@@ -80,7 +80,7 @@ export default function TestimoniesPage() {
     }
   }
 
-  function estadoLabel(testimony: Testimony): string {
+  function statusLabel(testimony: Testimony): string {
     if (!testimony.verified) return t("estadoGenerado");
     return testimony.flagged ? t("estadoObservado") : t("estadoVerificado");
   }
@@ -89,7 +89,7 @@ export default function TestimoniesPage() {
     { key: "id", header: tc("id"), render: (te) => <span className="text-xs text-muted-foreground">{te.idTestimony}</span>, className: "w-12" },
     { key: "number", header: t("fields.numero"), render: (te) => <span className="font-medium">{te.number}</span> },
     { key: "deed", header: t("fields.escritura"), render: (te) => te.deed?.number ?? "—" },
-    { key: "status", header: t("fields.estado"), render: (te) => estadoLabel(te) },
+    { key: "status", header: t("fields.estado"), render: (te) => statusLabel(te) },
     {
       key: "actions",
       header: "",

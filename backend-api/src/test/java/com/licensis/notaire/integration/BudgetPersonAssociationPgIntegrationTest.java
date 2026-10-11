@@ -148,7 +148,7 @@ class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("Should reflect the presence or absence of the client association per record when listing")
-    void shouldReflectPersonAcrossListedPresupuestos() throws Exception {
+    void shouldReflectPersonAcrossListedBudgets() throws Exception {
         Integer personId = createPerson("883pg005");
         String withPersonBody = """
                 {"number": 883005, "date": "2026-01-01", "heading": "Budget CU01 pg con client",

@@ -73,7 +73,7 @@ class ManagementQueryServiceTest {
 
     @Test
     @DisplayName("Should return an empty page when there are no managements")
-    void shouldReturnEmptyPageWhenNoGestiones() {
+    void shouldReturnEmptyPageWhenNoManagements() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<DeedManagement> page = new PageImpl<>(new ArrayList<>(), pageable, 0);
 

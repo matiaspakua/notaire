@@ -22,7 +22,7 @@ interface TemplateKey {
   conceptId: number;
 }
 
-export default function PlantillasPage() {
+export default function TemplatesPage() {
   const t = useTranslations("administracion.plantillas");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -44,52 +44,52 @@ export default function PlantillasPage() {
     queryFn: () => apiGet<DocumentType[]>("/document-types"),
   });
 
-  const [costoProcedureId, setCostoProcedureId] = useState("");
+  const [costProcedureId, setCostProcedureId] = useState("");
   const {
-    data: costosDocument = [],
-    isLoading: isLoadingCostos,
-    refetch: refetchCostos,
+    data: documentCosts = [],
+    isLoading: isLoadingCosts,
+    refetch: refetchCosts,
   } = useQuery({
-    queryKey: ["document-cost-templates", costoProcedureId],
+    queryKey: ["document-cost-templates", costProcedureId],
     queryFn: () =>
-      apiGet<DocumentCostTemplate[]>(`/document-cost-templates/procedure-types/${costoProcedureId}`),
-    enabled: !!costoProcedureId,
+      apiGet<DocumentCostTemplate[]>(`/document-cost-templates/procedure-types/${costProcedureId}`),
+    enabled: !!costProcedureId,
   });
-  const [costoModalOpen, setCostoModalOpen] = useState(false);
-  const [costoTypeDocumentId, setCostoTypeDocumentId] = useState("");
-  const [tipoCosto, setTipoCosto] = useState<"fijo" | "variable">("fijo");
-  const [costoValor, setCostoValor] = useState("");
-  const [savingCosto, setSavingCosto] = useState(false);
+  const [costModalOpen, setCostModalOpen] = useState(false);
+  const [costDocumentTypeId, setCostDocumentTypeId] = useState("");
+  const [costKind, setCostKind] = useState<"fixed" | "variable">("fixed");
+  const [costAmount, setCostAmount] = useState("");
+  const [savingCost, setSavingCost] = useState(false);
 
-  function openCreateCosto() {
-    setCostoTypeDocumentId("");
-    setTipoCosto("fijo");
-    setCostoValor("");
-    setCostoModalOpen(true);
+  function openCreateCost() {
+    setCostDocumentTypeId("");
+    setCostKind("fixed");
+    setCostAmount("");
+    setCostModalOpen(true);
   }
 
-  async function handleSaveCosto() {
-    const idTypeDocument = Number(costoTypeDocumentId);
-    const valor = Number(costoValor);
-    if (!costoProcedureId || !idTypeDocument || !valor) {
+  async function handleSaveCost() {
+    const idTypeDocument = Number(costDocumentTypeId);
+    const amount = Number(costAmount);
+    if (!costProcedureId || !idTypeDocument || !amount) {
       toast.error(t("costosDocumento.selectionRequired"));
       return;
     }
-    setSavingCosto(true);
+    setSavingCost(true);
     try {
       await apiPost("/document-cost-templates", {
-        idProcedureType: Number(costoProcedureId),
+        idProcedureType: Number(costProcedureId),
         idDocumentType: idTypeDocument,
-        fixedAmount: tipoCosto === "fijo" ? valor : null,
-        variablePercentage: tipoCosto === "variable" ? valor : null,
+        fixedAmount: costKind === "fixed" ? amount : null,
+        variablePercentage: costKind === "variable" ? amount : null,
       });
       toast.success(t("costosDocumento.created"));
-      setCostoModalOpen(false);
-      refetchCostos();
+      setCostModalOpen(false);
+      refetchCosts();
     } catch (err) {
       presentMutationError(err, { fallback: t("costosDocumento.errorCreate") });
     } finally {
-      setSavingCosto(false);
+      setSavingCost(false);
     }
   }
 
@@ -293,7 +293,7 @@ export default function PlantillasPage() {
 
       <AppHeader title={t("costosDocumento.title")} description={t("costosDocumento.description")} />
       <FormField label={t("costosDocumento.fields.tipoTramite")}>
-        <Select value={costoProcedureId} onValueChange={setCostoProcedureId}>
+        <Select value={costProcedureId} onValueChange={setCostProcedureId}>
           <SelectTrigger data-testid="select-procedure-type-costs">
             <SelectValue placeholder={t("fields.tipoTramitePlaceholder")} />
           </SelectTrigger>
@@ -307,17 +307,17 @@ export default function PlantillasPage() {
         </Select>
       </FormField>
 
-      {costoProcedureId && (
+      {costProcedureId && (
         <>
           <div className="flex justify-end mb-4">
-            <Button onClick={openCreateCosto} data-testid="btn-new-cost-document">
+            <Button onClick={openCreateCost} data-testid="btn-new-cost-document">
               <NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />
               {t("costosDocumento.newCosto")}
             </Button>
           </div>
           <DataTable
-            data={costosDocument}
-            isLoading={isLoadingCostos}
+            data={documentCosts}
+            isLoading={isLoadingCosts}
             emptyMessage={t("costosDocumento.noData")}
             keyExtractor={(c) =>
               `${c.documentCostTemplatePK?.fkIdProcedureType}-${c.documentCostTemplatePK?.fkIdDocumentType}`
@@ -344,12 +344,12 @@ export default function PlantillasPage() {
         </>
       )}
 
-      <Dialog open={costoModalOpen} onOpenChange={setCostoModalOpen}>
+      <Dialog open={costModalOpen} onOpenChange={setCostModalOpen}>
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={t("costosDocumento.newCosto")}>
               <FormField label={t("costosDocumento.fields.tipoDocumento")} required>
-                <Select value={costoTypeDocumentId} onValueChange={setCostoTypeDocumentId}>
+                <Select value={costDocumentTypeId} onValueChange={setCostDocumentTypeId}>
                   <SelectTrigger data-testid="select-document-type-cost">
                     <SelectValue placeholder={t("costosDocumento.fields.tipoDocumentoPlaceholder")} />
                   </SelectTrigger>
@@ -364,28 +364,28 @@ export default function PlantillasPage() {
               </FormField>
               <RadioField
                 label={t("costosDocumento.fields.tipoCosto")}
-                selected={tipoCosto}
-                onChange={(v) => setTipoCosto(v as "fijo" | "variable")}
+                selected={costKind}
+                onChange={(v) => setCostKind(v as "fixed" | "variable")}
                 options={[
-                  { value: "fijo", label: t("costosDocumento.fields.montoFijo") },
+                  { value: "fixed", label: t("costosDocumento.fields.montoFijo") },
                   { value: "variable", label: t("costosDocumento.fields.porcentajeVariable") },
                 ]}
               />
               <FormField label={t("costosDocumento.fields.valor")} required>
                 <Input
                   type="number"
-                  value={costoValor}
-                  onChange={(e) => setCostoValor(e.target.value)}
+                  value={costAmount}
+                  onChange={(e) => setCostAmount(e.target.value)}
                   data-testid="input-value-cost-document"
                 />
               </FormField>
             </FormSection>
             <FormActions align="right">
-              <Button variant="secondary" onClick={() => setCostoModalOpen(false)}>
+              <Button variant="secondary" onClick={() => setCostModalOpen(false)}>
                 <NotaireIcon src="/icons/actions/cerrar.png" alt={tc("cancel")} size={16} className="mr-1" />
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSaveCosto} disabled={savingCosto} data-testid="btn-save-cost-document">
+              <Button onClick={handleSaveCost} disabled={savingCost} data-testid="btn-save-cost-document">
                 <NotaireIcon src="/icons/actions/guardar.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
                 {tc("save")}
               </Button>

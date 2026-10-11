@@ -69,7 +69,7 @@ class FlywaySchemaValidationIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("Should return 200 for GET /api/v1/folio-types against the Flyway schema")
-    void shouldListTiposDeFolioWhenSchemaMatchesEntities() throws Exception {
+    void shouldListFolioTypesWhenSchemaMatchesEntities() throws Exception {
         mockMvc.perform(get("/api/v1/folio-types")).andExpect(status().isOk());
     }
 

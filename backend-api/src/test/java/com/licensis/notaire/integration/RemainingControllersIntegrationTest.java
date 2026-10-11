@@ -49,7 +49,7 @@ class RemainingControllersIntegrationTest {
 
         @Test
         @DisplayName("Should return all identification types")
-        void shouldReturnAllTiposIdentification() throws Exception {
+        void shouldReturnAllIdentificationTypes() throws Exception {
             mockMvc.perform(get("/api/v1/identification-types"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -92,7 +92,7 @@ class RemainingControllersIntegrationTest {
 
         @Test
         @DisplayName("Should return all managements")
-        void shouldReturnAllGestiones() throws Exception {
+        void shouldReturnAllManagements() throws Exception {
             mockMvc.perform(get("/api/v1/managements"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -108,7 +108,7 @@ class RemainingControllersIntegrationTest {
 
         @Test
         @DisplayName("Should return empty list when searching by client with not managements")
-        void shouldReturnEmptyListForClientWithNoGestiones() throws Exception {
+        void shouldReturnEmptyListForClientWithNoManagements() throws Exception {
             mockMvc.perform(get("/api/v1/managements/client/9999"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", isA(java.util.List.class)));

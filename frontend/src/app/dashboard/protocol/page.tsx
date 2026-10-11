@@ -17,7 +17,7 @@ import { presentMutationError } from "@/lib/mutation-error";
 import type { Folio } from "@/types";
 import { FileText, Download, BookOpen, FilePlus } from "lucide-react";
 
-export default function ProtocoloPage() {
+export default function ProtocolPage() {
   const t = useTranslations("protocolo");
   const tc = useTranslations("common");
 

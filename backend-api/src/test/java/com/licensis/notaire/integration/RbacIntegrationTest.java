@@ -136,7 +136,7 @@ class RbacIntegrationTest {
 
     @Test
     @DisplayName("should let an administrator create a procedure type")
-    void shouldLetAnAdministratorCreateATipoDeTramite() throws Exception {
+    void shouldLetAnAdministratorCreateAProcedureType() throws Exception {
         mockMvc.perform(post("/api/v1/procedure-types")
                         .header("Authorization", "Bearer " + administratorToken)
                         .contentType(MediaType.APPLICATION_JSON)

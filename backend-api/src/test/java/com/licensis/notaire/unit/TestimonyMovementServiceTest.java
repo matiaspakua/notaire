@@ -202,7 +202,7 @@ class TestimonyMovementServiceTest {
 
         @Test
         @DisplayName("Should create a new movement preserving the previous one when testimony was withdrawn")
-        void shouldCreateNewMovementOnReingreso() {
+        void shouldCreateNewMovementOnReentry() {
             TestimonyMovement retirado = movementConEntry();
             retirado.setRegistered(true);
             retirado.setDateRegistration(new Date());
@@ -282,7 +282,7 @@ class TestimonyMovementServiceTest {
 
         @Test
         @DisplayName("Should reject reentry when the most recent movement was not withdrawn")
-        void shouldRejectReingresoWhenNotWithdrawn() {
+        void shouldRejectReentryWhenNotWithdrawn() {
             TestimonyMovement ingresado = movementConEntry();
             when(testimonyRepository.existsById(5)).thenReturn(true);
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
@@ -295,7 +295,7 @@ class TestimonyMovementServiceTest {
 
         @Test
         @DisplayName("Should reject reentry when the testimony has no previous movement")
-        void shouldRejectReingresoWhenNoPreviousMovement() {
+        void shouldRejectReentryWhenNoPreviousMovement() {
             when(testimonyRepository.existsById(5)).thenReturn(true);
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
                     .thenReturn(Optional.empty());
@@ -307,7 +307,7 @@ class TestimonyMovementServiceTest {
 
         @Test
         @DisplayName("Should throw ResourceNotFoundException when testimony does not exist")
-        void shouldRejectReingresarWhenTestimonyNotFound() {
+        void shouldRejectReenterWhenTestimonyNotFound() {
             when(testimonyRepository.existsById(999)).thenReturn(false);
 
             assertThatThrownBy(() -> testimonyMovementService.reenter(999, TestimonyReentry.empty()))

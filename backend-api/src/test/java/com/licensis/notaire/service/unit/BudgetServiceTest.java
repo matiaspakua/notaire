@@ -63,7 +63,7 @@ class BudgetServiceTest {
 
     @Test
     @DisplayName("Should return an empty list when no budgets exist")
-    void shouldReturnEmptyListWhenNoPresupuestosExist() {
+    void shouldReturnEmptyListWhenNoBudgetsExist() {
         when(budgetRepository.findAll()).thenReturn(new ArrayList<>());
 
         List<Budget> result = budgetService.findAll();
@@ -120,7 +120,7 @@ class BudgetServiceTest {
 
     @Test
     @DisplayName("Should find budgets by person")
-    void shouldFindPresupuestosByPerson() {
+    void shouldFindBudgetsByPerson() {
         List<Budget> budgets = new ArrayList<>();
         budgets.add(testBudget);
 
@@ -138,7 +138,7 @@ class BudgetServiceTest {
 
     @Test
     @DisplayName("Should return empty list when person has not budgets")
-    void shouldReturnEmptyListWhenPersonHasNoPresupuestos() {
+    void shouldReturnEmptyListWhenPersonHasNoBudgets() {
         when(budgetRepository.findByPersonId(999))
                 .thenReturn(new ArrayList<>());
 
@@ -152,7 +152,7 @@ class BudgetServiceTest {
 
     @Test
     @DisplayName("Should find budgets by status")
-    void shouldFindPresupuestosByStatus() {
+    void shouldFindBudgetsByStatus() {
         List<Budget> budgets = new ArrayList<>();
         budgets.add(testBudget);
 
@@ -171,7 +171,7 @@ class BudgetServiceTest {
 
     @Test
     @DisplayName("Should return all budgets when status is null")
-    void shouldReturnAllPresupuestosWhenStatusIsNull() {
+    void shouldReturnAllBudgetsWhenStatusIsNull() {
         List<Budget> budgets = new ArrayList<>();
         budgets.add(testBudget);
 
@@ -189,7 +189,7 @@ class BudgetServiceTest {
 
     @Test
     @DisplayName("Should return all budgets when status is blank")
-    void shouldReturnAllPresupuestosWhenStatusIsBlank() {
+    void shouldReturnAllBudgetsWhenStatusIsBlank() {
         List<Budget> budgets = new ArrayList<>();
         budgets.add(testBudget);
 

@@ -9,7 +9,7 @@ import { forbiddenDashboardPath } from "@/lib/admin-access";
  * Client-side admin layout guard (issue #1052). Complements edge proxy role-cookie
  * checks when the edge signal is missing/stale but Zustand has a non-admin user.
  */
-export default function AdministracionLayout({
+export default function AdministrationLayout({
   children,
 }: {
   children: React.ReactNode;

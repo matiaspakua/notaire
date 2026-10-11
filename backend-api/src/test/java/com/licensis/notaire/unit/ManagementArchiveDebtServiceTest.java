@@ -99,7 +99,7 @@ class ManagementArchiveDebtServiceTest {
 
         @Test
         @DisplayName("Management with multiple procedures and budgets sums each budget's balance")
-        void shouldSumBalancesAcrossMultipleProceduresAndPresupuestos() {
+        void shouldSumBalancesAcrossMultipleProceduresAndBudgets() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1))
                     .thenReturn(List.of(procedureFor(10), procedureFor(20)));
@@ -113,7 +113,7 @@ class ManagementArchiveDebtServiceTest {
 
         @Test
         @DisplayName("Management whose budgets are fully paid returns zero")
-        void shouldReturnZeroWhenAllPresupuestosAreFullyPaid() {
+        void shouldReturnZeroWhenAllBudgetsAreFullyPaid() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
             when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("0.00"));

@@ -98,7 +98,7 @@ class SubstitutionRepositoryIntegrationTest extends ServiceIntegrationTest {
 
     @Test
     @DisplayName("Should find all substitutions")
-    void shouldFindAllSuplencias() {
+    void shouldFindAllSubstitutions() {
         Substitution substitution = new Substitution();
         substitution.setFkIdSubstitute(suplente);
         substitution.setFkIdSubstituted(suplantado);

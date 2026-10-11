@@ -70,7 +70,7 @@ class DeedEntityTest {
 
         @Test
         @DisplayName("Should have SIN_FIRMAR as default status")
-        void shouldHaveSinFirmarAsDefaultStatus() {
+        void shouldHaveUnsignedAsDefaultStatus() {
             Deed deed = new Deed();
 
             assertThat(deed.getStatus()).isEqualTo(BusinessConstants.DeedSINFIRMAR);

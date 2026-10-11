@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { NotaireIcon } from "@/components/ui/notaire-icon";
 
-export default function AdministracionPage() {
+export default function AdministrationPage() {
   const t = useTranslations("administracion");
 
   const adminModules = [

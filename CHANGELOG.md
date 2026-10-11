@@ -41,6 +41,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English test method names and frontend component locals** (#1490, CU75):
+  JUnit method names, page components, React Query keys, and local helpers
+  use English names. Message catalog keys such as `estadoFilter`,
+  `tiposDeFolio`, and `costosDocumento.fields.tipoCosto` stay. Stored labels
+  such as `Nuevo`, `Utilizado`, `DESCUENTO`, `RECARGO`, `ADMINISTRADOR`, and
+  `ESCRIBANO` stay.
 - **English frontend locals and column keys** (#1490, CU75): Data table
   column ids, substitution date inputs, and React Query keys for management
   statuses, procedure types, and procedure templates use English names.

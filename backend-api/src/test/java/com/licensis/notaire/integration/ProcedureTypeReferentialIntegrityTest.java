@@ -111,7 +111,7 @@ class ProcedureTypeReferentialIntegrityTest {
 
     @Test
     @DisplayName("Should search procedure types by name")
-    void shouldSearchTiposProcedureByName() throws Exception {
+    void shouldSearchProcedureTypesByName() throws Exception {
         String uniqueName = "SearchableTramite_" + System.nanoTime();
         createTypeProcedure(uniqueName);
 

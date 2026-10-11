@@ -26,7 +26,7 @@ export default function StatusesManagementPage() {
   const tc = useTranslations("common");
 
   const { data = [], isLoading, refetch } = useQuery({
-    queryKey: ["estados-gestion"],
+    queryKey: ["managementStatuses"],
     queryFn: () => apiGet<ManagementStatus[]>("/management-statuses"),
   });
 
@@ -43,7 +43,7 @@ export default function StatusesManagementPage() {
   const [deleting, setDeleting] = useState(false);
 
   const { data: filtered = data } = useQuery({
-    queryKey: ["estados-gestion", "search", search, data],
+    queryKey: ["managementStatuses", "search", search, data],
     queryFn: () =>
       search.trim()
         ? apiGet<ManagementStatus[]>(`/management-statuses/search?name=${encodeURIComponent(search.trim())}`)
@@ -56,8 +56,8 @@ export default function StatusesManagementPage() {
     setModalOpen(true);
   }
 
-  function openEdit(estado: ManagementStatus) {
-    setEditing(estado);
+  function openEdit(status: ManagementStatus) {
+    setEditing(status);
     setIsEditMode(true);
     setModalOpen(true);
   }

@@ -201,7 +201,7 @@ class WorkflowTraceApiH2IntegrationTest {
 
     @Test
     @DisplayName("Should serialize managements list when procedure type has a workflow definition")
-    void shouldSerializeGestionesListWhenTypeHasWorkflowDefinition() throws Exception {
+    void shouldSerializeManagementsListWhenTypeHasWorkflowDefinition() throws Exception {
         mockMvc.perform(get("/api/v1/managements"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].idManagement").value(managementId))

@@ -110,7 +110,7 @@ class ManagementCaseSummaryServiceTest {
 
     @Test
     @DisplayName("Should report SIN_INGRESAR for a testimony without movements")
-    void shouldReportSinIngresarWithoutMovements() {
+    void shouldReportNotEnteredWithoutMovements() {
         givenProcedures(procedureWithTestimony(testimony(List.of(), 0)));
 
         assertThat(onlyTestimony(service.getSummary(4)).state()).isEqualTo("SIN_INGRESAR");
@@ -118,7 +118,7 @@ class ManagementCaseSummaryServiceTest {
 
     @Test
     @DisplayName("Should report INGRESADO for an entered testimony not yet registered")
-    void shouldReportIngresado() {
+    void shouldReportEntered() {
         givenProcedures(procedureWithTestimony(testimony(List.of(movement(1, null, false)), 0)));
 
         assertThat(onlyTestimony(service.getSummary(4)).state()).isEqualTo("INGRESADO");

@@ -158,7 +158,7 @@ class CoreBusinessControllersIntegrationTest {
 
         @Test
         @DisplayName("CU45 - Should return all budgets")
-        void shouldReturnAllPresupuestos() throws Exception {
+        void shouldReturnAllBudgets() throws Exception {
             mockMvc.perform(get("/api/v1/budgets"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -205,7 +205,7 @@ class CoreBusinessControllersIntegrationTest {
 
         @Test
         @DisplayName("CU06 - Should return all deeds")
-        void shouldReturnAllEscrituras() throws Exception {
+        void shouldReturnAllDeeds() throws Exception {
             mockMvc.perform(get("/api/v1/deeds"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -278,7 +278,7 @@ class CoreBusinessControllersIntegrationTest {
 
         @Test
         @DisplayName("CU64 - Should return all procedure types")
-        void shouldReturnAllTiposDeProcedure() throws Exception {
+        void shouldReturnAllProcedureTypes() throws Exception {
             mockMvc.perform(get("/api/v1/procedure-types"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -348,7 +348,7 @@ class CoreBusinessControllersIntegrationTest {
 
         @Test
         @DisplayName("CU59 - Should return all substitutions")
-        void shouldReturnAllSuplencias() throws Exception {
+        void shouldReturnAllSubstitutions() throws Exception {
             mockMvc.perform(get("/api/v1/substitutions"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))

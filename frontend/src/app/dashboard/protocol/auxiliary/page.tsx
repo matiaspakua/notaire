@@ -14,7 +14,7 @@ import { extractApiError } from "@/lib/utils";
 import type { Folio, Deed } from "@/types";
 import { FilePlus } from "lucide-react";
 
-export default function ProtocoloAuxiliarPage() {
+export default function AuxiliaryProtocolPage() {
   const t = useTranslations("protocolo.auxiliar");
   const tc = useTranslations("common");
 

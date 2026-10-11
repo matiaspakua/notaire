@@ -59,7 +59,7 @@ class PaginationTest {
 
     @Test
     @DisplayName("GET /budgets returns page with content and metadata")
-    void shouldReturnPagedPresupuestos() throws Exception {
+    void shouldReturnPagedBudgets() throws Exception {
         Page<Budget> page = new PageImpl<>(List.of(new Budget()), PageRequest.of(0, 10), 1);
         when(budgetService.findAllPaged(any())).thenReturn(page);
 

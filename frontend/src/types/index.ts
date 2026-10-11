@@ -221,7 +221,7 @@ export interface CreateCompleteManagementInput {
   propertyId?: number;
 }
 
-export type TipoItem = "NORMAL" | "DESCUENTO" | "RECARGO";
+export type ItemType = "NORMAL" | "DESCUENTO" | "RECARGO";
 
 /** GET /api/v1/items — raw Item entity. */
 export interface Item {
@@ -230,7 +230,7 @@ export interface Item {
   value?: number;
   percentage?: number;
   notes?: string;
-  type?: TipoItem;
+  type?: ItemType;
   reason?: string;
   fixedConcept?: boolean;
   fkIdBudget?: { idBudget?: number };

@@ -103,7 +103,7 @@ function DeedsList() {
     finally { setDeleteId(null); }
   }
 
-  async function handleFirmar() {
+  async function handleSign() {
     if (!firmarId) return;
     try {
       await firmarMutation.mutateAsync(firmarId);
@@ -229,7 +229,7 @@ function DeedsList() {
       <ConfirmDialog
         open={!!firmarId}
         onOpenChange={(v) => !v && setFirmarId(null)}
-        onConfirm={handleFirmar}
+        onConfirm={handleSign}
         loading={firmarMutation.isPending}
         title={t("firmarConfirmTitle")}
         description={t("firmarConfirmDescription")}

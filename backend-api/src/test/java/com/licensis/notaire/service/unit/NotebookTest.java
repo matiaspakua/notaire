@@ -59,7 +59,7 @@ class NotebookTest {
 
     @Test
     @DisplayName("Should mark all folios as assigned to a notebook")
-    void shouldMarkFoliosAsAsignadoANotebook() {
+    void shouldMarkFoliosAsAssignedToANotebook() {
         List<Folio> folios = new ArrayList<>(List.of(folio(1, 1, "New"), folio(2, 2, "New")));
         Notebook notebook = new Notebook();
         notebook.setIdNotebook(10);

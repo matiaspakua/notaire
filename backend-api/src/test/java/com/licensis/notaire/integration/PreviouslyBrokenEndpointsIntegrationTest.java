@@ -70,7 +70,7 @@ class PreviouslyBrokenEndpointsIntegrationTest {
 
     @Test
     @DisplayName("Should return a JSON array for GET /api/v1/folio-types")
-    void shouldListTiposDeFolioWhenRequested() throws Exception {
+    void shouldListFolioTypesWhenRequested() throws Exception {
         mockMvc.perform(get("/api/v1/folio-types"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());

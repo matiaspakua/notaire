@@ -107,7 +107,7 @@ class CatalogControllersIntegrationTest {
 
         @Test
         @DisplayName("CU27 - Should return 200 and list of document types")
-        void shouldReturnAllTiposDeDocument() throws Exception {
+        void shouldReturnAllDocumentTypes() throws Exception {
             mockMvc.perform(get("/api/v1/document-types"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -168,7 +168,7 @@ class CatalogControllersIntegrationTest {
 
         @Test
         @DisplayName("CU36 - Should return 200 and a list of folio types")
-        void shouldReturnAllTiposDeFolio() throws Exception {
+        void shouldReturnAllFolioTypes() throws Exception {
             mockMvc.perform(get("/api/v1/folio-types"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))

@@ -93,7 +93,7 @@ test.describe("Filter selects expose an accessible name (#1343)", () => {
     }
   });
 
-  test("estados-gestion workflow selector, when shown, is a named combobox", async ({ page }) => {
+  test("management-statuses workflow selector, when shown, is a named combobox", async ({ page }) => {
     await page.goto("/dashboard/administration/management-statuses");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     if ((await page.getByTestId("select-workflow").count()) > 0) {

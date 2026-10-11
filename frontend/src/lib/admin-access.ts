@@ -11,13 +11,13 @@ export const AUTH_ROLE_COOKIE = "notaire-auth-role";
 export const FORBIDDEN_QUERY = "forbidden=1";
 export const ADMIN_ROUTE_PREFIXES = ["/dashboard/administration", "/dashboard/audit"] as const;
 
-const ADMIN_TIPOS = new Set(["ADMIN", "ADMINISTRADOR", "ESCRIBANO"]);
+const ADMIN_TYPES = new Set(["ADMIN", "ADMINISTRADOR", "ESCRIBANO"]);
 
-export function isAdminTipo(tipo?: string | null): boolean {
-  if (!tipo) {
+export function isAdminType(userType?: string | null): boolean {
+  if (!userType) {
     return false;
   }
-  return ADMIN_TIPOS.has(tipo.trim().toUpperCase());
+  return ADMIN_TYPES.has(userType.trim().toUpperCase());
 }
 
 export function isAdminRoute(pathname: string): boolean {
@@ -41,7 +41,7 @@ export function shouldDenyAdminRoute(
   if (!authStatus) {
     return false;
   }
-  return !isAdminTipo(role);
+  return !isAdminType(role);
 }
 
 export function setAuthCookies(tipo: string): void {

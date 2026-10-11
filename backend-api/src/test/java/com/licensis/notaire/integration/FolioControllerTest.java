@@ -53,7 +53,7 @@ class FolioControllerTest {
 
     @Test
     @DisplayName("Should create folio with status New")
-    void shouldCreateFolioWithStatusNuevo() throws Exception {
+    void shouldCreateFolioWithStatusNew() throws Exception {
         MvcResult result = mockMvc.perform(post("/api/v1/folios")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validBody(9001, "New")))
@@ -69,7 +69,7 @@ class FolioControllerTest {
 
     @Test
     @DisplayName("Should create folio with status Utilizado")
-    void shouldCreateFolioWithStatusUtilizado() throws Exception {
+    void shouldCreateFolioWithStatusInUse() throws Exception {
         mockMvc.perform(post("/api/v1/folios")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validBody(9002, "Utilizado")))
@@ -187,7 +187,7 @@ class FolioControllerTest {
 
     @Test
     @DisplayName("GET /{id}/in-use should report false for a folio with status New")
-    void shouldReportNotInUseForNuevoFolio() throws Exception {
+    void shouldReportNotInUseForNewFolio() throws Exception {
         MvcResult create = mockMvc.perform(post("/api/v1/folios").contentType(MediaType.APPLICATION_JSON)
                         .content(validBody(9011, "New")))
                 .andExpect(status().isCreated())
@@ -201,7 +201,7 @@ class FolioControllerTest {
 
     @Test
     @DisplayName("GET /{id}/in-use should report true for a folio with status Utilizado")
-    void shouldReportInUseForUtilizadoFolio() throws Exception {
+    void shouldReportInUseForInUseFolio() throws Exception {
         MvcResult create = mockMvc.perform(post("/api/v1/folios").contentType(MediaType.APPLICATION_JSON)
                         .content(validBody(9012, "Utilizado")))
                 .andExpect(status().isCreated())
@@ -215,7 +215,7 @@ class FolioControllerTest {
 
     @Test
     @DisplayName("PUT should return 409 when folio is already Utilizado")
-    void shouldReturn409WhenUpdatingUtilizadoFolio() throws Exception {
+    void shouldReturn409WhenUpdatingInUseFolio() throws Exception {
         MvcResult create = mockMvc.perform(post("/api/v1/folios").contentType(MediaType.APPLICATION_JSON)
                         .content(validBody(9013, "Utilizado")))
                 .andExpect(status().isCreated())
@@ -231,7 +231,7 @@ class FolioControllerTest {
 
     @Test
     @DisplayName("DELETE should return 409 when folio is already Utilizado")
-    void shouldReturn409WhenDeletingUtilizadoFolio() throws Exception {
+    void shouldReturn409WhenDeletingInUseFolio() throws Exception {
         MvcResult create = mockMvc.perform(post("/api/v1/folios").contentType(MediaType.APPLICATION_JSON)
                         .content(validBody(9014, "Utilizado")))
                 .andExpect(status().isCreated())
@@ -322,7 +322,7 @@ class FolioControllerTest {
 
     @Test
     @DisplayName("CU06/#838 — PUT should return 409 when folio is already Utilizado by another deed")
-    void shouldRejectLinkingFolioAlreadyUtilizadoByAnotherDeed() throws Exception {
+    void shouldRejectLinkingFolioAlreadyInUseByAnotherDeed() throws Exception {
         int idDeedA = createDeed();
         int idDeedB = createDeed();
         MvcResult create = mockMvc.perform(post("/api/v1/folios")

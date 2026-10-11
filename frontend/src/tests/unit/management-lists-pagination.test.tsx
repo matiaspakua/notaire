@@ -27,7 +27,7 @@ vi.mock("next-intl", () => ({
 vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
 import DocumentReentryPage from "@/app/dashboard/document-reentry/page";
-import DocumentosEntidadesExternasPage from "@/app/dashboard/external-entity-documents/page";
+import ExternalEntityDocumentsPage from "@/app/dashboard/external-entity-documents/page";
 import { ManagementPicker } from "@/components/shared/ManagementPicker";
 import type { DeedManagement } from "@/types";
 
@@ -66,7 +66,7 @@ const PAGE = { content: [NEWEST], number: 0, size: 20, totalElements: 1312, tota
 
 describe.each([
   ["document-reentry", DocumentReentryPage],
-  ["documentos-entidades-externas", DocumentosEntidadesExternasPage],
+  ["external-entity-documents", ExternalEntityDocumentsPage],
 ])("%s list (#1340)", (path, Page) => {
   beforeEach(() => {
     mockFetch.mockReset();

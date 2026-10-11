@@ -88,7 +88,7 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
 
     @Test
     @DisplayName("Should enter registration a verified testimony")
-    void shouldIngresarRegistrationForVerifiedTestimony() throws Exception {
+    void shouldEnterRegistrationForVerifiedTestimony() throws Exception {
         int idTestimony = generateVerifiedTestimony();
 
         mockMvc.perform(post("/api/v1/testimony-movements/" + idTestimony + "/enter-registration"))
@@ -99,7 +99,7 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
 
     @Test
     @DisplayName("Should return 400 when ingresando a registration a non-verified testimony")
-    void shouldRejectIngresarRegistrationWhenTestimonyNotVerified() throws Exception {
+    void shouldRejectEnterRegistrationWhenTestimonyNotVerified() throws Exception {
         int idTestimony = generateTestimony();
 
         mockMvc.perform(post("/api/v1/testimony-movements/" + idTestimony + "/enter-registration"))
@@ -108,14 +108,14 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
 
     @Test
     @DisplayName("Should return 404 when ingresando a registration a non-existing testimony")
-    void shouldReturn404WhenIngresarRegistrationForNonExistingTestimony() throws Exception {
+    void shouldReturn404WhenEnterRegistrationForNonExistingTestimony() throws Exception {
         mockMvc.perform(post("/api/v1/testimony-movements/99999/enter-registration"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("Should return 400 when testimony already has an open movement")
-    void shouldRejectIngresarRegistrationWhenAlreadyOpen() throws Exception {
+    void shouldRejectEnterRegistrationWhenAlreadyOpen() throws Exception {
         int idTestimony = generateVerifiedTestimony();
         registerEntry(idTestimony);
 
@@ -173,7 +173,7 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
 
     @Test
     @DisplayName("Should reenter a previously withdrawn testimony")
-    void shouldReingresarAfterWithdrawal() throws Exception {
+    void shouldReenterAfterWithdrawal() throws Exception {
         int idTestimony = generateVerifiedTestimony();
         registerEntry(idTestimony);
         registerInscription(idTestimony);
@@ -220,7 +220,7 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
 
     @Test
     @DisplayName("Should return 400 when re-entering without a previous withdrawal")
-    void shouldRejectReingresarWithoutPreviousWithdrawal() throws Exception {
+    void shouldRejectReenterWithoutPreviousWithdrawal() throws Exception {
         int idTestimony = generateVerifiedTestimony();
         registerEntry(idTestimony);
 
@@ -246,7 +246,7 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
 
     @Test
     @DisplayName("Should return 404 when re-entering a testimony that does not exist")
-    void shouldReturn404WhenReingresarForNonExistingTestimony() throws Exception {
+    void shouldReturn404WhenReenterForNonExistingTestimony() throws Exception {
         mockMvc.perform(post("/api/v1/testimony-movements/99999/reenter"))
                 .andExpect(status().isNotFound());
     }

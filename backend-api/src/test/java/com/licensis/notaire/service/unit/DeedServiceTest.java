@@ -106,7 +106,7 @@ class DeedServiceTest {
 
     @Test
     @DisplayName("Should return an empty list when no deeds exist")
-    void shouldReturnEmptyListWhenNoEscriturasExist() {
+    void shouldReturnEmptyListWhenNoDeedsExist() {
         when(deedRepository.findAll()).thenReturn(new ArrayList<>());
 
         List<Deed> result = deedService.findAll();
@@ -285,7 +285,7 @@ class DeedServiceTest {
 
     @Test
     @DisplayName("Should return all deeds when number is null")
-    void shouldReturnAllEscriturasWhenNumberIsNull() {
+    void shouldReturnAllDeedsWhenNumberIsNull() {
         List<Deed> escrituras = new ArrayList<>();
         escrituras.add(testDeed);
 

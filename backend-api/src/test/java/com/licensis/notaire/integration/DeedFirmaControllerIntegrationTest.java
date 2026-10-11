@@ -105,7 +105,7 @@ class DeedFirmaControllerIntegrationTest extends ServiceIntegrationTest {
 
     @Test
     @DisplayName("Should sign a 'Sin Firmar' deed with a folio assigned")
-    void shouldSignDeedSinFirmarWithFolioAsignado() throws Exception {
+    void shouldSignDeedUnsignedWithFolioAssigned() throws Exception {
         int idDeed = createDeed("Sin Firmar");
         assignFolio(idDeed);
 

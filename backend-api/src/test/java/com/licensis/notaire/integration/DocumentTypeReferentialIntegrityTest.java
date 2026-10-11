@@ -111,7 +111,7 @@ class DocumentTypeReferentialIntegrityTest {
 
     @Test
     @DisplayName("Should search document types by name")
-    void shouldSearchTiposDocumentByName() throws Exception {
+    void shouldSearchDocumentTypesByName() throws Exception {
         String uniqueName = "SearchableDoc_" + System.nanoTime();
         createTypeDocument(uniqueName);
 

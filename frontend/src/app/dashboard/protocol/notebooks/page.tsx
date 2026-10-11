@@ -18,7 +18,7 @@ import { Download, FolderPlus } from "lucide-react";
 
 const ESTADOS_DANADOS = ["Errose", "no pasó"];
 
-export default function CuadernosPage() {
+export default function NotebooksPage() {
   const t = useTranslations("protocolo.cuadernos");
   const tc = useTranslations("common");
 
@@ -55,7 +55,7 @@ export default function CuadernosPage() {
     setModalOpen(true);
   }
 
-  async function handleCrearCuaderno() {
+  async function handleCreateNotebook() {
     const notaryId = folios.find((f) => selectedIds.includes(f.idFolio!))?.fkIdNotaryPerson?.personId;
     if (!notaryId) {
       toast.error(t("selectFoliosFirst"));
@@ -173,7 +173,7 @@ export default function CuadernosPage() {
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleCrearCuaderno} disabled={saving || selectedIds.length === 0}>
+              <Button onClick={handleCreateNotebook} disabled={saving || selectedIds.length === 0}>
                 {saving ? tc("saving") : tc("create")}
               </Button>
             </FormActions>

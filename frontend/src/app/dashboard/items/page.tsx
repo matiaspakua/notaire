@@ -27,7 +27,7 @@ import {
 } from "@/hooks/useItems";
 import { presentMutationError } from "@/lib/mutation-error";
 import { formatCurrency } from "@/lib/utils";
-import type { Item, TipoItem } from "@/types";
+import type { Item, ItemType } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 
 const EMPTY: Partial<Item> = {
@@ -36,7 +36,7 @@ const EMPTY: Partial<Item> = {
   type: "NORMAL",
 };
 
-const TIPO_VALUES: TipoItem[] = ["NORMAL", "DESCUENTO", "RECARGO"];
+const ITEM_TYPE_VALUES: ItemType[] = ["NORMAL", "DESCUENTO", "RECARGO"];
 
 export default function ItemsPage() {
   const t = useTranslations("items");
@@ -52,13 +52,13 @@ export default function ItemsPage() {
   const [editing, setEditing] = useState<Partial<Item>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
   const [budgetId, setBudgetId] = useState("");
-  const [reporteId, setReporteId] = useState("");
-  const [reporteQuery, setReporteQuery] = useState<number | undefined>(undefined);
-  const { data: descuentosRecargos = [], isFetching: reporteLoading } =
-    useDiscountsAndSurcharges(reporteQuery);
+  const [reportId, setReportId] = useState("");
+  const [reportQuery, setReportQuery] = useState<number | undefined>(undefined);
+  const { data: discountsAndSurcharges = [], isFetching: reportLoading } =
+    useDiscountsAndSurcharges(reportQuery);
 
-  function tipoLabel(tipo: TipoItem): string {
-    return t(`types.${tipo}`);
+  function itemTypeLabel(itemType: ItemType): string {
+    return t(`types.${itemType}`);
   }
 
   function openCreate() {
@@ -137,7 +137,7 @@ export default function ItemsPage() {
     {
       key: "type",
       header: t("fields.tipo"),
-      render: (i) => tipoLabel(i.type ?? "NORMAL"),
+      render: (i) => itemTypeLabel(i.type ?? "NORMAL"),
     },
     {
       key: "actions",
@@ -189,29 +189,29 @@ export default function ItemsPage() {
             <FormField label={t("fields.presupuestoId")}>
               <Input
                 type="number"
-                value={reporteId}
-                onChange={(e) => setReporteId(e.target.value)}
+                value={reportId}
+                onChange={(e) => setReportId(e.target.value)}
                 placeholder={t("fields.presupuestoPlaceholder")}
                 data-testid="input-report-budget-id"
               />
             </FormField>
             <Button
               variant="secondary"
-              onClick={() => setReporteQuery(reporteId ? Number(reporteId) : undefined)}
+              onClick={() => setReportQuery(reportId ? Number(reportId) : undefined)}
               data-testid="btn-query-report"
             >
               {t("report.consult")}
             </Button>
           </div>
-          {reporteQuery && (
+          {reportQuery && (
             <DataTable
-              data={descuentosRecargos}
-              isLoading={reporteLoading}
+              data={discountsAndSurcharges}
+              isLoading={reportLoading}
               keyExtractor={(i) => i.idItem!}
               emptyMessage={t("report.empty")}
               columns={[
                 { key: "name", header: t("fields.nombre"), render: (i) => i.name ?? "—" },
-                { key: "type", header: t("fields.tipo"), render: (i) => tipoLabel(i.type ?? "NORMAL") },
+                { key: "type", header: t("fields.tipo"), render: (i) => itemTypeLabel(i.type ?? "NORMAL") },
                 { key: "reason", header: t("fields.motivo"), render: (i) => i.reason ?? "—" },
                 { key: "value", header: t("fields.valor"), render: (i) => formatCurrency(i.value) },
               ]}
@@ -254,15 +254,15 @@ export default function ItemsPage() {
               <FormField label={t("fields.tipoItem")}>
                 <Select
                   value={editing.type ?? "NORMAL"}
-                  onValueChange={(v) => setEditing({ ...editing, type: v as TipoItem })}
+                  onValueChange={(v) => setEditing({ ...editing, type: v as ItemType })}
                 >
                   <SelectTrigger data-testid="select-item-type">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {TIPO_VALUES.map((tipo) => (
-                      <SelectItem key={tipo} value={tipo}>
-                        {tipoLabel(tipo)}
+                    {ITEM_TYPE_VALUES.map((itemType) => (
+                      <SelectItem key={itemType} value={itemType}>
+                        {itemTypeLabel(itemType)}
                       </SelectItem>
                     ))}
                   </SelectContent>

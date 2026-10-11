@@ -118,7 +118,7 @@ class BudgetEntityTest {
 
         @Test
         @DisplayName("Should filter budgets by person")
-        void shouldFilterPresupuestosByPerson() {
+        void shouldFilterBudgetsByPerson() {
             Person persona1 = new Person(1);
             Person persona2 = new Person(2);
 
@@ -142,7 +142,7 @@ class BudgetEntityTest {
 
         @Test
         @DisplayName("Should filter budgets by status")
-        void shouldFilterPresupuestosByStatus() {
+        void shouldFilterBudgetsByStatus() {
             Budget presupuesto1 = new Budget(1);
             presupuesto1.setStatus("pendiente");
 

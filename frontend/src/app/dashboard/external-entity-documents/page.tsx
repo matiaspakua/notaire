@@ -35,16 +35,16 @@ const emptyMovement: ExternalEntityDocumentMovementInput = {
   delivered: false,
 };
 
-export default function DocumentosEntidadesExternasPage() {
+export default function ExternalEntityDocumentsPage() {
   // useUrlPagination reads useSearchParams, which needs a Suspense boundary.
   return (
     <Suspense>
-      <DocumentosEntidadesExternasList />
+      <ExternalEntityDocumentsList />
     </Suspense>
   );
 }
 
-function DocumentosEntidadesExternasList() {
+function ExternalEntityDocumentsList() {
   const t = useTranslations("documentosEntidadesExternas");
   const tc = useTranslations("common");
   const themeClass = useThemeClasses();

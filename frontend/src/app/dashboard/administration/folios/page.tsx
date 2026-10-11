@@ -19,11 +19,11 @@ import { useDeeds } from "@/hooks/useDeeds";
 import type { Folio, Person } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 
-const ESTADOS_FOLIO = ["Nuevo", "Utilizado", "Errose"] as const;
-const ESTADO_UTILIZADO = "Utilizado";
+const FOLIO_STATUSES = ["Nuevo", "Utilizado", "Errose"] as const;
+const STATUS_IN_USE = "Utilizado";
 const STATUS_DEED_SIGNED = "Firmada";
 
-interface TipoDeFolioRow {
+interface FolioTypeRow {
   idFolioType: number;
   name: string;
   isAuxiliary?: boolean;
@@ -60,111 +60,111 @@ export default function FoliosAdminPage() {
   const tc = useTranslations("common");
 
   const queryClient = useQueryClient();
-  const [estadoFilter, setEstadoFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
 
   const { data = [], isLoading, refetch } = useQuery({
-    queryKey: ["folios", estadoFilter],
+    queryKey: ["folios", statusFilter],
     queryFn: () =>
-      estadoFilter
-        ? apiGet<Folio[]>(`/folios/search?status=${encodeURIComponent(estadoFilter)}`)
+      statusFilter
+        ? apiGet<Folio[]>(`/folios/search?status=${encodeURIComponent(statusFilter)}`)
         : apiGet<Folio[]>("/folios"),
   });
 
-  const { data: tiposFolio = [], refetch: refetchTiposFolio } = useQuery({
-    queryKey: ["tipos-folio"],
-    queryFn: () => apiGet<TipoDeFolioRow[]>("/folio-types"),
+  const { data: folioTypes = [], refetch: refetchFolioTypes } = useQuery({
+    queryKey: ["folioTypes"],
+    queryFn: () => apiGet<FolioTypeRow[]>("/folio-types"),
   });
 
-  const [tipoSearch, setTipoSearch] = useState("");
-  const [tipoModalOpen, setTipoModalOpen] = useState(false);
-  const [tipoEditing, setTipoEditing] = useState<TipoDeFolioRow | null>(null);
+  const [typeSearch, setTypeSearch] = useState("");
+  const [typeModalOpen, setTypeModalOpen] = useState(false);
+  const [typeEditing, setTypeEditing] = useState<FolioTypeRow | null>(null);
   const [typeName, setTypeName] = useState("");
-  const [tipoEsAuxiliar, setTipoEsAuxiliar] = useState(false);
-  const [tipoDeleteId, setTipoDeleteId] = useState<number | null>(null);
-  const [tipoSaving, setTipoSaving] = useState(false);
-  const [tipoDeleting, setTipoDeleting] = useState(false);
+  const [typeIsAuxiliary, setTypeIsAuxiliary] = useState(false);
+  const [typeDeleteId, setTypeDeleteId] = useState<number | null>(null);
+  const [typeSaving, setTypeSaving] = useState(false);
+  const [typeDeleting, setTypeDeleting] = useState(false);
 
-  const { data: filteredTiposFolio = [] } = useQuery({
-    queryKey: ["tipos-folio", "search", tipoSearch, tiposFolio],
+  const { data: filteredFolioTypes = [] } = useQuery({
+    queryKey: ["folioTypes", "search", typeSearch, folioTypes],
     queryFn: () =>
-      tipoSearch
-        ? apiGet<TipoDeFolioRow[]>(`/folio-types/search?name=${encodeURIComponent(tipoSearch)}`)
-        : Promise.resolve(tiposFolio),
+      typeSearch
+        ? apiGet<FolioTypeRow[]>(`/folio-types/search?name=${encodeURIComponent(typeSearch)}`)
+        : Promise.resolve(folioTypes),
   });
 
-  function openCreateTipo() {
-    setTipoEditing(null);
+  function openCreateType() {
+    setTypeEditing(null);
     setTypeName("");
-    setTipoEsAuxiliar(false);
-    setTipoModalOpen(true);
+    setTypeIsAuxiliary(false);
+    setTypeModalOpen(true);
   }
 
-  function openEditTipo(tf: TipoDeFolioRow) {
-    setTipoEditing(tf);
+  function openEditType(tf: FolioTypeRow) {
+    setTypeEditing(tf);
     setTypeName(tf.name);
-    setTipoEsAuxiliar(tf.isAuxiliary ?? false);
-    setTipoModalOpen(true);
+    setTypeIsAuxiliary(tf.isAuxiliary ?? false);
+    setTypeModalOpen(true);
   }
 
-  async function handleSaveTipo() {
+  async function handleSaveType() {
     if (!typeName.trim()) {
       toast.error(t("tiposDeFolio.nameRequired"));
       return;
     }
-    setTipoSaving(true);
+    setTypeSaving(true);
     try {
-      if (tipoEditing) {
+      if (typeEditing) {
         // PUT replaces the row: send the loaded fields (notes, enabled, version) with the edited ones,
         // otherwise version reads as 0 and every edit after the first answers 409 (#655).
-        await apiPut(`/folio-types/${tipoEditing.idFolioType}`, {
-          ...tipoEditing,
+        await apiPut(`/folio-types/${typeEditing.idFolioType}`, {
+          ...typeEditing,
           name: typeName,
-          isAuxiliary: tipoEsAuxiliar,
+          isAuxiliary: typeIsAuxiliary,
         });
         toast.success(t("tiposDeFolio.updated"));
       } else {
-        await apiPost("/folio-types", { name: typeName, isAuxiliary: tipoEsAuxiliar });
+        await apiPost("/folio-types", { name: typeName, isAuxiliary: typeIsAuxiliary });
         toast.success(t("tiposDeFolio.created"));
       }
-      setTipoModalOpen(false);
-      refetchTiposFolio();
+      setTypeModalOpen(false);
+      refetchFolioTypes();
     } catch (err) {
       toast.error(extractApiError(err) ?? t("tiposDeFolio.errorSave"));
     } finally {
-      setTipoSaving(false);
+      setTypeSaving(false);
     }
   }
 
-  async function handleDeleteTipoClick(tf: TipoDeFolioRow) {
+  async function handleDeleteTypeClick(tf: FolioTypeRow) {
     try {
       const { inUse } = await apiGet<{ inUse: boolean }>(`/folio-types/${tf.idFolioType}/in-use`);
       if (inUse) {
         toast.warning(t("tiposDeFolio.inUseCannotDelete"));
         return;
       }
-      setTipoDeleteId(tf.idFolioType);
+      setTypeDeleteId(tf.idFolioType);
     } catch (err) {
       showDeleteError(err, t("tiposDeFolio.errorDelete"));
     }
   }
 
-  async function handleConfirmDeleteTipo() {
-    if (!tipoDeleteId) return;
-    setTipoDeleting(true);
+  async function handleConfirmDeleteType() {
+    if (!typeDeleteId) return;
+    setTypeDeleting(true);
     try {
-      await apiDelete(`/folio-types/${tipoDeleteId}`);
+      await apiDelete(`/folio-types/${typeDeleteId}`);
       toast.success(t("tiposDeFolio.deleted"));
-      refetchTiposFolio();
+      refetchFolioTypes();
     } catch (err) {
       showDeleteError(err, t("tiposDeFolio.errorDelete"));
     } finally {
-      setTipoDeleting(false);
-      setTipoDeleteId(null);
+      setTypeDeleting(false);
+      setTypeDeleteId(null);
     }
   }
 
   const { data: notaries = [] } = useQuery({
-    queryKey: ["notaries-disponibles"],
+    queryKey: ["availableNotaries"],
     queryFn: () => apiGet<Person[]>("/deeds/available-notaries"),
   });
 
@@ -285,7 +285,7 @@ export default function FoliosAdminPage() {
       header: "",
       className: "w-24",
       render: (f) => {
-        const inUse = f.status === ESTADO_UTILIZADO;
+        const inUse = f.status === STATUS_IN_USE;
         return (
           <div className="flex gap-2 justify-end">
             <Button
@@ -330,13 +330,13 @@ export default function FoliosAdminPage() {
         }
       />
       <div className="px-4 pb-4 flex items-center gap-2">
-        <Select value={estadoFilter || "all"} onValueChange={(v) => setEstadoFilter(v === "all" ? "" : v)}>
+        <Select value={statusFilter || "all"} onValueChange={(v) => setStatusFilter(v === "all" ? "" : v)}>
           <SelectTrigger className="w-48" data-testid="select-filter-status-folio" aria-label={t("estadoFilter")}>
             <SelectValue placeholder={t("fields.estadoPlaceholder")} />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{tc("all")}</SelectItem>
-            {ESTADOS_FOLIO.map((e) => (
+            {FOLIO_STATUSES.map((e) => (
               <SelectItem key={e} value={e}>{e}</SelectItem>
             ))}
           </SelectContent>
@@ -372,7 +372,7 @@ export default function FoliosAdminPage() {
                     <SelectValue placeholder={t("fields.estadoPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
-                    {ESTADOS_FOLIO.map((e) => (
+                    {FOLIO_STATUSES.map((e) => (
                       <SelectItem key={e} value={e}>{e}</SelectItem>
                     ))}
                   </SelectContent>
@@ -387,7 +387,7 @@ export default function FoliosAdminPage() {
                     <SelectValue placeholder={t("fields.tipoPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
-                    {tiposFolio.map((tf) => (
+                    {folioTypes.map((tf) => (
                       <SelectItem key={tf.idFolioType} value={String(tf.idFolioType)}>{tf.name}</SelectItem>
                     ))}
                   </SelectContent>
@@ -455,7 +455,7 @@ export default function FoliosAdminPage() {
         <AppHeader
           title={t("tiposDeFolio.title")}
           actions={
-            <Button onClick={openCreateTipo} data-testid="btn-new-folio-type">
+            <Button onClick={openCreateType} data-testid="btn-new-folio-type">
               <NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />
               {t("tiposDeFolio.newTipo")}
             </Button>
@@ -464,14 +464,14 @@ export default function FoliosAdminPage() {
         <div className="px-4 pb-4">
           <Input
             placeholder={t("tiposDeFolio.searchPlaceholder")}
-            value={tipoSearch}
-            onChange={(e) => setTipoSearch(e.target.value)}
+            value={typeSearch}
+            onChange={(e) => setTypeSearch(e.target.value)}
             className="w-64"
             data-testid="input-search-folio-type"
           />
         </div>
         <DataTable
-          data={filteredTiposFolio}
+          data={filteredFolioTypes}
           keyExtractor={(tf) => tf.idFolioType}
           emptyMessage={t("tiposDeFolio.noData")}
           columns={[
@@ -488,14 +488,14 @@ export default function FoliosAdminPage() {
               className: "w-24",
               render: (tf) => (
                 <div className="flex gap-2 justify-end">
-                  <Button size="sm" variant="ghost" onClick={() => openEditTipo(tf)} data-testid="btn-edit-folio-type" aria-label={tc("edit")}>
+                  <Button size="sm" variant="ghost" onClick={() => openEditType(tf)} data-testid="btn-edit-folio-type" aria-label={tc("edit")}>
                     <NotaireIcon src="/icons/actions/generate.png" alt={tc("edit")} size={16} />
                   </Button>
                   <Button
                     size="sm"
                     variant="ghost"
                     className="text-destructive hover:text-destructive"
-                    onClick={() => handleDeleteTipoClick(tf)}
+                    onClick={() => handleDeleteTypeClick(tf)}
                     data-testid="btn-delete-folio-type"
                     aria-label={tc("delete")}
                   >
@@ -508,10 +508,10 @@ export default function FoliosAdminPage() {
         />
       </div>
 
-      <Dialog open={tipoModalOpen} onOpenChange={setTipoModalOpen}>
+      <Dialog open={typeModalOpen} onOpenChange={setTypeModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection dialogTitle title={tipoEditing ? t("tiposDeFolio.editTipo") : t("tiposDeFolio.newTipo")}>
+            <FormSection dialogTitle title={typeEditing ? t("tiposDeFolio.editTipo") : t("tiposDeFolio.newTipo")}>
               <FormField label={tc("name")} required>
                 <Input
                   value={typeName}
@@ -521,19 +521,19 @@ export default function FoliosAdminPage() {
               </FormField>
               <CheckboxField
                 label={t("tiposDeFolio.esAuxiliar")}
-                checked={tipoEsAuxiliar}
-                onChange={setTipoEsAuxiliar}
+                checked={typeIsAuxiliary}
+                onChange={setTypeIsAuxiliary}
                 data-testid="checkbox-is-auxiliary-folio-type"
               />
             </FormSection>
             <FormActions align="right">
-              <Button variant="secondary" onClick={() => setTipoModalOpen(false)}>
+              <Button variant="secondary" onClick={() => setTypeModalOpen(false)}>
                 <NotaireIcon src="/icons/actions/cerrar.png" alt={tc("cancel")} size={16} className="mr-1" />
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSaveTipo} disabled={tipoSaving} data-testid="btn-save-folio-type">
+              <Button onClick={handleSaveType} disabled={typeSaving} data-testid="btn-save-folio-type">
                 <NotaireIcon src="/icons/actions/guardar.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
-                {tipoEditing ? tc("update") : tc("save")}
+                {typeEditing ? tc("update") : tc("save")}
               </Button>
             </FormActions>
           </FormContainer>
@@ -541,10 +541,10 @@ export default function FoliosAdminPage() {
       </Dialog>
 
       <ConfirmDialog
-        open={!!tipoDeleteId}
-        onOpenChange={(v) => !v && setTipoDeleteId(null)}
-        onConfirm={handleConfirmDeleteTipo}
-        loading={tipoDeleting}
+        open={!!typeDeleteId}
+        onOpenChange={(v) => !v && setTypeDeleteId(null)}
+        onConfirm={handleConfirmDeleteType}
+        loading={typeDeleting}
       />
     </div>
   );

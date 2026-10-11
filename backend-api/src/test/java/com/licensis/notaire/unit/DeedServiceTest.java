@@ -58,7 +58,7 @@ class DeedServiceTest {
 
         @Test
         @DisplayName("Should return all deeds from repository")
-        void shouldReturnAllEscrituras() {
+        void shouldReturnAllDeeds() {
             when(deedRepository.findAll()).thenReturn(List.of(testDeed));
 
             List<Deed> result = deedService.findAll();

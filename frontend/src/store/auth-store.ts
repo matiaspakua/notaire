@@ -5,7 +5,7 @@ import { persist } from "zustand/middleware";
 import type { DtoLoginUser } from "@/types";
 import {
   clearAuthCookies,
-  isAdminTipo,
+  isAdminType,
   setAuthCookies,
 } from "@/lib/admin-access";
 
@@ -47,7 +47,7 @@ export const useAuthStore = create<AuthState>()(
         set({ user: null, token: null, isAuthenticated: false });
       },
 
-      isAdmin: () => isAdminTipo(get().user?.type),
+      isAdmin: () => isAdminType(get().user?.type),
     }),
     {
       name: "notaire-auth",

@@ -105,7 +105,7 @@ class BudgetRepositoryIntegrationTest extends ServiceIntegrationTest {
 
     @Test
     @DisplayName("Should support multiple budgets")
-    void shouldSupportMultiplePresupuestos() {
+    void shouldSupportMultipleBudgets() {
         String headingUnico = "Pres" + System.nanoTime();
         String[] estados = {"BORRADOR", "PENDIENTE", "APROBADO", "RECHAZADO", "CANCELADO"};
         for (int i = 0; i < estados.length; i++) {

@@ -55,7 +55,7 @@ class BudgetServiceTest {
 
         @Test
         @DisplayName("Should return all budgets")
-        void shouldReturnAllPresupuestos() {
+        void shouldReturnAllBudgets() {
             when(budgetRepository.findAll()).thenReturn(List.of(testBudget));
 
             List<Budget> result = budgetService.findAll();
@@ -100,7 +100,7 @@ class BudgetServiceTest {
 
         @Test
         @DisplayName("Should return budgets for a given person")
-        void shouldReturnPresupuestosForPerson() {
+        void shouldReturnBudgetsForPerson() {
             when(budgetRepository.findByPersonId(5)).thenReturn(List.of(testBudget));
 
             List<Budget> result = budgetService.findByPerson(5);
@@ -110,7 +110,7 @@ class BudgetServiceTest {
 
         @Test
         @DisplayName("Should return empty list when person has not budgets")
-        void shouldReturnEmptyWhenPersonHasNoPresupuestos() {
+        void shouldReturnEmptyWhenPersonHasNoBudgets() {
             when(budgetRepository.findByPersonId(99)).thenReturn(List.of());
 
             assertThat(budgetService.findByPerson(99)).isEmpty();

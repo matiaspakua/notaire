@@ -4,7 +4,7 @@
  */
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import {
-  isAdminTipo,
+  isAdminType,
   isAdminRoute,
   shouldDenyAdminRoute,
   AUTH_ROLE_COOKIE,
@@ -14,17 +14,17 @@ import {
   FORBIDDEN_QUERY,
 } from "@/lib/admin-access";
 
-describe("isAdminTipo", () => {
+describe("isAdminType", () => {
   it("returns true for ADMIN, ADMINISTRADOR, ESCRIBANO (case-insensitive)", () => {
-    expect(isAdminTipo("ADMIN")).toBe(true);
-    expect(isAdminTipo("administrador")).toBe(true);
-    expect(isAdminTipo("Escribano")).toBe(true);
+    expect(isAdminType("ADMIN")).toBe(true);
+    expect(isAdminType("administrador")).toBe(true);
+    expect(isAdminType("Escribano")).toBe(true);
   });
 
   it("returns false for EMPLEADO and empty", () => {
-    expect(isAdminTipo("EMPLEADO")).toBe(false);
-    expect(isAdminTipo(undefined)).toBe(false);
-    expect(isAdminTipo("")).toBe(false);
+    expect(isAdminType("EMPLEADO")).toBe(false);
+    expect(isAdminType(undefined)).toBe(false);
+    expect(isAdminType("")).toBe(false);
   });
 });
 
