@@ -75,6 +75,20 @@ and maintainability/reliability/security ratings, new-code period. Not used (pai
 editions): pull-request decoration and, depending on your Community Build version,
 branch analysis.
 
+## Verify that the infra does its job
+
+```bash
+bash infra/scripts/verify-signals.sh              # check what the stack has recorded so far
+bash infra/scripts/verify-signals.sh --with-e2e   # run the Playwright suite first to generate traffic
+```
+
+Prints PASS / FAIL / SKIP for: Prometheus targets up, Alertmanager wired, backend metrics by scrape and
+through the OTLP collector, frontend metrics, Loki backend and frontend request logs, trace ids on log
+lines, Tempo traces, and the SonarQube projects. It exits non-zero on any FAIL. "Data present" means data
+from the last 30 minutes, so a FAIL on logs after a quiet period means "no traffic", not "broken": generate
+requests (or use `--with-e2e`) and run it again. SonarQube is SKIP until `run-sonar.sh` has created the
+projects and credentials are in the env file.
+
 ## Reports
 
 ```bash

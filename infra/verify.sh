@@ -20,3 +20,4 @@ python3 infra/tests/test_alertmanager.py
 python3 infra/tests/test_homer_hub.py
 python3 infra/tests/test_infra_dashboards.py
 python3 infra/tests/test_local_tools_no_login.py
+python3 infra/tests/test_verify_signals.py
