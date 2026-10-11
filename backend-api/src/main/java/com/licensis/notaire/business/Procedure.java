@@ -106,9 +106,8 @@ public class Procedure implements Serializable, Persistable<Integer> {
     private ProcedureType fkIdProcedureType;
 
     /**
-     * Constructor by default for Procedure. Inicializa the ID budget according to the
-     * campo
-     * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO, and all the listas.
+     * Default constructor. Initializes the id from
+     * {@link BusinessConstants#ID_OBJETO_NO_VALIDO}, and the lists.
      */
     public Procedure() {
         this.idProcedure = BusinessConstants.ID_OBJETO_NO_VALIDO;

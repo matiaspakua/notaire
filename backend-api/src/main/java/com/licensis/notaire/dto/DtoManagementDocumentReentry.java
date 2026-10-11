@@ -3,8 +3,8 @@ package com.licensis.notaire.dto;
 import java.util.List;
 
 /**
- * CU43 - Read-model for elegir qué reenter: the procedures of a management
- * together with the documentation required of each uno.
+ * CU43 - Read model for choosing what to re-enter: the procedures of a management
+ * together with the documentation each one requires.
  */
 public record DtoManagementDocumentReentry(
         Integer idManagement,

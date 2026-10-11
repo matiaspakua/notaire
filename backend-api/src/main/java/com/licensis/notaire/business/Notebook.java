@@ -18,9 +18,9 @@ import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 
 /**
- * A notebook groups exactly ten consecutive folios of the same registro
- * notarial, numbered correlatively per registro/year, so the protocol
- * carátula (CU80) can be emitted.
+ * A notebook groups exactly ten consecutive folios of the same notary
+ * registry, numbered in sequence per registry and year, so the protocol
+ * cover (CU80) can be issued.
  */
 @Entity
 @Table(name = "notebooks")

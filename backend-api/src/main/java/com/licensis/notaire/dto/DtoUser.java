@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * DTO que representa un UserAccount.
+ * DTO for a user account.
  */
 public class DtoUser
 {

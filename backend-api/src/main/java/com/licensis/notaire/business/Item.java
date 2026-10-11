@@ -80,8 +80,8 @@ public class Item implements Serializable, Persistable<Integer>
     private Budget fkIdBudget;
 
     /**
-     * Constructor by defaul of Item. Inicializa the ID budget according to the campo
-     * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO.
+     * Default constructor. Initializes the id from
+     * {@link BusinessConstants#ID_OBJETO_NO_VALIDO}.
      */
     public Item()
     {

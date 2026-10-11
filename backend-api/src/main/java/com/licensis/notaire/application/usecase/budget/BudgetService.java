@@ -60,7 +60,7 @@ public class BudgetService {
     /**
      * Returns all budgets belonging to a given person (CU60).
      *
-     * @param idPersona the persona ID
+     * @param idPerson the person id
      * @return list of budgets for the person
      */
     @Transactional(readOnly = true)
@@ -73,13 +73,13 @@ public class BudgetService {
      * Filters budgets by status (CU60).
      * If status is blank or null, all budgets are returned.
      *
-     * @param estado the estado value to filter by (may be null or blank)
+     * @param status the status value to filter by (may be null or blank)
      * @return matching budgets
      */
     @Transactional(readOnly = true)
     public List<Budget> findByStatus(String status) {
         if (status == null || status.isBlank()) {
-            log.debug("Returning all budgets (not status filter)");
+            log.debug("Returning all budgets (no status filter)");
             return budgetRepository.findAll();
         }
         log.debug("Finding budgets by status: {}", status);

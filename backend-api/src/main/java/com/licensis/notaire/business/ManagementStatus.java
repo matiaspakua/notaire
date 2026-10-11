@@ -27,7 +27,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
- * Clase that representa a management status (in a momento of the tiempo dado).
+ * A management status at a given moment.
  *
  * @author User
  */
@@ -61,8 +61,8 @@ public class ManagementStatus implements Serializable, Persistable<Integer> {
     private java.util.Set<History> historyList;
 
     /**
-     * Constructor by default for management status. Asigna to the ID the valor of
-     * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO.
+     * Default constructor. Assigns the id from
+     * {@link BusinessConstants#ID_OBJETO_NO_VALIDO}.
      */
     public ManagementStatus() {
         this.idManagementStatus = BusinessConstants.ID_OBJETO_NO_VALIDO;

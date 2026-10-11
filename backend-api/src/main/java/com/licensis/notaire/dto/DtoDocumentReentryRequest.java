@@ -4,12 +4,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
 /**
- * CU43 - Elección of the Gestor/Notary: procedure and document type a
- * reingresar.
+ * CU43 - The clerk or notary's choice: which procedure and document type
+ * to re-enter.
  */
 public record DtoDocumentReentryRequest(
         @NotNull @Schema(description = "Procedure of the management", requiredMode = Schema.RequiredMode.REQUIRED)
         Integer idProcedure,
-        @NotNull @Schema(description = "Tipo de documento a reingresar", requiredMode = Schema.RequiredMode.REQUIRED)
+        @NotNull @Schema(description = "Document type to re-enter", requiredMode = Schema.RequiredMode.REQUIRED)
         Integer idDocumentType) {
 }

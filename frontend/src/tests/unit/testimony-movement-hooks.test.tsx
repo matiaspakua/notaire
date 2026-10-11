@@ -1,6 +1,6 @@
 /**
- * Unit tests for the post-firma legal cycle hooks (testimony generation/
- * verification, copia download, and Registro de la Propiedad movements).
+ * Unit tests for the post-signing legal cycle hooks (testimony generation/
+ * verification, copy download, and property-registry movements).
  *
  * Covers: useTestimonies, useTestimonyMovements (CU07, CU08, CU11, CU12, CU44)
  */

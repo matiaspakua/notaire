@@ -34,7 +34,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
- * Clase that representa a budget.
+ * A budget.
  *
  * @author juanca
  */
@@ -101,9 +101,8 @@ public class Budget implements Serializable, Persistable<Integer> {
     private List<Item> itemList = new ArrayList<>();
 
     /**
-     * Constructor by default of budget. Inicializa the ID budget according to the
-     * campo
-     * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO, and all the listas of objetos.
+     * Default constructor. Initializes the id from
+     * {@link BusinessConstants#ID_OBJETO_NO_VALIDO}, and the object lists.
      */
     public Budget() {
         this.idBudget = BusinessConstants.ID_OBJETO_NO_VALIDO;

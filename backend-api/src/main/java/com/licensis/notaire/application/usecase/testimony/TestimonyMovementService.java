@@ -77,10 +77,10 @@ public class TestimonyMovementService {
     /**
      * Marks the most recent movement of a testimony as registered, registering the date of registration.
      *
-     * @param idTestimonio the testimony ID
+     * @param idTestimony the testimony id
      * @return the updated movement
-     * @throws ResourceNotFoundException if not testimony with the given ID exists
-     * @throws BusinessValidationException if the testimony has not movement with date of ingreso registered
+     * @throws ResourceNotFoundException if no testimony with the given id exists
+     * @throws BusinessValidationException if the testimony has no movement with a registered entry date
      */
     public TestimonyMovement registerInscription(Integer idTestimony) {
         requireTestimonyExists(idTestimony);

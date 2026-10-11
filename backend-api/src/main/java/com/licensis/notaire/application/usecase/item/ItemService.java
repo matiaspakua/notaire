@@ -47,7 +47,7 @@ public class ItemService {
     }
 
     /**
-     * CU71 - Query discounts and surcharges: devuelve the items of tipo DESCUENTO or RECARGO
+     * CU71 - Query discounts and surcharges: returns the items of type DESCUENTO or RECARGO
      * of a budget, together with its reason.
      */
     @Transactional(readOnly = true)

@@ -53,18 +53,18 @@ public class TestimonyGenerationVerificationService {
         testimony.setVerified(false);
         testimony.setFlagged(false);
 
-        log.info("Generando testimony for deed id: {}", idDeed);
+        log.info("Generating testimony for deed id: {}", idDeed);
         return testimonyRepository.save(testimony);
     }
 
     /**
      * Verifies a testimony, recording whether it was observed and why.
      *
-     * @param idTestimonio the testimony ID
-     * @param observado whether the testimony was found to have observations
-     * @param observaciones the reason, when observado is true
+     * @param idTestimony the testimony id
+     * @param flagged whether the testimony was found to have observations
+     * @param notes the reason, when flagged is true
      * @return the verified testimony
-     * @throws ResourceNotFoundException if not testimony with the given ID exists
+     * @throws ResourceNotFoundException if no testimony with the given id exists
      */
     public Testimony verify(Integer idTestimony, boolean flagged, String notes) {
         Testimony testimony = testimonyRepository.findById(idTestimony)

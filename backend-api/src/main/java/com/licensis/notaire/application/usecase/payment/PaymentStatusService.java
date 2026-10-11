@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 
 /**
- * CU47 "Consultar Estado de Payment": derives the pending balance and the aggregated
+ * CU47 "Query payment status": derives the pending balance and the aggregated
  * status of a budget from its charges and the amount already paid.
  */
 @Service

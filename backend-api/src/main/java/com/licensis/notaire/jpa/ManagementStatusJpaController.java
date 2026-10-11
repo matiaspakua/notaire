@@ -198,12 +198,10 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
     }
 
     /**
-     * Verifica if the management status indicado already encuentra registrado or not.
+     * Checks whether a management status with the given name is already stored.
      *
-     * @param nombreEstado The name of the management status.
-     * @return Verdadero if is management status already encuentra registrado, falso
-     *         en caso
-     *         contrario.
+     * @param nameStatus the name of the management status
+     * @return true when that status is already stored, false otherwise
      *
      */
     public boolean verifyManagementStatusExists(String nameStatus) {

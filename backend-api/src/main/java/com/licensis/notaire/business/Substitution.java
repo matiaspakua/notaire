@@ -25,11 +25,9 @@ import jakarta.persistence.Version;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
- * Clase that representa a substitution. A substitution indicia the reemplazado in the desarrollo and
- * administracion
- * of managements of a notary (suplente) by another (suplantado), in a determinado period of
- * tiempo (fecha desde,
- * fecha hasta).
+ * A substitution records that one notary (the substitute) replaces another
+ * (the substituted notary) in the handling and administration of managements,
+ * for a given period (start date through end date).
  *
  * @author juanca
  */

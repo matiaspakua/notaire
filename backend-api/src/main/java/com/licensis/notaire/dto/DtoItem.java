@@ -23,7 +23,7 @@ public class DtoItem implements ValidDto
     private String reason;
 
     /**
-     * Constructor sin argumentos de @link DtoItem
+     * No-argument constructor.
      */
     public DtoItem()
     {

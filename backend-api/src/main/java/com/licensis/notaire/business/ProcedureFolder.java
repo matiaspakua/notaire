@@ -14,8 +14,8 @@ import jakarta.persistence.Table;
 import java.io.Serializable;
 
 /**
- * Folder that agrupa the documentation of a único procedure dentro of a
- * management, with ciclo of vida active/wait/archivada (CU85).
+ * Folder that groups the documentation of a single procedure inside a
+ * management, with the active, on-hold, and archived lifecycle (CU85).
  */
 @Entity
 @Table(name = "procedure_folders")

@@ -690,8 +690,6 @@ public class PersonJpaController implements Serializable, JpaPersistence {
 
                 person.setPersonProcedureList(null);
                 person.setUserList(null);
-
-                // persona.setTramiteList(new ArrayList<Procedure>());
             }
 
             return people;
@@ -763,12 +761,6 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                     persistentPerson.setFkIdIdentificationType(pPerson.getFkIdIdentificationType());
                     persistentPerson.setIdentificationNumber(pPerson.getIdentificationNumber());
 
-                    /*
-                     * Tira error when the registro of notary vale NULL if
-                     * (pPersona.getRegistroEscribano() != 0) {
-                     * persistentPersona.setRegistroEscribano(pPersona.getRegistroEscribano()); }
-                     *
-                     */
                     em.getTransaction().commit();
                     em.close();
                 } catch (PersistenceException ex) {

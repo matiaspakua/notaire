@@ -270,8 +270,8 @@ public class UserJpaController implements Serializable, JpaPersistence {
     }
 
     /**
-     * Busca a user by associated person id.
-     * Retorna null si no existe.
+     * Finds a user by the associated person id.
+     * Returns null when none exists.
      */
     public User findUserByPerson(Integer idPerson) {
         if (idPerson == null)

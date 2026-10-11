@@ -41,6 +41,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English comments** (#1490, CU75): Class and method comments in the
+  live backend and a few frontend notes use English. Stored workflow
+  labels such as `Generada`, `Presentada`, `Observada`, `Inscripta`,
+  `Sin Firmar`, and `Firmada` stay inside those comments. Message
+  catalog keys stay.
 - **English API descriptions** (#1490, CU75): OpenAPI summaries and
   descriptions use English. Missing-field validation says `is required`.
   Delete conflicts say `Cannot delete`. Stored statuses such as `Generada`,

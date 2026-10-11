@@ -208,7 +208,7 @@ public class User implements Serializable, Persistable<Integer> {
 
     public void setAttributes(DtoUser dtoUser) {
 
-        // Ref persona de UserAccount
+        // Person linked to this user account
         Person person = new Person();
         person.setAttributes(dtoUser.getPersons());
         setFkIdPerson(person);

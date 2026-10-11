@@ -97,11 +97,11 @@ public class PersonProcedureJpaController implements Serializable, JpaPersistenc
     }
 
     /**
-     * Crea a registro new of procedures_person.
+     * Creates a person-procedure row.
      *
-     * @param personProcedure
-     * @return Verdadero if pudo create the registro, falso in caso of that the registro this
-     * repetido (error grave), u ocurra algun otro tipo de error.
+     * @param personProcedure the row to create
+     * @return true when the row is created, false when it is a duplicate
+     * or another error occurs
      * @throws PreexistingEntityException
      * @throws Exception
      */
@@ -393,10 +393,10 @@ public class PersonProcedureJpaController implements Serializable, JpaPersistenc
     }
 
     /**
-     * Busca the relacion between procedure and client (a registro in particualar)
+     * Finds the link between a procedure and a client.
      *
-     * @param idPersona
-     * @param idTramite
+     * @param idPerson
+     * @param idProcedure
      * @return
      */
     public List<PersonProcedure> findClientProcedures(Integer idPerson, Integer idProcedure)

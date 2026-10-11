@@ -406,12 +406,11 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
     }
 
     /**
-     * Busca a the budget asociados a a person (incluyendo the referencias
-     * hacia el
-     * procedure).
+     * Finds the budgets associated with a person, including their procedure
+     * references.
      *
-     * @param pIdPersona
-     * @param pIdTramite
+     * @param pIdPerson person id
+     * @param pIdProcedure procedure id
      * @return
      */
     public List<Budget> findBudgetsPersonProcedure(Integer pIdPerson, Integer pIdProcedure) {

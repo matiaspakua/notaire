@@ -1,8 +1,8 @@
 package com.licensis.notaire.exception;
 
 /**
- * Thrown when the number proposed for an deed leaves a gap in the correlativo
- * and not justificación was provided in notes (CU86, excepción 3.2).
+ * Thrown when the number proposed for a deed leaves a gap in the sequence
+ * and no justification was provided in notes (CU86, exception 3.2).
  */
 public class UnjustifiedNumberingGapException extends NotaireException {
 

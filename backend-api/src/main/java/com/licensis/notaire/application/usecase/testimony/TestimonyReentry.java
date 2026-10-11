@@ -3,8 +3,8 @@ package com.licensis.notaire.application.usecase.testimony;
 /**
  * Data CU44 asks for when a withdrawn testimony is re-entered.
  *
- * @param cardNumber cartón number, 0 when not given
- * @param observedByRegistry whether the Registro returned the testimony observed
+ * @param cardNumber carton number, 0 when not given
+ * @param observedByRegistry whether the registry returned the testimony as observed
  * @param notes observations, mandatory when the testimony was observed
  */
 public record TestimonyReentry(int cardNumber, boolean observedByRegistry, String notes) {

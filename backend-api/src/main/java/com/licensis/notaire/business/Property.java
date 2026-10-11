@@ -28,7 +28,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
- * Clase that representa a a property.
+ * A property.
  *
  * @author juanca
  */
@@ -72,9 +72,8 @@ public class Property implements Serializable, Persistable<Integer> {
     private List<Procedure> procedureList;
 
     /**
-     * Constructor by default of Property. Inicializa the ID budget according to the
-     * campo
-     * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO, and the listas internas.
+     * Default constructor. Initializes the id from
+     * {@link BusinessConstants#ID_OBJETO_NO_VALIDO}, and the internal lists.
      */
     public Property() {
         this.idProperty = BusinessConstants.ID_OBJETO_NO_VALIDO;

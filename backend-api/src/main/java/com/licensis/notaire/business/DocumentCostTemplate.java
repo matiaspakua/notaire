@@ -21,8 +21,8 @@ import org.springframework.data.domain.Persistable;
 import java.util.Objects;
 
 /**
- * CU27/CU39 - Costo (fijo o variable) esperado de un tipo de documento dentro
- * of the budget template of a procedure type.
+ * CU27/CU39 - Expected cost (fixed or variable) of a document type inside
+ * the budget template of a procedure type.
  */
 @Entity
 @Table(name = "document_cost_templates")

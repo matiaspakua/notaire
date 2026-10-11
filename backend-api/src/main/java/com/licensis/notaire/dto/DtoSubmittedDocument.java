@@ -77,39 +77,6 @@ public class DtoSubmittedDocument implements ValidDto
     public DtoSubmittedDocument()
     {
     }
-    /*
-     * public DtoDocumentoPresentado(DtoTramite procedures, String name, Date fechaIngreso, boolean
-     * preparado, boolean vence, boolean liberado, boolean observado) {
-     * this.fkTramite = procedures;
-     * this.name = name;
-     * this.fechaIngreso = fechaIngreso;
-     * this.preparado = preparado;
-     * this.vence = vence;
-     * this.liberado = liberado;
-     * this.observado = observado;
-     * }
-     *
-     * public DtoDocumentoPresentado(DtoTramite procedures, String name, Integer numeroCarton, Date
-     * fechaIngreso, Date fechaSalida, boolean preparado, boolean vence, Date fechaVencimiento,
-     * Integer diasVencimiento, Float importeAPagar, Date fechaPago, boolean liberado, Date
-     * fechaLiberado, boolean observado, String observaciones) {
-     * this.fkTramite = procedures;
-     * this.name = name;
-     * this.numeroCarton = numeroCarton;
-     * this.fechaIngreso = fechaIngreso;
-     * this.fechaSalida = fechaSalida;
-     * this.preparado = preparado;
-     * this.vence = vence;
-     * this.fechaVencimiento = fechaVencimiento;
-     * this.diasVencimiento = diasVencimiento;
-     * this.importeAPagar = importeAPagar;
-     * this.fechaPago = fechaPago;
-     * this.liberado = liberado;
-     * this.fechaLiberado = fechaLiberado;
-     * this.observado = observado;
-     * this.observaciones = observaciones;
-     * }
-     */
 
     public Integer getIdSubmittedDocument()
     {

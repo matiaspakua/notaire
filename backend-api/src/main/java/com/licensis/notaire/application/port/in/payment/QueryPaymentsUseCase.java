@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Inbound port for the read side of CU47 "Consultar Estado de Payment": retrieving
+ * Inbound port for the read side of CU47 "Query payment status": retrieving
  * registered payments.
  *
  * <p>Grouped as one port because these are the same capability (reading payments)

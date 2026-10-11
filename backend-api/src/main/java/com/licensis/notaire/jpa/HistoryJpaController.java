@@ -203,23 +203,23 @@ public class HistoryJpaController implements Serializable, JpaPersistence
     }
 
     /**
-     * Retorna the status actual of a management in particular.
+     * Returns the current status of one management.
      *
-     * @param idGestion The id of the management.
-     * @return estadoActualGestion A entidad tipo history with the status actual of the management.
+     * @param idManagement the management id
+     * @return a history row with the management's current status
      */
-    public History findStatusActualManagement(Integer idManagement)
+    public History findCurrentManagementStatus(Integer idManagement)
     {
-        History statusActualManagement = new History();
+        History currentManagementStatus = new History();
 
         EntityManager em = getEntityManager();
 
         Query q = em.createNamedQuery("History.currentManagementStatus");
         q.setParameter("fkIdManagement", idManagement);
 
-        statusActualManagement = (History) q.getSingleResult();
+        currentManagementStatus = (History) q.getSingleResult();
 
-        return statusActualManagement;
+        return currentManagementStatus;
     }
 
     /**

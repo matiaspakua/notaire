@@ -92,8 +92,8 @@ public class DtoDocumentType implements ValidDto
 
     public boolean isExpires()
     {
-        // Null-safe: a tipo de documento that doesn't specify "vence" defaults
-        // to not expiring, avoiding an NPE when the field is omitted on create.
+        // Null-safe: a document type that does not specify whether it expires
+        // defaults to not expiring, avoiding an NPE when the field is omitted on create.
         return Boolean.TRUE.equals(this.expires);
     }
 

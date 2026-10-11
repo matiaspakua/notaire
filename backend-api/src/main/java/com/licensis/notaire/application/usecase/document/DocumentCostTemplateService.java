@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * CU27/CU39 - Costos (fijos or variables) esperados by document type dentro
- * of the budget template of a procedure type (Issue #823).
+ * CU27/CU39 - Expected costs (fixed or variable) by document type inside
+ * the budget template of a procedure type (Issue #823).
  */
 @Service
 @Transactional

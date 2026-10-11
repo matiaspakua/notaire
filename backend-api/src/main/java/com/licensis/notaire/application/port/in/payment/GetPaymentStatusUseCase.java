@@ -5,7 +5,7 @@ import com.licensis.notaire.domain.payment.PaymentStatus;
 import java.math.BigDecimal;
 
 /**
- * Inbound port for CU47 "Consultar Estado de Payment": the financial position of a budget.
+ * Inbound port for CU47 "Query payment status": the financial position of a budget.
  */
 public interface GetPaymentStatusUseCase {
 

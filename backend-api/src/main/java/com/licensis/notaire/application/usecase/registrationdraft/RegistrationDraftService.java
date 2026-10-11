@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * CU82 - Generate Registration draft: generates and hace seguimiento of the
- * circuito registral (Generada -> Presentada -> Observada / Inscripta) de
- * a deed on a property ante the Registro of the Propiedad Property.
+ * CU82 - Generates a registration draft and tracks the registry workflow
+ * (Generada -> Presentada -> Observada / Inscripta) of a deed on a property
+ * filed with the property registry.
  */
 @Service
 @Transactional

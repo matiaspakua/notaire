@@ -68,8 +68,8 @@ public class History implements Serializable, Persistable<Integer>
     private DeedManagement fkIdManagement;
 
     /**
-     * Constructor by default for history. Asigna to the ID the valor of
-     * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO.
+     * Default constructor. Assigns the id from
+     * {@link BusinessConstants#ID_OBJETO_NO_VALIDO}.
      */
     public History()
     {

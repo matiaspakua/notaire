@@ -1041,7 +1041,7 @@ class EntitiesBasicTest {
     }
 
     @Nested
-    @DisplayName("ConstantesNegocio")
+    @DisplayName("BusinessConstants")
     class BusinessConstantsTests {
         @Test
         @DisplayName("Constants are accessible")

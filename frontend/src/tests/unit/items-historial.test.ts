@@ -181,7 +181,7 @@ describe("Managements search filter (CU02, CU53)", () => {
 });
 
 // ──────────────────────────────────────────────
-// Estado badge logic for managements
+// Status badge logic for managements
 // ──────────────────────────────────────────────
 
 describe("Management status badge logic", () => {

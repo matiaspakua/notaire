@@ -52,7 +52,7 @@ public class ManagementCaseSummaryService {
 
     /**
      * @param idManagement the management ID
-     * @return the case summary, with an empty deed list when not procedure has an deed
+     * @return the case summary, with an empty deed list when no procedure has a deed
      * @throws ResourceNotFoundException if the management does not exist
      */
     @Transactional(readOnly = true)

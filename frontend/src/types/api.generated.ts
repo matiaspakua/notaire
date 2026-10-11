@@ -3058,7 +3058,7 @@ export interface components {
         DtoDocumentReentryRequest: {
             /**
              * Format: int32
-             * @description Tipo de documento a reingresar
+             * @description Document type to re-enter
              */
             idDocumentType: number;
             /**

@@ -226,10 +226,10 @@ public class PropertyJpaController implements Serializable, JpaPersistence
     }
 
     /**
-     * Busca a property by its cadastral nomenclature.
+     * Finds a property by its cadastral designation.
      *
-     * @param dtoInmueble
-     * @return el Property encontrado.
+     * @param dtoProperty the property to look up
+     * @return the matching property
      */
     public Property findProperty(DtoProperty dtoProperty)
     {

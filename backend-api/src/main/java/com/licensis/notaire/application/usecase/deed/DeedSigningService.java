@@ -29,12 +29,12 @@ public class DeedSigningService {
     }
 
     /**
-     * Signs an deed: requires it to be "Sin Firmar" and have at least one folio assigned.
+     * Signs a deed: it must be "Sin Firmar" and have at least one folio assigned.
      *
-     * @param idEscritura the deed ID
+     * @param idDeed the deed id
      * @return the signed deed
-     * @throws ResourceNotFoundException if not deed with the given ID exists
-     * @throws BusinessValidationException if the deed is not "Sin Firmar" or has not folio assigned
+     * @throws ResourceNotFoundException if no deed with the given id exists
+     * @throws BusinessValidationException if the deed is not "Sin Firmar" or has no folio assigned
      */
     public Deed sign(Integer idDeed) {
         Deed deed = deedRepository.findById(idDeed)

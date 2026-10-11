@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * CU42 - Informar próximos vencimientos: lists the unreleased submitted documents whose due date falls between
+ * CU42 - Upcoming expirations: lists the unreleased submitted documents whose due date falls between
  * today and today plus a window of days, both inclusive.
  */
 @Service

@@ -372,12 +372,12 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
     }
 
     /**
-     * Busca a management of deed in base to the number of management.
+     * Finds a deed management by its number.
      *
-     * @param numeroGestionDeEscritura
-     * @return
+     * @param numberDeedManagement the management number
+     * @return the matching management
      */
-    public DeedManagement findDeedManagementPorNumber(Integer numberDeedManagement)
+    public DeedManagement findDeedManagementByNumber(Integer numberDeedManagement)
     {
 
         EntityManager em = getEntityManager();

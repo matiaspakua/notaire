@@ -297,9 +297,7 @@ public class DtoPerson implements ValidDto {
         return true;
     }
 
-    /*
-     * Retorna the deeds of a notary, not the of the person
-     */
+    /** Returns the deeds of a notary, rather than those of the person. */
     public ArrayList<DtoDeedManagement> getNotaryDeedManagements() {
         return notaryDeedManagements;
     }

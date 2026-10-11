@@ -125,7 +125,7 @@ describe("Reporte URL construction", () => {
 });
 
 // ──────────────────────────────────────────────
-// Reporte filename construction
+// Report filename construction
 // ──────────────────────────────────────────────
 
 describe("Reporte filename construction", () => {

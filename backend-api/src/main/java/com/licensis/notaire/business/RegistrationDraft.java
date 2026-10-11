@@ -23,8 +23,8 @@ import org.springframework.data.domain.Persistable;
 import java.util.Date;
 
 /**
- * Registration draft of a deed on a property ante the Registro
- * de la Propiedad Property, y su circuito registral (CU82): Generada,
+ * Registration draft of a deed on a property filed with the property
+ * registry, and its registry workflow (CU82): Generada,
  * Presentada, Observada, Inscripta.
  */
 @Entity
