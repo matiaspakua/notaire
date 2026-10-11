@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Icon-button users screen** (#1490, CU75): the living spec
+  `icon-button-accessible-names` names the users administration screen.
+  The default-locale labels “Editar” and “Eliminar” and the selector
+  `/editar/i` stay. The archived spec keeps `edit on usuarios`.
 - **Corrected notes** (#1490, CU75): synthetic testimony and payment notes in
   tests say `Corrected`, `Corrected number E2E`, and `First copy`. Visible
   labels such as `Eliminar` and `Testimonio actualizado` stay.

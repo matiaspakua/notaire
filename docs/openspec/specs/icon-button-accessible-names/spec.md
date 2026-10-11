@@ -66,9 +66,9 @@ Automated E2E tests MUST be able to target the fixed actions with
 `getByRole('button', { name })`, and previously skipped CU21 edit coverage
 that was blocked only by missing names MUST be restored.
 
-#### Scenario: Role-based selector finds edit on usuarios
+#### Scenario: Role-based selector finds edit on users
 
-- **WHEN** an authenticated admin opens Usuarios administration
+- **WHEN** an authenticated admin opens the users administration screen
 - **THEN** at least one `getByRole('button', { name: /editar/i })` is visible
   for a data row
 
