@@ -207,7 +207,7 @@ export default function TemplatesPage() {
             data-testid="btn-delete-template"
             aria-label={tc("delete")}
           >
-            <NotaireIcon src="/icons/actions/borrar.png" alt={tc("delete")} size={16} />
+            <NotaireIcon src="/icons/actions/delete.png" alt={tc("delete")} size={16} />
           </Button>
         </div>
       ),
@@ -221,7 +221,7 @@ export default function TemplatesPage() {
         description={t("description")}
         actions={
           <Button onClick={openCreate} data-testid="btn-new-template">
-            <NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />
+            <NotaireIcon src="/icons/actions/add.png" alt={tc("add")} size={16} className="mr-1" />
             {t("newPlantilla")}
           </Button>
         }
@@ -277,11 +277,11 @@ export default function TemplatesPage() {
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
-                <NotaireIcon src="/icons/actions/cerrar.png" alt={tc("cancel")} size={16} className="mr-1" />
+                <NotaireIcon src="/icons/actions/cancel.png" alt={tc("cancel")} size={16} className="mr-1" />
                 {tc("cancel")}
               </Button>
               <Button onClick={handleSave} disabled={saving}>
-                <NotaireIcon src="/icons/actions/guardar.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
+                <NotaireIcon src="/icons/actions/save.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
                 {isEditMode ? tc("update") : tc("save")}
               </Button>
             </FormActions>
@@ -311,7 +311,7 @@ export default function TemplatesPage() {
         <>
           <div className="flex justify-end mb-4">
             <Button onClick={openCreateCost} data-testid="btn-new-cost-document">
-              <NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />
+              <NotaireIcon src="/icons/actions/add.png" alt={tc("add")} size={16} className="mr-1" />
               {t("costosDocumento.newCosto")}
             </Button>
           </div>
@@ -382,11 +382,11 @@ export default function TemplatesPage() {
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setCostModalOpen(false)}>
-                <NotaireIcon src="/icons/actions/cerrar.png" alt={tc("cancel")} size={16} className="mr-1" />
+                <NotaireIcon src="/icons/actions/cancel.png" alt={tc("cancel")} size={16} className="mr-1" />
                 {tc("cancel")}
               </Button>
               <Button onClick={handleSaveCost} disabled={savingCost} data-testid="btn-save-cost-document">
-                <NotaireIcon src="/icons/actions/guardar.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
+                <NotaireIcon src="/icons/actions/save.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
                 {tc("save")}
               </Button>
             </FormActions>

@@ -126,7 +126,7 @@ export default function DocumentsPage() {
             <NotaireIcon src="/icons/actions/generate.png" alt="" size={16} />
           </Button>
           <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(documentType)} data-testid="btn-delete-document" aria-label={tc("delete")}>
-            <NotaireIcon src="/icons/actions/borrar.png" alt="" size={16} />
+            <NotaireIcon src="/icons/actions/delete.png" alt="" size={16} />
           </Button>
         </div>
       ),
@@ -140,7 +140,7 @@ export default function DocumentsPage() {
         description={t("description")}
         actions={
           <Button onClick={openCreate} data-testid="btn-new-document-type">
-            <NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />
+            <NotaireIcon src="/icons/actions/add.png" alt={tc("add")} size={16} className="mr-1" />
             {t("newDoc")}
           </Button>
         }
@@ -218,11 +218,11 @@ export default function DocumentsPage() {
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
-                <NotaireIcon src="/icons/actions/cerrar.png" alt={tc("cancel")} size={16} className="mr-1" />
+                <NotaireIcon src="/icons/actions/cancel.png" alt={tc("cancel")} size={16} className="mr-1" />
                 {tc("cancel")}
               </Button>
               <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
-                <NotaireIcon src="/icons/actions/guardar.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
+                <NotaireIcon src="/icons/actions/save.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
                 {isEditMode ? tc("update") : tc("save")}
               </Button>
             </FormActions>

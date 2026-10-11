@@ -136,7 +136,7 @@ export default function StatusesManagementPage() {
             data-testid="btn-delete-status"
             aria-label={tc("delete")}
           >
-            <NotaireIcon src="/icons/actions/borrar.png" alt={tc("delete")} size={16} />
+            <NotaireIcon src="/icons/actions/delete.png" alt={tc("delete")} size={16} />
           </Button>
         </div>
       ),
@@ -150,7 +150,7 @@ export default function StatusesManagementPage() {
         description={t("description")}
         actions={
           <Button onClick={openCreate} data-testid="btn-new-status">
-            <NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />
+            <NotaireIcon src="/icons/actions/add.png" alt={tc("add")} size={16} className="mr-1" />
             {t("newEstado")}
           </Button>
         }
@@ -210,11 +210,11 @@ export default function StatusesManagementPage() {
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
-                <NotaireIcon src="/icons/actions/cerrar.png" alt={tc("cancel")} size={16} className="mr-1" />
+                <NotaireIcon src="/icons/actions/cancel.png" alt={tc("cancel")} size={16} className="mr-1" />
                 {tc("cancel")}
               </Button>
               <Button onClick={handleSave} disabled={saving}>
-                <NotaireIcon src="/icons/actions/guardar.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
+                <NotaireIcon src="/icons/actions/save.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
                 {isEditMode ? tc("update") : tc("save")}
               </Button>
             </FormActions>

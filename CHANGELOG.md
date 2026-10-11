@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English icon filenames** (#1490, CU75):
+  Public icons use English names such as `save.png`, `delete.png`,
+  `users.png`, `management-statuses.png`, and `budget-templates.png`.
+  The folder `icons/modules` replaces `icons/modulos`. Message-catalog
+  keys such as `estadosGestion` and `usuarios` stay.
 - **English withdraw test id and history samples** (#1490, CU75):
   The testimony withdraw button test id is `btn-confirm-withdraw`.
   History samples live in `items-history.test.ts`. Deed-sign and

@@ -100,7 +100,7 @@ export default function ConceptsPage() {
       render: (c) => (
         <div className="flex gap-2 justify-end">
           <Button size="sm" variant="ghost" onClick={() => openEdit(c)} aria-label={tc("edit")}><NotaireIcon src="/icons/actions/generate.png" alt="" size={16} /></Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(c)} data-testid="btn-delete-concept" aria-label={tc("delete")}><NotaireIcon src="/icons/actions/borrar.png" alt="" size={16} /></Button>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(c)} data-testid="btn-delete-concept" aria-label={tc("delete")}><NotaireIcon src="/icons/actions/delete.png" alt="" size={16} /></Button>
         </div>
       ),
     },
@@ -111,7 +111,7 @@ export default function ConceptsPage() {
       <AppHeader
         title={t("title")}
         description={t("description")}
-        actions={<Button onClick={openCreate}><NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />{t("newConcepto")}</Button>}
+        actions={<Button onClick={openCreate}><NotaireIcon src="/icons/actions/add.png" alt={tc("add")} size={16} className="mr-1" />{t("newConcepto")}</Button>}
       />
 
       <div className="px-4 pb-4">
@@ -149,11 +149,11 @@ export default function ConceptsPage() {
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
-                <NotaireIcon src="/icons/actions/cerrar.png" alt={tc("cancel")} size={16} className="mr-1" />
+                <NotaireIcon src="/icons/actions/cancel.png" alt={tc("cancel")} size={16} className="mr-1" />
                 {tc("cancel")}
               </Button>
               <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
-                <NotaireIcon src="/icons/actions/guardar.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
+                <NotaireIcon src="/icons/actions/save.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
                 {isEditMode ? tc("update") : tc("save")}
               </Button>
             </FormActions>
