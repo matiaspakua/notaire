@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English workflow-tracker seed names** (#1490, CU83): the dashboard
+  workflow tracker quotes the seeded statuses `Testimonio Generado`,
+  `Testimonio Ingresado a Inscripcion`, `Testimonio Retirado`,
+  `Documentacion Completa`, and `Gestion con Escritura Inscripta`.
+  Procedure types stay `Compraventa`, `Donacion`, and `Hipoteca`. The
+  workflow name `Workflow de Gestión Estándar` stays.
 - **English business-constant names** (#1490, CU75): `BusinessConstants` field
   names are English (`DeedSigned`, `ManagementStatusInitial`,
   `DocumentationComplete`, `UserEmployee`, and the rest of that interface).
