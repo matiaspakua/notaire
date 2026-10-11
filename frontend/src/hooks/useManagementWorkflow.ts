@@ -8,7 +8,8 @@ import { MANAGEMENTS_SORT } from "@/hooks/useManagements";
 import type { ManagementWorkflowTrace } from "@/types";
 
 export const managementWorkflowKeys = {
-  trace: (managementId: number) => ["gestion-workflow-trace", managementId] as const,
+  trace: (managementId: number) => ["management-workflow-trace", managementId] as const,
+  latest: ["management-workflow-trace", "latest"] as const,
 };
 
 export function useManagementWorkflowTrace(managementId: number | undefined) {
@@ -57,7 +58,7 @@ export async function findLatestTracedManagement(): Promise<LatestTracedManageme
 
 export function useLatestTracedManagement(enabled = true) {
   return useQuery({
-    queryKey: ["gestion-workflow-trace", "latest"] as const,
+    queryKey: managementWorkflowKeys.latest,
     queryFn: findLatestTracedManagement,
     enabled,
     staleTime: 30_000,

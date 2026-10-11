@@ -87,14 +87,14 @@ export default function StatusesManagementPage() {
     }
   }
 
-  async function handleDeleteClick(estado: ManagementStatus) {
+  async function handleDeleteClick(status: ManagementStatus) {
     try {
-      const { inUse } = await apiGet<{ inUse: boolean }>(`/management-statuses/${estado.idManagementStatus}/in-use`);
+      const { inUse } = await apiGet<{ inUse: boolean }>(`/management-statuses/${status.idManagementStatus}/in-use`);
       if (inUse) {
         toast.warning(t("inUseCannotDelete"));
         return;
       }
-      setDeleteId(estado.idManagementStatus!);
+      setDeleteId(status.idManagementStatus!);
     } catch (err) {
       showDeleteError(err, t("errorDelete"));
     }

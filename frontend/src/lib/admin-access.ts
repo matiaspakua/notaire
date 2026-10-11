@@ -44,11 +44,11 @@ export function shouldDenyAdminRoute(
   return !isAdminType(role);
 }
 
-export function setAuthCookies(tipo: string): void {
+export function setAuthCookies(userType: string): void {
   if (typeof document === "undefined") {
     return;
   }
-  const normalized = (tipo || "").trim().toUpperCase() || "UNKNOWN";
+  const normalized = (userType || "").trim().toUpperCase() || "UNKNOWN";
   document.cookie = `${AUTH_STATUS_COOKIE}=1; path=/; SameSite=Lax`;
   document.cookie = `${AUTH_ROLE_COOKIE}=${encodeURIComponent(normalized)}; path=/; SameSite=Lax`;
 }

@@ -77,14 +77,14 @@ function BudgetsList() {
     useItemsByBudget(itemsBudgetId ?? undefined);
   const { data: procedureTypes = [] } = useProcedureTypes();
   const { data: catalogItems = [] } = useItems();
-  const [selectedProcedureTypeId, setSelectedTypeProcedureId] = useState<string>("");
+  const [selectedProcedureTypeId, setSelectedProcedureTypeId] = useState<string>("");
   const [selectedCatalogItemId, setSelectedCatalogItemId] = useState<string>("");
   const loadTemplateMutation = useLoadItemsFromTemplate();
   const addFromCatalogMutation = useAddItemsFromCatalog();
 
   function openItems(p: Budget) {
     setItemsBudgetId(p.idBudget!);
-    setSelectedTypeProcedureId("");
+    setSelectedProcedureTypeId("");
     setSelectedCatalogItemId("");
   }
 
@@ -518,7 +518,7 @@ function BudgetsList() {
                 helperText={procedureTypes.length === 0 ? t("items.noTiposTramite") : undefined}
               >
                 <div className="flex gap-2">
-                  <Select value={selectedProcedureTypeId} onValueChange={setSelectedTypeProcedureId}>
+                  <Select value={selectedProcedureTypeId} onValueChange={setSelectedProcedureTypeId}>
                     <SelectTrigger data-testid="select-procedure-type-items" disabled={procedureTypes.length === 0}>
                       <SelectValue placeholder={t("items.selectTipoTramite")} />
                     </SelectTrigger>

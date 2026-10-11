@@ -43,6 +43,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English payment and workflow identifiers** (#1490, CU75):
+  The payment status type is `PaymentStatus` and its cache key is `status`.
+  Workflow traces use `management-workflow-trace`. The budget setter is
+  `setSelectedProcedureTypeId`. Editor node data uses `type`, which the
+  node component already reads. The viewer fallback label is `Node`.
+  Message keys such as `fields.estado` and `estadosGestion` stay. Stored
+  status samples such as `PENDIENTE` stay.
 - **English testimony and request fixtures** (#1490, CU75):
   Testimony samples use `number`, `verified`, `idTestimonyMovement`, and
   `registered`. Withdraw and reentry inputs use `cardNumber`, and the

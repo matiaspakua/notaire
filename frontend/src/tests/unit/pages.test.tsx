@@ -52,8 +52,8 @@ describe("CU01 — Budget display helpers", () => {
   });
 
   it("status field reflects PENDIENTE/PAGADO states", () => {
-    const estados = ["PENDIENTE", "PAGADO", "CANCELADO"];
-    estados.forEach((e) => {
+    const statuses = ["PENDIENTE", "PAGADO", "CANCELADO"];
+    statuses.forEach((e) => {
       const p: Budget = { status: e };
       expect(p.status).toBe(e);
     });

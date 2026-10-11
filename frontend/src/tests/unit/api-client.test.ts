@@ -44,7 +44,7 @@ describe("Cookie credentials (issue #1051)", () => {
     window.localStorage.setItem(
       "notaire-auth",
       JSON.stringify({
-        state: { user: { nombre: "admin" }, token: "fake-jwt-token", isAuthenticated: true },
+        state: { user: { name: "admin" }, token: "fake-jwt-token", isAuthenticated: true },
       })
     );
     mockFetch.mockReturnValueOnce(makeResponse([]));
@@ -75,7 +75,7 @@ describe("X-Notaire-User header removal (issue #678)", () => {
   it("does not send X-Notaire-User even when a user is persisted", async () => {
     window.localStorage.setItem(
       "notaire-auth",
-      JSON.stringify({ state: { user: { nombre: "admin" }, isAuthenticated: true } })
+      JSON.stringify({ state: { user: { name: "admin" }, isAuthenticated: true } })
     );
     mockFetch.mockReturnValueOnce(makeResponse([]));
 

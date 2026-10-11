@@ -61,7 +61,7 @@ function ManagementsList() {
   const { data: managementsPage, isLoading, isFetching } = useManagementsPage({ page: paging.page, size: paging.size });
   const managements = managementsPage?.content ?? [];
   useClampPage(paging, managementsPage?.totalPages);
-  const { data: estados = [] } = useManagementStatuses();
+  const { data: statuses = [] } = useManagementStatuses();
   const { data: procedureTypes = [] } = useProcedureTypes();
   const { data: properties = [] } = useProperties();
   const createCompleteMutation = useCreateCompleteManagement();
@@ -433,7 +433,7 @@ function ManagementsList() {
                   <FormField label={t("fields.estado")} required>
                     <Select value={statusId} onValueChange={setStatusId}>
                       <SelectTrigger data-testid="select-status-management"><SelectValue placeholder={t("selectEstado")} /></SelectTrigger>
-                      <SelectContent>{estados.map((e) => <SelectItem key={e.idManagementStatus} value={String(e.idManagementStatus)}>{e.name}</SelectItem>)}</SelectContent>
+                      <SelectContent>{statuses.map((e) => <SelectItem key={e.idManagementStatus} value={String(e.idManagementStatus)}>{e.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </FormField>
                   <FormField label={t("fields.tipo")} required>

@@ -14,7 +14,7 @@ describe("workflow node meta (#646)", () => {
     expect(NODE_META.FINAL.border).toBe(theme.colors.error[500]);
   });
 
-  it("falls back to INTERMEDIATE meta for an unknown or missing tipo", () => {
+  it("falls back to INTERMEDIATE meta for an unknown or missing type", () => {
     expect(getNodeMeta(undefined)).toBe(NODE_META.INTERMEDIATE);
     expect(getNodeMeta("SOMETHING_ELSE")).toBe(NODE_META.INTERMEDIATE);
   });
@@ -25,7 +25,7 @@ describe("workflow node meta (#646)", () => {
   });
 
   it("prefixes a label with the type's icon", () => {
-    expect(withNodeIcon("Borrador", "INITIAL")).toBe(`${NODE_META.INITIAL.icon} Borrador`);
-    expect(withNodeIcon("Firmado", "FINAL")).toBe(`${NODE_META.FINAL.icon} Firmado`);
+    expect(withNodeIcon("Draft", "INITIAL")).toBe(`${NODE_META.INITIAL.icon} Draft`);
+    expect(withNodeIcon("Signed", "FINAL")).toBe(`${NODE_META.FINAL.icon} Signed`);
   });
 });

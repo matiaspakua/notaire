@@ -76,7 +76,7 @@ export default function WorkflowEditorPage() {
   const { data: rawNodes = [], refetch: refetchNodes } = useWorkflowNodes(workflowId);
   const { data: rawTransitions = [], refetch: refetchTransitions } = useWorkflowTransitions(workflowId);
 
-  const { data: estados = [] } = useManagementStatuses();
+  const { data: statuses = [] } = useManagementStatuses();
   const createNode = useCreateWorkflowNode();
   const updateNode = useUpdateWorkflowNode();
   const deleteNodeMut = useDeleteWorkflowNode();
@@ -85,8 +85,8 @@ export default function WorkflowEditorPage() {
 
   const [editMode, setEditMode] = useState(false);
   const [addNodeOpen, setAddNodeOpen] = useState(false);
-  const [newNodeEstadoId, setNewNodeEstadoId] = useState<number | "">("");
-  const [newNodeTipo, setNewNodeTipo] = useState<WorkflowNodeType>("INTERMEDIATE");
+  const [newNodeStatusId, setNewNodeStatusId] = useState<number | "">("");
+  const [newNodeType, setNewNodeType] = useState<WorkflowNodeType>("INTERMEDIATE");
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   const flowNodes: Node[] = rawNodes.map((n) => ({
@@ -98,7 +98,7 @@ export default function WorkflowEditorPage() {
         n.statusManagementName ?? t("nodeFallback", { id: n.id ?? 0 }),
         n.type ?? "INTERMEDIATE",
       ),
-      tipo: n.type ?? "INTERMEDIATE",
+      type: n.type ?? "INTERMEDIATE",
     },
   }));
 
@@ -149,21 +149,21 @@ export default function WorkflowEditorPage() {
   }
 
   async function handleAddNode() {
-    if (!newNodeEstadoId) {
+    if (!newNodeStatusId) {
       toast.error(t("selectStatus"));
       return;
     }
     try {
       await createNode.mutateAsync({
         workflowDefinitionId: workflowId,
-        statusManagementId: Number(newNodeEstadoId),
-        type: newNodeTipo,
+        statusManagementId: Number(newNodeStatusId),
+        type: newNodeType,
         positionX: 100 + rawNodes.length * 160,
         positionY: 100,
       });
       setAddNodeOpen(false);
-      setNewNodeEstadoId("");
-      setNewNodeTipo("INTERMEDIATE");
+      setNewNodeStatusId("");
+      setNewNodeType("INTERMEDIATE");
       refetchNodes();
       toast.success(t("nodeAdded"));
     } catch (err) {
@@ -292,12 +292,12 @@ export default function WorkflowEditorPage() {
               <FormField label={t("fields.estado")} required>
                 <select
                   className="w-full border border-input rounded-lg px-3 py-2 text-sm bg-background"
-                  value={newNodeEstadoId}
-                  onChange={(e) => setNewNodeEstadoId(e.target.value ? Number(e.target.value) : "")}
+                  value={newNodeStatusId}
+                  onChange={(e) => setNewNodeStatusId(e.target.value ? Number(e.target.value) : "")}
                   data-testid="select-status-node"
                 >
                   <option value="">{t("fields.estadoPlaceholder")}</option>
-                  {estados.map((e) => (
+                  {statuses.map((e) => (
                     <option key={e.idManagementStatus} value={e.idManagementStatus}>{e.name}</option>
                   ))}
                 </select>
@@ -305,8 +305,8 @@ export default function WorkflowEditorPage() {
               <FormField label={t("fields.tipo")} required>
                 <select
                   className="w-full border border-input rounded-lg px-3 py-2 text-sm bg-background"
-                  value={newNodeTipo}
-                  onChange={(e) => setNewNodeTipo(e.target.value as WorkflowNodeType)}
+                  value={newNodeType}
+                  onChange={(e) => setNewNodeType(e.target.value as WorkflowNodeType)}
                   data-testid="select-node-type"
                 >
                   <option value="INITIAL">{t("types.INITIAL")}</option>

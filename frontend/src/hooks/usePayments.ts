@@ -9,11 +9,11 @@ export function usePayments() {
 }
 // Values match PaymentStatus.java verbatim — its constant names are the published REST
 // contract (see domain/payment/PaymentStatus.java javadoc), not SIN_PAGOS/PARCIAL/SALDADO.
-export type EstadoPago = "NoPayments" | "PARTIAL" | "PAID";
+export type PaymentStatus = "NoPayments" | "PARTIAL" | "PAID";
 export function usePaymentStatus(idBudget: number | null) {
   return useQuery({
-    queryKey: [...paymentsKeys.all, "estado", idBudget],
-    queryFn: () => apiGet<EstadoPago>(`/payments/budget/${idBudget}/status`),
+    queryKey: [...paymentsKeys.all, "status", idBudget],
+    queryFn: () => apiGet<PaymentStatus>(`/payments/budget/${idBudget}/status`),
     enabled: idBudget !== null,
   });
 }
