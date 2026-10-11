@@ -7,12 +7,12 @@ import { apiGet } from "@/lib/api-client";
 import type { ProcedureTemplate } from "@/types";
 
 export const procedureTemplateKeys = {
-  byProcedure: (idTypeProcedure: number) => ["plantillaTramite", "tramite", idTypeProcedure] as const,
+  byProcedure: (idTypeProcedure: number) => ["procedureTemplate", "procedureType", idTypeProcedure] as const,
 };
 
 export function useProcedureTemplate(idTypeProcedure: number | undefined) {
   return useQuery({
-    queryKey: idTypeProcedure !== undefined ? procedureTemplateKeys.byProcedure(idTypeProcedure) : ["plantillaTramite", "tramite", "none"],
+    queryKey: idTypeProcedure !== undefined ? procedureTemplateKeys.byProcedure(idTypeProcedure) : ["procedureTemplate", "procedureType", "none"],
     queryFn: () => apiGet<ProcedureTemplate[]>(`/procedure-templates/procedure-types/${idTypeProcedure}`),
     enabled: idTypeProcedure !== undefined,
   });

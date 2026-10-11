@@ -17,22 +17,22 @@ import { auditKeys } from "@/hooks/useAudit";
 
 describe("React Query key contracts", () => {
   describe("managementStatusKeys", () => {
-    it("all key is ['estadosGestion']", () => {
-      expect(managementStatusKeys.all).toEqual(["estadosGestion"]);
+    it("all key is ['managementStatuses']", () => {
+      expect(managementStatusKeys.all).toEqual(["managementStatuses"]);
     });
 
     it("detail key includes id", () => {
-      expect(managementStatusKeys.detail(5)).toEqual(["estadosGestion", 5]);
+      expect(managementStatusKeys.detail(5)).toEqual(["managementStatuses", 5]);
     });
   });
 
   describe("procedureTypeKeys", () => {
-    it("all key is ['tiposTramite']", () => {
-      expect(procedureTypeKeys.all).toEqual(["tiposTramite"]);
+    it("all key is ['procedureTypes']", () => {
+      expect(procedureTypeKeys.all).toEqual(["procedureTypes"]);
     });
 
     it("detail key includes id", () => {
-      expect(procedureTypeKeys.detail(3)).toEqual(["tiposTramite", 3]);
+      expect(procedureTypeKeys.detail(3)).toEqual(["procedureTypes", 3]);
     });
   });
 
@@ -133,7 +133,7 @@ describe("API endpoint path contracts", () => {
     expect("/audit-log").toBe("/audit-log");
   });
 
-  it("AuditRecord by user path includes usuario segment", () => {
+  it("AuditRecord by user path includes the user segment", () => {
     const userId = 5;
     const path = `/audit-log/user/${userId}`;
     expect(path).toBe("/audit-log/user/5");
@@ -145,7 +145,7 @@ describe("API endpoint path contracts", () => {
 // ──────────────────────────────────────────────
 
 describe("Conditional query enabled logic", () => {
-  it("useAuditByUser — enabled when idUsuario > 0", () => {
+  it("useAuditByUser — enabled when userId > 0", () => {
     const enabled = (id: number | null) => id !== null && id > 0;
     expect(enabled(1)).toBe(true);
     expect(enabled(null)).toBe(false);

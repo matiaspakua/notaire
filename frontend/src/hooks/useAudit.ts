@@ -36,11 +36,11 @@ export function useAudit(params: AuditPageParams) {
   });
 }
 
-export function useAuditByUser(idUsuario: number | null) {
+export function useAuditByUser(userId: number | null) {
   return useQuery({
-    queryKey: auditKeys.byUser(idUsuario ?? 0),
+    queryKey: auditKeys.byUser(userId ?? 0),
     queryFn: () =>
-      apiGet<AuditRecord[]>(`/audit-log/user/${idUsuario}`),
-    enabled: idUsuario !== null && idUsuario > 0,
+      apiGet<AuditRecord[]>(`/audit-log/user/${userId}`),
+    enabled: userId !== null && userId > 0,
   });
 }

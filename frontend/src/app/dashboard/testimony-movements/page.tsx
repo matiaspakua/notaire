@@ -97,11 +97,11 @@ export default function MovementsTestimonyPage() {
 
   const columns: Column<Testimony>[] = [
     { key: "number", header: t("fields.numero"), render: (te) => <span className="font-medium">{te.number}</span> },
-    { key: "escritura", header: t("fields.escritura"), render: (te) => te.deed?.number ?? "—" },
-    { key: "estado", header: t("fields.estado"), render: (te) => t(`estados.${statusMovement(te)}`) },
-    { key: "fechaIngreso", header: t("fields.fechaIngreso"), render: (te) => formatDate(latestMovement(te)?.dateEntry) },
-    { key: "fechaInscripcion", header: t("fields.fechaInscripcion"), render: (te) => formatDate(latestMovement(te)?.dateRegistration) },
-    { key: "fechaSalida", header: t("fields.fechaSalida"), render: (te) => formatDate(latestMovement(te)?.dateExit) },
+    { key: "deed", header: t("fields.escritura"), render: (te) => te.deed?.number ?? "—" },
+    { key: "status", header: t("fields.estado"), render: (te) => t(`estados.${statusMovement(te)}`) },
+    { key: "entryDate", header: t("fields.fechaIngreso"), render: (te) => formatDate(latestMovement(te)?.dateEntry) },
+    { key: "registrationDate", header: t("fields.fechaInscripcion"), render: (te) => formatDate(latestMovement(te)?.dateRegistration) },
+    { key: "exitDate", header: t("fields.fechaSalida"), render: (te) => formatDate(latestMovement(te)?.dateExit) },
     {
       key: "actions",
       header: "",

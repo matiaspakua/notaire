@@ -35,27 +35,27 @@ describe("Item type shape (CU01, CU39)", () => {
   it("item has correct fields", () => {
     const item = {
       idItem: 1,
-      concept: { idConcept: 5, name: "Honorarios", valor: 100 },
-      cantidad: 2,
-      precio: 500,
+      concept: { idConcept: 5, name: "Honorarios", value: 100 },
+      quantity: 2,
+      price: 500,
       budget: { idBudget: 10 },
     };
     expect(item.idItem).toBe(1);
     expect(item.concept.name).toBe("Honorarios");
-    expect(item.cantidad).toBe(2);
-    expect(item.precio).toBe(500);
+    expect(item.quantity).toBe(2);
+    expect(item.price).toBe(500);
     expect(item.budget.idBudget).toBe(10);
   });
 
   it("item subtotal calculation", () => {
-    const item = { cantidad: 3, precio: 200 };
-    const subtotal = (item.precio ?? 0) * (item.cantidad ?? 1);
+    const item = { quantity: 3, price: 200 };
+    const subtotal = (item.price ?? 0) * (item.quantity ?? 1);
     expect(subtotal).toBe(600);
   });
 
   it("item subtotal defaults to price when quantity is 1", () => {
-    const item = { cantidad: 1, precio: 350 };
-    const subtotal = (item.precio ?? 0) * (item.cantidad ?? 1);
+    const item = { quantity: 1, price: 350 };
+    const subtotal = (item.price ?? 0) * (item.quantity ?? 1);
     expect(subtotal).toBe(350);
   });
 
@@ -75,36 +75,36 @@ describe("Item type shape (CU01, CU39)", () => {
 // ──────────────────────────────────────────────
 
 describe("ManagementHistory type shape (CU13, CU53)", () => {
-  it("historial has correct fields", () => {
-    const h = {
+  it("history has the expected fields", () => {
+    const history = {
       idHistory: 1,
-      estado: { idStatusManagement: 2, name: "En trámite" },
-      fecha: "2026-01-15",
+      status: { idStatusManagement: 2, name: "En trámite" },
+      date: "2026-01-15",
       notes: "Iniciado proceso",
     };
-    expect(h.idHistory).toBe(1);
-    expect(h.estado.name).toBe("En trámite");
-    expect(h.fecha).toBe("2026-01-15");
+    expect(history.idHistory).toBe(1);
+    expect(history.status.name).toBe("En trámite");
+    expect(history.date).toBe("2026-01-15");
   });
 
-  it("latest historial is determined by most recent fecha", () => {
-    const historiales = [
-      { idHistory: 1, fecha: "2026-01-01", estado: { name: "Iniciado" } },
-      { idHistory: 2, fecha: "2026-03-15", estado: { name: "En revisión" } },
-      { idHistory: 3, fecha: "2026-02-10", estado: { name: "Pausado" } },
+  it("latest history is the most recent date", () => {
+    const entries = [
+      { idHistory: 1, date: "2026-01-01", status: { name: "Iniciado" } },
+      { idHistory: 2, date: "2026-03-15", status: { name: "En revisión" } },
+      { idHistory: 3, date: "2026-02-10", status: { name: "Pausado" } },
     ];
-    const sorted = [...historiales].sort((a, b) =>
-      new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+    const sorted = [...entries].sort((a, b) =>
+      new Date(b.date).getTime() - new Date(a.date).getTime()
     );
-    expect(sorted[0].estado.name).toBe("En revisión");
+    expect(sorted[0].status.name).toBe("En revisión");
   });
 
-  it("empty historialList returns undefined estado", () => {
-    const management: { historyList: Array<{ estado?: { name?: string } }> } = { historyList: [] };
-    const estado = management.historyList.length > 0
-      ? management.historyList[0].estado
+  it("an empty history list has no current status", () => {
+    const management: { historyList: Array<{ status?: { name?: string } }> } = { historyList: [] };
+    const status = management.historyList.length > 0
+      ? management.historyList[0].status
       : undefined;
-    expect(estado).toBeUndefined();
+    expect(status).toBeUndefined();
   });
 });
 
@@ -118,13 +118,13 @@ describe("Managements search filter (CU02, CU53)", () => {
       idManagement: 1,
       number: 1001,
       procedureList: [],
-      historyList: [{ estado: { name: "Activo" }, fecha: "2026-01-01" }],
+      historyList: [{ status: { name: "Activo" }, date: "2026-01-01" }],
     },
     {
       idManagement: 2,
       number: 1002,
       procedureList: [{ idProcedure: 1 }],
-      historyList: [{ estado: { name: "Cerrado" }, fecha: "2026-02-01" }],
+      historyList: [{ status: { name: "Cerrado" }, date: "2026-02-01" }],
     },
     {
       idManagement: 3,
@@ -134,18 +134,18 @@ describe("Managements search filter (CU02, CU53)", () => {
     },
   ];
 
-  function getEstadoActual(g: typeof managements[0]): string | undefined {
-    if (!g.historyList || g.historyList.length === 0) return undefined;
-    return g.historyList[0]?.estado?.name;
+  function getCurrentStatus(management: typeof managements[0]): string | undefined {
+    if (!management.historyList || management.historyList.length === 0) return undefined;
+    return management.historyList[0]?.status?.name;
   }
 
-  function filterManagements(list: typeof managements, number: string, estado: string) {
-    return list.filter((g) => {
-      const matchNumber = !number || g.number?.toString().includes(number);
-      const matchEstado =
-        !estado ||
-        getEstadoActual(g)?.toLowerCase().includes(estado.toLowerCase());
-      return matchNumber && matchEstado;
+  function filterManagements(list: typeof managements, number: string, status: string) {
+    return list.filter((management) => {
+      const matchesNumber = !number || management.number?.toString().includes(number);
+      const matchesStatus =
+        !status ||
+        getCurrentStatus(management)?.toLowerCase().includes(status.toLowerCase());
+      return matchesNumber && matchesStatus;
     });
   }
 
@@ -153,23 +153,23 @@ describe("Managements search filter (CU02, CU53)", () => {
     expect(filterManagements(managements, "", "")).toHaveLength(3);
   });
 
-  it("filter by numero partial match", () => {
+  it("filter by partial number", () => {
     expect(filterManagements(managements, "100", "")).toHaveLength(2);
   });
 
-  it("filter by exact numero", () => {
+  it("filter by exact number", () => {
     expect(filterManagements(managements, "2001", "")).toHaveLength(1);
   });
 
-  it("filter by estado activo", () => {
+  it("filter by active status", () => {
     expect(filterManagements(managements, "", "activ")).toHaveLength(1);
   });
 
-  it("filter by estado cerrado", () => {
+  it("filter by closed status", () => {
     expect(filterManagements(managements, "", "cerrad")).toHaveLength(1);
   });
 
-  it("combined numero + estado filter", () => {
+  it("combined number and status filter", () => {
     const result = filterManagements(managements, "1001", "activ");
     expect(result).toHaveLength(1);
     expect(result[0].idManagement).toBe(1);
@@ -185,9 +185,9 @@ describe("Managements search filter (CU02, CU53)", () => {
 // ──────────────────────────────────────────────
 
 describe("Management status badge logic", () => {
-  function getBadgeVariant(estado?: string): string {
-    if (!estado) return "outline";
-    const lower = estado.toLowerCase();
+  function getBadgeVariant(status?: string): string {
+    if (!status) return "outline";
+    const lower = status.toLowerCase();
     if (lower.includes("activ") || lower.includes("abiert")) return "green";
     if (lower.includes("cerr") || lower.includes("finaliz")) return "secondary";
     if (lower.includes("cancel") || lower.includes("archiv")) return "destructive";
@@ -222,7 +222,7 @@ describe("Management status badge logic", () => {
     expect(getBadgeVariant(undefined)).toBe("outline");
   });
 
-  it("unknown estado maps to outline", () => {
+  it("an unknown status maps to outline", () => {
     expect(getBadgeVariant("En proceso")).toBe("outline");
   });
 });

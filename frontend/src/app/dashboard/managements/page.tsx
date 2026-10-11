@@ -62,7 +62,7 @@ function ManagementsList() {
   const managements = managementsPage?.content ?? [];
   useClampPage(paging, managementsPage?.totalPages);
   const { data: estados = [] } = useManagementStatuses();
-  const { data: tiposProcedure = [] } = useProcedureTypes();
+  const { data: procedureTypes = [] } = useProcedureTypes();
   const { data: properties = [] } = useProperties();
   const createCompleteMutation = useCreateCompleteManagement();
   const updateMutation = useUpdateManagement();
@@ -265,18 +265,18 @@ function ManagementsList() {
         ),
     },
     {
-      key: "inicio",
+      key: "start",
       header: t("fields.inicio"),
       render: (g) => <span className="whitespace-nowrap">{formatCalendarDate(g.dateStart)}</span>,
     },
     {
-      key: "tramites",
+      key: "procedures",
       header: t("fields.tramites"),
       render: (g) => g.procedureCount ?? 0,
       className: "text-right",
     },
     {
-      key: "estado",
+      key: "status",
       header: t("fields.estado"),
       render: (g) => g.statusActual ?? "—",
     },
@@ -439,7 +439,7 @@ function ManagementsList() {
                   <FormField label={t("fields.tipo")} required>
                     <Select value={procedureTypeId} onValueChange={setProcedureTypeId}>
                       <SelectTrigger data-testid="select-procedure-type-management"><SelectValue placeholder={t("selectTramite")} /></SelectTrigger>
-                      <SelectContent>{tiposProcedure.map((tt) => <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>{tt.name}</SelectItem>)}</SelectContent>
+                      <SelectContent>{procedureTypes.map((tt) => <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>{tt.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </FormField>
                   <FormField label={t("fields.inmueble")}>

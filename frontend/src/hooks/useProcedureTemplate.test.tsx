@@ -25,7 +25,7 @@ function createWrapper() {
 
 describe("procedureTemplateKeys", () => {
   it("byProcedure key includes the procedure id", () => {
-    expect(procedureTemplateKeys.byProcedure(7)).toEqual(["plantillaTramite", "tramite", 7]);
+    expect(procedureTemplateKeys.byProcedure(7)).toEqual(["procedureTemplate", "procedureType", 7]);
   });
 });
 
@@ -36,8 +36,8 @@ describe("useProcedureTemplate (CU03)", () => {
     vi.mocked(apiGet).mockResolvedValue([
       {
         notes: "",
-        typeDeProcedure: { idProcedureType: 7, name: "Compraventa" },
-        typeDeDocument: { idDocumentType: 1, name: "DNI", expires: false, deliveredBy: "Cliente" },
+        procedureType: { idProcedureType: 7, name: "Compraventa" },
+        documentType: { idDocumentType: 1, name: "DNI", expires: false, deliveredBy: "Cliente" },
       },
     ]);
 
@@ -45,10 +45,10 @@ describe("useProcedureTemplate (CU03)", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(apiGet).toHaveBeenCalledWith("/procedure-templates/procedure-types/7");
-    expect(result.current.data?.[0].typeDeDocument?.name).toBe("DNI");
+    expect(result.current.data?.[0].documentType?.name).toBe("DNI");
   });
 
-  it("does not fetch when idTipoTramite is undefined", () => {
+  it("does not fetch when procedureTypeId is undefined", () => {
     const { result } = renderHook(() => useProcedureTemplate(undefined), { wrapper: createWrapper() });
 
     expect(result.current.fetchStatus).toBe("idle");

@@ -39,8 +39,8 @@ export function useDeleteRole() {
 export function useAssignRoleToUser() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ idRol, idUsuario }: { idRol: number; idUsuario: number }) =>
-      apiPut<void>(`/roles/${idRol}/users/${idUsuario}`, {}),
+    mutationFn: ({ roleId, userId }: { roleId: number; userId: number }) =>
+      apiPut<void>(`/roles/${roleId}/users/${userId}`, {}),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: rolesKeys.all });
       qc.invalidateQueries({ queryKey: ["users"] });
@@ -51,7 +51,7 @@ export function useAssignRoleToUser() {
 export function useUnassignRoleFromUser() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (idUsuario: number) => apiDelete(`/roles/users/${idUsuario}`),
+    mutationFn: (userId: number) => apiDelete(`/roles/users/${userId}`),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["users"] }),
   });
 }

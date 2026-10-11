@@ -26,38 +26,38 @@ import type { UserAccount } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 
 const EMPTY: Partial<UserAccount> = { name: "", password: "", type: "EMPLEADO", active: true };
-const USUARIO_FIELD_NAMES = ["name", "password", "type"];
+const USER_FIELD_NAMES = ["name", "password", "type"];
 
-export default function UsuariosPage() {
+export default function UsersPage() {
   const t = useTranslations("administracion.usuarios");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const { data: usuarios = [], isLoading } = useUsers();
+  const { data: users = [], isLoading } = useUsers();
   const { data: roles = [] } = useRoles();
   const createMutation = useCreateUser();
   const updateMutation = useUpdateUser();
   const deleteMutation = useDeleteUser();
-  const assignRolMutation = useAssignRoleToUser();
-  const unassignRolMutation = useUnassignRoleFromUser();
+  const assignRoleMutation = useAssignRoleToUser();
+  const unassignRoleMutation = useUnassignRoleFromUser();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<UserAccount>>(EMPTY);
-  const [selectedRolId, setSelectedRolId] = useState<string>("none");
+  const [selectedRoleId, setSelectedRoleId] = useState<string>("none");
   const [isEditMode, setIsEditMode] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   function openCreate() {
     setEditing(EMPTY);
-    setSelectedRolId("none");
+    setSelectedRoleId("none");
     setIsEditMode(false);
     setFieldErrors({});
     setModalOpen(true);
   }
   function openEdit(u: UserAccount) {
     setEditing({ ...u, password: "" });
-    setSelectedRolId(u.role?.idRole?.toString() ?? "none");
+    setSelectedRoleId(u.role?.idRole?.toString() ?? "none");
     setIsEditMode(true);
     setFieldErrors({});
     setModalOpen(true);
@@ -78,17 +78,17 @@ export default function UsuariosPage() {
         toast.success(t("created"));
       }
       if (savedId) {
-        if (selectedRolId && selectedRolId !== "none") {
-          await assignRolMutation.mutateAsync({ idRol: Number(selectedRolId), idUsuario: savedId });
+        if (selectedRoleId && selectedRoleId !== "none") {
+          await assignRoleMutation.mutateAsync({ roleId: Number(selectedRoleId), userId: savedId });
         } else if (isEditMode && editing.role) {
-          await unassignRolMutation.mutateAsync(savedId);
+          await unassignRoleMutation.mutateAsync(savedId);
         }
       }
       setModalOpen(false);
     } catch (err) {
       presentMutationError(err, {
         fallback: t("errorSave"),
-        fieldNames: USUARIO_FIELD_NAMES,
+        fieldNames: USER_FIELD_NAMES,
         setFieldErrors,
       });
     }
@@ -106,8 +106,8 @@ export default function UsuariosPage() {
     }
   }
 
-  const tipoVariant = (tipo?: string) => {
-    const role = tipo?.toUpperCase();
+  const userTypeVariant = (userType?: string) => {
+    const role = userType?.toUpperCase();
     if (role === "ADMIN" || role === "ADMINISTRADOR" || role === "ESCRIBANO") return "default" as const;
     return "secondary" as const;
   };
@@ -115,9 +115,9 @@ export default function UsuariosPage() {
   const columns: Column<UserAccount>[] = [
     { key: "id", header: tc("id"), render: (u) => <span className="text-xs text-muted-foreground">{u.idUser}</span>, className: "w-12" },
     { key: "name", header: t("fields.nombre"), render: (u) => <span className="font-medium">{u.name}</span> },
-    { key: "tipo", header: t("fields.tipo"), render: (u) => <Badge variant={tipoVariant(u.type)}>{u.type ?? "—"}</Badge> },
-    { key: "rol", header: t("fields.rol"), render: (u) => u.role ? <Badge variant="outline">{u.role.name}</Badge> : <span className="text-xs text-muted-foreground">—</span> },
-    { key: "activo", header: tc("status"), render: (u) => u.active ? <Badge variant="success">{tc("active")}</Badge> : <Badge variant="secondary">{tc("inactive")}</Badge> },
+    { key: "type", header: t("fields.tipo"), render: (u) => <Badge variant={userTypeVariant(u.type)}>{u.type ?? "—"}</Badge> },
+    { key: "role", header: t("fields.rol"), render: (u) => u.role ? <Badge variant="outline">{u.role.name}</Badge> : <span className="text-xs text-muted-foreground">—</span> },
+    { key: "active", header: tc("status"), render: (u) => u.active ? <Badge variant="success">{tc("active")}</Badge> : <Badge variant="secondary">{tc("inactive")}</Badge> },
     {
       key: "actions", header: "", className: "w-24",
       render: (u) => (
@@ -135,7 +135,7 @@ export default function UsuariosPage() {
         title={t("title")}
         actions={<Button onClick={openCreate} data-testid="btn-new-user"><Plus className="h-4 w-4" />{t("newUsuario")}</Button>}
       />
-      <DataTable data={usuarios} columns={columns} isLoading={isLoading} keyExtractor={(u) => u.idUser!} emptyMessage={t("noData")} />
+      <DataTable data={users} columns={columns} isLoading={isLoading} keyExtractor={(u) => u.idUser!} emptyMessage={t("noData")} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
@@ -178,7 +178,7 @@ export default function UsuariosPage() {
                 </Select>
               </FormField>
               <FormField label={t("fields.rolAcceso")} helperText={t("fields.rolAccesoHint")}>
-                <Select value={selectedRolId} onValueChange={setSelectedRolId}>
+                <Select value={selectedRoleId} onValueChange={setSelectedRoleId}>
                   <SelectTrigger data-testid="select-role-user">
                     <SelectValue placeholder={t("fields.sinRolAsignado")} />
                   </SelectTrigger>

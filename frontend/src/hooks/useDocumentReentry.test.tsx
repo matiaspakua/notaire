@@ -59,7 +59,7 @@ describe("useDocumentReentry (CU43)", () => {
     expect(result.current.data?.procedures[0].requiredDocuments[0].name).toBe("Certificado de Dominio");
   });
 
-  it("does not fetch when gestionId is undefined", () => {
+  it("does not fetch when managementId is undefined", () => {
     const { Wrapper } = createWrapper();
     const { result } = renderHook(() => useDocumentReentry(undefined), { wrapper: Wrapper });
 

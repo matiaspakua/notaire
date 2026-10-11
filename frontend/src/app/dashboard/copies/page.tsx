@@ -118,7 +118,7 @@ export default function CopiesPage() {
       render: (c) => formatCalendarDate(c.dateWithdrawal),
     },
     {
-      key: "testimonio",
+      key: "testimony",
       header: t("columns.testimonio"),
       render: (c) => c.fkIdTestimony?.number ? `#${c.fkIdTestimony.number}` : "—",
       className: "w-32",

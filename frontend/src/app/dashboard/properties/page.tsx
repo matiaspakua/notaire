@@ -116,17 +116,17 @@ export default function PropertiesPage() {
       className: "w-16",
     },
     {
-      key: "nomenclatura",
+      key: "cadastralCode",
       header: t("fields.nomenclatura"),
       render: (i) => <span className="font-medium">{i.cadastralDesignation ?? "—"}</span>,
     },
     {
-      key: "domicilio",
+      key: "address",
       header: t("fields.domicilio"),
       render: (i) => i.address ?? "—",
     },
     {
-      key: "valuacion",
+      key: "valuation",
       header: t("fields.valuacionFiscal"),
       render: (i) => i.fiscalAppraisal ?? "—",
       className: "w-40",

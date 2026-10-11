@@ -94,7 +94,7 @@ export default function ConceptsPage() {
   const columns: Column<Concept>[] = [
     { key: "id", header: tc("id"), render: (c) => <span className="text-xs text-muted-foreground">{c.idConcept}</span>, className: "w-12" },
     { key: "name", header: t("fields.nombre"), render: (c) => <span className="font-medium">{c.name}</span> },
-    { key: "valor", header: t("fields.valorBase"), render: (c) => formatCurrency(c.value) },
+    { key: "value", header: t("fields.valorBase"), render: (c) => formatCurrency(c.value) },
     {
       key: "actions", header: "", className: "w-24",
       render: (c) => (

@@ -54,7 +54,7 @@ describe("useExternalEntityDocuments (CU10)", () => {
     expect(result.current.data?.documents[0].name).toBe("Certificado de Dominio");
   });
 
-  it("does not fetch when gestionId is undefined", () => {
+  it("does not fetch when managementId is undefined", () => {
     const { Wrapper } = createWrapper();
     const { result } = renderHook(() => useExternalEntityDocuments(undefined), { wrapper: Wrapper });
 

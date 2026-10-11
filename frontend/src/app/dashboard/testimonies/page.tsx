@@ -88,8 +88,8 @@ export default function TestimoniesPage() {
   const columns: Column<Testimony>[] = [
     { key: "id", header: tc("id"), render: (te) => <span className="text-xs text-muted-foreground">{te.idTestimony}</span>, className: "w-12" },
     { key: "number", header: t("fields.numero"), render: (te) => <span className="font-medium">{te.number}</span> },
-    { key: "escritura", header: t("fields.escritura"), render: (te) => te.deed?.number ?? "—" },
-    { key: "estado", header: t("fields.estado"), render: (te) => estadoLabel(te) },
+    { key: "deed", header: t("fields.escritura"), render: (te) => te.deed?.number ?? "—" },
+    { key: "status", header: t("fields.estado"), render: (te) => estadoLabel(te) },
     {
       key: "actions",
       header: "",

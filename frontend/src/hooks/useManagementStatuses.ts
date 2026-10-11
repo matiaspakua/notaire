@@ -7,8 +7,8 @@ import { apiGet } from "@/lib/api-client";
 import type { ManagementStatus } from "@/types";
 
 export const managementStatusKeys = {
-  all: ["estadosGestion"] as const,
-  detail: (id: number) => ["estadosGestion", id] as const,
+  all: ["managementStatuses"] as const,
+  detail: (id: number) => ["managementStatuses", id] as const,
 };
 
 export function useManagementStatuses() {

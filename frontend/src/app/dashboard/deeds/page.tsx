@@ -115,8 +115,8 @@ function DeedsList() {
   const columns: Column<Deed>[] = [
     { key: "id", header: tc("id"), render: (e) => <span className="text-xs text-muted-foreground">{e.idDeed}</span>, className: "w-12" },
     { key: "number", header: t("fields.numero"), render: (e) => <span className="font-medium">{e.number ?? "—"}</span> },
-    { key: "fecha", header: tc("date"), render: (e) => formatDate(e.dateDeedrecording) },
-    { key: "estado", header: t("fields.estado"), render: (e) => e.status ?? "—" },
+    { key: "date", header: tc("date"), render: (e) => formatDate(e.dateDeedrecording) },
+    { key: "status", header: t("fields.estado"), render: (e) => e.status ?? "—" },
     {
       key: "folio",
       header: t("fields.folio"),

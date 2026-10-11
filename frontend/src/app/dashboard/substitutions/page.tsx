@@ -48,12 +48,12 @@ export default function SubstitutionsPage() {
   const [isEditMode, setIsEditMode] = useState(false);
 
   const [notaryId, setNotaryId] = useState("");
-  const [suplenteId, setSuplenteId] = useState("");
+  const [substituteId, setSubstituteId] = useState("");
 
   function openCreate() {
     setEditing(EMPTY);
     setNotaryId("");
-    setSuplenteId("");
+    setSubstituteId("");
     setIsEditMode(false);
     setModalOpen(true);
   }
@@ -61,7 +61,7 @@ export default function SubstitutionsPage() {
   function openEdit(s: Substitution) {
     setEditing(s);
     setNotaryId(s.fkIdSubstituted?.personId?.toString() ?? "");
-    setSuplenteId(s.fkIdSubstitute?.personId?.toString() ?? "");
+    setSubstituteId(s.fkIdSubstitute?.personId?.toString() ?? "");
     setIsEditMode(true);
     setModalOpen(true);
   }
@@ -71,7 +71,7 @@ export default function SubstitutionsPage() {
       dateStart: editing.dateStart,
       dateEnd: editing.dateEnd,
       fkIdSubstituted: notaryId ? { personId: Number(notaryId) } : undefined,
-      fkIdSubstitute: suplenteId ? { personId: Number(suplenteId) } : undefined,
+      fkIdSubstitute: substituteId ? { personId: Number(substituteId) } : undefined,
     };
     try {
       if (isEditMode && editing.idSubstitution) {
@@ -107,7 +107,7 @@ export default function SubstitutionsPage() {
       className: "w-12",
     },
     {
-      key: "escribano",
+      key: "notary",
       header: t("fields.escribano"),
       render: (s) => (
         <div className="flex items-center gap-2">
@@ -117,17 +117,17 @@ export default function SubstitutionsPage() {
       ),
     },
     {
-      key: "suplente",
+      key: "substitute",
       header: t("fields.suplente"),
       render: (s) => personName(s.fkIdSubstitute),
     },
     {
-      key: "desde",
+      key: "startDate",
       header: t("fields.desde"),
       render: (s) => formatDate(s.dateStart),
     },
     {
-      key: "hasta",
+      key: "endDate",
       header: t("fields.hasta"),
       render: (s) => formatDate(s.dateEnd),
     },
@@ -189,13 +189,13 @@ export default function SubstitutionsPage() {
                     data-testid="input-notary-id"
                   />
                 </FormField>
-                <FormField label={t("fields.suplenteId")} helperText={t("fields.escribanoHelper")}>
+                <FormField label={t("fields.substituteId")} helperText={t("fields.escribanoHelper")}>
                   <Input
                     type="number"
-                    value={suplenteId}
-                    onChange={(e) => setSuplenteId(e.target.value)}
+                    value={substituteId}
+                    onChange={(e) => setSubstituteId(e.target.value)}
                     placeholder={t("fields.suplentePlaceholder")}
-                    data-testid="input-suplente-id"
+                    data-testid="input-substitute-id"
                   />
                 </FormField>
               </div>
@@ -205,7 +205,7 @@ export default function SubstitutionsPage() {
                     type="date"
                     value={toDateInputValue(editing.dateStart)}
                     onChange={(e) => setEditing({ ...editing, dateStart: e.target.value })}
-                    data-testid="input-desde"
+                    data-testid="input-start-date"
                   />
                 </FormField>
                 <FormField label={t("fields.hasta")}>
@@ -213,7 +213,7 @@ export default function SubstitutionsPage() {
                     type="date"
                     value={toDateInputValue(editing.dateEnd)}
                     onChange={(e) => setEditing({ ...editing, dateEnd: e.target.value })}
-                    data-testid="input-hasta"
+                    data-testid="input-end-date"
                   />
                 </FormField>
               </div>

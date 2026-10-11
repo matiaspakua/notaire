@@ -49,11 +49,11 @@ describe("fullName()", () => {
     expect(fullName(undefined)).toBe("—");
   });
 
-  it("concatenates nombre and apellido", () => {
+  it("concatenates first name and last name", () => {
     expect(fullName({ firstName: "Juan", lastName: "García" })).toBe("Juan García");
   });
 
-  it("handles missing apellido", () => {
+  it("handles a missing last name", () => {
     expect(fullName({ firstName: "Juan" })).toBe("Juan");
   });
 

@@ -2,7 +2,7 @@
  * Unit tests for useSubstitutions and useReports hooks.
  * Tests cover query keys, type shapes, and download URL construction.
  *
- * Covers: CU12, CU42, CU59 (Suplencias), CU50, CU24, CU25, CU13, CU01 (Reportes)
+ * Covers: CU12, CU42, CU59 (Substitutions), CU50, CU24, CU25, CU13, CU01 (Reports)
  */
 import { describe, it, expect } from "vitest";
 import { substitutionsKeys } from "@/hooks/useSubstitutions";
@@ -33,48 +33,48 @@ describe("Substitution type shape", () => {
   it("a substitution object has the expected optional fields", () => {
     const s = {
       idSubstitution: 1,
-      notary: { idPerson: 10, name: "Carlos", apellido: "López" },
-      suplente: { idPerson: 20, name: "Ana", apellido: "García" },
-      desde: "2026-01-01",
-      hasta: "2026-06-30",
+      notary: { idPerson: 10, name: "Carlos", lastName: "López" },
+      substitute: { idPerson: 20, name: "Ana", lastName: "García" },
+      dateStart: "2026-01-01",
+      dateEnd: "2026-06-30",
     };
     expect(s.idSubstitution).toBe(1);
     expect(s.notary.idPerson).toBe(10);
-    expect(s.suplente.idPerson).toBe(20);
-    expect(s.desde).toBe("2026-01-01");
-    expect(s.hasta).toBe("2026-06-30");
+    expect(s.substitute.idPerson).toBe(20);
+    expect(s.dateStart).toBe("2026-01-01");
+    expect(s.dateEnd).toBe("2026-06-30");
   });
 
   it("a substitution can omit the notary and the substitute", () => {
     const s: {
       idSubstitution?: number;
       notary?: unknown;
-      suplente?: unknown;
-      desde?: string;
-      hasta?: string;
+      substitute?: unknown;
+      dateStart?: string;
+      dateEnd?: string;
     } = { idSubstitution: 5 };
     expect(s.notary).toBeUndefined();
-    expect(s.suplente).toBeUndefined();
+    expect(s.substitute).toBeUndefined();
   });
 
   it("substitution date range — start is before end", () => {
-    const desde = new Date("2026-01-01");
-    const hasta = new Date("2026-12-31");
-    expect(desde < hasta).toBe(true);
+    const startDate = new Date("2026-01-01");
+    const endDate = new Date("2026-12-31");
+    expect(startDate < endDate).toBe(true);
   });
 
   it("substitution date range — an inverted range is detected", () => {
-    const desde = new Date("2026-12-31");
-    const hasta = new Date("2026-01-01");
-    expect(desde > hasta).toBe(true);
+    const startDate = new Date("2026-12-31");
+    const endDate = new Date("2026-01-01");
+    expect(startDate > endDate).toBe(true);
   });
 });
 
 // ──────────────────────────────────────────────
-// Reportes URL construction
+// Report URL construction
 // ──────────────────────────────────────────────
 
-describe("Reporte URL construction", () => {
+describe("Report URL construction", () => {
   const BASE = "http://localhost:8080/api/v1";
 
   it("the budget PDF URL is correct", () => {
@@ -117,7 +117,7 @@ describe("Reporte URL construction", () => {
     expect(url).toBe("http://localhost:8080/api/v1/reports/index-book?year=2025");
   });
 
-  it("deuda documentos URL includes the management number (numberManagement)", () => {
+  it("document debt URL includes the management number (numberManagement)", () => {
     const number = 1001;
     const url = `${BASE}/reports/document-debt?numberManagement=${number}`;
     expect(url).toContain("numberManagement=1001");
@@ -128,7 +128,7 @@ describe("Reporte URL construction", () => {
 // Report filename construction
 // ──────────────────────────────────────────────
 
-describe("Reporte filename construction", () => {
+describe("Report filename construction", () => {
   it("the budget filename includes the id", () => {
     const id = 5;
     const filename = `presupuesto_${id}.pdf`;
@@ -137,15 +137,15 @@ describe("Reporte filename construction", () => {
 
   it("DDJJ mensual filename includes year and month", () => {
     const year = 2026;
-    const mes = 3;
-    const filename = `ddjj_mensual_${year}_${mes}.pdf`;
+    const month = 3;
+    const filename = `ddjj_mensual_${year}_${month}.pdf`;
     expect(filename).toBe("ddjj_mensual_2026_3.pdf");
   });
 
   it("DDJJ rentas filename includes year and month", () => {
     const year = 2026;
-    const mes = 12;
-    const filename = `ddjj_rentas_${year}_${mes}.pdf`;
+    const month = 12;
+    const filename = `ddjj_rentas_${year}_${month}.pdf`;
     expect(filename).toBe("ddjj_rentas_2026_12.pdf");
   });
 
@@ -155,7 +155,7 @@ describe("Reporte filename construction", () => {
     expect(filename).toBe("historial_gestion_42.pdf");
   });
 
-  it("libro indice filename includes anio", () => {
+  it("index book filename includes the year", () => {
     const year = 2025;
     const filename = `libro_indice_${year}.pdf`;
     expect(filename).toBe("libro_indice_2025.pdf");
@@ -166,9 +166,9 @@ describe("Reporte filename construction", () => {
 // Budget status badge logic
 // ──────────────────────────────────────────────
 
-describe("Budget estado badge logic", () => {
-  function getEstadoBadgeClass(estado?: string): string {
-    switch (estado?.toUpperCase()) {
+describe("Budget status badge logic", () => {
+  function getStatusBadgeClass(status?: string): string {
+    switch (status?.toUpperCase()) {
       case "APROBADO":
         return "green";
       case "RECHAZADO":
@@ -181,27 +181,27 @@ describe("Budget estado badge logic", () => {
   }
 
   it("APROBADO maps to green", () => {
-    expect(getEstadoBadgeClass("APROBADO")).toBe("green");
+    expect(getStatusBadgeClass("APROBADO")).toBe("green");
   });
 
   it("aprobado (lowercase) maps to green", () => {
-    expect(getEstadoBadgeClass("aprobado")).toBe("green");
+    expect(getStatusBadgeClass("aprobado")).toBe("green");
   });
 
   it("RECHAZADO maps to destructive", () => {
-    expect(getEstadoBadgeClass("RECHAZADO")).toBe("destructive");
+    expect(getStatusBadgeClass("RECHAZADO")).toBe("destructive");
   });
 
   it("VENCIDO maps to orange", () => {
-    expect(getEstadoBadgeClass("VENCIDO")).toBe("orange");
+    expect(getStatusBadgeClass("VENCIDO")).toBe("orange");
   });
 
   it("BORRADOR maps to outline", () => {
-    expect(getEstadoBadgeClass("BORRADOR")).toBe("outline");
+    expect(getStatusBadgeClass("BORRADOR")).toBe("outline");
   });
 
   it("undefined maps to outline", () => {
-    expect(getEstadoBadgeClass(undefined)).toBe("outline");
+    expect(getStatusBadgeClass(undefined)).toBe("outline");
   });
 });
 
@@ -211,58 +211,58 @@ describe("Budget estado badge logic", () => {
 
 describe("People search filter (CU61)", () => {
   const people = [
-    { idPerson: 1, name: "Juan", apellido: "García", dni: "12345678", esClient: true },
-    { idPerson: 2, name: "Ana", apellido: "López", dni: "87654321", esClient: false },
-    { idPerson: 3, name: "Carlos", apellido: "García", dni: "11111111", esClient: true },
+    { idPerson: 1, name: "Juan", lastName: "García", dni: "12345678", isClient: true },
+    { idPerson: 2, name: "Ana", lastName: "López", dni: "87654321", isClient: false },
+    { idPerson: 3, name: "Carlos", lastName: "García", dni: "11111111", isClient: true },
   ];
 
-  function filterPersonas(
+  function filterPeople(
     list: typeof people,
     name: string,
-    apellido: string,
+    lastName: string,
     dni: string,
-    esClient: boolean | null
+    isClient: boolean | null
   ) {
     return list.filter((p) => {
-      const matchNombre = !name || p.name?.toLowerCase().includes(name.toLowerCase());
-      const matchApellido = !apellido || p.apellido?.toLowerCase().includes(apellido.toLowerCase());
-      const matchDni = !dni || p.dni?.includes(dni);
-      const matchCliente = esClient === null || p.esClient === esClient;
-      return matchNombre && matchApellido && matchDni && matchCliente;
+      const matchesName = !name || p.name?.toLowerCase().includes(name.toLowerCase());
+      const matchesLastName = !lastName || p.lastName?.toLowerCase().includes(lastName.toLowerCase());
+      const matchesDni = !dni || p.dni?.includes(dni);
+      const matchesClient = isClient === null || p.isClient === isClient;
+      return matchesName && matchesLastName && matchesDni && matchesClient;
     });
   }
 
   it("no filters returns every person", () => {
-    expect(filterPersonas(people, "", "", "", null)).toHaveLength(3);
+    expect(filterPeople(people, "", "", "", null)).toHaveLength(3);
   });
 
-  it("filter by nombre returns matching", () => {
-    expect(filterPersonas(people, "juan", "", "", null)).toHaveLength(1);
+  it("filter by first name returns matching", () => {
+    expect(filterPeople(people, "juan", "", "", null)).toHaveLength(1);
   });
 
-  it("filter by apellido returns multiple matches", () => {
-    expect(filterPersonas(people, "", "García", "", null)).toHaveLength(2);
+  it("filter by last name returns multiple matches", () => {
+    expect(filterPeople(people, "", "García", "", null)).toHaveLength(2);
   });
 
   it("filter by DNI returns exact match", () => {
-    expect(filterPersonas(people, "", "", "12345678", null)).toHaveLength(1);
+    expect(filterPeople(people, "", "", "12345678", null)).toHaveLength(1);
   });
 
-  it("filter by esCliente true returns only clients", () => {
-    expect(filterPersonas(people, "", "", "", true)).toHaveLength(2);
+  it("filter by client true returns only clients", () => {
+    expect(filterPeople(people, "", "", "", true)).toHaveLength(2);
   });
 
-  it("filter by esCliente false returns non-clients", () => {
-    expect(filterPersonas(people, "", "", "", false)).toHaveLength(1);
+  it("filter by client false returns non-clients", () => {
+    expect(filterPeople(people, "", "", "", false)).toHaveLength(1);
   });
 
-  it("combined nombre + apellido filter", () => {
-    const result = filterPersonas(people, "Carlos", "García", "", null);
+  it("combined first name and last name filter", () => {
+    const result = filterPeople(people, "Carlos", "García", "", null);
     expect(result).toHaveLength(1);
     expect(result[0].idPerson).toBe(3);
   });
 
   it("no match returns empty array", () => {
-    expect(filterPersonas(people, "NonExistent", "", "", null)).toHaveLength(0);
+    expect(filterPeople(people, "NonExistent", "", "", null)).toHaveLength(0);
   });
 });

@@ -40,7 +40,7 @@ export default function ProceduresPage() {
   const [selectedWorkflowId, setSelectedWorkflowId] = useState<string>("");
 
   const { data: filtered = data } = useQuery({
-    queryKey: ["tiposTramite", "search", search, data],
+    queryKey: ["procedureTypes", "search", search, data],
     queryFn: () =>
       search.trim()
         ? apiGet<ProcedureType[]>(`/procedure-types/search?name=${encodeURIComponent(search.trim())}`)

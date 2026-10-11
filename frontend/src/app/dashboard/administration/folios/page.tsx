@@ -269,14 +269,14 @@ export default function FoliosAdminPage() {
     { key: "id", header: tc("id"), render: (f) => <span className="text-xs text-muted-foreground">{f.idFolio}</span>, className: "w-12" },
     { key: "number", header: t("fields.numero"), render: (f) => <span className="font-medium">{f.number}</span> },
     { key: "year", header: tc("year"), render: (f) => f.year ?? "—" },
-    { key: "tipo", header: t("fields.tipo"), render: (f) => f.fkIdFolioType?.name ?? "—" },
+    { key: "type", header: t("fields.tipo"), render: (f) => f.fkIdFolioType?.name ?? "—" },
     {
       key: "status",
       header: t("fields.estado"),
       render: (f) => (f.status ? <Badge variant="secondary">{f.status}</Badge> : "—"),
     },
     {
-      key: "escritura",
+      key: "deed",
       header: t("fields.escritura"),
       render: (f) => (f.fkIdDeed?.number != null ? `Nº ${f.fkIdDeed.number}` : "—"),
     },
@@ -478,7 +478,7 @@ export default function FoliosAdminPage() {
             { key: "id", header: tc("id"), render: (tf) => <span className="text-xs text-muted-foreground">{tf.idFolioType}</span>, className: "w-12" },
             { key: "name", header: tc("name"), render: (tf) => <span className="font-medium">{tf.name}</span> },
             {
-              key: "esAuxiliar",
+              key: "auxiliary",
               header: t("tiposDeFolio.esAuxiliar"),
               render: (tf) => (tf.isAuxiliary ? <Badge variant="secondary">{t("tiposDeFolio.esAuxiliar")}</Badge> : "—"),
             },

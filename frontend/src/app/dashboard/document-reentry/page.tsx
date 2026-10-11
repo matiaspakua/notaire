@@ -56,7 +56,7 @@ function DocumentReentryList() {
   const managementColumns: Column<DeedManagement>[] = [
     { key: "number", header: t("fields.numero"), render: (g) => <span className="font-medium">{g.number}</span> },
     { key: "heading", header: t("fields.encabezado"), render: (g) => g.heading ?? "—" },
-    { key: "estadoActual", header: tc("status"), render: (g) => g.statusActual ?? "—" },
+    { key: "currentStatus", header: tc("status"), render: (g) => g.statusActual ?? "—" },
     {
       key: "actions",
       header: "",
@@ -81,16 +81,16 @@ function DocumentReentryList() {
     return [
       { key: "name", header: t("fields.nombre"), render: (d) => d.name ?? "—" },
       {
-        key: "vence",
+        key: "expires",
         header: t("fields.vence"),
         render: (d) => <Badge variant={d.expires ? "secondary" : "outline"}>{d.expires ? tc("yes") : tc("no")}</Badge>,
       },
       {
-        key: "diasVencimiento",
+        key: "dueDays",
         header: t("fields.diasVencimiento"),
         render: (d) => (d.expires ? (d.dueDays ?? "—") : "—"),
       },
-      { key: "quienEntrega", header: t("fields.quienEntrega"), render: (d) => d.deliveredBy ?? "—" },
+      { key: "deliveredBy", header: t("fields.quienEntrega"), render: (d) => d.deliveredBy ?? "—" },
       {
         key: "actions",
         header: "",

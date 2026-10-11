@@ -98,14 +98,14 @@ export default function CuadernosPage() {
   const columns: Column<Notebook>[] = [
     { key: "id", header: tc("id"), render: (c) => <span className="text-xs text-muted-foreground">{c.idNotebook}</span>, className: "w-12" },
     { key: "number", header: tc("number"), render: (c) => <span className="font-medium">{c.number}</span> },
-    { key: "anio", header: t("fields.year"), render: (c) => c.year },
+    { key: "year", header: t("fields.year"), render: (c) => c.year },
     {
-      key: "registro",
+      key: "registry",
       header: t("fields.registro"),
       render: (c) => c.fkIdNotaryPerson?.notaryRegistrationNumber ?? "—",
     },
     {
-      key: "caratula",
+      key: "cover",
       header: t("fields.caratula"),
       render: (c) => (
         <Button

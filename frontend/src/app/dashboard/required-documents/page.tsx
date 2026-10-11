@@ -22,7 +22,7 @@ export default function DocumentsRequiredPage() {
   const t = useTranslations("documentosNecesarios");
   const tc = useTranslations("common");
 
-  const { data: tiposProcedure = [] } = useProcedureTypes();
+  const { data: procedureTypes = [] } = useProcedureTypes();
   const [procedureId, setProcedureId] = useState("");
   const idTypeProcedure = procedureId ? Number(procedureId) : undefined;
   const { data: documents = [], isLoading, isFetched } = useProcedureTemplate(idTypeProcedure);
@@ -31,26 +31,26 @@ export default function DocumentsRequiredPage() {
     {
       key: "name",
       header: t("fields.nombre"),
-      render: (p) => <span className="font-medium">{p.typeDeDocument?.name}</span>,
+      render: (p) => <span className="font-medium">{p.documentType?.name}</span>,
     },
     {
-      key: "vence",
+      key: "expires",
       header: t("fields.vence"),
-      render: (p) => (p.typeDeDocument?.expires ? tc("yes") : tc("no")),
+      render: (p) => (p.documentType?.expires ? tc("yes") : tc("no")),
     },
     {
-      key: "diasVencimiento",
+      key: "dueDays",
       header: t("fields.diasVencimiento"),
-      render: (p) => (p.typeDeDocument?.expires ? (p.typeDeDocument?.dueDays ?? "—") : "—"),
+      render: (p) => (p.documentType?.expires ? (p.documentType?.dueDays ?? "—") : "—"),
     },
     {
-      key: "quienEntrega",
+      key: "deliveredBy",
       header: t("fields.quienEntrega"),
-      render: (p) => p.typeDeDocument?.deliveredBy ?? "—",
+      render: (p) => p.documentType?.deliveredBy ?? "—",
     },
   ];
 
-  const selectedProcedureName = tiposProcedure.find((tt) => tt.idProcedureType === idTypeProcedure)?.name ?? "";
+  const selectedProcedureName = procedureTypes.find((tt) => tt.idProcedureType === idTypeProcedure)?.name ?? "";
 
   return (
     <div>
@@ -59,7 +59,7 @@ export default function DocumentsRequiredPage() {
         description={t("description")}
         actions={
           idTypeProcedure && documents.length > 0 ? (
-            <Button onClick={() => window.print()} data-testid="btn-imprimir">
+            <Button onClick={() => window.print()} data-testid="btn-print">
               <Printer size={16} className="mr-1" />
               {t("print")}
             </Button>
@@ -76,7 +76,7 @@ export default function DocumentsRequiredPage() {
                   <SelectValue placeholder={t("fields.tramitePlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {tiposProcedure.map((tt) => (
+                  {procedureTypes.map((tt) => (
                     <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>
                       {tt.name}
                     </SelectItem>
@@ -102,7 +102,7 @@ export default function DocumentsRequiredPage() {
                 columns={columns}
                 isLoading={isLoading}
                 emptyMessage={t("noDocuments")}
-                keyExtractor={(p) => `${p.typeDeProcedure?.idProcedureType}-${p.typeDeDocument?.idDocumentType}`}
+                keyExtractor={(p) => `${p.procedureType?.idProcedureType}-${p.documentType?.idDocumentType}`}
               />
             )}
           </div>

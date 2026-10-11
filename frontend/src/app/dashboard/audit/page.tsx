@@ -77,7 +77,7 @@ function AuditoriaList() {
       className: "w-16",
     },
     {
-      key: "fecha",
+      key: "date",
       header: t("fields.fecha"),
       render: (r) => (
         <span className="text-sm">
@@ -87,7 +87,7 @@ function AuditoriaList() {
       className: "w-44",
     },
     {
-      key: "usuario",
+      key: "user",
       header: t("fields.usuario"),
       render: (r) => <span className="font-medium">{r.users?.name ?? "—"}</span>,
     },

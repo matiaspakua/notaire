@@ -123,8 +123,8 @@ export interface DocumentType {
 
 export interface ProcedureTemplate {
   notes?: string;
-  typeDeProcedure?: { idProcedureType?: number; name?: string };
-  typeDeDocument?: DocumentType;
+  procedureType?: { idProcedureType?: number; name?: string };
+  documentType?: DocumentType;
 }
 
 /** GET /api/v1/folio-types — raw FolioType entity. */

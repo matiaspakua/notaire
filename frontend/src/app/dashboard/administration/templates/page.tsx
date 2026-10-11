@@ -31,7 +31,7 @@ export default function PlantillasPage() {
     queryKey: ["budget-templates"],
     queryFn: () => apiGet<BudgetTemplate[]>("/budget-templates"),
   });
-  const { data: tiposProcedure = [] } = useQuery({
+  const { data: procedureTypes = [] } = useQuery({
     queryKey: ["procedure-types"],
     queryFn: () => apiGet<ProcedureType[]>("/procedure-types"),
   });
@@ -170,21 +170,21 @@ export default function PlantillasPage() {
     }
   }
 
-  const procedureName = (id?: number) => tiposProcedure.find((x) => x.idProcedureType === id)?.name ?? `#${id}`;
+  const procedureName = (id?: number) => procedureTypes.find((x) => x.idProcedureType === id)?.name ?? `#${id}`;
   const conceptName = (id?: number) => concepts.find((x) => x.idConcept === id)?.name ?? `#${id}`;
 
   const columns: Column<BudgetTemplate>[] = [
     {
-      key: "tramite",
+      key: "procedure",
       header: t("fields.tipoTramite"),
       render: (p) => <span className="font-medium">{p.procedureType?.name ?? procedureName(p.budgetTemplatePK?.fkIdProcedureType)}</span>,
     },
     {
-      key: "concepto",
+      key: "concept",
       header: t("fields.concepto"),
       render: (p) => p.concept?.name ?? conceptName(p.budgetTemplatePK?.fkIdConcept),
     },
-    { key: "obs", header: t("fields.observaciones"), render: (p) => p.notes ?? "—" },
+    { key: "notes", header: t("fields.observaciones"), render: (p) => p.notes ?? "—" },
     {
       key: "actions",
       header: "",
@@ -244,7 +244,7 @@ export default function PlantillasPage() {
                     <SelectValue placeholder={t("fields.tipoTramitePlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
-                    {tiposProcedure.map((tt) => (
+                    {procedureTypes.map((tt) => (
                       <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>
                         {tt.name}
                       </SelectItem>
@@ -298,7 +298,7 @@ export default function PlantillasPage() {
             <SelectValue placeholder={t("fields.tipoTramitePlaceholder")} />
           </SelectTrigger>
           <SelectContent>
-            {tiposProcedure.map((tt) => (
+            {procedureTypes.map((tt) => (
               <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>
                 {tt.name}
               </SelectItem>
@@ -324,18 +324,18 @@ export default function PlantillasPage() {
             }
             columns={[
               {
-                key: "tipoDocumento",
+                key: "documentType",
                 header: t("costosDocumento.fields.tipoDocumento"),
                 render: (c) =>
                   c.documentType?.name ?? typeDocumentName(c.documentCostTemplatePK?.fkIdDocumentType),
               },
               {
-                key: "montoFijo",
+                key: "fixedAmount",
                 header: t("costosDocumento.fields.montoFijo"),
                 render: (c) => (c.fixedAmount != null ? `$${c.fixedAmount}` : "—"),
               },
               {
-                key: "porcentajeVariable",
+                key: "variablePercentage",
                 header: t("costosDocumento.fields.porcentajeVariable"),
                 render: (c) => (c.variablePercentage != null ? `${c.variablePercentage}%` : "—"),
               },

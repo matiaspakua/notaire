@@ -75,7 +75,7 @@ function BudgetsList() {
   const [itemsBudgetId, setItemsBudgetId] = useState<number | null>(null);
   const { data: budgetItems = [], isLoading: isItemsLoading } =
     useItemsByBudget(itemsBudgetId ?? undefined);
-  const { data: tiposProcedure = [] } = useProcedureTypes();
+  const { data: procedureTypes = [] } = useProcedureTypes();
   const { data: catalogoItems = [] } = useItems();
   const [selectedProcedureTypeId, setSelectedTypeProcedureId] = useState<string>("");
   const [selectedCatalogItemId, setSelectedCatalogItemId] = useState<string>("");
@@ -124,10 +124,10 @@ function BudgetsList() {
   const itemsSubtotal = budgetItems.reduce((sum, item) => sum + (item.value ?? 0), 0);
 
   const [searchBudget, setSearchBudget] = useState("");
-  const [filterEstado, setFilterEstado] = useState<string>("TODOS");
+  const [statusFilter, setStatusFilter] = useState<string>("TODOS");
   const search = searchBudget.trim();
   const searchId = /^\d+$/.test(search) ? Number(search) : null;
-  const byStatus = filterEstado !== "TODOS";
+  const byStatus = statusFilter !== "TODOS";
 
   // One server page at a time, page and size in the URL (#1340): the list used
   // to load size=1000, so budgets after the 1000th were unreachable.
@@ -139,9 +139,9 @@ function BudgetsList() {
   useClampPage(paging, byStatus || searchId !== null ? undefined : budgetsPage?.totalPages);
 
   // CU60: the backend reads `status`; `estado` was ignored and returned every budget.
-  const { data: byEstado = [], isLoading: isLoadingEstado } = useQuery({
-    queryKey: ["budgets", "search", filterEstado],
-    queryFn: () => apiGet<Budget[]>(`/budgets/search?status=${encodeURIComponent(filterEstado)}`),
+  const { data: budgetsByStatus = [], isLoading: isLoadingByStatus } = useQuery({
+    queryKey: ["budgets", "search", statusFilter],
+    queryFn: () => apiGet<Budget[]>(`/budgets/search?status=${encodeURIComponent(statusFilter)}`),
     enabled: byStatus,
   });
 
@@ -156,14 +156,14 @@ function BudgetsList() {
     enabled: searchId !== null,
   });
 
-  const shown = byStatus ? byEstado : budgetsPage?.content ?? [];
-  const isLoading = searchId !== null ? isLoadingId : byStatus ? isLoadingEstado : isLoadingPage;
+  const shown = byStatus ? budgetsByStatus : budgetsPage?.content ?? [];
+  const isLoading = searchId !== null ? isLoadingId : byStatus ? isLoadingByStatus : isLoadingPage;
 
   // A name filters the rows shown (the page or the status list): the backend has
   // no budget search by client name.
   const filteredBudgets =
     searchId !== null
-      ? byId && (!byStatus || normalizeBudgetStatus(byId.status) === filterEstado)
+      ? byId && (!byStatus || normalizeBudgetStatus(byId.status) === statusFilter)
         ? [byId]
         : []
       : shown.filter((p) => {
@@ -228,22 +228,22 @@ function BudgetsList() {
       className: "w-12",
     },
     {
-      key: "fecha",
+      key: "date",
       header: tc("date"),
       render: (p) => formatDate(p.date),
     },
     {
-      key: "persona",
+      key: "person",
       header: t("fields.cliente"),
       render: (p) => p.person ? fullName(p.person) : <span className="text-muted-foreground">—</span>,
     },
     {
-      key: "monto",
+      key: "amount",
       header: tc("amount"),
       render: (p) => <span className="font-medium">{formatCurrency(p.propertyAmount)}</span>,
     },
     {
-      key: "estado",
+      key: "status",
       header: tc("status"),
       render: (p) => statusLabel(p.status),
     },
@@ -316,7 +316,7 @@ function BudgetsList() {
           data-testid="input-search-budget"
           className="w-full sm:w-52"
         />
-        <Select value={filterEstado} onValueChange={setFilterEstado}>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger data-testid="select-status" className="w-44" aria-label={t("estadoFilter")}>
             <SelectValue placeholder={`${tc("status")}...`} />
           </SelectTrigger>
@@ -387,7 +387,7 @@ function BudgetsList() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value={NO_TEMPLATE}>{t("fields.sinPlantilla")}</SelectItem>
-                      {tiposProcedure.map((tt) => (
+                      {procedureTypes.map((tt) => (
                         <SelectItem key={tt.idProcedureType} value={tt.idProcedureType!.toString()}>
                           {tt.name}
                         </SelectItem>
@@ -515,15 +515,15 @@ function BudgetsList() {
             <FormSection title={t("items.plantillaSection")}>
               <FormField
                 label={t("items.selectTipoTramite")}
-                helperText={tiposProcedure.length === 0 ? t("items.noTiposTramite") : undefined}
+                helperText={procedureTypes.length === 0 ? t("items.noTiposTramite") : undefined}
               >
                 <div className="flex gap-2">
                   <Select value={selectedProcedureTypeId} onValueChange={setSelectedTypeProcedureId}>
-                    <SelectTrigger data-testid="select-procedure-type-items" disabled={tiposProcedure.length === 0}>
+                    <SelectTrigger data-testid="select-procedure-type-items" disabled={procedureTypes.length === 0}>
                       <SelectValue placeholder={t("items.selectTipoTramite")} />
                     </SelectTrigger>
                     <SelectContent>
-                      {tiposProcedure.map((tt) => (
+                      {procedureTypes.map((tt) => (
                         <SelectItem key={tt.idProcedureType} value={tt.idProcedureType!.toString()}>
                           {tt.name}
                         </SelectItem>

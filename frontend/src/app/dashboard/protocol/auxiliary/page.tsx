@@ -63,7 +63,7 @@ export default function ProtocoloAuxiliarPage() {
       className: "w-12",
     },
     { key: "number", header: tc("number"), render: (f) => <span className="font-medium">{f.number ?? "—"}</span> },
-    { key: "tipo", header: tc("type"), render: (f) => f.fkIdFolioType?.name ?? "—" },
+    { key: "type", header: tc("type"), render: (f) => f.fkIdFolioType?.name ?? "—" },
     {
       key: "action",
       header: "",

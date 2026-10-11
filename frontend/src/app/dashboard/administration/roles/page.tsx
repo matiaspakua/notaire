@@ -102,14 +102,14 @@ export default function RolesPage() {
   const columns: Column<Role>[] = [
     { key: "id", header: tc("id"), render: (r) => <span className="text-xs text-muted-foreground">{r.idRole}</span>, className: "w-12" },
     { key: "name", header: tc("name"), render: (r) => <span className="font-medium">{r.name}</span> },
-    { key: "descripcion", header: tc("description"), render: (r) => <span className="text-sm text-muted-foreground">{r.description ?? "—"}</span> },
-    { key: "modulos", header: t("fields.modulos"), render: (r) => (
+    { key: "description", header: tc("description"), render: (r) => <span className="text-sm text-muted-foreground">{r.description ?? "—"}</span> },
+    { key: "modules", header: t("fields.modulos"), render: (r) => (
       <div className="flex flex-wrap gap-1">
         {(r.modulos ?? []).map((m) => <Badge key={m} variant="outline" className="text-xs">{m}</Badge>)}
         {(r.modulos ?? []).length === 0 && <span className="text-xs text-muted-foreground">{t("noPermissions")}</span>}
       </div>
     )},
-    { key: "activo", header: tc("status"), render: (r) => r.active ? <Badge variant="success">{tc("active")}</Badge> : <Badge variant="secondary">{tc("inactive")}</Badge> },
+    { key: "active", header: tc("status"), render: (r) => r.active ? <Badge variant="success">{tc("active")}</Badge> : <Badge variant="secondary">{tc("inactive")}</Badge> },
     {
       key: "actions", header: "", className: "w-24",
       render: (r) => (

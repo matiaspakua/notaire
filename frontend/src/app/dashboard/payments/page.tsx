@@ -112,10 +112,10 @@ export default function PagosPage() {
 
   const columns: Column<Payment>[] = [
     { key: "id", header: tc("id"), render: (p) => <span className="text-xs text-muted-foreground">{p.idPayment}</span>, className: "w-12" },
-    { key: "presupuesto", header: t("fields.presupuesto"), render: (p) => <span className="text-xs text-muted-foreground">#{p.idBudget ?? p.fkIdBudget?.idBudget ?? "—"}</span>, className: "w-20" },
-    { key: "fecha", header: tc("date"), render: (p) => formatDate(p.date) },
-    { key: "monto", header: tc("amount"), render: (p) => <span className="font-medium">{formatCurrency(p.amount)}</span> },
-    { key: "metodo", header: t("fields.metodoPago"), render: (p) => p.paymentMethod ?? "—" },
+    { key: "budget", header: t("fields.presupuesto"), render: (p) => <span className="text-xs text-muted-foreground">#{p.idBudget ?? p.fkIdBudget?.idBudget ?? "—"}</span>, className: "w-20" },
+    { key: "date", header: tc("date"), render: (p) => formatDate(p.date) },
+    { key: "amount", header: tc("amount"), render: (p) => <span className="font-medium">{formatCurrency(p.amount)}</span> },
+    { key: "method", header: t("fields.metodoPago"), render: (p) => p.paymentMethod ?? "—" },
     {
       key: "actions", header: "", className: "w-32",
       render: (p) => (

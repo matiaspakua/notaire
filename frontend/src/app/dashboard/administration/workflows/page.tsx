@@ -93,7 +93,7 @@ export default function WorkflowsPage() {
     { key: "name", header: tc("name"), render: (wf) => <span className="font-medium">{wf.name}</span> },
     { key: "desc", header: tc("description"), render: (wf) => wf.description ?? "—" },
     {
-      key: "activo",
+      key: "active",
       header: tc("status"),
       render: (wf) => (
         <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${wf.active ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}>

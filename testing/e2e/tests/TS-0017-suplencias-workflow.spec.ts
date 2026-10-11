@@ -26,9 +26,9 @@ test.describe("CU22 - Registrar Substitution", () => {
     // Then — modal uses IDs for notary/suplente (numeric inputs), and date range (Desde/Hasta)
     await steps.thenModalIsVisible("Nueva suplencia");
     await expect(steps.page.getByTestId("input-notary-id")).toBeVisible();
-    await expect(steps.page.getByTestId("input-suplente-id")).toBeVisible();
-    await expect(steps.page.getByTestId("input-desde")).toBeVisible();
-    await expect(steps.page.getByTestId("input-hasta")).toBeVisible();
+    await expect(steps.page.getByTestId("input-substitute-id")).toBeVisible();
+    await expect(steps.page.getByTestId("input-start-date")).toBeVisible();
+    await expect(steps.page.getByTestId("input-end-date")).toBeVisible();
   });
 
   test("CU22-GW02: Given the form is open, When it is filled and submitted, Then the substitution is created", async () => {
@@ -38,9 +38,9 @@ test.describe("CU22 - Registrar Substitution", () => {
 
     // When — fill notary ID, suplente ID, and date range via testids
     await steps.page.getByTestId("input-notary-id").fill("1");
-    await steps.page.getByTestId("input-suplente-id").fill("1");
-    await steps.page.getByTestId("input-desde").fill("2026-05-01");
-    await steps.page.getByTestId("input-hasta").fill("2026-05-31");
+    await steps.page.getByTestId("input-substitute-id").fill("1");
+    await steps.page.getByTestId("input-start-date").fill("2026-05-01");
+    await steps.page.getByTestId("input-end-date").fill("2026-05-31");
     await steps.page.getByTestId("btn-save-substitution").click();
 
     // Then — wait for modal to close, then verify success and table

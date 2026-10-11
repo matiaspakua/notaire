@@ -125,17 +125,17 @@ export default function ItemsPage() {
       render: (i) => i.name ?? "—",
     },
     {
-      key: "valor",
+      key: "value",
       header: t("fields.valor"),
       render: (i) => <span className="font-medium">{formatCurrency(i.value)}</span>,
     },
     {
-      key: "presupuesto",
+      key: "budget",
       header: t("fields.presupuesto"),
       render: (i) => i.fkIdBudget?.idBudget ? `#${i.fkIdBudget.idBudget}` : "—",
     },
     {
-      key: "tipo",
+      key: "type",
       header: t("fields.tipo"),
       render: (i) => tipoLabel(i.type ?? "NORMAL"),
     },
@@ -211,9 +211,9 @@ export default function ItemsPage() {
               emptyMessage={t("report.empty")}
               columns={[
                 { key: "name", header: t("fields.nombre"), render: (i) => i.name ?? "—" },
-                { key: "tipo", header: t("fields.tipo"), render: (i) => tipoLabel(i.type ?? "NORMAL") },
-                { key: "motivo", header: t("fields.motivo"), render: (i) => i.reason ?? "—" },
-                { key: "valor", header: t("fields.valor"), render: (i) => formatCurrency(i.value) },
+                { key: "type", header: t("fields.tipo"), render: (i) => tipoLabel(i.type ?? "NORMAL") },
+                { key: "reason", header: t("fields.motivo"), render: (i) => i.reason ?? "—" },
+                { key: "value", header: t("fields.valor"), render: (i) => formatCurrency(i.value) },
               ]}
             />
           )}

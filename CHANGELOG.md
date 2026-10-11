@@ -41,6 +41,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English frontend locals and column keys** (#1490, CU75): Data table
+  column ids, substitution date inputs, and React Query keys for management
+  statuses, procedure types, and procedure templates use English names.
+  Local test fixtures use English field names. Message catalog keys such as
+  `fields.estado`, `fields.suplente`, and `administracion.estadosGestion` stay.
+  Stored labels such as `APROBADO`, `Activo`, `En trámite`, and `Honorarios` stay.
+  PDF filenames stay.
 - **English comments** (#1490, CU75): Class and method comments in the
   live backend and a few frontend notes use English. Stored workflow
   labels such as `Generada`, `Presentada`, `Observada`, `Inscripta`,

@@ -193,20 +193,20 @@ describe("Payment outstanding-balance computation (CU47)", () => {
 // ──────────────────────────────────────────────
 
 describe("Deed display label (CU05)", () => {
-  function getDeedLabel(number?: number, fecha?: string): string {
-    if (!number) return "Sin número";
-    return fecha ? `Deed #${number} — ${fecha}` : `Deed #${number}`;
+  function getDeedLabel(number?: number, date?: string): string {
+    if (!number) return "No number";
+    return date ? `Deed #${number} — ${date}` : `Deed #${number}`;
   }
 
-  it("returns \"Sin número\" when number is undefined", () => {
-    expect(getDeedLabel(undefined, "2026-01-01")).toBe("Sin número");
+  it("returns \"No number\" when number is undefined", () => {
+    expect(getDeedLabel(undefined, "2026-01-01")).toBe("No number");
   });
 
   it("returns label with date when both present", () => {
     expect(getDeedLabel(42, "2026-03-15")).toBe("Deed #42 — 2026-03-15");
   });
 
-  it("returns label without date when fecha is absent", () => {
+  it("returns label without date when the date is absent", () => {
     expect(getDeedLabel(7)).toBe("Deed #7");
   });
 });
@@ -216,22 +216,22 @@ describe("Deed display label (CU05)", () => {
 // ──────────────────────────────────────────────
 
 describe("Person display name (CU17, CU18, CU61)", () => {
-  function getDisplayName(person?: { name?: string; apellido?: string }): string {
+  function getDisplayName(person?: { firstName?: string; lastName?: string }): string {
     if (!person) return "—";
-    const parts = [person.apellido, person.name].filter(Boolean);
+    const parts = [person.lastName, person.firstName].filter(Boolean);
     return parts.length > 0 ? parts.join(", ") : "—";
   }
 
-  it("formats as apellido, nombre", () => {
-    expect(getDisplayName({ name: "Juan", apellido: "García" })).toBe("García, Juan");
+  it("formats as last name, first name", () => {
+    expect(getDisplayName({ firstName: "Juan", lastName: "García" })).toBe("García, Juan");
   });
 
-  it("returns only apellido when nombre is missing", () => {
-    expect(getDisplayName({ apellido: "García" })).toBe("García");
+  it("returns only the last name when the first name is missing", () => {
+    expect(getDisplayName({ lastName: "García" })).toBe("García");
   });
 
-  it("returns only nombre when apellido is missing", () => {
-    expect(getDisplayName({ name: "Juan" })).toBe("Juan");
+  it("returns only the first name when the last name is missing", () => {
+    expect(getDisplayName({ firstName: "Juan" })).toBe("Juan");
   });
 
   it("returns a dash for an empty person", () => {
@@ -248,21 +248,21 @@ describe("Person display name (CU17, CU18, CU61)", () => {
 // ──────────────────────────────────────────────
 
 describe("Copy type shape (CU44, CU53)", () => {
-  it("copia has required fields", () => {
-    const copia = {
-      idCopia: 1,
+  it("a copy has the expected fields", () => {
+    const copy = {
+      idCopy: 1,
       testimony: { idTestimony: 10 },
-      fecha: "2026-02-01",
-      tipo: "Simple",
+      date: "2026-02-01",
+      type: "Simple",
     };
-    expect(copia.idCopia).toBe(1);
-    expect(copia.testimony.idTestimony).toBe(10);
-    expect(copia.fecha).toBe("2026-02-01");
+    expect(copy.idCopy).toBe(1);
+    expect(copy.testimony.idTestimony).toBe(10);
+    expect(copy.date).toBe("2026-02-01");
   });
 
-  it("copia can have undefined testimonio", () => {
-    const copia: { idCopia?: number; testimony?: unknown } = { idCopia: 5 };
-    expect(copia.testimony).toBeUndefined();
+  it("a copy can omit the testimony", () => {
+    const copy: { idCopy?: number; testimony?: unknown } = { idCopy: 5 };
+    expect(copy.testimony).toBeUndefined();
   });
 });
 
@@ -272,14 +272,14 @@ describe("Copy type shape (CU44, CU53)", () => {
 
 describe("Concept type shape (CU39, CU49)", () => {
   it("a concept has a name and a value", () => {
-    const concept = { idConcept: 1, name: "Honorarios", valor: 1500 };
+    const concept = { idConcept: 1, name: "Honorarios", value: 1500 };
     expect(concept.name).toBe("Honorarios");
-    expect(concept.valor).toBe(1500);
+    expect(concept.value).toBe(1500);
   });
 
   it("a concept value can be 0", () => {
-    const concept = { idConcept: 2, name: "Exento", valor: 0 };
-    expect(concept.valor).toBe(0);
+    const concept = { idConcept: 2, name: "Exento", value: 0 };
+    expect(concept.value).toBe(0);
   });
 });
 
@@ -291,18 +291,18 @@ describe("Property type shape (CU08)", () => {
   it("a property has address fields", () => {
     const property = {
       idProperty: 1,
-      calle: "Av. Corrientes",
+      street: "Av. Corrientes",
       number: 1234,
-      ciudad: "Buenos Aires",
+      city: "Buenos Aires",
     };
-    expect(property.calle).toBe("Av. Corrientes");
+    expect(property.street).toBe("Av. Corrientes");
     expect(property.number).toBe(1234);
   });
 
   it("a property can omit optional fields", () => {
-    const property: { idProperty?: number; piso?: string; depto?: string } = { idProperty: 1 };
-    expect(property.piso).toBeUndefined();
-    expect(property.depto).toBeUndefined();
+    const property: { idProperty?: number; floor?: string; unit?: string } = { idProperty: 1 };
+    expect(property.floor).toBeUndefined();
+    expect(property.unit).toBeUndefined();
   });
 });
 
@@ -311,19 +311,19 @@ describe("Property type shape (CU08)", () => {
 // ──────────────────────────────────────────────
 
 describe("DocumentType type shape (CU27, CU65)", () => {
-  it("tipoDeDocumento has id and nombre", () => {
-    const tipo = { idTypeDocument: 3, name: "DNI" };
-    expect(tipo.idTypeDocument).toBe(3);
-    expect(tipo.name).toBe("DNI");
+  it("a document type has an id and a name", () => {
+    const documentType = { idTypeDocument: 3, name: "DNI" };
+    expect(documentType.idTypeDocument).toBe(3);
+    expect(documentType.name).toBe("DNI");
   });
 
-  it("filter tipos by partial name match", () => {
-    const tipos = [
+  it("filters document types by a partial name", () => {
+    const documentTypes = [
       { idTypeDocument: 1, name: "DNI" },
       { idTypeDocument: 2, name: "Pasaporte" },
       { idTypeDocument: 3, name: "CUIT" },
     ];
-    const result = tipos.filter((t) => t.name.toLowerCase().includes("pas"));
+    const result = documentTypes.filter((documentType) => documentType.name.toLowerCase().includes("pas"));
     expect(result).toHaveLength(1);
     expect(result[0].name).toBe("Pasaporte");
   });
@@ -334,13 +334,13 @@ describe("DocumentType type shape (CU27, CU65)", () => {
 // ──────────────────────────────────────────────
 
 describe("UserAccount type shape (CU20, CU21)", () => {
-  it("usuario has username field", () => {
-    const u = { idUsuario: 1, usuario: "admin", idPerson: 5 };
-    expect(u.usuario).toBe("admin");
-    expect(u.idPerson).toBe(5);
+  it("a user has a username field", () => {
+    const user = { idUser: 1, username: "admin", idPerson: 5 };
+    expect(user.username).toBe("admin");
+    expect(user.idPerson).toBe(5);
   });
 
-  it("usuario login requires non-empty credentials", () => {
+  it("login requires non-empty credentials", () => {
     function validateLogin(user: string, pwd: string): boolean {
       return user.trim().length > 0 && pwd.trim().length > 0;
     }

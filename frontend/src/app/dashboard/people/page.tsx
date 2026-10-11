@@ -176,7 +176,7 @@ function PeopleList() {
       render: (p) => p.email ?? "—",
     },
     {
-      key: "cliente",
+      key: "client",
       header: tc("type"),
       render: (p) =>
         p.isClient ? (

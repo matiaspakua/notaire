@@ -7,8 +7,8 @@ import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import type { ProcedureType } from "@/types";
 
 export const procedureTypeKeys = {
-  all: ["tiposTramite"] as const,
-  detail: (id: number) => ["tiposTramite", id] as const,
+  all: ["procedureTypes"] as const,
+  detail: (id: number) => ["procedureTypes", id] as const,
 };
 
 export function useProcedureTypes() {
