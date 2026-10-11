@@ -21,16 +21,16 @@ public class ValidationAdministrator
         return instance;
     }
 
-    public Boolean validateEmptyField(String campoParaValidar)
+    public Boolean validateEmptyField(String fieldToValidate)
     {
-        return campoParaValidar.isEmpty();
+        return fieldToValidate.isEmpty();
     }
 
-    public Boolean validateTextOnlyField(String campoParaValidar)
+    public Boolean validateTextOnlyField(String fieldToValidate)
     {
         Boolean result = Boolean.TRUE;
-        char[] caractes = campoParaValidar.toCharArray();
-        for (char c : caractes)
+        char[] characters = fieldToValidate.toCharArray();
+        for (char c : characters)
         {
             if (!((Character.isLetter(c)) || (Character.isSpaceChar(c))))
             {
@@ -40,11 +40,11 @@ public class ValidationAdministrator
         return result;
     }
 
-    public Boolean validateIntegerOnlyField(String campoParaValidar)
+    public Boolean validateIntegerOnlyField(String fieldToValidate)
     {
         Boolean result = Boolean.TRUE;
-        char[] caractes = campoParaValidar.toCharArray();
-        for (char c : caractes)
+        char[] characters = fieldToValidate.toCharArray();
+        for (char c : characters)
         {
             if (!Character.isDigit(c))
             {
@@ -54,17 +54,17 @@ public class ValidationAdministrator
         return result;
     }
 
-    public Boolean validateLettersAndNumbersField(String campoParaValidar)
+    public Boolean validateLettersAndNumbersField(String fieldToValidate)
     {
         Boolean result = Boolean.TRUE;
         try
         {
-            if (campoParaValidar.isEmpty())
+            if (fieldToValidate.isEmpty())
             {
                 return false;
             }
-            char[] caractes = campoParaValidar.toCharArray();
-            for (char c : caractes)
+            char[] characters = fieldToValidate.toCharArray();
+            for (char c : characters)
             {
                 if (!Character.isLetterOrDigit(c))
                 {
@@ -83,13 +83,13 @@ public class ValidationAdministrator
         return result;
     }
 
-    public Boolean validateCharacters(String pCampo)
+    public Boolean validateCharacters(String field)
     {
         Boolean flag = false;
 
-        for (int i = 0; i < pCampo.length(); i++)
+        for (int i = 0; i < field.length(); i++)
         {
-            char c = pCampo.charAt(i);
+            char c = field.charAt(i);
 
             if ((!Character.isLetter(c)
                     || Character.isSpaceChar(c)
@@ -105,13 +105,13 @@ public class ValidationAdministrator
         return flag;
     }
 
-    public Boolean validateLettersAndNumbersOnly(String pCampo)
+    public Boolean validateLettersAndNumbersOnly(String field)
     {
         Boolean flag = true;
 
-        for (int i = 0; i < pCampo.length(); i++)
+        for (int i = 0; i < field.length(); i++)
         {
-            char c = pCampo.charAt(i);
+            char c = field.charAt(i);
 
             if (c == '-' || c == '_' || c == '(' || c == '.' || c == ','
                     || c == '@' || c == '<' || c == '>' || c == '/' || c == '?'
@@ -126,13 +126,13 @@ public class ValidationAdministrator
 
     }
 
-    public Boolean validateLettersAndHyphens(String pCampo)
+    public Boolean validateLettersAndHyphens(String field)
     {
         Boolean flag = true;
 
-        for (int i = 0; i < pCampo.length(); i++)
+        for (int i = 0; i < field.length(); i++)
         {
-            char c = pCampo.charAt(i);
+            char c = field.charAt(i);
 
             if (!Character.isLetterOrDigit(c))
             {
@@ -145,17 +145,17 @@ public class ValidationAdministrator
         return flag;
     }
 
-    public Boolean validateCharacterCount(int pCantCharter, String pCampo)
+    public Boolean validateCharacterCount(int expectedCount, String field)
     {
         Boolean flag = false;
         int count = 0;
 
-        for (int i = 0; i < pCampo.length(); i++)
+        for (int i = 0; i < field.length(); i++)
         {
             count++;
         }
 
-        if (count > pCantCharter)
+        if (count > expectedCount)
         {
             flag = true;
         }
@@ -163,11 +163,11 @@ public class ValidationAdministrator
         return flag;
     }
 
-    public Boolean validateNumber(int numberParaValidar)
+    public Boolean validateNumber(int numberToValidate)
     {
         Boolean result = Boolean.TRUE;
 
-        if (numberParaValidar < 0)
+        if (numberToValidate < 0)
         {
             return false;
         }
@@ -175,13 +175,13 @@ public class ValidationAdministrator
         return result;
     }
 
-    public Boolean validateFieldSpaces(String pCampo)
+    public Boolean validateFieldSpaces(String field)
     {
         Boolean flag = false;
 
-        for (int i = 0; i < pCampo.length(); i++)
+        for (int i = 0; i < field.length(); i++)
         {
-            char c = pCampo.charAt(i);
+            char c = field.charAt(i);
 
             if ((Character.isSpaceChar(c)))
             {
@@ -210,11 +210,11 @@ public class ValidationAdministrator
         }
     }
 
-    public Boolean validateDateAfterToday(Date dateParaValidar)
+    public Boolean validateDateAfterToday(Date dateToValidate)
     {
         boolean result = true;
 
-        if (dateParaValidar.before(Calendar.getInstance().getTime()))
+        if (dateToValidate.before(Calendar.getInstance().getTime()))
         {
             return false;
         }

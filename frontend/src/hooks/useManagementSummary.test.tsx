@@ -23,7 +23,7 @@ function createWrapper() {
 
 describe("managementSummaryKeys", () => {
   it("case and financial keys include the management id", () => {
-    expect(managementSummaryKeys.caso(4)).toEqual(["management-case-summary", 4]);
+    expect(managementSummaryKeys.caseSummary(4)).toEqual(["management-case-summary", 4]);
     expect(managementSummaryKeys.financialSummary(4)).toEqual(["management-financial-summary", 4]);
   });
 });

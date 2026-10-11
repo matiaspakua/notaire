@@ -181,9 +181,9 @@ public class AuditRecordJpaController implements Serializable, JpaPersistence {
         }
     }
 
-    public ArrayList<AuditRecord> searchRecordAuditoriasUser(User miUser) {
-        List<AuditRecord> listaAudit = null;
-        ArrayList<AuditRecord> userListaAudit = new ArrayList<AuditRecord>();
+    public ArrayList<AuditRecord> searchAuditRecordsByUser(User user) {
+        List<AuditRecord> auditRecords = null;
+        ArrayList<AuditRecord> userAuditRecords = new ArrayList<AuditRecord>();
         Boolean flag = false;
         try {
 
@@ -191,24 +191,24 @@ public class AuditRecordJpaController implements Serializable, JpaPersistence {
 
             Query query = em.createNamedQuery("AuditRecord.findAll");
 
-            listaAudit = query.getResultList();
+            auditRecords = query.getResultList();
 
             // Filter the search result to the requested user account
-            for (int i = 0; i < listaAudit.size(); i++) {
-                if (miUser.getIdUser().equals(listaAudit.get(i).getFkIdUser().getIdUser())) {
+            for (int i = 0; i < auditRecords.size(); i++) {
+                if (user.getIdUser().equals(auditRecords.get(i).getFkIdUser().getIdUser())) {
                     flag = true;
-                    userListaAudit.add(listaAudit.get(i));
+                    userAuditRecords.add(auditRecords.get(i));
                 }
             }
 
             if (!flag) {
-                userListaAudit = null;
+                userAuditRecords = null;
             }
 
         } catch (Exception e) {
-            System.out.println("Error Metodo : getDtoRegistroAuditoria");
+            System.out.println("Error in searchAuditRecordsByUser");
         }
-        return userListaAudit;
+        return userAuditRecords;
 
     }
 

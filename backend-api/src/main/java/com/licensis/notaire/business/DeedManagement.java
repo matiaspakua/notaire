@@ -251,12 +251,12 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
         dtoManagement.setPersonNotary(this.getDtoNotary());
 
         // Procedures associated with this management
-        ArrayList<DtoProcedure> listaDtoProcedures = new ArrayList<>();
+        ArrayList<DtoProcedure> procedureDtos = new ArrayList<>();
         if (procedureList != null && !procedureList.isEmpty()) {
             for (int i = 0; i < procedureList.size(); i++) {
-                listaDtoProcedures.add(this.getDtoProcedure(procedureList.get(i)));
+                procedureDtos.add(this.getDtoProcedure(procedureList.get(i)));
             }
-            dtoManagement.setAssociatedProcedures(listaDtoProcedures);
+            dtoManagement.setAssociatedProcedures(procedureDtos);
         }
 
         /*
@@ -265,23 +265,23 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
          * A management can have multiple procedures, and a procedure multiple people,
          * which would otherwise repeat people on the management DTO.
          */
-        ArrayList<DtoPerson> listaDtoPersons = new ArrayList<>();
-        ArrayList<Integer> listaIdPerson = new ArrayList<>();
+        ArrayList<DtoPerson> personDtos = new ArrayList<>();
+        ArrayList<Integer> personIds = new ArrayList<>();
 
         if (this.procedureList != null && !(this.procedureList.isEmpty())) {
             for (int j = 0; j < procedureList.size(); j++) {
                 for (int i = 0; i < procedureList.get(j).getPersonList().size(); i++) {
 
-                    DtoPerson miDtoPerson = this.getDtoPersonInvolucrada(procedureList.get(j).getPersonList().get(i));
+                    DtoPerson personDto = this.getInvolvedPersonDto(procedureList.get(j).getPersonList().get(i));
 
-                    if (!listaIdPerson.contains(miDtoPerson.getId())) {
-                        listaIdPerson.add(miDtoPerson.getId());
-                        listaDtoPersons.add(miDtoPerson);
+                    if (!personIds.contains(personDto.getId())) {
+                        personIds.add(personDto.getId());
+                        personDtos.add(personDto);
                     }
                 }
             }
 
-            dtoManagement.setInvolvedClients(listaDtoPersons);
+            dtoManagement.setInvolvedClients(personDtos);
         }
 
         // Management status — null when unset
@@ -343,52 +343,52 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
         return dtoPerson;
     }
 
-    public DtoProcedure getDtoProcedure(Procedure miProcedure) {
+    public DtoProcedure getDtoProcedure(Procedure procedure) {
 
-        DtoProcedure miDto = new DtoProcedure();
+        DtoProcedure procedureDto = new DtoProcedure();
 
-        miDto.setIdProcedure(miProcedure.getIdProcedure());
-        miDto.setNotes(miProcedure.getNotes());
-        miDto.setProcedureType(miProcedure.getFkIdProcedureType().getDto());
+        procedureDto.setIdProcedure(procedure.getIdProcedure());
+        procedureDto.setNotes(procedure.getNotes());
+        procedureDto.setProcedureType(procedure.getFkIdProcedureType().getDto());
 
-        if (miProcedure.getFkIdProperty() != null) {
-            miDto.setProperty(miProcedure.getFkIdProperty().getDto());
+        if (procedure.getFkIdProperty() != null) {
+            procedureDto.setProperty(procedure.getFkIdProperty().getDto());
         } else {
-            miDto.setProperty(null);
+            procedureDto.setProperty(null);
         }
 
-        return miDto;
+        return procedureDto;
     }
 
-    public DtoPerson getDtoPersonInvolucrada(Person miPerson) {
+    public DtoPerson getInvolvedPersonDto(Person person) {
         DtoPerson dtoPerson = new DtoPerson();
 
-        // Version of the objeto
-        dtoPerson.setVersion(miPerson.getVersion());
-        dtoPerson.setId(miPerson.getPersonId());
-        dtoPerson.setFirstName(miPerson.getFirstName());
-        dtoPerson.setLastName(miPerson.getLastName());
-        dtoPerson.setTaxId(miPerson.getTaxId());
-        dtoPerson.setEmail(miPerson.getEmail());
-        dtoPerson.setIsClient(miPerson.getIsClient());
-        dtoPerson.setMaritalStatus(miPerson.getMaritalStatus());
-        dtoPerson.setBirthDate(miPerson.getBirthDate());
-        dtoPerson.setNationality(miPerson.getNationality());
-        dtoPerson.setIdentificationNumber(miPerson.getIdentificationNumber());
-        dtoPerson.setMarriageCount(miPerson.getMarriageCount());
-        dtoPerson.setOccupation(miPerson.getOccupation());
-        dtoPerson.setAddress(miPerson.getAddress());
-        dtoPerson.setNotaryRegistrationNumber(miPerson.getNotaryRegistrationNumber());
-        dtoPerson.setSex(miPerson.getSex());
-        dtoPerson.setPhone(miPerson.getPhone());
+        // Object version
+        dtoPerson.setVersion(person.getVersion());
+        dtoPerson.setId(person.getPersonId());
+        dtoPerson.setFirstName(person.getFirstName());
+        dtoPerson.setLastName(person.getLastName());
+        dtoPerson.setTaxId(person.getTaxId());
+        dtoPerson.setEmail(person.getEmail());
+        dtoPerson.setIsClient(person.getIsClient());
+        dtoPerson.setMaritalStatus(person.getMaritalStatus());
+        dtoPerson.setBirthDate(person.getBirthDate());
+        dtoPerson.setNationality(person.getNationality());
+        dtoPerson.setIdentificationNumber(person.getIdentificationNumber());
+        dtoPerson.setMarriageCount(person.getMarriageCount());
+        dtoPerson.setOccupation(person.getOccupation());
+        dtoPerson.setAddress(person.getAddress());
+        dtoPerson.setNotaryRegistrationNumber(person.getNotaryRegistrationNumber());
+        dtoPerson.setSex(person.getSex());
+        dtoPerson.setPhone(person.getPhone());
 
         DtoIdentificationType dtoIdentificationType = new DtoIdentificationType();
-        dtoIdentificationType.setIdIdentificationType(miPerson.getFkIdIdentificationType().getIdIdentificationType());
+        dtoIdentificationType.setIdIdentificationType(person.getFkIdIdentificationType().getIdIdentificationType());
 
         dtoPerson.setDtoIdentificationType(dtoIdentificationType);
 
         dtoIdentificationType.setName(IdentificationTypeLookup.shared()
-                .nameOf(miPerson.getFkIdIdentificationType().getIdIdentificationType()));
+                .nameOf(person.getFkIdIdentificationType().getIdIdentificationType()));
 
         return dtoPerson;
     }

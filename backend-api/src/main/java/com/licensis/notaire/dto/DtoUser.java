@@ -103,7 +103,7 @@ public class DtoUser
     }
 
     @JsonIgnore
-    public String getRecordAuditorias()
+    public String getAuditLabel()
     {
         String auditRecord;
 
@@ -112,7 +112,7 @@ public class DtoUser
         return auditRecord;
     }
 
-    //Controlo the version of the objeto
+    // Object version
     public Integer getVersion()
     {
         return version;

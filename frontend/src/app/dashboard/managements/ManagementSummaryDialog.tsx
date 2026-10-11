@@ -26,17 +26,17 @@ interface ManagementSummaryDialogProps {
 /** #774 - Deeds, testimonies (with registry state), copies, and payments of a management. */
 export function ManagementSummaryDialog({ managementId, onClose }: ManagementSummaryDialogProps) {
   const t = useTranslations("gestiones.resumen");
-  const { data: caso, isLoading } = useManagementCaseSummary(managementId ?? undefined);
+  const { data: caseSummary, isLoading } = useManagementCaseSummary(managementId ?? undefined);
   const { data: financialSummary } = useManagementFinancialSummary(managementId ?? undefined);
 
-  const deeds = caso?.deeds ?? [];
-  const documents = caso?.documents ?? [];
+  const deeds = caseSummary?.deeds ?? [];
+  const documents = caseSummary?.documents ?? [];
 
   return (
     <Dialog open={!!managementId} onOpenChange={(open) => !open && onClose()}>
       <DialogContent data-testid="dialog-summary-case">
         <FormContainer>
-          <FormHeader dialogTitle title={t("title")} description={caso ? `${caso.managementNumber} — ${caso.heading ?? ""}` : undefined} />
+          <FormHeader dialogTitle title={t("title")} description={caseSummary ? `${caseSummary.managementNumber} — ${caseSummary.heading ?? ""}` : undefined} />
           {isLoading ? (
             <p className="text-sm text-muted-foreground">{t("loading")}</p>
           ) : (
