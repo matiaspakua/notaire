@@ -87,6 +87,7 @@ echo ""
 echo ">>> DevSecOps Infrastructure"
 echo "----------------------------------------"
 check_service "Dashboard (Homer)" "http://localhost:8888" 200
+check_service "Security reports" "http://localhost:8890" 200
 check_service "SonarQube" "http://localhost:9000/api/system/status" 200
 check_service "Prometheus" "http://localhost:9090/-/ready" 200
 check_service "Grafana" "http://localhost:3001/api/health" 200

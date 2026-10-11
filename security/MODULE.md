@@ -27,6 +27,7 @@ They stay next to what they protect, because the tool reads them from a fixed pl
 | Application security code | `backend-api/src/main/java/.../security` | product code |
 | Policy as code and secret scan | `security/policy/security-policy.yml`, `security/scan_secrets.py` | enforced by `security/verify.sh` and the CI security job (#307) |
 | Security case catalog | `security/cases/catalog.yml`, `security/run_gates.py` | local pre-PR gate and the CI security job (#1500) |
+| Security report service | `infra/observability` service `security-reports` | Homer `http://localhost:8890` (#1506) |
 | Sec by Design program | `docs/200-architecture/206-security/CYBERSECURITY-PROGRAM.md` | knowledge base |
 
 ## Seams (what this module reads from outside)

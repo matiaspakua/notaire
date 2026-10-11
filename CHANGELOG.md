@@ -1832,6 +1832,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- **Security reports on the local infra hub** (CU78, #1506): the case catalog
+  HTML is served at `http://localhost:8890` and linked from Homer. The CI
+  security job runs without waiting for the Java build and writes the case
+  summary on the Actions run.
 - **Local security gates in the AI SDLC** (CU78, #1500): the security case
   catalog runs before a pull request from `workspace/sdlc/run_pipeline.sh`
   (Semgrep, secret scan, Trivy, unauthenticated DAST baseline). CI runs the
