@@ -55,6 +55,14 @@ CU83 = (
     / "CU83 – Definir Workflow de Estados y Transiciones.md"
 )
 TRANSITION = "`POST /api/v1/gestiones/{id}/transition`"
+CU22 = (
+    ROOT
+    / "docs"
+    / "100-business"
+    / "102-use-cases"
+    / "CU22 – Registrar Suplencia.md"
+)
+COMPLETE_CASE = "`PUT /api/v1/gestiones/complete-case`"
 
 
 class DocumentReentryPathCitationEnglishTest(unittest.TestCase):
@@ -91,6 +99,17 @@ class DocumentReentryPathCitationEnglishTest(unittest.TestCase):
             ROOT / "docs" / "200-architecture" / "203-design" / "GESTION.md"
         ).read_text(encoding="utf-8")
         self.assertIn("`POST /api/v1/managements/{id}/transition`", live)
+
+    def test_design_cites_the_path_cu22_still_names(self):
+        text = DESIGN.read_text(encoding="utf-8")
+        use_case = CU22.read_text(encoding="utf-8")
+        self.assertIn(COMPLETE_CASE, text)
+        self.assertIn(COMPLETE_CASE.strip("`"), use_case)
+        self.assertIn("`DOC-GESTION`", text)
+        live = (
+            ROOT / "docs" / "200-architecture" / "203-design" / "GESTION.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("`POST /api/v1/managements/complete-case`", live)
 
 
 if __name__ == "__main__":

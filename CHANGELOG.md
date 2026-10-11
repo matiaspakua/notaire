@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Complete-case path citation** (#1490, CU75): the
+  engineering-sequences design names the path CU22 still writes,
+  `PUT /api/v1/gestiones/complete-case`. The live call stays in
+  `DOC-GESTION`. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
 - **Management transition path citation** (#1490, CU75): the
   engineering-sequences design names the path CU53 and CU83 still write,
   `POST /api/v1/gestiones/{id}/transition`. The live call stays in
