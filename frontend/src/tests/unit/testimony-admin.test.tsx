@@ -23,6 +23,7 @@ vi.mock("next/navigation", () => ({
 }));
 vi.mock("next-intl", () => ({
   useTranslations: (ns: string) => (key: string) => `${ns}.${key}`,
+  useLocale: () => "es",
 }));
 
 import TestimoniesPage from "@/app/dashboard/testimonies/page";

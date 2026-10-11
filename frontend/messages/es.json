@@ -379,6 +379,27 @@
       "estado": "Estado",
       "observado": "Observado",
       "observaciones": "Observaciones"
+    },
+    "editTestimonio": "Editar testimonio",
+    "updated": "Testimonio actualizado",
+    "errorUpdate": "No se pudo actualizar el testimonio",
+    "staleVersion": "Otro usuario modificó este testimonio. Recargá la lista y volvé a intentar.",
+    "numberRequired": "Indicá un número de testimonio mayor que cero",
+    "deleteTitle": "¿Eliminar este testimonio?",
+    "deleteDescription": "Se elimina el testimonio N.º {number}. Esta acción no se puede deshacer.",
+    "deleted": "Testimonio eliminado",
+    "errorDelete": "No se pudo eliminar el testimonio",
+    "deleteInUse": "No se puede eliminar: el testimonio tiene movimientos en el Registro o copias emitidas",
+    "verMovimientos": "Ver movimientos",
+    "movements": {
+      "title": "Movimientos del testimonio N.º {number}",
+      "empty": "Este testimonio todavía no tiene movimientos.",
+      "entered": "Ingreso al Registro",
+      "registered": "Inscripto",
+      "pending": "Pendiente de inscripción",
+      "withdrawn": "Retiro",
+      "card": "Cartón N.º",
+      "observed": "Observado por el Registro"
     }
   },
   "movimientosTestimonio": {

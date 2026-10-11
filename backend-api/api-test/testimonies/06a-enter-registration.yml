@@ -1,0 +1,23 @@
+info:
+  name: Enter the verified testimony for registration (records a movement)
+  type: http
+  seq: 7
+  description: |-
+      ## POST /api/v1/testimony-movements/{idTestimony}/enter-registration
+      Gives the testimony a registry movement so 06b can check that DELETE keeps it.
+      Traceability: CU11, #1364
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/testimony-movements/{{testimony_id}}/enter-registration"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Saves the movement id", function () {
+            expect(res.getBody()).to.have.property('idTestimonyMovement');
+            bru.setVar("testimony_movement_id", res.getBody().idTestimonyMovement);
+          });

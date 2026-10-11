@@ -379,6 +379,27 @@
       "estado": "Status",
       "observado": "Flagged",
       "observaciones": "Observations"
+    },
+    "editTestimonio": "Edit testimony",
+    "updated": "Testimony updated",
+    "errorUpdate": "Couldn't update the testimony",
+    "staleVersion": "Another user changed this testimony. Reload the list and try again.",
+    "numberRequired": "Enter a testimony number greater than zero",
+    "deleteTitle": "Delete this testimony?",
+    "deleteDescription": "Testimony no. {number} will be deleted. This can't be undone.",
+    "deleted": "Testimony deleted",
+    "errorDelete": "Couldn't delete the testimony",
+    "deleteInUse": "Can't delete: the testimony has registry movements or issued copies",
+    "verMovimientos": "View movements",
+    "movements": {
+      "title": "Movements of testimony no. {number}",
+      "empty": "This testimony has no movements yet.",
+      "entered": "Entered the registry",
+      "registered": "Registered",
+      "pending": "Registration pending",
+      "withdrawn": "Withdrawn",
+      "card": "Card no.",
+      "observed": "Observed by the registry"
     }
   },
   "movimientosTestimonio": {
