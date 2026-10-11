@@ -77,7 +77,7 @@ class ManagementDocumentsEntidadesExternasIntegrationTest {
     private Integer createManagementConProcedure(Integer number) throws Exception {
         Integer notaryId = createPerson("42100" + number);
         String body = """
-                {"encabezado": "Management CU10", "dateStart": "2026-01-01", "number": %d,
+                {"heading": "Management CU10", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d}
                 """.formatted(number, notaryId);
         MvcResult result = mockMvc.perform(post("/api/v1/managements")

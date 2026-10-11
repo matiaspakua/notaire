@@ -38,7 +38,7 @@ public final class BudgetPaymentTestFixtures {
     public static Integer createBudget(MockMvc mockMvc, Integer clientId, BigDecimal propertyAmount)
             throws Exception {
         String body = """
-                {"number": %d, "date": "2026-01-01", "encabezado": "Budget Payment Fixture IT",
+                {"number": %d, "date": "2026-01-01", "heading": "Budget Payment Fixture IT",
                  "status": "PENDIENTE", "propertyAmount": %s, "person": {"personId": %d}}
                 """.formatted((int) (System.nanoTime() % 100000), propertyAmount.toPlainString(), clientId);
         MvcResult result = mockMvc.perform(post("/api/v1/budgets")

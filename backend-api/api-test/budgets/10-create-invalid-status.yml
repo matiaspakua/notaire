@@ -14,7 +14,7 @@ http:
     data: |-
         {
           "date": "2026-06-01",
-          "encabezado": "E2E Budget invalid status",
+          "heading": "E2E Budget invalid status",
           "status": "Pending"
         }
   headers:

@@ -23,7 +23,7 @@ class EntityDtoMappingRatchetTest {
 
     private static final String ENTITIES_PACKAGE = "com.licensis.notaire.business";
     private static final String BASELINE = "/architecture/entity-dto-mapping.txt";
-    private static final Set<String> MAPPING_NAMES = Set.of("getDto", "setAtributo", "setAtributos", "toDto");
+    private static final Set<String> MAPPING_NAMES = Set.of("getDto", "setAttribute", "setAttributes", "toDto");
 
     @Test
     @DisplayName("shouldNotAddEntityMappingMethods")

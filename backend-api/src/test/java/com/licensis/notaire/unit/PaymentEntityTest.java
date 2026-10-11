@@ -60,7 +60,7 @@ class PaymentEntityTest {
     }
 
     @Nested
-    @DisplayName("setAtributos branches")
+    @DisplayName("setAttributes branches")
     class SetAtributosTests {
 
     }

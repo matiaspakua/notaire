@@ -75,7 +75,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
 
         testManagement = new DeedManagement();
         testManagement.setNumber((int) (System.currentTimeMillis() % 10000));
-        testManagement.setEncabezado("Venta Property");
+        testManagement.setHeading("Venta Property");
         testManagement.setDateStart(new Date());
         testManagement.setFkIdNotaryPerson(testNotary);
         testManagement.setFkIdManagementStatus(testStatus);
@@ -93,7 +93,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
         assertThat(retrieved).isPresent()
                 .hasValueSatisfying(g -> {
                     assertThat(g.getNumber()).isEqualTo(saved.getNumber());
-                    assertThat(g.getEncabezado()).isEqualTo("Venta Property");
+                    assertThat(g.getHeading()).isEqualTo("Venta Property");
                 });
     }
 
@@ -105,7 +105,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
         Optional<DeedManagement> found = managementRepository.findByNumber(saved.getNumber());
 
         assertThat(found).isPresent()
-                .hasValueSatisfying(g -> assertThat(g.getEncabezado()).isEqualTo("Venta Property"));
+                .hasValueSatisfying(g -> assertThat(g.getHeading()).isEqualTo("Venta Property"));
     }
 
     @Test
@@ -240,7 +240,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
         Budget budget = new Budget();
         budget.setNumber((int) (System.currentTimeMillis() % 10000));
         budget.setDate(new Date());
-        budget.setEncabezado("Budget Test");
+        budget.setHeading("Budget Test");
         budget.setStatus("PENDIENTE");
         budget.setFkIdPerson(client);
         budget = budgetRepository.save(budget);

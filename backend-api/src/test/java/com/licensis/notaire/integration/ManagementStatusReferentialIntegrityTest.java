@@ -76,7 +76,7 @@ class ManagementStatusReferentialIntegrityTest {
         DeedManagement management = new DeedManagement();
         management.setDateStart(new Date());
         management.setNumber(90000 + idManagementStatus);
-        management.setEncabezado("Test management for status " + idManagementStatus);
+        management.setHeading("Test management for status " + idManagementStatus);
         management.setFkIdNotaryPerson(notary);
         management.setFkIdManagementStatus(status);
         managementRepository.save(management);

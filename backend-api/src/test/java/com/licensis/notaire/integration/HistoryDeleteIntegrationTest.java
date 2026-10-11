@@ -78,7 +78,7 @@ class HistoryDeleteIntegrationTest {
         DeedManagement management = new DeedManagement();
         management.setDateStart(new Date());
         management.setNumber(1);
-        management.setEncabezado("test");
+        management.setHeading("test");
         management.setFkIdNotaryPerson(person);
         management.setFkIdManagementStatus(status);
         management = managementRepository.save(management);

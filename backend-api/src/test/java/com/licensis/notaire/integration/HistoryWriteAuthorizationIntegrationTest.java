@@ -88,7 +88,7 @@ class HistoryWriteAuthorizationIntegrationTest {
         DeedManagement management = new DeedManagement();
         management.setDateStart(new Date());
         management.setNumber(12500);
-        management.setEncabezado("history authorization");
+        management.setHeading("history authorization");
         management.setFkIdNotaryPerson(person);
         management.setFkIdManagementStatus(status);
         managementId = managementRepository.save(management).getIdManagement();

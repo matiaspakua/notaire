@@ -117,7 +117,7 @@ public class ProcedureTypeController {
                 dto.setAssociatesProperties(false);
             }
             ProcedureType entity = new ProcedureType();
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
@@ -147,7 +147,7 @@ public class ProcedureTypeController {
         try {
             dto.setIdProcedureType(id);
             ProcedureType entity = existing.get();
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {

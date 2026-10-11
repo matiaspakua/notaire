@@ -23,8 +23,8 @@ sorts first (login/rate-limit fixtures other folders depend on).
 |---|----------|--------|-----|
 | 1 | `POST /document-types` | NPE unboxing null `Boolean vence` | `DtoTipoDeDocumento.isVence()` null-safe |
 | 2 | `POST /identification-types` | `null value in column "caracteres"` (entity didn't map the NOT-NULL column) | added `caracteres` field to `IdentificationType` |
-| 3 | `PUT /procedure-types/{id}` | NPE on null `asociaInmuebles` / `version` | `ProcedureType.setAtributos` null-safe (booleans + preserve version) |
-| 4 | `PUT /document-types/{id}` | NPE on null `habilitado` / `version` | `DocumentType.setAtributos` null-safe |
+| 3 | `PUT /procedure-types/{id}` | NPE on null `asociaInmuebles` / `version` | `ProcedureType.setAttributes` null-safe (booleans + preserve version) |
+| 4 | `PUT /document-types/{id}` | NPE on null `habilitado` / `version` | `DocumentType.setAttributes` null-safe |
 | 5 | `GET /users/person/{id}` | `NonUniqueResult` 500 when a persona has >1 usuario | `findFirstByFkIdPersonaIdPersona` |
 | 6 | `PUT /users/{id}` | omitting `contrasenia` → NOT-NULL 500 | preserve stored password when omitted |
 | 7 | `POST/PUT /items` | `fkIdPresupuesto` silently dropped (`@JsonIgnore` blocked the field on write, not just read) | `@JsonProperty(access = WRITE_ONLY)` |
@@ -39,7 +39,7 @@ sorts first (login/rate-limit fixtures other folders depend on).
 
 The recurring root cause is **unboxing a nullable wrapper (`Boolean`/`Integer`)
 from a DTO into a primitive entity field** on the update path; create defaulted
-the value but update did not. Hardened in `setAtributos`.
+the value but update did not. Hardened in `setAttributes`.
 
 ## Covered resources (full lifecycle)
 

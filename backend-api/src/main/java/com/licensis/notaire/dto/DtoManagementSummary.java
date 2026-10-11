@@ -10,7 +10,7 @@ import java.util.Date;
 public record DtoManagementSummary(
         Integer idManagement,
         int number,
-        String encabezado,
+        String heading,
         Date dateStart,
         String statusActual,
         int procedureCount,

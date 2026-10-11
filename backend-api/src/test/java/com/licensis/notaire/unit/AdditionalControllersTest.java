@@ -190,7 +190,7 @@ class AdditionalControllersTest {
             mvc.perform(get("/api/v1/managements/1/current-status")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/managements/2/current-status")).andExpect(status().isNotFound());
 
-            String managementBody = "{\"number\":1,\"encabezado\":\"Gestion\"}";
+            String managementBody = "{\"number\":1,\"heading\":\"Gestion\"}";
             mvc.perform(post("/api/v1/managements").contentType("application/json")
                     .content(managementBody)).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/managements/1").contentType("application/json")

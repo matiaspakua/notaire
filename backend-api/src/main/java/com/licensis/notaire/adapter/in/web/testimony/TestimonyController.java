@@ -179,7 +179,7 @@ public class TestimonyController {
         }
         try {
             Testimony entity = new Testimony();
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
@@ -211,7 +211,7 @@ public class TestimonyController {
         }
         try {
             dto.setIdTestimony(id);
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {

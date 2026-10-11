@@ -103,7 +103,7 @@ public class ReportDocumentFactory {
                 new Field("Number of budget", String.valueOf(budget.getNumber())),
                 new Field("Date of emisión", day(budget.getDate())),
                 new Field("Cliente", fullName(budget.getFkIdPerson())),
-                new Field("Encabezado", orNotRecorded(budget.getEncabezado())),
+                new Field("Heading", orNotRecorded(budget.getHeading())),
                 new Field("Procedure", joinedOr(procedureTypeNames(procedures), "Without procedures asociados")),
                 new Field("Management", summary.managementNumber() == null
                         ? "Without management assigned"
@@ -201,7 +201,7 @@ public class ReportDocumentFactory {
                 List.of(
                         new Fields("Datos of the management", List.of(
                                 new Field("Management", String.valueOf(management.getNumber())),
-                                new Field("Encabezado", orNotRecorded(management.getEncabezado())),
+                                new Field("Heading", orNotRecorded(management.getHeading())),
                                 new Field("Estado actual", management.getFkIdManagementStatus() == null
                                         ? NOT_RECORDED : management.getFkIdManagementStatus().getName()),
                                 new Field("Fecha de inicio", day(management.getDateStart())),
@@ -249,7 +249,7 @@ public class ReportDocumentFactory {
                         new Field("Fecha de pago", paymentDate(document)))),
                 new Fields("Management", List.of(
                         new Field("Management N°", management == null ? NOT_RECORDED : String.valueOf(management.getNumber())),
-                        new Field("Encabezado", management == null ? NOT_RECORDED : orNotRecorded(management.getEncabezado())),
+                        new Field("Heading", management == null ? NOT_RECORDED : orNotRecorded(management.getHeading())),
                         new Field("Procedure", procedure == null || procedure.getFkIdProcedureType() == null
                                 ? NOT_RECORDED : procedure.getFkIdProcedureType().getName()),
                         new Field("Cliente de referencia", fullName(client))))));
@@ -285,8 +285,8 @@ public class ReportDocumentFactory {
                 "Consulta de deuda de documentos (CU09)", List.of(
                         new Fields("Management", List.of(
                                 new Field("Management N°", String.valueOf(managementNumber)),
-                                new Field("Encabezado", joinedOr(managements.stream()
-                                        .map(DeedManagement::getEncabezado).filter(Objects::nonNull)
+                                new Field("Heading", joinedOr(managements.stream()
+                                        .map(DeedManagement::getHeading).filter(Objects::nonNull)
                                         .distinct().toList(), NOT_RECORDED)))),
                         new Table("Documentos",
                                 List.of(Column.left("Procedure", 2), Column.left("Documento", 2.5f),

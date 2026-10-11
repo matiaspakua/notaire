@@ -183,7 +183,7 @@ public class DocumentType implements Serializable, Persistable<Integer>
         this.procedureTemplateList = procedureTemplateList;
     }
 
-    public void setAtributos(DtoDocumentType miDto)
+    public void setAttributes(DtoDocumentType miDto)
     {
         if (miDto.getIdDocumentType() != null)
         {

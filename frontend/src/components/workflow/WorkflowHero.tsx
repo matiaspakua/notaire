@@ -19,7 +19,7 @@ import { theme } from "@/theme/tokens";
 import type { ManagementWorkflowTrace } from "@/types";
 
 function caseLabel(trace: ManagementWorkflowTrace, fallback: (number: number | undefined) => string): string {
-  return trace.encabezado ? `#${trace.number} — ${trace.encabezado}` : fallback(trace.number);
+  return trace.heading ? `#${trace.number} — ${trace.heading}` : fallback(trace.number);
 }
 
 export function WorkflowHero() {

@@ -56,7 +56,7 @@ public class UpcomingExpirationService {
                 document.getIdSubmittedDocument(),
                 document.getName(),
                 management.map(DeedManagement::getNumber).orElse(null),
-                management.map(DeedManagement::getEncabezado).orElse(null),
+                management.map(DeedManagement::getHeading).orElse(null),
                 document.getPrepared(),
                 toLocalDate(document.getDateEntry()),
                 toLocalDate(document.getDateExit()),

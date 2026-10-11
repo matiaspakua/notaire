@@ -47,7 +47,7 @@ class UpcomingExpirationServiceTest {
     private static SubmittedDocument documentDueIn(int days) {
         DeedManagement management = new DeedManagement();
         management.setNumber(7);
-        management.setEncabezado("Compraventa Pérez");
+        management.setHeading("Compraventa Pérez");
         Procedure procedure = new Procedure();
         procedure.setFkIdManagement(management);
 

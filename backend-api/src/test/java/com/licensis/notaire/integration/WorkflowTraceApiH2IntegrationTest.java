@@ -144,7 +144,7 @@ class WorkflowTraceApiH2IntegrationTest {
         DeedManagement management = new DeedManagement();
         management.setIdManagement(null);
         management.setNumber(987654);
-        management.setEncabezado("Management Trace Test");
+        management.setHeading("Management Trace Test");
         management.setDateStart(new Date());
         management.setFkIdManagementStatus(enCurso);
         management.setFkIdNotaryPerson(personRepository.findAll().get(0));
@@ -172,7 +172,7 @@ class WorkflowTraceApiH2IntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.managementId").value(managementId))
                 .andExpect(jsonPath("$.number").value(987654))
-                .andExpect(jsonPath("$.encabezado").value("Management Trace Test"))
+                .andExpect(jsonPath("$.heading").value("Management Trace Test"))
                 .andExpect(jsonPath("$.statusActual").value("Trace En Curso"))
                 .andExpect(jsonPath("$.workflowDefinition.name").value("Workflow Trace Test"))
                 .andExpect(jsonPath("$.nodes", hasSize(3)))

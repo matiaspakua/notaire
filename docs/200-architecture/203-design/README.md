@@ -38,7 +38,7 @@ list endpoints) — there is no `{success, data, error}` envelope.
   "numero": 2024001,
   "fecha": "2024-03-15",
   "estado": "ACTIVO",
-  "encabezado": "..."
+  "heading": "..."
 }
 ```
 

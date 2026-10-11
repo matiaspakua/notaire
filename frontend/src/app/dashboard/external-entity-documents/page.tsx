@@ -97,7 +97,7 @@ function DocumentosEntidadesExternasList() {
 
   const gestionColumns: Column<DeedManagement>[] = [
     { key: "numero", header: t("fields.numero"), render: (g) => <span className="font-medium">{g.number}</span> },
-    { key: "encabezado", header: t("fields.encabezado"), render: (g) => g.encabezado ?? "—" },
+    { key: "heading", header: t("fields.encabezado"), render: (g) => g.heading ?? "—" },
     { key: "estadoActual", header: tc("status"), render: (g) => g.statusActual ?? "—" },
     {
       key: "actions",
@@ -185,7 +185,7 @@ function DocumentosEntidadesExternasList() {
                 <span className="font-semibold">{t("fields.escribano")}:</span> {detalle.notary ?? "—"}
               </div>
               <div>
-                <span className="font-semibold">{t("fields.encabezado")}:</span> {detalle.encabezado ?? "—"}
+                <span className="font-semibold">{t("fields.encabezado")}:</span> {detalle.heading ?? "—"}
               </div>
               <div>
                 <span className="font-semibold">{t("fields.nomenclaturaCatastral")}:</span>{" "}

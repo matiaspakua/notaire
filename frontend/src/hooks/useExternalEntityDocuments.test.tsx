@@ -42,7 +42,7 @@ describe("useExternalEntityDocuments (CU10)", () => {
     vi.mocked(apiGet).mockResolvedValue({
       idGestion: 9,
       numero: 1001,
-      encabezado: "Gestion",
+      heading: "Gestion",
       nomenclaturaCatastral: "11-22-33",
       documents: [{ idSubmittedDocument: 1, name: "Certificado de Dominio", delivered: false }],
     });

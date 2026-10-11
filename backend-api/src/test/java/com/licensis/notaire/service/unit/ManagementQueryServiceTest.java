@@ -48,7 +48,7 @@ class ManagementQueryServiceTest {
         testManagement = new DeedManagement();
         testManagement.setIdManagement(1);
         testManagement.setNumber(100);
-        testManagement.setEncabezado("Venta Property");
+        testManagement.setHeading("Venta Property");
         testManagement.setDateStart(new Date());
         testManagement.setFkIdManagementStatus(testStatus);
     }
@@ -65,7 +65,7 @@ class ManagementQueryServiceTest {
 
         assertThat(result).isNotNull()
                 .hasSize(1)
-                .allMatch(dto -> dto.encabezado().equals("Venta Property"));
+                .allMatch(dto -> dto.heading().equals("Venta Property"));
         assertThat(result.getTotalElements()).isEqualTo(1);
 
         verify(repository, times(1)).findAll(pageable);
@@ -99,7 +99,7 @@ class ManagementQueryServiceTest {
                 .hasValueSatisfying(dto -> {
                     assertThat(dto.idManagement()).isEqualTo(1);
                     assertThat(dto.number()).isEqualTo(100);
-                    assertThat(dto.encabezado()).isEqualTo("Venta Property");
+                    assertThat(dto.heading()).isEqualTo("Venta Property");
                     assertThat(dto.statusActual()).isEqualTo("INICIADO");
                 });
 
@@ -128,7 +128,7 @@ class ManagementQueryServiceTest {
         assertThat(result).isPresent()
                 .hasValueSatisfying(dto -> {
                     assertThat(dto.number()).isEqualTo(100);
-                    assertThat(dto.encabezado()).isEqualTo("Venta Property");
+                    assertThat(dto.heading()).isEqualTo("Venta Property");
                 });
 
         verify(repository, times(1)).findByNumber(100);
@@ -152,7 +152,7 @@ class ManagementQueryServiceTest {
         DeedManagement managementSinStatus = new DeedManagement();
         managementSinStatus.setIdManagement(1);
         managementSinStatus.setNumber(100);
-        managementSinStatus.setEncabezado("Test");
+        managementSinStatus.setHeading("Test");
         managementSinStatus.setDateStart(new Date());
         managementSinStatus.setFkIdManagementStatus(null);
 

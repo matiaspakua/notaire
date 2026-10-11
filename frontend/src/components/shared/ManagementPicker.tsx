@@ -27,7 +27,7 @@ export interface ManagementPickerProps {
 
 /** "<number> — <heading>": the number first, so it reads the same in es and en. */
 export function managementLabel(g: DeedManagement): string {
-  return g.encabezado ? `${g.number} — ${g.encabezado}` : String(g.number ?? `#${g.idManagement}`);
+  return g.heading ? `${g.number} — ${g.heading}` : String(g.number ?? `#${g.idManagement}`);
 }
 
 export function ManagementPicker({ value, onChange, allowClear = false, ...rest }: ManagementPickerProps) {

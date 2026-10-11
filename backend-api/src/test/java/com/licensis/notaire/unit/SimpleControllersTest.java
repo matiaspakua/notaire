@@ -517,7 +517,7 @@ class SimpleControllersTest {
             Budget p = new Budget();
             p.setIdBudget(1);
             p.setStatus("Pending");
-            p.setEncabezado("Test");
+            p.setHeading("Test");
             p.setNumber(1);
             when(service.findAllPaged(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(p), PageRequest.of(0, 20), 1));
             when(service.findById(1)).thenReturn(Optional.of(p));
@@ -534,7 +534,7 @@ class SimpleControllersTest {
             mvc.perform(get("/api/v1/budgets/search?estado=activo")).andExpect(status().isOk());
 
             String budgetBody = """
-                    {"number":1,"encabezado":"Test","status":"PENDIENTE","propertyAmount":10.0}
+                    {"number":1,"heading":"Test","status":"PENDIENTE","propertyAmount":10.0}
                     """;
             mvc.perform(post("/api/v1/budgets").contentType("application/json")
                     .content(budgetBody)).andExpect(status().isCreated());
@@ -575,7 +575,7 @@ class SimpleControllersTest {
             budget.setIdBudget(7);
             budget.setNumber(7);
             budget.setStatus("BORRADOR");
-            budget.setEncabezado("Con cliente");
+            budget.setHeading("Con cliente");
             budget.setFkIdPerson(client);
 
             when(service.findById(7)).thenReturn(Optional.of(budget));

@@ -13,7 +13,7 @@ public record DtoBudgetResumen(
         int numberBudget,
         Integer idManagement,
         Integer numberManagement,
-        String encabezadoManagement,
+        String managementHeading,
         BigDecimal total,
         BigDecimal pendingBalance,
         List<DtoPaymentResponse> payments) {

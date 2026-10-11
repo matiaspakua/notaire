@@ -41,7 +41,7 @@ describe("useDocumentReentry (CU43)", () => {
     vi.mocked(apiGet).mockResolvedValue({
       idManagement: 9,
       number: 1001,
-      encabezado: "Gestion",
+      heading: "Gestion",
       procedures: [
         {
           idProcedure: 1,

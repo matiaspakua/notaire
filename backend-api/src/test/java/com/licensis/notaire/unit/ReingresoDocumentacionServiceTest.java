@@ -67,7 +67,7 @@ class ReingresoDocumentacionServiceTest {
         management = new DeedManagement();
         management.setIdManagement(1);
         management.setNumber(100);
-        management.setEncabezado("Compraventa");
+        management.setHeading("Compraventa");
 
         typeProcedure = new ProcedureType();
         typeProcedure.setIdProcedureType(5);

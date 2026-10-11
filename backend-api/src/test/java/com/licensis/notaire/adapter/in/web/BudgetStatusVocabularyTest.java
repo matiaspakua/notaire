@@ -56,7 +56,7 @@ class BudgetStatusVocabularyTest {
     }
 
     private static String body(String status) {
-        return "{\"number\":1,\"date\":\"2026-10-10\",\"encabezado\":\"E\",\"status\":\"" + status + "\"}";
+        return "{\"number\":1,\"date\":\"2026-10-10\",\"heading\":\"E\",\"status\":\"" + status + "\"}";
     }
 
     @Test

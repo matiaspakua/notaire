@@ -52,7 +52,7 @@ class ManagementCaseSummaryServiceTest {
         DeedManagement management = new DeedManagement();
         management.setIdManagement(4);
         management.setNumber(1001);
-        management.setEncabezado("Compraventa Pérez");
+        management.setHeading("Compraventa Pérez");
         return management;
     }
 

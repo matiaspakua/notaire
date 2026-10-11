@@ -107,7 +107,7 @@ public class DocumentTypeController {
                 dto.setReturned(false);
             }
             DocumentType entity = new DocumentType();
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
@@ -139,7 +139,7 @@ public class DocumentTypeController {
             if (dto.getDeliveredBy() == null) {
                 dto.setDeliveredBy(entity.getDeliveredBy());
             }
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {

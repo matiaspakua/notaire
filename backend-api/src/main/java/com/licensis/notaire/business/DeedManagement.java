@@ -76,7 +76,7 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
     private int number;
     @Basic(optional = false)
     @Column(name = "heading")
-    private String encabezado;
+    private String heading;
     @Column(name = "notes")
     private String notes;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdManagement")
@@ -107,11 +107,11 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
         this.historyList = new ArrayList<>();
     }
 
-    public DeedManagement(Integer idManagement, int number, Date dateStart, String encabezado) {
+    public DeedManagement(Integer idManagement, int number, Date dateStart, String heading) {
         this.idManagement = idManagement;
         this.number = number;
         this.dateStart = dateStart;
-        this.encabezado = encabezado;
+        this.heading = heading;
         this.procedureList = new ArrayList<>();
         this.historyList = new ArrayList<>();
     }
@@ -155,12 +155,12 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
         this.dateStart = dateStart;
     }
 
-    public String getEncabezado() {
-        return encabezado;
+    public String getHeading() {
+        return heading;
     }
 
-    public void setEncabezado(String encabezado) {
-        this.encabezado = encabezado;
+    public void setHeading(String heading) {
+        this.heading = heading;
     }
 
     public String getNotes() {
@@ -243,7 +243,7 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
         dtoManagement.setVersion(this.getVersion());
         dtoManagement.setIdManagement(this.getIdManagement());
         dtoManagement.setNumber(this.getNumber());
-        dtoManagement.setEncabezado(this.getEncabezado());
+        dtoManagement.setHeading(this.getHeading());
         dtoManagement.setDateStart(this.getDateStart());
         dtoManagement.setNotes(this.getNotes());
 

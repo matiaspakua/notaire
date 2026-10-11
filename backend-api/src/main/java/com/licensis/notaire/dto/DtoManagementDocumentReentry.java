@@ -9,6 +9,6 @@ import java.util.List;
 public record DtoManagementDocumentReentry(
         Integer idManagement,
         int number,
-        String encabezado,
+        String heading,
         List<DtoProcedureRequiredDocumentation> procedures) {
 }

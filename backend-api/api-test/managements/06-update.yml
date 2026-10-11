@@ -13,7 +13,7 @@ http:
         {
           "dateStart": "2026-09-05",
           "number": {{mgmt_number}},
-          "encabezado": "Bruno E2E management updated",
+          "heading": "Bruno E2E management updated",
           "notaryPersonId": {{mgmt_notary_id}},
           "managementStatusId": 1
         }

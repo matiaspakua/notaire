@@ -72,7 +72,7 @@ public class ManagementCaseSummaryService {
                 .map(ManagementCaseSummaryService::toCaseDocument)
                 .toList();
         return new DtoManagementCaseSummary(management.getIdManagement(), management.getNumber(),
-                management.getEncabezado(), deeds, documents);
+                management.getHeading(), deeds, documents);
     }
 
     private static DtoCaseDocument toCaseDocument(SubmittedDocument document) {

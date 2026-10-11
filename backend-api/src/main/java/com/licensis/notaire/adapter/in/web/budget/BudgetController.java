@@ -63,7 +63,7 @@ public class BudgetController {
     record BudgetRequest(
             Integer number,
             Date date,
-            String encabezado,
+            String heading,
             @NotBlank
             @Schema(allowableValues = {"BORRADOR", "PENDIENTE", "APROBADO", "RECHAZADO", "FACTURADO"},
                     description = "Budget status (#1346). Accepts any uppercase/lowercase and "
@@ -81,7 +81,7 @@ public class BudgetController {
             Integer idBudget,
             int number,
             Date date,
-            String encabezado,
+            String heading,
             String status,
             java.math.BigDecimal propertyAmount,
             String notes,
@@ -123,7 +123,7 @@ public class BudgetController {
                 budget.getIdBudget(),
                 budget.getNumber(),
                 budget.getDate(),
-                budget.getEncabezado(),
+                budget.getHeading(),
                 budget.getStatus(),
                 budget.getPropertyAmount(),
                 budget.getNotes(),
@@ -154,7 +154,7 @@ public class BudgetController {
         if (request.date() != null) {
             budget.setDate(request.date());
         }
-        budget.setEncabezado(request.encabezado());
+        budget.setHeading(request.heading());
         budget.setStatus(canonicalStatus(request.status()));
         budget.setPropertyAmount(request.propertyAmount());
         budget.setNotes(request.notes());

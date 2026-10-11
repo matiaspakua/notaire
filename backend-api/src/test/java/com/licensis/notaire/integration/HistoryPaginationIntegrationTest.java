@@ -69,7 +69,7 @@ class HistoryPaginationIntegrationTest {
         DeedManagement management = new DeedManagement();
         management.setDateStart(new Date());
         management.setNumber(59610);
-        management.setEncabezado("pagination");
+        management.setHeading("pagination");
         management.setFkIdNotaryPerson(person);
         management.setFkIdManagementStatus(status);
         management = managementRepository.save(management);

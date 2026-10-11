@@ -90,7 +90,7 @@ class ManagementArchiveIntegrationTest {
 
     private Integer createBudget(Integer clientId, java.math.BigDecimal propertyAmount) throws Exception {
         String body = """
-                {"number": %d, "date": "2026-01-01", "encabezado": "Budget Archive IT",
+                {"number": %d, "date": "2026-01-01", "heading": "Budget Archive IT",
                  "status": "PENDIENTE", "propertyAmount": %s, "person": {"personId": %d}}
                 """.formatted((int) (System.nanoTime() % 100000), propertyAmount, clientId);
         MvcResult result = mockMvc.perform(post("/api/v1/budgets")
@@ -149,7 +149,7 @@ class ManagementArchiveIntegrationTest {
         Integer statusId = statusInicial.getIdManagementStatus();
         Integer typeProcedureId = createProcedureTypeConWorkflowHaciaArchivada(statusInicial);
         String body = """
-                {"number": %d, "encabezado": "Management Archive IT", "budgetId": %d,
+                {"number": %d, "heading": "Management Archive IT", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), budgetId, notaryId, statusId,
                 typeProcedureId);

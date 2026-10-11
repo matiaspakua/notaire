@@ -65,7 +65,7 @@ class ManagementCaseSummaryIntegrationTest {
                 .andExpect(status().isCreated()).andReturn();
         MvcResult management = mockMvc.perform(post("/api/v1/managements").contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"encabezado": "Gestión resumen caso", "dateStart": "2026-01-01", "number": %d,
+                                {"heading": "Gestión resumen caso", "dateStart": "2026-01-01", "number": %d,
                                  "notaryPersonId": %d}
                                 """.formatted(number, idFrom(person, "personId"))))
                 .andExpect(status().isCreated()).andReturn();

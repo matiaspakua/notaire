@@ -452,7 +452,7 @@ function BudgetsList() {
                     </div>
                     <div>
                       <p className="text-muted-foreground">{t("resumen.encabezado")}</p>
-                      <p className="font-medium">{resumen.encabezadoManagement ?? "—"}</p>
+                      <p className="font-medium">{resumen.managementHeading ?? "—"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">{t("resumen.numeroPresupuesto")}</p>

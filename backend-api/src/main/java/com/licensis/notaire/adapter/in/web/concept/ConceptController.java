@@ -100,7 +100,7 @@ public class ConceptController {
                 dto.setEnabled(true);
             }
             Concept entity = new Concept();
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             entity = service.create(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
@@ -132,7 +132,7 @@ public class ConceptController {
             if (dto.getEnabled() == null) {
                 dto.setEnabled(entity.getEnabled());
             }
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             service.update(id, entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {

@@ -44,7 +44,7 @@ class BudgetServiceTest {
         testBudget = new Budget();
         testBudget.setIdBudget(1);
         testBudget.setNumber(1001);
-        testBudget.setEncabezado("Budget test");
+        testBudget.setHeading("Budget test");
         testBudget.setStatus("PENDIENTE");
         testBudget.setDate(new Date());
     }
@@ -171,8 +171,8 @@ class BudgetServiceTest {
         }
 
         @Test
-        @DisplayName("Should set default encabezado when blank")
-        void shouldSetDefaultEncabezadoWhenBlank() {
+        @DisplayName("Should set default heading when blank")
+        void shouldSetDefaultHeadingWhenBlank() {
             Budget p = new Budget();
             p.setNumber(100);
             p.setStatus("PENDIENTE");
@@ -181,14 +181,14 @@ class BudgetServiceTest {
 
             Budget result = budgetService.create(p);
 
-            assertThat(result.getEncabezado()).isEqualTo("Budget");
+            assertThat(result.getHeading()).isEqualTo("Budget");
         }
 
         @Test
         @DisplayName("Should generate number when zero")
         void shouldGenerateNumberWhenZero() {
             Budget p = new Budget();
-            p.setEncabezado("Test");
+            p.setHeading("Test");
             p.setStatus("PENDIENTE");
             p.setDate(new Date());
             p.setNumber(0);
@@ -200,14 +200,14 @@ class BudgetServiceTest {
         }
 
         @Test
-        @DisplayName("Should keep provided encabezado when not blank")
-        void shouldKeepProvidedEncabezado() {
-            testBudget.setEncabezado("Budget específico");
+        @DisplayName("Should keep provided heading when not blank")
+        void shouldKeepProvidedHeading() {
+            testBudget.setHeading("Budget específico");
             when(budgetRepository.create(any(Budget.class))).thenReturn(testBudget);
 
             Budget result = budgetService.create(testBudget);
 
-            assertThat(result.getEncabezado()).isEqualTo("Budget específico");
+            assertThat(result.getHeading()).isEqualTo("Budget específico");
         }
     }
 

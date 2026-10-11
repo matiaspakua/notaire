@@ -16,7 +16,7 @@ public class DtoBudget implements ValidDto {
     private Integer idBudget;
     private Integer number;
     private Date date;
-    private String encabezado;
+    private String heading;
     private String status;
     private BigDecimal propertyAmount;
     private String notes;
@@ -60,12 +60,12 @@ public class DtoBudget implements ValidDto {
         this.date = date;
     }
 
-    public String getEncabezado() {
-        return this.encabezado;
+    public String getHeading() {
+        return this.heading;
     }
 
-    public void setEncabezado(String encabezado) {
-        this.encabezado = encabezado;
+    public void setHeading(String heading) {
+        this.heading = heading;
     }
 
     public String getStatus() {
@@ -136,6 +136,6 @@ public class DtoBudget implements ValidDto {
 
     @Override
     public Boolean isValid() {
-        return number != null && date != null && encabezado != null && status != null;
+        return number != null && date != null && heading != null && status != null;
     }
 }

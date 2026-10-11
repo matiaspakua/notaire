@@ -72,7 +72,7 @@ public class TestimonyMovementController {
     public ResponseEntity<Object> create(@RequestBody DtoTestimonyMovement dto) {
         try {
             TestimonyMovement entity = new TestimonyMovement();
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
@@ -99,7 +99,7 @@ public class TestimonyMovementController {
         }
         try {
             dto.setIdTestimonyMovement(id);
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {

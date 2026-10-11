@@ -56,7 +56,7 @@ class PaymentRepositoryIntegrationTest extends RepositoryIntegrationTest {
         testBudget = new Budget();
         testBudget.setNumber((int) (System.currentTimeMillis() % 10000));
         testBudget.setDate(new Date());
-        testBudget.setEncabezado("Budget Test");
+        testBudget.setHeading("Budget Test");
         testBudget.setStatus("PENDIENTE");
         testBudget.setPropertyAmount(new java.math.BigDecimal("500000"));
         testBudget.setFkIdPerson(testPerson);

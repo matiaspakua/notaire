@@ -212,7 +212,7 @@ export interface DtoArchivedManagement {
 
 export interface CreateCompleteManagementInput {
   number: number;
-  encabezado?: string;
+  heading?: string;
   notes?: string;
   presupuestoId: number;
   escribanoId: number;
@@ -431,7 +431,7 @@ export interface HistoryEntry {
 export interface ManagementWorkflowTrace {
   managementId: number;
   number?: number;
-  encabezado?: string;
+  heading?: string;
   dateStart?: string;
   statusActual?: string;
   workflowDefinition?: WorkflowDefinition;
@@ -473,7 +473,7 @@ export interface ExternalEntityDocument {
 export interface ManagementExternalEntityDocuments {
   idManagement: number;
   number?: number;
-  encabezado?: string;
+  heading?: string;
   dateStart?: string;
   notary?: string;
   cadastralDesignation?: string;
@@ -514,7 +514,7 @@ export interface ProcedureRequiredDocumentation {
 export interface ManagementDocumentReentry {
   idManagement: number;
   number?: number;
-  encabezado?: string;
+  heading?: string;
   procedures: ProcedureRequiredDocumentation[];
 }
 

@@ -63,7 +63,7 @@ class BudgetProcedureMigrationGuardIntegrationTest {
                 Statement statement = connection.createStatement()) {
             statement.execute("INSERT INTO tramites (version, numero, nombre) VALUES (0, 1, 'Compraventa')");
             statement.execute(
-                    "INSERT INTO presupuestos (version, numero, fecha, encabezado, estado, fk_id_tramite) "
+                    "INSERT INTO presupuestos (version, numero, fecha, heading, estado, fk_id_tramite) "
                             + "VALUES (0, 1, CURRENT_DATE, 'Test', 'pendiente', "
                             + "(SELECT id_tramite FROM tramites ORDER BY id_tramite DESC LIMIT 1))");
         }

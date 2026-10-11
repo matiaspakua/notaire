@@ -72,7 +72,7 @@ class CatalogConstraintErrorsIntegrationTest {
         "/api/v1/procedure-types, idProcedureType, '{\"name\":\"T579\"}'"
     })
     @DisplayName("an update that violates a NOT NULL constraint answers 400, not 500")
-    // Concept updates are partial (Concept.setAtributos skips null fields), so a null name
+    // Concept updates are partial (Concept.setAttributes skips null fields), so a null name
     // keeps the stored one; the concept update path is covered by ErrorResponsesTest.
     void updateConstraintViolationIsBadRequest(String url, String idField, String createBody) throws Exception {
         JsonNode created = mapper.readTree(mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON)

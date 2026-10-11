@@ -79,7 +79,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
 
     private Integer createBudget(Integer clientId) throws Exception {
         String body = """
-                {"number": 1, "date": "2026-01-01", "encabezado": "Budget History IT", "status": "PENDIENTE",
+                {"number": 1, "date": "2026-01-01", "heading": "Budget History IT", "status": "PENDIENTE",
                  "person": {"personId": %d}}
                 """.formatted(clientId);
         MvcResult result = mockMvc.perform(post("/api/v1/budgets")
@@ -116,7 +116,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         Integer notaryId = createPerson("80610001");
         ManagementStatus status = createStatus("Initial");
         String body = """
-                {"encabezado": "Plain create with status", "dateStart": "2026-01-01", "number": %d,
+                {"heading": "Plain create with status", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), notaryId, status.getIdManagementStatus());
 
@@ -139,7 +139,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
     void shouldNotWriteHistoryOnPlainCreateWithoutStatus() throws Exception {
         Integer notaryId = createPerson("80610002");
         String body = """
-                {"encabezado": "Plain create without status", "dateStart": "2026-01-01", "number": %d,
+                {"heading": "Plain create without status", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), notaryId);
 
@@ -161,7 +161,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         ManagementStatus statusA = createStatus("A");
         ManagementStatus statusB = createStatus("B");
         String createBody = """
-                {"encabezado": "Plain update change", "dateStart": "2026-01-01", "number": %d,
+                {"heading": "Plain update change", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), notaryId, statusA.getIdManagementStatus());
         MvcResult created = mockMvc.perform(post("/api/v1/managements")
@@ -174,7 +174,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         int before = historyFor(managementId).size();
 
         String updateBody = """
-                {"encabezado": "Plain update change", "dateStart": "2026-01-01", "number": %d,
+                {"heading": "Plain update change", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), notaryId, statusB.getIdManagementStatus());
         mockMvc.perform(put("/api/v1/managements/{id}", managementId)
@@ -197,7 +197,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         ManagementStatus status = createStatus("Same");
         int number = (int) (System.nanoTime() % 100000);
         String createBody = """
-                {"encabezado": "Plain update same", "dateStart": "2026-01-01", "number": %d,
+                {"heading": "Plain update same", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted(number, notaryId, status.getIdManagementStatus());
         MvcResult created = mockMvc.perform(post("/api/v1/managements")
@@ -210,7 +210,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         int before = historyFor(managementId).size();
 
         String updateBody = """
-                {"encabezado": "Plain update same renamed", "dateStart": "2026-01-01", "number": %d,
+                {"heading": "Plain update same renamed", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted(number, notaryId, status.getIdManagementStatus());
         mockMvc.perform(put("/api/v1/managements/{id}", managementId)
@@ -233,7 +233,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         int number = (int) (System.nanoTime() % 100000);
 
         String createBody = """
-                {"number": %d, "encabezado": "Complete-case History", "budgetId": %d,
+                {"number": %d, "heading": "Complete-case History", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(number, budgetId, notaryId, statusA.getIdManagementStatus(), typeId);
         MvcResult created = mockMvc.perform(post("/api/v1/managements/complete-case")
@@ -246,7 +246,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         int before = historyFor(managementId).size();
 
         String updateBody = """
-                {"number": %d, "encabezado": "Complete-case History", "budgetId": %d,
+                {"number": %d, "heading": "Complete-case History", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(number, budgetId, notaryId, statusB.getIdManagementStatus(), typeId);
         mockMvc.perform(put("/api/v1/managements/{id}/complete-case", managementId)
@@ -273,7 +273,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         int number = (int) (System.nanoTime() % 100000);
 
         String createBody = """
-                {"number": %d, "encabezado": "Complete-case same", "budgetId": %d,
+                {"number": %d, "heading": "Complete-case same", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(number, budgetId, notaryId, status.getIdManagementStatus(), typeId);
         MvcResult created = mockMvc.perform(post("/api/v1/managements/complete-case")
@@ -286,7 +286,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         int before = historyFor(managementId).size();
 
         String updateBody = """
-                {"number": %d, "encabezado": "Complete-case same renamed", "budgetId": %d,
+                {"number": %d, "heading": "Complete-case same renamed", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(number, budgetId, notaryId, status.getIdManagementStatus(), typeId);
         mockMvc.perform(put("/api/v1/managements/{id}/complete-case", managementId)
@@ -304,7 +304,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         ManagementStatus statusA = createStatus("Hist-A");
         ManagementStatus statusB = createStatus("Hist-B");
         String createBody = """
-                {"encabezado": "Estado from history", "dateStart": "2026-01-01", "number": %d,
+                {"heading": "Estado from history", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), notaryId, statusA.getIdManagementStatus());
         MvcResult created = mockMvc.perform(post("/api/v1/managements")
@@ -341,7 +341,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         ManagementStatus statusA = createStatus("Tie-A");
         ManagementStatus statusB = createStatus("Tie-B");
         String body = """
-                {"encabezado": "Tie", "dateStart": "2026-01-01", "number": %d,
+                {"heading": "Tie", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """;
         MvcResult created = mockMvc.perform(post("/api/v1/managements")
@@ -381,7 +381,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         Integer notaryId = createPerson("80610010");
         ManagementStatus status = createStatus("Fallback");
         String body = """
-                {"encabezado": "Estado fallback", "dateStart": "2026-01-01", "number": %d,
+                {"heading": "Estado fallback", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), notaryId, status.getIdManagementStatus());
         MvcResult created = mockMvc.perform(post("/api/v1/managements")
@@ -420,7 +420,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
     void shouldReturn404EstadoActualWhenStatusNullAndHistoryEmpty() throws Exception {
         Integer notaryId = createPerson("80610011");
         String body = """
-                {"encabezado": "No status", "dateStart": "2026-01-01", "number": %d,
+                {"heading": "No status", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), notaryId);
         MvcResult created = mockMvc.perform(post("/api/v1/managements")

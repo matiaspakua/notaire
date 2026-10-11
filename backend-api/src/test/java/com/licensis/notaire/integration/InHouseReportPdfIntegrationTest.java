@@ -119,7 +119,7 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
         Budget budget = new Budget();
         budget.setNumber(MANAGEMENT_NUMBER);
         budget.setDate(date(LocalDate.of(2026, 9, 15)));
-        budget.setEncabezado("Compraventa Peña");
+        budget.setHeading("Compraventa Peña");
         budget.setStatus("Pending");
         budget.setPropertyAmount(new BigDecimal("150000.00"));
         budget.setFkIdPerson(client);
@@ -153,7 +153,7 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
         DeedManagement management = new DeedManagement();
         management.setNumber(MANAGEMENT_NUMBER);
         management.setDateStart(date(LocalDate.of(2026, 9, 16)));
-        management.setEncabezado("Management Peña");
+        management.setHeading("Management Peña");
         management.setFkIdNotaryPerson(client);
         management.setFkIdManagementStatus(status);
         management = managementRepository.save(management);

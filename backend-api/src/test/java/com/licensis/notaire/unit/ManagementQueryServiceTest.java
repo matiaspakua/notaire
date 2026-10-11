@@ -48,8 +48,8 @@ class ManagementQueryServiceTest {
         testManagement.setFkIdManagementStatus(testStatus);
     }
 
-    private DeedManagement createManagement(Integer id, int number, String encabezado) {
-        DeedManagement g = new DeedManagement(id, number, new Date(), encabezado);
+    private DeedManagement createManagement(Integer id, int number, String heading) {
+        DeedManagement g = new DeedManagement(id, number, new Date(), heading);
         g.setFkIdManagementStatus(testStatus);
         return g;
     }
@@ -72,7 +72,7 @@ class ManagementQueryServiceTest {
 
             assertThat(result).hasSize(2);
             assertThat(result.getContent())
-                    .extracting(DtoManagementSummary::encabezado)
+                    .extracting(DtoManagementSummary::heading)
                     .containsExactly("Management A", "Management B");
             assertThat(result.getContent())
                     .extracting(DtoManagementSummary::number)
@@ -107,7 +107,7 @@ class ManagementQueryServiceTest {
             assertThat(result).isPresent();
             assertThat(result.get().idManagement()).isEqualTo(1);
             assertThat(result.get().number()).isEqualTo(100);
-            assertThat(result.get().encabezado()).isEqualTo("Test Management");
+            assertThat(result.get().heading()).isEqualTo("Test Management");
             assertThat(result.get().statusActual()).isEqualTo("En Proceso");
         }
 
@@ -163,7 +163,7 @@ class ManagementQueryServiceTest {
             DtoManagementSummary summary = result.get();
             assertThat(summary.idManagement()).isEqualTo(1);
             assertThat(summary.number()).isEqualTo(100);
-            assertThat(summary.encabezado()).isEqualTo("Test Management");
+            assertThat(summary.heading()).isEqualTo("Test Management");
             assertThat(summary.dateStart()).isNotNull();
             assertThat(summary.statusActual()).isEqualTo("En Proceso");
             assertThat(summary.procedureCount()).isZero();

@@ -160,7 +160,7 @@ public class Concept implements Serializable, Persistable<Integer>
         return miDto;
     }
 
-    public void setAtributos(DtoConcept nuevoDto) throws InvalidDtoException
+    public void setAttributes(DtoConcept nuevoDto) throws InvalidDtoException
     {
         this.setIdConcept(nuevoDto.getIdConcept());
 

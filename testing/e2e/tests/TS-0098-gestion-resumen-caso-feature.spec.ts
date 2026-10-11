@@ -22,7 +22,7 @@ test.describe("#774 - Resumen del caso", () => {
     const escribano = await createPersona(page, { isClient: false });
     expect(escribano.ok, escribano.error ?? "createPersona failed").toBe(true);
     const gestion = await apiPost<{ idManagement: number }>(page, "/managements", {
-      encabezado: `Gestión resumen E2E ${uniqueId()}`,
+      heading: `Gestión resumen E2E ${uniqueId()}`,
       dateStart: new Date().toISOString().split("T")[0],
       number: uniqueId() % 1_000_000,
       notaryPersonId: escribano.data!.personId,

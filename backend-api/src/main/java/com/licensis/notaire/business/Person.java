@@ -465,7 +465,7 @@ public class Person implements Serializable, Persistable<Integer> {
 
     }
 
-    public void setAtributos(DtoPerson dtoPerson) {
+    public void setAttributes(DtoPerson dtoPerson) {
 
         // Version of the objeto
         this.setVersion(dtoPerson.getVersion());

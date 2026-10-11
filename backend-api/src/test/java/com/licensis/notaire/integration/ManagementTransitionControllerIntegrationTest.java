@@ -136,7 +136,7 @@ class ManagementTransitionControllerIntegrationTest {
     private Integer createManagement(ManagementStatus status, ProcedureType type, boolean conProcedure) {
         DeedManagement management = new DeedManagement();
         management.setNumber((int) (System.nanoTime() % 100000));
-        management.setEncabezado("Management Transicion IT");
+        management.setHeading("Management Transicion IT");
         management.setDateStart(new Date());
         management.setFkIdManagementStatus(status);
         management.setFkIdNotaryPerson(personRepository.findAll().get(0));

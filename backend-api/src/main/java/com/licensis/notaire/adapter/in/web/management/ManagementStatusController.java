@@ -97,7 +97,7 @@ public class ManagementStatusController {
                 dto.setVersion(0);
             }
             ManagementStatus entity = new ManagementStatus();
-            entity.setAtributo(dto);
+            entity.setAttribute(dto);
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
@@ -129,7 +129,7 @@ public class ManagementStatusController {
             if (dto.getVersion() == null) {
                 dto.setVersion(entity.getVersion());
             }
-            entity.setAtributo(dto);
+            entity.setAttribute(dto);
             repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {

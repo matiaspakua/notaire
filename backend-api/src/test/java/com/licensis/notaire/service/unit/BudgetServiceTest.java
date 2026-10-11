@@ -40,7 +40,7 @@ class BudgetServiceTest {
         testBudget = new Budget();
         testBudget.setIdBudget(1);
         testBudget.setNumber(1000);
-        testBudget.setEncabezado("Budget Venta");
+        testBudget.setHeading("Budget Venta");
         testBudget.setStatus("APROBADO");
     }
 
@@ -206,10 +206,10 @@ class BudgetServiceTest {
     }
 
     @Test
-    @DisplayName("Should create budget with default encabezado")
-    void shouldCreateBudgetWithDefaultEncabezado() {
+    @DisplayName("Should create budget with default heading")
+    void shouldCreateBudgetWithDefaultHeading() {
         Budget newBudget = new Budget();
-        newBudget.setEncabezado(null);
+        newBudget.setHeading(null);
         newBudget.setNumber(0);
 
         when(budgetRepository.create(any(Budget.class)))
@@ -222,7 +222,7 @@ class BudgetServiceTest {
         Budget result = budgetService.create(newBudget);
 
         assertThat(result).isNotNull()
-                .extracting(Budget::getEncabezado)
+                .extracting(Budget::getHeading)
                 .isEqualTo("Budget");
         assertThat(result.getNumber()).isNotEqualTo(0);
 
@@ -230,10 +230,10 @@ class BudgetServiceTest {
     }
 
     @Test
-    @DisplayName("Should create budget with provided encabezado")
-    void shouldCreateBudgetWithProvidedEncabezado() {
+    @DisplayName("Should create budget with provided heading")
+    void shouldCreateBudgetWithProvidedHeading() {
         Budget newBudget = new Budget();
-        newBudget.setEncabezado("Custom");
+        newBudget.setHeading("Custom");
         newBudget.setNumber(0);
 
         when(budgetRepository.create(any(Budget.class)))
@@ -246,7 +246,7 @@ class BudgetServiceTest {
         Budget result = budgetService.create(newBudget);
 
         assertThat(result).isNotNull()
-                .extracting(Budget::getEncabezado)
+                .extracting(Budget::getHeading)
                 .isEqualTo("Custom");
 
         verify(budgetRepository, times(1)).create(any(Budget.class));
@@ -256,7 +256,7 @@ class BudgetServiceTest {
     @DisplayName("Should generate number when creating budget")
     void shouldGenerateNumberWhenCreatingBudget() {
         Budget newBudget = new Budget();
-        newBudget.setEncabezado("Test");
+        newBudget.setHeading("Test");
         newBudget.setNumber(0);
 
         when(budgetRepository.create(any(Budget.class)))

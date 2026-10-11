@@ -147,7 +147,7 @@ class RequestBodyDtoBindingIntegrationTest {
                                   "version": 77,
                                   "number": 106801,
                                   "date": "2026-10-02",
-                                  "encabezado": "Budget mass-assignment",
+                                  "heading": "Budget mass-assignment",
                                   "status": "PENDIENTE",
                                   "propertyAmount": 1500.0,
                                   "person": {"personId": %d}
@@ -164,6 +164,6 @@ class RequestBodyDtoBindingIntegrationTest {
         JsonNode body = mapper.readTree(result.getResponse().getContentAsString());
         assertThat(body.get("idBudget").asInt()).isNotEqualTo(88888);
         assertThat(body.get("version").asInt()).isNotEqualTo(77);
-        assertThat(body.get("encabezado").asText()).isEqualTo("Budget mass-assignment");
+        assertThat(body.get("heading").asText()).isEqualTo("Budget mass-assignment");
     }
 }

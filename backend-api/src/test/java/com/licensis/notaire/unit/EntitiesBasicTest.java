@@ -104,7 +104,7 @@ class EntitiesBasicTest {
         }
 
         @Test
-        @DisplayName("getDto and setAtributos roundtrip")
+        @DisplayName("getDto and setAttributes roundtrip")
         void getDtoAndSetAtributos() throws Exception {
             Concept c = new Concept(1);
             c.setName("X");
@@ -124,7 +124,7 @@ class EntitiesBasicTest {
             assertThat(dto.isFixed()).isTrue();
 
             Concept c2 = new Concept();
-            c2.setAtributos(dto);
+            c2.setAttributes(dto);
             assertThat(c2.getIdConcept()).isEqualTo(1);
             assertThat(c2.getName()).isEqualTo("X");
             assertThat(c2.getValue()).isEqualByComparingTo(new java.math.BigDecimal("10"));
@@ -171,7 +171,7 @@ class EntitiesBasicTest {
             dto.setName("X");
             dto.setNotes("y");
             dto.setVersion(2);
-            e1.setAtributo(dto);
+            e1.setAttribute(dto);
             assertThat(e1.getName()).isEqualTo("X");
 
             DtoManagementStatus outDto = e1.getDto();
@@ -226,7 +226,7 @@ class EntitiesBasicTest {
     @DisplayName("Folio")
     class FolioTests {
         @Test
-        @DisplayName("constructors/accessors/equals/setAtributos")
+        @DisplayName("constructors/accessors/equals/setAttributes")
         void all() {
             Folio f1 = new Folio();
             Folio f2 = new Folio(1);
@@ -262,7 +262,7 @@ class EntitiesBasicTest {
             assertThat(new Folio(1)).isNotEqualTo("x");
             assertThat(f1.toString()).contains("5");
 
-            // setAtributos + getDto roundtrip (DtoFolio must be valid)
+            // setAttributes + getDto roundtrip (DtoFolio must be valid)
             DtoFolio dto = new DtoFolio();
             dto.setIdFolio(50);
             dto.setNumber(5);
@@ -272,7 +272,7 @@ class EntitiesBasicTest {
             dto.setVersion(1);
 
             Folio target = new Folio();
-            // setAtributos only updates if dto.isValid() — DtoFolio may have specific rules
+            // setAttributes only updates if dto.isValid() — DtoFolio may have specific rules
             // (we just verify no exception is thrown)
             assertThat(target).isNotNull();
 
@@ -364,7 +364,7 @@ class EntitiesBasicTest {
             assertThat(new History(1)).isNotEqualTo("x");
             assertThat(h1.toString()).contains("3");
 
-            // setAtributos is a no-op
+            // setAttributes is a no-op
         }
     }
 
@@ -544,7 +544,7 @@ class EntitiesBasicTest {
             dto2.setFlagged(true);
             dto2.setVersion(1);
             Testimony t3 = new Testimony();
-            t3.setAtributos(dto2);
+            t3.setAttributes(dto2);
             assertThat(t3.getIdTestimony()).isEqualTo(99);
         }
     }
@@ -598,7 +598,7 @@ class EntitiesBasicTest {
             dto2.setTestimony(dtoT);
 
             TestimonyMovement m3 = new TestimonyMovement();
-            m3.setAtributos(dto2);
+            m3.setAttributes(dto2);
             assertThat(m3.getIdTestimonyMovement()).isEqualTo(50);
             assertThat(m3.getTestimony()).isNotNull();
         }
@@ -722,7 +722,7 @@ class EntitiesBasicTest {
             assertThat(new AuditRecord(1)).isNotEqualTo("x");
             assertThat(r1.toString()).contains("10");
 
-            // setAtributos doesn't do much
+            // setAttributes doesn't do much
         }
     }
 
@@ -768,7 +768,7 @@ class EntitiesBasicTest {
             dto2.setEnabled(true);
             dto2.setVersion(0);
             DocumentType t3 = new DocumentType();
-            t3.setAtributos(dto2);
+            t3.setAttributes(dto2);
             assertThat(t3.getName()).isEqualTo("RG");
         }
     }
@@ -810,7 +810,7 @@ class EntitiesBasicTest {
             dto2.setIdFolioType(99);
             dto2.setName("NewName");
             FolioType t5 = new FolioType();
-            t5.setAtributos(dto2);
+            t5.setAttributes(dto2);
             assertThat(t5.getName()).isEqualTo("NewName");
         }
     }
@@ -860,7 +860,7 @@ class EntitiesBasicTest {
             dto2.setEnabled(true);
             dto2.setVersion(0);
             ProcedureType t3 = new ProcedureType();
-            t3.setAtributos(dto2);
+            t3.setAttributes(dto2);
             assertThat(t3.getName()).isEqualTo("New");
         }
     }

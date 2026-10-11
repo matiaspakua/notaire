@@ -136,7 +136,7 @@ public class ExternalEntityDocumentService {
         return new DtoManagementExternalEntityDocuments(
                 management.getIdManagement(),
                 management.getNumber(),
-                management.getEncabezado(),
+                management.getHeading(),
                 management.getDateStart(),
                 nameNotary(management.getFkIdNotaryPerson()),
                 resolveCadastralDesignation(management.getIdManagement()),

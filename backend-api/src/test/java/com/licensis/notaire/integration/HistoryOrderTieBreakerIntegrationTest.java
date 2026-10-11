@@ -66,7 +66,7 @@ class HistoryOrderTieBreakerIntegrationTest {
 
         DeedManagement management = new DeedManagement();
         management.setNumber((int) (System.nanoTime() % 100000));
-        management.setEncabezado("History order IT");
+        management.setHeading("History order IT");
         management.setDateStart(new Date());
         management.setFkIdManagementStatus(later);
         management.setFkIdNotaryPerson(personRepository.findAll().get(0));

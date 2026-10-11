@@ -15,7 +15,7 @@ public class DtoManagementWorkflowTrace {
 
     private Integer managementId;
     private Integer number;
-    private String encabezado;
+    private String heading;
     private Date dateStart;
     private String statusActual;
 
@@ -43,12 +43,12 @@ public class DtoManagementWorkflowTrace {
         this.number = number;
     }
 
-    public String getEncabezado() {
-        return encabezado;
+    public String getHeading() {
+        return heading;
     }
 
-    public void setEncabezado(String encabezado) {
-        this.encabezado = encabezado;
+    public void setHeading(String heading) {
+        this.heading = heading;
     }
 
     public Date getDateStart() {

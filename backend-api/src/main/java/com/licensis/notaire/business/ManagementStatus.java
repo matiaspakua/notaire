@@ -153,7 +153,7 @@ public class ManagementStatus implements Serializable, Persistable<Integer> {
                 + "[ name=" + name + " ]";
     }
 
-    public void setAtributo(DtoManagementStatus miDto) throws InvalidDtoException {
+    public void setAttribute(DtoManagementStatus miDto) throws InvalidDtoException {
         if (miDto.isValid() == Boolean.TRUE) {
             this.setIdManagementStatus(miDto.getIdManagementStatus());
             this.setName(miDto.getName());

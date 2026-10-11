@@ -253,12 +253,12 @@ function GestionesList() {
       ),
     },
     {
-      key: "encabezado",
+      key: "heading",
       header: t("fields.encabezado"),
       render: (g) =>
-        g.encabezado ? (
-          <span className="block max-w-[18rem] truncate" title={g.encabezado}>
-            {g.encabezado}
+        g.heading ? (
+          <span className="block max-w-[18rem] truncate" title={g.heading}>
+            {g.heading}
           </span>
         ) : (
           "—"

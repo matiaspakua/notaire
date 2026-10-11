@@ -53,7 +53,7 @@ public class ReingresoDocumentacionService {
                 .map(this::toDtoProcedure)
                 .toList();
         return new DtoManagementDocumentReentry(management.getIdManagement(), management.getNumber(),
-                management.getEncabezado(), procedures);
+                management.getHeading(), procedures);
     }
 
     @Transactional

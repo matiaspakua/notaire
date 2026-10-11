@@ -84,14 +84,14 @@ export function useCreateCompleteManagement() {
   const qc = useQueryClient();
   return useMutation({
     // ManagementController's CompleteCaseRequest record field names are
-    // (number, encabezado, notes, budgetId, notaryId, statusManagementId,
+    // (number, heading, notes, budgetId, notaryId, statusManagementId,
     // typeProcedureId, propertyId) — not the presupuestoId/escribanoId/
     // estadoGestionId/tipoTramiteId names kept on CreateCompleteManagementInput
     // for callers, so translate before posting.
     mutationFn: (data: CreateCompleteManagementInput) =>
       apiPost<DeedManagement>("/managements/complete-case", {
         number: data.number,
-        encabezado: data.encabezado,
+        heading: data.heading,
         notes: data.notes,
         budgetId: data.presupuestoId,
         notaryId: data.escribanoId,

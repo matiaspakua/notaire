@@ -34,7 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `budget`, `budgets`, `folioType`, `deedManagement`, `users`, `copies`). Report and
   notebook calls use English names: `GET /api/v1/notebooks/{id}/cover`, query parameters
   `year`, `month`, `procedureTypeId`, and `procedureTypeName`, and path variables such as
-  `{idBudget}` and `{idManagement}`. `R45` reverses the
+  `{idBudget}` and `{idManagement}`. The JSON field `heading` replaces `encabezado`
+  (`managementHeading` on budget summaries). `R45` reverses the schema
   renames. Message catalogs stay bilingual, and stored status and catalog labels stay as recorded.
 
 ### Changed

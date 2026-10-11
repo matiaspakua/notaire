@@ -70,7 +70,7 @@ class ManagementBitacoraControllerIntegrationTest {
     private Integer createManagement(ManagementStatus status) {
         DeedManagement management = new DeedManagement();
         management.setNumber((int) (System.nanoTime() % 100000));
-        management.setEncabezado("Management Bitacora IT");
+        management.setHeading("Management Bitacora IT");
         management.setDateStart(new Date());
         management.setFkIdManagementStatus(status);
         management.setFkIdNotaryPerson(personRepository.findAll().get(0));

@@ -25,7 +25,7 @@ test.describe("#773 - Documento vinculado a un trámite", () => {
     expect(escribano.ok, escribano.error ?? "createPersona failed").toBe(true);
     const numeroGestion = uniqueId() % 1_000_000;
     const gestion = await apiPost<{ idManagement: number }>(page, "/managements", {
-      encabezado: `Gestión documentos E2E ${numeroGestion}`,
+      heading: `Gestión documentos E2E ${numeroGestion}`,
       dateStart: new Date().toISOString().split("T")[0],
       number: numeroGestion,
       notaryPersonId: escribano.data!.personId,

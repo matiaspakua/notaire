@@ -267,7 +267,7 @@ public class TestimonyMovement implements Serializable, Persistable<Integer>
         return miDto;
     }
 
-    public void setAtributos(DtoTestimonyMovement miDto)
+    public void setAttributes(DtoTestimonyMovement miDto)
     {
 
         if (miDto.getIdTestimonyMovement() != null)

@@ -93,7 +93,7 @@ public class FolioTypeController {
     public ResponseEntity<Object> create(@RequestBody DtoFolioType dto) {
         try {
             FolioType entity = new FolioType();
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
@@ -121,7 +121,7 @@ public class FolioTypeController {
         try {
             FolioType entity = existing.get();
             dto.setIdFolioType(id);
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {

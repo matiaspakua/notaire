@@ -31,9 +31,9 @@ import DocumentosEntidadesExternasPage from "@/app/dashboard/external-entity-doc
 import { ManagementPicker } from "@/components/shared/ManagementPicker";
 import type { DeedManagement } from "@/types";
 
-const NEWEST: DeedManagement = { idManagement: 1312, number: 98765, encabezado: "Compraventa Nueva", statusActual: "Iniciada" };
-const OLD: DeedManagement = { idManagement: 12, number: 4321, encabezado: "Hipoteca Garcia", statusActual: "Iniciada" };
-const OLD2: DeedManagement = { idManagement: 40, number: 5555, encabezado: "Donación Garcia", statusActual: "Iniciada" };
+const NEWEST: DeedManagement = { idManagement: 1312, number: 98765, heading: "Compraventa Nueva", statusActual: "Iniciada" };
+const OLD: DeedManagement = { idManagement: 12, number: 4321, heading: "Hipoteca Garcia", statusActual: "Iniciada" };
+const OLD2: DeedManagement = { idManagement: 40, number: 5555, heading: "Donación Garcia", statusActual: "Iniciada" };
 
 function json(body: unknown, status = 200) {
   const text = JSON.stringify(body);

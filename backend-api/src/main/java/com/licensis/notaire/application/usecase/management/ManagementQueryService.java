@@ -38,7 +38,7 @@ public class ManagementQueryService {
         return new DtoManagementSummary(
                 management.getIdManagement(),
                 management.getNumber(),
-                management.getEncabezado(),
+                management.getHeading(),
                 management.getDateStart(),
                 management.getFkIdManagementStatus() != null ? management.getFkIdManagementStatus().getName() : null,
                 management.getProcedureList() != null ? management.getProcedureList().size() : 0,

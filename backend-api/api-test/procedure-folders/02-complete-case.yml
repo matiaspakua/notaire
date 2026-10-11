@@ -12,7 +12,7 @@ http:
     data: |-
         {
           "number": {{pf_mgmt_number}},
-          "encabezado": "Bruno folder management",
+          "heading": "Bruno folder management",
           "budgetId": {{pf_budget_id}},
           "notaryId": {{pf_notary_id}},
           "statusManagementId": 1,

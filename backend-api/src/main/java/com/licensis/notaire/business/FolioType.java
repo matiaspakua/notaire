@@ -209,7 +209,7 @@ public class FolioType implements Serializable, Persistable<Integer>
 
     }
 
-    public void setAtributos(DtoFolioType dtoFolioType) throws InvalidDtoException
+    public void setAttributes(DtoFolioType dtoFolioType) throws InvalidDtoException
     {
         if (dtoFolioType.isValid())
         {

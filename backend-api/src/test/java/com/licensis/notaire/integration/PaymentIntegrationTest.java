@@ -64,7 +64,7 @@ class PaymentIntegrationTest extends ServiceIntegrationTest {
         Budget budget = new Budget();
         budget.setNumber((int) (System.currentTimeMillis() % 10000));
         budget.setDate(new Date());
-        budget.setEncabezado("Budget Test");
+        budget.setHeading("Budget Test");
         budget.setStatus("PENDIENTE");
         budget.setPropertyAmount(new java.math.BigDecimal("500000"));
         budget.setFkIdPerson(person);

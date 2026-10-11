@@ -87,7 +87,7 @@ class BudgetSummaryDtoTest {
             assertThat(resumen.payments()).isEmpty();
             assertThat(resumen.idManagement()).isEqualTo(1);
             assertThat(resumen.numberManagement()).isEqualTo(500);
-            assertThat(resumen.encabezadoManagement()).isEqualTo("Management Test");
+            assertThat(resumen.managementHeading()).isEqualTo("Management Test");
         }
 
         @Test

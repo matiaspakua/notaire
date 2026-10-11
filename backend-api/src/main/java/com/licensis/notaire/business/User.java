@@ -206,11 +206,11 @@ public class User implements Serializable, Persistable<Integer> {
                 + "[ estado=" + status + " ]";
     }
 
-    public void setAtributos(DtoUser dtoUser) {
+    public void setAttributes(DtoUser dtoUser) {
 
         // Ref persona de UserAccount
         Person miPerson = new Person();
-        miPerson.setAtributos(dtoUser.getPersons());
+        miPerson.setAttributes(dtoUser.getPersons());
         setFkIdPerson(miPerson);
 
         // Atributos user

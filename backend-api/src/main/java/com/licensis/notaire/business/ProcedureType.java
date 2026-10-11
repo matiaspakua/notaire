@@ -200,7 +200,7 @@ public class ProcedureType implements Serializable, Persistable<Integer> {
         this.workflowDefinition = workflowDefinition;
     }
 
-    public void setAtributos(DtoProcedureType dtoProcedureType) {
+    public void setAttributes(DtoProcedureType dtoProcedureType) {
         if (dtoProcedureType.isValid()) {
             this.idProcedureType = dtoProcedureType.getIdProcedureType();
             this.name = dtoProcedureType.getName();

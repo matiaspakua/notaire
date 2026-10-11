@@ -20,6 +20,6 @@ runtime:
           test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
           test("Update persisted", function () {
             const b = res.getBody();
-            expect(b.encabezado).to.equal('E2E Budget Updated');
+            expect(b.heading).to.equal('E2E Budget Updated');
             expect(b.status).to.equal('APROBADO'); // stored as the canonical code (#1346)
           });

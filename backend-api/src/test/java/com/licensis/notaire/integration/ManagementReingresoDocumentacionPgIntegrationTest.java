@@ -86,7 +86,7 @@ class ManagementReingresoDocumentacionPgIntegrationTest extends BaseIntegrationT
     void shouldReingresarWhenValidAgainstRealSchema() throws Exception {
         Integer notaryId = createPerson("43pg001");
         String managementBody = """
-                {"encabezado": "Management CU43 pg", "dateStart": "2026-01-01", "number": 943001,
+                {"heading": "Management CU43 pg", "dateStart": "2026-01-01", "number": 943001,
                  "notaryPersonId": %d}
                 """.formatted(notaryId);
         MvcResult managementResult = mockMvc.perform(post("/api/v1/managements")

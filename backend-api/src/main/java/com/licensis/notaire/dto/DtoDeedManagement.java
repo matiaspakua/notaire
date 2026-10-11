@@ -12,7 +12,7 @@ public class DtoDeedManagement implements ValidDto {
     private List<DtoPerson> listaClientesInvolucrados;
     private int number;
     private Date dateStart;
-    private String encabezado;
+    private String heading;
     private String notes;
     private Integer numberArchivo;
     private Integer numberBibliorato;
@@ -26,11 +26,11 @@ public class DtoDeedManagement implements ValidDto {
         this.listaProceduresAsociados = new ArrayList<>();
     }
 
-    public DtoDeedManagement(DtoPerson person, int number, Date dateStart, String encabezado) {
+    public DtoDeedManagement(DtoPerson person, int number, Date dateStart, String heading) {
         this.personNotary = person;
         this.number = number;
         this.dateStart = dateStart;
-        this.encabezado = encabezado;
+        this.heading = heading;
         this.listaClientesInvolucrados = new ArrayList<>();
         this.listaProceduresAsociados = new ArrayList<>();
     }
@@ -47,8 +47,8 @@ public class DtoDeedManagement implements ValidDto {
     public void setNumber(int number) { this.number = number; }
     public Date getDateStart() { return dateStart; }
     public void setDateStart(Date dateStart) { this.dateStart = dateStart; }
-    public String getEncabezado() { return encabezado; }
-    public void setEncabezado(String encabezado) { this.encabezado = encabezado; }
+    public String getHeading() { return heading; }
+    public void setHeading(String heading) { this.heading = heading; }
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
     public Integer getNumberArchivo() { return numberArchivo; }

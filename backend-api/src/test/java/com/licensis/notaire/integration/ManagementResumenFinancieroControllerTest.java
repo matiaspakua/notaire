@@ -62,7 +62,7 @@ class ManagementResumenFinancieroControllerTest {
 
     private Integer createBudget(Integer clientId, java.math.BigDecimal propertyAmount) throws Exception {
         String body = """
-                {"number": %d, "date": "2026-01-01", "encabezado": "Budget Resumen Management IT",
+                {"number": %d, "date": "2026-01-01", "heading": "Budget Resumen Management IT",
                  "status": "PENDIENTE", "propertyAmount": %s, "person": {"personId": %d}}
                 """.formatted((int) (System.nanoTime() % 100000), propertyAmount, clientId);
         MvcResult result = mockMvc.perform(post("/api/v1/budgets")
@@ -94,7 +94,7 @@ class ManagementResumenFinancieroControllerTest {
         Integer statusId = createManagementStatus();
         Integer typeProcedureId = createProcedureType();
         String body = """
-                {"number": %d, "encabezado": "Management Resumen IT", "budgetId": %d,
+                {"number": %d, "heading": "Management Resumen IT", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), budgetId, notaryId, statusId,
                 typeProcedureId);

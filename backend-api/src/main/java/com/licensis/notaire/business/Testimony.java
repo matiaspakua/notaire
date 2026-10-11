@@ -198,7 +198,7 @@ public class Testimony implements Serializable, Persistable<Integer>
         this.copyList = copyList;
     }
 
-    public void setAtributos(DtoTestimony miDto)
+    public void setAttributes(DtoTestimony miDto)
     {
 
         if (miDto.getIdTestimony() != null)
@@ -228,7 +228,7 @@ public class Testimony implements Serializable, Persistable<Integer>
             {
                 DtoTestimonyMovement dtoTestimonyMovement = it.next();
                 TestimonyMovement miTestimonyMovement = new TestimonyMovement();
-                miTestimonyMovement.setAtributos(dtoTestimonyMovement);
+                miTestimonyMovement.setAttributes(dtoTestimonyMovement);
                 testimonyMovementList.add(miTestimonyMovement);
             }
         }

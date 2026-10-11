@@ -14,8 +14,8 @@ test.describe("Managements list columns (#1348)", () => {
     expect(person.ok, person.error).toBe(true);
     const budget = await createPresupuesto(page, person.data!.personId);
     expect(budget.ok, budget.error).toBe(true);
-    const encabezado = `Carátula E2E ${Date.now()}`;
-    const gestion = await createCompleteCaseGestion(page, { presupuestoId: budget.data!.idBudget, encabezado });
+    const heading = `Carátula E2E ${Date.now()}`;
+    const gestion = await createCompleteCaseGestion(page, { presupuestoId: budget.data!.idBudget, heading });
     expect(gestion.ok, gestion.error).toBe(true);
 
     await page.goto("/dashboard/managements");
@@ -26,7 +26,7 @@ test.describe("Managements list columns (#1348)", () => {
     await expect(table.getByRole("columnheader", { name: "Tipo de Trámite" })).toHaveCount(0);
 
     const row = table.getByRole("row").filter({ has: page.getByTestId(`btn-ver-bitacora-${gestion.data!.idManagement}`) });
-    await expect(row).toContainText(encabezado);
+    await expect(row).toContainText(heading);
     await expect(row).toContainText(String(gestion.data!.number));
     // Started today (complete-case sets the start date): shown as a calendar date.
     const today = new Intl.DateTimeFormat("es-AR").format(new Date());

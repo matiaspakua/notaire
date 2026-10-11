@@ -54,7 +54,7 @@ class BudgetRepositoryIntegrationTest extends ServiceIntegrationTest {
         Budget budget = new Budget();
         budget.setNumber(1001);
         budget.setDate(new Date());
-        budget.setEncabezado("Budget Test");
+        budget.setHeading("Budget Test");
         budget.setStatus("BORRADOR");
         budget.setPropertyAmount(new java.math.BigDecimal("100000.0"));
         budget.setFkIdPerson(person);
@@ -72,7 +72,7 @@ class BudgetRepositoryIntegrationTest extends ServiceIntegrationTest {
         Budget budget = new Budget();
         budget.setNumber(2001);
         budget.setDate(new Date());
-        budget.setEncabezado("Budget Recuperación");
+        budget.setHeading("Budget Recuperación");
         budget.setStatus("PENDIENTE");
         budget.setFkIdPerson(person);
         Budget saved = budgetRepository.save(budget);
@@ -90,7 +90,7 @@ class BudgetRepositoryIntegrationTest extends ServiceIntegrationTest {
         Budget budget = new Budget();
         budget.setNumber(3001);
         budget.setDate(new Date());
-        budget.setEncabezado("Budget Actualizable");
+        budget.setHeading("Budget Actualizable");
         budget.setStatus("BORRADOR");
         budget.setFkIdPerson(person);
         Budget saved = budgetRepository.save(budget);
@@ -106,20 +106,20 @@ class BudgetRepositoryIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should support multiple budgets")
     void shouldSupportMultiplePresupuestos() {
-        String encabezadoUnico = "Pres" + System.nanoTime();
+        String headingUnico = "Pres" + System.nanoTime();
         String[] estados = {"BORRADOR", "PENDIENTE", "APROBADO", "RECHAZADO", "CANCELADO"};
         for (int i = 0; i < estados.length; i++) {
             Budget budget = new Budget();
             budget.setNumber(4000 + i);
             budget.setDate(new Date());
-            budget.setEncabezado(encabezadoUnico + " " + estados[i]);
+            budget.setHeading(headingUnico + " " + estados[i]);
             budget.setStatus(estados[i]);
             budget.setFkIdPerson(person);
             budgetRepository.save(budget);
         }
 
         List<Budget> creados = budgetRepository.findAll().stream()
-                .filter(p -> p.getEncabezado() != null && p.getEncabezado().startsWith(encabezadoUnico))
+                .filter(p -> p.getHeading() != null && p.getHeading().startsWith(headingUnico))
                 .toList();
         assertThat(creados).hasSize(5);
 

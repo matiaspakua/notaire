@@ -165,7 +165,7 @@ class BusinessWorkflowIntegrationTest {
                             .content("""
                                     {
                                       "number": 20250001,
-                                      "encabezado": "Gestión de prueba",
+                                      "heading": "Gestión de prueba",
                                       "dateStart": "2025-01-15",
                                       "notaryPersonId": 1
                                     }
@@ -219,7 +219,7 @@ class BusinessWorkflowIntegrationTest {
                                     {
                                       "number": 20250001,
                                       "date": "2025-01-15",
-                                      "encabezado": "Budget de prueba",
+                                      "heading": "Budget de prueba",
                                       "amount": 15000.00,
                                       "status": "PENDIENTE"
                                     }

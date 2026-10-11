@@ -71,7 +71,7 @@ class BudgetDeleteCascadeIntegrationTest {
         budget.setDate(new Date());
         budget.setNumber(1);
         budget.setStatus("ACTIVO");
-        budget.setEncabezado("Cascade Test Budget");
+        budget.setHeading("Cascade Test Budget");
         budget.setFkIdPerson(person);
         budget = budgetRepository.save(budget);
 

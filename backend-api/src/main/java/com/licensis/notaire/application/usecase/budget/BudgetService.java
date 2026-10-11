@@ -93,8 +93,8 @@ public class BudgetService {
      * @return the saved budget with generated ID
      */
     public Budget create(Budget budget) {
-        if (budget.getEncabezado() == null || budget.getEncabezado().isBlank()) {
-            budget.setEncabezado("Budget");
+        if (budget.getHeading() == null || budget.getHeading().isBlank()) {
+            budget.setHeading("Budget");
         }
         if (budget.getNumber() == 0) {
             budget.setNumber((int) (System.currentTimeMillis() % Integer.MAX_VALUE));

@@ -31,8 +31,8 @@ function json(body: unknown, status = 200) {
   return Promise.resolve({ ok: status < 400, status, text: () => Promise.resolve(text) } as Response);
 }
 
-const trace = (id: number, number: number, encabezado?: string) => ({
-  managementId: id, number, encabezado, statusActual: "Iniciada", nodes: [], transitions: [], history: [], nodeStatuses: {},
+const trace = (id: number, number: number, heading?: string) => ({
+  managementId: id, number, heading, statusActual: "Iniciada", nodes: [], transitions: [], history: [], nodeStatuses: {},
 });
 
 /** Managements newest first; `traced` ids have a workflow, the rest answer 400. */

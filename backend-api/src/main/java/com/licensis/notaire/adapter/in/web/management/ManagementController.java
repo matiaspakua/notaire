@@ -145,7 +145,7 @@ public class ManagementController {
 
     public record DtoTransitionRequest(String statusDestination) {}
 
-    public record CompleteCaseRequest(Integer number, String encabezado, String notes,
+    public record CompleteCaseRequest(Integer number, String heading, String notes,
             Integer budgetId, Integer notaryId, Integer statusManagementId, Integer typeProcedureId,
             Integer propertyId) {}
 
@@ -180,7 +180,7 @@ public class ManagementController {
     private void applyManagementFields(DeedManagement management, CompleteCaseRequest request,
             CaseDependencies dependencies) {
         management.setNumber(request.number());
-        management.setEncabezado(request.encabezado() == null ? "Management" : request.encabezado());
+        management.setHeading(request.heading() == null ? "Management" : request.heading());
         ManagementSubstitutionService.AssignedNotary assigned =
                 managementSubstitutionService.resolveNotary(dependencies.notary(), management.getDateStart());
         management.setFkIdNotaryPerson(assigned.notary());
@@ -361,7 +361,7 @@ public class ManagementController {
 
     record ManagementRequest(
             Integer number,
-            @NotBlank String encabezado,
+            @NotBlank String heading,
             Date dateStart,
             String notes,
             Integer notaryPersonId,
@@ -371,7 +371,7 @@ public class ManagementController {
     record ManagementResponse(
             Integer idManagement,
             int number,
-            String encabezado,
+            String heading,
             Date dateStart,
             String notes,
             Integer notaryPersonId,
@@ -387,7 +387,7 @@ public class ManagementController {
         return new ManagementResponse(
                 entity.getIdManagement(),
                 entity.getNumber(),
-                entity.getEncabezado(),
+                entity.getHeading(),
                 entity.getDateStart(),
                 entity.getNotes(),
                 notaryId,
@@ -400,7 +400,7 @@ public class ManagementController {
         if (request.number() != null) {
             entity.setNumber(request.number());
         }
-        entity.setEncabezado(request.encabezado());
+        entity.setHeading(request.heading());
         entity.setDateStart(request.dateStart() != null ? request.dateStart() : new Date());
         String notes = request.notes();
         if (request.pendingDebtAtArchiving() != null) {

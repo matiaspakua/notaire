@@ -2696,7 +2696,7 @@ export interface components {
         BudgetRequest: {
             /** Format: date-time */
             date?: string;
-            encabezado?: string;
+            heading?: string;
             notes?: string;
             /** Format: int32 */
             number?: number;
@@ -2713,7 +2713,7 @@ export interface components {
         BudgetResponse: {
             /** Format: date-time */
             date?: string;
-            encabezado?: string;
+            heading?: string;
             /** Format: int32 */
             idBudget?: number;
             notes?: string;
@@ -2751,7 +2751,7 @@ export interface components {
         CompleteCaseRequest: {
             /** Format: int32 */
             budgetId?: number;
-            encabezado?: string;
+            heading?: string;
             /** Format: int32 */
             notaryId?: number;
             notes?: string;
@@ -2892,7 +2892,7 @@ export interface components {
         DtoBudget: {
             /** Format: date-time */
             date?: string;
-            encabezado?: string;
+            heading?: string;
             /** Format: int32 */
             idBudget?: number;
             items?: components["schemas"]["DtoItem"][];
@@ -2912,11 +2912,11 @@ export interface components {
             version?: number;
         };
         DtoBudgetResumen: {
-            encabezadoManagement?: string;
             /** Format: int32 */
             idBudget?: number;
             /** Format: int32 */
             idManagement?: number;
+            managementHeading?: string;
             /** Format: int32 */
             numberBudget?: number;
             /** Format: int32 */
@@ -3022,7 +3022,7 @@ export interface components {
             clientReferencia?: components["schemas"]["DtoPerson"];
             /** Format: date-time */
             dateStart?: string;
-            encabezado?: string;
+            heading?: string;
             /** Format: int32 */
             idManagement?: number;
             listaClientesInvolucrados?: components["schemas"]["DtoPerson"][];
@@ -3209,7 +3209,7 @@ export interface components {
             managementNumber?: number;
         };
         DtoManagementDocumentReentry: {
-            encabezado?: string;
+            heading?: string;
             /** Format: int32 */
             idManagement?: number;
             /** Format: int32 */
@@ -3221,7 +3221,7 @@ export interface components {
             /** Format: date-time */
             dateStart?: string;
             documents?: components["schemas"]["DtoExternalEntityDocument"][];
-            encabezado?: string;
+            heading?: string;
             /** Format: int32 */
             idManagement?: number;
             notary?: string;
@@ -3251,7 +3251,7 @@ export interface components {
         DtoManagementSummary: {
             /** Format: date-time */
             dateStart?: string;
-            encabezado?: string;
+            heading?: string;
             /** Format: int32 */
             idManagement?: number;
             notes?: string;
@@ -3687,7 +3687,7 @@ export interface components {
             version?: number;
         };
         ManagementRef: {
-            encabezado?: string;
+            heading?: string;
             /** Format: int32 */
             idManagement?: number;
             /** Format: int32 */
@@ -3696,7 +3696,7 @@ export interface components {
         ManagementRequest: {
             /** Format: date-time */
             dateStart?: string;
-            encabezado: string;
+            heading: string;
             /** Format: int32 */
             managementStatusId?: number;
             /** Format: int32 */
@@ -3709,7 +3709,7 @@ export interface components {
         ManagementResponse: {
             /** Format: date-time */
             dateStart?: string;
-            encabezado?: string;
+            heading?: string;
             /** Format: int32 */
             idManagement?: number;
             /** Format: int32 */

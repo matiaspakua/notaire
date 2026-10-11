@@ -173,7 +173,7 @@ async function seedCatalogData(page: Page): Promise<void> {
   }
 
   // 4. Create a presupuesto (if we have a persona) — BudgetController accepts the raw
-  // Budget entity (encabezado, status, notes, person).
+  // Budget entity (heading, status, notes, person).
   if (seedData.seedPersonaId && seedData.seedConceptoId) {
     const presResult = await apiPost<{ idBudget: number }>(
       page,
@@ -181,7 +181,7 @@ async function seedCatalogData(page: Page): Promise<void> {
       {
         person: { personId: seedData.seedPersonaId },
         date: "2026-05-27",
-        encabezado: "Presupuesto E2E Seed",
+        heading: "Presupuesto E2E Seed",
         status: "PENDIENTE",
         notes: `Presupuesto semilla ${seedData.testId}`,
       }

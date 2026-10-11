@@ -148,7 +148,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
 
     private Integer createBudget(Integer clientId) throws Exception {
         String body = """
-                {"number": 1, "date": "2026-01-01", "encabezado": "Budget Enforce IT", "status": "PENDIENTE",
+                {"number": 1, "date": "2026-01-01", "heading": "Budget Enforce IT", "status": "PENDIENTE",
                  "person": {"personId": %d}}
                 """.formatted(clientId);
         MvcResult result = mockMvc.perform(post("/api/v1/budgets")
@@ -162,7 +162,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
     private Integer createCompleteCase(Integer budgetId, Integer notaryId, Integer statusId, int number)
             throws Exception {
         String body = """
-                {"number": %d, "encabezado": "Enforce IT", "budgetId": %d,
+                {"number": %d, "heading": "Enforce IT", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(number, budgetId, notaryId, statusId, procedureTypeId);
         MvcResult created = mockMvc.perform(post("/api/v1/managements/complete-case")
@@ -185,7 +185,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
         Integer notaryId = createPerson("80410001");
         int number = (int) (System.nanoTime() % 100000);
         String createBody = """
-                {"encabezado": "Plain PUT reject", "dateStart": "2026-01-01", "number": %d,
+                {"heading": "Plain PUT reject", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted(number, notaryId, startStatus.getIdManagementStatus());
         MvcResult created = mockMvc.perform(post("/api/v1/managements")
@@ -197,7 +197,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
                 .get("idManagement").asInt();
 
         String updateBody = """
-                {"encabezado": "Plain PUT reject", "dateStart": "2026-01-01", "number": %d,
+                {"heading": "Plain PUT reject", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted(number, notaryId, nextStatus.getIdManagementStatus());
         mockMvc.perform(put("/api/v1/managements/{id}", managementId)
@@ -224,7 +224,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
                 startStatus.getIdManagementStatus(), number);
 
         String updateBody = """
-                {"number": %d, "encabezado": "Enforce IT", "budgetId": %d,
+                {"number": %d, "heading": "Enforce IT", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(number, budgetId, notaryId, nextStatus.getIdManagementStatus(),
                         procedureTypeId);
@@ -247,7 +247,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
         Integer notaryId = createPerson("80410004");
         int number = (int) (System.nanoTime() % 100000);
         String createBody = """
-                {"encabezado": "Same status PUT", "dateStart": "2026-01-01", "number": %d,
+                {"heading": "Same status PUT", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted(number, notaryId, startStatus.getIdManagementStatus());
         MvcResult created = mockMvc.perform(post("/api/v1/managements")
@@ -259,7 +259,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
                 .get("idManagement").asInt();
 
         String updateBody = """
-                {"encabezado": "Same status PUT renamed", "dateStart": "2026-01-01", "number": %d,
+                {"heading": "Same status PUT renamed", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted(number, notaryId, startStatus.getIdManagementStatus());
         mockMvc.perform(put("/api/v1/managements/{id}", managementId)
@@ -268,7 +268,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
                 .andExpect(status().isOk());
 
         DeedManagement saved = managementRepository.findById(managementId).orElseThrow();
-        assertThat(saved.getEncabezado()).isEqualTo("Same status PUT renamed");
+        assertThat(saved.getHeading()).isEqualTo("Same status PUT renamed");
         assertThat(saved.getFkIdManagementStatus().getIdManagementStatus())
                 .isEqualTo(startStatus.getIdManagementStatus());
     }
@@ -300,7 +300,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
         int number = (int) (System.nanoTime() % 100000);
 
         String body = """
-                {"number": %d, "encabezado": "Outside workflow", "budgetId": %d,
+                {"number": %d, "heading": "Outside workflow", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(number, budgetId, notaryId,
                         outsideWorkflowStatus.getIdManagementStatus(), procedureTypeId);

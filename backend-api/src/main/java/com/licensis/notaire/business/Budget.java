@@ -68,7 +68,7 @@ public class Budget implements Serializable, Persistable<Integer> {
 
     @Basic(optional = false)
     @Column(name = "heading")
-    private String encabezado;
+    private String heading;
 
     @Column(name = "notes")
     private String notes;
@@ -116,11 +116,11 @@ public class Budget implements Serializable, Persistable<Integer> {
         this.idBudget = idBudget;
     }
 
-    public Budget(Integer idBudget, int number, Date date, String encabezado, String status) {
+    public Budget(Integer idBudget, int number, Date date, String heading, String status) {
         this.idBudget = idBudget;
         this.number = number;
         this.date = date;
-        this.encabezado = encabezado;
+        this.heading = heading;
         this.status = status;
     }
     @Override
@@ -232,12 +232,12 @@ public class Budget implements Serializable, Persistable<Integer> {
         this.number = number;
     }
 
-    public String getEncabezado() {
-        return encabezado;
+    public String getHeading() {
+        return heading;
     }
 
-    public void setEncabezado(String encabezado) {
-        this.encabezado = encabezado;
+    public void setHeading(String heading) {
+        this.heading = heading;
     }
 
     public String getStatus() {

@@ -82,7 +82,7 @@ class ProcedureSerializationIntegrationTest {
         MvcResult result = mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"number": 1, "encabezado": "budget ciclo IT", "status": "PENDIENTE",
+                                {"number": 1, "heading": "budget ciclo IT", "status": "PENDIENTE",
                                  "date": "2026-07-24"}
                                 """))
                 .andExpect(status().isCreated())
@@ -150,7 +150,7 @@ class ProcedureSerializationIntegrationTest {
         DeedManagement management = new DeedManagement();
         management.setIdManagement(null);
         management.setNumber(123456);
-        management.setEncabezado("Management Ciclo IT");
+        management.setHeading("Management Ciclo IT");
         management.setDateStart(new Date());
         management.setFkIdManagementStatus(status);
         management.setFkIdNotaryPerson(notary);

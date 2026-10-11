@@ -28,7 +28,7 @@ public class SessionAdministrator
 
         if (this.userSession != null)
         {
-            miUser.setAtributos(userSession);
+            miUser.setAttributes(userSession);
         }
         return miUser;
     }
