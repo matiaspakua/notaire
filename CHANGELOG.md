@@ -30,29 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `validate-testing-inventory.py` in preflight. ADR-006 and Constitution §7
   document enforced JaCoCo 80%/65% and Vitest raise-only floors. Nine unprefixed
   Playwright specs renamed to `TS-0130`–`TS-0138`.
-<<<<<<< HEAD
-
-### Breaking
-
-- **English HTTP paths, dashboard routes, and remaining schema names** (#1490, CU75):
-  public resources move to English segments (`POST /api/v1/users/login`, `/api/v1/managements`,
-  `/dashboard/people`, and the rest of the former Spanish paths). There is no Spanish alias.
-  Flyway `V45` renames the leftover Spanish table and columns (`identifications.number`,
-  `people.birth_date`, workflow `name` / `node_type` / `position_x`, and foreign keys such as
-  `fk_id_person` and `fk_id_deed_management`). Login JSON uses `valid`, `idUser`, `name`,
-  `type`, and `person`. Remaining DTO JSON names are English (`testimonies`, `testimonyMovements`,
-  `budget`, `budgets`, `folioType`, `deedManagement`, `users`, `copies`). Report and
-  notebook calls use English names: `GET /api/v1/notebooks/{id}/cover`, query parameters
-  `year`, `month`, `procedureTypeId`, and `procedureTypeName`, and path variables such as
-  `{idBudget}` and `{idManagement}`. The JSON field `heading` replaces `encabezado`
-  (`managementHeading` on budget summaries). Upcoming expirations take the query
-  parameter `days`. Management summaries and workflow traces use the JSON
-  field `currentStatus`. The current-status read operation id is
-  `getCurrentStatus`. `R45` reverses the schema
-  renames. Message catalogs stay bilingual, and stored status and catalog labels stay as recorded.
-
-### Changed
-
 - **English fixture names** (#1490, CU75): person fixtures use `Client`,
   `Lawyer`, and `Criminal`. Budget headings use `Updatable budget` and a
   `Budget` prefix. The management mock heading is `Management` and the
@@ -105,8 +82,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and `Urban Compraventa property`. Stored labels `CUIT`, `Borrador`,
   `Aprobado`, `Rechazado`, `Iniciada`, `Pendiente`, `Hipoteca`, `Donación`,
   `APROBADO`, `FIRMADA`, and `Compraventa` stay, along with `Juan`.
-=======
->>>>>>> a16c3ece (fix(changelog): unique Unreleased ### Changed after rebase onto #1517)
 - **English synthetic chrome fixtures** (#1490, CU75): tests name dialog and
   header props in English (`People`, `Client management`, `New person`,
   `Delete person`, `Edit budget`, `Budget summary`, `Items`, `Template`,
@@ -1151,6 +1126,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Dates, numbers and money follow the UI language** (#1355, RNF-05, ADR-015): every screen formatted values in `es-AR`, so the English UI showed `8/7/2026` and `$ 75.000,00`, and the dashboard and its counters each had their own locale switch. A new `useFormat()` hook (on `lib/format.ts` and the calendar-date helpers of #1339) formats dates, timestamps, numbers and ARS amounts for the active language. Spanish uses es-AR (`8/7/2026`, `$ 75.000,00`). English uses en-GB, so dates keep the day first as the Owner decided (`08/07/2026`), and money reads `ARS 75,000.00`. All 49 screen call sites (including the #1491 deed picker) moved to the hook, and guard tests keep locale names and the es-AR-only helpers out of screens. `use-format.test.tsx` and Playwright `TS-0040` cover it.
 
 
+
 ### Breaking
 
 - **English HTTP paths, dashboard routes, and remaining schema names** (#1490, CU75):
@@ -1169,6 +1145,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   field `currentStatus`. The current-status read operation id is
   `getCurrentStatus`. `R45` reverses the schema
   renames. Message catalogs stay bilingual, and stored status and catalog labels stay as recorded.
+- **English HTTP paths, dashboard routes, and remaining schema names** (#1490, CU75):
+  public resources move to English segments (`POST /api/v1/users/login`, `/api/v1/managements`,
+  `/dashboard/people`, and the rest of the former Spanish paths). There is no Spanish alias.
+  Flyway `V45` renames the leftover Spanish table and columns (`identifications.number`,
+  `people.birth_date`, workflow `name` / `node_type` / `position_x`, and foreign keys such as
+  `fk_id_person` and `fk_id_deed_management`). Login JSON uses `valid`, `idUser`, `name`,
+  `type`, and `person`. Remaining DTO JSON names are English (`testimonies`, `testimonyMovements`,
+  `budget`, `budgets`, `folioType`, `deedManagement`, `users`, `copies`). Report and
+  notebook calls use English names: `GET /api/v1/notebooks/{id}/cover`, query parameters
+  `year`, `month`, `procedureTypeId`, and `procedureTypeName`, and path variables such as
+  `{idBudget}` and `{idManagement}`. The JSON field `heading` replaces `encabezado`
+  (`managementHeading` on budget summaries). Upcoming expirations take the query
+  parameter `days`. Management summaries and workflow traces use the JSON
+  field `currentStatus`. The current-status read operation id is
+  `getCurrentStatus`. `R45` reverses the schema
+  renames. Message catalogs stay bilingual, and stored status and catalog labels stay as recorded.
+
 
 ### Fixed
 
@@ -1704,6 +1697,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **The bitácora lists same-day entries in the order they were recorded** (issue #1383, CU13): `history.event_date` only keeps the day and nothing broke ties, so `GET /gestiones/{id}/historial` returned same-day entries in whatever order the database gave, `GET /historial/gestion/{id}` was not sorted at all, and the workflow trace could pick the wrong current step. Every history read path (bitácora, history by management, workflow trace, current state, history report) now uses one order: event date, then `idHistory`. This was behind the recurring TS-0011/TS-0028 e2e flakes. JUnit `HistoryOrderTieBreakerIntegrationTest` and Bruno `history/05` cover it.
 - **Deeds are chosen with a searchable picker instead of the first 1000 (slice 8b of #1340)** (issue #1340, CU07/CU08/CU87): the testimony, registration-draft and folio forms read `GET /escrituras?size=1000` and kept the signed deeds in the browser, so once the deeds table passes 1000 rows a newly signed deed could not be chosen. A new `DeedPicker` (shared `SearchCombobox`) lists the 20 newest signed deeds on open (`GET /escrituras?status=Firmada`, #1476), finds any signed deed by number (`GET /escrituras/buscar`) and loads the current deed by id; unsigned deeds are never offered. The folio form still hides a deed already linked to another folio. `useEscrituras()`, the unused `usePersonas()` and the size=1000 helper `apiGetPaged` are removed, and a guard test fails if a source asks for a whole table again. `deed-picker.test.tsx`, `no-whole-table-loads.test.ts` and Playwright `TS-0123` cover it.
 
+
 ### Added
 
 - **Skip to content and focus on route change** (issue #1352, RNF-10, CU76): every dashboard page starts
@@ -2086,10 +2080,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **App-shell skeleton instead of a blank first paint** (issue #1359, RNF-03, RNF-05): the dashboard layout returned `null` until the client had mounted and read the stored session, so the server HTML of every dashboard URL was empty and each hard load painted a white page before the shell popped in. It now renders `components/layout/AppShellSkeleton.tsx` (busy `role="status"` region labelled `common.loading`, desktop sidebar block as wide as `AppSidebar`, header row, content blocks), which the real shell replaces without layout shift; the redirect to `/login` is unchanged. New shared `components/ui/skeleton.tsx` (`aria-hidden`, `motion-safe:animate-pulse`, a static tint under reduced motion) is used by `DataTable`'s loading rows and cards and by the workflow hero; the stat skeleton pulses only with motion allowed, and a guard keeps plain `animate-pulse` out of components. Vitest `app-shell-skeleton.test.tsx` and Playwright `TS-0125` cover it.
 - **One status badge on every status column** (issue #1366, RF-23, RNF-09): budgets, cases and testimonies showed status as plain text, folios the raw stored value, and protocol and users ad-hoc badges where color was the only difference. New `components/shared/StatusBadge.tsx` with `lib/status-maps.ts` maps a domain (`budget`, `management`, `testimony`, `folio`, `availability`, `user`) and a stored value to a tone (neutral, info, success, warning, danger), a decorative lucide icon and a text label, so no status relies on color alone (WCAG 1.4.1). Budget labels reuse `presupuestos.status.*` (#1346); management statuses keep their catalog name and only the seeded names get a tone; folio labels are new (`status.folio.*`, es/en); a value outside a vocabulary shows as stored in a neutral badge, an empty one as a dash. Wired on presupuestos, gestiones, testimonios, protocolo, administracion/usuarios and administracion/folios. Vitest `status-badge.test.tsx` and Playwright `TS-0124` cover it.
 
+
 ### Deprecated
 
 - `init-db/01-schema.sql` - Superseded by Flyway migration
 - `init-db/02-data.sql` - Superseded by Flyway migration
+
 
 ### Removed
 
@@ -2109,6 +2105,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING — unused payment params create** (issue #1065, CU76):
   `POST /api/v1/pagos/params` removed (no UI/Bruno callers). Use
   `POST /api/v1/pagos` (JSON body).
+
 
 ### Security
 
@@ -2186,6 +2183,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `spring.security.user.*` keys (`admin`/`admin`) from `application.properties`
   and deleted the legacy Swing-era `config.properties` (plain-text database
   credentials) that no code read. Actuator auth is unchanged (#1069)
+
 
 ## [1.0.0-SNAPSHOT] - 2026-04-14
 
