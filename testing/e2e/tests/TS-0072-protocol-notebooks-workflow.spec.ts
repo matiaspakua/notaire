@@ -43,7 +43,7 @@ test.describe("CU80 - Manage folio notebooks", () => {
     }
 
     await dialog.getByRole("button", { name: /crear/i }).click();
-    await expect(page.getByText(/notebook creado/i)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/cuaderno creado/i)).toBeVisible({ timeout: 10000 });
     await expect(dialog).not.toBeVisible();
     await expect(page.getByRole("button", { name: /descargar pdf/i }).first()).toBeVisible({ timeout: 10000 });
   });
@@ -111,6 +111,6 @@ test.describe("CU80 - Manage folio notebooks", () => {
 
     await dialog.getByLabel(/observaciones/i).fill("Folio damaged during printing");
     await dialog.getByRole("button", { name: /crear/i }).click();
-    await expect(page.getByText(/notebook creado/i)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/cuaderno creado/i)).toBeVisible({ timeout: 10000 });
   });
 });

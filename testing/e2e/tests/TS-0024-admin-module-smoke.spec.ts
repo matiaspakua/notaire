@@ -18,7 +18,7 @@ test.describe("Administration hub (ADMIN only)", () => {
       page.getByRole("heading", { level: 1, name: /administración/i })
     ).toBeVisible();
     await expect(page.getByText(/usuarios/i).first()).toBeVisible();
-    await expect(page.getByText(/concepts/i).first()).toBeVisible();
+    await expect(page.getByText(/conceptos/i).first()).toBeVisible();
     await expect(page.getByText(/tipos de trámite/i).first()).toBeVisible();
     await expect(page.getByText(/estados de gestión/i).first()).toBeVisible();
   });

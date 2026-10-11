@@ -70,7 +70,7 @@ test.describe("CU15 - Process a payment", () => {
     await expect(budgetOption).toBeVisible();
     await budgetOption.click();
 
-    const balanceDisplay = page.getByRole("dialog").getByText(/balance pendiente/i);
+    const balanceDisplay = page.getByRole("dialog").getByText(/saldo pendiente/i);
     await expect(balanceDisplay).toBeVisible({ timeout: 5000 });
 
     // The picker shows "#<id> — <client>"; the budget amount is in the balance panel (#1340).
@@ -91,7 +91,7 @@ test.describe("CU15 - Process a payment", () => {
     await budgetSelector.fill(apellido1);
     await page.getByRole("option", { name: new RegExp(apellido1, "i") }).click();
 
-    let balanceDisplay = page.getByRole("dialog").getByText(/balance pendiente/i);
+    let balanceDisplay = page.getByRole("dialog").getByText(/saldo pendiente/i);
     await expect(balanceDisplay).toBeVisible();
     const balanceText1 = await balanceDisplay.locator("../..").textContent();
 
@@ -102,7 +102,7 @@ test.describe("CU15 - Process a payment", () => {
     await budgetSelector.fill(apellido2);
     await page.getByRole("option", { name: new RegExp(apellido2, "i") }).click();
 
-    balanceDisplay = page.getByRole("dialog").getByText(/balance pendiente/i);
+    balanceDisplay = page.getByRole("dialog").getByText(/saldo pendiente/i);
     await expect(balanceDisplay).toBeVisible();
     const balanceText2 = await balanceDisplay.locator("../..").textContent();
 
