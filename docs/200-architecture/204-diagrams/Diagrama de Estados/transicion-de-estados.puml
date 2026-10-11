@@ -1,7 +1,11 @@
+' Actividad del trámite, alineada al workflow sembrado (V10 + V41) y a
+' docs/200-architecture/203-design/GESTION.md.
+' No es la fuente de verdad de los estados (ADR-027). Esa es CICLO-DE-VIDA.md §3.1.
+' La firma de la escritura y la minuta no son aristas de esta actividad.
 @startuml
-title Transición de estados de una gestión
+title Actividad — trámite de una gestión
 
-skinparam shadowing true
+skinparam shadowing false
 skinparam defaultFontName Arial
 skinparam activity {
   BackgroundColor #F6EBD8
@@ -13,60 +17,50 @@ skinparam activity {
 
 start
 
-:Solicita iniciar una gestión;
+:Cliente solicita un trámite;
+:Gestor identifica cliente y presupuesto\n(CU61, CU60, CU01);
+:POST /api/v1/managements/complete-case;
+:Gestión en Iniciada;
 
-if (¿Es cliente?) then (sí)
-  :Buscar cliente;
-else (no)
-  if (¿Requiere alta de persona?) then (sí)
-    :Dar alta persona;
+:Transición «Se asignan trámites»;
+:En Tramite;
+
+:Documentación del cliente y de entidades externas\n(CU04, CU10);
+:Transición «Documentación presentada»;
+:Documentacion Completa;
+
+if (¿Archivar sin escritura?) then (sí)
+  :POST /api/v1/managements/{id}/archive;
+  if (¿Carpeta en Espera sin confirmar?) then (sí)
+    :409 — la gestión no cambia;
+    stop
+  else (no)
+    :Saldo mayor a cero: advertencia, no bloquea;
+    :Archivada;
+    stop
   endif
-  :Dar alta cliente;
+else (seguir con la escritura)
 endif
 
-if (¿Existe presupuesto?) then (sí)
-  :Buscar presupuesto;
-else (no)
-  :Crear presupuesto;
-endif
+:Transición «Se redacta la escritura»;
+:Gestion con Escritura Sin Firmar;
 
-:Iniciar gestión;
+note right
+  POST /api/v1/deeds/{id}/sign
+  cambia deeds.status a Firmada.
+  No mueve este nodo.
+end note
 
-repeat
-  :En espera de documentación;
-repeat while (¿Documentación completa?) is (no) not (sí)
+:Transición «Las partes firman»;
+:Gestion con Escritura Firmada;
 
-repeat
-  :Preparar escritura;
+:Transición «Se genera el testimonio»;
+:Testimonio Generado;
 
-  if (Resultado de la escritura) then (firmar)
-    :Firmar escritura;
-    :Generar testimonio;
+:Transición «Ingreso a inscripción»;
+:Testimonio Ingresado a Inscripcion;
 
-    if (¿Requiere inscripción?) then (sí)
-      :Ingresar para inscripción;
-
-      while (¿Volvió observado?) is (sí)
-        :Registrar reingreso;
-        :Ingresar para inscripción;
-      endwhile (no)
-    endif
-
-    repeat
-      :Retirar testimonio;
-    repeat while (¿Todos los testimonios retirados?) is (no) not (sí)
-  elseif (anular)
-    :Escritura anulada;
-  else (no pasó)
-    :Escritura no pasó;
-  endif
-
-repeat while (¿Existen más trámites en la gestión?) is (sí) not (no)
-
-if (¿Saldo pendiente > 0?) then (sí)
-  :Mostrar advertencia de deuda pendiente (no bloqueante);
-endif
-
-:Archivar gestión;
+:Transición «Retiro»;
+:Testimonio Retirado;
 stop
 @enduml

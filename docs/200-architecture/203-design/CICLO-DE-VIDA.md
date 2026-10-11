@@ -5,9 +5,11 @@ máquinas de estado, secuencias del camino principal, componentes que los
 implementan y cómo eso se opera y se gestiona.
 
 Los casos de uso (`docs/100-business/102-use-cases/`) siguen siendo el relato
-paso a paso. OpenSpec describe el delta de un cambio. Este documento es la
-foto permanente. Si un cambio mueve un estado, se actualiza aquí en el mismo
-PR. No se agrega un PlantUML paralelo ([ADR-027](../202-ADR/ADR-027-mermaid-diagrams.md)).
+paso a paso. El recorrido de la gestión, con las dependencias de cada paso y
+una secuencia por paso, está en [GESTION.md](GESTION.md). OpenSpec describe el
+delta de un cambio. Este documento es la foto permanente de los estados. Si un
+cambio mueve un estado, se actualiza aquí en el mismo PR. No se agrega un
+PlantUML paralelo ([ADR-027](../202-ADR/ADR-027-mermaid-diagrams.md)).
 
 Cuando el relato de un caso de uso y el grafo sembrado no coinciden, manda el
 código y Flyway. Las divergencias están en [§8](#8-divergencias-conocidas).
@@ -116,10 +118,10 @@ gestión, y el movimiento del testimonio no es un nodo del workflow sembrado.
 
 Definición `Workflow de Gestión Estándar`, asignada a Compraventa, Donación
 e Hipoteca (`V10` + `V41`). Sucesión y Poder quedan sin workflow: cualquier
-`POST /api/v1/gestiones/{id}/transition` se rechaza.
+`POST /api/v1/managements/{id}/transition` se rechaza.
 
 El cambio de estado de una gestión existente solo entra por
-`POST /api/v1/gestiones/{id}/transition` o por el archivado. Un `PUT` que
+`POST /api/v1/managements/{id}/transition` o por el archivado. Un `PUT` que
 cambie el estado responde 400. Cada transición válida escribe la bitácora
 (CU13).
 
@@ -181,7 +183,7 @@ workflow sembrado. Un tipo de trámite puede incorporarlos con otra
 
 `deeds.status` empieza en `Sin Firmar`. La única transición que el servicio
 de firma exige es esa, y solo si hay al menos un folio (CU06). Anulada, No
-Paso e Inscripta son valores del vocabulario. `GET /api/v1/escrituras?status=`
+Paso e Inscripta son valores del vocabulario. `GET /api/v1/deeds?status=`
 acepta solo esos cinco textos, en cualquier mayúscula, y responde 400 ante
 otro valor. El `PUT` genérico persiste el texto que reciba: no consulta el
 workflow de la gestión ni ese vocabulario.
@@ -287,7 +289,7 @@ Ese orden es la lectura de negocio. No es un grafo custodiado.
 
 Un pago es un hecho: monto, fecha, método, observaciones, presupuesto. No
 tiene estado propio. El estado del presupuesto se calcula
-(`GET /api/v1/pagos/presupuesto/{id}/estado`):
+(`GET /api/v1/payments/budget/{id}/status`):
 
 ```mermaid
 stateDiagram-v2
@@ -342,14 +344,14 @@ sequenceDiagram
   participant DB as PostgreSQL
 
   Gestor->>FE: Inicia la gestión con presupuesto
-  FE->>API: POST /api/v1/gestiones/complete-case
+  FE->>API: POST /api/v1/managements/complete-case
   API->>WF: El estado inicial es un nodo del workflow
   WF-->>API: Iniciada
   API->>DB: Gestión, trámites, historial
   API-->>FE: 201
 
   Gestor->>FE: Cambia el estado
-  FE->>API: POST /api/v1/gestiones/{id}/transition
+  FE->>API: POST /api/v1/managements/{id}/transition
   API->>WF: Hay arista desde el nodo actual
   alt Arista válida
     API->>DB: Nuevo estado e historial
@@ -370,7 +372,7 @@ sequenceDiagram
   participant DB as PostgreSQL
 
   Gestor->>FE: Registra movimiento del certificado
-  FE->>Doc: PUT documentos-entidades-externas
+  FE->>Doc: PUT /api/v1/managements/{id}/external-entity-documents/{doc}
   Doc->>DB: Cartón, fechas, observado, entregado
   Doc-->>FE: Movimiento guardado
   Doc->>Doc: Todos los de entidad externa entregados
@@ -394,7 +396,7 @@ sequenceDiagram
   participant DB as PostgreSQL
 
   Recepcion->>FE: Registra un pago
-  FE->>Pay: POST /api/v1/pagos
+  FE->>Pay: POST /api/v1/payments
   Pay->>Pay: Monto menor o igual al saldo
   alt Válido
     Pay->>DB: Pago
@@ -404,9 +406,9 @@ sequenceDiagram
   end
 
   Recepcion->>FE: Archiva la gestión
-  FE->>Arc: Consulta saldo y confirma
+  FE->>Arc: POST /api/v1/managements/{id}/archive
   Arc->>Arc: Carpetas en Espera exigen confirmación
-  Arc->>WF: transition a Archivada
+  Arc->>WF: Arista a Archivada
   alt Arista presente
     WF->>DB: Archivada, deuda sí o no, carpetas Archivada, historial
   else Arista ausente
@@ -566,10 +568,9 @@ archivo además del spec OpenSpec.
 
 Hechos del sistema de hoy. No son una propuesta de cambio.
 
-1. El diagrama de actividad legado
-   `204-diagrams/Diagrama de Estados/transicion-de-estados.puml` archiva al
-   final, después de los testimonios. El grafo sembrado solo archiva desde
-   `Documentacion Completa`.
+1. La actividad `204-diagrams/Diagrama de Estados/transicion-de-estados.puml`
+   sigue el grafo sembrado: el archivo sale de `Documentacion Completa` y
+   `Testimonio Retirado` es final. Sigue siendo legado. La fuente es §3.1.
 2. `DeedSigningService` cambia `deeds.status`. No cambia el estado de la
    gestión.
 3. `Gestion con Escritura Inscripta` ya no está en el grafo. La inscripción

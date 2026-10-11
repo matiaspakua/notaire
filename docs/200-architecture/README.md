@@ -11,6 +11,7 @@ security, observability, DevSecOps, and deployment.
 | [`202-ADR/`](202-ADR/) | Architecture Decision Records — the relevant architecture decisions |
 | [`203-design/`](203-design/) | API design and the frontend design system |
 | [`203-design/CICLO-DE-VIDA.md`](203-design/CICLO-DE-VIDA.md) | States, sequences, and components of the notarial lifecycle (Mermaid) |
+| [`203-design/GESTION.md`](203-design/GESTION.md) | Core case process: use cases, step dependencies, and sequences |
 | [`204-diagrams/`](204-diagrams/) | Diagrams. The `.puml` files are legacy; the current lifecycle lives in design |
 | [`205-data-model/`](205-data-model/) | ERD, data dictionary, and compensation diagram (referential integrity) |
 | [`206-security/`](206-security/) | Authentication, input validation, and SQL injection prevention |
@@ -22,7 +23,8 @@ security, observability, DevSecOps, and deployment.
 
 The [SAD](201-SAD/sad.md) is the root document: context, constraints, building-block
 and runtime views, and links to the ADRs and diagrams that apply. The domain state
-lifecycle is in [CICLO-DE-VIDA.md](203-design/CICLO-DE-VIDA.md).
+lifecycle is in [CICLO-DE-VIDA.md](203-design/CICLO-DE-VIDA.md). The case
+walkthrough is in [GESTION.md](203-design/GESTION.md).
 
 ## Source of truth for the database schema
 

@@ -1,27 +1,28 @@
 @startuml
-title Workflow — Crear nueva Gestión de Escritura
+title Alta de una gestión — POST /api/v1/managements/complete-case
+
+skinparam shadowing false
 
 participant "Escribano / Gestor" as User
-participant "Frontend\n(Swing / Web)" as Client
-participant "REST API\n(Spring Boot)" as API
-participant "Spring Security" as Sec
-participant "GestionController" as Ctrl
-participant "Business Service" as Svc
+participant "Frontend" as Client
+participant "REST API" as API
+participant "ManagementController" as Ctrl
+participant "Workflow" as WF
 participant "PostgreSQL" as DB
 
-User -> Client : Iniciar nueva gestión
-Client -> API : POST /api/v1/gestion
-API -> Sec : Validar token JWT
-Sec --> API : OK (user context)
-API -> Ctrl : delegateRequest(dto)
-Ctrl -> Svc : createGestion(dto)
-Svc -> Svc : Validar datos de negocio
-Svc -> DB : INSERT INTO gestiones_de_escrituras
-DB --> Svc : OK (generatedId)
-Svc -> DB : INSERT INTO registro_auditoria
-DB --> Svc : OK
-Svc --> Ctrl : GestionDTO
-Ctrl --> API : 201 Created
-API --> Client : JSON response
-Client --> User : Mostrar éxito y número
+User -> Client : Iniciar la gestión con presupuesto
+Client -> API : POST /api/v1/managements/complete-case
+API -> Ctrl : completeCase(dto)
+Ctrl -> WF : El estado es un nodo INITIAL
+alt El tipo tiene workflow y el estado es inicial
+  WF --> Ctrl : Iniciada
+  Ctrl -> DB : INSERT INTO deed_managements
+  DB --> Ctrl : id
+  Ctrl --> API : 201 Created
+  API --> Client : JSON
+  Client --> User : Número de gestión
+else El estado no es inicial
+  Ctrl --> API : 400
+  API --> Client : No se crea la gestión
+end
 @enduml
