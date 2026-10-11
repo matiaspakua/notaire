@@ -56,7 +56,7 @@ test.describe("CU81 - Procedure management in the auxiliary protocol", () => {
     const submit = dialog.getByRole("button", { name: /crear/i });
     await expect(submit).toBeDisabled();
 
-    await dialog.getByTestId("textarea-deed-body-auxiliary").fill("Contenido");
+    await dialog.getByTestId("textarea-deed-body-auxiliary").fill("Deed body");
     await expect(submit).toBeEnabled();
   });
 

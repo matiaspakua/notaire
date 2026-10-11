@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Auxiliary deed body** (#1490, CU75): the auxiliary-protocol edge path
+  fills `Deed body`. The golden path still fills `E2E test deed body`.
+  The Spanish catalog helper `Contenido de la escritura` stays.
+  `docs/100-business` stays.
 - **Icon-button users screen** (#1490, CU75): the living spec
   `icon-button-accessible-names` names the users administration screen.
   The default-locale labels “Editar” and “Eliminar” and the selector
