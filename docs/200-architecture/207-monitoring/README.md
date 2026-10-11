@@ -176,6 +176,11 @@ Alert rules (`HighLoginFailureRate`, `SuspiciousLoginActivity`, `BackendDown`,
 and tabulated in [infra DEFINITION](../../../infra/docs/DEFINITION.md#alert-rules-prometheusalert-rulesyml).
 SonarQube analysis is run as described in [infra OPERATION](../../../infra/docs/OPERATION.md#code-quality-sonarqube).
 
+Local Grafana and SonarQube open without a login (Grafana anonymous Admin; Sonar
+`forceAuthentication=false`) with ports bound to `127.0.0.1` — see
+[ADR-016](../202-ADR/ADR-016-observability-stack.md) (#1413). Production overlays
+keep authentication.
+
 ---
 
 **Related Documents:**

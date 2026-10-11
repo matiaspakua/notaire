@@ -11,7 +11,10 @@ bash infra/scripts/start-infra.sh       # infra only (application must be up)
 docker compose -f infra/observability/docker-compose.yml --env-file infra/.env down   # stop
 ```
 
-Open Homer at http://localhost:8888 for links to every service.
+Open Homer at http://localhost:8888 for links to every service. Local Grafana
+(`http://127.0.0.1:3001`) and SonarQube (`http://127.0.0.1:9000`) open without a
+login (#1413); both ports are bound to loopback only. Recreate those containers
+after pulling if an older volume still shows a login form.
 
 ## Health check
 

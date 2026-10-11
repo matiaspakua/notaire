@@ -17,4 +17,7 @@ python3 infra/tests/test_otel_metrics_pipeline.py
 python3 infra/tests/test_log_trace_correlation.py
 python3 infra/tests/test_tempo_traces.py
 python3 infra/tests/test_alertmanager.py
+python3 infra/tests/test_homer_hub.py
+python3 infra/tests/test_infra_dashboards.py
+python3 infra/tests/test_local_tools_no_login.py
 python3 infra/tests/test_verify_signals.py

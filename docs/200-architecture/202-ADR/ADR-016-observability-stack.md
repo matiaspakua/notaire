@@ -67,11 +67,27 @@ credentials, which is an owner decision. Rules live in `prometheus/alert-rules.y
   Rejected to stay self-hosted and provider-agnostic (consistent with
   ADR-009's rationale).
 
+### Local authentication (issue #1413)
+
+On the **local** observability compose only:
+
+- Grafana enables anonymous access with the Admin org role and hides the login
+  form (`infra/observability/grafana/grafana.ini`).
+- SonarQube sets `SONAR_FORCEAUTHENTICATION=false` so projects can be browsed
+  without a login; analysis still uses a token (`infra/scripts/run-sonar.sh`) and
+  administration still requires an account.
+- Grafana (`3001`) and SonarQube (`9000`) host ports bind to `127.0.0.1` so
+  removing the login barrier does not expose the tools on the LAN.
+
+`docker-compose.prod.yml` and `infra/deploy/kustomize` do not adopt anonymous
+access. Production keeps credential-gated entry where those tools are deployed.
+
 ## Consequences
 
 - **Pros**: App and observability stacks can be started/stopped
   independently; matches local-dev and CI needs (CI doesn't need the infra
-  stack for `mvn verify`).
+  stack for `mvn verify`); local Grafana/Sonar open at a glance for CU77.
 - **Cons**: Two Compose files to keep in sync (shared network name,
   credentials via the single root `.env`); alerts reach only a local
-  receiver until an external notification integration is added.
+  receiver until an external notification integration is added; local
+  anonymous Admin is safe only because of the loopback bind.
