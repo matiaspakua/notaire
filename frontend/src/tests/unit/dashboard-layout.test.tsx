@@ -25,7 +25,7 @@ vi.mock("@/components/layout/AppSidebar", () => ({
   MOBILE_SIDEBAR_ID: "mobile-sidebar",
   AppSidebar: () => (
     <nav aria-label="sidebar">
-      <a href="/dashboard/managements">Gestiones</a>
+      <a href="/dashboard/managements">Managements</a>
     </nav>
   ),
 }));
@@ -61,7 +61,7 @@ describe("DashboardLayout skip link (#1352)", () => {
   it("renders the skip link as the first focusable element, targeting main", async () => {
     render(
       <DashboardLayout>
-        <Page title="Personas" />
+        <Page title="People" />
       </DashboardLayout>,
     );
     const skip = await screen.findByTestId("skip-link");
@@ -80,7 +80,7 @@ describe("DashboardLayout skip link (#1352)", () => {
   it("moves focus to main when the skip link is activated", async () => {
     render(
       <DashboardLayout>
-        <Page title="Personas" />
+        <Page title="People" />
       </DashboardLayout>,
     );
     fireEvent.click(await screen.findByTestId("skip-link"));
@@ -97,10 +97,10 @@ describe("DashboardLayout route focus (#1352)", () => {
   it("does not move focus on the first load", async () => {
     render(
       <DashboardLayout>
-        <Page title="Personas" />
+        <Page title="People" />
       </DashboardLayout>,
     );
-    await screen.findByRole("heading", { name: "Personas" });
+    await screen.findByRole("heading", { name: "People" });
     await new Promise((r) => setTimeout(r, 100));
     expect(document.activeElement).toBe(document.body);
   });
@@ -108,21 +108,21 @@ describe("DashboardLayout route focus (#1352)", () => {
   it("focuses the new page h1 after a client-side navigation", async () => {
     const { rerender } = render(
       <DashboardLayout>
-        <Page title="Personas" />
+        <Page title="People" />
       </DashboardLayout>,
     );
-    await screen.findByRole("heading", { name: "Personas" });
-    screen.getByRole("link", { name: "Gestiones" }).focus();
+    await screen.findByRole("heading", { name: "People" });
+    screen.getByRole("link", { name: "Managements" }).focus();
 
     mockPathname.mockReturnValue("/dashboard/managements");
     rerender(
       <DashboardLayout>
-        <Page title="Gestiones" />
+        <Page title="Managements" />
       </DashboardLayout>,
     );
 
     await waitFor(() =>
-      expect(document.activeElement).toBe(screen.getByRole("heading", { name: "Gestiones" })),
+      expect(document.activeElement).toBe(screen.getByRole("heading", { name: "Managements" })),
     );
     expect(document.activeElement).toHaveAttribute("tabindex", "-1");
   });

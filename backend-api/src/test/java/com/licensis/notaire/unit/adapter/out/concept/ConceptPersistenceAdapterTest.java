@@ -92,10 +92,10 @@ class ConceptPersistenceAdapterTest {
     @DisplayName("Should create concept")
     void shouldCreate() {
         Concept concept = new Concept();
-        concept.setName("Notaría");
+        concept.setName("Notary office");
         Concept savedConcept = new Concept();
         savedConcept.setIdConcept(1);
-        savedConcept.setName("Notaría");
+        savedConcept.setName("Notary office");
 
         when(repository.save(concept)).thenReturn(savedConcept);
 

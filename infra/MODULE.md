@@ -7,6 +7,7 @@
 ## Contract (what other modules may rely on)
 
 - Compose stack under `infra/observability/`; Kustomize base and staging overlay
+- Drill-down dashboards `notaire-infra-resources`, `notaire-frontend`, `notaire-observability-health`, `notaire-traces`
 - Overview dashboards `notaire-stack-status` (whole stack) and `notaire-status` (Notaire only)
 - Specialist dashboards `notaire-backend`, `notaire-postgres`, `notaire-auth`, `notaire-logs`
 

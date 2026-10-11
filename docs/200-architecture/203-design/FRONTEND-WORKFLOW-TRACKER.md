@@ -40,11 +40,13 @@ collects the distinct status IDs in chronological order:
 Flyway `V10__seed_workflow_demo_data.sql` seeds the base graph; `V41__extend_workflow_post_firma_testimony.sql`
 (#841) extends it:
 
-- "Workflow de Gestión Estándar" — nodes covering Iniciada → Firmada →
-  Testimony Generado → Testimony Ingresado a Inscripción → Testimony
-  Retirado (FINAL), with a fork at *Documentación Completa* → Archivada
-- Statuses 11–13 added; status id 10 (Inscripta) remains as inert catalog
-- The workflow assigned to procedure types Compraventa, Donación, Hipoteca
+- "Workflow de Gestión Estándar" — seeded nodes from `Iniciada` through
+  `En Tramite`, `Documentacion Completa`, `Gestion con Escritura Sin Firmar`,
+  and `Gestion con Escritura Firmada`, then `Testimonio Generado`,
+  `Testimonio Ingresado a Inscripcion`, and `Testimonio Retirado` (FINAL).
+  A fork goes from `Documentacion Completa` to `Archivada`.
+- Statuses 11–13 added; status id 10 (`Gestion con Escritura Inscripta`) remains as inert catalog
+- The workflow assigned to procedure types `Compraventa`, `Donacion`, and `Hipoteca`
 - Two sample managements (1001, 1002) with procedures and history
 
 ### Testimony movements / re-entry loop (#841, strategy b)

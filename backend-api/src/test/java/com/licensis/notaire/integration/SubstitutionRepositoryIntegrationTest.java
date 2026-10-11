@@ -47,7 +47,7 @@ class SubstitutionRepositoryIntegrationTest extends ServiceIntegrationTest {
 
         substitute = new Person();
         substitute.setFirstName("Juan");
-        substitute.setLastName("Suplente");
+        substitute.setLastName("Substitute");
         substitute.setIdentificationNumber("12345678");
         substitute.setIsClient(true);
         substitute.setFkIdIdentificationType(identificationType);
@@ -55,7 +55,7 @@ class SubstitutionRepositoryIntegrationTest extends ServiceIntegrationTest {
 
         substituted = new Person();
         substituted.setFirstName("Pedro");
-        substituted.setLastName("Suplantado");
+        substituted.setLastName("Substituted");
         substituted.setIdentificationNumber("87654321");
         substituted.setIsClient(true);
         substituted.setFkIdIdentificationType(identificationType);
@@ -121,14 +121,14 @@ class SubstitutionRepositoryIntegrationTest extends ServiceIntegrationTest {
         substitution.setDateEnd(toDate(LocalDate.of(2026, 2, 28)));
         Substitution saved = substitutionRepository.save(substitution);
 
-        saved.setNotes("Actualizado");
+        saved.setNotes("Updated");
         saved.setDateEnd(toDate(LocalDate.of(2026, 3, 31)));
         Substitution updated = substitutionRepository.save(saved);
 
-        assertThat(updated.getNotes()).isEqualTo("Actualizado");
+        assertThat(updated.getNotes()).isEqualTo("Updated");
 
         Optional<Substitution> fetched = substitutionRepository.findById(saved.getIdSubstitution());
-        assertThat(fetched.get().getNotes()).isEqualTo("Actualizado");
+        assertThat(fetched.get().getNotes()).isEqualTo("Updated");
     }
 
     @Test

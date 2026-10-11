@@ -47,8 +47,8 @@ class SubstitutionServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should perform CRUD lifecycle")
     void shouldPerformCRUDLifecycle() {
-        Person substitute = createPerson("Suplente 1");
-        Person substituted = createPerson("Suplantado 1");
+        Person substitute = createPerson("Substitute 1");
+        Person substituted = createPerson("Substituted 1");
 
         // Create
         Substitution substitution = new Substitution();
@@ -56,19 +56,19 @@ class SubstitutionServiceIntegrationTest extends ServiceIntegrationTest {
         substitution.setFkIdSubstituted(substituted);
         substitution.setDateStart(toDate(LocalDate.of(2026, 1, 1)));
         substitution.setDateEnd(toDate(LocalDate.of(2026, 12, 31)));
-        substitution.setNotes("Ciclo completo");
+        substitution.setNotes("Full cycle");
         Substitution created = substitutionRepository.save(substitution);
 
         assertThat(created.getIdSubstitution()).isNotNull();
 
         // Read
         Substitution read = substitutionRepository.findById(created.getIdSubstitution()).orElseThrow();
-        assertThat(read.getNotes()).isEqualTo("Ciclo completo");
+        assertThat(read.getNotes()).isEqualTo("Full cycle");
 
         // Update
-        read.setNotes("Actualizado");
+        read.setNotes("Updated");
         Substitution updated = substitutionRepository.save(read);
-        assertThat(updated.getNotes()).isEqualTo("Actualizado");
+        assertThat(updated.getNotes()).isEqualTo("Updated");
 
         // Delete
         substitutionRepository.delete(updated);
@@ -78,9 +78,9 @@ class SubstitutionServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle multiple substitutions for the same substitute")
     void shouldHandleMultipleSubstitutionsForSameSubstitute() {
-        Person substitute = createPerson("Suplente Activo");
-        Person substituted1 = createPerson("Suplantado 1");
-        Person substituted2 = createPerson("Suplantado 2");
+        Person substitute = createPerson("Substitute Active");
+        Person substituted1 = createPerson("Substituted 1");
+        Person substituted2 = createPerson("Substituted 2");
 
         for (int i = 0; i < 3; i++) {
             Substitution substitution = new Substitution();
@@ -98,8 +98,8 @@ class SubstitutionServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle date range scenarios")
     void shouldHandleDateRangeScenarios() {
-        Person substitute = createPerson("Suplente 2");
-        Person substituted = createPerson("Suplantado 2");
+        Person substitute = createPerson("Substitute 2");
+        Person substituted = createPerson("Substituted 2");
 
         Substitution substitution1 = new Substitution();
         substitution1.setFkIdSubstitute(substitute);
@@ -122,8 +122,8 @@ class SubstitutionServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should maintain relationship integrity")
     void shouldMaintainRelationshipIntegrity() {
-        Person substitute = createPerson("Suplente 3");
-        Person substituted = createPerson("Suplantado 3");
+        Person substitute = createPerson("Substitute 3");
+        Person substituted = createPerson("Substituted 3");
 
         Substitution substitution = new Substitution();
         substitution.setFkIdSubstitute(substitute);
@@ -143,9 +143,9 @@ class SubstitutionServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle concurrent operations")
     void shouldHandleConcurrentOperations() {
-        Person substitute1 = createPerson("Suplente A");
-        Person substitute2 = createPerson("Suplente B");
-        Person substituted = createPerson("Suplantado Concurrente");
+        Person substitute1 = createPerson("Substitute A");
+        Person substitute2 = createPerson("Substitute B");
+        Person substituted = createPerson("Substituted Concurrent");
 
         Substitution sup1 = new Substitution();
         sup1.setFkIdSubstitute(substitute1);
@@ -170,8 +170,8 @@ class SubstitutionServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should support filtering operations")
     void shouldSupportFilteringOperations() {
-        Person substitute = createPerson("Suplente Filtrado");
-        Person substituted = createPerson("Suplantado Filtrado");
+        Person substitute = createPerson("Substitute Filtered");
+        Person substituted = createPerson("Substituted Filtered");
 
         for (int i = 1; i <= 5; i++) {
             Substitution substitution = new Substitution();
@@ -193,10 +193,10 @@ class SubstitutionServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle batch operations")
     void shouldHandleBatchOperations() {
-        Person substitute = createPerson("Suplente Batch");
+        Person substitute = createPerson("Substitute Batch");
 
         for (int i = 0; i < 10; i++) {
-            Person substituted = createPerson("Suplantado Batch " + i);
+            Person substituted = createPerson("Substituted Batch " + i);
             Substitution substitution = new Substitution();
             substitution.setFkIdSubstitute(substitute);
             substitution.setFkIdSubstituted(substituted);
@@ -207,7 +207,7 @@ class SubstitutionServiceIntegrationTest extends ServiceIntegrationTest {
 
         List<Substitution> all = substitutionRepository.findAll();
         long countBatch = all.stream()
-                .filter(s -> s.getFkIdSubstitute().getFirstName().startsWith("Suplente Batch"))
+                .filter(s -> s.getFkIdSubstitute().getFirstName().startsWith("Substitute Batch"))
                 .count();
 
         assertThat(countBatch).isEqualTo(10);
@@ -218,7 +218,7 @@ class SubstitutionServiceIntegrationTest extends ServiceIntegrationTest {
     void shouldSupportComplexScenarios() {
         // Create multiple people
         Person substitute1 = createPerson("Notary Principal");
-        Person substitute2 = createPerson("Notary Suplente");
+        Person substitute2 = createPerson("Notary substitute");
         Person substituted1 = createPerson("Notary A");
         Person substituted2 = createPerson("Notary B");
 
@@ -228,7 +228,7 @@ class SubstitutionServiceIntegrationTest extends ServiceIntegrationTest {
         overlap1.setFkIdSubstituted(substituted1);
         overlap1.setDateStart(toDate(LocalDate.of(2026, 1, 1)));
         overlap1.setDateEnd(toDate(LocalDate.of(2026, 6, 30)));
-        overlap1.setNotes("Primer semestre");
+        overlap1.setNotes("First semester");
         substitutionRepository.save(overlap1);
 
         Substitution overlap2 = new Substitution();
@@ -236,13 +236,13 @@ class SubstitutionServiceIntegrationTest extends ServiceIntegrationTest {
         overlap2.setFkIdSubstituted(substituted2);
         overlap2.setDateStart(toDate(LocalDate.of(2026, 4, 1)));
         overlap2.setDateEnd(toDate(LocalDate.of(2026, 9, 30)));
-        overlap2.setNotes("Period extendido");
+        overlap2.setNotes("Extended period");
         substitutionRepository.save(overlap2);
 
         List<Substitution> all = substitutionRepository.findAll();
         assertThat(all).hasSize(2);
-        assertThat(all).anyMatch(s -> "Primer semestre".equals(s.getNotes()));
-        assertThat(all).anyMatch(s -> "Period extendido".equals(s.getNotes()));
+        assertThat(all).anyMatch(s -> "First semester".equals(s.getNotes()));
+        assertThat(all).anyMatch(s -> "Extended period".equals(s.getNotes()));
     }
 
     private Person createPerson(String name) {

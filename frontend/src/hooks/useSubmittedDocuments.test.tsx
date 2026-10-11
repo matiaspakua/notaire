@@ -1,5 +1,5 @@
 /**
- * Unit tests for the Documents presentados hooks (CU04, CU72 — #773): the request must use the
+ * Unit tests for the submitted-document hooks (CU04, CU72 — #773): the request must use the
  * field names SubmittedDocumentController reads.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";

@@ -53,7 +53,7 @@ class ProcedureControllerFkHydrationIntegrationTest {
         MvcResult result = mockMvc.perform(post("/api/v1/procedure-types")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"name": "Tipo FK Hydration", "isRegistered": false,
+                                {"name": "Type FK Hydration", "isRegistered": false,
                                  "isArchived": false, "associatesProperties": false}
                                 """))
                 .andExpect(status().isCreated())

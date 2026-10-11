@@ -54,7 +54,7 @@ class SubmittedDocumentPartialUpdateIntegrationTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
         expiringType = new DocumentType();
-        expiringType.setName("Tipo with expiration");
+        expiringType.setName("Type with expiration");
         expiringType.setExpires(true);
         expiringType.setDueDays(10);
         expiringType.setDeliveredBy("Cliente");
@@ -62,7 +62,7 @@ class SubmittedDocumentPartialUpdateIntegrationTest {
         expiringType = documentTypeRepository.save(expiringType);
 
         ProcedureType procedureType = new ProcedureType();
-        procedureType.setName("Tipo procedure doc");
+        procedureType.setName("Type procedure doc");
         procedureType.setEnabled(true);
         procedureType = procedureTypeRepository.save(procedureType);
         procedure = new Procedure();
@@ -115,10 +115,10 @@ class SubmittedDocumentPartialUpdateIntegrationTest {
     @Test
     @DisplayName("shouldKeepFlagsWhenOnlyTheNameIsSent")
     void shouldKeepFlagsWhenOnlyTheNameIsSent() throws Exception {
-        putJson(stored.getIdSubmittedDocument(), "{\"name\":\"Nombre nuevo\"}", 200);
+        putJson(stored.getIdSubmittedDocument(), "{\"name\":\"New name\"}", 200);
 
         SubmittedDocument after = reload();
-        assertThat(after.getName()).isEqualTo("Nombre nuevo");
+        assertThat(after.getName()).isEqualTo("New name");
         assertThat(after.getFlagged()).isTrue();
         assertThat(after.getFkIdProcedure().getIdProcedure()).isEqualTo(procedure.getIdProcedure());
     }

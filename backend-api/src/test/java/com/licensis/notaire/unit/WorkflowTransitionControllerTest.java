@@ -65,7 +65,7 @@ class WorkflowTransitionControllerTest {
         t.setWorkflowDefinition(new WorkflowDefinition(1));
         t.setOriginNode(buildNode(1, WorkflowNodeType.INITIAL));
         t.setDestinationNode(buildNode(2, WorkflowNodeType.INTERMEDIATE));
-        t.setDescription("Inicio → Revisión");
+        t.setDescription("Start → Review");
         return t;
     }
 
@@ -74,7 +74,7 @@ class WorkflowTransitionControllerTest {
         dto.setWorkflowDefinitionId(1);
         dto.setOriginNodeId(1);
         dto.setDestinationNodeId(2);
-        dto.setDescription("Inicio → Revisión");
+        dto.setDescription("Start → Review");
         dto.setVersion(0);
         return dto;
     }
@@ -85,7 +85,7 @@ class WorkflowTransitionControllerTest {
         when(repository.findByWorkflowDefinitionId(1)).thenReturn(List.of(buildEntity()));
         mockMvc.perform(get("/api/v1/workflow-transition/by-workflow/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].description").value("Inicio → Revisión"));
+                .andExpect(jsonPath("$[0].description").value("Start → Review"));
     }
 
     @Test

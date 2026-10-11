@@ -428,8 +428,8 @@ class BusinessWorkflowIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "name": "Honorario base",
-                                      "description": "Honorario base de deed",
+                                      "name": "Base fee",
+                                      "description": "Base fee for the deed",
                                       "value": 10000.00
                                     }
                                     """))
@@ -439,12 +439,12 @@ class BusinessWorkflowIntegrationTest {
 
     @Nested
     @DisplayName("CU26/CU57/CU64 — Procedure types catalog")
-    class TiposProcedureWorkflow {
+    class ProcedureTypesWorkflow {
 
         @Test
         @Order(1)
         @DisplayName("GET /api/v1/procedure-types returns array")
-        void getAllTiposProcedureReturnsArray() throws Exception {
+        void getAllProcedureTypesReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/procedure-types"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());
@@ -476,7 +476,7 @@ class BusinessWorkflowIntegrationTest {
         @Test
         @Order(1)
         @DisplayName("GET /api/v1/management-statuses returns array")
-        void getAllEstadosReturnsArray() throws Exception {
+        void getAllStatusesReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/management-statuses"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());

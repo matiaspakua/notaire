@@ -144,7 +144,7 @@ class RegistrationDraftControllerTest {
         mockMvc.perform(put("/api/v1/registration-drafts/1/observe")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(
-                                new RegistrationDraftController.ObserveRequest("Falta plano", new Date()))))
+                                new RegistrationDraftController.ObserveRequest("Missing plan", new Date()))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftObserved));
     }

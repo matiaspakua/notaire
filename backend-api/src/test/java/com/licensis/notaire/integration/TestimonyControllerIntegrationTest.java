@@ -304,10 +304,10 @@ class TestimonyControllerIntegrationTest {
 
         mockMvc.perform(post("/api/v1/testimonies/" + idTestimony + "/verify")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"flagged\": true, \"notes\": \"Falta firma del otorgante\"}"))
+                        .content("{\"flagged\": true, \"notes\": \"Missing grantor signature\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.verified").value(true))
                 .andExpect(jsonPath("$.flagged").value(true))
-                .andExpect(jsonPath("$.notes").value("Falta firma del otorgante"));
+                .andExpect(jsonPath("$.notes").value("Missing grantor signature"));
     }
 }

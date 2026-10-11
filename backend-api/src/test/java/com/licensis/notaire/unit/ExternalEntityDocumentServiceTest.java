@@ -63,7 +63,7 @@ class ExternalEntityDocumentServiceTest {
 
         Person notary = new Person();
         notary.setFirstName("Ana");
-        notary.setLastName("Notaria");
+        notary.setLastName("Notary");
 
         management = new DeedManagement();
         management.setIdManagement(1);
@@ -79,7 +79,7 @@ class ExternalEntityDocumentServiceTest {
         document = new SubmittedDocument();
         document.setIdSubmittedDocument(50);
         document.setName("Certificado de Dominio");
-        document.setDeliveredBy(BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA);
+        document.setDeliveredBy(BusinessConstants.DocumentationExternalEntity);
         document.setFkIdProcedure(procedure);
         document.setDelivered(false);
     }
@@ -98,13 +98,13 @@ class ExternalEntityDocumentServiceTest {
             when(documentRepository.findManagementById(1)).thenReturn(Optional.of(management));
             when(documentRepository.findProceduresByManagementId(1)).thenReturn(List.of(procedure));
             when(documentRepository.findByManagementAndDeliveredBy(
-                    1, BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA)).thenReturn(List.of(document));
+                    1, BusinessConstants.DocumentationExternalEntity)).thenReturn(List.of(document));
 
             DtoManagementExternalEntityDocuments result = externalEntityDocumentService.getDocuments(1);
 
             assertThat(result.idManagement()).isEqualTo(1);
             assertThat(result.number()).isEqualTo(100);
-            assertThat(result.notary()).isEqualTo("Ana Notaria");
+            assertThat(result.notary()).isEqualTo("Ana Notary");
             assertThat(result.cadastralDesignation()).isEqualTo("12-34-56");
             assertThat(result.documents()).hasSize(1);
             assertThat(result.documents().get(0).name()).isEqualTo("Certificado de Dominio");
@@ -116,7 +116,7 @@ class ExternalEntityDocumentServiceTest {
             when(documentRepository.findManagementById(1)).thenReturn(Optional.of(management));
             when(documentRepository.findProceduresByManagementId(1)).thenReturn(List.of(procedure));
             when(documentRepository.findByManagementAndDeliveredBy(
-                    1, BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA)).thenReturn(List.of());
+                    1, BusinessConstants.DocumentationExternalEntity)).thenReturn(List.of());
 
             DtoManagementExternalEntityDocuments result = externalEntityDocumentService.getDocuments(1);
 
@@ -185,7 +185,7 @@ class ExternalEntityDocumentServiceTest {
         @Test
         @DisplayName("Throws BusinessValidationException when the document is not for an external entity")
         void shouldThrowWhenDocumentIsNotExternalEntity() {
-            document.setDeliveredBy(BusinessConstants.DOCUMENTACIONClient);
+            document.setDeliveredBy(BusinessConstants.DocumentationClient);
 
             when(documentRepository.findManagementById(1)).thenReturn(Optional.of(management));
             when(documentRepository.findSubmittedDocumentById(50)).thenReturn(Optional.of(document));
@@ -220,7 +220,7 @@ class ExternalEntityDocumentServiceTest {
         void shouldTransitionManagementWhenAllDocumentsDelivered() {
             document.setDelivered(true);
             when(documentRepository.findByManagementAndDeliveredBy(
-                    1, BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA)).thenReturn(List.of(document));
+                    1, BusinessConstants.DocumentationExternalEntity)).thenReturn(List.of(document));
 
             externalEntityDocumentService.tryCompleteDocumentation(1);
 
@@ -228,14 +228,14 @@ class ExternalEntityDocumentServiceTest {
             ArgumentCaptor<String> statusCaptor = ArgumentCaptor.forClass(String.class);
             verify(managementTransitionService, times(1)).transition(idManagementCaptor.capture(), statusCaptor.capture());
             assertThat(idManagementCaptor.getValue()).isEqualTo(1);
-            assertThat(statusCaptor.getValue()).isEqualTo(BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA);
+            assertThat(statusCaptor.getValue()).isEqualTo(BusinessConstants.ManagementWithCompleteDocumentation);
         }
 
         @Test
         @DisplayName("Does not transition the management when documents are still undelivered")
         void shouldNotTransitionWhenDocumentsPending() {
             when(documentRepository.findByManagementAndDeliveredBy(
-                    1, BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA)).thenReturn(List.of(document));
+                    1, BusinessConstants.DocumentationExternalEntity)).thenReturn(List.of(document));
 
             externalEntityDocumentService.tryCompleteDocumentation(1);
 
@@ -247,13 +247,13 @@ class ExternalEntityDocumentServiceTest {
         void shouldSwallowBusinessValidationExceptionOnAutoTransition() {
             document.setDelivered(true);
             when(documentRepository.findByManagementAndDeliveredBy(
-                    1, BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA)).thenReturn(List.of(document));
-            when(managementTransitionService.transition(eq(1), eq(BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA)))
+                    1, BusinessConstants.DocumentationExternalEntity)).thenReturn(List.of(document));
+            when(managementTransitionService.transition(eq(1), eq(BusinessConstants.ManagementWithCompleteDocumentation)))
                     .thenThrow(new BusinessValidationException("Transition is not allowed"));
 
             externalEntityDocumentService.tryCompleteDocumentation(1);
 
-            verify(managementTransitionService, times(1)).transition(1, BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA);
+            verify(managementTransitionService, times(1)).transition(1, BusinessConstants.ManagementWithCompleteDocumentation);
         }
     }
 }

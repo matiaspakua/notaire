@@ -34,7 +34,7 @@ class BudgetTemplateServiceIntegrationTest extends ServiceIntegrationTest {
     @BeforeEach
     void setUp() {
         testTypeProcedure = new ProcedureType();
-        testTypeProcedure.setName("Deed de Compraventa");
+        testTypeProcedure.setName("Deed for Compraventa");
         typeProcedureRepository.save(testTypeProcedure);
 
         testConcept = new Concept();
@@ -156,7 +156,7 @@ class BudgetTemplateServiceIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("Should handle multiple budget templates for different concepts")
     void shouldHandleMultipleTemplatesForDifferentConcepts() {
         Concept concept2 = new Concept();
-        concept2.setName("Gastos");
+        concept2.setName("Expenses");
         concept2.setValue(java.math.BigDecimal.ZERO);
         concept2.setPercentage(0);
         conceptRepository.save(concept2);

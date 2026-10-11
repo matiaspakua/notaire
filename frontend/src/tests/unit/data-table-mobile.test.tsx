@@ -18,14 +18,14 @@ interface Row {
 
 const columns: Column<Row>[] = [
   { key: "id", header: "ID", render: (r) => r.id },
-  { key: "name", header: "Nombre", render: (r) => r.name },
+  { key: "name", header: "Name", render: (r) => r.name },
   { key: "email", header: "Email", render: (r) => r.email },
-  { key: "internal", header: "Interno", render: (r) => r.internal, mobile: "hidden" },
+  { key: "internal", header: "Internal", render: (r) => r.internal, mobile: "hidden" },
   {
     key: "actions",
     header: "",
     render: (r) => (
-      <button type="button" aria-label={`Editar ${r.name}`}>
+      <button type="button" aria-label={`Edit ${r.name}`}>
         e
       </button>
     ),
@@ -94,21 +94,21 @@ describe("DataTable on mobile (#1356)", () => {
     mockViewport(390);
     render(<DataTable data={data} columns={columns} keyExtractor={(r) => r.id} />);
     expect(screen.queryByText("x1")).toBeNull();
-    expect(screen.queryByText("Interno")).toBeNull();
+    expect(screen.queryByText("Internal")).toBeNull();
   });
 
   it("shows the row actions in the card", () => {
     mockViewport(390);
     render(<DataTable data={data} columns={columns} keyExtractor={(r) => r.id} />);
     const card = screen.getAllByRole("listitem")[1];
-    expect(within(within(card).getByTestId("data-table-card-actions")).getByRole("button", { name: "Editar Ana López" })).toBeDefined();
+    expect(within(within(card).getByTestId("data-table-card-actions")).getByRole("button", { name: "Edit Ana López" })).toBeDefined();
   });
 
   it("shows the empty message as a card list state", () => {
     mockViewport(390);
-    render(<DataTable data={[]} columns={columns} keyExtractor={(r) => r.id} emptyMessage="Nada" />);
+    render(<DataTable data={[]} columns={columns} keyExtractor={(r) => r.id} emptyMessage="Nothing" />);
     expect(screen.queryByRole("table")).toBeNull();
-    expect(screen.getByText("Nada")).toBeDefined();
+    expect(screen.getByText("Nothing")).toBeDefined();
   });
 
   it("keeps the table at desktop width", () => {

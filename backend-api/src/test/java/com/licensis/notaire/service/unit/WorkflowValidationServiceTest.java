@@ -52,8 +52,8 @@ class WorkflowValidationServiceTest {
     @DisplayName("Should reject workflow with no initial node")
     void shouldRejectWorkflowWithNoInitialNode() {
         List<WorkflowNode> nodes = new ArrayList<>();
-        ManagementStatus estado1 = createStatus(1, "Estado1");
-        nodes.add(createNode(1, WorkflowNodeType.FINAL, estado1));
+        ManagementStatus status1 = createStatus(1, "Status1");
+        nodes.add(createNode(1, WorkflowNodeType.FINAL, status1));
         nodes.add(createNode(2, WorkflowNodeType.FINAL, null));
 
         List<WorkflowTransition> transitions = new ArrayList<>();
@@ -85,7 +85,7 @@ class WorkflowValidationServiceTest {
     void shouldRejectWorkflowWithNoFinalNode() {
         List<WorkflowNode> nodes = new ArrayList<>();
         nodes.add(createNode(1, WorkflowNodeType.INITIAL, null));
-        nodes.add(createNode(2, WorkflowNodeType.INITIAL, createStatus(1, "Estado")));
+        nodes.add(createNode(2, WorkflowNodeType.INITIAL, createStatus(1, "Status")));
 
         List<WorkflowTransition> transitions = new ArrayList<>();
 
@@ -99,13 +99,13 @@ class WorkflowValidationServiceTest {
     @DisplayName("Should reject workflow with unreachable nodes")
     void shouldRejectWorkflowWithUnreachableNodes() {
         List<WorkflowNode> nodes = new ArrayList<>();
-        ManagementStatus estado1 = createStatus(1, "Inicio");
-        ManagementStatus estado2 = createStatus(2, "Fin");
-        ManagementStatus estado3 = createStatus(3, "Aislado");
+        ManagementStatus status1 = createStatus(1, "Start");
+        ManagementStatus status2 = createStatus(2, "End");
+        ManagementStatus status3 = createStatus(3, "Isolated");
 
-        nodes.add(createNode(1, WorkflowNodeType.INITIAL, estado1));
-        nodes.add(createNode(2, WorkflowNodeType.FINAL, estado2));
-        nodes.add(createNode(3, WorkflowNodeType.FINAL, estado3));
+        nodes.add(createNode(1, WorkflowNodeType.INITIAL, status1));
+        nodes.add(createNode(2, WorkflowNodeType.FINAL, status2));
+        nodes.add(createNode(3, WorkflowNodeType.FINAL, status3));
 
         List<WorkflowTransition> transitions = new ArrayList<>();
         transitions.add(createTransition(1, 2, nodes));

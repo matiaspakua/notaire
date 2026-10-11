@@ -43,6 +43,67 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English synthetic chrome fixtures** (#1490, CU75): tests name dialog and
+  header props in English (`People`, `Client management`, `New person`,
+  `Delete person`, `Edit budget`, `Budget summary`, `Items`, `Template`,
+  and `Managements`). Table fixtures use `Name`, `Internal`, `Edit`, and
+  `Nothing`. Deed fixtures use `Deed for Compraventa`, `Deed of sale`,
+  `Sale deed`, `Notarial body`, `Expenses`, and `Before delete`. Catalog
+  labels `Cerrar`, `Saltar al contenido`, `Honorarios`, `Comprador`, and
+  `Poder` stay, along with stored `Compraventa` and `Firmada` and the
+  person names `Juan García` and `Ana López`.
+- **English synthetic notes** (#1490, CU75): tests use English notes and
+  headings (`New name`, `Listed document`, `Missing grantor signature`,
+  `Missing survey plan`, `Missing cadastral certificate`, `without client`,
+  and `Case`). The last management number query aliases `latestManagement`.
+  The historical table name `documentos_presentados` stays, along with the
+  cadastral label `nomenclatura catastral`.
+- **English type fixture names** (#1490, CU75): Java tests name synthetic
+  types in English (`Type_unused_`, `Type #655`, `Case summary type`,
+  `Type Trace Test`, and `Base fee`). The traceability registry names the
+  live classes `BudgetEntityTest`, `DeedEntityTest`, `PaymentEntityTest`,
+  `ProcessPaymentServiceTest`, `ProcedureTypeWorkflowAssignmentTest`, and
+  `AuditRecordServiceTest`. The untyped person fixture is `No Type`.
+  Stored labels `Compraventa`, `Firmada`, `DNI`, and `Pasaporte` stay.
+  The named-query hygiene list still forbids `TipoDeTramite.` and
+  `DocumentoPresentado.`.
+- **English remaining fixture names** (#1490, CU75): Java tests use English
+  synthetic names (`Archived management`, `Notarial power`, `Grantor`,
+  `FindThisStatus`, `Procedure_unused_`, `Updated notes`, `Cycle IT Status`,
+  `Missing status`, `Substitute IT`, and `Ana Notary`). Stored label
+  `Archivada` stays. Test methods say `shouldReturnAllManagementStatuses`
+  and `shouldReturnCurrentStatusFromHistoryWhenRowsExist`.
+- **English synthetic test fixtures** (#1490, CU75): Java tests use English
+  notes and names (`Updated`, `Pending signature`, `Full cycle`,
+  `First semester`, `With client`, `Notary office`, `Active`, `Protocol`,
+  `Substitute`, and `Special folio`). Stored labels `Honorarios` and
+  `Protocolo Auxiliar` stay, along with the legacy budget status `Activo`
+  and the given names `Juan` and `Pedro`.
+- **English named-query and history specs** (#1490, CU75): the history-order
+  scenario says History, not Bitácora. The named-query spec lists the
+  forbidden Spanish prefixes `Escritura.`, `Usuario.`, `Presupuesto.`, and
+  `Persona.`, and the tail `Folio.findByNumero`. English prefixes `Deed` and
+  `Person` stay allowed.
+- **English workflow test fixtures** (#1490, CU83): workflow tests use
+  English identifiers (`nodeIntermediate`, `statusInProgress`, `status1`)
+  and synthetic names (`Start`, `In progress`, `Finished`, `Start → Review`,
+  `Cost type`, `Procedure type`). Stored label `Cliente` stays.
+- **English folio status comment** (#1490, CU28): the folio class states the
+  business rule in English and names the stored statuses `Nuevo`,
+  `Utilizado`, `Errose`, `no pasó`, and `Asignado a cuaderno`. The state
+  diagram note quotes `Documentacion Completa`.
+- **English workflow-tracker seed names** (#1490, CU83): the dashboard
+  workflow tracker quotes the seeded statuses `Testimonio Generado`,
+  `Testimonio Ingresado a Inscripcion`, `Testimonio Retirado`,
+  `Documentacion Completa`, and `Gestion con Escritura Inscripta`.
+  Procedure types stay `Compraventa`, `Donacion`, and `Hipoteca`. The
+  workflow name `Workflow de Gestión Estándar` stays.
+- **English business-constant names** (#1490, CU75): `BusinessConstants` field
+  names are English (`DeedSigned`, `ManagementStatusInitial`,
+  `DocumentationComplete`, `UserEmployee`, and the rest of that interface).
+  Stored values stay, including `Firmada`, `Iniciada`, `Documentacion Completa`,
+  `Empleado`, `Folio Errose`, `Modificar Persona`, and `Escribano`. Deed status
+  `Inscripta` stays.
 - **English registration-draft statuses** (#1490, CU82): comments, the
   lifecycle diagram, and the engineering gap row name the stored statuses
   `Generada`, `Presentado para inscripción`, `Observado`, and `Inscripto`.
