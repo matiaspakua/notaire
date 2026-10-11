@@ -64,6 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English registry path names** (#1490, CU75): the role section is
+  `RoleController`. The documents-due path variable is
+  `{idSubmittedDocument}`. The auxiliary-deed check reads `idDeed`.
+  Path variables `{idRole}` and `{idUser}` stay. The PDF filename
+  `documentos_vencer.pdf` stays. The live path
+  `/api/v1/reports/documents-due/` stays.
 - **English living-spec contract names** (#1490, CU75): the tie-break
   scenarios say `a management`. The tie test requests `current-status`.
   The Bruno controller list names `Management`, `AuxiliaryProtocol`, and
