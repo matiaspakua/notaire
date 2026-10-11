@@ -16,7 +16,7 @@ describe("openapi generated types (#1260)", () => {
   it("exports schema aliases used by management, budget, and document hooks", () => {
     const management: DeedManagement = { idManagement: 1, procedureCount: 2 };
     const budget: Budget = { idBudget: 9, number: 1 };
-    const resumen: BudgetSummary = {
+    const summary: BudgetSummary = {
       idBudget: 9,
       numberBudget: 1,
       total: 100,
@@ -25,7 +25,7 @@ describe("openapi generated types (#1260)", () => {
     const doc: SubmittedDocument = { idSubmittedDocument: 3, delivered: false };
     expect(management.idManagement).toBe(1);
     expect(budget.idBudget).toBe(9);
-    expect(resumen.total).toBe(100);
+    expect(summary.total).toBe(100);
     expect(doc.delivered).toBe(false);
   });
 

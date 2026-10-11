@@ -44,13 +44,13 @@ export default function PagosPage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   // Fetch the outstanding balance for the selected budget (Issue #796)
-  const { data: resumen, isLoading: resumenLoading } = useBudgetSummary(
+  const { data: summary, isLoading: summaryLoading } = useBudgetSummary(
     editing.idBudget || null
   );
   // Fetch the payment status for the selected budget (Issue #821)
-  const { data: estadoPago } = usePaymentStatus(editing.idBudget || null);
+  const { data: paymentStatus } = usePaymentStatus(editing.idBudget || null);
 
-  const estadoPagoLabel: Record<string, string> = {
+  const paymentStatusLabel: Record<string, string> = {
     NoPayments: t("estadoSinPagos"),
     PARTIAL: t("estadoParcial"),
     PAID: t("estadoSaldado"),
@@ -154,28 +154,28 @@ export default function PagosPage() {
               {/* Issue #796: Show the outstanding balance after selection */}
               {editing.idBudget && (
                 <div className="rounded-lg bg-info/10 p-3 border border-info/30">
-                  {resumenLoading ? (
+                  {summaryLoading ? (
                     <div className="text-sm text-muted-foreground">{t("saldo.loading")}</div>
-                  ) : resumen ? (
+                  ) : summary ? (
                     <div className="space-y-1">
                       <div className="flex items-center justify-between">
                         <div className="text-sm text-muted-foreground">{t("saldo.pending")}</div>
-                        {estadoPago && (
+                        {paymentStatus && (
                           <span
                             data-testid="status-payment-badge"
                             className="rounded-full bg-info/10 px-2 py-0.5 text-xs font-medium text-info"
                           >
-                            {estadoPagoLabel[estadoPago]}
+                            {paymentStatusLabel[paymentStatus]}
                           </span>
                         )}
                       </div>
                       <div className="text-lg font-semibold text-foreground" data-testid="pending-balance-amount">
-                        {formatCurrency(resumen.pendingBalance || 0)}
+                        {formatCurrency(summary.pendingBalance || 0)}
                       </div>
                       <div className="text-xs text-muted-foreground pt-1">
                         {t("saldo.summary", {
-                          budgeted: formatCurrency(resumen.total || 0),
-                          paid: formatCurrency((resumen.total || 0) - (resumen.pendingBalance || 0)),
+                          budgeted: formatCurrency(summary.total || 0),
+                          paid: formatCurrency((summary.total || 0) - (summary.pendingBalance || 0)),
                         })}
                       </div>
                     </div>

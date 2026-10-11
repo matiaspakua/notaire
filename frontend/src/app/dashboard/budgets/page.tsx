@@ -67,9 +67,9 @@ function BudgetsList() {
   const [editing, setEditing] = useState<Partial<Budget>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const [resumenId, setResumenId] = useState<number | null>(null);
-  const { data: resumen, isLoading: isResumenLoading, error: resumenError } =
-    useBudgetSummary(resumenId);
+  const [summaryId, setSummaryId] = useState<number | null>(null);
+  const { data: summary, isLoading: isSummaryLoading, error: summaryError } =
+    useBudgetSummary(summaryId);
 
   const [newProcedureTypeId, setNewProcedureTypeId] = useState(NO_TEMPLATE);
   const [itemsBudgetId, setItemsBudgetId] = useState<number | null>(null);
@@ -257,7 +257,7 @@ function BudgetsList() {
             variant="ghost"
             data-testid={`btn-summary-budget-${p.idBudget}`}
             aria-label={t("resumen.title")}
-            onClick={() => setResumenId(p.idBudget!)}
+            onClick={() => setSummaryId(p.idBudget!)}
           >
             <Receipt className="h-4 w-4" />
           </Button>
@@ -428,48 +428,48 @@ function BudgetsList() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={resumenId !== null} onOpenChange={(v) => !v && setResumenId(null)}>
+      <Dialog open={summaryId !== null} onOpenChange={(v) => !v && setSummaryId(null)}>
         <DialogContent className="max-w-2xl" data-testid="dialog-summary-budget">
           <FormContainer>
             <FormHeader dialogTitle title={t("resumen.title")} />
-            {isResumenLoading && (
+            {isSummaryLoading && (
               <p className="text-sm text-muted-foreground">{tc("loading")}</p>
             )}
-            {resumenError && (
+            {summaryError && (
               <p className="text-sm text-destructive" data-testid="summary-not-found">
-                {resumenError instanceof ApiError && resumenError.status === 404
+                {summaryError instanceof ApiError && summaryError.status === 404
                   ? t("resumen.notFound")
                   : t("errorSave")}
               </p>
             )}
-            {resumen && (
+            {summary && (
               <>
                 <FormSection title={t("resumen.gestionSection")}>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="text-muted-foreground">{t("resumen.numeroGestion")}</p>
-                      <p className="font-medium">{resumen.numberManagement ?? "—"}</p>
+                      <p className="font-medium">{summary.numberManagement ?? "—"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">{t("resumen.encabezado")}</p>
-                      <p className="font-medium">{resumen.managementHeading ?? "—"}</p>
+                      <p className="font-medium">{summary.managementHeading ?? "—"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">{t("resumen.numeroPresupuesto")}</p>
-                      <p className="font-medium">{resumen.numberBudget}</p>
+                      <p className="font-medium">{summary.numberBudget}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">{tc("amount")} {t("resumen.total").toLowerCase()}</p>
-                      <p className="font-medium">{formatCurrency(resumen.total)}</p>
+                      <p className="font-medium">{formatCurrency(summary.total)}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">{t("resumen.saldo")}</p>
-                      <p className="font-medium">{formatCurrency(resumen.pendingBalance)}</p>
+                      <p className="font-medium">{formatCurrency(summary.pendingBalance)}</p>
                     </div>
                   </div>
                 </FormSection>
                 <FormSection title={t("resumen.pagosSection")}>
-                  {(resumen.payments ?? []).length === 0 ? (
+                  {(summary.payments ?? []).length === 0 ? (
                     <p className="text-sm text-muted-foreground" data-testid="summary-empty-payments">
                       {t("resumen.noPagos")}
                     </p>
@@ -484,7 +484,7 @@ function BudgetsList() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-{(resumen.payments ?? []).map((payment) => (
+{(summary.payments ?? []).map((payment) => (
                 <TableRow key={payment.idPayment}>
                   <TableCell>{payment.idPayment}</TableCell>
                   <TableCell>{formatCurrency(payment.amount)}</TableCell>
@@ -499,7 +499,7 @@ function BudgetsList() {
               </>
             )}
             <FormActions align="right">
-              <Button variant="secondary" onClick={() => setResumenId(null)}>
+              <Button variant="secondary" onClick={() => setSummaryId(null)}>
                 {tc("cancel")}
               </Button>
             </FormActions>

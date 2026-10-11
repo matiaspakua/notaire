@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English summary locals** (#1490, CU75):
+  Budget and payment screens store the summary in `summary` and the
+  payment state in `paymentStatus`. Message keys such as `resumen.title`,
+  `gestiones.resumen`, and `estadoSinPagos` stay. The archive confirmation
+  assertion matches `Archivar de todos modos`.
 - **English screen test ids** (#1490, CU75):
   Playwright uses the live ids `btn-new-management`, `btn-new-budget`,
   `select-budget-management`, `btn-confirm-transition`, and
