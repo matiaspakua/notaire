@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English business-constant names** (#1490, CU75): `BusinessConstants` field
+  names are English (`DeedSigned`, `ManagementStatusInitial`,
+  `DocumentationComplete`, `UserEmployee`, and the rest of that interface).
+  Stored values stay, including `Firmada`, `Iniciada`, `Documentacion Completa`,
+  `Empleado`, `Folio Errose`, `Modificar Persona`, and `Escribano`. Deed status
+  `Inscripta` stays.
 - **English registration-draft statuses** (#1490, CU82): comments, the
   lifecycle diagram, and the engineering gap row name the stored statuses
   `Generada`, `Presentado para inscripción`, `Observado`, and `Inscripto`.

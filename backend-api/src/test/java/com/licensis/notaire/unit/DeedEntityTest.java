@@ -73,7 +73,7 @@ class DeedEntityTest {
         void shouldHaveUnsignedAsDefaultStatus() {
             Deed deed = new Deed();
 
-            assertThat(deed.getStatus()).isEqualTo(BusinessConstants.DeedSINFIRMAR);
+            assertThat(deed.getStatus()).isEqualTo(BusinessConstants.DeedUnsigned);
         }
 
         @Test

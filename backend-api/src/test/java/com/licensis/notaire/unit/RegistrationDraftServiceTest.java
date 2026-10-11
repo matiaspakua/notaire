@@ -56,7 +56,7 @@ class RegistrationDraftServiceTest {
 
         deed = new Deed();
         deed.setIdDeed(1);
-        deed.setStatus(BusinessConstants.DeedFIRMADA);
+        deed.setStatus(BusinessConstants.DeedSigned);
 
         property = new Property();
         property.setIdProperty(1);
@@ -104,7 +104,7 @@ class RegistrationDraftServiceTest {
     @Test
     @DisplayName("Should reject generation when deed is not firmada")
     void shouldRejectGenerationWhenDeedNotFirmada() {
-        deed.setStatus(BusinessConstants.DeedSINFIRMAR);
+        deed.setStatus(BusinessConstants.DeedUnsigned);
         when(deedRepository.findById(1)).thenReturn(Optional.of(deed));
 
         assertThatThrownBy(() -> registrationDraftService.generate(1))

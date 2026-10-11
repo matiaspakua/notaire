@@ -46,7 +46,7 @@ class TestimonyGenerationServiceTest {
         deed = new Deed();
         deed.setIdDeed(1);
         deed.setNumber(100);
-        deed.setStatus(BusinessConstants.DeedFIRMADA);
+        deed.setStatus(BusinessConstants.DeedSigned);
     }
 
     @Test
@@ -70,7 +70,7 @@ class TestimonyGenerationServiceTest {
     @Test
     @DisplayName("Should reject generation when deed is not signed")
     void shouldRejectGenerationWhenDeedNotSigned() {
-        deed.setStatus(BusinessConstants.DeedSINFIRMAR);
+        deed.setStatus(BusinessConstants.DeedUnsigned);
         when(deedRepository.findById(1)).thenReturn(Optional.of(deed));
 
         assertThatThrownBy(() -> testimonyService.generate(1))
