@@ -276,7 +276,10 @@ export async function createCompleteCaseManagement(
     procedureTypeId: 4,
     ...overrides,
   };
-  return apiPost(page, "/managements/complete-case", merged);
+  // CompleteCaseRequest reads typeProcedureId (not the helper's procedureTypeId); the other
+  // names already match the wire record (regression from #1495).
+  const { procedureTypeId, ...rest } = merged;
+  return apiPost(page, "/managements/complete-case", { ...rest, typeProcedureId: procedureTypeId });
 }
 
 /**
