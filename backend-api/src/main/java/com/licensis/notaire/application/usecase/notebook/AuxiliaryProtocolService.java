@@ -38,7 +38,7 @@ public class AuxiliaryProtocolService {
 
     public Deed startDeed(Integer idFolio, String body, Date dateDeedrecording) {
         if (idFolio == null) {
-            throw new BusinessValidationException("Must indicar the folio auxiliar where start the deed");
+            throw new BusinessValidationException("The auxiliary folio where the deed starts is required");
         }
 
         Folio folio = folioRepository.findById(idFolio)
@@ -55,11 +55,11 @@ public class AuxiliaryProtocolService {
         deed.setNumber(calculateNextNumberAuxiliary());
         deed.setBody(body);
         deed.setDateDeedrecording(dateDeedrecording);
-        Deed guardada = deedRepository.save(deed);
+        Deed saved = deedRepository.save(deed);
 
-        folio.setFkIdDeed(guardada);
+        folio.setFkIdDeed(saved);
         folioRepository.save(folio);
 
-        return guardada;
+        return saved;
     }
 }

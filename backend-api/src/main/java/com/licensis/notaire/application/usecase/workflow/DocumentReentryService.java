@@ -62,12 +62,12 @@ public class DocumentReentryService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Procedure not found with ID: " + request.idProcedure()));
         validateBelongsToManagement(procedure, idManagement);
-        DocumentType typeDocument = validateRequiredDocumentation(procedure, request.idDocumentType());
+        DocumentType documentType = validateRequiredDocumentation(procedure, request.idDocumentType());
 
-        SubmittedDocument document = createSubmittedDocument(procedure, typeDocument);
-        SubmittedDocument guardado = submittedDocumentRepository.save(document);
+        SubmittedDocument document = createSubmittedDocument(procedure, documentType);
+        SubmittedDocument saved = submittedDocumentRepository.save(document);
 
-        return toDto(guardado);
+        return toDto(saved);
     }
 
     private DeedManagement findManagementOrThrow(Integer idManagement) {
@@ -94,14 +94,14 @@ public class DocumentReentryService {
         return template.getDocumentType();
     }
 
-    private static SubmittedDocument createSubmittedDocument(Procedure procedure, DocumentType typeDocument) {
+    private static SubmittedDocument createSubmittedDocument(Procedure procedure, DocumentType documentType) {
         SubmittedDocument document = new SubmittedDocument();
         document.setFkIdProcedure(procedure);
-        document.setDocumentType(typeDocument);
-        document.setName(typeDocument.getName());
-        document.setExpires(typeDocument.getExpires());
-        document.setDueDays(typeDocument.getDueDays());
-        document.setDeliveredBy(typeDocument.getDeliveredBy());
+        document.setDocumentType(documentType);
+        document.setName(documentType.getName());
+        document.setExpires(documentType.getExpires());
+        document.setDueDays(documentType.getDueDays());
+        document.setDeliveredBy(documentType.getDeliveredBy());
         document.setReentered(true);
         // released/flagged are NOT NULL in Postgres; a freshly re-entered
         // document starts as neither released nor flagged.
@@ -114,15 +114,15 @@ public class DocumentReentryService {
         Integer idProcedureType = procedure.getFkIdProcedureType().getIdProcedureType();
         List<DtoRequiredDocument> documents = procedureTemplateRepository
                 .findByProcedureTypeIdProcedureType(idProcedureType).stream()
-                .map(template -> toDtoDocumentNecesario(template.getDocumentType()))
+                .map(template -> toRequiredDocument(template.getDocumentType()))
                 .toList();
         return new DtoProcedureRequiredDocumentation(procedure.getIdProcedure(),
                 procedure.getFkIdProcedureType().getName(), documents);
     }
 
-    private static DtoRequiredDocument toDtoDocumentNecesario(DocumentType typeDocument) {
-        return new DtoRequiredDocument(typeDocument.getIdDocumentType(), typeDocument.getName(),
-                typeDocument.getExpires(), typeDocument.getDueDays(), typeDocument.getDeliveredBy());
+    private static DtoRequiredDocument toRequiredDocument(DocumentType documentType) {
+        return new DtoRequiredDocument(documentType.getIdDocumentType(), documentType.getName(),
+                documentType.getExpires(), documentType.getDueDays(), documentType.getDeliveredBy());
     }
 
     private static DtoDocumentReentered toDto(SubmittedDocument document) {

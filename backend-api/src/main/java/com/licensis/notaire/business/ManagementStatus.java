@@ -160,7 +160,7 @@ public class ManagementStatus implements Serializable, Persistable<Integer> {
             this.setNotes(dto.getNotes());
             this.version = dto.getVersion();
         } else {
-            throw new InvalidDtoException("Dto invalido");
+            throw new InvalidDtoException("Invalid DTO");
         }
     }
 

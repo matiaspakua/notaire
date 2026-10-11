@@ -16,8 +16,8 @@ DTO classes live in `backend-api` (`com.licensis.notaire.dto`). They used to sit
 
 | DTO class | Purpose | Endpoint |
 |-----------|---------|----------|
-| `DtoLoginUser` | Login response — excludes password hash, includes `valido` flag | `POST /users/login` |
-| `DtoPlantillaPresupuesto` | Composite PK mapping for budget templates | `GET/POST /budget-templates` |
+| `DtoUser` | Login response — excludes the password hash, includes the `valid` flag | `POST /users/login` |
+| `BudgetTemplate` | Composite PK mapping for budget templates (`budgetTemplatePK`) | `GET/POST /budget-templates` |
 | `DtoWorkflowNode`, `DtoWorkflowDefinition`, `DtoWorkflowTransition` | Workflow graph editor payloads | `/workflow-definitions`, `/workflow-nodes`, `/workflow-transitions` |
 
 ### Where Direct Entity Serialization Is Used
@@ -29,17 +29,15 @@ Most CRUD endpoints return JPA entities directly:
 
 ## Login DTO Pattern
 
-The `DtoLoginUser` DTO is the primary auth response. It is built from the `UserAccount` entity in the service layer:
+The `DtoUser` DTO is the primary auth response. `UserController` builds it from the `User` entity. The HTTP body uses `valid`, `token`, `idUser`, `name`, `status`, `type`, `version`, and `person` (`idPerson`, `firstName`, `lastName`). The password is write-only and is not returned.
 
 ```java
-// DtoLoginUser fields:
-// idUsuario, nombre, tipo, valido (boolean), idPersona
-// NOT included: contrasenia (never expose password hash)
-
-DtoLoginUser dto = new DtoLoginUser();
-dto.setNombre(usuario.getNombre());
-dto.setTipo(usuario.getTipo());
-dto.setValido(autenticacionExitosa);
+DtoUser dtoUser = new DtoUser();
+dtoUser.setIdUser(user.getIdUser());
+dtoUser.setName(user.getName());
+dtoUser.setStatus(user.getStatus());
+dtoUser.setType(user.getType());
+dtoUser.setValid(true);
 ```
 
 ## Frontend TypeScript Types
@@ -48,16 +46,16 @@ The TypeScript types in `frontend/src/types/index.ts` mirror the backend entity 
 
 ```typescript
 // Field names come from Java getters → Jackson → JSON key
-// Java: getIdTipoTramite() → JSON: "idTipoTramite"
+// Java: getIdProcedureType() → JSON: "idProcedureType"
 export interface ProcedureType {
-  idTipoTramite?: number;  // NOT idTipoDeTramite
-  nombre?: string;
+  idProcedureType?: number;
+  name?: string;
 }
 
-// Java: getIdEstadoGestion() → JSON: "idEstadoGestion"  
+// Java: getIdManagementStatus() → JSON: "idManagementStatus"
 export interface ManagementStatus {
-  idEstadoGestion?: number;  // NOT idEstadoDeGestion
-  nombre?: string;
+  idManagementStatus?: number;
+  name?: string;
 }
 ```
 
@@ -65,11 +63,11 @@ export interface ManagementStatus {
 
 | Entity | Java field | JSON key | TypeScript field |
 |--------|-----------|----------|-----------------|
-| ProcedureType | `idTipoTramite` | `idTipoTramite` | `idTipoTramite` |
-| ManagementStatus | `idEstadoGestion` | `idEstadoGestion` | `idEstadoGestion` |
-| BudgetTemplate | `plantillaPresupuestoPK` | `plantillaPresupuestoPK` | `plantillaPresupuestoPK` |
-| AuditRecord | `idRegistroAuditoria` | `idRegistroAuditoria` | `idRegistroAuditoria` |
-| AuditRecord | `detalleOperacion` | `detalleOperacion` | `detalleOperacion` |
+| ProcedureType | `idProcedureType` | `idProcedureType` | `idProcedureType` |
+| ManagementStatus | `idManagementStatus` | `idManagementStatus` | `idManagementStatus` |
+| BudgetTemplate | `budgetTemplatePK` | `budgetTemplatePK` | `budgetTemplatePK` |
+| AuditRecord | `idAuditRecord` | `idAuditRecord` | `idAuditRecord` |
+| AuditRecord | `operationDetail` | `operationDetail` | `operationDetail` |
 
 ## Composite PK Handling
 
@@ -77,29 +75,29 @@ export interface ManagementStatus {
 
 ```java
 @EmbeddedId
-protected BudgetTemplateKey plantillaPresupuestoPK;
-// Contains: fkIdTipoTramite, fkIdConcepto
+protected BudgetTemplatePK budgetTemplatePK;
+// Contains: fkIdProcedureType, fkIdConcept
 ```
 
 The serialized JSON:
 
 ```json
 {
-  "plantillaPresupuestoPK": {
-    "fkIdTipoTramite": 3,
-    "fkIdConcepto": 7
+  "budgetTemplatePK": {
+    "fkIdProcedureType": 3,
+    "fkIdConcept": 7
   },
-  "observaciones": "...",
-  "tipoDeTramite": { "idTipoTramite": 3, "nombre": "Compraventa" },
-  "concepto": { "idConcepto": 7, "nombre": "Honorario base" }
+  "notes": "...",
+  "procedureType": { "idProcedureType": 3, "name": "Compraventa" },
+  "concept": { "idConcept": 7, "name": "Honorarios" }
 }
 ```
 
 PUT/DELETE endpoints use composite path variables:
 
 ```text
-PUT /api/v1/budget-templates/procedure-types/{idTipoTramite}/concept/{idConcepto}
-DELETE /api/v1/budget-templates/procedure-types/{idTipoTramite}/concept/{idConcepto}
+PUT /api/v1/budget-templates/procedure-types/{idProcedureType}/concept/{idConcept}
+DELETE /api/v1/budget-templates/procedure-types/{idProcedureType}/concept/{idConcept}
 ```
 
 ## Lazy Loading and JSON Serialization
@@ -119,16 +117,15 @@ When a new endpoint should return a reduced view of an entity:
 Real example, `WorkflowNode` → `DtoWorkflowNode`:
 
 ```java
-// In the entity class (backend-api, negocio package):
 public DtoWorkflowNode toDto() {
     DtoWorkflowNode dto = new DtoWorkflowNode();
     dto.setId(this.id);
     dto.setWorkflowDefinitionId(workflowDefinition != null ? workflowDefinition.getId() : null);
-    dto.setEstadoGestionId(estadoDeGestion != null ? estadoDeGestion.getIdEstadoGestion() : null);
-    dto.setEstadoGestionNombre(estadoDeGestion != null ? estadoDeGestion.getNombre() : null);
-    dto.setTipo(tipo != null ? tipo.name() : null);
-    dto.setPosicionX(this.posicionX);
-    dto.setPosicionY(this.posicionY);
+    dto.setStatusManagementId(managementStatus != null ? managementStatus.getIdManagementStatus() : null);
+    dto.setStatusManagementName(managementStatus != null ? managementStatus.getName() : null);
+    dto.setType(type != null ? type.name() : null);
+    dto.setPositionX(this.positionX);
+    dto.setPositionY(this.positionY);
     dto.setVersion(this.version);
     return dto;
 }
@@ -144,7 +141,7 @@ public ResponseEntity<DtoWorkflowNode> getById(@PathVariable Integer id) {
 
 ## References
 
-- `DtoLoginUser.java` (`backend-api`) — primary auth response DTO
+- `DtoUser.java` (`backend-api`) — primary auth response DTO
 - `BudgetTemplate.java` (`backend-api`) — composite PK entity example
 - `WorkflowNode.java` / `WorkflowNodeController.java` (`backend-api`) — `toDto()` mapping pattern
 - `frontend/src/types/index.ts` — TypeScript mirrors of all entity types

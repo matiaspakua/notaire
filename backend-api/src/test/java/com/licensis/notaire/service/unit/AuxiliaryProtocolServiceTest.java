@@ -77,7 +77,7 @@ class AuxiliaryProtocolServiceTest {
         when(folioRepository.findMaxNumberDeedAuxiliary()).thenReturn(Optional.empty());
         when(deedRepository.save(any(Deed.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        Deed result = auxiliaryProtocolService.startDeed(1, "body of the acta", new Date());
+        Deed result = auxiliaryProtocolService.startDeed(1, "deed body", new Date());
 
         assertThat(result.getProcedureList()).isNullOrEmpty();
     }
@@ -110,7 +110,8 @@ class AuxiliaryProtocolServiceTest {
     @DisplayName("Should reject starting a deed when no idFolio is provided")
     void shouldRejectDeedWhenNoFolioIndicated() {
         assertThatThrownBy(() -> auxiliaryProtocolService.startDeed(null, "body", new Date()))
-                .isInstanceOf(BusinessValidationException.class);
+                .isInstanceOf(BusinessValidationException.class)
+                .hasMessage("The auxiliary folio where the deed starts is required");
     }
 
     @Test

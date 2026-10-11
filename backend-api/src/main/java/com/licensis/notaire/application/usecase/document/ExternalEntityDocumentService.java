@@ -60,9 +60,9 @@ public class ExternalEntityDocumentService {
         validateIsExternalEntity(document);
 
         applyMovement(document, movement);
-        SubmittedDocument guardado = documentRepository.saveSubmittedDocument(document);
+        SubmittedDocument saved = documentRepository.saveSubmittedDocument(document);
 
-        return toDto(guardado);
+        return toDto(saved);
     }
 
     /**

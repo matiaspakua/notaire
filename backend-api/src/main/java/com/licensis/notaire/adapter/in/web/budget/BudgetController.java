@@ -239,7 +239,7 @@ public class BudgetController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Invalid request (p. ej. status outside the vocabulary)"),
+    @ApiResponse(responseCode = "400", description = "Invalid request (for example, status outside the vocabulary)"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")

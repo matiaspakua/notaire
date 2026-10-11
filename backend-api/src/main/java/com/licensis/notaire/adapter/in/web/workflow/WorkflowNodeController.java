@@ -117,7 +117,8 @@ public class WorkflowNodeController {
     @Operation(summary = "Update node")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoWorkflowNode dto) {
         if (dto.getType() == null && dto.getPositionX() == null && dto.getPositionY() == null) {
-            throw new BusinessValidationException("type, positionX, positionY: indicar to the menos a campo a update");
+            throw new BusinessValidationException(
+                    "type, positionX, positionY: provide at least one field to update");
         }
         WorkflowNodeType type = dto.getType() == null
                 ? null : RequiredFields.parseEnum(dto.getType(), WorkflowNodeType.class, "type");

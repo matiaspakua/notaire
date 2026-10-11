@@ -43,6 +43,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English validation messages and DTO guide** (#1490, CU75):
+  A missing auxiliary folio reports `The auxiliary folio where the deed starts is required`.
+  A workflow node update with no fields reports `provide at least one field to update`.
+  An invalid management-status DTO reports `Invalid DTO`. The budget search
+  description says `for example`. The DTO mapping guide uses the live fields
+  `budgetTemplatePK`, `idProcedureType`, `valid`, and `operationDetail`.
+  Stored labels such as `Protocolo Auxiliar`, `Compraventa`, and `Honorarios` stay.
 - **English audit and Playwright identifiers** (#1490, CU75):
   The audit module filter is `moduleFilter` and its test id is
   `select-audit-module`. Playwright uses the live ids `select-status-folio`,

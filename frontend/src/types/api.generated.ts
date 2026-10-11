@@ -4748,7 +4748,7 @@ export interface operations {
                     "*/*": components["schemas"]["BudgetResponse"];
                 };
             };
-            /** @description Invalid request (p. ej. status outside the vocabulary) */
+            /** @description Invalid request (for example, status outside the vocabulary) */
             400: {
                 headers: {
                     [name: string]: unknown;

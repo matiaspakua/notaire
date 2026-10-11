@@ -3216,7 +3216,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/BudgetResponse'
-          description: Invalid request (p. ej. status outside the vocabulary)
+          description: Invalid request (for example, status outside the vocabulary)
         '404':
           content:
             '*/*':
