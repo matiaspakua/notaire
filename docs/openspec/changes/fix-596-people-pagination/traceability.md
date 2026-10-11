@@ -35,7 +35,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Document | Updated | Commit |
 |----------|---------|--------|
 | `CHANGELOG.md` | yes | branch commit |
-| `backend-api/openapi/openapi.yaml` | yes | branch commit |
+| `backend-api/openapi/openapi.yaml` | no | not in this PR |
 
 ## Gate log
 
