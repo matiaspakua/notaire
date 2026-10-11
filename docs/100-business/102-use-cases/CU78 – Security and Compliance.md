@@ -21,6 +21,8 @@ tablero de seguridad están en
 El esquema de casos de seguridad (amenazas, secretos, SAST, SCA y DAST) es
 `security/cases/catalog.yml`, y el gate local antes del pull request es
 `python3 security/run_gates.py --profile local` (issue #1500).
+El informe local se publica en el hub de infra en `http://localhost:8890`
+(issue #1506). El job de CI escribe el mismo resumen en la corrida de Actions.
 
 ## Alcance Técnico
 
