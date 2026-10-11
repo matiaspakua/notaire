@@ -132,7 +132,7 @@ class JpaAdministratorTest {
 
     @Nested
     @DisplayName("getJpa")
-    class ObtenerJpa {
+    class GetJpa {
 
         @BeforeEach
         void setUp() {

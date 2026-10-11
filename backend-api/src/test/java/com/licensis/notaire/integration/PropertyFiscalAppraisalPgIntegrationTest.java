@@ -29,7 +29,7 @@ import org.springframework.web.context.WebApplicationContext;
 @ActiveProfiles("integration")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Tag("pg-integration")
-@DisplayName("Property valuación fiscal contra the esquema real (CU69)")
+@DisplayName("Property fiscal appraisal against the real schema (CU69)")
 class PropertyFiscalAppraisalPgIntegrationTest extends BaseIntegrationTest {
 
     @Autowired

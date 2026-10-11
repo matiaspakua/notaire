@@ -27,7 +27,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
-@DisplayName("GestionDeEscrituraRepository Integration Tests")
+@DisplayName("DeedManagementRepository Integration Tests")
 class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
     @Autowired

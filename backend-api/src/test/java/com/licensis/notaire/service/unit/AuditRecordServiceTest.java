@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("RegistroAuditoriaService Unit Tests")
+@DisplayName("AuditRecordService unit tests")
 class AuditRecordServiceTest {
 
     @Mock
@@ -56,7 +56,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should find all registros auditoria")
+    @DisplayName("Should find all audit records")
     void shouldFindAll() {
         List<AuditRecord> registros = new ArrayList<>();
         registros.add(testRecord);
@@ -73,7 +73,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should return empty list when no registros exist")
+    @DisplayName("Should return an empty list when no audit records exist")
     void shouldReturnEmptyListWhenNoRegistrosExist() {
         when(repository.findAll()).thenReturn(new ArrayList<>());
 
@@ -86,7 +86,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should find all registros as DTOs")
+    @DisplayName("Should find all audit records as DTOs")
     void shouldFindAllAsDto() {
         List<AuditRecord> registros = new ArrayList<>();
         registros.add(testRecord);
@@ -103,7 +103,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should find registros with pagination")
+    @DisplayName("Should find audit records with pagination")
     void shouldFindAllPaged() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<AuditRecord> page = new PageImpl<>(List.of(testRecord), pageable, 1);
@@ -121,7 +121,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should find registros as DTOs with pagination")
+    @DisplayName("Should find audit records as DTOs with pagination")
     void shouldFindAllAsPagedDto() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<AuditRecord> page = new PageImpl<>(List.of(testRecord), pageable, 1);
@@ -138,7 +138,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should find registros by module")
+    @DisplayName("Should find audit records by module")
     void shouldFindByModule() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<AuditRecord> page = new PageImpl<>(List.of(testRecord), pageable, 1);
@@ -155,7 +155,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should find registros by module as DTOs")
+    @DisplayName("Should find audit records by module as DTOs")
     void shouldFindByModuleAsDto() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<AuditRecord> page = new PageImpl<>(List.of(testRecord), pageable, 1);
@@ -172,7 +172,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should find registros by user id")
+    @DisplayName("Should find audit records by user id")
     void shouldFindByUserId() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<AuditRecord> page = new PageImpl<>(List.of(testRecord), pageable, 1);
@@ -189,7 +189,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should find registros by user id as DTOs")
+    @DisplayName("Should find audit records by user id as DTOs")
     void shouldFindByUserIdAsDto() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<AuditRecord> page = new PageImpl<>(List.of(testRecord), pageable, 1);
@@ -205,7 +205,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should find registro by id")
+    @DisplayName("Should find an audit record by id")
     void shouldFindById() {
         when(repository.findById(1)).thenReturn(Optional.of(testRecord));
 
@@ -218,7 +218,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should return empty optional when registro not found")
+    @DisplayName("Should return an empty optional when the audit record is not found")
     void shouldReturnEmptyOptionalWhenRecordNotFound() {
         when(repository.findById(999)).thenReturn(Optional.empty());
 
@@ -230,7 +230,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should find registro by id as DTO")
+    @DisplayName("Should find an audit record by id as a DTO")
     void shouldFindByIdAsDto() {
         when(repository.findByIdWithUser(1)).thenReturn(Optional.of(testRecord));
 
@@ -246,7 +246,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should find registros list by user id")
+    @DisplayName("Should find the audit record list by user id")
     void shouldFindRegistrosByUserIdList() {
         List<AuditRecord> registros = new ArrayList<>();
         registros.add(testRecord);
@@ -263,7 +263,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should find registros list by user id as DTOs")
+    @DisplayName("Should find the audit record list by user id as DTOs")
     void shouldFindRegistrosByUserIdAsDto() {
         List<AuditRecord> registros = new ArrayList<>();
         registros.add(testRecord);
@@ -280,7 +280,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should save registro auditoria")
+    @DisplayName("Should save audit record")
     void shouldSaveRecord() {
         when(repository.save(testRecord)).thenReturn(testRecord);
 
@@ -295,7 +295,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should map registro to DTO correctly")
+    @DisplayName("Should map an audit record to a DTO correctly")
     void shouldMapRecordToDto() {
         DtoAuditRecord dto = AuditRecordService.toDto(testRecord);
 

@@ -46,7 +46,7 @@ class DocumentTypeReferentialIntegrityTest {
     }
 
     @Test
-    @DisplayName("Should return inUse=false when type de documento is not referenced")
+    @DisplayName("Should return inUse=false when document type is not referenced")
     void shouldReturnInUseFalseWhenNotReferenced() throws Exception {
         int id = createTypeDocument("Tipo_unused_" + System.nanoTime());
 
@@ -67,7 +67,7 @@ class DocumentTypeReferentialIntegrityTest {
     }
 
     @Test
-    @DisplayName("Should return 409 when editing type de documento that is in use")
+    @DisplayName("Should return 409 when editing document type that is in use")
     void shouldReturn409WhenEditingTypeDocumentInUse() throws Exception {
         int id = createTypeDocument("Tipo_edit_conflict_" + System.nanoTime());
         linkToProcedureTemplate(id);
@@ -84,7 +84,7 @@ class DocumentTypeReferentialIntegrityTest {
     }
 
     @Test
-    @DisplayName("Should allow editing type de documento that is not in use")
+    @DisplayName("Should allow editing document type that is not in use")
     void shouldAllowEditingTypeDocumentNotInUse() throws Exception {
         int id = createTypeDocument("Tipo_edit_ok_" + System.nanoTime());
 
@@ -99,7 +99,7 @@ class DocumentTypeReferentialIntegrityTest {
     }
 
     @Test
-    @DisplayName("Should return 409 when deleting type de documento that is in use")
+    @DisplayName("Should return 409 when deleting document type that is in use")
     void shouldReturn409WhenDeletingTypeDocumentInUse() throws Exception {
         int id = createTypeDocument("Tipo_delete_conflict_" + System.nanoTime());
         linkToProcedureTemplate(id);
@@ -110,7 +110,7 @@ class DocumentTypeReferentialIntegrityTest {
     }
 
     @Test
-    @DisplayName("Should search tipos de documento by name")
+    @DisplayName("Should search document types by name")
     void shouldSearchTiposDocumentByName() throws Exception {
         String uniqueName = "SearchableDoc_" + System.nanoTime();
         createTypeDocument(uniqueName);

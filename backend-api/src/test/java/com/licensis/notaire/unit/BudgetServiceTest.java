@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 import com.licensis.notaire.testing.RequirementCoverage;
 
 @RequirementCoverage({"CU01", "CU45", "CU60"})
-@DisplayName("PresupuestoService unit tests")
+@DisplayName("BudgetService unit tests")
 @ExtendWith(MockitoExtension.class)
 class BudgetServiceTest {
 
@@ -65,7 +65,7 @@ class BudgetServiceTest {
         }
 
         @Test
-        @DisplayName("Should return empty list when not budgets exist")
+        @DisplayName("Should return an empty list when no budgets exist")
         void shouldReturnEmptyListWhenNoneExist() {
             when(budgetRepository.findAll()).thenReturn(List.of());
 
@@ -95,7 +95,7 @@ class BudgetServiceTest {
     }
 
     @Nested
-    @DisplayName("findByPersona - CU60")
+    @DisplayName("findByPerson - CU60")
     class FindByPerson {
 
         @Test

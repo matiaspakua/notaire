@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @RequirementCoverage({"CU08"})
-@DisplayName("TestimonioGeneracionVerificacionService - Verificación Tests")
+@DisplayName("TestimonyGenerationService - verification Tests")
 @ExtendWith(MockitoExtension.class)
 class TestimonyVerificacionServiceTest {
 

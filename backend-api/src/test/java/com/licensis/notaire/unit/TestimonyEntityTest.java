@@ -115,7 +115,7 @@ class TestimonyEntityTest {
         }
 
         @Test
-        @DisplayName("Should set and get copia list")
+        @DisplayName("Should set and get the copy list")
         void shouldSetAndGetCopyList() {
             List<Copy> copies = new ArrayList<>();
             copies.add(new Copy());
@@ -127,7 +127,7 @@ class TestimonyEntityTest {
         }
 
         @Test
-        @DisplayName("Should set and get movimiento list")
+        @DisplayName("Should set and get movement list")
         void shouldSetAndGetMovementList() {
             List<TestimonyMovement> movimientos = new ArrayList<>();
             movimientos.add(new TestimonyMovement());

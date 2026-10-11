@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RequirementCoverage({"CU82"})
 @ExtendWith(MockitoExtension.class)
-@DisplayName("MinutaInscripcionController unit tests")
+@DisplayName("RegistrationDraftController unit tests")
 class RegistrationDraftControllerTest {
 
     @Mock
@@ -62,7 +62,7 @@ class RegistrationDraftControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/registration-drafts/{id} returns minuta when found")
+    @DisplayName("GET /api/v1/registration-drafts/{id} returns the registration draft when found")
     void shouldReturnDraftById() throws Exception {
         when(registrationDraftService.findById(1))
                 .thenReturn(Optional.of(buildDraft(1, 1, BusinessConstants.RegistrationDraftGENERADA)));
@@ -82,7 +82,7 @@ class RegistrationDraftControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/v1/registration-drafts generates minuta when data is complete")
+    @DisplayName("POST /api/v1/registration-drafts generates a registration draft when data is complete")
     void shouldGenerateDraftWhenDataIsComplete() throws Exception {
         when(registrationDraftService.generate(1))
                 .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftGENERADA));
@@ -110,7 +110,7 @@ class RegistrationDraftControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/v1/registration-drafts returns 404 when escritura does not exist")
+    @DisplayName("POST /api/v1/registration-drafts returns 404 when the deed does not exist")
     void shouldReturnNotFoundWhenDeedMissing() throws Exception {
         when(registrationDraftService.generate(999))
                 .thenThrow(new ResourceNotFoundException("No existe la deed con ID: 999"));
@@ -122,7 +122,7 @@ class RegistrationDraftControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /api/v1/registration-drafts/{id}/submit registers presentacion")
+    @DisplayName("PUT /api/v1/registration-drafts/{id}/submit registers the submission")
     void shouldRegisterSubmission() throws Exception {
         when(registrationDraftService.submit(any(), any(), anyString()))
                 .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftPRESENTADA));
@@ -136,7 +136,7 @@ class RegistrationDraftControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /api/v1/registration-drafts/{id}/observe registers observacion")
+    @DisplayName("PUT /api/v1/registration-drafts/{id}/observe registers the observation")
     void shouldRegisterObservacion() throws Exception {
         when(registrationDraftService.observe(anyInt(), anyString(), any()))
                 .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftOBSERVADA));
@@ -150,7 +150,7 @@ class RegistrationDraftControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /api/v1/registration-drafts/{id}/register registers inscripcion definitiva")
+    @DisplayName("PUT /api/v1/registration-drafts/{id}/register registers the final registration")
     void shouldRegisterRegistrationDefinitiva() throws Exception {
         when(registrationDraftService.recordRegistration(anyInt(), any(), anyString()))
                 .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftRegistered));

@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
-@DisplayName("PresupuestoPlantillaService Tests (CU39)")
+@DisplayName("BudgetTemplateService Tests (CU39)")
 @ExtendWith(MockitoExtension.class)
 class BudgetTemplateServiceTest {
 
@@ -74,7 +74,7 @@ class BudgetTemplateServiceTest {
     }
 
     @Test
-    @DisplayName("Should not recalculate loaded items when the plantilla changes later")
+    @DisplayName("Should not recalculate loaded items when the budget template changes later")
     void shouldNotRecalculateLoadedItemsWhenTemplateChanges() {
         Budget budget = new Budget();
         budget.setIdBudget(1);

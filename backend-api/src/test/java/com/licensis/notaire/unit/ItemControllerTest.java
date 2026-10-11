@@ -85,7 +85,7 @@ class ItemControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/items/budget/{id} should return items for presupuesto")
+    @DisplayName("GET /api/v1/items/budget/{id} should return items for the budget")
     void shouldGetItemsByBudget() throws Exception {
         when(itemService.findByBudget(10)).thenReturn(List.of(buildItem(1, TypeItem.NORMAL, null)));
         mockMvc.perform(get("/api/v1/items/budget/10"))
@@ -117,7 +117,7 @@ class ItemControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/items/budget/{id}/discounts-surcharges should return 404 for unknown presupuesto")
+    @DisplayName("GET /api/v1/items/budget/{id}/discounts-surcharges should return 404 for an unknown budget")
     void shouldReturn404ForUnknownBudgetOnReport() throws Exception {
         when(itemService.findDiscountsAndSurchargesByBudget(999))
                 .thenThrow(new ResourceNotFoundException("Budget not found with ID: 999"));

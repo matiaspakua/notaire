@@ -86,7 +86,7 @@ class SubmittedDocumentControllerTest {
     }
 
     @Test
-    @DisplayName("Should return 201 when creating documento presentado with tipoId, date and delivered")
+    @DisplayName("Should return 201 when creating a submitted document with typeId, date, and delivered")
     void shouldCreateSubmittedDocumentWithDtoFields() throws Exception {
         String body = """
                 {"typeId": %d, "procedureId": %d, "date": "2024-06-01", "delivered": false}
@@ -101,7 +101,7 @@ class SubmittedDocumentControllerTest {
     }
 
     @Test
-    @DisplayName("Should return 201 when creating documento presentado with delivered true")
+    @DisplayName("Should return 201 when creating a submitted document with delivered true")
     void shouldCreateSubmittedDocumentDelivered() throws Exception {
         String body = """
                 {"typeId": %d, "procedureId": %d, "date": "2024-07-15", "delivered": true}
@@ -138,7 +138,7 @@ class SubmittedDocumentControllerTest {
     }
 
     @Test
-    @DisplayName("Should inherit expires, dueDays and deliveredBy from type de documento and compute dateDue")
+    @DisplayName("Should inherit expires, dueDays and deliveredBy from document type and compute dateDue")
     void shouldInheritDueFieldsFromDocumentType() throws Exception {
         Integer typeId = createDocumentType(true, 5, "Escribano");
         String body = """
@@ -161,7 +161,7 @@ class SubmittedDocumentControllerTest {
     }
 
     @Test
-    @DisplayName("Should not compute dateDue when type de documento does not expires")
+    @DisplayName("Should not compute dateDue when document type does not expires")
     void shouldNotComputeDateDueWhenTypeDoesNotExpires() throws Exception {
         Integer typeId = createDocumentType(false, null, "Cliente");
         String body = """
@@ -183,7 +183,7 @@ class SubmittedDocumentControllerTest {
     }
 
     @Test
-    @DisplayName("Should let an explicit deliveredBy override the value inherited from type de documento")
+    @DisplayName("Should let an explicit deliveredBy override the value inherited from document type")
     void shouldLetExplicitDeliveredByOverrideDocumentType() throws Exception {
         Integer typeId = createDocumentType(false, null, "Escribano");
         String body = """
@@ -236,7 +236,7 @@ class SubmittedDocumentControllerTest {
     }
 
     @Test
-    @DisplayName("Should return 200 and update documento presentado")
+    @DisplayName("Should return 200 and update the submitted document")
     void shouldUpdateSubmittedDocument() throws Exception {
         String createBody = """
                 {"typeId": %d, "procedureId": %d, "date": "2024-01-01", "delivered": false}
@@ -262,7 +262,7 @@ class SubmittedDocumentControllerTest {
     }
 
     @Test
-    @DisplayName("Should return 404 when updating non-existent documento presentado")
+    @DisplayName("Should return 404 when updating a missing submitted document")
     void shouldReturn404WhenUpdatingMissingDocument() throws Exception {
         String body = """
                 {"typeId": null, "date": "2024-01-01", "delivered": false}
@@ -275,7 +275,7 @@ class SubmittedDocumentControllerTest {
     }
 
     @Test
-    @DisplayName("Should return 200 and delete an existing documento presentado")
+    @DisplayName("Should return 200 and delete an existing submitted document")
     void shouldDeleteSubmittedDocument() throws Exception {
         String createBody = """
                 {"typeId": %d, "procedureId": %d, "date": "2024-05-10", "delivered": false}

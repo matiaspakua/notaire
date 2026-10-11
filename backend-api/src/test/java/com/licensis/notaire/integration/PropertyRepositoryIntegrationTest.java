@@ -56,7 +56,7 @@ class PropertyRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should find all inmuebles")
+    @DisplayName("Should find all properties")
     void shouldFindAllProperties() {
         Property property = new Property();
         property.setCadastralDesignation("Test 789");
@@ -120,7 +120,7 @@ class PropertyRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should support multiple inmuebles")
+    @DisplayName("Should support multiple properties")
     void shouldSupportMultipleProperties() {
         for (int i = 0; i < 5; i++) {
             Property property = new Property();

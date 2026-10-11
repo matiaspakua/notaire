@@ -30,7 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @RequirementCoverage({"CU82"})
-@DisplayName("MinutaInscripcionService Tests")
+@DisplayName("RegistrationDraftService tests")
 @ExtendWith(MockitoExtension.class)
 class RegistrationDraftServiceTest {
 
@@ -74,7 +74,7 @@ class RegistrationDraftServiceTest {
     }
 
     @Test
-    @DisplayName("Should generate minuta in status Generada with complete data")
+    @DisplayName("Should generate a registration draft in status Generada with complete data")
     void shouldGenerateDraftWhenDataIsComplete() {
         when(deedRepository.findById(1)).thenReturn(Optional.of(deed));
         when(procedureRepository.findByFkIdDeedIdDeed(1)).thenReturn(List.of(procedure));
@@ -122,7 +122,7 @@ class RegistrationDraftServiceTest {
     }
 
     @Test
-    @DisplayName("Should register presentacion and transition to Presentado")
+    @DisplayName("Should register the submission and transition to Presentado")
     void shouldRegisterSubmission() {
         RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftGENERADA);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
@@ -136,7 +136,7 @@ class RegistrationDraftServiceTest {
     }
 
     @Test
-    @DisplayName("Should reject presentacion when minuta is not in status Generada")
+    @DisplayName("Should reject the submission when the registration draft is not in status Generada")
     void shouldRejectSubmissionWhenNotGenerada() {
         RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftPRESENTADA);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
@@ -146,7 +146,7 @@ class RegistrationDraftServiceTest {
     }
 
     @Test
-    @DisplayName("Should register observacion and transition to Observado")
+    @DisplayName("Should register the observation and transition to Observado")
     void shouldRegisterObservacion() {
         RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftPRESENTADA);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
@@ -160,7 +160,7 @@ class RegistrationDraftServiceTest {
     }
 
     @Test
-    @DisplayName("Should reject observacion when minuta is not presented")
+    @DisplayName("Should reject the observation when the registration draft is not presented")
     void shouldRejectObservacionWhenNotPresentada() {
         RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftGENERADA);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
@@ -170,7 +170,7 @@ class RegistrationDraftServiceTest {
     }
 
     @Test
-    @DisplayName("Should register registration definitiva and transition to Registered")
+    @DisplayName("Should register the final registration and transition to Registered")
     void shouldRegisterRegistrationDefinitiva() {
         RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftPRESENTADA);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
@@ -184,7 +184,7 @@ class RegistrationDraftServiceTest {
     }
 
     @Test
-    @DisplayName("Should reject registration definitiva when minuta is not presented")
+    @DisplayName("Should reject the final registration when the registration draft is not presented")
     void shouldRejectRegistrationWhenNotPresentada() {
         RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftOBSERVADA);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
@@ -194,7 +194,7 @@ class RegistrationDraftServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw when minuta does not exist")
+    @DisplayName("Should throw when the registration draft does not exist")
     void shouldThrowWhenDraftNotFound() {
         when(registrationDraftRepository.findById(999)).thenReturn(Optional.empty());
 

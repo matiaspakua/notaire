@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * registration, registro of registration, retiro and reentry.
  */
 @RequirementCoverage({"CU11", "CU12", "CU44"})
-@DisplayName("MovimientoTestimonioController — CU11/CU12/CU44 integration tests")
+@DisplayName("TestimonyMovementController — CU11/CU12/CU44 integration tests")
 class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -188,7 +188,7 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should persist cartón number, observation flag and notes sent on reentry")
+    @DisplayName("Should persist the carton number, observation flag, and notes sent on re-entry")
     void shouldPersistReentryData() throws Exception {
         int idTestimony = generateVerifiedTestimony();
         registerEntry(idTestimony);

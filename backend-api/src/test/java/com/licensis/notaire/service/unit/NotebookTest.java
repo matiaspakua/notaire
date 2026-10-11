@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("CuadernoService Unit Tests")
+@DisplayName("NotebookService Unit Tests")
 class NotebookTest {
 
     @Mock
@@ -73,7 +73,7 @@ class NotebookTest {
     }
 
     @Test
-    @DisplayName("Should assign number one to the first notebook of the year for a registro")
+    @DisplayName("Should assign number one to the first notebook of the year for a notary")
     void shouldAssignNumberOneToFirstNotebookOfYear() {
         when(notebookRepository.findByYearAndNotary(2026, notary)).thenReturn(List.of());
         when(notebookRepository.existsByNumberYearAndNotary(1, 2026, notary)).thenReturn(false);

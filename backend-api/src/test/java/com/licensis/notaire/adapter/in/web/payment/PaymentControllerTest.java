@@ -51,7 +51,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * codes and same JSON as before the hexagonal refactor (ADR-021), now driven through the
  * inbound ports instead of the legacy {@code PaymentService}.
  */
-@DisplayName("PagoController unit tests")
+@DisplayName("PaymentController unit tests")
 @ExtendWith(MockitoExtension.class)
 class PaymentControllerTest {
 
@@ -88,7 +88,7 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/payments should return 200 with all pagos")
+    @DisplayName("GET /api/v1/payments should return 200 with all payments")
     void shouldGetAllPayments() throws Exception {
         when(queryPaymentsUseCase.findAll()).thenReturn(List.of(buildPayment()));
         mockMvc.perform(get("/api/v1/payments"))
@@ -106,7 +106,7 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/payments/{id} should return 200 when pago found")
+    @DisplayName("GET /api/v1/payments/{id} should return 200 when the payment is found")
     void shouldGetPaymentById() throws Exception {
         when(queryPaymentsUseCase.findById(1)).thenReturn(Optional.of(buildPayment()));
         mockMvc.perform(get("/api/v1/payments/1"))
@@ -115,7 +115,7 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/payments/{id} should return 404 when pago not found")
+    @DisplayName("GET /api/v1/payments/{id} should return 404 when the payment is not found")
     void shouldReturn404WhenPaymentNotFound() throws Exception {
         when(queryPaymentsUseCase.findById(999)).thenReturn(Optional.empty());
         mockMvc.perform(get("/api/v1/payments/999"))
@@ -123,7 +123,7 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/payments/{id} should include the associated presupuesto")
+    @DisplayName("GET /api/v1/payments/{id} should include the associated budget")
     void shouldIncludeBudgetWhenRetrievingPaymentById() throws Exception {
         when(queryPaymentsUseCase.findById(1)).thenReturn(Optional.of(buildPayment()));
         mockMvc.perform(get("/api/v1/payments/1"))
@@ -140,7 +140,7 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/payments/budget/{id} should return pagos for presupuesto")
+    @DisplayName("GET /api/v1/payments/budget/{id} should return payments for the budget")
     void shouldGetPaymentsByBudget() throws Exception {
         when(queryPaymentsUseCase.findByBudget(10)).thenReturn(List.of(buildPayment()));
         mockMvc.perform(get("/api/v1/payments/budget/10"))
@@ -149,7 +149,7 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/payments/budget/{id} should include the presupuesto on each entry")
+    @DisplayName("GET /api/v1/payments/budget/{id} should include the budget on each entry")
     void shouldIncludeBudgetOnEachListedPayment() throws Exception {
         when(queryPaymentsUseCase.findByBudget(10)).thenReturn(List.of(buildPayment()));
         mockMvc.perform(get("/api/v1/payments/budget/10"))
@@ -175,7 +175,7 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/payments/budget/{id}/balance should return 404 for invalid presupuesto")
+    @DisplayName("GET /api/v1/payments/budget/{id}/balance should return 404 for an invalid budget")
     void shouldReturn404ForInvalidBudget() throws Exception {
         when(paymentStatusUseCase.pendingBalance(999)).thenThrow(new IllegalArgumentException("Not found"));
         mockMvc.perform(get("/api/v1/payments/budget/999/balance"))
@@ -191,7 +191,7 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/payments/budget/{id}/status should return estado de pago")
+    @DisplayName("GET /api/v1/payments/budget/{id}/status should return the payment status")
     void shouldGetStatusPayment() throws Exception {
         when(paymentStatusUseCase.status(10)).thenReturn(PaymentStatus.PARTIAL);
         mockMvc.perform(get("/api/v1/payments/budget/10/status"))
@@ -200,7 +200,7 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/payments/budget/{id}/status should return 404 for invalid presupuesto")
+    @DisplayName("GET /api/v1/payments/budget/{id}/status should return 404 for an invalid budget")
     void shouldReturn404ForStatusOfInvalidBudget() throws Exception {
         when(paymentStatusUseCase.status(999)).thenThrow(new IllegalArgumentException("Not found"));
         mockMvc.perform(get("/api/v1/payments/budget/999/status"))
@@ -216,7 +216,7 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/payments/date should return pagos in fecha range")
+    @DisplayName("GET /api/v1/payments/date should return payments in a date range")
     void shouldGetPaymentsByDateRange() throws Exception {
         when(queryPaymentsUseCase.findByDateRange(any(Date.class), any(Date.class)))
                 .thenReturn(List.of(buildPayment()));
@@ -244,7 +244,7 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/v1/payments should return 201 when pago created")
+    @DisplayName("POST /api/v1/payments should return 201 when the payment is created")
     void shouldCreatePaymentViaJson() throws Exception {
         when(processPaymentUseCase.process(any(ProcessPaymentCommand.class))).thenReturn(buildPayment());
 
@@ -273,7 +273,7 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/v1/payments should return the associated presupuesto when creating a payment")
+    @DisplayName("POST /api/v1/payments should return the associated budget when creating a payment")
     void shouldReturnBudgetWhenCreatingPayment() throws Exception {
         when(processPaymentUseCase.process(any(ProcessPaymentCommand.class))).thenReturn(buildPayment());
 
@@ -401,7 +401,7 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /api/v1/payments/{id} should return 404 when pago not found")
+    @DisplayName("PUT /api/v1/payments/{id} should return 404 when the payment is not found")
     void shouldReturn404OnUpdateNotFound() throws Exception {
         when(editPaymentUseCase.edit(any(EditPaymentCommand.class)))
                 .thenThrow(new IllegalArgumentException("Payment not found"));
@@ -450,7 +450,7 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /api/v1/payments/{id} should return 404 when pago not found")
+    @DisplayName("DELETE /api/v1/payments/{id} should return 404 when the payment is not found")
     void shouldReturn404OnDeleteNotFound() throws Exception {
         doThrow(new IllegalArgumentException("Payment not found")).when(deletePaymentUseCase).delete(999);
         mockMvc.perform(delete("/api/v1/payments/999"))

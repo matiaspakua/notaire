@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("GestionQueryService Unit Tests")
+@DisplayName("ManagementQueryService Unit Tests")
 class ManagementQueryServiceTest {
 
     @Mock
@@ -72,7 +72,7 @@ class ManagementQueryServiceTest {
     }
 
     @Test
-    @DisplayName("Should return empty page when not managements")
+    @DisplayName("Should return an empty page when there are no managements")
     void shouldReturnEmptyPageWhenNoGestiones() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<DeedManagement> page = new PageImpl<>(new ArrayList<>(), pageable, 0);

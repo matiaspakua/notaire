@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
-@DisplayName("PresupuestoCatalogoItemsService Tests (CU71)")
+@DisplayName("BudgetCatalogItemsService Tests (CU71)")
 @ExtendWith(MockitoExtension.class)
 class BudgetCatalogItemsServiceTest {
 

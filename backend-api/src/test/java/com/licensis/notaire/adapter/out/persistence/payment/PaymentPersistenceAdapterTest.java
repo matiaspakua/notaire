@@ -47,7 +47,7 @@ import static org.mockito.Mockito.when;
  * very same repository interactions are still asserted.
  */
 @ExtendWith(MockitoExtension.class)
-@DisplayName("PagoService Unit Tests")
+@DisplayName("PaymentService Unit Tests")
 class PaymentPersistenceAdapterTest {
 
     @Mock
@@ -95,7 +95,7 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should process valid pago")
+    @DisplayName("Should process a valid payment")
     void shouldProcessValidPayment() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
@@ -166,7 +166,7 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should consult pago by id")
+    @DisplayName("Should look up a payment by id")
     void shouldConsultPaymentById() {
         when(paymentRepository.findById(1)).thenReturn(Optional.of(testPayment));
 
@@ -180,7 +180,7 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should return empty when pago not found")
+    @DisplayName("Should return empty when the payment is not found")
     void shouldReturnEmptyWhenPaymentNotFound() {
         when(paymentRepository.findById(999)).thenReturn(Optional.empty());
 
@@ -308,7 +308,7 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should delete pago")
+    @DisplayName("Should delete the payment")
     void shouldDeletePayment() {
         when(paymentRepository.existsById(1)).thenReturn(true);
 
@@ -319,7 +319,7 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should throw exception when deleting non-existent pago")
+    @DisplayName("Should throw exception when deleting a payment that does not exist")
     void shouldThrowExceptionWhenDeletingNonExistentPayment() {
         when(paymentRepository.existsById(999)).thenReturn(false);
 
@@ -331,7 +331,7 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should edit pago")
+    @DisplayName("Should edit the payment")
     void shouldEditarPayment() {
         Payment editedPayment = new Payment();
         editedPayment.setIdPayment(1);
@@ -352,7 +352,7 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should throw exception when editing non-existent pago")
+    @DisplayName("Should throw exception when editing a payment that does not exist")
     void shouldThrowExceptionWhenEditingNonExistentPayment() {
         when(paymentRepository.existsById(999)).thenReturn(false);
 
@@ -364,7 +364,7 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should throw exception when editing pago with invalid amount")
+    @DisplayName("Should throw exception when editing a payment with an invalid amount")
     void shouldThrowExceptionWhenEditingWithInvalidAmount() {
         when(paymentRepository.existsById(1)).thenReturn(true);
 
@@ -376,7 +376,7 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should include documento presentado cost in budget total (Issue #823)")
+    @DisplayName("Should include the submitted-document cost in the budget total (Issue #823)")
     void shouldIncludeDocumentCostInBudgetTotal() {
         testBudget.setProcedureList(List.of(procedureWithDocumentCosts(new java.math.BigDecimal("1500"))));
 
@@ -389,7 +389,7 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should sum multiple documento presentado costs in budget total (Issue #823)")
+    @DisplayName("Should sum multiple submitted-document costs in the budget total (Issue #823)")
     void shouldSumMultipleDocumentCostsInBudgetTotal() {
         testBudget.setProcedureList(List.of(procedureWithDocumentCosts(new java.math.BigDecimal("1000"), new java.math.BigDecimal("500"))));
 

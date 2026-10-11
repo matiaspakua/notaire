@@ -47,7 +47,7 @@ class BudgetDeleteCascadeIntegrationTest {
 
     @Test
     @Transactional
-    @DisplayName("Should delete budget and cascade-delete its pago children")
+    @DisplayName("Should delete budget and cascade-delete its payment children")
     void shouldDeleteBudgetWithCascadedChildren() {
         Integer idBudget = createAndCommitBudgetWithPayment();
 

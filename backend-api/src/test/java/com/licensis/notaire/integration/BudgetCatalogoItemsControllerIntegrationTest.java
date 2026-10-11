@@ -26,7 +26,7 @@ import java.util.List;
 @RequirementCoverage({"CU71"})
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Budget — add items existentes of the catálogo (CU71)")
+@DisplayName("Budget — add existing catalog items (CU71)")
 class BudgetCatalogoItemsControllerIntegrationTest {
 
     @Autowired

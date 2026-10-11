@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@DisplayName("RegistroAuditoriaController unit tests")
+@DisplayName("AuditRecordController unit tests")
 @ExtendWith(MockitoExtension.class)
 class AuditRecordControllerTest {
 
@@ -146,7 +146,7 @@ class AuditRecordControllerTest {
     }
 
     @Test
-    @DisplayName("Should return registro by id when found")
+    @DisplayName("Should return the audit record by id when found")
     void shouldReturnRecordByIdWhenFound() throws Exception {
         when(service.findByIdAsDto(100)).thenReturn(Optional.of(sampleDto));
 
@@ -156,7 +156,7 @@ class AuditRecordControllerTest {
     }
 
     @Test
-    @DisplayName("Should return 404 when registro id not found")
+    @DisplayName("Should return 404 when the audit record id is not found")
     void shouldReturn404WhenIdNotFound() throws Exception {
         when(service.findByIdAsDto(999)).thenReturn(Optional.empty());
 
@@ -165,7 +165,7 @@ class AuditRecordControllerTest {
     }
 
     @Test
-    @DisplayName("Should return registros by user id")
+    @DisplayName("Should return audit records by user id")
     void shouldReturnRegistrosByUserId() throws Exception {
         when(service.findByUserIdAsDto(1)).thenReturn(List.of(sampleDto));
 

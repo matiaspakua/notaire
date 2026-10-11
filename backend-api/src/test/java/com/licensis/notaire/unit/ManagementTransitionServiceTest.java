@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @RequirementCoverage({"CU83"})
-@DisplayName("GestionTransitionService Tests")
+@DisplayName("ManagementTransitionService Tests")
 @ExtendWith(MockitoExtension.class)
 class ManagementTransitionServiceTest {
 

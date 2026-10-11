@@ -221,7 +221,7 @@ class ConceptJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should remove concept when not orphans exist")
+        @DisplayName("should remove the concept when no orphans exist")
         void shouldRemoveWhenNoOrphans() throws Exception {
             Integer id = 1;
             Concept concept = new Concept(id, "To delete", new java.math.BigDecimal("100"), 10);

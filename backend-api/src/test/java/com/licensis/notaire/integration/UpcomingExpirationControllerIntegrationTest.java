@@ -33,7 +33,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RequirementCoverage({"CU42"})
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Próximos vencimientos — CU42 integration tests")
+@DisplayName("Upcoming expirations — CU42 integration tests")
 class UpcomingExpirationControllerIntegrationTest {
 
     private static final String ENDPOINT = "/api/v1/submitted-documents/upcoming-expirations";

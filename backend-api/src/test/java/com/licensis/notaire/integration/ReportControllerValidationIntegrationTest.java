@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Reporte controller request validation (issue #561)")
+@DisplayName("Report controller request validation (issue #561)")
 class ReportControllerValidationIntegrationTest {
 
     @Autowired
@@ -43,7 +43,7 @@ class ReportControllerValidationIntegrationTest {
     }
 
     @Test
-    @DisplayName("GET lista-documents-tramite with blank procedureTypeName returns 400")
+    @DisplayName("GET procedure-documents with a blank procedureTypeName returns 400")
     void shouldRejectListaDocumentsWithBlankNameTypeProcedure() throws Exception {
         mockMvc.perform(get("/api/v1/reports/procedure-document-list")
                         .param("procedureTypeName", "   "))
@@ -51,7 +51,7 @@ class ReportControllerValidationIntegrationTest {
     }
 
     @Test
-    @DisplayName("GET declaracion-jurada-mensual with mes=13 returns 400")
+    @DisplayName("GET monthly-sworn-statement with month=13 returns 400")
     void shouldRejectDeclaracionJuradaMensualWithMesOutOfRange() throws Exception {
         mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement")
                         .param("year", "2026")
@@ -60,7 +60,7 @@ class ReportControllerValidationIntegrationTest {
     }
 
     @Test
-    @DisplayName("GET declaracion-jurada-mensual with non-positive anio returns 400")
+    @DisplayName("GET monthly-sworn-statement with a non-positive year returns 400")
     void shouldRejectDeclaracionJuradaMensualWithNonPositiveYear() throws Exception {
         mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement")
                         .param("year", "0")

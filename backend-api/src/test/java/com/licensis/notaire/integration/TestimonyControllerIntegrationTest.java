@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @RequirementCoverage({"CU07", "CU08", "CU12", "CU44"})
-@DisplayName("TestimonioController — CU07/CU08 CRUD integration tests")
+@DisplayName("TestimonyController — CU07/CU08 CRUD integration tests")
 class TestimonyControllerIntegrationTest {
 
     @Autowired
@@ -88,7 +88,7 @@ class TestimonyControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("CU07 - Should return 200 and empty array when not testimonies exist")
+    @DisplayName("CU07 - Should return 200 and an empty array when no testimonies exist")
     void shouldReturnEmptyListWhenNoTestimonios() throws Exception {
         mockMvc.perform(get("/api/v1/testimonies"))
                 .andExpect(status().isOk())

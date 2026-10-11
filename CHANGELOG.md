@@ -41,6 +41,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English test titles** (#1490, CU75): JUnit display names and nested
+  test class names use English type names. Stored labels such as
+  `Protocolo Auxiliar`, `Protocolo Principal`, `Generada`, `Presentado`,
+  `Observado`, `Utilizado`, and `Sin Firmar` stay inside those titles.
+  Message catalog keys stay.
 - **English list locals and auxiliary-protocol operation** (#1490, CU75):
   list locals use English names. Starting an auxiliary-protocol deed is
   `startDeed`. Budget JSON uses `procedures`. Deed-number and CORS messages

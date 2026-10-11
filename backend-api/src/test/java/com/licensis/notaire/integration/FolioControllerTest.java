@@ -312,7 +312,7 @@ class FolioControllerTest {
     }
 
     @Test
-    @DisplayName("CU06/#838 — POST should return 400 when escrituraId does not exist")
+    @DisplayName("CU06/#838 — POST should return 400 when deedId does not exist")
     void shouldReturn400WhenDeedIdNotFound() throws Exception {
         mockMvc.perform(post("/api/v1/folios")
                         .contentType(MediaType.APPLICATION_JSON)

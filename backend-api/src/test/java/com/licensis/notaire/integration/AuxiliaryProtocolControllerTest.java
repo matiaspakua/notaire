@@ -75,7 +75,7 @@ class AuxiliaryProtocolControllerTest {
     }
 
     @Test
-    @DisplayName("Should list available auxiliar folios")
+    @DisplayName("Should list available auxiliary folios")
     void shouldListAvailableFoliosAuxiliares() throws Exception {
         FolioType type = createAuxiliaryType();
         createAuxiliaryFolio(type, 501);
@@ -86,7 +86,7 @@ class AuxiliaryProtocolControllerTest {
     }
 
     @Test
-    @DisplayName("Should return an empty list when there are no auxiliar folios available")
+    @DisplayName("Should return an empty list when there are no auxiliary folios available")
     void shouldReturnEmptyWhenNoFoliosAuxiliaresAvailable() throws Exception {
         mockMvc.perform(get("/api/v1/auxiliary-protocol/available-folios"))
                 .andExpect(status().isOk())
@@ -95,7 +95,7 @@ class AuxiliaryProtocolControllerTest {
     }
 
     @Test
-    @DisplayName("Should create deed on an available auxiliar folio with its own correlative number")
+    @DisplayName("Should create deed on an available auxiliary folio with its own correlative number")
     void shouldCreateDeedOnAvailableFolioAuxiliary() throws Exception {
         FolioType type = createAuxiliaryType();
         Folio folio = createAuxiliaryFolio(type, 601);
@@ -112,7 +112,7 @@ class AuxiliaryProtocolControllerTest {
     }
 
     @Test
-    @DisplayName("Should reject starting an deed when no auxiliar folio is available")
+    @DisplayName("Should reject starting a deed when no auxiliary folio is available")
     void shouldRejectDeedWhenNoFolioAuxiliaryAvailable() throws Exception {
         Map<String, Object> body = new HashMap<>();
         body.put("body", "Acta of certificación of firma");

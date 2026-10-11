@@ -57,7 +57,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should persist plantilla through repository")
+    @DisplayName("Should persist a budget template through the repository")
     void shouldPersistTemplate() {
         assertThat(testTemplate.getBudgetTemplatePK()).isNotNull();
         assertThat(templateRepository.findByProcedureTypeIdProcedureType(testTypeProcedure.getIdProcedureType())).isNotEmpty();
@@ -81,7 +81,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should find all plantillas")
+    @DisplayName("Should find all budget templates")
     void shouldFindAllPlantillas() {
         List<BudgetTemplate> all = templateRepository.findAll();
 
@@ -90,7 +90,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should update plantilla notes")
+    @DisplayName("Should update budget-template notes")
     void shouldUpdateTemplate() {
         testTemplate.setNotes("Observaciones actualizadas");
         BudgetTemplate updated = templateRepository.save(testTemplate);
@@ -103,7 +103,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should delete plantilla")
+    @DisplayName("Should delete the budget template")
     void shouldDeleteTemplate() {
         Long initialCount = (long) templateRepository.findAll().size();
         templateRepository.delete(testTemplate);
@@ -113,7 +113,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should create plantilla with null notes")
+    @DisplayName("Should create a budget template with null notes")
     void shouldCreateTemplateWithNullNotes() {
         ProcedureType type = new ProcedureType();
         type.setName("Poder");
@@ -141,7 +141,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should handle multiple plantillas for same type procedure")
+    @DisplayName("Should handle multiple budget templates for the same procedure type")
     void shouldHandleMultiplePlantillas() {
         Concept concepto2 = new Concept();
         concepto2.setName("Gastos");
@@ -168,7 +168,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should update plantilla fields independently")
+    @DisplayName("Should update budget-template fields independently")
     void shouldUpdateFieldsIndependently() {
         testTemplate.setNotes("Updated notes 1");
         templateRepository.save(testTemplate);
@@ -194,7 +194,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should create distinct plantillas with different IDs")
+    @DisplayName("Should create distinct budget templates with different IDs")
     void shouldCreateDistinctPlantillas() {
         ProcedureType tipo1 = new ProcedureType();
         tipo1.setName("Tipo 1");

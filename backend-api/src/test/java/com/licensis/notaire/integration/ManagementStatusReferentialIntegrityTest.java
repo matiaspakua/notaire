@@ -83,7 +83,7 @@ class ManagementStatusReferentialIntegrityTest {
     }
 
     @Test
-    @DisplayName("Should return inUse=false when not management references the status")
+    @DisplayName("Should return inUse=false when no management references the status")
     void shouldReturnInUseFalseWhenStatusIsNotReferenced() throws Exception {
         int id = createStatus("EstadoFree_InUse");
 

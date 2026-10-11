@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * Spring beans, so the real JPA outbound adapters and a real transaction boundary
  * take part. Formerly {@code PaymentServiceIntegrationTest}; expectations unchanged.
  */
-@DisplayName("PagoService Integration Tests")
+@DisplayName("PaymentService Integration Tests")
 class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -96,7 +96,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should process valid pago through service")
+    @DisplayName("Should process a valid payment through service")
     void shouldProcessValidPaymentThroughService() {
         PaymentDetails result = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Primer pago");
 
@@ -134,7 +134,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should reject a pago exceeding saldo pendiente and not persist it")
+    @DisplayName("Should reject a payment that exceeds the outstanding balance and not persist it")
     void shouldRejectPaymentExceedingSaldoPending() {
         assertThatThrownBy(() -> process(testBudget.getIdBudget(), new java.math.BigDecimal("600000"), new Date(), "Overpay attempt"))
                 .isInstanceOf(PendingBalanceExceededException.class);
@@ -144,7 +144,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should reject a pago exceeding saldo already reduced by a prior payment")
+    @DisplayName("Should reject a payment that exceeds the balance already reduced by a prior payment")
     void shouldRejectPaymentExceedingSaldoReducedByPriorPayment() {
         process(testBudget.getIdBudget(), new java.math.BigDecimal("400000"), new Date(), "Payment 1");
 
@@ -179,7 +179,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should find pago by id through service")
+    @DisplayName("Should find a payment by id through service")
     void shouldFindPaymentByIdThroughService() {
         PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Payment");
 
@@ -204,7 +204,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should delete pago through service")
+    @DisplayName("Should delete the payment through service")
     void shouldDeletePaymentThroughService() {
         PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Payment");
 
@@ -215,7 +215,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should edit pago through service")
+    @DisplayName("Should edit the payment through service")
     void shouldEditPaymentThroughService() {
         PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Payment");
 
@@ -244,7 +244,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should handle editarPago with null amount")
+    @DisplayName("Should handle updatePayment with null amount")
     void shouldHandleEditarPaymentWithNullAmount() {
         PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Payment Original");
 
@@ -256,7 +256,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should handle editarPago with null date")
+    @DisplayName("Should handle updatePayment with null date")
     void shouldHandleEditarPaymentWithNullDate() {
         Date originalDate = new Date();
         PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), originalDate, "Payment");
@@ -269,7 +269,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should handle editarPago with null notes")
+    @DisplayName("Should handle updatePayment with null notes")
     void shouldHandleEditarPaymentWithNullNotes() {
         PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Original");
 
@@ -281,7 +281,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should reject negative amount in editarPago")
+    @DisplayName("Should reject negative amount in updatePayment")
     void shouldRejectNegativeAmountInEditarPayment() {
         PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Payment");
 
@@ -291,7 +291,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should throw exception when editing non-existent pago")
+    @DisplayName("Should throw exception when editing a payment that does not exist")
     void shouldThrowExceptionWhenEditingNonExistentPayment() {
         assertThatThrownBy(() -> edit(9999, new java.math.BigDecimal("100000"), new Date(), "Test"))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -299,7 +299,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should throw exception when deleting non-existent pago")
+    @DisplayName("Should throw exception when deleting a payment that does not exist")
     void shouldThrowExceptionWhenDeletingNonExistentPayment() {
         assertThatThrownBy(() -> deletePayment.delete(9999))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -307,7 +307,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should handle procesarPago with null date and use current date")
+    @DisplayName("Should handle processPayment with null date and use current date")
     void shouldHandleProcessPaymentWithNullDate() {
         long beforeTime = System.currentTimeMillis();
 
@@ -321,7 +321,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should handle zero amount in procesarPago")
+    @DisplayName("Should handle zero amount in processPayment")
     void shouldRejectZeroAmountInProcessarPayment() {
         assertThatThrownBy(() -> process(testBudget.getIdBudget(), new java.math.BigDecimal("0"), new Date(), "Invalid"))
                 .isInstanceOf(IllegalArgumentException.class)

@@ -219,7 +219,7 @@ class WorkflowTraceApiH2IntegrationTest {
     }
 
     @Test
-    @DisplayName("Should serialize type-tramite list when a workflow definition is assigned")
+    @DisplayName("Should serialize procedure-type list when a workflow definition is assigned")
     void shouldSerializeTypeProcedureListWhenWorkflowDefinitionAssigned() throws Exception {
         mockMvc.perform(get("/api/v1/procedure-types"))
                 .andExpect(status().isOk())

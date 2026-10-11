@@ -33,7 +33,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("EscrituraService Unit Tests")
+@DisplayName("DeedService Unit Tests")
 class DeedServiceTest {
 
     @Mock
@@ -105,7 +105,7 @@ class DeedServiceTest {
     }
 
     @Test
-    @DisplayName("Should return empty list when not deeds exist")
+    @DisplayName("Should return an empty list when no deeds exist")
     void shouldReturnEmptyListWhenNoEscriturasExist() {
         when(deedRepository.findAll()).thenReturn(new ArrayList<>());
 
@@ -188,7 +188,7 @@ class DeedServiceTest {
     }
 
     @Test
-    @DisplayName("Should save deed when number correlativo is valid (CU86)")
+    @DisplayName("Should save the deed when the sequential number is valid (CU86)")
     void shouldSaveWhenNumberingIsOk() {
         Folio folio = folioConNotary(testNotary, 2026, false);
         testDeed.setIdFolio(10);

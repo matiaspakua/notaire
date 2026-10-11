@@ -33,7 +33,7 @@ import org.springframework.web.context.WebApplicationContext;
 @ActiveProfiles("integration")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Tag("pg-integration")
-@DisplayName("Budget - asociación with person (CU01)")
+@DisplayName("Budget - association with a person (CU01)")
 class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
 
     @Autowired

@@ -153,7 +153,7 @@ class CoreBusinessControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("PresupuestoController - CU01/CU45/CU60")
+    @DisplayName("BudgetController - CU01/CU45/CU60")
     class BudgetControllerTests {
 
         @Test
@@ -200,7 +200,7 @@ class CoreBusinessControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("EscrituraController - CU05/CU06/CU52/CU62")
+    @DisplayName("DeedController - CU05/CU06/CU52/CU62")
     class DeedControllerTests {
 
         @Test
@@ -273,7 +273,7 @@ class CoreBusinessControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("TipoDeTramiteController - CU26/CU31/CU57/CU64")
+    @DisplayName("ProcedureTypeController - CU26/CU31/CU57/CU64")
     class ProcedureTypeControllerTests {
 
         @Test
@@ -307,11 +307,11 @@ class CoreBusinessControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("RegistroAuditoriaController - CU23")
+    @DisplayName("AuditRecordController - CU23")
     class AuditRecordControllerTests {
 
         @Test
-        @DisplayName("CU23 - Should return all registros de auditoria")
+        @DisplayName("CU23 - Should return all audit records")
         void shouldReturnAllRegistrosAudit() throws Exception {
             mockMvc.perform(get("/api/v1/audit-log"))
                     .andExpect(status().isOk())
@@ -343,11 +343,11 @@ class CoreBusinessControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("SuplenciaController - CU22/CU59")
+    @DisplayName("SubstitutionController - CU22/CU59")
     class SubstitutionControllerTests {
 
         @Test
-        @DisplayName("CU59 - Should return all suplencias")
+        @DisplayName("CU59 - Should return all substitutions")
         void shouldReturnAllSuplencias() throws Exception {
             mockMvc.perform(get("/api/v1/substitutions"))
                     .andExpect(status().isOk())
@@ -357,11 +357,11 @@ class CoreBusinessControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("InmuebleController")
+    @DisplayName("PropertyController")
     class PropertyControllerTests {
 
         @Test
-        @DisplayName("Should return all inmuebles")
+        @DisplayName("Should return all properties")
         void shouldReturnAllProperties() throws Exception {
             mockMvc.perform(get("/api/v1/properties"))
                     .andExpect(status().isOk())

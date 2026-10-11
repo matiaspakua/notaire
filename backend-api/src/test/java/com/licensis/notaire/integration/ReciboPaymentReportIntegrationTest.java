@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * CU15 - Emitir recibo de pago (issue #23).
  */
 @RequirementCoverage({"CU15"})
-@DisplayName("ReportController#generarReporteReciboPago — CU15 integration tests")
+@DisplayName("ReportController#generatePaymentReceiptReport — CU15 integration tests")
 class ReciboPaymentReportIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -110,7 +110,7 @@ class ReciboPaymentReportIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return a PDF recibo for an existing pago")
+    @DisplayName("Should return a PDF receipt for an existing payment")
     void shouldReturnPdfForRecibo() throws Exception {
         int idPerson = createClient();
         int idBudget = createBudget(idPerson);
@@ -126,7 +126,7 @@ class ReciboPaymentReportIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return 404 for a non-existing pago")
+    @DisplayName("Should return 404 for a missing payment")
     void shouldReturn404ForNonExistingPayment() throws Exception {
         mockMvc.perform(get("/api/v1/reports/payment-receipt/999999"))
                 .andExpect(status().isNotFound());

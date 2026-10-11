@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
-@DisplayName("ReportService recibo de pago unit tests (CU15/RF-21, issue #23)")
+@DisplayName("ReportService payment-receipt unit tests (CU15/RF-21, issue #23)")
 @ExtendWith(MockitoExtension.class)
 class ReportServiceReciboPaymentTest {
 
@@ -102,7 +102,7 @@ class ReportServiceReciboPaymentTest {
     }
 
     @Test
-    @DisplayName("Should print the amount of a partial/installment pago, not the budget total")
+    @DisplayName("Should print the amount of a partial payment, not the budget total")
     void shouldGenerarReciboParaPaymentParcial() throws Exception {
         Person client = buildClient();
         Payment paymentParcial = buildPayment(2, new java.math.BigDecimal("100000"), client);

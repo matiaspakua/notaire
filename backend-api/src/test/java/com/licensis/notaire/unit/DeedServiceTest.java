@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@DisplayName("EscrituraService unit tests")
+@DisplayName("DeedService unit tests")
 @ExtendWith(MockitoExtension.class)
 class DeedServiceTest {
 
@@ -68,7 +68,7 @@ class DeedServiceTest {
         }
 
         @Test
-        @DisplayName("Should return empty list when not deeds exist")
+        @DisplayName("Should return an empty list when no deeds exist")
         void shouldReturnEmptyListWhenNoneExist() {
             when(deedRepository.findAll()).thenReturn(Collections.emptyList());
 
@@ -166,8 +166,8 @@ class DeedServiceTest {
     }
 
     @Nested
-    @DisplayName("buscarPorNumero")
-    class SearchPorNumber {
+    @DisplayName("findByNumber")
+    class SearchByNumber {
 
         @Test
         @DisplayName("Should return all deeds when number is null")

@@ -85,11 +85,11 @@ class ExternalEntityDocumentServiceTest {
     }
 
     @Nested
-    @DisplayName("Get documents of entidades externas of a management")
-    class ObtenerDocumentsTests {
+    @DisplayName("Get external-entity documents of a management")
+    class GetDocumentsTests {
 
         @Test
-        @DisplayName("Devuelve the management with their documents of external entity and cadastral nomenclature")
+        @DisplayName("Returns the management with its external-entity documents and cadastral designation")
         void shouldReturnManagementWithDocumentsAndDesignation() {
             Property property = new Property();
             property.setCadastralDesignation("12-34-56");
@@ -111,7 +111,7 @@ class ExternalEntityDocumentServiceTest {
         }
 
         @Test
-        @DisplayName("Cadastral nomenclature is null when ningún procedure has property associated")
+        @DisplayName("Cadastral nomenclature is null when no procedure has an associated property")
         void shouldReturnNullDesignationWhenNoProperty() {
             when(documentRepository.findManagementById(1)).thenReturn(Optional.of(management));
             when(documentRepository.findProceduresByManagementId(1)).thenReturn(List.of(procedure));
@@ -135,11 +135,11 @@ class ExternalEntityDocumentServiceTest {
     }
 
     @Nested
-    @DisplayName("Registrar movimiento de un documento de entidad externa")
-    class RegistrarMovementTests {
+    @DisplayName("Register a movement for an external-entity document")
+    class RegisterMovementTests {
 
         @Test
-        @DisplayName("Actualiza the campos of movimiento of the document")
+        @DisplayName("Updates the document movement fields")
         void shouldUpdateMovementFields() {
             when(documentRepository.findManagementById(1)).thenReturn(Optional.of(management));
             when(documentRepository.findSubmittedDocumentById(50)).thenReturn(Optional.of(document));
@@ -163,7 +163,7 @@ class ExternalEntityDocumentServiceTest {
         }
 
         @Test
-        @DisplayName("Lanza BusinessValidationException when the document not belongs to the management indicada")
+        @DisplayName("Throws BusinessValidationException when the document does not belong to the indicated management")
         void shouldThrowWhenDocumentDoesNotBelongToManagement() {
             DeedManagement otraManagement = new DeedManagement();
             otraManagement.setIdManagement(2);
@@ -183,7 +183,7 @@ class ExternalEntityDocumentServiceTest {
         }
 
         @Test
-        @DisplayName("Lanza BusinessValidationException cuando el documento no es de entidad externa")
+        @DisplayName("Throws BusinessValidationException when the document is not for an external entity")
         void shouldThrowWhenDocumentIsNotEntidadExterna() {
             document.setDeliveredBy(BusinessConstants.DOCUMENTACIONClient);
 
@@ -198,7 +198,7 @@ class ExternalEntityDocumentServiceTest {
         }
 
         @Test
-        @DisplayName("Lanza ResourceNotFoundException cuando el documento no existe")
+        @DisplayName("Throws ResourceNotFoundException when the document does not exist")
         void shouldThrowWhenDocumentNotFound() {
             when(documentRepository.findManagementById(1)).thenReturn(Optional.of(management));
             when(documentRepository.findSubmittedDocumentById(999)).thenReturn(Optional.empty());
@@ -212,7 +212,7 @@ class ExternalEntityDocumentServiceTest {
     }
 
     @Nested
-    @DisplayName("Intentar completar the documentation of entidades externas")
+    @DisplayName("Attempt to complete the external-entity documentation")
     class IntentarCompletarDocumentacionTests {
 
         @Test

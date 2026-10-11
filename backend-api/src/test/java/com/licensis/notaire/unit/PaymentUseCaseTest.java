@@ -47,7 +47,7 @@ import static org.mockito.Mockito.when;
  * Data repositories.
  */
 @RequirementCoverage({"CU15", "CU47"})
-@DisplayName("PagoService Tests")
+@DisplayName("PaymentService Tests")
 @ExtendWith(MockitoExtension.class)
 class PaymentUseCaseTest {
 
@@ -89,7 +89,7 @@ class PaymentUseCaseTest {
     }
 
     @Nested
-    @DisplayName("CU15 - Procesar pago")
+    @DisplayName("CU15 - Process payment")
     class ProcesarPaymentTests {
 
         @Test
@@ -217,7 +217,7 @@ class PaymentUseCaseTest {
     class ConsultarPaymentTests {
 
         @Test
-        @DisplayName("Should return pago when valid ID is provided")
+        @DisplayName("Should return the payment when a valid id is provided")
         void shouldReturnPaymentWhenValidIdProvided() {
             // Arrange
             Payment expectedPayment = new Payment();
@@ -235,7 +235,7 @@ class PaymentUseCaseTest {
         }
 
         @Test
-        @DisplayName("Should return empty when pago not found")
+        @DisplayName("Should return empty when the payment is not found")
         void shouldReturnEmptyWhenPaymentNotFound() {
             // Arrange
             when(paymentRepository.findById(999)).thenReturn(Optional.empty());
@@ -289,7 +289,7 @@ class PaymentUseCaseTest {
         }
 
         @Test
-        @DisplayName("Should delete pago successfully")
+        @DisplayName("Should delete the payment")
         void shouldDeletePaymentSuccessfully() {
             // Arrange
             when(paymentRepository.existsById(1)).thenReturn(true);
@@ -302,7 +302,7 @@ class PaymentUseCaseTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when deleting non-existent pago")
+        @DisplayName("Should throw exception when deleting a payment that does not exist")
         void shouldThrowExceptionWhenDeletingNonExistentPayment() {
             // Arrange
             when(paymentRepository.existsById(999)).thenReturn(false);
@@ -370,7 +370,7 @@ class PaymentUseCaseTest {
         }
 
         @Test
-        @DisplayName("Should throw when editing paymentMethod of a non-existent pago")
+        @DisplayName("Should throw when editing paymentMethod of a payment that does not exist")
         void shouldThrowWhenEditingPaymentMethodOfMissingPayment() {
             when(paymentRepository.existsById(999)).thenReturn(false);
 

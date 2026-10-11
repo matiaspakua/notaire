@@ -26,7 +26,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@DisplayName("GestionQueryService unit tests")
+@DisplayName("ManagementQueryService unit tests")
 @ExtendWith(MockitoExtension.class)
 class ManagementQueryServiceTest {
 
@@ -81,7 +81,7 @@ class ManagementQueryServiceTest {
         }
 
         @Test
-        @DisplayName("Should return empty page when not managements exist")
+        @DisplayName("Should return an empty page when no managements exist")
         void shouldReturnEmptyPageWhenNoneExist() {
             Pageable pageable = PageRequest.of(0, 10);
             when(repository.findAll(pageable)).thenReturn(Page.empty(pageable));
@@ -123,7 +123,7 @@ class ManagementQueryServiceTest {
     }
 
     @Nested
-    @DisplayName("findByNumero")
+    @DisplayName("findByNumber")
     class FindByNumber {
 
         @Test
@@ -138,7 +138,7 @@ class ManagementQueryServiceTest {
         }
 
         @Test
-        @DisplayName("Should return empty when not management matches number")
+        @DisplayName("Should return empty when no management matches the number")
         void shouldReturnEmptyWhenNotFound() {
             when(repository.findByNumber(999)).thenReturn(Optional.empty());
 

@@ -20,7 +20,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
-@DisplayName("PagoRepository Integration Tests")
+@DisplayName("PaymentRepository Integration Tests")
 class PaymentRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
     @Autowired
@@ -69,7 +69,7 @@ class PaymentRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should persist and retrieve pago")
+    @DisplayName("Should persist and retrieve a payment")
     void shouldPersistAndRetrievePayment() {
         Payment saved = paymentRepository.save(testPayment);
 
@@ -134,7 +134,7 @@ class PaymentRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should update pago")
+    @DisplayName("Should update the payment")
     void shouldUpdatePayment() {
         Payment saved = paymentRepository.save(testPayment);
 
@@ -152,7 +152,7 @@ class PaymentRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should delete pago")
+    @DisplayName("Should delete the payment")
     void shouldDeletePayment() {
         Payment saved = paymentRepository.save(testPayment);
 

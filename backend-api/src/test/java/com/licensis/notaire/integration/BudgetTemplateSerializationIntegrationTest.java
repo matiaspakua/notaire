@@ -80,7 +80,7 @@ class BudgetTemplateSerializationIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should serialize plantilla-presupuestos list as valid JSON array without recursion")
+    @DisplayName("Should serialize the budget-template list as valid JSON without recursion")
     void shouldListPlantillasWithoutCyclicRecursion() throws Exception {
         Integer conceptId = createConcept();
         Integer typeProcedureId = createTypeProcedure();

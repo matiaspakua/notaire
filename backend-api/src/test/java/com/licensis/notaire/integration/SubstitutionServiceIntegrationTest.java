@@ -76,7 +76,7 @@ class SubstitutionServiceIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should handle multiple suplencias for same substitute")
+    @DisplayName("Should handle multiple substitutions for the same substitute")
     void shouldHandleMultipleSuplenciasForSameSubstitute() {
         Person suplente = createPerson("Suplente Activo");
         Person suplantado1 = createPerson("Suplantado 1");

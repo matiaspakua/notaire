@@ -77,7 +77,7 @@ class BudgetTemplateControllerTest {
     }
 
     @Nested
-    @DisplayName("CU39/CU55 - Plantilla de budget — Update Workflow")
+    @DisplayName("CU39/CU55 - Budget template — Update Workflow")
     class UpdateWorkflowTests {
 
         @Test

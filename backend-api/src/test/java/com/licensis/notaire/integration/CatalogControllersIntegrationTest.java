@@ -40,7 +40,7 @@ class CatalogControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("EstadoDeGestionController - CU30/CU35/CU67")
+    @DisplayName("ManagementStatusController - CU30/CU35/CU67")
     class ManagementStatusTests {
 
         @Test
@@ -102,11 +102,11 @@ class CatalogControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("TipoDeDocumentoController - CU27/CU32/CU38/CU65")
+    @DisplayName("DocumentTypeController - CU27/CU32/CU38/CU65")
     class DocumentTypeTests {
 
         @Test
-        @DisplayName("CU27 - Should return 200 and list of tipos de documento")
+        @DisplayName("CU27 - Should return 200 and list of document types")
         void shouldReturnAllTiposDeDocument() throws Exception {
             mockMvc.perform(get("/api/v1/document-types"))
                     .andExpect(status().isOk())
@@ -115,14 +115,14 @@ class CatalogControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("CU27 - Should return 404 for non-existing type de documento")
+        @DisplayName("CU27 - Should return 404 for a missing document type")
         void shouldReturn404ForNonExistingTypeDocument() throws Exception {
             mockMvc.perform(get("/api/v1/document-types/9999"))
                     .andExpect(status().isNotFound());
         }
 
         @Test
-        @DisplayName("CU27 - Should create new type de documento")
+        @DisplayName("CU27 - Should create new document type")
         void shouldCreateDocumentType() throws Exception {
             mockMvc.perform(post("/api/v1/document-types")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -163,11 +163,11 @@ class CatalogControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("TipoDeFolioController - CU36/CU40/CU58/CU68")
+    @DisplayName("FolioTypeController - CU36/CU40/CU58/CU68")
     class FolioTypeTests {
 
         @Test
-        @DisplayName("CU36 - Should return 200 and list of tipos de folio")
+        @DisplayName("CU36 - Should return 200 and a list of folio types")
         void shouldReturnAllTiposDeFolio() throws Exception {
             mockMvc.perform(get("/api/v1/folio-types"))
                     .andExpect(status().isOk())
@@ -177,7 +177,7 @@ class CatalogControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("CU36 - Should return type de folio by ID")
+        @DisplayName("CU36 - Should return folio type by ID")
         void shouldReturnFolioTypeById() throws Exception {
             mockMvc.perform(get("/api/v1/folio-types/1"))
                     .andExpect(status().isOk())
@@ -185,14 +185,14 @@ class CatalogControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("CU36 - Should return 404 for non-existing type de folio")
+        @DisplayName("CU36 - Should return 404 for non-existing folio type")
         void shouldReturn404ForNonExistingFolioType() throws Exception {
             mockMvc.perform(get("/api/v1/folio-types/9999"))
                     .andExpect(status().isNotFound());
         }
 
         @Test
-        @DisplayName("CU58 - Should create new type de folio")
+        @DisplayName("CU58 - Should create new folio type")
         void shouldCreateFolioType() throws Exception {
             mockMvc.perform(post("/api/v1/folio-types")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -208,7 +208,7 @@ class CatalogControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("CU40 - Should update existing type de folio")
+        @DisplayName("CU40 - Should update existing folio type")
         void shouldUpdateFolioType() throws Exception {
             mockMvc.perform(put("/api/v1/folio-types/1")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -224,7 +224,7 @@ class CatalogControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("CU40 - Should return 404 when updating non-existing type de folio")
+        @DisplayName("CU40 - Should return 404 when updating non-existing folio type")
         void shouldReturn404WhenUpdatingNonExistingFolioType() throws Exception {
             mockMvc.perform(put("/api/v1/folio-types/9999")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -241,11 +241,11 @@ class CatalogControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("TestimonioController - CU07/CU08/CU12/CU44")
+    @DisplayName("TestimonyController - CU07/CU08/CU12/CU44")
     class TestimonyTests {
 
         @Test
-        @DisplayName("CU07 - Should return 200 and empty list when not testimonies exist")
+        @DisplayName("CU07 - Should return 200 and an empty list when no testimonies exist")
         void shouldReturnEmptyListOfTestimonios() throws Exception {
             mockMvc.perform(get("/api/v1/testimonies"))
                     .andExpect(status().isOk())
@@ -262,7 +262,7 @@ class CatalogControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("MovimientoTestimonioController - CU10/CU12/CU44")
+    @DisplayName("TestimonyMovementController - CU10/CU12/CU44")
     class TestimonyMovementTests {
 
         @Test
@@ -275,7 +275,7 @@ class CatalogControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("CU10 - Should return 404 for non-existing movimiento")
+        @DisplayName("CU10 - Should return 404 for a missing movement")
         void shouldReturn404ForNonExistingMovement() throws Exception {
             mockMvc.perform(get("/api/v1/testimony-movements/9999"))
                     .andExpect(status().isNotFound());

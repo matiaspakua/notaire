@@ -28,7 +28,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @RequirementCoverage({"CU42"})
-@DisplayName("UpcomingExpirationService — CU42 próximos vencimientos")
+@DisplayName("UpcomingExpirationService — CU42 upcoming expirations")
 @ExtendWith(MockitoExtension.class)
 class UpcomingExpirationServiceTest {
 

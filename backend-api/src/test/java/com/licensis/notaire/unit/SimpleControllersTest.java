@@ -92,7 +92,7 @@ class SimpleControllersTest {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Nested
-    @DisplayName("CopiaController")
+    @DisplayName("CopyController")
     class CopyControllerTests {
         private final CopyService service = mock(CopyService.class);
         private final com.licensis.notaire.repository.PersonRepository personRepository =
@@ -187,7 +187,7 @@ class SimpleControllersTest {
     }
 
     @Nested
-    @DisplayName("EstadoDeGestionController")
+    @DisplayName("ManagementStatusController")
     class ManagementStatusControllerTests {
         private final ManagementStatusRepository repo = mock(ManagementStatusRepository.class);
         private final DeedManagementRepository managementRepo = mock(DeedManagementRepository.class);
@@ -272,7 +272,7 @@ class SimpleControllersTest {
     }
 
     @Nested
-    @DisplayName("HistorialController")
+    @DisplayName("HistoryController")
     class HistoryControllerTests {
         private final HistoryRepository repo = mock(HistoryRepository.class);
         private final ManagementStatusRepository statusRepo = mock(ManagementStatusRepository.class);
@@ -355,7 +355,7 @@ class SimpleControllersTest {
     // since ItemController now depends on ItemService rather than ItemRepository.
 
     @Nested
-    @DisplayName("MovimientoTestimonioController")
+    @DisplayName("TestimonyMovementController")
     class TestimonyMovementControllerTests {
         private final TestimonyMovementRepository repo = mock(TestimonyMovementRepository.class);
         private final TestimonyMovementService testimonyMovementService = mock(TestimonyMovementService.class);
@@ -422,7 +422,7 @@ class SimpleControllersTest {
     }
 
     @Nested
-    @DisplayName("EscrituraController")
+    @DisplayName("DeedController")
     class DeedControllerTests {
         private final DeedService service = mock(DeedService.class);
         private final DeedSigningService firmaService = mock(DeedSigningService.class);
@@ -494,7 +494,7 @@ class SimpleControllersTest {
     }
 
     @Nested
-    @DisplayName("PresupuestoController")
+    @DisplayName("BudgetController")
     class BudgetControllerTests {
         private final BudgetService service = mock(BudgetService.class);
         private final com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase budgetSummaryUseCase =
@@ -589,7 +589,7 @@ class SimpleControllersTest {
     }
 
     @Nested
-    @DisplayName("TestimonioController")
+    @DisplayName("TestimonyController")
     class TestimonyControllerTests {
         private final TestimonyRepository repo = mock(TestimonyRepository.class);
         private final TestimonyGenerationVerificationService generationVerificacionService =
@@ -657,7 +657,7 @@ class SimpleControllersTest {
     }
 
     @Nested
-    @DisplayName("TipoDeDocumentoController")
+    @DisplayName("DocumentTypeController")
     class DocumentTypeControllerTests {
         private final DocumentTypeRepository repo = mock(DocumentTypeRepository.class);
         private final com.licensis.notaire.repository.ProcedureTemplateRepository templateRepo =
@@ -729,7 +729,7 @@ class SimpleControllersTest {
     }
 
     @Nested
-    @DisplayName("TipoDeFolioController")
+    @DisplayName("FolioTypeController")
     class FolioTypeControllerTests {
         private final FolioTypeRepository repo = mock(FolioTypeRepository.class);
         private final com.licensis.notaire.repository.FolioRepository folioRepo =
@@ -790,7 +790,7 @@ class SimpleControllersTest {
     }
 
     @Nested
-    @DisplayName("TipoDeTramiteController")
+    @DisplayName("ProcedureTypeController")
     class ProcedureTypeControllerTests {
         private final ProcedureTypeRepositoryPort repo = mock(ProcedureTypeRepositoryPort.class);
         private final com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort templateRepo =
@@ -930,7 +930,7 @@ class SimpleControllersTest {
     }
 
     @Nested
-    @DisplayName("TramiteController")
+    @DisplayName("ProcedureController")
     class ProcedureControllerTests {
         private final ProcedureRepositoryPort repo = mock(ProcedureRepositoryPort.class);
         private final ProcedureTypeRepositoryPort typeRepo = mock(ProcedureTypeRepositoryPort.class);

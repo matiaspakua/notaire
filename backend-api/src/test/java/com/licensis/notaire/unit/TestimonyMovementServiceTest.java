@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @RequirementCoverage({"CU11", "CU12", "CU44"})
-@DisplayName("MovimientoTestimonioService Tests")
+@DisplayName("TestimonyMovementService Tests")
 @ExtendWith(MockitoExtension.class)
 class TestimonyMovementServiceTest {
 
@@ -63,7 +63,7 @@ class TestimonyMovementServiceTest {
     class IngresarRegistrationTests {
 
         @Test
-        @DisplayName("Should register date de ingreso when testimony is verified and has no open movement")
+        @DisplayName("Should register the entry date when the testimony is verified and has no open movement")
         void shouldRegisterEntryRegistration() {
             when(testimonyRepository.findById(5)).thenReturn(Optional.of(testimony));
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
@@ -78,7 +78,7 @@ class TestimonyMovementServiceTest {
         }
 
         @Test
-        @DisplayName("Should reject when testimony already has an open movement without date de salida")
+        @DisplayName("Should reject when the testimony already has an open movement without an exit date")
         void shouldRejectEntryWhenAlreadyOpen() {
             TestimonyMovement abierto = movementConEntry();
             when(testimonyRepository.findById(5)).thenReturn(Optional.of(testimony));
@@ -113,7 +113,7 @@ class TestimonyMovementServiceTest {
 
     @Nested
     @DisplayName("Record registration")
-    class RegistrarRegistrationTests {
+    class RegisterRegistrationTests {
 
         @Test
         @DisplayName("Should mark as inscripto with date when testimony was ingresado")
@@ -131,7 +131,7 @@ class TestimonyMovementServiceTest {
         }
 
         @Test
-        @DisplayName("Should reject when testimony has no movement with date de ingreso")
+        @DisplayName("Should reject when the testimony has no movement with an entry date")
         void shouldRejectRegistrationWithoutEntry() {
             when(testimonyRepository.existsById(5)).thenReturn(true);
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
@@ -157,7 +157,7 @@ class TestimonyMovementServiceTest {
     class RetirarTests {
 
         @Test
-        @DisplayName("Should register date of salida and number of cartón when testimony is registered")
+        @DisplayName("Should register the exit date and carton number when the testimony is registered")
         void shouldRegisterWithdrawal() {
             TestimonyMovement inscripto = movementConEntry();
             inscripto.setRegistered(true);
@@ -224,7 +224,7 @@ class TestimonyMovementServiceTest {
         }
 
         @Test
-        @DisplayName("Should store cartón number, observation flag and notes on the new movement")
+        @DisplayName("Should store the carton number, observation flag, and notes on the new movement")
         void shouldStoreReentryDataOnTheNewMovement() {
             TestimonyMovement retirado = movementConEntry();
             retirado.setDateExit(new Date());

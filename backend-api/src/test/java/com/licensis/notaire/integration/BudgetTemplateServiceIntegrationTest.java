@@ -45,7 +45,7 @@ class BudgetTemplateServiceIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should create plantilla with all fields")
+    @DisplayName("Should create a budget template with all fields")
     void shouldCreateTemplateWithAllFields() {
         BudgetTemplatePK pk = new BudgetTemplatePK(
                 testTypeProcedure.getIdProcedureType(),
@@ -65,7 +65,7 @@ class BudgetTemplateServiceIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should retrieve plantilla by composite key")
+    @DisplayName("Should retrieve a budget template by composite key")
     void shouldRetrieveTemplateByCompositeKey() {
         BudgetTemplatePK pk = new BudgetTemplatePK(
                 testTypeProcedure.getIdProcedureType(),
@@ -86,7 +86,7 @@ class BudgetTemplateServiceIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should update plantilla notes")
+    @DisplayName("Should update budget-template notes")
     void shouldUpdateTemplateNotes() {
         BudgetTemplatePK pk = new BudgetTemplatePK(
                 testTypeProcedure.getIdProcedureType(),
@@ -153,7 +153,7 @@ class BudgetTemplateServiceIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should handle multiple plantillas for different concepts")
+    @DisplayName("Should handle multiple budget templates for different concepts")
     void shouldHandleMultiplePlantillasForDifferentConcepts() {
         Concept concepto2 = new Concept();
         concepto2.setName("Gastos");

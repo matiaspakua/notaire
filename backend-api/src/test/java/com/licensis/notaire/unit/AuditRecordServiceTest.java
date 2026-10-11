@@ -29,7 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@DisplayName("RegistroAuditoriaService unit tests - CU23")
+@DisplayName("AuditRecordService unit tests - CU23")
 @ExtendWith(MockitoExtension.class)
 class AuditRecordServiceTest {
 
@@ -162,7 +162,7 @@ class AuditRecordServiceTest {
     class FindById {
 
         @Test
-        @DisplayName("Should return registro when found by ID")
+        @DisplayName("Should return the audit record when found by ID")
         void shouldReturnRecordWhenFound() {
             when(repository.findById(1)).thenReturn(Optional.of(testRecord));
 
@@ -172,7 +172,7 @@ class AuditRecordServiceTest {
         }
 
         @Test
-        @DisplayName("Should return empty when registro not found")
+        @DisplayName("Should return empty when the audit record is not found")
         void shouldReturnEmptyWhenNotFound() {
             when(repository.findById(999)).thenReturn(Optional.empty());
 
@@ -200,7 +200,7 @@ class AuditRecordServiceTest {
     }
 
     @Nested
-    @DisplayName("findByUsuarioId - CU23")
+    @DisplayName("findByUserId - CU23")
     class FindByUserId {
 
         @Test

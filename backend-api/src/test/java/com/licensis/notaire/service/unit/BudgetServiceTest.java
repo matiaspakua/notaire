@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("PresupuestoService Unit Tests")
+@DisplayName("BudgetService Unit Tests")
 class BudgetServiceTest {
 
     @Mock
@@ -62,7 +62,7 @@ class BudgetServiceTest {
     }
 
     @Test
-    @DisplayName("Should return empty list when not budgets exist")
+    @DisplayName("Should return an empty list when no budgets exist")
     void shouldReturnEmptyListWhenNoPresupuestosExist() {
         when(budgetRepository.findAll()).thenReturn(new ArrayList<>());
 

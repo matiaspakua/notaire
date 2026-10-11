@@ -49,7 +49,7 @@ class BusinessWorkflowIntegrationTest {
     // ──────────────────────────────────────────────
 
     @Nested
-    @DisplayName("CU03 — Autenticación of the user")
+    @DisplayName("CU03 — User authentication")
     class LoginWorkflow {
 
         @Test
@@ -97,7 +97,7 @@ class BusinessWorkflowIntegrationTest {
     // ──────────────────────────────────────────────
 
     @Nested
-    @DisplayName("CU17/CU18 — Registro y consulta de persons")
+    @DisplayName("CU17/CU18 — Register and look up people")
     class PeopleWorkflow {
 
         @Test
@@ -260,7 +260,7 @@ class BusinessWorkflowIntegrationTest {
     // ──────────────────────────────────────────────
 
     @Nested
-    @DisplayName("CU15/CU47 — Procesamiento de payments")
+    @DisplayName("CU15/CU47 — Payment processing")
     class PaymentsWorkflow {
 
         private Integer fixtureBudgetId;
@@ -312,7 +312,7 @@ class BusinessWorkflowIntegrationTest {
     // ──────────────────────────────────────────────
 
     @Nested
-    @DisplayName("CU05-CU08 — Deeds and protocolo")
+    @DisplayName("CU05-CU08 — Deeds and protocol")
     class DeedsWorkflow {
 
         @Test
@@ -484,7 +484,7 @@ class BusinessWorkflowIntegrationTest {
     }
 
     @Nested
-    @DisplayName("Audit — Registro of operaciones")
+    @DisplayName("Audit — record of operations")
     class AuditWorkflow {
 
         @Test
@@ -512,7 +512,7 @@ class BusinessWorkflowIntegrationTest {
 
     @Nested
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @DisplayName("CU39/CU49/CU55 — Plantillas de budget")
+    @DisplayName("CU39/CU49/CU55 — Budget templates")
     class PlantillasWorkflow {
 
         @Test
@@ -526,7 +526,7 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(2)
-        @DisplayName("GET plantillas by type-tramite returns array")
+        @DisplayName("GET budget templates by procedure type returns an array")
         void getPlantillasByTypeProcedureReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/budget-templates/procedure-types/1"))
                     .andExpect(status().isOk())
@@ -559,7 +559,7 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(4)
-        @DisplayName("POST duplicate plantilla (same type=1/concept=1 created in Order 3) returns 409 Conflict")
+        @DisplayName("POST duplicate budget template (same type=1/concept=1 created in Order 3) returns 409 Conflict")
         void createDuplicateTemplateReturns409() throws Exception {
             // Order 3 already created (tipo=1, concept=1). Re-posting the same PK must return 409.
             String body = """

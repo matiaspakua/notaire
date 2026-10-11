@@ -31,7 +31,7 @@ import java.util.List;
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @Transactional
-@DisplayName("CU80 — Notebook of folios creation and carátula")
+@DisplayName("CU80 — Notebook of folios creation and cover")
 class NotebookControllerTest {
 
     @Autowired
@@ -151,7 +151,7 @@ class NotebookControllerTest {
     }
 
     @Test
-    @DisplayName("Should generate carátula for an existing notebook")
+    @DisplayName("Should generate cover for an existing notebook")
     void shouldGenerateCaratulaForExistingNotebook() throws Exception {
         List<Integer> ids = createFolios(10, "New");
         MvcResult creado = mockMvc.perform(post("/api/v1/notebooks")
@@ -170,7 +170,7 @@ class NotebookControllerTest {
     }
 
     @Test
-    @DisplayName("Should return 404 for carátula of a missing notebook")
+    @DisplayName("Should return 404 for cover of a missing notebook")
     void shouldReturnNotFoundForMissingNotebookCaratula() throws Exception {
         mockMvc.perform(get("/api/v1/notebooks/999999/cover"))
                 .andExpect(status().isNotFound());

@@ -27,7 +27,7 @@ class DeedNumberingUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should start correlativo at one when no deed exists yet in scope")
+    @DisplayName("Should start the sequence at one when no deed exists yet in scope")
     void shouldStartCorrelativoAtOneWhenScopeIsEmpty() {
         Person notary = createNotary(1);
 
@@ -37,7 +37,7 @@ class DeedNumberingUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should accept a number matching the expected correlativo")
+    @DisplayName("Should accept a number matching the expected sequence")
     void shouldAcceptNumberMatchingExpectedCorrelativo() {
         Person notary = createNotary(1);
         inMemoryPort.recordMaxNumber(1, 2026, false, null, 5);
@@ -85,7 +85,7 @@ class DeedNumberingUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should keep Protocolo Auxiliar numbering independent from Protocolo Principal")
+    @DisplayName("Should keep Protocolo Auxiliar numbering independent of Protocolo Principal")
     void shouldKeepAuxiliaryNumberingIndependentFromPrincipal() {
         Person notary = createNotary(1);
         inMemoryPort.recordMaxNumber(1, 2026, true, null, 2);

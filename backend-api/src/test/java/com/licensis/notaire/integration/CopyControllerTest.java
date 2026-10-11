@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * the creación of a copy when the testimony of origen already has a
  * movimiento inscripto (RF asociado).
  */
-@DisplayName("CopiaController#create — CU87 integration tests")
+@DisplayName("CopyController#create — CU87 integration tests")
 class CopyControllerTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -83,7 +83,7 @@ class CopyControllerTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return 409 when testimony already has an registered movimiento")
+    @DisplayName("Should return 409 when testimony already has a registered movement")
     void shouldRejectCopyWhenTestimonyHasRegisteredMovement() throws Exception {
         Testimony testimony = createTestimony();
         addMovement(testimony, true);
@@ -96,7 +96,7 @@ class CopyControllerTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should create copia when testimony has a non-registered movimiento")
+    @DisplayName("Should create a copy when the testimony has a movement that is not registered")
     void shouldCreateCopyWhenTestimonyHasNoRegisteredMovement() throws Exception {
         Testimony testimony = createTestimony();
         addMovement(testimony, false);
@@ -108,7 +108,7 @@ class CopyControllerTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should create copia when testimony has no movimientos")
+    @DisplayName("Should create a copy when the testimony has no movements")
     void shouldCreateCopyWhenTestimonyHasNoMovimientos() throws Exception {
         Testimony testimony = createTestimony();
 

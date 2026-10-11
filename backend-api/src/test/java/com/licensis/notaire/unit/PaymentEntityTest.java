@@ -16,11 +16,11 @@ import com.licensis.notaire.testing.RequirementCoverage;
 class PaymentEntityTest {
 
     @Nested
-    @DisplayName("CU15 - Procesar pago - Unit Tests")
+    @DisplayName("CU15 - Process payment - Unit Tests")
     class ProcesarPaymentTests {
 
         @Test
-        @DisplayName("Should create pago with required fields")
+        @DisplayName("Should create a payment with the required fields")
         void shouldCreatePaymentWithRequiredFields() {
             Payment payment = new Payment();
             payment.setIdPayment(1);

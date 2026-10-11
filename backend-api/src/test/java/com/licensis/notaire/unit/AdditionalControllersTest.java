@@ -43,11 +43,11 @@ class AdditionalControllersTest {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Nested
-    @DisplayName("PlantillaTramiteController")
+    @DisplayName("ProcedureTemplateController")
     class ProcedureTemplateControllerTests {
 
         @Test
-        @DisplayName("getAll and getByTipoTramite endpoints")
+        @DisplayName("getAll and getByProcedureType endpoints")
         void all() throws Exception {
             ProcedureTemplateRepositoryPort repo = mock(ProcedureTemplateRepositoryPort.class);
             var mvc = standaloneSetup(new ProcedureTemplateController(repo)).build();
@@ -125,7 +125,7 @@ class AdditionalControllersTest {
     }
 
     @Nested
-    @DisplayName("GestionController")
+    @DisplayName("ManagementController")
     class ManagementControllerTests {
 
         @Test

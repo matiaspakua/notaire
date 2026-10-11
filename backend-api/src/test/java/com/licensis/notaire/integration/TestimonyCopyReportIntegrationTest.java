@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * CU08 - Issue copy impresa of testimony verified (issue #832).
  */
 @RequirementCoverage({"CU08"})
-@DisplayName("ReportController#generarReporteCopiaTestimonio — CU08 integration tests")
+@DisplayName("ReportController#generateTestimonyCopyReport — CU08 integration tests")
 class TestimonyCopyReportIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired

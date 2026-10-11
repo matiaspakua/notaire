@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("ProtocoloAuxiliarService Unit Tests")
+@DisplayName("AuxiliaryProtocolService Unit Tests")
 class AuxiliaryProtocolServiceTest {
 
     @Mock
@@ -60,7 +60,7 @@ class AuxiliaryProtocolServiceTest {
     }
 
     @Test
-    @DisplayName("Should start auxiliar numbering at one when no auxiliar deed exists yet")
+    @DisplayName("Should start auxiliary numbering at one when no auxiliary deed exists yet")
     void shouldStartAuxiliaryNumberingAtOne() {
         when(folioRepository.findMaxNumberDeedAuxiliary()).thenReturn(Optional.empty());
 
@@ -70,7 +70,7 @@ class AuxiliaryProtocolServiceTest {
     }
 
     @Test
-    @DisplayName("Should not generate procedure folder for a Auxiliary protocol deed")
+    @DisplayName("Should not generate a procedure folder for an auxiliary-protocol deed")
     void shouldNotGenerateFolderForAuxiliaryDeed() {
         Folio folio = folioAuxiliaryDisponible();
         when(folioRepository.findById(1)).thenReturn(Optional.of(folio));
@@ -83,7 +83,7 @@ class AuxiliaryProtocolServiceTest {
     }
 
     @Test
-    @DisplayName("Should reject starting an deed on a folio that is not auxiliar")
+    @DisplayName("Should reject starting a deed on a folio that is not auxiliary")
     void shouldRejectDeedOnNonAuxiliaryFolio() {
         FolioType principal = new FolioType("Protocolo Principal");
         Folio folio = new Folio();
@@ -96,7 +96,7 @@ class AuxiliaryProtocolServiceTest {
     }
 
     @Test
-    @DisplayName("Should reject starting an deed on an auxiliar folio already linked to another deed")
+    @DisplayName("Should reject starting a deed on an auxiliary folio already linked to another deed")
     void shouldRejectDeedOnAlreadyLinkedFolio() {
         Folio folio = folioAuxiliaryDisponible();
         folio.setFkIdDeed(new Deed(99));
@@ -107,14 +107,14 @@ class AuxiliaryProtocolServiceTest {
     }
 
     @Test
-    @DisplayName("Should reject starting an deed when no idFolio is provided")
+    @DisplayName("Should reject starting a deed when no idFolio is provided")
     void shouldRejectDeedWhenNoFolioIndicated() {
         assertThatThrownBy(() -> auxiliaryProtocolService.startDeed(null, "body", new Date()))
                 .isInstanceOf(BusinessValidationException.class);
     }
 
     @Test
-    @DisplayName("Should reject starting an deed when the indicated folio does not exist")
+    @DisplayName("Should reject starting a deed when the indicated folio does not exist")
     void shouldRejectDeedWhenFolioNotFound() {
         when(folioRepository.findById(99)).thenReturn(Optional.empty());
 

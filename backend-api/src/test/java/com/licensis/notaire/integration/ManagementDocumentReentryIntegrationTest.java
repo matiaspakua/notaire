@@ -180,7 +180,7 @@ class ManagementDocumentReentryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return 400 when the type de documento is not part of the ProcedureTemplate")
+    @DisplayName("Should return 400 when the document type is not part of the ProcedureTemplate")
     void shouldReturn400WhenTypeDocumentNotInTemplate() throws Exception {
         ManagementConProcedure management = createManagementConProcedure(9404);
         DocumentType typeDocument = createDocumentType("Certificado de Dominio CU43-4");

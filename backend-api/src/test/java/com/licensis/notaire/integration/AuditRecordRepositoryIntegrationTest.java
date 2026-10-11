@@ -18,7 +18,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
-@DisplayName("RegistroAuditoriaRepository Integration Tests")
+@DisplayName("AuditRecordRepository integration tests")
 class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
     @Autowired
@@ -47,7 +47,7 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should persist and retrieve registro auditoria")
+    @DisplayName("Should persist and retrieve audit record")
     void shouldPersistAndRetrieveRecord() {
         AuditRecord saved = auditRecordRepository.save(testRecord);
 
@@ -63,7 +63,7 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should find registros by module")
+    @DisplayName("Should find audit records by module")
     void shouldFindByModule() {
         auditRecordRepository.save(testRecord);
 
@@ -75,7 +75,7 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should find registros by user id")
+    @DisplayName("Should find audit records by user id")
     void shouldFindByUserId() {
         auditRecordRepository.save(testRecord);
 
@@ -86,7 +86,7 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should find registros by user id paginated")
+    @DisplayName("Should find audit records by user id paginated")
     void shouldFindByUserIdPaginated() {
         auditRecordRepository.save(testRecord);
 
@@ -105,7 +105,7 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should find all registros with user")
+    @DisplayName("Should find all audit records with user")
     void shouldFindAllWithUser() {
         auditRecordRepository.save(testRecord);
 
@@ -116,7 +116,7 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should find registro by id with user")
+    @DisplayName("Should find an audit record by id with user")
     void shouldFindByIdWithUser() {
         AuditRecord saved = auditRecordRepository.save(testRecord);
 
@@ -130,7 +130,7 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should find registros by user id with user")
+    @DisplayName("Should find audit records by user id with user")
     void shouldFindByUserIdWithUser() {
         auditRecordRepository.save(testRecord);
 
@@ -155,7 +155,7 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should update registro auditoria")
+    @DisplayName("Should update audit record")
     void shouldUpdateRecord() {
         AuditRecord saved = auditRecordRepository.save(testRecord);
 
@@ -169,7 +169,7 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should delete registro auditoria")
+    @DisplayName("Should delete audit record")
     void shouldDeleteRecord() {
         AuditRecord saved = auditRecordRepository.save(testRecord);
 
@@ -181,7 +181,7 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should find all registros")
+    @DisplayName("Should find all audit records")
     void shouldFindAll() {
         auditRecordRepository.save(testRecord);
 

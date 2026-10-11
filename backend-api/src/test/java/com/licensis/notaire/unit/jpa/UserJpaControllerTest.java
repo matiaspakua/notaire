@@ -240,7 +240,7 @@ class UserJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should remove user when not orphans")
+        @DisplayName("should remove the user when there are no orphans")
         void shouldRemoveSuccessfully() throws Exception {
             Integer id = 1;
             User user = new User(id, "u", "p", true, "user");
@@ -316,7 +316,7 @@ class UserJpaControllerTest {
     // -- find methods -----------------------------------------------------
 
     @Nested
-    @DisplayName("findUsuariosEntities")
+    @DisplayName("findUsersEntities")
     class FindUsersEntities {
         @Test
         @DisplayName("should return all")
@@ -347,7 +347,7 @@ class UserJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("findUsuarios")
+    @DisplayName("findUsers")
     class FindUsers {
         @Test
         @DisplayName("should find by id")
@@ -362,7 +362,7 @@ class UserJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("getUsuariosCount")
+    @DisplayName("getUsersCount")
     class GetUsersCount {
         @Test
         @DisplayName("should return count")
@@ -378,7 +378,7 @@ class UserJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("buscarUsuarios")
+    @DisplayName("searchUsers")
     class SearchUsers {
         @Test
         @DisplayName("should use named query")
@@ -396,10 +396,10 @@ class UserJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("findUsuarioByPersona")
+    @DisplayName("findUserByPerson")
     class FindUserByPerson {
         @Test
-        @DisplayName("should return null when idPersona is null")
+        @DisplayName("should return null when idPerson is null")
         void shouldReturnNullWhenNullArg() {
             User result = controller.findUserByPerson(null);
             assertThat(result).isNull();

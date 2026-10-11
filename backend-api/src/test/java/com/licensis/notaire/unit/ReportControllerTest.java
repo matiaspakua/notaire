@@ -78,7 +78,7 @@ class ReportControllerTest {
     }
 
     @Test
-    @DisplayName("Should return 500 and log when lista-documents-tramite report generation fails")
+    @DisplayName("Should return 500 and log when the procedure document-list report fails")
     void shouldReturn500AndLogWhenListaDocumentsProcedureReportFails() throws Exception {
         when(reporteService.generateProcedureDocumentsListReport("Venta")).thenThrow(new RuntimeException("boom"));
 
@@ -103,7 +103,7 @@ class ReportControllerTest {
     }
 
     @Test
-    @DisplayName("CU15 - Should generate the recibo de pago report")
+    @DisplayName("CU15 - Should generate the payment receipt report")
     void shouldGenerateReciboPaymentReport() {
         byte[] pdfBytes = {1, 2, 3};
         when(reporteService.generatePaymentReceiptReport(1)).thenReturn(pdfBytes);

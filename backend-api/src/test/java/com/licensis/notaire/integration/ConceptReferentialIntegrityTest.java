@@ -70,7 +70,7 @@ class ConceptReferentialIntegrityTest {
     }
 
     @Test
-    @DisplayName("Should return inUse=false when not template references the concept")
+    @DisplayName("Should return inUse=false when no template references the concept")
     void shouldReturnInUseFalseWhenConceptIsNotReferenced() throws Exception {
         int id = createConcept("ConceptoFree_InUse");
 

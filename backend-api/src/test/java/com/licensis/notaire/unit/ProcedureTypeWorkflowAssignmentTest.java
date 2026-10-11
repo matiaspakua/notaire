@@ -96,7 +96,7 @@ class ProcedureTypeWorkflowAssignmentTest {
     }
 
     @Test
-    @DisplayName("PUT /api/v1/procedure-types/{id}/workflow should return 404 when tipo not found")
+    @DisplayName("PUT /api/v1/procedure-types/{id}/workflow should return 404 when the procedure type is not found")
     void shouldReturn404WhenTypeNotFound() throws Exception {
         when(repository.findById(99)).thenReturn(Optional.empty());
         mockMvc.perform(put("/api/v1/procedure-types/99/workflow")

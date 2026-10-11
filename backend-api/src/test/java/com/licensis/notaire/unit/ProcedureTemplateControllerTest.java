@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("PlantillaTramiteController unit tests")
+@DisplayName("ProcedureTemplateController unit tests")
 class ProcedureTemplateControllerTest {
 
     @Mock
@@ -60,7 +60,7 @@ class ProcedureTemplateControllerTest {
     }
 
     @Test
-    @DisplayName("GET /procedure-templates/type-tramite/{id} returns list")
+    @DisplayName("GET /procedure-templates/procedure-type/{id} returns list")
     void shouldReturnByTypeProcedure() throws Exception {
         when(repository.findByProcedureTypeIdProcedureType(1)).thenReturn(List.of(buildTemplate(1, 2)));
         mockMvc.perform(get("/api/v1/procedure-templates/procedure-types/1"))
@@ -69,7 +69,7 @@ class ProcedureTemplateControllerTest {
     }
 
     @Test
-    @DisplayName("GET /procedure-templates/{idTipoTramite}/{idDocumentType} returns 200 when found")
+    @DisplayName("GET /procedure-templates/{idProcedureType}/{idDocumentType} returns 200 when found")
     void shouldReturnByCompositeId() throws Exception {
         ProcedureTemplatePK pk = new ProcedureTemplatePK(1, 2);
         when(repository.findById(pk)).thenReturn(Optional.of(buildTemplate(1, 2)));
@@ -78,7 +78,7 @@ class ProcedureTemplateControllerTest {
     }
 
     @Test
-    @DisplayName("GET /procedure-templates/{idTipoTramite}/{idDocumentType} returns 404 when not found")
+    @DisplayName("GET /procedure-templates/{idProcedureType}/{idDocumentType} returns 404 when not found")
     void shouldReturn404WhenNotFound() throws Exception {
         ProcedureTemplatePK pk = new ProcedureTemplatePK(9, 9);
         when(repository.findById(pk)).thenReturn(Optional.empty());
@@ -98,7 +98,7 @@ class ProcedureTemplateControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /procedure-templates/{idTipoTramite}/{idDocumentType} returns 200 when exists")
+    @DisplayName("PUT /procedure-templates/{idProcedureType}/{idDocumentType} returns 200 when exists")
     void shouldUpdateTemplate() throws Exception {
         ProcedureTemplatePK pk = new ProcedureTemplatePK(1, 2);
         ProcedureTemplate pt = buildTemplate(1, 2);
@@ -111,7 +111,7 @@ class ProcedureTemplateControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /procedure-templates/{idTipoTramite}/{idDocumentType} returns 404 when not exists")
+    @DisplayName("PUT /procedure-templates/{idProcedureType}/{idDocumentType} returns 404 when it does not exist")
     void shouldReturn404OnUpdate() throws Exception {
         ProcedureTemplatePK pk = new ProcedureTemplatePK(9, 9);
         when(repository.findById(pk)).thenReturn(Optional.empty());
@@ -122,7 +122,7 @@ class ProcedureTemplateControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /procedure-templates/{idTipoTramite}/{idDocumentType} returns 204 when exists")
+    @DisplayName("DELETE /procedure-templates/{idProcedureType}/{idDocumentType} returns 204 when exists")
     void shouldDeleteTemplate() throws Exception {
         ProcedureTemplatePK pk = new ProcedureTemplatePK(1, 2);
         when(repository.existsById(pk)).thenReturn(true);
@@ -132,7 +132,7 @@ class ProcedureTemplateControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /procedure-templates/{idTipoTramite}/{idDocumentType} returns 404 when not exists")
+    @DisplayName("DELETE /procedure-templates/{idProcedureType}/{idDocumentType} returns 404 when it does not exist")
     void shouldReturn404OnDelete() throws Exception {
         ProcedureTemplatePK pk = new ProcedureTemplatePK(9, 9);
         when(repository.existsById(pk)).thenReturn(false);

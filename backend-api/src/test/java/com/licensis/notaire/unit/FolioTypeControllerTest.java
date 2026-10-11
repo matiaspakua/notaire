@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@DisplayName("TipoDeFolioController unit tests — CU68 Search folio types + integridad referencial")
+@DisplayName("FolioTypeController unit tests — CU68 Search folio types + referential integrity")
 @ExtendWith(MockitoExtension.class)
 class FolioTypeControllerTest {
 
@@ -54,7 +54,7 @@ class FolioTypeControllerTest {
     }
 
     @Test
-    @DisplayName("CU68 — GET /search?name= should return matching tipos de folio")
+    @DisplayName("CU68 — GET /search?name= should return matching folio types")
     void shouldSearchByName() throws Exception {
         when(repository.findByNameContaining("Proto")).thenReturn(List.of(buildEntity()));
         mockMvc.perform(get("/api/v1/folio-types/search").param("name", "Proto"))
@@ -83,7 +83,7 @@ class FolioTypeControllerTest {
     }
 
     @Test
-    @DisplayName("GET /{id}/in-use should return 404 when type de folio does not exist")
+    @DisplayName("GET /{id}/in-use should return 404 when folio type does not exist")
     void shouldReturn404WhenCheckingInUseForMissingType() throws Exception {
         when(repository.existsById(99)).thenReturn(false);
         mockMvc.perform(get("/api/v1/folio-types/99/in-use"))
@@ -91,7 +91,7 @@ class FolioTypeControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /{id} should return 409 when type de folio is in use")
+    @DisplayName("PUT /{id} should return 409 when folio type is in use")
     void shouldReturn409WhenUpdatingInUseType() throws Exception {
         when(repository.findById(1)).thenReturn(Optional.of(buildEntity()));
         when(folioRepository.findByFkIdFolioTypeIdFolioType(1)).thenReturn(List.of(new Folio()));
@@ -106,7 +106,7 @@ class FolioTypeControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /{id} should succeed when type de folio is not in use")
+    @DisplayName("PUT /{id} should succeed when folio type is not in use")
     void shouldUpdateWhenNotInUse() throws Exception {
         FolioType existing = buildEntity();
         when(repository.findById(1)).thenReturn(Optional.of(existing));
@@ -123,7 +123,7 @@ class FolioTypeControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /{id} should return 409 when type de folio is in use")
+    @DisplayName("DELETE /{id} should return 409 when folio type is in use")
     void shouldReturn409WhenDeletingInUseType() throws Exception {
         when(repository.existsById(1)).thenReturn(true);
         when(folioRepository.findByFkIdFolioTypeIdFolioType(1)).thenReturn(List.of(new Folio()));
@@ -133,7 +133,7 @@ class FolioTypeControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /{id} should succeed when type de folio is not in use")
+    @DisplayName("DELETE /{id} should succeed when folio type is not in use")
     void shouldDeleteWhenNotInUse() throws Exception {
         when(repository.existsById(1)).thenReturn(true);
         when(folioRepository.findByFkIdFolioTypeIdFolioType(1)).thenReturn(List.of());
@@ -143,7 +143,7 @@ class FolioTypeControllerTest {
     }
 
     @Test
-    @DisplayName("CU81 — PUT /{id} should mark a type de folio as Protocolo Auxiliar")
+    @DisplayName("CU81 — PUT /{id} should mark a folio type as Protocolo Auxiliar")
     void shouldMarkFolioTypeAsAuxiliary() throws Exception {
         FolioType existing = buildEntity();
         when(repository.findById(1)).thenReturn(Optional.of(existing));

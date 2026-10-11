@@ -30,7 +30,7 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("integration")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Tag("pg-integration")
-@DisplayName("Numeración of procedure folders contra the esquema real (CU85)")
+@DisplayName("Procedure-folder numbering against the real schema (CU85)")
 class ProcedureFolderNumberSequencePgIntegrationTest extends BaseIntegrationTest {
 
     private static final int CONCURRENT_REQUESTS = 20;

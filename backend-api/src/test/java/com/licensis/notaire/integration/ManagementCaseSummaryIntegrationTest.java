@@ -103,7 +103,7 @@ class ManagementCaseSummaryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return the header and an empty deeds list when not procedure has a deed")
+    @DisplayName("Should return the header and an empty deeds list when no procedure has a deed")
     void shouldReturnEmptyDeedsList() throws Exception {
         int idManagement = createManagement((int) (System.nanoTime() % 900_000) + 100_000);
         createProcedure(idManagement, null);

@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("UserController — hashing of contraseñas (issue #554)")
+@DisplayName("UserController — password hashing (issue #554)")
 class UserControllerHashTest {
 
     private static final String LEGACY_MD5_ADMIN = "21232f297a57a5a743894a0e4a801fc3";
@@ -70,7 +70,7 @@ class UserControllerHashTest {
     }
 
     @Test
-    @DisplayName("createUsuario should store a BCrypt-encoded hash, not plaintext or MD5")
+    @DisplayName("createUser should store a BCrypt-encoded hash, not plaintext or MD5")
     void createUserShouldStoreBcryptHash() throws Exception {
         when(passwordEncoder.encode("secret")).thenReturn(BCRYPT_HASH);
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -84,7 +84,7 @@ class UserControllerHashTest {
     }
 
     @Test
-    @DisplayName("updateUsuario should store a BCrypt-encoded hash when password changes")
+    @DisplayName("updateUser should store a BCrypt-encoded hash when password changes")
     void updateUserShouldStoreBcryptHash() throws Exception {
         User existing = new User(1);
         existing.setName("juan");

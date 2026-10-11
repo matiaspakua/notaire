@@ -87,7 +87,7 @@ class RemainingControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("GestionController - CU02/CU13/CU14/CU24/CU25")
+    @DisplayName("ManagementController - CU02/CU13/CU14/CU24/CU25")
     class ManagementTests {
 
         @Test
@@ -116,7 +116,7 @@ class RemainingControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("TramiteController - CU04/CU11")
+    @DisplayName("ProcedureController - CU04/CU11")
     class ProcedureTests {
 
         @Test
@@ -137,7 +137,7 @@ class RemainingControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("PagoController - CU15/CU47")
+    @DisplayName("PaymentController - CU15/CU47")
     class PaymentTests {
 
         @Test
@@ -150,7 +150,7 @@ class RemainingControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("Should return 404 for non-existing pago")
+        @DisplayName("Should return 404 for a missing payment")
         void shouldReturn404ForNonExistingPayment() throws Exception {
             mockMvc.perform(get("/api/v1/payments/9999"))
                     .andExpect(status().isNotFound());
@@ -191,11 +191,11 @@ class RemainingControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("HistorialController - CU09/CU16/CU43/CU48")
+    @DisplayName("HistoryController - CU09/CU16/CU43/CU48")
     class HistoryTests {
 
         @Test
-        @DisplayName("Should return a page of historiales")
+        @DisplayName("Should return a page of history records")
         void shouldReturnAllHistoriales() throws Exception {
             mockMvc.perform(get("/api/v1/history"))
                     .andExpect(status().isOk())
@@ -212,7 +212,7 @@ class RemainingControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("DocumentoPresentadoController - CU42/CU50/CU56")
+    @DisplayName("SubmittedDocumentController - CU42/CU50/CU56")
     class SubmittedDocumentTests {
 
         @Test
@@ -225,7 +225,7 @@ class RemainingControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("Should return 404 for non-existing documento presentado")
+        @DisplayName("Should return 404 for a missing submitted document")
         void shouldReturn404ForNonExistingSubmittedDocument() throws Exception {
             mockMvc.perform(get("/api/v1/submitted-documents/9999"))
                     .andExpect(status().isNotFound());
@@ -233,11 +233,11 @@ class RemainingControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("CopiaController - CU44/CU53")
+    @DisplayName("CopyController - CU44/CU53")
     class CopyTests {
 
         @Test
-        @DisplayName("Should return all copias")
+        @DisplayName("Should return all copies")
         void shouldReturnAllCopies() throws Exception {
             mockMvc.perform(get("/api/v1/copies"))
                     .andExpect(status().isOk())
@@ -246,7 +246,7 @@ class RemainingControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("Should return 404 for non-existing copia")
+        @DisplayName("Should return 404 for a missing copy")
         void shouldReturn404ForNonExistingCopy() throws Exception {
             mockMvc.perform(get("/api/v1/copies/9999"))
                     .andExpect(status().isNotFound());
@@ -275,11 +275,11 @@ class RemainingControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("PlantillaPresupuestoController - CU39/CU49/CU55")
+    @DisplayName("BudgetTemplateController - CU39/CU49/CU55")
     class BudgetTemplateTests {
 
         @Test
-        @DisplayName("CU39 - Should return all plantillas de budget")
+        @DisplayName("CU39 - Should return all budget templates")
         void shouldReturnAllPlantillasBudget() throws Exception {
             mockMvc.perform(get("/api/v1/budget-templates"))
                     .andExpect(status().isOk())
@@ -288,14 +288,14 @@ class RemainingControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("CU39 - Should return 404 for non-existing plantilla")
+        @DisplayName("CU39 - Should return 404 for a missing budget template")
         void shouldReturn404ForNonExistingTemplate() throws Exception {
             mockMvc.perform(get("/api/v1/budget-templates/9999"))
                     .andExpect(status().isNotFound());
         }
 
         @Test
-        @DisplayName("CU49 - Should return 404 for non-existing plantilla de budget")
+        @DisplayName("CU49 - Should return 404 for a missing budget template")
         void shouldReturn404ForNonExistingBudgetTemplate() throws Exception {
             mockMvc.perform(get("/api/v1/budget-templates/9999"))
                     .andExpect(status().isNotFound());
@@ -303,7 +303,7 @@ class RemainingControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("PlantillaTramiteController - CU25/CU33")
+    @DisplayName("ProcedureTemplateController - CU25/CU33")
     class ProcedureTemplateTests {
 
         @Test

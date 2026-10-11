@@ -145,7 +145,7 @@ class ManagementCaseSummaryServiceTest {
     }
 
     @Test
-    @DisplayName("Should return not deeds when not procedure has one")
+    @DisplayName("Should return no deeds when no procedure has one")
     void shouldReturnEmptyDeedsWhenNoneExists() {
         givenProcedures(new Procedure(1));
 

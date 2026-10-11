@@ -33,7 +33,7 @@ class ReportesUseCaseIntegrationTest {
     // --- Simple PDF endpoints (no DB connection needed) ---
 
     @Test
-    @DisplayName("CU24: libro of índice returns valid PDF bytes")
+    @DisplayName("CU24: the index book returns valid PDF bytes")
     void shouldGenerateLibroIndicePdf() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/v1/reports/index-book")
                         .param("year", "2026"))
@@ -47,7 +47,7 @@ class ReportesUseCaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("CU25: declaracion jurada mensual returns valid PDF bytes")
+    @DisplayName("CU25: monthly sworn statement returns valid PDF bytes")
     void shouldGenerateDeclaracionJuradaMensualPdf() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement")
                         .param("year", "2026")
@@ -62,7 +62,7 @@ class ReportesUseCaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("CU50: declaracion jurada de rentas returns valid PDF bytes")
+    @DisplayName("CU50: tax sworn statement returns valid PDF bytes")
     void shouldGenerateDeclaracionJuradaRentasPdf() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/v1/reports/tax-sworn-statement")
                         .param("year", "2026")
@@ -131,14 +131,14 @@ class ReportesUseCaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("CU01/CU45: budget-inmuebles endpoint handles missing data gracefully")
+    @DisplayName("CU01/CU45: budget-properties endpoint handles missing data gracefully")
     void shouldHandleBudgetPropertiesEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reports/budget-properties/99999"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("CU03: lista-documents-tramite endpoint handles unknown procedure gracefully")
+    @DisplayName("CU03: lista-procedure-documents endpoint handles unknown procedure gracefully")
     void shouldHandleListaDocumentsProcedureEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reports/procedure-document-list")
                         .param("procedureTypeName", "TramiteQueNoExiste"))
@@ -146,21 +146,21 @@ class ReportesUseCaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("CU13: history-gestion endpoint handles missing management gracefully")
+    @DisplayName("CU13: management-history endpoint handles missing management gracefully")
     void shouldHandleHistoryManagementEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reports/management-history/99999"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("CU42: documents-por-vencer endpoint handles missing document gracefully")
+    @DisplayName("CU42: documents-due endpoint handles missing document gracefully")
     void shouldHandleDocumentsPorVencerEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reports/documents-due/99999"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("CU09: consultar-deuda-documents endpoint handles missing management gracefully")
+    @DisplayName("CU09: document-debt endpoint handles a missing management gracefully")
     void shouldHandleConsultarDebtDocumentsEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reports/document-debt")
                         .param("numberManagement", "99999"))
