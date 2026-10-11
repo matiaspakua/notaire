@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Constraint-error use-case citation** (#1490, CU75): the record cites
+  `CU07 – Testimonio`. The titles `Movimientos de testimonio` and
+  `Personas` stay. The proposal heading `Objetivo` stays.
 - **Official use-case titles in open change records** (#1490, CU75):
   the people-pagination record cites `CU54 – Modificar Persona`. The
   testimony record cites `CU07 – Generar testimonio` and
