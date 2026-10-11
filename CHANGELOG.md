@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English payment use-case titles in ADR-021** (#1490, CU75): the
+  hexagonal pilot cites `CU15 "Procesar pago"` and
+  `CU47 "Consultar pago"`. Class name `PaymentService` stays.
 - **English cleanup comments and role fixture** (#1490, CU75): the
   cleanup comments name `people`, `deed_managements`, and `deeds`. The
   role description is `Administrator`. The synthetic role name is
