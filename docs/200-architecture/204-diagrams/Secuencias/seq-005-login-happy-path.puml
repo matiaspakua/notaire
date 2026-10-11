@@ -4,36 +4,36 @@ title TC-LOGIN-01: Happy Path — Valid Credentials Return JWT Token
 
 actor "User" as User
 participant "Frontend" as FE
-participant "UsuarioController" as Ctrl
+participant "UserController" as Ctrl
 participant "LoginAttemptService" as LAS
-participant "UsuarioRepository" as Repo
+participant "UserRepository" as Repo
 participant "PasswordEncoder" as PE
 participant "JwtTokenService" as JWT
 participant "MetricsUtil" as Metrics
 
-User -> FE: Enter credentials (nombre, contrasenia)
-FE -> Ctrl: POST /api/v1/usuarios/login
+User -> FE: Enter credentials (name, password)
+FE -> Ctrl: POST /api/v1/users/login
 activate Ctrl
 
-Ctrl -> LAS: isLocked(nombre)
+Ctrl -> LAS: isLocked(name)
 activate LAS
 LAS --> Ctrl: false (not locked)
 deactivate LAS
 
 Ctrl -> Repo: findAll()
 activate Repo
-Repo --> Ctrl: List<Usuario>
+Repo --> Ctrl: List<User>
 deactivate Repo
 
-Ctrl -> Ctrl: Iterate usuarios, find by nombre (case-insensitive)
+Ctrl -> Ctrl: Iterate users, find by name (case-insensitive)
 activate Ctrl
-Ctrl -> PE: matches(contrasenia, usuario)
+Ctrl -> PE: matches(password, user)
 activate PE
 PE --> Ctrl: true
 deactivate PE
 deactivate Ctrl
 
-Ctrl -> LAS: onLoginSucceeded(nombre)
+Ctrl -> LAS: onLoginSucceeded(name)
 activate LAS
 LAS --> Ctrl: void
 deactivate LAS
@@ -43,12 +43,12 @@ activate Metrics
 Metrics --> Ctrl: void
 deactivate Metrics
 
-Ctrl -> JWT: generateToken(nombre)
+Ctrl -> JWT: generateToken(name)
 activate JWT
 JWT --> Ctrl: signed JWT token
 deactivate JWT
 
-Ctrl --> FE: 200 OK {valido: true, token: "...", ...}
+Ctrl --> FE: 200 OK {valid: true, token: "...", ...}
 deactivate Ctrl
 
 FE -> User: Store token, redirect to dashboard

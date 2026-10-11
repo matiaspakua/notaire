@@ -23,8 +23,8 @@ package "CU-78 Requirements" {
 package "Test Cases" {
   package "Integration Tests" {
     [TC-LOGIN-01: Valid credentials\nreturn JWT token] as TC01
-    [TC-LOGIN-02: Wrong password\nreturn valido=false] as TC02
-    [TC-LOGIN-03: Unknown user\nreturn valido=false] as TC03
+    [TC-LOGIN-02: Wrong password\nreturn valid=false] as TC02
+    [TC-LOGIN-03: Unknown user\nreturn valid=false] as TC03
     [TC-LOGIN-04: Locked account\nreturn 429] as TC04
     [TC-LOGIN-05: Expired JWT\ntoken rejected] as TC05
     [TC-LOGIN-06: Invalid JWT\ntoken rejected] as TC06

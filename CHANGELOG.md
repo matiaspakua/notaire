@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English login sequences** (#1490, CU75):
+  The seven login diagrams call `UserController` at `POST /api/v1/users/login`
+  and `GET /api/v1/users`. The JSON field is `valid`. The lockout message is
+  `Account temporarily locked after too many failed attempts.` CU titles in
+  the other sequence files stay.
 - **English architecture diagrams** (#1490, CU75):
   The core model, package diagram, target architecture, and legacy Swing
   diagram name `DeedManagement`, `Person`, `Budget`, `adapter.in.web`, and
