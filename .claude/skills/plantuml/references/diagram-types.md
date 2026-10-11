@@ -51,9 +51,9 @@ and API/DTO shapes.
 @startuml
 class Person {
   -id: Long
-  -nombre: String
-  -dni: String
-  +getNombre(): String
+  -name: String
+  -documentNumber: String
+  +getName(): String
 }
 
 interface Auditable {
@@ -64,16 +64,16 @@ abstract class BaseEntity {
   #id: Long
 }
 
-enum EstadoEscritura {
-  BORRADOR
-  FIRMADA
-  ANULADA
+enum DeedStatus {
+  DRAFT
+  SIGNED
+  VOID
 }
 
 Person --|> BaseEntity
 Person ..|> Auditable
-Person "1" --> "0..*" Deed : otorga
-Deed --> EstadoEscritura
+Person "1" --> "0..*" Deed : grants
+Deed --> DeedStatus
 @enduml
 ```
 
@@ -101,11 +101,11 @@ useful for illustrating one concrete example of a data structure.
 
 ```plantuml
 @startuml
-object persona1
-persona1 : nombre = "Ana García"
-object escritura1
-escritura1 : estado = FIRMADA
-persona1 --> escritura1
+object person1
+person1 : name = "Ana García"
+object deed1
+deed1 : status = SIGNED
+person1 --> deed1
 @enduml
 ```
 
@@ -124,11 +124,11 @@ database "PostgreSQL" as DB
 
 User -> C: POST /api/v1/deeds
 activate C
-C -> S: crear(dto)
+C -> S: create(dto)
 activate S
-S -> DB: INSERT INTO escrituras
+S -> DB: INSERT INTO deeds
 DB --> S: id
-S --> C: EscrituraDTO
+S --> C: DeedDto
 deactivate S
 C --> User: 201 Created
 deactivate C
@@ -183,7 +183,7 @@ modern (post-2013) syntax below, not the old `(*)`/arrow syntax.
 start
 :Receive request;
 if (Documents complete?) then (yes)
-  :Draft escritura;
+  :Draft the deed;
   fork
     :Notify client;
   fork again
@@ -193,7 +193,7 @@ else (no)
   :Request missing documents;
   stop
 endif
-:Sign escritura;
+:Sign the deed;
 stop
 @enduml
 ```
@@ -285,16 +285,16 @@ arrows. This directly mirrors a relational schema (PK/FK, cardinality).
 entity Person {
   * id : bigint <<PK>>
   --
-  nombre : varchar
-  dni : varchar
+  name : varchar
+  document_number : varchar
 }
 entity Deed {
   * id : bigint <<PK>>
   --
-  * persona_id : bigint <<FK>>
-  fecha : date
+  * person_id : bigint <<FK>>
+  deed_date : date
 }
-Person ||--o{ Deed : otorga
+Person ||--o{ Deed : grants
 @enduml
 ```
 
@@ -454,8 +454,8 @@ documenting a config file, API payload shape, or DTO example.
 @startjson
 {
   "id": 42,
-  "estado": "FIRMADA",
-  "persona": {"nombre": "Ana García", "dni": "12345678A"}
+  "status": "SIGNED",
+  "person": {"name": "Ana García", "documentNumber": "12345678A"}
 }
 @endjson
 ```

@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English diagram and workflow samples** (#1490, CU75):
+  The PlantUML skill examples use `Person`, `Deed`, `deeds`, and `DeedDto`.
+  The workflow skill sample is `users.spec.ts` and `User authentication`.
+  The person name `Ana García` stays. The required heading `Use Case (Caso de Uso)` stays.
 - **English testimony labels** (#1490, CU75):
   The English catalog says `Testimonies`, `Generate testimony`, and
   `No testimonies registered`. Message keys stay `testimonios`. The Spanish
