@@ -19,7 +19,7 @@ const controls = [
   },
   {
     title: "Sec by Design",
-    body: "Threat model, security requirements, policy-as-code, and a failing secret scan. Program: CYBERSECURITY-PROGRAM.md (#307).",
+    body: "Threat model, security case catalog, policy-as-code, and local gates before a pull request. Program: CYBERSECURITY-PROGRAM.md (#307, #1500).",
   },
 ];
 

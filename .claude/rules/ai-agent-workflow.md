@@ -18,7 +18,7 @@ CONSTITUTION §10.
 | 13–15 Test | Unit + integration + coverage, Bruno API, Playwright for any UI change | `mvn verify -pl backend-api`; `bash testing/scripts/test.sh`; `cd testing/e2e && npx playwright test` |
 | 16 Docs (**Gate 3**) | Update permanent docs; move outdated ones to `docs/000-archive/` | CONSTITUTION §8 |
 | 17 Atomic commits | One logical change per commit, Conventional Commits. Only the commit that completes the Issue carries `Closes #<n>`; the others carry `Refs #<n>` | `.claude/rules/general.md` rule 6.1 |
-| 17.5 Pipeline | Must exit 0 before the PR | `bash workspace/sdlc/run_pipeline.sh` |
+| 17.5 Pipeline | Must exit 0 before the PR. Includes the security case catalog | `bash workspace/sdlc/run_pipeline.sh` (`python3 security/run_gates.py --profile local`) |
 | 18 PR | Title `[#<n>] <type>: <description>`, body from `.github/PULL_REQUEST_TEMPLATE.md` | `gh pr create`; then `gh pr view <n> --json mergeable,mergeStateStatus` must be `MERGEABLE` |
 | 19 CI green | Fix red CI before asking for review | `bash workspace/sdlc/preflight.sh` mirrors CI locally |
 | 20–21 Review + merge (**Gate 4**) | The Owner reviews and merges; agents never merge on their own authority | — |

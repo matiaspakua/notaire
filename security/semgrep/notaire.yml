@@ -1,0 +1,36 @@
+rules:
+  - id: notaire-log-password-value
+    languages: [java]
+    severity: ERROR
+    message: Do not pass a password value into a log call.
+    metadata:
+      cwe: "CWE-532: Insertion of Sensitive Information into Log File"
+      security-case: SEC-SAST-01
+      category: security
+    pattern-either:
+      - pattern: $LOG.info($X.getPassword())
+      - pattern: $LOG.info($MSG, $X.getPassword())
+      - pattern: $LOG.debug($X.getPassword())
+      - pattern: $LOG.debug($MSG, $X.getPassword())
+      - pattern: $LOG.warn($X.getPassword())
+      - pattern: $LOG.warn($MSG, $X.getPassword())
+      - pattern: $LOG.error($X.getPassword())
+      - pattern: $LOG.error($MSG, $X.getPassword())
+      - pattern: $LOG.trace($X.getPassword())
+      - pattern: $LOG.trace($MSG, $X.getPassword())
+
+  - id: notaire-localstorage-credential
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: Do not store a credential in localStorage or sessionStorage. Browser sessions use the HttpOnly cookie.
+    metadata:
+      cwe: "CWE-922: Insecure Storage of Sensitive Information"
+      security-case: SEC-SAST-01
+      category: security
+    patterns:
+      - pattern-either:
+          - pattern: localStorage.setItem($KEY, $VAL)
+          - pattern: sessionStorage.setItem($KEY, $VAL)
+      - metavariable-regex:
+          metavariable: $KEY
+          regex: (?i)^['\"]?(token|access_token|accessToken|jwt|password|secret)['\"]?$

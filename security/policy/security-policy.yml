@@ -6,11 +6,17 @@ owner: Oficial de Seguridad
 review_cadence: quarterly
 tools:
   sast: codeql
+  sast_local: semgrep
   sca: trivy
   secrets: security/scan_secrets.py
   dast: zap
+  dast_local: security/dast_baseline.py
   sbom: trivy-cyclonedx
   signing: cosign
+local_gates:
+  command: python3 security/run_gates.py --profile local
+  cases: security/cases/catalog.yml
+  pipeline: workspace/sdlc/run_pipeline.sh
 severity_sla:
   critical_days: 7
   high_days: 30

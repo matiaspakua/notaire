@@ -362,8 +362,10 @@ bash security/enable-gh-secure.sh --apply    # needs admin or maintain
    required beside it (see [SECURITY-TOOLS.md](../206-security/SECURITY-TOOLS.md))
 3. Add dependency review action
 4. Secret scanning is enforced by `python3 security/scan_secrets.py` (Gitleaks
-   rule families, no extra binary). GitHub push protection remains the admin
-   setting above
+   rule families, no extra binary). The security case catalog
+   (`python3 security/run_gates.py --profile local`, issue #1500) adds Semgrep,
+   a local Trivy run, and the DAST baseline before the pull request. GitHub
+   push protection remains the admin setting above
 5. Implement SLSA provenance attestation
 6. Enable backup→restore→smoke execution when #256 ships `infra/scripts/backup-postgres.sh`
 
