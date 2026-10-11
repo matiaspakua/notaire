@@ -96,7 +96,7 @@ public class ItemService {
 
         if (requiresReason && reasonEmpty) {
             throw new BusinessValidationException(
-                    "The motivo is required for items of tipo " + type);
+                    "The reason is required for items of type " + type);
         }
     }
 }

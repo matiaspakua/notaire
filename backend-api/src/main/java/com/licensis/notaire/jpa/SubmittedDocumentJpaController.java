@@ -108,7 +108,7 @@ public class SubmittedDocumentJpaController implements Serializable, JpaPersiste
 
             if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
             {
-                throw new ClassModifiedException("The document indicado has been modificado by another user");
+                throw new ClassModifiedException("The indicated document has been modified by another user");
 
             } else
             {
@@ -145,7 +145,7 @@ public class SubmittedDocumentJpaController implements Serializable, JpaPersiste
                         Integer id = submittedDocument.getIdSubmittedDocument();
                         if (findSubmittedDocument(id) == null)
                         {
-                            throw new NonexistentEntityException("The documentoPresentado with id " + id + " no longer exists.");
+                            throw new NonexistentEntityException("The submitted document with id " + id + " no longer exists.");
                         }
                     }
                     throw ex;
@@ -172,7 +172,7 @@ public class SubmittedDocumentJpaController implements Serializable, JpaPersiste
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The documentoPresentado with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The submitted document with id " + id + " no longer exists.", enfe);
             }
             Procedure fkIdProcedure = submittedDocument.getFkIdProcedure();
             if (fkIdProcedure != null)

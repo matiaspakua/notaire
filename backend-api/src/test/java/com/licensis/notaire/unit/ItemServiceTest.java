@@ -90,7 +90,7 @@ class ItemServiceTest {
 
         assertThatThrownBy(() -> itemService.create(item))
                 .isInstanceOf(BusinessValidationException.class)
-                .hasMessageContaining("motivo");
+                .hasMessageContaining("reason");
     }
 
     @Test
@@ -100,7 +100,7 @@ class ItemServiceTest {
 
         assertThatThrownBy(() -> itemService.create(item))
                 .isInstanceOf(BusinessValidationException.class)
-                .hasMessageContaining("motivo");
+                .hasMessageContaining("reason");
     }
 
     @Test

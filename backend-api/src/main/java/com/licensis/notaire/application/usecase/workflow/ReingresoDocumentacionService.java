@@ -79,7 +79,7 @@ public class ReingresoDocumentacionService {
         DeedManagement management = procedure.getFkIdManagement();
         if (management == null || !idManagement.equals(management.getIdManagement())) {
             throw new BusinessValidationException(
-                    "The procedure " + procedure.getIdProcedure() + " not belongs to the management " + idManagement);
+                    "The procedure " + procedure.getIdProcedure() + " does not belong to management " + idManagement);
         }
     }
 
@@ -88,8 +88,8 @@ public class ReingresoDocumentacionService {
         ProcedureTemplatePK pk = new ProcedureTemplatePK(idProcedureType, idDocumentType);
         ProcedureTemplate template = procedureTemplateRepository.findById(pk)
                 .orElseThrow(() -> new BusinessValidationException(
-                        "El tipo de documento " + idDocumentType
-                                + " not forma parte of the documentation required of the procedure "
+                        "Document type " + idDocumentType
+                                + " is not part of the documentation required for procedure "
                                 + procedure.getIdProcedure()));
         return template.getDocumentType();
     }
@@ -103,8 +103,8 @@ public class ReingresoDocumentacionService {
         document.setDueDays(typeDocument.getDueDays());
         document.setDeliveredBy(typeDocument.getDeliveredBy());
         document.setReentered(true);
-        // liberado/observado are NOT NULL in Postgres; a freshly reingresado
-        // document starts as neither liberado nor observado.
+        // released/flagged are NOT NULL in Postgres; a freshly re-entered
+        // document starts as neither released nor flagged.
         document.setReleased(false);
         document.setFlagged(false);
         return document;

@@ -93,7 +93,7 @@ public class ProcedureTemplateController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
     @GetMapping("/{idProcedureType}/{idDocumentType}")
     @Operation(summary = "Get template by key composite (CU55)")
@@ -107,9 +107,9 @@ public class ProcedureTemplateController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Creado"),
+        @ApiResponse(responseCode = "201", description = "Created"),
         @ApiResponse(responseCode = "400", description = "Invalid request"),
-        @ApiResponse(responseCode = "409", description = "Conflicto")
+        @ApiResponse(responseCode = "409", description = "Conflict")
     })
     @PostMapping
     @Operation(summary = "Create procedure template (CU55)")
@@ -129,7 +129,7 @@ public class ProcedureTemplateController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
     @PutMapping("/{idProcedureType}/{idDocumentType}")
     @Operation(summary = "Update procedure template (CU55)")
@@ -145,7 +145,7 @@ public class ProcedureTemplateController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Eliminado"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
     @DeleteMapping("/{idProcedureType}/{idDocumentType}")
     @Operation(summary = "Delete procedure template (CU55)")

@@ -72,7 +72,7 @@ public class JpaAdministrator {
                 return iPersistenciaJpa;
             }
         }
-        throw new NonexistentJpaException("El JPA indicado no existe.");
+        throw new NonexistentJpaException("The indicated JPA does not exist.");
 
     }
 

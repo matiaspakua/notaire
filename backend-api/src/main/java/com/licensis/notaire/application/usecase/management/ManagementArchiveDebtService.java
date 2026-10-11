@@ -103,8 +103,8 @@ public class ManagementArchiveDebtService {
                 procedureFolderRepository.findByFkIdManagementIdManagementAndStatus(idManagement, StatusWait);
         if (!foldersInWait.isEmpty() && !confirmado) {
             throw new FoldersInWaitException(
-                    "The management has procedure folders in espera without resolver; "
-                            + "confirme explícitamente for archivar of all modos",
+                    "The management has procedure folders on hold that are unresolved; "
+                            + "confirm explicitly to archive anyway",
                     foldersInWait);
         }
 

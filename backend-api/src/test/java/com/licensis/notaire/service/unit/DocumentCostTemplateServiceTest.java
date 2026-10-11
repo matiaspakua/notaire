@@ -77,7 +77,7 @@ class DocumentCostTemplateServiceTest {
     void shouldRejectWhenBothFixedAndVariableCostProvided() {
         assertThatThrownBy(() -> documentCostTemplateService.create(1, 1, new java.math.BigDecimal("1500"), new java.math.BigDecimal("5")))
                 .isInstanceOf(BusinessValidationException.class)
-                .hasMessageContaining("exactamente uno");
+                .hasMessageContaining("Exactly one");
     }
 
     @Test
@@ -85,6 +85,6 @@ class DocumentCostTemplateServiceTest {
     void shouldRejectWhenNeitherFixedNorVariableCostProvided() {
         assertThatThrownBy(() -> documentCostTemplateService.create(1, 1, null, null))
                 .isInstanceOf(BusinessValidationException.class)
-                .hasMessageContaining("exactamente uno");
+                .hasMessageContaining("Exactly one");
     }
 }

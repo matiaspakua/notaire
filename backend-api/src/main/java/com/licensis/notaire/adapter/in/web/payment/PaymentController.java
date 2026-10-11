@@ -85,7 +85,7 @@ public class PaymentController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
     @GetMapping("/{id}")
     @Operation(summary = "CU47 - Query payment by ID")
@@ -127,7 +127,7 @@ public class PaymentController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
     @GetMapping("/budget/{idBudget}/status")
     @Operation(summary = "CU47 - Calculate status of payment (SIN_PAGOS, PARCIAL, SALDADO) of a budget")
@@ -159,9 +159,9 @@ public class PaymentController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Creado"),
+        @ApiResponse(responseCode = "201", description = "Created"),
         @ApiResponse(responseCode = "400", description = "Invalid request"),
-        @ApiResponse(responseCode = "409", description = "Conflicto")
+        @ApiResponse(responseCode = "409", description = "Conflict")
     })
     @PostMapping
     @Operation(summary = "CU15 - Procesar pago (JSON body)")
@@ -189,7 +189,7 @@ public class PaymentController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
     @PutMapping("/{id}")
     @Operation(summary = "Editar pago")
@@ -209,7 +209,7 @@ public class PaymentController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Eliminado"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete payment")

@@ -40,11 +40,11 @@ public class RegistrationDraftService {
 
     public RegistrationDraft generate(Integer idDeed) {
         Deed deed = deedRepository.findById(idDeed)
-                .orElseThrow(() -> new ResourceNotFoundException("There is no the deed with ID: " + idDeed));
+                .orElseThrow(() -> new ResourceNotFoundException("Deed not found with ID: " + idDeed));
 
         if (!BusinessConstants.DeedFIRMADA.equals(deed.getStatus())) {
             throw new BusinessValidationException(
-                    "The deed must be firmada for generate the registration draft");
+                    "The deed must be in status 'Firmada' to generate the registration draft");
         }
 
         Property property = findProcedureProperty(idDeed);
@@ -68,28 +68,28 @@ public class RegistrationDraftService {
     }
 
     private void validateCompleteData(Property property) {
-        List<String> faltantes = new ArrayList<>();
+        List<String> missing = new ArrayList<>();
         if (isEmptyValue(property.getCadastralDesignation())) {
-            faltantes.add("cadastral nomenclature");
+            missing.add("cadastral nomenclature");
         }
         if (property.getFiscalAppraisal() == null) {
-            faltantes.add("valuación fiscal");
+            missing.add("fiscal appraisal");
         }
         if (isEmptyValue(property.getAddress())) {
-            faltantes.add("domicilio");
+            missing.add("address");
         }
         if (isEmptyValue(property.getRegistrationNumber())) {
-            faltantes.add("matrícula");
+            missing.add("registration number");
         }
         if (isEmptyValue(property.getVolumeFolioLandRecord())) {
-            faltantes.add("tomo/folios/finca");
+            missing.add("volume/folios/parcel");
         }
         if (isEmptyValue(property.getBoundaries())) {
-            faltantes.add("linderos");
+            missing.add("boundaries");
         }
-        if (!faltantes.isEmpty()) {
+        if (!missing.isEmpty()) {
             throw new BusinessValidationException(
-                    "Faltan datos catastrales/registrales of the property: " + String.join(", ", faltantes));
+                    "Missing cadastral/registry data for the property: " + String.join(", ", missing));
         }
     }
 
@@ -112,7 +112,7 @@ public class RegistrationDraftService {
         RegistrationDraft draft = searchDraft(id);
         if (!BusinessConstants.RegistrationDraftGENERADA.equals(draft.getStatus())) {
             throw new BusinessValidationException(
-                    "The minuta must be in status Generada for record the presentación");
+                    "The registration draft must be in status Generada to record the submission");
         }
         draft.setDateSubmission(dateSubmission);
         draft.setRegistryEntryNumber(registryEntryNumber);
@@ -124,7 +124,7 @@ public class RegistrationDraftService {
         RegistrationDraft draft = searchDraft(id);
         if (!BusinessConstants.RegistrationDraftPRESENTADA.equals(draft.getStatus())) {
             throw new BusinessValidationException(
-                    "The minuta must be presented for record a observation of the Registro");
+                    "The registration draft must be submitted to record a registry observation");
         }
         draft.setRegistryNotes(registryNotes);
         draft.setDateCorrection(dateCorrection);
@@ -136,7 +136,7 @@ public class RegistrationDraftService {
         RegistrationDraft draft = searchDraft(id);
         if (!BusinessConstants.RegistrationDraftPRESENTADA.equals(draft.getStatus())) {
             throw new BusinessValidationException(
-                    "The minuta must be presented for record the registration definitiva");
+                    "The registration draft must be submitted to record the final registration");
         }
         draft.setDateReception(dateReception);
         draft.setFinalRegistrationNumber(finalRegistrationNumber);
@@ -146,6 +146,6 @@ public class RegistrationDraftService {
 
     private RegistrationDraft searchDraft(Integer id) {
         return registrationDraftRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("There is no the registration draft with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Registration draft not found with ID: " + id));
     }
 }

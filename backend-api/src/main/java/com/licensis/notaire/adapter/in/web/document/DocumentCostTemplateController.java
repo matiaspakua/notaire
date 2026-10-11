@@ -60,7 +60,7 @@ public class DocumentCostTemplateController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Creado"),
+        @ApiResponse(responseCode = "201", description = "Created"),
         @ApiResponse(responseCode = "400", description = "Invalid request"),
         @ApiResponse(responseCode = "404", description = "Procedure type or document not found")
     })

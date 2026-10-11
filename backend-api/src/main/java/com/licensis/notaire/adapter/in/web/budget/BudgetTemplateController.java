@@ -134,9 +134,9 @@ public class BudgetTemplateController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "201", description = "Created"),
     @ApiResponse(responseCode = "400", description = "Invalid request"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
     @Operation(summary = "Create budget template")
@@ -230,7 +230,7 @@ public class BudgetTemplateController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Eliminado"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
     @DeleteMapping("/procedure-types/{idProcedureType}/concept/{idConcept}")
     @Operation(summary = "Delete budget template")

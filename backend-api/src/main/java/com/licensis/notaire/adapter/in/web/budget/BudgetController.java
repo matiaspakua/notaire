@@ -177,7 +177,7 @@ public class BudgetController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
     @Operation(summary = "Get budget by ID")
@@ -191,7 +191,7 @@ public class BudgetController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}/summary")
     @Operation(summary = "CU47 - Get financial summary of a budget (total, balance and payments)")
@@ -224,9 +224,9 @@ public class BudgetController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "201", description = "Created"),
     @ApiResponse(responseCode = "400", description = "Invalid request"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
     @Operation(summary = "Create budget")
@@ -240,7 +240,7 @@ public class BudgetController {
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
     @ApiResponse(responseCode = "400", description = "Invalid request (p. ej. status outside the vocabulary)"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Update budget")
@@ -260,7 +260,7 @@ public class BudgetController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete budget")
@@ -290,10 +290,10 @@ public class BudgetController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "Budget or item of catálogo not found")
+    @ApiResponse(responseCode = "404", description = "Budget or catalog item not found")
 })
     @PostMapping("/{id}/items-from-catalog")
-    @Operation(summary = "CU71 - Add to the budget copies of items existentes of the catálogo")
+    @Operation(summary = "CU71 - Add catalog item copies to the budget")
     public ResponseEntity<List<ItemResponse>> addItemsFromCatalog(
             @PathVariable Integer id,
             @RequestBody List<Integer> idItems) {

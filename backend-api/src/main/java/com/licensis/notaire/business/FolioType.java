@@ -221,7 +221,7 @@ public class FolioType implements Serializable, Persistable<Integer>
             this.setVersion(dtoFolioType.getVersion());
         } else
         {
-            throw new InvalidDtoException("El dto indicado no es valid.");
+            throw new InvalidDtoException("The indicated DTO is not valid.");
         }
 
     }

@@ -70,7 +70,7 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
             }
 
             if (this.verifyManagementStatusExists(managementStatus.getName())) {
-                throw new PreexistingEntityException("La entidad ya existe");
+                throw new PreexistingEntityException("The entity already exists");
             }
 
             em.getTransaction().commit();

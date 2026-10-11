@@ -44,7 +44,7 @@ public class TestimonyGenerationVerificationService {
 
         if (!BusinessConstants.DeedFIRMADA.equals(deed.getStatus())) {
             throw new BusinessValidationException(
-                    "The deed must be in status 'Firmada' for generate its testimony");
+                    "The deed must be in status 'Firmada' to generate its testimony");
         }
 
         Testimony testimony = new Testimony();

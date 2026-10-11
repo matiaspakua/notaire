@@ -41,6 +41,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English validation messages and API descriptions** (#1490, CU75): exception
+  and validation text, PDF labels, and OpenAPI response descriptions (`Not found`,
+  `Created`, `Conflict`) are English. The status log parameter is `statusLog`.
+  External-entity document locals use `detail` and `registerMutation`. Stored
+  labels stay, including folio status `Asignado a cuaderno`, damaged statuses
+  `Errose` and `no pasó`, and `Protocolo Auxiliar`. Message catalog keys stay.
 - **English copy dates and testimony-movement handlers** (#1490, CU75): the copy
   form uses `datePrinting` and `dateWithdrawal`. Testimony movement handlers
   use enter, register, withdraw, and re-enter. Document re-entry posts

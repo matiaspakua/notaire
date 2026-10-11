@@ -155,7 +155,7 @@ class AdministradorJpaTest {
             assertThatThrownBy(() ->
                     JpaAdministrator.getInstancia().getJpa("NonExistentJpa"))
                     .isInstanceOf(NonexistentJpaException.class)
-                    .hasMessage("El JPA indicado no existe.");
+                    .hasMessage("The indicated JPA does not exist.");
         }
     }
 

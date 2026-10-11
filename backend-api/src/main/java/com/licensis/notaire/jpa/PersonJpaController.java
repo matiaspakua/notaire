@@ -749,7 +749,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
 
             if (version != oldVersion) // Si son distintas "Alguien modifico el objeto"
             {
-                throw new ClassModifiedException("La persona indicada ya ha sido modificada");
+                throw new ClassModifiedException("The indicated person has already been modified");
             } else {
                 try {
 
@@ -778,7 +778,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
             }
         } else // If was eliminado dispara a excepcion
         {
-            throw new ClassEliminatedException("La persona indicada ha sido eliminada");
+            throw new ClassEliminatedException("The indicated person has been deleted");
         }
         return flag;
     }
@@ -818,7 +818,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
             }
         } else // If was eliminado dispara a excepcion
         {
-            throw new NonexistentEntityException("No existe la persona indicada");
+            throw new NonexistentEntityException("The indicated person does not exist");
         }
         return resultado;
     }
@@ -839,7 +839,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
 
             if (version != oldVersion) // Si son distintas "Alguien modifico el objeto"
             {
-                throw new ClassModifiedException("El cliente indicado ya ha sido modificado");
+                throw new ClassModifiedException("The indicated client has already been modified");
 
             } else {
                 try {
@@ -877,7 +877,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
             }
         } else // If was eliminado dispara a excepcion
         {
-            throw new ClassEliminatedException("El cliente indicado ha sido eliminado o no existe");
+            throw new ClassEliminatedException("The indicated client has been deleted or does not exist");
         }
         return flag;
     }

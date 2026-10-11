@@ -112,7 +112,7 @@ class TransitionManagementUseCaseTest {
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("is not allowed");
 
-        // Verify bitacora was not called
+        // Verify the status log was not called
         assertThat(fakeBitacora.wasStatusRegistered(1)).isFalse();
     }
 

@@ -72,7 +72,7 @@ public class NotebookController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
     @GetMapping("/{id}")
     @Operation(summary = "Get notebook by ID")
@@ -84,7 +84,7 @@ public class NotebookController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Creado"),
+        @ApiResponse(responseCode = "201", description = "Created"),
         @ApiResponse(responseCode = "400", description = "Invalid request"),
         @ApiResponse(responseCode = "404", description = "Notary or folio not found"),
         @ApiResponse(responseCode = "409", description = "A notebook already exists with that number for the year and notary")

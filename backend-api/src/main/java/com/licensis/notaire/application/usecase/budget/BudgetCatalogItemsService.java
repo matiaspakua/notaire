@@ -41,7 +41,7 @@ public class BudgetCatalogItemsService {
     private Item copyItemFromCatalog(Budget budget, Integer idItem) {
         Item catalogItem = itemRepository.findById(idItem)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Item of catálogo not found with ID: " + idItem));
+                        "Catalog item not found with ID: " + idItem));
 
         Item copy = new Item();
         copy.setName(catalogItem.getName());

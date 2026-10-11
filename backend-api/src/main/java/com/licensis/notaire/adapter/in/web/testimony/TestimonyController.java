@@ -150,7 +150,7 @@ public class TestimonyController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
     @Operation(summary = "Get testimony by ID")
@@ -162,10 +162,10 @@ public class TestimonyController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "201", description = "Created"),
     @ApiResponse(responseCode = "400", description = "Invalid request (falta the deed or its idDeed)"),
     @ApiResponse(responseCode = "404", description = "Deed no encontrada"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
     @Operation(summary = "Create testimony")
@@ -191,7 +191,7 @@ public class TestimonyController {
     @ApiResponse(responseCode = "200", description = "OK"),
     @ApiResponse(responseCode = "400", description = "Cuerpo empty or incompleto: number, flagged, verified and version are "
             + "obligatorios"),
-    @ApiResponse(responseCode = "404", description = "No encontrado"),
+    @ApiResponse(responseCode = "404", description = "Not found"),
     @ApiResponse(responseCode = "409", description = "version is not the stored one: another user modified the testimony")
 })
     @PutMapping("/{id}")
@@ -221,7 +221,7 @@ public class TestimonyController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete testimony")
@@ -239,7 +239,7 @@ public class TestimonyController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "201", description = "Created"),
     @ApiResponse(responseCode = "400", description = "The deed is not in status 'Firmada'"),
     @ApiResponse(responseCode = "404", description = "Deed no encontrada")
 })

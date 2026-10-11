@@ -58,7 +58,7 @@ class NotebookTest {
     }
 
     @Test
-    @DisplayName("Should mark all folios as Assigned a notebook")
+    @DisplayName("Should mark all folios as assigned to a notebook")
     void shouldMarkFoliosAsAsignadoANotebook() {
         List<Folio> folios = new ArrayList<>(List.of(folio(1, 1, "New"), folio(2, 2, "New")));
         Notebook notebook = new Notebook();
@@ -67,7 +67,7 @@ class NotebookTest {
         notebookService.markFoliosAssigned(folios, notebook);
 
         assertThat(folios).allSatisfy(f -> {
-            assertThat(f.getStatus()).isEqualTo("Assigned a notebook");
+            assertThat(f.getStatus()).isEqualTo("Asignado a cuaderno");
             assertThat(f.getFkIdNotebook()).isEqualTo(notebook);
         });
     }

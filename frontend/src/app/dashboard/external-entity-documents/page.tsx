@@ -57,14 +57,14 @@ function DocumentosEntidadesExternasList() {
   useClampPage(paging, managementsPage?.totalPages);
 
   const [selectedManagementId, setSelectedManagementId] = useState<number | null>(null);
-  const { data: detalle, isLoading: isLoadingDetalle } = useExternalEntityDocuments(selectedManagementId ?? undefined);
+  const { data: detail, isLoading: isLoadingDetail } = useExternalEntityDocuments(selectedManagementId ?? undefined);
 
   const [editingDocument, setEditingDocument] = useState<ExternalEntityDocument | null>(null);
   const [movement, setMovement] = useState<ExternalEntityDocumentMovementInput>(emptyMovement);
 
-  const registrarMutation = useRegisterExternalEntityDocumentMovement();
+  const registerMutation = useRegisterExternalEntityDocumentMovement();
 
-  function openEditar(document: ExternalEntityDocument) {
+  function openEdit(document: ExternalEntityDocument) {
     setEditingDocument(document);
     setMovement({
       prepared: document.prepared ?? false,
@@ -83,7 +83,7 @@ function DocumentosEntidadesExternasList() {
   async function handleGuardarMovement() {
     if (!selectedManagementId || !editingDocument) return;
     try {
-      await registrarMutation.mutateAsync({
+      await registerMutation.mutateAsync({
         managementId: selectedManagementId,
         idDocumentPresentado: editingDocument.idSubmittedDocument,
         movement,
@@ -141,7 +141,7 @@ function DocumentosEntidadesExternasList() {
           <Button
             size="sm"
             variant="ghost"
-            onClick={() => openEditar(d)}
+            onClick={() => openEdit(d)}
             aria-label={t("registrarMovimiento")}
             data-testid={`btn-edit-document-${d.idSubmittedDocument}`}
           >
@@ -176,27 +176,27 @@ function DocumentosEntidadesExternasList() {
           <DialogHeader>
             <DialogTitle>{t("detalleTitle")}</DialogTitle>
           </DialogHeader>
-          {detalle && (
+          {detail && (
             <div className="mb-6 grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="font-semibold">{t("fields.numero")}:</span> {detalle.number ?? "—"}
+                <span className="font-semibold">{t("fields.numero")}:</span> {detail.number ?? "—"}
               </div>
               <div>
-                <span className="font-semibold">{t("fields.escribano")}:</span> {detalle.notary ?? "—"}
+                <span className="font-semibold">{t("fields.escribano")}:</span> {detail.notary ?? "—"}
               </div>
               <div>
-                <span className="font-semibold">{t("fields.encabezado")}:</span> {detalle.heading ?? "—"}
+                <span className="font-semibold">{t("fields.encabezado")}:</span> {detail.heading ?? "—"}
               </div>
               <div>
                 <span className="font-semibold">{t("fields.nomenclaturaCatastral")}:</span>{" "}
-                {detalle.cadastralDesignation ?? "—"}
+                {detail.cadastralDesignation ?? "—"}
               </div>
             </div>
           )}
           <DataTable
-            data={detalle?.documents ?? []}
+            data={detail?.documents ?? []}
             columns={documentColumns}
-            isLoading={isLoadingDetalle}
+            isLoading={isLoadingDetail}
             keyExtractor={(d) => d.idSubmittedDocument}
             emptyMessage={t("noDocumentos")}
           />
@@ -292,7 +292,7 @@ function DocumentosEntidadesExternasList() {
               </Button>
               <Button
                 onClick={handleGuardarMovement}
-                disabled={registrarMutation.isPending}
+                disabled={registerMutation.isPending}
                 data-testid="btn-save-movimiento"
               >
                 {tc("save")}

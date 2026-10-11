@@ -75,7 +75,7 @@ public class FolioTypeJpaController implements Serializable, JpaPersistence
 
             if (this.checkFolioTypeExists(folioType.getName()))
             {
-                throw new PreexistingEntityException("El tipo de folio indicado ya existe");
+                throw new PreexistingEntityException("The indicated folio type already exists");
             }
 
             em.getTransaction().commit();
@@ -168,7 +168,7 @@ public class FolioTypeJpaController implements Serializable, JpaPersistence
             }
         } else
         {
-            throw new ClassEliminatedException("El tipo de folio con ID:" + folioType.getIdFolioType() + ", ya no existe");
+            throw new ClassEliminatedException("The folio type with ID:" + folioType.getIdFolioType() + " no longer exists");
         }
 
         return resultado;

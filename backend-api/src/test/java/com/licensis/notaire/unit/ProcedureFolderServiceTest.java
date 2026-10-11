@@ -97,7 +97,7 @@ class ProcedureFolderServiceTest {
     void shouldRejectWaitWithoutReason() {
         assertThatThrownBy(() -> procedureFolderService.ponerEnWait(1, "  "))
                 .isInstanceOf(BusinessValidationException.class)
-                .hasMessageContaining("motivo");
+                .hasMessageContaining("reason");
     }
 
     @Test

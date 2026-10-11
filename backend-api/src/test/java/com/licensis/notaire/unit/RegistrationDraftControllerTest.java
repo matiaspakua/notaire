@@ -100,13 +100,13 @@ class RegistrationDraftControllerTest {
     void shouldRejectGenerationWhenDataIsIncomplete() throws Exception {
         when(registrationDraftService.generate(1))
                 .thenThrow(new BusinessValidationException(
-                        "Faltan datos catastrales/registrales of the property: matrícula"));
+                        "Missing cadastral/registry data for the property: registration number"));
 
         mockMvc.perform(post("/api/v1/registration-drafts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new RegistrationDraftController.GenerateRequest(1))))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Faltan datos catastrales/registrales of the property: matrícula"));
+                .andExpect(jsonPath("$.message").value("Missing cadastral/registry data for the property: registration number"));
     }
 
     @Test

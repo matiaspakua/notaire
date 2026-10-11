@@ -304,7 +304,7 @@ public class UserJpaController implements Serializable, JpaPersistence {
                 oldVersion = pUser.getVersion();
 
                 if (version != oldVersion) {
-                    throw new ClassModifiedException("The user indicado has been modificado by another user");
+                    throw new ClassModifiedException("The indicated user has been modified by another user");
                 } else {
                     em.getTransaction().begin();
                     persistenUser.setName(pUser.getName());
@@ -315,7 +315,7 @@ public class UserJpaController implements Serializable, JpaPersistence {
                     flag = true;
                 }
             } else {
-                throw new ClassEliminatedException("El cliente indicado ya ha sido eliminado con anterioridad");
+                throw new ClassEliminatedException("The indicated client has already been deleted");
             }
         } finally {
             em.close();

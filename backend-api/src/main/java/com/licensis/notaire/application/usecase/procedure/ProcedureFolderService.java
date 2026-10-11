@@ -63,10 +63,10 @@ public class ProcedureFolderService {
     public ProcedureFolder ponerEnWait(Integer idFolder, String reason) {
         if (reason == null || reason.isBlank()) {
             throw new BusinessValidationException(
-                    "The motivo is required for put a folder in espera");
+                    "The reason is required to put a folder on hold");
         }
         ProcedureFolder folder = procedureFolderRepository.findById(idFolder)
-                .orElseThrow(() -> new ResourceNotFoundException("There is no the folder with ID: " + idFolder));
+                .orElseThrow(() -> new ResourceNotFoundException("Folder not found with ID: " + idFolder));
         folder.setStatus(StatusWait);
         folder.setWaitReason(reason);
         return procedureFolderRepository.save(folder);

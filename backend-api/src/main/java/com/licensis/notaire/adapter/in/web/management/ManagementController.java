@@ -298,7 +298,7 @@ public class ManagementController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
     @Operation(summary = "Get management by ID")

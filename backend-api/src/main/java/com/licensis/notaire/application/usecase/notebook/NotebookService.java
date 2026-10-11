@@ -21,8 +21,8 @@ import java.util.Optional;
 public class NotebookService {
 
     private static final int FOLIOS_PER_NOTEBOOK = 10;
-    private static final String StatusAssignedToNotebook = "Assigned a notebook";
-    private static final List<String> DAMAGED_STATUSES = List.of("Errose", "not pasó");
+    private static final String StatusAssignedToNotebook = "Asignado a cuaderno";
+    private static final List<String> DAMAGED_STATUSES = List.of("Errose", "no pasó");
 
     private static final Logger logger = LoggerFactory.getLogger(NotebookService.class);
 
@@ -95,7 +95,7 @@ public class NotebookService {
     private void validateFolioCount(List<Folio> folios) {
         if (folios.isEmpty() || folios.size() % FOLIOS_PER_NOTEBOOK != 0) {
             throw new BusinessValidationException(
-                    "The cantidad of folios must be a múltiplo exacto of " + FOLIOS_PER_NOTEBOOK);
+                    "The number of folios must be an exact multiple of " + FOLIOS_PER_NOTEBOOK);
         }
     }
 
@@ -103,7 +103,7 @@ public class NotebookService {
         boolean allSameNotary = folios.stream()
                 .allMatch(f -> notary.getPersonId().equals(f.getFkIdNotaryPerson().getPersonId()));
         if (!allSameNotary) {
-            throw new BusinessValidationException("All the folios must pertenecer to the mismo registro notarial");
+            throw new BusinessValidationException("All folios must belong to the same notary registry");
         }
     }
 
@@ -113,7 +113,7 @@ public class NotebookService {
             int current = sortedFolios.get(i).getNumber();
             if (current != previous + 1) {
                 throw new BusinessValidationException(
-                        "The folios must be estrictamente consecutive and without faltantes");
+                        "Folios must be strictly consecutive, with none missing");
             }
         }
     }
@@ -129,7 +129,7 @@ public class NotebookService {
         boolean hasDamagedFolio = folios.stream().anyMatch(f -> DAMAGED_STATUSES.contains(f.getStatus()));
         if (hasDamagedFolio && (notes == null || notes.isBlank())) {
             throw new BusinessValidationException(
-                    "A folio dañado or anulado in the lote requires a justificación in notes");
+                    "A damaged or voided folio in the batch requires a justification in notes");
         }
     }
 }

@@ -69,7 +69,7 @@ public class IdentificationTypeController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
     @Operation(summary = "Get identification type by ID")
@@ -82,9 +82,9 @@ public class IdentificationTypeController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "201", description = "Created"),
     @ApiResponse(responseCode = "400", description = "Invalid request"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
     @Operation(summary = "Create identification type")
@@ -102,7 +102,7 @@ public class IdentificationTypeController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Update identification type")
@@ -122,7 +122,7 @@ public class IdentificationTypeController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete identification type")

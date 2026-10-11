@@ -75,10 +75,10 @@ public class HistoryController {
     }
 
     @GetMapping
-    @Operation(summary = "Get the history, a página by vez",
-            description = "Página of Spring Data (by defecto 20 filas, ordenadas by idHistory ascendente). "
-                    + "Usar sort=idHistory,desc for ver primero the cambios more recientes. "
-                    + "El historial completo de una gestión está en GET /api/v1/history/management/{idManagement}.")
+    @Operation(summary = "Get history, one page at a time",
+            description = "Spring Data page (20 rows by default, ordered by idHistory ascending). "
+                    + "Use sort=idHistory,desc to see the most recent changes first. "
+                    + "The full history of a management is at GET /api/v1/history/management/{idManagement}.")
     @Transactional(readOnly = true)
     public ResponseEntity<Page<DtoHistorySummary>> getAll(
             @ParameterObject @PageableDefault(size = 20, sort = "idHistory") Pageable pageable) {
@@ -87,7 +87,7 @@ public class HistoryController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
     @Operation(summary = "Get history by ID")
@@ -109,9 +109,9 @@ public class HistoryController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "201", description = "Created"),
     @ApiResponse(responseCode = "400", description = "Invalid request"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
     @Operation(summary = "Create registro of history")
@@ -132,7 +132,7 @@ public class HistoryController {
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
     @ApiResponse(responseCode = "403", description = "Only a administrador can update the history"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Update history (only administrador)",
@@ -156,7 +156,7 @@ public class HistoryController {
     @ApiResponses({
     @ApiResponse(responseCode = "204", description = "Eliminado"),
     @ApiResponse(responseCode = "403", description = "Only a administrador can delete the history"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete history (only administrador)",

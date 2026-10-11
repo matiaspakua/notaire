@@ -28,16 +28,16 @@ public class TransitionManagementUseCaseImpl implements TransitionManagementUseC
     private final StatusRepositoryPort statusRepository;
     private final WorkflowLookupPort workflowLookup;
     private final WorkflowTransitionValidatorPort transitionValidator;
-    private final ManagementBitacoraPort bitacora;
+    private final ManagementBitacoraPort statusLog;
 
     public TransitionManagementUseCaseImpl(ManagementRepositoryPort managementRepository,
             StatusRepositoryPort statusRepository, WorkflowLookupPort workflowLookup,
-            WorkflowTransitionValidatorPort transitionValidator, ManagementBitacoraPort bitacora) {
+            WorkflowTransitionValidatorPort transitionValidator, ManagementBitacoraPort statusLog) {
         this.managementRepository = managementRepository;
         this.statusRepository = statusRepository;
         this.workflowLookup = workflowLookup;
         this.transitionValidator = transitionValidator;
-        this.bitacora = bitacora;
+        this.statusLog = statusLog;
     }
 
     // Without a transaction, managementRepository.findById(...) returns a DeedManagement whose
@@ -67,7 +67,7 @@ public class TransitionManagementUseCaseImpl implements TransitionManagementUseC
 
         management.setFkIdManagementStatus(destination);
         DeedManagement transitioned = managementRepository.save(management);
-        bitacora.registerStatus(transitioned, null);
+        statusLog.registerStatus(transitioned, null);
         LOG.info("Management {} transitioned to status '{}'", managementId, destination.getName());
 
         return new TransitionManagementOutput(transitioned.getIdManagement());

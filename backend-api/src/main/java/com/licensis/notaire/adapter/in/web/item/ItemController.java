@@ -121,7 +121,7 @@ public class ItemController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
     @Operation(summary = "Get item by ID")
@@ -142,7 +142,7 @@ public class ItemController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/budget/{idBudget}/discounts-surcharges")
     @Operation(summary = "CU45/CU71 - Query discounts and surcharges of a budget")
@@ -157,9 +157,9 @@ public class ItemController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "201", description = "Created"),
     @ApiResponse(responseCode = "400", description = "Invalid request"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
     @Operation(summary = "Create item")
@@ -181,7 +181,7 @@ public class ItemController {
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
     @ApiResponse(responseCode = "400", description = "Invalid request"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Update item")
@@ -205,7 +205,7 @@ public class ItemController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete item")

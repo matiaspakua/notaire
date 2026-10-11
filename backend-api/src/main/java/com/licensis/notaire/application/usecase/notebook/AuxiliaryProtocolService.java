@@ -42,13 +42,13 @@ public class AuxiliaryProtocolService {
         }
 
         Folio folio = folioRepository.findById(idFolio)
-                .orElseThrow(() -> new ResourceNotFoundException("No existe el folio con ID: " + idFolio));
+                .orElseThrow(() -> new ResourceNotFoundException("Folio not found with ID: " + idFolio));
 
         if (!folio.getFkIdFolioType().isIsAuxiliary()) {
-            throw new BusinessValidationException("El folio indicado no pertenece a Protocolo Auxiliar");
+            throw new BusinessValidationException("The indicated folio does not belong to Protocolo Auxiliar");
         }
         if (folio.getFkIdDeed() != null) {
-            throw new BusinessValidationException("The folio indicado already has a deed associated");
+            throw new BusinessValidationException("The indicated folio already has a deed associated");
         }
 
         Deed deed = new Deed();

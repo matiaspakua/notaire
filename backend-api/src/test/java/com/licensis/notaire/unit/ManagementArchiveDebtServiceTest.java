@@ -163,11 +163,11 @@ class ManagementArchiveDebtServiceTest {
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
             when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("0.00"));
             when(managementTransitionService.transition(1, "Archivada"))
-                    .thenThrow(new BusinessValidationException("Transition not permitida"));
+                    .thenThrow(new BusinessValidationException("Transition is not allowed"));
 
             assertThatThrownBy(() -> managementArchiveDebtService.archiving(1))
                     .isInstanceOf(BusinessValidationException.class)
-                    .hasMessageContaining("Transition not permitida");
+                    .hasMessageContaining("Transition is not allowed");
         }
 
         @Test

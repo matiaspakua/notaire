@@ -42,16 +42,16 @@ public class DeedSigningService {
 
         if (!BusinessConstants.DeedSINFIRMAR.equals(deed.getStatus())) {
             throw new BusinessValidationException(
-                    "The deed must be in status 'Sin Firmar' for poder firmarse");
+                    "The deed must be in status 'Sin Firmar' to be signed");
         }
 
         if (!folioRepository.existsByFkIdDeedIdDeed(idDeed)) {
             throw new BusinessValidationException(
-                    "The deed must tener to the menos a folio assigned for poder firmarse");
+                    "The deed must have at least one folio assigned to be signed");
         }
 
         deed.setStatus(BusinessConstants.DeedFIRMADA);
-        log.info("Firmando deed id: {}", idDeed);
+        log.info("Signing deed id: {}", idDeed);
         return deedRepository.save(deed);
     }
 }

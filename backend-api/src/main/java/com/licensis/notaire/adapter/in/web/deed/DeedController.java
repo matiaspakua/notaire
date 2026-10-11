@@ -142,7 +142,7 @@ public class DeedController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
     @Operation(summary = "Get deed by ID")
@@ -155,9 +155,9 @@ public class DeedController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "201", description = "Created"),
     @ApiResponse(responseCode = "400", description = "Invalid request"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
     @Operation(summary = "Create deed")
@@ -172,7 +172,7 @@ public class DeedController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Update deed")
@@ -189,7 +189,7 @@ public class DeedController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete deed")
@@ -229,7 +229,7 @@ public class DeedController {
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
     @ApiResponse(responseCode = "400", description = "The deed is not in status 'Sin Firmar' or does not have folio assigned"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PostMapping("/{id}/sign")
     @Operation(summary = "Firmar deed",

@@ -138,7 +138,7 @@ class AdditionalControllersTest {
             var transitionUseCase = mock(com.licensis.notaire.application.port.in.management.TransitionManagementUseCase.class);
             var transitionWebMapper =
                     mock(com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper.class);
-            var bitacoraService = mock(com.licensis.notaire.application.usecase.management.ManagementBitacoraService.class);
+            var statusLogService = mock(com.licensis.notaire.application.usecase.management.ManagementBitacoraService.class);
             var statusWriteGuard = mock(com.licensis.notaire.application.usecase.management.ManagementStatusWriteGuard.class);
             var documentEntidadExternaService = mock(com.licensis.notaire.application.usecase.document.ExternalEntityDocumentService.class);
             var reingresoDocumentacionService = mock(com.licensis.notaire.application.usecase.workflow.ReingresoDocumentacionService.class);
@@ -152,7 +152,7 @@ class AdditionalControllersTest {
                     mock(com.licensis.notaire.application.usecase.management.ManagementArchiveDebtService.class),
                     mock(com.licensis.notaire.application.usecase.management.ManagementSubstitutionService.class),
                     mock(com.licensis.notaire.application.usecase.management.ManagementResumenFinancieroService.class),
-                    bitacoraService, statusWriteGuard, transitionUseCase, transitionWebMapper,
+                    statusLogService, statusWriteGuard, transitionUseCase, transitionWebMapper,
                     documentEntidadExternaService, reingresoDocumentacionService,
                     mock(com.licensis.notaire.application.usecase.procedure.ProcedureFolderService.class)))
                     .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())

@@ -51,7 +51,7 @@ public class TestimonyMovementController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
     @Operation(summary = "Get testimony movement by ID")
@@ -63,9 +63,9 @@ public class TestimonyMovementController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "201", description = "Created"),
     @ApiResponse(responseCode = "400", description = "Invalid request"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
     @Operation(summary = "Create testimony movement")
@@ -83,7 +83,7 @@ public class TestimonyMovementController {
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
     @ApiResponse(responseCode = "400", description = "Invalid request"),
-    @ApiResponse(responseCode = "404", description = "No encontrado"),
+    @ApiResponse(responseCode = "404", description = "Not found"),
     @ApiResponse(responseCode = "409", description = "version is not the stored one: another user modified the record")
 })
     @PutMapping("/{id}")
@@ -109,7 +109,7 @@ public class TestimonyMovementController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete testimony movement")
@@ -127,7 +127,7 @@ public class TestimonyMovementController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "201", description = "Created"),
     @ApiResponse(responseCode = "400", description = "The testimony is not verified or already has a movimiento abierto"),
     @ApiResponse(responseCode = "404", description = "Testimony not found")
 })
@@ -167,7 +167,7 @@ public class TestimonyMovementController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "201", description = "Created"),
     @ApiResponse(responseCode = "400", description = "The testimony was not retirado previamente, or the reentry observado does not have notes"),
     @ApiResponse(responseCode = "404", description = "Testimony not found")
 })

@@ -2502,7 +2502,7 @@ components:
     SubmittedDocumentCreateRequest:
       properties:
         date:
-          description: 'Fecha de ingreso: un día real con formato yyyy-MM-dd (p. ej. 2026-09-05); otro valor responde 400'
+          description: 'Entry date: a real day in yyyy-MM-dd format (for example 2026-09-05); any other value returns 400'
           type: string
         delivered:
           type: boolean
@@ -2511,12 +2511,12 @@ components:
         name:
           type: string
         procedureId:
-          description: Id of the procedure of the management for the that presenta the document; si no existe la respuesta
-            es 404
+          description: Id of the management procedure this document is submitted for; the response is 404 when it does not
+            exist
           format: int32
           type: integer
         typeId:
-          description: Id de un tipo de documento existente; si no existe la respuesta es 404
+          description: Id of an existing document type; the response is 404 when it does not exist
           format: int32
           type: integer
       required:
@@ -2526,7 +2526,7 @@ components:
     SubmittedDocumentRequest:
       properties:
         date:
-          description: 'Fecha de ingreso: un día real con formato yyyy-MM-dd (p. ej. 2026-09-05); otro valor responde 400'
+          description: 'Entry date: a real day in yyyy-MM-dd format (for example 2026-09-05); any other value returns 400'
           type: string
         delivered:
           type: boolean
@@ -2535,11 +2535,11 @@ components:
         name:
           type: string
         procedureId:
-          description: Id of a procedure existente; if there is no the respuesta is 404
+          description: Id of an existing procedure; the response is 404 when it does not exist
           format: int32
           type: integer
         typeId:
-          description: Id de un tipo de documento existente; si no existe la respuesta es 404
+          description: Id of an existing document type; the response is 404 when it does not exist
           format: int32
           type: integer
       type: object
@@ -2838,7 +2838,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoAuditRecord'
-          description: No encontrado
+          description: Not found
       summary: Get registro of audit by ID
       tags:
       - AuditRecord
@@ -2917,7 +2917,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -2929,7 +2929,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create budget template
       tags:
       - BudgetTemplate
@@ -2983,7 +2983,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
       summary: Delete budget template
       tags:
       - BudgetTemplate
@@ -3074,7 +3074,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/BudgetResponse'
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -3086,7 +3086,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/BudgetResponse'
-          description: Conflicto
+          description: Conflict
       summary: Create budget
       tags:
       - Budgets
@@ -3162,7 +3162,7 @@ paths:
         '204':
           description: Eliminado
         '404':
-          description: No encontrado
+          description: Not found
       summary: Delete budget
       tags:
       - Budgets
@@ -3187,7 +3187,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/BudgetResponse'
-          description: No encontrado
+          description: Not found
       summary: Get budget by ID
       tags:
       - Budgets
@@ -3224,7 +3224,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/BudgetResponse'
-          description: No encontrado
+          description: Not found
       summary: Update budget
       tags:
       - Budgets
@@ -3263,8 +3263,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/ItemResponse'
                 type: array
-          description: Budget or item of catálogo not found
-      summary: CU71 - Add to the budget copies of items existentes of the catálogo
+          description: Budget or catalog item not found
+      summary: CU71 - Add catalog item copies to the budget
       tags:
       - Budgets
   /api/v1/budgets/{id}/items-from-template:
@@ -3334,7 +3334,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoBudgetResumen'
-          description: No encontrado
+          description: Not found
       summary: CU47 - Get financial summary of a budget (total, balance and payments)
       tags:
       - Budgets
@@ -3367,7 +3367,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -3379,7 +3379,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create concept
       tags:
       - Conceptos
@@ -3426,7 +3426,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
       summary: Delete concept
       tags:
       - Conceptos
@@ -3451,7 +3451,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoConcept'
-          description: No encontrado
+          description: Not found
       summary: Get concept by ID
       tags:
       - Conceptos
@@ -3488,7 +3488,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
         '409':
           content:
             '*/*':
@@ -3549,7 +3549,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -3561,7 +3561,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create copy
       tags:
       - Copy
@@ -3579,7 +3579,7 @@ paths:
         '204':
           description: Eliminado
         '404':
-          description: No encontrado
+          description: Not found
       summary: Delete copy
       tags:
       - Copy
@@ -3604,7 +3604,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/CopyResponse'
-          description: No encontrado
+          description: Not found
       summary: Get copy by ID
       tags:
       - Copy
@@ -3627,7 +3627,7 @@ paths:
         '200':
           description: OK
         '404':
-          description: No encontrado
+          description: Not found
       summary: Update copy
       tags:
       - Copy
@@ -3702,7 +3702,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DeedResponse'
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -3714,7 +3714,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DeedResponse'
-          description: Conflicto
+          description: Conflict
       summary: Create deed
       tags:
       - Deeds
@@ -3769,7 +3769,7 @@ paths:
         '204':
           description: Eliminado
         '404':
-          description: No encontrado
+          description: Not found
       summary: Delete deed
       tags:
       - Deeds
@@ -3794,7 +3794,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DeedResponse'
-          description: No encontrado
+          description: Not found
       summary: Get deed by ID
       tags:
       - Deeds
@@ -3825,7 +3825,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DeedResponse'
-          description: No encontrado
+          description: Not found
       summary: Update deed
       tags:
       - Deeds
@@ -3858,7 +3858,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DeedResponse'
-          description: No encontrado
+          description: Not found
       summary: Firmar deed
       tags:
       - Deeds
@@ -3877,7 +3877,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -4126,7 +4126,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -4138,7 +4138,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create folio type
       tags:
       - Tipo de Folio
@@ -4185,7 +4185,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
       summary: Delete folio type
       tags:
       - Tipo de Folio
@@ -4210,7 +4210,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoFolioType'
-          description: No encontrado
+          description: Not found
       summary: Get folio type by ID
       tags:
       - Tipo de Folio
@@ -4247,7 +4247,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
         '409':
           content:
             '*/*':
@@ -4308,7 +4308,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/FolioResponse'
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -4320,7 +4320,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/FolioResponse'
-          description: Conflicto
+          description: Conflict
       summary: Create folio
       tags:
       - Folio
@@ -4367,7 +4367,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
       summary: Delete folio
       tags:
       - Folio
@@ -4392,7 +4392,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/FolioResponse'
-          description: No encontrado
+          description: Not found
       summary: Get folio by ID
       tags:
       - Folio
@@ -4423,13 +4423,13 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
         '409':
           content:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Update folio
       tags:
       - Folio
@@ -4457,8 +4457,8 @@ paths:
       - Folio
   /api/v1/history:
     get:
-      description: Página of Spring Data (by defecto 20 filas, ordenadas by idHistory ascendente). Usar sort=idHistory,desc
-        for ver primero the cambios more recientes. El historial completo de una gestión está en GET /api/v1/history/management/{idManagement}.
+      description: Spring Data page (20 rows by default, ordered by idHistory ascending). Use sort=idHistory,desc to see the
+        most recent changes first. The full history of a management is at GET /api/v1/history/management/{idManagement}.
       operationId: getAll_14
       parameters:
       - description: Zero-based page index (0..N)
@@ -4495,7 +4495,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PageDtoHistorySummary'
           description: OK
-      summary: Get the history, a página by vez
+      summary: Get history, one page at a time
       tags:
       - ManagementHistory
     post:
@@ -4512,7 +4512,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -4524,7 +4524,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create registro of history
       tags:
       - ManagementHistory
@@ -4568,7 +4568,7 @@ paths:
         '403':
           description: Only a administrador can delete the history
         '404':
-          description: No encontrado
+          description: Not found
       summary: Delete history (only administrador)
       tags:
       - ManagementHistory
@@ -4593,7 +4593,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoHistorySummary'
-          description: No encontrado
+          description: Not found
       summary: Get history by ID
       tags:
       - ManagementHistory
@@ -4620,7 +4620,7 @@ paths:
         '403':
           description: Only a administrador can update the history
         '404':
-          description: No encontrado
+          description: Not found
       summary: Update history (only administrador)
       tags:
       - ManagementHistory
@@ -4653,7 +4653,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -4665,7 +4665,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create identification type
       tags:
       - IdentificationType
@@ -4683,7 +4683,7 @@ paths:
         '204':
           description: Eliminado
         '404':
-          description: No encontrado
+          description: Not found
       summary: Delete identification type
       tags:
       - IdentificationType
@@ -4708,7 +4708,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/IdentificationTypeResponse'
-          description: No encontrado
+          description: Not found
       summary: Get identification type by ID
       tags:
       - IdentificationType
@@ -4731,7 +4731,7 @@ paths:
         '200':
           description: OK
         '404':
-          description: No encontrado
+          description: Not found
       summary: Update identification type
       tags:
       - IdentificationType
@@ -4764,7 +4764,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -4776,7 +4776,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create item
       tags:
       - Items
@@ -4828,7 +4828,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/ItemResponse'
                 type: array
-          description: No encontrado
+          description: Not found
       summary: CU45/CU71 - Query discounts and surcharges of a budget
       tags:
       - Items
@@ -4846,7 +4846,7 @@ paths:
         '204':
           description: Eliminado
         '404':
-          description: No encontrado
+          description: Not found
       summary: Delete item
       tags:
       - Items
@@ -4871,7 +4871,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ItemResponse'
-          description: No encontrado
+          description: Not found
       summary: Get item by ID
       tags:
       - Items
@@ -4896,7 +4896,7 @@ paths:
         '400':
           description: Invalid request
         '404':
-          description: No encontrado
+          description: Not found
       summary: Update item
       tags:
       - Items
@@ -4929,7 +4929,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -4941,7 +4941,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create management status
       tags:
       - Management status
@@ -4988,7 +4988,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
       summary: Delete management status
       tags:
       - Management status
@@ -5013,7 +5013,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoManagementStatus'
-          description: No encontrado
+          description: Not found
       summary: Get management status by ID
       tags:
       - Management status
@@ -5050,7 +5050,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
         '409':
           content:
             '*/*':
@@ -5257,7 +5257,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoManagementSummary'
-          description: No encontrado
+          description: Not found
       summary: Get management by ID
       tags:
       - Managements
@@ -5723,7 +5723,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -5767,7 +5767,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/NotebookResponse'
-          description: No encontrado
+          description: Not found
       summary: Get notebook by ID
       tags:
       - Cuadernos
@@ -5828,7 +5828,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoPaymentResponse'
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -5840,7 +5840,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoPaymentResponse'
-          description: Conflicto
+          description: Conflict
       summary: CU15 - Procesar pago (JSON body)
       tags:
       - Payment
@@ -5916,7 +5916,7 @@ paths:
                 - PARTIAL
                 - PAID
                 type: string
-          description: No encontrado
+          description: Not found
       summary: CU47 - Calculate status of payment (SIN_PAGOS, PARCIAL, SALDADO) of a budget
       tags:
       - Payment
@@ -5964,7 +5964,7 @@ paths:
         '204':
           description: Eliminado
         '404':
-          description: No encontrado
+          description: Not found
       summary: Delete payment
       tags:
       - Payment
@@ -5989,7 +5989,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoPaymentResponse'
-          description: No encontrado
+          description: Not found
       summary: CU47 - Query payment by ID
       tags:
       - Payment
@@ -6020,7 +6020,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoPaymentResponse'
-          description: No encontrado
+          description: Not found
       summary: Editar pago
       tags:
       - Payment
@@ -6352,7 +6352,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ProcedureTemplateResponse'
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -6364,7 +6364,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ProcedureTemplateResponse'
-          description: Conflicto
+          description: Conflict
       summary: Create procedure template (CU55)
       tags:
       - ProcedureTemplate
@@ -6410,7 +6410,7 @@ paths:
         '204':
           description: Eliminado
         '404':
-          description: No encontrado
+          description: Not found
       summary: Delete procedure template (CU55)
       tags:
       - ProcedureTemplate
@@ -6441,7 +6441,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ProcedureTemplateResponse'
-          description: No encontrado
+          description: Not found
       summary: Get template by key composite (CU55)
       tags:
       - ProcedureTemplate
@@ -6478,7 +6478,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ProcedureTemplateResponse'
-          description: No encontrado
+          description: Not found
       summary: Update procedure template (CU55)
       tags:
       - ProcedureTemplate
@@ -6511,7 +6511,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -6523,7 +6523,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create procedure type
       tags:
       - Tipo de Procedure
@@ -6570,7 +6570,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
       summary: Delete procedure type
       tags:
       - Tipo de Procedure
@@ -6595,7 +6595,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoProcedureType'
-          description: No encontrado
+          description: Not found
       summary: Get procedure type by ID
       tags:
       - Tipo de Procedure
@@ -6632,7 +6632,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
         '409':
           content:
             '*/*':
@@ -6761,7 +6761,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -6779,7 +6779,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create procedure
       tags:
       - Procedures
@@ -6797,7 +6797,7 @@ paths:
         '204':
           description: Eliminado
         '404':
-          description: No encontrado
+          description: Not found
       summary: Delete procedure
       tags:
       - Procedures
@@ -6822,7 +6822,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ProcedureResponse'
-          description: No encontrado
+          description: Not found
       summary: Get procedure by ID
       tags:
       - Procedures
@@ -6894,7 +6894,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -6906,7 +6906,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create property
       tags:
       - Property
@@ -6924,7 +6924,7 @@ paths:
         '204':
           description: Eliminado
         '404':
-          description: No encontrado
+          description: Not found
       summary: Delete property
       tags:
       - Property
@@ -6949,7 +6949,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/PropertyResponse'
-          description: No encontrado
+          description: Not found
       summary: Get property by ID
       tags:
       - Property
@@ -6974,7 +6974,7 @@ paths:
         '400':
           description: Invalid request (falta the cadastral nomenclature)
         '404':
-          description: No encontrado
+          description: Not found
       summary: Update property
       tags:
       - Property
@@ -7610,7 +7610,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -7622,7 +7622,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create role
       tags:
       - Roles
@@ -7684,7 +7684,7 @@ paths:
         '204':
           description: Eliminado
         '404':
-          description: No encontrado
+          description: Not found
       summary: Delete role
       tags:
       - Roles
@@ -7709,7 +7709,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/RoleResponse'
-          description: No encontrado
+          description: Not found
       summary: Get role by ID
       tags:
       - Roles
@@ -7746,7 +7746,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/RoleResponse'
-          description: No encontrado
+          description: Not found
         '409':
           content:
             '*/*':
@@ -7785,13 +7785,13 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
               schema:
                 type: object
-          description: Solicitud inválida (falta typeId o procedureId, o la fecha no es un día yyyy-MM-dd)
+          description: Invalid request (typeId or procedureId is missing, or the date is not a yyyy-MM-dd day)
         '404':
           content:
             '*/*':
@@ -7803,7 +7803,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create submitted document
       tags:
       - SubmittedDocument
@@ -7853,7 +7853,7 @@ paths:
         '204':
           description: Eliminado
         '404':
-          description: No encontrado
+          description: Not found
       summary: Delete submitted document
       tags:
       - SubmittedDocument
@@ -7878,7 +7878,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/SubmittedDocumentResponse'
-          description: No encontrado
+          description: Not found
       summary: Get submitted document by ID
       tags:
       - SubmittedDocument
@@ -7901,7 +7901,7 @@ paths:
         '200':
           description: OK
         '400':
-          description: Solicitud inválida (fecha que no es un día yyyy-MM-dd)
+          description: Invalid request (date is not a yyyy-MM-dd day)
         '404':
           description: Document, document type or procedure not found
       summary: Update submitted document
@@ -7936,7 +7936,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -7948,7 +7948,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create substitution
       tags:
       - Substitution
@@ -7966,7 +7966,7 @@ paths:
         '204':
           description: Eliminado
         '404':
-          description: No encontrado
+          description: Not found
       summary: Delete substitution
       tags:
       - Substitution
@@ -7991,7 +7991,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/SubstitutionResponse'
-          description: No encontrado
+          description: Not found
       summary: Get substitution by ID
       tags:
       - Substitution
@@ -8014,7 +8014,7 @@ paths:
         '200':
           description: OK
         '404':
-          description: No encontrado
+          description: Not found
       summary: Update substitution
       tags:
       - Substitution
@@ -8047,7 +8047,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -8065,7 +8065,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create testimony
       tags:
       - Testimony
@@ -8086,7 +8086,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoTestimony'
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -8124,7 +8124,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
       summary: Delete testimony
       tags:
       - Testimony
@@ -8149,7 +8149,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoTestimony'
-          description: No encontrado
+          description: Not found
       summary: Get testimony by ID
       tags:
       - Testimony
@@ -8189,7 +8189,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
         '409':
           content:
             '*/*':
@@ -8261,7 +8261,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -8273,7 +8273,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create testimony movement
       tags:
       - TestimonyMovement
@@ -8294,7 +8294,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoTestimonyMovement'
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -8334,7 +8334,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoTestimonyMovement'
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -8444,7 +8444,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
       summary: Delete testimony movement
       tags:
       - TestimonyMovement
@@ -8469,7 +8469,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoTestimonyMovement'
-          description: No encontrado
+          description: Not found
       summary: Get testimony movement by ID
       tags:
       - TestimonyMovement
@@ -8506,7 +8506,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
         '409':
           content:
             '*/*':
@@ -8545,7 +8545,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -8557,7 +8557,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create user
       tags:
       - Users
@@ -8637,7 +8637,7 @@ paths:
         '204':
           description: Eliminado
         '404':
-          description: No encontrado
+          description: Not found
       summary: Delete user
       tags:
       - Users
@@ -8662,7 +8662,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/UserResponse'
-          description: No encontrado
+          description: Not found
       summary: Get user by ID
       tags:
       - Users
@@ -8685,7 +8685,7 @@ paths:
         '200':
           description: OK
         '404':
-          description: No encontrado
+          description: Not found
       summary: Update user
       tags:
       - Users
@@ -8718,7 +8718,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -8730,7 +8730,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create workflow
       tags:
       - Workflow Definition
@@ -8756,7 +8756,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
       summary: Delete workflow
       tags:
       - Workflow Definition
@@ -8781,7 +8781,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoWorkflowDefinition'
-          description: No encontrado
+          description: Not found
       summary: Get workflow by ID
       tags:
       - Workflow Definition
@@ -8818,7 +8818,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
         '409':
           content:
             '*/*':
@@ -8864,7 +8864,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -8877,7 +8877,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create node in a workflow
       tags:
       - Workflow Node
@@ -8925,7 +8925,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
       summary: Delete node
       tags:
       - Workflow Node
@@ -8950,7 +8950,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoWorkflowNode'
-          description: No encontrado
+          description: Not found
       summary: Get node by ID
       tags:
       - Workflow Node
@@ -8988,7 +8988,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
       summary: Update node
       tags:
       - Workflow Node
@@ -9007,7 +9007,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
@@ -9019,7 +9019,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
+          description: Conflict
       summary: Create transition between dos nodes
       tags:
       - Workflow Transition
@@ -9067,7 +9067,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
       summary: Delete transition
       tags:
       - Workflow Transition
@@ -9092,7 +9092,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoWorkflowTransition'
-          description: No encontrado
+          description: Not found
       summary: Get transition by ID
       tags:
       - Workflow Transition
@@ -9129,7 +9129,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Not found
       summary: Update transition
       tags:
       - Workflow Transition

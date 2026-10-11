@@ -98,7 +98,7 @@ class RegistrationDraftServiceTest {
 
         assertThatThrownBy(() -> registrationDraftService.generate(1))
                 .isInstanceOf(BusinessValidationException.class)
-                .hasMessageContaining("matrícula");
+                .hasMessageContaining("registration number");
     }
 
     @Test
@@ -109,7 +109,7 @@ class RegistrationDraftServiceTest {
 
         assertThatThrownBy(() -> registrationDraftService.generate(1))
                 .isInstanceOf(BusinessValidationException.class)
-                .hasMessageContaining("firmada");
+                .hasMessageContaining("Firmada");
     }
 
     @Test

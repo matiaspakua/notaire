@@ -220,7 +220,7 @@ public class ReportDocumentFactory {
     public ReportDocument submittedDocumentExpiry(Integer idSubmittedDocument) {
         SubmittedDocument document = submittedDocumentRepository.findById(idSubmittedDocument)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Documento presentado not found with ID: " + idSubmittedDocument));
+                        "Submitted document not found with ID: " + idSubmittedDocument));
         Procedure procedure = document.getFkIdProcedure();
         DeedManagement management = procedure == null ? null : procedure.getFkIdManagement();
         Person client = procedure == null || procedure.getFkIdBudget() == null

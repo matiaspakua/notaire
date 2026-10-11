@@ -29,7 +29,7 @@ public class ManagementCompositionConfig {
     public TransitionManagementUseCase transitionManagementUseCase(
             DeedManagementRepository managementRepository,
             ManagementStatusRepository statusRepository,
-            ManagementBitacoraService bitacoraService,
+            ManagementBitacoraService statusLogService,
             WorkflowTransitionRepository workflowTransitionRepository) {
 
         var managementRepositoryAdapter = new ManagementRepositoryAdapter(managementRepository);
@@ -37,10 +37,10 @@ public class ManagementCompositionConfig {
         var workflowLookupAdapter = new WorkflowLookupAdapter();
         var workflowTransitionValidatorAdapter =
                 new WorkflowTransitionValidatorAdapter(workflowTransitionRepository);
-        var bitacoraAdapter = new ManagementBitacoraAdapter(bitacoraService);
+        var statusLogAdapter = new ManagementBitacoraAdapter(statusLogService);
 
         return new TransitionManagementUseCaseImpl(managementRepositoryAdapter, statusRepositoryAdapter,
-                workflowLookupAdapter, workflowTransitionValidatorAdapter, bitacoraAdapter);
+                workflowLookupAdapter, workflowTransitionValidatorAdapter, statusLogAdapter);
     }
 
     /**

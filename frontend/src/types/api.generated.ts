@@ -225,7 +225,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** CU71 - Add to the budget copies of items existentes of the catálogo */
+        /** CU71 - Add catalog item copies to the budget */
         post: operations["addItemsFromCatalog"];
         delete?: never;
         options?: never;
@@ -721,8 +721,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get the history, a página by vez
-         * @description Página of Spring Data (by defecto 20 filas, ordenadas by idHistory ascendente). Usar sort=idHistory,desc for ver primero the cambios more recientes. El historial completo de una gestión está en GET /api/v1/history/management/{idManagement}.
+         * Get history, one page at a time
+         * @description Spring Data page (20 rows by default, ordered by idHistory ascending). Use sort=idHistory,desc to see the most recent changes first. The full history of a management is at GET /api/v1/history/management/{idManagement}.
          */
         get: operations["getAll_14"];
         put?: never;
@@ -4075,36 +4075,36 @@ export interface components {
             registryEntryNumber?: string;
         };
         SubmittedDocumentCreateRequest: {
-            /** @description Fecha de ingreso: un día real con formato yyyy-MM-dd (p. ej. 2026-09-05); otro valor responde 400 */
+            /** @description Entry date: a real day in yyyy-MM-dd format (for example 2026-09-05); any other value returns 400 */
             date?: string;
             delivered?: boolean;
             deliveredBy?: string;
             name?: string;
             /**
              * Format: int32
-             * @description Id of the procedure of the management for the that presenta the document; si no existe la respuesta es 404
+             * @description Id of the management procedure this document is submitted for; the response is 404 when it does not exist
              */
             procedureId: number;
             /**
              * Format: int32
-             * @description Id de un tipo de documento existente; si no existe la respuesta es 404
+             * @description Id of an existing document type; the response is 404 when it does not exist
              */
             typeId: number;
         };
         SubmittedDocumentRequest: {
-            /** @description Fecha de ingreso: un día real con formato yyyy-MM-dd (p. ej. 2026-09-05); otro valor responde 400 */
+            /** @description Entry date: a real day in yyyy-MM-dd format (for example 2026-09-05); any other value returns 400 */
             date?: string;
             delivered?: boolean;
             deliveredBy?: string;
             name?: string;
             /**
              * Format: int32
-             * @description Id of a procedure existente; if there is no the respuesta is 404
+             * @description Id of an existing procedure; the response is 404 when it does not exist
              */
             procedureId?: number;
             /**
              * Format: int32
-             * @description Id de un tipo de documento existente; si no existe la respuesta es 404
+             * @description Id of an existing document type; the response is 404 when it does not exist
              */
             typeId?: number;
         };
@@ -4354,7 +4354,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoAuditRecord"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -4460,7 +4460,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -4478,7 +4478,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -4559,7 +4559,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -4610,7 +4610,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -4628,7 +4628,7 @@ export interface operations {
                     "*/*": components["schemas"]["BudgetResponse"];
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -4713,7 +4713,7 @@ export interface operations {
                     "*/*": components["schemas"]["BudgetResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -4757,7 +4757,7 @@ export interface operations {
                     "*/*": components["schemas"]["BudgetResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -4786,7 +4786,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -4819,7 +4819,7 @@ export interface operations {
                     "*/*": components["schemas"]["ItemResponse"][];
                 };
             };
-            /** @description Budget or item of catálogo not found */
+            /** @description Budget or catalog item not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -4893,7 +4893,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoBudgetResumen"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -4937,7 +4937,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -4955,7 +4955,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -5008,7 +5008,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoConcept"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5052,7 +5052,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5092,7 +5092,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5160,7 +5160,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -5178,7 +5178,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -5209,7 +5209,7 @@ export interface operations {
                     "*/*": components["schemas"]["CopyResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5242,7 +5242,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5269,7 +5269,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5329,7 +5329,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -5347,7 +5347,7 @@ export interface operations {
                     "*/*": components["schemas"]["DeedResponse"];
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -5420,7 +5420,7 @@ export interface operations {
                     "*/*": components["schemas"]["DeedResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5455,7 +5455,7 @@ export interface operations {
                     "*/*": components["schemas"]["DeedResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5484,7 +5484,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5522,7 +5522,7 @@ export interface operations {
                     "*/*": components["schemas"]["DeedResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5546,7 +5546,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -5853,7 +5853,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -5871,7 +5871,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -5924,7 +5924,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoFolioType"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5968,7 +5968,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -6008,7 +6008,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -6076,7 +6076,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -6094,7 +6094,7 @@ export interface operations {
                     "*/*": components["schemas"]["FolioResponse"];
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -6147,7 +6147,7 @@ export interface operations {
                     "*/*": components["schemas"]["FolioResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -6182,7 +6182,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -6191,7 +6191,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -6222,7 +6222,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -6297,7 +6297,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -6315,7 +6315,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -6368,7 +6368,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoHistorySummary"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -6408,7 +6408,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -6442,7 +6442,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -6484,7 +6484,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -6502,7 +6502,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -6533,7 +6533,7 @@ export interface operations {
                     "*/*": components["schemas"]["IdentificationTypeResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -6566,7 +6566,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -6593,7 +6593,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -6635,7 +6635,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -6653,7 +6653,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -6706,7 +6706,7 @@ export interface operations {
                     "*/*": components["schemas"]["ItemResponse"][];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -6737,7 +6737,7 @@ export interface operations {
                     "*/*": components["schemas"]["ItemResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -6777,7 +6777,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -6804,7 +6804,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -6846,7 +6846,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -6864,7 +6864,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -6917,7 +6917,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoManagementStatus"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -6961,7 +6961,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -7001,7 +7001,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -7193,7 +7193,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoManagementSummary"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -7751,7 +7751,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -7809,7 +7809,7 @@ export interface operations {
                     "*/*": components["schemas"]["NotebookResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -7884,7 +7884,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -7902,7 +7902,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoPaymentResponse"];
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -7977,7 +7977,7 @@ export interface operations {
                     "*/*": "NoPayments" | "PARTIAL" | "PAID";
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -8033,7 +8033,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoPaymentResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -8068,7 +8068,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoPaymentResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -8097,7 +8097,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -8447,7 +8447,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -8465,7 +8465,7 @@ export interface operations {
                     "*/*": components["schemas"]["ProcedureTemplateResponse"];
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -8519,7 +8519,7 @@ export interface operations {
                     "*/*": components["schemas"]["ProcedureTemplateResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -8555,7 +8555,7 @@ export interface operations {
                     "*/*": components["schemas"]["ProcedureTemplateResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -8585,7 +8585,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -8627,7 +8627,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -8645,7 +8645,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -8698,7 +8698,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoProcedureType"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -8742,7 +8742,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -8782,7 +8782,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -8910,7 +8910,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -8937,7 +8937,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -8968,7 +8968,7 @@ export interface operations {
                     "*/*": components["schemas"]["ProcedureResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -9041,7 +9041,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -9083,7 +9083,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -9101,7 +9101,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -9132,7 +9132,7 @@ export interface operations {
                     "*/*": components["schemas"]["PropertyResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -9172,7 +9172,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -9199,7 +9199,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -9921,7 +9921,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -9939,7 +9939,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -10020,7 +10020,7 @@ export interface operations {
                     "*/*": components["schemas"]["RoleResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10064,7 +10064,7 @@ export interface operations {
                     "*/*": components["schemas"]["RoleResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10102,7 +10102,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10144,7 +10144,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -10153,7 +10153,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Solicitud inválida (falta typeId o procedureId, o la fecha no es un día yyyy-MM-dd) */
+            /** @description Invalid request (typeId or procedureId is missing, or the date is not a yyyy-MM-dd day) */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -10171,7 +10171,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -10233,7 +10233,7 @@ export interface operations {
                     "*/*": components["schemas"]["SubmittedDocumentResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10266,7 +10266,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Solicitud inválida (fecha que no es un día yyyy-MM-dd) */
+            /** @description Invalid request (date is not a yyyy-MM-dd day) */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -10300,7 +10300,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10342,7 +10342,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -10360,7 +10360,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -10391,7 +10391,7 @@ export interface operations {
                     "*/*": components["schemas"]["SubstitutionResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10424,7 +10424,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10451,7 +10451,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10493,7 +10493,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -10520,7 +10520,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -10542,7 +10542,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -10591,7 +10591,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoTestimony"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10635,7 +10635,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10675,7 +10675,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10754,7 +10754,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -10772,7 +10772,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -10794,7 +10794,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -10838,7 +10838,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -10971,7 +10971,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoTestimonyMovement"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11015,7 +11015,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11055,7 +11055,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11099,7 +11099,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -11117,7 +11117,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -11225,7 +11225,7 @@ export interface operations {
                     "*/*": components["schemas"]["UserResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11258,7 +11258,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11285,7 +11285,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11327,7 +11327,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -11345,7 +11345,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -11376,7 +11376,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoWorkflowDefinition"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11420,7 +11420,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11460,7 +11460,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11508,7 +11508,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -11526,7 +11526,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -11579,7 +11579,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoWorkflowNode"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11623,7 +11623,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11654,7 +11654,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11678,7 +11678,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -11696,7 +11696,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -11749,7 +11749,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoWorkflowTransition"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11793,7 +11793,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11824,7 +11824,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;

@@ -60,13 +60,13 @@ public class SubmittedDocumentController {
     ) {}
 
     record SubmittedDocumentRequest(
-            @Schema(description = "Id de un tipo de documento existente; si no existe la respuesta es 404")
+            @Schema(description = "Id of an existing document type; the response is 404 when it does not exist")
             Integer typeId,
-            @Schema(description = "Fecha de ingreso: un día real con formato yyyy-MM-dd (p. ej. 2026-09-05); "
-                    + "otro valor responde 400")
+            @Schema(description = "Entry date: a real day in yyyy-MM-dd format (for example 2026-09-05); "
+                    + "any other value returns 400")
             String date,
             Boolean delivered,
-            @Schema(description = "Id of a procedure existente; if there is no the respuesta is 404")
+            @Schema(description = "Id of an existing procedure; the response is 404 when it does not exist")
             Integer procedureId,
             String deliveredBy,
             String name) {}
@@ -81,16 +81,16 @@ public class SubmittedDocumentController {
      */
     record SubmittedDocumentCreateRequest(
             @NotNull
-            @Schema(description = "Id de un tipo de documento existente; si no existe la respuesta es 404",
+            @Schema(description = "Id of an existing document type; the response is 404 when it does not exist",
                     requiredMode = Schema.RequiredMode.REQUIRED)
             Integer typeId,
-            @Schema(description = "Fecha de ingreso: un día real con formato yyyy-MM-dd (p. ej. 2026-09-05); "
-                    + "otro valor responde 400")
+            @Schema(description = "Entry date: a real day in yyyy-MM-dd format (for example 2026-09-05); "
+                    + "any other value returns 400")
             String date,
             Boolean delivered,
             @NotNull
-            @Schema(description = "Id of the procedure of the management for the that presenta the document; "
-                    + "si no existe la respuesta es 404", requiredMode = Schema.RequiredMode.REQUIRED)
+            @Schema(description = "Id of the management procedure this document is submitted for; "
+                    + "the response is 404 when it does not exist", requiredMode = Schema.RequiredMode.REQUIRED)
             Integer procedureId,
             String deliveredBy,
             String name) {
@@ -139,7 +139,7 @@ public class SubmittedDocumentController {
             return LocalDate.parse(value, DATE_FORMAT);
         } catch (DateTimeParseException e) {
             throw new BusinessValidationException(
-                    "La fecha debe ser un día válido con formato yyyy-MM-dd: '" + value + "'");
+                    "The date must be a valid day in yyyy-MM-dd format: '" + value + "'");
         }
     }
 
@@ -212,7 +212,7 @@ public class SubmittedDocumentController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
     @Operation(summary = "Get submitted document by ID")
@@ -225,11 +225,11 @@ public class SubmittedDocumentController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "201", description = "Created"),
     @ApiResponse(responseCode = "400",
-            description = "Solicitud inválida (falta typeId o procedureId, o la fecha no es un día yyyy-MM-dd)"),
+            description = "Invalid request (typeId or procedureId is missing, or the date is not a yyyy-MM-dd day)"),
     @ApiResponse(responseCode = "404", description = "Document type or procedure not found"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
     @Operation(summary = "Create submitted document")
@@ -243,14 +243,14 @@ public class SubmittedDocumentController {
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(entity));
         } catch (Exception e) {
-            log.error("Failed to create documento presentado", e);
+            log.error("Failed to create submitted document", e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida (fecha que no es un día yyyy-MM-dd)"),
+    @ApiResponse(responseCode = "400", description = "Invalid request (date is not a yyyy-MM-dd day)"),
     @ApiResponse(responseCode = "404", description = "Document, document type or procedure not found")
 })
     @PutMapping("/{id}")
@@ -277,7 +277,7 @@ public class SubmittedDocumentController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete submitted document")
