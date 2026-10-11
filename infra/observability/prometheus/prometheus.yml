@@ -278,3 +278,32 @@ scrape_configs:
         labels:
           service: 'node-exporter'
           app: 'host'
+
+  # --- Observability tools monitored by the stack itself ---
+  - job_name: 'tempo-metrics'
+    static_configs:
+      - targets: ['tempo:3200']
+        labels:
+          service: 'tempo'
+          app: 'tracing'
+
+  - job_name: 'alertmanager-metrics'
+    static_configs:
+      - targets: ['alertmanager:9093']
+        labels:
+          service: 'alertmanager'
+          app: 'alerting'
+
+  - job_name: 'promtail-metrics'
+    static_configs:
+      - targets: ['promtail:9080']
+        labels:
+          service: 'promtail'
+          app: 'logging'
+
+  - job_name: 'otel-collector-self'
+    static_configs:
+      - targets: ['otel-collector:8888']
+        labels:
+          service: 'otel-collector-self'
+          app: 'otel'

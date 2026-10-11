@@ -44,6 +44,34 @@
       "url": "/d/notaire-logs",
       "icon": "dashboard",
       "targetBlank": false
+    },
+    {
+      "title": "Infra resources",
+      "type": "link",
+      "url": "/d/notaire-infra-resources",
+      "icon": "dashboard",
+      "targetBlank": false
+    },
+    {
+      "title": "Frontend",
+      "type": "link",
+      "url": "/d/notaire-frontend",
+      "icon": "dashboard",
+      "targetBlank": false
+    },
+    {
+      "title": "Observability health",
+      "type": "link",
+      "url": "/d/notaire-observability-health",
+      "icon": "dashboard",
+      "targetBlank": false
+    },
+    {
+      "title": "Traces",
+      "type": "link",
+      "url": "/d/notaire-traces",
+      "icon": "dashboard",
+      "targetBlank": false
     }
   ],
   "panels": [
