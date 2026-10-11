@@ -64,6 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Upcoming expirations screen** (#1490, CU75): the living
+  `upcoming-expirations` spec names `/dashboard/upcoming-expirations`.
+  The engineering-sequences design names the screen CU42 still writes,
+  `/dashboard/proximos-vencimientos`. The archived proposal keeps that
+  screen. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
 - **Payment consult paths** (#1490, CU75): the engineering-sequences
   design names the paths CU47 still writes,
   `GET /api/v1/presupuestos/{id}/resumen` and

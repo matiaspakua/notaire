@@ -32,7 +32,7 @@ so the availability answer is not only in a pull request.
 `DOC-GESTION`. Rewriting every file is a different change.
 [CU01 and CU39 still name `POST /api/v1/presupuestos/{id}/items-desde-plantilla`] → The live call is in
 `presupuesto-from-template`.
-[CU42 still names `GET /api/v1/documento-presentado/proximos-vencimientos?dias=N`] → The live call is in
+[CU42 still names `GET /api/v1/documento-presentado/proximos-vencimientos?dias=N` and `/dashboard/proximos-vencimientos`] → The live call is in
 `upcoming-expirations`.
 [CU71 still names `POST /api/v1/presupuestos/{id}/items-desde-catalogo`] → The live call is in
 `presupuesto-catalogo-items`.

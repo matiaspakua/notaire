@@ -36,6 +36,17 @@ CU42 = (
 )
 RETIRED = "`GET /api/v1/documento-presentado/proximos-vencimientos?dias=N`"
 LIVE = "`GET /api/v1/submitted-documents/upcoming-expirations`"
+SCREEN = "`/dashboard/proximos-vencimientos`"
+LIVE_SCREEN = "`/dashboard/upcoming-expirations`"
+ARCHIVED_PROPOSAL = (
+    ROOT
+    / "docs"
+    / "openspec"
+    / "changes"
+    / "archive"
+    / "2026-10-05-feat-802-proximos-vencimientos"
+    / "proposal.md"
+)
 
 
 class UpcomingExpirationsQueryEnglishTest(unittest.TestCase):
@@ -58,6 +69,21 @@ class UpcomingExpirationsQueryEnglishTest(unittest.TestCase):
         self.assertIn(RETIRED, text)
         self.assertIn(RETIRED.strip("`"), use_case)
         self.assertIn("`upcoming-expirations`", text)
+
+    def test_living_spec_names_the_screen(self):
+        text = LIVING.read_text(encoding="utf-8")
+        self.assertIn(LIVE_SCREEN, text)
+        self.assertNotIn("proximos-vencimientos", text)
+
+    def test_design_cites_the_screen_cu42_still_names(self):
+        text = DESIGN.read_text(encoding="utf-8")
+        use_case = CU42.read_text(encoding="utf-8")
+        archived = ARCHIVED_PROPOSAL.read_text(encoding="utf-8")
+        self.assertIn(SCREEN, text)
+        self.assertIn(SCREEN.strip("`"), use_case)
+        self.assertIn("`upcoming-expirations`", text)
+        self.assertIn(SCREEN.strip("`"), archived)
+        self.assertNotIn(LIVE_SCREEN.strip("`"), archived)
 
 
 if __name__ == "__main__":

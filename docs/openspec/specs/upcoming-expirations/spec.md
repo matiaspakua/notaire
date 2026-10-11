@@ -46,7 +46,8 @@ The system MUST reject with 400 a window smaller than 1 or larger than 365 days 
 
 ### Requirement: The UI lists the upcoming expirations
 
-The dashboard MUST show the upcoming expirations for a selectable window and an empty message when there are none.
+The dashboard MUST show the upcoming expirations for a selectable window and an empty message when there are none. The screen is
+`/dashboard/upcoming-expirations`.
 
 #### Scenario: The screen lists the documents
 
