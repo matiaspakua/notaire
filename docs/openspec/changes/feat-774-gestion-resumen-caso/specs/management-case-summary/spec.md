@@ -3,17 +3,17 @@
 
 ## Purpose
 
-Show what a gestión has produced in the post-signing workflow. Source: #774; owner CU07.
+Show what a management has produced in the post-signing workflow. Source: #774; owner CU07.
 
 ## ADDED Requirements
 
-### Requirement: Escrituras and testimonios of the gestión
+### Requirement: Deeds and testimonies of the management
 
-The system MUST list, for a gestión, the distinct escrituras of its trámites and, for each, its testimonios with the verified flag, the flagged flag, the state of the latest movement and the number of copias.
+The system MUST list, for a management, the distinct deeds of its procedures and, for each, its testimonies with the verified flag, the flagged flag, the state of the latest movement and the number of copies.
 
-#### Scenario: A gestión with a deed, a testimony, a movement and a copy
+#### Scenario: A management with a deed, a testimony, a movement and a copy
 
-- **WHEN** a trámite of the gestión has a deed whose testimony was entered, registered and has one copy
+- **WHEN** a procedure of the management has a deed whose testimony was entered, registered and has one copy
 - **THEN** the summary lists the deed, the testimony with state INSCRIPTO and one copy
 
 #### Scenario: A testimony without movements
@@ -26,29 +26,29 @@ The system MUST list, for a gestión, the distinct escrituras of its trámites a
 - **WHEN** the latest movement has an exit date
 - **THEN** its state is RETIRADO
 
-### Requirement: A gestión without deeds
+### Requirement: A management without deeds
 
-The system MUST return an empty escrituras list, not an error, for a gestión whose trámites have no deed.
+The system MUST return an empty deeds list, not an error, for a management whose procedures have no deed.
 
 #### Scenario: No deed yet
 
-- **WHEN** no trámite of the gestión has a deed
-- **THEN** the escrituras list is empty
+- **WHEN** no procedure of the management has a deed
+- **THEN** the deeds list is empty
 
-### Requirement: Unknown gestión
+### Requirement: Unknown management
 
-The system MUST answer 404 for a gestión that does not exist.
+The system MUST answer 404 for a management that does not exist.
 
 #### Scenario: Unknown id
 
-- **WHEN** the summary of gestión 999999 is requested
+- **WHEN** the summary of management 999999 is requested
 - **THEN** the response is 404
 
-### Requirement: The gestiones screen shows the case summary
+### Requirement: The managements screen shows the case summary
 
-The gestiones screen MUST offer a case summary dialog showing escrituras, testimonios with their state, copias and pagos.
+The managements screen MUST offer a case summary dialog showing deeds, testimonies with their state, copies and payments.
 
 #### Scenario: Open the summary
 
-- **WHEN** the user opens the case summary of a gestión that has a deed and a testimony
+- **WHEN** the user opens the case summary of a management that has a deed and a testimony
 - **THEN** the dialog lists the deed, the testimony state and the payment totals

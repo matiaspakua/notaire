@@ -27,7 +27,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| A gestión with a deed, a testimony, a movement and a copy | `ManagementCaseSummaryServiceTest` | pending |
+| A management with a deed, a testimony, a movement and a copy | `ManagementCaseSummaryServiceTest` | pending |
 | A testimony without movements | `ManagementCaseSummaryServiceTest` | pending |
 | A withdrawn testimony | `ManagementCaseSummaryServiceTest` | pending |
 | No deed yet | `ManagementCaseSummaryIntegrationTest` | pending |

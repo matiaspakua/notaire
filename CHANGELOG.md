@@ -64,6 +64,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English open-change requirements** (#1490, CU75): the case-summary
+  spec and the submitted-document delta name a management and a
+  procedure. The change slugs `feat-774-gestion-resumen-caso` and
+  `fix-655-submitted-document-required-fields` stay. Stored states
+  `INSCRIPTO`, `SIN_INGRESAR`, and `RETIRADO` stay. The official title
+  `CU07 – Generar testimonio` stays. `POST /api/v1/submitted-documents`,
+  `typeId`, and `procedureId` stay.
 - **English E2E header comments** (#1490, CU75): the file headers
   name a procedure and the administration screens. Visible labels
   stay, including `/administración/i`, the link `Administración`,
