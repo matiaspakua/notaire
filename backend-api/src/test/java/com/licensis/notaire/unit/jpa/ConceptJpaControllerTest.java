@@ -338,7 +338,7 @@ class ConceptJpaControllerTest {
     class FindConceptByName {
 
         @Test
-        @DisplayName("should return conceptos matching name")
+        @DisplayName("should return concepts matching name")
         void shouldFindByName() {
             String name = "Test Concept";
             List<Concept> expectedList = new ArrayList<>();
@@ -391,7 +391,7 @@ class ConceptJpaControllerTest {
     class GetConceptCount {
 
         @Test
-        @DisplayName("should return count of conceptos")
+        @DisplayName("should return count of concepts")
         void shouldReturnCount() {
             when(em.createQuery("select count(o) from Concept as o")).thenReturn(query);
             when(query.getSingleResult()).thenReturn(42L);

@@ -60,5 +60,5 @@ mvn test -pl backend-api -Dtest=LoginAttemptServiceTest
 mvn test -pl backend-api -Dtest=JwtAuthIntegrationTest
 
 # Full suite
-mvn test -pl backend-api -Dtest="*Login*,*Auth*,*UserAccount*"
+mvn test -pl backend-api -Dtest="*Login*,*Auth*,*User*"
 ```

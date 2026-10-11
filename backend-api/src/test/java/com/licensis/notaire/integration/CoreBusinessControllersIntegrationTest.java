@@ -109,7 +109,7 @@ class CoreBusinessControllersIntegrationTest {
     class ConceptControllerTests {
 
         @Test
-        @DisplayName("CU66 - Should return all conceptos")
+        @DisplayName("CU66 - Should return all concepts")
         void shouldReturnAllConcepts() throws Exception {
             mockMvc.perform(get("/api/v1/concepts"))
                     .andExpect(status().isOk())

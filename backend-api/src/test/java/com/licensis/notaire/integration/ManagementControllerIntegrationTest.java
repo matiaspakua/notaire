@@ -188,7 +188,7 @@ class ManagementControllerIntegrationTest {
         List<Procedure> procedures = procedureRepository.findByFkIdManagementIdManagement(managementId);
         assertThat(procedures).as("complete-case should persist a procedure linked to the management").hasSize(1);
         assertThat(procedures.get(0).getFkIdBudget())
-                .as("the persisted procedure should carry the requested presupuestoId as its fkIdBudget")
+                .as("the persisted procedure should carry the requested budgetId as its fkIdBudget")
                 .isNotNull()
                 .extracting("idBudget")
                 .isEqualTo(budgetId);

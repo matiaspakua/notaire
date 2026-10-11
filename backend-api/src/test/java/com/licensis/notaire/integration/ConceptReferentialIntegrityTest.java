@@ -140,7 +140,7 @@ class ConceptReferentialIntegrityTest {
     }
 
     @Test
-    @DisplayName("Should search conceptos by name")
+    @DisplayName("Should search concepts by name")
     void shouldSearchConceptsByName() throws Exception {
         createConcept("BuscarEsteConcepto");
 

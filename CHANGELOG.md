@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English lazy-association names** (#1490, CU75):
+  The JPA lazy-loading guide lists the live collections `testimonyMovementList`,
+  `procedureList`, `itemList`, `auditRecordList`, and `nodes`. Samples join
+  `Testimony.testimonyMovementList`. Java display names say `typeFolioId`,
+  `budgetId`, and concepts. Stored statuses such as `Nuevo`, `Utilizado`,
+  and `Errose` stay.
 - **English login contract in the security guides** (#1490, CU75):
   The authentication, validation, and SQL-injection guides, plus the login
   test reports, use the live field `valid` and the JSON names `name` and

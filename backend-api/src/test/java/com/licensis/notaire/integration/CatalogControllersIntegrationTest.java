@@ -140,7 +140,7 @@ class CatalogControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("CU27 - Should return all tipos including newly created")
+        @DisplayName("CU27 - Should return all document types including newly created")
         void shouldReturnCreatedDocumentType() throws Exception {
             mockMvc.perform(post("/api/v1/document-types")
                             .contentType(MediaType.APPLICATION_JSON)
