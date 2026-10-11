@@ -143,7 +143,7 @@ class ManagementStatusReferentialIntegrityTest {
     }
 
     @Test
-    @DisplayName("Should search estados by name")
+    @DisplayName("Should search statuses by name")
     void shouldSearchEstadosByName() throws Exception {
         createStatus("BuscarEsteEstado");
 

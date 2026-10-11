@@ -470,8 +470,8 @@ class BusinessWorkflowIntegrationTest {
     }
 
     @Nested
-    @DisplayName("CU67 — Estados of management catalog")
-    class EstadosManagementWorkflow {
+    @DisplayName("CU67 — Management status catalog")
+    class ManagementStatusCatalogWorkflow {
 
         @Test
         @Order(1)

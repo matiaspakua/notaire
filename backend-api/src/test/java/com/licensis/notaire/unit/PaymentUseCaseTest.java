@@ -213,8 +213,8 @@ class PaymentUseCaseTest {
     }
 
     @Nested
-    @DisplayName("CU47 - Consultar Payment")
-    class ConsultarPaymentTests {
+    @DisplayName("CU47 - Query payment")
+    class QueryPaymentTests {
 
         @Test
         @DisplayName("Should return the payment when a valid id is provided")
@@ -453,8 +453,8 @@ class PaymentUseCaseTest {
     }
 
     @Nested
-    @DisplayName("Descuentos y recargos en el total (Issue #822)")
-    class DescuentosYRecargosTests {
+    @DisplayName("Discounts and surcharges on the total (Issue #822)")
+    class DiscountsAndSurchargesTests {
 
         private Item buildItem(TypeItem type, java.math.BigDecimal value) {
             Item item = new Item();

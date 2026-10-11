@@ -60,7 +60,7 @@ class TestimonyMovementServiceTest {
 
     @Nested
     @DisplayName("Enter for registration")
-    class IngresarRegistrationTests {
+    class EnterRegistrationTests {
 
         @Test
         @DisplayName("Should register the entry date when the testimony is verified and has no open movement")
@@ -116,7 +116,7 @@ class TestimonyMovementServiceTest {
     class RegisterRegistrationTests {
 
         @Test
-        @DisplayName("Should mark as inscripto with date when testimony was ingresado")
+        @DisplayName("Should mark the testimony inscripto with a date when it was ingresado")
         void shouldRegisterRegistration() {
             TestimonyMovement ingresado = movementConEntry();
             when(testimonyRepository.existsById(5)).thenReturn(true);
@@ -153,8 +153,8 @@ class TestimonyMovementServiceTest {
     }
 
     @Nested
-    @DisplayName("Retirar testimony")
-    class RetirarTests {
+    @DisplayName("Withdraw testimony")
+    class WithdrawTests {
 
         @Test
         @DisplayName("Should register the exit date and carton number when the testimony is registered")
@@ -174,7 +174,7 @@ class TestimonyMovementServiceTest {
         }
 
         @Test
-        @DisplayName("Should reject retiro when testimony is not inscripto")
+        @DisplayName("Should reject withdrawal when the testimony is not inscripto")
         void shouldRejectWithdrawalWhenNotInscripto() {
             TestimonyMovement ingresado = movementConEntry();
             when(testimonyRepository.existsById(5)).thenReturn(true);
@@ -197,7 +197,7 @@ class TestimonyMovementServiceTest {
     }
 
     @Nested
-    @DisplayName("Reingresar testimony")
+    @DisplayName("Re-enter testimony")
     class ReenterTests {
 
         @Test
@@ -294,7 +294,7 @@ class TestimonyMovementServiceTest {
         }
 
         @Test
-        @DisplayName("Should reject reentry when testimony has not previous movement")
+        @DisplayName("Should reject reentry when the testimony has no previous movement")
         void shouldRejectReingresoWhenNoPreviousMovement() {
             when(testimonyRepository.existsById(5)).thenReturn(true);
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))

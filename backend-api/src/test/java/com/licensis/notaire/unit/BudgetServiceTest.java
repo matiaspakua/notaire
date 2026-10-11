@@ -118,7 +118,7 @@ class BudgetServiceTest {
     }
 
     @Nested
-    @DisplayName("findByEstado - CU60")
+    @DisplayName("findByStatus - CU60")
     class FindByStatus {
 
         @Test

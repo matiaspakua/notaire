@@ -36,7 +36,7 @@ import com.licensis.notaire.testing.RequirementCoverage;
 
 /**
  * #806 — Residual History (audit log) gaps on plain create/update and
- * complete-case update, plus GET estado-actual entity-status fallback.
+ * complete-case update, plus GET current-status entity-status fallback.
  */
 @RequirementCoverage({"CU13", "CU02", "CU53"})
 @SpringBootTest
@@ -298,7 +298,7 @@ class ManagementHistoryOrphanWriteIntegrationTest {
     }
 
     @Test
-    @DisplayName("estado-actual returns latest History when rows exist")
+    @DisplayName("current-status returns the latest history when rows exist")
     void shouldReturnEstadoActualFromHistoryWhenRowsExist() throws Exception {
         Integer notaryId = createPerson("80610009");
         ManagementStatus statusA = createStatus("Hist-A");
@@ -316,7 +316,7 @@ class ManagementHistoryOrphanWriteIntegrationTest {
                 .get("idManagement").asInt();
 
         // #804 rejects status changes via PUT — append a second History row directly
-        // (same effect as a successful /transition) to exercise estado-actual.
+        // (same effect as a successful /transition) to exercise current-status.
         var management = managementRepository.findById(managementId).orElseThrow();
         management.setFkIdManagementStatus(statusB);
         managementRepository.save(management);
@@ -335,7 +335,7 @@ class ManagementHistoryOrphanWriteIntegrationTest {
     }
 
     @Test
-    @DisplayName("GET estado-actual returns the later insert when history dates tie")
+    @DisplayName("GET current-status returns the later insert when history dates tie")
     void shouldReturnLaterHistoryRowWhenDatesTie() throws Exception {
         Integer notaryId = createPerson("HIST-TIE-" + System.nanoTime());
         ManagementStatus statusA = createStatus("Tie-A");
@@ -376,7 +376,7 @@ class ManagementHistoryOrphanWriteIntegrationTest {
     }
 
     @Test
-    @DisplayName("estado-actual falls back to entity status when History empty")
+    @DisplayName("current-status falls back to the entity status when history is empty")
     void shouldReturnEstadoActualFallbackWhenHistoryEmpty() throws Exception {
         Integer notaryId = createPerson("80610010");
         ManagementStatus status = createStatus("Fallback");
@@ -409,14 +409,14 @@ class ManagementHistoryOrphanWriteIntegrationTest {
     }
 
     @Test
-    @DisplayName("estado-actual returns 404 when management is missing")
+    @DisplayName("current-status returns 404 when the management is missing")
     void shouldReturn404EstadoActualWhenManagementMissing() throws Exception {
         mockMvc.perform(get("/api/v1/managements/{id}/current-status", 999999))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("estado-actual returns 404 when status null and History empty")
+    @DisplayName("current-status returns 404 when the status is null and history is empty")
     void shouldReturn404EstadoActualWhenStatusNullAndHistoryEmpty() throws Exception {
         Integer notaryId = createPerson("80610011");
         String body = """

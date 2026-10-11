@@ -160,7 +160,7 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should return 400 when retirando a testimony that is not inscripto")
+    @DisplayName("Should return 400 when withdrawing a testimony that is not inscripto")
     void shouldRejectRetirarWhenNotInscripto() throws Exception {
         int idTestimony = generateVerifiedTestimony();
         registerEntry(idTestimony);
@@ -219,7 +219,7 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should return 400 when reingresando without a previous retiro")
+    @DisplayName("Should return 400 when re-entering without a previous withdrawal")
     void shouldRejectReingresarWithoutPreviousWithdrawal() throws Exception {
         int idTestimony = generateVerifiedTestimony();
         registerEntry(idTestimony);
@@ -236,7 +236,7 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should return 404 when retirando a non-existing testimony")
+    @DisplayName("Should return 404 when withdrawing a testimony that does not exist")
     void shouldReturn404WhenRetirarForNonExistingTestimony() throws Exception {
         mockMvc.perform(post("/api/v1/testimony-movements/99999/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -245,7 +245,7 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should return 404 when reingresando a non-existing testimony")
+    @DisplayName("Should return 404 when re-entering a testimony that does not exist")
     void shouldReturn404WhenReingresarForNonExistingTestimony() throws Exception {
         mockMvc.perform(post("/api/v1/testimony-movements/99999/reenter"))
                 .andExpect(status().isNotFound());

@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("CU28/CU33/CU63 — Folio CRUD with valid estados and required fields")
+@DisplayName("CU28/CU33/CU63 — Folio CRUD with valid statuses and required fields")
 class FolioControllerTest {
 
     @Autowired
