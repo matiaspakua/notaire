@@ -58,9 +58,9 @@ public interface BusinessConstants
     /**
      * Registry-circuit statuses of a registration draft (CU82).
      */
-    public String RegistrationDraftGENERADA = "Generada";
-    public String RegistrationDraftPRESENTADA = "Presentado para inscripción";
-    public String RegistrationDraftOBSERVADA = "Observado";
+    public String RegistrationDraftGenerated = "Generada";
+    public String RegistrationDraftSubmitted = "Presentado para inscripción";
+    public String RegistrationDraftObserved = "Observado";
     public String RegistrationDraftRegistered = "Inscripto";
     /**
      * User types. {@code Escribano} is an administrator type.

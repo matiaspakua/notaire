@@ -8,17 +8,17 @@ Editing a submitted document does not erase its progress. Source: #1241; owner C
 
 ### Requirement: Update changes only the fields it carries
 
-`PUT /api/v1/submitted-documents/{id}` MUST change only the fields present in the request and MUST keep every other stored field, including the name, the prepared, released, flagged and reentered flags, the trámite link and the dates.
+`PUT /api/v1/submitted-documents/{id}` MUST change only the fields present in the request and MUST keep every other stored field, including the name, the `prepared`, `released`, `flagged` and `reentered` flags, the procedure link (`procedureId`), and the dates.
 
 #### Scenario: Delivered flag update keeps the rest
 
-- **WHEN** a document with a name, a trámite link and raised flags is updated with only `delivered`
-- **THEN** `delivered` changes and the name, the trámite link and every flag are unchanged
+- **WHEN** a document with a name, a `procedureId`, and raised flags is updated with only `delivered`
+- **THEN** `delivered` changes and the name, the `procedureId`, and every flag are unchanged
 
 #### Scenario: Name update keeps the flags
 
 - **WHEN** a document with raised flags is updated with only a new name
-- **THEN** the name changes and the flags and the trámite link are unchanged
+- **THEN** the name changes and the flags and the `procedureId` are unchanged
 
 #### Scenario: Unknown document
 
@@ -27,9 +27,9 @@ Editing a submitted document does not erase its progress. Source: #1241; owner C
 
 ### Requirement: Derived due fields follow the type and the date
 
-When an update changes the document type or the entry date, the system MUST recompute whether the document expires, its due days and its due date from the resulting type and date.
+When an update changes the document type or the entry date (`date`), the system MUST recompute whether the document expires, its due days, and its due date (`dateDue`) from the resulting type and date.
 
 #### Scenario: Date change recomputes the due date
 
 - **WHEN** a document whose type expires after 10 days is updated with a new entry date
-- **THEN** its due date is the new entry date plus 10 days
+- **THEN** its `dateDue` is the new entry date plus 10 days

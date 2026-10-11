@@ -1,12 +1,12 @@
 @startuml presupuestos
 !theme plain
 left to right direction
-title Casos de Uso — Módulo Presupuesto
+title Use cases — Budget module
 
-actor "Recepcionista / Gestor" as RecepcionistaGestor
-actor Persona
+actor "Receptionist / Clerk (Gestor)" as ReceptionistClerk
+actor Person
 
-rectangle "Módulo Presupuesto" {
+rectangle "Budget module" {
   usecase "CU01 - Preparar Presupuesto" as CU01
   usecase "CU60 - Buscar Presupuesto" as CU60
   usecase "CU45 - Modificar presupuesto" as CU45
@@ -15,11 +15,11 @@ rectangle "Módulo Presupuesto" {
 usecase "CU64 - Buscar Tipo de trámite\n(from Trámites)" as CU64
 usecase "CU61 - Buscar persona o cliente\n(from Clientes)" as CU61
 
-RecepcionistaGestor --> CU01 : prepara
-RecepcionistaGestor --> CU60 : busca / necesita
-RecepcionistaGestor --> CU45 : requiere
-Persona --> CU01 : aporta datos
-Persona --> CU45 : aporta datos
+ReceptionistClerk --> CU01 : prepares
+ReceptionistClerk --> CU60 : looks up / needs
+ReceptionistClerk --> CU45 : needs
+Person --> CU01 : provides data
+Person --> CU45 : provides data
 
 CU01 ..> CU64 : <<include>>
 CU01 ..> CU61 : <<include>>

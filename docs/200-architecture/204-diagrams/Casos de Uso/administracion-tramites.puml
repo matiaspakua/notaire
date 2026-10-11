@@ -1,20 +1,20 @@
 @startuml administracion-tramites
 !theme plain
 left to right direction
-title Casos de Uso — Módulo Trámites (Administración)
+title Use cases — Procedures module (Administration)
 
 actor Escribano
 
-rectangle "Módulo Trámites" {
+rectangle "Procedures module" {
   usecase "CU26 - Ingresar nuevo tipo de trámite" as CU26
   usecase "CU31 - Modificar tipo de trámite" as CU31
   usecase "CU57 - Eliminar tipo de trámite" as CU57
   usecase "CU64 - Buscar Tipo de trámite" as CU64
 }
 
-Escribano --> CU26 : requiere
-Escribano --> CU31 : requiere
-Escribano --> CU57 : requiere
+Escribano --> CU26 : needs
+Escribano --> CU31 : needs
+Escribano --> CU57 : needs
 
 CU31 ..> CU64 : <<include>>
 CU57 ..> CU64 : <<include>>

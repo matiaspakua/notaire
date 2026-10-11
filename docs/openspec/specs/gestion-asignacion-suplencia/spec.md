@@ -2,13 +2,13 @@
 
 ## Purpose
 
-Hace que registrar una suplencia (CU22) tenga efecto práctico sobre la
-asignación de gestiones nuevas, en lugar de ser un dato aislado que nadie
-consulta (CU59, RF-89).
+Makes recording a substitution (CU22) affect the assignment of new
+managements, instead of remaining an isolated record that nothing consults
+(CU59, RF-89).
 
 ## Requirements
 
-### Requirement: Redirigir la asignación de gestión al suplente activo
+### Requirement: Redirect management assignment to the active substitute
 
 The system SHALL assign a management to the substitute (`fkIdSubstitute`) of an
 active `Substitution` when the requested notary is the substituted notary
@@ -17,20 +17,20 @@ active `Substitution` when the requested notary is the substituted notary
 `POST`/`PUT /api/v1/managements` as well as complete-case paths already covered
 by #836.
 
-#### Scenario: Creación de gestión sin suplencia activa
+#### Scenario: Creating a management with no active substitution
 
 - **WHEN** a management is created with a notary that has no active
   substitution for the management date
 - **THEN** the system assigns the management to the requested notary
 
-#### Scenario: Creación de gestión con suplencia activa
+#### Scenario: Creating a management with an active substitution
 
 - **WHEN** a management is created with a notary that has an active
   substitution as the substituted notary for the management date
 - **THEN** the system assigns the management to that substitution's substitute
   instead of the requested notary
 
-#### Scenario: Edición de gestión con suplencia activa
+#### Scenario: Editing a management with an active substitution
 
 - **WHEN** an existing management is edited changing the notary to one that
   has an active substitution as the substituted notary for the management date
@@ -53,13 +53,15 @@ by #836.
 - **THEN** the persisted `fkIdNotaryPerson` is the substitute, not the
   requested notary
 
-### Requirement: Registrar el redireccionamiento en la gestión
+### Requirement: Record the redirection on the management
 
 The system SHALL record in the management notes that assignment was redirected
 by an active substitution, identifying the requested notary and the assigned
-substitute — including when redirection happens on plain POST/PUT paths.
+substitute — including when redirection happens on plain POST/PUT paths. The
+persisted notes start with
+`Management redirected by active substitution`.
 
-#### Scenario: Observaciones registran el redireccionamiento
+#### Scenario: Notes record the redirection
 
 - **WHEN** the system assigns a management to the substitute instead of the
   requested notary
@@ -70,5 +72,5 @@ substitute — including when redirection happens on plain POST/PUT paths.
 
 - **WHEN** plain POST or plain PUT redirects notary assignment under an active
   substitution
-- **THEN** the persisted notes contain the redirection text identifying both
-  notaries
+- **THEN** the persisted notes contain
+  `Management redirected by active substitution` and identify both notaries

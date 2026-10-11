@@ -2,43 +2,43 @@
 
 ## Purpose
 
-Hace que un documento presentado herede el vencimiento y el responsable de su
-tipo de documento al crearse, en lugar de forzarlos siempre a valores vacíos,
-resolviendo el bloqueo de datos que impide "informar próximos vencimientos"
+Makes a submitted document inherit the expiry and the responsible party of its
+document type when it is created, instead of always forcing empty values,
+removing the data block that prevents "informar próximos vencimientos"
 (CU42).
 
 ## Requirements
 
-### Requirement: Heredar vencimiento y responsable del tipo de documento
-El sistema SHALL copiar `vence`, `diasVencimiento` y `quienEntrega` del
-`DocumentType` asociado al crear un documento presentado, en lugar de
-asignar siempre `vence = false` y `quienEntrega = ""`.
+### Requirement: Inherit expiry and the responsible party from the document type
+The system SHALL copy `expires`, `dueDays`, and `deliveredBy` from the
+linked `DocumentType` when creating a submitted document, instead of
+always assigning `expires = false` and `deliveredBy = ""`.
 
-#### Scenario: Alta de documento presentado de un tipo que vence
-- **WHEN** se crea un documento presentado a partir de un tipo de documento
-  con `vence = true`, `diasVencimiento` y `quienEntrega` cargados
-- **THEN** el documento presentado se guarda con esos mismos valores de
-  `vence`, `diasVencimiento` y `quienEntrega`
+#### Scenario: Create a submitted document of a type that expires
+- **WHEN** a submitted document is created from a document type
+  with `expires = true`, and `dueDays` and `deliveredBy` filled in
+- **THEN** the submitted document is stored with those same values of
+  `expires`, `dueDays`, and `deliveredBy`
 
-#### Scenario: Alta de documento presentado de un tipo que no vence
-- **WHEN** se crea un documento presentado a partir de un tipo de documento
-  con `vence = false`
-- **THEN** el documento presentado se guarda con `vence = false` y sin
-  `fechaVencimiento`
+#### Scenario: Create a submitted document of a type that does not expire
+- **WHEN** a submitted document is created from a document type
+  with `expires = false`
+- **THEN** the submitted document is stored with `expires = false` and without
+  `dateDue`
 
-### Requirement: Calcular la fecha de vencimiento al crear el documento
-El sistema SHALL calcular `fechaVencimiento` como `fechaIngreso` más
-`diasVencimiento` cuando el tipo de documento asociado tiene `vence = true` y
-`fechaIngreso` fue informada.
+### Requirement: Calculate the due date when the document is created
+The system SHALL calculate `dateDue` as `dateEntry` plus
+`dueDays` when the linked document type has `expires = true` and
+`dateEntry` was provided.
 
-#### Scenario: Cálculo de fecha de vencimiento
-- **WHEN** se crea un documento presentado con `fechaIngreso` informada, a
-  partir de un tipo de documento con `vence = true` y `diasVencimiento`
-  cargado
-- **THEN** el documento presentado se guarda con `fechaVencimiento` igual a
-  `fechaIngreso` más `diasVencimiento` días
+#### Scenario: Due-date calculation
+- **WHEN** a submitted document is created with `dateEntry` provided, from
+  a document type with `expires = true` and `dueDays`
+  filled in
+- **THEN** the submitted document is stored with `dateDue` equal to
+  `dateEntry` plus `dueDays` days
 
-#### Scenario: Sin fecha de ingreso no hay fecha de vencimiento
-- **WHEN** se crea un documento presentado sin `fechaIngreso`, a partir de un
-  tipo de documento con `vence = true`
-- **THEN** el documento presentado se guarda sin `fechaVencimiento`
+#### Scenario: No entry date means no due date
+- **WHEN** a submitted document is created without `dateEntry`, from a
+  document type with `expires = true`
+- **THEN** the submitted document is stored without `dateDue`

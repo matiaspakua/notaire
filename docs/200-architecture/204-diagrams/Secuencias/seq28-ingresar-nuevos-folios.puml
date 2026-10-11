@@ -3,15 +3,15 @@
 title CU28 — Ingresar nuevos folios
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : Un Escribano decide registrar el ingreso de nuevos folios.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Solicita: (Número primer folio; Número último folio; Número de registro; Año)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano ingresa los datos indicados.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Registra el nuevo conjunto de folios.
-Sistema -> Sistema : Sistema
+Actor -> Actor : A notary (Escribano) decides to record the entry of new folios.
+System -> System : Escribano
+Actor -> Actor : Requests: (First folio number; Last folio number; Register number; Year)
+System -> System : System
+Actor -> Actor : The notary (Escribano) enters the indicated data.
+System -> System : Escribano
+Actor -> Actor : Records the new set of folios.
+System -> System : System
 
 @enduml

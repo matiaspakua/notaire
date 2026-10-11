@@ -3,33 +3,33 @@
 ## Purpose
 
 Loads the `Concept`s of a `ProcedureType`'s `BudgetTemplate` as
-`Item`s of a real `Presupuesto`, so quoting the same tipo de trámite
+`Item`s of a real `Budget`, so quoting the same procedure type
 starts from a common, previously defined price list (CU39).
 
 ## Requirements
 
-### Requirement: Cargar ítems de presupuesto desde la plantilla del tipo de trámite
-El sistema SHALL permitir cargar en un presupuesto, como nuevos `Item`s,
-los `Concept`s de la `BudgetTemplate` asociada al `ProcedureType`
-elegido, copiando su nombre, valor y porcentaje al momento de la carga,
-según CU39 y RF-04/RF-64 a RF-67.
+### Requirement: Load budget items from the procedure type template
+The system SHALL allow a `Budget` to be loaded with new `Item`s
+from the `Concept`s of the `BudgetTemplate` linked to the chosen
+`ProcedureType`, copying name, amount, and percentage at load time,
+per CU39 and RF-04/RF-64 through RF-67.
 
-#### Scenario: Carga exitosa desde una plantilla existente
-- **WHEN** un usuario carga los ítems de plantilla en un presupuesto para
-  un tipo de trámite que tiene una `BudgetTemplate` con uno o más
-  conceptos
-- **THEN** el sistema crea un `Item` del presupuesto por cada concepto de
-  la plantilla, con el mismo nombre, valor y porcentaje
+#### Scenario: Successful load from an existing template
+- **WHEN** a user loads the template items into a `Budget` for
+  a procedure type that has a `BudgetTemplate` with one or more
+  concepts
+- **THEN** the system creates one `Budget` `Item` for each concept in
+  the template, with the same name, amount, and percentage
 
-#### Scenario: Ítems cargados no se recalculan si la plantilla cambia después
-- **WHEN** la `BudgetTemplate` de un tipo de trámite se modifica
-  después de haber cargado sus ítems en un presupuesto existente
-- **THEN** los ítems ya cargados en ese presupuesto conservan los valores
-  con los que fueron creados, sin actualizarse automáticamente
+#### Scenario: Loaded items are not recalculated if the template changes later
+- **WHEN** the `BudgetTemplate` of a procedure type is modified
+  after its items were loaded into an existing `Budget`
+- **THEN** the items already loaded in that `Budget` keep the values
+  they were created with, and are not updated automatically
 
-#### Scenario: Rechazo cuando el tipo de trámite no tiene plantilla
-- **WHEN** un usuario intenta cargar los ítems de plantilla en un
-  presupuesto para un tipo de trámite que no tiene ninguna
-  `BudgetTemplate` definida
-- **THEN** el sistema rechaza la operación y responde con un error que
-  indica que el tipo de trámite no tiene plantilla configurada
+#### Scenario: Rejection when the procedure type has no template
+- **WHEN** a user tries to load template items into a
+  `Budget` for a procedure type that has no
+  `BudgetTemplate`
+- **THEN** the system rejects the operation and responds with an error
+  that the procedure type has no template configured

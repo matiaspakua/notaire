@@ -1,85 +1,86 @@
-# Minuta de Inscripción Specification
+# minuta-inscripcion Specification
 
 ## Purpose
 
-Genera la Minuta de Inscripción para escrituras sobre inmuebles y hace
-seguimiento de su circuito registral (presentación, observaciones,
-inscripción definitiva) ante el Registro de la Propiedad Property (CU82).
+Generates the registration draft (Minuta de Inscripción) for deeds on
+properties and tracks its registry circuit (submission, observations, final
+registration) before the property registry (CU82).
 
 ## Requirements
 
-### Requirement: Registrar datos registrales del inmueble
+### Requirement: Record a property's registry data
 
-El sistema SHALL permitir registrar la matrícula, tomo/folios/finca y
-linderos de un inmueble.
+The system SHALL allow recording a property's `registrationNumber`,
+`volumeFolioLandRecord`, and `boundaries`.
 
-#### Scenario: Cargar datos registrales de un inmueble
+#### Scenario: Load a property's registry data
 
-- **WHEN** se completan la matrícula, el tomo/folios/finca y los linderos de
-  un inmueble
-- **THEN** el sistema guarda esos datos junto con la nomenclatura catastral
-  y la valuación fiscal existentes
+- **WHEN** a property's `registrationNumber`, `volumeFolioLandRecord`, and
+  `boundaries` are completed
+- **THEN** the system stores those data together with the existing
+  `cadastralDesignation` and fiscal appraisal
 
-### Requirement: Generar la Minuta de Inscripción
+### Requirement: Generate the registration draft
 
-El sistema SHALL permitir generar la Minuta de Inscripción para una escritura
-sobre un inmueble con trámite aprobado, siempre que estén completos los
-datos catastrales y registrales requeridos. A successful generate via
+The system SHALL allow generating the registration draft for a deed on a
+property with an approved procedure, provided the required cadastral and
+registry data are complete. A successful generate via
 `POST /api/v1/registration-drafts` SHALL return HTTP `201 Created` with a
 `Location` header pointing at `/api/v1/registration-drafts/{id}`.
 
-#### Scenario: Generar minuta con datos completos
+#### Scenario: Generate a draft with complete data
 
-- **WHEN** se solicita generar la minuta de inscripción para una escritura
-  sobre un inmueble cuyo trámite está aprobado y cuyos datos catastrales y
-  registrales están completos
-- **THEN** el sistema genera la minuta con un número identificador, en
-  estado "Generada", responde `201 Created` e incluye `Location` de la minuta
+- **WHEN** generating the registration draft is requested for a deed on a
+  property whose procedure is approved and whose cadastral and registry
+  data are complete
+- **THEN** the system generates the draft with an identifier number, in
+  status "Generada", responds `201 Created`, and includes the draft's
+  `Location`
 
-#### Scenario: Intento de generar minuta con datos incompletos
+#### Scenario: Attempt to generate a draft with incomplete data
 
-- **WHEN** se solicita generar la minuta de inscripción para un inmueble al
-  que le faltan datos catastrales o registrales requeridos
-- **THEN** el sistema rechaza la solicitud informando los campos faltantes y
-  no genera la minuta
+- **WHEN** generating the registration draft is requested for a property
+  that is missing required cadastral or registry data
+- **THEN** the system rejects the request, reports the missing fields, and
+  does not generate the draft
 
-#### Scenario: Imprimir la minuta en formulario normalizado
+#### Scenario: Print the draft on the standard form
 
-- **WHEN** se solicita el documento de una minuta ya generada
-- **THEN** el sistema devuelve el reporte en formato PDF con el formulario
-  normalizado
+- **WHEN** the document of an already generated draft is requested
+- **THEN** the system returns the report as a PDF. The download name stays
+  `minuta_inscripcion_{idRegistrationDraft}.pdf`
 
-### Requirement: Presentar la minuta ante el Registro
+### Requirement: Submit the draft to the registry
 
-El sistema SHALL permitir registrar la presentación de la minuta ante el
-Registro de la Propiedad Property.
+The system SHALL allow recording submission of the draft to the property
+registry.
 
-#### Scenario: Registrar presentación
+#### Scenario: Record the submission
 
-- **WHEN** se registra la presentación de una minuta generada, indicando la
-  fecha y el número de entrada registral
-- **THEN** el sistema guarda esos datos y cambia el estado de la minuta a
+- **WHEN** submission of a generated draft is recorded, giving the date and
+  the registry entry number (`registryEntryNumber`)
+- **THEN** the system stores those data and changes the draft status to
   "Presentado para inscripción"
 
-### Requirement: Registrar observaciones del Registro
+### Requirement: Record registry observations
 
-El sistema SHALL permitir registrar observaciones formuladas por el Registro
-sobre una minuta presentada.
+The system SHALL allow recording observations made by the registry on a
+submitted draft.
 
-#### Scenario: Registrar observación
+#### Scenario: Record an observation
 
-- **WHEN** el Registro formula observaciones sobre una minuta presentada
-- **THEN** el sistema guarda las observaciones y la fecha de subsanación, y
-  cambia el estado de la minuta a "Observado"
+- **WHEN** the registry makes observations on a submitted draft
+- **THEN** the system stores the observations and the correction date, and
+  changes the draft status to "Observado"
 
-### Requirement: Registrar la inscripción definitiva
+### Requirement: Record the final registration
 
-El sistema SHALL permitir registrar la inscripción definitiva de una minuta
-presentada.
+The system SHALL allow recording the final registration of a submitted
+draft.
 
-#### Scenario: Registrar inscripción definitiva
+#### Scenario: Record the final registration
 
-- **WHEN** se registra la devolución del testimonio inscripto, indicando la
-  fecha de recepción y el número de inscripción definitivo
-- **THEN** el sistema guarda esos datos y cambia el estado de la minuta a
+- **WHEN** return of the registered testimony is recorded, giving the
+  reception date and the final registration number
+- **THEN** the system stores those data and changes the draft status to
   "Inscripto"

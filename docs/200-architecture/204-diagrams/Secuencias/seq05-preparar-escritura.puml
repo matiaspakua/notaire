@@ -3,19 +3,19 @@
 title CU05 — Preparar escritura
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano busca una gestión de escritura.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra la lista de gestiones disponibles.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano selecciona una gestión.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra los datos de la gestión y solicita preparar la escritura.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano confirma la preparación.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Registra la preparación de la escritura.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) looks up a deed management.
+System -> System : Escribano
+Actor -> Actor : Shows the list of available managements.
+System -> System : System
+Actor -> Actor : The notary (Escribano) selects a management.
+System -> System : Escribano
+Actor -> Actor : Shows the management data and asks to prepare the deed.
+System -> System : System
+Actor -> Actor : The notary (Escribano) confirms the preparation.
+System -> System : Escribano
+Actor -> Actor : Records the deed preparation.
+System -> System : System
 
 @enduml
