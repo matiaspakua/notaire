@@ -81,9 +81,9 @@ test.describe("CU25 - Generate the monthly sworn statement", () => {
     await steps.whenUserOpensSidebarNav("reportes");
   });
 
-  test.skip("CU25-GW01 (#1146): Given on reportes, When select month and generate, Then creates", async () => {
-    // Skipped (#1146): reports page has no "mes" dropdown or "declaración jurada" named button.
-    // The DDJJ mensual section uses number inputs for year/month and a "Descargar PDF" button.
+  test.skip("CU25-GW01 (#1146): Given reports, When select month and generate, Then creates", async () => {
+    // Skipped (#1146): the reports page has no month dropdown or "declaración jurada" button.
+    // The monthly affidavit section uses number inputs for year and month and a "Descargar PDF" button.
   });
 });
 
@@ -226,7 +226,7 @@ test.describe("CU62 - Search deeds", () => {
     await steps.givenUserIsOnPage("/dashboard/deeds");
   });
 
-  test.skip("CU62-GW01 (#1146): Given on escrituras, When search by number, Then shows results", async () => {
+  test.skip("CU62-GW01 (#1146): Given deeds, When search by number, Then shows results", async () => {
     // Skipped (#1146): deeds page has no search bar in the current UI.
   });
 });

@@ -95,8 +95,8 @@ class BudgetTemplateControllerTest {
             BudgetTemplate fromDb = new BudgetTemplate(new BudgetTemplatePK(1, 1));
             fromDb.setNotes("Original notes");
 
-            // Simulate client sending update with observaciones but no version
-            String newNotes = "Notes actualizadas by the client";
+            // Simulate a client update that sends notes and omits version
+            String newNotes = "Notes updated by the client";
             fromDb.setNotes(newNotes);
 
             assertThat(fromDb.getNotes()).isEqualTo(newNotes);

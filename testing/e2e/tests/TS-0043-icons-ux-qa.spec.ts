@@ -119,16 +119,16 @@ test.describe("Icon rendering — Admin sub-pages with action icons", () => {
 
   for (const pageInfo of adminPages) {
     test.describe(`page: ${pageInfo.title}`, () => {
-      test("action icon renders for Agregar", async ({ page }) => {
+      test("action icon renders for add", async ({ page }) => {
         await authSetup(page);
         await page.goto(pageInfo.path);
         await page.waitForLoadState("networkidle");
-        // Folios has two "Agregar" actions (folio and folio type); either is fine here.
+        // Folios has two add actions (alt "Agregar"); either is fine here.
         const addImg = page.locator('img[alt="Agregar"]').first();
         await expect(addImg).toBeVisible({ timeout: 5000 });
       });
 
-      test("open modal shows Cancelar and Guardar icons", async ({ page }) => {
+      test("open modal shows cancel and save icons", async ({ page }) => {
         await authSetup(page);
         await page.goto(pageInfo.path);
         await page.waitForLoadState("networkidle");

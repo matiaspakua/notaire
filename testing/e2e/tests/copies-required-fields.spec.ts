@@ -8,7 +8,7 @@
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
 
-test.describe("Copias: required number and print date (#655)", () => {
+test.describe("Copies: required number and print date (#655)", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {

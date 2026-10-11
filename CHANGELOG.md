@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English skipped-case titles** (#1490, CU75):
+  Skipped and smoke titles say reports, deeds, concepts, copies, users, and
+  administration. Icon alts `Agregar`, `Cancelar`, and `Guardar`, and the
+  visible labels `declaración jurada` and `Descargar PDF`, stay.
 - **English agent skill prose** (#1490, CU75):
   The motion-design skill and the Bruno collection skill are written in
   English. Library names, the install commands, and the Bruno file layout stay.

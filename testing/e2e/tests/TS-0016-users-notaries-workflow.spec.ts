@@ -137,8 +137,8 @@ test.describe("CU23 - View the activity log", () => {
     await steps.givenUserIsOnPage("/dashboard/administration/users");
   });
 
-  test.skip("CU23-GW01 (#1146): Given on usuarios page, When click ver actividades, Then shows log", async () => {
-    // Skipped (#1146): no "ver actividades" button on the users page.
+  test.skip("CU23-GW01 (#1146): Given the users page, When view activity is clicked, Then shows log", async () => {
+    // Skipped (#1146): the users page has no view-activity button.
   });
 });
 

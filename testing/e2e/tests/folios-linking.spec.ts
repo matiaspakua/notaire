@@ -103,7 +103,7 @@ test.describe('CU87 - Link a deed and a folio', () => {
     await expect(page.getByRole('option', { name: `Escritura Nº ${number}` })).toHaveCount(0)
 
     // Escape closes the open select; a second Escape (or the first, if focus is on
-    // the dialog) dismisses the modal. Never click Cancelar after Escape — the
+    // the dialog) dismisses the modal. Never click Cancel after Escape — the
     // button is gone once the dialog is already closed (CI flake CU87-EDGE01).
     await page.keyboard.press('Escape')
     if (await dialog.isVisible().catch(() => false)) {

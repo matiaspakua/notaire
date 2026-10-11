@@ -92,7 +92,7 @@ test.describe("CU26/CU57/CU64 — Procedure types", () => {
   });
 });
 
-test.describe("CU37 — Conceptos", () => {
+test.describe("CU37 — Concepts", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
     await page.goto("/dashboard/administration/concepts");
@@ -149,7 +149,7 @@ test.describe("CU28/CU40/CU58/CU68 — Folios", () => {
     await expect(dialog.getByLabel(/año/i)).toBeVisible();
   });
 
-  test("CU63 — estado filter select is present and usable", async ({ page }) => {
+  test("CU63 — status filter select is present and usable", async ({ page }) => {
     await expect(page.getByTestId("select-filter-status-folio")).toBeVisible();
   });
 

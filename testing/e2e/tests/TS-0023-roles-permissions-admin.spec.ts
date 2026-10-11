@@ -13,7 +13,7 @@ test.describe("CU431 — Role and permission management", () => {
     await loginAsAdmin(page);
   });
 
-  test("roles page is accessible from administracion", async ({ page }) => {
+  test("roles page is accessible from administration", async ({ page }) => {
     await page.goto("/dashboard/administration/roles");
     await expect(page.getByRole("heading", { name: "Roles y Permisos" })).toBeVisible({ timeout: 10000 });
   });

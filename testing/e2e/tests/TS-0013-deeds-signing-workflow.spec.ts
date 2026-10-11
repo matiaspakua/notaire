@@ -81,7 +81,7 @@ test.describe('CU05 - Prepare a deed', () => {
     await page.goto('/dashboard/deeds')
     await page.waitForLoadState('domcontentloaded')
 
-    // When: click "Nueva deed"
+    // When: click the new-deed button
     await page.getByRole('button', { name: /nueva escritura/i }).click()
 
     // Then: modal opens
@@ -291,7 +291,7 @@ for (const viewport of [
     // Page heading visible
     await expect(page.getByRole('heading', { level: 1, name: /deeds/i })).toBeVisible()
 
-    // "Nueva deed" button accessible
+    // New-deed button is accessible
     await expect(page.getByRole('button', { name: /nueva escritura/i })).toBeVisible()
 
     // Search input accessible
