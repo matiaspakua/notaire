@@ -8169,6 +8169,8 @@ paths:
       - Testimony
   /api/v1/testimonies/{id}:
     delete:
+      description: 'Deletes a testimony that has no registry movements and no issued copies. Otherwise answers 409 with the
+        reason and keeps everything: they are part of the deed''s history.'
       operationId: delete_4
       parameters:
       - in: path
@@ -8190,6 +8192,12 @@ paths:
               schema:
                 type: object
           description: Not found
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'The testimony has registry movements or issued copies (issue #1364)'
       summary: Delete testimony
       tags:
       - Testimony
