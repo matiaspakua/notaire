@@ -64,6 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired association ignores** (#1490, CU75): Jackson ignore lists on
+  `Copy`, `Deed`, `Folio`, `Testimony`, and `IdentificationType` no longer
+  name `fkIdEscritura`, `fkIdTestimonio`, `fkIdTipoIdentificacion`,
+  `foliosCopiasCollection`, `movimientoTestimonioList`, `copiaList`, or
+  `copia`. Those names match no current field, so the serialized shape stays.
+  `folioList`, `tramiteList`, and `testimonioList` stay.
 - **Retired validation detail** (#1490, CU75): the engineering-sequences
   design names the detail CU20 still writes, `campo: mensaje`.
   The live validation text is `field: message`. The heading

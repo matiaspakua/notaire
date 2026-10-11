@@ -109,6 +109,37 @@ class EnglishSurfaceRatchetTest {
         assertThat(offenders).isEmpty();
     }
 
+    @Test
+    @DisplayName("Should not ignore retired Spanish association names")
+    void shouldNotIgnoreRetiredSpanishAssociations() throws IOException {
+        Path business = repoRoot().resolve(
+                "backend-api/src/main/java/com/licensis/notaire/business");
+        List<String> retired = List.of(
+                "fkIdEscritura",
+                "fkIdTestimonio",
+                "fkIdTipoIdentificacion",
+                "foliosCopiasCollection",
+                "movimientoTestimonioList",
+                "copiaList",
+                "\"copia\"");
+        List<String> offenders = new ArrayList<>();
+        try (Stream<Path> files = Files.walk(business)) {
+            files.filter(path -> path.toString().endsWith(".java")).forEach(path -> {
+                String text = read(path);
+                for (String name : retired) {
+                    if (text.contains(name)) {
+                        offenders.add(path.getFileName() + " " + name);
+                    }
+                }
+            });
+        }
+        assertThat(offenders).isEmpty();
+        String folio = read(business.resolve("Folio.java"));
+        assertThat(folio).contains("\"folioList\"");
+        assertThat(folio).contains("\"tramiteList\"");
+        assertThat(folio).contains("\"testimonioList\"");
+    }
+
     private static boolean containsSegment(String text, String segment) {
         return Pattern.compile("(^|/)(?<![A-Za-z0-9_-])" + Pattern.quote(segment) + "(?![A-Za-z0-9_-])")
                 .matcher(text)

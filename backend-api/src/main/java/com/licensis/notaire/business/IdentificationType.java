@@ -59,7 +59,6 @@ public class IdentificationType implements Serializable, Persistable<Integer> {
     private String characters;
     @XmlTransient
     @JsonIgnore
-    @JsonIgnoreProperties("fkIdTipoIdentificacion")
     // No cascade: removing a type must never remove its people (issue #1361; the delete
     // endpoint answers 409 while people use the type).
     @OneToMany(mappedBy = "fkIdIdentificationType", fetch = FetchType.LAZY)
