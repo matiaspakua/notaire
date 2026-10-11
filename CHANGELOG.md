@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired reentered flag** (#1490, CU75): the engineering-sequences
+  design names the flag CU43 still writes, `reingresado=true`.
+  The live field is `reentered`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
 - **Retired current status field** (#1490, CU75): the engineering-sequences
   design names the field CU83 still writes, `statusActual`.
   The live field is `currentStatus`. The heading `Riesgos / Trade-offs`
