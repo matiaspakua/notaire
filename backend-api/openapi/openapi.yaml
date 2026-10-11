@@ -170,6 +170,34 @@ components:
           format: int32
           type: integer
       type: object
+    CompleteCaseResponse:
+      properties:
+        budgetId:
+          format: int32
+          type: integer
+        heading:
+          type: string
+        idManagement:
+          format: int32
+          type: integer
+        notaryId:
+          format: int32
+          type: integer
+        notes:
+          type: string
+        number:
+          format: int32
+          type: integer
+        propertyId:
+          format: int32
+          type: integer
+        statusManagementId:
+          format: int32
+          type: integer
+        typeProcedureId:
+          format: int32
+          type: integer
+      type: object
     CopyRequest:
       properties:
         datePrinting:
@@ -5362,6 +5390,34 @@ paths:
       tags:
       - Managements
   /api/v1/managements/{id}/complete-case:
+    get:
+      description: 'Issue #1360 - Returns the management number, heading and notes plus the ids of its budget, notary, status,
+        procedure type and property (null when none), taken from the same procedure PUT /{id}/complete-case updates. Lets
+        the UI prefill a full edit.'
+      operationId: getCompleteCase
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          format: int32
+          type: integer
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CompleteCaseResponse'
+          description: OK
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CompleteCaseResponse'
+          description: Management not found
+      summary: CU53 - Get a management with its case dependencies, as PUT /{id}/complete-case accepts them
+      tags:
+      - Managements
     put:
       description: CU22/CU59 - If the requested notary has an active substitution for the management start date, the management
         is redirected to the substitute and a note is recorded. CU83 **BREAKING** - Changing statusManagementId is rejected;

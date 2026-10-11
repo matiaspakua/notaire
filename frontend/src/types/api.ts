@@ -8,6 +8,8 @@ export type ApiSchemas = components["schemas"];
 
 /** GET /managements page content — DtoManagementSummary. */
 export type DeedManagement = ApiSchemas["DtoManagementSummary"];
+/** Case values of a management in the shape PUT /managements/{id}/complete-case accepts (#1360). */
+export type ManagementCompleteCase = ApiSchemas["CompleteCaseResponse"];
 
 /** GET /budgets page/detail — BudgetResponse. */
 export type Budget = ApiSchemas["BudgetResponse"];

@@ -1,0 +1,26 @@
+info:
+  name: Get complete case (edit prefill)
+  type: http
+  seq: 7
+  description: |-
+      Traceability: CU53, issue #1360 - GET /managements/{id}/complete-case returns the values PUT accepts.
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/managements/{{pf_mgmt_id}}/complete-case"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns the case ids the PUT accepts", function () {
+            const b = res.getBody();
+            expect(b.idManagement).to.equal(Number(bru.getVar('pf_mgmt_id')));
+            expect(b.number).to.equal(Number(bru.getVar('pf_mgmt_number')));
+            expect(b.budgetId).to.equal(Number(bru.getVar('pf_budget_id')));
+            expect(b.notaryId).to.equal(Number(bru.getVar('pf_notary_id')));
+            expect(b.statusManagementId).to.equal(1);
+            expect(b.typeProcedureId).to.equal(1);
+          });

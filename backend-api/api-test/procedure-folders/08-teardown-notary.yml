@@ -1,7 +1,7 @@
 info:
   name: Teardown - Delete notary (may 409)
   type: http
-  seq: 9
+  seq: 12
   description: |-
       Traceability: CU85
 http:

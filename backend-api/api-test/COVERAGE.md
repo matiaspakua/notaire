@@ -67,7 +67,7 @@ the value but update did not. Hardened in `setAttributes`.
 | notebooks | `/notebooks` | POST/GET | 10-folio fixture; cover PDF | CU80 |
 | payments | `/payments` | ✅ | `budget/{id}`, `balance`, `status`, over-limit 409, non-positive update 400, receipt PDF | CU01, CU15, CU47, CU45 |
 | people | `/people` | ✅ | `search?lastName=`, 409 duplicate, 400 unknown identification type (#1361) | CU17, CU18, CU61, CU46, CU54, CU41 |
-| procedure-folders | `/procedure-folders` | GET + wait | via complete-case fixture | CU85 |
+| procedure-folders | `/procedure-folders` | GET + wait | via complete-case fixture; `GET`/`PUT /managements/{id}/complete-case` full edit read-back (#1360) | CU85, CU53 |
 | procedure-templates | `/procedure-templates` | read-only | list, `procedure-types/{id}` | CU79, CU03 |
 | procedure-types | `/procedure-types` | ✅ | — | CU26, CU64, CU31, CU57 |
 | procedures | `/procedures` | ✅ | — | CU02, CU53 |

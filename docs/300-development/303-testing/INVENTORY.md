@@ -10,12 +10,12 @@
 
 | Suite | Count | Location |
 |-------|------:|----------|
-| Playwright E2E specs | 84 | `testing/e2e/tests/*.spec.ts` |
-| Backend `*Test.java` (all) | 265 | `backend-api/src/test` |
+| Playwright E2E specs | 85 | `testing/e2e/tests/*.spec.ts` |
+| Backend `*Test.java` (all) | 266 | `backend-api/src/test` |
 | Backend unit-path | 111 | `.../unit/*Test.java` |
-| Backend integration-path | 119 | `.../integration/*Test.java` |
-| Frontend Vitest files | 82 | `frontend/src/**/*.test.ts(x)` |
-| Bruno YAML requests | 405 | `backend-api/api-test/**/*.yml` |
+| Backend integration-path | 120 | `.../integration/*Test.java` |
+| Frontend Vitest files | 83 | `frontend/src/**/*.test.ts(x)` |
+| Bruno YAML requests | 408 | `backend-api/api-test/**/*.yml` |
 
 ## Playwright suites (TS-nnnn)
 
@@ -95,6 +95,7 @@
 | `TS-0123` | `TS-0123-deed-picker.spec.ts` |
 | `TS-0124` | `TS-0124-status-badges.spec.ts` |
 | `TS-0125` | `TS-0125-app-shell-skeleton.spec.ts` |
+| `TS-0126` | `TS-0126-management-full-edit.spec.ts` |
 | `TS-0130` | `TS-0130-budget-catalog-items.spec.ts` |
 | `TS-0131` | `TS-0131-budget-template.spec.ts` |
 | `TS-0132` | `TS-0132-copies-required-fields.spec.ts` |

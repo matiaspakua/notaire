@@ -242,6 +242,7 @@
     "updated": "Case updated",
     "deleted": "Case deleted",
     "suplenciaRedirected": "The case was redirected to the notary's active substitute",
+    "estadoViaTransition": "Change the status with “Change state” (workflow).",
     "errorSave": "Error saving case",
     "errorDelete": "Error deleting case",
     "noData": "No cases registered",
