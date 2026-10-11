@@ -79,9 +79,9 @@ public class ExternalEntityDocumentService {
         List<SubmittedDocument> documents = documentRepository
                 .findByManagementAndDeliveredBy(idManagement,
                         BusinessConstants.DocumentationExternalEntity);
-        boolean todosEntregados = !documents.isEmpty()
+        boolean allDelivered = !documents.isEmpty()
                 && documents.stream().allMatch(doc -> Boolean.TRUE.equals(doc.getDelivered()));
-        if (!todosEntregados) {
+        if (!allDelivered) {
             return;
         }
         try {

@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English sign and delivery locals** (#1490, CU75): the deeds page
+  uses `UNSIGNED_STATUS`, `signMutation`, and `signId`. The delivery
+  flag is `allDelivered`. Audit lists are `records`. The stored status
+  `Sin Firmar` stays, along with message keys `errorFirmar`,
+  `firmarEscritura`, and `firmarConfirmTitle`.
 - **English verification identifiers** (#1490, CU75): the testimony
   controller field is `generationVerificationService`. The verification
   test class is `TestimonyVerificationServiceTest`. Withdrawal rejection
