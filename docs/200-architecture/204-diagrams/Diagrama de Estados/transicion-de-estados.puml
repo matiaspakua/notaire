@@ -1,5 +1,5 @@
 @startuml
-title Transición de estados de una gestión
+title Management state transition
 
 skinparam shadowing true
 skinparam defaultFontName Arial
@@ -13,60 +13,60 @@ skinparam activity {
 
 start
 
-:Solicita iniciar una gestión;
+:Request to start a management;
 
-if (¿Es cliente?) then (sí)
-  :Buscar cliente;
+if (Is the person a client?) then (yes)
+  :Find the client;
 else (no)
-  if (¿Requiere alta de persona?) then (sí)
-    :Dar alta persona;
+  if (Does the person need to be created?) then (yes)
+    :Create the person;
   endif
-  :Dar alta cliente;
+  :Create the client;
 endif
 
-if (¿Existe presupuesto?) then (sí)
-  :Buscar presupuesto;
+if (Does a budget exist?) then (yes)
+  :Find the budget;
 else (no)
-  :Crear presupuesto;
+  :Create the budget;
 endif
 
-:Iniciar gestión;
+:Start the management;
 
 repeat
-  :En espera de documentación;
-repeat while (¿Documentación completa?) is (no) not (sí)
+  :Waiting for documents;
+repeat while (Are the documents complete?) is (no) not (yes)
 
 repeat
-  :Preparar escritura;
+  :Prepare the deed;
 
-  if (Resultado de la escritura) then (firmar)
-    :Firmar escritura;
-    :Generar testimonio;
+  if (Deed result) then (sign)
+    :Sign the deed;
+    :Generate the testimony;
 
-    if (¿Requiere inscripción?) then (sí)
-      :Ingresar para inscripción;
+    if (Does it require registration?) then (yes)
+      :Submit for registration;
 
-      while (¿Volvió observado?) is (sí)
-        :Registrar reingreso;
-        :Ingresar para inscripción;
+      while (Did it return Observado?) is (yes)
+        :Record the re-entry;
+        :Submit for registration;
       endwhile (no)
     endif
 
     repeat
-      :Retirar testimonio;
-    repeat while (¿Todos los testimonios retirados?) is (no) not (sí)
-  elseif (anular)
-    :Escritura anulada;
-  else (no pasó)
-    :Escritura no pasó;
+      :Withdraw the testimony;
+    repeat while (Have all testimonies been withdrawn?) is (no) not (yes)
+  elseif (void)
+    :Deed voided;
+  else (No Pasó)
+    :Deed status No Pasó;
   endif
 
-repeat while (¿Existen más trámites en la gestión?) is (sí) not (no)
+repeat while (Are there more procedures in the management?) is (yes) not (no)
 
-if (¿Saldo pendiente > 0?) then (sí)
-  :Mostrar advertencia de deuda pendiente (no bloqueante);
+if (Is the pending balance > 0?) then (yes)
+  :Show the pending-debt warning (it does not block);
 endif
 
-:Archivar gestión;
+:Archive the management;
 stop
 @enduml

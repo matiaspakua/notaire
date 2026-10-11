@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English management state diagrams** (#1490, CU75):
+  `workflow-gestion.puml` calls `ManagementController` at
+  `POST /api/v1/managements` and inserts into `deed_managements` and
+  `audit_records`. The activity diagram is in English. The stored status
+  `No Pasó` and the role `Escribano` stay. The folder name
+  `Diagrama de Estados` stays.
 - **English login sequences** (#1490, CU75):
   The seven login diagrams call `UserController` at `POST /api/v1/users/login`
   and `GET /api/v1/users`. The JSON field is `valid`. The lockout message is
