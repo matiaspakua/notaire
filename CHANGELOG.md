@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English Flyway schema-versioning decision** (#1490, CU75):
+  ADR-007 is English. Dependencies are `spring-boot-starter-flyway` and
+  `flyway-database-postgresql`. `V1__initial_schema.sql`, `V2__initial_data.sql`,
+  and `V45__rename_remaining_spanish_identifiers.sql` exist. Applied migration
+  filenames V1–V44 stay. Seeded label `Workflow de Gestión Estándar` stays.
+  `spring.flyway.clean-disabled` stays `true`.
 - **English database-migration decision** (#1490, CU75):
   ADR-004 is English. The live database is PostgreSQL 16 with Flyway, Hibernate
   `ddl-auto` `none`, and table `budgets`. The Liquibase sketch and the MySQL

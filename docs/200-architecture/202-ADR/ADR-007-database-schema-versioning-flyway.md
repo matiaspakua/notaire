@@ -1,73 +1,74 @@
-# ADR-007: Control de Versiones de Schema con Flyway
+# ADR-007: Schema versioning with Flyway
 
 **Status:** Accepted
 **Date:** 2026-04-14
 **Deciders:** Matías Miguez
-**Supersedes:** ADR-004 (sección de Liquibase)
+**Supersedes:** ADR-004 (Liquibase section)
 **Related:** ADR-001 (Microservices Architecture), ADR-004 (Database Migration)
 
 ## Context
 
-El sistema Notaire actualmente gestiona el esquema de base de datos mediante scripts SQL estáticos en `init-db/` que se ejecutan una sola vez al crear el contenedor PostgreSQL. Esta aproximación presenta varios problemas:
+Notaire used to apply the database schema with static SQL in `init-db/`, run once when the PostgreSQL volume was created. That approach had several problems:
 
-### Problemas Identificados
+### Problems
 
-1. **Sin control de versiones del schema**: No hay historial de cambios del schema
-2. **Sin rollback fácil**: No hay mecanismo para revertir cambios problemáticos
-3. **Migraciones manuales**: Los cambios de schema requieren intervención manual
-4. **Difícil CI/CD**: No se integra fácilmente con pipelines de despliegue
-5. **Riesgo en producción**: Cambios de schema pueden causar inconsistencias
+1. **No schema history**: there was no record of schema changes
+2. **No easy rollback**: there was no mechanism to reverse a bad change
+3. **Manual migrations**: schema changes needed a person to apply them
+4. **Weak CI/CD**: the scripts did not fit a deploy pipeline
+5. **Production risk**: a schema change could leave environments inconsistent
 
-### Estado Actual
+### Former layout
 
-```
+```text
 init-db/
-├── 01-schema.sql    # Creación de tablas (371 líneas)
-├── 02-data.sql     # Datos iniciales (94 líneas)
-├── migrate.load    # Documentación histórica
+├── 01-schema.sql    # table creation (371 lines)
+├── 02-data.sql      # seed data (94 lines)
+├── migrate.load     # historical notes
 └── README.md
 ```
 
-Los scripts se ejecutan vía:
+Those scripts ran through:
+
 ```yaml
-# docker-compose.yml
+# former docker-compose.yml volume
 volumes:
   - ./init-db:/docker-entrypoint-initdb.d:ro
 ```
 
-Esto significa que solo se ejecutan en la **primera creación** del volumen Docker.
+They ran only on the **first creation** of the Docker volume. The folder is now archived at `docs/000-archive/init-db/`. Compose no longer mounts it.
 
 ## Decision
 
-**Implementar Flyway** como sistema de control de versiones del schema de base de datos.
+**Use Flyway** to version the database schema.
 
-### Por qué Flyway (y no Liquibase)
+### Why Flyway, not Liquibase
 
-| Criterio | Flyway | Liquibase |
-|----------|--------|-----------|
-| Curva de aprendizaje | Baja (SQL puro) | Media (XML/YAML/JSON) |
-| Mantenimiento | Simple (archivos SQL) | Mayor (formatos declarativos) |
-| Integración Spring Boot | Nativa (spring-boot-starter-jdbc) | Requiere configuración adicional |
-| Team familiarity | Alto (SQL estándar) | Medio |
-| Rollback | SQL nativo | Requiere changelog complejo |
+| Criterion | Flyway | Liquibase |
+|-----------|--------|-----------|
+| Learning curve | Low (plain SQL) | Medium (XML/YAML/JSON) |
+| Maintenance | Simple (SQL files) | Higher (declarative formats) |
+| Spring Boot | `spring-boot-starter-flyway` | Extra setup |
+| Team familiarity | High (standard SQL) | Medium |
+| Rollback | Hand-written SQL | Needs a changelog |
 
-### Contexto: ADR-004 Recomendaba Liquibase
+### ADR-004 had recommended Liquibase
 
-El ADR-004 mencionaba Liquibase como herramienta preferida. Sin embargo, tras evaluación:
+ADR-004 named Liquibase in its original sketch. After review:
 
-1. **SQL puro es más simple**: El equipo ya conoce SQL
-2. **Menos abstracción**: Flyway usa SQL directo, sin XML/YAML overhead
-3. **Spring Boot nativo**: `spring-boot-starter-data-jpa` incluye soporte Flyway
-4. **Migración más simple**: Los scripts existentes se convierten directamente
+1. **Plain SQL is simpler**: the team already writes SQL
+2. **Less abstraction**: Flyway runs SQL directly
+3. **Spring Boot**: the project depends on `spring-boot-starter-flyway`, plus `flyway-database-postgresql`
+4. **Straight conversion**: the old scripts became versioned SQL files
 
-### Configuración de Flyway
+### Flyway configuration
 
-#### 1. Dependencia Maven
+#### 1. Maven dependencies
 
 ```xml
 <dependency>
-    <groupId>org.flywaydb</groupId>
-    <artifactId>flyway-core</artifactId>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-flyway</artifactId>
 </dependency>
 <dependency>
     <groupId>org.flywaydb</groupId>
@@ -75,21 +76,24 @@ El ADR-004 mencionaba Liquibase como herramienta preferida. Sin embargo, tras ev
 </dependency>
 ```
 
-#### 2. Ubicación de Migraciones
+#### 2. Migration location
 
-```
+```text
 backend-api/src/main/resources/
 ├── db/migration/
 │   ├── V1__initial_schema.sql
 │   ├── V2__initial_data.sql
-│   └── V3__add_indexes.sql
+│   └── V45__rename_remaining_spanish_identifiers.sql
 └── application.properties
 ```
 
-#### 3. Configuración Spring Boot
+`V1__initial_schema.sql`, `V2__initial_data.sql`, and `V45__rename_remaining_spanish_identifiers.sql` exist. Applied filenames V1–V44 stay as recorded, including Spanish words in those names. New migrations use English descriptions. Undo scripts use the `R{version}__` prefix (`R45__rename_remaining_spanish_identifiers.sql`).
+
+#### 3. Spring Boot settings
+
+These match `application.properties`:
 
 ```properties
-# application.properties
 spring.flyway.enabled=true
 spring.flyway.baseline-on-migrate=true
 spring.flyway.baseline-version=0
@@ -99,136 +103,143 @@ spring.flyway.validate-on-migrate=true
 spring.flyway.clean-disabled=true
 ```
 
-#### 4. Convenciones de Nomenclatura
+`clean` is disabled. Do not run `mvn flyway:clean` against a shared database.
 
-```
+#### 4. Naming
+
+```text
 V{version}__{description}.sql
-  └── Version: 1, 2, 3... (números enteros)
-  └── Description: snake_case, descriptivo
+  version: 1, 2, 3... (integers)
+  description: snake_case
 
-Ejemplos:
+Examples:
 - V1__initial_schema.sql
-- V2__initial_data.sql
-- V3__add_performance_indexes.sql
-- V4__add_users_table.sql
+- V10__seed_workflow_demo_data.sql
+- V45__rename_remaining_spanish_identifiers.sql
 ```
 
-#### 5. Estrategia de Baseline
+Seeded labels inside a migration, such as `Workflow de Gestión Estándar`, stay as stored data. Applied migration files are not edited.
 
-Para bases de datos existentes, usar baseline:
+#### 5. Baseline
+
+For a database that already has the schema, baseline it:
 
 ```sql
--- Baseline migration (replica el estado actual)
+-- Baseline (records the current state)
 INSERT INTO flyway_schema_history (version, description, type, installed_on)
 VALUES (0, '<< BASELINE >>', 'BASELINE', NOW());
 ```
 
-## Options Considered
+Prefer `mvn flyway:baseline` or `baseline-on-migrate` over a hand-written insert. The insert above is the idea, not a script to apply.
 
-### Option A: Mantener Scripts Estáticos (Status Quo)
+## Options considered
 
-| Pros | Contras |
-|------|---------|
-| Sin cambios | Sin versionado |
-| Simple initially | Difícil rollback |
-| SQL directo | No integrable con CI/CD |
-| | Riesgo en producción |
+### Option A: Keep static scripts (status quo)
 
-### Option B: Liquibase (Recomendado en ADR-004)
+| Pros | Cons |
+|------|------|
+| No change | No versioning |
+| Simple at first | Rollback is hard |
+| Direct SQL | Does not fit CI/CD |
+| | Production risk |
 
-| Pros | Contras |
-|------|---------|
-| Rollback automático | XML/YAML overhead |
-| Cross-database | Mayor complejidad |
-| Changelog versionable | Curva de aprendizaje |
+### Option B: Liquibase (named in ADR-004)
 
-### Option C: Flyway (SELECCIONADO)
+| Pros | Cons |
+|------|------|
+| Automatic rollback | XML/YAML overhead |
+| Cross-database | More complexity |
+| Versioned changelog | Learning curve |
 
-| Pros | Contras |
-|------|---------|
-| SQL puro | Rollback manual |
-| Simple | Sin changelog declarativo |
-| Spring Boot nativo | - |
-| Bajo mantenimiento | - |
+### Option C: Flyway (selected)
 
-### Option D: Doctrine Migrations
+| Pros | Cons |
+|------|------|
+| Plain SQL | Rollback is manual |
+| Simple | No declarative changelog |
+| Spring Boot starter | |
+| Low maintenance | |
 
-| Pros | Contras |
-|------|---------|
-| PHP/Doctrine | Fuera del stack Java |
-| TypeScript | No aplica |
+### Option D: Doctrine migrations
 
-## Trade-off Analysis
+| Pros | Cons |
+|------|------|
+| PHP/Doctrine | Outside the Java stack |
+| TypeScript | Does not apply |
 
-### Esfuerzo vs. Beneficios
+## Trade-off analysis
 
-| Aspecto | Antes | Después |
-|---------|-------|---------|
-| Versionado schema | No | Sí (V1, V2, V3...) |
-| Rollback | Manual/Difícil | SQL nativo |
-| CI/CD | Manual | Automatizado |
-| Testing schema | Ad-hoc | Reproducible |
+### Effort versus benefit
 
-### Migration Path
+| Aspect | Before | After |
+|--------|--------|-------|
+| Schema versioning | No | Yes (V1, V2, V3...) |
+| Rollback | Manual | A new undo script |
+| CI/CD | Manual | Runs on startup and in pipelines |
+| Schema tests | Ad hoc | Repeatable |
 
-1. **Fase 1**: Migrar scripts actuales a Flyway (V1, V2)
-2. **Fase 2**: Configurar baseline para datos existentes
-3. **Fase 3**: Actualizar Docker Compose
-4. **Fase 4**: Agregar nuevas migraciones para features
+### Migration path
+
+1. **Phase 1**: move the current scripts into Flyway (V1, V2)
+2. **Phase 2**: baseline existing databases
+3. **Phase 3**: update Docker Compose
+4. **Phase 4**: add a new migration for each later change
 
 ## Consequences
 
-### Positivos
+### Positive
 
-- **Versionado completo**: Cada cambio tiene su migración
-- **Reproducibilidad**: Same schema en todos los ambientes
-- **CI/CD integrado**: Migrations en pipelines de deploy
-- **Audit trail**: Tabla `flyway_schema_history` registra todo
-- **Rollback seguro**: SQL revert permite volver atrás
-- **Testing de schema**: Migrations pueden incluir tests
+- **Full history**: each change is a migration
+- **Repeatable schema**: the same files run in every environment
+- **CI/CD**: migrations run as part of startup
+- **Audit**: `flyway_schema_history` records each apply
+- **Rollback**: an `R{version}` script can reverse a change
+- **Schema tests**: migrations can be exercised by the test suite
 
-### Negativos
+### Negative
 
-- **Curva de aprendizaje**: Equipo debe aprender convenciones Flyway
-- **Overhead inicial**: Migrar scripts existentes toma tiempo
-- **Discipline requerida**: Todas las mudanças de schema = nueva migración
-- **No auto-rollback**: Rollback requiere escribir SQL manualmente
+- **Learning curve**: the team follows Flyway naming and immutability
+- **Upfront work**: the old scripts had to be converted
+- **Discipline**: every schema change is a new migration
+- **No automatic rollback**: an undo script is written by hand
 
-## Implementation Plan
+## Implementation plan
 
-### Fase 1: Setup (Sprint 1)
+### Phase 1: setup (sprint 1)
 
-- [ ] Agregar dependencia Flyway a `pom.xml`
-- [ ] Crear directorio `db/migration/`
-- [ ] Migrar `01-schema.sql` → `V1__initial_schema.sql`
-- [ ] Migrar `02-data.sql` → `V2__initial_data.sql`
-- [ ] Configurar baseline en `application.properties`
-- [ ] Probar en ambiente local
+- [x] Add the Flyway dependency to `pom.xml`
+- [x] Create `db/migration/`
+- [x] Move `01-schema.sql` to `V1__initial_schema.sql`
+- [x] Move `02-data.sql` to `V2__initial_data.sql` (the archived copy stays at `docs/000-archive/init-db/`)
+- [x] Configure baseline in `application.properties`
+- [ ] Prove a local startup applies the pending migrations
 
-### Fase 2: Docker Integration (Sprint 1) — COMPLETED
+### Phase 2: Docker (sprint 1) — done
 
-- [x] Actualizar `docker-compose.yml` para usar Flyway
-- [x] Remover volúmenes de `init-db` (archivado en `docs/000-archive/init-db/`)
-- [ ] Agregar healthcheck de Flyway
-- [ ] Test de migrate + clean en containers
+- [x] `docker-compose.yml` enables Flyway (`SPRING_FLYWAY_ENABLED`)
+- [x] Remove the `init-db` volume (archived at `docs/000-archive/init-db/`)
+- [ ] Add a Flyway-specific healthcheck
+- [ ] Test migrate and clean in containers (`clean` is disabled)
 
-### Fase 3: CI/CD (Sprint 2)
+### Phase 3: CI/CD (sprint 2)
 
-- [ ] Agregar step de Flyway en GitHub Actions
-- [ ] Configurar validación de migraciones en PR
-- [ ] Documentar rollback procedures
+- [ ] Add a Flyway step in GitHub Actions
+- [ ] Validate migrations on pull requests
+- [ ] Document rollback procedures
 
-### Fase 4: Testing (Sprint 2)
+### Phase 4: testing (sprint 2)
 
-- [ ] Crear tests de integración con Testcontainers
-- [ ] Tests de rollback
-- [ ] Tests de idempotencia
+- [ ] Integration tests with Testcontainers
+- [ ] Rollback tests
+- [ ] Idempotence tests
 
-## Technical Details
+The checkboxes above are the original plan. They were not all kept current. What the repo shows today is listed in the checked items.
 
-### Tabla de ManagementHistory
+## Technical details
 
-Flyway crea automáticamente:
+### Schema history table
+
+Flyway creates:
 
 ```sql
 CREATE TABLE flyway_schema_history (
@@ -245,90 +256,83 @@ CREATE TABLE flyway_schema_history (
 );
 ```
 
-### Comandos Principales
+### Commands
 
 ```bash
-# Validar migraciones
+# Validate migrations
 mvn flyway:validate
 
-# Aplicar migraciones
+# Apply migrations
 mvn flyway:migrate
 
-# Ver estado
+# Show state
 mvn flyway:info
 
-# Limpiar (CUIDADO!)
-mvn flyway:clean
+# Clean is disabled (spring.flyway.clean-disabled=true)
+# mvn flyway:clean
 
-# Baseline para DB existente
+# Baseline an existing database
 mvn flyway:baseline
 ```
 
-### Integración Spring Boot
+### Spring Boot
 
-Spring Boot auto-configura Flyway cuando detecta la dependencia:
+Spring Boot configures Flyway when the starter is on the classpath. Startup is `NotaireBackendApplication`.
 
-```java
-@SpringBootApplication
-public class NotaireBackendApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(NotaireBackendApplication.class, args);
-    }
-}
-```
+## Migration script templates
 
-## Migration Scripts Templates
-
-### Template de Migración
+### Forward migration
 
 ```sql
 -- V{version}__{description}.sql
--- Author: {nombre}
--- Date: {fecha}
--- Description: {descripción}
+-- Author: {name}
+-- Date: {date}
+-- Description: {description}
 
 -- =============================================================================
--- UP Migration
+-- UP migration
 -- =============================================================================
 
--- Tu SQL aquí
+-- SQL here
 
 -- =============================================================================
 -- Verification
 -- =============================================================================
--- SELECT COUNT(*) FROM table_name; -- debe retornar X rows
+-- SELECT COUNT(*) FROM table_name; -- expect X rows
 ```
 
-### Template de Rollback
+### Undo migration
 
 ```sql
 -- R{version}__{description}.sql
--- Author: {nombre}
--- Date: {fecha}
--- Description: Rollback de V{version}
+-- Author: {name}
+-- Date: {date}
+-- Description: undo of V{version}
 
 -- =============================================================================
--- DOWN Migration (Rollback)
+-- DOWN migration
 -- =============================================================================
 
--- Tu SQL de rollback aquí
+-- Undo SQL here
 ```
+
+Do not edit an applied `V` or `R` file. Add the next version instead.
 
 ## References
 
 - [Flyway Documentation](https://flywaydb.org/documentation/)
-- [Flyway + Spring Boot](https://flywaydb.org/documentation/database/postgresql/)
+- [Flyway and PostgreSQL](https://flywaydb.org/documentation/database/postgresql/)
 - [Flyway Best Practices](https://flywaydb.org/documentation/bestPractices.html)
-- ADR-004: Database Migration MySQL → PostgreSQL
+- ADR-004: Database migration from MySQL to PostgreSQL
 - Issue #252: Implement Flyway for database schema migration
 
-## AI Agent Guidelines
+## AI agent guidelines
 
 Reference files AI coding agents must consult before writing a migration:
 
 | File | Description |
 |------|-------------|
-| `.claude/skills/flyway/SKILL.md` | Complete Flyway skill with examples |
+| `.claude/skills/flyway/SKILL.md` | Flyway skill with examples |
 | `.claude/rules/database-migrations.md` | Mandatory rules for migrations |
 
 Mandatory rules for agents:
@@ -339,11 +343,11 @@ Mandatory rules for agents:
 4. **Idempotent SQL** — use `IF EXISTS` / `IF NOT EXISTS`.
 5. **Sequences** — include `setval` after any `INSERT` with an explicit ID.
 
-Agent workflow: analyze the required schema change → check the current version (`ls db/migration/`) → create `V{n+1}__{description}.sql` with the standard header template (see [Migration Scripts Templates](#migration-scripts-templates) above) → validate with `mvn flyway:validate` → commit referencing the issue.
+Agent workflow: analyze the required schema change → check the current version (`ls db/migration/`) → create `V{n+1}__{description}.sql` with the standard header template (see [Migration script templates](#migration-script-templates) above) → validate with `mvn flyway:validate` → commit referencing the issue.
 
 ## Related ADRs
 
-- ADR-001: Microservices Architecture
-- ADR-004: Database Migration (MySQL → PostgreSQL)
-- ADR-005: Modern Frontend Migration (Next.js)
-- ADR-006: Testing Strategy
+- ADR-001: Microservices architecture
+- ADR-004: Database migration (MySQL to PostgreSQL)
+- ADR-005: Frontend migration from Java Swing to Next.js
+- ADR-006: Testing strategy
