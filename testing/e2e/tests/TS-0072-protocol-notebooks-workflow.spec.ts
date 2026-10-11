@@ -86,7 +86,7 @@ test.describe("CU80 - Manage folio notebooks", () => {
     }
     await dialog.getByRole("button", { name: /crear/i }).click();
 
-    await expect(page.getByText(/múltiplo exacto de 10/i)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/exact multiple of 10/i)).toBeVisible({ timeout: 10000 });
     await expect(dialog).toBeVisible();
   });
 
@@ -106,7 +106,7 @@ test.describe("CU80 - Manage folio notebooks", () => {
     }
     await dialog.getByRole("button", { name: /crear/i }).click();
 
-    await expect(page.getByText(/requiere una justificaci/i)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/requires a justification/i)).toBeVisible({ timeout: 10000 });
     await expect(dialog).toBeVisible();
 
     await dialog.getByLabel(/observaciones/i).fill("Folio damaged during printing");
