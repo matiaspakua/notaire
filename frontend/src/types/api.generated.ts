@@ -1093,7 +1093,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * CU53 - Get a management with its case dependencies, as PUT /{id}/complete-case accepts them
+         * @description Issue #1360 - Returns the management number, heading and notes plus the ids of its budget, notary, status, procedure type and property (null when none), taken from the same procedure PUT /{id}/complete-case updates. Lets the UI prefill a full edit.
+         */
+        get: operations["getCompleteCase"];
         /**
          * CU02/CU53 - Update a management with its required dependencies
          * @description CU22/CU59 - If the requested notary has an active substitution for the management start date, the management is redirected to the substitute and a note is recorded. CU83 **BREAKING** - Changing statusManagementId is rejected; use POST /{id}/transition. Same-status updates remain allowed.
@@ -2752,6 +2756,24 @@ export interface components {
             /** Format: int32 */
             budgetId?: number;
             heading?: string;
+            /** Format: int32 */
+            notaryId?: number;
+            notes?: string;
+            /** Format: int32 */
+            number?: number;
+            /** Format: int32 */
+            propertyId?: number;
+            /** Format: int32 */
+            statusManagementId?: number;
+            /** Format: int32 */
+            typeProcedureId?: number;
+        };
+        CompleteCaseResponse: {
+            /** Format: int32 */
+            budgetId?: number;
+            heading?: string;
+            /** Format: int32 */
+            idManagement?: number;
             /** Format: int32 */
             notaryId?: number;
             notes?: string;
@@ -7338,6 +7360,37 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["DtoManagementCaseSummary"];
+                };
+            };
+        };
+    };
+    getCompleteCase: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CompleteCaseResponse"];
+                };
+            };
+            /** @description Management not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CompleteCaseResponse"];
                 };
             };
         };

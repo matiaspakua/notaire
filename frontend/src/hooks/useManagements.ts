@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiGetPage, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { managementWorkflowKeys } from "@/hooks/useManagementWorkflow";
-import type { DtoOutstandingBalance, DeedManagement } from "@/types/api";
+import type { DtoOutstandingBalance, DeedManagement, ManagementCompleteCase } from "@/types/api";
 import type {
   ProcedureFolder,
   CreateCompleteManagementInput,
@@ -12,6 +12,7 @@ import type {
 export const managementsKeys = {
   all: ["managements"] as const,
   detail: (id: number) => ["managements", id] as const,
+  completeCase: (id: number) => ["managements", id, "complete-case"] as const,
   byClient: (id: number) => ["managements", "client", id] as const,
   byNumber: (number: number) => ["managements", "number", number] as const,
   outstandingBalance: (id: number) => ["managements", id, "outstanding-balance"] as const,
@@ -107,12 +108,28 @@ export function useCreateCompleteManagement() {
   });
 }
 
-export function useUpdateManagement() {
+/** CU53 (#1360) - current case values of a management, to prefill the full edit. */
+export function useManagementCompleteCase(id: number | undefined) {
+  return useQuery({
+    queryKey: managementsKeys.completeCase(id ?? 0),
+    queryFn: () => apiGet<ManagementCompleteCase>(`/managements/${id}/complete-case`),
+    enabled: !!id,
+  });
+}
+
+/**
+ * CU53 (#1360) - full management edit through PUT /managements/{id}/complete-case. The
+ * status must stay the same (CU83: status changes go through /transition).
+ */
+export function useUpdateCompleteManagement() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<DeedManagement> }) =>
-      apiPut<void>(`/managements/${id}`, data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: managementsKeys.all }),
+    mutationFn: ({ id, data }: { id: number; data: CreateCompleteManagementInput }) =>
+      apiPut<DeedManagement>(`/managements/${id}/complete-case`, toCompleteCaseRequest(data)),
+    onSuccess: (_data, { id }) => {
+      qc.invalidateQueries({ queryKey: managementsKeys.all });
+      qc.invalidateQueries({ queryKey: managementWorkflowKeys.trace(id) });
+    },
   });
 }
 
