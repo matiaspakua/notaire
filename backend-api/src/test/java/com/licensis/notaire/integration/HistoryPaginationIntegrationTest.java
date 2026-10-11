@@ -60,7 +60,7 @@ class HistoryPaginationIntegrationTest {
 
         Person person = new Person();
         person.setFirstName("Pag");
-        person.setLastName("ManagementHistory");
+        person.setLastName("History");
         person.setIdentificationNumber("59610");
         person.setFkIdIdentificationType(identificationTypeRepository.findById(1).orElseThrow());
         person = personRepository.save(person);

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-@DisplayName("UserAccount entity JSON serialization")
+@DisplayName("User entity JSON serialization")
 class UserSerializationTest {
 
     @Test
@@ -18,9 +18,9 @@ class UserSerializationTest {
 
         String json = new ObjectMapper().writeValueAsString(user);
 
-        assertFalse(json.contains("password"), "Serialized UserAccount must not contain the password field");
+        assertFalse(json.contains("password"), "Serialized User must not contain the password field");
         assertFalse(json.contains("5f4dcc3b5aa765d61d8327deb882cf99"),
-                "Serialized UserAccount must not leak the password hash");
+                "Serialized User must not leak the password hash");
     }
 
     @Test

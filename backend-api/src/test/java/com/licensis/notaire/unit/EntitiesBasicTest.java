@@ -334,7 +334,7 @@ class EntitiesBasicTest {
     }
 
     @Nested
-    @DisplayName("ManagementHistory")
+    @DisplayName("History")
     class HistoryTests {
         @Test
         @DisplayName("All members and equals")
@@ -964,7 +964,7 @@ class EntitiesBasicTest {
     }
 
     @Nested
-    @DisplayName("UserAccount")
+    @DisplayName("User")
     class UserTests {
         @Test
         @DisplayName("All")

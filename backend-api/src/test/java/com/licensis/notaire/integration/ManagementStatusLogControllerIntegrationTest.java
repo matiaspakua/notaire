@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Integration tests for GET /api/v1/managements/{id}/history.
- * Seeds ManagementHistory entries out of chronological order and asserts the
+ * Seeds history entries out of chronological order and asserts the
  * endpoint returns them sorted by date, per CU13.
  */
 @RequirementCoverage({"CU13"})

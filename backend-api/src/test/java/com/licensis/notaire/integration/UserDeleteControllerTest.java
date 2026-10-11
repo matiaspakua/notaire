@@ -30,7 +30,7 @@ import com.licensis.notaire.repository.UserRepository;
 
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("UserAccount delete — user is actually removed from DB")
+@DisplayName("User delete — user is actually removed from DB")
 class UserDeleteControllerTest {
 
     @Autowired

@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("UserAccount controller — activo field mapping")
+@DisplayName("User controller — active field mapping")
 class UserControllerTest {
 
     @Autowired
@@ -37,7 +37,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Should return activo field (not status) in GET response")
+    @DisplayName("Should return active field (not status) in GET response")
     void shouldReturnActiveFieldInGetResponse() throws Exception {
         mockMvc.perform(get("/api/v1/users"))
                 .andExpect(status().isOk())
@@ -92,7 +92,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Should set activo=false when update sends activo=false")
+    @DisplayName("Should set active=false when update sends active=false")
     void shouldDeactivateUserWhenActiveFalse() throws Exception {
         String createBody = """
                 {"name": "testuser_deact", "password": "pass", "type": "EMPLEADO", "active": true}

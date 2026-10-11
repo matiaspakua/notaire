@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English test titles and PDF fixtures** (#1490, CU75):
+  User and history tests name the live types `User` and `History`, and the
+  user field `active`. PDF samples use `No concepts`, `Properties`,
+  `History`, and `Notes`. Accent fixtures `Símbolos` and `línea`, the
+  procedure name `Compraventa`, and the status `En Tramite` stay.
 - **English persistence and report names** (#1490, CU75):
   Creating a history row reports `Could not create an entity of type: History`.
   Orphan checks name `User`, `History`, and `DeedManagement`. The management

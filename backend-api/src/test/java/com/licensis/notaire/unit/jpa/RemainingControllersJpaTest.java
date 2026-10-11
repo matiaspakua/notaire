@@ -120,7 +120,7 @@ class RemainingControllersJpaTest {
 
     @Nested
     @DisplayName("Standard controllers: Copy, SubmittedDocument, Deed, ManagementStatus, Folio, " +
-            "DeedManagement, ManagementHistory, Property, Item, TestimonyMovement, Payment, BudgetTemplate, " +
+            "DeedManagement, History, Property, Item, TestimonyMovement, Payment, BudgetTemplate, " +
             "ProcedureTemplate, Budget, Substitution, Testimony, DocumentType, FolioType, ProcedureType")
     class StandardControllers {
 

@@ -14,7 +14,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("UserAccount Repository Integration Tests")
+@DisplayName("User Repository Integration Tests")
 class UserRepositoryIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired

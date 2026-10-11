@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("UserAccount request validation (issue #561)")
+@DisplayName("User request validation (issue #561)")
 class UserRequestValidationIntegrationTest {
 
     @Autowired

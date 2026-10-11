@@ -330,10 +330,10 @@ describe("DocumentType type shape (CU27, CU65)", () => {
 });
 
 // ──────────────────────────────────────────────
-// UserAccount type shape + password hash (CU20, CU21)
+// User type shape + password hash (CU20, CU21)
 // ──────────────────────────────────────────────
 
-describe("UserAccount type shape (CU20, CU21)", () => {
+describe("User type shape (CU20, CU21)", () => {
   it("a user has a username field", () => {
     const user = { idUser: 1, username: "admin", idPerson: 5 };
     expect(user.username).toBe("admin");

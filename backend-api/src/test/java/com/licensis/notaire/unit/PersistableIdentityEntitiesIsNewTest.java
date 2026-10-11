@@ -85,7 +85,7 @@ class PersistableIdentityEntitiesIsNewTest {
                 identityCase("ProcedureType", ProcedureType::new, (ProcedureType e) -> e.setIdProcedureType(1)),
                 identityCase("IdentificationType", IdentificationType::new,
                         (IdentificationType e) -> e.setIdIdentificationType(1)),
-                identityCase("UserAccount", User::new, (User e) -> e.setIdUser(1)),
+                identityCase("User", User::new, (User e) -> e.setIdUser(1)),
                 identityCase("WorkflowDefinition", WorkflowDefinition::new, (WorkflowDefinition e) -> e.setId(1)),
                 identityCase("WorkflowNode", WorkflowNode::new, (WorkflowNode e) -> e.setId(1)),
                 identityCase("WorkflowTransition", WorkflowTransition::new, (WorkflowTransition e) -> e.setId(1))

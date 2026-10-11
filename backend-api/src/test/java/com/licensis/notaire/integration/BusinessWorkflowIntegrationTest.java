@@ -184,7 +184,7 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(4)
-        @DisplayName("ManagementHistory endpoint is accessible for management")
+        @DisplayName("History endpoint is accessible for management")
         void historyEndpointAccessible() throws Exception {
             mockMvc.perform(get("/api/v1/history"))
                     .andExpect(status().isOk())
