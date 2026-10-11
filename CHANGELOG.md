@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Reports screen** (#1490, CU75): the engineering-sequences design names
+  the screen CU24, CU25, and CU50 still write, `/dashboard/reportes`.
+  The live screen stays in `dashboard-nav-canonical-routes`. The label
+  key `reportes` stays. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
 - **Substitutions screen** (#1490, CU75): the engineering-sequences design
   names the screen CU22 and CU59 still write, `/dashboard/suplencias`.
   The live screen stays in `dashboard-nav-canonical-routes`. The label
