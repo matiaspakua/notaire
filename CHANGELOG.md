@@ -64,6 +64,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English change-design notes** (#1490, CU75): the case-summary
+  design names the managements screen, `useManagementSummary`, and
+  `financial-summary`. The required-documents design names the
+  required-documents screen and the procedure-types page. The
+  property design says properties require `cadastralDesignation`.
+  The submitted-document design names the Documents screen and
+  `DocumentReentryService`. Official titles stay, including
+  `CU07 – Generar testimonio` and `CU70 – Gestión de Copias`. The
+  heading `Riesgos / Trade-offs` stays. The column
+  `properties.nomenclature` and `fk_id_tramite` stay. The filename
+  `TS-0098-gestion-resumen-caso-feature.spec.ts` stays. The proposal
+  heading `Objetivo` stays, along with `Documentos necesarios` in
+  that proposal.
 - **English change-contract requirements** (#1490, CU75): the
   archive-debt change spec names a management, `pendingBalance`, and
   `pendingDebtAtArchiving`. The incomplete-PUT delta names

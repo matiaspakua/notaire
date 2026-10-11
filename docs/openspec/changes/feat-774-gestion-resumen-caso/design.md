@@ -2,21 +2,21 @@
 
 ## Context
 
-Issue #774, Use Case CU07 – Generar testimonio (#160); CU11 – Ingresar para inscripción (#164); CU12 – Retirar testimonio (#165); CU15 – Procesar pago (#168); CU70 – Gestión de Copias (#243). #772 captures case dependencies at creation and the post-signing modules exist (#832, #841, #851); #774 asks for them to be visible from the gestión.
+Issue #774, Use Case CU07 – Generar testimonio (#160); CU11 – Ingresar para inscripción (#164); CU12 – Retirar testimonio (#165); CU15 – Procesar pago (#168); CU70 – Gestión de Copias (#243). #772 captures case dependencies at creation and the post-signing modules exist (#832, #841, #851); #774 asks for them to be visible from the management.
 
 ## Goals / Non-Goals
 
 **Goals:** One place to see how far a case has progressed after signing.
-**Non-Goals:** Creating deeds, folios, testimonies, copies or payments from inside the gestión screen; changing the workflow engine.
+**Non-Goals:** Creating deeds, folios, testimonies, copies or payments from inside the managements screen; changing the workflow engine.
 
 ## Decisions
 
-1. The summary is a read endpoint of its own instead of enlarging workflow-trace, which is tied to a workflow definition and fails for gestiones without one. Rejected: adding the data to the trace.
-2. Pagos reuse the existing resumen-financiero endpoint from the frontend instead of duplicating the totals in the new DTO.
+1. The summary is a read endpoint of its own instead of enlarging workflow-trace, which is tied to a workflow definition and fails for managements without one. Rejected: adding the data to the trace.
+2. Payments reuse the existing financial-summary endpoint from the frontend instead of duplicating the totals in the new DTO.
 
 ## Riesgos / Trade-offs
 
-- Navigating deed to testimonies to copies loads lazy collections; the service is read-only transactional and a gestión has few deeds.
+- Navigating deed to testimonies to copies loads lazy collections; the service is read-only transactional and a management has few deeds.
 
 ## Testing Strategy
 
@@ -29,7 +29,7 @@ Issue #774, Use Case CU07 – Generar testimonio (#160); CU11 – Ingresar para 
 | Unknown id | integration | `ManagementCaseSummaryIntegrationTest` |
 | Open the summary | e2e | `testing/e2e/tests/TS-0098-gestion-resumen-caso-feature.spec.ts` |
 
-- New unit tests (`src/test/java/.../unit/`): `ManagementCaseSummaryServiceTest`, `useResumenCaso` hook test
+- New unit tests (`src/test/java/.../unit/`): `ManagementCaseSummaryServiceTest`, `useManagementSummary` hook test
 - New integration tests: `ManagementCaseSummaryIntegrationTest` (H2)
 - Coverage impact: positive: new service covered; the floor is unchanged
 
@@ -50,7 +50,7 @@ No UI change; n/a.
 - Deployment order / coupling: single PR
 - Configuration or `.env` keys: none
 - Feature flag: no
-- Smoke test after deploy (Gate 5): CI green on the merge commit; the case summary opens from the gestiones screen
+- Smoke test after deploy (Gate 5): CI green on the merge commit; the case summary opens from the managements screen
 
 ## Rollback Strategy
 
