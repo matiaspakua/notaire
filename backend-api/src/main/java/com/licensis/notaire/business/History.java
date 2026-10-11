@@ -26,9 +26,8 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import org.springframework.data.domain.Persistable;
 
 /**
- * Clase that representa the history (registro of cambios of status) of a management of deed.
- * Each instancia of the history of a misma management of deed, representa a cambio of status of
- * the management.
+ * Status-change record for a deed management. Each instance belongs to one management
+ * and records one status change.
  *
  * @author juanca
  */

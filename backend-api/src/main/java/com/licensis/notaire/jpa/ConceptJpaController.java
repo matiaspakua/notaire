@@ -27,7 +27,7 @@ import jakarta.transaction.UserTransaction;
 public class ConceptJpaController implements Serializable, JpaPersistence
 {
 
-    private static ConceptJpaController instancia = null;
+    private static ConceptJpaController instance = null;
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 

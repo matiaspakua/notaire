@@ -42,7 +42,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
 
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
-    private static PersonJpaController instancia = null;
+    private static PersonJpaController instance = null;
 
     private PersonJpaController(UserTransaction utx, EntityManagerFactory emf) {
         this.utx = utx;
@@ -722,14 +722,14 @@ public class PersonJpaController implements Serializable, JpaPersistence {
         }
     }
 
-    public static PersonJpaController getInstancia() {
+    public static PersonJpaController getInstance() {
 
         EntityManagerFactory emf = JpaAdministrator.getEmf();
 
-        if (instancia == null || (instancia.emf == null && emf != null)) {
-            instancia = new PersonJpaController(null, emf);
+        if (instance == null || (instance.emf == null && emf != null)) {
+            instance = new PersonJpaController(null, emf);
         }
-        return instancia;
+        return instance;
 
     }
 

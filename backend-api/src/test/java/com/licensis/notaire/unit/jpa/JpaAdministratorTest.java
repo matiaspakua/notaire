@@ -25,9 +25,9 @@ class JpaAdministratorTest {
     @BeforeEach
     void setUp() throws Exception {
         // Use reflection to reset the singleton state
-        java.lang.reflect.Field instanciaField = JpaAdministrator.class.getDeclaredField("instancia");
-        instanciaField.setAccessible(true);
-        instanciaField.set(null, null);
+        java.lang.reflect.Field instanceField = JpaAdministrator.class.getDeclaredField("instance");
+        instanceField.setAccessible(true);
+        instanceField.set(null, null);
 
         java.lang.reflect.Field emfField = JpaAdministrator.class.getDeclaredField("emf");
         emfField.setAccessible(true);
@@ -42,9 +42,9 @@ class JpaAdministratorTest {
 
     @AfterEach
     void tearDown() throws Exception {
-        java.lang.reflect.Field instanciaField = JpaAdministrator.class.getDeclaredField("instancia");
-        instanciaField.setAccessible(true);
-        instanciaField.set(null, null);
+        java.lang.reflect.Field instanceField = JpaAdministrator.class.getDeclaredField("instance");
+        instanceField.setAccessible(true);
+        instanceField.set(null, null);
 
         java.lang.reflect.Field emfField = JpaAdministrator.class.getDeclaredField("emf");
         emfField.setAccessible(true);
@@ -56,14 +56,14 @@ class JpaAdministratorTest {
     }
 
     @Nested
-    @DisplayName("getInstancia")
-    class GetInstancia {
+    @DisplayName("getInstance")
+    class GetInstance {
 
         @Test
         @DisplayName("should return singleton instance")
         void shouldReturnSingleton() {
-            JpaAdministrator first = JpaAdministrator.getInstancia();
-            JpaAdministrator second = JpaAdministrator.getInstancia();
+            JpaAdministrator first = JpaAdministrator.getInstance();
+            JpaAdministrator second = JpaAdministrator.getInstance();
             assertThat(first).isSameAs(second);
         }
     }
@@ -73,21 +73,21 @@ class JpaAdministratorTest {
     class SetEmf {
 
         @Test
-        @DisplayName("should set EMF and deregister when instancia is null")
+        @DisplayName("should set EMF and deregister when instance is null")
         void shouldSetEmfWithoutLoadingList() {
             JpaAdministrator.setEmf(mockEmf);
             assertThat(JpaAdministrator.getEmf()).isSameAs(mockEmf);
-            // jpaList should be null since instancia is null (no call to loadJpaList)
-            // Note: after getInstancia(), setEmf will trigger loadJpaList()
+            // jpaList should be null since instance is null (no call to loadJpaList)
+            // Note: after getInstance(), setEmf will trigger loadJpaList()
         }
 
         @Test
-        @DisplayName("should reload JPA list when instancia already exists")
-        void shouldReloadListWhenInstanciaExists() {
-            // First get instance (instancia created, but no emf yet)
-            JpaAdministrator.getInstancia();
+        @DisplayName("should reload JPA list when instance already exists")
+        void shouldReloadListWhenInstanceExists() {
+            // First get instance (instance created, but no emf yet)
+            JpaAdministrator.getInstance();
 
-            // Now set EMF - should trigger loadJpaList via the if (instancia != null) block
+            // Now set EMF - should trigger loadJpaList via the if (instance != null) block
             JpaAdministrator.setEmf(mockEmf);
 
             Collection<JpaPersistence> list = JpaAdministrator.getJpaList();
@@ -102,13 +102,13 @@ class JpaAdministratorTest {
 
         @BeforeEach
         void setUp() {
-            JpaAdministrator.getInstancia();
+            JpaAdministrator.getInstance();
         }
 
         @Test
         @DisplayName("should populate jpaList with all controllers")
         void shouldPopulateAllControllers() {
-            // This test verifies that calling setEmf after instancia triggers loadJpaList
+            // This test verifies that calling setEmf after instance triggers loadJpaList
             // which adds all 26 controllers to the list
             JpaAdministrator.setEmf(mockEmf);
 
@@ -136,14 +136,14 @@ class JpaAdministratorTest {
 
         @BeforeEach
         void setUp() {
-            JpaAdministrator.getInstancia();
+            JpaAdministrator.getInstance();
             JpaAdministrator.setEmf(mockEmf);
         }
 
         @Test
         @DisplayName("should return matching JPA by class name")
         void shouldFindMatchingJpa() throws Exception {
-            JpaPersistence jpa = JpaAdministrator.getInstancia()
+            JpaPersistence jpa = JpaAdministrator.getInstance()
                     .getJpa("ConceptJpaController");
             assertThat(jpa).isNotNull();
             assertThat(jpa).isInstanceOf(ConceptJpaController.class);
@@ -153,7 +153,7 @@ class JpaAdministratorTest {
         @DisplayName("should throw NonexistentJpaException when not found")
         void shouldThrowWhenNotFound() {
             assertThatThrownBy(() ->
-                    JpaAdministrator.getInstancia().getJpa("NonExistentJpa"))
+                    JpaAdministrator.getInstance().getJpa("NonExistentJpa"))
                     .isInstanceOf(NonexistentJpaException.class)
                     .hasMessage("The indicated JPA does not exist.");
         }

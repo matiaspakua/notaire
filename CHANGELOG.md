@@ -41,6 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English singleton accessors** (#1490, CU75): JPA and session
+  singletons use `getInstance()` and the field `instance`.
 - **English document-reentry and deed-management fields** (#1490, CU75):
   required-document JSON is `requiredDocuments`. Deed-management JSON uses
   `involvedClients`, `referenceClient`, `associatedProcedures`, `archiveNumber`,

@@ -139,8 +139,7 @@ public class Concept implements Serializable, Persistable<Integer>
     }
 
     /**
-     * Retorna a instancia of DtoConcepto with all the valores actuales of the instancia of
-     * Concept.
+     * Returns a {@code DtoConcept} with the current values of this concept.
      *
      * @return
      */

@@ -6,19 +6,19 @@ import java.util.Date;
 public class ValidationAdministrator
 {
 
-    private static ValidationAdministrator instancia = null;
+    private static ValidationAdministrator instance = null;
 
     private ValidationAdministrator()
     {
     }
 
-    public static ValidationAdministrator getInstancia()
+    public static ValidationAdministrator getInstance()
     {
-        if (instancia == null)
+        if (instance == null)
         {
-            instancia = new ValidationAdministrator();
+            instance = new ValidationAdministrator();
         }
-        return instancia;
+        return instance;
     }
 
     public Boolean validateEmptyField(String campoParaValidar)

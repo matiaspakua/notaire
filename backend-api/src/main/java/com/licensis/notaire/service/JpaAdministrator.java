@@ -36,14 +36,14 @@ import jakarta.persistence.EntityManagerFactory;
 public class JpaAdministrator {
 
     public static final int ERROR = -1;
-    private static JpaAdministrator instancia = null;
+    private static JpaAdministrator instance = null;
     private static EntityManagerFactory emf = null;
 
     private static Collection<JpaPersistence> jpaList = null;
 
     public static void setEmf(EntityManagerFactory factory) {
         emf = factory;
-        if (instancia != null) {
+        if (instance != null) {
             loadJpaList();
         }
     }
@@ -54,11 +54,11 @@ public class JpaAdministrator {
         }
     }
 
-    public static JpaAdministrator getInstancia() {
-        if (JpaAdministrator.instancia == null) {
-            instancia = new JpaAdministrator();
+    public static JpaAdministrator getInstance() {
+        if (JpaAdministrator.instance == null) {
+            instance = new JpaAdministrator();
         }
-        return instancia;
+        return instance;
     }
 
     public static EntityManagerFactory getEmf() {
@@ -90,9 +90,9 @@ public class JpaAdministrator {
 
         JpaAdministrator.jpaList.add(new ManagementStatusJpaController(null, emf));
         JpaAdministrator.jpaList.add(new FolioTypeJpaController(null, emf));
-        JpaAdministrator.jpaList.add(PersonJpaController.getInstancia());
+        JpaAdministrator.jpaList.add(PersonJpaController.getInstance());
         JpaAdministrator.jpaList.add(new SubstitutionJpaController(null, emf));
-        JpaAdministrator.jpaList.add(UserJpaController.getInstancia());
+        JpaAdministrator.jpaList.add(UserJpaController.getInstance());
         JpaAdministrator.jpaList.add(new FolioJpaController(null, emf));
         JpaAdministrator.jpaList.add(new FolioTypeJpaController(null, emf));
         JpaAdministrator.jpaList.add(new DocumentTypeJpaController(null, emf));
@@ -102,7 +102,7 @@ public class JpaAdministrator {
         JpaAdministrator.jpaList.add(new HistoryJpaController(null, emf));
         JpaAdministrator.jpaList.add(new ProcedureJpaController(null, emf));
         JpaAdministrator.jpaList.add(new DeedManagementJpaController(null, emf));
-        JpaAdministrator.jpaList.add(AuditRecordJpaController.getInstancia());
+        JpaAdministrator.jpaList.add(AuditRecordJpaController.getInstance());
         JpaAdministrator.jpaList.add(new BudgetJpaController(null, emf));
         JpaAdministrator.jpaList.add(new ItemJpaController(null, emf));
         JpaAdministrator.jpaList.add(new PropertyJpaController(null, emf));

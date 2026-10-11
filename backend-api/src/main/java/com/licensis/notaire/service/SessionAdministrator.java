@@ -6,31 +6,31 @@ import com.licensis.notaire.business.User;
 public class SessionAdministrator
 {
 
-    private static SessionAdministrator instancia = null;
+    private static SessionAdministrator instance = null;
     private DtoUser userSession;
 
     private SessionAdministrator()
     {
     }
 
-    public static SessionAdministrator getInstancia()
+    public static SessionAdministrator getInstance()
     {
-        if (instancia == null)
+        if (instance == null)
         {
-            instancia = new SessionAdministrator();
+            instance = new SessionAdministrator();
         }
-        return instancia;
+        return instance;
     }
 
     public User getUserSession()
     {
-        User miUser = new User();
+        User user = new User();
 
         if (this.userSession != null)
         {
-            miUser.setAttributes(userSession);
+            user.setAttributes(userSession);
         }
-        return miUser;
+        return user;
     }
 
     public void setUserSession(DtoUser userSession)

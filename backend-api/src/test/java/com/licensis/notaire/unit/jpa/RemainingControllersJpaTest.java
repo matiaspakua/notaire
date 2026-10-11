@@ -1188,31 +1188,31 @@ class RemainingControllersJpaTest {
     }
 
     //╔══════════════════════════════════════════════════════════════════════════════╗
-    //║  TIPOIDENTIFICACION — singleton with private constructor                    ║
+    //║  IDENTIFICATION TYPE — singleton with a private constructor                 ║
     //╚══════════════════════════════════════════════════════════════════════════════╝
 
     @Nested
-    @DisplayName("TipoIdentificacionJpaController (singleton)")
+    @DisplayName("IdentificationTypeJpaController (singleton)")
     class IdentificationTypeSingletonTest {
 
         private void primeSingleton() {
             try {
                 IdentificationTypeJpaController instance = new IdentificationTypeJpaController(mockUtx, mockEmf);
-                java.lang.reflect.Field instanciaField =
-                        IdentificationTypeJpaController.class.getDeclaredField("instancia");
-                instanciaField.setAccessible(true);
-                instanciaField.set(null, instance);
+                java.lang.reflect.Field instanceField =
+                        IdentificationTypeJpaController.class.getDeclaredField("instance");
+                instanceField.setAccessible(true);
+                instanceField.set(null, instance);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
 
         @Test
-        @DisplayName("getNombreJpa via singleton pattern")
+        @DisplayName("getNameJpa via the singleton")
         void getNameJpa() {
             primeSingleton();
 
-            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstancia();
+            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstance();
             assertThat(controller.getNameJpa()).contains("IdentificationTypeJpaController");
         }
 
@@ -1221,8 +1221,8 @@ class RemainingControllersJpaTest {
         void getInstanceSingleton() {
             primeSingleton();
 
-            IdentificationTypeJpaController first = IdentificationTypeJpaController.getInstancia();
-            IdentificationTypeJpaController second = IdentificationTypeJpaController.getInstancia();
+            IdentificationTypeJpaController first = IdentificationTypeJpaController.getInstance();
+            IdentificationTypeJpaController second = IdentificationTypeJpaController.getInstance();
             assertThat(first).isSameAs(second);
         }
 
@@ -1231,7 +1231,7 @@ class RemainingControllersJpaTest {
         void create() throws Exception {
             primeSingleton();
 
-            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstancia();
+            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstance();
             IdentificationType entity = new IdentificationType();
             controller.create(entity);
             verify(mockEm).persist(entity);
@@ -1244,7 +1244,7 @@ class RemainingControllersJpaTest {
             primeSingleton();
 
             when(mockQuery.getResultList()).thenReturn(List.of(mock(IdentificationType.class)));
-            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstancia();
+            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstance();
             assertThat(controller.findIdentificationTypeEntities()).hasSize(1);
         }
 
@@ -1254,7 +1254,7 @@ class RemainingControllersJpaTest {
             primeSingleton();
 
             when(mockQuery.getSingleResult()).thenReturn(5L);
-            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstancia();
+            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstance();
             assertThat(controller.getIdentificationTypeCount()).isEqualTo(5);
         }
     }

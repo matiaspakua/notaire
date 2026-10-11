@@ -31,7 +31,7 @@ public class AuditRecordJpaController implements Serializable, JpaPersistence {
 
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
-    private static AuditRecordJpaController instancia = null;
+    private static AuditRecordJpaController instance = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
@@ -64,14 +64,14 @@ public class AuditRecordJpaController implements Serializable, JpaPersistence {
         return result;
     }
 
-    public static AuditRecordJpaController getInstancia() {
+    public static AuditRecordJpaController getInstance() {
 
         EntityManagerFactory emf = JpaAdministrator.getEmf();
 
-        if (instancia == null || (instancia.emf == null && emf != null)) {
-            instancia = new AuditRecordJpaController(null, emf);
+        if (instance == null || (instance.emf == null && emf != null)) {
+            instance = new AuditRecordJpaController(null, emf);
         }
-        return instancia;
+        return instance;
     }
 
     public void edit(AuditRecord auditRecord) throws NonexistentEntityException, Exception {

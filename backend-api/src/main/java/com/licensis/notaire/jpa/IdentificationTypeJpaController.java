@@ -25,7 +25,7 @@ import jakarta.transaction.UserTransaction;
  */
 public class IdentificationTypeJpaController implements Serializable, JpaPersistence {
 
-    private static IdentificationTypeJpaController instancia = null;
+    private static IdentificationTypeJpaController instance = null;
 
     public IdentificationTypeJpaController(UserTransaction utx, EntityManagerFactory emf) {
         this.utx = utx;
@@ -213,14 +213,14 @@ public class IdentificationTypeJpaController implements Serializable, JpaPersist
         }
     }
 
-    public static IdentificationTypeJpaController getInstancia() {
+    public static IdentificationTypeJpaController getInstance() {
 
         EntityManagerFactory emf = JpaAdministrator.getEmf();
 
-        if (instancia == null || (instancia.emf == null && emf != null)) {
-            instancia = new IdentificationTypeJpaController(null, emf);
+        if (instance == null || (instance.emf == null && emf != null)) {
+            instance = new IdentificationTypeJpaController(null, emf);
         }
-        return instancia;
+        return instance;
     }
 
     @Override
