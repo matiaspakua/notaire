@@ -1,5 +1,5 @@
 /**
- * React Query hooks for Workflow (CU70, CU71 — Gestionar workflows de estados).
+ * React Query hooks for workflow (CU70, CU71 — manage status workflows).
  * Endpoints: /api/v1/workflow-definition, /api/v1/workflow-node, /api/v1/workflow-transition
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";

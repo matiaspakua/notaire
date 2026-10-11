@@ -53,8 +53,8 @@ class CatalogConstraintErrorsIntegrationTest {
     }
 
     @ParameterizedTest(name = "POST {0} with an empty body answers 400")
-    @CsvSource({"/api/v1/conceptos", "/api/v1/estado-gestion", "/api/v1/tipo-de-documento",
-        "/api/v1/tipo-folio", "/api/v1/tipo-tramite"})
+    @CsvSource({"/api/v1/concepts", "/api/v1/management-statuses", "/api/v1/document-types",
+        "/api/v1/folio-types", "/api/v1/procedure-types"})
     @DisplayName("a create that violates a NOT NULL constraint answers 400, not 409")
     void createConstraintViolationIsBadRequest(String url) throws Exception {
         mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content("{}"))
@@ -66,13 +66,13 @@ class CatalogConstraintErrorsIntegrationTest {
 
     @ParameterizedTest(name = "PUT {0}/'{id}' without a name answers 400")
     @CsvSource({
-        "/api/v1/estado-gestion, idManagementStatus, '{\"name\":\"E579\"}'",
-        "/api/v1/tipo-de-documento, idDocumentType, '{\"name\":\"D579\"}'",
-        "/api/v1/tipo-folio, idFolioType, '{\"name\":\"F579\"}'",
-        "/api/v1/tipo-tramite, idProcedureType, '{\"name\":\"T579\"}'"
+        "/api/v1/management-statuses, idManagementStatus, '{\"name\":\"E579\"}'",
+        "/api/v1/document-types, idDocumentType, '{\"name\":\"D579\"}'",
+        "/api/v1/folio-types, idFolioType, '{\"name\":\"F579\"}'",
+        "/api/v1/procedure-types, idProcedureType, '{\"name\":\"T579\"}'"
     })
     @DisplayName("an update that violates a NOT NULL constraint answers 400, not 500")
-    // Concept updates are partial (Concept.setAtributos skips null fields), so a null name
+    // Concept updates are partial (Concept.setAttributes skips null fields), so a null name
     // keeps the stored one; the concept update path is covered by ErrorResponsesTest.
     void updateConstraintViolationIsBadRequest(String url, String idField, String createBody) throws Exception {
         JsonNode created = mapper.readTree(mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON)
@@ -89,8 +89,8 @@ class CatalogConstraintErrorsIntegrationTest {
     }
 
     @ParameterizedTest(name = "contract of {0} documents 400 on POST and PUT")
-    @CsvSource({"/api/v1/conceptos", "/api/v1/estado-gestion", "/api/v1/tipo-de-documento",
-        "/api/v1/tipo-folio", "/api/v1/tipo-tramite"})
+    @CsvSource({"/api/v1/concepts", "/api/v1/management-statuses", "/api/v1/document-types",
+        "/api/v1/folio-types", "/api/v1/procedure-types"})
     @DisplayName("the contract documents 400 on create and update")
     void contractDocumentsBadRequest(String url) throws Exception {
         JsonNode spec = mapper.readTree(mockMvc.perform(get("/v3/api-docs"))

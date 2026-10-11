@@ -3,13 +3,13 @@ info:
   type: http
   seq: 1
   description: |-
-      ## Login — POST /api/v1/usuarios/login
-      Authenticates a user. Returns `valido:true` plus the user data on
-      success; `valido:false` for wrong credentials.
+      ## Login — POST /api/v1/users/login
+      Authenticates a user. Returns `valid:true` plus the user data on
+      success; `valid:false` for wrong credentials.
       Traceability: CU78 (RF #81, #82, #83, #84, #85)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/usuarios/login"
+  url: "{{base_url}}/api/v1/users/login"
   body:
     type: json
     data: |-
@@ -22,22 +22,22 @@ runtime:
     - type: tests
       code: |-
           test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
-          test("Response has valido field", function () {
-            expect(res.getBody()).to.have.property('valido');
+          test("Response has valid field", function () {
+            expect(res.getBody()).to.have.property('valid');
           });
           test("admin login is valid", function () {
-            expect(res.getBody().valido).to.equal(true);
+            expect(res.getBody().valid).to.equal(true);
           });
           test("Stores user_id on success", function () {
             const b = res.getBody();
-            if (b && b.valido === true && b.idUser) {
+            if (b && b.valid === true && b.idUser) {
               bru.setVar('user_id', b.idUser);
               expect(b.idUser).to.be.a('number');
             }
           });
           test("Stores JWT token on success", function () {
             const b = res.getBody();
-            if (b && b.valido === true && b.token) {
+            if (b && b.valid === true && b.token) {
               bru.setVar('token', b.token);
               expect(b.token).to.be.a('string');
             }

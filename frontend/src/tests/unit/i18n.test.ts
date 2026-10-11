@@ -166,7 +166,7 @@ describe("message file integrity", () => {
     "items.report.title",
     "items.report.empty",
     "items.report.consult",
-    // suplencias
+    // substitutions
     "suplencias.title",
     "suplencias.description",
     "suplencias.newSuplencia",

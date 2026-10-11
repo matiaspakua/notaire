@@ -30,7 +30,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/workflow-transition")
-@Tag(name = "Workflow Transition", description = "CU71 - Transiciones entre estados de un workflow")
+@Tag(name = "Workflow Transition", description = "CU71 - Transitions between statuses of a workflow")
 public class WorkflowTransitionController {
 
     private final WorkflowTransitionRepository repository;
@@ -46,7 +46,7 @@ public class WorkflowTransitionController {
     }
 
     @GetMapping("/by-workflow/{workflowId}")
-    @Operation(summary = "Obtener transiciones por workflow")
+    @Operation(summary = "Get transitions by workflow")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoWorkflowTransition>> getByWorkflow(@PathVariable Integer workflowId) {
         return ResponseEntity.ok(repository.findByWorkflowDefinitionId(workflowId)
@@ -55,10 +55,10 @@ public class WorkflowTransitionController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener transición por ID")
+    @Operation(summary = "Get transition by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<DtoWorkflowTransition> getById(@PathVariable Integer id) {
         return repository.findById(id)
@@ -67,13 +67,13 @@ public class WorkflowTransitionController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida: workflowDefinitionId, originNodeId y "
-            + "destinationNodeId son obligatorios"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "201", description = "Created"),
+    @ApiResponse(responseCode = "400", description = "Invalid request: workflowDefinitionId, originNodeId and "
+            + "destinationNodeId are required"),
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
-    @Operation(summary = "Crear transición entre dos nodos")
+    @Operation(summary = "Create a transition between two nodes")
     public ResponseEntity<Object> create(@RequestBody DtoWorkflowTransition dto) {
         Integer workflowId = RequiredFields.require(dto.getWorkflowDefinitionId(), "workflowDefinitionId");
         Integer originId = RequiredFields.require(dto.getOriginNodeId(), "originNodeId");
@@ -106,12 +106,12 @@ public class WorkflowTransitionController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida: originNodeId y destinationNodeId son "
-            + "obligatorios"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "400", description = "Invalid request: originNodeId and destinationNodeId are "
+            + "required"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar transición")
+    @Operation(summary = "Update transition")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoWorkflowTransition dto) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
@@ -140,11 +140,11 @@ public class WorkflowTransitionController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "204", description = "Deleted"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar transición")
+    @Operation(summary = "Delete transition")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();

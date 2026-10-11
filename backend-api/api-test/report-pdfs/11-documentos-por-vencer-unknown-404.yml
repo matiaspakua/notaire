@@ -3,12 +3,12 @@ info:
   type: http
   seq: 12
   description: |-
-      ## GET /api/v1/reportes/documentos-por-vencer/{idDocumentoPresentado} for a missing document
+      ## GET /api/v1/reports/documents-due/{idDocumentoPresentado} for a missing document
       The happy path is covered by InHouseReportPdfIntegrationTest (#567).
       Traceability: CU42
 http:
   method: GET
-  url: "{{base_url}}/api/v1/reportes/documentos-por-vencer/999999999"
+  url: "{{base_url}}/api/v1/reports/documents-due/999999999"
   headers:
     - name: Content-Type
       value: application/json

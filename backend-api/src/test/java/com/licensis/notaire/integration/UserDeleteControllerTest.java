@@ -30,7 +30,7 @@ import com.licensis.notaire.repository.UserRepository;
 
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Usuario delete — user is actually removed from DB")
+@DisplayName("User delete — user is actually removed from DB")
 class UserDeleteControllerTest {
 
     @Autowired
@@ -51,9 +51,9 @@ class UserDeleteControllerTest {
     }
 
     @Test
-    @DisplayName("Should delete usuario and return 404 on subsequent GET")
+    @DisplayName("Should delete user and return 404 on subsequent GET")
     void shouldDeleteUserAndReturnNotFoundOnSubsequentGet() throws Exception {
-        // Create a user to delete (using persona id=1 from V2 test data)
+        // Create a user to delete (using person id=1 from V2 test data)
         String createBody = """
                 {
                   "name": "to_be_deleted",
@@ -63,7 +63,7 @@ class UserDeleteControllerTest {
                 }
                 """;
 
-        MvcResult result = mockMvc.perform(post("/api/v1/usuarios")
+        MvcResult result = mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -73,23 +73,23 @@ class UserDeleteControllerTest {
                 .get("idUser").asInt();
 
         // Delete the user
-        mockMvc.perform(delete("/api/v1/usuarios/" + id))
+        mockMvc.perform(delete("/api/v1/users/" + id))
                 .andExpect(status().isNoContent());
 
         // Verify the user is actually gone
-        mockMvc.perform(get("/api/v1/usuarios/" + id))
+        mockMvc.perform(get("/api/v1/users/" + id))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("Should return 404 when deleting non-existent usuario")
+    @DisplayName("Should return 404 when deleting non-existent user")
     void shouldReturn404WhenDeletingNonExistentUser() throws Exception {
-        mockMvc.perform(delete("/api/v1/usuarios/999999"))
+        mockMvc.perform(delete("/api/v1/users/999999"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("Should remove deleted usuario from list response")
+    @DisplayName("Should remove deleted user from list response")
     void shouldNotIncludeDeletedUserInList() throws Exception {
         String createBody = """
                 {
@@ -100,7 +100,7 @@ class UserDeleteControllerTest {
                 }
                 """;
 
-        MvcResult result = mockMvc.perform(post("/api/v1/usuarios")
+        MvcResult result = mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -110,22 +110,22 @@ class UserDeleteControllerTest {
                 .get("idUser").asInt();
 
         // Verify user exists in the list
-        mockMvc.perform(get("/api/v1/usuarios"))
+        mockMvc.perform(get("/api/v1/users"))
                 .andExpect(jsonPath("$[?(@.idUser == " + id + ")]").exists());
 
         // Delete
-        mockMvc.perform(delete("/api/v1/usuarios/" + id))
+        mockMvc.perform(delete("/api/v1/users/" + id))
                 .andExpect(status().isNoContent());
 
         // Verify user is not in the list anymore
-        mockMvc.perform(get("/api/v1/usuarios"))
+        mockMvc.perform(get("/api/v1/users"))
                 .andExpect(jsonPath("$[?(@.idUser == " + id + ")]").doesNotExist());
     }
 
     @Test
-    @DisplayName("Should delete usuario and cascade-remove associated audit records")
+    @DisplayName("Should delete user and cascade-remove associated audit records")
     void shouldDeleteUserWithAuditRecordsViaCascade() throws Exception {
-        // Create user via API (sets fkIdPersona=1 from seeded test data)
+        // Create user via API (sets fkIdPerson=1 from seeded test data)
         String createBody = """
                 {
                   "name": "user_with_audit",
@@ -134,7 +134,7 @@ class UserDeleteControllerTest {
                   "active": true
                 }
                 """;
-        MvcResult result = mockMvc.perform(post("/api/v1/usuarios")
+        MvcResult result = mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -146,7 +146,7 @@ class UserDeleteControllerTest {
         User savedUser = userRepository.findById(userId).orElseThrow();
         AuditRecord audit = new AuditRecord();
         audit.setDate(new Date());
-        audit.setModule("Usuarios");
+        audit.setModule("Users");
         audit.setOperationDetail("POST");
         audit.setFkIdUser(savedUser);
         auditRecordRepository.save(audit);
@@ -156,7 +156,7 @@ class UserDeleteControllerTest {
         assertThat(before).isNotEmpty();
 
         // Delete user via API endpoint
-        mockMvc.perform(delete("/api/v1/usuarios/" + userId))
+        mockMvc.perform(delete("/api/v1/users/" + userId))
                 .andExpect(status().isNoContent());
 
         // User must be gone

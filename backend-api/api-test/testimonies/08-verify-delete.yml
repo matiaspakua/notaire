@@ -6,7 +6,7 @@ info:
       Traceability: CU07
 http:
   method: GET
-  url: "{{base_url}}/api/v1/testimonio/{{testimony_id}}"
+  url: "{{base_url}}/api/v1/testimonies/{{testimony_id}}"
   headers:
     - name: Content-Type
       value: application/json

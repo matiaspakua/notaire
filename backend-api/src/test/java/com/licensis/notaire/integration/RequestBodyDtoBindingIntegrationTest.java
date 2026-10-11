@@ -38,9 +38,9 @@ class RequestBodyDtoBindingIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /inmueble ignores client-supplied id and version")
+    @DisplayName("POST /properties ignores client-supplied id and version")
     void shouldIgnoreClientIdAndVersionOnPropertyCreate() throws Exception {
-        MvcResult result = mockMvc.perform(post("/api/v1/inmueble")
+        MvcResult result = mockMvc.perform(post("/api/v1/properties")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -63,7 +63,7 @@ class RequestBodyDtoBindingIntegrationTest {
     @Test
     @DisplayName("Created property returns response DTO with generated id")
     void shouldReturnPropertyResponseDtoWithGeneratedId() throws Exception {
-        mockMvc.perform(post("/api/v1/inmueble")
+        mockMvc.perform(post("/api/v1/properties")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -123,7 +123,7 @@ class RequestBodyDtoBindingIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /presupuestos creates from writable fields and ignores server-managed keys")
+    @DisplayName("POST /budgets creates from writable fields and ignores server-managed keys")
     void shouldCreateBudgetFromRequestDtoIgnoringServerFields() throws Exception {
         MvcResult personResult = mockMvc.perform(post("/api/v1/people")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -139,7 +139,7 @@ class RequestBodyDtoBindingIntegrationTest {
                 .andReturn();
         int personId = mapper.readTree(personResult.getResponse().getContentAsString()).get("personId").asInt();
 
-        MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
+        MvcResult result = mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -147,7 +147,7 @@ class RequestBodyDtoBindingIntegrationTest {
                                   "version": 77,
                                   "number": 106801,
                                   "date": "2026-10-02",
-                                  "encabezado": "Budget mass-assignment",
+                                  "heading": "Budget mass-assignment",
                                   "status": "PENDIENTE",
                                   "propertyAmount": 1500.0,
                                   "person": {"personId": %d}
@@ -164,6 +164,6 @@ class RequestBodyDtoBindingIntegrationTest {
         JsonNode body = mapper.readTree(result.getResponse().getContentAsString());
         assertThat(body.get("idBudget").asInt()).isNotEqualTo(88888);
         assertThat(body.get("version").asInt()).isNotEqualTo(77);
-        assertThat(body.get("encabezado").asText()).isEqualTo("Budget mass-assignment");
+        assertThat(body.get("heading").asText()).isEqualTo("Budget mass-assignment");
     }
 }

@@ -22,6 +22,6 @@ public interface PaymentRepository extends JpaRepository<Payment, Integer> {
     @Query("SELECT p FROM Payment p WHERE p.date BETWEEN :startDate AND :endDate")
     List<Payment> findByDateBetween(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
-    @Query("SELECT SUM(p.amount) FROM Payment p WHERE p.fkIdBudget.idBudget = :idPresupuesto")
-    java.math.BigDecimal sumAmountByBudgetId(@Param("idPresupuesto") Integer idBudget);
+    @Query("SELECT SUM(p.amount) FROM Payment p WHERE p.fkIdBudget.idBudget = :idBudget")
+    java.math.BigDecimal sumAmountByBudgetId(@Param("idBudget") Integer idBudget);
 }

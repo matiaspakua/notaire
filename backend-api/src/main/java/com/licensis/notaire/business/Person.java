@@ -62,28 +62,28 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
         name = "people",
         uniqueConstraints = @UniqueConstraint(
                 name = "uq_people_identification_type_number",
-                columnNames = {"fk_id_tipo_identificacion", "identification_number"}))
+                columnNames = {"fk_id_identification_type", "identification_number"}))
 @XmlRootElement
 @JsonIgnoreProperties({
         "hibernateLazyInitializer", "handler",
-        "tramiteList", "tramitesPersonasList", "presupuestoList",
-        "GestionDeEscrituraList", "folioList", "suplenciaList", "suplenciaList1",
-        "usuariosList", "copiaList"
+        "procedureList", "personProcedureList", "budgetList",
+        "deedManagementList", "folioList", "substitutionList", "substitutionList1",
+        "userList", "copyList"
 })
 @NamedQueries({
         @NamedQuery(name = "Person.findAll", query = "SELECT p FROM Person p"),
-        @NamedQuery(name = "Person.findByIdPerson", query = "SELECT p FROM Person p WHERE p.idPerson = :idPersona"),
+        @NamedQuery(name = "Person.findByIdPerson", query = "SELECT p FROM Person p WHERE p.idPerson = :idPerson"),
         @NamedQuery(name = "Person.findByIdentificationNumber", query = "SELECT p FROM Person p WHERE p.identificationNumber = :identificationNumber"),
         @NamedQuery(name = "Person.findBySex", query = "SELECT p FROM Person p WHERE p.sex = :sex"),
-        @NamedQuery(name = "Person.findByBirthDate", query = "SELECT p FROM Person p WHERE p.birthDate = :fechaNacimiento"),
-        @NamedQuery(name = "Person.findByMarriageCount", query = "SELECT p FROM Person p WHERE p.marriageCount = :numeroNupcias"),
-        @NamedQuery(name = "Person.findByNotaryRegistrationNumber", query = "SELECT p FROM Person p WHERE p.notaryRegistrationNumber = :registroEscribano"),
+        @NamedQuery(name = "Person.findByBirthDate", query = "SELECT p FROM Person p WHERE p.birthDate = :birthDate"),
+        @NamedQuery(name = "Person.findByMarriageCount", query = "SELECT p FROM Person p WHERE p.marriageCount = :marriageCount"),
+        @NamedQuery(name = "Person.findByNotaryRegistrationNumber", query = "SELECT p FROM Person p WHERE p.notaryRegistrationNumber = :notaryRegistrationNumber"),
         @NamedQuery(name = "Person.findByIsClient", query = "SELECT p FROM Person p WHERE p.isClient = :isClient"),
-        @NamedQuery(name = "Person.findByPersonNameLastName", query = "SELECT p FROM Person p WHERE p.name LIKE :nombre and p.lastName LIKE :apellido"),
+        @NamedQuery(name = "Person.findByPersonNameLastName", query = "SELECT p FROM Person p WHERE p.name LIKE :name and p.lastName LIKE :lastName"),
 })
 public class Person implements Serializable, Persistable<Integer> {
 
-    @Column(name = "fecha_nacimiento")
+    @Column(name = "birth_date")
     @Temporal(TemporalType.DATE)
     private Date birthDate;
     @Basic(optional = false)
@@ -139,7 +139,7 @@ public class Person implements Serializable, Persistable<Integer> {
     @JsonIgnore
     @ManyToMany(mappedBy = "personList", fetch = FetchType.LAZY)
     private List<Procedure> procedureList;
-    @JoinColumn(name = "fk_id_tipo_identificacion", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_identification_type", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private IdentificationType fkIdIdentificationType;
     @XmlTransient
@@ -197,7 +197,7 @@ public class Person implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idPerson == null || idPerson.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idPerson == null || idPerson.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 
@@ -442,32 +442,28 @@ public class Person implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "Person[ idPersona=" + idPerson + " ]"
-                + "[ nombre=" + name + " ]"
-                + "[ apellido=" + lastName + " ]";
+        return "Person[ idPerson=" + idPerson + " ]"
+                + "[ name=" + name + " ]"
+                + "[ lastName=" + lastName + " ]";
     }
 
 
 
-    public ArrayList<DtoDeedManagement> elimimarDuplicados(ArrayList<DtoDeedManagement> listaDtoDeed) {
+    public ArrayList<DtoDeedManagement> removeDuplicates(ArrayList<DtoDeedManagement> deedManagements) {
 
-        // Creamos un objeto HashSet
+        // A set drops duplicate managements.
         HashSet hs = new HashSet();
+        hs.addAll(deedManagements);
+        deedManagements.clear();
+        deedManagements.addAll(hs);
 
-        // Lo cargamos con los valores del array, esto hace quite los repetidos
-        hs.addAll(listaDtoDeed);
-
-        // Limpiamos el array
-        listaDtoDeed.clear();
-        listaDtoDeed.addAll(hs);
-
-        return listaDtoDeed;
+        return deedManagements;
 
     }
 
-    public void setAtributos(DtoPerson dtoPerson) {
+    public void setAttributes(DtoPerson dtoPerson) {
 
-        // Version del objeto
+        // Version of the object
         this.setVersion(dtoPerson.getVersion());
 
         this.setFirstName(dtoPerson.getFirstName());
@@ -482,7 +478,7 @@ public class Person implements Serializable, Persistable<Integer> {
         identificationType.setName(dtoPerson.getDtoIdentificationType().getName());
         this.setFkIdIdentificationType(identificationType);
 
-        // Set atributos Cliente
+        // Set client attributes
         if (dtoPerson.getIsClient()) {
             this.setNationality(dtoPerson.getNationality());
             this.setBirthDate(dtoPerson.getBirthDate());

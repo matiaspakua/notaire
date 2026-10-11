@@ -14,8 +14,8 @@ public interface ConceptRepository extends JpaRepository<Concept, Integer> {
 
     Optional<Concept> findByName(String name);
 
-    @Query("SELECT c FROM Concept c WHERE c.name LIKE %:nombre%")
-    List<Concept> findByNameContaining(@Param("nombre") String name);
+    @Query("SELECT c FROM Concept c WHERE c.name LIKE %:name%")
+    List<Concept> findByNameContaining(@Param("name") String name);
 
     List<Concept> findByFixedConcept(boolean fixedConcept);
 

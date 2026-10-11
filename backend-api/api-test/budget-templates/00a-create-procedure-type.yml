@@ -3,13 +3,13 @@ info:
   type: http
   seq: 1
   description: |-
-      ## Setup — POST /api/v1/tipo-tramite
+      ## Setup — POST /api/v1/procedure-types
       Own procedure type so the template lifecycle never touches seeded rows;
       deleted by `08-teardown-delete-procedure-type.yml`.
       Traceability: CU26 (RF #55, #56)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/tipo-tramite"
+  url: "{{base_url}}/api/v1/procedure-types"
   body:
     type: json
     data: |-

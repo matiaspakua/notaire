@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Rol Repository Integration Tests")
+@DisplayName("Role Repository Integration Tests")
 class RoleRepositoryIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -28,14 +28,14 @@ class RoleRepositoryIntegrationTest extends ServiceIntegrationTest {
     void shouldCreateRoleWithAllFields() {
         Role role = new Role();
         role.setName("EDITOR");
-        role.setDescription("Rol de edición");
+        role.setDescription("Editing role");
         role.setActive(true);
 
         Role saved = roleRepository.save(role);
 
         assertThat(saved.getIdRole()).isNotNull();
         assertThat(saved.getName()).isEqualTo("EDITOR");
-        assertThat(saved.getDescription()).isEqualTo("Rol de edición");
+        assertThat(saved.getDescription()).isEqualTo("Editing role");
         assertThat(saved.isActive()).isTrue();
     }
 
@@ -75,11 +75,11 @@ class RoleRepositoryIntegrationTest extends ServiceIntegrationTest {
         role.setActive(true);
         Role saved = roleRepository.save(role);
 
-        saved.setDescription("Descripción actualizada");
+        saved.setDescription("Description actualizada");
         saved.setActive(false);
         Role updated = roleRepository.save(saved);
 
-        assertThat(updated.getDescription()).isEqualTo("Descripción actualizada");
+        assertThat(updated.getDescription()).isEqualTo("Description actualizada");
         assertThat(updated.isActive()).isFalse();
     }
 

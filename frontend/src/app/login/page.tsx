@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuthStore } from "@/store/auth-store";
 import { apiPost, ApiError } from "@/lib/api-client";
-import type { DtoUsuario } from "@/types";
+import type { DtoLoginUser } from "@/types";
 
 /** Reads the backend's `message` field from a lockout response body, if present. */
 function lockoutMessage(body: string, fallback: string): string {
@@ -30,28 +30,28 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const sessionExpired = searchParams.get("expired") === "1";
   const { login } = useAuthStore();
-  const [nombre, setNombre] = useState("");
-  const [contrasenia, setContrasenia] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!nombre.trim() || !contrasenia.trim()) {
+    if (!username.trim() || !password.trim()) {
       toast.error(t("validationRequired"));
       return;
     }
     setLoading(true);
     try {
-      const result = await apiPost<DtoUsuario>("/usuarios/login", {
-        name: nombre.trim(),
-        password: contrasenia.trim(),
+      const result = await apiPost<DtoLoginUser>("/users/login", {
+        name: username.trim(),
+        password: password.trim(),
       });
 
-      if (result.valido) {
+      if (result.valid) {
         // UX cookies for edge gating are set inside auth-store.login (#1052).
         // JWT is delivered as HttpOnly Set-Cookie; ignore JSON token (#1051).
         login(result);
-        toast.success(t("welcome", { name: result.nombre }));
+        toast.success(t("welcome", { name: result.name }));
         router.push("/dashboard");
       } else {
         toast.error(t("error"));
@@ -103,32 +103,32 @@ function LoginForm() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="nombre" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">
+                  <Label htmlFor="username" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">
                     {t("username")}
                   </Label>
                   <Input
-                    id="nombre"
-                    data-testid="input-usuario"
+                    id="username"
+                    data-testid="input-username"
                     placeholder={t("username").toLowerCase()}
                     className="h-12 rounded-[12px] bg-white text-lg apple-focus"
-                    value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     autoComplete="username"
                     disabled={loading}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="contrasenia" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">
+                  <Label htmlFor="password" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">
                     {t("password")}
                   </Label>
                   <Input
-                    id="contrasenia"
-                    data-testid="input-contrasenia"
+                    id="password"
+                    data-testid="input-password"
                     type="password"
                     placeholder="••••••••"
                     className="h-12 rounded-[12px] bg-white text-lg apple-focus"
-                    value={contrasenia}
-                    onChange={(e) => setContrasenia(e.target.value)}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     autoComplete="current-password"
                     disabled={loading}
                   />
@@ -142,7 +142,7 @@ function LoginForm() {
                   variant="apple"
                   className="w-full h-12 text-lg font-semibold rounded-[12px]"
                   disabled={loading}
-                  data-testid="btn-ingresar"
+                  data-testid="btn-sign-in"
                 >
                   {loading && <Loader2 className="h-5 w-5 animate-spin mr-2" />}
                   {loading ? "..." : t("submit")}

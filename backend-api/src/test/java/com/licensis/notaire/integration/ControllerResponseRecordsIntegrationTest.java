@@ -94,7 +94,7 @@ class ControllerResponseRecordsIntegrationTest {
     void shouldReturnFolioRecordWithSlimReferences() throws Exception {
         Folio folio = saveFolio("Disponible");
 
-        JsonNode body = getJson("/api/v1/folio/" + folio.getIdFolio());
+        JsonNode body = getJson("/api/v1/folios/" + folio.getIdFolio());
 
         assertNoEntityInternals(body);
         assertThat(body.get("idFolio").asInt()).isEqualTo(folio.getIdFolio());
@@ -108,8 +108,8 @@ class ControllerResponseRecordsIntegrationTest {
     void shouldReturnFolioRecordsFromListAndSearch() throws Exception {
         saveFolio("Disponible");
 
-        JsonNode all = getJson("/api/v1/folio");
-        JsonNode found = getJson("/api/v1/folio/search?status=Disponible");
+        JsonNode all = getJson("/api/v1/folios");
+        JsonNode found = getJson("/api/v1/folios/search?status=Disponible");
 
         assertNoEntityInternals(all.get(0));
         assertNotaryRef(found.get(0).get("fkIdNotaryPerson"));
@@ -118,7 +118,7 @@ class ControllerResponseRecordsIntegrationTest {
     @Test
     @DisplayName("shouldReturnFolioRecordsFromAuxiliaryProtocol")
     void shouldReturnFolioRecordsFromAuxiliaryProtocol() throws Exception {
-        JsonNode body = getJson("/api/v1/protocolo-auxiliar/folios-disponibles");
+        JsonNode body = getJson("/api/v1/auxiliary-protocol/available-folios");
 
         assertThat(body.isArray()).isTrue();
         body.forEach(this::assertNoEntityInternals);
@@ -133,8 +133,8 @@ class ControllerResponseRecordsIntegrationTest {
         notebook.setFkIdNotaryPerson(personRepository.findById(1).orElseThrow());
         Notebook saved = notebookRepository.save(notebook);
 
-        JsonNode one = getJson("/api/v1/cuadernos/" + saved.getIdNotebook());
-        JsonNode all = getJson("/api/v1/cuadernos");
+        JsonNode one = getJson("/api/v1/notebooks/" + saved.getIdNotebook());
+        JsonNode all = getJson("/api/v1/notebooks");
 
         assertNoEntityInternals(one);
         assertThat(one.get("idNotebook").asInt()).isEqualTo(saved.getIdNotebook());
@@ -145,7 +145,7 @@ class ControllerResponseRecordsIntegrationTest {
     @Test
     @DisplayName("shouldReturnAvailableNotariesAsPersonRecords")
     void shouldReturnAvailableNotariesAsPersonRecords() throws Exception {
-        JsonNode body = getJson("/api/v1/escrituras/escribanos-disponibles");
+        JsonNode body = getJson("/api/v1/deeds/available-notaries");
 
         assertThat(body.isArray()).isTrue();
         body.forEach(person -> {
@@ -157,16 +157,16 @@ class ControllerResponseRecordsIntegrationTest {
     @Test
     @DisplayName("shouldReturnCostTemplateRecordsByProcedureType")
     void shouldReturnCostTemplateRecordsByProcedureType() throws Exception {
-        JsonNode type = postJson("/api/v1/tipo-tramite",
+        JsonNode type = postJson("/api/v1/procedure-types",
                 "{\"name\":\"Tipo costos\",\"isRegistered\":false,\"isArchived\":false,"
                         + "\"associatesProperties\":false}");
-        JsonNode document = postJson("/api/v1/tipo-de-documento",
+        JsonNode document = postJson("/api/v1/document-types",
                 "{\"name\":\"Doc costos\",\"expires\":false,\"deliveredBy\":\"Cliente\",\"returned\":false}");
-        postJson("/api/v1/plantilla-costos-documento", "{\"idProcedureType\":" + type.get("idProcedureType")
+        postJson("/api/v1/document-cost-templates", "{\"idProcedureType\":" + type.get("idProcedureType")
                 + ",\"idDocumentType\":" + document.get("idDocumentType")
                 + ",\"fixedAmount\":10}");
 
-        JsonNode body = getJson("/api/v1/plantilla-costos-documento/tipo-tramite/" + type.get("idProcedureType"));
+        JsonNode body = getJson("/api/v1/document-cost-templates/procedure-types/" + type.get("idProcedureType"));
 
         JsonNode first = body.get(0);
         assertNoEntityInternals(first);
@@ -180,14 +180,14 @@ class ControllerResponseRecordsIntegrationTest {
     @Test
     @DisplayName("shouldReturnProcedureRecordsFromPageAndById")
     void shouldReturnProcedureRecordsFromPageAndById() throws Exception {
-        JsonNode type = postJson("/api/v1/tipo-tramite",
+        JsonNode type = postJson("/api/v1/procedure-types",
                 "{\"name\":\"Tipo tramite\",\"isRegistered\":false,\"isArchived\":false,"
                         + "\"associatesProperties\":false}");
-        JsonNode procedure = postJson("/api/v1/tramites", "{\"notes\":\"n\",\"idProcedureType\":"
+        JsonNode procedure = postJson("/api/v1/procedures", "{\"notes\":\"n\",\"idProcedureType\":"
                 + type.get("idProcedureType") + "}");
 
-        JsonNode one = getJson("/api/v1/tramites/" + procedure.get("idProcedure"));
-        JsonNode page = getJson("/api/v1/tramites");
+        JsonNode one = getJson("/api/v1/procedures/" + procedure.get("idProcedure"));
+        JsonNode page = getJson("/api/v1/procedures");
 
         assertNoEntityInternals(one);
         assertThat(one.get("fkIdProcedureType").get("idProcedureType").asInt())

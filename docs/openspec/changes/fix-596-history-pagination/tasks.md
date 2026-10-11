@@ -27,7 +27,7 @@
 
 ## 7. Ejecutar Playwright
 
-- [x] 7.1 TS-0050 health matrix (68 passed, includes `GET /historial`)
+- [x] 7.1 TS-0050 health matrix (68 passed, includes `GET /history`)
 
 ## 8. Gate 3 — Actualizar documentación permanente
 

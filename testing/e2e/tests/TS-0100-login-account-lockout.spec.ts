@@ -30,9 +30,9 @@ const VIEWPORTS = [
 ] as const;
 
 async function submitCredentials(page: Page, username: string, password: string) {
-  await page.getByTestId("input-usuario").fill(username);
-  await page.getByTestId("input-contrasenia").fill(password);
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("input-username").fill(username);
+  await page.getByTestId("input-password").fill(password);
+  await page.getByTestId("btn-sign-in").click();
 }
 
 async function failUntilLocked(page: Page, username: string) {
@@ -67,7 +67,7 @@ for (const viewport of VIEWPORTS) {
       expect(lockedAt, "lockout message never appeared").not.toBeNull();
       expect(lockedAt).toBeLessThanOrEqual(MAX_ATTEMPTS + 1);
       await expect(page).toHaveURL(/\/login/);
-      await expect(page.getByTestId("btn-ingresar")).toBeVisible();
+      await expect(page.getByTestId("btn-sign-in")).toBeVisible();
     });
 
     test("keeps a locked username locked on the next attempt", async ({ page }) => {
@@ -88,7 +88,7 @@ for (const viewport of VIEWPORTS) {
       );
 
       expect(overflows).toBe(false);
-      await expect(page.getByTestId("input-usuario")).toBeVisible();
+      await expect(page.getByTestId("input-username")).toBeVisible();
     });
   });
 }

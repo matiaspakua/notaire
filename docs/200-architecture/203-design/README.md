@@ -1,6 +1,6 @@
 # API Documentation - Notaire Project
 
-Referencia completa de la API REST del proyecto Notaire.
+Complete reference for the Notaire REST API.
 
 ## 📋 Contents
 
@@ -8,8 +8,9 @@ Referencia completa de la API REST del proyecto Notaire.
 - **[REST-API-ENDPOINT_REGISTRY.md](REST-API-ENDPOINT_REGISTRY.md)** — Full inventory of all 189 REST endpoints, classified by frontend usage.
 - **[BACKEND-ERROR-HANDLING-STRATEGY.md](BACKEND-ERROR-HANDLING-STRATEGY.md)** — Exception handling and error response conventions.
 - **[FRONTEND-DESIGN-SYSTEM.md](FRONTEND-DESIGN-SYSTEM.md)** — Theme tokens, form patterns, quick reference, form checklist, and UI conventions.
-- **[FRONTEND-WORKFLOW-TRACKER.md](FRONTEND-WORKFLOW-TRACKER.md)** — Dashboard animated gestión-workflow visualization (backend endpoint, DTOs, frontend components, tests).
+- **[FRONTEND-WORKFLOW-TRACKER.md](FRONTEND-WORKFLOW-TRACKER.md)** — Dashboard animated management-workflow visualization (backend endpoint, DTOs, frontend components, tests).
 - **[FRONTEND-OPENAPI-TYPES.md](FRONTEND-OPENAPI-TYPES.md)** — OpenAPI→TypeScript generation, drift check, and hook migration policy (#1260).
+- **[CICLO-DE-VIDA.md](CICLO-DE-VIDA.md)** — Canonical lifecycles: gestión, deed, testimony, documents, budget, payment, folders. Mermaid only.
 
 ## 🚀 Quick Start
 
@@ -23,7 +24,7 @@ http://localhost:8080/swagger-ui.html
 
 ### Example Request
 ```bash
-curl -X GET "http://localhost:8080/api/v1/presupuestos" \
+curl -X GET "http://localhost:8080/api/v1/budgets" \
   -H "Authorization: Bearer <token>"
 ```
 
@@ -34,11 +35,11 @@ list endpoints) — there is no `{success, data, error}` envelope.
 
 ```json
 {
-  "idPresupuesto": 1,
-  "numero": 2024001,
-  "fecha": "2024-03-15",
-  "estado": "ACTIVO",
-  "encabezado": "..."
+  "idBudget": 1,
+  "number": 2024001,
+  "date": "2024-03-15",
+  "status": "BORRADOR",
+  "heading": "..."
 }
 ```
 
@@ -46,7 +47,10 @@ list endpoints) — there is no `{success, data, error}` envelope.
 
 ```json
 {
-  "error": "Descripción del error en español"
+  "status": 404,
+  "error": "Not Found",
+  "message": "Budget not found",
+  "path": "/api/v1/budgets/1"
 }
 ```
 
@@ -54,7 +58,7 @@ See [REST-API-REFERENCE.md](REST-API-REFERENCE.md#error-responses) for the full 
 
 ## 🔐 Authentication
 
-`POST /api/v1/usuarios/login` authenticates a user and returns a JWT. Subsequent
+`POST /api/v1/users/login` authenticates a user and returns a JWT. Subsequent
 requests carry `Authorization: Bearer <token>`, validated by `JwtAuthenticationFilter`.
 Details in [REST-API-REFERENCE.md](REST-API-REFERENCE.md#authentication).
 
@@ -66,6 +70,6 @@ Details in [REST-API-REFERENCE.md](REST-API-REFERENCE.md#authentication).
 
 ## 📖 Navigation
 
-- **[← Back to Docs](../../)** — Volver a índice principal
-- **[Development](../../300-development/)** — Cómo desarrollar endpoints
-- **[SAD](../201-SAD/sad.md)** — Decisiones de arquitectura
+- **[← Back to Docs](../../)** — Documentation index
+- **[Development](../../300-development/)** — How to build endpoints
+- **[SAD](../201-SAD/sad.md)** — Architecture decisions

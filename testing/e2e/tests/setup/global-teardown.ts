@@ -13,26 +13,26 @@ import { apiDelete } from "./api-helpers";
 
 // Track IDs to clean up (loaded from env vars set by global-setup)
 const idsToCleanup = {
-  personaId: process.env.E2E_SEED_PERSONA_ID
-    ? Number(process.env.E2E_SEED_PERSONA_ID)
+  personId: process.env.E2E_SEED_PERSON_ID
+    ? Number(process.env.E2E_SEED_PERSON_ID)
     : null,
-  presupuestoId: process.env.E2E_SEED_PRESUPUESTO_ID
-    ? Number(process.env.E2E_SEED_PRESUPUESTO_ID)
+  budgetId: process.env.E2E_SEED_BUDGET_ID
+    ? Number(process.env.E2E_SEED_BUDGET_ID)
     : null,
-  conceptoId: process.env.E2E_SEED_CONCEPTO_ID
-    ? Number(process.env.E2E_SEED_CONCEPTO_ID)
+  conceptId: process.env.E2E_SEED_CONCEPT_ID
+    ? Number(process.env.E2E_SEED_CONCEPT_ID)
     : null,
-  tipoTramiteId: process.env.E2E_SEED_TIPO_TRAMITE_ID
-    ? Number(process.env.E2E_SEED_TIPO_TRAMITE_ID)
+  procedureTypeId: process.env.E2E_SEED_PROCEDURE_TYPE_ID
+    ? Number(process.env.E2E_SEED_PROCEDURE_TYPE_ID)
     : null,
-  usuarioId: process.env.E2E_SEED_USUARIO_ID
-    ? Number(process.env.E2E_SEED_USUARIO_ID)
+  userId: process.env.E2E_SEED_USER_ID
+    ? Number(process.env.E2E_SEED_USER_ID)
     : null,
   folioId: process.env.E2E_SEED_FOLIO_ID
     ? Number(process.env.E2E_SEED_FOLIO_ID)
     : null,
-  estadoGestionId: process.env.E2E_SEED_ESTADO_GESTION_ID
-    ? Number(process.env.E2E_SEED_ESTADO_GESTION_ID)
+  managementStatusId: process.env.E2E_SEED_MANAGEMENT_STATUS_ID
+    ? Number(process.env.E2E_SEED_MANAGEMENT_STATUS_ID)
     : null,
 };
 
@@ -53,35 +53,35 @@ async function globalTeardown(): Promise<void> {
     // Authenticate first (needed for DELETE operations)
     await page.goto("/login");
     await page.waitForLoadState("networkidle");
-    await page.getByTestId("input-usuario").fill("admin");
-    await page.getByTestId("input-contrasenia").fill("admin");
-    await page.getByTestId("btn-ingresar").click();
+    await page.getByTestId("input-username").fill("admin");
+    await page.getByTestId("input-password").fill("admin");
+    await page.getByTestId("btn-sign-in").click();
     await page.waitForURL(/\/dashboard/, { timeout: 15000 });
 
     // Delete in dependency-safe order (children before parents)
     const deletions: { label: string; path: string }[] = [
-      ...(idsToCleanup.presupuestoId
-        ? [{ label: "presupuesto", path: `/presupuestos/${idsToCleanup.presupuestoId}` }]
+      ...(idsToCleanup.budgetId
+        ? [{ label: "budget", path: `/budgets/${idsToCleanup.budgetId}` }]
         : []),
       ...(idsToCleanup.folioId
-        ? [{ label: "folio", path: `/folio/${idsToCleanup.folioId}` }]
+        ? [{ label: "folio", path: `/folios/${idsToCleanup.folioId}` }]
         : []),
-      ...(idsToCleanup.conceptoId
-        ? [{ label: "concepto", path: `/conceptos/${idsToCleanup.conceptoId}` }]
+      ...(idsToCleanup.conceptId
+        ? [{ label: "concept", path: `/concepts/${idsToCleanup.conceptId}` }]
         : []),
-      // Delete the usuario before the persona it references, otherwise the
-      // persona delete hits a foreign-key constraint.
-      ...(idsToCleanup.usuarioId
-        ? [{ label: "usuario", path: `/usuarios/${idsToCleanup.usuarioId}` }]
+      // Delete the user before the person it references, otherwise the
+      // person delete hits a foreign-key constraint.
+      ...(idsToCleanup.userId
+        ? [{ label: "user", path: `/users/${idsToCleanup.userId}` }]
         : []),
-      ...(idsToCleanup.personaId
-        ? [{ label: "persona", path: `/people/${idsToCleanup.personaId}` }]
+      ...(idsToCleanup.personId
+        ? [{ label: "person", path: `/people/${idsToCleanup.personId}` }]
         : []),
-      ...(idsToCleanup.tipoTramiteId
-        ? [{ label: "tipo-tramite", path: `/tipo-tramite/${idsToCleanup.tipoTramiteId}` }]
+      ...(idsToCleanup.procedureTypeId
+        ? [{ label: "procedure-type", path: `/procedure-types/${idsToCleanup.procedureTypeId}` }]
         : []),
-      ...(idsToCleanup.estadoGestionId
-        ? [{ label: "estado-gestion", path: `/estado-gestion/${idsToCleanup.estadoGestionId}` }]
+      ...(idsToCleanup.managementStatusId
+        ? [{ label: "management-status", path: `/management-statuses/${idsToCleanup.managementStatusId}` }]
         : []),
     ];
 

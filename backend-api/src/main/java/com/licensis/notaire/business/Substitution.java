@@ -25,11 +25,9 @@ import jakarta.persistence.Version;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
- * Clase que representa una suplencia. Una suplencia indicia el reemplazado en el desarrollo y
- * administracion
- * de gestiones de un escribano (suplente) por otro (suplantado), en un determinado periodo de
- * tiempo (fecha desde,
- * fecha hasta).
+ * A substitution records that one notary (the substitute) replaces another
+ * (the substituted notary) in the handling and administration of managements,
+ * for a given period (start date through end date).
  *
  * @author juanca
  */
@@ -39,10 +37,10 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @NamedQueries(
         {
             @NamedQuery(name = "Substitution.findAll", query = "SELECT s FROM Substitution s"),
-            @NamedQuery(name = "Substitution.findByIdSubstitution", query = "SELECT s FROM Substitution s WHERE s.idSubstitution = :idSuplencia"),
-            @NamedQuery(name = "Substitution.findByStartDate", query = "SELECT s FROM Substitution s WHERE s.dateStart = :fechaInicio"),
-            @NamedQuery(name = "Substitution.findByEndDate", query = "SELECT s FROM Substitution s WHERE s.dateEnd = :fechaFin"),
-            @NamedQuery(name = "Substitution.findSubstitutionsByYear", query = "SELECT s FROM Substitution s WHERE s.dateStart >= :fechaInicio AND s.dateEnd <= :fechaFin"),
+            @NamedQuery(name = "Substitution.findByIdSubstitution", query = "SELECT s FROM Substitution s WHERE s.idSubstitution = :idSubstitution"),
+            @NamedQuery(name = "Substitution.findByStartDate", query = "SELECT s FROM Substitution s WHERE s.dateStart = :startDate"),
+            @NamedQuery(name = "Substitution.findByEndDate", query = "SELECT s FROM Substitution s WHERE s.dateEnd = :endDate"),
+            @NamedQuery(name = "Substitution.findSubstitutionsByYear", query = "SELECT s FROM Substitution s WHERE s.dateStart >= :startDate AND s.dateEnd <= :endDate"),
         })
 public class Substitution implements Serializable, Persistable<Integer>
 {
@@ -101,7 +99,7 @@ public class Substitution implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idSubstitution == null || idSubstitution.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idSubstitution == null || idSubstitution.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 
@@ -192,7 +190,7 @@ public class Substitution implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "Suplencia[ idSuplencia=" + idSubstitution + " ]";
+        return "Substitution[ idSubstitution=" + idSubstitution + " ]";
     }
 
 

@@ -119,13 +119,13 @@ class RemainingControllersJpaTest {
     //╚══════════════════════════════════════════════════════════════════════════════╝
 
     @Nested
-    @DisplayName("Standard controllers: Copia, DocumentoPresentado, Escritura, EstadoDeGestion, Folio, " +
-            "GestionDeEscritura, Historial, Inmueble, Item, MovimientoTestimonio, Pago, PlantillaPresupuesto, " +
-            "PlantillaTramite, Presupuesto, Suplencia, Testimonio, TipoDeDocumento, TipoDeFolio, TipoDeTramite")
+    @DisplayName("Standard controllers: Copy, SubmittedDocument, Deed, ManagementStatus, Folio, " +
+            "DeedManagement, History, Property, Item, TestimonyMovement, Payment, BudgetTemplate, " +
+            "ProcedureTemplate, Budget, Substitution, Testimony, DocumentType, FolioType, ProcedureType")
     class StandardControllers {
 
         @Nested
-        @DisplayName("CopiaJpaController")
+        @DisplayName("CopyJpaController")
         class CopyTest {
             private CopyJpaController controller;
 
@@ -135,7 +135,7 @@ class RemainingControllersJpaTest {
             }
 
             @Test
-            @DisplayName("getNombreJpa returns class name")
+            @DisplayName("getNameJpa returns class name")
             void getNameJpa() {
                 assertThat(controller.getNameJpa()).contains("CopyJpaController");
             }
@@ -147,7 +147,7 @@ class RemainingControllersJpaTest {
             }
 
             @Test
-            @DisplayName("findCopiaEntities returns list from query")
+            @DisplayName("findCopyEntities returns list from query")
             void findCopyEntities() {
                 Copy mockEntity = mock(Copy.class);
                 when(mockQuery.getResultList()).thenReturn(List.of(mockEntity));
@@ -159,7 +159,7 @@ class RemainingControllersJpaTest {
             }
 
             @Test
-            @DisplayName("findCopiaEntities paginated returns limited list")
+            @DisplayName("findCopyEntities paginated returns limited list")
             void findCopyEntitiesPaginated() {
                 Copy mockEntity = mock(Copy.class);
                 when(mockQuery.getResultList()).thenReturn(List.of(mockEntity));
@@ -171,7 +171,7 @@ class RemainingControllersJpaTest {
             }
 
             @Test
-            @DisplayName("findCopia returns entity from EM")
+            @DisplayName("findCopy returns entity from EM")
             void findCopy() {
                 Copy mockEntity = mock(Copy.class);
                 when(mockEm.find(Copy.class, 1)).thenReturn(mockEntity);
@@ -181,7 +181,7 @@ class RemainingControllersJpaTest {
             }
 
             @Test
-            @DisplayName("getCopiaCount returns count from query")
+            @DisplayName("getCopyCount returns count from query")
             void getCopyCount() {
                 when(mockQuery.getSingleResult()).thenReturn(42L);
 
@@ -239,7 +239,7 @@ class RemainingControllersJpaTest {
         }
 
         @Nested
-        @DisplayName("DocumentoPresentadoJpaController")
+        @DisplayName("SubmittedDocumentJpaController")
         class SubmittedDocumentTest {
             private SubmittedDocumentJpaController controller;
 
@@ -249,27 +249,27 @@ class RemainingControllersJpaTest {
             }
 
             @Test
-            @DisplayName("getNombreJpa")
+            @DisplayName("getNameJpa")
             void getNameJpa() {
                 assertThat(controller.getNameJpa()).contains("SubmittedDocumentJpaController");
             }
 
             @Test
-            @DisplayName("findDocumentoPresentadoEntities")
+            @DisplayName("findSubmittedDocumentEntities")
             void findEntities() {
                 when(mockQuery.getResultList()).thenReturn(List.of(mock(SubmittedDocument.class)));
                 assertThat(controller.findSubmittedDocumentEntities()).hasSize(1);
             }
 
             @Test
-            @DisplayName("findDocumentoPresentado")
+            @DisplayName("findSubmittedDocument")
             void findById() {
                 when(mockEm.find(SubmittedDocument.class, 5)).thenReturn(mock(SubmittedDocument.class));
                 assertThat(controller.findSubmittedDocument(5)).isNotNull();
             }
 
             @Test
-            @DisplayName("getDocumentoPresentadoCount")
+            @DisplayName("getSubmittedDocumentCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(7L);
                 assertThat(controller.getSubmittedDocumentCount()).isEqualTo(7);
@@ -298,7 +298,7 @@ class RemainingControllersJpaTest {
         }
 
         @Nested
-        @DisplayName("EscrituraJpaController")
+        @DisplayName("DeedJpaController")
         class DeedTest {
             private DeedJpaController controller;
 
@@ -308,25 +308,25 @@ class RemainingControllersJpaTest {
             }
 
             @Test
-            @DisplayName("getNombreJpa")
+            @DisplayName("getNameJpa")
             void getNameJpa() { assertThat(controller.getNameJpa()).contains("DeedJpaController"); }
 
             @Test
-            @DisplayName("findEscrituraEntities")
+            @DisplayName("findDeedEntities")
             void findEntities() {
                 when(mockQuery.getResultList()).thenReturn(List.of(mock(Deed.class)));
                 assertThat(controller.findDeedEntities()).hasSize(1);
             }
 
             @Test
-            @DisplayName("findEscritura")
+            @DisplayName("findDeed")
             void findById() {
                 when(mockEm.find(Deed.class, 3)).thenReturn(mock(Deed.class));
                 assertThat(controller.findDeed(3)).isNotNull();
             }
 
             @Test
-            @DisplayName("getEscrituraCount")
+            @DisplayName("getDeedCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(15L);
                 assertThat(controller.getDeedCount()).isEqualTo(15);
@@ -356,7 +356,7 @@ class RemainingControllersJpaTest {
         }
 
         @Nested
-        @DisplayName("EstadoDeGestionJpaController")
+        @DisplayName("ManagementStatusJpaController")
         class ManagementStatusTest {
             private ManagementStatusJpaController controller;
 
@@ -366,25 +366,25 @@ class RemainingControllersJpaTest {
             }
 
             @Test
-            @DisplayName("getNombreJpa")
+            @DisplayName("getNameJpa")
             void getNameJpa() { assertThat(controller.getNameJpa()).contains("ManagementStatusJpaController"); }
 
             @Test
-            @DisplayName("findEstadoDeGestionEntities")
+            @DisplayName("findManagementStatusEntities")
             void findEntities() {
                 when(mockQuery.getResultList()).thenReturn(List.of(mock(ManagementStatus.class)));
                 assertThat(controller.findManagementStatusEntities()).hasSize(1);
             }
 
             @Test
-            @DisplayName("findEstadoDeGestion")
+            @DisplayName("findManagementStatus")
             void findById() {
                 when(mockEm.find(ManagementStatus.class, 2)).thenReturn(mock(ManagementStatus.class));
                 assertThat(controller.findManagementStatus(2)).isNotNull();
             }
 
             @Test
-            @DisplayName("getEstadoDeGestionCount")
+            @DisplayName("getManagementStatusCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(5L);
                 assertThat(controller.getManagementStatusCount()).isEqualTo(5);
@@ -422,7 +422,7 @@ class RemainingControllersJpaTest {
             }
 
             @Test
-            @DisplayName("getNombreJpa")
+            @DisplayName("getNameJpa")
             void getNameJpa() { assertThat(controller.getNameJpa()).contains("FolioJpaController"); }
 
             @Test @DisplayName("findFolioEntities")
@@ -462,7 +462,7 @@ class RemainingControllersJpaTest {
         }
 
         @Nested
-        @DisplayName("GestionDeEscrituraJpaController")
+        @DisplayName("DeedManagementJpaController")
         class DeedManagementTest {
             private DeedManagementJpaController controller;
 
@@ -471,22 +471,22 @@ class RemainingControllersJpaTest {
                 controller = createStandardController(DeedManagementJpaController.class);
             }
 
-            @Test @DisplayName("getNombreJpa")
+            @Test @DisplayName("getNameJpa")
             void getNameJpa() { assertThat(controller.getNameJpa()).contains("DeedManagementJpaController"); }
 
-            @Test @DisplayName("findGestionDeEscrituraEntities")
+            @Test @DisplayName("findDeedManagementEntities")
             void findEntities() {
                 when(mockQuery.getResultList()).thenReturn(List.of(mock(DeedManagement.class)));
                 assertThat(controller.findDeedManagementEntities()).hasSize(1);
             }
 
-            @Test @DisplayName("findGestionDeEscritura")
+            @Test @DisplayName("findDeedManagement")
             void findById() {
                 when(mockEm.find(DeedManagement.class, 7)).thenReturn(mock(DeedManagement.class));
                 assertThat(controller.findDeedManagement(7)).isNotNull();
             }
 
-            @Test @DisplayName("getGestionDeEscrituraCount")
+            @Test @DisplayName("getDeedManagementCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(2L);
                 assertThat(controller.getDeedManagementCount()).isEqualTo(2);
@@ -511,7 +511,7 @@ class RemainingControllersJpaTest {
         }
 
         @Nested
-        @DisplayName("HistorialJpaController")
+        @DisplayName("HistoryJpaController")
         class HistoryTest {
             private HistoryJpaController controller;
 
@@ -520,22 +520,22 @@ class RemainingControllersJpaTest {
                 controller = createStandardController(HistoryJpaController.class);
             }
 
-            @Test @DisplayName("getNombreJpa")
+            @Test @DisplayName("getNameJpa")
             void getNameJpa() { assertThat(controller.getNameJpa()).contains("HistoryJpaController"); }
 
-            @Test @DisplayName("findHistorialEntities")
+            @Test @DisplayName("findHistoryEntities")
             void findEntities() {
                 when(mockQuery.getResultList()).thenReturn(List.of(mock(History.class)));
                 assertThat(controller.findHistoryEntities()).hasSize(1);
             }
 
-            @Test @DisplayName("findHistorial")
+            @Test @DisplayName("findHistory")
             void findById() {
                 when(mockEm.find(History.class, 2)).thenReturn(mock(History.class));
                 assertThat(controller.findHistory(2)).isNotNull();
             }
 
-            @Test @DisplayName("getHistorialCount")
+            @Test @DisplayName("getHistoryCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(10L);
                 assertThat(controller.getHistoryCount()).isEqualTo(10);
@@ -560,7 +560,7 @@ class RemainingControllersJpaTest {
         }
 
         @Nested
-        @DisplayName("InmuebleJpaController")
+        @DisplayName("PropertyJpaController")
         class PropertyTest {
             private PropertyJpaController controller;
 
@@ -569,22 +569,22 @@ class RemainingControllersJpaTest {
                 controller = createStandardController(PropertyJpaController.class);
             }
 
-            @Test @DisplayName("getNombreJpa")
+            @Test @DisplayName("getNameJpa")
             void getNameJpa() { assertThat(controller.getNameJpa()).contains("PropertyJpaController"); }
 
-            @Test @DisplayName("findInmuebleEntities")
+            @Test @DisplayName("findPropertyEntities")
             void findEntities() {
                 when(mockQuery.getResultList()).thenReturn(List.of(mock(Property.class)));
                 assertThat(controller.findPropertyEntities()).hasSize(1);
             }
 
-            @Test @DisplayName("findInmueble")
+            @Test @DisplayName("findProperty")
             void findById() {
                 when(mockEm.find(Property.class, 3)).thenReturn(mock(Property.class));
                 assertThat(controller.findProperty(3)).isNotNull();
             }
 
-            @Test @DisplayName("getInmuebleCount")
+            @Test @DisplayName("getPropertyCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(6L);
                 assertThat(controller.getPropertyCount()).isEqualTo(6);
@@ -618,7 +618,7 @@ class RemainingControllersJpaTest {
                 controller = createStandardController(ItemJpaController.class);
             }
 
-            @Test @DisplayName("getNombreJpa")
+            @Test @DisplayName("getNameJpa")
             void getNameJpa() { assertThat(controller.getNameJpa()).contains("ItemJpaController"); }
 
             @Test @DisplayName("findItemEntities")
@@ -658,7 +658,7 @@ class RemainingControllersJpaTest {
         }
 
         @Nested
-        @DisplayName("MovimientoTestimonioJpaController")
+        @DisplayName("TestimonyMovementJpaController")
         class TestimonyMovementTest {
             private TestimonyMovementJpaController controller;
 
@@ -667,22 +667,22 @@ class RemainingControllersJpaTest {
                 controller = createStandardController(TestimonyMovementJpaController.class);
             }
 
-            @Test @DisplayName("getNombreJpa")
+            @Test @DisplayName("getNameJpa")
             void getNameJpa() { assertThat(controller.getNameJpa()).contains("TestimonyMovementJpaController"); }
 
-            @Test @DisplayName("findMovimientoTestimonioEntities")
+            @Test @DisplayName("findTestimonyMovementEntities")
             void findEntities() {
                 when(mockQuery.getResultList()).thenReturn(List.of(mock(TestimonyMovement.class)));
                 assertThat(controller.findTestimonyMovementEntities()).hasSize(1);
             }
 
-            @Test @DisplayName("findMovimientoTestimonio")
+            @Test @DisplayName("findTestimonyMovement")
             void findById() {
                 when(mockEm.find(TestimonyMovement.class, 5)).thenReturn(mock(TestimonyMovement.class));
                 assertThat(controller.findTestimonyMovement(5)).isNotNull();
             }
 
-            @Test @DisplayName("getMovimientoTestimonioCount")
+            @Test @DisplayName("getTestimonyMovementCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(9L);
                 assertThat(controller.getTestimonyMovementCount()).isEqualTo(9);
@@ -707,7 +707,7 @@ class RemainingControllersJpaTest {
         }
 
         @Nested
-        @DisplayName("PagoJpaController")
+        @DisplayName("PaymentJpaController")
         class PaymentTest {
             private PaymentJpaController controller;
 
@@ -716,22 +716,22 @@ class RemainingControllersJpaTest {
                 controller = createStandardController(PaymentJpaController.class);
             }
 
-            @Test @DisplayName("getNombreJpa")
+            @Test @DisplayName("getNameJpa")
             void getNameJpa() { assertThat(controller.getNameJpa()).contains("PaymentJpaController"); }
 
-            @Test @DisplayName("findPagoEntities")
+            @Test @DisplayName("findPaymentEntities")
             void findEntities() {
                 when(mockQuery.getResultList()).thenReturn(List.of(mock(Payment.class)));
                 assertThat(controller.findPaymentEntities()).hasSize(1);
             }
 
-            @Test @DisplayName("findPago")
+            @Test @DisplayName("findPayment")
             void findById() {
                 when(mockEm.find(Payment.class, 6)).thenReturn(mock(Payment.class));
                 assertThat(controller.findPayment(6)).isNotNull();
             }
 
-            @Test @DisplayName("getPagoCount")
+            @Test @DisplayName("getPaymentCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(11L);
                 assertThat(controller.getPaymentCount()).isEqualTo(11);
@@ -757,7 +757,7 @@ class RemainingControllersJpaTest {
         }
 
         @Nested
-        @DisplayName("PlantillaPresupuestoJpaController")
+        @DisplayName("BudgetTemplateJpaController")
         class BudgetTemplateTest {
             private BudgetTemplateJpaController controller;
 
@@ -766,23 +766,23 @@ class RemainingControllersJpaTest {
                 controller = createStandardController(BudgetTemplateJpaController.class);
             }
 
-            @Test @DisplayName("getNombreJpa")
+            @Test @DisplayName("getNameJpa")
             void getNameJpa() { assertThat(controller.getNameJpa()).contains("BudgetTemplateJpaController"); }
 
-            @Test @DisplayName("findPlantillaPresupuestoEntities")
+            @Test @DisplayName("findBudgetTemplateEntities")
             void findEntities() {
                 when(mockQuery.getResultList()).thenReturn(List.of(mock(BudgetTemplate.class)));
                 assertThat(controller.findBudgetTemplateEntities()).hasSize(1);
             }
 
-            @Test @DisplayName("findPlantillaPresupuesto")
+            @Test @DisplayName("findBudgetTemplate")
             void findById() {
                 BudgetTemplatePK id = new BudgetTemplatePK(2, 2);
                 when(mockEm.find(BudgetTemplate.class, id)).thenReturn(mock(BudgetTemplate.class));
                 assertThat(controller.findBudgetTemplate(id)).isNotNull();
             }
 
-            @Test @DisplayName("getPlantillaPresupuestoCount")
+            @Test @DisplayName("getBudgetTemplateCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(8L);
                 assertThat(controller.getBudgetTemplateCount()).isEqualTo(8);
@@ -824,7 +824,7 @@ class RemainingControllersJpaTest {
         }
 
         @Nested
-        @DisplayName("PlantillaTramiteJpaController")
+        @DisplayName("ProcedureTemplateJpaController")
         class ProcedureTemplateTest {
             private ProcedureTemplateJpaController controller;
 
@@ -833,23 +833,23 @@ class RemainingControllersJpaTest {
                 controller = createStandardController(ProcedureTemplateJpaController.class);
             }
 
-            @Test @DisplayName("getNombreJpa")
+            @Test @DisplayName("getNameJpa")
             void getNameJpa() { assertThat(controller.getNameJpa()).contains("ProcedureTemplateJpaController"); }
 
-            @Test @DisplayName("findPlantillaTramiteEntities")
+            @Test @DisplayName("findProcedureTemplateEntities")
             void findEntities() {
                 when(mockQuery.getResultList()).thenReturn(List.of(mock(ProcedureTemplate.class)));
                 assertThat(controller.findProcedureTemplateEntities()).hasSize(1);
             }
 
-            @Test @DisplayName("findPlantillaTramite")
+            @Test @DisplayName("findProcedureTemplate")
             void findById() {
                 ProcedureTemplatePK id = new ProcedureTemplatePK(4, 4);
                 when(mockEm.find(ProcedureTemplate.class, id)).thenReturn(mock(ProcedureTemplate.class));
                 assertThat(controller.findProcedureTemplate(id)).isNotNull();
             }
 
-            @Test @DisplayName("getPlantillaTramiteCount")
+            @Test @DisplayName("getProcedureTemplateCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(12L);
                 assertThat(controller.getProcedureTemplateCount()).isEqualTo(12);
@@ -877,7 +877,7 @@ class RemainingControllersJpaTest {
         }
 
         @Nested
-        @DisplayName("PresupuestoJpaController")
+        @DisplayName("BudgetJpaController")
         class BudgetTest {
             private BudgetJpaController controller;
 
@@ -886,22 +886,22 @@ class RemainingControllersJpaTest {
                 controller = createStandardController(BudgetJpaController.class);
             }
 
-            @Test @DisplayName("getNombreJpa")
+            @Test @DisplayName("getNameJpa")
             void getNameJpa() { assertThat(controller.getNameJpa()).contains("BudgetJpaController"); }
 
-            @Test @DisplayName("findPresupuestoEntities")
+            @Test @DisplayName("findBudgetEntities")
             void findEntities() {
                 when(mockQuery.getResultList()).thenReturn(List.of(mock(Budget.class)));
                 assertThat(controller.findBudgetEntities()).hasSize(1);
             }
 
-            @Test @DisplayName("findPresupuesto")
+            @Test @DisplayName("findBudget")
             void findById() {
                 when(mockEm.find(Budget.class, 9)).thenReturn(mock(Budget.class));
                 assertThat(controller.findBudget(9)).isNotNull();
             }
 
-            @Test @DisplayName("getPresupuestoCount")
+            @Test @DisplayName("getBudgetCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(20L);
                 assertThat(controller.getBudgetCount()).isEqualTo(20);
@@ -927,7 +927,7 @@ class RemainingControllersJpaTest {
         }
 
         @Nested
-        @DisplayName("SuplenciaJpaController")
+        @DisplayName("SubstitutionJpaController")
         class SubstitutionTest {
             private SubstitutionJpaController controller;
 
@@ -936,28 +936,28 @@ class RemainingControllersJpaTest {
                 controller = createStandardController(SubstitutionJpaController.class);
             }
 
-            @Test @DisplayName("getNombreJpa")
+            @Test @DisplayName("getNameJpa")
             void getNameJpa() { assertThat(controller.getNameJpa()).contains("SubstitutionJpaController"); }
 
-            @Test @DisplayName("findSuplenciaEntities")
+            @Test @DisplayName("findSubstitutionEntities")
             void findEntities() {
                 when(mockQuery.getResultList()).thenReturn(List.of(mock(Substitution.class)));
                 assertThat(controller.findSubstitutionEntities()).hasSize(1);
             }
 
-            @Test @DisplayName("findSuplencia")
+            @Test @DisplayName("findSubstitution")
             void findById() {
                 when(mockQuery.getResultList()).thenReturn(List.of(mock(Substitution.class)));
                 assertThat(controller.findSubstitution(3)).isNotNull();
             }
 
-            @Test @DisplayName("findSuplencia returns null when not found")
+            @Test @DisplayName("findSubstitution returns null when not found")
             void findByIdNotFound() {
                 when(mockQuery.getResultList()).thenReturn(List.of());
                 assertThat(controller.findSubstitution(999)).isNull();
             }
 
-            @Test @DisplayName("getSuplenciaCount")
+            @Test @DisplayName("getSubstitutionCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(1L);
                 assertThat(controller.getSubstitutionCount()).isEqualTo(1);
@@ -982,7 +982,7 @@ class RemainingControllersJpaTest {
         }
 
         @Nested
-        @DisplayName("TestimonioJpaController")
+        @DisplayName("TestimonyJpaController")
         class TestimonyTest {
             private TestimonyJpaController controller;
 
@@ -991,22 +991,22 @@ class RemainingControllersJpaTest {
                 controller = createStandardController(TestimonyJpaController.class);
             }
 
-            @Test @DisplayName("getNombreJpa")
+            @Test @DisplayName("getNameJpa")
             void getNameJpa() { assertThat(controller.getNameJpa()).contains("TestimonyJpaController"); }
 
-            @Test @DisplayName("findTestimonioEntities")
+            @Test @DisplayName("findTestimonyEntities")
             void findEntities() {
                 when(mockQuery.getResultList()).thenReturn(List.of(mock(Testimony.class)));
                 assertThat(controller.findTestimonyEntities()).hasSize(1);
             }
 
-            @Test @DisplayName("findTestimonio")
+            @Test @DisplayName("findTestimony")
             void findById() {
                 when(mockEm.find(Testimony.class, 7)).thenReturn(mock(Testimony.class));
                 assertThat(controller.findTestimony(7)).isNotNull();
             }
 
-            @Test @DisplayName("getTestimonioCount")
+            @Test @DisplayName("getTestimonyCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(3L);
                 assertThat(controller.getTestimonyCount()).isEqualTo(3);
@@ -1031,7 +1031,7 @@ class RemainingControllersJpaTest {
         }
 
         @Nested
-        @DisplayName("TipoDeDocumentoJpaController")
+        @DisplayName("DocumentTypeJpaController")
         class DocumentTypeTest {
             private DocumentTypeJpaController controller;
 
@@ -1040,22 +1040,22 @@ class RemainingControllersJpaTest {
                 controller = createStandardController(DocumentTypeJpaController.class);
             }
 
-            @Test @DisplayName("getNombreJpa")
+            @Test @DisplayName("getNameJpa")
             void getNameJpa() { assertThat(controller.getNameJpa()).contains("DocumentTypeJpaController"); }
 
-            @Test @DisplayName("findTipoDeDocumentoEntities")
+            @Test @DisplayName("findDocumentTypeEntities")
             void findEntities() {
                 when(mockQuery.getResultList()).thenReturn(List.of(mock(DocumentType.class)));
                 assertThat(controller.findDocumentTypeEntities()).hasSize(1);
             }
 
-            @Test @DisplayName("findTipoDeDocumento")
+            @Test @DisplayName("findDocumentType")
             void findById() {
                 when(mockEm.find(DocumentType.class, 4)).thenReturn(mock(DocumentType.class));
                 assertThat(controller.findDocumentType(4)).isNotNull();
             }
 
-            @Test @DisplayName("getTipoDeDocumentoCount")
+            @Test @DisplayName("getDocumentTypeCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(16L);
                 assertThat(controller.getDocumentTypeCount()).isEqualTo(16);
@@ -1083,7 +1083,7 @@ class RemainingControllersJpaTest {
         }
 
         @Nested
-        @DisplayName("TipoDeFolioJpaController")
+        @DisplayName("FolioTypeJpaController")
         class FolioTypeTest {
             private FolioTypeJpaController controller;
 
@@ -1092,22 +1092,22 @@ class RemainingControllersJpaTest {
                 controller = createStandardController(FolioTypeJpaController.class);
             }
 
-            @Test @DisplayName("getNombreJpa")
+            @Test @DisplayName("getNameJpa")
             void getNameJpa() { assertThat(controller.getNameJpa()).contains("FolioTypeJpaController"); }
 
-            @Test @DisplayName("findTipoDeFolioEntities")
+            @Test @DisplayName("findFolioTypeEntities")
             void findEntities() {
                 when(mockQuery.getResultList()).thenReturn(List.of(mock(FolioType.class)));
                 assertThat(controller.findFolioTypeEntities()).hasSize(1);
             }
 
-            @Test @DisplayName("findTipoDeFolio")
+            @Test @DisplayName("findFolioType")
             void findById() {
                 when(mockEm.find(FolioType.class, 5)).thenReturn(mock(FolioType.class));
                 assertThat(controller.findFolioType(5)).isNotNull();
             }
 
-            @Test @DisplayName("getTipoDeFolioCount")
+            @Test @DisplayName("getFolioTypeCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(2L);
                 assertThat(controller.getFolioTypeCount()).isEqualTo(2);
@@ -1133,7 +1133,7 @@ class RemainingControllersJpaTest {
         }
 
         @Nested
-        @DisplayName("TipoDeTramiteJpaController")
+        @DisplayName("ProcedureTypeJpaController")
         class ProcedureTypeTest {
             private ProcedureTypeJpaController controller;
 
@@ -1142,22 +1142,22 @@ class RemainingControllersJpaTest {
                 controller = createStandardController(ProcedureTypeJpaController.class);
             }
 
-            @Test @DisplayName("getNombreJpa")
+            @Test @DisplayName("getNameJpa")
             void getNameJpa() { assertThat(controller.getNameJpa()).contains("ProcedureTypeJpaController"); }
 
-            @Test @DisplayName("findTipoDeTramiteEntities")
+            @Test @DisplayName("findProcedureTypeEntities")
             void findEntities() {
                 when(mockQuery.getResultList()).thenReturn(List.of(mock(ProcedureType.class)));
                 assertThat(controller.findProcedureTypeEntities()).hasSize(1);
             }
 
-            @Test @DisplayName("findTipoDeTramite")
+            @Test @DisplayName("findProcedureType")
             void findById() {
                 when(mockQuery.getResultList()).thenReturn(List.of(mock(ProcedureType.class)));
                 assertThat(controller.findProcedureType(6)).isNotNull();
             }
 
-            @Test @DisplayName("getTipoDeTramiteCount")
+            @Test @DisplayName("getProcedureTypeCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(7L);
                 assertThat(controller.getProcedureTypeCount()).isEqualTo(7);
@@ -1188,31 +1188,31 @@ class RemainingControllersJpaTest {
     }
 
     //╔══════════════════════════════════════════════════════════════════════════════╗
-    //║  TIPOIDENTIFICACION — singleton with private constructor                    ║
+    //║  IDENTIFICATION TYPE — singleton with a private constructor                 ║
     //╚══════════════════════════════════════════════════════════════════════════════╝
 
     @Nested
-    @DisplayName("TipoIdentificacionJpaController (singleton)")
+    @DisplayName("IdentificationTypeJpaController (singleton)")
     class IdentificationTypeSingletonTest {
 
         private void primeSingleton() {
             try {
                 IdentificationTypeJpaController instance = new IdentificationTypeJpaController(mockUtx, mockEmf);
-                java.lang.reflect.Field instanciaField =
-                        IdentificationTypeJpaController.class.getDeclaredField("instancia");
-                instanciaField.setAccessible(true);
-                instanciaField.set(null, instance);
+                java.lang.reflect.Field instanceField =
+                        IdentificationTypeJpaController.class.getDeclaredField("instance");
+                instanceField.setAccessible(true);
+                instanceField.set(null, instance);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
 
         @Test
-        @DisplayName("getNombreJpa via singleton pattern")
+        @DisplayName("getNameJpa via the singleton")
         void getNameJpa() {
             primeSingleton();
 
-            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstancia();
+            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstance();
             assertThat(controller.getNameJpa()).contains("IdentificationTypeJpaController");
         }
 
@@ -1221,8 +1221,8 @@ class RemainingControllersJpaTest {
         void getInstanceSingleton() {
             primeSingleton();
 
-            IdentificationTypeJpaController first = IdentificationTypeJpaController.getInstancia();
-            IdentificationTypeJpaController second = IdentificationTypeJpaController.getInstancia();
+            IdentificationTypeJpaController first = IdentificationTypeJpaController.getInstance();
+            IdentificationTypeJpaController second = IdentificationTypeJpaController.getInstance();
             assertThat(first).isSameAs(second);
         }
 
@@ -1231,7 +1231,7 @@ class RemainingControllersJpaTest {
         void create() throws Exception {
             primeSingleton();
 
-            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstancia();
+            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstance();
             IdentificationType entity = new IdentificationType();
             controller.create(entity);
             verify(mockEm).persist(entity);
@@ -1239,28 +1239,28 @@ class RemainingControllersJpaTest {
         }
 
         @Test
-        @DisplayName("findTipoIdentificacionEntities")
+        @DisplayName("findIdentificationTypeEntities")
         void findEntities() {
             primeSingleton();
 
             when(mockQuery.getResultList()).thenReturn(List.of(mock(IdentificationType.class)));
-            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstancia();
+            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstance();
             assertThat(controller.findIdentificationTypeEntities()).hasSize(1);
         }
 
         @Test
-        @DisplayName("getTipoIdentificacionCount")
+        @DisplayName("getIdentificationTypeCount")
         void getCount() {
             primeSingleton();
 
             when(mockQuery.getSingleResult()).thenReturn(5L);
-            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstancia();
+            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstance();
             assertThat(controller.getIdentificationTypeCount()).isEqualTo(5);
         }
     }
 
     //╔══════════════════════════════════════════════════════════════════════════════╗
-    //║  PERSONA — singleton with private constructor, has extra query methods       ║
+    //║  PERSON — singleton with private constructor, has extra query methods        ║
     //╚══════════════════════════════════════════════════════════════════════════════╝
 
     @Nested
@@ -1275,18 +1275,18 @@ class RemainingControllersJpaTest {
         }
 
         @Test
-        @DisplayName("getNombreJpa")
+        @DisplayName("getNameJpa")
         void getNameJpa() { assertThat(controller.getNameJpa()).contains("PersonJpaController"); }
 
         @Test
-        @DisplayName("findPersonaEntities")
+        @DisplayName("findPersonEntities")
         void findEntities() {
             when(mockQuery.getResultList()).thenReturn(List.of(mock(Person.class)));
             assertThat(controller.findPersonEntities()).hasSize(1);
         }
 
         @Test
-        @DisplayName("findPersonaEntities paginated")
+        @DisplayName("findPersonEntities paginated")
         void findEntitiesPaginated() {
             when(mockQuery.getResultList()).thenReturn(List.of(mock(Person.class)));
             assertThat(controller.findPersonEntities(20, 0)).hasSize(1);
@@ -1295,14 +1295,14 @@ class RemainingControllersJpaTest {
         }
 
         @Test
-        @DisplayName("findPersona")
+        @DisplayName("findPerson")
         void findById() {
             when(mockEm.find(Person.class, 10)).thenReturn(mock(Person.class));
             assertThat(controller.findPerson(10)).isNotNull();
         }
 
         @Test
-        @DisplayName("getPersonaCount")
+        @DisplayName("getPersonCount")
         void getCount() {
             jakarta.persistence.criteria.CriteriaBuilder mockCb =
                     mock(jakarta.persistence.criteria.CriteriaBuilder.class);
@@ -1347,11 +1347,11 @@ class RemainingControllersJpaTest {
         }
 
         @Test
-        @DisplayName("findPersonaNombreApellido uses named query")
+        @DisplayName("findPersonByFirstAndLastName uses named query")
         void findNameLastName() {
             when(mockEm.createNamedQuery("Person.findByPersonNameLastName")).thenReturn(mockQuery);
-            when(mockQuery.setParameter(eq("nombre"), anyString())).thenReturn(mockQuery);
-            when(mockQuery.setParameter(eq("apellido"), anyString())).thenReturn(mockQuery);
+            when(mockQuery.setParameter(eq("name"), anyString())).thenReturn(mockQuery);
+            when(mockQuery.setParameter(eq("lastName"), anyString())).thenReturn(mockQuery);
             when(mockQuery.getResultList()).thenReturn(List.of(mock(Person.class)));
 
             DtoPerson dto = new DtoPerson();
@@ -1359,17 +1359,17 @@ class RemainingControllersJpaTest {
             dto.setLastName("Perez");
             List<Person> result = controller.findPersonNameLastName(dto);
             assertThat(result).hasSize(1);
-            verify(mockQuery).setParameter("nombre", "%Juan%");
-            verify(mockQuery).setParameter("apellido", "%Perez%");
+            verify(mockQuery).setParameter("name", "%Juan%");
+            verify(mockQuery).setParameter("lastName", "%Perez%");
         }
     }
 
     //╔══════════════════════════════════════════════════════════════════════════════╗
-    //║  TRAMITE — standard constructor + 4 named queries                          ║
+    //║ PROCEDURE — standard constructor + 4 named queries ║
     //╚══════════════════════════════════════════════════════════════════════════════╝
 
     @Nested
-    @DisplayName("TramiteJpaController")
+    @DisplayName("ProcedureJpaController")
     class ProcedureTest {
         private ProcedureJpaController controller;
 
@@ -1378,22 +1378,22 @@ class RemainingControllersJpaTest {
             controller = createStandardController(ProcedureJpaController.class);
         }
 
-        @Test @DisplayName("getNombreJpa")
+        @Test @DisplayName("getNameJpa")
         void getNameJpa() { assertThat(controller.getNameJpa()).contains("ProcedureJpaController"); }
 
-        @Test @DisplayName("findTramiteEntities")
+        @Test @DisplayName("findProcedureEntities")
         void findEntities() {
             when(mockQuery.getResultList()).thenReturn(List.of(mock(Procedure.class)));
             assertThat(controller.findProcedureEntities()).hasSize(1);
         }
 
-        @Test @DisplayName("findTramite")
+        @Test @DisplayName("findProcedure")
         void findById() {
             when(mockEm.find(Procedure.class, 1)).thenReturn(mock(Procedure.class));
             assertThat(controller.findProcedure(1)).isNotNull();
         }
 
-        @Test @DisplayName("getTramiteCount")
+        @Test @DisplayName("getProcedureCount")
         void getCount() {
             jakarta.persistence.criteria.CriteriaBuilder mockCb = mock(jakarta.persistence.criteria.CriteriaBuilder.class);
             jakarta.persistence.criteria.CriteriaQuery mockCq = mock(jakarta.persistence.criteria.CriteriaQuery.class);
@@ -1433,7 +1433,7 @@ class RemainingControllersJpaTest {
     //╚══════════════════════════════════════════════════════════════════════════════╝
 
     @Nested
-    @DisplayName("TramitesPersonasJpaController (single-arg constructor)")
+    @DisplayName("PersonProcedureJpaController (single-arg constructor)")
     class PersonProcedureTest {
         private PersonProcedureJpaController controller;
 
@@ -1442,13 +1442,13 @@ class RemainingControllersJpaTest {
             controller = new PersonProcedureJpaController(mockEmf);
         }
 
-        @Test @DisplayName("getNombreJpa")
+        @Test @DisplayName("getNameJpa")
         void getNameJpa() { assertThat(controller.getNameJpa()).contains("PersonProcedureJpaController"); }
 
         @Test @DisplayName("getEntityManager")
         void getEntityManager() { assertThat(controller.getEntityManager()).isSameAs(mockEm); }
 
-        @Test @DisplayName("findTramitesPersonasEntities")
+        @Test @DisplayName("findPersonProcedureEntities")
         void findEntities() {
             jakarta.persistence.criteria.CriteriaBuilder mockCb = mock(jakarta.persistence.criteria.CriteriaBuilder.class);
             jakarta.persistence.criteria.CriteriaQuery mockCq = mock(jakarta.persistence.criteria.CriteriaQuery.class);
@@ -1462,14 +1462,14 @@ class RemainingControllersJpaTest {
             assertThat(controller.findPersonProcedureEntities()).hasSize(1);
         }
 
-        @Test @DisplayName("findTramitesPersonas")
+        @Test @DisplayName("findPersonProcedure")
         void findById() {
             PersonProcedurePK id = new PersonProcedurePK(2, 2);
             when(mockEm.find(PersonProcedure.class, id)).thenReturn(mock(PersonProcedure.class));
             assertThat(controller.findPersonProcedure(id)).isNotNull();
         }
 
-        @Test @DisplayName("getTramitesPersonasCount")
+        @Test @DisplayName("getPersonProcedureCount")
         void getCount() {
             jakarta.persistence.criteria.CriteriaBuilder mockCb = mock(jakarta.persistence.criteria.CriteriaBuilder.class);
             jakarta.persistence.criteria.CriteriaQuery mockCq = mock(jakarta.persistence.criteria.CriteriaQuery.class);

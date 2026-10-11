@@ -17,7 +17,7 @@ mutation-error helper), the UI MUST toast that message. The generic
 
 #### Scenario: Backend 400 validation message is toasted
 
-- **WHEN** the user submits the Persona form and the API responds with HTTP 400
+- **WHEN** the user submits the Person form and the API responds with HTTP 400
   carrying a parseable validation message (e.g. blank identification)
 - **THEN** a toast shows that backend message (or an equivalent user-visible
   form-level validation text matching Dedup-EDGE) and MUST NOT show only the
@@ -45,12 +45,12 @@ person id is known), not raw English API text substituted via
 
 ### Requirement: Validation failure keeps the dialog open
 
-On validation failure for create/edit, the Persona modal MUST remain open so
+On validation failure for create/edit, the Person modal MUST remain open so
 the user can correct fields.
 
 #### Scenario: Dialog stays open after empty-DNI validation failure
 
-- **WHEN** the user opens Nueva Persona, fills name fields, leaves DNI empty,
+- **WHEN** the user opens Nueva Person, fills name fields, leaves DNI empty,
   and submits
 - **THEN** validation feedback is visible (inline or toast per Dedup-EDGE) and
   the dialog remains visible

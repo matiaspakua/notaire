@@ -104,6 +104,6 @@ class PaymentQueryAndDeleteServiceTest {
     void shouldRejectDeletingUnknownPayment() {
         assertThatThrownBy(() -> deletePayment.delete(999))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Pago no encontrado con ID: 999");
+                .hasMessage("Payment not found with ID: 999");
     }
 }

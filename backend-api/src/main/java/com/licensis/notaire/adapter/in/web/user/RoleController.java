@@ -28,7 +28,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/roles")
-@Tag(name = "Roles", description = "API para gestionar roles y permisos de usuario")
+@Tag(name = "Roles", description = "API for managing roles and user permissions")
 public class RoleController {
 
     private final RoleRepository roleRepository;
@@ -49,7 +49,7 @@ public class RoleController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todos los roles")
+    @Operation(summary = "Get all roles")
     @Transactional(readOnly = true)
     public ResponseEntity<List<RoleResponse>> getAllRoles() {
         return ResponseEntity.ok(roleRepository.findAll().stream().map(this::toResponse).toList());
@@ -57,10 +57,10 @@ public class RoleController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener rol por ID")
+    @Operation(summary = "Get role by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<RoleResponse> getRoleById(@PathVariable Integer id) {
         return roleRepository.findById(id)
@@ -70,16 +70,16 @@ public class RoleController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "201", description = "Created"),
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
-    @Operation(summary = "Crear nuevo rol")
+    @Operation(summary = "Create role")
     public ResponseEntity<Object> createRole(@Valid @RequestBody RoleRequest request) {
         if (roleRepository.findByName(request.name()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "Ya existe un rol con el nombre: " + request.name()));
+                    .body(Map.of("error", "Already exists a role with the name: " + request.name()));
         }
         Role role = new Role();
         role.setName(request.name());
@@ -92,12 +92,12 @@ public class RoleController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-    @ApiResponse(responseCode = "404", description = "No encontrado"),
-    @ApiResponse(responseCode = "409", description = "Ya existe un rol con ese nombre")
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
+    @ApiResponse(responseCode = "404", description = "Not found"),
+    @ApiResponse(responseCode = "409", description = "A role with that name already exists")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar rol")
+    @Operation(summary = "Update role")
     public ResponseEntity<RoleResponse> updateRole(@PathVariable Integer id, @Valid @RequestBody RoleRequest request) {
         Optional<Role> existing = roleRepository.findById(id);
         if (existing.isEmpty()) {
@@ -112,11 +112,11 @@ public class RoleController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "204", description = "Deleted"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar rol")
+    @Operation(summary = "Delete role")
     public ResponseEntity<Void> deleteRole(@PathVariable Integer id) {
         if (!roleRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
@@ -125,8 +125,8 @@ public class RoleController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{idRole}/usuarios/{idUser}")
-    @Operation(summary = "Asignar rol a usuario")
+    @PutMapping("/{idRole}/users/{idUser}")
+    @Operation(summary = "Assign role to a user")
     public ResponseEntity<Object> assignRoleToUser(@PathVariable Integer idRole,
                                                       @PathVariable Integer idUser) {
         Optional<Role> role = roleRepository.findById(idRole);
@@ -139,15 +139,15 @@ public class RoleController {
         }
         user.get().setRole(role.get());
         userRepository.save(user.get());
-        return ResponseEntity.ok(Map.of("idUsuario", idUser, "idRol", idRole));
+        return ResponseEntity.ok(Map.of("idUser", idUser, "idRole", idRole));
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "204", description = "Rol desasignado"),
-        @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+        @ApiResponse(responseCode = "204", description = "Role desasignado"),
+        @ApiResponse(responseCode = "404", description = "User account not found")
     })
-    @DeleteMapping("/usuarios/{idUser}")
-    @Operation(summary = "Desasignar rol de usuario")
+    @DeleteMapping("/users/{idUser}")
+    @Operation(summary = "Unassign role of the user")
     public ResponseEntity<Void> unassignRoleFromUser(@PathVariable Integer idUser) {
         Optional<User> user = userRepository.findById(idUser);
         if (user.isEmpty()) {

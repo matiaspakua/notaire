@@ -86,6 +86,6 @@ public class PersonProcedurePK implements Serializable
     @Override
     public String toString()
     {
-        return "negocio.TramitesPersonasPK[ fkIdTramite=" + fkIdProcedure + ", fkIdPersonaCliente=" + fkIdClientPerson + " ]";
+        return "PersonProcedurePK[ fkIdProcedure=" + fkIdProcedure + ", fkIdClientPerson=" + fkIdClientPerson + " ]";
     }
 }

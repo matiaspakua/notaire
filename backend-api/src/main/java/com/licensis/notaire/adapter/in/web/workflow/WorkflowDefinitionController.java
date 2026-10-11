@@ -28,7 +28,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/workflow-definition")
-@Tag(name = "Workflow Definition", description = "CU70 - Gestión de workflows de estados")
+@Tag(name = "Workflow Definition", description = "CU70 - Management of status workflows")
 public class WorkflowDefinitionController {
 
     private final WorkflowDefinitionRepository repository;
@@ -44,7 +44,7 @@ public class WorkflowDefinitionController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todos los workflows")
+    @Operation(summary = "Get all workflows")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoWorkflowDefinition>> getAll() {
         return ResponseEntity.ok(repository.findAll().stream().map(WorkflowDefinition::toDto).toList());
@@ -52,10 +52,10 @@ public class WorkflowDefinitionController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener workflow por ID")
+    @Operation(summary = "Get workflow by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<DtoWorkflowDefinition> getById(@PathVariable Integer id) {
         return repository.findById(id)
@@ -64,12 +64,12 @@ public class WorkflowDefinitionController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida: name es obligatorio"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "201", description = "Created"),
+    @ApiResponse(responseCode = "400", description = "Invalid request: name is required"),
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
-    @Operation(summary = "Crear workflow")
+    @Operation(summary = "Create workflow")
     public ResponseEntity<Object> create(@RequestBody DtoWorkflowDefinition dto) {
         try {
             WorkflowDefinition entity = new WorkflowDefinition();
@@ -85,12 +85,12 @@ public class WorkflowDefinitionController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida: name es obligatorio"),
-    @ApiResponse(responseCode = "404", description = "No encontrado"),
-    @ApiResponse(responseCode = "409", description = "version no es la almacenada: otro usuario modificó el registro")
+    @ApiResponse(responseCode = "400", description = "Invalid request: name is required"),
+    @ApiResponse(responseCode = "404", description = "Not found"),
+    @ApiResponse(responseCode = "409", description = "version is not the stored one: another user modified the record")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar workflow")
+    @Operation(summary = "Update workflow")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoWorkflowDefinition dto) {
         Optional<WorkflowDefinition> existing = repository.findById(id);
         if (existing.isEmpty()) {
@@ -112,18 +112,18 @@ public class WorkflowDefinitionController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "204", description = "Deleted"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar workflow")
+    @Operation(summary = "Delete workflow")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
         if (!nodeRepository.findByWorkflowDefinitionId(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "No se puede eliminar: el workflow tiene nodos asociados."));
+                    .body(Map.of("error", "Cannot delete: the workflow has associated nodes."));
         }
         repository.deleteById(id);
         return ResponseEntity.noContent().build();

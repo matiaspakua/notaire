@@ -5,37 +5,37 @@ description: Generate Bruno API test collections from project API definitions. U
 
 # API-to-Bruno Collection Generator Skill
 
-## Descripción
-Analiza API completa de proyecto y genera colección Bruno con subdirs por modelo de negocio, requests .bru separados, assertions, tests JS/Chai, docs. Ejecutable en Bruno app.
+## Description
+Analyze a project's full API and generate a Bruno collection with subdirectories per business model, separate `.bru` requests, assertions, JS/Chai tests, and docs. The collection runs in the Bruno app.
 
-## Inputs Requeridos
-- Código fuente proyecto (repositorio/archivos API: routes, controllers, schemas)
-- Base URL del proyecto
-- Esquemas/auth details (opcional)
+## Required inputs
+- Project source (repository or API files: routes, controllers, schemas)
+- Project base URL
+- Schemas and auth details (optional)
 
 ## Outputs
-- Carpeta colección Bruno: collection.bru, subdirs/*.bru, requests/*.bru, environments/*.bru
-- Archivos listos para Git/Bruno CLI: `bru run --env dev`
+- Bruno collection folder: `collection.bru`, `subdirs/*.bru`, `requests/*.bru`, `environments/*.bru`
+- Files ready for Git and the Bruno CLI: `bru run --env dev`
 
-## Dependencias
+## Dependencies
 - Bruno >= v1.20 [web:42]
-- Chai assertions en tests [web:23]
-- bru.setVar() para variables cross-request
+- Chai assertions in tests [web:23]
+- `bru.setVar()` for cross-request variables
 
-## Ejecución
-1. Analizar código → mapear endpoints
-2. Inferir modelo negocio → crear subdirs
-3. Generar .bru por request: http{}, assertions{}, tests{}, docs{}
-4. Validar sintaxis Bruno YAML/Bru
-5. Test local: abrir Bruno → load collection → run all → 100% pass
+## Execution
+1. Analyze the code and map the endpoints
+2. Infer the business model and create subdirectories
+3. Generate one `.bru` per request: `http{}`, `assertions{}`, `tests{}`, `docs{}`
+4. Validate Bruno YAML/Bru syntax
+5. Test locally: open Bruno, load the collection, run all, and require a 100% pass
 
-## Best Practices Integradas [web:16][web:39][web:40]
-- Vars env: {{base_url}}, {{auth_token}}
-- Tests: status, body keys/types, nested objects, arrays/loops, headers, response time
-- Assertions: res.getStatus() eq 200, res.getBody() has.property('id')
+## Built-in best practices [web:16][web:39][web:40]
+- Env vars: `{{base_url}}`, `{{auth_token}}`
+- Tests: status, body keys and types, nested objects, arrays and loops, headers, response time
+- Assertions: `res.getStatus() eq 200`, `res.getBody() has.property('id')`
 - Docs: params, expected response, errors
 
-## Ejemplo Output Structure
+## Example output structure
 api-tests/
 ├── collection.bru
 ├── auth/

@@ -4,17 +4,18 @@ import Link from "next/link";
 import { Calculator, FolderKanban, Users } from "lucide-react";
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Stagger, StaggerItem, HoverLift } from "@/components/motion";
 import { useAuthStore } from "@/store/auth-store";
-import { useGestionesPage } from "@/hooks/useGestiones";
-import { usePersonasPage } from "@/hooks/usePersonas";
-import { usePresupuestosPage } from "@/hooks/usePresupuestos";
+import { useManagementsPage } from "@/hooks/useManagements";
+import { usePeoplePage } from "@/hooks/usePeople";
+import { useBudgetsPage } from "@/hooks/useBudgets";
 import { StatValue } from "@/components/dashboard/StatValue";
 import { WorkflowHero } from "@/components/workflow/WorkflowHero";
 import { theme } from "@/theme/tokens";
 import { DASHBOARD_MODULES } from "@/lib/dashboard-nav";
+import { useFormat } from "@/hooks/useFormat";
 
 function AccessDeniedBanner() {
   const td = useTranslations("dashboard");
@@ -35,21 +36,20 @@ function AccessDeniedBanner() {
 
 export default function DashboardPage() {
   const td = useTranslations("dashboard");
-  const locale = useLocale();
   const { user, isAdmin } = useAuthStore();
   // Only the totals are needed: size=1 pages, never the lists (#1340, #1358).
-  const gestionesPage = useGestionesPage({ page: 0, size: 1 });
-  const personasPage = usePersonasPage({ page: 0, size: 1 });
-  const presupuestosPage = usePresupuestosPage({ page: 0, size: 1 });
+  const managementsPage = useManagementsPage({ page: 0, size: 1 });
+  const peoplePage = usePeoplePage({ page: 0, size: 1 });
+  const budgetsPage = useBudgetsPage({ page: 0, size: 1 });
 
   // One config for the sidebar and this grid (#1367).
   const visibleModules = DASHBOARD_MODULES.filter((m) => !m.adminOnly || isAdmin());
-  const dateLocale = locale === "en" ? "en-US" : "es-AR";
+  const fmt = useFormat();
 
   const stats = [
-    { labelKey: "gestiones.label", query: gestionesPage, icon: FolderKanban, tint: "bg-primary/10", iconColor: "text-primary" },
-    { labelKey: "personas.label", query: personasPage, icon: Users, tint: "bg-primary/10", iconColor: "text-primary" },
-    { labelKey: "presupuestos.label", query: presupuestosPage, icon: Calculator, tint: "bg-primary/10", iconColor: "text-primary" },
+    { labelKey: "gestiones.label", query: managementsPage, icon: FolderKanban, tint: "bg-primary/10", iconColor: "text-primary" },
+    { labelKey: "personas.label", query: peoplePage, icon: Users, tint: "bg-primary/10", iconColor: "text-primary" },
+    { labelKey: "presupuestos.label", query: budgetsPage, icon: Calculator, tint: "bg-primary/10", iconColor: "text-primary" },
   ] as const;
 
   return (
@@ -60,7 +60,7 @@ export default function DashboardPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-1.5">
           <h1 className="text-4xl font-semibold tracking-tight text-foreground">
-            {td("hello")}, {user?.nombre?.split(" ")[0]}
+            {td("hello")}, {user?.name?.split(" ")[0]}
           </h1>
           <p className="text-xl text-muted-foreground font-medium">{td("today")}</p>
         </div>
@@ -69,7 +69,7 @@ export default function DashboardPage() {
             className="text-sm font-semibold"
             style={{ color: theme.colors.neutral[800] }}
           >
-            {new Date().toLocaleDateString(dateLocale, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+            {fmt.longDate(new Date())}
           </p>
         </div>
       </div>

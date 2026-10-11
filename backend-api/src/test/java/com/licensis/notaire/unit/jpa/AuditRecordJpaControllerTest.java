@@ -2,7 +2,7 @@ package com.licensis.notaire.unit.jpa;
 
 import com.licensis.notaire.jpa.AuditRecordJpaController;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.AuditRecord;
 import com.licensis.notaire.business.User;
 import jakarta.persistence.EntityManager;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@DisplayName("RegistroAuditoriaJpaController unit tests")
+@DisplayName("AuditRecordJpaController tests")
 @ExtendWith(MockitoExtension.class)
 class AuditRecordJpaControllerTest {
 
@@ -53,7 +53,7 @@ class AuditRecordJpaControllerTest {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends IPersistenciaJpa> T createWithReflection(Class<T> clazz, Object... args) throws Exception {
+    private <T extends JpaPersistence> T createWithReflection(Class<T> clazz, Object... args) throws Exception {
         for (Constructor<?> ctor : clazz.getDeclaredConstructors()) {
             if (ctor.getParameterCount() == args.length) {
                 ctor.setAccessible(true);
@@ -93,7 +93,7 @@ class AuditRecordJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should handle null FK usuario")
+        @DisplayName("should handle null FK user")
         void shouldHandleNullFk() {
             AuditRecord ra = new AuditRecord(99);
 
@@ -134,7 +134,7 @@ class AuditRecordJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should update FK references when usuario changes")
+        @DisplayName("should update FK references when user changes")
         void shouldUpdateFkWhenUserChanges() throws Exception {
             Integer id = 1;
             User oldUser = new User(10);
@@ -219,7 +219,7 @@ class AuditRecordJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("findRegistroAuditoriaEntities")
+    @DisplayName("findAuditRecordEntities")
     class FindEntities {
         @Test
         @DisplayName("should return all")
@@ -250,7 +250,7 @@ class AuditRecordJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("findRegistroAuditoria")
+    @DisplayName("findAuditRecord")
     class FindById {
         @Test
         @DisplayName("should find by id")
@@ -271,7 +271,7 @@ class AuditRecordJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("getRegistroAuditoriaCount")
+    @DisplayName("getAuditRecordCount")
     class GetCount {
         @Test
         @DisplayName("should return count")
@@ -285,10 +285,10 @@ class AuditRecordJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("buscarRegistroAuditoriasUsuario")
-    class SearchPorUser {
+    @DisplayName("searchAuditRecordsByUser")
+    class SearchByUser {
         @Test
-        @DisplayName("should return filtered list when usuario matches")
+        @DisplayName("should return filtered list when user matches")
         void shouldReturnFiltered() {
             User user = new User(5);
             List<AuditRecord> all = new ArrayList<>();
@@ -302,7 +302,7 @@ class AuditRecordJpaControllerTest {
             when(em.createNamedQuery("AuditRecord.findAll")).thenReturn(query);
             when(query.getResultList()).thenReturn(all);
 
-            ArrayList<AuditRecord> result = controller.searchRecordAuditoriasUser(user);
+            ArrayList<AuditRecord> result = controller.searchAuditRecordsByUser(user);
 
             assertThat(result).hasSize(1);
             assertThat(result.get(0).getIdAuditRecord()).isEqualTo(1);
@@ -321,7 +321,7 @@ class AuditRecordJpaControllerTest {
             when(em.createNamedQuery("AuditRecord.findAll")).thenReturn(query);
             when(query.getResultList()).thenReturn(all);
 
-            ArrayList<AuditRecord> result = controller.searchRecordAuditoriasUser(user);
+            ArrayList<AuditRecord> result = controller.searchAuditRecordsByUser(user);
 
             assertThat(result).isNull();
         }
@@ -331,14 +331,14 @@ class AuditRecordJpaControllerTest {
         void shouldHandleException() {
             when(em.createNamedQuery("AuditRecord.findAll")).thenThrow(new RuntimeException("DB error"));
 
-            ArrayList<AuditRecord> result = controller.searchRecordAuditoriasUser(new User(1));
+            ArrayList<AuditRecord> result = controller.searchAuditRecordsByUser(new User(1));
 
             assertThat(result).isEmpty();
         }
     }
 
     @Nested
-    @DisplayName("getNombreJpa")
+    @DisplayName("getNameJpa")
     class GetNameJpa {
         @Test
         @DisplayName("should return class name")

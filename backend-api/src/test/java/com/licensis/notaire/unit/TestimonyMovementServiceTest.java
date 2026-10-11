@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @RequirementCoverage({"CU11", "CU12", "CU44"})
-@DisplayName("MovimientoTestimonioService Tests")
+@DisplayName("TestimonyMovementService Tests")
 @ExtendWith(MockitoExtension.class)
 class TestimonyMovementServiceTest {
 
@@ -50,7 +50,7 @@ class TestimonyMovementServiceTest {
         testimony.setVerified(true);
     }
 
-    private TestimonyMovement movementConEntry() {
+    private TestimonyMovement movementWithEntry() {
         TestimonyMovement movement = new TestimonyMovement();
         movement.setIdTestimonyMovement(1);
         movement.setDateEntry(new Date());
@@ -59,11 +59,11 @@ class TestimonyMovementServiceTest {
     }
 
     @Nested
-    @DisplayName("Ingresar para inscripción")
-    class IngresarRegistrationTests {
+    @DisplayName("Enter for registration")
+    class EnterRegistrationTests {
 
         @Test
-        @DisplayName("Should register date de ingreso when testimony is verified and has no open movement")
+        @DisplayName("Should register the entry date when the testimony is verified and has no open movement")
         void shouldRegisterEntryRegistration() {
             when(testimonyRepository.findById(5)).thenReturn(Optional.of(testimony));
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
@@ -78,16 +78,16 @@ class TestimonyMovementServiceTest {
         }
 
         @Test
-        @DisplayName("Should reject when testimony already has an open movement without date de salida")
+        @DisplayName("Should reject when the testimony already has an open movement without an exit date")
         void shouldRejectEntryWhenAlreadyOpen() {
-            TestimonyMovement abierto = movementConEntry();
+            TestimonyMovement openMovement = movementWithEntry();
             when(testimonyRepository.findById(5)).thenReturn(Optional.of(testimony));
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
-                    .thenReturn(Optional.of(abierto));
+                    .thenReturn(Optional.of(openMovement));
 
             assertThatThrownBy(() -> testimonyMovementService.registerEntry(5))
                     .isInstanceOf(BusinessValidationException.class)
-                    .hasMessageContaining("trámite de inscripción");
+                    .hasMessageContaining("already in registration");
         }
 
         @Test
@@ -98,7 +98,7 @@ class TestimonyMovementServiceTest {
 
             assertThatThrownBy(() -> testimonyMovementService.registerEntry(5))
                     .isInstanceOf(BusinessValidationException.class)
-                    .hasMessageContaining("verificado");
+                    .hasMessageContaining("verified");
         }
 
         @Test
@@ -112,26 +112,26 @@ class TestimonyMovementServiceTest {
     }
 
     @Nested
-    @DisplayName("Registrar inscripción")
-    class RegistrarRegistrationTests {
+    @DisplayName("Record registration")
+    class RegisterRegistrationTests {
 
         @Test
-        @DisplayName("Should mark as inscripto with date when testimony was ingresado")
+        @DisplayName("Should mark the testimony inscribed with a date when it has an entry")
         void shouldRegisterRegistration() {
-            TestimonyMovement ingresado = movementConEntry();
+            TestimonyMovement entered = movementWithEntry();
             when(testimonyRepository.existsById(5)).thenReturn(true);
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
-                    .thenReturn(Optional.of(ingresado));
-            when(testimonyMovementRepository.save(ingresado)).thenReturn(ingresado);
+                    .thenReturn(Optional.of(entered));
+            when(testimonyMovementRepository.save(entered)).thenReturn(entered);
 
-            TestimonyMovement resultado = testimonyMovementService.registerInscription(5);
+            TestimonyMovement result = testimonyMovementService.registerInscription(5);
 
-            assertThat(resultado.getRegistered()).isTrue();
-            assertThat(resultado.getDateRegistration()).isNotNull();
+            assertThat(result.getRegistered()).isTrue();
+            assertThat(result.getDateRegistration()).isNotNull();
         }
 
         @Test
-        @DisplayName("Should reject when testimony has no movement with date de ingreso")
+        @DisplayName("Should reject when the testimony has no movement with an entry date")
         void shouldRejectRegistrationWithoutEntry() {
             when(testimonyRepository.existsById(5)).thenReturn(true);
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
@@ -139,12 +139,12 @@ class TestimonyMovementServiceTest {
 
             assertThatThrownBy(() -> testimonyMovementService.registerInscription(5))
                     .isInstanceOf(BusinessValidationException.class)
-                    .hasMessageContaining("ingreso");
+                    .hasMessageContaining("registration entry");
         }
 
         @Test
         @DisplayName("Should throw ResourceNotFoundException when testimony does not exist")
-        void shouldRejectRegistrarRegistrationWhenTestimonyNotFound() {
+        void shouldRejectRegistrationWhenTestimonyNotFound() {
             when(testimonyRepository.existsById(999)).thenReturn(false);
 
             assertThatThrownBy(() -> testimonyMovementService.registerInscription(999))
@@ -153,37 +153,37 @@ class TestimonyMovementServiceTest {
     }
 
     @Nested
-    @DisplayName("Retirar testimony")
-    class RetirarTests {
+    @DisplayName("Withdraw testimony")
+    class WithdrawTests {
 
         @Test
-        @DisplayName("Should register date de salida and number de cartón when testimony is inscripto")
+        @DisplayName("Should register the exit date and carton number when the testimony is registered")
         void shouldRegisterWithdrawal() {
-            TestimonyMovement inscripto = movementConEntry();
-            inscripto.setRegistered(true);
-            inscripto.setDateRegistration(new Date());
+            TestimonyMovement inscribed = movementWithEntry();
+            inscribed.setRegistered(true);
+            inscribed.setDateRegistration(new Date());
             when(testimonyRepository.existsById(5)).thenReturn(true);
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
-                    .thenReturn(Optional.of(inscripto));
-            when(testimonyMovementRepository.save(inscripto)).thenReturn(inscripto);
+                    .thenReturn(Optional.of(inscribed));
+            when(testimonyMovementRepository.save(inscribed)).thenReturn(inscribed);
 
-            TestimonyMovement resultado = testimonyMovementService.withdraw(5, 123);
+            TestimonyMovement result = testimonyMovementService.withdraw(5, 123);
 
-            assertThat(resultado.getDateExit()).isNotNull();
-            assertThat(resultado.getCardNumber()).isEqualTo(123);
+            assertThat(result.getDateExit()).isNotNull();
+            assertThat(result.getCardNumber()).isEqualTo(123);
         }
 
         @Test
-        @DisplayName("Should reject retiro when testimony is not inscripto")
+        @DisplayName("Should reject withdrawal when the testimony is not inscribed")
         void shouldRejectWithdrawalWhenNotInscripto() {
-            TestimonyMovement ingresado = movementConEntry();
+            TestimonyMovement entered = movementWithEntry();
             when(testimonyRepository.existsById(5)).thenReturn(true);
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
-                    .thenReturn(Optional.of(ingresado));
+                    .thenReturn(Optional.of(entered));
 
             assertThatThrownBy(() -> testimonyMovementService.withdraw(5, 123))
                     .isInstanceOf(BusinessValidationException.class)
-                    .hasMessageContaining("inscripto");
+                    .hasMessageContaining("registered");
         }
 
         @Test
@@ -197,117 +197,117 @@ class TestimonyMovementServiceTest {
     }
 
     @Nested
-    @DisplayName("Reingresar testimony")
-    class ReingresarTests {
+    @DisplayName("Re-enter testimony")
+    class ReenterTests {
 
         @Test
         @DisplayName("Should create a new movement preserving the previous one when testimony was withdrawn")
-        void shouldCreateNewMovementOnReingreso() {
-            TestimonyMovement retirado = movementConEntry();
-            retirado.setRegistered(true);
-            retirado.setDateRegistration(new Date());
-            retirado.setDateExit(new Date());
-            retirado.setCardNumber(123);
+        void shouldCreateNewMovementOnReentry() {
+            TestimonyMovement withdrawn = movementWithEntry();
+            withdrawn.setRegistered(true);
+            withdrawn.setDateRegistration(new Date());
+            withdrawn.setDateExit(new Date());
+            withdrawn.setCardNumber(123);
 
             when(testimonyRepository.existsById(5)).thenReturn(true);
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
-                    .thenReturn(Optional.of(retirado));
+                    .thenReturn(Optional.of(withdrawn));
             when(testimonyMovementRepository.save(any(TestimonyMovement.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
-            TestimonyMovement nuevo = testimonyMovementService.reenter(5, TestimonyReentry.empty());
+            TestimonyMovement created = testimonyMovementService.reenter(5, TestimonyReentry.empty());
 
-            assertThat(nuevo.getDateEntry()).isNotNull();
-            assertThat(nuevo.getDateExit()).isNull();
-            assertThat(nuevo).isNotSameAs(retirado);
-            assertThat(retirado.getDateExit()).isNotNull();
+            assertThat(created.getDateEntry()).isNotNull();
+            assertThat(created.getDateExit()).isNull();
+            assertThat(created).isNotSameAs(withdrawn);
+            assertThat(withdrawn.getDateExit()).isNotNull();
         }
 
         @Test
-        @DisplayName("Should store cartón number, observation flag and notes on the new movement")
+        @DisplayName("Should store the carton number, observation flag, and notes on the new movement")
         void shouldStoreReentryDataOnTheNewMovement() {
-            TestimonyMovement retirado = movementConEntry();
-            retirado.setDateExit(new Date());
-            retirado.setCardNumber(123);
+            TestimonyMovement withdrawn = movementWithEntry();
+            withdrawn.setDateExit(new Date());
+            withdrawn.setCardNumber(123);
 
             when(testimonyRepository.existsById(5)).thenReturn(true);
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
-                    .thenReturn(Optional.of(retirado));
+                    .thenReturn(Optional.of(withdrawn));
             when(testimonyMovementRepository.save(any(TestimonyMovement.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
-            TestimonyMovement nuevo = testimonyMovementService.reenter(5,
-                    new TestimonyReentry(77, true, "Falta firma del escribano"));
+            TestimonyMovement created = testimonyMovementService.reenter(5,
+                    new TestimonyReentry(77, true, "Missing notary signature"));
 
-            assertThat(nuevo.getCardNumber()).isEqualTo(77);
-            assertThat(nuevo.isObservedByRegistry()).isTrue();
-            assertThat(nuevo.getNotes()).isEqualTo("Falta firma del escribano");
-            assertThat(retirado.getCardNumber()).isEqualTo(123);
-            assertThat(retirado.isObservedByRegistry()).isFalse();
+            assertThat(created.getCardNumber()).isEqualTo(77);
+            assertThat(created.isObservedByRegistry()).isTrue();
+            assertThat(created.getNotes()).isEqualTo("Missing notary signature");
+            assertThat(withdrawn.getCardNumber()).isEqualTo(123);
+            assertThat(withdrawn.isObservedByRegistry()).isFalse();
         }
 
         @Test
         @DisplayName("Should default to card 0, not observed and no notes when no data is given")
         void shouldDefaultReentryDataWhenEmpty() {
-            TestimonyMovement retirado = movementConEntry();
-            retirado.setDateExit(new Date());
+            TestimonyMovement withdrawn = movementWithEntry();
+            withdrawn.setDateExit(new Date());
 
             when(testimonyRepository.existsById(5)).thenReturn(true);
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
-                    .thenReturn(Optional.of(retirado));
+                    .thenReturn(Optional.of(withdrawn));
             when(testimonyMovementRepository.save(any(TestimonyMovement.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
-            TestimonyMovement nuevo = testimonyMovementService.reenter(5, TestimonyReentry.empty());
+            TestimonyMovement created = testimonyMovementService.reenter(5, TestimonyReentry.empty());
 
-            assertThat(nuevo.getCardNumber()).isZero();
-            assertThat(nuevo.isObservedByRegistry()).isFalse();
-            assertThat(nuevo.getNotes()).isNull();
+            assertThat(created.getCardNumber()).isZero();
+            assertThat(created.isObservedByRegistry()).isFalse();
+            assertThat(created.getNotes()).isNull();
         }
 
         @Test
         @DisplayName("Should reject an observed reentry without notes")
         void shouldRejectObservedReentryWithoutNotes() {
-            TestimonyMovement retirado = movementConEntry();
-            retirado.setDateExit(new Date());
+            TestimonyMovement withdrawn = movementWithEntry();
+            withdrawn.setDateExit(new Date());
 
             when(testimonyRepository.existsById(5)).thenReturn(true);
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
-                    .thenReturn(Optional.of(retirado));
+                    .thenReturn(Optional.of(withdrawn));
 
             assertThatThrownBy(() -> testimonyMovementService.reenter(5, new TestimonyReentry(77, true, "  ")))
                     .isInstanceOf(BusinessValidationException.class)
-                    .hasMessageContaining("observaciones");
+                    .hasMessageContaining("notes");
         }
 
         @Test
-        @DisplayName("Should reject reingreso when the most recent movement was not withdrawn")
-        void shouldRejectReingresoWhenNotWithdrawn() {
-            TestimonyMovement ingresado = movementConEntry();
+        @DisplayName("Should reject reentry when the most recent movement was not withdrawn")
+        void shouldRejectReentryWhenNotWithdrawn() {
+            TestimonyMovement entered = movementWithEntry();
             when(testimonyRepository.existsById(5)).thenReturn(true);
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
-                    .thenReturn(Optional.of(ingresado));
+                    .thenReturn(Optional.of(entered));
 
             assertThatThrownBy(() -> testimonyMovementService.reenter(5, TestimonyReentry.empty()))
                     .isInstanceOf(BusinessValidationException.class)
-                    .hasMessageContaining("retirado");
+                    .hasMessageContaining("withdrawn");
         }
 
         @Test
-        @DisplayName("Should reject reingreso when testimony has no previous movement")
-        void shouldRejectReingresoWhenNoPreviousMovement() {
+        @DisplayName("Should reject reentry when the testimony has no previous movement")
+        void shouldRejectReentryWhenNoPreviousMovement() {
             when(testimonyRepository.existsById(5)).thenReturn(true);
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
                     .thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> testimonyMovementService.reenter(5, TestimonyReentry.empty()))
                     .isInstanceOf(BusinessValidationException.class)
-                    .hasMessageContaining("retirado");
+                    .hasMessageContaining("withdrawn");
         }
 
         @Test
         @DisplayName("Should throw ResourceNotFoundException when testimony does not exist")
-        void shouldRejectReingresarWhenTestimonyNotFound() {
+        void shouldRejectReenterWhenTestimonyNotFound() {
             when(testimonyRepository.existsById(999)).thenReturn(false);
 
             assertThatThrownBy(() -> testimonyMovementService.reenter(999, TestimonyReentry.empty()))

@@ -11,9 +11,9 @@ updated coverage documentation. Source: #953; CU76.
 ### Requirement: Each listed controller has a Bruno folder
 
 The Bruno suite under `backend-api/api-test/` MUST include a dedicated folder
-for each of: CarpetaTramite, Copia, Cuaderno, DocumentoPresentado, Gestion,
-MinutaInscripcion, MovimientoTestimonio, PlantillaCostoDocumento,
-ProtocoloAuxiliar, Reporte, Rol, Testimonio, WorkflowDefinition, WorkflowNode,
+for each of: ProcedureFolder, Copy, Notebook, SubmittedDocument, Gestion,
+RegistrationDraft, TestimonyMovement, DocumentCostTemplate,
+ProtocoloAuxiliar, Reporte, Role, Testimony, WorkflowDefinition, WorkflowNode,
 WorkflowTransition, WorkflowValidation (mapped to current English controllers /
 paths).
 

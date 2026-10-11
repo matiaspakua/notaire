@@ -11,7 +11,7 @@ resolviendo el bloqueo de datos que impide "informar próximos vencimientos"
 
 ### Requirement: Heredar vencimiento y responsable del tipo de documento
 El sistema SHALL copiar `vence`, `diasVencimiento` y `quienEntrega` del
-`TipoDeDocumento` asociado al crear un documento presentado, en lugar de
+`DocumentType` asociado al crear un documento presentado, en lugar de
 asignar siempre `vence = false` y `quienEntrega = ""`.
 
 #### Scenario: Alta de documento presentado de un tipo que vence

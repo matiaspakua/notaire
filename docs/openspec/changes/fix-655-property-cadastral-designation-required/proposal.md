@@ -12,7 +12,7 @@
 
 ## Objetivo
 
-`POST /api/v1/inmueble` stored a property without a cadastral designation (`{}` answered 201 on PostgreSQL), although the nomenclatura catastral is what identifies a property and the Inmuebles form already labels it required. The Owner decided it is required (#655, Run 7).
+`POST /api/v1/properties` stored a property without a cadastral designation (`{}` answered 201 on PostgreSQL), although the nomenclatura catastral is what identifies a property and the Inmuebles form already labels it required. The Owner decided it is required (#655, Run 7).
 
 ## What Changes
 
@@ -50,7 +50,7 @@
 
 ### Surface area
 
-- Endpoints: `POST /api/v1/inmueble`, `PUT /api/v1/inmueble/{id}` (cadastralDesignation required, minLength 1; breaking, accepted)
+- Endpoints: `POST /api/v1/properties`, `PUT /api/v1/properties/{id}` (cadastralDesignation required, minLength 1; breaking, accepted)
 - Entities / Flyway: none (the entity already declares the column `optional = false`; no data migration)
 - UI: Inmuebles dialog
 

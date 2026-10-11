@@ -22,9 +22,9 @@ public interface SubstitutionRepositoryPort {
 
     boolean existsById(Integer id);
 
-    List<Substitution> findByFkIdSubstitute(Person suplente);
+    List<Substitution> findByFkIdSubstitute(Person substitute);
 
-    List<Substitution> findByFkIdSubstituteIdPerson(Integer idSuplente);
+    List<Substitution> findByFkIdSubstituteIdPerson(Integer substituteId);
 
     List<Substitution> findByFkIdSubstituted(Person suplantado);
 

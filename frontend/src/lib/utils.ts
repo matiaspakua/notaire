@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { ApiError } from "@/lib/api-client";
 import { formatCalendarDate } from "@/lib/dates";
+import { formatMoney } from "@/lib/format";
 
 /** Merge Tailwind classes safely */
 export function cn(...inputs: ClassValue[]) {
@@ -10,22 +11,19 @@ export function cn(...inputs: ClassValue[]) {
 
 /**
  * Format a date-only business field as D/M/YYYY (es-AR) showing the stored
- * calendar day in any browser zone (#1339); see `lib/dates.ts`.
+ * calendar day in any browser zone (#1339); see `lib/dates.ts`. Screens use
+ * `useFormat().date`, which follows the active locale (#1355).
  */
 export function formatDate(dateStr?: string | null): string {
   return formatCalendarDate(dateStr, "es-AR");
 }
 
-/** Format a number as currency (ARS) */
+/** Format a number as currency (ARS, es-AR). Screens use `useFormat().currency` (#1355). */
 export function formatCurrency(amount?: number | null): string {
-  if (amount == null) return "—";
-  return new Intl.NumberFormat("es-AR", {
-    style: "currency",
-    currency: "ARS",
-  }).format(amount);
+  return formatMoney(amount);
 }
 
-/** Get full name from Persona (firstName/lastName) or DtoPerson (name/lastName) */
+/** Get full name from Person (firstName/lastName) or DtoPerson (name/lastName) */
 export function fullName(p?: {
   firstName?: string;
   name?: string;

@@ -3,11 +3,11 @@ info:
   type: http
   seq: 3
   description: |-
-      ## List payments — GET /api/v1/pagos
+      ## List payments — GET /api/v1/payments
       Traceability: CU47 (RF #20, #22)
 http:
   method: GET
-  url: "{{base_url}}/api/v1/pagos"
+  url: "{{base_url}}/api/v1/payments"
   headers:
     - name: Content-Type
       value: application/json

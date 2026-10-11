@@ -6,7 +6,7 @@
 | Field | Value |
 |-------|-------|
 | GitHub Issue | #596 |
-| Use Case | CU18 – Dar Alta Cliente; CU54 – Modificar Persona; CU61 – Buscar persona |
+| Use Case | CU18 – Dar Alta Cliente; CU54 – Modificar Person; CU61 – Buscar persona |
 | Branch | `fix/596_people_pagination` |
 | Gate 1 status | draft |
 
@@ -17,7 +17,7 @@ The people list returns the whole table; page it like the budget, deed, procedur
 ## What Changes
 
 - `PersonController#getAllPeople` takes a `Pageable` (default 20, sort `idPerson`) and returns `Page<PersonResponse>`; `PersonService#findAll(Pageable)`.
-- Frontend `usePersonas` uses `apiGetPaged` (same as `usePresupuestos`).
+- Frontend `usePeople` uses `apiGetPaged` (same as `useBudgets`).
 - Bruno `people/02-list`, Playwright `TS-0051`, existing integration tests updated to the page shape; OpenAPI regenerated; CHANGELOG.
 
 ## Reglas de negocio
@@ -43,7 +43,7 @@ The people list returns the whole table; page it like the budget, deed, procedur
 | Module | Touched | What changes |
 |--------|---------|--------------|
 | `backend-api` | yes | `PersonController`, `PersonService` |
-| `frontend` | yes | `usePersonas` |
+| `frontend` | yes | `usePeople` |
 | `notaire-shared` | no | — |
 | Docs / scripts / CI | yes | OpenAPI, Bruno, Playwright, CHANGELOG |
 

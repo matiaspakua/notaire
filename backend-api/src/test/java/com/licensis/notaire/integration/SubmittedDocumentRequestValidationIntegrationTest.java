@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Issue #655 (CU04 / CU72): {@code /api/v1/documento-presentado} must reject what it cannot
+ * Issue #655 (CU04 / CU72): {@code /api/v1/submitted-documents} must reject what it cannot
  * store instead of silently dropping it. Rows are committed and reloaded (no test
  * transaction), as in two real HTTP requests.
  */
@@ -46,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("Submitted document requests are validated at the boundary (issue #655)")
 class SubmittedDocumentRequestValidationIntegrationTest {
 
-    private static final String URL = "/api/v1/documento-presentado";
+    private static final String URL = "/api/v1/submitted-documents";
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -79,7 +79,7 @@ class SubmittedDocumentRequestValidationIntegrationTest {
         expiringType = documentTypeRepository.save(expiringType);
 
         procedureType = new ProcedureType();
-        procedureType.setName("Tipo trámite #655");
+        procedureType.setName("Tipo procedure #655");
         procedureType.setEnabled(true);
         procedureType = procedureTypeRepository.save(procedureType);
         procedure = new Procedure();

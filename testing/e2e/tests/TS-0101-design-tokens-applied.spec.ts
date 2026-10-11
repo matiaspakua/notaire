@@ -9,7 +9,7 @@
  */
 import { test, expect, type Locator } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
-import { createPersona } from "./setup/api-helpers";
+import { createPerson } from "./setup/api-helpers";
 
 const BRAND_PRIMARY = "rgb(0, 113, 227)"; // #0071E3, owner decision 2026-10-09
 const WHITE = "rgb(255, 255, 255)";
@@ -25,7 +25,7 @@ async function style(locator: Locator, prop: "backgroundColor" | "color"): Promi
 test.describe("Design tokens are applied (#1337)", () => {
   test("login submit button is brand primary with white text", async ({ page }) => {
     await page.goto("/login");
-    const submit = page.getByTestId("btn-ingresar");
+    const submit = page.getByTestId("btn-sign-in");
     await expect(submit).toBeVisible();
     expect(await style(submit, "backgroundColor")).toBe(BRAND_PRIMARY);
     expect(await style(submit, "color")).toBe(WHITE);
@@ -33,10 +33,10 @@ test.describe("Design tokens are applied (#1337)", () => {
 
   test("active nav item has the primary pill and delete icons are red", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    const created = await createPersona(page);
-    expect(created.ok, created.error ?? "createPersona failed").toBe(true);
+    const created = await createPerson(page);
+    expect(created.ok, created.error ?? "createPerson failed").toBe(true);
 
-    await page.goto("/dashboard/personas");
+    await page.goto("/dashboard/people");
     await page.waitForLoadState("networkidle");
 
     const active = page.locator('[data-testid="sidebar"] a[aria-current="page"]');

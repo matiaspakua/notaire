@@ -8,16 +8,16 @@ Recording and reading the state-change history of deed managements.
 
 ### Requirement: ADMIN-only history writes
 
-`PUT` and `DELETE /api/v1/historial/{id}` SHALL require the administrator role; reading and creating history SHALL stay available to any authenticated user.
+`PUT` and `DELETE /api/v1/history/{id}` SHALL require the administrator role; reading and creating history SHALL stay available to any authenticated user.
 
 #### Scenario: Employee rewrites history
 
-- **WHEN** an employee sends PUT /api/v1/historial/{id}
+- **WHEN** an employee sends PUT /api/v1/history/{id}
 - **THEN** the response is 403 and the row is unchanged
 
 #### Scenario: Employee deletes history
 
-- **WHEN** an employee sends DELETE /api/v1/historial/{id}
+- **WHEN** an employee sends DELETE /api/v1/history/{id}
 - **THEN** the response is 403 and the row still exists
 
 #### Scenario: Administrator corrects history

@@ -27,7 +27,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
-@DisplayName("GestionDeEscrituraRepository Integration Tests")
+@DisplayName("DeedManagementRepository Integration Tests")
 class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
     @Autowired
@@ -62,7 +62,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
         identificationTypeRepository.save(identificationType);
 
         testNotary = new Person();
-        testNotary.setFirstName("Escribano");
+        testNotary.setFirstName("Notary");
         testNotary.setLastName("Test");
         testNotary.setIdentificationNumber("87654321");
         testNotary.setIsClient(false);
@@ -75,14 +75,14 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
 
         testManagement = new DeedManagement();
         testManagement.setNumber((int) (System.currentTimeMillis() % 10000));
-        testManagement.setEncabezado("Venta Inmueble");
+        testManagement.setHeading("Venta Property");
         testManagement.setDateStart(new Date());
         testManagement.setFkIdNotaryPerson(testNotary);
         testManagement.setFkIdManagementStatus(testStatus);
     }
 
     @Test
-    @DisplayName("Should persist and retrieve gestion")
+    @DisplayName("Should persist and retrieve management")
     void shouldPersistAndRetrieveManagement() {
         DeedManagement saved = managementRepository.save(testManagement);
 
@@ -93,23 +93,23 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
         assertThat(retrieved).isPresent()
                 .hasValueSatisfying(g -> {
                     assertThat(g.getNumber()).isEqualTo(saved.getNumber());
-                    assertThat(g.getEncabezado()).isEqualTo("Venta Inmueble");
+                    assertThat(g.getHeading()).isEqualTo("Venta Property");
                 });
     }
 
     @Test
-    @DisplayName("Should find gestion by number")
+    @DisplayName("Should find management by number")
     void shouldFindByNumber() {
         DeedManagement saved = managementRepository.save(testManagement);
 
         Optional<DeedManagement> found = managementRepository.findByNumber(saved.getNumber());
 
         assertThat(found).isPresent()
-                .hasValueSatisfying(g -> assertThat(g.getEncabezado()).isEqualTo("Venta Inmueble"));
+                .hasValueSatisfying(g -> assertThat(g.getHeading()).isEqualTo("Venta Property"));
     }
 
     @Test
-    @DisplayName("Should find gestiones by notary")
+    @DisplayName("Should find managements by notary")
     void shouldFindByNotary() {
         managementRepository.save(testManagement);
 
@@ -120,7 +120,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should find gestiones by status")
+    @DisplayName("Should find managements by status")
     void shouldFindByStatus() {
         managementRepository.save(testManagement);
 
@@ -131,7 +131,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should find gestiones by notary and status")
+    @DisplayName("Should find managements by notary and status")
     void shouldFindByNotaryAndStatus() {
         managementRepository.save(testManagement);
 
@@ -146,7 +146,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should find gestiones by date range")
+    @DisplayName("Should find managements by date range")
     void shouldFindByDateStartBetween() {
         DeedManagement saved = managementRepository.save(testManagement);
 
@@ -160,7 +160,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should find gestiones by notes containing")
+    @DisplayName("Should find managements by notes containing")
     void shouldFindByNotesContaining() {
         testManagement.setNotes("Venta de propiedad");
         managementRepository.save(testManagement);
@@ -172,7 +172,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should update gestion")
+    @DisplayName("Should update management")
     void shouldUpdateManagement() {
         DeedManagement saved = managementRepository.save(testManagement);
 
@@ -186,7 +186,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should delete gestion")
+    @DisplayName("Should delete management")
     void shouldDeleteManagement() {
         DeedManagement saved = managementRepository.save(testManagement);
 
@@ -212,7 +212,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should find all gestiones paginated")
+    @DisplayName("Should find all managements paginated")
     void shouldFindAllPaginated() {
         DeedManagement saved = managementRepository.save(testManagement);
 
@@ -223,7 +223,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should find gestiones by cliente person id (CU19)")
+    @DisplayName("Should find managements by client person id (CU19)")
     void shouldFindByClientPersonId() {
         IdentificationType identificationType = new IdentificationType();
         identificationType.setName("DNI");
@@ -240,7 +240,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
         Budget budget = new Budget();
         budget.setNumber((int) (System.currentTimeMillis() % 10000));
         budget.setDate(new Date());
-        budget.setEncabezado("Presupuesto Test");
+        budget.setHeading("Budget Test");
         budget.setStatus("PENDIENTE");
         budget.setFkIdPerson(client);
         budget = budgetRepository.save(budget);
@@ -249,7 +249,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
         DeedManagement saved = managementRepository.save(testManagement);
 
         ProcedureType procedureType = new ProcedureType();
-        procedureType.setName("Tipo Tramite Test");
+        procedureType.setName("Tipo Procedure Test");
         procedureTypeRepository.save(procedureType);
 
         Procedure procedure = new Procedure();

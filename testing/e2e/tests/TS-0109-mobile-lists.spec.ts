@@ -15,32 +15,32 @@ const ROW_ID = 990_109;
 
 const PAGES: { route: string; api: string; paged: boolean; row: Record<string, unknown> }[] = [
   {
-    route: "/dashboard/personas",
+    route: "/dashboard/people",
     api: "**/api/v1/people?**",
     paged: true,
     row: { personId: ROW_ID, firstName: "Movil", lastName: "TS0109", identificationNumber: "99010901", email: "movil.ts0109@notaire.test", isClient: true },
   },
   {
-    route: "/dashboard/gestiones",
-    api: "**/api/v1/gestiones?**",
+    route: "/dashboard/managements",
+    api: "**/api/v1/managements?**",
     paged: true,
-    row: { idManagement: ROW_ID, number: "TS0109", procedureCount: 1, statusActual: "INICIADA" },
+    row: { idManagement: ROW_ID, number: "TS0109", procedureCount: 1, currentStatus: "INICIADA" },
   },
   {
-    route: "/dashboard/presupuestos",
-    api: "**/api/v1/presupuestos?**",
+    route: "/dashboard/budgets",
+    api: "**/api/v1/budgets?**",
     paged: true,
     row: { idBudget: ROW_ID, date: "2026-10-01", propertyAmount: 1000, status: "PENDIENTE" },
   },
   {
-    route: "/dashboard/escrituras",
-    api: "**/api/v1/escrituras?**",
+    route: "/dashboard/deeds",
+    api: "**/api/v1/deeds?**",
     paged: true,
     row: { idDeed: ROW_ID, number: 109, dateDeedrecording: "2026-10-01", status: "BORRADOR" },
   },
   {
-    route: "/dashboard/pagos",
-    api: "**/api/v1/pagos",
+    route: "/dashboard/payments",
+    api: "**/api/v1/payments",
     paged: false,
     row: { idPayment: ROW_ID, idBudget: 1, date: "2026-10-01", amount: 109, paymentMethod: "EFECTIVO" },
   },
@@ -48,9 +48,9 @@ const PAGES: { route: string; api: string; paged: boolean; row: Record<string, u
 
 async function loginAsAdmin(page: Page) {
   await page.goto("/login");
-  await page.getByTestId("input-usuario").fill("admin");
-  await page.getByTestId("input-contrasenia").fill("admin");
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("input-username").fill("admin");
+  await page.getByTestId("input-password").fill("admin");
+  await page.getByTestId("btn-sign-in").click();
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 }
 
@@ -93,7 +93,7 @@ test.describe("TS-0109 - list pages at 390px (#1356)", () => {
   test("desktop keeps the table", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await loginAsAdmin(page);
-    await page.goto("/dashboard/personas");
+    await page.goto("/dashboard/people");
     await expect(page.getByRole("table")).toBeVisible({ timeout: 15000 });
     await expect(page.getByTestId("data-table-cards")).toHaveCount(0);
   });

@@ -24,11 +24,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * REST API para administrar la plantilla de costos de documentos por tipo de trámite (CU27/CU39).
+ * REST API for managing expected document costs by procedure type (CU27/CU39).
  */
 @RestController
-@RequestMapping("/api/v1/plantilla-costos-documento")
-@Tag(name = "PlantillaCostosDocumento", description = "API para administrar costos esperados de documentos por tipo de trámite")
+@RequestMapping("/api/v1/document-cost-templates")
+@Tag(name = "Document cost template", description = "API for managing expected document costs by procedure type")
 public class DocumentCostTemplateController {
 
     private final DocumentCostTemplateService documentCostTemplateService;
@@ -60,18 +60,18 @@ public class DocumentCostTemplateController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Creado"),
-        @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-        @ApiResponse(responseCode = "404", description = "Tipo de trámite o documento no encontrado")
+        @ApiResponse(responseCode = "201", description = "Created"),
+        @ApiResponse(responseCode = "400", description = "Invalid request"),
+        @ApiResponse(responseCode = "404", description = "Procedure type or document not found")
     })
     @PostMapping
-    @Operation(summary = "Definir el costo (fijo o variable) de un tipo de documento en la plantilla de un tipo de trámite")
+    @Operation(summary = "Define the fixed or variable cost of a document type in a procedure type template")
     public ResponseEntity<Object> createCost(@RequestBody CreateCostRequest request) {
         try {
-            DocumentCostTemplate creado = documentCostTemplateService.create(
+            DocumentCostTemplate created = documentCostTemplateService.create(
                     request.idProcedureType(), request.idDocumentType(),
                     request.fixedAmount(), request.variablePercentage());
-            return ResponseEntity.status(HttpStatus.CREATED).body(CostTemplateResponse.from(creado));
+            return ResponseEntity.status(HttpStatus.CREATED).body(CostTemplateResponse.from(created));
         } catch (BusinessValidationException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         } catch (ResourceNotFoundException e) {
@@ -82,8 +82,8 @@ public class DocumentCostTemplateController {
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK")
     })
-    @GetMapping("/tipo-tramite/{idProcedureType}")
-    @Operation(summary = "Obtener los costos de documentos definidos para un tipo de trámite")
+    @GetMapping("/procedure-types/{idProcedureType}")
+    @Operation(summary = "Get the document costs defined for a procedure type")
     @Transactional(readOnly = true)
     public ResponseEntity<List<CostTemplateResponse>> getCostosByTypeProcedure(
             @PathVariable Integer idProcedureType) {

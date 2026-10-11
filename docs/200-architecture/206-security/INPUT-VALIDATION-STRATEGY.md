@@ -14,11 +14,11 @@ Notaire enforces validation at two layers:
 Use `jakarta.validation` annotations on request DTOs or `@RequestBody` records:
 
 ```java
-public record UsuarioRequest(
-    @NotBlank String nombre,
-    @Size(min = 0, max = 255) String contrasenia,
-    @NotBlank String tipo,
-    boolean activo
+public record UserRequest(
+    @NotBlank String name,
+    @Size(min = 0, max = 255) String password,
+    @NotBlank String type,
+    boolean active
 ) {}
 ```
 
@@ -26,7 +26,7 @@ Activate with `@Valid` on the parameter:
 
 ```java
 @PostMapping
-public ResponseEntity<?> create(@Valid @RequestBody UsuarioRequest request) { ... }
+public ResponseEntity<?> create(@Valid @RequestBody UserRequest request) { ... }
 ```
 
 ### Annotation reference by field type
@@ -75,8 +75,8 @@ Rate limiting is a deployment-level concern. Implement via:
 - **Monitoring** — Prometheus alert `SuspiciousLoginActivity` fires when bad-credential login rate exceeds 30/min.
 
 Priority endpoints for rate limiting:
-1. `POST /api/v1/usuarios/login` — brute-force target
-2. `GET /api/v1/reportes/*` — expensive PDF generation
+1. `POST /api/v1/users/login` — brute-force target
+2. `GET /api/v1/reports/*` — expensive PDF generation
 
 ## File upload security
 
@@ -90,23 +90,23 @@ Currently there are no file upload endpoints. When implemented:
 ## Validation testing strategy
 
 ```java
-// Test missing required field → 400
-mvc.perform(post("/api/v1/usuarios")
+// Test missing required field → 400 (UserRequest.name and type are @NotBlank)
+mvc.perform(post("/api/v1/users")
     .contentType(APPLICATION_JSON)
-    .content("{\"contrasenia\":\"pwd\"}"))  // nombre missing
+    .content("{\"password\":\"pwd\"}"))  // name missing
     .andExpect(status().isBadRequest());
 
-// Test oversized field → 400
-mvc.perform(post("/api/v1/usuarios/login")
+// Oversized username must not crash the login endpoint
+mvc.perform(post("/api/v1/users/login")
     .contentType(APPLICATION_JSON)
-    .content("{\"nombre\":\"" + "x".repeat(5000) + "\",\"contrasenia\":\"\"}"))
-    .andExpect(status().isOk());  // login returns 200 with valido:false
+    .content("{\"name\":\"" + "x".repeat(5000) + "\",\"password\":\"\"}"));
 
-// Test SQL injection attempt → no 500
-mvc.perform(post("/api/v1/usuarios/login")
+// SQL injection attempt → 200 and valid false
+mvc.perform(post("/api/v1/users/login")
     .contentType(APPLICATION_JSON)
-    .content("{\"nombre\":\"' OR '1'='1\",\"contrasenia\":\"\"}"))
-    .andExpect(status().isOk());
+    .content("{\"name\":\"' OR '1'='1\",\"password\":\"\"}"))
+    .andExpect(status().isOk())
+    .andExpect(jsonPath("$.valid").value(false));
 ```
 
 See `EdgeCaseBoundaryConditionsTest` for the established test patterns.

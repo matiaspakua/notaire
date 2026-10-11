@@ -3,11 +3,11 @@ info:
   type: http
   seq: 4
   description: |-
-      ## Update property — PUT /api/v1/inmueble/{property_id}
+      ## Update property — PUT /api/v1/properties/{property_id}
       Traceability: CU69 (RF #117)
 http:
   method: PUT
-  url: "{{base_url}}/api/v1/inmueble/{{property_id}}"
+  url: "{{base_url}}/api/v1/properties/{{property_id}}"
   body:
     type: json
     data: |-

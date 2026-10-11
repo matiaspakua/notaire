@@ -26,7 +26,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Date;
 
-@DisplayName("Pago REST integration tests — CU15 paymentMethod persistence")
+@DisplayName("Payment REST integration tests — CU15 paymentMethod persistence")
 class PaymentIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -64,7 +64,7 @@ class PaymentIntegrationTest extends ServiceIntegrationTest {
         Budget budget = new Budget();
         budget.setNumber((int) (System.currentTimeMillis() % 10000));
         budget.setDate(new Date());
-        budget.setEncabezado("Presupuesto Test");
+        budget.setHeading("Budget Test");
         budget.setStatus("PENDIENTE");
         budget.setPropertyAmount(new java.math.BigDecimal("500000"));
         budget.setFkIdPerson(person);
@@ -85,7 +85,7 @@ class PaymentIntegrationTest extends ServiceIntegrationTest {
                 }
                 """.formatted(idBudget);
 
-        mockMvc.perform(post("/api/v1/pagos")
+        mockMvc.perform(post("/api/v1/payments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isCreated())
@@ -106,7 +106,7 @@ class PaymentIntegrationTest extends ServiceIntegrationTest {
                 }
                 """.formatted(idBudget);
 
-        MvcResult created = mockMvc.perform(post("/api/v1/pagos")
+        MvcResult created = mockMvc.perform(post("/api/v1/payments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isCreated())
@@ -115,7 +115,7 @@ class PaymentIntegrationTest extends ServiceIntegrationTest {
         Integer idPayment = mapper.readTree(created.getResponse().getContentAsString())
                 .get("idPayment").asInt();
 
-        mockMvc.perform(get("/api/v1/pagos/" + idPayment))
+        mockMvc.perform(get("/api/v1/payments/" + idPayment))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.paymentMethod").value("Transferencia"));
     }
@@ -133,7 +133,7 @@ class PaymentIntegrationTest extends ServiceIntegrationTest {
                 }
                 """.formatted(idBudget);
 
-        MvcResult created = mockMvc.perform(post("/api/v1/pagos")
+        MvcResult created = mockMvc.perform(post("/api/v1/payments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createJson))
                 .andExpect(status().isCreated())
@@ -151,13 +151,13 @@ class PaymentIntegrationTest extends ServiceIntegrationTest {
                 }
                 """;
 
-        mockMvc.perform(put("/api/v1/pagos/" + idPayment)
+        mockMvc.perform(put("/api/v1/payments/" + idPayment)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.paymentMethod").value("Cheque"));
 
-        mockMvc.perform(get("/api/v1/pagos/" + idPayment))
+        mockMvc.perform(get("/api/v1/payments/" + idPayment))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.paymentMethod").value("Cheque"));
     }

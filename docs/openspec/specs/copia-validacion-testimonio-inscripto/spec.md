@@ -9,19 +9,19 @@ descrito en CU87.
 El sistema SHALL rechazar el alta de una copia cuando el testimonio de
 origen tiene al menos un movimiento marcado como inscripto.
 
-#### Scenario: Testimonio con movimiento inscripto
+#### Scenario: Testimony con movimiento inscripto
 - **WHEN** se solicita el alta de una copia cuyo testimonio de origen tiene
-  un `MovimientoTestimonio` con `inscripta = true`
+  un `TestimonyMovement` con `inscripta = true`
 - **THEN** el sistema rechaza la solicitud con `409 Conflict` y no se crea
   la copia
 
-#### Scenario: Testimonio sin movimientos inscriptos
+#### Scenario: Testimony sin movimientos inscriptos
 - **WHEN** se solicita el alta de una copia cuyo testimonio de origen no
-  tiene ningún `MovimientoTestimonio` con `inscripta = true`
+  tiene ningún `TestimonyMovement` con `inscripta = true`
 - **THEN** la copia se crea normalmente (comportamiento sin cambios)
 
-#### Scenario: Testimonio sin movimientos registrados
+#### Scenario: Testimony sin movimientos registrados
 - **WHEN** se solicita el alta de una copia cuyo testimonio de origen no
-  tiene ningún `MovimientoTestimonio` registrado
+  tiene ningún `TestimonyMovement` registrado
 - **THEN** la copia se crea normalmente (comportamiento sin cambios)
 

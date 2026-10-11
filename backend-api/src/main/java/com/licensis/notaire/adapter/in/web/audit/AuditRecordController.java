@@ -24,7 +24,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/audit-log")
-@Tag(name = "RegistroAuditoria", description = "API para consultar auditoria de usuarios (solo lectura; mutaciones denegadas)")
+@Tag(name = "AuditRecord", description = "API for querying user audit records (read only; mutations are denied)")
 public class AuditRecordController {
 
     private final AuditRecordService service;
@@ -35,12 +35,12 @@ public class AuditRecordController {
 
     /**
      * Returns audit log entries. Supports pagination, sort and optional
-     * filters by {@code modulo} and {@code idUsuario}. When no pagination
+     * filters by {@code module} and {@code idUser}. When no pagination
      * parameters are present the response is a flat list of DTOs (kept for
      * backwards compatibility with the existing Swing/Next clients).
      */
     @GetMapping
-    @Operation(summary = "Obtener los registros de auditoria con paginación y filtros opcionales")
+    @Operation(summary = "Get audit records with pagination and optional filters")
     @Transactional(readOnly = true)
     public ResponseEntity<?> getAll(
             @RequestParam(required = false) Integer page,
@@ -69,10 +69,10 @@ public class AuditRecordController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener registro de auditoria por ID")
+    @Operation(summary = "Get an audit record by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<DtoAuditRecord> getById(@PathVariable Integer id) {
         return service.findByIdAsDto(id)
@@ -81,7 +81,7 @@ public class AuditRecordController {
     }
 
     @GetMapping("/user/{idUser}")
-    @Operation(summary = "Obtener registros de auditoria por usuario")
+    @Operation(summary = "Get audit records by user")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoAuditRecord>> getByUser(@PathVariable Integer idUser) {
         return ResponseEntity.ok(service.findByUserIdAsDto(idUser));

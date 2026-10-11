@@ -17,8 +17,8 @@ Validation (`@Valid`/`@Validated`) get a response built by
   "timestamp": "2026-06-10T14:00:00.123456",
   "status": 404,
   "error": "Not Found",
-  "message": "GestionDeEscritura with id 42 not found",
-  "path": "/api/v1/gestiones/42"
+  "message": "DeedManagement with id 42 not found",
+  "path": "/api/v1/managements/42"
 }
 ```
 
@@ -93,15 +93,15 @@ semicolon-joined `field: reason` list (see
   "timestamp": "2026-06-10T14:00:00.123456",
   "status": 400,
   "error": "Bad Request",
-  "message": "nombre: must not be blank; fechaInicio: must not be null",
-  "path": "/api/v1/gestiones"
+  "message": "heading: must not be blank",
+  "path": "/api/v1/managements"
 }
 ```
 
 ## Login endpoint special case
 
-The login endpoint (`POST /api/v1/usuarios/login`) returns HTTP 200 for both
-a successful and a credential-failure attempt, using the `valido` field to
+The login endpoint (`POST /api/v1/users/login`) returns HTTP 200 for both
+a successful and a credential-failure attempt, using the `valid` field to
 signal which one occurred. This intentional design prevents HTTP-level
 information leakage (an attacker cannot distinguish "user not found" from
 "wrong password" by status code alone). This is a deliberate exception to the
@@ -113,7 +113,7 @@ Rate limiting is a separate case with its own distinct status: once
 `LoginAttemptService` locks an account out, the endpoint returns **429** (Too
 Many Requests) with a `message` field describing the lockout — not 200 and
 not 423 (Locked), which issue #685 originally assumed before its own
-verification against `UsuarioController.login()` corrected it. The frontend
+verification against `UserController.login()` corrected it. The frontend
 reads this `message` field to show a lockout-specific error instead of a
 generic one (issue #756).
 
@@ -139,9 +139,9 @@ not on structured fields, since many endpoints don't yet return the
 ```typescript
 try {
   await mutation.mutateAsync(data);
-  toast.success("Operación exitosa");
+  toast.success("Saved");
 } catch (error) {
-  const message = error instanceof Error ? error.message : "Error desconocido";
+  const message = error instanceof Error ? error.message : "Unknown error";
   toast.error(`Error: ${message}`);
 }
 ```
@@ -158,7 +158,7 @@ private int version = 0;
 
 **Key rule**: never pass the raw client request body directly to an update
 method — always fetch the current entity first and apply changes onto it, so
-the correct `@Version` is carried. See `PlantillaPresupuestoController.java`
+the correct `@Version` is carried. See `BudgetTemplateController.java`
 for the reference implementation (fix for issue #340).
 
 ## Testing error paths

@@ -2,7 +2,7 @@ package com.licensis.notaire.dto;
 
 import java.util.List;
 
-/** Case summary of a gestión: its escrituras, testimonios and copias, and the documents of its trámites. */
+/** Case summary of a management: its deeds, testimonies and copies, and the documents of its procedures. */
 public record DtoManagementCaseSummary(
         Integer managementId,
         int managementNumber,

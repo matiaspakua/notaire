@@ -13,9 +13,9 @@ of accepting any estado value unconditionally through the generic `PUT`.
 El sistema SHALL validar que un cambio de estado propuesto para una
 gestión corresponda a una `WorkflowTransition` existente entre el
 `WorkflowNode` del estado actual y el `WorkflowNode` del estado destino,
-dentro del `WorkflowDefinition` asignado al `TipoDeTramite` de la gestión,
+dentro del `WorkflowDefinition` asignado al `ProcedureType` de la gestión,
 según CU83. Status mutations after create MUST use
-`POST /api/v1/gestiones/{id}/transition` (or archive); generic PUT and
+`POST /api/v1/managements/{id}/transition` (or archive); generic PUT and
 complete-case update MUST NOT apply a changed status id.
 
 #### Scenario: Transición válida se aplica
@@ -45,28 +45,28 @@ complete-case update MUST NOT apply a changed status id.
 
 The system SHALL reject any request that changes
 `managementStatusId` / `statusManagementId` on an existing gestión via
-`PUT /api/v1/gestiones/{id}` or `PUT /api/v1/gestiones/{id}/complete-case`,
+`PUT /api/v1/managements/{id}` or `PUT /api/v1/managements/{id}/complete-case`,
 responding with HTTP 400 and directing clients to
-`POST /api/v1/gestiones/{id}/transition`. Updates that leave the status id
+`POST /api/v1/managements/{id}/transition`. Updates that leave the status id
 unchanged (or omit a status change) SHALL still succeed for other fields.
 History (bitácora) coverage from #806 remains for create and for successful
 `/transition` / archive paths.
 
 #### Scenario: Plain PUT that changes status is rejected
 
-- **WHEN** a client sends `PUT /api/v1/gestiones/{id}` with a
+- **WHEN** a client sends `PUT /api/v1/managements/{id}` with a
   `managementStatusId` different from the gestión's current status
 - **THEN** the system responds 400 without persisting the status change
 
 #### Scenario: Complete-case PUT that changes status is rejected
 
-- **WHEN** a client sends `PUT /api/v1/gestiones/{id}/complete-case` with a
+- **WHEN** a client sends `PUT /api/v1/managements/{id}/complete-case` with a
   `statusManagementId` different from the gestión's current status
 - **THEN** the system responds 400 without persisting the status change
 
 #### Scenario: Plain PUT that keeps the same status succeeds
 
-- **WHEN** a client sends `PUT /api/v1/gestiones/{id}` with the same
+- **WHEN** a client sends `PUT /api/v1/managements/{id}` with the same
   `managementStatusId` as the current status (or updates non-status fields)
 - **THEN** the system applies the non-status updates successfully
 
@@ -95,14 +95,14 @@ Initial assignment does not require a prior transition edge.
 ### Requirement: Legal next destinations via workflow-trace
 
 The system SHALL expose legal next destinations for a gestión by
-`GET /api/v1/gestiones/{id}/workflow-trace`: clients derive valid
+`GET /api/v1/managements/{id}/workflow-trace`: clients derive valid
 destination statuses from `transitions` whose `originNodeId` matches the
-current node (the node whose status equals `statusActual`). The gestiones
+current node (the node whose status equals `currentStatus`). The gestiones
 UI MUST offer only those destinations when changing status.
 
 #### Scenario: Workflow-trace lists transitions usable as legal next states
 
-- **WHEN** a client requests `GET /api/v1/gestiones/{id}/workflow-trace` for
+- **WHEN** a client requests `GET /api/v1/managements/{id}/workflow-trace` for
   a gestión with a workflow and current status on a node that has outbound
   transitions
 - **THEN** the response includes those transitions and nodes so the client

@@ -11,11 +11,11 @@ import java.util.List;
 @Repository
 public interface PropertyRepository extends JpaRepository<Property, Integer> {
 
-    @Query("SELECT i FROM Property i WHERE i.address LIKE %:domicilio%")
-    List<Property> findByAddressContaining(@Param("domicilio") String address);
+    @Query("SELECT i FROM Property i WHERE i.address LIKE %:address%")
+    List<Property> findByAddressContaining(@Param("address") String address);
 
-    @Query("SELECT i FROM Property i WHERE i.cadastralDesignation LIKE %:nomenclatura%")
-    List<Property> findByDesignationContaining(@Param("nomenclatura") String designation);
+    @Query("SELECT i FROM Property i WHERE i.cadastralDesignation LIKE %:cadastralDesignation%")
+    List<Property> findByDesignationContaining(@Param("cadastralDesignation") String designation);
 
     List<Property> findByCadastralDesignation(String cadastralDesignation);
 }

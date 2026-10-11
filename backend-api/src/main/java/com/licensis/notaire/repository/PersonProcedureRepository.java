@@ -21,7 +21,7 @@ public interface PersonProcedureRepository extends JpaRepository<PersonProcedure
 
     List<PersonProcedure> findByProcedureIdProcedure(Integer idProcedure);
 
-    @Query("SELECT tp FROM PersonProcedure tp WHERE tp.person.idPerson = :idPersona AND tp.procedure.idProcedure = :idTramite")
+    @Query("SELECT tp FROM PersonProcedure tp WHERE tp.person.idPerson = :idPerson AND tp.procedure.idProcedure = :idProcedure")
     List<PersonProcedure> findByPersonIdPersonAndProcedureIdProcedure(
-            @Param("idPersona") Integer idPerson, @Param("idTramite") Integer idProcedure);
+            @Param("idPerson") Integer idPerson, @Param("idProcedure") Integer idProcedure);
 }

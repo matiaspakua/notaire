@@ -43,11 +43,11 @@ class PagedEndpointsOpenApiParametersIntegrationTest {
     @ParameterizedTest(name = "GET {0}")
     @ValueSource(strings = {
         "/api/v1/people",
-        "/api/v1/presupuestos",
-        "/api/v1/escrituras",
-        "/api/v1/tramites",
-        "/api/v1/gestiones",
-        "/api/v1/historial",
+        "/api/v1/budgets",
+        "/api/v1/deeds",
+        "/api/v1/procedures",
+        "/api/v1/managements",
+        "/api/v1/history",
         "/api/v1/audit-log"
     })
     @DisplayName("shouldDocumentOptionalPageSizeAndSort")

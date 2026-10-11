@@ -84,18 +84,6 @@ export interface SpringPage<T> {
   size: number;
 }
 
-const PAGE_SIZE_ALL = 1000;
-
-/**
- * Fetches a paginated Spring Data endpoint and returns the unwrapped content.
- * Uses a large page size because list screens render the full collection.
- */
-export async function apiGetPaged<T>(path: string): Promise<T[]> {
-  const separator = path.includes("?") ? "&" : "?";
-  const page = await apiGet<SpringPage<T>>(`${path}${separator}size=${PAGE_SIZE_ALL}`);
-  return page.content;
-}
-
 export interface PageRequest {
   page?: number;
   size?: number;
@@ -198,7 +186,7 @@ export async function apiGetBytes(path: string): Promise<Blob> {
 /** Clears the HttpOnly auth cookie via the backend logout endpoint (#1051). */
 export async function apiLogout(): Promise<void> {
   try {
-    await fetch(`${BASE_URL}/usuarios/logout`, {
+    await fetch(`${BASE_URL}/users/logout`, {
       ...DEFAULT_FETCH_INIT,
       method: "POST",
       headers: buildHeaders({ "Content-Type": "application/json" }),

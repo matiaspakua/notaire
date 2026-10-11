@@ -37,7 +37,7 @@ import com.licensis.notaire.testing.RequirementCoverage;
 @RequirementCoverage({"CU16", "RF-22", "RF-37"})
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Gestion archive — verifies pending debt before and while archiving (CU16, RF-22, RF-37)")
+@DisplayName("Management archive — verifies pending debt before and while archiving (CU16, RF-22, RF-37)")
 class ManagementArchiveIntegrationTest {
 
     @Autowired
@@ -90,10 +90,10 @@ class ManagementArchiveIntegrationTest {
 
     private Integer createBudget(Integer clientId, java.math.BigDecimal propertyAmount) throws Exception {
         String body = """
-                {"number": %d, "date": "2026-01-01", "encabezado": "Budget Archive IT",
+                {"number": %d, "date": "2026-01-01", "heading": "Budget Archive IT",
                  "status": "PENDIENTE", "propertyAmount": %s, "person": {"personId": %d}}
                 """.formatted((int) (System.nanoTime() % 100000), propertyAmount, clientId);
-        MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
+        MvcResult result = mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -107,7 +107,7 @@ class ManagementArchiveIntegrationTest {
         return managementStatusRepository.save(status);
     }
 
-    private Integer createProcedureTypeConWorkflowHaciaArchivada(ManagementStatus statusInicial) {
+    private Integer createProcedureTypeConWorkflowHaciaArchivada(ManagementStatus initialStatus) {
         WorkflowDefinition definition = new WorkflowDefinition();
         definition.setName("Workflow Archive IT " + System.nanoTime());
         definition.setActive(true);
@@ -115,7 +115,7 @@ class ManagementArchiveIntegrationTest {
 
         WorkflowNode originNode = new WorkflowNode();
         originNode.setWorkflowDefinition(definition);
-        originNode.setManagementStatus(statusInicial);
+        originNode.setManagementStatus(initialStatus);
         originNode.setType(WorkflowNodeType.INITIAL);
         originNode = workflowNodeRepository.save(originNode);
 
@@ -132,7 +132,7 @@ class ManagementArchiveIntegrationTest {
         workflowTransitionRepository.save(transicion);
 
         ProcedureType type = new ProcedureType();
-        type.setName("Tramite Archive IT");
+        type.setName("Procedure Archive IT");
         type.setEnabled(true);
         type.setIsArchived(false);
         type.setIsRegistered(false);
@@ -145,15 +145,15 @@ class ManagementArchiveIntegrationTest {
         Integer clientId = createPerson("43" + (System.nanoTime() % 1000000));
         Integer notaryId = createPerson("44" + (System.nanoTime() % 1000000));
         Integer budgetId = createBudget(clientId, propertyAmount);
-        ManagementStatus statusInicial = createManagementStatus();
-        Integer statusId = statusInicial.getIdManagementStatus();
-        Integer typeProcedureId = createProcedureTypeConWorkflowHaciaArchivada(statusInicial);
+        ManagementStatus initialStatus = createManagementStatus();
+        Integer statusId = initialStatus.getIdManagementStatus();
+        Integer typeProcedureId = createProcedureTypeConWorkflowHaciaArchivada(initialStatus);
         String body = """
-                {"number": %d, "encabezado": "Management Archive IT", "budgetId": %d,
+                {"number": %d, "heading": "Management Archive IT", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), budgetId, notaryId, statusId,
                 typeProcedureId);
-        MvcResult result = mockMvc.perform(post("/api/v1/gestiones/complete-case")
+        MvcResult result = mockMvc.perform(post("/api/v1/managements/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -162,15 +162,15 @@ class ManagementArchiveIntegrationTest {
     }
 
     @Test
-    @DisplayName("Archiving a gestión with pending debt reflects the aggregate balance in the response")
+    @DisplayName("Archiving a management with pending debt reflects the aggregate balance in the response")
     void shouldReportPendingDebtWhenArchivingManagementWithBalance() throws Exception {
         Integer managementId = createManagementWithBudget(new java.math.BigDecimal("5000.00"));
 
-        mockMvc.perform(get("/api/v1/gestiones/" + managementId + "/saldo-pendiente"))
+        mockMvc.perform(get("/api/v1/managements/" + managementId + "/outstanding-balance"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.pendingBalance").value(5000.00));
 
-        mockMvc.perform(post("/api/v1/gestiones/" + managementId + "/archivar"))
+        mockMvc.perform(post("/api/v1/managements/" + managementId + "/archive"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idManagement").value(managementId))
                 .andExpect(jsonPath("$.pendingBalance").value(5000.00))
@@ -178,11 +178,11 @@ class ManagementArchiveIntegrationTest {
     }
 
     @Test
-    @DisplayName("Confirming archiving despite pending debt still archives the gestión")
+    @DisplayName("Confirming archiving despite pending debt still archives the management")
     void shouldArchiveManagementEvenWhenPendingDebtExists() throws Exception {
         Integer managementId = createManagementWithBudget(new java.math.BigDecimal("3000.00"));
 
-        mockMvc.perform(post("/api/v1/gestiones/" + managementId + "/archivar"))
+        mockMvc.perform(post("/api/v1/managements/" + managementId + "/archive"))
                 .andExpect(status().isOk());
 
         assertThat(deedManagementRepository.findById(managementId))
@@ -193,22 +193,22 @@ class ManagementArchiveIntegrationTest {
     }
 
     @Test
-    @DisplayName("Archiving a gestión with no pending debt reports zero balance")
+    @DisplayName("Archiving a management with not pending debt reports zero balance")
     void shouldArchiveManagementWithoutDebtWarning() throws Exception {
         Integer managementId = createManagementWithBudget(new java.math.BigDecimal("0.00"));
 
-        mockMvc.perform(post("/api/v1/gestiones/" + managementId + "/archivar"))
+        mockMvc.perform(post("/api/v1/managements/" + managementId + "/archive"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.pendingBalance").value(0.00))
                 .andExpect(jsonPath("$.pendingDebtAtArchiving").value(false));
     }
 
     @Test
-    @DisplayName("Archiving record reflects pending debt when the gestión had an outstanding balance")
+    @DisplayName("Archiving record reflects pending debt when the management had an outstanding balance")
     void shouldPersistDebtPendingTrueWhenBalanceIsPositive() throws Exception {
         Integer managementId = createManagementWithBudget(new java.math.BigDecimal("1234.00"));
 
-        mockMvc.perform(post("/api/v1/gestiones/" + managementId + "/archivar"))
+        mockMvc.perform(post("/api/v1/managements/" + managementId + "/archive"))
                 .andExpect(status().isOk());
 
         assertThat(deedManagementRepository.findById(managementId))
@@ -219,11 +219,11 @@ class ManagementArchiveIntegrationTest {
     }
 
     @Test
-    @DisplayName("Archiving record reflects no pending debt when the gestión had a zero balance")
+    @DisplayName("Archiving record reflects not pending debt when the management had a zero balance")
     void shouldPersistDebtPendingFalseWhenBalanceIsZero() throws Exception {
         Integer managementId = createManagementWithBudget(new java.math.BigDecimal("0.00"));
 
-        mockMvc.perform(post("/api/v1/gestiones/" + managementId + "/archivar"))
+        mockMvc.perform(post("/api/v1/managements/" + managementId + "/archive"))
                 .andExpect(status().isOk());
 
         assertThat(deedManagementRepository.findById(managementId))
@@ -234,9 +234,9 @@ class ManagementArchiveIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return 404 when archiving a gestión that does not exist")
+    @DisplayName("Should return 404 when archiving a management that does not exist")
     void shouldReturn404WhenArchivingMissingManagement() throws Exception {
-        mockMvc.perform(post("/api/v1/gestiones/999999/archivar"))
+        mockMvc.perform(post("/api/v1/managements/999999/archive"))
                 .andExpect(status().isNotFound());
     }
 }

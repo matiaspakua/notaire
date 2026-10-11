@@ -28,8 +28,8 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/tipo-de-documento")
-@Tag(name = "TipoDeDocumento", description = "API to manage document types")
+@RequestMapping("/api/v1/document-types")
+@Tag(name = "DocumentType", description = "API to manage document types")
 public class DocumentTypeController {
 
     private final DocumentTypeRepository repository;
@@ -107,7 +107,7 @@ public class DocumentTypeController {
                 dto.setReturned(false);
             }
             DocumentType entity = new DocumentType();
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
@@ -119,7 +119,7 @@ public class DocumentTypeController {
     @ApiResponse(responseCode = "200", description = "OK"),
     @ApiResponse(responseCode = "400", description = "Bad request"),
     @ApiResponse(responseCode = "404", description = "Not found"),
-    @ApiResponse(responseCode = "409", description = "version no es la almacenada: otro usuario modificó el registro")
+    @ApiResponse(responseCode = "409", description = "version is not the stored one: another user modified the record")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Update document type")
@@ -139,7 +139,7 @@ public class DocumentTypeController {
             if (dto.getDeliveredBy() == null) {
                 dto.setDeliveredBy(entity.getDeliveredBy());
             }
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {

@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Suplencia controller — CU23 get by id serializes detached lazy relations")
+@DisplayName("Substitution controller — CU23 get by id serializes detached lazy relations")
 class SubstitutionControllerIntegrationTest {
 
     @Autowired
@@ -51,13 +51,13 @@ class SubstitutionControllerIntegrationTest {
 
     private Integer createSubstitution() throws Exception {
         long suffix = System.nanoTime() % 100000;
-        Integer suplente = createPerson("Suplente IT", "410" + suffix);
-        Integer suplantado = createPerson("Suplantado IT", "411" + suffix);
+        Integer substitute = createPerson("Suplente IT", "410" + suffix);
+        Integer substituted = createPerson("Suplantado IT", "411" + suffix);
         String body = """
                 {"dateStart": "2026-01-01", "dateEnd": "2026-01-31",
                  "substitutePersonId": %d, "substitutedPersonId": %d}
-                """.formatted(suplente, suplantado);
-        MvcResult result = mockMvc.perform(post("/api/v1/suplencia")
+                """.formatted(substitute, substituted);
+        MvcResult result = mockMvc.perform(post("/api/v1/substitutions")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -66,11 +66,11 @@ class SubstitutionControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return 200 with suplencia and persons when getting existing suplencia by id")
+    @DisplayName("Should return 200 with substitution and persons when getting existing substitution by id")
     void shouldReturnSubstitutionByIdWithPersons() throws Exception {
         Integer id = createSubstitution();
 
-        mockMvc.perform(get("/api/v1/suplencia/" + id))
+        mockMvc.perform(get("/api/v1/substitutions/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idSubstitution").value(id))
                 .andExpect(jsonPath("$.substitutePersonId").isNumber())
@@ -91,7 +91,7 @@ class SubstitutionControllerIntegrationTest {
                  "fkIdSubstitute": {"personId": %d}, "fkIdSubstituted": {"personId": %d}}
                 """.formatted(substituteId, substitutedId);
 
-        mockMvc.perform(post("/api/v1/suplencia")
+        mockMvc.perform(post("/api/v1/substitutions")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -103,21 +103,21 @@ class SubstitutionControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return 404 when getting nonexistent suplencia by id")
+    @DisplayName("Should return 404 when getting nonexistent substitution by id")
     void shouldReturn404ForNonexistentSubstitution() throws Exception {
-        mockMvc.perform(get("/api/v1/suplencia/999999"))
+        mockMvc.perform(get("/api/v1/substitutions/999999"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("Should actually remove suplencia row so a subsequent get returns 404")
+    @DisplayName("Should actually remove substitution row so a subsequent get returns 404")
     void shouldDeleteSubstitutionAndMakeItUnreachable() throws Exception {
         Integer id = createSubstitution();
 
-        mockMvc.perform(delete("/api/v1/suplencia/" + id))
+        mockMvc.perform(delete("/api/v1/substitutions/" + id))
                 .andExpect(status().isNoContent());
 
-        mockMvc.perform(get("/api/v1/suplencia/" + id))
+        mockMvc.perform(get("/api/v1/substitutions/" + id))
                 .andExpect(status().isNotFound());
     }
 }

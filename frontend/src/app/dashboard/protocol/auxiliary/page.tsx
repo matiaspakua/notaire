@@ -1,0 +1,123 @@
+"use client";
+
+import { useState } from "react";
+import { toast } from "sonner";
+import { useTranslations } from "next-intl";
+import { AppHeader } from "@/components/layout/AppHeader";
+import { DataTable, type Column } from "@/components/shared/DataTable";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
+import { useQuery } from "@tanstack/react-query";
+import { apiGet, apiPost } from "@/lib/api-client";
+import { extractApiError } from "@/lib/utils";
+import type { Folio, Deed } from "@/types";
+import { FilePlus } from "lucide-react";
+
+export default function AuxiliaryProtocolPage() {
+  const t = useTranslations("protocolo.auxiliar");
+  const tc = useTranslations("common");
+
+  const {
+    data: availableFolios = [],
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["auxiliary-protocol", "available-folios"],
+    queryFn: () => apiGet<Folio[]>("/auxiliary-protocol/available-folios"),
+  });
+
+  const [selectedFolio, setSelectedFolio] = useState<Folio | null>(null);
+  const [deedBody, setDeedBody] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  function openModal(folio: Folio) {
+    setSelectedFolio(folio);
+    setDeedBody("");
+  }
+
+  async function handleStartDeed() {
+    if (!selectedFolio) return;
+    setSaving(true);
+    try {
+      // Backend body is StartDeedRequest(idFolio, body).
+      await apiPost<Deed>("/auxiliary-protocol/deeds", {
+        idFolio: selectedFolio.idFolio,
+        body: deedBody,
+      });
+      toast.success(t("created"));
+      setSelectedFolio(null);
+      refetch();
+    } catch (err) {
+      toast.error(extractApiError(err) ?? t("errorCreate"));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const columns: Column<Folio>[] = [
+    {
+      key: "id",
+      header: tc("id"),
+      render: (f) => <span className="text-xs text-muted-foreground">{f.idFolio}</span>,
+      className: "w-12",
+    },
+    { key: "number", header: tc("number"), render: (f) => <span className="font-medium">{f.number ?? "—"}</span> },
+    { key: "type", header: tc("type"), render: (f) => f.fkIdFolioType?.name ?? "—" },
+    {
+      key: "action",
+      header: "",
+      render: (f) => (
+        <Button size="sm" onClick={() => openModal(f)}>
+          <FilePlus className="h-4 w-4" />
+          {t("iniciarEscritura")}
+        </Button>
+      ),
+      className: "w-48",
+    },
+  ];
+
+  return (
+    <div>
+      <AppHeader title={t("title")} description={t("description")} />
+      <DataTable
+        data={availableFolios}
+        columns={columns}
+        isLoading={isLoading}
+        keyExtractor={(f) => f.idFolio!}
+        emptyMessage={t("noData")}
+      />
+
+      <Dialog open={!!selectedFolio} onOpenChange={(v) => !v && setSelectedFolio(null)}>
+        <DialogContent>
+          <FormContainer>
+            <FormSection dialogTitle title={t("iniciarEscritura")}>
+              <FormField label={t("fields.folio")}>
+                <span className="text-sm font-medium">
+                  N° {selectedFolio?.number} — {selectedFolio?.fkIdFolioType?.name}
+                </span>
+              </FormField>
+              <FormField label={t("fields.cuerpo")} required helperText={t("cuerpoHelper")}>
+                <textarea
+                  className="w-full rounded-lg border border-input bg-transparent p-3 text-sm"
+                  rows={6}
+                  value={deedBody}
+                  onChange={(e) => setDeedBody(e.target.value)}
+                  data-testid="textarea-deed-body-auxiliary"
+                />
+              </FormField>
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setSelectedFolio(null)}>
+                {tc("cancel")}
+              </Button>
+              <Button onClick={handleStartDeed} disabled={saving || !deedBody.trim()}>
+                {saving ? tc("saving") : tc("create")}
+              </Button>
+            </FormActions>
+          </FormContainer>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

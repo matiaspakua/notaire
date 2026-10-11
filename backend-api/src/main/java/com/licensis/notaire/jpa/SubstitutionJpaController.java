@@ -5,7 +5,7 @@
 package com.licensis.notaire.jpa;
 
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Substitution;
 import java.io.Serializable;
@@ -20,7 +20,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author juanca
  */
-public class SubstitutionJpaController implements Serializable, IPersistenciaJpa
+public class SubstitutionJpaController implements Serializable, JpaPersistence
 {
 
     public SubstitutionJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -130,7 +130,7 @@ public class SubstitutionJpaController implements Serializable, IPersistenciaJpa
                 Integer id = substitution.getIdSubstitution();
                 if (findSubstitution(id) == null)
                 {
-                    throw new NonexistentEntityException("The suplencia with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The substitution with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -151,14 +151,14 @@ public class SubstitutionJpaController implements Serializable, IPersistenciaJpa
         {
             em = getEntityManager();
             em.getTransaction().begin();
-            // Load directly (not via getReference + reverse-collection removal): Suplencia
-            // is the FK-owning side, so removing it from Persona.suplenciaList/suplenciaList1
+            // Load directly (not via getReference + reverse-collection removal): Substitution
+            // is the FK-owning side, so removing it from Person.substitutionList/substitutionList1
             // in memory has no cascading DB effect (no orphanRemoval) and previously left the
             // row un-flushed — em.remove() below is sufficient and correct on its own.
             Substitution substitution = em.find(Substitution.class, id);
             if (substitution == null)
             {
-                throw new NonexistentEntityException("The suplencia with id " + id + " no longer exists.");
+                throw new NonexistentEntityException("The substitution with id " + id + " no longer exists.");
             }
             em.remove(substitution);
             em.getTransaction().commit();
@@ -204,16 +204,16 @@ public class SubstitutionJpaController implements Serializable, IPersistenciaJpa
 
     public List<Substitution> findSubstitutionsByYear(Substitution unaSubstitution)
     {
-        List<Substitution> listaSuplencias = new ArrayList<>();
+        List<Substitution> substitutions = new ArrayList<>();
         EntityManager em = getEntityManager();
 
         Query query = em.createNamedQuery("Substitution.findSubstitutionsByYear");
-        query.setParameter("fechaInicio", unaSubstitution.getDateStart());
-        query.setParameter("fechaFin", unaSubstitution.getDateEnd());
+        query.setParameter("startDate", unaSubstitution.getDateStart());
+        query.setParameter("endDate", unaSubstitution.getDateEnd());
 
-        listaSuplencias = query.getResultList();
+        substitutions = query.getResultList();
 
-        return listaSuplencias;
+        return substitutions;
     }
 
     public Substitution findSubstitution(Integer id)
@@ -221,8 +221,8 @@ public class SubstitutionJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            // JOIN FETCH: las personas son LAZY y la entidad se serializa con el
-            // EntityManager ya cerrado (detached); sin fetch la serialización falla.
+            // JOIN FETCH: the people are LAZY and the entidad serializa with the
+            // EntityManager is already closed (detached); without a fetch, serialization fails.
             Query q = em.createQuery(
                     "SELECT s FROM Substitution s "
                             + "JOIN FETCH s.fkIdSubstitute "
@@ -230,8 +230,8 @@ public class SubstitutionJpaController implements Serializable, IPersistenciaJpa
                             + "WHERE s.idSubstitution = :id");
             q.setParameter("id", id);
             @SuppressWarnings("unchecked")
-            List<Substitution> resultado = q.getResultList();
-            return resultado.isEmpty() ? null : resultado.get(0);
+            List<Substitution> result = q.getResultList();
+            return result.isEmpty() ? null : result.get(0);
         }
         finally
         {

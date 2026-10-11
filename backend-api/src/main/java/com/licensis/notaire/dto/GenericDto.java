@@ -5,8 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * DTO genérico que usa un Map para almacenar datos
- * Permite flexibilidad sin estar atado a tipos específicos
+ * Generic DTO that stores values in a map so callers are not tied to a fixed schema.
  */
 public class GenericDto implements Serializable, Cloneable {
 

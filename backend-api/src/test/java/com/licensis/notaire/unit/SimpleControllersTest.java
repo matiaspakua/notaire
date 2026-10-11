@@ -92,7 +92,7 @@ class SimpleControllersTest {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Nested
-    @DisplayName("CopiaController")
+    @DisplayName("CopyController")
     class CopyControllerTests {
         private final CopyService service = mock(CopyService.class);
         private final com.licensis.notaire.repository.PersonRepository personRepository =
@@ -110,7 +110,7 @@ class SimpleControllersTest {
             Copy c = new Copy();
             c.setIdCopy(1);
             when(service.findAll()).thenReturn(List.of(c));
-            mvc.perform(get("/api/v1/copia")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/copies")).andExpect(status().isOk());
         }
 
         @Test
@@ -120,8 +120,8 @@ class SimpleControllersTest {
             c.setIdCopy(1);
             when(service.findById(1)).thenReturn(Optional.of(c));
             when(service.findById(2)).thenReturn(Optional.empty());
-            mvc.perform(get("/api/v1/copia/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/copia/2")).andExpect(status().isNotFound());
+            mvc.perform(get("/api/v1/copies/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/copies/2")).andExpect(status().isNotFound());
         }
 
         @Test
@@ -132,7 +132,7 @@ class SimpleControllersTest {
             when(service.save(any(Copy.class))).thenReturn(c);
             when(service.canCreateCopyForTestimony(any())).thenReturn(true);
             String body = "{\"number\":1,\"datePrinting\":\"2026-10-09\",\"notes\":\"n\"}";
-            mvc.perform(post("/api/v1/copia").contentType("application/json")
+            mvc.perform(post("/api/v1/copies").contentType("application/json")
                             .content(body))
                     .andExpect(status().isCreated());
         }
@@ -143,7 +143,7 @@ class SimpleControllersTest {
             when(service.canCreateCopyForTestimony(any())).thenReturn(true);
             when(service.save(any(Copy.class))).thenThrow(new RuntimeException("x"));
             String body = "{\"number\":1,\"datePrinting\":\"2026-10-09\",\"notes\":\"n\"}";
-            mvc.perform(post("/api/v1/copia").contentType("application/json")
+            mvc.perform(post("/api/v1/copies").contentType("application/json")
                             .content(body))
                     .andExpect(status().isInternalServerError());
         }
@@ -156,9 +156,9 @@ class SimpleControllersTest {
             when(service.findById(1)).thenReturn(Optional.of(c));
             when(service.findById(2)).thenReturn(Optional.empty());
             String body = "{\"number\":1,\"datePrinting\":\"2026-10-09\",\"notes\":\"n\"}";
-            mvc.perform(put("/api/v1/copia/1").contentType("application/json")
+            mvc.perform(put("/api/v1/copies/1").contentType("application/json")
                     .content(body)).andExpect(status().isOk());
-            mvc.perform(put("/api/v1/copia/2").contentType("application/json")
+            mvc.perform(put("/api/v1/copies/2").contentType("application/json")
                     .content(body)).andExpect(status().isNotFound());
         }
 
@@ -170,7 +170,7 @@ class SimpleControllersTest {
             when(service.findById(1)).thenReturn(Optional.of(c));
             when(service.save(any(Copy.class))).thenThrow(new RuntimeException("x"));
             String body = "{\"number\":1,\"datePrinting\":\"2026-10-09\",\"notes\":\"n\"}";
-            mvc.perform(put("/api/v1/copia/1").contentType("application/json")
+            mvc.perform(put("/api/v1/copies/1").contentType("application/json")
                     .content(body)).andExpect(status().isInternalServerError());
         }
 
@@ -179,15 +179,15 @@ class SimpleControllersTest {
         void deleteCopy() throws Exception {
             when(service.existsById(1)).thenReturn(true);
             when(service.existsById(2)).thenReturn(false);
-            mvc.perform(delete("/api/v1/copia/1")).andExpect(status().isNoContent());
-            mvc.perform(delete("/api/v1/copia/2")).andExpect(status().isNotFound());
+            mvc.perform(delete("/api/v1/copies/1")).andExpect(status().isNoContent());
+            mvc.perform(delete("/api/v1/copies/2")).andExpect(status().isNotFound());
             doThrow(new RuntimeException("fk")).when(service).deleteById(1);
-            mvc.perform(delete("/api/v1/copia/1")).andExpect(status().isConflict());
+            mvc.perform(delete("/api/v1/copies/1")).andExpect(status().isConflict());
         }
     }
 
     @Nested
-    @DisplayName("EstadoDeGestionController")
+    @DisplayName("ManagementStatusController")
     class ManagementStatusControllerTests {
         private final ManagementStatusRepository repo = mock(ManagementStatusRepository.class);
         private final DeedManagementRepository managementRepo = mock(DeedManagementRepository.class);
@@ -203,7 +203,7 @@ class SimpleControllersTest {
         @DisplayName("GET all should return list of DTOs")
         void getAll() throws Exception {
             when(repo.findAll()).thenReturn(List.of(build()));
-            mvc.perform(get("/api/v1/estado-gestion"))
+            mvc.perform(get("/api/v1/management-statuses"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$[0].idManagementStatus").value(1));
         }
@@ -213,8 +213,8 @@ class SimpleControllersTest {
         void getById() throws Exception {
             when(repo.findById(1)).thenReturn(Optional.of(build()));
             when(repo.findById(2)).thenReturn(Optional.empty());
-            mvc.perform(get("/api/v1/estado-gestion/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/estado-gestion/2")).andExpect(status().isNotFound());
+            mvc.perform(get("/api/v1/management-statuses/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/management-statuses/2")).andExpect(status().isNotFound());
         }
 
         @Test
@@ -224,7 +224,7 @@ class SimpleControllersTest {
             dto.setIdManagementStatus(1);
             dto.setName("Activo");
             when(repo.save(any(ManagementStatus.class))).thenReturn(build());
-            mvc.perform(post("/api/v1/estado-gestion").contentType("application/json")
+            mvc.perform(post("/api/v1/management-statuses").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
         }
 
@@ -235,7 +235,7 @@ class SimpleControllersTest {
             dto.setIdManagementStatus(1);
             dto.setName("Activo");
             when(repo.save(any(ManagementStatus.class))).thenThrow(new RuntimeException("x"));
-            mvc.perform(post("/api/v1/estado-gestion").contentType("application/json")
+            mvc.perform(post("/api/v1/management-statuses").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
         }
 
@@ -247,13 +247,13 @@ class SimpleControllersTest {
             when(repo.findById(1)).thenReturn(Optional.of(build()));
             when(repo.findById(2)).thenReturn(Optional.empty());
             when(managementRepo.findByFkIdManagementStatusIdManagementStatus(anyInt())).thenReturn(List.of());
-            mvc.perform(put("/api/v1/estado-gestion/1").contentType("application/json")
+            mvc.perform(put("/api/v1/management-statuses/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isOk());
-            mvc.perform(put("/api/v1/estado-gestion/2").contentType("application/json")
+            mvc.perform(put("/api/v1/management-statuses/2").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
             when(managementRepo.findByFkIdManagementStatusIdManagementStatus(1))
                     .thenReturn(List.of(new com.licensis.notaire.business.DeedManagement()));
-            mvc.perform(put("/api/v1/estado-gestion/1").contentType("application/json")
+            mvc.perform(put("/api/v1/management-statuses/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
         }
 
@@ -263,16 +263,16 @@ class SimpleControllersTest {
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
             when(managementRepo.findByFkIdManagementStatusIdManagementStatus(anyInt())).thenReturn(List.of());
-            mvc.perform(delete("/api/v1/estado-gestion/1")).andExpect(status().isNoContent());
-            mvc.perform(delete("/api/v1/estado-gestion/2")).andExpect(status().isNotFound());
+            mvc.perform(delete("/api/v1/management-statuses/1")).andExpect(status().isNoContent());
+            mvc.perform(delete("/api/v1/management-statuses/2")).andExpect(status().isNotFound());
             when(managementRepo.findByFkIdManagementStatusIdManagementStatus(1))
                     .thenReturn(List.of(new com.licensis.notaire.business.DeedManagement()));
-            mvc.perform(delete("/api/v1/estado-gestion/1")).andExpect(status().isConflict());
+            mvc.perform(delete("/api/v1/management-statuses/1")).andExpect(status().isConflict());
         }
     }
 
     @Nested
-    @DisplayName("HistorialController")
+    @DisplayName("HistoryController")
     class HistoryControllerTests {
         private final HistoryRepository repo = mock(HistoryRepository.class);
         private final ManagementStatusRepository statusRepo = mock(ManagementStatusRepository.class);
@@ -284,7 +284,7 @@ class SimpleControllersTest {
                         .build();
 
         @Test
-        @DisplayName("GET all and by id and by gestion should work")
+        @DisplayName("GET all and by id and by management should work")
         void getEndpoints() throws Exception {
             History h = new History();
             h.setIdHistory(1);
@@ -293,10 +293,10 @@ class SimpleControllersTest {
             when(repo.findById(1)).thenReturn(Optional.of(h));
             when(repo.findById(2)).thenReturn(Optional.empty());
             when(repo.findByFkIdManagementIdManagement(10)).thenReturn(List.of(h));
-            mvc.perform(get("/api/v1/historial")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/historial/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/historial/2")).andExpect(status().isNotFound());
-            mvc.perform(get("/api/v1/historial/gestion/10")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/history")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/history/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/history/2")).andExpect(status().isNotFound());
+            mvc.perform(get("/api/v1/history/management/10")).andExpect(status().isOk());
         }
 
         @Test
@@ -313,19 +313,19 @@ class SimpleControllersTest {
             when(repo.findById(1)).thenReturn(Optional.of(saved));
             when(repo.findById(2)).thenReturn(Optional.empty());
 
-            mvc.perform(post("/api/v1/historial").contentType("application/json")
+            mvc.perform(post("/api/v1/history").contentType("application/json")
                     .content(body)).andExpect(status().isCreated());
-            mvc.perform(put("/api/v1/historial/1").contentType("application/json")
+            mvc.perform(put("/api/v1/history/1").contentType("application/json")
                     .content(body)).andExpect(status().isOk());
-            mvc.perform(put("/api/v1/historial/2").contentType("application/json")
+            mvc.perform(put("/api/v1/history/2").contentType("application/json")
                     .content(body)).andExpect(status().isNotFound());
 
             History toDelete = new History();
             status.setHistoryList(new java.util.HashSet<>(List.of(toDelete)));
             toDelete.setFkIdManagementStatus(status);
             when(repo.findById(1)).thenReturn(Optional.of(toDelete));
-            mvc.perform(delete("/api/v1/historial/1")).andExpect(status().isNoContent());
-            mvc.perform(delete("/api/v1/historial/2")).andExpect(status().isNotFound());
+            mvc.perform(delete("/api/v1/history/1")).andExpect(status().isNoContent());
+            mvc.perform(delete("/api/v1/history/2")).andExpect(status().isNotFound());
         }
 
         @Test
@@ -341,13 +341,13 @@ class SimpleControllersTest {
             toDelete.setFkIdManagementStatus(status);
             when(repo.findById(1)).thenReturn(Optional.of(toDelete));
             when(repo.save(any(History.class))).thenThrow(new RuntimeException("x"));
-            mvc.perform(post("/api/v1/historial").contentType("application/json")
+            mvc.perform(post("/api/v1/history").contentType("application/json")
                     .content(body)).andExpect(status().isInternalServerError());
-            mvc.perform(put("/api/v1/historial/1").contentType("application/json")
+            mvc.perform(put("/api/v1/history/1").contentType("application/json")
                     .content(body)).andExpect(status().isInternalServerError());
 
             doThrow(new RuntimeException("fk")).when(repo).delete(toDelete);
-            mvc.perform(delete("/api/v1/historial/1")).andExpect(status().isConflict());
+            mvc.perform(delete("/api/v1/history/1")).andExpect(status().isConflict());
         }
     }
 
@@ -355,7 +355,7 @@ class SimpleControllersTest {
     // since ItemController now depends on ItemService rather than ItemRepository.
 
     @Nested
-    @DisplayName("MovimientoTestimonioController")
+    @DisplayName("TestimonyMovementController")
     class TestimonyMovementControllerTests {
         private final TestimonyMovementRepository repo = mock(TestimonyMovementRepository.class);
         private final TestimonyMovementService testimonyMovementService = mock(TestimonyMovementService.class);
@@ -377,9 +377,9 @@ class SimpleControllersTest {
             when(repo.findAll()).thenReturn(List.of(build()));
             when(repo.findById(1)).thenReturn(Optional.of(build()));
             when(repo.findById(2)).thenReturn(Optional.empty());
-            mvc.perform(get("/api/v1/movimiento-testimonio")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/movimiento-testimonio/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/movimiento-testimonio/2")).andExpect(status().isNotFound());
+            mvc.perform(get("/api/v1/testimony-movements")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/testimony-movements/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/testimony-movements/2")).andExpect(status().isNotFound());
         }
 
         @Test
@@ -393,14 +393,14 @@ class SimpleControllersTest {
             when(repo.existsById(2)).thenReturn(false);
 
             when(repo.save(any(TestimonyMovement.class))).thenReturn(build());
-            mvc.perform(post("/api/v1/movimiento-testimonio").contentType("application/json")
+            mvc.perform(post("/api/v1/testimony-movements").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
-            mvc.perform(put("/api/v1/movimiento-testimonio/1").contentType("application/json")
+            mvc.perform(put("/api/v1/testimony-movements/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isOk());
-            mvc.perform(put("/api/v1/movimiento-testimonio/2").contentType("application/json")
+            mvc.perform(put("/api/v1/testimony-movements/2").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/v1/movimiento-testimonio/1")).andExpect(status().isNoContent());
-            mvc.perform(delete("/api/v1/movimiento-testimonio/2")).andExpect(status().isNotFound());
+            mvc.perform(delete("/api/v1/testimony-movements/1")).andExpect(status().isNoContent());
+            mvc.perform(delete("/api/v1/testimony-movements/2")).andExpect(status().isNotFound());
         }
 
         @Test
@@ -411,18 +411,18 @@ class SimpleControllersTest {
             when(repo.findById(1)).thenReturn(Optional.of(build()));
             when(repo.existsById(1)).thenReturn(true);
             when(repo.save(any(TestimonyMovement.class))).thenThrow(new RuntimeException("x"));
-            mvc.perform(post("/api/v1/movimiento-testimonio").contentType("application/json")
+            mvc.perform(post("/api/v1/testimony-movements").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
-            mvc.perform(put("/api/v1/movimiento-testimonio/1").contentType("application/json")
+            mvc.perform(put("/api/v1/testimony-movements/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isInternalServerError());
 
             doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
-            mvc.perform(delete("/api/v1/movimiento-testimonio/1")).andExpect(status().isConflict());
+            mvc.perform(delete("/api/v1/testimony-movements/1")).andExpect(status().isConflict());
         }
     }
 
     @Nested
-    @DisplayName("EscrituraController")
+    @DisplayName("DeedController")
     class DeedControllerTests {
         private final DeedService service = mock(DeedService.class);
         private final DeedSigningService firmaService = mock(DeedSigningService.class);
@@ -441,37 +441,37 @@ class SimpleControllersTest {
             e.setIdDeed(1);
             e.setStatus("BORRADOR");
             e.setNumber(10);
-            // GET /escrituras without ?status= asks the service for every status (#1340).
+            // GET /deeds without ?status= asks the service for every status (#1340).
             when(service.findAllPaged(isNull(), any(Pageable.class))).thenReturn(new PageImpl<>(List.of(e), PageRequest.of(0, 20), 1));
             when(service.findById(1)).thenReturn(Optional.of(e));
             when(service.findById(2)).thenReturn(Optional.empty());
-            when(service.findEscribanosDisponibles()).thenReturn(List.of());
-            when(service.searchPorNumber(any())).thenReturn(List.of(e));
+            when(service.findAvailableNotaries()).thenReturn(List.of());
+            when(service.searchByNumber(any())).thenReturn(List.of(e));
             when(service.save(any(Deed.class))).thenReturn(e);
 
-            mvc.perform(get("/api/v1/escrituras")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/escrituras/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/escrituras/2")).andExpect(status().isNotFound());
-            mvc.perform(get("/api/v1/escrituras/escribanos-disponibles")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/escrituras/buscar?numero=10")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/deeds")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/deeds/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/deeds/2")).andExpect(status().isNotFound());
+            mvc.perform(get("/api/v1/deeds/available-notaries")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/deeds/search?numero=10")).andExpect(status().isOk());
 
             String deedBody = "{\"number\":10,\"status\":\"BORRADOR\",\"body\":\"x\"}";
-            mvc.perform(post("/api/v1/escrituras").contentType("application/json")
+            mvc.perform(post("/api/v1/deeds").contentType("application/json")
                     .content(deedBody)).andExpect(status().isCreated());
-            mvc.perform(put("/api/v1/escrituras/1").contentType("application/json")
+            mvc.perform(put("/api/v1/deeds/1").contentType("application/json")
                     .content(deedBody)).andExpect(status().isOk());
-            mvc.perform(put("/api/v1/escrituras/2").contentType("application/json")
+            mvc.perform(put("/api/v1/deeds/2").contentType("application/json")
                     .content(deedBody)).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/v1/escrituras/1")).andExpect(status().isNoContent());
-            mvc.perform(delete("/api/v1/escrituras/2")).andExpect(status().isNotFound());
+            mvc.perform(delete("/api/v1/deeds/1")).andExpect(status().isNoContent());
+            mvc.perform(delete("/api/v1/deeds/2")).andExpect(status().isNotFound());
         }
 
         @Test
-        @DisplayName("Should return 500 when escritura save throws (#916)")
+        @DisplayName("Should return 500 when deed save throws (#916)")
         void allPathsErrorOnSave() throws Exception {
             when(service.save(any(Deed.class))).thenThrow(new RuntimeException("x"));
             String deedBody = "{\"number\":10,\"status\":\"BORRADOR\",\"body\":\"x\"}";
-            mvc.perform(post("/api/v1/escrituras").contentType("application/json")
+            mvc.perform(post("/api/v1/deeds").contentType("application/json")
                     .content(deedBody)).andExpect(status().isInternalServerError());
         }
 
@@ -484,7 +484,7 @@ class SimpleControllersTest {
                 return saved;
             });
 
-            mvc.perform(post("/api/v1/escrituras").contentType("application/json")
+            mvc.perform(post("/api/v1/deeds").contentType("application/json")
                             .content("""
                                     {"number":55,"dateDeedrecording":"2026-08-05","notes":"seed","idFolio":1}
                                     """))
@@ -494,20 +494,20 @@ class SimpleControllersTest {
     }
 
     @Nested
-    @DisplayName("PresupuestoController")
+    @DisplayName("BudgetController")
     class BudgetControllerTests {
         private final BudgetService service = mock(BudgetService.class);
         private final com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase budgetSummaryUseCase =
                 mock(com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase.class);
         private final com.licensis.notaire.application.usecase.budget.BudgetTemplateService budgetTemplateService =
                 mock(com.licensis.notaire.application.usecase.budget.BudgetTemplateService.class);
-        private final com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService budgetCatalogoItemsService =
+        private final com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService budgetCatalogItemsService =
                 mock(com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService.class);
         private final com.licensis.notaire.repository.PersonRepository personRepository =
                 mock(com.licensis.notaire.repository.PersonRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
                 standaloneSetup(new BudgetController(service, budgetSummaryUseCase,
-                        budgetTemplateService, budgetCatalogoItemsService, personRepository))
+                        budgetTemplateService, budgetCatalogItemsService, personRepository))
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
 
@@ -517,7 +517,7 @@ class SimpleControllersTest {
             Budget p = new Budget();
             p.setIdBudget(1);
             p.setStatus("Pending");
-            p.setEncabezado("Test");
+            p.setHeading("Test");
             p.setNumber(1);
             when(service.findAllPaged(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(p), PageRequest.of(0, 20), 1));
             when(service.findById(1)).thenReturn(Optional.of(p));
@@ -527,38 +527,38 @@ class SimpleControllersTest {
             when(service.create(any(Budget.class))).thenReturn(p);
             when(service.update(any(Integer.class), any(Budget.class))).thenReturn(p);
 
-            mvc.perform(get("/api/v1/presupuestos")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/presupuestos/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/presupuestos/2")).andExpect(status().isNotFound());
-            mvc.perform(get("/api/v1/presupuestos/persona/5")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/presupuestos/buscar?estado=activo")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/budgets")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/budgets/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/budgets/2")).andExpect(status().isNotFound());
+            mvc.perform(get("/api/v1/budgets/person/5")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/budgets/search?status=PENDIENTE")).andExpect(status().isOk());
 
             String budgetBody = """
-                    {"number":1,"encabezado":"Test","status":"PENDIENTE","propertyAmount":10.0}
+                    {"number":1,"heading":"Test","status":"PENDIENTE","propertyAmount":10.0}
                     """;
-            mvc.perform(post("/api/v1/presupuestos").contentType("application/json")
+            mvc.perform(post("/api/v1/budgets").contentType("application/json")
                     .content(budgetBody)).andExpect(status().isCreated());
-            mvc.perform(put("/api/v1/presupuestos/1").contentType("application/json")
+            mvc.perform(put("/api/v1/budgets/1").contentType("application/json")
                     .content(budgetBody)).andExpect(status().isOk());
 
             when(service.findById(1)).thenReturn(Optional.empty());
-            mvc.perform(put("/api/v1/presupuestos/1").contentType("application/json")
+            mvc.perform(put("/api/v1/budgets/1").contentType("application/json")
                     .content(budgetBody)).andExpect(status().isNotFound());
             when(service.findById(1)).thenReturn(Optional.of(p));
 
-            mvc.perform(delete("/api/v1/presupuestos/1")).andExpect(status().isNoContent());
+            mvc.perform(delete("/api/v1/budgets/1")).andExpect(status().isNoContent());
             doThrow(new ResourceNotFoundException("not found")).when(service).deleteById(99);
-            mvc.perform(delete("/api/v1/presupuestos/99")).andExpect(status().isNotFound());
+            mvc.perform(delete("/api/v1/budgets/99")).andExpect(status().isNotFound());
 
             com.licensis.notaire.business.Item item = new com.licensis.notaire.business.Item(
                     1, "Sellado", new java.math.BigDecimal("500"));
-            when(budgetTemplateService.cargarItemsDesdeTemplate(1, 5)).thenReturn(List.of(item));
-            mvc.perform(post("/api/v1/presupuestos/1/items-desde-plantilla?tipoTramiteId=5"))
+            when(budgetTemplateService.loadItemsFromTemplate(1, 5)).thenReturn(List.of(item));
+            mvc.perform(post("/api/v1/budgets/1/items-from-template?procedureTypeId=5"))
                     .andExpect(status().isOk());
 
-            when(budgetCatalogoItemsService.addItemsFromCatalog(eq(1), anyList()))
+            when(budgetCatalogItemsService.addItemsFromCatalog(eq(1), anyList()))
                     .thenReturn(List.of(item));
-            mvc.perform(post("/api/v1/presupuestos/1/items-desde-catalogo").contentType("application/json")
+            mvc.perform(post("/api/v1/budgets/1/items-from-catalog").contentType("application/json")
                     .content(mapper.writeValueAsString(List.of(1))))
                     .andExpect(status().isOk());
         }
@@ -575,12 +575,12 @@ class SimpleControllersTest {
             budget.setIdBudget(7);
             budget.setNumber(7);
             budget.setStatus("BORRADOR");
-            budget.setEncabezado("Con cliente");
+            budget.setHeading("Con cliente");
             budget.setFkIdPerson(client);
 
             when(service.findById(7)).thenReturn(Optional.of(budget));
 
-            mvc.perform(get("/api/v1/presupuestos/7"))
+            mvc.perform(get("/api/v1/budgets/7"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.person.personId").value(42))
                     .andExpect(jsonPath("$.person.name").value("Ana"))
@@ -589,7 +589,7 @@ class SimpleControllersTest {
     }
 
     @Nested
-    @DisplayName("TestimonioController")
+    @DisplayName("TestimonyController")
     class TestimonyControllerTests {
         private final TestimonyRepository repo = mock(TestimonyRepository.class);
         private final TestimonyGenerationVerificationService generationVerificacionService =
@@ -620,19 +620,19 @@ class SimpleControllersTest {
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
 
-            mvc.perform(get("/api/v1/testimonio")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/testimonio/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/testimonio/2")).andExpect(status().isNotFound());
+            mvc.perform(get("/api/v1/testimonies")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/testimonies/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/testimonies/2")).andExpect(status().isNotFound());
 
             when(repo.save(any(Testimony.class))).thenReturn(build());
-            mvc.perform(post("/api/v1/testimonio").contentType("application/json")
+            mvc.perform(post("/api/v1/testimonies").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
-            mvc.perform(put("/api/v1/testimonio/1").contentType("application/json")
+            mvc.perform(put("/api/v1/testimonies/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isOk());
-            mvc.perform(put("/api/v1/testimonio/2").contentType("application/json")
+            mvc.perform(put("/api/v1/testimonies/2").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/v1/testimonio/1")).andExpect(status().isNoContent());
-            mvc.perform(delete("/api/v1/testimonio/2")).andExpect(status().isNotFound());
+            mvc.perform(delete("/api/v1/testimonies/1")).andExpect(status().isNoContent());
+            mvc.perform(delete("/api/v1/testimonies/2")).andExpect(status().isNotFound());
         }
 
         @Test
@@ -647,17 +647,17 @@ class SimpleControllersTest {
             when(repo.findById(1)).thenReturn(Optional.of(build()));
             when(repo.existsById(1)).thenReturn(true);
             when(repo.save(any(Testimony.class))).thenThrow(new RuntimeException("x"));
-            mvc.perform(post("/api/v1/testimonio").contentType("application/json")
+            mvc.perform(post("/api/v1/testimonies").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
-            mvc.perform(put("/api/v1/testimonio/1").contentType("application/json")
+            mvc.perform(put("/api/v1/testimonies/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isInternalServerError());
             doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
-            mvc.perform(delete("/api/v1/testimonio/1")).andExpect(status().isConflict());
+            mvc.perform(delete("/api/v1/testimonies/1")).andExpect(status().isConflict());
         }
     }
 
     @Nested
-    @DisplayName("TipoDeDocumentoController")
+    @DisplayName("DocumentTypeController")
     class DocumentTypeControllerTests {
         private final DocumentTypeRepository repo = mock(DocumentTypeRepository.class);
         private final com.licensis.notaire.repository.ProcedureTemplateRepository templateRepo =
@@ -687,19 +687,19 @@ class SimpleControllersTest {
             when(templateRepo.findByDocumentTypeIdDocumentType(anyInt())).thenReturn(List.of());
             when(docSubmittedRepo.existsByDocumentTypeIdDocumentType(anyInt())).thenReturn(false);
 
-            mvc.perform(get("/api/v1/tipo-de-documento")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/tipo-de-documento/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/tipo-de-documento/2")).andExpect(status().isNotFound());
+            mvc.perform(get("/api/v1/document-types")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/document-types/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/document-types/2")).andExpect(status().isNotFound());
 
             when(repo.save(any(DocumentType.class))).thenReturn(t);
-            mvc.perform(post("/api/v1/tipo-de-documento").contentType("application/json")
+            mvc.perform(post("/api/v1/document-types").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
-            mvc.perform(put("/api/v1/tipo-de-documento/1").contentType("application/json")
+            mvc.perform(put("/api/v1/document-types/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isOk());
-            mvc.perform(put("/api/v1/tipo-de-documento/2").contentType("application/json")
+            mvc.perform(put("/api/v1/document-types/2").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/v1/tipo-de-documento/1")).andExpect(status().isNoContent());
-            mvc.perform(delete("/api/v1/tipo-de-documento/2")).andExpect(status().isNotFound());
+            mvc.perform(delete("/api/v1/document-types/1")).andExpect(status().isNoContent());
+            mvc.perform(delete("/api/v1/document-types/2")).andExpect(status().isNotFound());
         }
 
         @Test
@@ -718,18 +718,18 @@ class SimpleControllersTest {
             when(templateRepo.findByDocumentTypeIdDocumentType(anyInt())).thenReturn(List.of());
             when(docSubmittedRepo.existsByDocumentTypeIdDocumentType(anyInt())).thenReturn(false);
             when(repo.save(any(DocumentType.class))).thenThrow(new RuntimeException("x"));
-            mvc.perform(post("/api/v1/tipo-de-documento").contentType("application/json")
+            mvc.perform(post("/api/v1/document-types").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
-            mvc.perform(put("/api/v1/tipo-de-documento/1").contentType("application/json")
+            mvc.perform(put("/api/v1/document-types/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isInternalServerError());
 
             when(templateRepo.findByDocumentTypeIdDocumentType(1)).thenReturn(List.of(new com.licensis.notaire.business.ProcedureTemplate()));
-            mvc.perform(delete("/api/v1/tipo-de-documento/1")).andExpect(status().isConflict());
+            mvc.perform(delete("/api/v1/document-types/1")).andExpect(status().isConflict());
         }
     }
 
     @Nested
-    @DisplayName("TipoDeFolioController")
+    @DisplayName("FolioTypeController")
     class FolioTypeControllerTests {
         private final FolioTypeRepository repo = mock(FolioTypeRepository.class);
         private final com.licensis.notaire.repository.FolioRepository folioRepo =
@@ -753,19 +753,19 @@ class SimpleControllersTest {
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
 
-            mvc.perform(get("/api/v1/tipo-folio")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/tipo-folio/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/tipo-folio/2")).andExpect(status().isNotFound());
+            mvc.perform(get("/api/v1/folio-types")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/folio-types/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/folio-types/2")).andExpect(status().isNotFound());
 
             when(repo.save(any(FolioType.class))).thenReturn(t);
-            mvc.perform(post("/api/v1/tipo-folio").contentType("application/json")
+            mvc.perform(post("/api/v1/folio-types").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
-            mvc.perform(put("/api/v1/tipo-folio/1").contentType("application/json")
+            mvc.perform(put("/api/v1/folio-types/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isOk());
-            mvc.perform(put("/api/v1/tipo-folio/2").contentType("application/json")
+            mvc.perform(put("/api/v1/folio-types/2").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/v1/tipo-folio/1")).andExpect(status().isNoContent());
-            mvc.perform(delete("/api/v1/tipo-folio/2")).andExpect(status().isNotFound());
+            mvc.perform(delete("/api/v1/folio-types/1")).andExpect(status().isNoContent());
+            mvc.perform(delete("/api/v1/folio-types/2")).andExpect(status().isNotFound());
         }
 
         @Test
@@ -780,17 +780,17 @@ class SimpleControllersTest {
             when(repo.findById(1)).thenReturn(Optional.of(t));
             when(repo.existsById(1)).thenReturn(true);
             when(repo.save(any(FolioType.class))).thenThrow(new RuntimeException("x"));
-            mvc.perform(post("/api/v1/tipo-folio").contentType("application/json")
+            mvc.perform(post("/api/v1/folio-types").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
-            mvc.perform(put("/api/v1/tipo-folio/1").contentType("application/json")
+            mvc.perform(put("/api/v1/folio-types/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isInternalServerError());
             doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
-            mvc.perform(delete("/api/v1/tipo-folio/1")).andExpect(status().isConflict());
+            mvc.perform(delete("/api/v1/folio-types/1")).andExpect(status().isConflict());
         }
     }
 
     @Nested
-    @DisplayName("TipoDeTramiteController")
+    @DisplayName("ProcedureTypeController")
     class ProcedureTypeControllerTests {
         private final ProcedureTypeRepositoryPort repo = mock(ProcedureTypeRepositoryPort.class);
         private final com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort templateRepo =
@@ -828,19 +828,19 @@ class SimpleControllersTest {
             when(budgetRepo.findByProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of());
             when(procedureRepo.findByFkIdProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of());
 
-            mvc.perform(get("/api/v1/tipo-tramite")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/tipo-tramite/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/tipo-tramite/2")).andExpect(status().isNotFound());
+            mvc.perform(get("/api/v1/procedure-types")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/procedure-types/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/procedure-types/2")).andExpect(status().isNotFound());
 
             when(repo.save(any(ProcedureType.class))).thenReturn(t);
-            mvc.perform(post("/api/v1/tipo-tramite").contentType("application/json")
+            mvc.perform(post("/api/v1/procedure-types").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
-            mvc.perform(put("/api/v1/tipo-tramite/1").contentType("application/json")
+            mvc.perform(put("/api/v1/procedure-types/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isOk());
-            mvc.perform(put("/api/v1/tipo-tramite/2").contentType("application/json")
+            mvc.perform(put("/api/v1/procedure-types/2").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/v1/tipo-tramite/1")).andExpect(status().isNoContent());
-            mvc.perform(delete("/api/v1/tipo-tramite/2")).andExpect(status().isNotFound());
+            mvc.perform(delete("/api/v1/procedure-types/1")).andExpect(status().isNoContent());
+            mvc.perform(delete("/api/v1/procedure-types/2")).andExpect(status().isNotFound());
         }
 
         @Test
@@ -863,17 +863,17 @@ class SimpleControllersTest {
             when(budgetRepo.findByProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of());
             when(procedureRepo.findByFkIdProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of());
             when(repo.save(any(ProcedureType.class))).thenThrow(new RuntimeException("x"));
-            mvc.perform(post("/api/v1/tipo-tramite").contentType("application/json")
+            mvc.perform(post("/api/v1/procedure-types").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
-            mvc.perform(put("/api/v1/tipo-tramite/1").contentType("application/json")
+            mvc.perform(put("/api/v1/procedure-types/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isInternalServerError());
             when(templateRepo.findByProcedureTypeIdProcedureType(1)).thenReturn(List.of(new com.licensis.notaire.business.ProcedureTemplate()));
-            mvc.perform(delete("/api/v1/tipo-tramite/1")).andExpect(status().isConflict());
+            mvc.perform(delete("/api/v1/procedure-types/1")).andExpect(status().isConflict());
         }
     }
 
     @Nested
-    @DisplayName("TipoIdentificacionController")
+    @DisplayName("IdentificationTypeController")
     class IdentificationTypeControllerTests {
         private final IdentificationTypeRepository repo = mock(IdentificationTypeRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
@@ -895,19 +895,19 @@ class SimpleControllersTest {
             when(repo.existsById(2)).thenReturn(false);
             when(repo.save(any(IdentificationType.class))).thenReturn(t);
 
-            mvc.perform(get("/api/v1/tipo-identificacion")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/tipo-identificacion/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/tipo-identificacion/2")).andExpect(status().isNotFound());
+            mvc.perform(get("/api/v1/identification-types")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/identification-types/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/identification-types/2")).andExpect(status().isNotFound());
 
             String typeBody = "{\"name\":\"DNI\",\"characters\":\"8\"}";
-            mvc.perform(post("/api/v1/tipo-identificacion").contentType("application/json")
+            mvc.perform(post("/api/v1/identification-types").contentType("application/json")
                     .content(typeBody)).andExpect(status().isCreated());
-            mvc.perform(put("/api/v1/tipo-identificacion/1").contentType("application/json")
+            mvc.perform(put("/api/v1/identification-types/1").contentType("application/json")
                     .content(typeBody)).andExpect(status().isOk());
-            mvc.perform(put("/api/v1/tipo-identificacion/2").contentType("application/json")
+            mvc.perform(put("/api/v1/identification-types/2").contentType("application/json")
                     .content(typeBody)).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/v1/tipo-identificacion/1")).andExpect(status().isNoContent());
-            mvc.perform(delete("/api/v1/tipo-identificacion/2")).andExpect(status().isNotFound());
+            mvc.perform(delete("/api/v1/identification-types/1")).andExpect(status().isNoContent());
+            mvc.perform(delete("/api/v1/identification-types/2")).andExpect(status().isNotFound());
         }
 
         @Test
@@ -920,17 +920,17 @@ class SimpleControllersTest {
             when(repo.existsById(1)).thenReturn(true);
             String typeBody = "{\"name\":\"DNI\",\"characters\":\"8\"}";
             when(repo.save(any(IdentificationType.class))).thenThrow(new RuntimeException("x"));
-            mvc.perform(post("/api/v1/tipo-identificacion").contentType("application/json")
+            mvc.perform(post("/api/v1/identification-types").contentType("application/json")
                     .content(typeBody)).andExpect(status().isInternalServerError());
-            mvc.perform(put("/api/v1/tipo-identificacion/1").contentType("application/json")
+            mvc.perform(put("/api/v1/identification-types/1").contentType("application/json")
                     .content(typeBody)).andExpect(status().isInternalServerError());
             doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
-            mvc.perform(delete("/api/v1/tipo-identificacion/1")).andExpect(status().isConflict());
+            mvc.perform(delete("/api/v1/identification-types/1")).andExpect(status().isConflict());
         }
     }
 
     @Nested
-    @DisplayName("TramiteController")
+    @DisplayName("ProcedureController")
     class ProcedureControllerTests {
         private final ProcedureRepositoryPort repo = mock(ProcedureRepositoryPort.class);
         private final ProcedureTypeRepositoryPort typeRepo = mock(ProcedureTypeRepositoryPort.class);
@@ -964,20 +964,20 @@ class SimpleControllersTest {
                     {"idProcedureType": 1}
                     """;
 
-            mvc.perform(get("/api/v1/tramites")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/tramites/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/tramites/2")).andExpect(status().isNotFound());
+            mvc.perform(get("/api/v1/procedures")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/procedures/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/procedures/2")).andExpect(status().isNotFound());
 
-            mvc.perform(post("/api/v1/tramites").contentType("application/json")
+            mvc.perform(post("/api/v1/procedures").contentType("application/json")
                     .content(requestBody)).andExpect(status().isCreated());
-            mvc.perform(put("/api/v1/tramites/1").contentType("application/json")
+            mvc.perform(put("/api/v1/procedures/1").contentType("application/json")
                     .content(requestBody)).andExpect(status().isOk());
-            mvc.perform(put("/api/v1/tramites/2").contentType("application/json")
+            mvc.perform(put("/api/v1/procedures/2").contentType("application/json")
                     .content(requestBody)).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/v1/tramites/1")).andExpect(status().isNoContent());
-            mvc.perform(delete("/api/v1/tramites/2")).andExpect(status().isNotFound());
+            mvc.perform(delete("/api/v1/procedures/1")).andExpect(status().isNoContent());
+            mvc.perform(delete("/api/v1/procedures/2")).andExpect(status().isNotFound());
 
-            mvc.perform(post("/api/v1/tramites").contentType("application/json")
+            mvc.perform(post("/api/v1/procedures").contentType("application/json")
                     .content("{}")).andExpect(status().isBadRequest());
         }
 
@@ -995,12 +995,12 @@ class SimpleControllersTest {
                     {"idProcedureType": 1}
                     """;
             when(repo.save(any(Procedure.class))).thenThrow(new RuntimeException("x"));
-            mvc.perform(post("/api/v1/tramites").contentType("application/json")
+            mvc.perform(post("/api/v1/procedures").contentType("application/json")
                     .content(requestBody)).andExpect(status().isInternalServerError());
-            mvc.perform(put("/api/v1/tramites/1").contentType("application/json")
+            mvc.perform(put("/api/v1/procedures/1").contentType("application/json")
                     .content(requestBody)).andExpect(status().isInternalServerError());
             doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
-            mvc.perform(delete("/api/v1/tramites/1")).andExpect(status().isConflict());
+            mvc.perform(delete("/api/v1/procedures/1")).andExpect(status().isConflict());
         }
     }
 
@@ -1015,7 +1015,7 @@ class SimpleControllersTest {
                         .build();
 
         @Test
-        @DisplayName("Cover happy paths including search and default type identificacion")
+        @DisplayName("Cover happy paths including search and default type identification")
         void all() throws Exception {
             Person p = new Person();
             p.setPersonId(1);
@@ -1050,7 +1050,7 @@ class SimpleControllersTest {
             mvc.perform(delete("/api/v1/people/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/people/2")).andExpect(status().isNotFound());
 
-            // POST with missing tipo identificacion should use default
+            // POST with missing tipo identification should use default
             String person2Body = """
                     {"firstName":"Ana","lastName":"Gomez","identificationNumber":"87654321","isClient":false}
                     """;
@@ -1072,7 +1072,7 @@ class SimpleControllersTest {
         }
 
         @Test
-        @DisplayName("POST should create default type identificacion when missing in DB")
+        @DisplayName("POST should create default type identification when missing in DB")
         void postShouldCreateDefaultType() throws Exception {
             Person p = new Person();
             p.setFirstName("Juan");

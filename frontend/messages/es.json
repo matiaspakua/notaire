@@ -7,7 +7,7 @@
     "personas": "Personas",
     "escrituras": "Escrituras",
     "testimonios": "Testimonios",
-    "movimientosTestimonio": "Movimientos de Testimonio",
+    "movimientosTestimonio": "Movimientos de testimonio",
     "documentosEntidadesExternas": "Documentación de Entidades Externas",
     "pagos": "Pagos",
     "protocolo": "Protocolo",
@@ -193,9 +193,9 @@
     "title": "Personas y Clientes",
     "newPersona": "Nueva persona",
     "editPersona": "Editar persona",
-    "created": "Persona creada",
-    "updated": "Persona actualizada",
-    "deleted": "Persona eliminada",
+    "created": "Person creada",
+    "updated": "Person actualizada",
+    "deleted": "Person eliminada",
     "errorSave": "Error al guardar la persona",
     "errorDelete": "Error al eliminar la persona",
     "duplicateDocument": "Ya existe otra persona registrada con este documento.",
@@ -220,7 +220,7 @@
     },
     "badges": {
       "client": "Cliente",
-      "person": "Persona"
+      "person": "Person"
     },
     "searchPlaceholders": {
       "nombre": "Buscar por nombre...",
@@ -285,11 +285,11 @@
       "estado": "Estado",
       "fecha": "Fecha",
       "escribano": "Escribano",
-      "persona": "Persona",
+      "persona": "Person",
       "folio": "Folio",
       "observaciones": "Observaciones",
       "presupuesto": "Presupuesto",
-      "inmueble": "Inmueble",
+      "inmueble": "Property",
       "encabezado": "Carátula",
       "inicio": "Inicio",
       "tramites": "Trámites",
@@ -330,7 +330,7 @@
     "selectEstado": "Seleccionar estado...",
     "selectTramite": "Seleccionar trámite...",
     "selectInmueble": "Seleccionar inmueble...",
-    "inmuebleFallback": "Inmueble #{id}"
+    "inmuebleFallback": "Property #{id}"
   },
   "escrituras": {
     "title": "Escrituras",
@@ -361,7 +361,6 @@
   "testimonios": {
     "title": "Testimonios",
     "newTestimonio": "Generar testimonio",
-    "selectEscritura": "Seleccionar escritura...",
     "generated": "Testimonio generado",
     "errorGenerate": "Error al generar el testimonio",
     "verificarTestimonio": "Verificar testimonio",
@@ -382,7 +381,7 @@
     }
   },
   "movimientosTestimonio": {
-    "title": "Movimientos de Testimonio",
+    "title": "Movimientos de testimonio",
     "ingresar": "Ingresar para inscripción",
     "ingresado": "Testimonio ingresado",
     "errorIngresar": "Error al ingresar el testimonio",
@@ -478,7 +477,7 @@
       "presupuesto": "Presupuesto",
       "fecha": "Fecha",
       "monto": "Monto",
-      "metodoPago": "Método de Pago",
+      "metodoPago": "Método de pago",
       "observaciones": "Observaciones",
       "metodoPlaceholder": "Efectivo, transferencia, etc."
     },
@@ -509,8 +508,8 @@
       "title": "Cuadernos de Folios",
       "description": "Administrar cuadernos formados por diez folios consecutivos",
       "noData": "No hay cuadernos registrados",
-      "newCuaderno": "Nuevo Cuaderno",
-      "created": "Cuaderno creado correctamente",
+      "newCuaderno": "Nuevo Notebook",
+      "created": "Notebook creado correctamente",
       "errorCreate": "Error al crear el cuaderno",
       "errorCaratula": "Error al generar la carátula",
       "selectFoliosFirst": "Seleccioná los folios para el cuaderno",
@@ -530,7 +529,7 @@
       "title": "Protocolo Auxiliar",
       "description": "Gestionar trámites en folios de Protocolo Auxiliar",
       "noData": "No hay folios de Protocolo Auxiliar disponibles",
-      "iniciarEscritura": "Iniciar Escritura",
+      "iniciarEscritura": "Iniciar escritura",
       "created": "Escritura iniciada correctamente",
       "errorCreate": "Error al iniciar la escritura",
       "cuerpoHelper": "Contenido de la escritura a iniciar en el folio seleccionado",
@@ -561,9 +560,9 @@
     "title": "Inmuebles",
     "newInmueble": "Nuevo inmueble",
     "editInmueble": "Editar inmueble",
-    "created": "Inmueble creado",
-    "updated": "Inmueble actualizado",
-    "deleted": "Inmueble eliminado",
+    "created": "Property creado",
+    "updated": "Property actualizado",
+    "deleted": "Property eliminado",
     "errorSave": "Error al guardar",
     "errorDelete": "Error al eliminar",
     "noData": "No hay inmuebles registrados",
@@ -586,7 +585,6 @@
     "title": "Minutas de Inscripción",
     "generarSection": "Generar minuta",
     "buscarSection": "Buscar minuta existente",
-    "selectEscritura": "Seleccionar escritura",
     "generarMinuta": "Generar minuta",
     "descargarReporte": "Descargar formulario",
     "presentar": "Presentar",
@@ -826,9 +824,9 @@
         "contrasenia": "Contraseña",
         "contraseniaHint": "Dejar vacío para no cambiar",
         "tipo": "Tipo",
-        "rol": "Rol",
+        "rol": "Role",
         "nuevaContrasenia": "Nueva contraseña",
-        "rolAcceso": "Rol de acceso",
+        "rolAcceso": "Role de acceso",
         "rolAccesoHint": "Permisos de módulos del sistema",
         "sinRolAsignado": "Sin rol asignado",
         "sinRol": "Sin rol"
@@ -845,9 +843,9 @@
       "newConcepto": "Nuevo concepto",
       "editConcepto": "Editar concepto",
       "searchPlaceholder": "Buscar por nombre...",
-      "created": "Concepto creado",
-      "updated": "Concepto actualizado",
-      "deleted": "Concepto eliminado",
+      "created": "Concept creado",
+      "updated": "Concept actualizado",
+      "deleted": "Concept eliminado",
       "errorSave": "Error al guardar el concepto",
       "errorDelete": "Error al eliminar",
       "inUseCannotDelete": "No se puede eliminar: el concepto está siendo utilizado en plantillas de presupuesto",
@@ -933,7 +931,7 @@
       "errorDelete": "Error al eliminar el folio",
       "editFolio": "Editar Folio",
       "inUseCannotModify": "Este folio está en uso (Utilizado) y no puede modificarse",
-      "linkedToEscritura": "Vinculado a la Escritura Nº {numero}",
+      "linkedToEscritura": "Vinculado a la escritura Nº {numero}",
       "tiposDeFolio": {
         "title": "Tipos de Folio",
         "newTipo": "Nuevo Tipo de Folio",
@@ -949,8 +947,7 @@
         "noData": "No hay tipos de folio",
         "esAuxiliar": "Protocolo Auxiliar"
       },
-      "estadoFilter": "Filtrar por estado",
-      "escrituraOption": "Escritura Nº {number}"
+      "estadoFilter": "Filtrar por estado"
     },
     "tramites": {
       "title": "Tipos de Trámite",
@@ -995,7 +992,7 @@
         "namePlaceholder": "Ej: Compraventa estándar",
         "tipoTramite": "Tipo de Trámite",
         "tipoTramitePlaceholder": "Seleccionar tipo de trámite...",
-        "concepto": "Concepto",
+        "concepto": "Concept",
         "conceptoPlaceholder": "Seleccionar concepto...",
         "observaciones": "Observaciones",
         "items": "Items"
@@ -1022,11 +1019,11 @@
     "roles": {
       "title": "Roles y Permisos",
       "description": "Gestión de roles de usuario y sus accesos a módulos",
-      "newRol": "Nuevo Rol",
-      "editRol": "Editar Rol",
-      "created": "Rol creado",
-      "updated": "Rol actualizado",
-      "deleted": "Rol eliminado",
+      "newRol": "Nuevo Role",
+      "editRol": "Editar Role",
+      "created": "Role creado",
+      "updated": "Role actualizado",
+      "deleted": "Role eliminado",
       "errorSave": "Error al guardar el rol",
       "errorDelete": "Error al eliminar",
       "noData": "No hay roles registrados",
@@ -1036,7 +1033,7 @@
         "modulos": "Módulos",
         "modulosPermitidos": "Módulos permitidos",
         "activo": "Activo",
-        "activoHint": "Rol activo"
+        "activoHint": "Role activo"
       },
       "modules": {
         "administracion": "Administración",
@@ -1148,9 +1145,9 @@
     "description": "Registrar y consultar suplencias de escribano",
     "newSuplencia": "Nueva suplencia",
     "editSuplencia": "Editar suplencia",
-    "created": "Suplencia registrada",
-    "updated": "Suplencia actualizada",
-    "deleted": "Suplencia eliminada",
+    "created": "Substitution registrada",
+    "updated": "Substitution actualizada",
+    "deleted": "Substitution eliminada",
     "errorSave": "Error al guardar la suplencia",
     "errorDelete": "Error al eliminar",
     "noData": "No hay suplencias registradas",
@@ -1255,6 +1252,16 @@
     "clear": "Quitar selección",
     "loadError": "No se pudieron cargar las gestiones"
   },
+  "deedPicker": {
+    "option": "Escritura Nº {number}",
+    "placeholder": "Buscar escritura firmada por número…",
+    "searching": "Buscando…",
+    "noResults": "Sin resultados",
+    "results": "{count} resultados",
+    "recentHint": "Escrituras firmadas más recientes. Escriba un número para buscar.",
+    "clear": "Quitar selección",
+    "loadError": "No se pudieron cargar las escrituras"
+  },
   "breadcrumb": {
     "label": "Ruta de navegación",
     "segments": {
@@ -1262,7 +1269,7 @@
       "auditoria": "Auditoría",
       "items": "Items",
       "escrituras": "Escrituras",
-      "movimientosTestimonio": "Movimientos de Testimonio",
+      "movimientosTestimonio": "Movimientos de testimonio",
       "reportes": "Reportes",
       "minutasInscripcion": "Minutas de Inscripción",
       "testimonios": "Testimonios",
@@ -1279,9 +1286,31 @@
       "protocolo": "Protocolo",
       "cuadernos": "Cuadernos de Folios",
       "auxiliar": "Protocolo Auxiliar",
+      "auxiliary": "Protocolo Auxiliar",
       "documentosEntidadesExternas": "Documentación de Entidades Externas",
       "administracion": "Administración",
-      "inmuebles": "Inmuebles"
+      "inmuebles": "Inmuebles",
+      "administration": "Administración",
+      "audit": "Auditoría",
+      "deeds": "Escrituras",
+      "testimonyMovements": "Movimientos de testimonio",
+      "reports": "Reportes",
+      "registrationDrafts": "Minutas de Inscripción",
+      "testimonies": "Testimonios",
+      "documents": "Documentos",
+      "managements": "Gestiones",
+      "people": "Personas",
+      "budgets": "Presupuestos",
+      "payments": "Pagos",
+      "requiredDocuments": "Documentos Necesarios",
+      "substitutions": "Suplencias",
+      "upcomingExpirations": "Próximos Vencimientos",
+      "documentReentry": "Reingresar Documentación",
+      "copies": "Copias",
+      "protocol": "Protocolo",
+      "notebooks": "Cuadernos de Folios",
+      "externalEntityDocuments": "Documentación de Entidades Externas",
+      "properties": "Inmuebles"
     },
     "admin": {
       "roles": "Roles y Permisos",
@@ -1294,10 +1323,25 @@
       "conceptos": "Conceptos",
       "estadosGestion": "Estados de Gestión",
       "folios": "Folios",
-      "usuarios": "Usuarios"
+      "usuarios": "Usuarios",
+      "audit": "Auditoría",
+      "documents": "Tipos de Documento",
+      "procedures": "Tipos de Trámite",
+      "templates": "Plantillas Presupuesto",
+      "concepts": "Conceptos",
+      "managementStatuses": "Estados de Gestión",
+      "users": "Usuarios"
     }
   },
   "workflowViewer": {
     "empty": "Sin nodos. Agrega estados al workflow."
+  },
+  "status": {
+    "folio": {
+      "nuevo": "Nuevo",
+      "utilizado": "Utilizado",
+      "asignado": "Asignado a cuaderno",
+      "errose": "Errose"
+    }
   }
 }

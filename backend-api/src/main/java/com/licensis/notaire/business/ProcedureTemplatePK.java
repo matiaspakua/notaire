@@ -86,6 +86,6 @@ public class ProcedureTemplatePK implements Serializable
     @Override
     public String toString()
     {
-        return "negocio.PlantillaTramitePK[ fkIdTipoTramite=" + fkIdProcedureType + ", fkIdTipoDocumento=" + fkIdDocumentType + " ]";
+        return "ProcedureTemplatePK[ fkIdProcedureType=" + fkIdProcedureType + ", fkIdDocumentType=" + fkIdDocumentType + " ]";
     }
 }

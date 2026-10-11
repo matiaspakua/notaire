@@ -3,13 +3,13 @@ info:
   type: http
   seq: 15
   description: |-
-      ## Teardown — DELETE /api/v1/tramites/{id}
-      Removes the trámite from 00-setup-procedure; its document was deleted by
+      ## Teardown — DELETE /api/v1/procedures/{id}
+      Removes the procedure from 00-setup-procedure; its document was deleted by
       06-delete.
       Traceability: CU04 / CU72 (#655)
 http:
   method: DELETE
-  url: "{{base_url}}/api/v1/tramites/{{submitted_doc_procedure_id}}"
+  url: "{{base_url}}/api/v1/procedures/{{submitted_doc_procedure_id}}"
   headers:
     - name: Authorization
       value: "Bearer {{token}}"

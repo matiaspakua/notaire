@@ -11,7 +11,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Obtener los registros de auditoria con paginación y filtros opcionales */
+        /** Get audit records with pagination and optional filters */
         get: operations["getAll_22"];
         put?: never;
         post?: never;
@@ -28,7 +28,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Obtener registros de auditoria por usuario */
+        /** Get audit records by user */
         get: operations["getByUser"];
         put?: never;
         post?: never;
@@ -45,7 +45,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Obtener registro de auditoria por ID */
+        /** Get an audit record by ID */
         get: operations["getById_25"];
         put?: never;
         post?: never;
@@ -55,14 +55,139 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/carpetas": {
+    "/api/v1/auxiliary-protocol/available-folios": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** CU85 - Consultar carpetas de trámite por gestión o por trámite */
+        /** List available auxiliary-protocol folios */
+        get: operations["getAvailableFolios"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auxiliary-protocol/deeds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start an auxiliary-protocol deed on an available folio */
+        post: operations["startDeed"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/budget-templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all budget templates */
+        get: operations["getAll_21"];
+        put?: never;
+        /** Create budget template */
+        post: operations["create_22"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/budget-templates/procedure-types/{idProcedureType}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get budget templates by procedure type */
+        get: operations["getByTypeProcedure_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/budget-templates/procedure-types/{idProcedureType}/concept/{idConcept}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update budget template */
+        put: operations["update_23"];
+        post?: never;
+        /** Delete budget template */
+        delete: operations["delete_23"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/budgets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get budgets, paged
+         * @description Parameters: page (default 0), size (default 20), sort (for example idBudget,desc)
+         */
+        get: operations["getAll_20"];
+        put?: never;
+        /** Create budget */
+        post: operations["create_21"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/budgets/person/{idPerson}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get budgets of a person (CU60) */
+        get: operations["getByPerson"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/budgets/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search budgets by status (CU60) */
         get: operations["search_6"];
         put?: never;
         post?: never;
@@ -72,24 +197,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/carpetas/{id}": {
+    "/api/v1/budgets/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** CU85 - Consultar una carpeta de trámite por ID */
-        get: operations["getById_24"];
-        put?: never;
+        /** Get budget by ID */
+        get: operations["getById_22"];
+        /** Update budget */
+        put: operations["update_22"];
         post?: never;
-        delete?: never;
+        /** Delete budget */
+        delete: operations["delete_22"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/carpetas/{id}/espera": {
+    "/api/v1/budgets/{id}/items-from-catalog": {
         parameters: {
             query?: never;
             header?: never;
@@ -97,8 +224,42 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** CU85 - Poner una carpeta de trámite en espera, con motivo obligatorio */
-        put: operations["ponerEnWait"];
+        put?: never;
+        /** CU71 - Add catalog item copies to the budget */
+        post: operations["addItemsFromCatalog"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/budgets/{id}/items-from-template": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** CU39 - Load budget items from the template of the procedure type */
+        post: operations["loadItemsFromTemplate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/budgets/{id}/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** CU47 - Get financial summary of a budget (total, balance and payments) */
+        get: operations["getBudgetSummary"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -106,17 +267,17 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/conceptos": {
+    "/api/v1/concepts": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener todos los conceptos */
+        /** Get all concepts */
         get: operations["getAllConcepts"];
         put?: never;
-        /** Crear nuevo concepto */
+        /** Create concept */
         post: operations["createConcept"];
         delete?: never;
         options?: never;
@@ -124,14 +285,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/conceptos/search": {
+    "/api/v1/concepts/search": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Buscar conceptos por nombre */
+        /** Search concepts by name */
         get: operations["searchConcepts"];
         put?: never;
         post?: never;
@@ -141,33 +302,33 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/conceptos/{id}": {
+    "/api/v1/concepts/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener concepto por ID */
+        /** Get concept by ID */
         get: operations["getConceptById"];
-        /** Actualizar concepto */
+        /** Update concept */
         put: operations["updateConcept"];
         post?: never;
-        /** Eliminar concepto */
+        /** Delete concept */
         delete: operations["deleteConcept"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/conceptos/{id}/in-use": {
+    "/api/v1/concepts/{id}/in-use": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Verificar si un concepto está en uso */
+        /** Check whether a concept is in use */
         get: operations["isConceptInUse"];
         put?: never;
         post?: never;
@@ -177,163 +338,17 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/copia": {
+    "/api/v1/copies": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener todas las copias */
-        get: operations["getAll_21"];
-        put?: never;
-        /** Crear nueva copia */
-        post: operations["create_22"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/copia/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener copia por ID */
-        get: operations["getById_22"];
-        /** Actualizar copia */
-        put: operations["update_23"];
-        post?: never;
-        /** Eliminar copia */
-        delete: operations["delete_23"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/cuadernos": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los cuadernos */
-        get: operations["getAllCuadernos"];
-        put?: never;
-        /** Crear un nuevo cuaderno a partir de diez folios consecutivos */
-        post: operations["createNotebook"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/cuadernos/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener cuaderno por ID */
-        get: operations["getNotebookById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/cuadernos/{id}/caratula": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Generar la carátula PDF de un cuaderno */
-        get: operations["getCaratula"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/documento-presentado": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los documentos presentados */
-        get: operations["getAll_20"];
-        put?: never;
-        /** Crear nuevo documento presentado */
-        post: operations["create_21"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/documento-presentado/proximos-vencimientos": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * CU42 - Informar próximos vencimientos
-         * @description Documentos presentados que vencen entre hoy y hoy más 'dias' días (por defecto 30), no liberados, ordenados por fecha de vencimiento
-         */
-        get: operations["getUpcoming"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/documento-presentado/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener documento presentado por ID */
-        get: operations["getById_21"];
-        /** Actualizar documento presentado */
-        put: operations["update_22"];
-        post?: never;
-        /** Eliminar documento presentado */
-        delete: operations["delete_22"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/escrituras": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todas las escrituras, opcionalmente solo las de un estado */
+        /** Get all copies */
         get: operations["getAll_19"];
         put?: never;
-        /** Crear nueva escritura */
+        /** Create copy */
         post: operations["create_20"];
         delete?: never;
         options?: never;
@@ -341,14 +356,68 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/escrituras/buscar": {
+    "/api/v1/copies/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Buscar escrituras por numero */
+        /** Get copy by ID */
+        get: operations["getById_21"];
+        /** Update copy */
+        put: operations["update_21"];
+        post?: never;
+        /** Delete copy */
+        delete: operations["delete_21"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/deeds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all deeds, optionally only the of a status */
+        get: operations["getAll_18"];
+        put?: never;
+        /** Create deed */
+        post: operations["create_19"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/deeds/available-notaries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the list of available notaries (with a registry) */
+        get: operations["getAvailableNotaries"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/deeds/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search deeds by number */
         get: operations["searchDeeds"];
         put?: never;
         post?: never;
@@ -358,43 +427,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/escrituras/escribanos-disponibles": {
+    "/api/v1/deeds/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener lista de escribanos disponibles (con registro) */
-        get: operations["getEscribanosDisponibles"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/escrituras/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener escritura por ID */
+        /** Get deed by ID */
         get: operations["getById_20"];
-        /** Actualizar escritura */
-        put: operations["update_21"];
+        /** Update deed */
+        put: operations["update_20"];
         post?: never;
-        /** Eliminar escritura */
-        delete: operations["delete_21"];
+        /** Delete deed */
+        delete: operations["delete_20"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/escrituras/{id}/firmar": {
+    "/api/v1/deeds/{id}/sign": {
         parameters: {
             query?: never;
             header?: never;
@@ -404,42 +456,76 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Firmar escritura
-         * @description Transiciona una escritura 'Sin Firmar' con folio asignado al estado 'Firmada'
+         * Sign deed
+         * @description Transitions a deed 'Sin Firmar' with folio assigned to the status 'Firmada'
          */
-        post: operations["firmar"];
+        post: operations["sign"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/estado-gestion": {
+    "/api/v1/document-cost-templates": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener todos los estados de gestion */
-        get: operations["getAll_18"];
+        get?: never;
         put?: never;
-        /** Crear estado de gestion */
-        post: operations["create_19"];
+        /** Define the fixed or variable cost of a document type in a procedure type template */
+        post: operations["createCost"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/estado-gestion/search": {
+    "/api/v1/document-cost-templates/procedure-types/{idProcedureType}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Buscar estados de gestion por nombre */
+        /** Get the document costs defined for a procedure type */
+        get: operations["getCostosByTypeProcedure"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/document-types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List all document types */
+        get: operations["getAll_17"];
+        put?: never;
+        /** Create a new document type */
+        post: operations["create_18"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/document-types/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search document types by name */
         get: operations["search_5"];
         put?: never;
         post?: never;
@@ -449,33 +535,33 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/estado-gestion/{id}": {
+    "/api/v1/document-types/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener estado de gestion por ID */
+        /** Get document type by ID */
         get: operations["getById_19"];
-        /** Actualizar estado de gestion */
-        put: operations["update_20"];
+        /** Update document type */
+        put: operations["update_19"];
         post?: never;
-        /** Eliminar estado de gestion */
-        delete: operations["delete_20"];
+        /** Delete document type */
+        delete: operations["delete_19"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/estado-gestion/{id}/in-use": {
+    "/api/v1/document-types/{id}/in-use": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Verificar si el estado esta referenciado */
+        /** Check whether the document type is in use */
         get: operations["isInUse_4"];
         put?: never;
         post?: never;
@@ -485,32 +571,32 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/folio": {
+    "/api/v1/folio-types": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener todos los folios */
-        get: operations["getAll_17"];
+        /** Get all folio types */
+        get: operations["getAll_16"];
         put?: never;
-        /** Crear nuevo folio */
-        post: operations["create_18"];
+        /** Create folio type */
+        post: operations["create_17"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/folio/search": {
+    "/api/v1/folio-types/search": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Buscar folios por estado */
+        /** Search folio types by name */
         get: operations["search_4"];
         put?: never;
         post?: never;
@@ -520,33 +606,33 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/folio/{id}": {
+    "/api/v1/folio-types/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener folio por ID */
+        /** Get folio type by ID */
         get: operations["getById_18"];
-        /** Actualizar folio */
-        put: operations["update_19"];
+        /** Update folio type */
+        put: operations["update_18"];
         post?: never;
-        /** Eliminar folio */
-        delete: operations["delete_19"];
+        /** Delete folio type */
+        delete: operations["delete_18"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/folio/{id}/in-use": {
+    "/api/v1/folio-types/{id}/in-use": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Verificar si un folio está en uso */
+        /** Check whether a folio type is in use */
         get: operations["isInUse_3"];
         put?: never;
         post?: never;
@@ -556,7 +642,320 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/gestiones": {
+    "/api/v1/folios": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all folios */
+        get: operations["getAll_15"];
+        put?: never;
+        /** Create folio */
+        post: operations["create_16"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folios/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search folios by status */
+        get: operations["search_3"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folios/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get folio by ID */
+        get: operations["getById_17"];
+        /** Update folio */
+        put: operations["update_17"];
+        post?: never;
+        /** Delete folio */
+        delete: operations["delete_17"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folios/{id}/in-use": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Check whether a folio is in use */
+        get: operations["isInUse_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get history, one page at a time
+         * @description Spring Data page (20 rows by default, ordered by idHistory ascending). Use sort=idHistory,desc to see the most recent changes first. The full history of a management is at GET /api/v1/history/management/{idManagement}.
+         */
+        get: operations["getAll_14"];
+        put?: never;
+        /** Create a history record */
+        post: operations["create_15"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/management/{idManagement}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get history of a management (CU13) */
+        get: operations["getByManagement"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get history by ID */
+        get: operations["getById_16"];
+        /**
+         * Update history (administrator only)
+         * @description The history is the trace of status changes of the management (CU13): only an administrator can correct a record.
+         */
+        put: operations["update_16"];
+        post?: never;
+        /**
+         * Delete history (administrator only)
+         * @description The history is the trace of status changes of the management (CU13): only an administrator can delete a record.
+         */
+        delete: operations["delete_16"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/identification-types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all identification types */
+        get: operations["getAll_13"];
+        put?: never;
+        /** Create identification type */
+        post: operations["create_14"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/identification-types/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get identification type by ID */
+        get: operations["getById_15"];
+        /** Update identification type */
+        put: operations["update_15"];
+        post?: never;
+        /** Delete identification type */
+        delete: operations["delete_15"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all items */
+        get: operations["getAll_12"];
+        put?: never;
+        /** Create item */
+        post: operations["create_13"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/items/budget/{idBudget}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get items by budget */
+        get: operations["getByBudget_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/items/budget/{idBudget}/discounts-surcharges": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** CU45/CU71 - Query discounts and surcharges of a budget */
+        get: operations["getDiscountsAndSurcharges"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/items/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get item by ID */
+        get: operations["getById_14"];
+        /** Update item */
+        put: operations["update_14"];
+        post?: never;
+        /** Delete item */
+        delete: operations["delete_14"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/management-statuses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all management statuses */
+        get: operations["getAll_11"];
+        put?: never;
+        /** Create management status */
+        post: operations["create_12"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/management-statuses/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search management statuses by name */
+        get: operations["search_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/management-statuses/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get management status by ID */
+        get: operations["getById_13"];
+        /** Update management status */
+        put: operations["update_13"];
+        post?: never;
+        /** Delete management status */
+        delete: operations["delete_13"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/management-statuses/{id}/in-use": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Check whether the status is referenced */
+        get: operations["isInUse_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/managements": {
         parameters: {
             query?: never;
             header?: never;
@@ -564,20 +963,20 @@ export interface paths {
             cookie?: never;
         };
         /** List all managements */
-        get: operations["getAll_16"];
+        get: operations["getAll_10"];
         put?: never;
         /**
          * CU02 - Create a new management
          * @description CU22/CU59 - If the requested notary has an active substitution for the management start date, the management is redirected to the substitute and a note is recorded. CU13 - When a status is provided, the initial status is appended to History. Plain create has no procedure/workflow yet, so any defined status is accepted.
          */
-        post: operations["create_17"];
+        post: operations["create_11"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/gestiones/cliente/{idPerson}": {
+    "/api/v1/managements/client/{idPerson}": {
         parameters: {
             query?: never;
             header?: never;
@@ -594,7 +993,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/gestiones/complete-case": {
+    "/api/v1/managements/complete-case": {
         parameters: {
             query?: never;
             header?: never;
@@ -614,7 +1013,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/gestiones/numero/{number}": {
+    "/api/v1/managements/number/{number}": {
         parameters: {
             query?: never;
             header?: never;
@@ -631,7 +1030,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/gestiones/{id}": {
+    "/api/v1/managements/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -639,21 +1038,21 @@ export interface paths {
             cookie?: never;
         };
         /** Get management by ID */
-        get: operations["getById_17"];
+        get: operations["getById_12"];
         /**
          * CU53 - Update a management
          * @description CU22/CU59 - If the requested notary has an active substitution for the management start date, the management is redirected to the substitute and a note is recorded. CU83 **BREAKING** - Changing managementStatusId is rejected; use POST /{id}/transition. Same-status updates remain allowed. CU13 - History for status changes is written by /transition (and create).
          */
-        put: operations["update_18"];
+        put: operations["update_12"];
         post?: never;
         /** Delete management */
-        delete: operations["delete_18"];
+        delete: operations["delete_12"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/gestiones/{id}/archivar": {
+    "/api/v1/managements/{id}/archive": {
         parameters: {
             query?: never;
             header?: never;
@@ -670,7 +1069,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/gestiones/{id}/complete-case": {
+    "/api/v1/managements/{id}/case-summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** CU07/CU11/CU12/CU70 - Get the deeds, testimonies and copies of a management */
+        get: operations["getCaseSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/managements/{id}/complete-case": {
         parameters: {
             query?: never;
             header?: never;
@@ -690,41 +1106,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/gestiones/{id}/documentos-entidades-externas": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** CU10 - Get management documentation handled by external entities */
-        get: operations["getDocumentsEntidadesExternas"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/gestiones/{id}/documentos-entidades-externas/{idSubmittedDocument}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** CU10 - Register movement of an external-entity document */
-        put: operations["registerMovementDocumentEntidadExterna"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/gestiones/{id}/estado-actual": {
+    "/api/v1/managements/{id}/current-status": {
         parameters: {
             query?: never;
             header?: never;
@@ -735,7 +1117,7 @@ export interface paths {
          * CU13/CU14 - Get current management status
          * @description Returns the latest History row by date when present; otherwise synthesizes a summary from DeedManagement.fkIdManagementStatus (as-of-now). Missing management or null status yields 404.
          */
-        get: operations["getStatusActual"];
+        get: operations["getCurrentStatus"];
         put?: never;
         post?: never;
         delete?: never;
@@ -744,24 +1126,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/gestiones/{id}/historial": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** CU13 - Get the full management History log, ordered chronologically */
-        get: operations["getHistory"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/gestiones/{id}/reingreso-documentacion": {
+    "/api/v1/managements/{id}/document-reentry": {
         parameters: {
             query?: never;
             header?: never;
@@ -779,15 +1144,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/gestiones/{id}/resumen-caso": {
+    "/api/v1/managements/{id}/external-entity-documents": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** CU07/CU11/CU12/CU70 - Get the escrituras, testimonios and copias of a management */
-        get: operations["getCaseSummary"];
+        /** CU10 - Get management documentation handled by external entities */
+        get: operations["getExternalEntityDocuments"];
         put?: never;
         post?: never;
         delete?: never;
@@ -796,7 +1161,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/gestiones/{id}/resumen-financiero": {
+    "/api/v1/managements/{id}/external-entity-documents/{idSubmittedDocument}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** CU10 - Register movement of an external-entity document */
+        put: operations["registerExternalEntityDocumentMovement"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/managements/{id}/financial-summary": {
         parameters: {
             query?: never;
             header?: never;
@@ -804,7 +1186,7 @@ export interface paths {
             cookie?: never;
         };
         /** CU47/CU02 - Get aggregated financial summary for a management */
-        get: operations["getResumenFinanciero"];
+        get: operations["getFinancialSummary"];
         put?: never;
         post?: never;
         delete?: never;
@@ -813,7 +1195,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/gestiones/{id}/saldo-pendiente": {
+    "/api/v1/managements/{id}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** CU13 - Get the full management History log, ordered chronologically */
+        get: operations["getHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/managements/{id}/outstanding-balance": {
         parameters: {
             query?: never;
             header?: never;
@@ -821,7 +1220,7 @@ export interface paths {
             cookie?: never;
         };
         /** CU16 - Calculate aggregated pending balance for a management (RF-22) */
-        get: operations["getSaldoPending_1"];
+        get: operations["getPendingBalance_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -830,7 +1229,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/gestiones/{id}/transition": {
+    "/api/v1/managements/{id}/transition": {
         parameters: {
             query?: never;
             header?: never;
@@ -847,7 +1246,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/gestiones/{id}/workflow-trace": {
+    "/api/v1/managements/{id}/workflow-trace": {
         parameters: {
             query?: never;
             header?: never;
@@ -856,7 +1255,7 @@ export interface paths {
         };
         /**
          * Get workflow trace for a management (nodes, transitions, history, node statuses)
-         * @description CU83 legal-next contract: clients derive valid destination statuses from `transitions` whose `originNodeId` matches the current node (the node whose status equals `statusActual`). The managements UI must offer only those destinations when changing status via POST /{id}/transition.
+         * @description CU83 legal-next contract: clients derive valid destination statuses from `transitions` whose `originNodeId` matches the current node (the node whose status equals `currentStatus`). The managements UI must offer only those destinations when changing status via POST /{id}/transition.
          */
         get: operations["getWorkflowTrace"];
         put?: never;
@@ -867,36 +1266,33 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/historial": {
+    "/api/v1/notebooks": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * Obtener el historial, una página por vez
-         * @description Página de Spring Data (por defecto 20 filas, ordenadas por idHistory ascendente). Usar sort=idHistory,desc para ver primero los cambios más recientes. El historial completo de una gestión está en GET /api/v1/historial/gestion/{idManagement}.
-         */
-        get: operations["getAll_15"];
+        /** Get all notebooks */
+        get: operations["getAllNotebooks"];
         put?: never;
-        /** Crear nuevo registro de historial */
-        post: operations["create_16"];
+        /** Create a notebook from ten consecutive folios */
+        post: operations["createNotebook"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/historial/gestion/{idManagement}": {
+    "/api/v1/notebooks/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener historial de una gestion (CU13) */
-        get: operations["getByManagement"];
+        /** Get notebook by ID */
+        get: operations["getNotebookById"];
         put?: never;
         post?: never;
         delete?: never;
@@ -905,95 +1301,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/historial/{id}": {
+    "/api/v1/notebooks/{id}/cover": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener historial por ID */
-        get: operations["getById_16"];
-        /**
-         * Actualizar historial (solo administrador)
-         * @description El historial es la traza de cambios de estado de la gestión (CU13): solo un administrador puede corregir un registro.
-         */
-        put: operations["update_17"];
-        post?: never;
-        /**
-         * Eliminar historial (solo administrador)
-         * @description El historial es la traza de cambios de estado de la gestión (CU13): solo un administrador puede eliminar un registro.
-         */
-        delete: operations["delete_17"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/inmueble": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los inmueble */
-        get: operations["getAll_14"];
-        put?: never;
-        /** Crear nuevo inmueble */
-        post: operations["create_15"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/inmueble/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener inmueble por ID */
-        get: operations["getById_15"];
-        /** Actualizar inmueble */
-        put: operations["update_16"];
-        post?: never;
-        /** Eliminar inmueble */
-        delete: operations["delete_16"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/items": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los ítems */
-        get: operations["getAll_13"];
-        put?: never;
-        /** Crear nuevo ítem */
-        post: operations["create_14"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/items/presupuesto/{idBudget}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener ítems por presupuesto */
-        get: operations["getByBudget_1"];
+        /** Generate the cover PDF of a notebook */
+        get: operations["getCover"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1002,255 +1318,17 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/items/presupuesto/{idBudget}/descuentos-recargos": {
+    "/api/v1/payments": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** CU45/CU71 - Consultar descuentos y recargos de un presupuesto */
-        get: operations["getDescuentosYRecargos"];
+        /** Get all payments */
+        get: operations["getAll_9"];
         put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/items/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener ítem por ID */
-        get: operations["getById_14"];
-        /** Actualizar ítem */
-        put: operations["update_15"];
-        post?: never;
-        /** Eliminar ítem */
-        delete: operations["delete_15"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/minutas-inscripcion": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** CU82 - Generar la minuta de inscripción para una escritura sobre un inmueble */
-        post: operations["generate"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/minutas-inscripcion/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** CU82 - Consultar una minuta de inscripción por ID */
-        get: operations["getById_23"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/minutas-inscripcion/{id}/inscribir": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** CU82 - Registrar la inscripción definitiva de la minuta */
-        put: operations["inscribir"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/minutas-inscripcion/{id}/observar": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** CU82 - Registrar una observación formulada por el Registro */
-        put: operations["observar"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/minutas-inscripcion/{id}/presentar": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** CU82 - Registrar la presentación de la minuta ante el Registro */
-        put: operations["presentar"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/movimiento-testimonio": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los movimiento-testimonio */
-        get: operations["getAll_12"];
-        put?: never;
-        /** Crear nuevo movimiento-testimonio */
-        post: operations["create_13"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/movimiento-testimonio/{idTestimony}/ingresar-inscripcion": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Ingresar testimonio para inscripción
-         * @description Registra la fecha de ingreso de un testimonio verificado al Registro de la Propiedad
-         */
-        post: operations["registerEntry"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/movimiento-testimonio/{idTestimony}/reenter": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Reingresar testimonio retirado
-         * @description Crea un nuevo movimiento de ingreso para un testimonio previamente retirado, sin alterar el movimiento anterior. El cuerpo es opcional: número de cartón, si fue observado por el registro y observaciones (obligatorias cuando fue observado)
-         */
-        post: operations["reenter"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/movimiento-testimonio/{idTestimony}/registrar-inscripcion": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Registrar inscripción del testimonio
-         * @description Marca como inscripto el movimiento abierto de un testimonio, registrando la fecha
-         */
-        post: operations["registerInscription"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/movimiento-testimonio/{idTestimony}/withdraw": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Retirar testimonio inscripto
-         * @description Registra la fecha de salida y el número de cartón de un testimonio inscripto
-         */
-        post: operations["withdraw"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/movimiento-testimonio/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener movimiento-testimonio por ID */
-        get: operations["getById_13"];
-        /** Actualizar movimiento-testimonio */
-        put: operations["update_14"];
-        post?: never;
-        /** Eliminar movimiento-testimonio */
-        delete: operations["delete_14"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/pagos": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los pagos */
-        get: operations["getAll_11"];
-        put?: never;
-        /** CU15 - Procesar pago (JSON body) */
+        /** CU15 - Process a payment (JSON body) */
         post: operations["processPayment"];
         delete?: never;
         options?: never;
@@ -1258,31 +1336,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/pagos/fecha": {
+    "/api/v1/payments/budget/{idBudget}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener pagos por rango de fechas */
-        get: operations["getByDateRange"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/pagos/presupuesto/{idBudget}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener pagos por presupuesto */
+        /** Get payments by budget */
         get: operations["getByBudget"];
         put?: never;
         post?: never;
@@ -1292,14 +1353,31 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/pagos/presupuesto/{idBudget}/estado": {
+    "/api/v1/payments/budget/{idBudget}/balance": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** CU47 - Calcular estado de pago (SIN_PAGOS, PARCIAL, SALDADO) de un presupuesto */
+        /** Calculate outstanding balance of a budget */
+        get: operations["getPendingBalance"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payments/budget/{idBudget}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** CU47 - Calculate status of payment (SIN_PAGOS, PARCIAL, SALDADO) of a budget */
         get: operations["getStatusPayment"];
         put?: never;
         post?: never;
@@ -1309,15 +1387,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/pagos/presupuesto/{idBudget}/saldo": {
+    "/api/v1/payments/date": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Calcular saldo pendiente de un presupuesto */
-        get: operations["getSaldoPending"];
+        /** Get payments by date range */
+        get: operations["getByDateRange"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1326,20 +1404,20 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/pagos/{id}": {
+    "/api/v1/payments/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** CU47 - Consultar pago por ID */
-        get: operations["getById_12"];
-        /** Editar pago */
-        put: operations["update_13"];
+        /** CU47 - Query payment by ID */
+        get: operations["getById_11"];
+        /** Edit a payment */
+        put: operations["update_11"];
         post?: never;
-        /** Eliminar pago */
-        delete: operations["delete_13"];
+        /** Delete payment */
+        delete: operations["delete_11"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1399,7 +1477,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/plantilla-costos-documento": {
+    "/api/v1/procedure-folders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** CU85 - Query procedure folders by management or by procedure */
+        get: operations["search_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/procedure-folders/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** CU85 - Query a procedure folder by ID */
+        get: operations["getById_24"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/procedure-folders/{id}/wait": {
         parameters: {
             query?: never;
             header?: never;
@@ -1407,25 +1519,8 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put?: never;
-        /** Definir el costo (fijo o variable) de un tipo de documento en la plantilla de un tipo de trámite */
-        post: operations["createCost"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/plantilla-costos-documento/tipo-tramite/{idProcedureType}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener los costos de documentos definidos para un tipo de trámite */
-        get: operations["getCostosByTypeProcedure"];
-        put?: never;
+        /** CU85 - Put a procedure folder on hold; a reason is required */
+        put: operations["putOnHold"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1433,85 +1528,32 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/plantilla-presupuestos": {
+    "/api/v1/procedure-templates": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener todas las plantillas de presupuesto */
-        get: operations["getAll_10"];
+        /** Get all procedure templates */
+        get: operations["getAll_8"];
         put?: never;
-        /** Crear nueva plantilla de presupuesto */
-        post: operations["create_12"];
+        /** Create procedure template (CU55) */
+        post: operations["create_10"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/plantilla-presupuestos/tipo-tramite/{idProcedureType}": {
+    "/api/v1/procedure-templates/procedure-types/{idProcedureType}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener plantillas de presupuesto por tipo de tramite */
-        get: operations["getByTypeProcedure_1"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/plantilla-presupuestos/tipo-tramite/{idProcedureType}/concepto/{idConcept}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Actualizar plantilla de presupuesto */
-        put: operations["update_12"];
-        post?: never;
-        /** Eliminar plantilla de presupuesto */
-        delete: operations["delete_12"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/plantilla-tramite": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todas las plantillas de tramite */
-        get: operations["getAll_9"];
-        put?: never;
-        /** Crear plantilla de tramite (CU55) */
-        post: operations["create_11"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/plantilla-tramite/tipo-tramite/{idProcedureType}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener plantillas de tramite por tipo de tramite */
+        /** Get procedure templates by procedure type */
         get: operations["getByTypeProcedure"];
         put?: never;
         post?: never;
@@ -1521,100 +1563,191 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/plantilla-tramite/{idProcedureType}/{idDocumentType}": {
+    "/api/v1/procedure-templates/{idProcedureType}/{idDocumentType}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener plantilla por clave compuesta (CU55) */
-        get: operations["getById_11"];
-        /** Actualizar plantilla de tramite (CU55) */
-        put: operations["update_11"];
-        post?: never;
-        /** Eliminar plantilla de tramite (CU55) */
-        delete: operations["delete_11"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/presupuestos": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Obtener presupuestos paginados
-         * @description Parámetros: page (default 0), size (default 20), sort (ej. idPresupuesto,desc)
-         */
-        get: operations["getAll_8"];
-        put?: never;
-        /** Crear nuevo presupuesto */
-        post: operations["create_10"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/presupuestos/buscar": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Buscar presupuestos por estado (CU60) */
-        get: operations["search_3"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/presupuestos/persona/{idPerson}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener presupuestos de una persona (CU60) */
-        get: operations["getByPerson"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/presupuestos/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener presupuesto por ID */
+        /** Get template by key composite (CU55) */
         get: operations["getById_10"];
-        /** Actualizar presupuesto */
+        /** Update procedure template (CU55) */
         put: operations["update_10"];
         post?: never;
-        /** Eliminar presupuesto */
+        /** Delete procedure template (CU55) */
         delete: operations["delete_10"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/presupuestos/{id}/items-desde-catalogo": {
+    "/api/v1/procedure-types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all procedure types */
+        get: operations["getAll_7"];
+        put?: never;
+        /** Create procedure type */
+        post: operations["create_9"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/procedure-types/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search procedure types by name */
+        get: operations["search"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/procedure-types/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get procedure type by ID */
+        get: operations["getById_9"];
+        /** Update procedure type */
+        put: operations["update_9"];
+        post?: never;
+        /** Delete procedure type */
+        delete: operations["delete_9"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/procedure-types/{id}/in-use": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Check whether the procedure type is in use */
+        get: operations["isInUse"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/procedure-types/{id}/workflow": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Assign or unassign workflow a procedure type */
+        put: operations["assignWorkflow"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/procedures": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all procedures */
+        get: operations["getAll_6"];
+        put?: never;
+        /** Create procedure */
+        post: operations["create_8"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/procedures/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get procedure by ID */
+        get: operations["getById_8"];
+        /**
+         * Update procedure
+         * @description idProcedureType is required (400 if it is missing); notes are stored as sent and a missing association keeps the current one.
+         */
+        put: operations["update_8"];
+        post?: never;
+        /** Delete procedure */
+        delete: operations["delete_8"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/properties": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all property */
+        get: operations["getAll_5"];
+        put?: never;
+        /** Create property */
+        post: operations["create_7"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/properties/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get property by ID */
+        get: operations["getById_7"];
+        /** Update property */
+        put: operations["update_7"];
+        post?: never;
+        /** Delete property */
+        delete: operations["delete_7"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/registration-drafts": {
         parameters: {
             query?: never;
             header?: never;
@@ -1623,15 +1756,32 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** CU71 - Agregar al presupuesto copias de ítems existentes del catálogo */
-        post: operations["addItemsFromCatalog"];
+        /** CU82 - Generate the registration draft for a deed on a property */
+        post: operations["generate_1"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/presupuestos/{id}/items-desde-plantilla": {
+    "/api/v1/registration-drafts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** CU82 - Query a registration draft by ID */
+        get: operations["getById_23"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/registration-drafts/{id}/observe": {
         parameters: {
             query?: never;
             header?: never;
@@ -1639,25 +1789,8 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put?: never;
-        /** CU39 - Cargar ítems del presupuesto desde la plantilla del tipo de trámite */
-        post: operations["cargarItemsDesdeTemplate"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/presupuestos/{id}/resumen": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** CU47 - Obtener resumen financiero de un presupuesto (total, saldo y pagos) */
-        get: operations["getResumen"];
-        put?: never;
+        /** CU82 - Record an observation issued by the registry */
+        put: operations["observe"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1665,7 +1798,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/protocolo-auxiliar/escrituras": {
+    "/api/v1/registration-drafts/{id}/register": {
         parameters: {
             query?: never;
             header?: never;
@@ -1673,25 +1806,8 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put?: never;
-        /** Iniciar una escritura de Protocolo Auxiliar sobre un folio disponible */
-        post: operations["iniciarDeed"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/protocolo-auxiliar/folios-disponibles": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Listar folios de Protocolo Auxiliar disponibles */
-        get: operations["getAvailableFolios"];
-        put?: never;
+        /** CU82 - Record the final registration of the registration draft */
+        put: operations["recordRegistration"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1699,19 +1815,16 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/reportes/consultar-deuda-documentos": {
+    "/api/v1/registration-drafts/{id}/submit": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * Generar reporte de consulta de deuda de documentos
-         * @description Genera un PDF con los documentos presentados en las gestiones con ese número, su importe, fecha de pago o pago pendiente, y el total adeudado
-         */
-        get: operations["generateDebtDocumentsReport"];
-        put?: never;
+        get?: never;
+        /** CU82 - Record the registration draft submission to the registry */
+        put: operations["submit"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1719,7 +1832,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/reportes/declaracion-jurada-mensual": {
+    "/api/v1/reports/budget-properties/{idBudget}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1727,148 +1840,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Generar declaracion jurada mensual
-         * @description Endpoint base para CU25: PDF provisorio con el período solicitado; el contenido de la DDJJ mensual está pendiente
-         */
-        get: operations["generarDeclaracionJuradaMensual"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/reportes/declaracion-jurada-rentas": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Generar declaracion jurada de rentas
-         * @description Endpoint base para CU50: PDF provisorio con el período solicitado; el contenido de la DDJJ de rentas está pendiente
-         */
-        get: operations["generarDeclaracionJuradaRentas"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/reportes/documentos-por-vencer/{idDocumentoPresentado}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Generar reporte de documentos por vencer
-         * @description Genera un PDF con el vencimiento de un documento presentado (fecha y días restantes), su estado de pago y la gestión, trámite y cliente a los que pertenece
-         */
-        get: operations["generateDocumentsDueSoonReport"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/reportes/historial-gestion/{idGestion}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Generar reporte de historial de gestión
-         * @description Genera un PDF con los datos de la gestión y su historial de estados, del más antiguo al más reciente
-         */
-        get: operations["generateManagementHistoryReport"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/reportes/libro-indice": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Generar libro de indice
-         * @description Endpoint base para CU24: PDF provisorio con el período solicitado; el contenido del libro de índice está pendiente
-         */
-        get: operations["generarLibroIndice"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/reportes/lista-documentos-tramite": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Generar reporte de lista de documentos por trámite
-         * @description Genera un PDF con los documentos que requiere un tipo de trámite según su plantilla (vencimiento, días de validez y quién los entrega)
-         */
-        get: operations["generateProcedureDocumentsListReport"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/reportes/minuta-inscripcion/{idMinutaInscripcion}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * CU82 - Generar el formulario normalizado de la minuta de inscripción
-         * @description Genera un PDF con el formulario normalizado de una minuta de inscripción
-         */
-        get: operations["generateRegistrationDraftReport"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/reportes/presupuesto-inmuebles/{idPresupuesto}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Generar reporte de presupuesto con inmuebles
-         * @description Genera el PDF del presupuesto e incluye los inmuebles de sus trámites (nomenclatura catastral, domicilio y valuación fiscal)
+         * Generate the budget report with properties
+         * @description Generates the budget PDF and includes the properties of its procedures (cadastral designation, address, and fiscal appraisal)
          */
         get: operations["generateBudgetPropertiesReport"];
         put?: never;
@@ -1879,7 +1852,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/reportes/presupuesto/{idPresupuesto}": {
+    "/api/v1/reports/budget/{idBudget}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1887,8 +1860,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Generar reporte de presupuesto
-         * @description Genera un PDF con los datos del presupuesto (cliente, trámites, gestión), sus conceptos y el total y saldo pendiente calculados como en CU47
+         * Generate the budget report
+         * @description Generates a PDF with the budget data (client, procedures, management), its concepts, and the total and pending balance calculated as in CU47
          */
         get: operations["generateBudgetReport"];
         put?: never;
@@ -1899,7 +1872,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/reportes/recibo-pago/{idPago}": {
+    "/api/v1/reports/document-debt": {
         parameters: {
             query?: never;
             header?: never;
@@ -1907,8 +1880,108 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * CU15 - Emitir recibo de pago
-         * @description Genera un PDF con el recibo de un pago existente
+         * Generate the document-debt report
+         * @description Generates a PDF with the submitted documents in the managements with that number, its amount, payment date or pending payment, and the total owed
+         */
+        get: operations["generateDebtDocumentsReport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reports/documents-due/{idSubmittedDocument}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Generate the documents-due report
+         * @description Generates a PDF with the expiration of a submitted document (date and days remaining), its payment status, and the management, procedure, and client it belongs to
+         */
+        get: operations["generateDocumentsDueSoonReport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reports/index-book": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Generate the index book
+         * @description Base endpoint for CU24: a provisional PDF for the requested period; the index-book content is still pending
+         */
+        get: operations["generateIndexBook"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reports/management-history/{idManagement}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Generate the management history report
+         * @description Generates a PDF with the management data and its status history, from the oldest to the most recent
+         */
+        get: operations["generateManagementHistoryReport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reports/monthly-sworn-statement": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Generate the monthly sworn statement
+         * @description Base endpoint for CU25: a provisional PDF for the requested period; the monthly sworn-statement content is still pending
+         */
+        get: operations["generateMonthlySwornStatement"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reports/payment-receipt/{idPayment}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * CU15 - Issue a payment receipt
+         * @description Generates a PDF with the receipt of an existing payment
          */
         get: operations["generatePaymentReceiptReport"];
         put?: never;
@@ -1919,7 +1992,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/reportes/testimonio/{idTestimonio}/copia": {
+    "/api/v1/reports/procedure-document-list": {
         parameters: {
             query?: never;
             header?: never;
@@ -1927,8 +2000,68 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Generar copia impresa de testimonio verificado
-         * @description Genera un PDF con la copia impresa de un testimonio, solo si ya fue verificado
+         * Generate the document list report for a procedure
+         * @description Generates a PDF with the documents a procedure type requires according to its template (expiration, validity days, and who delivers them)
+         */
+        get: operations["generateProcedureDocumentsListReport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reports/registration-draft/{idRegistrationDraft}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * CU82 - Generate the standard form of the registration draft
+         * @description Generates a PDF with the standard form of a registration draft
+         */
+        get: operations["generateRegistrationDraftReport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reports/tax-sworn-statement": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Generate the tax sworn statement
+         * @description Base endpoint for CU50: a provisional PDF for the requested period; the tax sworn-statement content is still pending
+         */
+        get: operations["generateTaxSwornStatement"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reports/testimonies/{idTestimony}/copies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Generate the printed copy of a verified testimony
+         * @description Generates a PDF with the printed copy of a testimony, only when it has been verified
          */
         get: operations["generateTestimonyCopyReport"];
         put?: never;
@@ -1946,10 +2079,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Obtener todos los roles */
+        /** Get all roles */
         get: operations["getAllRoles"];
         put?: never;
-        /** Crear nuevo rol */
+        /** Create role */
         post: operations["createRole"];
         delete?: never;
         options?: never;
@@ -1957,7 +2090,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/roles/usuarios/{idUser}": {
+    "/api/v1/roles/users/{idUser}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1967,14 +2100,14 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        /** Desasignar rol de usuario */
+        /** Unassign role of the user */
         delete: operations["unassignRoleFromUser"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/roles/{idRole}/usuarios/{idUser}": {
+    "/api/v1/roles/{idRole}/users/{idUser}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1982,7 +2115,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Asignar rol a usuario */
+        /** Assign role to a user */
         put: operations["assignRoleToUser"];
         post?: never;
         delete?: never;
@@ -1998,217 +2131,29 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Obtener rol por ID */
+        /** Get role by ID */
         get: operations["getRoleById"];
-        /** Actualizar rol */
+        /** Update role */
         put: operations["updateRole"];
         post?: never;
-        /** Eliminar rol */
+        /** Delete role */
         delete: operations["deleteRole"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/suplencia": {
+    "/api/v1/submitted-documents": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener todos los suplencia */
-        get: operations["getAll_7"];
-        put?: never;
-        /** Crear nuevo suplencia */
-        post: operations["create_9"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/suplencia/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener suplencia por ID */
-        get: operations["getById_9"];
-        /** Actualizar suplencia */
-        put: operations["update_9"];
-        post?: never;
-        /** Eliminar suplencia */
-        delete: operations["delete_9"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/testimonio": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los testimonio */
-        get: operations["getAll_6"];
-        put?: never;
-        /** Crear nuevo testimonio */
-        post: operations["create_8"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/testimonio/{idDeed}/generar": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Generar testimonio de una escritura firmada
-         * @description Genera un testimonio con número asignado por el sistema a partir de una escritura 'Firmada'
-         */
-        post: operations["generar"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/testimonio/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener testimonio por ID */
-        get: operations["getById_8"];
-        /**
-         * Actualizar testimonio
-         * @description Reemplaza el testimonio. number, flagged, verified y version son obligatorios (400 si falta alguno); notes se guarda tal como se envía y una escritura ausente conserva la actual. version es la leída: si ya no es la almacenada responde 409 (bloqueo optimista).
-         */
-        put: operations["update_8"];
-        post?: never;
-        /** Eliminar testimonio */
-        delete: operations["delete_8"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/testimonio/{id}/verificar": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Verificar testimonio
-         * @description Registra la verificación de un testimonio, marcando si fue observado y por qué
-         */
-        post: operations["verificar"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/tipo-de-documento": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List all document types */
-        get: operations["getAll_5"];
-        put?: never;
-        /** Create a new document type */
-        post: operations["create_7"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/tipo-de-documento/search": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Search document types by name */
-        get: operations["search_2"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/tipo-de-documento/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get document type by ID */
-        get: operations["getById_7"];
-        /** Update document type */
-        put: operations["update_7"];
-        post?: never;
-        /** Delete document type */
-        delete: operations["delete_7"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/tipo-de-documento/{id}/in-use": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Check whether the document type is in use */
-        get: operations["isInUse_2"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/tipo-folio": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los tipos de folio */
+        /** Get all submitted documents */
         get: operations["getAll_4"];
         put?: never;
-        /** Crear tipo de folio */
+        /** Create submitted document */
         post: operations["create_6"];
         delete?: never;
         options?: never;
@@ -2216,15 +2161,18 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/tipo-folio/search": {
+    "/api/v1/submitted-documents/upcoming-expirations": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Buscar tipos de folio por nombre */
-        get: operations["search_1"];
+        /**
+         * CU42 - Report upcoming expirations
+         * @description Submitted documents that expire between today and today plus 'days' days (default 30), not released, ordered by expiration date
+         */
+        get: operations["getUpcoming"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2233,53 +2181,36 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/tipo-folio/{id}": {
+    "/api/v1/submitted-documents/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener tipo de folio por ID */
+        /** Get submitted document by ID */
         get: operations["getById_6"];
-        /** Actualizar tipo de folio */
+        /** Update submitted document */
         put: operations["update_6"];
         post?: never;
-        /** Eliminar tipo de folio */
+        /** Delete submitted document */
         delete: operations["delete_6"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/tipo-folio/{id}/in-use": {
+    "/api/v1/substitutions": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Verificar si un tipo de folio está en uso */
-        get: operations["isInUse_1"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/tipo-identificacion": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los tipos de identificacion */
+        /** Get all substitution */
         get: operations["getAll_3"];
         put?: never;
-        /** Crear nuevo tipo de identificacion */
+        /** Create substitution */
         post: operations["create_5"];
         delete?: never;
         options?: never;
@@ -2287,36 +2218,36 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/tipo-identificacion/{id}": {
+    "/api/v1/substitutions/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener tipo de identificacion por ID */
+        /** Get substitution by ID */
         get: operations["getById_5"];
-        /** Actualizar tipo de identificacion */
+        /** Update substitution */
         put: operations["update_5"];
         post?: never;
-        /** Eliminar tipo de identificacion */
+        /** Delete substitution */
         delete: operations["delete_5"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/tipo-tramite": {
+    "/api/v1/testimonies": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener todos los tipos de tramite */
+        /** Get all testimony */
         get: operations["getAll_2"];
         put?: never;
-        /** Crear tipo de tramite */
+        /** Create testimony */
         post: operations["create_4"];
         delete?: never;
         options?: never;
@@ -2324,60 +2255,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/tipo-tramite/search": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Buscar tipos de tramite por nombre */
-        get: operations["search"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/tipo-tramite/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener tipo de tramite por ID */
-        get: operations["getById_4"];
-        /** Actualizar tipo de tramite */
-        put: operations["update_4"];
-        post?: never;
-        /** Eliminar tipo de tramite */
-        delete: operations["delete_4"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/tipo-tramite/{id}/in-use": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Verificar si el tipo de tramite está en uso */
-        get: operations["isInUse"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/tipo-tramite/{id}/workflow": {
+    "/api/v1/testimonies/{idDeed}/generate": {
         parameters: {
             query?: never;
             header?: never;
@@ -2385,26 +2263,71 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Asignar o desasignar workflow a tipo de tramite */
-        put: operations["assignWorkflow"];
-        post?: never;
+        put?: never;
+        /**
+         * Generate a testimony from a signed deed
+         * @description Generates a testimony with a number assigned by the system from a deed 'Firmada'
+         */
+        post: operations["generate"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/tramites": {
+    "/api/v1/testimonies/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener todos los trámites */
+        /** Get testimony by ID */
+        get: operations["getById_4"];
+        /**
+         * Update testimony
+         * @description Replaces the testimony. number, flagged, verified, and version are required (400 if any of them is missing); notes are stored as sent, and a missing deed keeps the current one. version is the one that was read: a mismatch with the stored version responds 409 (optimistic lock).
+         */
+        put: operations["update_4"];
+        post?: never;
+        /** Delete testimony */
+        delete: operations["delete_4"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/testimonies/{id}/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Check testimony
+         * @description Records the verification of a testimony, marking whether it was observed and why
+         */
+        post: operations["verify"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/testimony-movements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all testimony movement */
         get: operations["getAll_1"];
         put?: never;
-        /** Crear nuevo trámite */
+        /** Create testimony movement */
         post: operations["create_3"];
         delete?: never;
         options?: never;
@@ -2412,39 +2335,116 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/tramites/{id}": {
+    "/api/v1/testimony-movements/{idTestimony}/enter-registration": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener trámite por ID */
-        get: operations["getById_3"];
+        get?: never;
+        put?: never;
         /**
-         * Actualizar trámite
-         * @description idProcedureType es obligatorio (400 si falta); notes se guarda tal como se envía y una asociación ausente conserva la actual.
+         * Enter testimony for registration
+         * @description Records the entry date of a verified testimony at the property registry
          */
+        post: operations["registerEntry"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/testimony-movements/{idTestimony}/reenter": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Re-enter a withdrawn testimony
+         * @description Creates a new entry movement for a previously withdrawn testimony, without changing the previous movement. The body is optional: carton number, whether it was observed by the registry, and notes (required when it was observed)
+         */
+        post: operations["reenter"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/testimony-movements/{idTestimony}/register-inscription": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record registration of the testimony
+         * @description Marks the open testimony movement as registered and records the date
+         */
+        post: operations["registerInscription"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/testimony-movements/{idTestimony}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Withdraw a registered testimony
+         * @description Records the exit date and carton number of a registered testimony
+         */
+        post: operations["withdraw"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/testimony-movements/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get testimony movement by ID */
+        get: operations["getById_3"];
+        /** Update testimony movement */
         put: operations["update_3"];
         post?: never;
-        /** Eliminar trámite */
+        /** Delete testimony movement */
         delete: operations["delete_3"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/usuarios": {
+    "/api/v1/users": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener todos los usuarios */
+        /** Get all users */
         get: operations["getAllUsers"];
         put?: never;
-        /** Crear nuevo usuario */
+        /** Create user */
         post: operations["createUser"];
         delete?: never;
         options?: never;
@@ -2452,7 +2452,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/usuarios/login": {
+    "/api/v1/users/login": {
         parameters: {
             query?: never;
             header?: never;
@@ -2461,7 +2461,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Autenticar usuario */
+        /** Authenticate user */
         post: operations["login"];
         delete?: never;
         options?: never;
@@ -2469,7 +2469,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/usuarios/logout": {
+    "/api/v1/users/logout": {
         parameters: {
             query?: never;
             header?: never;
@@ -2479,8 +2479,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Cerrar sesión (revoca el token presentado y limpia cookie HttpOnly)
-         * @description Revoca en el servidor el JWT enviado por Bearer o cookie, de modo que no puede reutilizarse aunque no haya expirado; las demás sesiones del usuario siguen activas. Sin token o con un token inválido responde igual (issue #676).
+         * Sign out (revokes the presented token and clears the HttpOnly cookie)
+         * @description Revokes on the server the JWT sent by Bearer or cookie, so it cannot be reused even if it has not expired; the user's other sessions remain active. A missing or invalid token gets the same response (issue #676).
          */
         post: operations["logout"];
         delete?: never;
@@ -2489,14 +2489,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/usuarios/persona/{idPerson}": {
+    "/api/v1/users/person/{idPerson}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener usuario por id de persona asociada */
+        /** Get user by associated person id */
         get: operations["getUserByPerson"];
         put?: never;
         post?: never;
@@ -2506,19 +2506,19 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/usuarios/{id}": {
+    "/api/v1/users/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener usuario por ID */
+        /** Get user by ID */
         get: operations["getUserById"];
-        /** Actualizar usuario */
+        /** Update user */
         put: operations["updateUser"];
         post?: never;
-        /** Eliminar usuario */
+        /** Delete user */
         delete: operations["deleteUser"];
         options?: never;
         head?: never;
@@ -2532,10 +2532,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Obtener todos los workflows */
+        /** Get all workflows */
         get: operations["getAll"];
         put?: never;
-        /** Crear workflow */
+        /** Create workflow */
         post: operations["create_2"];
         delete?: never;
         options?: never;
@@ -2550,12 +2550,12 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Obtener workflow por ID */
+        /** Get workflow by ID */
         get: operations["getById_2"];
-        /** Actualizar workflow */
+        /** Update workflow */
         put: operations["update_2"];
         post?: never;
-        /** Eliminar workflow */
+        /** Delete workflow */
         delete: operations["delete_2"];
         options?: never;
         head?: never;
@@ -2571,7 +2571,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Validar consistencia de un workflow */
+        /** Validate the consistency of a workflow */
         post: operations["validate"];
         delete?: never;
         options?: never;
@@ -2588,7 +2588,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Crear nodo en un workflow */
+        /** Create node in a workflow */
         post: operations["create_1"];
         delete?: never;
         options?: never;
@@ -2603,7 +2603,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Obtener nodos por workflow */
+        /** Get nodes by workflow */
         get: operations["getByWorkflow_1"];
         put?: never;
         post?: never;
@@ -2620,12 +2620,12 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Obtener nodo por ID */
+        /** Get node by ID */
         get: operations["getById_1"];
-        /** Actualizar nodo */
+        /** Update node */
         put: operations["update_1"];
         post?: never;
-        /** Eliminar nodo */
+        /** Delete node */
         delete: operations["delete_1"];
         options?: never;
         head?: never;
@@ -2641,7 +2641,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Crear transición entre dos nodos */
+        /** Create a transition between two nodes */
         post: operations["create"];
         delete?: never;
         options?: never;
@@ -2656,7 +2656,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Obtener transiciones por workflow */
+        /** Get transitions by workflow */
         get: operations["getByWorkflow"];
         put?: never;
         post?: never;
@@ -2673,12 +2673,12 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Obtener transición por ID */
+        /** Get transition by ID */
         get: operations["getById"];
-        /** Actualizar transición */
+        /** Update transition */
         put: operations["update"];
         post?: never;
-        /** Eliminar transición */
+        /** Delete transition */
         delete: operations["delete"];
         options?: never;
         head?: never;
@@ -2696,7 +2696,7 @@ export interface components {
         BudgetRequest: {
             /** Format: date-time */
             date?: string;
-            encabezado?: string;
+            heading?: string;
             notes?: string;
             /** Format: int32 */
             number?: number;
@@ -2705,7 +2705,7 @@ export interface components {
             personId?: number;
             propertyAmount?: number;
             /**
-             * @description Estado del presupuesto (#1346). Se acepta cualquier mayúscula/minúscula y se guarda el código; otro valor responde 400.
+             * @description Budget status (#1346). Accepts any letter case and stores the code; any other value returns 400.
              * @enum {string}
              */
             status: "BORRADOR" | "PENDIENTE" | "APROBADO" | "RECHAZADO" | "FACTURADO";
@@ -2713,7 +2713,7 @@ export interface components {
         BudgetResponse: {
             /** Format: date-time */
             date?: string;
-            encabezado?: string;
+            heading?: string;
             /** Format: int32 */
             idBudget?: number;
             notes?: string;
@@ -2751,7 +2751,7 @@ export interface components {
         CompleteCaseRequest: {
             /** Format: int32 */
             budgetId?: number;
-            encabezado?: string;
+            heading?: string;
             /** Format: int32 */
             notaryId?: number;
             notes?: string;
@@ -2767,7 +2767,7 @@ export interface components {
         CopyRequest: {
             /**
              * Format: date-time
-             * @description Fecha de impresión
+             * @description Print date
              */
             datePrinting: string;
             /** Format: date-time */
@@ -2775,7 +2775,7 @@ export interface components {
             notes?: string;
             /**
              * Format: int32
-             * @description Número de copia
+             * @description Number of copy
              */
             number: number;
             /** Format: int32 */
@@ -2887,36 +2887,36 @@ export interface components {
             module?: string;
             operationDetail?: string;
             users?: components["schemas"]["DtoUser"];
-            valido?: boolean;
+            valid?: boolean;
         };
         DtoBudget: {
             /** Format: date-time */
             date?: string;
-            encabezado?: string;
+            heading?: string;
             /** Format: int32 */
             idBudget?: number;
             items?: components["schemas"]["DtoItem"][];
-            listaProcedures?: components["schemas"]["DtoProcedure"][];
             notes?: string;
             /** Format: int32 */
             number?: number;
             person?: components["schemas"]["DtoPerson"];
+            procedures?: components["schemas"]["DtoProcedure"][];
             propertyAmount?: number;
             /** @deprecated */
             saldo?: number;
             status?: string;
             /** @deprecated */
             total?: number;
-            valido?: boolean;
+            valid?: boolean;
             /** Format: int32 */
             version?: number;
         };
-        DtoBudgetResumen: {
-            encabezadoManagement?: string;
+        DtoBudgetSummary: {
             /** Format: int32 */
             idBudget?: number;
             /** Format: int32 */
             idManagement?: number;
+            managementHeading?: string;
             /** Format: int32 */
             numberBudget?: number;
             /** Format: int32 */
@@ -2926,10 +2926,10 @@ export interface components {
             total?: number;
         };
         DtoBudgetTemplate: {
-            conceptos?: components["schemas"]["DtoConcept"];
+            concept?: components["schemas"]["DtoConcept"];
             notes?: string;
-            tiposDeProcedure?: components["schemas"]["DtoProcedureType"];
-            valido?: boolean;
+            procedureType?: components["schemas"]["DtoProcedureType"];
+            valid?: boolean;
             /** Format: int32 */
             version?: number;
         };
@@ -2968,6 +2968,7 @@ export interface components {
             verified?: boolean;
         };
         DtoConcept: {
+            budgetTemplates?: components["schemas"]["DtoBudgetTemplate"][];
             enabled?: boolean;
             fixed?: boolean;
             /** Format: int32 */
@@ -2975,8 +2976,7 @@ export interface components {
             name?: string;
             /** Format: int32 */
             percentage?: number;
-            templatePresupuestoses?: components["schemas"]["DtoBudgetTemplate"][];
-            valido?: boolean;
+            valid?: boolean;
             value?: number;
             /** Format: int32 */
             version?: number;
@@ -2994,7 +2994,7 @@ export interface components {
             number?: number;
             person?: components["schemas"]["DtoPerson"];
             testimony?: components["schemas"]["DtoTestimony"];
-            valido?: boolean;
+            valid?: boolean;
             /** Format: int32 */
             version?: number;
         };
@@ -3013,35 +3013,76 @@ export interface components {
             procedures?: components["schemas"]["DtoProcedure"][];
             registrationEntryNumber?: string;
             status?: string;
-            testimonios?: components["schemas"]["DtoTestimony"][];
-            valido?: boolean;
+            testimonies?: components["schemas"]["DtoTestimony"][];
+            valid?: boolean;
             /** Format: int32 */
             version?: number;
         };
         DtoDeedManagement: {
-            clientReferencia?: components["schemas"]["DtoPerson"];
+            /** Format: int32 */
+            archiveNumber?: number;
+            associatedProcedures?: components["schemas"]["DtoProcedure"][];
+            /** Format: int32 */
+            binderNumber?: number;
             /** Format: date-time */
             dateStart?: string;
-            encabezado?: string;
+            heading?: string;
             /** Format: int32 */
             idManagement?: number;
-            listaClientesInvolucrados?: components["schemas"]["DtoPerson"][];
-            listaProceduresAsociados?: components["schemas"]["DtoProcedure"][];
+            involvedClients?: components["schemas"]["DtoPerson"][];
             notes?: string;
             /** Format: int32 */
             number?: number;
-            /** Format: int32 */
-            numberArchivo?: number;
-            /** Format: int32 */
-            numberBibliorato?: number;
             personNotary?: components["schemas"]["DtoPerson"];
             recordHistory?: components["schemas"]["DtoHistory"][];
+            referenceClient?: components["schemas"]["DtoPerson"];
             status?: components["schemas"]["DtoManagementStatus"];
-            valido?: boolean;
+            valid?: boolean;
             /** Format: int32 */
             version?: number;
         };
-        DtoDocumentEntidadExterna: {
+        DtoDocumentReentered: {
+            deliveredBy?: string;
+            /** Format: int32 */
+            dueDays?: number;
+            expires?: boolean;
+            /** Format: int32 */
+            idDocumentType?: number;
+            /** Format: int32 */
+            idProcedure?: number;
+            /** Format: int32 */
+            idSubmittedDocument?: number;
+            name?: string;
+            reentered?: boolean;
+        };
+        DtoDocumentReentryRequest: {
+            /**
+             * Format: int32
+             * @description Document type to re-enter
+             */
+            idDocumentType: number;
+            /**
+             * Format: int32
+             * @description Procedure of the management
+             */
+            idProcedure: number;
+        };
+        DtoDocumentType: {
+            deliveredBy?: string;
+            /** Format: int32 */
+            dueDays?: number;
+            enabled?: boolean;
+            expires?: boolean;
+            /** Format: int32 */
+            idDocumentType?: number;
+            name?: string;
+            returned?: boolean;
+            templateProcedures?: components["schemas"]["DtoProcedureTemplate"][];
+            valid?: boolean;
+            /** Format: int32 */
+            version?: number;
+        };
+        DtoExternalEntityDocument: {
             amountToPay?: number;
             /** Format: int32 */
             cardNumber?: number;
@@ -3061,48 +3102,27 @@ export interface components {
             notes?: string;
             prepared?: boolean;
         };
-        DtoDocumentNecesario: {
-            deliveredBy?: string;
+        DtoExternalEntityDocumentMovement: {
+            amountToPay?: number;
             /** Format: int32 */
-            dueDays?: number;
-            expires?: boolean;
-            /** Format: int32 */
-            idDocumentType?: number;
-            name?: string;
-        };
-        DtoDocumentReentered: {
-            deliveredBy?: string;
-            /** Format: int32 */
-            dueDays?: number;
-            expires?: boolean;
-            /** Format: int32 */
-            idDocumentType?: number;
-            /** Format: int32 */
-            idProcedure?: number;
-            /** Format: int32 */
-            idSubmittedDocument?: number;
-            name?: string;
-            reentered?: boolean;
-        };
-        DtoDocumentType: {
-            deliveredBy?: string;
-            /** Format: int32 */
-            dueDays?: number;
-            enabled?: boolean;
-            expires?: boolean;
-            /** Format: int32 */
-            idDocumentType?: number;
-            name?: string;
-            returned?: boolean;
-            templateProcedures?: components["schemas"]["DtoProcedureTemplate"][];
-            templateTramiteses?: components["schemas"]["DtoProcedureTemplate"][];
-            valido?: boolean;
-            /** Format: int32 */
-            version?: number;
+            cardNumber?: number;
+            /** Format: date-time */
+            dateEntry?: string;
+            /** Format: date-time */
+            dateExit?: string;
+            /** Format: date-time */
+            datePayment?: string;
+            /** Format: date-time */
+            dateReleased?: string;
+            delivered?: boolean;
+            flagged?: boolean;
+            notes?: string;
+            prepared?: boolean;
         };
         DtoFolio: {
             copies?: components["schemas"]["DtoCopy"][];
             deed?: components["schemas"]["DtoDeed"];
+            folioType?: components["schemas"]["DtoFolioType"];
             /** Format: int32 */
             idFolio?: number;
             notes?: string;
@@ -3110,8 +3130,7 @@ export interface components {
             number?: number;
             personNotary?: components["schemas"]["DtoPerson"];
             status?: string;
-            tiposDeFolio?: components["schemas"]["DtoFolioType"];
-            valido?: boolean;
+            valid?: boolean;
             /** Format: int32 */
             version?: number;
             /** Format: int32 */
@@ -3125,19 +3144,19 @@ export interface components {
             isAuxiliary?: boolean;
             name?: string;
             notes?: string;
-            valido?: boolean;
+            valid?: boolean;
             /** Format: int32 */
             version?: number;
         };
         DtoHistory: {
             /** Format: date-time */
             date?: string;
-            estadosDeManagement?: components["schemas"]["DtoManagementStatus"];
-            gestionesDeEscrituras?: components["schemas"]["DtoDeedManagement"];
+            deedManagement?: components["schemas"]["DtoDeedManagement"];
             /** Format: int32 */
             idHistory?: number;
+            managementStatus?: components["schemas"]["DtoManagementStatus"];
             notes?: string;
-            valido?: boolean;
+            valid?: boolean;
             /** Format: int32 */
             version?: number;
         };
@@ -3158,11 +3177,12 @@ export interface components {
             /** Format: int32 */
             idIdentificationType?: number;
             name?: string;
-            valido?: boolean;
+            valid?: boolean;
             /** Format: int32 */
             version?: number;
         };
         DtoItem: {
+            budget?: components["schemas"]["DtoBudget"];
             fixed?: boolean;
             fixedConcept?: boolean;
             /** Format: int32 */
@@ -3171,11 +3191,10 @@ export interface components {
             notes?: string;
             /** Format: int32 */
             percentage?: number;
-            presupuestos?: components["schemas"]["DtoBudget"];
             reason?: string;
             /** @enum {string} */
             type?: "NORMAL" | "DESCUENTO" | "RECARGO";
-            valido?: boolean;
+            valid?: boolean;
             value?: number;
             /** Format: int32 */
             version?: number;
@@ -3189,32 +3208,32 @@ export interface components {
             /** Format: int32 */
             managementNumber?: number;
         };
-        DtoManagementDocumentsEntidadesExternas: {
+        DtoManagementDocumentReentry: {
+            heading?: string;
+            /** Format: int32 */
+            idManagement?: number;
+            /** Format: int32 */
+            number?: number;
+            procedures?: components["schemas"]["DtoProcedureRequiredDocumentation"][];
+        };
+        DtoManagementExternalEntityDocuments: {
             cadastralDesignation?: string;
             /** Format: date-time */
             dateStart?: string;
-            documents?: components["schemas"]["DtoDocumentEntidadExterna"][];
-            encabezado?: string;
+            documents?: components["schemas"]["DtoExternalEntityDocument"][];
+            heading?: string;
             /** Format: int32 */
             idManagement?: number;
             notary?: string;
             /** Format: int32 */
             number?: number;
         };
-        DtoManagementReingresoDocumentacion: {
-            encabezado?: string;
-            /** Format: int32 */
-            idManagement?: number;
-            /** Format: int32 */
-            number?: number;
-            procedures?: components["schemas"]["DtoProcedureDocumentacionNecesaria"][];
-        };
-        DtoManagementResumenFinanciero: {
+        DtoManagementFinancialSummary: {
             /** Format: int32 */
             idManagement?: number;
             pendingBalance?: number;
-            totalCobrado?: number;
-            totalPresupuestado?: number;
+            totalBudgeted?: number;
+            totalCollected?: number;
         };
         DtoManagementStatus: {
             data?: {
@@ -3225,14 +3244,15 @@ export interface components {
             idManagementStatus?: number;
             name?: string;
             notes?: string;
-            valido?: boolean;
+            valid?: boolean;
             /** Format: int32 */
             version?: number;
         };
         DtoManagementSummary: {
+            currentStatus?: string;
             /** Format: date-time */
             dateStart?: string;
-            encabezado?: string;
+            heading?: string;
             /** Format: int32 */
             idManagement?: number;
             notes?: string;
@@ -3240,24 +3260,6 @@ export interface components {
             number?: number;
             /** Format: int32 */
             procedureCount?: number;
-            statusActual?: string;
-        };
-        DtoMovementDocumentEntidadExterna: {
-            amountToPay?: number;
-            /** Format: int32 */
-            cardNumber?: number;
-            /** Format: date-time */
-            dateEntry?: string;
-            /** Format: date-time */
-            dateExit?: string;
-            /** Format: date-time */
-            datePayment?: string;
-            /** Format: date-time */
-            dateReleased?: string;
-            delivered?: boolean;
-            flagged?: boolean;
-            notes?: string;
-            prepared?: boolean;
         };
         DtoPaymentResponse: {
             amount?: number;
@@ -3270,67 +3272,61 @@ export interface components {
             notes?: string;
             paymentMethod?: string;
         };
+        DtoPendingBalance: {
+            pendingBalance?: number;
+        };
         DtoPerson: {
             address?: string;
             /** Format: date-time */
             birthDate?: string;
+            budgets?: unknown[];
             client?: boolean;
-            copiases?: unknown[];
+            copies?: unknown[];
             dtoIdentificationType?: components["schemas"]["DtoIdentificationType"];
             email?: string;
             firstName?: string;
-            folioses?: unknown[];
+            folios?: unknown[];
             /** Format: int32 */
             id?: number;
-            identificacioneses?: unknown[];
             identificationNumber?: string;
+            identifications?: unknown[];
             isClient?: boolean;
             lastName?: string;
-            listDtoManagementDeEscriturasDeNotary?: components["schemas"]["DtoDeedManagement"][];
-            listaDtoManagementDeEscriturasPerson?: components["schemas"]["DtoDeedManagement"][];
-            listaProceduresPerson?: components["schemas"]["DtoProcedure"][];
             maritalStatus?: string;
             /** Format: int32 */
             marriageCount?: number;
             nationality?: string;
+            notaryDeedManagements?: components["schemas"]["DtoDeedManagement"][];
             /** Format: int32 */
             notaryRegistrationNumber?: number;
             occupation?: string;
+            personDeedManagements?: components["schemas"]["DtoDeedManagement"][];
+            personProcedures?: components["schemas"]["DtoProcedure"][];
             phone?: string;
-            presupuestoses?: unknown[];
             sex?: string;
-            suplenciasesForFkIdSubstitute?: unknown[];
-            suplenciasesForFkIdSubstituted?: unknown[];
+            substitutionsForSubstitute?: unknown[];
+            substitutionsForSubstituted?: unknown[];
             taxId?: string;
-            usuarioses?: unknown[];
+            users?: unknown[];
             /** Format: int32 */
             version?: number;
         };
         DtoProcedure: {
             budget?: components["schemas"]["DtoBudget"];
+            budgets?: components["schemas"]["DtoBudget"][];
             deed?: components["schemas"]["DtoDeed"];
             deedManagement?: components["schemas"]["DtoDeedManagement"];
+            documentsNotSubmitted?: components["schemas"]["DtoSubmittedDocument"][];
             /** Format: int32 */
             idProcedure?: number;
-            listaDocumentsManagement?: components["schemas"]["DtoSubmittedDocument"][];
-            listaDocumentsNecesarios?: components["schemas"]["DtoDocumentType"][];
-            listaDocumentsNoPrecentados?: components["schemas"]["DtoSubmittedDocument"][];
-            listaDocumentsPresentados?: components["schemas"]["DtoSubmittedDocument"][];
-            listaPersons?: components["schemas"]["DtoPerson"][];
-            listaPresupuestos?: components["schemas"]["DtoBudget"][];
             management?: components["schemas"]["DtoDeedManagement"];
-            managementDeEscrituras?: components["schemas"]["DtoDeedManagement"];
             notes?: string;
+            people?: components["schemas"]["DtoPerson"][];
             procedureType?: components["schemas"]["DtoProcedureType"];
             property?: components["schemas"]["DtoProperty"];
-            tiposDeProcedure?: components["schemas"]["DtoProcedureType"];
-            valido?: boolean;
-        };
-        DtoProcedureDocumentacionNecesaria: {
-            documentsNecesarios?: components["schemas"]["DtoDocumentNecesario"][];
-            /** Format: int32 */
-            idProcedure?: number;
-            typeProcedureName?: string;
+            requiredDocuments?: components["schemas"]["DtoDocumentType"][];
+            submittedDocuments?: components["schemas"]["DtoSubmittedDocument"][];
+            valid?: boolean;
         };
         DtoProcedureFolder: {
             /** Format: int32 */
@@ -3344,14 +3340,21 @@ export interface components {
             status?: string;
             waitReason?: string;
         };
+        DtoProcedureRequiredDocumentation: {
+            /** Format: int32 */
+            idProcedure?: number;
+            requiredDocuments?: components["schemas"]["DtoRequiredDocument"][];
+            typeProcedureName?: string;
+        };
         DtoProcedureTemplate: {
+            documentType?: components["schemas"]["DtoDocumentType"];
             notes?: string;
-            tiposDeDocument?: components["schemas"]["DtoDocumentType"];
-            tiposDeProcedure?: components["schemas"]["DtoProcedureType"];
-            valido?: boolean;
+            procedureType?: components["schemas"]["DtoProcedureType"];
+            valid?: boolean;
         };
         DtoProcedureType: {
             associatesProperties?: boolean;
+            budgetTemplates?: components["schemas"]["DtoBudgetTemplate"][];
             data?: {
                 [key: string]: unknown;
             };
@@ -3363,9 +3366,8 @@ export interface components {
             isRegistered?: boolean;
             name?: string;
             notes?: string;
-            templatePresupuestos?: components["schemas"]["DtoBudgetTemplate"][];
             templateProcedures?: components["schemas"]["DtoProcedureTemplate"][];
-            valido?: boolean;
+            valid?: boolean;
             /** Format: int32 */
             version?: number;
             /** Format: int32 */
@@ -3383,7 +3385,7 @@ export interface components {
             procedures?: components["schemas"]["DtoProcedure"][];
             registrationNumber?: string;
             typeProperty?: string;
-            valido?: boolean;
+            valid?: boolean;
             volumeFolioLandRecord?: string;
         };
         DtoRegistrationDraft: {
@@ -3407,20 +3409,14 @@ export interface components {
             registryNotes?: string;
             status?: string;
         };
-        DtoReingresoDocumentacionRequest: {
-            /**
-             * Format: int32
-             * @description Tipo de documento a reingresar
-             */
-            idDocumentType: number;
-            /**
-             * Format: int32
-             * @description Trámite de la gestión
-             */
-            idProcedure: number;
-        };
-        DtoSaldoPending: {
-            pendingBalance?: number;
+        DtoRequiredDocument: {
+            deliveredBy?: string;
+            /** Format: int32 */
+            dueDays?: number;
+            expires?: boolean;
+            /** Format: int32 */
+            idDocumentType?: number;
+            name?: string;
         };
         DtoSubmittedDocument: {
             amountApagar?: number;
@@ -3451,7 +3447,7 @@ export interface components {
             prepared?: boolean;
             reentered?: boolean;
             released?: boolean;
-            valido?: boolean;
+            valid?: boolean;
             /** Format: int32 */
             version?: number;
         };
@@ -3461,11 +3457,11 @@ export interface components {
             flagged?: boolean;
             /** Format: int32 */
             idTestimony?: number;
-            movimientosTestimonios?: components["schemas"]["DtoTestimonyMovement"][];
             notes?: string;
             /** Format: int32 */
             number?: number;
-            valido?: boolean;
+            testimonyMovements?: components["schemas"]["DtoTestimonyMovement"][];
+            valid?: boolean;
             verified?: boolean;
             /** Format: int32 */
             version?: number;
@@ -3485,7 +3481,7 @@ export interface components {
             observedByRegistry?: boolean;
             registered?: boolean;
             testimony?: components["schemas"]["DtoTestimony"];
-            valido?: boolean;
+            valid?: boolean;
             /** Format: int32 */
             version?: number;
         };
@@ -3530,7 +3526,7 @@ export interface components {
             status?: boolean;
             token?: string;
             type?: string;
-            valido?: boolean;
+            valid?: boolean;
             /** Format: int32 */
             version?: number;
         };
@@ -3625,7 +3621,7 @@ export interface components {
         GenerateRequest: {
             /**
              * Format: int32
-             * @description Escritura para la que se genera la minuta
+             * @description Deed for which the registration draft is generated
              */
             idDeed: number;
         };
@@ -3653,16 +3649,6 @@ export interface components {
             name?: string;
             /** Format: int32 */
             version?: number;
-        };
-        IniciarDeedRequest: {
-            body?: string;
-            /** Format: int32 */
-            idFolio?: number;
-        };
-        InscribirRequest: {
-            /** Format: date-time */
-            dateReception?: string;
-            finalRegistrationNumber?: string;
         };
         ItemRequest: {
             /** Format: int32 */
@@ -3696,7 +3682,7 @@ export interface components {
             version?: number;
         };
         ManagementRef: {
-            encabezado?: string;
+            heading?: string;
             /** Format: int32 */
             idManagement?: number;
             /** Format: int32 */
@@ -3705,7 +3691,7 @@ export interface components {
         ManagementRequest: {
             /** Format: date-time */
             dateStart?: string;
-            encabezado: string;
+            heading: string;
             /** Format: int32 */
             managementStatusId?: number;
             /** Format: int32 */
@@ -3718,7 +3704,7 @@ export interface components {
         ManagementResponse: {
             /** Format: date-time */
             dateStart?: string;
-            encabezado?: string;
+            heading?: string;
             /** Format: int32 */
             idManagement?: number;
             /** Format: int32 */
@@ -3753,7 +3739,7 @@ export interface components {
             /** Format: int32 */
             year?: number;
         };
-        ObservarRequest: {
+        ObserveRequest: {
             /** Format: date-time */
             dateCorrection?: string;
             registryNotes?: string;
@@ -3916,7 +3902,7 @@ export interface components {
             identificationNumber: string;
             /**
              * Format: int32
-             * @description Identification type id from GET /tipo-identificacion. Omitted on create: DNI. An id that is not in the catalog answers 400 (#1361).
+             * @description Identification type id from GET /identification-types. Omitted on create: DNI. An id that is not in the catalog answers 400 (#1361).
              */
             identificationTypeId?: number;
             isClient?: boolean;
@@ -3958,11 +3944,6 @@ export interface components {
             /** Format: int32 */
             version?: number;
         };
-        PresentarRequest: {
-            /** Format: date-time */
-            dateSubmission?: string;
-            registryEntryNumber?: string;
-        };
         ProcedureRequest: {
             /** Format: int32 */
             idBudget?: number;
@@ -3972,7 +3953,7 @@ export interface components {
             idManagement?: number;
             /**
              * Format: int32
-             * @description Tipo de trámite; debe existir (404 si no)
+             * @description Procedure type; must existir (404 if not)
              */
             idProcedureType: number;
             /** Format: int32 */
@@ -4034,7 +4015,7 @@ export interface components {
         PropertyRequest: {
             address?: string;
             boundaries?: string;
-            /** @description Nomenclatura catastral que identifica el inmueble; obligatoria y no vacía */
+            /** @description Cadastral nomenclature that identifies the property; required and not empty */
             cadastralDesignation: string;
             fiscalAppraisal?: number;
             notes?: string;
@@ -4053,6 +4034,11 @@ export interface components {
             /** Format: int32 */
             version?: number;
             volumeFolioLandRecord?: string;
+        };
+        RegisterRequest: {
+            /** Format: date-time */
+            dateReception?: string;
+            finalRegistrationNumber?: string;
         };
         RoleInfo: {
             /** Format: int32 */
@@ -4078,37 +4064,47 @@ export interface components {
             sorted?: boolean;
             unsorted?: boolean;
         };
+        StartDeedRequest: {
+            body?: string;
+            /** Format: int32 */
+            idFolio?: number;
+        };
+        SubmitRequest: {
+            /** Format: date-time */
+            dateSubmission?: string;
+            registryEntryNumber?: string;
+        };
         SubmittedDocumentCreateRequest: {
-            /** @description Fecha de ingreso: un día real con formato yyyy-MM-dd (p. ej. 2026-09-05); otro valor responde 400 */
+            /** @description Entry date: a real day in yyyy-MM-dd format (for example 2026-09-05); any other value returns 400 */
             date?: string;
             delivered?: boolean;
             deliveredBy?: string;
             name?: string;
             /**
              * Format: int32
-             * @description Id del trámite de la gestión para el que se presenta el documento; si no existe la respuesta es 404
+             * @description Id of the management procedure this document is submitted for; the response is 404 when it does not exist
              */
             procedureId: number;
             /**
              * Format: int32
-             * @description Id de un tipo de documento existente; si no existe la respuesta es 404
+             * @description Id of an existing document type; the response is 404 when it does not exist
              */
             typeId: number;
         };
         SubmittedDocumentRequest: {
-            /** @description Fecha de ingreso: un día real con formato yyyy-MM-dd (p. ej. 2026-09-05); otro valor responde 400 */
+            /** @description Entry date: a real day in yyyy-MM-dd format (for example 2026-09-05); any other value returns 400 */
             date?: string;
             delivered?: boolean;
             deliveredBy?: string;
             name?: string;
             /**
              * Format: int32
-             * @description Id de un trámite existente; si no existe la respuesta es 404
+             * @description Id of an existing procedure; the response is 404 when it does not exist
              */
             procedureId?: number;
             /**
              * Format: int32
-             * @description Id de un tipo de documento existente; si no existe la respuesta es 404
+             * @description Id of an existing document type; the response is 404 when it does not exist
              */
             typeId?: number;
         };
@@ -4153,16 +4149,16 @@ export interface components {
         };
         TestimonyCreateRequest: {
             copies?: components["schemas"]["DtoCopy"][];
-            /** @description Escritura de la que el testimonio es copia; `idDeed` debe existir (404 si no) */
+            /** @description Deed this testimony copies; `idDeed` must exist (404 if it does not) */
             deed: components["schemas"]["DtoDeed"];
             flagged?: boolean;
             /** Format: int32 */
             idTestimony?: number;
-            movimientosTestimonios?: components["schemas"]["DtoTestimonyMovement"][];
             notes?: string;
             /** Format: int32 */
             number?: number;
-            valido?: boolean;
+            testimonyMovements?: components["schemas"]["DtoTestimonyMovement"][];
+            valid?: boolean;
             verified?: boolean;
             /** Format: int32 */
             version?: number;
@@ -4170,23 +4166,23 @@ export interface components {
         TestimonyUpdateRequest: {
             copies?: components["schemas"]["DtoCopy"][];
             deed?: components["schemas"]["DtoDeed"];
-            /** @description Testimonio observado */
+            /** @description Flagged testimony */
             flagged: boolean;
             /** Format: int32 */
             idTestimony?: number;
-            movimientosTestimonios?: components["schemas"]["DtoTestimonyMovement"][];
             notes?: string;
             /**
              * Format: int32
-             * @description Número del testimonio
+             * @description Number of the testimony
              */
             number: number;
-            valido?: boolean;
-            /** @description Testimonio verificado */
+            testimonyMovements?: components["schemas"]["DtoTestimonyMovement"][];
+            valid?: boolean;
+            /** @description Verified testimony */
             verified: boolean;
             /**
              * Format: int32
-             * @description Versión leída del testimonio (bloqueo optimista): 409 si ya no es la almacenada
+             * @description Version read from the testimony (optimistic lock): 409 when it is no longer the stored version
              */
             version: number;
         };
@@ -4216,13 +4212,13 @@ export interface components {
         WorkflowAssignmentRequest: {
             /**
              * Format: int32
-             * @description Workflow activo a asignar, o null para desasignar el actual
+             * @description Workflow active a assign, or null for unassign the actual
              */
             workflowDefinitionId: number | null;
         };
     };
     responses: {
-        /** @description Solicitud inválida — parámetros o cuerpo malformado */
+        /** @description Invalid request — malformed parameters or body */
         400: {
             headers: {
                 [name: string]: unknown;
@@ -4237,7 +4233,7 @@ export interface components {
                 };
             };
         };
-        /** @description Recurso no encontrado */
+        /** @description Resource not found */
         404: {
             headers: {
                 [name: string]: unknown;
@@ -4252,7 +4248,7 @@ export interface components {
                 };
             };
         };
-        /** @description Conflicto — el recurso ya existe o viola una restricción */
+        /** @description Conflict — the resource already exists or violates a constraint */
         409: {
             headers: {
                 [name: string]: unknown;
@@ -4267,7 +4263,7 @@ export interface components {
                 };
             };
         };
-        /** @description Error interno del servidor */
+        /** @description Internal server error */
         500: {
             headers: {
                 [name: string]: unknown;
@@ -4358,7 +4354,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoAuditRecord"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -4369,11 +4365,220 @@ export interface operations {
             };
         };
     };
-    search_6: {
+    getAvailableFolios: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FolioResponse"][];
+                };
+            };
+        };
+    };
+    startDeed: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StartDeedRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Folio not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    getAll_21: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BudgetTemplateResponse"][];
+                };
+            };
+        };
+    };
+    create_22: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BudgetTemplateRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    getByTypeProcedure_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                idProcedureType: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BudgetTemplateResponse"][];
+                };
+            };
+        };
+    };
+    update_23: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                idProcedureType: number;
+                idConcept: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BudgetTemplateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    delete_23: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                idProcedureType: number;
+                idConcept: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    getAll_20: {
         parameters: {
             query?: {
-                managementId?: number;
-                procedureId?: number;
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
             };
             header?: never;
             path?: never;
@@ -4387,12 +4592,108 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["DtoProcedureFolder"][];
+                    "*/*": components["schemas"]["PageBudgetResponse"];
                 };
             };
         };
     };
-    getById_24: {
+    create_21: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BudgetRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BudgetResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BudgetResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BudgetResponse"];
+                };
+            };
+        };
+    };
+    getByPerson: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                idPerson: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BudgetResponse"][];
+                };
+            };
+        };
+    };
+    search_6: {
+        parameters: {
+            query?: {
+                /** @description Budget status (any letter case; any other value returns 400) */
+                status?: "BORRADOR" | "PENDIENTE" | "APROBADO" | "RECHAZADO" | "FACTURADO";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BudgetResponse"][];
+                };
+            };
+            /** @description Status outside the vocabulary */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BudgetResponse"][];
+                };
+            };
+        };
+    };
+    getById_22: {
         parameters: {
             query?: never;
             header?: never;
@@ -4409,21 +4710,21 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["DtoProcedureFolder"];
+                    "*/*": components["schemas"]["BudgetResponse"];
                 };
             };
-            /** @description Carpeta no encontrada */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["DtoProcedureFolder"];
+                    "*/*": components["schemas"]["BudgetResponse"];
                 };
             };
         };
     };
-    ponerEnWait: {
+    update_22: {
         parameters: {
             query?: never;
             header?: never;
@@ -4434,35 +4735,171 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["WaitRequest"];
+                "application/json": components["schemas"]["BudgetRequest"];
             };
         };
         responses: {
-            /** @description Carpeta puesta en espera */
+            /** @description OK */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["BudgetResponse"];
                 };
             };
-            /** @description Motivo no informado */
+            /** @description Invalid request (for example, status outside the vocabulary) */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["BudgetResponse"];
                 };
             };
-            /** @description Carpeta no encontrada */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["BudgetResponse"];
+                };
+            };
+        };
+    };
+    delete_22: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    addItemsFromCatalog: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": number[];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ItemResponse"][];
+                };
+            };
+            /** @description Budget or catalog item not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ItemResponse"][];
+                };
+            };
+        };
+    };
+    loadItemsFromTemplate: {
+        parameters: {
+            query: {
+                /** @description ID of the procedure type */
+                procedureTypeId: number;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ItemResponse"][];
+                };
+            };
+            /** @description The procedure type does not have template configured */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ItemResponse"][];
+                };
+            };
+            /** @description Budget not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ItemResponse"][];
+                };
+            };
+        };
+    };
+    getBudgetSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoBudgetSummary"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoBudgetSummary"];
                 };
             };
         };
@@ -4500,7 +4937,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -4509,7 +4946,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Solicitud inválida */
+            /** @description Invalid request */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -4518,7 +4955,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -4571,7 +5008,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoConcept"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -4606,7 +5043,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Solicitud inválida */
+            /** @description Invalid request */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -4615,7 +5052,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -4624,7 +5061,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description version no es la almacenada: otro usuario modificó el registro */
+            /** @description version is not the stored one: another user modified the record */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -4646,7 +5083,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -4655,7 +5092,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -4690,7 +5127,7 @@ export interface operations {
             };
         };
     };
-    getAll_21: {
+    getAll_19: {
         parameters: {
             query?: never;
             header?: never;
@@ -4710,7 +5147,7 @@ export interface operations {
             };
         };
     };
-    create_22: {
+    create_20: {
         parameters: {
             query?: never;
             header?: never;
@@ -4723,7 +5160,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -4732,7 +5169,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Solicitud inválida */
+            /** @description Invalid request */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -4741,337 +5178,13 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    getById_22: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["CopyResponse"];
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["CopyResponse"];
-                };
-            };
-        };
-    };
-    update_23: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CopyRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    delete_23: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Eliminado */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getAllCuadernos: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["NotebookResponse"][];
-                };
-            };
-        };
-    };
-    createNotebook: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateNotebookRequest"];
-            };
-        };
-        responses: {
-            /** @description Creado */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Solicitud inválida */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Escribano o folio no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Ya existe un cuaderno con ese número para el año y escribano */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    getNotebookById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["NotebookResponse"];
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["NotebookResponse"];
-                };
-            };
-        };
-    };
-    getCaratula: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": string;
-                };
-            };
-            /** @description Cuaderno no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": string;
-                };
-            };
-        };
-    };
-    getAll_20: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["SubmittedDocumentResponse"][];
-                };
-            };
-        };
-    };
-    create_21: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SubmittedDocumentCreateRequest"];
-            };
-        };
-        responses: {
-            /** @description Creado */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Solicitud inválida (falta typeId o procedureId, o la fecha no es un día yyyy-MM-dd) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Tipo de documento o trámite no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Conflicto */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    getUpcoming: {
-        parameters: {
-            query?: {
-                dias?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoUpcomingExpiration"][];
-                };
-            };
-            /** @description La ventana de días está fuera de 1 a 365 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoUpcomingExpiration"][];
                 };
             };
         };
@@ -5093,21 +5206,21 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["SubmittedDocumentResponse"];
+                    "*/*": components["schemas"]["CopyResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["SubmittedDocumentResponse"];
+                    "*/*": components["schemas"]["CopyResponse"];
                 };
             };
         };
     };
-    update_22: {
+    update_21: {
         parameters: {
             query?: never;
             header?: never;
@@ -5118,7 +5231,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["SubmittedDocumentRequest"];
+                "application/json": components["schemas"]["CopyRequest"];
             };
         };
         responses: {
@@ -5129,14 +5242,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Solicitud inválida (fecha que no es un día yyyy-MM-dd) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Documento, tipo de documento o trámite no encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5145,7 +5251,7 @@ export interface operations {
             };
         };
     };
-    delete_22: {
+    delete_21: {
         parameters: {
             query?: never;
             header?: never;
@@ -5156,14 +5262,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5172,10 +5278,10 @@ export interface operations {
             };
         };
     };
-    getAll_19: {
+    getAll_18: {
         parameters: {
             query?: {
-                /** @description Estado de la escritura (cualquier mayúscula/minúscula; otro valor responde 400). Sin este parámetro se listan todas. */
+                /** @description Deed status (any letter case; any other value responds 400). Without this parameter, every deed is listed. */
                 status?: "Sin Firmar" | "Firmada" | "Anulada" | "No Paso" | "Inscripta";
                 /** @description Zero-based page index (0..N) */
                 page?: number;
@@ -5199,7 +5305,7 @@ export interface operations {
                     "*/*": components["schemas"]["PageDeedResponse"];
                 };
             };
-            /** @description Estado fuera del vocabulario */
+            /** @description Status outside the vocabulary */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -5210,7 +5316,7 @@ export interface operations {
             };
         };
     };
-    create_20: {
+    create_19: {
         parameters: {
             query?: never;
             header?: never;
@@ -5223,7 +5329,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -5232,7 +5338,7 @@ export interface operations {
                     "*/*": components["schemas"]["DeedResponse"];
                 };
             };
-            /** @description Solicitud inválida */
+            /** @description Invalid request */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -5241,13 +5347,33 @@ export interface operations {
                     "*/*": components["schemas"]["DeedResponse"];
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "*/*": components["schemas"]["DeedResponse"];
+                };
+            };
+        };
+    };
+    getAvailableNotaries: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PersonResponse"][];
                 };
             };
         };
@@ -5274,26 +5400,6 @@ export interface operations {
             };
         };
     };
-    getEscribanosDisponibles: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["PersonResponse"][];
-                };
-            };
-        };
-    };
     getById_20: {
         parameters: {
             query?: never;
@@ -5314,7 +5420,7 @@ export interface operations {
                     "*/*": components["schemas"]["DeedResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5325,7 +5431,7 @@ export interface operations {
             };
         };
     };
-    update_21: {
+    update_20: {
         parameters: {
             query?: never;
             header?: never;
@@ -5349,7 +5455,7 @@ export interface operations {
                     "*/*": components["schemas"]["DeedResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5360,7 +5466,7 @@ export interface operations {
             };
         };
     };
-    delete_21: {
+    delete_20: {
         parameters: {
             query?: never;
             header?: never;
@@ -5371,14 +5477,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5387,7 +5493,7 @@ export interface operations {
             };
         };
     };
-    firmar: {
+    sign: {
         parameters: {
             query?: never;
             header?: never;
@@ -5407,7 +5513,7 @@ export interface operations {
                     "*/*": components["schemas"]["DeedResponse"];
                 };
             };
-            /** @description La escritura no está en estado 'Sin Firmar' o no tiene folio asignado */
+            /** @description The deed is not in status 'Sin Firmar' or does not have folio assigned */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -5416,7 +5522,7 @@ export interface operations {
                     "*/*": components["schemas"]["DeedResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5427,27 +5533,7 @@ export interface operations {
             };
         };
     };
-    getAll_18: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoManagementStatus"][];
-                };
-            };
-        };
-    };
-    create_19: {
+    createCost: {
         parameters: {
             query?: never;
             header?: never;
@@ -5456,11 +5542,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoManagementStatus"];
+                "application/json": components["schemas"]["CreateCostRequest"];
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -5469,7 +5555,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Solicitud inválida */
+            /** @description Invalid request */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -5478,7 +5564,91 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Procedure type or document not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    getCostosByTypeProcedure: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                idProcedureType: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CostTemplateResponse"][];
+                };
+            };
+        };
+    };
+    getAll_17: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoDocumentType"][];
+                };
+            };
+        };
+    };
+    create_18: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DtoDocumentType"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -5506,7 +5676,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["DtoManagementStatus"][];
+                    "*/*": components["schemas"]["DtoDocumentType"][];
                 };
             };
         };
@@ -5528,21 +5698,21 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["DtoManagementStatus"];
+                    "*/*": components["schemas"]["DtoDocumentType"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["DtoManagementStatus"];
+                    "*/*": components["schemas"]["DtoDocumentType"];
                 };
             };
         };
     };
-    update_20: {
+    update_19: {
         parameters: {
             query?: never;
             header?: never;
@@ -5553,7 +5723,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoManagementStatus"];
+                "application/json": components["schemas"]["DtoDocumentType"];
             };
         };
         responses: {
@@ -5566,7 +5736,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Solicitud inválida */
+            /** @description Bad request */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -5575,7 +5745,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5584,7 +5754,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description version no es la almacenada: otro usuario modificó el registro */
+            /** @description version is not the stored one: another user modified the record */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -5595,7 +5765,7 @@ export interface operations {
             };
         };
     };
-    delete_20: {
+    delete_19: {
         parameters: {
             query?: never;
             header?: never;
@@ -5606,7 +5776,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -5615,7 +5785,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5650,7 +5820,7 @@ export interface operations {
             };
         };
     };
-    getAll_17: {
+    getAll_16: {
         parameters: {
             query?: never;
             header?: never;
@@ -5665,12 +5835,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["FolioResponse"][];
+                    "*/*": components["schemas"]["DtoFolioType"][];
                 };
             };
         };
     };
-    create_18: {
+    create_17: {
         parameters: {
             query?: never;
             header?: never;
@@ -5679,35 +5849,35 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["FolioRequest"];
+                "application/json": components["schemas"]["DtoFolioType"];
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["FolioResponse"];
+                    "*/*": Record<string, never>;
                 };
             };
-            /** @description Solicitud inválida */
+            /** @description Invalid request */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["FolioResponse"];
+                    "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["FolioResponse"];
+                    "*/*": Record<string, never>;
                 };
             };
         };
@@ -5715,7 +5885,7 @@ export interface operations {
     search_4: {
         parameters: {
             query: {
-                status: string;
+                name: string;
             };
             header?: never;
             path?: never;
@@ -5729,7 +5899,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["FolioResponse"][];
+                    "*/*": components["schemas"]["DtoFolioType"][];
                 };
             };
         };
@@ -5751,21 +5921,21 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["FolioResponse"];
+                    "*/*": components["schemas"]["DtoFolioType"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["FolioResponse"];
+                    "*/*": components["schemas"]["DtoFolioType"];
                 };
             };
         };
     };
-    update_19: {
+    update_18: {
         parameters: {
             query?: never;
             header?: never;
@@ -5776,7 +5946,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["FolioRequest"];
+                "application/json": components["schemas"]["DtoFolioType"];
             };
         };
         responses: {
@@ -5789,7 +5959,16 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5798,7 +5977,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description version is not the stored one: another user modified the record */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -5809,7 +5988,7 @@ export interface operations {
             };
         };
     };
-    delete_19: {
+    delete_18: {
         parameters: {
             query?: never;
             header?: never;
@@ -5820,7 +5999,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -5829,7 +6008,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5864,7 +6043,1000 @@ export interface operations {
             };
         };
     };
-    getAll_16: {
+    getAll_15: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FolioResponse"][];
+                };
+            };
+        };
+    };
+    create_16: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FolioRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FolioResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FolioResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FolioResponse"];
+                };
+            };
+        };
+    };
+    search_3: {
+        parameters: {
+            query: {
+                status: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FolioResponse"][];
+                };
+            };
+        };
+    };
+    getById_17: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FolioResponse"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FolioResponse"];
+                };
+            };
+        };
+    };
+    update_17: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FolioRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    delete_17: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    isInUse_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": {
+                        [key: string]: boolean;
+                    };
+                };
+            };
+        };
+    };
+    getAll_14: {
+        parameters: {
+            query?: {
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageDtoHistorySummary"];
+                };
+            };
+        };
+    };
+    create_15: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HistoryRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    getByManagement: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                idManagement: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoHistorySummary"][];
+                };
+            };
+        };
+    };
+    getById_16: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoHistorySummary"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoHistorySummary"];
+                };
+            };
+        };
+    };
+    update_16: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HistoryRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Only an administrator can update the history */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    delete_16: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Only an administrator can delete the history */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getAll_13: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["IdentificationTypeResponse"][];
+                };
+            };
+        };
+    };
+    create_14: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IdentificationTypeRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    getById_15: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["IdentificationTypeResponse"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["IdentificationTypeResponse"];
+                };
+            };
+        };
+    };
+    update_15: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IdentificationTypeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    delete_15: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getAll_12: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ItemResponse"][];
+                };
+            };
+        };
+    };
+    create_13: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ItemRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    getByBudget_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                idBudget: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ItemResponse"][];
+                };
+            };
+        };
+    };
+    getDiscountsAndSurcharges: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                idBudget: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ItemResponse"][];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ItemResponse"][];
+                };
+            };
+        };
+    };
+    getById_14: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ItemResponse"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ItemResponse"];
+                };
+            };
+        };
+    };
+    update_14: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ItemRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    delete_14: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getAll_11: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoManagementStatus"][];
+                };
+            };
+        };
+    };
+    create_12: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DtoManagementStatus"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    search_2: {
+        parameters: {
+            query: {
+                name: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoManagementStatus"][];
+                };
+            };
+        };
+    };
+    getById_13: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoManagementStatus"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoManagementStatus"];
+                };
+            };
+        };
+    };
+    update_13: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DtoManagementStatus"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description version is not the stored one: another user modified the record */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    delete_13: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    isInUse_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": {
+                        [key: string]: boolean;
+                    };
+                };
+            };
+        };
+    };
+    getAll_10: {
         parameters: {
             query?: {
                 /** @description Zero-based page index (0..N) */
@@ -5891,7 +7063,7 @@ export interface operations {
             };
         };
     };
-    create_17: {
+    create_11: {
         parameters: {
             query?: never;
             header?: never;
@@ -6001,7 +7173,7 @@ export interface operations {
             };
         };
     };
-    getById_17: {
+    getById_12: {
         parameters: {
             query?: never;
             header?: never;
@@ -6021,7 +7193,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoManagementSummary"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -6032,7 +7204,7 @@ export interface operations {
             };
         };
     };
-    update_18: {
+    update_12: {
         parameters: {
             query?: never;
             header?: never;
@@ -6070,7 +7242,7 @@ export interface operations {
             };
         };
     };
-    delete_18: {
+    delete_12: {
         parameters: {
             query?: never;
             header?: never;
@@ -6139,6 +7311,37 @@ export interface operations {
             };
         };
     };
+    getCaseSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoManagementCaseSummary"];
+                };
+            };
+            /** @description Management not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoManagementCaseSummary"];
+                };
+            };
+        };
+    };
     updateCompleteCase: {
         parameters: {
             query?: never;
@@ -6165,83 +7368,7 @@ export interface operations {
             };
         };
     };
-    getDocumentsEntidadesExternas: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoManagementDocumentsEntidadesExternas"];
-                };
-            };
-            /** @description Management not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoManagementDocumentsEntidadesExternas"];
-                };
-            };
-        };
-    };
-    registerMovementDocumentEntidadExterna: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-                idSubmittedDocument: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DtoMovementDocumentEntidadExterna"];
-            };
-        };
-        responses: {
-            /** @description Movement registered */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoDocumentEntidadExterna"];
-                };
-            };
-            /** @description Invalid document for the management */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoDocumentEntidadExterna"];
-                };
-            };
-            /** @description Management or document not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoDocumentEntidadExterna"];
-                };
-            };
-        };
-    };
-    getStatusActual: {
+    getCurrentStatus: {
         parameters: {
             query?: never;
             header?: never;
@@ -6259,6 +7386,188 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["DtoHistorySummary"];
+                };
+            };
+        };
+    };
+    getRequiredDocumentationForReentry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoManagementDocumentReentry"];
+                };
+            };
+            /** @description Management not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoManagementDocumentReentry"];
+                };
+            };
+        };
+    };
+    reenterDocumentation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DtoDocumentReentryRequest"];
+            };
+        };
+        responses: {
+            /** @description Document re-entered */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoDocumentReentered"];
+                };
+            };
+            /** @description Invalid procedure or document type */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoDocumentReentered"];
+                };
+            };
+            /** @description Management or procedure not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoDocumentReentered"];
+                };
+            };
+        };
+    };
+    getExternalEntityDocuments: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoManagementExternalEntityDocuments"];
+                };
+            };
+            /** @description Management not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoManagementExternalEntityDocuments"];
+                };
+            };
+        };
+    };
+    registerExternalEntityDocumentMovement: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                idSubmittedDocument: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DtoExternalEntityDocumentMovement"];
+            };
+        };
+        responses: {
+            /** @description Movement registered */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoExternalEntityDocument"];
+                };
+            };
+            /** @description Invalid document for the management */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoExternalEntityDocument"];
+                };
+            };
+            /** @description Management or document not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoExternalEntityDocument"];
+                };
+            };
+        };
+    };
+    getFinancialSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoManagementFinancialSummary"];
+                };
+            };
+            /** @description Management not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoManagementFinancialSummary"];
                 };
             };
         };
@@ -6294,7 +7603,7 @@ export interface operations {
             };
         };
     };
-    getRequiredDocumentationForReentry: {
+    getPendingBalance_1: {
         parameters: {
             query?: never;
             header?: never;
@@ -6311,7 +7620,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["DtoManagementReingresoDocumentacion"];
+                    "*/*": components["schemas"]["DtoPendingBalance"];
                 };
             };
             /** @description Management not found */
@@ -6320,144 +7629,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["DtoManagementReingresoDocumentacion"];
-                };
-            };
-        };
-    };
-    reenterDocumentation: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DtoReingresoDocumentacionRequest"];
-            };
-        };
-        responses: {
-            /** @description Document re-entered */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoDocumentReentered"];
-                };
-            };
-            /** @description Invalid procedure or document type */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoDocumentReentered"];
-                };
-            };
-            /** @description Management or procedure not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoDocumentReentered"];
-                };
-            };
-        };
-    };
-    getCaseSummary: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoManagementCaseSummary"];
-                };
-            };
-            /** @description Management not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoManagementCaseSummary"];
-                };
-            };
-        };
-    };
-    getResumenFinanciero: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoManagementResumenFinanciero"];
-                };
-            };
-            /** @description Management not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoManagementResumenFinanciero"];
-                };
-            };
-        };
-    };
-    getSaldoPending_1: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoSaldoPending"];
-                };
-            };
-            /** @description Management not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoSaldoPending"];
+                    "*/*": components["schemas"]["DtoPendingBalance"];
                 };
             };
         };
@@ -6546,16 +7718,9 @@ export interface operations {
             };
         };
     };
-    getAll_15: {
+    getAllNotebooks: {
         parameters: {
-            query?: {
-                /** @description Zero-based page index (0..N) */
-                page?: number;
-                /** @description The size of the page to be returned */
-                size?: number;
-                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
-                sort?: string[];
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
@@ -6568,12 +7733,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["PageDtoHistorySummary"];
+                    "*/*": components["schemas"]["NotebookResponse"][];
                 };
             };
         };
     };
-    create_16: {
+    createNotebook: {
         parameters: {
             query?: never;
             header?: never;
@@ -6582,11 +7747,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["HistoryRequest"];
+                "application/json": components["schemas"]["CreateNotebookRequest"];
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -6595,7 +7760,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Solicitud inválida */
+            /** @description Invalid request */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -6604,7 +7769,16 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Notary or folio not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description A notebook already exists with that number for the year and notary */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -6615,29 +7789,7 @@ export interface operations {
             };
         };
     };
-    getByManagement: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                idManagement: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoHistorySummary"][];
-                };
-            };
-        };
-    };
-    getById_16: {
+    getNotebookById: {
         parameters: {
             query?: never;
             header?: never;
@@ -6654,155 +7806,21 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["DtoHistorySummary"];
+                    "*/*": components["schemas"]["NotebookResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["DtoHistorySummary"];
+                    "*/*": components["schemas"]["NotebookResponse"];
                 };
             };
         };
     };
-    update_17: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["HistoryRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Solo un administrador puede modificar el historial */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    delete_17: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Eliminado */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Solo un administrador puede eliminar el historial */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getAll_14: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["PropertyResponse"][];
-                };
-            };
-        };
-    };
-    create_15: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PropertyRequest"];
-            };
-        };
-        responses: {
-            /** @description Creado */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Solicitud inválida (falta la nomenclatura catastral) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Conflicto */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    getById_15: {
+    getCover: {
         parameters: {
             query?: never;
             header?: never;
@@ -6819,856 +7837,21 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["PropertyResponse"];
+                    "application/pdf": string;
                 };
             };
-            /** @description No encontrado */
+            /** @description Notebook not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["PropertyResponse"];
+                    "application/pdf": string;
                 };
             };
         };
     };
-    update_16: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PropertyRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Solicitud inválida (falta la nomenclatura catastral) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    delete_16: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Eliminado */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getAll_13: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ItemResponse"][];
-                };
-            };
-        };
-    };
-    create_14: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ItemRequest"];
-            };
-        };
-        responses: {
-            /** @description Creado */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Solicitud inválida */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Conflicto */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    getByBudget_1: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                idBudget: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ItemResponse"][];
-                };
-            };
-        };
-    };
-    getDescuentosYRecargos: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                idBudget: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ItemResponse"][];
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ItemResponse"][];
-                };
-            };
-        };
-    };
-    getById_14: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ItemResponse"];
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ItemResponse"];
-                };
-            };
-        };
-    };
-    update_15: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ItemRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Solicitud inválida */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    delete_15: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Eliminado */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    generate: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["GenerateRequest"];
-            };
-        };
-        responses: {
-            /** @description Minuta generada */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Datos catastrales/registrales incompletos o escritura no firmada */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Escritura no encontrada */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description La escritura ya tiene una minuta de inscripción */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    getById_23: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoRegistrationDraft"];
-                };
-            };
-            /** @description Minuta no encontrada */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoRegistrationDraft"];
-                };
-            };
-        };
-    };
-    inscribir: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["InscribirRequest"];
-            };
-        };
-        responses: {
-            /** @description Inscripción definitiva registrada */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description La minuta no está presentada */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Minuta no encontrada */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    observar: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ObservarRequest"];
-            };
-        };
-        responses: {
-            /** @description Observación registrada */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description La minuta no está presentada */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Minuta no encontrada */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    presentar: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PresentarRequest"];
-            };
-        };
-        responses: {
-            /** @description Presentación registrada */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description La minuta no está en estado Generada */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Minuta no encontrada */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    getAll_12: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimonyMovement"][];
-                };
-            };
-        };
-    };
-    create_13: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DtoTestimonyMovement"];
-            };
-        };
-        responses: {
-            /** @description Creado */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Solicitud inválida */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Conflicto */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    registerEntry: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                idTestimony: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Creado */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimonyMovement"];
-                };
-            };
-            /** @description El testimonio no está verificado o ya tiene un movimiento abierto */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimonyMovement"];
-                };
-            };
-            /** @description Testimonio no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimonyMovement"];
-                };
-            };
-        };
-    };
-    reenter: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                idTestimony: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["DtoTestimonyMovement"];
-            };
-        };
-        responses: {
-            /** @description Creado */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimonyMovement"];
-                };
-            };
-            /** @description El testimonio no fue retirado previamente, o el reingreso observado no tiene observaciones */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimonyMovement"];
-                };
-            };
-            /** @description Testimonio no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimonyMovement"];
-                };
-            };
-        };
-    };
-    registerInscription: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                idTestimony: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimonyMovement"];
-                };
-            };
-            /** @description Falta el ingreso a inscripción previo */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimonyMovement"];
-                };
-            };
-            /** @description Testimonio no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimonyMovement"];
-                };
-            };
-        };
-    };
-    withdraw: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                idTestimony: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DtoTestimonyMovement"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimonyMovement"];
-                };
-            };
-            /** @description El testimonio no está inscripto */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimonyMovement"];
-                };
-            };
-            /** @description Testimonio no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimonyMovement"];
-                };
-            };
-        };
-    };
-    getById_13: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimonyMovement"];
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimonyMovement"];
-                };
-            };
-        };
-    };
-    update_14: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DtoTestimonyMovement"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Solicitud inválida */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description version no es la almacenada: otro usuario modificó el registro */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    delete_14: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Eliminado */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    getAll_11: {
+    getAll_9: {
         parameters: {
             query?: never;
             header?: never;
@@ -7701,7 +7884,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -7710,7 +7893,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoPaymentResponse"];
                 };
             };
-            /** @description Solicitud inválida */
+            /** @description Invalid request */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -7719,38 +7902,13 @@ export interface operations {
                     "*/*": components["schemas"]["DtoPaymentResponse"];
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "*/*": components["schemas"]["DtoPaymentResponse"];
-                };
-            };
-        };
-    };
-    getByDateRange: {
-        parameters: {
-            query: {
-                /** @description Fecha inicio (YYYY-MM-DD) */
-                startDate: string;
-                /** @description Fecha fin (YYYY-MM-DD) */
-                endDate: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoPaymentResponse"][];
                 };
             };
         };
@@ -7777,38 +7935,7 @@ export interface operations {
             };
         };
     };
-    getStatusPayment: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                idBudget: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": "NoPayments" | "PARTIAL" | "PAID";
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": "NoPayments" | "PARTIAL" | "PAID";
-                };
-            };
-        };
-    };
-    getSaldoPending: {
+    getPendingBalance: {
         parameters: {
             query?: never;
             header?: never;
@@ -7830,7 +7957,63 @@ export interface operations {
             };
         };
     };
-    getById_12: {
+    getStatusPayment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                idBudget: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": "NoPayments" | "PARTIAL" | "PAID";
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": "NoPayments" | "PARTIAL" | "PAID";
+                };
+            };
+        };
+    };
+    getByDateRange: {
+        parameters: {
+            query: {
+                /** @description Start date (YYYY-MM-DD) */
+                startDate: string;
+                /** @description End date (YYYY-MM-DD) */
+                endDate: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoPaymentResponse"][];
+                };
+            };
+        };
+    };
+    getById_11: {
         parameters: {
             query?: never;
             header?: never;
@@ -7850,7 +8033,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoPaymentResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -7861,7 +8044,7 @@ export interface operations {
             };
         };
     };
-    update_13: {
+    update_11: {
         parameters: {
             query?: never;
             header?: never;
@@ -7885,7 +8068,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoPaymentResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -7896,7 +8079,7 @@ export interface operations {
             };
         };
     };
-    delete_13: {
+    delete_11: {
         parameters: {
             query?: never;
             header?: never;
@@ -7907,14 +8090,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -8133,21 +8316,77 @@ export interface operations {
             };
         };
     };
-    createCost: {
+    search_1: {
         parameters: {
-            query?: never;
+            query?: {
+                managementId?: number;
+                procedureId?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
         };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoProcedureFolder"][];
+                };
+            };
+        };
+    };
+    getById_24: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoProcedureFolder"];
+                };
+            };
+            /** @description Folder not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoProcedureFolder"];
+                };
+            };
+        };
+    };
+    putOnHold: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateCostRequest"];
+                "application/json": components["schemas"]["WaitRequest"];
             };
         };
         responses: {
-            /** @description Creado */
-            201: {
+            /** @description Folder put on hold */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8155,7 +8394,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Solicitud inválida */
+            /** @description Reason not provided */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -8164,7 +8403,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Tipo de trámite o documento no encontrado */
+            /** @description Folder not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -8175,172 +8414,7 @@ export interface operations {
             };
         };
     };
-    getCostosByTypeProcedure: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                idProcedureType: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["CostTemplateResponse"][];
-                };
-            };
-        };
-    };
-    getAll_10: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["BudgetTemplateResponse"][];
-                };
-            };
-        };
-    };
-    create_12: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BudgetTemplateRequest"];
-            };
-        };
-        responses: {
-            /** @description Creado */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Solicitud inválida */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Conflicto */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    getByTypeProcedure_1: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                idProcedureType: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["BudgetTemplateResponse"][];
-                };
-            };
-        };
-    };
-    update_12: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                idProcedureType: number;
-                idConcept: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BudgetTemplateRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    delete_12: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                idProcedureType: number;
-                idConcept: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Eliminado */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    getAll_9: {
+    getAll_8: {
         parameters: {
             query?: never;
             header?: never;
@@ -8360,7 +8434,7 @@ export interface operations {
             };
         };
     };
-    create_11: {
+    create_10: {
         parameters: {
             query?: never;
             header?: never;
@@ -8373,7 +8447,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -8382,7 +8456,7 @@ export interface operations {
                     "*/*": components["schemas"]["ProcedureTemplateResponse"];
                 };
             };
-            /** @description Solicitud inválida */
+            /** @description Invalid request */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -8391,7 +8465,7 @@ export interface operations {
                     "*/*": components["schemas"]["ProcedureTemplateResponse"];
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -8424,7 +8498,7 @@ export interface operations {
             };
         };
     };
-    getById_11: {
+    getById_10: {
         parameters: {
             query?: never;
             header?: never;
@@ -8445,7 +8519,7 @@ export interface operations {
                     "*/*": components["schemas"]["ProcedureTemplateResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -8456,7 +8530,7 @@ export interface operations {
             };
         };
     };
-    update_11: {
+    update_10: {
         parameters: {
             query?: never;
             header?: never;
@@ -8481,7 +8555,7 @@ export interface operations {
                     "*/*": components["schemas"]["ProcedureTemplateResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -8492,7 +8566,7 @@ export interface operations {
             };
         };
     };
-    delete_11: {
+    delete_10: {
         parameters: {
             query?: never;
             header?: never;
@@ -8504,1099 +8578,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getAll_8: {
-        parameters: {
-            query?: {
-                /** @description Zero-based page index (0..N) */
-                page?: number;
-                /** @description The size of the page to be returned */
-                size?: number;
-                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
-                sort?: string[];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["PageBudgetResponse"];
-                };
-            };
-        };
-    };
-    create_10: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BudgetRequest"];
-            };
-        };
-        responses: {
-            /** @description Creado */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["BudgetResponse"];
-                };
-            };
-            /** @description Solicitud inválida */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["BudgetResponse"];
-                };
-            };
-            /** @description Conflicto */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["BudgetResponse"];
-                };
-            };
-        };
-    };
-    search_3: {
-        parameters: {
-            query?: {
-                /** @description Estado del presupuesto (cualquier mayúscula/minúscula; otro valor responde 400) */
-                status?: "BORRADOR" | "PENDIENTE" | "APROBADO" | "RECHAZADO" | "FACTURADO";
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["BudgetResponse"][];
-                };
-            };
-            /** @description Estado fuera del vocabulario */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["BudgetResponse"][];
-                };
-            };
-        };
-    };
-    getByPerson: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                idPerson: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["BudgetResponse"][];
-                };
-            };
-        };
-    };
-    getById_10: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["BudgetResponse"];
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["BudgetResponse"];
-                };
-            };
-        };
-    };
-    update_10: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BudgetRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["BudgetResponse"];
-                };
-            };
-            /** @description Solicitud inválida (p. ej. estado fuera del vocabulario) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["BudgetResponse"];
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["BudgetResponse"];
-                };
-            };
-        };
-    };
-    delete_10: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Eliminado */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    addItemsFromCatalog: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": number[];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ItemResponse"][];
-                };
-            };
-            /** @description Presupuesto o ítem de catálogo no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ItemResponse"][];
-                };
-            };
-        };
-    };
-    cargarItemsDesdeTemplate: {
-        parameters: {
-            query: {
-                /** @description ID del tipo de trámite */
-                tipoTramiteId: number;
-            };
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ItemResponse"][];
-                };
-            };
-            /** @description El tipo de trámite no tiene plantilla configurada */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ItemResponse"][];
-                };
-            };
-            /** @description Presupuesto no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ItemResponse"][];
-                };
-            };
-        };
-    };
-    getResumen: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoBudgetResumen"];
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoBudgetResumen"];
-                };
-            };
-        };
-    };
-    iniciarDeed: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["IniciarDeedRequest"];
-            };
-        };
-        responses: {
-            /** @description Creada */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Solicitud inválida */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Folio no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    getAvailableFolios: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["FolioResponse"][];
-                };
-            };
-        };
-    };
-    generateDebtDocumentsReport: {
-        parameters: {
-            query: {
-                /** @description Número de gestión */
-                numberManagement: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description PDF con la deuda de documentos de la gestión */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": string;
-                };
-            };
-            /** @description Parámetro inválido */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description No existe una gestión con ese número */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Error inesperado al generar el PDF (sin cuerpo) */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    generarDeclaracionJuradaMensual: {
-        parameters: {
-            query: {
-                /** @description Año del periodo */
-                anio: number;
-                /** @description Mes del periodo */
-                mes: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": string;
-                };
-            };
-        };
-    };
-    generarDeclaracionJuradaRentas: {
-        parameters: {
-            query: {
-                /** @description Año del periodo */
-                anio: number;
-                /** @description Mes del periodo */
-                mes: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": string;
-                };
-            };
-        };
-    };
-    generateDocumentsDueSoonReport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del documento presentado */
-                idDocumentoPresentado: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description PDF con el vencimiento del documento presentado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": string;
-                };
-            };
-            /** @description Parámetro inválido */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Documento presentado no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Error inesperado al generar el PDF (sin cuerpo) */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    generateManagementHistoryReport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID de la gestión */
-                idGestion: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description PDF con el historial de la gestión */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": string;
-                };
-            };
-            /** @description Parámetro inválido */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Gestión no encontrada */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Error inesperado al generar el PDF (sin cuerpo) */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    generarLibroIndice: {
-        parameters: {
-            query: {
-                /** @description Año del libro de indice */
-                anio: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": string;
-                };
-            };
-        };
-    };
-    generateProcedureDocumentsListReport: {
-        parameters: {
-            query: {
-                /** @description Nombre del tipo de trámite */
-                nombreTipoTramite: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description PDF con los documentos del tipo de trámite */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": string;
-                };
-            };
-            /** @description Parámetro inválido */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Tipo de trámite no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Error inesperado al generar el PDF (sin cuerpo) */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    generateRegistrationDraftReport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID de la minuta de inscripción */
-                idMinutaInscripcion: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": string;
-                };
-            };
-            /** @description Minuta de inscripción no encontrada */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": string;
-                };
-            };
-        };
-    };
-    generateBudgetPropertiesReport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del presupuesto */
-                idPresupuesto: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description PDF del presupuesto con inmuebles */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": string;
-                };
-            };
-            /** @description Parámetro inválido */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Presupuesto no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Error inesperado al generar el PDF (sin cuerpo) */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    generateBudgetReport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del presupuesto */
-                idPresupuesto: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description PDF del presupuesto */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": string;
-                };
-            };
-            /** @description Parámetro inválido */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Presupuesto no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Error inesperado al generar el PDF (sin cuerpo) */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    generatePaymentReceiptReport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del pago */
-                idPago: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": string;
-                };
-            };
-            /** @description Pago no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": string;
-                };
-            };
-        };
-    };
-    generateTestimonyCopyReport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del testimonio */
-                idTestimonio: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": string;
-                };
-            };
-            /** @description El testimonio no está verificado */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": string;
-                };
-            };
-            /** @description Testimonio no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": string;
-                };
-            };
-        };
-    };
-    getAllRoles: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["RoleResponse"][];
-                };
-            };
-        };
-    };
-    createRole: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RoleRequest"];
-            };
-        };
-        responses: {
-            /** @description Creado */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Solicitud inválida */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Conflicto */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    unassignRoleFromUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                idUser: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Rol desasignado */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Usuario no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    assignRoleToUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                idRole: number;
-                idUser: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    getRoleById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["RoleResponse"];
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["RoleResponse"];
-                };
-            };
-        };
-    };
-    updateRole: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RoleRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["RoleResponse"];
-                };
-            };
-            /** @description Solicitud inválida */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["RoleResponse"];
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["RoleResponse"];
-                };
-            };
-            /** @description Ya existe un rol con ese nombre */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["RoleResponse"];
-                };
-            };
-        };
-    };
-    deleteRole: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Eliminado */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -9620,7 +8609,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["SubstitutionResponse"][];
+                    "*/*": components["schemas"]["DtoProcedureType"][];
                 };
             };
         };
@@ -9634,419 +8623,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["SubstitutionRequest"];
-            };
-        };
-        responses: {
-            /** @description Creado */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Solicitud inválida */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Conflicto */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    getById_9: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["SubstitutionResponse"];
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["SubstitutionResponse"];
-                };
-            };
-        };
-    };
-    update_9: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SubstitutionRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    delete_9: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Eliminado */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getAll_6: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimony"][];
-                };
-            };
-        };
-    };
-    create_8: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["TestimonyCreateRequest"];
-            };
-        };
-        responses: {
-            /** @description Creado */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Solicitud inválida (falta la escritura o su idDeed) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Escritura no encontrada */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Conflicto */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    generar: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                idDeed: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Creado */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimony"];
-                };
-            };
-            /** @description La escritura no está en estado 'Firmada' */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimony"];
-                };
-            };
-            /** @description Escritura no encontrada */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimony"];
-                };
-            };
-        };
-    };
-    getById_8: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimony"];
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimony"];
-                };
-            };
-        };
-    };
-    update_8: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["TestimonyUpdateRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Cuerpo vacío o incompleto: number, flagged, verified y version son obligatorios */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description version no es la almacenada: otro usuario modificó el testimonio */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    delete_8: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Eliminado */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    verificar: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DtoTestimony"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimony"];
-                };
-            };
-            /** @description Testimonio no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoTestimony"];
-                };
-            };
-        };
-    };
-    getAll_5: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoDocumentType"][];
-                };
-            };
-        };
-    };
-    create_7: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DtoDocumentType"];
+                "application/json": components["schemas"]["DtoProcedureType"];
             };
         };
         responses: {
@@ -10059,7 +8636,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Bad request */
+            /** @description Invalid request */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -10069,603 +8646,6 @@ export interface operations {
                 };
             };
             /** @description Conflict */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    search_2: {
-        parameters: {
-            query: {
-                name: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoDocumentType"][];
-                };
-            };
-        };
-    };
-    getById_7: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoDocumentType"];
-                };
-            };
-            /** @description Not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoDocumentType"];
-                };
-            };
-        };
-    };
-    update_7: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DtoDocumentType"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description version no es la almacenada: otro usuario modificó el registro */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    delete_7: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Deleted */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    isInUse_2: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": {
-                        [key: string]: boolean;
-                    };
-                };
-            };
-        };
-    };
-    getAll_4: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoFolioType"][];
-                };
-            };
-        };
-    };
-    create_6: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DtoFolioType"];
-            };
-        };
-        responses: {
-            /** @description Creado */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Solicitud inválida */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Conflicto */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    search_1: {
-        parameters: {
-            query: {
-                name: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoFolioType"][];
-                };
-            };
-        };
-    };
-    getById_6: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoFolioType"];
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoFolioType"];
-                };
-            };
-        };
-    };
-    update_6: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DtoFolioType"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Solicitud inválida */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description version no es la almacenada: otro usuario modificó el registro */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    delete_6: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Eliminado */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    isInUse_1: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": {
-                        [key: string]: boolean;
-                    };
-                };
-            };
-        };
-    };
-    getAll_3: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["IdentificationTypeResponse"][];
-                };
-            };
-        };
-    };
-    create_5: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["IdentificationTypeRequest"];
-            };
-        };
-        responses: {
-            /** @description Creado */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Solicitud inválida */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Conflicto */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    getById_5: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["IdentificationTypeResponse"];
-                };
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["IdentificationTypeResponse"];
-                };
-            };
-        };
-    };
-    update_5: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["IdentificationTypeRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    delete_5: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Eliminado */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getAll_2: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DtoProcedureType"][];
-                };
-            };
-        };
-    };
-    create_4: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DtoProcedureType"];
-            };
-        };
-        responses: {
-            /** @description Creado */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Solicitud inválida */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Conflicto */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -10698,7 +8678,7 @@ export interface operations {
             };
         };
     };
-    getById_4: {
+    getById_9: {
         parameters: {
             query?: never;
             header?: never;
@@ -10718,7 +8698,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoProcedureType"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10729,7 +8709,7 @@ export interface operations {
             };
         };
     };
-    update_4: {
+    update_9: {
         parameters: {
             query?: never;
             header?: never;
@@ -10753,7 +8733,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Solicitud inválida */
+            /** @description Invalid request */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -10762,7 +8742,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10771,7 +8751,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description version no es la almacenada: otro usuario modificó el registro */
+            /** @description version is not the stored one: another user modified the record */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -10782,7 +8762,7 @@ export interface operations {
             };
         };
     };
-    delete_4: {
+    delete_9: {
         parameters: {
             query?: never;
             header?: never;
@@ -10793,7 +8773,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -10802,7 +8782,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10861,7 +8841,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Cuerpo vacío o inválido: workflowDefinitionId es obligatorio (entero, o null para desasignar) */
+            /** @description Empty or invalid body: workflowDefinitionId is required (entero, or null for unassign) */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -10870,7 +8850,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Tipo de trámite o workflow no encontrado */
+            /** @description Procedure type or workflow not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10879,7 +8859,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description El workflow seleccionado no está activo */
+            /** @description The workflow seleccionado is not active */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -10890,7 +8870,7 @@ export interface operations {
             };
         };
     };
-    getAll_1: {
+    getAll_6: {
         parameters: {
             query?: {
                 /** @description Zero-based page index (0..N) */
@@ -10917,7 +8897,7 @@ export interface operations {
             };
         };
     };
-    create_3: {
+    create_8: {
         parameters: {
             query?: never;
             header?: never;
@@ -10930,7 +8910,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -10939,7 +8919,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Solicitud inválida: idProcedureType es obligatorio */
+            /** @description Invalid request: idProcedureType is required */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -10948,7 +8928,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Referencia no encontrada */
+            /** @description Reference not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10957,13 +8937,2016 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    getById_8: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ProcedureResponse"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ProcedureResponse"];
+                };
+            };
+        };
+    };
+    update_8: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProcedureRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Empty or incomplete body: idProcedureType is required */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Procedure or reference not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    delete_8: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getAll_5: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PropertyResponse"][];
+                };
+            };
+        };
+    };
+    create_7: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PropertyRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Invalid request (the cadastral designation is missing) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    getById_7: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PropertyResponse"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PropertyResponse"];
+                };
+            };
+        };
+    };
+    update_7: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PropertyRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid request (the cadastral designation is missing) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    delete_7: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    generate_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GenerateRequest"];
+            };
+        };
+        responses: {
+            /** @description Registration draft generated */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Incomplete cadastral or registry data, or the deed is not signed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Deed not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description The deed already has a registration draft */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    getById_23: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoRegistrationDraft"];
+                };
+            };
+            /** @description Registration draft not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoRegistrationDraft"];
+                };
+            };
+        };
+    };
+    observe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ObserveRequest"];
+            };
+        };
+        responses: {
+            /** @description Observation recorded */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description The registration draft is not submitted */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Registration draft not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    recordRegistration: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegisterRequest"];
+            };
+        };
+        responses: {
+            /** @description Final registration recorded */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description The registration draft is not submitted */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Registration draft not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    submit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubmitRequest"];
+            };
+        };
+        responses: {
+            /** @description Submission recorded */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description The registration draft is not in status Generada */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Registration draft not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    generateBudgetPropertiesReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID of the budget */
+                idBudget: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description PDF of the budget with properties */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+            /** @description Invalid parameter */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Budget not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected error generating the PDF (no body) */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    generateBudgetReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID of the budget */
+                idBudget: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description PDF of the budget */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+            /** @description Invalid parameter */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Budget not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected error generating the PDF (no body) */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    generateDebtDocumentsReport: {
+        parameters: {
+            query: {
+                /** @description Number of management */
+                numberManagement: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description PDF with the debt of documents of the management */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+            /** @description Invalid parameter */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description There is no management with that number */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected error generating the PDF (no body) */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    generateDocumentsDueSoonReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID of the submitted document */
+                idSubmittedDocument: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description PDF with the expiration of the submitted document */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+            /** @description Invalid parameter */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Submitted document not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected error generating the PDF (no body) */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    generateIndexBook: {
+        parameters: {
+            query: {
+                /** @description Year of the index book */
+                year: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
+    generateManagementHistoryReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID of the management */
+                idManagement: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description PDF with the history of the management */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+            /** @description Invalid parameter */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Management not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected error generating the PDF (no body) */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    generateMonthlySwornStatement: {
+        parameters: {
+            query: {
+                /** @description Year of the period */
+                year: number;
+                /** @description Month of the period */
+                month: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
+    generatePaymentReceiptReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID of the payment */
+                idPayment: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+            /** @description Payment not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
+    generateProcedureDocumentsListReport: {
+        parameters: {
+            query: {
+                /** @description Name of the procedure type */
+                procedureTypeName: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description PDF with the documents of the procedure type */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+            /** @description Invalid parameter */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Procedure type not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected error generating the PDF (no body) */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    generateRegistrationDraftReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID of the registration draft */
+                idRegistrationDraft: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+            /** @description Registration draft not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
+    generateTaxSwornStatement: {
+        parameters: {
+            query: {
+                /** @description Year of the period */
+                year: number;
+                /** @description Month of the period */
+                month: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
+    generateTestimonyCopyReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID of the testimony */
+                idTestimony: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+            /** @description The testimony is not verified */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+            /** @description Testimony not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
+    getAllRoles: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RoleResponse"][];
+                };
+            };
+        };
+    };
+    createRole: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RoleRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    unassignRoleFromUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                idUser: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Role desasignado */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description User account not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    assignRoleToUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                idRole: number;
+                idUser: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    getRoleById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RoleResponse"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RoleResponse"];
+                };
+            };
+        };
+    };
+    updateRole: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RoleRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RoleResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RoleResponse"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RoleResponse"];
+                };
+            };
+            /** @description A role with that name already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RoleResponse"];
+                };
+            };
+        };
+    };
+    deleteRole: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getAll_4: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SubmittedDocumentResponse"][];
+                };
+            };
+        };
+    };
+    create_6: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubmittedDocumentCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Invalid request (typeId or procedureId is missing, or the date is not a yyyy-MM-dd day) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Document type or procedure not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    getUpcoming: {
+        parameters: {
+            query?: {
+                days?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoUpcomingExpiration"][];
+                };
+            };
+            /** @description The window of days is outside 1 to 365 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoUpcomingExpiration"][];
+                };
+            };
+        };
+    };
+    getById_6: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SubmittedDocumentResponse"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SubmittedDocumentResponse"];
+                };
+            };
+        };
+    };
+    update_6: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubmittedDocumentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid request (date is not a yyyy-MM-dd day) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Document, document type or procedure not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    delete_6: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getAll_3: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SubstitutionResponse"][];
+                };
+            };
+        };
+    };
+    create_5: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubstitutionRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    getById_5: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SubstitutionResponse"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SubstitutionResponse"];
+                };
+            };
+        };
+    };
+    update_5: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubstitutionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    delete_5: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getAll_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimony"][];
+                };
+            };
+        };
+    };
+    create_4: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TestimonyCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Invalid request (the deed or its idDeed is missing) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Deed not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    generate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                idDeed: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimony"];
+                };
+            };
+            /** @description The deed is not in status 'Firmada' */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimony"];
+                };
+            };
+            /** @description Deed not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimony"];
+                };
+            };
+        };
+    };
+    getById_4: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimony"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimony"];
+                };
+            };
+        };
+    };
+    update_4: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TestimonyUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Empty or incomplete body: number, flagged, verified, and version are required */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description version is not the stored one: another user modified the testimony */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    delete_4: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    verify: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DtoTestimony"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimony"];
+                };
+            };
+            /** @description Testimony not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimony"];
+                };
+            };
+        };
+    };
+    getAll_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimonyMovement"][];
+                };
+            };
+        };
+    };
+    create_3: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DtoTestimonyMovement"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    registerEntry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                idTestimony: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimonyMovement"];
+                };
+            };
+            /** @description The testimony is not verified or already has an open movement */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimonyMovement"];
+                };
+            };
+            /** @description Testimony not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimonyMovement"];
+                };
+            };
+        };
+    };
+    reenter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                idTestimony: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["DtoTestimonyMovement"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimonyMovement"];
+                };
+            };
+            /** @description The testimony was not withdrawn earlier, or the observed re-entry has no notes */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimonyMovement"];
+                };
+            };
+            /** @description Testimony not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimonyMovement"];
+                };
+            };
+        };
+    };
+    registerInscription: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                idTestimony: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimonyMovement"];
+                };
+            };
+            /** @description The prior registration entry is missing */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimonyMovement"];
+                };
+            };
+            /** @description Testimony not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimonyMovement"];
+                };
+            };
+        };
+    };
+    withdraw: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                idTestimony: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DtoTestimonyMovement"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimonyMovement"];
+                };
+            };
+            /** @description The testimony is not registered */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimonyMovement"];
+                };
+            };
+            /** @description Testimony not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoTestimonyMovement"];
                 };
             };
         };
@@ -10985,16 +10968,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ProcedureResponse"];
+                    "*/*": components["schemas"]["DtoTestimonyMovement"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ProcedureResponse"];
+                    "*/*": components["schemas"]["DtoTestimonyMovement"];
                 };
             };
         };
@@ -11010,7 +10993,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ProcedureRequest"];
+                "application/json": components["schemas"]["DtoTestimonyMovement"];
             };
         };
         responses: {
@@ -11023,7 +11006,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Cuerpo vacío o incompleto: idProcedureType es obligatorio */
+            /** @description Invalid request */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -11032,8 +11015,17 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Trámite o referencia no encontrados */
+            /** @description Not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description version is not the stored one: another user modified the record */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -11054,19 +11046,23 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": Record<string, never>;
+                };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": Record<string, never>;
+                };
             };
         };
     };
@@ -11103,7 +11099,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -11112,7 +11108,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Solicitud inválida */
+            /** @description Invalid request */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -11121,7 +11117,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -11145,7 +11141,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description OK (ver campo 'valido' para el resultado) */
+            /** @description OK (see the 'valid' field for the result) */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -11154,7 +11150,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Cuenta bloqueada temporalmente por intentos fallidos */
+            /** @description Account temporarily locked after failed attempts */
             429: {
                 headers: {
                     [name: string]: unknown;
@@ -11229,7 +11225,7 @@ export interface operations {
                     "*/*": components["schemas"]["UserResponse"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11262,7 +11258,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11282,14 +11278,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11331,7 +11327,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -11340,7 +11336,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Solicitud inválida: name es obligatorio */
+            /** @description Invalid request: name is required */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -11349,7 +11345,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -11380,7 +11376,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoWorkflowDefinition"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11415,7 +11411,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Solicitud inválida: name es obligatorio */
+            /** @description Invalid request: name is required */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -11424,7 +11420,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11433,7 +11429,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description version no es la almacenada: otro usuario modificó el registro */
+            /** @description version is not the stored one: another user modified the record */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -11455,7 +11451,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -11464,7 +11460,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11512,7 +11508,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -11521,7 +11517,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Solicitud inválida: workflowDefinitionId, statusManagementId y type (INITIAL, INTERMEDIATE o FINAL) son obligatorios */
+            /** @description Invalid request: workflowDefinitionId, statusManagementId and type (INITIAL, INTERMEDIATE or FINAL) are required */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -11530,7 +11526,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -11583,7 +11579,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoWorkflowNode"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11618,7 +11614,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Solicitud inválida: indicar al menos type, positionX o positionY; type debe ser INITIAL, INTERMEDIATE o FINAL */
+            /** @description Invalid request: provide at least type, positionX, or positionY; type must be INITIAL, INTERMEDIATE, or FINAL */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -11627,7 +11623,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11649,7 +11645,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -11658,7 +11654,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11682,7 +11678,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Creado */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -11691,7 +11687,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Solicitud inválida: workflowDefinitionId, originNodeId y destinationNodeId son obligatorios */
+            /** @description Invalid request: workflowDefinitionId, originNodeId and destinationNodeId are required */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -11700,7 +11696,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Conflicto */
+            /** @description Conflict */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -11753,7 +11749,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoWorkflowTransition"];
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11788,7 +11784,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Solicitud inválida: originNodeId y destinationNodeId son obligatorios */
+            /** @description Invalid request: originNodeId and destinationNodeId are required */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -11797,7 +11793,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -11819,7 +11815,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -11828,7 +11824,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description No encontrado */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;

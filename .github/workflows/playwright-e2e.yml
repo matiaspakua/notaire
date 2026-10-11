@@ -238,7 +238,7 @@ jobs:
       # provided up front rather than captured by the auth/login request.
       - name: Run Bruno API tests
         run: |
-          TOKEN=$(curl -sf -X POST http://localhost:8080/api/v1/usuarios/login \
+          TOKEN=$(curl -sf -X POST http://localhost:8080/api/v1/users/login \
             -H 'Content-Type: application/json' \
             -d '{"name":"admin","password":"admin"}' | jq -r '.token')
           if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then

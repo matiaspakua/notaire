@@ -47,13 +47,13 @@ public class ItemService {
     }
 
     /**
-     * CU71 - Consultar descuentos y recargos: devuelve los ítems de tipo DESCUENTO o RECARGO
-     * de un presupuesto, junto con su motivo.
+     * CU71 - Query discounts and surcharges: returns the items of type DESCUENTO or RECARGO
+     * of a budget, together with its reason.
      */
     @Transactional(readOnly = true)
     public List<Item> findDiscountsAndSurchargesByBudget(Integer idBudget) {
         if (!budgetRepository.existsById(idBudget)) {
-            throw new ResourceNotFoundException("Presupuesto no encontrado con ID: " + idBudget);
+            throw new ResourceNotFoundException("Budget not found with ID: " + idBudget);
         }
         return itemRepository.findByBudgetId(idBudget).stream()
                 .filter(item -> item.getType() == TypeItem.DESCUENTO || item.getType() == TypeItem.RECARGO)
@@ -69,7 +69,7 @@ public class ItemService {
     @Transactional
     public Item update(Integer id, Item item) {
         if (!itemRepository.findById(id).isPresent()) {
-            throw new ResourceNotFoundException("Item no encontrado con ID: " + id);
+            throw new ResourceNotFoundException("Item not found with ID: " + id);
         }
         validateReason(item);
         item.setIdItem(id);
@@ -79,15 +79,15 @@ public class ItemService {
     @Transactional
     public void delete(Integer id) {
         if (itemRepository.findById(id).isEmpty()) {
-            throw new ResourceNotFoundException("Item no encontrado con ID: " + id);
+            throw new ResourceNotFoundException("Item not found with ID: " + id);
         }
         itemRepository.deleteById(id);
-        log.info("Item eliminado exitosamente: ID={}", id);
+        log.info("Item deleted successfully: ID={}", id);
     }
 
     /**
-     * CU45 - Exigir motivo estructurado en descuentos y recargos: rechaza items de tipo
-     * DESCUENTO o RECARGO sin un motivo no vacío.
+     * CU45 - A structured reason is required for discounts and surcharges: rejects items of type
+     * DESCUENTO or RECARGO when the reason is empty.
      */
     private void validateReason(Item item) {
         TypeItem type = item.getType();
@@ -96,7 +96,7 @@ public class ItemService {
 
         if (requiresReason && reasonEmpty) {
             throw new BusinessValidationException(
-                    "El motivo es obligatorio para ítems de tipo " + type);
+                    "The reason is required for items of type " + type);
         }
     }
 }

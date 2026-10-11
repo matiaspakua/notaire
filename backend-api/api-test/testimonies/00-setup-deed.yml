@@ -3,13 +3,13 @@ info:
   type: http
   seq: 1
   description: |-
-      ## Setup — POST /api/v1/escrituras
+      ## Setup — POST /api/v1/deeds
       A testimony is a certified copy of a deed, so the bare create requires
       one (#655). Deleted by `10-teardown-deed.yml`.
       Traceability: CU07 / CU08 (#655)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/escrituras"
+  url: "{{base_url}}/api/v1/deeds"
   body:
     type: json
     data: |-

@@ -32,7 +32,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/items")
-@Tag(name = "Items", description = "API para gestionar ítems de presupuesto")
+@Tag(name = "Items", description = "API for managing budget items")
 public class ItemController {
 
     private static final Logger log = LoggerFactory.getLogger(ItemController.class);
@@ -113,7 +113,7 @@ public class ItemController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todos los ítems")
+    @Operation(summary = "Get all items")
     @Transactional(readOnly = true)
     public ResponseEntity<List<ItemResponse>> getAll() {
         return ResponseEntity.ok(itemService.findAll().stream().map(ItemResponse::from).toList());
@@ -121,10 +121,10 @@ public class ItemController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener ítem por ID")
+    @Operation(summary = "Get item by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<ItemResponse> getById(@PathVariable Integer id) {
         return itemService.findById(id)
@@ -133,8 +133,8 @@ public class ItemController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/presupuesto/{idBudget}")
-    @Operation(summary = "Obtener ítems por presupuesto")
+    @GetMapping("/budget/{idBudget}")
+    @Operation(summary = "Get items by budget")
     @Transactional(readOnly = true)
     public ResponseEntity<List<ItemResponse>> getByBudget(@PathVariable Integer idBudget) {
         return ResponseEntity.ok(itemService.findByBudget(idBudget).stream().map(ItemResponse::from).toList());
@@ -142,12 +142,12 @@ public class ItemController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
-    @GetMapping("/presupuesto/{idBudget}/descuentos-recargos")
-    @Operation(summary = "CU45/CU71 - Consultar descuentos y recargos de un presupuesto")
+    @GetMapping("/budget/{idBudget}/discounts-surcharges")
+    @Operation(summary = "CU45/CU71 - Query discounts and surcharges of a budget")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<ItemResponse>> getDescuentosYRecargos(@PathVariable Integer idBudget) {
+    public ResponseEntity<List<ItemResponse>> getDiscountsAndSurcharges(@PathVariable Integer idBudget) {
         try {
             return ResponseEntity.ok(itemService.findDiscountsAndSurchargesByBudget(idBudget)
                     .stream().map(ItemResponse::from).toList());
@@ -157,12 +157,12 @@ public class ItemController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "201", description = "Created"),
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
-    @Operation(summary = "Crear nuevo ítem")
+    @Operation(summary = "Create item")
     public ResponseEntity<Object> create(@Valid @RequestBody ItemRequest request) {
         try {
             Item entity = new Item();
@@ -170,7 +170,7 @@ public class ItemController {
             entity = itemService.create(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(ItemResponse.from(entity));
         } catch (BusinessValidationException e) {
-            log.warn("Error de validación al crear item: {}", e.getMessage());
+            log.warn("Validation error while creating the item: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             log.error("Failed to create item", e);
@@ -180,22 +180,22 @@ public class ItemController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar ítem")
+    @Operation(summary = "Update item")
     public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody ItemRequest request) {
         try {
             Item entity = itemService.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Item no encontrado: " + id));
+                    .orElseThrow(() -> new ResourceNotFoundException("Item not found: " + id));
             applyRequest(entity, request);
             itemService.update(id, entity);
             return ResponseEntity.ok().build();
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (BusinessValidationException e) {
-            log.warn("Error de validación al actualizar item id {}: {}", id, e.getMessage());
+            log.warn("Validation error while updating item id {}: {}", id, e.getMessage());
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             log.error("Failed to update item id {}", id, e);
@@ -204,11 +204,11 @@ public class ItemController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "204", description = "Deleted"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar ítem")
+    @Operation(summary = "Delete item")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         try {
             itemService.delete(id);

@@ -8,7 +8,7 @@ Lists backed by growing tables are paged server-side with a shared footer.
 
 ### Requirement: The managements list is read one page at a time
 
-`/dashboard/gestiones` SHALL request one page of `GET /api/v1/gestiones` (default 20, newest first), show the total, reach the last page and keep page/size in the URL; the dashboard SHALL count managements with `totalElements` and SHALL NOT load the list.
+`/dashboard/managements` SHALL request one page of `GET /api/v1/managements` (default 20, newest first), show the total, reach the last page and keep page/size in the URL; the dashboard SHALL count managements with `totalElements` and SHALL NOT load the list.
 
 #### Scenario: Page and total
 

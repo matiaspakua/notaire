@@ -54,7 +54,7 @@ class WorkflowDefinitionControllerTest {
         WorkflowDefinition wf = new WorkflowDefinition();
         wf.setId(1);
         wf.setName("Workflow Compraventa");
-        wf.setDescription("Workflow estándar");
+        wf.setDescription("Standard workflow");
         wf.setActive(false);
         return wf;
     }
@@ -62,7 +62,7 @@ class WorkflowDefinitionControllerTest {
     private DtoWorkflowDefinition buildDto() {
         DtoWorkflowDefinition dto = new DtoWorkflowDefinition();
         dto.setName("Workflow Compraventa");
-        dto.setDescription("Workflow estándar");
+        dto.setDescription("Standard workflow");
         dto.setActive(false);
         dto.setVersion(0);
         return dto;

@@ -3,14 +3,14 @@ info:
   type: http
   seq: 10
   description: |-
-      ## POST /api/v1/movimiento-testimonio with {} — 400 Bad Request
+      ## POST /api/v1/testimony-movements with {} — 400 Bad Request
       The body violates the NOT NULL entry date constraint. A constraint error is the
       client's fault and answers 400 with the standard ErrorResponse, like
       GlobalExceptionHandler (#579 slice 4), instead of 409. Nothing is stored.
       Traceability: CU08 (#579)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/movimiento-testimonio"
+  url: "{{base_url}}/api/v1/testimony-movements"
   body:
     type: json
     data: |-

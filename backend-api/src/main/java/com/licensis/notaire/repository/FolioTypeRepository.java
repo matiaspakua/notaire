@@ -16,6 +16,6 @@ public interface FolioTypeRepository extends JpaRepository<FolioType, Integer> {
 
     boolean existsByName(String name);
 
-    @Query("SELECT t FROM FolioType t WHERE t.name LIKE %:nombre%")
-    List<FolioType> findByNameContaining(@Param("nombre") String name);
+    @Query("SELECT t FROM FolioType t WHERE t.name LIKE %:name%")
+    List<FolioType> findByNameContaining(@Param("name") String name);
 }

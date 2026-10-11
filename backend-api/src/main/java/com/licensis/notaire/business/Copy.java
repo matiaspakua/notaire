@@ -41,11 +41,11 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @NamedQueries(
         {
             @NamedQuery(name = "Copy.findAll", query = "SELECT c FROM Copy c"),
-            @NamedQuery(name = "Copy.findByIdCopy", query = "SELECT c FROM Copy c WHERE c.idCopy = :idCopia"),
+            @NamedQuery(name = "Copy.findByIdCopy", query = "SELECT c FROM Copy c WHERE c.idCopy = :idCopy"),
             @NamedQuery(name = "Copy.findByNumber", query = "SELECT c FROM Copy c WHERE c.number = :number"),
-            @NamedQuery(name = "Copy.findByPrintingDate", query = "SELECT c FROM Copy c WHERE c.datePrinting = :fechaImpresion"),
-            @NamedQuery(name = "Copy.findByTestimony", query = "SELECT c FROM Copy c WHERE c.fkIdTestimony.idTestimony = :idTestimonio"),
-            @NamedQuery(name = "Copy.findByWithdrawalDate", query = "SELECT c FROM Copy c WHERE c.dateWithdrawal = :fechaRetiro")
+            @NamedQuery(name = "Copy.findByPrintingDate", query = "SELECT c FROM Copy c WHERE c.datePrinting = :printingDate"),
+            @NamedQuery(name = "Copy.findByTestimony", query = "SELECT c FROM Copy c WHERE c.fkIdTestimony.idTestimony = :idTestimony"),
+            @NamedQuery(name = "Copy.findByWithdrawalDate", query = "SELECT c FROM Copy c WHERE c.dateWithdrawal = :withdrawalDate")
         })
 public class Copy implements Serializable, Persistable<Integer>
 {
@@ -81,7 +81,7 @@ public class Copy implements Serializable, Persistable<Integer>
     @JoinColumn(name = "fk_id_person", referencedColumnName = "id")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Person fkIdPerson;
-    @JoinColumn(name = "fk_id_testimonio", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_testimony", referencedColumnName = "id")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"copiaList", "movimientoTestimonioList"})
     private Testimony fkIdTestimony;
@@ -113,7 +113,7 @@ public class Copy implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idCopy == null || idCopy.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idCopy == null || idCopy.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 
@@ -226,7 +226,7 @@ public class Copy implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "Copia[ idCopia=" + idCopy + " ]";
+        return "Copy[ idCopy=" + idCopy + " ]";
     }
 
     public int getVersion()

@@ -3,11 +3,11 @@ info:
   type: http
   seq: 2
   description: |-
-      ## List procedures — GET /api/v1/tramites (paginated)
+      ## List procedures — GET /api/v1/procedures (paginated)
       Traceability: CU02 (RF #3, #10)
 http:
   method: GET
-  url: "{{base_url}}/api/v1/tramites?size=1000"
+  url: "{{base_url}}/api/v1/procedures?size=1000"
   headers:
     - name: Content-Type
       value: application/json

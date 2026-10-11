@@ -6,170 +6,186 @@
 **Swagger UI:** `http://localhost:8080/swagger-ui.html`  
 **OpenAPI spec:** `http://localhost:8080/v3/api-docs`
 
+Paths below are relative to the base URL. The authoritative contract is `backend-api/openapi/openapi.yaml`.
+
 ---
 
 ## Authentication
 
-### POST /usuarios/login
+### POST /users/login
 
-Authenticate a user.
+Authenticate a user. The body is a `DtoUser`. A successful login also sets the HttpOnly session cookie.
 
 **Request body:**
 ```json
 {
-  "nombre": "admin",
-  "contrasenia": "admin"
+  "name": "admin",
+  "password": "admin"
 }
 ```
 
 **Response 200:**
 ```json
 {
-  "idUsuario": 1,
-  "nombre": "admin",
-  "tipo": "ADMIN",
-  "valido": true,
-  "idPersona": null
+  "valid": true,
+  "idUser": 1,
+  "name": "admin",
+  "status": true,
+  "type": "Escribano",
+  "person": {
+    "idPerson": 1,
+    "firstName": "Ana",
+    "lastName": "Perez"
+  }
 }
 ```
 
+The response also includes `token` and `version`. `type` keeps the stored administrator value `Escribano` (also `ADMIN` or `ADMINISTRADOR`). A failed login returns `200` with `valid: false`. Too many failures return `429`.
+
 ---
 
-## Personas (Clientes)
+## People (clients)
 
 | Method | Path | Description | Use Cases |
 |--------|------|-------------|-----------|
-| GET | `/personas` | List all persons | CU17 |
-| GET | `/personas/{id}` | Get person by ID | CU17 |
-| GET | `/personas/buscar` | Search persons (`?nombre=&idTipoIdentificacion=`) | CU41 |
-| POST | `/personas` | Create person | CU18 |
-| PUT | `/personas/{id}` | Update person | CU21 |
-| DELETE | `/personas/{id}` | Delete person | — |
+| GET | `/people` | List people | CU17 |
+| GET | `/people/{id}` | Get a person by ID | CU17 |
+| GET | `/people/search` | Search (`firstName`, `lastName`, `identificationNumber`, `idIdentificationType`, `isClient`) | CU61 |
+| POST | `/people` | Create a person | CU18 |
+| PUT | `/people/{id}` | Update a person | CU21 |
+| DELETE | `/people/{id}` | Delete a person | — |
 
-**Persona object:**
+**Person object:**
 ```json
 {
-  "idPersona": 1,
-  "nombre": "Juan",
-  "apellido": "García",
-  "dni": "20123456",
-  "cuil": "20201234567",
+  "id": 1,
+  "firstName": "Juan",
+  "lastName": "Garcia",
+  "identificationNumber": "20123456",
+  "taxId": "20201234567",
   "email": "juan@example.com",
-  "telefono": "1155667788",
-  "domicilio": "Av. Corrientes 1234",
-  "esCliente": true
+  "phone": "1155667788",
+  "address": "Av. Corrientes 1234",
+  "isClient": true
 }
 ```
 
 ---
 
-## Gestiones
+## Managements
 
 | Method | Path | Description | Use Cases |
 |--------|------|-------------|-----------|
-| GET | `/gestiones` | List all gestiones | CU02 |
-| GET | `/gestiones/{id}` | Get gestión by ID | CU13, CU14 |
-| GET | `/gestiones/cliente/{idCliente}` | Get gestiones by client | CU19 |
-| POST | `/gestiones` | Create gestión | CU02 |
-| PUT | `/gestiones/{id}` | Update gestión | CU16 |
-| DELETE | `/gestiones/{id}` | Delete gestión | — |
+| GET | `/managements` | List managements | CU02 |
+| GET | `/managements/{id}` | Get a management by ID | CU13, CU14 |
+| GET | `/managements/client/{idPerson}` | Managements for a client | CU19 |
+| POST | `/managements` | Create a management | CU02 |
+| PUT | `/managements/{id}` | Update a management | CU16 |
+| DELETE | `/managements/{id}` | Delete a management | — |
+
+Related reads include `/managements/{id}/current-status`, `/managements/{id}/history`, `/managements/{id}/case-summary`, and `/managements/{id}/transition`.
 
 ---
 
-## Presupuestos
+## Budgets
 
 | Method | Path | Description | Use Cases |
 |--------|------|-------------|-----------|
-| GET | `/presupuestos` | List all presupuestos | CU01 |
-| GET | `/presupuestos/{id}` | Get presupuesto by ID | CU01 |
-| GET | `/presupuestos/persona/{idPersona}` | Presupuestos by person | CU45 |
-| POST | `/presupuestos` | Create presupuesto | CU01 |
-| PUT | `/presupuestos/{id}` | Update presupuesto | CU60 |
-| DELETE | `/presupuestos/{id}` | Delete presupuesto | — |
+| GET | `/budgets` | List budgets | CU01 |
+| GET | `/budgets/{id}` | Get a budget by ID | CU01 |
+| GET | `/budgets/person/{idPerson}` | Budgets for a person | CU45 |
+| POST | `/budgets` | Create a budget | CU01 |
+| PUT | `/budgets/{id}` | Update a budget | CU60 |
+| DELETE | `/budgets/{id}` | Delete a budget | — |
 
-### Items (Presupuesto lines)
+Status values stay the stored codes `BORRADOR`, `PENDIENTE`, `APROBADO`, `RECHAZADO`, and `FACTURADO`.
+
+### Items (budget lines)
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/items` | List all items |
-| GET | `/items/{id}` | Get item by ID |
-| GET | `/items/presupuesto/{idPresupuesto}` | Items by presupuesto |
-| POST | `/items` | Create item |
-| PUT | `/items/{id}` | Update item |
-| DELETE | `/items/{id}` | Delete item |
+| GET | `/items` | List items |
+| GET | `/items/{id}` | Get an item by ID |
+| GET | `/items/budget/{idBudget}` | Items for a budget |
+| POST | `/items` | Create an item |
+| PUT | `/items/{id}` | Update an item |
+| DELETE | `/items/{id}` | Delete an item |
+
+Item types stay `NORMAL`, `DESCUENTO`, and `RECARGO`.
 
 ---
 
-## Pagos
+## Payments
 
 | Method | Path | Description | Use Cases |
 |--------|------|-------------|-----------|
-| GET | `/pagos` | List all pagos | CU15 |
-| GET | `/pagos/{id}` | Get pago by ID | CU15 |
-| GET | `/pagos/presupuesto/{idPresupuesto}` | Pagos by presupuesto | CU47 |
-| POST | `/pagos` | Create pago | CU15 |
-| PUT | `/pagos/{id}` | Update pago | — |
-| DELETE | `/pagos/{id}` | Delete pago | — |
+| GET | `/payments` | List payments | CU15 |
+| GET | `/payments/{id}` | Get a payment by ID | CU15 |
+| GET | `/payments/budget/{idBudget}` | Payments for a budget | CU47 |
+| POST | `/payments` | Create a payment | CU15 |
+| PUT | `/payments/{id}` | Update a payment | — |
+| DELETE | `/payments/{id}` | Delete a payment | — |
 
-**Pago object:**
+**Payment request:**
 ```json
 {
-  "idPago": 1,
-  "monto": 5000.00,
-  "fecha": "2025-04-15",
-  "metodoPago": "Efectivo",
-  "presupuesto": { "idPresupuesto": 3 }
+  "idBudget": 3,
+  "amount": 5000.00,
+  "date": "2025-04-15T00:00:00Z",
+  "paymentMethod": "Cash"
 }
 ```
 
 ---
 
-## Escrituras
+## Deeds
 
 | Method | Path | Description | Use Cases |
 |--------|------|-------------|-----------|
-| GET | `/escrituras` | List all escrituras | CU05 |
-| GET | `/escrituras/{id}` | Get escritura by ID | CU05 |
-| POST | `/escrituras` | Create escritura | CU05 |
-| PUT | `/escrituras/{id}` | Update escritura | CU06 |
-| DELETE | `/escrituras/{id}` | Delete escritura | — |
+| GET | `/deeds` | List deeds | CU05 |
+| GET | `/deeds/{id}` | Get a deed by ID | CU05 |
+| POST | `/deeds` | Create a deed | CU05 |
+| PUT | `/deeds/{id}` | Update a deed | CU06 |
+| DELETE | `/deeds/{id}` | Delete a deed | — |
 
-### Testimonio
+Deed statuses stay the stored labels `Sin Firmar`, `Firmada`, `Anulada`, `No Paso`, and `Inscripta`.
+
+### Testimony
 
 | Method | Path | Description | Use Cases |
 |--------|------|-------------|-----------|
-| GET | `/testimonio` | List all testimonios | CU07 |
-| GET | `/testimonio/{id}` | Get testimonio | CU07 |
-| POST | `/testimonio` | Create testimonio | CU07 |
-| GET | `/movimiento-testimonio` | List movimientos | CU10, CU11, CU12 |
+| GET | `/testimonies` | List testimonies | CU07 |
+| GET | `/testimonies/{id}` | Get a testimony | CU07 |
+| POST | `/testimonies` | Create a testimony | CU07 |
+| GET | `/testimony-movements` | List testimony movements | CU10, CU11, CU12 |
 
-### Inmueble / Copia
+### Property / Copy
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/inmueble` | List inmuebles |
-| GET | `/copia` | List copias |
+| GET | `/properties` | List properties |
+| GET | `/copies` | List copies |
 
 ---
 
-## Trámites
+## Procedures
 
 | Method | Path | Description | Use Cases |
 |--------|------|-------------|-----------|
-| GET | `/tramites` | List all tramites | CU03 |
-| GET | `/tramites/{id}` | Get tramite by ID | — |
-| POST | `/tramites` | Create tramite | CU03 |
-| PUT | `/tramites/{id}` | Update tramite | — |
-| DELETE | `/tramites/{id}` | Delete tramite | — |
+| GET | `/procedures` | List procedures | CU03 |
+| GET | `/procedures/{id}` | Get a procedure by ID | — |
+| POST | `/procedures` | Create a procedure | CU03 |
+| PUT | `/procedures/{id}` | Update a procedure | — |
+| DELETE | `/procedures/{id}` | Delete a procedure | — |
 
 ---
 
-## Historial
+## Management history
 
 | Method | Path | Description | Use Cases |
 |--------|------|-------------|-----------|
-| GET | `/historial` | List all historial | CU13 |
-| GET | `/historial/gestion/{idGestion}` | Historial by gestión | CU13 |
+| GET | `/history` | List history records | CU13 |
+| GET | `/history/management/{idManagement}` | History for a management | CU13 |
 
 ---
 
@@ -177,137 +193,143 @@ Authenticate a user.
 
 | Method | Path | Description | Use Cases |
 |--------|------|-------------|-----------|
-| GET | `/folio` | List all folios | CU28 |
-| POST | `/folio` | Create folio | CU28 |
-| PUT | `/folio/{id}` | Update folio | CU40 |
-| DELETE | `/folio/{id}` | Delete folio | CU68 |
+| GET | `/folios` | List folios | CU28 |
+| POST | `/folios` | Create a folio | CU28 |
+| PUT | `/folios/{id}` | Update a folio | CU40 |
+| DELETE | `/folios/{id}` | Delete a folio | CU68 |
 
-### Tipo de Folio
+Folio statuses stay the stored labels `Nuevo`, `Utilizado`, and `Errose`.
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/tipo-folio` | List tipos de folio |
-
----
-
-## Usuarios
-
-| Method | Path | Description | Use Cases |
-|--------|------|-------------|-----------|
-| GET | `/usuarios` | List all usuarios | CU23 |
-| GET | `/usuarios/{id}` | Get usuario by ID | — |
-| POST | `/usuarios` | Create usuario | CU20 |
-| PUT | `/usuarios/{id}` | Update usuario | CU21 |
-| DELETE | `/usuarios/{id}` | Delete usuario | — |
-
----
-
-## Administration Catalogs
-
-### Conceptos
-
-| Method | Path | Description | Use Cases |
-|--------|------|-------------|-----------|
-| GET | `/conceptos` | List all conceptos | CU29 |
-| GET | `/conceptos/{id}` | Get concepto | CU29 |
-| POST | `/conceptos` | Create concepto | CU29 |
-| PUT | `/conceptos/{id}` | Update concepto | CU66 |
-| DELETE | `/conceptos/{id}` | Delete concepto | — |
-
-### Tipos de Trámite
-
-| Method | Path | Description | Use Cases |
-|--------|------|-------------|-----------|
-| GET | `/tipo-tramite` | List all tipos | CU26 |
-| GET | `/tipo-tramite/{id}` | Get tipo | — |
-| POST | `/tipo-tramite` | Create tipo | CU26 |
-| PUT | `/tipo-tramite/{id}` | Update tipo | CU57, CU64 |
-| DELETE | `/tipo-tramite/{id}` | Delete tipo | — |
-
-### Tipos de Documento
-
-| Method | Path | Description | Use Cases |
-|--------|------|-------------|-----------|
-| GET | `/tipo-de-documento` | List all tipos | CU27 |
-| POST | `/tipo-de-documento` | Create tipo | CU27 |
-| PUT | `/tipo-de-documento/{id}` | Update tipo | CU65 |
-| DELETE | `/tipo-de-documento/{id}` | Delete tipo | — |
-
-### Documentos Presentados
+### Folio type
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/documento-presentado` | List all |
-| POST | `/documento-presentado` | Create |
-| PUT | `/documento-presentado/{id}` | Update |
-| DELETE | `/documento-presentado/{id}` | Delete |
-
-### Estados de Gestión
-
-| Method | Path | Description | Use Cases |
-|--------|------|-------------|-----------|
-| GET | `/estado-gestion` | List all estados | CU67 |
-| POST | `/estado-gestion` | Create estado | CU67 |
-| PUT | `/estado-gestion/{id}` | Update estado | CU67 |
-| DELETE | `/estado-gestion/{id}` | Delete estado | CU67 |
-
-### Plantillas de Presupuesto (Composite PK)
-
-| Method | Path | Description | Use Cases |
-|--------|------|-------------|-----------|
-| GET | `/plantilla-presupuestos` | List all plantillas | CU39 |
-| GET | `/plantilla-presupuestos/tipo-tramite/{id}` | By tipo de trámite | CU49 |
-| POST | `/plantilla-presupuestos` | Create plantilla | CU39 |
-| PUT | `/plantilla-presupuestos/tipo-tramite/{tId}/concepto/{cId}` | Update | CU55 |
-| DELETE | `/plantilla-presupuestos/tipo-tramite/{tId}/concepto/{cId}` | Delete | — |
+| GET | `/folio-types` | List folio types |
 
 ---
 
-## Auditoría
+## Users
+
+| Method | Path | Description | Use Cases |
+|--------|------|-------------|-----------|
+| GET | `/users` | List users | CU23 |
+| GET | `/users/{id}` | Get a user by ID | — |
+| POST | `/users` | Create a user | CU20 |
+| PUT | `/users/{id}` | Update a user | CU21 |
+| DELETE | `/users/{id}` | Delete a user | — |
+
+---
+
+## Administration catalogs
+
+### Concepts
+
+| Method | Path | Description | Use Cases |
+|--------|------|-------------|-----------|
+| GET | `/concepts` | List concepts | CU29 |
+| GET | `/concepts/{id}` | Get a concept | CU29 |
+| POST | `/concepts` | Create a concept | CU29 |
+| PUT | `/concepts/{id}` | Update a concept | CU66 |
+| DELETE | `/concepts/{id}` | Delete a concept | — |
+
+### Procedure types
+
+| Method | Path | Description | Use Cases |
+|--------|------|-------------|-----------|
+| GET | `/procedure-types` | List procedure types | CU26 |
+| GET | `/procedure-types/{id}` | Get a procedure type | — |
+| POST | `/procedure-types` | Create a procedure type | CU26 |
+| PUT | `/procedure-types/{id}` | Update a procedure type | CU57, CU64 |
+| DELETE | `/procedure-types/{id}` | Delete a procedure type | — |
+
+### Document types
+
+| Method | Path | Description | Use Cases |
+|--------|------|-------------|-----------|
+| GET | `/document-types` | List document types | CU27 |
+| POST | `/document-types` | Create a document type | CU27 |
+| PUT | `/document-types/{id}` | Update a document type | CU65 |
+| DELETE | `/document-types/{id}` | Delete a document type | — |
+
+### Submitted documents
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/registro-auditoria` | List all audit logs (read-only) |
-| GET | `/registro-auditoria/usuario/{idUsuario}` | Audit logs by user |
+| GET | `/submitted-documents` | List submitted documents |
+| POST | `/submitted-documents` | Create a submitted document |
+| PUT | `/submitted-documents/{id}` | Update a submitted document |
+| DELETE | `/submitted-documents/{id}` | Delete a submitted document |
 
----
-
-## Reportes (PDF generation)
-
-All endpoints return `application/pdf` (errors: `ErrorResponse` JSON) and are consumed via `downloadPdf()` in `frontend/src/hooks/useReportes.ts` (not the `apiGet` JSON wrapper), except `documentos-por-vencer`, which is API-only (see `contracts/api-reachability-allowlist.yaml`). Since #567 the PDFs are generated in-house from the current schema.
+### Management statuses
 
 | Method | Path | Description | Use Cases |
 |--------|------|-------------|-----------|
-| GET | `/reportes/presupuesto/{idPresupuesto}` | Download presupuesto PDF (items, total and pending balance) | CU01, CU39 |
-| GET | `/reportes/presupuesto-inmuebles/{idPresupuesto}` | Download presupuesto PDF with the properties of its trámites | CU01 |
-| GET | `/reportes/lista-documentos-tramite` | Documents required by a trámite type, from its template (`?nombreTipoTramite=`) | CU03 |
-| GET | `/reportes/historial-gestion/{idGestion}` | Gestión data and state history report | CU13 |
-| GET | `/reportes/documentos-por-vencer/{idDocumentoPresentado}` | Expiry, payment and gestión of one submitted document | CU42 |
-| GET | `/reportes/consultar-deuda-documentos` | Document debt of a gestión number (`?numberManagement=`) | CU09 |
-| GET | `/reportes/libro-indice` | Libro Índice report (`?anio=`) | CU24 |
-| GET | `/reportes/declaracion-jurada-mensual` | Monthly declaración jurada (`?anio=&mes=`) | CU25 |
-| GET | `/reportes/declaracion-jurada-rentas` | Rentas declaración jurada (`?anio=&mes=`) | CU50 |
+| GET | `/management-statuses` | List management statuses | CU67 |
+| POST | `/management-statuses` | Create a management status | CU67 |
+| PUT | `/management-statuses/{id}` | Update a management status | CU67 |
+| DELETE | `/management-statuses/{id}` | Delete a management status | CU67 |
 
----
-
-## Suplencias
+### Budget templates (composite key)
 
 | Method | Path | Description | Use Cases |
 |--------|------|-------------|-----------|
-| GET | `/suplencia` | List suplencias | CU22 |
-| POST | `/suplencia` | Create suplencia | CU22 |
-| PUT | `/suplencia/{id}` | Update suplencia | — |
-| DELETE | `/suplencia/{id}` | Delete suplencia | — |
+| GET | `/budget-templates` | List budget templates | CU39 |
+| GET | `/budget-templates/procedure-types/{idProcedureType}` | Templates for a procedure type | CU49 |
+| POST | `/budget-templates` | Create a budget template | CU39 |
+| PUT | `/budget-templates/procedure-types/{idProcedureType}/concept/{idConcept}` | Update a template | CU55 |
+| DELETE | `/budget-templates/procedure-types/{idProcedureType}/concept/{idConcept}` | Delete a template | — |
 
 ---
 
-## Error Responses
+## Audit
 
-All error responses return a structured JSON body:
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/audit-log` | List audit records (read only) |
+| GET | `/audit-log/user/{idUser}` | Audit records for a user |
+
+---
+
+## Reports (PDF)
+
+These endpoints return `application/pdf` (errors are `ErrorResponse` JSON). The frontend downloads them with `downloadPdf()` in `frontend/src/hooks/useReports.ts`. Since #567 the PDFs are generated in-house. Download filenames stay the historical Spanish names.
+
+| Method | Path | Description | Use Cases |
+|--------|------|-------------|-----------|
+| GET | `/reports/budget/{idBudget}` | Budget PDF (items, total, and pending balance) | CU01, CU39 |
+| GET | `/reports/budget-properties/{idBudget}` | Budget PDF including the properties of its procedures | CU01 |
+| GET | `/reports/procedure-document-list` | Documents required by a procedure type (`?procedureTypeName=`) | CU03 |
+| GET | `/reports/management-history/{idManagement}` | Management data and status history | CU13 |
+| GET | `/reports/documents-due/{idSubmittedDocument}` | Expiry, payment, and management of one submitted document | CU42 |
+| GET | `/reports/document-debt` | Document debt for a management number (`?numberManagement=`) | CU09 |
+| GET | `/reports/index-book` | Index book (`?year=`) | CU24 |
+| GET | `/reports/monthly-sworn-statement` | Monthly sworn statement (`?year=&month=`) | CU25 |
+| GET | `/reports/tax-sworn-statement` | Tax sworn statement (`?year=&month=`) | CU50 |
+
+---
+
+## Substitutions
+
+| Method | Path | Description | Use Cases |
+|--------|------|-------------|-----------|
+| GET | `/substitutions` | List substitutions | CU22 |
+| POST | `/substitutions` | Create a substitution | CU22 |
+| PUT | `/substitutions/{id}` | Update a substitution | — |
+| DELETE | `/substitutions/{id}` | Delete a substitution | — |
+
+---
+
+## Error responses
+
+Error bodies use `ErrorResponse`:
 
 ```json
 {
-  "error": "Descripción del error en español"
+  "status": 400,
+  "error": "Bad Request",
+  "message": "heading: is required",
+  "path": "/api/v1/budgets",
+  "timestamp": "2026-10-11T00:00:00Z"
 }
 ```
 
@@ -315,7 +337,7 @@ All error responses return a structured JSON body:
 |-------------|---------|
 | 200 OK | Success |
 | 400 Bad Request | Invalid input |
-| 404 Not Found | Entity does not exist |
+| 404 Not Found | The entity does not exist |
 | 409 Conflict | Duplicate entity or optimistic lock conflict |
 | 500 Internal Server Error | Unexpected server error |
 

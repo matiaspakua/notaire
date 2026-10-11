@@ -8,7 +8,7 @@ info:
       Traceability: CU02; CU13 (RF #110)
 http:
   method: DELETE
-  url: "{{base_url}}/api/v1/gestiones/{{mgmt_id}}"
+  url: "{{base_url}}/api/v1/managements/{{mgmt_id}}"
   headers:
     - name: Content-Type
       value: application/json
@@ -23,12 +23,12 @@ runtime:
           const managementId = bru.getVar('mgmt_id');
           const headers = { Authorization: `Bearer ${token}` };
           const listed = await axios.get(
-            `${baseUrl}/api/v1/historial/gestion/${managementId}`,
+            `${baseUrl}/api/v1/history/management/${managementId}`,
             { headers }
           );
           const rows = listed.data || [];
           for (const row of rows) {
-            await axios.delete(`${baseUrl}/api/v1/historial/${row.idHistory}`, { headers });
+            await axios.delete(`${baseUrl}/api/v1/history/${row.idHistory}`, { headers });
           }
     - type: tests
       code: |-

@@ -45,7 +45,7 @@ class WorkflowValidationServiceTest {
         WorkflowValidationService.ValidationResult result = service.validate(nodes, transitions);
 
         assertThat(result.isValid()).isFalse();
-        assertThat(result.getErrors()).contains("El workflow no tiene nodos.");
+        assertThat(result.getErrors()).contains("The workflow has no nodes.");
     }
 
     @Test
@@ -61,7 +61,7 @@ class WorkflowValidationServiceTest {
         WorkflowValidationService.ValidationResult result = service.validate(nodes, transitions);
 
         assertThat(result.isValid()).isFalse();
-        assertThat(result.getErrors()).anyMatch(e -> e.contains("nodo inicial"));
+        assertThat(result.getErrors()).anyMatch(e -> e.contains("initial node"));
     }
 
     @Test
@@ -77,7 +77,7 @@ class WorkflowValidationServiceTest {
         WorkflowValidationService.ValidationResult result = service.validate(nodes, transitions);
 
         assertThat(result.isValid()).isFalse();
-        assertThat(result.getErrors()).anyMatch(e -> e.contains("más de un nodo inicial"));
+        assertThat(result.getErrors()).anyMatch(e -> e.contains("more than one initial node"));
     }
 
     @Test
@@ -92,7 +92,7 @@ class WorkflowValidationServiceTest {
         WorkflowValidationService.ValidationResult result = service.validate(nodes, transitions);
 
         assertThat(result.isValid()).isFalse();
-        assertThat(result.getErrors()).anyMatch(e -> e.contains("nodo final"));
+        assertThat(result.getErrors()).anyMatch(e -> e.contains("final node"));
     }
 
     @Test
@@ -113,7 +113,7 @@ class WorkflowValidationServiceTest {
         WorkflowValidationService.ValidationResult result = service.validate(nodes, transitions);
 
         assertThat(result.isValid()).isFalse();
-        assertThat(result.getErrors()).anyMatch(e -> e.contains("no alcanzables"));
+        assertThat(result.getErrors()).anyMatch(e -> e.contains("unreachable"));
     }
 
     @Test
@@ -168,8 +168,8 @@ class WorkflowValidationServiceTest {
 
         assertThat(result.isValid()).isFalse();
         assertThat(result.getErrors()).hasSize(2)
-                .anyMatch(e -> e.contains("más de un nodo inicial"))
-                .anyMatch(e -> e.contains("nodo final"));
+                .anyMatch(e -> e.contains("more than one initial node"))
+                .anyMatch(e -> e.contains("final node"));
     }
 
     @Test

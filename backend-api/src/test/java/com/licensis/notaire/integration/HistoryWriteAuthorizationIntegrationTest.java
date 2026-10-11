@@ -88,7 +88,7 @@ class HistoryWriteAuthorizationIntegrationTest {
         DeedManagement management = new DeedManagement();
         management.setDateStart(new Date());
         management.setNumber(12500);
-        management.setEncabezado("history authorization");
+        management.setHeading("history authorization");
         management.setFkIdNotaryPerson(person);
         management.setFkIdManagementStatus(status);
         managementId = managementRepository.save(management).getIdManagement();
@@ -114,7 +114,7 @@ class HistoryWriteAuthorizationIntegrationTest {
     @Test
     @DisplayName("shouldForbidAnEmployeeFromRewritingHistory")
     void shouldForbidAnEmployeeFromRewritingHistory() throws Exception {
-        mockMvc.perform(put("/api/v1/historial/{id}", historyId)
+        mockMvc.perform(put("/api/v1/history/{id}", historyId)
                         .header("Authorization", "Bearer " + employeeToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body("rewritten")))
@@ -126,7 +126,7 @@ class HistoryWriteAuthorizationIntegrationTest {
     @Test
     @DisplayName("shouldForbidAnEmployeeFromDeletingHistory")
     void shouldForbidAnEmployeeFromDeletingHistory() throws Exception {
-        mockMvc.perform(delete("/api/v1/historial/{id}", historyId)
+        mockMvc.perform(delete("/api/v1/history/{id}", historyId)
                         .header("Authorization", "Bearer " + employeeToken))
                 .andExpect(status().isForbidden());
 
@@ -136,7 +136,7 @@ class HistoryWriteAuthorizationIntegrationTest {
     @Test
     @DisplayName("shouldLetAnAdministratorRewriteHistory")
     void shouldLetAnAdministratorRewriteHistory() throws Exception {
-        mockMvc.perform(put("/api/v1/historial/{id}", historyId)
+        mockMvc.perform(put("/api/v1/history/{id}", historyId)
                         .header("Authorization", "Bearer " + administratorToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body("corrected")))
@@ -148,7 +148,7 @@ class HistoryWriteAuthorizationIntegrationTest {
     @Test
     @DisplayName("shouldLetAnAdministratorDeleteHistory")
     void shouldLetAnAdministratorDeleteHistory() throws Exception {
-        mockMvc.perform(delete("/api/v1/historial/{id}", historyId)
+        mockMvc.perform(delete("/api/v1/history/{id}", historyId)
                         .header("Authorization", "Bearer " + administratorToken))
                 .andExpect(status().isNoContent());
     }
@@ -156,12 +156,12 @@ class HistoryWriteAuthorizationIntegrationTest {
     @Test
     @DisplayName("shouldLetAnEmployeeReadAndRecordHistory")
     void shouldLetAnEmployeeReadAndRecordHistory() throws Exception {
-        mockMvc.perform(get("/api/v1/historial/{id}", historyId)
+        mockMvc.perform(get("/api/v1/history/{id}", historyId)
                         .header("Authorization", "Bearer " + employeeToken))
                 .andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/historial").header("Authorization", "Bearer " + employeeToken))
+        mockMvc.perform(get("/api/v1/history").header("Authorization", "Bearer " + employeeToken))
                 .andExpect(status().isOk());
-        mockMvc.perform(post("/api/v1/historial")
+        mockMvc.perform(post("/api/v1/history")
                         .header("Authorization", "Bearer " + employeeToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body("recorded")))

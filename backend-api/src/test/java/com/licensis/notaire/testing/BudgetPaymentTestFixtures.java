@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Shared H2 IT helpers for arranging person + presupuesto fixtures used by payment
+ * Shared H2 IT helpers for arranging person + budget fixtures used by payment
  * mutation tests (Issue #916). Prefer these over hardcoding seed {@code idBudget=1}.
  */
 public final class BudgetPaymentTestFixtures {
@@ -38,10 +38,10 @@ public final class BudgetPaymentTestFixtures {
     public static Integer createBudget(MockMvc mockMvc, Integer clientId, BigDecimal propertyAmount)
             throws Exception {
         String body = """
-                {"number": %d, "date": "2026-01-01", "encabezado": "Budget Payment Fixture IT",
+                {"number": %d, "date": "2026-01-01", "heading": "Budget Payment Fixture IT",
                  "status": "PENDIENTE", "propertyAmount": %s, "person": {"personId": %d}}
                 """.formatted((int) (System.nanoTime() % 100000), propertyAmount.toPlainString(), clientId);
-        MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
+        MvcResult result = mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -55,7 +55,7 @@ public final class BudgetPaymentTestFixtures {
     }
 
     public static BigDecimal pendingBalance(MockMvc mockMvc, int budgetId) throws Exception {
-        MvcResult result = mockMvc.perform(get("/api/v1/pagos/presupuesto/" + budgetId + "/saldo"))
+        MvcResult result = mockMvc.perform(get("/api/v1/payments/budget/" + budgetId + "/balance"))
                 .andExpect(status().isOk())
                 .andReturn();
         JsonNode root = MAPPER.readTree(result.getResponse().getContentAsString());
@@ -68,7 +68,7 @@ public final class BudgetPaymentTestFixtures {
         if (root.has("saldoPendiente")) {
             return root.get("saldoPendiente").decimalValue();
         }
-        throw new IllegalStateException("Unexpected saldo payload: " + root);
+        throw new IllegalStateException("Unexpected balance payload: " + root);
     }
 
     public static void createPayment(MockMvc mockMvc, int budgetId, BigDecimal amount, String notes)
@@ -76,7 +76,7 @@ public final class BudgetPaymentTestFixtures {
         String body = """
                 {"idBudget": %d, "amount": %s, "date": "2026-01-15", "notes": "%s"}
                 """.formatted(budgetId, amount.toPlainString(), notes);
-        mockMvc.perform(post("/api/v1/pagos")
+        mockMvc.perform(post("/api/v1/payments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated());

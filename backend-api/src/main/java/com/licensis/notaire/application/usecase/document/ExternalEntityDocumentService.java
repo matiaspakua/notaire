@@ -1,9 +1,9 @@
 package com.licensis.notaire.application.usecase.document;
 
 import com.licensis.notaire.application.port.out.document.ExternalDocumentRepositoryPort;
-import com.licensis.notaire.dto.DtoDocumentEntidadExterna;
-import com.licensis.notaire.dto.DtoManagementDocumentsEntidadesExternas;
-import com.licensis.notaire.dto.DtoMovementDocumentEntidadExterna;
+import com.licensis.notaire.dto.DtoExternalEntityDocument;
+import com.licensis.notaire.dto.DtoManagementExternalEntityDocuments;
+import com.licensis.notaire.dto.DtoExternalEntityDocumentMovement;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.BusinessConstants;
@@ -21,11 +21,10 @@ import com.licensis.notaire.application.usecase.management.ManagementTransitionS
 import java.util.List;
 
 /**
- * CU10 - Registrar movimientos de documentación de entidades externas: expone
- * la documentación de una gestión que debe ser presentada por entidades
- * externas (registros, catastro) y permite registrar los datos de su
- * movimiento, disparando la transición automática de la gestión a
- * "Documentacion Completa" cuando todos esos documentos quedan entregados.
+ * CU10 — Record movements of external-entity documentation. Exposes the
+ * documents a management must present to an external entity (registry,
+ * cadastre) and records each movement. When every such document is delivered,
+ * it tries an automatic transition to the stored status "Documentacion Completa".
  */
 @Service
 public class ExternalEntityDocumentService {
@@ -42,7 +41,7 @@ public class ExternalEntityDocumentService {
     }
 
     @Transactional(readOnly = true)
-    public DtoManagementDocumentsEntidadesExternas getDocuments(Integer idManagement) {
+    public DtoManagementExternalEntityDocuments getDocuments(Integer idManagement) {
         DeedManagement management = findManagementOrThrow(idManagement);
         List<SubmittedDocument> documents = documentRepository
                 .findByManagementAndDeliveredBy(idManagement,
@@ -51,30 +50,30 @@ public class ExternalEntityDocumentService {
     }
 
     @Transactional
-    public DtoDocumentEntidadExterna registerMovement(Integer idManagement, Integer idSubmittedDocument,
-            DtoMovementDocumentEntidadExterna movement) {
+    public DtoExternalEntityDocument registerMovement(Integer idManagement, Integer idSubmittedDocument,
+            DtoExternalEntityDocumentMovement movement) {
         findManagementOrThrow(idManagement);
         SubmittedDocument document = documentRepository.findSubmittedDocumentById(idSubmittedDocument)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Documento presentado no encontrado con ID: " + idSubmittedDocument));
+                        "Submitted document not found with ID: " + idSubmittedDocument));
         validateBelongsToManagement(document, idManagement);
         validateIsExternalEntity(document);
 
         applyMovement(document, movement);
-        SubmittedDocument guardado = documentRepository.saveSubmittedDocument(document);
+        SubmittedDocument saved = documentRepository.saveSubmittedDocument(document);
 
-        return toDto(guardado);
+        return toDto(saved);
     }
 
     /**
-     * Intenta transition la gestión a "Documentacion Completa" cuando todos sus
-     * documentos de entidad externa quedaron entregados. Se invoca como un paso
-     * independiente después de {@link #registrarMovimiento}, en su propia
-     * transacción de nivel superior: una transición no definida en el workflow es
-     * un efecto colateral "best effort" que nunca debe invalidar el movimiento ya
-     * guardado, y solo una llamada fuera de la transacción de {@code
-     * registrarMovimiento} evita que Spring marque esa transacción como
-     * rollback-only cuando {@link GestionTransitionService#transition} falla.
+     * Tries to move the management to the stored status "Documentacion Completa"
+     * when every external-entity document has been delivered. Called as its own
+     * step after {@link #registerMovement}, in a separate top-level transaction:
+     * a transition the workflow does not define is a best-effort side effect and
+     * must not invalidate the movement already saved. Only a call outside the
+     * {@code registerMovement} transaction keeps Spring from marking that
+     * transaction rollback-only when {@link ManagementTransitionService#transition}
+     * fails.
      */
     public void tryCompleteDocumentation(Integer idManagement) {
         List<SubmittedDocument> documents = documentRepository
@@ -88,14 +87,14 @@ public class ExternalEntityDocumentService {
         try {
             managementTransitionService.transition(idManagement, BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA);
         } catch (BusinessValidationException | ResourceNotFoundException e) {
-            log.warn("No se pudo transition automáticamente la gestión {} a '{}': {}", idManagement,
+            log.warn("Could not automatically transition management {} to '{}': {}", idManagement,
                     BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA, e.getMessage());
         }
     }
 
     private DeedManagement findManagementOrThrow(Integer idManagement) {
         return documentRepository.findManagementById(idManagement)
-                .orElseThrow(() -> new ResourceNotFoundException("Gestión no encontrada con ID: " + idManagement));
+                .orElseThrow(() -> new ResourceNotFoundException("Management not found with ID: " + idManagement));
     }
 
     private static void validateBelongsToManagement(SubmittedDocument document, Integer idManagement) {
@@ -103,7 +102,7 @@ public class ExternalEntityDocumentService {
         DeedManagement management = procedure != null ? procedure.getFkIdManagement() : null;
         if (management == null || !idManagement.equals(management.getIdManagement())) {
             throw new BusinessValidationException(
-                    "El documento " + document.getIdSubmittedDocument() + " no pertenece a la gestión "
+                    "Document " + document.getIdSubmittedDocument() + " does not belong to management "
                             + idManagement);
         }
     }
@@ -111,12 +110,12 @@ public class ExternalEntityDocumentService {
     private static void validateIsExternalEntity(SubmittedDocument document) {
         if (!BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA.equals(document.getDeliveredBy())) {
             throw new BusinessValidationException(
-                    "El documento " + document.getIdSubmittedDocument() + " no es de entidad externa");
+                    "Document " + document.getIdSubmittedDocument() + " is not an external-entity document");
         }
     }
 
     private static void applyMovement(SubmittedDocument document,
-            DtoMovementDocumentEntidadExterna movement) {
+            DtoExternalEntityDocumentMovement movement) {
         if (movement.prepared() != null) {
             document.setPrepared(movement.prepared());
         }
@@ -131,12 +130,12 @@ public class ExternalEntityDocumentService {
         document.setDelivered(movement.delivered());
     }
 
-    private DtoManagementDocumentsEntidadesExternas toDto(DeedManagement management,
+    private DtoManagementExternalEntityDocuments toDto(DeedManagement management,
             List<SubmittedDocument> documents) {
-        return new DtoManagementDocumentsEntidadesExternas(
+        return new DtoManagementExternalEntityDocuments(
                 management.getIdManagement(),
                 management.getNumber(),
-                management.getEncabezado(),
+                management.getHeading(),
                 management.getDateStart(),
                 nameNotary(management.getFkIdNotaryPerson()),
                 resolveCadastralDesignation(management.getIdManagement()),
@@ -160,8 +159,8 @@ public class ExternalEntityDocumentService {
                 .orElse(null);
     }
 
-    private static DtoDocumentEntidadExterna toDto(SubmittedDocument document) {
-        return new DtoDocumentEntidadExterna(
+    private static DtoExternalEntityDocument toDto(SubmittedDocument document) {
+        return new DtoExternalEntityDocument(
                 document.getIdSubmittedDocument(),
                 document.getName(),
                 document.getPrepared(),

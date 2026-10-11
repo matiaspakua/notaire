@@ -12,7 +12,7 @@
 
 ## Objetivo
 
-The budget client, the management notary and the management client filter were Radix selects fed by `usePersonas()`, i.e. `GET /people?size=1000`. On the dev DB (more than 1000 people) anyone created after the 1000th could not be chosen, so creating a budget or a management for a new client failed (Playwright presupuesto-plantilla, TS-0071, TS-0090 and TS-0092 failed on it), and the dashboard showed 1000 as the people count.
+The budget client, the management notary and the management client filter were Radix selects fed by `usePeople()`, i.e. `GET /people?size=1000`. On the dev DB (more than 1000 people) anyone created after the 1000th could not be chosen, so creating a budget or a management for a new client failed (Playwright presupuesto-plantilla, TS-0071, TS-0090 and TS-0092 failed on it), and the dashboard showed 1000 as the people count.
 
 ## What Changes
 
@@ -54,12 +54,12 @@ The budget client, the management notary and the management client filter were R
 
 ### Surface area
 
-- Routes: /dashboard/presupuestos, /dashboard/gestiones, /dashboard
+- Routes: /dashboard/budgets, /dashboard/managements, /dashboard
 - API: GET /api/v1/people/search, GET /api/v1/people/{id}, GET /api/v1/people?page=0&size=20&sort=idPerson,desc (unchanged contract)
 
 ### Architecture review
 
-No architecture change. `usePersonas()` stays exported for the unit tests but no page or component calls it (a unit test enforces that).
+No architecture change. `usePeople()` stays exported for the unit tests but no page or component calls it (a unit test enforces that).
 
 ## Documentation Impact
 

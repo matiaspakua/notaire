@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Inmueble Service Integration Tests")
+@DisplayName("Property Service Integration Tests")
 class PropertyServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -54,7 +54,7 @@ class PropertyServiceIntegrationTest extends ServiceIntegrationTest {
     void shouldValidateFiscalValuationCorrectly() {
         Property property = new Property();
         property.setCadastralDesignation("Casa valuada");
-        property.setAddress("Casa con valuación");
+        property.setAddress("House with valuation");
         property.setFiscalAppraisal(new java.math.BigDecimal("150000"));
         Property saved = propertyRepository.save(property);
 
@@ -65,12 +65,12 @@ class PropertyServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle different cadastral nomenclatures")
     void shouldHandleDifferentCadastralNomenclatures() {
-        String[] nomenclaturas = {"N001-A1-B2", "N002-C3-D4", "N003-E5-F6", "N004-G7-H8", "N005-I9-J0"};
+        String[] designations = {"N001-A1-B2", "N002-C3-D4", "N003-E5-F6", "N004-G7-H8", "N005-I9-J0"};
 
-        for (String designation : nomenclaturas) {
+        for (String designation : designations) {
             Property property = new Property();
             property.setCadastralDesignation(designation);
-            property.setAddress("Propiedad " + designation);
+            property.setAddress("Property " + designation);
             propertyRepository.save(property);
         }
 
@@ -85,8 +85,8 @@ class PropertyServiceIntegrationTest extends ServiceIntegrationTest {
 
         for (int i = 0; i < locations.length; i++) {
             Property property = new Property();
-            property.setCadastralDesignation("Nomenclatura " + locations[i]);
-            property.setAddress("Calle Principal " + locations[i]);
+            property.setCadastralDesignation("Designation " + locations[i]);
+            property.setAddress("Main street " + locations[i]);
             property.setFiscalAppraisal(java.math.BigDecimal.valueOf(100000 + (i * 50000L)));
             propertyRepository.save(property);
         }
@@ -98,7 +98,7 @@ class PropertyServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle various fiscal valuations")
     void shouldHandleVariousFiscalValuations() {
-        java.math.BigDecimal[] valuaciones = {
+        java.math.BigDecimal[] appraisals = {
                 new java.math.BigDecimal("50000"),
                 new java.math.BigDecimal("100000"),
                 new java.math.BigDecimal("250000"),
@@ -106,10 +106,10 @@ class PropertyServiceIntegrationTest extends ServiceIntegrationTest {
                 new java.math.BigDecimal("1000000")
         };
 
-        for (java.math.BigDecimal appraisal : valuaciones) {
+        for (java.math.BigDecimal appraisal : appraisals) {
             Property property = new Property();
             property.setCadastralDesignation("Val-" + appraisal);
-            property.setAddress("Propiedad valuada " + appraisal);
+            property.setAddress("Appraised property " + appraisal);
             property.setFiscalAppraisal(appraisal);
             propertyRepository.save(property);
         }
@@ -122,24 +122,24 @@ class PropertyServiceIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("Should maintain data integrity on concurrent operations")
     void shouldMaintainDataIntegrityOnConcurrentOperations() {
         // Create initial data
-        Property inmueble1 = new Property();
-        inmueble1.setCadastralDesignation("Prop 1");
-        inmueble1.setAddress("Propiedad 1");
-        inmueble1.setFiscalAppraisal(new java.math.BigDecimal("100000"));
-        Property saved1 = propertyRepository.save(inmueble1);
+        Property property1 = new Property();
+        property1.setCadastralDesignation("Prop 1");
+        property1.setAddress("Property 1");
+        property1.setFiscalAppraisal(new java.math.BigDecimal("100000"));
+        Property saved1 = propertyRepository.save(property1);
 
-        Property inmueble2 = new Property();
-        inmueble2.setCadastralDesignation("Prop 2");
-        inmueble2.setAddress("Propiedad 2");
-        inmueble2.setFiscalAppraisal(new java.math.BigDecimal("150000"));
-        Property saved2 = propertyRepository.save(inmueble2);
+        Property property2 = new Property();
+        property2.setCadastralDesignation("Prop 2");
+        property2.setAddress("Property 2");
+        property2.setFiscalAppraisal(new java.math.BigDecimal("150000"));
+        Property saved2 = propertyRepository.save(property2);
 
         // Simulate concurrent reads
         Property read1 = propertyRepository.findById(saved1.getIdProperty()).orElseThrow();
         Property read2 = propertyRepository.findById(saved2.getIdProperty()).orElseThrow();
 
-        assertThat(read1.getAddress()).isEqualTo("Propiedad 1");
-        assertThat(read2.getAddress()).isEqualTo("Propiedad 2");
+        assertThat(read1.getAddress()).isEqualTo("Property 1");
+        assertThat(read2.getAddress()).isEqualTo("Property 2");
         assertThat(read1.getFiscalAppraisal()).isNotEqualTo(read2.getFiscalAppraisal());
     }
 
@@ -193,15 +193,15 @@ class PropertyServiceIntegrationTest extends ServiceIntegrationTest {
         // High-end property
         Property luxury = new Property();
         luxury.setCadastralDesignation("ALV-1050-LUX");
-        luxury.setAddress("Avenida Alvear 1050, Penthouse Exclusivo");
+        luxury.setAddress("Alvear Avenue 1050, exclusive penthouse");
         luxury.setFiscalAppraisal(new java.math.BigDecimal("5000000"));
-        luxury.setNotes("Propiedad de lujo en zona premium");
+        luxury.setNotes("Luxury property in a premium area");
         propertyRepository.save(luxury);
 
         // Budget property
         Property budget = new Property();
         budget.setCadastralDesignation("RIO-800-STD");
-        budget.setAddress("Calle Rioja 800, Departamento");
+        budget.setAddress("Rioja Street 800, apartment");
         budget.setFiscalAppraisal(new java.math.BigDecimal("45000"));
         propertyRepository.save(budget);
 

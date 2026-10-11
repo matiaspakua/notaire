@@ -12,7 +12,7 @@ import com.licensis.notaire.business.WorkflowTransition;
 import com.licensis.notaire.repository.ManagementStatusRepository;
 import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.WorkflowTransitionRepository;
-import com.licensis.notaire.application.usecase.management.ManagementBitacoraService;
+import com.licensis.notaire.application.usecase.management.ManagementStatusLogService;
 import com.licensis.notaire.application.usecase.management.ManagementTransitionService;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @RequirementCoverage({"CU83"})
-@DisplayName("GestionTransitionService Tests")
+@DisplayName("ManagementTransitionService Tests")
 @ExtendWith(MockitoExtension.class)
 class ManagementTransitionServiceTest {
 
@@ -45,13 +45,13 @@ class ManagementTransitionServiceTest {
     private WorkflowTransitionRepository workflowTransitionRepository;
 
     @Mock
-    private ManagementBitacoraService managementBitacoraService;
+    private ManagementStatusLogService statusLogService;
 
     @InjectMocks
     private ManagementTransitionService managementTransitionService;
 
     private DeedManagement management;
-    private ManagementStatus statusInicial;
+    private ManagementStatus initialStatus;
     private ManagementStatus statusDestination;
     private WorkflowDefinition workflowDefinition;
     private WorkflowNode originNode;
@@ -59,8 +59,8 @@ class ManagementTransitionServiceTest {
 
     @BeforeEach
     void setUp() {
-        statusInicial = new ManagementStatus(1, "Iniciada");
-        statusDestination = new ManagementStatus(2, "En trámite");
+        initialStatus = new ManagementStatus(1, "Iniciada");
+        statusDestination = new ManagementStatus(2, "In procedure");
 
         workflowDefinition = new WorkflowDefinition(1);
 
@@ -72,11 +72,11 @@ class ManagementTransitionServiceTest {
 
         management = new DeedManagement();
         management.setIdManagement(1);
-        management.setFkIdManagementStatus(statusInicial);
+        management.setFkIdManagementStatus(initialStatus);
         management.setProcedureList(List.of(procedure));
 
         originNode = new WorkflowNode(1);
-        originNode.setManagementStatus(statusInicial);
+        originNode.setManagementStatus(initialStatus);
 
         destinationNode = new WorkflowNode(2);
         destinationNode.setManagementStatus(statusDestination);
@@ -90,11 +90,11 @@ class ManagementTransitionServiceTest {
         transition.setDestinationNode(destinationNode);
 
         when(managementRepository.findById(1)).thenReturn(Optional.of(management));
-        when(statusRepository.findByName("En trámite")).thenReturn(Optional.of(statusDestination));
+        when(statusRepository.findByName("In procedure")).thenReturn(Optional.of(statusDestination));
         when(workflowTransitionRepository.findByWorkflowDefinitionId(1)).thenReturn(List.of(transition));
         when(managementRepository.save(management)).thenReturn(management);
 
-        DeedManagement result = managementTransitionService.transition(1, "En trámite");
+        DeedManagement result = managementTransitionService.transition(1, "In procedure");
 
         assertThat(result.getFkIdManagementStatus()).isEqualTo(statusDestination);
     }
@@ -103,13 +103,13 @@ class ManagementTransitionServiceTest {
     @DisplayName("Should reject invalid transition")
     void shouldRejectInvalidTransition() {
         when(managementRepository.findById(1)).thenReturn(Optional.of(management));
-        when(statusRepository.findByName("En trámite")).thenReturn(Optional.of(statusDestination));
+        when(statusRepository.findByName("In procedure")).thenReturn(Optional.of(statusDestination));
         when(workflowTransitionRepository.findByWorkflowDefinitionId(1)).thenReturn(List.of());
 
-        assertThatThrownBy(() -> managementTransitionService.transition(1, "En trámite"))
+        assertThatThrownBy(() -> managementTransitionService.transition(1, "In procedure"))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("Iniciada")
-                .hasMessageContaining("En trámite");
+                .hasMessageContaining("In procedure");
     }
 
     @Test
@@ -120,7 +120,7 @@ class ManagementTransitionServiceTest {
 
         when(managementRepository.findById(1)).thenReturn(Optional.of(management));
 
-        assertThatThrownBy(() -> managementTransitionService.transition(1, "En trámite"))
+        assertThatThrownBy(() -> managementTransitionService.transition(1, "In procedure"))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("workflow");
     }
@@ -130,7 +130,7 @@ class ManagementTransitionServiceTest {
     void shouldRejectTransitionWhenManagementNotFound() {
         when(managementRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> managementTransitionService.transition(999, "En trámite"))
+        assertThatThrownBy(() -> managementTransitionService.transition(999, "In procedure"))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("999");
     }

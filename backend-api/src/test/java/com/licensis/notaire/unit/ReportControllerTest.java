@@ -26,14 +26,14 @@ import static org.mockito.Mockito.when;
 class ReportControllerTest {
 
     @Mock
-    private ReportService reporteService;
+    private ReportService reportService;
 
     private ReportController controller;
     private ListAppender<ILoggingEvent> logAppender;
 
     @BeforeEach
     void setUp() {
-        controller = new ReportController(reporteService);
+        controller = new ReportController(reportService);
 
         Logger logger = (Logger) LoggerFactory.getLogger(ReportController.class);
         logAppender = new ListAppender<>();
@@ -51,7 +51,7 @@ class ReportControllerTest {
     @DisplayName("Should return PDF bytes with correct headers when report generation succeeds")
     void shouldReturnPdfBytesWithCorrectHeadersWhenReportGenerationSucceeds() throws Exception {
         byte[] pdfBytes = {1, 2, 3};
-        when(reporteService.generateBudgetReport(42)).thenReturn(pdfBytes);
+        when(reportService.generateBudgetReport(42)).thenReturn(pdfBytes);
 
         ResponseEntity<byte[]> response = controller.generateBudgetReport(42);
 
@@ -65,7 +65,7 @@ class ReportControllerTest {
     @DisplayName("Should log the exception when report generation fails")
     void shouldLogExceptionWhenReportGenerationFails() throws Exception {
         RuntimeException cause = new RuntimeException("pdf rendering failure");
-        when(reporteService.generateBudgetReport(42)).thenThrow(cause);
+        when(reportService.generateBudgetReport(42)).thenThrow(cause);
 
         ResponseEntity<byte[]> response = controller.generateBudgetReport(42);
 
@@ -78,21 +78,21 @@ class ReportControllerTest {
     }
 
     @Test
-    @DisplayName("Should return 500 and log when lista-documents-tramite report generation fails")
-    void shouldReturn500AndLogWhenListaDocumentsProcedureReportFails() throws Exception {
-        when(reporteService.generateProcedureDocumentsListReport("Venta")).thenThrow(new RuntimeException("boom"));
+    @DisplayName("Should return 500 and log when the procedure document-list report fails")
+    void shouldReturn500AndLogWhenProcedureDocumentListReportFails() throws Exception {
+        when(reportService.generateProcedureDocumentsListReport("Sale")).thenThrow(new RuntimeException("boom"));
 
-        ResponseEntity<byte[]> response = controller.generateProcedureDocumentsListReport("Venta");
+        ResponseEntity<byte[]> response = controller.generateProcedureDocumentsListReport("Sale");
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
         assertThat(logAppender.list).isNotEmpty();
     }
 
     @Test
-    @DisplayName("CU82 - Should generate the minuta de inscripción report")
+    @DisplayName("CU82 - Should generate the registration draft report")
     void shouldGenerateRegistrationDraftReport() {
         byte[] pdfBytes = {1, 2, 3};
-        when(reporteService.generateRegistrationDraftReport(1)).thenReturn(pdfBytes);
+        when(reportService.generateRegistrationDraftReport(1)).thenReturn(pdfBytes);
 
         ResponseEntity<byte[]> response = controller.generateRegistrationDraftReport(1);
 
@@ -103,10 +103,10 @@ class ReportControllerTest {
     }
 
     @Test
-    @DisplayName("CU15 - Should generate the recibo de pago report")
-    void shouldGenerateReciboPaymentReport() {
+    @DisplayName("CU15 - Should generate the payment receipt report")
+    void shouldGeneratePaymentReceiptReport() {
         byte[] pdfBytes = {1, 2, 3};
-        when(reporteService.generatePaymentReceiptReport(1)).thenReturn(pdfBytes);
+        when(reportService.generatePaymentReceiptReport(1)).thenReturn(pdfBytes);
 
         ResponseEntity<byte[]> response = controller.generatePaymentReceiptReport(1);
 

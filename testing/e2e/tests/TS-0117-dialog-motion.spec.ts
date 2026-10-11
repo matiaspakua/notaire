@@ -8,8 +8,8 @@ import { establishAdminBrowserSession } from "./setup/auth";
 
 async function openDialog(page: Page) {
   await establishAdminBrowserSession(page);
-  await page.goto("/dashboard/presupuestos");
-  await page.getByTestId("btn-nuevo-presupuesto").click();
+  await page.goto("/dashboard/budgets");
+  await page.getByTestId("btn-new-budget").click();
   return page.getByRole("dialog");
 }
 

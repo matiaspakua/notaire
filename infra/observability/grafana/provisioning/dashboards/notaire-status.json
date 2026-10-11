@@ -69,7 +69,12 @@
     {
       "title": "Traces",
       "type": "link",
-      "url": "/d/notaire-traces",
+      "url": "/d/notaire-traces"
+    },
+    {
+      "title": "Security posture",
+      "type": "link",
+      "url": "/d/notaire-security",
       "icon": "dashboard",
       "targetBlank": false
     }

@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * CU47 "Consultar Pago": assembles the financial summary of a budget.
+ * CU47 "Look up a payment": assembles the financial summary of a budget.
  *
  * <p>The total is derived as {@code pendingBalance + totalPaid} rather than
  * recomputed from the budget charges, preserving the previous formula with exact
@@ -40,7 +40,7 @@ public class BudgetSummaryService implements GetBudgetSummaryUseCase {
     public BudgetSummary summary(Integer budgetId) {
         BudgetDescriptor descriptor = budgets.findDescriptor(budgetId)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "Presupuesto no encontrado con ID: " + budgetId));
+                        "Budget not found with ID: " + budgetId));
 
         BigDecimal pendingBalance = paymentStatus.pendingBalance(budgetId);
         List<PaymentDetails> payments = paymentQueries.findByBudget(budgetId);

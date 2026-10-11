@@ -6,9 +6,9 @@ import { type Page, test, expect } from "@playwright/test";
 
 async function loginAs(page: Page, role: "admin" | "empleado" = "admin") {
   await page.goto("/login");
-  await page.getByTestId("input-usuario").fill(role === "admin" ? "admin" : "empleado");
-  await page.getByTestId("input-contrasenia").fill(role === "admin" ? "admin" : "admin");
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("input-username").fill(role === "admin" ? "admin" : "empleado");
+  await page.getByTestId("input-password").fill(role === "admin" ? "admin" : "admin");
+  await page.getByTestId("btn-sign-in").click();
   await page.waitForURL(/\/dashboard/, { timeout: 15000 });
   // Wait for the dashboard layout to finish hydrating
   await page.waitForLoadState("domcontentloaded");
@@ -19,7 +19,7 @@ test.describe("Dashboard navigation", () => {
     await loginAs(page);
 
     // Sidebar link accessible names include icon alt text + label text
-    // (e.g. "Gestiones Gestiones"), so use exact: false
+    // (e.g. "Managements Managements"), so use exact: false
     for (const name of ["Gestiones", "Presupuestos", "Personas", "Escrituras", "Pagos"]) {
       await expect(page.getByRole("link", { name }).first()).toBeVisible({ timeout: 5000 });
     }
@@ -87,35 +87,35 @@ test.describe("Dashboard navigation", () => {
   });
 });
 
-test.describe("Gestiones module (CU02, CU13-CU16)", () => {
-  test("shows gestiones page with table", async ({ page }) => {
+test.describe("Managements module (CU02, CU13-CU16)", () => {
+  test("shows the managements page with a table", async ({ page }) => {
     await loginAs(page);
-    await page.goto("/dashboard/gestiones");
+    await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
 
     await expect(page.getByRole("heading", { name: "Gestiones" })).toBeVisible({ timeout: 10000 });
-    await expect(page.getByTestId("btn-nueva-gestion")).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId("btn-new-management")).toBeVisible({ timeout: 10000 });
   });
 });
 
-test.describe("Personas module (CU17, CU18)", () => {
-  test("shows personas page", async ({ page }) => {
+test.describe("People module (CU17, CU18)", () => {
+  test("shows the people page", async ({ page }) => {
     await loginAs(page);
-    await page.goto("/dashboard/personas");
+    await page.goto("/dashboard/people");
     await page.waitForLoadState("domcontentloaded");
 
     await expect(page.getByRole("heading", { name: "Personas y Clientes" })).toBeVisible({ timeout: 10000 });
-    await expect(page.getByTestId("btn-nueva-persona")).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId("btn-new-person")).toBeVisible({ timeout: 10000 });
   });
 });
 
-test.describe("Presupuestos module (CU01)", () => {
-  test("shows presupuestos page", async ({ page }) => {
+test.describe("Budgets module (CU01)", () => {
+  test("shows the budgets page", async ({ page }) => {
     await loginAs(page);
-    await page.goto("/dashboard/presupuestos");
+    await page.goto("/dashboard/budgets");
     await page.waitForLoadState("domcontentloaded");
 
     await expect(page.getByRole("heading", { name: "Presupuestos" })).toBeVisible({ timeout: 10000 });
-    await expect(page.getByTestId("btn-nuevo-presupuesto")).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId("btn-new-budget")).toBeVisible({ timeout: 10000 });
   });
 });

@@ -6,12 +6,12 @@
  */
 import { test, expect } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
-import { createPersona } from "./setup/api-helpers";
+import { createPerson } from "./setup/api-helpers";
 
 test.describe("Person picker (#1340)", () => {
   test("the budget form finds a new person by name, by keyboard, and saves it", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    const person = await createPersona(page, { isClient: true });
+    const person = await createPerson(page, { isClient: true });
     expect(person.ok, person.error).toBe(true);
     const lastName = person.data!.lastName!;
 
@@ -20,11 +20,11 @@ test.describe("Person picker (#1340)", () => {
       if (/\/api\/v1\/people/.test(r.url())) requested.push(r.url());
     });
 
-    await page.goto("/dashboard/presupuestos");
+    await page.goto("/dashboard/budgets");
     await page.waitForLoadState("networkidle");
-    await page.getByTestId("btn-nuevo-presupuesto").click();
+    await page.getByTestId("btn-new-budget").click();
     const dialog = page.getByRole("dialog");
-    const picker = dialog.getByRole("combobox", { name: /cliente|client/i });
+    const picker = dialog.getByRole("combobox", { name: /client|client/i });
     await expect(picker).toHaveAttribute("aria-expanded", "false");
     await picker.click();
     await expect(picker).toHaveAttribute("aria-expanded", "true");
@@ -39,9 +39,9 @@ test.describe("Person picker (#1340)", () => {
     await expect(dialog).toBeVisible();
 
     await dialog.locator('input[type="date"]').fill(new Date().toISOString().split("T")[0]);
-    await dialog.getByTestId("input-monto").fill("1000");
-    const post = page.waitForRequest((r) => /\/api\/v1\/presupuestos$/.test(r.url()) && r.method() === "POST");
-    await dialog.getByTestId("btn-guardar-presupuesto").click();
+    await dialog.getByTestId("input-amount").fill("1000");
+    const post = page.waitForRequest((r) => /\/api\/v1\/budgets$/.test(r.url()) && r.method() === "POST");
+    await dialog.getByTestId("btn-save-budget").click();
     expect((await post).postDataJSON().person.personId).toBe(person.data!.personId);
 
     expect(requested.some((u) => u.includes("/people/search"))).toBe(true);
@@ -50,16 +50,16 @@ test.describe("Person picker (#1340)", () => {
 
   test("the management client filter finds a new client by name", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    const person = await createPersona(page, { isClient: true });
+    const person = await createPerson(page, { isClient: true });
     expect(person.ok, person.error).toBe(true);
 
-    await page.goto("/dashboard/gestiones");
+    await page.goto("/dashboard/managements");
     await page.waitForLoadState("networkidle");
-    const filter = page.getByRole("combobox", { name: /cliente|client/i });
+    const filter = page.getByRole("combobox", { name: /client|client/i });
     await filter.click();
     await filter.fill(person.data!.lastName!);
     const filtered = page.waitForRequest((r) =>
-      new RegExp(`/api/v1/gestiones/cliente/${person.data!.personId}$`).test(r.url()),
+      new RegExp(`/api/v1/managements/client/${person.data!.personId}$`).test(r.url()),
     );
     await page.getByRole("option", { name: new RegExp(person.data!.lastName!) }).click();
     await filtered;

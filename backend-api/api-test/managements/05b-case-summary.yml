@@ -1,0 +1,24 @@
+info:
+  name: Get case summary
+  type: http
+  seq: 7
+  description: |-
+      A management without procedures has no deeds (#774).
+      Traceability: CU07; CU11; CU12; CU70
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/managements/{{mgmt_id}}/case-summary"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 with the management header and no deeds", function () {
+            expect(res.getStatus()).to.equal(200);
+            expect(res.getBody().managementId).to.equal(parseInt(bru.getVar('mgmt_id'), 10));
+            expect(res.getBody().deeds).to.be.an('array').that.is.empty;
+          });

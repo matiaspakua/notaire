@@ -3,11 +3,11 @@ info:
   type: http
   seq: 3
   description: |-
-      ## Create budget template — POST /api/v1/plantilla-presupuestos
+      ## Create budget template — POST /api/v1/budget-templates
       Traceability: CU39 (RF #6, #61, #66, #67)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/plantilla-presupuestos"
+  url: "{{base_url}}/api/v1/budget-templates"
   body:
     type: json
     data: |-

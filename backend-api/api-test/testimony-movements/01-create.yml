@@ -6,7 +6,7 @@ info:
       Traceability: CU12
 http:
   method: POST
-  url: "{{base_url}}/api/v1/movimiento-testimonio"
+  url: "{{base_url}}/api/v1/testimony-movements"
   body:
     type: json
     data: |-

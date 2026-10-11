@@ -3,14 +3,14 @@ info:
   type: http
   seq: 4
   description: |-
-      ## Empty body — PUT /api/v1/tramites/{procedure_id}
+      ## Empty body — PUT /api/v1/procedures/{procedure_id}
       Issue #655, Owner decision Oct 9: idProcedureType is required on PUT as on
       POST; `{}` used to answer 200 and clear the notes. 05-verify-update still
       sees the notes stored by 04-update.
       Traceability: CU53
 http:
   method: PUT
-  url: "{{base_url}}/api/v1/tramites/{{procedure_id}}"
+  url: "{{base_url}}/api/v1/procedures/{{procedure_id}}"
   body:
     type: json
     data: |-

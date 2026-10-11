@@ -12,25 +12,27 @@ All unit tests follow the **AAA pattern** for clarity and maintainability:
 
 ```java
 /**
- * Unit test for PresupuestoService.calcularMontoTotal()
- * 
- * Business rule: Total = Monto + (Monto * IVA%)
- * Example: $100 + (100 * 0.21) = $121
+ * AAA sample for a total that includes VAT.
+ *
+ * Budget amounts on the wire are propertyAmount. BudgetService has no
+ * total-with-VAT method, so the arithmetic stays in the test.
+ * Stored budget statuses are BORRADOR, PENDIENTE, APROBADO, RECHAZADO, and FACTURADO.
+ *
+ * Rule: total = amount + (amount * VAT rate)
+ * Example: 100 + (100 * 0.21) = 121
  */
 @Test
-@DisplayName("Should calculate total presupuesto with correct IVA")
-void shouldCalculateTotalWithIVA() {
+@DisplayName("Should calculate a total that includes 21 percent VAT")
+void shouldCalculateTotalWithVat() {
   // ARRANGE: Set up test data
-  BigDecimal monto = new BigDecimal("100.00");
-  BigDecimal ivaPorcentaje = new BigDecimal("0.21"); // 21% IVA
-  PresupuestoService service = new PresupuestoService();
-  
-  // ACT: Execute the business logic
-  BigDecimal total = service.calcularMontoTotal(monto, ivaPorcentaje);
-  
+  BigDecimal amount = new BigDecimal("100.00");
+  BigDecimal vatRate = new BigDecimal("0.21");
+
+  // ACT: Execute the calculation
+  BigDecimal total = amount.add(amount.multiply(vatRate));
+
   // ASSERT: Verify the result
-  BigDecimal expected = new BigDecimal("121.00");
-  assertEquals(expected, total, "Total debe incluir IVA del 21%");
+  assertEquals(0, new BigDecimal("121.00").compareTo(total));
 }
 ```
 
@@ -46,49 +48,48 @@ void shouldCalculateTotalWithIVA() {
 Avoid hardcoding test data; use **builder patterns** for complex objects:
 
 ```java
-public class PresupuestoBuilder {
-  private String numero = "PRE-001-TEST";
-  private LocalDate fecha = LocalDate.now();
-  private BigDecimal monto = new BigDecimal("1000.00");
-  private String estado = "DRAFT";
-  private Long clienteId = 1L;
-  
-  // Fluent API for flexibility
-  public PresupuestoBuilder withNumero(String numero) {
-    this.numero = numero;
+public class BudgetBuilder {
+  private int number = 1001;
+  private Date date = new Date();
+  private String heading = "Test budget";
+  private String status = "BORRADOR";
+  private BigDecimal propertyAmount = new BigDecimal("1000.00");
+
+  public BudgetBuilder withNumber(int number) {
+    this.number = number;
     return this;
   }
-  
-  public PresupuestoBuilder withMonto(BigDecimal monto) {
-    this.monto = monto;
+
+  public BudgetBuilder withPropertyAmount(BigDecimal propertyAmount) {
+    this.propertyAmount = propertyAmount;
     return this;
   }
-  
-  public PresupuestoBuilder withEstado(String estado) {
-    this.estado = estado;
+
+  public BudgetBuilder withStatus(String status) {
+    this.status = status;
     return this;
   }
-  
-  public Presupuesto build() {
-    Presupuesto p = new Presupuesto();
-    p.setNumero(numero);
-    p.setFecha(fecha);
-    p.setMonto(monto);
-    p.setEstado(estado);
-    p.setClienteId(clienteId);
-    return p;
+
+  public Budget build() {
+    Budget budget = new Budget();
+    budget.setNumber(number);
+    budget.setDate(date);
+    budget.setHeading(heading);
+    budget.setStatus(status);
+    budget.setPropertyAmount(propertyAmount);
+    return budget;
   }
 }
 
 // Usage in tests:
 @Test
-void shouldHandleLargePresupuesto() {
-  Presupuesto presupuesto = new PresupuestoBuilder()
-    .withMonto(new BigDecimal("999999.99"))
-    .withEstado("APPROVED")
+void shouldHandleLargeBudget() {
+  Budget budget = new BudgetBuilder()
+    .withPropertyAmount(new BigDecimal("999999.99"))
+    .withStatus("APROBADO")
     .build();
-  
-  // Test with large presupuesto...
+
+  // Test with a large propertyAmount...
 }
 ```
 
@@ -104,59 +105,40 @@ Mock **external dependencies**, test **business logic** in isolation:
 
 ```java
 @ExtendWith(MockitoExtension.class)
-class GestionServiceTest {
-  
+class BudgetServiceTest {
+
   @Mock
-  private GestionRepository gestionRepository;
-  
-  @Mock
-  private PersonaRepository personaRepository;
-  
+  private BudgetRepositoryPort budgetRepository;
+
   @InjectMocks
-  private GestionService gestionService;
-  
+  private BudgetService budgetService;
+
   @Test
-  @DisplayName("Should create gestion when persona exists")
-  void shouldCreateGestionWhenPersonaExists() {
+  @DisplayName("Should return budgets when the status matches")
+  void shouldReturnBudgetsWhenStatusMatches() {
     // ARRANGE
-    Long personaId = 1L;
-    Persona persona = new PersonaBuilder().withId(personaId).build();
-    
-    // Mock the repository call
-    when(personaRepository.findById(personaId))
-      .thenReturn(Optional.of(persona));
-    
-    when(gestionRepository.save(any(Gestion.class)))
-      .thenAnswer(inv -> {
-        Gestion g = inv.getArgument(0);
-        g.setId(100L); // Simulate DB auto-increment
-        return g;
-      });
-    
+    Budget budget = new BudgetBuilder().withStatus("BORRADOR").build();
+    when(budgetRepository.findByStatus("BORRADOR")).thenReturn(List.of(budget));
+
     // ACT
-    Gestion result = gestionService.crearGestion(personaId, "GES-001");
-    
+    List<Budget> result = budgetService.findByStatus("BORRADOR");
+
     // ASSERT
-    assertNotNull(result.getId());
-    assertEquals("GES-001", result.getNumero());
-    
-    // Verify mocks were called correctly
-    verify(personaRepository).findById(personaId);
-    verify(gestionRepository).save(any(Gestion.class));
+    assertEquals(1, result.size());
+    assertEquals("BORRADOR", result.get(0).getStatus());
+    verify(budgetRepository).findByStatus("BORRADOR");
   }
-  
+
   @Test
-  @DisplayName("Should throw exception when persona not found")
-  void shouldThrowWhenPersonaNotFound() {
+  @DisplayName("Should throw when the budget to update does not exist")
+  void shouldThrowWhenBudgetMissing() {
     // ARRANGE
-    Long invalidPersonaId = 999L;
-    when(personaRepository.findById(invalidPersonaId))
-      .thenReturn(Optional.empty());
-    
+    when(budgetRepository.existsById(999)).thenReturn(false);
+
     // ACT & ASSERT
-    assertThrows(PersonaNotFoundException.class, () -> {
-      gestionService.crearGestion(invalidPersonaId, "GES-001");
-    });
+    ResourceNotFoundException error = assertThrows(ResourceNotFoundException.class, () ->
+        budgetService.update(999, new Budget()));
+    assertEquals("Budget not found with ID: 999", error.getMessage());
   }
 }
 ```
@@ -245,8 +227,10 @@ export { renderWithProviders as render };
 
 ### 2.2 Component Testing Patterns
 
+The sample renders the English catalog (`First name`, `Last name`, `Save`). A test of the live people screen asserts the default Spanish catalog (`Nombre`, `Apellido`, `Guardar`). Message keys stay `personas.fields.nombre` and `personas.fields.apellido`. The submit body matches `PersonRequest`: `firstName` and `lastName`.
+
 ```typescript
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MyFormComponent } from './MyFormComponent';
 
@@ -254,24 +238,24 @@ describe('MyFormComponent', () => {
   test('should render form with required fields', () => {
     // ARRANGE & ACT
     render(<MyFormComponent />);
-    
+
     // ASSERT
-    expect(screen.getByLabelText(/nombre/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /guardar/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/first name/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/last name/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument();
   });
 
   test('should show validation error on empty submission', async () => {
     // ARRANGE
     const user = userEvent.setup();
     render(<MyFormComponent />);
-    
+
     // ACT
-    await user.click(screen.getByRole('button', { name: /guardar/i }));
-    
+    await user.click(screen.getByRole('button', { name: /save/i }));
+
     // ASSERT
     await waitFor(() => {
-      expect(screen.getByText(/nombre es requerido/i)).toBeInTheDocument();
+      expect(screen.getByText(/first name is required/i)).toBeInTheDocument();
     });
   });
 
@@ -280,17 +264,17 @@ describe('MyFormComponent', () => {
     const handleSubmit = vi.fn();
     const user = userEvent.setup();
     render(<MyFormComponent onSubmit={handleSubmit} />);
-    
+
     // ACT
-    await user.type(screen.getByLabelText(/nombre/i), 'Juan Pérez');
-    await user.type(screen.getByLabelText(/email/i), 'juan@example.com');
-    await user.click(screen.getByRole('button', { name: /guardar/i }));
-    
+    await user.type(screen.getByLabelText(/first name/i), 'Juan');
+    await user.type(screen.getByLabelText(/last name/i), 'Pérez');
+    await user.click(screen.getByRole('button', { name: /save/i }));
+
     // ASSERT
     await waitFor(() => {
       expect(handleSubmit).toHaveBeenCalledWith({
-        nombre: 'Juan Pérez',
-        email: 'juan@example.com',
+        firstName: 'Juan',
+        lastName: 'Pérez',
       });
     });
   });
@@ -306,35 +290,50 @@ describe('MyFormComponent', () => {
 
 ### 2.3 Hook Testing Patterns
 
+`useManagementsPage` is the list hook. It returns a React Query result whose `data` is a Spring page (`content`, `totalElements`). `createTestQueryClient` is the factory from section 2.1.
+
 ```typescript
 import { renderHook, waitFor } from '@testing-library/react';
-import { useGestiones } from './useGestiones';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { useManagementsPage } from './useManagements';
 
-describe('useGestiones', () => {
-  test('should load gestiones on mount', async () => {
+function QueryClientWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <QueryClientProvider client={createTestQueryClient()}>
+      {children}
+    </QueryClientProvider>
+  );
+}
+
+describe('useManagementsPage', () => {
+  test('should load managements on mount', async () => {
     // ARRANGE & ACT
-    const { result } = renderHook(() => useGestiones());
-    
+    const { result } = renderHook(
+      () => useManagementsPage({ page: 0, size: 20 }),
+      { wrapper: QueryClientWrapper }
+    );
+
     // ASSERT: Initial state
     expect(result.current.isLoading).toBe(true);
     expect(result.current.data).toBeUndefined();
-    
+
     // ASSERT: After loading
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
-      expect(result.current.data).toBeDefined();
-      expect(result.current.data).toHaveLength(3);
+      expect(result.current.data?.content).toBeDefined();
     });
   });
 
   test('should handle fetch error', async () => {
-    // ARRANGE: Mock API to fail
-    const { result } = renderHook(() => useGestiones());
-    
+    // ARRANGE: MSW returns 500 for GET /managements
+    const { result } = renderHook(
+      () => useManagementsPage({ page: 0, size: 20 }),
+      { wrapper: QueryClientWrapper }
+    );
+
     // ASSERT: Error state
     await waitFor(() => {
       expect(result.current.isError).toBe(true);
-      expect(result.current.error).toContain('Failed to fetch');
     });
   });
 });
@@ -355,31 +354,31 @@ describe('useGestiones', () => {
 
 ### 3.1 Contract Validation Pattern
 
-Every REST endpoint test validates the **contract** (request format, response format, status codes):
+Every REST endpoint test validates the **contract** (request format, response format, status codes).
+
+Error bodies are `ErrorResponse`: `timestamp`, `status`, `error` (the HTTP reason phrase), `message`, `path`, `traceId`, and `details`. There is no `code` field. A missing management id returns **404 with an empty body**. An unauthenticated call returns **401**; the entry point reason is `Unauthorized`.
 
 ```
-# Bruno test: POST /api/v1/gestiones - Create Gestion
-# CU02: Iniciar Gestión
+# Bruno test: POST /api/v1/managements — create a management
+# CU02
 
-@name createGestion
-POST http://{{baseUrl}}/api/v1/gestiones
+@name createManagement
+POST http://{{baseUrl}}/api/v1/managements
 Content-Type: application/json
 Authorization: Bearer {{adminToken}}
 
 {
-  "numero": "GES-TEST-{{$timestamp}}",
-  "presupuestoId": {{presupuestoId}},
-  "estado": "DRAFT",
-  "descripcion": "Test gestion"
+  "number": {{managementNumber}},
+  "heading": "Test management",
+  "notes": "Contract test"
 }
 
-# Response validation
+# Response validation — ManagementResponse
 ? res.status === 201
-? res.headers["content-type"] === "application/json"
-? res.body.id != null
-? res.body.numero != null
-? res.body.createdAt != null
-? res.body.estado === "DRAFT"
+? res.headers["content-type"].includes("application/json")
+? res.body.idManagement != null
+? res.body.number != null
+? res.body.heading === "Test management"
 
 # Performance assertion
 ? res.responseTime < 500
@@ -390,74 +389,75 @@ Authorization: Bearer {{adminToken}}
 Test **all error paths** (400, 401, 403, 404, 500):
 
 ```
-# Test: POST /api/v1/gestiones - Missing required field (400)
-POST http://{{baseUrl}}/api/v1/gestiones
+# Test: POST /api/v1/managements — missing required heading (400)
+POST http://{{baseUrl}}/api/v1/managements
 Content-Type: application/json
 Authorization: Bearer {{adminToken}}
 
 {
-  "presupuestoId": {{presupuestoId}}
-  # "numero" intentionally omitted
+  "number": {{managementNumber}}
 }
 
 ? res.status === 400
-? res.body.error === "numero es requerido"
-? res.body.code === "VALIDATION_ERROR"
+? res.body.error === "Bad Request"
+? res.body.message.includes("heading")
 
 ---
 
-# Test: GET /api/v1/gestiones/999 - Not found (404)
-GET http://{{baseUrl}}/api/v1/gestiones/999
+# Test: GET /api/v1/managements/999999 — not found (404, empty body)
+GET http://{{baseUrl}}/api/v1/managements/999999
 Authorization: Bearer {{adminToken}}
 
 ? res.status === 404
-? res.body.error.contains("Gestion no encontrada")
 
 ---
 
-# Test: POST /api/v1/gestiones - Unauthorized (401)
-POST http://{{baseUrl}}/api/v1/gestiones
+# Test: POST /api/v1/managements — unauthorized (401)
+POST http://{{baseUrl}}/api/v1/managements
 Content-Type: application/json
 
-{...}
+{
+  "heading": "Test management"
+}
 
 ? res.status === 401
-? res.body.error === "Token inválido o expirado"
 ```
 
-### 3.3 Idempotency Testing
+### 3.3 Conflict responses
 
-POST operations should be **idempotent** when submitted multiple times:
+A unique-constraint violation answers **409** with `ErrorResponse.message` equal to `The submitted data duplicates an existing record`. A stale `version` on update answers **409** with `The record was modified by another user; reload it and try again`. Creating the same budget twice is not rejected: `budgets.number` is not unique, and `POST /api/v1/budgets` returns **201** with a new `idBudget` each time.
 
 ```
-# Test: Create presupuesto twice with same data
-# Expected: First request → 201 Created, Second → 409 Conflict (or 200 OK)
-
-@name createPresupuesto
-POST http://{{baseUrl}}/api/v1/presupuestos
+# Create budget — BudgetRequest / BudgetResponse
+@name createBudget
+POST http://{{baseUrl}}/api/v1/budgets
 Content-Type: application/json
 Authorization: Bearer {{adminToken}}
 
 {
-  "numero": "PRE-IDEMPOTENT-{{idempotencyKey}}",
-  "fecha": "2026-08-31",
-  "monto": 5000,
-  "clienteId": {{clienteId}}
+  "number": {{budgetNumber}},
+  "date": "2026-08-31",
+  "heading": "Contract budget",
+  "status": "BORRADOR",
+  "propertyAmount": 5000,
+  "personId": {{personId}}
 }
 
 ? res.status === 201
+? res.body.idBudget != null
+? res.body.status === "BORRADOR"
 
-# Second request with same data
-? res.status === 409 || res.status === 200
-# Should return same ID, not create duplicate
-? res.body.id === prev-response.id
+# Duplicate unique key
+? res.status === 409
+? res.body.error === "Conflict"
+? res.body.message === "The submitted data duplicates an existing record"
 ```
 
 ### 3.4 API Coverage Rules
 
 | Endpoint Type | Minimum | Target |
 |---------------|---------|--------|
-| CREATE (POST) | 3 tests | 5 (golden path + errors + idempotency) |
+| CREATE (POST) | 3 tests | 5 (golden path + validation + conflict) |
 | READ (GET) | 3 tests | 5 (single, list, filter, not found, unauthorized) |
 | UPDATE (PUT) | 3 tests | 4 (success, not found, validation, conflict) |
 | DELETE (DELETE) | 2 tests | 3 (success, not found, cascade effects) |
@@ -472,7 +472,7 @@ See [`TEST-PLAN.md`](TEST-PLAN.md) §3 (Fixture Patterns & Test Architecture) an
 
 **Summary**:
 - **GherkinSteps**: Given-When-Then helpers (26 suites)
-- **API Helpers**: Data setup via REST (createPersona, createPresupuesto, etc.)
+- **API Helpers**: Data setup via REST (createPerson, createBudget, etc.)
 - **Global Setup**: Auth token, test data seeding
 - **Global Teardown**: Cleanup, fixture removal
 
@@ -536,7 +536,7 @@ Execution Strategy:
 // Global Setup (runs once per test worker)
 export async function globalSetup(config: FullConfig) {
   // 1. Authenticate as admin → get JWT token
-  // 2. Seed base data (roles, tipos, estados) via API
+  // 2. Seed base data (roles, procedure types, management statuses) via API
   // 3. Save token to process.env.E2E_ADMIN_TOKEN
   // 4. Save localStorage state for browser
 }
@@ -545,7 +545,7 @@ export async function globalSetup(config: FullConfig) {
 test.beforeEach(async ({ page }) => {
   // 1. Login (reuse token from global setup)
   // 2. Navigate to page under test
-  // 3. Seed test-specific data (persona, presupuesto) via API
+  // 3. Seed test-specific data (person, budget) via API
   // 4. Wait for page to load
 });
 
@@ -568,18 +568,17 @@ export async function globalTeardown(config: FullConfig) {
 Make test data **identifiable** and **safe to delete**:
 
 ```typescript
-// Good: Clearly identified as test data
-const testNumeroPE = `PRE-TEST-${Date.now()}`; // PRE-TEST-1725130000
-const testNumeroGE = `GES-TEST-${Date.now()}`; // GES-TEST-1725130000
-const testEmailPersona = `test+${Date.now()}@example.com`;
+// Good: Clearly identified as test data. Budget and management numbers are integers.
+const testBudgetNumber = Date.now() % 1_000_000_000;
+const testPersonEmail = `test+${Date.now()}@example.com`;
 
 // Bad: Could collide with real data
-const numero = "PRE-001";
+const budgetNumber = 1;
 const email = "test@example.com";
 
-// Cleanup: Delete by test marker
-await apiDelete(`/api/v1/presupuestos?numero_startswith=PRE-TEST-`);
-await apiDelete(`/api/v1/gestiones?numero_startswith=GES-TEST-`);
+// Cleanup: delete the ids the create calls returned
+await apiDelete(`/api/v1/budgets/${createdBudgetId}`);
+await apiDelete(`/api/v1/managements/${createdManagementId}`);
 ```
 
 ### Backend H2 payment IT fixture isolation (#916)
@@ -587,7 +586,7 @@ await apiDelete(`/api/v1/gestiones?numero_startswith=GES-TEST-`);
 H2 Spring Boot integration tests share a cached application context. Payments
 against the seeded `idBudget=1` (`src/test/resources/data.sql`) accumulate across
 classes and eventually trip the CU15/#848 overpayment guard (`409` instead of
-`201`). Prefer arranging a dedicated presupuesto over blanket
+`201`). Prefer arranging a dedicated budget over blanket
 `@DirtiesContext(AFTER_EACH)`.
 
 ```java
@@ -596,12 +595,12 @@ Integer budgetId = BudgetPaymentTestFixtures.createIsolatedBudget(
         mockMvc, new BigDecimal("10000.00"));
 BudgetPaymentTestFixtures.createPayment(mockMvc, budgetId, new BigDecimal("1500.00"), "IT");
 
-// Bad: hardcode seed id for POST /api/v1/pagos
+// Bad: hardcode seed id for POST /api/v1/payments
 // {"idBudget": 1, "amount": 1500.00, ...}
 ```
 
 Read-only GETs against seed id `1` remain acceptable. Patterns to follow:
-`ManagementArchiveIntegrationTest`, `BudgetResumenControllerTest`,
+`ManagementArchiveIntegrationTest`, `BudgetSummaryControllerTest`,
 `BudgetPaymentTestFixtures`. Controller unit mega-tests that stub
 `RuntimeException("x")` must keep happy-path and error-path methods separate
 (`SimpleControllersTest`).
@@ -614,7 +613,7 @@ Read-only GETs against seed id `1` remain acceptable. Patterns to follow:
 
 ```bash
 # Run single test with debug output
-mvn test -pl backend-api -Dtest=GestionServiceTest#shouldCreateGestion -X
+mvn test -pl backend-api -Dtest=BudgetEntityTest -X
 
 # Check test report
 open backend-api/target/site/surefire-report.html

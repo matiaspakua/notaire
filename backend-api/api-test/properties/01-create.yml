@@ -3,12 +3,12 @@ info:
   type: http
   seq: 1
   description: |-
-      ## Create property — POST /api/v1/inmueble
+      ## Create property — POST /api/v1/properties
       Cadastral designation is unique per run; deleted by `06-delete.yml`.
       Traceability: CU69 (RF #117)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/inmueble"
+  url: "{{base_url}}/api/v1/properties"
   body:
     type: json
     data: |-

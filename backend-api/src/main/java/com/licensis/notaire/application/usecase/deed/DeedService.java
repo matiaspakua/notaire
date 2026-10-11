@@ -51,18 +51,18 @@ public class DeedService {
     }
 
     public List<Deed> findAll() {
-        logger.debug("Finding all escrituras");
+        logger.debug("Finding all deeds");
         return deedRepository.findAll();
     }
 
     @Transactional(readOnly = true)
     public Optional<Deed> findById(Integer id) {
-        logger.debug("Finding escritura by id: {}", id);
+        logger.debug("Finding deed by id: {}", id);
         return deedRepository.findById(id);
     }
 
     public Deed save(Deed entity) {
-        logger.info("Saving escritura with numero: {}", entity.getNumber());
+        logger.info("Saving deed with number: {}", entity.getNumber());
         validateNumbering(entity);
         return deedRepository.save(entity);
     }
@@ -74,19 +74,19 @@ public class DeedService {
                 return;
             }
             boolean isAuxiliary = folio.getFkIdFolioType() != null && folio.getFkIdFolioType().isIsAuxiliary();
-            DeedNumberingValidationResult resultado = validateDeedNumberingUseCase.validate(
+            DeedNumberingValidationResult result = validateDeedNumberingUseCase.validate(
                     entity.getNumber(), notary, folio.getYear(), isAuxiliary,
                     entity.getNotes(), entity.getIdDeed());
 
-            if (resultado == DeedNumberingValidationResult.DUPLICATE) {
+            if (result == DeedNumberingValidationResult.DUPLICATE) {
                 throw new DuplicateDeedNumberException(
-                        "El número " + entity.getNumber() + " ya fue utilizado en el protocolo "
-                                + (isAuxiliary ? "auxiliar" : "principal") + " del año " + folio.getYear());
+                        "The number " + entity.getNumber() + " was already used in the "
+                                + (isAuxiliary ? "auxiliary" : "main") + " protocol for year " + folio.getYear());
             }
-            if (resultado == DeedNumberingValidationResult.SKIP_UNJUSTIFIED) {
+            if (result == DeedNumberingValidationResult.SKIP_UNJUSTIFIED) {
                 throw new UnjustifiedNumberingGapException(
-                        "El número " + entity.getNumber() + " deja un salto en la numeración correlativa; "
-                                + "debe indicar una justificación en observaciones");
+                        "The number " + entity.getNumber() + " leaves a gap in the sequence; "
+                                + "a justification is required in notes");
             }
         });
     }
@@ -102,19 +102,19 @@ public class DeedService {
     }
 
     public void deleteById(Integer id) {
-        logger.info("Deleting escritura with id: {}", id);
+        logger.info("Deleting deed with id: {}", id);
         deedRepository.deleteById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<Person> findEscribanosDisponibles() {
-        logger.debug("Finding all available escribanos");
-        return personRepository.findAllEscribanos();
+    public List<Person> findAvailableNotaries() {
+        logger.debug("Finding all available notaries");
+        return personRepository.findAllNotaries();
     }
 
     @Transactional(readOnly = true)
-    public List<Deed> searchPorNumber(Integer number) {
-        logger.debug("Searching escrituras by numero: {}", number);
+    public List<Deed> searchByNumber(Integer number) {
+        logger.debug("Searching deeds by number: {}", number);
         if (number == null) {
             return deedRepository.findAll();
         }

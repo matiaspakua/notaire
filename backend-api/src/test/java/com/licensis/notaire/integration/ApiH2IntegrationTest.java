@@ -30,7 +30,7 @@ class ApiH2IntegrationTest {
 
     @Test
     void shouldAuthenticateDefaultAdminUser() throws Exception {
-        mockMvc.perform(post("/api/v1/usuarios/login")
+        mockMvc.perform(post("/api/v1/users/login")
                         .contentType("application/json")
                         .content("""
                                 {
@@ -39,18 +39,18 @@ class ApiH2IntegrationTest {
                                 }
                                 """))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.valido").isBoolean());
+                .andExpect(jsonPath("$.valid").isBoolean());
     }
 
     @Test
     void shouldExposeCoreCatalogEndpoints() throws Exception {
-        mockMvc.perform(get("/api/v1/conceptos"))
+        mockMvc.perform(get("/api/v1/concepts"))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/v1/people"))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/v1/tramites"))
+        mockMvc.perform(get("/api/v1/procedures"))
                 .andExpect(status().isOk());
     }
 }

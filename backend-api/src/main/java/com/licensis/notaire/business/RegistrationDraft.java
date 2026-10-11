@@ -23,8 +23,8 @@ import org.springframework.data.domain.Persistable;
 import java.util.Date;
 
 /**
- * Minuta de Inscripción de una escritura sobre un inmueble ante el Registro
- * de la Propiedad Inmueble, y su circuito registral (CU82): Generada,
+ * Registration draft of a deed on a property filed with the property
+ * registry, and its registry workflow (CU82): Generada,
  * Presentada, Observada, Inscripta.
  */
 @Entity
@@ -76,7 +76,7 @@ public class RegistrationDraft implements Serializable, Persistable<Integer> {
     @Column(name = "correction_date")
     private Date dateCorrection;
 
-    @JoinColumn(name = "fk_id_escritura", referencedColumnName = "id", unique = true)
+    @JoinColumn(name = "fk_id_deed", referencedColumnName = "id", unique = true)
     @OneToOne(optional = false, fetch = FetchType.EAGER)
     private Deed fkIdDeed;
 
@@ -96,7 +96,7 @@ public class RegistrationDraft implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idRegistrationDraft == null || idRegistrationDraft.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idRegistrationDraft == null || idRegistrationDraft.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 
@@ -219,8 +219,8 @@ public class RegistrationDraft implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "MinutaInscripcion[ idMinutaInscripcion=" + idRegistrationDraft + " ][ numero=" + number
-                + " ][ estado=" + status + " ]";
+        return "RegistrationDraft[ idRegistrationDraft=" + idRegistrationDraft + " ][ number=" + number
+                + " ][ status=" + status + " ]";
     }
 
     public DtoRegistrationDraft getDto() {

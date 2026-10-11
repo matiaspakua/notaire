@@ -5,24 +5,24 @@
  */
 import { test, expect } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
-import { createPersona, createPresupuesto } from "./setup/api-helpers";
+import { createPerson, createBudget } from "./setup/api-helpers";
 
 test.describe("Budget status vocabulary (#1346)", () => {
   test("a pending budget can be filtered, shows a translated status and keeps it in the edit dialog", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    const person = await createPersona(page, { isClient: true });
+    const person = await createPerson(page, { isClient: true });
     expect(person.ok, person.error).toBe(true);
     // Any letter case is accepted and stored as the canonical code.
-    const budget = await createPresupuesto(page, person.data!.personId, undefined, { status: "Pendiente" });
+    const budget = await createBudget(page, person.data!.personId, undefined, { status: "Pendiente" });
     expect(budget.ok, budget.error).toBe(true);
     const id = budget.data!.idBudget;
 
-    const searched = page.waitForRequest((r) => /\/presupuestos\/buscar\?status=PENDIENTE$/.test(r.url()));
-    await page.goto("/dashboard/presupuestos");
-    await page.getByTestId("select-estado").click();
+    const searched = page.waitForRequest((r) => /\/budgets\/search\?status=PENDIENTE$/.test(r.url()));
+    await page.goto("/dashboard/budgets");
+    await page.getByTestId("select-status").click();
     await page.getByRole("option", { name: "Pendiente", exact: true }).click();
     await searched;
-    const editButton = page.getByTestId(`btn-editar-presupuesto-${id}`);
+    const editButton = page.getByTestId(`btn-edit-budget-${id}`);
     await expect(editButton).toBeVisible({ timeout: 10000 });
     const row = page.getByRole("row").filter({ has: editButton });
     await expect(row).toContainText("Pendiente");
@@ -30,13 +30,13 @@ test.describe("Budget status vocabulary (#1346)", () => {
 
     await editButton.click();
     const dialog = page.getByRole("dialog");
-    await expect(dialog.getByTestId("select-estado-presupuesto")).toHaveText("Pendiente");
+    await expect(dialog.getByTestId("select-status-budget")).toHaveText("Pendiente");
   });
 
   test("the status filter offers every status of the vocabulary", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    await page.goto("/dashboard/presupuestos");
-    await page.getByTestId("select-estado").click();
+    await page.goto("/dashboard/budgets");
+    await page.getByTestId("select-status").click();
     const options = page.getByRole("listbox").getByRole("option");
     await expect(options).toHaveText(["Todos", "Borrador", "Pendiente", "Aprobado", "Rechazado", "Facturado"]);
   });

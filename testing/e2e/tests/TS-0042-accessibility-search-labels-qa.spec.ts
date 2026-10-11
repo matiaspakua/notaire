@@ -11,81 +11,81 @@ test.describe("Search inputs expose an accessible label (#608)", () => {
     await adminAuthSetup(page);
   });
 
-  test("personas page search inputs are labeled", async ({ page }) => {
-    await page.goto("/dashboard/personas");
+  test("people page search inputs are labeled", async ({ page }) => {
+    await page.goto("/dashboard/people");
     await expect(page.getByLabel("Buscar por nombre...", { exact: true })).toBeVisible();
     await expect(page.getByLabel("Buscar por apellido...", { exact: true })).toBeVisible();
     await expect(page.getByLabel("Buscar por DNI...", { exact: true })).toBeVisible();
   });
 
-  test("escrituras page search input is labeled", async ({ page }) => {
-    await page.goto("/dashboard/escrituras");
+  test("deeds page search input is labeled", async ({ page }) => {
+    await page.goto("/dashboard/deeds");
     await expect(page.getByLabel("Buscar por número...", { exact: true })).toBeVisible();
   });
 
-  test("presupuestos page search input is labeled", async ({ page }) => {
-    await page.goto("/dashboard/presupuestos");
+  test("the budgets page search input is labeled", async ({ page }) => {
+    await page.goto("/dashboard/budgets");
     await expect(page.getByLabel("Buscar por ID o cliente...", { exact: true })).toBeVisible();
   });
 
-  test("auditoria page search input is labeled", async ({ page }) => {
-    await page.goto("/dashboard/auditoria");
+  test("audit page search input is labeled", async ({ page }) => {
+    await page.goto("/dashboard/audit");
     await expect(page.getByLabel("Buscar en esta página por usuario u operación...", { exact: true })).toBeVisible();
   });
 
-  test("administracion/workflows page search input is labeled", async ({ page }) => {
-    await page.goto("/dashboard/administracion/workflows");
+  test("administration/workflows page search input is labeled", async ({ page }) => {
+    await page.goto("/dashboard/administration/workflows");
     await expect(page.getByLabel("Buscar por nombre...", { exact: true })).toBeVisible();
   });
 
-  test("administracion/tramites page search input is labeled", async ({ page }) => {
-    await page.goto("/dashboard/administracion/tramites");
+  test("administration/procedures page search input is labeled", async ({ page }) => {
+    await page.goto("/dashboard/administration/procedures");
     await expect(page.getByLabel("Buscar por nombre...", { exact: true })).toBeVisible();
   });
 
-  test("administracion/conceptos page search input is labeled", async ({ page }) => {
-    await page.goto("/dashboard/administracion/conceptos");
+  test("administration/concepts page search input is labeled", async ({ page }) => {
+    await page.goto("/dashboard/administration/concepts");
     await expect(page.getByLabel("Buscar por nombre...", { exact: true })).toBeVisible();
   });
 
-  test("administracion/documentos page search input is labeled", async ({ page }) => {
-    await page.goto("/dashboard/administracion/documentos");
+  test("administration/documents page search input is labeled", async ({ page }) => {
+    await page.goto("/dashboard/administration/documents");
     await expect(page.getByLabel("Buscar por nombre...", { exact: true })).toBeVisible();
   });
 
-  test("administracion/estados-gestion page search input is labeled", async ({ page }) => {
-    await page.goto("/dashboard/administracion/estados-gestion");
+  test("administration/management-statuses page search input is labeled", async ({ page }) => {
+    await page.goto("/dashboard/administration/management-statuses");
     await expect(page.getByLabel("Buscar por nombre...", { exact: true })).toBeVisible();
   });
 });
 
 /**
  * Issue #1343: filter selects had no accessible name (axe button-name /
- * select-name, critical) on gestiones, presupuestos, folios, auditoria and
- * estados-gestion.
+ * select-name, critical) on managements, budgets, folios, audit, and
+ * estados-management.
  */
 test.describe("Filter selects expose an accessible name (#1343)", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
   });
 
-  test("gestiones client filter is a named combobox", async ({ page }) => {
-    await page.goto("/dashboard/gestiones");
+  test("the managements client filter is a named combobox", async ({ page }) => {
+    await page.goto("/dashboard/managements");
     await expect(page.getByRole("combobox", { name: "Filtrar por cliente", exact: true })).toBeVisible();
   });
 
-  test("presupuestos status filter is a named combobox", async ({ page }) => {
-    await page.goto("/dashboard/presupuestos");
+  test("the budgets status filter is a named combobox", async ({ page }) => {
+    await page.goto("/dashboard/budgets");
     await expect(page.getByRole("combobox", { name: "Filtrar por estado", exact: true })).toBeVisible();
   });
 
   test("folios status filter is a named combobox", async ({ page }) => {
-    await page.goto("/dashboard/administracion/folios");
+    await page.goto("/dashboard/administration/folios");
     await expect(page.getByRole("combobox", { name: "Filtrar por estado", exact: true })).toBeVisible();
   });
 
-  test("auditoria module filter, when shown, is a named combobox", async ({ page }) => {
-    await page.goto("/dashboard/auditoria");
+  test("audit module filter, when shown, is a named combobox", async ({ page }) => {
+    await page.goto("/dashboard/audit");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     const selects = page.locator("select");
     if ((await selects.count()) > 0) {
@@ -93,8 +93,8 @@ test.describe("Filter selects expose an accessible name (#1343)", () => {
     }
   });
 
-  test("estados-gestion workflow selector, when shown, is a named combobox", async ({ page }) => {
-    await page.goto("/dashboard/administracion/estados-gestion");
+  test("management-statuses workflow selector, when shown, is a named combobox", async ({ page }) => {
+    await page.goto("/dashboard/administration/management-statuses");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     if ((await page.getByTestId("select-workflow").count()) > 0) {
       await expect(page.getByRole("combobox", { name: "Workflow a visualizar", exact: true })).toBeVisible();

@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Gestiona el alta de trámites en Protocolo Auxiliar (CU81).
+ * Creates procedures in the auxiliary protocol (CU81).
  */
 @Service
 @Transactional
@@ -36,30 +36,30 @@ public class AuxiliaryProtocolService {
         return folioRepository.findMaxNumberDeedAuxiliary().orElse(0) + 1;
     }
 
-    public Deed iniciarDeed(Integer idFolio, String body, Date dateDeedrecording) {
+    public Deed startDeed(Integer idFolio, String body, Date dateDeedrecording) {
         if (idFolio == null) {
-            throw new BusinessValidationException("Debe indicar el folio auxiliar donde iniciar la escritura");
+            throw new BusinessValidationException("The auxiliary folio where the deed starts is required");
         }
 
         Folio folio = folioRepository.findById(idFolio)
-                .orElseThrow(() -> new ResourceNotFoundException("No existe el folio con ID: " + idFolio));
+                .orElseThrow(() -> new ResourceNotFoundException("Folio not found with ID: " + idFolio));
 
         if (!folio.getFkIdFolioType().isIsAuxiliary()) {
-            throw new BusinessValidationException("El folio indicado no pertenece a Protocolo Auxiliar");
+            throw new BusinessValidationException("The indicated folio does not belong to Protocolo Auxiliar");
         }
         if (folio.getFkIdDeed() != null) {
-            throw new BusinessValidationException("El folio indicado ya tiene una escritura asociada");
+            throw new BusinessValidationException("The indicated folio already has a deed associated");
         }
 
         Deed deed = new Deed();
         deed.setNumber(calculateNextNumberAuxiliary());
         deed.setBody(body);
         deed.setDateDeedrecording(dateDeedrecording);
-        Deed guardada = deedRepository.save(deed);
+        Deed saved = deedRepository.save(deed);
 
-        folio.setFkIdDeed(guardada);
+        folio.setFkIdDeed(saved);
         folioRepository.save(folio);
 
-        return guardada;
+        return saved;
     }
 }

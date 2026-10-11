@@ -28,7 +28,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import org.springframework.data.domain.Persistable;
 
 /**
- * Clase que presenta los items que pueden ser asociados a los presupuestos.
+ * Class that presents the items that can be associated with budgets.
  *
  * @author juanca
  */
@@ -39,9 +39,9 @@ import org.springframework.data.domain.Persistable;
         {
             @NamedQuery(name = "Item.findAll", query = "SELECT i FROM Item i"),
             @NamedQuery(name = "Item.findByIdItem", query = "SELECT i FROM Item i WHERE i.idItem = :idItem"),
-            @NamedQuery(name = "Item.findByValue", query = "SELECT i FROM Item i WHERE i.value = :valor"),
-            @NamedQuery(name = "Item.findByPercentage", query = "SELECT i FROM Item i WHERE i.percentage = :porcentaje"),
-            @NamedQuery(name = "Item.findByBudget", query = "SELECT i FROM Item i WHERE i.fkIdBudget.idBudget = :idPresupuesto")
+            @NamedQuery(name = "Item.findByValue", query = "SELECT i FROM Item i WHERE i.value = :value"),
+            @NamedQuery(name = "Item.findByPercentage", query = "SELECT i FROM Item i WHERE i.percentage = :percentage"),
+            @NamedQuery(name = "Item.findByBudget", query = "SELECT i FROM Item i WHERE i.fkIdBudget.idBudget = :idBudget")
         })
 public class Item implements Serializable, Persistable<Integer>
 {
@@ -74,18 +74,18 @@ public class Item implements Serializable, Persistable<Integer>
     private TypeItem type = TypeItem.NORMAL;
     @Column(name = "reason")
     private String reason;
-    @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_budget", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Budget fkIdBudget;
 
     /**
-     * Constructor por defaul de Item. Inicializa el ID presupuesto segun el campo
-     * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO.
+     * Default constructor. Initializes the id from
+     * {@link BusinessConstants#INVALID_OBJECT_ID}.
      */
     public Item()
     {
-        this.idItem = BusinessConstants.ID_OBJETO_NO_VALIDO;
+        this.idItem = BusinessConstants.INVALID_OBJECT_ID;
     }
 
     public Item(Integer idItem)
@@ -123,7 +123,7 @@ public class Item implements Serializable, Persistable<Integer>
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew()
     {
-        return idItem == null || idItem.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idItem == null || idItem.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
     public String getName()
@@ -217,8 +217,8 @@ public class Item implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "negocio.Item[ idItem=" + idItem + " ]"
-                + "[ nombre=" + name + " ]";
+        return "Item[ idItem=" + idItem + " ]"
+                + "[ name=" + name + " ]";
     }
 
     public int getVersion()

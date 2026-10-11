@@ -1,0 +1,27 @@
+info:
+  name: Verify testimony action
+  type: http
+  seq: 7
+  description: |-
+      ## POST /api/v1/testimonies/{id}/verify
+      Traceability: CU08
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/testimonies/{{testimony_id}}/verify"
+  body:
+    type: json
+    data: |-
+        {"flagged": false, "notes": "verified by Bruno"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Body has idTestimony", function () {
+            expect(res.getBody()).to.have.property('idTestimony');
+          });

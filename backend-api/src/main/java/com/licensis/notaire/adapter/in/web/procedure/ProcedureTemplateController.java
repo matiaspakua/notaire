@@ -24,8 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/plantilla-tramite")
-@Tag(name = "PlantillaTramite", description = "API para plantillas de tramite (documentos por tipo de tramite)")
+@RequestMapping("/api/v1/procedure-templates")
+@Tag(name = "ProcedureTemplate", description = "API for procedure (documents by procedure type)")
 public class ProcedureTemplateController {
 
     record ProcedureTemplatePkRequest(
@@ -76,14 +76,14 @@ public class ProcedureTemplateController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todas las plantillas de tramite")
+    @Operation(summary = "Get all procedure templates")
     @Transactional(readOnly = true)
     public ResponseEntity<List<ProcedureTemplateResponse>> getAll() {
         return ResponseEntity.ok(repository.findAll().stream().map(this::toResponse).toList());
     }
 
-    @GetMapping("/tipo-tramite/{idProcedureType}")
-    @Operation(summary = "Obtener plantillas de tramite por tipo de tramite")
+    @GetMapping("/procedure-types/{idProcedureType}")
+    @Operation(summary = "Get procedure templates by procedure type")
     @Transactional(readOnly = true)
     public ResponseEntity<List<ProcedureTemplateResponse>> getByTypeProcedure(
             @PathVariable Integer idProcedureType) {
@@ -93,10 +93,10 @@ public class ProcedureTemplateController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
     @GetMapping("/{idProcedureType}/{idDocumentType}")
-    @Operation(summary = "Obtener plantilla por clave compuesta (CU55)")
+    @Operation(summary = "Get template by key composite (CU55)")
     @Transactional(readOnly = true)
     public ResponseEntity<ProcedureTemplateResponse> getById(@PathVariable Integer idProcedureType,
             @PathVariable Integer idDocumentType) {
@@ -107,12 +107,12 @@ public class ProcedureTemplateController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Creado"),
-        @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-        @ApiResponse(responseCode = "409", description = "Conflicto")
+        @ApiResponse(responseCode = "201", description = "Created"),
+        @ApiResponse(responseCode = "400", description = "Invalid request"),
+        @ApiResponse(responseCode = "409", description = "Conflict")
     })
     @PostMapping
-    @Operation(summary = "Crear plantilla de tramite (CU55)")
+    @Operation(summary = "Create procedure template (CU55)")
     public ResponseEntity<ProcedureTemplateResponse> create(
             @Valid @RequestBody ProcedureTemplateRequest request) {
         Integer procedureTypeId = resolveProcedureTypeId(request);
@@ -129,10 +129,10 @@ public class ProcedureTemplateController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
     @PutMapping("/{idProcedureType}/{idDocumentType}")
-    @Operation(summary = "Actualizar plantilla de tramite (CU55)")
+    @Operation(summary = "Update procedure template (CU55)")
     public ResponseEntity<ProcedureTemplateResponse> update(@PathVariable Integer idProcedureType,
             @PathVariable Integer idDocumentType,
             @Valid @RequestBody ProcedureTemplateRequest request) {
@@ -144,11 +144,11 @@ public class ProcedureTemplateController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "204", description = "Eliminado"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "204", description = "Deleted"),
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
     @DeleteMapping("/{idProcedureType}/{idDocumentType}")
-    @Operation(summary = "Eliminar plantilla de tramite (CU55)")
+    @Operation(summary = "Delete procedure template (CU55)")
     public ResponseEntity<Void> delete(@PathVariable Integer idProcedureType,
             @PathVariable Integer idDocumentType) {
         ProcedureTemplatePK pk = new ProcedureTemplatePK(idProcedureType, idDocumentType);

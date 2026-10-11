@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@DisplayName("CU83 - TipoDeTramite workflow assignment tests")
+@DisplayName("CU83 - ProcedureType workflow assignment tests")
 @ExtendWith(MockitoExtension.class)
 class ProcedureTypeWorkflowAssignmentTest {
 
@@ -61,7 +61,7 @@ class ProcedureTypeWorkflowAssignmentTest {
     }
 
     @Test
-    @DisplayName("PUT /api/v1/tipo-tramite/{id}/workflow should assign active workflow")
+    @DisplayName("PUT /api/v1/procedure-types/{id}/workflow should assign active workflow")
     void shouldAssignActiveWorkflow() throws Exception {
         ProcedureType type = buildType();
         WorkflowDefinition wf = new WorkflowDefinition(5);
@@ -72,14 +72,14 @@ class ProcedureTypeWorkflowAssignmentTest {
         when(workflowRepository.findById(5)).thenReturn(Optional.of(wf));
         when(repository.save(any(ProcedureType.class))).thenReturn(type);
 
-        mockMvc.perform(put("/api/v1/tipo-tramite/1/workflow")
+        mockMvc.perform(put("/api/v1/procedure-types/1/workflow")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(Map.of("workflowDefinitionId", 5))))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("PUT /api/v1/tipo-tramite/{id}/workflow should return 409 for inactive workflow")
+    @DisplayName("PUT /api/v1/procedure-types/{id}/workflow should return 409 for inactive workflow")
     void shouldReturn409WhenWorkflowInactive() throws Exception {
         ProcedureType type = buildType();
         WorkflowDefinition wf = new WorkflowDefinition(5);
@@ -89,30 +89,30 @@ class ProcedureTypeWorkflowAssignmentTest {
         when(repository.findById(1)).thenReturn(Optional.of(type));
         when(workflowRepository.findById(5)).thenReturn(Optional.of(wf));
 
-        mockMvc.perform(put("/api/v1/tipo-tramite/1/workflow")
+        mockMvc.perform(put("/api/v1/procedure-types/1/workflow")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(Map.of("workflowDefinitionId", 5))))
                 .andExpect(status().isConflict());
     }
 
     @Test
-    @DisplayName("PUT /api/v1/tipo-tramite/{id}/workflow should return 404 when tipo not found")
+    @DisplayName("PUT /api/v1/procedure-types/{id}/workflow should return 404 when the procedure type is not found")
     void shouldReturn404WhenTypeNotFound() throws Exception {
         when(repository.findById(99)).thenReturn(Optional.empty());
-        mockMvc.perform(put("/api/v1/tipo-tramite/99/workflow")
+        mockMvc.perform(put("/api/v1/procedure-types/99/workflow")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(Map.of("workflowDefinitionId", 5))))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("PUT /api/v1/tipo-tramite/{id}/workflow should unassign workflow when workflowDefinitionId is null")
+    @DisplayName("PUT /api/v1/procedure-types/{id}/workflow should unassign workflow when workflowDefinitionId is null")
     void shouldUnassignWorkflowWhenIdNull() throws Exception {
         ProcedureType type = buildType();
         when(repository.findById(1)).thenReturn(Optional.of(type));
         when(repository.save(any(ProcedureType.class))).thenReturn(type);
 
-        mockMvc.perform(put("/api/v1/tipo-tramite/1/workflow")
+        mockMvc.perform(put("/api/v1/procedure-types/1/workflow")
                         .contentType("application/json")
                         .content("{\"workflowDefinitionId\": null}"))
                 .andExpect(status().isOk());

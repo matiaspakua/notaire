@@ -4,10 +4,10 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Copy;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.Person;
@@ -25,7 +25,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author juanca
  */
-public class CopyJpaController implements Serializable, IPersistenciaJpa
+public class CopyJpaController implements Serializable, JpaPersistence
 {
 
     public CopyJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -43,7 +43,7 @@ public class CopyJpaController implements Serializable, IPersistenciaJpa
 
     public int create(Copy copy)
     {
-        int creada = -1;
+        int created = -1;
         if (copy.getFolioList() == null)
         {
             copy.setFolioList(new ArrayList<Folio>());
@@ -89,7 +89,7 @@ public class CopyJpaController implements Serializable, IPersistenciaJpa
                 folioListFolio = em.merge(folioListFolio);
             }
             em.getTransaction().commit();
-            creada = copy.getIdCopy();
+            created = copy.getIdCopy();
         }
         finally
         {
@@ -98,7 +98,7 @@ public class CopyJpaController implements Serializable, IPersistenciaJpa
                 em.close();
             }
         }
-        return creada;
+        return created;
     }
 
     public void edit(Copy copy) throws NonexistentEntityException, Exception
@@ -180,7 +180,7 @@ public class CopyJpaController implements Serializable, IPersistenciaJpa
                 Integer id = copy.getIdCopy();
                 if (findCopy(id) == null)
                 {
-                    throw new NonexistentEntityException("The copia with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The copy with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -209,7 +209,7 @@ public class CopyJpaController implements Serializable, IPersistenciaJpa
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The copia with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The copy with id " + id + " no longer exists.", enfe);
             }
             Person fkIdPerson = copy.getFkIdPerson();
             if (fkIdPerson != null)
@@ -297,9 +297,9 @@ public class CopyJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public int crearCopy(Copy miCopy)
+    public int createCopy(Copy copy)
     {
-        int creada = -1;
+        int created = -1;
 
         EntityManager em = null;
         try
@@ -307,10 +307,10 @@ public class CopyJpaController implements Serializable, IPersistenciaJpa
             em = getEntityManager();
             em.getTransaction().begin();
 
-            em.persist(miCopy);
+            em.persist(copy);
 
             em.getTransaction().commit();
-            creada = miCopy.getIdCopy();
+            created = copy.getIdCopy();
         }
         finally
         {
@@ -319,7 +319,7 @@ public class CopyJpaController implements Serializable, IPersistenciaJpa
                 em.close();
             }
         }
-        return creada;
+        return created;
     }
 
     public List<Copy> searchCopiesTestimony(Integer idTestimony)
@@ -328,17 +328,17 @@ public class CopyJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
 
         Query query = em.createNamedQuery("Copy.findByTestimony");
-        query.setParameter("idTestimonio", idTestimony);
+        query.setParameter("idTestimony", idTestimony);
 
         copies = (List<Copy>) query.getResultList();
 
         return copies;
     }
 
-    public Boolean modificarCopy(Copy copy) throws ClassModifiedException, ClassEliminatedException
+    public Boolean modifyCopy(Copy copy) throws ClassModifiedException, ClassDeletedException
     {
         EntityManager em = null;
-        Boolean modificada = false;
+        Boolean updated = false;
         int version = 0;
         int oldVersion = 0;
 
@@ -348,10 +348,10 @@ public class CopyJpaController implements Serializable, IPersistenciaJpa
 
         if (persistentCopy != null)
         {
-            version = persistentCopy.getVersion(); // Version del Objeto en db
-            oldVersion = copy.getVersion(); // Version del Objeto en memoria
+            version = persistentCopy.getVersion(); // Version of the object in the database
+            oldVersion = copy.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException();
             }
@@ -360,17 +360,17 @@ public class CopyJpaController implements Serializable, IPersistenciaJpa
             persistentCopy.setNotes(copy.getNotes());
 
             em.getTransaction().commit();
-            modificada = true;
+            updated = true;
         } else
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
         if (em != null)
         {
             em.close();
         }
 
-        return modificada;
+        return updated;
     }
 
     @Override

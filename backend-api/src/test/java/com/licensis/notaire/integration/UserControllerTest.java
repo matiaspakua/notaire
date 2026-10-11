@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Usuario controller — activo field mapping")
+@DisplayName("User controller — active field mapping")
 class UserControllerTest {
 
     @Autowired
@@ -37,21 +37,21 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Should return activo field (not status) in GET response")
+    @DisplayName("Should return active field (not status) in GET response")
     void shouldReturnActiveFieldInGetResponse() throws Exception {
-        mockMvc.perform(get("/api/v1/usuarios"))
+        mockMvc.perform(get("/api/v1/users"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].active").exists());
     }
 
     @Test
-    @DisplayName("Should create usuario with activo=true and return activo in response")
+    @DisplayName("Should create user with active=true and return active in response")
     void shouldCreateUserWithActive() throws Exception {
         String body = """
                 {"name": "testuser_create", "password": "pass", "type": "EMPLEADO", "active": true}
                 """;
 
-        mockMvc.perform(post("/api/v1/usuarios")
+        mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -60,13 +60,13 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Should update usuario and preserve activo=true, not silently deactivate")
+    @DisplayName("Should update user and preserve active=true, not silently deactivate")
     void shouldUpdateUserWithoutDeactivating() throws Exception {
         String createBody = """
                 {"name": "testuser_upd", "password": "pass", "type": "EMPLEADO", "active": true}
                 """;
 
-        MvcResult result = mockMvc.perform(post("/api/v1/usuarios")
+        MvcResult result = mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -79,12 +79,12 @@ class UserControllerTest {
                 {"name": "testuser_upd_renamed", "password": "", "type": "ADMIN", "active": true}
                 """;
 
-        mockMvc.perform(put("/api/v1/usuarios/" + id)
+        mockMvc.perform(put("/api/v1/users/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/v1/usuarios/" + id))
+        mockMvc.perform(get("/api/v1/users/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.active").value(true))
                 .andExpect(jsonPath("$.name").value("testuser_upd_renamed"))
@@ -92,13 +92,13 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Should set activo=false when update sends activo=false")
+    @DisplayName("Should set active=false when update sends active=false")
     void shouldDeactivateUserWhenActiveFalse() throws Exception {
         String createBody = """
                 {"name": "testuser_deact", "password": "pass", "type": "EMPLEADO", "active": true}
                 """;
 
-        MvcResult result = mockMvc.perform(post("/api/v1/usuarios")
+        MvcResult result = mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -111,24 +111,24 @@ class UserControllerTest {
                 {"name": "testuser_deact", "password": "", "type": "EMPLEADO", "active": false}
                 """;
 
-        mockMvc.perform(put("/api/v1/usuarios/" + id)
+        mockMvc.perform(put("/api/v1/users/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/v1/usuarios/" + id))
+        mockMvc.perform(get("/api/v1/users/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.active").value(false));
     }
 
     @Test
-    @DisplayName("Should return 404 when updating non-existent usuario")
+    @DisplayName("Should return 404 when updating non-existent user")
     void shouldReturn404WhenUpdatingMissingUser() throws Exception {
         String body = """
                 {"name": "ghost", "password": "x", "type": "EMPLEADO", "active": true}
                 """;
 
-        mockMvc.perform(put("/api/v1/usuarios/999999")
+        mockMvc.perform(put("/api/v1/users/999999")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isNotFound());

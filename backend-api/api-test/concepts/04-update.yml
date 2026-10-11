@@ -3,12 +3,12 @@ info:
   type: http
   seq: 4
   description: |-
-      ## Update concept — PUT /api/v1/conceptos/{id}
+      ## Update concept — PUT /api/v1/concepts/{id}
       Regression guard for issue #415: payload omits `enabled` and must not 500.
       Traceability: CU34 (RF #55, #60)
 http:
   method: PUT
-  url: "{{base_url}}/api/v1/conceptos/{{concept_id}}"
+  url: "{{base_url}}/api/v1/concepts/{{concept_id}}"
   body:
     type: json
     data: |-

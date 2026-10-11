@@ -97,7 +97,7 @@ class WorkflowValidationServiceTest {
             ValidationResult result = service.validate(List.of(mid, finalNode), List.of(t));
 
             assertThat(result.isValid()).isFalse();
-            assertThat(result.getErrors()).anyMatch(e -> e.contains("inicial"));
+            assertThat(result.getErrors()).anyMatch(e -> e.contains("initial"));
         }
 
         @Test
@@ -110,7 +110,7 @@ class WorkflowValidationServiceTest {
             ValidationResult result = service.validate(List.of(i1, i2, finalNode), List.of());
 
             assertThat(result.isValid()).isFalse();
-            assertThat(result.getErrors()).anyMatch(e -> e.contains("inicial"));
+            assertThat(result.getErrors()).anyMatch(e -> e.contains("initial"));
         }
 
         @Test
@@ -137,7 +137,7 @@ class WorkflowValidationServiceTest {
             ValidationResult result = service.validate(List.of(initial, finalNode, orphan), List.of(t));
 
             assertThat(result.isValid()).isFalse();
-            assertThat(result.getErrors()).anyMatch(e -> e.contains("alcanzable") || e.contains("aislado"));
+            assertThat(result.getErrors()).anyMatch(e -> e.contains("unreachable") || e.contains("isolated"));
         }
     }
 }

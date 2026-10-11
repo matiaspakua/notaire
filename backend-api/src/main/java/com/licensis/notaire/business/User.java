@@ -38,9 +38,9 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
-        @NamedQuery(name = "User.findByIdUser", query = "SELECT u FROM User u WHERE u.idUser = :idUsuario"),
+        @NamedQuery(name = "User.findByIdUser", query = "SELECT u FROM User u WHERE u.idUser = :idUser"),
         @NamedQuery(name = "User.findByStatus", query = "SELECT u FROM User u WHERE u.status = :status"),
-        @NamedQuery(name = "User.findByPersonId", query = "SELECT u FROM User u WHERE u.fkIdPerson.idPerson = :idPersona")
+        @NamedQuery(name = "User.findByPersonId", query = "SELECT u FROM User u WHERE u.fkIdPerson.idPerson = :idPerson")
 })
 public class User implements Serializable, Persistable<Integer> {
 
@@ -69,7 +69,7 @@ public class User implements Serializable, Persistable<Integer> {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdUser", fetch = FetchType.LAZY)
     private List<AuditRecord> auditRecordList;
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "usuariosList", "presupuestosList", "tramiteList", "suplenciaEscribanoList", "suplenciaReemplazadoList"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "userList", "budgetList", "procedureList", "substitutionList", "substitutionList1"})
     @JoinColumn(name = "fk_id_person", referencedColumnName = "id")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Person fkIdPerson;
@@ -105,7 +105,7 @@ public class User implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idUser == null || idUser.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idUser == null || idUser.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 
@@ -199,21 +199,21 @@ public class User implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "Usuarios[ version=" + version + " ]"
-                + "[ idUsuario=" + idUser + " ]"
-                + "[ nombre=" + name + " ]"
-                + "[ tipo=" + type + " ] "
-                + "[ estado=" + status + " ]";
+        return "User[ version=" + version + " ]"
+                + "[ idUser=" + idUser + " ]"
+                + "[ name=" + name + " ]"
+                + "[ type=" + type + " ] "
+                + "[ status=" + status + " ]";
     }
 
-    public void setAtributos(DtoUser dtoUser) {
+    public void setAttributes(DtoUser dtoUser) {
 
-        // Ref persona de Usuario
-        Person miPerson = new Person();
-        miPerson.setAtributos(dtoUser.getPersons());
-        setFkIdPerson(miPerson);
+        // Person linked to this user account
+        Person person = new Person();
+        person.setAttributes(dtoUser.getPersons());
+        setFkIdPerson(person);
 
-        // Atributos usuario
+        // User attributes
         setPassword(dtoUser.getPassword());
         ;
         setStatus(dtoUser.isStatus());
@@ -222,7 +222,7 @@ public class User implements Serializable, Persistable<Integer> {
         setType(dtoUser.getType());
 
         if (dtoUser.getVersion() != null) {
-            // Controlo Version Objeto
+            // Check the object version
             setVersion(dtoUser.getVersion());
         }
 

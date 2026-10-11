@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.licensis.notaire.testing.RequirementCoverage;
 
 @RequirementCoverage({"CU05", "CU06", "CU52", "CU62"})
-@DisplayName("Escritura Entity Tests")
+@DisplayName("Deed Entity Tests")
 class DeedEntityTest {
 
     @Nested
@@ -31,11 +31,11 @@ class DeedEntityTest {
             deed.setIdDeed(1);
             deed.setNumber(1001);
             deed.setDateDeedrecording(new Date());
-            deed.setBody("Escritura de compraventa");
+            deed.setBody("Deed de compraventa");
             deed.setStatus("firmada");
 
             assertThat(deed.getNumber()).isEqualTo(1001);
-            assertThat(deed.getBody()).isEqualTo("Escritura de compraventa");
+            assertThat(deed.getBody()).isEqualTo("Deed de compraventa");
             assertThat(deed.getStatus()).isEqualTo("firmada");
         }
 
@@ -70,7 +70,7 @@ class DeedEntityTest {
 
         @Test
         @DisplayName("Should have SIN_FIRMAR as default status")
-        void shouldHaveSinFirmarAsDefaultStatus() {
+        void shouldHaveUnsignedAsDefaultStatus() {
             Deed deed = new Deed();
 
             assertThat(deed.getStatus()).isEqualTo(BusinessConstants.DeedSINFIRMAR);
@@ -144,7 +144,7 @@ class DeedEntityTest {
         }
 
         @Test
-        @DisplayName("Should set and get tramite list")
+        @DisplayName("Should set and get procedure list")
         void shouldSetAndGetProcedureList() {
             List<Procedure> procedures = new ArrayList<>();
             procedures.add(new Procedure(1));
@@ -158,11 +158,11 @@ class DeedEntityTest {
         @Test
         @DisplayName("Should set and get testimony list")
         void shouldSetAndGetTestimonyList() {
-            List<Testimony> testimonios = new ArrayList<>();
-            testimonios.add(new Testimony());
+            List<Testimony> testimonies = new ArrayList<>();
+            testimonies.add(new Testimony());
 
             Deed deed = new Deed();
-            deed.setTestimonyList(testimonios);
+            deed.setTestimonyList(testimonies);
 
             assertThat(deed.getTestimonyList()).hasSize(1);
         }
@@ -215,7 +215,7 @@ class DeedEntityTest {
     }
 
     @Nested
-    @DisplayName("setAtributos branches")
+    @DisplayName("setAttributes branches")
     class SetAtributosTests {
 
     }
@@ -229,7 +229,7 @@ class DeedEntityTest {
         void getDtoWithNullFolioListReturnsFoliosEmpty() {
             Deed e = new Deed(1);
             e.setNumber(42);
-            // folioList is null by default → getDto sets folios null on DTO, but DtoEscritura.getFolios() returns new ArrayList<>()
+            // folioList is null by default → getDto sets folios null on DTO, but DtoDeed.getFolios() returns new ArrayList<>()
             var dto = e.getDto();
             assertThat(dto.getFolios()).isNotNull().isEmpty();
         }
@@ -245,17 +245,17 @@ class DeedEntityTest {
         }
 
         @Test
-        @DisplayName("getDto with null tramiteList returns empty procedures")
+        @DisplayName("getDto with null procedureList returns empty procedures")
         void getDtoWithNullProcedureListReturnsProceduresEmpty() {
             Deed e = new Deed(1);
             e.setNumber(42);
             var dto = e.getDto();
-            // tramiteList null → setTramites(null) → dto.getTramites() is null
+            // procedureList null → setTramites(null) → dto.getTramites() is null
             assertThat(dto.getProcedures()).isNull();
         }
 
         @Test
-        @DisplayName("getDto with empty tramiteList returns null procedures")
+        @DisplayName("getDto with empty procedureList returns null procedures")
         void getDtoWithEmptyProcedureListReturnsProceduresNull() {
             Deed e = new Deed(1);
             e.setNumber(42);
@@ -269,11 +269,11 @@ class DeedEntityTest {
         void getDtoMapsBasicFields() {
             Deed e = new Deed(5);
             e.setNumber(3001);
-            e.setBody("Escritura de prueba");
+            e.setBody("Test deed");
             var dto = e.getDto();
             assertThat(dto.getIdDeed()).isEqualTo(5);
             assertThat(dto.getNumber()).isEqualTo(3001);
-            assertThat(dto.getBody()).isEqualTo("Escritura de prueba");
+            assertThat(dto.getBody()).isEqualTo("Test deed");
         }
     }
 }

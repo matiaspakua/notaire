@@ -3,12 +3,12 @@ info:
   type: http
   seq: 9
   description: |-
-      ## Update payment with a non-positive amount — PUT /api/v1/pagos/{payment_id}
+      ## Update payment with a non-positive amount — PUT /api/v1/payments/{payment_id}
       Bean validation rejects `amount <= 0` with 400 (it used to answer 404). Issue #655.
       Traceability: CU15 (RF #3, #20)
 http:
   method: PUT
-  url: "{{base_url}}/api/v1/pagos/{{payment_id}}"
+  url: "{{base_url}}/api/v1/payments/{{payment_id}}"
   body:
     type: json
     data: |-

@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RequirementCoverage({"CU82"})
 @ExtendWith(MockitoExtension.class)
-@DisplayName("MinutaInscripcionController unit tests")
+@DisplayName("RegistrationDraftController unit tests")
 class RegistrationDraftControllerTest {
 
     @Mock
@@ -62,103 +62,103 @@ class RegistrationDraftControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/minutas-inscripcion/{id} returns minuta when found")
+    @DisplayName("GET /api/v1/registration-drafts/{id} returns the registration draft when found")
     void shouldReturnDraftById() throws Exception {
         when(registrationDraftService.findById(1))
                 .thenReturn(Optional.of(buildDraft(1, 1, BusinessConstants.RegistrationDraftGENERADA)));
 
-        mockMvc.perform(get("/api/v1/minutas-inscripcion/1"))
+        mockMvc.perform(get("/api/v1/registration-drafts/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftGENERADA));
     }
 
     @Test
-    @DisplayName("GET /api/v1/minutas-inscripcion/{id} returns 404 when not found")
+    @DisplayName("GET /api/v1/registration-drafts/{id} returns 404 when not found")
     void shouldReturnNotFoundWhenDraftMissing() throws Exception {
         when(registrationDraftService.findById(999)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/v1/minutas-inscripcion/999"))
+        mockMvc.perform(get("/api/v1/registration-drafts/999"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("POST /api/v1/minutas-inscripcion generates minuta when data is complete")
+    @DisplayName("POST /api/v1/registration-drafts generates a registration draft when data is complete")
     void shouldGenerateDraftWhenDataIsComplete() throws Exception {
         when(registrationDraftService.generate(1))
                 .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftGENERADA));
 
-        mockMvc.perform(post("/api/v1/minutas-inscripcion")
+        mockMvc.perform(post("/api/v1/registration-drafts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new RegistrationDraftController.GenerateRequest(1))))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/v1/minutas-inscripcion/1"))
+                .andExpect(header().string("Location", "/api/v1/registration-drafts/1"))
                 .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftGENERADA));
     }
 
     @Test
-    @DisplayName("POST /api/v1/minutas-inscripcion returns 400 when data is incomplete")
+    @DisplayName("POST /api/v1/registration-drafts returns 400 when data is incomplete")
     void shouldRejectGenerationWhenDataIsIncomplete() throws Exception {
         when(registrationDraftService.generate(1))
                 .thenThrow(new BusinessValidationException(
-                        "Faltan datos catastrales/registrales del property: matrícula"));
+                        "Missing cadastral/registry data for the property: registration number"));
 
-        mockMvc.perform(post("/api/v1/minutas-inscripcion")
+        mockMvc.perform(post("/api/v1/registration-drafts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new RegistrationDraftController.GenerateRequest(1))))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Faltan datos catastrales/registrales del property: matrícula"));
+                .andExpect(jsonPath("$.message").value("Missing cadastral/registry data for the property: registration number"));
     }
 
     @Test
-    @DisplayName("POST /api/v1/minutas-inscripcion returns 404 when escritura does not exist")
+    @DisplayName("POST /api/v1/registration-drafts returns 404 when the deed does not exist")
     void shouldReturnNotFoundWhenDeedMissing() throws Exception {
         when(registrationDraftService.generate(999))
                 .thenThrow(new ResourceNotFoundException("No existe la deed con ID: 999"));
 
-        mockMvc.perform(post("/api/v1/minutas-inscripcion")
+        mockMvc.perform(post("/api/v1/registration-drafts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new RegistrationDraftController.GenerateRequest(999))))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("PUT /api/v1/minutas-inscripcion/{id}/presentar registers presentacion")
+    @DisplayName("PUT /api/v1/registration-drafts/{id}/submit registers the submission")
     void shouldRegisterSubmission() throws Exception {
-        when(registrationDraftService.presentar(any(), any(), anyString()))
+        when(registrationDraftService.submit(any(), any(), anyString()))
                 .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftPRESENTADA));
 
-        mockMvc.perform(put("/api/v1/minutas-inscripcion/1/presentar")
+        mockMvc.perform(put("/api/v1/registration-drafts/1/submit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(
-                                new RegistrationDraftController.PresentarRequest(new Date(), "ENT-123"))))
+                                new RegistrationDraftController.SubmitRequest(new Date(), "ENT-123"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftPRESENTADA));
     }
 
     @Test
-    @DisplayName("PUT /api/v1/minutas-inscripcion/{id}/observar registers observacion")
+    @DisplayName("PUT /api/v1/registration-drafts/{id}/observe registers the observation")
     void shouldRegisterObservacion() throws Exception {
-        when(registrationDraftService.observar(anyInt(), anyString(), any()))
+        when(registrationDraftService.observe(anyInt(), anyString(), any()))
                 .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftOBSERVADA));
 
-        mockMvc.perform(put("/api/v1/minutas-inscripcion/1/observar")
+        mockMvc.perform(put("/api/v1/registration-drafts/1/observe")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(
-                                new RegistrationDraftController.ObservarRequest("Falta plano", new Date()))))
+                                new RegistrationDraftController.ObserveRequest("Falta plano", new Date()))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftOBSERVADA));
     }
 
     @Test
-    @DisplayName("PUT /api/v1/minutas-inscripcion/{id}/inscribir registers inscripcion definitiva")
+    @DisplayName("PUT /api/v1/registration-drafts/{id}/register registers the final registration")
     void shouldRegisterRegistrationDefinitiva() throws Exception {
-        when(registrationDraftService.inscribir(anyInt(), any(), anyString()))
+        when(registrationDraftService.recordRegistration(anyInt(), any(), anyString()))
                 .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftRegistered));
 
-        mockMvc.perform(put("/api/v1/minutas-inscripcion/1/inscribir")
+        mockMvc.perform(put("/api/v1/registration-drafts/1/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(
-                                new RegistrationDraftController.InscribirRequest(new Date(), "INS-456"))))
+                                new RegistrationDraftController.RegisterRequest(new Date(), "INS-456"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftRegistered));
     }

@@ -7,7 +7,7 @@
     "personas": "People",
     "escrituras": "Deeds",
     "testimonios": "Testimonios",
-    "movimientosTestimonio": "Testimonio Movements",
+    "movimientosTestimonio": "Testimony Movements",
     "documentosEntidadesExternas": "External Entity Documentation",
     "pagos": "Payments",
     "protocolo": "Protocol",
@@ -361,11 +361,10 @@
   "testimonios": {
     "title": "Testimonios",
     "newTestimonio": "Generate testimonio",
-    "selectEscritura": "Select deed...",
-    "generated": "Testimonio generated",
+    "generated": "Testimony generated",
     "errorGenerate": "Error generating the testimonio",
     "verificarTestimonio": "Verify testimonio",
-    "verified": "Testimonio verified",
+    "verified": "Testimony verified",
     "errorVerify": "Error verifying the testimonio",
     "emitirCopia": "Issue copy",
     "errorCopia": "Error issuing the copy",
@@ -382,18 +381,18 @@
     }
   },
   "movimientosTestimonio": {
-    "title": "Testimonio Movements",
+    "title": "Testimony Movements",
     "ingresar": "File for registration",
-    "ingresado": "Testimonio filed",
+    "ingresado": "Testimony filed",
     "errorIngresar": "Error filing the testimonio",
     "registrarInscripcion": "Register inscription",
     "inscripto": "Inscription registered",
     "errorRegistrar": "Error registering the inscription",
     "retirar": "Withdraw",
-    "retirado": "Testimonio withdrawn",
+    "retirado": "Testimony withdrawn",
     "errorRetirar": "Error withdrawing the testimonio",
     "reingresar": "Re-file",
-    "reingresado": "Testimonio re-filed",
+    "reingresado": "Testimony re-filed",
     "errorReingresar": "Error re-filing the testimonio",
     "noData": "No verified testimonios",
     "estados": {
@@ -586,7 +585,6 @@
     "title": "Registration Memoranda",
     "generarSection": "Generate memorandum",
     "buscarSection": "Find existing memorandum",
-    "selectEscritura": "Select deed",
     "generarMinuta": "Generate memorandum",
     "descargarReporte": "Download form",
     "presentar": "Submit",
@@ -631,7 +629,7 @@
     "columns": {
       "fechaImpresion": "Print date",
       "fechaRetiro": "Pickup date",
-      "testimonio": "Testimonio"
+      "testimonio": "Testimony"
     },
     "fields": {
       "fechaImpresion": "Print date",
@@ -949,8 +947,7 @@
         "noData": "No folio types",
         "esAuxiliar": "Protocolo Auxiliar"
       },
-      "estadoFilter": "Filter by status",
-      "escrituraOption": "Deed No. {number}"
+      "estadoFilter": "Filter by status"
     },
     "tramites": {
       "title": "Case Types",
@@ -1006,10 +1003,10 @@
         "newCosto": "New Document Cost",
         "created": "Cost created",
         "errorCreate": "Error creating cost",
-        "noData": "No costs defined for this trámite type",
+        "noData": "No costs defined for this case type",
         "selectionRequired": "Select a document type and enter a value",
         "fields": {
-          "tipoTramite": "Trámite Type",
+          "tipoTramite": "Case Type",
           "tipoDocumento": "Document Type",
           "tipoDocumentoPlaceholder": "Select document type...",
           "tipoCosto": "Cost Type",
@@ -1255,6 +1252,16 @@
     "clear": "Clear selection",
     "loadError": "Could not load the cases"
   },
+  "deedPicker": {
+    "option": "Deed No. {number}",
+    "placeholder": "Search signed deeds by number…",
+    "searching": "Searching…",
+    "noResults": "No results",
+    "results": "{count} results",
+    "recentHint": "Newest signed deeds. Type a number to search.",
+    "clear": "Clear selection",
+    "loadError": "Could not load the deeds"
+  },
   "breadcrumb": {
     "label": "Breadcrumb",
     "segments": {
@@ -1262,7 +1269,7 @@
       "auditoria": "Audit",
       "items": "Items",
       "escrituras": "Deeds",
-      "movimientosTestimonio": "Testimonio Movements",
+      "movimientosTestimonio": "Testimony Movements",
       "reportes": "Reports",
       "minutasInscripcion": "Registration Memoranda",
       "testimonios": "Testimonios",
@@ -1279,9 +1286,31 @@
       "protocolo": "Protocol",
       "cuadernos": "Folio Notebooks",
       "auxiliar": "Auxiliary Protocol",
+      "auxiliary": "Auxiliary Protocol",
       "documentosEntidadesExternas": "External Entity Documentation",
       "administracion": "Administration",
-      "inmuebles": "Properties"
+      "inmuebles": "Properties",
+      "administration": "Administration",
+      "audit": "Audit",
+      "deeds": "Deeds",
+      "testimonyMovements": "Testimony Movements",
+      "reports": "Reports",
+      "registrationDrafts": "Registration Drafts",
+      "testimonies": "Testimonies",
+      "documents": "Documents",
+      "managements": "Managements",
+      "people": "People",
+      "budgets": "Budgets",
+      "payments": "Payments",
+      "requiredDocuments": "Required Documents",
+      "substitutions": "Substitutions",
+      "upcomingExpirations": "Upcoming Expirations",
+      "documentReentry": "Document Reentry",
+      "copies": "Copies",
+      "protocol": "Protocol",
+      "notebooks": "Folio Notebooks",
+      "externalEntityDocuments": "External Entity Documents",
+      "properties": "Properties"
     },
     "admin": {
       "roles": "Roles & Permissions",
@@ -1294,10 +1323,25 @@
       "conceptos": "Concepts",
       "estadosGestion": "Case Statuses",
       "folios": "Folios",
-      "usuarios": "Users"
+      "usuarios": "Users",
+      "audit": "Audit",
+      "documents": "Document Types",
+      "procedures": "Procedure Types",
+      "templates": "Budget Templates",
+      "concepts": "Concepts",
+      "managementStatuses": "Management Statuses",
+      "users": "Users"
     }
   },
   "workflowViewer": {
     "empty": "No nodes. Add statuses to the workflow."
+  },
+  "status": {
+    "folio": {
+      "nuevo": "New",
+      "utilizado": "Used",
+      "asignado": "Assigned to a notebook",
+      "errose": "Voided"
+    }
   }
 }

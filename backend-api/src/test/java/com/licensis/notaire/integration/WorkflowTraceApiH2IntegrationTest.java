@@ -39,9 +39,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Integration tests for GET /api/v1/gestiones/{id}/workflow-trace.
- * Seeds a workflow (INITIAL → INTERMEDIATE → FINAL), a gestión whose trámite
- * uses that workflow's tipo, and historial entries covering the first two
+ * Integration tests for GET /api/v1/managements/{id}/workflow-trace.
+ * Seeds a workflow (INITIAL → INTERMEDIATE → FINAL), a management whose procedure
+ * uses that workflow's tipo, and history entries covering the first two
  * estados, then asserts the aggregated trace and computed node statuses.
  */
 @RequirementCoverage({"CU83"})
@@ -144,7 +144,7 @@ class WorkflowTraceApiH2IntegrationTest {
         DeedManagement management = new DeedManagement();
         management.setIdManagement(null);
         management.setNumber(987654);
-        management.setEncabezado("Gestion Trace Test");
+        management.setHeading("Management Trace Test");
         management.setDateStart(new Date());
         management.setFkIdManagementStatus(enCurso);
         management.setFkIdNotaryPerson(personRepository.findAll().get(0));
@@ -168,12 +168,12 @@ class WorkflowTraceApiH2IntegrationTest {
     @Test
     @DisplayName("Should return aggregated trace with nodes, transitions and history")
     void shouldReturnAggregatedTraceWithNodesTransitionsAndHistory() throws Exception {
-        mockMvc.perform(get("/api/v1/gestiones/{id}/workflow-trace", managementId))
+        mockMvc.perform(get("/api/v1/managements/{id}/workflow-trace", managementId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.managementId").value(managementId))
                 .andExpect(jsonPath("$.number").value(987654))
-                .andExpect(jsonPath("$.encabezado").value("Gestion Trace Test"))
-                .andExpect(jsonPath("$.statusActual").value("Trace En Curso"))
+                .andExpect(jsonPath("$.heading").value("Management Trace Test"))
+                .andExpect(jsonPath("$.currentStatus").value("Trace En Curso"))
                 .andExpect(jsonPath("$.workflowDefinition.name").value("Workflow Trace Test"))
                 .andExpect(jsonPath("$.nodes", hasSize(3)))
                 .andExpect(jsonPath("$.transitions", hasSize(2)))
@@ -184,7 +184,7 @@ class WorkflowTraceApiH2IntegrationTest {
     @Test
     @DisplayName("Should compute completed, in_progress and pending node statuses")
     void shouldComputeNodeStatusesFromHistory() throws Exception {
-        mockMvc.perform(get("/api/v1/gestiones/{id}/workflow-trace", managementId))
+        mockMvc.perform(get("/api/v1/managements/{id}/workflow-trace", managementId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nodeStatuses." + initialNodeId).value("completed"))
                 .andExpect(jsonPath("$.nodeStatuses." + middleNodeId).value("in_progress"))
@@ -192,36 +192,36 @@ class WorkflowTraceApiH2IntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return 400 when gestion does not exist")
+    @DisplayName("Should return 400 when management does not exist")
     void shouldReturnBadRequestWhenManagementDoesNotExist() throws Exception {
-        mockMvc.perform(get("/api/v1/gestiones/{id}/workflow-trace", 999999))
+        mockMvc.perform(get("/api/v1/managements/{id}/workflow-trace", 999999))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").exists());
     }
 
     @Test
-    @DisplayName("Should serialize gestiones list when tramite type has a workflow definition")
-    void shouldSerializeGestionesListWhenTypeHasWorkflowDefinition() throws Exception {
-        mockMvc.perform(get("/api/v1/gestiones"))
+    @DisplayName("Should serialize managements list when procedure type has a workflow definition")
+    void shouldSerializeManagementsListWhenTypeHasWorkflowDefinition() throws Exception {
+        mockMvc.perform(get("/api/v1/managements"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].idManagement").value(managementId))
                 .andExpect(jsonPath("$.content[0].procedureCount").value(1));
     }
 
     @Test
-    @DisplayName("Should serialize gestion by number when tramite type has a workflow definition")
+    @DisplayName("Should serialize management by number when procedure type has a workflow definition")
     void shouldSerializeManagementByNumberWhenTypeHasWorkflowDefinition() throws Exception {
-        mockMvc.perform(get("/api/v1/gestiones/numero/{numero}", 987654))
+        mockMvc.perform(get("/api/v1/managements/number/{numero}", 987654))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.number").value(987654))
-                .andExpect(jsonPath("$.statusActual").value("Trace En Curso"))
+                .andExpect(jsonPath("$.currentStatus").value("Trace En Curso"))
                 .andExpect(jsonPath("$.procedureCount").value(1));
     }
 
     @Test
-    @DisplayName("Should serialize type-tramite list when a workflow definition is assigned")
+    @DisplayName("Should serialize procedure-type list when a workflow definition is assigned")
     void shouldSerializeTypeProcedureListWhenWorkflowDefinitionAssigned() throws Exception {
-        mockMvc.perform(get("/api/v1/tipo-tramite"))
+        mockMvc.perform(get("/api/v1/procedure-types"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[?(@.name == 'Tipo Trace Test')].workflowDefinitionName")
                         .value("Workflow Trace Test"));
@@ -230,13 +230,13 @@ class WorkflowTraceApiH2IntegrationTest {
     @Test
     @DisplayName("Should serialize history endpoints without entity cycles")
     void shouldSerializeHistoryEndpointsWithoutEntityCycles() throws Exception {
-        mockMvc.perform(get("/api/v1/historial"))
+        mockMvc.perform(get("/api/v1/history"))
                 .andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/historial/gestion/{id}", managementId))
+        mockMvc.perform(get("/api/v1/history/management/{id}", managementId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].managementId").value(managementId));
-        mockMvc.perform(get("/api/v1/gestiones/{id}/estado-actual", managementId))
+        mockMvc.perform(get("/api/v1/managements/{id}/current-status", managementId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.statusManagementName").value("Trace En Curso"));
     }

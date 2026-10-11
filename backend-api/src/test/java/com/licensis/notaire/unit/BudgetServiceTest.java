@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 import com.licensis.notaire.testing.RequirementCoverage;
 
 @RequirementCoverage({"CU01", "CU45", "CU60"})
-@DisplayName("PresupuestoService unit tests")
+@DisplayName("BudgetService unit tests")
 @ExtendWith(MockitoExtension.class)
 class BudgetServiceTest {
 
@@ -44,7 +44,7 @@ class BudgetServiceTest {
         testBudget = new Budget();
         testBudget.setIdBudget(1);
         testBudget.setNumber(1001);
-        testBudget.setEncabezado("Presupuesto test");
+        testBudget.setHeading("Budget test");
         testBudget.setStatus("PENDIENTE");
         testBudget.setDate(new Date());
     }
@@ -54,8 +54,8 @@ class BudgetServiceTest {
     class FindAll {
 
         @Test
-        @DisplayName("Should return all presupuestos")
-        void shouldReturnAllPresupuestos() {
+        @DisplayName("Should return all budgets")
+        void shouldReturnAllBudgets() {
             when(budgetRepository.findAll()).thenReturn(List.of(testBudget));
 
             List<Budget> result = budgetService.findAll();
@@ -65,7 +65,7 @@ class BudgetServiceTest {
         }
 
         @Test
-        @DisplayName("Should return empty list when no presupuestos exist")
+        @DisplayName("Should return an empty list when no budgets exist")
         void shouldReturnEmptyListWhenNoneExist() {
             when(budgetRepository.findAll()).thenReturn(List.of());
 
@@ -95,12 +95,12 @@ class BudgetServiceTest {
     }
 
     @Nested
-    @DisplayName("findByPersona - CU60")
+    @DisplayName("findByPerson - CU60")
     class FindByPerson {
 
         @Test
-        @DisplayName("Should return presupuestos for a given person")
-        void shouldReturnPresupuestosForPerson() {
+        @DisplayName("Should return budgets for a given person")
+        void shouldReturnBudgetsForPerson() {
             when(budgetRepository.findByPersonId(5)).thenReturn(List.of(testBudget));
 
             List<Budget> result = budgetService.findByPerson(5);
@@ -109,8 +109,8 @@ class BudgetServiceTest {
         }
 
         @Test
-        @DisplayName("Should return empty list when person has no presupuestos")
-        void shouldReturnEmptyWhenPersonHasNoPresupuestos() {
+        @DisplayName("Should return empty list when person has not budgets")
+        void shouldReturnEmptyWhenPersonHasNoBudgets() {
             when(budgetRepository.findByPersonId(99)).thenReturn(List.of());
 
             assertThat(budgetService.findByPerson(99)).isEmpty();
@@ -118,11 +118,11 @@ class BudgetServiceTest {
     }
 
     @Nested
-    @DisplayName("findByEstado - CU60")
+    @DisplayName("findByStatus - CU60")
     class FindByStatus {
 
         @Test
-        @DisplayName("Should return presupuestos filtered by status")
+        @DisplayName("Should return budgets filtered by status")
         void shouldFilterByStatus() {
             when(budgetRepository.findByStatus("PENDIENTE")).thenReturn(List.of(testBudget));
 
@@ -132,7 +132,7 @@ class BudgetServiceTest {
         }
 
         @Test
-        @DisplayName("Should return all presupuestos when status is null")
+        @DisplayName("Should return all budgets when status is null")
         void shouldReturnAllWhenStatusIsNull() {
             when(budgetRepository.findAll()).thenReturn(List.of(testBudget));
 
@@ -143,7 +143,7 @@ class BudgetServiceTest {
         }
 
         @Test
-        @DisplayName("Should return all presupuestos when status is blank")
+        @DisplayName("Should return all budgets when status is blank")
         void shouldReturnAllWhenStatusIsBlank() {
             when(budgetRepository.findAll()).thenReturn(List.of(testBudget));
 
@@ -171,8 +171,8 @@ class BudgetServiceTest {
         }
 
         @Test
-        @DisplayName("Should set default encabezado when blank")
-        void shouldSetDefaultEncabezadoWhenBlank() {
+        @DisplayName("Should set default heading when blank")
+        void shouldSetDefaultHeadingWhenBlank() {
             Budget p = new Budget();
             p.setNumber(100);
             p.setStatus("PENDIENTE");
@@ -181,14 +181,14 @@ class BudgetServiceTest {
 
             Budget result = budgetService.create(p);
 
-            assertThat(result.getEncabezado()).isEqualTo("Presupuesto");
+            assertThat(result.getHeading()).isEqualTo("Budget");
         }
 
         @Test
         @DisplayName("Should generate number when zero")
         void shouldGenerateNumberWhenZero() {
             Budget p = new Budget();
-            p.setEncabezado("Test");
+            p.setHeading("Test");
             p.setStatus("PENDIENTE");
             p.setDate(new Date());
             p.setNumber(0);
@@ -200,14 +200,14 @@ class BudgetServiceTest {
         }
 
         @Test
-        @DisplayName("Should keep provided encabezado when not blank")
-        void shouldKeepProvidedEncabezado() {
-            testBudget.setEncabezado("Presupuesto específico");
+        @DisplayName("Should keep provided heading when not blank")
+        void shouldKeepProvidedHeading() {
+            testBudget.setHeading("Specific budget");
             when(budgetRepository.create(any(Budget.class))).thenReturn(testBudget);
 
             Budget result = budgetService.create(testBudget);
 
-            assertThat(result.getEncabezado()).isEqualTo("Presupuesto específico");
+            assertThat(result.getHeading()).isEqualTo("Specific budget");
         }
     }
 

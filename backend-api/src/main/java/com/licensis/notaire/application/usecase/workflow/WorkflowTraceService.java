@@ -9,6 +9,7 @@ import com.licensis.notaire.dto.DtoWorkflowTransition;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.History;
+import com.licensis.notaire.business.HistoryOrder;
 import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.business.Testimony;
@@ -86,16 +87,18 @@ public class WorkflowTraceService {
                 .findByWorkflowDefinitionId(workflowDef.getId());
 
         List<History> historyEntities = historyRepository
-                .findByFkIdManagementIdManagement(managementId);
+                .findByFkIdManagementIdManagement(managementId).stream()
+                .sorted(HistoryOrder.CHRONOLOGICAL)
+                .toList();
 
         Map<Integer, String> nodeStatuses = computeNodeStatuses(nodeEntities, historyEntities);
 
         DtoManagementWorkflowTrace trace = new DtoManagementWorkflowTrace();
         trace.setManagementId(management.getIdManagement());
         trace.setNumber(management.getNumber());
-        trace.setEncabezado(management.getEncabezado());
+        trace.setHeading(management.getHeading());
         trace.setDateStart(management.getDateStart());
-        trace.setStatusActual(management.getFkIdManagementStatus() != null
+        trace.setCurrentStatus(management.getFkIdManagementStatus() != null
                 ? management.getFkIdManagementStatus().getName() : null);
 
         DtoWorkflowDefinition defDto = new DtoWorkflowDefinition();
@@ -203,7 +206,7 @@ public class WorkflowTraceService {
             List<WorkflowNode> nodes, List<History> historyList) {
 
         List<History> sorted = new ArrayList<>(historyList);
-        sorted.sort(Comparator.comparing(History::getDate));
+        sorted.sort(HistoryOrder.CHRONOLOGICAL);
 
         List<Integer> distinctStatusIds = new ArrayList<>();
         for (History h : sorted) {

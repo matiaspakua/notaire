@@ -2,7 +2,7 @@ package com.licensis.notaire.unit.jpa;
 
 
 import com.licensis.notaire.jpa.ConceptJpaController;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@DisplayName("ConceptoJpaController unit tests")
+@DisplayName("ConceptJpaController unit tests")
 @ExtendWith(MockitoExtension.class)
 class ConceptJpaControllerTest {
 
@@ -83,13 +83,13 @@ class ConceptJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should persist concepto and return its id")
+        @DisplayName("should persist concept and return its id")
         void shouldPersistAndReturnId() {
             Concept concept = new Concept(null, "Test Concept", new java.math.BigDecimal("100.0"), 10);
 
             Integer result = controller.create(concept);
 
-            assertThat(result).isNull(); // idConcepto is null before persist
+            assertThat(result).isNull(); // idConcept is null before persist
             verify(tx).begin();
             verify(tx).commit();
             verify(em).persist(concept);
@@ -97,7 +97,7 @@ class ConceptJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should initialize plantillaPresupuestoList when null")
+        @DisplayName("should initialize budgetTemplateList when null")
         void shouldInitializeTemplateListWhenNull() {
             Concept concept = new Concept(1, "Test", new java.math.BigDecimal("100"), 10);
             concept.setBudgetTemplateList(null);
@@ -127,7 +127,7 @@ class ConceptJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should merge concepto when version matches")
+        @DisplayName("should merge concept when version matches")
         void shouldMergeWhenVersionMatches() throws Exception {
             Integer id = 1;
             Concept concept = new Concept(id, "Updated", new java.math.BigDecimal("200"), 20);
@@ -168,7 +168,7 @@ class ConceptJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should throw ClassEliminatedException when entity not found and not close EM")
+        @DisplayName("should throw ClassDeletedException when entity not found and not close EM")
         void shouldThrowWhenEntityNotFound() {
             Integer id = 999;
             Concept concept = new Concept(id, "Ghost", new java.math.BigDecimal("100"), 10);
@@ -176,7 +176,7 @@ class ConceptJpaControllerTest {
             when(em.find(Concept.class, id)).thenReturn(null);
 
             assertThatThrownBy(() -> controller.edit(concept))
-                    .isInstanceOf(ClassEliminatedException.class);
+                    .isInstanceOf(ClassDeletedException.class);
 
             // Note: edit() does NOT close EM in this path (it's a bug in the source)
             verify(em, never()).close();
@@ -184,7 +184,7 @@ class ConceptJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should throw IllegalOrphanException when removing referenced PlantillaPresupuesto")
+        @DisplayName("should throw IllegalOrphanException when removing referenced BudgetTemplate")
         void shouldThrowWhenRemovingReferencedTemplate() {
             Integer id = 1;
             BudgetTemplate pp = new BudgetTemplate();
@@ -203,7 +203,7 @@ class ConceptJpaControllerTest {
 
             assertThatThrownBy(() -> controller.edit(concept))
                     .isInstanceOf(IllegalOrphanException.class)
-                    .hasMessageContaining("PlantillaPresupuesto");
+                    .hasMessageContaining("BudgetTemplate");
 
             // Note: edit() does NOT close EM when throwing IllegalOrphanException from the merge path
             verify(em, never()).close();
@@ -221,7 +221,7 @@ class ConceptJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should remove concepto when no orphans exist")
+        @DisplayName("should remove the concept when no orphans exist")
         void shouldRemoveWhenNoOrphans() throws Exception {
             Integer id = 1;
             Concept concept = new Concept(id, "To delete", new java.math.BigDecimal("100"), 10);
@@ -240,21 +240,21 @@ class ConceptJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should throw ClassEliminatedException when entity not found")
+        @DisplayName("should throw ClassDeletedException when entity not found")
         void shouldThrowWhenEntityNotFound() {
             Integer id = 999;
 
             when(em.find(Concept.class, id)).thenReturn(null);
 
             assertThatThrownBy(() -> controller.destroy(id))
-                    .isInstanceOf(ClassEliminatedException.class);
+                    .isInstanceOf(ClassDeletedException.class);
 
             verify(em).close();
             verify(tx, never()).commit();
         }
 
         @Test
-        @DisplayName("should throw IllegalOrphanException when PlantillaPresupuesto references exist")
+        @DisplayName("should throw IllegalOrphanException when BudgetTemplate references exist")
         void shouldThrowWhenOrphansExist() {
             Integer id = 1;
             BudgetTemplate pp = new BudgetTemplate();
@@ -295,7 +295,7 @@ class ConceptJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("findConceptoEntities")
+    @DisplayName("findConceptEntities")
     class FindConceptEntities {
 
         @Test
@@ -334,11 +334,11 @@ class ConceptJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("findConceptoByNombre")
+    @DisplayName("findConceptByName")
     class FindConceptByName {
 
         @Test
-        @DisplayName("should return conceptos matching name")
+        @DisplayName("should return concepts matching name")
         void shouldFindByName() {
             String name = "Test Concept";
             List<Concept> expectedList = new ArrayList<>();
@@ -358,11 +358,11 @@ class ConceptJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("findConcepto")
+    @DisplayName("findConcept")
     class FindConcept {
 
         @Test
-        @DisplayName("should return concepto by id")
+        @DisplayName("should return concept by id")
         void shouldFindById() {
             Concept expected = new Concept(1, "Found", new java.math.BigDecimal("100"), 10);
             when(em.find(Concept.class, 1)).thenReturn(expected);
@@ -387,11 +387,11 @@ class ConceptJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("getConceptoCount")
+    @DisplayName("getConceptCount")
     class GetConceptCount {
 
         @Test
-        @DisplayName("should return count of conceptos")
+        @DisplayName("should return count of concepts")
         void shouldReturnCount() {
             when(em.createQuery("select count(o) from Concept as o")).thenReturn(query);
             when(query.getSingleResult()).thenReturn(42L);
@@ -404,7 +404,7 @@ class ConceptJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("getNombreJpa")
+    @DisplayName("getNameJpa")
     class GetNameJpa {
 
         @Test

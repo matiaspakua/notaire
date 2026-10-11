@@ -31,9 +31,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Issue #655 (empty bodies answering 500): {@code POST /copia} without a print date broke the
- * NOT NULL {@code print_date} column, and {@code POST /minutas-inscripcion} and
- * {@code POST /gestiones/{id}/reingreso-documentacion} without their ids passed {@code null} to
+ * Issue #655 (empty bodies answering 500): {@code POST /copies} without a print date broke the
+ * NOT NULL {@code print_date} column, and {@code POST /registration-drafts} and
+ * {@code POST /managements/{id}/document-reentry} without their ids passed {@code null} to
  * {@code findById}; all answered 500. The required fields must be validated at the boundary
  * (400 naming each field, nothing stored) and marked required in the contract.
  */
@@ -57,10 +57,10 @@ class RequiredRequestIdsIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /copia with an empty body answers 400 naming number and datePrinting, and stores nothing")
+    @DisplayName("POST /copies with an empty body answers 400 naming number and datePrinting, and stores nothing")
     void copyCreateRequiresNumberAndPrintDate() throws Exception {
         long before = copyRepository.count();
-        mockMvc.perform(post("/api/v1/copia").contentType(MediaType.APPLICATION_JSON).content("{}"))
+        mockMvc.perform(post("/api/v1/copies").contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message", allOf(containsString("number"), containsString("datePrinting"))));
@@ -68,31 +68,31 @@ class RequiredRequestIdsIntegrationTest {
     }
 
     @Test
-    @DisplayName("PUT /copia/{id} without datePrinting answers 400, not 500")
+    @DisplayName("PUT /copies/{id} without datePrinting answers 400, not 500")
     void copyUpdateRequiresPrintDate() throws Exception {
         Copy copy = new Copy();
         copy.setNumber(655);
         copy.setDatePrinting(new Date());
         int id = copyRepository.save(copy).getIdCopy();
 
-        mockMvc.perform(put("/api/v1/copia/" + id).contentType(MediaType.APPLICATION_JSON).content("{\"number\":655}"))
+        mockMvc.perform(put("/api/v1/copies/" + id).contentType(MediaType.APPLICATION_JSON).content("{\"number\":655}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", containsString("datePrinting")));
     }
 
     @Test
-    @DisplayName("POST /minutas-inscripcion with an empty body answers 400 naming idDeed, not 500")
+    @DisplayName("POST /registration-drafts with an empty body answers 400 naming idDeed, not 500")
     void registrationDraftRequiresDeed() throws Exception {
-        mockMvc.perform(post("/api/v1/minutas-inscripcion").contentType(MediaType.APPLICATION_JSON).content("{}"))
+        mockMvc.perform(post("/api/v1/registration-drafts").contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message", containsString("idDeed")));
     }
 
     @Test
-    @DisplayName("POST /gestiones/{id}/reingreso-documentacion with an empty body answers 400 naming both ids, not 500")
+    @DisplayName("POST /managements/{id}/document-reentry with an empty body answers 400 naming both ids, not 500")
     void reentryRequiresProcedureAndDocumentType() throws Exception {
-        mockMvc.perform(post("/api/v1/gestiones/1/reingreso-documentacion")
+        mockMvc.perform(post("/api/v1/managements/1/document-reentry")
                         .contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
@@ -102,10 +102,10 @@ class RequiredRequestIdsIntegrationTest {
 
     @ParameterizedTest(name = "contract: {0} {1} requires {2}")
     @CsvSource({
-        "/api/v1/copia, post, number;datePrinting",
-        "/api/v1/copia/{id}, put, number;datePrinting",
-        "/api/v1/minutas-inscripcion, post, idDeed",
-        "/api/v1/gestiones/{id}/reingreso-documentacion, post, idProcedure;idDocumentType"
+        "/api/v1/copies, post, number;datePrinting",
+        "/api/v1/copies/{id}, put, number;datePrinting",
+        "/api/v1/registration-drafts, post, idDeed",
+        "/api/v1/managements/{id}/document-reentry, post, idProcedure;idDocumentType"
     })
     @DisplayName("the contract marks the fields required")
     void contractMarksFieldsRequired(String path, String method, String fields) throws Exception {

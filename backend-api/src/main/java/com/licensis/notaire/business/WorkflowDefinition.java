@@ -27,13 +27,13 @@ public class WorkflowDefinition implements Serializable, Persistable<Integer> {
     @Column(name = "id_workflow_definition")
     private Integer id;
 
-    @Column(name = "nombre", nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "descripcion")
+    @Column(name = "description")
     private String description;
 
-    @Column(name = "activo", nullable = false)
+    @Column(name = "active", nullable = false)
     private boolean active = false;
 
     @Version
@@ -142,6 +142,6 @@ public class WorkflowDefinition implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "WorkflowDefinition[id=" + id + ", nombre=" + name + "]";
+        return "WorkflowDefinition[id=" + id + ", name=" + name + "]";
     }
 }

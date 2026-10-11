@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * {@code @DirtiesContext(BEFORE_CLASS)}: the create/list round trip goes through the legacy
- * {@code PlantillaPresupuestoJpaController}, which caches its {@code EntityManagerFactory} in
+ * {@code BudgetTemplateJpaController}, which caches its {@code EntityManagerFactory} in
  * the static {@link com.licensis.notaire.config.JpaControllerProvider}. If an earlier test class
  * in the same JVM dirtied the Spring context, that static reference goes stale relative to the
  * newly created H2 instance, so a create() here is invisible to a getAll() backed by the fresh
@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-@DisplayName("PlantillaPresupuesto — CU30 list endpoints serialize without cyclic recursion")
+@DisplayName("BudgetTemplate — CU30 list endpoints serialize without cyclic recursion")
 class BudgetTemplateSerializationIntegrationTest {
 
     @Autowired
@@ -48,7 +48,7 @@ class BudgetTemplateSerializationIntegrationTest {
     }
 
     private Integer createConcept() throws Exception {
-        MvcResult result = mockMvc.perform(post("/api/v1/conceptos")
+        MvcResult result = mockMvc.perform(post("/api/v1/concepts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "Concept Ciclo IT", "value": 100, "percentage": 0, "fixedConcept": true}
@@ -59,7 +59,7 @@ class BudgetTemplateSerializationIntegrationTest {
     }
 
     private Integer createTypeProcedure() throws Exception {
-        MvcResult result = mockMvc.perform(post("/api/v1/tipo-tramite")
+        MvcResult result = mockMvc.perform(post("/api/v1/procedure-types")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "Procedure Ciclo IT", "isRegistered": false, "isArchived": false, "associatesProperties": false}
@@ -73,20 +73,20 @@ class BudgetTemplateSerializationIntegrationTest {
         String body = """
                 {"fkIdProcedureType": %d, "fkIdConcept": %d, "notes": "template ciclo IT"}
                 """.formatted(typeProcedureId, conceptId);
-        mockMvc.perform(post("/api/v1/plantilla-presupuestos")
+        mockMvc.perform(post("/api/v1/budget-templates")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated());
     }
 
     @Test
-    @DisplayName("Should serialize plantilla-presupuestos list as valid JSON array without recursion")
-    void shouldListPlantillasWithoutCyclicRecursion() throws Exception {
+    @DisplayName("Should serialize the budget-template list as valid JSON without recursion")
+    void shouldListTemplatesWithoutCyclicRecursion() throws Exception {
         Integer conceptId = createConcept();
         Integer typeProcedureId = createTypeProcedure();
         createTemplate(typeProcedureId, conceptId);
 
-        MvcResult result = mockMvc.perform(get("/api/v1/plantilla-presupuestos"))
+        MvcResult result = mockMvc.perform(get("/api/v1/budget-templates"))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -100,7 +100,7 @@ class BudgetTemplateSerializationIntegrationTest {
                 break;
             }
         }
-        assertThat(template).as("created plantilla should be in the list").isNotNull();
+        assertThat(template).as("created template should be in the list").isNotNull();
         assertThat(template.has("concept"))
                 .as("DTO response must not embed concept entity graph")
                 .isFalse();
@@ -110,13 +110,13 @@ class BudgetTemplateSerializationIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should serialize conceptos list as valid JSON when a plantilla references the concepto")
-    void shouldListConceptosWhenTemplateExists() throws Exception {
+    @DisplayName("Should serialize concepts list as valid JSON when a template references the concept")
+    void shouldListConceptsWhenTemplateExists() throws Exception {
         Integer conceptId = createConcept();
         Integer typeProcedureId = createTypeProcedure();
         createTemplate(typeProcedureId, conceptId);
 
-        MvcResult result = mockMvc.perform(get("/api/v1/conceptos"))
+        MvcResult result = mockMvc.perform(get("/api/v1/concepts"))
                 .andExpect(status().isOk())
                 .andReturn();
 

@@ -30,7 +30,7 @@ class ApiIntegrationTest {
 
     @Test
     void shouldAuthenticateDefaultAdminUser() throws Exception {
-        mockMvc.perform(post("/api/v1/usuarios/login")
+        mockMvc.perform(post("/api/v1/users/login")
                         .contentType("application/json")
                         .content("""
                                 {
@@ -39,18 +39,18 @@ class ApiIntegrationTest {
                                 }
                                 """))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.valido").value(true));
+                .andExpect(jsonPath("$.valid").value(true));
     }
 
     @Test
     void shouldExposeCoreCatalogEndpoints() throws Exception {
-        mockMvc.perform(get("/api/v1/conceptos"))
+        mockMvc.perform(get("/api/v1/concepts"))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/v1/usuarios"))
+        mockMvc.perform(get("/api/v1/users"))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/v1/presupuestos"))
+        mockMvc.perform(get("/api/v1/budgets"))
                 .andExpect(status().isOk());
     }
 }

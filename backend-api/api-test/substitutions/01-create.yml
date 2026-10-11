@@ -3,11 +3,11 @@ info:
   type: http
   seq: 3
   description: |-
-      ## Create substitution — POST /api/v1/suplencia
+      ## Create substitution — POST /api/v1/substitutions
       Traceability: CU22 (RF #43, #113, #114, #115)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/suplencia"
+  url: "{{base_url}}/api/v1/substitutions"
   body:
     type: json
     data: |-

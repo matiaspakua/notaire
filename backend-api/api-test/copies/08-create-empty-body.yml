@@ -3,12 +3,12 @@ info:
   type: http
   seq: 8
   description: |-
-      ## POST /api/v1/copia with {} — 400 Bad Request
+      ## POST /api/v1/copies with {} — 400 Bad Request
       number and datePrinting are required (NOT NULL columns); an empty body used to answer 500. Nothing is stored.
       Traceability: CU08 (#655)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/copia"
+  url: "{{base_url}}/api/v1/copies"
   body:
     type: json
     data: |-

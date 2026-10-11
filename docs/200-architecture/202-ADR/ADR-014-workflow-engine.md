@@ -1,4 +1,4 @@
-# ADR-014: Motor de Workflow Configurable para Gestiones
+# ADR-014: Configurable workflow engine for managements
 
 **Status:** Accepted
 **Date:** 2026-06-09
@@ -7,45 +7,45 @@
 
 ## Context
 
-El monolito legacy modelaba el ciclo de vida de una `GestionDeEscritura` (y de un `Tramite`) como un conjunto fijo de estados codificados en Java (`EstadoDeGestion`), con las transiciones válidas dispersas en condicionales dentro de los controladores JPA legacy. Añadir o modificar un estado, o cambiar qué transiciones son válidas para un tipo de trámite, requería cambiar código y desplegar.
+The legacy monolith modeled the life cycle of a `DeedManagement` (and of a `Procedure`) as a fixed set of states coded in Java (`ManagementStatus`), with the valid transitions scattered through conditionals in the legacy JPA controllers. Adding or changing a state, or changing which transitions are valid for a procedure type, required a code change and a deploy.
 
-El sistema notarial tiene múltiples tipos de trámite (`TipoDeTramite`), cada uno con su propio flujo de estados válido — un modelo de máquina de estados fija en código no escala a esa variabilidad sin duplicar lógica por tipo.
+The notarial system has many procedure types (`ProcedureType`), each with its own valid state flow. A state machine fixed in code does not scale to that variation without duplicating logic per type.
 
 ## Decision
 
-Modelar el flujo de estados como datos versionados en base de datos, mediante tres entidades JPA en `com.licensis.notaire.negocio`:
+Model the state flow as versioned data in the database, with three JPA entities in `com.licensis.notaire.business`:
 
-- **`WorkflowDefinition`** — una definición de flujo, asociable a uno o más `TipoDeTramite`.
-- **`WorkflowNode`** — un nodo del flujo, vinculado a un `EstadoDeGestion` existente y tipado como `WorkflowNodeType`: `INITIAL`, `INTERMEDIATE` o `FINAL`. Incluye coordenadas (`posicionX`, `posicionY`) para renderizado visual del diagrama en el frontend.
-- **`WorkflowTransition`** — una arista dirigida entre dos `WorkflowNode` (`nodoOrigen` → `nodoDestino`), con una `condicion` opcional (expresión evaluada para habilitar la transición) y `descripcion` legible.
+- **`WorkflowDefinition`** — one flow definition, assignable to one or more `ProcedureType` values.
+- **`WorkflowNode`** — one node in the flow, linked to an existing `ManagementStatus` and typed as `WorkflowNodeType`: `INITIAL`, `INTERMEDIATE`, or `FINAL`. It includes coordinates (`positionX`, `positionY`) so the frontend can draw the diagram.
+- **`WorkflowTransition`** — a directed edge between two `WorkflowNode` values (`originNode` → `destinationNode`), with an optional `condition` (an expression evaluated to enable the transition) and a readable `description`.
 
-La validación de transiciones se expone vía `WorkflowValidationController` / `WorkflowValidationService`, y la trazabilidad de instancias de flujo vía `WorkflowTraceService`. La definición y edición de flujos se expone vía `WorkflowDefinitionController`, `WorkflowNodeController` y `WorkflowTransitionController`.
+Transition checks are exposed through `WorkflowValidationController` / `WorkflowValidationService`, and flow-instance traceability through `WorkflowTraceService`. Creating and editing flows is exposed through `WorkflowDefinitionController`, `WorkflowNodeController`, and `WorkflowTransitionController`.
 
-Todas las entidades incluyen columna `version` para versionado optimista (`@Version` semántico gestionado a nivel de aplicación), consistente con el resto del modelo de dominio.
+Every entity has a `version` column for optimistic locking (`@Version`, applied by the application), consistent with the rest of the domain model.
 
-### Por qué un motor de workflow basado en datos (y no un enum de estados fijo, ni un motor BPMN externo)
+### Why a data-driven workflow engine (not a fixed status enum, and not an external BPMN engine)
 
-| Criterio | Motor basado en datos (elegido) | Enum de estados fijo | Motor BPMN externo (Camunda/Flowable) |
+| Criterion | Data-driven engine (chosen) | Fixed status enum | External BPMN engine (Camunda/Flowable) |
 |----------|----------------------------------|------------------------|------------------------------------------|
-| Flexibilidad por tipo de trámite | Alta — cada `TipoDeTramite` referencia su propia `WorkflowDefinition` | Ninguna — un solo flujo para todos los tipos | Alta, pero con modelo de proceso ajeno al dominio |
-| Complejidad añadida | Media — 3 entidades nuevas, sin motor externo | Mínima | Alta — nuevo runtime, nuevo lenguaje (BPMN XML), curva de aprendizaje |
-| Cambios de flujo sin despliegue | Sí — se editan filas, no código | No | Sí |
-| Encaje con Spring Data JPA existente | Directo — mismas convenciones que el resto del dominio | Directo | Requiere integración adicional |
+| Flexibility per procedure type | High — each `ProcedureType` references its own `WorkflowDefinition` | None — one flow for every type | High, but with a process model foreign to the domain |
+| Added complexity | Medium — 3 new entities, no external engine | Minimal | High — a new runtime, a new language (BPMN XML), and a learning curve |
+| Flow changes without a deploy | Yes — edit rows, not code | No | Yes |
+| Fit with existing Spring Data JPA | Direct — the same conventions as the rest of the domain | Direct | Needs extra integration |
 
-**Decisión:** motor de workflow propio y minimalista basado en datos, evitando la sobre-ingeniería de introducir un motor BPMN completo para un dominio con un número acotado de tipos de trámite.
+**Decision:** a small, in-house, data-driven workflow engine. A full BPMN engine would be more machinery than this domain needs for a bounded number of procedure types.
 
 ## Consequences
 
-### Positivos
+### Positive
 
-- Un administrador puede definir o ajustar el flujo de un tipo de trámite sin cambios de código, vía los endpoints `Workflow*Controller`.
-- El modelo es directamente representable como diagrama de estados (ver `docs/200-architecture/204-diagrams/Diagrama de Estados/`), ya que cada `WorkflowNode` mapea 1:1 a un `EstadoDeGestion`.
-- Reutiliza los patrones ya establecidos (JPA, DTOs, repositorios) — no introduce un paradigma nuevo en el backend.
+- An administrator can define or adjust the flow of a procedure type without a code change, through the `Workflow*Controller` endpoints.
+- The model maps directly to a state diagram, because each `WorkflowNode` maps 1:1 to a `ManagementStatus`. The seeded graph and the neighboring machines (payment, documentation, deed, testimony) are in [CICLO-DE-VIDA.md](../203-design/CICLO-DE-VIDA.md). The `.puml` files under `204-diagrams/Diagrama de Estados/` are legacy.
+- It reuses the established patterns (JPA, DTOs, repositories) and does not introduce a new backend paradigm.
 
-### Negativos
+### Negative
 
-- La validación de la `condicion` de una `WorkflowTransition` depende de convenciones de aplicación (no hay motor de expresión formal); su semántica debe documentarse por caso de uso.
-- Un `WorkflowDefinition` mal configurado (por ejemplo, sin nodo `FINAL` alcanzable) no se detecta en tiempo de diseño; depende de `WorkflowValidationService` en tiempo de ejecución.
+- Validating a `WorkflowTransition` `condition` depends on application conventions (there is no formal expression engine); its meaning has to be documented per use case.
+- A badly configured `WorkflowDefinition` (for example, no reachable `FINAL` node) is not caught at design time; it depends on `WorkflowValidationService` at runtime.
 
 ## Related ADRs
 

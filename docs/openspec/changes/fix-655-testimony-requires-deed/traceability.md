@@ -11,7 +11,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Link | Reference | Status |
 |------|-----------|--------|
 | Issue | #655 | open → in progress |
-| Use Case | CU07 – Generar Testimonio; CU08 – Verificar Testimonio | exists |
+| Use Case | CU07 – Generar Testimony; CU08 – Verificar Testimony | exists |
 | Specification | `docs/openspec/changes/fix-655-testimony-requires-deed/` | Gate 1 draft |
 | Branch | `fix/655_testimony_requires_deed` | created from updated `main` |
 | Tasks | `tasks.md` | in progress |

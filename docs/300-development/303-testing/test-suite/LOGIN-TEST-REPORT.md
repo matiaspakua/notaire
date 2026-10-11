@@ -4,7 +4,7 @@
 **Tester:** AI Agent
 **Version:** backend-api (Spring Boot 4.1.0, Java 21)
 **Use Case:** CU-78 — Security and Compliance
-**Endpoint:** `POST /api/v1/usuarios/login`
+**Endpoint:** `POST /api/v1/users/login`
 
 ## Summary
 
@@ -20,24 +20,24 @@
 
 - [x] Unit tests (PasswordEncoderTest, LoginAttemptServiceTest)
 - [x] Integration tests (JwtAuthIntegrationTest, LoginRateLimitIntegrationTest)
-- [x] Existing tests (UsuarioControllerHashTest)
+- [x] Existing tests (UserControllerHashTest)
 
 ## Test Execution Results
 
 ### TC-LOGIN-01: Valid credentials return JWT token
 - **Status:** ✅ Pass
 - **Test:** `JwtAuthIntegrationTest.shouldLoginAndReturnJwtToken`
-- **Description:** Login with valid admin credentials returns a JWT token with `valido=true`
+- **Description:** Login with valid admin credentials returns a JWT token with `valid=true`
 
-### TC-LOGIN-02: Wrong password returns valido=false
+### TC-LOGIN-02: Wrong password returns valid=false
 - **Status:** ✅ Pass
 - **Test:** `JwtAuthIntegrationTest.shouldRejectLoginWithWrongPassword`
-- **Description:** Login with wrong password returns `valido=false` without token
+- **Description:** Login with wrong password returns `valid=false` without token
 
-### TC-LOGIN-03: Unknown user returns valido=false
+### TC-LOGIN-03: Unknown user returns valid=false
 - **Status:** ✅ Pass
 - **Test:** `JwtAuthIntegrationTest.shouldRejectLoginWithUnknownUser`
-- **Description:** Login with non-existent username returns `valido=false`
+- **Description:** Login with non-existent username returns `valid=false`
 
 ### TC-LOGIN-04: Locked account returns 429
 - **Status:** ✅ Pass
@@ -82,7 +82,7 @@
 ### TC-LOGIN-12: Empty username/password handled
 - **Status:** ✅ Pass
 - **Test:** `JwtAuthIntegrationTest.shouldRejectLoginWithEmptyCredentials`
-- **Description:** Login with empty username and password returns `valido=false`
+- **Description:** Login with empty username and password returns `valid=false`
 
 ### TC-LOGIN-13: Case-insensitive username matching
 - **Status:** ✅ Pass
@@ -92,13 +92,13 @@
 ### TC-LOGIN-14: Inactive user cannot login
 - **Status:** ✅ Pass
 - **Test:** `JwtAuthIntegrationTest.shouldRejectLoginForInactiveUser`
-- **Description:** Inactive user with correct password returns `valido=false`
+- **Description:** Inactive user with correct password returns `valid=false`
 
 ## Coverage Analysis
 
 | Component | Coverage |
 |-----------|----------|
-| UsuarioController (login method) | 100% |
+| UserController (login method) | 100% |
 | LoginAttemptService | 100% |
 | JwtTokenService | 100% |
 | PasswordEncoder (BCrypt) | 100% |

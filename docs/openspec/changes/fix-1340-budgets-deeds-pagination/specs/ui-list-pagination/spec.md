@@ -8,7 +8,7 @@ Lists backed by growing tables are paged server-side with a shared footer.
 
 ### Requirement: The budgets and deeds lists are read one page at a time
 
-`/dashboard/presupuestos` and `/dashboard/escrituras` SHALL request one page of `GET /api/v1/presupuestos` and `GET /api/v1/escrituras` (default 20, newest first), show the total, reach the last page and keep page/size in the URL; the dashboard SHALL count budgets with `totalElements`. The budget status filter SHALL send `status` and the deed search SHALL send `number`.
+`/dashboard/budgets` and `/dashboard/deeds` SHALL request one page of `GET /api/v1/budgets` and `GET /api/v1/deeds` (default 20, newest first), show the total, reach the last page and keep page/size in the URL; the dashboard SHALL count budgets with `totalElements`. The budget status filter SHALL send `status` and the deed search SHALL send `number`.
 
 #### Scenario: Page and total
 

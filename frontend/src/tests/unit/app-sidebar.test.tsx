@@ -5,7 +5,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, within } from "@testing-library/react";
 
-const mockPathname = vi.fn(() => "/dashboard/copias");
+const mockPathname = vi.fn(() => "/dashboard/copies");
 let admin = true;
 
 vi.mock("next/navigation", () => ({
@@ -19,7 +19,7 @@ vi.mock("next-intl", () => ({
 vi.mock("@/lib/api-client", () => ({ apiLogout: vi.fn() }));
 vi.mock("@/components/shared/LanguageSwitcher", () => ({ LanguageSwitcher: () => null }));
 vi.mock("@/store/auth-store", () => ({
-  useAuthStore: () => ({ user: { nombre: "Ana", tipo: "ESCRIBANO" }, logout: vi.fn(), isAdmin: () => admin }),
+  useAuthStore: () => ({ user: { name: "Ana", type: "ESCRIBANO" }, logout: vi.fn(), isAdmin: () => admin }),
 }));
 
 import { AppSidebar, SIDEBAR_COLLAPSED_KEY } from "@/components/layout/AppSidebar";
@@ -30,12 +30,12 @@ function desktop() {
 
 beforeEach(() => {
   admin = true;
-  mockPathname.mockReturnValue("/dashboard/copias");
+  mockPathname.mockReturnValue("/dashboard/copies");
   window.localStorage.removeItem(SIDEBAR_COLLAPSED_KEY);
 });
 
 describe("AppSidebar sections (#1367)", () => {
-  it("renders six labelled sections for an admin, five without Administración otherwise", () => {
+  it("renders six labelled sections for an admin, five without Administration otherwise", () => {
     const { unmount } = render(<AppSidebar />);
     expect(desktop().getAllByRole("heading", { level: 2 })).toHaveLength(6);
     unmount();

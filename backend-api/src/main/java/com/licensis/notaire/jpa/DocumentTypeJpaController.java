@@ -4,11 +4,11 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.ProcedureTemplate;
 import com.licensis.notaire.business.DocumentType;
 import java.io.Serializable;
@@ -24,7 +24,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author User
  */
-public class DocumentTypeJpaController implements Serializable, IPersistenciaJpa
+public class DocumentTypeJpaController implements Serializable, JpaPersistence
 {
 
     public DocumentTypeJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -88,10 +88,10 @@ public class DocumentTypeJpaController implements Serializable, IPersistenciaJpa
         return oid;
     }
 
-    public Boolean edit(DocumentType documentType) throws ClassEliminatedException, ClassModifiedException, IllegalOrphanException, NonexistentEntityException
+    public Boolean edit(DocumentType documentType) throws ClassDeletedException, ClassModifiedException, IllegalOrphanException, NonexistentEntityException
     {
         EntityManager em = null;
-        Boolean modificado = false;
+        Boolean modified = false;
         Integer version = -1;
         Integer oldVersion = -1;
 
@@ -102,10 +102,10 @@ public class DocumentTypeJpaController implements Serializable, IPersistenciaJpa
 
         if (persistentDocumentType != null)
         {
-            version = persistentDocumentType.getVersion(); // Version del Objeto en db
-            oldVersion = documentType.getVersion(); // Version del Objeto en memoria
+            version = persistentDocumentType.getVersion(); // Version of the object in the database
+            oldVersion = documentType.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 if (em != null)
                 {
@@ -128,7 +128,7 @@ public class DocumentTypeJpaController implements Serializable, IPersistenciaJpa
                         {
                             illegalOrphanMessages = new ArrayList<String>();
                         }
-                        illegalOrphanMessages.add("You must retain PlantillaTramite " + procedureTemplateListOldProcedureTemplate + " since its tipoDeDocumento field is not nullable.");
+                        illegalOrphanMessages.add("You must retain ProcedureTemplate " + procedureTemplateListOldProcedureTemplate + " since its documentType field is not nullable.");
                     }
                 }
                 if (illegalOrphanMessages != null)
@@ -160,11 +160,11 @@ public class DocumentTypeJpaController implements Serializable, IPersistenciaJpa
                 }
 
                 em.getTransaction().commit();
-                modificado = true;
+                modified = true;
             }
         } else
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
 
         if (em != null)
@@ -172,13 +172,13 @@ public class DocumentTypeJpaController implements Serializable, IPersistenciaJpa
             em.close();
         }
 
-        return modificado;
+        return modified;
     }
 
-    public Boolean destroy(Integer id) throws ClassEliminatedException, IllegalOrphanException, NonexistentEntityException
+    public Boolean destroy(Integer id) throws ClassDeletedException, IllegalOrphanException, NonexistentEntityException
     {
         EntityManager em = null;
-        Boolean eliminado = false;
+        Boolean removed = false;
         try
         {
             em = getEntityManager();
@@ -197,7 +197,7 @@ public class DocumentTypeJpaController implements Serializable, IPersistenciaJpa
                 }
                 catch (EntityNotFoundException enfe)
                 {
-                    throw new NonexistentEntityException("The tipoDeDocumento with id " + id + " no longer exists.", enfe);
+                    throw new NonexistentEntityException("The document type with id " + id + " no longer exists.", enfe);
                 }
                 List<String> illegalOrphanMessages = null;
                 List<ProcedureTemplate> procedureTemplateListOrphanCheck = documentType.getProcedureTemplateList();
@@ -207,7 +207,7 @@ public class DocumentTypeJpaController implements Serializable, IPersistenciaJpa
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("This TipoDeDocumento (" + documentType + ") cannot be destroyed since the PlantillaTramite " + procedureTemplateListOrphanCheckProcedureTemplate + " in its plantillaTramiteList field has a non-nullable tipoDeDocumento field.");
+                    illegalOrphanMessages.add("This DocumentType (" + documentType + ") cannot be destroyed since the ProcedureTemplate " + procedureTemplateListOrphanCheckProcedureTemplate + " in its procedureTemplateList field has a non-nullable documentType field.");
                 }
                 if (illegalOrphanMessages != null)
                 {
@@ -215,10 +215,10 @@ public class DocumentTypeJpaController implements Serializable, IPersistenciaJpa
                 }
                 em.remove(documentType);
                 em.getTransaction().commit();
-                eliminado = true;
+                removed = true;
             } else
             {
-                throw new ClassEliminatedException();
+                throw new ClassDeletedException();
             }
         }
         finally
@@ -229,7 +229,7 @@ public class DocumentTypeJpaController implements Serializable, IPersistenciaJpa
             }
         }
 
-        return eliminado;
+        return removed;
     }
 
     public List<DocumentType> findDocumentTypeEntities()
@@ -278,19 +278,19 @@ public class DocumentTypeJpaController implements Serializable, IPersistenciaJpa
     {
         EntityManager em = getEntityManager();
 
-        List<DocumentType> miDocumentType = null;
+        List<DocumentType> documentType = null;
 
         try
         {
-            // Nombre del @NamedQuery definido en nuestra clase
+            // Named query declared on the entity.
             Query q = em.createNamedQuery("DocumentType.findByName");
 
-            //Le paso el nombre del parametro del query, y el valor a buscar.
+            // Bind the named query parameter.
             q.setParameter("name", name);
 
-            miDocumentType = (List<DocumentType>) q.getResultList();
+            documentType = (List<DocumentType>) q.getResultList();
 
-            return miDocumentType;
+            return documentType;
 
         }
         finally

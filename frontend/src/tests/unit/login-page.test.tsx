@@ -1,6 +1,6 @@
 /**
  * Unit tests for LoginPage
- * Covers: CU — Autenticación de usuario / CU84 session expiry (#1053)
+ * Covers: user authentication / CU84 session expiry (#1053)
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
@@ -84,31 +84,31 @@ beforeEach(() => {
 describe("LoginPage", () => {
   it("renders username and password fields", () => {
     render(<LoginPage />, { wrapper });
-    expect(screen.getByTestId("input-usuario")).toBeDefined();
-    expect(screen.getByTestId("input-contrasenia")).toBeDefined();
+    expect(screen.getByTestId("input-username")).toBeDefined();
+    expect(screen.getByTestId("input-password")).toBeDefined();
   });
 
   it("renders the login button", () => {
     render(<LoginPage />, { wrapper });
-    expect(screen.getByTestId("btn-ingresar")).toBeDefined();
+    expect(screen.getByTestId("btn-sign-in")).toBeDefined();
   });
 
   it("calls apiPost with credentials on submit", async () => {
     const mockPost = vi.mocked(apiPost);
-    mockPost.mockResolvedValueOnce({ valido: true, nombre: "admin", tipo: "ADMIN" });
+    mockPost.mockResolvedValueOnce({ valid: true, name: "admin", type: "ADMIN" });
 
     render(<LoginPage />, { wrapper });
 
-    fireEvent.change(screen.getByTestId("input-usuario"), {
+    fireEvent.change(screen.getByTestId("input-username"), {
       target: { value: "admin" },
     });
-    fireEvent.change(screen.getByTestId("input-contrasenia"), {
+    fireEvent.change(screen.getByTestId("input-password"), {
       target: { value: "admin" },
     });
-    fireEvent.click(screen.getByTestId("btn-ingresar"));
+    fireEvent.click(screen.getByTestId("btn-sign-in"));
 
     await waitFor(() => {
-      expect(mockPost).toHaveBeenCalledWith("/usuarios/login", {
+      expect(mockPost).toHaveBeenCalledWith("/users/login", {
         name: "admin",
         password: "admin",
       });
@@ -118,17 +118,17 @@ describe("LoginPage", () => {
   it("authenticates without persisting JWT from the login JSON (issue #1051)", async () => {
     const mockPost = vi.mocked(apiPost);
     mockPost.mockResolvedValueOnce({
-      valido: true,
-      nombre: "admin",
-      tipo: "ADMIN",
+      valid: true,
+      name: "admin",
+      type: "ADMIN",
       token: "fake-jwt-token",
     });
 
     render(<LoginPage />, { wrapper });
 
-    fireEvent.change(screen.getByTestId("input-usuario"), { target: { value: "admin" } });
-    fireEvent.change(screen.getByTestId("input-contrasenia"), { target: { value: "admin" } });
-    fireEvent.click(screen.getByTestId("btn-ingresar"));
+    fireEvent.change(screen.getByTestId("input-username"), { target: { value: "admin" } });
+    fireEvent.change(screen.getByTestId("input-password"), { target: { value: "admin" } });
+    fireEvent.click(screen.getByTestId("btn-sign-in"));
 
     await waitFor(() => {
       expect(useAuthStore.getState().isAuthenticated).toBe(true);
@@ -136,31 +136,31 @@ describe("LoginPage", () => {
     });
   });
 
-  it("logs in when valido is true even without a JSON token (issue #1051)", async () => {
+  it("logs in when valid is true even without a JSON token (issue #1051)", async () => {
     const mockPost = vi.mocked(apiPost);
-    mockPost.mockResolvedValueOnce({ valido: true, nombre: "admin", tipo: "ADMIN" });
+    mockPost.mockResolvedValueOnce({ valid: true, name: "admin", type: "ADMIN" });
 
     render(<LoginPage />, { wrapper });
 
-    fireEvent.change(screen.getByTestId("input-usuario"), { target: { value: "admin" } });
-    fireEvent.change(screen.getByTestId("input-contrasenia"), { target: { value: "admin" } });
-    fireEvent.click(screen.getByTestId("btn-ingresar"));
+    fireEvent.change(screen.getByTestId("input-username"), { target: { value: "admin" } });
+    fireEvent.change(screen.getByTestId("input-password"), { target: { value: "admin" } });
+    fireEvent.click(screen.getByTestId("btn-sign-in"));
 
     await waitFor(() => {
       expect(useAuthStore.getState().isAuthenticated).toBe(true);
     });
   });
 
-  it("shows error toast on failed login (valido=false)", async () => {
+  it("shows error toast on failed login (valid=false)", async () => {
     const mockPost = vi.mocked(apiPost);
-    mockPost.mockResolvedValueOnce({ valido: false });
+    mockPost.mockResolvedValueOnce({ valid: false });
 
     const { toast } = await import("sonner");
     render(<LoginPage />, { wrapper });
 
-    fireEvent.change(screen.getByTestId("input-usuario"), { target: { value: "bad" } });
-    fireEvent.change(screen.getByTestId("input-contrasenia"), { target: { value: "bad" } });
-    fireEvent.click(screen.getByTestId("btn-ingresar"));
+    fireEvent.change(screen.getByTestId("input-username"), { target: { value: "bad" } });
+    fireEvent.change(screen.getByTestId("input-password"), { target: { value: "bad" } });
+    fireEvent.click(screen.getByTestId("btn-sign-in"));
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith("Usuario o contraseña incorrectos");
@@ -171,7 +171,7 @@ describe("LoginPage", () => {
     const { toast } = await import("sonner");
     render(<LoginPage />, { wrapper });
 
-    fireEvent.click(screen.getByTestId("btn-ingresar"));
+    fireEvent.click(screen.getByTestId("btn-sign-in"));
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith("Complete usuario y contraseña");
@@ -182,15 +182,15 @@ describe("LoginPage", () => {
     const mockPost = vi.mocked(apiPost);
     const lockoutMessage = "Cuenta bloqueada temporalmente por demasiados intentos fallidos.";
     mockPost.mockRejectedValueOnce(
-      new ApiError(429, "/usuarios/login", JSON.stringify({ valido: false, message: lockoutMessage }))
+      new ApiError(429, "/users/login", JSON.stringify({ valid: false, message: lockoutMessage }))
     );
 
     const { toast } = await import("sonner");
     render(<LoginPage />, { wrapper });
 
-    fireEvent.change(screen.getByTestId("input-usuario"), { target: { value: "admin" } });
-    fireEvent.change(screen.getByTestId("input-contrasenia"), { target: { value: "wrong" } });
-    fireEvent.click(screen.getByTestId("btn-ingresar"));
+    fireEvent.change(screen.getByTestId("input-username"), { target: { value: "admin" } });
+    fireEvent.change(screen.getByTestId("input-password"), { target: { value: "wrong" } });
+    fireEvent.click(screen.getByTestId("btn-sign-in"));
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(lockoutMessage);
@@ -199,14 +199,14 @@ describe("LoginPage", () => {
 
   it("falls back to a generic lockout message when a 429 body has no message field (issue #756)", async () => {
     const mockPost = vi.mocked(apiPost);
-    mockPost.mockRejectedValueOnce(new ApiError(429, "/usuarios/login", ""));
+    mockPost.mockRejectedValueOnce(new ApiError(429, "/users/login", ""));
 
     const { toast } = await import("sonner");
     render(<LoginPage />, { wrapper });
 
-    fireEvent.change(screen.getByTestId("input-usuario"), { target: { value: "admin" } });
-    fireEvent.change(screen.getByTestId("input-contrasenia"), { target: { value: "wrong" } });
-    fireEvent.click(screen.getByTestId("btn-ingresar"));
+    fireEvent.change(screen.getByTestId("input-username"), { target: { value: "admin" } });
+    fireEvent.change(screen.getByTestId("input-password"), { target: { value: "wrong" } });
+    fireEvent.click(screen.getByTestId("btn-sign-in"));
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(
@@ -222,9 +222,9 @@ describe("LoginPage", () => {
     const { toast } = await import("sonner");
     render(<LoginPage />, { wrapper });
 
-    fireEvent.change(screen.getByTestId("input-usuario"), { target: { value: "admin" } });
-    fireEvent.change(screen.getByTestId("input-contrasenia"), { target: { value: "admin" } });
-    fireEvent.click(screen.getByTestId("btn-ingresar"));
+    fireEvent.change(screen.getByTestId("input-username"), { target: { value: "admin" } });
+    fireEvent.change(screen.getByTestId("input-password"), { target: { value: "admin" } });
+    fireEvent.click(screen.getByTestId("btn-sign-in"));
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(

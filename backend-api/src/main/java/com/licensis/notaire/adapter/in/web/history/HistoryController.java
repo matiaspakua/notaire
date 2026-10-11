@@ -3,6 +3,7 @@ package com.licensis.notaire.adapter.in.web.history;
 import com.licensis.notaire.dto.DtoHistorySummary;
 import com.licensis.notaire.application.usecase.history.HistoryMapper;
 import com.licensis.notaire.business.History;
+import com.licensis.notaire.business.HistoryOrder;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.repository.HistoryRepository;
@@ -36,8 +37,8 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/historial")
-@Tag(name = "Historial", description = "API para gestionar historial de gestiones")
+@RequestMapping("/api/v1/history")
+@Tag(name = "ManagementHistory", description = "API for managing management history")
 public class HistoryController {
 
     private static final Logger log = LoggerFactory.getLogger(HistoryController.class);
@@ -74,10 +75,10 @@ public class HistoryController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener el historial, una página por vez",
-            description = "Página de Spring Data (por defecto 20 filas, ordenadas por idHistory ascendente). "
-                    + "Usar sort=idHistory,desc para ver primero los cambios más recientes. "
-                    + "El historial completo de una gestión está en GET /api/v1/historial/gestion/{idManagement}.")
+    @Operation(summary = "Get history, one page at a time",
+            description = "Spring Data page (20 rows by default, ordered by idHistory ascending). "
+                    + "Use sort=idHistory,desc to see the most recent changes first. "
+                    + "The full history of a management is at GET /api/v1/history/management/{idManagement}.")
     @Transactional(readOnly = true)
     public ResponseEntity<Page<DtoHistorySummary>> getAll(
             @ParameterObject @PageableDefault(size = 20, sort = "idHistory") Pageable pageable) {
@@ -86,10 +87,10 @@ public class HistoryController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener historial por ID")
+    @Operation(summary = "Get history by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<DtoHistorySummary> getById(@PathVariable Integer id) {
         return repository.findById(id)
@@ -97,22 +98,23 @@ public class HistoryController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/gestion/{idManagement}")
-    @Operation(summary = "Obtener historial de una gestion (CU13)")
+    @GetMapping("/management/{idManagement}")
+    @Operation(summary = "Get history of a management (CU13)")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoHistorySummary>> getByManagement(@PathVariable Integer idManagement) {
         return ResponseEntity.ok(repository.findByFkIdManagementIdManagement(idManagement).stream()
+            .sorted(HistoryOrder.CHRONOLOGICAL)
             .map(HistoryMapper::toDto)
             .toList());
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "201", description = "Created"),
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
-    @Operation(summary = "Crear nuevo registro de historial")
+    @Operation(summary = "Create a history record")
     public ResponseEntity<Object> create(@Valid @RequestBody HistoryRequest request) {
         try {
             History entity = new History();
@@ -122,20 +124,20 @@ public class HistoryController {
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(HistoryMapper.toDto(entity));
         } catch (Exception e) {
-            log.error("Failed to create historial", e);
+            log.error("Failed to create history", e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "403", description = "Solo un administrador puede modificar el historial"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "403", description = "Only an administrator can update the history"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar historial (solo administrador)",
-            description = "El historial es la traza de cambios de estado de la gestión (CU13): "
-                    + "solo un administrador puede corregir un registro.")
+    @Operation(summary = "Update history (administrator only)",
+            description = "The history is the trace of status changes of the management (CU13): "
+                    + "only an administrator can correct a record.")
     public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody HistoryRequest request) {
         return repository.findById(id).map(existing -> {
             try {
@@ -145,21 +147,21 @@ public class HistoryController {
                 repository.save(existing);
                 return ResponseEntity.ok().<Void>build();
             } catch (Exception e) {
-                log.error("Failed to update historial id {}", id, e);
+                log.error("Failed to update history id {}", id, e);
                 return ResponseEntity.internalServerError().<Void>build();
             }
         }).orElse(ResponseEntity.notFound().build());
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "403", description = "Solo un administrador puede eliminar el historial"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "204", description = "Deleted"),
+    @ApiResponse(responseCode = "403", description = "Only an administrator can delete the history"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar historial (solo administrador)",
-            description = "El historial es la traza de cambios de estado de la gestión (CU13): "
-                    + "solo un administrador puede eliminar un registro.")
+    @Operation(summary = "Delete history (administrator only)",
+            description = "The history is the trace of status changes of the management (CU13): "
+                    + "only an administrator can delete a record.")
     @Transactional
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         History entity = repository.findById(id).orElse(null);
@@ -171,7 +173,7 @@ public class HistoryController {
             repository.delete(entity);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            log.error("Failed to delete historial id {}", id, e);
+            log.error("Failed to delete history id {}", id, e);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }

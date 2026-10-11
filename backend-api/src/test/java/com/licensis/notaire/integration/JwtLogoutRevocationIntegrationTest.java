@@ -43,7 +43,7 @@ class JwtLogoutRevocationIntegrationTest {
     }
 
     private String loginAsAdmin() throws Exception {
-        String body = mockMvc.perform(post("/api/v1/usuarios/login")
+        String body = mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "admin", "password": "admin"}
@@ -59,16 +59,16 @@ class JwtLogoutRevocationIntegrationTest {
         String loggedOut = loginAsAdmin();
         String otherSession = loginAsAdmin();
 
-        mockMvc.perform(get("/api/v1/usuarios").header("Authorization", "Bearer " + loggedOut))
+        mockMvc.perform(get("/api/v1/users").header("Authorization", "Bearer " + loggedOut))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(post("/api/v1/usuarios/logout").header("Authorization", "Bearer " + loggedOut))
+        mockMvc.perform(post("/api/v1/users/logout").header("Authorization", "Bearer " + loggedOut))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.ok").value(true));
 
-        mockMvc.perform(get("/api/v1/usuarios").header("Authorization", "Bearer " + loggedOut))
+        mockMvc.perform(get("/api/v1/users").header("Authorization", "Bearer " + loggedOut))
                 .andExpect(status().isUnauthorized());
-        mockMvc.perform(get("/api/v1/usuarios").header("Authorization", "Bearer " + otherSession))
+        mockMvc.perform(get("/api/v1/users").header("Authorization", "Bearer " + otherSession))
                 .andExpect(status().isOk());
     }
 
@@ -77,20 +77,20 @@ class JwtLogoutRevocationIntegrationTest {
     void cookieTokenIsRejectedAfterLogout() throws Exception {
         String token = loginAsAdmin();
 
-        mockMvc.perform(post("/api/v1/usuarios/logout").cookie(new Cookie(COOKIE_NAME, token)))
+        mockMvc.perform(post("/api/v1/users/logout").cookie(new Cookie(COOKIE_NAME, token)))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/v1/usuarios").cookie(new Cookie(COOKIE_NAME, token)))
+        mockMvc.perform(get("/api/v1/users").cookie(new Cookie(COOKIE_NAME, token)))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     @DisplayName("Logout without a token or with an invalid one still succeeds")
     void logoutWithoutValidTokenStillSucceeds() throws Exception {
-        mockMvc.perform(post("/api/v1/usuarios/logout"))
+        mockMvc.perform(post("/api/v1/users/logout"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.ok").value(true));
-        mockMvc.perform(post("/api/v1/usuarios/logout").header("Authorization", "Bearer not-a-real-token"))
+        mockMvc.perform(post("/api/v1/users/logout").header("Authorization", "Bearer not-a-real-token"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.ok").value(true));
     }
@@ -100,12 +100,12 @@ class JwtLogoutRevocationIntegrationTest {
     void repeatedLogoutIsIdempotent() throws Exception {
         String token = loginAsAdmin();
 
-        mockMvc.perform(post("/api/v1/usuarios/logout").header("Authorization", "Bearer " + token))
+        mockMvc.perform(post("/api/v1/users/logout").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
-        mockMvc.perform(post("/api/v1/usuarios/logout").header("Authorization", "Bearer " + token))
+        mockMvc.perform(post("/api/v1/users/logout").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/v1/usuarios").header("Authorization", "Bearer " + token))
+        mockMvc.perform(get("/api/v1/users").header("Authorization", "Bearer " + token))
                 .andExpect(status().isUnauthorized());
     }
 }

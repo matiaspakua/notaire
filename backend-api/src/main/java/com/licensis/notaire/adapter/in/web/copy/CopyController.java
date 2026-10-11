@@ -32,8 +32,8 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/copia")
-@Tag(name = "Copia", description = "API para gestionar copias")
+@RequestMapping("/api/v1/copies")
+@Tag(name = "Copy", description = "API for managing copies")
 public class CopyController {
 
     private static final Logger log = LoggerFactory.getLogger(CopyController.class);
@@ -43,9 +43,9 @@ public class CopyController {
      * replaces them, so both are required on both operations (issue #655).
      */
     record CopyRequest(
-            @NotNull @Schema(description = "Número de copia", requiredMode = Schema.RequiredMode.REQUIRED)
+            @NotNull @Schema(description = "Number of copy", requiredMode = Schema.RequiredMode.REQUIRED)
             Integer number,
-            @NotNull @Schema(description = "Fecha de impresión", requiredMode = Schema.RequiredMode.REQUIRED)
+            @NotNull @Schema(description = "Print date", requiredMode = Schema.RequiredMode.REQUIRED)
             Date datePrinting,
             Date dateWithdrawal,
             String notes,
@@ -109,7 +109,7 @@ public class CopyController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todas las copias")
+    @Operation(summary = "Get all copies")
     @Transactional(readOnly = true)
     public ResponseEntity<List<CopyResponse>> getAll() {
         return ResponseEntity.ok(service.findAll().stream().map(this::toResponse).toList());
@@ -117,10 +117,10 @@ public class CopyController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener copia por ID")
+    @Operation(summary = "Get copy by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<CopyResponse> getById(@PathVariable Integer id) {
         return service.findById(id)
@@ -130,17 +130,17 @@ public class CopyController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "201", description = "Created"),
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
-    @Operation(summary = "Crear nueva copia")
+    @Operation(summary = "Create copy")
     public ResponseEntity<Object> create(@Valid @RequestBody CopyRequest request) {
         if (request.testimonyId() != null
                 && !service.canCreateCopyForTestimony(request.testimonyId())) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "El testimonio ya tiene un movimiento inscripto y no admite nuevas copias."));
+                    .body(Map.of("error", "The testimony already has a registered movement and does not accept new copies."));
         }
         try {
             Copy entity = new Copy();
@@ -148,17 +148,17 @@ public class CopyController {
             entity = service.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(entity));
         } catch (Exception e) {
-            log.error("Failed to create copia", e);
+            log.error("Failed to create copy", e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar copia")
+    @Operation(summary = "Update copy")
     public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody CopyRequest request) {
         return service.findById(id).map(existing -> {
             try {
@@ -166,18 +166,18 @@ public class CopyController {
                 service.save(existing);
                 return ResponseEntity.ok().<Void>build();
             } catch (Exception e) {
-                log.error("Failed to update copia id {}", id, e);
+                log.error("Failed to update copy id {}", id, e);
                 return ResponseEntity.internalServerError().<Void>build();
             }
         }).orElse(ResponseEntity.notFound().build());
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "204", description = "Deleted"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar copia")
+    @Operation(summary = "Delete copy")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         if (!service.existsById(id)) {
             return ResponseEntity.notFound().build();
@@ -186,7 +186,7 @@ public class CopyController {
             service.deleteById(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            log.error("Failed to delete copia id {}", id, e);
+            log.error("Failed to delete copy id {}", id, e);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }

@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @RequirementCoverage({"CU07", "CU08", "CU12", "CU44"})
-@DisplayName("TestimonioController — CU07/CU08 CRUD integration tests")
+@DisplayName("TestimonyController — CU07/CU08 CRUD integration tests")
 class TestimonyControllerIntegrationTest {
 
     @Autowired
@@ -44,12 +44,12 @@ class TestimonyControllerIntegrationTest {
         String deedBody = """
                 {
                   "number": 3001,
-                  "body": "Deed de prueba para testimony",
+                  "body": "Test deed for testimony",
                   "status": "BORRADOR",
                   "dateDeedrecording": "2026-06-16"
                 }
                 """;
-        MvcResult result = mockMvc.perform(post("/api/v1/escrituras")
+        MvcResult result = mockMvc.perform(post("/api/v1/deeds")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(deedBody))
                 .andExpect(status().isCreated())
@@ -62,12 +62,12 @@ class TestimonyControllerIntegrationTest {
         String deedBody = """
                 {
                   "number": 3002,
-                  "body": "Deed firmada de prueba para generar testimony",
+                  "body": "Test signed deed for testimony generation",
                   "status": "Firmada",
                   "dateDeedrecording": "2026-06-16"
                 }
                 """;
-        MvcResult result = mockMvc.perform(post("/api/v1/escrituras")
+        MvcResult result = mockMvc.perform(post("/api/v1/deeds")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(deedBody))
                 .andExpect(status().isCreated())
@@ -76,7 +76,7 @@ class TestimonyControllerIntegrationTest {
         return node.get("idDeed").asInt();
     }
 
-    // DtoEscritura.numero is primitive int — must be included in nested object to avoid 400
+    // DtoDeed.number is a primitive int — must be included in the nested object to avoid 400
     private String testimonyBody(int number, boolean flagged, int deedId) {
         return """
                 {
@@ -88,9 +88,9 @@ class TestimonyControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("CU07 - Should return 200 and empty array when no testimonios exist")
-    void shouldReturnEmptyListWhenNoTestimonios() throws Exception {
-        mockMvc.perform(get("/api/v1/testimonio"))
+    @DisplayName("CU07 - Should return 200 and an empty array when no testimonies exist")
+    void shouldReturnEmptyListWhenNoTestimonies() throws Exception {
+        mockMvc.perform(get("/api/v1/testimonies"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
@@ -98,7 +98,7 @@ class TestimonyControllerIntegrationTest {
     @Test
     @DisplayName("CU07 - Should return 404 for non-existing testimony")
     void shouldReturn404ForNonExistingTestimony() throws Exception {
-        mockMvc.perform(get("/api/v1/testimonio/99999"))
+        mockMvc.perform(get("/api/v1/testimonies/99999"))
                 .andExpect(status().isNotFound());
     }
 
@@ -111,12 +111,12 @@ class TestimonyControllerIntegrationTest {
                 {
                   "number": 1001,
                   "flagged": false,
-                  "notes": "Testimony de prueba",
+                  "notes": "Test testimony",
                   "deed": {"idDeed": %d, "number": 0}
                 }
                 """.formatted(deedId);
 
-        MvcResult result = mockMvc.perform(post("/api/v1/testimonio")
+        MvcResult result = mockMvc.perform(post("/api/v1/testimonies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -142,7 +142,7 @@ class TestimonyControllerIntegrationTest {
                 }
                 """.formatted(deedId);
 
-        MvcResult created = mockMvc.perform(post("/api/v1/testimonio")
+        MvcResult created = mockMvc.perform(post("/api/v1/testimonies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -150,7 +150,7 @@ class TestimonyControllerIntegrationTest {
 
         int id = mapper.readTree(created.getResponse().getContentAsString()).get("idTestimony").asInt();
 
-        mockMvc.perform(get("/api/v1/testimonio/" + id))
+        mockMvc.perform(get("/api/v1/testimonies/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idTestimony").value(id))
                 .andExpect(jsonPath("$.number").value(1002));
@@ -169,7 +169,7 @@ class TestimonyControllerIntegrationTest {
                 }
                 """.formatted(deedId);
 
-        MvcResult created = mockMvc.perform(post("/api/v1/testimonio")
+        MvcResult created = mockMvc.perform(post("/api/v1/testimonies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -191,12 +191,12 @@ class TestimonyControllerIntegrationTest {
                 }
                 """.formatted(id, version, deedId);
 
-        mockMvc.perform(put("/api/v1/testimonio/" + id)
+        mockMvc.perform(put("/api/v1/testimonies/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/v1/testimonio/" + id))
+        mockMvc.perform(get("/api/v1/testimonies/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.flagged").value(true))
                 .andExpect(jsonPath("$.notes").value("Verified por notary"));
@@ -215,7 +215,7 @@ class TestimonyControllerIntegrationTest {
                 }
                 """.formatted(deedId);
 
-        MvcResult created = mockMvc.perform(post("/api/v1/testimonio")
+        MvcResult created = mockMvc.perform(post("/api/v1/testimonies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -223,10 +223,10 @@ class TestimonyControllerIntegrationTest {
 
         int id = mapper.readTree(created.getResponse().getContentAsString()).get("idTestimony").asInt();
 
-        mockMvc.perform(delete("/api/v1/testimonio/" + id))
+        mockMvc.perform(delete("/api/v1/testimonies/" + id))
                 .andExpect(status().isNoContent());
 
-        mockMvc.perform(get("/api/v1/testimonio/" + id))
+        mockMvc.perform(get("/api/v1/testimonies/" + id))
                 .andExpect(status().isNotFound());
     }
 
@@ -236,7 +236,7 @@ class TestimonyControllerIntegrationTest {
         String body = """
                 {"number": 9999, "flagged": false, "verified": false, "version": 0}
                 """;
-        mockMvc.perform(put("/api/v1/testimonio/99999")
+        mockMvc.perform(put("/api/v1/testimonies/99999")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isNotFound());
@@ -245,7 +245,7 @@ class TestimonyControllerIntegrationTest {
     @Test
     @DisplayName("CU07 - Should return 404 when deleting non-existing testimony")
     void shouldReturn404WhenDeletingNonExistingTestimony() throws Exception {
-        mockMvc.perform(delete("/api/v1/testimonio/99999"))
+        mockMvc.perform(delete("/api/v1/testimonies/99999"))
                 .andExpect(status().isNotFound());
     }
 
@@ -254,7 +254,7 @@ class TestimonyControllerIntegrationTest {
     void shouldGenerateTestimonyFromFirmadaDeed() throws Exception {
         int deedId = createDeedFirmada();
 
-        mockMvc.perform(post("/api/v1/testimonio/" + deedId + "/generar"))
+        mockMvc.perform(post("/api/v1/testimonies/" + deedId + "/generate"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.idTestimony").isNumber())
                 .andExpect(jsonPath("$.number").isNumber())
@@ -268,7 +268,7 @@ class TestimonyControllerIntegrationTest {
     void shouldRejectGenerateTestimonyFromNonFirmadaDeed() throws Exception {
         int deedId = createDeed();
 
-        mockMvc.perform(post("/api/v1/testimonio/" + deedId + "/generar"))
+        mockMvc.perform(post("/api/v1/testimonies/" + deedId + "/generate"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -277,13 +277,13 @@ class TestimonyControllerIntegrationTest {
     void shouldVerifyGeneratedTestimonyWithoutNotes() throws Exception {
         int deedId = createDeedFirmada();
 
-        MvcResult generated = mockMvc.perform(post("/api/v1/testimonio/" + deedId + "/generar"))
+        MvcResult generated = mockMvc.perform(post("/api/v1/testimonies/" + deedId + "/generate"))
                 .andExpect(status().isCreated())
                 .andReturn();
         int idTestimony = mapper.readTree(generated.getResponse().getContentAsString())
                 .get("idTestimony").asInt();
 
-        mockMvc.perform(post("/api/v1/testimonio/" + idTestimony + "/verificar")
+        mockMvc.perform(post("/api/v1/testimonies/" + idTestimony + "/verify")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"flagged\": false}"))
                 .andExpect(status().isOk())
@@ -296,13 +296,13 @@ class TestimonyControllerIntegrationTest {
     void shouldVerifyGeneratedTestimonyWithNotes() throws Exception {
         int deedId = createDeedFirmada();
 
-        MvcResult generated = mockMvc.perform(post("/api/v1/testimonio/" + deedId + "/generar"))
+        MvcResult generated = mockMvc.perform(post("/api/v1/testimonies/" + deedId + "/generate"))
                 .andExpect(status().isCreated())
                 .andReturn();
         int idTestimony = mapper.readTree(generated.getResponse().getContentAsString())
                 .get("idTestimony").asInt();
 
-        mockMvc.perform(post("/api/v1/testimonio/" + idTestimony + "/verificar")
+        mockMvc.perform(post("/api/v1/testimonies/" + idTestimony + "/verify")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"flagged\": true, \"notes\": \"Falta firma del otorgante\"}"))
                 .andExpect(status().isOk())

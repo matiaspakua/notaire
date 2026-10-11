@@ -5,11 +5,11 @@
 package com.licensis.notaire.jpa;
 
 import com.licensis.notaire.dto.DtoPerson;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.IdentificationTypeLookup;
 import com.licensis.notaire.business.Copy;
 import com.licensis.notaire.business.Folio;
@@ -20,7 +20,7 @@ import com.licensis.notaire.business.Substitution;
 import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.business.PersonProcedure;
 import com.licensis.notaire.business.User;
-import com.licensis.notaire.service.AdministradorJpa;
+import com.licensis.notaire.service.JpaAdministrator;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -38,11 +38,11 @@ import jakarta.transaction.UserTransaction;
  *
  * @author matias
  */
-public class PersonJpaController implements Serializable, IPersistenciaJpa {
+public class PersonJpaController implements Serializable, JpaPersistence {
 
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
-    private static PersonJpaController instancia = null;
+    private static PersonJpaController instance = null;
 
     private PersonJpaController(UserTransaction utx, EntityManagerFactory emf) {
         this.utx = utx;
@@ -104,15 +104,15 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                 attachedBudgetList.add(budgetListBudgetToAttach);
             }
             person.setBudgetList(attachedBudgetList);
-            List<DeedManagement> attachedGestionesDeEscriturasList = new ArrayList<DeedManagement>();
-            for (DeedManagement gestionesDeEscriturasListGestionesDeEscriturasToAttach : person
+            List<DeedManagement> attachedDeedManagementsList = new ArrayList<DeedManagement>();
+            for (DeedManagement deedManagementListDeedManagementsToAttach : person
                     .getDeedManagementList()) {
-                gestionesDeEscriturasListGestionesDeEscriturasToAttach = em.getReference(
-                        gestionesDeEscriturasListGestionesDeEscriturasToAttach.getClass(),
-                        gestionesDeEscriturasListGestionesDeEscriturasToAttach.getIdManagement());
-                attachedGestionesDeEscriturasList.add(gestionesDeEscriturasListGestionesDeEscriturasToAttach);
+                deedManagementListDeedManagementsToAttach = em.getReference(
+                        deedManagementListDeedManagementsToAttach.getClass(),
+                        deedManagementListDeedManagementsToAttach.getIdManagement());
+                attachedDeedManagementsList.add(deedManagementListDeedManagementsToAttach);
             }
-            person.setDeedManagementList(attachedGestionesDeEscriturasList);
+            person.setDeedManagementList(attachedDeedManagementsList);
             List<Folio> attachedFolioList = new ArrayList<Folio>();
             for (Folio folioListFolioToAttach : person.getFolioList()) {
                 folioListFolioToAttach = em.getReference(folioListFolioToAttach.getClass(),
@@ -174,18 +174,18 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     oldFkIdPersonOfBudgetListBudget = em.merge(oldFkIdPersonOfBudgetListBudget);
                 }
             }
-            for (DeedManagement gestionesDeEscriturasListGestionesDeEscrituras : person
+            for (DeedManagement deedManagementListDeedManagements : person
                     .getDeedManagementList()) {
-                Person oldFkIdNotaryPersonOfGestionesDeEscriturasListGestionesDeEscrituras = gestionesDeEscriturasListGestionesDeEscrituras
+                Person oldFkIdNotaryPersonOfDeedManagementsListDeedManagements = deedManagementListDeedManagements
                         .getFkIdNotaryPerson();
-                gestionesDeEscriturasListGestionesDeEscrituras.setFkIdNotaryPerson(person);
-                gestionesDeEscriturasListGestionesDeEscrituras = em
-                        .merge(gestionesDeEscriturasListGestionesDeEscrituras);
-                if (oldFkIdNotaryPersonOfGestionesDeEscriturasListGestionesDeEscrituras != null) {
-                    oldFkIdNotaryPersonOfGestionesDeEscriturasListGestionesDeEscrituras.getDeedManagementList()
-                            .remove(gestionesDeEscriturasListGestionesDeEscrituras);
-                    oldFkIdNotaryPersonOfGestionesDeEscriturasListGestionesDeEscrituras = em
-                            .merge(oldFkIdNotaryPersonOfGestionesDeEscriturasListGestionesDeEscrituras);
+                deedManagementListDeedManagements.setFkIdNotaryPerson(person);
+                deedManagementListDeedManagements = em
+                        .merge(deedManagementListDeedManagements);
+                if (oldFkIdNotaryPersonOfDeedManagementsListDeedManagements != null) {
+                    oldFkIdNotaryPersonOfDeedManagementsListDeedManagements.getDeedManagementList()
+                            .remove(deedManagementListDeedManagements);
+                    oldFkIdNotaryPersonOfDeedManagementsListDeedManagements = em
+                            .merge(oldFkIdNotaryPersonOfDeedManagementsListDeedManagements);
                 }
             }
             for (Folio folioListFolio : person.getFolioList()) {
@@ -255,8 +255,8 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
             List<PersonProcedure> personProcedureListNew = person.getPersonProcedureList();
             List<Budget> budgetListOld = persistentPerson.getBudgetList();
             List<Budget> budgetListNew = person.getBudgetList();
-            List<DeedManagement> gestionesDeEscriturasListOld = persistentPerson.getDeedManagementList();
-            List<DeedManagement> gestionesDeEscriturasListNew = person.getDeedManagementList();
+            List<DeedManagement> deedManagementListOld = persistentPerson.getDeedManagementList();
+            List<DeedManagement> deedManagementListNew = person.getDeedManagementList();
             List<Folio> folioListOld = persistentPerson.getFolioList();
             List<Folio> folioListNew = person.getFolioList();
             List<Substitution> substitutionListOld = persistentPerson.getSubstitutionList();
@@ -273,8 +273,8 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain TramitesPersonas "
-                            + personProcedureListOldPersonProcedure + " since its persona field is not nullable.");
+                    illegalOrphanMessages.add("You must retain PersonProcedure "
+                            + personProcedureListOldPersonProcedure + " since its person field is not nullable.");
                 }
             }
             for (Budget budgetListOldBudget : budgetListOld) {
@@ -282,18 +282,18 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Presupuesto " + budgetListOldBudget
-                            + " since its fkIdPersona field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Budget " + budgetListOldBudget
+                            + " since its fkIdPerson field is not nullable.");
                 }
             }
-            for (DeedManagement gestionesDeEscriturasListOldGestionesDeEscrituras : gestionesDeEscriturasListOld) {
-                if (!gestionesDeEscriturasListNew.contains(gestionesDeEscriturasListOldGestionesDeEscrituras)) {
+            for (DeedManagement deedManagementListOldDeedManagements : deedManagementListOld) {
+                if (!deedManagementListNew.contains(deedManagementListOldDeedManagements)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
                     illegalOrphanMessages.add(
-                            "You must retain GestionesDeEscrituras " + gestionesDeEscriturasListOldGestionesDeEscrituras
-                                    + " since its fkIdPersonaEscribano field is not nullable.");
+                            "You must retain DeedManagement " + deedManagementListOldDeedManagements
+                                    + " since its fkIdNotaryPerson field is not nullable.");
                 }
             }
             for (Folio folioListOldFolio : folioListOld) {
@@ -302,7 +302,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
                     illegalOrphanMessages.add("You must retain Folio " + folioListOldFolio
-                            + " since its fkIdPersonaEscribano field is not nullable.");
+                            + " since its fkIdNotaryPerson field is not nullable.");
                 }
             }
             for (Substitution substitutionListOldSubstitution : substitutionListOld) {
@@ -310,8 +310,8 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Suplencia " + substitutionListOldSubstitution
-                            + " since its fkIdSuplente field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Substitution " + substitutionListOldSubstitution
+                            + " since its fkIdSubstitute field is not nullable.");
                 }
             }
             for (Substitution substitutionList1OldSubstitution : substitutionList1Old) {
@@ -319,8 +319,8 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Suplencia " + substitutionList1OldSubstitution
-                            + " since its fkIdSuplantado field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Substitution " + substitutionList1OldSubstitution
+                            + " since its fkIdSubstituted field is not nullable.");
                 }
             }
             for (Copy copyListOldCopy : copyListOld) {
@@ -328,8 +328,8 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Copia " + copyListOldCopy
-                            + " since its fkIdPersona field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Copy " + copyListOldCopy
+                            + " since its fkIdPerson field is not nullable.");
                 }
             }
             for (User userListOldUser : userListOld) {
@@ -337,8 +337,8 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Usuario " + userListOldUser
-                            + " since its fkIdPersona field is not nullable.");
+                    illegalOrphanMessages.add("You must retain User " + userListOldUser
+                            + " since its fkIdPerson field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
@@ -367,15 +367,15 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
             }
             budgetListNew = attachedBudgetListNew;
             person.setBudgetList(budgetListNew);
-            List<DeedManagement> attachedGestionesDeEscriturasListNew = new ArrayList<DeedManagement>();
-            for (DeedManagement gestionesDeEscriturasListNewGestionesDeEscriturasToAttach : gestionesDeEscriturasListNew) {
-                gestionesDeEscriturasListNewGestionesDeEscriturasToAttach = em.getReference(
-                        gestionesDeEscriturasListNewGestionesDeEscriturasToAttach.getClass(),
-                        gestionesDeEscriturasListNewGestionesDeEscriturasToAttach.getIdManagement());
-                attachedGestionesDeEscriturasListNew.add(gestionesDeEscriturasListNewGestionesDeEscriturasToAttach);
+            List<DeedManagement> attachedDeedManagementsListNew = new ArrayList<DeedManagement>();
+            for (DeedManagement deedManagementListNewDeedManagementsToAttach : deedManagementListNew) {
+                deedManagementListNewDeedManagementsToAttach = em.getReference(
+                        deedManagementListNewDeedManagementsToAttach.getClass(),
+                        deedManagementListNewDeedManagementsToAttach.getIdManagement());
+                attachedDeedManagementsListNew.add(deedManagementListNewDeedManagementsToAttach);
             }
-            gestionesDeEscriturasListNew = attachedGestionesDeEscriturasListNew;
-            person.setDeedManagementList(gestionesDeEscriturasListNew);
+            deedManagementListNew = attachedDeedManagementsListNew;
+            person.setDeedManagementList(deedManagementListNew);
             List<Folio> attachedFolioListNew = new ArrayList<Folio>();
             for (Folio folioListNewFolioToAttach : folioListNew) {
                 folioListNewFolioToAttach = em.getReference(folioListNewFolioToAttach.getClass(),
@@ -455,20 +455,20 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     }
                 }
             }
-            for (DeedManagement gestionesDeEscriturasListNewGestionesDeEscrituras : gestionesDeEscriturasListNew) {
-                if (!gestionesDeEscriturasListOld.contains(gestionesDeEscriturasListNewGestionesDeEscrituras)) {
-                    Person oldFkIdNotaryPersonOfGestionesDeEscriturasListNewGestionesDeEscrituras = gestionesDeEscriturasListNewGestionesDeEscrituras
+            for (DeedManagement deedManagementListNewDeedManagements : deedManagementListNew) {
+                if (!deedManagementListOld.contains(deedManagementListNewDeedManagements)) {
+                    Person oldFkIdNotaryPersonOfDeedManagementsListNewDeedManagements = deedManagementListNewDeedManagements
                             .getFkIdNotaryPerson();
-                    gestionesDeEscriturasListNewGestionesDeEscrituras.setFkIdNotaryPerson(person);
-                    gestionesDeEscriturasListNewGestionesDeEscrituras = em
-                            .merge(gestionesDeEscriturasListNewGestionesDeEscrituras);
-                    if (oldFkIdNotaryPersonOfGestionesDeEscriturasListNewGestionesDeEscrituras != null
-                            && !oldFkIdNotaryPersonOfGestionesDeEscriturasListNewGestionesDeEscrituras
+                    deedManagementListNewDeedManagements.setFkIdNotaryPerson(person);
+                    deedManagementListNewDeedManagements = em
+                            .merge(deedManagementListNewDeedManagements);
+                    if (oldFkIdNotaryPersonOfDeedManagementsListNewDeedManagements != null
+                            && !oldFkIdNotaryPersonOfDeedManagementsListNewDeedManagements
                                     .equals(person)) {
-                        oldFkIdNotaryPersonOfGestionesDeEscriturasListNewGestionesDeEscrituras
-                                .getDeedManagementList().remove(gestionesDeEscriturasListNewGestionesDeEscrituras);
-                        oldFkIdNotaryPersonOfGestionesDeEscriturasListNewGestionesDeEscrituras = em
-                                .merge(oldFkIdNotaryPersonOfGestionesDeEscriturasListNewGestionesDeEscrituras);
+                        oldFkIdNotaryPersonOfDeedManagementsListNewDeedManagements
+                                .getDeedManagementList().remove(deedManagementListNewDeedManagements);
+                        oldFkIdNotaryPersonOfDeedManagementsListNewDeedManagements = em
+                                .merge(oldFkIdNotaryPersonOfDeedManagementsListNewDeedManagements);
                     }
                 }
             }
@@ -543,7 +543,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
             if (msg == null || msg.length() == 0) {
                 Integer id = person.getPersonId();
                 if (findPerson(id) == null) {
-                    throw new NonexistentEntityException("The persona with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The person with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -564,7 +564,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                 person = em.getReference(Person.class, id);
                 person.getPersonId();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The persona with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The person with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
             List<PersonProcedure> personProcedureListOrphanCheck = person.getPersonProcedureList();
@@ -573,72 +573,72 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
                 illegalOrphanMessages
-                        .add("This Persona (" + person + ") cannot be destroyed since the TramitesPersonas "
+                        .add("This Person (" + person + ") cannot be destroyed since the PersonProcedure "
                                 + personProcedureListOrphanCheckPersonProcedure
-                                + " in its tramitesPersonasList field has a non-nullable persona field.");
+                                + " in its personProcedureList field has a non-nullable person field.");
             }
             List<Budget> budgetListOrphanCheck = person.getBudgetList();
             for (Budget budgetListOrphanCheckBudget : budgetListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + person + ") cannot be destroyed since the Presupuesto "
+                illegalOrphanMessages.add("This Person (" + person + ") cannot be destroyed since the Budget "
                         + budgetListOrphanCheckBudget
-                        + " in its presupuestoList field has a non-nullable fkIdPersona field.");
+                        + " in its budgetList field has a non-nullable fkIdPerson field.");
             }
-            List<DeedManagement> gestionesDeEscriturasListOrphanCheck = person.getDeedManagementList();
-            for (DeedManagement gestionesDeEscriturasListOrphanCheckGestionesDeEscrituras : gestionesDeEscriturasListOrphanCheck) {
+            List<DeedManagement> deedManagementListOrphanCheck = person.getDeedManagementList();
+            for (DeedManagement deedManagementListOrphanCheckDeedManagements : deedManagementListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + person
-                        + ") cannot be destroyed since the GestionesDeEscrituras "
-                        + gestionesDeEscriturasListOrphanCheckGestionesDeEscrituras
-                        + " in its gestionesDeEscriturasList field has a non-nullable fkIdPersonaEscribano field.");
+                illegalOrphanMessages.add("This Person (" + person
+                        + ") cannot be destroyed since the DeedManagement "
+                        + deedManagementListOrphanCheckDeedManagements
+                        + " in its deedManagementList field has a non-nullable fkIdNotaryPerson field.");
             }
             List<Folio> folioListOrphanCheck = person.getFolioList();
             for (Folio folioListOrphanCheckFolio : folioListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + person + ") cannot be destroyed since the Folio "
+                illegalOrphanMessages.add("This Person (" + person + ") cannot be destroyed since the Folio "
                         + folioListOrphanCheckFolio
-                        + " in its folioList field has a non-nullable fkIdPersonaEscribano field.");
+                        + " in its folioList field has a non-nullable fkIdNotaryPerson field.");
             }
             List<Substitution> substitutionListOrphanCheck = person.getSubstitutionList();
             for (Substitution substitutionListOrphanCheckSubstitution : substitutionListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + person + ") cannot be destroyed since the Suplencia "
+                illegalOrphanMessages.add("This Person (" + person + ") cannot be destroyed since the Substitution "
                         + substitutionListOrphanCheckSubstitution
-                        + " in its suplenciaList field has a non-nullable fkIdSuplente field.");
+                        + " in its substitutionList field has a non-nullable fkIdSubstitute field.");
             }
             List<Substitution> substitutionList1OrphanCheck = person.getSubstitutionList1();
             for (Substitution substitutionList1OrphanCheckSubstitution : substitutionList1OrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + person + ") cannot be destroyed since the Suplencia "
+                illegalOrphanMessages.add("This Person (" + person + ") cannot be destroyed since the Substitution "
                         + substitutionList1OrphanCheckSubstitution
-                        + " in its suplenciaList1 field has a non-nullable fkIdSuplantado field.");
+                        + " in its substitutionList1 field has a non-nullable fkIdSubstituted field.");
             }
             List<Copy> copyListOrphanCheck = person.getCopyList();
             for (Copy copyListOrphanCheckCopy : copyListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + person + ") cannot be destroyed since the Copia "
-                        + copyListOrphanCheckCopy + " in its copiaList field has a non-nullable fkIdPersona field.");
+                illegalOrphanMessages.add("This Person (" + person + ") cannot be destroyed since the Copy "
+                        + copyListOrphanCheckCopy + " in its copyList field has a non-nullable fkIdPerson field.");
             }
             List<User> userListOrphanCheck = person.getUserList();
             for (User userListOrphanCheckUser : userListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + person + ") cannot be destroyed since the Usuario "
+                illegalOrphanMessages.add("This Person (" + person + ") cannot be destroyed since the User "
                         + userListOrphanCheckUser
-                        + " in its usuarioList field has a non-nullable fkIdPersona field.");
+                        + " in its userList field has a non-nullable fkIdPerson field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
@@ -674,9 +674,9 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                 q.setFirstResult(firstResult);
             }
 
-            List<Person> listaPersons = q.getResultList();
+            List<Person> people = q.getResultList();
 
-            for (Iterator<Person> it = listaPersons.iterator(); it.hasNext();) {
+            for (Iterator<Person> it = people.iterator(); it.hasNext();) {
                 Person person = it.next();
                 person.setFolioList(null);
 
@@ -690,11 +690,9 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
 
                 person.setPersonProcedureList(null);
                 person.setUserList(null);
-
-                // persona.setTramiteList(new ArrayList<Tramite>());
             }
 
-            return listaPersons;
+            return people;
         } finally {
             em.close();
         }
@@ -722,40 +720,40 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
         }
     }
 
-    public static PersonJpaController getInstancia() {
+    public static PersonJpaController getInstance() {
 
-        EntityManagerFactory emf = AdministradorJpa.getEmf();
+        EntityManagerFactory emf = JpaAdministrator.getEmf();
 
-        if (instancia == null || (instancia.emf == null && emf != null)) {
-            instancia = new PersonJpaController(null, emf);
+        if (instance == null || (instance.emf == null && emf != null)) {
+            instance = new PersonJpaController(null, emf);
         }
-        return instancia;
+        return instance;
 
     }
 
-    public Boolean modificarPerson(Person pPerson) throws ClassModifiedException, ClassEliminatedException {
+    public Boolean modifyPerson(Person pPerson) throws ClassModifiedException, ClassDeletedException {
 
-        Boolean flag = false; // Variable para saber el resultado de la transaccion
-        int oldVersion = ConstantesPersistencia.VersionINICIAL; // Variable para Version en memoria del Objeto
-        int version = ConstantesPersistencia.VersionINICIAL; // Variable para Version en bd del Objeto
+        Boolean flag = false; // Whether the transaction succeeded
+        int oldVersion = PersistenceConstants.INITIAL_VERSION; // Version of the object in memory
+        int version = PersistenceConstants.INITIAL_VERSION; // Version of the object in the database
 
         EntityManager em = getEntityManager();
 
         Person persistentPerson = em.find(Person.class, pPerson.getPersonId());
 
         if (persistentPerson != null) {
-            version = persistentPerson.getVersion(); // Version del Objeto en db
-            oldVersion = pPerson.getVersion(); // Version del Objeto en memoria
+            version = persistentPerson.getVersion(); // Version of the object in the database
+            oldVersion = pPerson.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) // Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
-                throw new ClassModifiedException("La persona indicada ya ha sido modificada");
+                throw new ClassModifiedException("The indicated person has already been modified");
             } else {
                 try {
 
                     em.getTransaction().begin();
 
-                    // Atributos Persona
+                    // Person attributes
                     persistentPerson.setFirstName(pPerson.getFirstName());
                     persistentPerson.setLastName(pPerson.getLastName());
                     persistentPerson.setPhone(pPerson.getPhone());
@@ -763,41 +761,35 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     persistentPerson.setFkIdIdentificationType(pPerson.getFkIdIdentificationType());
                     persistentPerson.setIdentificationNumber(pPerson.getIdentificationNumber());
 
-                    /*
-                     * Tira error cuando el registro de escribano vale NULL if
-                     * (pPersona.getRegistroEscribano() != 0) {
-                     * persistentPersona.setRegistroEscribano(pPersona.getRegistroEscribano()); }
-                     *
-                     */
                     em.getTransaction().commit();
                     em.close();
                 } catch (PersistenceException ex) {
-                    System.out.println("Error de Persistencia: Usuario JpaController metodo: modificarUsuario");
+                    System.out.println("Persistence error: PersonJpaController method modifyPerson");
                     ex.printStackTrace();
                 }
             }
-        } else // Si fue eliminado se dispara una excepcion
+        } else // Already deleted: throw
         {
-            throw new ClassEliminatedException("La persona indicada ha sido eliminada");
+            throw new ClassDeletedException("The indicated person has been deleted");
         }
         return flag;
     }
 
-    public Boolean registrarNotary(Person notary) throws ClassModifiedException, NonexistentEntityException {
+    public Boolean registerNotary(Person notary) throws ClassModifiedException, NonexistentEntityException {
 
-        Boolean resultado = false; // Variable para saber el resultado de la transaccion
-        int oldVersion = ConstantesPersistencia.VersionINICIAL; // Variable para Version en memoria del Objeto
-        int version = ConstantesPersistencia.VersionINICIAL; // Variable para Version en bd del Objeto
+        Boolean result = false; // Whether the transaction succeeded
+        int oldVersion = PersistenceConstants.INITIAL_VERSION; // Version of the object in memory
+        int version = PersistenceConstants.INITIAL_VERSION; // Version of the object in the database
 
         EntityManager em = getEntityManager();
 
         Person persistentPerson = em.find(Person.class, notary.getPersonId());
 
         if (persistentPerson != null) {
-            version = persistentPerson.getVersion(); // Version del Objeto en db
-            oldVersion = notary.getVersion(); // Version del Objeto en memoria
+            version = persistentPerson.getVersion(); // Version of the object in the database
+            oldVersion = notary.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) // Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 if (em != null) {
                     em.close();
@@ -810,42 +802,42 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     persistentPerson.setNotaryRegistrationNumber(notary.getNotaryRegistrationNumber());
                 }
                 em.getTransaction().commit();
-                resultado = true;
+                result = true;
 
                 if (em != null) {
                     em.close();
                 }
             }
-        } else // Si fue eliminado se dispara una excepcion
+        } else // Already deleted: throw
         {
-            throw new NonexistentEntityException("No existe la persona indicada");
+            throw new NonexistentEntityException("The indicated person does not exist");
         }
-        return resultado;
+        return result;
     }
 
-    public Boolean modificarClient(Person pClient) throws ClassModifiedException, ClassEliminatedException {
+    public Boolean modifyClient(Person pClient) throws ClassModifiedException, ClassDeletedException {
 
-        Boolean flag = false; // Variable para saber el resultado de la transaccion
-        int oldVersion = 0; // Variable para Version en memoria del Objeto
-        int version = 0; // Variable para Version en bd del Objeto
+        Boolean flag = false; // Whether the transaction succeeded
+        int oldVersion = 0; // Version of the object in memory
+        int version = 0; // Version of the object in the database
 
         EntityManager em = getEntityManager();
 
         Person persistentPerson = em.find(Person.class, pClient.getPersonId());
 
         if (persistentPerson != null) {
-            version = persistentPerson.getVersion(); // Version del Objeto en db
-            oldVersion = pClient.getVersion(); // Version del Objeto en memoria
+            version = persistentPerson.getVersion(); // Version of the object in the database
+            oldVersion = pClient.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) // Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
-                throw new ClassModifiedException("El cliente indicado ya ha sido modificado");
+                throw new ClassModifiedException("The indicated client has already been modified");
 
             } else {
                 try {
                     em.getTransaction().begin();
 
-                    // Atributos Persona
+                    // Person attributes
                     persistentPerson.setFirstName(pClient.getFirstName());
                     persistentPerson.setLastName(pClient.getLastName());
                     persistentPerson.setPhone(pClient.getPhone());
@@ -853,8 +845,8 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     persistentPerson.setFkIdIdentificationType(pClient.getFkIdIdentificationType());
                     persistentPerson.setIdentificationNumber(pClient.getIdentificationNumber());
 
-                    // La version del objeto queda a cargo de Hivernate
-                    // Atributos Cliente
+                    // Hibernate assigns the version.
+                    // Client attributes
                     persistentPerson.setNationality(pClient.getNationality());
                     persistentPerson.setBirthDate(pClient.getBirthDate());
                     persistentPerson.setTaxId(pClient.getTaxId());
@@ -872,33 +864,27 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     em.close();
                     flag = true;
                 } catch (Exception e) {
-                    System.out.println("Error de Persistencia: Usuario JpaController metodo: modificarUsuario");
+                    System.out.println("Persistence error: PersonJpaController method modifyClient");
                 }
             }
-        } else // Si fue eliminado se dispara una excepcion
+        } else // Already deleted: throw
         {
-            throw new ClassEliminatedException("El cliente indicado ha sido eliminado o no existe");
+            throw new ClassDeletedException("The indicated client has been deleted or does not exist");
         }
         return flag;
     }
 
     /**
-     * Metodo JPA que permite buscar si existe o no , una persona con el mismo tipo
-     * de
-     * Identificacion y numero.
+     * Looks up a person by identification type and number.
      *
-     * @param pNumeroIdentificacion
-     * @param pTipoIdentificacion
-     * @return Retorno una lista de personas
+     * @param dtoPerson identification type and number to match
+     * @return the matching person, or null when none exists
      */
-    public Person findPersonTypeIdentificationNumber(DtoPerson dtoPerson) { // No pueden repetirse un mismo numero y
-                                                                                // tipo de identificacion
-
+    public Person findPersonTypeIdentificationNumber(DtoPerson dtoPerson) {
         EntityManager em = getEntityManager();
-        List<Person> listaPerson = null;
+        List<Person> people = null;
         Person person = null;
-        // acocio el nombre de la identificacion con su id correspondiente, para la
-        // busqueda
+        // Resolve the identification type name to its id before the lookup.
         dtoPerson.getDtoIdentificationType().setIdIdentificationType(
                 IdentificationTypeLookup.shared().idOf(dtoPerson.getDtoIdentificationType().getName()));
 
@@ -908,12 +894,12 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
         Query query = em.createNamedQuery("Person.findByIdentificationNumber");
         query.setParameter("identificationNumber", identificationNumber);
 
-        listaPerson = query.getResultList();
+        people = query.getResultList();
 
-        if (!listaPerson.isEmpty()) {
-            for (int i = 0; i < listaPerson.size(); i++) {
-                if (listaPerson.get(i).getFkIdIdentificationType().getIdIdentificationType() == idIdentificationType) {
-                    person = listaPerson.get(i);
+        if (!people.isEmpty()) {
+            for (int i = 0; i < people.size(); i++) {
+                if (people.get(i).getFkIdIdentificationType().getIdIdentificationType() == idIdentificationType) {
+                    person = people.get(i);
                 }
 
             }
@@ -923,77 +909,81 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
     }
 
     /**
-     * Metodo JPA, que permite buscar personas por aproximacion de nombre y apellido
+     * Looks up people by an approximate first name and last name.
      *
-     * @param dtoPersona
-     * @return
+     * @param dtoPerson name fragment to match
+     * @return people whose names contain the given fragments
      */
-    public List<Person> findPersonNameLastName(DtoPerson dtoPerson) { // No pueden repetirse un mismo numero y
-                                                                            // tipo de identificacion
+    public List<Person> findPersonNameLastName(DtoPerson dtoPerson) {
 
         EntityManager em = getEntityManager();
 
-        List<Person> listaPerson = null;
+        List<Person> people = null;
         Person person = null;
         String name = "%" + dtoPerson.getFirstName() + "%";
         String lastName = "%" + dtoPerson.getLastName() + "%";
 
         Query query = em.createNamedQuery("Person.findByPersonNameLastName");
-        query.setParameter("nombre", name);
-        query.setParameter("apellido", lastName);
+        query.setParameter("name", name);
+        query.setParameter("lastName", lastName);
 
-        listaPerson = query.getResultList();
+        people = query.getResultList();
 
-        return listaPerson;
+        return people;
     }
 
     /**
-     * Metodo que devuelve todas las personas, con su red de objetos cada una
+     * Returns every person.
      *
-     * @return
+     * @return all people
      */
     public List<Person> findPersons() {
         EntityManager em = getEntityManager();
 
-        List<Person> listaPerson = null;
+        List<Person> people = null;
         Person person = null;
         try {
             Query query = em.createNamedQuery("Person.findAll");
 
-            listaPerson = query.getResultList();
+            people = query.getResultList();
         } catch (PersistenceException ex) {
             ex.printStackTrace();
         }
-        return listaPerson;
+        return people;
     }
 
-    public Person findPersonNotary(Person miPerson) { // No pueden repetirse un mismo numero y tipo de
-                                                             // identificacion
+    /**
+     * Looks up a notary by registration number.
+     *
+     * @param notary person carrying the notary registration number
+     * @return the matching notary, or null when none exists
+     */
+    public Person findPersonNotary(Person notary) {
 
         EntityManager em = getEntityManager();
 
-        List<Person> listaPerson = null;
+        List<Person> people = null;
         Person person = null;
 
         Query query = em.createNamedQuery("Person.findByNotaryRegistrationNumber");
-        query.setParameter("registroEscribano", miPerson.getNotaryRegistrationNumber());
+        query.setParameter("notaryRegistrationNumber", notary.getNotaryRegistrationNumber());
 
-        listaPerson = query.getResultList();
+        people = query.getResultList();
 
-        if (listaPerson != null) {
-            person = listaPerson.get(0);
+        if (people != null) {
+            person = people.get(0);
         }
 
         return person;
     }
 
-    public Person findPersonPorId(Integer idPerson) {
+    public Person findPersonById(Integer idPerson) {
         EntityManager em = getEntityManager();
 
         Person person = new Person();
 
         Query query = em.createNamedQuery("Person.findByIdPerson");
-        query.setParameter("idPersona", idPerson);
+        query.setParameter("idPerson", idPerson);
 
         person = (Person) query.getSingleResult();
 

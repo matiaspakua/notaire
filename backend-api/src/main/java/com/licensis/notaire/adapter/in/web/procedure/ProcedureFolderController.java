@@ -22,11 +22,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * REST API para administrar carpetas de trámite (CU85).
+ * REST API for managing procedure folders (CU85).
  */
 @RestController
-@RequestMapping("/api/v1/carpetas")
-@Tag(name = "Carpetas de Trámite", description = "API para administrar carpetas de trámite")
+@RequestMapping("/api/v1/procedure-folders")
+@Tag(name = "Procedure folders", description = "API for managing procedure folders")
 public class ProcedureFolderController {
 
     private final ProcedureFolderService procedureFolderService;
@@ -40,10 +40,10 @@ public class ProcedureFolderController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "Carpeta no encontrada")
+        @ApiResponse(responseCode = "404", description = "Folder not found")
     })
     @GetMapping("/{id}")
-    @Operation(summary = "CU85 - Consultar una carpeta de trámite por ID")
+    @Operation(summary = "CU85 - Query a procedure folder by ID")
     public ResponseEntity<DtoProcedureFolder> getById(@PathVariable Integer id) {
         return procedureFolderService.findById(id)
                 .map(folder -> ResponseEntity.ok(folder.getDto()))
@@ -54,31 +54,31 @@ public class ProcedureFolderController {
         @ApiResponse(responseCode = "200", description = "OK")
     })
     @GetMapping
-    @Operation(summary = "CU85 - Consultar carpetas de trámite por gestión o por trámite")
+    @Operation(summary = "CU85 - Query procedure folders by management or by procedure")
     public ResponseEntity<List<DtoProcedureFolder>> search(
             @RequestParam(required = false) Integer managementId,
             @RequestParam(required = false) Integer procedureId) {
-        List<ProcedureFolder> carpetas;
+        List<ProcedureFolder> folders;
         if (procedureId != null) {
-            carpetas = procedureFolderService.findByProcedure(procedureId).map(List::of).orElse(List.of());
+            folders = procedureFolderService.findByProcedure(procedureId).map(List::of).orElse(List.of());
         } else if (managementId != null) {
-            carpetas = procedureFolderService.findByManagement(managementId);
+            folders = procedureFolderService.findByManagement(managementId);
         } else {
-            carpetas = List.of();
+            folders = List.of();
         }
-        return ResponseEntity.ok(carpetas.stream().map(ProcedureFolder::getDto).toList());
+        return ResponseEntity.ok(folders.stream().map(ProcedureFolder::getDto).toList());
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Carpeta puesta en espera"),
-        @ApiResponse(responseCode = "400", description = "Motivo no informado"),
-        @ApiResponse(responseCode = "404", description = "Carpeta no encontrada")
+        @ApiResponse(responseCode = "200", description = "Folder put on hold"),
+        @ApiResponse(responseCode = "400", description = "Reason not provided"),
+        @ApiResponse(responseCode = "404", description = "Folder not found")
     })
-    @PutMapping("/{id}/espera")
-    @Operation(summary = "CU85 - Poner una carpeta de trámite en espera, con motivo obligatorio")
-    public ResponseEntity<Object> ponerEnWait(@PathVariable Integer id, @RequestBody WaitRequest request) {
+    @PutMapping("/{id}/wait")
+    @Operation(summary = "CU85 - Put a procedure folder on hold; a reason is required")
+    public ResponseEntity<Object> putOnHold(@PathVariable Integer id, @RequestBody WaitRequest request) {
         try {
-            DtoProcedureFolder dto = procedureFolderService.ponerEnWait(id, request.reason()).getDto();
+            DtoProcedureFolder dto = procedureFolderService.putOnHold(id, request.reason()).getDto();
             return ResponseEntity.ok(dto);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();

@@ -110,7 +110,7 @@ async function parseResponse<T>(response: APIResponse): Promise<ApiResult<T>> {
 // Domain-specific helper types (mirroring backend DTOs)
 // ──────────────────────────────────────────────
 
-export interface PersonaPayload {
+export interface PersonPayload {
   firstName: string;
   lastName: string;
   identificationNumber: string;
@@ -127,27 +127,27 @@ export interface PersonaPayload {
   notaryRegistrationNumber?: number;
 }
 
-export interface PresupuestoPayload {
+export interface BudgetPayload {
   person?: { personId: number };
   date?: string;
-  encabezado?: string;
+  heading?: string;
   status?: string;
   notes?: string;
   propertyAmount?: number;
 }
 
-export interface CompleteCaseGestionPayload {
+export interface CompleteCaseManagementPayload {
   number: number;
-  encabezado?: string;
+  heading?: string;
   notes?: string;
-  presupuestoId: number;
-  escribanoId: number;
-  estadoGestionId: number;
-  tipoTramiteId: number;
-  inmuebleId?: number;
+  budgetId: number;
+  notaryId: number;
+  statusManagementId: number;
+  procedureTypeId: number;
+  propertyId?: number;
 }
 
-export interface EscrituraPayload {
+export interface DeedPayload {
   dateDeedrecording?: string;
   body?: string;
   status?: string;
@@ -155,14 +155,14 @@ export interface EscrituraPayload {
   notes?: string;
 }
 
-export interface UsuarioPayload {
+export interface UserPayload {
   name: string;
   password: string;
   type: string;
   active?: boolean;
 }
 
-export interface PagoPayload {
+export interface PaymentPayload {
   idBudget?: number;
   amount: number;
   date?: string;
@@ -170,12 +170,12 @@ export interface PagoPayload {
   notes?: string;
 }
 
-export interface TestimonioPayload {
+export interface TestimonyPayload {
   idDeed: number;
   notes?: string;
 }
 
-export interface DocumentoPresentadoPayload {
+export interface SubmittedDocumentPayload {
   name: string;
   typeId?: number;
   procedureId?: number;
@@ -183,7 +183,7 @@ export interface DocumentoPresentadoPayload {
   delivered?: boolean;
 }
 
-export interface SuplenciaPayload {
+export interface SubstitutionPayload {
   fkIdSubstitute: { personId: number };
   fkIdSubstituted: { personId: number };
   dateStart: string;
@@ -220,16 +220,16 @@ export function uniqueLabel(prefix: string): string {
 }
 
 /**
- * Persona helpers — PersonController accepts the raw Person entity at /people.
+ * Person helpers — PersonController accepts the raw Person entity at /people.
  */
-export async function createPersona(
+export async function createPerson(
   page: Page,
-  overrides: Partial<PersonaPayload> = {},
+  overrides: Partial<PersonPayload> = {},
 ): Promise<ApiResult<{ personId: number; firstName?: string; lastName?: string }>> {
   const id = uniqueId();
   return apiPost(page, "/people", {
     firstName: "Test",
-    lastName: `Persona-${id}`,
+    lastName: `Person-${id}`,
     identificationNumber: `E2E${id}`,
     email: `e2e-${id}@notaire.test`,
     isClient: true,
@@ -242,115 +242,103 @@ export async function createPersona(
 }
 
 /**
- * Presupuesto helpers — BudgetController accepts the raw Budget entity.
+ * Budget helpers — BudgetController accepts the raw Budget entity.
  */
-export async function createPresupuesto(
+export async function createBudget(
   page: Page,
-  personaId: number,
-  _conceptoId?: number,
-  overrides: Partial<PresupuestoPayload> = {},
+  personId: number,
+  _conceptId?: number,
+  overrides: Partial<BudgetPayload> = {},
 ): Promise<ApiResult<{ idBudget: number }>> {
-  return apiPost(page, "/presupuestos", {
-    person: { personId: personaId },
+  return apiPost(page, "/budgets", {
+    person: { personId: personId },
     date: new Date().toISOString().split("T")[0],
-    encabezado: `Presupuesto E2E ${uniqueId()}`,
+    heading: `Budget E2E ${uniqueId()}`,
     status: "PENDIENTE",
-    notes: `Presupuesto E2E ${uniqueId()}`,
+    notes: `Budget E2E ${uniqueId()}`,
     ...overrides,
   });
 }
 
 /**
- * Gestión helpers (CU02 - complete-case: gestión + trámite in one call)
+ * Management helpers (CU02 - complete-case: management and procedure in one call)
  */
-export async function createCompleteCaseGestion(
+export async function createCompleteCaseManagement(
   page: Page,
-  overrides: Partial<CompleteCaseGestionPayload> & { presupuestoId: number },
-): Promise<ApiResult<{ idManagement: number; number: number; statusActual: string }>> {
-  const merged: CompleteCaseGestionPayload = {
+  overrides: Partial<CompleteCaseManagementPayload> & { budgetId: number },
+): Promise<ApiResult<{ idManagement: number; number: number; currentStatus: string }>> {
+  const merged: CompleteCaseManagementPayload = {
     // `number` is a Postgres `integer` column; uniqueId() is Date.now()-based and overflows it.
     number: uniqueId() % 1_000_000,
-    encabezado: `Gestión E2E ${uniqueId()}`,
-    escribanoId: 1,
-    estadoGestionId: 1,
-    tipoTramiteId: 4,
+    heading: `Management E2E ${uniqueId()}`,
+    notaryId: 1,
+    statusManagementId: 1,
+    procedureTypeId: 4,
     ...overrides,
   };
-  // CompleteCaseRequest's real wire field names are (number, encabezado, notes, budgetId,
-  // notaryId, statusManagementId, typeProcedureId, propertyId) — not the presupuestoId/
-  // escribanoId/estadoGestionId/tipoTramiteId helper argument names kept for callers.
-  return apiPost(page, "/gestiones/complete-case", {
-    number: merged.number,
-    encabezado: merged.encabezado,
-    notes: merged.notes,
-    budgetId: merged.presupuestoId,
-    notaryId: merged.escribanoId,
-    statusManagementId: merged.estadoGestionId,
-    typeProcedureId: merged.tipoTramiteId,
-    propertyId: merged.inmuebleId,
-  });
+  return apiPost(page, "/managements/complete-case", merged);
 }
 
 /**
- * CU43 - trámites of a gestión with their required documentation. `DtoManagementSummary`
- * (the `complete-case`/`GET /gestiones/{id}` read-model) never exposes trámite IDs, so
- * this is the only way to learn the ID of the trámite `complete-case` created.
+ * CU43 - procedures of a management with their required documentation. `DtoManagementSummary`
+ * (the `complete-case`/`GET /managements/{id}` read-model) never exposes procedure IDs, so
+ * this is the only way to learn the ID of the procedure `complete-case` created.
  */
-export async function getReingresoDocumentacion(
+export async function getDocumentReentry(
   page: Page,
-  idGestion: number,
+  idManagement: number,
 ): Promise<ApiResult<{ idManagement: number; number: number; procedures: Array<{ idProcedure: number }> }>> {
-  return apiGet(page, `/gestiones/${idGestion}/reingreso-documentacion`);
+  return apiGet(page, `/managements/${idManagement}/document-reentry`);
 }
 
 /**
- * Plain gestión helper (CU43) — unlike `createCompleteCaseGestion`, this does
- * not create a `Tramite`, so the resulting gestión has zero trámites.
+ * Plain management helper (CU43) — unlike `createCompleteCaseManagement`, this does
+ * not create a `Procedure`, so the resulting management has zero procedures.
  * ManagementController accepts the raw DeedManagement entity.
  */
-export async function createGestionSinTramite(
+export async function createManagementWithoutProcedure(
   page: Page,
-  escribanoId: number,
-  overrides: { encabezado?: string; number?: number } = {},
+  notaryId: number,
+  overrides: { heading?: string; number?: number } = {},
 ): Promise<ApiResult<{ idManagement: number; number: number }>> {
-  return apiPost(page, "/gestiones", {
-    encabezado: `Gestión E2E ${uniqueId()}`,
+  return apiPost(page, "/managements", {
+    heading: `Management E2E ${uniqueId()}`,
     dateStart: new Date().toISOString().split("T")[0],
     number: uniqueId() % 1_000_000,
-    notaryPersonId: escribanoId,
+    notaryPersonId: notaryId,
     ...overrides,
   });
 }
 
 /**
- * Escritura helpers — DeedController accepts the raw Deed entity.
+ * Deed helpers — DeedController accepts the raw Deed entity.
  */
-export async function createEscritura(
+export async function createDeed(
   page: Page,
-  gestionId: number,
-  personaId: number,
-  overrides: Partial<EscrituraPayload> = {},
+  managementId: number,
+  personId: number,
+  overrides: Partial<DeedPayload> = {},
 ): Promise<ApiResult<{ idDeed: number }>> {
   const id = uniqueId();
-  return apiPost(page, "/escrituras", {
+  return apiPost(page, "/deeds", {
     number: id % 1_000_000,
     dateDeedrecording: new Date().toISOString().split("T")[0],
-    body: `Contenido de escritura E2E ${id}`,
+    body: `E2E deed body ${id}`,
     status: "Pendiente",
     ...overrides,
   });
 }
 
 /**
- * Usuario helpers — UserController's UserRequest is (name, password, type, active).
+ * User helpers — UserController's UserRequest is (name, password, type, active).
  */
-export async function createUsuario(
+export async function createUser(
   page: Page,
-  personaId?: number,
-  overrides: Partial<UsuarioPayload> = {},
+  personId?: number,
+  overrides: Partial<UserPayload> = {},
 ): Promise<ApiResult<{ idUser: number }>> {
   const id = uniqueId();
-  return apiPost(page, "/usuarios", {
+  return apiPost(page, "/users", {
     name: `e2euser-${id}`,
     password: "Test1234!",
     type: "EMPLEADO",
@@ -360,15 +348,15 @@ export async function createUsuario(
 }
 
 /**
- * Pago helpers — PaymentController's PaymentRequest is (idBudget, amount, date, notes, paymentMethod).
+ * Payment helpers — PaymentController's PaymentRequest is (idBudget, amount, date, notes, paymentMethod).
  */
-export async function createPago(
+export async function createPayment(
   page: Page,
-  presupuestoId: number,
-  overrides: Partial<PagoPayload> = {},
+  budgetId: number,
+  overrides: Partial<PaymentPayload> = {},
 ): Promise<ApiResult<{ idPayment: number }>> {
-  return apiPost(page, "/pagos", {
-    idBudget: presupuestoId,
+  return apiPost(page, "/payments", {
+    idBudget: budgetId,
     amount: 5000,
     date: new Date().toISOString().split("T")[0],
     paymentMethod: "Efectivo",
@@ -382,7 +370,7 @@ export async function createPago(
  */
 export async function createFolio(
   page: Page,
-  personaId?: number,
+  personId?: number,
   overrides: {
     number?: number;
     year?: number;
@@ -392,22 +380,22 @@ export async function createFolio(
     deedId?: number;
   } = {},
 ): Promise<ApiResult<{ idFolio: number }>> {
-  return apiPost(page, "/folio", {
+  return apiPost(page, "/folios", {
     number: Math.floor(10000 + Math.random() * 90000),
     year: 2026,
     status: "Nuevo",
     typeFolioId: 1,
-    notaryId: personaId || 1,
+    notaryId: personId || 1,
     ...overrides,
   });
 }
 
-export async function createTipoDeFolio(
+export async function createFolioType(
   page: Page,
   overrides: { name?: string; isAuxiliary?: boolean; enabled?: boolean } = {},
 ): Promise<ApiResult<{ idFolioType: number }>> {
   const id = uniqueId();
-  return apiPost(page, "/tipo-folio", {
+  return apiPost(page, "/folio-types", {
     name: `Tipo Folio E2E ${id}`,
     enabled: true,
     isAuxiliary: false,
@@ -416,15 +404,15 @@ export async function createTipoDeFolio(
 }
 
 /**
- * Catálogo helpers
+ * Catalog helpers
  */
-export async function createTipoTramite(
+export async function createProcedureType(
   page: Page,
   overrides: { name?: string; notes?: string } = {},
 ): Promise<ApiResult<{ idProcedureType: number }>> {
   const id = uniqueId();
-  return apiPost(page, "/tipo-tramite", {
-    name: `Tipo Tramite E2E ${id}`,
+  return apiPost(page, "/procedure-types", {
+    name: `Procedure type E2E ${id}`,
     notes: "Created by E2E test",
     isArchived: false,
     isRegistered: false,
@@ -433,17 +421,17 @@ export async function createTipoTramite(
 }
 
 /**
- * Trámite / documento presentado helpers (CU10) — ProcedureController takes
+ * Procedure and submitted-document helpers (CU10) — ProcedureController takes
  * a plain-id ProcedureRequest (issue #981), not the raw Procedure entity.
  */
-export async function createTramite(
+export async function createProcedure(
   page: Page,
-  gestionId: number,
-  tipoTramiteId: number,
+  managementId: number,
+  procedureTypeId: number,
 ): Promise<ApiResult<{ idProcedure: number }>> {
-  return apiPost(page, "/tramites", {
-    idProcedureType: tipoTramiteId,
-    idManagement: gestionId,
+  return apiPost(page, "/procedures", {
+    idProcedureType: procedureTypeId,
+    idManagement: managementId,
   });
 }
 
@@ -453,22 +441,22 @@ export async function createTramite(
  * procedureId are required (#655). Without an explicit typeId a
  * non-expiring document type is created first.
  */
-export async function createDocumentoEntidadExterna(
+export async function createExternalEntityDocument(
   page: Page,
-  tramiteId: number,
+  procedureId: number,
   overrides: { name?: string; deliveredBy?: string; typeId?: number } = {},
 ): Promise<ApiResult<{ idSubmittedDocument: number }>> {
   let typeId = overrides.typeId;
   if (typeId === undefined) {
-    const tipo = await createTipoDocumento(page, { expires: false });
-    if (!tipo.ok) {
-      return { ok: false, status: tipo.status, error: tipo.error ?? "createTipoDocumento failed" };
+    const documentType = await createDocumentType(page, { expires: false });
+    if (!documentType.ok) {
+      return { ok: false, status: documentType.status, error: documentType.error ?? "createDocumentType failed" };
     }
-    typeId = tipo.data!.idDocumentType;
+    typeId = documentType.data!.idDocumentType;
   }
-  return apiPost(page, "/documento-presentado", {
+  return apiPost(page, "/submitted-documents", {
     typeId,
-    procedureId: tramiteId,
+    procedureId: procedureId,
     deliveredBy: "Entidad Externa",
     delivered: false,
     ...overrides,
@@ -477,7 +465,7 @@ export async function createDocumentoEntidadExterna(
 
 /**
  * Workflow helpers (CU83) — used to seed a self-contained workflow
- * (definition + nodes + transition) for gestión transition E2E tests,
+ * (definition + nodes + transition) for management transition E2E tests,
  * independent of demo/seed data.
  */
 export async function createWorkflowDefinition(
@@ -496,12 +484,12 @@ export async function createWorkflowDefinition(
 export async function createWorkflowNode(
   page: Page,
   workflowDefinitionId: number,
-  estadoGestionId: number,
+  managementStatusId: number,
   type: "INITIAL" | "INTERMEDIATE" | "FINAL",
 ): Promise<ApiResult<{ id: number }>> {
   return apiPost(page, "/workflow-node", {
     workflowDefinitionId,
-    statusManagementId: estadoGestionId,
+    statusManagementId: managementStatusId,
     type,
     positionX: 0,
     positionY: 0,
@@ -521,95 +509,95 @@ export async function createWorkflowTransition(
   });
 }
 
-export async function assignWorkflowToTipoTramite(
+export async function assignWorkflowToProcedureType(
   page: Page,
-  tipoTramiteId: number,
+  procedureTypeId: number,
   workflowDefinitionId: number,
 ): Promise<ApiResult<unknown>> {
-  return apiPut(page, `/tipo-tramite/${tipoTramiteId}/workflow`, { workflowDefinitionId });
+  return apiPut(page, `/procedure-types/${procedureTypeId}/workflow`, { workflowDefinitionId });
 }
 
 /**
  * Seeds a self-contained two-node workflow (INITIAL -> FINAL) with a single
- * valid transition, assigns it to a fresh tipo de trámite, and creates a
- * gestión whose estado inicial matches the workflow's INITIAL node — ready
- * for a "Cambiar estado" transition to the FINAL node's estado.
+ * valid transition, assigns it to a fresh procedure type, and creates a
+ * management whose initial status matches the workflow's INITIAL node — ready
+ * for a status change to the FINAL node's status.
  */
-export async function seedGestionWithWorkflow(
+export async function seedManagementWithWorkflow(
   page: Page,
-  presupuestoId: number,
+  budgetId: number,
 ): Promise<{
-  idGestion: number;
-  numero: number;
-  estadoInicial: string;
-  estadoFinal: string;
+  idManagement: number;
+  number: number;
+  initialStatus: string;
+  finalStatus: string;
 }> {
-  const estadoInicial = await createEstadoGestion(page);
-  const estadoFinal = await createEstadoGestion(page);
+  const initialStatus = await createManagementStatus(page);
+  const finalStatus = await createManagementStatus(page);
   const workflow = await createWorkflowDefinition(page);
   const workflowId = workflow.data!.id;
 
-  const nodoInicial = await createWorkflowNode(
+  const initialNode = await createWorkflowNode(
     page,
     workflowId,
-    estadoInicial.data!.idManagementStatus,
+    initialStatus.data!.idManagementStatus,
     "INITIAL",
   );
-  const nodoFinal = await createWorkflowNode(
+  const finalNode = await createWorkflowNode(
     page,
     workflowId,
-    estadoFinal.data!.idManagementStatus,
+    finalStatus.data!.idManagementStatus,
     "FINAL",
   );
-  await createWorkflowTransition(page, workflowId, nodoInicial.data!.id, nodoFinal.data!.id);
+  await createWorkflowTransition(page, workflowId, initialNode.data!.id, finalNode.data!.id);
 
-  const tipoTramite = await createTipoTramite(page);
-  await assignWorkflowToTipoTramite(page, tipoTramite.data!.idProcedureType, workflowId);
+  const procedureType = await createProcedureType(page);
+  await assignWorkflowToProcedureType(page, procedureType.data!.idProcedureType, workflowId);
 
-  const gestion = await createCompleteCaseGestion(page, {
-    presupuestoId,
-    tipoTramiteId: tipoTramite.data!.idProcedureType,
-    estadoGestionId: estadoInicial.data!.idManagementStatus,
+  const management = await createCompleteCaseManagement(page, {
+    budgetId,
+    procedureTypeId: procedureType.data!.idProcedureType,
+    statusManagementId: initialStatus.data!.idManagementStatus,
   });
 
   return {
-    idGestion: gestion.data!.idManagement,
-    numero: gestion.data!.number,
-    estadoInicial: estadoInicial.data!.name,
-    estadoFinal: estadoFinal.data!.name,
+    idManagement: management.data!.idManagement,
+    number: management.data!.number,
+    initialStatus: initialStatus.data!.name,
+    finalStatus: finalStatus.data!.name,
   };
 }
 
-export async function createConcepto(
+export async function createConcept(
   page: Page,
   overrides: { name?: string; value?: number } = {},
 ): Promise<ApiResult<{ idConcept: number }>> {
   const id = uniqueId();
-  return apiPost(page, "/conceptos", {
-    name: `Concepto E2E ${id}`,
+  return apiPost(page, "/concepts", {
+    name: `Concept E2E ${id}`,
     value: 1000,
     ...overrides,
   });
 }
 
 /**
- * CU39 - PlantillaPresupuesto: associates a Concepto's price with a TipoDeTramite.
+ * CU39 - BudgetTemplate: associates a Concept's price with a ProcedureType.
  * BudgetTemplateController accepts the raw BudgetTemplate entity.
  */
-export async function createPlantillaPresupuesto(
+export async function createBudgetTemplate(
   page: Page,
-  tipoTramiteId: number,
-  conceptoId: number,
+  procedureTypeId: number,
+  conceptId: number,
 ): Promise<ApiResult<Record<string, unknown>>> {
-  return apiPost(page, "/plantilla-presupuestos", {
-    budgetTemplatePK: { fkIdProcedureType: tipoTramiteId, fkIdConcept: conceptoId },
-    procedureType: { idProcedureType: tipoTramiteId },
-    concept: { idConcept: conceptoId },
+  return apiPost(page, "/budget-templates", {
+    budgetTemplatePK: { fkIdProcedureType: procedureTypeId, fkIdConcept: conceptId },
+    procedureType: { idProcedureType: procedureTypeId },
+    concept: { idConcept: conceptId },
   });
 }
 
 /**
- * CU71 - Item catalog entry (reusable, not yet attached to a presupuesto).
+ * CU71 - Item catalog entry (reusable, not yet attached to a budget).
  */
 export async function createItem(
   page: Page,
@@ -624,19 +612,19 @@ export async function createItem(
   });
 }
 
-export async function createEstadoGestion(
+export async function createManagementStatus(
   page: Page,
   overrides: { name?: string } = {},
 ): Promise<ApiResult<{ idManagementStatus: number; name: string }>> {
   const id = uniqueId();
-  return apiPost(page, "/estado-gestion", {
-    name: `Estado E2E ${id}`,
+  return apiPost(page, "/management-statuses", {
+    name: `Status E2E ${id}`,
     notes: "Created by E2E test",
     ...overrides,
   });
 }
 
-export async function createTipoDocumento(
+export async function createDocumentType(
   page: Page,
   overrides: {
     name?: string;
@@ -648,8 +636,8 @@ export async function createTipoDocumento(
   } = {},
 ): Promise<ApiResult<{ idDocumentType: number }>> {
   const id = uniqueId();
-  return apiPost(page, "/tipo-de-documento", {
-    name: `Tipo Documento E2E ${id}`,
+  return apiPost(page, "/document-types", {
+    name: `Document type E2E ${id}`,
     enabled: true,
     returned: false,
     expires: true,
@@ -660,66 +648,66 @@ export async function createTipoDocumento(
 }
 
 /**
- * PlantillaTramite helper (CU03/CU43) — links a tipo de trámite to a tipo de
- * documento as required documentación necesaria. ProcedureTemplateController
+ * ProcedureTemplate helper (CU03/CU43) — links a procedure type to a document
+ * type as required documentation. ProcedureTemplateController
  * accepts the raw ProcedureTemplate entity.
  */
-export async function createPlantillaTramite(
+export async function createProcedureTemplate(
   page: Page,
-  idTipoTramite: number,
-  idTipoDocumento: number,
+  idProcedureType: number,
+  idDocumentType: number,
 ): Promise<ApiResult<unknown>> {
-  return apiPost(page, "/plantilla-tramite", {
-    procedureTemplatePK: { fkIdProcedureType: idTipoTramite, fkIdDocumentType: idTipoDocumento },
-    procedureType: { idProcedureType: idTipoTramite },
-    documentType: { idDocumentType: idTipoDocumento },
+  return apiPost(page, "/procedure-templates", {
+    procedureTemplatePK: { fkIdProcedureType: idProcedureType, fkIdDocumentType: idDocumentType },
+    procedureType: { idProcedureType: idProcedureType },
+    documentType: { idDocumentType: idDocumentType },
   });
 }
 
 /**
- * Suplencia helpers — SubstitutionController accepts the raw Substitution entity.
+ * Substitution helpers — SubstitutionController accepts the raw Substitution entity.
  */
-export async function createSuplencia(
+export async function createSubstitution(
   page: Page,
   idSuplente: number,
   idSuplantado: number,
-  overrides: Partial<SuplenciaPayload> = {},
+  overrides: Partial<SubstitutionPayload> = {},
 ): Promise<ApiResult<{ idSubstitution: number }>> {
-  return apiPost(page, "/suplencia", {
+  return apiPost(page, "/substitutions", {
     fkIdSubstitute: { personId: idSuplente },
     fkIdSubstituted: { personId: idSuplantado },
     dateStart: new Date().toISOString().split("T")[0],
-    notes: "Suplencia E2E de prueba",
+    notes: "E2E test substitution",
     ...overrides,
   });
 }
 
 /**
- * Testimonio helpers — TestimonyController accepts a DtoTestimony (idTestimony, deed, notes).
+ * Testimony helpers — TestimonyController accepts a DtoTestimony (idTestimony, deed, notes).
  */
-export async function createTestimonio(
+export async function createTestimony(
   page: Page,
-  idEscritura: number,
-  overrides: Partial<TestimonioPayload> = {},
+  idDeed: number,
+  overrides: Partial<TestimonyPayload> = {},
 ): Promise<ApiResult<{ idTestimony: number }>> {
-  return apiPost(page, "/testimonio", {
-    deed: { idDeed: idEscritura },
+  return apiPost(page, "/testimonies", {
+    deed: { idDeed: idDeed },
     ...overrides,
   });
 }
 
 /**
- * Historial helpers — HistoryController accepts the raw History entity.
+ * History helpers — HistoryController accepts the raw History entity.
  */
-export async function createHistorialEntry(
+export async function createHistoryEntry(
   page: Page,
-  idGestion: number,
-  estado: string = "Iniciado",
+  idManagement: number,
+  status: string = "Iniciado",
 ): Promise<ApiResult<any>> {
-  return apiPost(page, "/historial", {
-    fkIdManagement: { idManagement: idGestion },
+  return apiPost(page, "/history", {
+    fkIdManagement: { idManagement: idManagement },
     date: new Date().toISOString().split("T")[0],
-    notes: `Historial E2E ${uniqueId()}`,
+    notes: `History E2E ${uniqueId()}`,
   });
 }
 
@@ -732,82 +720,82 @@ export async function brunoLogin(
   username: string = "admin",
   password: string = "admin",
 ): Promise<ApiResult> {
-  return apiPost(page, "/usuarios/login", {
+  return apiPost(page, "/users/login", {
     name: username,
     password,
   });
 }
 
-export async function brunoGetPresupuestosByPersona(
+export async function brunoGetBudgetsByPerson(
   page: Page,
-  personaId: number,
+  personId: number,
 ): Promise<ApiResult> {
-  return apiGet(page, `/presupuestos/persona/${personaId}`);
+  return apiGet(page, `/budgets/person/${personId}`);
 }
 
-export async function brunoGetGestionesByCliente(
+export async function brunoGetManagementsByClient(
   page: Page,
-  clienteId: number,
+  clientId: number,
 ): Promise<ApiResult> {
-  return apiGet(page, `/gestiones/cliente/${clienteId}`);
+  return apiGet(page, `/managements/client/${clientId}`);
 }
 
-export async function brunoGetHistorialByGestion(
+export async function brunoGetHistoryByManagement(
   page: Page,
-  gestionId: number,
+  managementId: number,
 ): Promise<ApiResult> {
-  return apiGet(page, `/historial/gestion/${gestionId}`);
+  return apiGet(page, `/history/management/${managementId}`);
 }
 
-export async function brunoSearchPersonas(
+export async function brunoSearchPeople(
   page: Page,
   query: string,
 ): Promise<ApiResult> {
   return apiGet(page, `/people/search?firstName=${encodeURIComponent(query)}`);
 }
 
-export async function brunoGetRegistrosAuditoria(
+export async function brunoGetAuditRecords(
   page: Page,
-  usuarioId: number,
+  userId: number,
 ): Promise<ApiResult> {
-  return apiGet(page, `/audit-log/user/${usuarioId}`);
+  return apiGet(page, `/audit-log/user/${userId}`);
 }
 
-export async function brunoGetEstadoActualGestion(
+export async function brunoGetCurrentManagementStatus(
   page: Page,
-  gestionId: number,
+  managementId: number,
 ): Promise<ApiResult> {
-  return apiGet(page, `/gestiones/${gestionId}/estado-actual`);
+  return apiGet(page, `/managements/${managementId}/current-status`);
 }
 
-export async function brunoActivarGestion(
+export async function brunoActivateManagement(
   page: Page,
-  gestionId: number,
+  managementId: number,
 ): Promise<ApiResult> {
-  return apiPut(page, `/gestiones/${gestionId}`, {
+  return apiPut(page, `/managements/${managementId}`, {
     detalle: "Activada desde Playwright",
     dateStart: new Date().toISOString().split("T")[0],
   });
 }
 
-export async function brunoArchivarGestion(
+export async function brunoArchiveManagement(
   page: Page,
-  gestionId: number,
+  managementId: number,
 ): Promise<ApiResult> {
-  return apiPut(page, `/gestiones/${gestionId}`, {
+  return apiPut(page, `/managements/${managementId}`, {
     detalle: "Archivada desde Playwright",
   });
 }
 
-export async function brunoGetEscribanosDisponibles(
+export async function brunoGetAvailableNotaries(
   page: Page,
 ): Promise<ApiResult> {
-  return apiGet(page, "/escrituras/escribanos-disponibles");
+  return apiGet(page, "/deeds/available-notaries");
 }
 
-export async function brunoGetReportePresupuesto(
+export async function brunoGetBudgetReport(
   page: Page,
-  presupuestoId: number,
+  budgetId: number,
 ): Promise<ApiResult> {
-  return apiGet(page, `/reportes/presupuesto/${presupuestoId}`);
+  return apiGet(page, `/reports/budget/${budgetId}`);
 }

@@ -15,7 +15,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequirementCoverage({"CU51", "CU52", "CU53"})
-@DisplayName("Testimonio Entity Tests")
+@DisplayName("Testimony Entity Tests")
 class TestimonyEntityTest {
 
     @Nested
@@ -79,9 +79,9 @@ class TestimonyEntityTest {
         @DisplayName("Should set and get notes")
         void shouldSetAndGetNotes() {
             Testimony testimony = new Testimony();
-            testimony.setNotes("Requiere notificación al cliente");
+            testimony.setNotes("Requires notification to the client");
 
-            assertThat(testimony.getNotes()).isEqualTo("Requiere notificación al cliente");
+            assertThat(testimony.getNotes()).isEqualTo("Requires notification to the client");
         }
 
         @Test
@@ -115,7 +115,7 @@ class TestimonyEntityTest {
         }
 
         @Test
-        @DisplayName("Should set and get copia list")
+        @DisplayName("Should set and get the copy list")
         void shouldSetAndGetCopyList() {
             List<Copy> copies = new ArrayList<>();
             copies.add(new Copy());
@@ -127,7 +127,7 @@ class TestimonyEntityTest {
         }
 
         @Test
-        @DisplayName("Should set and get movimiento list")
+        @DisplayName("Should set and get movement list")
         void shouldSetAndGetMovementList() {
             List<TestimonyMovement> movimientos = new ArrayList<>();
             movimientos.add(new TestimonyMovement());

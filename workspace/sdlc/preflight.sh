@@ -293,7 +293,7 @@ if [ "$MODE_FULL" = "1" ]; then
         # front (the collection sends it on every request; folders run
         # alphabetically so it can't be captured mid-run) and run the real
         # Bruno collection, not the legacy testing/integration/http suite above.
-        BRUNO_TOKEN="$(curl -sf -X POST http://localhost:8080/api/v1/usuarios/login \
+        BRUNO_TOKEN="$(curl -sf -X POST http://localhost:8080/api/v1/users/login \
             -H 'Content-Type: application/json' \
             -d '{"name":"admin","password":"admin"}' | tr -d '\n' | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')"
         if [ -n "$BRUNO_TOKEN" ]; then

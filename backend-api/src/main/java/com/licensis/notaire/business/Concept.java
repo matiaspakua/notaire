@@ -7,7 +7,7 @@ package com.licensis.notaire.business;
 import java.math.BigDecimal;
 
 import com.licensis.notaire.dto.DtoConcept;
-import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
+import com.licensis.notaire.dto.exceptions.InvalidDtoException;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 import java.util.ArrayList;
@@ -38,10 +38,10 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @NamedQueries(
         {
             @NamedQuery(name = "Concept.findAll", query = "SELECT c FROM Concept c"),
-            @NamedQuery(name = "Concept.findByIdConcept", query = "SELECT c FROM Concept c WHERE c.idConcept = :idConcepto"),
-            @NamedQuery(name = "Concept.findByValue", query = "SELECT c FROM Concept c WHERE c.value = :valor"),
+            @NamedQuery(name = "Concept.findByIdConcept", query = "SELECT c FROM Concept c WHERE c.idConcept = :idConcept"),
+            @NamedQuery(name = "Concept.findByValue", query = "SELECT c FROM Concept c WHERE c.value = :value"),
             @NamedQuery(name = "Concept.findByName", query = "SELECT c FROM Concept c WHERE c.name = :name"),
-            @NamedQuery(name = "Concept.findByPercentage", query = "SELECT c FROM Concept c WHERE c.percentage = :porcentaje")
+            @NamedQuery(name = "Concept.findByPercentage", query = "SELECT c FROM Concept c WHERE c.percentage = :percentage")
         })
 public class Concept implements Serializable, Persistable<Integer>
 {
@@ -102,7 +102,7 @@ public class Concept implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idConcept == null || idConcept.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idConcept == null || idConcept.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 
@@ -139,49 +139,48 @@ public class Concept implements Serializable, Persistable<Integer>
     }
 
     /**
-     * Retorna una instancia de DtoConcepto con todos los valores actuales de la instancia de
-     * Concepto.
+     * Returns a {@code DtoConcept} with the current values of this concept.
      *
      * @return
      */
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoConcept getDto()
     {
-        DtoConcept miDto = new DtoConcept();
+        DtoConcept dto = new DtoConcept();
 
-        miDto.setIdConcept(this.getIdConcept());
-        miDto.setName(this.getName());
-        miDto.setValue(this.getValue());
-        miDto.setPercentage(this.getPercentage());
-        miDto.setVersion(this.version);
-        miDto.setEnabled(enabled);
-        miDto.setFixed(fixedConcept);
+        dto.setIdConcept(this.getIdConcept());
+        dto.setName(this.getName());
+        dto.setValue(this.getValue());
+        dto.setPercentage(this.getPercentage());
+        dto.setVersion(this.version);
+        dto.setEnabled(enabled);
+        dto.setFixed(fixedConcept);
 
-        return miDto;
+        return dto;
     }
 
-    public void setAtributos(DtoConcept nuevoDto) throws DtoInvalidoException
+    public void setAttributes(DtoConcept updatedDto) throws InvalidDtoException
     {
-        this.setIdConcept(nuevoDto.getIdConcept());
+        this.setIdConcept(updatedDto.getIdConcept());
 
-        if (nuevoDto.getName() != null)
+        if (updatedDto.getName() != null)
         {
-            this.setName(nuevoDto.getName());
+            this.setName(updatedDto.getName());
         }
 
-        if (nuevoDto.getValue() != null)
+        if (updatedDto.getValue() != null)
         {
-            this.setValue(nuevoDto.getValue());
+            this.setValue(updatedDto.getValue());
         }
 
-        if (nuevoDto.getPercentage() != null)
+        if (updatedDto.getPercentage() != null)
         {
-            this.setPercentage(nuevoDto.getPercentage());
+            this.setPercentage(updatedDto.getPercentage());
         }
 
-        this.setVersion(nuevoDto.getVersion());
-        this.setEnabled(nuevoDto.getEnabled());
-        this.fixedConcept = nuevoDto.isFixed();
+        this.setVersion(updatedDto.getVersion());
+        this.setEnabled(updatedDto.getEnabled());
+        this.fixedConcept = updatedDto.isFixed();
     }
 
     @Override
@@ -211,9 +210,9 @@ public class Concept implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "Conceptos[ version=" + version + " ]"
-                + "[ idConcepto=" + idConcept + " ]"
-                + "[ nombre=" + name + " ]";
+        return "Concept[ version=" + version + " ]"
+                + "[ idConcept=" + idConcept + " ]"
+                + "[ name=" + name + " ]";
     }
 
     public int getVersion()

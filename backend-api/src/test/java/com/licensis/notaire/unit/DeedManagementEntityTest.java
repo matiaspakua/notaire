@@ -31,10 +31,10 @@ class DeedManagementEntityTest {
             management.setIdManagement(1);
             management.setNumber(1001);
             management.setDateStart(new Date());
-            management.setEncabezado("Sale - Perez Garcia");
+            management.setHeading("Sale - Perez Garcia");
 
             assertThat(management.getNumber()).isEqualTo(1001);
-            assertThat(management.getEncabezado()).isEqualTo("Sale - Perez Garcia");
+            assertThat(management.getHeading()).isEqualTo("Sale - Perez Garcia");
         }
 
         @Test
@@ -180,7 +180,7 @@ class DeedManagementEntityTest {
     }
 
     @Nested
-    @DisplayName("setAtributos branches")
+    @DisplayName("setAttributes branches")
     class SetAtributosTests {
 
     }

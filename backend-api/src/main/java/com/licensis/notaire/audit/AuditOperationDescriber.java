@@ -12,7 +12,7 @@ import java.util.Locale;
 
 /**
  * Builds the human-readable description stored in
- * {@code registro_auditoria.detalle_operacion} from controller method
+ * {@code audit_records.operation_detail} from controller method
  * metadata.
  *
  * <p>The descriptions are intentionally written in plain, non-technical

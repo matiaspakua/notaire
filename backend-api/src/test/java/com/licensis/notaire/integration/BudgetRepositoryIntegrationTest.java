@@ -18,7 +18,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Presupuesto Repository Integration Tests")
+@DisplayName("Budget Repository Integration Tests")
 class BudgetRepositoryIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -54,7 +54,7 @@ class BudgetRepositoryIntegrationTest extends ServiceIntegrationTest {
         Budget budget = new Budget();
         budget.setNumber(1001);
         budget.setDate(new Date());
-        budget.setEncabezado("Presupuesto Test");
+        budget.setHeading("Budget Test");
         budget.setStatus("BORRADOR");
         budget.setPropertyAmount(new java.math.BigDecimal("100000.0"));
         budget.setFkIdPerson(person);
@@ -72,7 +72,7 @@ class BudgetRepositoryIntegrationTest extends ServiceIntegrationTest {
         Budget budget = new Budget();
         budget.setNumber(2001);
         budget.setDate(new Date());
-        budget.setEncabezado("Presupuesto Recuperación");
+        budget.setHeading("Budget recovery");
         budget.setStatus("PENDIENTE");
         budget.setFkIdPerson(person);
         Budget saved = budgetRepository.save(budget);
@@ -90,36 +90,36 @@ class BudgetRepositoryIntegrationTest extends ServiceIntegrationTest {
         Budget budget = new Budget();
         budget.setNumber(3001);
         budget.setDate(new Date());
-        budget.setEncabezado("Presupuesto Actualizable");
+        budget.setHeading("Budget Actualizable");
         budget.setStatus("BORRADOR");
         budget.setFkIdPerson(person);
         Budget saved = budgetRepository.save(budget);
 
         saved.setStatus("APROBADO");
-        saved.setNotes("Aprobado por el cliente");
+        saved.setNotes("Aprobado by the client");
         Budget updated = budgetRepository.save(saved);
 
         assertThat(updated.getStatus()).isEqualTo("APROBADO");
-        assertThat(updated.getNotes()).isEqualTo("Aprobado por el cliente");
+        assertThat(updated.getNotes()).isEqualTo("Aprobado by the client");
     }
 
     @Test
-    @DisplayName("Should support multiple presupuestos")
-    void shouldSupportMultiplePresupuestos() {
-        String encabezadoUnico = "Pres" + System.nanoTime();
+    @DisplayName("Should support multiple budgets")
+    void shouldSupportMultipleBudgets() {
+        String headingUnico = "Pres" + System.nanoTime();
         String[] estados = {"BORRADOR", "PENDIENTE", "APROBADO", "RECHAZADO", "CANCELADO"};
         for (int i = 0; i < estados.length; i++) {
             Budget budget = new Budget();
             budget.setNumber(4000 + i);
             budget.setDate(new Date());
-            budget.setEncabezado(encabezadoUnico + " " + estados[i]);
+            budget.setHeading(headingUnico + " " + estados[i]);
             budget.setStatus(estados[i]);
             budget.setFkIdPerson(person);
             budgetRepository.save(budget);
         }
 
         List<Budget> creados = budgetRepository.findAll().stream()
-                .filter(p -> p.getEncabezado() != null && p.getEncabezado().startsWith(encabezadoUnico))
+                .filter(p -> p.getHeading() != null && p.getHeading().startsWith(headingUnico))
                 .toList();
         assertThat(creados).hasSize(5);
 

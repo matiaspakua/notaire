@@ -3,11 +3,11 @@ info:
   type: http
   seq: 2
   description: |-
-      ## Create folio — POST /api/v1/folio
+      ## Create folio — POST /api/v1/folios
       Traceability: CU28 (RF #55, #58, #94, #95, #96)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/folio"
+  url: "{{base_url}}/api/v1/folios"
   body:
     type: json
     data: |-

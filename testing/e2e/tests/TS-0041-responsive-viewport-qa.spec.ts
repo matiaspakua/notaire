@@ -16,9 +16,9 @@ async function hasNoHorizontalOverflow(page: Page): Promise<boolean> {
 
 async function loginAsAdmin(page: Page) {
   await page.goto("/login");
-  await page.getByTestId("input-usuario").fill("admin");
-  await page.getByTestId("input-contrasenia").fill("admin");
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("input-username").fill("admin");
+  await page.getByTestId("input-password").fill("admin");
+  await page.getByTestId("btn-sign-in").click();
   await page.waitForURL(/\/dashboard/, { timeout: 15000 });
   await page.waitForLoadState("domcontentloaded");
 }
@@ -28,9 +28,9 @@ test.describe("Mobile/responsive viewport @mobile", () => {
     await page.setViewportSize({ width: 320, height: 568 });
     await page.goto("/login");
 
-    await expect(page.getByTestId("input-usuario")).toBeVisible();
-    await expect(page.getByTestId("input-contrasenia")).toBeVisible();
-    await expect(page.getByTestId("btn-ingresar")).toBeVisible();
+    await expect(page.getByTestId("input-username")).toBeVisible();
+    await expect(page.getByTestId("input-password")).toBeVisible();
+    await expect(page.getByTestId("btn-sign-in")).toBeVisible();
     expect(await hasNoHorizontalOverflow(page)).toBe(true);
   });
 

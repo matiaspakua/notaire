@@ -3,19 +3,19 @@ info:
   type: http
   seq: 6
   description: |-
-      ## Setup — POST /api/v1/presupuestos
+      ## Setup — POST /api/v1/budgets
       Budget used by the two budget reports; deleted by `08-teardown-delete-budget.yml`.
       Traceability: CU01
 http:
   method: POST
-  url: "{{base_url}}/api/v1/presupuestos"
+  url: "{{base_url}}/api/v1/budgets"
   body:
     type: json
     data: |-
         {
           "person": { "personId": 1 },
           "date": "2026-10-07",
-          "encabezado": "Report PDFs E2E budget",
+          "heading": "Report PDFs E2E budget",
           "status": "PENDIENTE",
           "propertyAmount": 10000.0,
           "notes": "created by the report-pdfs suite"

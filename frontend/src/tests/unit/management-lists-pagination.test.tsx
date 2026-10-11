@@ -1,5 +1,5 @@
 /**
- * Screens that list or pick managements never load GET /gestiones?size=1000
+ * Screens that list or pick managements never load GET /managements?size=1000
  * (#1340 slice 7, CU31/CU32/CU84). The dev DB has more than 1000 managements, so
  * the external-entity documents and re-entry lists and the document form's
  * management select silently missed every case after the 1000th.
@@ -13,7 +13,7 @@ const mockFetch = vi.fn();
 vi.stubGlobal("fetch", mockFetch);
 
 let mockSearchParams = new URLSearchParams();
-let mockPathname = "/dashboard/reingreso-documentacion";
+let mockPathname = "/dashboard/document-reentry";
 const mockReplace = vi.fn();
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), replace: mockReplace }),
@@ -26,14 +26,14 @@ vi.mock("next-intl", () => ({
 }));
 vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
-import ReingresoDocumentacionPage from "@/app/dashboard/reingreso-documentacion/page";
-import DocumentosEntidadesExternasPage from "@/app/dashboard/documentos-entidades-externas/page";
+import DocumentReentryPage from "@/app/dashboard/document-reentry/page";
+import ExternalEntityDocumentsPage from "@/app/dashboard/external-entity-documents/page";
 import { ManagementPicker } from "@/components/shared/ManagementPicker";
-import type { GestionDeEscritura } from "@/types";
+import type { DeedManagement } from "@/types";
 
-const NEWEST: GestionDeEscritura = { idManagement: 1312, number: 98765, encabezado: "Compraventa Nueva", statusActual: "Iniciada" };
-const OLD: GestionDeEscritura = { idManagement: 12, number: 4321, encabezado: "Hipoteca Garcia", statusActual: "Iniciada" };
-const OLD2: GestionDeEscritura = { idManagement: 40, number: 5555, encabezado: "Donación Garcia", statusActual: "Iniciada" };
+const NEWEST: DeedManagement = { idManagement: 1312, number: 98765, heading: "Compraventa Nueva", currentStatus: "Iniciada" };
+const OLD: DeedManagement = { idManagement: 12, number: 4321, heading: "Hipoteca Garcia", currentStatus: "Iniciada" };
+const OLD2: DeedManagement = { idManagement: 40, number: 5555, heading: "Donación Garcia", currentStatus: "Iniciada" };
 
 function json(body: unknown, status = 200) {
   const text = JSON.stringify(body);
@@ -43,16 +43,16 @@ function json(body: unknown, status = 200) {
 function route(page: object) {
   return (u: string) => {
     const url = String(u);
-    if (/\/gestiones\?/.test(url)) return json(page);
+    if (/\/managements\?/.test(url)) return json(page);
     if (url.includes("/people/search")) {
       const q = new URL(url, "http://x").searchParams;
       if (q.get("identificationNumber") === "30111222") return json([{ personId: 7, firstName: "Carla", lastName: "Garcia" }]);
       if (q.get("lastName")?.toLowerCase().startsWith("gar")) return json([{ personId: 7, firstName: "Carla", lastName: "Garcia" }]);
       return json([]);
     }
-    if (/\/gestiones\/cliente\/7$/.test(url)) return json([OLD, OLD2]);
-    if (/\/gestiones\/numero\/4321$/.test(url)) return json(OLD);
-    if (/\/gestiones\/12$/.test(url)) return json(OLD);
+    if (/\/managements\/client\/7$/.test(url)) return json([OLD, OLD2]);
+    if (/\/managements\/number\/4321$/.test(url)) return json(OLD);
+    if (/\/managements\/12$/.test(url)) return json(OLD);
     return json({ message: "not found" }, 404);
   };
 }
@@ -65,8 +65,8 @@ const urls = () => mockFetch.mock.calls.map((c) => String(c[0]));
 const PAGE = { content: [NEWEST], number: 0, size: 20, totalElements: 1312, totalPages: 66 };
 
 describe.each([
-  ["reingreso-documentacion", ReingresoDocumentacionPage],
-  ["documentos-entidades-externas", DocumentosEntidadesExternasPage],
+  ["document-reentry", DocumentReentryPage],
+  ["external-entity-documents", ExternalEntityDocumentsPage],
 ])("%s list (#1340)", (path, Page) => {
   beforeEach(() => {
     mockFetch.mockReset();
@@ -80,7 +80,7 @@ describe.each([
     render(<Page />, { wrapper });
     expect(await screen.findByText("98765")).toBeInTheDocument();
     expect(screen.getByRole("navigation")).toBeInTheDocument();
-    expect(urls().some((u) => /\/gestiones\?page=0&size=20&sort=idManagement%2Cdesc$/.test(u))).toBe(true);
+    expect(urls().some((u) => /\/managements\?page=0&size=20&sort=idManagement%2Cdesc$/.test(u))).toBe(true);
     expect(urls().some((u) => u.includes("size=1000"))).toBe(false);
   });
 
@@ -92,7 +92,7 @@ describe.each([
   });
 });
 
-function Harness({ initial, onPick }: { initial?: number; onPick?: (g?: GestionDeEscritura) => void }) {
+function Harness({ initial, onPick }: { initial?: number; onPick?: (g?: DeedManagement) => void }) {
   const [id, setId] = useState<number | undefined>(initial);
   return (
     <ManagementPicker
@@ -101,7 +101,7 @@ function Harness({ initial, onPick }: { initial?: number; onPick?: (g?: GestionD
         setId(g?.idManagement);
         onPick?.(g);
       }}
-      aria-label="Gestión"
+      aria-label="Management"
       data-testid="picker"
     />
   );
@@ -115,7 +115,7 @@ describe("ManagementPicker (#1340)", () => {
 
   it("is an ARIA combobox that opens with the newest managements and never asks for size=1000", async () => {
     render(<Harness />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Gestión" });
+    const box = screen.getByRole("combobox", { name: "Management" });
     fireEvent.click(box);
     // The number leads the label, so it reads the same in es and en.
     expect(await screen.findByRole("option", { name: "98765 — Compraventa Nueva" })).toBeInTheDocument();
@@ -125,7 +125,7 @@ describe("ManagementPicker (#1340)", () => {
 
   it("finds a management by its number, and every management of a client by name or document", async () => {
     render(<Harness />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Gestión" });
+    const box = screen.getByRole("combobox", { name: "Management" });
     fireEvent.click(box);
     fireEvent.change(box, { target: { value: "4321" } });
     expect(await screen.findByRole("option", { name: "4321 — Hipoteca Garcia" })).toBeInTheDocument();
@@ -139,7 +139,7 @@ describe("ManagementPicker (#1340)", () => {
   it("picks an option and shows the current value loaded by id", async () => {
     const onPick = vi.fn();
     render(<Harness initial={12} onPick={onPick} />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Gestión" });
+    const box = screen.getByRole("combobox", { name: "Management" });
     await waitFor(() => expect(box).toHaveValue("4321 — Hipoteca Garcia"));
     fireEvent.click(box);
     fireEvent.click(await screen.findByRole("option", { name: "98765 — Compraventa Nueva" }));

@@ -2,7 +2,7 @@ package com.licensis.notaire.adapter.in.web.payment;
 
 import com.licensis.notaire.application.port.in.payment.BudgetSummary;
 import com.licensis.notaire.domain.payment.PaymentDetails;
-import com.licensis.notaire.dto.DtoBudgetResumen;
+import com.licensis.notaire.dto.DtoBudgetSummary;
 import com.licensis.notaire.dto.DtoPaymentResponse;
 
 import java.util.List;
@@ -36,8 +36,8 @@ public final class PaymentWebMapper {
         return payments.stream().map(PaymentWebMapper::toDto).toList();
     }
 
-    public static DtoBudgetResumen toDto(BudgetSummary summary) {
-        return new DtoBudgetResumen(
+    public static DtoBudgetSummary toDto(BudgetSummary summary) {
+        return new DtoBudgetSummary(
                 summary.budgetId(),
                 summary.budgetNumber(),
                 summary.managementId(),

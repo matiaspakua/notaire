@@ -17,11 +17,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * CU11/CU12/CU44 - Circuito de movimientos de testimonio (issue #832): ingreso a
- * inscripción, registro de inscripción, retiro y reingreso.
+ * CU11/CU12/CU44 - Testimony movement circuit (issue #832): entry for
+ * registration, recording the inscription, withdrawal, and re-entry.
  */
 @RequirementCoverage({"CU11", "CU12", "CU44"})
-@DisplayName("MovimientoTestimonioController — CU11/CU12/CU44 integration tests")
+@DisplayName("TestimonyMovementController — CU11/CU12/CU44 integration tests")
 class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -44,7 +44,7 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
                   "dateDeedrecording": "2026-06-16"
                 }
                 """.formatted((int) (System.currentTimeMillis() % 1_000_000));
-        MvcResult result = mockMvc.perform(post("/api/v1/escrituras")
+        MvcResult result = mockMvc.perform(post("/api/v1/deeds")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -52,17 +52,17 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
         return mapper.readTree(result.getResponse().getContentAsString()).get("idDeed").asInt();
     }
 
-    private int generarTestimony() throws Exception {
+    private int generateTestimony() throws Exception {
         int idDeed = createDeedFirmada();
-        MvcResult result = mockMvc.perform(post("/api/v1/testimonio/" + idDeed + "/generar"))
+        MvcResult result = mockMvc.perform(post("/api/v1/testimonies/" + idDeed + "/generate"))
                 .andExpect(status().isCreated())
                 .andReturn();
         return mapper.readTree(result.getResponse().getContentAsString()).get("idTestimony").asInt();
     }
 
-    private int generarTestimonyVerified() throws Exception {
-        int idTestimony = generarTestimony();
-        mockMvc.perform(post("/api/v1/testimonio/" + idTestimony + "/verificar")
+    private int generateVerifiedTestimony() throws Exception {
+        int idTestimony = generateTestimony();
+        mockMvc.perform(post("/api/v1/testimonies/" + idTestimony + "/verify")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"flagged\": false}"))
                 .andExpect(status().isOk());
@@ -70,88 +70,88 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
     }
 
     private void registerEntry(int idTestimony) throws Exception {
-        mockMvc.perform(post("/api/v1/movimiento-testimonio/" + idTestimony + "/ingresar-inscripcion"))
+        mockMvc.perform(post("/api/v1/testimony-movements/" + idTestimony + "/enter-registration"))
                 .andExpect(status().isCreated());
     }
 
     private void registerInscription(int idTestimony) throws Exception {
-        mockMvc.perform(post("/api/v1/movimiento-testimonio/" + idTestimony + "/registrar-inscripcion"))
+        mockMvc.perform(post("/api/v1/testimony-movements/" + idTestimony + "/register-inscription"))
                 .andExpect(status().isOk());
     }
 
     private void withdraw(int idTestimony, int cardNumber) throws Exception {
-        mockMvc.perform(post("/api/v1/movimiento-testimonio/" + idTestimony + "/withdraw")
+        mockMvc.perform(post("/api/v1/testimony-movements/" + idTestimony + "/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"cardNumber\": " + cardNumber + "}"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Should ingresar a inscripción a verified testimony")
-    void shouldIngresarRegistrationForVerifiedTestimony() throws Exception {
-        int idTestimony = generarTestimonyVerified();
+    @DisplayName("Should enter registration for a verified testimony")
+    void shouldEnterRegistrationForVerifiedTestimony() throws Exception {
+        int idTestimony = generateVerifiedTestimony();
 
-        mockMvc.perform(post("/api/v1/movimiento-testimonio/" + idTestimony + "/ingresar-inscripcion"))
+        mockMvc.perform(post("/api/v1/testimony-movements/" + idTestimony + "/enter-registration"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.dateEntry").exists())
                 .andExpect(jsonPath("$.registered").value(false));
     }
 
     @Test
-    @DisplayName("Should return 400 when ingresando a inscripción a non-verified testimony")
-    void shouldRejectIngresarRegistrationWhenTestimonyNotVerified() throws Exception {
-        int idTestimony = generarTestimony();
+    @DisplayName("Should return 400 when entering registration for a testimony that is not verified")
+    void shouldRejectEnterRegistrationWhenTestimonyNotVerified() throws Exception {
+        int idTestimony = generateTestimony();
 
-        mockMvc.perform(post("/api/v1/movimiento-testimonio/" + idTestimony + "/ingresar-inscripcion"))
+        mockMvc.perform(post("/api/v1/testimony-movements/" + idTestimony + "/enter-registration"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("Should return 404 when ingresando a inscripción a non-existing testimony")
-    void shouldReturn404WhenIngresarRegistrationForNonExistingTestimony() throws Exception {
-        mockMvc.perform(post("/api/v1/movimiento-testimonio/99999/ingresar-inscripcion"))
+    @DisplayName("Should return 404 when entering registration for a testimony that does not exist")
+    void shouldReturn404WhenEnterRegistrationForNonExistingTestimony() throws Exception {
+        mockMvc.perform(post("/api/v1/testimony-movements/99999/enter-registration"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("Should return 400 when testimony already has an open movement")
-    void shouldRejectIngresarRegistrationWhenAlreadyOpen() throws Exception {
-        int idTestimony = generarTestimonyVerified();
+    void shouldRejectEnterRegistrationWhenAlreadyOpen() throws Exception {
+        int idTestimony = generateVerifiedTestimony();
         registerEntry(idTestimony);
 
-        mockMvc.perform(post("/api/v1/movimiento-testimonio/" + idTestimony + "/ingresar-inscripcion"))
+        mockMvc.perform(post("/api/v1/testimony-movements/" + idTestimony + "/enter-registration"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("Should registrar inscripción after ingreso")
-    void shouldRegistrarRegistrationAfterEntry() throws Exception {
-        int idTestimony = generarTestimonyVerified();
+    @DisplayName("Should record the inscription after entry")
+    void shouldRecordInscriptionAfterEntry() throws Exception {
+        int idTestimony = generateVerifiedTestimony();
         registerEntry(idTestimony);
 
-        mockMvc.perform(post("/api/v1/movimiento-testimonio/" + idTestimony + "/registrar-inscripcion"))
+        mockMvc.perform(post("/api/v1/testimony-movements/" + idTestimony + "/register-inscription"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.registered").value(true))
                 .andExpect(jsonPath("$.dateRegistration").exists());
     }
 
     @Test
-    @DisplayName("Should return 400 when registrando inscripción without a prior ingreso")
-    void shouldRejectRegistrarRegistrationWithoutEntry() throws Exception {
-        int idTestimony = generarTestimonyVerified();
+    @DisplayName("Should return 400 when recording the inscription without a prior entry")
+    void shouldRejectInscriptionWithoutEntry() throws Exception {
+        int idTestimony = generateVerifiedTestimony();
 
-        mockMvc.perform(post("/api/v1/movimiento-testimonio/" + idTestimony + "/registrar-inscripcion"))
+        mockMvc.perform(post("/api/v1/testimony-movements/" + idTestimony + "/register-inscription"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("Should withdraw an inscripto testimony")
-    void shouldRetirarInscriptoTestimony() throws Exception {
-        int idTestimony = generarTestimonyVerified();
+    @DisplayName("Should withdraw an inscribed testimony")
+    void shouldWithdrawInscribedTestimony() throws Exception {
+        int idTestimony = generateVerifiedTestimony();
         registerEntry(idTestimony);
         registerInscription(idTestimony);
 
-        mockMvc.perform(post("/api/v1/movimiento-testimonio/" + idTestimony + "/withdraw")
+        mockMvc.perform(post("/api/v1/testimony-movements/" + idTestimony + "/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"cardNumber\": 123}"))
                 .andExpect(status().isOk())
@@ -160,12 +160,12 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should return 400 when retirando a testimony that is not inscripto")
-    void shouldRejectRetirarWhenNotInscripto() throws Exception {
-        int idTestimony = generarTestimonyVerified();
+    @DisplayName("Should return 400 when withdrawing a testimony that is not inscribed")
+    void shouldRejectWithdrawalWhenNotInscribed() throws Exception {
+        int idTestimony = generateVerifiedTestimony();
         registerEntry(idTestimony);
 
-        mockMvc.perform(post("/api/v1/movimiento-testimonio/" + idTestimony + "/withdraw")
+        mockMvc.perform(post("/api/v1/testimony-movements/" + idTestimony + "/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"cardNumber\": 123}"))
                 .andExpect(status().isBadRequest());
@@ -173,13 +173,13 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
 
     @Test
     @DisplayName("Should reenter a previously withdrawn testimony")
-    void shouldReingresarAfterWithdrawal() throws Exception {
-        int idTestimony = generarTestimonyVerified();
+    void shouldReenterAfterWithdrawal() throws Exception {
+        int idTestimony = generateVerifiedTestimony();
         registerEntry(idTestimony);
         registerInscription(idTestimony);
         withdraw(idTestimony, 456);
 
-        mockMvc.perform(post("/api/v1/movimiento-testimonio/" + idTestimony + "/reenter"))
+        mockMvc.perform(post("/api/v1/testimony-movements/" + idTestimony + "/reenter"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.dateEntry").exists())
                 .andExpect(jsonPath("$.registered").value(false))
@@ -188,66 +188,66 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should persist cartón number, observation flag and notes sent on reentry")
+    @DisplayName("Should persist the carton number, observation flag, and notes sent on re-entry")
     void shouldPersistReentryData() throws Exception {
-        int idTestimony = generarTestimonyVerified();
+        int idTestimony = generateVerifiedTestimony();
         registerEntry(idTestimony);
         registerInscription(idTestimony);
         withdraw(idTestimony, 456);
 
-        mockMvc.perform(post("/api/v1/movimiento-testimonio/" + idTestimony + "/reenter")
+        mockMvc.perform(post("/api/v1/testimony-movements/" + idTestimony + "/reenter")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"cardNumber\": 77, \"observedByRegistry\": true, \"notes\": \"Falta sello\"}"))
+                        .content("{\"cardNumber\": 77, \"observedByRegistry\": true, \"notes\": \"Missing seal\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.cardNumber").value(77))
                 .andExpect(jsonPath("$.observedByRegistry").value(true))
-                .andExpect(jsonPath("$.notes").value("Falta sello"));
+                .andExpect(jsonPath("$.notes").value("Missing seal"));
     }
 
     @Test
     @DisplayName("Should return 400 when the reentry is observed but has no notes")
     void shouldRejectObservedReentryWithoutNotes() throws Exception {
-        int idTestimony = generarTestimonyVerified();
+        int idTestimony = generateVerifiedTestimony();
         registerEntry(idTestimony);
         registerInscription(idTestimony);
         withdraw(idTestimony, 456);
 
-        mockMvc.perform(post("/api/v1/movimiento-testimonio/" + idTestimony + "/reenter")
+        mockMvc.perform(post("/api/v1/testimony-movements/" + idTestimony + "/reenter")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"cardNumber\": 77, \"observedByRegistry\": true}"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("Should return 400 when reingresando without a previous retiro")
-    void shouldRejectReingresarWithoutPreviousWithdrawal() throws Exception {
-        int idTestimony = generarTestimonyVerified();
+    @DisplayName("Should return 400 when re-entering without a previous withdrawal")
+    void shouldRejectReenterWithoutPreviousWithdrawal() throws Exception {
+        int idTestimony = generateVerifiedTestimony();
         registerEntry(idTestimony);
 
-        mockMvc.perform(post("/api/v1/movimiento-testimonio/" + idTestimony + "/reenter"))
+        mockMvc.perform(post("/api/v1/testimony-movements/" + idTestimony + "/reenter"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("Should return 404 when registrando inscripción for a non-existing testimony")
-    void shouldReturn404WhenRegistrarRegistrationForNonExistingTestimony() throws Exception {
-        mockMvc.perform(post("/api/v1/movimiento-testimonio/99999/registrar-inscripcion"))
+    @DisplayName("Should return 404 when recording the inscription for a testimony that does not exist")
+    void shouldReturn404WhenRecordingInscriptionForMissingTestimony() throws Exception {
+        mockMvc.perform(post("/api/v1/testimony-movements/99999/register-inscription"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("Should return 404 when retirando a non-existing testimony")
-    void shouldReturn404WhenRetirarForNonExistingTestimony() throws Exception {
-        mockMvc.perform(post("/api/v1/movimiento-testimonio/99999/withdraw")
+    @DisplayName("Should return 404 when withdrawing a testimony that does not exist")
+    void shouldReturn404WhenWithdrawingMissingTestimony() throws Exception {
+        mockMvc.perform(post("/api/v1/testimony-movements/99999/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"cardNumber\": 123}"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("Should return 404 when reingresando a non-existing testimony")
-    void shouldReturn404WhenReingresarForNonExistingTestimony() throws Exception {
-        mockMvc.perform(post("/api/v1/movimiento-testimonio/99999/reenter"))
+    @DisplayName("Should return 404 when re-entering a testimony that does not exist")
+    void shouldReturn404WhenReenterForNonExistingTestimony() throws Exception {
+        mockMvc.perform(post("/api/v1/testimony-movements/99999/reenter"))
                 .andExpect(status().isNotFound());
     }
 }

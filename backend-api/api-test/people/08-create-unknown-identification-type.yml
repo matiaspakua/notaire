@@ -5,7 +5,7 @@ info:
   description: |-
       ## Create person with an unknown identification type — POST /api/v1/people
       Traceability: CU17, issue #1361. An identificationTypeId that is not in
-      GET /tipo-identificacion answers 400 (it used to store DNI silently).
+      GET /identification-types answers 400 (it used to store DNI silently).
       Omitting the type still defaults to DNI.
 http:
   method: POST

@@ -7,7 +7,7 @@ package com.licensis.notaire.business;
 import com.licensis.notaire.dto.DtoDeed;
 import com.licensis.notaire.dto.DtoFolio;
 import com.licensis.notaire.dto.DtoPerson;
-import com.licensis.notaire.jpa.ConstantesPersistencia;
+import com.licensis.notaire.jpa.PersistenceConstants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
@@ -39,7 +39,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
  * REGLA DE NEGOCIO:
  * <p>
  *
- * <lo> <li> Estados posibles de un Folio: -Nuevo -Utilizado -Errose </li> </lo>
+ * <it> <li> Estados posibles of a Folio: -New -Utilizado -Errose </li> </it>
  *
  *
  * @author Tefi
@@ -53,7 +53,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
             @NamedQuery(name = "Folio.findByIdFolio", query = "SELECT f FROM Folio f WHERE f.idFolio = :idFolio"),
             @NamedQuery(name = "Folio.findByNumber", query = "SELECT f FROM Folio f WHERE f.number = :number"),
             @NamedQuery(name = "Folio.findByYear", query = "SELECT f FROM Folio f WHERE f.year = :year"),
-            @NamedQuery(name = "Folio.findByYearAndRegistration", query = "SELECT f FROM Folio f WHERE f.year = :anio AND f.fkIdNotaryPerson.notaryRegistrationNumber =:registro")
+            @NamedQuery(name = "Folio.findByYearAndRegistration", query = "SELECT f FROM Folio f WHERE f.year = :year AND f.fkIdNotaryPerson.notaryRegistrationNumber =:registration")
         })
 public class Folio implements Serializable, Persistable<Integer>
 {
@@ -61,7 +61,7 @@ public class Folio implements Serializable, Persistable<Integer>
     @Basic(optional = false)
     @Column(name = "version")
     @Version
-    private int version = ConstantesPersistencia.VersionINICIAL;
+    private int version = PersistenceConstants.INITIAL_VERSION;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "folio")
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folio", "copia"})
     private Collection<FolioCopies> folioCopiesCollection;
@@ -100,7 +100,7 @@ public class Folio implements Serializable, Persistable<Integer>
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
     private FolioType fkIdFolioType;
-    // EAGER, not LAZY: GET /api/v1/folio now serializes the raw entity (see #1006), and with
+    // EAGER, not LAZY: GET /api/v1/folios now serializes the raw entity (see #1006), and with
     // spring.jpa.open-in-view=false the Hibernate session closes as soon as the @Transactional
     // controller method returns — before Jackson gets a chance to initialize a lazy proxy,
     // failing with "Could not initialize proxy ... - no session".
@@ -144,7 +144,7 @@ public class Folio implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idFolio == null || idFolio.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idFolio == null || idFolio.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 
@@ -278,8 +278,8 @@ public class Folio implements Serializable, Persistable<Integer>
     public String toString()
     {
         return "Folio[ idFolio=" + idFolio + " ]"
-                + "[ numero=" + number + " ]"
-                + "[ anio=" + year + " ]";
+                + "[ number=" + number + " ]"
+                + "[ year=" + year + " ]";
     }
 
 
@@ -287,38 +287,38 @@ public class Folio implements Serializable, Persistable<Integer>
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoFolio getDto()
     {
-        DtoFolio miDtoFolio = new DtoFolio();
+        DtoFolio folioDto = new DtoFolio();
 
-        miDtoFolio.setIdFolio(this.idFolio);
-        miDtoFolio.setNumber(this.number);
-        miDtoFolio.setStatus(this.status);
-        miDtoFolio.setNotes(this.notes);
-        miDtoFolio.setYear(this.year);
-        miDtoFolio.setVersion(this.getVersion());
+        folioDto.setIdFolio(this.idFolio);
+        folioDto.setNumber(this.number);
+        folioDto.setStatus(this.status);
+        folioDto.setNotes(this.notes);
+        folioDto.setYear(this.year);
+        folioDto.setVersion(this.getVersion());
 
         if (this.getFkIdNotaryPerson() != null)
         {
-            DtoPerson miPerson = new DtoPerson();
-            miPerson.setId(fkIdNotaryPerson.getPersonId());
-            miPerson.setNotaryRegistrationNumber(fkIdNotaryPerson.getNotaryRegistrationNumber());
+            DtoPerson person = new DtoPerson();
+            person.setId(fkIdNotaryPerson.getPersonId());
+            person.setNotaryRegistrationNumber(fkIdNotaryPerson.getNotaryRegistrationNumber());
 
-            miDtoFolio.setPersonNotary(miPerson);
+            folioDto.setPersonNotary(person);
         }
 
-        miDtoFolio.setTiposDeFolio(this.fkIdFolioType.getDto());
+        folioDto.setFolioType(this.fkIdFolioType.getDto());
 
         if (this.fkIdDeed != null)
         {
-            // Not fkIdEscritura.getDto(): that walks Escritura's lazy folioList, which
+            // Not fkIdDeed.getDto(): that walks Deed's lazy folioList, which
             // includes this same Folio, and would recurse back into Folio.getDto().
-            DtoDeed miDtoDeed = new DtoDeed();
-            miDtoDeed.setIdDeed(this.fkIdDeed.getIdDeed());
-            miDtoDeed.setNumber(this.fkIdDeed.getNumber());
-            miDtoDeed.setStatus(this.fkIdDeed.getStatus());
-            miDtoFolio.setDeed(miDtoDeed);
+            DtoDeed deedDto = new DtoDeed();
+            deedDto.setIdDeed(this.fkIdDeed.getIdDeed());
+            deedDto.setNumber(this.fkIdDeed.getNumber());
+            deedDto.setStatus(this.fkIdDeed.getStatus());
+            folioDto.setDeed(deedDto);
         }
 
-        return miDtoFolio;
+        return folioDto;
     }
 
     public int getVersion()

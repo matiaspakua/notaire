@@ -24,17 +24,17 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/inmueble")
-@Tag(name = "Inmueble", description = "API para gestionar inmueble")
+@RequestMapping("/api/v1/properties")
+@Tag(name = "Property", description = "API for managing property")
 public class PropertyController {
 
     /**
-     * Create and full-update body. The cadastral designation (nomenclatura catastral) identifies
+     * Create and full-update body. The cadastral designation (cadastral nomenclature) identifies
      * the property and is required on both, since PUT replaces every field (issue #655).
      */
     record PropertyRequest(
             @NotBlank
-            @Schema(description = "Nomenclatura catastral que identifica el inmueble; obligatoria y no vacía",
+            @Schema(description = "Cadastral nomenclature that identifies the property; required and not empty",
                     requiredMode = Schema.RequiredMode.REQUIRED)
             String cadastralDesignation,
             java.math.BigDecimal fiscalAppraisal,
@@ -85,7 +85,7 @@ public class PropertyController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todos los inmueble")
+    @Operation(summary = "Get all property")
     @Transactional(readOnly = true)
     public ResponseEntity<List<PropertyResponse>> getAll() {
         return ResponseEntity.ok(repository.findAll().stream().map(this::toResponse).toList());
@@ -93,10 +93,10 @@ public class PropertyController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener inmueble por ID")
+    @Operation(summary = "Get property by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<PropertyResponse> getById(@PathVariable Integer id) {
         return repository.findById(id)
@@ -106,12 +106,12 @@ public class PropertyController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Creado"),
-        @ApiResponse(responseCode = "400", description = "Solicitud inválida (falta la nomenclatura catastral)"),
-        @ApiResponse(responseCode = "409", description = "Conflicto")
+        @ApiResponse(responseCode = "201", description = "Created"),
+        @ApiResponse(responseCode = "400", description = "Invalid request (the cadastral designation is missing)"),
+        @ApiResponse(responseCode = "409", description = "Conflict")
     })
     @PostMapping
-    @Operation(summary = "Crear nuevo inmueble")
+    @Operation(summary = "Create property")
     public ResponseEntity<Object> create(@Valid @RequestBody PropertyRequest request) {
         try {
             Property entity = new Property();
@@ -125,11 +125,11 @@ public class PropertyController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "400", description = "Solicitud inválida (falta la nomenclatura catastral)"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "400", description = "Invalid request (the cadastral designation is missing)"),
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar inmueble")
+    @Operation(summary = "Update property")
     public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody PropertyRequest request) {
         return repository.findById(id).map(existing -> {
             applyRequest(existing, request);
@@ -139,11 +139,11 @@ public class PropertyController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "204", description = "Eliminado"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "204", description = "Deleted"),
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar inmueble")
+    @Operation(summary = "Delete property")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();

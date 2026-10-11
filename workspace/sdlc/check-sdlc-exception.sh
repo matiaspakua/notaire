@@ -13,6 +13,14 @@ set -uo pipefail
 BASE="${1:?usage: check-sdlc-exception.sh <base> [head]}"
 HEAD="${2:-HEAD}"
 
+# pull_request workflows check out refs/pull/N/merge. That commit's first parent
+# is the base the PR was actually merged into, which can be newer than the
+# event's base SHA. Diffing from the stale SHA counts files that landed on main
+# (including someone else's docs/openspec/changes/ path) as if this PR added them.
+if git rev-parse --verify --quiet "${HEAD}^2" >/dev/null 2>&1; then
+  BASE="$(git rev-parse "${HEAD}^1")"
+fi
+
 # Capture first: `grep -q` closing the pipe early can SIGPIPE `git diff` and flip the result under pipefail.
 CHANGED="$(git diff --name-only "$BASE...$HEAD")"
 

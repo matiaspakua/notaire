@@ -27,23 +27,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Controller REST para generación de reportes PDF.
+ * REST controller for PDF report generation.
  *
- * <p>Los reportes se generan internamente con Apache PDFBox a partir del modelo de
- * dominio actual (issue #567); ya no se usan plantillas JasperReports.
+ * <p>Reports are generated internally with Apache PDFBox from the current domain
+ * model (issue #567); JasperReports templates are no longer used.
  */
 @RestController
-@RequestMapping("/api/v1/reportes")
+@RequestMapping("/api/v1/reports")
 @Validated
-@Tag(name = "Reportes", description = "API para generación de reportes PDF")
+@Tag(name = "Reports", description = "API for generating PDF reports")
 public class ReportController {
 
     private static final Logger log = LoggerFactory.getLogger(ReportController.class);
 
-    private final ReportService reporteService;
+    private final ReportService reportService;
 
-    public ReportController(ReportService reporteService) {
-        this.reporteService = reporteService;
+    public ReportController(ReportService reportService) {
+        this.reportService = reportService;
     }
 
     @FunctionalInterface
@@ -67,164 +67,164 @@ public class ReportController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "PDF del presupuesto"),
-        @ApiResponse(responseCode = "400", description = "Parámetro inválido", content = @Content(
+        @ApiResponse(responseCode = "200", description = "PDF of the budget"),
+        @ApiResponse(responseCode = "400", description = "Invalid parameter", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "404", description = "Presupuesto no encontrado", content = @Content(
+        @ApiResponse(responseCode = "404", description = "Budget not found", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
+        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF (no body)",
                 content = @Content)
     })
-    @GetMapping(value = "/presupuesto/{idPresupuesto}", produces = MediaType.APPLICATION_PDF_VALUE)
-    @Operation(summary = "Generar reporte de presupuesto",
-               description = "Genera un PDF con los datos del presupuesto (cliente, trámites, gestión), "
-                       + "sus conceptos y el total y saldo pendiente calculados como en CU47")
+    @GetMapping(value = "/budget/{idBudget}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Generate the budget report",
+               description = "Generates a PDF with the budget data (client, procedures, management), "
+                       + "its concepts, and the total and pending balance calculated as in CU47")
     public ResponseEntity<byte[]> generateBudgetReport(
-            @Parameter(description = "ID del presupuesto")
-            @PathVariable("idPresupuesto") @Positive Integer idBudget) {
+            @Parameter(description = "ID of the budget")
+            @PathVariable("idBudget") @Positive Integer idBudget) {
         return buildPdfResponse("presupuesto_" + idBudget + ".pdf",
-                () -> reporteService.generateBudgetReport(idBudget));
+                () -> reportService.generateBudgetReport(idBudget));
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "PDF del presupuesto con inmuebles"),
-        @ApiResponse(responseCode = "400", description = "Parámetro inválido", content = @Content(
+        @ApiResponse(responseCode = "200", description = "PDF of the budget with properties"),
+        @ApiResponse(responseCode = "400", description = "Invalid parameter", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "404", description = "Presupuesto no encontrado", content = @Content(
+        @ApiResponse(responseCode = "404", description = "Budget not found", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
+        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF (no body)",
                 content = @Content)
     })
-    @GetMapping(value = "/presupuesto-inmuebles/{idPresupuesto}", produces = MediaType.APPLICATION_PDF_VALUE)
-    @Operation(summary = "Generar reporte de presupuesto con inmuebles",
-               description = "Genera el PDF del presupuesto e incluye los inmuebles de sus trámites "
-                       + "(nomenclatura catastral, domicilio y valuación fiscal)")
+    @GetMapping(value = "/budget-properties/{idBudget}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Generate the budget report with properties",
+               description = "Generates the budget PDF and includes the properties of its procedures "
+                       + "(cadastral designation, address, and fiscal appraisal)")
     public ResponseEntity<byte[]> generateBudgetPropertiesReport(
-            @Parameter(description = "ID del presupuesto")
-            @PathVariable("idPresupuesto") @Positive Integer idBudget) {
+            @Parameter(description = "ID of the budget")
+            @PathVariable("idBudget") @Positive Integer idBudget) {
         return buildPdfResponse("presupuesto_inmuebles_" + idBudget + ".pdf",
-                () -> reporteService.generateBudgetPropertiesReport(idBudget));
+                () -> reportService.generateBudgetPropertiesReport(idBudget));
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "PDF con los documentos del tipo de trámite"),
-        @ApiResponse(responseCode = "400", description = "Parámetro inválido", content = @Content(
+        @ApiResponse(responseCode = "200", description = "PDF with the documents of the procedure type"),
+        @ApiResponse(responseCode = "400", description = "Invalid parameter", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "404", description = "Tipo de trámite no encontrado", content = @Content(
+        @ApiResponse(responseCode = "404", description = "Procedure type not found", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
+        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF (no body)",
                 content = @Content)
     })
-    @GetMapping(value = "/lista-documentos-tramite", produces = MediaType.APPLICATION_PDF_VALUE)
-    @Operation(summary = "Generar reporte de lista de documentos por trámite",
-               description = "Genera un PDF con los documentos que requiere un tipo de trámite según su "
-                       + "plantilla (vencimiento, días de validez y quién los entrega)")
+    @GetMapping(value = "/procedure-document-list", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Generate the document list report for a procedure",
+               description = "Generates a PDF with the documents a procedure type requires according to its "
+                       + "template (expiration, validity days, and who delivers them)")
     public ResponseEntity<byte[]> generateProcedureDocumentsListReport(
-            @Parameter(description = "Nombre del tipo de trámite")
-            @RequestParam("nombreTipoTramite") @NotBlank String nameTypeProcedure) {
+            @Parameter(description = "Name of the procedure type")
+            @RequestParam("procedureTypeName") @NotBlank String nameTypeProcedure) {
         return buildPdfResponse("lista_documentos.pdf",
-                () -> reporteService.generateProcedureDocumentsListReport(nameTypeProcedure));
+                () -> reportService.generateProcedureDocumentsListReport(nameTypeProcedure));
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "PDF con el historial de la gestión"),
-        @ApiResponse(responseCode = "400", description = "Parámetro inválido", content = @Content(
+        @ApiResponse(responseCode = "200", description = "PDF with the history of the management"),
+        @ApiResponse(responseCode = "400", description = "Invalid parameter", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "404", description = "Gestión no encontrada", content = @Content(
+        @ApiResponse(responseCode = "404", description = "Management not found", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
+        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF (no body)",
                 content = @Content)
     })
-    @GetMapping(value = "/historial-gestion/{idGestion}", produces = MediaType.APPLICATION_PDF_VALUE)
-    @Operation(summary = "Generar reporte de historial de gestión",
-               description = "Genera un PDF con los datos de la gestión y su historial de estados, "
-                       + "del más antiguo al más reciente")
+    @GetMapping(value = "/management-history/{idManagement}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Generate the management history report",
+               description = "Generates a PDF with the management data and its status history, "
+                       + "from the oldest to the most recent")
     public ResponseEntity<byte[]> generateManagementHistoryReport(
-            @Parameter(description = "ID de la gestión")
-            @PathVariable("idGestion") @Positive Integer idManagement) {
+            @Parameter(description = "ID of the management")
+            @PathVariable("idManagement") @Positive Integer idManagement) {
         return buildPdfResponse("historial_gestion_" + idManagement + ".pdf",
-                () -> reporteService.generateManagementHistoryReport(idManagement));
+                () -> reportService.generateManagementHistoryReport(idManagement));
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "PDF con el vencimiento del documento presentado"),
-        @ApiResponse(responseCode = "400", description = "Parámetro inválido", content = @Content(
+        @ApiResponse(responseCode = "200", description = "PDF with the expiration of the submitted document"),
+        @ApiResponse(responseCode = "400", description = "Invalid parameter", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "404", description = "Documento presentado no encontrado", content = @Content(
+        @ApiResponse(responseCode = "404", description = "Submitted document not found", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
+        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF (no body)",
                 content = @Content)
     })
-    @GetMapping(value = "/documentos-por-vencer/{idDocumentoPresentado}", produces = MediaType.APPLICATION_PDF_VALUE)
-    @Operation(summary = "Generar reporte de documentos por vencer",
-               description = "Genera un PDF con el vencimiento de un documento presentado (fecha y días "
-                       + "restantes), su estado de pago y la gestión, trámite y cliente a los que pertenece")
+    @GetMapping(value = "/documents-due/{idSubmittedDocument}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Generate the documents-due report",
+               description = "Generates a PDF with the expiration of a submitted document (date and days "
+                       + "remaining), its payment status, and the management, procedure, and client it belongs to")
     public ResponseEntity<byte[]> generateDocumentsDueSoonReport(
-            @Parameter(description = "ID del documento presentado")
-            @PathVariable("idDocumentoPresentado") @Positive Integer idSubmittedDocument) {
+            @Parameter(description = "ID of the submitted document")
+            @PathVariable("idSubmittedDocument") @Positive Integer idSubmittedDocument) {
         return buildPdfResponse("documentos_vencer.pdf",
-                () -> reporteService.generateDocumentsDueSoonReport(idSubmittedDocument));
+                () -> reportService.generateDocumentsDueSoonReport(idSubmittedDocument));
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "PDF con la deuda de documentos de la gestión"),
-        @ApiResponse(responseCode = "400", description = "Parámetro inválido", content = @Content(
+        @ApiResponse(responseCode = "200", description = "PDF with the debt of documents of the management"),
+        @ApiResponse(responseCode = "400", description = "Invalid parameter", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "404", description = "No existe una gestión con ese número", content = @Content(
+        @ApiResponse(responseCode = "404", description = "There is no management with that number", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
+        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF (no body)",
                 content = @Content)
     })
-    @GetMapping(value = "/consultar-deuda-documentos", produces = MediaType.APPLICATION_PDF_VALUE)
-    @Operation(summary = "Generar reporte de consulta de deuda de documentos",
-               description = "Genera un PDF con los documentos presentados en las gestiones con ese número, "
-                       + "su importe, fecha de pago o pago pendiente, y el total adeudado")
+    @GetMapping(value = "/document-debt", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Generate the document-debt report",
+               description = "Generates a PDF with the submitted documents in the managements with that number, "
+                       + "its amount, payment date or pending payment, and the total owed")
     public ResponseEntity<byte[]> generateDebtDocumentsReport(
-            @Parameter(description = "Número de gestión")
+            @Parameter(description = "Number of management")
             @RequestParam @Positive Integer numberManagement) {
         return buildPdfResponse("deuda_documentos_" + numberManagement + ".pdf",
-                () -> reporteService.generateDebtDocumentsReport(numberManagement));
+                () -> reportService.generateDebtDocumentsReport(numberManagement));
     }
 
-    @GetMapping(value = "/libro-indice", produces = MediaType.APPLICATION_PDF_VALUE)
-    @Operation(summary = "Generar libro de indice",
-               description = "Endpoint base para CU24: PDF provisorio con el período solicitado; "
-                       + "el contenido del libro de índice está pendiente")
-    public ResponseEntity<byte[]> generarLibroIndice(
-            @Parameter(description = "Año del libro de indice")
-            @RequestParam("anio") @Positive Integer year) {
+    @GetMapping(value = "/index-book", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Generate the index book",
+               description = "Base endpoint for CU24: a provisional PDF for the requested period; "
+                       + "the index-book content is still pending")
+    public ResponseEntity<byte[]> generateIndexBook(
+            @Parameter(description = "Year of the index book")
+            @RequestParam("year") @Positive Integer year) {
         return buildPdfResponse("libro_indice_" + year + ".pdf",
-                () -> reporteService.generateIndexBookReport(year));
+                () -> reportService.generateIndexBookReport(year));
     }
 
-    @GetMapping(value = "/declaracion-jurada-mensual", produces = MediaType.APPLICATION_PDF_VALUE)
-    @Operation(summary = "Generar declaracion jurada mensual",
-               description = "Endpoint base para CU25: PDF provisorio con el período solicitado; "
-                       + "el contenido de la DDJJ mensual está pendiente")
-    public ResponseEntity<byte[]> generarDeclaracionJuradaMensual(
-            @Parameter(description = "Año del periodo")
-            @RequestParam("anio") @Positive Integer year,
-            @Parameter(description = "Mes del periodo")
-            @RequestParam @Min(1) @Max(12) Integer mes) {
-        if (mes < 1 || mes > 12) {
+    @GetMapping(value = "/monthly-sworn-statement", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Generate the monthly sworn statement",
+               description = "Base endpoint for CU25: a provisional PDF for the requested period; "
+                       + "the monthly sworn-statement content is still pending")
+    public ResponseEntity<byte[]> generateMonthlySwornStatement(
+            @Parameter(description = "Year of the period")
+            @RequestParam("year") @Positive Integer year,
+            @Parameter(description = "Month of the period")
+            @RequestParam("month") @Min(1) @Max(12) Integer month) {
+        if (month < 1 || month > 12) {
             return ResponseEntity.badRequest().build();
         }
-        return buildPdfResponse("ddjj_mensual_" + year + "_" + mes + ".pdf",
-                () -> reporteService.generateMonthlyTaxDeclarationReport(year, mes));
+        return buildPdfResponse("ddjj_mensual_" + year + "_" + month + ".pdf",
+                () -> reportService.generateMonthlyTaxDeclarationReport(year, month));
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "El testimonio no está verificado"),
-    @ApiResponse(responseCode = "404", description = "Testimonio no encontrado")
+    @ApiResponse(responseCode = "400", description = "The testimony is not verified"),
+    @ApiResponse(responseCode = "404", description = "Testimony not found")
 })
-    @GetMapping(value = "/testimonio/{idTestimonio}/copia", produces = MediaType.APPLICATION_PDF_VALUE)
-    @Operation(summary = "Generar copia impresa de testimonio verificado",
-               description = "Genera un PDF con la copia impresa de un testimonio, solo si ya fue verificado")
+    @GetMapping(value = "/testimonies/{idTestimony}/copies", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Generate the printed copy of a verified testimony",
+               description = "Generates a PDF with the printed copy of a testimony, only when it has been verified")
     public ResponseEntity<byte[]> generateTestimonyCopyReport(
-            @Parameter(description = "ID del testimonio")
-            @PathVariable("idTestimonio") @Positive Integer idTestimony) {
-        byte[] pdfBytes = reporteService.generateTestimonyCopyReport(idTestimony);
+            @Parameter(description = "ID of the testimony")
+            @PathVariable("idTestimony") @Positive Integer idTestimony) {
+        byte[] pdfBytes = reportService.generateTestimonyCopyReport(idTestimony);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"testimonio_" + idTestimony + "_copia.pdf\"")
@@ -233,15 +233,15 @@ public class ReportController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "Minuta de inscripción no encontrada")
+        @ApiResponse(responseCode = "404", description = "Registration draft not found")
     })
-    @GetMapping(value = "/minuta-inscripcion/{idMinutaInscripcion}", produces = MediaType.APPLICATION_PDF_VALUE)
-    @Operation(summary = "CU82 - Generar el formulario normalizado de la minuta de inscripción",
-               description = "Genera un PDF con el formulario normalizado de una minuta de inscripción")
+    @GetMapping(value = "/registration-draft/{idRegistrationDraft}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "CU82 - Generate the standard form of the registration draft",
+               description = "Generates a PDF with the standard form of a registration draft")
     public ResponseEntity<byte[]> generateRegistrationDraftReport(
-            @Parameter(description = "ID de la minuta de inscripción")
-            @PathVariable("idMinutaInscripcion") @Positive Integer idRegistrationDraft) {
-        byte[] pdfBytes = reporteService.generateRegistrationDraftReport(idRegistrationDraft);
+            @Parameter(description = "ID of the registration draft")
+            @PathVariable("idRegistrationDraft") @Positive Integer idRegistrationDraft) {
+        byte[] pdfBytes = reportService.generateRegistrationDraftReport(idRegistrationDraft);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
                 .header(HttpHeaders.CONTENT_DISPOSITION,
@@ -251,34 +251,34 @@ public class ReportController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "Pago no encontrado")
+        @ApiResponse(responseCode = "404", description = "Payment not found")
     })
-    @GetMapping(value = "/recibo-pago/{idPago}", produces = MediaType.APPLICATION_PDF_VALUE)
-    @Operation(summary = "CU15 - Emitir recibo de pago",
-               description = "Genera un PDF con el recibo de un pago existente")
+    @GetMapping(value = "/payment-receipt/{idPayment}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "CU15 - Issue a payment receipt",
+               description = "Generates a PDF with the receipt of an existing payment")
     public ResponseEntity<byte[]> generatePaymentReceiptReport(
-            @Parameter(description = "ID del pago")
-            @PathVariable("idPago") @Positive Integer idPayment) {
-        byte[] pdfBytes = reporteService.generatePaymentReceiptReport(idPayment);
+            @Parameter(description = "ID of the payment")
+            @PathVariable("idPayment") @Positive Integer idPayment) {
+        byte[] pdfBytes = reportService.generatePaymentReceiptReport(idPayment);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"recibo_pago_" + idPayment + ".pdf\"")
                 .body(pdfBytes);
     }
 
-    @GetMapping(value = "/declaracion-jurada-rentas", produces = MediaType.APPLICATION_PDF_VALUE)
-    @Operation(summary = "Generar declaracion jurada de rentas",
-               description = "Endpoint base para CU50: PDF provisorio con el período solicitado; "
-                       + "el contenido de la DDJJ de rentas está pendiente")
-    public ResponseEntity<byte[]> generarDeclaracionJuradaRentas(
-            @Parameter(description = "Año del periodo")
-            @RequestParam("anio") @Positive Integer year,
-            @Parameter(description = "Mes del periodo")
-            @RequestParam @Min(1) @Max(12) Integer mes) {
-        if (mes < 1 || mes > 12) {
+    @GetMapping(value = "/tax-sworn-statement", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Generate the tax sworn statement",
+               description = "Base endpoint for CU50: a provisional PDF for the requested period; "
+                       + "the tax sworn-statement content is still pending")
+    public ResponseEntity<byte[]> generateTaxSwornStatement(
+            @Parameter(description = "Year of the period")
+            @RequestParam("year") @Positive Integer year,
+            @Parameter(description = "Month of the period")
+            @RequestParam("month") @Min(1) @Max(12) Integer month) {
+        if (month < 1 || month > 12) {
             return ResponseEntity.badRequest().build();
         }
-        return buildPdfResponse("ddjj_rentas_" + year + "_" + mes + ".pdf",
-                () -> reporteService.generateIncomeTaxDeclarationReport(year, mes));
+        return buildPdfResponse("ddjj_rentas_" + year + "_" + month + ".pdf",
+                () -> reportService.generateIncomeTaxDeclarationReport(year, month));
     }
 }

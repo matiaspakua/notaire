@@ -53,7 +53,7 @@ The **C4 model** provides hierarchical views of system architecture at four leve
 
 **Include:**
 - Your system (single box)
-- Users/personas interacting with the system
+- Users/people interacting with the system
 - External systems your system depends on
 - Relationships and protocols
 

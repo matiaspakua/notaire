@@ -3,11 +3,11 @@ info:
   type: http
   seq: 11
   description: |-
-      ## Teardown - Delete budget — DELETE /api/v1/presupuestos/{items_budget_id}
+      ## Teardown - Delete budget — DELETE /api/v1/budgets/{items_budget_id}
       Traceability: CU45 (RF #4, #7, #8, #9)
 http:
   method: DELETE
-  url: "{{base_url}}/api/v1/presupuestos/{{items_budget_id}}"
+  url: "{{base_url}}/api/v1/budgets/{{items_budget_id}}"
   headers:
     - name: Content-Type
       value: application/json

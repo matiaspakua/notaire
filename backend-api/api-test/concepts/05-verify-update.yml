@@ -3,12 +3,12 @@ info:
   type: http
   seq: 5
   description: |-
-      ## Verify the update persisted — GET /api/v1/conceptos/{id}
+      ## Verify the update persisted — GET /api/v1/concepts/{id}
       Traceability: CU34 (RF #55, #60)
 
 http:
   method: GET
-  url: "{{base_url}}/api/v1/conceptos/{{concept_id}}"
+  url: "{{base_url}}/api/v1/concepts/{{concept_id}}"
   headers:
     - name: Content-Type
       value: application/json

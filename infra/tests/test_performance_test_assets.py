@@ -57,7 +57,7 @@ class K6LoadTestScriptTest(unittest.TestCase):
 
     def test_authenticates_in_setup_and_reuses_token(self):
         self.assertIn("export function setup()", self.script)
-        self.assertIn("/api/v1/usuarios/login", self.script)
+        self.assertIn("/api/v1/users/login", self.script)
         self.assertIn("Authorization", self.script)
         self.assertIn("Bearer", self.script)
 
@@ -71,7 +71,7 @@ class K6LoadTestScriptTest(unittest.TestCase):
         self.assertNotIn("contrasenia:", self.script)
 
     def test_covers_the_highest_traffic_endpoints(self):
-        for path in ("/api/v1/gestiones", "/api/v1/presupuestos", "/api/v1/tramites"):
+        for path in ("/api/v1/managements", "/api/v1/budgets", "/api/v1/procedures"):
             self.assertIn(path, self.script)
 
     def test_writes_summary_json_artifact(self):

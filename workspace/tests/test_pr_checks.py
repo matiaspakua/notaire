@@ -135,6 +135,28 @@ class SdlcExceptionTest(unittest.TestCase):
         commit(repo, "chore(deps): bump", "frontend/package.json")
         self.assertEqual(run("check-sdlc-exception.sh", base, cwd=repo, PR_AUTHOR="dependabot[bot]").returncode, 0)
 
+    def test_merge_checkout_ignores_openspec_files_that_landed_on_main(self):
+        """Actions checks out refs/pull/N/merge. A stale event base SHA must not
+        count an OpenSpec path that arrived on main after the PR opened."""
+        repo, stale = new_repo()
+        commit(repo, "docs(openspec): someone else's plan", "docs/openspec/changes/other/proposal.md")
+        git(repo, "checkout", "-q", "-b", "pr", stale)
+        commit(repo, "docs: readme", "docs/README.md")
+        git(repo, "checkout", "-q", "main")
+        git(repo, "merge", "-q", "--no-ff", "pr", "-m", "Merge pr into main")
+        result = run("check-sdlc-exception.sh", stale, cwd=repo)
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("sdlc-exception", result.stdout)
+
+    def test_merge_checkout_accepts_an_openspec_change_made_by_the_pr(self):
+        repo, stale = new_repo()
+        commit(repo, "docs: unrelated main note", "docs/OTHER.md")
+        git(repo, "checkout", "-q", "-b", "pr", stale)
+        commit(repo, "docs(openspec): plan", "docs/openspec/changes/x/proposal.md")
+        git(repo, "checkout", "-q", "main")
+        git(repo, "merge", "-q", "--no-ff", "pr", "-m", "Merge pr into main")
+        self.assertEqual(run("check-sdlc-exception.sh", stale, cwd=repo).returncode, 0)
+
 
 class AgentRulesTest(unittest.TestCase):
     def setUp(self):
@@ -173,7 +195,7 @@ class AgentRulesTest(unittest.TestCase):
             "# Refactoring\n"
             "Package root `com.licensis.notaire`. "
             "Spring Boot 4.1, Java 26, PostgreSQL 16, Next.js frontend. "
-            "DTOs named `DtoUsuario`.\n"
+            "DTOs named `DtoLoginUser`.\n"
         )
 
     def test_rejects_obsolete_package_in_refactoring_md(self):

@@ -18,6 +18,7 @@ truth for new work. Archived copies may also live under `docs/000-archive/`.
 
 | View | Location |
 |------|----------|
+| Domain lifecycles (states, sequences, components) | [`CICLO-DE-VIDA.md`](../203-design/CICLO-DE-VIDA.md) |
 | Module ownership / dependencies | [`docs/300-development/MODULE-OWNERSHIP.md`](../../300-development/MODULE-OWNERSHIP.md) |
 | Pages Docs (rendered) | `github-page/app/docs/` |
 

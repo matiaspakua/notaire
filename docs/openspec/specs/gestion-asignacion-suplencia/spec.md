@@ -14,7 +14,7 @@ The system SHALL assign a management to the substitute (`fkIdSubstitute`) of an
 active `Substitution` when the requested notary is the substituted notary
 (`fkIdSubstituted`) and the management date falls within
 `dateStart`–`dateEnd`, per CU22 / CU02 / RF-89 / RF-115 — including plain
-`POST`/`PUT /api/v1/gestiones` as well as complete-case paths already covered
+`POST`/`PUT /api/v1/managements` as well as complete-case paths already covered
 by #836.
 
 #### Scenario: Creación de gestión sin suplencia activa
@@ -39,7 +39,7 @@ by #836.
 
 #### Scenario: Plain POST create redirects under active substitution
 
-- **WHEN** a client creates a management via plain `POST /api/v1/gestiones`
+- **WHEN** a client creates a management via plain `POST /api/v1/managements`
   with `notaryPersonId` of a notary covered by an active substitution for
   `dateStart`
 - **THEN** the persisted `fkIdNotaryPerson` is the substitute, not the
@@ -47,7 +47,7 @@ by #836.
 
 #### Scenario: Plain PUT update redirects under active substitution
 
-- **WHEN** a client updates a management via plain `PUT /api/v1/gestiones/{id}`
+- **WHEN** a client updates a management via plain `PUT /api/v1/managements/{id}`
   setting `notaryPersonId` to a notary covered by an active substitution for
   the management date
 - **THEN** the persisted `fkIdNotaryPerson` is the substitute, not the

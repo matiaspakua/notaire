@@ -3,11 +3,11 @@ info:
   type: http
   seq: 1
   description: |-
-      ## Search deeds by number — GET /api/v1/escrituras/buscar?number=<n>
+      ## Search deeds by number — GET /api/v1/deeds/search?number=<n>
       Traceability: CU62 (RF #27, #28, #30)
 http:
   method: GET
-  url: "{{base_url}}/api/v1/escrituras/buscar"
+  url: "{{base_url}}/api/v1/deeds/search"
   headers:
     - name: Authorization
       value: "Bearer {{token}}"

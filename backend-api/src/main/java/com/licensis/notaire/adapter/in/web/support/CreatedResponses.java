@@ -20,7 +20,7 @@ public final class CreatedResponses {
      * Builds {@code 201 Created} with {@code Location: {collectionPath}/{id}}.
      *
      * @param body           response body
-     * @param collectionPath absolute API path of the collection (e.g. {@code /api/v1/pagos})
+     * @param collectionPath absolute API path of the collection (e.g. {@code /api/v1/payments})
      * @param id             created resource identifier
      */
     public static <T> ResponseEntity<T> of(T body, String collectionPath, Object id) {

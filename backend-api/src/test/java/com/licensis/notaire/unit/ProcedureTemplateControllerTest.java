@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("PlantillaTramiteController unit tests")
+@DisplayName("ProcedureTemplateController unit tests")
 class ProcedureTemplateControllerTest {
 
     @Mock
@@ -51,92 +51,92 @@ class ProcedureTemplateControllerTest {
     }
 
     @Test
-    @DisplayName("GET /plantilla-tramite returns list")
+    @DisplayName("GET /procedure-templates returns list")
     void shouldReturnAll() throws Exception {
         when(repository.findAll()).thenReturn(List.of(buildTemplate(1, 2)));
-        mockMvc.perform(get("/api/v1/plantilla-tramite"))
+        mockMvc.perform(get("/api/v1/procedure-templates"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
 
     @Test
-    @DisplayName("GET /plantilla-tramite/type-tramite/{id} returns list")
+    @DisplayName("GET /procedure-templates/procedure-type/{id} returns list")
     void shouldReturnByTypeProcedure() throws Exception {
         when(repository.findByProcedureTypeIdProcedureType(1)).thenReturn(List.of(buildTemplate(1, 2)));
-        mockMvc.perform(get("/api/v1/plantilla-tramite/tipo-tramite/1"))
+        mockMvc.perform(get("/api/v1/procedure-templates/procedure-types/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
 
     @Test
-    @DisplayName("GET /plantilla-tramite/{idTipoTramite}/{idDocumentType} returns 200 when found")
+    @DisplayName("GET /procedure-templates/{idProcedureType}/{idDocumentType} returns 200 when found")
     void shouldReturnByCompositeId() throws Exception {
         ProcedureTemplatePK pk = new ProcedureTemplatePK(1, 2);
         when(repository.findById(pk)).thenReturn(Optional.of(buildTemplate(1, 2)));
-        mockMvc.perform(get("/api/v1/plantilla-tramite/1/2"))
+        mockMvc.perform(get("/api/v1/procedure-templates/1/2"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("GET /plantilla-tramite/{idTipoTramite}/{idDocumentType} returns 404 when not found")
+    @DisplayName("GET /procedure-templates/{idProcedureType}/{idDocumentType} returns 404 when not found")
     void shouldReturn404WhenNotFound() throws Exception {
         ProcedureTemplatePK pk = new ProcedureTemplatePK(9, 9);
         when(repository.findById(pk)).thenReturn(Optional.empty());
-        mockMvc.perform(get("/api/v1/plantilla-tramite/9/9"))
+        mockMvc.perform(get("/api/v1/procedure-templates/9/9"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("POST /plantilla-tramite creates new entry and returns 201")
+    @DisplayName("POST /procedure-templates creates new entry and returns 201")
     void shouldCreateTemplate() throws Exception {
         ProcedureTemplate pt = buildTemplate(1, 2);
         when(repository.save(any(ProcedureTemplate.class))).thenReturn(pt);
-        mockMvc.perform(post("/api/v1/plantilla-tramite")
+        mockMvc.perform(post("/api/v1/procedure-templates")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(pt)))
                 .andExpect(status().isCreated());
     }
 
     @Test
-    @DisplayName("PUT /plantilla-tramite/{idTipoTramite}/{idDocumentType} returns 200 when exists")
+    @DisplayName("PUT /procedure-templates/{idProcedureType}/{idDocumentType} returns 200 when exists")
     void shouldUpdateTemplate() throws Exception {
         ProcedureTemplatePK pk = new ProcedureTemplatePK(1, 2);
         ProcedureTemplate pt = buildTemplate(1, 2);
         when(repository.findById(pk)).thenReturn(Optional.of(pt));
         when(repository.save(any(ProcedureTemplate.class))).thenReturn(pt);
-        mockMvc.perform(put("/api/v1/plantilla-tramite/1/2")
+        mockMvc.perform(put("/api/v1/procedure-templates/1/2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(pt)))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("PUT /plantilla-tramite/{idTipoTramite}/{idDocumentType} returns 404 when not exists")
+    @DisplayName("PUT /procedure-templates/{idProcedureType}/{idDocumentType} returns 404 when it does not exist")
     void shouldReturn404OnUpdate() throws Exception {
         ProcedureTemplatePK pk = new ProcedureTemplatePK(9, 9);
         when(repository.findById(pk)).thenReturn(Optional.empty());
-        mockMvc.perform(put("/api/v1/plantilla-tramite/9/9")
+        mockMvc.perform(put("/api/v1/procedure-templates/9/9")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(buildTemplate(9, 9))))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("DELETE /plantilla-tramite/{idTipoTramite}/{idDocumentType} returns 204 when exists")
+    @DisplayName("DELETE /procedure-templates/{idProcedureType}/{idDocumentType} returns 204 when exists")
     void shouldDeleteTemplate() throws Exception {
         ProcedureTemplatePK pk = new ProcedureTemplatePK(1, 2);
         when(repository.existsById(pk)).thenReturn(true);
         doNothing().when(repository).deleteById(pk);
-        mockMvc.perform(delete("/api/v1/plantilla-tramite/1/2"))
+        mockMvc.perform(delete("/api/v1/procedure-templates/1/2"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    @DisplayName("DELETE /plantilla-tramite/{idTipoTramite}/{idDocumentType} returns 404 when not exists")
+    @DisplayName("DELETE /procedure-templates/{idProcedureType}/{idDocumentType} returns 404 when it does not exist")
     void shouldReturn404OnDelete() throws Exception {
         ProcedureTemplatePK pk = new ProcedureTemplatePK(9, 9);
         when(repository.existsById(pk)).thenReturn(false);
-        mockMvc.perform(delete("/api/v1/plantilla-tramite/9/9"))
+        mockMvc.perform(delete("/api/v1/procedure-templates/9/9"))
                 .andExpect(status().isNotFound());
     }
 }

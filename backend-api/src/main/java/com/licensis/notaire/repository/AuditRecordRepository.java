@@ -32,6 +32,6 @@ public interface AuditRecordRepository extends JpaRepository<AuditRecord, Intege
     Optional<AuditRecord> findByIdWithUser(@Param("id") Integer id);
 
     @Query("SELECT r FROM AuditRecord r LEFT JOIN FETCH r.fkIdUser u "
-            + "LEFT JOIN FETCH u.fkIdPerson WHERE u.idUser = :idUsuario")
-    List<AuditRecord> findByUserIdWithUser(@Param("idUsuario") Integer idUser);
+            + "LEFT JOIN FETCH u.fkIdPerson WHERE u.idUser = :idUser")
+    List<AuditRecord> findByUserIdWithUser(@Param("idUser") Integer idUser);
 }

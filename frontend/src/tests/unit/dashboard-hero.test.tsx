@@ -24,25 +24,25 @@ vi.mock("@/components/motion/WorkflowTracker", () => ({
 }));
 
 import { WorkflowHero } from "@/components/workflow/WorkflowHero";
-import { findLatestTracedGestion, LATEST_TRACE_CANDIDATES } from "@/hooks/useGestionWorkflow";
+import { findLatestTracedManagement, LATEST_TRACE_CANDIDATES } from "@/hooks/useManagementWorkflow";
 
 function json(body: unknown, status = 200) {
   const text = JSON.stringify(body);
   return Promise.resolve({ ok: status < 400, status, text: () => Promise.resolve(text) } as Response);
 }
 
-const trace = (id: number, number: number, encabezado?: string) => ({
-  managementId: id, number, encabezado, statusActual: "Iniciada", nodes: [], transitions: [], history: [], nodeStatuses: {},
+const trace = (id: number, number: number, heading?: string) => ({
+  managementId: id, number, heading, currentStatus: "Iniciada", nodes: [], transitions: [], history: [], nodeStatuses: {},
 });
 
 /** Managements newest first; `traced` ids have a workflow, the rest answer 400. */
 function routes(ids: number[], traced: number[]) {
   return (u: string) => {
     const url = String(u);
-    if (/\/gestiones\?page=0&size=\d+&sort=idManagement%2Cdesc$/.test(url)) {
+    if (/\/managements\?page=0&size=\d+&sort=idManagement%2Cdesc$/.test(url)) {
       return json({ content: ids.map((id) => ({ idManagement: id, number: 1000 + id })), number: 0, size: ids.length, totalElements: ids.length, totalPages: 1 });
     }
-    const m = url.match(/\/gestiones\/(\d+)\/workflow-trace$/);
+    const m = url.match(/\/managements\/(\d+)\/workflow-trace$/);
     if (m) {
       const id = Number(m[1]);
       return traced.includes(id) ? json(trace(id, 1000 + id, `Caso ${id}`)) : json({ error: "no workflow" }, 400);
@@ -63,20 +63,20 @@ describe("findLatestTracedGestion (#1347)", () => {
 
   it("asks for the newest managements first and returns the newest one with a workflow", async () => {
     mockFetch.mockImplementation(routes([30, 29, 28, 27], [29, 27]));
-    const found = await findLatestTracedGestion();
+    const found = await findLatestTracedManagement();
     expect(found?.trace.managementId).toBe(29);
-    expect(urls()[0]).toMatch(new RegExp(`/gestiones\\?page=0&size=${LATEST_TRACE_CANDIDATES}&sort=idManagement%2Cdesc$`));
+    expect(urls()[0]).toMatch(new RegExp(`/managements\\?page=0&size=${LATEST_TRACE_CANDIDATES}&sort=idManagement%2Cdesc$`));
   });
 
   it("skips a long run of managements without a workflow", async () => {
     const ids = Array.from({ length: 15 }, (_, i) => 100 - i);
     mockFetch.mockImplementation(routes(ids, [87]));
-    expect((await findLatestTracedGestion())?.trace.managementId).toBe(87);
+    expect((await findLatestTracedManagement())?.trace.managementId).toBe(87);
   });
 
   it("returns null when no recent management has a workflow", async () => {
     mockFetch.mockImplementation(routes([3, 2, 1], []));
-    expect(await findLatestTracedGestion()).toBeNull();
+    expect(await findLatestTracedManagement()).toBeNull();
   });
 });
 
@@ -96,7 +96,7 @@ describe("WorkflowHero (#1347)", () => {
     render(<WorkflowHero />, { wrapper });
     const empty = await screen.findByTestId("workflow-empty");
     expect(empty).toHaveTextContent("dashboard.workflow.noRecentWorkflow");
-    expect(screen.getByRole("link", { name: "dashboard.workflow.openGestiones" })).toHaveAttribute("href", "/dashboard/gestiones");
+    expect(screen.getByRole("link", { name: "dashboard.workflow.openGestiones" })).toHaveAttribute("href", "/dashboard/managements");
     expect(screen.queryByTestId("workflow-tracker")).not.toBeInTheDocument();
   });
 });

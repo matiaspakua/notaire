@@ -31,17 +31,17 @@ public class WorkflowNode implements Serializable, Persistable<Integer> {
     private WorkflowDefinition workflowDefinition;
 
     @ManyToOne
-    @JoinColumn(name = "fk_estado_gestion_id", nullable = false)
+    @JoinColumn(name = "fk_management_status_id", nullable = false)
     private ManagementStatus managementStatus;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "tipo", nullable = false)
+    @Column(name = "node_type", nullable = false)
     private WorkflowNodeType type;
 
-    @Column(name = "posicion_x")
+    @Column(name = "position_x")
     private Float positionX;
 
-    @Column(name = "posicion_y")
+    @Column(name = "position_y")
     private Float positionY;
 
     @Version
@@ -147,6 +147,6 @@ public class WorkflowNode implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "WorkflowNode[id=" + id + ", tipo=" + type + "]";
+        return "WorkflowNode[id=" + id + ", type=" + type + "]";
     }
 }

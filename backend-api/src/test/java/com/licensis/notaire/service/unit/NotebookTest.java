@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("CuadernoService Unit Tests")
+@DisplayName("NotebookService Unit Tests")
 class NotebookTest {
 
     @Mock
@@ -58,9 +58,9 @@ class NotebookTest {
     }
 
     @Test
-    @DisplayName("Should mark all folios as Asignado a cuaderno")
-    void shouldMarkFoliosAsAsignadoANotebook() {
-        List<Folio> folios = new ArrayList<>(List.of(folio(1, 1, "Nuevo"), folio(2, 2, "Nuevo")));
+    @DisplayName("Should mark all folios as assigned to a notebook")
+    void shouldMarkFoliosAsAssignedToANotebook() {
+        List<Folio> folios = new ArrayList<>(List.of(folio(1, 1, "New"), folio(2, 2, "New")));
         Notebook notebook = new Notebook();
         notebook.setIdNotebook(10);
 
@@ -73,7 +73,7 @@ class NotebookTest {
     }
 
     @Test
-    @DisplayName("Should assign number one to the first cuaderno of the year for a registro")
+    @DisplayName("Should assign number one to the first notebook of the year for a notary")
     void shouldAssignNumberOneToFirstNotebookOfYear() {
         when(notebookRepository.findByYearAndNotary(2026, notary)).thenReturn(List.of());
         when(notebookRepository.existsByNumberYearAndNotary(1, 2026, notary)).thenReturn(false);
@@ -84,7 +84,7 @@ class NotebookTest {
     }
 
     @Test
-    @DisplayName("Should recalculate the next available cuaderno number on conflict")
+    @DisplayName("Should recalculate the next available notebook number on conflict")
     void shouldRecalculateNextAvailableNotebookNumber() {
         when(notebookRepository.findByYearAndNotary(2026, notary))
                 .thenReturn(List.of(new Notebook()));
@@ -97,7 +97,7 @@ class NotebookTest {
     }
 
     @Test
-    @DisplayName("Should reject cuaderno creation when notary does not exist")
+    @DisplayName("Should reject notebook creation when notary does not exist")
     void shouldRejectCreationWhenNotaryNotFound() {
         when(notebookRepository.findPersonById(anyInt())).thenReturn(Optional.empty());
 
@@ -106,10 +106,10 @@ class NotebookTest {
     }
 
     @Test
-    @DisplayName("Should reject cuaderno creation when folio count is not a multiple of ten")
+    @DisplayName("Should reject notebook creation when folio count is not a multiple of ten")
     void shouldRejectWhenFolioCountNotMultipleOfTen() {
         when(notebookRepository.findPersonById(1)).thenReturn(Optional.of(notary));
-        List<Folio> folios = List.of(folio(1, 1, "Nuevo"), folio(2, 2, "Nuevo"));
+        List<Folio> folios = List.of(folio(1, 1, "New"), folio(2, 2, "New"));
         when(folioRepository.findAllById(List.of(1, 2))).thenReturn(folios);
 
         assertThatThrownBy(() -> notebookService.createNotebook(List.of(1, 2), 1, 2026, null))

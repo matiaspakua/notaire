@@ -1,17 +1,17 @@
 /**
- * E2E — Workflow tracker reingreso loop (strategy b)
+ * E2E — Workflow tracker reentry loop (strategy b)
  * CU: CU83, CU44 — Issue #841
  *
  * Stubs the workflow-trace API so the secondary TestimonyMovement timeline
- * and reingreso badge can be asserted without depending on live seed data.
+ * and the reentry badge can be asserted without depending on live seed data.
  */
 import { type Page, test, expect } from "@playwright/test";
 
 async function loginAs(page: Page) {
   await page.goto("/login");
-  await page.getByTestId("input-usuario").fill("admin");
-  await page.getByTestId("input-contrasenia").fill("admin");
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("input-username").fill("admin");
+  await page.getByTestId("input-password").fill("admin");
+  await page.getByTestId("btn-sign-in").click();
   await page.waitForURL(/\/dashboard/, { timeout: 15000 });
   await page.waitForLoadState("domcontentloaded");
 }
@@ -20,8 +20,8 @@ function baseTrace(overrides: Record<string, unknown> = {}) {
   return {
     managementId: 1,
     number: 1001,
-    encabezado: "Reingreso loop fixture",
-    statusActual: "Testimonio Ingresado a Inscripcion",
+    heading: "Reingreso loop fixture",
+    currentStatus: "Testimony Ingresado a Inscripcion",
     workflowDefinition: {
       id: 1,
       name: "Standard management workflow",
@@ -37,25 +37,25 @@ function baseTrace(overrides: Record<string, unknown> = {}) {
       {
         id: 5,
         statusManagementId: 6,
-        statusManagementName: "Gestion con Escritura Firmada",
+        statusManagementName: "Gestion con Deed Firmada",
         type: "INTERMEDIATE",
       },
       {
         id: 8,
         statusManagementId: 11,
-        statusManagementName: "Testimonio Generado",
+        statusManagementName: "Testimony Generado",
         type: "INTERMEDIATE",
       },
       {
         id: 9,
         statusManagementId: 12,
-        statusManagementName: "Testimonio Ingresado a Inscripcion",
+        statusManagementName: "Testimony Ingresado a Inscripcion",
         type: "INTERMEDIATE",
       },
       {
         id: 10,
         statusManagementId: 13,
-        statusManagementName: "Testimonio Retirado",
+        statusManagementName: "Testimony Retirado",
         type: "FINAL",
       },
     ],
@@ -84,7 +84,7 @@ function baseTrace(overrides: Record<string, unknown> = {}) {
 }
 
 async function stubTrace(page: Page, body: Record<string, unknown>) {
-  await page.route("**/api/v1/gestiones/*/workflow-trace", async (route) => {
+  await page.route("**/api/v1/managements/*/workflow-trace", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -93,8 +93,8 @@ async function stubTrace(page: Page, body: Record<string, unknown>) {
   });
 }
 
-test.describe("Workflow tracker reingreso loop (#841)", () => {
-  test("shows reingreso badge and movement timeline when returnedObserved=2", async ({
+test.describe("Workflow tracker re-entry loop (#841)", () => {
+  test("shows the re-entry badge and movement timeline when returnedObserved=2", async ({
     page,
   }) => {
     await stubTrace(
@@ -123,8 +123,8 @@ test.describe("Workflow tracker reingreso loop (#841)", () => {
 
     const tracker = page.getByTestId("workflow-tracker");
     await expect(tracker).toBeVisible({ timeout: 15000 });
-    await expect(page.getByTestId("workflow-reingreso-badge")).toBeVisible();
-    await expect(page.getByTestId("workflow-reingreso-badge")).toContainText("2");
+    await expect(page.getByTestId("workflow-reentry-badge")).toBeVisible();
+    await expect(page.getByTestId("workflow-reentry-badge")).toContainText("2");
 
     await page.getByTestId("workflow-node-9").click();
     await expect(page.getByTestId("workflow-node-modal")).toBeVisible();
@@ -132,7 +132,7 @@ test.describe("Workflow tracker reingreso loop (#841)", () => {
     await expect(page.getByTestId("workflow-movement-entry")).toHaveCount(3);
   });
 
-  test("hides reingreso badge when no returned-observed movements", async ({
+  test("hides the re-entry badge when there are no returned-observed movements", async ({
     page,
   }) => {
     await stubTrace(
@@ -151,7 +151,7 @@ test.describe("Workflow tracker reingreso loop (#841)", () => {
 
     const tracker = page.getByTestId("workflow-tracker");
     await expect(tracker).toBeVisible({ timeout: 15000 });
-    await expect(page.getByTestId("workflow-reingreso-badge")).toHaveCount(0);
+    await expect(page.getByTestId("workflow-reentry-badge")).toHaveCount(0);
   });
 
   test("degrades without post-firma nodes and without movements", async ({
@@ -184,12 +184,12 @@ test.describe("Workflow tracker reingreso loop (#841)", () => {
 
     const tracker = page.getByTestId("workflow-tracker");
     await expect(tracker).toBeVisible({ timeout: 15000 });
-    await expect(page.getByTestId("workflow-reingreso-badge")).toHaveCount(0);
+    await expect(page.getByTestId("workflow-reentry-badge")).toHaveCount(0);
     await expect(page.getByTestId("workflow-node-1")).toBeVisible();
   });
 
   for (const width of [320, 768, 1024] as const) {
-    test(`renders tracker at ${width}px with reingreso badge`, async ({ page }) => {
+    test(`renders the tracker at ${width}px with the re-entry badge`, async ({ page }) => {
       await page.setViewportSize({ width, height: 800 });
       await stubTrace(
         page,
@@ -212,7 +212,7 @@ test.describe("Workflow tracker reingreso loop (#841)", () => {
       await expect(page.getByTestId("workflow-tracker")).toBeVisible({
         timeout: 15000,
       });
-      await expect(page.getByTestId("workflow-reingreso-badge")).toBeVisible();
+      await expect(page.getByTestId("workflow-reentry-badge")).toBeVisible();
     });
   }
 });

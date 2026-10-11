@@ -59,7 +59,7 @@ public class BudgetLookupAdapter implements BudgetLookupPort {
                 budget.getNumber(),
                 management != null ? management.getIdManagement() : null,
                 management != null ? management.getNumber() : null,
-                management != null ? management.getEncabezado() : null);
+                management != null ? management.getHeading() : null);
     }
 
     private static BudgetCharges toCharges(Budget budget) {

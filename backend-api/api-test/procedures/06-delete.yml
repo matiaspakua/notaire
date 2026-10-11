@@ -3,11 +3,11 @@ info:
   type: http
   seq: 6
   description: |-
-      ## Delete procedure — DELETE /api/v1/tramites/{procedure_id}
+      ## Delete procedure — DELETE /api/v1/procedures/{procedure_id}
       Traceability: CU53 (RF #3, #13)
 http:
   method: DELETE
-  url: "{{base_url}}/api/v1/tramites/{{procedure_id}}"
+  url: "{{base_url}}/api/v1/procedures/{{procedure_id}}"
   headers:
     - name: Content-Type
       value: application/json

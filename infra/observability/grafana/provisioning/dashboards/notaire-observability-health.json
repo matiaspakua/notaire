@@ -79,6 +79,13 @@
       "url": "/d/notaire-logs",
       "icon": "dashboard",
       "targetBlank": false
+    },
+    {
+      "title": "Security posture",
+      "type": "link",
+      "url": "/d/notaire-security",
+      "icon": "dashboard",
+      "targetBlank": false
     }
   ],
   "panels": [

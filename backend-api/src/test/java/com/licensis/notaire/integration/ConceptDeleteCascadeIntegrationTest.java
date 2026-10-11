@@ -18,9 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Regression test for {@code Concepto}'s
+ * Regression test for {@code Concept}'s
  * {@code @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)} collection of
- * {@link PlantillaPresupuesto} — the highest-risk cascade shape identified in design.md
+ * {@link BudgetTemplate} — the highest-risk cascade shape identified in design.md
  * "Riesgos" for reverting a delete via Hibernate re-managing the loaded, cascaded
  * children in the same persistence context (#957).
  *
@@ -41,7 +41,7 @@ class ConceptDeleteCascadeIntegrationTest {
 
     @Test
     @Transactional
-    @DisplayName("Should delete concepto and cascade-delete its plantilla_presupuesto children")
+    @DisplayName("Should delete concept and cascade-delete its template_budget children")
     void shouldDeleteConceptWithCascadedChildren() {
         Integer idConcept = createAndCommitConceptWithTemplate();
 
@@ -53,11 +53,11 @@ class ConceptDeleteCascadeIntegrationTest {
 
     private Integer createAndCommitConceptWithTemplate() {
         ProcedureType procedureType = new ProcedureType();
-        procedureType.setName("Cascade Test Tramite");
+        procedureType.setName("Cascade Test Procedure");
         procedureType = procedureTypeRepository.save(procedureType);
 
         Concept concept = new Concept();
-        concept.setName("Cascade Test Concepto");
+        concept.setName("Cascade Test Concept");
         concept.setValue(java.math.BigDecimal.ZERO);
         concept.setPercentage(0);
         concept = conceptRepository.save(concept);

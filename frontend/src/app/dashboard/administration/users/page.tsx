@@ -1,0 +1,208 @@
+"use client";
+
+import { useState } from "react";
+import { toast } from "sonner";
+import { Plus, Pencil, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { AppHeader } from "@/components/layout/AppHeader";
+import { DataTable, type Column } from "@/components/shared/DataTable";
+import { StatusBadge } from "@/components/shared/StatusBadge";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
+import { useUsers, useCreateUser, useUpdateUser, useDeleteUser } from "@/hooks/useUsers";
+import { useRoles, useAssignRoleToUser, useUnassignRoleFromUser } from "@/hooks/useRoles";
+import { presentMutationError } from "@/lib/mutation-error";
+import type { UserAccount } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
+
+const EMPTY: Partial<UserAccount> = { name: "", password: "", type: "EMPLEADO", active: true };
+const USER_FIELD_NAMES = ["name", "password", "type"];
+
+export default function UsersPage() {
+  const t = useTranslations("administracion.usuarios");
+  const showDeleteError = useDeleteError();
+  const tc = useTranslations("common");
+
+  const { data: users = [], isLoading } = useUsers();
+  const { data: roles = [] } = useRoles();
+  const createMutation = useCreateUser();
+  const updateMutation = useUpdateUser();
+  const deleteMutation = useDeleteUser();
+  const assignRoleMutation = useAssignRoleToUser();
+  const unassignRoleMutation = useUnassignRoleFromUser();
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [editing, setEditing] = useState<Partial<UserAccount>>(EMPTY);
+  const [selectedRoleId, setSelectedRoleId] = useState<string>("none");
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  function openCreate() {
+    setEditing(EMPTY);
+    setSelectedRoleId("none");
+    setIsEditMode(false);
+    setFieldErrors({});
+    setModalOpen(true);
+  }
+  function openEdit(u: UserAccount) {
+    setEditing({ ...u, password: "" });
+    setSelectedRoleId(u.role?.idRole?.toString() ?? "none");
+    setIsEditMode(true);
+    setFieldErrors({});
+    setModalOpen(true);
+  }
+
+  async function handleSave() {
+    if (!editing.name?.trim()) { toast.error(t("fields.nombre") + " " + tc("required")); return; }
+    setFieldErrors({});
+    try {
+      let savedId: number | undefined;
+      if (isEditMode && editing.idUser) {
+        await updateMutation.mutateAsync({ id: editing.idUser, data: editing });
+        savedId = editing.idUser;
+        toast.success(t("updated"));
+      } else {
+        const created = await createMutation.mutateAsync(editing);
+        savedId = (created as UserAccount)?.idUser;
+        toast.success(t("created"));
+      }
+      if (savedId) {
+        if (selectedRoleId && selectedRoleId !== "none") {
+          await assignRoleMutation.mutateAsync({ roleId: Number(selectedRoleId), userId: savedId });
+        } else if (isEditMode && editing.role) {
+          await unassignRoleMutation.mutateAsync(savedId);
+        }
+      }
+      setModalOpen(false);
+    } catch (err) {
+      presentMutationError(err, {
+        fallback: t("errorSave"),
+        fieldNames: USER_FIELD_NAMES,
+        setFieldErrors,
+      });
+    }
+  }
+
+  async function handleDelete() {
+    if (!deleteId) return;
+    try {
+      await deleteMutation.mutateAsync(deleteId);
+      toast.success(t("deleted"));
+    } catch (err) {
+      showDeleteError(err, t("errorDelete"));
+    } finally {
+      setDeleteId(null);
+    }
+  }
+
+  const userTypeVariant = (userType?: string) => {
+    const role = userType?.toUpperCase();
+    if (role === "ADMIN" || role === "ADMINISTRADOR" || role === "ESCRIBANO") return "default" as const;
+    return "secondary" as const;
+  };
+
+  const columns: Column<UserAccount>[] = [
+    { key: "id", header: tc("id"), render: (u) => <span className="text-xs text-muted-foreground">{u.idUser}</span>, className: "w-12" },
+    { key: "name", header: t("fields.nombre"), render: (u) => <span className="font-medium">{u.name}</span> },
+    { key: "type", header: t("fields.tipo"), render: (u) => <Badge variant={userTypeVariant(u.type)}>{u.type ?? "—"}</Badge> },
+    { key: "role", header: t("fields.rol"), render: (u) => u.role ? <Badge variant="outline">{u.role.name}</Badge> : <span className="text-xs text-muted-foreground">—</span> },
+    { key: "active", header: tc("status"), render: (u) => <StatusBadge domain="user" value={u.active ?? false} /> },
+    {
+      key: "actions", header: "", className: "w-24",
+      render: (u) => (
+        <div className="flex gap-2 justify-end">
+          <Button size="sm" variant="ghost" onClick={() => openEdit(u)} aria-label={tc("edit")}><Pencil className="h-4 w-4" /></Button>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(u.idUser!)} aria-label={tc("delete")}><Trash2 className="h-4 w-4" /></Button>
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <div>
+      <AppHeader
+        title={t("title")}
+        actions={<Button onClick={openCreate} data-testid="btn-new-user"><Plus className="h-4 w-4" />{t("newUsuario")}</Button>}
+      />
+      <DataTable data={users} columns={columns} isLoading={isLoading} keyExtractor={(u) => u.idUser!} emptyMessage={t("noData")} />
+
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+        <DialogContent>
+          <FormContainer>
+            <FormSection dialogTitle title={isEditMode ? t("editUsuario") : t("newUsuario")}>
+              <FormField label={t("fields.nombre")} required error={fieldErrors.name}>
+                <Input
+                  value={editing.name ?? ""}
+                  onChange={(e) => setEditing({ ...editing, name: e.target.value })}
+                  data-testid="input-name-user"
+                  aria-invalid={!!fieldErrors.name}
+                />
+              </FormField>
+              <FormField
+                label={isEditMode ? t("fields.nuevaContrasenia") : t("fields.contrasenia")}
+                required={!isEditMode}
+                helperText={isEditMode ? t("fields.contraseniaHint") : undefined}
+                error={fieldErrors.password}
+              >
+                <Input
+                  type="password"
+                  value={editing.password ?? ""}
+                  onChange={(e) => setEditing({ ...editing, password: e.target.value })}
+                  aria-invalid={!!fieldErrors.password}
+                />
+              </FormField>
+              <FormField label={t("fields.tipo")} error={fieldErrors.type}>
+                <Select
+                  value={editing.type ?? "EMPLEADO"}
+                  onValueChange={(v) => setEditing({ ...editing, type: v })}
+                >
+                  <SelectTrigger aria-invalid={!!fieldErrors.type}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="EMPLEADO">{t("roles.empleado")}</SelectItem>
+                    <SelectItem value="ADMIN">{t("roles.admin")}</SelectItem>
+                    <SelectItem value="ESCRIBANO">{t("roles.escribano")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormField>
+              <FormField label={t("fields.rolAcceso")} helperText={t("fields.rolAccesoHint")}>
+                <Select value={selectedRoleId} onValueChange={setSelectedRoleId}>
+                  <SelectTrigger data-testid="select-role-user">
+                    <SelectValue placeholder={t("fields.sinRolAsignado")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">{t("fields.sinRol")}</SelectItem>
+                    {roles.filter((r) => r.active).map((r) => (
+                      <SelectItem key={r.idRole} value={String(r.idRole)}>{r.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormField>
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>{tc("cancel")}</Button>
+              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
+                {isEditMode ? tc("update") : tc("create")}
+              </Button>
+            </FormActions>
+          </FormContainer>
+        </DialogContent>
+      </Dialog>
+
+      <ConfirmDialog open={!!deleteId} onOpenChange={(v) => !v && setDeleteId(null)} onConfirm={handleDelete} loading={deleteMutation.isPending} />
+    </div>
+  );
+}

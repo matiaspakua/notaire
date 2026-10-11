@@ -2,7 +2,7 @@ package com.licensis.notaire.dto;
 
 import java.time.LocalDate;
 
-/** A submitted document of a gestión's trámite, with the flags that tell how far it has progressed. */
+/** A submitted document of a management's procedure, with the flags that tell how far it has progressed. */
 public record DtoCaseDocument(
         Integer idSubmittedDocument,
         String name,

@@ -19,20 +19,20 @@ public class WorkflowValidationService {
         List<String> errors = new ArrayList<>();
 
         if (nodes.isEmpty()) {
-            errors.add("El workflow no tiene nodos.");
+            errors.add("The workflow has no nodes.");
             return ValidationResult.invalid(errors);
         }
 
         long initialCount = nodes.stream().filter(n -> n.getType() == WorkflowNodeType.INITIAL).count();
         if (initialCount == 0) {
-            errors.add("El workflow debe tener exactamente un nodo inicial.");
+            errors.add("The workflow must have exactly one initial node.");
         } else if (initialCount > 1) {
-            errors.add("El workflow tiene más de un nodo inicial (" + initialCount + ").");
+            errors.add("The workflow has more than one initial node (" + initialCount + ").");
         }
 
         long finalCount = nodes.stream().filter(n -> n.getType() == WorkflowNodeType.FINAL).count();
         if (finalCount == 0) {
-            errors.add("El workflow debe tener al menos un nodo final.");
+            errors.add("The workflow must have at least one final node.");
         }
 
         if (!errors.isEmpty()) {
@@ -53,7 +53,7 @@ public class WorkflowValidationService {
                     .filter(n -> unreachable.contains(n.getId()))
                     .map(n -> n.getManagementStatus() != null ? n.getManagementStatus().getName() : String.valueOf(n.getId()))
                     .collect(Collectors.joining(", "));
-            errors.add("Nodos no alcanzables desde el nodo inicial (aislados): " + names + ".");
+            errors.add("Nodes unreachable from the initial node (isolated): " + names + ".");
         }
 
         return errors.isEmpty() ? ValidationResult.valid() : ValidationResult.invalid(errors);

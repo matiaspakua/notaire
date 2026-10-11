@@ -30,299 +30,298 @@ skinparam note {
     FontSize 10
 }
 
-title **Diagrama de Compensación — Sistema Notaire**\nReglas de Integridad Referencial de Base de Datos (Insertar / Modificar / Borrar)\nAlineado con Flyway V1–V14 y PostgreSQL 16
+title **Compensation diagram — Notaire**\nReferential-integrity rules (Insert / Update / Delete)\nColumn names follow Flyway V45. PostgreSQL 16.
 
 ' =============================================================================
-' LEYENDA Y CONVENCIONES
+' LEGEND
 ' =============================================================================
 legend top left
-  |= Operación |= Mecanismo |= Significado |
-  | **I** (Insertar) | **I** (Impedir) | Requiere que exista la clave primaria padre (FK NOT NULL) |
-  | | **Null** (Asignar Null) | Permite registrar el hijo sin padre asociado cuando la FK es nullable |
-  | **M** (Modificar) | **I** (Impedir) | Impide cambiar la FK a un valor de PK inexistente |
-  | | **C** (Cascada) | Propaga cambios de PK a todas las FKs hijas |
-  | **B** (Borrar) | **I** (Impedir / Restrict) | Es la operación por defecto de PostgreSQL cuando no hay ON DELETE específico |
-  | | **C** (Cascada / Cascade) | Elimina en cascada los registros hijos al borrar el padre |
-  | | **Null** (Set Null) | Desvincula los hijos asignando NULL a la FK al borrar el padre |
-  | **Nota** | **V14** | La relación canónica es `tramites.fk_id_presupuesto`; `presupuestos.fk_id_tramite` fue eliminada |
+  |= Operation |= Mechanism |= Meaning |
+  | **I** (Insert) | **I** (Restrict) | The parent primary key must exist (FK NOT NULL) |
+  | | **Null** (Set null) | The child may be recorded without a parent when the FK is nullable |
+  | **M** (Update) | **I** (Restrict) | The FK cannot be changed to a primary key that does not exist |
+  | | **C** (Cascade) | A primary-key change is copied to every child foreign key |
+  | **B** (Delete) | **I** (Restrict) | PostgreSQL's default when no ON DELETE action is declared |
+  | | **C** (Cascade) | Deleting the parent deletes the child rows |
+  | | **Null** (Set null) | Deleting the parent sets the child foreign key to NULL |
+  | **Note** | **V14** | The canonical link is `procedures.fk_id_budget`. `budgets.fk_id_tramite` was removed |
 endlegend
 
 ' =============================================================================
-' ENTIDADES (Representadas como Óvalos según estándar Notarial)
+' ENTITIES
+' Numbering matches the Id column of "Diagrama de Compensacion.csv".
+' identifications is not drawn. Flyway V1–V44 never create it. See section 6.1.
 ' =============================================================================
-' Nota: la entidad heredada "Identificaciones" no se representa aquí porque nunca
-' fue materializada en las migraciones Flyway (V1-V14). Ver Diccionario de Datos §6.1.
-usecase "Personas" as personas
-usecase "Tipos de\nIdentificación" as tipos_identificacion
-usecase "Usuarios" as usuarios
-usecase "Roles" as roles
-usecase "Roles-Permisos" as roles_permisos
-usecase "Registro\nAuditoría" as registro_auditoria
-usecase "Suplencias" as suplencias
+usecase "people" as people
+usecase "identification_types" as identification_types
+usecase "users" as users
+usecase "roles" as roles
+usecase "role_modules" as role_modules
+usecase "audit_records" as audit_records
+usecase "substitutions" as substitutions
 
-usecase "Gestiones de\nEscrituras" as gestiones_escrituras
-usecase "Estados de\nGestión" as estados_de_gestion
-usecase "Historial" as historial
-usecase "Tipos de\nTrámite" as tipos_tramite
-usecase "Trámites" as tramites
-usecase "Trámites-Personas" as tramites_personas
-usecase "Inmuebles" as inmuebles
-usecase "Definición\nWorkflow" as workflow_definition
-usecase "Nodos\nWorkflow" as workflow_node
-usecase "Transiciones\nWorkflow" as workflow_transition
+usecase "deed_managements" as deed_managements
+usecase "management_statuses" as management_statuses
+usecase "history" as history
+usecase "procedure_types" as procedure_types
+usecase "procedures" as procedures
+usecase "person_procedures" as person_procedures
+usecase "properties" as properties
+usecase "workflow_definition" as workflow_definition
+usecase "workflow_node" as workflow_node
+usecase "workflow_transition" as workflow_transition
 
-usecase "Tipos de\nDocumento" as tipos_documentos
-usecase "Plantillas\nTrámites" as plantillas_tramites
-usecase "Documentos\nPresentados" as documentos_presentados
+usecase "document_types" as document_types
+usecase "procedure_templates" as procedure_templates
+usecase "submitted_documents" as submitted_documents
 
-usecase "Presupuestos" as presupuestos
-usecase "Conceptos" as conceptos
-usecase "Plantillas\nPresupuestos" as plantillas_presupuestos
-usecase "Items" as items
-usecase "Pagos" as pagos
+usecase "budgets" as budgets
+usecase "concepts" as concepts
+usecase "budget_templates" as budget_templates
+usecase "items" as items
+usecase "payments" as payments
 
-usecase "Escrituras" as escrituras
-usecase "Tipos de Folio" as tipos_folio
-usecase "Folios" as folios
-usecase "Testimonios" as testimonios
-usecase "Movimientos\nTestimonio" as movimientos_testimonio
-usecase "Copias" as copias
-usecase "Folios-Copias" as folios_copias
+usecase "deeds" as deeds
+usecase "folio_types" as folio_types
+usecase "folios" as folios
+usecase "testimonies" as testimonies
+usecase "testimony_movements" as testimony_movements
+usecase "copies" as copies
+usecase "folio_copies" as folio_copies
 
 ' =============================================================================
-' MECANISMOS DE COMPENSACIÓN Y RELACIONES
-' (Numeración alineada con la columna Id de "Diagrama de Compensacion.csv")
+' COMPENSATION RULES
 ' =============================================================================
 
-' 3. Personas -> Usuarios
-rectangle "I: I\nM: I\nB: I" as r_pers_usua <<rule>>
-personas -down- r_pers_usua
-r_pers_usua -down-> usuarios
+' 3. people -> users
+rectangle "I: I\nM: I\nB: I" as r_people_users <<rule>>
+people -down- r_people_users
+r_people_users -down-> users
 
-' 4. Roles -> Usuarios
-rectangle "I: Null\nM: I\nB: Null" as r_rol_usua <<rule>>
-roles -down- r_rol_usua
-r_rol_usua -down-> usuarios
+' 4. roles -> users
+rectangle "I: Null\nM: I\nB: Null" as r_roles_users <<rule>>
+roles -down- r_roles_users
+r_roles_users -down-> users
 
-' 5. Roles -> Roles-Permisos
-rectangle "I: I\nM: I\nB: C" as r_rol_perm <<rule>>
-roles -down- r_rol_perm
-r_rol_perm -down-> roles_permisos
+' 5. roles -> role_modules
+rectangle "I: I\nM: I\nB: C" as r_roles_modules <<rule>>
+roles -down- r_roles_modules
+r_roles_modules -down-> role_modules
 
-' 6. Usuarios -> Registro Auditoría
-rectangle "I: I\nM: I\nB: I" as r_usua_aud <<rule>>
-usuarios -down- r_usua_aud
-r_usua_aud -down-> registro_auditoria
+' 6. users -> audit_records
+rectangle "I: I\nM: I\nB: I" as r_users_audit <<rule>>
+users -down- r_users_audit
+r_users_audit -down-> audit_records
 
-' 7. Personas -> Suplencias (Suplantado / Suplente)
-rectangle "I: I\nM: I\nB: I" as r_pers_supl <<rule>>
-personas -down- r_pers_supl
-r_pers_supl -down-> suplencias
+' 7. people -> substitutions (substituted / substitute)
+rectangle "I: I\nM: I\nB: I" as r_people_substitutions <<rule>>
+people -down- r_people_substitutions
+r_people_substitutions -down-> substitutions
 
-' 8. Workflow Definition -> Nodos Workflow
+' 8. workflow_definition -> workflow_node
 rectangle "I: I\nM: I\nB: C" as r_wf_node <<rule>>
 workflow_definition -down- r_wf_node
 r_wf_node -down-> workflow_node
 
-' 9. Workflow Definition -> Transiciones Workflow
-rectangle "I: I\nM: I\nB: C" as r_wf_trans <<rule>>
-workflow_definition -down- r_wf_trans
-r_wf_trans -down-> workflow_transition
+' 9. workflow_definition -> workflow_transition
+rectangle "I: I\nM: I\nB: C" as r_wf_transition <<rule>>
+workflow_definition -down- r_wf_transition
+r_wf_transition -down-> workflow_transition
 
-' 10. Estados de Gestión -> Workflow Node
-rectangle "I: I\nM: I\nB: I" as r_est_wfnode <<rule>>
-estados_de_gestion -down- r_est_wfnode
-r_est_wfnode -down-> workflow_node
+' 10. management_statuses -> workflow_node
+rectangle "I: I\nM: I\nB: I" as r_status_node <<rule>>
+management_statuses -down- r_status_node
+r_status_node -down-> workflow_node
 
-' 11. Workflow Node -> Workflow Transition
-rectangle "I: I\nM: I\nB: C" as r_wfnode_trans <<rule>>
-workflow_node -down- r_wfnode_trans
-r_wfnode_trans -down-> workflow_transition
+' 11. workflow_node -> workflow_transition
+rectangle "I: I\nM: I\nB: C" as r_node_transition <<rule>>
+workflow_node -down- r_node_transition
+r_node_transition -down-> workflow_transition
 
-' 12. Workflow Definition -> Tipos de Trámite
-rectangle "I: Null\nM: I\nB: I" as r_wf_tt <<rule>>
-workflow_definition -down- r_wf_tt
-r_wf_tt -down-> tipos_tramite
-note right of r_wf_tt
-  La columna es nullable; el borrado del workflow
-  queda restringido por defecto de PostgreSQL.
+' 12. workflow_definition -> procedure_types
+rectangle "I: Null\nM: I\nB: I" as r_wf_procedure_type <<rule>>
+workflow_definition -down- r_wf_procedure_type
+r_wf_procedure_type -down-> procedure_types
+note right of r_wf_procedure_type
+  The column is nullable. Deleting the workflow
+  stays restricted by PostgreSQL's default.
 end note
 
-' 13. Personas (Escribano) -> Gestiones de Escrituras
-rectangle "I: I\nM: I\nB: I" as r_pers_ges <<rule>>
-personas -down- r_pers_ges
-r_pers_ges -down-> gestiones_escrituras
+' 13. people (notary) -> deed_managements
+rectangle "I: I\nM: I\nB: I" as r_people_managements <<rule>>
+people -down- r_people_managements
+r_people_managements -down-> deed_managements
 
-' 14. Estados de Gestión -> Gestiones de Escrituras
-rectangle "I: Null\nM: I\nB: Null" as r_est_ges <<rule>>
-estados_de_gestion -down- r_est_ges
-r_est_ges -down-> gestiones_escrituras
+' 14. management_statuses -> deed_managements
+rectangle "I: Null\nM: I\nB: Null" as r_status_managements <<rule>>
+management_statuses -down- r_status_managements
+r_status_managements -down-> deed_managements
 
-' 15. Gestiones de Escrituras -> Historial
-rectangle "I: I\nM: I\nB: C" as r_ges_hist <<rule>>
-gestiones_escrituras -down- r_ges_hist
-r_ges_hist -down-> historial
+' 15. deed_managements -> history
+rectangle "I: I\nM: I\nB: C" as r_managements_history <<rule>>
+deed_managements -down- r_managements_history
+r_managements_history -down-> history
 
-' 16. Estados de Gestión -> Historial
-rectangle "I: I\nM: I\nB: I" as r_est_hist <<rule>>
-estados_de_gestion -down- r_est_hist
-r_est_hist -down-> historial
+' 16. management_statuses -> history
+rectangle "I: I\nM: I\nB: I" as r_status_history <<rule>>
+management_statuses -down- r_status_history
+r_status_history -down-> history
 
-' 17. Tipos de Trámite -> Plantillas Trámites
-rectangle "I: I\nM: I\nB: I" as r_tt_pt <<rule>>
-tipos_tramite -down- r_tt_pt
-r_tt_pt -down-> plantillas_tramites
+' 17. procedure_types -> procedure_templates
+rectangle "I: I\nM: I\nB: I" as r_procedure_type_templates <<rule>>
+procedure_types -down- r_procedure_type_templates
+r_procedure_type_templates -down-> procedure_templates
 
-' 18. Tipos de Documento -> Plantillas Trámites
-rectangle "I: I\nM: I\nB: C" as r_td_pt <<rule>>
-tipos_documentos -down- r_td_pt
-r_td_pt -down-> plantillas_tramites
+' 18. document_types -> procedure_templates
+rectangle "I: I\nM: I\nB: C" as r_document_type_templates <<rule>>
+document_types -down- r_document_type_templates
+r_document_type_templates -down-> procedure_templates
 
-' 19. Tipos de Trámite -> Plantillas Presupuestos
-rectangle "I: I\nM: I\nB: C" as r_tt_pp <<rule>>
-tipos_tramite -down- r_tt_pp
-r_tt_pp -down-> plantillas_presupuestos
+' 19. procedure_types -> budget_templates
+rectangle "I: I\nM: I\nB: C" as r_procedure_type_budget_templates <<rule>>
+procedure_types -down- r_procedure_type_budget_templates
+r_procedure_type_budget_templates -down-> budget_templates
 
-' 20. Conceptos -> Plantillas Presupuestos
-rectangle "I: I\nM: I\nB: C" as r_conc_pp <<rule>>
-conceptos -down- r_conc_pp
-r_conc_pp -down-> plantillas_presupuestos
+' 20. concepts -> budget_templates
+rectangle "I: I\nM: I\nB: C" as r_concepts_budget_templates <<rule>>
+concepts -down- r_concepts_budget_templates
+r_concepts_budget_templates -down-> budget_templates
 
-' 21. Personas -> Presupuestos
-rectangle "I: I\nM: I\nB: I" as r_pers_pres <<rule>>
-personas -down- r_pers_pres
-r_pers_pres -down-> presupuestos
+' 21. people -> budgets
+rectangle "I: I\nM: I\nB: I" as r_people_budgets <<rule>>
+people -down- r_people_budgets
+r_people_budgets -down-> budgets
 
-' 22. Presupuestos -> Items
-rectangle "I: I\nM: I\nB: C" as r_pres_items <<rule>>
-presupuestos -down- r_pres_items
-r_pres_items -down-> items
+' 22. budgets -> items
+rectangle "I: I\nM: I\nB: C" as r_budgets_items <<rule>>
+budgets -down- r_budgets_items
+r_budgets_items -down-> items
 
-' 23. Presupuestos -> Pagos
-rectangle "I: I\nM: I\nB: I" as r_pres_pagos <<rule>>
-presupuestos -down- r_pres_pagos
-r_pres_pagos -down-> pagos
-note right of r_pres_pagos
-  No existen pagos sin presupuesto.
-  Impedir borrar presupuesto con cobranzas.
+' 23. budgets -> payments
+rectangle "I: I\nM: I\nB: I" as r_budgets_payments <<rule>>
+budgets -down- r_budgets_payments
+r_budgets_payments -down-> payments
+note right of r_budgets_payments
+  Payments cannot exist without a budget.
+  Do not delete a budget that has payments.
 end note
 
-' 24. Presupuestos -> Trámites (Flyway V14: relación canónica en tramites.fk_id_presupuesto)
-rectangle "I: I\nM: I\nB: I" as r_pres_tram <<rule>>
-presupuestos -down- r_pres_tram
-r_pres_tram -down-> tramites
-note right of r_pres_tram
-  V14: la FK redundante en presupuestos fue removida.
-  La relación viva se expresa desde tramites hacia presupuestos.
+' 24. budgets -> procedures (Flyway V14: canonical link is procedures.fk_id_budget)
+rectangle "I: I\nM: I\nB: I" as r_budgets_procedures <<rule>>
+budgets -down- r_budgets_procedures
+r_budgets_procedures -down-> procedures
+note right of r_budgets_procedures
+  V14: the redundant foreign key on budgets was removed.
+  The live link is procedures.fk_id_budget.
 end note
 
-' 25. Tipos de Trámite -> Trámites
-rectangle "I: I\nM: I\nB: I" as r_tt_tram <<rule>>
-tipos_tramite -down- r_tt_tram
-r_tt_tram -down-> tramites
+' 25. procedure_types -> procedures
+rectangle "I: I\nM: I\nB: I" as r_procedure_type_procedures <<rule>>
+procedure_types -down- r_procedure_type_procedures
+r_procedure_type_procedures -down-> procedures
 
-' 26. Gestiones de Escrituras -> Trámites
-rectangle "I: Null\nM: I\nB: Null" as r_ges_tram <<rule>>
-gestiones_escrituras -down- r_ges_tram
-r_ges_tram -down-> tramites
-note right of r_ges_tram
-  Protocolo Auxiliar puede no
-  tener carpeta de gestión.
+' 26. deed_managements -> procedures
+rectangle "I: Null\nM: I\nB: Null" as r_managements_procedures <<rule>>
+deed_managements -down- r_managements_procedures
+r_managements_procedures -down-> procedures
+note right of r_managements_procedures
+  Protocolo Auxiliar may have
+  no deed-management folder.
 end note
 
-' 27. Escrituras -> Trámites
-rectangle "I: Null\nM: I\nB: Null" as r_escr_tram <<rule>>
-escrituras -down- r_escr_tram
-r_escr_tram -down-> tramites
-note right of r_escr_tram
-  El trámite nace sin escritura;
-  se asigna al otorgar el acto.
+' 27. deeds -> procedures
+rectangle "I: Null\nM: I\nB: Null" as r_deeds_procedures <<rule>>
+deeds -down- r_deeds_procedures
+r_deeds_procedures -down-> procedures
+note right of r_deeds_procedures
+  The procedure starts without a deed.
+  The deed is assigned when the act is granted.
 end note
 
-' 28. Inmuebles -> Trámites
-rectangle "I: Null\nM: I\nB: Null" as r_inm_tram <<rule>>
-inmuebles -down- r_inm_tram
-r_inm_tram -down-> tramites
-note right of r_inm_tram
-  Trámites sin inmueble
-  tienen FK nula.
+' 28. properties -> procedures
+rectangle "I: Null\nM: I\nB: Null" as r_properties_procedures <<rule>>
+properties -down- r_properties_procedures
+r_properties_procedures -down-> procedures
+note right of r_properties_procedures
+  Procedures with no property
+  have a null foreign key.
 end note
 
-' 29. Trámites -> Trámites-Personas
-rectangle "I: I\nM: I\nB: C" as r_tram_tp <<rule>>
-tramites -down- r_tram_tp
-r_tram_tp -down-> tramites_personas
+' 29. procedures -> person_procedures
+rectangle "I: I\nM: I\nB: C" as r_procedures_parties <<rule>>
+procedures -down- r_procedures_parties
+r_procedures_parties -down-> person_procedures
 
-' 30. Personas -> Trámites-Personas
-rectangle "I: I\nM: I\nB: I" as r_pers_tp <<rule>>
-personas -down- r_pers_tp
-r_pers_tp -down-> tramites_personas
+' 30. people -> person_procedures
+rectangle "I: I\nM: I\nB: I" as r_people_parties <<rule>>
+people -down- r_people_parties
+r_people_parties -down-> person_procedures
 
-' 31. Trámites -> Documentos Presentados (Flyway V6)
-rectangle "I: Null\nM: I\nB: C" as r_tram_docp <<rule>>
-tramites -down- r_tram_docp
-r_tram_docp -down-> documentos_presentados
-note right of r_tram_docp
-  V6: Permite documentos autónomos
-  previo a asociar trámite.
+' 31. procedures -> submitted_documents (Flyway V6)
+rectangle "I: Null\nM: I\nB: C" as r_procedures_documents <<rule>>
+procedures -down- r_procedures_documents
+r_procedures_documents -down-> submitted_documents
+note right of r_procedures_documents
+  V6: autonomous documents are allowed
+  before a procedure is assigned.
 end note
 
-' 32. Tipos de Documento -> Documentos Presentados
-rectangle "I: Null\nM: I\nB: I" as r_td_docp <<rule>>
-tipos_documentos -down- r_td_docp
-r_td_docp -down-> documentos_presentados
+' 32. document_types -> submitted_documents
+rectangle "I: Null\nM: I\nB: I" as r_document_type_documents <<rule>>
+document_types -down- r_document_type_documents
+r_document_type_documents -down-> submitted_documents
 
-' 33. Personas (Escribano) -> Folios
-rectangle "I: I\nM: I\nB: I" as r_pers_fol <<rule>>
-personas -down- r_pers_fol
-r_pers_fol -down-> folios
+' 33. people (notary) -> folios
+rectangle "I: I\nM: I\nB: I" as r_people_folios <<rule>>
+people -down- r_people_folios
+r_people_folios -down-> folios
 
-' 34. Tipos de Folio -> Folios
-rectangle "I: I\nM: I\nB: I" as r_tf_fol <<rule>>
-tipos_folio -down- r_tf_fol
-r_tf_fol -down-> folios
+' 34. folio_types -> folios
+rectangle "I: I\nM: I\nB: I" as r_folio_type_folios <<rule>>
+folio_types -down- r_folio_type_folios
+r_folio_type_folios -down-> folios
 
-' 35. Escrituras -> Folios
-rectangle "I: Null\nM: I\nB: Null" as r_escr_fol <<rule>>
-escrituras -down- r_escr_fol
-r_escr_fol -down-> folios
-note right of r_escr_fol
-  Folios disponibles o en "Errose / No Pasó"
-  no tienen escritura asignada.
+' 35. deeds -> folios
+rectangle "I: Null\nM: I\nB: Null" as r_deeds_folios <<rule>>
+deeds -down- r_deeds_folios
+r_deeds_folios -down-> folios
+note right of r_deeds_folios
+  Folios that are available, or stored as "Errose / No Pasó",
+  have no deed assigned.
 end note
 
-' 36. Escrituras -> Testimonios
-rectangle "I: I\nM: I\nB: C" as r_escr_test <<rule>>
-escrituras -down- r_escr_test
-r_escr_test -down-> testimonios
+' 36. deeds -> testimonies
+rectangle "I: I\nM: I\nB: C" as r_deeds_testimonies <<rule>>
+deeds -down- r_deeds_testimonies
+r_deeds_testimonies -down-> testimonies
 
-' 37. Testimonios -> Movimientos Testimonio
-rectangle "I: I\nM: I\nB: C" as r_test_mov <<rule>>
-testimonios -down- r_test_mov
-r_test_mov -down-> movimientos_testimonio
+' 37. testimonies -> testimony_movements
+rectangle "I: I\nM: I\nB: C" as r_testimonies_movements <<rule>>
+testimonies -down- r_testimonies_movements
+r_testimonies_movements -down-> testimony_movements
 
-' 38. Testimonios -> Copias
-rectangle "I: I\nM: I\nB: C" as r_test_cop <<rule>>
-testimonios -down- r_test_cop
-r_test_cop -down-> copias
-note right of r_test_cop
-  Se eliminan copias no retiradas
-  o emitidas erróneamente.
+' 38. testimonies -> copies
+rectangle "I: I\nM: I\nB: C" as r_testimonies_copies <<rule>>
+testimonies -down- r_testimonies_copies
+r_testimonies_copies -down-> copies
+note right of r_testimonies_copies
+  Copies that were not picked up,
+  or that were issued by mistake, are deleted.
 end note
 
-' 39. Personas -> Copias
-rectangle "I: I\nM: I\nB: I" as r_pers_cop <<rule>>
-personas -down- r_pers_cop
-r_pers_cop -down-> copias
+' 39. people -> copies
+rectangle "I: I\nM: I\nB: I" as r_people_copies <<rule>>
+people -down- r_people_copies
+r_people_copies -down-> copies
 
-' 40. Folios -> Folios-Copias
-rectangle "I: I\nM: I\nB: I" as r_fol_fc <<rule>>
-folios -down- r_fol_fc
-r_fol_fc -down-> folios_copias
+' 40. folios -> folio_copies
+rectangle "I: I\nM: I\nB: I" as r_folios_folio_copies <<rule>>
+folios -down- r_folios_folio_copies
+r_folios_folio_copies -down-> folio_copies
 
-' 41. Copias -> Folios-Copias
-rectangle "I: I\nM: I\nB: C" as r_cop_fc <<rule>>
-copias -down- r_cop_fc
-r_cop_fc -down-> folios_copias
+' 41. copies -> folio_copies
+rectangle "I: I\nM: I\nB: C" as r_copies_folio_copies <<rule>>
+copies -down- r_copies_folio_copies
+r_copies_folio_copies -down-> folio_copies
 
 @enduml

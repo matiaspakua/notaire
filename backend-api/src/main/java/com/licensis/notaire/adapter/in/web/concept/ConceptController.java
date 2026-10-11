@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/conceptos")
-@Tag(name = "Conceptos", description = "API para gestionar conceptos")
+@RequestMapping("/api/v1/concepts")
+@Tag(name = "Concepts", description = "API for managing concepts")
 public class ConceptController {
 
     private static final Logger log = LoggerFactory.getLogger(ConceptController.class);
@@ -44,7 +44,7 @@ public class ConceptController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todos los conceptos")
+    @Operation(summary = "Get all concepts")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoConcept>> getAllConcepts() {
         List<DtoConcept> result = service.findAll().stream()
@@ -54,7 +54,7 @@ public class ConceptController {
     }
 
     @GetMapping("/search")
-    @Operation(summary = "Buscar conceptos por nombre")
+    @Operation(summary = "Search concepts by name")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoConcept>> searchConcepts(@RequestParam String name) {
         List<DtoConcept> result = service.searchByName(name).stream()
@@ -64,7 +64,7 @@ public class ConceptController {
     }
 
     @GetMapping("/{id}/in-use")
-    @Operation(summary = "Verificar si un concepto está en uso")
+    @Operation(summary = "Check whether a concept is in use")
     @Transactional(readOnly = true)
     public ResponseEntity<Map<String, Boolean>> isConceptInUse(@PathVariable Integer id) {
         if (service.findById(id).isEmpty()) {
@@ -76,10 +76,10 @@ public class ConceptController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener concepto por ID")
+    @Operation(summary = "Get concept by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<DtoConcept> getConceptById(@PathVariable Integer id) {
         return service.findById(id)
@@ -88,19 +88,19 @@ public class ConceptController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "201", description = "Created"),
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
-    @Operation(summary = "Crear nuevo concepto")
+    @Operation(summary = "Create concept")
     public ResponseEntity<Object> createConcept(@RequestBody DtoConcept dto) {
         try {
             if (dto.getEnabled() == null) {
                 dto.setEnabled(true);
             }
             Concept entity = new Concept();
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             entity = service.create(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
@@ -111,12 +111,12 @@ public class ConceptController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-    @ApiResponse(responseCode = "404", description = "No encontrado"),
-    @ApiResponse(responseCode = "409", description = "version no es la almacenada: otro usuario modificó el registro")
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
+    @ApiResponse(responseCode = "404", description = "Not found"),
+    @ApiResponse(responseCode = "409", description = "version is not the stored one: another user modified the record")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar concepto")
+    @Operation(summary = "Update concept")
     public ResponseEntity<Object> updateConcept(@PathVariable Integer id, @RequestBody DtoConcept dto) {
         try {
             var existing = service.findById(id);
@@ -125,14 +125,14 @@ public class ConceptController {
             }
             if (!templateRepository.findByConceptIdConcept(id).isEmpty()) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body(Map.of("error", "Este concepto está en uso y no puede modificarse. Cree un nuevo concepto."));
+                        .body(Map.of("error", "This concept is in use and cannot be modified. Create a new concept."));
             }
             dto.setIdConcept(id);
             Concept entity = existing.get();
             if (dto.getEnabled() == null) {
                 dto.setEnabled(entity.getEnabled());
             }
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             service.update(id, entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
@@ -142,11 +142,11 @@ public class ConceptController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "204", description = "Deleted"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar concepto")
+    @Operation(summary = "Delete concept")
     public ResponseEntity<Object> deleteConcept(@PathVariable Integer id) {
         try {
             if (service.findById(id).isEmpty()) {
@@ -154,7 +154,7 @@ public class ConceptController {
             }
             if (!templateRepository.findByConceptIdConcept(id).isEmpty()) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body(Map.of("error", "No se puede eliminar: el concepto está siendo utilizado en plantillas de presupuesto."));
+                        .body(Map.of("error", "Cannot delete: the concept is in use on budget templates."));
             }
             service.deleteById(id);
             return ResponseEntity.noContent().build();

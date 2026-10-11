@@ -4,10 +4,10 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Copy;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
@@ -27,7 +27,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author juanca
  */
-public class FolioJpaController implements Serializable, IPersistenciaJpa
+public class FolioJpaController implements Serializable, JpaPersistence
 {
 
     public FolioJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -111,11 +111,11 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public void edit(Folio folio) throws NonexistentEntityException, ClassModifiedException, ClassEliminatedException
+    public void edit(Folio folio) throws NonexistentEntityException, ClassModifiedException, ClassDeletedException
     {
         EntityManager em = null;
-        Integer version = ConstantesPersistencia.VersionINICIAL;
-        Integer oldVersion = ConstantesPersistencia.VersionINICIAL;
+        Integer version = PersistenceConstants.INITIAL_VERSION;
+        Integer oldVersion = PersistenceConstants.INITIAL_VERSION;
 
         em = getEntityManager();
         em.getTransaction().begin();
@@ -126,7 +126,7 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
             version = persistentFolio.getVersion();
             oldVersion = folio.getVersion();
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 if (em != null)
                 {
@@ -141,8 +141,8 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
                 FolioType fkIdFolioTypeNew = folio.getFkIdFolioType();
                 Deed fkIdDeedOld = persistentFolio.getFkIdDeed();
                 Deed fkIdDeedNew = folio.getFkIdDeed();
-//                List<Copia> copiaListOld = persistentFolio.getCopiaList();
-//                List<Copia> copiaListNew = folio.getCopiaList();
+//                List<Copy> copyListOld = persistentFolio.getCopyList();
+//                List<Copy> copyListNew = folio.getCopyList();
                 if (fkIdNotaryPersonNew != null)
                 {
                     fkIdNotaryPersonNew = em.getReference(fkIdNotaryPersonNew.getClass(), fkIdNotaryPersonNew.getPersonId());
@@ -158,59 +158,59 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
                     fkIdDeedNew = em.getReference(fkIdDeedNew.getClass(), fkIdDeedNew.getIdDeed());
                     folio.setFkIdDeed(fkIdDeedNew);
                 }
-//                List<Copia> attachedCopiaListNew = new ArrayList<Copia>();
-//                for (Copia copiaListNewCopiaToAttach : copiaListNew)
+//                List<Copy> attachedCopyListNew = new ArrayList<Copy>();
+//                for (Copy copyListNewCopyToAttach : copyListNew)
 //                {
-//                    copiaListNewCopiaToAttach = em.getReference(copiaListNewCopiaToAttach.getClass(), copiaListNewCopiaToAttach.getIdCopia());
-//                    attachedCopiaListNew.add(copiaListNewCopiaToAttach);
+//                    copyListNewCopyToAttach = em.getReference(copyListNewCopyToAttach.getClass(), copyListNewCopyToAttach.getIdCopy());
+//                    attachedCopyListNew.add(copyListNewCopyToAttach);
 //                }
-//                copiaListNew = attachedCopiaListNew;
-//                folio.setCopiaList(copiaListNew);
+//                copyListNew = attachedCopyListNew;
+//                folio.setCopyList(copyListNew);
                 folio = em.merge(folio);
-//                if (fkIdPersonaEscribanoOld != null && !fkIdPersonaEscribanoOld.equals(fkIdPersonaEscribanoNew))
+//                if (fkIdNotaryPersonOld != null && !fkIdNotaryPersonOld.equals(fkIdNotaryPersonNew))
 //                {
-//                    fkIdPersonaEscribanoOld.getFolioList().remove(folio);
-//                    fkIdPersonaEscribanoOld = em.merge(fkIdPersonaEscribanoOld);
+//                    fkIdNotaryPersonOld.getFolioList().remove(folio);
+//                    fkIdNotaryPersonOld = em.merge(fkIdNotaryPersonOld);
 //                }
-//                if (fkIdPersonaEscribanoNew != null && !fkIdPersonaEscribanoNew.equals(fkIdPersonaEscribanoOld))
+//                if (fkIdNotaryPersonNew != null && !fkIdNotaryPersonNew.equals(fkIdNotaryPersonOld))
 //                {
-//                    fkIdPersonaEscribanoNew.getFolioList().add(folio);
-//                    fkIdPersonaEscribanoNew = em.merge(fkIdPersonaEscribanoNew);
+//                    fkIdNotaryPersonNew.getFolioList().add(folio);
+//                    fkIdNotaryPersonNew = em.merge(fkIdNotaryPersonNew);
 //                }
-//                if (fkIdTipoFolioOld != null && !fkIdTipoFolioOld.equals(fkIdTipoFolioNew))
+//                if (fkIdFolioTypeOld != null && !fkIdFolioTypeOld.equals(fkIdFolioTypeNew))
 //                {
-//                    fkIdTipoFolioOld.getFolioList().remove(folio);
-//                    fkIdTipoFolioOld = em.merge(fkIdTipoFolioOld);
+//                    fkIdFolioTypeOld.getFolioList().remove(folio);
+//                    fkIdFolioTypeOld = em.merge(fkIdFolioTypeOld);
 //                }
-//                if (fkIdTipoFolioNew != null && !fkIdTipoFolioNew.equals(fkIdTipoFolioOld))
+//                if (fkIdFolioTypeNew != null && !fkIdFolioTypeNew.equals(fkIdFolioTypeOld))
 //                {
-//                    fkIdTipoFolioNew.getFolioList().add(folio);
-//                    fkIdTipoFolioNew = em.merge(fkIdTipoFolioNew);
+//                    fkIdFolioTypeNew.getFolioList().add(folio);
+//                    fkIdFolioTypeNew = em.merge(fkIdFolioTypeNew);
 //                }
-//                if (fkIdEscrituraOld != null && !fkIdEscrituraOld.equals(fkIdEscrituraNew))
+//                if (fkIdDeedOld != null && !fkIdDeedOld.equals(fkIdDeedNew))
 //                {
-//                    fkIdEscrituraOld.getFolioList().remove(folio);
-//                    fkIdEscrituraOld = em.merge(fkIdEscrituraOld);
+//                    fkIdDeedOld.getFolioList().remove(folio);
+//                    fkIdDeedOld = em.merge(fkIdDeedOld);
 //                }
-//                if (fkIdEscrituraNew != null && !fkIdEscrituraNew.equals(fkIdEscrituraOld))
+//                if (fkIdDeedNew != null && !fkIdDeedNew.equals(fkIdDeedOld))
 //                {
-//                    fkIdEscrituraNew.getFolioList().add(folio);
-//                    fkIdEscrituraNew = em.merge(fkIdEscrituraNew);
+//                    fkIdDeedNew.getFolioList().add(folio);
+//                    fkIdDeedNew = em.merge(fkIdDeedNew);
 //                }
-//                for (Copia copiaListOldCopia : copiaListOld)
+//                for (Copy copyListOldCopy : copyListOld)
 //                {
-//                    if (!copiaListNew.contains(copiaListOldCopia))
+//                    if (!copyListNew.contains(copyListOldCopy))
 //                    {
-//                        copiaListOldCopia.getFolioList().remove(folio);
-//                        copiaListOldCopia = em.merge(copiaListOldCopia);
+//                        copyListOldCopy.getFolioList().remove(folio);
+//                        copyListOldCopy = em.merge(copyListOldCopy);
 //                    }
 //                }
-//                for (Copia copiaListNewCopia : copiaListNew)
+//                for (Copy copyListNewCopy : copyListNew)
 //                {
-//                    if (!copiaListOld.contains(copiaListNewCopia))
+//                    if (!copyListOld.contains(copyListNewCopy))
 //                    {
-//                        copiaListNewCopia.getFolioList().add(folio);
-//                        copiaListNewCopia = em.merge(copiaListNewCopia);
+//                        copyListNewCopy.getFolioList().add(folio);
+//                        copyListNewCopy = em.merge(copyListNewCopy);
 //                    }
 //                }
                 em.getTransaction().commit();
@@ -222,28 +222,28 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
             }
         } else
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
     }
 
-    public boolean updateFolioFull(Folio folioModificado) throws ClassModifiedException
+    public boolean updateFolioFull(Folio updatedFolio) throws ClassModifiedException
     {
-        boolean resultado = false;
+        boolean result = false;
 
         EntityManager em = null;
-        Integer version = ConstantesPersistencia.VersionINICIAL;
-        Integer oldVersion = ConstantesPersistencia.VersionINICIAL;
+        Integer version = PersistenceConstants.INITIAL_VERSION;
+        Integer oldVersion = PersistenceConstants.INITIAL_VERSION;
 
         em = getEntityManager();
         em.getTransaction().begin();
-        Folio persistentFolio = em.find(Folio.class, folioModificado.getIdFolio());
+        Folio persistentFolio = em.find(Folio.class, updatedFolio.getIdFolio());
 
         if (persistentFolio != null)
         {
             version = persistentFolio.getVersion();
-            oldVersion = folioModificado.getVersion();
+            oldVersion = updatedFolio.getVersion();
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 if (em != null)
                 {
@@ -252,12 +252,12 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
                 throw new ClassModifiedException();
             } else
             {
-                persistentFolio.setYear(folioModificado.getYear());
-                persistentFolio.setStatus(folioModificado.getStatus());
-//                persistentFolio.setFkIdPersonaEscribano(folioModificado.getFkIdPersonaEscribano());
-//                persistentFolio.setFkIdTipoFolio(folioModificado.getFkIdTipoFolio());
-                persistentFolio.setNumber(folioModificado.getNumber());
-                persistentFolio.setNotes(folioModificado.getNotes());
+                persistentFolio.setYear(updatedFolio.getYear());
+                persistentFolio.setStatus(updatedFolio.getStatus());
+//                persistentFolio.setFkIdNotaryPerson(updatedFolio.getFkIdNotaryPerson());
+//                persistentFolio.setFkIdFolioType(updatedFolio.getFkIdFolioType());
+                persistentFolio.setNumber(updatedFolio.getNumber());
+                persistentFolio.setNotes(updatedFolio.getNotes());
 
                 em.getTransaction().commit();
 
@@ -266,11 +266,11 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
                     em.close();
                 }
 
-                resultado = true;
+                result = true;
             }
         }
 
-        return resultado;
+        return result;
     }
 
     public void destroy(Integer id) throws NonexistentEntityException
@@ -335,21 +335,21 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
     public List<Folio> findFoliosByRecordYear(Integer record, Integer year)
     {
         EntityManager em = getEntityManager();
-        List<Folio> miListaFolios = null;
+        List<Folio> folios = null;
         try
         {
             Query q = em.createNamedQuery("Folio.findByYearAndRegistration");
-            q.setParameter("anio", year);
-            q.setParameter("registro", record);
-            miListaFolios = q.getResultList();
+            q.setParameter("year", year);
+            q.setParameter("registration", record);
+            folios = q.getResultList();
 
-            for (Iterator<Folio> it = miListaFolios.iterator(); it.hasNext();)
+            for (Iterator<Folio> it = folios.iterator(); it.hasNext();)
             {
                 Folio folio = it.next();
                 folio.setFkIdNotaryPerson(null);
             }
 
-            return miListaFolios;
+            return folios;
         }
         finally
         {
@@ -361,21 +361,21 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
     public List<Folio> findFoliosByNumber(Integer number)
     {
         EntityManager em = getEntityManager();
-        List<Folio> miListaFolios = null;
+        List<Folio> folios = null;
         try
         {
             Query q = em.createNamedQuery("Folio.findByNumber");
             q.setParameter("number", number);
 
-            miListaFolios = q.getResultList();
+            folios = q.getResultList();
 
-            for (Iterator<Folio> it = miListaFolios.iterator(); it.hasNext();)
+            for (Iterator<Folio> it = folios.iterator(); it.hasNext();)
             {
                 Folio folio = it.next();
                 folio.setFkIdNotaryPerson(null);
             }
 
-            return miListaFolios;
+            return folios;
         }
         finally
         {
@@ -440,7 +440,7 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public void updateFolio(Folio miFolio) throws ClassModifiedException, ClassEliminatedException
+    public void updateFolio(Folio folio) throws ClassModifiedException, ClassDeletedException
     {
         EntityManager em = null;
 
@@ -449,27 +449,27 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
 
         em = getEntityManager();
         em.getTransaction().begin();
-        Folio persistentFolio = em.find(Folio.class, miFolio.getIdFolio());
+        Folio persistentFolio = em.find(Folio.class, folio.getIdFolio());
 
         if (persistentFolio != null)
         {
-            version = persistentFolio.getVersion(); // Version del Objeto en db
-            oldVersion = miFolio.getVersion(); // Version del Objeto en memoria
+            version = persistentFolio.getVersion(); // Version of the object in the database
+            oldVersion = folio.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException();
 
             }
 
-            persistentFolio.setStatus(miFolio.getStatus());
+            persistentFolio.setStatus(folio.getStatus());
 
             em.getTransaction().commit();
 
             em.close();
         } else
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
     }
 

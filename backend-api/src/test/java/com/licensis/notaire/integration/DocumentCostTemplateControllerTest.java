@@ -29,7 +29,7 @@ import java.util.Map;
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @Transactional
-@DisplayName("CU39 — Plantilla de costos de documents por type de trámite (Issue #823)")
+@DisplayName("CU39 — Document cost template by procedure type (Issue #823)")
 class DocumentCostTemplateControllerTest {
 
     @Autowired
@@ -52,7 +52,7 @@ class DocumentCostTemplateControllerTest {
         procedureType = procedureTypeRepository.findById(1).orElseThrow();
     }
 
-    private DocumentType crearDocumentType(String name) {
+    private DocumentType createDocumentType(String name) {
         DocumentType documentType = new DocumentType();
         documentType.setName(name);
         documentType.setExpires(false);
@@ -72,16 +72,16 @@ class DocumentCostTemplateControllerTest {
     }
 
     @Test
-    @DisplayName("Should return costos by type de tramite")
+    @DisplayName("Should return costos by type of procedure")
     void shouldReturnCostosByTypeProcedure() throws Exception {
-        DocumentType documentType = crearDocumentType("Escritura previa");
+        DocumentType documentType = createDocumentType("Deed previa");
 
-        mockMvc.perform(post("/api/v1/plantilla-costos-documento")
+        mockMvc.perform(post("/api/v1/document-cost-templates")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createCostBody(documentType.getIdDocumentType(), new java.math.BigDecimal("2000"), null)))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(get("/api/v1/plantilla-costos-documento/tipo-tramite/" + procedureType.getIdProcedureType()))
+        mockMvc.perform(get("/api/v1/document-cost-templates/procedure-types/" + procedureType.getIdProcedureType()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].fixedAmount").value(new java.math.BigDecimal("2000")));
@@ -90,7 +90,7 @@ class DocumentCostTemplateControllerTest {
     @Test
     @DisplayName("Should return empty list when no costos defined")
     void shouldReturnEmptyListWhenNoCostosDefined() throws Exception {
-        mockMvc.perform(get("/api/v1/plantilla-costos-documento/tipo-tramite/" + procedureType.getIdProcedureType()))
+        mockMvc.perform(get("/api/v1/document-cost-templates/procedure-types/" + procedureType.getIdProcedureType()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
     }

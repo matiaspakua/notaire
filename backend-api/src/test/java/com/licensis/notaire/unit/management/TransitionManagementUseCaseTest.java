@@ -1,7 +1,7 @@
 package com.licensis.notaire.unit.management;
 
 import com.licensis.notaire.application.port.in.management.TransitionManagementOutput;
-import com.licensis.notaire.application.port.out.management.ManagementBitacoraPort;
+import com.licensis.notaire.application.port.out.management.ManagementStatusLogPort;
 import com.licensis.notaire.application.port.out.management.ManagementRepositoryPort;
 import com.licensis.notaire.application.port.out.management.StatusRepositoryPort;
 import com.licensis.notaire.application.port.out.management.WorkflowLookupPort;
@@ -31,7 +31,7 @@ class TransitionManagementUseCaseTest {
     private FakeStatusRepository fakeStatusRepository;
     private FakeWorkflowLookup fakeWorkflowLookup;
     private FakeWorkflowTransitionValidator fakeTransitionValidator;
-    private FakeBitacora fakeBitacora;
+    private FakeStatusLog fakeStatusLog;
 
     @BeforeEach
     void setUp() {
@@ -39,19 +39,19 @@ class TransitionManagementUseCaseTest {
         fakeStatusRepository = new FakeStatusRepository();
         fakeWorkflowLookup = new FakeWorkflowLookup();
         fakeTransitionValidator = new FakeWorkflowTransitionValidator();
-        fakeBitacora = new FakeBitacora();
+        fakeStatusLog = new FakeStatusLog();
 
         useCase = new TransitionManagementUseCaseImpl(fakeManagementRepository, fakeStatusRepository,
-                fakeWorkflowLookup, fakeTransitionValidator, fakeBitacora);
+                fakeWorkflowLookup, fakeTransitionValidator, fakeStatusLog);
     }
 
     @Test
     @DisplayName("Valid transition is applied and returns updated management")
     void shouldApplyValidTransition() {
         // Arrange
-        var statusInicial = new ManagementStatus();
-        statusInicial.setIdManagementStatus(1);
-        statusInicial.setName("Inicial");
+        var initialStatus = new ManagementStatus();
+        initialStatus.setIdManagementStatus(1);
+        initialStatus.setName("Inicial");
 
         var statusIntermedio = new ManagementStatus();
         statusIntermedio.setIdManagementStatus(2);
@@ -59,17 +59,17 @@ class TransitionManagementUseCaseTest {
 
         var management = new DeedManagement();
         management.setIdManagement(1);
-        management.setFkIdManagementStatus(statusInicial);
+        management.setFkIdManagementStatus(initialStatus);
         management.setNumber(123);
 
         var workflow = new WorkflowDefinition();
         workflow.setId(1);
 
         fakeManagementRepository.save(management);
-        fakeStatusRepository.save(statusInicial);
+        fakeStatusRepository.save(initialStatus);
         fakeStatusRepository.save(statusIntermedio);
         fakeWorkflowLookup.setWorkflow(workflow);
-        fakeTransitionValidator.allowTransition(workflow, statusInicial, statusIntermedio);
+        fakeTransitionValidator.allowTransition(workflow, initialStatus, statusIntermedio);
 
         // Act
         TransitionManagementOutput output = useCase.execute(1, "Intermedio");
@@ -79,16 +79,16 @@ class TransitionManagementUseCaseTest {
         var updatedManagement = fakeManagementRepository.findById(1);
         assertThat(updatedManagement).isNotNull();
         assertThat(updatedManagement.getFkIdManagementStatus().getName()).isEqualTo("Intermedio");
-        assertThat(fakeBitacora.wasStatusRegistered(1)).isTrue();
+        assertThat(fakeStatusLog.wasStatusRegistered(1)).isTrue();
     }
 
     @Test
     @DisplayName("Invalid transition is rejected with BusinessValidationException")
     void shouldRejectInvalidTransition() {
         // Arrange
-        var statusInicial = new ManagementStatus();
-        statusInicial.setIdManagementStatus(1);
-        statusInicial.setName("Inicial");
+        var initialStatus = new ManagementStatus();
+        initialStatus.setIdManagementStatus(1);
+        initialStatus.setName("Inicial");
 
         var statusInasequible = new ManagementStatus();
         statusInasequible.setIdManagementStatus(3);
@@ -96,13 +96,13 @@ class TransitionManagementUseCaseTest {
 
         var management = new DeedManagement();
         management.setIdManagement(1);
-        management.setFkIdManagementStatus(statusInicial);
+        management.setFkIdManagementStatus(initialStatus);
 
         var workflow = new WorkflowDefinition();
         workflow.setId(1);
 
         fakeManagementRepository.save(management);
-        fakeStatusRepository.save(statusInicial);
+        fakeStatusRepository.save(initialStatus);
         fakeStatusRepository.save(statusInasequible);
         fakeWorkflowLookup.setWorkflow(workflow);
         // Validator has no allowed transitions
@@ -112,8 +112,8 @@ class TransitionManagementUseCaseTest {
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("is not allowed");
 
-        // Verify bitacora was not called
-        assertThat(fakeBitacora.wasStatusRegistered(1)).isFalse();
+        // Verify the status log was not called
+        assertThat(fakeStatusLog.wasStatusRegistered(1)).isFalse();
     }
 
     @Test
@@ -128,23 +128,23 @@ class TransitionManagementUseCaseTest {
     @DisplayName("Undefined destination status throws BusinessValidationException")
     void shouldThrowBusinessValidationWhenStatusNotDefined() {
         // Arrange
-        var statusInicial = new ManagementStatus();
-        statusInicial.setIdManagementStatus(1);
-        statusInicial.setName("Inicial");
+        var initialStatus = new ManagementStatus();
+        initialStatus.setIdManagementStatus(1);
+        initialStatus.setName("Inicial");
 
         var management = new DeedManagement();
         management.setIdManagement(1);
-        management.setFkIdManagementStatus(statusInicial);
+        management.setFkIdManagementStatus(initialStatus);
 
         var workflow = new WorkflowDefinition();
         workflow.setId(1);
 
         fakeManagementRepository.save(management);
-        fakeStatusRepository.save(statusInicial);
+        fakeStatusRepository.save(initialStatus);
         fakeWorkflowLookup.setWorkflow(workflow);
 
         // Act & Assert
-        assertThatThrownBy(() -> useCase.execute(1, "NoExiste"))
+        assertThatThrownBy(() -> useCase.execute(1, "DoesNotExist"))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("is not defined");
     }
@@ -221,7 +221,7 @@ class TransitionManagementUseCaseTest {
         }
     }
 
-    private static class FakeBitacora implements ManagementBitacoraPort {
+    private static class FakeStatusLog implements ManagementStatusLogPort {
         private final java.util.Set<Integer> registeredManagementIds = new java.util.HashSet<>();
 
         @Override

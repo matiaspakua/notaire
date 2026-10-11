@@ -7,16 +7,16 @@ import { X } from "lucide-react";
 import { theme } from "@/theme/tokens";
 import { easeApple } from "@/components/motion";
 import type {
-  GestionWorkflowTrace,
-  HistorialEntry,
+  ManagementWorkflowTrace,
+  HistoryEntry,
   TestimonyMovementEntry,
   WorkflowNode,
   WorkflowTransition,
 } from "@/types";
-import { formatCalendarDate } from "@/lib/dates";
+import { useFormat } from "@/hooks/useFormat";
 
 interface Props {
-  trace: GestionWorkflowTrace;
+  trace: ManagementWorkflowTrace;
 }
 
 /**
@@ -29,7 +29,7 @@ const FLOW_DOT_REPEATS = 2;
 const PULSE_SECONDS = 1.6;
 const PULSE_REPEATS = 3;
 
-/** ManagementStatus id for "Testimonio Ingresado a Inscripcion" (V41 seed). */
+/** ManagementStatus id for the seeded label "Testimony Ingresado a Inscripcion" (V41). */
 const INSCRIPTION_STATUS_ID = 12;
 
 type NodeStatus = "completed" | "in_progress" | "pending";
@@ -195,15 +195,16 @@ function StatusBadge({ status }: { status: NodeStatus }) {
 interface NodeModalProps {
   node: LaidOutNode;
   status: NodeStatus;
-  trace: GestionWorkflowTrace;
+  trace: ManagementWorkflowTrace;
   onClose: () => void;
 }
 
 function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
+  const fmt = useFormat();
   const tw = useTranslations("dashboard.workflow");
   const nodeName = (id: number | undefined) =>
     trace.nodes.find((n) => n.id === id)?.statusManagementName ?? `#${id}`;
-  const history: HistorialEntry[] = trace.history.filter(
+  const history: HistoryEntry[] = trace.history.filter(
     (h) => h.statusManagementId === node.statusManagementId,
   );
   const incoming = trace.transitions.filter((t) => t.destinationNodeId === node.id);
@@ -269,7 +270,7 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
           )}
           {returnedCount > 0 && (
             <span
-              data-testid="workflow-reingreso-badge"
+              data-testid="workflow-reentry-badge"
               className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-white"
               style={{ backgroundColor: theme.colors.warning[600] }}
             >
@@ -318,7 +319,7 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
                     style={{ backgroundColor: theme.colors.neutral[100] }}
                   >
                     <p className="font-medium" style={{ color: theme.colors.neutral[900] }}>
-                      {formatCalendarDate(h.date)}
+                      {fmt.date(h.date)}
                     </p>
                     {h.notes && (
                       <p className="mt-0.5" style={{ color: theme.colors.neutral[600] }}>
@@ -344,9 +345,9 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
                     data-testid="workflow-movement-entry"
                   >
                     <p className="font-medium" style={{ color: theme.colors.neutral[900] }}>
-                      {formatCalendarDate(m.dateEntry)}
+                      {fmt.date(m.dateEntry)}
                       {m.dateExit
-                        ? ` → ${formatCalendarDate(m.dateExit)}`
+                        ? ` → ${fmt.date(m.dateExit)}`
                         : ` → ${tw("reentry.open")}`}
                     </p>
                     {m.returnedObserved && (
@@ -366,7 +367,7 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
 }
 
 /**
- * Animated, interactive map of a gestión's workflow trace.
+ * Animated, interactive map of a management's workflow trace.
  *
  * Top-to-bottom DAG: forks fan out and re-converge; each node card reflects
  * its computed status (completed / in progress / pending), the in-progress
@@ -583,7 +584,7 @@ export default function WorkflowTracker({ trace }: Props) {
                   </text>
                 )}
                 {showReentryBadge && (
-                  <g data-testid="workflow-reingreso-badge">
+                  <g data-testid="workflow-reentry-badge">
                     <rect
                       x={node.lx + 40}
                       y={cy + (inProgress ? 14 : 6)}

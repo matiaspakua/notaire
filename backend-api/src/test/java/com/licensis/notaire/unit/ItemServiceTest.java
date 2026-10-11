@@ -38,7 +38,7 @@ class ItemServiceTest {
 
     private Item buildItem(TypeItem type, String reason) {
         Item item = new Item();
-        item.setName("Item de prueba");
+        item.setName("Test item");
         item.setValue(new java.math.BigDecimal("1000"));
         item.setType(type);
         item.setReason(reason);
@@ -62,25 +62,25 @@ class ItemServiceTest {
     @Test
     @DisplayName("Should accept a discount item with a reason")
     void shouldAcceptDiscountItemWithReason() {
-        Item item = buildItem(TypeItem.DESCUENTO, "Descuento por pronto pago");
+        Item item = buildItem(TypeItem.DESCUENTO, "Descuento by pronto payment");
         when(itemRepository.create(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Item saved = itemService.create(item);
 
         assertThat(saved.getType()).isEqualTo(TypeItem.DESCUENTO);
-        assertThat(saved.getReason()).isEqualTo("Descuento por pronto pago");
+        assertThat(saved.getReason()).isEqualTo("Descuento by pronto payment");
     }
 
     @Test
     @DisplayName("Should accept a surcharge item with a reason")
     void shouldAcceptSurchargeItemWithReason() {
-        Item item = buildItem(TypeItem.RECARGO, "Recargo por mora");
+        Item item = buildItem(TypeItem.RECARGO, "Recargo by mora");
         when(itemRepository.create(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Item saved = itemService.create(item);
 
         assertThat(saved.getType()).isEqualTo(TypeItem.RECARGO);
-        assertThat(saved.getReason()).isEqualTo("Recargo por mora");
+        assertThat(saved.getReason()).isEqualTo("Recargo by mora");
     }
 
     @Test
@@ -90,7 +90,7 @@ class ItemServiceTest {
 
         assertThatThrownBy(() -> itemService.create(item))
                 .isInstanceOf(BusinessValidationException.class)
-                .hasMessageContaining("motivo");
+                .hasMessageContaining("reason");
     }
 
     @Test
@@ -100,7 +100,7 @@ class ItemServiceTest {
 
         assertThatThrownBy(() -> itemService.create(item))
                 .isInstanceOf(BusinessValidationException.class)
-                .hasMessageContaining("motivo");
+                .hasMessageContaining("reason");
     }
 
     @Test

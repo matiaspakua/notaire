@@ -43,21 +43,21 @@ class EdgeCaseBoundaryConditionsTest {
     class AuthEdgeCases {
 
         @Test
-        @DisplayName("Login with empty credentials returns valido=false, not crash")
+        @DisplayName("Login with empty credentials returns valid=false, not crash")
         void loginWithEmptyCredentials() throws Exception {
-            mockMvc.perform(post("/api/v1/usuarios/login")
+            mockMvc.perform(post("/api/v1/users/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {"name": "", "password": ""}
                                     """))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.valido").value(false));
+                    .andExpect(jsonPath("$.valid").value(false));
         }
 
         @Test
-        @DisplayName("Login with null password returns valido=false, not crash")
+        @DisplayName("Login with null password returns valid=false, not crash")
         void loginWithNullPassword() throws Exception {
-            mockMvc.perform(post("/api/v1/usuarios/login")
+            mockMvc.perform(post("/api/v1/users/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {"name": "admin", "password": null}
@@ -69,22 +69,22 @@ class EdgeCaseBoundaryConditionsTest {
         }
 
         @Test
-        @DisplayName("Login with SQL injection in username returns valido=false")
+        @DisplayName("Login with SQL injection in username returns valid=false")
         void loginWithSqlInjectionInUsername() throws Exception {
-            mockMvc.perform(post("/api/v1/usuarios/login")
+            mockMvc.perform(post("/api/v1/users/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {"name": "admin' OR '1'='1", "password": "anything"}
                                     """))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.valido").value(false));
+                    .andExpect(jsonPath("$.valid").value(false));
         }
 
         @Test
-        @DisplayName("Login with very long username returns valido=false, not crash")
+        @DisplayName("Login with very long username returns valid=false, not crash")
         void loginWithVeryLongUsername() throws Exception {
             String longName = "a".repeat(5000);
-            mockMvc.perform(post("/api/v1/usuarios/login")
+            mockMvc.perform(post("/api/v1/users/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {"name": "%s", "password": "pass"}
@@ -107,20 +107,20 @@ class EdgeCaseBoundaryConditionsTest {
         @Test
         @DisplayName("Non-numeric ID on any resource returns 400, not crash")
         void nonNumericIdReturns400() throws Exception {
-            mockMvc.perform(get("/api/v1/usuarios/abc"))
+            mockMvc.perform(get("/api/v1/users/abc"))
                     .andExpect(status().is4xxClientError());
 
             mockMvc.perform(get("/api/v1/people/xyz"))
                     .andExpect(status().is4xxClientError());
 
-            mockMvc.perform(get("/api/v1/gestiones/not-a-numero"))
+            mockMvc.perform(get("/api/v1/managements/not-a-numero"))
                     .andExpect(status().is4xxClientError());
         }
 
         @Test
         @DisplayName("Very large ID returns 404, not crash")
         void veryLargeIdReturns404() throws Exception {
-            mockMvc.perform(get("/api/v1/usuarios/" + Integer.MAX_VALUE))
+            mockMvc.perform(get("/api/v1/users/" + Integer.MAX_VALUE))
                     .andExpect(status().isNotFound());
 
             mockMvc.perform(get("/api/v1/people/" + Integer.MAX_VALUE))
@@ -130,10 +130,10 @@ class EdgeCaseBoundaryConditionsTest {
         @Test
         @DisplayName("DELETE non-existent resource returns 404")
         void deleteNonExistentResourceReturns404() throws Exception {
-            mockMvc.perform(delete("/api/v1/usuarios/" + Integer.MAX_VALUE))
+            mockMvc.perform(delete("/api/v1/users/" + Integer.MAX_VALUE))
                     .andExpect(status().isNotFound());
 
-            mockMvc.perform(delete("/api/v1/conceptos/" + Integer.MAX_VALUE))
+            mockMvc.perform(delete("/api/v1/concepts/" + Integer.MAX_VALUE))
                     .andExpect(status().isNotFound());
         }
     }
@@ -147,25 +147,25 @@ class EdgeCaseBoundaryConditionsTest {
     class CollectionEndpointEdgeCases {
 
         @Test
-        @DisplayName("GET gestiones returns 200 with paginated content array")
-        void getGestionesReturns200WithArray() throws Exception {
-            mockMvc.perform(get("/api/v1/gestiones"))
+        @DisplayName("GET managements returns 200 with paginated content array")
+        void getManagementsReturns200WithArray() throws Exception {
+            mockMvc.perform(get("/api/v1/managements"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isArray());
         }
 
         @Test
-        @DisplayName("GET escrituras returns 200 with paginated content array")
-        void getEscriturasReturns200WithArray() throws Exception {
-            mockMvc.perform(get("/api/v1/escrituras"))
+        @DisplayName("GET deeds returns 200 with paginated content array")
+        void getDeedsReturns200WithArray() throws Exception {
+            mockMvc.perform(get("/api/v1/deeds"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isArray());
         }
 
         @Test
-        @DisplayName("GET presupuestos returns 200 with paginated content array")
-        void getPresupuestosReturns200WithArray() throws Exception {
-            mockMvc.perform(get("/api/v1/presupuestos"))
+        @DisplayName("GET budgets returns 200 with paginated content array")
+        void getBudgetReturns200WithArray() throws Exception {
+            mockMvc.perform(get("/api/v1/budgets"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isArray());
         }
@@ -180,9 +180,9 @@ class EdgeCaseBoundaryConditionsTest {
     class InputValidationEdgeCases {
 
         @Test
-        @DisplayName("Creating concepto with missing name returns error, not crash")
+        @DisplayName("Creating concept with missing name returns error, not crash")
         void createConceptWithMissingNameReturnsError() throws Exception {
-            mockMvc.perform(post("/api/v1/conceptos")
+            mockMvc.perform(post("/api/v1/concepts")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {"value": 100}
@@ -194,9 +194,9 @@ class EdgeCaseBoundaryConditionsTest {
         }
 
         @Test
-        @DisplayName("Creating usuario with empty body returns error, not 200")
+        @DisplayName("Creating user with empty body returns error, not 200")
         void createUserWithEmptyBodyReturnsError() throws Exception {
-            mockMvc.perform(post("/api/v1/usuarios")
+            mockMvc.perform(post("/api/v1/users")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("{}"))
                     .andExpect(result ->
@@ -208,18 +208,18 @@ class EdgeCaseBoundaryConditionsTest {
         @Test
         @DisplayName("Report endpoint with month 0 returns 400")
         void reportEndpointWithMonthZeroReturns400() throws Exception {
-            mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-mensual")
-                            .param("anio", "2026")
-                            .param("mes", "0"))
+            mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement")
+                            .param("year", "2026")
+                            .param("month", "0"))
                     .andExpect(status().isBadRequest());
         }
 
         @Test
         @DisplayName("Report endpoint with month 13 returns 400")
         void reportEndpointWithMonth13Returns400() throws Exception {
-            mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-rentas")
-                            .param("anio", "2026")
-                            .param("mes", "13"))
+            mockMvc.perform(get("/api/v1/reports/tax-sworn-statement")
+                            .param("year", "2026")
+                            .param("month", "13"))
                     .andExpect(status().isBadRequest());
         }
     }
@@ -236,12 +236,12 @@ class EdgeCaseBoundaryConditionsTest {
         @DisplayName("All catalog endpoints return 200 with arrays (not crashes)")
         void allCatalogEndpointsReturn200() throws Exception {
             String[] endpoints = {
-                "/api/v1/tipo-tramite",
-                "/api/v1/tipo-de-documento",
-                "/api/v1/conceptos",
-                "/api/v1/estado-gestion",
-                "/api/v1/tipo-folio",
-                "/api/v1/folio"
+                "/api/v1/procedure-types",
+                "/api/v1/document-types",
+                "/api/v1/concepts",
+                "/api/v1/management-statuses",
+                "/api/v1/folio-types",
+                "/api/v1/folios"
             };
             for (String endpoint : endpoints) {
                 mockMvc.perform(get(endpoint))

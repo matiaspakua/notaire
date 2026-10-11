@@ -43,8 +43,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RestController
-@RequestMapping("/api/v1/usuarios")
-@Tag(name = "Usuarios", description = "API para gestionar usuarios")
+@RequestMapping("/api/v1/users")
+@Tag(name = "Users", description = "API for managing users")
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
@@ -98,14 +98,14 @@ public class UserController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todos los usuarios")
+    @Operation(summary = "Get all users")
     @Transactional(readOnly = true)
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         return ResponseEntity.ok(userRepository.findAll().stream().map(this::toResponse).toList());
     }
 
-    @GetMapping("/persona/{idPerson}")
-    @Operation(summary = "Obtener usuario por id de persona asociada")
+    @GetMapping("/person/{idPerson}")
+    @Operation(summary = "Get user by associated person id")
     @Transactional(readOnly = true)
     public ResponseEntity<UserResponse> getUserByPerson(@PathVariable Integer idPerson) {
         return userRepository.findFirstByFkIdPersonIdPerson(idPerson)
@@ -116,10 +116,10 @@ public class UserController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener usuario por ID")
+    @Operation(summary = "Get user by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<UserResponse> getUserById(@PathVariable Integer id) {
         return userRepository.findById(id)
@@ -129,12 +129,12 @@ public class UserController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "201", description = "Created"),
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
-    @Operation(summary = "Crear nuevo usuario")
+    @Operation(summary = "Create user")
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserRequest request) {
         try {
             User user = new User();
@@ -146,17 +146,17 @@ public class UserController {
             user = userRepository.save(user);
             return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(user));
         } catch (Exception e) {
-            log.error("Failed to create usuario", e);
+            log.error("Failed to create user", e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar usuario")
+    @Operation(summary = "Update user")
     public ResponseEntity<Void> updateUser(@PathVariable Integer id, @Valid @RequestBody UserRequest request) {
         Optional<User> existing = userRepository.findById(id);
         if (existing.isEmpty()) {
@@ -174,17 +174,17 @@ public class UserController {
             userRepository.save(user);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            log.error("Failed to update usuario id {}", id, e);
+            log.error("Failed to update user id {}", id, e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "204", description = "Deleted"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar usuario")
+    @Operation(summary = "Delete user")
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
         if (!userRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
@@ -193,44 +193,44 @@ public class UserController {
             userRepository.deleteById(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            log.error("Failed to delete usuario id {}", id, e);
+            log.error("Failed to delete user id {}", id, e);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "OK (ver campo 'valido' para el resultado)"),
-    @ApiResponse(responseCode = "429", description = "Cuenta bloqueada temporalmente por intentos fallidos")
+    @ApiResponse(responseCode = "200", description = "OK (see the 'valid' field for the result)"),
+    @ApiResponse(responseCode = "429", description = "Account temporarily locked after failed attempts")
 })
     @PostMapping("/login")
-    @Operation(summary = "Autenticar usuario")
+    @Operation(summary = "Authenticate user")
     public ResponseEntity<?> login(@RequestBody DtoUser loginRequest) {
         try {
             if (loginAttemptService.isLocked(loginRequest.getName())) {
-                log.warn("Login bloqueado para '{}': demasiados intentos fallidos.", loginRequest.getName());
+                log.warn("Login locked for '{}': too many failed attempts.", loginRequest.getName());
                 metricsUtil.incrementCounter("login", "locked");
                 Map<String, Object> lockedResponse = new HashMap<>();
-                lockedResponse.put("valido", false);
-                lockedResponse.put("message", "Cuenta bloqueada temporalmente por demasiados intentos fallidos.");
+                lockedResponse.put("valid", false);
+                lockedResponse.put("message", "Account temporarily locked after too many failed attempts.");
                 return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(lockedResponse);
             }
 
             List<User> users = userRepository.findAll();
 
             if (users == null || users.isEmpty()) {
-                log.warn("Login fallido: No hay usuarios en la base de datos.");
+                log.warn("Login failed: There are no users in the database.");
                 DtoUser errorResponse = new DtoUser();
-                errorResponse.setValido(false);
+                errorResponse.setValid(false);
                 return ResponseEntity.ok(errorResponse);
             }
 
-            log.debug("Intento de login para usuario: '{}'", loginRequest.getName());
+            log.debug("Login attempt for user: '{}'", loginRequest.getName());
 
             for (User user : users) {
                 if (user.getName().equalsIgnoreCase(loginRequest.getName())) {
                     if (passwordMatches(loginRequest.getPassword(), user)) {
                         if (user.getStatus()) {
-                            log.info("Login exitoso para usuario: '{}'", user.getName());
+                            log.info("Login succeeded for user: '{}'", user.getName());
                             metricsUtil.incrementCounter("login", "success");
                             loginAttemptService.onLoginSucceeded(user.getName());
                             DtoUser dtoUser = new DtoUser();
@@ -246,39 +246,39 @@ public class UserController {
                                 dtoPerson.setLastName(user.getFkIdPerson().getLastName());
                                 dtoUser.setPersons(dtoPerson);
                             }
-                            dtoUser.setValido(true);
-                            log.debug("DTO Usuario creado - valido: {}, estado: {}", dtoUser.isValido(), dtoUser.isStatus());
+                            dtoUser.setValid(true);
+                            log.debug("DTO User created - valid: {}, status: {}", dtoUser.isValid(), dtoUser.isStatus());
 
-                            // Create a map response to ensure 'valido' field is included
+                            // Create a map response to ensure 'valid' field is included
                             String jwt = jwtTokenService.generateToken(user.getName());
                             Map<String, Object> response = new HashMap<>();
-                            response.put("valido", true);
+                            response.put("valid", true);
                             // Bearer token kept for Bruno/API clients; browsers use the HttpOnly cookie (#1051).
                             response.put("token", jwt);
-                            response.put("idUsuario", dtoUser.getIdUser());
-                            response.put("nombre", dtoUser.getName());
-                            response.put("estado", dtoUser.isStatus());
-                            response.put("tipo", dtoUser.getType());
+                            response.put("idUser", dtoUser.getIdUser());
+                            response.put("name", dtoUser.getName());
+                            response.put("status", dtoUser.isStatus());
+                            response.put("type", dtoUser.getType());
                             response.put("version", dtoUser.getVersion());
                             if (dtoUser.getPersons() != null) {
                                 Map<String, Object> personMap = new HashMap<>();
-                                personMap.put("idPersona", dtoUser.getPersons().getId());
-                                personMap.put("nombre", dtoUser.getPersons().getFirstName());
-                                personMap.put("apellido", dtoUser.getPersons().getLastName());
-                                response.put("personas", personMap);
+                                personMap.put("idPerson", dtoUser.getPersons().getId());
+                                personMap.put("firstName", dtoUser.getPersons().getFirstName());
+                                personMap.put("lastName", dtoUser.getPersons().getLastName());
+                                response.put("person", personMap);
                             }
                             ResponseCookie sessionCookie = authCookieService.createSessionCookie(jwt);
                             return ResponseEntity.ok()
                                     .header(HttpHeaders.SET_COOKIE, sessionCookie.toString())
                                     .body(response);
                         } else {
-                            log.warn("Login fallido para '{}': usuario inactivo", user.getName());
+                            log.warn("Login failed for '{}': inactive user", user.getName());
                             metricsUtil.incrementCounter("login", "inactive");
                             loginAttemptService.onLoginFailed(user.getName());
                             return ResponseEntity.ok(invalidLoginResponse());
                         }
                     } else {
-                        log.warn("Login fallido para '{}': contraseña incorrecta", user.getName());
+                        log.warn("Login failed for '{}': incorrect password", user.getName());
                         metricsUtil.incrementCounter("login", "bad_credentials");
                         loginAttemptService.onLoginFailed(user.getName());
                         return ResponseEntity.ok(invalidLoginResponse());
@@ -286,7 +286,7 @@ public class UserController {
                 }
             }
 
-            log.warn("Login fallido: usuario '{}' no encontrado en {} usuarios cargados.", loginRequest.getName(),
+            log.warn("Login failed: user '{}' not found among {} loaded users.", loginRequest.getName(),
                     users.size());
             metricsUtil.incrementCounter("login", "not_found");
             loginAttemptService.onLoginFailed(loginRequest.getName());
@@ -303,10 +303,10 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Token revoked (if any) and auth cookie cleared")
     })
     @PostMapping("/logout")
-    @Operation(summary = "Cerrar sesión (revoca el token presentado y limpia cookie HttpOnly)",
-            description = "Revoca en el servidor el JWT enviado por Bearer o cookie, de modo que no puede "
-                    + "reutilizarse aunque no haya expirado; las demás sesiones del usuario siguen activas. "
-                    + "Sin token o con un token inválido responde igual (issue #676).")
+    @Operation(summary = "Sign out (revokes the presented token and clears the HttpOnly cookie)",
+            description = "Revokes on the server the JWT sent by Bearer or cookie, so it cannot "
+                    + "be reused even if it has not expired; the user's other sessions remain active. "
+                    + "A missing or invalid token gets the same response (issue #676).")
     public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request) {
         tokenRevocationService.revoke(RequestTokenResolver.resolve(request, authCookieService.cookieName()));
         ResponseCookie cleared = authCookieService.clearSessionCookie();
@@ -319,15 +319,15 @@ public class UserController {
 
     private Map<String, Object> invalidLoginResponse() {
         Map<String, Object> response = new HashMap<>();
-        response.put("valido", false);
+        response.put("valid", false);
         return response;
     }
 
     /**
-     * Verifica la contraseña ingresada contra el hash almacenado, soportando tanto el
-     * nuevo formato BCrypt como el legado MD5 (issue #554). Si el hash almacenado
-     * todavía es MD5 y la contraseña coincide, se re-encripta en BCrypt y se persiste
-     * de forma transparente, migrando la credencial sin exigir un reseteo al usuario.
+     * Checks the submitted password against the stored hash. Accepts BCrypt and
+     * the legacy MD5 form (issue #554). When the stored hash is still MD5 and the
+     * password matches, it re-encodes the password as BCrypt and saves it, so the
+     * credential migrates without a reset.
      */
     private boolean passwordMatches(String rawPassword, User user) {
         String storedHash = user.getPassword();
@@ -347,8 +347,8 @@ public class UserController {
     }
 
     /**
-     * Hash MD5 legado, mantenido únicamente para verificar credenciales sembradas
-     * antes de la migración a BCrypt (issue #554); no se usa para generar hashes nuevos.
+     * Legacy MD5 hash, kept only to check credentials seeded before the BCrypt
+     * migration (issue #554). It is not used to create new hashes.
      */
     private String legacyMd5Hash(String stringAEncriptar) {
         char[] hexChars = {

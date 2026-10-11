@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("UserController — hashing de contraseñas (issue #554)")
+@DisplayName("UserController — password hashing (issue #554)")
 class UserControllerHashTest {
 
     private static final String LEGACY_MD5_ADMIN = "21232f297a57a5a743894a0e4a801fc3";
@@ -70,12 +70,12 @@ class UserControllerHashTest {
     }
 
     @Test
-    @DisplayName("createUsuario should store a BCrypt-encoded hash, not plaintext or MD5")
+    @DisplayName("createUser should store a BCrypt-encoded hash, not plaintext or MD5")
     void createUserShouldStoreBcryptHash() throws Exception {
         when(passwordEncoder.encode("secret")).thenReturn(BCRYPT_HASH);
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        mockMvc.perform(post("/api/v1/usuarios").contentType("application/json")
+        mockMvc.perform(post("/api/v1/users").contentType("application/json")
                 .content("{\"name\":\"juan\",\"password\":\"secret\",\"type\":\"Escribano\",\"active\":true}"));
 
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
@@ -84,7 +84,7 @@ class UserControllerHashTest {
     }
 
     @Test
-    @DisplayName("updateUsuario should store a BCrypt-encoded hash when password changes")
+    @DisplayName("updateUser should store a BCrypt-encoded hash when password changes")
     void updateUserShouldStoreBcryptHash() throws Exception {
         User existing = new User(1);
         existing.setName("juan");
@@ -92,7 +92,7 @@ class UserControllerHashTest {
         when(userRepository.findById(1)).thenReturn(Optional.of(existing));
         when(passwordEncoder.encode("newpass")).thenReturn(BCRYPT_HASH);
 
-        mockMvc.perform(put("/api/v1/usuarios/1").contentType("application/json")
+        mockMvc.perform(put("/api/v1/users/1").contentType("application/json")
                 .content("{\"name\":\"juan\",\"password\":\"newpass\",\"type\":\"Escribano\",\"active\":true}"));
 
         assertThat(existing.getPassword()).isEqualTo(BCRYPT_HASH);
@@ -119,7 +119,7 @@ class UserControllerHashTest {
 
         @SuppressWarnings("unchecked")
         Map<String, Object> body = (Map<String, Object>) response.getBody();
-        assertThat(body).containsEntry("valido", true);
+        assertThat(body).containsEntry("valid", true);
         verify(userRepository, never()).save(any());
     }
 
@@ -143,7 +143,7 @@ class UserControllerHashTest {
 
         @SuppressWarnings("unchecked")
         Map<String, Object> body = (Map<String, Object>) response.getBody();
-        assertThat(body).containsEntry("valido", true);
+        assertThat(body).containsEntry("valid", true);
         assertThat(user.getPassword()).isEqualTo(BCRYPT_HASH);
         verify(userRepository).save(user);
     }
@@ -166,7 +166,7 @@ class UserControllerHashTest {
 
         @SuppressWarnings("unchecked")
         Map<String, Object> body = (Map<String, Object>) response.getBody();
-        assertThat(body).containsEntry("valido", false);
+        assertThat(body).containsEntry("valid", false);
         verify(userRepository, never()).save(any());
     }
 }

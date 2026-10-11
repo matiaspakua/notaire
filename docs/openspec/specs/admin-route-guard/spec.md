@@ -10,18 +10,18 @@ layout guard, and informs the user when access is denied.
 
 ### Requirement: Admin routes require an admin-capable role
 
-Authenticated access to `/dashboard/administracion` and its sub-paths SHALL be
+Authenticated access to `/dashboard/administration` and its sub-paths SHALL be
 allowed only for admin-capable user types (`ADMIN`, `ADMINISTRADOR`, `ESCRIBANO`).
 Source: CU78 – Security and Compliance (step 3 / alt 3.1); CU20/CU21 admin actors.
 
 #### Scenario: Non-admin edge deny for administración path
 
-- **WHEN** an authenticated session presents a non-admin role signal and requests `/dashboard/administracion` or any sub-path
+- **WHEN** an authenticated session presents a non-admin role signal and requests `/dashboard/administration` or any sub-path
 - **THEN** the edge layer redirects to `/dashboard?forbidden=1` and does not serve the admin page
 
 #### Scenario: Admin edge allow for administración path
 
-- **WHEN** an authenticated session presents an admin-capable role signal and requests `/dashboard/administracion` or any sub-path
+- **WHEN** an authenticated session presents an admin-capable role signal and requests `/dashboard/administration` or any sub-path
 - **THEN** the edge layer allows the request to proceed
 
 #### Scenario: Non-admin layout redirects with forbidden flag
@@ -41,5 +41,5 @@ access-denied message on the dashboard.
 
 #### Scenario: Non-admin cannot open admin routes end-to-end
 
-- **WHEN** a non-admin user (for example `EMPLEADO`) logs in and navigates to `/dashboard/administracion/usuarios`
+- **WHEN** a non-admin user (for example `EMPLEADO`) logs in and navigates to `/dashboard/administration/users`
 - **THEN** the user lands on the dashboard with the forbidden signal and message, and does not see the admin usuarios UI

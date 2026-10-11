@@ -47,7 +47,7 @@ import static org.mockito.Mockito.when;
  * Data repositories.
  */
 @RequirementCoverage({"CU15", "CU47"})
-@DisplayName("PagoService Tests")
+@DisplayName("PaymentService Tests")
 @ExtendWith(MockitoExtension.class)
 class PaymentUseCaseTest {
 
@@ -89,7 +89,7 @@ class PaymentUseCaseTest {
     }
 
     @Nested
-    @DisplayName("CU15 - Procesar pago")
+    @DisplayName("CU15 - Process payment")
     class ProcesarPaymentTests {
 
         @Test
@@ -107,7 +107,7 @@ class PaymentUseCaseTest {
             when(paymentRepository.save(any(Payment.class))).thenReturn(savedPayment);
 
             // Act
-            PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("2000.00"), new Date(), "Pago parcial"));
+            PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("2000.00"), new Date(), "Payment parcial"));
 
             // Assert
             assertThat(result).isNotNull();
@@ -125,7 +125,7 @@ class PaymentUseCaseTest {
             // Act & Assert
             assertThatThrownBy(() -> processPayment.process(command(999, new java.math.BigDecimal("1000.00"), new Date(), "Test")))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("Presupuesto no encontrado");
+                    .hasMessageContaining("Budget not found");
         }
 
         @Test
@@ -137,7 +137,7 @@ class PaymentUseCaseTest {
             // Act & Assert
             assertThatThrownBy(() -> processPayment.process(command(1, new java.math.BigDecimal("0.00"), new Date(), "Test")))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("El monto del pago debe ser mayor a cero");
+                    .hasMessageContaining("The payment amount must be greater than zero");
         }
 
         @Test
@@ -149,7 +149,7 @@ class PaymentUseCaseTest {
             // Act & Assert
             assertThatThrownBy(() -> processPayment.process(command(1, new java.math.BigDecimal("-500.00"), new Date(), "Test")))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("El monto del pago debe ser mayor a cero");
+                    .hasMessageContaining("The payment amount must be greater than zero");
         }
 
         @Test
@@ -161,7 +161,7 @@ class PaymentUseCaseTest {
             // Act & Assert
             assertThatThrownBy(() -> processPayment.process(command(1, null, new Date(), "Test")))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("El monto del pago debe ser mayor a cero");
+                    .hasMessageContaining("The payment amount must be greater than zero");
         }
 
         @Test
@@ -213,11 +213,11 @@ class PaymentUseCaseTest {
     }
 
     @Nested
-    @DisplayName("CU47 - Consultar Pago")
-    class ConsultarPaymentTests {
+    @DisplayName("CU47 - Query payment")
+    class QueryPaymentTests {
 
         @Test
-        @DisplayName("Should return pago when valid ID is provided")
+        @DisplayName("Should return the payment when a valid id is provided")
         void shouldReturnPaymentWhenValidIdProvided() {
             // Arrange
             Payment expectedPayment = new Payment();
@@ -235,7 +235,7 @@ class PaymentUseCaseTest {
         }
 
         @Test
-        @DisplayName("Should return empty when pago not found")
+        @DisplayName("Should return empty when the payment is not found")
         void shouldReturnEmptyWhenPaymentNotFound() {
             // Arrange
             when(paymentRepository.findById(999)).thenReturn(Optional.empty());
@@ -289,7 +289,7 @@ class PaymentUseCaseTest {
         }
 
         @Test
-        @DisplayName("Should delete pago successfully")
+        @DisplayName("Should delete the payment")
         void shouldDeletePaymentSuccessfully() {
             // Arrange
             when(paymentRepository.existsById(1)).thenReturn(true);
@@ -302,7 +302,7 @@ class PaymentUseCaseTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when deleting non-existent pago")
+        @DisplayName("Should throw exception when deleting a payment that does not exist")
         void shouldThrowExceptionWhenDeletingNonExistentPayment() {
             // Arrange
             when(paymentRepository.existsById(999)).thenReturn(false);
@@ -310,7 +310,7 @@ class PaymentUseCaseTest {
             // Act & Assert
             assertThatThrownBy(() -> deletePayment.delete(999))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("Pago no encontrado");
+                    .hasMessageContaining("Payment not found");
         }
 
         private Payment createPayment(Integer id, java.math.BigDecimal amount) {
@@ -334,7 +334,7 @@ class PaymentUseCaseTest {
             when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
             PaymentDetails result = processPayment.process(
-                    new ProcessPaymentCommand(1, new java.math.BigDecimal("2000.00"), new Date(), "Pago parcial", "Efectivo"));
+                    new ProcessPaymentCommand(1, new java.math.BigDecimal("2000.00"), new Date(), "Payment parcial", "Efectivo"));
 
             assertThat(result.paymentMethod()).isEqualTo("Efectivo");
         }
@@ -346,7 +346,7 @@ class PaymentUseCaseTest {
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("0"));
             when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-            PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("2000.00"), new Date(), "Pago parcial"));
+            PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("2000.00"), new Date(), "Payment parcial"));
 
             assertThat(result.paymentMethod()).isNull();
         }
@@ -370,14 +370,14 @@ class PaymentUseCaseTest {
         }
 
         @Test
-        @DisplayName("Should throw when editing paymentMethod of a non-existent pago")
+        @DisplayName("Should throw when editing paymentMethod of a payment that does not exist")
         void shouldThrowWhenEditingPaymentMethodOfMissingPayment() {
             when(paymentRepository.existsById(999)).thenReturn(false);
 
             assertThatThrownBy(() -> editPayment.edit(
                     new EditPaymentCommand(999, new java.math.BigDecimal("1000"), new Date(), "Test", "Efectivo")))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("Pago no encontrado");
+                    .hasMessageContaining("Payment not found");
 
             verify(paymentRepository, never()).save(any(Payment.class));
         }
@@ -388,8 +388,8 @@ class PaymentUseCaseTest {
     class OverpaymentValidationTests {
 
         @Test
-        @DisplayName("Should reject payment that exceeds saldo pendiente")
-        void shouldRejectPaymentExceedingSaldo() {
+        @DisplayName("Should reject payment that exceeds the pending balance")
+        void shouldRejectPaymentExceedingPendingBalance() {
             Budget budget = new Budget();
             budget.setIdBudget(1);
             budget.setPropertyAmount(new java.math.BigDecimal("50000"));
@@ -397,17 +397,17 @@ class PaymentUseCaseTest {
             when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("30000")); // Already paid 30k
 
-            // Saldo = 50k - 30k = 20k, trying to pay 25k should fail
+            // Balance = 50k - 30k = 20k, trying to pay 25k should fail
             assertThatThrownBy(() -> processPayment.process(command(1, new java.math.BigDecimal("25000"), new Date(), "Overpay attempt")))
                     .isInstanceOf(PendingBalanceExceededException.class)
-                    .hasMessageContaining("no puede exceder el saldo pendiente");
+                    .hasMessageContaining("cannot exceed the outstanding balance");
 
             verify(paymentRepository, never()).save(any(Payment.class));
         }
 
         @Test
-        @DisplayName("Should accept payment equal to saldo pendiente")
-        void shouldAcceptPaymentEqualToSaldo() {
+        @DisplayName("Should accept payment equal to the pending balance")
+        void shouldAcceptPaymentEqualToPendingBalance() {
             Budget budget = new Budget();
             budget.setIdBudget(1);
             budget.setPropertyAmount(new java.math.BigDecimal("50000"));
@@ -420,7 +420,7 @@ class PaymentUseCaseTest {
                 return p;
             });
 
-            // Saldo = 50k - 30k = 20k, paying exactly 20k should succeed
+            // Balance = 50k - 30k = 20k, paying exactly 20k should succeed
             PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("20000"), new Date(), "Exact payment"));
 
             assertThat(result).isNotNull();
@@ -429,7 +429,7 @@ class PaymentUseCaseTest {
         }
 
         @Test
-        @DisplayName("Should accept payment less than saldo pendiente")
+        @DisplayName("Should accept payment less than the pending balance")
         void shouldAcceptPartialPayment() {
             Budget budget = new Budget();
             budget.setIdBudget(1);
@@ -443,7 +443,7 @@ class PaymentUseCaseTest {
                 return p;
             });
 
-            // Saldo = 50k - 30k = 20k, paying 15k should succeed
+            // Balance = 50k - 30k = 20k, paying 15k should succeed
             PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("15000"), new Date(), "Partial payment"));
 
             assertThat(result).isNotNull();
@@ -453,12 +453,12 @@ class PaymentUseCaseTest {
     }
 
     @Nested
-    @DisplayName("Descuentos y recargos en el total (Issue #822)")
-    class DescuentosYRecargosTests {
+    @DisplayName("Discounts and surcharges on the total (Issue #822)")
+    class DiscountsAndSurchargesTests {
 
         private Item buildItem(TypeItem type, java.math.BigDecimal value) {
             Item item = new Item();
-            item.setName("Item de prueba");
+            item.setName("Test item");
             item.setValue(value);
             item.setType(type);
             return item;

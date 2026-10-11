@@ -1,34 +1,34 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
-import type { Rol } from "@/types";
+import type { Role } from "@/types";
 
 export const rolesKeys = { all: ["roles"] as const };
 
 export function useRoles() {
   return useQuery({
     queryKey: rolesKeys.all,
-    queryFn: () => apiGet<Rol[]>("/roles"),
+    queryFn: () => apiGet<Role[]>("/roles"),
   });
 }
 
-export function useCreateRol() {
+export function useCreateRole() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<Rol>) => apiPost<Rol>("/roles", data),
+    mutationFn: (data: Partial<Role>) => apiPost<Role>("/roles", data),
     onSuccess: () => qc.invalidateQueries({ queryKey: rolesKeys.all }),
   });
 }
 
-export function useUpdateRol() {
+export function useUpdateRole() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<Rol> }) =>
-      apiPut<Rol>(`/roles/${id}`, data),
+    mutationFn: ({ id, data }: { id: number; data: Partial<Role> }) =>
+      apiPut<Role>(`/roles/${id}`, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: rolesKeys.all }),
   });
 }
 
-export function useDeleteRol() {
+export function useDeleteRole() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => apiDelete(`/roles/${id}`),
@@ -36,22 +36,22 @@ export function useDeleteRol() {
   });
 }
 
-export function useAssignRolToUsuario() {
+export function useAssignRoleToUser() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ idRol, idUsuario }: { idRol: number; idUsuario: number }) =>
-      apiPut<void>(`/roles/${idRol}/usuarios/${idUsuario}`, {}),
+    mutationFn: ({ roleId, userId }: { roleId: number; userId: number }) =>
+      apiPut<void>(`/roles/${roleId}/users/${userId}`, {}),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: rolesKeys.all });
-      qc.invalidateQueries({ queryKey: ["usuarios"] });
+      qc.invalidateQueries({ queryKey: ["users"] });
     },
   });
 }
 
-export function useUnassignRolFromUsuario() {
+export function useUnassignRoleFromUser() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (idUsuario: number) => apiDelete(`/roles/usuarios/${idUsuario}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["usuarios"] }),
+    mutationFn: (userId: number) => apiDelete(`/roles/users/${userId}`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["users"] }),
   });
 }

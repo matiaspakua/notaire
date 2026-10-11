@@ -40,9 +40,9 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @NamedQueries(
         {
             @NamedQuery(name = "Testimony.findAll", query = "SELECT t FROM Testimony t"),
-            @NamedQuery(name = "Testimony.findByIdTestimony", query = "SELECT t FROM Testimony t WHERE t.idTestimony = :idTestimonio"),
-            @NamedQuery(name = "Testimony.findByNumber", query = "SELECT t FROM Testimony t WHERE t.number = :numero"),
-            @NamedQuery(name = "Testimony.findByDeed", query = "SELECT t FROM Testimony t WHERE t.fkIdDeed.idDeed = :idEscritura"),
+            @NamedQuery(name = "Testimony.findByIdTestimony", query = "SELECT t FROM Testimony t WHERE t.idTestimony = :idTestimony"),
+            @NamedQuery(name = "Testimony.findByNumber", query = "SELECT t FROM Testimony t WHERE t.number = :number"),
+            @NamedQuery(name = "Testimony.findByDeed", query = "SELECT t FROM Testimony t WHERE t.fkIdDeed.idDeed = :idDeed"),
             @NamedQuery(name = "Testimony.findByFlagged", query = "SELECT t FROM Testimony t WHERE t.flagged = :flagged")
         })
 public class Testimony implements Serializable, Persistable<Integer>
@@ -110,7 +110,7 @@ public class Testimony implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idTestimony == null || idTestimony.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idTestimony == null || idTestimony.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 
@@ -198,38 +198,38 @@ public class Testimony implements Serializable, Persistable<Integer>
         this.copyList = copyList;
     }
 
-    public void setAtributos(DtoTestimony miDto)
+    public void setAttributes(DtoTestimony dto)
     {
 
-        if (miDto.getIdTestimony() != null)
+        if (dto.getIdTestimony() != null)
         {
-            idTestimony = miDto.getIdTestimony();
+            idTestimony = dto.getIdTestimony();
         }
 
-        number = miDto.getNumber();
-        notes = miDto.getNotes();
-        flagged = miDto.isFlagged();
-        verified = miDto.isVerified();
-        version = miDto.getVersion();
+        number = dto.getNumber();
+        notes = dto.getNotes();
+        flagged = dto.isFlagged();
+        verified = dto.isVerified();
+        version = dto.getVersion();
 
-        if (miDto.getDeed() != null)
+        if (dto.getDeed() != null)
         {
-            Deed miDeed = new Deed();
-            miDeed.setIdDeed(miDto.getDeed().getIdDeed());
+            Deed deed = new Deed();
+            deed.setIdDeed(dto.getDeed().getIdDeed());
 
-            fkIdDeed = miDeed;
+            fkIdDeed = deed;
         }
 
-        if (miDto.getMovimientosTestimonios() != null && !miDto.getMovimientosTestimonios().isEmpty())
+        if (dto.getTestimonyMovements() != null && !dto.getTestimonyMovements().isEmpty())
         {
             testimonyMovementList = new ArrayList<>();
 
-            for (Iterator<DtoTestimonyMovement> it = miDto.getMovimientosTestimonios().iterator(); it.hasNext();)
+            for (Iterator<DtoTestimonyMovement> it = dto.getTestimonyMovements().iterator(); it.hasNext();)
             {
                 DtoTestimonyMovement dtoTestimonyMovement = it.next();
-                TestimonyMovement miTestimonyMovement = new TestimonyMovement();
-                miTestimonyMovement.setAtributos(dtoTestimonyMovement);
-                testimonyMovementList.add(miTestimonyMovement);
+                TestimonyMovement testimonyMovement = new TestimonyMovement();
+                testimonyMovement.setAttributes(dtoTestimonyMovement);
+                testimonyMovementList.add(testimonyMovement);
             }
         }
     }
@@ -237,35 +237,35 @@ public class Testimony implements Serializable, Persistable<Integer>
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoTestimony getDto()
     {
-        DtoTestimony miDto = new DtoTestimony();
+        DtoTestimony dto = new DtoTestimony();
 
-        miDto.setIdTestimony(idTestimony);
-        miDto.setNumber(number);
-        miDto.setNotes(notes);
-        miDto.setFlagged(flagged);
-        miDto.setVerified(verified);
-        miDto.setVersion(version);
+        dto.setIdTestimony(idTestimony);
+        dto.setNumber(number);
+        dto.setNotes(notes);
+        dto.setFlagged(flagged);
+        dto.setVerified(verified);
+        dto.setVersion(version);
 
         if (fkIdDeed != null)
         {
-            miDto.setDeed(fkIdDeed.getDto());
+            dto.setDeed(fkIdDeed.getDto());
         }
 
         if (testimonyMovementList != null && !testimonyMovementList.isEmpty())
         {
-            List<DtoTestimonyMovement> miLista = new ArrayList<>();
+            List<DtoTestimonyMovement> movementDtos = new ArrayList<>();
 
             for (Iterator<TestimonyMovement> it = testimonyMovementList.iterator(); it.hasNext();)
             {
                 TestimonyMovement testimonyMovement = it.next();
-                DtoTestimonyMovement miDtoTestimonyMovement = testimonyMovement.getDto();
-                miLista.add(miDtoTestimonyMovement);
+                DtoTestimonyMovement testimonyMovementDto = testimonyMovement.getDto();
+                movementDtos.add(testimonyMovementDto);
             }
 
-            miDto.setMovimientosTestimonios(miLista);
+            dto.setTestimonyMovements(movementDtos);
         }
 
-        return miDto;
+        return dto;
     }
 
     @Override
@@ -296,9 +296,9 @@ public class Testimony implements Serializable, Persistable<Integer>
     public String toString()
     {
         String deedId = fkIdDeed != null ? String.valueOf(fkIdDeed.getIdDeed()) : "null";
-        return "Testimonio[ idTestimonio=" + idTestimony + " ]"
-                + "[ numero=" + number + " ]"
-                + "[ idEscritura=" + deedId + " ]";
+        return "Testimony[ idTestimony=" + idTestimony + " ]"
+                + "[ number=" + number + " ]"
+                + "[ idDeed=" + deedId + " ]";
     }
 
     public int getVersion()

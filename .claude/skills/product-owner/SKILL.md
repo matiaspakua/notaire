@@ -71,9 +71,9 @@ So that I can share results with stakeholders who don't have system access.
 | Bug Fix | As a [persona], I expect [behavior] when [condition] | As a user, I expect my cart to persist when I refresh the page |
 | Enabler | As a developer, I need to [technical task] to enable [capability] | As a developer, I need to implement caching to enable instant search |
 
-### Persona Reference
+### Person Reference
 
-| Persona | Typical Needs | Context |
+| Person | Typical Needs | Context |
 |---------|--------------|---------|
 | End User | Efficiency, simplicity, reliability | Daily feature usage |
 | Administrator | Control, visibility, security | System management |

@@ -6,7 +6,7 @@ info:
       Traceability: CU85
 http:
   method: PUT
-  url: "{{base_url}}/api/v1/carpetas/{{pf_folder_id}}/espera"
+  url: "{{base_url}}/api/v1/procedure-folders/{{pf_folder_id}}/wait"
   body:
     type: json
     data: |-

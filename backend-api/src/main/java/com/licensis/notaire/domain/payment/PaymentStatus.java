@@ -7,7 +7,7 @@ import java.math.BigDecimal;
  * (CU15 / CU47, Issue #821).
  *
  * <p>The constant names are part of the published REST contract: they are serialised
- * verbatim by {@code GET /api/v1/pagos/presupuesto/{id}/estado}. Do not rename them
+ * verbatim by {@code GET /api/v1/payments/budget/{id}/status}. Do not rename them
  * without versioning the API.
  */
 public enum PaymentStatus {

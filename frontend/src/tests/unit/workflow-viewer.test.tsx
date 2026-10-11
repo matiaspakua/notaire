@@ -8,7 +8,7 @@ import type { WorkflowNode, WorkflowTransition } from "@/types";
 
 const node = (id: number, type: string): WorkflowNode => ({
   id,
-  statusManagementName: `Estado ${id}`,
+  statusManagementName: `Status ${id}`,
   type,
   positionX: 0,
   positionY: 0,
@@ -43,9 +43,9 @@ describe("WorkflowViewer node styling (#613)", () => {
     const intermediateLabel = String((intermediate.data as { label: string }).label);
     const finalLabel = String((final.data as { label: string }).label);
 
-    expect(initialLabel).not.toBe("Estado 1");
-    expect(finalLabel).not.toBe("Estado 3");
-    expect(initialLabel).not.toBe(intermediateLabel.replace("Estado 2", "Estado 1"));
+    expect(initialLabel).not.toBe("Status 1");
+    expect(finalLabel).not.toBe("Status 3");
+    expect(initialLabel).not.toBe(intermediateLabel.replace("Status 2", "Status 1"));
     expect(initialLabel.charAt(0)).not.toBe(finalLabel.charAt(0));
     expect(initialLabel.charAt(0)).not.toBe(intermediateLabel.charAt(0));
   });

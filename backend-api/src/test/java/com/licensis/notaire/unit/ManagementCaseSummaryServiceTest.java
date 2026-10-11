@@ -32,7 +32,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @RequirementCoverage({"CU07", "CU11", "CU12", "CU70"})
-@DisplayName("ManagementCaseSummaryService — escrituras, testimonios and copias of a gestión")
+@DisplayName("ManagementCaseSummaryService — deeds, testimonies and copies of a management")
 @ExtendWith(MockitoExtension.class)
 class ManagementCaseSummaryServiceTest {
 
@@ -52,7 +52,7 @@ class ManagementCaseSummaryServiceTest {
         DeedManagement management = new DeedManagement();
         management.setIdManagement(4);
         management.setNumber(1001);
-        management.setEncabezado("Compraventa Pérez");
+        management.setHeading("Compraventa Pérez");
         return management;
     }
 
@@ -110,7 +110,7 @@ class ManagementCaseSummaryServiceTest {
 
     @Test
     @DisplayName("Should report SIN_INGRESAR for a testimony without movements")
-    void shouldReportSinIngresarWithoutMovements() {
+    void shouldReportNotEnteredWithoutMovements() {
         givenProcedures(procedureWithTestimony(testimony(List.of(), 0)));
 
         assertThat(onlyTestimony(service.getSummary(4)).state()).isEqualTo("SIN_INGRESAR");
@@ -118,7 +118,7 @@ class ManagementCaseSummaryServiceTest {
 
     @Test
     @DisplayName("Should report INGRESADO for an entered testimony not yet registered")
-    void shouldReportIngresado() {
+    void shouldReportEntered() {
         givenProcedures(procedureWithTestimony(testimony(List.of(movement(1, null, false)), 0)));
 
         assertThat(onlyTestimony(service.getSummary(4)).state()).isEqualTo("INGRESADO");
@@ -134,7 +134,7 @@ class ManagementCaseSummaryServiceTest {
     }
 
     @Test
-    @DisplayName("Should list a deed shared by several trámites once")
+    @DisplayName("Should list a deed shared by several procedures once")
     void shouldListSharedDeedOnce() {
         Procedure first = procedureWithTestimony(testimony(List.of(), 0));
         Procedure second = new Procedure(2);
@@ -145,7 +145,7 @@ class ManagementCaseSummaryServiceTest {
     }
 
     @Test
-    @DisplayName("Should return no deeds when no trámite has one")
+    @DisplayName("Should return no deeds when no procedure has one")
     void shouldReturnEmptyDeedsWhenNoneExists() {
         givenProcedures(new Procedure(1));
 
@@ -153,7 +153,7 @@ class ManagementCaseSummaryServiceTest {
     }
 
     @Test
-    @DisplayName("Should list the documents of the gestión with their status flags")
+    @DisplayName("Should list the documents of the management with their status flags")
     void shouldListDocumentsOfTheManagement() {
         givenProcedures(new Procedure(7));
         SubmittedDocument document = new SubmittedDocument();
@@ -182,7 +182,7 @@ class ManagementCaseSummaryServiceTest {
     }
 
     @Test
-    @DisplayName("Should return no documents when the gestión has none")
+    @DisplayName("Should return not documents when the management has none")
     void shouldReturnEmptyDocumentsWhenNoneExists() {
         givenProcedures(new Procedure(1));
 
@@ -190,7 +190,7 @@ class ManagementCaseSummaryServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw ResourceNotFoundException for an unknown gestión")
+    @DisplayName("Should throw ResourceNotFoundException for an unknown management")
     void shouldRejectUnknownManagement() {
         when(managementRepository.findById(404)).thenReturn(Optional.empty());
 

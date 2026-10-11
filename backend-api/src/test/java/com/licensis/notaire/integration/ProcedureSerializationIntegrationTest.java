@@ -32,19 +32,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * {@code Tramite} has two bidirectional EAGER/LAZY relationships that Jackson recurses through
+ * {@code Procedure} has two bidirectional EAGER/LAZY relationships that Jackson recurses through
  * unless the back-reference side is excluded:
  * <ul>
  *   <li>{@code Procedure.fkIdBudget} (EAGER) &lt;-&gt; {@code Budget.procedureList} (LAZY)</li>
  *   <li>{@code Procedure.fkIdManagement} (EAGER) &lt;-&gt; {@code DeedManagement.procedureList} (LAZY)</li>
  * </ul>
- * Both previously 500'd GET /api/v1/tramites ("Failed to write request") as soon as production
+ * Both previously 500'd GET /api/v1/procedures ("Failed to write request") as soon as production
  * data populated either relation — which V1 seed data does via {@code fk_id_gestion}.
  */
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-@DisplayName("Tramite — list endpoint serializes without cyclic recursion")
+@DisplayName("Procedure — list endpoint serializes without cyclic recursion")
 class ProcedureSerializationIntegrationTest {
 
     @Autowired
@@ -67,7 +67,7 @@ class ProcedureSerializationIntegrationTest {
     }
 
     private Integer createTypeProcedure() throws Exception {
-        MvcResult result = mockMvc.perform(post("/api/v1/tipo-tramite")
+        MvcResult result = mockMvc.perform(post("/api/v1/procedure-types")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "Procedure Ciclo Budget", "isRegistered": false,
@@ -79,10 +79,10 @@ class ProcedureSerializationIntegrationTest {
     }
 
     private Integer createBudget() throws Exception {
-        MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
+        MvcResult result = mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"number": 1, "encabezado": "budget ciclo IT", "status": "PENDIENTE",
+                                {"number": 1, "heading": "budget ciclo IT", "status": "PENDIENTE",
                                  "date": "2026-07-24"}
                                 """))
                 .andExpect(status().isCreated())
@@ -94,7 +94,7 @@ class ProcedureSerializationIntegrationTest {
         String body = """
                 {"notes": "procedure ciclo IT", "idProcedureType": %d, "idBudget": %d}
                 """.formatted(typeProcedureId, budgetId);
-        MvcResult result = mockMvc.perform(post("/api/v1/tramites")
+        MvcResult result = mockMvc.perform(post("/api/v1/procedures")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -103,13 +103,13 @@ class ProcedureSerializationIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should list procedures as valid JSON when a tramite references its budget")
+    @DisplayName("Should list procedures as valid JSON when a procedure references its budget")
     void shouldListProceduresWithoutCyclicRecursion() throws Exception {
         Integer typeProcedureId = createTypeProcedure();
         Integer budgetId = createBudget();
         Integer procedureId = createProcedureForBudget(typeProcedureId, budgetId);
 
-        MvcResult result = mockMvc.perform(get("/api/v1/tramites"))
+        MvcResult result = mockMvc.perform(get("/api/v1/procedures"))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -124,10 +124,10 @@ class ProcedureSerializationIntegrationTest {
                 break;
             }
         }
-        assertThat(procedure).as("created tramite should be in the list").isNotNull();
+        assertThat(procedure).as("created procedure should be in the list").isNotNull();
 
         JsonNode budget = procedure.get("fkIdBudget");
-        assertThat(budget).as("tramite should embed its fkIdBudget").isNotNull();
+        assertThat(budget).as("procedure should embed its fkIdBudget").isNotNull();
         assertThat(budget.get("idBudget").asInt()).isEqualTo(budgetId);
         assertThat(budget.has("procedureList"))
                 .as("budget must not embed its procedureList (cyclic reference)")
@@ -135,7 +135,7 @@ class ProcedureSerializationIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should list procedures as valid JSON when a gestion references the tramite (matches V1 seed data)")
+    @DisplayName("Should list procedures as valid JSON when a management references the procedure (matches V1 seed data)")
     void shouldListProceduresWithoutCyclicRecursionThroughManagement() throws Exception {
         Integer typeProcedureId = createTypeProcedure();
         ProcedureType type = new ProcedureType();
@@ -150,7 +150,7 @@ class ProcedureSerializationIntegrationTest {
         DeedManagement management = new DeedManagement();
         management.setIdManagement(null);
         management.setNumber(123456);
-        management.setEncabezado("Gestion Ciclo IT");
+        management.setHeading("Management Ciclo IT");
         management.setDateStart(new Date());
         management.setFkIdManagementStatus(status);
         management.setFkIdNotaryPerson(notary);
@@ -162,7 +162,7 @@ class ProcedureSerializationIntegrationTest {
         procedure.setFkIdProcedureType(type);
         procedureRepository.save(procedure);
 
-        MvcResult result = mockMvc.perform(get("/api/v1/tramites"))
+        MvcResult result = mockMvc.perform(get("/api/v1/procedures"))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -179,9 +179,9 @@ class ProcedureSerializationIntegrationTest {
                 break;
             }
         }
-        assertThat(found).as("tramite linked to the gestion should be in the list").isNotNull();
+        assertThat(found).as("procedure linked to the management should be in the list").isNotNull();
         assertThat(found.get("fkIdManagement").has("procedureList"))
-                .as("gestion must not embed its procedureList (cyclic reference)")
+                .as("management must not embed its procedureList (cyclic reference)")
                 .isFalse();
     }
 }

@@ -29,7 +29,7 @@ describe("parseFieldErrors()", () => {
   });
 
   it("returns empty map when message has no field detail", () => {
-    expect(parseFieldErrors("Saldo excedido", ["amount"])).toEqual({});
+    expect(parseFieldErrors("Balance exceeded", ["amount"])).toEqual({});
   });
 });
 
@@ -43,32 +43,38 @@ describe("presentMutationError()", () => {
     const { toast } = await import("sonner");
     const err = new ApiError(
       409,
-      "/pagos",
-      JSON.stringify({ message: "El monto excede el saldo pendiente" })
+      "/payments",
+      JSON.stringify({
+        message: "The payment amount ($10.00) cannot exceed the outstanding balance ($5.00)",
+      })
     );
 
-    const result = presentMutationError(err, { fallback: "Error al guardar" });
+    const result = presentMutationError(err, { fallback: "Error while saving" });
 
-    expect(result.message).toBe("El monto excede el saldo pendiente");
-    expect(toast.error).toHaveBeenCalledWith("El monto excede el saldo pendiente");
+    expect(result.message).toBe(
+      "The payment amount ($10.00) cannot exceed the outstanding balance ($5.00)"
+    );
+    expect(toast.error).toHaveBeenCalledWith(
+      "The payment amount ($10.00) cannot exceed the outstanding balance ($5.00)"
+    );
     expect(result.toasted).toBe(true);
   });
 
   it("falls back when the body has no parseable business message", async () => {
     const { toast } = await import("sonner");
-    const err = new ApiError(500, "/pagos", "plain text");
+    const err = new ApiError(500, "/payments", "plain text");
 
-    const result = presentMutationError(err, { fallback: "Error al guardar" });
+    const result = presentMutationError(err, { fallback: "Error while saving" });
 
-    expect(result.message).toBe("Error al guardar");
-    expect(toast.error).toHaveBeenCalledWith("Error al guardar");
+    expect(result.message).toBe("Error while saving");
+    expect(toast.error).toHaveBeenCalledWith("Error while saving");
   });
 
   it("does not toast authenticated 401 (session-expiry owns that path)", async () => {
     const { toast } = await import("sonner");
-    const err = new ApiError(401, "/usuarios", "Unauthorized");
+    const err = new ApiError(401, "/users", "Unauthorized");
 
-    const result = presentMutationError(err, { fallback: "Error al guardar" });
+    const result = presentMutationError(err, { fallback: "Error while saving" });
 
     expect(result.toasted).toBe(false);
     expect(toast.error).not.toHaveBeenCalled();
@@ -84,7 +90,7 @@ describe("presentMutationError()", () => {
     );
 
     const result = presentMutationError(err, {
-      fallback: "Error al guardar el rol",
+      fallback: "Error while saving the role",
       fieldNames: ["name"],
       setFieldErrors,
     });
@@ -105,7 +111,7 @@ describe("presentMutationError()", () => {
     );
 
     const result = presentMutationError(err, {
-      fallback: "Error al guardar el rol",
+      fallback: "Error while saving the role",
       fieldNames: ["name"],
       setFieldErrors,
     });
@@ -119,19 +125,19 @@ describe("presentMutationError()", () => {
     const { toast } = await import("sonner");
     const err = new ApiError(
       404,
-      "/documentos/99",
-      JSON.stringify({ message: "Documento no encontrado" })
+      "/documents/99",
+      JSON.stringify({ message: "Document not found" })
     );
 
-    presentMutationError(err, { fallback: "Error al eliminar" });
-    expect(toast.error).toHaveBeenCalledWith("Documento no encontrado");
+    presentMutationError(err, { fallback: "Could not delete" });
+    expect(toast.error).toHaveBeenCalledWith("Document not found");
   });
 
   it("preferFallback toasts curated fallback even when body has a message", async () => {
     const { toast } = await import("sonner");
     const err = new ApiError(
       400,
-      "/presupuestos/1/items-desde-plantilla",
+      "/budgets/1/items-from-template",
       JSON.stringify({ message: "El tipo de trámite no tiene plantilla configurada" })
     );
 

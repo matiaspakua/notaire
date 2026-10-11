@@ -1,11 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.licensis.notaire.business;
 
 /**
- * Clase que agrupa todas las constantes utilizadas en la capa de negocio.
+ * Stored business vocabulary. The string values are persisted labels and stay
+ * as recorded; only the comments around them are English.
  *
  * @author matias
  */
@@ -13,18 +10,15 @@ public interface BusinessConstants
 {
 
     /**
-     * Todos los objejos deben ser instanciados en un estado valido. Si un objeto es creado, se le
-     * asigna al idxx este valor para indicar que es un objeto en un estado inconsistente, ya sea
-     * por que aun no ha sido persistido o por que ha habido algun tipo de error peristiendo la
-     * entidad, buscandola, etc.
+     * Sentinel id for an object that is not yet consistent: it was just created
+     * and not persisted, or a persistence or lookup error left it invalid.
      * <p>
-     * Para saber si un objeto esta en un estado consistente, se debe
-     * verificar que su ID sea distinto a {@link ID_OBJETO_NO_VALIDO}.
+     * An object is consistent when its id is different from {@link #INVALID_OBJECT_ID}.
      */
-    public int ID_OBJETO_NO_VALIDO = -1;
-    //Estados Gestion
+    public int INVALID_OBJECT_ID = -1;
+    // Management statuses
     /**
-     * Estado inicial de un historial cuando se inicia una gestion: "Gestion iniciada"
+     * Initial history status when a management starts: "Iniciada".
      */
     public String ManagementStatusINICIAL = "Iniciada";
     public String ManagementStatusMODIFICADA = "Gestion Modificada";
@@ -38,15 +32,15 @@ public interface BusinessConstants
     public String ManagementCONDOCUMENTACIONCOMPLETA = "Documentacion Completa";
     public String ManagementARCHIVADA = "Archivada";
     /**
-     * Determina que un tipo de folio en particular se puede usar.
+     * A folio type that can still be used.
      */
     public boolean FolioTypeEnabled = true;
     public boolean FolioTypeDESHABILITADO = false;
 
     /**
-     * Determina que un tipo de folio ha sido eliminado o no se puede utilizar.
+     * A folio type that was removed or can no longer be used.
      */
-    //  Todos los estados posibles de los folios.
+    // Possible folio statuses.
     public String StatusFolioNUEVOS = "Folio Nuevo";
     public String StatusFolioUTILIZADO = "Folio Utilizado";
     public String StatusFolioERROSE = "Folio Errose";
@@ -54,7 +48,7 @@ public interface BusinessConstants
     public String ModuleMODIFICARPerson = "Modificar Persona";
     public String ModuleMODIFICARClient = "Modificar Cliente";
     /**
-     * Los distintos estado de una escritura.
+     * Possible deed statuses.
      */
     public String DeedFIRMADA = "Firmada";
     public String DeedSINFIRMAR = "Sin Firmar";
@@ -62,20 +56,20 @@ public interface BusinessConstants
     public String DeedNOPASO = "No Paso";
     public String DeedRegistered = "Inscripta";
     /**
-     * Los distintos estados del circuito registral de una Minuta de Inscripción (CU82).
+     * Registry-circuit statuses of a registration draft (CU82).
      */
     public String RegistrationDraftGENERADA = "Generada";
     public String RegistrationDraftPRESENTADA = "Presentado para inscripción";
     public String RegistrationDraftOBSERVADA = "Observado";
     public String RegistrationDraftRegistered = "Inscripto";
     /**
-     * Los distintos tipos de usuarios.
+     * User types. {@code Escribano} is an administrator type.
      */
     public String UserEMPLEADO = "Empleado";
     public String UserNotary = "Escribano";
 
     /**
-     * Quienes entregan la documentacion
+     * Who delivers the documentation.
      */
     public String DOCUMENTACION_ENTIDAD_EXTERNA = "Entidad Externa";
     public String DOCUMENTACIONClient = "Cliente";

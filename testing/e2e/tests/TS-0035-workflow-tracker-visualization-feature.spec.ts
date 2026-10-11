@@ -1,27 +1,27 @@
 /**
  * E2E tests — Animated workflow tracker on the dashboard landing page
- * CU: CU70 (Workflow de Estados de Gestión), CU71 (Trazabilidad de Trámites)
+ * CU: CU70 (management-status workflow), CU71 (procedure traceability)
  * Issue: #453
  */
 import { type Page, test, expect } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
 import {
   apiGet,
-  assignWorkflowToTipoTramite,
-  createCompleteCaseGestion,
-  createEstadoGestion,
-  createPersona,
-  createPresupuesto,
-  createTipoTramite,
+  assignWorkflowToProcedureType,
+  createCompleteCaseManagement,
+  createManagementStatus,
+  createPerson,
+  createBudget,
+  createProcedureType,
   createWorkflowDefinition,
   createWorkflowNode,
 } from "./setup/api-helpers";
 
 async function loginAs(page: Page) {
   await page.goto("/login");
-  await page.getByTestId("input-usuario").fill("admin");
-  await page.getByTestId("input-contrasenia").fill("admin");
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("input-username").fill("admin");
+  await page.getByTestId("input-password").fill("admin");
+  await page.getByTestId("btn-sign-in").click();
   await page.waitForURL(/\/dashboard/, { timeout: 15000 });
   await page.waitForLoadState("domcontentloaded");
 }
@@ -37,7 +37,7 @@ test.describe("Workflow hero section (CU70, CU71)", () => {
     await expect(page.locator("#workflow-ref")).toBeVisible();
   });
 
-  test("workflow tracker renders nodes and legend for latest gestion", async ({ page }) => {
+  test("workflow tracker renders nodes and legend for the latest management", async ({ page }) => {
     const tracker = page.getByTestId("workflow-tracker");
     await expect(tracker).toBeVisible({ timeout: 15000 });
 
@@ -83,23 +83,23 @@ test.describe("Workflow hero section (CU70, CU71)", () => {
 test.describe("Workflow hero shows the newest case (#1347)", () => {
   test("a case just created with a workflow (or a newer one) is shown, never the oldest", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    const person = await createPersona(page, { isClient: true });
+    const person = await createPerson(page, { isClient: true });
     expect(person.ok, person.error).toBe(true);
-    const budget = await createPresupuesto(page, person.data!.personId);
+    const budget = await createBudget(page, person.data!.personId);
     expect(budget.ok, budget.error).toBe(true);
     // A self-contained one-node workflow, so the new case is traceable on any database.
-    const estado = await createEstadoGestion(page);
+    const status = await createManagementStatus(page);
     const workflow = await createWorkflowDefinition(page);
-    await createWorkflowNode(page, workflow.data!.id, estado.data!.idManagementStatus, "INITIAL");
-    const tipo = await createTipoTramite(page);
-    await assignWorkflowToTipoTramite(page, tipo.data!.idProcedureType, workflow.data!.id);
-    const gestion = await createCompleteCaseGestion(page, {
-      presupuestoId: budget.data!.idBudget,
-      tipoTramiteId: tipo.data!.idProcedureType,
-      estadoGestionId: estado.data!.idManagementStatus,
+    await createWorkflowNode(page, workflow.data!.id, status.data!.idManagementStatus, "INITIAL");
+    const procedureType = await createProcedureType(page);
+    await assignWorkflowToProcedureType(page, procedureType.data!.idProcedureType, workflow.data!.id);
+    const management = await createCompleteCaseManagement(page, {
+      budgetId: budget.data!.idBudget,
+      procedureTypeId: procedureType.data!.idProcedureType,
+      statusManagementId: status.data!.idManagementStatus,
     });
-    expect(gestion.ok, gestion.error).toBe(true);
-    const trace = await apiGet(page, `/gestiones/${gestion.data!.idManagement}/workflow-trace`);
+    expect(management.ok, management.error).toBe(true);
+    const trace = await apiGet(page, `/managements/${management.data!.idManagement}/workflow-trace`);
     expect(trace.ok, trace.error).toBe(true);
 
     await page.goto("/dashboard");
@@ -107,7 +107,7 @@ test.describe("Workflow hero shows the newest case (#1347)", () => {
     await expect(page.getByTestId("workflow-tracker")).toBeVisible({ timeout: 15000 });
     const shown = Number(await hero.getAttribute("data-management-id"));
     // Parallel workers may create newer cases; the oldest (seed 1001) must never win.
-    expect(shown).toBeGreaterThanOrEqual(gestion.data!.idManagement);
+    expect(shown).toBeGreaterThanOrEqual(management.data!.idManagement);
     await expect(page.getByTestId("workflow-subtitle")).toContainText("#");
   });
 

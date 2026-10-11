@@ -16,7 +16,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("PlantillaPresupuesto Repository Integration Tests")
+@DisplayName("BudgetTemplate Repository Integration Tests")
 class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -35,7 +35,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     @BeforeEach
     void setUp() {
         testTypeProcedure = new ProcedureType();
-        testTypeProcedure.setName("Escritura de Compraventa");
+        testTypeProcedure.setName("Deed de Compraventa");
         typeProcedureRepository.save(testTypeProcedure);
 
         testConcept = new Concept();
@@ -52,28 +52,28 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
         testTemplate.setBudgetTemplatePK(pk);
         testTemplate.setProcedureType(testTypeProcedure);
         testTemplate.setConcept(testConcept);
-        testTemplate.setNotes("Plantilla estándar");
+        testTemplate.setNotes("Standard template");
         templateRepository.save(testTemplate);
     }
 
     @Test
-    @DisplayName("Should persist plantilla through repository")
+    @DisplayName("Should persist a budget template through the repository")
     void shouldPersistTemplate() {
         assertThat(testTemplate.getBudgetTemplatePK()).isNotNull();
         assertThat(templateRepository.findByProcedureTypeIdProcedureType(testTypeProcedure.getIdProcedureType())).isNotEmpty();
     }
 
     @Test
-    @DisplayName("Should find plantilla by type tramite")
+    @DisplayName("Should find template by type procedure")
     void shouldFindTemplateByTypeProcedure() {
         List<BudgetTemplate> found = templateRepository.findByProcedureTypeIdProcedureType(testTypeProcedure.getIdProcedureType());
 
         assertThat(found).isNotEmpty()
-                .anyMatch(p -> p.getNotes().equals("Plantilla estándar"));
+                .anyMatch(p -> p.getNotes().equals("Standard template"));
     }
 
     @Test
-    @DisplayName("Should return empty for non-existent type tramite")
+    @DisplayName("Should return empty for non-existent type procedure")
     void shouldReturnEmptyForNonExistentTypeProcedure() {
         List<BudgetTemplate> found = templateRepository.findByProcedureTypeIdProcedureType(999999);
 
@@ -81,8 +81,8 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should find all plantillas")
-    void shouldFindAllPlantillas() {
+    @DisplayName("Should find all budget templates")
+    void shouldFindAllTemplates() {
         List<BudgetTemplate> all = templateRepository.findAll();
 
         assertThat(all).isNotEmpty()
@@ -90,7 +90,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should update plantilla notes")
+    @DisplayName("Should update budget-template notes")
     void shouldUpdateTemplate() {
         testTemplate.setNotes("Observaciones actualizadas");
         BudgetTemplate updated = templateRepository.save(testTemplate);
@@ -103,7 +103,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should delete plantilla")
+    @DisplayName("Should delete the budget template")
     void shouldDeleteTemplate() {
         Long initialCount = (long) templateRepository.findAll().size();
         templateRepository.delete(testTemplate);
@@ -113,14 +113,14 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should create plantilla with null notes")
+    @DisplayName("Should create a budget template with null notes")
     void shouldCreateTemplateWithNullNotes() {
         ProcedureType type = new ProcedureType();
         type.setName("Poder");
         typeProcedureRepository.save(type);
 
         Concept concept = new Concept();
-        concept.setName("Gestión");
+        concept.setName("Management");
         concept.setValue(java.math.BigDecimal.ZERO);
         concept.setPercentage(0);
         conceptRepository.save(concept);
@@ -141,34 +141,34 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should handle multiple plantillas for same type tramite")
-    void shouldHandleMultiplePlantillas() {
-        Concept concepto2 = new Concept();
-        concepto2.setName("Gastos");
-        concepto2.setValue(java.math.BigDecimal.ZERO);
-        concepto2.setPercentage(0);
-        conceptRepository.save(concepto2);
+    @DisplayName("Should handle multiple budget templates for the same procedure type")
+    void shouldHandleMultipleTemplates() {
+        Concept concept2 = new Concept();
+        concept2.setName("Gastos");
+        concept2.setValue(java.math.BigDecimal.ZERO);
+        concept2.setPercentage(0);
+        conceptRepository.save(concept2);
 
         BudgetTemplatePK pk2 = new BudgetTemplatePK(
                 testTypeProcedure.getIdProcedureType(),
-                concepto2.getIdConcept()
+                concept2.getIdConcept()
         );
-        BudgetTemplate plantilla2 = new BudgetTemplate();
-        plantilla2.setBudgetTemplatePK(pk2);
-        plantilla2.setProcedureType(testTypeProcedure);
-        plantilla2.setConcept(concepto2);
-        plantilla2.setNotes("Segunda plantilla");
+        BudgetTemplate template2 = new BudgetTemplate();
+        template2.setBudgetTemplatePK(pk2);
+        template2.setProcedureType(testTypeProcedure);
+        template2.setConcept(concept2);
+        template2.setNotes("Second template");
 
-        templateRepository.save(plantilla2);
+        templateRepository.save(template2);
 
         List<BudgetTemplate> all = templateRepository.findAll();
         assertThat(all).isNotEmpty()
                 .anyMatch(p -> p.getBudgetTemplatePK().equals(testTemplate.getBudgetTemplatePK()))
-                .anyMatch(p -> p.getBudgetTemplatePK().equals(plantilla2.getBudgetTemplatePK()));
+                .anyMatch(p -> p.getBudgetTemplatePK().equals(template2.getBudgetTemplatePK()));
     }
 
     @Test
-    @DisplayName("Should update plantilla fields independently")
+    @DisplayName("Should update budget-template fields independently")
     void shouldUpdateFieldsIndependently() {
         testTemplate.setNotes("Updated notes 1");
         templateRepository.save(testTemplate);
@@ -184,7 +184,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle transaction consistency")
     void shouldMaintainTransactionConsistency() {
-        testTemplate.setNotes("Antes de eliminar");
+        testTemplate.setNotes("Antes of delete");
         templateRepository.save(testTemplate);
 
         templateRepository.delete(testTemplate);
@@ -194,48 +194,48 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should create distinct plantillas with different IDs")
-    void shouldCreateDistinctPlantillas() {
-        ProcedureType tipo1 = new ProcedureType();
-        tipo1.setName("Tipo 1");
-        typeProcedureRepository.save(tipo1);
+    @DisplayName("Should create distinct budget templates with different IDs")
+    void shouldCreateDistinctTemplates() {
+        ProcedureType type1 = new ProcedureType();
+        type1.setName("Tipo 1");
+        typeProcedureRepository.save(type1);
 
-        ProcedureType tipo2 = new ProcedureType();
-        tipo2.setName("Tipo 2");
-        typeProcedureRepository.save(tipo2);
+        ProcedureType type2 = new ProcedureType();
+        type2.setName("Tipo 2");
+        typeProcedureRepository.save(type2);
 
-        Concept concepto1 = new Concept();
-        concepto1.setName("Concepto 1");
-        concepto1.setValue(java.math.BigDecimal.ZERO);
-        concepto1.setPercentage(0);
-        conceptRepository.save(concepto1);
+        Concept concept1 = new Concept();
+        concept1.setName("Concept 1");
+        concept1.setValue(java.math.BigDecimal.ZERO);
+        concept1.setPercentage(0);
+        conceptRepository.save(concept1);
 
-        Concept concepto2 = new Concept();
-        concepto2.setName("Concepto 2");
-        concepto2.setValue(java.math.BigDecimal.ZERO);
-        concepto2.setPercentage(0);
-        conceptRepository.save(concepto2);
+        Concept concept2 = new Concept();
+        concept2.setName("Concept 2");
+        concept2.setValue(java.math.BigDecimal.ZERO);
+        concept2.setPercentage(0);
+        conceptRepository.save(concept2);
 
-        BudgetTemplatePK pk1 = new BudgetTemplatePK(tipo1.getIdProcedureType(), concepto1.getIdConcept());
-        BudgetTemplate plantilla1 = new BudgetTemplate();
-        plantilla1.setBudgetTemplatePK(pk1);
-        plantilla1.setProcedureType(tipo1);
-        plantilla1.setConcept(concepto1);
-        plantilla1.setNotes("Plantilla 1");
-        templateRepository.save(plantilla1);
+        BudgetTemplatePK pk1 = new BudgetTemplatePK(type1.getIdProcedureType(), concept1.getIdConcept());
+        BudgetTemplate template1 = new BudgetTemplate();
+        template1.setBudgetTemplatePK(pk1);
+        template1.setProcedureType(type1);
+        template1.setConcept(concept1);
+        template1.setNotes("Template 1");
+        templateRepository.save(template1);
 
-        BudgetTemplatePK pk2 = new BudgetTemplatePK(tipo2.getIdProcedureType(), concepto2.getIdConcept());
-        BudgetTemplate plantilla2 = new BudgetTemplate();
-        plantilla2.setBudgetTemplatePK(pk2);
-        plantilla2.setProcedureType(tipo2);
-        plantilla2.setConcept(concepto2);
-        plantilla2.setNotes("Plantilla 2");
-        templateRepository.save(plantilla2);
+        BudgetTemplatePK pk2 = new BudgetTemplatePK(type2.getIdProcedureType(), concept2.getIdConcept());
+        BudgetTemplate template2 = new BudgetTemplate();
+        template2.setBudgetTemplatePK(pk2);
+        template2.setProcedureType(type2);
+        template2.setConcept(concept2);
+        template2.setNotes("Template 2");
+        templateRepository.save(template2);
 
-        List<BudgetTemplate> found1 = templateRepository.findByProcedureTypeIdProcedureType(tipo1.getIdProcedureType());
-        List<BudgetTemplate> found2 = templateRepository.findByProcedureTypeIdProcedureType(tipo2.getIdProcedureType());
+        List<BudgetTemplate> found1 = templateRepository.findByProcedureTypeIdProcedureType(type1.getIdProcedureType());
+        List<BudgetTemplate> found2 = templateRepository.findByProcedureTypeIdProcedureType(type2.getIdProcedureType());
 
-        assertThat(found1).isNotEmpty().anyMatch(p -> p.getNotes().equals("Plantilla 1"));
-        assertThat(found2).isNotEmpty().anyMatch(p -> p.getNotes().equals("Plantilla 2"));
+        assertThat(found1).isNotEmpty().anyMatch(p -> p.getNotes().equals("Template 1"));
+        assertThat(found2).isNotEmpty().anyMatch(p -> p.getNotes().equals("Template 2"));
     }
 }

@@ -14,8 +14,8 @@ import jakarta.persistence.Table;
 import java.io.Serializable;
 
 /**
- * Carpeta que agrupa la documentación de un único trámite dentro de una
- * gestión, con ciclo de vida activa/espera/archivada (CU85).
+ * Folder that groups the documentation of a single procedure inside a
+ * management, with the active, on-hold, and archived lifecycle (CU85).
  */
 @Entity
 @Table(name = "procedure_folders")
@@ -39,11 +39,11 @@ public class ProcedureFolder implements Serializable {
     @Column(name = "wait_reason")
     private String waitReason;
 
-    @JoinColumn(name = "fk_id_gestion", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_deed_management", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private DeedManagement fkIdManagement;
 
-    @JoinColumn(name = "fk_id_tramite", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_procedure", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Procedure fkIdProcedure;
 
@@ -110,7 +110,7 @@ public class ProcedureFolder implements Serializable {
 
     @Override
     public String toString() {
-        return "CarpetaTramite[ idCarpeta=" + idFolder + " ][ numero=" + number + " ][ estado=" + status + " ]";
+        return "ProcedureFolder[ idFolder=" + idFolder + " ][ number=" + number + " ][ status=" + status + " ]";
     }
 
     public DtoProcedureFolder getDto() {

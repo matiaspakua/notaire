@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-@DisplayName("CU34/CU37/CU66 — Concepto referential integrity (issue #432)")
+@DisplayName("CU34/CU37/CU66 — Concept referential integrity (issue #432)")
 class ConceptReferentialIntegrityTest {
 
     @Autowired
@@ -40,7 +40,7 @@ class ConceptReferentialIntegrityTest {
     }
 
     private int createConcept(String name) throws Exception {
-        MvcResult result = mockMvc.perform(post("/api/v1/conceptos")
+        MvcResult result = mockMvc.perform(post("/api/v1/concepts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -58,7 +58,7 @@ class ConceptReferentialIntegrityTest {
     }
 
     private void linkConceptToTemplate(int typeProcedureId, int conceptId) throws Exception {
-        mockMvc.perform(post("/api/v1/plantilla-presupuestos")
+        mockMvc.perform(post("/api/v1/budget-templates")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -70,33 +70,33 @@ class ConceptReferentialIntegrityTest {
     }
 
     @Test
-    @DisplayName("Should return inUse=false when no plantilla references the concepto")
+    @DisplayName("Should return inUse=false when no template references the concept")
     void shouldReturnInUseFalseWhenConceptIsNotReferenced() throws Exception {
         int id = createConcept("ConceptoFree_InUse");
 
-        mockMvc.perform(get("/api/v1/conceptos/" + id + "/in-use"))
+        mockMvc.perform(get("/api/v1/concepts/" + id + "/in-use"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.inUse").value(false));
     }
 
     @Test
-    @DisplayName("Should return inUse=true when a plantilla references the concepto")
+    @DisplayName("Should return inUse=true when a template references the concept")
     void shouldReturnInUseTrueWhenConceptIsReferenced() throws Exception {
         int id = createConcept("ConceptoUsed_InUse");
         linkConceptToTemplate(1, id);
 
-        mockMvc.perform(get("/api/v1/conceptos/" + id + "/in-use"))
+        mockMvc.perform(get("/api/v1/concepts/" + id + "/in-use"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.inUse").value(true));
     }
 
     @Test
-    @DisplayName("Should return 409 when editing a concepto that is in use")
+    @DisplayName("Should return 409 when editing a concept that is in use")
     void shouldReturn409WhenEditingConceptInUse() throws Exception {
         int id = createConcept("ConceptoEditBlocked");
         linkConceptToTemplate(1, id);
 
-        mockMvc.perform(put("/api/v1/conceptos/" + id)
+        mockMvc.perform(put("/api/v1/concepts/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -111,11 +111,11 @@ class ConceptReferentialIntegrityTest {
     }
 
     @Test
-    @DisplayName("Should allow editing a concepto that is NOT in use")
+    @DisplayName("Should allow editing a concept that is NOT in use")
     void shouldAllowEditingConceptNotInUse() throws Exception {
         int id = createConcept("ConceptoEditAllowed");
 
-        mockMvc.perform(put("/api/v1/conceptos/" + id)
+        mockMvc.perform(put("/api/v1/concepts/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -129,22 +129,22 @@ class ConceptReferentialIntegrityTest {
     }
 
     @Test
-    @DisplayName("Should return 409 when deleting a concepto that is in use")
+    @DisplayName("Should return 409 when deleting a concept that is in use")
     void shouldReturn409WhenDeletingConceptInUse() throws Exception {
         int id = createConcept("ConceptoDeleteBlocked");
         linkConceptToTemplate(1, id);
 
-        mockMvc.perform(delete("/api/v1/conceptos/" + id))
+        mockMvc.perform(delete("/api/v1/concepts/" + id))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error").exists());
     }
 
     @Test
-    @DisplayName("Should search conceptos by name")
-    void shouldSearchConceptosByName() throws Exception {
+    @DisplayName("Should search concepts by name")
+    void shouldSearchConceptsByName() throws Exception {
         createConcept("BuscarEsteConcepto");
 
-        mockMvc.perform(get("/api/v1/conceptos/search").param("name", "BuscarEste"))
+        mockMvc.perform(get("/api/v1/concepts/search").param("name", "BuscarEste"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].name").value("BuscarEsteConcepto"));

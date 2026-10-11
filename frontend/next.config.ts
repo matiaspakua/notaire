@@ -16,13 +16,13 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
-        source: "/dashboard/administracion/items",
+        source: "/dashboard/administration/items",
         destination: "/dashboard/items",
         permanent: true,
       },
       {
-        source: "/dashboard/administracion/auditoria",
-        destination: "/dashboard/auditoria",
+        source: "/dashboard/administration/audit",
+        destination: "/dashboard/audit",
         permanent: true,
       },
     ];

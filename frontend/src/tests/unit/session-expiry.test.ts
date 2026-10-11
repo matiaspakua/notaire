@@ -16,7 +16,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   window.localStorage.clear();
   useAuthStore.setState({
-    user: { nombre: "admin", tipo: "ADMIN", valido: true },
+    user: { name: "admin", type: "ADMIN", valid: true },
     token: "valid-jwt",
     isAuthenticated: true,
   });
@@ -32,7 +32,7 @@ afterEach(() => {
 
 describe("handleAuthenticatedSessionExpiry (issue #1053)", () => {
   it("clears auth and navigates to /login?expired=1 on authenticated 401", () => {
-    const handled = handleAuthenticatedSessionExpiry(401, "/gestiones");
+    const handled = handleAuthenticatedSessionExpiry(401, "/managements");
 
     expect(handled).toBe(true);
     expect(useAuthStore.getState().isAuthenticated).toBe(false);
@@ -45,12 +45,12 @@ describe("handleAuthenticatedSessionExpiry (issue #1053)", () => {
       resetSessionExpiryGuardForTests();
       assignMock.mockClear();
       useAuthStore.setState({
-        user: { nombre: "admin", tipo: "ADMIN", valido: true },
+        user: { name: "admin", type: "ADMIN", valid: true },
         token: "valid-jwt",
         isAuthenticated: true,
       });
 
-      const handled = handleAuthenticatedSessionExpiry(status, "/gestiones");
+      const handled = handleAuthenticatedSessionExpiry(status, "/managements");
 
       expect(handled).toBe(false);
       expect(useAuthStore.getState().isAuthenticated).toBe(true);
@@ -61,7 +61,7 @@ describe("handleAuthenticatedSessionExpiry (issue #1053)", () => {
   it("does not expiry-redirect login-endpoint 401 (bad credentials)", () => {
     useAuthStore.setState({ user: null, token: null, isAuthenticated: false });
 
-    const handled = handleAuthenticatedSessionExpiry(401, "/usuarios/login");
+    const handled = handleAuthenticatedSessionExpiry(401, "/users/login");
 
     expect(handled).toBe(false);
     expect(assignMock).not.toHaveBeenCalled();
@@ -70,7 +70,7 @@ describe("handleAuthenticatedSessionExpiry (issue #1053)", () => {
   it("does not expiry-redirect when there is no local session", () => {
     useAuthStore.setState({ user: null, token: null, isAuthenticated: false });
 
-    const handled = handleAuthenticatedSessionExpiry(401, "/gestiones");
+    const handled = handleAuthenticatedSessionExpiry(401, "/managements");
 
     expect(handled).toBe(false);
     expect(assignMock).not.toHaveBeenCalled();
@@ -78,20 +78,20 @@ describe("handleAuthenticatedSessionExpiry (issue #1053)", () => {
 
   it("treats isAuthenticated without a token as an active session (issue #1051)", () => {
     useAuthStore.setState({
-      user: { nombre: "admin", tipo: "ADMIN", valido: true },
+      user: { name: "admin", type: "ADMIN", valid: true },
       token: null,
       isAuthenticated: true,
     });
 
-    const handled = handleAuthenticatedSessionExpiry(401, "/gestiones");
+    const handled = handleAuthenticatedSessionExpiry(401, "/managements");
 
     expect(handled).toBe(true);
     expect(assignMock).toHaveBeenCalledWith("/login?expired=1");
   });
 
   it("is idempotent under concurrent 401s (re-entrancy guard)", () => {
-    handleAuthenticatedSessionExpiry(401, "/gestiones");
-    handleAuthenticatedSessionExpiry(401, "/personas");
+    handleAuthenticatedSessionExpiry(401, "/managements");
+    handleAuthenticatedSessionExpiry(401, "/people");
 
     expect(assignMock).toHaveBeenCalledTimes(1);
     expect(assignMock).toHaveBeenCalledWith("/login?expired=1");

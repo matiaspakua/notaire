@@ -20,7 +20,7 @@ NEW_UIDS = {
 }
 EXISTING_UIDS = {
     "notaire-backend", "notaire-postgres", "notaire-auth", "notaire-logs",
-    "notaire-stack-status", "notaire-status",
+    "notaire-stack-status", "notaire-status", "notaire-security",
 }
 DATASOURCE_UIDS = {"prometheus", "loki", "tempo", "alertmanager"}
 TOOL_JOBS = {"tempo": "tempo:3200", "alertmanager": "alertmanager:9093", "promtail": "promtail:9080"}

@@ -16,16 +16,19 @@ ciclo de vida: negocio, arquitectura y desarrollo.
 ## Punto de entrada recomendado
 
 1. **Negocio**: [Casos de Uso](100-business/102-use-cases/) — qué hace el sistema y para quién.
-2. **Arquitectura**: [SAD](200-architecture/201-SAD/sad.md) — visión arc42 completa del sistema.
-3. **Desarrollo**: [`CLAUDE.md`](../CLAUDE.md) y [`CONSTITUTION.md`](../CONSTITUTION.md) — flujo de
+2. **Ciclo de vida**: [CICLO-DE-VIDA.md](200-architecture/203-design/CICLO-DE-VIDA.md) — estados,
+   secuencias y vistas C4 del producto.
+3. **Método**: [INGENIERIA.md](300-development/INGENIERIA.md) — artefactos, trazabilidad y procesos.
+4. **Arquitectura**: [SAD](200-architecture/201-SAD/sad.md) — visión arc42 completa del sistema.
+5. **Desarrollo**: [`CLAUDE.md`](../CLAUDE.md) y [`CONSTITUTION.md`](../CONSTITUTION.md) — flujo de
    trabajo obligatorio para cualquier cambio de código.
-4. **Gestión**: [Organización de GitHub](github/README.md) — dónde se sigue el trabajo y cómo se etiqueta.
+6. **Gestión**: [Organización de GitHub](github/README.md) — dónde se sigue el trabajo y cómo se etiqueta.
 
 ## Convenciones
 
 - Toda carpeta numerada (`1XX-`, `2XX-`, `3XX-`) sigue el orden de lectura sugerido dentro de su fase.
-- Los diagramas se mantienen en PlantUML (`.puml`), versionables como texto; los `.svg` renderizados
-  se commitean junto al fuente.
+- Los diagramas activos van en Mermaid dentro del Markdown ([ADR-027](200-architecture/202-ADR/ADR-027-mermaid-diagrams.md)).
+  Los `.puml` que quedan son legado.
 - Los documentos superados (formatos legacy como `.drawio`/`.jpg`, o contenido reemplazado) se mueven
   a `000-archive/` con un `README.md` que enlaza al equivalente vigente, y se deja una nota de
   redirección en la carpeta original.

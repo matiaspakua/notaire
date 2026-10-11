@@ -84,6 +84,7 @@ shipped; use `bash workspace/stack/start.sh` for centralized logs.
 |-------|-----------|----------|
 | HighLoginFailureRate | >50% of logins fail over 2m | Warning |
 | SuspiciousLoginActivity | bad-credential rate above ~30/min for 1m | Critical |
+| LoginLockoutSpike | any locked-login rate for 1m | Warning |
 | BackendDown | `up{job="notaire-backend"}` is 0 for 1m | Critical |
 | HighJvmHeapUsage | JVM heap above 85% for 5m | Warning |
 

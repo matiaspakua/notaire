@@ -105,7 +105,7 @@ class WorkflowTraceServiceTest {
         DeedManagement management = new DeedManagement();
         management.setIdManagement(100);
         management.setNumber(1001);
-        management.setEncabezado("Trace with testimony");
+        management.setHeading("Trace with testimony");
         management.setDateStart(new Date(1_000L));
         management.setFkIdManagementStatus(new ManagementStatus(12));
         management.setProcedureList(List.of(procedure));
@@ -128,7 +128,7 @@ class WorkflowTraceServiceTest {
         DeedManagement management = new DeedManagement();
         management.setIdManagement(200);
         management.setNumber(2002);
-        management.setEncabezado("Trace without testimony");
+        management.setHeading("Trace without testimony");
         management.setDateStart(new Date(1_000L));
         management.setFkIdManagementStatus(new ManagementStatus(2));
         management.setProcedureList(List.of(procedure));
@@ -182,6 +182,21 @@ class WorkflowTraceServiceTest {
     }
 
     @Test
+    @DisplayName("#1383 Should break same-day ties by idHistory when picking the latest status")
+    void shouldBreakSameDayTiesByIdHistory() {
+        List<WorkflowNode> nodes = List.of(
+                makeNode(1, 10, WorkflowNodeType.INITIAL),
+                makeNode(2, 20, WorkflowNodeType.FINAL));
+        List<History> history = List.of(
+                makeHistory(2, 20, 1000L),
+                makeHistory(1, 10, 1000L));
+
+        Map<Integer, String> statuses = WorkflowTraceService.computeNodeStatuses(nodes, history);
+
+        assertThat(statuses).containsEntry(1, "completed").containsEntry(2, "in_progress");
+    }
+
+    @Test
     @DisplayName("Should keep node in_progress when the same status repeats in history")
     void shouldKeepNodeInProgressWhenSameStatusRepeats() {
         List<WorkflowNode> nodes = List.of(makeNode(1, 10, WorkflowNodeType.INITIAL));
@@ -195,7 +210,7 @@ class WorkflowTraceServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw when gestion does not exist")
+    @DisplayName("Should throw when management does not exist")
     void shouldThrowWhenManagementDoesNotExist() {
         DeedManagementRepository managementRepository = Mockito.mock(DeedManagementRepository.class);
         Mockito.when(managementRepository.findById(99)).thenReturn(Optional.empty());

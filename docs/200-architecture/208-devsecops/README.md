@@ -358,9 +358,12 @@ bash security/enable-gh-secure.sh --apply    # needs admin or maintain
 ## Future Enhancements
 
 1. Ratchet OWASP ZAP baseline from warn-first to fail on CRITICAL/HIGH (allowlist as needed) — CI job already landed in #1067
-2. Implement Snyk for additional vulnerability scanning
+2. Keep Trivy as the open-source SCA scanner. A commercial SCA product is not
+   required beside it (see [SECURITY-TOOLS.md](../206-security/SECURITY-TOOLS.md))
 3. Add dependency review action
-4. Add secret scanning with GitLeaks (push protection is the GitHub setting above)
+4. Secret scanning is enforced by `python3 security/scan_secrets.py` (Gitleaks
+   rule families, no extra binary). GitHub push protection remains the admin
+   setting above
 5. Implement SLSA provenance attestation
 6. Enable backup→restore→smoke execution when #256 ships `infra/scripts/backup-postgres.sh`
 

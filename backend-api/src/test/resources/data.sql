@@ -22,21 +22,21 @@ INSERT INTO management_statuses (version, name, notes) VALUES (0, 'Iniciada', 'I
 -- Reference Data: Procedure Types
 -- Entity columns: version, id (auto), name, notes, enabled, is_archived, is_registered, associates_properties
 INSERT INTO procedure_types (version, name, notes, enabled, is_archived, is_registered, associates_properties) VALUES
-(0, 'Compraventa', 'Tramite de compraventa', true, true, true, true);
+(0, 'Compraventa', 'Procedure de compraventa', true, true, true, true);
 
 -- Reference Data: Concepts
 -- Entity columns: version, id (auto), name, amount, percentage, enabled, fixed_concept
 INSERT INTO concepts (version, name, amount, percentage, enabled, fixed_concept) VALUES
 (0, 'Honorario base', 10000, 0, true, true);
 
--- Seed Data: Person (Escribano) — required by Gestion, Folio, Usuario FKs
+-- Seed Data: Person (Escribano) — required by Gestion, Folio, UserAccount FKs
 -- Entity columns: version, id (auto), first_name, last_name, identification_number,
 --   tax_id, sex, marital_status, occupation, address, phone, email,
---   notary_registration_number, is_client, fk_id_tipo_identificacion
+--   notary_registration_number, is_client, fk_id_identification_type
 INSERT INTO people (
     version, first_name, last_name, identification_number,
     tax_id, sex, marital_status, occupation, address, phone, email,
-    notary_registration_number, is_client, fk_id_tipo_identificacion
+    notary_registration_number, is_client, fk_id_identification_type
 ) VALUES (
     0, 'Juan Carlos', 'Garcia', '20123456',
     '20-20123456-3', 'M', 'Casado', 'Escribano', 'Av. Principal 123', '011-4555-1234', 'jcgarcia@notaria.com',

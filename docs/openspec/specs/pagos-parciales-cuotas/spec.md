@@ -10,12 +10,12 @@ presupuesto está sin pagos, parcialmente abonado o saldado al consultarlo
 El sistema SHALL aceptar el registro de un pago sobre un presupuesto cuyo
 monto sea menor al saldo pendiente, sin rechazarlo por no cubrir el total.
 
-#### Scenario: Pago que cubre el total del presupuesto
+#### Scenario: Payment que cubre el total del presupuesto
 - **WHEN** se registra un único pago cuyo monto es igual al total del
   presupuesto
 - **THEN** el sistema acepta el pago y el saldo pendiente queda en cero
 
-#### Scenario: Pago parcial que no cubre el total
+#### Scenario: Payment parcial que no cubre el total
 - **WHEN** se registra un pago cuyo monto es menor al saldo pendiente del
   presupuesto
 - **THEN** el sistema acepta el pago sin exigir que cubra el resto del

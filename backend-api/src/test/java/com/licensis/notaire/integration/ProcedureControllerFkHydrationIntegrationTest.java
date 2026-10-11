@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
- * Reproduces issue #981: {@code POST}/{@code PUT /api/v1/tramites} must resolve
+ * Reproduces issue #981: {@code POST}/{@code PUT /api/v1/procedures} must resolve
  * plain FK ids (idDeed, idProperty, idManagement, idBudget, idProcedureType)
  * against their real persisted rows, never trust a client-supplied nested
  * object as-is. See docs/openspec/changes/fix-procedure-nested-fk-hydration/.
@@ -50,7 +50,7 @@ class ProcedureControllerFkHydrationIntegrationTest {
     }
 
     private Integer createProcedureType() throws Exception {
-        MvcResult result = mockMvc.perform(post("/api/v1/tipo-tramite")
+        MvcResult result = mockMvc.perform(post("/api/v1/procedure-types")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "Tipo FK Hydration", "isRegistered": false,
@@ -65,19 +65,19 @@ class ProcedureControllerFkHydrationIntegrationTest {
         Deed deed = new Deed();
         deed.setNumber(number);
         deed.setDateDeedrecording(new Date());
-        deed.setBody("Cuerpo de escritura de prueba");
+        deed.setBody("Test deed body");
         deed.setStatus("Firmada");
         deed = deedRepository.save(deed);
         return deed.getIdDeed();
     }
 
     @Test
-    @DisplayName("POST /api/v1/tramites with a real idDeed returns the Deed's actual state")
+    @DisplayName("POST /api/v1/procedures with a real idDeed returns the Deed's actual state")
     void shouldReturnRealDeedStateOnCreate() throws Exception {
         Integer typeId = createProcedureType();
         Integer deedId = createSignedDeed(777);
 
-        MvcResult result = mockMvc.perform(post("/api/v1/tramites")
+        MvcResult result = mockMvc.perform(post("/api/v1/procedures")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"idProcedureType": %d, "idDeed": %d}
@@ -93,12 +93,12 @@ class ProcedureControllerFkHydrationIntegrationTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/tramites/{id} after creation reflects the same real Deed state")
+    @DisplayName("GET /api/v1/procedures/{id} after creation reflects the same real Deed state")
     void shouldReflectRealDeedStateOnSubsequentGet() throws Exception {
         Integer typeId = createProcedureType();
         Integer deedId = createSignedDeed(778);
 
-        MvcResult createResult = mockMvc.perform(post("/api/v1/tramites")
+        MvcResult createResult = mockMvc.perform(post("/api/v1/procedures")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"idProcedureType": %d, "idDeed": %d}
@@ -108,7 +108,7 @@ class ProcedureControllerFkHydrationIntegrationTest {
         Integer procedureId = mapper.readTree(createResult.getResponse().getContentAsString())
                 .get("idProcedure").asInt();
 
-        MvcResult getResult = mockMvc.perform(get("/api/v1/tramites/" + procedureId))
+        MvcResult getResult = mockMvc.perform(get("/api/v1/procedures/" + procedureId))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -118,20 +118,20 @@ class ProcedureControllerFkHydrationIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /api/v1/tramites without idProcedureType returns 400")
+    @DisplayName("POST /api/v1/procedures without idProcedureType returns 400")
     void shouldRejectMissingProcedureType() throws Exception {
-        mockMvc.perform(post("/api/v1/tramites")
+        mockMvc.perform(post("/api/v1/procedures")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("POST /api/v1/tramites with a non-existent idDeed returns 404")
+    @DisplayName("POST /api/v1/procedures with a non-existent idDeed returns 404")
     void shouldRejectNonExistentDeed() throws Exception {
         Integer typeId = createProcedureType();
 
-        mockMvc.perform(post("/api/v1/tramites")
+        mockMvc.perform(post("/api/v1/procedures")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"idProcedureType": %d, "idDeed": 999999}
@@ -140,11 +140,11 @@ class ProcedureControllerFkHydrationIntegrationTest {
     }
 
     @Test
-    @DisplayName("PUT /api/v1/tramites/{id} with a real idDeed returns the Deed's actual state")
+    @DisplayName("PUT /api/v1/procedures/{id} with a real idDeed returns the Deed's actual state")
     void shouldReturnRealDeedStateOnUpdate() throws Exception {
         Integer typeId = createProcedureType();
 
-        MvcResult createResult = mockMvc.perform(post("/api/v1/tramites")
+        MvcResult createResult = mockMvc.perform(post("/api/v1/procedures")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"idProcedureType": %d}
@@ -156,7 +156,7 @@ class ProcedureControllerFkHydrationIntegrationTest {
 
         Integer deedId = createSignedDeed(779);
 
-        MvcResult updateResult = mockMvc.perform(put("/api/v1/tramites/" + procedureId)
+        MvcResult updateResult = mockMvc.perform(put("/api/v1/procedures/" + procedureId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"idProcedureType": %d, "idDeed": %d}

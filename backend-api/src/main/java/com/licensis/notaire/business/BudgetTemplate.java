@@ -32,8 +32,8 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @NamedQueries(
         {
             @NamedQuery(name = "BudgetTemplate.findAll", query = "SELECT p FROM BudgetTemplate p"),
-            @NamedQuery(name = "BudgetTemplate.findByFkIdProcedureType", query = "SELECT p FROM BudgetTemplate p WHERE p.budgetTemplatePK.fkIdProcedureType = :fkIdTipoTramite"),
-            @NamedQuery(name = "BudgetTemplate.findByFkIdConcept", query = "SELECT p FROM BudgetTemplate p WHERE p.budgetTemplatePK.fkIdConcept = :fkIdConcepto")
+            @NamedQuery(name = "BudgetTemplate.findByFkIdProcedureType", query = "SELECT p FROM BudgetTemplate p WHERE p.budgetTemplatePK.fkIdProcedureType = :fkIdProcedureType"),
+            @NamedQuery(name = "BudgetTemplate.findByFkIdConcept", query = "SELECT p FROM BudgetTemplate p WHERE p.budgetTemplatePK.fkIdConcept = :fkIdConcept")
         })
 public class BudgetTemplate implements Serializable, Persistable<BudgetTemplatePK>
 {
@@ -173,6 +173,6 @@ public class BudgetTemplate implements Serializable, Persistable<BudgetTemplateP
     @Override
     public String toString()
     {
-        return "PlantillaPresupuesto[ plantillaPresupuestoPK=" + budgetTemplatePK + " ]";
+        return "BudgetTemplate[ budgetTemplateKey=" + budgetTemplatePK + " ]";
     }
 }

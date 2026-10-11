@@ -22,10 +22,10 @@ public interface DeedManagementRepository extends JpaRepository<DeedManagement, 
 
     List<DeedManagement> findByFkIdManagementStatusIdManagementStatus(Integer idStatus);
 
-    @Query("SELECT g FROM DeedManagement g WHERE g.fkIdNotaryPerson.idPerson = :idEscribano "
-            + "AND g.fkIdManagementStatus.idManagementStatus = :idEstado")
+    @Query("SELECT g FROM DeedManagement g WHERE g.fkIdNotaryPerson.idPerson = :idNotary "
+            + "AND g.fkIdManagementStatus.idManagementStatus = :idStatus")
     List<DeedManagement> findByFkIdNotaryPersonIdPersonAndFkIdStatusIdManagementStatus(
-            @Param("idEscribano") Integer idNotary, @Param("idEstado") Integer idStatus);
+            @Param("idNotary") Integer idNotary, @Param("idStatus") Integer idStatus);
 
     @Query("SELECT g FROM DeedManagement g WHERE g.dateStart BETWEEN :startDate AND :endDate")
     List<DeedManagement> findByDateStartBetween(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
@@ -39,6 +39,6 @@ public interface DeedManagementRepository extends JpaRepository<DeedManagement, 
     List<DeedManagement> findAllByNumber(int number);
 
     @Query("SELECT DISTINCT g FROM DeedManagement g JOIN g.procedureList t "
-            + "WHERE t.fkIdBudget.fkIdPerson.idPerson = :idPersona")
-    List<DeedManagement> findByClientPersonId(@Param("idPersona") Integer idPerson);
+            + "WHERE t.fkIdBudget.fkIdPerson.idPerson = :idPerson")
+    List<DeedManagement> findByClientPersonId(@Param("idPerson") Integer idPerson);
 }

@@ -40,13 +40,13 @@ PACKAGES = OrderedDict([
                                            "testimony_movements", "copies", "folio_copies", "registration_drafts"]),
 ])
 TYPE_MAP = {
-    "integer": ("INT", "Entero"), "bigint": ("BIGINT", "Entero"), "smallint": ("INT", "Entero"),
-    "text": ("TEXT", "Texto"), "character varying": ("TEXT", "Texto"), "character": ("TEXT", "Texto"),
-    "date": ("DATE", "Fecha"), "boolean": ("BOOLEAN", "Lógico"),
-    "timestamp without time zone": ("TIMESTAMP", "Fecha/Hora"), "timestamp with time zone": ("TIMESTAMP", "Fecha/Hora"),
+    "integer": ("INT", "Integer"), "bigint": ("BIGINT", "Integer"), "smallint": ("INT", "Integer"),
+    "text": ("TEXT", "Text"), "character varying": ("TEXT", "Text"), "character": ("TEXT", "Text"),
+    "date": ("DATE", "Date"), "boolean": ("BOOLEAN", "Boolean"),
+    "timestamp without time zone": ("TIMESTAMP", "Timestamp"), "timestamp with time zone": ("TIMESTAMP", "Timestamp"),
     "real": ("REAL", "Real"), "double precision": ("REAL", "Real"), "numeric": ("NUMERIC", "Real"),
 }
-ENTITY_TYPES = {"Fuerte", "Débil", "Asociativa"}
+ENTITY_TYPES = {"Strong", "Weak", "Associative", "Weak / strong"}
 
 QUERY = """
 select json_build_object(
@@ -113,15 +113,15 @@ def parse_dictionary():
 
 
 def puml_type(column):
-    return TYPE_MAP.get(column["data_type"], (column["data_type"].upper(), "Texto"))[0]
+    return TYPE_MAP.get(column["data_type"], (column["data_type"].upper(), "Text"))[0]
 
 
 def entity_type(table, columns, pk, fk_columns, dictionary_types):
     if table in dictionary_types:
         return dictionary_types[table]
     if pk and all(c in fk_columns for c in pk):
-        return "Asociativa"
-    return "Fuerte"
+        return "Associative"
+    return "Strong"
 
 
 def full_entity(table, columns, pk, fk_columns, uniques):
@@ -237,8 +237,8 @@ def write_simple(tables, pks, fks, uniques):
 def write_csv(tables, pks, fks, uniques):
     dictionary_types, descriptions = parse_dictionary()
     fk_columns = {(fk["table_name"], fk["columns"][0]) for fk in fks}
-    rows = [["Nombre Entidad", "Tipo Entidad", "Atributo", "Clave", "Null?", "Tipo_Dato", "PK", "FK", "NULL",
-             "Observaciones"]]
+    rows = [["Entity", "Entity type", "Attribute", "Key", "Nullable", "Data type", "PK", "FK", "NULL",
+             "Description"]]
     for _, members in grouped(tables):
         for table in members:
             pk = pks.get(table, [])
@@ -246,8 +246,8 @@ def write_csv(tables, pks, fks, uniques):
             for name, column in tables[table].items():
                 is_pk, is_fk = name in pk, (table, name) in fk_columns
                 key = "PK" if is_pk else ("FK" if is_fk else "")
-                data_type = TYPE_MAP.get(column["data_type"], ("", "Texto"))[1]
-                rows.append([table, kind, name, key, "si" if column["nullable"] else "no", data_type,
+                data_type = TYPE_MAP.get(column["data_type"], ("", "Text"))[1]
+                rows.append([table, kind, name, key, "yes" if column["nullable"] else "no", data_type,
                              "x" if is_pk else "", "x" if is_fk else "", "x" if column["nullable"] else "",
                              descriptions.get((table, name), "")])
     with open(CSV_FILE, "w", encoding="utf-8", newline="") as handle:

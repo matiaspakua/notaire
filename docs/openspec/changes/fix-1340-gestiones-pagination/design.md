@@ -2,7 +2,7 @@
 
 ## Context
 
-`/dashboard/gestiones` read `GET /gestiones?size=1000` through `useGestiones()` and rendered every row; the dashboard counted that array and took its first element as the newest management. Slice 2 (#1392) added `useUrlPagination`, `useClampPage` and the `DataTable` `pagination` prop; this slice is stacked on #1394, which carries them.
+`/dashboard/managements` read `GET /managements?size=1000` through `useManagements()` and rendered every row; the dashboard counted that array and took its first element as the newest management. Slice 2 (#1392) added `useUrlPagination`, `useClampPage` and the `DataTable` `pagination` prop; this slice is stacked on #1394, which carries them.
 
 ## Goals / Non-Goals
 
@@ -11,9 +11,9 @@
 
 ## Decisions
 
-1. **Reuse slice 2.** This slice only wires the existing hooks and footer to `/gestiones`.
-2. **Sort `idManagement,desc`.** `GET /gestiones` has no default sort; newest first keeps a management just created on page 1.
-3. **Client filter stays unpaged.** `GET /gestiones/cliente/{id}` returns one client's managements; the footer is hidden while it is active.
+1. **Reuse slice 2.** This slice only wires the existing hooks and footer to `/managements`.
+2. **Sort `idManagement,desc`.** `GET /managements` has no default sort; newest first keeps a management just created on page 1.
+3. **Client filter stays unpaged.** `GET /managements/client/{id}` returns one client's managements; the footer is hidden while it is active.
 4. **Dashboard reads `size=1`.** The counter needs only `totalElements`. The hero keeps its previous target (the first management in backend order, `sort: null`): following the newest one left the tracker empty when that management has no workflow (TS-0035), which is a product decision outside this slice.
 
 ## Riesgos / Trade-offs

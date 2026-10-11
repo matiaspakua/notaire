@@ -8,7 +8,7 @@ Editing a submitted document does not erase its progress. Source: #1241; owner C
 
 ### Requirement: Update changes only the fields it carries
 
-`PUT /api/v1/documento-presentado/{id}` MUST change only the fields present in the request and MUST keep every other stored field, including the name, the prepared, released, flagged and reentered flags, the trámite link and the dates.
+`PUT /api/v1/submitted-documents/{id}` MUST change only the fields present in the request and MUST keep every other stored field, including the name, the prepared, released, flagged and reentered flags, the trámite link and the dates.
 
 #### Scenario: Delivered flag update keeps the rest
 

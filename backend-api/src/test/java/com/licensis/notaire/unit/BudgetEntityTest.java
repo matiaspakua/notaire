@@ -15,11 +15,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.licensis.notaire.testing.RequirementCoverage;
 
 @RequirementCoverage({"CU01", "CU45", "CU60"})
-@DisplayName("Presupuesto Entity Tests")
+@DisplayName("Budget Entity Tests")
 class BudgetEntityTest {
 
     @Nested
-    @DisplayName("CU01 - Preparar Presupuesto - Unit Tests")
+    @DisplayName("CU01 - Preparar Budget - Unit Tests")
     class PrepararBudgetTests {
 
         @Test
@@ -29,12 +29,12 @@ class BudgetEntityTest {
             budget.setIdBudget(1);
             budget.setNumber(1001);
             budget.setDate(new Date());
-            budget.setEncabezado("Compraventa de property");
+            budget.setHeading("Compraventa de property");
             budget.setStatus("pendiente");
             budget.setPropertyAmount(new java.math.BigDecimal("500000.00"));
 
             assertThat(budget.getNumber()).isEqualTo(1001);
-            assertThat(budget.getEncabezado()).isEqualTo("Compraventa de property");
+            assertThat(budget.getHeading()).isEqualTo("Compraventa de property");
             assertThat(budget.getStatus()).isEqualTo("pendiente");
             assertThat(budget.getPropertyAmount()).isEqualByComparingTo(new java.math.BigDecimal("500000.00"));
         }
@@ -46,7 +46,7 @@ class BudgetEntityTest {
             budget.setIdBudget(1);
             budget.setNumber(1001);
             budget.setDate(new Date());
-            budget.setEncabezado("Compraventa");
+            budget.setHeading("Compraventa");
             budget.setStatus("pendiente");
 
             budget.setStatus("aprobado");
@@ -70,24 +70,24 @@ class BudgetEntityTest {
         }
 
         @Test
-        @DisplayName("Should associate budget with more than one tramite")
+        @DisplayName("Should associate budget with more than one procedure")
         void shouldAssociateBudgetWithMultipleProcedures() {
             Budget budget = new Budget();
             budget.setIdBudget(1);
 
-            Procedure tramite1 = new Procedure();
-            tramite1.setIdProcedure(1);
-            tramite1.setFkIdBudget(budget);
+            Procedure procedure1 = new Procedure();
+            procedure1.setIdProcedure(1);
+            procedure1.setFkIdBudget(budget);
 
-            Procedure tramite2 = new Procedure();
-            tramite2.setIdProcedure(2);
-            tramite2.setFkIdBudget(budget);
+            Procedure procedure2 = new Procedure();
+            procedure2.setIdProcedure(2);
+            procedure2.setFkIdBudget(budget);
 
-            budget.setProcedureList(List.of(tramite1, tramite2));
+            budget.setProcedureList(List.of(procedure1, procedure2));
 
-            assertThat(budget.getProcedureList()).containsExactly(tramite1, tramite2);
-            assertThat(tramite1.getFkIdBudget()).isEqualTo(budget);
-            assertThat(tramite2.getFkIdBudget()).isEqualTo(budget);
+            assertThat(budget.getProcedureList()).containsExactly(procedure1, procedure2);
+            assertThat(procedure1.getFkIdBudget()).isEqualTo(budget);
+            assertThat(procedure2.getFkIdBudget()).isEqualTo(budget);
         }
 
         @Test
@@ -113,27 +113,27 @@ class BudgetEntityTest {
     }
 
     @Nested
-    @DisplayName("CU60 - Buscar Presupuesto - Unit Tests")
+    @DisplayName("CU60 - Search Budget - Unit Tests")
     class SearchBudgetTests {
 
         @Test
-        @DisplayName("Should filter presupuestos by person")
-        void shouldFilterPresupuestosByPerson() {
-            Person persona1 = new Person(1);
-            Person persona2 = new Person(2);
+        @DisplayName("Should filter budgets by person")
+        void shouldFilterBudgetsByPerson() {
+            Person person1 = new Person(1);
+            Person person2 = new Person(2);
 
-            Budget presupuesto1 = new Budget(1);
-            presupuesto1.setFkIdPerson(persona1);
+            Budget budget1 = new Budget(1);
+            budget1.setFkIdPerson(person1);
 
-            Budget presupuesto2 = new Budget(2);
-            presupuesto2.setFkIdPerson(persona2);
+            Budget budget2 = new Budget(2);
+            budget2.setFkIdPerson(person2);
 
-            Budget presupuesto3 = new Budget(3);
-            presupuesto3.setFkIdPerson(persona1);
+            Budget budget3 = new Budget(3);
+            budget3.setFkIdPerson(person1);
 
-            List<Budget> presupuestos = List.of(presupuesto1, presupuesto2, presupuesto3);
+            List<Budget> budgets = List.of(budget1, budget2, budget3);
 
-            var filtered = presupuestos.stream()
+            var filtered = budgets.stream()
                 .filter(p -> p.getFkIdPerson() != null && p.getFkIdPerson().getPersonId().equals(1))
                 .toList();
 
@@ -141,18 +141,18 @@ class BudgetEntityTest {
         }
 
         @Test
-        @DisplayName("Should filter presupuestos by status")
-        void shouldFilterPresupuestosByStatus() {
-            Budget presupuesto1 = new Budget(1);
-            presupuesto1.setStatus("pendiente");
+        @DisplayName("Should filter budgets by status")
+        void shouldFilterBudgetsByStatus() {
+            Budget budget1 = new Budget(1);
+            budget1.setStatus("pending");
 
-            Budget presupuesto2 = new Budget(2);
-            presupuesto2.setStatus("aprobado");
+            Budget budget2 = new Budget(2);
+            budget2.setStatus("approved");
 
-            List<Budget> presupuestos = List.of(presupuesto1, presupuesto2);
+            List<Budget> budgets = List.of(budget1, budget2);
 
-            var pending = presupuestos.stream()
-                .filter(p -> "pendiente".equals(p.getStatus()))
+            var pending = budgets.stream()
+                .filter(p -> "pending".equals(p.getStatus()))
                 .toList();
 
             assertThat(pending).hasSize(1);

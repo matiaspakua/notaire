@@ -5,7 +5,7 @@
 package com.licensis.notaire.business;
 
 import com.licensis.notaire.dto.DtoManagementStatus;
-import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
+import com.licensis.notaire.dto.exceptions.InvalidDtoException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
@@ -27,7 +27,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
- * Clase que representa un estado de gestion (en un momento del tiempo dado).
+ * A management status at a given moment.
  *
  * @author User
  */
@@ -36,7 +36,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "ManagementStatus.findAll", query = "SELECT e FROM ManagementStatus e"),
-        @NamedQuery(name = "ManagementStatus.findByIdManagementStatus", query = "SELECT e FROM ManagementStatus e WHERE e.idManagementStatus = :idEstadoGestion")
+        @NamedQuery(name = "ManagementStatus.findByIdManagementStatus", query = "SELECT e FROM ManagementStatus e WHERE e.idManagementStatus = :idManagementStatus")
 })
 public class ManagementStatus implements Serializable, Persistable<Integer> {
 
@@ -61,11 +61,11 @@ public class ManagementStatus implements Serializable, Persistable<Integer> {
     private java.util.Set<History> historyList;
 
     /**
-     * Constructor por default para estado de gestion. Asigna al ID el valor de
-     * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO.
+     * Default constructor. Assigns the id from
+     * {@link BusinessConstants#INVALID_OBJECT_ID}.
      */
     public ManagementStatus() {
-        this.idManagementStatus = BusinessConstants.ID_OBJETO_NO_VALIDO;
+        this.idManagementStatus = BusinessConstants.INVALID_OBJECT_ID;
     }
 
     public ManagementStatus(Integer idManagementStatus) {
@@ -88,7 +88,7 @@ public class ManagementStatus implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idManagementStatus == null || idManagementStatus.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idManagementStatus == null || idManagementStatus.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 
@@ -149,31 +149,31 @@ public class ManagementStatus implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "EstadoDeGestion[ idEstadoGestion=" + idManagementStatus + " ]"
-                + "[ nombre=" + name + " ]";
+        return "ManagementStatus[ idManagementStatus=" + idManagementStatus + " ]"
+                + "[ name=" + name + " ]";
     }
 
-    public void setAtributo(DtoManagementStatus miDto) throws DtoInvalidoException {
-        if (miDto.isValido() == Boolean.TRUE) {
-            this.setIdManagementStatus(miDto.getIdManagementStatus());
-            this.setName(miDto.getName());
-            this.setNotes(miDto.getNotes());
-            this.version = miDto.getVersion();
+    public void setAttribute(DtoManagementStatus dto) throws InvalidDtoException {
+        if (dto.isValid() == Boolean.TRUE) {
+            this.setIdManagementStatus(dto.getIdManagementStatus());
+            this.setName(dto.getName());
+            this.setNotes(dto.getNotes());
+            this.version = dto.getVersion();
         } else {
-            throw new DtoInvalidoException("Dto invalido");
+            throw new InvalidDtoException("Invalid DTO");
         }
     }
 
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoManagementStatus getDto() throws NullPointerException {
-        DtoManagementStatus miDto = new DtoManagementStatus();
+        DtoManagementStatus dto = new DtoManagementStatus();
 
-        miDto.setIdManagementStatus(this.getIdManagementStatus());
-        miDto.setName(this.getName());
-        miDto.setNotes(this.getNotes());
-        miDto.setVersion(this.getVersion());
+        dto.setIdManagementStatus(this.getIdManagementStatus());
+        dto.setName(this.getName());
+        dto.setNotes(this.getNotes());
+        dto.setVersion(this.getVersion());
 
-        return miDto;
+        return dto;
     }
 
     public int getVersion() {

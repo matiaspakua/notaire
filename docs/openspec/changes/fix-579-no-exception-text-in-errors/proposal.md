@@ -12,7 +12,7 @@
 
 ## Objetivo
 
-Eleven controllers caught `Exception` and returned `e.getMessage()` as the 409/500 body. A request with a missing required field (for example `POST /api/v1/tipo-folio` with `{}`) answered with the raw PostgreSQL error: table and column names, the constraint, and `Failing row contains (...)` with the row's values. `PUT /api/v1/conceptos/{id}` leaked the JPA entity class name. That is information disclosure (CWE-209) and the body was not the standard `ErrorResponse`, so the frontend could not show it either.
+Eleven controllers caught `Exception` and returned `e.getMessage()` as the 409/500 body. A request with a missing required field (for example `POST /api/v1/folio-types` with `{}`) answered with the raw PostgreSQL error: table and column names, the constraint, and `Failing row contains (...)` with the row's values. `PUT /api/v1/concepts/{id}` leaked the JPA entity class name. That is information disclosure (CWE-209) and the body was not the standard `ErrorResponse`, so the frontend could not show it either.
 
 ## What Changes
 

@@ -27,7 +27,7 @@ The system MUST derive the authority of every authenticated request from the use
 
 ### Requirement: User, role and audit endpoints are administrator-only
 
-The system MUST answer 403 to any non-administrator request to `/api/v1/usuarios` (except login and logout), `/api/v1/roles` and `/api/v1/audit-log`, for every method.
+The system MUST answer 403 to any non-administrator request to `/api/v1/users` (except login and logout), `/api/v1/roles` and `/api/v1/audit-log`, for every method.
 
 #### Scenario: Employee cannot manage users
 

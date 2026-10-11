@@ -28,10 +28,10 @@ export const NODE_META: Record<string, WorkflowNodeMeta> = {
   },
 };
 
-export function getNodeMeta(tipo?: string): WorkflowNodeMeta {
-  return NODE_META[tipo ?? "INTERMEDIATE"] ?? NODE_META.INTERMEDIATE;
+export function getNodeMeta(nodeType?: string): WorkflowNodeMeta {
+  return NODE_META[nodeType ?? "INTERMEDIATE"] ?? NODE_META.INTERMEDIATE;
 }
 
-export function withNodeIcon(label: string, tipo?: string): string {
-  return `${getNodeMeta(tipo).icon} ${label}`;
+export function withNodeIcon(label: string, nodeType?: string): string {
+  return `${getNodeMeta(nodeType).icon} ${label}`;
 }

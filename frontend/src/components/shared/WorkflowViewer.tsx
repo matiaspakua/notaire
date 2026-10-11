@@ -17,7 +17,7 @@ import type { WorkflowNode, WorkflowTransition } from "@/types";
 export function toFlowNodes(nodes: WorkflowNode[]): Node[] {
   return nodes.map((n) => {
     const meta = getNodeMeta(n.type);
-    const label = withNodeIcon(n.statusManagementName ?? `Nodo ${n.id}`, n.type);
+    const label = withNodeIcon(n.statusManagementName ?? `Node ${n.id}`, n.type);
     return {
       id: String(n.id),
       position: { x: n.positionX ?? 0, y: n.positionY ?? 0 },
@@ -86,8 +86,8 @@ export function WorkflowViewer({ nodes, transitions, "data-testid": testId }: Wo
         <Background />
         <Controls showInteractive={false} />
         <MiniMap nodeColor={(n) => {
-          const tipo = nodes.find((wn) => String(wn.id) === n.id)?.type ?? "INTERMEDIATE";
-          return NODE_META[tipo]?.border ?? theme.colors.neutral[500];
+          const nodeType = nodes.find((wn) => String(wn.id) === n.id)?.type ?? "INTERMEDIATE";
+          return NODE_META[nodeType]?.border ?? theme.colors.neutral[500];
         }} />
       </ReactFlow>
     </div>

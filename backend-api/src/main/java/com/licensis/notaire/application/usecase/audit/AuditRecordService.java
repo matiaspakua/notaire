@@ -30,13 +30,13 @@ public class AuditRecordService {
 
     @Transactional(readOnly = true)
     public List<AuditRecord> findAll() {
-        logger.debug("Finding all RegistroAuditoria");
+        logger.debug("Finding all AuditRecord");
         return repository.findAll();
     }
 
     @Transactional(readOnly = true)
     public List<DtoAuditRecord> findAllAsDto() {
-        logger.debug("Finding all RegistroAuditoria as DTO");
+        logger.debug("Finding all AuditRecord as DTO");
         return repository.findAllWithUser().stream()
                 .map(AuditRecordService::toDto)
                 .toList();
@@ -44,62 +44,62 @@ public class AuditRecordService {
 
     @Transactional(readOnly = true)
     public Page<AuditRecord> findAll(Pageable pageable) {
-        logger.debug("Finding page of RegistroAuditoria: {}", pageable);
+        logger.debug("Finding page of AuditRecord: {}", pageable);
         return repository.findAll(pageable);
     }
 
     @Transactional(readOnly = true)
     public Page<DtoAuditRecord> findAllAsDto(Pageable pageable) {
-        logger.debug("Finding page of RegistroAuditoria as DTO: {}", pageable);
+        logger.debug("Finding page of AuditRecord as DTO: {}", pageable);
         return repository.findAll(pageable).map(AuditRecordService::toDto);
     }
 
     @Transactional(readOnly = true)
     public Page<AuditRecord> findByModule(String module, Pageable pageable) {
-        logger.debug("Finding RegistroAuditoria by modulo={} page={}", module, pageable);
+        logger.debug("Finding AuditRecord by module={} page={}", module, pageable);
         return repository.findByModule(module, pageable);
     }
 
     @Transactional(readOnly = true)
     public Page<DtoAuditRecord> findByModuleAsDto(String module, Pageable pageable) {
-        logger.debug("Finding RegistroAuditoria by modulo={} page={} as DTO", module, pageable);
+        logger.debug("Finding AuditRecord by module={} page={} as DTO", module, pageable);
         return repository.findByModule(module, pageable).map(AuditRecordService::toDto);
     }
 
     @Transactional(readOnly = true)
     public Page<AuditRecord> findByUserId(Integer idUser, Pageable pageable) {
-        logger.debug("Finding RegistroAuditoria by usuarioId={} page={}", idUser, pageable);
+        logger.debug("Finding AuditRecord by userId={} page={}", idUser, pageable);
         return repository.findByFkIdUserIdUser(idUser, pageable);
     }
 
     @Transactional(readOnly = true)
     public Page<DtoAuditRecord> findByUserIdAsDto(Integer idUser, Pageable pageable) {
-        logger.debug("Finding RegistroAuditoria by usuarioId={} page={} as DTO", idUser, pageable);
+        logger.debug("Finding AuditRecord by userId={} page={} as DTO", idUser, pageable);
         return repository.findByFkIdUserIdUser(idUser, pageable)
                 .map(AuditRecordService::toDto);
     }
 
     @Transactional(readOnly = true)
     public Optional<AuditRecord> findById(Integer id) {
-        logger.debug("Finding RegistroAuditoria by id: {}", id);
+        logger.debug("Finding AuditRecord by id: {}", id);
         return repository.findById(id);
     }
 
     @Transactional(readOnly = true)
     public Optional<DtoAuditRecord> findByIdAsDto(Integer id) {
-        logger.debug("Finding RegistroAuditoria by id as DTO: {}", id);
+        logger.debug("Finding AuditRecord by id as DTO: {}", id);
         return repository.findByIdWithUser(id).map(AuditRecordService::toDto);
     }
 
     @Transactional(readOnly = true)
     public List<AuditRecord> findByUserId(Integer idUser) {
-        logger.debug("Finding RegistroAuditoria by usuario id: {}", idUser);
+        logger.debug("Finding AuditRecord by user id: {}", idUser);
         return repository.findByFkIdUserIdUser(idUser);
     }
 
     @Transactional(readOnly = true)
     public List<DtoAuditRecord> findByUserIdAsDto(Integer idUser) {
-        logger.debug("Finding RegistroAuditoria by usuario id as DTO: {}", idUser);
+        logger.debug("Finding AuditRecord by user id as DTO: {}", idUser);
         return repository.findByUserIdWithUser(idUser).stream()
                 .map(AuditRecordService::toDto)
                 .toList();
@@ -107,13 +107,13 @@ public class AuditRecordService {
 
     @Transactional
     public AuditRecord save(AuditRecord auditRecord) {
-        logger.debug("Saving RegistroAuditoria: {}", auditRecord);
+        logger.debug("Saving AuditRecord: {}", auditRecord);
         return repository.save(auditRecord);
     }
 
     /**
-     * Maps a {@link RegistroAuditoria} entity to its DTO inside the current
-     * transaction so that the LAZY {@code fkIdUsuario} association can be
+     * Maps a {@link AuditRecord} entity to its DTO inside the current
+     * transaction so that the LAZY {@code fkIdUser} association can be
      * dereferenced safely.
      */
     public static DtoAuditRecord toDto(AuditRecord entity) {

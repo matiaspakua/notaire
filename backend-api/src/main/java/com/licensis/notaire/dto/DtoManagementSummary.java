@@ -3,16 +3,16 @@ package com.licensis.notaire.dto;
 import java.util.Date;
 
 /**
- * Read-model for gestión list/detail endpoints. Avoids serializing the JPA
- * entity, whose lazy collections (tramiteList, historialList) and circular
+ * Read-model for management list/detail endpoints. Avoids serializing the JPA
+ * entity, whose lazy collections (procedureList, historyList) and circular
  * back-references cannot be written outside a Hibernate session.
  */
 public record DtoManagementSummary(
         Integer idManagement,
         int number,
-        String encabezado,
+        String heading,
         Date dateStart,
-        String statusActual,
+        String currentStatus,
         int procedureCount,
         String notes) {
 }

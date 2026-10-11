@@ -27,15 +27,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Issue #655 (CU07 / CU08): a testimony is a certified copy of a deed, so the bare
- * {@code POST /api/v1/testimonio} must not store one without its deed. (The UI creates
- * testimonies through {@code POST /testimonio/{idDeed}/generar}, which already takes the deed.)
+ * {@code POST /api/v1/testimonies} must not store one without its deed. (The UI creates
+ * testimonies through {@code POST /testimonies/{idDeed}/generate}, which already takes the deed.)
  */
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @DisplayName("Bare testimony create requires its deed (issue #655)")
 class TestimonyCreateRequiresDeedIntegrationTest {
 
-    private static final String URL = "/api/v1/testimonio";
+    private static final String URL = "/api/v1/testimonies";
 
     @Autowired
     private WebApplicationContext webApplicationContext;

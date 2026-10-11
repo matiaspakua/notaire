@@ -23,11 +23,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * CU87 - Vincular Escritura a Folio y Copia a Testimonio (issue #838): rechaza
- * la creación de una copia cuando el testimonio de origen ya tiene un
- * movimiento inscripto (RF asociado).
+ * CU87 - Link a deed to a folio and a copy to a testimony (issue #838): rejects
+ * creating a copy when the source testimony already has a
+ * registered movement (related requirement).
  */
-@DisplayName("CopiaController#create — CU87 integration tests")
+@DisplayName("CopyController#create — CU87 integration tests")
 class CopyControllerTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -83,36 +83,37 @@ class CopyControllerTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return 409 when testimony already has an registered movimiento")
+    @DisplayName("Should return 409 when testimony already has a registered movement")
     void shouldRejectCopyWhenTestimonyHasRegisteredMovement() throws Exception {
         Testimony testimony = createTestimony();
         addMovement(testimony, true);
 
-        mockMvc.perform(post("/api/v1/copia")
+        mockMvc.perform(post("/api/v1/copies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(copyBody(8001, testimony.getIdTestimony())))
                 .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.error").exists());
+                .andExpect(jsonPath("$.error").value(
+                        "The testimony already has a registered movement and does not accept new copies."));
     }
 
     @Test
-    @DisplayName("Should create copia when testimony has a non-registered movimiento")
+    @DisplayName("Should create a copy when the testimony has a movement that is not registered")
     void shouldCreateCopyWhenTestimonyHasNoRegisteredMovement() throws Exception {
         Testimony testimony = createTestimony();
         addMovement(testimony, false);
 
-        mockMvc.perform(post("/api/v1/copia")
+        mockMvc.perform(post("/api/v1/copies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(copyBody(8002, testimony.getIdTestimony())))
                 .andExpect(status().isCreated());
     }
 
     @Test
-    @DisplayName("Should create copia when testimony has no movimientos")
+    @DisplayName("Should create a copy when the testimony has no movements")
     void shouldCreateCopyWhenTestimonyHasNoMovimientos() throws Exception {
         Testimony testimony = createTestimony();
 
-        mockMvc.perform(post("/api/v1/copia")
+        mockMvc.perform(post("/api/v1/copies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(copyBody(8003, testimony.getIdTestimony())))
                 .andExpect(status().isCreated());

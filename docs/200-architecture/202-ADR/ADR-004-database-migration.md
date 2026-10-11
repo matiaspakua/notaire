@@ -1,36 +1,44 @@
-# ADR-004: Migración de Base de Datos MySQL a PostgreSQL
+# ADR-004: Database migration from MySQL to PostgreSQL
 
 **Status:** Accepted  
 **Date:** 2024-03-20  
 **Deciders:** Matías Miguez  
-**Related:** ADR-001, ADR-002  
+**Related:** ADR-001, ADR-002, ADR-007  
+
+> **Current state:** the application runs on PostgreSQL 16. Schema changes are
+> Flyway migrations under `backend-api/src/main/resources/db/migration`
+> (ADR-007). Applied migrations V1–V44 stay immutable. The budget table is
+> `budgets`. Hibernate `ddl-auto` is `none`. The Liquibase changelog and the
+> `presupuesto` table name below are this ADR's original sketch. They were not
+> shipped.
 
 ## Context
 
-El sistema Notaire originalmente usaba MySQL para persistencia. La migración a microservicios con Spring Boot moderno requiere actualizar a PostgreSQL 16 por:
+Notaire originally used MySQL. The move to a Spring Boot service required PostgreSQL 16 because of:
 
-- **Mejor soporte en Spring Boot/Hibernate**: PostgreSQL tiene dialect optimizado
-- **JSONB support**: Útil para estructuras semi-estructuradas
-- **Mejor performance en queries complejas**: Índices más sofisticados
-- **Mejores herramientas para Docker**: PostgreSQL tiene excelente soporte containerizado
-- **Long-term support**: PostgreSQL tiene mejor ciclo de soporte
+- **Spring Boot and Hibernate support**: PostgreSQL has a maintained dialect
+- **JSONB**: useful for semi-structured values
+- **Complex queries**: richer indexes
+- **Docker**: a well-supported container image
+- **Long-term support**: a clearer support cycle than the MySQL version then in use
 
-**Restricciones:**
-- Datos históricos deben preservarse
-- Sistema debe mantener operativo durante migración
-- Equipo no tiene experiencia en PostgreSQL (pero sí en relacional databases)
-- Schema debe ser compatible con entidades JPA existentes
+**Constraints:**
+
+- Historical data had to be preserved
+- The system had to stay operable during the move
+- The team knew relational databases and was new to PostgreSQL
+- The schema had to stay compatible with the existing JPA entities
 
 ## Decision
 
-Migrar completamente a **PostgreSQL 16** con siguiente estrategia:
+Move fully to **PostgreSQL 16**.
 
-### 1. Schema Migration
+### 1. Schema migration
 
-Usar **Liquibase** para versionado de schema:
+Schema versioning is **Flyway**, not Liquibase. See ADR-007. The original sketch was:
 
 ```yaml
-# liquibase/changelog/01-initial-schema.yaml
+# liquibase/changelog/01-initial-schema.yaml  (not shipped)
 databaseChangeLog:
   - changeSet:
       id: 001-create-presupuesto-table
@@ -56,234 +64,239 @@ databaseChangeLog:
                   defaultValue: CURRENT_TIMESTAMP
 ```
 
-### 2. Data Migration
+The live budget entity is `@Table(name = "budgets")`.
 
-**Fase 1**: Export desde MySQL
+### 2. Data migration
+
+**Phase 1**: export from MySQL
+
 ```sql
--- MySQL: export tabla
+-- MySQL: export a table
 mysqldump -u user -p database presupuesto > presupuesto.sql
 ```
 
-**Fase 2**: Transform schema
-```sql
--- Convertir tipos MySQL → PostgreSQL:
--- INT AUTO_INCREMENT → BIGINT + SERIAL/IDENTITY
--- DATETIME → TIMESTAMP
--- VARCHAR → VARCHAR
--- DECIMAL → NUMERIC
--- ENUM → VARCHAR + constraint
+**Phase 2**: transform the schema
+
+```text
+MySQL → PostgreSQL:
+INT AUTO_INCREMENT → BIGINT + IDENTITY
+DATETIME → TIMESTAMP
+VARCHAR → VARCHAR
+DECIMAL → NUMERIC
+ENUM → VARCHAR + constraint
 ```
 
-**Fase 3**: Import a PostgreSQL
+**Phase 3**: import into PostgreSQL
+
 ```sql
--- PostgreSQL: import transformado
+-- PostgreSQL: import the transformed dump
 psql -U user -d database -f presupuesto.sql
 ```
 
-**Fase 4**: Validación de integridad
-```sql
--- Verificar counts
-SELECT COUNT(*) FROM presupuesto;  -- MySQL vs PostgreSQL
+**Phase 4**: integrity checks
 
--- Verificar constraints
-SELECT constraint_name FROM information_schema.table_constraints 
-WHERE table_name='presupuesto' AND constraint_type='PRIMARY KEY';
+```sql
+-- Compare counts
+SELECT COUNT(*) FROM budgets;
+
+-- Check constraints
+SELECT constraint_name FROM information_schema.table_constraints
+WHERE table_name = 'budgets' AND constraint_type = 'PRIMARY KEY';
 ```
 
-### 3. Hibernate Configuration
+The `presupuesto` name in the dump commands is the MySQL table this ADR started from.
+
+### 3. Hibernate configuration
+
+Live settings in `application.properties` and Compose:
 
 ```yaml
-# application-prod.yml
 spring:
   datasource:
     url: jdbc:postgresql://postgres:5432/notaire
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: validate  # No auto-update in production
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: false
+      ddl-auto: none
+  flyway:
+    enabled: true
 ```
 
-### 4. Type Mappings
+`ddl-auto` stays `none`. Flyway owns schema changes.
 
-| MySQL | PostgreSQL | JPA Type |
-|-------|-----------|----------|
-| INT AUTO_INCREMENT | BIGSERIAL | @GeneratedValue(strategy=IDENTITY) |
+### 4. Type mappings
+
+| MySQL | PostgreSQL | JPA type |
+|-------|------------|----------|
+| INT AUTO_INCREMENT | BIGINT GENERATED BY DEFAULT AS IDENTITY | @GeneratedValue(strategy=IDENTITY) |
 | DATETIME | TIMESTAMP | java.time.LocalDateTime |
 | DECIMAL(10,2) | NUMERIC(10,2) | java.math.BigDecimal |
 | TEXT | TEXT | String |
-| ENUM('A','B') | VARCHAR(50) | String o Enum |
+| ENUM('A','B') | VARCHAR(50) | String or enum |
 | BLOB | BYTEA | byte[] |
 | DATE | DATE | java.time.LocalDate |
 | VARCHAR(255) | VARCHAR(255) | String |
 
-### 5. Docker Setup
+Stored labels such as budget status `BORRADOR` and `PENDIENTE` stay. They are data, not type names.
 
-```dockerfile
-# Dockerfile.postgres
-FROM postgres:16-alpine
+### 5. Docker
 
-ENV POSTGRES_DB=notaire
-ENV POSTGRES_USER=notaire
-ENV POSTGRES_PASSWORD=secure_password
-
-COPY init-db/ /docker-entrypoint-initdb.d/
-```
+`docker-compose.yml` runs `postgres:16.15`. Credentials come from the environment. The default database name is `notaire`. The container name defaults to `notary-postgres`.
 
 ```yaml
-# docker-compose.yml
 services:
   postgres:
-    image: postgres:16-alpine
-    container_name: notaire-postgres
+    image: postgres:16.15
     environment:
-      POSTGRES_DB: notaire
-      POSTGRES_USER: notaire
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-notaire}
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
-      - ./init-db:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U notaire"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-admin} -d ${POSTGRES_DB:-notaire}"]
       interval: 10s
       timeout: 5s
       retries: 5
-
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@notaire.local
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
-    ports:
-      - "5050:80"
-    depends_on:
-      - postgres
 ```
 
-## Options Considered
+The backend sets `SPRING_DATASOURCE_URL` to `jdbc:postgresql://postgres:5432/${POSTGRES_DB:-notaire}` and `SPRING_FLYWAY_ENABLED` to `true`.
 
-### Option A: Mantener MySQL
-| Dimensión | Evaluación |
-|-----------|-----------|
-| Riesgo | Bajo |
-| Compatibilidad | Alta |
-| Performance | Media |
-| Support | Declinante |
+## Options considered
+
+### Option A: Keep MySQL
+
+| Dimension | Assessment |
+|-----------|------------|
+| Risk | Low |
+| Compatibility | High |
+| Performance | Medium |
+| Support | Declining |
 
 **Cons:**
-- MySQL 5.7 EOL próximo (Oct 2023)
-- Peor performance en queries complejas
-- Dialect de Hibernate no tan optimizado
-- JSONB no disponible
 
-### Option B: Migrar a PostgreSQL 16 (SELECCIONADO)
-| Dimensión | Evaluación |
-|-----------|-----------|
-| Riesgo | Medio |
-| Performance | Alta |
-| Long-term support | 5 años |
-| Tooling | Excelente |
+- MySQL 5.7 was near end of life (October 2023)
+- Weaker performance on complex queries
+- A less optimized Hibernate dialect
+- No JSONB
+
+### Option B: Move to PostgreSQL 16 (selected)
+
+| Dimension | Assessment |
+|-----------|------------|
+| Risk | Medium |
+| Performance | High |
+| Long-term support | 5 years |
+| Tooling | Excellent |
 
 **Pros:**
-- Long-term support (5+ años)
-- Excelente performance
-- JSONB para semi-structured data
-- JSON support nativo
+
+- Long-term support (5+ years)
+- Strong performance
+- JSONB for semi-structured data
+- Native JSON
 - Array types
 - Full-text search
 
 **Cons:**
-- Requiere migration effort
-- Equipo menos familiarizado
-- Algunos tipos de datos requieren mapeo cuidadoso
 
-### Option C: MariaDB (MySQL moderno)
-| Dimensión | Evaluación |
-|-----------|-----------|
-| Riesgo | Bajo |
-| Compatibilidad MySQL | Alta |
-| Performance | Muy buena |
+- Migration effort
+- The team was less familiar with PostgreSQL
+- Some types need a careful mapping
+
+### Option C: MariaDB (a current MySQL lineage)
+
+| Dimension | Assessment |
+|-----------|------------|
+| Risk | Low |
+| MySQL compatibility | High |
+| Performance | Very good |
 
 **Cons:**
-- Menos estándar que PostgreSQL
-- Menos herramientas para Docker
-- No hay ventaja de features sobre PostgreSQL
 
-## Trade-off Analysis
+- Less common as a target than PostgreSQL
+- Weaker reason to switch the container toolchain
+- No feature advantage over PostgreSQL for this system
 
-**Effort de migración vs. Beneficios a largo plazo**
+## Trade-off analysis
 
-La migración requiere ~2-3 semanas de esfuerzo inicial, pero resulta en:
-- 5+ años de soporte oficial
-- Mejor performance
-- Mejor tooling
-- Capacidad de usar features avanzadas (JSONB, arrays, full-text search)
+**Migration effort versus long-term benefit**
 
-**Risk de corrupción de datos vs. Modernización**
+The move is a one-time cost. The result is official support, better performance, better tooling, and access to JSONB, arrays, and full-text search.
 
-El riesgo se mitiga con:
-- Backup completo antes de migración
-- Testing exhaustivo en environment clona
-- Validación de data integrity post-migración
-- Rollback plan claro
+**Data-corruption risk versus modernization**
+
+The risk is limited by:
+
+- A full backup before the move
+- Tests against a clone
+- Integrity checks after the load
+- A written rollback
 
 ## Consequences
 
-### Positivas
-- **Mejor performance**: Queries complejas más rápidas
-- **JSONB support**: Flexibilidad para datos semi-estructurados
-- **Array support**: Estructuras de datos más ricas
-- **Full-text search**: Búsquedas textuales eficientes
-- **Long-term support**: 5+ años de actualizaciones de seguridad
-- **Better tooling**: pgAdmin, psql, excelente ecosistema
+### Positive
 
-### Desafíos
-- **Curva de aprendizaje**: Equipo debe aprender PostgreSQL
-- **Migration downtime**: ~30 mins - 2 horas de downtime (depende de tamaño)
-- **Operaciones diferentes**: pg_dump vs mysqldump, diferentes herramientas
-- **Testing exhaustivo**: Validar todos queries en PostgreSQL
+- **Performance**: complex queries are faster
+- **JSONB**: room for semi-structured values
+- **Arrays**: richer column types when needed
+- **Full-text search**: text lookup without a separate engine
+- **Support**: security updates on a supported major version
+- **Tooling**: `psql` and the PostgreSQL ecosystem
 
-## Migration Timeline
+### Challenges
 
-### Semana 1-2: Preparation
-- [ ] Crear PostgreSQL 16 en desarrollo
-- [ ] Crear Liquibase changelog
-- [ ] Export schema desde MySQL
-- [ ] Transform types MySQL → PostgreSQL
-- [ ] Setup docker-compose con PostgreSQL
+- **Learning curve**: the team had to learn PostgreSQL operations
+- **Downtime**: the cutover depends on data size
+- **Different tools**: `pg_dump` instead of `mysqldump`
+- **Test coverage**: every query path has to be valid on PostgreSQL
 
-### Semana 3: Testing
-- [ ] Import data en PostgreSQL
-- [ ] Validar integridad de data
-- [ ] Run todos test suites en PostgreSQL
+## Migration timeline
+
+This checklist is the original plan. It was not kept up to date. The database
+in Compose today is PostgreSQL 16, and schema changes go through Flyway.
+
+### Weeks 1–2: preparation
+
+- [ ] Run PostgreSQL 16 in development
+- [ ] Create a Liquibase changelog
+- [ ] Export the schema from MySQL
+- [ ] Transform MySQL types to PostgreSQL
+- [ ] Compose service for PostgreSQL
+
+### Week 3: testing
+
+- [ ] Import data into PostgreSQL
+- [ ] Check data integrity
+- [ ] Run the test suites on PostgreSQL
 - [ ] Performance testing
-- [ ] Crear rollback procedure
+- [ ] Write the rollback procedure
 
-### Semana 4: Migration
-- [ ] Full backup de MySQL
+### Week 4: cutover
+
+- [ ] Full MySQL backup
 - [ ] Final data export
-- [ ] Import a PostgreSQL
-- [ ] Run data validation queries
-- [ ] Punto de rollback claro
-- [ ] Update connection strings en prod
-- [ ] Monitor logs y performance
+- [ ] Import into PostgreSQL
+- [ ] Run validation queries
+- [ ] A clear rollback point
+- [ ] Update production connection strings
+- [ ] Watch logs and performance
 
-### Post-Migration
-- [ ] Validar diariamente durante 1 semana
-- [ ] Backup PostgreSQL regularmente
-- [ ] Decommission MySQL infrastructure
+### After the move
 
-## PostgreSQL Best Practices
+- [ ] Check daily for one week
+- [ ] Back up PostgreSQL on a schedule
+- [ ] Decommission the MySQL infrastructure
 
-### Connection Pooling
+## PostgreSQL practices in this repo
+
+### Connection pooling
+
+From `application.properties`:
+
 ```yaml
 spring:
   datasource:
@@ -293,38 +306,43 @@ spring:
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
+      pool-name: NotaireHikariCP
 ```
 
 ### Monitoring
-```bash
-# Ver conexiones activas
+
+```sql
+-- Active connections
 SELECT count(*) FROM pg_stat_activity;
 
-# Ver queries lentas
-SELECT query, mean_time FROM pg_stat_statements 
-ORDER BY mean_time DESC LIMIT 10;
+-- Slow statements, when pg_stat_statements is enabled
+SELECT query, mean_time FROM pg_stat_statements
+ORDER BY mean_time DESC
+LIMIT 10;
 ```
 
-### Backup Strategy
+### Backup
+
 ```bash
 # Full backup
 pg_dump -U notaire -d notaire > backup.sql
 
 # Compressed backup
 pg_dump -U notaire -d notaire | gzip > backup.sql.gz
-
-# Point-in-time recovery enabled
-echo "wal_level = replica" >> postgresql.conf
 ```
+
+Point-in-time recovery needs `wal_level = replica` on the server. That setting is an operations choice, not a Flyway migration.
 
 ## Related ADRs
 
-- ADR-001: Arquitectura de microservicios
-- ADR-002: Estructura de módulos
-- ADR-005: Testing strategy
+- ADR-001: Microservices architecture
+- ADR-002: Maven module structure
+- ADR-006: Testing strategy
+- ADR-007: Database schema versioning with Flyway
 
-## See Also
+## See also
 
 - [PostgreSQL 16 Release Notes](https://www.postgresql.org/docs/16/release-16.html)
 - [PostgreSQL vs MySQL Comparison](https://wiki.postgresql.org/wiki/PostgreSQL_vs_MySQL)
-- [Liquibase Documentation](https://docs.liquibase.com/)
+- `docker-compose.yml`
+- `backend-api/src/main/resources/application.properties`

@@ -6,14 +6,14 @@ info:
       Traceability: CU53
 http:
   method: PUT
-  url: "{{base_url}}/api/v1/gestiones/{{mgmt_id}}"
+  url: "{{base_url}}/api/v1/managements/{{mgmt_id}}"
   body:
     type: json
     data: |-
         {
           "dateStart": "2026-09-05",
           "number": {{mgmt_number}},
-          "encabezado": "Bruno E2E management updated",
+          "heading": "Bruno E2E management updated",
           "notaryPersonId": {{mgmt_notary_id}},
           "managementStatusId": 1
         }

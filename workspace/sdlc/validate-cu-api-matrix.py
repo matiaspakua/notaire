@@ -19,14 +19,14 @@ import sys
 from pathlib import Path
 
 REQUIRED_BASES = (
-    "/carpetas",
-    "/cuadernos",
-    "/minutas-inscripcion",
-    "/plantilla-costos-documento",
-    "/protocolo-auxiliar",
+    "/procedure-folders",
+    "/notebooks",
+    "/registration-drafts",
+    "/document-cost-templates",
+    "/auxiliary-protocol",
     "/roles",
-    "/tipo-identificacion",
-    "/tramites",
+    "/identification-types",
+    "/procedures",
 )
 
 FORBIDDEN_BRUNO_STATUS = frozenset({"DONE", "OK", "PASS", "PASSED", "FAIL", "FAILED"})

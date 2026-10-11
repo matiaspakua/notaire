@@ -1,36 +1,38 @@
-# Documentación de Arquitectura
+# Architecture documentation
 
-Arquitectura del sistema Notaire: visión arc42, decisiones de diseño, diagramas, modelo de datos,
-seguridad, observabilidad, DevSecOps y deployment.
+Architecture of the Notaire system: arc42 view, design decisions, diagrams, data model,
+security, observability, DevSecOps, and deployment.
 
-## Estructura
+## Structure
 
-| Carpeta | Contenido |
+| Folder | Contents |
 |---------|-----------|
-| [`201-SAD/`](201-SAD/) | Software Architecture Document, estructurado según arc42 |
-| [`202-ADR/`](202-ADR/) | Architecture Decision Records — decisiones arquitectónicas relevantes |
-| [`203-design/`](203-design/) | Diseño de API y sistema de diseño (design system) del frontend |
-| [`204-diagrams/`](204-diagrams/) | Diagramas PlantUML: casos de uso, clases, estados, secuencia |
-| [`205-data-model/`](205-data-model/) | ERD, diccionario de datos y diagrama de compensación (integridad referencial) |
-| [`206-security/`](206-security/) | Autenticación, validación de entrada y prevención de inyección SQL |
-| [`207-monitoring/`](207-monitoring/) | Observabilidad: Prometheus, Grafana, Loki |
-| [`208-devsecops/`](208-devsecops/) | Infraestructura Docker y prácticas DevSecOps |
-| [`209-deployment/`](209-deployment/) | Estrategia y guía de despliegue |
+| [`201-SAD/`](201-SAD/) | Software Architecture Document, structured with arc42 |
+| [`202-ADR/`](202-ADR/) | Architecture Decision Records — the relevant architecture decisions |
+| [`203-design/`](203-design/) | API design and the frontend design system |
+| [`203-design/CICLO-DE-VIDA.md`](203-design/CICLO-DE-VIDA.md) | States, sequences, and components of the notarial lifecycle (Mermaid) |
+| [`204-diagrams/`](204-diagrams/) | Diagrams. The `.puml` files are legacy; the current lifecycle lives in design |
+| [`205-data-model/`](205-data-model/) | ERD, data dictionary, and compensation diagram (referential integrity) |
+| [`206-security/`](206-security/) | Authentication, input validation, and SQL injection prevention |
+| [`207-monitoring/`](207-monitoring/) | Observability: Prometheus, Grafana, Loki |
+| [`208-devsecops/`](208-devsecops/) | Docker infrastructure and DevSecOps practices |
+| [`209-deployment/`](209-deployment/) | Deployment strategy and guide |
 
-## Punto de entrada
+## Entry point
 
-El [SAD](201-SAD/sad.md) es el documento raíz: da contexto, restricciones, vista de bloques y
-runtime, y enlaza a los ADRs y diagramas específicos según corresponda.
+The [SAD](201-SAD/sad.md) is the root document: context, constraints, building-block
+and runtime views, and links to the ADRs and diagrams that apply. The domain state
+lifecycle is in [CICLO-DE-VIDA.md](203-design/CICLO-DE-VIDA.md).
 
-## Fuente de verdad del esquema de base de datos
+## Source of truth for the database schema
 
-Las migraciones Flyway (`backend-api/src/main/resources/db/migration/V*.sql`) son la única fuente
-de verdad del esquema (ver [ADR-007](202-ADR/ADR-007-database-schema-versioning-flyway.md) y
-[`.claude/rules/database-migrations.md`](../../.claude/rules/database-migrations.md)). Toda
-discrepancia entre `205-data-model/` y Flyway se resuelve a favor de Flyway.
+Flyway migrations (`backend-api/src/main/resources/db/migration/V*.sql`) are the only
+source of truth for the schema (see [ADR-007](202-ADR/ADR-007-database-schema-versioning-flyway.md)
+and [`.claude/rules/database-migrations.md`](../../.claude/rules/database-migrations.md)).
+Any discrepancy between `205-data-model/` and Flyway is resolved in favor of Flyway.
 
 ## Navigation
 
-- [← Documentación](../)
-- [Negocio](../100-business/)
-- [Desarrollo](../300-development/)
+- [← Documentation](../)
+- [Business](../100-business/)
+- [Development](../300-development/)

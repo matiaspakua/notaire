@@ -6,23 +6,23 @@ import type { components } from "@/types/api.generated";
 
 export type ApiSchemas = components["schemas"];
 
-/** GET /gestiones page content — DtoManagementSummary. */
-export type GestionDeEscritura = ApiSchemas["DtoManagementSummary"];
+/** GET /managements page content — DtoManagementSummary. */
+export type DeedManagement = ApiSchemas["DtoManagementSummary"];
 
-/** GET /presupuestos page/detail — BudgetResponse. */
-export type Presupuesto = ApiSchemas["BudgetResponse"];
+/** GET /budgets page/detail — BudgetResponse. */
+export type Budget = ApiSchemas["BudgetResponse"];
 
-/** GET /presupuestos/{id}/resumen — DtoBudgetResumen. */
-export type PresupuestoResumen = ApiSchemas["DtoBudgetResumen"];
+/** GET /budgets/{id}/summary — DtoBudgetSummary. */
+export type BudgetSummary = ApiSchemas["DtoBudgetSummary"];
 
-/** GET /documento-presentado item — SubmittedDocumentResponse. */
-export type DocumentoPresentado = ApiSchemas["SubmittedDocumentResponse"];
+/** GET /submitted-documents item — SubmittedDocumentResponse. */
+export type SubmittedDocument = ApiSchemas["SubmittedDocumentResponse"];
 
-/** POST /documento-presentado body. */
-export type DocumentoPresentadoRequest = ApiSchemas["SubmittedDocumentCreateRequest"];
+/** POST /submitted-documents body. */
+export type SubmittedDocumentRequest = ApiSchemas["SubmittedDocumentCreateRequest"];
 
-/** PUT /documento-presentado/{id} body. */
-export type DocumentoPresentadoUpdateRequest = ApiSchemas["SubmittedDocumentRequest"];
+/** PUT /submitted-documents/{id} body. */
+export type SubmittedDocumentUpdateRequest = ApiSchemas["SubmittedDocumentRequest"];
 
-/** GET /gestiones/{id}/saldo-pendiente. */
-export type DtoSaldoPendiente = ApiSchemas["DtoSaldoPending"];
+/** GET /managements/{id}/outstanding-balance. */
+export type DtoOutstandingBalance = ApiSchemas["DtoPendingBalance"];

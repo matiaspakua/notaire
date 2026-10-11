@@ -38,8 +38,8 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/escrituras")
-@Tag(name = "Escrituras", description = "API para gestionar escrituras")
+@RequestMapping("/api/v1/deeds")
+@Tag(name = "Deeds", description = "API for managing deeds")
 public class DeedController {
 
     record DeedRequest(
@@ -106,15 +106,15 @@ public class DeedController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Estado fuera del vocabulario", content = @Content(
+    @ApiResponse(responseCode = "400", description = "Status outside the vocabulary", content = @Content(
             mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class)))
 })
     @GetMapping
-    @Operation(summary = "Obtener todas las escrituras, opcionalmente solo las de un estado")
+    @Operation(summary = "Get all deeds, optionally only the of a status")
     @Transactional(readOnly = true)
     public ResponseEntity<Page<DeedResponse>> getAll(
-            @Parameter(description = "Estado de la escritura (cualquier mayúscula/minúscula; otro valor responde 400). "
-                    + "Sin este parámetro se listan todas.",
+            @Parameter(description = "Deed status (any letter case; any other value responds 400). "
+                    + "Without this parameter, every deed is listed.",
                     schema = @Schema(allowableValues = {"Sin Firmar", "Firmada", "Anulada", "No Paso", "Inscripta"}))
             @RequestParam(required = false) String status,
             @ParameterObject @PageableDefault(size = 20) Pageable pageable) {
@@ -136,16 +136,16 @@ public class DeedController {
                 return known;
             }
         }
-        throw new BusinessValidationException("status: valor no válido '" + value + "'; valores aceptados: "
+        throw new BusinessValidationException("status: invalid value '" + value + "'; accepted values: "
                 + String.join(", ", DEED_STATUSES));
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener escritura por ID")
+    @Operation(summary = "Get deed by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<DeedResponse> getById(@PathVariable Integer id) {
         return deedService.findById(id)
@@ -155,12 +155,12 @@ public class DeedController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "201", description = "Created"),
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
-    @Operation(summary = "Crear nueva escritura")
+    @Operation(summary = "Create deed")
     @Transactional
     public ResponseEntity<DeedResponse> create(@Valid @RequestBody DeedRequest request) {
         Deed entity = new Deed();
@@ -172,10 +172,10 @@ public class DeedController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar escritura")
+    @Operation(summary = "Update deed")
     @Transactional
     public ResponseEntity<DeedResponse> update(@PathVariable Integer id, @Valid @RequestBody DeedRequest request) {
         return deedService.findById(id)
@@ -188,11 +188,11 @@ public class DeedController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "204", description = "Deleted"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar escritura")
+    @Operation(summary = "Delete deed")
     @Transactional
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         if (deedService.findById(id).isPresent()) {
@@ -212,29 +212,29 @@ public class DeedController {
         });
     }
 
-    @GetMapping("/escribanos-disponibles")
-    @Operation(summary = "Obtener lista de escribanos disponibles (con registro)")
+    @GetMapping("/available-notaries")
+    @Operation(summary = "Get the list of available notaries (with a registry)")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<PersonResponse>> getEscribanosDisponibles() {
-        return ResponseEntity.ok(deedService.findEscribanosDisponibles().stream().map(PersonResponse::from).toList());
+    public ResponseEntity<List<PersonResponse>> getAvailableNotaries() {
+        return ResponseEntity.ok(deedService.findAvailableNotaries().stream().map(PersonResponse::from).toList());
     }
 
-    @GetMapping("/buscar")
-    @Operation(summary = "Buscar escrituras por numero")
+    @GetMapping("/search")
+    @Operation(summary = "Search deeds by number")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DeedResponse>> searchDeeds(@RequestParam(required = false) Integer number) {
-        return ResponseEntity.ok(deedService.searchPorNumber(number).stream().map(this::toResponse).toList());
+        return ResponseEntity.ok(deedService.searchByNumber(number).stream().map(this::toResponse).toList());
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "La escritura no está en estado 'Sin Firmar' o no tiene folio asignado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "400", description = "The deed is not in status 'Sin Firmar' or does not have folio assigned"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
-    @PostMapping("/{id}/firmar")
-    @Operation(summary = "Firmar escritura",
-               description = "Transiciona una escritura 'Sin Firmar' con folio asignado al estado 'Firmada'")
-    public ResponseEntity<DeedResponse> firmar(@PathVariable Integer id) {
+    @PostMapping("/{id}/sign")
+    @Operation(summary = "Sign deed",
+               description = "Transitions a deed 'Sin Firmar' with folio assigned to the status 'Firmada'")
+    public ResponseEntity<DeedResponse> sign(@PathVariable Integer id) {
         return ResponseEntity.ok(toResponse(deedFirmaService.sign(id)));
     }
 }

@@ -4,11 +4,11 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Copy;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.TestimonyMovement;
@@ -26,7 +26,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author juanca
  */
-public class TestimonyJpaController implements Serializable, IPersistenciaJpa
+public class TestimonyJpaController implements Serializable, JpaPersistence
 {
 
     public TestimonyJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -44,7 +44,7 @@ public class TestimonyJpaController implements Serializable, IPersistenciaJpa
 
     public Boolean create(Testimony testimony)
     {
-        Boolean creado = false;
+        Boolean created = false;
         if (testimony.getTestimonyMovementList() == null)
         {
             testimony.setTestimonyMovementList(new ArrayList<TestimonyMovement>());
@@ -107,7 +107,7 @@ public class TestimonyJpaController implements Serializable, IPersistenciaJpa
                 }
             }
             em.getTransaction().commit();
-            creado = true;
+            created = true;
         }
         finally
         {
@@ -116,7 +116,7 @@ public class TestimonyJpaController implements Serializable, IPersistenciaJpa
                 em.close();
             }
         }
-        return creado;
+        return created;
     }
 
     public void edit(Testimony testimony) throws IllegalOrphanException, NonexistentEntityException, Exception
@@ -142,7 +142,7 @@ public class TestimonyJpaController implements Serializable, IPersistenciaJpa
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain MovimientoTestimonio " + testimonyMovementListOldTestimonyMovement + " since its fkIdTestimonio field is not nullable.");
+                    illegalOrphanMessages.add("You must retain TestimonyMovement " + testimonyMovementListOldTestimonyMovement + " since its fkIdTestimony field is not nullable.");
                 }
             }
             for (Copy copyListOldCopy : copyListOld)
@@ -153,7 +153,7 @@ public class TestimonyJpaController implements Serializable, IPersistenciaJpa
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Copia " + copyListOldCopy + " since its fkIdTestimonio field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Copy " + copyListOldCopy + " since its fkIdTestimony field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null)
@@ -230,7 +230,7 @@ public class TestimonyJpaController implements Serializable, IPersistenciaJpa
                 Integer id = testimony.getIdTestimony();
                 if (findTestimony(id) == null)
                 {
-                    throw new NonexistentEntityException("The testimonio with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The testimony with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -259,7 +259,7 @@ public class TestimonyJpaController implements Serializable, IPersistenciaJpa
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The testimonio with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The testimony with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
             List<TestimonyMovement> testimonyMovementListOrphanCheck = testimony.getTestimonyMovementList();
@@ -269,7 +269,7 @@ public class TestimonyJpaController implements Serializable, IPersistenciaJpa
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Testimonio (" + testimony + ") cannot be destroyed since the MovimientoTestimonio " + testimonyMovementListOrphanCheckTestimonyMovement + " in its movimientoTestimonioList field has a non-nullable fkIdTestimonio field.");
+                illegalOrphanMessages.add("This Testimony (" + testimony + ") cannot be destroyed since the TestimonyMovement " + testimonyMovementListOrphanCheckTestimonyMovement + " in its testimonyMovementList field has a non-nullable fkIdTestimony field.");
             }
             List<Copy> copyListOrphanCheck = testimony.getCopyList();
             for (Copy copyListOrphanCheckCopy : copyListOrphanCheck)
@@ -278,7 +278,7 @@ public class TestimonyJpaController implements Serializable, IPersistenciaJpa
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Testimonio (" + testimony + ") cannot be destroyed since the Copia " + copyListOrphanCheckCopy + " in its copiaList field has a non-nullable fkIdTestimonio field.");
+                illegalOrphanMessages.add("This Testimony (" + testimony + ") cannot be destroyed since the Copy " + copyListOrphanCheckCopy + " in its copyList field has a non-nullable fkIdTestimony field.");
             }
             if (illegalOrphanMessages != null)
             {
@@ -361,14 +361,14 @@ public class TestimonyJpaController implements Serializable, IPersistenciaJpa
     public List<Testimony> findTestimoniesDeed(Integer idDeed)
     {
         EntityManager em = getEntityManager();
-        List<Testimony> lista = null;
+        List<Testimony> testimonies = null;
 
         Query query = em.createNamedQuery("Testimony.findByDeed");
-        query.setParameter("idEscritura", idDeed);
+        query.setParameter("idDeed", idDeed);
 
-        lista = (List<Testimony>) query.getResultList();
+        testimonies = (List<Testimony>) query.getResultList();
 
-        return lista;
+        return testimonies;
     }
 
     public Testimony findTestimonyById(Integer idTestimony)
@@ -378,45 +378,45 @@ public class TestimonyJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
 
         Query query = em.createNamedQuery("Testimony.findByIdTestimony");
-        query.setParameter("idTestimonio", idTestimony);
+        query.setParameter("idTestimony", idTestimony);
 
         testimony = (Testimony) query.getResultList().get(0);
 
         return testimony;
     }
 
-    public Boolean modificarTestimony(Testimony miTestimony) throws ClassModifiedException, ClassEliminatedException
+    public Boolean modifyTestimony(Testimony testimony) throws ClassModifiedException, ClassDeletedException
     {
 
-        Boolean flag = false; //Variable para saber el resultado de la transaccion
-        int oldVersion = 0; //Variable para Version en memoria del Objeto
-        int version = 0;    //Variable para Version en bd del Objeto
+        Boolean flag = false; // Whether the transaction succeeded
+        int oldVersion = 0; // Version of the object in memory
+        int version = 0;    // Version of the object in the database
 
         EntityManager em = getEntityManager();
 
-        Testimony persistentTestimony = em.find(Testimony.class, miTestimony.getIdTestimony());
+        Testimony persistentTestimony = em.find(Testimony.class, testimony.getIdTestimony());
 
         if (persistentTestimony != null)
         {
-            version = persistentTestimony.getVersion(); // Version del Objeto en db
-            oldVersion = miTestimony.getVersion(); // Version del Objeto en memoria
+            version = persistentTestimony.getVersion(); // Version of the object in the database
+            oldVersion = testimony.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException();
             } else
             {
                 em.getTransaction().begin();
 
-                persistentTestimony.setFlagged(miTestimony.getFlagged());
+                persistentTestimony.setFlagged(testimony.getFlagged());
 
                 em.getTransaction().commit();
                 em.close();
                 flag = true;
             }
-        } else //Si fue  eliminado se dispara una excepcion
+        } else // A missing row raises an exception.
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
         return flag;
     }

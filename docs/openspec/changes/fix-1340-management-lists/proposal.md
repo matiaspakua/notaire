@@ -12,13 +12,13 @@
 
 ## Objetivo
 
-Three screens still read the managements table with `GET /gestiones?size=1000` through `useGestiones()`: the external-entity documents list, the documentation re-entry list and the management select of the presented-documents form. The dev DB now has more than 1000 managements, so every case after the 1000th was missing from them (local e2e TS-0018, TS-0033, TS-0090 and TS-0099 failed for that reason). The two lists now read one server page at a time and the form picks the management with a server-search combobox.
+Three screens still read the managements table with `GET /managements?size=1000` through `useManagements()`: the external-entity documents list, the documentation re-entry list and the management select of the presented-documents form. The dev DB now has more than 1000 managements, so every case after the 1000th was missing from them (local e2e TS-0018, TS-0033, TS-0090 and TS-0099 failed for that reason). The two lists now read one server page at a time and the form picks the management with a server-search combobox.
 
 ## What Changes
 
-- `/dashboard/documentos-entidades-externas` and `/dashboard/reingreso-documentacion`: one server page of `GET /gestiones` (newest first, `page`/`size` in the URL, shared pagination footer, a page past the end moves to the last page), like `/dashboard/gestiones` (#1396).
-- `/dashboard/documentos` form: the management `Select` becomes `ManagementPicker` (shared `SearchCombobox`): newest 20 on open; a number searches `GET /gestiones/numero/{n}` and also clients by document number; text searches clients (`GET /people/search`) and lists their managements (`GET /gestiones/cliente/{id}`, at most 5 clients); the current value is loaded by id (`GET /gestiones/{id}`). The option label keeps `<number> — <heading>`.
-- `useGestiones()` (the size=1000 hook) is removed; it has no callers left.
+- `/dashboard/external-entity-documents` and `/dashboard/document-reentry`: one server page of `GET /managements` (newest first, `page`/`size` in the URL, shared pagination footer, a page past the end moves to the last page), like `/dashboard/managements` (#1396).
+- `/dashboard/documents` form: the management `Select` becomes `ManagementPicker` (shared `SearchCombobox`): newest 20 on open; a number searches `GET /managements/number/{n}` and also clients by document number; text searches clients (`GET /people/search`) and lists their managements (`GET /managements/client/{id}`, at most 5 clients); the current value is loaded by id (`GET /managements/{id}`). The option label keeps `<number> — <heading>`.
+- `useManagements()` (the size=1000 hook) is removed; it has no callers left.
 - i18n `managementPicker.*` in es/en. E2E helpers in TS-0090 and TS-0099 type the case number into the picker.
 - CHANGELOG entry.
 
@@ -50,7 +50,7 @@ Three screens still read the managements table with `GET /gestiones?size=1000` t
 
 ### Surface area
 
-- Endpoints: none new (`GET /gestiones` paged, `/gestiones/{id}`, `/gestiones/numero/{n}`, `/gestiones/cliente/{id}`, `/people/search`)
+- Endpoints: none new (`GET /managements` paged, `/managements/{id}`, `/managements/number/{n}`, `/managements/client/{id}`, `/people/search`)
 - Entities / Flyway / configuration: none
 
 ### Architecture review

@@ -25,11 +25,11 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-/** Issue #774 — GET /api/v1/gestiones/{id}/resumen-caso over the H2 schema. */
+/** Issue #774 — GET /api/v1/managements/{id}/case-summary over the H2 schema. */
 @RequirementCoverage({"CU07", "CU11", "CU12", "CU70"})
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Resumen del caso de una gestión — integration tests")
+@DisplayName("Resumen of the caso of a management — integration tests")
 class ManagementCaseSummaryIntegrationTest {
 
     @Autowired
@@ -63,9 +63,9 @@ class ManagementCaseSummaryIntegrationTest {
                                  "isClient": false, "identificationType": {"idIdentificationType": 1}}
                                 """.formatted(number)))
                 .andExpect(status().isCreated()).andReturn();
-        MvcResult management = mockMvc.perform(post("/api/v1/gestiones").contentType(MediaType.APPLICATION_JSON)
+        MvcResult management = mockMvc.perform(post("/api/v1/managements").contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"encabezado": "Gestión resumen caso", "dateStart": "2026-01-01", "number": %d,
+                                {"heading": "Management case summary", "dateStart": "2026-01-01", "number": %d,
                                  "notaryPersonId": %d}
                                 """.formatted(number, idFrom(person, "personId"))))
                 .andExpect(status().isCreated()).andReturn();
@@ -74,7 +74,7 @@ class ManagementCaseSummaryIntegrationTest {
 
     private Procedure createProcedure(int idManagement, Deed deed) {
         ProcedureType type = new ProcedureType();
-        type.setName("Tramite caso resumen " + System.nanoTime());
+        type.setName("Procedure caso resumen " + System.nanoTime());
         type.setEnabled(true);
         type.setIsArchived(false);
         type.setIsRegistered(false);
@@ -91,31 +91,31 @@ class ManagementCaseSummaryIntegrationTest {
     }
 
     private int createSignedDeedWithTestimony(int number) throws Exception {
-        MvcResult deed = mockMvc.perform(post("/api/v1/escrituras").contentType(MediaType.APPLICATION_JSON)
+        MvcResult deed = mockMvc.perform(post("/api/v1/deeds").contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"number": %d, "body": "Escritura resumen caso", "status": "Firmada",
+                                {"number": %d, "body": "Deed resumen caso", "status": "Firmada",
                                  "dateDeedrecording": "2026-06-16"}
                                 """.formatted(number)))
                 .andExpect(status().isCreated()).andReturn();
         int idDeed = idFrom(deed, "idDeed");
-        mockMvc.perform(post("/api/v1/testimonio/" + idDeed + "/generar")).andExpect(status().isCreated());
+        mockMvc.perform(post("/api/v1/testimonies/" + idDeed + "/generate")).andExpect(status().isCreated());
         return idDeed;
     }
 
     @Test
-    @DisplayName("Should return the header and an empty deeds list when no trámite has a deed")
+    @DisplayName("Should return the header and an empty deeds list when no procedure has a deed")
     void shouldReturnEmptyDeedsList() throws Exception {
         int idManagement = createManagement((int) (System.nanoTime() % 900_000) + 100_000);
         createProcedure(idManagement, null);
 
-        mockMvc.perform(get("/api/v1/gestiones/" + idManagement + "/resumen-caso"))
+        mockMvc.perform(get("/api/v1/managements/" + idManagement + "/case-summary"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.managementId").value(idManagement))
                 .andExpect(jsonPath("$.deeds").isEmpty());
     }
 
     @Test
-    @DisplayName("Should list the deed of a trámite with its generated testimony in state SIN_INGRESAR")
+    @DisplayName("Should list the deed of a procedure with its generated testimony in state SIN_INGRESAR")
     void shouldListDeedWithTestimony() throws Exception {
         int seed = (int) (System.nanoTime() % 900_000) + 100_000;
         int idManagement = createManagement(seed);
@@ -123,7 +123,7 @@ class ManagementCaseSummaryIntegrationTest {
         Deed deed = new Deed(idDeed);
         createProcedure(idManagement, deed);
 
-        mockMvc.perform(get("/api/v1/gestiones/" + idManagement + "/resumen-caso"))
+        mockMvc.perform(get("/api/v1/managements/" + idManagement + "/case-summary"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.deeds[0].idDeed").value(idDeed))
                 .andExpect(jsonPath("$.deeds[0].testimonies[0].state").value("SIN_INGRESAR"))
@@ -131,7 +131,7 @@ class ManagementCaseSummaryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should list a document registered against a trámite of the gestión")
+    @DisplayName("Should list a document registered against a procedure of the management")
     void shouldListDocumentOfTheManagement() throws Exception {
         int idManagement = createManagement((int) (System.nanoTime() % 900_000) + 100_000);
         Procedure procedure = createProcedure(idManagement, null);
@@ -141,22 +141,22 @@ class ManagementCaseSummaryIntegrationTest {
         type.setExpires(false);
         type.setEnabled(true);
         type = documentTypeRepository.save(type);
-        mockMvc.perform(post("/api/v1/documento-presentado").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/api/v1/submitted-documents").contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"typeId": %d, "date": "2026-06-01", "delivered": false, "procedureId": %d,
                                  "name": "Doc del caso"}
                                 """.formatted(type.getIdDocumentType(), procedure.getIdProcedure())))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(get("/api/v1/gestiones/" + idManagement + "/resumen-caso"))
+        mockMvc.perform(get("/api/v1/managements/" + idManagement + "/case-summary"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.documents[0].name").value("Doc del caso"))
                 .andExpect(jsonPath("$.documents[0].idProcedure").value(procedure.getIdProcedure()));
     }
 
     @Test
-    @DisplayName("Should return 404 for an unknown gestión")
+    @DisplayName("Should return 404 for an unknown management")
     void shouldReturn404ForUnknownManagement() throws Exception {
-        mockMvc.perform(get("/api/v1/gestiones/999999/resumen-caso")).andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/v1/managements/999999/case-summary")).andExpect(status().isNotFound());
     }
 }

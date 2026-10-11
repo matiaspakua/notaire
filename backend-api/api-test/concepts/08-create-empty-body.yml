@@ -3,14 +3,14 @@ info:
   type: http
   seq: 8
   description: |-
-      ## POST /api/v1/conceptos with {} — 400 Bad Request
+      ## POST /api/v1/concepts with {} — 400 Bad Request
       The body violates the NOT NULL name constraint. A constraint error is the
       client's fault and answers 400 with the standard ErrorResponse, like
       GlobalExceptionHandler (#579 slice 2), instead of 409. Nothing is stored.
       Traceability: CU29 (#579)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/conceptos"
+  url: "{{base_url}}/api/v1/concepts"
   body:
     type: json
     data: |-

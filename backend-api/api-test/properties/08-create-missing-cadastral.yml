@@ -3,13 +3,13 @@ info:
   type: http
   seq: 8
   description: |-
-      ## Reject — POST /api/v1/inmueble without cadastralDesignation
+      ## Reject — POST /api/v1/properties without cadastralDesignation
       A property is identified by its nomenclatura catastral; a create
       without it is rejected and nothing is stored (#655).
       Traceability: CU69 (#655)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/inmueble"
+  url: "{{base_url}}/api/v1/properties"
   body:
     type: json
     data: |-

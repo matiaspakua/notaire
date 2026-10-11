@@ -12,9 +12,9 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Query;
 import jakarta.transaction.UserTransaction;
-import com.licensis.notaire.service.AdministradorJpa;
+import com.licensis.notaire.service.JpaAdministrator;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.AuditRecord;
 import com.licensis.notaire.business.User;
 
@@ -22,7 +22,7 @@ import com.licensis.notaire.business.User;
  *
  * @author juanca
  */
-public class AuditRecordJpaController implements Serializable, IPersistenciaJpa {
+public class AuditRecordJpaController implements Serializable, JpaPersistence {
 
     private AuditRecordJpaController(UserTransaction utx, EntityManagerFactory emf) {
         this.utx = utx;
@@ -31,14 +31,14 @@ public class AuditRecordJpaController implements Serializable, IPersistenciaJpa 
 
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
-    private static AuditRecordJpaController instancia = null;
+    private static AuditRecordJpaController instance = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
     public boolean create(AuditRecord auditRecord) {
-        boolean resultado = false;
+        boolean result = false;
 
         EntityManager em = null;
         try {
@@ -55,23 +55,23 @@ public class AuditRecordJpaController implements Serializable, IPersistenciaJpa 
                 fkIdUser = em.merge(fkIdUser);
             }
             em.getTransaction().commit();
-            resultado = true;
+            result = true;
         } finally {
             if (em != null) {
                 em.close();
             }
         }
-        return resultado;
+        return result;
     }
 
-    public static AuditRecordJpaController getInstancia() {
+    public static AuditRecordJpaController getInstance() {
 
-        EntityManagerFactory emf = AdministradorJpa.getEmf();
+        EntityManagerFactory emf = JpaAdministrator.getEmf();
 
-        if (instancia == null || (instancia.emf == null && emf != null)) {
-            instancia = new AuditRecordJpaController(null, emf);
+        if (instance == null || (instance.emf == null && emf != null)) {
+            instance = new AuditRecordJpaController(null, emf);
         }
-        return instancia;
+        return instance;
     }
 
     public void edit(AuditRecord auditRecord) throws NonexistentEntityException, Exception {
@@ -102,7 +102,7 @@ public class AuditRecordJpaController implements Serializable, IPersistenciaJpa 
             if (msg == null || msg.length() == 0) {
                 Integer id = auditRecord.getIdAuditRecord();
                 if (findAuditRecord(id) == null) {
-                    throw new NonexistentEntityException("The registroAuditoria with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The audit record with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -123,7 +123,7 @@ public class AuditRecordJpaController implements Serializable, IPersistenciaJpa 
                 auditRecord = em.getReference(AuditRecord.class, id);
                 auditRecord.getIdAuditRecord();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The registroAuditoria with id " + id + " no longer exists.",
+                throw new NonexistentEntityException("The audit record with id " + id + " no longer exists.",
                         enfe);
             }
             User fkIdUser = auditRecord.getFkIdUser();
@@ -181,9 +181,9 @@ public class AuditRecordJpaController implements Serializable, IPersistenciaJpa 
         }
     }
 
-    public ArrayList<AuditRecord> searchRecordAuditoriasUser(User miUser) {
-        List<AuditRecord> listaAudit = null;
-        ArrayList<AuditRecord> userListaAudit = new ArrayList<AuditRecord>();
+    public ArrayList<AuditRecord> searchAuditRecordsByUser(User user) {
+        List<AuditRecord> auditRecords = null;
+        ArrayList<AuditRecord> userAuditRecords = new ArrayList<AuditRecord>();
         Boolean flag = false;
         try {
 
@@ -191,24 +191,24 @@ public class AuditRecordJpaController implements Serializable, IPersistenciaJpa 
 
             Query query = em.createNamedQuery("AuditRecord.findAll");
 
-            listaAudit = query.getResultList();
+            auditRecords = query.getResultList();
 
-            // Filtro el resultado de la busqueda con el Usuario deseado
-            for (int i = 0; i < listaAudit.size(); i++) {
-                if (miUser.getIdUser().equals(listaAudit.get(i).getFkIdUser().getIdUser())) {
+            // Filter the search result to the requested user account
+            for (int i = 0; i < auditRecords.size(); i++) {
+                if (user.getIdUser().equals(auditRecords.get(i).getFkIdUser().getIdUser())) {
                     flag = true;
-                    userListaAudit.add(listaAudit.get(i));
+                    userAuditRecords.add(auditRecords.get(i));
                 }
             }
 
             if (!flag) {
-                userListaAudit = null;
+                userAuditRecords = null;
             }
 
         } catch (Exception e) {
-            System.out.println("Error Metodo : getDtoRegistroAuditoria");
+            System.out.println("Error in searchAuditRecordsByUser");
         }
-        return userListaAudit;
+        return userAuditRecords;
 
     }
 

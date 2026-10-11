@@ -6,7 +6,7 @@ info:
       Traceability: CU82
 http:
   method: PUT
-  url: "{{base_url}}/api/v1/minutas-inscripcion/999999991/observar"
+  url: "{{base_url}}/api/v1/registration-drafts/999999991/observe"
   body:
     type: json
     data: |-

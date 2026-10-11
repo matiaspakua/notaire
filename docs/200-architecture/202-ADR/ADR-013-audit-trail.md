@@ -1,4 +1,4 @@
-# ADR-013: Auditoría Transversal con Spring AOP
+# ADR-013: Cross-cutting audit with Spring AOP
 
 **Status:** Accepted
 **Date:** 2026-05-12
@@ -7,45 +7,45 @@
 
 ## Context
 
-Por requerimiento legal (ver `.claude/rules/general.md` y la sección "Legal Constraints" del [SAD](../201-SAD/sad.md#2-constraints)), toda operación de creación, modificación y eliminación sobre entidades del dominio notarial debe quedar registrada de forma inmutable, junto con el usuario autenticado que la ejecutó. Implementar el registro manualmente en cada controlador (31 `*Controller`) sería repetitivo, propenso a omisiones y difícil de mantener consistente.
+A legal requirement (see `.claude/rules/general.md` and the "Legal Constraints" section of the [SAD](../201-SAD/sad.md#2-constraints)) says every create, update, and delete on notarial domain entities must be recorded immutably, together with the authenticated user who performed it. Recording that by hand in each controller (31 `*Controller` classes) would be repetitive, easy to skip, and hard to keep consistent.
 
-Un incidente de diseño previo (issue #555) identificó que confiar en un header enviado por el cliente (`X-Notaire-User`) para atribuir la autoría permitía a un cliente malicioso falsificar el usuario auditado.
+An earlier design incident (issue #555) found that trusting a client-supplied header (`X-Notaire-User`) for authorship let a malicious client forge the audited user.
 
 ## Decision
 
-Implementar la auditoría como una **preocupación transversal (cross-cutting concern)** usando **Spring AOP**, centralizada en `AuditoriaAspect` (`com.licensis.notaire.audit`):
+Implement auditing as a **cross-cutting concern** with **Spring AOP**, centralized in `AuditAspect` (`com.licensis.notaire.audit`):
 
-- **Pointcut único**: intercepta todo método público de cualquier clase `*Controller` en el paquete `api`.
-- **Advice `@AfterReturning`**: el registro solo se genera si la operación fue exitosa (no audita intentos fallidos de escritura, salvo login/logout).
-- **Filtro de operaciones auditables** (`isAuditableOperation`): solo métodos anotados `@PostMapping`, `@PutMapping`, `@PatchMapping`, `@DeleteMapping`, o cuyo nombre contenga `login`/`logout`. Las operaciones `GET` (lectura) **no se auditan**.
-- **Atribución del usuario**: el actor se resuelve exclusivamente desde el `SecurityContextHolder`, poblado por `JwtAuthenticationFilter` a partir de un JWT válido — nunca desde un header enviado por el cliente. Como todo endpoint de escritura bajo `/api/**` requiere autenticación, en el momento en que el aspecto se ejecuta siempre existe un usuario autenticado.
-- **Persistencia**: cada registro se guarda en la tabla `registro_auditoria` vía `RegistroAuditoriaService` → `RegistroAuditoriaRepository`.
-- **Exposición**: consultable vía `RegistroAuditoriaController` (`GET /api/v1/auditoria`) y visible en el frontend en `/dashboard/auditoria`.
+- **Single pointcut**: every public method of a `*Controller` in `com.licensis.notaire.api` or `com.licensis.notaire.adapter.in.web`. `AuditRecordController` is excluded so audit reads do not audit themselves.
+- **`@AfterReturning` advice**: a record is written only when the operation succeeds (failed writes are not audited, except login and logout).
+- **Auditable-operation filter** (`isAuditableOperation`): methods annotated with `@PostMapping`, `@PutMapping`, `@PatchMapping`, or `@DeleteMapping`, or whose name contains `login` or `logout`. `GET` (read) operations are **not audited**.
+- **User attribution**: the actor comes only from `SecurityContextHolder`, filled by `JwtAuthenticationFilter` from a valid JWT — never from a client-supplied header. Every write under `/api/**` requires authentication, so an authenticated user is present when the aspect runs.
+- **Persistence**: each record is stored in `audit_records` through `AuditRecordService` → `AuditRecordRepository`.
+- **Exposure**: readable through `AuditRecordController` (`GET /api/v1/audit-log`) and in the frontend at `/dashboard/audit`.
 
-### Por qué AOP (y no auditoría manual por servicio, ni triggers de base de datos)
+### Why AOP (not per-service audit code, and not database triggers)
 
-| Criterio | Spring AOP (elegido) | Auditoría manual en cada servicio | Triggers PostgreSQL |
+| Criterion | Spring AOP (chosen) | Manual audit in each service | PostgreSQL triggers |
 |----------|----------------------|-------------------------------------|----------------------|
-| Cobertura garantizada | Sí — un único pointcut cubre todos los controllers presentes y futuros | No — depende de que cada desarrollador recuerde añadirla | Sí, pero a nivel de fila, sin contexto HTTP/usuario JWT |
-| Acceso al usuario autenticado | Directo vía `SecurityContextHolder` | Directo, pero duplicado en cada servicio | No tiene acceso al contexto de aplicación |
-| Acoplamiento con lógica de negocio | Ninguno — el aspecto vive fuera de los servicios | Alto — mezcla auditoría con lógica de negocio | Ninguno, pero opaco para el equipo de aplicación |
-| Mantenibilidad | Un solo punto de cambio | N cambios (uno por servicio) | Requiere migraciones SQL por tabla |
+| Guaranteed coverage | Yes — one pointcut covers current and future controllers | No — each developer must remember to add it | Yes, but at row level, without HTTP or JWT user context |
+| Access to the authenticated user | Direct, through `SecurityContextHolder` | Direct, but duplicated in each service | No access to the application context |
+| Coupling to business logic | None — the aspect lives outside the services | High — audit mixed with business logic | None, but opaque to the application team |
+| Maintainability | One place to change | N changes (one per service) | A SQL migration per table |
 
 ## Consequences
 
-### Positivos
+### Positive
 
-- Nuevos endpoints de escritura quedan auditados automáticamente sin código adicional, siempre que sigan la convención `*Controller` + verbo HTTP de escritura.
-- La atribución del usuario no puede ser falsificada por el cliente (issue #555 resuelto).
-- La lógica de auditoría está completamente desacoplada de los servicios de negocio (Single Responsibility).
+- New write endpoints are audited automatically, with no extra code, as long as they follow the `*Controller` convention and a write HTTP verb.
+- The client cannot forge the audited user (issue #555).
+- Audit logic is fully decoupled from the business services (single responsibility).
 
-### Negativos
+### Negative
 
-- El pointcut basado en convención de nombres (`*Controller`) requiere disciplina: un controlador que no siga la convención de paquete `api` o de sufijo `Controller` no será auditado.
-- No audita cambios realizados directamente en base de datos fuera de la aplicación (fuera de alcance: se asume que solo `backend-api` accede a PostgreSQL, ver ADR-001).
+- The name-based pointcut needs discipline: a controller outside `adapter.in.web` (or the legacy `api` package) or without the `Controller` suffix is not audited.
+- Changes made directly in the database, outside the application, are not audited (out of scope: only `backend-api` is assumed to access PostgreSQL; see ADR-001).
 
 ## Related ADRs
 
-- ADR-001: Microservices Architecture (solo el backend accede a la base de datos)
-- ADR-008: Security & Authentication (JWT como única fuente de identidad)
+- ADR-001: Microservices Architecture (only the backend accesses the database)
+- ADR-008: Security & Authentication (JWT is the only identity source)
 - ADR-010: Error Handling

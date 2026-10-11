@@ -42,8 +42,8 @@ when duplicate groups already exist before creating the unique index.
 
 ### Requirement: Rechazar alta de persona con documento duplicado
 
-El sistema SHALL rechazar la creación de una `Persona` cuando ya existe
-otra `Persona` con el mismo `TipoIdentificacion` y
+El sistema SHALL rechazar la creación de una `Person` cuando ya existe
+otra `Person` con el mismo `IdentificationType` y
 `numeroIdentificacion`, según CU17 y CU18. El rechazo SHALL aplicarse tanto
 en el servicio de aplicación (#835) como mediante la restricción única de base
 de datos (#799).
@@ -63,8 +63,8 @@ de datos (#799).
 
 ### Requirement: Rechazar edición de persona hacia un documento duplicado
 
-El sistema SHALL rechazar la edición de una `Persona` cuando el tipo y
-número de identificación propuestos ya pertenecen a otra `Persona`
+El sistema SHALL rechazar la edición de una `Person` cuando el tipo y
+número de identificación propuestos ya pertenecen a otra `Person`
 distinta, según CU17 y CU18.
 
 #### Scenario: Edición exitosa sin cambiar el documento
