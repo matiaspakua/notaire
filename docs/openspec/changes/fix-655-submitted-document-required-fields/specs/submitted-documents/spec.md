@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Registering and maintaining the documents clients submit for a gestión's trámites.
+Registering and maintaining the documents clients submit for a management's procedures.
 
 ## MODIFIED Requirements
 
@@ -30,16 +30,16 @@ Registering and maintaining the documents clients submit for a gestión's trámi
 - **WHEN** the OpenAPI document is generated
 - **THEN** the POST request schema lists typeId and procedureId as required and the PUT schema does not
 
-### Requirement: UI registers documents for a trámite
+### Requirement: UI registers documents for a procedure
 
-The Documentos dialog SHALL require the type and a trámite of a gestión to create a document, and SHALL let a document without a trámite be linked when edited, without forcing it.
+The Documents dialog SHALL require the type and a procedure of a management to create a document, and SHALL let a document without a procedure be linked when edited, without forcing it.
 
 #### Scenario: Create form
 
 - **WHEN** the user creates a document
-- **THEN** Save is enabled only after choosing a type and a trámite, and the document is listed in the gestión's case summary
+- **THEN** Save is enabled only after choosing a type and a procedure, and the document is listed in the management's case summary
 
 #### Scenario: Legacy document
 
-- **WHEN** the user edits a document stored without a trámite
-- **THEN** the gestión/trámite selectors are offered and saving without choosing one is allowed
+- **WHEN** the user edits a document stored without a procedure
+- **THEN** the management/procedure selectors are offered and saving without choosing one is allowed

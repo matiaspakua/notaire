@@ -45,7 +45,7 @@ const SIDEBAR_MODULES: Module[] = [
   { navLabel: "Auditoría", urlPart: "/dashboard/audit" },
 ];
 
-/** Administración sub-pages (reached by direct navigation from the admin hub). */
+/** Administration sub-pages (reached by direct navigation from the admin hub). */
 const ADMIN_MODULES: Module[] = [
   { navLabel: "Trámites", urlPart: "/dashboard/administration/procedures", createTestId: "btn-new-procedure-type" },
   { navLabel: "Conceptos", urlPart: "/dashboard/administration/concepts" },

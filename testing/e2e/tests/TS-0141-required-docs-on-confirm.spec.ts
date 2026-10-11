@@ -1,5 +1,5 @@
 /**
- * #773 remaining — Required documents are seeded when a trámite is confirmed via complete-case.
+ * #773 remaining — Required documents are seeded when a procedure is confirmed via complete-case.
  *
  * Setup creates a procedure template before confirm so the checklist materializes; the management
  * case-summary dialog then lists the pending required document names (CU02 / CU03 / CU72).

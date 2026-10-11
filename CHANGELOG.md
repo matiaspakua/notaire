@@ -64,6 +64,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English open-change requirements** (#1490, CU75): the case-summary
+  spec and the submitted-document delta name a management and a
+  procedure. The change slugs `feat-774-gestion-resumen-caso` and
+  `fix-655-submitted-document-required-fields` stay. Stored states
+  `INSCRIPTO`, `SIN_INGRESAR`, and `RETIRADO` stay. The official title
+  `CU07 – Generar testimonio` stays. `POST /api/v1/submitted-documents`,
+  `typeId`, and `procedureId` stay.
+- **English E2E header comments** (#1490, CU75): the file headers
+  name a procedure and the administration screens. Visible labels
+  stay, including `/administración/i`, the link `Administración`,
+  `Trámites`, `nav-administracion`, and `nav-auditoria`. The official
+  title `CU53 - Modificar gestión` stays. The column title
+  `Tipo de Trámite` stays.
+- **English document-link requirements** (#1490, CU75):
+  `document-procedure-link` and `required-docs-on-confirm` name a
+  procedure and a management. The Documents screen stays the screen
+  name in that prose. Spec ids stay. `ProcedureTemplate`,
+  `POST /api/v1/managements/complete-case`, and
+  `GET /api/v1/managements/{id}/case-summary` stay.
+- **Named-query prefix** (#1490, CU75): the createNamedQuery scenario
+  forbids the retired prefix `Persona.`. The live prefix is `Person.*`.
+  Spec id `jpa-namedquery-english-names` stays.
 - **Historical user-manual filename** (#1490, CU75): the PDF is
   `Manual de Usuario Notaire.doc.pdf`, in `C_Manual de Usuario`, and the
   release asset is `Manual-de-Usuario-Notaire.doc.pdf`. The fetch script,

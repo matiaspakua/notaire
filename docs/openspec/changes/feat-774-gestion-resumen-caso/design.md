@@ -22,7 +22,7 @@ Issue #774, Use Case CU07 – Generar testimonio (#160); CU11 – Ingresar para 
 
 | Scenario (spec) | Test level | Test class / file |
 |-----------------|------------|-------------------|
-| A gestión with a deed, a testimony, a movement and a copy | unit | `ManagementCaseSummaryServiceTest` |
+| A management with a deed, a testimony, a movement and a copy | unit | `ManagementCaseSummaryServiceTest` |
 | A testimony without movements | unit | `ManagementCaseSummaryServiceTest` |
 | A withdrawn testimony | unit | `ManagementCaseSummaryServiceTest` |
 | No deed yet | integration | `ManagementCaseSummaryIntegrationTest` |
