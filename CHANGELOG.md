@@ -1201,6 +1201,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   anything else answers 400) and returns one page of deeds in that status, so deed pickers
   no longer need the whole list to find signed deeds. Non-breaking.
 
+- **One status badge on every status column** (issue #1366, RF-23, RNF-09): budgets, cases and testimonies showed status as plain text, folios the raw stored value, and protocol and users ad-hoc badges where color was the only difference. New `components/shared/StatusBadge.tsx` with `lib/status-maps.ts` maps a domain (`budget`, `management`, `testimony`, `folio`, `availability`, `user`) and a stored value to a tone (neutral, info, success, warning, danger), a decorative lucide icon and a text label, so no status relies on color alone (WCAG 1.4.1). Budget labels reuse `presupuestos.status.*` (#1346); management statuses keep their catalog name and only the seeded names get a tone; folio labels are new (`status.folio.*`, es/en); a value outside a vocabulary shows as stored in a neutral badge, an empty one as a dash. Wired on presupuestos, gestiones, testimonios, protocolo, administracion/usuarios and administracion/folios. Vitest `status-badge.test.tsx` and Playwright `TS-0124` cover it.
+
 ### Deprecated
 
 - `init-db/01-schema.sql` - Superseded by Flyway migration
