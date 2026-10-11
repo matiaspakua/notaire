@@ -31,11 +31,11 @@ shared or production use.
 | Service | URL | Login |
 |---------|-----|-------|
 | Homer | http://localhost:8888 | – |
-| Grafana | http://localhost:3001 | `GRAFANA_ADMIN_*` |
+| Grafana | http://127.0.0.1:3001 (published as loopback) | none locally — anonymous Admin (#1413); `GRAFANA_ADMIN_*` still seeds the admin user for scripts |
 | Prometheus | http://localhost:9090 | – |
 | Loki | http://localhost:3100 | – |
 | PostgreSQL exporter | http://localhost:9187/metrics | – |
-| SonarQube | http://localhost:9000 | `SONAR_ADMIN_*` |
+| SonarQube | http://127.0.0.1:9000 (published as loopback) | browse anonymously (`SONAR_FORCEAUTHENTICATION=false`); admin/token for analysis (#1413) |
 
 Application credentials (frontend, API, pgAdmin) belong to the application
 repository; see its `.env.example`.
