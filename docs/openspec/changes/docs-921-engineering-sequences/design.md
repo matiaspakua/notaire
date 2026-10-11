@@ -72,6 +72,8 @@ so the availability answer is not only in a pull request.
 `amountToPay`.
 [CU71 still names `fk_id_presupuesto`] → The live column is
 `fk_id_budget`.
+[CU87 still names `escrituraId`] → The live field is
+`deedId`.
 [CU42 still names `GET /api/v1/documento-presentado/proximos-vencimientos?dias=N` and `/dashboard/proximos-vencimientos`] → The live call is in
 `upcoming-expirations`.
 [CU71 still names `POST /api/v1/presupuestos/{id}/items-desde-catalogo`] → The live call is in

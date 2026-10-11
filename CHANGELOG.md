@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired deed link field** (#1490, CU75): the engineering-sequences
+  design names the field CU87 still writes, `escrituraId`.
+  The live field is `deedId`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
 - **Retired budget foreign key** (#1490, CU75): the engineering-sequences
   design names the column CU71 still writes, `fk_id_presupuesto`.
   The live column is `fk_id_budget`. The heading `Riesgos / Trade-offs`
