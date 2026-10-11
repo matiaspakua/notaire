@@ -76,7 +76,7 @@ public class WorkflowNodeController {
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Created"),
     @ApiResponse(responseCode = "400", description = "Invalid request: workflowDefinitionId, statusManagementId "
-            + "y type (INITIAL, INTERMEDIATE o FINAL) son obligatorios"),
+            + "and type (INITIAL, INTERMEDIATE or FINAL) are required"),
     @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping

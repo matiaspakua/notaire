@@ -43,58 +43,57 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
     }
 
     /**
-     * Persiste in the database a new management of deeds.
+     * Persists a new deed management.
      *
-     * @param unaGestionDeEscritura The new management of deeds a persistir.
-     * @return oidGestionEscritura The id of the new management of deed, -1 if ocurrio algun
-     * error.
+     * @param deedManagement the deed management to persist
+     * @return the id of the new deed management, or -1 when creation fails
      */
-    public Integer create(DeedManagement unaDeedManagement)
+    public Integer create(DeedManagement deedManagement)
     {
         Integer oidManagementDeed = new Integer(-1);
-        if (unaDeedManagement.getHistoryList() == null)
+        if (deedManagement.getHistoryList() == null)
         {
-            unaDeedManagement.setHistoryList(new ArrayList<History>());
+            deedManagement.setHistoryList(new ArrayList<History>());
         }
-        if (unaDeedManagement.getProcedureList() == null)
+        if (deedManagement.getProcedureList() == null)
         {
-            unaDeedManagement.setProcedureList(new ArrayList<Procedure>());
+            deedManagement.setProcedureList(new ArrayList<Procedure>());
         }
         EntityManager em = null;
         try
         {
             em = getEntityManager();
             em.getTransaction().begin();
-            Person fkIdNotaryPerson = unaDeedManagement.getFkIdNotaryPerson();
+            Person fkIdNotaryPerson = deedManagement.getFkIdNotaryPerson();
             if (fkIdNotaryPerson != null)
             {
                 fkIdNotaryPerson = em.getReference(fkIdNotaryPerson.getClass(), fkIdNotaryPerson.getPersonId());
-                unaDeedManagement.setFkIdNotaryPerson(fkIdNotaryPerson);
+                deedManagement.setFkIdNotaryPerson(fkIdNotaryPerson);
             }
             List<History> attachedHistoryList = new ArrayList<History>();
-            for (History historyListHistoryToAttach : unaDeedManagement.getHistoryList())
+            for (History historyListHistoryToAttach : deedManagement.getHistoryList())
             {
                 historyListHistoryToAttach = em.getReference(historyListHistoryToAttach.getClass(), historyListHistoryToAttach.getIdHistory());
                 attachedHistoryList.add(historyListHistoryToAttach);
             }
-            unaDeedManagement.setHistoryList(attachedHistoryList);
+            deedManagement.setHistoryList(attachedHistoryList);
             List<Procedure> attachedProcedureList = new ArrayList<Procedure>();
-            for (Procedure procedureListProcedureToAttach : unaDeedManagement.getProcedureList())
+            for (Procedure procedureListProcedureToAttach : deedManagement.getProcedureList())
             {
                 procedureListProcedureToAttach = em.getReference(procedureListProcedureToAttach.getClass(), procedureListProcedureToAttach.getIdProcedure());
                 attachedProcedureList.add(procedureListProcedureToAttach);
             }
-            unaDeedManagement.setProcedureList(attachedProcedureList);
-            em.persist(unaDeedManagement);
+            deedManagement.setProcedureList(attachedProcedureList);
+            em.persist(deedManagement);
             if (fkIdNotaryPerson != null)
             {
-                fkIdNotaryPerson.getDeedManagementList().add(unaDeedManagement);
+                fkIdNotaryPerson.getDeedManagementList().add(deedManagement);
                 fkIdNotaryPerson = em.merge(fkIdNotaryPerson);
             }
-            for (History historyListHistory : unaDeedManagement.getHistoryList())
+            for (History historyListHistory : deedManagement.getHistoryList())
             {
                 DeedManagement oldFkIdManagementOfHistoryListHistory = historyListHistory.getFkIdManagement();
-                historyListHistory.setFkIdManagement(unaDeedManagement);
+                historyListHistory.setFkIdManagement(deedManagement);
                 historyListHistory = em.merge(historyListHistory);
                 if (oldFkIdManagementOfHistoryListHistory != null)
                 {
@@ -102,10 +101,10 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
                     oldFkIdManagementOfHistoryListHistory = em.merge(oldFkIdManagementOfHistoryListHistory);
                 }
             }
-            for (Procedure procedureListProcedure : unaDeedManagement.getProcedureList())
+            for (Procedure procedureListProcedure : deedManagement.getProcedureList())
             {
                 DeedManagement oldFkIdManagementOfProcedureListProcedure = procedureListProcedure.getFkIdManagement();
-                procedureListProcedure.setFkIdManagement(unaDeedManagement);
+                procedureListProcedure.setFkIdManagement(deedManagement);
                 procedureListProcedure = em.merge(procedureListProcedure);
                 if (oldFkIdManagementOfProcedureListProcedure != null)
                 {
@@ -115,7 +114,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
             }
             em.getTransaction().commit();
 
-            oidManagementDeed = unaDeedManagement.getIdManagement();
+            oidManagementDeed = deedManagement.getIdManagement();
         }
         finally
         {
@@ -487,7 +486,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
         return managements;
     }
 
-    public boolean archivingManagements(DeedManagement pGestioneDeEscrituras) throws ClassModifiedException
+    public boolean archivingManagements(DeedManagement managementToArchive) throws ClassModifiedException
     {
 
         Boolean flag = false; // Whether the transaction succeeded
@@ -496,12 +495,12 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
 
         EntityManager em = getEntityManager();
 
-        DeedManagement persistentManagement = em.find(DeedManagement.class, pGestioneDeEscrituras.getIdManagement());
+        DeedManagement persistentManagement = em.find(DeedManagement.class, managementToArchive.getIdManagement());
 
         if (persistentManagement != null)
         {
             version = persistentManagement.getVersion(); // Version of the object in the database
-            oldVersion = pGestioneDeEscrituras.getVersion(); // Version of the object in memory
+            oldVersion = managementToArchive.getVersion(); // Version of the object in memory
 
             if (version != oldVersion) // Versions differ: someone else modified the object
             {
@@ -512,8 +511,8 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
                 try
                 {
                     em.getTransaction().begin();
-                    persistentManagement.setFkIdManagementStatus(pGestioneDeEscrituras.getFkIdManagementStatus());
-                    persistentManagement.setNotes(pGestioneDeEscrituras.getNotes());
+                    persistentManagement.setFkIdManagementStatus(managementToArchive.getFkIdManagementStatus());
+                    persistentManagement.setNotes(managementToArchive.getNotes());
 
                     em.getTransaction().commit();
                     em.close();

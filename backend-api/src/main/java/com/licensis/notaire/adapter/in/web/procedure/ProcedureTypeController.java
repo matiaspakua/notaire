@@ -89,7 +89,7 @@ public class ProcedureTypeController {
     }
 
     @GetMapping("/{id}/in-use")
-    @Operation(summary = "Check whether the procedure type is in uso")
+    @Operation(summary = "Check whether the procedure type is in use")
     public ResponseEntity<Map<String, Boolean>> isInUse(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
@@ -142,7 +142,7 @@ public class ProcedureTypeController {
                 || !budgetTemplateRepository.findByProcedureTypeIdProcedureType(id).isEmpty()
                 || !procedureRepository.findByFkIdProcedureTypeIdProcedureType(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "This procedure type is in uso and cannot modificarse. Cree uno new."));
+                    .body(Map.of("error", "This procedure type is in use and cannot be modified. Create a new one."));
         }
         try {
             dto.setIdProcedureType(id);

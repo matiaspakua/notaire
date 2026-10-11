@@ -60,7 +60,7 @@ public class FolioTypeController {
     }
 
     @GetMapping("/{id}/in-use")
-    @Operation(summary = "Check whether a folio type is in uso")
+    @Operation(summary = "Check whether a folio type is in use")
     @Transactional(readOnly = true)
     public ResponseEntity<Map<String, Boolean>> isInUse(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
@@ -116,7 +116,7 @@ public class FolioTypeController {
         }
         if (!folioRepository.findByFkIdFolioTypeIdFolioType(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "This folio type is in uso and cannot modificarse. Cree uno new."));
+                    .body(Map.of("error", "This folio type is in use and cannot be modified. Create a new one."));
         }
         try {
             FolioType entity = existing.get();

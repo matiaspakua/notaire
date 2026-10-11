@@ -33,9 +33,9 @@ public class TestimonyGenerationVerificationService {
     /**
      * Generates a testimony from a signed deed. The testimony number is system-assigned.
      *
-     * @param idEscritura the deed ID
+     * @param idDeed the deed ID
      * @return the generated testimony
-     * @throws ResourceNotFoundException if not deed with the given ID exists
+     * @throws ResourceNotFoundException if no deed with the given ID exists
      * @throws BusinessValidationException if the deed is not "Firmada"
      */
     public Testimony generate(Integer idDeed) {

@@ -144,7 +144,7 @@ public class DtoUser
     }
 
     /**
-     * JWT emitido by POST /users/login; ausente fuera of the respuesta of login.
+     * JWT issued by POST /users/login; absent outside the login response.
      */
     public String getToken()
     {

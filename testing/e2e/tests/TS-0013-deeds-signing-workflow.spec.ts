@@ -201,7 +201,7 @@ test.describe('CU06 - Firmar Deed', () => {
         expect(isDisabled).toBe(true)
       } else {
         // If not disabled, confirming the firmar dialog must produce an error toast
-        // (backend rejects with 400 — EscrituraController: "no tiene folio asignado")
+        // (backend rejects with 400 when the deed has no folio assigned)
         await firmarBtn.click()
         const confirmDialog = page.getByRole('dialog').or(page.getByRole('alertdialog'))
         await expect(confirmDialog).toBeVisible({ timeout: 5000 })

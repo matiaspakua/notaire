@@ -81,7 +81,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Start a deed of Auxiliary protocol on a folio available */
+        /** Start an auxiliary-protocol deed on an available folio */
         post: operations["startDeed"];
         delete?: never;
         options?: never;
@@ -328,7 +328,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Check whether a concept is in uso */
+        /** Check whether a concept is in use */
         get: operations["isConceptInUse"];
         put?: never;
         post?: never;
@@ -632,7 +632,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Check whether a folio type is in uso */
+        /** Check whether a folio type is in use */
         get: operations["isInUse_3"];
         put?: never;
         post?: never;
@@ -703,7 +703,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Check whether a folio is in uso */
+        /** Check whether a folio is in use */
         get: operations["isInUse_2"];
         put?: never;
         post?: never;
@@ -1643,7 +1643,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Check whether the procedure type is in uso */
+        /** Check whether the procedure type is in use */
         get: operations["isInUse"];
         put?: never;
         post?: never;
@@ -2479,8 +2479,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Sign out (revokes the token presented and clears cookie HttpOnly)
-         * @description Revokes in the server the JWT sent by Bearer or cookie, of way that cannot be reused even if not haya expired; the other sesiones of the user remain active. Without token or with a token invalid responde igual (issue #676).
+         * Sign out (revokes the presented token and clears the HttpOnly cookie)
+         * @description Revokes on the server the JWT sent by Bearer or cookie, so it cannot be reused even if it has not expired; the user's other sessions remain active. A missing or invalid token gets the same response (issue #676).
          */
         post: operations["logout"];
         delete?: never;
@@ -2641,7 +2641,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Create transition between dos nodes */
+        /** Create a transition between two nodes */
         post: operations["create"];
         delete?: never;
         options?: never;
@@ -4664,7 +4664,7 @@ export interface operations {
     search_6: {
         parameters: {
             query?: {
-                /** @description Budget status (any uppercase/lowercase; another valor responde 400) */
+                /** @description Budget status (any letter case; any other value returns 400) */
                 status?: "BORRADOR" | "PENDIENTE" | "APROBADO" | "RECHAZADO" | "FACTURADO";
             };
             header?: never;
@@ -11517,7 +11517,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Invalid request: workflowDefinitionId, statusManagementId y type (INITIAL, INTERMEDIATE o FINAL) son obligatorios */
+            /** @description Invalid request: workflowDefinitionId, statusManagementId and type (INITIAL, INTERMEDIATE or FINAL) are required */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -11687,7 +11687,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Invalid request: workflowDefinitionId, originNodeId and destinationNodeId son obligatorios */
+            /** @description Invalid request: workflowDefinitionId, originNodeId and destinationNodeId are required */
             400: {
                 headers: {
                     [name: string]: unknown;

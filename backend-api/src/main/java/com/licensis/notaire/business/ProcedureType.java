@@ -205,7 +205,7 @@ public class ProcedureType implements Serializable, Persistable<Integer> {
             this.idProcedureType = dtoProcedureType.getIdProcedureType();
             this.name = dtoProcedureType.getName();
             // Null-safe unboxing: PUT payloads may omit boolean flags, which
-            // previously NPE'd (e.g. getAsociaInmuebles() null on update).
+            // previously NPE'd (for example getAssociatesProperties() null on update).
             this.isArchived = Boolean.TRUE.equals(dtoProcedureType.getIsArchived());
             this.isRegistered = Boolean.TRUE.equals(dtoProcedureType.getIsRegistered());
             this.associatesProperties = Boolean.TRUE.equals(dtoProcedureType.getAssociatesProperties());

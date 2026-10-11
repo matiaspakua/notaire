@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English logout, budget-search, and leftover API wording** (#1490, CU75):
+  the logout summary and description, the budget-search status parameter,
+  workflow create validation messages, and the "in use" operation summaries
+  are English. Conflict errors for a concept, folio type, or procedure type
+  that is already in use say the record cannot be modified. Stored status
+  codes and message-catalog keys stay.
 - **English REST API reference** (#1490, CU75):
   `docs/200-architecture/203-design/REST-API-REFERENCE.md` uses English
   resource names and the current JSON fields (`name`, `password`, `valid`,

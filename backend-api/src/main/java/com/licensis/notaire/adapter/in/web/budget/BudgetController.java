@@ -218,7 +218,7 @@ public class BudgetController {
     @Operation(summary = "Search budgets by status (CU60)")
     @Transactional(readOnly = true)
     public ResponseEntity<List<BudgetResponse>> search(
-            @Parameter(description = "Budget status (any uppercase/lowercase; another valor responde 400)",
+            @Parameter(description = "Budget status (any letter case; any other value returns 400)",
                     schema = @Schema(allowableValues = {"BORRADOR", "PENDIENTE", "APROBADO", "RECHAZADO", "FACTURADO"})) @RequestParam(required = false) String status) {
         return ResponseEntity.ok(budgetService.findByStatus(canonicalStatus(status)).stream().map(this::toResponse).toList());
     }

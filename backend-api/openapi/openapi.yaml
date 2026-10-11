@@ -2883,7 +2883,7 @@ paths:
               schema:
                 type: object
           description: Folio not found
-      summary: Start a deed of Auxiliary protocol on a folio available
+      summary: Start an auxiliary-protocol deed on an available folio
       tags:
       - Auxiliary protocol
   /api/v1/budget-templates:
@@ -3114,7 +3114,7 @@ paths:
     get:
       operationId: search_6
       parameters:
-      - description: Budget status (any uppercase/lowercase; another valor responde 400)
+      - description: Budget status (any letter case; any other value returns 400)
         in: query
         name: status
         required: false
@@ -3515,7 +3515,7 @@ paths:
                   type: boolean
                 type: object
           description: OK
-      summary: Check whether a concept is in uso
+      summary: Check whether a concept is in use
       tags:
       - Concepts
   /api/v1/copies:
@@ -4274,7 +4274,7 @@ paths:
                   type: boolean
                 type: object
           description: OK
-      summary: Check whether a folio type is in uso
+      summary: Check whether a folio type is in use
       tags:
       - Folio type
   /api/v1/folios:
@@ -4450,7 +4450,7 @@ paths:
                   type: boolean
                 type: object
           description: OK
-      summary: Check whether a folio is in uso
+      summary: Check whether a folio is in use
       tags:
       - Folio
   /api/v1/history:
@@ -6657,7 +6657,7 @@ paths:
                   type: boolean
                 type: object
           description: OK
-      summary: Check whether the procedure type is in uso
+      summary: Check whether the procedure type is in use
       tags:
       - Procedure type
   /api/v1/procedure-types/{id}/workflow:
@@ -8581,8 +8581,8 @@ paths:
       - Users
   /api/v1/users/logout:
     post:
-      description: 'Revokes in the server the JWT sent by Bearer or cookie, of way that cannot be reused even if not haya
-        expired; the other sesiones of the user remain active. Without token or with a token invalid responde igual (issue
+      description: 'Revokes on the server the JWT sent by Bearer or cookie, so it cannot be reused even if it has not
+        expired; the user''s other sessions remain active. A missing or invalid token gets the same response (issue
         #676).'
       operationId: logout
       responses:
@@ -8593,7 +8593,7 @@ paths:
                 additionalProperties: {}
                 type: object
           description: Token revoked (if any) and auth cookie cleared
-      summary: Sign out (revokes the token presented and clears cookie HttpOnly)
+      summary: Sign out (revokes the presented token and clears the HttpOnly cookie)
       tags:
       - Users
   /api/v1/users/person/{idPerson}:
@@ -8863,8 +8863,8 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: 'Invalid request: workflowDefinitionId, statusManagementId y type (INITIAL, INTERMEDIATE o FINAL) son
-            obligatorios'
+          description: 'Invalid request: workflowDefinitionId, statusManagementId and type (INITIAL, INTERMEDIATE or FINAL)
+            are required'
         '409':
           content:
             '*/*':
@@ -9006,14 +9006,14 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: 'Invalid request: workflowDefinitionId, originNodeId and destinationNodeId son obligatorios'
+          description: 'Invalid request: workflowDefinitionId, originNodeId and destinationNodeId are required'
         '409':
           content:
             '*/*':
               schema:
                 type: object
           description: Conflict
-      summary: Create transition between dos nodes
+      summary: Create a transition between two nodes
       tags:
       - Workflow Transition
   /api/v1/workflow-transition/by-workflow/{workflowId}:

@@ -303,10 +303,10 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Token revoked (if any) and auth cookie cleared")
     })
     @PostMapping("/logout")
-    @Operation(summary = "Sign out (revokes the token presented and clears cookie HttpOnly)",
-            description = "Revokes in the server the JWT sent by Bearer or cookie, of way that cannot "
-                    + "be reused even if not haya expired; the other sesiones of the user remain active. "
-                    + "Without token or with a token invalid responde igual (issue #676).")
+    @Operation(summary = "Sign out (revokes the presented token and clears the HttpOnly cookie)",
+            description = "Revokes on the server the JWT sent by Bearer or cookie, so it cannot "
+                    + "be reused even if it has not expired; the user's other sessions remain active. "
+                    + "A missing or invalid token gets the same response (issue #676).")
     public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request) {
         tokenRevocationService.revoke(RequestTokenResolver.resolve(request, authCookieService.cookieName()));
         ResponseCookie cleared = authCookieService.clearSessionCookie();

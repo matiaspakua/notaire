@@ -69,11 +69,11 @@ public class WorkflowTransitionController {
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Created"),
     @ApiResponse(responseCode = "400", description = "Invalid request: workflowDefinitionId, originNodeId and "
-            + "destinationNodeId son obligatorios"),
+            + "destinationNodeId are required"),
     @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
-    @Operation(summary = "Create transition between dos nodes")
+    @Operation(summary = "Create a transition between two nodes")
     public ResponseEntity<Object> create(@RequestBody DtoWorkflowTransition dto) {
         Integer workflowId = RequiredFields.require(dto.getWorkflowDefinitionId(), "workflowDefinitionId");
         Integer originId = RequiredFields.require(dto.getOriginNodeId(), "originNodeId");

@@ -53,7 +53,7 @@ public class AuxiliaryProtocolController {
         @ApiResponse(responseCode = "404", description = "Folio not found")
     })
     @PostMapping("/deeds")
-    @Operation(summary = "Start a deed of Auxiliary protocol on a folio available")
+    @Operation(summary = "Start an auxiliary-protocol deed on an available folio")
     public ResponseEntity<Object> startDeed(@RequestBody StartDeedRequest request) {
         try {
             Deed created = auxiliaryProtocolService.startDeed(

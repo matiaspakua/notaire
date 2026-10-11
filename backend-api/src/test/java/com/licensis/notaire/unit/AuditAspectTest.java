@@ -94,7 +94,7 @@ class AuditAspectTest {
 
     private void stubJoinPoint(Class<?> target, Method method, Object[] args) {
         // Mockito.mock(target) yields a proxy whose getClass().getSimpleName()
-        // is e.g. "EscrituraController$MockitoMock$xxx". The aspect handles
+        // is e.g. "DeedController$MockitoMock$xxx". The aspect handles
         // proxy class names by walking up the superclass chain, so we get back
         // the original controller name.
         Object targetInstance = org.mockito.Mockito.mock(target);

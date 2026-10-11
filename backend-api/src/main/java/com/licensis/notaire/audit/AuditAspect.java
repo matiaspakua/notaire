@@ -112,8 +112,8 @@ public class AuditAspect {
 
     /**
      * Resolves the original controller simple name. When the target is a
-     * Spring CGLIB or Mockito proxy ({@code EscrituraController$$EnhancerBy...}
-     * / {@code EscrituraController$MockitoMock$...}), we walk up to the
+     * Spring CGLIB or Mockito proxy ({@code DeedController$$EnhancerBy...}
+     * / {@code DeedController$MockitoMock$...}), we walk up to the
      * declaring superclass to recover the original name.
      */
     private String resolveControllerSimpleName(JoinPoint joinPoint) {

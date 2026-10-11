@@ -3,13 +3,13 @@ package com.licensis.notaire.audit;
 import java.util.Map;
 
 /**
- * Translates a controller class name (e.g. {@code EscrituraController}) into a
- * user-facing module name (e.g. {@code Escrituras}) used in the
+ * Translates a controller class name (for example {@code DeedController}) into a
+ * user-facing module name (for example {@code Deeds}) used in the
  * {@code registro_auditoria.modulo} column.
  *
  * <p>Centralising the mapping in a single helper avoids scattering the
  * controller-to-module translation across the audit aspect and keeps the
- * Spanish, plural, business-friendly names consistent.
+ * module names consistent.
  */
 public final class AuditModuleResolver {
 
@@ -51,7 +51,7 @@ public final class AuditModuleResolver {
     /**
      * Resolve a friendly module name for the given controller class.
      *
-     * @param controllerSimpleName simple class name (e.g. {@code EscrituraController})
+     * @param controllerSimpleName simple class name (e.g. {@code DeedController})
      * @return business-friendly module label, never {@code null}
      */
     public static String resolve(String controllerSimpleName) {

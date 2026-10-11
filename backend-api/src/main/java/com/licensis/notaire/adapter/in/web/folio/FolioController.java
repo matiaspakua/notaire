@@ -107,7 +107,7 @@ public class FolioController {
     }
 
     @GetMapping("/{id}/in-use")
-    @Operation(summary = "Check whether a folio is in uso")
+    @Operation(summary = "Check whether a folio is in use")
     public ResponseEntity<Map<String, Boolean>> isInUse(@PathVariable Integer id) {
         return folioRepository.findById(id)
                 .map(f -> ResponseEntity.ok(Map.of("inUse", StatusUTILIZADO.equals(f.getStatus()))))

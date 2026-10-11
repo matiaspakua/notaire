@@ -64,7 +64,7 @@ public class ConceptController {
     }
 
     @GetMapping("/{id}/in-use")
-    @Operation(summary = "Check whether a concept is in uso")
+    @Operation(summary = "Check whether a concept is in use")
     @Transactional(readOnly = true)
     public ResponseEntity<Map<String, Boolean>> isConceptInUse(@PathVariable Integer id) {
         if (service.findById(id).isEmpty()) {
@@ -125,7 +125,7 @@ public class ConceptController {
             }
             if (!templateRepository.findByConceptIdConcept(id).isEmpty()) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body(Map.of("error", "This concept is in uso and cannot modificarse. Cree a new concept."));
+                        .body(Map.of("error", "This concept is in use and cannot be modified. Create a new concept."));
             }
             dto.setIdConcept(id);
             Concept entity = existing.get();

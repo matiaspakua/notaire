@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Gestiona the alta of procedures in Auxiliary protocol (CU81).
+ * Creates procedures in the auxiliary protocol (CU81).
  */
 @Service
 @Transactional

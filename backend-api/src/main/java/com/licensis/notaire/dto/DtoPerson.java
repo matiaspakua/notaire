@@ -310,8 +310,8 @@ public class DtoPerson implements ValidDto {
         this.personProcedures = personProcedures;
     }
 
-    public void setNotaryDeedManagements(ArrayList<DtoDeedManagement> listDtoManagementDeEscrituras) {
-        this.notaryDeedManagements = listDtoManagementDeEscrituras;
+    public void setNotaryDeedManagements(ArrayList<DtoDeedManagement> deedManagements) {
+        this.notaryDeedManagements = deedManagements;
     }
 
     public ArrayList<DtoDeedManagement> getPersonDeedManagements() {
