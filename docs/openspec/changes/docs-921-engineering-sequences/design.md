@@ -70,6 +70,8 @@ so the availability answer is not only in a pull request.
 `DocumentCostTemplate`.
 [CU27 still names `DocumentoPresentado.importeAPagar`] → The live field is
 `amountToPay`.
+[CU71 still names `fk_id_presupuesto`] → The live column is
+`fk_id_budget`.
 [CU42 still names `GET /api/v1/documento-presentado/proximos-vencimientos?dias=N` and `/dashboard/proximos-vencimientos`] → The live call is in
 `upcoming-expirations`.
 [CU71 still names `POST /api/v1/presupuestos/{id}/items-desde-catalogo`] → The live call is in

@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired budget foreign key** (#1490, CU75): the engineering-sequences
+  design names the column CU71 still writes, `fk_id_presupuesto`.
+  The live column is `fk_id_budget`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
 - **Retired amount to pay** (#1490, CU75): the engineering-sequences
   design names the field CU27 still writes, `DocumentoPresentado.importeAPagar`.
   The live field is `amountToPay`. The heading `Riesgos / Trade-offs`
