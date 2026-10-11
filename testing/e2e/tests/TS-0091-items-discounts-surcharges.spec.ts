@@ -5,9 +5,9 @@
  * Test Level: E2E UI/UX
  *
  * Workflow:
- *   - Open the item form and select tipo DESCUENTO/RECARGO
- *   - Motivo becomes required and is enforced client-side
- *   - Query the descuentos/recargos report for a budget
+ *   - Open the item form and select stored types DESCUENTO and RECARGO
+ *   - The reason field becomes required and is enforced client-side
+ *   - Query the discounts and surcharges report for a budget
  *
  * Reference: docs/openspec/changes/descuentos-recargos-budget
  */
@@ -35,7 +35,7 @@ test.describe("Items - discounts and surcharges", () => {
     await expect(page.getByTestId("input-reason")).toBeVisible();
   });
 
-  test("CU71-GW02: Given tipo Descuento, When saving without motivo, Then shows validation error", async ({ page }) => {
+  test("CU71-GW02: Given a surcharge, When saving without a reason, Then shows validation error", async ({ page }) => {
     await page.getByTestId("btn-new-item").click();
     await page.getByTestId("select-item-type").click();
     await page.getByRole("option", { name: "Recargo" }).click();

@@ -64,6 +64,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English load-test check names and dialog locals** (#1490, CU75): k6
+  check names are `managements`, `budgets`, and `procedures`. The
+  reentry dialog local is `detailDialog`. Item-form prose names stored
+  types `DESCUENTO` and `RECARGO`, and the surcharge case saves without
+  a reason. Paths `/api/v1/managements`, `/api/v1/budgets`, and
+  `/api/v1/procedures` stay. Login fields `name` and `password` stay.
+  Visible text `Certificado de Dominio`, `no tiene trámites`,
+  `documento reingresado`, `Descuento`, `Recargo`, and
+  `motivo es obligatorio` stay. The change slug
+  `descuentos-recargos-budget` stays.
 - **English catalog fixture phrases** (#1490, CU75): substitution notes
   are `Sick leave`. The management heading fixture is `Heading E2E`.
   The folio-type name is `Folio type E2E`. Playwright detail values are

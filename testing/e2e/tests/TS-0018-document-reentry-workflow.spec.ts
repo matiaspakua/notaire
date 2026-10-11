@@ -60,9 +60,9 @@ test.describe("CU43 - Re-enter documentation", () => {
     await expect(row).toBeVisible({ timeout: 10000 });
     await page.getByTestId(`btn-view-procedures-${idManagement}`).click();
 
-    const detalleDialog = page.getByRole("dialog");
-    await expect(detalleDialog).toBeVisible();
-    await expect(detalleDialog.getByText("Certificado de Dominio")).toBeVisible();
+    const detailDialog = page.getByRole("dialog");
+    await expect(detailDialog).toBeVisible();
+    await expect(detailDialog.getByText("Certificado de Dominio")).toBeVisible();
 
     await page.getByTestId(`btn-reenter-${idProcedure}-${idDocumentType}`).click();
 
@@ -80,8 +80,8 @@ test.describe("CU43 - Re-enter documentation", () => {
     await expect(row).toBeVisible({ timeout: 10000 });
     await page.getByTestId(`btn-view-procedures-${management.data!.idManagement}`).click();
 
-    const detalleDialog = page.getByRole("dialog");
-    await expect(detalleDialog).toBeVisible();
-    await expect(detalleDialog.getByText(/no tiene trámites/i)).toBeVisible();
+    const detailDialog = page.getByRole("dialog");
+    await expect(detailDialog).toBeVisible();
+    await expect(detailDialog.getByText(/no tiene trámites/i)).toBeVisible();
   });
 });
