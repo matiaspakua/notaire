@@ -10,15 +10,15 @@ import { NotaireIcon } from "@/components/ui/notaire-icon";
 
 describe("NotaireIcon (#1525)", () => {
   it("can't be squeezed: no flex shrink and no percentage max-width", () => {
-    render(<NotaireIcon src="/icons/actions/delete.png" alt="Eliminar" size={16} />);
-    const cls = screen.getByAltText("Eliminar").className.split(/\s+/);
+    render(<NotaireIcon src="/icons/actions/delete.png" alt="Delete" size={16} />);
+    const cls = screen.getByAltText("Delete").className.split(/\s+/);
     expect(cls).toContain("shrink-0");
     expect(cls).toContain("max-w-none");
   });
 
   it("keeps the declared width and height and the caller's classes", () => {
-    render(<NotaireIcon src="/icons/actions/add.png" alt="Agregar" size={16} className="mr-1" />);
-    const img = screen.getByAltText("Agregar");
+    render(<NotaireIcon src="/icons/actions/add.png" alt="Add" size={16} className="mr-1" />);
+    const img = screen.getByAltText("Add");
     expect(img.getAttribute("width")).toBe("16");
     expect(img.getAttribute("height")).toBe("16");
     expect(img.className.split(/\s+/)).toContain("mr-1");
