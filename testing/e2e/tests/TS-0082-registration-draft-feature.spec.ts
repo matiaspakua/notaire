@@ -118,7 +118,7 @@ test.describe("CU82 - Generate and track the registration draft", () => {
 
     await page.getByTestId("btn-observe-registration-draft").click();
     await steps.thenModalIsVisible();
-    await page.getByTestId("input-notes-registro").fill("Missing cadastral certificate");
+    await page.getByTestId("input-notes-registry").fill("Missing cadastral certificate");
     await page.getByTestId("input-correction-date").fill(new Date().toISOString().split("T")[0]);
     await page.getByTestId("btn-confirm-observe").click();
     await steps.thenShowsSuccessMessage("Observación");

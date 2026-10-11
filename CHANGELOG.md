@@ -64,6 +64,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English payment edit locals and registry note id** (#1490, CU75):
+  the payment method update test is `shouldUpdatePaymentMethodWhenEditingPayment`.
+  Null-field edit tests are `shouldHandleEditPaymentWithNullAmount`,
+  `shouldHandleEditPaymentWithNullDate`, and `shouldHandleEditPaymentWithNullNotes`.
+  Negative amount rejection is `shouldRejectNegativeAmountInEditPayment`.
+  The registration-draft note test id is `input-notes-registry`. Stored payment
+  methods `Efectivo` and `Transferencia` stay, along with message keys
+  `fields.observacionesRegistro` and `observar`, and the visible status
+  `/Generada/i`.
 - **English credential parameters and status locals** (#1490, CU75):
   the admin login parameter is `password`. The route-guard login
   parameter is `password`. Invalid login fixtures are `invalid_user`

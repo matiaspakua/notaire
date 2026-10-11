@@ -262,7 +262,7 @@ export default function RegistrationDraftsRegistrationPage() {
             <FormSection dialogTitle title={t("observar")}>
               <FormField label={t("fields.observacionesRegistro")} required>
                 <Input
-                  data-testid="input-notes-registro"
+                  data-testid="input-notes-registry"
                   value={registryNotes}
                   onChange={(e) => setRegistryNotes(e.target.value)}
                 />
