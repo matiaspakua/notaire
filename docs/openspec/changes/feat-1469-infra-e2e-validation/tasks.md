@@ -18,24 +18,24 @@
 ## 3. Gate 2 — Write tests (TDD, failing first)
 
 - [x] 3.1 Enumerate cases from the spec scenarios
-- [ ] 3.2 Write `infra/tests/test_verify_signals.py`
-- [ ] 3.3 Run it and observe it fail
-- [ ] 3.4 Every scenario maps to a test (`traceability.md`)
+- [x] 3.2 Write `infra/tests/test_verify_signals.py`
+- [x] 3.3 Run it and observe it fail
+- [x] 3.4 Every scenario maps to a test (`traceability.md`)
 
 ## 4. Implementation
 
-- [ ] 4.1 `infra/scripts/verify_signals.py`
-- [ ] 4.2 `infra/scripts/verify-signals.sh` with `--with-e2e`
-- [ ] 4.3 Register the test in `infra/verify.sh`
-- [ ] 4.4 Register the guard in `infra/verify.sh`
+- [x] 4.1 `infra/scripts/verify_signals.py`
+- [x] 4.2 `infra/scripts/verify-signals.sh` with `--with-e2e`
+- [x] 4.3 Register the test in `infra/verify.sh`
+- [x] 4.4 Register the guard in `infra/verify.sh`
 
 ## 5. Update existing tests
 
-- [ ] 5.1 Existing `infra/tests/test_*.py` still pass
+- [x] 5.1 Existing `infra/tests/test_*.py` still pass
 
 ## 6. Run regression
 
-- [ ] 6.1 `bash infra/verify.sh`
+- [x] 6.1 `bash infra/verify.sh`
 - [ ] 6.2 `bash workspace/sdlc/preflight.sh`
 - [ ] 6.3 Live run on the local stack including the Playwright suite
 
@@ -45,7 +45,7 @@
 
 ## 8. Gate 3 — Update permanent documentation
 
-- [ ] 8.1 `infra/docs/OPERATION.md`
+- [x] 8.1 `infra/docs/OPERATION.md`
 - [ ] 8.2 `infra/docs/DEFINITION.md`
 - [ ] 8.3 `CHANGELOG.md` n/a
 

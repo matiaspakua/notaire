@@ -30,7 +30,7 @@
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `infra/docs/OPERATION.md` | pending | pending |
+| `infra/docs/OPERATION.md` | yes | docs commit |
 | `CHANGELOG.md` | n/a | n/a |
 
 ## Gate log
