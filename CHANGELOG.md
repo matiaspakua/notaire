@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired budget template** (#1490, CU75): the engineering-sequences
+  design names the type CU39 still writes, `PlantillaPresupuesto`.
+  The live class is `BudgetTemplate`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
 - **Retired management status** (#1490, CU75): the engineering-sequences
   design names the type CU83 still writes, `EstadoDeGestion`.
   The live class is `ManagementStatus`. The heading `Riesgos / Trade-offs`
