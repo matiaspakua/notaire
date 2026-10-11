@@ -43,6 +43,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English synthetic phrases** (#1490, CU75): tests use English phrases and
+  local names (`Name`, `No data available`, `Client A`, `Employee B`,
+  `PAID`, `CANCELLED`, `Approved by the client`, `notes only`,
+  `budget cycle IT`, `procedure cycle IT`, and `template cycle IT`).
+  The budget repository names `statuses`, `uniqueHeading`, `created`, and
+  `approved`. The workflow-trace comment names the procedure type and
+  statuses. Stored labels `PENDIENTE`, `BORRADOR`, `APROBADO`, `RECHAZADO`,
+  `En proceso`, and `Compraventa` stay, along with `Juan García` and
+  `Ana López`.
 - **English synthetic labels** (#1490, CU75): form and picker fixtures use
   English (`Name`, `The name is required`, `Without hyphens`, `Notes`,
   `Too long`, `Status`, `Choose a status`, `Client`, `Ana Latest`,

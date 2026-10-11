@@ -96,36 +96,36 @@ class BudgetRepositoryIntegrationTest extends ServiceIntegrationTest {
         Budget saved = budgetRepository.save(budget);
 
         saved.setStatus("APROBADO");
-        saved.setNotes("Aprobado by the client");
+        saved.setNotes("Approved by the client");
         Budget updated = budgetRepository.save(saved);
 
         assertThat(updated.getStatus()).isEqualTo("APROBADO");
-        assertThat(updated.getNotes()).isEqualTo("Aprobado by the client");
+        assertThat(updated.getNotes()).isEqualTo("Approved by the client");
     }
 
     @Test
     @DisplayName("Should support multiple budgets")
     void shouldSupportMultipleBudgets() {
-        String headingUnico = "Pres" + System.nanoTime();
-        String[] estados = {"BORRADOR", "PENDIENTE", "APROBADO", "RECHAZADO", "CANCELADO"};
-        for (int i = 0; i < estados.length; i++) {
+        String uniqueHeading = "Pres" + System.nanoTime();
+        String[] statuses = {"BORRADOR", "PENDIENTE", "APROBADO", "RECHAZADO", "CANCELLED"};
+        for (int i = 0; i < statuses.length; i++) {
             Budget budget = new Budget();
             budget.setNumber(4000 + i);
             budget.setDate(new Date());
-            budget.setHeading(headingUnico + " " + estados[i]);
-            budget.setStatus(estados[i]);
+            budget.setHeading(uniqueHeading + " " + statuses[i]);
+            budget.setStatus(statuses[i]);
             budget.setFkIdPerson(person);
             budgetRepository.save(budget);
         }
 
-        List<Budget> creados = budgetRepository.findAll().stream()
-                .filter(p -> p.getHeading() != null && p.getHeading().startsWith(headingUnico))
+        List<Budget> created = budgetRepository.findAll().stream()
+                .filter(p -> p.getHeading() != null && p.getHeading().startsWith(uniqueHeading))
                 .toList();
-        assertThat(creados).hasSize(5);
+        assertThat(created).hasSize(5);
 
-        List<Budget> aprobados = creados.stream()
+        List<Budget> approved = created.stream()
                 .filter(p -> "APROBADO".equals(p.getStatus()))
                 .toList();
-        assertThat(aprobados).hasSize(1);
+        assertThat(approved).hasSize(1);
     }
 }

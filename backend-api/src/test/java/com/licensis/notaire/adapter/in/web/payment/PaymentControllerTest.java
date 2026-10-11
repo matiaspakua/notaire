@@ -501,7 +501,7 @@ class PaymentControllerTest {
 
         mockMvc.perform(put("/api/v1/payments/1")
                 .contentType("application/json")
-                .content("{\"notes\": \"solo notas\"}"))
+                .content("{\"notes\": \"notes only\"}"))
                 .andExpect(status().isOk());
     }
 }
