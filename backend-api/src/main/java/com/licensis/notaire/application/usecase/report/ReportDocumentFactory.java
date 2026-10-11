@@ -61,7 +61,7 @@ import java.util.function.Function;
 public class ReportDocumentFactory {
 
     static final String NOT_RECORDED = "N/A";
-    private static final String PAYMENT_PENDING = "Payment pendiente";
+    private static final String PAYMENT_PENDING = "Payment pending";
     private static final DateTimeFormatter DAY = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final Locale SPANISH_ARGENTINA = Locale.of("es", "AR");
 
@@ -101,16 +101,16 @@ public class ReportDocumentFactory {
 
         List<Field> fields = new ArrayList<>(List.of(
                 new Field("Number of budget", String.valueOf(budget.getNumber())),
-                new Field("Date of emisión", day(budget.getDate())),
-                new Field("Cliente", fullName(budget.getFkIdPerson())),
+                new Field("Issue date", day(budget.getDate())),
+                new Field("Client", fullName(budget.getFkIdPerson())),
                 new Field("Heading", orNotRecorded(budget.getHeading())),
-                new Field("Procedure", joinedOr(procedureTypeNames(procedures), "Without procedures asociados")),
+                new Field("Procedure", joinedOr(procedureTypeNames(procedures), "Without associated procedures")),
                 new Field("Management", summary.managementNumber() == null
                         ? "Without management assigned"
                         : summary.managementNumber() + " - " + orNotRecorded(summary.managementHeading())),
-                new Field("Estado", orNotRecorded(budget.getStatus()))));
+                new Field("Status", orNotRecorded(budget.getStatus()))));
         if (withProperties) {
-            fields.add(new Field("Monto of the property", money(budget.getPropertyAmount())));
+            fields.add(new Field("Property amount", money(budget.getPropertyAmount())));
         }
 
         // Same item source as the CU47 total (BudgetLookupAdapter), so the lines add up to it.
@@ -119,17 +119,17 @@ public class ReportDocumentFactory {
                 .sorted(Comparator.comparing(Item::getIdItem, Comparator.nullsLast(Comparator.naturalOrder())))
                 .map(item -> List.of(
                         orNotRecorded(item.getName()),
-                        item.getType() == TypeItem.DESCUENTO ? "Descuento" : "Cargo",
+                        item.getType() == TypeItem.DESCUENTO ? "Discount" : "Charge",
                         money(item.getValue()),
                         item.getPercentage() == null ? "-" : item.getPercentage() + " %"))
                 .toList();
 
         List<Section> sections = new ArrayList<>();
-        sections.add(new Fields("Datos of the budget", fields));
+        sections.add(new Fields("Budget details", fields));
         if (withProperties) {
-            sections.add(new Table("Inmuebles",
-                    List.of(Column.left("Cadastral nomenclature", 2), Column.left("Domicilio", 3),
-                            Column.right("Valuación fiscal", 1.5f)),
+            sections.add(new Table("Properties",
+                    List.of(Column.left("Cadastral nomenclature", 2), Column.left("Address", 3),
+                            Column.right("Fiscal appraisal", 1.5f)),
                     distinct(procedures.stream().map(Procedure::getFkIdProperty).toList(), Property::getIdProperty)
                             .stream()
                             .map(property -> List.of(
@@ -137,14 +137,14 @@ public class ReportDocumentFactory {
                                     orNotRecorded(property.getAddress()),
                                     money(property.getFiscalAppraisal())))
                             .toList(),
-                    "Sin inmuebles asociados", List.of()));
+                    "No associated properties", List.of()));
         }
-        sections.add(new Table("Conceptos",
-                List.of(Column.left("Concept", 3), Column.left("Tipo", 1), Column.right("Valor", 1.4f),
-                        Column.right("Porcentaje", 1)),
-                itemRows, "Sin conceptos cargados",
+        sections.add(new Table("Concepts",
+                List.of(Column.left("Concept", 3), Column.left("Type", 1), Column.right("Amount", 1.4f),
+                        Column.right("Percentage", 1)),
+                itemRows, "No concepts recorded",
                 List.of(new Field("Total", money(summary.total())),
-                        new Field("Saldo pendiente", money(summary.pendingBalance())))));
+                        new Field("Pending balance", money(summary.pendingBalance())))));
 
         return new ReportDocument("Budget N° " + budget.getNumber(),
                 withProperties ? "Budget with properties (CU01)" : "Budget (CU01)", sections);
@@ -168,17 +168,17 @@ public class ReportDocumentFactory {
                         orNotRecorded(document.getDeliveredBy())))
                 .toList();
 
-        return new ReportDocument("Documents by procedure: " + type.getName(), "Listado de documentos (CU03)",
+        return new ReportDocument("Documents by procedure: " + type.getName(), "Document list (CU03)",
                 List.of(
                         new Fields("Procedure type", List.of(
                                 new Field("Procedure type", type.getName()),
-                                new Field("Se archiva", yesNo(type.getIsArchived())),
-                                new Field("Se inscribe", yesNo(type.getIsRegistered())),
-                                new Field("Asocia inmuebles", yesNo(type.getAssociatesProperties())),
-                                new Field("Observaciones", orNotRecorded(type.getNotes())))),
-                        new Table("Documentos requeridos",
-                                List.of(Column.left("Tipo de documento", 3), Column.left("Vence", 1),
-                                        Column.right("Days of validez", 1.2f), Column.left("Entrega", 2)),
+                                new Field("Is archived", yesNo(type.getIsArchived())),
+                                new Field("Is registered", yesNo(type.getIsRegistered())),
+                                new Field("Associates properties", yesNo(type.getAssociatesProperties())),
+                                new Field("Notes", orNotRecorded(type.getNotes())))),
+                        new Table("Required documents",
+                                List.of(Column.left("Document type", 3), Column.left("Expires", 1),
+                                        Column.right("Validity days", 1.2f), Column.left("Delivered by", 2)),
                                 rows, "The procedure type does not have documents in its template", List.of())));
     }
 
@@ -199,21 +199,21 @@ public class ReportDocumentFactory {
 
         return new ReportDocument("ManagementHistory of Management N° " + management.getNumber(), "ManagementHistory of management (CU13)",
                 List.of(
-                        new Fields("Datos of the management", List.of(
+                        new Fields("Management details", List.of(
                                 new Field("Management", String.valueOf(management.getNumber())),
                                 new Field("Heading", orNotRecorded(management.getHeading())),
-                                new Field("Estado actual", management.getFkIdManagementStatus() == null
+                                new Field("Current status", management.getFkIdManagementStatus() == null
                                         ? NOT_RECORDED : management.getFkIdManagementStatus().getName()),
-                                new Field("Fecha de inicio", day(management.getDateStart())),
+                                new Field("Start date", day(management.getDateStart())),
                                 new Field("Notary", fullName(management.getFkIdNotaryPerson())),
-                                new Field("Clientes de referencia",
+                                new Field("Reference clients",
                                         joinedOr(clientNames(procedures), NOT_RECORDED)),
                                 new Field("Procedures", joinedOr(procedureTypeNames(procedures), "Without procedures")),
-                                new Field("Observaciones", orNotRecorded(management.getNotes())))),
-                        new Table("ManagementHistory de estados",
-                                List.of(Column.left("Fecha", 1), Column.left("Estado", 1.5f),
-                                        Column.left("Observaciones", 4)),
-                                rows, "Sin movimientos registrados", List.of())));
+                                new Field("Notes", orNotRecorded(management.getNotes())))),
+                        new Table("Status history",
+                                List.of(Column.left("Date", 1), Column.left("Status", 1.5f),
+                                        Column.left("Notes", 4)),
+                                rows, "No recorded movements", List.of())));
     }
 
     /** Expiry, payment and management context of one submitted document (CU42). */
@@ -227,32 +227,32 @@ public class ReportDocumentFactory {
                 ? null : procedure.getFkIdBudget().getFkIdPerson();
 
         return new ReportDocument("Expiration of submitted document", "Documents due (CU42)", List.of(
-                new Fields("Documento", List.of(
-                        new Field("Documento", orNotRecorded(document.getName())),
-                        new Field("Tipo de documento", document.getDocumentType() == null
+                new Fields("Document", List.of(
+                        new Field("Document", orNotRecorded(document.getName())),
+                        new Field("Document type", document.getDocumentType() == null
                                 ? NOT_RECORDED : orNotRecorded(document.getDocumentType().getName())),
-                        new Field("Entrega", orNotRecorded(document.getDeliveredBy())),
-                        new Field("Preparado", yesNo(document.getPrepared())),
-                        new Field("Observado", yesNo(Boolean.TRUE.equals(document.getFlagged()))),
-                        new Field("Number of cartón", document.getCardNumber() == null
+                        new Field("Delivered by", orNotRecorded(document.getDeliveredBy())),
+                        new Field("Prepared", yesNo(document.getPrepared())),
+                        new Field("Flagged", yesNo(Boolean.TRUE.equals(document.getFlagged()))),
+                        new Field("Card number", document.getCardNumber() == null
                                 ? NOT_RECORDED : String.valueOf(document.getCardNumber())),
-                        new Field("Fecha de ingreso", day(document.getDateEntry())),
-                        new Field("Fecha de salida", day(document.getDateExit())))),
+                        new Field("Entry date", day(document.getDateEntry())),
+                        new Field("Exit date", day(document.getDateExit())))),
                 new Fields("Expiration", List.of(
-                        new Field("Vence", yesNo(document.getExpires())),
+                        new Field("Expires", yesNo(document.getExpires())),
                         new Field("Date of expiration", day(document.getDateDue())),
-                        new Field("Estado", expiryStatus(document.getDateDue())),
-                        new Field("Date of liberación", day(document.getDateReleased())))),
+                        new Field("Status", expiryStatus(document.getDateDue())),
+                        new Field("Release date", day(document.getDateReleased())))),
                 new Fields("Payment", List.of(
-                        new Field("Importe a pagar", document.getAmountToPay() == null
-                                ? "No registra" : money(document.getAmountToPay())),
-                        new Field("Fecha de pago", paymentDate(document)))),
+                        new Field("Amount due", document.getAmountToPay() == null
+                                ? "Not recorded" : money(document.getAmountToPay())),
+                        new Field("Payment date", paymentDate(document)))),
                 new Fields("Management", List.of(
                         new Field("Management N°", management == null ? NOT_RECORDED : String.valueOf(management.getNumber())),
                         new Field("Heading", management == null ? NOT_RECORDED : orNotRecorded(management.getHeading())),
                         new Field("Procedure", procedure == null || procedure.getFkIdProcedureType() == null
                                 ? NOT_RECORDED : procedure.getFkIdProcedureType().getName()),
-                        new Field("Cliente de referencia", fullName(client))))));
+                        new Field("Reference client", fullName(client))))));
     }
 
     /** Amounts owed for the documents submitted under a management number (CU09). */
@@ -273,7 +273,7 @@ public class ReportDocumentFactory {
                         procedure == null || procedure.getFkIdProcedureType() == null
                                 ? NOT_RECORDED : procedure.getFkIdProcedureType().getName(),
                         orNotRecorded(document.getName()),
-                        document.getAmountToPay() == null ? "No registra" : money(document.getAmountToPay()),
+                        document.getAmountToPay() == null ? "Not recorded" : money(document.getAmountToPay()),
                         paymentDate(document)));
                 if (document.getAmountToPay() != null && document.getDatePayment() == null) {
                     owed = owed.add(document.getAmountToPay());
@@ -282,17 +282,17 @@ public class ReportDocumentFactory {
         }
 
         return new ReportDocument("Debt of documents - Management N° " + managementNumber,
-                "Consulta de deuda de documentos (CU09)", List.of(
+                "Document debt (CU09)", List.of(
                         new Fields("Management", List.of(
                                 new Field("Management N°", String.valueOf(managementNumber)),
                                 new Field("Heading", joinedOr(managements.stream()
                                         .map(DeedManagement::getHeading).filter(Objects::nonNull)
                                         .distinct().toList(), NOT_RECORDED)))),
-                        new Table("Documentos",
-                                List.of(Column.left("Procedure", 2), Column.left("Documento", 2.5f),
-                                        Column.right("Importe", 1.3f), Column.left("Fecha de pago", 1.3f)),
+                        new Table("Documents",
+                                List.of(Column.left("Procedure", 2), Column.left("Document", 2.5f),
+                                        Column.right("Amount", 1.3f), Column.left("Payment date", 1.3f)),
                                 rows, "The management does not have submitted documents",
-                                List.of(new Field("Total adeudado", money(owed))))));
+                                List.of(new Field("Total owed", money(owed))))));
     }
 
     private static List<DeedManagement> sortedById(List<DeedManagement> managements) {
@@ -312,7 +312,7 @@ public class ReportDocumentFactory {
 
     static String expiryStatus(Date dateDue) {
         if (dateDue == null) {
-            return "Without expiration registrado";
+            return "No expiration recorded";
         }
         long days = ChronoUnit.DAYS.between(LocalDate.now(), localDate(dateDue));
         if (days < 0) {

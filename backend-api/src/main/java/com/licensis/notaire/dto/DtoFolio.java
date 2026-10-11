@@ -33,10 +33,10 @@ public class DtoFolio implements ValidDto {
         this.status = status;
     }
 
-    public DtoFolio(DtoFolioType folioType, DtoDeed escrituras, DtoPerson persons, int number, int year,
+    public DtoFolio(DtoFolioType folioType, DtoDeed deed, DtoPerson persons, int number, int year,
             String status, String notes, List<DtoCopy> copies) {
         this.folioType = folioType;
-        this.deed = escrituras;
+        this.deed = deed;
         this.personNotary = persons;
         this.number = number;
         this.year = year;
@@ -65,8 +65,8 @@ public class DtoFolio implements ValidDto {
         return this.deed;
     }
 
-    public void setDeed(DtoDeed escrituras) {
-        this.deed = escrituras;
+    public void setDeed(DtoDeed deed) {
+        this.deed = deed;
     }
 
     public DtoPerson getPersonNotary() {

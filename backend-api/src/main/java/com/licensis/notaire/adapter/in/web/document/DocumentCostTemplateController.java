@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * REST API for managing the template of costos of documents by procedure type (CU27/CU39).
+ * REST API for managing expected document costs by procedure type (CU27/CU39).
  */
 @RestController
 @RequestMapping("/api/v1/document-cost-templates")
@@ -65,13 +65,13 @@ public class DocumentCostTemplateController {
         @ApiResponse(responseCode = "404", description = "Procedure type or document not found")
     })
     @PostMapping
-    @Operation(summary = "Define the costo (fijo or variable) of a document type in the template of a procedure type")
+    @Operation(summary = "Define the fixed or variable cost of a document type in a procedure type template")
     public ResponseEntity<Object> createCost(@RequestBody CreateCostRequest request) {
         try {
-            DocumentCostTemplate creado = documentCostTemplateService.create(
+            DocumentCostTemplate created = documentCostTemplateService.create(
                     request.idProcedureType(), request.idDocumentType(),
                     request.fixedAmount(), request.variablePercentage());
-            return ResponseEntity.status(HttpStatus.CREATED).body(CostTemplateResponse.from(creado));
+            return ResponseEntity.status(HttpStatus.CREATED).body(CostTemplateResponse.from(created));
         } catch (BusinessValidationException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         } catch (ResourceNotFoundException e) {
@@ -83,7 +83,7 @@ public class DocumentCostTemplateController {
         @ApiResponse(responseCode = "200", description = "OK")
     })
     @GetMapping("/procedure-types/{idProcedureType}")
-    @Operation(summary = "Get the costos of documents definidos for a procedure type")
+    @Operation(summary = "Get the document costs defined for a procedure type")
     @Transactional(readOnly = true)
     public ResponseEntity<List<CostTemplateResponse>> getCostosByTypeProcedure(
             @PathVariable Integer idProcedureType) {

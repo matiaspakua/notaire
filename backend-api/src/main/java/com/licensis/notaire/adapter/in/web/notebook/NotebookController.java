@@ -90,12 +90,12 @@ public class NotebookController {
         @ApiResponse(responseCode = "409", description = "A notebook already exists with that number for the year and notary")
     })
     @PostMapping
-    @Operation(summary = "Create a notebook a partir of diez folios consecutive")
+    @Operation(summary = "Create a notebook from ten consecutive folios")
     public ResponseEntity<Object> createNotebook(@RequestBody CreateNotebookRequest request) {
         try {
-            Notebook creado = notebookService.createNotebook(
+            Notebook created = notebookService.createNotebook(
                     request.idsFolio(), request.idNotary(), request.year(), request.notes());
-            return ResponseEntity.status(HttpStatus.CREATED).body(NotebookResponse.from(creado));
+            return ResponseEntity.status(HttpStatus.CREATED).body(NotebookResponse.from(created));
         } catch (BusinessValidationException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         } catch (ResourceNotFoundException e) {

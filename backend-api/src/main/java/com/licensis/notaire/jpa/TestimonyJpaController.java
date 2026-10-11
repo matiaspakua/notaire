@@ -44,7 +44,7 @@ public class TestimonyJpaController implements Serializable, JpaPersistence
 
     public Boolean create(Testimony testimony)
     {
-        Boolean creado = false;
+        Boolean created = false;
         if (testimony.getTestimonyMovementList() == null)
         {
             testimony.setTestimonyMovementList(new ArrayList<TestimonyMovement>());
@@ -107,7 +107,7 @@ public class TestimonyJpaController implements Serializable, JpaPersistence
                 }
             }
             em.getTransaction().commit();
-            creado = true;
+            created = true;
         }
         finally
         {
@@ -116,7 +116,7 @@ public class TestimonyJpaController implements Serializable, JpaPersistence
                 em.close();
             }
         }
-        return creado;
+        return created;
     }
 
     public void edit(Testimony testimony) throws IllegalOrphanException, NonexistentEntityException, Exception

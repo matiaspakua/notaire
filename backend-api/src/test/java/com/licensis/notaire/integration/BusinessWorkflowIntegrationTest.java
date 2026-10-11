@@ -408,13 +408,13 @@ class BusinessWorkflowIntegrationTest {
     // ──────────────────────────────────────────────
 
     @Nested
-    @DisplayName("CU29/CU66 — Conceptos catalog")
-    class ConceptosWorkflow {
+    @DisplayName("CU29/CU66 — Concepts catalog")
+    class ConceptsWorkflow {
 
         @Test
         @Order(1)
         @DisplayName("GET /api/v1/concepts returns array")
-        void getAllConceptosReturnsArray() throws Exception {
+        void getAllConceptsReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/concepts"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());

@@ -295,7 +295,7 @@ class ConceptJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("findConceptoEntities")
+    @DisplayName("findConceptEntities")
     class FindConceptEntities {
 
         @Test
@@ -334,7 +334,7 @@ class ConceptJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("findConceptoByNombre")
+    @DisplayName("findConceptByName")
     class FindConceptByName {
 
         @Test
@@ -358,7 +358,7 @@ class ConceptJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("findConcepto")
+    @DisplayName("findConcept")
     class FindConcept {
 
         @Test
@@ -387,7 +387,7 @@ class ConceptJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("getConceptoCount")
+    @DisplayName("getConceptCount")
     class GetConceptCount {
 
         @Test

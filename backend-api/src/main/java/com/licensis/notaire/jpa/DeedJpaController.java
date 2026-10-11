@@ -361,14 +361,14 @@ public class DeedJpaController implements Serializable, JpaPersistence
     public List<Deed> findDeedByNumber(Integer number)
     {
         EntityManager em = getEntityManager();
-        List<Deed> escrituras = null;
+        List<Deed> deeds = null;
 
         Query query = em.createNamedQuery("Deed.findByNumber");
         query.setParameter("number", number);
 
-        escrituras = query.getResultList();
+        deeds = query.getResultList();
 
-        return escrituras;
+        return deeds;
     }
 
     public Deed findDeedById(Integer id)

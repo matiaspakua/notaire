@@ -111,7 +111,7 @@ class BudgetTemplateSerializationIntegrationTest {
 
     @Test
     @DisplayName("Should serialize concepts list as valid JSON when a template references the concept")
-    void shouldListConceptosWhenTemplateExists() throws Exception {
+    void shouldListConceptsWhenTemplateExists() throws Exception {
         Integer conceptId = createConcept();
         Integer typeProcedureId = createTypeProcedure();
         createTemplate(typeProcedureId, conceptId);

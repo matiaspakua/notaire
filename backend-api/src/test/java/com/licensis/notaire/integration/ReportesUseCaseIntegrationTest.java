@@ -154,7 +154,7 @@ class ReportesUseCaseIntegrationTest {
 
     @Test
     @DisplayName("CU42: documents-due endpoint handles missing document gracefully")
-    void shouldHandleDocumentsPorVencerEndpointGracefully() throws Exception {
+    void shouldHandleDocumentsDueEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reports/documents-due/99999"))
                 .andExpect(status().isNotFound());
     }

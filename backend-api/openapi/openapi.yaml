@@ -3890,7 +3890,7 @@ paths:
               schema:
                 type: object
           description: Procedure type or document not found
-      summary: Define the costo (fijo or variable) of a document type in the template of a procedure type
+      summary: Define the fixed or variable cost of a document type in a procedure type template
       tags:
       - Document cost template
   /api/v1/document-cost-templates/procedure-types/{idProcedureType}:
@@ -3912,7 +3912,7 @@ paths:
                   $ref: '#/components/schemas/CostTemplateResponse'
                 type: array
           description: OK
-      summary: Get the costos of documents definidos for a procedure type
+      summary: Get the document costs defined for a procedure type
       tags:
       - Document cost template
   /api/v1/document-types:
@@ -5740,7 +5740,7 @@ paths:
               schema:
                 type: object
           description: A notebook already exists with that number for the year and notary
-      summary: Create a notebook a partir of diez folios consecutive
+      summary: Create a notebook from ten consecutive folios
       tags:
       - Notebooks
   /api/v1/notebooks/{id}:

@@ -475,7 +475,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Define the costo (fijo or variable) of a document type in the template of a procedure type */
+        /** Define the fixed or variable cost of a document type in a procedure type template */
         post: operations["createCost"];
         delete?: never;
         options?: never;
@@ -490,7 +490,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get the costos of documents definidos for a procedure type */
+        /** Get the document costs defined for a procedure type */
         get: operations["getCostosByTypeProcedure"];
         put?: never;
         post?: never;
@@ -1276,7 +1276,7 @@ export interface paths {
         /** Get all notebooks */
         get: operations["getAllNotebooks"];
         put?: never;
-        /** Create a notebook a partir of diez folios consecutive */
+        /** Create a notebook from ten consecutive folios */
         post: operations["createNotebook"];
         delete?: never;
         options?: never;

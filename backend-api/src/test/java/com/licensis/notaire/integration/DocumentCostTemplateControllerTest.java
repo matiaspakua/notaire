@@ -29,7 +29,7 @@ import java.util.Map;
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @Transactional
-@DisplayName("CU39 — Template of costos of documents by type of procedure (Issue #823)")
+@DisplayName("CU39 — Document cost template by procedure type (Issue #823)")
 class DocumentCostTemplateControllerTest {
 
     @Autowired

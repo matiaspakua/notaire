@@ -270,7 +270,7 @@ public class SubmittedDocumentController {
             repository.save(stored.get());
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            log.error("Failed to update documento presentado id {}", id, e);
+            log.error("Failed to update submitted document id {}", id, e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -289,7 +289,7 @@ public class SubmittedDocumentController {
             repository.deleteById(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            log.error("Failed to delete documento presentado id {}", id, e);
+            log.error("Failed to delete submitted document id {}", id, e);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }

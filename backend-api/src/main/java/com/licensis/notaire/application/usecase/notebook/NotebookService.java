@@ -71,7 +71,7 @@ public class NotebookService {
         Notebook savedNotebook = notebookRepository.save(notebook);
 
         markFoliosAssigned(sortedFolios, savedNotebook);
-        logger.info("Notebook {}/{} creado for notary {} with {} folios",
+        logger.info("Notebook {}/{} created for notary {} with {} folios",
                 savedNotebook.getNumber(), savedNotebook.getYear(), notary.getPersonId(), sortedFolios.size());
         return savedNotebook;
     }

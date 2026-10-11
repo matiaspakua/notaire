@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@DisplayName("ConceptoController unit tests")
+@DisplayName("ConceptController unit tests")
 @ExtendWith(MockitoExtension.class)
 class ConceptControllerTest {
 
@@ -60,7 +60,7 @@ class ConceptControllerTest {
 
     @Test
     @DisplayName("GET /api/v1/concepts should return 200 with mapped DTOs")
-    void shouldReturnAllConceptos() throws Exception {
+    void shouldReturnAllConcepts() throws Exception {
         when(service.findAll()).thenReturn(List.of(buildEntity()));
         mockMvc.perform(get("/api/v1/concepts"))
                 .andExpect(status().isOk())
@@ -130,7 +130,7 @@ class ConceptControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /api/v1/concepts/{id} should return 200 when payload omits habilitado")
+    @DisplayName("PUT /api/v1/concepts/{id} should return 200 when payload omits enabled")
     void shouldUpdateConceptWhenEnabledOmitted() throws Exception {
         // Regression: a payload without 'habilitado' must not NPE while unboxing
         // a null Boolean — the controller preserves the existing enabled state.
@@ -188,7 +188,7 @@ class ConceptControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /api/v1/concepts/{id} should return 409 when concepto is in use")
+    @DisplayName("DELETE /api/v1/concepts/{id} should return 409 when the concept is in use")
     void shouldReturn409WhenConceptIsInUse() throws Exception {
         com.licensis.notaire.business.BudgetTemplate pp = new com.licensis.notaire.business.BudgetTemplate();
         when(service.findById(1)).thenReturn(Optional.of(buildEntity()));

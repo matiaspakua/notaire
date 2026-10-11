@@ -252,23 +252,23 @@ public class SubmittedDocumentJpaController implements Serializable, JpaPersiste
     {
         EntityManager em = getEntityManager();
 
-        List<SubmittedDocument> listDocumentPresentados = null;
+        List<SubmittedDocument> submittedDocuments = null;
 
         Query query = em.createNamedQuery("SubmittedDocument.findAll");
-        listDocumentPresentados = query.getResultList();
+        submittedDocuments = query.getResultList();
 
-        return listDocumentPresentados;
+        return submittedDocuments;
     }
 
-    public List<SubmittedDocument> findDocumentsPorVencer()
+    public List<SubmittedDocument> findDocumentsDue()
     {
         EntityManager em = getEntityManager();
         List<SubmittedDocument> documentsDue = new ArrayList<>();
 
-        Date dateActual = Calendar.getInstance().getTime();
+        Date currentDate = Calendar.getInstance().getTime();
 
         Query query = em.createNamedQuery("SubmittedDocument.findByDueDate");
-        query.setParameter("dueDate", dateActual);
+        query.setParameter("dueDate", currentDate);
 
         documentsDue = query.getResultList();
 

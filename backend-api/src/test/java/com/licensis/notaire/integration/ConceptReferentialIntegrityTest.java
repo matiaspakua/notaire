@@ -141,7 +141,7 @@ class ConceptReferentialIntegrityTest {
 
     @Test
     @DisplayName("Should search conceptos by name")
-    void shouldSearchConceptosByName() throws Exception {
+    void shouldSearchConceptsByName() throws Exception {
         createConcept("BuscarEsteConcepto");
 
         mockMvc.perform(get("/api/v1/concepts/search").param("name", "BuscarEste"))

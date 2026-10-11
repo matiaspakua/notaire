@@ -105,12 +105,12 @@ class CoreBusinessControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("ConceptoController - CU29/CU34/CU37/CU66")
+    @DisplayName("ConceptController - CU29/CU34/CU37/CU66")
     class ConceptControllerTests {
 
         @Test
         @DisplayName("CU66 - Should return all conceptos")
-        void shouldReturnAllConceptos() throws Exception {
+        void shouldReturnAllConcepts() throws Exception {
             mockMvc.perform(get("/api/v1/concepts"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))

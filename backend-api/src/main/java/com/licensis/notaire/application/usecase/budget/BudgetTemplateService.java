@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Loads the Conceptos of a ProcedureType's BudgetTemplate as Items of a
+ * Loads the concepts of a ProcedureType's BudgetTemplate as Items of a
  * real Budget (CU39).
  */
 @Service

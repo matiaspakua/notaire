@@ -197,7 +197,7 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
         assertThat(text).contains("Budget N° " + MANAGEMENT_NUMBER, "Lucía Peña", "15/09/2026",
                 PROCEDURE_TYPE, "Honorarios escribanía", "$ 10.000,00", "Sellado", "$ 2.500,00");
         // CU47 total: item lines plus the cost of the documents submitted for the budget.
-        assertThat(text).contains("Total", "$ 15.500,00", "Saldo pendiente");
+        assertThat(text).contains("Total", "$ 15.500,00", "Pending balance");
         assertThat(text).doesNotContain("01-02-003-004");
     }
 
@@ -207,7 +207,7 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
         String text = pdfText(get("/api/v1/reports/budget-properties/{id}", budgetId));
 
         assertThat(text).contains("Budget N° " + MANAGEMENT_NUMBER, "Honorarios escribanía",
-                "Inmuebles", "01-02-003-004", "$ 98.765,43", "Calle Falsa 123", "$ 15.500,00");
+                "Properties", "01-02-003-004", "$ 98.765,43", "Calle Falsa 123", "$ 15.500,00");
     }
 
     @Test
@@ -216,7 +216,7 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
         String text = pdfText(get("/api/v1/reports/procedure-document-list")
                 .param("procedureTypeName", PROCEDURE_TYPE));
 
-        assertThat(text).contains(PROCEDURE_TYPE, "Se archiva", "Yes", "Informe de dominio 567", "30",
+        assertThat(text).contains(PROCEDURE_TYPE, "Is archived", "Yes", "Informe de dominio 567", "30",
                 "Registro de la Propiedad", "Certificado catastral 567", "Catastro");
     }
 
@@ -246,8 +246,8 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
         String text = pdfText(get("/api/v1/reports/document-debt")
                 .param("numberManagement", String.valueOf(MANAGEMENT_NUMBER)));
 
-        assertThat(text).contains(PROCEDURE_TYPE, "Informe de dominio", "$ 3.000,00", "Payment pendiente",
-                "Total adeudado");
+        assertThat(text).contains(PROCEDURE_TYPE, "Informe de dominio", "$ 3.000,00", "Payment pending",
+                "Total owed");
     }
 
     @Test
