@@ -3,27 +3,27 @@
 title CU75 — Generar Minuta de Inscripción
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Gestor solicita generar la minuta de inscripción.
-Sistema -> Sistema : Gestor
-Actor -> Actor : Recupera datos de la escritura y partes.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Gestor verifica datos registrales.
-Sistema -> Sistema : Gestor
-Actor -> Actor : Valida la completitud de campos.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Gestor confirma la generación.
-Sistema -> Sistema : Gestor
-Actor -> Actor : Genera el documento oficial de minuta.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Gestor presenta el testimonio y minuta.
-Sistema -> Sistema : Gestor
-Actor -> Actor : Registra la fecha de presentación y número de entrada.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El organismo registral procesa y devuelve.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Gestor registra fecha de recepción e inscripción.
-Sistema -> Sistema : Gestor
+Actor -> Actor : The clerk (Gestor) requests generation of the registration memorandum.
+System -> System : Clerk
+Actor -> Actor : Loads the deed data and the parties.
+System -> System : System
+Actor -> Actor : The clerk (Gestor) checks the registry data.
+System -> System : Clerk
+Actor -> Actor : Validates that the fields are complete.
+System -> System : System
+Actor -> Actor : The clerk (Gestor) confirms generation.
+System -> System : Clerk
+Actor -> Actor : Generates the official memorandum document.
+System -> System : System
+Actor -> Actor : The clerk (Gestor) submits the testimony and the memorandum.
+System -> System : Clerk
+Actor -> Actor : Records the filing date and entry number.
+System -> System : System
+Actor -> Actor : The registry authority processes it and returns it.
+System -> System : System
+Actor -> Actor : The clerk (Gestor) records the receipt date and registration.
+System -> System : Clerk
 
 @enduml

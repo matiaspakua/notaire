@@ -12,6 +12,11 @@ Constitution.
 
 The product (states, sequences, components) is in
 [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md).
+The step-by-step case, including testimony and document re-entry, is
+[GESTION.md](../200-architecture/203-design/GESTION.md) (`DOC-GESTION`).
+Which engineering documents exist, and which gaps are product behaviour
+rather than a missing file, is in
+[EVALUACION-INGENIERIA.md](EVALUACION-INGENIERIA.md).
 This file is the process.
 
 ## 1. What is adopted
@@ -43,6 +48,7 @@ The ID that already exists is the one that is cited. Files are not renamed.
 | `TS-nnnn` | E2E suite | `testing/e2e`, index in the test plan |
 | `#n` | Work issue | GitHub board |
 | `DOC-CICLO` | Domain state model | [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md) |
+| `DOC-GESTION` | Case-process analysis | [GESTION.md](../200-architecture/203-design/GESTION.md) |
 | `DOC-SAD` | arc42 architecture | [sad.md](../200-architecture/201-SAD/sad.md) |
 | `DOC-ING` | This method | this file |
 | `DOC-MTP` | Master test plan | [TEST-PLAN.md](303-testing/TEST-PLAN.md) |

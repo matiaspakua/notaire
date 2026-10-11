@@ -3,29 +3,29 @@
 title CU44 — Modificar presupuesto
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano/Recepcionista busca un presupuesto.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Solicita: (Número de presupuesto; Nombre y apellido; Tipo y número de identificación)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano/Recepcionista ingresa los datos.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Presenta una lista de presupuestos.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano/Recepcionista selecciona un presupuesto.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra: (Nombre; Trámite; Ítems; Total; Observaciones)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano/Recepcionista modifica los datos.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Solicita calcular el nuevo total.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Calcula el nuevo total.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano confirma los cambios.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Registra los cambios.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) or receptionist (Recepcionista) looks up a budget.
+System -> System : Escribano
+Actor -> Actor : Requests: (Budget number; First and last name; Identification type and number)
+System -> System : System
+Actor -> Actor : The notary (Escribano) or receptionist (Recepcionista) enters the data.
+System -> System : Escribano
+Actor -> Actor : Presents a list of budgets.
+System -> System : System
+Actor -> Actor : The notary (Escribano) or receptionist (Recepcionista) selects a budget.
+System -> System : Escribano
+Actor -> Actor : Shows: (Name; Procedure; Items; Total; Notes)
+System -> System : System
+Actor -> Actor : The notary (Escribano) or receptionist (Recepcionista) modifies the data.
+System -> System : Escribano
+Actor -> Actor : Asks to calculate the new total.
+System -> System : Escribano
+Actor -> Actor : Calculates the new total.
+System -> System : System
+Actor -> Actor : The notary (Escribano) confirms the changes.
+System -> System : Escribano
+Actor -> Actor : Records the changes.
+System -> System : System
 
 @enduml

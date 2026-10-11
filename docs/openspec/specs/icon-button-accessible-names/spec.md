@@ -31,9 +31,9 @@ complete for this requirement.
 - **THEN** the control’s accessible name matches the translated delete label
   (for example Spanish “Eliminar”)
 
-#### Scenario: Presupuesto resumen action is named
+#### Scenario: Budget summary action is named
 
-- **WHEN** a user focuses the icon-only presupuesto summary (Receipt) action
+- **WHEN** a user focuses the icon-only budget summary (Receipt) action
 - **THEN** the control’s accessible name is a non-empty translated summary
   label (not an empty or generic “button”)
 

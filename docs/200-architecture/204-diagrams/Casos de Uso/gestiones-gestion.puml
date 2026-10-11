@@ -1,13 +1,13 @@
 @startuml gestiones-gestion
 !theme plain
 left to right direction
-title Casos de Uso — Módulo Gestión
+title Use cases — Management module
 
-actor "Recepcionista / Gestor" as RecepcionistaGestor
+actor "Receptionist / Clerk (Gestor)" as ReceptionistClerk
 actor Escribano
-actor Cliente
+actor Client
 
-rectangle "Módulo Gestión" {
+rectangle "Management module" {
   usecase "CU02 - Iniciar Gestión" as CU02
   usecase "CU53 - Modificar Gestión" as CU53
   usecase "CU13 - Ver historial de gestión" as CU13
@@ -17,13 +17,13 @@ rectangle "Módulo Gestión" {
 usecase "CU60 - Buscar Presupuesto\n(from Presupuesto)" as CU60
 usecase "CU19 - Buscar gestiones de un Cliente\n(from Clientes)" as CU19
 
-RecepcionistaGestor --> CU02 : indica
-RecepcionistaGestor --> CU53 : requiere
-RecepcionistaGestor --> CU13 : requiere
-Escribano --> CU13 : requiere
-Escribano --> CU16 : requiere
-Cliente --> CU02 : solicita
-Cliente --> CU53 : solicita
+ReceptionistClerk --> CU02 : indicates
+ReceptionistClerk --> CU53 : needs
+ReceptionistClerk --> CU13 : needs
+Escribano --> CU13 : needs
+Escribano --> CU16 : needs
+Client --> CU02 : requests
+Client --> CU53 : requests
 
 CU02 ..> CU60 : <<include>>
 CU53 ..> CU19 : <<include>>

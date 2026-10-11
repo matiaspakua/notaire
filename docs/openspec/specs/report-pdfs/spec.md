@@ -35,7 +35,7 @@ The six report endpoints SHALL return an `application/pdf` document built from t
 #### Scenario: Document debt report
 
 - **WHEN** a client requests /api/v1/reports/document-debt?numberManagement=N
-- **THEN** the PDF lists the submitted documents of the managements numbered N with amount, payment date or Payment pendiente, and the total owed
+- **THEN** the PDF lists the submitted documents of the managements numbered N with amount, payment date or Payment pending, and the total owed
 
 ### Requirement: Missing aggregates are 404
 

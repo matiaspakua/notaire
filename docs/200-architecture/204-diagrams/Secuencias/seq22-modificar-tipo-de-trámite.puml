@@ -3,19 +3,19 @@
 title CU22 — Modificar tipo de trámite
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano decide modificar un tipo de trámite.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Presenta una lista de todos los tipos de trámite disponibles.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano selecciona un tipo de trámite.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Presenta: (Nombre; Si requiere inscripción; Si se archiva; Si se asocia con inmuebles; Observaciones; Tipos de documento asociados)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano modifica los datos necesarios.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Guarda los cambios realizados.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) decides to modify a procedure type.
+System -> System : Escribano
+Actor -> Actor : Presents a list of every available procedure type.
+System -> System : System
+Actor -> Actor : The notary (Escribano) selects a procedure type.
+System -> System : Escribano
+Actor -> Actor : Presents: (Name; Whether registration is required; Whether it is archived; Whether it is linked to properties; Notes; Associated document types)
+System -> System : System
+Actor -> Actor : The notary (Escribano) modifies the necessary data.
+System -> System : Escribano
+Actor -> Actor : Saves the changes made.
+System -> System : System
 
 @enduml

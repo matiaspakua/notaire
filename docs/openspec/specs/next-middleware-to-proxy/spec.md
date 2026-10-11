@@ -52,8 +52,8 @@ still bypass edge redirects so the rewrite/BFF can forward credentials
 
 - **WHEN** an authenticated non-admin role cookie is present and the path is
   under `/dashboard/administration`
-- **THEN** the response redirects away from administración (forbidden dashboard
-  path) as today
+- **THEN** the response redirects away from administration (the forbidden
+  dashboard path) as today
 
 #### Scenario: API proxy paths skip edge auth redirects
 

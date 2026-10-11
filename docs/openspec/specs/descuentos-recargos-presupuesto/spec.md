@@ -1,78 +1,82 @@
 # descuentos-recargos-presupuesto Specification
 
 ## Purpose
-Permite clasificar un ítem de presupuesto como descuento o recargo con un
-motivo obligatorio, y refleja ese signo en el total del presupuesto y en un
-reporte consultable (CU45, CU71).
+
+Allows classifying a budget item as a discount or a surcharge with a
+mandatory reason, and reflects that sign in the budget total and in a
+readable report (CU45, CU71).
+
 ## Requirements
-### Requirement: Clasificar un ítem de presupuesto por tipo
-El sistema SHALL permitir clasificar un ítem de presupuesto como normal,
-descuento o recargo. Un ítem sin tipo explícito SHALL comportarse como
-normal.
 
-#### Scenario: Crear un ítem normal sin tipo explícito
-- **WHEN** se crea un ítem de presupuesto sin especificar tipo
-- **THEN** el sistema lo trata como tipo "normal"
+### Requirement: Classify a budget item by type
+The system SHALL allow classifying a budget item as `NORMAL`, `DESCUENTO`,
+or `RECARGO` (stored on `item_type`). An item without an explicit type
+SHALL behave as `NORMAL`.
 
-#### Scenario: Crear un ítem de tipo descuento
-- **WHEN** se crea un ítem de presupuesto con tipo "descuento" y un motivo
-  válido
-- **THEN** el sistema acepta el ítem clasificado como descuento
+#### Scenario: Create a normal item without an explicit type
+- **WHEN** a budget item is created without specifying a type
+- **THEN** the system treats it as type "NORMAL"
 
-#### Scenario: Crear un ítem de tipo recargo
-- **WHEN** se crea un ítem de presupuesto con tipo "recargo" y un motivo
-  válido
-- **THEN** el sistema acepta el ítem clasificado como recargo
+#### Scenario: Create a discount item
+- **WHEN** a budget item is created with type "DESCUENTO" and a valid
+  `reason`
+- **THEN** the system accepts the item classified as a discount
 
-### Requirement: Exigir motivo estructurado en descuentos y recargos
-El sistema SHALL rechazar la creación o actualización de un ítem de tipo
-descuento o recargo cuando no incluye un motivo no vacío.
+#### Scenario: Create a surcharge item
+- **WHEN** a budget item is created with type "RECARGO" and a valid
+  `reason`
+- **THEN** the system accepts the item classified as a surcharge
 
-#### Scenario: Rechazar un descuento sin motivo
-- **WHEN** se intenta crear un ítem de tipo "descuento" sin motivo
-- **THEN** el sistema rechaza la operación con un error de validación
+### Requirement: Require a structured reason on discounts and surcharges
+The system SHALL reject creating or updating an item of type `DESCUENTO`
+or `RECARGO` when it does not include a non-empty `reason`.
 
-#### Scenario: Rechazar un recargo sin motivo
-- **WHEN** se intenta crear un ítem de tipo "recargo" sin motivo
-- **THEN** el sistema rechaza la operación con un error de validación
+#### Scenario: Reject a discount without a reason
+- **WHEN** creating an item of type "DESCUENTO" without a `reason` is
+  attempted
+- **THEN** the system rejects the operation with a validation error
 
-#### Scenario: Aceptar un ítem normal sin motivo
-- **WHEN** se crea un ítem de tipo "normal" sin motivo
-- **THEN** el sistema acepta el ítem sin exigir motivo
+#### Scenario: Reject a surcharge without a reason
+- **WHEN** creating an item of type "RECARGO" without a `reason` is
+  attempted
+- **THEN** the system rejects the operation with a validation error
 
-### Requirement: Calcular el total del presupuesto según el tipo de ítem
-El sistema SHALL calcular el total de un presupuesto sumando los ítems de
-tipo normal y recargo, y restando los ítems de tipo descuento.
+#### Scenario: Accept a normal item without a reason
+- **WHEN** an item of type "NORMAL" is created without a `reason`
+- **THEN** the system accepts the item without requiring a reason
 
-#### Scenario: Total con un ítem de descuento
-- **WHEN** un presupuesto tiene ítems normales y un ítem de tipo descuento
-- **THEN** el total del presupuesto resta el valor del ítem de descuento
+### Requirement: Calculate the budget total from the item type
+The system SHALL calculate a budget total by adding items of type
+`NORMAL` and `RECARGO`, and subtracting items of type `DESCUENTO`.
 
-#### Scenario: Total con un ítem de recargo
-- **WHEN** un presupuesto tiene ítems normales y un ítem de tipo recargo
-- **THEN** el total del presupuesto suma el valor del ítem de recargo
+#### Scenario: Total with a discount item
+- **WHEN** a budget has normal items and an item of type `DESCUENTO`
+- **THEN** the budget total subtracts the discount item's value
 
-#### Scenario: Total sin descuentos ni recargos
-- **WHEN** un presupuesto solo tiene ítems de tipo normal
-- **THEN** el total del presupuesto se calcula sumando todos los ítems,
-  igual que hoy
+#### Scenario: Total with a surcharge item
+- **WHEN** a budget has normal items and an item of type `RECARGO`
+- **THEN** the budget total adds the surcharge item's value
 
-### Requirement: Consultar los descuentos y recargos de un presupuesto
-El sistema SHALL permitir consultar, para un presupuesto dado, la lista de
-sus ítems de tipo descuento y recargo junto con su motivo.
+#### Scenario: Total with neither discounts nor surcharges
+- **WHEN** a budget has only items of type `NORMAL`
+- **THEN** the budget total is the sum of all items
 
-#### Scenario: Consultar descuentos y recargos de un presupuesto con ambos
-- **WHEN** se consulta el reporte de descuentos y recargos de un
-  presupuesto que tiene al menos un ítem de cada tipo
-- **THEN** el sistema responde con la lista de esos ítems y su motivo
+### Requirement: Read a budget's discounts and surcharges
+The system SHALL allow reading, for a given budget, the list of its
+`DESCUENTO` and `RECARGO` items together with each `reason`.
 
-#### Scenario: Consultar descuentos y recargos de un presupuesto sin ninguno
-- **WHEN** se consulta el reporte de descuentos y recargos de un
-  presupuesto que solo tiene ítems normales
-- **THEN** el sistema responde con una lista vacía
+#### Scenario: Read discounts and surcharges of a budget that has both
+- **WHEN** the discount and surcharge report of a budget that has at
+  least one item of each type is read
+- **THEN** the system responds with the list of those items and their
+  reason
 
-#### Scenario: Consultar descuentos y recargos de un presupuesto inexistente
-- **WHEN** se consulta el reporte de descuentos y recargos de un
-  presupuesto cuyo ID no existe
-- **THEN** el sistema responde con un error de no encontrado
+#### Scenario: Read discounts and surcharges of a budget that has none
+- **WHEN** the discount and surcharge report of a budget that has only
+  normal items is read
+- **THEN** the system responds with an empty list
 
+#### Scenario: Read discounts and surcharges of a budget that does not exist
+- **WHEN** the discount and surcharge report of a budget whose id does
+  not exist is read
+- **THEN** the system responds with a not-found error

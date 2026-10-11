@@ -1,24 +1,24 @@
 @startuml actores
 !theme plain
-title Actores del Sistema Notaire
+title Actors of the Notaire system
 
-actor Persona
-actor Cliente
+actor Person
+actor Client
 actor Escribano
-actor "Recepcionista / Gestor" as RecepcionistaGestor
-actor Administrador
+actor "Receptionist / Clerk (Gestor)" as ReceptionistClerk
+actor Administrator
 
-Cliente --|> Persona
-Escribano --|> Persona
-RecepcionistaGestor --|> Persona
-Administrador --|> Persona
+Client --|> Person
+Escribano --|> Person
+ReceptionistClerk --|> Person
+Administrator --|> Person
 
-note right of Persona
-  Actor abstracto: agrupa los atributos y
-  casos de uso comunes a toda persona
-  registrada en el sistema. Cliente,
-  Escribano, Recepcionista/Gestor y
-  Administrador especializan a Persona.
+note right of Person
+  Abstract actor: groups the attributes and
+  use cases shared by every person
+  registered in the system. Client,
+  Escribano, Receptionist/Clerk (Gestor), and
+  Administrator specialize Person.
 end note
 
 @enduml

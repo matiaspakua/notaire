@@ -3,19 +3,19 @@
 title CU65 — Gestión de Documentos Presentados
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Gestor selecciona una gestión abierta.
-Sistema -> Sistema : Gestor
-Actor -> Actor : Muestra la lista de documentos requeridos y presentados.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Gestor registra la recepción de un documento.
-Sistema -> Sistema : Gestor
-Actor -> Actor : Solicita: (Fecha de recepción; Observaciones)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Gestor confirma la recepción.
-Sistema -> Sistema : Gestor
-Actor -> Actor : Actualiza el estado del documento a Presentado.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The clerk (Gestor) selects an open management.
+System -> System : Clerk
+Actor -> Actor : Shows the list of required and submitted documents.
+System -> System : System
+Actor -> Actor : The clerk (Gestor) records receipt of a document.
+System -> System : Clerk
+Actor -> Actor : Requests: (Receipt date; Notes)
+System -> System : System
+Actor -> Actor : The clerk (Gestor) confirms receipt.
+System -> System : Clerk
+Actor -> Actor : Updates the document status to Presentado.
+System -> System : System
 
 @enduml

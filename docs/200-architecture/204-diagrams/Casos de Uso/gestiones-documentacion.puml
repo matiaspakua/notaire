@@ -1,14 +1,14 @@
 @startuml gestiones-documentacion
 !theme plain
 left to right direction
-title Casos de Uso — Módulo Documentación
+title Use cases — Documentation module
 
-actor "Recepcionista / Gestor" as RecepcionistaGestor
+actor "Receptionist / Clerk (Gestor)" as ReceptionistClerk
 actor Escribano
-actor Cliente
-actor Persona
+actor Client
+actor Person
 
-rectangle "Módulo Documentación" {
+rectangle "Documentation module" {
   usecase "CU42 - Informar próximos vencimientos" as CU42
   usecase "CU04 - Registrar documentación cliente" as CU04
   usecase "CU03 - Lista documentos y certificados necesarios" as CU03
@@ -19,19 +19,19 @@ rectangle "Módulo Documentación" {
 
 usecase "CU19 - Buscar gestiones de un Cliente\n(from Clientes)" as CU19
 
-RecepcionistaGestor --> CU42 : se le informa
-RecepcionistaGestor --> CU04 : registra
-RecepcionistaGestor --> CU03 : solicita
-RecepcionistaGestor --> CU09 : requiere
+ReceptionistClerk --> CU42 : is informed
+ReceptionistClerk --> CU04 : records
+ReceptionistClerk --> CU03 : requests
+ReceptionistClerk --> CU09 : needs
 
-Escribano --> CU42 : se le informa
-Escribano --> CU09 : registra
-Escribano --> CU10 : requiere
-Escribano --> CU43 : registra
+Escribano --> CU42 : is informed
+Escribano --> CU09 : records
+Escribano --> CU10 : needs
+Escribano --> CU43 : records
 
-Cliente --> CU04 : hace entrega
-Cliente --> CU03 : requiere
-Persona --> CU03 : requiere
+Client --> CU04 : hands over
+Client --> CU03 : needs
+Person --> CU03 : needs
 
 CU04 ..> CU19 : <<include>>
 CU09 ..> CU19 : <<include>>

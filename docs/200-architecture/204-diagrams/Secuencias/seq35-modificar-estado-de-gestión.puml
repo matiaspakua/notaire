@@ -3,19 +3,19 @@
 title CU35 — Modificar estado de Gestión
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano decide modificar el nombre de un estado de gestión.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra una lista de todos los estados disponibles.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano selecciona un estado.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra: (Nombre del estado; Observaciones)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano modifica los datos.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Registra la modificación.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) decides to modify a management status name.
+System -> System : Escribano
+Actor -> Actor : Shows a list of every available status.
+System -> System : System
+Actor -> Actor : The notary (Escribano) selects a status.
+System -> System : Escribano
+Actor -> Actor : Shows: (Status name; Notes)
+System -> System : System
+Actor -> Actor : The notary (Escribano) modifies the data.
+System -> System : Escribano
+Actor -> Actor : Records the modification.
+System -> System : System
 
 @enduml

@@ -2,24 +2,24 @@
 !theme plain
 title CU78 — Seguridad, Privacidad y Cumplimiento
 
-actor "Usuario" as Actor
-participant "Sistema Notaire" as Sistema
+actor "User (Usuario)" as Actor
+participant "Notaire system" as System
 
-Actor -> Actor : El usuario ingresa sus credenciales (nombre de usuario y contraseña).
-Sistema -> Sistema : Usuario
-Actor -> Actor : Valida las credenciales contra el hash seguro en base de datos cifrada.
-Sistema -> Sistema : Sistema
-Actor -> Actor : Si las credenciales son válidas, se genera una sesión autenticada con token firmado.
-Sistema -> Sistema : Sistema
-Actor -> Actor : Transmite el token seguro mediante canal cifrado HTTPS/TLS.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El usuario solicita ejecutar una operación sobre un trámite o cliente.
-Sistema -> Sistema : Usuario
-Actor -> Actor : Valida los permisos de rol del usuario y autoriza la ejecución.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El sistema procesa la operación.
-Sistema -> Sistema : Sistema
-Actor -> Actor : Registra la acción en el log de auditoría inmutable indicando usuario, fecha, hora e IP.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The user enters their credentials (username and password).
+System -> System : User
+Actor -> Actor : Validates the credentials against the secure hash in the encrypted database.
+System -> System : System
+Actor -> Actor : If the credentials are valid, an authenticated session is created with a signed token.
+System -> System : System
+Actor -> Actor : Sends the secure token over an encrypted HTTPS/TLS channel.
+System -> System : System
+Actor -> Actor : The user requests to run an operation on a procedure or client.
+System -> System : User
+Actor -> Actor : Validates the user's role permissions and authorizes the execution.
+System -> System : System
+Actor -> Actor : The system processes the operation.
+System -> System : System
+Actor -> Actor : Records the action in the immutable audit log with user, date, time, and IP.
+System -> System : System
 
 @enduml

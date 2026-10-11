@@ -3,15 +3,15 @@
 title CU49 — Generar Declaración Jurada de Rentas
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano/Recepcionista decide generar las DDJJ.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Solicita: (Mes; Año; Registro de Escribano)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano/Recepcionista ingresa los datos.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Presenta la declaración jurada.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) or receptionist (Recepcionista) decides to generate the sworn statements (DDJJ).
+System -> System : Escribano
+Actor -> Actor : Requests: (Month; Year; Notary register (Escribano))
+System -> System : System
+Actor -> Actor : The notary (Escribano) or receptionist (Recepcionista) enters the data.
+System -> System : Escribano
+Actor -> Actor : Presents the sworn statement.
+System -> System : System
 
 @enduml

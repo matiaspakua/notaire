@@ -3,15 +3,15 @@
 title CU29 — Ingresar nuevo concepto
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano decide dar de alta un nuevo concepto.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Solicita: (Nombre; Valor; Porcentaje; Si es valor fijo o variable)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano ingresa los datos solicitados.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Registra los datos ingresados, registrando un nuevo concepto.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) decides to register a new concept.
+System -> System : Escribano
+Actor -> Actor : Requests: (Name; Amount; Percentage; Whether the amount is fixed or variable)
+System -> System : System
+Actor -> Actor : The notary (Escribano) enters the requested data.
+System -> System : Escribano
+Actor -> Actor : Records the entered data and registers a new concept.
+System -> System : System
 
 @enduml

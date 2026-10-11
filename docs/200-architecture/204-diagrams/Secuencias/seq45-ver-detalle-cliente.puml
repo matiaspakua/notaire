@@ -2,16 +2,16 @@
 !theme plain
 title CU45 — Ver detalle cliente
 
-actor "Recepcionista" as Actor
-participant "Sistema Notaire" as Sistema
+actor "Receptionist (Recepcionista)" as Actor
+participant "Notaire system" as System
 
-Actor -> Actor : El recepcionista necesita ver la información de un cliente.
-Sistema -> Sistema : Recepcionista
-Actor -> Actor : Solicita: (Nombre y apellido; Tipo y número de identificación)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El recepcionista ingresa los datos.
-Sistema -> Sistema : Recepcionista
-Actor -> Actor : Busca y presenta la información del cliente.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The receptionist needs to see a client's information.
+System -> System : Receptionist
+Actor -> Actor : Requests: (First and last name; Identification type and number)
+System -> System : System
+Actor -> Actor : The receptionist enters the data.
+System -> System : Receptionist
+Actor -> Actor : Looks up and presents the client information.
+System -> System : System
 
 @enduml

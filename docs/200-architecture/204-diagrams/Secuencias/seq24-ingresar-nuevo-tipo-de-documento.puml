@@ -3,15 +3,15 @@
 title CU24 — Ingresar nuevo tipo de documento
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano decide dar de alta un nuevo tipo de documento.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Solicita: (Nombre del documento; Si posee vencimiento; Días de validez; Quién lo entrega)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano ingresa los datos solicitados.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Registra un nuevo documento en el sistema.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) decides to register a new document type.
+System -> System : Escribano
+Actor -> Actor : Requests: (Document name; Whether it expires; Days of validity; Who submits it)
+System -> System : System
+Actor -> Actor : The notary (Escribano) enters the requested data.
+System -> System : Escribano
+Actor -> Actor : Records a new document in the system.
+System -> System : System
 
 @enduml

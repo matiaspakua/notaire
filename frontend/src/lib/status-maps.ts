@@ -4,7 +4,7 @@
  * One place maps a stored status to a tone (neutral | info | success | warning
  * | danger) and, where the vocabulary is fixed, an i18n key (relative to the
  * root of the messages). Management statuses are an admin catalog
- * (estados-gestion), so their label stays the stored name; only the seeded
+ * (`administracion.estadosGestion`), so their label stays the stored name; only the seeded
  * names get a tone. Anything outside a vocabulary is neutral with its raw text.
  */
 import { normalizeBudgetStatus, type BudgetStatusCode } from "@/lib/budget-status";
