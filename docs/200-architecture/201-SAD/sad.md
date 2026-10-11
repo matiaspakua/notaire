@@ -2,7 +2,9 @@
 
 > **arc42 Template v8.2** — based on [docs.arc42.org](https://docs.arc42.org/home/)
 >
-> **Version:** 3.2 | **Date:** 2026-10-10 | **Author:** Architecture Team
+> **Version:** 3.3 | **Date:** 2026-10-10 | **Author:** Architecture Team
+>
+> **Changelog v3.3**: §6 points at [CICLO-DE-VIDA.md](../203-design/CICLO-DE-VIDA.md) as the single domain lifecycle. Existing PlantUML runtime sketches stay legacy (ADR-027).
 >
 > **Changelog v3.2**: Delivery tracking points at [Notaire — Delivery Board #1](https://github.com/users/matiaspakua/projects/1) (Project #4 is gone). In-repo module ownership: [MODULE-OWNERSHIP.md](../../300-development/MODULE-OWNERSHIP.md) / ADR-026. Active diagrams: Mermaid only (ADR-027). Technical docs also render on GitHub Pages `/docs/`.
 >
@@ -622,6 +624,12 @@ Flyway on every migration (see the dictionary's §6.3 validation log).
 ---
 
 ## 6. Runtime View
+
+Domain lifecycles — gestión, deed, testimony, registration draft, documents,
+budget, payment, procedure folder — are specified once in
+[CICLO-DE-VIDA.md](../203-design/CICLO-DE-VIDA.md). The PlantUML sequences in
+this section are legacy runtime sketches ([ADR-027](../202-ADR/ADR-027-mermaid-diagrams.md)).
+Do not add a second state machine here.
 
 ### 6.1 User Authentication Flow
 

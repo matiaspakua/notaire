@@ -39,7 +39,7 @@ Todas las entidades incluyen columna `version` para versionado optimista (`@Vers
 ### Positivos
 
 - Un administrador puede definir o ajustar el flujo de un tipo de trámite sin cambios de código, vía los endpoints `Workflow*Controller`.
-- El modelo es directamente representable como diagrama de estados (ver `docs/200-architecture/204-diagrams/Diagrama de Estados/`), ya que cada `WorkflowNode` mapea 1:1 a un `EstadoDeGestion`.
+- El modelo es directamente representable como diagrama de estados, ya que cada `WorkflowNode` mapea 1:1 a un estado de gestión. El grafo sembrado y las máquinas vecinas (pago, documentación, escritura, testimonio) están en [CICLO-DE-VIDA.md](../203-design/CICLO-DE-VIDA.md). Los `.puml` de `204-diagrams/Diagrama de Estados/` son legado.
 - Reutiliza los patrones ya establecidos (JPA, DTOs, repositorios) — no introduce un paradigma nuevo en el backend.
 
 ### Negativos

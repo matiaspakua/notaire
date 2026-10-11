@@ -27,6 +27,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      # The event base SHA is the base from when the PR opened. Checkout is the
+      # merge into current main, so a stale base makes main's later commits look
+      # like this PR (a foreign OpenSpec path then satisfies the exception gate).
+      - name: Diff against the base this checkout was merged into
+        run: |
+          if git rev-parse --verify --quiet 'HEAD^2' >/dev/null; then
+            echo "BASE_SHA=$(git rev-parse 'HEAD^1')" >> "$GITHUB_ENV"
+          fi
+
       - name: Commit messages are Conventional Commits
         if: ${{ !cancelled() }}
         run: bash workspace/sdlc/check-commit-messages.sh "$BASE_SHA"

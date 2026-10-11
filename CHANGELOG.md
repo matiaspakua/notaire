@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Process Checks diff the pull request, not a stale base** (CU76, #921):
+  `sdlc-process.yml` and `check-sdlc-exception.sh` use the merge commit's first parent.
+  An OpenSpec path that landed on `main` after the PR opened no longer satisfies the gate.
 - **OpenSpec hygiene after #1477 / #1480**: archive closed-issue tree
   `feat-1462-otel-metrics-exporters` and shipped Gate 1 trees
   `docs-1445-archive-closed-1472` / `docs-1479-modules-owner-tracker` so `validate-sdlc-plan` stays green.

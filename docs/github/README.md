@@ -14,6 +14,20 @@ Everything is on **[Notaire — Delivery Board](https://github.com/users/matiasp
 | In Progress | Branch open; the issue also carries the `in-progress` label |
 | Done | Issue closed |
 
+Board status is the **work item** lifecycle. It is not a gestión state.
+`In Progress` on an issue is not `En Tramite` on a deed file. Domain states
+live in [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md).
+
+The `in-review` label marks a pull request under review. The board column
+stays In Progress until the issue is closed.
+
+```mermaid
+stateDiagram-v2
+  [*] --> Todo
+  Todo --> InProgress: Branch and in-progress label
+  InProgress --> Done: Merged and issue closed
+```
+
 ## Milestones
 
 | Milestone | Contains |
