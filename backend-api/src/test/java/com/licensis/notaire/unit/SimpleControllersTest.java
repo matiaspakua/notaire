@@ -592,12 +592,17 @@ class SimpleControllersTest {
     @DisplayName("TestimonyController")
     class TestimonyControllerTests {
         private final TestimonyRepository repo = mock(TestimonyRepository.class);
+        private final com.licensis.notaire.repository.TestimonyMovementRepository movementRepo =
+                mock(com.licensis.notaire.repository.TestimonyMovementRepository.class);
+        private final com.licensis.notaire.repository.CopyRepository copyRepo =
+                mock(com.licensis.notaire.repository.CopyRepository.class);
         private final TestimonyGenerationVerificationService generationVerificationService =
                 mock(TestimonyGenerationVerificationService.class);
         private final com.licensis.notaire.repository.DeedRepository deedRepo =
                 mock(com.licensis.notaire.repository.DeedRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new TestimonyController(repo, generationVerificationService, deedRepo)).build();
+                standaloneSetup(new TestimonyController(repo, generationVerificationService, deedRepo,
+                        movementRepo, copyRepo)).build();
 
         private Testimony build() {
             Testimony t = new Testimony();
@@ -632,6 +637,10 @@ class SimpleControllersTest {
             mvc.perform(put("/api/v1/testimonies/2").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
             mvc.perform(delete("/api/v1/testimonies/1")).andExpect(status().isNoContent());
+            // #1364: a testimony with registry movements is kept (409 with the reason)
+            when(movementRepo.existsByFkIdTestimonyIdTestimony(1)).thenReturn(true);
+            mvc.perform(delete("/api/v1/testimonies/1")).andExpect(status().isConflict());
+            when(movementRepo.existsByFkIdTestimonyIdTestimony(1)).thenReturn(false);
             mvc.perform(delete("/api/v1/testimonies/2")).andExpect(status().isNotFound());
         }
 
