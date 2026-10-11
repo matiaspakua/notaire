@@ -35,9 +35,9 @@
 
 ## 6. Run regression
 
-- [ ] 6.1 `bash infra/verify.sh`
+- [x] 6.1 `bash infra/verify.sh`
 - [ ] 6.2 `bash workspace/sdlc/preflight.sh`
-- [ ] 6.3 Restart Homer and verify the page serves the new config
+- [x] 6.3 Restart Homer and verify the page serves the new config
 
 ## 7. Playwright
 
@@ -45,7 +45,7 @@
 
 ## 8. Gate 3 — Update permanent documentation
 
-- [ ] 8.1 `infra/docs/DEFINITION.md`
+- [x] 8.1 `infra/docs/DEFINITION.md`
 - [ ] 8.2 `infra/docs/DEFINITION.md`
 - [ ] 8.3 `CHANGELOG.md` n/a
 

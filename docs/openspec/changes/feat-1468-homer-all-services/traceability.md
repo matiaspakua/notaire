@@ -29,7 +29,7 @@
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `infra/docs/DEFINITION.md` | pending | pending |
+| `infra/docs/DEFINITION.md` | yes | docs commit |
 | `CHANGELOG.md` | n/a | n/a |
 
 ## Gate log
