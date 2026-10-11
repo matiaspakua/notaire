@@ -48,6 +48,13 @@ class OpenSpecRequirementsEnglishTest(unittest.TestCase):
             "presupuesto-from-template",
             "procedure-fk-hydration",
             "inmueble-valuacion-fiscal",
+            "submitted-document-update",
+            "testimony-reentry-data",
+            "budget-person-response",
+            "backend-test-isolation",
+            "admin-route-guard",
+            "dashboard-nav-canonical-routes",
+            "next-middleware-to-proxy",
         ):
             path = SPECS / spec_id / "spec.md"
             text = path.read_text(encoding="utf-8")
@@ -380,6 +387,71 @@ class OpenSpecRequirementsEnglishTest(unittest.TestCase):
             "saldo pendiente",
         ):
             self.assertNotIn(retired, collection, retired)
+        submitted = (SPECS / "submitted-document-update" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`procedureId`", submitted)
+        self.assertIn("`delivered`", submitted)
+        self.assertIn("PUT /api/v1/submitted-documents/{id}", submitted)
+        self.assertIn("CU72", submitted)
+        reentry = (SPECS / "testimony-reentry-data" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`cardNumber`", reentry)
+        self.assertIn("`observedByRegistry`", reentry)
+        self.assertIn("reingresar", reentry)
+        self.assertIn("btn-reenter-testimony", reentry)
+        self.assertIn("CU44", reentry)
+        budget_person = (SPECS / "budget-person-response" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`Budget`", budget_person)
+        self.assertIn("`personId`", budget_person)
+        self.assertIn("`lastName`", budget_person)
+        self.assertIn("POST /api/v1/budgets", budget_person)
+        isolation = (SPECS / "backend-test-isolation" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`Budget`", isolation)
+        self.assertIn("`amount`", isolation)
+        self.assertIn("`pendingBalance`", isolation)
+        self.assertIn("`idBudget`", isolation)
+        self.assertIn("CU15", isolation)
+        guard = (SPECS / "admin-route-guard" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("/dashboard/administration", guard)
+        self.assertIn("ADMINISTRADOR", guard)
+        self.assertIn("ESCRIBANO", guard)
+        self.assertIn("EMPLEADO", guard)
+        self.assertIn("CU78", guard)
+        nav = (SPECS / "dashboard-nav-canonical-routes" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`suplencias`", nav)
+        self.assertIn("`reportes`", nav)
+        self.assertIn("`auditoria`", nav)
+        self.assertIn("nav-suplencias", nav)
+        self.assertIn("nav-reportes", nav)
+        self.assertIn("/dashboard/substitutions", nav)
+        self.assertIn("/dashboard/reports", nav)
+        proxy = (SPECS / "next-middleware-to-proxy" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("frontend/src/proxy.ts", proxy)
+        self.assertIn("Login al sistema", proxy)
+        self.assertIn("/dashboard/administration", proxy)
+        self.assertIn("CU84", proxy)
+        screens = "\n".join(
+            (SPECS / spec_id / "spec.md").read_text(encoding="utf-8")
+            for spec_id in (
+                "submitted-document-update",
+                "testimony-reentry-data",
+                "budget-person-response",
+                "backend-test-isolation",
+                "admin-route-guard",
+                "dashboard-nav-canonical-routes",
+                "next-middleware-to-proxy",
+            )
+        )
+        for retired in (
+            "trámite",
+            "cartón",
+            "presupuesto",
+            "`monto`",
+            "saldo pendiente",
+            "administración",
+            "Auditoría",
+            "Suplencias",
+            "Reportes",
+        ):
+            self.assertNotIn(retired, screens, retired)
 
 
 if __name__ == "__main__":

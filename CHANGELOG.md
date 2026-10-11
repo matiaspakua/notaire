@@ -43,6 +43,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English document, reentry, budget-person, and navigation requirement prose** (#1490, CU75):
+  `submitted-document-update`, `testimony-reentry-data`,
+  `budget-person-response`, `backend-test-isolation`, `admin-route-guard`,
+  `dashboard-nav-canonical-routes`, and `next-middleware-to-proxy` state
+  requirements in English. Spec ids stay. Live names stay: `procedureId`,
+  `cardNumber`, `observedByRegistry`, `personId`, `amount`,
+  `pendingBalance`, `/dashboard/administration`, `/dashboard/substitutions`,
+  and `frontend/src/proxy.ts`. Message key `reingresar` stays, along with
+  sidebar label keys `suplencias`, `reportes`, `auditoria`, and
+  `administracion`, test ids `nav-suplencias`, `nav-reportes`, and
+  `btn-reenter-testimony`, and stored roles `ADMINISTRADOR`, `ESCRIBANO`,
+  and `EMPLEADO`. Official title `Login al sistema` stays.
 - **English payment, template, and property-appraisal requirement prose** (#1490, CU75):
   `pago-limite-saldo-pendiente`, `pago-presupuesto-picker-saldo`, `pagos`,
   `presupuesto-from-template`, `procedure-fk-hydration`, and
