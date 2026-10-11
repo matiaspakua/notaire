@@ -43,7 +43,7 @@ public class FolioController {
 
     private static final Logger log = LoggerFactory.getLogger(FolioController.class);
 
-    private static final String StatusUTILIZADO = "Utilizado";
+    private static final String STATUS_USED = "Utilizado";
 
     public record FolioTypeRef(Integer idFolioType, String name, String notes, boolean enabled, boolean isAuxiliary) {
         public static FolioTypeRef from(FolioType type) {
@@ -110,7 +110,7 @@ public class FolioController {
     @Operation(summary = "Check whether a folio is in use")
     public ResponseEntity<Map<String, Boolean>> isInUse(@PathVariable Integer id) {
         return folioRepository.findById(id)
-                .map(f -> ResponseEntity.ok(Map.of("inUse", StatusUTILIZADO.equals(f.getStatus()))))
+                .map(f -> ResponseEntity.ok(Map.of("inUse", STATUS_USED.equals(f.getStatus()))))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -160,7 +160,7 @@ public class FolioController {
             folio.setFkIdNotaryPerson(notary.get());
             if (deed != null) {
                 folio.setFkIdDeed(deed);
-                folio.setStatus(StatusUTILIZADO);
+                folio.setStatus(STATUS_USED);
             }
             Folio saved = folioRepository.save(folio);
             return CreatedResponses.of(FolioResponse.from(saved), "/api/v1/folios", saved.getIdFolio());
@@ -194,7 +194,7 @@ public class FolioController {
             return ResponseEntity.notFound().build();
         }
         Folio folio = existing.get();
-        if (StatusUTILIZADO.equals(folio.getStatus()) && !linksSameDeed(folio, request)) {
+        if (STATUS_USED.equals(folio.getStatus()) && !linksSameDeed(folio, request)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error", "This folio is in use (Utilizado) and cannot be modified."));
         }
@@ -218,7 +218,7 @@ public class FolioController {
         }
         if (deed != null) {
             folio.setFkIdDeed(deed);
-            folio.setStatus(StatusUTILIZADO);
+            folio.setStatus(STATUS_USED);
         }
         try {
             Folio saved = folioRepository.save(folio);
@@ -241,7 +241,7 @@ public class FolioController {
         if (opt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        if (StatusUTILIZADO.equals(opt.get().getStatus())) {
+        if (STATUS_USED.equals(opt.get().getStatus())) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error", "Cannot delete: the folio is in use (Utilizado)."));
         }

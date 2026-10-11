@@ -64,6 +64,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English found locals and report dialog keys** (#1490, CU75): the
+  procedure-type edit local is `foundProcedureType`. The person-procedure
+  delete local is `found`. The folio status constant is `STATUS_USED`.
+  Sworn-statement tests are `shouldGenerateMonthlySwornStatementPdf`,
+  `shouldGenerateTaxSwornStatementPdf`,
+  `shouldRejectMonthlySwornStatementWithMonthOutOfRange`, and
+  `shouldRejectInvalidMonthForSwornStatements`. Protocol dialog keys are
+  `index-book`, `monthly-sworn-statement`, and `tax-sworn-statement`.
+  Role module locals are `MODULE_VALUES` and `toggleModule`. The stored
+  folio status `Utilizado` stays, along with PDF filenames `libro_indice_`,
+  `declaracion_jurada_mensual_`, `declaracion_jurada_rentas_`, and
+  `ddjj_mensual_`. The role field `modulos` stays, along with module
+  values `administracion` and message keys `fields.modulos`,
+  `reports.libroIndice`, `reports.ddjjMensual`, and `reports.ddjjRentas`.
 - **English sign and delivery locals** (#1490, CU75): the deeds page
   uses `UNSIGNED_STATUS`, `signMutation`, and `signId`. The delivery
   flag is `allDelivered`. Audit lists are `records`. The stored status

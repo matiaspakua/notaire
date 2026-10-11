@@ -37,13 +37,13 @@ export default function ProtocolPage() {
     try {
       let url = "";
       let filename = "";
-      if (reportDialog === "libro-indice") {
+      if (reportDialog === "index-book") {
         url = `/reports/index-book?year=${reportYear}`;
         filename = `libro_indice_${reportYear}.pdf`;
-      } else if (reportDialog === "declaracion-jurada-mensual") {
+      } else if (reportDialog === "monthly-sworn-statement") {
         url = `/reports/monthly-sworn-statement?year=${reportYear}&month=${reportMonth}`;
         filename = `declaracion_jurada_mensual_${reportMonth}_${reportYear}.pdf`;
-      } else if (reportDialog === "declaracion-jurada-rentas") {
+      } else if (reportDialog === "tax-sworn-statement") {
         url = `/reports/tax-sworn-statement?year=${reportYear}&month=${reportMonth}`;
         filename = `declaracion_jurada_rentas_${reportMonth}_${reportYear}.pdf`;
       }
@@ -63,9 +63,9 @@ export default function ProtocolPage() {
   }
 
   const reportTitle = {
-    "libro-indice": t("reports.libroIndice.title"),
-    "declaracion-jurada-mensual": t("reports.ddjjMensual.title"),
-    "declaracion-jurada-rentas": t("reports.ddjjRentas.title"),
+    "index-book": t("reports.libroIndice.title"),
+    "monthly-sworn-statement": t("reports.ddjjMensual.title"),
+    "tax-sworn-statement": t("reports.ddjjRentas.title"),
   }[reportDialog ?? ""] ?? "";
 
   const columns: Column<Folio>[] = [
@@ -98,13 +98,13 @@ export default function ProtocolPage() {
                 {t("auxiliar.title")}
               </Link>
             </Button>
-            <Button variant="outline" onClick={() => setReportDialog("libro-indice")}>
+            <Button variant="outline" onClick={() => setReportDialog("index-book")}>
               <FileText className="h-4 w-4" />{t("reports.libroIndice.button")}
             </Button>
-            <Button variant="outline" onClick={() => setReportDialog("declaracion-jurada-mensual")}>
+            <Button variant="outline" onClick={() => setReportDialog("monthly-sworn-statement")}>
               <FileText className="h-4 w-4" />{t("reports.ddjjMensual.button")}
             </Button>
-            <Button variant="outline" onClick={() => setReportDialog("declaracion-jurada-rentas")}>
+            <Button variant="outline" onClick={() => setReportDialog("tax-sworn-statement")}>
               <FileText className="h-4 w-4" />{t("reports.ddjjRentas.button")}
             </Button>
           </div>
@@ -125,7 +125,7 @@ export default function ProtocolPage() {
               <FormField label={tc("year")} required>
                 <Input type="number" value={reportYear} onChange={(e) => setReportYear(e.target.value)} />
               </FormField>
-              {reportDialog !== "libro-indice" && (
+              {reportDialog !== "index-book" && (
                 <FormField label={tc("month")} required helperText="1 – 12">
                   <Input type="number" min="1" max="12" value={reportMonth} onChange={(e) => setReportMonth(e.target.value)} />
                 </FormField>
