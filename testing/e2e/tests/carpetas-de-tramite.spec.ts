@@ -8,15 +8,15 @@ import { type Page, test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";
 import {
   apiGet,
-  createPersona,
-  createPresupuesto,
-  createEstadoGestion,
-  createTipoTramite,
+  createPerson,
+  createBudget,
+  createManagementStatus,
+  createProcedureType,
   createWorkflowDefinition,
   createWorkflowNode,
   createWorkflowTransition,
-  assignWorkflowToTipoTramite,
-  createCompleteCaseGestion,
+  assignWorkflowToProcedureType,
+  createCompleteCaseManagement,
 } from "./setup/api-helpers";
 import { listRow } from "./setup/list-locators";
 
@@ -38,11 +38,11 @@ async function findEstadoArchivada(page: Page): Promise<{ idManagementStatus: nu
 }
 
 /** Seeds a gestión whose workflow allows a direct transition to "Archivada". */
-async function seedArchivableGestion(page: Page) {
-  const persona = await createPersona(page);
-  const presupuesto = await createPresupuesto(page, persona.data!.personId);
+async function seedArchivableManagement(page: Page) {
+  const persona = await createPerson(page);
+  const presupuesto = await createBudget(page, persona.data!.personId);
 
-  const estadoInicial = await createEstadoGestion(page);
+  const estadoInicial = await createManagementStatus(page);
   const estadoArchivada = await findEstadoArchivada(page);
   const workflow = await createWorkflowDefinition(page);
   const workflowId = workflow.data!.id;
@@ -61,10 +61,10 @@ async function seedArchivableGestion(page: Page) {
   );
   await createWorkflowTransition(page, workflowId, nodoInicial.data!.id, nodoArchivada.data!.id);
 
-  const tipoTramite = await createTipoTramite(page);
-  await assignWorkflowToTipoTramite(page, tipoTramite.data!.idProcedureType, workflowId);
+  const tipoTramite = await createProcedureType(page);
+  await assignWorkflowToProcedureType(page, tipoTramite.data!.idProcedureType, workflowId);
 
-  const gestion = await createCompleteCaseGestion(page, {
+  const gestion = await createCompleteCaseManagement(page, {
     budgetId: presupuesto.data!.idBudget,
     procedureTypeId: tipoTramite.data!.idProcedureType,
     statusManagementId: estadoInicial.data!.idManagementStatus,
@@ -81,7 +81,7 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
   test("golden path: iniciar trámite genera carpeta activa, se pone en espera y se archiva con la gestión", async ({
     page,
   }) => {
-    const { idGestion, numero } = await seedArchivableGestion(page);
+    const { idGestion, numero } = await seedArchivableManagement(page);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
@@ -121,7 +121,7 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
   });
 
   test("edge path: poner en espera sin motivo muestra un error visible", async ({ page }) => {
-    const { idGestion, numero } = await seedArchivableGestion(page);
+    const { idGestion, numero } = await seedArchivableManagement(page);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
@@ -144,7 +144,7 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
   test("edge path: archivar una gestión con carpeta en espera exige confirmación explícita", async ({
     page,
   }) => {
-    const { idGestion, numero } = await seedArchivableGestion(page);
+    const { idGestion, numero } = await seedArchivableManagement(page);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
@@ -175,7 +175,7 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
     { width: 1024, height: 768, label: "1024px (desktop)" },
   ]) {
     test(`carpetas dialog is usable at ${viewport.label}`, async ({ page }) => {
-      const { idGestion, numero } = await seedArchivableGestion(page);
+      const { idGestion, numero } = await seedArchivableManagement(page);
 
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto("/dashboard/managements");

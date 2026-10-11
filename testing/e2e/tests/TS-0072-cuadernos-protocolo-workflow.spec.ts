@@ -3,9 +3,9 @@
  */
 import { type Page, test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";
-import { createPersona, createFolio, uniqueId } from "./setup/api-helpers";
+import { createPerson, createFolio, uniqueId } from "./setup/api-helpers";
 
-async function seedFoliosConsecutivos(
+async function seedConsecutiveFolios(
   page: Page,
   notaryId: number,
   count: number,
@@ -28,9 +28,9 @@ test.describe("CU80 - Administrar Cuadernos de Folios", () => {
   });
 
   test("golden path: creating a cuaderno from 10 consecutive folios shows it in the list", async ({ page }) => {
-    const persona = await createPersona(page);
+    const persona = await createPerson(page);
     const notaryId = persona.data!.personId;
-    const folios = await seedFoliosConsecutivos(page, notaryId, 10);
+    const folios = await seedConsecutiveFolios(page, notaryId, 10);
 
     await page.goto("/dashboard/protocol/notebooks");
     await page.waitForLoadState("domcontentloaded");
@@ -51,8 +51,8 @@ test.describe("CU80 - Administrar Cuadernos de Folios", () => {
   test("checkbox selection toggles independently for each folio (regression for double-toggle bug)", async ({
     page,
   }) => {
-    const persona = await createPersona(page);
-    const folios = await seedFoliosConsecutivos(page, persona.data!.personId, 3);
+    const persona = await createPerson(page);
+    const folios = await seedConsecutiveFolios(page, persona.data!.personId, 3);
 
     await page.goto("/dashboard/protocol/notebooks");
     await page.waitForLoadState("domcontentloaded");
@@ -73,8 +73,8 @@ test.describe("CU80 - Administrar Cuadernos de Folios", () => {
   });
 
   test("edge path: selecting a count that is not a multiple of ten shows a validation error", async ({ page }) => {
-    const persona = await createPersona(page);
-    const folios = await seedFoliosConsecutivos(page, persona.data!.personId, 3);
+    const persona = await createPerson(page);
+    const folios = await seedConsecutiveFolios(page, persona.data!.personId, 3);
 
     await page.goto("/dashboard/protocol/notebooks");
     await page.waitForLoadState("domcontentloaded");
@@ -91,8 +91,8 @@ test.describe("CU80 - Administrar Cuadernos de Folios", () => {
   });
 
   test("edge path: including a damaged folio without observaciones shows a validation error", async ({ page }) => {
-    const persona = await createPersona(page);
-    const folios = await seedFoliosConsecutivos(page, persona.data!.personId, 10, {
+    const persona = await createPerson(page);
+    const folios = await seedConsecutiveFolios(page, persona.data!.personId, 10, {
       estados: ["Errose"],
     });
 

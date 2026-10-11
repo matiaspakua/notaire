@@ -10,14 +10,14 @@
  */
 import { type Page, test, expect } from '@playwright/test'
 import { authenticateAsAdmin } from './setup/auth'
-import { createPersona, createPresupuesto, seedGestionWithWorkflow } from './setup/api-helpers'
+import { createPerson, createBudget, seedManagementWithWorkflow } from './setup/api-helpers'
 import { listRow } from './setup/list-locators'
 
 // ──────────────────────────────────────────────
 // Shared seed helper
 // ──────────────────────────────────────────────
 
-interface SeededGestion {
+interface SeededManagement {
   idGestion: number
   numero: number
   estadoInicial: string
@@ -26,12 +26,12 @@ interface SeededGestion {
   personaApellido: string
 }
 
-async function seedFullWorkflow(page: Page): Promise<SeededGestion> {
-  const persona = await createPersona(page)
+async function seedFullWorkflow(page: Page): Promise<SeededManagement> {
+  const persona = await createPerson(page)
   const personaId = persona.data!.personId
   const personaApellido = persona.data!.lastName!
-  const presupuesto = await createPresupuesto(page, personaId)
-  const gestion = await seedGestionWithWorkflow(page, presupuesto.data!.idBudget)
+  const presupuesto = await createBudget(page, personaId)
+  const gestion = await seedManagementWithWorkflow(page, presupuesto.data!.idBudget)
   return { ...gestion, personaId, personaApellido }
 }
 
@@ -67,9 +67,9 @@ test.describe('CU02 - Iniciar Gestión', () => {
 
   test('CU02-GW03: picker de presupuesto muestra el nombre del cliente asociado (#889)', async ({ page }) => {
     // Seed a fresh persona + presupuesto to ensure option exists
-    const persona = await createPersona(page)
+    const persona = await createPerson(page)
     const personaId = persona.data!.personId
-    await createPresupuesto(page, personaId)
+    await createBudget(page, personaId)
 
     // Fetch the persona's apellido from the seeded data to locate the option
     const apellido = persona.data!.lastName ?? ''
@@ -98,7 +98,7 @@ test.describe('Full workflow: CU02 → CU13 → CU83 → CU16', () => {
   })
 
   test('golden path — gestión en tabla → bitácora 1 entrada → cambiar estado → bitácora 2 entradas', async ({ page }) => {
-    // Step 1: seed — createPersona → createPresupuesto → seedGestionWithWorkflow
+    // Step 1: seed — createPerson → createBudget → seedManagementWithWorkflow
     const { idGestion, numero, estadoInicial, estadoFinal } = await seedFullWorkflow(page)
 
     // Step 2: navegar a /dashboard/managements y verificar que la gestión aparece con estado inicial

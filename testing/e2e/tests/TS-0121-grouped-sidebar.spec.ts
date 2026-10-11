@@ -5,7 +5,7 @@
  * from the same config; non-admins get neither Administración nor Auditoría.
  */
 import { test, expect, type Page } from "@playwright/test";
-import { createUsuario } from "./setup/api-helpers";
+import { createUser } from "./setup/api-helpers";
 import { authenticateAsAdmin, establishAdminBrowserSession } from "./setup/auth";
 
 const SECTIONS = [
@@ -69,8 +69,8 @@ test.describe("TS-0121 grouped sidebar (#1367)", () => {
     const username = `emp1367-${Date.now()}`;
     const password = "Test1234!";
     await authenticateAsAdmin(page);
-    const created = await createUsuario(page, undefined, { name: username, password, type: "EMPLEADO", active: true });
-    expect(created.ok, `createUsuario failed: ${created.status} ${created.error}`).toBe(true);
+    const created = await createUser(page, undefined, { name: username, password, type: "EMPLEADO", active: true });
+    expect(created.ok, `createUser failed: ${created.status} ${created.error}`).toBe(true);
     await page.context().clearCookies();
     await page.goto("/login");
     await page.evaluate(() => localStorage.clear());

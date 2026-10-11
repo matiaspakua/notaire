@@ -9,10 +9,10 @@
 import { test, expect } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
 import {
-  createConcepto,
-  createPersona,
-  createPresupuesto,
-  createUsuario,
+  createConcept,
+  createPerson,
+  createBudget,
+  createUser,
 } from "./setup/api-helpers";
 import { listView } from "./setup/list-locators";
 
@@ -30,8 +30,8 @@ test.describe("Icon-only buttons expose accessible names (#1057)", () => {
   });
 
   test("usuarios row actions are reachable by role name", async ({ page }) => {
-    const created = await createUsuario(page);
-    expect(created.ok, created.error ?? "createUsuario failed").toBe(true);
+    const created = await createUser(page);
+    expect(created.ok, created.error ?? "createUser failed").toBe(true);
 
     const table = await openList(page, "/dashboard/administration/users");
     await expect(table.getByRole("button", { name: /editar|edit/i }).first()).toBeVisible({
@@ -41,8 +41,8 @@ test.describe("Icon-only buttons expose accessible names (#1057)", () => {
   });
 
   test("personas row actions are reachable by role name", async ({ page }) => {
-    const created = await createPersona(page);
-    expect(created.ok, created.error ?? "createPersona failed").toBe(true);
+    const created = await createPerson(page);
+    expect(created.ok, created.error ?? "createPerson failed").toBe(true);
 
     const table = await openList(page, "/dashboard/people");
     await expect(table.getByRole("button", { name: /editar|edit/i }).first()).toBeVisible({
@@ -52,10 +52,10 @@ test.describe("Icon-only buttons expose accessible names (#1057)", () => {
   });
 
   test("presupuestos resumen action is reachable by role name", async ({ page }) => {
-    const persona = await createPersona(page);
-    expect(persona.ok, persona.error ?? "createPersona failed").toBe(true);
-    const presupuesto = await createPresupuesto(page, persona.data!.personId);
-    expect(presupuesto.ok, presupuesto.error ?? "createPresupuesto failed").toBe(true);
+    const persona = await createPerson(page);
+    expect(persona.ok, persona.error ?? "createPerson failed").toBe(true);
+    const presupuesto = await createBudget(page, persona.data!.personId);
+    expect(presupuesto.ok, presupuesto.error ?? "createBudget failed").toBe(true);
 
     const table = await openList(page, "/dashboard/budgets");
     await expect(page.getByTestId(/^btn-resumen-presupuesto-/).first()).toBeVisible({
@@ -67,8 +67,8 @@ test.describe("Icon-only buttons expose accessible names (#1057)", () => {
   });
 
   test("administracion/concepts NotaireIcon actions use button aria-label", async ({ page }) => {
-    const created = await createConcepto(page);
-    expect(created.ok, created.error ?? "createConcepto failed").toBe(true);
+    const created = await createConcept(page);
+    expect(created.ok, created.error ?? "createConcept failed").toBe(true);
 
     const table = await openList(page, "/dashboard/administration/concepts");
     await expect(table.getByRole("button", { name: /editar|edit/i }).first()).toBeVisible({
@@ -78,8 +78,8 @@ test.describe("Icon-only buttons expose accessible names (#1057)", () => {
   });
 
   test("named edit/delete remain visible at mobile viewport", async ({ page }) => {
-    const created = await createUsuario(page);
-    expect(created.ok, created.error ?? "createUsuario failed").toBe(true);
+    const created = await createUser(page);
+    expect(created.ok, created.error ?? "createUser failed").toBe(true);
 
     await page.setViewportSize({ width: 320, height: 720 });
     const table = await openList(page, "/dashboard/administration/users");

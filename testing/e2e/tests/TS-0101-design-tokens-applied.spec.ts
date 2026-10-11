@@ -9,7 +9,7 @@
  */
 import { test, expect, type Locator } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
-import { createPersona } from "./setup/api-helpers";
+import { createPerson } from "./setup/api-helpers";
 
 const BRAND_PRIMARY = "rgb(0, 113, 227)"; // #0071E3, owner decision 2026-10-09
 const WHITE = "rgb(255, 255, 255)";
@@ -33,8 +33,8 @@ test.describe("Design tokens are applied (#1337)", () => {
 
   test("active nav item has the primary pill and delete icons are red", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    const created = await createPersona(page);
-    expect(created.ok, created.error ?? "createPersona failed").toBe(true);
+    const created = await createPerson(page);
+    expect(created.ok, created.error ?? "createPerson failed").toBe(true);
 
     await page.goto("/dashboard/people");
     await page.waitForLoadState("networkidle");

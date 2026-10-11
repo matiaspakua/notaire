@@ -6,11 +6,11 @@ import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
 import { authenticateAsAdmin } from "./setup/auth";
 import {
-  createPersona,
-  createPresupuesto,
-  createTipoTramite,
-  createConcepto,
-  createPlantillaPresupuesto,
+  createPerson,
+  createBudget,
+  createProcedureType,
+  createConcept,
+  createBudgetTemplate,
 } from "./setup/api-helpers";
 
 test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
@@ -23,27 +23,27 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
 
   test("carga los ítems de la plantilla del tipo de trámite en el presupuesto", async ({ page }) => {
     // GIVEN: presupuesto, tipo de trámite con plantilla configurada
-    const personaResult = await createPersona(page);
+    const personaResult = await createPerson(page);
     expect(personaResult.ok).toBe(true);
-    const presupuestoResult = await createPresupuesto(page, personaResult.data!.personId);
+    const presupuestoResult = await createBudget(page, personaResult.data!.personId);
     expect(presupuestoResult.ok).toBe(true);
     const idPresupuesto = presupuestoResult.data!.idBudget;
 
     // Own uniquely named type: `.last()` on a shared name raced with parallel tests.
     const tipoTramiteName = `Tipo Items E2E ${Date.now()}`;
-    const tipoTramiteResult = await createTipoTramite(page, { name: tipoTramiteName });
+    const tipoTramiteResult = await createProcedureType(page, { name: tipoTramiteName });
     expect(tipoTramiteResult.ok).toBe(true);
     const idTipoTramite = tipoTramiteResult.data!.idProcedureType;
 
-    const conceptoResult = await createConcepto(page, { name: "Honorarios E2E", value: 1500 });
+    const conceptoResult = await createConcept(page, { name: "Honorarios E2E", value: 1500 });
     expect(conceptoResult.ok).toBe(true);
 
-    const plantillaResult = await createPlantillaPresupuesto(
+    const plantillaResult = await createBudgetTemplate(
       page,
       idTipoTramite,
       conceptoResult.data!.idConcept,
     );
-    expect(plantillaResult.ok, `createPlantillaPresupuesto failed: ${plantillaResult.error}`).toBe(true);
+    expect(plantillaResult.ok, `createBudgetTemplate failed: ${plantillaResult.error}`).toBe(true);
 
     // WHEN: operador abre los ítems del presupuesto y elige el tipo de trámite
     await steps.givenUserIsOnPage("/dashboard/budgets");
@@ -70,19 +70,19 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
   test("crea el presupuesto desde el formulario con los ítems de la plantilla del tipo de trámite", async ({ page }) => {
     // GIVEN: persona, tipo de trámite con plantilla configurada
     const lastName = `Plantilla-${Date.now()}`;
-    const personaResult = await createPersona(page, { lastName });
+    const personaResult = await createPerson(page, { lastName });
     expect(personaResult.ok).toBe(true);
     const tipoTramiteName = `Tipo Alta E2E ${Date.now()}`;
-    const tipoTramiteResult = await createTipoTramite(page, { name: tipoTramiteName });
+    const tipoTramiteResult = await createProcedureType(page, { name: tipoTramiteName });
     expect(tipoTramiteResult.ok).toBe(true);
-    const conceptoResult = await createConcepto(page, { name: "Honorarios Alta E2E", value: 2500 });
+    const conceptoResult = await createConcept(page, { name: "Honorarios Alta E2E", value: 2500 });
     expect(conceptoResult.ok).toBe(true);
-    const plantillaResult = await createPlantillaPresupuesto(
+    const plantillaResult = await createBudgetTemplate(
       page,
       tipoTramiteResult.data!.idProcedureType,
       conceptoResult.data!.idConcept,
     );
-    expect(plantillaResult.ok, `createPlantillaPresupuesto failed: ${plantillaResult.error}`).toBe(true);
+    expect(plantillaResult.ok, `createBudgetTemplate failed: ${plantillaResult.error}`).toBe(true);
 
     // WHEN: el operador crea el presupuesto eligiendo cliente, monto y tipo de trámite
     await steps.givenUserIsOnPage("/dashboard/budgets");
@@ -104,13 +104,13 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
   });
 
   test("muestra un error cuando el tipo de trámite no tiene plantilla configurada", async ({ page }) => {
-    const personaResult = await createPersona(page);
+    const personaResult = await createPerson(page);
     expect(personaResult.ok).toBe(true);
-    const presupuestoResult = await createPresupuesto(page, personaResult.data!.personId);
+    const presupuestoResult = await createBudget(page, personaResult.data!.personId);
     expect(presupuestoResult.ok).toBe(true);
     const idPresupuesto = presupuestoResult.data!.idBudget;
 
-    const tipoTramiteResult = await createTipoTramite(page, { name: `Sin Plantilla E2E ${Date.now()}` });
+    const tipoTramiteResult = await createProcedureType(page, { name: `Sin Plantilla E2E ${Date.now()}` });
     expect(tipoTramiteResult.ok).toBe(true);
 
     await steps.givenUserIsOnPage("/dashboard/budgets");
@@ -144,9 +144,9 @@ for (const viewport of [
     const steps = new GherkinSteps(page);
     await authenticateAsAdmin(page);
 
-    const personaResult = await createPersona(page);
+    const personaResult = await createPerson(page);
     expect(personaResult.ok).toBe(true);
-    const presupuestoResult = await createPresupuesto(page, personaResult.data!.personId);
+    const presupuestoResult = await createBudget(page, personaResult.data!.personId);
     expect(presupuestoResult.ok).toBe(true);
     const idPresupuesto = presupuestoResult.data!.idBudget;
 

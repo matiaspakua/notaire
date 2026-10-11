@@ -10,7 +10,7 @@
 import { type Page, test, expect } from '@playwright/test'
 import { GherkinSteps } from './gherkin-helpers'
 import { authenticateAsAdmin } from './setup/auth'
-import { createPersona, uniqueId } from './setup/api-helpers'
+import { createPerson, uniqueId } from './setup/api-helpers'
 
 // ---------------------------------------------------------------------------
 // NOTE ON CU18 MECHANISM
@@ -372,7 +372,7 @@ test.describe('CU61 - Buscar persona o cliente', () => {
       const steps = new GherkinSteps(page)
 
       // Given — a persona was created via API with a unique apellido
-      const result = await createPersona(page, {
+      const result = await createPerson(page, {
         lastName: `BuscaApellido${uniqueId() % 100_000}`,
         identificationNumber: `CU61A${uniqueId() % 10_000_000}`,
       })
@@ -403,7 +403,7 @@ test.describe('CU61 - Buscar persona o cliente', () => {
 
       // Given — a persona with a unique DNI
       const dni = `CU61D${uniqueId() % 10_000_000}`
-      const result = await createPersona(page, {
+      const result = await createPerson(page, {
         lastName: `BuscaDni${uniqueId() % 100_000}`,
         identificationNumber: dni,
       })
@@ -540,7 +540,7 @@ test.describe('Personas screen - responsive viewports', () => {
 test.describe('#1357 - Debounced personas search', () => {
   test('typing a surname quickly sends one /people/search request and finds the person', async ({ page }) => {
     await loginAndGoToPersonas(page)
-    const created = await createPersona(page)
+    const created = await createPerson(page)
     const lastName = created.data!.lastName!
     const searches: string[] = []
     page.on('request', (r) => {

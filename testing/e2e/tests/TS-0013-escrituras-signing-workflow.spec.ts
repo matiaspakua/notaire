@@ -10,7 +10,7 @@
 import { type Page, test, expect } from '@playwright/test'
 import { GherkinSteps } from './gherkin-helpers'
 import { authenticateAsAdmin } from './setup/auth'
-import { createFolio, createPersona, uniqueId } from './setup/api-helpers'
+import { createFolio, createPerson, uniqueId } from './setup/api-helpers'
 import { apiPost } from './setup/api-helpers'
 
 // ──────────────────────────────────────────────
@@ -18,7 +18,7 @@ import { apiPost } from './setup/api-helpers'
 // ──────────────────────────────────────────────
 
 /** Seed a folio in estado "Nuevo" and return its idFolio */
-async function seedFolioNuevo(page: Page): Promise<number> {
+async function seedNewFolio(page: Page): Promise<number> {
   const result = await createFolio(page, 1, { status: 'Nuevo' })
   if (!result.ok || !result.data?.idFolio) {
     throw new Error(`Failed to seed folio: ${result.error ?? JSON.stringify(result.data)}`)
@@ -31,7 +31,7 @@ async function seedFolioNuevo(page: Page): Promise<number> {
  * Returns the idEscritura and numero — the table only renders `numero`, not `cuerpo`,
  * so tests must match rows by numero.
  */
-async function seedEscrituraConFolio(page: Page, idFolio: number): Promise<{ idEscritura: number; numero: number }> {
+async function seedDeedWithFolio(page: Page, idFolio: number): Promise<{ idEscritura: number; numero: number }> {
   const id = uniqueId()
   const result = await apiPost<{ idDeed: number }>(page, '/deeds', {
     number: id,
@@ -51,7 +51,7 @@ async function seedEscrituraConFolio(page: Page, idFolio: number): Promise<{ idE
  * Seed a escritura in estado "Sin Firmar" WITHOUT a folio — used by the edge-case
  * test that verifies firmar is blocked when no folio is assigned.
  */
-async function seedEscrituraSinFolio(page: Page): Promise<{ idEscritura: number; numero: number }> {
+async function seedDeedWithoutFolio(page: Page): Promise<{ idEscritura: number; numero: number }> {
   const id = uniqueId()
   const result = await apiPost<{ idDeed: number }>(page, '/deeds', {
     number: id,
@@ -76,7 +76,7 @@ test.describe('CU05 - Preparar Deed', () => {
 
   test('CU05-GW01: golden path — modal opens with número, fecha and folio selector', async ({ page }) => {
     // Seed: ensure at least one folio is available for the picker
-    await seedFolioNuevo(page)
+    await seedNewFolio(page)
 
     await page.goto('/dashboard/deeds')
     await page.waitForLoadState('domcontentloaded')
@@ -99,7 +99,7 @@ test.describe('CU05 - Preparar Deed', () => {
   })
 
   test('CU05-GW02: golden path — fill form with folio → escritura appears in table as Sin Firmar', async ({ page }) => {
-    const idFolio = await seedFolioNuevo(page)
+    const idFolio = await seedNewFolio(page)
 
     await page.goto('/dashboard/deeds')
     await page.waitForLoadState('domcontentloaded')
@@ -155,8 +155,8 @@ test.describe('CU06 - Firmar Deed', () => {
 
   test('CU06-GW01: golden path — escritura Sin Firmar con folio → firmar → estado Firmada', async ({ page }) => {
     // Seed: folio + escritura con folio asignado
-    const idFolio = await seedFolioNuevo(page)
-    const { idEscritura, numero } = await seedEscrituraConFolio(page, idFolio)
+    const idFolio = await seedNewFolio(page)
+    const { idEscritura, numero } = await seedDeedWithFolio(page, idFolio)
 
     await page.goto('/dashboard/deeds')
     await page.waitForLoadState('domcontentloaded')
@@ -180,7 +180,7 @@ test.describe('CU06 - Firmar Deed', () => {
 
   test('CU06-EDGE01: escritura Sin Firmar SIN folio → botón firmar deshabilitado o muestra error', async ({ page }) => {
     // Seed: escritura sin folio asignado
-    const { idEscritura, numero } = await seedEscrituraSinFolio(page)
+    const { idEscritura, numero } = await seedDeedWithoutFolio(page)
 
     await page.goto('/dashboard/deeds')
     await page.waitForLoadState('domcontentloaded')

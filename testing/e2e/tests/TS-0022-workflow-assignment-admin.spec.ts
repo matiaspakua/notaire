@@ -6,7 +6,7 @@
  * Arranges its own tipo-tramite via API helpers (#1066) — never skips when the table is empty.
  */
 import { test, expect, type Page } from "@playwright/test";
-import { createTipoTramite } from "./setup/api-helpers";
+import { createProcedureType } from "./setup/api-helpers";
 
 async function loginAsAdmin(page: Page) {
   await page.goto("/login");
@@ -18,7 +18,7 @@ async function loginAsAdmin(page: Page) {
 
 /** Create a tipo de trámite; fail the test if arrange/seed fails (do not skip). */
 async function arrangeTipoTramite(page: Page): Promise<number> {
-  const created = await createTipoTramite(page, {
+  const created = await createProcedureType(page, {
     name: `Asignación E2E ${Date.now()}`,
   });
   expect(

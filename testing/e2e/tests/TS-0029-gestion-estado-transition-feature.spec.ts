@@ -4,13 +4,13 @@
  */
 import { type Page, test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";
-import { createPersona, createPresupuesto, seedGestionWithWorkflow } from "./setup/api-helpers";
+import { createPerson, createBudget, seedManagementWithWorkflow } from "./setup/api-helpers";
 import { listRow } from "./setup/list-locators";
 
-async function seedGestion(page: Page) {
-  const persona = await createPersona(page);
-  const presupuesto = await createPresupuesto(page, persona.data!.personId);
-  return seedGestionWithWorkflow(page, presupuesto.data!.idBudget);
+async function seedManagement(page: Page) {
+  const persona = await createPerson(page);
+  const presupuesto = await createBudget(page, persona.data!.personId);
+  return seedManagementWithWorkflow(page, presupuesto.data!.idBudget);
 }
 
 test.describe("CU83 - Cambiar estado de una gestión", () => {
@@ -19,7 +19,7 @@ test.describe("CU83 - Cambiar estado de una gestión", () => {
   });
 
   test("golden path: transitioning to a valid destination updates the estado", async ({ page }) => {
-    const { idGestion, numero, estadoFinal } = await seedGestion(page);
+    const { idGestion, numero, estadoFinal } = await seedManagement(page);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
@@ -40,7 +40,7 @@ test.describe("CU83 - Cambiar estado de una gestión", () => {
   });
 
   test("edge path: only valid workflow destinations are offered", async ({ page }) => {
-    const { idGestion, estadoInicial, estadoFinal } = await seedGestion(page);
+    const { idGestion, estadoInicial, estadoFinal } = await seedManagement(page);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
@@ -59,7 +59,7 @@ test.describe("CU83 - Cambiar estado de una gestión", () => {
     { width: 1024, height: 768, label: "1024px (desktop)" },
   ]) {
     test(`cambiar estado action is usable at ${viewport.label}`, async ({ page }) => {
-      const { idGestion, numero, estadoFinal } = await seedGestion(page);
+      const { idGestion, numero, estadoFinal } = await seedManagement(page);
 
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto("/dashboard/managements");

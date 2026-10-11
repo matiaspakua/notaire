@@ -5,15 +5,15 @@
  */
 import { test, expect } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
-import { createPersona, createPresupuesto } from "./setup/api-helpers";
+import { createPerson, createBudget } from "./setup/api-helpers";
 
 test.describe("Budget status vocabulary (#1346)", () => {
   test("a pending budget can be filtered, shows a translated status and keeps it in the edit dialog", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    const person = await createPersona(page, { isClient: true });
+    const person = await createPerson(page, { isClient: true });
     expect(person.ok, person.error).toBe(true);
     // Any letter case is accepted and stored as the canonical code.
-    const budget = await createPresupuesto(page, person.data!.personId, undefined, { status: "Pendiente" });
+    const budget = await createBudget(page, person.data!.personId, undefined, { status: "Pendiente" });
     expect(budget.ok, budget.error).toBe(true);
     const id = budget.data!.idBudget;
 

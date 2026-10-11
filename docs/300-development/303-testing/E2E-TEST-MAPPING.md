@@ -72,7 +72,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 - `personas.spec.ts` → merged into TS-0015 (module CRUD duplicate)
 - `suplencias.spec.ts` → merged into TS-0017 (module view duplicate)
 
-**Fixture Pattern**: GherkinSteps Given-When-Then, createPersona/createPresupuesto API helpers
+**Fixture Pattern**: GherkinSteps Given-When-Then, createPerson/createBudget API helpers
 **Setup**: givenUserIsLoggedIn() + givenUserIsOnPage("/dashboard/...")
 **Dependencies**: TS-0001 (login must succeed), API helpers, global-setup auth
 
@@ -183,7 +183,7 @@ test("scenario", async () => {
 **Fixture Components**:
 
 - `GherkinSteps` class (given-helpers.ts)
-- API helpers: `createPersona()`, `createPresupuesto()`, etc. (setup/api-helpers.ts)
+- API helpers: `createPerson()`, `createBudget()`, etc. (setup/api-helpers.ts)
 - Global auth: `global-setup.ts` injects `E2E_ADMIN_TOKEN`
 
 ### Pattern 2: Direct Navigation (No GherkinSteps)
@@ -239,7 +239,7 @@ CU21 edit is **not** in this inventory (unskipped in #1057). Vitest
 |----|-------------|--------|
 | TS-0016 | CU21 edit (icon-only unnamed) | Unskipped — #1057 (`aria-label` + `getByRole`) |
 | TS-0021 | Conditional empty-table skip | Fixed — #1066 (`createWorkflowDefinition`) |
-| TS-0022 | Conditional empty-table skip | Fixed — #1066 (`createTipoTramite`) |
+| TS-0022 | Conditional empty-table skip | Fixed — #1066 (`createProcedureType`) |
 | TS-0010–TS-0015 historical design skips | Formerly listed in this doc | No static `test.skip` on current `main` |
 
 **Policy**: Intentional feature-gap skips MUST cite an open GitHub issue in the

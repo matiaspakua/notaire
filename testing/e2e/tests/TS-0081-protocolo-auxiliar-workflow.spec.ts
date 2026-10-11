@@ -3,12 +3,12 @@
  */
 import { test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";
-import { createPersona, createFolio, createTipoDeFolio } from "./setup/api-helpers";
+import { createPerson, createFolio, createFolioType } from "./setup/api-helpers";
 import { rowWithCell } from "./setup/rows";
 
-async function seedFolioAuxiliarDisponible(page: import("@playwright/test").Page) {
-  const persona = await createPersona(page);
-  const tipoAuxiliar = await createTipoDeFolio(page, { isAuxiliary: true });
+async function seedAvailableAuxiliaryFolio(page: import("@playwright/test").Page) {
+  const persona = await createPerson(page);
+  const tipoAuxiliar = await createFolioType(page, { isAuxiliary: true });
   const folio = await createFolio(page, persona.data!.personId, {
     typeFolioId: tipoAuxiliar.data!.idFolioType,
   });
@@ -23,7 +23,7 @@ test.describe("CU81 - Gestión de Trámites en Protocolo Auxiliar", () => {
   test("golden path: starting an escritura on an available auxiliar folio removes it from the list", async ({
     page,
   }) => {
-    const idFolio = await seedFolioAuxiliarDisponible(page);
+    const idFolio = await seedAvailableAuxiliaryFolio(page);
 
     await page.goto("/dashboard/protocol/auxiliary");
     await page.waitForLoadState("domcontentloaded");
@@ -43,7 +43,7 @@ test.describe("CU81 - Gestión de Trámites en Protocolo Auxiliar", () => {
   });
 
   test("edge path: submit button stays disabled until the cuerpo field is filled", async ({ page }) => {
-    const idFolio = await seedFolioAuxiliarDisponible(page);
+    const idFolio = await seedAvailableAuxiliaryFolio(page);
 
     await page.goto("/dashboard/protocol/auxiliary");
     await page.waitForLoadState("domcontentloaded");

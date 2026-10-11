@@ -5,7 +5,7 @@
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
 import { authenticateAsAdmin } from "./setup/auth";
-import { createPersona, createPresupuesto, createItem } from "./setup/api-helpers";
+import { createPerson, createBudget, createItem } from "./setup/api-helpers";
 
 test.describe("CU71 - Agregar ítems del catálogo (golden path)", () => {
   let steps: GherkinSteps;
@@ -17,9 +17,9 @@ test.describe("CU71 - Agregar ítems del catálogo (golden path)", () => {
 
   test("agrega un ítem del catálogo al presupuesto y lo muestra en el desglose", async ({ page }) => {
     // GIVEN: presupuesto y un ítem reutilizable en el catálogo
-    const personaResult = await createPersona(page);
+    const personaResult = await createPerson(page);
     expect(personaResult.ok).toBe(true);
-    const presupuestoResult = await createPresupuesto(page, personaResult.data!.personId);
+    const presupuestoResult = await createBudget(page, personaResult.data!.personId);
     expect(presupuestoResult.ok).toBe(true);
     const idPresupuesto = presupuestoResult.data!.idBudget;
 
@@ -47,9 +47,9 @@ test.describe("CU71 - Agregar ítems del catálogo (golden path)", () => {
   });
 
   test("permite combinar un ítem de plantilla y uno de catálogo en el mismo presupuesto", async ({ page }) => {
-    const personaResult = await createPersona(page);
+    const personaResult = await createPerson(page);
     expect(personaResult.ok).toBe(true);
-    const presupuestoResult = await createPresupuesto(page, personaResult.data!.personId);
+    const presupuestoResult = await createBudget(page, personaResult.data!.personId);
     expect(presupuestoResult.ok).toBe(true);
     const idPresupuesto = presupuestoResult.data!.idBudget;
 

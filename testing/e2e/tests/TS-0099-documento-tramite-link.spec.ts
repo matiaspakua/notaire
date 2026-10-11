@@ -8,10 +8,10 @@ import { test, expect } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
 import {
   apiPost,
-  createPersona,
-  createTipoDocumento,
-  createTipoTramite,
-  createTramite,
+  createPerson,
+  createDocumentType,
+  createProcedureType,
+  createProcedure,
   uniqueId,
 } from "./setup/api-helpers";
 
@@ -21,8 +21,8 @@ test.describe("#773 - Documento vinculado a un trámite", () => {
   });
 
   test("creates a document for a trámite and lists it in the case summary", async ({ page }) => {
-    const escribano = await createPersona(page, { isClient: false });
-    expect(escribano.ok, escribano.error ?? "createPersona failed").toBe(true);
+    const escribano = await createPerson(page, { isClient: false });
+    expect(escribano.ok, escribano.error ?? "createPerson failed").toBe(true);
     const numeroGestion = uniqueId() % 1_000_000;
     const gestion = await apiPost<{ idManagement: number }>(page, "/managements", {
       heading: `Gestión documentos E2E ${numeroGestion}`,
@@ -31,13 +31,13 @@ test.describe("#773 - Documento vinculado a un trámite", () => {
       notaryPersonId: escribano.data!.personId,
     });
     expect(gestion.ok, gestion.error ?? "create gestión failed").toBe(true);
-    const tipoTramite = await createTipoTramite(page);
-    expect(tipoTramite.ok, tipoTramite.error ?? "createTipoTramite failed").toBe(true);
-    const tramite = await createTramite(page, gestion.data!.idManagement, tipoTramite.data!.idProcedureType);
-    expect(tramite.ok, `createTramite ${tramite.status}`).toBe(true);
+    const tipoTramite = await createProcedureType(page);
+    expect(tipoTramite.ok, tipoTramite.error ?? "createProcedureType failed").toBe(true);
+    const tramite = await createProcedure(page, gestion.data!.idManagement, tipoTramite.data!.idProcedureType);
+    expect(tramite.ok, `createProcedure ${tramite.status}`).toBe(true);
     const tipoNombre = `Certificado E2E ${uniqueId()}`;
-    const tipoDocumento = await createTipoDocumento(page, { name: tipoNombre, expires: false });
-    expect(tipoDocumento.ok, tipoDocumento.error ?? "createTipoDocumento failed").toBe(true);
+    const tipoDocumento = await createDocumentType(page, { name: tipoNombre, expires: false });
+    expect(tipoDocumento.ok, tipoDocumento.error ?? "createDocumentType failed").toBe(true);
 
     await page.goto("/dashboard/documents");
     await page.getByTestId("btn-nuevo-documento").click();

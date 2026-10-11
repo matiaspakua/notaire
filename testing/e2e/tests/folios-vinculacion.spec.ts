@@ -10,7 +10,7 @@ import { apiPost, createFolio, uniqueId } from './setup/api-helpers'
 const ESTADO_ESCRITURA_FIRMADA = 'Firmada'
 
 /** Seed a escritura already in estado "Firmada" (no folio linked) */
-async function seedEscrituraFirmada(page: Page): Promise<{ idEscritura: number; numero: number }> {
+async function seedSignedDeed(page: Page): Promise<{ idEscritura: number; numero: number }> {
   const id = uniqueId()
   const result = await apiPost<{ idDeed: number }>(page, '/deeds', {
     number: id,
@@ -55,7 +55,7 @@ test.describe('CU87 - Vincular Deed y Folio', () => {
   test('CU87-GW01: golden path — crear folio vinculado a escritura firmada → folio Utilizado y escritura muestra el folio', async ({
     page,
   }) => {
-    const { numero } = await seedEscrituraFirmada(page)
+    const { numero } = await seedSignedDeed(page)
     const numeroFolio = Math.floor(10000 + Math.random() * 90000)
 
     await page.goto('/dashboard/administration/folios')
@@ -89,7 +89,7 @@ test.describe('CU87 - Vincular Deed y Folio', () => {
   })
 
   test('CU87-EDGE01: escritura ya vinculada a otro folio no aparece disponible en el selector', async ({ page }) => {
-    const { idEscritura, numero } = await seedEscrituraFirmada(page)
+    const { idEscritura, numero } = await seedSignedDeed(page)
     const linked = await createFolio(page, 1, { status: 'Nuevo', deedId: idEscritura })
     if (!linked.ok) throw new Error(`Failed to seed linked folio: ${linked.error}`)
 
@@ -113,7 +113,7 @@ test.describe('CU87 - Vincular Deed y Folio', () => {
   })
 
   test('CU87-EDGE02: folio en estado Utilizado no puede editarse ni borrarse desde la grilla', async ({ page }) => {
-    const { idEscritura } = await seedEscrituraFirmada(page)
+    const { idEscritura } = await seedSignedDeed(page)
     const numeroFolio = Math.floor(10000 + Math.random() * 90000)
     const linked = await createFolio(page, 1, { number: numeroFolio, status: 'Nuevo', deedId: idEscritura })
     if (!linked.ok) throw new Error(`Failed to seed linked folio: ${linked.error}`)

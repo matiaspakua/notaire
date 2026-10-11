@@ -102,7 +102,7 @@ Every E2E suite uses a **Given-When-Then (Gherkin)** pattern via the `GherkinSte
  * 
  * Fixtures:
  * - GherkinSteps (Given-When-Then helpers)
- * - API create helpers: createPersona(), createPresupuesto()
+ * - API create helpers: createPerson(), createBudget()
  * - Global auth: global-setup.ts injects E2E_ADMIN_TOKEN
  */
 import { test, expect } from "@playwright/test";
@@ -136,7 +136,7 @@ test.describe("TS-0010 - Presupuesto Workflow", () => {
 | Component | Location | Purpose |
 |-----------|----------|---------|
 | **GherkinSteps** | `testing/e2e/tests/gherkin-helpers.ts` | Given-When-Then step definitions (login, modal, form, table assertions) |
-| **API Helpers** | `testing/e2e/tests/setup/api-helpers.ts` | Shared functions: `createPersona()`, `createPresupuesto()`, `seedGestion()` |
+| **API Helpers** | `testing/e2e/tests/setup/api-helpers.ts` | Shared functions: `createPerson()`, `createBudget()`, `seedManagement()` |
 | **Global Setup** | `testing/e2e/tests/setup/global-setup.ts` | Runs once per worker: login as admin, extract JWT to `process.env.E2E_ADMIN_TOKEN` |
 | **Global Teardown** | `testing/e2e/tests/setup/global-teardown.ts` | Cleanup after suite (close browser, audit logs) |
 | **Auth Helper** | `testing/e2e/tests/setup/auth.ts` | Inject cached token or re-login (`authenticateAsAdmin()`) |

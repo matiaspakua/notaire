@@ -10,7 +10,7 @@
  */
 
 import { test, expect, type Page } from "@playwright/test";
-import { apiGet, apiPost, apiPut, apiDelete, createPersona, createPresupuesto } from "./setup/api-helpers";
+import { apiGet, apiPost, apiPut, apiDelete, createPerson, createBudget } from "./setup/api-helpers";
 
 /**
  * CU health check configuration

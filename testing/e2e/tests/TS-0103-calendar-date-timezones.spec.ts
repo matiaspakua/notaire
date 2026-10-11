@@ -6,18 +6,18 @@
  */
 import { test, expect, type Page } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
-import { createPago, createPersona, createPresupuesto } from "./setup/api-helpers";
+import { createPayment, createPerson, createBudget } from "./setup/api-helpers";
 
 async function seedPayment(page: Page): Promise<number> {
-  const persona = await createPersona(page);
-  expect(persona.ok, persona.error ?? "createPersona failed").toBe(true);
-  const budget = await createPresupuesto(page, persona.data!.personId, undefined, {
+  const persona = await createPerson(page);
+  expect(persona.ok, persona.error ?? "createPerson failed").toBe(true);
+  const budget = await createBudget(page, persona.data!.personId, undefined, {
     date: "2026-08-07",
     propertyAmount: 10000, // a payment may not exceed the budget balance
   });
-  expect(budget.ok, budget.error ?? "createPresupuesto failed").toBe(true);
-  const pago = await createPago(page, budget.data!.idBudget, { date: "2026-08-07" });
-  expect(pago.ok, pago.error ?? "createPago failed").toBe(true);
+  expect(budget.ok, budget.error ?? "createBudget failed").toBe(true);
+  const pago = await createPayment(page, budget.data!.idBudget, { date: "2026-08-07" });
+  expect(pago.ok, pago.error ?? "createPayment failed").toBe(true);
   return pago.data!.idPayment;
 }
 

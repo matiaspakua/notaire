@@ -4,13 +4,13 @@
  */
 import { type Page, test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";
-import { createPersona, createPresupuesto, seedGestionWithWorkflow } from "./setup/api-helpers";
+import { createPerson, createBudget, seedManagementWithWorkflow } from "./setup/api-helpers";
 import { listRow } from "./setup/list-locators";
 
-async function seedGestion(page: Page) {
-  const persona = await createPersona(page);
-  const presupuesto = await createPresupuesto(page, persona.data!.personId);
-  return seedGestionWithWorkflow(page, presupuesto.data!.idBudget);
+async function seedManagement(page: Page) {
+  const persona = await createPerson(page);
+  const presupuesto = await createBudget(page, persona.data!.personId);
+  return seedManagementWithWorkflow(page, presupuesto.data!.idBudget);
 }
 
 test.describe("CU13 - Ver bitácora de una gestión", () => {
@@ -19,7 +19,7 @@ test.describe("CU13 - Ver bitácora de una gestión", () => {
   });
 
   test("golden path: transitioning a gestión adds a new bitácora entry", async ({ page }) => {
-    const { idGestion, numero, estadoInicial, estadoFinal } = await seedGestion(page);
+    const { idGestion, numero, estadoInicial, estadoFinal } = await seedManagement(page);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
@@ -45,7 +45,7 @@ test.describe("CU13 - Ver bitácora de una gestión", () => {
   });
 
   test("edge path: a gestión with only its initial estado shows a single bitácora entry", async ({ page }) => {
-    const { idGestion, numero, estadoInicial } = await seedGestion(page);
+    const { idGestion, numero, estadoInicial } = await seedManagement(page);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
@@ -65,7 +65,7 @@ test.describe("CU13 - Ver bitácora de una gestión", () => {
   test("edge path: archiving a gestión whose estado cannot transition to Archivada shows a visible error", async ({
     page,
   }) => {
-    const { idGestion, numero } = await seedGestion(page);
+    const { idGestion, numero } = await seedManagement(page);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
@@ -88,7 +88,7 @@ test.describe("CU13 - Ver bitácora de una gestión", () => {
     { width: 1024, height: 768, label: "1024px (desktop)" },
   ]) {
     test(`bitácora view is usable at ${viewport.label}`, async ({ page }) => {
-      const { idGestion, numero, estadoInicial } = await seedGestion(page);
+      const { idGestion, numero, estadoInicial } = await seedManagement(page);
 
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto("/dashboard/managements");

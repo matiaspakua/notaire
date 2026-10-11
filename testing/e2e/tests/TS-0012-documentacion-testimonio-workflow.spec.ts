@@ -29,7 +29,7 @@ interface TestimonioCreado {
 }
 
 /** Seed a "Firmada" escritura so CU07 has something to reference. */
-async function seedEscrituraFirmada(
+async function seedSignedDeed(
   page: import('@playwright/test').Page,
 ): Promise<EscrituraCreada> {
   const numero = uniqueId() % 1_000_000
@@ -40,7 +40,7 @@ async function seedEscrituraFirmada(
     status: 'Firmada',
   })
   if (!result.ok || !result.data?.idDeed) {
-    throw new Error(`seedEscrituraFirmada failed: status ${result.status} — ${result.error}`)
+    throw new Error(`seedSignedDeed failed: status ${result.status} — ${result.error}`)
   }
   return { idEscritura: result.data.idDeed, numero }
 }
@@ -49,10 +49,10 @@ async function seedEscrituraFirmada(
  * Seed a testimonio that is already "verificado" (true) so CU11/CU12 can
  * start directly from the movimientos page without repeating CU07/CU08.
  */
-async function seedTestimonioVerificado(
+async function seedVerifiedTestimony(
   page: import('@playwright/test').Page,
 ): Promise<TestimonioCreado> {
-  const { idEscritura, numero: escrituraNumero } = await seedEscrituraFirmada(page)
+  const { idEscritura, numero: escrituraNumero } = await seedSignedDeed(page)
   const numero = uniqueId() % 1_000_000
   const result = await apiPost<{ idTestimony: number }>(page, '/testimonies', {
     deed: { idDeed: idEscritura, number: escrituraNumero },
@@ -61,7 +61,7 @@ async function seedTestimonioVerificado(
     verified: true,
   })
   if (!result.ok || !result.data?.idTestimony) {
-    throw new Error(`seedTestimonioVerificado failed: status ${result.status} — ${result.error}`)
+    throw new Error(`seedVerifiedTestimony failed: status ${result.status} — ${result.error}`)
   }
   return { idTestimonio: result.data.idTestimony, numero }
 }
@@ -108,7 +108,7 @@ test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)'
 
   test('Golden path: generar → verificar → ingresar → inscribir → retirar', async ({ page }) => {
     // ── Seed ──────────────────────────────────────────
-    const { idEscritura, numero: escrituraNumero } = await seedEscrituraFirmada(page)
+    const { idEscritura, numero: escrituraNumero } = await seedSignedDeed(page)
 
     // ── CU07: Generar testimonio ──────────────────────
     await steps.givenUserIsOnPage('/dashboard/testimonies')
@@ -179,7 +179,7 @@ test.describe('CU07 - Generar testimonio', () => {
   test('CU07-GW01: Given escritura firmada, When generar testimonio, Then estado generado aparece en tabla', async ({
     page,
   }) => {
-    const { numero } = await seedEscrituraFirmada(page)
+    const { numero } = await seedSignedDeed(page)
 
     await steps.givenUserIsOnPage('/dashboard/testimonies')
     await page.getByTestId('btn-generar-testimonio').click()
@@ -210,7 +210,7 @@ test.describe('CU08 - Verificar testimonio', () => {
 
   test('CU08-GW01: Edge: verificar con observaciones → estado Observado', async ({ page }) => {
     // Seed escritura and generate testimonio via API so this test is independent
-    const { idEscritura, numero } = await seedEscrituraFirmada(page)
+    const { idEscritura, numero } = await seedSignedDeed(page)
     const generated = await apiPost<{ idTestimony: number }>(
       page,
       `/testimonies/${idEscritura}/generate`,
@@ -235,7 +235,7 @@ test.describe('CU08 - Verificar testimonio', () => {
   test('CU08-GW02: Edge: emitir copia está bloqueado hasta que el testimonio esté verificado', async ({
     page,
   }) => {
-    const { idEscritura, numero } = await seedEscrituraFirmada(page)
+    const { idEscritura, numero } = await seedSignedDeed(page)
     const generated = await apiPost<{ idTestimony: number }>(
       page,
       `/testimonies/${idEscritura}/generate`,
@@ -267,7 +267,7 @@ test.describe('CU11 - Ingresar para inscripción', () => {
   })
 
   test('CU11-GW01: ingresar y registrar inscripción cambia estado a inscripto', async ({ page }) => {
-    const { idTestimonio, numero } = await seedTestimonioVerificado(page)
+    const { idTestimonio, numero } = await seedVerifiedTestimony(page)
 
     await steps.givenUserIsOnPage('/dashboard/testimony-movements')
     const row = rowWithCell(page, numero)
@@ -296,7 +296,7 @@ test.describe('CU12 - Retirar testimonio', () => {
   })
 
   test('CU12-GW01: retirar después de inscripción → estado retirado', async ({ page }) => {
-    const { idTestimonio, numero } = await seedTestimonioVerificado(page)
+    const { idTestimonio, numero } = await seedVerifiedTestimony(page)
 
     await steps.givenUserIsOnPage('/dashboard/testimony-movements')
     const row = rowWithCell(page, numero)

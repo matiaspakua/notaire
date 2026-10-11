@@ -41,6 +41,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English Playwright helper names** (#1490, CU75): setup functions and payload
+  types in `testing/e2e/tests/setup/api-helpers.ts` use English names
+  (`createPerson`, `createBudget`, `createCompleteCaseManagement`,
+  `createDocumentType`). Spec-local seed helpers follow the same names.
+  Spec filenames are unchanged.
 - **English caller fields for complete-case and budget creation** (#1490, CU75):
   `CreateCompleteManagementInput` and the Playwright complete-case helper use
   `budgetId`, `notaryId`, `statusManagementId`, `procedureTypeId`, and `propertyId`.

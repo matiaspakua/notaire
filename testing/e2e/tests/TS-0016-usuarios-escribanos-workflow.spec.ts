@@ -7,7 +7,7 @@
  */
 import { test, expect, type Page } from "@playwright/test";
 import { GherkinSteps, TestData } from "./gherkin-helpers";
-import { createUsuario } from "./setup/api-helpers";
+import { createUser } from "./setup/api-helpers";
 
 /** Capture JWT from HttpOnly cookie (or shared env) for page.request helpers. */
 async function syncAdminTokenFromBrowser(page: Page): Promise<void> {
@@ -25,15 +25,15 @@ async function syncAdminTokenFromBrowser(page: Page): Promise<void> {
  * Create a disposable EMPLEADO to edit. Never target row nth(1) — that is the
  * seeded admin; renaming it locks out the rest of the suite (login 429).
  */
-async function seedEditableUsuario(page: Page): Promise<string> {
+async function seedEditableUser(page: Page): Promise<string> {
   const username = `cu21-${Date.now()}`;
-  const created = await createUsuario(page, undefined, {
+  const created = await createUser(page, undefined, {
     name: username,
     password: "Test1234!",
     type: "EMPLEADO",
     active: true,
   });
-  expect(created.ok, created.error ?? "createUsuario failed").toBe(true);
+  expect(created.ok, created.error ?? "createUser failed").toBe(true);
   await page.goto("/dashboard/administration/users");
   await page.waitForLoadState("networkidle");
   await expect(page.getByRole("table").getByText(username)).toBeVisible({ timeout: 15000 });
@@ -92,7 +92,7 @@ test.describe("CU21 - Modificar UserAccount", () => {
   test("CU21-GW01: Given usuario exists, When click editar, Then modal opens with data", async ({
     page,
   }) => {
-    const username = await seedEditableUsuario(page);
+    const username = await seedEditableUser(page);
 
     // When — icon-only edit is named via aria-label (#1057)
     await page
@@ -109,7 +109,7 @@ test.describe("CU21 - Modificar UserAccount", () => {
   test("CU21-GW02: Given edit modal open, When modify and submit, Then shows success", async ({
     page,
   }) => {
-    const username = await seedEditableUsuario(page);
+    const username = await seedEditableUser(page);
 
     await page
       .getByRole("table")

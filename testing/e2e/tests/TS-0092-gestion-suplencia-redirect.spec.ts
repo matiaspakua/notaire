@@ -8,7 +8,7 @@
  */
 import { type Page, test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";
-import { createPersona, createPresupuesto, createSuplencia, uniqueId } from "./setup/api-helpers";
+import { createPerson, createBudget, createSubstitution, uniqueId } from "./setup/api-helpers";
 
 async function choose(page: Page, triggerTestId: string, option: RegExp): Promise<void> {
   const trigger = page.getByTestId(triggerTestId);
@@ -56,7 +56,7 @@ test.describe("CU48/CU51 - Registro de escribano en Personas", () => {
   });
 
   test("CU51-GW01: editar persona y modificar su registro de escribano", async ({ page }) => {
-    const persona = await createPersona(page, {
+    const persona = await createPerson(page, {
       lastName: `Modif${uniqueId() % 100_000}`,
       identificationNumber: `51${uniqueId() % 10_000_000}`,
     });
@@ -90,20 +90,20 @@ test.describe("CU22/CU59 - Redirección de gestión por suplencia activa", () =>
   });
 
   test("GW01: gestión creada para un escribano con suplencia activa se redirige al suplente", async ({ page }) => {
-    const escribano = await createPersona(page, {
+    const escribano = await createPerson(page, {
       lastName: `Suplantado${uniqueId() % 100_000}`,
     });
-    const suplente = await createPersona(page, {
+    const suplente = await createPerson(page, {
       lastName: `Suplente${uniqueId() % 100_000}`,
     });
-    const cliente = await createPersona(page, {
+    const cliente = await createPerson(page, {
       lastName: `Cliente${uniqueId() % 100_000}`,
     });
-    const presupuesto = await createPresupuesto(page, cliente.data!.personId);
+    const presupuesto = await createBudget(page, cliente.data!.personId);
 
     const hoy = new Date();
     const manana = new Date(hoy.getTime() + 24 * 60 * 60 * 1000);
-    const suplencia = await createSuplencia(page, suplente.data!.personId, escribano.data!.personId, {
+    const suplencia = await createSubstitution(page, suplente.data!.personId, escribano.data!.personId, {
       dateStart: hoy.toISOString().split("T")[0],
       dateEnd: manana.toISOString().split("T")[0],
     });
@@ -132,13 +132,13 @@ test.describe("CU22/CU59 - Redirección de gestión por suplencia activa", () =>
   });
 
   test("EDGE: gestión creada para un escribano sin suplencia activa no dispara aviso de redirección", async ({ page }) => {
-    const escribano = await createPersona(page, {
+    const escribano = await createPerson(page, {
       lastName: `SinSuplencia${uniqueId() % 100_000}`,
     });
-    const cliente = await createPersona(page, {
+    const cliente = await createPerson(page, {
       lastName: `ClienteNorm${uniqueId() % 100_000}`,
     });
-    await createPresupuesto(page, cliente.data!.personId);
+    await createBudget(page, cliente.data!.personId);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");

@@ -12,7 +12,7 @@ import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
 import { apiPost, uniqueId } from "./setup/api-helpers";
 
-async function seedTestimonioVerificado(page: import("@playwright/test").Page): Promise<{ idTestimonio: number; numero: number }> {
+async function seedVerifiedTestimony(page: import("@playwright/test").Page): Promise<{ idTestimonio: number; numero: number }> {
   const escrituraNumero = uniqueId() % 1_000_000;
   const escritura = await apiPost<{ idDeed: number }>(page, "/deeds", {
     number: escrituraNumero,
@@ -41,7 +41,7 @@ test.describe("CU11/CU12/CU44 - Movimientos de testimonio", () => {
   });
 
   test("Golden path: ingresar, registrar inscripción y retirar", async ({ page }) => {
-    const { idTestimonio, numero } = await seedTestimonioVerificado(page);
+    const { idTestimonio, numero } = await seedVerifiedTestimony(page);
 
     await steps.givenUserIsOnPage("/dashboard/testimony-movements");
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
@@ -64,7 +64,7 @@ test.describe("CU11/CU12/CU44 - Movimientos de testimonio", () => {
   });
 
   test("Edge: reingresar solo está disponible después de un retiro previo", async ({ page }) => {
-    const { idTestimonio, numero } = await seedTestimonioVerificado(page);
+    const { idTestimonio, numero } = await seedVerifiedTestimony(page);
 
     await steps.givenUserIsOnPage("/dashboard/testimony-movements");
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });

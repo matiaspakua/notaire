@@ -6,7 +6,7 @@
  */
 import { test, expect } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
-import { createPago, createPersona, createPresupuesto } from "./setup/api-helpers";
+import { createPayment, createPerson, createBudget } from "./setup/api-helpers";
 
 const DAY = "2026-09-05";
 
@@ -16,10 +16,10 @@ for (const timezoneId of ["America/Argentina/Buenos_Aires", "Europe/Madrid"]) {
 
     test("budget edit shows the stored date and saving keeps it", async ({ page }) => {
       await establishAdminBrowserSession(page);
-      const persona = await createPersona(page);
-      expect(persona.ok, persona.error ?? "createPersona failed").toBe(true);
-      const budget = await createPresupuesto(page, persona.data!.personId, undefined, { date: DAY });
-      expect(budget.ok, budget.error ?? "createPresupuesto failed").toBe(true);
+      const persona = await createPerson(page);
+      expect(persona.ok, persona.error ?? "createPerson failed").toBe(true);
+      const budget = await createBudget(page, persona.data!.personId, undefined, { date: DAY });
+      expect(budget.ok, budget.error ?? "createBudget failed").toBe(true);
       const id = budget.data!.idBudget;
 
       await page.goto("/dashboard/budgets");
@@ -37,12 +37,12 @@ for (const timezoneId of ["America/Argentina/Buenos_Aires", "Europe/Madrid"]) {
 
     test("payment edit shows the stored date", async ({ page }) => {
       await establishAdminBrowserSession(page);
-      const persona = await createPersona(page);
-      const budget = await createPresupuesto(page, persona.data!.personId, undefined, {
+      const persona = await createPerson(page);
+      const budget = await createBudget(page, persona.data!.personId, undefined, {
         propertyAmount: 10000, // a payment may not exceed the budget balance
       });
-      const pago = await createPago(page, budget.data!.idBudget, { date: DAY });
-      expect(pago.ok, pago.error ?? "createPago failed").toBe(true);
+      const pago = await createPayment(page, budget.data!.idBudget, { date: DAY });
+      expect(pago.ok, pago.error ?? "createPayment failed").toBe(true);
 
       await page.goto("/dashboard/payments");
       await page.waitForLoadState("networkidle");

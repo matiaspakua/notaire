@@ -12,7 +12,7 @@
  * audit-log APIs and cannot change a catalog, while catalog reads stay open.
  */
 import { test, expect, type Page } from "@playwright/test";
-import { createUsuario } from "./setup/api-helpers";
+import { createUser } from "./setup/api-helpers";
 import { authenticateAsAdmin } from "./setup/auth";
 
 async function loginAs(page: Page, nombre: string, contrasenia: string) {
@@ -28,13 +28,13 @@ async function loginAsNewEmployee(page: Page): Promise<void> {
   const password = "Test1234!";
 
   await authenticateAsAdmin(page);
-  const created = await createUsuario(page, undefined, {
+  const created = await createUser(page, undefined, {
     name: username,
     password,
     type: "EMPLEADO",
     active: true,
   });
-  expect(created.ok, `createUsuario failed: ${created.status} ${created.error}`).toBe(true);
+  expect(created.ok, `createUser failed: ${created.status} ${created.error}`).toBe(true);
 
   // Drop admin cookies first so edge proxy does not bounce /login → /dashboard
   // (ERR_ABORTED). Auth helper init script only hydrates when status cookie

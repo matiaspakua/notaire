@@ -4,28 +4,28 @@
 import { type Page, test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";
 import {
-  createPersona,
-  createPresupuesto,
-  createCompleteCaseGestion,
-  createTipoTramite,
-  createTramite,
-  createDocumentoEntidadExterna,
-  createEstadoGestion,
+  createPerson,
+  createBudget,
+  createCompleteCaseManagement,
+  createProcedureType,
+  createProcedure,
+  createExternalEntityDocument,
+  createManagementStatus,
 } from "./setup/api-helpers";
 
-async function seedGestionConDocumentoEntidadExterna(page: Page, nombreDocumento: string) {
-  const persona = await createPersona(page);
-  const presupuesto = await createPresupuesto(page, persona.data!.personId);
-  const estado = await createEstadoGestion(page);
-  const tipoTramite = await createTipoTramite(page);
-  const gestion = await createCompleteCaseGestion(page, {
+async function seedManagementWithExternalEntityDocument(page: Page, nombreDocumento: string) {
+  const persona = await createPerson(page);
+  const presupuesto = await createBudget(page, persona.data!.personId);
+  const estado = await createManagementStatus(page);
+  const tipoTramite = await createProcedureType(page);
+  const gestion = await createCompleteCaseManagement(page, {
     budgetId: presupuesto.data!.idBudget,
     notaryId: persona.data!.personId,
     statusManagementId: estado.data!.idManagementStatus,
     procedureTypeId: tipoTramite.data!.idProcedureType,
   });
-  const tramite = await createTramite(page, gestion.data!.idManagement, tipoTramite.data!.idProcedureType);
-  const documento = await createDocumentoEntidadExterna(page, tramite.data!.idProcedure, {
+  const tramite = await createProcedure(page, gestion.data!.idManagement, tipoTramite.data!.idProcedureType);
+  const documento = await createExternalEntityDocument(page, tramite.data!.idProcedure, {
     name: nombreDocumento,
   });
 
@@ -42,7 +42,7 @@ test.describe("CU10 - Registrar movimientos de documentación de entidades exter
   });
 
   test("golden path: registering a movement updates the document and shows a success toast", async ({ page }) => {
-    const { idGestion, numero, idDocumentoPresentado } = await seedGestionConDocumentoEntidadExterna(
+    const { idGestion, numero, idDocumentoPresentado } = await seedManagementWithExternalEntityDocument(
       page,
       "Certificado de Dominio",
     );
@@ -72,11 +72,11 @@ test.describe("CU10 - Registrar movimientos de documentación de entidades exter
   });
 
   test("edge path: a gestión without entidad externa documents shows the empty state", async ({ page }) => {
-    const persona = await createPersona(page);
-    const presupuesto = await createPresupuesto(page, persona.data!.personId);
-    const estado = await createEstadoGestion(page);
-    const tipoTramite = await createTipoTramite(page);
-    const gestion = await createCompleteCaseGestion(page, {
+    const persona = await createPerson(page);
+    const presupuesto = await createBudget(page, persona.data!.personId);
+    const estado = await createManagementStatus(page);
+    const tipoTramite = await createProcedureType(page);
+    const gestion = await createCompleteCaseManagement(page, {
       budgetId: presupuesto.data!.idBudget,
       notaryId: persona.data!.personId,
       statusManagementId: estado.data!.idManagementStatus,

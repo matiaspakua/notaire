@@ -9,28 +9,28 @@
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
 import { authenticateAsAdmin } from "./setup/auth";
-import { createPersona, createPresupuesto, createPago } from "./setup/api-helpers";
+import { createPerson, createBudget, createPayment } from "./setup/api-helpers";
 import { listView } from "./setup/list-locators";
 
 // ─────────────────────────────────────────────────────────────
 // Seed helper: creates a persona + presupuesto via API
 // ─────────────────────────────────────────────────────────────
-async function seedPresupuesto(
+async function seedBudget(
   steps: GherkinSteps,
   montoOverride = 80000,
 ) {
   const { page } = steps;
 
-  const personaResult = await createPersona(page);
-  expect(personaResult.ok, `createPersona failed: ${personaResult.error}`).toBe(true);
+  const personaResult = await createPerson(page);
+  expect(personaResult.ok, `createPerson failed: ${personaResult.error}`).toBe(true);
   const idPersona = personaResult.data!.personId;
   const apellido = personaResult.data as any;
 
-  const presupuestoResult = await createPresupuesto(page, idPersona, undefined, {
+  const presupuestoResult = await createBudget(page, idPersona, undefined, {
     propertyAmount: montoOverride,
     status: "PENDIENTE",
   });
-  expect(presupuestoResult.ok, `createPresupuesto failed: ${presupuestoResult.error}`).toBe(true);
+  expect(presupuestoResult.ok, `createBudget failed: ${presupuestoResult.error}`).toBe(true);
   const idPresupuesto = presupuestoResult.data!.idBudget;
 
   return { idPersona, idPresupuesto };
@@ -52,8 +52,8 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
     page,
   }) => {
     // GIVEN: persona creada via API helper (CU01 pre-condition)
-    const personaResult = await createPersona(page);
-    expect(personaResult.ok, `createPersona failed: ${personaResult.error}`).toBe(true);
+    const personaResult = await createPerson(page);
+    expect(personaResult.ok, `createPerson failed: ${personaResult.error}`).toBe(true);
     const idPersona = personaResult.data!.personId;
 
     // Lean on any name-like field that the API returns; we search by idPersona
@@ -103,11 +103,11 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
     page,
   }) => {
     // GIVEN: presupuesto sembrado via API
-    const personaResult = await createPersona(page);
+    const personaResult = await createPerson(page);
     expect(personaResult.ok).toBe(true);
     const idPersona = personaResult.data!.personId;
 
-    const presupuestoResult = await createPresupuesto(page, idPersona, undefined, { propertyAmount: 60000 });
+    const presupuestoResult = await createBudget(page, idPersona, undefined, { propertyAmount: 60000 });
     expect(presupuestoResult.ok).toBe(true);
 
     // WHEN: recarga la lista
@@ -141,7 +141,7 @@ test.describe("CU47 - Consultar Payment / Saldo", () => {
     page,
   }) => {
     // GIVEN: presupuesto con saldo conocido
-    const { idPresupuesto } = await seedPresupuesto(steps, 75000);
+    const { idPresupuesto } = await seedBudget(steps, 75000);
 
     await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.waitForLoadState("networkidle");
@@ -164,12 +164,12 @@ test.describe("CU47 - Consultar Payment / Saldo", () => {
     page,
   }) => {
     // GIVEN: presupuesto con monto 80000 y sin pagos
-    const { idPresupuesto } = await seedPresupuesto(steps, 80000);
+    const { idPresupuesto } = await seedBudget(steps, 80000);
 
     // WHEN: se registra un pago parcial (40000 < 80000) vía API — el registro de pagos
     // en sí se cubre en TS-0014 (CU15); aquí verificamos que CU47 refleje el saldo actualizado.
-    const pagoResult = await createPago(page, idPresupuesto, { amount: 40000 });
-    expect(pagoResult.ok, `createPago failed: ${pagoResult.error}`).toBe(true);
+    const pagoResult = await createPayment(page, idPresupuesto, { amount: 40000 });
+    expect(pagoResult.ok, `createPayment failed: ${pagoResult.error}`).toBe(true);
 
     await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.waitForLoadState("networkidle");
@@ -203,11 +203,11 @@ test.describe("CU45 - Modificar Presupuesto", () => {
     page,
   }) => {
     // GIVEN: presupuesto creado via API
-    const personaResult = await createPersona(page);
+    const personaResult = await createPerson(page);
     expect(personaResult.ok).toBe(true);
     const idPersona = personaResult.data!.personId;
 
-    const presupuestoResult = await createPresupuesto(page, idPersona, undefined, { propertyAmount: 30000 });
+    const presupuestoResult = await createBudget(page, idPersona, undefined, { propertyAmount: 30000 });
     expect(presupuestoResult.ok).toBe(true);
     const idPresupuesto = presupuestoResult.data!.idBudget;
 
@@ -252,10 +252,10 @@ for (const viewport of [
     await authenticateAsAdmin(page);
 
     // Seed a presupuesto so the list is not empty
-    const personaResult = await createPersona(page);
+    const personaResult = await createPerson(page);
     expect(personaResult.ok).toBe(true);
     const idPersona = personaResult.data!.personId;
-    const presupuestoResult = await createPresupuesto(page, idPersona);
+    const presupuestoResult = await createBudget(page, idPersona);
     expect(presupuestoResult.ok).toBe(true);
 
     // Set viewport before navigating

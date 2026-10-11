@@ -5,17 +5,17 @@
  */
 import { test, expect } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
-import { createCompleteCaseGestion, createPersona, createPresupuesto } from "./setup/api-helpers";
+import { createCompleteCaseManagement, createPerson, createBudget } from "./setup/api-helpers";
 
 test.describe("Managements list columns (#1348)", () => {
   test("each row shows number, header, start date, procedure count and status under the right titles", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    const person = await createPersona(page, { isClient: true });
+    const person = await createPerson(page, { isClient: true });
     expect(person.ok, person.error).toBe(true);
-    const budget = await createPresupuesto(page, person.data!.personId);
+    const budget = await createBudget(page, person.data!.personId);
     expect(budget.ok, budget.error).toBe(true);
     const heading = `Carátula E2E ${Date.now()}`;
-    const gestion = await createCompleteCaseGestion(page, { budgetId: budget.data!.idBudget, heading });
+    const gestion = await createCompleteCaseManagement(page, { budgetId: budget.data!.idBudget, heading });
     expect(gestion.ok, gestion.error).toBe(true);
 
     await page.goto("/dashboard/managements");

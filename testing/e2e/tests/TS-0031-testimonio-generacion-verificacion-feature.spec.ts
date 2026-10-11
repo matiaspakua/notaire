@@ -15,7 +15,7 @@ interface TestimonioApiResult {
   deed?: { number?: number };
 }
 
-async function seedEscrituraFirmada(page: import("@playwright/test").Page): Promise<{ idEscritura: number; numero: number }> {
+async function seedSignedDeed(page: import("@playwright/test").Page): Promise<{ idEscritura: number; numero: number }> {
   const numero = uniqueId() % 1_000_000;
   const seeded = await apiPost<{ idDeed: number }>(page, "/deeds", {
     number: numero,
@@ -35,7 +35,7 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
   });
 
   test("Golden path: generar testimonio, verificar sin observaciones y emitir copia", async ({ page }) => {
-    const { numero } = await seedEscrituraFirmada(page);
+    const { numero } = await seedSignedDeed(page);
 
     await steps.givenUserIsOnPage("/dashboard/testimonies");
     await page.getByTestId("btn-generar-testimonio").click();
@@ -65,7 +65,7 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
   });
 
   test("Edge: verificar con observaciones muestra el testimonio como Observado", async ({ page }) => {
-    const { idEscritura, numero } = await seedEscrituraFirmada(page);
+    const { idEscritura, numero } = await seedSignedDeed(page);
     const generated = await apiPost<{ idTestimony: number }>(page, `/testimonies/${idEscritura}/generate`, {});
     const idTestimonio = generated.data!.idTestimony;
 
@@ -84,7 +84,7 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
   });
 
   test("Edge: emitir copia está bloqueado hasta que el testimonio esté verificado", async ({ page }) => {
-    const { idEscritura, numero } = await seedEscrituraFirmada(page);
+    const { idEscritura, numero } = await seedSignedDeed(page);
     const generated = await apiPost<{ idTestimony: number }>(page, `/testimonies/${idEscritura}/generate`, {});
     const idTestimonio = generated.data!.idTestimony;
 

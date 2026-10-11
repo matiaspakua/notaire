@@ -18,7 +18,7 @@ interface InmuebleApiResult {
   idProperty: number;
 }
 
-async function seedEscrituraFirmada(page: import("@playwright/test").Page): Promise<{ idEscritura: number; numero: number }> {
+async function seedSignedDeed(page: import("@playwright/test").Page): Promise<{ idEscritura: number; numero: number }> {
   const numero = uniqueId() % 1_000_000;
   const seeded = await apiPost<EscrituraApiResult>(page, "/deeds", {
     number: numero,
@@ -29,7 +29,7 @@ async function seedEscrituraFirmada(page: import("@playwright/test").Page): Prom
   return { idEscritura: seeded.data!.idDeed, numero };
 }
 
-async function seedInmueble(
+async function seedProperty(
   page: import("@playwright/test").Page,
   overrides: Record<string, unknown> = {},
 ): Promise<number> {
@@ -45,7 +45,7 @@ async function seedInmueble(
   return seeded.data!.idProperty;
 }
 
-async function seedTramite(
+async function seedProcedure(
   page: import("@playwright/test").Page,
   idEscritura: number,
   idInmueble: number,
@@ -66,9 +66,9 @@ test.describe("CU82 - Generar y hacer seguimiento de la minuta de inscripción",
   });
 
   test("Golden path: generar minuta, presentar e inscribir en forma definitiva", async ({ page }) => {
-    const { idEscritura, numero } = await seedEscrituraFirmada(page);
-    const idInmueble = await seedInmueble(page);
-    await seedTramite(page, idEscritura, idInmueble);
+    const { idEscritura, numero } = await seedSignedDeed(page);
+    const idInmueble = await seedProperty(page);
+    await seedProcedure(page, idEscritura, idInmueble);
 
     await steps.givenUserIsOnPage("/dashboard/registration-drafts");
     await page.getByTestId("select-escritura-minuta").click();
@@ -100,9 +100,9 @@ test.describe("CU82 - Generar y hacer seguimiento de la minuta de inscripción",
   });
 
   test("Edge: observar tras presentar muestra la minuta como Observado", async ({ page }) => {
-    const { idEscritura, numero } = await seedEscrituraFirmada(page);
-    const idInmueble = await seedInmueble(page);
-    await seedTramite(page, idEscritura, idInmueble);
+    const { idEscritura, numero } = await seedSignedDeed(page);
+    const idInmueble = await seedProperty(page);
+    await seedProcedure(page, idEscritura, idInmueble);
 
     await steps.givenUserIsOnPage("/dashboard/registration-drafts");
     await page.getByTestId("select-escritura-minuta").click();
@@ -130,13 +130,13 @@ test.describe("CU82 - Generar y hacer seguimiento de la minuta de inscripción",
   test("Edge: generar está bloqueado cuando el inmueble no tiene datos catastrales/registrales completos", async ({
     page,
   }) => {
-    const { idEscritura, numero } = await seedEscrituraFirmada(page);
-    const idInmueble = await seedInmueble(page, {
+    const { idEscritura, numero } = await seedSignedDeed(page);
+    const idInmueble = await seedProperty(page, {
       registrationNumber: null,
       volumeFolioLandRecord: null,
       boundaries: null,
     });
-    await seedTramite(page, idEscritura, idInmueble);
+    await seedProcedure(page, idEscritura, idInmueble);
 
     await steps.givenUserIsOnPage("/dashboard/registration-drafts");
     await page.getByTestId("select-escritura-minuta").click();

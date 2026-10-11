@@ -8,8 +8,8 @@ import { test, expect } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
 import {
   apiPost,
-  createPersona,
-  createTipoTramite,
+  createPerson,
+  createProcedureType,
   uniqueId,
 } from "./setup/api-helpers";
 
@@ -19,8 +19,8 @@ test.describe("#774 - Resumen del caso", () => {
   });
 
   test("lists the escritura and the testimonio state of a gestión", async ({ page }) => {
-    const escribano = await createPersona(page, { isClient: false });
-    expect(escribano.ok, escribano.error ?? "createPersona failed").toBe(true);
+    const escribano = await createPerson(page, { isClient: false });
+    expect(escribano.ok, escribano.error ?? "createPerson failed").toBe(true);
     const gestion = await apiPost<{ idManagement: number }>(page, "/managements", {
       heading: `Gestión resumen E2E ${uniqueId()}`,
       dateStart: new Date().toISOString().split("T")[0],
@@ -41,14 +41,14 @@ test.describe("#774 - Resumen del caso", () => {
     const testimonio = await apiPost(page, `/testimonies/${escritura.data!.idDeed}/generate`, {});
     expect(testimonio.ok, testimonio.error ?? "generar testimonio failed").toBe(true);
 
-    const tipo = await createTipoTramite(page);
-    expect(tipo.ok, tipo.error ?? "createTipoTramite failed").toBe(true);
+    const tipo = await createProcedureType(page);
+    expect(tipo.ok, tipo.error ?? "createProcedureType failed").toBe(true);
     const tramite = await apiPost(page, "/procedures", {
       idProcedureType: tipo.data!.idProcedureType,
       idManagement: idGestion,
       idDeed: escritura.data!.idDeed,
     });
-    expect(tramite.ok, `createTramite ${tramite.status}`).toBe(true);
+    expect(tramite.ok, `createProcedure ${tramite.status}`).toBe(true);
 
     await page.goto("/dashboard/managements");
     await page.getByTestId(`btn-resumen-caso-${idGestion}`).click();

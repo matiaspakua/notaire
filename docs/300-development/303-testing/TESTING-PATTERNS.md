@@ -433,7 +433,7 @@ POST operations should be **idempotent** when submitted multiple times:
 # Test: Create presupuesto twice with same data
 # Expected: First request → 201 Created, Second → 409 Conflict (or 200 OK)
 
-@name createPresupuesto
+@name createBudget
 POST http://{{baseUrl}}/api/v1/budgets
 Content-Type: application/json
 Authorization: Bearer {{adminToken}}
@@ -472,7 +472,7 @@ See [`TEST-PLAN.md`](TEST-PLAN.md) §3 (Fixture Patterns & Test Architecture) an
 
 **Summary**:
 - **GherkinSteps**: Given-When-Then helpers (26 suites)
-- **API Helpers**: Data setup via REST (createPersona, createPresupuesto, etc.)
+- **API Helpers**: Data setup via REST (createPerson, createBudget, etc.)
 - **Global Setup**: Auth token, test data seeding
 - **Global Teardown**: Cleanup, fixture removal
 

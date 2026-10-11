@@ -13,7 +13,7 @@
  */
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
-import { createTipoTramite, createTipoDocumento } from "./setup/api-helpers";
+import { createProcedureType, createDocumentType } from "./setup/api-helpers";
 
 test.describe("Plantillas - Costos de Documentos", () => {
   let steps: GherkinSteps;
@@ -42,9 +42,9 @@ test.describe("Plantillas - Costos de Documentos", () => {
     const runId = Date.now();
     const nombreTramite = `Tipo Procedure Costo E2E ${runId}`;
     const nombreDocumento = `Tipo Documento Costo E2E ${runId}`;
-    const tipoTramiteResult = await createTipoTramite(page, { name: nombreTramite });
+    const tipoTramiteResult = await createProcedureType(page, { name: nombreTramite });
     expect(tipoTramiteResult.ok).toBe(true);
-    const tipoDocumentoResult = await createTipoDocumento(page, { name: nombreDocumento });
+    const tipoDocumentoResult = await createDocumentType(page, { name: nombreDocumento });
     expect(tipoDocumentoResult.ok).toBe(true);
 
     await page.reload();

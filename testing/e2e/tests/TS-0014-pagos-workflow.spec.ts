@@ -8,19 +8,19 @@
  */
 import { type Page, test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
-import { createPersona, createPresupuesto, createPago } from "./setup/api-helpers";
+import { createPerson, createBudget, createPayment } from "./setup/api-helpers";
 
 // ──────────────────────────────────────────────
 // Seed helpers
 // ──────────────────────────────────────────────
 
 /** Seed a persona + presupuesto with a given monto, returning both IDs and the apellido used to find it in the UI. */
-async function seedPresupuesto(page: Page, monto: number): Promise<{ idPresupuesto: number; apellido: string }> {
-  const personaResult = await createPersona(page);
+async function seedBudget(page: Page, monto: number): Promise<{ idPresupuesto: number; apellido: string }> {
+  const personaResult = await createPerson(page);
   if (!personaResult.ok || !personaResult.data?.personId) {
     throw new Error(`Failed to seed persona: ${personaResult.error ?? JSON.stringify(personaResult.data)}`);
   }
-  const presupuestoResult = await createPresupuesto(page, personaResult.data.personId, undefined, { propertyAmount: monto });
+  const presupuestoResult = await createBudget(page, personaResult.data.personId, undefined, { propertyAmount: monto });
   if (!presupuestoResult.ok || !presupuestoResult.data?.idBudget) {
     throw new Error(`Failed to seed presupuesto: ${presupuestoResult.error ?? JSON.stringify(presupuestoResult.data)}`);
   }
@@ -55,7 +55,7 @@ test.describe("CU15 - Procesar Payment", () => {
 
   test("CU15-SALDO-02 (#796): Selecting a presupuesto shows its client name and saldo pendiente", async ({ page }) => {
     const montoPresupuesto = 75000;
-    const { apellido } = await seedPresupuesto(page, montoPresupuesto);
+    const { apellido } = await seedBudget(page, montoPresupuesto);
 
     await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
@@ -79,8 +79,8 @@ test.describe("CU15 - Procesar Payment", () => {
   });
 
   test("CU15-SALDO-03 (#796): Saldo updates when presupuesto selection changes", async ({ page }) => {
-    const { apellido: apellido1 } = await seedPresupuesto(page, 50000);
-    const { apellido: apellido2 } = await seedPresupuesto(page, 100000);
+    const { apellido: apellido1 } = await seedBudget(page, 50000);
+    const { apellido: apellido2 } = await seedBudget(page, 100000);
 
     await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
@@ -110,7 +110,7 @@ test.describe("CU15 - Procesar Payment", () => {
   });
 
   test("CU15-SALDO-04 (#848): Submitting a monto over saldo pendiente shows a specific rejection message", async ({ page }) => {
-    const { apellido } = await seedPresupuesto(page, 50000);
+    const { apellido } = await seedBudget(page, 50000);
 
     await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
@@ -131,7 +131,7 @@ test.describe("CU15 - Procesar Payment", () => {
   });
 
   test("CU15-GW02: Given form open, When fill and submit, Then pago is registered", async ({ page }) => {
-    const { apellido } = await seedPresupuesto(page, 50000);
+    const { apellido } = await seedBudget(page, 50000);
 
     await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
@@ -157,8 +157,8 @@ test.describe("CU15 - Procesar Payment", () => {
 
   test("CU15-RECIBO-01 (#23): Given pago exists, When click emitir recibo, Then PDF is downloaded", async ({ page }) => {
     const montoUnico = 345;
-    const { idPresupuesto } = await seedPresupuesto(page, montoUnico + 1000);
-    const pagoResult = await createPago(page, idPresupuesto, { amount: montoUnico });
+    const { idPresupuesto } = await seedBudget(page, montoUnico + 1000);
+    const pagoResult = await createPayment(page, idPresupuesto, { amount: montoUnico });
     if (!pagoResult.ok || !pagoResult.data?.idPayment) {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }
@@ -186,7 +186,7 @@ test.describe("CU47 - Consultar Payment (Estado de Payment #821)", () => {
   });
 
   test("ESTADO-01: New presupuesto without payments shows SIN_PAGOS badge", async ({ page }) => {
-    const { apellido } = await seedPresupuesto(page, 60000);
+    const { apellido } = await seedBudget(page, 60000);
 
     await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
@@ -204,8 +204,8 @@ test.describe("CU47 - Consultar Payment (Estado de Payment #821)", () => {
   });
 
   test("ESTADO-02: Presupuesto with a partial payment shows PARCIAL badge", async ({ page }) => {
-    const { idPresupuesto, apellido } = await seedPresupuesto(page, 100000);
-    const pagoResult = await createPago(page, idPresupuesto, { amount: 40000 });
+    const { idPresupuesto, apellido } = await seedBudget(page, 100000);
+    const pagoResult = await createPayment(page, idPresupuesto, { amount: 40000 });
     if (!pagoResult.ok) {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }
@@ -226,8 +226,8 @@ test.describe("CU47 - Consultar Payment (Estado de Payment #821)", () => {
   });
 
   test("ESTADO-03: Presupuesto fully paid shows SALDADO badge", async ({ page }) => {
-    const { idPresupuesto, apellido } = await seedPresupuesto(page, 80000);
-    const pagoResult = await createPago(page, idPresupuesto, { amount: 80000 });
+    const { idPresupuesto, apellido } = await seedBudget(page, 80000);
+    const pagoResult = await createPayment(page, idPresupuesto, { amount: 80000 });
     if (!pagoResult.ok) {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }
@@ -261,8 +261,8 @@ test.describe("CU47 - Pagos Table CRUD (list, edit, delete)", () => {
   });
 
   test("TABLE-01: Given a pago exists, When visiting pagos page, Then it renders in the table with correct data", async ({ page }) => {
-    const { idPresupuesto } = await seedPresupuesto(page, 20000);
-    const pagoResult = await createPago(page, idPresupuesto, { amount: 12345, paymentMethod: "Transferencia" });
+    const { idPresupuesto } = await seedBudget(page, 20000);
+    const pagoResult = await createPayment(page, idPresupuesto, { amount: 12345, paymentMethod: "Transferencia" });
     if (!pagoResult.ok || !pagoResult.data?.idPayment) {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }
@@ -276,8 +276,8 @@ test.describe("CU47 - Pagos Table CRUD (list, edit, delete)", () => {
   });
 
   test("TABLE-02: Given a pago exists, When editing its monto, Then the table reflects the update", async ({ page }) => {
-    const { idPresupuesto } = await seedPresupuesto(page, 30000);
-    const pagoResult = await createPago(page, idPresupuesto, { amount: 1000, paymentMethod: "Efectivo" });
+    const { idPresupuesto } = await seedBudget(page, 30000);
+    const pagoResult = await createPayment(page, idPresupuesto, { amount: 1000, paymentMethod: "Efectivo" });
     if (!pagoResult.ok || !pagoResult.data?.idPayment) {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }
@@ -298,8 +298,8 @@ test.describe("CU47 - Pagos Table CRUD (list, edit, delete)", () => {
   });
 
   test("TABLE-03: Given a pago exists, When deleting it, Then it is removed from the table", async ({ page }) => {
-    const { idPresupuesto } = await seedPresupuesto(page, 15000);
-    const pagoResult = await createPago(page, idPresupuesto, { amount: 500 });
+    const { idPresupuesto } = await seedBudget(page, 15000);
+    const pagoResult = await createPayment(page, idPresupuesto, { amount: 500 });
     if (!pagoResult.ok || !pagoResult.data?.idPayment) {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }

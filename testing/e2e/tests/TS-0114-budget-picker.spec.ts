@@ -5,7 +5,7 @@
  */
 import { test, expect, type Page } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
-import { apiGet, createPersona, createPresupuesto } from "./setup/api-helpers";
+import { apiGet, createPerson, createBudget } from "./setup/api-helpers";
 
 function trackBudgetRequests(page: Page): string[] {
   const requested: string[] = [];
@@ -44,9 +44,9 @@ test.describe("Budget picker (#1340)", () => {
 
   test("the management form finds a new client's budget by the client's name", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    const person = await createPersona(page, { isClient: true });
+    const person = await createPerson(page, { isClient: true });
     expect(person.ok, person.error).toBe(true);
-    const budget = await createPresupuesto(page, person.data!.personId);
+    const budget = await createBudget(page, person.data!.personId);
     expect(budget.ok, budget.error).toBe(true);
     const lastName = person.data!.lastName!;
     const requested = trackBudgetRequests(page);

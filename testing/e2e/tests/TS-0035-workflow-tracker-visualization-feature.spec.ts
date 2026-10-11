@@ -7,12 +7,12 @@ import { type Page, test, expect } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
 import {
   apiGet,
-  assignWorkflowToTipoTramite,
-  createCompleteCaseGestion,
-  createEstadoGestion,
-  createPersona,
-  createPresupuesto,
-  createTipoTramite,
+  assignWorkflowToProcedureType,
+  createCompleteCaseManagement,
+  createManagementStatus,
+  createPerson,
+  createBudget,
+  createProcedureType,
   createWorkflowDefinition,
   createWorkflowNode,
 } from "./setup/api-helpers";
@@ -83,17 +83,17 @@ test.describe("Workflow hero section (CU70, CU71)", () => {
 test.describe("Workflow hero shows the newest case (#1347)", () => {
   test("a case just created with a workflow (or a newer one) is shown, never the oldest", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    const person = await createPersona(page, { isClient: true });
+    const person = await createPerson(page, { isClient: true });
     expect(person.ok, person.error).toBe(true);
-    const budget = await createPresupuesto(page, person.data!.personId);
+    const budget = await createBudget(page, person.data!.personId);
     expect(budget.ok, budget.error).toBe(true);
     // A self-contained one-node workflow, so the new case is traceable on any database.
-    const estado = await createEstadoGestion(page);
+    const estado = await createManagementStatus(page);
     const workflow = await createWorkflowDefinition(page);
     await createWorkflowNode(page, workflow.data!.id, estado.data!.idManagementStatus, "INITIAL");
-    const tipo = await createTipoTramite(page);
-    await assignWorkflowToTipoTramite(page, tipo.data!.idProcedureType, workflow.data!.id);
-    const gestion = await createCompleteCaseGestion(page, {
+    const tipo = await createProcedureType(page);
+    await assignWorkflowToProcedureType(page, tipo.data!.idProcedureType, workflow.data!.id);
+    const gestion = await createCompleteCaseManagement(page, {
       budgetId: budget.data!.idBudget,
       procedureTypeId: tipo.data!.idProcedureType,
       statusManagementId: estado.data!.idManagementStatus,
