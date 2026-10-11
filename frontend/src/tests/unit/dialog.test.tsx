@@ -37,39 +37,39 @@ describe("DialogContent accessible name (#1344)", () => {
   });
 
   it("a FormSection marked dialogTitle names the dialog with its visible heading", () => {
-    renderDialog(<FormSection dialogTitle title="Editar presupuesto"><input aria-label="x" /></FormSection>);
-    const dialog = screen.getByRole("dialog", { name: "Editar presupuesto" });
+    renderDialog(<FormSection dialogTitle title="Edit budget"><input aria-label="x" /></FormSection>);
+    const dialog = screen.getByRole("dialog", { name: "Edit budget" });
     const labelId = dialog.getAttribute("aria-labelledby");
     expect(labelId).toBeTruthy();
-    expect(document.getElementById(labelId!)).toHaveTextContent("Editar presupuesto");
+    expect(document.getElementById(labelId!)).toHaveTextContent("Edit budget");
     expect(document.getElementById(labelId!)?.tagName).toBe("H3");
   });
 
   it("a FormHeader marked dialogTitle names the dialog", () => {
-    renderDialog(<FormHeader dialogTitle title="Resumen del presupuesto" />);
-    expect(screen.getByRole("dialog", { name: "Resumen del presupuesto" })).toBeInTheDocument();
+    renderDialog(<FormHeader dialogTitle title="Budget summary" />);
+    expect(screen.getByRole("dialog", { name: "Budget summary" })).toBeInTheDocument();
   });
 
   it("a plain FormSection is not a dialog title (only one title per dialog)", () => {
     renderDialog(
       <>
-        <FormHeader dialogTitle title="Ítems" />
-        <FormSection title="Plantilla"><span /></FormSection>
+        <FormHeader dialogTitle title="Items" />
+        <FormSection title="Template"><span /></FormSection>
       </>
     );
-    expect(screen.getByRole("dialog", { name: "Ítems" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Plantilla" }).id).toBe("");
+    expect(screen.getByRole("dialog", { name: "Items" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Template" }).id).toBe("");
   });
 
   it("logs no Radix DialogTitle or aria-describedby warning", () => {
-    renderDialog(<FormSection dialogTitle title="Nueva persona"><span /></FormSection>);
+    renderDialog(<FormSection dialogTitle title="New person"><span /></FormSection>);
     const logged = [...errorSpy.mock.calls, ...warnSpy.mock.calls].map((c) => String(c[0])).join("\n");
     expect(logged).not.toMatch(/DialogTitle|Description|aria-describedby/);
     expect(screen.getByRole("dialog")).not.toHaveAttribute("aria-describedby");
   });
 
   it("the close button is named in the active locale", () => {
-    const { unmount } = renderDialog(<FormSection dialogTitle title="Nueva persona"><span /></FormSection>, "es");
+    const { unmount } = renderDialog(<FormSection dialogTitle title="New person"><span /></FormSection>, "es");
     expect(screen.getByRole("button", { name: "Cerrar" })).toBeInTheDocument();
     unmount();
     renderDialog(<FormSection dialogTitle title="New person"><span /></FormSection>, "en");

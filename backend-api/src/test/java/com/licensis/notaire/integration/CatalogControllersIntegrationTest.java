@@ -128,7 +128,7 @@ class CatalogControllersIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "name": "Deed de Venta",
+                                      "name": "Deed of sale",
                                       "expires": false,
                                       "deliveredBy": "Comprador",
                                       "returned": false,

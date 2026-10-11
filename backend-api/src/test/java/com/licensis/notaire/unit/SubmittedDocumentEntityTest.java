@@ -53,8 +53,8 @@ class SubmittedDocumentEntityTest {
         @DisplayName("Should set and get name")
         void shouldSetAndGetName() {
             SubmittedDocument doc = new SubmittedDocument();
-            doc.setName("Deed de compraventa");
-            assertThat(doc.getName()).isEqualTo("Deed de compraventa");
+            doc.setName("Sale deed");
+            assertThat(doc.getName()).isEqualTo("Sale deed");
         }
 
         @Test

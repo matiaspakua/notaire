@@ -43,6 +43,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English synthetic chrome fixtures** (#1490, CU75): tests name dialog and
+  header props in English (`People`, `Client management`, `New person`,
+  `Delete person`, `Edit budget`, `Budget summary`, `Items`, `Template`,
+  and `Managements`). Table fixtures use `Name`, `Internal`, `Edit`, and
+  `Nothing`. Deed fixtures use `Deed for Compraventa`, `Deed of sale`,
+  `Sale deed`, `Notarial body`, `Expenses`, and `Before delete`. Catalog
+  labels `Cerrar`, `Saltar al contenido`, `Honorarios`, `Comprador`, and
+  `Poder` stay, along with stored `Compraventa` and `Firmada` and the
+  person names `Juan García` and `Ana López`.
 - **English synthetic notes** (#1490, CU75): tests use English notes and
   headings (`New name`, `Listed document`, `Missing grantor signature`,
   `Missing survey plan`, `Missing cadastral certificate`, `without client`,

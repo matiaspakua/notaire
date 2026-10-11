@@ -29,12 +29,12 @@ describe("ConfirmDialog", () => {
         open={true}
         onOpenChange={vi.fn()}
         onConfirm={vi.fn()}
-        title="Eliminar persona"
-        description="Se eliminará permanentemente."
+        title="Delete person"
+        description="This will be deleted permanently."
       />
     );
-    expect(screen.getByText("Eliminar persona")).toBeInTheDocument();
-    expect(screen.getByText("Se eliminará permanentemente.")).toBeInTheDocument();
+    expect(screen.getByText("Delete person")).toBeInTheDocument();
+    expect(screen.getByText("This will be deleted permanently.")).toBeInTheDocument();
   });
 
   it("calls onConfirm when the confirm action is clicked", async () => {
