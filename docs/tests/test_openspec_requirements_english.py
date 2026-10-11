@@ -25,6 +25,11 @@ class OpenSpecRequirementsEnglishTest(unittest.TestCase):
             "numeracion-escrituras",
             "folio-vinculacion-escritura",
             "testimonio-generacion-verificacion",
+            "protocolo-auxiliar",
+            "pagos-parciales-cuotas",
+            "carpetas-de-tramite",
+            "descuentos-recargos-presupuesto",
+            "persona-validacion-duplicados",
         ):
             path = SPECS / spec_id / "spec.md"
             text = path.read_text(encoding="utf-8")
@@ -75,6 +80,43 @@ class OpenSpecRequirementsEnglishTest(unittest.TestCase):
         self.assertIn('"Firmada"', testimony)
         self.assertIn("Escribano", testimony)
         self.assertIn("CU07", testimony)
+        auxiliary = (SPECS / "protocolo-auxiliar" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("Protocolo Auxiliar", auxiliary)
+        self.assertIn("Protocolo Principal", auxiliary)
+        self.assertIn("`isAuxiliary`", auxiliary)
+        self.assertIn("GET /api/v1/auxiliary-protocol/available-folios", auxiliary)
+        self.assertIn("`idFolio`", auxiliary)
+        self.assertIn("CU81", auxiliary)
+        payments = (SPECS / "pagos-parciales-cuotas" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`NoPayments`", payments)
+        self.assertIn("`PARTIAL`", payments)
+        self.assertIn("`PAID`", payments)
+        self.assertIn("GET /api/v1/payments/budget/{id}/status", payments)
+        self.assertIn("`amount`", payments)
+        self.assertIn("CU15", payments)
+        self.assertIn("CU47", payments)
+        folders = (SPECS / "carpetas-de-tramite" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn('"Activa"', folders)
+        self.assertIn('"Espera"', folders)
+        self.assertIn('"Archivada"', folders)
+        self.assertIn("`confirmado`", folders)
+        self.assertIn("CU85", folders)
+        self.assertIn("CU16", folders)
+        adjustments = (SPECS / "descuentos-recargos-presupuesto" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn('"NORMAL"', adjustments)
+        self.assertIn('"DESCUENTO"', adjustments)
+        self.assertIn('"RECARGO"', adjustments)
+        self.assertIn("`item_type`", adjustments)
+        self.assertIn("`reason`", adjustments)
+        self.assertIn("CU45", adjustments)
+        self.assertIn("CU71", adjustments)
+        duplicates = (SPECS / "persona-validacion-duplicados" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`identificationNumber`", duplicates)
+        self.assertIn("fk_id_identification_type", duplicates)
+        self.assertIn("existingPersonId", duplicates)
+        self.assertIn("CU17", duplicates)
+        self.assertIn("#799", duplicates)
+        self.assertIn("#835", duplicates)
         combined = "\n".join(
             (SPECS / spec_id / "spec.md").read_text(encoding="utf-8")
             for spec_id in (
@@ -107,6 +149,22 @@ class OpenSpecRequirementsEnglishTest(unittest.TestCase):
             "escrituraId",
         ):
             self.assertNotIn(retired, combined, retired)
+        later = "\n".join(
+            (SPECS / spec_id / "spec.md").read_text(encoding="utf-8")
+            for spec_id in (
+                "protocolo-auxiliar",
+                "pagos-parciales-cuotas",
+                "carpetas-de-tramite",
+                "descuentos-recargos-presupuesto",
+                "persona-validacion-duplicados",
+            )
+        )
+        for retired in (
+            "El sistema SHALL",
+            "numeroIdentificacion",
+            "fk_id_tipo_identificacion",
+        ):
+            self.assertNotIn(retired, later, retired)
 
 
 if __name__ == "__main__":

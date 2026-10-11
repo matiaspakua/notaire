@@ -43,6 +43,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English protocol, payment, folder, and person requirement prose** (#1490, CU75):
+  `protocolo-auxiliar`, `pagos-parciales-cuotas`, `carpetas-de-tramite`,
+  `descuentos-recargos-presupuesto`, and `persona-validacion-duplicados`
+  state requirements in English. Spec ids stay. Live names stay:
+  `isAuxiliary`, `idFolio`, `NoPayments`, `PARTIAL`, `PAID`, `amount`,
+  `identificationNumber`, and `fk_id_identification_type`. Stored labels
+  `Protocolo Auxiliar`, `Protocolo Principal`, `Activa`, `Espera`,
+  `Archivada`, `NORMAL`, `DESCUENTO`, and `RECARGO` stay, along with the
+  archive query flag `confirmado`.
 - **English deed, folio, and document requirement prose** (#1490, CU75):
   Six more living specs state requirements in English and name `registered`,
   `expires`, `dueDays`, `deliveredBy`, `dateEntry`, `dateDue`, `amountToPay`,
