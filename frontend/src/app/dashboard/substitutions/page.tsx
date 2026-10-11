@@ -47,12 +47,12 @@ export default function SuplenciasPage() {
   const [editing, setEditing] = useState<Partial<Substitution>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const [escribanoId, setEscribanoId] = useState("");
+  const [notaryId, setNotaryId] = useState("");
   const [suplenteId, setSuplenteId] = useState("");
 
   function openCreate() {
     setEditing(EMPTY);
-    setEscribanoId("");
+    setNotaryId("");
     setSuplenteId("");
     setIsEditMode(false);
     setModalOpen(true);
@@ -60,7 +60,7 @@ export default function SuplenciasPage() {
 
   function openEdit(s: Substitution) {
     setEditing(s);
-    setEscribanoId(s.fkIdSubstituted?.personId?.toString() ?? "");
+    setNotaryId(s.fkIdSubstituted?.personId?.toString() ?? "");
     setSuplenteId(s.fkIdSubstitute?.personId?.toString() ?? "");
     setIsEditMode(true);
     setModalOpen(true);
@@ -70,7 +70,7 @@ export default function SuplenciasPage() {
     const payload: Partial<Substitution> = {
       dateStart: editing.dateStart,
       dateEnd: editing.dateEnd,
-      fkIdSubstituted: escribanoId ? { personId: Number(escribanoId) } : undefined,
+      fkIdSubstituted: notaryId ? { personId: Number(notaryId) } : undefined,
       fkIdSubstitute: suplenteId ? { personId: Number(suplenteId) } : undefined,
     };
     try {
@@ -183,8 +183,8 @@ export default function SuplenciasPage() {
                 <FormField label={t("fields.escribanoId")} helperText={t("fields.escribanoHelper")}>
                   <Input
                     type="number"
-                    value={escribanoId}
-                    onChange={(e) => setEscribanoId(e.target.value)}
+                    value={notaryId}
+                    onChange={(e) => setNotaryId(e.target.value)}
                     placeholder={t("fields.escribanoPlaceholder")}
                     data-testid="input-escribano-id"
                   />

@@ -65,9 +65,9 @@ async function seedArchivableGestion(page: Page) {
   await assignWorkflowToTipoTramite(page, tipoTramite.data!.idProcedureType, workflowId);
 
   const gestion = await createCompleteCaseGestion(page, {
-    presupuestoId: presupuesto.data!.idBudget,
-    tipoTramiteId: tipoTramite.data!.idProcedureType,
-    estadoGestionId: estadoInicial.data!.idManagementStatus,
+    budgetId: presupuesto.data!.idBudget,
+    procedureTypeId: tipoTramite.data!.idProcedureType,
+    statusManagementId: estadoInicial.data!.idManagementStatus,
   });
 
   return { idGestion: gestion.data!.idManagement, numero: gestion.data!.number };

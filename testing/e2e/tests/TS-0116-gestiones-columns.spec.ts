@@ -15,7 +15,7 @@ test.describe("Managements list columns (#1348)", () => {
     const budget = await createPresupuesto(page, person.data!.personId);
     expect(budget.ok, budget.error).toBe(true);
     const heading = `Carátula E2E ${Date.now()}`;
-    const gestion = await createCompleteCaseGestion(page, { presupuestoId: budget.data!.idBudget, heading });
+    const gestion = await createCompleteCaseGestion(page, { budgetId: budget.data!.idBudget, heading });
     expect(gestion.ok, gestion.error).toBe(true);
 
     await page.goto("/dashboard/managements");

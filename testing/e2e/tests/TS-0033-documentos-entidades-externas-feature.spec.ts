@@ -19,10 +19,10 @@ async function seedGestionConDocumentoEntidadExterna(page: Page, nombreDocumento
   const estado = await createEstadoGestion(page);
   const tipoTramite = await createTipoTramite(page);
   const gestion = await createCompleteCaseGestion(page, {
-    presupuestoId: presupuesto.data!.idBudget,
-    escribanoId: persona.data!.personId,
-    estadoGestionId: estado.data!.idManagementStatus,
-    tipoTramiteId: tipoTramite.data!.idProcedureType,
+    budgetId: presupuesto.data!.idBudget,
+    notaryId: persona.data!.personId,
+    statusManagementId: estado.data!.idManagementStatus,
+    procedureTypeId: tipoTramite.data!.idProcedureType,
   });
   const tramite = await createTramite(page, gestion.data!.idManagement, tipoTramite.data!.idProcedureType);
   const documento = await createDocumentoEntidadExterna(page, tramite.data!.idProcedure, {
@@ -77,10 +77,10 @@ test.describe("CU10 - Registrar movimientos de documentación de entidades exter
     const estado = await createEstadoGestion(page);
     const tipoTramite = await createTipoTramite(page);
     const gestion = await createCompleteCaseGestion(page, {
-      presupuestoId: presupuesto.data!.idBudget,
-      escribanoId: persona.data!.personId,
-      estadoGestionId: estado.data!.idManagementStatus,
-      tipoTramiteId: tipoTramite.data!.idProcedureType,
+      budgetId: presupuesto.data!.idBudget,
+      notaryId: persona.data!.personId,
+      statusManagementId: estado.data!.idManagementStatus,
+      procedureTypeId: tipoTramite.data!.idProcedureType,
     });
 
     await page.goto("/dashboard/external-entity-documents");

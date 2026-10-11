@@ -37,11 +37,11 @@ export function useBudgetSummary(id: number | null) {
 
 interface CreateBudgetInput {
   data: Partial<Budget>;
-  tipoTramiteId?: number;
+  procedureTypeId?: number;
 }
 
 interface CreateBudgetResult {
-  presupuesto: Budget;
+  budget: Budget;
   itemsLoaded: boolean;
 }
 
@@ -52,22 +52,22 @@ interface CreateBudgetResult {
 export function useCreateBudget() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ data, tipoTramiteId }: CreateBudgetInput): Promise<CreateBudgetResult> => {
-      const presupuesto = await apiPost<Budget>("/budgets", data);
-      if (tipoTramiteId === undefined) return { presupuesto, itemsLoaded: false };
+    mutationFn: async ({ data, procedureTypeId }: CreateBudgetInput): Promise<CreateBudgetResult> => {
+      const budget = await apiPost<Budget>("/budgets", data);
+      if (procedureTypeId === undefined) return { budget, itemsLoaded: false };
       try {
         await apiPost<Item[]>(
-          `/budgets/${presupuesto.idBudget}/items-from-template?procedureTypeId=${tipoTramiteId}`,
+          `/budgets/${budget.idBudget}/items-from-template?procedureTypeId=${procedureTypeId}`,
           undefined,
         );
-        return { presupuesto, itemsLoaded: true };
+        return { budget, itemsLoaded: true };
       } catch {
-        return { presupuesto, itemsLoaded: false };
+        return { budget, itemsLoaded: false };
       }
     },
     onSuccess: (result) => {
       qc.invalidateQueries({ queryKey: budgetsKeys.all });
-      if (result.itemsLoaded) qc.invalidateQueries({ queryKey: itemsKeys.byBudget(result.presupuesto.idBudget!) });
+      if (result.itemsLoaded) qc.invalidateQueries({ queryKey: itemsKeys.byBudget(result.budget.idBudget!) });
     },
   });
 }
@@ -93,8 +93,8 @@ export function useDeleteBudget() {
 export function useLoadItemsFromTemplate() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ idBudget, tipoTramiteId }: { idBudget: number; tipoTramiteId: number }) =>
-      apiPost<Item[]>(`/budgets/${idBudget}/items-from-template?procedureTypeId=${tipoTramiteId}`, undefined),
+    mutationFn: ({ idBudget, procedureTypeId }: { idBudget: number; procedureTypeId: number }) =>
+      apiPost<Item[]>(`/budgets/${idBudget}/items-from-template?procedureTypeId=${procedureTypeId}`, undefined),
     onSuccess: (_, variables) =>
       qc.invalidateQueries({ queryKey: itemsKeys.byBudget(variables.idBudget) }),
   });

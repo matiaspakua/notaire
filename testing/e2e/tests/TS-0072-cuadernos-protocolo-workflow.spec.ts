@@ -7,7 +7,7 @@ import { createPersona, createFolio, uniqueId } from "./setup/api-helpers";
 
 async function seedFoliosConsecutivos(
   page: Page,
-  escribanoId: number,
+  notaryId: number,
   count: number,
   overrides: { estados?: string[] } = {},
 ) {
@@ -16,7 +16,7 @@ async function seedFoliosConsecutivos(
   for (let i = 0; i < count; i++) {
     const numero = base + i;
     const estado = overrides.estados?.[i] ?? "Nuevo";
-    const folio = await createFolio(page, escribanoId, { number: numero, status: estado });
+    const folio = await createFolio(page, notaryId, { number: numero, status: estado });
     folios.push({ idFolio: folio.data!.idFolio, numero });
   }
   return folios;
@@ -29,8 +29,8 @@ test.describe("CU80 - Administrar Cuadernos de Folios", () => {
 
   test("golden path: creating a cuaderno from 10 consecutive folios shows it in the list", async ({ page }) => {
     const persona = await createPersona(page);
-    const escribanoId = persona.data!.personId;
-    const folios = await seedFoliosConsecutivos(page, escribanoId, 10);
+    const notaryId = persona.data!.personId;
+    const folios = await seedFoliosConsecutivos(page, notaryId, 10);
 
     await page.goto("/dashboard/protocol/notebooks");
     await page.waitForLoadState("domcontentloaded");

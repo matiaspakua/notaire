@@ -71,13 +71,13 @@ function BudgetsList() {
   const { data: resumen, isLoading: isResumenLoading, error: resumenError } =
     useBudgetSummary(resumenId);
 
-  const [tipoTramiteNuevoId, setTipoTramiteNuevoId] = useState(NO_TEMPLATE);
+  const [newProcedureTypeId, setTipoTramiteNuevoId] = useState(NO_TEMPLATE);
   const [itemsBudgetId, setItemsBudgetId] = useState<number | null>(null);
   const { data: presupuestoItems = [], isLoading: isItemsLoading } =
     useItemsByBudget(itemsBudgetId ?? undefined);
   const { data: tiposTramite = [] } = useProcedureTypes();
   const { data: catalogoItems = [] } = useItems();
-  const [selectedTipoTramiteId, setSelectedTipoTramiteId] = useState<string>("");
+  const [selectedProcedureTypeId, setSelectedTipoTramiteId] = useState<string>("");
   const [selectedCatalogItemId, setSelectedCatalogItemId] = useState<string>("");
   const cargarPlantillaMutation = useLoadItemsFromTemplate();
   const agregarCatalogoMutation = useAddItemsFromCatalog();
@@ -89,11 +89,11 @@ function BudgetsList() {
   }
 
   async function handleCargarPlantilla() {
-    if (!itemsBudgetId || !selectedTipoTramiteId) return;
+    if (!itemsBudgetId || !selectedProcedureTypeId) return;
     try {
       await cargarPlantillaMutation.mutateAsync({
         idBudget: itemsBudgetId,
-        tipoTramiteId: Number(selectedTipoTramiteId),
+        procedureTypeId: Number(selectedProcedureTypeId),
       });
       toast.success(t("items.loadedFromPlantilla"));
     } catch (e) {
@@ -197,10 +197,10 @@ function BudgetsList() {
         await updateMutation.mutateAsync({ id: editing.idBudget, data: editing });
         toast.success(t("updated"));
       } else {
-        const tipoTramiteId = tipoTramiteNuevoId === NO_TEMPLATE ? undefined : Number(tipoTramiteNuevoId);
-        const { itemsLoaded } = await createMutation.mutateAsync({ data: editing, tipoTramiteId });
+        const procedureTypeId = newProcedureTypeId === NO_TEMPLATE ? undefined : Number(newProcedureTypeId);
+        const { itemsLoaded } = await createMutation.mutateAsync({ data: editing, procedureTypeId });
         toast.success(t("created"));
-        if (tipoTramiteId !== undefined && !itemsLoaded) toast.warning(t("itemsNotLoaded"));
+        if (procedureTypeId !== undefined && !itemsLoaded) toast.warning(t("itemsNotLoaded"));
       }
       setModalOpen(false);
     } catch (err) {
@@ -381,7 +381,7 @@ function BudgetsList() {
               </FormField>
               {!isEditMode && (
                 <FormField label={t("fields.tipoTramite")} helperText={t("fields.tipoTramiteAyuda")}>
-                  <Select value={tipoTramiteNuevoId} onValueChange={setTipoTramiteNuevoId}>
+                  <Select value={newProcedureTypeId} onValueChange={setTipoTramiteNuevoId}>
                     <SelectTrigger data-testid="select-tipo-tramite-nuevo">
                       <SelectValue />
                     </SelectTrigger>
@@ -518,7 +518,7 @@ function BudgetsList() {
                 helperText={tiposTramite.length === 0 ? t("items.noTiposTramite") : undefined}
               >
                 <div className="flex gap-2">
-                  <Select value={selectedTipoTramiteId} onValueChange={setSelectedTipoTramiteId}>
+                  <Select value={selectedProcedureTypeId} onValueChange={setSelectedTipoTramiteId}>
                     <SelectTrigger data-testid="select-tipo-tramite-items" disabled={tiposTramite.length === 0}>
                       <SelectValue placeholder={t("items.selectTipoTramite")} />
                     </SelectTrigger>
@@ -532,7 +532,7 @@ function BudgetsList() {
                   </Select>
                   <Button
                     data-testid="btn-cargar-plantilla"
-                    disabled={!selectedTipoTramiteId || cargarPlantillaMutation.isPending}
+                    disabled={!selectedProcedureTypeId || cargarPlantillaMutation.isPending}
                     onClick={handleCargarPlantilla}
                   >
                     {t("items.cargarPlantilla")}

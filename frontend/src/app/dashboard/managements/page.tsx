@@ -85,11 +85,11 @@ function GestionesList() {
   const [editing, setEditing] = useState<DeedManagement | null>(null);
   const [numero, setNumero] = useState("");
   const [clienteFilter, setClienteFilter] = useState("");
-  const [presupuestoId, setBudgetId] = useState("");
-  const [escribanoId, setEscribanoId] = useState("");
-  const [estadoId, setEstadoId] = useState("");
-  const [tipoTramiteId, setTipoTramiteId] = useState("");
-  const [inmuebleId, setInmuebleId] = useState("");
+  const [budgetId, setBudgetId] = useState("");
+  const [notaryId, setNotaryId] = useState("");
+  const [statusId, setStatusId] = useState("");
+  const [procedureTypeId, setProcedureTypeId] = useState("");
+  const [propertyId, setPropertyId] = useState("");
 
   const { data: gestionesByCliente = [], isLoading: isLoadingByCliente } = useManagementsByClient(
     clienteFilter ? Number(clienteFilter) : 0
@@ -114,10 +114,10 @@ function GestionesList() {
     setEditing(null);
     setNumero("");
     setBudgetId("");
-    setEscribanoId("");
-    setEstadoId("");
-    setTipoTramiteId("");
-    setInmuebleId("");
+    setNotaryId("");
+    setStatusId("");
+    setProcedureTypeId("");
+    setPropertyId("");
     setModalOpen(true);
   }
 
@@ -138,11 +138,11 @@ function GestionesList() {
       } else {
         const created = await createCompleteMutation.mutateAsync({
           number: Number(numero),
-          presupuestoId: Number(presupuestoId),
-          escribanoId: Number(escribanoId),
-          estadoGestionId: Number(estadoId),
-          tipoTramiteId: Number(tipoTramiteId),
-          inmuebleId: inmuebleId ? Number(inmuebleId) : undefined,
+          budgetId: Number(budgetId),
+          notaryId: Number(notaryId),
+          statusManagementId: Number(statusId),
+          procedureTypeId: Number(procedureTypeId),
+          propertyId: propertyId ? Number(propertyId) : undefined,
         });
         toast.success(t("created"));
         notifySubstitutionRedirect(created.notes);
@@ -416,7 +416,7 @@ function GestionesList() {
                   <FormField label={t("fields.presupuesto")} required>
                     {/* Server search instead of the first 1000 budgets (#1340). */}
                     <BudgetPicker
-                      value={presupuestoId ? Number(presupuestoId) : undefined}
+                      value={budgetId ? Number(budgetId) : undefined}
                       onChange={(budget) => setBudgetId(budget?.idBudget != null ? String(budget.idBudget) : "")}
                       aria-label={t("fields.presupuesto")}
                       data-testid="select-presupuesto-gestion"
@@ -424,26 +424,26 @@ function GestionesList() {
                   </FormField>
                   <FormField label={t("fields.escribano")} required>
                     <PersonPicker
-                      value={escribanoId ? Number(escribanoId) : undefined}
-                      onChange={(person) => setEscribanoId(person?.personId != null ? String(person.personId) : "")}
+                      value={notaryId ? Number(notaryId) : undefined}
+                      onChange={(person) => setNotaryId(person?.personId != null ? String(person.personId) : "")}
                       aria-label={t("fields.escribano")}
                       data-testid="select-escribano-gestion"
                     />
                   </FormField>
                   <FormField label={t("fields.estado")} required>
-                    <Select value={estadoId} onValueChange={setEstadoId}>
+                    <Select value={statusId} onValueChange={setStatusId}>
                       <SelectTrigger data-testid="select-estado-gestion"><SelectValue placeholder={t("selectEstado")} /></SelectTrigger>
                       <SelectContent>{estados.map((e) => <SelectItem key={e.idManagementStatus} value={String(e.idManagementStatus)}>{e.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </FormField>
                   <FormField label={t("fields.tipo")} required>
-                    <Select value={tipoTramiteId} onValueChange={setTipoTramiteId}>
+                    <Select value={procedureTypeId} onValueChange={setProcedureTypeId}>
                       <SelectTrigger data-testid="select-tipo-tramite-gestion"><SelectValue placeholder={t("selectTramite")} /></SelectTrigger>
                       <SelectContent>{tiposTramite.map((tt) => <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>{tt.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </FormField>
                   <FormField label={t("fields.inmueble")}>
-                    <Select value={inmuebleId} onValueChange={setInmuebleId}>
+                    <Select value={propertyId} onValueChange={setPropertyId}>
                       <SelectTrigger data-testid="select-inmueble-gestion"><SelectValue placeholder={t("selectInmueble")} /></SelectTrigger>
                       <SelectContent>{inmuebles.map((i) => <SelectItem key={i.idProperty} value={String(i.idProperty)}>{i.address ?? t("inmuebleFallback", { id: i.idProperty ?? "—" })}</SelectItem>)}</SelectContent>
                     </Select>

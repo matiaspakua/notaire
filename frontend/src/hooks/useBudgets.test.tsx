@@ -38,14 +38,14 @@ describe("useCreateBudget (CU01, CU39)", () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(apiPost).toHaveBeenCalledTimes(1);
     expect(apiPost).toHaveBeenCalledWith("/budgets", { propertyAmount: 100 });
-    expect(result.current.data).toMatchObject({ presupuesto: { idBudget: 7 }, itemsLoaded: false });
+    expect(result.current.data).toMatchObject({ budget: { idBudget: 7 }, itemsLoaded: false });
   });
 
   it("loads the template items into the new presupuesto when a tipo de trámite is given", async () => {
     vi.mocked(apiPost).mockResolvedValueOnce({ idBudget: 7 }).mockResolvedValueOnce([{ idItem: 1 }]);
 
     const { result } = renderHook(() => useCreateBudget(), { wrapper: createWrapper() });
-    result.current.mutate({ data: { propertyAmount: 100 }, tipoTramiteId: 3 });
+    result.current.mutate({ data: { propertyAmount: 100 }, procedureTypeId: 3 });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(apiPost).toHaveBeenNthCalledWith(2, "/budgets/7/items-from-template?procedureTypeId=3", undefined);
@@ -56,9 +56,9 @@ describe("useCreateBudget (CU01, CU39)", () => {
     vi.mocked(apiPost).mockResolvedValueOnce({ idBudget: 7 }).mockRejectedValueOnce(new Error("no template"));
 
     const { result } = renderHook(() => useCreateBudget(), { wrapper: createWrapper() });
-    result.current.mutate({ data: { propertyAmount: 100 }, tipoTramiteId: 3 });
+    result.current.mutate({ data: { propertyAmount: 100 }, procedureTypeId: 3 });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toMatchObject({ presupuesto: { idBudget: 7 }, itemsLoaded: false });
+    expect(result.current.data).toMatchObject({ budget: { idBudget: 7 }, itemsLoaded: false });
   });
 });

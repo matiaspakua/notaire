@@ -266,12 +266,12 @@ async function globalSetup(): Promise<void> {
     await seedCatalogData(page);
     console.log("[global-setup] Seed complete:", {
       personaId: seedData.seedPersonaId,
-      presupuestoId: seedData.seedPresupuestoId,
-      conceptoId: seedData.seedConceptoId,
-      tipoTramiteId: seedData.seedTipoTramiteId,
+      budgetId: seedData.seedPresupuestoId,
+      conceptId: seedData.seedConceptoId,
+      procedureTypeId: seedData.seedTipoTramiteId,
       usuarioId: seedData.seedUsuarioId,
       folioId: seedData.seedFolioId,
-      estadoGestionId: seedData.seedEstadoGestionId,
+      managementStatusId: seedData.seedEstadoGestionId,
     });
 
     // Step 3: Export seed data to environment for test specs

@@ -35,23 +35,23 @@ interface TipoDeFolioRow {
 
 interface FolioFormState {
   idFolio?: number;
-  numero?: number;
-  anio?: number;
-  estado: string;
-  observaciones: string;
-  tipoFolioId?: number;
-  escribanoId?: number;
-  escrituraId?: number;
+  number?: number;
+  year?: number;
+  status: string;
+  notes: string;
+  folioTypeId?: number;
+  notaryId?: number;
+  deedId?: number;
 }
 
 const EMPTY: FolioFormState = {
-  numero: undefined,
-  anio: new Date().getFullYear(),
-  estado: "Nuevo",
-  observaciones: "",
-  tipoFolioId: undefined,
-  escribanoId: undefined,
-  escrituraId: undefined,
+  number: undefined,
+  year: new Date().getFullYear(),
+  status: "Nuevo",
+  notes: "",
+  folioTypeId: undefined,
+  notaryId: undefined,
+  deedId: undefined,
 };
 
 export default function FoliosAdminPage() {
@@ -197,41 +197,41 @@ export default function FoliosAdminPage() {
   function openEdit(folio: Folio) {
     setForm({
       idFolio: folio.idFolio,
-      numero: folio.number,
-      anio: folio.year,
-      estado: folio.status ?? "Nuevo",
-      observaciones: folio.notes ?? "",
-      tipoFolioId: folio.fkIdFolioType?.idFolioType,
-      escribanoId: folio.fkIdNotaryPerson?.personId,
-      escrituraId: folio.fkIdDeed?.idDeed,
+      number: folio.number,
+      year: folio.year,
+      status: folio.status ?? "Nuevo",
+      notes: folio.notes ?? "",
+      folioTypeId: folio.fkIdFolioType?.idFolioType,
+      notaryId: folio.fkIdNotaryPerson?.personId,
+      deedId: folio.fkIdDeed?.idDeed,
     });
     setIsEditMode(true);
     setModalOpen(true);
   }
 
   async function handleSave() {
-    if (form.numero === undefined || form.numero === null || Number.isNaN(form.numero)) {
+    if (form.number === undefined || form.number === null || Number.isNaN(form.number)) {
       toast.error(t("numberRequired"));
       return;
     }
-    if (!form.tipoFolioId) {
+    if (!form.folioTypeId) {
       toast.error(t("fields.tipo") + " " + tc("required"));
       return;
     }
-    if (!form.escribanoId) {
+    if (!form.notaryId) {
       toast.error(t("fields.escribano") + " " + tc("required"));
       return;
     }
     setSaving(true);
     try {
       const body = {
-        number: form.numero,
-        year: form.anio,
-        status: form.estado,
-        notes: form.observaciones,
-        typeFolioId: form.tipoFolioId,
-        notaryId: form.escribanoId,
-        deedId: form.escrituraId,
+        number: form.number,
+        year: form.year,
+        status: form.status,
+        notes: form.notes,
+        typeFolioId: form.folioTypeId,
+        notaryId: form.notaryId,
+        deedId: form.deedId,
       };
       if (isEditMode && form.idFolio) {
         await apiPut(`/folios/${form.idFolio}`, body);
@@ -267,11 +267,11 @@ export default function FoliosAdminPage() {
 
   const columns: Column<Folio>[] = [
     { key: "id", header: tc("id"), render: (f) => <span className="text-xs text-muted-foreground">{f.idFolio}</span>, className: "w-12" },
-    { key: "numero", header: t("fields.numero"), render: (f) => <span className="font-medium">{f.number}</span> },
-    { key: "anio", header: tc("year"), render: (f) => f.year ?? "—" },
+    { key: "number", header: t("fields.numero"), render: (f) => <span className="font-medium">{f.number}</span> },
+    { key: "year", header: tc("year"), render: (f) => f.year ?? "—" },
     { key: "tipo", header: t("fields.tipo"), render: (f) => f.fkIdFolioType?.name ?? "—" },
     {
-      key: "estado",
+      key: "status",
       header: t("fields.estado"),
       render: (f) => (f.status ? <Badge variant="secondary">{f.status}</Badge> : "—"),
     },
@@ -352,8 +352,8 @@ export default function FoliosAdminPage() {
               <FormField label={t("fields.numero")} required>
                 <Input
                   type="number"
-                  value={form.numero ?? ""}
-                  onChange={(e) => setForm({ ...form, numero: e.target.value === "" ? undefined : Number(e.target.value) })}
+                  value={form.number ?? ""}
+                  onChange={(e) => setForm({ ...form, number: e.target.value === "" ? undefined : Number(e.target.value) })}
                   placeholder="1001"
                   data-testid="input-numero-folio"
                 />
@@ -361,13 +361,13 @@ export default function FoliosAdminPage() {
               <FormField label={tc("year")}>
                 <Input
                   type="number"
-                  value={form.anio ?? ""}
-                  onChange={(e) => setForm({ ...form, anio: e.target.value === "" ? undefined : Number(e.target.value) })}
+                  value={form.year ?? ""}
+                  onChange={(e) => setForm({ ...form, year: e.target.value === "" ? undefined : Number(e.target.value) })}
                   placeholder={String(new Date().getFullYear())}
                 />
               </FormField>
               <FormField label={t("fields.estado")} required>
-                <Select value={form.estado} onValueChange={(v) => setForm({ ...form, estado: v })}>
+                <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
                   <SelectTrigger data-testid="select-estado-folio">
                     <SelectValue placeholder={t("fields.estadoPlaceholder")} />
                   </SelectTrigger>
@@ -380,8 +380,8 @@ export default function FoliosAdminPage() {
               </FormField>
               <FormField label={t("fields.tipo")} required>
                 <Select
-                  value={form.tipoFolioId !== undefined ? String(form.tipoFolioId) : ""}
-                  onValueChange={(v) => setForm({ ...form, tipoFolioId: Number(v) })}
+                  value={form.folioTypeId !== undefined ? String(form.folioTypeId) : ""}
+                  onValueChange={(v) => setForm({ ...form, folioTypeId: Number(v) })}
                 >
                   <SelectTrigger data-testid="select-tipo-folio">
                     <SelectValue placeholder={t("fields.tipoPlaceholder")} />
@@ -395,8 +395,8 @@ export default function FoliosAdminPage() {
               </FormField>
               <FormField label={t("fields.escribano")} required>
                 <Select
-                  value={form.escribanoId !== undefined ? String(form.escribanoId) : ""}
-                  onValueChange={(v) => setForm({ ...form, escribanoId: Number(v) })}
+                  value={form.notaryId !== undefined ? String(form.notaryId) : ""}
+                  onValueChange={(v) => setForm({ ...form, notaryId: Number(v) })}
                 >
                   <SelectTrigger data-testid="select-escribano-folio">
                     <SelectValue placeholder={t("fields.escribanoPlaceholder")} />
@@ -412,8 +412,8 @@ export default function FoliosAdminPage() {
               </FormField>
               <FormField label={t("fields.escritura")}>
                 <Select
-                  value={form.escrituraId !== undefined ? String(form.escrituraId) : "none"}
-                  onValueChange={(v) => setForm({ ...form, escrituraId: v === "none" ? undefined : Number(v) })}
+                  value={form.deedId !== undefined ? String(form.deedId) : "none"}
+                  onValueChange={(v) => setForm({ ...form, deedId: v === "none" ? undefined : Number(v) })}
                 >
                   <SelectTrigger data-testid="select-escritura-folio">
                     <SelectValue placeholder={t("fields.escrituraPlaceholder")} />
@@ -430,8 +430,8 @@ export default function FoliosAdminPage() {
               </FormField>
               <FormField label={tc("observations")}>
                 <Input
-                  value={form.observaciones}
-                  onChange={(e) => setForm({ ...form, observaciones: e.target.value })}
+                  value={form.notes}
+                  onChange={(e) => setForm({ ...form, notes: e.target.value })}
                 />
               </FormField>
             </FormSection>

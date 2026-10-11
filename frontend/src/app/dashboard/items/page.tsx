@@ -51,7 +51,7 @@ export default function ItemsPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Item>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [presupuestoId, setBudgetId] = useState("");
+  const [budgetId, setBudgetId] = useState("");
   const [reporteId, setReporteId] = useState("");
   const [reporteQuery, setReporteQuery] = useState<number | undefined>(undefined);
   const { data: descuentosRecargos = [], isFetching: reporteLoading } =
@@ -84,7 +84,7 @@ export default function ItemsPage() {
     const payload: Partial<Item> = {
       ...editing,
       type,
-      fkIdBudget: presupuestoId ? { idBudget: Number(presupuestoId) } : undefined,
+      fkIdBudget: budgetId ? { idBudget: Number(budgetId) } : undefined,
     };
     try {
       if (isEditMode && editing.idItem) {
@@ -227,7 +227,7 @@ export default function ItemsPage() {
               <FormField label={t("fields.presupuestoId")}>
                 <Input
                   type="number"
-                  value={presupuestoId}
+                  value={budgetId}
                   onChange={(e) => setBudgetId(e.target.value)}
                   placeholder={t("fields.presupuestoPlaceholder")}
                   data-testid="input-presupuesto-id"

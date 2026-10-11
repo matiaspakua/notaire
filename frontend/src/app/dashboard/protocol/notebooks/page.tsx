@@ -56,8 +56,8 @@ export default function CuadernosPage() {
   }
 
   async function handleCrearCuaderno() {
-    const escribanoId = folios.find((f) => selectedIds.includes(f.idFolio!))?.fkIdNotaryPerson?.personId;
-    if (!escribanoId) {
+    const notaryId = folios.find((f) => selectedIds.includes(f.idFolio!))?.fkIdNotaryPerson?.personId;
+    if (!notaryId) {
       toast.error(t("selectFoliosFirst"));
       return;
     }
@@ -65,7 +65,7 @@ export default function CuadernosPage() {
     try {
       await apiPost("/notebooks", {
         idsFolio: selectedIds,
-        idNotary: escribanoId,
+        idNotary: notaryId,
         year: new Date().getFullYear(),
         notes: observaciones || null,
       });

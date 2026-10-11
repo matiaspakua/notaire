@@ -18,8 +18,8 @@ import type { BudgetTemplate, ProcedureType, Concept, DocumentType, DocumentCost
 import { useDeleteError } from "@/hooks/useDeleteError";
 
 interface PlantillaKey {
-  tipoTramiteId: number;
-  conceptoId: number;
+  procedureTypeId: number;
+  conceptId: number;
 }
 
 export default function PlantillasPage() {
@@ -98,8 +98,8 @@ export default function PlantillasPage() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [tipoTramiteId, setTipoTramiteId] = useState("");
-  const [conceptoId, setConceptoId] = useState("");
+  const [procedureTypeId, setProcedureTypeId] = useState("");
+  const [conceptId, setConceptId] = useState("");
   const [observaciones, setObservaciones] = useState("");
   const [deleteKey, setDeleteKey] = useState<PlantillaKey | null>(null);
   const [saving, setSaving] = useState(false);
@@ -107,23 +107,23 @@ export default function PlantillasPage() {
 
   function openCreate() {
     setIsEditMode(false);
-    setTipoTramiteId("");
-    setConceptoId("");
+    setProcedureTypeId("");
+    setConceptId("");
     setObservaciones("");
     setModalOpen(true);
   }
 
   function openEdit(p: BudgetTemplate) {
     setIsEditMode(true);
-    setTipoTramiteId(String(p.budgetTemplatePK?.fkIdProcedureType ?? ""));
-    setConceptoId(String(p.budgetTemplatePK?.fkIdConcept ?? ""));
+    setProcedureTypeId(String(p.budgetTemplatePK?.fkIdProcedureType ?? ""));
+    setConceptId(String(p.budgetTemplatePK?.fkIdConcept ?? ""));
     setObservaciones(p.notes ?? "");
     setModalOpen(true);
   }
 
   async function handleSave() {
-    const tt = Number(tipoTramiteId);
-    const cc = Number(conceptoId);
+    const tt = Number(procedureTypeId);
+    const cc = Number(conceptId);
     if (!tt || !cc) {
       toast.error(t("selectionRequired"));
       return;
@@ -159,7 +159,7 @@ export default function PlantillasPage() {
     if (!deleteKey) return;
     setDeleting(true);
     try {
-      await apiDelete(`/budget-templates/procedure-types/${deleteKey.tipoTramiteId}/concept/${deleteKey.conceptoId}`);
+      await apiDelete(`/budget-templates/procedure-types/${deleteKey.procedureTypeId}/concept/${deleteKey.conceptId}`);
       toast.success(t("deleted"));
       refetch();
     } catch (err) {
@@ -200,8 +200,8 @@ export default function PlantillasPage() {
             className="text-destructive hover:text-destructive"
             onClick={() =>
               setDeleteKey({
-                tipoTramiteId: p.budgetTemplatePK!.fkIdProcedureType,
-                conceptoId: p.budgetTemplatePK!.fkIdConcept,
+                procedureTypeId: p.budgetTemplatePK!.fkIdProcedureType,
+                conceptId: p.budgetTemplatePK!.fkIdConcept,
               })
             }
             data-testid="btn-delete-plantilla"
@@ -239,7 +239,7 @@ export default function PlantillasPage() {
           <FormContainer>
             <FormSection dialogTitle title={isEditMode ? t("editPlantilla") : t("newPlantilla")}>
               <FormField label={t("fields.tipoTramite")} required>
-                <Select value={tipoTramiteId} onValueChange={setTipoTramiteId}>
+                <Select value={procedureTypeId} onValueChange={setProcedureTypeId}>
                   <SelectTrigger data-testid="select-tipo-tramite" disabled={isEditMode}>
                     <SelectValue placeholder={t("fields.tipoTramitePlaceholder")} />
                   </SelectTrigger>
@@ -253,7 +253,7 @@ export default function PlantillasPage() {
                 </Select>
               </FormField>
               <FormField label={t("fields.concepto")} required>
-                <Select value={conceptoId} onValueChange={setConceptoId}>
+                <Select value={conceptId} onValueChange={setConceptId}>
                   <SelectTrigger data-testid="select-concepto" disabled={isEditMode}>
                     <SelectValue placeholder={t("fields.conceptoPlaceholder")} />
                   </SelectTrigger>

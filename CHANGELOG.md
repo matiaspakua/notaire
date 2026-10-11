@@ -41,6 +41,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English caller fields for complete-case and budget creation** (#1490, CU75):
+  `CreateCompleteManagementInput` and the Playwright complete-case helper use
+  `budgetId`, `notaryId`, `statusManagementId`, `procedureTypeId`, and `propertyId`.
+  `useCreateBudget` returns `budget` and takes `procedureTypeId`. Message catalog keys
+  and stored labels such as folio status `Nuevo` stay as recorded.
 - **OpenSpec hygiene after #1477 / #1480**: archive closed-issue tree
   `feat-1462-otel-metrics-exporters` and shipped Gate 1 trees
   `docs-1445-archive-closed-1472` / `docs-1479-modules-owner-tracker` so `validate-sdlc-plan` stays green.

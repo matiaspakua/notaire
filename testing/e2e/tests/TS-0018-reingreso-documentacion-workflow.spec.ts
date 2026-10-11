@@ -24,10 +24,10 @@ async function seedGestionConDocumentacionNecesaria(page: Page, nombreDocumento:
   // creating a second trámite for the same tipoTramite here would duplicate
   // the "Certificado de Dominio" row and break the dialog's strict-mode lookup.
   const gestion = await createCompleteCaseGestion(page, {
-    presupuestoId: presupuesto.data!.idBudget,
-    escribanoId: persona.data!.personId,
-    estadoGestionId: estado.data!.idManagementStatus,
-    tipoTramiteId: tipoTramite.data!.idProcedureType,
+    budgetId: presupuesto.data!.idBudget,
+    notaryId: persona.data!.personId,
+    statusManagementId: estado.data!.idManagementStatus,
+    procedureTypeId: tipoTramite.data!.idProcedureType,
   });
   const tipoDocumento = await createTipoDocumento(page, { name: nombreDocumento });
   await createPlantillaTramite(page, tipoTramite.data!.idProcedureType, tipoDocumento.data!.idDocumentType);

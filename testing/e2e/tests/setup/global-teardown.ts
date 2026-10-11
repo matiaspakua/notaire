@@ -16,13 +16,13 @@ const idsToCleanup = {
   personaId: process.env.E2E_SEED_PERSONA_ID
     ? Number(process.env.E2E_SEED_PERSONA_ID)
     : null,
-  presupuestoId: process.env.E2E_SEED_PRESUPUESTO_ID
+  budgetId: process.env.E2E_SEED_PRESUPUESTO_ID
     ? Number(process.env.E2E_SEED_PRESUPUESTO_ID)
     : null,
-  conceptoId: process.env.E2E_SEED_CONCEPTO_ID
+  conceptId: process.env.E2E_SEED_CONCEPTO_ID
     ? Number(process.env.E2E_SEED_CONCEPTO_ID)
     : null,
-  tipoTramiteId: process.env.E2E_SEED_TIPO_TRAMITE_ID
+  procedureTypeId: process.env.E2E_SEED_TIPO_TRAMITE_ID
     ? Number(process.env.E2E_SEED_TIPO_TRAMITE_ID)
     : null,
   usuarioId: process.env.E2E_SEED_USUARIO_ID
@@ -31,7 +31,7 @@ const idsToCleanup = {
   folioId: process.env.E2E_SEED_FOLIO_ID
     ? Number(process.env.E2E_SEED_FOLIO_ID)
     : null,
-  estadoGestionId: process.env.E2E_SEED_ESTADO_GESTION_ID
+  managementStatusId: process.env.E2E_SEED_ESTADO_GESTION_ID
     ? Number(process.env.E2E_SEED_ESTADO_GESTION_ID)
     : null,
 };
@@ -60,14 +60,14 @@ async function globalTeardown(): Promise<void> {
 
     // Delete in dependency-safe order (children before parents)
     const deletions: { label: string; path: string }[] = [
-      ...(idsToCleanup.presupuestoId
-        ? [{ label: "presupuesto", path: `/budgets/${idsToCleanup.presupuestoId}` }]
+      ...(idsToCleanup.budgetId
+        ? [{ label: "presupuesto", path: `/budgets/${idsToCleanup.budgetId}` }]
         : []),
       ...(idsToCleanup.folioId
         ? [{ label: "folio", path: `/folios/${idsToCleanup.folioId}` }]
         : []),
-      ...(idsToCleanup.conceptoId
-        ? [{ label: "concepto", path: `/concepts/${idsToCleanup.conceptoId}` }]
+      ...(idsToCleanup.conceptId
+        ? [{ label: "concepto", path: `/concepts/${idsToCleanup.conceptId}` }]
         : []),
       // Delete the usuario before the persona it references, otherwise the
       // persona delete hits a foreign-key constraint.
@@ -77,11 +77,11 @@ async function globalTeardown(): Promise<void> {
       ...(idsToCleanup.personaId
         ? [{ label: "persona", path: `/people/${idsToCleanup.personaId}` }]
         : []),
-      ...(idsToCleanup.tipoTramiteId
-        ? [{ label: "tipo-tramite", path: `/procedure-types/${idsToCleanup.tipoTramiteId}` }]
+      ...(idsToCleanup.procedureTypeId
+        ? [{ label: "tipo-tramite", path: `/procedure-types/${idsToCleanup.procedureTypeId}` }]
         : []),
-      ...(idsToCleanup.estadoGestionId
-        ? [{ label: "estado-gestion", path: `/management-statuses/${idsToCleanup.estadoGestionId}` }]
+      ...(idsToCleanup.managementStatusId
+        ? [{ label: "estado-gestion", path: `/management-statuses/${idsToCleanup.managementStatusId}` }]
         : []),
     ];
 

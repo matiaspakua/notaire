@@ -94,9 +94,9 @@ test.describe("Workflow hero shows the newest case (#1347)", () => {
     const tipo = await createTipoTramite(page);
     await assignWorkflowToTipoTramite(page, tipo.data!.idProcedureType, workflow.data!.id);
     const gestion = await createCompleteCaseGestion(page, {
-      presupuestoId: budget.data!.idBudget,
-      tipoTramiteId: tipo.data!.idProcedureType,
-      estadoGestionId: estado.data!.idManagementStatus,
+      budgetId: budget.data!.idBudget,
+      procedureTypeId: tipo.data!.idProcedureType,
+      statusManagementId: estado.data!.idManagementStatus,
     });
     expect(gestion.ok, gestion.error).toBe(true);
     const trace = await apiGet(page, `/managements/${gestion.data!.idManagement}/workflow-trace`);

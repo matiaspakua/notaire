@@ -181,7 +181,7 @@ export interface Procedure {
   idProcedure?: number;
   procedureType?: ProcedureType;
   people?: Person[];
-  documentosPresentados?: SubmittedDocument[];
+  submittedDocuments?: SubmittedDocument[];
 }
 
 /** GET /api/v1/procedure-folders — raw ProcedureFolder DTO. */
@@ -214,11 +214,11 @@ export interface CreateCompleteManagementInput {
   number: number;
   heading?: string;
   notes?: string;
-  presupuestoId: number;
-  escribanoId: number;
-  estadoGestionId: number;
-  tipoTramiteId: number;
-  inmuebleId?: number;
+  budgetId: number;
+  notaryId: number;
+  statusManagementId: number;
+  procedureTypeId: number;
+  propertyId?: number;
 }
 
 export type TipoItem = "NORMAL" | "DESCUENTO" | "RECARGO";

@@ -140,11 +140,11 @@ export interface CompleteCaseGestionPayload {
   number: number;
   heading?: string;
   notes?: string;
-  presupuestoId: number;
-  escribanoId: number;
-  estadoGestionId: number;
-  tipoTramiteId: number;
-  inmuebleId?: number;
+  budgetId: number;
+  notaryId: number;
+  statusManagementId: number;
+  procedureTypeId: number;
+  propertyId?: number;
 }
 
 export interface EscrituraPayload {
@@ -265,30 +265,18 @@ export async function createPresupuesto(
  */
 export async function createCompleteCaseGestion(
   page: Page,
-  overrides: Partial<CompleteCaseGestionPayload> & { presupuestoId: number },
+  overrides: Partial<CompleteCaseGestionPayload> & { budgetId: number },
 ): Promise<ApiResult<{ idManagement: number; number: number; statusActual: string }>> {
   const merged: CompleteCaseGestionPayload = {
     // `number` is a Postgres `integer` column; uniqueId() is Date.now()-based and overflows it.
     number: uniqueId() % 1_000_000,
     heading: `Gestión E2E ${uniqueId()}`,
-    escribanoId: 1,
-    estadoGestionId: 1,
-    tipoTramiteId: 4,
+    notaryId: 1,
+    statusManagementId: 1,
+    procedureTypeId: 4,
     ...overrides,
   };
-  // CompleteCaseRequest's real wire field names are (number, heading, notes, budgetId,
-  // notaryId, statusManagementId, typeProcedureId, propertyId) — not the presupuestoId/
-  // escribanoId/estadoGestionId/tipoTramiteId helper argument names kept for callers.
-  return apiPost(page, "/managements/complete-case", {
-    number: merged.number,
-    heading: merged.heading,
-    notes: merged.notes,
-    budgetId: merged.presupuestoId,
-    notaryId: merged.escribanoId,
-    statusManagementId: merged.estadoGestionId,
-    typeProcedureId: merged.tipoTramiteId,
-    propertyId: merged.inmuebleId,
-  });
+  return apiPost(page, "/managements/complete-case", merged);
 }
 
 /**
@@ -310,14 +298,14 @@ export async function getReingresoDocumentacion(
  */
 export async function createGestionSinTramite(
   page: Page,
-  escribanoId: number,
+  notaryId: number,
   overrides: { heading?: string; number?: number } = {},
 ): Promise<ApiResult<{ idManagement: number; number: number }>> {
   return apiPost(page, "/managements", {
     heading: `Gestión E2E ${uniqueId()}`,
     dateStart: new Date().toISOString().split("T")[0],
     number: uniqueId() % 1_000_000,
-    notaryPersonId: escribanoId,
+    notaryPersonId: notaryId,
     ...overrides,
   });
 }
@@ -364,11 +352,11 @@ export async function createUsuario(
  */
 export async function createPago(
   page: Page,
-  presupuestoId: number,
+  budgetId: number,
   overrides: Partial<PagoPayload> = {},
 ): Promise<ApiResult<{ idPayment: number }>> {
   return apiPost(page, "/payments", {
-    idBudget: presupuestoId,
+    idBudget: budgetId,
     amount: 5000,
     date: new Date().toISOString().split("T")[0],
     paymentMethod: "Efectivo",
@@ -439,10 +427,10 @@ export async function createTipoTramite(
 export async function createTramite(
   page: Page,
   gestionId: number,
-  tipoTramiteId: number,
+  procedureTypeId: number,
 ): Promise<ApiResult<{ idProcedure: number }>> {
   return apiPost(page, "/procedures", {
-    idProcedureType: tipoTramiteId,
+    idProcedureType: procedureTypeId,
     idManagement: gestionId,
   });
 }
@@ -496,12 +484,12 @@ export async function createWorkflowDefinition(
 export async function createWorkflowNode(
   page: Page,
   workflowDefinitionId: number,
-  estadoGestionId: number,
+  managementStatusId: number,
   type: "INITIAL" | "INTERMEDIATE" | "FINAL",
 ): Promise<ApiResult<{ id: number }>> {
   return apiPost(page, "/workflow-node", {
     workflowDefinitionId,
-    statusManagementId: estadoGestionId,
+    statusManagementId: managementStatusId,
     type,
     positionX: 0,
     positionY: 0,
@@ -523,10 +511,10 @@ export async function createWorkflowTransition(
 
 export async function assignWorkflowToTipoTramite(
   page: Page,
-  tipoTramiteId: number,
+  procedureTypeId: number,
   workflowDefinitionId: number,
 ): Promise<ApiResult<unknown>> {
-  return apiPut(page, `/procedure-types/${tipoTramiteId}/workflow`, { workflowDefinitionId });
+  return apiPut(page, `/procedure-types/${procedureTypeId}/workflow`, { workflowDefinitionId });
 }
 
 /**
@@ -537,7 +525,7 @@ export async function assignWorkflowToTipoTramite(
  */
 export async function seedGestionWithWorkflow(
   page: Page,
-  presupuestoId: number,
+  budgetId: number,
 ): Promise<{
   idGestion: number;
   numero: number;
@@ -567,9 +555,9 @@ export async function seedGestionWithWorkflow(
   await assignWorkflowToTipoTramite(page, tipoTramite.data!.idProcedureType, workflowId);
 
   const gestion = await createCompleteCaseGestion(page, {
-    presupuestoId,
-    tipoTramiteId: tipoTramite.data!.idProcedureType,
-    estadoGestionId: estadoInicial.data!.idManagementStatus,
+    budgetId,
+    procedureTypeId: tipoTramite.data!.idProcedureType,
+    statusManagementId: estadoInicial.data!.idManagementStatus,
   });
 
   return {
@@ -598,13 +586,13 @@ export async function createConcepto(
  */
 export async function createPlantillaPresupuesto(
   page: Page,
-  tipoTramiteId: number,
-  conceptoId: number,
+  procedureTypeId: number,
+  conceptId: number,
 ): Promise<ApiResult<Record<string, unknown>>> {
   return apiPost(page, "/budget-templates", {
-    budgetTemplatePK: { fkIdProcedureType: tipoTramiteId, fkIdConcept: conceptoId },
-    procedureType: { idProcedureType: tipoTramiteId },
-    concept: { idConcept: conceptoId },
+    budgetTemplatePK: { fkIdProcedureType: procedureTypeId, fkIdConcept: conceptId },
+    procedureType: { idProcedureType: procedureTypeId },
+    concept: { idConcept: conceptId },
   });
 }
 
@@ -807,7 +795,7 @@ export async function brunoGetAvailableNotaries(
 
 export async function brunoGetReportePresupuesto(
   page: Page,
-  presupuestoId: number,
+  budgetId: number,
 ): Promise<ApiResult> {
-  return apiGet(page, `/reports/budget/${presupuestoId}`);
+  return apiGet(page, `/reports/budget/${budgetId}`);
 }
