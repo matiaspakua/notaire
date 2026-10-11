@@ -1,8 +1,8 @@
 package com.licensis.notaire.business;
 
 /**
- * Stored business vocabulary. The string values are persisted labels and stay
- * as recorded; only the comments around them are English.
+ * Stored business vocabulary. Field names are English. The string values are
+ * persisted labels and stay as recorded.
  *
  * @author matias
  */
@@ -20,40 +20,40 @@ public interface BusinessConstants
     /**
      * Initial history status when a management starts: "Iniciada".
      */
-    public String ManagementStatusINICIAL = "Iniciada";
-    public String ManagementStatusMODIFICADA = "Gestion Modificada";
-    public String ManagementENProcedure = "En Tramite";
-    public String DOCUMENTACION_COMPLETA = "Documentacion Completa";
-    public String ManagementCONDeedFIRMADA = "Gestion con Escritura Firmada";
-    public String ManagementCONDeedSINFIRMAR = "Gestion con Escritura Sin Firmar";
-    public String ManagementCONDeedANULADA = "Gestion con Escritura Anulada";
-    public String ManagementCONDeedNOPASO = "Gestion con Escritura No Paso";
-    public String ManagementCONDeedRegistered = "Gestion con Escritura Inscripta";
-    public String ManagementCONDOCUMENTACIONCOMPLETA = "Documentacion Completa";
-    public String ManagementARCHIVADA = "Archivada";
+    public String ManagementStatusInitial = "Iniciada";
+    public String ManagementStatusModified = "Gestion Modificada";
+    public String ManagementInProcedure = "En Tramite";
+    public String DocumentationComplete = "Documentacion Completa";
+    public String ManagementWithSignedDeed = "Gestion con Escritura Firmada";
+    public String ManagementWithUnsignedDeed = "Gestion con Escritura Sin Firmar";
+    public String ManagementWithVoidedDeed = "Gestion con Escritura Anulada";
+    public String ManagementWithDeedNotPassed = "Gestion con Escritura No Paso";
+    public String ManagementWithRegisteredDeed = "Gestion con Escritura Inscripta";
+    public String ManagementWithCompleteDocumentation = "Documentacion Completa";
+    public String ManagementArchived = "Archivada";
     /**
      * A folio type that can still be used.
      */
     public boolean FolioTypeEnabled = true;
-    public boolean FolioTypeDESHABILITADO = false;
+    public boolean FolioTypeDisabled = false;
 
     /**
      * A folio type that was removed or can no longer be used.
      */
     // Possible folio statuses.
-    public String StatusFolioNUEVOS = "Folio Nuevo";
-    public String StatusFolioUTILIZADO = "Folio Utilizado";
-    public String StatusFolioERROSE = "Folio Errose";
+    public String FolioStatusNew = "Folio Nuevo";
+    public String FolioStatusUsed = "Folio Utilizado";
+    public String FolioStatusDamaged = "Folio Errose";
 
-    public String ModuleMODIFICARPerson = "Modificar Persona";
-    public String ModuleMODIFICARClient = "Modificar Cliente";
+    public String ModuleUpdatePerson = "Modificar Persona";
+    public String ModuleUpdateClient = "Modificar Cliente";
     /**
      * Possible deed statuses.
      */
-    public String DeedFIRMADA = "Firmada";
-    public String DeedSINFIRMAR = "Sin Firmar";
-    public String DeedANULADA = "Anulada";
-    public String DeedNOPASO = "No Paso";
+    public String DeedSigned = "Firmada";
+    public String DeedUnsigned = "Sin Firmar";
+    public String DeedVoided = "Anulada";
+    public String DeedNotPassed = "No Paso";
     public String DeedRegistered = "Inscripta";
     /**
      * Registry-circuit statuses of a registration draft (CU82).
@@ -65,12 +65,12 @@ public interface BusinessConstants
     /**
      * User types. {@code Escribano} is an administrator type.
      */
-    public String UserEMPLEADO = "Empleado";
+    public String UserEmployee = "Empleado";
     public String UserNotary = "Escribano";
 
     /**
      * Who delivers the documentation.
      */
-    public String DOCUMENTACION_ENTIDAD_EXTERNA = "Entidad Externa";
-    public String DOCUMENTACIONClient = "Cliente";
+    public String DocumentationExternalEntity = "Entidad Externa";
+    public String DocumentationClient = "Cliente";
 }

@@ -45,7 +45,7 @@ public class ExternalEntityDocumentService {
         DeedManagement management = findManagementOrThrow(idManagement);
         List<SubmittedDocument> documents = documentRepository
                 .findByManagementAndDeliveredBy(idManagement,
-                        BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA);
+                        BusinessConstants.DocumentationExternalEntity);
         return toDto(management, documents);
     }
 
@@ -78,17 +78,17 @@ public class ExternalEntityDocumentService {
     public void tryCompleteDocumentation(Integer idManagement) {
         List<SubmittedDocument> documents = documentRepository
                 .findByManagementAndDeliveredBy(idManagement,
-                        BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA);
+                        BusinessConstants.DocumentationExternalEntity);
         boolean todosEntregados = !documents.isEmpty()
                 && documents.stream().allMatch(doc -> Boolean.TRUE.equals(doc.getDelivered()));
         if (!todosEntregados) {
             return;
         }
         try {
-            managementTransitionService.transition(idManagement, BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA);
+            managementTransitionService.transition(idManagement, BusinessConstants.ManagementWithCompleteDocumentation);
         } catch (BusinessValidationException | ResourceNotFoundException e) {
             log.warn("Could not automatically transition management {} to '{}': {}", idManagement,
-                    BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA, e.getMessage());
+                    BusinessConstants.ManagementWithCompleteDocumentation, e.getMessage());
         }
     }
 
@@ -108,7 +108,7 @@ public class ExternalEntityDocumentService {
     }
 
     private static void validateIsExternalEntity(SubmittedDocument document) {
-        if (!BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA.equals(document.getDeliveredBy())) {
+        if (!BusinessConstants.DocumentationExternalEntity.equals(document.getDeliveredBy())) {
             throw new BusinessValidationException(
                     "Document " + document.getIdSubmittedDocument() + " is not an external-entity document");
         }

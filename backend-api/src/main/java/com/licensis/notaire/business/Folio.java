@@ -35,12 +35,8 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
- * <p>
- * REGLA DE NEGOCIO:
- * <p>
- *
- * <it> <li> Estados posibles of a Folio: -New -Utilizado -Errose </li> </it>
- *
+ * Business rule: stored folio statuses are {@code Nuevo}, {@code Utilizado},
+ * {@code Errose}, {@code no pasó}, and {@code Asignado a cuaderno}.
  *
  * @author Tefi
  */

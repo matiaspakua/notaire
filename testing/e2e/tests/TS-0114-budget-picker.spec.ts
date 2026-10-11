@@ -38,7 +38,7 @@ test.describe("Budget picker (#1340)", () => {
     await picker.press("Enter");
     await expect(picker).toHaveValue(new RegExp(`^#${id} `));
     await expect(picker).toHaveAttribute("aria-expanded", "false");
-    await expect(dialog.getByText(/balance pendiente/i)).toBeVisible({ timeout: 8000 });
+    await expect(dialog.getByText(/saldo pendiente/i)).toBeVisible({ timeout: 8000 });
     expect(requested.some((u) => u.includes("size=1000"))).toBe(false);
   });
 

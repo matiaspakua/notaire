@@ -211,7 +211,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     const row = page.getByRole("row").filter({ hasText: def.deedNumber });
     deedId = ((await row.locator("td").first().innerText()) ?? "").trim();
     await row.getByTestId(`btn-sign-deed-${deedId}`).click();
-    await page.getByRole("button", { name: /sign escritura/i }).click();
+    await page.getByRole("button", { name: /firmar escritura/i }).click();
     await expect(page.getByRole("dialog")).toBeHidden();
     await pause(page);
   });
@@ -244,7 +244,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     await chooseInDialogCombobox(page, new RegExp(`^${def.managementNumber} `), "select-management-document");
     await chooseFirst(page, "select-procedure-document");
     await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-06");
-    await page.getByRole("dialog").getByLabel(/document entregado/i).click();
+    await page.getByRole("dialog").getByLabel(/documento entregado/i).click();
     await saveDialog(page);
   });
 

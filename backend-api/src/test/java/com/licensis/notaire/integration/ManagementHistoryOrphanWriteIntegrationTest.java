@@ -299,12 +299,12 @@ class ManagementHistoryOrphanWriteIntegrationTest {
 
     @Test
     @DisplayName("current-status returns the latest history when rows exist")
-    void shouldReturnEstadoActualFromHistoryWhenRowsExist() throws Exception {
+    void shouldReturnCurrentStatusFromHistoryWhenRowsExist() throws Exception {
         Integer notaryId = createPerson("80610009");
         ManagementStatus statusA = createStatus("Hist-A");
         ManagementStatus statusB = createStatus("Hist-B");
         String createBody = """
-                {"heading": "Estado from history", "dateStart": "2026-01-01", "number": %d,
+                {"heading": "Status from history", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), notaryId, statusA.getIdManagementStatus());
         MvcResult created = mockMvc.perform(post("/api/v1/managements")
@@ -377,11 +377,11 @@ class ManagementHistoryOrphanWriteIntegrationTest {
 
     @Test
     @DisplayName("current-status falls back to the entity status when history is empty")
-    void shouldReturnEstadoActualFallbackWhenHistoryEmpty() throws Exception {
+    void shouldReturnCurrentStatusFallbackWhenHistoryEmpty() throws Exception {
         Integer notaryId = createPerson("80610010");
         ManagementStatus status = createStatus("Fallback");
         String body = """
-                {"heading": "Estado fallback", "dateStart": "2026-01-01", "number": %d,
+                {"heading": "Status fallback", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), notaryId, status.getIdManagementStatus());
         MvcResult created = mockMvc.perform(post("/api/v1/managements")
@@ -410,14 +410,14 @@ class ManagementHistoryOrphanWriteIntegrationTest {
 
     @Test
     @DisplayName("current-status returns 404 when the management is missing")
-    void shouldReturn404EstadoActualWhenManagementMissing() throws Exception {
+    void shouldReturn404CurrentStatusWhenManagementMissing() throws Exception {
         mockMvc.perform(get("/api/v1/managements/{id}/current-status", 999999))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("current-status returns 404 when the status is null and history is empty")
-    void shouldReturn404EstadoActualWhenStatusNullAndHistoryEmpty() throws Exception {
+    void shouldReturn404CurrentStatusWhenStatusNullAndHistoryEmpty() throws Exception {
         Integer notaryId = createPerson("80610011");
         String body = """
                 {"heading": "No status", "dateStart": "2026-01-01", "number": %d,

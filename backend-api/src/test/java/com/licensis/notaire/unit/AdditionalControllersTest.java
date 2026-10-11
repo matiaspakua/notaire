@@ -205,7 +205,7 @@ class AdditionalControllersTest {
             when(transitionWebMapper.mapToHttpResponse(transitionOutput))
                     .thenReturn(new com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper
                             .ManagementSummaryDto(1, "En Progreso"));
-            when(transitionUseCase.execute(1, "Estado Inexistente"))
+            when(transitionUseCase.execute(1, "Missing status"))
                     .thenThrow(new com.licensis.notaire.exception.BusinessValidationException(
                             "Transition not allowed"));
             when(transitionUseCase.execute(2, "En Progreso"))
@@ -215,7 +215,7 @@ class AdditionalControllersTest {
             mvc.perform(post("/api/v1/managements/1/transition").contentType("application/json")
                     .content("{\"statusDestination\": \"En Progreso\"}")).andExpect(status().isOk());
             mvc.perform(post("/api/v1/managements/1/transition").contentType("application/json")
-                    .content("{\"statusDestination\": \"Estado Inexistente\"}")).andExpect(status().isBadRequest());
+                    .content("{\"statusDestination\": \"Missing status\"}")).andExpect(status().isBadRequest());
             mvc.perform(post("/api/v1/managements/2/transition").contentType("application/json")
                     .content("{\"statusDestination\": \"En Progreso\"}")).andExpect(status().isNotFound());
 

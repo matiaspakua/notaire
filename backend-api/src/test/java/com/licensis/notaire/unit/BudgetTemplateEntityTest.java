@@ -130,13 +130,13 @@ class BudgetTemplateEntityTest {
         @DisplayName("Should set and get type of procedure")
         void shouldSetAndGetProcedureType() {
             ProcedureType type = new ProcedureType();
-            type.setName("Deed de Venta");
+            type.setName("Deed of sale");
 
             BudgetTemplate pp = new BudgetTemplate();
             pp.setProcedureType(type);
 
             assertThat(pp.getProcedureType()).isNotNull();
-            assertThat(pp.getProcedureType().getName()).isEqualTo("Deed de Venta");
+            assertThat(pp.getProcedureType().getName()).isEqualTo("Deed of sale");
         }
 
         @Test

@@ -89,7 +89,7 @@ test.describe("CU11/CU12/CU44 - Testimony movements", () => {
     await page.getByTestId("input-reentry-card-number").fill("77");
     await page.getByTestId("checkbox-reentry-observed").check();
     await expect(page.getByTestId("btn-confirm-reentry")).toBeDisabled();
-    await page.getByTestId("input-reentry-notes").fill("Falta sello del registro");
+    await page.getByTestId("input-reentry-notes").fill("Missing registry seal");
     await expect(page.getByTestId("btn-confirm-reentry")).toBeEnabled();
     await page.getByTestId("btn-confirm-reentry").click();
     await steps.thenShowsSuccessMessage("reingresado");

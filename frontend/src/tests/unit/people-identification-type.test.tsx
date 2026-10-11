@@ -33,7 +33,7 @@ const CUIT_PERSON = {
   identificationTypeId: 5, isClient: true, version: 0,
 };
 const UNTYPED_PERSON = {
-  personId: 8, firstName: "Sin", lastName: "Tipo", identificationNumber: "123",
+  personId: 8, firstName: "No", lastName: "Type", identificationNumber: "123",
   identificationTypeId: null, isClient: false, version: 0,
 };
 
@@ -91,7 +91,7 @@ describe("PeoplePage identification type (#1361)", () => {
 
   it("asks for a type before saving a person stored without one", async () => {
     render(<PeoplePage />, { wrapper });
-    await screen.findByText("Sin Tipo");
+    await screen.findByText("No Type");
     const rows = screen.getAllByRole("button", { name: "common.edit" });
     fireEvent.click(rows[1]);
     const dialog = await screen.findByRole("dialog");

@@ -61,7 +61,7 @@ class SubmittedDocumentControllerTest {
 
     private Integer createDocumentType(boolean expires, Integer dueDays, String deliveredBy) {
         DocumentType type = new DocumentType();
-        type.setName("Tipo DocumentoPresentadoControllerTest " + System.nanoTime());
+        type.setName("Type SubmittedDocumentControllerTest " + System.nanoTime());
         type.setExpires(expires);
         type.setDueDays(dueDays);
         type.setDeliveredBy(deliveredBy);
@@ -72,7 +72,7 @@ class SubmittedDocumentControllerTest {
 
     private Integer createProcedure() {
         ProcedureType type = new ProcedureType();
-        type.setName("Procedure DocumentoPresentadoControllerTest");
+        type.setName("Procedure SubmittedDocumentControllerTest");
         type.setEnabled(true);
         type.setIsArchived(false);
         type.setIsRegistered(false);
@@ -209,7 +209,7 @@ class SubmittedDocumentControllerTest {
         Integer typeId = createDocumentType(false, null, "Cliente");
         Integer procedureId = createProcedure();
         String body = """
-                {"typeId": %d, "date": "2026-06-01", "delivered": true, "procedureId": %d, "name": "Doc listado"}
+                {"typeId": %d, "date": "2026-06-01", "delivered": true, "procedureId": %d, "name": "Listed document"}
                 """.formatted(typeId, procedureId);
         MvcResult created = mockMvc.perform(post("/api/v1/submitted-documents")
                         .contentType(MediaType.APPLICATION_JSON).content(body))
@@ -228,8 +228,8 @@ class SubmittedDocumentControllerTest {
     }
 
     @Test
-    @DisplayName("Should return 200 when listing documents presentados")
-    void shouldListDocumentsPresentados() throws Exception {
+    @DisplayName("Should return 200 when listing submitted documents")
+    void shouldListSubmittedDocuments() throws Exception {
         mockMvc.perform(get("/api/v1/submitted-documents"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());

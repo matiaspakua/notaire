@@ -123,8 +123,8 @@ public class DeedController {
 
     /** Deed statuses as stored (BusinessConstants), in workflow order. */
     static final List<String> DEED_STATUSES = List.of(
-            BusinessConstants.DeedSINFIRMAR, BusinessConstants.DeedFIRMADA, BusinessConstants.DeedANULADA,
-            BusinessConstants.DeedNOPASO, BusinessConstants.DeedRegistered);
+            BusinessConstants.DeedUnsigned, BusinessConstants.DeedSigned, BusinessConstants.DeedVoided,
+            BusinessConstants.DeedNotPassed, BusinessConstants.DeedRegistered);
 
     /** The stored spelling of {@code value} in any letter case, null for none, or a 400. */
     static String canonicalStatus(String value) {

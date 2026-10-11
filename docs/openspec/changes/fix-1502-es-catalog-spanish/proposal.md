@@ -19,10 +19,10 @@ The English identifier rename (#1495) also replaced entity words inside Spanish 
 - `frontend/messages/es.json`: 27 values restored from `d4bd1693` (personas, gestiones.fields, inmuebles, protocolo.cuadernos, administracion.usuarios/conceptos/plantillas/roles, suplencias). Sentence-case changes from #1495 that stay Spanish ("Movimientos de testimonio", "Método de pago") are kept. `en.json` untouched.
 - Vitest `es-catalog-spanish.test.ts`: fails when an es.json value contains an English entity name from the rename map ("Roles" excluded: it is also Spanish).
 - Playwright `TS-0023`: the users table header is "Rol" again (the rename had changed the assertion to "Role").
-- Playwright specs (20 files): Spanish locator text restored from the pre-#1495 specs where the UI renders Spanish; English kept where the test runs in EN or matches the English API (`search?number=`, the `cadastral` message).
+- Playwright `TS-0072` edge paths expect the English notebook validation messages the backend returns since #1495.
+- Playwright specs (21 files): Spanish locator text restored from the pre-#1495 specs where the UI renders Spanish; English kept where the test runs in EN or matches the English API (`search?number=`, the `cadastral` message).
 - `useCreateCompleteManagement` and the E2E helper `createCompleteCaseManagement` map `procedureTypeId` to `typeProcedureId` (shared `toCompleteCaseRequest`); Vitest `useManagements.create-wire.test.tsx`.
-- `frontend/src/types/api.generated.ts` regenerated from the merged `openapi.yaml` (budget status description).
-- Bruno: five assertions (`procedures/04a`, `procedure-types/04a`, `testimonies/04a`, `testimonies/04c`, `workflow-nodes/10`) expect the English validation messages the backend has returned since #1495.
+- The generated-types drift and the Spanish Bruno assertion (`workflow-nodes/10`) that also kept main red were fixed on main by #1512 while this change was open, so they are no longer part of this diff.
 - CHANGELOG entry.
 
 ## Reglas de negocio
@@ -49,7 +49,7 @@ The English identifier rename (#1495) also replaced entity words inside Spanish 
 | Module | Touched | What changes |
 |--------|---------|--------------|
 | `frontend` | yes | es.json, guard test, create mapper, generated types |
-| `testing/e2e` | yes | 20 specs, seed helper |
+| `testing/e2e` | yes | 21 specs, seed helper |
 | `backend-api` | no | — |
 
 ### Surface area

@@ -35,7 +35,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     @BeforeEach
     void setUp() {
         testTypeProcedure = new ProcedureType();
-        testTypeProcedure.setName("Deed de Compraventa");
+        testTypeProcedure.setName("Deed for Compraventa");
         typeProcedureRepository.save(testTypeProcedure);
 
         testConcept = new Concept();
@@ -92,14 +92,14 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should update budget-template notes")
     void shouldUpdateTemplate() {
-        testTemplate.setNotes("Observaciones actualizadas");
+        testTemplate.setNotes("Updated notes");
         BudgetTemplate updated = templateRepository.save(testTemplate);
 
-        assertThat(updated.getNotes()).isEqualTo("Observaciones actualizadas");
+        assertThat(updated.getNotes()).isEqualTo("Updated notes");
 
         List<BudgetTemplate> fetched = templateRepository.findByProcedureTypeIdProcedureType(testTypeProcedure.getIdProcedureType());
         assertThat(fetched).isNotEmpty()
-                .anyMatch(p -> p.getNotes().equals("Observaciones actualizadas"));
+                .anyMatch(p -> p.getNotes().equals("Updated notes"));
     }
 
     @Test
@@ -144,7 +144,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("Should handle multiple budget templates for the same procedure type")
     void shouldHandleMultipleTemplates() {
         Concept concept2 = new Concept();
-        concept2.setName("Gastos");
+        concept2.setName("Expenses");
         concept2.setValue(java.math.BigDecimal.ZERO);
         concept2.setPercentage(0);
         conceptRepository.save(concept2);
@@ -184,7 +184,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle transaction consistency")
     void shouldMaintainTransactionConsistency() {
-        testTemplate.setNotes("Antes of delete");
+        testTemplate.setNotes("Before delete");
         templateRepository.save(testTemplate);
 
         templateRepository.delete(testTemplate);
@@ -197,11 +197,11 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("Should create distinct budget templates with different IDs")
     void shouldCreateDistinctTemplates() {
         ProcedureType type1 = new ProcedureType();
-        type1.setName("Tipo 1");
+        type1.setName("Type 1");
         typeProcedureRepository.save(type1);
 
         ProcedureType type2 = new ProcedureType();
-        type2.setName("Tipo 2");
+        type2.setName("Type 2");
         typeProcedureRepository.save(type2);
 
         Concept concept1 = new Concept();

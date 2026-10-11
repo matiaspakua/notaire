@@ -104,7 +104,7 @@ class ManagementControllerIntegrationTest {
 
     private Integer createManagementStatus() {
         ManagementStatus status = new ManagementStatus();
-        status.setName("Estado IT");
+        status.setName("Status IT");
         return managementStatusRepository.save(status).getIdManagementStatus();
     }
 
