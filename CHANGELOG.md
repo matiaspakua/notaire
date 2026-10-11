@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English H2 seed phrases** (#1490, CU75): the concept is `Base fee`.
+  The budget heading is `Test budget`. The procedure-type note is
+  `Compraventa procedure`. Stored labels `De documento`, `Iniciada`,
+  `Inicio Gestion`, `Compraventa`, `PENDIENTE`, `Casado`, `Escribano`,
+  and `DNI` stay. Applied migration `V2` stays.
 - **English hook fixture phrases** (#1490, CU75): the budget-template
   procedure type is `Base fee`. The folio type is `Protocol`. Save-error
   describe titles name `presentPersonSaveError`. The fixture last name is
