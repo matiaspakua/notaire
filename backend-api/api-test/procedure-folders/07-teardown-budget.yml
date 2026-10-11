@@ -1,7 +1,7 @@
 info:
   name: Teardown - Delete budget (may 409)
   type: http
-  seq: 8
+  seq: 11
   description: |-
       Traceability: CU85
 http:

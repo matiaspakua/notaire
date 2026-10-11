@@ -1,0 +1,22 @@
+info:
+  name: Verify complete case update
+  type: http
+  seq: 9
+  description: |-
+      Traceability: CU53, issue #1360 - the full edit reads back.
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/managements/{{pf_mgmt_id}}/complete-case"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Edited header and notes persisted", function () {
+            const b = res.getBody();
+            expect(b.heading).to.equal("Bruno folder management edited");
+            expect(b.notes).to.equal("edited by Bruno #1360");
+          });
