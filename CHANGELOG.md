@@ -64,6 +64,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Official use-case titles in open change records** (#1490, CU75):
+  the people-pagination record cites `CU54 – Modificar Persona`. The
+  testimony record cites `CU07 – Generar testimonio` and
+  `CU08 – Verificar Testimonio`. The delete-status record cites
+  `CU21 – Modificar Usuario`. Official titles `Dar Alta Cliente`,
+  `Buscar persona`, and `Procesar pago` stay, along with the original
+  wording `Gestionar historial de gestion`. Required headings
+  `Objetivo` and `Reglas de negocio` stay.
 - **English transaction-guide sample** (#1490, CU75): the sample service
   is `DeedService`. The lazy-field search path is
   `com/licensis/notaire/business/`. The return type `Page<Deed>` stays.

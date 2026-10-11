@@ -11,7 +11,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Link | Reference | Status |
 |------|-----------|--------|
 | Issue | #1315 | open → in progress |
-| Use Case | CU15 – Procesar pago; CU13 – Gestionar historial de gestion; CU21 – Modificar UserAccount (and the other CRUD use cases with a DELETE) | exists |
+| Use Case | CU15 – Procesar pago; CU13 – Gestionar historial de gestion; CU21 – Modificar Usuario (and the other CRUD use cases with a DELETE) | exists |
 | Specification | `docs/openspec/changes/fix-1315-delete-returns-204/` | Gate 1 draft |
 | Branch | `fix/1315_delete_returns_204` | created from updated `main` |
 | Tasks | `tasks.md` | in progress |

@@ -6,7 +6,7 @@
 | Field | Value |
 |-------|-------|
 | GitHub Issue | #655 |
-| Use Case | CU07 – Generar Testimony; CU08 – Verificar Testimony |
+| Use Case | CU07 – Generar testimonio; CU08 – Verificar Testimonio |
 | Branch | `fix/655_testimony_requires_deed` |
 | Gate 1 status | draft |
 
