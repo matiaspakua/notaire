@@ -30,6 +30,8 @@ so the availability answer is not only in a pull request.
 
 [CU43 still names `GET/POST /api/v1/gestiones/{id}/reingreso-documentacion`, CU44 still names `POST /api/v1/movimiento-testimonio/{id}/reenter`, CU10 still names `GET/PUT /api/v1/gestiones/{id}/documentos-entidades-externas[/{idDocumentoPresentado}]`, CU53 and CU83 still name `POST /api/v1/gestiones/{id}/transition`, CU22 still names `PUT /api/v1/gestiones/complete-case`, CU83 still names `GET /api/v1/gestiones/{id}/workflow-trace`, CU13 still names `GET /api/v1/gestiones/{id}/historial` and `GET /api/v1/gestiones/{id}/estado-actual`, and CU53 still names `PUT /api/v1/gestiones/{id}` and `PUT /api/v1/gestiones/{id}/complete-case`] → The live call is in
 `DOC-GESTION`. Rewriting every file is a different change.
+[CU01 and CU39 still name `POST /api/v1/presupuestos/{id}/items-desde-plantilla`] → The live call is in
+`presupuesto-from-template`.
 [Dictionary stays stale] → #1222, recorded as not a missing sequence.
 
 ## Testing Strategy

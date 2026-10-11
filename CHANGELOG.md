@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Budget template path** (#1490, CU75): the engineering-sequences
+  design names the path CU01 and CU39 still write,
+  `POST /api/v1/presupuestos/{id}/items-desde-plantilla`. The live call
+  stays in `presupuesto-from-template`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
 - **Rejected status PUT paths** (#1490, CU75): `DOC-GESTION` names the
   live updates `PUT /api/v1/managements/{id}` and
   `PUT /api/v1/managements/{id}/complete-case`. A status change on either

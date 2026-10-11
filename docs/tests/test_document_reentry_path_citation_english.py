@@ -75,6 +75,24 @@ HISTORY = "`GET /api/v1/gestiones/{id}/historial`"
 CURRENT_STATUS = "`GET /api/v1/gestiones/{id}/estado-actual`"
 PUT_MANAGEMENT = "`PUT /api/v1/gestiones/{id}`"
 PUT_COMPLETE = "`PUT /api/v1/gestiones/{id}/complete-case`"
+CU01 = (
+    ROOT
+    / "docs"
+    / "100-business"
+    / "102-use-cases"
+    / "CU01 – Preparar Presupuesto.md"
+)
+CU39 = (
+    ROOT
+    / "docs"
+    / "100-business"
+    / "102-use-cases"
+    / "CU39 – Crear Plantilla Presupuesto.md"
+)
+TEMPLATE = "`POST /api/v1/presupuestos/{id}/items-desde-plantilla`"
+TEMPLATE_SPEC = (
+    ROOT / "docs" / "openspec" / "specs" / "presupuesto-from-template" / "spec.md"
+)
 
 
 class DocumentReentryPathCitationEnglishTest(unittest.TestCase):
@@ -161,6 +179,18 @@ class DocumentReentryPathCitationEnglishTest(unittest.TestCase):
         ).read_text(encoding="utf-8")
         self.assertIn("`PUT /api/v1/managements/{id}`", live)
         self.assertIn("`PUT /api/v1/managements/{id}/complete-case`", live)
+
+    def test_design_cites_the_path_cu01_and_cu39_still_name(self):
+        text = DESIGN.read_text(encoding="utf-8")
+        self.assertIn(TEMPLATE, text)
+        self.assertIn(TEMPLATE.strip("`"), CU01.read_text(encoding="utf-8"))
+        self.assertIn(
+            "/api/v1/presupuestos/{id}/items-desde-plantilla",
+            CU39.read_text(encoding="utf-8"),
+        )
+        self.assertIn("`presupuesto-from-template`", text)
+        live = TEMPLATE_SPEC.read_text(encoding="utf-8")
+        self.assertIn("`POST /api/v1/budgets/{id}/items-from-template`", live)
 
 
 if __name__ == "__main__":
