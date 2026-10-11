@@ -202,14 +202,14 @@ public class SubstitutionJpaController implements Serializable, JpaPersistence
         }
     }
 
-    public List<Substitution> findSubstitutionsByYear(Substitution unaSubstitution)
+    public List<Substitution> findSubstitutionsByYear(Substitution substitution)
     {
         List<Substitution> substitutions = new ArrayList<>();
         EntityManager em = getEntityManager();
 
         Query query = em.createNamedQuery("Substitution.findSubstitutionsByYear");
-        query.setParameter("startDate", unaSubstitution.getDateStart());
-        query.setParameter("endDate", unaSubstitution.getDateEnd());
+        query.setParameter("startDate", substitution.getDateStart());
+        query.setParameter("endDate", substitution.getDateEnd());
 
         substitutions = query.getResultList();
 
@@ -221,7 +221,7 @@ public class SubstitutionJpaController implements Serializable, JpaPersistence
         EntityManager em = getEntityManager();
         try
         {
-            // JOIN FETCH: the people are LAZY and the entidad serializa with the
+            // JOIN FETCH: the people are LAZY and the entity serializes while the
             // EntityManager is already closed (detached); without a fetch, serialization fails.
             Query q = em.createQuery(
                     "SELECT s FROM Substitution s "

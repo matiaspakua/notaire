@@ -64,6 +64,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English transition fixtures** (#1490, CU75): workflow fixtures use
+  `Initial`, `Intermediate`, and `Unreachable`. The history note is
+  `Initial status change`. Notebook locals are `firstBatch`,
+  `secondBatch`, `withReassignedFolio`, and `discontinuous`. The
+  substitution lookup takes `substitution`, and the fetch comment says
+  the entity serializes while the entity manager is closed. Stored
+  status `En proceso` stays, along with folio statuses `New` and
+  `Errose`.
 - **English date parameters and note fixtures** (#1490, CU75): date
   checks use `startDate`, `endDate`, and `today`. Note fixtures use
   `notes`. Substitution comments name the notary and substitute and the
