@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English REST API reference** (#1490, CU75):
+  `docs/200-architecture/203-design/REST-API-REFERENCE.md` uses English
+  resource names and the current JSON fields (`name`, `password`, `valid`,
+  `idUser`, `firstName`, `lastName`). The audit path is `/audit-log`.
+  Stored status codes and PDF filenames stay.
 - **English end-to-end comments** (#1490, CU75): Playwright file headers
   and step comments use English use-case names. Catalog button labels,
   placeholders such as `Buscar por name...`, and stored types

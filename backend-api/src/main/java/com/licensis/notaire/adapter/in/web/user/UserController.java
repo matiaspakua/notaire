@@ -207,7 +207,7 @@ public class UserController {
     public ResponseEntity<?> login(@RequestBody DtoUser loginRequest) {
         try {
             if (loginAttemptService.isLocked(loginRequest.getName())) {
-                log.warn("Login bloqueado for '{}': demasiados intentos fallidos.", loginRequest.getName());
+                log.warn("Login locked for '{}': too many failed attempts.", loginRequest.getName());
                 metricsUtil.incrementCounter("login", "locked");
                 Map<String, Object> lockedResponse = new HashMap<>();
                 lockedResponse.put("valid", false);
