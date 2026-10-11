@@ -27,7 +27,7 @@ class ChangeContractEnglishTest(unittest.TestCase):
             self.assertNotIn(retired, text, retired)
         proposal = (folder / "proposal.md").read_text(encoding="utf-8")
         self.assertIn("## Objetivo", proposal)
-        self.assertIn("deudaPendienteAlArchivar", proposal)
+        self.assertIn("`pendingDebtAtArchiving`", proposal)
 
     def test_incomplete_put_delta_names_the_live_message(self):
         text = (
