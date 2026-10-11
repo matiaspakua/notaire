@@ -213,7 +213,7 @@ public class User implements Serializable, Persistable<Integer> {
         person.setAttributes(dtoUser.getPersons());
         setFkIdPerson(person);
 
-        // Atributos user
+        // User attributes
         setPassword(dtoUser.getPassword());
         ;
         setStatus(dtoUser.isStatus());

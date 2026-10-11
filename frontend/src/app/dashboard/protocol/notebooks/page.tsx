@@ -16,7 +16,7 @@ import { extractApiError } from "@/lib/utils";
 import type { Notebook, Folio } from "@/types";
 import { Download, FolderPlus } from "lucide-react";
 
-const ESTADOS_DANADOS = ["Errose", "no pasó"];
+const DAMAGED_STATUSES = ["Errose", "no pasó"];
 
 export default function NotebooksPage() {
   const t = useTranslations("protocolo.cuadernos");
@@ -33,7 +33,7 @@ export default function NotebooksPage() {
   });
 
   const foliosDisponibles = useMemo(
-    () => folios.filter((f) => f.status === "Nuevo" || ESTADOS_DANADOS.includes(f.status ?? "")),
+    () => folios.filter((f) => f.status === "Nuevo" || DAMAGED_STATUSES.includes(f.status ?? "")),
     [folios],
   );
 
@@ -158,7 +158,7 @@ export default function NotebooksPage() {
                         onChange={() => toggleFolio(f.idFolio!)}
                         data-testid={`checkbox-folio-${f.idFolio}`}
                       />
-                      {ESTADOS_DANADOS.includes(f.status ?? "") && (
+                      {DAMAGED_STATUSES.includes(f.status ?? "") && (
                         <Badge variant="secondary">{t("damaged")}</Badge>
                       )}
                     </div>

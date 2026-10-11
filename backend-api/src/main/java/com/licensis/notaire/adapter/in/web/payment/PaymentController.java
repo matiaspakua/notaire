@@ -78,7 +78,7 @@ public class PaymentController {
         try {
             return ResponseEntity.ok(PaymentWebMapper.toDtoList(queryPaymentsUseCase.findAll()));
         } catch (Exception e) {
-            log.error("Error to the get payments", e);
+            log.error("Failed to list payments", e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -107,7 +107,7 @@ public class PaymentController {
         try {
             return ResponseEntity.ok(PaymentWebMapper.toDtoList(queryPaymentsUseCase.findByBudget(idBudget)));
         } catch (Exception e) {
-            log.error("Error to the get payments by budget ID={}", idBudget, e);
+            log.error("Failed to list payments for budget ID={}", idBudget, e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -153,7 +153,7 @@ public class PaymentController {
             return ResponseEntity.ok(
                     PaymentWebMapper.toDtoList(queryPaymentsUseCase.findByDateRange(startDate, endDate)));
         } catch (Exception e) {
-            log.error("Error to the get payments by date", e);
+            log.error("Failed to list payments by date", e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -202,7 +202,7 @@ public class PaymentController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            log.error("Error to the update payment ID={}", id, e);
+            log.error("Failed to update payment ID={}", id, e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -220,7 +220,7 @@ public class PaymentController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            log.error("Error to the delete payment ID={}", id, e);
+            log.error("Failed to delete payment ID={}", id, e);
             return ResponseEntity.internalServerError().build();
         }
     }

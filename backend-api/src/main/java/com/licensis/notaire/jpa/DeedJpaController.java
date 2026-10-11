@@ -135,7 +135,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
     public Boolean edit(Deed deed) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException, ClassDeletedException
     {
         EntityManager em = null;
-        Boolean modificada = false;
+        Boolean updated = false;
 
         int version;
         int oldVersion;
@@ -261,7 +261,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
                 }
             }
             em.getTransaction().commit();
-            modificada = true;
+            updated = true;
         } else
         {
             throw new ClassDeletedException();
@@ -271,7 +271,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
         {
             em.close();
         }
-        return modificada;
+        return updated;
     }
 
     public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException
@@ -414,7 +414,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
     public Boolean modifyDeed(Deed deed) throws ClassModifiedException, ClassDeletedException
     {
         EntityManager em = null;
-        Boolean modificada = false;
+        Boolean updated = false;
 
         int version;
         int oldVersion;
@@ -456,20 +456,20 @@ public class DeedJpaController implements Serializable, JpaPersistence
             }
 
             em.getTransaction().commit();
-            modificada = true;
+            updated = true;
             em.close();
         } else
         {
             throw new ClassDeletedException();
         }
 
-        return modificada;
+        return updated;
     }
 
     public Boolean modifyDeedSimple(Deed deed) throws ClassModifiedException, ClassDeletedException
     {
         EntityManager em = null;
-        Boolean modificada = false;
+        Boolean updated = false;
 
         int version;
         int oldVersion;
@@ -497,14 +497,14 @@ public class DeedJpaController implements Serializable, JpaPersistence
             persistentDeed.setNumber(deed.getNumber());
 
             em.getTransaction().commit();
-            modificada = true;
+            updated = true;
             em.close();
         } else
         {
             throw new ClassDeletedException();
         }
 
-        return modificada;
+        return updated;
     }
 
     @Override

@@ -114,7 +114,7 @@ public class BudgetTemplateController {
             return ResponseEntity.ok(getJpaController().findBudgetTemplateEntities()
                     .stream().map(this::toResponse).toList());
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Error to the get budget templates", e);
+            LOG.log(Level.SEVERE, "Failed to list budget templates", e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -128,7 +128,7 @@ public class BudgetTemplateController {
             return ResponseEntity.ok(getJpaController().findBudgetTemplates(idProcedureType)
                     .stream().map(this::toResponse).toList());
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Error to the get plantillas by procedure type " + idProcedureType, e);
+            LOG.log(Level.SEVERE, "Failed to list budget templates for procedure type " + idProcedureType, e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -165,7 +165,7 @@ public class BudgetTemplateController {
             entity.setProcedureType(procedureTypeRef);
             Boolean created = getJpaController().create(entity);
             if (!Boolean.TRUE.equals(created)) {
-                LOG.log(Level.SEVERE, "Budget template create returned false for tipo={0} concept={1}",
+                LOG.log(Level.SEVERE, "Budget template create returned false for procedureType={0} concept={1}",
                         new Object[]{procedureTypeId, conceptId});
                 return ResponseEntity.internalServerError()
                         .body(Map.of("error", "Internal error creating the template"));
@@ -178,7 +178,7 @@ public class BudgetTemplateController {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error", "The budget template already exists for that procedure type and concept"));
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Error to the create budget template", e);
+            LOG.log(Level.SEVERE, "Failed to create budget template", e);
             return ResponseEntity.internalServerError()
                     .body(Map.of("error", "Internal error creating the template"));
         }
@@ -207,24 +207,24 @@ public class BudgetTemplateController {
             return ResponseEntity.ok().build();
 
         } catch (OptimisticLockException e) {
-            LOG.log(Level.WARNING, "Conflicto of concurrencia to the update budget template", e);
+            LOG.log(Level.WARNING, "Concurrency conflict while updating the budget template", e);
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "Conflicto of concurrencia: the template was modificada by another user. Recargue and vuelva a intentarlo."));
+                    .body(Map.of("error", "Concurrency conflict: the template was modified by another user. Reload and try again."));
         } catch (NonexistentEntityException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
             Throwable cause = e.getCause();
             while (cause != null) {
                 if (cause instanceof OptimisticLockException) {
-                    LOG.log(Level.WARNING, "Conflicto of concurrencia (wrapped) to the update template", cause);
+                    LOG.log(Level.WARNING, "Concurrency conflict (wrapped) while updating the template", cause);
                     return ResponseEntity.status(HttpStatus.CONFLICT)
-                            .body(Map.of("error", "Conflicto of concurrencia: the template was modificada by another user."));
+                            .body(Map.of("error", "Concurrency conflict: the template was modified by another user."));
                 }
                 cause = cause.getCause();
             }
-            LOG.log(Level.SEVERE, "Error to the update budget template", e);
+            LOG.log(Level.SEVERE, "Failed to update the budget template", e);
             return ResponseEntity.internalServerError()
-                    .body(Map.of("error", "Error interno to the update the template"));
+                    .body(Map.of("error", "Internal error while updating the template"));
         }
     }
 
@@ -241,9 +241,9 @@ public class BudgetTemplateController {
         } catch (NonexistentEntityException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Error to the delete budget template", e);
+            LOG.log(Level.SEVERE, "Failed to delete the budget template", e);
             return ResponseEntity.internalServerError()
-                    .body(Map.of("error", "Error interno to the delete the template"));
+                    .body(Map.of("error", "Internal error while deleting the template"));
         }
     }
 }

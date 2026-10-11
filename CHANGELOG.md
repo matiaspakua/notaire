@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English persistence messages and update locals** (#1490, CU75):
+  budget-template conflict errors, payment and template failure logs, and
+  persistence `println` lines are English. Update flags use `updated`.
+  `findDeedManagementById` and `searchMovementsByTestimony` replace the
+  Spanish method names. Damaged folio statuses stay `Errose` and `no pasó`.
 - **English name for the deleted-record JPA exception** (#1490, CU75):
   `ClassEliminatedException` is now `ClassDeletedException`. Call sites and
   unit tests use the new name. The deprecated tree keeps the old class.

@@ -338,7 +338,7 @@ public class CopyJpaController implements Serializable, JpaPersistence
     public Boolean modifyCopy(Copy copy) throws ClassModifiedException, ClassDeletedException
     {
         EntityManager em = null;
-        Boolean modificada = false;
+        Boolean updated = false;
         int version = 0;
         int oldVersion = 0;
 
@@ -360,7 +360,7 @@ public class CopyJpaController implements Serializable, JpaPersistence
             persistentCopy.setNotes(copy.getNotes());
 
             em.getTransaction().commit();
-            modificada = true;
+            updated = true;
         } else
         {
             throw new ClassDeletedException();
@@ -370,7 +370,7 @@ public class CopyJpaController implements Serializable, JpaPersistence
             em.close();
         }
 
-        return modificada;
+        return updated;
     }
 
     @Override

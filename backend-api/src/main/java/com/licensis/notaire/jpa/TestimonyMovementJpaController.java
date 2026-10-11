@@ -204,31 +204,31 @@ public class TestimonyMovementJpaController implements Serializable, JpaPersiste
         }
     }
 
-    public List<TestimonyMovement> searchMovimientosPorTestimony(Integer idTestimony)
+    public List<TestimonyMovement> searchMovementsByTestimony(Integer idTestimony)
     {
-        List<TestimonyMovement> movTestimony = null;
+        List<TestimonyMovement> movements = null;
         EntityManager em = getEntityManager();
 
         Query query = em.createNamedQuery("TestimonyMovement.findByTestimony");
         query.setParameter("idTestimony", idTestimony);
 
-        movTestimony = (List<TestimonyMovement>) query.getResultList();
+        movements = (List<TestimonyMovement>) query.getResultList();
 
-        return movTestimony;
+        return movements;
     }
 
     public TestimonyMovement findMovementById(Integer idMovement)
     {
 
-        TestimonyMovement movTestimony = null;
+        TestimonyMovement movement = null;
         EntityManager em = getEntityManager();
 
         Query query = em.createNamedQuery("TestimonyMovement.findByIdTestimonyMovement");
         query.setParameter("idTestimonyMovement", idMovement);
 
-        movTestimony = (TestimonyMovement) query.getResultList().get(0);
+        movement = (TestimonyMovement) query.getResultList().get(0);
 
-        return movTestimony;
+        return movement;
     }
 
     public int getTestimonyMovementCount()

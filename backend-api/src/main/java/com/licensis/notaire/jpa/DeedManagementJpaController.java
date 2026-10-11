@@ -388,7 +388,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
 
         if (!managements.isEmpty())
         {
-            // exists the management indicada
+            // The indicated management exists.
             return managements.get(0);
         }
 
@@ -397,7 +397,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
         return emptyManagement;
     }
 
-    public DeedManagement findDeedManagementPorId(Integer idManagement)
+    public DeedManagement findDeedManagementById(Integer idManagement)
     {
 
         EntityManager em = getEntityManager();
@@ -409,7 +409,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
 
         if (!managements.isEmpty())
         {
-            // exists the management indicada
+            // The indicated management exists.
             return managements.get(0);
         }
 
@@ -504,7 +504,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
 
             if (version != oldVersion) // Versions differ: someone else modified the object
             {
-                throw new ClassModifiedException("The management indicada has been modificada by another user");
+                throw new ClassModifiedException("The indicated management was modified by another user");
 
             } else
             {
@@ -521,7 +521,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
                 }
                 catch (Exception e)
                 {
-                    System.out.println("Error de Persistencia: UserAccount JpaController metodo: modificarUsuario");
+                    System.out.println("Persistence error: DeedManagementJpaController method archivingManagements");
                 }
             }
         } else

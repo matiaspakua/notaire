@@ -753,7 +753,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
 
                     em.getTransaction().begin();
 
-                    // Atributos Person
+                    // Person attributes
                     persistentPerson.setFirstName(pPerson.getFirstName());
                     persistentPerson.setLastName(pPerson.getLastName());
                     persistentPerson.setPhone(pPerson.getPhone());
@@ -764,7 +764,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                     em.getTransaction().commit();
                     em.close();
                 } catch (PersistenceException ex) {
-                    System.out.println("Error de Persistencia: UserAccount JpaController metodo: modificarUsuario");
+                    System.out.println("Persistence error: PersonJpaController method modifyPerson");
                     ex.printStackTrace();
                 }
             }
@@ -837,7 +837,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                 try {
                     em.getTransaction().begin();
 
-                    // Atributos Person
+                    // Person attributes
                     persistentPerson.setFirstName(pClient.getFirstName());
                     persistentPerson.setLastName(pClient.getLastName());
                     persistentPerson.setPhone(pClient.getPhone());
@@ -864,7 +864,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                     em.close();
                     flag = true;
                 } catch (Exception e) {
-                    System.out.println("Error de Persistencia: UserAccount JpaController metodo: modificarUsuario");
+                    System.out.println("Persistence error: PersonJpaController method modifyClient");
                 }
             }
         } else // Already deleted: throw

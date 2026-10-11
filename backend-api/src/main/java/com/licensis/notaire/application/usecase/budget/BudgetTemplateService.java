@@ -39,15 +39,15 @@ public class BudgetTemplateService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Budget not found with ID: " + idBudget));
 
-        List<BudgetTemplate> plantillas =
+        List<BudgetTemplate> templates =
                 budgetTemplateRepository.findByProcedureTypeIdProcedureType(typeProcedureId);
 
-        if (plantillas.isEmpty()) {
+        if (templates.isEmpty()) {
             throw new BusinessValidationException(
                     "The procedure type does not have template configured");
         }
 
-        List<Item> items = plantillas.stream()
+        List<Item> items = templates.stream()
                 .map(template -> createItemFromConcept(budget, template.getConcept()))
                 .toList();
 
