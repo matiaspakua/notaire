@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English cost fixture phrases** (#1490, CU75): the document type is
+  `Previous deed`. Display names say `costs`. The printed-copy comment
+  names a verified testimony. Delivered-by `Cliente` stays. Stored
+  status `Firmada` stays. Operation id `getCostosByTypeProcedure` stays.
 - **English document note phrases** (#1490, CU75): the upcoming-expiration
   note is `Request a copy`. The partial-update note is `previous note`.
   Stored document name `Certificado de dominio` stays, along with heading
