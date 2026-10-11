@@ -39,9 +39,9 @@ for (const viewport of [
 
         // THEN: the icons in the first rows' action buttons are about 16x16
         const sizes = await page.evaluate(() =>
-          [...document.querySelectorAll("table tbody tr, [data-testid='data-table-card']")]
+          Array.from(document.querySelectorAll("table tbody tr, [data-testid='data-table-card']"))
             .slice(0, 10)
-            .flatMap((row) => [...row.querySelectorAll("button img")])
+            .flatMap((row) => Array.from(row.querySelectorAll("button img")))
             .filter((img) => img.getClientRects().length > 0) // skip the layout hidden at this width
             .map((img) => {
               const b = img.getBoundingClientRect();
