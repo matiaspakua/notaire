@@ -45,7 +45,7 @@ class CatalogControllersIntegrationTest {
 
         @Test
         @DisplayName("CU67 - Should return 200 and list of management statuses")
-        void shouldReturnAllEstadosDeManagement() throws Exception {
+        void shouldReturnAllManagementStatuses() throws Exception {
             mockMvc.perform(get("/api/v1/management-statuses"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -77,7 +77,7 @@ class CatalogControllersIntegrationTest {
                             .content("""
                                     {
                                       "name": "Archivada",
-                                      "notes": "Management archivada",
+                                      "notes": "Archived management",
                                       "version": 0
                                     }
                                     """))
@@ -92,8 +92,8 @@ class CatalogControllersIntegrationTest {
                             .content("""
                                     {
                                       "idManagementStatus": 1,
-                                      "name": "Iniciada - Modificada",
-                                      "notes": "Actualizada",
+                                      "name": "Initial - Modified",
+                                      "notes": "Updated",
                                       "version": 0
                                     }
                                     """))
@@ -146,10 +146,10 @@ class CatalogControllersIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "name": "Poder Notarial",
+                                      "name": "Notarial power",
                                       "expires": true,
                                       "dueDays": 365,
-                                      "deliveredBy": "Mandante",
+                                      "deliveredBy": "Grantor",
                                       "enabled": true,
                                       "version": 0
                                     }
@@ -158,7 +158,7 @@ class CatalogControllersIntegrationTest {
 
             mockMvc.perform(get("/api/v1/document-types"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[?(@.name == 'Poder Notarial')]", hasSize(1)));
+                    .andExpect(jsonPath("$[?(@.name == 'Notarial power')]", hasSize(1)));
         }
     }
 

@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English remaining fixture names** (#1490, CU75): Java tests use English
+  synthetic names (`Archived management`, `Notarial power`, `Grantor`,
+  `FindThisStatus`, `Procedure_unused_`, `Updated notes`, `Cycle IT Status`,
+  `Missing status`, `Substitute IT`, and `Ana Notary`). Stored label
+  `Archivada` stays. Test methods say `shouldReturnAllManagementStatuses`
+  and `shouldReturnCurrentStatusFromHistoryWhenRowsExist`.
 - **English synthetic test fixtures** (#1490, CU75): Java tests use English
   notes and names (`Updated`, `Pending signature`, `Full cycle`,
   `First semester`, `With client`, `Notary office`, `Active`, `Protocol`,

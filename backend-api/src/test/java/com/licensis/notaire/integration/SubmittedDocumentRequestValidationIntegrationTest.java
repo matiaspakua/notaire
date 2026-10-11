@@ -88,7 +88,7 @@ class SubmittedDocumentRequestValidationIntegrationTest {
 
         stored = new SubmittedDocument();
         stored.setDocumentType(expiringType);
-        stored.setName("Documento #655");
+        stored.setName("Document #655");
         stored.setDelivered(false);
         stored.setPrepared(false);
         stored.setReleased(false);

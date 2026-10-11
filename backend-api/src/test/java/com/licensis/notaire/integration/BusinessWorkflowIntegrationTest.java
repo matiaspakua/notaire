@@ -476,7 +476,7 @@ class BusinessWorkflowIntegrationTest {
         @Test
         @Order(1)
         @DisplayName("GET /api/v1/management-statuses returns array")
-        void getAllEstadosReturnsArray() throws Exception {
+        void getAllStatusesReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/management-statuses"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());

@@ -63,7 +63,7 @@ class ExternalEntityDocumentServiceTest {
 
         Person notary = new Person();
         notary.setFirstName("Ana");
-        notary.setLastName("Notaria");
+        notary.setLastName("Notary");
 
         management = new DeedManagement();
         management.setIdManagement(1);
@@ -104,7 +104,7 @@ class ExternalEntityDocumentServiceTest {
 
             assertThat(result.idManagement()).isEqualTo(1);
             assertThat(result.number()).isEqualTo(100);
-            assertThat(result.notary()).isEqualTo("Ana Notaria");
+            assertThat(result.notary()).isEqualTo("Ana Notary");
             assertThat(result.cadastralDesignation()).isEqualTo("12-34-56");
             assertThat(result.documents()).hasSize(1);
             assertThat(result.documents().get(0).name()).isEqualTo("Certificado de Dominio");

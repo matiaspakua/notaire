@@ -78,15 +78,15 @@ class ManagementStatusLogServiceTest {
     @Test
     @DisplayName("Should record history entry on archive")
     void shouldRecordHistoryOnArchive() {
-        ManagementStatus archivada = new ManagementStatus(3, "Archivada");
-        management.setFkIdManagementStatus(archivada);
+        ManagementStatus archived = new ManagementStatus(3, "Archivada");
+        management.setFkIdManagementStatus(archived);
         ArgumentCaptor<History> captor = ArgumentCaptor.forClass(History.class);
         when(historyRepository.save(any(History.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         statusLogService.registerStatus(management, "Archived with outstanding debt");
 
         verify(historyRepository).save(captor.capture());
-        assertThat(captor.getValue().getFkIdManagementStatus()).isEqualTo(archivada);
+        assertThat(captor.getValue().getFkIdManagementStatus()).isEqualTo(archived);
         assertThat(captor.getValue().getNotes()).isEqualTo("Archived with outstanding debt");
     }
 

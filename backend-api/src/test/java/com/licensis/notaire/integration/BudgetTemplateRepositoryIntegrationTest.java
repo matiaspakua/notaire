@@ -92,14 +92,14 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should update budget-template notes")
     void shouldUpdateTemplate() {
-        testTemplate.setNotes("Observaciones actualizadas");
+        testTemplate.setNotes("Updated notes");
         BudgetTemplate updated = templateRepository.save(testTemplate);
 
-        assertThat(updated.getNotes()).isEqualTo("Observaciones actualizadas");
+        assertThat(updated.getNotes()).isEqualTo("Updated notes");
 
         List<BudgetTemplate> fetched = templateRepository.findByProcedureTypeIdProcedureType(testTypeProcedure.getIdProcedureType());
         assertThat(fetched).isNotEmpty()
-                .anyMatch(p -> p.getNotes().equals("Observaciones actualizadas"));
+                .anyMatch(p -> p.getNotes().equals("Updated notes"));
     }
 
     @Test
