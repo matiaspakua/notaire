@@ -24,10 +24,10 @@ DEMO_SPECS = (
     "TS-0090-demo-two-full-cases.spec.ts",
 )
 FEATURE_GAP_SKIPS = {
-    "TS-0014-pagos-workflow.spec.ts": 2,
-    "TS-0016-usuarios-escribanos-workflow.spec.ts": 3,
-    "TS-0017-suplencias-workflow.spec.ts": 2,
-    "TS-0020-reportes-admin-workflow.spec.ts": 7,
+    "TS-0014-payments-workflow.spec.ts": 2,
+    "TS-0016-users-notaries-workflow.spec.ts": 3,
+    "TS-0017-substitutions-workflow.spec.ts": 2,
+    "TS-0020-reports-admin-workflow.spec.ts": 7,
 }
 FEATURE_GAP_TOTAL = 14
 MAX_DEFAULT_TIMEOUT_MS = 120_000
@@ -81,7 +81,7 @@ class SleepAndSkipRulesTest(unittest.TestCase):
         assignment = read_spec("TS-0022-workflow-assignment-admin.spec.ts")
         self.assertRegex(editor, r"createWorkflowDefinition")
         self.assertNotRegex(editor, BARE_SKIP)
-        self.assertRegex(assignment, r"createTipoTramite")
+        self.assertRegex(assignment, r"createProcedureType")
         self.assertNotRegex(assignment, BARE_SKIP)
 
     def test_editor_validation_assert_avoids_the_toast_union(self):
@@ -108,7 +108,7 @@ class FeatureGapSkipInventoryTest(unittest.TestCase):
                     self.assertRegex(block, r"#\d+")
 
     def test_cu21_skip_does_not_reappear_in_ts_0016(self):
-        source = read_spec("TS-0016-usuarios-escribanos-workflow.spec.ts")
+        source = read_spec("TS-0016-users-notaries-workflow.spec.ts")
         self.assertNotRegex(source, r"""test\.skip\s*\(\s*["'`][^"'`]*CU21[^"'`]*["'`]""")
 
 
@@ -118,9 +118,9 @@ class ApiPayloadFieldsTest(unittest.TestCase):
                      if "fkIdNotaryPerson" in path.read_text(encoding="utf-8")]
         self.assertEqual([], offenders, "the gestiones API reads notaryPersonId, not fkIdNotaryPerson")
 
-    def test_gestion_helper_sends_the_notary_field_the_api_reads(self):
+    def test_management_helper_sends_the_notary_field_the_api_reads(self):
         helpers = (TESTS_DIR / "setup" / "api-helpers.ts").read_text(encoding="utf-8")
-        body = helpers[helpers.index("export async function createGestionSinTramite"):]
+        body = helpers[helpers.index("export async function createManagementWithoutProcedure"):]
         self.assertIn("notaryPersonId", body[: body.index("\n}\n")])
 
 
