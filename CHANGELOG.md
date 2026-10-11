@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired amount to pay** (#1490, CU75): the engineering-sequences
+  design names the field CU27 still writes, `DocumentoPresentado.importeAPagar`.
+  The live field is `amountToPay`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
 - **Retired document cost template** (#1490, CU75): the engineering-sequences
   design names the type CU39 still writes, `PlantillaCostoDocumento`.
   The live class is `DocumentCostTemplate`. The heading `Riesgos / Trade-offs`
