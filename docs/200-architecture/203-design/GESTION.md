@@ -69,7 +69,9 @@ The management status changes only through
 `POST /api/v1/managements/{id}/transition` or through
 `POST /api/v1/managements/{id}/archive`. A `PUT` that changes the status
 answers 400. Legal next destinations come from
-`GET /api/v1/managements/{id}/workflow-trace`. Stored procedure types
+`GET /api/v1/managements/{id}/workflow-trace`. The history log is
+`GET /api/v1/managements/{id}/history`. The current status is
+`GET /api/v1/managements/{id}/current-status`. Stored procedure types
 `Sucesion` and `Poder` have no seeded workflow: any transition answers 400.
 
 | Step | Node before | Must exist | Use case | Call | Not enough |

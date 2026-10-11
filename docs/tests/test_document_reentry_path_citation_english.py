@@ -64,6 +64,15 @@ CU22 = (
 )
 COMPLETE_CASE = "`PUT /api/v1/gestiones/complete-case`"
 WORKFLOW_TRACE = "`GET /api/v1/gestiones/{id}/workflow-trace`"
+CU13 = (
+    ROOT
+    / "docs"
+    / "100-business"
+    / "102-use-cases"
+    / "CU13 – Ver historial de gestión.md"
+)
+HISTORY = "`GET /api/v1/gestiones/{id}/historial`"
+CURRENT_STATUS = "`GET /api/v1/gestiones/{id}/estado-actual`"
 
 
 class DocumentReentryPathCitationEnglishTest(unittest.TestCase):
@@ -122,6 +131,20 @@ class DocumentReentryPathCitationEnglishTest(unittest.TestCase):
             ROOT / "docs" / "200-architecture" / "203-design" / "GESTION.md"
         ).read_text(encoding="utf-8")
         self.assertIn("`GET /api/v1/managements/{id}/workflow-trace`", live)
+
+    def test_design_cites_the_paths_cu13_still_names(self):
+        text = DESIGN.read_text(encoding="utf-8")
+        use_case = CU13.read_text(encoding="utf-8")
+        self.assertIn(HISTORY, text)
+        self.assertIn(CURRENT_STATUS, text)
+        self.assertIn(HISTORY.strip("`"), use_case)
+        self.assertIn(CURRENT_STATUS.strip("`"), use_case)
+        self.assertIn("`DOC-GESTION`", text)
+        live = (
+            ROOT / "docs" / "200-architecture" / "203-design" / "GESTION.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("`GET /api/v1/managements/{id}/history`", live)
+        self.assertIn("`GET /api/v1/managements/{id}/current-status`", live)
 
 
 if __name__ == "__main__":
