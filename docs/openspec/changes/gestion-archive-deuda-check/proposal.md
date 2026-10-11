@@ -1,4 +1,4 @@
-# Verificar Deuda Antes de Archivar Gestión
+# Warn about pending debt before archiving a management
 
 | Field | Value |
 |-------|-------|
@@ -9,18 +9,18 @@
 
 ## Objetivo
 
-CU16 (Archivar Gestión) debe advertir al usuario cuando la gestión tiene deuda pendiente antes de confirmar el archivo. Actualmente, el sistema permite archivar gestiones con saldo pendiente sin previo aviso.
+CU16 (Archivar Gestión) warns the user when a management has pending debt before the archive is confirmed. The system currently archives managements with a pending balance without a warning.
 
-**Regla de Negocio:** Cuando se intenta archivar una gestión, se debe verificar si hay presupuestos con saldo pendiente. Si los hay, mostrar advertencia al usuario con el monto de deuda antes de confirmar el archivo, pero el archivo se completa igualmente (no se bloquea).
+**Regla de Negocio:** When a user tries to archive a management, the system checks whether its budgets have a pending balance. If they do, it shows the user the debt amount before confirming the archive, and the archive still completes (it is not blocked).
 
 ## What Changes
 
-- Backend: `GestionArchiveDebtService` calcula el saldo pendiente agregado de la gestión antes de archivar (expuesto vía `GET /outstanding-balance`)
-- Backend: El archivado **no se bloquea** por deuda; se persiste `deudaPendienteAlArchivar = true` cuando el saldo es positivo
-- Frontend: `gestiones/page.tsx` consulta el saldo pendiente y muestra advertencia con opción de confirmar/cancelar antes de archivar
-- Backend: Tests verifican que el archivo se completa con o sin deuda, registrando correctamente `deudaPendienteAlArchivar`
+- Backend: `ManagementArchiveDebtService` calculates the aggregate pending balance of the management before archiving (exposed via `GET /outstanding-balance`)
+- Backend: Archiving is **not blocked** by debt; it persists `pendingDebtAtArchiving = true` when the pending balance is positive
+- Frontend: `managements/page.tsx` reads the pending balance and shows a warning with confirm or cancel before archiving
+- Backend: Tests verify that the archive completes with or without debt, recording `pendingDebtAtArchiving` correctly
 
 ## Capabilities
 
 ### New Capabilities
-- `gestion-archive-deuda-check`: Verificar deuda antes de archivar gestión
+- `gestion-archive-deuda-check`: Warn about pending debt before archiving a management

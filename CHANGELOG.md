@@ -64,6 +64,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English remaining proposals** (#1490, CU75): the archive-debt
+  proposal names `ManagementArchiveDebtService`,
+  `pendingDebtAtArchiving`, and `managements/page.tsx`. The
+  submitted-document proposal names the Documents screen. The
+  property proposal names the Properties page and the Properties
+  dialog. Headings `Objetivo`, `Regla de Negocio`, `Reglas de negocio`,
+  and `Módulos afectados` stay. Official titles stay, including
+  `CU16 – Archivar Gestión`, `CU04 – Registrar documentación cliente`,
+  `CU72 – Gestionar documentos presentados`,
+  `CU69 – Gestión de Inmuebles`, and
+  `CU82 – Datos registrales del inmueble`. The visible label
+  `nomenclatura catastral` stays. The branch
+  `feat/169_gestion-archive-deuda-check` and the change slug
+  `gestion-archive-deuda-check` stay. `fk_id_tramite` and
+  `GET /outstanding-balance` stay.
 - **English change proposals** (#1490, CU75): the case-summary
   proposal names a management, the managements screen,
   `financial-summary`, and `ManagementFinancialSummaryService`.

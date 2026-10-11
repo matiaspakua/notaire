@@ -12,12 +12,12 @@
 
 ## Objetivo
 
-`POST /api/v1/properties` stored a property without a cadastral designation (`{}` answered 201 on PostgreSQL), although the nomenclatura catastral is what identifies a property and the Inmuebles form already labels it required. The Owner decided it is required (#655, Run 7).
+`POST /api/v1/properties` stored a property without a cadastral designation (`{}` answered 201 on PostgreSQL), although the nomenclatura catastral is what identifies a property and the Properties form already labels it required. The Owner decided it is required (#655, Run 7).
 
 ## What Changes
 
 - `PropertyController.PropertyRequest.cadastralDesignation`: `@NotBlank`, documented `requiredMode = REQUIRED`. The record serves POST and PUT; PUT replaces every field, so it requires the designation too (otherwise it would erase it).
-- Inmuebles page: Save stays disabled while the designation is blank.
+- Properties page: Save stays disabled while the designation is blank.
 - `openapi.yaml` regenerated; `accepted-breaking-changes.txt`: four entries (required + minLength on POST and PUT), justified.
 - Tests: `PropertyRequestValidationIntegrationTest`, Bruno `properties/08`, Playwright TS-0019 CU69-GW04; CHANGELOG entry.
 
@@ -35,7 +35,7 @@
 
 ### Modified Capabilities
 
-- `properties`: Registering and maintaining the properties (inmuebles) involved in a deed.
+- `properties`: Registering and maintaining the properties involved in a deed.
 
 ## Impact Analysis
 
@@ -44,7 +44,7 @@
 | Module | Touched | What changes |
 |--------|---------|--------------|
 | `backend-api` | yes | `PropertyController`, OpenAPI, tests, Bruno |
-| `frontend` | yes | Inmuebles page |
+| `frontend` | yes | Properties page |
 | `testing` | yes | Playwright TS-0019 |
 | Docs / scripts / CI | yes | CHANGELOG, accepted-breaking-changes |
 
@@ -52,7 +52,7 @@
 
 - Endpoints: `POST /api/v1/properties`, `PUT /api/v1/properties/{id}` (cadastralDesignation required, minLength 1; breaking, accepted)
 - Entities / Flyway: none (the entity already declares the column `optional = false`; no data migration)
-- UI: Inmuebles dialog
+- UI: Properties dialog
 
 ### Architecture review
 
