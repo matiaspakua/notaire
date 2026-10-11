@@ -2705,7 +2705,7 @@ export interface components {
             personId?: number;
             propertyAmount?: number;
             /**
-             * @description Budget status (#1346). Accepts any uppercase/lowercase and guarda the código; another valor responde 400.
+             * @description Budget status (#1346). Accepts any letter case and stores the code; any other value returns 400.
              * @enum {string}
              */
             status: "BORRADOR" | "PENDIENTE" | "APROBADO" | "RECHAZADO" | "FACTURADO";
@@ -4218,7 +4218,7 @@ export interface components {
         };
     };
     responses: {
-        /** @description Invalid request — parámetros or cuerpo malformado */
+        /** @description Invalid request — malformed parameters or body */
         400: {
             headers: {
                 [name: string]: unknown;
@@ -4248,7 +4248,7 @@ export interface components {
                 };
             };
         };
-        /** @description Conflicto — the recurso already exists or viola a restricción */
+        /** @description Conflict — the resource already exists or violates a constraint */
         409: {
             headers: {
                 [name: string]: unknown;
@@ -4263,7 +4263,7 @@ export interface components {
                 };
             };
         };
-        /** @description Error interno of the server */
+        /** @description Internal server error */
         500: {
             headers: {
                 [name: string]: unknown;

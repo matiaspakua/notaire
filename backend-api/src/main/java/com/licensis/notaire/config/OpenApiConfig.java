@@ -33,10 +33,10 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Notaire API")
                         .version("1.0.0")
-                        .description("Sistema of management notarial — API REST backend. "
-                                + "Todos los recursos siguen el prefijo `/api/v1/`. "
-                                + "The respuestas of error remain the esquema "
-                                + "`{error, message, timestamp, path}`.")
+                        .description("Notarial management system — REST backend API. "
+                                + "Every resource uses the `/api/v1/` prefix. "
+                                + "Error responses keep the "
+                                + "`{error, message, timestamp, path}` shape.")
                         .contact(new Contact()
                                 .name("Licensis")
                                 .url("https://www.licensis.com")
@@ -45,21 +45,21 @@ public class OpenApiConfig {
                                 .name("Apache 2.0")
                                 .url("https://www.apache.org/licenses/LICENSE-2.0.html")))
                 .servers(List.of(
-                        new Server().url("http://localhost:8080").description("Desarrollo local"),
+                        new Server().url("http://localhost:8080").description("Local development"),
                         new Server().url("http://localhost:8081").description("Docker local")
                 ))
                 .components(new Components()
                         .addResponses("400", new ApiResponse()
-                                .description("Invalid request — parámetros or cuerpo malformado")
+                                .description("Invalid request — malformed parameters or body")
                                 .content(jsonContent))
                         .addResponses("404", new ApiResponse()
                                 .description("Resource not found")
                                 .content(jsonContent))
                         .addResponses("409", new ApiResponse()
-                                .description("Conflicto — the recurso already exists or viola a restricción")
+                                .description("Conflict — the resource already exists or violates a constraint")
                                 .content(jsonContent))
                         .addResponses("500", new ApiResponse()
-                                .description("Error interno of the server")
+                                .description("Internal server error")
                                 .content(jsonContent))
                 );
     }

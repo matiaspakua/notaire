@@ -67,7 +67,7 @@ public class BudgetController {
             @NotBlank
             @Schema(allowableValues = {"BORRADOR", "PENDIENTE", "APROBADO", "RECHAZADO", "FACTURADO"},
                     description = "Budget status (#1346). Accepts any uppercase/lowercase and "
-                            + "guarda the código; another valor responde 400.")
+                            + "stores the code; any other value returns 400.")
             String status,
             @JsonAlias("amount") java.math.BigDecimal propertyAmount,
             String notes,

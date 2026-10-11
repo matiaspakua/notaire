@@ -278,7 +278,7 @@ public class UserController {
                             return ResponseEntity.ok(invalidLoginResponse());
                         }
                     } else {
-                        log.warn("Login failed for '{}': contraseña incorrecta", user.getName());
+                        log.warn("Login failed for '{}': incorrect password", user.getName());
                         metricsUtil.incrementCounter("login", "bad_credentials");
                         loginAttemptService.onLoginFailed(user.getName());
                         return ResponseEntity.ok(invalidLoginResponse());

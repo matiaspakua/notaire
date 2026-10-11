@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English startup and OpenAPI messages** (#1490, CU75): JWT secret
+  failures, the production-credentials guard, the login failure log, and
+  the OpenAPI info, server, and error descriptions are English. Stored
+  budget status codes such as `PENDIENTE` stay.
 - **English PDF report labels** (#1490, CU75): in-house report headings,
   column names, and empty-state messages are English (`Pending balance`,
   `Properties`, `Is archived`, `Payment pending`, `Total owed`). Stored

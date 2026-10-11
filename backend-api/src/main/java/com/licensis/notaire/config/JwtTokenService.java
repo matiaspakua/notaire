@@ -30,17 +30,17 @@ public class JwtTokenService {
     public void validateSecret() {
         if (secretKey == null || secretKey.isBlank()) {
             throw new IllegalStateException(
-                    "jwt.secret is not configured. Definí a key secreta propia (variable of entorno "
-                            + "JWT_SECRET) antes of start the aplicación.");
+                    "jwt.secret is not configured. Set a private secret key (environment variable "
+                            + "JWT_SECRET) before starting the application.");
         }
         if (INSECURE_DEFAULT_SECRET.equals(secretKey)) {
             throw new IllegalStateException(
-                    "jwt.secret usa the valor by defecto inseguro incluido in the repositorio. "
-                            + "Definí a key secreta propia (variable of entorno JWT_SECRET).");
+                    "jwt.secret uses the insecure default value checked into the repository. "
+                            + "Set a private secret key (environment variable JWT_SECRET).");
         }
         if (secretKey.getBytes(StandardCharsets.UTF_8).length < MIN_SECRET_LENGTH) {
             throw new IllegalStateException(
-                    "jwt.secret is demasiado corto for HS256: requieren to the menos " + MIN_SECRET_LENGTH
+                    "jwt.secret is too short for HS256: it requires at least " + MIN_SECRET_LENGTH
                             + " bytes.");
         }
     }
