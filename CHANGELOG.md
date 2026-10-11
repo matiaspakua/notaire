@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired procedure type** (#1490, CU75): the engineering-sequences
+  design names the type CU83 and CU39 still write, `TipoDeTramite`.
+  The live class is `ProcedureType`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
 - **Retired submitted document** (#1490, CU75): the engineering-sequences
   design names the type CU43 and CU42 still write, `DocumentoPresentado`.
   The live class is `SubmittedDocument`. The heading `Riesgos / Trade-offs`

@@ -60,6 +60,8 @@ so the availability answer is not only in a pull request.
 `ProcedureTemplate`.
 [CU43 and CU42 still name `DocumentoPresentado`] → The live class is
 `SubmittedDocument`.
+[CU83 and CU39 still name `TipoDeTramite`] → The live class is
+`ProcedureType`.
 [CU42 still names `GET /api/v1/documento-presentado/proximos-vencimientos?dias=N` and `/dashboard/proximos-vencimientos`] → The live call is in
 `upcoming-expirations`.
 [CU71 still names `POST /api/v1/presupuestos/{id}/items-desde-catalogo`] → The live call is in
