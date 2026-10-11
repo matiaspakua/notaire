@@ -2,22 +2,22 @@ import type { SubmittedDocument, SubmittedDocumentRequest } from "@/types";
 
 /** State of the Documents create/edit dialog (CU04 / CU72). */
 export interface DocumentForm {
-  tipoId: string;
-  fecha: string;
-  entregado: boolean;
+  typeId: string;
+  date: string;
+  delivered: boolean;
   managementId: string;
   procedureId: string;
 }
 
 export const EMPTY_DOCUMENT_FORM: DocumentForm = {
-  tipoId: "",
-  fecha: "",
-  entregado: false,
+  typeId: "",
+  date: "",
+  delivered: false,
   managementId: "",
   procedureId: "",
 };
 
-export type DocumentRequiredField = "tipoId" | "tramiteId";
+export type DocumentRequiredField = "typeId" | "procedureId";
 
 /**
  * A document is presented for a procedure of a management (CU04), so a new one needs
@@ -27,8 +27,8 @@ export type DocumentRequiredField = "tipoId" | "tramiteId";
 export function missingDocumentFields(form: DocumentForm, isEditing: boolean): DocumentRequiredField[] {
   if (isEditing) return [];
   const missing: DocumentRequiredField[] = [];
-  if (!form.tipoId) missing.push("tipoId");
-  if (!form.procedureId) missing.push("tramiteId");
+  if (!form.typeId) missing.push("typeId");
+  if (!form.procedureId) missing.push("procedureId");
   return missing;
 }
 
@@ -40,9 +40,9 @@ export function showsProcedureLink(editing: SubmittedDocument | null): boolean {
 /** Build a create body; call only after `missingDocumentFields` is empty (#655 / #1260). */
 export function toDocumentRequest(form: DocumentForm): SubmittedDocumentRequest {
   return {
-    typeId: Number(form.tipoId),
-    date: form.fecha || undefined,
-    delivered: form.entregado,
+    typeId: Number(form.typeId),
+    date: form.date || undefined,
+    delivered: form.delivered,
     procedureId: Number(form.procedureId),
   };
 }

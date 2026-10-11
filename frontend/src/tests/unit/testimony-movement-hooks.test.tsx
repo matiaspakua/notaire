@@ -41,8 +41,8 @@ function createWrapper() {
 }
 
 describe("testimoniesKeys (CU07, CU08)", () => {
-  it("all key is ['testimonios']", () => {
-    expect(testimoniesKeys.all).toEqual(["testimonios"]);
+  it("all key is ['testimonies']", () => {
+    expect(testimoniesKeys.all).toEqual(["testimonies"]);
   });
 });
 
@@ -81,7 +81,7 @@ describe("useVerifyTestimony (CU08)", () => {
     vi.mocked(apiPost).mockResolvedValue({ idTestimony: 3, verificado: true });
 
     const { result } = renderHook(() => useVerifyTestimony(), { wrapper: createWrapper() });
-    result.current.mutate({ id: 3, observado: true, notes: "Falta firma" });
+    result.current.mutate({ id: 3, flagged: true, notes: "Falta firma" });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(apiPost).toHaveBeenCalledWith("/testimonies/3/verify", {
@@ -157,7 +157,7 @@ describe("Movimiento de testimonio hooks (CU11, CU12, CU44)", () => {
     result.current.mutate({
       idTestimony: 5,
       numberCard: 77,
-      observadoPorRegistro: true,
+      observedByRegistry: true,
       notes: "Falta sello",
     });
 

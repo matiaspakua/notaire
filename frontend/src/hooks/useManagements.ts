@@ -169,8 +169,8 @@ export function useFoldersByManagement(managementId: number | undefined) {
 export function usePutFolderOnHold() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ idFolder, motivo }: { idFolder: number; motivo: string; managementId: number }) =>
-      apiPut<ProcedureFolder>(`/procedure-folders/${idFolder}/wait`, { reason: motivo }),
+    mutationFn: ({ idFolder, reason }: { idFolder: number; reason: string; managementId: number }) =>
+      apiPut<ProcedureFolder>(`/procedure-folders/${idFolder}/wait`, { reason }),
     onSuccess: (_data, { managementId }) => {
       qc.invalidateQueries({ queryKey: procedureFolderKeys.byManagement(managementId) });
     },

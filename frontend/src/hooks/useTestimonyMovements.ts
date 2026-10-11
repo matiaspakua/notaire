@@ -39,7 +39,7 @@ export function useWithdraw() {
 export interface TestimonyReentry {
   idTestimony: number;
   numberCard: number;
-  observadoPorRegistro: boolean;
+  observedByRegistry: boolean;
   notes: string;
 }
 
@@ -47,11 +47,11 @@ export interface TestimonyReentry {
 export function useReenter() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ idTestimony, numberCard, observadoPorRegistro, notes }: TestimonyReentry) =>
+    mutationFn: ({ idTestimony, numberCard, observedByRegistry, notes }: TestimonyReentry) =>
       apiPost<TestimonyMovement>(`/testimony-movements/${idTestimony}/reenter`, {
         cardNumber: numberCard,
-        observedByRegistry: observadoPorRegistro,
-        notes: notes,
+        observedByRegistry,
+        notes,
       }),
     onSuccess: () => qc.invalidateQueries({ queryKey: testimoniesKeys.all }),
   });

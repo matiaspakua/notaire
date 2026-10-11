@@ -60,16 +60,16 @@ export default function DocumentsPage() {
 
   function openCreate() {
     setEditing(null);
-    setForm({ ...EMPTY_DOCUMENT_FORM, fecha: todayInputValue() });
+    setForm({ ...EMPTY_DOCUMENT_FORM, date: todayInputValue() });
     setModalOpen(true);
   }
 
   function openEdit(d: SubmittedDocument) {
     setEditing(d);
     setForm({
-      tipoId: d.type?.idDocumentType?.toString() ?? "",
-      fecha: toDateInputValue(d.date),
-      entregado: d.delivered ?? false,
+      typeId: d.type?.idDocumentType?.toString() ?? "",
+      date: toDateInputValue(d.date),
+      delivered: d.delivered ?? false,
       managementId: "",
       procedureId: d.procedureId?.toString() ?? "",
     });
@@ -112,23 +112,23 @@ export default function DocumentsPage() {
       className: "w-16",
     },
     {
-      key: "tipo",
+      key: "type",
       header: tc("type"),
       render: (d) => <span className="font-medium">{d.type?.name ?? "—"}</span>,
     },
     {
-      key: "tramite",
+      key: "procedure",
       header: t("tramite"),
       render: (d) => (d.procedureId ? `#${d.procedureId}` : "—"),
       className: "w-24",
     },
     {
-      key: "fecha",
+      key: "date",
       header: tc("date"),
       render: (d) => formatDate(d.date),
     },
     {
-      key: "entregado",
+      key: "delivered",
       header: t("delivered"),
       render: (d) => (
         <span className="flex items-center gap-1.5">
@@ -190,7 +190,7 @@ export default function DocumentsPage() {
           <FormContainer>
             <FormSection dialogTitle title={editing ? t("editDocumento") : t("newDocumento")}>
               <FormField label={tc("type")} required={!editing}>
-                <Select value={form.tipoId} onValueChange={(v) => setForm({ ...form, tipoId: v })}>
+                <Select value={form.typeId} onValueChange={(v) => setForm({ ...form, typeId: v })}>
                   <SelectTrigger data-testid="select-document-type">
                     <SelectValue placeholder={t("selectTipo")} />
                   </SelectTrigger>
@@ -206,8 +206,8 @@ export default function DocumentsPage() {
               <FormField label={tc("date")}>
                 <Input
                   type="date"
-                  value={form.fecha}
-                  onChange={(e) => setForm({ ...form, fecha: e.target.value })}
+                  value={form.date}
+                  onChange={(e) => setForm({ ...form, date: e.target.value })}
                 />
               </FormField>
               {showsProcedureLink(editing) && (
@@ -245,8 +245,8 @@ export default function DocumentsPage() {
               )}
               <CheckboxField
                 label={t("delivered")}
-                checked={form.entregado}
-                onChange={(v) => setForm({ ...form, entregado: v })}
+                checked={form.delivered}
+                onChange={(v) => setForm({ ...form, delivered: v })}
               />
             </FormSection>
             <FormActions align="right">

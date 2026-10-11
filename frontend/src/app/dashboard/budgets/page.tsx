@@ -484,12 +484,12 @@ function BudgetsList() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {(resumen.payments ?? []).map((pago) => (
-                          <TableRow key={pago.idPayment}>
-                            <TableCell>{pago.idPayment}</TableCell>
-                            <TableCell>{formatCurrency(pago.amount)}</TableCell>
-                            <TableCell>{formatDate(pago.date)}</TableCell>
-                            <TableCell>{pago.notes ?? "—"}</TableCell>
+{(resumen.payments ?? []).map((payment) => (
+                <TableRow key={payment.idPayment}>
+                  <TableCell>{payment.idPayment}</TableCell>
+                  <TableCell>{formatCurrency(payment.amount)}</TableCell>
+                  <TableCell>{formatDate(payment.date)}</TableCell>
+                  <TableCell>{payment.notes ?? "—"}</TableCell>
                           </TableRow>
                         ))}
                       </TableBody>

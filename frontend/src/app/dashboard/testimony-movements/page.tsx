@@ -13,7 +13,7 @@ import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form
 import { useTestimonies } from "@/hooks/useTestimonies";
 import { useEnterRegistration, useRegisterInscription, useWithdraw, useReenter } from "@/hooks/useTestimonyMovements";
 import { extractApiError, formatDate } from "@/lib/utils";
-import { ReenterDialog, type DatosReingreso } from "./ReenterDialog";
+import { ReenterDialog, type ReentryDetails } from "./ReenterDialog";
 import type { Testimony, TestimonyMovement } from "@/types";
 
 type StatusMovement = "sinIngresar" | "ingresado" | "inscripto" | "retirado";
@@ -84,10 +84,10 @@ export default function MovementsTestimonyPage() {
     }
   }
 
-  async function handleReingresar(datos: DatosReingreso) {
+  async function handleReenter(details: ReentryDetails) {
     if (!reingresarId) return;
     try {
-      await reingresarMutation.mutateAsync({ idTestimony: reingresarId, ...datos });
+      await reingresarMutation.mutateAsync({ idTestimony: reingresarId, ...details });
       toast.success(t("reingresado"));
       setReingresarId(null);
     } catch (err) {
@@ -163,7 +163,7 @@ export default function MovementsTestimonyPage() {
       </Dialog>
 
       {reingresarId !== null && (
-        <ReenterDialog open isPending={reingresarMutation.isPending} onCancel={() => setReingresarId(null)} onConfirm={handleReingresar} />
+        <ReenterDialog open isPending={reingresarMutation.isPending} onCancel={() => setReingresarId(null)} onConfirm={handleReenter} />
       )}
     </div>
   );

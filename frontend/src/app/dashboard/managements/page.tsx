@@ -67,9 +67,9 @@ function ManagementsList() {
   const createCompleteMutation = useCreateCompleteManagement();
   const updateMutation = useUpdateManagement();
   const deleteMutation = useDeleteManagement();
-  const archivarMutation = useArchiveManagement();
+  const archiveMutation = useArchiveManagement();
   const transitionMutation = useTransitionManagement();
-  const ponerEnEsperaMutation = usePutFolderOnHold();
+  const putOnHoldMutation = usePutFolderOnHold();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -81,7 +81,7 @@ function ManagementsList() {
   const [foldersManagementId, setFoldersManagementId] = useState<number | null>(null);
   const [resumenCasoId, setResumenCasoId] = useState<number | null>(null);
   const [waitFolderId, setWaitFolderId] = useState<number | null>(null);
-  const [motivoEspera, setMotivoEspera] = useState("");
+  const [waitReason, setWaitReason] = useState("");
   const [editing, setEditing] = useState<DeedManagement | null>(null);
   const [number, setNumber] = useState("");
   const [clientFilter, setClientFilter] = useState("");
@@ -176,7 +176,7 @@ function ManagementsList() {
   async function handleArchive() {
     if (!archiveId) return;
     try {
-      await archivarMutation.mutateAsync({ id: archiveId, confirmado: !!archiveConflict });
+      await archiveMutation.mutateAsync({ id: archiveId, confirmado: !!archiveConflict });
       toast.success(t("archived"));
       setArchiveId(null);
       setArchiveConflict(null);
@@ -198,21 +198,21 @@ function ManagementsList() {
     }
   }
 
-  async function handlePonerEnEspera() {
+  async function handlePutOnHold() {
     if (!waitFolderId || !foldersManagementId) return;
-    if (!motivoEspera.trim()) {
+    if (!waitReason.trim()) {
       toast.error(t("errorMotivoRequerido"));
       return;
     }
     try {
-      await ponerEnEsperaMutation.mutateAsync({
+      await putOnHoldMutation.mutateAsync({
         idFolder: waitFolderId,
-        motivo: motivoEspera,
+        reason: waitReason,
         managementId: foldersManagementId,
       });
       toast.success(t("carpetaEnEspera"));
       setWaitFolderId(null);
-      setMotivoEspera("");
+      setWaitReason("");
       setFoldersManagementId(null);
     } catch (err) {
       toast.error(extractApiError(err) ?? t("errorCarpetaEspera"));
@@ -478,7 +478,7 @@ function ManagementsList() {
         open={!!archiveId}
         onOpenChange={closeArchiveDialog}
         onConfirm={handleArchive}
-        loading={archivarMutation.isPending}
+        loading={archiveMutation.isPending}
         title={archiveConflict ? t("archiveConflictTitle") : t("archiveConfirmTitle")}
         description={
           archiveConflict
@@ -555,7 +555,7 @@ function ManagementsList() {
           if (!v) {
             setFoldersManagementId(null);
             setWaitFolderId(null);
-            setMotivoEspera("");
+            setWaitReason("");
           }
         }}
       >
@@ -566,8 +566,8 @@ function ManagementsList() {
               <FormSection title={t("ponerEnEsperaTitle")}>
                 <FormField label={t("motivoEspera")} required helperText={t("motivoEsperaHelper")}>
                   <Input
-                    value={motivoEspera}
-                    onChange={(e) => setMotivoEspera(e.target.value)}
+                    value={waitReason}
+                    onChange={(e) => setWaitReason(e.target.value)}
                     placeholder={t("motivoEsperaPlaceholder")}
                     data-testid="input-wait-reason"
                   />
@@ -578,14 +578,14 @@ function ManagementsList() {
                   variant="secondary"
                   onClick={() => {
                     setWaitFolderId(null);
-                    setMotivoEspera("");
+                    setWaitReason("");
                   }}
                 >
                   {tc("cancel")}
                 </Button>
                 <Button
-                  onClick={handlePonerEnEspera}
-                  disabled={ponerEnEsperaMutation.isPending}
+                  onClick={handlePutOnHold}
+                  disabled={putOnHoldMutation.isPending}
                   data-testid="btn-confirm-espera"
                 >
                   {t("confirmEspera")}

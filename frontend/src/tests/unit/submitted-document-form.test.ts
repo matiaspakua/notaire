@@ -11,12 +11,12 @@ import {
 * management, so the create form requires the document type and the procedure.
  */
 describe("submitted document form (#655)", () => {
-  const complete = { ...EMPTY_DOCUMENT_FORM, tipoId: "3", fecha: "2026-09-05", managementId: "7", procedureId: "11" };
+  const complete = { ...EMPTY_DOCUMENT_FORM, typeId: "3", date: "2026-09-05", managementId: "7", procedureId: "11" };
 
   it("requires the type and the procedure on create", () => {
-    expect(missingDocumentFields(EMPTY_DOCUMENT_FORM, false)).toEqual(["tipoId", "tramiteId"]);
-    expect(missingDocumentFields({ ...complete, procedureId: "" }, false)).toEqual(["tramiteId"]);
-    expect(missingDocumentFields({ ...complete, tipoId: "" }, false)).toEqual(["tipoId"]);
+    expect(missingDocumentFields(EMPTY_DOCUMENT_FORM, false)).toEqual(["typeId", "procedureId"]);
+    expect(missingDocumentFields({ ...complete, procedureId: "" }, false)).toEqual(["procedureId"]);
+    expect(missingDocumentFields({ ...complete, typeId: "" }, false)).toEqual(["typeId"]);
     expect(missingDocumentFields(complete, false)).toEqual([]);
   });
 
@@ -37,7 +37,7 @@ describe("submitted document form (#655)", () => {
       delivered: false,
       procedureId: 11,
     });
-    expect(toDocumentRequest({ ...complete, fecha: "" })).toEqual({
+    expect(toDocumentRequest({ ...complete, date: "" })).toEqual({
       typeId: 3,
       date: undefined,
       delivered: false,

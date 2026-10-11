@@ -3,7 +3,7 @@ import { apiGet, apiPost, apiGetBytes } from "@/lib/api-client";
 import type { Testimony } from "@/types";
 
 export const testimoniesKeys = {
-  all: ["testimonios"] as const,
+  all: ["testimonies"] as const,
 };
 
 export function useTestimonies() {
@@ -26,9 +26,9 @@ export function useGenerateTestimony() {
 export function useVerifyTestimony() {
   const qc = useQueryClient();
   return useMutation({
-    // Backend body is DtoTestimony(flagged, notes). The local flag is `observado`.
-    mutationFn: ({ id, observado, notes }: { id: number; observado: boolean; notes?: string }) =>
-      apiPost<Testimony>(`/testimonies/${id}/verify`, { flagged: observado, notes: notes }),
+    // Backend body is DtoTestimony(flagged, notes).
+    mutationFn: ({ id, flagged, notes }: { id: number; flagged: boolean; notes?: string }) =>
+      apiPost<Testimony>(`/testimonies/${id}/verify`, { flagged, notes }),
     onSuccess: () => qc.invalidateQueries({ queryKey: testimoniesKeys.all }),
   });
 }

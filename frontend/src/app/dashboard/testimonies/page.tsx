@@ -25,32 +25,32 @@ export default function TestimoniesPage() {
 
   const { data: testimonies = [], isLoading } = useTestimonies();
   const { data: deeds = [] } = useDeeds();
-  const generarMutation = useGenerateTestimony();
-  const verificarMutation = useVerifyTestimony();
+  const generateMutation = useGenerateTestimony();
+  const verifyMutation = useVerifyTestimony();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [idDeed, setIdDeed] = useState("");
-  const [verificarId, setVerificarId] = useState<number | null>(null);
-  const [observado, setObservado] = useState(false);
+  const [verifyId, setVerifyId] = useState<number | null>(null);
+  const [flagged, setFlagged] = useState(false);
   const [notes, setNotes] = useState("");
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
 
   const deedsSigned = deeds.filter((e) => e.status === STATUS_SIGNED);
 
-  function openGenerar() {
+  function openGenerate() {
     setIdDeed("");
     setModalOpen(true);
   }
 
-  function openVerificar(testimony: Testimony) {
-    setVerificarId(testimony.idTestimony!);
-    setObservado(false);
+  function openVerify(testimony: Testimony) {
+    setVerifyId(testimony.idTestimony!);
+    setFlagged(false);
     setNotes("");
   }
 
-  async function handleGenerar() {
+  async function handleGenerate() {
     try {
-      await generarMutation.mutateAsync(Number(idDeed));
+      await generateMutation.mutateAsync(Number(idDeed));
       toast.success(t("generated"));
       setModalOpen(false);
     } catch (err) {
@@ -58,12 +58,12 @@ export default function TestimoniesPage() {
     }
   }
 
-  async function handleVerificar() {
-    if (!verificarId) return;
+  async function handleVerify() {
+    if (!verifyId) return;
     try {
-      await verificarMutation.mutateAsync({ id: verificarId, observado, notes: notes || undefined });
+      await verifyMutation.mutateAsync({ id: verifyId, flagged, notes: notes || undefined });
       toast.success(t("verified"));
-      setVerificarId(null);
+      setVerifyId(null);
     } catch (err) {
       toast.error(extractApiError(err) ?? t("errorVerify"));
     }
@@ -100,7 +100,7 @@ export default function TestimoniesPage() {
             <Button
               size="sm"
               variant="ghost"
-              onClick={() => openVerificar(te)}
+              onClick={() => openVerify(te)}
               aria-label={t("verificarTestimonio")}
               data-testid={`btn-verify-testimony-${te.idTestimony}`}
             >
@@ -129,7 +129,7 @@ export default function TestimoniesPage() {
       <AppHeader
         title={t("title")}
         actions={
-          <Button onClick={openGenerar} data-testid="btn-generate-testimony">
+          <Button onClick={openGenerate} data-testid="btn-generate-testimony">
             <Plus className="h-4 w-4" />
             {t("newTestimonio")}
           </Button>
@@ -161,7 +161,7 @@ export default function TestimoniesPage() {
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleGenerar} disabled={!idDeed || generarMutation.isPending} data-testid="btn-save-testimony">
+              <Button onClick={handleGenerate} disabled={!idDeed || generateMutation.isPending} data-testid="btn-save-testimony">
                 {tc("create")}
               </Button>
             </FormActions>
@@ -169,11 +169,11 @@ export default function TestimoniesPage() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={!!verificarId} onOpenChange={(v) => !v && setVerificarId(null)}>
+      <Dialog open={!!verifyId} onOpenChange={(v) => !v && setVerifyId(null)}>
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={t("verificarTestimonio")}>
-              <CheckboxField label={t("fields.observado")} checked={observado} onChange={setObservado} data-testid="checkbox-observed-testimony" />
+              <CheckboxField label={t("fields.observado")} checked={flagged} onChange={setFlagged} data-testid="checkbox-observed-testimony" />
               <FormField label={t("fields.observaciones")}>
                 <textarea
                   className={themeClass("textarea")}
@@ -184,10 +184,10 @@ export default function TestimoniesPage() {
               </FormField>
             </FormSection>
             <FormActions align="right">
-              <Button variant="secondary" onClick={() => setVerificarId(null)}>
+              <Button variant="secondary" onClick={() => setVerifyId(null)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleVerificar} disabled={verificarMutation.isPending} data-testid="btn-confirm-verify-testimony">
+              <Button onClick={handleVerify} disabled={verifyMutation.isPending} data-testid="btn-confirm-verify-testimony">
                 {t("verificarTestimonio")}
               </Button>
             </FormActions>

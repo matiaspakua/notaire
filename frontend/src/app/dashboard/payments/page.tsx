@@ -31,7 +31,7 @@ export default function PagosPage() {
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const { data: pagos = [], isLoading } = usePayments();
+  const { data: payments = [], isLoading } = usePayments();
   const createMutation = useCreatePayment();
   const updateMutation = useUpdatePayment();
   const deleteMutation = useDeletePayment();
@@ -134,7 +134,7 @@ export default function PagosPage() {
         title={t("title")}
         actions={<Button onClick={openCreate} data-testid="btn-new-payment"><Plus className="h-4 w-4" />{t("newPago")}</Button>}
       />
-      <DataTable data={pagos} columns={columns} isLoading={isLoading} keyExtractor={(p) => p.idPayment!} emptyMessage={t("noData")} />
+      <DataTable data={payments} columns={columns} isLoading={isLoading} keyExtractor={(p) => p.idPayment!} emptyMessage={t("noData")} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
