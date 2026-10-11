@@ -425,11 +425,11 @@ class SimpleControllersTest {
     @DisplayName("DeedController")
     class DeedControllerTests {
         private final DeedService service = mock(DeedService.class);
-        private final DeedSigningService firmaService = mock(DeedSigningService.class);
+        private final DeedSigningService signingService = mock(DeedSigningService.class);
         private final com.licensis.notaire.repository.FolioRepository folioRepository =
                 mock(com.licensis.notaire.repository.FolioRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new DeedController(service, firmaService, folioRepository))
+                standaloneSetup(new DeedController(service, signingService, folioRepository))
                         .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();

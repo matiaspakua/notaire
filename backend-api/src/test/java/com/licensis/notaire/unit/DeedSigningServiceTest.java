@@ -35,7 +35,7 @@ class DeedSigningServiceTest {
     private FolioRepository folioRepository;
 
     @InjectMocks
-    private DeedSigningService deedFirmaService;
+    private DeedSigningService deedSigningService;
 
     private Deed deed;
 
@@ -54,19 +54,19 @@ class DeedSigningServiceTest {
         when(folioRepository.existsByFkIdDeedIdDeed(1)).thenReturn(true);
         when(deedRepository.save(deed)).thenReturn(deed);
 
-        Deed firmada = deedFirmaService.sign(1);
+        Deed signed = deedSigningService.sign(1);
 
-        assertThat(firmada.getStatus()).isEqualTo(BusinessConstants.DeedSigned);
+        assertThat(signed.getStatus()).isEqualTo(BusinessConstants.DeedSigned);
         verify(deedRepository).save(deed);
     }
 
     @Test
-    @DisplayName("Should reject signing when deed is already firmada")
+    @DisplayName("Should reject signing when the deed is already signed")
     void shouldRejectSignWhenAlreadySigned() {
         deed.setStatus(BusinessConstants.DeedSigned);
         when(deedRepository.findById(1)).thenReturn(Optional.of(deed));
 
-        assertThatThrownBy(() -> deedFirmaService.sign(1))
+        assertThatThrownBy(() -> deedSigningService.sign(1))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("Sin Firmar");
     }
@@ -77,7 +77,7 @@ class DeedSigningServiceTest {
         when(deedRepository.findById(1)).thenReturn(Optional.of(deed));
         when(folioRepository.existsByFkIdDeedIdDeed(1)).thenReturn(false);
 
-        assertThatThrownBy(() -> deedFirmaService.sign(1))
+        assertThatThrownBy(() -> deedSigningService.sign(1))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("folio");
     }
@@ -87,7 +87,7 @@ class DeedSigningServiceTest {
     void shouldRejectSignWhenDeedNotFound() {
         when(deedRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> deedFirmaService.sign(999))
+        assertThatThrownBy(() -> deedSigningService.sign(999))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("999");
     }

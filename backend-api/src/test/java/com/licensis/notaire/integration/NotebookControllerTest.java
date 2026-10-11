@@ -51,7 +51,7 @@ class NotebookControllerTest {
 
     private Person notary;
     private FolioType folioType;
-    private int siguienteNumber = 1;
+    private int nextNumber = 1;
 
     @BeforeEach
     void setUp() {
@@ -60,11 +60,11 @@ class NotebookControllerTest {
         folioType = folioTypeRepository.findById(1).orElseThrow();
     }
 
-    private List<Integer> createFolios(int cantidad, String status) {
+    private List<Integer> createFolios(int count, String status) {
         List<Integer> ids = new ArrayList<>();
-        for (int i = 0; i < cantidad; i++) {
+        for (int i = 0; i < count; i++) {
             Folio folio = new Folio();
-            folio.setNumber(siguienteNumber++);
+            folio.setNumber(nextNumber++);
             folio.setYear(2026);
             folio.setStatus(status);
             folio.setFkIdFolioType(folioType);

@@ -43,6 +43,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English signing identifiers** (#1490, CU75): the signing service comment
+  says `Sign a deed`. The controller field is `deedSigningService`. Tests
+  name `createSignedDeed`, `nextNumber`, `next`, `nextAuxiliary`,
+  `nextPrincipal`, and `count`. The gap justification is
+  `Voided deed No. 6 to 8`. The integration class is
+  `DeedSigningControllerIntegrationTest`. Stored statuses `Firmada` and
+  `Sin Firmar` stay, along with `Protocolo Auxiliar` and `Protocolo Principal`.
 - **English entity round-trips** (#1490, CU75): budget and deed setter fixtures
   use `pending`, `approved`, `signed`, `unsigned`, `voided`, and `not_passed`.
   Nested tests are `PrepareBudgetTests`, `PrepareDeedTests`, and

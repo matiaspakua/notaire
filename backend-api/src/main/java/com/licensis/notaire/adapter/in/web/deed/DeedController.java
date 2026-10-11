@@ -65,13 +65,13 @@ public class DeedController {
             int version) {}
 
     private final DeedService deedService;
-    private final DeedSigningService deedFirmaService;
+    private final DeedSigningService deedSigningService;
     private final FolioRepository folioRepository;
 
-    public DeedController(DeedService deedService, DeedSigningService deedFirmaService,
+    public DeedController(DeedService deedService, DeedSigningService deedSigningService,
             FolioRepository folioRepository) {
         this.deedService = deedService;
-        this.deedFirmaService = deedFirmaService;
+        this.deedSigningService = deedSigningService;
         this.folioRepository = folioRepository;
     }
 
@@ -235,6 +235,6 @@ public class DeedController {
     @Operation(summary = "Sign deed",
                description = "Transitions a deed 'Sin Firmar' with folio assigned to the status 'Firmada'")
     public ResponseEntity<DeedResponse> sign(@PathVariable Integer id) {
-        return ResponseEntity.ok(toResponse(deedFirmaService.sign(id)));
+        return ResponseEntity.ok(toResponse(deedSigningService.sign(id)));
     }
 }
