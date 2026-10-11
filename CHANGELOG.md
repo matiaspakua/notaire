@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired case create** (#1490, CU75): the engineering-sequences design
+  names the path and table EVALUACION-DOCUMENTACION still writes,
+  `POST /api/v1/gestion` and `gestiones_de_escrituras`. The live call
+  stays in `DOC-GESTION`. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
 - **Short management create and status** (#1490, CU75): the engineering-sequences
   design names the paths CU13 still writes, `POST /gestiones` and
   `GET /gestiones/{id}/estado-actual`. The live calls stay in
