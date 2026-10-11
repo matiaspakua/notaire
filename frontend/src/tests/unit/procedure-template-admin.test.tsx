@@ -82,12 +82,12 @@ describe("RequiredDocumentsDialog (#1362)", () => {
     renderDialog();
     await screen.findByTestId("required-doc-row-1");
     fireEvent.change(screen.getByTestId("select-required-doc-type"), { target: { value: "3" } });
-    fireEvent.change(screen.getByTestId("input-required-doc-notes"), { target: { value: "Copia certificada" } });
+    fireEvent.change(screen.getByTestId("input-required-doc-notes"), { target: { value: "Certified copy" } });
     fireEvent.click(screen.getByTestId("btn-add-required-doc"));
     await waitFor(() => expect(calls("POST")).toHaveLength(1));
     const [url, init] = calls("POST")[0];
     expect(String(url)).toContain("/procedure-templates");
-    expect(JSON.parse(String(init.body))).toEqual({ fkIdProcedureType: 7, fkIdDocumentType: 3, notes: "Copia certificada" });
+    expect(JSON.parse(String(init.body))).toEqual({ fkIdProcedureType: 7, fkIdDocumentType: 3, notes: "Certified copy" });
   });
 
   it("shows a duplicate message when the API answers 409", async () => {
@@ -104,12 +104,12 @@ describe("RequiredDocumentsDialog (#1362)", () => {
     const row = await screen.findByTestId("required-doc-row-1");
     fireEvent.click(within(row).getByTestId("btn-edit-required-doc"));
     const input = within(row).getByTestId("input-edit-required-doc-notes");
-    fireEvent.change(input, { target: { value: "Original y copia" } });
+    fireEvent.change(input, { target: { value: "Original and copy" } });
     fireEvent.click(within(row).getByTestId("btn-save-required-doc"));
     await waitFor(() => expect(calls("PUT")).toHaveLength(1));
     const [url, init] = calls("PUT")[0];
     expect(String(url)).toContain("/procedure-templates/7/1");
-    expect(JSON.parse(String(init.body))).toEqual({ notes: "Original y copia" });
+    expect(JSON.parse(String(init.body))).toEqual({ notes: "Original and copy" });
   });
 
   it("removes a document after confirmation with DELETE /procedure-templates/{type}/{document}", async () => {

@@ -64,6 +64,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English checklist fixture notes** (#1490, CU75): required-document
+  samples say `Original and copy` and `Certified copy`. Created names
+  say `Procedure checklist E2E`, `Document checklist E2E`,
+  `FolioTypeTest`, and `AuxiliaryFolioTypeTest`. The visible labels
+  `Administración → Trámites`, `Documentos requeridos`, and
+  `Documentos necesarios` stay. Stored `Cliente` and `Protocolo Auxiliar`
+  stay, along with `tipos de trámite`.
 - **English retired test filenames** (#1490, CU75): the copies
   change names `TS-0132-copies-required-fields.spec.ts`. The
   people-pagination change names `people-pagination.test.tsx` and

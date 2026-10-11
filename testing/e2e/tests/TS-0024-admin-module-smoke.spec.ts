@@ -154,7 +154,7 @@ test.describe("CU28/CU40/CU58/CU68 — Folios", () => {
   });
 
   test("Folio types section: full CRUD via search + create + edit + delete", async ({ page }) => {
-    const uniqueName = `TipoTest${Date.now()}`;
+    const uniqueName = `FolioTypeTest${Date.now()}`;
     const renamed = `${uniqueName}-edit`;
 
     await expect(page.getByRole("heading", { name: /tipos de folio/i })).toBeVisible();
@@ -184,7 +184,7 @@ test.describe("CU28/CU40/CU58/CU68 — Folios", () => {
   });
 
   test("CU81 — marking a folio type as Protocolo Auxiliar via checkbox persists the flag", async ({ page }) => {
-    const uniqueName = `TipoAuxiliarTest${Date.now()}`;
+    const uniqueName = `AuxiliaryFolioTypeTest${Date.now()}`;
 
     await page.getByTestId("btn-new-folio-type").click();
     const dialog = page.getByRole("dialog");
