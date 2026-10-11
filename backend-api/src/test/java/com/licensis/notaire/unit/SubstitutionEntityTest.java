@@ -78,9 +78,9 @@ class SubstitutionEntityTest {
         @DisplayName("Should set and get notes")
         void shouldSetAndGetNotes() {
             Substitution substitution = new Substitution();
-            substitution.setNotes("Licencia by enfermedad");
+            substitution.setNotes("Sick leave");
 
-            assertThat(substitution.getNotes()).isEqualTo("Licencia by enfermedad");
+            assertThat(substitution.getNotes()).isEqualTo("Sick leave");
         }
 
         @Test

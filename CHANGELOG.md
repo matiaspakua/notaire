@@ -64,6 +64,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English catalog fixture phrases** (#1490, CU75): substitution notes
+  are `Sick leave`. The management heading fixture is `Heading E2E`.
+  The folio-type name is `Folio type E2E`. Playwright detail values are
+  `Activated from Playwright` and `Archived from Playwright`. The
+  movement note is `Withdrawn from the registry`. Procedure notes are
+  `Donation procedure`. Document-type names are `Power Expires`,
+  `Identity card Expires`, and `Contract Expires`. The delivered-by
+  fixture is `Property Registry`. The dialog local is `detailDialog`.
+  Visible headers `Carátula`, `Inicio`, `Trámites`, and
+  `Tipo de Trámite` stay, along with `días`, `creado`,
+  `movimiento registrado`, and `no hay documentos`. Stored labels
+  `Donacion`, `Escribano`, `Certificado de Dominio`, `Entidad Externa`,
+  `Cliente`, `Soltero`, `Masculino`, `Efectivo`, and `Nuevo` stay.
+  The dead field `detalle` and the keys `vence`, `diasVencimiento`,
+  and `quienEntrega` stay.
 - **English person and concept fixture labels** (#1490, CU75): stubbed
   people are `Referenced` and `Mobile`. The company fixture is
   `Company`. The concept value is `New Concept Test`. The

@@ -401,7 +401,7 @@ export async function createFolioType(
 ): Promise<ApiResult<{ idFolioType: number }>> {
   const id = uniqueId();
   return apiPost(page, "/folio-types", {
-    name: `Tipo Folio E2E ${id}`,
+    name: `Folio type E2E ${id}`,
     enabled: true,
     isAuxiliary: false,
     ...overrides,
@@ -778,7 +778,7 @@ export async function brunoActivateManagement(
   managementId: number,
 ): Promise<ApiResult> {
   return apiPut(page, `/managements/${managementId}`, {
-    detalle: "Activada desde Playwright",
+    detalle: "Activated from Playwright",
     dateStart: new Date().toISOString().split("T")[0],
   });
 }
@@ -788,7 +788,7 @@ export async function brunoArchiveManagement(
   managementId: number,
 ): Promise<ApiResult> {
   return apiPut(page, `/managements/${managementId}`, {
-    detalle: "Archivada desde Playwright",
+    detalle: "Archived from Playwright",
   });
 }
 

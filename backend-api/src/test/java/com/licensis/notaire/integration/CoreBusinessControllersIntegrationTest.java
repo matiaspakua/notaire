@@ -294,7 +294,7 @@ class CoreBusinessControllersIntegrationTest {
                             .content("""
                                     {
                                       "name": "Donacion",
-                                      "notes": "Procedure de donacion",
+                                      "notes": "Donation procedure",
                                       "enabled": true,
                                       "isArchived": true,
                                       "isRegistered": false,
