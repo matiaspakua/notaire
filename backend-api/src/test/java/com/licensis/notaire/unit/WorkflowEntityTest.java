@@ -138,21 +138,21 @@ class WorkflowEntityTest {
             transition.setWorkflowDefinition(wf);
             transition.setOriginNode(origin);
             transition.setDestinationNode(destination);
-            transition.setDescription("Avance de status");
+            transition.setDescription("Status advance");
 
             assertThat(transition.getWorkflowDefinition()).isEqualTo(wf);
             assertThat(transition.getOriginNode()).isEqualTo(origin);
             assertThat(transition.getDestinationNode()).isEqualTo(destination);
-            assertThat(transition.getDescription()).isEqualTo("Avance de status");
+            assertThat(transition.getDescription()).isEqualTo("Status advance");
         }
 
         @Test
         @DisplayName("Should allow optional condition on transition")
         void shouldAllowOptionalConditionOnTransition() {
             WorkflowTransition transition = new WorkflowTransition();
-            transition.setCondition("status.documentosCompletos == true");
+            transition.setCondition("status.documentsComplete == true");
 
-            assertThat(transition.getCondition()).isEqualTo("status.documentosCompletos == true");
+            assertThat(transition.getCondition()).isEqualTo("status.documentsComplete == true");
         }
 
         @Test

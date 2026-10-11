@@ -98,7 +98,7 @@ test.describe('CU17 - Register a person', () => {
     'CU17-GW02: creating a person without checking is-client → the person appears in the table, not as a client',
     async ({ page }) => {
       const dni = `17${uniqueId() % 10_000_000}`
-      const lastName = `Alta${uniqueId() % 100_000}`
+      const lastName = `Create${uniqueId() % 100_000}`
 
       // When — create without the es-client checkbox
       await fillPersonForm(page, {
@@ -208,7 +208,7 @@ test.describe('CU18 - Register a client via the is-client checkbox', () => {
       // NOTE (CU41): editing an existing person and checking 'es client'
       // promotes them to client status. This is the CU41 path.
       const dni = `CU41${uniqueId() % 10_000_000}`
-      const lastName = `Promover${uniqueId() % 100_000}`
+      const lastName = `Promote${uniqueId() % 100_000}`
 
       // Given — person created without es-client
       await fillPersonForm(page, {
@@ -291,13 +291,13 @@ test.describe('Issue #835 - Deduplication by DNI', () => {
     async ({ page }) => {
       const dni = `DUP2${uniqueId() % 10_000_000}`
 
-      await fillPersonForm(page, { name: 'Primero', lastName: 'Exist', dni })
+      await fillPersonForm(page, { name: 'First', lastName: 'Exist', dni })
       await submitForm(page)
       await expect(
         page.locator('[data-sonner-toast]').getByText(/creada/i),
       ).toBeVisible({ timeout: 8000 })
 
-      await fillPersonForm(page, { name: 'Segundo', lastName: 'Dup', dni })
+      await fillPersonForm(page, { name: 'Second', lastName: 'Dup', dni })
       await submitForm(page)
 
       // Then — link to existing person is shown in the toast
@@ -314,8 +314,8 @@ test.describe('Issue #835 - Deduplication by DNI', () => {
       await page.getByTestId('btn-new-person').click()
       await expect(page.getByRole('dialog')).toBeVisible()
 
-      await page.getByTestId('input-firstName').fill('SinDNI')
-      await page.getByTestId('input-lastName').fill('Prueba')
+      await page.getByTestId('input-firstName').fill('NoId')
+      await page.getByTestId('input-lastName').fill('Sample')
       // DNI left empty intentionally
       await submitForm(page)
 
@@ -512,14 +512,14 @@ test.describe('People screen - responsive viewports', () => {
         await page.waitForLoadState('domcontentloaded')
 
         // Create original
-        await fillPersonForm(page, { name: 'Primero', lastName: 'VP', dni })
+        await fillPersonForm(page, { name: 'First', lastName: 'VP', dni })
         await submitForm(page)
         await expect(
           page.locator('[data-sonner-toast]').getByText(/creada/i),
         ).toBeVisible({ timeout: 8000 })
 
         // Attempt duplicate
-        await fillPersonForm(page, { name: 'Segundo', lastName: 'VP', dni })
+        await fillPersonForm(page, { name: 'Second', lastName: 'VP', dni })
         await submitForm(page)
 
         // Then — duplicate error is visible even on narrow screens
@@ -582,7 +582,7 @@ test.describe('#1361 - Identification type in the person form', () => {
     const lastName = `Cuit${uniqueId() % 100_000}`
     await page.getByTestId('btn-new-person').click()
     const dialog = page.getByRole('dialog')
-    await page.getByTestId('input-firstName').fill('Empresa')
+    await page.getByTestId('input-firstName').fill('Company')
     await page.getByTestId('input-lastName').fill(lastName)
     await dialog.getByRole('combobox', { name: /tipo de identificación/i }).click()
     await page.getByRole('listbox').getByRole('option', { name: 'CUIT', exact: true }).click()

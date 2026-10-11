@@ -57,7 +57,7 @@ test.describe("CU48/CU51 - Notary registration on people", () => {
 
   test("CU51-GW01: editing a person and changing their notary registration number", async ({ page }) => {
     const person = await createPerson(page, {
-      lastName: `Modif${uniqueId() % 100_000}`,
+      lastName: `Edit${uniqueId() % 100_000}`,
       identificationNumber: `51${uniqueId() % 10_000_000}`,
     });
     const lastName = person.data!.lastName!;

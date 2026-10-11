@@ -171,7 +171,7 @@ class ReportsUseCaseIntegrationTest {
     @DisplayName("Special characters in procedureTypeName are matched literally, never a server error")
     void shouldHandleSpecialCharsInProcedureParam() throws Exception {
         mockMvc.perform(get("/api/v1/reports/procedure-document-list")
-                        .param("procedureTypeName", "Compra/Venta (especial) & more"))
+                        .param("procedureTypeName", "Purchase/Sale (special) & more"))
                 .andExpect(status().isNotFound());
     }
 

@@ -64,6 +64,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English workflow fixture phrases** (#1490, CU75): the transition
+  description is `Status advance`. The condition is
+  `status.documentsComplete == true`. The special-character query is
+  `Purchase/Sale (special) & more`. Person fixtures are `Create`,
+  `Promote`, `Edit`, `First`, `Second`, `NoId`, `Sample`, and
+  `Company`. Stored type `Compraventa` stays, along with person names
+  `Lucía`, `María`, and `Pedro`, and the visible toast match
+  `/suplente/i`.
 - **English case-summary state and status names** (#1490, CU75): the
   managements page state is `caseSummaryId`. Identification-type
   display names use `/identification-types`. Synthetic status names
