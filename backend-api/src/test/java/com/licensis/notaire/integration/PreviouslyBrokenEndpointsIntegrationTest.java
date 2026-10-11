@@ -55,7 +55,7 @@ class PreviouslyBrokenEndpointsIntegrationTest {
 
     @Test
     @DisplayName("Should return a JSON array for GET /api/v1/testimony-movements")
-    void shouldListMovimientosTestimonyWhenRequested() throws Exception {
+    void shouldListTestimonyMovementsWhenRequested() throws Exception {
         mockMvc.perform(get("/api/v1/testimony-movements"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());

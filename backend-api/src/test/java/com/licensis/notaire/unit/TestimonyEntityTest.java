@@ -129,11 +129,11 @@ class TestimonyEntityTest {
         @Test
         @DisplayName("Should set and get movement list")
         void shouldSetAndGetMovementList() {
-            List<TestimonyMovement> movimientos = new ArrayList<>();
-            movimientos.add(new TestimonyMovement());
+            List<TestimonyMovement> movements = new ArrayList<>();
+            movements.add(new TestimonyMovement());
 
             Testimony testimony = new Testimony();
-            testimony.setTestimonyMovementList(movimientos);
+            testimony.setTestimonyMovementList(movements);
 
             assertThat(testimony.getTestimonyMovementList()).hasSize(1);
         }

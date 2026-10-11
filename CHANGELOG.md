@@ -64,6 +64,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English hash and movement names** (#1490, CU75): the legacy MD5 helper
+  uses `plainText`, `md5Hex`, `lowNibble`, and `highNibble`. Testimony
+  movement tests say `shouldListTestimonyMovementsWhenRequested`,
+  `shouldReturnEmptyListOfMovements`,
+  `shouldCreateCopyWhenTestimonyHasNoMovements`, and
+  `shouldListTestimonyMovementsWhenSchemaMatchesEntities`. The movement
+  list variable is `movements`. The receipt heading is
+  `Budget receipt E2E`. Stored status `PENDIENTE` stays, along with the
+  message key `movimientosTestimonio`.
 - **English leftover fixture words** (#1490, CU75): document costs use
   `amountsToPay`. Payment notes say `Test payment`. Deed search uses
   `number`. The non-numeric management path is `not-a-number`. Synthetic
