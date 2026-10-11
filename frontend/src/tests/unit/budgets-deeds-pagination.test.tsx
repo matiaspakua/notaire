@@ -1,7 +1,7 @@
 /**
  * Budgets and deeds lists read one server page at a time (#1340 slice 5, CU01/CU60, CU06/CU07).
  * Both requested size=1000; their filters also sent query parameters the backend ignores
- * (`estado` instead of `status`, `number` instead of `number`), so they returned every row.
+ * (`estado` instead of `status`, `numero` instead of `number`), so they returned every row.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor, renderHook, fireEvent } from "@testing-library/react";
@@ -31,7 +31,7 @@ import BudgetsPage from "@/app/dashboard/budgets/page";
 import DeedsPage from "@/app/dashboard/deeds/page";
 
 const BUDGET = { idBudget: 1192, date: "2026-10-01", status: "BORRADOR", propertyAmount: 1000 };
-const DEED = { idDeed: 845, number: 77001, status: "Borrador" };
+const DEED = { idDeed: 845, number: 77001, status: "Sin Firmar" };
 
 function json(body: unknown) {
   const text = JSON.stringify(body);
@@ -44,7 +44,7 @@ function route(list: RegExp, page: object) {
     const url = String(u);
     if (list.test(url)) return json(page);
     if (/\/budgets\/\d+$/.test(url)) return json(BUDGET);
-    if (/\/(buscar)\?/.test(url)) return json([]);
+    if (/\/search\?/.test(url)) return json([]);
     if (/\?|size=/.test(url)) return json(EMPTY_PAGE);
     return json([]);
   };

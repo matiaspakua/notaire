@@ -78,25 +78,25 @@ describe("ManagementHistory type shape (CU13, CU53)", () => {
   it("history has the expected fields", () => {
     const history = {
       idHistory: 1,
-      status: { idStatusManagement: 2, name: "En trámite" },
+      status: { idStatusManagement: 2, name: "En Tramite" },
       date: "2026-01-15",
-      notes: "Iniciado proceso",
+      notes: "Process started",
     };
     expect(history.idHistory).toBe(1);
-    expect(history.status.name).toBe("En trámite");
+    expect(history.status.name).toBe("En Tramite");
     expect(history.date).toBe("2026-01-15");
   });
 
   it("latest history is the most recent date", () => {
     const entries = [
-      { idHistory: 1, date: "2026-01-01", status: { name: "Iniciado" } },
-      { idHistory: 2, date: "2026-03-15", status: { name: "En revisión" } },
-      { idHistory: 3, date: "2026-02-10", status: { name: "Pausado" } },
+      { idHistory: 1, date: "2026-01-01", status: { name: "Iniciada" } },
+      { idHistory: 2, date: "2026-03-15", status: { name: "En Tramite" } },
+      { idHistory: 3, date: "2026-02-10", status: { name: "Archivada" } },
     ];
     const sorted = [...entries].sort((a, b) =>
       new Date(b.date).getTime() - new Date(a.date).getTime()
     );
-    expect(sorted[0].status.name).toBe("En revisión");
+    expect(sorted[0].status.name).toBe("En Tramite");
   });
 
   it("an empty history list has no current status", () => {
@@ -118,13 +118,13 @@ describe("Managements search filter (CU02, CU53)", () => {
       idManagement: 1,
       number: 1001,
       procedureList: [],
-      historyList: [{ status: { name: "Activo" }, date: "2026-01-01" }],
+      historyList: [{ status: { name: "Active" }, date: "2026-01-01" }],
     },
     {
       idManagement: 2,
       number: 1002,
       procedureList: [{ idProcedure: 1 }],
-      historyList: [{ status: { name: "Cerrado" }, date: "2026-02-01" }],
+      historyList: [{ status: { name: "Closed" }, date: "2026-02-01" }],
     },
     {
       idManagement: 3,
@@ -162,15 +162,15 @@ describe("Managements search filter (CU02, CU53)", () => {
   });
 
   it("filter by active status", () => {
-    expect(filterManagements(managements, "", "activ")).toHaveLength(1);
+    expect(filterManagements(managements, "", "active")).toHaveLength(1);
   });
 
   it("filter by closed status", () => {
-    expect(filterManagements(managements, "", "cerrad")).toHaveLength(1);
+    expect(filterManagements(managements, "", "clos")).toHaveLength(1);
   });
 
   it("combined number and status filter", () => {
-    const result = filterManagements(managements, "1001", "activ");
+    const result = filterManagements(managements, "1001", "active");
     expect(result).toHaveLength(1);
     expect(result[0].idManagement).toBe(1);
   });
@@ -188,34 +188,34 @@ describe("Management status badge logic", () => {
   function getBadgeVariant(status?: string): string {
     if (!status) return "outline";
     const lower = status.toLowerCase();
-    if (lower.includes("activ") || lower.includes("abiert")) return "green";
-    if (lower.includes("cerr") || lower.includes("finaliz")) return "secondary";
+    if (lower.includes("active") || lower.includes("open")) return "green";
+    if (lower.includes("clos") || lower.includes("finish")) return "secondary";
     if (lower.includes("cancel") || lower.includes("archiv")) return "destructive";
     return "outline";
   }
 
-  it("Activo maps to green", () => {
-    expect(getBadgeVariant("Activo")).toBe("green");
+  it("Active maps to green", () => {
+    expect(getBadgeVariant("Active")).toBe("green");
   });
 
-  it("Abierto maps to green", () => {
-    expect(getBadgeVariant("Abierto")).toBe("green");
+  it("Open maps to green", () => {
+    expect(getBadgeVariant("Open")).toBe("green");
   });
 
-  it("Cerrado maps to secondary", () => {
-    expect(getBadgeVariant("Cerrado")).toBe("secondary");
+  it("Closed maps to secondary", () => {
+    expect(getBadgeVariant("Closed")).toBe("secondary");
   });
 
-  it("Finalizado maps to secondary", () => {
-    expect(getBadgeVariant("Finalizado")).toBe("secondary");
+  it("Finished maps to secondary", () => {
+    expect(getBadgeVariant("Finished")).toBe("secondary");
   });
 
-  it("Cancelado maps to destructive", () => {
-    expect(getBadgeVariant("Cancelado")).toBe("destructive");
+  it("Cancelled maps to destructive", () => {
+    expect(getBadgeVariant("Cancelled")).toBe("destructive");
   });
 
-  it("Archivado maps to destructive", () => {
-    expect(getBadgeVariant("Archivado")).toBe("destructive");
+  it("Archived maps to destructive", () => {
+    expect(getBadgeVariant("Archived")).toBe("destructive");
   });
 
   it("undefined maps to outline", () => {

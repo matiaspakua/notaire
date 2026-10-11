@@ -39,7 +39,7 @@ src/tests/unit/
 ├── business-logic-hooks.test.ts     # managementsKeys and related query-key contracts (CU02, CU13, CU24)
 ├── hooks.test.ts                    # React Query key contracts, type shapes, API path contracts
 ├── i18n.test.ts                     # isSupportedLocale and locale helpers
-├── items-historial.test.ts          # itemsKeys query-key contracts
+├── items-history.test.ts            # itemsKeys query-key contracts
 ├── next-config-security-headers.test.ts  # next.config security headers
 ├── substitutions-reports.test.ts    # substitutionsKeys query-key contracts
 ├── utils.test.ts                    # cn(), formatDate, formatCurrency, fullName()

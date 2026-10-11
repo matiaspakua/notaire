@@ -98,14 +98,16 @@ describe("extractApiError()", () => {
 
   it("extracts the message field from a 400 BusinessValidationException body", () => {
     const err = new Error(
-      '[400] /deeds/1/sign: {"status":400,"error":"Bad Request","message":"La escritura no está en estado \'Sin Firmar\'"}'
+      '[400] /deeds/1/sign: {"status":400,"error":"Bad Request","message":"The deed must be in status \'Sin Firmar\' to be signed"}'
     );
-    expect(extractApiError(err)).toBe("La escritura no está en estado 'Sin Firmar'");
+    expect(extractApiError(err)).toBe("The deed must be in status 'Sin Firmar' to be signed");
   });
 
   it("extracts the error field from a 409 Conflict body as a fallback", () => {
-    const err = new Error('[409] /testimony-movements: {"error":"Ya existe un movimiento abierto"}');
-    expect(extractApiError(err)).toBe("Ya existe un movimiento abierto");
+    const err = new Error(
+      '[409] /testimony-movements: {"error":"The testimony is already in registration"}'
+    );
+    expect(extractApiError(err)).toBe("The testimony is already in registration");
   });
 
   it("prefers ApiError.status and ApiError.body over message regex", () => {

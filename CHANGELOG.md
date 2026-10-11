@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English withdraw test id and history samples** (#1490, CU75):
+  The testimony withdraw button test id is `btn-confirm-withdraw`.
+  History samples live in `items-history.test.ts`. Deed-sign and
+  testimony-movement fixtures use the live English sentences, and the
+  stored status `Sin Firmar` stays. Search mocks match `/search`.
+  Default-locale delete fallbacks such as `Error al eliminar` stay.
 - **English mutation-error samples** (#1490, CU75):
   The local budget-total sample uses `calculateTotal`, `price`, and
   `quantity`. Mutation-error fixtures use the live English sentences

@@ -58,7 +58,7 @@ test.describe("CU11/CU12/CU44 - Testimony movements", () => {
     await page.getByTestId(`btn-withdraw-testimony-${idTestimony}`).click();
     await steps.thenModalIsVisible();
     await page.getByTestId("input-card-number").fill("123");
-    await page.getByTestId("btn-confirm-retiro").click();
+    await page.getByTestId("btn-confirm-withdraw").click();
     await steps.thenShowsSuccessMessage("retirado");
     await expect(row).toContainText(/retirado/i);
   });
@@ -80,7 +80,7 @@ test.describe("CU11/CU12/CU44 - Testimony movements", () => {
     await page.getByTestId(`btn-withdraw-testimony-${idTestimony}`).click();
     await steps.thenModalIsVisible();
     await page.getByTestId("input-card-number").fill("456");
-    await page.getByTestId("btn-confirm-retiro").click();
+    await page.getByTestId("btn-confirm-withdraw").click();
     await steps.thenShowsSuccessMessage("retirado");
 
     await expect(page.getByTestId(`btn-reenter-testimony-${idTestimony}`)).toBeVisible();

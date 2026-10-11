@@ -44,11 +44,17 @@ describe("presentDeleteError()", () => {
 
   it("409 with a JSON body uses its message as the detail", async () => {
     const { toast } = await import("sonner");
-    const err = new ApiError(409, "/concepts/3", JSON.stringify({ message: "Concept usado en 2 presupuestos" }));
+    const err = new ApiError(
+      409,
+      "/concepts/3",
+      JSON.stringify({ message: "Cannot delete: the concept is in use on budget templates." })
+    );
 
     presentDeleteError(err, OPTS);
 
-    expect(toast.warning).toHaveBeenCalledWith(OPTS.inUse, { description: "Concept usado en 2 presupuestos" });
+    expect(toast.warning).toHaveBeenCalledWith(OPTS.inUse, {
+      description: "Cannot delete: the concept is in use on budget templates.",
+    });
   });
 
   it("409 without a body still warns with the in-use text", async () => {

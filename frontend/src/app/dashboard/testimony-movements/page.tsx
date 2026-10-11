@@ -154,7 +154,7 @@ export default function MovementsTestimonyPage() {
               <Button variant="secondary" onClick={() => setWithdrawId(null)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleWithdraw} disabled={!numberCard || withdrawMutation.isPending} data-testid="btn-confirm-retiro">
+              <Button onClick={handleWithdraw} disabled={!numberCard || withdrawMutation.isPending} data-testid="btn-confirm-withdraw">
                 {t("retirar")}
               </Button>
             </FormActions>
