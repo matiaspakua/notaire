@@ -45,9 +45,9 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Conventional Commit
-- [ ] 9.2 Commit message ends with `Closes #1500`
-- [ ] 9.3 Record the commit SHA in traceability
+- [x] 9.1 Conventional Commit
+- [x] 9.2 Commit message ends with `Closes #1500`
+- [x] 9.3 Record the commit SHA in traceability
 
 ## 10. Pull Request y validación CI
 
