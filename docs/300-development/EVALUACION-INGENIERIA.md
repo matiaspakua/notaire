@@ -43,7 +43,7 @@ Two sequences were missing even though the services exist:
 | Gap | Why it stays |
 |-----|----------------|
 | Deed statuses Anulada, No Paso, Inscripta | Vocabulary. No dedicated service, so no sequence |
-| Registration draft in Observada | The service has no return. `DOC-GESTION` §3.6 says so |
+| Registration draft in `Observado` | The service has no return from `Observado` to `Presentado para inscripción` or `Inscripto`. Stored statuses are `Generada`, `Presentado para inscripción`, `Observado`, and `Inscripto`. `DOC-GESTION` §3.6 says so |
 | Budget status order | Not guarded by edges. `DOC-CICLO` §3.7 |
 | Data dictionary columns | Finding F3, issue #1222. It needs a generator |
 | Repository license | Issue #1226 |
