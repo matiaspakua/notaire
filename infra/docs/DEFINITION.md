@@ -30,7 +30,7 @@ infra/
 | Loki + Promtail | structured JSON log storage and Docker log shipping | 3100 |
 | PostgreSQL exporter | database metrics for Prometheus | 9187 |
 | SonarQube CE (+ own database) | static analysis of backend and frontend, quality gate "Notaire way" | 9000 |
-| Homer | landing page linking every service | 8888 |
+| Homer | landing page linking every service and dashboard, in five groups (application, security and quality, observability, collectors and exporters, dashboards); `infra/tests/test_homer_hub.py` fails when a compose service or provisioned dashboard is missing. Services without a browsable port link to the Grafana view that shows their health | 8888 |
 | Security reports | nginx serving `reports/security` (case catalog HTML and JSON) | 8890 |
 
 Jenkins, Nexus and Dependency-Track were removed in 2026-06: not wired to the
