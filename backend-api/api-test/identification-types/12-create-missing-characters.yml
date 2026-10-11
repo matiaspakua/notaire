@@ -11,7 +11,7 @@ http:
   body:
     type: json
     data: |-
-        {"name":"Sin caracteres 1526"}
+        {"name":"Missing characters 1526"}
   headers:
     - name: Content-Type
       value: application/json
