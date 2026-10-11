@@ -307,6 +307,19 @@ jobs:
           python3 -m pip install --disable-pip-version-check pyyaml==6.0.1
           python3 security/scan_secrets.py
 
+      - name: Enforce security case catalog
+        run: |
+          python3 -m pip install --disable-pip-version-check 'semgrep==1.180.0'
+          python3 security/run_gates.py --profile ci --no-install
+
+      - name: Upload security case report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: security-case-report
+          path: reports/security/latest/
+          retention-days: 30
+
       - name: Set up JDK
         uses: actions/setup-java@v6
         with:

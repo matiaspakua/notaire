@@ -72,6 +72,7 @@ playwright e2e          (--full) UI E2E Tests (Playwright)       playwright-e2e.
 bruno api tests         (--full) API Tests (Bruno)               playwright-e2e.yml
 docker build/smoke      (--full) Build Docker Image              ci.yml             (image scan not replicated locally)
 codeql analysis                 Analyze (CodeQL)                 codeql.yml         (GitHub-hosted only; not replicated locally)
+security gates (local)          Security Scan                    ci.yml             (BLOCKING; Semgrep + secrets + Trivy; DAST in run_pipeline.sh)
 MAP
             exit 0 ;;
         -h|--help) sed -n '3,28p' "${BASH_SOURCE[0]}"; exit 0 ;;
@@ -158,6 +159,15 @@ run "process script self-tests" bash -c \
      && python3 -m unittest discover -s testing/tests \
      && python3 -m unittest discover -s docs/tests \
      && python3 -m unittest discover -s backend-api/tools/tests"
+
+# Security case catalog (CU78, #1500). The same command is a phase of
+# run_pipeline.sh, which then runs the DAST baseline against the stack.
+# Skip the duplicate when that phase already passed in this process.
+if [ "${NOTAIRE_SECURITY_GATES_DONE:-0}" = "1" ]; then
+    skip "security gates (local)" "already run by run_pipeline.sh"
+else
+    run "security gates (local)" python3 security/run_gates.py --profile local --skip-dast
+fi
 
 # Mirrors: OpenAPI commit + breaking diff (openapi-contract.yml), breaking half.
 # Same oasdiff rule and the same Owner-accepted entries as CI: the checker

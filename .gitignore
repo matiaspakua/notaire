@@ -78,6 +78,9 @@ headroom_memory.db
 # workspace/sdlc/run_pipeline.sh dashboard + logs (regenerated every run)
 reports/
 
+# Local Semgrep venv and Trivy binary (security/tools/ensure_local_tools.sh)
+security/.tools/
+
 # Generated CI/CD/E2E reports — publish via Actions artifacts / job summary /
 # GitHub Pages only (issue #1041). Never commit into the application repo.
 docs/wiki/cicd-reports/

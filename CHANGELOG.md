@@ -1822,6 +1822,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- **Local security gates in the AI SDLC** (CU78, #1500): the security case
+  catalog runs before a pull request from `workspace/sdlc/run_pipeline.sh`
+  (Semgrep, secret scan, Trivy, unauthenticated DAST baseline). CI runs the
+  same catalog and keeps CodeQL and OWASP ZAP.
 - **Sec by Design program** (CU78, #307): system threat model (STRIDE and
   LINDDUN), OWASP Top 10 map, toolchain selection, security Grafana dashboard,
   login-lockout alert, and a failing secret scan in CI.
