@@ -35,7 +35,7 @@ import com.licensis.notaire.repository.ProcedureRepository;
  * schema. {@link ManagementDocumentReentryIntegrationTest} runs on
  * {@code test-h2}, whose {@code ddl-auto=create} schema does not enforce the
  * NOT NULL columns (e.g. {@code released}, {@code observed}) that
- * {@code submitted_documents} has in production, so it cannot catch a
+ * {@code submitted_documents} (historical {@code documentos_presentados}) has in production, so it cannot catch a
  * service that forgets to set them.
  */
 @SpringBootTest
