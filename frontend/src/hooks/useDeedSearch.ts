@@ -11,7 +11,7 @@ import type { Deed } from "@/types";
 
 /** Newest signed deeds listed before the user types. */
 export const DEED_PICKER_RECENT_SIZE = 20;
-/** The only deeds a testimony, registration draft or folio can use (BusinessConstants.DeedFIRMADA). */
+/** The only deeds a testimony, registration draft or folio can use (BusinessConstants.DeedSigned). */
 export const DEED_STATUS_SIGNED = "Firmada";
 
 const isSigned = (deed: Deed) => deed.status === DEED_STATUS_SIGNED;

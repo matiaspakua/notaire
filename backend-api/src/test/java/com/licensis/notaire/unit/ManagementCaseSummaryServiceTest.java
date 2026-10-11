@@ -66,7 +66,7 @@ class ManagementCaseSummaryServiceTest {
     }
 
     private static Procedure procedureWithTestimony(Testimony testimony) {
-        Deed deed = new Deed(9, 55, new Date(), "cuerpo", "Firmada");
+        Deed deed = new Deed(9, 55, new Date(), "body", "Firmada");
         deed.setTestimonyList(List.of(testimony));
         Procedure procedure = new Procedure(1);
         procedure.setFkIdDeed(deed);

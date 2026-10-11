@@ -29,7 +29,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RequirementCoverage({"CU07", "CU11", "CU12", "CU70"})
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Resumen of the caso of a management — integration tests")
+@DisplayName("Case summary of a management — integration tests")
 class ManagementCaseSummaryIntegrationTest {
 
     @Autowired
@@ -74,7 +74,7 @@ class ManagementCaseSummaryIntegrationTest {
 
     private Procedure createProcedure(int idManagement, Deed deed) {
         ProcedureType type = new ProcedureType();
-        type.setName("Procedure caso resumen " + System.nanoTime());
+        type.setName("Procedure case summary " + System.nanoTime());
         type.setEnabled(true);
         type.setIsArchived(false);
         type.setIsRegistered(false);
@@ -93,7 +93,7 @@ class ManagementCaseSummaryIntegrationTest {
     private int createSignedDeedWithTestimony(int number) throws Exception {
         MvcResult deed = mockMvc.perform(post("/api/v1/deeds").contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"number": %d, "body": "Deed resumen caso", "status": "Firmada",
+                                {"number": %d, "body": "Deed case summary", "status": "Firmada",
                                  "dateDeedrecording": "2026-06-16"}
                                 """.formatted(number)))
                 .andExpect(status().isCreated()).andReturn();
@@ -136,7 +136,7 @@ class ManagementCaseSummaryIntegrationTest {
         int idManagement = createManagement((int) (System.nanoTime() % 900_000) + 100_000);
         Procedure procedure = createProcedure(idManagement, null);
         com.licensis.notaire.business.DocumentType type = new com.licensis.notaire.business.DocumentType();
-        type.setName("Tipo resumen caso " + System.nanoTime());
+        type.setName("Case summary type " + System.nanoTime());
         type.setDeliveredBy("Cliente");
         type.setExpires(false);
         type.setEnabled(true);
@@ -144,13 +144,13 @@ class ManagementCaseSummaryIntegrationTest {
         mockMvc.perform(post("/api/v1/submitted-documents").contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"typeId": %d, "date": "2026-06-01", "delivered": false, "procedureId": %d,
-                                 "name": "Doc del caso"}
+                                 "name": "Case document"}
                                 """.formatted(type.getIdDocumentType(), procedure.getIdProcedure())))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(get("/api/v1/managements/" + idManagement + "/case-summary"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.documents[0].name").value("Doc del caso"))
+                .andExpect(jsonPath("$.documents[0].name").value("Case document"))
                 .andExpect(jsonPath("$.documents[0].idProcedure").value(procedure.getIdProcedure()));
     }
 

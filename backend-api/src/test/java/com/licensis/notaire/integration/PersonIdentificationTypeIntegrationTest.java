@@ -61,7 +61,7 @@ class PersonIdentificationTypeIntegrationTest {
     }
 
     private static String body(String number, String typeField) {
-        return "{\"firstName\":\"Ana\",\"lastName\":\"Tipo1361\",\"identificationNumber\":\"" + number + "\","
+        return "{\"firstName\":\"Ana\",\"lastName\":\"Type1361\",\"identificationNumber\":\"" + number + "\","
                 + "\"isClient\":true" + (typeField == null ? "" : "," + typeField) + "}";
     }
 

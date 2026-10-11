@@ -144,12 +144,12 @@ class ManagementStatusReferentialIntegrityTest {
 
     @Test
     @DisplayName("Should search statuses by name")
-    void shouldSearchEstadosByName() throws Exception {
-        createStatus("BuscarEsteEstado");
+    void shouldSearchStatusesByName() throws Exception {
+        createStatus("FindThisStatus");
 
-        mockMvc.perform(get("/api/v1/management-statuses/search").param("name", "BuscarEste"))
+        mockMvc.perform(get("/api/v1/management-statuses/search").param("name", "FindThis"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].name").value("BuscarEsteEstado"));
+                .andExpect(jsonPath("$[0].name").value("FindThisStatus"));
     }
 }

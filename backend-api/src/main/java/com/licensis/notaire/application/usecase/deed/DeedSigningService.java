@@ -40,7 +40,7 @@ public class DeedSigningService {
         Deed deed = deedRepository.findById(idDeed)
                 .orElseThrow(() -> new ResourceNotFoundException("Deed not found with ID: " + idDeed));
 
-        if (!BusinessConstants.DeedSINFIRMAR.equals(deed.getStatus())) {
+        if (!BusinessConstants.DeedUnsigned.equals(deed.getStatus())) {
             throw new BusinessValidationException(
                     "The deed must be in status 'Sin Firmar' to be signed");
         }
@@ -50,7 +50,7 @@ public class DeedSigningService {
                     "The deed must have at least one folio assigned to be signed");
         }
 
-        deed.setStatus(BusinessConstants.DeedFIRMADA);
+        deed.setStatus(BusinessConstants.DeedSigned);
         log.info("Signing deed id: {}", idDeed);
         return deedRepository.save(deed);
     }

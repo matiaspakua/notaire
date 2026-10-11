@@ -62,11 +62,11 @@ class TestimonyVerificacionServiceTest {
         when(testimonyRepository.findById(5)).thenReturn(Optional.of(testimony));
         when(testimonyRepository.save(testimony)).thenReturn(testimony);
 
-        Testimony verified = testimonyService.verify(5, true, "Falta a firma");
+        Testimony verified = testimonyService.verify(5, true, "Missing a signature");
 
         assertThat(verified.getVerified()).isTrue();
         assertThat(verified.getFlagged()).isTrue();
-        assertThat(verified.getNotes()).isEqualTo("Falta a firma");
+        assertThat(verified.getNotes()).isEqualTo("Missing a signature");
     }
 
     @Test

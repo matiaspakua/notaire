@@ -31,11 +31,11 @@ class DeedEntityTest {
             deed.setIdDeed(1);
             deed.setNumber(1001);
             deed.setDateDeedrecording(new Date());
-            deed.setBody("Deed de compraventa");
+            deed.setBody("Sale deed");
             deed.setStatus("firmada");
 
             assertThat(deed.getNumber()).isEqualTo(1001);
-            assertThat(deed.getBody()).isEqualTo("Deed de compraventa");
+            assertThat(deed.getBody()).isEqualTo("Sale deed");
             assertThat(deed.getStatus()).isEqualTo("firmada");
         }
 
@@ -73,19 +73,19 @@ class DeedEntityTest {
         void shouldHaveUnsignedAsDefaultStatus() {
             Deed deed = new Deed();
 
-            assertThat(deed.getStatus()).isEqualTo(BusinessConstants.DeedSINFIRMAR);
+            assertThat(deed.getStatus()).isEqualTo(BusinessConstants.DeedUnsigned);
         }
 
         @Test
         @DisplayName("Should initialize with full constructor")
         void shouldInitializeWithFullConstructor() {
             Date date = new Date();
-            Deed deed = new Deed(7, 2025007, date, "Cuerpo notarial", "FIRMADA");
+            Deed deed = new Deed(7, 2025007, date, "Notarial body", "FIRMADA");
 
             assertThat(deed.getIdDeed()).isEqualTo(7);
             assertThat(deed.getNumber()).isEqualTo(2025007);
             assertThat(deed.getDateDeedrecording()).isEqualTo(date);
-            assertThat(deed.getBody()).isEqualTo("Cuerpo notarial");
+            assertThat(deed.getBody()).isEqualTo("Notarial body");
             assertThat(deed.getStatus()).isEqualTo("FIRMADA");
         }
     }
@@ -117,9 +117,9 @@ class DeedEntityTest {
         @DisplayName("Should set and get notes")
         void shouldSetAndGetNotes() {
             Deed deed = new Deed();
-            deed.setNotes("Pendiente de firma");
+            deed.setNotes("Pending signature");
 
-            assertThat(deed.getNotes()).isEqualTo("Pendiente de firma");
+            assertThat(deed.getNotes()).isEqualTo("Pending signature");
         }
 
         @Test

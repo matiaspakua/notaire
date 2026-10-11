@@ -82,10 +82,10 @@ class ConceptServiceTest {
     @DisplayName("Should create concept with enabled flag")
     void shouldCreateConcept() {
         Concept concept = new Concept();
-        concept.setName("Notaría");
+        concept.setName("Notary office");
         Concept savedConcept = new Concept();
         savedConcept.setIdConcept(1);
-        savedConcept.setName("Notaría");
+        savedConcept.setName("Notary office");
         savedConcept.setEnabled(true);
 
         when(repository.create(concept)).thenReturn(savedConcept);

@@ -142,11 +142,11 @@ class ConceptReferentialIntegrityTest {
     @Test
     @DisplayName("Should search concepts by name")
     void shouldSearchConceptsByName() throws Exception {
-        createConcept("BuscarEsteConcepto");
+        createConcept("FindThisConcept");
 
-        mockMvc.perform(get("/api/v1/concepts/search").param("name", "BuscarEste"))
+        mockMvc.perform(get("/api/v1/concepts/search").param("name", "FindThis"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].name").value("BuscarEsteConcepto"));
+                .andExpect(jsonPath("$[0].name").value("FindThisConcept"));
     }
 }

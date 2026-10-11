@@ -73,7 +73,7 @@ public class Deed implements Serializable, Persistable<Integer>
     private String body;
     @Basic(optional = false)
     @Column(name = "status")
-    private String status = BusinessConstants.DeedSINFIRMAR;
+    private String status = BusinessConstants.DeedUnsigned;
     @Column(name = "registration_number")
     private String registrationEntryNumber;
     @Column(name = "notes")

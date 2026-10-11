@@ -7,7 +7,7 @@ Deterministic chronological order of a management's history.
 
 Every endpoint that returns or interprets a management's history SHALL order it by event date ascending and, for entries on the same date, by idHistory ascending (insertion order).
 
-#### Scenario: Bitácora lists same-day entries in insertion order
+#### Scenario: History lists same-day entries in insertion order
 
 - **WHEN** a management gets two state changes on the same day and a client calls GET /api/v1/managements/{id}/history
 - **THEN** the entries come back in the order they were recorded, on every call

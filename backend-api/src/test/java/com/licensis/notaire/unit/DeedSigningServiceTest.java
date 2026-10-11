@@ -44,7 +44,7 @@ class DeedSigningServiceTest {
         deed = new Deed();
         deed.setIdDeed(1);
         deed.setNumber(100);
-        deed.setStatus(BusinessConstants.DeedSINFIRMAR);
+        deed.setStatus(BusinessConstants.DeedUnsigned);
     }
 
     @Test
@@ -56,14 +56,14 @@ class DeedSigningServiceTest {
 
         Deed firmada = deedFirmaService.sign(1);
 
-        assertThat(firmada.getStatus()).isEqualTo(BusinessConstants.DeedFIRMADA);
+        assertThat(firmada.getStatus()).isEqualTo(BusinessConstants.DeedSigned);
         verify(deedRepository).save(deed);
     }
 
     @Test
     @DisplayName("Should reject signing when deed is already firmada")
     void shouldRejectSignWhenAlreadySigned() {
-        deed.setStatus(BusinessConstants.DeedFIRMADA);
+        deed.setStatus(BusinessConstants.DeedSigned);
         when(deedRepository.findById(1)).thenReturn(Optional.of(deed));
 
         assertThatThrownBy(() -> deedFirmaService.sign(1))

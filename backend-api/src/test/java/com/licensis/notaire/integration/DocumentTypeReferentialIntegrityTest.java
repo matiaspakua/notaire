@@ -48,7 +48,7 @@ class DocumentTypeReferentialIntegrityTest {
     @Test
     @DisplayName("Should return inUse=false when document type is not referenced")
     void shouldReturnInUseFalseWhenNotReferenced() throws Exception {
-        int id = createTypeDocument("Tipo_unused_" + System.nanoTime());
+        int id = createTypeDocument("Type_unused_" + System.nanoTime());
 
         mockMvc.perform(get("/api/v1/document-types/" + id + "/in-use"))
                 .andExpect(status().isOk())
@@ -58,7 +58,7 @@ class DocumentTypeReferentialIntegrityTest {
     @Test
     @DisplayName("Should return inUse=true when type of document is referenced by template procedure")
     void shouldReturnInUseTrueWhenReferencedByProcedureTemplate() throws Exception {
-        int id = createTypeDocument("Tipo_used_" + System.nanoTime());
+        int id = createTypeDocument("Type_used_" + System.nanoTime());
         linkToProcedureTemplate(id);
 
         mockMvc.perform(get("/api/v1/document-types/" + id + "/in-use"))
@@ -69,7 +69,7 @@ class DocumentTypeReferentialIntegrityTest {
     @Test
     @DisplayName("Should return 409 when editing document type that is in use")
     void shouldReturn409WhenEditingTypeDocumentInUse() throws Exception {
-        int id = createTypeDocument("Tipo_edit_conflict_" + System.nanoTime());
+        int id = createTypeDocument("Type_edit_conflict_" + System.nanoTime());
         linkToProcedureTemplate(id);
 
         String updateBody = """
@@ -86,7 +86,7 @@ class DocumentTypeReferentialIntegrityTest {
     @Test
     @DisplayName("Should allow editing document type that is not in use")
     void shouldAllowEditingTypeDocumentNotInUse() throws Exception {
-        int id = createTypeDocument("Tipo_edit_ok_" + System.nanoTime());
+        int id = createTypeDocument("Type_edit_ok_" + System.nanoTime());
 
         String updateBody = """
                 {"name": "Name actualizado ok", "expires": false}
@@ -101,7 +101,7 @@ class DocumentTypeReferentialIntegrityTest {
     @Test
     @DisplayName("Should return 409 when deleting document type that is in use")
     void shouldReturn409WhenDeletingTypeDocumentInUse() throws Exception {
-        int id = createTypeDocument("Tipo_delete_conflict_" + System.nanoTime());
+        int id = createTypeDocument("Type_delete_conflict_" + System.nanoTime());
         linkToProcedureTemplate(id);
 
         mockMvc.perform(delete("/api/v1/document-types/" + id))
@@ -124,7 +124,7 @@ class DocumentTypeReferentialIntegrityTest {
     @Test
     @DisplayName("Should persist enabled and returned on create and return them on GET (#800)")
     void shouldPersistEnabledAndReturnedOnCreate() throws Exception {
-        String name = "Tipo_enabled_returned_" + System.nanoTime();
+        String name = "Type_enabled_returned_" + System.nanoTime();
         String body = String.format("""
                 {"name": "%s", "expires": false, "enabled": false, "returned": true, "deliveredBy": ""}
                 """, name);
@@ -149,7 +149,7 @@ class DocumentTypeReferentialIntegrityTest {
     @Test
     @DisplayName("Should update enabled and returned when type is not in use (#800)")
     void shouldUpdateEnabledAndReturnedWhenNotInUse() throws Exception {
-        int id = createTypeDocument("Tipo_update_flags_" + System.nanoTime());
+        int id = createTypeDocument("Type_update_flags_" + System.nanoTime());
 
         String updateBody = """
                 {"name": "Name flags updated", "expires": false, "enabled": false, "returned": true, "deliveredBy": ""}
@@ -170,7 +170,7 @@ class DocumentTypeReferentialIntegrityTest {
     @Test
     @DisplayName("Should default enabled true and returned false when omitted on create (#800)")
     void shouldDefaultEnabledTrueAndReturnedFalseWhenOmitted() throws Exception {
-        String name = "Tipo_defaults_" + System.nanoTime();
+        String name = "Type_defaults_" + System.nanoTime();
         String body = String.format("""
                 {"name": "%s", "expires": false}
                 """, name);

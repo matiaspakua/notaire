@@ -137,7 +137,7 @@ class WorkflowTraceApiH2IntegrationTest {
         workflowTransitionRepository.save(t2);
 
         ProcedureType type = new ProcedureType();
-        type.setName("Tipo Trace Test");
+        type.setName("Type Trace Test");
         type.setWorkflowDefinition(def);
         type = procedureTypeRepository.save(type);
 
@@ -223,7 +223,7 @@ class WorkflowTraceApiH2IntegrationTest {
     void shouldSerializeTypeProcedureListWhenWorkflowDefinitionAssigned() throws Exception {
         mockMvc.perform(get("/api/v1/procedure-types"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[?(@.name == 'Tipo Trace Test')].workflowDefinitionName")
+                .andExpect(jsonPath("$[?(@.name == 'Type Trace Test')].workflowDefinitionName")
                         .value("Workflow Trace Test"));
     }
 

@@ -15,7 +15,6 @@ import jakarta.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.History;
 import com.licensis.notaire.business.Person;
@@ -438,7 +437,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
         int result = 0;
         try
         {
-            Query q = em.createQuery("select max(number) as ultimaGestion from DeedManagement");
+            Query q = em.createQuery("select max(number) as latestManagement from DeedManagement");
 
             if (q.getSingleResult() != null)
             {
