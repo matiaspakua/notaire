@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **External-entity document path citation** (#1490, CU75): the
+  engineering-sequences design names the path CU10 still writes,
+  `GET/PUT /api/v1/gestiones/{id}/documentos-entidades-externas[/{idDocumentoPresentado}]`.
+  The live call stays in `DOC-GESTION`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
 - **k6 script path** (#1490, CU75): the living load-test spec names
   `infra/performance/k6/load-test.js`, the file the weekly workflow runs.
   The archived change keeps `performance-test/k6/load-test.js`.

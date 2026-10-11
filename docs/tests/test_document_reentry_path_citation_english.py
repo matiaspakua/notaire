@@ -29,6 +29,17 @@ CU44 = (
     / "CU44 – Reingresar testimonio.md"
 )
 REENTER = "`POST /api/v1/movimiento-testimonio/{id}/reenter`"
+CU10 = (
+    ROOT
+    / "docs"
+    / "100-business"
+    / "102-use-cases"
+    / "CU10 – Registrar movimientos documentación de entidades externas.md"
+)
+EXTERNAL = (
+    "`GET/PUT /api/v1/gestiones/{id}/documentos-entidades-externas"
+    "[/{idDocumentoPresentado}]`"
+)
 
 
 class DocumentReentryPathCitationEnglishTest(unittest.TestCase):
@@ -46,6 +57,13 @@ class DocumentReentryPathCitationEnglishTest(unittest.TestCase):
         use_case = CU44.read_text(encoding="utf-8")
         self.assertIn(REENTER, text)
         self.assertIn(REENTER.strip("`"), use_case)
+        self.assertIn("`DOC-GESTION`", text)
+
+    def test_design_cites_the_path_cu10_still_names(self):
+        text = DESIGN.read_text(encoding="utf-8")
+        use_case = CU10.read_text(encoding="utf-8")
+        self.assertIn(EXTERNAL, text)
+        self.assertIn(EXTERNAL.strip("`"), use_case)
         self.assertIn("`DOC-GESTION`", text)
 
 
