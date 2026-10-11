@@ -220,8 +220,8 @@ class CoreBusinessControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("CU05 - Should return escribanos disponibles")
-        void shouldReturnEscribanosDisponibles() throws Exception {
+        @DisplayName("CU05 - Should return available notaries")
+        void shouldReturnAvailableNotaries() throws Exception {
             mockMvc.perform(get("/api/v1/deeds/available-notaries"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", isA(java.util.List.class)));

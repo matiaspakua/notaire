@@ -12,14 +12,14 @@ function useMovimientoAction(action: string) {
   });
 }
 
-/** CU11 - Ingresa un testimonio verificado al Registro de la Propiedad para su inscripción. */
+/** CU11 - Send a verified testimony to the property registry for inscription. */
 export function useIngresarInscripcion() {
-  return useMovimientoAction("ingresar-inscripcion");
+  return useMovimientoAction("enter-registration");
 }
 
-/** Registra la inscripción del movimiento abierto de un testimonio. */
+/** Record the inscription of the testimony's open movement. */
 export function useRegistrarInscripcion() {
-  return useMovimientoAction("registrar-inscripcion");
+  return useMovimientoAction("register-inscription");
 }
 
 /** CU12 - Retira un testimonio inscripto, registrando el número de cartón. */

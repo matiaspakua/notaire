@@ -47,10 +47,10 @@ class BudgetServiceTest {
     @Test
     @DisplayName("Should find all budgets")
     void shouldFindAll() {
-        List<Budget> presupuestos = new ArrayList<>();
-        presupuestos.add(testBudget);
+        List<Budget> budgets = new ArrayList<>();
+        budgets.add(testBudget);
 
-        when(budgetRepository.findAll()).thenReturn(presupuestos);
+        when(budgetRepository.findAll()).thenReturn(budgets);
 
         List<Budget> result = budgetService.findAll();
 
@@ -121,11 +121,11 @@ class BudgetServiceTest {
     @Test
     @DisplayName("Should find budgets by person")
     void shouldFindPresupuestosByPerson() {
-        List<Budget> presupuestos = new ArrayList<>();
-        presupuestos.add(testBudget);
+        List<Budget> budgets = new ArrayList<>();
+        budgets.add(testBudget);
 
         when(budgetRepository.findByPersonId(1))
-                .thenReturn(presupuestos);
+                .thenReturn(budgets);
 
         List<Budget> result = budgetService.findByPerson(1);
 
@@ -153,11 +153,11 @@ class BudgetServiceTest {
     @Test
     @DisplayName("Should find budgets by status")
     void shouldFindPresupuestosByStatus() {
-        List<Budget> presupuestos = new ArrayList<>();
-        presupuestos.add(testBudget);
+        List<Budget> budgets = new ArrayList<>();
+        budgets.add(testBudget);
 
         when(budgetRepository.findByStatus("APROBADO"))
-                .thenReturn(presupuestos);
+                .thenReturn(budgets);
 
         List<Budget> result = budgetService.findByStatus("APROBADO");
 
@@ -172,10 +172,10 @@ class BudgetServiceTest {
     @Test
     @DisplayName("Should return all budgets when status is null")
     void shouldReturnAllPresupuestosWhenStatusIsNull() {
-        List<Budget> presupuestos = new ArrayList<>();
-        presupuestos.add(testBudget);
+        List<Budget> budgets = new ArrayList<>();
+        budgets.add(testBudget);
 
-        when(budgetRepository.findAll()).thenReturn(presupuestos);
+        when(budgetRepository.findAll()).thenReturn(budgets);
 
         List<Budget> result = budgetService.findByStatus(null);
 
@@ -190,10 +190,10 @@ class BudgetServiceTest {
     @Test
     @DisplayName("Should return all budgets when status is blank")
     void shouldReturnAllPresupuestosWhenStatusIsBlank() {
-        List<Budget> presupuestos = new ArrayList<>();
-        presupuestos.add(testBudget);
+        List<Budget> budgets = new ArrayList<>();
+        budgets.add(testBudget);
 
-        when(budgetRepository.findAll()).thenReturn(presupuestos);
+        when(budgetRepository.findAll()).thenReturn(budgets);
 
         List<Budget> result = budgetService.findByStatus("  ");
 

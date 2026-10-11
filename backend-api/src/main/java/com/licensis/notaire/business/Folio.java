@@ -305,7 +305,7 @@ public class Folio implements Serializable, Persistable<Integer>
             miDtoFolio.setPersonNotary(miPerson);
         }
 
-        miDtoFolio.setTiposDeFolio(this.fkIdFolioType.getDto());
+        miDtoFolio.setFolioType(this.fkIdFolioType.getDto());
 
         if (this.fkIdDeed != null)
         {

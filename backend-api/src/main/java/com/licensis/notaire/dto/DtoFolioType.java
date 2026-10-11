@@ -26,10 +26,10 @@ public class DtoFolioType implements ValidDto {
         this.name = name;
     }
 
-    public DtoFolioType(String name, String notes, Set folioses) {
+    public DtoFolioType(String name, String notes, Set folios) {
         this.name = name;
         this.notes = notes;
-        this.folios = folioses;
+        this.folios = folios;
     }
 
     public Integer getIdFolioType() {

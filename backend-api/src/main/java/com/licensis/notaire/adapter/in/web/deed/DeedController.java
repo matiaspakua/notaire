@@ -215,15 +215,15 @@ public class DeedController {
     @GetMapping("/available-notaries")
     @Operation(summary = "Get lista of notaries available (with registro)")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<PersonResponse>> getEscribanosDisponibles() {
-        return ResponseEntity.ok(deedService.findEscribanosDisponibles().stream().map(PersonResponse::from).toList());
+    public ResponseEntity<List<PersonResponse>> getAvailableNotaries() {
+        return ResponseEntity.ok(deedService.findAvailableNotaries().stream().map(PersonResponse::from).toList());
     }
 
     @GetMapping("/search")
     @Operation(summary = "Search deeds by number")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DeedResponse>> searchDeeds(@RequestParam(required = false) Integer number) {
-        return ResponseEntity.ok(deedService.searchPorNumber(number).stream().map(this::toResponse).toList());
+        return ResponseEntity.ok(deedService.searchByNumber(number).stream().map(this::toResponse).toList());
     }
 
     @ApiResponses({

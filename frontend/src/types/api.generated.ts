@@ -401,7 +401,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get lista of notaries available (with registro) */
-        get: operations["getEscribanosDisponibles"];
+        get: operations["getAvailableNotaries"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1274,7 +1274,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get all notebooks */
-        get: operations["getAllCuadernos"];
+        get: operations["getAllNotebooks"];
         put?: never;
         /** Create a notebook a partir of diez folios consecutive */
         post: operations["createNotebook"];
@@ -2926,9 +2926,9 @@ export interface components {
             total?: number;
         };
         DtoBudgetTemplate: {
-            conceptos?: components["schemas"]["DtoConcept"];
+            concept?: components["schemas"]["DtoConcept"];
             notes?: string;
-            tiposDeProcedure?: components["schemas"]["DtoProcedureType"];
+            procedureType?: components["schemas"]["DtoProcedureType"];
             valid?: boolean;
             /** Format: int32 */
             version?: number;
@@ -2968,6 +2968,7 @@ export interface components {
             verified?: boolean;
         };
         DtoConcept: {
+            budgetTemplates?: components["schemas"]["DtoBudgetTemplate"][];
             enabled?: boolean;
             fixed?: boolean;
             /** Format: int32 */
@@ -2975,9 +2976,7 @@ export interface components {
             name?: string;
             /** Format: int32 */
             percentage?: number;
-            templatePresupuestoses?: components["schemas"]["DtoBudgetTemplate"][];
             valid?: boolean;
-            valido?: boolean;
             value?: number;
             /** Format: int32 */
             version?: number;
@@ -3014,7 +3013,7 @@ export interface components {
             procedures?: components["schemas"]["DtoProcedure"][];
             registrationEntryNumber?: string;
             status?: string;
-            testimonios?: components["schemas"]["DtoTestimony"][];
+            testimonies?: components["schemas"]["DtoTestimony"][];
             valid?: boolean;
             /** Format: int32 */
             version?: number;
@@ -3079,7 +3078,6 @@ export interface components {
             name?: string;
             returned?: boolean;
             templateProcedures?: components["schemas"]["DtoProcedureTemplate"][];
-            templateTramiteses?: components["schemas"]["DtoProcedureTemplate"][];
             valid?: boolean;
             /** Format: int32 */
             version?: number;
@@ -3124,6 +3122,7 @@ export interface components {
         DtoFolio: {
             copies?: components["schemas"]["DtoCopy"][];
             deed?: components["schemas"]["DtoDeed"];
+            folioType?: components["schemas"]["DtoFolioType"];
             /** Format: int32 */
             idFolio?: number;
             notes?: string;
@@ -3131,7 +3130,6 @@ export interface components {
             number?: number;
             personNotary?: components["schemas"]["DtoPerson"];
             status?: string;
-            tiposDeFolio?: components["schemas"]["DtoFolioType"];
             valid?: boolean;
             /** Format: int32 */
             version?: number;
@@ -3153,10 +3151,10 @@ export interface components {
         DtoHistory: {
             /** Format: date-time */
             date?: string;
-            estadosDeManagement?: components["schemas"]["DtoManagementStatus"];
-            gestionesDeEscrituras?: components["schemas"]["DtoDeedManagement"];
+            deedManagement?: components["schemas"]["DtoDeedManagement"];
             /** Format: int32 */
             idHistory?: number;
+            managementStatus?: components["schemas"]["DtoManagementStatus"];
             notes?: string;
             valid?: boolean;
             /** Format: int32 */
@@ -3184,6 +3182,7 @@ export interface components {
             version?: number;
         };
         DtoItem: {
+            budget?: components["schemas"]["DtoBudget"];
             fixed?: boolean;
             fixedConcept?: boolean;
             /** Format: int32 */
@@ -3192,7 +3191,6 @@ export interface components {
             notes?: string;
             /** Format: int32 */
             percentage?: number;
-            presupuestos?: components["schemas"]["DtoBudget"];
             reason?: string;
             /** @enum {string} */
             type?: "NORMAL" | "DESCUENTO" | "RECARGO";
@@ -3278,56 +3276,53 @@ export interface components {
             address?: string;
             /** Format: date-time */
             birthDate?: string;
+            budgets?: unknown[];
             client?: boolean;
-            copiases?: unknown[];
+            copies?: unknown[];
             dtoIdentificationType?: components["schemas"]["DtoIdentificationType"];
             email?: string;
             firstName?: string;
-            folioses?: unknown[];
+            folios?: unknown[];
             /** Format: int32 */
             id?: number;
-            identificacioneses?: unknown[];
             identificationNumber?: string;
+            identifications?: unknown[];
             isClient?: boolean;
             lastName?: string;
-            listDtoManagementDeEscriturasDeNotary?: components["schemas"]["DtoDeedManagement"][];
-            listaDtoManagementDeEscriturasPerson?: components["schemas"]["DtoDeedManagement"][];
-            listaProceduresPerson?: components["schemas"]["DtoProcedure"][];
             maritalStatus?: string;
             /** Format: int32 */
             marriageCount?: number;
             nationality?: string;
+            notaryDeedManagements?: components["schemas"]["DtoDeedManagement"][];
             /** Format: int32 */
             notaryRegistrationNumber?: number;
             occupation?: string;
+            personDeedManagements?: components["schemas"]["DtoDeedManagement"][];
+            personProcedures?: components["schemas"]["DtoProcedure"][];
             phone?: string;
-            presupuestoses?: unknown[];
             sex?: string;
-            suplenciasesForFkIdSubstitute?: unknown[];
-            suplenciasesForFkIdSubstituted?: unknown[];
+            substitutionsForSubstitute?: unknown[];
+            substitutionsForSubstituted?: unknown[];
             taxId?: string;
-            usuarioses?: unknown[];
+            users?: unknown[];
             /** Format: int32 */
             version?: number;
         };
         DtoProcedure: {
             budget?: components["schemas"]["DtoBudget"];
+            budgets?: components["schemas"]["DtoBudget"][];
             deed?: components["schemas"]["DtoDeed"];
             deedManagement?: components["schemas"]["DtoDeedManagement"];
+            documentsNotSubmitted?: components["schemas"]["DtoSubmittedDocument"][];
             /** Format: int32 */
             idProcedure?: number;
-            listaDocumentsManagement?: components["schemas"]["DtoSubmittedDocument"][];
-            listaDocumentsNecesarios?: components["schemas"]["DtoDocumentType"][];
-            listaDocumentsNoPrecentados?: components["schemas"]["DtoSubmittedDocument"][];
-            listaDocumentsPresentados?: components["schemas"]["DtoSubmittedDocument"][];
-            listaPersons?: components["schemas"]["DtoPerson"][];
-            listaPresupuestos?: components["schemas"]["DtoBudget"][];
             management?: components["schemas"]["DtoDeedManagement"];
-            managementDeEscrituras?: components["schemas"]["DtoDeedManagement"];
             notes?: string;
+            people?: components["schemas"]["DtoPerson"][];
             procedureType?: components["schemas"]["DtoProcedureType"];
             property?: components["schemas"]["DtoProperty"];
-            tiposDeProcedure?: components["schemas"]["DtoProcedureType"];
+            requiredDocuments?: components["schemas"]["DtoDocumentType"][];
+            submittedDocuments?: components["schemas"]["DtoSubmittedDocument"][];
             valid?: boolean;
         };
         DtoProcedureFolder: {
@@ -3349,13 +3344,14 @@ export interface components {
             typeProcedureName?: string;
         };
         DtoProcedureTemplate: {
+            documentType?: components["schemas"]["DtoDocumentType"];
             notes?: string;
-            tiposDeDocument?: components["schemas"]["DtoDocumentType"];
-            tiposDeProcedure?: components["schemas"]["DtoProcedureType"];
+            procedureType?: components["schemas"]["DtoProcedureType"];
             valid?: boolean;
         };
         DtoProcedureType: {
             associatesProperties?: boolean;
+            budgetTemplates?: components["schemas"]["DtoBudgetTemplate"][];
             data?: {
                 [key: string]: unknown;
             };
@@ -3367,7 +3363,6 @@ export interface components {
             isRegistered?: boolean;
             name?: string;
             notes?: string;
-            templatePresupuestos?: components["schemas"]["DtoBudgetTemplate"][];
             templateProcedures?: components["schemas"]["DtoProcedureTemplate"][];
             valid?: boolean;
             /** Format: int32 */
@@ -3462,10 +3457,10 @@ export interface components {
             flagged?: boolean;
             /** Format: int32 */
             idTestimony?: number;
-            movimientosTestimonios?: components["schemas"]["DtoTestimonyMovement"][];
             notes?: string;
             /** Format: int32 */
             number?: number;
+            testimonyMovements?: components["schemas"]["DtoTestimonyMovement"][];
             valid?: boolean;
             verified?: boolean;
             /** Format: int32 */
@@ -4159,10 +4154,10 @@ export interface components {
             flagged?: boolean;
             /** Format: int32 */
             idTestimony?: number;
-            movimientosTestimonios?: components["schemas"]["DtoTestimonyMovement"][];
             notes?: string;
             /** Format: int32 */
             number?: number;
+            testimonyMovements?: components["schemas"]["DtoTestimonyMovement"][];
             valid?: boolean;
             verified?: boolean;
             /** Format: int32 */
@@ -4175,13 +4170,13 @@ export interface components {
             flagged: boolean;
             /** Format: int32 */
             idTestimony?: number;
-            movimientosTestimonios?: components["schemas"]["DtoTestimonyMovement"][];
             notes?: string;
             /**
              * Format: int32
              * @description Number of the testimony
              */
             number: number;
+            testimonyMovements?: components["schemas"]["DtoTestimonyMovement"][];
             valid?: boolean;
             /** @description Testimony verificado */
             verified: boolean;
@@ -4238,7 +4233,7 @@ export interface components {
                 };
             };
         };
-        /** @description Recurso no encontrado */
+        /** @description Resource not found */
         404: {
             headers: {
                 [name: string]: unknown;
@@ -4421,7 +4416,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Folio no encontrado */
+            /** @description Folio not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5363,7 +5358,7 @@ export interface operations {
             };
         };
     };
-    getEscribanosDisponibles: {
+    getAvailableNotaries: {
         parameters: {
             query?: never;
             header?: never;
@@ -7723,7 +7718,7 @@ export interface operations {
             };
         };
     };
-    getAllCuadernos: {
+    getAllNotebooks: {
         parameters: {
             query?: never;
             header?: never;
@@ -7845,7 +7840,7 @@ export interface operations {
                     "application/pdf": string;
                 };
             };
-            /** @description Notebook no encontrado */
+            /** @description Notebook not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -9601,7 +9596,7 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Documento presentado no encontrado */
+            /** @description Submitted document not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -9736,7 +9731,7 @@ export interface operations {
                     "application/pdf": string;
                 };
             };
-            /** @description Payment no encontrado */
+            /** @description Payment not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -9882,7 +9877,7 @@ export interface operations {
                     "application/pdf": string;
                 };
             };
-            /** @description Testimony no encontrado */
+            /** @description Testimony not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -9973,7 +9968,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description UserAccount no encontrado */
+            /** @description User account not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10715,7 +10710,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoTestimony"];
                 };
             };
-            /** @description Testimony no encontrado */
+            /** @description Testimony not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10817,7 +10812,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoTestimonyMovement"];
                 };
             };
-            /** @description Testimony no encontrado */
+            /** @description Testimony not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10861,7 +10856,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoTestimonyMovement"];
                 };
             };
-            /** @description Testimony no encontrado */
+            /** @description Testimony not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10901,7 +10896,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoTestimonyMovement"];
                 };
             };
-            /** @description Testimony no encontrado */
+            /** @description Testimony not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10945,7 +10940,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoTestimonyMovement"];
                 };
             };
-            /** @description Testimony no encontrado */
+            /** @description Testimony not found */
             404: {
                 headers: {
                     [name: string]: unknown;

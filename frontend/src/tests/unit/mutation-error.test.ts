@@ -120,11 +120,11 @@ describe("presentMutationError()", () => {
     const err = new ApiError(
       404,
       "/documents/99",
-      JSON.stringify({ message: "Documento no encontrado" })
+      JSON.stringify({ message: "Document not found" })
     );
 
-    presentMutationError(err, { fallback: "Error al eliminar" });
-    expect(toast.error).toHaveBeenCalledWith("Documento no encontrado");
+    presentMutationError(err, { fallback: "Could not delete" });
+    expect(toast.error).toHaveBeenCalledWith("Document not found");
   });
 
   it("preferFallback toasts curated fallback even when body has a message", async () => {

@@ -19,7 +19,7 @@ import type { Testimony, TestimonyMovement } from "@/types";
 type EstadoMovimiento = "sinIngresar" | "ingresado" | "inscripto" | "retirado";
 
 function latestMovimiento(testimonio: Testimony): TestimonyMovement | undefined {
-  const movimientos = testimonio.movimientosTestimonios ?? [];
+  const movimientos = testimonio.testimonyMovements ?? [];
   return movimientos.reduce<TestimonyMovement | undefined>(
     (latest, m) => (!latest || (m.idTestimonyMovement ?? 0) > (latest.idTestimonyMovement ?? 0) ? m : latest),
     undefined

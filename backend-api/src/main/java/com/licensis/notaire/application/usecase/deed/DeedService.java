@@ -107,13 +107,13 @@ public class DeedService {
     }
 
     @Transactional(readOnly = true)
-    public List<Person> findEscribanosDisponibles() {
-        logger.debug("Finding all available escribanos");
-        return personRepository.findAllEscribanos();
+    public List<Person> findAvailableNotaries() {
+        logger.debug("Finding all available notaries");
+        return personRepository.findAllNotaries();
     }
 
     @Transactional(readOnly = true)
-    public List<Deed> searchPorNumber(Integer number) {
+    public List<Deed> searchByNumber(Integer number) {
         logger.debug("Searching deeds by number: {}", number);
         if (number == null) {
             return deedRepository.findAll();

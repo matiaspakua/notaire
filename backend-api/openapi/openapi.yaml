@@ -21,7 +21,7 @@ components:
               path: {}
               timestamp:
                 format: date-time
-      description: Recurso no encontrado
+      description: Resource not found
     '409':
       content:
         application/json:
@@ -442,11 +442,11 @@ components:
       type: object
     DtoBudgetTemplate:
       properties:
-        conceptos:
+        concept:
           $ref: '#/components/schemas/DtoConcept'
         notes:
           type: string
-        tiposDeProcedure:
+        procedureType:
           $ref: '#/components/schemas/DtoProcedureType'
         valid:
           type: boolean
@@ -515,6 +515,10 @@ components:
       type: object
     DtoConcept:
       properties:
+        budgetTemplates:
+          items:
+            $ref: '#/components/schemas/DtoBudgetTemplate'
+          type: array
         enabled:
           type: boolean
         fixed:
@@ -527,13 +531,7 @@ components:
         percentage:
           format: int32
           type: integer
-        templatePresupuestoses:
-          items:
-            $ref: '#/components/schemas/DtoBudgetTemplate'
-          type: array
         valid:
-          type: boolean
-        valido:
           type: boolean
         value:
           type: number
@@ -601,7 +599,7 @@ components:
           type: string
         status:
           type: string
-        testimonios:
+        testimonies:
           items:
             $ref: '#/components/schemas/DtoTestimony'
           type: array
@@ -715,11 +713,6 @@ components:
           items:
             $ref: '#/components/schemas/DtoProcedureTemplate'
           type: array
-        templateTramiteses:
-          items:
-            $ref: '#/components/schemas/DtoProcedureTemplate'
-          type: array
-          writeOnly: true
         valid:
           type: boolean
         version:
@@ -795,6 +788,8 @@ components:
           type: array
         deed:
           $ref: '#/components/schemas/DtoDeed'
+        folioType:
+          $ref: '#/components/schemas/DtoFolioType'
         idFolio:
           format: int32
           type: integer
@@ -807,8 +802,6 @@ components:
           $ref: '#/components/schemas/DtoPerson'
         status:
           type: string
-        tiposDeFolio:
-          $ref: '#/components/schemas/DtoFolioType'
         valid:
           type: boolean
         version:
@@ -846,13 +839,13 @@ components:
         date:
           format: date-time
           type: string
-        estadosDeManagement:
-          $ref: '#/components/schemas/DtoManagementStatus'
-        gestionesDeEscrituras:
+        deedManagement:
           $ref: '#/components/schemas/DtoDeedManagement'
         idHistory:
           format: int32
           type: integer
+        managementStatus:
+          $ref: '#/components/schemas/DtoManagementStatus'
         notes:
           type: string
         valid:
@@ -897,6 +890,8 @@ components:
       type: object
     DtoItem:
       properties:
+        budget:
+          $ref: '#/components/schemas/DtoBudget'
         fixed:
           type: boolean
         fixedConcept:
@@ -912,8 +907,6 @@ components:
         percentage:
           format: int32
           type: integer
-        presupuestos:
-          $ref: '#/components/schemas/DtoBudget'
         reason:
           type: string
         type:
@@ -1066,9 +1059,13 @@ components:
         birthDate:
           format: date-time
           type: string
+        budgets:
+          items: {}
+          type: array
+          uniqueItems: true
         client:
           type: boolean
-        copiases:
+        copies:
           items: {}
           type: array
           uniqueItems: true
@@ -1078,35 +1075,23 @@ components:
           type: string
         firstName:
           type: string
-        folioses:
+        folios:
           items: {}
           type: array
           uniqueItems: true
         id:
           format: int32
           type: integer
-        identificacioneses:
+        identificationNumber:
+          type: string
+        identifications:
           items: {}
           type: array
           uniqueItems: true
-        identificationNumber:
-          type: string
         isClient:
           type: boolean
         lastName:
           type: string
-        listDtoManagementDeEscriturasDeNotary:
-          items:
-            $ref: '#/components/schemas/DtoDeedManagement'
-          type: array
-        listaDtoManagementDeEscriturasPerson:
-          items:
-            $ref: '#/components/schemas/DtoDeedManagement'
-          type: array
-        listaProceduresPerson:
-          items:
-            $ref: '#/components/schemas/DtoProcedure'
-          type: array
         maritalStatus:
           type: string
         marriageCount:
@@ -1114,30 +1099,38 @@ components:
           type: integer
         nationality:
           type: string
+        notaryDeedManagements:
+          items:
+            $ref: '#/components/schemas/DtoDeedManagement'
+          type: array
         notaryRegistrationNumber:
           format: int32
           type: integer
         occupation:
           type: string
+        personDeedManagements:
+          items:
+            $ref: '#/components/schemas/DtoDeedManagement'
+          type: array
+        personProcedures:
+          items:
+            $ref: '#/components/schemas/DtoProcedure'
+          type: array
         phone:
           type: string
-        presupuestoses:
-          items: {}
-          type: array
-          uniqueItems: true
         sex:
           type: string
-        suplenciasesForFkIdSubstitute:
+        substitutionsForSubstitute:
           items: {}
           type: array
           uniqueItems: true
-        suplenciasesForFkIdSubstituted:
+        substitutionsForSubstituted:
           items: {}
           type: array
           uniqueItems: true
         taxId:
           type: string
-        usuarioses:
+        users:
           items: {}
           type: array
           uniqueItems: true
@@ -1149,51 +1142,42 @@ components:
       properties:
         budget:
           $ref: '#/components/schemas/DtoBudget'
+        budgets:
+          items:
+            $ref: '#/components/schemas/DtoBudget'
+          type: array
         deed:
           $ref: '#/components/schemas/DtoDeed'
         deedManagement:
           $ref: '#/components/schemas/DtoDeedManagement'
           writeOnly: true
+        documentsNotSubmitted:
+          items:
+            $ref: '#/components/schemas/DtoSubmittedDocument'
+          type: array
         idProcedure:
           format: int32
           type: integer
-        listaDocumentsManagement:
-          items:
-            $ref: '#/components/schemas/DtoSubmittedDocument'
-          type: array
-        listaDocumentsNecesarios:
-          items:
-            $ref: '#/components/schemas/DtoDocumentType'
-          type: array
-        listaDocumentsNoPrecentados:
-          items:
-            $ref: '#/components/schemas/DtoSubmittedDocument'
-          type: array
-        listaDocumentsPresentados:
-          items:
-            $ref: '#/components/schemas/DtoSubmittedDocument'
-          type: array
-        listaPersons:
-          items:
-            $ref: '#/components/schemas/DtoPerson'
-          type: array
-        listaPresupuestos:
-          items:
-            $ref: '#/components/schemas/DtoBudget'
-          type: array
         management:
-          $ref: '#/components/schemas/DtoDeedManagement'
-        managementDeEscrituras:
           $ref: '#/components/schemas/DtoDeedManagement'
         notes:
           type: string
+        people:
+          items:
+            $ref: '#/components/schemas/DtoPerson'
+          type: array
         procedureType:
           $ref: '#/components/schemas/DtoProcedureType'
         property:
           $ref: '#/components/schemas/DtoProperty'
-        tiposDeProcedure:
-          $ref: '#/components/schemas/DtoProcedureType'
-          writeOnly: true
+        requiredDocuments:
+          items:
+            $ref: '#/components/schemas/DtoDocumentType'
+          type: array
+        submittedDocuments:
+          items:
+            $ref: '#/components/schemas/DtoSubmittedDocument'
+          type: array
         valid:
           type: boolean
       type: object
@@ -1230,11 +1214,11 @@ components:
       type: object
     DtoProcedureTemplate:
       properties:
+        documentType:
+          $ref: '#/components/schemas/DtoDocumentType'
         notes:
           type: string
-        tiposDeDocument:
-          $ref: '#/components/schemas/DtoDocumentType'
-        tiposDeProcedure:
+        procedureType:
           $ref: '#/components/schemas/DtoProcedureType'
         valid:
           type: boolean
@@ -1243,6 +1227,10 @@ components:
       properties:
         associatesProperties:
           type: boolean
+        budgetTemplates:
+          items:
+            $ref: '#/components/schemas/DtoBudgetTemplate'
+          type: array
         data:
           additionalProperties: {}
           type: object
@@ -1261,10 +1249,6 @@ components:
           type: string
         notes:
           type: string
-        templatePresupuestos:
-          items:
-            $ref: '#/components/schemas/DtoBudgetTemplate'
-          type: array
         templateProcedures:
           items:
             $ref: '#/components/schemas/DtoProcedureTemplate'
@@ -1432,15 +1416,15 @@ components:
         idTestimony:
           format: int32
           type: integer
-        movimientosTestimonios:
-          items:
-            $ref: '#/components/schemas/DtoTestimonyMovement'
-          type: array
         notes:
           type: string
         number:
           format: int32
           type: integer
+        testimonyMovements:
+          items:
+            $ref: '#/components/schemas/DtoTestimonyMovement'
+          type: array
         valid:
           type: boolean
         verified:
@@ -2639,15 +2623,15 @@ components:
         idTestimony:
           format: int32
           type: integer
-        movimientosTestimonios:
-          items:
-            $ref: '#/components/schemas/DtoTestimonyMovement'
-          type: array
         notes:
           type: string
         number:
           format: int32
           type: integer
+        testimonyMovements:
+          items:
+            $ref: '#/components/schemas/DtoTestimonyMovement'
+          type: array
         valid:
           type: boolean
         verified:
@@ -2672,16 +2656,16 @@ components:
         idTestimony:
           format: int32
           type: integer
-        movimientosTestimonios:
-          items:
-            $ref: '#/components/schemas/DtoTestimonyMovement'
-          type: array
         notes:
           type: string
         number:
           description: Number of the testimony
           format: int32
           type: integer
+        testimonyMovements:
+          items:
+            $ref: '#/components/schemas/DtoTestimonyMovement'
+          type: array
         valid:
           type: boolean
         verified:
@@ -2900,7 +2884,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Folio no encontrado
+          description: Folio not found
       summary: Start a deed of Auxiliary protocol on a folio available
       tags:
       - Protocolo Auxiliar
@@ -3736,7 +3720,7 @@ paths:
       - Deeds
   /api/v1/deeds/available-notaries:
     get:
-      operationId: getEscribanosDisponibles
+      operationId: getAvailableNotaries
       responses:
         '200':
           content:
@@ -5712,7 +5696,7 @@ paths:
       - Managements
   /api/v1/notebooks:
     get:
-      operationId: getAllCuadernos
+      operationId: getAllNotebooks
       responses:
         '200':
           content:
@@ -5811,7 +5795,7 @@ paths:
               schema:
                 format: byte
                 type: string
-          description: Notebook no encontrado
+          description: Notebook not found
       summary: Generate the carátula PDF of a notebook
       tags:
       - Cuadernos
@@ -7321,7 +7305,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-          description: Documento presentado no encontrado
+          description: Submitted document not found
         '500':
           description: Error inesperado al generar el PDF (sin cuerpo)
       summary: Generate reporte of documents by vencer
@@ -7452,7 +7436,7 @@ paths:
               schema:
                 format: byte
                 type: string
-          description: Payment no encontrado
+          description: Payment not found
       summary: CU15 - Emitir recibo de pago
       tags:
       - Reportes
@@ -7593,7 +7577,7 @@ paths:
               schema:
                 format: byte
                 type: string
-          description: Testimony no encontrado
+          description: Testimony not found
       summary: Generate copy impresa of testimony verified
       tags:
       - Reportes
@@ -7656,7 +7640,7 @@ paths:
         '204':
           description: Role desasignado
         '404':
-          description: UserAccount no encontrado
+          description: User account not found
       summary: Unassign role of the user
       tags:
       - Roles
@@ -8244,7 +8228,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoTestimony'
-          description: Testimony no encontrado
+          description: Testimony not found
       summary: Check testimony
       tags:
       - Testimony
@@ -8322,7 +8306,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoTestimonyMovement'
-          description: Testimony no encontrado
+          description: Testimony not found
       summary: Enter testimony for registration
       tags:
       - TestimonyMovement
@@ -8362,7 +8346,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoTestimonyMovement'
-          description: Testimony no encontrado
+          description: Testimony not found
       summary: Reenter testimony retirado
       tags:
       - TestimonyMovement
@@ -8395,7 +8379,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoTestimonyMovement'
-          description: Testimony no encontrado
+          description: Testimony not found
       summary: Record registration of the testimony
       tags:
       - TestimonyMovement
@@ -8434,7 +8418,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoTestimonyMovement'
-          description: Testimony no encontrado
+          description: Testimony not found
       summary: Retirar testimony registered
       tags:
       - TestimonyMovement

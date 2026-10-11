@@ -445,8 +445,8 @@ class SimpleControllersTest {
             when(service.findAllPaged(isNull(), any(Pageable.class))).thenReturn(new PageImpl<>(List.of(e), PageRequest.of(0, 20), 1));
             when(service.findById(1)).thenReturn(Optional.of(e));
             when(service.findById(2)).thenReturn(Optional.empty());
-            when(service.findEscribanosDisponibles()).thenReturn(List.of());
-            when(service.searchPorNumber(any())).thenReturn(List.of(e));
+            when(service.findAvailableNotaries()).thenReturn(List.of());
+            when(service.searchByNumber(any())).thenReturn(List.of(e));
             when(service.save(any(Deed.class))).thenReturn(e);
 
             mvc.perform(get("/api/v1/deeds")).andExpect(status().isOk());

@@ -11,7 +11,7 @@ import java.util.List;
 public class DtoFolio implements ValidDto {
 
     private Integer idFolio;
-    private DtoFolioType tiposDeFolio;
+    private DtoFolioType folioType;
     private DtoDeed deed;
     private DtoPerson personNotary;
     private int number;
@@ -25,17 +25,17 @@ public class DtoFolio implements ValidDto {
         this.version = 0;
     }
 
-    public DtoFolio(DtoFolioType tiposDeFolio, DtoPerson persons, int number, int year, String status) {
-        this.tiposDeFolio = tiposDeFolio;
+    public DtoFolio(DtoFolioType folioType, DtoPerson persons, int number, int year, String status) {
+        this.folioType = folioType;
         this.personNotary = persons;
         this.number = number;
         this.year = year;
         this.status = status;
     }
 
-    public DtoFolio(DtoFolioType tiposDeFolio, DtoDeed escrituras, DtoPerson persons, int number, int year,
+    public DtoFolio(DtoFolioType folioType, DtoDeed escrituras, DtoPerson persons, int number, int year,
             String status, String notes, List<DtoCopy> copies) {
-        this.tiposDeFolio = tiposDeFolio;
+        this.folioType = folioType;
         this.deed = escrituras;
         this.personNotary = persons;
         this.number = number;
@@ -53,12 +53,12 @@ public class DtoFolio implements ValidDto {
         this.idFolio = idFolio;
     }
 
-    public DtoFolioType getTiposDeFolio() {
-        return this.tiposDeFolio;
+    public DtoFolioType getFolioType() {
+        return this.folioType;
     }
 
-    public void setTiposDeFolio(DtoFolioType tiposDeFolio) {
-        this.tiposDeFolio = tiposDeFolio;
+    public void setFolioType(DtoFolioType folioType) {
+        this.folioType = folioType;
     }
 
     public DtoDeed getDeed() {

@@ -30,8 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Flyway `V45` renames the leftover Spanish table and columns (`identifications.number`,
   `people.birth_date`, workflow `name` / `node_type` / `position_x`, and foreign keys such as
   `fk_id_person` and `fk_id_deed_management`). Login JSON uses `valid`, `idUser`, `name`,
-  `type`, and `person`. `R45` reverses the renames. Message catalogs stay bilingual, and stored
-  status and catalog labels stay as recorded.
+  `type`, and `person`. Remaining DTO JSON names are English (`testimonies`, `testimonyMovements`,
+  `budget`, `budgets`, `folioType`, `deedManagement`, `users`, `copies`). `R45` reverses the
+  renames. Message catalogs stay bilingual, and stored status and catalog labels stay as recorded.
 
 ### Changed
 

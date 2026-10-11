@@ -349,7 +349,7 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
 
         miDto.setIdProcedure(miProcedure.getIdProcedure());
         miDto.setNotes(miProcedure.getNotes());
-        miDto.setTiposDeProcedure(miProcedure.getFkIdProcedureType().getDto());
+        miDto.setProcedureType(miProcedure.getFkIdProcedureType().getDto());
 
         if (miProcedure.getFkIdProperty() != null) {
             miDto.setProperty(miProcedure.getFkIdProperty().getDto());

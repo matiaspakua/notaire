@@ -66,7 +66,7 @@ const CU_CHECKS: CuCheck[] = [
   { id: "CU06", name: "Firmar escritura", method: "GET", path: "/deeds", expectStatus: 200 },
   { id: "CU52", name: "Modificar Deed", method: "GET", path: "/deeds", expectStatus: 200 },
   { id: "CU62", name: "Buscar Deed", method: "GET", path: "/deeds/search", expectStatus: 200 },
-  // escribanos-disponibles endpoint (CU48 related)
+  // notaries-disponibles endpoint (CU48 related)
   { id: "CU48-SUB", name: "Escribanos disponibles (GET)", method: "GET", path: "/deeds/available-notaries", expectStatus: 200 },
 
   // ── Testimonios (CU07, CU08) ──

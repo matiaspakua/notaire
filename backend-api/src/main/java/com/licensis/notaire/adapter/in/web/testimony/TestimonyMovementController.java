@@ -129,7 +129,7 @@ public class TestimonyMovementController {
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Creado"),
     @ApiResponse(responseCode = "400", description = "The testimony is not verified or already has a movimiento abierto"),
-    @ApiResponse(responseCode = "404", description = "Testimony no encontrado")
+    @ApiResponse(responseCode = "404", description = "Testimony not found")
 })
     @PostMapping("/{idTestimony}/enter-registration")
     @Operation(summary = "Enter testimony for registration",
@@ -142,7 +142,7 @@ public class TestimonyMovementController {
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
     @ApiResponse(responseCode = "400", description = "Falta the ingreso a registration previo"),
-    @ApiResponse(responseCode = "404", description = "Testimony no encontrado")
+    @ApiResponse(responseCode = "404", description = "Testimony not found")
 })
     @PostMapping("/{idTestimony}/register-inscription")
     @Operation(summary = "Record registration of the testimony",
@@ -155,7 +155,7 @@ public class TestimonyMovementController {
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
     @ApiResponse(responseCode = "400", description = "The testimony is not registered"),
-    @ApiResponse(responseCode = "404", description = "Testimony no encontrado")
+    @ApiResponse(responseCode = "404", description = "Testimony not found")
 })
     @PostMapping("/{idTestimony}/withdraw")
     @Operation(summary = "Retirar testimony registered",
@@ -169,7 +169,7 @@ public class TestimonyMovementController {
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Creado"),
     @ApiResponse(responseCode = "400", description = "The testimony was not retirado previamente, or the reentry observado does not have notes"),
-    @ApiResponse(responseCode = "404", description = "Testimony no encontrado")
+    @ApiResponse(responseCode = "404", description = "Testimony not found")
 })
     @PostMapping("/{idTestimony}/reenter")
     @Operation(summary = "Reenter testimony retirado",

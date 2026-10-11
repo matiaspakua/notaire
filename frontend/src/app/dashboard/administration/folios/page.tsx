@@ -163,8 +163,8 @@ export default function FoliosAdminPage() {
     }
   }
 
-  const { data: escribanos = [] } = useQuery({
-    queryKey: ["escribanos-disponibles"],
+  const { data: notaries = [] } = useQuery({
+    queryKey: ["notaries-disponibles"],
     queryFn: () => apiGet<Person[]>("/deeds/available-notaries"),
   });
 
@@ -402,7 +402,7 @@ export default function FoliosAdminPage() {
                     <SelectValue placeholder={t("fields.escribanoPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
-                    {escribanos.map((e) => (
+                    {notaries.map((e) => (
                       <SelectItem key={e.personId} value={String(e.personId)}>
                         {e.lastName} {e.firstName}
                       </SelectItem>

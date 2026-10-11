@@ -180,7 +180,7 @@ export interface Notebook {
 export interface Procedure {
   idProcedure?: number;
   procedureType?: ProcedureType;
-  listaPersons?: Person[];
+  people?: Person[];
   documentosPresentados?: SubmittedDocument[];
 }
 
@@ -298,7 +298,7 @@ export interface Testimony {
   verified?: boolean;
   notes?: string;
   deed?: Deed;
-  movimientosTestimonios?: TestimonyMovement[];
+  testimonyMovements?: TestimonyMovement[];
 }
 
 /** GET /api/v1/payments — raw Payment entity; POST/PUT body is the flat PaymentRequest shape. */

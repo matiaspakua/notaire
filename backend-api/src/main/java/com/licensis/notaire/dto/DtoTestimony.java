@@ -19,7 +19,7 @@ public class DtoTestimony implements ValidDto
     private String notes;
     private int version = 0;
     private List<DtoCopy> copies = new ArrayList();
-    private List<DtoTestimonyMovement> movimientosTestimonios = new ArrayList();
+    private List<DtoTestimonyMovement> testimonyMovements = new ArrayList();
 
     public DtoTestimony()
     {
@@ -105,14 +105,14 @@ public class DtoTestimony implements ValidDto
         this.copies = misCopies;
     }
 
-    public List<DtoTestimonyMovement> getMovimientosTestimonios()
+    public List<DtoTestimonyMovement> getTestimonyMovements()
     {
-        return this.movimientosTestimonios;
+        return this.testimonyMovements;
     }
 
-    public void setMovimientosTestimonios(List<DtoTestimonyMovement> movimientosTestimonios)
+    public void setTestimonyMovements(List<DtoTestimonyMovement> testimonyMovements)
     {
-        this.movimientosTestimonios = movimientosTestimonios;
+        this.testimonyMovements = testimonyMovements;
     }
 
     @Override

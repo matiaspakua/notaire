@@ -220,11 +220,11 @@ public class Testimony implements Serializable, Persistable<Integer>
             fkIdDeed = miDeed;
         }
 
-        if (miDto.getMovimientosTestimonios() != null && !miDto.getMovimientosTestimonios().isEmpty())
+        if (miDto.getTestimonyMovements() != null && !miDto.getTestimonyMovements().isEmpty())
         {
             testimonyMovementList = new ArrayList<>();
 
-            for (Iterator<DtoTestimonyMovement> it = miDto.getMovimientosTestimonios().iterator(); it.hasNext();)
+            for (Iterator<DtoTestimonyMovement> it = miDto.getTestimonyMovements().iterator(); it.hasNext();)
             {
                 DtoTestimonyMovement dtoTestimonyMovement = it.next();
                 TestimonyMovement miTestimonyMovement = new TestimonyMovement();
@@ -262,7 +262,7 @@ public class Testimony implements Serializable, Persistable<Integer>
                 miLista.add(miDtoTestimonyMovement);
             }
 
-            miDto.setMovimientosTestimonios(miLista);
+            miDto.setTestimonyMovements(miLista);
         }
 
         return miDto;

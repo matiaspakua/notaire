@@ -223,34 +223,34 @@ class DeedServiceTest {
     }
 
     @Test
-    @DisplayName("Should find all available escribanos")
-    void shouldFindEscribanosDisponibles() {
-        List<Person> escribanos = new ArrayList<>();
-        escribanos.add(testNotary);
+    @DisplayName("Should find all available notaries")
+    void shouldFindAvailableNotaries() {
+        List<Person> notaries = new ArrayList<>();
+        notaries.add(testNotary);
 
-        when(personRepository.findAllEscribanos()).thenReturn(escribanos);
+        when(personRepository.findAllNotaries()).thenReturn(notaries);
 
-        List<Person> result = deedService.findEscribanosDisponibles();
+        List<Person> result = deedService.findAvailableNotaries();
 
         assertThat(result).isNotNull()
                 .hasSize(1)
                 .contains(testNotary)
                 .allMatch(p -> p.getNotaryRegistrationNumber() != null);
 
-        verify(personRepository, times(1)).findAllEscribanos();
+        verify(personRepository, times(1)).findAllNotaries();
     }
 
     @Test
-    @DisplayName("Should return empty list when no escribanos available")
-    void shouldReturnEmptyListWhenNoEscribanosAvailable() {
-        when(personRepository.findAllEscribanos()).thenReturn(new ArrayList<>());
+    @DisplayName("Should return empty list when no notaries available")
+    void shouldReturnEmptyListWhenNoNotariesAvailable() {
+        when(personRepository.findAllNotaries()).thenReturn(new ArrayList<>());
 
-        List<Person> result = deedService.findEscribanosDisponibles();
+        List<Person> result = deedService.findAvailableNotaries();
 
         assertThat(result).isNotNull()
                 .isEmpty();
 
-        verify(personRepository, times(1)).findAllEscribanos();
+        verify(personRepository, times(1)).findAllNotaries();
     }
 
     @Test
@@ -259,7 +259,7 @@ class DeedServiceTest {
         when(deedRepository.findByNumber(100))
                 .thenReturn(Optional.of(testDeed));
 
-        List<Deed> result = deedService.searchPorNumber(100);
+        List<Deed> result = deedService.searchByNumber(100);
 
         assertThat(result).isNotNull()
                 .hasSize(1)
@@ -275,7 +275,7 @@ class DeedServiceTest {
         when(deedRepository.findByNumber(999))
                 .thenReturn(Optional.empty());
 
-        List<Deed> result = deedService.searchPorNumber(999);
+        List<Deed> result = deedService.searchByNumber(999);
 
         assertThat(result).isNotNull()
                 .isEmpty();
@@ -291,7 +291,7 @@ class DeedServiceTest {
 
         when(deedRepository.findAll()).thenReturn(escrituras);
 
-        List<Deed> result = deedService.searchPorNumber(null);
+        List<Deed> result = deedService.searchByNumber(null);
 
         assertThat(result).isNotNull()
                 .hasSize(1)

@@ -151,8 +151,8 @@ test.describe("CU48 - Dar alta escribano", () => {
     await steps.givenUserIsOnPage("/dashboard/administration/users");
   });
 
-  test.skip("CU48-GW01 (#1146): Given on escribanos page, When click nuevo escribano, Then modal opens", async () => {
-    // Skipped (#1146): no /dashboard/administration/escribanos page exists in the current frontend.
+  test.skip("CU48-GW01 (#1146): Given on notaries page, When click nuevo escribano, Then modal opens", async () => {
+    // Skipped (#1146): no /dashboard/administration/notaries page exists in the current frontend.
     // Escribanos are managed through the Usuarios module.
   });
 

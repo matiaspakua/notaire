@@ -799,7 +799,7 @@ export async function brunoArchivarGestion(
   });
 }
 
-export async function brunoGetEscribanosDisponibles(
+export async function brunoGetAvailableNotaries(
   page: Page,
 ): Promise<ApiResult> {
   return apiGet(page, "/deeds/available-notaries");

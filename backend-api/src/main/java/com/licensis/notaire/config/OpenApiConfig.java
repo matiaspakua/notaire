@@ -53,7 +53,7 @@ public class OpenApiConfig {
                                 .description("Invalid request — parámetros or cuerpo malformado")
                                 .content(jsonContent))
                         .addResponses("404", new ApiResponse()
-                                .description("Recurso no encontrado")
+                                .description("Resource not found")
                                 .content(jsonContent))
                         .addResponses("409", new ApiResponse()
                                 .description("Conflicto — the recurso already exists or viola a restricción")

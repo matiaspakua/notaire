@@ -9,32 +9,32 @@ import com.licensis.notaire.dto.interfaces.ValidDto;
 public class DtoProcedureTemplate implements ValidDto
 {
 
-    private DtoDocumentType tiposDeDocument;
-    private DtoProcedureType tiposDeProcedure;
+    private DtoDocumentType documentType;
+    private DtoProcedureType procedureType;
     private String notes;
 
     public DtoProcedureTemplate()
     {
     }
 
-    public DtoDocumentType getTiposDeDocument()
+    public DtoDocumentType getDocumentType()
     {
-        return this.tiposDeDocument;
+        return this.documentType;
     }
 
-    public void setTiposDeDocument(DtoDocumentType tiposDeDocument)
+    public void setDocumentType(DtoDocumentType documentType)
     {
-        this.tiposDeDocument = tiposDeDocument;
+        this.documentType = documentType;
     }
 
-    public DtoProcedureType getTiposDeProcedure()
+    public DtoProcedureType getProcedureType()
     {
-        return this.tiposDeProcedure;
+        return this.procedureType;
     }
 
-    public void setTiposDeProcedure(DtoProcedureType tiposDeProcedure)
+    public void setProcedureType(DtoProcedureType procedureType)
     {
-        this.tiposDeProcedure = tiposDeProcedure;
+        this.procedureType = procedureType;
     }
 
     public String getNotes()

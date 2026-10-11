@@ -34,7 +34,7 @@ class UseCaseDomainsIntegrationTest {
     }
 
     @Test
-    void presupuestosPaymentsDomain() throws Exception {
+    void budgetsPaymentsDomain() throws Exception {
         mockMvc.perform(get("/api/v1/budgets")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/items")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/payments")).andExpect(status().isOk());

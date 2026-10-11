@@ -12,7 +12,7 @@ public class DtoItem implements ValidDto
 {
 
     private Integer idItem;
-    private DtoBudget presupuestos;
+    private DtoBudget budget;
     private String name;
     private BigDecimal value;
     private Integer percentage;
@@ -30,16 +30,16 @@ public class DtoItem implements ValidDto
         this.fixedConcept = false;
     }
 
-    public DtoItem(DtoBudget presupuestos, String name, BigDecimal value)
+    public DtoItem(DtoBudget budget, String name, BigDecimal value)
     {
-        this.presupuestos = presupuestos;
+        this.budget = budget;
         this.name = name;
         this.value = value;
     }
 
-    public DtoItem(DtoBudget presupuestos, String name, BigDecimal value, Integer percentage, String notes)
+    public DtoItem(DtoBudget budget, String name, BigDecimal value, Integer percentage, String notes)
     {
-        this.presupuestos = presupuestos;
+        this.budget = budget;
         this.name = name;
         this.value = value;
         this.percentage = percentage;
@@ -76,14 +76,14 @@ public class DtoItem implements ValidDto
         this.idItem = idItem;
     }
 
-    public DtoBudget getPresupuestos()
+    public DtoBudget getBudget()
     {
-        return this.presupuestos;
+        return this.budget;
     }
 
-    public void setPresupuestos(DtoBudget presupuestos)
+    public void setBudget(DtoBudget budget)
     {
-        this.presupuestos = presupuestos;
+        this.budget = budget;
     }
 
     public String getName()

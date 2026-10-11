@@ -404,7 +404,7 @@ class PaymentControllerTest {
     @DisplayName("PUT /api/v1/payments/{id} should return 404 when pago not found")
     void shouldReturn404OnUpdateNotFound() throws Exception {
         when(editPaymentUseCase.edit(any(EditPaymentCommand.class)))
-                .thenThrow(new IllegalArgumentException("Payment no encontrado"));
+                .thenThrow(new IllegalArgumentException("Payment not found"));
 
         String json = """
                 {
@@ -452,7 +452,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("DELETE /api/v1/payments/{id} should return 404 when pago not found")
     void shouldReturn404OnDeleteNotFound() throws Exception {
-        doThrow(new IllegalArgumentException("Payment no encontrado")).when(deletePaymentUseCase).delete(999);
+        doThrow(new IllegalArgumentException("Payment not found")).when(deletePaymentUseCase).delete(999);
         mockMvc.perform(delete("/api/v1/payments/999"))
                 .andExpect(status().isNotFound());
     }

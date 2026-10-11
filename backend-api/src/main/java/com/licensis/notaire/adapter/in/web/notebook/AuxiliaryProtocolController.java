@@ -50,7 +50,7 @@ public class AuxiliaryProtocolController {
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Creada"),
         @ApiResponse(responseCode = "400", description = "Invalid request"),
-        @ApiResponse(responseCode = "404", description = "Folio no encontrado")
+        @ApiResponse(responseCode = "404", description = "Folio not found")
     })
     @PostMapping("/deeds")
     @Operation(summary = "Start a deed of Auxiliary protocol on a folio available")

@@ -66,7 +66,7 @@ public class NotebookController {
     @GetMapping
     @Operation(summary = "Get all notebooks")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<NotebookResponse>> getAllCuadernos() {
+    public ResponseEntity<List<NotebookResponse>> getAllNotebooks() {
         return ResponseEntity.ok(notebookService.findAll().stream().map(NotebookResponse::from).toList());
     }
 
@@ -105,7 +105,7 @@ public class NotebookController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "Notebook no encontrado")
+        @ApiResponse(responseCode = "404", description = "Notebook not found")
     })
     @GetMapping(value = "/{id}/caratula", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generate the carátula PDF of a notebook")

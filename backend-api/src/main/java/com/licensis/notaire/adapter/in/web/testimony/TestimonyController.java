@@ -255,7 +255,7 @@ public class TestimonyController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "Testimony no encontrado")
+    @ApiResponse(responseCode = "404", description = "Testimony not found")
 })
     @PostMapping("/{id}/verify")
     @Operation(summary = "Check testimony",

@@ -127,7 +127,7 @@ public class DtoDocumentType implements ValidDto
         return this.templateProcedures;
     }
 
-    public void setTemplateTramiteses(List<DtoProcedureTemplate> templateProcedures)
+    public void setTemplateProcedures(List<DtoProcedureTemplate> templateProcedures)
     {
         this.templateProcedures = templateProcedures;
     }

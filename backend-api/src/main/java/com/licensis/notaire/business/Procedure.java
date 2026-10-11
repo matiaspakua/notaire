@@ -229,7 +229,7 @@ public class Procedure implements Serializable, Persistable<Integer> {
 
         miDto.setIdProcedure(getIdProcedure());
         miDto.setNotes(notes);
-        miDto.setTiposDeProcedure(fkIdProcedureType.getDto());
+        miDto.setProcedureType(fkIdProcedureType.getDto());
 
         if (fkIdDeed != null) {
             DtoDeed miDtoDeed = new DtoDeed();

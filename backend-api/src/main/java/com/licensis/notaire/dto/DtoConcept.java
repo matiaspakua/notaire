@@ -20,7 +20,7 @@ public class DtoConcept implements ValidDto {
     private Integer version = 0;
     private Boolean enabled;
     private Boolean fixed;
-    private List<DtoBudgetTemplate> templatePresupuestos = null;
+    private List<DtoBudgetTemplate> budgetTemplates = null;
 
     public DtoConcept() {
         this.fixed = Boolean.FALSE;
@@ -56,20 +56,16 @@ public class DtoConcept implements ValidDto {
         this.enabled = enabled;
     }
 
-    public Boolean getValido() {
-        return valid;
-    }
-
     public void setValid(Boolean valid) {
         this.valid = valid;
     }
 
     public DtoConcept(String name, BigDecimal value, Integer percentage,
-            List<DtoBudgetTemplate> templatePresupuestoses) {
+            List<DtoBudgetTemplate> budgetTemplates) {
         this.name = name;
         this.value = value;
         this.percentage = percentage;
-        this.templatePresupuestos = templatePresupuestoses;
+        this.budgetTemplates = budgetTemplates;
     }
 
     public Integer getIdConcept() {
@@ -104,12 +100,12 @@ public class DtoConcept implements ValidDto {
         this.percentage = percentage;
     }
 
-    public List<DtoBudgetTemplate> getTemplatePresupuestoses() {
-        return this.templatePresupuestos;
+    public List<DtoBudgetTemplate> getBudgetTemplates() {
+        return this.budgetTemplates;
     }
 
-    public void setTemplatePresupuestoses(List<DtoBudgetTemplate> templatePresupuestos) {
-        this.templatePresupuestos = templatePresupuestos;
+    public void setBudgetTemplates(List<DtoBudgetTemplate> budgetTemplates) {
+        this.budgetTemplates = budgetTemplates;
     }
 
     @Override

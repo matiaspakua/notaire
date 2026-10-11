@@ -9,8 +9,8 @@ import com.licensis.notaire.dto.interfaces.ValidDto;
 public class DtoBudgetTemplate implements ValidDto
 {
 
-    private DtoConcept conceptos;
-    private DtoProcedureType tiposDeProcedure;
+    private DtoConcept concept;
+    private DtoProcedureType procedureType;
     private String notes;
     private Integer version = 0;
 
@@ -18,14 +18,14 @@ public class DtoBudgetTemplate implements ValidDto
     {
     }
 
-    public DtoConcept getConceptos()
+    public DtoConcept getConcept()
     {
-        return this.conceptos;
+        return this.concept;
     }
 
-    public void setConceptos(DtoConcept conceptos)
+    public void setConcept(DtoConcept concept)
     {
-        this.conceptos = conceptos;
+        this.concept = concept;
     }
 
     public Integer getVersion()
@@ -38,14 +38,14 @@ public class DtoBudgetTemplate implements ValidDto
         this.version = version;
     }
 
-    public DtoProcedureType getTiposDeProcedure()
+    public DtoProcedureType getProcedureType()
     {
-        return this.tiposDeProcedure;
+        return this.procedureType;
     }
 
-    public void setTiposDeProcedure(DtoProcedureType tiposDeProcedure)
+    public void setProcedureType(DtoProcedureType procedureType)
     {
-        this.tiposDeProcedure = tiposDeProcedure;
+        this.procedureType = procedureType;
     }
 
     public String getNotes()

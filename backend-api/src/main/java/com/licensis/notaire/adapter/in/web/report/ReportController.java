@@ -150,7 +150,7 @@ public class ReportController {
         @ApiResponse(responseCode = "200", description = "PDF with the expiration of the submitted document"),
         @ApiResponse(responseCode = "400", description = "Parámetro invalid", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "404", description = "Documento presentado no encontrado", content = @Content(
+        @ApiResponse(responseCode = "404", description = "Submitted document not found", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
         @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
                 content = @Content)
@@ -216,7 +216,7 @@ public class ReportController {
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
     @ApiResponse(responseCode = "400", description = "The testimony is not verified"),
-    @ApiResponse(responseCode = "404", description = "Testimony no encontrado")
+    @ApiResponse(responseCode = "404", description = "Testimony not found")
 })
     @GetMapping(value = "/testimonies/{idTestimonio}/copies", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generate copy impresa of testimony verified",
@@ -251,7 +251,7 @@ public class ReportController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "Payment no encontrado")
+        @ApiResponse(responseCode = "404", description = "Payment not found")
     })
     @GetMapping(value = "/payment-receipt/{idPago}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "CU15 - Emitir recibo de pago",

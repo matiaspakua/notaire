@@ -24,16 +24,16 @@ public class DtoPayment implements ValidDto
     {
     }
 
-    public DtoPayment(DtoBudget presupuestos, BigDecimal amount, Date date)
+    public DtoPayment(DtoBudget budget, BigDecimal amount, Date date)
     {
-        this.budget = presupuestos;
+        this.budget = budget;
         this.amount = amount;
         this.date = date;
     }
 
-    public DtoPayment(DtoBudget presupuestos, BigDecimal amount, Date date, String notes)
+    public DtoPayment(DtoBudget budget, BigDecimal amount, Date date, String notes)
     {
-        this.budget = presupuestos;
+        this.budget = budget;
         this.amount = amount;
         this.date = date;
         this.notes = notes;
@@ -64,9 +64,9 @@ public class DtoPayment implements ValidDto
         return this.budget;
     }
 
-    public void setBudget(DtoBudget presupuestos)
+    public void setBudget(DtoBudget budget)
     {
-        this.budget = presupuestos;
+        this.budget = budget;
     }
 
     public BigDecimal getAmount()

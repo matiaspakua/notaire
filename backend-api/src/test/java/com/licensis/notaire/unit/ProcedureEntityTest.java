@@ -218,7 +218,7 @@ class ProcedureEntityTest {
             DtoProcedure dto = new DtoProcedure();
             dto.setIdProcedure(10);
             dto.setNotes("obs");
-            dto.setTiposDeProcedure(typeDto);
+            dto.setProcedureType(typeDto);
             return dto;
         }
 

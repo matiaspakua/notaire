@@ -202,8 +202,8 @@ public class History implements Serializable, Persistable<Integer>
         dto.setIdHistory(this.idHistory);
         dto.setVersion(this.version);
         dto.setDate(this.date);
-        dto.setGestionesDeEscrituras(this.getFkIdManagement().getDto());
-        dto.setEstadosDeManagement(this.fkIdManagementStatus.getDto());
+        dto.setDeedManagement(this.getFkIdManagement().getDto());
+        dto.setManagementStatus(this.fkIdManagementStatus.getDto());
         dto.setNotes(this.notes);
 
         return dto;

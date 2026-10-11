@@ -144,7 +144,7 @@ public class RoleController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Role desasignado"),
-        @ApiResponse(responseCode = "404", description = "UserAccount no encontrado")
+        @ApiResponse(responseCode = "404", description = "User account not found")
     })
     @DeleteMapping("/users/{idUser}")
     @Operation(summary = "Unassign role of the user")

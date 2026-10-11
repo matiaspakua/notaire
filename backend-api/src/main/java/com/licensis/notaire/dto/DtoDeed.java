@@ -121,11 +121,11 @@ public class DtoDeed implements ValidDto {
         // Backend-only, ignored in shared module
     }
 
-    public List<DtoTestimony> getTestimonios() {
+    public List<DtoTestimony> getTestimonies() {
         return new ArrayList<>();
     }
 
-    public void setTestimonios(List<DtoTestimony> testimonios) {
+    public void setTestimonies(List<DtoTestimony> testimonios) {
         // Backend-only, ignored in shared module
     }
 

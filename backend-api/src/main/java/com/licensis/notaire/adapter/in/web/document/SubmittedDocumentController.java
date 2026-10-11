@@ -128,7 +128,7 @@ public class SubmittedDocumentController {
 
     private Resolved resolve(SubmittedDocumentRequest request) {
         Optional<DocumentType> type = Optional.ofNullable(request.typeId()).map(id -> typeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Tipo de documento no encontrado: " + id)));
+                .orElseThrow(() -> new ResourceNotFoundException("Document type not found: " + id)));
         Optional<Procedure> procedure = Optional.ofNullable(request.procedureId()).map(id -> procedureRepository
                 .findById(id).orElseThrow(() -> new ResourceNotFoundException("Procedure not found: " + id)));
         return new Resolved(type, procedure, Optional.ofNullable(request.date()).map(this::parseDate));

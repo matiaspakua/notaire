@@ -188,7 +188,7 @@ public class ItemController {
     public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody ItemRequest request) {
         try {
             Item entity = itemService.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Item no encontrado: " + id));
+                    .orElseThrow(() -> new ResourceNotFoundException("Item not found: " + id));
             applyRequest(entity, request);
             itemService.update(id, entity);
             return ResponseEntity.ok().build();

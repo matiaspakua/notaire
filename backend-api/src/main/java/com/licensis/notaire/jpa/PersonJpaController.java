@@ -105,12 +105,12 @@ public class PersonJpaController implements Serializable, JpaPersistence {
             }
             person.setBudgetList(attachedBudgetList);
             List<DeedManagement> attachedGestionesDeEscriturasList = new ArrayList<DeedManagement>();
-            for (DeedManagement gestionesDeEscriturasListGestionesDeEscriturasToAttach : person
+            for (DeedManagement deedManagementListGestionesDeEscriturasToAttach : person
                     .getDeedManagementList()) {
-                gestionesDeEscriturasListGestionesDeEscriturasToAttach = em.getReference(
-                        gestionesDeEscriturasListGestionesDeEscriturasToAttach.getClass(),
-                        gestionesDeEscriturasListGestionesDeEscriturasToAttach.getIdManagement());
-                attachedGestionesDeEscriturasList.add(gestionesDeEscriturasListGestionesDeEscriturasToAttach);
+                deedManagementListGestionesDeEscriturasToAttach = em.getReference(
+                        deedManagementListGestionesDeEscriturasToAttach.getClass(),
+                        deedManagementListGestionesDeEscriturasToAttach.getIdManagement());
+                attachedGestionesDeEscriturasList.add(deedManagementListGestionesDeEscriturasToAttach);
             }
             person.setDeedManagementList(attachedGestionesDeEscriturasList);
             List<Folio> attachedFolioList = new ArrayList<Folio>();
@@ -174,16 +174,16 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                     oldFkIdPersonOfBudgetListBudget = em.merge(oldFkIdPersonOfBudgetListBudget);
                 }
             }
-            for (DeedManagement gestionesDeEscriturasListGestionesDeEscrituras : person
+            for (DeedManagement deedManagementListGestionesDeEscrituras : person
                     .getDeedManagementList()) {
-                Person oldFkIdNotaryPersonOfGestionesDeEscriturasListGestionesDeEscrituras = gestionesDeEscriturasListGestionesDeEscrituras
+                Person oldFkIdNotaryPersonOfGestionesDeEscriturasListGestionesDeEscrituras = deedManagementListGestionesDeEscrituras
                         .getFkIdNotaryPerson();
-                gestionesDeEscriturasListGestionesDeEscrituras.setFkIdNotaryPerson(person);
-                gestionesDeEscriturasListGestionesDeEscrituras = em
-                        .merge(gestionesDeEscriturasListGestionesDeEscrituras);
+                deedManagementListGestionesDeEscrituras.setFkIdNotaryPerson(person);
+                deedManagementListGestionesDeEscrituras = em
+                        .merge(deedManagementListGestionesDeEscrituras);
                 if (oldFkIdNotaryPersonOfGestionesDeEscriturasListGestionesDeEscrituras != null) {
                     oldFkIdNotaryPersonOfGestionesDeEscriturasListGestionesDeEscrituras.getDeedManagementList()
-                            .remove(gestionesDeEscriturasListGestionesDeEscrituras);
+                            .remove(deedManagementListGestionesDeEscrituras);
                     oldFkIdNotaryPersonOfGestionesDeEscriturasListGestionesDeEscrituras = em
                             .merge(oldFkIdNotaryPersonOfGestionesDeEscriturasListGestionesDeEscrituras);
                 }
@@ -255,8 +255,8 @@ public class PersonJpaController implements Serializable, JpaPersistence {
             List<PersonProcedure> personProcedureListNew = person.getPersonProcedureList();
             List<Budget> budgetListOld = persistentPerson.getBudgetList();
             List<Budget> budgetListNew = person.getBudgetList();
-            List<DeedManagement> gestionesDeEscriturasListOld = persistentPerson.getDeedManagementList();
-            List<DeedManagement> gestionesDeEscriturasListNew = person.getDeedManagementList();
+            List<DeedManagement> deedManagementListOld = persistentPerson.getDeedManagementList();
+            List<DeedManagement> deedManagementListNew = person.getDeedManagementList();
             List<Folio> folioListOld = persistentPerson.getFolioList();
             List<Folio> folioListNew = person.getFolioList();
             List<Substitution> substitutionListOld = persistentPerson.getSubstitutionList();
@@ -286,13 +286,13 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                             + " since its fkIdPersona field is not nullable.");
                 }
             }
-            for (DeedManagement gestionesDeEscriturasListOldGestionesDeEscrituras : gestionesDeEscriturasListOld) {
-                if (!gestionesDeEscriturasListNew.contains(gestionesDeEscriturasListOldGestionesDeEscrituras)) {
+            for (DeedManagement deedManagementListOldGestionesDeEscrituras : deedManagementListOld) {
+                if (!deedManagementListNew.contains(deedManagementListOldGestionesDeEscrituras)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
                     illegalOrphanMessages.add(
-                            "You must retain GestionesDeEscrituras " + gestionesDeEscriturasListOldGestionesDeEscrituras
+                            "You must retain GestionesDeEscrituras " + deedManagementListOldGestionesDeEscrituras
                                     + " since its fkIdPersonaEscribano field is not nullable.");
                 }
             }
@@ -368,14 +368,14 @@ public class PersonJpaController implements Serializable, JpaPersistence {
             budgetListNew = attachedBudgetListNew;
             person.setBudgetList(budgetListNew);
             List<DeedManagement> attachedGestionesDeEscriturasListNew = new ArrayList<DeedManagement>();
-            for (DeedManagement gestionesDeEscriturasListNewGestionesDeEscriturasToAttach : gestionesDeEscriturasListNew) {
-                gestionesDeEscriturasListNewGestionesDeEscriturasToAttach = em.getReference(
-                        gestionesDeEscriturasListNewGestionesDeEscriturasToAttach.getClass(),
-                        gestionesDeEscriturasListNewGestionesDeEscriturasToAttach.getIdManagement());
-                attachedGestionesDeEscriturasListNew.add(gestionesDeEscriturasListNewGestionesDeEscriturasToAttach);
+            for (DeedManagement deedManagementListNewGestionesDeEscriturasToAttach : deedManagementListNew) {
+                deedManagementListNewGestionesDeEscriturasToAttach = em.getReference(
+                        deedManagementListNewGestionesDeEscriturasToAttach.getClass(),
+                        deedManagementListNewGestionesDeEscriturasToAttach.getIdManagement());
+                attachedGestionesDeEscriturasListNew.add(deedManagementListNewGestionesDeEscriturasToAttach);
             }
-            gestionesDeEscriturasListNew = attachedGestionesDeEscriturasListNew;
-            person.setDeedManagementList(gestionesDeEscriturasListNew);
+            deedManagementListNew = attachedGestionesDeEscriturasListNew;
+            person.setDeedManagementList(deedManagementListNew);
             List<Folio> attachedFolioListNew = new ArrayList<Folio>();
             for (Folio folioListNewFolioToAttach : folioListNew) {
                 folioListNewFolioToAttach = em.getReference(folioListNewFolioToAttach.getClass(),
@@ -455,18 +455,18 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                     }
                 }
             }
-            for (DeedManagement gestionesDeEscriturasListNewGestionesDeEscrituras : gestionesDeEscriturasListNew) {
-                if (!gestionesDeEscriturasListOld.contains(gestionesDeEscriturasListNewGestionesDeEscrituras)) {
-                    Person oldFkIdNotaryPersonOfGestionesDeEscriturasListNewGestionesDeEscrituras = gestionesDeEscriturasListNewGestionesDeEscrituras
+            for (DeedManagement deedManagementListNewGestionesDeEscrituras : deedManagementListNew) {
+                if (!deedManagementListOld.contains(deedManagementListNewGestionesDeEscrituras)) {
+                    Person oldFkIdNotaryPersonOfGestionesDeEscriturasListNewGestionesDeEscrituras = deedManagementListNewGestionesDeEscrituras
                             .getFkIdNotaryPerson();
-                    gestionesDeEscriturasListNewGestionesDeEscrituras.setFkIdNotaryPerson(person);
-                    gestionesDeEscriturasListNewGestionesDeEscrituras = em
-                            .merge(gestionesDeEscriturasListNewGestionesDeEscrituras);
+                    deedManagementListNewGestionesDeEscrituras.setFkIdNotaryPerson(person);
+                    deedManagementListNewGestionesDeEscrituras = em
+                            .merge(deedManagementListNewGestionesDeEscrituras);
                     if (oldFkIdNotaryPersonOfGestionesDeEscriturasListNewGestionesDeEscrituras != null
                             && !oldFkIdNotaryPersonOfGestionesDeEscriturasListNewGestionesDeEscrituras
                                     .equals(person)) {
                         oldFkIdNotaryPersonOfGestionesDeEscriturasListNewGestionesDeEscrituras
-                                .getDeedManagementList().remove(gestionesDeEscriturasListNewGestionesDeEscrituras);
+                                .getDeedManagementList().remove(deedManagementListNewGestionesDeEscrituras);
                         oldFkIdNotaryPersonOfGestionesDeEscriturasListNewGestionesDeEscrituras = em
                                 .merge(oldFkIdNotaryPersonOfGestionesDeEscriturasListNewGestionesDeEscrituras);
                     }
@@ -586,15 +586,15 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                         + budgetListOrphanCheckBudget
                         + " in its presupuestoList field has a non-nullable fkIdPersona field.");
             }
-            List<DeedManagement> gestionesDeEscriturasListOrphanCheck = person.getDeedManagementList();
-            for (DeedManagement gestionesDeEscriturasListOrphanCheckGestionesDeEscrituras : gestionesDeEscriturasListOrphanCheck) {
+            List<DeedManagement> deedManagementListOrphanCheck = person.getDeedManagementList();
+            for (DeedManagement deedManagementListOrphanCheckGestionesDeEscrituras : deedManagementListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
                 illegalOrphanMessages.add("This Person (" + person
                         + ") cannot be destroyed since the GestionesDeEscrituras "
-                        + gestionesDeEscriturasListOrphanCheckGestionesDeEscrituras
-                        + " in its gestionesDeEscriturasList field has a non-nullable fkIdPersonaEscribano field.");
+                        + deedManagementListOrphanCheckGestionesDeEscrituras
+                        + " in its deedManagementList field has a non-nullable fkIdPersonaEscribano field.");
             }
             List<Folio> folioListOrphanCheck = person.getFolioList();
             for (Folio folioListOrphanCheckFolio : folioListOrphanCheck) {
@@ -674,9 +674,9 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                 q.setFirstResult(firstResult);
             }
 
-            List<Person> listaPersons = q.getResultList();
+            List<Person> people = q.getResultList();
 
-            for (Iterator<Person> it = listaPersons.iterator(); it.hasNext();) {
+            for (Iterator<Person> it = people.iterator(); it.hasNext();) {
                 Person person = it.next();
                 person.setFolioList(null);
 
@@ -694,7 +694,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                 // persona.setTramiteList(new ArrayList<Procedure>());
             }
 
-            return listaPersons;
+            return people;
         } finally {
             em.close();
         }

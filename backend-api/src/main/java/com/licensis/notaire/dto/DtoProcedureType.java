@@ -125,11 +125,11 @@ public class DtoProcedureType extends GenericDto implements ValidDto {
     }
 
     // Backend-only method - kept for compatibility
-    public List<DtoBudgetTemplate> getTemplatePresupuestos() {
+    public List<DtoBudgetTemplate> getBudgetTemplates() {
         return new ArrayList<>();
     }
 
-    public void setTemplatePresupuestos(List<DtoBudgetTemplate> templatePresupuestos) {
+    public void setBudgetTemplates(List<DtoBudgetTemplate> budgetTemplates) {
         // Backend-only, ignored in shared module
     }
 

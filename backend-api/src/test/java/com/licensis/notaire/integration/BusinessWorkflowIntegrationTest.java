@@ -230,7 +230,7 @@ class BusinessWorkflowIntegrationTest {
         @Test
         @Order(3)
         @DisplayName("CU45 — GET budgets by person returns array")
-        void getPresupuestosByPersonReturnsArray() throws Exception {
+        void getBudgetByPersonReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/budgets/person/1"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());

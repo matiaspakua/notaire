@@ -131,9 +131,9 @@ class BudgetEntityTest {
             Budget presupuesto3 = new Budget(3);
             presupuesto3.setFkIdPerson(persona1);
 
-            List<Budget> presupuestos = List.of(presupuesto1, presupuesto2, presupuesto3);
+            List<Budget> budgets = List.of(presupuesto1, presupuesto2, presupuesto3);
 
-            var filtered = presupuestos.stream()
+            var filtered = budgets.stream()
                 .filter(p -> p.getFkIdPerson() != null && p.getFkIdPerson().getPersonId().equals(1))
                 .toList();
 
@@ -149,9 +149,9 @@ class BudgetEntityTest {
             Budget presupuesto2 = new Budget(2);
             presupuesto2.setStatus("aprobado");
 
-            List<Budget> presupuestos = List.of(presupuesto1, presupuesto2);
+            List<Budget> budgets = List.of(presupuesto1, presupuesto2);
 
-            var pending = presupuestos.stream()
+            var pending = budgets.stream()
                 .filter(p -> "pendiente".equals(p.getStatus()))
                 .toList();
 
