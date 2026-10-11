@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English data-dictionary descriptions** (#1490, CU75):
+  Column descriptions, the table index, the compensation notes, and sections
+  1, 3, 6.2, and 6.3 of the data dictionary are English. Stored labels such
+  as `No Pasó`, `Workflow de Gestión Estándar`, `Honorarios`, and `DNI` stay.
+  Historical names `identificaciones`, `nombre`, `numero`, and `fk_id_tramite`
+  stay where they name the pre-rename schema.
 - **English data-dictionary column names** (#1490, CU75):
   The data dictionary, the ERD, and the compensation diagram use the V45
   column names (`fk_id_budget`, `birth_date`, `node_type`, and the rest).

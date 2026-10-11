@@ -12,128 +12,129 @@
 
 ## 1. Introduction
 
-El presente **Diccionario de Datos** documenta formalmente la totalidad de las tablas, columnas, tipos de datos, restricciones y relaciones de clave foránea que componen la base de datos relacional del sistema **Notaire**.
+This data dictionary lists the tables, columns, data types, constraints, and foreign keys of the Notaire relational database.
 
-### Principios de Normalización y Evolución del Esquema
+### Normalization and how the schema evolved
 
-1. **Tercera Forma Normal (3FN):**  
-   - Desacoplamiento de identificaciones civiles/tributarias (`identificaciones`, `identification_types`).
-   - Eliminación de dependencias transitivas en líneas presupuestarias y documentales: los atributos maestros residen en `concepts` y `document_types`, manteniendo en `items` y `submitted_documents` únicamente los valores efectivos y atestados de la transacción.
-2. **Subflujo de Workflows Notariales (V7, V8):**  
-   - Tablas `workflow_definition`, `workflow_node` y `workflow_transition` para modelar y ejecutar máquinas de estados dinámicas sobre `management_statuses` y asociarlas a `procedure_types`.
-3. **Control de Acceso Basado en Roles (V9):**  
-   - Modelo de seguridad ampliado con tablas `roles` y `role_modules`, vinculando cada usuario con un rol granular (`fk_id_role`).
-4. **Resolución de Cardinalidad Presupuesto–Trámite (V14):**  
-   - Eliminación de la clave foránea circular en `budgets` (`fk_id_tramite`, removed in V14); la relación canónica es `procedures.fk_id_budget` (1:N, donde un presupuesto puede originar o abarcar trámites vinculados).
-5. **Alineación de Movimientos de Testimony y Folios (V3, V4, V5, V6, V13):**  
-   - Identificador `id`, fechas de tracto registral, y soporte para documentos autónomos (`submitted_documents.fk_id_procedure` nullable).
+1. **Third normal form:**
+   - Civil and tax identifications are separate (`identificaciones` is not created by Flyway; `identification_types` is).
+   - Master attributes live on `concepts` and `document_types`. `items` and `submitted_documents` keep only the values of that transaction.
+2. **Notarial workflows (V7, V8):**
+   - `workflow_definition`, `workflow_node`, and `workflow_transition` model state machines over `management_statuses` and attach them to `procedure_types`.
+3. **Role-based access (V9):**
+   - `roles` and `role_modules` give each user one role (`fk_id_role`).
+4. **Budget-to-procedure cardinality (V14):**
+   - The circular foreign key on `budgets` (`fk_id_tramite`) was removed. The canonical link is `procedures.fk_id_budget` (one budget, many procedures).
+5. **Testimony movements and folios (V3, V4, V5, V6, V13):**
+   - Identifier `id`, registry dates, and autonomous documents (`submitted_documents.fk_id_procedure` is nullable).
 
 ---
 
 ## 2. Table index (37 tables, Flyway V1–V45)
 
-**Nota sobre Entidades Heredadas:** La entidad `identificaciones` se documentó en versiones previas pero nunca fue materializada en las migraciones Flyway activas (V1–V43). Existe solo en los scripts archivados de inicialización (`docs/000-archive/init-db/`) y fue utilizada en el modelo JPA legacy. Se considera un componente de normalización 3FN planificado pero no implementado. Véase la sección "Notas Técnicas" al pie para detalles.
+**Legacy entity:** `identificaciones` was documented earlier and exists in archived init scripts and in the JPA entity. Flyway V1–V44 never create it. See section 6.1.
 
 | # | Table | Package / module | Entity type | Description |
 |---|---|---|---|---|
-| 1 | [concepts](#1-concepts) | Presupuestos | Fuerte | Catálogo maestro de honorarios, aranceles y sellados |
-| 2 | [copies](#2-copies) | Protocolos | Débil | Ejemplares impresos y certificados de testimonios |
-| 3 | [submitted_documents](#3-submitted_documents) | Documentación | Débil | Documentos y certificados tramitados por gestión o autónomos |
-| 4 | [deeds](#4-deeds) | Protocolos | Fuerte | Escrituras públicas matrices otorgadas en protocolos |
-| 5 | [management_statuses](#5-management_statuses) | Gestión Notarial | Fuerte | Catálogo maestro de estados del ciclo notarial |
-| 6 | [folios](#6-folios) | Protocolos | Fuerte | Hojas de protocolo numeradas provistas por el Colegio |
-| 7 | [folio_copies](#7-folio_copies) | Protocolos | Asociativa | Relación M:N entre folios especiales y copies emitidas |
-| 8 | [deed_managements](#8-deed_managements) | Gestión Notarial | Fuerte | Carpetas de gestión y expedientes de trámites |
-| 9 | [history](#9-history) | Gestión Notarial | Débil | Trazabilidad y auditoría de cambios de estado de gestiones |
-| 10 | [properties](#10-properties) | Gestión Notarial | Fuerte | Bienes inmuebles y especificaciones catastrales |
-| 11 | [items](#11-items) | Presupuestos | Débil | Desglose arancelario de líneas de cada presupuesto |
-| 12 | [testimony_movements](#12-testimony_movements) | Protocolos | Débil | Asientos de presentación y tracto registral ante el Registro |
-| 13 | [payments](#13-payments) | Presupuestos | Débil | Recibos de cobro y entregas dinerarias a cuenta |
-| 14 | [people](#14-people) | Sujetos | Fuerte | Sujetos de derecho (clientes, escribanos, otorgantes) |
-| 15 | [budget_templates](#15-budget_templates) | Presupuestos | Asociativa | Conceptos arancelarios sugeridos por tipo de trámite |
-| 16 | [procedure_templates](#16-procedure_templates) | Documentación | Asociativa | Requisitos documentales obligatorios por tipo de trámite |
-| 17 | [budgets](#17-budgets) | Presupuestos | Fuerte | Cotización económica que fundamenta el trámite |
-| 18 | [audit_records](#18-audit_records) | Seguridad | Débil | Bitácora de auditoría de transacciones de usuarios |
-| 19 | [roles](#19-roles) | Seguridad | Fuerte | Perfiles y roles de seguridad en el sistema |
-| 20 | [role_modules](#20-role_modules) | Seguridad | Asociativa | Permisos funcionales asignados a cada rol |
-| 21 | [substitutions](#21-substitutions) | Sujetos | Asociativa | Períodos de suplencia y licencias notariales |
-| 22 | [testimonies](#22-testimonies) | Protocolos | Débil | Testimonios notariales expedidos de escrituras matrices |
-| 23 | [document_types](#23-document_types) | Documentación | Fuerte | Catálogo maestro de tipos de documento y certificados |
-| 24 | [folio_types](#24-folio_types) | Protocolos | Fuerte | Clasificación de hojas de protocolo |
-| 25 | [procedure_types](#25-procedure_types) | Gestión Notarial | Fuerte | Catálogo maestro de actos jurídicos notariales |
-| 26 | [identification_types](#26-identification_types) | Sujetos | Fuerte | Catálogo de tipos de documento de identidad |
-| 27 | [procedures](#27-procedures) | Gestión Notarial | Fuerte | Instancia particular de acto notarial en ejecución |
-| 28 | [person_procedures](#28-person_procedures) | Gestión Notarial | Asociativa | Personas intervinientes y sus roles jurídicos |
-| 29 | [users](#29-users) | Seguridad | Débil / Fuerte | Cuentas de acceso y credenciales de operadores |
-| 30 | [workflow_definition](#30-workflow_definition) | Workflow | Fuerte | Definición maestra de grafos de flujos de trabajo |
-| 31 | [workflow_node](#31-workflow_node) | Workflow | Débil | Nodos de estado dentro de un flujo de trabajo |
-| 32 | [workflow_transition](#32-workflow_transition) | Workflow | Débil | Transiciones dirigidas y reglas de guarda entre estados |
-| 33 | [document_cost_templates](#33-document_cost_templates) | Documentación | Asociativa | Costo sugerido de cada documento por tipo de trámite |
-| 34 | [notebooks](#34-notebooks) | Protocolos | Fuerte | Cuadernos anuales de protocolo de un escribano |
-| 35 | [procedure_folders](#35-procedure_folders) | Gestión Notarial | Débil | Carpetas numeradas de los trámites de una gestión |
-| 36 | [registration_drafts](#36-registration_drafts) | Protocolos | Débil | Borradores de inscripción registral de escrituras |
-| 37 | [revoked_tokens](#37-revoked_tokens) | Seguridad | Fuerte | Identificadores de JWT revocados por cierre de sesión hasta su expiración |
+| 1 | [concepts](#1-concepts) | Budgets | Strong | Master catalog of fees, tariffs, and stamps. Stored names such as `Honorarios` stay. |
+| 2 | [copies](#2-copies) | Protocol | Weak | Printed and certified copies of testimonies |
+| 3 | [submitted_documents](#3-submitted_documents) | Documents | Weak | Documents and certificates filed on a management or on their own |
+| 4 | [deeds](#4-deeds) | Protocol | Strong | Source public deeds granted in a protocol |
+| 5 | [management_statuses](#5-management_statuses) | Deed management | Strong | Master catalog of notarial-cycle statuses. Stored names stay. |
+| 6 | [folios](#6-folios) | Protocol | Strong | Numbered protocol sheets |
+| 7 | [folio_copies](#7-folio_copies) | Protocol | Associative | Many-to-many link between special folios and issued copies |
+| 8 | [deed_managements](#8-deed_managements) | Deed management | Strong | Deed-management files and procedure folders |
+| 9 | [history](#9-history) | Deed management | Weak | Trace of status changes on deed managements |
+| 10 | [properties](#10-properties) | Deed management | Strong | Real property and cadastral details |
+| 11 | [items](#11-items) | Budgets | Weak | Fee lines on each budget |
+| 12 | [testimony_movements](#12-testimony_movements) | Protocol | Weak | Registry presentation entries |
+| 13 | [payments](#13-payments) | Budgets | Weak | Receipts and payments on account |
+| 14 | [people](#14-people) | People | Strong | People (clients, notaries, grantors) |
+| 15 | [budget_templates](#15-budget_templates) | Budgets | Associative | Suggested fee concepts by procedure type |
+| 16 | [procedure_templates](#16-procedure_templates) | Documents | Associative | Required documents by procedure type |
+| 17 | [budgets](#17-budgets) | Budgets | Strong | Quote that supports the procedure |
+| 18 | [audit_records](#18-audit_records) | Security | Weak | Audit log of user transactions |
+| 19 | [roles](#19-roles) | Security | Strong | Security roles. Stored names such as `ESCRIBANO` stay. |
+| 20 | [role_modules](#20-role_modules) | Security | Associative | Functional permissions granted to each role |
+| 21 | [substitutions](#21-substitutions) | People | Associative | Substitution periods and notarial leave |
+| 22 | [testimonies](#22-testimonies) | Protocol | Weak | Testimonies issued from source deeds |
+| 23 | [document_types](#23-document_types) | Documents | Strong | Master catalog of document types and certificates |
+| 24 | [folio_types](#24-folio_types) | Protocol | Strong | Classification of protocol sheets |
+| 25 | [procedure_types](#25-procedure_types) | Deed management | Strong | Master catalog of notarial act types. Stored names such as `Compraventa` stay. |
+| 26 | [identification_types](#26-identification_types) | People | Strong | Catalog of identification document types |
+| 27 | [procedures](#27-procedures) | Deed management | Strong | One notarial act in progress |
+| 28 | [person_procedures](#28-person_procedures) | Deed management | Associative | People taking part, and their legal roles |
+| 29 | [users](#29-users) | Security | Weak / strong | Operator accounts and credentials |
+| 30 | [workflow_definition](#30-workflow_definition) | Workflow | Strong | Workflow graph definitions |
+| 31 | [workflow_node](#31-workflow_node) | Workflow | Weak | Status nodes inside a workflow |
+| 32 | [workflow_transition](#32-workflow_transition) | Workflow | Weak | Directed transitions and guard rules |
+| 33 | [document_cost_templates](#33-document_cost_templates) | Documents | Associative | Suggested document cost by procedure type |
+| 34 | [notebooks](#34-notebooks) | Protocol | Strong | A notary's yearly protocol notebooks |
+| 35 | [procedure_folders](#35-procedure_folders) | Deed management | Weak | Numbered folders for the procedures of a management |
+| 36 | [registration_drafts](#36-registration_drafts) | Protocol | Weak | Registry registration drafts for deeds |
+| 37 | [revoked_tokens](#37-revoked_tokens) | Security | Strong | JWT ids revoked at logout until they expire |
 
 ---
 
 ## 3. Flyway synchronization and compensation
 
-### Revisión del esquema activo
+### Active schema
 
-La base de datos actual refleja la evolución real del sistema a través de Flyway V1–V43. Los cambios relevantes para la integridad del modelo son:
+The database is the result of Flyway V1–V45. Changes that matter for this model:
 
-- V1: esquema base relacional con entidades de sujetos, protocolo, trámites, presupuestos y documentación.
-- V3/V4: se corrigen columnas faltantes en `items`, `folio_types` y `testimonies`.
-- V5: se normaliza `testimony_movements` para que coincida con el nombre de la entidad JPA (`id`, `entry_date`, `registered`, `folder_number`).
-- V6: `submitted_documents.fk_id_procedure` pasa a ser opcional para soportar documentos autónomos.
-- V7/V8: se incorporan `workflow_definition`, `workflow_node`, `workflow_transition` y la referencia desde `procedure_types` al workflow.
-- V9: se incorporan `roles` y `role_modules`, y se enlaza `users` con `fk_id_role`.
-- V13: `procedures.nombre` y `procedures.numero` pasan a ser opcionales para coincidir con las entidades de negocio.
-- V14: se elimina la FK redundante `budgets.fk_id_tramite`; la relación canónica quedó en `procedures.fk_id_budget` (1:N).
-- V43: se incorpora `revoked_tokens`, la lista de revocación de JWT por cierre de sesión (issue #676); sin FK.
+- V1: base relational schema for people, protocol, procedures, budgets, and documents.
+- V3/V4: missing columns on `items`, `folio_types`, and `testimonies`.
+- V5: `testimony_movements` matches the JPA entity (`id`, `entry_date`, `registered`, `folder_number`).
+- V6: `submitted_documents.fk_id_procedure` is optional so a document can stand alone.
+- V7/V8: `workflow_definition`, `workflow_node`, `workflow_transition`, and the link from `procedure_types`.
+- V9: `roles`, `role_modules`, and `users.fk_id_role`.
+- V13: `procedures.name` and `procedures.number` become optional. Those columns were renamed from `nombre` and `numero` in V31.
+- V14: `budgets.fk_id_tramite` was removed. The canonical link is `procedures.fk_id_budget` (one to many).
+- V43: `revoked_tokens`, the JWT revocation list for logout (issue #676); no foreign key.
+- V45: renames the remaining Spanish columns (`fk_id_budget`, `birth_date`, `node_type`, and the rest). Applied migration filenames V1–V44 stay as recorded.
 
-### Matriz de entidades, PK/FK y mecanismo de compensación
+### Entity, key, and compensation matrix
 
-| Entidad | PK principal | FK relevantes | Mecanismo de compensación | Observación de sincronía |
+| Entity | Primary key | Relevant foreign keys | Compensation | Sync note |
 |---|---|---|---|---|
-| `concepts` | `id` | — | Sin compensación | Tabla maestra, no depende de otras entidades |
-| `copies` | `id` | `fk_id_testimony`, `fk_id_person` | `I: Impedir`, `M: Impedir`, `B: Impedir` (RESTRICT por defecto) | Efectúa copies de testimonios |
-| `submitted_documents` | `id` | `fk_id_procedure`, `fk_id_document_type` | `I: Null` si no hay trámite, `M: Impedir`, `B: Impedir` | Compatible con V6: trámite opcional |
-| `deeds` | `id` | — | Sin compensación | Matriz protocolares |
-| `management_statuses` | `id` | — | Sin compensación | Catálogo de estados |
-| `folios` | `id` | `fk_id_deed`, `fk_id_folio_type`, `fk_id_notary_person` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Folio del protocolo |
-| `folio_copies` | `fk_id_folio + fk_id_copy` | `fk_id_folio`, `fk_id_copy` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Tabla asociativa |
-| `deed_managements` | `id` | `fk_id_notary_person`, `fk_id_management_status` | `I: Impedir`, `M: Impedir`, `B: Impedir` / `SET NULL` en estado si se deja nulo | Agrupa trámites |
-| `history` | `id` | `fk_id_deed_management`, `fk_id_management_status` | `I: Impedir`, `M: Impedir`, `B: Cascada` en gestión | Histórico de estados |
-| `properties` | `id` | — | Sin compensación | Bien inmueble |
-| `items` | `id` | `fk_id_budget` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Límite de presupuesto |
-| `testimony_movements` | `id` | `fk_id_testimony` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Corresponde a V5 |
-| `payments` | `id` | `fk_id_budget` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Liquidación de cobros |
-| `people` | `id` | `fk_id_identification_type` | `I: Null` si corresponde, `M: Impedir`, `B: Impedir` | Entidad central del sistema |
-| `budget_templates` | `fk_id_procedure_type + fk_id_concept` | `fk_id_procedure_type`, `fk_id_concept` | `I: Impedir`, `M: Impedir`, `B: Cascada` en `concepts` | Plantilla arancelaria |
-| `procedure_templates` | `fk_id_procedure_type + fk_id_document_type` | `fk_id_procedure_type`, `fk_id_document_type` | `I: Impedir`, `M: Impedir`, `B: Cascada` en documento | Requisitos documentales |
-| `budgets` | `id` | `fk_id_person` | `I: Impedir`, `M: Impedir`, `B: Impedir` | La FK a trámite fue removida en V14 |
-| `audit_records` | `id` | `fk_id_user` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Auditoría de transacciones |
-| `roles` | `id` | — | Sin compensación | Catálogo de perfiles |
-| `role_modules` | `fk_id_role + modulo` | `fk_id_role` | `I: Impedir`, `M: Impedir`, `B: Cascada` | V9; permisos por módulo |
-| `substitutions` | `id` | `fk_id_substituted_person`, `fk_id_substitute_person` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Cobertura de escribanos |
-| `testimonies` | `id` | `fk_id_deed` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Testimony generado desde escritura |
-| `document_types` | `id` | — | Sin compensación | Catálogo maestra de documentos |
-| `folio_types` | `id` | — | Sin compensación | Catálogo maestra de folios |
-| `procedure_types` | `id` | `fk_workflow_definition_id` | `I: Null`, `M: Impedir`, `B: Impedir` (por defecto, no cascade) | V8: workflow opcional |
-| `identification_types` | `id` | — | Sin compensación | Catálogo de documentos de identidad |
-| `procedures` | `id` | `fk_id_procedure_type`, `fk_id_deed_management`, `fk_id_deed`, `fk_id_budget`, `fk_id_property` | `I: Impedir` / `Null` según columna, `M: Impedir`, `B: Impedir` o `SET NULL` según caso | Relación canónica con presupuesto en V14 |
-| `person_procedures` | `fk_id_procedure + fk_id_client_person` | `fk_id_procedure`, `fk_id_client_person` | `I: Impedir`, `M: Impedir`, `B: Cascada` en trámite | Tabla asociativa de participación |
-| `users` | `id` | `fk_id_person`, `fk_id_role` | `I: Impedir` / `Null`, `M: Impedir`, `B: Impedir` | Acceso y autenticación |
-| `workflow_definition` | `id_workflow_definition` | — | Sin compensación | Definición del grafo de estados |
-| `workflow_node` | `id_workflow_node` | `fk_workflow_definition_id`, `fk_management_status_id` | `I: Impedir`, `M: Impedir`, `B: Cascada` en workflow | Nodos del flujo |
-| `workflow_transition` | `id_workflow_transition` | `fk_workflow_definition_id`, `fk_origin_node_id`, `fk_destination_node_id` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Transiciones del flujo |
-| `document_cost_templates` | `fk_id_procedure_type + fk_id_document_type` | `fk_id_procedure_type`, `fk_id_document_type` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Costo sugerido por documento |
-| `notebooks` | `id` | `fk_id_notary_person` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Notebook anual de protocolo |
-| `procedure_folders` | `id` | `fk_id_deed_management`, `fk_id_procedure` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Carpetas numeradas de trámites (CU85) |
-| `registration_drafts` | `id` | `fk_id_deed` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Borrador de inscripción registral |
+| `concepts` | `id` | — | No compensation | Master table; it does not depend on other entities |
+| `copies` | `id` | `fk_id_testimony`, `fk_id_person` | `I: Restrict`, `M: Restrict`, `B: Restrict` (RESTRICT by default) | Issues copies of testimonies |
+| `submitted_documents` | `id` | `fk_id_procedure`, `fk_id_document_type` | `I: Null` when there is no procedure, `M: Restrict`, `B: Restrict` | Matches V6: the procedure is optional |
+| `deeds` | `id` | — | No compensation | Source deeds |
+| `management_statuses` | `id` | — | No compensation | Status catalog |
+| `folios` | `id` | `fk_id_deed`, `fk_id_folio_type`, `fk_id_notary_person` | `I: Restrict`, `M: Restrict`, `B: Restrict` | Protocol sheet |
+| `folio_copies` | `fk_id_folio + fk_id_copy` | `fk_id_folio`, `fk_id_copy` | `I: Restrict`, `M: Restrict`, `B: Restrict` | Association table |
+| `deed_managements` | `id` | `fk_id_notary_person`, `fk_id_management_status` | `I: Restrict`, `M: Restrict`, `B: Restrict` / `SET NULL` on status when left null | Groups procedures |
+| `history` | `id` | `fk_id_deed_management`, `fk_id_management_status` | `I: Restrict`, `M: Restrict`, `B: Cascade` on the deed management | Status history |
+| `properties` | `id` | — | No compensation | Real property |
+| `items` | `id` | `fk_id_budget` | `I: Restrict`, `M: Restrict`, `B: Cascade` | Belongs to a budget |
+| `testimony_movements` | `id` | `fk_id_testimony` | `I: Restrict`, `M: Restrict`, `B: Cascade` | Matches V5 |
+| `payments` | `id` | `fk_id_budget` | `I: Restrict`, `M: Restrict`, `B: Cascade` | Payment receipts |
+| `people` | `id` | `fk_id_identification_type` | `I: Null` when it applies, `M: Restrict`, `B: Restrict` | Central entity |
+| `budget_templates` | `fk_id_procedure_type + fk_id_concept` | `fk_id_procedure_type`, `fk_id_concept` | `I: Restrict`, `M: Restrict`, `B: Cascade` on `concepts` | Fee template |
+| `procedure_templates` | `fk_id_procedure_type + fk_id_document_type` | `fk_id_procedure_type`, `fk_id_document_type` | `I: Restrict`, `M: Restrict`, `B: Cascade` on the document | Document requirements |
+| `budgets` | `id` | `fk_id_person` | `I: Restrict`, `M: Restrict`, `B: Restrict` | The procedure foreign key was removed in V14 |
+| `audit_records` | `id` | `fk_id_user` | `I: Restrict`, `M: Restrict`, `B: Restrict` | Transaction audit |
+| `roles` | `id` | — | No compensation | Role catalog |
+| `role_modules` | `fk_id_role + module` | `fk_id_role` | `I: Restrict`, `M: Restrict`, `B: Cascade` | V9; permissions by module |
+| `substitutions` | `id` | `fk_id_substituted_person`, `fk_id_substitute_person` | `I: Restrict`, `M: Restrict`, `B: Restrict` | Notary coverage |
+| `testimonies` | `id` | `fk_id_deed` | `I: Restrict`, `M: Restrict`, `B: Cascade` | Testimony issued from a deed |
+| `document_types` | `id` | — | No compensation | Document catalog |
+| `folio_types` | `id` | — | No compensation | Folio-type catalog |
+| `procedure_types` | `id` | `fk_workflow_definition_id` | `I: Null`, `M: Restrict`, `B: Restrict` (default, no cascade) | V8: the workflow is optional |
+| `identification_types` | `id` | — | No compensation | Identification-type catalog |
+| `procedures` | `id` | `fk_id_procedure_type`, `fk_id_deed_management`, `fk_id_deed`, `fk_id_budget`, `fk_id_property` | `I: Restrict` / `Null` by column, `M: Restrict`, `B: Restrict` or `SET NULL` by case | Canonical budget link since V14 |
+| `person_procedures` | `fk_id_procedure + fk_id_client_person` | `fk_id_procedure`, `fk_id_client_person` | `I: Restrict`, `M: Restrict`, `B: Cascade` on the procedure | Participation association table |
+| `users` | `id` | `fk_id_person`, `fk_id_role` | `I: Restrict` / `Null`, `M: Restrict`, `B: Restrict` | Access and authentication |
+| `workflow_definition` | `id_workflow_definition` | — | No compensation | State-graph definition |
+| `workflow_node` | `id_workflow_node` | `fk_workflow_definition_id`, `fk_management_status_id` | `I: Restrict`, `M: Restrict`, `B: Cascade` on the workflow | Flow nodes |
+| `workflow_transition` | `id_workflow_transition` | `fk_workflow_definition_id`, `fk_origin_node_id`, `fk_destination_node_id` | `I: Restrict`, `M: Restrict`, `B: Cascade` | Flow transitions |
+| `document_cost_templates` | `fk_id_procedure_type + fk_id_document_type` | `fk_id_procedure_type`, `fk_id_document_type` | `I: Restrict`, `M: Restrict`, `B: Cascade` | Suggested cost per document |
+| `notebooks` | `id` | `fk_id_notary_person` | `I: Restrict`, `M: Restrict`, `B: Restrict` | Yearly protocol notebook |
+| `procedure_folders` | `id` | `fk_id_deed_management`, `fk_id_procedure` | `I: Restrict`, `M: Restrict`, `B: Restrict` | Numbered procedure folders (CU85) |
+| `registration_drafts` | `id` | `fk_id_deed` | `I: Restrict`, `M: Restrict`, `B: Restrict` | Registry registration draft |
 
-> La regla general del esquema vigente es que la mayoría de las relaciones usan restricciones por defecto de PostgreSQL (RESTRICT / NO ACTION), y solo se habilitan compensaciones explícitas con ON DELETE CASCADE o columnas anulables cuando la migración lo define.
+> Most relationships use PostgreSQL's default (RESTRICT / NO ACTION). ON DELETE CASCADE and nullable columns appear only where a migration defines them.
 
 ## 4. Table specifications
 
@@ -143,13 +144,13 @@ Master catalog of fee concepts, professional fees, contributions, and notarial t
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco del concepto arancelario |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista (Hibernate) |
-| `name` | TEXT | No | No | Yes | — | — | Denominación del concepto (e.g., Honorarios, Aporte Caja Notarial) |
-| `amount` | NUMERIC(19,2) | No | No | Yes | 0 | — | Importe fijo de referencia en moneda de curso legal |
-| `percentage` | INTEGER | No | No | Yes | 0 | — | Porcentaje estándar aplicable sobre el monto del acto |
-| `enabled` | BOOLEAN | No | No | Yes | — | — | Indica si el concepto está disponible para presupuestos |
-| `fixed_concept` | BOOLEAN | No | No | Yes | — | — | `true` si es importe fijo, `false` si es liquidación porcentual |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the fee concept |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock (Hibernate) |
+| `name` | TEXT | No | No | Yes | — | — | Concept name (for example `Honorarios`). Stored names stay. |
+| `amount` | NUMERIC(19,2) | No | No | Yes | 0 | — | Fixed reference amount |
+| `percentage` | INTEGER | No | No | Yes | 0 | — | Standard percentage applied to the act amount |
+| `enabled` | BOOLEAN | No | No | Yes | — | — | Whether the concept can be used on budgets |
+| `fixed_concept` | BOOLEAN | No | No | Yes | — | — | `true` when the amount is fixed, `false` when it is a percentage |
 
 ---
 
@@ -159,14 +160,14 @@ Printed copies issued from a source notarial testimony.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco del ejemplar de copia |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `number` | INTEGER | No | No | Yes | — | — | Número correlativo de copia emitida |
-| `print_date` | DATE | No | No | Yes | — | — | Fecha de expedición e impresión de la copia |
-| `pickup_date` | DATE | No | No | No | NULL | — | Fecha en que fue retirada por el interesado |
-| `notes` | TEXT | No | No | No | NULL | — | Registro de entrega o atestaciones |
-| `fk_id_testimony` | INTEGER | No | Yes | No | NULL | `testimonies(id)` | Testimony matriz originario |
-| `fk_id_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Person a quien se le expide o entrega la copia |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the copy |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `number` | INTEGER | No | No | Yes | — | — | Serial number of the issued copy |
+| `print_date` | DATE | No | No | Yes | — | — | Date the copy was issued and printed |
+| `pickup_date` | DATE | No | No | No | NULL | — | Date the interested party picked it up |
+| `notes` | TEXT | No | No | No | NULL | — | Delivery record or attestations |
+| `fk_id_testimony` | INTEGER | No | Yes | No | NULL | `testimonies(id)` | Source testimony |
+| `fk_id_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Person the copy is issued or delivered to |
 
 ---
 
@@ -176,27 +177,27 @@ Documents and certificates filed for a procedure, or created on their own (V6).
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco de la pieza documental |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `name` | TEXT | No | No | Yes | — | — | Nombre descriptivo del documento presentado |
-| `folder_number` | INTEGER | No | No | No | NULL | — | Número de cartón de mesa de entrada de organismo externo |
-| `entry_date` | DATE | No | No | No | NULL | — | Fecha en que se ingresó o solicitó ante organismo externo |
-| `exit_date` | DATE | No | No | No | NULL | — | Fecha de devolución por parte del organismo |
-| `prepared` | BOOLEAN | No | No | Yes | — | — | `true` si fue confeccionado en la escribanía |
-| `expires` | BOOLEAN | No | No | Yes | — | — | Indica si el documento está sujeto a caducidad |
-| `due_date` | DATE | No | No | No | NULL | — | Fecha límite de validez legal |
-| `due_days` | INTEGER | No | No | No | NULL | — | Plazo de vigencia en días |
-| `amount_to_pay` | NUMERIC(19,2) | No | No | No | NULL | — | Monto real de sellado o tasa liquidada |
-| `payment_date` | DATE | No | No | No | NULL | — | Fecha de efectivización del pago de la tasa |
-| `released` | BOOLEAN | No | No | Yes | — | — | `true` si se emitió constancia de libre deuda |
-| `released_date` | DATE | No | No | No | NULL | — | Fecha de acreditación de liberación |
-| `observed` | BOOLEAN | No | No | Yes | — | — | `true` si el organismo formuló observaciones técnicas |
-| `notes` | TEXT | No | No | No | NULL | — | Notas técnicas o requisitos de subsanación |
-| `delivered` | BOOLEAN | No | No | No | false | — | `true` si ya fue entregado a la entidad requirente |
-| `reentered` | BOOLEAN | No | No | No | NULL | — | `true` si fue reingresado tras subsanar (V6 nullable) |
-| `delivered_by` | TEXT | No | No | Yes | — | — | Origen de provisión (`Cliente` o `Entidad Externa`) |
-| `fk_id_procedure` | INTEGER | No | Yes | No | NULL | `procedures(id)` | Trámite al que pertenece (V6: opcional) |
-| `fk_id_document_type` | INTEGER | No | Yes | No | NULL | `document_types(id)` | Tipo de documento maestro |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the document |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `name` | TEXT | No | No | Yes | — | — | Name of the submitted document |
+| `folder_number` | INTEGER | No | No | No | NULL | — | External-agency intake folder number |
+| `entry_date` | DATE | No | No | No | NULL | — | Date it was filed with or requested from an external agency |
+| `exit_date` | DATE | No | No | No | NULL | — | Date the agency returned it |
+| `prepared` | BOOLEAN | No | No | Yes | — | — | `true` when it was prepared in the practice |
+| `expires` | BOOLEAN | No | No | Yes | — | — | Whether the document expires |
+| `due_date` | DATE | No | No | No | NULL | — | Legal expiry date |
+| `due_days` | INTEGER | No | No | No | NULL | — | Validity period in days |
+| `amount_to_pay` | NUMERIC(19,2) | No | No | No | NULL | — | Stamp or tax amount actually charged |
+| `payment_date` | DATE | No | No | No | NULL | — | Date the tax payment was completed |
+| `released` | BOOLEAN | No | No | Yes | — | — | `true` when a clearance certificate was issued |
+| `released_date` | DATE | No | No | No | NULL | — | Date the clearance was recorded |
+| `observed` | BOOLEAN | No | No | Yes | — | — | `true` when the agency recorded technical observations |
+| `notes` | TEXT | No | No | No | NULL | — | Technical notes or correction requirements |
+| `delivered` | BOOLEAN | No | No | No | false | — | `true` when it was delivered to the requesting entity |
+| `reentered` | BOOLEAN | No | No | No | NULL | — | `true` when it was re-entered after a correction (nullable since V6) |
+| `delivered_by` | TEXT | No | No | Yes | — | — | Supply origin (`Cliente` or `Entidad Externa`). Those stored values stay. |
+| `fk_id_procedure` | INTEGER | No | Yes | No | NULL | `procedures(id)` | Procedure it belongs to (optional since V6) |
+| `fk_id_document_type` | INTEGER | No | Yes | No | NULL | `document_types(id)` | Master document type |
 
 ---
 
@@ -206,15 +207,15 @@ The source deed granted in the notarial protocol.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador interno de la escritura matriz |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `number` | INTEGER | No | No | Yes | — | — | Número correlativo anual de escritura dentro del protocolo |
-| `deed_date` | DATE | No | No | Yes | — | — | Fecha de otorgamiento y celebración del acto |
-| `body` | TEXT | No | No | Yes | — | — | Texto legal íntegro de la escritura protocolar |
-| `status` | TEXT | No | No | Yes | — | — | Estado de la escritura (`Preparada`, `Firmada`, `No Pasó`, `Errose`) |
-| `registration_number` | TEXT | No | No | No | NULL | — | Matrícula registral otorgada por el Registro |
-| `registration_date` | DATE | No | No | No | NULL | — | Fecha de inscripción definitiva |
-| `notes` | TEXT | No | No | No | NULL | — | Notas marginales y atestados notariales |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Internal id of the source deed |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `number` | INTEGER | No | No | Yes | — | — | Yearly serial number of the deed in the protocol |
+| `deed_date` | DATE | No | No | Yes | — | — | Date the act was granted |
+| `body` | TEXT | No | No | Yes | — | — | Full legal text of the protocol deed |
+| `status` | TEXT | No | No | Yes | — | — | Deed status. Stored values `Preparada`, `Firmada`, `No Pasó`, and `Errose` stay. |
+| `registration_number` | TEXT | No | No | No | NULL | — | Registration number granted by the registry |
+| `registration_date` | DATE | No | No | No | NULL | — | Final registration date |
+| `notes` | TEXT | No | No | No | NULL | — | Marginal notes and notarial attestations |
 
 ---
 
@@ -224,10 +225,10 @@ Catalog of operational statuses a deed management can move through. Stored statu
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador del estado de gestión |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `name` | TEXT | No | No | Yes | — | — | Nombre del estado (e.g., `Generado`, `En proceso`, `Listo para firmar`) |
-| `notes` | TEXT | No | No | No | NULL | — | Definición funcional y condiciones |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Management-status id |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `name` | TEXT | No | No | Yes | — | — | Status name. Stored examples such as `Generado`, `En proceso`, and `Listo para firmar` stay. |
+| `notes` | TEXT | No | No | No | NULL | — | Functional definition and conditions |
 
 ---
 
@@ -237,16 +238,16 @@ Protocol sheets supplied for recording public deeds.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco del folio notarial |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `number` | INTEGER | No | No | Yes | — | — | Número oficial correlativo impreso en el folio |
-| `year_number` | INTEGER | No | No | Yes | — | — | Año calendario del protocolo correspondiente |
-| `status` | TEXT | No | No | Yes | — | — | Estado (`Disponible`, `Usado`, `Errose`, `No Pasó`) |
-| `notes` | TEXT | No | No | No | NULL | — | Justificación de contingencias o atestados |
-| `fk_id_deed` | INTEGER | No | Yes | No | NULL | `deeds(id)` | Deed en la que fue utilizado |
-| `fk_id_folio_type` | INTEGER | No | Yes | Yes | — | `folio_types(id)` | Clasificación de uso del folio |
-| `fk_id_notary_person` | INTEGER | No | Yes | Yes | — | `people(id)` | Escribano responsable titular del registro |
-| `fk_id_notebook` | INTEGER | No | Yes | No | NULL | `notebooks(id)` | Notebook al que pertenece el folio |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the protocol sheet |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `number` | INTEGER | No | No | Yes | — | — | Official serial number printed on the sheet |
+| `year_number` | INTEGER | No | No | Yes | — | — | Calendar year of the protocol |
+| `status` | TEXT | No | No | Yes | — | — | Status. Stored values `Disponible`, `Usado`, `Errose`, and `No Pasó` stay. |
+| `notes` | TEXT | No | No | No | NULL | — | Notes on exceptions or attestations |
+| `fk_id_deed` | INTEGER | No | Yes | No | NULL | `deeds(id)` | Deed that used this sheet |
+| `fk_id_folio_type` | INTEGER | No | Yes | Yes | — | `folio_types(id)` | How the sheet is classified |
+| `fk_id_notary_person` | INTEGER | No | Yes | Yes | — | `people(id)` | Notary responsible for the register |
+| `fk_id_notebook` | INTEGER | No | Yes | No | NULL | `notebooks(id)` | Notebook this sheet belongs to |
 
 ---
 
@@ -256,9 +257,9 @@ Associates testimony sheets with the copies that were issued.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `fk_id_folio` | INTEGER | Yes | Yes | Yes | — | `folios(id)` | Folio especial de testimonio |
-| `fk_id_copy` | INTEGER | Yes | Yes | Yes | — | `copies(id)` | Copy expedida |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
+| `fk_id_folio` | INTEGER | Yes | Yes | Yes | — | `folios(id)` | Special testimony sheet |
+| `fk_id_copy` | INTEGER | Yes | Yes | Yes | — | `copies(id)` | Issued copy |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
 
 ---
 
@@ -268,15 +269,15 @@ File that groups one or more related procedures.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco de la gestión |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `number` | INTEGER | No | No | Yes | — | — | Número correlativo anual de la gestión |
-| `start_date` | DATE | No | No | Yes | — | — | Fecha de apertura de la carpeta |
-| `heading` | TEXT | No | No | Yes | — | — | Carátula descriptiva del objeto de la gestión |
-| `notes` | TEXT | No | No | No | NULL | — | Notas operativas de tramitación |
-| `fk_id_notary_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Escribano a cargo de la gestión |
-| `fk_id_management_status` | INTEGER | No | Yes | No | NULL | `management_statuses(id)` | Estado operativo consolidado |
-| `pending_debt_on_archive` | BOOLEAN | No | No | No | NULL | — | `true` si la gestión se archivó con deuda pendiente |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the deed management |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `number` | INTEGER | No | No | Yes | — | — | Yearly serial number of the management |
+| `start_date` | DATE | No | No | Yes | — | — | Date the file was opened |
+| `heading` | TEXT | No | No | Yes | — | — | Heading that describes the management |
+| `notes` | TEXT | No | No | No | NULL | — | Working notes |
+| `fk_id_notary_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Notary in charge |
+| `fk_id_management_status` | INTEGER | No | Yes | No | NULL | `management_statuses(id)` | Current operational status |
+| `pending_debt_on_archive` | BOOLEAN | No | No | No | NULL | — | `true` when the management was archived with a pending debt |
 
 ---
 
@@ -286,12 +287,12 @@ Chronological history of status changes for a deed management.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador del registro histórico |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `event_date` | DATE | No | No | Yes | — | — | Fecha del cambio de estado |
-| `notes` | TEXT | No | No | No | NULL | — | Motivo o atestación del cambio de estado |
-| `fk_id_deed_management` | INTEGER | No | Yes | No | NULL | `deed_managements(id)` | Gestión que transitó de estado |
-| `fk_id_management_status` | INTEGER | No | Yes | No | NULL | `management_statuses(id)` | Estado alcanzado |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | History-row id |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `event_date` | DATE | No | No | Yes | — | — | Date of the status change |
+| `notes` | TEXT | No | No | No | NULL | — | Reason or attestation for the status change |
+| `fk_id_deed_management` | INTEGER | No | Yes | No | NULL | `deed_managements(id)` | Deed management that changed status |
+| `fk_id_management_status` | INTEGER | No | Yes | No | NULL | `management_statuses(id)` | Status reached |
 
 ---
 
@@ -301,25 +302,25 @@ Real property and its cadastral and registry details.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco del inmueble |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `nomenclature` | TEXT | No | No | No | NULL | — | Nomenclatura catastral oficial |
-| `registration_number` | TEXT | No | No | No | NULL | — | Matrícula del Registro de la Propiedad |
-| `valuation_year` | INTEGER | No | No | No | NULL | — | Año de la valuación fiscal |
-| `fiscal_valuation` | NUMERIC(19,2) | No | No | No | NULL | — | Monto fiscal oficial de tasación |
-| `record_number` | INTEGER | No | No | No | NULL | — | Número de partida inmobiliaria |
-| `district` | TEXT | No | No | No | NULL | — | Circunscripción |
-| `section` | TEXT | No | No | No | NULL | — | Sección |
-| `zone` | TEXT | No | No | No | NULL | — | Zona |
-| `block` | TEXT | No | No | No | NULL | — | Manzana |
-| `parcel` | TEXT | No | No | No | NULL | — | Parcela |
-| `polygon` | TEXT | No | No | No | NULL | — | Polígono |
-| `functional_unit` | TEXT | No | No | No | NULL | — | Unidad funcional (PH) |
-| `address` | TEXT | No | No | No | NULL | — | Dirección física del inmueble |
-| `locality` | TEXT | No | No | No | NULL | — | Localidad de ubicación |
-| `notes` | TEXT | No | No | No | NULL | — | Linderos y especificaciones |
-| `registry_volume_folio` | VARCHAR(255) | No | No | No | NULL | — | Tomo y folio de inscripción en el Registro de la Propiedad |
-| `boundaries` | TEXT | No | No | No | NULL | — | Linderos del inmueble |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the property |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `nomenclature` | TEXT | No | No | No | NULL | — | Official cadastral nomenclature |
+| `registration_number` | TEXT | No | No | No | NULL | — | Property-registry registration number |
+| `valuation_year` | INTEGER | No | No | No | NULL | — | Year of the fiscal valuation |
+| `fiscal_valuation` | NUMERIC(19,2) | No | No | No | NULL | — | Official fiscal valuation amount |
+| `record_number` | INTEGER | No | No | No | NULL | — | Property parcel number |
+| `district` | TEXT | No | No | No | NULL | — | District |
+| `section` | TEXT | No | No | No | NULL | — | Section |
+| `zone` | TEXT | No | No | No | NULL | — | Zone |
+| `block` | TEXT | No | No | No | NULL | — | Block |
+| `parcel` | TEXT | No | No | No | NULL | — | Parcel |
+| `polygon` | TEXT | No | No | No | NULL | — | Polygon |
+| `functional_unit` | TEXT | No | No | No | NULL | — | Functional unit |
+| `address` | TEXT | No | No | No | NULL | — | Street address of the property |
+| `locality` | TEXT | No | No | No | NULL | — | Locality |
+| `notes` | TEXT | No | No | No | NULL | — | Boundaries and other notes |
+| `registry_volume_folio` | VARCHAR(255) | No | No | No | NULL | — | Volume and folio of the property-registry inscription |
+| `boundaries` | TEXT | No | No | No | NULL | — | Property boundaries |
 
 ---
 
@@ -329,16 +330,16 @@ Fee lines charged on a budget (V3/V4).
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco del ítem |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `name` | TEXT | No | No | Yes | — | — | Concept o partida liquidada |
-| `amount` | NUMERIC(19,2) | No | No | Yes | — | — | Monto resultante de la línea |
-| `percentage` | INTEGER | No | No | Yes | — | — | Porcentaje aplicado en la liquidación |
-| `fixed_concept` | BOOLEAN | No | No | Yes | — | — | `true` si es importe fijo, `false` si es porcentual |
-| `fk_id_budget` | INTEGER | No | Yes | No | NULL | `budgets(id)` | Presupuesto al que pertenece |
-| `notes` | TEXT | No | No | No | NULL | — | Notas justificativas de la partida (V3/V4) |
-| `item_type` | VARCHAR(20) | No | No | Yes | 'NORMAL' | — | Clase de ítem presupuestario (por defecto `NORMAL`) |
-| `reason` | VARCHAR(255) | No | No | No | NULL | — | Motivo declarado del ítem cuando no es un concepto ordinario |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the line |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `name` | TEXT | No | No | Yes | — | — | Concept or charged line |
+| `amount` | NUMERIC(19,2) | No | No | Yes | — | — | Resulting line amount |
+| `percentage` | INTEGER | No | No | Yes | — | — | Percentage applied |
+| `fixed_concept` | BOOLEAN | No | No | Yes | — | — | `true` when the amount is fixed, `false` when it is a percentage |
+| `fk_id_budget` | INTEGER | No | Yes | No | NULL | `budgets(id)` | Budget this line belongs to |
+| `notes` | TEXT | No | No | No | NULL | — | Justification notes (V3/V4) |
+| `item_type` | VARCHAR(20) | No | No | Yes | 'NORMAL' | — | Budget line class (default `NORMAL`) |
+| `reason` | VARCHAR(255) | No | No | No | NULL | — | Stated reason when the line is not an ordinary concept |
 
 ---
 
@@ -348,16 +349,16 @@ Registry presentation entries for a testimony (V5).
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador del movimiento registral (V5) |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `entry_date` | DATE | No | No | Yes | — | — | Fecha de ingreso del movimiento (V5) |
-| `notes` | TEXT | No | No | No | NULL | — | Notas y despachos registrales |
-| `fk_id_testimony` | INTEGER | No | Yes | No | NULL | `testimonies(id)` | Testimony objeto del trámite |
-| `exit_date` | DATE | No | No | No | NULL | — | Fecha de devolución del Registro (V5) |
-| `registration_date` | DATE | No | No | No | NULL | — | Fecha en que se perfeccionó la inscripción (V5) |
-| `registered` | BOOLEAN | No | No | Yes | false | — | `true` si la inscripción resultó favorable (V5) |
-| `folder_number` | INTEGER | No | No | Yes | 0 | — | Número de cartón de presentación (V5) |
-| `observed_by_registry` | BOOLEAN | No | No | Yes | false | — | `true` si el registro devolvió observado el testimonio al reingresarlo (CU44); exige observaciones |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Registry-movement id (V5) |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `entry_date` | DATE | No | No | Yes | — | — | Entry date of the movement (V5) |
+| `notes` | TEXT | No | No | No | NULL | — | Registry notes |
+| `fk_id_testimony` | INTEGER | No | Yes | No | NULL | `testimonies(id)` | Testimony this movement belongs to |
+| `exit_date` | DATE | No | No | No | NULL | — | Date the registry returned it (V5) |
+| `registration_date` | DATE | No | No | No | NULL | — | Date registration was completed (V5) |
+| `registered` | BOOLEAN | No | No | Yes | false | — | `true` when registration succeeded (V5) |
+| `folder_number` | INTEGER | No | No | Yes | 0 | — | Presentation folder number (V5) |
+| `observed_by_registry` | BOOLEAN | No | No | Yes | false | — | `true` when the registry returned the testimony as observed on re-entry (CU44); observations are required |
 
 ---
 
@@ -367,13 +368,13 @@ Receipts applied to a budget.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco del recibo |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `payment_date` | DATE | No | No | Yes | — | — | Fecha de realización del pago |
-| `amount` | NUMERIC(19,2) | No | No | Yes | — | — | Importe percibido |
-| `notes` | TEXT | No | No | No | NULL | — | Medio de pago y constancias |
-| `fk_id_budget` | INTEGER | No | Yes | No | NULL | `budgets(id)` | Presupuesto cancelado |
-| `payment_method` | TEXT | No | No | No | NULL | — | Medio de pago utilizado |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the receipt |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `payment_date` | DATE | No | No | Yes | — | — | Payment date |
+| `amount` | NUMERIC(19,2) | No | No | Yes | — | — | Amount received |
+| `notes` | TEXT | No | No | No | NULL | — | Payment method and evidence |
+| `fk_id_budget` | INTEGER | No | Yes | No | NULL | `budgets(id)` | Budget this payment applies to |
+| `payment_method` | TEXT | No | No | No | NULL | — | Payment method used |
 
 ---
 
@@ -383,31 +384,31 @@ People, natural or legal, who take part in the practice.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco de la persona |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `last_name` | TEXT | No | No | Yes | — | — | Apellido o denominación societaria |
-| `first_name` | TEXT | No | No | Yes | — | — | Nombres de pila o razón social |
-| `identification_number` | TEXT | No | No | Yes | — | — | Identificación civil principal |
-| `tax_id` | TEXT | No | No | No | NULL | — | Clave tributaria CUIT / CUIL |
-| `sex` | TEXT | No | No | No | NULL | — | Sexo / Género legal |
-| `birth_date` | DATE | No | No | No | NULL | — | Fecha de nacimiento |
-| `marital_status` | TEXT | No | No | No | NULL | — | Estado civil |
-| `marriage_count` | INTEGER | No | No | No | NULL | — | Número de nupcias si contrajo matrimonio |
-| `occupation` | TEXT | No | No | No | NULL | — | Ocupación laboral |
-| `address` | TEXT | No | No | No | NULL | — | Domicilio real / legal |
-| `email` | TEXT | No | No | No | NULL | — | Correo electrónico principal |
-| `notary_registration_number` | INTEGER | No | No | No | NULL | — | Número de Registro Notarial (escribanos) |
-| `is_client` | BOOLEAN | No | No | Yes | false | — | `true` si es cliente de la escribanía |
-| `locality` | TEXT | No | No | No | NULL | — | Localidad |
-| `province` | TEXT | No | No | No | NULL | — | Provincia |
-| `phone` | TEXT | No | No | No | NULL | — | Teléfono fijo |
-| `mobile_phone` | TEXT | No | No | No | NULL | — | Teléfono celular |
-| `secondary_email` | TEXT | No | No | No | NULL | — | Correo electrónico secundario/histórico |
-| `nationality` | TEXT | No | No | No | NULL | — | Nacionalidad de la persona |
-| `profession` | TEXT | No | No | No | NULL | — | Profesión u oficio |
-| `notes` | TEXT | No | No | No | NULL | — | Legajo y antecedentes de la persona |
-| `fk_id_identification_type` | INTEGER | No | Yes | No | NULL | `identification_types(id)` | Tipo de identificación principal |
-| `is_notary` | BOOLEAN | No | No | Yes | false | — | `true` si es escribano habilitado |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the person |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `last_name` | TEXT | No | No | Yes | — | — | Last name or legal name |
+| `first_name` | TEXT | No | No | Yes | — | — | First name or trade name |
+| `identification_number` | TEXT | No | No | Yes | — | — | Primary identification number |
+| `tax_id` | TEXT | No | No | No | NULL | — | Tax id (`CUIT` / `CUIL`). Those stored names stay. |
+| `sex` | TEXT | No | No | No | NULL | — | Legal sex |
+| `birth_date` | DATE | No | No | No | NULL | — | Birth date |
+| `marital_status` | TEXT | No | No | No | NULL | — | Marital status |
+| `marriage_count` | INTEGER | No | No | No | NULL | — | Marriage count |
+| `occupation` | TEXT | No | No | No | NULL | — | Occupation |
+| `address` | TEXT | No | No | No | NULL | — | Residential or legal address |
+| `email` | TEXT | No | No | No | NULL | — | Primary email |
+| `notary_registration_number` | INTEGER | No | No | No | NULL | — | Notary registration number |
+| `is_client` | BOOLEAN | No | No | Yes | false | — | `true` when the person is a client of the practice |
+| `locality` | TEXT | No | No | No | NULL | — | Locality |
+| `province` | TEXT | No | No | No | NULL | — | Province |
+| `phone` | TEXT | No | No | No | NULL | — | Landline |
+| `mobile_phone` | TEXT | No | No | No | NULL | — | Mobile phone |
+| `secondary_email` | TEXT | No | No | No | NULL | — | Secondary or historical email |
+| `nationality` | TEXT | No | No | No | NULL | — | Nationality |
+| `profession` | TEXT | No | No | No | NULL | — | Profession or trade |
+| `notes` | TEXT | No | No | No | NULL | — | File notes and background |
+| `fk_id_identification_type` | INTEGER | No | Yes | No | NULL | `identification_types(id)` | Primary identification type |
+| `is_notary` | BOOLEAN | No | No | Yes | false | — | `true` when the person is a licensed notary |
 
 ---
 
@@ -417,10 +418,10 @@ Associates standard fee concepts with a procedure type.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `fk_id_procedure_type` | INTEGER | Yes | Yes | Yes | — | `procedure_types(id)` | Tipo de trámite |
-| `fk_id_concept` | INTEGER | Yes | Yes | Yes | — | `concepts(id)` | Concept presupuestado |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `notes` | TEXT | No | No | No | NULL | — | Reglas particulares de cómputo |
+| `fk_id_procedure_type` | INTEGER | Yes | Yes | Yes | — | `procedure_types(id)` | Procedure type |
+| `fk_id_concept` | INTEGER | Yes | Yes | Yes | — | `concepts(id)` | Budgeted concept |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `notes` | TEXT | No | No | No | NULL | — | Special calculation rules |
 
 ---
 
@@ -430,10 +431,10 @@ Associates required documents and certificates with a procedure type.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `fk_id_procedure_type` | INTEGER | Yes | Yes | Yes | — | `procedure_types(id)` | Tipo de trámite |
-| `fk_id_document_type` | INTEGER | Yes | Yes | Yes | — | `document_types(id)` | Documento/Certificado requerido |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `notes` | TEXT | No | No | No | NULL | — | Instrucciones específicas de presentación |
+| `fk_id_procedure_type` | INTEGER | Yes | Yes | Yes | — | `procedure_types(id)` | Procedure type |
+| `fk_id_document_type` | INTEGER | Yes | Yes | Yes | — | `document_types(id)` | Required document or certificate |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `notes` | TEXT | No | No | No | NULL | — | Specific filing instructions |
 
 ---
 
@@ -443,15 +444,15 @@ Quote issued to a client. V14 removed the redundant foreign key `fk_id_tramite`.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco del presupuesto |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `number` | INTEGER | No | No | Yes | — | — | Número correlativo del presupuesto |
-| `budget_date` | DATE | No | No | Yes | — | — | Fecha de emisión |
-| `heading` | TEXT | No | No | Yes | — | — | Título descriptivo de la cotización |
-| `notes` | TEXT | No | No | No | NULL | — | Condiciones y plazos de validez |
-| `status` | TEXT | No | No | Yes | — | — | Estado (`Borrador`, `Emitido`, `Aceptado`, `Abonado`, `Cancelado`) |
-| `property_amount` | NUMERIC(19,2) | No | No | No | NULL | — | Base imponible inmobiliaria informada |
-| `fk_id_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Cliente solicitante |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the budget |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `number` | INTEGER | No | No | Yes | — | — | Budget serial number |
+| `budget_date` | DATE | No | No | Yes | — | — | Issue date |
+| `heading` | TEXT | No | No | Yes | — | — | Descriptive heading of the quote |
+| `notes` | TEXT | No | No | No | NULL | — | Validity conditions and deadlines |
+| `status` | TEXT | No | No | Yes | — | — | Status. Stored codes `BORRADOR`, `PENDIENTE`, `APROBADO`, `RECHAZADO`, and `FACTURADO` stay. |
+| `property_amount` | NUMERIC(19,2) | No | No | No | NULL | — | Declared property amount |
+| `fk_id_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Requesting client |
 
 ---
 
@@ -461,12 +462,12 @@ Audit log of security events and business transactions.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco del evento auditado |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `date` | TIMESTAMP | No | No | Yes | — | — | Marca temporal exacta de la transacción |
-| `module` | TEXT | No | No | Yes | — | — | Módulo funcional afectado |
-| `operation_detail` | TEXT | No | No | Yes | — | — | Detalle de datos modificados o acción ejecutada |
-| `fk_id_user` | INTEGER | No | Yes | No | NULL | `users(id)` | Operador responsable de la acción |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the audited event |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `date` | TIMESTAMP | No | No | Yes | — | — | Exact timestamp of the transaction |
+| `module` | TEXT | No | No | Yes | — | — | Functional module affected |
+| `operation_detail` | TEXT | No | No | Yes | — | — | Changed data or the action that ran |
+| `fk_id_user` | INTEGER | No | Yes | No | NULL | `users(id)` | Operator who performed the action |
 
 ---
 
@@ -476,11 +477,11 @@ Security roles (Flyway V9). Stored names such as `ESCRIBANO` and `ADMIN` stay.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco del rol |
-| `version` | INTEGER | No | No | Yes | 0 | — | Control de concurrencia optimista |
-| `name` | TEXT | No | No | Yes | — | — | Nombre único del rol (`ADMIN`, `ESCRIBANO`, `SECRETARIA`, etc.) |
-| `description` | TEXT | No | No | No | NULL | — | Alcances y responsabilidades del rol |
-| `active` | BOOLEAN | No | No | Yes | true | — | Indica si el rol está habilitado |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the role |
+| `version` | INTEGER | No | No | Yes | 0 | — | Optimistic lock |
+| `name` | TEXT | No | No | Yes | — | — | Unique role name. Stored values such as `ADMIN`, `ESCRIBANO`, and `SECRETARIA` stay. |
+| `description` | TEXT | No | No | No | NULL | — | Scope and responsibilities of the role |
+| `active` | BOOLEAN | No | No | Yes | true | — | Whether the role is enabled |
 
 ---
 
@@ -490,8 +491,8 @@ Module permissions granted to each role (Flyway V9). The column is `module`.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `fk_id_role` | INTEGER | Yes | Yes | Yes | — | `roles(id)` | Role al cual se le concede el permiso |
-| `module` | TEXT | Yes | No | Yes | — | — | Identificador del módulo o acción autorizada |
+| `fk_id_role` | INTEGER | Yes | Yes | Yes | — | `roles(id)` | Role that receives the permission |
+| `module` | TEXT | Yes | No | Yes | — | — | Id of the authorized module or action. The column is `module`. |
 
 ---
 
@@ -501,13 +502,13 @@ Substitution periods between notaries.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco de la suplencia |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `start_date` | DATE | No | No | Yes | — | — | Fecha inicial de la suplencia |
-| `end_date` | DATE | No | No | No | NULL | — | Fecha de finalización |
-| `notes` | TEXT | No | No | No | NULL | — | Motivo o atestación legal |
-| `fk_id_substituted_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Escribano titular bajo licencia |
-| `fk_id_substitute_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Escribano suplente interviniente |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the substitution |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `start_date` | DATE | No | No | Yes | — | — | Start date of the substitution |
+| `end_date` | DATE | No | No | No | NULL | — | End date |
+| `notes` | TEXT | No | No | No | NULL | — | Reason or legal attestation |
+| `fk_id_substituted_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Notary on leave |
+| `fk_id_substitute_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Substitute notary |
 
 ---
 
@@ -517,19 +518,19 @@ Testimonies issued from source deeds (V3/V4).
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco del testimonio |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `number` | INTEGER | No | No | Yes | — | — | Número de testimonio (1º, 2º testimonio) |
-| `notes` | TEXT | No | No | No | NULL | — | Notas registrales o de entrega |
-| `registration_date` | DATE | No | No | No | NULL | — | Fecha de registración |
-| `pickup_date` | DATE | No | No | No | NULL | — | Fecha de entrega al cliente |
-| `book_entry_date` | DATE | No | No | No | NULL | — | Fecha de asiento en libro |
-| `folder_number` | INTEGER | No | No | No | NULL | — | Número de carpeta registral |
-| `file_number` | INTEGER | No | No | No | NULL | — | Número de expediente del Registro |
-| `reentered` | BOOLEAN | No | No | Yes | false | — | `true` si fue reingresado |
-| `fk_id_deed` | INTEGER | No | Yes | No | NULL | `deeds(id)` | Deed matriz de origen |
-| `observed` | BOOLEAN | No | No | Yes | false | — | `true` si fue observado (V3/V4) |
-| `verified` | BOOLEAN | No | No | Yes | false | — | `true` si el testimonio fue verificado |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the testimony |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `number` | INTEGER | No | No | Yes | — | — | Testimony number (first, second, and so on) |
+| `notes` | TEXT | No | No | No | NULL | — | Registry or delivery notes |
+| `registration_date` | DATE | No | No | No | NULL | — | Registration date |
+| `pickup_date` | DATE | No | No | No | NULL | — | Date delivered to the client |
+| `book_entry_date` | DATE | No | No | No | NULL | — | Date entered in the book |
+| `folder_number` | INTEGER | No | No | No | NULL | — | Registry folder number |
+| `file_number` | INTEGER | No | No | No | NULL | — | Registry file number |
+| `reentered` | BOOLEAN | No | No | Yes | false | — | `true` when it was re-entered |
+| `fk_id_deed` | INTEGER | No | Yes | No | NULL | `deeds(id)` | Source deed |
+| `observed` | BOOLEAN | No | No | Yes | false | — | `true` when it was observed (V3/V4) |
+| `verified` | BOOLEAN | No | No | Yes | false | — | `true` when the testimony was verified |
 
 ---
 
@@ -539,15 +540,15 @@ Master catalog of documents, prior titles, and registry certificates.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco del tipo de documento |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `name` | TEXT | No | No | Yes | — | — | Denominación del documento/certificado |
-| `returned` | BOOLEAN | No | No | Yes | — | — | `true` si el original debe restituirse al cliente |
-| `expires` | BOOLEAN | No | No | Yes | — | — | `true` si el certificado tiene vigencia temporal |
-| `due_days` | INTEGER | No | No | No | NULL | — | Plazo legal de vigencia en días |
-| `amount_to_pay` | NUMERIC(19,2) | No | No | No | NULL | — | Tasa arancelaria estándar |
-| `enabled` | BOOLEAN | No | No | Yes | — | — | `true` si está activo para plantillas |
-| `delivered_by` | TEXT | No | No | Yes | — | — | Origen (`Cliente` o `Entidad Externa`) |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the document type |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `name` | TEXT | No | No | Yes | — | — | Name of the document or certificate |
+| `returned` | BOOLEAN | No | No | Yes | — | — | `true` when the original must be returned to the client |
+| `expires` | BOOLEAN | No | No | Yes | — | — | `true` when the certificate expires |
+| `due_days` | INTEGER | No | No | No | NULL | — | Legal validity in days |
+| `amount_to_pay` | NUMERIC(19,2) | No | No | No | NULL | — | Standard fee |
+| `enabled` | BOOLEAN | No | No | Yes | — | — | `true` when it can be used on templates |
+| `delivered_by` | TEXT | No | No | Yes | — | — | Origin (`Cliente` or `Entidad Externa`). Those stored values stay. |
 
 ---
 
@@ -557,12 +558,12 @@ Master catalog of protocol sheet types (V3/V4). Stored names such as `Protocolo 
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco del tipo de folio |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `name` | TEXT | No | No | Yes | — | — | Nombre (`Protocolo Principal`, `Protocolo Auxiliar`, `Testimony`) |
-| `notes` | TEXT | No | No | No | NULL | — | Notas del tipo de folio (V3/V4) |
-| `enabled` | BOOLEAN | No | No | Yes | true | — | `true` si está activo para tandas de folios (V3/V4) |
-| `is_auxiliary` | BOOLEAN | No | No | Yes | false | — | `true` si el tipo corresponde a folios auxiliares (de uso complementario) |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the folio type |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `name` | TEXT | No | No | Yes | — | — | Name. Stored values `Protocolo Principal`, `Protocolo Auxiliar`, and `Testimony` stay. |
+| `notes` | TEXT | No | No | No | NULL | — | Folio-type notes (V3/V4) |
+| `enabled` | BOOLEAN | No | No | Yes | true | — | `true` when it can be used for folio batches (V3/V4) |
+| `is_auxiliary` | BOOLEAN | No | No | Yes | false | — | `true` when the type is an auxiliary sheet |
 
 ---
 
@@ -572,15 +573,15 @@ Master catalog of notarial act types (V8). Stored names such as `Compraventa` st
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador del tipo de trámite |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `name` | TEXT | No | No | Yes | — | — | Denominación del trámite (e.g., `Compraventa`, `Poder`) |
-| `notes` | TEXT | No | No | No | NULL | — | Normativa y descripción notarial |
-| `enabled` | BOOLEAN | No | No | Yes | — | — | `true` si permite nuevas gestiones |
-| `is_archived` | BOOLEAN | No | No | Yes | — | — | `true` si requiere archivo físico con bibliorato |
-| `is_registered` | BOOLEAN | No | No | Yes | — | — | `true` si requiere inscripción registral |
-| `associates_properties` | BOOLEAN | No | No | Yes | — | — | `true` si involucra properties |
-| `fk_workflow_definition_id` | INTEGER | No | Yes | No | NULL | `workflow_definition(id_workflow_definition)` | Workflow asignado al tipo de trámite (V8) |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Procedure-type id |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `name` | TEXT | No | No | Yes | — | — | Procedure-type name. Stored examples such as `Compraventa` and `Poder` stay. |
+| `notes` | TEXT | No | No | No | NULL | — | Rules and notarial description |
+| `enabled` | BOOLEAN | No | No | Yes | — | — | `true` when new managements are allowed |
+| `is_archived` | BOOLEAN | No | No | Yes | — | — | `true` when a physical binder is required |
+| `is_registered` | BOOLEAN | No | No | Yes | — | — | `true` when registry registration is required |
+| `associates_properties` | BOOLEAN | No | No | Yes | — | — | `true` when the act involves property |
+| `fk_workflow_definition_id` | INTEGER | No | Yes | No | NULL | `workflow_definition(id_workflow_definition)` | Workflow assigned to the procedure type (V8) |
 
 ---
 
@@ -590,10 +591,10 @@ Master catalog of identification document types. Stored names such as `DNI` and 
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco del tipo de documento |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `name` | TEXT | No | No | Yes | — | — | Nombre (`DNI`, `CUIT`, `CUIL`, `Pasaporte`, `CI`, `LC`, `LE`) |
-| `characters` | TEXT | No | No | Yes | — | — | Formato o máscara alfanumérica |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the document type |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `name` | TEXT | No | No | Yes | — | — | Name. Stored values `DNI`, `CUIT`, `CUIL`, `Pasaporte`, `CI`, `LC`, and `LE` stay. |
+| `characters` | TEXT | No | No | Yes | — | — | Format or alphanumeric mask |
 
 ---
 
@@ -603,16 +604,16 @@ One procedure instance (V13/V14).
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco del trámite |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `number` | INTEGER | No | No | No | NULL | — | Número correlativo de trámite (V13 opcional) |
-| `name` | TEXT | No | No | No | NULL | — | Carátula descriptiva (V13 opcional) |
-| `notes` | TEXT | No | No | No | NULL | — | Instrucciones u observaciones |
-| `fk_id_procedure_type` | INTEGER | No | Yes | No | NULL | `procedure_types(id)` | Tipo de trámite |
-| `fk_id_deed_management` | INTEGER | No | Yes | No | NULL | `deed_managements(id)` | Gestión que lo agrupa (nulo en aux.) |
-| `fk_id_deed` | INTEGER | No | Yes | No | NULL | `deeds(id)` | Deed notarial resultante |
-| `fk_id_budget` | INTEGER | No | Yes | No | NULL | `budgets(id)` | Presupuesto económico base (V14) |
-| `fk_id_property` | INTEGER | No | Yes | No | NULL | `properties(id)` | Property objeto del acto (si aplica) |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the procedure |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `number` | INTEGER | No | No | No | NULL | — | Procedure serial number (optional since V13) |
+| `name` | TEXT | No | No | No | NULL | — | Descriptive heading (optional since V13) |
+| `notes` | TEXT | No | No | No | NULL | — | Instructions or observations |
+| `fk_id_procedure_type` | INTEGER | No | Yes | No | NULL | `procedure_types(id)` | Procedure type |
+| `fk_id_deed_management` | INTEGER | No | Yes | No | NULL | `deed_managements(id)` | Deed management that groups it (null for auxiliary work) |
+| `fk_id_deed` | INTEGER | No | Yes | No | NULL | `deeds(id)` | Resulting deed |
+| `fk_id_budget` | INTEGER | No | Yes | No | NULL | `budgets(id)` | Base budget (V14) |
+| `fk_id_property` | INTEGER | No | Yes | No | NULL | `properties(id)` | Property the act concerns, when there is one |
 
 ---
 
@@ -622,10 +623,10 @@ Associates people with a procedure and records their legal role. Stored role lab
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `fk_id_procedure` | INTEGER | Yes | Yes | Yes | — | `procedures(id)` | Trámite en el que participa |
-| `fk_id_client_person` | INTEGER | Yes | Yes | Yes | — | `people(id)` | Person que interviene |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `notes` | TEXT | No | No | Yes | '' | — | Role notarial (`Comprador`, `Vendedor`, `Donante`, `Apoderado`) |
+| `fk_id_procedure` | INTEGER | Yes | Yes | Yes | — | `procedures(id)` | Procedure the person joins |
+| `fk_id_client_person` | INTEGER | Yes | Yes | Yes | — | `people(id)` | Person taking part |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `notes` | TEXT | No | No | Yes | '' | — | Notarial role. Stored labels such as `Comprador`, `Vendedor`, `Donante`, and `Apoderado` stay. |
 
 ---
 
@@ -635,14 +636,14 @@ Operator accounts (V9).
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco del usuario |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `username` | TEXT | No | No | Yes | — | — | Nombre de usuario (login único) |
-| `password` | TEXT | No | No | Yes | — | — | Hash seguro de la contraseña |
-| `user_type` | TEXT | No | No | Yes | — | — | Role descriptivo legacy |
-| `status` | BOOLEAN | No | No | Yes | — | — | `true` si la cuenta está activa |
-| `fk_id_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Person física asociada |
-| `fk_id_role` | INTEGER | No | Yes | No | NULL | `roles(id)` | Role de seguridad asignado (V9) |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the user |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `username` | TEXT | No | No | Yes | — | — | Username (unique login) |
+| `password` | TEXT | No | No | Yes | — | — | Password hash |
+| `user_type` | TEXT | No | No | Yes | — | — | Legacy descriptive role |
+| `status` | BOOLEAN | No | No | Yes | — | — | `true` when the account is active |
+| `fk_id_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Linked person |
+| `fk_id_role` | INTEGER | No | Yes | No | NULL | `roles(id)` | Assigned security role (V9) |
 
 ---
 
@@ -652,11 +653,11 @@ Workflow graph definitions (Flyway V7). The seeded name `Workflow de Gestión Es
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id_workflow_definition` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco del workflow |
-| `version` | INTEGER | No | No | Yes | 0 | — | Control de concurrencia optimista |
-| `name` | TEXT | No | No | Yes | — | — | Nombre descriptivo del workflow |
-| `description` | TEXT | No | No | No | NULL | — | Descripción funcional del proceso |
-| `active` | BOOLEAN | No | No | Yes | false | — | `true` si el workflow está habilitado para uso |
+| `id_workflow_definition` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the workflow |
+| `version` | INTEGER | No | No | Yes | 0 | — | Optimistic lock |
+| `name` | TEXT | No | No | Yes | — | — | Workflow name. The seeded value `Workflow de Gestión Estándar` stays. |
+| `description` | TEXT | No | No | No | NULL | — | Functional description of the process |
+| `active` | BOOLEAN | No | No | Yes | false | — | `true` when the workflow is enabled |
 
 ---
 
@@ -666,13 +667,13 @@ Workflow nodes linked to management statuses (Flyway V7).
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id_workflow_node` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco del nodo |
-| `version` | INTEGER | No | No | Yes | 0 | — | Control de concurrencia optimista |
-| `fk_workflow_definition_id` | INTEGER | No | Yes | Yes | — | `workflow_definition(id_workflow_definition)` | Workflow contenedor (ON DELETE CASCADE) |
-| `fk_management_status_id` | INTEGER | No | Yes | Yes | — | `management_statuses(id)` | Estado de gestión representado por el nodo |
-| `node_type` | TEXT | No | No | Yes | — | — | Tipo de nodo: `INITIAL`, `INTERMEDIATE`, `FINAL` |
-| `position_x` | REAL | No | No | No | NULL | — | Coordenada visual X en el diagramador |
-| `position_y` | REAL | No | No | No | NULL | — | Coordenada visual Y en el diagramador |
+| `id_workflow_node` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the node |
+| `version` | INTEGER | No | No | Yes | 0 | — | Optimistic lock |
+| `fk_workflow_definition_id` | INTEGER | No | Yes | Yes | — | `workflow_definition(id_workflow_definition)` | Parent workflow (ON DELETE CASCADE) |
+| `fk_management_status_id` | INTEGER | No | Yes | Yes | — | `management_statuses(id)` | Management status this node represents |
+| `node_type` | TEXT | No | No | Yes | — | — | Node type: `INITIAL`, `INTERMEDIATE`, `FINAL` |
+| `position_x` | REAL | No | No | No | NULL | — | Visual X coordinate in the designer |
+| `position_y` | REAL | No | No | No | NULL | — | Visual Y coordinate in the designer |
 
 ---
 
@@ -682,13 +683,13 @@ Directed transitions between workflow nodes, with guard conditions (Flyway V7).
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id_workflow_transition` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco de la transición |
-| `version` | INTEGER | No | No | Yes | 0 | — | Control de concurrencia optimista |
-| `fk_workflow_definition_id` | INTEGER | No | Yes | Yes | — | `workflow_definition(id_workflow_definition)` | Workflow contenedor (ON DELETE CASCADE) |
-| `fk_origin_node_id` | INTEGER | No | Yes | Yes | — | `workflow_node(id_workflow_node)` | Nodo origen (ON DELETE CASCADE) |
-| `fk_destination_node_id` | INTEGER | No | Yes | Yes | — | `workflow_node(id_workflow_node)` | Nodo destino (ON DELETE CASCADE) |
-| `condition` | TEXT | No | No | No | NULL | — | Condición lógica de habilitación de la transición |
-| `description` | TEXT | No | No | No | NULL | — | Descripción de la acción que dispara el avance |
+| `id_workflow_transition` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the transition |
+| `version` | INTEGER | No | No | Yes | 0 | — | Optimistic lock |
+| `fk_workflow_definition_id` | INTEGER | No | Yes | Yes | — | `workflow_definition(id_workflow_definition)` | Parent workflow (ON DELETE CASCADE) |
+| `fk_origin_node_id` | INTEGER | No | Yes | Yes | — | `workflow_node(id_workflow_node)` | Origin node (ON DELETE CASCADE) |
+| `fk_destination_node_id` | INTEGER | No | Yes | Yes | — | `workflow_node(id_workflow_node)` | Destination node (ON DELETE CASCADE) |
+| `condition` | TEXT | No | No | No | NULL | — | Guard condition for the transition |
+| `description` | TEXT | No | No | No | NULL | — | Description of the action that advances the flow |
 
 ---
 
@@ -698,11 +699,11 @@ Suggested cost of each required document for a procedure type.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `fk_id_procedure_type` | INTEGER | Yes | Yes | Yes | — | `procedure_types(id)` | Tipo de trámite al que aplica la plantilla de costo |
-| `fk_id_document_type` | INTEGER | Yes | Yes | Yes | — | `document_types(id)` | Tipo de documento al que aplica la plantilla de costo |
-| `version` | INTEGER | No | No | Yes | 0 | — | Control de concurrencia optimista |
-| `fixed_amount` | NUMERIC(19,2) | No | No | No | NULL | — | Importe fijo sugerido para el documento |
-| `variable_percentage` | NUMERIC(7,4) | No | No | No | NULL | — | Porcentaje variable sugerido para el documento |
+| `fk_id_procedure_type` | INTEGER | Yes | Yes | Yes | — | `procedure_types(id)` | Procedure type this cost template applies to |
+| `fk_id_document_type` | INTEGER | Yes | Yes | Yes | — | `document_types(id)` | Document type this cost template applies to |
+| `version` | INTEGER | No | No | Yes | 0 | — | Optimistic lock |
+| `fixed_amount` | NUMERIC(19,2) | No | No | No | NULL | — | Suggested fixed amount for the document |
+| `variable_percentage` | NUMERIC(7,4) | No | No | No | NULL | — | Suggested variable percentage for the document |
 
 ---
 
@@ -712,12 +713,12 @@ A notary's yearly notebooks of protocol sheets.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco del cuaderno |
-| `version` | INTEGER | No | No | Yes | — | — | Control de concurrencia optimista |
-| `number` | INTEGER | No | No | Yes | — | — | Número del cuaderno |
-| `year_number` | INTEGER | No | No | Yes | — | — | Año al que corresponde el cuaderno |
-| `notes` | TEXT | No | No | No | NULL | — | Observaciones del cuaderno |
-| `fk_id_notary_person` | INTEGER | No | Yes | Yes | — | `people(id)` | Escribano titular del cuaderno |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the notebook |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
+| `number` | INTEGER | No | No | Yes | — | — | Notebook number |
+| `year_number` | INTEGER | No | No | Yes | — | — | Year of the notebook |
+| `notes` | TEXT | No | No | No | NULL | — | Notebook notes |
+| `fk_id_notary_person` | INTEGER | No | Yes | Yes | — | `people(id)` | Notary who owns the notebook |
 
 ---
 
@@ -727,12 +728,12 @@ Numbered procedure folders inside a deed management (CU85).
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco de la carpeta de trámite |
-| `number` | INTEGER | No | No | Yes | — | — | Número correlativo de la carpeta (secuencia dedicada) |
-| `status` | VARCHAR(20) | No | No | Yes | — | — | Estado de la carpeta |
-| `wait_reason` | TEXT | No | No | No | NULL | — | Motivo de la espera cuando la carpeta está detenida |
-| `fk_id_deed_management` | INTEGER | No | Yes | Yes | — | `deed_managements(id)` | Gestión a la que pertenece la carpeta |
-| `fk_id_procedure` | INTEGER | No | Yes | Yes | — | `procedures(id)` | Trámite que origina la carpeta |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the procedure folder |
+| `number` | INTEGER | No | No | Yes | — | — | Folder serial number (its own sequence) |
+| `status` | VARCHAR(20) | No | No | Yes | — | — | Folder status |
+| `wait_reason` | TEXT | No | No | No | NULL | — | Reason the folder is waiting |
+| `fk_id_deed_management` | INTEGER | No | Yes | Yes | — | `deed_managements(id)` | Deed management this folder belongs to |
+| `fk_id_procedure` | INTEGER | No | Yes | Yes | — | `procedures(id)` | Procedure that created the folder |
 
 ---
 
@@ -742,19 +743,19 @@ Registry registration drafts for a deed, and their follow-up.
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Identificador unívoco del borrador de inscripción |
-| `version` | INTEGER | No | No | Yes | 0 | — | Control de concurrencia optimista |
-| `number` | INTEGER | No | No | Yes | — | — | Número del borrador |
-| `operation_price` | NUMERIC(19,2) | No | No | No | NULL | — | Precio de la operación a inscribir |
-| `status` | VARCHAR(50) | No | No | Yes | — | — | Estado del borrador en el circuito de inscripción |
-| `generation_date` | DATE | No | No | Yes | — | — | Fecha de generación del borrador |
-| `submission_date` | DATE | No | No | No | NULL | — | Fecha de presentación ante el Registro |
-| `registry_entry_number` | VARCHAR(255) | No | No | No | NULL | — | Número de ingreso asignado por el Registro |
-| `reception_date` | DATE | No | No | No | NULL | — | Fecha de recepción por el Registro |
-| `final_registration_number` | VARCHAR(255) | No | No | No | NULL | — | Número definitivo de inscripción |
-| `registry_notes` | TEXT | No | No | No | NULL | — | Observaciones formuladas por el Registro |
-| `correction_date` | DATE | No | No | No | NULL | — | Fecha de la corrección solicitada por el Registro |
-| `fk_id_deed` | INTEGER | No | Yes | Yes | — | `deeds(id)` | Deed a inscribir |
+| `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the registration draft |
+| `version` | INTEGER | No | No | Yes | 0 | — | Optimistic lock |
+| `number` | INTEGER | No | No | Yes | — | — | Draft number |
+| `operation_price` | NUMERIC(19,2) | No | No | No | NULL | — | Price of the operation to register |
+| `status` | VARCHAR(50) | No | No | Yes | — | — | Draft status in the registration flow. Stored labels stay. |
+| `generation_date` | DATE | No | No | Yes | — | — | Date the draft was created |
+| `submission_date` | DATE | No | No | No | NULL | — | Date it was filed with the registry |
+| `registry_entry_number` | VARCHAR(255) | No | No | No | NULL | — | Intake number assigned by the registry |
+| `reception_date` | DATE | No | No | No | NULL | — | Date the registry received it |
+| `final_registration_number` | VARCHAR(255) | No | No | No | NULL | — | Final registration number |
+| `registry_notes` | TEXT | No | No | No | NULL | — | Observations from the registry |
+| `correction_date` | DATE | No | No | No | NULL | — | Date of the correction the registry requested |
+| `fk_id_deed` | INTEGER | No | Yes | Yes | — | `deeds(id)` | Deed to register |
 
 ---
 
@@ -764,9 +765,9 @@ JWT revocation list (issue #676). Logout stores the presented token's `jti` unti
 
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
-| `jti` | VARCHAR(64) | Yes | No | Yes | — | — | Identificador único del JWT revocado (claim `jti`) |
-| `expires_at` | TIMESTAMP WITH TIME ZONE | No | No | Yes | — | — | Vencimiento del token; después de esta fecha la fila puede purgarse |
-| `revoked_at` | TIMESTAMP WITH TIME ZONE | No | No | Yes | — | — | Momento del cierre de sesión que revocó el token |
+| `jti` | VARCHAR(64) | Yes | No | Yes | — | — | Unique id of the revoked JWT (`jti` claim) |
+| `expires_at` | TIMESTAMP WITH TIME ZONE | No | No | Yes | — | — | Token expiry; the row may be purged after this date |
+| `revoked_at` | TIMESTAMP WITH TIME ZONE | No | No | Yes | — | — | Logout time that revoked the token |
 
 ---
 
@@ -836,36 +837,36 @@ JWT revocation list (issue #676). Logout stores the presented token's `jti` unti
 
 Each person keeps one `identification_number` and one `tax_id` on `people`, classified by `fk_id_identification_type`. Stored type names such as `DNI` and `CUIT` stay.
 
-### 6.2 Entidades de Apoyo (Supporting Entities) sin Caso de Uso Independiente
+### 6.2 Supporting entities without their own use case
 
-Las siguientes 20 entidades (61% de la base de datos) no poseen un Caso de Uso independiente. Se clasifican como **entidades maestras, plantillas o de compensación** que se crean y modifican indirectamente dentro de los flujos principales:
+These 20 entities (61% of the tables) have no use case of their own. They are **master data, templates, or compensation tables** created inside the main flows:
 
-| Categoría | Entidades | Observación |
+| Category | Entities | Note |
 |-----------|-----------|-------------|
-| **Maestros/Catálogos** | `document_types`, `folio_types`, `procedure_types`, `identification_types`, `concepts`, `management_statuses` | Se crean vía CRUD administrativo, referenciados por CUs de negocio. |
-| **Plantillas** | `budget_templates`, `procedure_templates` | Se definen una única vez y reutilizan en múltiples CUs (presupuestación, documentación). |
-| **Compensación/Seguridad** | `roles`, `role_modules`, `audit_records`, `users`, `revoked_tokens`, `workflow_definition`, `workflow_node`, `workflow_transition` | Se crean durante instalación/configuración del sistema o automáticamente por auditoría/workflows. |
-| **Asociativas Operacionales** | `submitted_documents`, `person_procedures`, `folio_copies`, `testimony_movements`, `substitutions`, `history`, `properties`, `items`, `payments` | Tablas débiles/asociativas creadas como parte de CUs que gestionan entidades fuertes (trámites, escrituras, presupuestos). |
+| **Master catalogs** | `document_types`, `folio_types`, `procedure_types`, `identification_types`, `concepts`, `management_statuses` | Created through administrative CRUD and referenced by business use cases. |
+| **Templates** | `budget_templates`, `procedure_templates` | Defined once and reused by several use cases (budgeting, documents). |
+| **Compensation and security** | `roles`, `role_modules`, `audit_records`, `users`, `revoked_tokens`, `workflow_definition`, `workflow_node`, `workflow_transition` | Created during setup, or automatically by audit and workflows. |
+| **Operational associations** | `submitted_documents`, `person_procedures`, `folio_copies`, `testimony_movements`, `substitutions`, `history`, `properties`, `items`, `payments` | Weak or association tables created by use cases that manage strong entities (procedures, deeds, budgets). |
 
-**Patrón de Cobertura:**
+**Coverage pattern:**
 
-- 13 entidades **fuertes** (39%) poseen CUs explícitas.
-- 20 entidades **de apoyo/asociativas** (61%) son creadas por las 13 CUs principales o durante operaciones administrativas.
+- 13 **strong** entities (39%) have an explicit use case.
+- 20 **supporting or association** entities (61%) are created by those use cases or by administration.
 
-Este patrón es esperado en sistemas notariales donde la mayoría del trabajo se concentra en trámites, escrituras y presupuestos, mientras que los catálogos y configuración son actividades de administración de bajo volumen.
+That split is expected: most of the work is procedures, deeds, and budgets, while catalogs and configuration are low-volume administration.
 
-### 6.3 Coherencia Flyway ↔ Documentación ↔ Use Cases
+### 6.3 Flyway, this dictionary, and use cases
 
-**Validación 2026-10-04:**
+**Check on 11 October 2026:**
 
-- ✅ 37/37 tablas Flyway presentes en Diccionario de Datos (regeneradas por `docs/tools/generate_data_dictionary.py`).
-- ✅ 49 Foreign Keys documentadas correctamente (matriz de la sección 5 igual al esquema).
-- ✅ Cardinalidad V14 (presupuesto-trámite) reflejada en Diccionario.
-- ✅ Workflows (V7/V8) y RBAC (V9) presentes y coherentes.
+- 37/37 Flyway tables in this dictionary, guarded by `docs/tests/test_data_dictionary_sync.py`.
+- 49 foreign keys. Section 5 matches the ERD.
+- V14 cardinality (budget to procedure) is reflected here.
+- Workflows (V7/V8) and RBAC (V9) are present.
 - `identificaciones` is not a Flyway-created table. See section 6.1.
-- ℹ️  20 entidades sin CU independiente; clasificadas como "supporting" (normal para dominios notariales).
+- 20 entities have no use case of their own and are classified as supporting.
 
-**Mantenimiento:** Cada migración Flyway debe ir acompañada, en el mismo commit, de `python3 docs/tools/generate_data_dictionary.py` (con PostgreSQL migrado) y de la descripción de cada tabla o columna nueva: el generador deja `TODO` y `docs/tests/test_data_dictionary_sync.py` (CI) falla mientras quede alguno o el Diccionario difiera del esquema. Las secciones 3 y 6 y los textos introductorios son manuales.
+**Maintenance:** Each Flyway migration should be followed, in the same commit, by `python3 docs/tools/generate_data_dictionary.py` against a migrated PostgreSQL, plus a description of every new table or column. The generator writes `TODO`, and `docs/tests/test_data_dictionary_sync.py` fails while any `TODO` remains or the dictionary drifts from the ERD. Sections 1, 3, and 6 are written by hand.
 
 ---
 
