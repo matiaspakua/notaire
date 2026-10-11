@@ -10,7 +10,7 @@
 | Branch | `fix/1525_notaire_icon_shrink` |
 | Gate 1 status | draft |
 
-## Objective
+## Objetivo
 
 On desktop, the edit and delete buttons in the action column of the folios, documents, templates, management-statuses, procedures and concepts tables showed no icon. Tailwind preflight gives every img max-width: 100%, so a replaced element contributes 0 to its button's min-content width; the ghost size="sm" button in the narrow action column shrank to its padding and the NotaireIcon image was drawn 0px wide. The buttons stayed clickable, so users clicked empty cells. NotaireIcon now can't shrink.
 
@@ -21,7 +21,7 @@ On desktop, the edit and delete buttons in the action column of the folios, docu
 - Playwright `TS-0140-row-action-icons.spec.ts`: on management-statuses, concepts and procedures, at 1440px and 390px, every icon in the first rows' action buttons is at least 12x12.
 - CHANGELOG held (serialize); testing INVENTORY regenerated.
 
-## Business rules
+## Reglas de negocio
 
 | Rule | Source | New / Changed / Made explicit |
 |------|--------|-------------------------------|
@@ -39,7 +39,7 @@ On desktop, the edit and delete buttons in the action column of the folios, docu
 
 ## Impact Analysis
 
-### Affected modules
+### Módulos afectados
 
 | Module | Touched | What changes |
 |--------|---------|--------------|

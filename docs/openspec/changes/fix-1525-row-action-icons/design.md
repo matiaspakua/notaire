@@ -12,7 +12,7 @@ Goals: every NotaireIcon visible at its size on every page and viewport, fixed i
 
 Fix the component, not the 6 call sites: with max-w-none the image's min-content size is its real size, so flex layout keeps the button at least icon + padding wide. Two 16px icons with px-3 and gap-2 (88px) fit the w-24 column, so no column width changes.
 
-## Risks / Trade-offs
+## Riesgos / Trade-offs
 
 A caller that relied on the image shrinking (none found among the 9 files using NotaireIcon) would now overflow; the admin index cards use larger fixed sizes and are unchanged.
 
