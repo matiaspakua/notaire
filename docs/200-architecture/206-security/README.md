@@ -33,11 +33,11 @@ application data.
 ### Data sensitivity
 | Category | Examples | Sensitivity |
 |----------|----------|--------------|
-| PII | `Person` (DNI, email, nombre/apellido) | High — regulated personal data |
+| PII | `Person` (DNI, email, firstName/lastName) | High — regulated personal data |
 | Legal/notarial records | `Deed`, `Testimony`, `Folio`, `SubmittedDocument` | High — legally binding, indefinite retention |
 | Financial | `Budget`, `Payment` | Medium — budget/payment amounts, no card data stored |
 | Operational | `AuditRecord`, `ManagementHistory` | Medium — who-did-what audit trail, itself a control |
-| Credentials | `UserAccount.password` (BCrypt hash) | Critical |
+| Credentials | `User.password` (BCrypt hash) | Critical |
 
 ### Primary threats and current mitigations
 | Threat | Mitigation | Gap |

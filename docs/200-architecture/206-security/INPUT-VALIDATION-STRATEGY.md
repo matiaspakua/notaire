@@ -90,23 +90,23 @@ Currently there are no file upload endpoints. When implemented:
 ## Validation testing strategy
 
 ```java
-// Test missing required field → 400
+// Test missing required field → 400 (UserRequest.name and type are @NotBlank)
 mvc.perform(post("/api/v1/users")
     .contentType(APPLICATION_JSON)
-    .content("{\"contrasenia\":\"pwd\"}"))  // nombre missing
+    .content("{\"password\":\"pwd\"}"))  // name missing
     .andExpect(status().isBadRequest());
 
-// Test oversized field → 400
+// Oversized username must not crash the login endpoint
 mvc.perform(post("/api/v1/users/login")
     .contentType(APPLICATION_JSON)
-    .content("{\"nombre\":\"" + "x".repeat(5000) + "\",\"contrasenia\":\"\"}"))
-    .andExpect(status().isOk());  // login returns 200 with valido:false
+    .content("{\"name\":\"" + "x".repeat(5000) + "\",\"password\":\"\"}"));
 
-// Test SQL injection attempt → no 500
+// SQL injection attempt → 200 and valid false
 mvc.perform(post("/api/v1/users/login")
     .contentType(APPLICATION_JSON)
-    .content("{\"nombre\":\"' OR '1'='1\",\"contrasenia\":\"\"}"))
-    .andExpect(status().isOk());
+    .content("{\"name\":\"' OR '1'='1\",\"password\":\"\"}"))
+    .andExpect(status().isOk())
+    .andExpect(jsonPath("$.valid").value(false));
 ```
 
 See `EdgeCaseBoundaryConditionsTest` for the established test patterns.

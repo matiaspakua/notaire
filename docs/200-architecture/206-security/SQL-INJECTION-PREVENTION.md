@@ -8,8 +8,8 @@ Notaire uses **Spring Data JPA with Hibernate**. The `JpaRepository` methods (`f
 
 ```java
 // Safe: Spring Data generates a parameterized query
-Optional<UserAccount> u = usuarioRepository.findById(id);
-// Hibernate executes: SELECT ... FROM usuarios WHERE id_usuario = ?
+Optional<User> user = userRepository.findById(id);
+// Hibernate executes: SELECT ... FROM users WHERE id = ?
 // The value of `id` is bound as a parameter, never interpolated.
 ```
 
@@ -18,27 +18,27 @@ Optional<UserAccount> u = usuarioRepository.findById(id);
 ### Spring Data derived query methods
 
 ```java
-// Safe — Hibernate generates: ... WHERE nombre = ?
-Optional<UserAccount> findFirstByNombre(String nombre);
+// Safe — Hibernate generates: ... WHERE username = ?
+Optional<User> findByName(String name);
 
-// Safe — Hibernate generates: ... WHERE tipo = ? AND estado = ?
-List<UserAccount> findByTipoAndEstado(String tipo, boolean estado);
+// Safe — Hibernate generates: ... WHERE user_type = ? AND status = ?
+List<User> findByTypeAndStatus(String type, boolean status);
 ```
 
 ### @Query with named parameters
 
 ```java
-// Safe — :nombre is bound as a PreparedStatement parameter
-@Query("SELECT u FROM UserAccount u WHERE LOWER(u.nombre) = LOWER(:nombre)")
-Optional<UserAccount> findByNombreIgnoreCase(@Param("nombre") String nombre);
+// Safe — :name is bound as a PreparedStatement parameter
+@Query("SELECT u FROM User u WHERE LOWER(u.name) = LOWER(:name)")
+Optional<User> findByNameIgnoreCase(@Param("name") String name);
 ```
 
 ### @Query with JPQL positional parameters
 
 ```java
 // Safe — ?1 is a positional bind parameter
-@Query("SELECT g FROM DeedManagement g WHERE g.numero = ?1")
-Optional<DeedManagement> findByNumero(Integer numero);
+@Query("SELECT g FROM DeedManagement g WHERE g.number = ?1")
+Optional<DeedManagement> findByNumber(Integer number);
 ```
 
 ## Dangerous patterns — never do this
@@ -47,7 +47,7 @@ Optional<DeedManagement> findByNumero(Integer numero);
 
 ```java
 // DANGEROUS — DO NOT DO THIS
-@Query("SELECT u FROM UserAccount u WHERE u.nombre = '" + nombre + "'")
+@Query("SELECT u FROM User u WHERE u.name = '" + name + "'")
 // An attacker could pass: ' OR '1'='1 to return all users.
 ```
 
@@ -56,7 +56,7 @@ Optional<DeedManagement> findByNumero(Integer numero);
 ```java
 // DANGEROUS
 entityManager.createNativeQuery(
-    "SELECT * FROM usuarios WHERE nombre = '" + nombre + "'"
+    "SELECT * FROM users WHERE username = '" + name + "'"
 );
 ```
 
@@ -66,16 +66,16 @@ Use named parameters with `@Query(nativeQuery = true)`:
 
 ```java
 // Safe native query with parameter binding
-@Query(value = "SELECT * FROM usuarios WHERE nombre = :nombre", nativeQuery = true)
-List<UserAccount> findNativeByNombre(@Param("nombre") String nombre);
+@Query(value = "SELECT * FROM users WHERE username = :name", nativeQuery = true)
+List<User> findNativeByName(@Param("name") String name);
 ```
 
 If using `EntityManager` directly (legacy `jpa` package), always use `createNativeQuery` with parameter setting:
 
 ```java
 // Safe
-Query q = em.createNativeQuery("SELECT * FROM gestiones WHERE numero_gestion = :num");
-q.setParameter("num", numero);
+Query q = em.createNativeQuery("SELECT * FROM deed_managements WHERE number = :num");
+q.setParameter("num", number);
 List<?> results = q.getResultList();
 ```
 
@@ -89,8 +89,8 @@ CriteriaQuery<DeedManagement> cq = cb.createQuery(DeedManagement.class);
 Root<DeedManagement> root = cq.from(DeedManagement.class);
 
 List<Predicate> predicates = new ArrayList<>();
-if (tipo != null) {
-    predicates.add(cb.equal(root.get("tipo"), tipo));  // parameterized
+if (heading != null) {
+    predicates.add(cb.equal(root.get("heading"), heading));  // parameterized
 }
 cq.where(predicates.toArray(new Predicate[0]));
 return em.createQuery(cq).getResultList();
@@ -115,12 +115,12 @@ The `EdgeCaseBoundaryConditionsTest` includes an SQL injection attempt in the lo
 // Confirms the login endpoint does not 500 on a SQL injection payload
 mvc.perform(post("/api/v1/users/login")
     .contentType(APPLICATION_JSON)
-    .content("{\"nombre\":\"' OR '1'='1\",\"contrasenia\":\"\"}"))
+    .content("{\"name\":\"' OR '1'='1\",\"password\":\"\"}"))
     .andExpect(status().isOk())
-    .andExpect(jsonPath("$.valido").value(false));
+    .andExpect(jsonPath("$.valid").value(false));
 ```
 
-The test must remain green. If it ever returns `valido: true` or a 5xx, a regression has been introduced.
+The test must remain green. If it ever returns `valid: true` or a 5xx, a regression has been introduced.
 
 ## Tools
 

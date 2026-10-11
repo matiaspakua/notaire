@@ -22,7 +22,7 @@ Client ──POST /api/v1/users/login──► UserController
                                     │  generateToken()   │
                                     └──────────┬──────────┘
                                                │
-                                      { valido: true,
+                                      { valid: true,
                                         token: "eyJ..." }  + Set-Cookie: notaire-auth-token
 ```
 
@@ -126,8 +126,8 @@ boolean valid = jwtTokenService.isValid(token);
 ### Role model
 
 ```text
-UserAccount ──M:1──► Role
-Role     ──name, description──► (ENUM: Escribano, Secretario, Admin, ...)
+User ──M:1──► Role
+Role     ──name, description──► (stored names such as Escribano, Secretario, Admin)
 ```
 
 The `Role` entity is stored in the `roles` table. `UserController` exposes the role in the `UserResponse` DTO.
@@ -141,7 +141,7 @@ Authorization (#559): `JwtAuthenticationFilter` asks `UserAuthorityResolver` for
 | Scope | Methods | Required |
 |-------|---------|----------|
 | `/api/v1/users/**` (except login, logout), `/api/v1/roles/**`, `/api/v1/audit-log/**` | all | `ROLE_ADMIN` |
-| workflow definitions, nodes and transitions; `tipo-tramite`, `tipo-de-documento`, `tipo-folio`, `tipo-identificacion`, `conceptos`, `estado-gestion`, `plantilla-tramite`, `plantilla-presupuestos`, `plantilla-costos-documento` | POST, PUT, PATCH, DELETE | `ROLE_ADMIN` |
+| `/api/v1/workflow-definition/**`, `/api/v1/workflow-node/**`, `/api/v1/workflow-transition/**`, `/api/v1/procedure-types/**`, `/api/v1/document-types/**`, `/api/v1/folio-types/**`, `/api/v1/identification-types/**`, `/api/v1/concepts/**`, `/api/v1/management-statuses/**`, `/api/v1/procedure-templates/**`, `/api/v1/budget-templates/**`, `/api/v1/document-cost-templates/**` | POST, PUT, PATCH, DELETE | `ROLE_ADMIN` |
 | the same catalogs | GET | any authenticated user |
 | `/api/v1/history/{id}` (management history, the CU13 audit trail; issue #1250) | PUT, DELETE | `ROLE_ADMIN` |
 | everything else | all | any authenticated user |
@@ -151,22 +151,23 @@ A non-administrator receives `403` from `apiAccessDeniedHandler`. The frontend m
 ### Extending RBAC
 
 1. Add a path to `ADMIN_ONLY_PATHS` or `ADMIN_WRITE_PATHS` (or a method-specific rule such as `ADMIN_HISTORY_METHODS`) in `SecurityAndCorsConfig` and a case to `RbacIntegrationTest` and the Bruno `rbac/` folder.
-2. For per-permission rules, use the `roles_permisos` data through `UserAuthorityResolver` (not yet implemented).
+2. For finer permission rules, use the `role_modules` rows through `UserAuthorityResolver` (not yet implemented).
 
 ## Authentication error handling
 
 | Scenario | HTTP | Response body |
 |----------|------|---------------|
-| Wrong password | 200 | `{ "valido": false }` |
-| User not found | 200 | `{ "valido": false }` |
-| Inactive user | 200 | `{ "valido": false }` |
-| DB error | 200 | `{ "valido": false }` |
+| Wrong password | 200 | `{ "valid": false }` |
+| User not found | 200 | `{ "valid": false }` |
+| Inactive user | 200 | `{ "valid": false }` |
+| DB error | 200 | `{ "valid": false }` |
+| Account locked after failed attempts | 429 | `{ "valid": false, "message": "Account temporarily locked after too many failed attempts." }` |
 | Missing/invalid/expired JWT on a protected endpoint | 401 | `Unauthorized` (via `apiAuthenticationEntryPoint`) |
 | Valid JWT of a deleted or inactive user | 401 | `Unauthorized` |
 | JWT revoked by logout | 401 | `Unauthorized` |
 | Authenticated non-administrator on an administrator-only endpoint | 403 | `Forbidden` (via `apiAccessDeniedHandler`) |
 
-The login endpoint always returns HTTP 200 to avoid information leakage. The `valido` field in the response distinguishes success from failure.
+A failed login for a wrong password, an unknown user, an inactive user, or a database error returns HTTP 200 with `valid` false. A locked account returns HTTP 429 with `valid` false and a lock message.
 
 ## Logout and revocation
 

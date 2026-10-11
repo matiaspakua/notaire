@@ -1,6 +1,6 @@
 # Test Suite — Login Authentication (CU-78)
 
-**Use Case:** CU-78 — Seguridad, Privacidad y Cumplimiento (Security and Compliance)
+**Use Case:** CU-78 — Security, Privacy, and Compliance
 **Endpoint:** `POST /api/v1/users/login`
 **Issue:** [#824](https://github.com/matiaspakua/notaire/issues/824)
 **Status:** Complete ✅
@@ -16,8 +16,8 @@ security event logging.
 | TC-ID | Scenario | Level | Priority | Status |
 |-------|----------|-------|----------|--------|
 | TC-LOGIN-01 | Valid credentials return JWT token | Integration | High | ✅ Pass |
-| TC-LOGIN-02 | Wrong password returns valido=false | Integration | High | ✅ Pass |
-| TC-LOGIN-03 | Unknown user returns valido=false | Integration | High | ✅ Pass |
+| TC-LOGIN-02 | Wrong password returns valid=false | Integration | High | ✅ Pass |
+| TC-LOGIN-03 | Unknown user returns valid=false | Integration | High | ✅ Pass |
 | TC-LOGIN-04 | Locked account returns 429 | Integration | High | ✅ Pass |
 | TC-LOGIN-05 | Expired JWT token rejected with 401 | Integration | High | ✅ Pass |
 | TC-LOGIN-06 | Invalid JWT token rejected with 401 | Integration | High | ✅ Pass |

@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English login contract in the security guides** (#1490, CU75):
+  The authentication, validation, and SQL-injection guides, plus the login
+  test reports, use the live field `valid` and the JSON names `name` and
+  `password`. Samples use `User`, `users.username`, and `deed_managements.number`.
+  Administrator write paths match `SecurityAndCorsConfig`. A locked account
+  is documented as HTTP 429. Stored role names such as `Escribano` stay.
 - **English Playwright case identifiers** (#1490, CU75):
   Folio and deed selects use `select-folio-type` and `select-folio-deed`.
   Case fixtures name `folioType` and `copyNumber`. Seed failures, payment
