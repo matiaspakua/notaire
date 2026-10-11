@@ -73,6 +73,8 @@ CU13 = (
 )
 HISTORY = "`GET /api/v1/gestiones/{id}/historial`"
 CURRENT_STATUS = "`GET /api/v1/gestiones/{id}/estado-actual`"
+PUT_MANAGEMENT = "`PUT /api/v1/gestiones/{id}`"
+PUT_COMPLETE = "`PUT /api/v1/gestiones/{id}/complete-case`"
 
 
 class DocumentReentryPathCitationEnglishTest(unittest.TestCase):
@@ -145,6 +147,20 @@ class DocumentReentryPathCitationEnglishTest(unittest.TestCase):
         ).read_text(encoding="utf-8")
         self.assertIn("`GET /api/v1/managements/{id}/history`", live)
         self.assertIn("`GET /api/v1/managements/{id}/current-status`", live)
+
+    def test_design_cites_the_paths_cu53_still_names_for_status_puts(self):
+        text = DESIGN.read_text(encoding="utf-8")
+        use_case = CU53.read_text(encoding="utf-8")
+        self.assertIn(PUT_MANAGEMENT, text)
+        self.assertIn(PUT_COMPLETE, text)
+        self.assertIn(PUT_MANAGEMENT, use_case)
+        self.assertIn(PUT_COMPLETE, use_case)
+        self.assertIn("`DOC-GESTION`", text)
+        live = (
+            ROOT / "docs" / "200-architecture" / "203-design" / "GESTION.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("`PUT /api/v1/managements/{id}`", live)
+        self.assertIn("`PUT /api/v1/managements/{id}/complete-case`", live)
 
 
 if __name__ == "__main__":

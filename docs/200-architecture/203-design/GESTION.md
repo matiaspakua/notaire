@@ -67,8 +67,9 @@ the management node.
 
 The management status changes only through
 `POST /api/v1/managements/{id}/transition` or through
-`POST /api/v1/managements/{id}/archive`. A `PUT` that changes the status
-answers 400. Legal next destinations come from
+`POST /api/v1/managements/{id}/archive`. A status change on
+`PUT /api/v1/managements/{id}` or
+`PUT /api/v1/managements/{id}/complete-case` answers 400. Legal next destinations come from
 `GET /api/v1/managements/{id}/workflow-trace`. The history log is
 `GET /api/v1/managements/{id}/history`. The current status is
 `GET /api/v1/managements/{id}/current-status`. Stored procedure types

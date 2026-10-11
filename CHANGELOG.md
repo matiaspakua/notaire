@@ -64,6 +64,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Rejected status PUT paths** (#1490, CU75): `DOC-GESTION` names the
+  live updates `PUT /api/v1/managements/{id}` and
+  `PUT /api/v1/managements/{id}/complete-case`. A status change on either
+  answers 400. The engineering-sequences design names the paths CU53 still
+  writes, `PUT /api/v1/gestiones/{id}` and
+  `PUT /api/v1/gestiones/{id}/complete-case`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
 - **Management history paths** (#1490, CU75): `DOC-GESTION` names the
   live reads `GET /api/v1/managements/{id}/history` and
   `GET /api/v1/managements/{id}/current-status`. The engineering-sequences
