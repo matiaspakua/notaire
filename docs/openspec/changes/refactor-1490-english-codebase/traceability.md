@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/refactor-1490-english-codebase/` | written |
 | Branch | `cursor/english-codebase-01e0` | created from `origin/main` |
 | Tasks | `tasks.md` | in progress |
-| Commits | `9c536900`, `329247ba`, `86b51c34`, `93300933`, `4a3afc10`, `4e3b809e` | created |
+| Commits | `9c536900`, `329247ba`, `86b51c34`, `93300933`, `4a3afc10`, `4e3b809e`, `48dcc181` | created |
 | Pull Request | #1495 | draft |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -43,8 +43,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Document | Updated | Commit |
 |----------|---------|--------|
 | `docs/300-development/303-testing/CU-API-MATRIX.csv` | yes | `329247ba` |
-| `CHANGELOG.md` | yes | `329247ba`, `86b51c34`, `4a3afc10`, `4e3b809e` |
-| `backend-api/openapi/openapi.yaml` | yes | `329247ba`, `86b51c34`, `4a3afc10`, `4e3b809e` |
+| `CHANGELOG.md` | yes | `329247ba`, `86b51c34`, `4a3afc10`, `4e3b809e`, `48dcc181` |
+| `backend-api/openapi/openapi.yaml` | yes | `329247ba`, `86b51c34`, `4a3afc10`, `4e3b809e`, `48dcc181` |
 | `docs/200-architecture/203-design/REST-API-REFERENCE.md` | yes | `4a3afc10` |
 | `backend-api/api-test/COVERAGE.md` | yes | `329247ba` |
 
