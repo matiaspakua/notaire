@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English OpenSpec requirement prose** (#1490, CU75):
+  `escritura-firma`, `presupuesto-plantilla`, `presupuesto-catalogo-items`,
+  `pago-recibo`, and `persona-credencial-escribano` state requirements in
+  English and name `Budget`, `{idPayment}`, and `notaryRegistrationNumber`.
+  Spec ids stay. Stored statuses `Sin Firmar` and `Firmada`, the role
+  `Escribano`, and the receipt filename `recibo_pago_` stay.
 - **English use-case diagram structure** (#1490, CU75):
   Module titles, actor names, and association labels in
   `Casos de Uso/*.puml` are English. Official `CUxx` titles and the filenames
