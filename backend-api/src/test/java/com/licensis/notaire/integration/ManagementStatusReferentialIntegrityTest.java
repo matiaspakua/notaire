@@ -85,7 +85,7 @@ class ManagementStatusReferentialIntegrityTest {
     @Test
     @DisplayName("Should return inUse=false when no management references the status")
     void shouldReturnInUseFalseWhenStatusIsNotReferenced() throws Exception {
-        int id = createStatus("EstadoFree_InUse");
+        int id = createStatus("StatusFree_InUse");
 
         mockMvc.perform(get("/api/v1/management-statuses/" + id + "/in-use"))
                 .andExpect(status().isOk())
@@ -95,7 +95,7 @@ class ManagementStatusReferentialIntegrityTest {
     @Test
     @DisplayName("Should return inUse=true when a management references the status")
     void shouldReturnInUseTrueWhenStatusIsReferenced() throws Exception {
-        int id = createStatus("EstadoUsed_InUse");
+        int id = createStatus("StatusUsed_InUse");
         linkStatusToManagement(id);
 
         mockMvc.perform(get("/api/v1/management-statuses/" + id + "/in-use"))
@@ -106,7 +106,7 @@ class ManagementStatusReferentialIntegrityTest {
     @Test
     @DisplayName("Should return 409 when editing an status that is in use")
     void shouldReturn409WhenEditingStatusInUse() throws Exception {
-        int id = createStatus("EstadoEditBlocked");
+        int id = createStatus("StatusEditBlocked");
         linkStatusToManagement(id);
 
         mockMvc.perform(put("/api/v1/management-statuses/" + id)
@@ -121,7 +121,7 @@ class ManagementStatusReferentialIntegrityTest {
     @Test
     @DisplayName("Should allow editing an status that is NOT in use")
     void shouldAllowEditingStatusNotInUse() throws Exception {
-        int id = createStatus("EstadoEditAllowed");
+        int id = createStatus("StatusEditAllowed");
 
         mockMvc.perform(put("/api/v1/management-statuses/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -134,7 +134,7 @@ class ManagementStatusReferentialIntegrityTest {
     @Test
     @DisplayName("Should return 409 when deleting an status that is in use")
     void shouldReturn409WhenDeletingStatusInUse() throws Exception {
-        int id = createStatus("EstadoDeleteBlocked");
+        int id = createStatus("StatusDeleteBlocked");
         linkStatusToManagement(id);
 
         mockMvc.perform(delete("/api/v1/management-statuses/" + id))

@@ -64,6 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English case-summary state and status names** (#1490, CU75): the
+  managements page state is `caseSummaryId`. Identification-type
+  display names use `/identification-types`. Synthetic status names
+  are `StatusFree_InUse`, `StatusUsed_InUse`, `StatusEditBlocked`,
+  `StatusEditAllowed`, and `StatusDeleteBlocked`. Message keys under
+  `gestiones` stay. Stored statuses stay.
 - **English synthetic person labels** (#1490, CU75): the substitution
   fixture first name is `Substituted IT`. Redirect last names are
   `Notary`, `Substituted`, `Substitute`, `Client`, `NoSubstitution`,
