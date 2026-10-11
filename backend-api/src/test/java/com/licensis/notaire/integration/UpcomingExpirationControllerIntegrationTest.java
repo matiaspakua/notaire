@@ -61,7 +61,7 @@ class UpcomingExpirationControllerIntegrationTest {
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         ProcedureType procedureType = new ProcedureType();
-        procedureType.setName("Tipo procedure CU42 " + System.nanoTime());
+        procedureType.setName("Type procedure CU42 " + System.nanoTime());
         procedureType.setEnabled(true);
         procedureType = procedureTypeRepository.save(procedureType);
         Procedure procedure = new Procedure();
@@ -71,7 +71,7 @@ class UpcomingExpirationControllerIntegrationTest {
 
     private Integer documentType(boolean expires, Integer dueDays) {
         DocumentType type = new DocumentType();
-        type.setName("Tipo CU42 " + System.nanoTime());
+        type.setName("Type CU42 " + System.nanoTime());
         type.setExpires(expires);
         type.setDueDays(dueDays);
         type.setDeliveredBy("");

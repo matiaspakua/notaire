@@ -249,7 +249,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
         DeedManagement saved = managementRepository.save(testManagement);
 
         ProcedureType procedureType = new ProcedureType();
-        procedureType.setName("Tipo Procedure Test");
+        procedureType.setName("Type Procedure Test");
         procedureTypeRepository.save(procedureType);
 
         Procedure procedure = new Procedure();

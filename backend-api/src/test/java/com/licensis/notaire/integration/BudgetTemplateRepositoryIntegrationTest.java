@@ -197,11 +197,11 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("Should create distinct budget templates with different IDs")
     void shouldCreateDistinctTemplates() {
         ProcedureType type1 = new ProcedureType();
-        type1.setName("Tipo 1");
+        type1.setName("Type 1");
         typeProcedureRepository.save(type1);
 
         ProcedureType type2 = new ProcedureType();
-        type2.setName("Tipo 2");
+        type2.setName("Type 2");
         typeProcedureRepository.save(type2);
 
         Concept concept1 = new Concept();

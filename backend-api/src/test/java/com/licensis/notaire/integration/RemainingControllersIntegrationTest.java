@@ -44,7 +44,7 @@ class RemainingControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("TipoIdentificacionController")
+    @DisplayName("IdentificationTypeController")
     class IdentificationTypeTests {
 
         @Test
@@ -216,8 +216,8 @@ class RemainingControllersIntegrationTest {
     class SubmittedDocumentTests {
 
         @Test
-        @DisplayName("Should return all documents presentados")
-        void shouldReturnAllDocumentsPresentados() throws Exception {
+        @DisplayName("Should return all submitted documents")
+        void shouldReturnAllSubmittedDocuments() throws Exception {
             mockMvc.perform(get("/api/v1/submitted-documents"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))

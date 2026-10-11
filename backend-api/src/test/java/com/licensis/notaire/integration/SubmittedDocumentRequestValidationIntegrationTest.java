@@ -71,7 +71,7 @@ class SubmittedDocumentRequestValidationIntegrationTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
         expiringType = new DocumentType();
-        expiringType.setName("Tipo #655");
+        expiringType.setName("Type #655");
         expiringType.setExpires(true);
         expiringType.setDueDays(10);
         expiringType.setDeliveredBy("Cliente");
@@ -79,7 +79,7 @@ class SubmittedDocumentRequestValidationIntegrationTest {
         expiringType = documentTypeRepository.save(expiringType);
 
         procedureType = new ProcedureType();
-        procedureType.setName("Tipo procedure #655");
+        procedureType.setName("Type procedure #655");
         procedureType.setEnabled(true);
         procedureType = procedureTypeRepository.save(procedureType);
         procedure = new Procedure();

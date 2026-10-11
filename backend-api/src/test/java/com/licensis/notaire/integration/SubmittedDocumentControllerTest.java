@@ -61,7 +61,7 @@ class SubmittedDocumentControllerTest {
 
     private Integer createDocumentType(boolean expires, Integer dueDays, String deliveredBy) {
         DocumentType type = new DocumentType();
-        type.setName("Tipo DocumentoPresentadoControllerTest " + System.nanoTime());
+        type.setName("Type SubmittedDocumentControllerTest " + System.nanoTime());
         type.setExpires(expires);
         type.setDueDays(dueDays);
         type.setDeliveredBy(deliveredBy);
@@ -72,7 +72,7 @@ class SubmittedDocumentControllerTest {
 
     private Integer createProcedure() {
         ProcedureType type = new ProcedureType();
-        type.setName("Procedure DocumentoPresentadoControllerTest");
+        type.setName("Procedure SubmittedDocumentControllerTest");
         type.setEnabled(true);
         type.setIsArchived(false);
         type.setIsRegistered(false);

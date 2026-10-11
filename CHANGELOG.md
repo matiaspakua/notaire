@@ -43,6 +43,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English type fixture names** (#1490, CU75): Java tests name synthetic
+  types in English (`Type_unused_`, `Type #655`, `Case summary type`,
+  `Type Trace Test`, and `Base fee`). The traceability registry names the
+  live classes `BudgetEntityTest`, `DeedEntityTest`, `PaymentEntityTest`,
+  `ProcessPaymentServiceTest`, `ProcedureTypeWorkflowAssignmentTest`, and
+  `AuditRecordServiceTest`. The untyped person fixture is `No Type`.
+  Stored labels `Compraventa`, `Firmada`, `DNI`, and `Pasaporte` stay.
+  The named-query hygiene list still forbids `TipoDeTramite.` and
+  `DocumentoPresentado.`.
 - **English remaining fixture names** (#1490, CU75): Java tests use English
   synthetic names (`Archived management`, `Notarial power`, `Grantor`,
   `FindThisStatus`, `Procedure_unused_`, `Updated notes`, `Cycle IT Status`,
