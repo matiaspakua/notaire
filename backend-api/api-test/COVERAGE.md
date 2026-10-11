@@ -77,7 +77,7 @@ the value but update did not. Hardened in `setAttributes`.
 | roles | `/roles` | ✅ | — | CU76 |
 | submitted-documents | `/submitted-documents` | ✅ | — | CU04, CU72 |
 | substitutions | `/substitutions` | ✅ | own substitute + replaced person fixtures | CU48, CU22, CU59 |
-| testimonies | `/testimonies` | ✅ | verify action | CU07, CU08 |
+| testimonies | `/testimonies` | ✅ | verify action; DELETE with a registry movement answers 409 and keeps it (#1364) | CU07, CU08, CU44 |
 | testimony-movements | `/testimony-movements` | ✅ | — | CU12 |
 | users | `/users` | ✅ | login (+/- credentials), case-insensitive login, JWT structure, `person/{id}` | CU20, CU78, CU21 |
 | workflow-definitions | `/workflow-definition` | ✅ | — | CU83 |

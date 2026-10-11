@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiPost, apiGetBytes } from "@/lib/api-client";
+import { apiDelete, apiGet, apiPost, apiPut, apiGetBytes } from "@/lib/api-client";
 import type { Testimony } from "@/types";
 
 export const testimoniesKeys = {
@@ -41,4 +41,31 @@ export async function downloadTestimonyCopy(idTestimony: number): Promise<void> 
   link.download = `testimonio_${idTestimony}_copia.pdf`;
   link.click();
   URL.revokeObjectURL(link.href);
+}
+
+/** Body of PUT /testimonies/{id}: number, flagged, verified and version are required (#655). */
+export interface TestimonyUpdate {
+  number: number;
+  notes: string;
+  flagged: boolean;
+  verified: boolean;
+  version: number;
+}
+
+/** #1364 - Corrects a mistaken testimony (number, notes); a stale version answers 409. */
+export function useUpdateTestimony() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: TestimonyUpdate }) => apiPut(`/testimonies/${id}`, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: testimoniesKeys.all }),
+  });
+}
+
+/** #1364 - Deletes a testimony; one with registry movements or copies answers 409. */
+export function useDeleteTestimony() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => apiDelete(`/testimonies/${id}`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: testimoniesKeys.all }),
+  });
 }

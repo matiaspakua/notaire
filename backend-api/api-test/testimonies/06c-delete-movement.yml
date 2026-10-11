@@ -1,0 +1,19 @@
+info:
+  name: Remove the movement (API-only correction) so the testimony can be deleted
+  type: http
+  seq: 7
+  description: |-
+      ## DELETE /api/v1/testimony-movements/{id}
+      Manual movement correction stays API-only (Owner decision 2026-10-09, #1364).
+      Traceability: CU44, #1364
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/testimony-movements/{{testimony_movement_id}}"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 204 No Content", function () { expect(res.getStatus()).to.equal(204); });

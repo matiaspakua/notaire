@@ -2294,7 +2294,10 @@ export interface paths {
          */
         put: operations["update_4"];
         post?: never;
-        /** Delete testimony */
+        /**
+         * Delete testimony
+         * @description Deletes a testimony that has no registry movements and no issued copies. Otherwise answers 409 with the reason and keeps everything: they are part of the deed's history.
+         */
         delete: operations["delete_4"];
         options?: never;
         head?: never;
@@ -10755,6 +10758,15 @@ export interface operations {
             };
             /** @description Not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description The testimony has registry movements or issued copies (issue #1364) */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };

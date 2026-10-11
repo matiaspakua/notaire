@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, CheckCircle2, Download } from "lucide-react";
+import { Plus, CheckCircle2, Download, Pencil, Trash2, History } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -12,7 +12,12 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import { useThemeClasses } from "@/theme";
-import { useTestimonies, useGenerateTestimony, useVerifyTestimony, downloadTestimonyCopy } from "@/hooks/useTestimonies";
+import { useTestimonies, useGenerateTestimony, useVerifyTestimony, useUpdateTestimony, useDeleteTestimony, downloadTestimonyCopy } from "@/hooks/useTestimonies";
+import { Input } from "@/components/ui/input";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
+import { useDeleteError } from "@/hooks/useDeleteError";
+import { ApiError } from "@/lib/api-client";
+import { TestimonyMovementsDialog } from "./TestimonyMovementsDialog";
 import { DeedPicker } from "@/components/shared/DeedPicker";
 import { extractApiError } from "@/lib/utils";
 import type { Testimony } from "@/types";
@@ -25,6 +30,9 @@ export default function TestimoniesPage() {
   const { data: testimonies = [], isLoading } = useTestimonies();
   const generateMutation = useGenerateTestimony();
   const verifyMutation = useVerifyTestimony();
+  const updateMutation = useUpdateTestimony();
+  const deleteMutation = useDeleteTestimony();
+  const showDeleteError = useDeleteError();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [idDeed, setIdDeed] = useState("");
@@ -32,6 +40,55 @@ export default function TestimoniesPage() {
   const [flagged, setFlagged] = useState(false);
   const [notes, setNotes] = useState("");
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
+  const [editing, setEditing] = useState<Testimony | null>(null);
+  const [editNumber, setEditNumber] = useState("");
+  const [editNotes, setEditNotes] = useState("");
+  const [deleting, setDeleting] = useState<Testimony | null>(null);
+  const [movementsOf, setMovementsOf] = useState<Testimony | null>(null);
+
+  function openEdit(testimony: Testimony) {
+    setEditing(testimony);
+    setEditNumber(String(testimony.number ?? ""));
+    setEditNotes(testimony.notes ?? "");
+  }
+
+  async function handleSaveEdit() {
+    if (!editing?.idTestimony) return;
+    const number = editNumber.trim();
+    if (!/^[1-9]\d*$/.test(number)) {
+      toast.error(t("numberRequired"));
+      return;
+    }
+    try {
+      await updateMutation.mutateAsync({
+        id: editing.idTestimony,
+        data: {
+          number: Number(number),
+          notes: editNotes.trim(),
+          flagged: editing.flagged ?? false,
+          verified: editing.verified ?? false,
+          version: editing.version ?? 0,
+        },
+      });
+      toast.success(t("updated"));
+      setEditing(null);
+    } catch (err) {
+      toast.error(err instanceof ApiError && err.status === 409 ? t("staleVersion") : extractApiError(err) ?? t("errorUpdate"));
+    }
+  }
+
+  async function handleDelete() {
+    if (!deleting?.idTestimony) return;
+    try {
+      await deleteMutation.mutateAsync(deleting.idTestimony);
+      toast.success(t("deleted"));
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 409) toast.warning(t("deleteInUse"));
+      else showDeleteError(err, t("errorDelete"));
+    } finally {
+      setDeleting(null);
+    }
+  }
 
   function openGenerate() {
     setIdDeed("");
@@ -84,32 +141,63 @@ export default function TestimoniesPage() {
     {
       key: "actions",
       header: "",
-      className: "w-32",
+      className: "w-52",
       render: (te) => (
         <div className="flex gap-2 justify-end">
+          <Button
+            size="icon-sm"
+            variant="ghost"
+            onClick={() => setMovementsOf(te)}
+            aria-label={t("verMovimientos")}
+            title={t("verMovimientos")}
+            data-testid={`btn-movements-testimony-${te.idTestimony}`}
+          >
+            <History aria-hidden />
+          </Button>
+          <Button
+            size="icon-sm"
+            variant="ghost"
+            onClick={() => openEdit(te)}
+            aria-label={t("editTestimonio")}
+            title={t("editTestimonio")}
+            data-testid={`btn-edit-testimony-${te.idTestimony}`}
+          >
+            <Pencil aria-hidden />
+          </Button>
           {!te.verified && (
             <Button
-              size="sm"
+              size="icon-sm"
               variant="ghost"
               onClick={() => openVerify(te)}
               aria-label={t("verificarTestimonio")}
               data-testid={`btn-verify-testimony-${te.idTestimony}`}
             >
-              <CheckCircle2 className="h-4 w-4" />
+              <CheckCircle2 aria-hidden />
             </Button>
           )}
           {te.verified && (
             <Button
-              size="sm"
+              size="icon-sm"
               variant="ghost"
               onClick={() => handleDownloadCopy(te)}
               disabled={downloadingId === te.idTestimony}
               aria-label={t("emitirCopia")}
               data-testid={`btn-issue-copy-${te.idTestimony}`}
             >
-              <Download className="h-4 w-4" />
+              <Download aria-hidden />
             </Button>
           )}
+          <Button
+            size="icon-sm"
+            variant="ghost"
+            className="text-destructive hover:text-destructive"
+            onClick={() => setDeleting(te)}
+            aria-label={tc("delete")}
+            title={tc("delete")}
+            data-testid={`btn-delete-testimony-${te.idTestimony}`}
+          >
+            <Trash2 aria-hidden />
+          </Button>
         </div>
       ),
     },
@@ -179,6 +267,50 @@ export default function TestimoniesPage() {
           </FormContainer>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={editing !== null} onOpenChange={(v) => !v && setEditing(null)}>
+        <DialogContent>
+          <FormContainer>
+            <FormSection dialogTitle title={t("editTestimonio")}>
+              <FormField label={t("fields.numero")} required>
+                <Input
+                  value={editNumber}
+                  onChange={(e) => setEditNumber(e.target.value)}
+                  inputMode="numeric"
+                  data-testid="input-edit-testimony-number"
+                />
+              </FormField>
+              <FormField label={t("fields.observaciones")}>
+                <textarea
+                  className={themeClass("textarea")}
+                  value={editNotes}
+                  onChange={(e) => setEditNotes(e.target.value)}
+                  data-testid="input-edit-testimony-notes"
+                />
+              </FormField>
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setEditing(null)}>
+                {tc("cancel")}
+              </Button>
+              <Button onClick={handleSaveEdit} disabled={updateMutation.isPending} data-testid="btn-save-edit-testimony">
+                {tc("save")}
+              </Button>
+            </FormActions>
+          </FormContainer>
+        </DialogContent>
+      </Dialog>
+
+      <ConfirmDialog
+        open={deleting !== null}
+        onOpenChange={(v) => { if (!v) setDeleting(null); }}
+        title={t("deleteTitle")}
+        description={t("deleteDescription", { number: deleting?.number ?? "" })}
+        onConfirm={handleDelete}
+        loading={deleteMutation.isPending}
+      />
+
+      <TestimonyMovementsDialog testimony={movementsOf} onClose={() => setMovementsOf(null)} />
     </div>
   );
 }

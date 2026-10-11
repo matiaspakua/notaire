@@ -24,6 +24,9 @@ public interface TestimonyMovementRepository extends JpaRepository<TestimonyMove
 
     boolean existsByFkIdTestimonyIdTestimonyAndRegisteredTrue(Integer idTestimony);
 
+    /** Whether the testimony has any registry movement (issue #1364: then it can't be deleted). */
+    boolean existsByFkIdTestimonyIdTestimony(Integer idTestimony);
+
     @Query("SELECT m FROM TestimonyMovement m WHERE m.dateEntry BETWEEN :startDate AND :endDate")
     List<TestimonyMovement> findByDateMovementBetween(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 }

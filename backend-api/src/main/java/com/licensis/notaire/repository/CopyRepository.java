@@ -14,6 +14,9 @@ public interface CopyRepository extends JpaRepository<Copy, Integer> {
 
     List<Copy> findByFkIdTestimonyIdTestimony(Integer idTestimony);
 
+    /** Whether copies were issued from the testimony (issue #1364: then it can't be deleted). */
+    boolean existsByFkIdTestimonyIdTestimony(Integer idTestimony);
+
     List<Copy> findByFkIdPersonIdPerson(Integer idPerson);
 
     List<Copy> findByNumber(int number);

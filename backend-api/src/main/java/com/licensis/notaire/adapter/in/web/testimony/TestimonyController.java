@@ -9,7 +9,9 @@ import com.licensis.notaire.application.usecase.testimony.TestimonyGenerationVer
 import com.licensis.notaire.dto.DtoDeed;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
+import com.licensis.notaire.repository.CopyRepository;
 import com.licensis.notaire.repository.DeedRepository;
+import com.licensis.notaire.repository.TestimonyMovementRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -129,13 +131,23 @@ public class TestimonyController {
     private final TestimonyRepository repository;
     private final TestimonyGenerationVerificationService generationVerificationService;
     private final DeedRepository deedRepository;
+    private final TestimonyMovementRepository movementRepository;
+    private final CopyRepository copyRepository;
+
+    /** Reason for a 409 on delete (issue #1364): the testimony is part of the deed's history. */
+    static final String IN_USE_MESSAGE =
+            "Cannot delete: the testimony has registry movements or issued copies";
 
     public TestimonyController(TestimonyRepository repository,
             TestimonyGenerationVerificationService generationVerificationService,
-            DeedRepository deedRepository) {
+            DeedRepository deedRepository,
+            TestimonyMovementRepository movementRepository,
+            CopyRepository copyRepository) {
         this.repository = repository;
         this.generationVerificationService = generationVerificationService;
         this.deedRepository = deedRepository;
+        this.movementRepository = movementRepository;
+        this.copyRepository = copyRepository;
     }
 
     @GetMapping
@@ -221,13 +233,19 @@ public class TestimonyController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "204", description = "Deleted"),
-    @ApiResponse(responseCode = "404", description = "Not found")
+    @ApiResponse(responseCode = "404", description = "Not found"),
+    @ApiResponse(responseCode = "409", description = "The testimony has registry movements or issued copies (issue #1364)")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete testimony")
+    @Operation(summary = "Delete testimony",
+               description = "Deletes a testimony that has no registry movements and no issued copies. Otherwise "
+                       + "answers 409 with the reason and keeps everything: they are part of the deed's history.")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
+        }
+        if (movementRepository.existsByFkIdTestimonyIdTestimony(id) || copyRepository.existsByFkIdTestimonyIdTestimony(id)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(IN_USE_MESSAGE);
         }
         try {
             repository.deleteById(id);

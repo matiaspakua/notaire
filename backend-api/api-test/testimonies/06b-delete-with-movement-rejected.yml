@@ -1,0 +1,22 @@
+info:
+  name: Delete a testimony with movements is rejected (409)
+  type: http
+  seq: 7
+  description: |-
+      ## DELETE /api/v1/testimonies/{id} with a registry movement
+      The movement history is kept: 409 with the reason, not a cascade delete (#1364).
+      Traceability: CU07, CU44, #1364
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/testimonies/{{testimony_id}}"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 409 Conflict", function () { expect(res.getStatus()).to.equal(409); });
+          test("Body names the movements", function () {
+            expect(String(res.getBody())).to.contain("movements");
+          });

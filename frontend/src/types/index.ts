@@ -303,7 +303,9 @@ export interface Testimony {
   number?: number;
   flagged?: boolean;
   verified?: boolean;
-  notes?: string;
+  notes?: string | null;
+  /** Optimistic-lock version; PUT /testimonies/{id} must send the one read (409 otherwise). */
+  version?: number;
   deed?: Deed;
   testimonyMovements?: TestimonyMovement[];
 }
