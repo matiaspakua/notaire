@@ -68,7 +68,7 @@ public final class BudgetPaymentTestFixtures {
         if (root.has("saldoPendiente")) {
             return root.get("saldoPendiente").decimalValue();
         }
-        throw new IllegalStateException("Unexpected saldo payload: " + root);
+        throw new IllegalStateException("Unexpected balance payload: " + root);
     }
 
     public static void createPayment(MockMvc mockMvc, int budgetId, BigDecimal amount, String notes)

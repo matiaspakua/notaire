@@ -158,11 +158,11 @@ class DeedEntityTest {
         @Test
         @DisplayName("Should set and get testimony list")
         void shouldSetAndGetTestimonyList() {
-            List<Testimony> testimonios = new ArrayList<>();
-            testimonios.add(new Testimony());
+            List<Testimony> testimonies = new ArrayList<>();
+            testimonies.add(new Testimony());
 
             Deed deed = new Deed();
-            deed.setTestimonyList(testimonios);
+            deed.setTestimonyList(testimonies);
 
             assertThat(deed.getTestimonyList()).hasSize(1);
         }

@@ -44,7 +44,7 @@ class UseCaseDomainsIntegrationTest {
     }
 
     @Test
-    void gestionesDomain() throws Exception {
+    void managementsDomain() throws Exception {
         mockMvc.perform(get("/api/v1/managements")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/managements/client/1")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/history")).andExpect(status().isOk());
@@ -54,7 +54,7 @@ class UseCaseDomainsIntegrationTest {
     }
 
     @Test
-    void clientesPersonsDomain() throws Exception {
+    void clientsAndPeopleDomain() throws Exception {
         mockMvc.perform(get("/api/v1/people")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/people/search")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/people/search").param("firstName", "Admin")).andExpect(status().isOk());
@@ -63,26 +63,26 @@ class UseCaseDomainsIntegrationTest {
     }
 
     @Test
-    void documentacionDomain() throws Exception {
+    void documentationDomain() throws Exception {
         mockMvc.perform(get("/api/v1/submitted-documents")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/document-types")).andExpect(status().isOk());
     }
 
     @Test
-    void escriturasDomain() throws Exception {
+    void deedsDomain() throws Exception {
         mockMvc.perform(get("/api/v1/deeds")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/properties")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/copies")).andExpect(status().isOk());
     }
 
     @Test
-    void testimoniosDomain() throws Exception {
+    void testimoniesDomain() throws Exception {
         mockMvc.perform(get("/api/v1/testimonies")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/testimony-movements")).andExpect(status().isOk());
     }
 
     @Test
-    void administracionCatalogosDomain() throws Exception {
+    void administrationCatalogsDomain() throws Exception {
         mockMvc.perform(get("/api/v1/procedure-types")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/folio-types")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/concepts")).andExpect(status().isOk());
@@ -98,7 +98,7 @@ class UseCaseDomainsIntegrationTest {
     }
 
     @Test
-    void suplenciasDomain() throws Exception {
+    void substitutionsDomain() throws Exception {
         mockMvc.perform(get("/api/v1/substitutions")).andExpect(status().isOk());
     }
 }

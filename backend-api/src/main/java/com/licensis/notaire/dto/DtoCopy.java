@@ -61,9 +61,9 @@ public class DtoCopy implements ValidDto
         return this.testimony;
     }
 
-    public void setTestimony(DtoTestimony testimonios)
+    public void setTestimony(DtoTestimony testimony)
     {
-        this.testimony = testimonios;
+        this.testimony = testimony;
     }
 
     public int getNumber()
@@ -119,7 +119,7 @@ public class DtoCopy implements ValidDto
     @Override
     public Boolean isValid()
     {
-        //  TODO: implementar.
+        //  TODO: implement.
         return true;
     }
 }

@@ -135,7 +135,7 @@ public class DtoDocumentType implements ValidDto
     @Override
     public Boolean isValid()
     {
-        //  TODO: implementar.
+        //  TODO: implement.
         return true;
     }
 }

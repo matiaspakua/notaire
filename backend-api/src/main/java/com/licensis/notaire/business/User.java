@@ -222,7 +222,7 @@ public class User implements Serializable, Persistable<Integer> {
         setType(dtoUser.getType());
 
         if (dtoUser.getVersion() != null) {
-            // Controlo Version Objeto
+            // Check the object version
             setVersion(dtoUser.getVersion());
         }
 

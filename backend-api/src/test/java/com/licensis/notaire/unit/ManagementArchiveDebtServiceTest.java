@@ -83,7 +83,7 @@ class ManagementArchiveDebtServiceTest {
 
     @Nested
     @DisplayName("Calculate outstanding balance of a management")
-    class CalcularSaldoPendingTests {
+    class PendingBalanceCalculationTests {
 
         @Test
         @DisplayName("Management with one procedure and budget returns that budget's balance")

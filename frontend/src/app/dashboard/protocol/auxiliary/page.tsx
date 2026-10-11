@@ -19,21 +19,21 @@ export default function AuxiliaryProtocolPage() {
   const tc = useTranslations("common");
 
   const {
-    data: foliosDisponibles = [],
+    data: availableFolios = [],
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["protocolo-auxiliar", "folios-disponibles"],
+    queryKey: ["auxiliary-protocol", "available-folios"],
     queryFn: () => apiGet<Folio[]>("/auxiliary-protocol/available-folios"),
   });
 
   const [selectedFolio, setSelectedFolio] = useState<Folio | null>(null);
-  const [cuerpo, setCuerpo] = useState("");
+  const [deedBody, setDeedBody] = useState("");
   const [saving, setSaving] = useState(false);
 
   function openModal(folio: Folio) {
     setSelectedFolio(folio);
-    setCuerpo("");
+    setDeedBody("");
   }
 
   async function handleStartDeed() {
@@ -43,7 +43,7 @@ export default function AuxiliaryProtocolPage() {
       // Backend body is StartDeedRequest(idFolio, body).
       await apiPost<Deed>("/auxiliary-protocol/deeds", {
         idFolio: selectedFolio.idFolio,
-        body: cuerpo,
+        body: deedBody,
       });
       toast.success(t("created"));
       setSelectedFolio(null);
@@ -81,7 +81,7 @@ export default function AuxiliaryProtocolPage() {
     <div>
       <AppHeader title={t("title")} description={t("description")} />
       <DataTable
-        data={foliosDisponibles}
+        data={availableFolios}
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(f) => f.idFolio!}
@@ -101,8 +101,8 @@ export default function AuxiliaryProtocolPage() {
                 <textarea
                   className="w-full rounded-lg border border-input bg-transparent p-3 text-sm"
                   rows={6}
-                  value={cuerpo}
-                  onChange={(e) => setCuerpo(e.target.value)}
+                  value={deedBody}
+                  onChange={(e) => setDeedBody(e.target.value)}
                   data-testid="textarea-deed-body-auxiliary"
                 />
               </FormField>
@@ -111,7 +111,7 @@ export default function AuxiliaryProtocolPage() {
               <Button variant="secondary" onClick={() => setSelectedFolio(null)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleStartDeed} disabled={saving || !cuerpo.trim()}>
+              <Button onClick={handleStartDeed} disabled={saving || !deedBody.trim()}>
                 {saving ? tc("saving") : tc("create")}
               </Button>
             </FormActions>

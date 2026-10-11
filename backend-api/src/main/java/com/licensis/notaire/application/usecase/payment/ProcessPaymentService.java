@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * CU15 "Procesar Payment" use case: validates a payment against the budget's pending
+ * CU15 "Process payment" use case: validates a payment against the budget's pending
  * balance and registers it.
  *
  * <p>Pure orchestration — the arithmetic lives in {@link BudgetCharges}, the I/O behind
@@ -43,7 +43,7 @@ public class ProcessPaymentService implements ProcessPaymentUseCase {
     public PaymentDetails process(ProcessPaymentCommand command) {
         Integer budgetId = command.budgetId();
         BigDecimal amount = Money.of(command.amount());
-        log.info("Procesando payment for budget {}: monto={}", budgetId, amount);
+        log.info("Processing payment for budget {}: amount={}", budgetId, amount);
 
         BudgetCharges charges = budgets.findCharges(budgetId)
                 .orElseThrow(() -> new IllegalArgumentException(

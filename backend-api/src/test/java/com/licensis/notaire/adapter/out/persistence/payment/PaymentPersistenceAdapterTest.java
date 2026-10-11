@@ -210,8 +210,8 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should calculate saldo pendiente correctly")
-    void shouldCalculateSaldoPending() {
+    @DisplayName("Should calculate the pending balance correctly")
+    void shouldCalculatePendingBalance() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("1000"));
 
@@ -224,8 +224,8 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should calculate saldo pendiente with null totalPaid")
-    void shouldCalculateSaldoPendingWithNullTotal() {
+    @DisplayName("Should calculate the pending balance with a null total paid")
+    void shouldCalculatePendingBalanceWithNullTotal() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
 
@@ -248,7 +248,7 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should report status PARTIAL when saldo pendiente is positive but some payments exist")
+    @DisplayName("Should report status PARTIAL when the pending balance is positive but some payments exist")
     void shouldCalculateStatusPaymentParcial() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("1000"));
@@ -259,7 +259,7 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should report status PAID when saldo pendiente is zero")
+    @DisplayName("Should report status PAID when the pending balance is zero")
     void shouldCalculateStatusPaymentSaldado() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("5000"));

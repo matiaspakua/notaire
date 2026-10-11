@@ -166,8 +166,8 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/payments/budget/{id}/balance should return saldo pendiente")
-    void shouldGetSaldoPending() throws Exception {
+    @DisplayName("GET /api/v1/payments/budget/{id}/balance should return the pending balance")
+    void shouldGetPendingBalance() throws Exception {
         when(paymentStatusUseCase.pendingBalance(10)).thenReturn(new java.math.BigDecimal("1000.0"));
         mockMvc.perform(get("/api/v1/payments/budget/10/balance"))
                 .andExpect(status().isOk())
@@ -184,7 +184,7 @@ class PaymentControllerTest {
 
     @Test
     @DisplayName("GET /api/v1/payments/budget/{id}/balance should return 500 on error")
-    void shouldReturnServerErrorOnSaldoCalculation() throws Exception {
+    void shouldReturnServerErrorOnBalanceCalculation() throws Exception {
         when(paymentStatusUseCase.pendingBalance(anyInt())).thenThrow(new RuntimeException("Calculation error"));
         mockMvc.perform(get("/api/v1/payments/budget/10/balance"))
                 .andExpect(status().isInternalServerError());
@@ -315,10 +315,10 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/v1/payments should return 409 when monto exceeds saldo pendiente")
-    void shouldReturn409WhenCreateExceedsSaldo() throws Exception {
+    @DisplayName("POST /api/v1/payments should return 409 when the amount exceeds the pending balance")
+    void shouldReturn409WhenAmountExceedsPendingBalance() throws Exception {
         when(processPaymentUseCase.process(any(ProcessPaymentCommand.class)))
-                .thenThrow(new PendingBalanceExceededException("no puede exceder el saldo pendiente"));
+                .thenThrow(new PendingBalanceExceededException("cannot exceed the outstanding balance"));
 
         String json = """
                 {

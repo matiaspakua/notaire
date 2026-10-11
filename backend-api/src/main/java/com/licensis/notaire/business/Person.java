@@ -478,7 +478,7 @@ public class Person implements Serializable, Persistable<Integer> {
         identificationType.setName(dtoPerson.getDtoIdentificationType().getName());
         this.setFkIdIdentificationType(identificationType);
 
-        // Set atributos Cliente
+        // Set client attributes
         if (dtoPerson.getIsClient()) {
             this.setNationality(dtoPerson.getNationality());
             this.setBirthDate(dtoPerson.getBirthDate());

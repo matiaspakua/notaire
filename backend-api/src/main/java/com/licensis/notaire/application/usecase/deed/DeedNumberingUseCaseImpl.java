@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Deed numbering use case implementation (CU86).
- * Orchestrates business rules for validating and calculating correlativo
+ * Orchestrates business rules for validating and calculating the sequence number
  * for deeds by notary, year, and protocol type.
  */
 @Service

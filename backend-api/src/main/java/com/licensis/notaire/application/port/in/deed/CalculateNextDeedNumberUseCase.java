@@ -4,7 +4,7 @@ import com.licensis.notaire.business.Person;
 
 /**
  * Inbound port for calculating the next deed sequence number.
- * Used by domain to determine what the next correlativo should be
+ * Used by domain to determine what the next sequence number should be
  * for a given notary, year, and folio type.
  */
 public interface CalculateNextDeedNumberUseCase {

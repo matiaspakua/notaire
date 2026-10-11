@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English payment wording and protocol locals** (#1490, CU75):
+  Payment logs, comments, and test titles say pending balance and amount.
+  Protocol pages use `notebooks`, `availableFolios`, and `deedBody`. Query
+  keys are `notebooks` and `auxiliary-protocol`. Message keys such as
+  `protocolo.cuadernos` and `fields.cuerpo` stay. The deprecated JSON field
+  `saldo` stays.
 - **English API coverage notes and leftover test titles** (#1490, CU75):
   Bruno descriptions and `COVERAGE.md` filter notes use the live English
   paths (`person`, `search`, `management`, `budget`, `current-status`,

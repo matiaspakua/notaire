@@ -277,7 +277,7 @@ public class Budget implements Serializable, Persistable<Integer> {
     }
 
     @Deprecated
-    public void setSaldo(BigDecimal saldo) {
+    public void setSaldo(BigDecimal balance) {
     }
 
     @Deprecated

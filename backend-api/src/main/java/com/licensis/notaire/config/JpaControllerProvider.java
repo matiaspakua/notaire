@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Clase base for acceder to the EntityManagerFactory
+ * Base class for access to the EntityManagerFactory
  */
 @Component
 public class JpaControllerProvider {

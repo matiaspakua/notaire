@@ -388,8 +388,8 @@ class PaymentUseCaseTest {
     class OverpaymentValidationTests {
 
         @Test
-        @DisplayName("Should reject payment that exceeds saldo pendiente")
-        void shouldRejectPaymentExceedingSaldo() {
+        @DisplayName("Should reject payment that exceeds the pending balance")
+        void shouldRejectPaymentExceedingPendingBalance() {
             Budget budget = new Budget();
             budget.setIdBudget(1);
             budget.setPropertyAmount(new java.math.BigDecimal("50000"));
@@ -397,7 +397,7 @@ class PaymentUseCaseTest {
             when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("30000")); // Already paid 30k
 
-            // Saldo = 50k - 30k = 20k, trying to pay 25k should fail
+            // Balance = 50k - 30k = 20k, trying to pay 25k should fail
             assertThatThrownBy(() -> processPayment.process(command(1, new java.math.BigDecimal("25000"), new Date(), "Overpay attempt")))
                     .isInstanceOf(PendingBalanceExceededException.class)
                     .hasMessageContaining("cannot exceed the outstanding balance");
@@ -406,8 +406,8 @@ class PaymentUseCaseTest {
         }
 
         @Test
-        @DisplayName("Should accept payment equal to saldo pendiente")
-        void shouldAcceptPaymentEqualToSaldo() {
+        @DisplayName("Should accept payment equal to the pending balance")
+        void shouldAcceptPaymentEqualToPendingBalance() {
             Budget budget = new Budget();
             budget.setIdBudget(1);
             budget.setPropertyAmount(new java.math.BigDecimal("50000"));
@@ -420,7 +420,7 @@ class PaymentUseCaseTest {
                 return p;
             });
 
-            // Saldo = 50k - 30k = 20k, paying exactly 20k should succeed
+            // Balance = 50k - 30k = 20k, paying exactly 20k should succeed
             PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("20000"), new Date(), "Exact payment"));
 
             assertThat(result).isNotNull();
@@ -429,7 +429,7 @@ class PaymentUseCaseTest {
         }
 
         @Test
-        @DisplayName("Should accept payment less than saldo pendiente")
+        @DisplayName("Should accept payment less than the pending balance")
         void shouldAcceptPartialPayment() {
             Budget budget = new Budget();
             budget.setIdBudget(1);
@@ -443,7 +443,7 @@ class PaymentUseCaseTest {
                 return p;
             });
 
-            // Saldo = 50k - 30k = 20k, paying 15k should succeed
+            // Balance = 50k - 30k = 20k, paying 15k should succeed
             PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("15000"), new Date(), "Partial payment"));
 
             assertThat(result).isNotNull();

@@ -122,7 +122,7 @@ public class DtoBudget implements ValidDto {
     }
 
     @Deprecated
-    public void setSaldo(BigDecimal saldo) {
+    public void setSaldo(BigDecimal balance) {
     }
 
     @Deprecated

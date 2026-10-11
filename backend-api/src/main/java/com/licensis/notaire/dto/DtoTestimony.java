@@ -118,7 +118,7 @@ public class DtoTestimony implements ValidDto
     @Override
     public Boolean isValid()
     {
-        //  TODO: implementar.
+        //  TODO: implement.
         return true;
     }
 }

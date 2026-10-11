@@ -28,7 +28,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import org.springframework.data.domain.Persistable;
 
 /**
- * Clase that presenta the items that can be asociados a the budgets.
+ * Class that presents the items that can be associated with budgets.
  *
  * @author juanca
  */

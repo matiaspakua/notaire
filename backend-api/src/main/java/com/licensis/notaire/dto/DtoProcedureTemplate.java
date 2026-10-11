@@ -50,7 +50,7 @@ public class DtoProcedureTemplate implements ValidDto
     @Override
     public Boolean isValid()
     {
-        //  TODO: implementar.
+        //  TODO: implement.
         return true;
     }
 }

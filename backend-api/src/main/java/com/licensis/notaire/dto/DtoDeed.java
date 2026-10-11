@@ -125,13 +125,13 @@ public class DtoDeed implements ValidDto {
         return new ArrayList<>();
     }
 
-    public void setTestimonies(List<DtoTestimony> testimonios) {
+    public void setTestimonies(List<DtoTestimony> testimonies) {
         // Backend-only, ignored in shared module
     }
 
     @Override
     public Boolean isValid() {
-        // TODO: implementar.
+        // TODO: implement.
         return true;
     }
 }

@@ -149,7 +149,7 @@ public class DtoItem implements ValidDto
     @Override
     public Boolean isValid()
     {
-        //  TODO: implementar.
+        //  TODO: implement.
         return true;
     }
 }

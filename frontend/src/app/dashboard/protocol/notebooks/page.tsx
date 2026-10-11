@@ -22,8 +22,8 @@ export default function NotebooksPage() {
   const t = useTranslations("protocolo.cuadernos");
   const tc = useTranslations("common");
 
-  const { data: cuadernos = [], isLoading, refetch } = useQuery({
-    queryKey: ["cuadernos"],
+  const { data: notebooks = [], isLoading, refetch } = useQuery({
+    queryKey: ["notebooks"],
     queryFn: () => apiGet<Notebook[]>("/notebooks"),
   });
 
@@ -32,7 +32,7 @@ export default function NotebooksPage() {
     queryFn: () => apiGet<Folio[]>("/folios"),
   });
 
-  const foliosDisponibles = useMemo(
+  const availableFolios = useMemo(
     () => folios.filter((f) => f.status === "Nuevo" || DAMAGED_STATUSES.includes(f.status ?? "")),
     [folios],
   );
@@ -134,7 +134,7 @@ export default function NotebooksPage() {
         }
       />
       <DataTable
-        data={cuadernos}
+        data={notebooks}
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(c) => c.idNotebook!}
@@ -147,10 +147,10 @@ export default function NotebooksPage() {
             <FormSection dialogTitle title={t("newCuaderno")}>
               <FormField label={t("fields.selectFolios")} helperText={t("selectTenHelper")}>
                 <div className="max-h-64 overflow-y-auto rounded-lg border border-border/40 p-3 space-y-2">
-                  {foliosDisponibles.length === 0 && (
+                  {availableFolios.length === 0 && (
                     <p className="text-sm text-muted-foreground">{t("noAvailableFolios")}</p>
                   )}
-                  {foliosDisponibles.map((f) => (
+                  {availableFolios.map((f) => (
                     <div key={f.idFolio} className="flex items-center gap-2">
                       <CheckboxField
                         label={`N° ${f.number} — ${f.status}`}

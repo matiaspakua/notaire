@@ -50,9 +50,9 @@ public class DtoTestimonyMovement implements ValidDto
         return this.testimony;
     }
 
-    public void setTestimony(DtoTestimony testimonios)
+    public void setTestimony(DtoTestimony testimony)
     {
-        this.testimony = testimonios;
+        this.testimony = testimony;
     }
 
     public Date getDateEntry()

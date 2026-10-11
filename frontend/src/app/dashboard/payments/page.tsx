@@ -169,7 +169,7 @@ export default function PagosPage() {
                           </span>
                         )}
                       </div>
-                      <div className="text-lg font-semibold text-foreground" data-testid="saldo-pendiente-amount">
+                      <div className="text-lg font-semibold text-foreground" data-testid="pending-balance-amount">
                         {formatCurrency(resumen.pendingBalance || 0)}
                       </div>
                       <div className="text-xs text-muted-foreground pt-1">

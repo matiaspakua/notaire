@@ -165,8 +165,8 @@ class RemainingControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("CU47 - Should return saldo for budget")
-        void shouldReturnSaldoForBudget() throws Exception {
+        @DisplayName("CU47 - Should return the balance for a budget")
+        void shouldReturnBalanceForBudget() throws Exception {
             mockMvc.perform(get("/api/v1/payments/budget/1/balance"))
                     .andExpect(status().isOk());
         }

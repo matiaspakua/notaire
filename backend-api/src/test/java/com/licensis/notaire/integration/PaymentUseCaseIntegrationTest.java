@@ -113,8 +113,8 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should calculate saldo pendiente correctly")
-    void shouldCalculateSaldoPendingCorrectly() {
+    @DisplayName("Should calculate the pending balance correctly")
+    void shouldCalculatePendingBalanceCorrectly() {
         process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Payment 1");
 
         java.math.BigDecimal pendingBalance = paymentStatus.pendingBalance(testBudget.getIdBudget());
@@ -123,8 +123,8 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should calculate saldo pendiente with multiple payments")
-    void shouldCalculateSaldoPendingWithMultiplePayments() {
+    @DisplayName("Should calculate the pending balance with multiple payments")
+    void shouldCalculatePendingBalanceWithMultiplePayments() {
         process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Payment 1");
         process(testBudget.getIdBudget(), new java.math.BigDecimal("150000"), new Date(), "Payment 2");
 
@@ -135,7 +135,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
 
     @Test
     @DisplayName("Should reject a payment that exceeds the outstanding balance and not persist it")
-    void shouldRejectPaymentExceedingSaldoPending() {
+    void shouldRejectPaymentExceedingPendingBalance() {
         assertThatThrownBy(() -> process(testBudget.getIdBudget(), new java.math.BigDecimal("600000"), new Date(), "Overpay attempt"))
                 .isInstanceOf(PendingBalanceExceededException.class);
 
@@ -145,11 +145,11 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
 
     @Test
     @DisplayName("Should reject a payment that exceeds the balance already reduced by a prior payment")
-    void shouldRejectPaymentExceedingSaldoReducedByPriorPayment() {
+    void shouldRejectPaymentExceedingBalanceReducedByPriorPayment() {
         process(testBudget.getIdBudget(), new java.math.BigDecimal("400000"), new Date(), "Payment 1");
 
         assertThatThrownBy(() ->
-                process(testBudget.getIdBudget(), new java.math.BigDecimal("150000"), new Date(), "Overpay against reduced saldo"))
+                process(testBudget.getIdBudget(), new java.math.BigDecimal("150000"), new Date(), "Overpay against reduced balance"))
                 .isInstanceOf(PendingBalanceExceededException.class);
 
         List<PaymentDetails> payments = paymentQueries.findByBudget(testBudget.getIdBudget());
@@ -369,15 +369,15 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
 
         List<PaymentDetails> found = paymentQueries.findByDateRange(startDate, endDate);
 
-        List<PaymentDetails> foundDeBudget = found.stream()
+        List<PaymentDetails> foundForBudget = found.stream()
                 .filter(p -> testBudget.getIdBudget().equals(p.budgetId()))
                 .toList();
-        assertThat(foundDeBudget).hasSize(3);
+        assertThat(foundForBudget).hasSize(3);
     }
 
     @Test
-    @DisplayName("Should calculate saldo correctly with full payment")
-    void shouldCalculateSaldoWithFullPayment() {
+    @DisplayName("Should calculate the balance correctly with a full payment")
+    void shouldCalculateBalanceWithFullPayment() {
         process(testBudget.getIdBudget(), new java.math.BigDecimal("500000"), new Date(), "Full payment");
 
         java.math.BigDecimal pendingBalance = paymentStatus.pendingBalance(testBudget.getIdBudget());
@@ -385,8 +385,8 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should throw exception when calcularSaldoPendiente for non-existent budget")
-    void shouldThrowExceptionWhenCalculatingSaldoForNonExistentBudget() {
+    @DisplayName("Should throw an exception when calculating the pending balance for a missing budget")
+    void shouldThrowExceptionWhenCalculatingBalanceForMissingBudget() {
         assertThatThrownBy(() -> paymentStatus.pendingBalance(9999))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("not found");
