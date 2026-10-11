@@ -41,6 +41,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English document, testimony, and folder-hold locals** (#1490, CU75): the
+  submitted-document form uses `typeId`, `date`, and `delivered`. Testimony
+  verification passes `flagged`. Re-entry passes `observedByRegistry`. The
+  testimony query key is `testimonies`. Putting a folder on hold passes
+  `reason`. Message catalog keys and the archive query flag `confirmado` stay.
 - **English document-type cache key and registration-draft fields** (#1490, CU75):
   the document-type query key is `documentTypes`. Registration-draft form state
   uses the English wire names (`dateSubmission`, `registryEntryNumber`,
