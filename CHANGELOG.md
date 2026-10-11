@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English module-structure decision** (#1490, CU75):
+  ADR-002 is English. Samples name current types (`ReportController`,
+  `DeedManagementRepository`, `User`, `SecurityAndCorsConfig`). The coverage
+  exclusion `service.Administrador*` stays. `frontend-swing` and `notaire-shared`
+  stay retired.
 - **English frontend-migration decision** (#1490, CU75):
   ADR-005 is English. The original planned routes (`gestiones`, `clientes`,
   `escrituras`, `presupuestos`, `protocolos`, `administracion`, `reportes`) stay
