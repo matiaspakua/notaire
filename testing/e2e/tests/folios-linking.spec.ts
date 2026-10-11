@@ -64,7 +64,7 @@ test.describe('CU87 - Link a deed and a folio', () => {
     const dialog = await openNewFolioAndFillRequired(page, folioNumber)
 
     await page.getByTestId('select-deed-folio').click()
-    const deedOption = page.getByRole('option', { name: `Deed Nº ${number}` })
+    const deedOption = page.getByRole('option', { name: `Escritura Nº ${number}` })
     await deedOption.waitFor({ state: 'attached', timeout: 5000 })
     await deedOption.evaluate((el: HTMLElement) => el.click())
 
@@ -100,7 +100,7 @@ test.describe('CU87 - Link a deed and a folio', () => {
     await page.getByTestId('select-deed-folio').click()
 
     // Then: the picker never offers an deed already Utilizado by another folio
-    await expect(page.getByRole('option', { name: `Deed Nº ${number}` })).toHaveCount(0)
+    await expect(page.getByRole('option', { name: `Escritura Nº ${number}` })).toHaveCount(0)
 
     // Escape closes the open select; a second Escape (or the first, if focus is on
     // the dialog) dismisses the modal. Never click Cancelar after Escape — the

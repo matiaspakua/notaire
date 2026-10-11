@@ -39,10 +39,10 @@ vi.mock("next-intl", () => ({
       login: {
         title: "Iniciar sesión",
         subtitle: "Sistema de Gestión de Escribanía",
-        username: "UserAccount",
+        username: "Usuario",
         password: "Contraseña",
         submit: "Ingresar",
-        error: "UserAccount o contraseña incorrectos",
+        error: "Usuario o contraseña incorrectos",
         sessionExpired: "Su sesión ha expirado. Inicie sesión nuevamente.",
         connectionError:
           "No se pudo conectar al servidor. Verifique que el backend esté en ejecución.",
@@ -163,7 +163,7 @@ describe("LoginPage", () => {
     fireEvent.click(screen.getByTestId("btn-sign-in"));
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith("UserAccount o contraseña incorrectos");
+      expect(toast.error).toHaveBeenCalledWith("Usuario o contraseña incorrectos");
     });
   });
 

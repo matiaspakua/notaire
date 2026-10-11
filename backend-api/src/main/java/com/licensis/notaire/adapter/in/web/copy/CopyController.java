@@ -140,7 +140,7 @@ public class CopyController {
         if (request.testimonyId() != null
                 && !service.canCreateCopyForTestimony(request.testimonyId())) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "The testimony already has a movimiento registered and not admite new copies."));
+                    .body(Map.of("error", "The testimony already has a registered movement and does not accept new copies."));
         }
         try {
             Copy entity = new Copy();

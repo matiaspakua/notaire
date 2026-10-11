@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Spanish catalog nouns restored** (#1490, CU75):
+  `es.json` again says `Usuario`, `Escritura`, `Testimonio`, `Copia`, `Pago`,
+  and `Historial` where class names had replaced those words. The English
+  catalog stays in English. A copy rejected because of a registered movement
+  reports `The testimony already has a registered movement and does not accept new copies.`
 - **English lazy-association names** (#1490, CU75):
   The JPA lazy-loading guide lists the live collections `testimonyMovementList`,
   `procedureList`, `itemList`, `auditRecordList`, and `nodes`. Samples join

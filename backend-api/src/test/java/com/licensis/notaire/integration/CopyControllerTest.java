@@ -92,7 +92,8 @@ class CopyControllerTest extends ServiceIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(copyBody(8001, testimony.getIdTestimony())))
                 .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.error").exists());
+                .andExpect(jsonPath("$.error").value(
+                        "The testimony already has a registered movement and does not accept new copies."));
     }
 
     @Test
