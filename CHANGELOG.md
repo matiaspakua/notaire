@@ -64,6 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **RBAC notary filename** (#1490, CU75): the Bruno request file is
+  `04-employee-create-notary.yml`. The stored type `ESCRIBANO` stays.
 - **Document-type unit filename** (#1490, CU75): the form-defaults unit
   test is `document-type-enabled-returned.test.ts`. The archived #800
   design keeps `tipo-documento-enabled-returned.test.ts`.
