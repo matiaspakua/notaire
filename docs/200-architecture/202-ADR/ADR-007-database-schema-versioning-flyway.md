@@ -83,11 +83,12 @@ backend-api/src/main/resources/
 ├── db/migration/
 │   ├── V1__initial_schema.sql
 │   ├── V2__initial_data.sql
-│   └── V45__rename_remaining_spanish_identifiers.sql
+│   ├── V45__rename_remaining_spanish_identifiers.sql
+│   └── V46__rename_spanish_constraint_names.sql
 └── application.properties
 ```
 
-`V1__initial_schema.sql`, `V2__initial_data.sql`, and `V45__rename_remaining_spanish_identifiers.sql` exist. Applied filenames V1–V44 stay as recorded, including Spanish words in those names. New migrations use English descriptions. Undo scripts use the `R{version}__` prefix (`R45__rename_remaining_spanish_identifiers.sql`).
+`V1__initial_schema.sql`, `V2__initial_data.sql`, `V45__rename_remaining_spanish_identifiers.sql`, and `V46__rename_spanish_constraint_names.sql` exist. Applied filenames V1–V45 stay as recorded, including Spanish words in those names. New migrations use English descriptions. Undo scripts use the `R{version}__` prefix (`R45__rename_remaining_spanish_identifiers.sql`, `R46__rename_spanish_constraint_names.sql`).
 
 #### 3. Spring Boot settings
 

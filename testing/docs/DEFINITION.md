@@ -47,7 +47,7 @@ verifies the outcome with SQL. No Spring context is involved.
 | Check | Verifies |
 |-------|----------|
 | migrate, then validate | Every migration applies to an empty database and the history validates |
-| files versus history | Every `V<n>__*.sql` file is applied, and the only ignored SQL files are the documented manual rollbacks `R14__restore_presupuestos_fk_id_tramite.sql` and `R45__rename_remaining_spanish_identifiers.sql` |
+| files versus history | Every `V<n>__*.sql` file is applied, and the only ignored SQL files are the documented manual rollbacks `R14__restore_presupuestos_fk_id_tramite.sql`, `R45__rename_remaining_spanish_identifiers.sql`, and `R46__rename_spanish_constraint_names.sql` |
 | `10_history.sql` | No failed row; versions contiguous from 1 to the latest |
 | `20_config.sql` | Server major version 16; database encoding UTF8 |
 | `30_roles.sql` | The V12 exporter role exists, can log in, is not a superuser and belongs to `pg_monitor` only |
