@@ -39,7 +39,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |----------|---------|--------|
 | `CHANGELOG.md` | yes | branch commit |
 | `backend-api/openapi/openapi.yaml` | yes | branch commit |
-| `backend-api/openapi/accepted-breaking-changes.txt` | yes | branch commit |
+| `backend-api/openapi/accepted-breaking-changes.txt` | retired | legacy single list; entries live in `accepted-breaking-changes.d/` |
 
 ## Gate log
 

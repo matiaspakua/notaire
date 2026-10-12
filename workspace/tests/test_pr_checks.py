@@ -280,6 +280,24 @@ class DocTraceabilityTest(unittest.TestCase):
         commit(repo, "docs: readme", "docs/README.md")
         self.assertEqual(run_doc(base, repo).returncode, 0)
 
+    def test_accepts_a_pending_permanent_docs_section(self):
+        repo, base = new_repo()
+        path = "docs/openspec/changes/docs-case/traceability.md"
+        body = (
+            "# Traceability\n\n## Permanent documentation updated\n\n"
+            "| Document | Updated | Commit |\n"
+            "|----------|---------|--------|\n"
+            "| `CHANGELOG.md` | pending | — |\n\n"
+            "## Gate log\n"
+        )
+        full = os.path.join(repo, path)
+        os.makedirs(os.path.dirname(full))
+        with open(full, "w", encoding="utf-8") as handle:
+            handle.write(body)
+        commit(repo, "docs(openspec): cite the English spec name", path)
+        result = run_doc(base, repo)
+        self.assertEqual(result.returncode, 0, result.stdout)
+
     def test_accepts_claimed_path_with_en_dash(self):
         """git quotepath C-quotes en-dashes; claims must still match (CU76)."""
         repo, base = new_repo()

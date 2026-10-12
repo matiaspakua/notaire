@@ -42,6 +42,13 @@ class OpenPlaywrightFilenamesEnglishTest(unittest.TestCase):
             self.assertNotIn(name, text, name)
         self.assertIn("feat-774-gestion-resumen-caso", summary_ledger)
         self.assertIn("## Riesgos / Trade-offs", summary)
+        legacy_claim = "`backend-api/openapi/accepted-breaking-changes.txt` | yes"
+        self.assertNotIn(legacy_claim, documents)
+        self.assertNotIn(legacy_claim, properties)
+        self.assertIn("`CHANGELOG.md` | yes", documents)
+        self.assertIn("`backend-api/openapi/openapi.yaml` | yes", documents)
+        self.assertIn("`CHANGELOG.md` | yes", properties)
+        self.assertIn("`backend-api/openapi/openapi.yaml` | yes", properties)
         archive = (
             CHANGES
             / "archive"
