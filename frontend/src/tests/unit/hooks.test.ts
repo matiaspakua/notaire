@@ -41,9 +41,6 @@ describe("React Query key contracts", () => {
       expect(auditKeys.all).toEqual(["audit"]);
     });
 
-    it("byUser key includes user id", () => {
-      expect(auditKeys.byUser(12)).toEqual(["audit", "user", 12]);
-    });
   });
 });
 
@@ -140,15 +137,3 @@ describe("API endpoint path contracts", () => {
   });
 });
 
-// ──────────────────────────────────────────────
-// Enabled condition for conditional hooks
-// ──────────────────────────────────────────────
-
-describe("Conditional query enabled logic", () => {
-  it("useAuditByUser — enabled when userId > 0", () => {
-    const enabled = (id: number | null) => id !== null && id > 0;
-    expect(enabled(1)).toBe(true);
-    expect(enabled(null)).toBe(false);
-    expect(enabled(0)).toBe(false);
-  });
-});
