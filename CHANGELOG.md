@@ -2721,6 +2721,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Audit log filter by user and date range** (issue #1545, CU23): `/dashboard/audit` has a
+  user selector and Desde/Hasta dates, kept in the URL. `GET /api/v1/audit-log` accepts optional
+  `from`/`to` (yyyy-MM-dd, inclusive), the filters now combine (module no longer overrides
+  `idUser`), and an inverted or malformed range answers 400.
+
 - **Testimony edit, delete and movement history** (issue #1364, CU07 / CU44 / RF-31): on
   /dashboard/testimonies each row can open **Ver movimientos** (the testimony's registry
   movements, newest first, with the withdrawal card number), **Editar** (number and notes) and

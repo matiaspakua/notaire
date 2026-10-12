@@ -48,7 +48,7 @@ the value but update did not. Hardened in `setAttributes`.
 | Folder | Endpoint | CRUD | Filters / extras | Use Cases |
 |--------|----------|------|------------------|-----------|
 | 00-auth | `/users/login` | n/a | login, invalid, rate-limit lockout | CU78 |
-| audit-records | `/audit-log` | read-only | list; POST/PUT/DELETE → 405 (#1060) | CU73, CU23, CU78 |
+| audit-records | `/audit-log` | read-only | list; user + date-range filter, bad range → 400 (#1545); POST/PUT/DELETE → 405 (#1060) | CU73, CU23, CU78 |
 | auxiliary-protocol | `/auxiliary-protocol` | actions | available folios; start a deed | CU81 |
 | budget-templates | `/budget-templates` | ✅ | `procedure-types/{id}`; own procedure type + concept fixtures | CU26, CU29, CU39, CU55, CU49, CU37, CU57 |
 | budgets | `/budgets` | ✅ | `person/{id}`, `search?status=` | CU01, CU60, CU45 |

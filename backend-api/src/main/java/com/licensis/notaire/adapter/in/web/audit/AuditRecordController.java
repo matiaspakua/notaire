@@ -18,6 +18,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +39,8 @@ public class AuditRecordController {
 
     /**
      * Returns audit log entries. Supports pagination, sort and optional
-     * filters by {@code module} and {@code idUser}. When no pagination
+     * filters by {@code module}, {@code idUser} and an inclusive {@code from}/{@code to}
+     * calendar-day range (#1545 / CU23); the filters combine. When no pagination
      * parameters are present the response is a flat list of DTOs (kept for
      * backwards compatibility with the existing Swing/Next clients).
      */
@@ -47,7 +52,11 @@ public class AuditRecordController {
             @RequestParam(required = false) Integer size,
             @RequestParam(required = false, defaultValue = "date,desc") String sort,
             @RequestParam(required = false) String module,
-            @RequestParam(required = false) Integer idUser
+            @RequestParam(required = false) Integer idUser,
+            @Parameter(description = "First day, inclusive (yyyy-MM-dd, business time zone)")
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @Parameter(description = "Last day, inclusive (yyyy-MM-dd, business time zone)")
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
     ) {
         boolean paginated = page != null || size != null;
         if (!paginated) {
@@ -56,14 +65,7 @@ public class AuditRecordController {
         }
 
         Pageable pageable = buildPageable(page, size, sort);
-        Page<DtoAuditRecord> result;
-        if (module != null && !module.isBlank()) {
-            result = service.findByModuleAsDto(module, pageable);
-        } else if (idUser != null) {
-            result = service.findByUserIdAsDto(idUser, pageable);
-        } else {
-            result = service.findAllAsDto(pageable);
-        }
+        Page<DtoAuditRecord> result = service.searchAsDto(module, idUser, from, to, pageable);
         return ResponseEntity.ok(toPageResponse(result));
     }
 

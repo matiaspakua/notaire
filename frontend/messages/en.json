@@ -792,7 +792,12 @@
       "modulo": "Module"
     },
     "allModules": "All modules",
-    "moduleFilter": "Module"
+    "moduleFilter": "Module",
+    "userFilter": "Filter by user",
+    "allUsers": "All users",
+    "desde": "From",
+    "hasta": "To",
+    "rangoInvalido": "The \"from\" date must be on or before \"to\""
   },
   "administracion": {
     "title": "Administration",
