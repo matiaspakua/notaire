@@ -15,8 +15,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/docs-1561-project-management/` | written |
 | Branch | `cursor/project-management-roadmap-4e9a` | open |
 | Tasks | `tasks.md` | in progress |
-| Commits | `52c0772190b62f168d36186ec2f79411f34a5c22` policy and tests | in progress |
-| Pull Request | pending | pending |
+| Commits | `52c0772190b62f168d36186ec2f79411f34a5c22` policy and tests; `24e490d4` handbook, chart, fleet | pushed |
+| Pull Request | #1565 | draft |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |

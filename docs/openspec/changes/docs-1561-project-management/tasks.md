@@ -72,11 +72,11 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Push the branch
-- [ ] 10.2 PR `[#1561] docs(pm): schedule milestones and agent lanes`
+- [x] 10.1 Pushed `cursor/project-management-roadmap-4e9a`
+- [x] 10.2 Draft PR #1565 `[#1561] docs(pm): schedule milestones and agent lanes`
 - [ ] 10.3 CI on the docs-scoped workflows
 - [ ] 10.4 Gate 4
-- [ ] 10.5 PR number in `traceability.md`
+- [x] 10.5 PR number recorded in `traceability.md`
 
 ## 11. Deploy
 
