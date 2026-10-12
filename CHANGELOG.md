@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Role unassign response** (#1490, CU75): the 204 description says
+  `Role unassigned`. Stored role names `ADMIN`, `ESCRIBANO`, and
+  `SECRETARIA` stay.
 - **Role diagram labels** (#1490, CU75): the role diagram names `ADMIN`,
   `ESCRIBANO`, and `SECRETARIA`. The stored user type `Escribano` stays.
 - **Procedure-folder status labels** (#1490, CU75): the procedure-folder
