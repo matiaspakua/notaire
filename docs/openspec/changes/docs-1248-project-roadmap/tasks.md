@@ -59,7 +59,7 @@
 - [x] 8.3 n/a — not user-visible product behavior
 - [x] 8.4 Nothing superseded moved to the archive; SAD §11.3 now points at the new guide
 - [x] 8.5 The guide is the source for counts; the SAD keeps the phase narrative and links out
-- [ ] 8.6 `bash workspace/sdlc/preflight.sh` before push
+- [x] 8.6 `bash workspace/sdlc/preflight.sh` ran on this branch: 21 checks passed, including backend verify and the frontend build. The three local failures are pre-existing (other OpenSpec changes, archive leftovers, missing python3-venv) and are not this diff.
 
 ## 9. Commits atómicos
 
@@ -74,7 +74,7 @@
 - [x] 10.2 Draft PR #1562 with Issue #1248 and CU76
 - [ ] 10.3 CI on the PR
 - [ ] 10.4 Review
-- [ ] 10.5 PR number recorded in traceability.md
+- [x] 10.5 PR #1562 recorded in traceability.md
 
 ## 11. Deploy
 
