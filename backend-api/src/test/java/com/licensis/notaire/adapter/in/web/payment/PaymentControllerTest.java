@@ -35,6 +35,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -76,7 +77,9 @@ class PaymentControllerTest {
     void setUp() {
         PaymentController controller = new PaymentController(processPaymentUseCase, editPaymentUseCase,
                 deletePaymentUseCase, queryPaymentsUseCase, paymentStatusUseCase);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
+                .build();
     }
 
     private PaymentDetails buildPayment() {
@@ -229,6 +232,27 @@ class PaymentControllerTest {
 
         verify(queryPaymentsUseCase).findByDateRange(
                 toDate(LocalDate.of(2026, 1, 1)), toDate(LocalDate.of(2026, 12, 31)));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/payments/date answers 400 when startDate is after endDate (#1557)")
+    void shouldRejectInvertedDateRange() throws Exception {
+        mockMvc.perform(get("/api/v1/payments/date")
+                .param("startDate", "2026-12-31")
+                .param("endDate", "2026-01-01"))
+                .andExpect(status().isBadRequest());
+        verify(queryPaymentsUseCase, never()).findByDateRange(any(Date.class), any(Date.class));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/payments/date answers 400 for a malformed or missing date (#1557)")
+    void shouldRejectMalformedDate() throws Exception {
+        mockMvc.perform(get("/api/v1/payments/date")
+                .param("startDate", "31/12/2026")
+                .param("endDate", "2026-12-31"))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(get("/api/v1/payments/date").param("startDate", "2026-01-01"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
