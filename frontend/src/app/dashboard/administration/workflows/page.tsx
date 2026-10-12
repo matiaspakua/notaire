@@ -176,7 +176,7 @@ export default function WorkflowsPage() {
                     type="checkbox"
                     checked={editing.active ?? false}
                     onChange={(e) => setEditing({ ...editing, active: e.target.checked })}
-                    data-testid="checkbox-activo-workflow"
+                    data-testid="checkbox-active-workflow"
                   />
                   <span className="text-sm">{t("enabledForAssignment")}</span>
                 </label>
