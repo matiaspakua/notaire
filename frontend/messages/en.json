@@ -514,6 +514,14 @@
       "pending": "Outstanding Balance",
       "summary": "Budgeted: {budgeted} | Paid: {paid}",
       "error": "Couldn't load the balance. Please try again."
+    },
+    "consulta": {
+      "label": "Consult by budget",
+      "total": "Total",
+      "paid": "Paid",
+      "balance": "Balance",
+      "status": "Payment status",
+      "sinPagos": "This budget has no payments"
     }
   },
   "protocolo": {

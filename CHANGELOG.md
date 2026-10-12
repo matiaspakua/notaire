@@ -2721,6 +2721,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Consult a budget's payments** (issue #1544, CU47): the payments page has a
+  "Consultar por presupuesto" picker (kept in `?budget=`). It shows the budget's total, paid
+  amount, outstanding balance and payment status, and lists only its payments, newest first.
+  `GET /payments/budget/{id}` and `/balance` now have a UI caller (off the #1250 allowlist).
+
 - **Testimony edit, delete and movement history** (issue #1364, CU07 / CU44 / RF-31): on
   /dashboard/testimonies each row can open **Ver movimientos** (the testimony's registry
   movements, newest first, with the withdrawal card number), **Editar** (number and notes) and

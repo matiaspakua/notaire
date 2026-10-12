@@ -17,6 +17,22 @@ export function usePaymentStatus(idBudget: number | null) {
     enabled: idBudget !== null,
   });
 }
+/** CU47 (#1544): one budget's payments. */
+export function usePaymentsByBudget(idBudget: number | null) {
+  return useQuery({
+    queryKey: [...paymentsKeys.all, "budget", idBudget],
+    queryFn: () => apiGet<Payment[]>(`/payments/budget/${idBudget}`),
+    enabled: idBudget !== null,
+  });
+}
+/** CU47 (#1544): a budget's outstanding balance. */
+export function useBudgetBalance(idBudget: number | null) {
+  return useQuery({
+    queryKey: [...paymentsKeys.all, "balance", idBudget],
+    queryFn: () => apiGet<number>(`/payments/budget/${idBudget}/balance`),
+    enabled: idBudget !== null,
+  });
+}
 export function useCreatePayment() {
   const qc = useQueryClient();
   return useMutation({ mutationFn: (d: Partial<Payment>) => apiPost<void>("/payments", d), onSuccess: () => qc.invalidateQueries({ queryKey: paymentsKeys.all }) });
