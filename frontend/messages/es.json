@@ -514,6 +514,14 @@
       "pending": "Saldo Pendiente",
       "summary": "Presupuestado: {budgeted} | Pagado: {paid}",
       "error": "No se pudo cargar el saldo. Intenta nuevamente."
+    },
+    "consulta": {
+      "label": "Consultar por presupuesto",
+      "total": "Total",
+      "paid": "Pagado",
+      "balance": "Saldo",
+      "status": "Estado de pago",
+      "sinPagos": "Este presupuesto no tiene pagos"
     }
   },
   "protocolo": {

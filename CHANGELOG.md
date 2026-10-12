@@ -2732,6 +2732,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   user selector and Desde/Hasta dates, kept in the URL. `GET /api/v1/audit-log` accepts optional
   `from`/`to` (yyyy-MM-dd, inclusive), the filters now combine (module no longer overrides
   `idUser`), and an inverted or malformed range answers 400.
+- **Consult a budget's payments** (issue #1544, CU47): the payments page has a
+  "Consultar por presupuesto" picker (kept in `?budget=`). It shows the budget's total, paid
+  amount, outstanding balance and payment status, and lists only its payments, newest first.
+  `GET /payments/budget/{id}` and `/balance` now have a UI caller (off the #1250 allowlist).
 
 - **Board Status / label / issue-state coherence gate** (#1550, CU76):
   `python3 workspace/sdlc/check-board-status-label-coherence.py` enforces
