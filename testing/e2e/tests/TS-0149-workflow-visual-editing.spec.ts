@@ -98,7 +98,10 @@ test.describe("TS-0149 - Workflow visual editing (#1576)", () => {
       await expect(page.locator(".react-flow__node")).toHaveCount(3);
 
       // delete a transition, with confirmation
-      await page.locator(".react-flow__edge").last().click({ force: true });
+      const trs = await apiGet<Array<{ id: number; originNodeId: number; destinationNodeId: number }>>(
+        page, `/workflow-transition/by-workflow/${wfId}`);
+      const midToFinal = trs.data!.find((t) => t.originNodeId === n2 && t.destinationNodeId === n3)!;
+      await page.getByTestId(`rf__edge-${midToFinal.id}`).click({ force: true });
       await expect(page.getByTestId("wf-panel-edge")).toBeVisible();
       await page.getByTestId("wf-panel-delete-edge").click();
       await page.getByTestId("confirm-dialog-confirm").click();
