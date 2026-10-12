@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded procedure-type flags** (#1490, CU75): `enabled` stays `true` for
+  `Compraventa`, `Donacion`, `Hipoteca`, `Sucesion`, and `Poder`. A binder
+  stays required for every seeded type except `Poder`. Registry registration
+  and property association stay `true` for `Compraventa`, `Donacion`, and
+  `Hipoteca`, and `false` for `Sucesion` and `Poder`.
 - **Seeded document-type fees** (#1490, CU75): returned and expires stay
   `true` for `Libre Deuda Municipal`, `Informe de Dominio`, and
   `Certificado Catastral`, and `false` for `Fotocopia DNI`. Validity stays
