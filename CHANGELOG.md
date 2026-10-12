@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **H2 seed address and email** (#1490, CU75): the seeded notary lives at
+  `Main Avenue 123` with email `jcgarcia@notary.com`. The name
+  `Juan Carlos Garcia`, marital status `Casado`, and type `Escribano`
+  stay. Applied migration `V2` keeps `Av. Principal 123` and
+  `jcgarcia@notaria.com`.
 - **Fiscal valuation designation** (#1490, CU75): the property saved for the
   fiscal valuation check uses the designation `Appraised house`. Visible
   labels `Domicilio` and `Nomenclatura Catastral` stay.
