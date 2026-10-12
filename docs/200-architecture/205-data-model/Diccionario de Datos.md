@@ -273,7 +273,7 @@ File that groups one or more related procedures.
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
 | `number` | INTEGER | No | No | Yes | — | — | Yearly serial number of the management |
 | `start_date` | DATE | No | No | Yes | — | — | Date the file was opened |
-| `heading` | TEXT | No | No | Yes | — | — | Heading that describes the management |
+| `heading` | TEXT | No | No | Yes | — | — | Heading that describes the management. Stored values `Compraventa Lote 12 — Familia Pérez` and `Donación — Sucesión Gómez` stay. |
 | `notes` | TEXT | No | No | No | NULL | — | Working notes |
 | `fk_id_notary_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Notary in charge |
 | `fk_id_management_status` | INTEGER | No | Yes | No | NULL | `management_statuses(id)` | Current operational status |

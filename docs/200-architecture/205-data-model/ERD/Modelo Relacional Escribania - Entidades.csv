@@ -100,7 +100,7 @@ deed_managements,Strong,version,,no,Integer,,,,Optimistic lock
 deed_managements,Strong,id,PK,no,Integer,x,,,Unique id of the deed management
 deed_managements,Strong,number,,no,Integer,,,,Yearly serial number of the management
 deed_managements,Strong,start_date,,no,Date,,,,Date the file was opened
-deed_managements,Strong,heading,,no,Text,,,,Heading that describes the management
+deed_managements,Strong,heading,,no,Text,,,,Heading that describes the management. Stored values `Compraventa Lote 12 — Familia Pérez` and `Donación — Sucesión Gómez` stay.
 deed_managements,Strong,notes,,yes,Text,,,x,Working notes
 deed_managements,Strong,fk_id_notary_person,FK,yes,Integer,,x,x,Notary in charge
 deed_managements,Strong,fk_id_management_status,FK,yes,Integer,,x,x,Current operational status
