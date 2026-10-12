@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded sample ownership** (#1490, CU75): seeded managements stay with
+  notary `Garcia`. History and procedures stay on managements `1001` and
+  `1002`. Seeded workflow rows stay on `Workflow de Gestión Estándar`.
+  Notes stay empty for the seeded statuses that have no note text.
 - **Seeded sample links** (#1490, CU75): the person sample stays identified
   by `DNI`. The login stays linked to `Garcia`. Management `1001` stays
   `Documentacion Completa` and management `1002` stays `En Tramite`. History
