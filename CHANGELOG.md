@@ -2180,6 +2180,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Workflow editor boxes no longer overlap** (issue #1574, epic #1573, CU70/CU71): the editor
+  canvas is derived from the loaded nodes and transitions (it used to keep its first, empty
+  state, so a direct load was blank and cached data stacked every box at 0,0). Nodes without a
+  saved position, or overlapping one, get an automatic left-to-right layout (dagre) that follows
+  the transitions; "Auto-organizar" re-lays out the whole graph and saves every position with
+  `PUT /workflow-node/{id}`; new nodes go to free space. The read-only `WorkflowViewer` uses the
+  same layout. New Playwright TS-0147.
+
 - **An expired session always shows the "session expired" message** (issue #1548):
   under load the edge proxy could answer `/login?expired=1` with a redirect to `/dashboard`
   (the UX status cookie was still present), and the dashboard guard then sent the user to a
@@ -2733,6 +2741,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### Added
+
+- **Register a testimony manually** (issue #1555, CU07): `/dashboard/testimonies` has a
+  "Registrar testimonio" button. Its dialog takes a signed deed (required), number, notes and
+  a verified flag, and posts them with `POST /testimonies`, which is off the #1250 allowlist (bucket C).
+  Missing deed or number and 400 field errors show next to the field; 404 (deed gone) and 409 come
+  as a toast. The "Generar" flow is unchanged. New Playwright TS-0146.
 
 - **All document templates overview** (issue #1554, CU79): Administración → Plantillas has a
   "Todas las plantillas de documentos" table (procedure type, document type, condition, notes)

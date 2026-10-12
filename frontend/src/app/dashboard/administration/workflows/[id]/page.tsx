@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
@@ -8,12 +8,13 @@ import {
   Background,
   Controls,
   MiniMap,
-  addEdge,
-  useNodesState,
-  useEdgesState,
+  applyNodeChanges,
+  applyEdgeChanges,
   type Node,
   type Edge,
   type Connection,
+  type NodeChange,
+  type EdgeChange,
   Handle,
   Position,
 } from "@xyflow/react";
@@ -38,6 +39,7 @@ import type { WorkflowNodeType } from "@/types";
 import { useManagementStatuses } from "@/hooks/useManagementStatuses";
 import { theme } from "@/theme/tokens";
 import { getNodeMeta, withNodeIcon } from "@/lib/workflow-node-meta";
+import { layoutWorkflow, nextFreePosition, NODE_WIDTH, NODE_HEIGHT, type Point } from "@/lib/workflow-layout";
 
 function WorkflowNodeComponent({ data }: { data: { label: string; type: string } }) {
   const meta = getNodeMeta(data.type);
@@ -48,11 +50,17 @@ function WorkflowNodeComponent({ data }: { data: { label: string; type: string }
         border: `2px solid ${meta.border}`,
         color: meta.color,
         borderRadius: "8px",
-        padding: "8px 16px",
+        padding: "8px 12px",
         fontWeight: 600,
         fontSize: "13px",
-        minWidth: "120px",
+        width: `${NODE_WIDTH}px`,
+        minHeight: `${NODE_HEIGHT}px`,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         textAlign: "center",
+        lineHeight: 1.25,
+        overflowWrap: "anywhere",
       }}
     >
       <Handle type="target" position={Position.Left} />
@@ -89,35 +97,91 @@ export default function WorkflowEditorPage() {
   const [newNodeType, setNewNodeType] = useState<WorkflowNodeType>("INTERMEDIATE");
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
-  const flowNodes: Node[] = rawNodes.map((n) => ({
-    id: String(n.id),
-    type: "workflowNode",
-    position: { x: n.positionX ?? 0, y: n.positionY ?? 0 },
-    data: {
-      label: withNodeIcon(
-        n.statusManagementName ?? t("nodeFallback", { id: n.id ?? 0 }),
-        n.type ?? "INTERMEDIATE",
-      ),
-      type: n.type ?? "INTERMEDIATE",
+  // #1574: the canvas is derived from the query data (useNodesState only kept its first,
+  // empty value). Saved positions win; missing or overlapping ones get an automatic layout.
+  const layout = useMemo(() => layoutWorkflow(rawNodes, rawTransitions), [rawNodes, rawTransitions]);
+  const [local, setLocal] = useState<Record<string, { position?: Point; selected?: boolean; dragging?: boolean }>>({});
+  const [selectedEdges, setSelectedEdges] = useState<Record<string, boolean>>({});
+
+  const nodes: Node[] = useMemo(
+    () =>
+      rawNodes.map((n) => {
+        const id = String(n.id);
+        return {
+          id,
+          type: "workflowNode",
+          position: local[id]?.position ?? layout.get(id) ?? { x: 0, y: 0 },
+          selected: local[id]?.selected ?? false,
+          dragging: local[id]?.dragging ?? false,
+          data: {
+            label: withNodeIcon(
+              n.statusManagementName ?? t("nodeFallback", { id: n.id ?? 0 }),
+              n.type ?? "INTERMEDIATE",
+            ),
+            type: n.type ?? "INTERMEDIATE",
+          },
+        };
+      }),
+    [rawNodes, layout, local, t],
+  );
+
+  const edges: Edge[] = useMemo(
+    () =>
+      rawTransitions.map((tr) => ({
+        id: String(tr.id),
+        source: String(tr.originNodeId),
+        target: String(tr.destinationNodeId),
+        label: tr.description ?? undefined,
+        animated: false,
+        selected: selectedEdges[String(tr.id)] ?? false,
+        style: { stroke: theme.colors.neutral[500] },
+      })),
+    [rawTransitions, selectedEdges],
+  );
+
+  const onNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      const next = applyNodeChanges(changes, nodes);
+      setLocal((prev) => {
+        const out = { ...prev };
+        for (const n of next) out[n.id] = { position: n.position, selected: n.selected, dragging: n.dragging };
+        return out;
+      });
     },
-  }));
+    [nodes],
+  );
 
-  const flowEdges: Edge[] = rawTransitions.map((tr) => ({
-    id: String(tr.id),
-    source: String(tr.originNodeId),
-    target: String(tr.destinationNodeId),
-    label: tr.description ?? undefined,
-    animated: false,
-    style: { stroke: theme.colors.neutral[500] },
-  }));
+  const onEdgesChange = useCallback(
+    (changes: EdgeChange[]) => {
+      const next = applyEdgeChanges(changes, edges);
+      setSelectedEdges(Object.fromEntries(next.map((e) => [e.id, !!e.selected])));
+    },
+    [edges],
+  );
 
-  const [nodes, , onNodesChange] = useNodesState(flowNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(flowEdges);
+  async function handleAutoLayout() {
+    const forced = layoutWorkflow(rawNodes, rawTransitions, { force: true });
+    try {
+      await Promise.all(
+        rawNodes.map((n) => {
+          const p = forced.get(String(n.id))!;
+          return updateNode.mutateAsync({
+            id: Number(n.id),
+            data: { workflowDefinitionId: workflowId, positionX: p.x, positionY: p.y },
+          });
+        }),
+      );
+      setLocal({});
+      await refetchNodes();
+      toast.success(t("autoLayoutDone"));
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorSavePosition") });
+    }
+  }
 
   const onConnect = useCallback(
     async (connection: Connection) => {
       if (!editMode) return;
-      setEdges((eds) => addEdge(connection, eds));
       try {
         await createTransition.mutateAsync({
           workflowDefinitionId: workflowId,
@@ -129,7 +193,7 @@ export default function WorkflowEditorPage() {
         presentMutationError(err, { fallback: t("errorCreateTransition") });
       }
     },
-    [editMode, createTransition, workflowId, refetchTransitions, setEdges, t]
+    [editMode, createTransition, workflowId, refetchTransitions, t]
   );
 
   async function handleNodeDragStop(_: unknown, node: Node) {
@@ -153,13 +217,14 @@ export default function WorkflowEditorPage() {
       toast.error(t("selectStatus"));
       return;
     }
+    const free = nextFreePosition(nodes.map((n) => n.position));
     try {
       await createNode.mutateAsync({
         workflowDefinitionId: workflowId,
         statusManagementId: Number(newNodeStatusId),
         type: newNodeType,
-        positionX: 100 + rawNodes.length * 160,
-        positionY: 100,
+        positionX: Math.round(free.x),
+        positionY: Math.round(free.y),
       });
       setAddNodeOpen(false);
       setNewNodeStatusId("");
@@ -233,6 +298,11 @@ export default function WorkflowEditorPage() {
                 {t("addNode")}
               </Button>
             )}
+            {editMode && (
+              <Button variant="secondary" onClick={handleAutoLayout} disabled={updateNode.isPending} data-testid="btn-auto-layout">
+                {t("autoLayout")}
+              </Button>
+            )}
             <Button variant="secondary" onClick={handleValidate} data-testid="btn-validate">
               {t("validate")}
             </Button>
@@ -273,6 +343,8 @@ export default function WorkflowEditorPage() {
           nodesDraggable={editMode}
           nodesConnectable={editMode}
           fitView
+          fitViewOptions={{ padding: 0.2 }}
+          minZoom={0.2}
         >
           <Background />
           <Controls />

@@ -13,14 +13,17 @@ import "@xyflow/react/dist/style.css";
 import { theme } from "@/theme/tokens";
 import { NODE_META, getNodeMeta, withNodeIcon } from "@/lib/workflow-node-meta";
 import type { WorkflowNode, WorkflowTransition } from "@/types";
+import { layoutWorkflow, NODE_WIDTH } from "@/lib/workflow-layout";
 
-export function toFlowNodes(nodes: WorkflowNode[]): Node[] {
+export function toFlowNodes(nodes: WorkflowNode[], transitions: WorkflowTransition[] = []): Node[] {
+  // #1574: same automatic layout as the editor, so boxes never stack at 0,0.
+  const layout = layoutWorkflow(nodes, transitions);
   return nodes.map((n) => {
     const meta = getNodeMeta(n.type);
     const label = withNodeIcon(n.statusManagementName ?? `Node ${n.id}`, n.type);
     return {
       id: String(n.id),
-      position: { x: n.positionX ?? 0, y: n.positionY ?? 0 },
+      position: layout.get(String(n.id)) ?? { x: 0, y: 0 },
       data: { label },
       style: {
         background: meta.background,
@@ -30,7 +33,7 @@ export function toFlowNodes(nodes: WorkflowNode[]): Node[] {
         padding: "8px 16px",
         fontWeight: 600,
         fontSize: "13px",
-        minWidth: "120px",
+        width: `${NODE_WIDTH}px`,
         textAlign: "center" as const,
       },
     };
@@ -55,7 +58,7 @@ interface WorkflowViewerProps {
 }
 
 export function WorkflowViewer({ nodes, transitions, "data-testid": testId }: WorkflowViewerProps) {
-  const flowNodes = useMemo(() => toFlowNodes(nodes), [nodes]);
+  const flowNodes = useMemo(() => toFlowNodes(nodes, transitions), [nodes, transitions]);
   const flowEdges = useMemo(() => toFlowEdges(transitions), [transitions]);
 
   if (nodes.length === 0) {
