@@ -64,6 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded occupation and profession** (#1490, CU75): occupation and
+  profession stay free text. The seeded sample `Escribano` stays.
 - **Seeded procedure headings** (#1490, CU75): the procedure heading lists
   `Compraventa inmueble Lote 12` and `Donación a herederos`.
 - **Seeded management headings** (#1490, CU75): the management heading lists
