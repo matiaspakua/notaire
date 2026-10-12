@@ -278,7 +278,7 @@ describe("Concept type shape (CU39, CU49)", () => {
   });
 
   it("a concept value can be 0", () => {
-    const concept = { idConcept: 2, name: "Exento", value: 0 };
+    const concept = { idConcept: 2, name: "Exempt", value: 0 };
     expect(concept.value).toBe(0);
   });
 });
