@@ -14,12 +14,12 @@ people,Strong,address,,yes,Text,,,x,Residential or legal address. The seeded sam
 people,Strong,email,,yes,Text,,,x,Primary email. The seeded sample `jcgarcia@notaria.com` stays.
 people,Strong,notary_registration_number,,yes,Integer,,,x,Notary registration number
 people,Strong,is_client,,no,Boolean,,,,`true` when the person is a client of the practice
-people,Strong,locality,,yes,Text,,,x,Locality
-people,Strong,province,,yes,Text,,,x,Province
+people,Strong,locality,,yes,Text,,,x,Locality. The seeded sample `Buenos Aires` stays.
+people,Strong,province,,yes,Text,,,x,Province. The seeded sample `Buenos Aires` stays.
 people,Strong,phone,,yes,Text,,,x,Landline
 people,Strong,mobile_phone,,yes,Text,,,x,Mobile phone
 people,Strong,secondary_email,,yes,Text,,,x,Secondary or historical email. The seeded sample `jcgarcia@notaria.com` stays.
-people,Strong,nationality,,yes,Text,,,x,Nationality
+people,Strong,nationality,,yes,Text,,,x,Nationality. The seeded sample `Argentina` stays.
 people,Strong,profession,,yes,Text,,,x,Profession or trade. Free text. The seeded sample `Escribano` stays.
 people,Strong,notes,,yes,Text,,,x,File notes and background
 people,Strong,fk_id_identification_type,FK,yes,Integer,,x,x,Primary identification type

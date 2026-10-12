@@ -399,12 +399,12 @@ People, natural or legal, who take part in the practice.
 | `email` | TEXT | No | No | No | NULL | — | Primary email. The seeded sample `jcgarcia@notaria.com` stays. |
 | `notary_registration_number` | INTEGER | No | No | No | NULL | — | Notary registration number |
 | `is_client` | BOOLEAN | No | No | Yes | false | — | `true` when the person is a client of the practice |
-| `locality` | TEXT | No | No | No | NULL | — | Locality |
-| `province` | TEXT | No | No | No | NULL | — | Province |
+| `locality` | TEXT | No | No | No | NULL | — | Locality. The seeded sample `Buenos Aires` stays. |
+| `province` | TEXT | No | No | No | NULL | — | Province. The seeded sample `Buenos Aires` stays. |
 | `phone` | TEXT | No | No | No | NULL | — | Landline |
 | `mobile_phone` | TEXT | No | No | No | NULL | — | Mobile phone |
 | `secondary_email` | TEXT | No | No | No | NULL | — | Secondary or historical email. The seeded sample `jcgarcia@notaria.com` stays. |
-| `nationality` | TEXT | No | No | No | NULL | — | Nationality |
+| `nationality` | TEXT | No | No | No | NULL | — | Nationality. The seeded sample `Argentina` stays. |
 | `profession` | TEXT | No | No | No | NULL | — | Profession or trade. Free text. The seeded sample `Escribano` stays. |
 | `notes` | TEXT | No | No | No | NULL | — | File notes and background |
 | `fk_id_identification_type` | INTEGER | No | Yes | No | NULL | `identification_types(id)` | Primary identification type |
