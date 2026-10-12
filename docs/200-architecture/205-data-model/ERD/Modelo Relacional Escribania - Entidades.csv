@@ -87,7 +87,7 @@ items,Weak,percentage,,no,Integer,,,,Percentage applied
 items,Weak,fixed_concept,,no,Boolean,,,,"`true` when the amount is fixed, `false` when it is a percentage"
 items,Weak,fk_id_budget,FK,yes,Integer,,x,x,Budget this line belongs to
 items,Weak,notes,,yes,Text,,,x,Justification notes (V3/V4)
-items,Weak,item_type,,no,Text,,,,Budget line class (default `NORMAL`)
+items,Weak,item_type,,no,Text,,,,"Budget line class. Stored values `NORMAL`, `DESCUENTO`, and `RECARGO` stay. The default is `NORMAL`."
 items,Weak,reason,,yes,Text,,,x,Stated reason when the line is not an ordinary concept
 payments,Weak,version,,no,Integer,,,,Optimistic lock
 payments,Weak,id,PK,no,Integer,x,,,Unique id of the receipt

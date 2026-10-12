@@ -338,7 +338,7 @@ Fee lines charged on a budget (V3/V4).
 | `fixed_concept` | BOOLEAN | No | No | Yes | — | — | `true` when the amount is fixed, `false` when it is a percentage |
 | `fk_id_budget` | INTEGER | No | Yes | No | NULL | `budgets(id)` | Budget this line belongs to |
 | `notes` | TEXT | No | No | No | NULL | — | Justification notes (V3/V4) |
-| `item_type` | VARCHAR(20) | No | No | Yes | 'NORMAL' | — | Budget line class (default `NORMAL`) |
+| `item_type` | VARCHAR(20) | No | No | Yes | 'NORMAL' | — | Budget line class. Stored values `NORMAL`, `DESCUENTO`, and `RECARGO` stay. The default is `NORMAL`. |
 | `reason` | VARCHAR(255) | No | No | No | NULL | — | Stated reason when the line is not an ordinary concept |
 
 ---
