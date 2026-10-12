@@ -9,7 +9,7 @@
 | Specification | `docs/openspec/changes/docs-1248-project-roadmap/specs/project-roadmap/spec.md` |
 | Branch | `cursor/project-management-sdlc-566d` |
 | Commits | `527fef7a` docs(roadmap): add the project-management model and chart |
-| PR | pending |
+| PR | https://github.com/matiaspakua/notaire/pull/1562 draft |
 | CI | pending |
 | Merge | pending |
 | Release | pending |

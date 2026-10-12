@@ -70,11 +70,11 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Push the branch
-- [ ] 10.2 Open the PR with Issue #1248 and CU76
+- [x] 10.1 Pushed `cursor/project-management-sdlc-566d`
+- [x] 10.2 Draft PR #1562 with Issue #1248 and CU76
 - [ ] 10.3 CI on the PR
 - [ ] 10.4 Review
-- [ ] 10.5 Record the PR number
+- [ ] 10.5 PR number recorded in traceability.md
 
 ## 11. Deploy
 
