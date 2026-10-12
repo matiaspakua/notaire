@@ -38,7 +38,7 @@ On the release commit for tag `vX.Y.Z`:
 | `frontend/package.json` `"version"` | `X.Y.Z` |
 | `release/product-release.json` | `X.Y.Z` on `version`, `components.backend.version`, and `components.frontend.version` |
 | Flyway schema | Highest `V*` migration id, stored as `components.database.schemaVersion`. Not equal to `X.Y.Z` |
-| `CHANGELOG.md` | New `## [X.Y.Z](…) (YYYY-MM-DD)` from conventional commits |
+| `CHANGELOG.md` | New `## [X.Y.Z](https://github.com/matiaspakua/notaire/compare/…) (YYYY-MM-DD)` from conventional commits |
 | Actuator `/info`, OpenAPI `info.version`, sidebar | `X.Y.Z`, plus the schema id on `/info` |
 | GitHub Pages | Version history generated from the changelog at site build |
 
