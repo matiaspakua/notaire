@@ -32,6 +32,15 @@ do not implement on `release-please--branches--*`. `Closes #<issue>` (not only `
 
 Scheduling, milestones, and lanes: [305-project-management](../305-project-management/README.md).
 
+## Shared fleet coordination
+
+Cloud agents do not maintain a cloud-specific queue. Before picking work, the
+foreman reads the full-lifecycle **Roadmap**, current **KANBAN**, and **Agent
+queue**, then follows
+[PARALLEL-AGENTS.md](../305-project-management/PARALLEL-AGENTS.md). Milestones,
+priority, derived lanes, Issue state, Project Status, and WIP labels form one
+coordination protocol shared by every agent runtime and humans.
+
 ## Authority
 
 - Process: [`CONSTITUTION.md`](../../../CONSTITUTION.md) (always-loaded digest:

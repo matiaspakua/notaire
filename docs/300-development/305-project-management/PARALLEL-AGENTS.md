@@ -1,59 +1,64 @@
 # Parallel agents
 
-Several Cloud agents may work at the same time. They stay apart by **lane**,
-not by hoping the files do not overlap.
+Every Notaire agent runtime—cloud, local, or human-supervised—uses the same
+derived-lane lock. No runtime may create a private queue or interpret labels
+differently.
 
-## Claim rule
+## Claim protocol
 
-1. Ignore issues whose milestone starts with `Scope —`.
-2. Ignore issues labeled `roadmap` unless the foreman was asked to split that umbrella into child issues.
-3. A lane is **free** when no OPEN issue in that lane has `in-progress`.
-4. `lane:fullstack` occupies **three** lanes at once: fullstack, backend, and frontend.
-5. `lane:security` is exclusive even when the issue also has `BACKEND`, `FRONTEND`, or `DEVOPS`.
-6. The foreman claims one issue: add `in-progress`, set board Status to In Progress, then dispatch the specialist for that lane.
-7. A second agent does not take another issue in a busy lane.
+1. Read the **Roadmap**, then the **KANBAN**, then the **Agent queue**.
+2. Consider only OPEN issues on the six delivery trains.
+3. Skip requirement anchors, roadmap epics, `blocked`, and `needs-info`.
+4. Derive the lane with `workspace/sdlc/milestone_policy.py`.
+5. A lane is free when no other OPEN issue in a conflicting derived lane has
+   `in-progress`.
+6. Prefer `ready-for-dev`, then higher priority, then the earlier train.
+7. Claim atomically: add `in-progress` and set Project Status to In Progress.
+8. Dispatch the matching specialist with the issue, OpenSpec change, branch,
+   acceptance criteria, and prior gate evidence.
 
-Claimable open work on 2026-10-12, after classification:
+An unlabeled or owner-decision issue is not agent-ready. It remains Todo until a
+person supplies area, priority, and acceptance criteria.
 
-| Lane | Open issues the foreman may pick | Specialist |
-|------|-----------------------------------|------------|
-| `lane:devops` | 25 | devops-engineer |
-| `lane:backend` | 24 | backend-implementer |
-| `lane:docs` | 19 | efficiency fallback, docs only |
-| `lane:owner` | 14 | nobody — a person decides |
-| `lane:frontend` | 10 | frontend-design |
-| `lane:test` | 7 | testing-qa |
-| `lane:fullstack` | 6 | backend then frontend, serialized |
-| `lane:security` | 3 | security-auditor |
+## Conflict matrix
 
-`lane:owner` is never picked by an agent. It holds decisions such as
-[#1445](https://github.com/matiaspakua/notaire/issues/1445) and probe issues
-with no area label.
+| Active lane | Blocks | Typical specialist |
+|-------------|--------|--------------------|
+| `security` | security, backend | security auditor |
+| `cross` | cross, backend, frontend | backend then frontend, serialized |
+| `backend` | backend | backend implementer |
+| `frontend` | frontend | frontend design |
+| `platform` | platform | DevOps engineer |
+| `quality` | quality | testing/QA or docs specialist |
+| `catalog`, `epic` | not claimable | project manager splits/refines |
 
-## What "no conflict" means
+Read-only review may run beside implementation. Two writers never share a
+branch, and a second agent never claims a blocked lane.
 
-| Allowed together | Not allowed together |
-|------------------|----------------------|
-| One backend issue and one frontend issue | Two backend issues both `in-progress` |
-| One devops issue and one docs issue | A fullstack issue plus any backend or frontend issue |
-| Security review of an open PR (read-only) while another lane implements | Two writers on the same branch |
-| | A new product PR while heavy CI for another PR is still queued |
+## Completion and handoff
 
-Heavy CI stays serialized. See
-[CI-MERGE-GATE.md](../304-ai-sdlc-cloud/CI-MERGE-GATE.md). Lanes remove
-**edit** collisions. They do not remove the single heavy-CI queue.
+| Event | Issue | Status | Labels |
+|-------|-------|--------|--------|
+| Claimed | OPEN | In Progress | `in-progress` |
+| Waiting but still owned | OPEN | In Progress | `in-progress`, `blocked` |
+| Released back to queue | OPEN | Todo | no WIP label |
+| Completed | CLOSED | Done | no `in-progress`, no `blocked` |
 
-## Pick order inside a free lane
+Validate synchronization with:
 
-1. `ready-for-dev`, then
-2. `priority:critical`, then `priority:high`, then `priority:medium`, then
-3. the earlier delivery train (Phase 4 and Phase 6 before v1.0, v1.0 before v1.1, v1.1 before Backlog).
+```bash
+python3 workspace/sdlc/check-board-status-label-coherence.py --scope wip
+```
 
-Skip `needs-info` and `blocked`.
+If an agent token cannot write GitHub, the coordinator performs the Status and
+label mutation. The PR body with `Closes #N` is the fallback synchronization
+channel, not a substitute board.
 
-## Module boundary
+## Module and CI boundaries
 
-The lane is the lock. The module map is the file boundary once the issue is
-claimed: `python3 workspace/modules.py affected <path>`. A backend lane issue
-does not edit `frontend/`. A fullstack issue may, and it is the only writer
-on both modules until it merges.
+After claim, use `python3 workspace/modules.py affected <path>` to establish the
+file boundary. A backend lane does not edit `frontend/`; only a cross lane may
+own both.
+
+Lanes prevent edit collisions. Heavy CI remains one serialized queue:
+[CI-MERGE-GATE.md](../304-ai-sdlc-cloud/CI-MERGE-GATE.md).

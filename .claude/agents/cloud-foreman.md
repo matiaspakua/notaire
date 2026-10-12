@@ -112,9 +112,15 @@ Retry the same phase with `prior_gate_log` attached (max 2–3 attempts) then es
 
 - Prefer small, labeled, non-epic issues with clear Acceptance Criteria and a Use Case.
 - Skip `roadmap` / umbrella issues; ask the project manager for a split first.
-- Skip milestones whose title starts with `Scope —` (requirements catalog, not delivery).
-- Skip `lane:owner`. Skip a lane that already has an open `in-progress` issue. `lane:fullstack` also blocks `lane:backend` and `lane:frontend`.
-- Lane rules: `docs/300-development/305-project-management/PARALLEL-AGENTS.md`.
+- Read the Roadmap, KANBAN, and Agent queue before selecting work.
+- Skip catalog anchors, roadmap epics, `blocked`, `needs-info`, and
+  owner-decision work.
+- Derive the lane from existing area/type labels with
+  `workspace/sdlc/milestone_policy.py`; do not expect or create `lane:*` labels.
+- Skip a lane that conflicts with any OPEN `in-progress` issue. Cross work
+  blocks backend and frontend; security blocks backend.
+- Canonical rules:
+  `docs/300-development/305-project-management/PARALLEL-AGENTS.md`.
 - Confirm environment **GO** from `VALIDATION-PLAN.md` before the first product issue.
 
 ## PR / merge

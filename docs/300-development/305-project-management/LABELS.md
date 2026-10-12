@@ -7,12 +7,28 @@ means, and which labels must not be duplicated.
 
 | Family | Cardinality | Labels |
 |--------|-------------|--------|
-| Lane | exactly one | `lane:backend`, `lane:frontend`, `lane:fullstack`, `lane:devops`, `lane:docs`, `lane:test`, `lane:security`, `lane:owner` |
 | Priority | exactly one | `priority:critical`, `priority:high`, `priority:medium`, `priority:low` |
 | Area | one or more | `BACKEND`, `FRONTEND`, `DB`, `DEVOPS`, `TEST`, `DOC` |
 
 Scope-catalog issues (RF / CU / RNF milestones) do not need a priority label.
-They still get exactly one lane, for filtering, and they are not claimable.
+They are not claimable.
+
+## Derived lanes
+
+There are no `lane:*` labels. A lane is computed from existing labels by
+`workspace/sdlc/milestone_policy.py`:
+
+| Derived lane | Signal | Conflict |
+|--------------|--------|----------|
+| `security` | `security`, or critical backend work | blocks security and backend |
+| `cross` | both `BACKEND` and `FRONTEND` | blocks cross, backend, and frontend |
+| `backend` | `BACKEND` | blocks backend |
+| `frontend` | `FRONTEND` | blocks frontend |
+| `platform` | `DEVOPS` implementation | blocks platform |
+| `quality` | `DOC`, `TEST`, or remaining process work | blocks quality |
+| `catalog` / `epic` | requirement anchor or roadmap umbrella | never claimable |
+
+Deriving the lane keeps area ownership and concurrency from drifting apart.
 
 ## Workflow and board
 
@@ -46,7 +62,7 @@ Coherence with Status and issue state:
 | `DOC` | `documentation`, `docs`, `DOCUMENTACION` |
 | `enhancement` | `MEJORAS` |
 | `requerimiento-funcional` / `requerimiento-no-funcional` | `req:*` |
-| `lane:*` | a second area code such as `area:backend` |
+| Derived lane | `lane:*` or a second area code such as `area:backend` |
 
 `documentation` still exists from older automation. New work uses `DOC`.
 When applying the roadmap, move any leftover `documentation` issues onto `DOC`
@@ -67,19 +83,6 @@ Leave these in place. Agents do not apply them to product work.
 `FRONTEND` still describes Swing forms. The description to set:
 
 > Next.js web client, forms, and pages. Swing is not a target.
-
-## Lane colors
-
-| Label | Color |
-|-------|--------|
-| `lane:backend` | `#1d76db` |
-| `lane:frontend` | `#0096C7` |
-| `lane:fullstack` | `#0A84FF` |
-| `lane:devops` | `#7cd5b4` |
-| `lane:docs` | `#fad8c3` |
-| `lane:test` | `#9b59b6` |
-| `lane:security` | `#b60205` |
-| `lane:owner` | `#fbca04` |
 
 ## Status field on the project
 

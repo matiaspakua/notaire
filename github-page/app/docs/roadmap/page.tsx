@@ -1,52 +1,46 @@
 import { MermaidDiagram } from "@/components/MermaidDiagram";
 import { DOCS } from "@/lib/docs-content";
-import snapshot from "@/lib/roadmap-snapshot.json";
+import snapshot from "@/lib/milestone-snapshot.json";
 
 const SEQUENCE = `
 flowchart LR
-  P4["Phase 4 Frontend"] --> V10["v1.0 Production"]
-  P6["Phase 6 Deprecation"] --> V10
-  V10 --> V11["v1.1 Hardening"]
-  V11 --> BL["Backlog"]
+  RB["2026-11 Release blockers"] --> FE["2026-12 Frontend product"]
+  FE --> QA["2027-01 Quality & traceability"]
+  QA --> OP["2027-02 Platform & operability"]
+  OP --> LR["2027-03 Legacy retirement"]
+  LR --> BL["2027-06 Backlog"]
 `;
 
 type Milestone = {
   title: string;
-  state: string;
-  kind: string;
-  open: number;
-  closed: number;
+  count: number;
 };
 
 const data = snapshot as {
-  as_of: string;
-  issues: number;
+  generated: string;
   open: number;
   closed: number;
-  current_unassigned: number;
-  moves: number;
-  claimable_open: number;
-  by_milestone: Milestone[];
-  by_lane_claimable_open: Record<string, number>;
+  openByMilestone: Record<string, number>;
+  closedByMilestone: Record<string, number>;
+  openByLane: Record<string, number>;
 };
 
-function share(row: Milestone): number {
-  const total = row.open + row.closed;
-  if (total === 0) return 0;
-  return Math.round((100 * row.closed) / total);
+function rows(values: Record<string, number>): Milestone[] {
+  return Object.entries(values).map(([title, count]) => ({ title, count }));
 }
 
 export default function DocsRoadmapPage() {
-  const delivery = data.by_milestone.filter((row) => row.kind === "delivery");
-  const history = data.by_milestone.filter((row) => row.kind === "history");
-  const scope = data.by_milestone.filter((row) => row.kind === "scope");
-  const lanes = Object.entries(data.by_lane_claimable_open).sort((a, b) => b[1] - a[1]);
+  const delivery = rows(data.openByMilestone);
+  const history = rows(data.closedByMilestone);
+  const lanes = Object.entries(data.openByLane).sort((a, b) => b[1] - a[1]);
+  const catalog = data.openByLane.catalog ?? 0;
+  const claimable = data.open - catalog;
 
   return (
     <div className="space-y-10">
       <header className="space-y-3">
         <p className="text-xs uppercase tracking-[0.2em] text-[#0A84FF] font-semibold">
-          Project chart · {data.as_of}
+          Project chart · {data.generated}
         </p>
         <h1
           className="text-3xl font-semibold text-neutral-900"
@@ -55,10 +49,9 @@ export default function DocsRoadmapPage() {
           Roadmap and progress
         </h1>
         <p className="text-neutral-600 max-w-3xl leading-relaxed">
-          Target layout for {data.issues} issues ({data.open} open, {data.closed} closed).
-          {data.current_unassigned} issues had no milestone on this date. The plan assigns{" "}
-          {data.moves} of them onto a history cohort, a delivery train, or the requirements
-          catalog. {data.claimable_open} open issues are work agents may pick.
+          Live milestone snapshot for {data.open + data.closed} issues ({data.open} open,{" "}
+          {data.closed} closed). Every issue has a history or delivery milestone.{" "}
+          {claimable} open issues are delivery work; {catalog} are catalog anchors.
         </p>
         <a
           className="text-sm text-[#0A84FF] hover:underline"
@@ -70,9 +63,9 @@ export default function DocsRoadmapPage() {
 
       <section className="grid sm:grid-cols-3 gap-4">
         {[
-          ["History", history.reduce((sum, row) => sum + row.closed, 0), "closed issues grouped by era"],
-          ["Delivery", delivery.reduce((sum, row) => sum + row.open, 0), "open issues on a train"],
-          ["Scope", scope.reduce((sum, row) => sum + row.open, 0), "RF, CU, and RNF catalog rows"],
+          ["History", data.closed, "closed issues grouped by era"],
+          ["Delivery", claimable, "open delivery work"],
+          ["Catalog", catalog, "requirement anchors, not agent work"],
         ].map(([label, value, note]) => (
           <div key={String(label)} className="rounded-2xl border border-neutral-200 bg-white p-5">
             <p className="text-sm text-neutral-500">{label}</p>
@@ -91,27 +84,13 @@ export default function DocsRoadmapPage() {
               <tr>
                 <th className="px-4 py-3 font-medium">Train</th>
                 <th className="px-4 py-3 font-medium">Open</th>
-                <th className="px-4 py-3 font-medium">Closed</th>
-                <th className="px-4 py-3 font-medium">Closed share</th>
               </tr>
             </thead>
             <tbody>
               {delivery.map((row) => (
                 <tr key={row.title} className="border-t border-neutral-100">
                   <td className="px-4 py-3 text-neutral-900">{row.title}</td>
-                  <td className="px-4 py-3 text-neutral-700">{row.open}</td>
-                  <td className="px-4 py-3 text-neutral-700">{row.closed}</td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <div className="h-2 w-28 rounded-full bg-neutral-100 overflow-hidden">
-                        <div
-                          className="h-full bg-[#0A84FF]"
-                          style={{ width: `${share(row)}%` }}
-                        />
-                      </div>
-                      <span className="text-neutral-600">{share(row)}%</span>
-                    </div>
-                  </td>
+                  <td className="px-4 py-3 text-neutral-700">{row.count}</td>
                 </tr>
               ))}
             </tbody>
@@ -122,14 +101,14 @@ export default function DocsRoadmapPage() {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold text-neutral-900">How the project was organized</h2>
         <p className="text-sm text-neutral-600 max-w-3xl">
-          Closed cohorts for issues that had no milestone. Older milestones that already
-          had a title stay in the table with their original names.
+          Closed cohorts preserve the path from the first issue to the current
+          delivery plan. Curated phase buckets remain distinct from date cohorts.
         </p>
         <ul className="space-y-2">
           {history.map((row) => (
             <li key={row.title} className="flex items-center justify-between gap-4 text-sm">
               <span className="text-neutral-800">{row.title}</span>
-              <span className="font-mono text-neutral-500">{row.closed}</span>
+              <span className="font-mono text-neutral-500">{row.count}</span>
             </li>
           ))}
         </ul>
@@ -138,23 +117,17 @@ export default function DocsRoadmapPage() {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold text-neutral-900">Requirements catalog</h2>
         <p className="text-sm text-neutral-600 max-w-3xl">
-          These stay open for traceability. They are not unfinished features, and agents do not pick them.
+          {catalog} RF, CU, and RNF anchors remain open for traceability. They
+          have dedicated Project views and are never picked as implementation work.
         </p>
-        <ul className="space-y-2">
-          {scope.map((row) => (
-            <li key={row.title} className="flex items-center justify-between gap-4 text-sm">
-              <span className="text-neutral-800">{row.title}</span>
-              <span className="font-mono text-neutral-500">{row.open} open</span>
-            </li>
-          ))}
-        </ul>
       </section>
 
       <section className="space-y-3">
         <h2 className="text-lg font-semibold text-neutral-900">Parallel lanes</h2>
         <p className="text-sm text-neutral-600 max-w-3xl">
-          One in-progress issue per lane. Fullstack also blocks backend and frontend.
-          lane:owner waits for a person. lane:security is exclusive.
+          Lanes are derived from area and type labels. Cross work blocks backend
+          and frontend; security also blocks backend. Catalog and epic lanes are
+          not claimable.
         </p>
         <ul className="grid sm:grid-cols-2 gap-2">
           {lanes.map(([lane, count]) => (

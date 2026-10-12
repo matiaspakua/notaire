@@ -35,6 +35,10 @@ Operational detail (load when implementing): `.claude/rules/ai-agent-workflow.md
 | OpenSpec propose/apply | `.claude/skills/openspec-*/SKILL.md` |
 | Milestones, roadmap, lanes | `.claude/agents/project-manager.md`, `.claude/skills/project-management/SKILL.md`, `docs/300-development/305-project-management/` |
 
+All agent fleets share the Roadmap, KANBAN, Agent queue, and derived-lane
+claim protocol documented in `docs/300-development/305-project-management/`;
+do not create a runtime-specific backlog or `lane:*` labels.
+
 General hygiene (short): `.claude/rules/general.md` — load at session start if needed;
 prefer skills over pasting full rule bodies into context.
 

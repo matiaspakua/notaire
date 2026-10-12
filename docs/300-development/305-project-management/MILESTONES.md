@@ -1,91 +1,77 @@
 # Milestones
 
-A milestone is a **train** or a **catalog** or a **history cohort**. It is not
-a git tag. Product cuts (`v0.1.2`, and `vX.Y.Z` after that) are defined in
-[RELEASES.md](RELEASES.md). Do not close a train because a tag was cut, and do
-not name a tag after a milestone title.
+Every GitHub issue has exactly one milestone. A milestone is either a closed
+history cohort or an open delivery train. It is not a SemVer release; product
+cuts are defined in [RELEASES.md](RELEASES.md).
 
-One milestone per issue. Titles below are the canonical strings. The em dash
-(`—`) and the hyphen (`-`) are different milestones; do not merge them by eye.
+The strings below are canonical. Generated counts belong in
+`docs/github/milestone-snapshot.json`, not in this policy.
 
-Counts are the **target** layout from the 2026-10-12 dry run
-([roadmap-snapshot.json](roadmap-snapshot.json)), not the live board until a
-maintainer applies [ROADMAP.md](ROADMAP.md).
+## Open delivery trains
 
-## Delivery trains (open)
+| Train | Window | Purpose |
+|-------|--------|---------|
+| `2026-11 · Release blockers` | 2026-10-13 → 2026-11-30 | Critical work, security fixes, and RNF-11–16 |
+| `2026-12 · Frontend product` | 2026-10-13 → 2026-12-31 | Next.js product scope, functional requirements, use cases, and RNF-05–10 |
+| `2027-01 · Quality & traceability` | 2027-01-01 → 2027-01-31 | Tests, documentation, traceability, RNF-01–04, RNF-21–22 |
+| `2027-02 · Platform & operability` | 2027-02-01 → 2027-02-28 | CI, observability, and non-critical operability |
+| `2027-03 · Legacy retirement` | 2027-03-01 → 2027-03-31 | `jpa` retirement and deprecation work |
+| `2027-06 · Backlog` | 2027-04-01 → 2027-06-30 | Low-priority work, owner decisions, RNF-17–20 and RNF-23–24 |
 
-These are what a manager schedules. Progress uses closed ÷ (open + closed)
-**on that train only**.
+Windows are planning markers for the GitHub roadmap, not effort estimates.
+Priority orders work inside a train; it does not choose a second schedule.
 
-| Milestone | Open | Closed | Closed share | Due marker | What belongs here |
-|-----------|------|--------|--------------|------------|-------------------|
-| Phase 4 — Modern Frontend | 15 | 15 | 50% | 2026-12-31 | Remaining Next.js use-case screens, including [#898](https://github.com/matiaspakua/notaire/issues/898). Reopen milestone **#9**. |
-| Phase 6 — Deprecation | 3 | 2 | 40% | 2027-01-31 | Legacy `jpa` retirement that is not a critical production blocker. Reopen milestone **#11**. [#899](https://github.com/matiaspakua/notaire/issues/899) moves here from v1.1. |
-| v1.0 — Production Ready | 33 | 32 | 49% | 2027-03-31 | Critical and high security, integrity, and release blockers (milestone **#12**). |
-| v1.1 — Hardening | 40 | 27 | 40% | 2027-06-30 | Medium quality, performance, tests, and docs (milestone **#13**). |
-| Backlog | 17 | 9 | 35% | none | Low priority and owner decisions (milestone **#14**). |
+## Closed history
 
-Due dates are **sequence markers** so the GitHub roadmap view can draw bars.
-They are not an effort estimate.
+Closed issues that had curated milestones retain those groupings under explicit
+history names:
 
-**108** open issues are claimable across those trains. The other open issues are
-the scope catalog below.
+- `History · Phase 0 Foundations`
+- `History · Phase 1 Backend API`
+- `History · Phase 2 Platform & observability`
+- `History · Phase 3 Frontend slice`
+- `History · Phase 4 Frontend wave`
+- `History · Phase 4 Production slice`
+- `History · Phase 6 Deprecation start`
+- `History · v1.0 priority bucket`
+- `History · v1.1 priority bucket`
+- `History · Backlog priority bucket`
 
-## Scope catalogs (open, not claimable)
+Previously unmilestoned closed issues are grouped by close date:
 
-Agents do not pick these. They stay open so requirements stay traceable.
-Putting them on a delivery train would freeze that train below 100% forever.
+| Cohort | Window | Rule |
+|--------|--------|------|
+| `History · 2026 Q2 — Foundations & API` | 2026-03-01 → 2026-06-30 | Closed before 2026-07-01 |
+| `History · 2026 Q3 — Product build` | 2026-07-01 → 2026-09-30 | Closed during 2026 Q3 |
+| `History · 2026 Q4 — Cloud AI SDLC` | 2026-10-01 → 2026-10-12 | Closed on or after 2026-10-01 at migration time |
 
-| Milestone | Open | Contains |
-|-----------|------|----------|
-| Scope — Functional requirements | 94 | Issues titled `RF-*` or `[RF]` |
-| Scope — Use cases | 69 | `CASO-DE-USO` issues titled `CU*` |
-| Scope — Non-functional requirements | 24 | Issues titled `RNF-*` |
+History milestones are closed and must contain zero open issues. A new closed
+issue keeps its delivery milestone, preserving the train in which it shipped.
 
-The requirements tracker [#902](https://github.com/matiaspakua/notaire/issues/902)
-is not itself an RF/RNF row. It stays claimable work on **v1.0** (priority high).
+## Assignment precedence
 
-NFR rows still name a delivery train in the snapshot field `nfr_trains`
-(6 security → v1.0, 6 experience → Phase 4, 4 performance → v1.1, 8 platform → Backlog).
+`workspace/sdlc/milestone_policy.py` is executable policy:
 
-## History (closed)
+1. Security and critical work → Release blockers.
+2. Visual/product requirements and use cases → Frontend product.
+3. `jpa` retirement and deprecation → Legacy retirement.
+4. DevOps implementation → Platform & operability.
+5. Tests, docs, traceability, and process NFRs → Quality & traceability.
+6. Low-priority, owner-only, or otherwise unclassified work → Backlog.
+7. Closed issues without a milestone → the close-date history cohort.
 
-Closed issues that **already** had a milestone keep it. That preserves the
-older numbering, including titles that clash with the SAD:
+The policy never closes issues or decides whether stale work is valid,
+duplicate, or obsolete. That product decision remains tracked by
+[#1248](https://github.com/matiaspakua/notaire/issues/1248).
 
-| Existing milestone | Closed | Note |
-|--------------------|--------|------|
-| Phase 0 - Foundations (#1) | 6 | Early platform |
-| Phase 1 - Backend Complete (#2) | 15 | Older "phase 1" name |
-| Phase 2 - Kubernetes & Observability (#3) | 5 | Older observability slice |
-| Phase 3 - Modern Frontend (#4) | 3 | Older numbering. Not SAD Phase 3 |
-| Phase 4 - Production Ready (#5) | 2 | Older numbering. Not the open Phase 4 train |
-| Phase 6 — Deprecation (#11) | 2 | Stays; the milestone is reopened for the 3 open items |
+## Verification
 
-Closed issues with **no** milestone are grouped by `phase:*` label, otherwise
-by close date:
+```bash
+python3 workspace/sdlc/apply_milestone_policy.py --check
 
-| New closed milestone | Closed | Rule |
-|----------------------|--------|------|
-| Phase 1 — Analysis & foundation | 31 | Closed on or before 2026-05-31, or `phase:1-analysis` |
-| Phase 2 — Foundation | 0 in this snapshot | Only `phase:2-foundation` (none unlabeled in that way on this date) |
-| Phase 3 — Backend API | 49 | Closed in June 2026, or `phase:3-backend-api`. This is SAD Phase 3 |
-| Phase 4 — Frontend deliveries (history) | 114 | Closed in July–August 2026, or closed `phase:4-frontend`. Separate from the open Phase 4 train so the progress bar is not inflated |
-| Phase 5 — Observability & production audit | 77 | Closed in September 2026, or `phase:5-observability` |
-| Cloud AI SDLC | 117 | Closed from 2026-10-01 onward with no phase label |
+gh api 'search/issues?q=repo:matiaspakua/notaire+is:issue+no:milestone&per_page=1' \
+  --jq .total_count
+```
 
-Historical volume in those closed cohorts: **419** issues. Together with the
-closed issues already sitting on delivery milestones, that is the full **504**
-closed set.
-
-SAD milestones **#6, #7, #8, and #10** were deleted. Do not recreate those
-numbers. The titles in this file replace those links.
-
-## What the classifier will not do
-
-- It will not close an issue, even when the title looks like a probe
-  (`test-permission`, `test create permission`, `test-agent-create`). Those
-  land on **Backlog** / `lane:owner` for a person to judge.
-- It will not finish [#1248](https://github.com/matiaspakua/notaire/issues/1248).
-  That issue still requires a per-issue decision: still valid, done, duplicate,
-  or obsolete.
+Both checks must report zero missing assignments before a project-management
+change is complete.

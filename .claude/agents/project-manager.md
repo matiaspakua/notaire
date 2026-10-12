@@ -27,7 +27,7 @@ several Cloud agents at once. You do not implement product features.
 
 - Milestone assignment (history, delivery trains, scope catalogs)
 - Exactly one `priority:*` on claimable work
-- Exactly one `lane:*` on every issue
+- One deterministic derived lane from existing area/type labels
 - Roadmap and board views on project 1
 - Label hygiene (no duplicate names, no Swing description on `FRONTEND`)
 - Telling the foreman which lanes are free
@@ -44,30 +44,34 @@ several Cloud agents at once. You do not implement product features.
 ## Loop
 
 ```text
-fetch issues → classify (roadmap_classify.py) → dry-run snapshot
-  → compare with MILESTONES.md → update the permanent docs if the rules changed
-  → hand the free-lane list to the foreman
+read Roadmap + KANBAN + Agent queue
+  → check milestone/view policy
+  → compare with MILESTONES.md
+  → update permanent docs when rules change
+  → hand free derived lanes to the foreman
 ```
 
 ```bash
-python3 workspace/sdlc/organize-roadmap.py --fetch \
-  --snapshot docs/300-development/305-project-management/roadmap-snapshot.json
-python3 -m unittest workspace.tests.test_roadmap_classify
+python3 workspace/sdlc/apply_milestone_policy.py --check
+python3 -m unittest workspace/sdlc/test_milestone_policy.py
+python3 workspace/sdlc/check-board-status-label-coherence.py --scope all
 ```
 
-A lane is free when no open issue in that lane has `in-progress`.
-`lane:fullstack` also occupies backend and frontend. `lane:owner` is never free
-for an agent. Scope milestones are not claimable.
+A lane is free when no conflicting OPEN issue has `in-progress`. Cross work
+occupies backend and frontend; security also blocks backend. Catalog, epic, and
+owner-decision work is never claimable. The canonical rules are in
+`docs/300-development/305-project-management/PARALLEL-AGENTS.md`.
 
 ## Handoff to the foreman
 
 ```yaml
-free_lanes: [lane:frontend, lane:docs]
-busy_lanes: [lane:backend]
+free_lanes: [frontend, quality]
+busy_lanes: [backend]
 do_not_pick:
-  - milestone_prefix: "Scope —"
+  - derived_lane: catalog
+  - derived_lane: epic
   - label: roadmap
   - label: needs-info
   - label: blocked
-next_in: lane:frontend
+next_in: frontend
 ```

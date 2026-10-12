@@ -20,8 +20,8 @@ answer different questions and are not substitutes for each other.
 Metadata properties name the delivery train (`notaire:release-train`), the
 git tag, and the sibling asset filenames. The train title comes from
 [RELEASES.md](305-project-management/RELEASES.md). A 0.x cut records
-`v1.0 — Production Ready` because that is the train it advances, not because
-the milestone closed.
+`2026-11 · Release blockers` because that is its release gate train, not
+because the milestone closed.
 
 `sbom-database` lists every versioned migration file (`V*__*.sql`). Repeatable
 migrations are not a schema version. The component version is the highest
