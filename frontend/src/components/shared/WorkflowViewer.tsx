@@ -11,11 +11,12 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { theme } from "@/theme/tokens";
-import { NODE_META, getNodeMeta, withNodeIcon } from "@/lib/workflow-node-meta";
+import { getNodeMeta, withNodeIcon } from "@/lib/workflow-node-meta";
 import type { WorkflowNode, WorkflowTransition } from "@/types";
-import { layoutWorkflow } from "@/lib/workflow-layout";
+import { layoutWorkflow, NODE_WIDTH, NODE_HEIGHT } from "@/lib/workflow-layout";
 import { workflowNodeTypes } from "@/components/workflow/WorkflowNodeBox";
 import { workflowEdge } from "@/components/workflow/workflow-edges";
+import { WORKFLOW_ZOOM, WORKFLOW_FIT, MINIMAP_CLASS, workflowAriaLabels, workflowMiniMapColor } from "@/components/workflow/workflow-canvas";
 
 export function toFlowNodes(nodes: WorkflowNode[], transitions: WorkflowTransition[] = []): Node[] {
   // #1574: same automatic layout as the editor, so boxes never stack at 0,0.
@@ -27,6 +28,9 @@ export function toFlowNodes(nodes: WorkflowNode[], transitions: WorkflowTransiti
       id: String(n.id),
       type: "workflowNode",
       position: layout.get(String(n.id)) ?? { x: 0, y: 0 },
+      // #1579: fixed box size, so the MiniMap draws nodes React Flow never reports as measured.
+      initialWidth: NODE_WIDTH,
+      initialHeight: NODE_HEIGHT,
       data: { label: withNodeIcon(n.statusManagementName ?? `Node ${n.id}`, type), type, meta: getNodeMeta(type) },
     };
   });
@@ -45,6 +49,7 @@ interface WorkflowViewerProps {
 export function WorkflowViewer({ nodes, transitions, "data-testid": testId }: WorkflowViewerProps) {
   const flowNodes = useMemo(() => toFlowNodes(nodes, transitions), [nodes, transitions]);
   const flowEdges = useMemo(() => toFlowEdges(transitions), [transitions]);
+  const tCanvas = useTranslations("workflowViewer.canvas");
 
   if (nodes.length === 0) {
     return (
@@ -68,16 +73,16 @@ export function WorkflowViewer({ nodes, transitions, "data-testid": testId }: Wo
         edges={flowEdges}
         nodeTypes={workflowNodeTypes}
         fitView
+        fitViewOptions={WORKFLOW_FIT}
+        {...WORKFLOW_ZOOM}
+        ariaLabelConfig={workflowAriaLabels(tCanvas)}
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={false}
       >
         <Background />
         <Controls showInteractive={false} />
-        <MiniMap nodeColor={(n) => {
-          const nodeType = nodes.find((wn) => String(wn.id) === n.id)?.type ?? "INTERMEDIATE";
-          return NODE_META[nodeType]?.border ?? theme.colors.neutral[500];
-        }} />
+        <MiniMap className={MINIMAP_CLASS} nodeColor={workflowMiniMapColor} />
       </ReactFlow>
     </div>
   );
