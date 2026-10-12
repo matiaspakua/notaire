@@ -21,8 +21,15 @@ async function cleanup(page: Page, wfId: number) {
   await apiDelete(page, `/workflow-definition/${wfId}`);
 }
 
+/** No horizontal page scroll, and every header action fits inside the viewport. */
 const noOverflow = (page: Page) =>
-  page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1);
+  page.evaluate(() => {
+    if (document.documentElement.scrollWidth > window.innerWidth + 1) return false;
+    return Array.from(document.querySelectorAll("header button, header a")).every((el) => {
+      const r = el.getBoundingClientRect();
+      return r.right <= window.innerWidth + 1 && r.left >= -1;
+    });
+  });
 
 test.describe("TS-0153 - Workflow editor on a phone (#1580)", () => {
   test.use({ viewport: { width: 390, height: 844 } });
