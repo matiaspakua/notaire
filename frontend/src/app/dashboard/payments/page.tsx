@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
-import { usePayments, usePaymentsByBudget, useBudgetBalance, useCreatePayment, useUpdatePayment, useDeletePayment, usePaymentStatus } from "@/hooks/usePayments";
+import { usePayments, usePaymentsByBudget, usePaymentsByDate, useBudgetBalance, useCreatePayment, useUpdatePayment, useDeletePayment, usePaymentStatus } from "@/hooks/usePayments";
 import { useBudgetSummary } from "@/hooks/useBudgets";
 import { BudgetPicker } from "@/components/shared/BudgetPicker";
 import { usePaymentReceipt } from "@/hooks/useReports";
@@ -48,22 +48,49 @@ function PaymentsPageContent() {
   const searchParams = useSearchParams();
   const budgetParam = Number(searchParams.get("budget"));
   const consultBudget = Number.isInteger(budgetParam) && budgetParam > 0 ? budgetParam : null;
-  function setConsultBudget(id: number | undefined) {
+  function updateQuery(key: string, value: string | undefined) {
     const params = new URLSearchParams(searchParams.toString());
-    if (id) params.set("budget", String(id));
-    else params.delete("budget");
+    if (value) params.set(key, value);
+    else params.delete(key);
     const qs = params.toString();
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   }
+  function setConsultBudget(id: number | undefined) {
+    updateQuery("budget", id ? String(id) : undefined);
+  }
+  // CU47 (#1557): inclusive date range, kept in the URL (?from=&to=). Local state so
+  // typing isn't lost while the URL catches up.
+  const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
+  const [from, setFrom] = useState(() => {
+    const v = searchParams.get("from") ?? "";
+    return ISO_DAY.test(v) ? v : "";
+  });
+  const [to, setTo] = useState(() => {
+    const v = searchParams.get("to") ?? "";
+    return ISO_DAY.test(v) ? v : "";
+  });
+  const rangeInvalid = !!from && !!to && from > to;
+  const rangeActive = (!!from || !!to) && !rangeInvalid;
+  // Server-side only with both days and no budget; otherwise narrow on the client.
+  const serverRange = rangeActive && !consultBudget && !!from && !!to;
   const allPayments = usePayments();
   const byBudget = usePaymentsByBudget(consultBudget);
+  const byDate = usePaymentsByDate(serverRange ? from : "", serverRange ? to : "");
   const { data: consultSummary } = useBudgetSummary(consultBudget);
   const { data: consultBalance } = useBudgetBalance(consultBudget);
   const { data: consultStatus } = usePaymentStatus(consultBudget);
+  const inRange = (p: Payment) => {
+    // Same calendar-day parsing as the Fecha column (#1557), not a raw slice.
+    const day = toDateInputValue(p.date);
+    return (!from || day >= from) && (!to || day <= to);
+  };
+  const source = consultBudget ? byBudget : serverRange ? byDate : allPayments;
+  const rows = source.data ?? [];
+  const filteredRows = rangeInvalid ? [] : rangeActive && !serverRange ? rows.filter(inRange) : rows;
   const payments = consultBudget
-    ? [...(byBudget.data ?? [])].sort((a, b) => String(b.date ?? "").localeCompare(String(a.date ?? "")))
-    : (allPayments.data ?? []);
-  const isLoading = consultBudget ? byBudget.isLoading : allPayments.isLoading;
+    ? [...filteredRows].sort((a, b) => String(b.date ?? "").localeCompare(String(a.date ?? "")))
+    : filteredRows;
+  const isLoading = source.isLoading;
   const createMutation = useCreatePayment();
   const updateMutation = useUpdatePayment();
   const deleteMutation = useDeletePayment();
@@ -204,6 +231,41 @@ function PaymentsPageContent() {
               </dd>
             </div>
           </dl>
+        )}
+      </div>
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <label className="flex items-center gap-2 text-sm text-muted-foreground">
+          {t("consulta.desde")}
+          <Input
+            type="date"
+            className="w-auto"
+            data-testid="input-payments-from"
+            aria-invalid={rangeInvalid}
+            value={from}
+            onChange={(e) => {
+              setFrom(e.target.value);
+              updateQuery("from", e.target.value || undefined);
+            }}
+          />
+        </label>
+        <label className="flex items-center gap-2 text-sm text-muted-foreground">
+          {t("consulta.hasta")}
+          <Input
+            type="date"
+            className="w-auto"
+            data-testid="input-payments-to"
+            aria-invalid={rangeInvalid}
+            value={to}
+            onChange={(e) => {
+              setTo(e.target.value);
+              updateQuery("to", e.target.value || undefined);
+            }}
+          />
+        </label>
+        {rangeInvalid && (
+          <p role="alert" data-testid="payments-range-error" className="w-full text-sm text-destructive">
+            {t("consulta.rangoInvalido")}
+          </p>
         )}
       </div>
       <DataTable data={payments} columns={columns} isLoading={isLoading} keyExtractor={(p) => p.idPayment!} emptyMessage={consultBudget ? t("consulta.sinPagos") : t("noData")} />

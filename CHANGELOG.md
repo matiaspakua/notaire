@@ -2728,6 +2728,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Filter payments by date** (issue #1557, CU47): the payments page has "Desde" / "Hasta"
+  date inputs (kept in `?from=&to=`), both days inclusive. Without a budget it lists
+  `GET /payments/date` (off the #1250 allowlist; the reachability scanner also counts that call for `GET /payments/{id}`, so that entry goes too); with a budget it narrows that budget's
+  payments. An inverted range shows an inline error and sends no request, and the API now
+  answers it with 400 instead of an empty list. TS-0014 CU47-GW01 is implemented (one fewer feature-gap skip).
+
 - **Substitutions by year and notary** (issue #1546, CU59): `/dashboard/substitutions` has an
   Año selector (a substitution counts in every year its range overlaps) and an Escribano search
   over both sides, accent- and case-insensitive, kept in the URL, with a result count.

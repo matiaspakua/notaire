@@ -1,0 +1,19 @@
+info:
+  name: Get by date range - inverted range rejected
+  type: http
+  seq: 7
+  description: |-
+      ## Inverted date range — GET /api/v1/payments/date
+      startDate after endDate is a client error, not an empty list.
+      Traceability: CU47, #1557
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/payments/date?startDate=2031-02-20&endDate=2031-02-10"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 400 Bad Request", function () { expect(res.getStatus()).to.equal(400); });

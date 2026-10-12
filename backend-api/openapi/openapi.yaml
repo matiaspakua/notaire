@@ -6028,7 +6028,15 @@ paths:
                   $ref: '#/components/schemas/DtoPaymentResponse'
                 type: array
           description: OK
-      summary: Get payments by date range
+        '400':
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/DtoPaymentResponse'
+                type: array
+          description: Malformed, missing or inverted date range
+      summary: CU47 - Get payments by date range (both days inclusive)
       tags:
       - Payment
   /api/v1/payments/{id}:
