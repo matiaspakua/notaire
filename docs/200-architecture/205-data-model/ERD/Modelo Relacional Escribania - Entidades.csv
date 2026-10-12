@@ -6,14 +6,14 @@ people,Strong,first_name,,no,Text,,,,First name or trade name. The seeded sample
 people,Strong,identification_number,,no,Text,,,,Primary identification number. The seeded sample `20123456` stays.
 people,Strong,tax_id,,yes,Text,,,x,Tax id (`CUIT` / `CUIL`). Those stored names stay. The seeded sample `20-20123456-3` stays.
 people,Strong,sex,,yes,Text,,,x,Legal sex. Stored values `Masculino` and `Femenino` stay. The seeded sample `M` stays.
-people,Strong,birth_date,,yes,Date,,,x,Birth date
+people,Strong,birth_date,,yes,Date,,,x,Birth date. The seeded sample `1980-01-15` stays.
 people,Strong,marital_status,,yes,Text,,,x,Marital status. Stored values `Soltero` and `Casado` stay.
-people,Strong,marriage_count,,yes,Integer,,,x,Marriage count
+people,Strong,marriage_count,,yes,Integer,,,x,Marriage count. The seeded sample `1` stays.
 people,Strong,occupation,,yes,Text,,,x,Occupation. Free text. The seeded sample `Escribano` stays.
 people,Strong,address,,yes,Text,,,x,Residential or legal address. The seeded sample `Av. Principal 123` stays.
 people,Strong,email,,yes,Text,,,x,Primary email. The seeded sample `jcgarcia@notaria.com` stays.
-people,Strong,notary_registration_number,,yes,Integer,,,x,Notary registration number
-people,Strong,is_client,,no,Boolean,,,,`true` when the person is a client of the practice
+people,Strong,notary_registration_number,,yes,Integer,,,x,Notary registration number. The seeded sample `1001` stays.
+people,Strong,is_client,,no,Boolean,,,,`true` when the person is a client of the practice. The seeded sample stays `false`.
 people,Strong,locality,,yes,Text,,,x,Locality. The seeded sample `Buenos Aires` stays.
 people,Strong,province,,yes,Text,,,x,Province. The seeded sample `Buenos Aires` stays.
 people,Strong,phone,,yes,Text,,,x,Landline. The seeded sample `011-4555-1234` stays.
@@ -23,7 +23,7 @@ people,Strong,nationality,,yes,Text,,,x,Nationality. The seeded sample `Argentin
 people,Strong,profession,,yes,Text,,,x,Profession or trade. Free text. The seeded sample `Escribano` stays.
 people,Strong,notes,,yes,Text,,,x,File notes and background
 people,Strong,fk_id_identification_type,FK,yes,Integer,,x,x,Primary identification type
-people,Strong,is_notary,,no,Boolean,,,,`true` when the person is a licensed notary
+people,Strong,is_notary,,no,Boolean,,,,`true` when the person is a licensed notary. The seeded sample stays `true`.
 identification_types,Strong,version,,no,Integer,,,,Optimistic lock
 identification_types,Strong,id,PK,no,Integer,x,,,Unique id of the document type
 identification_types,Strong,name,,no,Text,,,,"Name. Stored values `DNI`, `CUIT`, `CUIL`, `Pasaporte`, `CI`, `LC`, and `LE` stay."
@@ -37,10 +37,10 @@ substitutions,Associative,fk_id_substituted_person,FK,yes,Integer,,x,x,Notary on
 substitutions,Associative,fk_id_substitute_person,FK,yes,Integer,,x,x,Substitute notary
 users,Weak / strong,version,,no,Integer,,,,Optimistic lock
 users,Weak / strong,id,PK,no,Integer,x,,,Unique id of the user
-users,Weak / strong,username,,no,Text,,,,Username (unique login)
-users,Weak / strong,password,,no,Text,,,,Password hash
+users,Weak / strong,username,,no,Text,,,,Username (unique login). The seeded sample `admin` stays.
+users,Weak / strong,password,,no,Text,,,,Password hash. The seeded account stores a hash of `admin`.
 users,Weak / strong,user_type,,no,Text,,,,"Legacy descriptive role. Stored values `Escribano`, `Empleado`, `EMPLEADO`, `ADMIN`, `ADMINISTRADOR`, and `ESCRIBANO` stay."
-users,Weak / strong,status,,no,Boolean,,,,`true` when the account is active
+users,Weak / strong,status,,no,Boolean,,,,`true` when the account is active. The seeded sample stays `true`.
 users,Weak / strong,fk_id_person,FK,yes,Integer,,x,x,Linked person
 users,Weak / strong,fk_id_role,FK,yes,Integer,,x,x,Assigned security role (V9)
 roles,Strong,version,,no,Integer,,,,Optimistic lock
@@ -73,7 +73,7 @@ concepts,Strong,id,PK,no,Integer,x,,,Unique id of the fee concept
 concepts,Strong,name,,no,Text,,,,"Concept name. Stored values `IVA`, `Honorarios`, `Documentacion`, and `Protocolo` stay."
 concepts,Strong,amount,,no,Real,,,,"Fixed reference amount. Seeded amounts stay: `0` for `IVA` and `Honorarios`, `500` for `Documentacion`, and `150` for `Protocolo`."
 concepts,Strong,percentage,,no,Integer,,,,"Standard percentage applied to the act amount. Seeded percentages stay: `20` for `IVA`, `5` for `Honorarios`, and `0` for `Documentacion` and `Protocolo`."
-concepts,Strong,enabled,,no,Boolean,,,,Whether the concept can be used on budgets
+concepts,Strong,enabled,,no,Boolean,,,,"Whether the concept can be used on budgets. Seeded flags stay: `true` for `IVA`, `Honorarios`, `Documentacion`, and `Protocolo`."
 concepts,Strong,fixed_concept,,no,Boolean,,,,"`true` when the amount is fixed, `false` when it is a percentage. Seeded flags stay: `false` for `IVA` and `Honorarios`, and `true` for `Documentacion` and `Protocolo`."
 budget_templates,Associative,version,,no,Integer,,,,Optimistic lock
 budget_templates,Associative,fk_id_procedure_type,PK,no,Integer,x,x,,Procedure type
@@ -189,7 +189,7 @@ document_types,Strong,returned,,no,Boolean,,,,"`true` when the original must be 
 document_types,Strong,expires,,no,Boolean,,,,"`true` when the certificate expires. Seeded flags stay: `true` for `Libre Deuda Municipal`, `Informe de Dominio`, and `Certificado Catastral`, and `false` for `Fotocopia DNI`."
 document_types,Strong,due_days,,yes,Integer,,,x,"Legal validity in days. Seeded day counts stay: `30` for `Libre Deuda Municipal`, `60` for `Informe de Dominio`, `90` for `Certificado Catastral`, and NULL for `Fotocopia DNI`."
 document_types,Strong,amount_to_pay,,yes,Real,,,x,"Standard fee. Seeded fees stay: `0` for `Libre Deuda Municipal` and `Fotocopia DNI`, `150` for `Informe de Dominio`, and `100` for `Certificado Catastral`."
-document_types,Strong,enabled,,no,Boolean,,,,`true` when it can be used on templates
+document_types,Strong,enabled,,no,Boolean,,,,"`true` when it can be used on templates. Seeded flags stay: `true` for `Libre Deuda Municipal`, `Informe de Dominio`, `Certificado Catastral`, and `Fotocopia DNI`."
 document_types,Strong,delivered_by,,no,Text,,,,"Origin. Stored values `Cliente`, `Entidad`, and `Entidad Externa` stay."
 procedure_templates,Associative,version,,no,Integer,,,,Optimistic lock
 procedure_templates,Associative,fk_id_procedure_type,PK,no,Integer,x,x,,Procedure type

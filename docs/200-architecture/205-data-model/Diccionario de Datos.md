@@ -149,7 +149,7 @@ Master catalog of fee concepts, professional fees, contributions, and notarial t
 | `name` | TEXT | No | No | Yes | — | — | Concept name. Stored values `IVA`, `Honorarios`, `Documentacion`, and `Protocolo` stay. |
 | `amount` | NUMERIC(19,2) | No | No | Yes | 0 | — | Fixed reference amount. Seeded amounts stay: `0` for `IVA` and `Honorarios`, `500` for `Documentacion`, and `150` for `Protocolo`. |
 | `percentage` | INTEGER | No | No | Yes | 0 | — | Standard percentage applied to the act amount. Seeded percentages stay: `20` for `IVA`, `5` for `Honorarios`, and `0` for `Documentacion` and `Protocolo`. |
-| `enabled` | BOOLEAN | No | No | Yes | — | — | Whether the concept can be used on budgets |
+| `enabled` | BOOLEAN | No | No | Yes | — | — | Whether the concept can be used on budgets. Seeded flags stay: `true` for `IVA`, `Honorarios`, `Documentacion`, and `Protocolo`. |
 | `fixed_concept` | BOOLEAN | No | No | Yes | — | — | `true` when the amount is fixed, `false` when it is a percentage. Seeded flags stay: `false` for `IVA` and `Honorarios`, and `true` for `Documentacion` and `Protocolo`. |
 
 ---
@@ -391,14 +391,14 @@ People, natural or legal, who take part in the practice.
 | `identification_number` | TEXT | No | No | Yes | — | — | Primary identification number. The seeded sample `20123456` stays. |
 | `tax_id` | TEXT | No | No | No | NULL | — | Tax id (`CUIT` / `CUIL`). Those stored names stay. The seeded sample `20-20123456-3` stays. |
 | `sex` | TEXT | No | No | No | NULL | — | Legal sex. Stored values `Masculino` and `Femenino` stay. The seeded sample `M` stays. |
-| `birth_date` | DATE | No | No | No | NULL | — | Birth date |
+| `birth_date` | DATE | No | No | No | NULL | — | Birth date. The seeded sample `1980-01-15` stays. |
 | `marital_status` | TEXT | No | No | No | NULL | — | Marital status. Stored values `Soltero` and `Casado` stay. |
-| `marriage_count` | INTEGER | No | No | No | NULL | — | Marriage count |
+| `marriage_count` | INTEGER | No | No | No | NULL | — | Marriage count. The seeded sample `1` stays. |
 | `occupation` | TEXT | No | No | No | NULL | — | Occupation. Free text. The seeded sample `Escribano` stays. |
 | `address` | TEXT | No | No | No | NULL | — | Residential or legal address. The seeded sample `Av. Principal 123` stays. |
 | `email` | TEXT | No | No | No | NULL | — | Primary email. The seeded sample `jcgarcia@notaria.com` stays. |
-| `notary_registration_number` | INTEGER | No | No | No | NULL | — | Notary registration number |
-| `is_client` | BOOLEAN | No | No | Yes | false | — | `true` when the person is a client of the practice |
+| `notary_registration_number` | INTEGER | No | No | No | NULL | — | Notary registration number. The seeded sample `1001` stays. |
+| `is_client` | BOOLEAN | No | No | Yes | false | — | `true` when the person is a client of the practice. The seeded sample stays `false`. |
 | `locality` | TEXT | No | No | No | NULL | — | Locality. The seeded sample `Buenos Aires` stays. |
 | `province` | TEXT | No | No | No | NULL | — | Province. The seeded sample `Buenos Aires` stays. |
 | `phone` | TEXT | No | No | No | NULL | — | Landline. The seeded sample `011-4555-1234` stays. |
@@ -408,7 +408,7 @@ People, natural or legal, who take part in the practice.
 | `profession` | TEXT | No | No | No | NULL | — | Profession or trade. Free text. The seeded sample `Escribano` stays. |
 | `notes` | TEXT | No | No | No | NULL | — | File notes and background |
 | `fk_id_identification_type` | INTEGER | No | Yes | No | NULL | `identification_types(id)` | Primary identification type |
-| `is_notary` | BOOLEAN | No | No | Yes | false | — | `true` when the person is a licensed notary |
+| `is_notary` | BOOLEAN | No | No | Yes | false | — | `true` when the person is a licensed notary. The seeded sample stays `true`. |
 
 ---
 
@@ -547,7 +547,7 @@ Master catalog of documents, prior titles, and registry certificates.
 | `expires` | BOOLEAN | No | No | Yes | — | — | `true` when the certificate expires. Seeded flags stay: `true` for `Libre Deuda Municipal`, `Informe de Dominio`, and `Certificado Catastral`, and `false` for `Fotocopia DNI`. |
 | `due_days` | INTEGER | No | No | No | NULL | — | Legal validity in days. Seeded day counts stay: `30` for `Libre Deuda Municipal`, `60` for `Informe de Dominio`, `90` for `Certificado Catastral`, and NULL for `Fotocopia DNI`. |
 | `amount_to_pay` | NUMERIC(19,2) | No | No | No | NULL | — | Standard fee. Seeded fees stay: `0` for `Libre Deuda Municipal` and `Fotocopia DNI`, `150` for `Informe de Dominio`, and `100` for `Certificado Catastral`. |
-| `enabled` | BOOLEAN | No | No | Yes | — | — | `true` when it can be used on templates |
+| `enabled` | BOOLEAN | No | No | Yes | — | — | `true` when it can be used on templates. Seeded flags stay: `true` for `Libre Deuda Municipal`, `Informe de Dominio`, `Certificado Catastral`, and `Fotocopia DNI`. |
 | `delivered_by` | TEXT | No | No | Yes | — | — | Origin. Stored values `Cliente`, `Entidad`, and `Entidad Externa` stay. |
 
 ---
@@ -638,10 +638,10 @@ Operator accounts (V9).
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the user |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
-| `username` | TEXT | No | No | Yes | — | — | Username (unique login) |
-| `password` | TEXT | No | No | Yes | — | — | Password hash |
+| `username` | TEXT | No | No | Yes | — | — | Username (unique login). The seeded sample `admin` stays. |
+| `password` | TEXT | No | No | Yes | — | — | Password hash. The seeded account stores a hash of `admin`. |
 | `user_type` | TEXT | No | No | Yes | — | — | Legacy descriptive role. Stored values `Escribano`, `Empleado`, `EMPLEADO`, `ADMIN`, `ADMINISTRADOR`, and `ESCRIBANO` stay. |
-| `status` | BOOLEAN | No | No | Yes | — | — | `true` when the account is active |
+| `status` | BOOLEAN | No | No | Yes | — | — | `true` when the account is active. The seeded sample stays `true`. |
 | `fk_id_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Linked person |
 | `fk_id_role` | INTEGER | No | Yes | No | NULL | `roles(id)` | Assigned security role (V9) |
 
