@@ -145,7 +145,7 @@ Master catalog of fee concepts, professional fees, contributions, and notarial t
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the fee concept |
-| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock (Hibernate) |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock (Hibernate). The seeded `Documentacion` row stays at version `2`. The other seeded concepts stay at version `1`. |
 | `name` | TEXT | No | No | Yes | — | — | Concept name. Stored values `IVA`, `Honorarios`, `Documentacion`, and `Protocolo` stay. |
 | `amount` | NUMERIC(19,2) | No | No | Yes | 0 | — | Fixed reference amount. Seeded amounts stay: `0` for `IVA` and `Honorarios`, `500` for `Documentacion`, and `150` for `Protocolo`. |
 | `percentage` | INTEGER | No | No | Yes | 0 | — | Standard percentage applied to the act amount. Seeded percentages stay: `20` for `IVA`, `5` for `Honorarios`, and `0` for `Documentacion` and `Protocolo`. |
@@ -274,7 +274,7 @@ File that groups one or more related procedures.
 | `number` | INTEGER | No | No | Yes | — | — | Yearly serial number of the management. Seeded numbers `1001` and `1002` stay. |
 | `start_date` | DATE | No | No | Yes | — | — | Date the file was opened. Seeded dates `2026-05-02` and `2026-05-20` stay. |
 | `heading` | TEXT | No | No | Yes | — | — | Heading that describes the management. Stored values `Compraventa Lote 12 — Familia Pérez` and `Donación — Sucesión Gómez` stay. |
-| `notes` | TEXT | No | No | No | NULL | — | Working notes |
+| `notes` | TEXT | No | No | No | NULL | — | Working notes. The seeded samples stay empty. |
 | `fk_id_notary_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Notary in charge. The seeded managements stay with `Garcia`. |
 | `fk_id_management_status` | INTEGER | No | Yes | No | NULL | `management_statuses(id)` | Current operational status. Seeded samples stay `Documentacion Completa` for management `1001` and `En Tramite` for management `1002`. |
 | `pending_debt_on_archive` | BOOLEAN | No | No | No | NULL | — | `true` when the management was archived with a pending debt |
@@ -406,7 +406,7 @@ People, natural or legal, who take part in the practice.
 | `secondary_email` | TEXT | No | No | No | NULL | — | Secondary or historical email. The seeded sample `jcgarcia@notaria.com` stays. |
 | `nationality` | TEXT | No | No | No | NULL | — | Nationality. The seeded sample `Argentina` stays. |
 | `profession` | TEXT | No | No | No | NULL | — | Profession or trade. Free text. The seeded sample `Escribano` stays. |
-| `notes` | TEXT | No | No | No | NULL | — | File notes and background |
+| `notes` | TEXT | No | No | No | NULL | — | File notes and background. The seeded sample stays empty. |
 | `fk_id_identification_type` | INTEGER | No | Yes | No | NULL | `identification_types(id)` | Primary identification type. The seeded sample stays `DNI`. |
 | `is_notary` | BOOLEAN | No | No | Yes | false | — | `true` when the person is a licensed notary. The seeded sample stays `true`. |
 
@@ -608,7 +608,7 @@ One procedure instance (V13/V14).
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
 | `number` | INTEGER | No | No | No | NULL | — | Procedure serial number (optional since V13). Seeded numbers `1` and `2` stay. |
 | `name` | TEXT | No | No | No | NULL | — | Descriptive heading (optional since V13). Stored values `Compraventa inmueble Lote 12` and `Donación a herederos` stay. |
-| `notes` | TEXT | No | No | No | NULL | — | Instructions or observations |
+| `notes` | TEXT | No | No | No | NULL | — | Instructions or observations. The seeded samples stay empty. |
 | `fk_id_procedure_type` | INTEGER | No | Yes | No | NULL | `procedure_types(id)` | Procedure type. Seeded samples stay `Compraventa` for procedure `1` and `Donacion` for procedure `2`. |
 | `fk_id_deed_management` | INTEGER | No | Yes | No | NULL | `deed_managements(id)` | Deed management that groups it (null for auxiliary work). Seeded procedures stay on managements `1001` and `1002`. |
 | `fk_id_deed` | INTEGER | No | Yes | No | NULL | `deeds(id)` | Resulting deed |
@@ -688,7 +688,7 @@ Directed transitions between workflow nodes, with guard conditions (Flyway V7).
 | `fk_workflow_definition_id` | INTEGER | No | Yes | Yes | — | `workflow_definition(id_workflow_definition)` | Parent workflow (ON DELETE CASCADE). The seeded rows stay on `Workflow de Gestión Estándar`. |
 | `fk_origin_node_id` | INTEGER | No | Yes | Yes | — | `workflow_node(id_workflow_node)` | Origin node (ON DELETE CASCADE) |
 | `fk_destination_node_id` | INTEGER | No | Yes | Yes | — | `workflow_node(id_workflow_node)` | Destination node (ON DELETE CASCADE) |
-| `condition` | TEXT | No | No | No | NULL | — | Guard condition for the transition |
+| `condition` | TEXT | No | No | No | NULL | — | Guard condition for the transition. The seeded transitions stay with an empty condition. |
 | `description` | TEXT | No | No | No | NULL | — | Description of the action that advances the flow. Stored values `Se asignan trámites y comienza la gestión`, `Toda la documentación requerida fue presentada`, `Se redacta la escritura`, `Las partes firman la escritura`, `La gestión se archiva sin escritura`, `Testimony generated after deed signing`, `Testimony submitted for inscription`, and `Testimony withdrawn after inscription cycle` stay. |
 
 ---
