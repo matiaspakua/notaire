@@ -55,6 +55,8 @@ test.describe("TS-0150 - Workflow zoom and fit (#1579)", () => {
     const nodes = await apiGet<Array<{ id: number }>>(page, "/workflow-node/by-workflow/1");
     const ids = nodes.data!.map((n) => n.id);
     await page.goto("/dashboard/administration/workflows/1");
+    // #1580: a phone opens in the list view; the diagram is one tab away.
+    await page.getByTestId("wf-tab-graph").click();
     await expect(page.locator(".react-flow__node")).toHaveCount(ids.length, { timeout: 15000 });
     await page.getByRole("button", { name: "Ajustar a la vista" }).click();
     await expect.poll(() => allInside(page, ids), { timeout: 5000 }).toBe(true);
@@ -63,6 +65,7 @@ test.describe("TS-0150 - Workflow zoom and fit (#1579)", () => {
   test("the MiniMap is hidden on a phone", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/dashboard/administration/workflows/1");
+    await page.getByTestId("wf-tab-graph").click();
     await expect(page.locator(".react-flow__node").first()).toBeAttached({ timeout: 15000 });
     await expect(page.locator(".react-flow__minimap")).toBeHidden();
   });

@@ -1273,7 +1273,8 @@
           "delete": "Delete",
           "addStatus": "Add status",
           "from": "Origin status",
-          "fromPlaceholder": "Select origin..."
+          "fromPlaceholder": "Select origin...",
+          "phoneReadOnly": "On a phone the diagram is read-only: edit the workflow in the list view."
         }
       },
       "activateInvalid": "Cannot activate: the workflow is not valid.",

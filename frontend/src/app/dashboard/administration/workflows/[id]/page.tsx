@@ -41,6 +41,8 @@ import { workflowNodeTypes } from "@/components/workflow/WorkflowNodeBox";
 import { workflowEdge } from "@/components/workflow/workflow-edges";
 import { WorkflowSelectionPanel, type PanelSelection } from "@/components/workflow/WorkflowSelectionPanel";
 import { WORKFLOW_ZOOM, WORKFLOW_FIT, MINIMAP_CLASS, workflowAriaLabels, workflowMiniMapColor } from "@/components/workflow/workflow-canvas";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { resolveView, graphEditable, type WorkflowView } from "@/lib/workflow-view";
 import { WorkflowListView } from "@/components/workflow/WorkflowListView";
 import { validateWorkflow, nodeProblems } from "@/lib/workflow-validate";
 import { checkNewTransition } from "@/lib/workflow-edit";
@@ -73,7 +75,11 @@ export default function WorkflowEditorPage() {
 
   const [editMode, setEditMode] = useState(false);
   // #1578: graph or list view (the list is the keyboard / screen-reader path).
-  const [view, setView] = useState<"graph" | "list">("graph");
+  // #1580: on a phone the list is the default view and the graph is read-only.
+  const isPhone = useMediaQuery("(max-width: 767px)");
+  const [chosenView, setView] = useState<WorkflowView | null>(null);
+  const view = resolveView(chosenView, isPhone);
+  const canEditGraph = graphEditable(editMode, isPhone);
   const [addNodeOpen, setAddNodeOpen] = useState(false);
   const [newNodeStatusId, setNewNodeStatusId] = useState<number | "">("");
   const [newNodeType, setNewNodeType] = useState<WorkflowNodeType>("INTERMEDIATE");
@@ -325,7 +331,7 @@ export default function WorkflowEditorPage() {
         title={workflow?.name ?? t("title")}
         description={workflow?.description ?? ""}
         actions={
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button variant="secondary" onClick={() => router.back()}>
               {t("back")}
             </Button>
@@ -341,7 +347,7 @@ export default function WorkflowEditorPage() {
                 {t("addNode")}
               </Button>
             )}
-            {editMode && (
+            {canEditGraph && (
               <Button variant="secondary" onClick={handleAutoLayout} disabled={updateNode.isPending} data-testid="btn-auto-layout">
                 {t("autoLayout")}
               </Button>
@@ -431,6 +437,9 @@ export default function WorkflowEditorPage() {
         </div>
       ) : (
       <div role="tabpanel" id="wf-panel-graph" aria-labelledby="wf-tab-graph">
+      {isPhone && (
+        <p className="mb-2 text-xs text-muted-foreground" data-testid="wf-mobile-readonly">{t("list.phoneReadOnly")}</p>
+      )}
       <div className="mb-3 flex gap-3 text-xs text-muted-foreground">
         <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-success/20 border border-success inline-block" />{t("types.INITIAL")}</span>
         <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-info/20 border border-info inline-block" />{t("types.INTERMEDIATE")}</span>
@@ -449,16 +458,16 @@ export default function WorkflowEditorPage() {
           nodes={nodes}
           edges={edges}
           nodeTypes={nodeTypes}
-          onNodesChange={editMode ? onNodesChange : undefined}
-          onConnect={editMode ? onConnect : undefined}
-          onNodeDragStop={editMode ? handleNodeDragStop : undefined}
+          onNodesChange={canEditGraph ? onNodesChange : undefined}
+          onConnect={canEditGraph ? onConnect : undefined}
+          onNodeDragStop={canEditGraph ? handleNodeDragStop : undefined}
           onNodeClick={(_, node) => setSelection({ kind: "node", id: Number(node.id) })}
           onEdgeClick={(_, edge) => setSelection({ kind: "edge", id: Number(edge.id) })}
           onPaneClick={() => setSelection(null)}
           zoomOnDoubleClick={false}
           onInit={setFlow}
-          nodesDraggable={editMode}
-          nodesConnectable={editMode}
+          nodesDraggable={canEditGraph}
+          nodesConnectable={canEditGraph}
           fitView
           fitViewOptions={WORKFLOW_FIT}
           {...WORKFLOW_ZOOM}
@@ -478,7 +487,7 @@ export default function WorkflowEditorPage() {
           type: n.type ?? "INTERMEDIATE",
         }))}
         transitions={rawTransitions}
-        editMode={editMode}
+        editMode={canEditGraph}
         onChangeType={handleChangeType}
         onDeleteNode={(id) => handleDeleteNode(String(id))}
         onDeleteTransition={(id) => handleDeleteEdge(String(id))}
@@ -486,7 +495,7 @@ export default function WorkflowEditorPage() {
         onSaveDescription={handleSaveDescription}
       />
       </div>
-      {editMode && (
+      {canEditGraph && (
         <p className="text-xs text-muted-foreground mt-1">
           {t("hint")}
         </p>
