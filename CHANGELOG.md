@@ -64,6 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded document delivery origin** (#1490, CU75): the document-type
+  origin lists `Cliente`, `Entidad`, and `Entidad Externa`.
 - **Seeded concept labels** (#1490, CU75): the concept name lists `IVA`,
   `Honorarios`, `Documentacion`, and `Protocolo`.
 - **Seeded document types** (#1490, CU75): the document-type name lists
