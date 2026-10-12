@@ -119,10 +119,10 @@ procedure_types,Strong,version,,no,Integer,,,,Optimistic lock
 procedure_types,Strong,id,PK,no,Integer,x,,,Procedure-type id
 procedure_types,Strong,name,,no,Text,,,,"Procedure-type name. Stored examples such as `Compraventa` and `Poder` stay. The seeded catalog also keeps `Donacion`, `Hipoteca`, and `Sucesion`."
 procedure_types,Strong,notes,,yes,Text,,,x,"Rules and notarial description. Stored notes `Tramite de compraventa de inmuebles`, `Tramite de donacion`, `Tramite de hipoteca`, `Tramite de sucesion`, and `Otorgamiento de poderes` stay."
-procedure_types,Strong,enabled,,no,Boolean,,,,`true` when new managements are allowed
-procedure_types,Strong,is_archived,,no,Boolean,,,,`true` when a physical binder is required
-procedure_types,Strong,is_registered,,no,Boolean,,,,`true` when registry registration is required
-procedure_types,Strong,associates_properties,,no,Boolean,,,,`true` when the act involves property
+procedure_types,Strong,enabled,,no,Boolean,,,,"`true` when new managements are allowed. Seeded flags stay: `true` for `Compraventa`, `Donacion`, `Hipoteca`, `Sucesion`, and `Poder`."
+procedure_types,Strong,is_archived,,no,Boolean,,,,"`true` when a physical binder is required. Seeded flags stay: `true` for `Compraventa`, `Donacion`, `Hipoteca`, and `Sucesion`, and `false` for `Poder`."
+procedure_types,Strong,is_registered,,no,Boolean,,,,"`true` when registry registration is required. Seeded flags stay: `true` for `Compraventa`, `Donacion`, and `Hipoteca`, and `false` for `Sucesion` and `Poder`."
+procedure_types,Strong,associates_properties,,no,Boolean,,,,"`true` when the act involves property. Seeded flags stay: `true` for `Compraventa`, `Donacion`, and `Hipoteca`, and `false` for `Sucesion` and `Poder`."
 procedure_types,Strong,fk_workflow_definition_id,FK,yes,Integer,,x,x,Workflow assigned to the procedure type (V8)
 procedures,Strong,version,,no,Integer,,,,Optimistic lock
 procedures,Strong,id,PK,no,Integer,x,,,Unique id of the procedure

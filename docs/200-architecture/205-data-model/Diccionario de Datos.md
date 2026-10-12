@@ -577,10 +577,10 @@ Master catalog of notarial act types (V8). Stored names such as `Compraventa` st
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
 | `name` | TEXT | No | No | Yes | — | — | Procedure-type name. Stored examples such as `Compraventa` and `Poder` stay. The seeded catalog also keeps `Donacion`, `Hipoteca`, and `Sucesion`. |
 | `notes` | TEXT | No | No | No | NULL | — | Rules and notarial description. Stored notes `Tramite de compraventa de inmuebles`, `Tramite de donacion`, `Tramite de hipoteca`, `Tramite de sucesion`, and `Otorgamiento de poderes` stay. |
-| `enabled` | BOOLEAN | No | No | Yes | — | — | `true` when new managements are allowed |
-| `is_archived` | BOOLEAN | No | No | Yes | — | — | `true` when a physical binder is required |
-| `is_registered` | BOOLEAN | No | No | Yes | — | — | `true` when registry registration is required |
-| `associates_properties` | BOOLEAN | No | No | Yes | — | — | `true` when the act involves property |
+| `enabled` | BOOLEAN | No | No | Yes | — | — | `true` when new managements are allowed. Seeded flags stay: `true` for `Compraventa`, `Donacion`, `Hipoteca`, `Sucesion`, and `Poder`. |
+| `is_archived` | BOOLEAN | No | No | Yes | — | — | `true` when a physical binder is required. Seeded flags stay: `true` for `Compraventa`, `Donacion`, `Hipoteca`, and `Sucesion`, and `false` for `Poder`. |
+| `is_registered` | BOOLEAN | No | No | Yes | — | — | `true` when registry registration is required. Seeded flags stay: `true` for `Compraventa`, `Donacion`, and `Hipoteca`, and `false` for `Sucesion` and `Poder`. |
+| `associates_properties` | BOOLEAN | No | No | Yes | — | — | `true` when the act involves property. Seeded flags stay: `true` for `Compraventa`, `Donacion`, and `Hipoteca`, and `false` for `Sucesion` and `Poder`. |
 | `fk_workflow_definition_id` | INTEGER | No | Yes | No | NULL | `workflow_definition(id_workflow_definition)` | Workflow assigned to the procedure type (V8) |
 
 ---
