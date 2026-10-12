@@ -640,7 +640,7 @@ Operator accounts (V9).
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
 | `username` | TEXT | No | No | Yes | — | — | Username (unique login) |
 | `password` | TEXT | No | No | Yes | — | — | Password hash |
-| `user_type` | TEXT | No | No | Yes | — | — | Legacy descriptive role |
+| `user_type` | TEXT | No | No | Yes | — | — | Legacy descriptive role. Stored values `Escribano`, `Empleado`, `EMPLEADO`, `ADMIN`, `ADMINISTRADOR`, and `ESCRIBANO` stay. |
 | `status` | BOOLEAN | No | No | Yes | — | — | `true` when the account is active |
 | `fk_id_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Linked person |
 | `fk_id_role` | INTEGER | No | Yes | No | NULL | `roles(id)` | Assigned security role (V9) |

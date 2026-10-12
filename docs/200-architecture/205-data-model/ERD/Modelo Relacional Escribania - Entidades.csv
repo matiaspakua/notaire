@@ -39,7 +39,7 @@ users,Weak / strong,version,,no,Integer,,,,Optimistic lock
 users,Weak / strong,id,PK,no,Integer,x,,,Unique id of the user
 users,Weak / strong,username,,no,Text,,,,Username (unique login)
 users,Weak / strong,password,,no,Text,,,,Password hash
-users,Weak / strong,user_type,,no,Text,,,,Legacy descriptive role
+users,Weak / strong,user_type,,no,Text,,,,"Legacy descriptive role. Stored values `Escribano`, `Empleado`, `EMPLEADO`, `ADMIN`, `ADMINISTRADOR`, and `ESCRIBANO` stay."
 users,Weak / strong,status,,no,Boolean,,,,`true` when the account is active
 users,Weak / strong,fk_id_person,FK,yes,Integer,,x,x,Linked person
 users,Weak / strong,fk_id_role,FK,yes,Integer,,x,x,Assigned security role (V9)
