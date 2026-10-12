@@ -543,10 +543,10 @@ Master catalog of documents, prior titles, and registry certificates.
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the document type |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
 | `name` | TEXT | No | No | Yes | — | — | Name of the document or certificate. Stored values `Libre Deuda Municipal`, `Informe de Dominio`, `Certificado Catastral`, and `Fotocopia DNI` stay. |
-| `returned` | BOOLEAN | No | No | Yes | — | — | `true` when the original must be returned to the client |
-| `expires` | BOOLEAN | No | No | Yes | — | — | `true` when the certificate expires |
-| `due_days` | INTEGER | No | No | No | NULL | — | Legal validity in days |
-| `amount_to_pay` | NUMERIC(19,2) | No | No | No | NULL | — | Standard fee |
+| `returned` | BOOLEAN | No | No | Yes | — | — | `true` when the original must be returned to the client. Seeded flags stay: `true` for `Libre Deuda Municipal`, `Informe de Dominio`, and `Certificado Catastral`, and `false` for `Fotocopia DNI`. |
+| `expires` | BOOLEAN | No | No | Yes | — | — | `true` when the certificate expires. Seeded flags stay: `true` for `Libre Deuda Municipal`, `Informe de Dominio`, and `Certificado Catastral`, and `false` for `Fotocopia DNI`. |
+| `due_days` | INTEGER | No | No | No | NULL | — | Legal validity in days. Seeded day counts stay: `30` for `Libre Deuda Municipal`, `60` for `Informe de Dominio`, `90` for `Certificado Catastral`, and NULL for `Fotocopia DNI`. |
+| `amount_to_pay` | NUMERIC(19,2) | No | No | No | NULL | — | Standard fee. Seeded fees stay: `0` for `Libre Deuda Municipal` and `Fotocopia DNI`, `150` for `Informe de Dominio`, and `100` for `Certificado Catastral`. |
 | `enabled` | BOOLEAN | No | No | Yes | — | — | `true` when it can be used on templates |
 | `delivered_by` | TEXT | No | No | Yes | — | — | Origin. Stored values `Cliente`, `Entidad`, and `Entidad Externa` stay. |
 
