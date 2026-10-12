@@ -39,7 +39,7 @@ INSERT INTO people (
     notary_registration_number, is_client, fk_id_identification_type
 ) VALUES (
     0, 'Juan Carlos', 'Garcia', '20123456',
-    '20-20123456-3', 'M', 'Casado', 'Escribano', 'Av. Principal 123', '011-4555-1234', 'jcgarcia@notaria.com',
+    '20-20123456-3', 'M', 'Casado', 'Escribano', 'Main Avenue 123', '011-4555-1234', 'jcgarcia@notary.com',
     1001, false, 1
 );
 

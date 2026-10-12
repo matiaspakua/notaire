@@ -32,6 +32,18 @@ class H2SeedPhrasesEnglishTest(unittest.TestCase):
         self.assertIn("'Casado'", text)
         self.assertIn("'Escribano'", text)
         self.assertIn("'DNI'", text)
+        self.assertIn("'Juan Carlos'", text)
+        self.assertIn("'Garcia'", text)
+        self.assertIn("'Main Avenue 123'", text)
+        self.assertIn("'jcgarcia@notary.com'", text)
+        self.assertNotIn("Av. Principal", text)
+        self.assertNotIn("notaria.com", text)
+
+        applied = (
+            ROOT / "backend-api/src/main/resources/db/migration/V2__initial_data.sql"
+        ).read_text(encoding="utf-8")
+        self.assertIn("Av. Principal 123", applied)
+        self.assertIn("jcgarcia@notaria.com", applied)
 
 
 if __name__ == "__main__":
