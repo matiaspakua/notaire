@@ -64,6 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded workflow graph** (#1490, CU75): the seeded workflow stays active
+  and assigned to `Compraventa`, `Donacion`, and `Hipoteca`. `Sucesion` and
+  `Poder` stay unassigned. The live nodes stay `Iniciada` (`INITIAL`), the
+  intermediate deed and testimony statuses, and `Archivada` and `Testimonio
+  Retirado` (`FINAL`). Sample managements stay `1001` and `1002`. Procedure
+  numbers stay `1` and `2`.
 - **Seeded person and login** (#1490, CU75): the person sample stays born
   `1980-01-15`, with marriage count `1` and notary registration `1001`.
   `is_client` stays `false` and `is_notary` stays `true`. The login stays
