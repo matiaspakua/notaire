@@ -3,6 +3,7 @@ package com.licensis.notaire.dto;
 import java.math.BigDecimal;
 // Generated 19/04/2012 16:59:26 by Hibernate Tools 3.2.1.GA
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.licensis.notaire.dto.interfaces.ValidDto;
 import java.util.ArrayList;
 import java.util.Date;
@@ -117,12 +118,14 @@ public class DtoBudget implements ValidDto {
     }
 
     @Deprecated
-    public BigDecimal getSaldo() {
+    @JsonProperty("saldo")
+    public BigDecimal getBalance() {
         return null;
     }
 
     @Deprecated
-    public void setSaldo(BigDecimal balance) {
+    @JsonProperty("saldo")
+    public void setBalance(BigDecimal balance) {
     }
 
     @Deprecated

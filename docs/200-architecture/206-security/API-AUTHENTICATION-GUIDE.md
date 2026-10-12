@@ -127,7 +127,7 @@ boolean valid = jwtTokenService.isValid(token);
 
 ```text
 User ──M:1──► Role
-Role     ──name, description──► (stored names such as Escribano, Secretario, Admin)
+Role     ──name, description──► (stored names such as ADMIN, ESCRIBANO, and SECRETARIA)
 ```
 
 The `Role` entity is stored in the `roles` table. `UserController` exposes the role in the `UserResponse` DTO.

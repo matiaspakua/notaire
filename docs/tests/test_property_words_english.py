@@ -65,6 +65,13 @@ class PropertyWordsEnglishTest(unittest.TestCase):
         self.assertIn("not a payment", payment)
         self.assertNotIn("pago", payment)
 
+        valuation = (API / "integration/PropertyServiceIntegrationTest.java").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn('setCadastralDesignation("Appraised house")', valuation)
+        self.assertNotIn("Casa valuada", valuation)
+        self.assertIn("House with valuation", valuation)
+
         helpers = (ROOT / "testing/e2e/tests/gherkin-helpers.ts").read_text(encoding="utf-8")
         self.assertIn('address: "Fake Street 123"', helpers)
         self.assertIn('number: "DEED-001"', helpers)

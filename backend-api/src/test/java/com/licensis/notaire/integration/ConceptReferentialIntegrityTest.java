@@ -100,7 +100,7 @@ class ConceptReferentialIntegrityTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
-                                  "name": "NameModificado",
+                                  "name": "NameModified",
                                   "description": "Updated",
                                   "value": 200,
                                   "enabled": true

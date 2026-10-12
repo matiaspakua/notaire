@@ -21,7 +21,8 @@ class ChangeDesignEnglishTest(unittest.TestCase):
         ):
             self.assertIn(title, text, title)
         self.assertIn("## Riesgos / Trade-offs", text)
-        self.assertIn("TS-0098-gestion-resumen-caso-feature.spec.ts", text)
+        self.assertIn("TS-0098-management-case-summary-feature.spec.ts", text)
+        self.assertNotIn("TS-0098-gestion-resumen-caso-feature.spec.ts", text)
         self.assertIn("useManagementSummary", text)
         self.assertIn("financial-summary", text)
         self.assertIn("managements screen", text)

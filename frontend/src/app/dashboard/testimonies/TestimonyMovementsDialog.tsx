@@ -2,7 +2,7 @@
 /**
  * Read-only movement history of one testimony (#1364, CU11/CU12/CU44): each registry movement,
  * newest first, with its entry, inscription and withdrawal. Movements are recorded by the
- * actions on Movimientos de testimonio; manual correction stays API-only (Owner, 2026-10-09).
+ * actions on the testimony-movements screen; manual correction stays API-only (Owner, 2026-10-09).
  * The data comes with the testimony list (GET /testimonies carries testimonyMovements).
  */
 import { useTranslations } from "next-intl";

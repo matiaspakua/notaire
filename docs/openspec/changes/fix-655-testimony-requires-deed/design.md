@@ -2,7 +2,7 @@
 
 ## Context
 
-Issue #655 lists endpoints that accept incomplete bodies; one is the bare `POST /testimonies`. Run 7: the Owner asked to require the deed unless removing the endpoint was clearly cleaner. The UI generates testimonies with `POST /testimonies/generate` (signed deed). The bare create is still used by the Playwright seed helpers (`createTestimonio`, TS-0032), Bruno and backend tests, which all send a deed.
+Issue #655 lists endpoints that accept incomplete bodies; one is the bare `POST /testimonies`. Run 7: the Owner asked to require the deed unless removing the endpoint was clearly cleaner. The UI generates testimonies with `POST /testimonies/generate` (signed deed). The Playwright seed helper is `createTestimony`. TS-0032, Bruno, and backend tests still send a deed on the bare create. The retired helper name `createTestimonio` stays out of the seed.
 
 ## Goals / Non-Goals
 

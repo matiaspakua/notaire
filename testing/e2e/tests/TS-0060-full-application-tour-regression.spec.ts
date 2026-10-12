@@ -379,7 +379,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
     await test.step("Search", async () => {
       const searchInput = page.getByTestId("search-statuses");
-      await searchInput.fill("inicial");
+      await searchInput.fill("Iniciada");
       await pause(page, PAUSE);
       await searchInput.clear();
       await pause(page, 400);
@@ -502,7 +502,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
     await test.step("Search", async () => {
       const searchInput = page.getByTestId("search-workflows");
-      await searchInput.fill("Gestión");
+      await searchInput.fill("Workflow");
       await pause(page, PAUSE);
       await searchInput.clear();
       await pause(page, 400);

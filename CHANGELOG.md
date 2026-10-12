@@ -64,6 +64,274 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Constraint-name rollback script** (#1490, CU75): the database suite
+  treats `R46__rename_spanish_constraint_names.sql` as a manual rollback
+  Flyway ignores, alongside `R14` and `R45`. The testing inventory counts
+  the constraint-name unit test.
+- **English constraint names** (#1490, CU75): Flyway `V46` renames the
+  Spanish constraint names PostgreSQL kept after the table and column
+  renames (`users_pkey` and the names that follow the current tables).
+  Constraints stay attached to the same columns. Row values stay unchanged.
+  `R46` restores the previous names. Applied migrations V1–V45 stay as recorded.
+- **Pending open ledgers** (#1490, CU75): a traceability file whose permanent
+  documents are still pending can cite a live English Playwright filename.
+  The legacy `accepted-breaking-changes.txt` claim on the open #655 notes is
+  retired. Accepted breaking entries live in `accepted-breaking-changes.d/`.
+  `CHANGELOG.md` and `openapi.yaml` stay claimed on those notes.
+- **Seeded marital status and node layout** (#1490, CU75): the person sample
+  stays `Casado`. The login sample stays `Escribano`. The seeded workflow
+  uses `INITIAL`, `INTERMEDIATE`, and `FINAL`, and the seeded nodes stay
+  without designer coordinates.
+- **Seeded empty fields** (#1490, CU75): `Documentacion` stays at version
+  `2`. The other seeded concepts stay at version `1`. The seeded person
+  notes, management notes, procedure notes, and transition conditions stay
+  empty.
+- **Seeded sample ownership** (#1490, CU75): seeded managements stay with
+  notary `Garcia`. History and procedures stay on managements `1001` and
+  `1002`. Seeded workflow rows stay on `Workflow de Gestión Estándar`.
+  Notes stay empty for the seeded statuses that have no note text.
+- **Seeded sample links** (#1490, CU75): the person sample stays identified
+  by `DNI`. The login stays linked to `Garcia`. Management `1001` stays
+  `Documentacion Completa` and management `1002` stays `En Tramite`. History
+  samples stay `Iniciada`, `En Tramite`, and `Documentacion Completa`.
+  Procedure `1` stays `Compraventa` and procedure `2` stays `Donacion`.
+- **Seeded workflow graph** (#1490, CU75): the seeded workflow stays active
+  and assigned to `Compraventa`, `Donacion`, and `Hipoteca`. `Sucesion` and
+  `Poder` stay unassigned. The live nodes stay `Iniciada` (`INITIAL`), the
+  intermediate deed and testimony statuses, and `Archivada` and `Testimonio
+  Retirado` (`FINAL`). Sample managements stay `1001` and `1002`. Procedure
+  numbers stay `1` and `2`.
+- **Seeded person and login** (#1490, CU75): the person sample stays born
+  `1980-01-15`, with marriage count `1` and notary registration `1001`.
+  `is_client` stays `false` and `is_notary` stays `true`. The login stays
+  `admin` and active. Concept and document-type `enabled` stays `true` for
+  the seeded catalogs.
+- **Seeded procedure-type flags** (#1490, CU75): `enabled` stays `true` for
+  `Compraventa`, `Donacion`, `Hipoteca`, `Sucesion`, and `Poder`. A binder
+  stays required for `Compraventa`, `Donacion`, `Hipoteca`, and `Sucesion`.
+  `Poder` stays without a binder. Registry registration and property
+  association stay `true` for `Compraventa`, `Donacion`, and `Hipoteca`, and
+  `false` for `Sucesion` and `Poder`.
+- **Seeded document-type fees** (#1490, CU75): returned and expires stay
+  `true` for `Libre Deuda Municipal`, `Informe de Dominio`, and
+  `Certificado Catastral`, and `false` for `Fotocopia DNI`. Validity stays
+  `30`, `60`, and `90` days. Fees stay `0`, `150`, `100`, and `0`.
+  `Fotocopia DNI` stays without a day count.
+- **Seeded concept amounts** (#1490, CU75): `IVA` is `0` at `20` percent,
+  `Honorarios` is `0` at `5` percent, `Documentacion` is `500`, and
+  `Protocolo` is `150`. `Documentacion` and `Protocolo` stay fixed amounts.
+- **Seeded procedure-type catalog** (#1490, CU75): the procedure-type name
+  also lists `Donacion`, `Hipoteca`, and `Sucesion`. `Compraventa` and
+  `Poder` stay.
+- **Seeded management-status catalog** (#1490, CU75): the status name also
+  lists `Documentacion Completa`, `Archivada`, `Gestion Modificada`,
+  `Gestion con Escritura Firmada`, `Gestion con Escritura Sin Firmar`,
+  `Gestion con Escritura Anulada`, `Gestion con Escritura No Paso`,
+  `Gestion con Escritura Inscripta`, `Testimonio Ingresado a Inscripcion`,
+  and `Testimonio Retirado`. `Iniciada`, `En Tramite`, and `Testimonio
+  Generado` stay.
+- **Seeded identification lengths** (#1490, CU75): the character mask cites
+  `8` for `DNI`, `LE`, and `LC`, `12` for `Pasaporte`, and `11` for `CUIT`.
+- **Seeded person identity** (#1490, CU75): the person samples are
+  `Garcia`, `Juan Carlos`, `20123456`, `20-20123456-3`, `011-4555-1234`,
+  and `011-15-5555-1234`. `CUIT` and `CUIL` stay.
+- **Seeded person place** (#1490, CU75): locality and province cite
+  `Buenos Aires`. Nationality cites `Argentina`.
+- **Seeded person sex code** (#1490, CU75): legal sex keeps `Masculino` and
+  `Femenino`. The seeded sample `M` stays.
+- **Seeded person contact** (#1490, CU75): the person address sample is
+  `Av. Principal 123`. The email samples are `jcgarcia@notaria.com`.
+- **Seeded occupation and profession** (#1490, CU75): occupation and
+  profession stay free text. The seeded sample `Escribano` stays.
+- **Seeded procedure headings** (#1490, CU75): the procedure heading lists
+  `Compraventa inmueble Lote 12` and `Donación a herederos`.
+- **Seeded management headings** (#1490, CU75): the management heading lists
+  `Compraventa Lote 12 — Familia Pérez` and `Donación — Sucesión Gómez`.
+- **Seeded history notes** (#1490, CU75): the history notes list
+  `Apertura de la gestión`, `Trámite de compraventa en curso`,
+  `Documentación completa recibida`, and `Trámite de donación en curso`.
+- **Seeded management-status notes** (#1490, CU75): the status notes list
+  `Inicio Gestion`, `Post-signing: testimony generated from signed deed`,
+  `Post-signing: testimony submitted for inscription`, and `Post-signing:
+  testimony withdrawn after inscription cycle`.
+- **Seeded workflow transitions** (#1490, CU75): the transition description
+  lists `Se asignan trámites y comienza la gestión`, `Toda la documentación
+  requerida fue presentada`, `Se redacta la escritura`, `Las partes firman la
+  escritura`, `La gestión se archiva sin escritura`, `Testimony generated
+  after deed signing`, `Testimony submitted for inscription`, and `Testimony
+  withdrawn after inscription cycle`.
+- **Seeded workflow description** (#1490, CU75): the workflow description
+  names `Ciclo de vida estándar de una gestión de escritura`. The workflow
+  name `Workflow de Gestión Estándar` stays.
+- **Seeded procedure-type notes** (#1490, CU75): the procedure-type notes
+  list `Tramite de compraventa de inmuebles`, `Tramite de donacion`,
+  `Tramite de hipoteca`, `Tramite de sucesion`, and `Otorgamiento de poderes`.
+- **Seeded document delivery origin** (#1490, CU75): the document-type
+  origin lists `Cliente`, `Entidad`, and `Entidad Externa`.
+- **Seeded concept labels** (#1490, CU75): the concept name lists `IVA`,
+  `Honorarios`, `Documentacion`, and `Protocolo`.
+- **Seeded document types** (#1490, CU75): the document-type name lists
+  `Libre Deuda Municipal`, `Informe de Dominio`, `Certificado Catastral`,
+  and `Fotocopia DNI`.
+- **Seeded folio types** (#1490, CU75): the folio-type name also lists
+  `De documento`, `De actuacion`, and `De certificacion`. `Protocolo Principal`,
+  `Protocolo Auxiliar`, and `Testimonio` stay.
+- **Person demographic labels** (#1490, CU75): sex names `Masculino` and
+  `Femenino`. Marital status names `Soltero` and `Casado`.
+- **User type labels** (#1490, CU75): the user-type column names
+  `Escribano`, `Empleado`, `EMPLEADO`, `ADMIN`, `ADMINISTRADOR`, and
+  `ESCRIBANO`.
+- **Budget item types** (#1490, CU75): the item-type column names
+  `NORMAL`, `DESCUENTO`, and `RECARGO`. The default stays `NORMAL`.
+- **Role unassign response** (#1490, CU75): the 204 description says
+  `Role unassigned`. Stored role names `ADMIN`, `ESCRIBANO`, and
+  `SECRETARIA` stay.
+- **Role diagram labels** (#1490, CU75): the role diagram names `ADMIN`,
+  `ESCRIBANO`, and `SECRETARIA`. The stored user type `Escribano` stays.
+- **Procedure-folder status labels** (#1490, CU75): the procedure-folder
+  status names `Activa`, `Espera`, and `Archivada`.
+- **Registration-draft status labels** (#1490, CU75): the registration-draft
+  status names `Generada`, `Presentado para inscripción`, `Observado`, and
+  `Inscripto`. Deed status `Inscripta` stays.
+- **Data dictionary status labels** (#1490, CU75): deed status names
+  `Sin Firmar`, `Firmada`, `Anulada`, `No Paso`, and `Inscripta`.
+  Management-status examples name `Iniciada`, `En Tramite`, and
+  `Testimonio Generado`. Folio status names `Nuevo`, `Utilizado`,
+  `Errose`, `no pasó`, and `Asignado a cuaderno`. Stored concept
+  `Honorarios` and procedure type `Compraventa` stay.
+- **Constitution workflow steps** (#1490, CU75): the SDLC step titles say
+  `Refine requirement`, `Design test cases`, `Full regression`, and
+  `Run the full pipeline`. E2E tests are described as `self-contained`.
+  The Gate 3 heading `Actualizar documentación permanente` stays, along
+  with `Use Case (Caso de Uso)` and `hallazgo`.
+- **Zero-value concept fixture** (#1490, CU75): the concept whose value is
+  zero is named `Exempt`. Seeded concept `Honorarios` stays, and the
+  sample street `Av. Corrientes` stays.
+- **Demo case addresses** (#1490, CU75): the seeded property street is
+  `Demo Avenue`, and the step titles say `Case`. Place abbreviation
+  `CABA`, name `María`, and procedure type `Compraventa` stay. Visible
+  matchers `domicilio` and `guardar|crear` stay.
+- **API coverage defect names** (#1490, CU75): the defect notes name
+  `expires`, `DtoDocumentType.isExpires()`, `characters`,
+  `associatesProperties`, `enabled`, `findFirstByFkIdPersonIdPerson`,
+  `password`, and `fkIdBudget`. Stored status `Firmada` stays.
+- **Retired query comments** (#1490, CU75): the budget filter comment names
+  `status`, and the identification-type comment names the column
+  `characters`. Catalog keys `estadoFilter` and `resumen.numeroGestion`
+  stay. The pagination check still rejects a `numero` query.
+- **Application tour search queries** (#1490, CU75): the status search
+  uses the stored label `Iniciada`, and the workflow search uses
+  `Workflow`. The seeded name `Workflow de Gestión Estándar` stays.
+- **Flyway guide examples** (#1490, CU75): the migration guide examples
+  reference `users(id)`, `phone`, `mobile_phone`, and `procedure_types`.
+  Applied migrations `V1` and `V26` keep `usuarios`, `id_usuario`,
+  `tipos_de_tramite`, `habilitado`, and `asocia_inmuebles`.
+- **Unknown identification-type person** (#1490, CU75): the person posted
+  with an unknown identification type is named `Unknown Type E2E`. The
+  request still answers 400. The first name `Ana` stays, and omitting
+  the type still defaults to `DNI`.
+- **H2 seed address and email** (#1490, CU75): the seeded notary lives at
+  `Main Avenue 123` with email `jcgarcia@notary.com`. The name
+  `Juan Carlos Garcia`, marital status `Casado`, and type `Escribano`
+  stay. Applied migration `V2` keeps `Av. Principal 123` and
+  `jcgarcia@notaria.com`.
+- **Fiscal valuation designation** (#1490, CU75): the property saved for the
+  fiscal valuation check uses the designation `Appraised house`. Visible
+  labels `Domicilio` and `Nomenclatura Catastral` stay.
+- **Concept edit fixture** (#1490, CU75): a concept that is in use is
+  edited as `NameModified` and still answers 409. Stored concept names
+  stay.
+- **Doc-traceability fixture heading** (#1490, CU75): the temporary design
+  file in the PR check is headed `# Management`. The claimed path stays
+  `docs/200-architecture/203-design/GESTION.md`.
+- **Budget balance accessors** (#1490, CU75): the deprecated budget methods
+  are `getBalance` and `setBalance`. The JSON field stays `saldo`. The
+  catalog key `resumen.saldo` stays.
+- **Workflow active checkbox** (#1490, CU75): the workflow form checkbox
+  test id is `checkbox-active-workflow`. The catalog namespace
+  `administracion.workflows` stays. The visible label still comes from
+  `common.active`.
+- **Administrator seed name** (#1490, CU75): a newly created administrator
+  person is stored as `Admin System`. The login name `admin`, the type
+  `Escribano`, and the identification type `DNI` stay. An administrator
+  that already exists is left unchanged.
+- **Testimony seed helper** (#1490, CU75): the deed-required design names
+  `createTestimony`. The retired helper name `createTestimonio` stays out
+  of the seed. TS-0032 still posts a deed on the bare create.
+- **Success-toast default** (#1490, CU75): the unused helper default is
+  `success`. The deed toast matcher keeps `/creada|éxito/i`. Visible toasts
+  such as `inscripción registrada` stay. Button matchers such as
+  `confirmar|guardar|crear` stay.
+- **Synthetic person occupation** (#1490, CU75): person fixtures use `Clerk`.
+  The stored user type `Empleado` stays, along with `EMPLEADO`, `Soltero`,
+  and `Masculino`.
+- **Budget-procedure survey citation** (#1490, CU75): the living spec names
+  `docs/openspec/explore.md`. The archived cardinality spec keeps
+  `openspec/explore_functional_report.md`.
+- **Workflow tracker E2E filename** (#1490, CU75): the design cites
+  `testing/e2e/tests/TS-0138-workflow-tracker.spec.ts`. The e2e-suite
+  spec keeps the historical name `workflow-tracker.spec.ts`.
+- **Person validation E2E filename** (#1490, CU75): the living spec names
+  `TS-0015-people-clients-workflow.spec.ts`. The archived #945 spec keeps
+  `TS-0015-personas-clientes-workflow.spec.ts`.
+- **Report query fixture** (#1490, CU75): the document-list hook encodes
+  `Purchase/Sale & more`. The stored procedure type `Compraventa` stays.
+- **Runtime proxy edge file** (#1490, CU75): the living spec names
+  `frontend/src/proxy.ts`. The archived #1055 spec keeps
+  `middleware.ts` or `proxy.ts`.
+- **E2E sequence pointers** (#1490, CU75): the Playwright headers cite
+  `seq01-ingresar-gestión-de-escritura.puml`,
+  `seq02-ingresar-gestión-de-trámite.puml`,
+  `seq05-preparar-escritura.puml`,
+  `seq07-inscribir-escritura.puml`, and
+  `seq17-buscar-gestiones-de-un-cliente.puml`. The sequence titles stay.
+- **RBAC notary filename** (#1490, CU75): the Bruno request file is
+  `04-employee-create-notary.yml`. The stored type `ESCRIBANO` stays.
+- **Document-type unit filename** (#1490, CU75): the form-defaults unit
+  test is `document-type-enabled-returned.test.ts`. The archived #800
+  design keeps `tipo-documento-enabled-returned.test.ts`.
+- **Open Playwright filenames** (#1490, CU75): open change notes cite
+  `TS-0098-management-case-summary-feature.spec.ts`,
+  `TS-0099-document-procedure-link.spec.ts`, and
+  `TS-0019-properties-valuation-workflow.spec.ts`. The change slug
+  `feat-774-gestion-resumen-caso` stays. The archived feat-773 design
+  keeps `TS-0099-documento-tramite-link.spec.ts`.
+- **Testimony-movements screen comment** (#1490, CU75): the dialog comment
+  names the testimony-movements screen. The official title
+  `CU08 – Movimientos de testimonio` stays. The Spanish catalog value
+  `Movimientos de testimonio` stays.
+- **Auxiliary deed body** (#1490, CU75): the auxiliary-protocol edge path
+  fills `Deed body`. The golden path still fills `E2E test deed body`.
+  The Spanish catalog helper `Contenido de la escritura` stays.
+  `docs/100-business` stays.
+- **Icon-button users screen** (#1490, CU75): the living spec
+  `icon-button-accessible-names` names the users administration screen.
+  The default-locale labels “Editar” and “Eliminar” and the selector
+  `/editar/i` stay. The archived spec keeps `edit on usuarios`.
+- **Corrected notes** (#1490, CU75): synthetic testimony and payment notes in
+  tests say `Corrected`, `Corrected number E2E`, and `First copy`. Visible
+  labels such as `Eliminar` and `Testimonio actualizado` stay.
+- **Error-toast exemplars** (#1490, CU75): the living spec `api-error-toasts`
+  cites `CU20 – Dar alta usuario` and `CU21 – Modificar Usuario`, and names
+  the CU26–CU30 base-catalog pages. The archived spec keeps `usuarios` and
+  `tablas base`.
+- **Upcoming-expiration purpose** (#1490, CU75): the living spec
+  `documento-presentado-herencia-vencimiento` cites the official title
+  `CU42 – Informar próximos vencimientos`. The archived spec keeps
+  `"informar próximos vencimientos"`.
+- **Management-status histories accessor** (#1490, CU75): `DtoManagementStatus`
+  names the set `histories` (`getHistories` / `setHistories`). The JSON key
+  stays `historials`.
+- **Retired association ignores** (#1490, CU75): Jackson ignore lists on
+  `Copy`, `Deed`, `Folio`, `Testimony`, and `IdentificationType` no longer
+  name `fkIdEscritura`, `fkIdTestimonio`, `fkIdTipoIdentificacion`,
+  `foliosCopiasCollection`, `movimientoTestimonioList`, `copiaList`, or
+  `copia`. Those names match no current field, so the serialized shape stays.
+  `folioList`, `tramiteList`, and `testimonioList` stay.
+- **Retired validation detail** (#1490, CU75): the engineering-sequences
+  design names the detail CU20 still writes, `campo: mensaje`.
+  The live validation text is `field: message`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
 - **Retired item type and reason** (#1490, CU75): the engineering-sequences
   design names the fields CU71 still writes, `tipo` and `motivo`.
   The live fields are `type` and `reason`. Stored item types `NORMAL`,

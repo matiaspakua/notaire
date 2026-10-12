@@ -1,7 +1,7 @@
 /**
  * Budgets and deeds lists read one server page at a time (#1340 slice 5, CU01/CU60, CU06/CU07).
- * Both requested size=1000; their filters also sent query parameters the backend ignores
- * (`estado` instead of `status`, `numero` instead of `number`), so they returned every row.
+ * Both requested size=1000; their filters also sent retired query names the backend ignores,
+ * so they returned every row.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor, renderHook, fireEvent } from "@testing-library/react";

@@ -30,7 +30,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Missing procedure | `backend-api/src/test/java/com/licensis/notaire/integration/SubmittedDocumentRequestValidationIntegrationTest.java, Bruno submitted-documents/12` | passing |
 | Empty body | `backend-api/src/test/java/com/licensis/notaire/integration/SubmittedDocumentRequestValidationIntegrationTest.java` | passing |
 | Contract | `backend-api/src/test/java/com/licensis/notaire/integration/SubmittedDocumentRequestValidationIntegrationTest.java` | passing |
-| Create form | `frontend/src/tests/unit/submitted-document-form.test.ts, testing/e2e/tests/TS-0099-documento-tramite-link.spec.ts` | passing |
+| Create form | `frontend/src/tests/unit/submitted-document-form.test.ts, testing/e2e/tests/TS-0099-document-procedure-link.spec.ts` | passing |
 | Legacy document | `frontend/src/tests/unit/submitted-document-form.test.ts, backend-api/src/test/java/com/licensis/notaire/integration/SubmittedDocumentPartialUpdateIntegrationTest.java` | passing |
 
 ## Permanent documentation updated
@@ -39,7 +39,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |----------|---------|--------|
 | `CHANGELOG.md` | yes | branch commit |
 | `backend-api/openapi/openapi.yaml` | yes | branch commit |
-| `backend-api/openapi/accepted-breaking-changes.txt` | yes | branch commit |
+| `backend-api/openapi/accepted-breaking-changes.txt` | retired | legacy single list; entries live in `accepted-breaking-changes.d/` |
 
 ## Gate log
 

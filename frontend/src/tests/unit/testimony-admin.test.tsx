@@ -30,7 +30,7 @@ import TestimoniesPage from "@/app/dashboard/testimonies/page";
 
 const TESTIMONIES = [
   {
-    idTestimony: 7, number: 1200, flagged: false, verified: true, notes: "Primera copia", version: 3,
+    idTestimony: 7, number: 1200, flagged: false, verified: true, notes: "First copy", version: 3,
     deed: { idDeed: 70, number: 500 },
     testimonyMovements: [
       { idTestimonyMovement: 11, dateEntry: "2026-10-01T03:00:00.000Z", registered: true, dateRegistration: "2026-10-03T03:00:00.000Z", cardNumber: 0 },
@@ -81,12 +81,12 @@ describe("Testimonies edit/delete and movement history (#1364)", () => {
     fireEvent.click(within(await row(7)).getByTestId("btn-edit-testimony-7"));
     const dialog = await screen.findByRole("dialog");
     fireEvent.change(within(dialog).getByTestId("input-edit-testimony-number"), { target: { value: "1210" } });
-    fireEvent.change(within(dialog).getByTestId("input-edit-testimony-notes"), { target: { value: "Corregido" } });
+    fireEvent.change(within(dialog).getByTestId("input-edit-testimony-notes"), { target: { value: "Corrected" } });
     fireEvent.click(within(dialog).getByTestId("btn-save-edit-testimony"));
     await waitFor(() => expect(calls("PUT")).toHaveLength(1));
     const [url, init] = calls("PUT")[0];
     expect(String(url)).toContain("/testimonies/7");
-    expect(JSON.parse(String(init.body))).toEqual({ number: 1210, notes: "Corregido", flagged: false, verified: true, version: 3 });
+    expect(JSON.parse(String(init.body))).toEqual({ number: 1210, notes: "Corrected", flagged: false, verified: true, version: 3 });
   });
 
   it("does not send an edit without a positive whole number", async () => {

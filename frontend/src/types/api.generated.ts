@@ -10042,7 +10042,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Role desasignado */
+            /** @description Role unassigned */
             204: {
                 headers: {
                     [name: string]: unknown;

@@ -102,7 +102,7 @@ function buildCaseDefinition(label: "A" | "B", suffix: string): CaseDefinition {
     procedureType: `Compraventa Demo ${label} ${suffix}`,
     folioType: `Protocol Demo ${label} ${suffix}`,
     documentType: `DNI Comprador Demo ${label} ${suffix}`,
-    propertyAddress: `Av. Demo ${label} 1234, CABA ${suffix}`,
+    propertyAddress: `Demo Avenue ${label} 1234, CABA ${suffix}`,
     propertyCadastralDesignation: `0${label === "A" ? "1" : "2"}-0${label === "A" ? "2" : "3"}-${suffix}`,
     budgetAmount: label === "A" ? "150000" : "220000",
     managementNumber: `${label === "A" ? "10" : "20"}${suffix}`,
@@ -161,7 +161,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     await expect(page.getByRole("table")).toContainText(def.clientLastName);
   });
 
-  await test.step(`[Caso ${def.label}] Property`, async () => {
+  await test.step(`[Case ${def.label}] Property`, async () => {
     await go(page, "/dashboard/properties");
     await page.getByRole("button", { name: /nuevo inmueble/i }).click();
     await page.getByRole("dialog").getByLabel(/nomenclatura catastral/i).fill(def.propertyCadastralDesignation);
@@ -248,7 +248,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     await saveDialog(page);
   });
 
-  await test.step(`[Caso ${def.label}] Payment`, async () => {
+  await test.step(`[Case ${def.label}] Payment`, async () => {
     await go(page, "/dashboard/payments");
     await page.getByTestId("btn-new-payment").click();
     await choose(page, "select-budget-payment", new RegExp(def.clientLastName, "i"));

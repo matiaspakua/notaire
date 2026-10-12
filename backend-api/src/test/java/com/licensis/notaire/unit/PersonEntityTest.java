@@ -61,13 +61,14 @@ class PersonEntityTest {
             person.setTaxId("27-87654321-5");
             person.setMaritalStatus("soltero");
             person.setSex("femenino");
-            person.setOccupation("empleada");
+            person.setOccupation("Clerk");
             person.setAddress("Fake Street 123");
 
             assertThat(person.getIsClient()).isTrue();
             assertThat(person.getNationality()).isEqualTo("Argentina");
             assertThat(person.getTaxId()).isEqualTo("27-87654321-5");
             assertThat(person.getMaritalStatus()).isEqualTo("soltero");
+            assertThat(person.getOccupation()).isEqualTo("Clerk");
         }
 
         @Test

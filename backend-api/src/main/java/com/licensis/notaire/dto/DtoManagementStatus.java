@@ -1,5 +1,6 @@
 package com.licensis.notaire.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.licensis.notaire.dto.interfaces.ValidDto;
 import java.util.HashSet;
 import java.util.Set;
@@ -8,7 +9,7 @@ public class DtoManagementStatus extends GenericDto implements ValidDto {
     private Integer idManagementStatus;
     private String name;
     private String notes;
-    private Set historials = new HashSet(0);
+    private Set histories = new HashSet(0);
     private Integer version;
 
     public DtoManagementStatus() {
@@ -43,12 +44,14 @@ public class DtoManagementStatus extends GenericDto implements ValidDto {
         this.notes = notes;
     }
 
-    public Set getHistorials() {
-        return historials;
+    @JsonProperty("historials")
+    public Set getHistories() {
+        return histories;
     }
 
-    public void setHistorials(Set historials) {
-        this.historials = historials;
+    @JsonProperty("historials")
+    public void setHistories(Set histories) {
+        this.histories = histories;
     }
 
     public Integer getVersion() {

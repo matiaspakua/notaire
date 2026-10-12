@@ -107,7 +107,7 @@ public class DataInitializer implements ApplicationRunner {
 
         Person person = new Person();
         person.setFirstName("Admin");
-        person.setLastName("Sistema");
+        person.setLastName("System");
         person.setIsClient(false);
         person.setIdentificationNumber("00000000");
         person.setFkIdIdentificationType(type);

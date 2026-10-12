@@ -52,7 +52,7 @@ Every migration must include this header:
 
 CREATE TABLE user_preferences (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES usuarios(id_usuario),
+    user_id INTEGER NOT NULL REFERENCES users(id),
     preference_key VARCHAR(100) NOT NULL,
     preference_value TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -96,8 +96,8 @@ CREATE TABLE new_table (
 ### Adding a Column
 
 ```sql
-ALTER TABLE usuarios ADD COLUMN telefono VARCHAR(20);
-ALTER TABLE usuarios ADD COLUMN celular VARCHAR(20);
+ALTER TABLE users ADD COLUMN phone VARCHAR(20);
+ALTER TABLE users ADD COLUMN mobile_phone VARCHAR(20);
 ```
 
 ### Adding an Index
@@ -109,11 +109,11 @@ CREATE INDEX IF NOT EXISTS idx_table_column ON table_name(column_name);
 ### Inserting Reference Data
 
 ```sql
-INSERT INTO tipos_de_tramite (version, id_tipo_tramite, nombre, habilitado, se_archiva, se_inscribe, asocia_inmuebles)
+INSERT INTO procedure_types (version, id, name, enabled, is_archived, is_registered, associates_properties)
 SELECT 0, 99, 'New Type', true, true, true, false
-WHERE NOT EXISTS (SELECT 1 FROM tipos_de_tramite WHERE nombre = 'New Type');
+WHERE NOT EXISTS (SELECT 1 FROM procedure_types WHERE name = 'New Type');
 
-SELECT setval('tipos_de_tramite_id_tipo_tramite_seq', COALESCE(MAX(id_tipo_tramite), 1)) FROM tipos_de_tramite;
+SELECT setval('procedure_types_id_seq', COALESCE(MAX(id), 1)) FROM procedure_types;
 ```
 
 ## Testing Migrations

@@ -19,7 +19,7 @@ Optional overrides read directly from the environment:
 | Variable | Default | Meaning |
 |----------|---------|---------|
 | `TESTING_ENV_FILE` | `testing/.env` | Explicit env file |
-| `EXPECTED_IGNORED` | `R14__restore_presupuestos_fk_id_tramite.sql R45__rename_remaining_spanish_identifiers.sql` | Space-separated SQL files Flyway must ignore on purpose |
+| `EXPECTED_IGNORED` | `R14__restore_presupuestos_fk_id_tramite.sql R45__rename_remaining_spanish_identifiers.sql R46__rename_spanish_constraint_names.sql` | Space-separated SQL files Flyway must ignore on purpose |
 | `DB_VV_PROJECT` | `notaire-db-vv-<pid>` | Docker Compose project name; unique per run by default |
 
 ## Parity with the backend

@@ -80,18 +80,15 @@ public class Deed implements Serializable, Persistable<Integer>
     private String notes;
     @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToMany(mappedBy = "fkIdDeed", fetch = FetchType.LAZY)
-    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"fkIdEscritura"})
     private List<Folio> folioList = null;
     /** Write-only input: id of the folio to link on creation. Not persisted on this entity. */
     @jakarta.persistence.Transient
     private Integer idFolio;
     @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToMany(mappedBy = "fkIdDeed", fetch = FetchType.LAZY)
-    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"fkIdEscritura"})
     private List<Procedure> procedureList = null;
     @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdDeed", fetch = FetchType.LAZY)
-    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"fkIdEscritura"})
     private List<Testimony> testimonyList = null;
 
     public Deed()

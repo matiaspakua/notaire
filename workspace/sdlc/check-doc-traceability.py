@@ -47,14 +47,20 @@ def diff_base(base: str, head: str) -> str:
     return base
 
 
-def claimed_paths(text: str) -> list[str]:
+def permanent_rows(text: str) -> list[tuple[str, str]] | None:
+    """Rows under Permanent documentation updated.
+
+    None when the section is missing. An empty list means the section has no
+    data rows. A pending row is kept so a filename citation can land in an
+    open ledger without pretending a permanent document was updated.
+    """
     match = SECTION.search(text)
     if not match:
-        return []
+        return None
     rest = text[match.end() :]
     nxt = NEXT.search(rest)
     body = rest[: nxt.start()] if nxt else rest
-    claimed: list[str] = []
+    rows: list[tuple[str, str]] = []
     for line in body.splitlines():
         row = ROW.match(line.strip())
         if not row:
@@ -65,11 +71,9 @@ def claimed_paths(text: str) -> list[str]:
         document, updated = cells[0], cells[1].lower()
         if document.lower() in {"document", "documento"} or set(document) <= {"-"}:
             continue
-        if updated not in YES:
-            continue
         path = document.strip("`").strip()
-        claimed.append(path)
-    return claimed
+        rows.append((path, updated))
+    return rows
 
 
 def main() -> int:
@@ -97,13 +101,15 @@ def main() -> int:
         except OSError as exc:
             errors.append(f"{path}: unreadable ({exc})")
             continue
-        claimed = claimed_paths(text)
-        if not claimed:
+        rows = permanent_rows(text)
+        if not rows:
             errors.append(
                 f"{path}: Permanent documentation updated has no row marked yes"
             )
             continue
-        for doc in claimed:
+        for doc, updated in rows:
+            if updated not in YES:
+                continue
             if doc not in changed_set:
                 errors.append(
                     f"{path}: claims `{doc}` updated, but that file is not in the diff"

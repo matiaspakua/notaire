@@ -1,33 +1,33 @@
 Entity,Entity type,Attribute,Key,Nullable,Data type,PK,FK,NULL,Description
 people,Strong,version,,no,Integer,,,,Optimistic lock
 people,Strong,id,PK,no,Integer,x,,,Unique id of the person
-people,Strong,last_name,,no,Text,,,,Last name or legal name
-people,Strong,first_name,,no,Text,,,,First name or trade name
-people,Strong,identification_number,,no,Text,,,,Primary identification number
-people,Strong,tax_id,,yes,Text,,,x,Tax id (`CUIT` / `CUIL`). Those stored names stay.
-people,Strong,sex,,yes,Text,,,x,Legal sex
-people,Strong,birth_date,,yes,Date,,,x,Birth date
-people,Strong,marital_status,,yes,Text,,,x,Marital status
-people,Strong,marriage_count,,yes,Integer,,,x,Marriage count
-people,Strong,occupation,,yes,Text,,,x,Occupation
-people,Strong,address,,yes,Text,,,x,Residential or legal address
-people,Strong,email,,yes,Text,,,x,Primary email
-people,Strong,notary_registration_number,,yes,Integer,,,x,Notary registration number
-people,Strong,is_client,,no,Boolean,,,,`true` when the person is a client of the practice
-people,Strong,locality,,yes,Text,,,x,Locality
-people,Strong,province,,yes,Text,,,x,Province
-people,Strong,phone,,yes,Text,,,x,Landline
-people,Strong,mobile_phone,,yes,Text,,,x,Mobile phone
-people,Strong,secondary_email,,yes,Text,,,x,Secondary or historical email
-people,Strong,nationality,,yes,Text,,,x,Nationality
-people,Strong,profession,,yes,Text,,,x,Profession or trade
-people,Strong,notes,,yes,Text,,,x,File notes and background
-people,Strong,fk_id_identification_type,FK,yes,Integer,,x,x,Primary identification type
-people,Strong,is_notary,,no,Boolean,,,,`true` when the person is a licensed notary
+people,Strong,last_name,,no,Text,,,,Last name or legal name. The seeded sample `Garcia` stays.
+people,Strong,first_name,,no,Text,,,,First name or trade name. The seeded sample `Juan Carlos` stays.
+people,Strong,identification_number,,no,Text,,,,Primary identification number. The seeded sample `20123456` stays.
+people,Strong,tax_id,,yes,Text,,,x,Tax id (`CUIT` / `CUIL`). Those stored names stay. The seeded sample `20-20123456-3` stays.
+people,Strong,sex,,yes,Text,,,x,Legal sex. Stored values `Masculino` and `Femenino` stay. The seeded sample `M` stays.
+people,Strong,birth_date,,yes,Date,,,x,Birth date. The seeded sample `1980-01-15` stays.
+people,Strong,marital_status,,yes,Text,,,x,Marital status. Stored values `Soltero` and `Casado` stay. The seeded sample `Casado` stays.
+people,Strong,marriage_count,,yes,Integer,,,x,Marriage count. The seeded sample `1` stays.
+people,Strong,occupation,,yes,Text,,,x,Occupation. Free text. The seeded sample `Escribano` stays.
+people,Strong,address,,yes,Text,,,x,Residential or legal address. The seeded sample `Av. Principal 123` stays.
+people,Strong,email,,yes,Text,,,x,Primary email. The seeded sample `jcgarcia@notaria.com` stays.
+people,Strong,notary_registration_number,,yes,Integer,,,x,Notary registration number. The seeded sample `1001` stays.
+people,Strong,is_client,,no,Boolean,,,,`true` when the person is a client of the practice. The seeded sample stays `false`.
+people,Strong,locality,,yes,Text,,,x,Locality. The seeded sample `Buenos Aires` stays.
+people,Strong,province,,yes,Text,,,x,Province. The seeded sample `Buenos Aires` stays.
+people,Strong,phone,,yes,Text,,,x,Landline. The seeded sample `011-4555-1234` stays.
+people,Strong,mobile_phone,,yes,Text,,,x,Mobile phone. The seeded sample `011-15-5555-1234` stays.
+people,Strong,secondary_email,,yes,Text,,,x,Secondary or historical email. The seeded sample `jcgarcia@notaria.com` stays.
+people,Strong,nationality,,yes,Text,,,x,Nationality. The seeded sample `Argentina` stays.
+people,Strong,profession,,yes,Text,,,x,Profession or trade. Free text. The seeded sample `Escribano` stays.
+people,Strong,notes,,yes,Text,,,x,File notes and background. The seeded sample stays empty.
+people,Strong,fk_id_identification_type,FK,yes,Integer,,x,x,Primary identification type. The seeded sample stays `DNI`.
+people,Strong,is_notary,,no,Boolean,,,,`true` when the person is a licensed notary. The seeded sample stays `true`.
 identification_types,Strong,version,,no,Integer,,,,Optimistic lock
 identification_types,Strong,id,PK,no,Integer,x,,,Unique id of the document type
 identification_types,Strong,name,,no,Text,,,,"Name. Stored values `DNI`, `CUIT`, `CUIL`, `Pasaporte`, `CI`, `LC`, and `LE` stay."
-identification_types,Strong,characters,,no,Text,,,,Format or alphanumeric mask
+identification_types,Strong,characters,,no,Text,,,,"Format or alphanumeric mask. Seeded lengths stay: `8` for `DNI`, `LE`, and `LC`; `12` for `Pasaporte`; and `11` for `CUIT`."
 substitutions,Associative,version,,no,Integer,,,,Optimistic lock
 substitutions,Associative,id,PK,no,Integer,x,,,Unique id of the substitution
 substitutions,Associative,start_date,,no,Date,,,,Start date of the substitution
@@ -37,11 +37,11 @@ substitutions,Associative,fk_id_substituted_person,FK,yes,Integer,,x,x,Notary on
 substitutions,Associative,fk_id_substitute_person,FK,yes,Integer,,x,x,Substitute notary
 users,Weak / strong,version,,no,Integer,,,,Optimistic lock
 users,Weak / strong,id,PK,no,Integer,x,,,Unique id of the user
-users,Weak / strong,username,,no,Text,,,,Username (unique login)
-users,Weak / strong,password,,no,Text,,,,Password hash
-users,Weak / strong,user_type,,no,Text,,,,Legacy descriptive role
-users,Weak / strong,status,,no,Boolean,,,,`true` when the account is active
-users,Weak / strong,fk_id_person,FK,yes,Integer,,x,x,Linked person
+users,Weak / strong,username,,no,Text,,,,Username (unique login). The seeded sample `admin` stays.
+users,Weak / strong,password,,no,Text,,,,Password hash. The seeded account stores a hash of `admin`.
+users,Weak / strong,user_type,,no,Text,,,,"Legacy descriptive role. Stored values `Escribano`, `Empleado`, `EMPLEADO`, `ADMIN`, `ADMINISTRADOR`, and `ESCRIBANO` stay. The seeded sample `Escribano` stays."
+users,Weak / strong,status,,no,Boolean,,,,`true` when the account is active. The seeded sample stays `true`.
+users,Weak / strong,fk_id_person,FK,yes,Integer,,x,x,Linked person. The seeded account stays linked to the person `Garcia`.
 users,Weak / strong,fk_id_role,FK,yes,Integer,,x,x,Assigned security role (V9)
 roles,Strong,version,,no,Integer,,,,Optimistic lock
 roles,Strong,id,PK,no,Integer,x,,,Unique id of the role
@@ -68,13 +68,13 @@ budgets,Strong,notes,,yes,Text,,,x,Validity conditions and deadlines
 budgets,Strong,status,,no,Text,,,,"Status. Stored codes `BORRADOR`, `PENDIENTE`, `APROBADO`, `RECHAZADO`, and `FACTURADO` stay."
 budgets,Strong,property_amount,,yes,Real,,,x,Declared property amount
 budgets,Strong,fk_id_person,FK,yes,Integer,,x,x,Requesting client
-concepts,Strong,version,,no,Integer,,,,Optimistic lock (Hibernate)
+concepts,Strong,version,,no,Integer,,,,"Optimistic lock (Hibernate). The seeded `Documentacion` row stays at version `2`. The other seeded concepts stay at version `1`."
 concepts,Strong,id,PK,no,Integer,x,,,Unique id of the fee concept
-concepts,Strong,name,,no,Text,,,,Concept name (for example `Honorarios`). Stored names stay.
-concepts,Strong,amount,,no,Real,,,,Fixed reference amount
-concepts,Strong,percentage,,no,Integer,,,,Standard percentage applied to the act amount
-concepts,Strong,enabled,,no,Boolean,,,,Whether the concept can be used on budgets
-concepts,Strong,fixed_concept,,no,Boolean,,,,"`true` when the amount is fixed, `false` when it is a percentage"
+concepts,Strong,name,,no,Text,,,,"Concept name. Stored values `IVA`, `Honorarios`, `Documentacion`, and `Protocolo` stay."
+concepts,Strong,amount,,no,Real,,,,"Fixed reference amount. Seeded amounts stay: `0` for `IVA` and `Honorarios`, `500` for `Documentacion`, and `150` for `Protocolo`."
+concepts,Strong,percentage,,no,Integer,,,,"Standard percentage applied to the act amount. Seeded percentages stay: `20` for `IVA`, `5` for `Honorarios`, and `0` for `Documentacion` and `Protocolo`."
+concepts,Strong,enabled,,no,Boolean,,,,"Whether the concept can be used on budgets. Seeded flags stay: `true` for `IVA`, `Honorarios`, `Documentacion`, and `Protocolo`."
+concepts,Strong,fixed_concept,,no,Boolean,,,,"`true` when the amount is fixed, `false` when it is a percentage. Seeded flags stay: `false` for `IVA` and `Honorarios`, and `true` for `Documentacion` and `Protocolo`."
 budget_templates,Associative,version,,no,Integer,,,,Optimistic lock
 budget_templates,Associative,fk_id_procedure_type,PK,no,Integer,x,x,,Procedure type
 budget_templates,Associative,fk_id_concept,PK,no,Integer,x,x,,Budgeted concept
@@ -87,7 +87,7 @@ items,Weak,percentage,,no,Integer,,,,Percentage applied
 items,Weak,fixed_concept,,no,Boolean,,,,"`true` when the amount is fixed, `false` when it is a percentage"
 items,Weak,fk_id_budget,FK,yes,Integer,,x,x,Budget this line belongs to
 items,Weak,notes,,yes,Text,,,x,Justification notes (V3/V4)
-items,Weak,item_type,,no,Text,,,,Budget line class (default `NORMAL`)
+items,Weak,item_type,,no,Text,,,,"Budget line class. Stored values `NORMAL`, `DESCUENTO`, and `RECARGO` stay. The default is `NORMAL`."
 items,Weak,reason,,yes,Text,,,x,Stated reason when the line is not an ordinary concept
 payments,Weak,version,,no,Integer,,,,Optimistic lock
 payments,Weak,id,PK,no,Integer,x,,,Unique id of the receipt
@@ -98,39 +98,39 @@ payments,Weak,fk_id_budget,FK,yes,Integer,,x,x,Budget this payment applies to
 payments,Weak,payment_method,,yes,Text,,,x,Payment method used
 deed_managements,Strong,version,,no,Integer,,,,Optimistic lock
 deed_managements,Strong,id,PK,no,Integer,x,,,Unique id of the deed management
-deed_managements,Strong,number,,no,Integer,,,,Yearly serial number of the management
-deed_managements,Strong,start_date,,no,Date,,,,Date the file was opened
-deed_managements,Strong,heading,,no,Text,,,,Heading that describes the management
-deed_managements,Strong,notes,,yes,Text,,,x,Working notes
-deed_managements,Strong,fk_id_notary_person,FK,yes,Integer,,x,x,Notary in charge
-deed_managements,Strong,fk_id_management_status,FK,yes,Integer,,x,x,Current operational status
+deed_managements,Strong,number,,no,Integer,,,,Yearly serial number of the management. Seeded numbers `1001` and `1002` stay.
+deed_managements,Strong,start_date,,no,Date,,,,Date the file was opened. Seeded dates `2026-05-02` and `2026-05-20` stay.
+deed_managements,Strong,heading,,no,Text,,,,Heading that describes the management. Stored values `Compraventa Lote 12 — Familia Pérez` and `Donación — Sucesión Gómez` stay.
+deed_managements,Strong,notes,,yes,Text,,,x,Working notes. The seeded samples stay empty.
+deed_managements,Strong,fk_id_notary_person,FK,yes,Integer,,x,x,Notary in charge. The seeded managements stay with `Garcia`.
+deed_managements,Strong,fk_id_management_status,FK,yes,Integer,,x,x,"Current operational status. Seeded samples stay `Documentacion Completa` for management `1001` and `En Tramite` for management `1002`."
 deed_managements,Strong,pending_debt_on_archive,,yes,Boolean,,,x,`true` when the management was archived with a pending debt
 management_statuses,Strong,version,,no,Integer,,,,Optimistic lock
 management_statuses,Strong,id,PK,no,Integer,x,,,Management-status id
-management_statuses,Strong,name,,no,Text,,,,"Status name. Stored examples such as `Generado`, `En proceso`, and `Listo para firmar` stay."
-management_statuses,Strong,notes,,yes,Text,,,x,Functional definition and conditions
+management_statuses,Strong,name,,no,Text,,,,"Status name. Stored examples such as `Iniciada`, `En Tramite`, and `Testimonio Generado` stay. The seeded catalog also keeps `Documentacion Completa`, `Archivada`, `Gestion Modificada`, `Gestion con Escritura Firmada`, `Gestion con Escritura Sin Firmar`, `Gestion con Escritura Anulada`, `Gestion con Escritura No Paso`, `Gestion con Escritura Inscripta`, `Testimonio Ingresado a Inscripcion`, and `Testimonio Retirado`."
+management_statuses,Strong,notes,,yes,Text,,,x,"Functional definition and conditions. Stored notes `Inicio Gestion`, `Post-signing: testimony generated from signed deed`, `Post-signing: testimony submitted for inscription`, and `Post-signing: testimony withdrawn after inscription cycle` stay. Seeded notes stay empty for `En Tramite`, `Documentacion Completa`, `Archivada`, `Gestion Modificada`, `Gestion con Escritura Firmada`, `Gestion con Escritura Sin Firmar`, `Gestion con Escritura Anulada`, `Gestion con Escritura No Paso`, and `Gestion con Escritura Inscripta`."
 history,Weak,version,,no,Integer,,,,Optimistic lock
 history,Weak,id,PK,no,Integer,x,,,History-row id
-history,Weak,event_date,,no,Date,,,,Date of the status change
-history,Weak,notes,,yes,Text,,,x,Reason or attestation for the status change
-history,Weak,fk_id_deed_management,FK,yes,Integer,,x,x,Deed management that changed status
-history,Weak,fk_id_management_status,FK,yes,Integer,,x,x,Status reached
+history,Weak,event_date,,no,Date,,,,"Date of the status change. Seeded dates `2026-05-02`, `2026-05-09`, `2026-05-28`, `2026-05-20`, and `2026-06-01` stay."
+history,Weak,notes,,yes,Text,,,x,"Reason or attestation for the status change. Stored notes `Apertura de la gestión`, `Trámite de compraventa en curso`, `Documentación completa recibida`, and `Trámite de donación en curso` stay."
+history,Weak,fk_id_deed_management,FK,yes,Integer,,x,x,Deed management that changed status. Seeded history stays on managements `1001` and `1002`.
+history,Weak,fk_id_management_status,FK,yes,Integer,,x,x,"Status reached. Seeded samples stay `Iniciada`, `En Tramite`, and `Documentacion Completa`."
 procedure_types,Strong,version,,no,Integer,,,,Optimistic lock
 procedure_types,Strong,id,PK,no,Integer,x,,,Procedure-type id
-procedure_types,Strong,name,,no,Text,,,,Procedure-type name. Stored examples such as `Compraventa` and `Poder` stay.
-procedure_types,Strong,notes,,yes,Text,,,x,Rules and notarial description
-procedure_types,Strong,enabled,,no,Boolean,,,,`true` when new managements are allowed
-procedure_types,Strong,is_archived,,no,Boolean,,,,`true` when a physical binder is required
-procedure_types,Strong,is_registered,,no,Boolean,,,,`true` when registry registration is required
-procedure_types,Strong,associates_properties,,no,Boolean,,,,`true` when the act involves property
-procedure_types,Strong,fk_workflow_definition_id,FK,yes,Integer,,x,x,Workflow assigned to the procedure type (V8)
+procedure_types,Strong,name,,no,Text,,,,"Procedure-type name. Stored examples such as `Compraventa` and `Poder` stay. The seeded catalog also keeps `Donacion`, `Hipoteca`, and `Sucesion`."
+procedure_types,Strong,notes,,yes,Text,,,x,"Rules and notarial description. Stored notes `Tramite de compraventa de inmuebles`, `Tramite de donacion`, `Tramite de hipoteca`, `Tramite de sucesion`, and `Otorgamiento de poderes` stay."
+procedure_types,Strong,enabled,,no,Boolean,,,,"`true` when new managements are allowed. Seeded flags stay: `true` for `Compraventa`, `Donacion`, `Hipoteca`, `Sucesion`, and `Poder`."
+procedure_types,Strong,is_archived,,no,Boolean,,,,"`true` when a physical binder is required. Seeded flags stay: `true` for `Compraventa`, `Donacion`, `Hipoteca`, and `Sucesion`, and `false` for `Poder`."
+procedure_types,Strong,is_registered,,no,Boolean,,,,"`true` when registry registration is required. Seeded flags stay: `true` for `Compraventa`, `Donacion`, and `Hipoteca`, and `false` for `Sucesion` and `Poder`."
+procedure_types,Strong,associates_properties,,no,Boolean,,,,"`true` when the act involves property. Seeded flags stay: `true` for `Compraventa`, `Donacion`, and `Hipoteca`, and `false` for `Sucesion` and `Poder`."
+procedure_types,Strong,fk_workflow_definition_id,FK,yes,Integer,,x,x,"Workflow assigned to the procedure type (V8). The seeded workflow stays assigned to `Compraventa`, `Donacion`, and `Hipoteca`. `Sucesion` and `Poder` stay unassigned."
 procedures,Strong,version,,no,Integer,,,,Optimistic lock
 procedures,Strong,id,PK,no,Integer,x,,,Unique id of the procedure
-procedures,Strong,number,,yes,Integer,,,x,Procedure serial number (optional since V13)
-procedures,Strong,name,,yes,Text,,,x,Descriptive heading (optional since V13)
-procedures,Strong,notes,,yes,Text,,,x,Instructions or observations
-procedures,Strong,fk_id_procedure_type,FK,yes,Integer,,x,x,Procedure type
-procedures,Strong,fk_id_deed_management,FK,yes,Integer,,x,x,Deed management that groups it (null for auxiliary work)
+procedures,Strong,number,,yes,Integer,,,x,Procedure serial number (optional since V13). Seeded numbers `1` and `2` stay.
+procedures,Strong,name,,yes,Text,,,x,Descriptive heading (optional since V13). Stored values `Compraventa inmueble Lote 12` and `Donación a herederos` stay.
+procedures,Strong,notes,,yes,Text,,,x,Instructions or observations. The seeded samples stay empty.
+procedures,Strong,fk_id_procedure_type,FK,yes,Integer,,x,x,"Procedure type. Seeded samples stay `Compraventa` for procedure `1` and `Donacion` for procedure `2`."
+procedures,Strong,fk_id_deed_management,FK,yes,Integer,,x,x,Deed management that groups it (null for auxiliary work). Seeded procedures stay on managements `1001` and `1002`.
 procedures,Strong,fk_id_deed,FK,yes,Integer,,x,x,Resulting deed
 procedures,Strong,fk_id_budget,FK,yes,Integer,,x,x,Base budget (V14)
 procedures,Strong,fk_id_property,FK,yes,Integer,,x,x,"Property the act concerns, when there is one"
@@ -140,7 +140,7 @@ person_procedures,Associative,fk_id_client_person,PK,no,Integer,x,x,,Person taki
 person_procedures,Associative,notes,,no,Text,,,,"Notarial role. Stored labels such as `Comprador`, `Vendedor`, `Donante`, and `Apoderado` stay."
 procedure_folders,Weak,id,PK,no,Integer,x,,,Unique id of the procedure folder
 procedure_folders,Weak,number,,no,Integer,,,,Folder serial number (its own sequence)
-procedure_folders,Weak,status,,no,Text,,,,Folder status
+procedure_folders,Weak,status,,no,Text,,,,"Folder status. Stored labels `Activa`, `Espera`, and `Archivada` stay."
 procedure_folders,Weak,wait_reason,,yes,Text,,,x,Reason the folder is waiting
 procedure_folders,Weak,fk_id_deed_management,FK,no,Integer,,x,,Deed management this folder belongs to
 procedure_folders,Weak,fk_id_procedure,FK,no,Integer,,x,,Procedure that created the folder
@@ -166,31 +166,31 @@ properties,Strong,boundaries,,yes,Text,,,x,Property boundaries
 workflow_definition,Strong,version,,no,Integer,,,,Optimistic lock
 workflow_definition,Strong,id_workflow_definition,PK,no,Integer,x,,,Unique id of the workflow
 workflow_definition,Strong,name,,no,Text,,,,Workflow name. The seeded value `Workflow de Gestión Estándar` stays.
-workflow_definition,Strong,description,,yes,Text,,,x,Functional description of the process
-workflow_definition,Strong,active,,no,Boolean,,,,`true` when the workflow is enabled
+workflow_definition,Strong,description,,yes,Text,,,x,Functional description of the process. The seeded value `Ciclo de vida estándar de una gestión de escritura` stays.
+workflow_definition,Strong,active,,no,Boolean,,,,`true` when the workflow is enabled. The seeded workflow stays `true`.
 workflow_node,Weak,version,,no,Integer,,,,Optimistic lock
 workflow_node,Weak,id_workflow_node,PK,no,Integer,x,,,Unique id of the node
-workflow_node,Weak,fk_workflow_definition_id,FK,no,Integer,,x,,Parent workflow (ON DELETE CASCADE)
-workflow_node,Weak,fk_management_status_id,FK,no,Integer,,x,,Management status this node represents
-workflow_node,Weak,node_type,,no,Text,,,,"Node type: `INITIAL`, `INTERMEDIATE`, `FINAL`"
-workflow_node,Weak,position_x,,yes,Real,,,x,Visual X coordinate in the designer
-workflow_node,Weak,position_y,,yes,Real,,,x,Visual Y coordinate in the designer
+workflow_node,Weak,fk_workflow_definition_id,FK,no,Integer,,x,,Parent workflow (ON DELETE CASCADE). The seeded rows stay on `Workflow de Gestión Estándar`.
+workflow_node,Weak,fk_management_status_id,FK,no,Integer,,x,,"Management status this node represents. The live seeded graph stays: `Iniciada` as `INITIAL`; `En Tramite`, `Documentacion Completa`, `Gestion con Escritura Sin Firmar`, `Gestion con Escritura Firmada`, `Testimonio Generado`, and `Testimonio Ingresado a Inscripcion` as `INTERMEDIATE`; `Archivada` and `Testimonio Retirado` as `FINAL`."
+workflow_node,Weak,node_type,,no,Text,,,,"Node type: `INITIAL`, `INTERMEDIATE`, `FINAL`. The live seeded graph uses all three."
+workflow_node,Weak,position_x,,yes,Real,,,x,Visual X coordinate in the designer. The seeded nodes stay without a coordinate.
+workflow_node,Weak,position_y,,yes,Real,,,x,Visual Y coordinate in the designer. The seeded nodes stay without a coordinate.
 workflow_transition,Weak,version,,no,Integer,,,,Optimistic lock
 workflow_transition,Weak,id_workflow_transition,PK,no,Integer,x,,,Unique id of the transition
-workflow_transition,Weak,fk_workflow_definition_id,FK,no,Integer,,x,,Parent workflow (ON DELETE CASCADE)
+workflow_transition,Weak,fk_workflow_definition_id,FK,no,Integer,,x,,Parent workflow (ON DELETE CASCADE). The seeded rows stay on `Workflow de Gestión Estándar`.
 workflow_transition,Weak,fk_origin_node_id,FK,no,Integer,,x,,Origin node (ON DELETE CASCADE)
 workflow_transition,Weak,fk_destination_node_id,FK,no,Integer,,x,,Destination node (ON DELETE CASCADE)
-workflow_transition,Weak,condition,,yes,Text,,,x,Guard condition for the transition
-workflow_transition,Weak,description,,yes,Text,,,x,Description of the action that advances the flow
+workflow_transition,Weak,condition,,yes,Text,,,x,Guard condition for the transition. The seeded transitions stay with an empty condition.
+workflow_transition,Weak,description,,yes,Text,,,x,"Description of the action that advances the flow. Stored values `Se asignan trámites y comienza la gestión`, `Toda la documentación requerida fue presentada`, `Se redacta la escritura`, `Las partes firman la escritura`, `La gestión se archiva sin escritura`, `Testimony generated after deed signing`, `Testimony submitted for inscription`, and `Testimony withdrawn after inscription cycle` stay."
 document_types,Strong,version,,no,Integer,,,,Optimistic lock
 document_types,Strong,id,PK,no,Integer,x,,,Unique id of the document type
-document_types,Strong,name,,no,Text,,,,Name of the document or certificate
-document_types,Strong,returned,,no,Boolean,,,,`true` when the original must be returned to the client
-document_types,Strong,expires,,no,Boolean,,,,`true` when the certificate expires
-document_types,Strong,due_days,,yes,Integer,,,x,Legal validity in days
-document_types,Strong,amount_to_pay,,yes,Real,,,x,Standard fee
-document_types,Strong,enabled,,no,Boolean,,,,`true` when it can be used on templates
-document_types,Strong,delivered_by,,no,Text,,,,Origin (`Cliente` or `Entidad Externa`). Those stored values stay.
+document_types,Strong,name,,no,Text,,,,"Name of the document or certificate. Stored values `Libre Deuda Municipal`, `Informe de Dominio`, `Certificado Catastral`, and `Fotocopia DNI` stay."
+document_types,Strong,returned,,no,Boolean,,,,"`true` when the original must be returned to the client. Seeded flags stay: `true` for `Libre Deuda Municipal`, `Informe de Dominio`, and `Certificado Catastral`, and `false` for `Fotocopia DNI`."
+document_types,Strong,expires,,no,Boolean,,,,"`true` when the certificate expires. Seeded flags stay: `true` for `Libre Deuda Municipal`, `Informe de Dominio`, and `Certificado Catastral`, and `false` for `Fotocopia DNI`."
+document_types,Strong,due_days,,yes,Integer,,,x,"Legal validity in days. Seeded day counts stay: `30` for `Libre Deuda Municipal`, `60` for `Informe de Dominio`, `90` for `Certificado Catastral`, and NULL for `Fotocopia DNI`."
+document_types,Strong,amount_to_pay,,yes,Real,,,x,"Standard fee. Seeded fees stay: `0` for `Libre Deuda Municipal` and `Fotocopia DNI`, `150` for `Informe de Dominio`, and `100` for `Certificado Catastral`."
+document_types,Strong,enabled,,no,Boolean,,,,"`true` when it can be used on templates. Seeded flags stay: `true` for `Libre Deuda Municipal`, `Informe de Dominio`, `Certificado Catastral`, and `Fotocopia DNI`."
+document_types,Strong,delivered_by,,no,Text,,,,"Origin. Stored values `Cliente`, `Entidad`, and `Entidad Externa` stay."
 procedure_templates,Associative,version,,no,Integer,,,,Optimistic lock
 procedure_templates,Associative,fk_id_procedure_type,PK,no,Integer,x,x,,Procedure type
 procedure_templates,Associative,fk_id_document_type,PK,no,Integer,x,x,,Required document or certificate
@@ -226,7 +226,7 @@ deeds,Strong,id,PK,no,Integer,x,,,Internal id of the source deed
 deeds,Strong,number,,no,Integer,,,,Yearly serial number of the deed in the protocol
 deeds,Strong,deed_date,,no,Date,,,,Date the act was granted
 deeds,Strong,body,,no,Text,,,,Full legal text of the protocol deed
-deeds,Strong,status,,no,Text,,,,"Deed status. Stored values `Preparada`, `Firmada`, `No Pasó`, and `Errose` stay."
+deeds,Strong,status,,no,Text,,,,"Deed status. Stored values `Sin Firmar`, `Firmada`, `Anulada`, `No Paso`, and `Inscripta` stay."
 deeds,Strong,registration_number,,yes,Text,,,x,Registration number granted by the registry
 deeds,Strong,registration_date,,yes,Date,,,x,Final registration date
 deeds,Strong,notes,,yes,Text,,,x,Marginal notes and notarial attestations
@@ -238,7 +238,7 @@ notebooks,Strong,notes,,yes,Text,,,x,Notebook notes
 notebooks,Strong,fk_id_notary_person,FK,no,Integer,,x,,Notary who owns the notebook
 folio_types,Strong,version,,no,Integer,,,,Optimistic lock
 folio_types,Strong,id,PK,no,Integer,x,,,Unique id of the folio type
-folio_types,Strong,name,,no,Text,,,,"Name. Stored values `Protocolo Principal`, `Protocolo Auxiliar`, and `Testimonio` stay."
+folio_types,Strong,name,,no,Text,,,,"Name. Stored values `De documento`, `De actuacion`, `De certificacion`, `Protocolo Principal`, `Protocolo Auxiliar`, and `Testimonio` stay."
 folio_types,Strong,notes,,yes,Text,,,x,Folio-type notes (V3/V4)
 folio_types,Strong,enabled,,no,Boolean,,,,`true` when it can be used for folio batches (V3/V4)
 folio_types,Strong,is_auxiliary,,no,Boolean,,,,`true` when the type is an auxiliary sheet
@@ -246,7 +246,7 @@ folios,Strong,version,,no,Integer,,,,Optimistic lock
 folios,Strong,id,PK,no,Integer,x,,,Unique id of the protocol sheet
 folios,Strong,number,,no,Integer,,,,Official serial number printed on the sheet
 folios,Strong,year_number,,no,Integer,,,,Calendar year of the protocol
-folios,Strong,status,,no,Text,,,,"Status. Stored values `Disponible`, `Usado`, `Errose`, and `No Pasó` stay."
+folios,Strong,status,,no,Text,,,,"Status. Stored values `Nuevo`, `Utilizado`, `Errose`, `no pasó`, and `Asignado a cuaderno` stay."
 folios,Strong,notes,,yes,Text,,,x,Notes on exceptions or attestations
 folios,Strong,fk_id_deed,FK,yes,Integer,,x,x,Deed that used this sheet
 folios,Strong,fk_id_folio_type,FK,no,Integer,,x,,How the sheet is classified
@@ -289,7 +289,7 @@ folio_copies,Associative,fk_id_copy,PK,no,Integer,x,x,,Issued copy
 registration_drafts,Weak,id,PK,no,Integer,x,,,Unique id of the registration draft
 registration_drafts,Weak,number,,no,Integer,,,,Draft number
 registration_drafts,Weak,operation_price,,yes,Real,,,x,Price of the operation to register
-registration_drafts,Weak,status,,no,Text,,,,Draft status in the registration flow. Stored labels stay.
+registration_drafts,Weak,status,,no,Text,,,,"Draft status in the registration flow. Stored labels `Generada`, `Presentado para inscripción`, `Observado`, and `Inscripto` stay."
 registration_drafts,Weak,generation_date,,no,Date,,,,Date the draft was created
 registration_drafts,Weak,submission_date,,yes,Date,,,x,Date it was filed with the registry
 registration_drafts,Weak,registry_entry_number,,yes,Text,,,x,Intake number assigned by the registry

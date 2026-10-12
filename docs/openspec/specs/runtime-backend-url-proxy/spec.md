@@ -88,8 +88,9 @@ session credential.
 
 ### Requirement: Edge interceptor continues to skip API proxy paths
 
-Whether the edge file is `middleware.ts` or `proxy.ts` (#1056), requests under
-`/api/**` MUST bypass edge auth redirects so the BFF can forward credentials.
+The edge interceptor is `frontend/src/proxy.ts` (#1056). The retired `middleware.ts`
+file stays out of the tree. Requests under `/api/**` MUST bypass edge auth
+redirects so the BFF can forward credentials.
 
 #### Scenario: API paths are not redirected to login by the edge interceptor
 

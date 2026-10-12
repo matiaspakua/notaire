@@ -5,7 +5,7 @@
 Defines the association between `Budget` and `Procedure`: which side owns the
 foreign key and the resulting cardinality, so the two entities have exactly
 one consistent relation instead of the two contradictory ones found by
-`docs/openspec/explore_functional_report.md` §3.5.
+the 2026-08-11 survey recorded in `docs/openspec/explore.md`.
 
 ## Requirements
 

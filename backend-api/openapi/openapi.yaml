@@ -7703,7 +7703,7 @@ paths:
           type: integer
       responses:
         '204':
-          description: Role desasignado
+          description: Role unassigned
         '404':
           description: User account not found
       summary: Unassign role of the user

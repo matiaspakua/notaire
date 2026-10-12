@@ -4,8 +4,7 @@
 
 Makes a submitted document inherit the expiry and the responsible party of its
 document type when it is created, instead of always forcing empty values,
-removing the data block that prevents "informar próximos vencimientos"
-(CU42).
+removing the data block that prevents CU42 – Informar próximos vencimientos.
 
 ## Requirements
 

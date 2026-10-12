@@ -70,7 +70,6 @@ public class Testimony implements Serializable, Persistable<Integer>
     @Column(name = "notes")
     private String notes;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdTestimony", fetch = FetchType.LAZY)
-    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"fkIdTestimonio"})
     private List<TestimonyMovement> testimonyMovementList = new ArrayList<>();
     // Deed is optional at persistence time: raw creates and some protocol flows leave
     // fk_id_deed null. optional=false forced an INNER JOIN so findById/list-of-movements
@@ -80,7 +79,6 @@ public class Testimony implements Serializable, Persistable<Integer>
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList", "tramiteList", "testimonioList"})
     private Deed fkIdDeed;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdTestimony", fetch = FetchType.LAZY)
-    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"fkIdTestimonio"})
     private List<Copy> copyList = new ArrayList<>();
 
     public Testimony()

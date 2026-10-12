@@ -96,6 +96,12 @@ class SyntheticFixtureStringsEnglishTest(unittest.TestCase):
         self.assertNotIn("especiales", catalog)
         self.assertNotIn("Actualizado", catalog)
 
+    def test_concept_edit_name_is_english(self):
+        concepts = read("integration/ConceptReferentialIntegrityTest.java")
+        self.assertIn('"name": "NameModified"', concepts)
+        self.assertNotIn("NameModificado", concepts)
+        self.assertIn("status().isConflict()", concepts)
+
     def test_legacy_budget_status_mapping_keeps_activo(self):
         migration = read("integration/BudgetStatusMigrationIntegrationTest.java")
         self.assertIn('"Activo"', migration)

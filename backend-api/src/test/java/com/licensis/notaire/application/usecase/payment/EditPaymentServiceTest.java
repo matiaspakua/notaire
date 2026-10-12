@@ -56,9 +56,9 @@ class EditPaymentServiceTest {
         Date newDate = new Date(0L);
 
         PaymentDetails updated = editPayment.edit(
-                new EditPaymentCommand(existing.id(), null, newDate, "Corregido", "TRANSFERENCIA"));
+                new EditPaymentCommand(existing.id(), null, newDate, "Corrected", "TRANSFERENCIA"));
 
-        assertThat(updated.notes()).isEqualTo("Corregido");
+        assertThat(updated.notes()).isEqualTo("Corrected");
         assertThat(updated.paymentMethod()).isEqualTo("TRANSFERENCIA");
         assertThat(updated.date()).isEqualTo(newDate);
         assertThat(updated.amount()).isEqualByComparingTo(new java.math.BigDecimal("500"));

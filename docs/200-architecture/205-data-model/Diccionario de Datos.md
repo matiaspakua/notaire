@@ -4,9 +4,9 @@
 
 **Version:** 3.1  
 **Database:** PostgreSQL 16  
-**Migrations:** Flyway (V1 through V45)  
-**Updated:** 11 October 2026  
-**Status:** Aligned with the current PostgreSQL schema and JPA mappings (#1222, #1490). 37 Flyway tables and 49 foreign keys. Column names follow V45 (`fk_id_budget`, `birth_date`, `node_type`, and the other renames). `identificaciones` is not created by Flyway (see section 6). V14 removed `budgets.fk_id_tramite`. Workflows are V7/V8. Roles are V9.
+**Migrations:** Flyway (V1 through V46)  
+**Updated:** 12 October 2026  
+**Status:** Aligned with the current PostgreSQL schema and JPA mappings (#1222, #1490). 37 Flyway tables and 49 foreign keys. Column names follow V45 (`fk_id_budget`, `birth_date`, `node_type`, and the other renames). Constraint names follow V46 (`users_pkey` and the names that follow the current tables). `identificaciones` is not created by Flyway (see section 6). V14 removed `budgets.fk_id_tramite`. Workflows are V7/V8. Roles are V9.
 
 ---
 
@@ -30,7 +30,7 @@ This data dictionary lists the tables, columns, data types, constraints, and for
 
 ---
 
-## 2. Table index (37 tables, Flyway V1–V45)
+## 2. Table index (37 tables, Flyway V1–V46)
 
 **Legacy entity:** `identificaciones` was documented earlier and exists in archived init scripts and in the JPA entity. Flyway V1–V44 never create it. See section 6.1.
 
@@ -80,7 +80,7 @@ This data dictionary lists the tables, columns, data types, constraints, and for
 
 ### Active schema
 
-The database is the result of Flyway V1–V45. Changes that matter for this model:
+The database is the result of Flyway V1–V46. Changes that matter for this model:
 
 - V1: base relational schema for people, protocol, procedures, budgets, and documents.
 - V3/V4: missing columns on `items`, `folio_types`, and `testimonies`.
@@ -92,6 +92,7 @@ The database is the result of Flyway V1–V45. Changes that matter for this mode
 - V14: `budgets.fk_id_tramite` was removed. The canonical link is `procedures.fk_id_budget` (one to many).
 - V43: `revoked_tokens`, the JWT revocation list for logout (issue #676); no foreign key.
 - V45: renames the remaining Spanish columns (`fk_id_budget`, `birth_date`, `node_type`, and the rest). Applied migration filenames V1–V44 stay as recorded.
+- V46: renames the Spanish constraint names PostgreSQL kept after the table and column renames (`users_pkey` and the names that follow the current tables). Applied migration files V1–V45 stay as recorded.
 
 ### Entity, key, and compensation matrix
 
@@ -145,12 +146,12 @@ Master catalog of fee concepts, professional fees, contributions, and notarial t
 | Column | Data type | PK | FK | Not null | Default | Reference | Description |
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the fee concept |
-| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock (Hibernate) |
-| `name` | TEXT | No | No | Yes | — | — | Concept name (for example `Honorarios`). Stored names stay. |
-| `amount` | NUMERIC(19,2) | No | No | Yes | 0 | — | Fixed reference amount |
-| `percentage` | INTEGER | No | No | Yes | 0 | — | Standard percentage applied to the act amount |
-| `enabled` | BOOLEAN | No | No | Yes | — | — | Whether the concept can be used on budgets |
-| `fixed_concept` | BOOLEAN | No | No | Yes | — | — | `true` when the amount is fixed, `false` when it is a percentage |
+| `version` | INTEGER | No | No | Yes | — | — | Optimistic lock (Hibernate). The seeded `Documentacion` row stays at version `2`. The other seeded concepts stay at version `1`. |
+| `name` | TEXT | No | No | Yes | — | — | Concept name. Stored values `IVA`, `Honorarios`, `Documentacion`, and `Protocolo` stay. |
+| `amount` | NUMERIC(19,2) | No | No | Yes | 0 | — | Fixed reference amount. Seeded amounts stay: `0` for `IVA` and `Honorarios`, `500` for `Documentacion`, and `150` for `Protocolo`. |
+| `percentage` | INTEGER | No | No | Yes | 0 | — | Standard percentage applied to the act amount. Seeded percentages stay: `20` for `IVA`, `5` for `Honorarios`, and `0` for `Documentacion` and `Protocolo`. |
+| `enabled` | BOOLEAN | No | No | Yes | — | — | Whether the concept can be used on budgets. Seeded flags stay: `true` for `IVA`, `Honorarios`, `Documentacion`, and `Protocolo`. |
+| `fixed_concept` | BOOLEAN | No | No | Yes | — | — | `true` when the amount is fixed, `false` when it is a percentage. Seeded flags stay: `false` for `IVA` and `Honorarios`, and `true` for `Documentacion` and `Protocolo`. |
 
 ---
 
@@ -212,7 +213,7 @@ The source deed granted in the notarial protocol.
 | `number` | INTEGER | No | No | Yes | — | — | Yearly serial number of the deed in the protocol |
 | `deed_date` | DATE | No | No | Yes | — | — | Date the act was granted |
 | `body` | TEXT | No | No | Yes | — | — | Full legal text of the protocol deed |
-| `status` | TEXT | No | No | Yes | — | — | Deed status. Stored values `Preparada`, `Firmada`, `No Pasó`, and `Errose` stay. |
+| `status` | TEXT | No | No | Yes | — | — | Deed status. Stored values `Sin Firmar`, `Firmada`, `Anulada`, `No Paso`, and `Inscripta` stay. |
 | `registration_number` | TEXT | No | No | No | NULL | — | Registration number granted by the registry |
 | `registration_date` | DATE | No | No | No | NULL | — | Final registration date |
 | `notes` | TEXT | No | No | No | NULL | — | Marginal notes and notarial attestations |
@@ -227,8 +228,8 @@ Catalog of operational statuses a deed management can move through. Stored statu
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Management-status id |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
-| `name` | TEXT | No | No | Yes | — | — | Status name. Stored examples such as `Generado`, `En proceso`, and `Listo para firmar` stay. |
-| `notes` | TEXT | No | No | No | NULL | — | Functional definition and conditions |
+| `name` | TEXT | No | No | Yes | — | — | Status name. Stored examples such as `Iniciada`, `En Tramite`, and `Testimonio Generado` stay. The seeded catalog also keeps `Documentacion Completa`, `Archivada`, `Gestion Modificada`, `Gestion con Escritura Firmada`, `Gestion con Escritura Sin Firmar`, `Gestion con Escritura Anulada`, `Gestion con Escritura No Paso`, `Gestion con Escritura Inscripta`, `Testimonio Ingresado a Inscripcion`, and `Testimonio Retirado`. |
+| `notes` | TEXT | No | No | No | NULL | — | Functional definition and conditions. Stored notes `Inicio Gestion`, `Post-signing: testimony generated from signed deed`, `Post-signing: testimony submitted for inscription`, and `Post-signing: testimony withdrawn after inscription cycle` stay. Seeded notes stay empty for `En Tramite`, `Documentacion Completa`, `Archivada`, `Gestion Modificada`, `Gestion con Escritura Firmada`, `Gestion con Escritura Sin Firmar`, `Gestion con Escritura Anulada`, `Gestion con Escritura No Paso`, and `Gestion con Escritura Inscripta`. |
 
 ---
 
@@ -242,7 +243,7 @@ Protocol sheets supplied for recording public deeds.
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
 | `number` | INTEGER | No | No | Yes | — | — | Official serial number printed on the sheet |
 | `year_number` | INTEGER | No | No | Yes | — | — | Calendar year of the protocol |
-| `status` | TEXT | No | No | Yes | — | — | Status. Stored values `Disponible`, `Usado`, `Errose`, and `No Pasó` stay. |
+| `status` | TEXT | No | No | Yes | — | — | Status. Stored values `Nuevo`, `Utilizado`, `Errose`, `no pasó`, and `Asignado a cuaderno` stay. |
 | `notes` | TEXT | No | No | No | NULL | — | Notes on exceptions or attestations |
 | `fk_id_deed` | INTEGER | No | Yes | No | NULL | `deeds(id)` | Deed that used this sheet |
 | `fk_id_folio_type` | INTEGER | No | Yes | Yes | — | `folio_types(id)` | How the sheet is classified |
@@ -271,12 +272,12 @@ File that groups one or more related procedures.
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the deed management |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
-| `number` | INTEGER | No | No | Yes | — | — | Yearly serial number of the management |
-| `start_date` | DATE | No | No | Yes | — | — | Date the file was opened |
-| `heading` | TEXT | No | No | Yes | — | — | Heading that describes the management |
-| `notes` | TEXT | No | No | No | NULL | — | Working notes |
-| `fk_id_notary_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Notary in charge |
-| `fk_id_management_status` | INTEGER | No | Yes | No | NULL | `management_statuses(id)` | Current operational status |
+| `number` | INTEGER | No | No | Yes | — | — | Yearly serial number of the management. Seeded numbers `1001` and `1002` stay. |
+| `start_date` | DATE | No | No | Yes | — | — | Date the file was opened. Seeded dates `2026-05-02` and `2026-05-20` stay. |
+| `heading` | TEXT | No | No | Yes | — | — | Heading that describes the management. Stored values `Compraventa Lote 12 — Familia Pérez` and `Donación — Sucesión Gómez` stay. |
+| `notes` | TEXT | No | No | No | NULL | — | Working notes. The seeded samples stay empty. |
+| `fk_id_notary_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Notary in charge. The seeded managements stay with `Garcia`. |
+| `fk_id_management_status` | INTEGER | No | Yes | No | NULL | `management_statuses(id)` | Current operational status. Seeded samples stay `Documentacion Completa` for management `1001` and `En Tramite` for management `1002`. |
 | `pending_debt_on_archive` | BOOLEAN | No | No | No | NULL | — | `true` when the management was archived with a pending debt |
 
 ---
@@ -289,10 +290,10 @@ Chronological history of status changes for a deed management.
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | History-row id |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
-| `event_date` | DATE | No | No | Yes | — | — | Date of the status change |
-| `notes` | TEXT | No | No | No | NULL | — | Reason or attestation for the status change |
-| `fk_id_deed_management` | INTEGER | No | Yes | No | NULL | `deed_managements(id)` | Deed management that changed status |
-| `fk_id_management_status` | INTEGER | No | Yes | No | NULL | `management_statuses(id)` | Status reached |
+| `event_date` | DATE | No | No | Yes | — | — | Date of the status change. Seeded dates `2026-05-02`, `2026-05-09`, `2026-05-28`, `2026-05-20`, and `2026-06-01` stay. |
+| `notes` | TEXT | No | No | No | NULL | — | Reason or attestation for the status change. Stored notes `Apertura de la gestión`, `Trámite de compraventa en curso`, `Documentación completa recibida`, and `Trámite de donación en curso` stay. |
+| `fk_id_deed_management` | INTEGER | No | Yes | No | NULL | `deed_managements(id)` | Deed management that changed status. Seeded history stays on managements `1001` and `1002`. |
+| `fk_id_management_status` | INTEGER | No | Yes | No | NULL | `management_statuses(id)` | Status reached. Seeded samples stay `Iniciada`, `En Tramite`, and `Documentacion Completa`. |
 
 ---
 
@@ -338,7 +339,7 @@ Fee lines charged on a budget (V3/V4).
 | `fixed_concept` | BOOLEAN | No | No | Yes | — | — | `true` when the amount is fixed, `false` when it is a percentage |
 | `fk_id_budget` | INTEGER | No | Yes | No | NULL | `budgets(id)` | Budget this line belongs to |
 | `notes` | TEXT | No | No | No | NULL | — | Justification notes (V3/V4) |
-| `item_type` | VARCHAR(20) | No | No | Yes | 'NORMAL' | — | Budget line class (default `NORMAL`) |
+| `item_type` | VARCHAR(20) | No | No | Yes | 'NORMAL' | — | Budget line class. Stored values `NORMAL`, `DESCUENTO`, and `RECARGO` stay. The default is `NORMAL`. |
 | `reason` | VARCHAR(255) | No | No | No | NULL | — | Stated reason when the line is not an ordinary concept |
 
 ---
@@ -386,29 +387,29 @@ People, natural or legal, who take part in the practice.
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the person |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
-| `last_name` | TEXT | No | No | Yes | — | — | Last name or legal name |
-| `first_name` | TEXT | No | No | Yes | — | — | First name or trade name |
-| `identification_number` | TEXT | No | No | Yes | — | — | Primary identification number |
-| `tax_id` | TEXT | No | No | No | NULL | — | Tax id (`CUIT` / `CUIL`). Those stored names stay. |
-| `sex` | TEXT | No | No | No | NULL | — | Legal sex |
-| `birth_date` | DATE | No | No | No | NULL | — | Birth date |
-| `marital_status` | TEXT | No | No | No | NULL | — | Marital status |
-| `marriage_count` | INTEGER | No | No | No | NULL | — | Marriage count |
-| `occupation` | TEXT | No | No | No | NULL | — | Occupation |
-| `address` | TEXT | No | No | No | NULL | — | Residential or legal address |
-| `email` | TEXT | No | No | No | NULL | — | Primary email |
-| `notary_registration_number` | INTEGER | No | No | No | NULL | — | Notary registration number |
-| `is_client` | BOOLEAN | No | No | Yes | false | — | `true` when the person is a client of the practice |
-| `locality` | TEXT | No | No | No | NULL | — | Locality |
-| `province` | TEXT | No | No | No | NULL | — | Province |
-| `phone` | TEXT | No | No | No | NULL | — | Landline |
-| `mobile_phone` | TEXT | No | No | No | NULL | — | Mobile phone |
-| `secondary_email` | TEXT | No | No | No | NULL | — | Secondary or historical email |
-| `nationality` | TEXT | No | No | No | NULL | — | Nationality |
-| `profession` | TEXT | No | No | No | NULL | — | Profession or trade |
-| `notes` | TEXT | No | No | No | NULL | — | File notes and background |
-| `fk_id_identification_type` | INTEGER | No | Yes | No | NULL | `identification_types(id)` | Primary identification type |
-| `is_notary` | BOOLEAN | No | No | Yes | false | — | `true` when the person is a licensed notary |
+| `last_name` | TEXT | No | No | Yes | — | — | Last name or legal name. The seeded sample `Garcia` stays. |
+| `first_name` | TEXT | No | No | Yes | — | — | First name or trade name. The seeded sample `Juan Carlos` stays. |
+| `identification_number` | TEXT | No | No | Yes | — | — | Primary identification number. The seeded sample `20123456` stays. |
+| `tax_id` | TEXT | No | No | No | NULL | — | Tax id (`CUIT` / `CUIL`). Those stored names stay. The seeded sample `20-20123456-3` stays. |
+| `sex` | TEXT | No | No | No | NULL | — | Legal sex. Stored values `Masculino` and `Femenino` stay. The seeded sample `M` stays. |
+| `birth_date` | DATE | No | No | No | NULL | — | Birth date. The seeded sample `1980-01-15` stays. |
+| `marital_status` | TEXT | No | No | No | NULL | — | Marital status. Stored values `Soltero` and `Casado` stay. The seeded sample `Casado` stays. |
+| `marriage_count` | INTEGER | No | No | No | NULL | — | Marriage count. The seeded sample `1` stays. |
+| `occupation` | TEXT | No | No | No | NULL | — | Occupation. Free text. The seeded sample `Escribano` stays. |
+| `address` | TEXT | No | No | No | NULL | — | Residential or legal address. The seeded sample `Av. Principal 123` stays. |
+| `email` | TEXT | No | No | No | NULL | — | Primary email. The seeded sample `jcgarcia@notaria.com` stays. |
+| `notary_registration_number` | INTEGER | No | No | No | NULL | — | Notary registration number. The seeded sample `1001` stays. |
+| `is_client` | BOOLEAN | No | No | Yes | false | — | `true` when the person is a client of the practice. The seeded sample stays `false`. |
+| `locality` | TEXT | No | No | No | NULL | — | Locality. The seeded sample `Buenos Aires` stays. |
+| `province` | TEXT | No | No | No | NULL | — | Province. The seeded sample `Buenos Aires` stays. |
+| `phone` | TEXT | No | No | No | NULL | — | Landline. The seeded sample `011-4555-1234` stays. |
+| `mobile_phone` | TEXT | No | No | No | NULL | — | Mobile phone. The seeded sample `011-15-5555-1234` stays. |
+| `secondary_email` | TEXT | No | No | No | NULL | — | Secondary or historical email. The seeded sample `jcgarcia@notaria.com` stays. |
+| `nationality` | TEXT | No | No | No | NULL | — | Nationality. The seeded sample `Argentina` stays. |
+| `profession` | TEXT | No | No | No | NULL | — | Profession or trade. Free text. The seeded sample `Escribano` stays. |
+| `notes` | TEXT | No | No | No | NULL | — | File notes and background. The seeded sample stays empty. |
+| `fk_id_identification_type` | INTEGER | No | Yes | No | NULL | `identification_types(id)` | Primary identification type. The seeded sample stays `DNI`. |
+| `is_notary` | BOOLEAN | No | No | Yes | false | — | `true` when the person is a licensed notary. The seeded sample stays `true`. |
 
 ---
 
@@ -542,13 +543,13 @@ Master catalog of documents, prior titles, and registry certificates.
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the document type |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
-| `name` | TEXT | No | No | Yes | — | — | Name of the document or certificate |
-| `returned` | BOOLEAN | No | No | Yes | — | — | `true` when the original must be returned to the client |
-| `expires` | BOOLEAN | No | No | Yes | — | — | `true` when the certificate expires |
-| `due_days` | INTEGER | No | No | No | NULL | — | Legal validity in days |
-| `amount_to_pay` | NUMERIC(19,2) | No | No | No | NULL | — | Standard fee |
-| `enabled` | BOOLEAN | No | No | Yes | — | — | `true` when it can be used on templates |
-| `delivered_by` | TEXT | No | No | Yes | — | — | Origin (`Cliente` or `Entidad Externa`). Those stored values stay. |
+| `name` | TEXT | No | No | Yes | — | — | Name of the document or certificate. Stored values `Libre Deuda Municipal`, `Informe de Dominio`, `Certificado Catastral`, and `Fotocopia DNI` stay. |
+| `returned` | BOOLEAN | No | No | Yes | — | — | `true` when the original must be returned to the client. Seeded flags stay: `true` for `Libre Deuda Municipal`, `Informe de Dominio`, and `Certificado Catastral`, and `false` for `Fotocopia DNI`. |
+| `expires` | BOOLEAN | No | No | Yes | — | — | `true` when the certificate expires. Seeded flags stay: `true` for `Libre Deuda Municipal`, `Informe de Dominio`, and `Certificado Catastral`, and `false` for `Fotocopia DNI`. |
+| `due_days` | INTEGER | No | No | No | NULL | — | Legal validity in days. Seeded day counts stay: `30` for `Libre Deuda Municipal`, `60` for `Informe de Dominio`, `90` for `Certificado Catastral`, and NULL for `Fotocopia DNI`. |
+| `amount_to_pay` | NUMERIC(19,2) | No | No | No | NULL | — | Standard fee. Seeded fees stay: `0` for `Libre Deuda Municipal` and `Fotocopia DNI`, `150` for `Informe de Dominio`, and `100` for `Certificado Catastral`. |
+| `enabled` | BOOLEAN | No | No | Yes | — | — | `true` when it can be used on templates. Seeded flags stay: `true` for `Libre Deuda Municipal`, `Informe de Dominio`, `Certificado Catastral`, and `Fotocopia DNI`. |
+| `delivered_by` | TEXT | No | No | Yes | — | — | Origin. Stored values `Cliente`, `Entidad`, and `Entidad Externa` stay. |
 
 ---
 
@@ -560,7 +561,7 @@ Master catalog of protocol sheet types (V3/V4). Stored names such as `Protocolo 
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the folio type |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
-| `name` | TEXT | No | No | Yes | — | — | Name. Stored values `Protocolo Principal`, `Protocolo Auxiliar`, and `Testimonio` stay. |
+| `name` | TEXT | No | No | Yes | — | — | Name. Stored values `De documento`, `De actuacion`, `De certificacion`, `Protocolo Principal`, `Protocolo Auxiliar`, and `Testimonio` stay. |
 | `notes` | TEXT | No | No | No | NULL | — | Folio-type notes (V3/V4) |
 | `enabled` | BOOLEAN | No | No | Yes | true | — | `true` when it can be used for folio batches (V3/V4) |
 | `is_auxiliary` | BOOLEAN | No | No | Yes | false | — | `true` when the type is an auxiliary sheet |
@@ -575,13 +576,13 @@ Master catalog of notarial act types (V8). Stored names such as `Compraventa` st
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Procedure-type id |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
-| `name` | TEXT | No | No | Yes | — | — | Procedure-type name. Stored examples such as `Compraventa` and `Poder` stay. |
-| `notes` | TEXT | No | No | No | NULL | — | Rules and notarial description |
-| `enabled` | BOOLEAN | No | No | Yes | — | — | `true` when new managements are allowed |
-| `is_archived` | BOOLEAN | No | No | Yes | — | — | `true` when a physical binder is required |
-| `is_registered` | BOOLEAN | No | No | Yes | — | — | `true` when registry registration is required |
-| `associates_properties` | BOOLEAN | No | No | Yes | — | — | `true` when the act involves property |
-| `fk_workflow_definition_id` | INTEGER | No | Yes | No | NULL | `workflow_definition(id_workflow_definition)` | Workflow assigned to the procedure type (V8) |
+| `name` | TEXT | No | No | Yes | — | — | Procedure-type name. Stored examples such as `Compraventa` and `Poder` stay. The seeded catalog also keeps `Donacion`, `Hipoteca`, and `Sucesion`. |
+| `notes` | TEXT | No | No | No | NULL | — | Rules and notarial description. Stored notes `Tramite de compraventa de inmuebles`, `Tramite de donacion`, `Tramite de hipoteca`, `Tramite de sucesion`, and `Otorgamiento de poderes` stay. |
+| `enabled` | BOOLEAN | No | No | Yes | — | — | `true` when new managements are allowed. Seeded flags stay: `true` for `Compraventa`, `Donacion`, `Hipoteca`, `Sucesion`, and `Poder`. |
+| `is_archived` | BOOLEAN | No | No | Yes | — | — | `true` when a physical binder is required. Seeded flags stay: `true` for `Compraventa`, `Donacion`, `Hipoteca`, and `Sucesion`, and `false` for `Poder`. |
+| `is_registered` | BOOLEAN | No | No | Yes | — | — | `true` when registry registration is required. Seeded flags stay: `true` for `Compraventa`, `Donacion`, and `Hipoteca`, and `false` for `Sucesion` and `Poder`. |
+| `associates_properties` | BOOLEAN | No | No | Yes | — | — | `true` when the act involves property. Seeded flags stay: `true` for `Compraventa`, `Donacion`, and `Hipoteca`, and `false` for `Sucesion` and `Poder`. |
+| `fk_workflow_definition_id` | INTEGER | No | Yes | No | NULL | `workflow_definition(id_workflow_definition)` | Workflow assigned to the procedure type (V8). The seeded workflow stays assigned to `Compraventa`, `Donacion`, and `Hipoteca`. `Sucesion` and `Poder` stay unassigned. |
 
 ---
 
@@ -594,7 +595,7 @@ Master catalog of identification document types. Stored names such as `DNI` and 
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the document type |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
 | `name` | TEXT | No | No | Yes | — | — | Name. Stored values `DNI`, `CUIT`, `CUIL`, `Pasaporte`, `CI`, `LC`, and `LE` stay. |
-| `characters` | TEXT | No | No | Yes | — | — | Format or alphanumeric mask |
+| `characters` | TEXT | No | No | Yes | — | — | Format or alphanumeric mask. Seeded lengths stay: `8` for `DNI`, `LE`, and `LC`; `12` for `Pasaporte`; and `11` for `CUIT`. |
 
 ---
 
@@ -606,11 +607,11 @@ One procedure instance (V13/V14).
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the procedure |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
-| `number` | INTEGER | No | No | No | NULL | — | Procedure serial number (optional since V13) |
-| `name` | TEXT | No | No | No | NULL | — | Descriptive heading (optional since V13) |
-| `notes` | TEXT | No | No | No | NULL | — | Instructions or observations |
-| `fk_id_procedure_type` | INTEGER | No | Yes | No | NULL | `procedure_types(id)` | Procedure type |
-| `fk_id_deed_management` | INTEGER | No | Yes | No | NULL | `deed_managements(id)` | Deed management that groups it (null for auxiliary work) |
+| `number` | INTEGER | No | No | No | NULL | — | Procedure serial number (optional since V13). Seeded numbers `1` and `2` stay. |
+| `name` | TEXT | No | No | No | NULL | — | Descriptive heading (optional since V13). Stored values `Compraventa inmueble Lote 12` and `Donación a herederos` stay. |
+| `notes` | TEXT | No | No | No | NULL | — | Instructions or observations. The seeded samples stay empty. |
+| `fk_id_procedure_type` | INTEGER | No | Yes | No | NULL | `procedure_types(id)` | Procedure type. Seeded samples stay `Compraventa` for procedure `1` and `Donacion` for procedure `2`. |
+| `fk_id_deed_management` | INTEGER | No | Yes | No | NULL | `deed_managements(id)` | Deed management that groups it (null for auxiliary work). Seeded procedures stay on managements `1001` and `1002`. |
 | `fk_id_deed` | INTEGER | No | Yes | No | NULL | `deeds(id)` | Resulting deed |
 | `fk_id_budget` | INTEGER | No | Yes | No | NULL | `budgets(id)` | Base budget (V14) |
 | `fk_id_property` | INTEGER | No | Yes | No | NULL | `properties(id)` | Property the act concerns, when there is one |
@@ -638,11 +639,11 @@ Operator accounts (V9).
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the user |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
-| `username` | TEXT | No | No | Yes | — | — | Username (unique login) |
-| `password` | TEXT | No | No | Yes | — | — | Password hash |
-| `user_type` | TEXT | No | No | Yes | — | — | Legacy descriptive role |
-| `status` | BOOLEAN | No | No | Yes | — | — | `true` when the account is active |
-| `fk_id_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Linked person |
+| `username` | TEXT | No | No | Yes | — | — | Username (unique login). The seeded sample `admin` stays. |
+| `password` | TEXT | No | No | Yes | — | — | Password hash. The seeded account stores a hash of `admin`. |
+| `user_type` | TEXT | No | No | Yes | — | — | Legacy descriptive role. Stored values `Escribano`, `Empleado`, `EMPLEADO`, `ADMIN`, `ADMINISTRADOR`, and `ESCRIBANO` stay. The seeded sample `Escribano` stays. |
+| `status` | BOOLEAN | No | No | Yes | — | — | `true` when the account is active. The seeded sample stays `true`. |
+| `fk_id_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Linked person. The seeded account stays linked to the person `Garcia`. |
 | `fk_id_role` | INTEGER | No | Yes | No | NULL | `roles(id)` | Assigned security role (V9) |
 
 ---
@@ -656,8 +657,8 @@ Workflow graph definitions (Flyway V7). The seeded name `Workflow de Gestión Es
 | `id_workflow_definition` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the workflow |
 | `version` | INTEGER | No | No | Yes | 0 | — | Optimistic lock |
 | `name` | TEXT | No | No | Yes | — | — | Workflow name. The seeded value `Workflow de Gestión Estándar` stays. |
-| `description` | TEXT | No | No | No | NULL | — | Functional description of the process |
-| `active` | BOOLEAN | No | No | Yes | false | — | `true` when the workflow is enabled |
+| `description` | TEXT | No | No | No | NULL | — | Functional description of the process. The seeded value `Ciclo de vida estándar de una gestión de escritura` stays. |
+| `active` | BOOLEAN | No | No | Yes | false | — | `true` when the workflow is enabled. The seeded workflow stays `true`. |
 
 ---
 
@@ -669,11 +670,11 @@ Workflow nodes linked to management statuses (Flyway V7).
 |---|---|---|---|---|---|---|---|
 | `id_workflow_node` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the node |
 | `version` | INTEGER | No | No | Yes | 0 | — | Optimistic lock |
-| `fk_workflow_definition_id` | INTEGER | No | Yes | Yes | — | `workflow_definition(id_workflow_definition)` | Parent workflow (ON DELETE CASCADE) |
-| `fk_management_status_id` | INTEGER | No | Yes | Yes | — | `management_statuses(id)` | Management status this node represents |
-| `node_type` | TEXT | No | No | Yes | — | — | Node type: `INITIAL`, `INTERMEDIATE`, `FINAL` |
-| `position_x` | REAL | No | No | No | NULL | — | Visual X coordinate in the designer |
-| `position_y` | REAL | No | No | No | NULL | — | Visual Y coordinate in the designer |
+| `fk_workflow_definition_id` | INTEGER | No | Yes | Yes | — | `workflow_definition(id_workflow_definition)` | Parent workflow (ON DELETE CASCADE). The seeded rows stay on `Workflow de Gestión Estándar`. |
+| `fk_management_status_id` | INTEGER | No | Yes | Yes | — | `management_statuses(id)` | Management status this node represents. The live seeded graph stays: `Iniciada` as `INITIAL`; `En Tramite`, `Documentacion Completa`, `Gestion con Escritura Sin Firmar`, `Gestion con Escritura Firmada`, `Testimonio Generado`, and `Testimonio Ingresado a Inscripcion` as `INTERMEDIATE`; `Archivada` and `Testimonio Retirado` as `FINAL`. |
+| `node_type` | TEXT | No | No | Yes | — | — | Node type: `INITIAL`, `INTERMEDIATE`, `FINAL`. The live seeded graph uses all three. |
+| `position_x` | REAL | No | No | No | NULL | — | Visual X coordinate in the designer. The seeded nodes stay without a coordinate. |
+| `position_y` | REAL | No | No | No | NULL | — | Visual Y coordinate in the designer. The seeded nodes stay without a coordinate. |
 
 ---
 
@@ -685,11 +686,11 @@ Directed transitions between workflow nodes, with guard conditions (Flyway V7).
 |---|---|---|---|---|---|---|---|
 | `id_workflow_transition` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the transition |
 | `version` | INTEGER | No | No | Yes | 0 | — | Optimistic lock |
-| `fk_workflow_definition_id` | INTEGER | No | Yes | Yes | — | `workflow_definition(id_workflow_definition)` | Parent workflow (ON DELETE CASCADE) |
+| `fk_workflow_definition_id` | INTEGER | No | Yes | Yes | — | `workflow_definition(id_workflow_definition)` | Parent workflow (ON DELETE CASCADE). The seeded rows stay on `Workflow de Gestión Estándar`. |
 | `fk_origin_node_id` | INTEGER | No | Yes | Yes | — | `workflow_node(id_workflow_node)` | Origin node (ON DELETE CASCADE) |
 | `fk_destination_node_id` | INTEGER | No | Yes | Yes | — | `workflow_node(id_workflow_node)` | Destination node (ON DELETE CASCADE) |
-| `condition` | TEXT | No | No | No | NULL | — | Guard condition for the transition |
-| `description` | TEXT | No | No | No | NULL | — | Description of the action that advances the flow |
+| `condition` | TEXT | No | No | No | NULL | — | Guard condition for the transition. The seeded transitions stay with an empty condition. |
+| `description` | TEXT | No | No | No | NULL | — | Description of the action that advances the flow. Stored values `Se asignan trámites y comienza la gestión`, `Toda la documentación requerida fue presentada`, `Se redacta la escritura`, `Las partes firman la escritura`, `La gestión se archiva sin escritura`, `Testimony generated after deed signing`, `Testimony submitted for inscription`, and `Testimony withdrawn after inscription cycle` stay. |
 
 ---
 
@@ -730,7 +731,7 @@ Numbered procedure folders inside a deed management (CU85).
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the procedure folder |
 | `number` | INTEGER | No | No | Yes | — | — | Folder serial number (its own sequence) |
-| `status` | VARCHAR(20) | No | No | Yes | — | — | Folder status |
+| `status` | VARCHAR(20) | No | No | Yes | — | — | Folder status. Stored labels `Activa`, `Espera`, and `Archivada` stay. |
 | `wait_reason` | TEXT | No | No | No | NULL | — | Reason the folder is waiting |
 | `fk_id_deed_management` | INTEGER | No | Yes | Yes | — | `deed_managements(id)` | Deed management this folder belongs to |
 | `fk_id_procedure` | INTEGER | No | Yes | Yes | — | `procedures(id)` | Procedure that created the folder |
@@ -747,7 +748,7 @@ Registry registration drafts for a deed, and their follow-up.
 | `version` | INTEGER | No | No | Yes | 0 | — | Optimistic lock |
 | `number` | INTEGER | No | No | Yes | — | — | Draft number |
 | `operation_price` | NUMERIC(19,2) | No | No | No | NULL | — | Price of the operation to register |
-| `status` | VARCHAR(50) | No | No | Yes | — | — | Draft status in the registration flow. Stored labels stay. |
+| `status` | VARCHAR(50) | No | No | Yes | — | — | Draft status in the registration flow. Stored labels `Generada`, `Presentado para inscripción`, `Observado`, and `Inscripto` stay. |
 | `generation_date` | DATE | No | No | Yes | — | — | Date the draft was created |
 | `submission_date` | DATE | No | No | No | NULL | — | Date it was filed with the registry |
 | `registry_entry_number` | VARCHAR(255) | No | No | No | NULL | — | Intake number assigned by the registry |

@@ -1,5 +1,9 @@
 package com.licensis.notaire.unit;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.licensis.notaire.business.Budget;
+import com.licensis.notaire.dto.DtoBudget;
+import com.licensis.notaire.dto.DtoManagementStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -107,6 +111,77 @@ class EnglishSurfaceRatchetTest {
             });
         }
         assertThat(offenders).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Should not ignore retired Spanish association names")
+    void shouldNotIgnoreRetiredSpanishAssociations() throws IOException {
+        Path business = repoRoot().resolve(
+                "backend-api/src/main/java/com/licensis/notaire/business");
+        List<String> retired = List.of(
+                "fkIdEscritura",
+                "fkIdTestimonio",
+                "fkIdTipoIdentificacion",
+                "foliosCopiasCollection",
+                "movimientoTestimonioList",
+                "copiaList",
+                "\"copia\"");
+        List<String> offenders = new ArrayList<>();
+        try (Stream<Path> files = Files.walk(business)) {
+            files.filter(path -> path.toString().endsWith(".java")).forEach(path -> {
+                String text = read(path);
+                for (String name : retired) {
+                    if (text.contains(name)) {
+                        offenders.add(path.getFileName() + " " + name);
+                    }
+                }
+            });
+        }
+        assertThat(offenders).isEmpty();
+        String folio = read(business.resolve("Folio.java"));
+        assertThat(folio).contains("\"folioList\"");
+        assertThat(folio).contains("\"tramiteList\"");
+        assertThat(folio).contains("\"testimonioList\"");
+    }
+
+    @Test
+    @DisplayName("Should name management-status histories in English and keep the wire key")
+    void shouldNameManagementStatusHistoriesInEnglish() {
+        String text = read(repoRoot().resolve(
+                "backend-api/src/main/java/com/licensis/notaire/dto/DtoManagementStatus.java"));
+        assertThat(text).contains("getHistories");
+        assertThat(text).doesNotContain("getHistorials");
+        assertThat(text).contains("@JsonProperty(\"historials\")");
+    }
+
+    @Test
+    @DisplayName("Should keep the management-status wire key historials")
+    void shouldKeepTheManagementStatusWireKey() throws Exception {
+        String json = new ObjectMapper().writeValueAsString(new DtoManagementStatus());
+        assertThat(json).contains("\"historials\"");
+        assertThat(json).doesNotContain("\"histories\"");
+    }
+
+    @Test
+    @DisplayName("Should name the deprecated budget balance accessors in English and keep the wire key")
+    void shouldNameBudgetBalanceAccessorsInEnglish() throws Exception {
+        for (String relative : List.of(
+                "backend-api/src/main/java/com/licensis/notaire/business/Budget.java",
+                "backend-api/src/main/java/com/licensis/notaire/dto/DtoBudget.java")) {
+            String text = read(repoRoot().resolve(relative));
+            assertThat(text).contains("getBalance");
+            assertThat(text).contains("setBalance");
+            assertThat(text).doesNotContain("getSaldo");
+            assertThat(text).doesNotContain("setSaldo");
+            assertThat(text).contains("@JsonProperty(\"saldo\")");
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        for (String json : List.of(
+                mapper.writeValueAsString(new DtoBudget()),
+                mapper.writeValueAsString(new Budget()))) {
+            assertThat(json).contains("\"saldo\"");
+            assertThat(json).doesNotContain("\"balance\"");
+        }
     }
 
     private static boolean containsSegment(String text, String segment) {

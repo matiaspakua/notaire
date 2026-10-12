@@ -62,7 +62,6 @@ public class Copy implements Serializable, Persistable<Integer>
     @Version
     private int version = 0;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "copy")
-    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"copia"})
     private Collection<FolioCopies> folioCopiesCollection;
     private static final long serialVersionUID = 1L;
     @Id
@@ -76,14 +75,12 @@ public class Copy implements Serializable, Persistable<Integer>
     @Column(name = "notes")
     private String notes;
     @ManyToMany(mappedBy = "copyList", fetch = FetchType.LAZY)
-    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"copiaList"})
     private List<Folio> folioList;
     @JoinColumn(name = "fk_id_person", referencedColumnName = "id")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Person fkIdPerson;
     @JoinColumn(name = "fk_id_testimony", referencedColumnName = "id")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
-    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"copiaList", "movimientoTestimonioList"})
     private Testimony fkIdTestimony;
 
     public Copy()

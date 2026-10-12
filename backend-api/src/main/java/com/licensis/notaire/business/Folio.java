@@ -59,7 +59,7 @@ public class Folio implements Serializable, Persistable<Integer>
     @Version
     private int version = PersistenceConstants.INITIAL_VERSION;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "folio")
-    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folio", "copia"})
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folio"})
     private Collection<FolioCopies> folioCopiesCollection;
     private static final long serialVersionUID = 1L;
     @Id
@@ -86,7 +86,7 @@ public class Folio implements Serializable, Persistable<Integer>
         @JoinColumn(name = "fk_id_copy", referencedColumnName = "id")
     })
     @ManyToMany(fetch = FetchType.LAZY)
-    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList", "foliosCopiasCollection"})
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
     private List<Copy> copyList;
     @JoinColumn(name = "fk_id_notary_person", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
