@@ -2,7 +2,7 @@
  * TS-0093 - Session expiry / authenticated 401 handling
  *
  * Covers: CU84 – Login al sistema (expired-session alternate flow)
- * Issues: #1053 (global 401 handling), #690 (E2E gap), #1051 (HttpOnly cookie)
+ * Issues: #1053 (global 401 handling), #690 (E2E gap), #1051 (HttpOnly cookie), #1548 (redirect race)
  *
  * Golden path:
  *   authenticated user → API 401 (invalid JWT cookie) → /login?expired=1 + message
@@ -22,16 +22,6 @@ async function loginAsAdmin(page: Page) {
 }
 
 async function corruptJwtCookie(page: Page) {
-  await page.context().addCookies([
-    {
-      name: "notaire-auth-token",
-      value: "invalid-expired-jwt-for-e2e",
-      domain: "localhost",
-      path: "/",
-      httpOnly: true,
-      sameSite: "Lax",
-    },
-  ]);
   // Keep client session marker so 401 triggers the expiry path.
   await page.evaluate(() => {
     const raw = window.localStorage.getItem("notaire-auth");
@@ -43,6 +33,20 @@ async function corruptJwtCookie(page: Page) {
     delete parsed.state.token;
     window.localStorage.setItem("notaire-auth", JSON.stringify(parsed));
   });
+  // #1548: leave the dashboard before corrupting the cookie. Otherwise a query
+  // still in flight on the old page can hit the 401 first, and the goto below
+  // aborts that page's /login?expired=1 redirect.
+  await page.goto("about:blank");
+  await page.context().addCookies([
+    {
+      name: "notaire-auth-token",
+      value: "invalid-expired-jwt-for-e2e",
+      domain: "localhost",
+      path: "/",
+      httpOnly: true,
+      sameSite: "Lax",
+    },
+  ]);
 }
 
 test.describe("TS-0093 - Session expiry (CU84 / #1053 / #1051)", () => {
@@ -50,16 +54,15 @@ test.describe("TS-0093 - Session expiry (CU84 / #1053 / #1051)", () => {
     await loginAsAdmin(page);
     await corruptJwtCookie(page);
 
-    // Session expiry uses window.location.assign, which aborts in-flight goto.
-    // Wait for the expired-login URL rather than requiring goto to complete.
-    await Promise.all([
-      page.waitForURL(/\/login\?expired=1/, { timeout: 15000 }),
-      page.goto("/dashboard/managements", { waitUntil: "commit" }).catch((err: Error) => {
-        if (!/ERR_ABORTED|frame was detached/i.test(String(err))) {
-          throw err;
-        }
-      }),
-    ]);
+    // Session expiry uses window.location.assign, which aborts the in-flight goto.
+    // Tolerate that abort, then poll the settled URL (#1548): a concurrent
+    // waitForURL could itself reject with ERR_ABORTED.
+    await page.goto("/dashboard/managements", { waitUntil: "commit" }).catch((err: Error) => {
+      if (!/ERR_ABORTED|frame was detached/i.test(String(err))) {
+        throw err;
+      }
+    });
+    await expect(page).toHaveURL(/\/login\?expired=1/, { timeout: 15000 });
 
     await expect(page.getByTestId("session-expired-message")).toBeVisible();
     await expect(page.getByTestId("session-expired-message")).toContainText(/sesión ha expirado|session has expired/i);
@@ -69,6 +72,8 @@ test.describe("TS-0093 - Session expiry (CU84 / #1053 / #1051)", () => {
     expect(parsed?.state?.token ?? null).toBeNull();
     expect(parsed?.state?.isAuthenticated ?? false).toBe(false);
 
+    // #1548: under load, a click before hydration finishes is lost.
+    await page.waitForLoadState("networkidle");
     await page.getByTestId("input-username").fill("admin");
     await page.getByTestId("input-password").fill("admin");
     await page.getByTestId("btn-sign-in").click();
