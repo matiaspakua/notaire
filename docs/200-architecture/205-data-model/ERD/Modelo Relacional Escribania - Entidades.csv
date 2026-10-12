@@ -127,7 +127,7 @@ procedure_types,Strong,fk_workflow_definition_id,FK,yes,Integer,,x,x,Workflow as
 procedures,Strong,version,,no,Integer,,,,Optimistic lock
 procedures,Strong,id,PK,no,Integer,x,,,Unique id of the procedure
 procedures,Strong,number,,yes,Integer,,,x,Procedure serial number (optional since V13)
-procedures,Strong,name,,yes,Text,,,x,Descriptive heading (optional since V13)
+procedures,Strong,name,,yes,Text,,,x,Descriptive heading (optional since V13). Stored values `Compraventa inmueble Lote 12` and `Donación a herederos` stay.
 procedures,Strong,notes,,yes,Text,,,x,Instructions or observations
 procedures,Strong,fk_id_procedure_type,FK,yes,Integer,,x,x,Procedure type
 procedures,Strong,fk_id_deed_management,FK,yes,Integer,,x,x,Deed management that groups it (null for auxiliary work)

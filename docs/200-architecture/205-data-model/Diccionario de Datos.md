@@ -607,7 +607,7 @@ One procedure instance (V13/V14).
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the procedure |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
 | `number` | INTEGER | No | No | No | NULL | — | Procedure serial number (optional since V13) |
-| `name` | TEXT | No | No | No | NULL | — | Descriptive heading (optional since V13) |
+| `name` | TEXT | No | No | No | NULL | — | Descriptive heading (optional since V13). Stored values `Compraventa inmueble Lote 12` and `Donación a herederos` stay. |
 | `notes` | TEXT | No | No | No | NULL | — | Instructions or observations |
 | `fk_id_procedure_type` | INTEGER | No | Yes | No | NULL | `procedure_types(id)` | Procedure type |
 | `fk_id_deed_management` | INTEGER | No | Yes | No | NULL | `deed_managements(id)` | Deed management that groups it (null for auxiliary work) |
