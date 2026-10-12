@@ -108,7 +108,7 @@ deed_managements,Strong,pending_debt_on_archive,,yes,Boolean,,,x,`true` when the
 management_statuses,Strong,version,,no,Integer,,,,Optimistic lock
 management_statuses,Strong,id,PK,no,Integer,x,,,Management-status id
 management_statuses,Strong,name,,no,Text,,,,"Status name. Stored examples such as `Iniciada`, `En Tramite`, and `Testimonio Generado` stay."
-management_statuses,Strong,notes,,yes,Text,,,x,Functional definition and conditions
+management_statuses,Strong,notes,,yes,Text,,,x,"Functional definition and conditions. Stored notes `Inicio Gestion`, `Post-signing: testimony generated from signed deed`, `Post-signing: testimony submitted for inscription`, and `Post-signing: testimony withdrawn after inscription cycle` stay."
 history,Weak,version,,no,Integer,,,,Optimistic lock
 history,Weak,id,PK,no,Integer,x,,,History-row id
 history,Weak,event_date,,no,Date,,,,Date of the status change

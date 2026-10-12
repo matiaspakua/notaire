@@ -228,7 +228,7 @@ Catalog of operational statuses a deed management can move through. Stored statu
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Management-status id |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
 | `name` | TEXT | No | No | Yes | — | — | Status name. Stored examples such as `Iniciada`, `En Tramite`, and `Testimonio Generado` stay. |
-| `notes` | TEXT | No | No | No | NULL | — | Functional definition and conditions |
+| `notes` | TEXT | No | No | No | NULL | — | Functional definition and conditions. Stored notes `Inicio Gestion`, `Post-signing: testimony generated from signed deed`, `Post-signing: testimony submitted for inscription`, and `Post-signing: testimony withdrawn after inscription cycle` stay. |
 
 ---
 
