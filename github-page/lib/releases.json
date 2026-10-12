@@ -1,6 +1,6 @@
 {
   "productVersion": "0.1.2",
-  "train": "v1.0 — Production Ready",
+  "train": "2026-11 · Release blockers",
   "tag": "notaire-v0.1.2",
   "components": {
     "backend": "0.1.2",
@@ -12,14 +12,14 @@
       "version": "0.1.2",
       "date": "2026-10-10",
       "tag": "notaire-v0.1.2",
-      "train": "v1.0 — Production Ready",
+      "train": "2026-11 · Release blockers",
       "url": "https://github.com/matiaspakua/notaire/releases/tag/notaire-v0.1.2"
     },
     {
       "version": "0.1.1",
       "date": "2026-10-07",
       "tag": "notaire-v0.1.1",
-      "train": "v1.0 — Production Ready",
+      "train": "2026-11 · Release blockers",
       "url": "https://github.com/matiaspakua/notaire/releases/tag/notaire-v0.1.1"
     }
   ]

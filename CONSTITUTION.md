@@ -672,8 +672,9 @@ Agent-specific entry points:
 - Versioning follows **Semantic Versioning** (SemVer): `MAJOR.MINOR.PATCH`.
   One tag is the product. It includes the backend (Maven), the frontend (npm),
   and the database (Flyway schema id recorded beside the tag, not equal to it).
-- Delivery milestones are trains, not tags. `v1.0 — Production Ready` is not
-  `v1.0.0`. See [RELEASES.md](docs/300-development/305-project-management/RELEASES.md).
+- Delivery milestones are dated trains, not tags. `2026-11 · Release blockers`
+  is not `v1.0.0`. See
+  [RELEASES.md](docs/300-development/305-project-management/RELEASES.md).
 - `CHANGELOG.md` follows **Keep a Changelog** and is updated with every
   user-visible change; the `[Unreleased]` section is curated per release.
 - Releases are tagged `vX.Y.Z`. Tags through `notaire-v0.1.2` keep that
@@ -756,7 +757,8 @@ drift.
 
 ---
 
-*Last reviewed: 2026-10-12 (product release = backend + frontend + database schema,
+*Last reviewed: 2026-10-12 (shared full-lifecycle roadmap and agent coordination
+#1569; product release = backend + frontend + database schema,
 trains ≠ tags, CycloneDX product SBOM, #1571; testing MTP / inventory #1511; AI SDLC tooling map,
 issue sync, Mermaid/modules, heavy-CI merge gate, path-scoped CI #1257 /
 #1197 P0.2). This Constitution supersedes the process summary in

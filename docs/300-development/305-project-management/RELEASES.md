@@ -6,7 +6,7 @@ They are different clocks.
 
 | Clock | Example | Closes when |
 |-------|---------|-------------|
-| Delivery train | `v1.0 — Production Ready` (milestone #12, due marker 2027-03-31) | A person closes the milestone after its exit criteria, not when a tag is pushed |
+| Release gate train | `2026-11 · Release blockers` | A person closes the milestone after its exit criteria, not when a tag is pushed |
 | Product semver | `v0.1.2` today; `vX.Y.Z` from the next cut | release-please merges the release PR |
 | Database schema | Flyway `V46` | A migration is applied. The number is not the semver |
 
@@ -32,16 +32,14 @@ Reviewed against the 0.2.0 release-please pull request and the live releases:
 3. **The database was not in the release.** Flyway is the schema source of
    truth and was invisible on the tag. Forcing the schema id to equal the
    semver would break Flyway. The schema is recorded beside the product version.
-4. **Trains and tags shared a spelling.** `v1.0 — Production Ready` is an open
-   queue of critical and high work. The product is `0.1.2`. Cutting `v1.0.0`
-   to “match the milestone” would pretend the train had shipped.
-   [MILESTONES.md](MILESTONES.md) is the schedule (six open trains, three
-   scope catalogs, history cohorts). This file is the only map from a semver
-   to a train.
-5. **The September audit’s three buckets are not the whole schema.**
-   Priority still chooses a train when no phase rule matches, but Phase 4,
-   Phase 6, and the RF / CU / RNF catalogs are milestones too. A release does
-   not close catalog issues.
+4. **Trains and tags shared a spelling.** The former `v1.0 — Production Ready`
+   and `v1.1 — Hardening` priority buckets are now closed history milestones.
+   Open trains use dates and purposes, so no live milestone resembles a SemVer
+   tag. [MILESTONES.md](MILESTONES.md) is the schedule; this file maps a
+   product series to its release gate train.
+5. **Delivery is broader than one release gate.** Frontend product, quality,
+   platform, and legacy trains may all contribute to a cut. The release record
+   names the gate train; it does not move or close the other milestones.
 6. **The SBOM was unnamed.** Trivy wrote an image bill and the release job
    was supposed to attach it. Nothing defined the bill of the product, and
    the attach step never ran (see 1).
@@ -58,10 +56,10 @@ Reviewed against the 0.2.0 release-please pull request and the live releases:
 - The database component is `components.database.schemaVersion` (highest
   Flyway `V*`). It is allowed to differ from the semver. It must be updated
   in the same change as a new migration (`python3 workspace/release/product_release.py --write`).
-- `0.x` and `1.0.x` advance train `v1.0 — Production Ready`. They do not close it.
-  `v1.0.0` is a human decision when that train’s release blockers are closed
+- `0.x` and `1.0.x` advance gate train `2026-11 · Release blockers`. They do not close it.
+  `v1.0.0` is a human decision when release blockers are closed
   or explicitly deferred.
-- `1.1.x` advances `v1.1 — Hardening`. Any other minor fails
+- `1.1.x` advances `2027-01 · Quality & traceability`. Any other minor fails
   `train_for()` until this file and the function name the new train.
 - Tags from the next cut are `vX.Y.Z` (`include-component-in-tag: false`).
   CD still accepts `notaire-v*` so 0.1.1 and 0.1.2 can be republished.

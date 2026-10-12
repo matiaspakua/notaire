@@ -1,110 +1,86 @@
 # Project management
 
-How a project manager reads Notaire, and how the Cloud AI SDLC schedules work
-so several agents can run at once without editing the same surface.
+This directory is the durable source for how humans and every Notaire agent
+fleet read history, coordinate current work, and select what comes next.
 
-| Document | What it answers |
-|----------|-----------------|
-| [MILESTONES.md](MILESTONES.md) | Which milestone an issue belongs to, including history and the requirements catalog |
-| [LABELS.md](LABELS.md) | The label set: area, priority, lane, phase, workflow |
-| [ROADMAP.md](ROADMAP.md) | Board views, the 2026-10-12 chart, and how to apply the plan on GitHub |
-| [PARALLEL-AGENTS.md](PARALLEL-AGENTS.md) | The rule that keeps agents off each other's files |
-| [RELEASES.md](RELEASES.md) | How a semver cut relates to trains, the board, the SBOM, and the AI SDLC |
-| [roadmap-snapshot.json](roadmap-snapshot.json) | Counts behind the chart (regenerate; do not edit by hand) |
+| Start here | Question answered |
+|------------|-------------------|
+| [MILESTONES.md](MILESTONES.md) | Which history cohort or delivery train owns an issue? |
+| [ROADMAP.md](ROADMAP.md) | Which GitHub Project view answers history, execution, queue, or triage? |
+| [PARALLEL-AGENTS.md](PARALLEL-AGENTS.md) | May another agent claim this work now? |
+| [LABELS.md](LABELS.md) | Which labels express area, urgency, concern, and workflow? |
+| [RELEASES.md](RELEASES.md) | How do delivery trains differ from SemVer releases? |
 
-The GitHub Pages chart is the Docs tab **Roadmap**:
-`github-page/app/docs/roadmap/page.tsx`.
+Generated counts live in
+[`docs/github/milestone-snapshot.json`](../../github/milestone-snapshot.json)
+and are copied to `github-page/lib/milestone-snapshot.json`. Never edit either
+snapshot by hand.
 
-## Roles
+## Shared operating model
 
-| Role | Owns |
-|------|------|
-| Project manager agent | Milestone, priority, lane, and board hygiene. Does not write product code. [`.claude/agents/project-manager.md`](../../../.claude/agents/project-manager.md) |
-| Cloud foreman | Picks **one claimable issue in a free lane**, then runs the Constitution loop |
-| Specialists | Implement inside the lane the issue already has |
+Every issue answers four independent questions:
 
-Skill: [`.claude/skills/project-management/SKILL.md`](../../../.claude/skills/project-management/SKILL.md).
+| Question | Signal | Cardinality |
+|----------|--------|-------------|
+| When is it planned or when was it completed? | Milestone | exactly one |
+| How urgent is open delivery work? | `priority:*` | exactly one on claimable work |
+| Which implementation surface does it occupy? | Derived lane from area/type labels | exactly one result |
+| What is its current execution state? | Issue state + Project Status + WIP labels | one coherent state |
 
-## Three questions, three fields
+Milestones are trains or history cohorts, never release tags. Priority orders
+work **inside** a train. A lane is computed by
+`workspace/sdlc/milestone_policy.py`; there are deliberately no `lane:*`
+labels to synchronize.
 
-Every issue answers three different questions. They are not interchangeable.
+Project Status remains **Todo / In Progress / Done**. Blocked work uses the
+`blocked` label, not another column.
 
-| Question | Field | Rule |
-|----------|--------|------|
-| When does this ship, or which catalog is it? | **Milestone** (exactly one) | See [MILESTONES.md](MILESTONES.md) |
-| How urgent is the delivery work? | **`priority:*`** (exactly one on claimable work) | critical, high, medium, low |
-| Which agent may claim it? | **`lane:*`** (exactly one) | See [PARALLEL-AGENTS.md](PARALLEL-AGENTS.md) |
+## One coordination loop
 
-Phase labels (`phase:1-analysis` … `phase:6-deprecation`) record the migration
-stream. They do not replace the milestone.
+```text
+Roadmap (history → future trains)
+  → Agent queue (open non-catalog work)
+  → choose earliest train + highest priority in a free derived lane
+  → claim: OPEN + in-progress + Status In Progress
+  → Constitution gates + PR
+  → complete: CLOSED + Status Done + no WIP labels
+```
 
-Board Status stays **Todo / In Progress / Done**. Blocked work uses the
-`blocked` label. There is no Blocked column.
+The foreman owns selection and synchronization. Specialists implement only the
+claimed issue. The project manager maintains milestones, views, priorities,
+and policy; it does not implement product work.
 
-## What this organization is for
+Before claiming:
 
-On 2026-10-12 the repository had **799** issues (**295** open, **504** closed).
-**607** had no milestone, so the roadmap could not show how the project had been
-built or what was left. Closed phase milestones had been replaced by three
-priority buckets (`v1.0`, `v1.1`, `Backlog`), and the SAD still linked milestone
-numbers that no longer exist (#6, #7, #8, #10).
+1. Exclude catalog anchors, roadmap umbrellas, `blocked`, and `needs-info`.
+2. Derive the lane and verify no conflicting open issue has `in-progress`.
+3. Prefer `ready-for-dev`, then priority, then the earlier delivery train.
+4. Add `in-progress` and set Status to In Progress before dispatch.
 
-The target layout:
+The exact conflict rules are in [PARALLEL-AGENTS.md](PARALLEL-AGENTS.md).
 
-- **History** — closed cohorts, so a manager can see the sequence of work.
-- **Delivery** — the open trains a manager schedules.
-- **Scope** — RF, CU, and RNF catalogs. They stay open and agents do not pick them.
-
-Classifier and dry-run:
+## Mechanical checks
 
 ```bash
-python3 workspace/sdlc/organize-roadmap.py --fetch \
-  --snapshot docs/300-development/305-project-management/roadmap-snapshot.json
-python3 -m unittest workspace.tests.test_roadmap_classify
+# Read-only: all issue assignments and Project view contracts.
+python3 workspace/sdlc/apply_milestone_policy.py --check
+
+# Pure scheduling/view-policy tests.
+python3 -m unittest workspace/sdlc/test_milestone_policy.py
+
+# Issue state, Status, and WIP-label agreement.
+python3 workspace/sdlc/check-board-status-label-coherence.py --scope all
 ```
 
-`--apply` does not mutate GitHub. Applying the plan needs a token that can edit
-issues, labels, and milestones. The steps are in [ROADMAP.md](ROADMAP.md).
+`--apply` is owner-only and explicit. It requires an authenticated `gh` user
+with repository Issues and user Project write permission. Agent installation
+tokens that return 403 produce a handoff; they do not invent a second tracker.
 
-## Scheduling and priority
+## Authority and navigation
 
-Precedence of the open trains, from earlier to later:
-
-```mermaid
-flowchart LR
-  P4["Phase 4 — Modern Frontend"] --> V10["v1.0 — Production Ready"]
-  P6["Phase 6 — Deprecation"] --> V10
-  V10 --> V11["v1.1 — Hardening"]
-  V11 --> BL["Backlog"]
-```
-
-Priority is urgency **inside** a train, not a second schedule.
-
-| Priority | Default train when no phase rule applies |
-|----------|------------------------------------------|
-| critical, high | v1.0 — Production Ready |
-| medium | v1.1 — Hardening |
-| low | Backlog |
-
-Exceptions (the classifier applies these first):
-
-- Frontend product slices go to **Phase 4**, unless they are critical or a security/audit finding.
-- `phase:6-deprecation`, and non-critical `tech-debt` that retires the `jpa` package, go to **Phase 6**.
-- Security and `audit-2026-09` findings stay on the production gate (v1.0, or Backlog when priority is low).
-
-Non-functional **catalog** items (RNF-*) stay on `Scope — Non-functional requirements`.
-Each one also records which train the requirement informs:
-
-| RNF numbers | Theme | Informs |
-|-------------|--------|---------|
-| 01–04 | performance | v1.1 — Hardening |
-| 05–10 | experience | Phase 4 — Modern Frontend |
-| 11–16 | security and access | v1.0 — Production Ready |
-| 17–24 | platform constraints | Backlog |
-
-## Related
-
-- Delivery board mechanics: [docs/github/README.md](../../github/README.md)
-- Fleet: [304-ai-sdlc-cloud](../304-ai-sdlc-cloud/README.md)
-- Use case for this process work: CU76
-- Backlog triage that this grouping does **not** finish: [#1248](https://github.com/matiaspakua/notaire/issues/1248)
+- Process authority: [`CONSTITUTION.md`](../../../CONSTITUTION.md)
+- GitHub mechanics: [`docs/github/README.md`](../../github/README.md)
+- Cloud fleet entry point: [304-ai-sdlc-cloud](../304-ai-sdlc-cloud/README.md)
+- Project manager agent:
+  [`.claude/agents/project-manager.md`](../../../.claude/agents/project-manager.md)
+- Use cases: RNF-21, RNF-22, and board lifecycle #1550 / CU76

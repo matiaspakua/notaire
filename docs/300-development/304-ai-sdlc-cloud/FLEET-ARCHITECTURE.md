@@ -226,7 +226,13 @@ If a specialist finds itself reading `local-ai/` for product work, stop and re-r
 ## 8. Concurrency and isolation
 
 - Default: **one product issue per foreman run**.
-- Several foreman runs may work at once only on **different lanes**. A lane is free when no open issue in that lane has `in-progress`. `lane:fullstack` also occupies `lane:backend` and `lane:frontend`. `lane:security` is exclusive. `lane:owner` and milestones starting with `Scope —` are not claimable. Rules: [PARALLEL-AGENTS.md](../305-project-management/PARALLEL-AGENTS.md).
+- Several foreman runs may work at once only on non-conflicting **derived
+  lanes**. Lanes come from existing area/type labels; there are no `lane:*`
+  labels. A lane is free when no conflicting OPEN issue has `in-progress`.
+  Catalog anchors, roadmap epics, blocked work, needs-info work, and
+  owner-decision issues are not claimable. The canonical selection and
+  synchronization protocol is
+  [PARALLEL-AGENTS.md](../305-project-management/PARALLEL-AGENTS.md).
 - Parallel specialists on the **same** issue are allowed only for read-only review (security + code-review) or non-overlapping paths explicitly listed in the brief.
 - Never two writers on the same branch without foreman serialization.
 - Heavy CI stays one PR at a time even when lanes are free.

@@ -26,8 +26,8 @@ LEGACY_COMPONENT_TAGS = {
     "0.1.2": "notaire-v0.1.2",
 }
 
-TRAIN_V10 = "v1.0 — Production Ready"
-TRAIN_V11 = "v1.1 — Hardening"
+TRAIN_V10 = "2026-11 · Release blockers"
+TRAIN_V11 = "2027-01 · Quality & traceability"
 
 RELEASE_HEADING = re.compile(
     r"^## \[(\d+\.\d+\.\d+)\]\([^)]*\) \((\d{4}-\d{2}-\d{2})\)\s*$",
@@ -50,9 +50,9 @@ def repo_root_from_here() -> Path:
 def train_for(version: str) -> str:
     """Map a product semver to a delivery-train title.
 
-    0.x and 1.0.x advance the v1.0 train. They do not close it.
-    1.1.x advances the hardening train. Any other minor fails closed so a
-    new train is an explicit decision, not an accident.
+    0.x and 1.0.x advance the release-blocker gate. They do not close it.
+    1.1.x advances the quality gate. Any other minor fails closed so a new
+    release-gate mapping is an explicit decision, not an accident.
     """
     major_s, minor_s, *_rest = version.split(".")
     major, minor = int(major_s), int(minor_s)

@@ -36,19 +36,20 @@ Read these before changing a rule:
 - `docs/300-development/305-project-management/PARALLEL-AGENTS.md`
 - `docs/300-development/305-project-management/ROADMAP.md`
 
-The executable rules are `workspace/sdlc/roadmap_classify.py`. If the prose and
+The executable rules are `workspace/sdlc/milestone_policy.py`. If the prose and
 the function disagree, fix both in the same change and extend
-`workspace/tests/test_roadmap_classify.py` first.
+`workspace/sdlc/test_milestone_policy.py` first.
 
 ## Steps
 
-1. Export issues (`organize-roadmap.py --fetch` or a JSONL inventory).
-2. Classify. Confirm each issue has one milestone and one lane.
-3. Write the snapshot JSON. Copy it to `github-page/lib/roadmap-snapshot.json`.
-4. Update the chart page and `MILESTONES.md` counts when the snapshot changes.
+1. Read Roadmap, KANBAN, and Agent queue.
+2. Run `apply_milestone_policy.py --check`.
+3. Confirm every issue has one milestone and one derived lane result.
+4. Apply only with owner credentials; regenerate both snapshot JSON files.
 5. Do not close issues from a classification run.
-6. Do not pick `Scope —` milestones or `lane:owner` for an agent.
-7. Claim at most one `in-progress` issue per lane. Fullstack blocks backend and frontend too.
+6. Do not pick catalog, epic, blocked, needs-info, or owner-decision work.
+7. Claim at most one issue per non-conflicting derived lane. Cross blocks
+   backend and frontend; security blocks backend.
 
 ## Priority versus milestone
 
@@ -59,5 +60,5 @@ even when it also touches the frontend.
 ## Tests
 
 ```bash
-python3 -m unittest workspace.tests.test_roadmap_classify
+python3 -m unittest workspace/sdlc/test_milestone_policy.py
 ```

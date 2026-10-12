@@ -80,6 +80,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Project coordination (#1569, RNF-21/RNF-22).** Every issue is covered by a
+  history or delivery milestone; the Delivery Board now separates the
+  full-lifecycle Roadmap, current Kanban, Agent queue, and Needs triage views.
+  Humans and all agent fleets share one documented milestone, derived-lane, and
+  Status/label claim protocol.
+
 - **releases:** a product cut records the backend, the frontend, and the Flyway
   schema, publishes the CycloneDX product and database bills, and shows the
   version in the app and on GitHub Pages (#1571, CU76).

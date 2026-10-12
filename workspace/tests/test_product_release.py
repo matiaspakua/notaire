@@ -41,13 +41,15 @@ class TrainAndTagTest(unittest.TestCase):
     def setUp(self):
         self.mod = load_module()
 
-    def test_pre_one_and_one_zero_advance_the_production_train(self):
+    def test_pre_one_and_one_zero_advance_the_release_blockers_train(self):
+        self.assertEqual(self.mod.TRAIN_V10, "2026-11 · Release blockers")
         self.assertEqual(self.mod.train_for("0.1.2"), self.mod.TRAIN_V10)
         self.assertEqual(self.mod.train_for("0.2.0"), self.mod.TRAIN_V10)
         self.assertEqual(self.mod.train_for("1.0.0"), self.mod.TRAIN_V10)
         self.assertEqual(self.mod.train_for("1.0.4"), self.mod.TRAIN_V10)
 
-    def test_one_one_advances_the_hardening_train(self):
+    def test_one_one_advances_the_quality_train(self):
+        self.assertEqual(self.mod.TRAIN_V11, "2027-01 · Quality & traceability")
         self.assertEqual(self.mod.train_for("1.1.0"), self.mod.TRAIN_V11)
 
     def test_unmapped_minor_fails_closed(self):
