@@ -64,6 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded person contact** (#1490, CU75): the person address sample is
+  `Av. Principal 123`. The email samples are `jcgarcia@notaria.com`.
 - **Seeded occupation and profession** (#1490, CU75): occupation and
   profession stay free text. The seeded sample `Escribano` stays.
 - **Seeded procedure headings** (#1490, CU75): the procedure heading lists
