@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded document types** (#1490, CU75): the document-type name lists
+  `Libre Deuda Municipal`, `Informe de Dominio`, `Certificado Catastral`,
+  and `Fotocopia DNI`.
 - **Seeded folio types** (#1490, CU75): the folio-type name also lists
   `De documento`, `De actuacion`, and `De certificacion`. `Protocolo Principal`,
   `Protocolo Auxiliar`, and `Testimonio` stay.
