@@ -14,6 +14,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.licensis.notaire.exception.BusinessValidationException;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,6 +81,24 @@ public class AuditRecordService {
     public Page<DtoAuditRecord> findByUserIdAsDto(Integer idUser, Pageable pageable) {
         logger.debug("Finding AuditRecord by userId={} page={} as DTO", idUser, pageable);
         return repository.findByFkIdUserIdUser(idUser, pageable)
+                .map(AuditRecordService::toDto);
+    }
+
+    /**
+     * #1545 / CU23: paged search by module, user and an inclusive calendar-day range
+     * (business time zone = JVM default, as elsewhere). Every filter is optional.
+     */
+    @Transactional(readOnly = true)
+    public Page<DtoAuditRecord> searchAsDto(String module, Integer idUser, LocalDate from, LocalDate to,
+            Pageable pageable) {
+        if (from != null && to != null && from.isAfter(to)) {
+            throw new BusinessValidationException("'from' must be on or before 'to'");
+        }
+        ZoneId zone = ZoneId.systemDefault();
+        Date fromInclusive = from == null ? null : Date.from(from.atStartOfDay(zone).toInstant());
+        Date toExclusive = to == null ? null : Date.from(to.plusDays(1).atStartOfDay(zone).toInstant());
+        String moduleFilter = module == null || module.isBlank() ? null : module;
+        return repository.search(moduleFilter, idUser, fromInclusive, toExclusive, pageable)
                 .map(AuditRecordService::toDto);
     }
 

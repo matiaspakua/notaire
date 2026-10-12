@@ -2817,6 +2817,20 @@ paths:
         schema:
           format: int32
           type: integer
+      - description: First day, inclusive (yyyy-MM-dd, business time zone)
+        in: query
+        name: from
+        required: false
+        schema:
+          format: date
+          type: string
+      - description: Last day, inclusive (yyyy-MM-dd, business time zone)
+        in: query
+        name: to
+        required: false
+        schema:
+          format: date
+          type: string
       responses:
         '200':
           content:

@@ -5,8 +5,12 @@ import com.licensis.notaire.business.AuditRecord;
 import com.licensis.notaire.repository.AuditRecordRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,5 +75,27 @@ public class AuditRecordPersistenceAdapter implements AuditRecordRepositoryPort 
     @Override
     public List<AuditRecord> findByUserIdWithUser(Integer idUser) {
         return auditRecordRepository.findByUserIdWithUser(idUser);
+    }
+
+    @Override
+    public Page<AuditRecord> search(String module, Integer idUser, Date fromInclusive, Date toExclusive,
+            Pageable pageable) {
+        Specification<AuditRecord> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (module != null) {
+                predicates.add(cb.equal(root.get("module"), module));
+            }
+            if (idUser != null) {
+                predicates.add(cb.equal(root.get("fkIdUser").get("idUser"), idUser));
+            }
+            if (fromInclusive != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.<Date>get("date"), fromInclusive));
+            }
+            if (toExclusive != null) {
+                predicates.add(cb.lessThan(root.<Date>get("date"), toExclusive));
+            }
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+        return auditRecordRepository.findAll(spec, pageable);
     }
 }

@@ -30,6 +30,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -103,7 +104,7 @@ class AuditRecordControllerTest {
     void shouldReturnPagedResponseWhenPageProvided() throws Exception {
         Pageable pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "date"));
         Page<DtoAuditRecord> page = new PageImpl<>(List.of(sampleDto), pageable, 1);
-        when(service.findAllAsDto(any(Pageable.class))).thenReturn(page);
+        when(service.searchAsDto(isNull(), isNull(), isNull(), isNull(), any(Pageable.class))).thenReturn(page);
 
         mockMvc.perform(get("/api/v1/audit-log?page=0&size=20"))
                 .andExpect(status().isOk())
@@ -121,13 +122,13 @@ class AuditRecordControllerTest {
     void shouldFilterByModuleWhenParamSet() throws Exception {
         Pageable pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "date"));
         Page<DtoAuditRecord> page = new PageImpl<>(List.of(sampleDto), pageable, 1);
-        when(service.findByModuleAsDto(eq("Deeds"), any(Pageable.class))).thenReturn(page);
+        when(service.searchAsDto(eq("Deeds"), isNull(), isNull(), isNull(), any(Pageable.class))).thenReturn(page);
 
         mockMvc.perform(get("/api/v1/audit-log?page=0&size=20&module=Deeds"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].module").value("Deeds"));
 
-        verify(service).findByModuleAsDto(eq("Deeds"), any(Pageable.class));
+        verify(service).searchAsDto(eq("Deeds"), isNull(), isNull(), isNull(), any(Pageable.class));
         verify(service, never()).findAllAsDto(any(Pageable.class));
     }
 
@@ -136,13 +137,13 @@ class AuditRecordControllerTest {
     void shouldFilterByIdUserWhenParamSet() throws Exception {
         Pageable pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "date"));
         Page<DtoAuditRecord> page = new PageImpl<>(List.of(sampleDto), pageable, 1);
-        when(service.findByUserIdAsDto(eq(1), any(Pageable.class))).thenReturn(page);
+        when(service.searchAsDto(isNull(), eq(1), isNull(), isNull(), any(Pageable.class))).thenReturn(page);
 
         mockMvc.perform(get("/api/v1/audit-log?page=0&size=20&idUser=1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].users.idUser").value(1));
 
-        verify(service).findByUserIdAsDto(eq(1), any(Pageable.class));
+        verify(service).searchAsDto(isNull(), eq(1), isNull(), isNull(), any(Pageable.class));
     }
 
     @Test
@@ -217,7 +218,7 @@ class AuditRecordControllerTest {
     void shouldFallBackToDefaultSortOnInvalidParameter() throws Exception {
         Pageable pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "date"));
         Page<DtoAuditRecord> page = new PageImpl<>(List.of(sampleDto), pageable, 1);
-        when(service.findAllAsDto(any(Pageable.class))).thenReturn(page);
+        when(service.searchAsDto(isNull(), isNull(), isNull(), isNull(), any(Pageable.class))).thenReturn(page);
 
         mockMvc.perform(get("/api/v1/audit-log?page=0&size=20&sort=date,unknown"))
                 .andExpect(status().isOk());
@@ -228,7 +229,7 @@ class AuditRecordControllerTest {
     void shouldNormalizeInvalidPaginationValues() throws Exception {
         Pageable pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "date"));
         Page<DtoAuditRecord> page = new PageImpl<>(List.of(sampleDto), pageable, 1);
-        when(service.findAllAsDto(any(Pageable.class))).thenReturn(page);
+        when(service.searchAsDto(isNull(), isNull(), isNull(), isNull(), any(Pageable.class))).thenReturn(page);
 
         mockMvc.perform(get("/api/v1/audit-log?page=-1&size=0"))
                 .andExpect(status().isOk());

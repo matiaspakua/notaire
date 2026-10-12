@@ -4323,6 +4323,10 @@ export interface operations {
                 sort?: string;
                 module?: string;
                 idUser?: number;
+                /** @description First day, inclusive (yyyy-MM-dd, business time zone) */
+                from?: string;
+                /** @description Last day, inclusive (yyyy-MM-dd, business time zone) */
+                to?: string;
             };
             header?: never;
             path?: never;

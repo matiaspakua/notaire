@@ -2732,9 +2732,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   date inputs (kept in `?from=&to=`), both days inclusive. Without a budget it lists
   `GET /payments/date` (off the #1250 allowlist; the reachability scanner also counts that call for `GET /payments/{id}`, so that entry goes too); with a budget it narrows that budget's
   payments. An inverted range shows an inline error and sends no request, and the API now
-  answers it with 400 instead of an empty list. TS-0014 CU47-GW01 is implemented, so 13
-  feature-gap skips remain.
+  answers it with 400 instead of an empty list. TS-0014 CU47-GW01 is implemented (one fewer feature-gap skip).
 
+- **Audit log filter by user and date range** (issue #1545, CU23): `/dashboard/audit` has a
+  user selector and Desde/Hasta dates, kept in the URL. `GET /api/v1/audit-log` accepts optional
+  `from`/`to` (yyyy-MM-dd, inclusive), the filters now combine (module no longer overrides
+  `idUser`), and an inverted or malformed range answers 400.
 - **Consult a budget's payments** (issue #1544, CU47): the payments page has a
   "Consultar por presupuesto" picker (kept in `?budget=`). It shows the budget's total, paid
   amount, outstanding balance and payment status, and lists only its payments, newest first.
