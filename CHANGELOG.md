@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded management-status notes** (#1490, CU75): the status notes list
+  `Inicio Gestion`, `Post-signing: testimony generated from signed deed`,
+  `Post-signing: testimony submitted for inscription`, and `Post-signing:
+  testimony withdrawn after inscription cycle`.
 - **Seeded workflow transitions** (#1490, CU75): the transition description
   lists `Se asignan trámites y comienza la gestión`, `Toda la documentación
   requerida fue presentada`, `Se redacta la escritura`, `Las partes firman la
