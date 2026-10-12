@@ -60,4 +60,12 @@ describe("workflowEdge (#1575)", () => {
     expect(e.source).toBe("1");
     expect(e.target).toBe("2");
   });
+
+  it("truncates long labels on the canvas and keeps the full text in data", () => {
+    const long = "Las partes firman la escritura ante el escribano";
+    const e = workflowEdge({ id: 4, originNodeId: 1, destinationNodeId: 2, description: long });
+    expect(String(e.label).length).toBeLessThanOrEqual(22);
+    expect(String(e.label).endsWith("…")).toBe(true);
+    expect((e.data as { description: string }).description).toBe(long);
+  });
 });

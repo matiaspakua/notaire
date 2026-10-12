@@ -12,6 +12,14 @@ export interface TransitionLike {
   description?: string | null;
 }
 
+/** Longest label drawn on the canvas; the full text stays in the transition's data. */
+export const EDGE_LABEL_MAX = 22;
+
+export function edgeLabel(description?: string | null): string | undefined {
+  if (!description) return undefined;
+  return description.length > EDGE_LABEL_MAX ? `${description.slice(0, EDGE_LABEL_MAX - 1).trimEnd()}…` : description;
+}
+
 export function workflowEdge(tr: TransitionLike, selected = false): Edge {
   const color = selected ? theme.colors.primary[600] : theme.colors.neutral[500];
   return {
@@ -19,7 +27,8 @@ export function workflowEdge(tr: TransitionLike, selected = false): Edge {
     source: String(tr.originNodeId),
     target: String(tr.destinationNodeId),
     type: "smoothstep",
-    label: tr.description ?? undefined,
+    label: edgeLabel(tr.description),
+    data: { description: tr.description ?? undefined },
     animated: false,
     selected,
     markerEnd: { type: MarkerType.ArrowClosed, color, width: 18, height: 18 },
