@@ -64,6 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Budget item types** (#1490, CU75): the item-type column names
+  `NORMAL`, `DESCUENTO`, and `RECARGO`. The default stays `NORMAL`.
 - **Role unassign response** (#1490, CU75): the 204 description says
   `Role unassigned`. Stored role names `ADMIN`, `ESCRIBANO`, and
   `SECRETARIA` stay.
