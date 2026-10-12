@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Workflow active checkbox** (#1490, CU75): the workflow form checkbox
+  test id is `checkbox-active-workflow`. The catalog namespace
+  `administracion.workflows` stays. The visible label still comes from
+  `common.active`.
 - **Administrator seed name** (#1490, CU75): a newly created administrator
   person is stored as `Admin System`. The login name `admin`, the type
   `Escribano`, and the identification type `DNI` stay. An administrator
