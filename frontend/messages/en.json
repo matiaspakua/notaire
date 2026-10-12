@@ -187,6 +187,10 @@
     "administracion": {
       "label": "Administration",
       "description": "Catalogs and system configuration"
+    },
+    "vencimientos": {
+      "titulo": "{count, plural, one {# document expires} other {# documents expire}} in the next {days} days",
+      "verTodos": "View all"
     }
   },
   "personas": {
