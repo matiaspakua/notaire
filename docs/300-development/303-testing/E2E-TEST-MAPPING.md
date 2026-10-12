@@ -245,6 +245,7 @@ CU21 edit is **not** in this inventory (unskipped in #1057). Vitest
 | TS-0016 | CU21 edit (icon-only unnamed) | Unskipped — #1057 (`aria-label` + `getByRole`) |
 | TS-0017 | CU59-GW01 (notary filter) | Implemented — #1546 (year + notary filters) |
 | TS-0017 | CU59-GW02 (detail) | Implemented — #1546 (the edit dialog is the detail view) |
+| TS-0014 | CU47-GW01 (date filter) | Implemented — #1557 (Desde/Hasta on `/dashboard/payments`) |
 | TS-0016 | CU23-GW01 (activity log) | Implemented — #1545 (user + date-range filter on `/dashboard/audit`) |
 | TS-0021 | Conditional empty-table skip | Fixed — #1066 (`createWorkflowDefinition`) |
 | TS-0022 | Conditional empty-table skip | Fixed — #1066 (`createProcedureType`) |
