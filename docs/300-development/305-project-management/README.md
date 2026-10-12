@@ -9,6 +9,7 @@ so several agents can run at once without editing the same surface.
 | [LABELS.md](LABELS.md) | The label set: area, priority, lane, phase, workflow |
 | [ROADMAP.md](ROADMAP.md) | Board views, the 2026-10-12 chart, and how to apply the plan on GitHub |
 | [PARALLEL-AGENTS.md](PARALLEL-AGENTS.md) | The rule that keeps agents off each other's files |
+| [RELEASES.md](RELEASES.md) | How a semver cut relates to trains, the board, the SBOM, and the AI SDLC |
 | [roadmap-snapshot.json](roadmap-snapshot.json) | Counts behind the chart (regenerate; do not edit by hand) |
 
 The GitHub Pages chart is the Docs tab **Roadmap**:

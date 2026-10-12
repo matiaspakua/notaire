@@ -1,5 +1,10 @@
 # Milestones
 
+A milestone is a **train** or a **catalog** or a **history cohort**. It is not
+a git tag. Product cuts (`v0.1.2`, and `vX.Y.Z` after that) are defined in
+[RELEASES.md](RELEASES.md). Do not close a train because a tag was cut, and do
+not name a tag after a milestone title.
+
 One milestone per issue. Titles below are the canonical strings. The em dash
 (`—`) and the hyphen (`-`) are different milestones; do not merge them by eye.
 

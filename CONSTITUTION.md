@@ -670,11 +670,20 @@ Agent-specific entry points:
 ## 11. Release Rules
 
 - Versioning follows **Semantic Versioning** (SemVer): `MAJOR.MINOR.PATCH`.
+  One tag is the product. It includes the backend (Maven), the frontend (npm),
+  and the database (Flyway schema id recorded beside the tag, not equal to it).
+- Delivery milestones are trains, not tags. `v1.0 — Production Ready` is not
+  `v1.0.0`. See [RELEASES.md](docs/300-development/305-project-management/RELEASES.md).
 - `CHANGELOG.md` follows **Keep a Changelog** and is updated with every
   user-visible change; the `[Unreleased]` section is curated per release.
-- Releases are tagged `v*` (e.g. `v1.2.0`).
-- The CD pipeline (`cd.yml`) publishes the Docker image to GHCR **only after**
-  CI on `main` succeeds (or on version tags / manual dispatch).
+- Releases are tagged `vX.Y.Z`. Tags through `notaire-v0.1.2` keep that
+  legacy prefix; CD accepts both.
+- The product SBOM is CycloneDX: composition, database schema, and the two
+  image dependency bills. See [SBOM.md](docs/300-development/SBOM.md).
+- The running system shows the product version on `/actuator/info`, in the
+  OpenAPI document, and in the frontend shell. GitHub Pages lists the cut history.
+- The CD pipeline (`cd.yml`) publishes the backend and frontend images to GHCR
+  **only after** CI on `main` succeeds (or on version tags / manual dispatch).
 - GitHub Pages documentation deployment is handled by `deploy-github-page.yml`.
 - Every release/deploy must pass a **smoke test** before the associated Issues
   are closed (Gate 5).
@@ -741,13 +750,14 @@ drift.
 | **Merge gate (heavy CI)** | `bash workspace/sdlc/check-heavy-ci.sh <pr>` — Integration + Coverage + Bruno + Playwright must pass; light-only green is not mergeable ([CI-MERGE-GATE.md](docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md)) |
 | Path-scoped CI | `dorny/paths-filter` job `changes` in `ci.yml` / `frontend-ci.yml` / `playwright-e2e.yml` / `openapi-contract.yml`; aggregators accept `success\|skipped`; invariants in `workspace/tests/test_ci_workflow_invariants.py` (#1257) |
 | Security | Local case catalog `security/cases/catalog.yml` via `python3 security/run_gates.py` (Semgrep, secret scan, Trivy, DAST baseline). CI adds CodeQL and OWASP ZAP and runs the same catalog. `security/` module for rulesets-as-code |
-| Deploy | `cd.yml` → build, scan, sign (cosign) and publish backend image to GHCR; no automated smoke test |
+| Deploy | `cd.yml` → build, scan, sign (cosign) and publish backend and frontend images to GHCR; attach product, database, and image SBOMs on `v*` / `notaire-v*`; no automated smoke test |
 | Public documentation site | `deploy-github-page.yml` → https://matiaspakua.github.io/notaire/ (story) and `/docs/` (technical Docs tab) |
 | Agent rules | `AGENTS.md`, `.claude/rules/*`, `.claude/skills/*`, `.claude/agents/*`; Cursor Cloud fleet: `docs/300-development/304-ai-sdlc-cloud/` |
 
 ---
 
-*Last reviewed: 2026-10-11 (testing MTP / inventory #1511; AI SDLC tooling map,
+*Last reviewed: 2026-10-12 (product release = backend + frontend + database schema,
+trains ≠ tags, CycloneDX product SBOM, #1571; testing MTP / inventory #1511; AI SDLC tooling map,
 issue sync, Mermaid/modules, heavy-CI merge gate, path-scoped CI #1257 /
 #1197 P0.2). This Constitution supersedes the process summary in
 `.claude/rules/ai-agent-workflow.md` where they conflict; that document remains

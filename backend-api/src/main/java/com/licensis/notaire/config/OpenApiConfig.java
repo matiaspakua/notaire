@@ -10,6 +10,7 @@ import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,6 +18,12 @@ import java.util.List;
 
 @Configuration
 public class OpenApiConfig {
+
+    private final String appVersion;
+
+    public OpenApiConfig(@Value("${app.version}") String appVersion) {
+        this.appVersion = appVersion;
+    }
 
     @Bean
     public OpenAPI customOpenAPI() {
@@ -32,7 +39,7 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("Notaire API")
-                        .version("1.0.0")
+                        .version(appVersion)
                         .description("Notarial management system — REST backend API. "
                                 + "Every resource uses the `/api/v1/` prefix. "
                                 + "Error responses keep the "

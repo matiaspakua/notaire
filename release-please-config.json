@@ -7,6 +7,7 @@
       "package-name": "notaire",
       "changelog-path": "CHANGELOG.md",
       "include-v-in-tag": true,
+      "include-component-in-tag": false,
       "bump-minor-pre-major": true,
       "extra-files": [
         {
@@ -23,6 +24,21 @@
           "type": "json",
           "path": "frontend/package.json",
           "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "release/product-release.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "release/product-release.json",
+          "jsonpath": "$.components.backend.version"
+        },
+        {
+          "type": "json",
+          "path": "release/product-release.json",
+          "jsonpath": "$.components.frontend.version"
         }
       ]
     }

@@ -23,6 +23,7 @@ vi.mock("@/store/auth-store", () => ({
 }));
 
 import { AppSidebar, SIDEBAR_COLLAPSED_KEY } from "@/components/layout/AppSidebar";
+import { PRODUCT_VERSION } from "@/lib/product-version";
 
 function desktop() {
   return within(screen.getAllByTestId("sidebar")[0]);
@@ -46,6 +47,14 @@ describe("AppSidebar sections (#1367)", () => {
     expect(headings).toHaveLength(5);
     expect(headings).not.toContain("navGroups.administracion");
     expect(desktop().queryByTestId("nav-auditoria")).toBeNull();
+  });
+
+  it("shows the product version from package.json", () => {
+    render(<AppSidebar />);
+    expect(desktop().getByTestId("app-version")).toHaveTextContent(
+      `navigation.productVersion ${PRODUCT_VERSION}`,
+    );
+    expect(PRODUCT_VERSION).toMatch(/^\d+\.\d+\.\d+$/);
   });
 
   it("keeps Inicio outside the sections", () => {

@@ -22,6 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **releases:** a product cut records the backend, the frontend, and the Flyway
+  schema, publishes the CycloneDX product and database bills, and shows the
+  version in the app and on GitHub Pages (#1571, CU76).
+
 ### Breaking
 
 - **English HTTP paths, dashboard routes, and remaining schema names** (#1490, CU75):

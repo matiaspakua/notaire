@@ -16,6 +16,9 @@ triggers:
 Schedule and label Notaire work so a manager can read the roadmap and so
 Cloud agents do not edit the same surface.
 
+A milestone title is not a git tag. Product cuts are
+`docs/300-development/305-project-management/RELEASES.md`.
+
 ## When to use
 
 - Organizing milestones, the roadmap view, or the delivery board

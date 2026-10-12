@@ -562,9 +562,12 @@ stateDiagram-v2
 | Engineering | Issue, OpenSpec, TDD, preflight, PR, heavy CI, review, merge, smoke | [CONSTITUTION.md](../../../CONSTITUTION.md) |
 | Domain | §3 of this file | Code and Flyway |
 
-Milestones: `v1.0 — Production Ready` (critical and high priority),
-`v1.1 — Hardening` (medium), `Backlog` (low). The anchor issues for an RF
-and a use case stay open; the work references them and does not close them.
+Milestones (trains, catalogs, and history) are defined in
+[MILESTONES.md](../../300-development/305-project-management/MILESTONES.md).
+A product semver tag is not one of those milestones
+([RELEASES.md](../../300-development/305-project-management/RELEASES.md)).
+The anchor issues for an RF and a use case stay open; the work references
+them and does not close them.
 
 A work issue carries a use case, acceptance criteria, an area, a priority,
 and a milestone. A change that alters a status in §3 updates this file as

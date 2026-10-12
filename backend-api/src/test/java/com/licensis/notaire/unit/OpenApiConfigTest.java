@@ -10,15 +10,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("OpenAPI Configuration")
 class OpenApiConfigTest {
 
-    private final OpenApiConfig config = new OpenApiConfig();
+    private final OpenApiConfig config = new OpenApiConfig("0.1.2");
 
     @Test
-    @DisplayName("Should configure API info with title and version")
+    @DisplayName("Should configure API info with title and the product version")
     void shouldConfigureApiInfo() {
         OpenAPI api = config.customOpenAPI();
         assertThat(api.getInfo()).isNotNull();
         assertThat(api.getInfo().getTitle()).isEqualTo("Notaire API");
-        assertThat(api.getInfo().getVersion()).isEqualTo("1.0.0");
+        assertThat(api.getInfo().getVersion()).isEqualTo("0.1.2");
+        assertThat(api.getInfo().getVersion()).isNotEqualTo("1.0.0");
     }
 
     @Test

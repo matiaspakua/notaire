@@ -3,6 +3,8 @@ import { SmoothScroll } from "@/components/SmoothScroll";
 import { Nav } from "@/components/Nav";
 import { Hero } from "@/components/Hero";
 import { Timeline } from "@/components/Timeline";
+import { VersionHistory } from "@/components/VersionHistory";
+import { loadReleaseHistory } from "@/lib/releases";
 import { TechEvolution } from "@/components/TechEvolution";
 import { AIEra } from "@/components/AIEra";
 import { AITools } from "@/components/AITools";
@@ -16,6 +18,7 @@ import { loadMetrics } from "@/lib/metrics";
 
 export default function Home() {
   const metrics = loadMetrics();
+  const releases = loadReleaseHistory();
 
   return (
     <>
@@ -25,6 +28,7 @@ export default function Home() {
         <main>
           <Hero />
           <Timeline />
+          <VersionHistory history={releases} />
           <TechEvolution />
           <AIEra />
           <AITools />
@@ -34,7 +38,7 @@ export default function Home() {
           <Coverage metrics={metrics} />
           <Stats metrics={metrics} />
         </main>
-        <Footer />
+        <Footer version={releases.productVersion} />
       </SmoothScroll>
     </>
   );

@@ -32,6 +32,11 @@ const cards = [
     title: "Roadmap",
     body: "Milestone history, delivery trains, requirements catalog, and parallel-agent lanes.",
   },
+  {
+    href: "/docs/releases/",
+    title: "Releases",
+    body: "Product semver cuts: backend, frontend, and the Flyway schema recorded with each tag.",
+  },
 ];
 
 export default function DocsHomePage() {

@@ -1,0 +1,26 @@
+{
+  "productVersion": "0.1.2",
+  "train": "v1.0 — Production Ready",
+  "tag": "notaire-v0.1.2",
+  "components": {
+    "backend": "0.1.2",
+    "frontend": "0.1.2",
+    "databaseSchema": "46"
+  },
+  "releases": [
+    {
+      "version": "0.1.2",
+      "date": "2026-10-10",
+      "tag": "notaire-v0.1.2",
+      "train": "v1.0 — Production Ready",
+      "url": "https://github.com/matiaspakua/notaire/releases/tag/notaire-v0.1.2"
+    },
+    {
+      "version": "0.1.1",
+      "date": "2026-10-07",
+      "tag": "notaire-v0.1.1",
+      "train": "v1.0 — Production Ready",
+      "url": "https://github.com/matiaspakua/notaire/releases/tag/notaire-v0.1.1"
+    }
+  ]
+}
