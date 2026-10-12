@@ -1,7 +1,8 @@
 "use client";
 /**
  * #1555 / CU07: register a testimony manually (bare POST /testimonies) with a chosen deed,
- * number, notes and verified flag. 400 field errors show inline; 404/409 as a toast.
+ * number, notes and verified flag. The deed goes with its number: the API's DtoDeed.number is a
+ * primitive and a body without it answers 400 "Failed to read request". 400 field errors show inline; 404/409 as a toast.
  */
 import { useState } from "react";
 import { toast } from "sonner";
@@ -22,14 +23,15 @@ export function RegisterTestimonyDialog({ open, onClose }: { open: boolean; onCl
   const t = useTranslations("testimonios.registrar");
   const tc = useTranslations("common");
   const create = useCreateTestimony();
-  const [idDeed, setIdDeed] = useState<number | undefined>();
+  const [deed, setDeed] = useState<{ idDeed: number; number: number } | undefined>();
+  const idDeed = deed?.idDeed;
   const [number, setNumber] = useState("");
   const [notes, setNotes] = useState("");
   const [verified, setVerified] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   function reset() {
-    setIdDeed(undefined);
+    setDeed(undefined);
     setNumber("");
     setNotes("");
     setVerified(false);
@@ -48,7 +50,7 @@ export function RegisterTestimonyDialog({ open, onClose }: { open: boolean; onCl
     setErrors(next);
     if (Object.keys(next).length > 0) return;
     try {
-      await create.mutateAsync({ deed: { idDeed: idDeed! }, number: Number(number.trim()), notes: notes.trim(), flagged: false, verified });
+      await create.mutateAsync({ deed: deed!, number: Number(number.trim()), notes: notes.trim(), flagged: false, verified });
       toast.success(t("created"));
       close();
     } catch (err) {
@@ -83,7 +85,7 @@ export function RegisterTestimonyDialog({ open, onClose }: { open: boolean; onCl
             <FormField label={t("deed")} required>
               <DeedPicker
                 value={idDeed}
-                onChange={(deed) => setIdDeed(deed?.idDeed ?? undefined)}
+                onChange={(d) => setDeed(d?.idDeed != null ? { idDeed: d.idDeed, number: d.number ?? 0 } : undefined)}
                 aria-label={t("deed")}
                 data-testid="select-deed-register-testimony"
               />

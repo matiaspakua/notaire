@@ -18,8 +18,8 @@ vi.mock("next-intl", () => ({
 const toastError = vi.fn();
 vi.mock("sonner", () => ({ toast: { error: (m: string) => toastError(m), success: vi.fn(), warning: vi.fn() } }));
 vi.mock("@/components/shared/DeedPicker", () => ({
-  DeedPicker: ({ onChange, "data-testid": tid }: { onChange: (d: { idDeed: number } | undefined) => void; "data-testid"?: string }) => (
-    <button type="button" data-testid={tid} onClick={() => onChange({ idDeed: 77 })}>pick</button>
+  DeedPicker: ({ onChange, "data-testid": tid }: { onChange: (d: { idDeed: number; number: number } | undefined) => void; "data-testid"?: string }) => (
+    <button type="button" data-testid={tid} onClick={() => onChange({ idDeed: 77, number: 1234 })}>pick</button>
   ),
 }));
 
@@ -42,8 +42,8 @@ describe("useCreateTestimony (#1555)", () => {
   it("posts the body to /testimonies", async () => {
     apiPost.mockResolvedValue({ idTestimony: 5 });
     const { result } = renderHook(() => useCreateTestimony(), { wrapper });
-    await result.current.mutateAsync({ deed: { idDeed: 77 }, number: 12, notes: "x", flagged: false, verified: true });
-    expect(apiPost).toHaveBeenCalledWith("/testimonies", { deed: { idDeed: 77 }, number: 12, notes: "x", flagged: false, verified: true });
+    await result.current.mutateAsync({ deed: { idDeed: 77, number: 1234 }, number: 12, notes: "x", flagged: false, verified: true });
+    expect(apiPost).toHaveBeenCalledWith("/testimonies", { deed: { idDeed: 77, number: 1234 }, number: 12, notes: "x", flagged: false, verified: true });
   });
 });
 
@@ -70,7 +70,7 @@ describe("RegisterTestimonyDialog (#1555)", () => {
     fireEvent.change(screen.getByTestId("input-notes-register-testimony"), { target: { value: "Histórico" } });
     fireEvent.click(screen.getByTestId("btn-save-register-testimony"));
     await waitFor(() => expect(onClose).toHaveBeenCalled());
-    expect(apiPost).toHaveBeenCalledWith("/testimonies", expect.objectContaining({ deed: { idDeed: 77 }, number: 345, notes: "Histórico", flagged: false }));
+    expect(apiPost).toHaveBeenCalledWith("/testimonies", expect.objectContaining({ deed: { idDeed: 77, number: 1234 }, number: 345, notes: "Histórico", flagged: false }));
   });
 
   it("shows 400 field errors next to their fields", async () => {

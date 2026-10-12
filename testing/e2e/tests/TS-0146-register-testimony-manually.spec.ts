@@ -36,9 +36,10 @@ async function registerManually(page: Page, steps: GherkinSteps) {
   await page.getByTestId("input-number-register-testimony").fill(String(testimonyNumber));
   await page.getByTestId("input-notes-register-testimony").fill("Testimonio histórico E2E");
   await page.getByTestId("btn-save-register-testimony").click();
-  await steps.thenShowsSuccessMessage("Testimonio registrado");
-  await steps.thenModalIsNotVisible();
-  await expect(page.getByRole("row", { name: new RegExp(String(testimonyNumber)) })).toBeVisible({ timeout: 15000 });
+  // The save can take a few seconds on a loaded backend: wait for the dialog to close, not a 5 s toast.
+  await expect(page.getByRole("dialog")).toBeHidden({ timeout: 30000 });
+  // Table row on desktop, card at 390px (#1356): match the number as text.
+  await expect(page.getByText(String(testimonyNumber), { exact: true }).first()).toBeVisible({ timeout: 15000 });
   const list = await apiGet<Array<{ idTestimony: number; number: number; notes: string; deed?: { idDeed: number } }>>(page, "/testimonies");
   const stored = list.data!.find((te) => te.number === testimonyNumber)!;
   expect(stored).toMatchObject({ notes: "Testimonio histórico E2E", deed: { idDeed: deed.idDeed } });

@@ -10,7 +10,7 @@ Goals: deed, number, notes, verified; inline validation; 404/409 toasts; 390px. 
 
 ## Decisions
 
-Number is required in the UI (positive integer, same rule as the edit dialog). 'flagged' is sent false: flagging is the CU08 verify flow.
+Number is required in the UI (positive integer, same rule as the edit dialog). 'flagged' is sent false: flagging is the CU08 verify flow. The deed is sent with its number: `DtoDeed.number` is a primitive and the API answers 400 'Failed to read request' without it.
 
 ## Riesgos / Trade-offs
 

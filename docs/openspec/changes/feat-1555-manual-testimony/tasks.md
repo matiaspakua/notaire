@@ -27,7 +27,7 @@
 
 ## 7. Ejecutar Playwright
 
-- [x] 7.1 TS-0146 and TS-0031/0143 green (see PR)
+- [x] 7.1 TS-0146 9/9 over 3 repeats; TS-0031/0143 18/18 (see PR)
 
 ## 8. Gate 3 — Actualizar documentación permanente
 

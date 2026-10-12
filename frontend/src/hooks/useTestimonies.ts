@@ -24,7 +24,8 @@ export function useGenerateTestimony() {
 
 /** Body of the bare POST /testimonies (#1555): the deed is required, the rest as typed. */
 export interface TestimonyCreate {
-  deed: { idDeed: number };
+  /** `number` is required by the API (primitive in DtoDeed). */
+  deed: { idDeed: number; number: number };
   number: number;
   notes: string;
   flagged: boolean;
