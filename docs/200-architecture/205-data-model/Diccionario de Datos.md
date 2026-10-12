@@ -392,7 +392,7 @@ People, natural or legal, who take part in the practice.
 | `tax_id` | TEXT | No | No | No | NULL | — | Tax id (`CUIT` / `CUIL`). Those stored names stay. The seeded sample `20-20123456-3` stays. |
 | `sex` | TEXT | No | No | No | NULL | — | Legal sex. Stored values `Masculino` and `Femenino` stay. The seeded sample `M` stays. |
 | `birth_date` | DATE | No | No | No | NULL | — | Birth date. The seeded sample `1980-01-15` stays. |
-| `marital_status` | TEXT | No | No | No | NULL | — | Marital status. Stored values `Soltero` and `Casado` stay. |
+| `marital_status` | TEXT | No | No | No | NULL | — | Marital status. Stored values `Soltero` and `Casado` stay. The seeded sample `Casado` stays. |
 | `marriage_count` | INTEGER | No | No | No | NULL | — | Marriage count. The seeded sample `1` stays. |
 | `occupation` | TEXT | No | No | No | NULL | — | Occupation. Free text. The seeded sample `Escribano` stays. |
 | `address` | TEXT | No | No | No | NULL | — | Residential or legal address. The seeded sample `Av. Principal 123` stays. |
@@ -640,7 +640,7 @@ Operator accounts (V9).
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
 | `username` | TEXT | No | No | Yes | — | — | Username (unique login). The seeded sample `admin` stays. |
 | `password` | TEXT | No | No | Yes | — | — | Password hash. The seeded account stores a hash of `admin`. |
-| `user_type` | TEXT | No | No | Yes | — | — | Legacy descriptive role. Stored values `Escribano`, `Empleado`, `EMPLEADO`, `ADMIN`, `ADMINISTRADOR`, and `ESCRIBANO` stay. |
+| `user_type` | TEXT | No | No | Yes | — | — | Legacy descriptive role. Stored values `Escribano`, `Empleado`, `EMPLEADO`, `ADMIN`, `ADMINISTRADOR`, and `ESCRIBANO` stay. The seeded sample `Escribano` stays. |
 | `status` | BOOLEAN | No | No | Yes | — | — | `true` when the account is active. The seeded sample stays `true`. |
 | `fk_id_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Linked person. The seeded account stays linked to the person `Garcia`. |
 | `fk_id_role` | INTEGER | No | Yes | No | NULL | `roles(id)` | Assigned security role (V9) |
@@ -671,9 +671,9 @@ Workflow nodes linked to management statuses (Flyway V7).
 | `version` | INTEGER | No | No | Yes | 0 | — | Optimistic lock |
 | `fk_workflow_definition_id` | INTEGER | No | Yes | Yes | — | `workflow_definition(id_workflow_definition)` | Parent workflow (ON DELETE CASCADE). The seeded rows stay on `Workflow de Gestión Estándar`. |
 | `fk_management_status_id` | INTEGER | No | Yes | Yes | — | `management_statuses(id)` | Management status this node represents. The live seeded graph stays: `Iniciada` as `INITIAL`; `En Tramite`, `Documentacion Completa`, `Gestion con Escritura Sin Firmar`, `Gestion con Escritura Firmada`, `Testimonio Generado`, and `Testimonio Ingresado a Inscripcion` as `INTERMEDIATE`; `Archivada` and `Testimonio Retirado` as `FINAL`. |
-| `node_type` | TEXT | No | No | Yes | — | — | Node type: `INITIAL`, `INTERMEDIATE`, `FINAL` |
-| `position_x` | REAL | No | No | No | NULL | — | Visual X coordinate in the designer |
-| `position_y` | REAL | No | No | No | NULL | — | Visual Y coordinate in the designer |
+| `node_type` | TEXT | No | No | Yes | — | — | Node type: `INITIAL`, `INTERMEDIATE`, `FINAL`. The live seeded graph uses all three. |
+| `position_x` | REAL | No | No | No | NULL | — | Visual X coordinate in the designer. The seeded nodes stay without a coordinate. |
+| `position_y` | REAL | No | No | No | NULL | — | Visual Y coordinate in the designer. The seeded nodes stay without a coordinate. |
 
 ---
 

@@ -7,7 +7,7 @@ people,Strong,identification_number,,no,Text,,,,Primary identification number. T
 people,Strong,tax_id,,yes,Text,,,x,Tax id (`CUIT` / `CUIL`). Those stored names stay. The seeded sample `20-20123456-3` stays.
 people,Strong,sex,,yes,Text,,,x,Legal sex. Stored values `Masculino` and `Femenino` stay. The seeded sample `M` stays.
 people,Strong,birth_date,,yes,Date,,,x,Birth date. The seeded sample `1980-01-15` stays.
-people,Strong,marital_status,,yes,Text,,,x,Marital status. Stored values `Soltero` and `Casado` stay.
+people,Strong,marital_status,,yes,Text,,,x,Marital status. Stored values `Soltero` and `Casado` stay. The seeded sample `Casado` stays.
 people,Strong,marriage_count,,yes,Integer,,,x,Marriage count. The seeded sample `1` stays.
 people,Strong,occupation,,yes,Text,,,x,Occupation. Free text. The seeded sample `Escribano` stays.
 people,Strong,address,,yes,Text,,,x,Residential or legal address. The seeded sample `Av. Principal 123` stays.
@@ -39,7 +39,7 @@ users,Weak / strong,version,,no,Integer,,,,Optimistic lock
 users,Weak / strong,id,PK,no,Integer,x,,,Unique id of the user
 users,Weak / strong,username,,no,Text,,,,Username (unique login). The seeded sample `admin` stays.
 users,Weak / strong,password,,no,Text,,,,Password hash. The seeded account stores a hash of `admin`.
-users,Weak / strong,user_type,,no,Text,,,,"Legacy descriptive role. Stored values `Escribano`, `Empleado`, `EMPLEADO`, `ADMIN`, `ADMINISTRADOR`, and `ESCRIBANO` stay."
+users,Weak / strong,user_type,,no,Text,,,,"Legacy descriptive role. Stored values `Escribano`, `Empleado`, `EMPLEADO`, `ADMIN`, `ADMINISTRADOR`, and `ESCRIBANO` stay. The seeded sample `Escribano` stays."
 users,Weak / strong,status,,no,Boolean,,,,`true` when the account is active. The seeded sample stays `true`.
 users,Weak / strong,fk_id_person,FK,yes,Integer,,x,x,Linked person. The seeded account stays linked to the person `Garcia`.
 users,Weak / strong,fk_id_role,FK,yes,Integer,,x,x,Assigned security role (V9)
@@ -172,9 +172,9 @@ workflow_node,Weak,version,,no,Integer,,,,Optimistic lock
 workflow_node,Weak,id_workflow_node,PK,no,Integer,x,,,Unique id of the node
 workflow_node,Weak,fk_workflow_definition_id,FK,no,Integer,,x,,Parent workflow (ON DELETE CASCADE). The seeded rows stay on `Workflow de Gestión Estándar`.
 workflow_node,Weak,fk_management_status_id,FK,no,Integer,,x,,"Management status this node represents. The live seeded graph stays: `Iniciada` as `INITIAL`; `En Tramite`, `Documentacion Completa`, `Gestion con Escritura Sin Firmar`, `Gestion con Escritura Firmada`, `Testimonio Generado`, and `Testimonio Ingresado a Inscripcion` as `INTERMEDIATE`; `Archivada` and `Testimonio Retirado` as `FINAL`."
-workflow_node,Weak,node_type,,no,Text,,,,"Node type: `INITIAL`, `INTERMEDIATE`, `FINAL`"
-workflow_node,Weak,position_x,,yes,Real,,,x,Visual X coordinate in the designer
-workflow_node,Weak,position_y,,yes,Real,,,x,Visual Y coordinate in the designer
+workflow_node,Weak,node_type,,no,Text,,,,"Node type: `INITIAL`, `INTERMEDIATE`, `FINAL`. The live seeded graph uses all three."
+workflow_node,Weak,position_x,,yes,Real,,,x,Visual X coordinate in the designer. The seeded nodes stay without a coordinate.
+workflow_node,Weak,position_y,,yes,Real,,,x,Visual Y coordinate in the designer. The seeded nodes stay without a coordinate.
 workflow_transition,Weak,version,,no,Integer,,,,Optimistic lock
 workflow_transition,Weak,id_workflow_transition,PK,no,Integer,x,,,Unique id of the transition
 workflow_transition,Weak,fk_workflow_definition_id,FK,no,Integer,,x,,Parent workflow (ON DELETE CASCADE). The seeded rows stay on `Workflow de Gestión Estándar`.
