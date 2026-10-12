@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired query comments** (#1490, CU75): the budget filter comment names
+  `status`, and the identification-type comment names the column
+  `characters`. Catalog keys `estadoFilter` and `resumen.numeroGestion`
+  stay. The pagination check still rejects a `numero` query.
 - **Application tour search queries** (#1490, CU75): the status search
   uses the stored label `Iniciada`, and the workflow search uses
   `Workflow`. The seeded name `Workflow de Gestión Estándar` stays.
