@@ -64,6 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Person demographic labels** (#1490, CU75): sex names `Masculino` and
+  `Femenino`. Marital status names `Soltero` and `Casado`.
 - **User type labels** (#1490, CU75): the user-type column names
   `Escribano`, `Empleado`, `EMPLEADO`, `ADMIN`, `ADMINISTRADOR`, and
   `ESCRIBANO`.
