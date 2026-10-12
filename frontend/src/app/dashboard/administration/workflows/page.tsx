@@ -17,12 +17,16 @@ import {
   useDeleteWorkflowDefinition,
 } from "@/hooks/useWorkflow";
 import { presentMutationError } from "@/lib/mutation-error";
+import { apiGet, apiPost } from "@/lib/api-client";
+import { validateWorkflow } from "@/lib/workflow-validate";
+import type { WorkflowNode, WorkflowTransition } from "@/types";
 import type { WorkflowDefinition } from "@/types";
 
 const EMPTY: Partial<WorkflowDefinition> = { name: "", description: "", active: false };
 
 export default function WorkflowsPage() {
   const t = useTranslations("administracion.workflows");
+  const tProblem = useTranslations("workflowViewer.problemList");
   const tc = useTranslations("common");
   const { data = [], isLoading } = useWorkflowDefinitions();
   const createWf = useCreateWorkflowDefinition();
@@ -35,6 +39,8 @@ export default function WorkflowsPage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
+  // #1577: an invalid workflow cannot be saved as active; the backend validate decides.
+  const [activateErrors, setActivateErrors] = useState<string[]>([]);
 
   const filtered = search.trim()
     ? data.filter((wf) => wf.name?.toLowerCase().includes(search.toLowerCase()))
@@ -42,14 +48,36 @@ export default function WorkflowsPage() {
 
   function openCreate() {
     setEditing(EMPTY);
+    setActivateErrors([]);
     setIsEditMode(false);
     setModalOpen(true);
   }
 
   function openEdit(wf: WorkflowDefinition) {
     setEditing(wf);
+    setActivateErrors([]);
     setIsEditMode(true);
     setModalOpen(true);
+  }
+
+  /** Backend decides; the message comes from the same rules on the client, in the user's language. */
+  async function localizedProblems(id: number | undefined, fallback: string[]): Promise<string[]> {
+    if (!id) return fallback.length ? fallback : [t("activateInvalid")];
+    try {
+      const [nodes, transitions] = await Promise.all([
+        apiGet<WorkflowNode[]>(`/workflow-node/by-workflow/${id}`),
+        apiGet<WorkflowTransition[]>(`/workflow-transition/by-workflow/${id}`),
+      ]);
+      const { problems } = validateWorkflow(nodes, transitions);
+      if (problems.length === 0) return fallback;
+      return problems.map((p) =>
+        tProblem(p.code, {
+          names: p.nodeIds.map((n) => nodes.find((x) => x.id === n)?.statusManagementName ?? `#${n}`).join(", "),
+        }),
+      );
+    } catch {
+      return fallback.length ? fallback : [t("activateInvalid")];
+    }
   }
 
   async function handleSave() {
@@ -59,6 +87,17 @@ export default function WorkflowsPage() {
     }
     setSaving(true);
     try {
+      if (editing.active) {
+        const result = isEditMode && editing.id
+          ? await apiPost<{ valid: boolean; errors: string[] }>(`/workflow-definition/${editing.id}/validate`, {})
+          : { valid: false, errors: [t("activateNewHasNoNodes")] };
+        if (!result.valid) {
+          setActivateErrors(await localizedProblems(editing.id, result.errors ?? []));
+          toast.error(t("activateInvalid"));
+          return;
+        }
+      }
+      setActivateErrors([]);
       if (isEditMode && editing.id) {
         await updateWf.mutateAsync({ id: editing.id, data: editing });
         toast.success(t("updated"));
@@ -182,6 +221,17 @@ export default function WorkflowsPage() {
                 </label>
               </FormField>
             </FormSection>
+            {activateErrors.length > 0 && (
+              <div role="alert" className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-sm text-destructive" data-testid="workflow-activate-errors">
+                <p className="font-semibold mb-1">{t("activateInvalid")}</p>
+                <ul className="list-disc list-inside">
+                  {activateErrors.map((e, i) => <li key={i}>{e}</li>)}
+                </ul>
+                {isEditMode && editing.id && (
+                  <Link className="underline" href={`/dashboard/administration/workflows/${editing.id}`}>{t("openEditorToFix")}</Link>
+                )}
+              </div>
+            )}
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>{tc("cancel")}</Button>
               <Button onClick={handleSave} disabled={saving} data-testid="btn-save-workflow">
