@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded sample links** (#1490, CU75): the person sample stays identified
+  by `DNI`. The login stays linked to `Garcia`. Management `1001` stays
+  `Documentacion Completa` and management `1002` stays `En Tramite`. History
+  samples stay `Iniciada`, `En Tramite`, and `Documentacion Completa`.
+  Procedure `1` stays `Compraventa` and procedure `2` stays `Donacion`.
 - **Seeded workflow graph** (#1490, CU75): the seeded workflow stays active
   and assigned to `Compraventa`, `Donacion`, and `Hipoteca`. `Sucesion` and
   `Poder` stay unassigned. The live nodes stay `Iniciada` (`INITIAL`), the
