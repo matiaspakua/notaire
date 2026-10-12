@@ -4,9 +4,9 @@
 
 **Version:** 3.1  
 **Database:** PostgreSQL 16  
-**Migrations:** Flyway (V1 through V45)  
-**Updated:** 11 October 2026  
-**Status:** Aligned with the current PostgreSQL schema and JPA mappings (#1222, #1490). 37 Flyway tables and 49 foreign keys. Column names follow V45 (`fk_id_budget`, `birth_date`, `node_type`, and the other renames). `identificaciones` is not created by Flyway (see section 6). V14 removed `budgets.fk_id_tramite`. Workflows are V7/V8. Roles are V9.
+**Migrations:** Flyway (V1 through V46)  
+**Updated:** 12 October 2026  
+**Status:** Aligned with the current PostgreSQL schema and JPA mappings (#1222, #1490). 37 Flyway tables and 49 foreign keys. Column names follow V45 (`fk_id_budget`, `birth_date`, `node_type`, and the other renames). Constraint names follow V46 (`users_pkey` and the names that follow the current tables). `identificaciones` is not created by Flyway (see section 6). V14 removed `budgets.fk_id_tramite`. Workflows are V7/V8. Roles are V9.
 
 ---
 
@@ -30,7 +30,7 @@ This data dictionary lists the tables, columns, data types, constraints, and for
 
 ---
 
-## 2. Table index (37 tables, Flyway V1–V45)
+## 2. Table index (37 tables, Flyway V1–V46)
 
 **Legacy entity:** `identificaciones` was documented earlier and exists in archived init scripts and in the JPA entity. Flyway V1–V44 never create it. See section 6.1.
 
@@ -80,7 +80,7 @@ This data dictionary lists the tables, columns, data types, constraints, and for
 
 ### Active schema
 
-The database is the result of Flyway V1–V45. Changes that matter for this model:
+The database is the result of Flyway V1–V46. Changes that matter for this model:
 
 - V1: base relational schema for people, protocol, procedures, budgets, and documents.
 - V3/V4: missing columns on `items`, `folio_types`, and `testimonies`.
@@ -92,6 +92,7 @@ The database is the result of Flyway V1–V45. Changes that matter for this mode
 - V14: `budgets.fk_id_tramite` was removed. The canonical link is `procedures.fk_id_budget` (one to many).
 - V43: `revoked_tokens`, the JWT revocation list for logout (issue #676); no foreign key.
 - V45: renames the remaining Spanish columns (`fk_id_budget`, `birth_date`, `node_type`, and the rest). Applied migration filenames V1–V44 stay as recorded.
+- V46: renames the Spanish constraint names PostgreSQL kept after the table and column renames (`users_pkey` and the names that follow the current tables). Applied migration files V1–V45 stay as recorded.
 
 ### Entity, key, and compensation matrix
 

@@ -6,7 +6,7 @@
 >
 > **Changelog v3.4**: §6 points at [GESTION.md](../203-design/GESTION.md) for the case-process analysis. States stay in CICLO-DE-VIDA.md.
 >
-> **Changelog v3.3**: English names for the current schema (Java 26, Spring Boot 4.1.1, Flyway through V45). §6 points at [CICLO-DE-VIDA.md](../203-design/CICLO-DE-VIDA.md) as the single domain lifecycle. Stored labels such as `Escribano` stay. Existing PlantUML runtime sketches stay legacy (ADR-027).
+> **Changelog v3.3**: English names for the current schema (Java 26, Spring Boot 4.1.1, Flyway through V46). §6 points at [CICLO-DE-VIDA.md](../203-design/CICLO-DE-VIDA.md) as the single domain lifecycle. Stored labels such as `Escribano` stay. Existing PlantUML runtime sketches stay legacy (ADR-027).
 >
 > **Changelog v3.2**: Delivery tracking points at [Notaire — Delivery Board #1](https://github.com/users/matiaspakua/projects/1) (Project #4 is gone). In-repo module ownership: [MODULE-OWNERSHIP.md](../../300-development/MODULE-OWNERSHIP.md) / ADR-026. Active diagrams: Mermaid only (ADR-027). Technical docs also render on GitHub Pages `/docs/`.
 >
@@ -627,7 +627,7 @@ procedureType }o--o| workflowDefinition
 ```
 
 This is a simplified view of the core entities. The full 37-table
-schema — every column, type, foreign key, and its Flyway provenance (V1 through V45)
+schema — every column, type, foreign key, and its Flyway provenance (V1 through V46)
 — is maintained in the
 [Diccionario de Datos](../205-data-model/Diccionario%20de%20Datos.md), with the
 complete ERD at
@@ -918,7 +918,7 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 
 - **Flyway** is the single source of truth for database schema.
 - Migrations located at `backend-api/src/main/resources/db/migration/`.
-- Docker starts PostgreSQL **empty**; Flyway applies the versioned migrations on backend startup, through V45. Applied files V1–V44 stay immutable.
+- Docker starts PostgreSQL **empty**; Flyway applies the versioned migrations on backend startup, through V46. Applied files V1–V45 stay immutable.
 - Historical `init-db/` scripts archived at `docs/000-archive/init-db/`.
 - Repeatable migrations (`R__`) used for reversible operations.
 
@@ -942,6 +942,7 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 | V14 | Drop `budgets.fk_id_tramite`. The canonical link is `procedures.fk_id_budget` |
 | R14 | Manual rollback script that restores `budgets.fk_id_tramite`. Flyway does not run it |
 | V45 | Rename the remaining Spanish identifiers. `R45` reverses that rename |
+| V46 | Rename Spanish constraint names. `R46` restores the previous names |
 
 ### 8.5 Observability
 
