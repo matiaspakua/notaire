@@ -64,6 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded person place** (#1490, CU75): locality and province cite
+  `Buenos Aires`. Nationality cites `Argentina`.
 - **Seeded person sex code** (#1490, CU75): legal sex keeps `Masculino` and
   `Femenino`. The seeded sample `M` stays.
 - **Seeded person contact** (#1490, CU75): the person address sample is
