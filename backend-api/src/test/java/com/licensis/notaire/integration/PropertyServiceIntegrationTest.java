@@ -53,7 +53,7 @@ class PropertyServiceIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("Should validate fiscal valuation correctly")
     void shouldValidateFiscalValuationCorrectly() {
         Property property = new Property();
-        property.setCadastralDesignation("Casa valuada");
+        property.setCadastralDesignation("Appraised house");
         property.setAddress("House with valuation");
         property.setFiscalAppraisal(new java.math.BigDecimal("150000"));
         Property saved = propertyRepository.save(property);
