@@ -21,12 +21,15 @@ import { ApiError } from "@/lib/api-client";
 import { useManagementCurrentStatus } from "@/hooks/useManagements";
 import { ManagementCurrentStatus } from "@/app/dashboard/managements/ManagementCurrentStatus";
 
+let qc: QueryClient;
 function wrapper({ children }: { children: ReactNode }) {
-  const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return <QueryClientProvider client={qc}>{children}</QueryClientProvider>;
 }
 
-beforeEach(() => apiGet.mockReset());
+beforeEach(() => {
+  apiGet.mockReset();
+  qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+});
 
 describe("useManagementCurrentStatus (#1553)", () => {
   it("calls GET /managements/{id}/current-status", async () => {
@@ -64,7 +67,7 @@ describe("ManagementCurrentStatus (#1553)", () => {
   });
 
   it("shows 'Sin estado registrado' on 404", async () => {
-    apiGet.mockRejectedValue(new ApiError(404, "/managements/42/current-status", ""));
+    apiGet.mockImplementation(() => Promise.reject(new ApiError(404, "/managements/42/current-status", "")));
     render(<ManagementCurrentStatus managementId={42} />, { wrapper });
     expect(await screen.findByTestId("management-current-status-empty")).toHaveTextContent(
       "gestiones.estadoActual.sinEstado",

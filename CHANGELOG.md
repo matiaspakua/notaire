@@ -2728,6 +2728,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Current status in the case summary** (issue #1553, CU14): the managements case summary
+  has an "Estado actual" section (status, date, notes) read from
+  `GET /managements/{id}/current-status`, which is off the #1250 allowlist (bucket C). It shows
+  "Sin estado registrado" on 404 and refreshes after a CU83 transition. New Playwright TS-0144.
+
 - **Filter payments by date** (issue #1557, CU47): the payments page has "Desde" / "Hasta"
   date inputs (kept in `?from=&to=`), both days inclusive. Without a budget it lists
   `GET /payments/date` (off the #1250 allowlist; the reachability scanner also counts that call for `GET /payments/{id}`, so that entry goes too); with a budget it narrows that budget's
