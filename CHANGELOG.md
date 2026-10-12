@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Application tour search queries** (#1490, CU75): the status search
+  uses the stored label `Iniciada`, and the workflow search uses
+  `Workflow`. The seeded name `Workflow de Gestión Estándar` stays.
 - **Flyway guide examples** (#1490, CU75): the migration guide examples
   reference `users(id)`, `phone`, `mobile_phone`, and `procedure_types`.
   Applied migrations `V1` and `V26` keep `usuarios`, `id_usuario`,
