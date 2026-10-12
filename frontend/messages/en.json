@@ -1255,6 +1255,25 @@
             "duplicate": "That transition already exists.",
             "incomplete": "Select the destination status."
           }
+        },
+        "list": {
+          "views": "Workflow view",
+          "graphTab": "Diagram",
+          "listTab": "List view",
+          "statuses": "Statuses",
+          "status": "Status",
+          "transitions": "Transitions",
+          "fromTo": "From → to",
+          "actions": "Actions",
+          "typeOf": "Type of {name}",
+          "deleteStatus": "Delete status {name}",
+          "descriptionOf": "Description of {name}",
+          "saveDescription": "Save the description of {name}",
+          "deleteTransition": "Delete transition {name}",
+          "delete": "Delete",
+          "addStatus": "Add status",
+          "from": "Origin status",
+          "fromPlaceholder": "Select origin..."
         }
       },
       "activateInvalid": "Cannot activate: the workflow is not valid.",
@@ -1532,7 +1551,8 @@
       "multipleStart": "There is more than one start status: {names}.",
       "noFinal": "At least one final status is missing.",
       "unreachable": "These statuses are not reachable from the start: {names}."
-    }
+    },
+    "outgoing": "{count, plural, =0 {no outgoing transitions} one {1 outgoing transition} other {# outgoing transitions}}"
   },
   "status": {
     "folio": {

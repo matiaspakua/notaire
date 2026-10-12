@@ -1255,6 +1255,25 @@
             "duplicate": "Esa transición ya existe.",
             "incomplete": "Selecciona el estado destino."
           }
+        },
+        "list": {
+          "views": "Vista del workflow",
+          "graphTab": "Diagrama",
+          "listTab": "Vista de lista",
+          "statuses": "Estados",
+          "status": "Estado",
+          "transitions": "Transiciones",
+          "fromTo": "Desde → hasta",
+          "actions": "Acciones",
+          "typeOf": "Tipo de {name}",
+          "deleteStatus": "Eliminar el estado {name}",
+          "descriptionOf": "Descripción de {name}",
+          "saveDescription": "Guardar la descripción de {name}",
+          "deleteTransition": "Eliminar la transición {name}",
+          "delete": "Eliminar",
+          "addStatus": "Agregar estado",
+          "from": "Estado origen",
+          "fromPlaceholder": "Seleccionar origen..."
         }
       },
       "activateInvalid": "No se puede activar: el workflow no es válido.",
@@ -1532,7 +1551,8 @@
       "multipleStart": "Hay más de un estado inicial: {names}.",
       "noFinal": "Falta al menos un estado final.",
       "unreachable": "Estos estados no se alcanzan desde el inicio: {names}."
-    }
+    },
+    "outgoing": "{count, plural, =0 {sin transiciones salientes} one {1 transición saliente} other {# transiciones salientes}}"
   },
   "status": {
     "folio": {
