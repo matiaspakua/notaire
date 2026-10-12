@@ -394,7 +394,7 @@ People, natural or legal, who take part in the practice.
 | `birth_date` | DATE | No | No | No | NULL | — | Birth date |
 | `marital_status` | TEXT | No | No | No | NULL | — | Marital status. Stored values `Soltero` and `Casado` stay. |
 | `marriage_count` | INTEGER | No | No | No | NULL | — | Marriage count |
-| `occupation` | TEXT | No | No | No | NULL | — | Occupation |
+| `occupation` | TEXT | No | No | No | NULL | — | Occupation. Free text. The seeded sample `Escribano` stays. |
 | `address` | TEXT | No | No | No | NULL | — | Residential or legal address |
 | `email` | TEXT | No | No | No | NULL | — | Primary email |
 | `notary_registration_number` | INTEGER | No | No | No | NULL | — | Notary registration number |
@@ -405,7 +405,7 @@ People, natural or legal, who take part in the practice.
 | `mobile_phone` | TEXT | No | No | No | NULL | — | Mobile phone |
 | `secondary_email` | TEXT | No | No | No | NULL | — | Secondary or historical email |
 | `nationality` | TEXT | No | No | No | NULL | — | Nationality |
-| `profession` | TEXT | No | No | No | NULL | — | Profession or trade |
+| `profession` | TEXT | No | No | No | NULL | — | Profession or trade. Free text. The seeded sample `Escribano` stays. |
 | `notes` | TEXT | No | No | No | NULL | — | File notes and background |
 | `fk_id_identification_type` | INTEGER | No | Yes | No | NULL | `identification_types(id)` | Primary identification type |
 | `is_notary` | BOOLEAN | No | No | Yes | false | — | `true` when the person is a licensed notary |

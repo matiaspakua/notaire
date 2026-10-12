@@ -9,7 +9,7 @@ people,Strong,sex,,yes,Text,,,x,Legal sex. Stored values `Masculino` and `Femeni
 people,Strong,birth_date,,yes,Date,,,x,Birth date
 people,Strong,marital_status,,yes,Text,,,x,Marital status. Stored values `Soltero` and `Casado` stay.
 people,Strong,marriage_count,,yes,Integer,,,x,Marriage count
-people,Strong,occupation,,yes,Text,,,x,Occupation
+people,Strong,occupation,,yes,Text,,,x,Occupation. Free text. The seeded sample `Escribano` stays.
 people,Strong,address,,yes,Text,,,x,Residential or legal address
 people,Strong,email,,yes,Text,,,x,Primary email
 people,Strong,notary_registration_number,,yes,Integer,,,x,Notary registration number
@@ -20,7 +20,7 @@ people,Strong,phone,,yes,Text,,,x,Landline
 people,Strong,mobile_phone,,yes,Text,,,x,Mobile phone
 people,Strong,secondary_email,,yes,Text,,,x,Secondary or historical email
 people,Strong,nationality,,yes,Text,,,x,Nationality
-people,Strong,profession,,yes,Text,,,x,Profession or trade
+people,Strong,profession,,yes,Text,,,x,Profession or trade. Free text. The seeded sample `Escribano` stays.
 people,Strong,notes,,yes,Text,,,x,File notes and background
 people,Strong,fk_id_identification_type,FK,yes,Integer,,x,x,Primary identification type
 people,Strong,is_notary,,no,Boolean,,,,`true` when the person is a licensed notary
