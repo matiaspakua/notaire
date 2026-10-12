@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { NotaireIcon } from "@/components/ui/notaire-icon";
@@ -23,6 +24,14 @@ import { RequiredDocumentsDialog } from "./RequiredDocumentsDialog";
 const EMPTY: Partial<ProcedureType> = { name: "", notes: "" };
 
 export default function ProceduresPage() {
+  return (
+    <Suspense>
+      <ProceduresList />
+    </Suspense>
+  );
+}
+
+function ProceduresList() {
   const t = useTranslations("administracion.tramites");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -41,6 +50,13 @@ export default function ProceduresPage() {
   const [search, setSearch] = useState("");
   const [selectedWorkflowId, setSelectedWorkflowId] = useState<string>("");
   const [checklistFor, setChecklistFor] = useState<ProcedureType | null>(null);
+
+  // #1554: ?checklist=<idProcedureType> (from the "Todas las plantillas" overview) opens that editor until closed.
+  const searchParams = useSearchParams();
+  const deepLinkId = Number(searchParams.get("checklist"));
+  const [deepLinkDismissed, setDeepLinkDismissed] = useState(false);
+  const deepLinkTarget = !deepLinkDismissed && deepLinkId ? (data.find((p) => p.idProcedureType === deepLinkId) ?? null) : null;
+  const dialogFor = checklistFor ?? deepLinkTarget;
 
   const { data: filtered = data } = useQuery({
     queryKey: ["procedureTypes", "search", search, data],
@@ -165,7 +181,13 @@ export default function ProceduresPage() {
         emptyMessage={t("noData")}
       />
 
-      <RequiredDocumentsDialog procedureType={checklistFor} onClose={() => setChecklistFor(null)} />
+      <RequiredDocumentsDialog
+        procedureType={dialogFor}
+        onClose={() => {
+          setChecklistFor(null);
+          setDeepLinkDismissed(true);
+        }}
+      />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>

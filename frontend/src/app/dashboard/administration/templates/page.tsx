@@ -16,6 +16,7 @@ import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { presentMutationError } from "@/lib/mutation-error";
 import type { BudgetTemplate, ProcedureType, Concept, DocumentType, DocumentCostTemplate } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
+import { AllProcedureTemplates } from "./AllProcedureTemplates";
 
 interface TemplateKey {
   procedureTypeId: number;
@@ -393,6 +394,8 @@ export default function TemplatesPage() {
           </FormContainer>
         </DialogContent>
       </Dialog>
+
+      <AllProcedureTemplates />
     </div>
   );
 }

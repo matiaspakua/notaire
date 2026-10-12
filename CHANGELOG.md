@@ -2728,6 +2728,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **All document templates overview** (issue #1554, CU79): Administración → Plantillas has a
+  "Todas las plantillas de documentos" table (procedure type, document type, condition, notes)
+  read from `GET /procedure-templates`, which is off the #1250 allowlist (bucket C). It filters
+  client-side by procedure and document, and each row opens that procedure's "Documentos
+  requeridos" editor (`/dashboard/administration/procedures?checklist=<id>`). New Playwright TS-0145.
+
 - **Filter payments by date** (issue #1557, CU47): the payments page has "Desde" / "Hasta"
   date inputs (kept in `?from=&to=`), both days inclusive. Without a budget it lists
   `GET /payments/date` (off the #1250 allowlist; the reachability scanner also counts that call for `GET /payments/{id}`, so that entry goes too); with a budget it narrows that budget's
