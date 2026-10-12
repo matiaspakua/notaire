@@ -331,7 +331,7 @@ export default function WorkflowEditorPage() {
         title={workflow?.name ?? t("title")}
         description={workflow?.description ?? ""}
         actions={
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button variant="secondary" onClick={() => router.back()}>
               {t("back")}
             </Button>
@@ -347,7 +347,7 @@ export default function WorkflowEditorPage() {
                 {t("addNode")}
               </Button>
             )}
-            {editMode && (
+            {canEditGraph && (
               <Button variant="secondary" onClick={handleAutoLayout} disabled={updateNode.isPending} data-testid="btn-auto-layout">
                 {t("autoLayout")}
               </Button>

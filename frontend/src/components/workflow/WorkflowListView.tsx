@@ -94,7 +94,7 @@ export function WorkflowListView(props: ListViewProps) {
                     </th>
                     <td className="p-2">
                       <select
-                        className={FIELD}
+                        className={`${FIELD} min-w-[8.5rem]`}
                         aria-label={t("list.typeOf", { name: n.label })}
                         value={n.type}
                         disabled={!editMode}
