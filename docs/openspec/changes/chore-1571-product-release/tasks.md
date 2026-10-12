@@ -70,8 +70,8 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Push the branch
-- [ ] 10.2 Open the PR
+- [x] 10.1 Pushed `cursor/release-product-schema-db96`
+- [x] 10.2 Draft PR #1572
 - [ ] 10.3 Required workflows
 - [ ] 10.4 Gate 4 pending review
 - [ ] 10.5 PR number pending

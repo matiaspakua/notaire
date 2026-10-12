@@ -16,7 +16,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `cursor/release-product-schema-db96` | from `origin/main` |
 | Tasks | `tasks.md` | groups 1–8 ticked; 9–12 pending PR/merge |
 | Commits | `673be81d` | recorded |
-| Pull Request | | pending |
+| Pull Request | https://github.com/matiaspakua/notaire/pull/1572 | draft |
 | CI run | | pending |
 | Merge commit | | pending |
 | Release / tag | | pending — do not merge the open release-please PR first |
