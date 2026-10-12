@@ -276,7 +276,7 @@ File that groups one or more related procedures.
 | `heading` | TEXT | No | No | Yes | — | — | Heading that describes the management. Stored values `Compraventa Lote 12 — Familia Pérez` and `Donación — Sucesión Gómez` stay. |
 | `notes` | TEXT | No | No | No | NULL | — | Working notes |
 | `fk_id_notary_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Notary in charge |
-| `fk_id_management_status` | INTEGER | No | Yes | No | NULL | `management_statuses(id)` | Current operational status |
+| `fk_id_management_status` | INTEGER | No | Yes | No | NULL | `management_statuses(id)` | Current operational status. Seeded samples stay `Documentacion Completa` for management `1001` and `En Tramite` for management `1002`. |
 | `pending_debt_on_archive` | BOOLEAN | No | No | No | NULL | — | `true` when the management was archived with a pending debt |
 
 ---
@@ -292,7 +292,7 @@ Chronological history of status changes for a deed management.
 | `event_date` | DATE | No | No | Yes | — | — | Date of the status change. Seeded dates `2026-05-02`, `2026-05-09`, `2026-05-28`, `2026-05-20`, and `2026-06-01` stay. |
 | `notes` | TEXT | No | No | No | NULL | — | Reason or attestation for the status change. Stored notes `Apertura de la gestión`, `Trámite de compraventa en curso`, `Documentación completa recibida`, and `Trámite de donación en curso` stay. |
 | `fk_id_deed_management` | INTEGER | No | Yes | No | NULL | `deed_managements(id)` | Deed management that changed status |
-| `fk_id_management_status` | INTEGER | No | Yes | No | NULL | `management_statuses(id)` | Status reached |
+| `fk_id_management_status` | INTEGER | No | Yes | No | NULL | `management_statuses(id)` | Status reached. Seeded samples stay `Iniciada`, `En Tramite`, and `Documentacion Completa`. |
 
 ---
 
@@ -407,7 +407,7 @@ People, natural or legal, who take part in the practice.
 | `nationality` | TEXT | No | No | No | NULL | — | Nationality. The seeded sample `Argentina` stays. |
 | `profession` | TEXT | No | No | No | NULL | — | Profession or trade. Free text. The seeded sample `Escribano` stays. |
 | `notes` | TEXT | No | No | No | NULL | — | File notes and background |
-| `fk_id_identification_type` | INTEGER | No | Yes | No | NULL | `identification_types(id)` | Primary identification type |
+| `fk_id_identification_type` | INTEGER | No | Yes | No | NULL | `identification_types(id)` | Primary identification type. The seeded sample stays `DNI`. |
 | `is_notary` | BOOLEAN | No | No | Yes | false | — | `true` when the person is a licensed notary. The seeded sample stays `true`. |
 
 ---
@@ -609,7 +609,7 @@ One procedure instance (V13/V14).
 | `number` | INTEGER | No | No | No | NULL | — | Procedure serial number (optional since V13). Seeded numbers `1` and `2` stay. |
 | `name` | TEXT | No | No | No | NULL | — | Descriptive heading (optional since V13). Stored values `Compraventa inmueble Lote 12` and `Donación a herederos` stay. |
 | `notes` | TEXT | No | No | No | NULL | — | Instructions or observations |
-| `fk_id_procedure_type` | INTEGER | No | Yes | No | NULL | `procedure_types(id)` | Procedure type |
+| `fk_id_procedure_type` | INTEGER | No | Yes | No | NULL | `procedure_types(id)` | Procedure type. Seeded samples stay `Compraventa` for procedure `1` and `Donacion` for procedure `2`. |
 | `fk_id_deed_management` | INTEGER | No | Yes | No | NULL | `deed_managements(id)` | Deed management that groups it (null for auxiliary work) |
 | `fk_id_deed` | INTEGER | No | Yes | No | NULL | `deeds(id)` | Resulting deed |
 | `fk_id_budget` | INTEGER | No | Yes | No | NULL | `budgets(id)` | Base budget (V14) |
@@ -642,7 +642,7 @@ Operator accounts (V9).
 | `password` | TEXT | No | No | Yes | — | — | Password hash. The seeded account stores a hash of `admin`. |
 | `user_type` | TEXT | No | No | Yes | — | — | Legacy descriptive role. Stored values `Escribano`, `Empleado`, `EMPLEADO`, `ADMIN`, `ADMINISTRADOR`, and `ESCRIBANO` stay. |
 | `status` | BOOLEAN | No | No | Yes | — | — | `true` when the account is active. The seeded sample stays `true`. |
-| `fk_id_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Linked person |
+| `fk_id_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Linked person. The seeded account stays linked to the person `Garcia`. |
 | `fk_id_role` | INTEGER | No | Yes | No | NULL | `roles(id)` | Assigned security role (V9) |
 
 ---

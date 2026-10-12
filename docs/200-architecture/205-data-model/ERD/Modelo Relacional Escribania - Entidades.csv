@@ -22,7 +22,7 @@ people,Strong,secondary_email,,yes,Text,,,x,Secondary or historical email. The s
 people,Strong,nationality,,yes,Text,,,x,Nationality. The seeded sample `Argentina` stays.
 people,Strong,profession,,yes,Text,,,x,Profession or trade. Free text. The seeded sample `Escribano` stays.
 people,Strong,notes,,yes,Text,,,x,File notes and background
-people,Strong,fk_id_identification_type,FK,yes,Integer,,x,x,Primary identification type
+people,Strong,fk_id_identification_type,FK,yes,Integer,,x,x,Primary identification type. The seeded sample stays `DNI`.
 people,Strong,is_notary,,no,Boolean,,,,`true` when the person is a licensed notary. The seeded sample stays `true`.
 identification_types,Strong,version,,no,Integer,,,,Optimistic lock
 identification_types,Strong,id,PK,no,Integer,x,,,Unique id of the document type
@@ -41,7 +41,7 @@ users,Weak / strong,username,,no,Text,,,,Username (unique login). The seeded sam
 users,Weak / strong,password,,no,Text,,,,Password hash. The seeded account stores a hash of `admin`.
 users,Weak / strong,user_type,,no,Text,,,,"Legacy descriptive role. Stored values `Escribano`, `Empleado`, `EMPLEADO`, `ADMIN`, `ADMINISTRADOR`, and `ESCRIBANO` stay."
 users,Weak / strong,status,,no,Boolean,,,,`true` when the account is active. The seeded sample stays `true`.
-users,Weak / strong,fk_id_person,FK,yes,Integer,,x,x,Linked person
+users,Weak / strong,fk_id_person,FK,yes,Integer,,x,x,Linked person. The seeded account stays linked to the person `Garcia`.
 users,Weak / strong,fk_id_role,FK,yes,Integer,,x,x,Assigned security role (V9)
 roles,Strong,version,,no,Integer,,,,Optimistic lock
 roles,Strong,id,PK,no,Integer,x,,,Unique id of the role
@@ -103,7 +103,7 @@ deed_managements,Strong,start_date,,no,Date,,,,Date the file was opened. Seeded 
 deed_managements,Strong,heading,,no,Text,,,,Heading that describes the management. Stored values `Compraventa Lote 12 — Familia Pérez` and `Donación — Sucesión Gómez` stay.
 deed_managements,Strong,notes,,yes,Text,,,x,Working notes
 deed_managements,Strong,fk_id_notary_person,FK,yes,Integer,,x,x,Notary in charge
-deed_managements,Strong,fk_id_management_status,FK,yes,Integer,,x,x,Current operational status
+deed_managements,Strong,fk_id_management_status,FK,yes,Integer,,x,x,"Current operational status. Seeded samples stay `Documentacion Completa` for management `1001` and `En Tramite` for management `1002`."
 deed_managements,Strong,pending_debt_on_archive,,yes,Boolean,,,x,`true` when the management was archived with a pending debt
 management_statuses,Strong,version,,no,Integer,,,,Optimistic lock
 management_statuses,Strong,id,PK,no,Integer,x,,,Management-status id
@@ -114,7 +114,7 @@ history,Weak,id,PK,no,Integer,x,,,History-row id
 history,Weak,event_date,,no,Date,,,,"Date of the status change. Seeded dates `2026-05-02`, `2026-05-09`, `2026-05-28`, `2026-05-20`, and `2026-06-01` stay."
 history,Weak,notes,,yes,Text,,,x,"Reason or attestation for the status change. Stored notes `Apertura de la gestión`, `Trámite de compraventa en curso`, `Documentación completa recibida`, and `Trámite de donación en curso` stay."
 history,Weak,fk_id_deed_management,FK,yes,Integer,,x,x,Deed management that changed status
-history,Weak,fk_id_management_status,FK,yes,Integer,,x,x,Status reached
+history,Weak,fk_id_management_status,FK,yes,Integer,,x,x,"Status reached. Seeded samples stay `Iniciada`, `En Tramite`, and `Documentacion Completa`."
 procedure_types,Strong,version,,no,Integer,,,,Optimistic lock
 procedure_types,Strong,id,PK,no,Integer,x,,,Procedure-type id
 procedure_types,Strong,name,,no,Text,,,,"Procedure-type name. Stored examples such as `Compraventa` and `Poder` stay. The seeded catalog also keeps `Donacion`, `Hipoteca`, and `Sucesion`."
@@ -129,7 +129,7 @@ procedures,Strong,id,PK,no,Integer,x,,,Unique id of the procedure
 procedures,Strong,number,,yes,Integer,,,x,Procedure serial number (optional since V13). Seeded numbers `1` and `2` stay.
 procedures,Strong,name,,yes,Text,,,x,Descriptive heading (optional since V13). Stored values `Compraventa inmueble Lote 12` and `Donación a herederos` stay.
 procedures,Strong,notes,,yes,Text,,,x,Instructions or observations
-procedures,Strong,fk_id_procedure_type,FK,yes,Integer,,x,x,Procedure type
+procedures,Strong,fk_id_procedure_type,FK,yes,Integer,,x,x,"Procedure type. Seeded samples stay `Compraventa` for procedure `1` and `Donacion` for procedure `2`."
 procedures,Strong,fk_id_deed_management,FK,yes,Integer,,x,x,Deed management that groups it (null for auxiliary work)
 procedures,Strong,fk_id_deed,FK,yes,Integer,,x,x,Resulting deed
 procedures,Strong,fk_id_budget,FK,yes,Integer,,x,x,Base budget (V14)
