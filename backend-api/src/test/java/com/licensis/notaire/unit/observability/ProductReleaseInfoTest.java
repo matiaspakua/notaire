@@ -74,4 +74,18 @@ class ProductReleaseInfoTest {
         Map<String, Object> components = (Map<String, Object>) notaire.get("components");
         assertThat(components).containsEntry("databaseSchema", "none");
     }
+
+    @Test
+    @DisplayName("Should report none when the Flyway bean is absent")
+    void shouldReportNoneWhenFlywayBeanIsAbsent() {
+        ProductReleaseInfoContributor contributor = new ProductReleaseInfoContributor("0.1.2", (Flyway) null);
+        Info.Builder builder = new Info.Builder();
+        contributor.contribute(builder);
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> notaire = (Map<String, Object>) builder.build().getDetails().get("notaire");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> components = (Map<String, Object>) notaire.get("components");
+        assertThat(components).containsEntry("databaseSchema", "none");
+    }
 }
