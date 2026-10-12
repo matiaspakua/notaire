@@ -395,15 +395,15 @@ People, natural or legal, who take part in the practice.
 | `marital_status` | TEXT | No | No | No | NULL | — | Marital status. Stored values `Soltero` and `Casado` stay. |
 | `marriage_count` | INTEGER | No | No | No | NULL | — | Marriage count |
 | `occupation` | TEXT | No | No | No | NULL | — | Occupation. Free text. The seeded sample `Escribano` stays. |
-| `address` | TEXT | No | No | No | NULL | — | Residential or legal address |
-| `email` | TEXT | No | No | No | NULL | — | Primary email |
+| `address` | TEXT | No | No | No | NULL | — | Residential or legal address. The seeded sample `Av. Principal 123` stays. |
+| `email` | TEXT | No | No | No | NULL | — | Primary email. The seeded sample `jcgarcia@notaria.com` stays. |
 | `notary_registration_number` | INTEGER | No | No | No | NULL | — | Notary registration number |
 | `is_client` | BOOLEAN | No | No | Yes | false | — | `true` when the person is a client of the practice |
 | `locality` | TEXT | No | No | No | NULL | — | Locality |
 | `province` | TEXT | No | No | No | NULL | — | Province |
 | `phone` | TEXT | No | No | No | NULL | — | Landline |
 | `mobile_phone` | TEXT | No | No | No | NULL | — | Mobile phone |
-| `secondary_email` | TEXT | No | No | No | NULL | — | Secondary or historical email |
+| `secondary_email` | TEXT | No | No | No | NULL | — | Secondary or historical email. The seeded sample `jcgarcia@notaria.com` stays. |
 | `nationality` | TEXT | No | No | No | NULL | — | Nationality |
 | `profession` | TEXT | No | No | No | NULL | — | Profession or trade. Free text. The seeded sample `Escribano` stays. |
 | `notes` | TEXT | No | No | No | NULL | — | File notes and background |
