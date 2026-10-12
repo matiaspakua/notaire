@@ -1,6 +1,8 @@
 package com.licensis.notaire.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.licensis.notaire.business.Budget;
+import com.licensis.notaire.dto.DtoBudget;
 import com.licensis.notaire.dto.DtoManagementStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -158,6 +160,28 @@ class EnglishSurfaceRatchetTest {
         String json = new ObjectMapper().writeValueAsString(new DtoManagementStatus());
         assertThat(json).contains("\"historials\"");
         assertThat(json).doesNotContain("\"histories\"");
+    }
+
+    @Test
+    @DisplayName("Should name the deprecated budget balance accessors in English and keep the wire key")
+    void shouldNameBudgetBalanceAccessorsInEnglish() throws Exception {
+        for (String relative : List.of(
+                "backend-api/src/main/java/com/licensis/notaire/business/Budget.java",
+                "backend-api/src/main/java/com/licensis/notaire/dto/DtoBudget.java")) {
+            String text = read(repoRoot().resolve(relative));
+            assertThat(text).contains("getBalance");
+            assertThat(text).contains("setBalance");
+            assertThat(text).doesNotContain("getSaldo");
+            assertThat(text).doesNotContain("setSaldo");
+            assertThat(text).contains("@JsonProperty(\"saldo\")");
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        for (String json : List.of(
+                mapper.writeValueAsString(new DtoBudget()),
+                mapper.writeValueAsString(new Budget()))) {
+            assertThat(json).contains("\"saldo\"");
+            assertThat(json).doesNotContain("\"balance\"");
+        }
     }
 
     private static boolean containsSegment(String text, String segment) {

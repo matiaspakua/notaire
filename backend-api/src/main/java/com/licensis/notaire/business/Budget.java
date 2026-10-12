@@ -272,12 +272,14 @@ public class Budget implements Serializable, Persistable<Integer> {
     }
 
     @Deprecated
-    public BigDecimal getSaldo() {
+    @JsonProperty("saldo")
+    public BigDecimal getBalance() {
         return null;
     }
 
     @Deprecated
-    public void setSaldo(BigDecimal balance) {
+    @JsonProperty("saldo")
+    public void setBalance(BigDecimal balance) {
     }
 
     @Deprecated
