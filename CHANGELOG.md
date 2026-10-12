@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded procedure-type catalog** (#1490, CU75): the procedure-type name
+  also lists `Donacion`, `Hipoteca`, and `Sucesion`. `Compraventa` and
+  `Poder` stay.
 - **Seeded management-status catalog** (#1490, CU75): the status name also
   lists `Documentacion Completa`, `Archivada`, `Gestion Modificada`,
   `Gestion con Escritura Firmada`, `Gestion con Escritura Sin Firmar`,
