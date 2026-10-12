@@ -2740,6 +2740,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Workflow zoom and fit-to-view** (issue #1579, epic #1573, CU70/CU71): the workflow graph's zoom is
+  bounded (0.1–2), its controls have Spanish/English accessible names (Acercar, Alejar, Ajustar a la
+  vista), fit-to-view shows every box on desktop and on a phone, and the MiniMap now draws every box
+  colored by type (it was empty in view mode and in the read-only viewer) and is hidden on phones.
 - **Workflow visual editing** (issue #1576, epic #1573, CU70): selecting a status or a transition opens a
   side panel to change the status type, add a transition (with an optional description), edit a
   transition's description and delete either one. Every delete asks for confirmation; self-loops and
