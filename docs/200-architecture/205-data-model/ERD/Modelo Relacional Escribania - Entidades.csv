@@ -70,7 +70,7 @@ budgets,Strong,property_amount,,yes,Real,,,x,Declared property amount
 budgets,Strong,fk_id_person,FK,yes,Integer,,x,x,Requesting client
 concepts,Strong,version,,no,Integer,,,,Optimistic lock (Hibernate)
 concepts,Strong,id,PK,no,Integer,x,,,Unique id of the fee concept
-concepts,Strong,name,,no,Text,,,,Concept name (for example `Honorarios`). Stored names stay.
+concepts,Strong,name,,no,Text,,,,"Concept name. Stored values `IVA`, `Honorarios`, `Documentacion`, and `Protocolo` stay."
 concepts,Strong,amount,,no,Real,,,,Fixed reference amount
 concepts,Strong,percentage,,no,Integer,,,,Standard percentage applied to the act amount
 concepts,Strong,enabled,,no,Boolean,,,,Whether the concept can be used on budgets

@@ -146,7 +146,7 @@ Master catalog of fee concepts, professional fees, contributions, and notarial t
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the fee concept |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock (Hibernate) |
-| `name` | TEXT | No | No | Yes | — | — | Concept name (for example `Honorarios`). Stored names stay. |
+| `name` | TEXT | No | No | Yes | — | — | Concept name. Stored values `IVA`, `Honorarios`, `Documentacion`, and `Protocolo` stay. |
 | `amount` | NUMERIC(19,2) | No | No | Yes | 0 | — | Fixed reference amount |
 | `percentage` | INTEGER | No | No | Yes | 0 | — | Standard percentage applied to the act amount |
 | `enabled` | BOOLEAN | No | No | Yes | — | — | Whether the concept can be used on budgets |
