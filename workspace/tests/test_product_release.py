@@ -69,7 +69,7 @@ class RepositoryContractTest(unittest.TestCase):
 
     def test_manifest_matches_maven_npm_and_latest_changelog(self):
         version = self.snapshot["version"]
-        self.assertEqual(version, "0.1.2")
+        self.assertEqual(version, "0.2.0")
         self.assertEqual(self.snapshot["components"]["backend"]["version"], version)
         self.assertEqual(self.snapshot["components"]["backend"]["parentVersion"], version)
         self.assertEqual(self.snapshot["components"]["frontend"]["version"], version)
@@ -89,6 +89,7 @@ class RepositoryContractTest(unittest.TestCase):
 
     def test_snapshot_heading_is_not_a_product_release(self):
         versions = [item["version"] for item in self.snapshot["releases"]]
+        self.assertIn("0.2.0", versions)
         self.assertIn("0.1.2", versions)
         self.assertIn("0.1.1", versions)
         self.assertNotIn("1.0.0-SNAPSHOT", versions)
@@ -130,7 +131,7 @@ class RepositoryContractTest(unittest.TestCase):
             [item["version"] for item in history["releases"]],
             [item["version"] for item in self.snapshot["releases"]],
         )
-        self.assertTrue(history["releases"][0]["url"].endswith("/notaire-v0.1.2"))
+        self.assertTrue(history["releases"][0]["url"].endswith("/v0.2.0"))
 
     def test_sbom_writer_is_deterministic(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -1,13 +1,20 @@
 {
-  "productVersion": "0.1.2",
+  "productVersion": "0.2.0",
   "train": "2026-11 · Release blockers",
-  "tag": "notaire-v0.1.2",
+  "tag": "v0.2.0",
   "components": {
-    "backend": "0.1.2",
-    "frontend": "0.1.2",
+    "backend": "0.2.0",
+    "frontend": "0.2.0",
     "databaseSchema": "46"
   },
   "releases": [
+    {
+      "version": "0.2.0",
+      "date": "2026-10-12",
+      "tag": "v0.2.0",
+      "train": "2026-11 · Release blockers",
+      "url": "https://github.com/matiaspakua/notaire/releases/tag/v0.2.0"
+    },
     {
       "version": "0.1.2",
       "date": "2026-10-10",
