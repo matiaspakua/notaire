@@ -15,13 +15,15 @@ export interface WorkflowNodeData extends Record<string, unknown> {
   type: string;
   /** #1577: validation problem code for this node, if any. */
   problem?: string;
+  /** #1578: outgoing transitions, read out in the accessible name. */
+  outgoing?: number;
 }
 
 const SHAPE: Record<string, "start" | "step" | "end"> = { INITIAL: "start", INTERMEDIATE: "step", FINAL: "end" };
 
 export function WorkflowNodeBox({ id, data, selected }: NodeProps) {
   const t = useTranslations("workflowViewer");
-  const { label, type, problem } = data as WorkflowNodeData;
+  const { label, type, problem, outgoing } = data as WorkflowNodeData;
   const meta = getNodeMeta(type);
   const shape = SHAPE[type] ?? "step";
   const typeName = t(`types.${SHAPE[type] ? type : "INTERMEDIATE"}`);
@@ -29,7 +31,9 @@ export function WorkflowNodeBox({ id, data, selected }: NodeProps) {
     <div
       role="group"
       aria-label={
-        t("nodeAria", { name: label, type: typeName }) + (problem ? `. ${t(`problem.${problem}`)}` : "")
+        t("nodeAria", { name: label, type: typeName }) +
+        (outgoing !== undefined ? `, ${t("outgoing", { count: outgoing })}` : "") +
+        (problem ? `. ${t(`problem.${problem}`)}` : "")
       }
       data-testid={`workflow-node-${id}`}
       data-shape={shape}

@@ -41,6 +41,7 @@ import { workflowNodeTypes } from "@/components/workflow/WorkflowNodeBox";
 import { workflowEdge } from "@/components/workflow/workflow-edges";
 import { WorkflowSelectionPanel, type PanelSelection } from "@/components/workflow/WorkflowSelectionPanel";
 import { WORKFLOW_ZOOM, WORKFLOW_FIT, MINIMAP_CLASS, workflowAriaLabels, workflowMiniMapColor } from "@/components/workflow/workflow-canvas";
+import { WorkflowListView } from "@/components/workflow/WorkflowListView";
 import { validateWorkflow, nodeProblems } from "@/lib/workflow-validate";
 import { checkNewTransition } from "@/lib/workflow-edit";
 import { layoutWorkflow, nextFreePosition, NODE_WIDTH, NODE_HEIGHT, type Point } from "@/lib/workflow-layout";
@@ -71,6 +72,8 @@ export default function WorkflowEditorPage() {
   const updateTransition = useUpdateWorkflowTransition();
 
   const [editMode, setEditMode] = useState(false);
+  // #1578: graph or list view (the list is the keyboard / screen-reader path).
+  const [view, setView] = useState<"graph" | "list">("graph");
   const [addNodeOpen, setAddNodeOpen] = useState(false);
   const [newNodeStatusId, setNewNodeStatusId] = useState<number | "">("");
   const [newNodeType, setNewNodeType] = useState<WorkflowNodeType>("INTERMEDIATE");
@@ -112,10 +115,11 @@ export default function WorkflowEditorPage() {
             ),
             type: n.type ?? "INTERMEDIATE",
             problem: problemsByNode.get(Number(n.id)),
+            outgoing: rawTransitions.filter((tr) => tr.originNodeId === n.id).length,
           },
         };
       }),
-    [rawNodes, layout, local, selection, problemsByNode, t],
+    [rawNodes, rawTransitions, layout, local, selection, problemsByNode, t],
   );
 
   const edges: Edge[] = useMemo(
@@ -246,23 +250,30 @@ export default function WorkflowEditorPage() {
       toast.error(t("selectStatus"));
       return;
     }
+    if (await createNodeFor(Number(newNodeStatusId), newNodeType)) {
+      setAddNodeOpen(false);
+      setNewNodeStatusId("");
+      setNewNodeType("INTERMEDIATE");
+    }
+  }
+
+  async function createNodeFor(statusId: number, type: WorkflowNodeType): Promise<boolean> {
     const free = nextFreePosition(nodes.map((n) => n.position));
     try {
       await createNode.mutateAsync({
         workflowDefinitionId: workflowId,
-        statusManagementId: Number(newNodeStatusId),
-        type: newNodeType,
+        statusManagementId: statusId,
+        type,
         positionX: Math.round(free.x),
         positionY: Math.round(free.y),
       });
-      setAddNodeOpen(false);
-      setNewNodeStatusId("");
-      setNewNodeType("INTERMEDIATE");
       await refetchNodes();
       refit();
       toast.success(t("nodeAdded"));
+      return true;
     } catch (err) {
       presentMutationError(err, { fallback: t("errorAddNode") });
+      return false;
     }
   }
 
@@ -372,6 +383,54 @@ export default function WorkflowEditorPage() {
         </div>
       )}
 
+      <div role="tablist" aria-label={t("list.views")} className="mb-3 inline-flex rounded-lg border border-border p-1 gap-1">
+        {(["graph", "list"] as const).map((v) => (
+          <button
+            key={v}
+            type="button"
+            role="tab"
+            id={`wf-tab-${v}`}
+            aria-selected={view === v}
+            aria-controls={`wf-panel-${v}`}
+            tabIndex={view === v ? 0 : -1}
+            onClick={() => setView(v)}
+            onKeyDown={(e) => {
+              if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+                const next = v === "graph" ? "list" : "graph";
+                setView(next);
+                document.getElementById(`wf-tab-${next}`)?.focus();
+              }
+            }}
+            className={`px-3 py-1.5 text-sm rounded-md ${view === v ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`}
+            data-testid={`wf-tab-${v}`}
+          >
+            {t(v === "graph" ? "list.graphTab" : "list.listTab")}
+          </button>
+        ))}
+      </div>
+
+      {view === "list" ? (
+        <div role="tabpanel" id="wf-panel-list" aria-labelledby="wf-tab-list">
+          <WorkflowListView
+            nodes={rawNodes.map((n) => ({
+              id: Number(n.id),
+              label: n.statusManagementName ?? t("nodeFallback", { id: n.id ?? 0 }),
+              type: n.type ?? "INTERMEDIATE",
+              problem: problemsByNode.get(Number(n.id)),
+            }))}
+            transitions={rawTransitions}
+            statuses={statuses.map((st) => ({ id: Number(st.idManagementStatus), name: st.name ?? "" }))}
+            editMode={editMode}
+            onAddNode={(statusId, type) => { void createNodeFor(statusId, type); }}
+            onChangeType={handleChangeType}
+            onDeleteNode={(id) => handleDeleteNode(String(id))}
+            onAddTransition={handleAddTransition}
+            onSaveDescription={handleSaveDescription}
+            onDeleteTransition={(id) => handleDeleteEdge(String(id))}
+          />
+        </div>
+      ) : (
+      <div role="tabpanel" id="wf-panel-graph" aria-labelledby="wf-tab-graph">
       <div className="mb-3 flex gap-3 text-xs text-muted-foreground">
         <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-success/20 border border-success inline-block" />{t("types.INITIAL")}</span>
         <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-info/20 border border-info inline-block" />{t("types.INTERMEDIATE")}</span>
@@ -431,6 +490,8 @@ export default function WorkflowEditorPage() {
         <p className="text-xs text-muted-foreground mt-1">
           {t("hint")}
         </p>
+      )}
+      </div>
       )}
 
       <Dialog open={addNodeOpen} onOpenChange={setAddNodeOpen}>

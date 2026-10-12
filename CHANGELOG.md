@@ -2740,6 +2740,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Workflow list view** (issue #1578, epic #1573, CU70): a "Vista de lista" tab next to the workflow
+  diagram lists statuses and transitions in tables where they can be added, retyped, described and
+  deleted with the keyboard only; every control has an accessible name, and diagram boxes now read out
+  their number of outgoing transitions.
 - **Workflow validation on the canvas** (issue #1577, epic #1573, CU70): the workflow editor checks the
   workflow after every change (one start, at least one final, every status reachable) and marks the
   statuses involved on the canvas with a Spanish/English message. A workflow can no longer be saved as
