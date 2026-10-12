@@ -390,9 +390,9 @@ People, natural or legal, who take part in the practice.
 | `first_name` | TEXT | No | No | Yes | — | — | First name or trade name |
 | `identification_number` | TEXT | No | No | Yes | — | — | Primary identification number |
 | `tax_id` | TEXT | No | No | No | NULL | — | Tax id (`CUIT` / `CUIL`). Those stored names stay. |
-| `sex` | TEXT | No | No | No | NULL | — | Legal sex |
+| `sex` | TEXT | No | No | No | NULL | — | Legal sex. Stored values `Masculino` and `Femenino` stay. |
 | `birth_date` | DATE | No | No | No | NULL | — | Birth date |
-| `marital_status` | TEXT | No | No | No | NULL | — | Marital status |
+| `marital_status` | TEXT | No | No | No | NULL | — | Marital status. Stored values `Soltero` and `Casado` stay. |
 | `marriage_count` | INTEGER | No | No | No | NULL | — | Marriage count |
 | `occupation` | TEXT | No | No | No | NULL | — | Occupation |
 | `address` | TEXT | No | No | No | NULL | — | Residential or legal address |
