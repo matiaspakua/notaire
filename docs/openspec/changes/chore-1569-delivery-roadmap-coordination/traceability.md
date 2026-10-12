@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `chore/1569_delivery_roadmap_coordination` | created |
 | Tasks | `tasks.md` | planning complete |
 | Commits | `f20bfa8d`, `f8293bb` | implementation committed |
-| Pull Request | #<!-- number --> | pending |
+| Pull Request | #1590 | open |
 | CI run | <!-- workflow run URL --> | pending |
 | Merge commit | <!-- SHA --> | pending |
 | Release / tag | <!-- vX.Y.Z --> | pending |
