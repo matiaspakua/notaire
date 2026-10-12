@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded person and login** (#1490, CU75): the person sample stays born
+  `1980-01-15`, with marriage count `1` and notary registration `1001`.
+  `is_client` stays `false` and `is_notary` stays `true`. The login stays
+  `admin` and active. Concept and document-type `enabled` stays `true` for
+  the seeded catalogs.
 - **Seeded procedure-type flags** (#1490, CU75): `enabled` stays `true` for
   `Compraventa`, `Donacion`, `Hipoteca`, `Sucesion`, and `Poder`. A binder
   stays required for `Compraventa`, `Donacion`, `Hipoteca`, and `Sucesion`.
