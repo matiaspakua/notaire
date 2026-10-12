@@ -2734,6 +2734,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Missing deed or number and 400 field errors show next to the field; 404 (deed gone) and 409 come
   as a toast. The "Generar" flow is unchanged. New Playwright TS-0146.
 
+- **Current status in the case summary** (issue #1553, CU14): the managements case summary
+  has an "Estado actual" section (status, date, notes) read from
+  `GET /managements/{id}/current-status`, which is off the #1250 allowlist (bucket C). It shows
+  "Sin estado registrado" on 404 and refreshes after a CU83 transition. New Playwright TS-0144.
+
 - **Upcoming-expirations alert on the dashboard** (issue #1556, CU42): the home dashboard shows
   "N documentos vencen en los próximos 30 días" with the 3 nearest (document, management,
   due date) and a link to `/dashboard/upcoming-expirations`. Same endpoint and window as that

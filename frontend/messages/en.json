@@ -329,13 +329,22 @@
       "preparado": "prepared",
       "liberado": "released",
       "entregado": "delivered",
-      "reingresado": "re-entered"
+      "reingresado": "re-entered",
+      "estadoActual": "Current status"
     },
     "clienteFilter": "Filter by client",
     "selectEstado": "Select status...",
     "selectTramite": "Select procedure...",
     "selectInmueble": "Select property...",
-    "inmuebleFallback": "Property #{id}"
+    "inmuebleFallback": "Property #{id}",
+    "estadoActual": {
+      "estado": "Status",
+      "fecha": "Date",
+      "notas": "Notes",
+      "sinEstado": "No status recorded",
+      "cargando": "Loading status…",
+      "error": "Could not load the status"
+    }
   },
   "escrituras": {
     "title": "Deeds",
