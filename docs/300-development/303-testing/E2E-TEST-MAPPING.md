@@ -219,11 +219,11 @@ test("scenario", async ({ page }) => {
 
 ### Live inventory — intentional feature-gap skips (#1146 / CU76)
 
-**Fourteen** static `test.skip` declarations remain in TS-0014 / TS-0016 /
+**Twelve** static `test.skip` declarations remain in TS-0014 / TS-0016 /
 TS-0017 / TS-0020. Each skip title cites `#1146` (tracker hygiene). **Product
 delivery stays on the owning CU** — do not unskip without real UI assertions.
 CU21 edit is **not** in this inventory (unskipped in #1057). Vitest
-`testing/tests/test_e2e_reliability.py` enforces `#\d+` citations and the count `14`.
+`testing/tests/test_e2e_reliability.py` enforces `#\d+` citations and the count `12`.
 
 | TS | Skip id | Owning CU | Product gap (summary) | Citation | Product tracking |
 |----|---------|-----------|-----------------------|----------|------------------|
@@ -232,8 +232,6 @@ CU21 edit is **not** in this inventory (unskipped in #1057). Vitest
 | TS-0016 | CU23-GW01 | CU23 | Users page has no “ver actividades” action | #1146 | Owning CU23 (activities UI) |
 | TS-0016 | CU48-GW01 | CU48 | No `/dashboard/administration/notaries` page. Notaries are managed as users. | #1146 | Owning CU48 (notary CRUD) |
 | TS-0016 | CU48-GW02 | CU48 | Same — create-notary flow is absent | #1146 | Owning CU48 |
-| TS-0017 | CU59-GW01 | CU59 | Substitutions (`nav-suplencias`) has no notary filter | #1146 | Owning CU59 (filter UI) |
-| TS-0017 | CU59-GW02 | CU59 | Substitutions table has no “ver” detail | #1146 | Owning CU59 (detail UI) |
 | TS-0020 | CU24-GW01 | CU24 | Reports (`nav-reportes`) has no “libro índices” named action | #1146 | Owning CU24 (report action/copy) |
 | TS-0020 | CU25-GW01 | CU25 | Reports has no “mes” dropdown or “declaración jurada” button | #1146 | Owning CU25 |
 | TS-0020 | CU39-GW01 | CU39 | Budgets page has no templates button | #1146 | Owning CU39 |
@@ -247,6 +245,8 @@ CU21 edit is **not** in this inventory (unskipped in #1057). Vitest
 | TS | Former skip | Status |
 |----|-------------|--------|
 | TS-0016 | CU21 edit (icon-only unnamed) | Unskipped — #1057 (`aria-label` + `getByRole`) |
+| TS-0017 | CU59-GW01 (notary filter) | Implemented — #1546 (year + notary filters) |
+| TS-0017 | CU59-GW02 (detail) | Implemented — #1546 (the edit dialog is the detail view) |
 | TS-0021 | Conditional empty-table skip | Fixed — #1066 (`createWorkflowDefinition`) |
 | TS-0022 | Conditional empty-table skip | Fixed — #1066 (`createProcedureType`) |
 | TS-0010–TS-0015 historical design skips | Formerly listed in this doc | No static `test.skip` on current `main` |

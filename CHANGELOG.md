@@ -2728,6 +2728,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Substitutions by year and notary** (issue #1546, CU59): `/dashboard/substitutions` has an
+  Año selector (a substitution counts in every year its range overlaps) and an Escribano search
+  over both sides, accent- and case-insensitive, kept in the URL, with a result count.
+
 - **Testimony edit, delete and movement history** (issue #1364, CU07 / CU44 / RF-31): on
   /dashboard/testimonies each row can open **Ver movimientos** (the testimony's registry
   movements, newest first, with the withdrawal card number), **Editar** (number and notes) and
