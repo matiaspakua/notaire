@@ -114,7 +114,7 @@ Gates in [section 6](#6-quality-gates) are checked at the marked points.
 Issue
   │
   ▼
-Refinar requerimiento (Refine requirement)
+Refine requirement
   │
   ▼
 Specification                              ◄── GATE 1
@@ -126,31 +126,31 @@ Impact Analysis
 Architecture Review (ADR if architectural change)
   │
   ▼
-Crear Branch (<type>/<issue-number>_<description>)
+Create branch (<type>/<issue-number>_<description>)
   │
   ▼
-Definir Acceptance Criteria
+Define acceptance criteria
   │
   ▼
-Diseñar casos de prueba                     ◄── GATE 2
+Design test cases                          ◄── GATE 2
   │
   ▼
-Escribir Unit Tests (failing)
+Write unit tests (failing)
   │
   ▼
-Escribir Integration Tests (failing)
+Write integration tests (failing)
   │
   ▼
-Implementar (make tests pass)
+Implement (make tests pass)
   │
   ▼
-Actualizar Tests existentes
+Update existing tests
   │
   ▼
-Ejecutar Tests (unit + integration)
+Run tests (unit + integration)
   │
   ▼
-Regression completa
+Full regression
   │
   ▼
 Playwright E2E
@@ -162,10 +162,10 @@ Actualizar documentación permanente         ◄── GATE 3
 Atomic Commits
   │
   ▼
-Crear Pull Request
+Create pull request
   │
   ▼
-Esperar CI/CD verde
+Wait for green CI/CD
   │
   ▼
 Code Review                                ◄── GATE 4
@@ -180,7 +180,7 @@ Deploy
 Smoke Test                                 ◄── GATE 5
   │
   ▼
-Cerrar Issue
+Close the issue
 ```
 
 ### Step-by-step detail
@@ -189,7 +189,7 @@ Cerrar Issue
 with: Description, mandatory Use Case reference, Context, Acceptance Criteria,
 Technical Notes, Definition of Done, and appropriate labels.
 
-**2. Refinar requerimiento.** Clarify the requirement with the requester and
+**2. Refine the requirement.** Clarify the requirement with the requester and
 affected areas. Confirm the Use Case is accurate or must be created/updated.
 
 **3. Specification.** Produce a written Specification describing **only this
@@ -219,33 +219,33 @@ Run `python3 workspace/modules.py affected <path>` when unsure.
 architecture and conventions. If the change is architectural, record it in an
 ADR (`docs/200-architecture/202-ADR/`).
 
-**6. Crear Branch.** From an updated `main`:
+**6. Create the branch.** From an updated `main`:
 
 ```bash
 git checkout main && git pull origin main
 git checkout -b <type>/<issue-number>_<short-description>
 ```
 
-**7. Definir Acceptance Criteria.** Formalize testable criteria (Given-When-Then
+**7. Define acceptance criteria.** Formalize testable criteria (Given-When-Then
 where useful) in the Issue and the Specification.
 
-**8. Diseñar casos de prueba.** Enumerate the test cases: happy path, edge
+**8. Design test cases.** Enumerate the test cases: happy path, edge
 cases, error paths — at the unit, integration, and E2E level. → **Gate 2.**
 
-**9–10. Escribir Unit e Integration Tests (TDD).** Write the tests first and
+**9–10. Write unit and integration tests (TDD).** Write the tests first and
 **watch them fail** before implementing:
 
 ```bash
 mvn test -pl backend-api -Dtest=YourNewTestClass   # must FAIL at this point
 ```
 
-**11. Implementar.** Write the minimum code to make the tests pass, following
+**11. Implement.** Write the minimum code to make the tests pass, following
 project conventions and the Specification.
 
-**12. Actualizar Tests existentes.** Update any existing tests affected by the
+**12. Update existing tests.** Update any existing tests affected by the
 change. Never weaken assertions to force green.
 
-**13. Ejecutar Tests.**
+**13. Run the tests.**
 
 ```bash
 mvn test -pl backend-api                 # unit + integration
@@ -253,7 +253,7 @@ mvn jacoco:check -pl backend-api         # coverage gate
 mvn verify -pl backend-api               # all quality checks
 ```
 
-**14. Regression completa.** Run the full suite, including HTTP/Bruno API tests
+**14. Full regression.** Run the full suite, including HTTP/Bruno API tests
 (`bash testing/scripts/test.sh`) and any affected legacy paths. No
 `@Disabled` or skipped tests without documented, approved justification.
 
@@ -266,7 +266,7 @@ affected by the change (see [section 8](#8-documentation-rules)). → **Gate 3.*
 **17. Atomic Commits.** Commit in small, focused, self-contained units using
 Conventional Commits; each commit references the issue (`Closes #<issue-number>`).
 
-**17.5 Ejecutar el pipeline completo.** Before opening the PR, run
+**17.5 Run the full pipeline.** Before opening the PR, run
 `bash workspace/sdlc/run_pipeline.sh` — the single, dashboarded pre-PR gate. It brings
 the Docker stack up itself and composes `validate-sdlc-plan.sh` +
 `python3 security/run_gates.py --profile local` (threat-model, secret, SAST, and SCA
@@ -276,10 +276,10 @@ markdown-lint pass, writing one HTML dashboard under
 The case catalog is `security/cases/catalog.yml`. CI runs the same catalog and
 adds CodeQL and OWASP ZAP.
 
-**18. Crear Pull Request.** Open a PR from the branch to `main` using
+**18. Create the pull request.** Open a PR from the branch to `main` using
 `.github/PULL_REQUEST_TEMPLATE.md`, referencing the Issue and Use Case.
 
-**19. Esperar CI/CD verde.** Wait for all required GitHub Actions workflows to
+**19. Wait for green CI/CD.** Wait for all required GitHub Actions workflows to
 pass (see [Tooling Map](#13-tooling-map)). Do not request review or merge while
 CI is red. Locally, run `bash workspace/sdlc/preflight.sh` before pushing (installed
 pre-push hook enforces it).
@@ -303,7 +303,7 @@ Docker image; see [Release Rules](#11-release-rules)).
 **23. Smoke Test.** Verify the deployed change on the target environment
 (endpoint health, key flow of the change). → **Gate 5.**
 
-**24. Cerrar Issue.** Close the GitHub Issue only after deploy + smoke test
+**24. Close the issue.** Close the GitHub Issue only after deploy + smoke test
 succeeded, referencing the PR.
 
 ### Skill-assisted SDLC operating model
@@ -501,7 +501,7 @@ Execution Strategy:
 - **For a bug fix**: first write a test that reproduces the bug, then fix.
 - **For a new endpoint**: controller + integration tests, OpenAPI documentation,
   and UI traceability (the endpoint is called from the UI at least once).
-- **E2E tests must be autocontenido** (not depend on other tests) except where
+- **E2E tests must be self-contained** (not depend on other tests) except where
   clearly justified and documented.
 - **E2E test nomenclature**: `TS-nnnn-<workflow-name>.spec.ts` with CU traceability.
   Drift guard: `python3 workspace/sdlc/validate-testing-inventory.py`.
