@@ -33,6 +33,7 @@ Architecture Decision Records document the important architecture decisions for 
 | [025](ADR-025-retire-notaire-shared.md) | Retire the notaire-shared module | Accepted | 2026-10-05 | Code organization |
 | [026](ADR-026-module-separation.md) | Module separation inside the repository | Accepted | 2026-10-06 | Code organization |
 | [027](ADR-027-mermaid-diagrams.md) | Mermaid as the canonical diagram language | Accepted | 2026-10-10 | Documentation |
+| [028](ADR-028-release-and-version-identity.md) | Release and version identity | Proposed | 2026-10-12 | DevOps and release |
 
 Dates for ADR-005, ADR-006, and ADR-007 match the date in each decision file.
 
