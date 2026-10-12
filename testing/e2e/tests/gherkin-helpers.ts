@@ -211,7 +211,7 @@ export class GherkinSteps {
     await expect(scope.getByLabel(new RegExp(fieldLabel, "i"))).toBeVisible();
   }
 
-  async thenShowsSuccessMessage(message: string = "éxito") {
+  async thenShowsSuccessMessage(message: string = "success") {
     await expect(
       this.page.locator("[data-sonner-toast]").getByText(new RegExp(message, "i"))
     ).toBeVisible({ timeout: 5000 });

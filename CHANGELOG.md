@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Success-toast default** (#1490, CU75): the unused helper default is
+  `success`. The deed toast matcher keeps `/creada|éxito/i`. Visible toasts
+  such as `inscripción registrada` stay. Button matchers such as
+  `confirmar|guardar|crear` stay.
 - **Synthetic person occupation** (#1490, CU75): person fixtures use `Clerk`.
   The stored user type `Empleado` stays, along with `EMPLEADO`, `Soltero`,
   and `Masculino`.
