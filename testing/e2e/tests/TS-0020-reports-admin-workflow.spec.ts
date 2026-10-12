@@ -220,7 +220,7 @@ test.describe("CU42 - Report upcoming expirations", () => {
       const alert = page.getByTestId("expirations-alert");
       // Then the alert shows a count and up to three items, without horizontal overflow
       await expect(alert).toBeVisible({ timeout: 15000 });
-      await expect(alert).toContainText(/vencen en los próximos 30 días/i);
+      await expect(alert).toContainText(/vencen? en los próximos 30 días/i);
       const items = alert.getByTestId("expirations-alert-item");
       expect(await items.count()).toBeGreaterThan(0);
       expect(await items.count()).toBeLessThanOrEqual(3);
