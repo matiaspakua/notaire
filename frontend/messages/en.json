@@ -1469,7 +1469,13 @@
     }
   },
   "workflowViewer": {
-    "empty": "No nodes. Add statuses to the workflow."
+    "empty": "No nodes. Add statuses to the workflow.",
+    "types": {
+      "INITIAL": "Initial",
+      "INTERMEDIATE": "Intermediate",
+      "FINAL": "Final"
+    },
+    "nodeAria": "Status {name}, {type}"
   },
   "status": {
     "folio": {

@@ -13,42 +13,27 @@ import "@xyflow/react/dist/style.css";
 import { theme } from "@/theme/tokens";
 import { NODE_META, getNodeMeta, withNodeIcon } from "@/lib/workflow-node-meta";
 import type { WorkflowNode, WorkflowTransition } from "@/types";
-import { layoutWorkflow, NODE_WIDTH } from "@/lib/workflow-layout";
+import { layoutWorkflow } from "@/lib/workflow-layout";
+import { workflowNodeTypes } from "@/components/workflow/WorkflowNodeBox";
+import { workflowEdge } from "@/components/workflow/workflow-edges";
 
 export function toFlowNodes(nodes: WorkflowNode[], transitions: WorkflowTransition[] = []): Node[] {
   // #1574: same automatic layout as the editor, so boxes never stack at 0,0.
   const layout = layoutWorkflow(nodes, transitions);
+  // #1575: rendered by the shared WorkflowNodeBox (type badge, shape, wrapped name).
   return nodes.map((n) => {
-    const meta = getNodeMeta(n.type);
-    const label = withNodeIcon(n.statusManagementName ?? `Node ${n.id}`, n.type);
+    const type = n.type ?? "INTERMEDIATE";
     return {
       id: String(n.id),
+      type: "workflowNode",
       position: layout.get(String(n.id)) ?? { x: 0, y: 0 },
-      data: { label },
-      style: {
-        background: meta.background,
-        border: `2px solid ${meta.border}`,
-        color: meta.color,
-        borderRadius: "8px",
-        padding: "8px 16px",
-        fontWeight: 600,
-        fontSize: "13px",
-        width: `${NODE_WIDTH}px`,
-        textAlign: "center" as const,
-      },
+      data: { label: withNodeIcon(n.statusManagementName ?? `Node ${n.id}`, type), type, meta: getNodeMeta(type) },
     };
   });
 }
 
 export function toFlowEdges(transitions: WorkflowTransition[]): Edge[] {
-  return transitions.map((t) => ({
-    id: String(t.id),
-    source: String(t.originNodeId),
-    target: String(t.destinationNodeId),
-    label: t.description ?? undefined,
-    animated: false,
-    style: { stroke: theme.colors.neutral[500] },
-  }));
+  return transitions.map((t) => workflowEdge(t));
 }
 
 interface WorkflowViewerProps {
@@ -81,6 +66,7 @@ export function WorkflowViewer({ nodes, transitions, "data-testid": testId }: Wo
       <ReactFlow
         nodes={flowNodes}
         edges={flowEdges}
+        nodeTypes={workflowNodeTypes}
         fitView
         nodesDraggable={false}
         nodesConnectable={false}

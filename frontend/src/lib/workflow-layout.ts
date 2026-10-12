@@ -25,7 +25,7 @@ const overlaps = (a: Point, b: Point) =>
 
 function dagrePositions(nodes: WorkflowNode[], transitions: WorkflowTransition[]): Map<string, Point> {
   const g = new dagre.graphlib.Graph();
-  g.setGraph({ rankdir: "LR", nodesep: 40, ranksep: 90, marginx: 0, marginy: 0 });
+  g.setGraph({ rankdir: "LR", nodesep: 40, ranksep: 150, marginx: 0, marginy: 0 });
   g.setDefaultEdgeLabel(() => ({}));
   const ids = new Set(nodes.map((n) => String(n.id)));
   for (const n of nodes) g.setNode(String(n.id), { width: NODE_WIDTH, height: NODE_HEIGHT });
@@ -79,5 +79,5 @@ export function nextFreePosition(existing: Point[]): Point {
   if (existing.length === 0) return { x: 0, y: 0 };
   const maxX = Math.max(...existing.map((p) => p.x));
   const minY = Math.min(...existing.map((p) => p.y));
-  return { x: maxX + NODE_WIDTH + 90, y: minY };
+  return { x: maxX + NODE_WIDTH + 150, y: minY };
 }

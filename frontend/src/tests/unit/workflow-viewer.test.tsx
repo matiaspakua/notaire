@@ -22,14 +22,14 @@ describe("WorkflowViewer node styling (#613)", () => {
       node(3, "FINAL"),
     ]);
 
-    expect(initial.style?.background).toBe(theme.colors.success[50]);
-    expect(initial.style?.border).toContain(theme.colors.success[500]);
+    expect((initial.data as { meta: { background: string } }).meta.background).toBe(theme.colors.success[50]);
+    expect((initial.data as { meta: { border: string } }).meta.border).toContain(theme.colors.success[500]);
 
-    expect(intermediate.style?.background).toBe(theme.colors.primary[50]);
-    expect(intermediate.style?.border).toContain(theme.colors.primary[500]);
+    expect((intermediate.data as { meta: { background: string } }).meta.background).toBe(theme.colors.primary[50]);
+    expect((intermediate.data as { meta: { border: string } }).meta.border).toContain(theme.colors.primary[500]);
 
-    expect(final.style?.background).toBe(theme.colors.error[50]);
-    expect(final.style?.border).toContain(theme.colors.error[500]);
+    expect((final.data as { meta: { background: string } }).meta.background).toBe(theme.colors.error[50]);
+    expect((final.data as { meta: { border: string } }).meta.border).toContain(theme.colors.error[500]);
   });
 
   it("differentiates node state with a text/icon badge, not color alone", () => {

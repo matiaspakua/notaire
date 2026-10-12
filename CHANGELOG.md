@@ -2740,6 +2740,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Workflow status boxes and arrows** (issue #1575, epic #1573, CU70/CU71): workflow statuses are
+  fixed-width boxes with a text type badge (Inicial / Intermedio / Final), a pill shape for the
+  start and a double border for final nodes (not color alone), and a highlight when selected.
+  Transitions are smooth-step arrows with a closed head and a short label on a solid background
+  (long descriptions are truncated on the canvas). Columns are wider so labels never cover a box,
+  and the canvas mounts once the graph is loaded so fit-to-view covers every box. The editor and
+  the read-only viewer share the same box. New Playwright TS-0148.
+
 - **Register a testimony manually** (issue #1555, CU07): `/dashboard/testimonies` has a
   "Registrar testimonio" button. Its dialog takes a signed deed (required), number, notes and
   a verified flag, and posts them with `POST /testimonies`, which is off the #1250 allowlist (bucket C).
