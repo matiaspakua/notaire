@@ -61,7 +61,7 @@ class AuditRecordControllerTest {
         DtoPerson person = new DtoPerson();
         person.setId(10);
         person.setFirstName("Admin");
-        person.setLastName("Sistema");
+        person.setLastName("System");
 
         DtoUser user = new DtoUser();
         user.setIdUser(1);

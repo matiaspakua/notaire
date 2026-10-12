@@ -91,6 +91,30 @@ class DataInitializerTest {
     }
 
     @Test
+    @DisplayName("Should seed the administrator person with an English last name")
+    void shouldSeedAdministratorPersonInEnglish() {
+        when(userRepository.findByName("admin")).thenReturn(Optional.empty());
+        IdentificationType type = new IdentificationType();
+        type.setName("DNI");
+        when(identificationTypeRepository.findAll()).thenReturn(List.of(type));
+        when(passwordEncoder.encode("admin")).thenReturn(BCRYPT_ADMIN);
+
+        dataInitializer.run(null);
+
+        ArgumentCaptor<Person> personCaptor = ArgumentCaptor.forClass(Person.class);
+        verify(personRepository).save(personCaptor.capture());
+        Person created = personCaptor.getValue();
+        assertThat(created.getFirstName()).isEqualTo("Admin");
+        assertThat(created.getLastName()).isEqualTo("System");
+        assertThat(created.getIdentificationNumber()).isEqualTo("00000000");
+
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(userCaptor.capture());
+        assertThat(userCaptor.getValue().getName()).isEqualTo("admin");
+        assertThat(userCaptor.getValue().getType()).isEqualTo("Escribano");
+    }
+
+    @Test
     @DisplayName("Should seed the configured username/password, not hardcoded literals (issue #651)")
     void shouldUseConfiguredAdminCredentials() {
         ReflectionTestUtils.setField(dataInitializer, "adminUsername", "custom-admin");
