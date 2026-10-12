@@ -37,3 +37,16 @@ describe("WorkflowNodeBox validation mark (#1577)", () => {
     expect(node.getAttribute("aria-label")).toContain("workflowViewer.problem.unreachable");
   });
 });
+
+describe("WorkflowNodeBox outgoing count (#1578)", () => {
+  it("adds the number of outgoing transitions to the accessible name", () => {
+    render(
+      <ReactFlowProvider>
+        <WorkflowNodeBox
+          {...({ id: "5", data: { label: "Ingresado", type: "INITIAL", outgoing: 2 }, selected: false } as unknown as Parameters<typeof WorkflowNodeBox>[0])}
+        />
+      </ReactFlowProvider>,
+    );
+    expect(screen.getByTestId("workflow-node-5").getAttribute("aria-label")).toContain("workflowViewer.outgoing:2");
+  });
+});
