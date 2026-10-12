@@ -98,8 +98,8 @@ payments,Weak,fk_id_budget,FK,yes,Integer,,x,x,Budget this payment applies to
 payments,Weak,payment_method,,yes,Text,,,x,Payment method used
 deed_managements,Strong,version,,no,Integer,,,,Optimistic lock
 deed_managements,Strong,id,PK,no,Integer,x,,,Unique id of the deed management
-deed_managements,Strong,number,,no,Integer,,,,Yearly serial number of the management
-deed_managements,Strong,start_date,,no,Date,,,,Date the file was opened
+deed_managements,Strong,number,,no,Integer,,,,Yearly serial number of the management. Seeded numbers `1001` and `1002` stay.
+deed_managements,Strong,start_date,,no,Date,,,,Date the file was opened. Seeded dates `2026-05-02` and `2026-05-20` stay.
 deed_managements,Strong,heading,,no,Text,,,,Heading that describes the management. Stored values `Compraventa Lote 12 — Familia Pérez` and `Donación — Sucesión Gómez` stay.
 deed_managements,Strong,notes,,yes,Text,,,x,Working notes
 deed_managements,Strong,fk_id_notary_person,FK,yes,Integer,,x,x,Notary in charge
@@ -111,7 +111,7 @@ management_statuses,Strong,name,,no,Text,,,,"Status name. Stored examples such a
 management_statuses,Strong,notes,,yes,Text,,,x,"Functional definition and conditions. Stored notes `Inicio Gestion`, `Post-signing: testimony generated from signed deed`, `Post-signing: testimony submitted for inscription`, and `Post-signing: testimony withdrawn after inscription cycle` stay."
 history,Weak,version,,no,Integer,,,,Optimistic lock
 history,Weak,id,PK,no,Integer,x,,,History-row id
-history,Weak,event_date,,no,Date,,,,Date of the status change
+history,Weak,event_date,,no,Date,,,,"Date of the status change. Seeded dates `2026-05-02`, `2026-05-09`, `2026-05-28`, `2026-05-20`, and `2026-06-01` stay."
 history,Weak,notes,,yes,Text,,,x,"Reason or attestation for the status change. Stored notes `Apertura de la gestión`, `Trámite de compraventa en curso`, `Documentación completa recibida`, and `Trámite de donación en curso` stay."
 history,Weak,fk_id_deed_management,FK,yes,Integer,,x,x,Deed management that changed status
 history,Weak,fk_id_management_status,FK,yes,Integer,,x,x,Status reached
@@ -123,10 +123,10 @@ procedure_types,Strong,enabled,,no,Boolean,,,,"`true` when new managements are a
 procedure_types,Strong,is_archived,,no,Boolean,,,,"`true` when a physical binder is required. Seeded flags stay: `true` for `Compraventa`, `Donacion`, `Hipoteca`, and `Sucesion`, and `false` for `Poder`."
 procedure_types,Strong,is_registered,,no,Boolean,,,,"`true` when registry registration is required. Seeded flags stay: `true` for `Compraventa`, `Donacion`, and `Hipoteca`, and `false` for `Sucesion` and `Poder`."
 procedure_types,Strong,associates_properties,,no,Boolean,,,,"`true` when the act involves property. Seeded flags stay: `true` for `Compraventa`, `Donacion`, and `Hipoteca`, and `false` for `Sucesion` and `Poder`."
-procedure_types,Strong,fk_workflow_definition_id,FK,yes,Integer,,x,x,Workflow assigned to the procedure type (V8)
+procedure_types,Strong,fk_workflow_definition_id,FK,yes,Integer,,x,x,"Workflow assigned to the procedure type (V8). The seeded workflow stays assigned to `Compraventa`, `Donacion`, and `Hipoteca`. `Sucesion` and `Poder` stay unassigned."
 procedures,Strong,version,,no,Integer,,,,Optimistic lock
 procedures,Strong,id,PK,no,Integer,x,,,Unique id of the procedure
-procedures,Strong,number,,yes,Integer,,,x,Procedure serial number (optional since V13)
+procedures,Strong,number,,yes,Integer,,,x,Procedure serial number (optional since V13). Seeded numbers `1` and `2` stay.
 procedures,Strong,name,,yes,Text,,,x,Descriptive heading (optional since V13). Stored values `Compraventa inmueble Lote 12` and `Donación a herederos` stay.
 procedures,Strong,notes,,yes,Text,,,x,Instructions or observations
 procedures,Strong,fk_id_procedure_type,FK,yes,Integer,,x,x,Procedure type
@@ -167,11 +167,11 @@ workflow_definition,Strong,version,,no,Integer,,,,Optimistic lock
 workflow_definition,Strong,id_workflow_definition,PK,no,Integer,x,,,Unique id of the workflow
 workflow_definition,Strong,name,,no,Text,,,,Workflow name. The seeded value `Workflow de Gestión Estándar` stays.
 workflow_definition,Strong,description,,yes,Text,,,x,Functional description of the process. The seeded value `Ciclo de vida estándar de una gestión de escritura` stays.
-workflow_definition,Strong,active,,no,Boolean,,,,`true` when the workflow is enabled
+workflow_definition,Strong,active,,no,Boolean,,,,`true` when the workflow is enabled. The seeded workflow stays `true`.
 workflow_node,Weak,version,,no,Integer,,,,Optimistic lock
 workflow_node,Weak,id_workflow_node,PK,no,Integer,x,,,Unique id of the node
 workflow_node,Weak,fk_workflow_definition_id,FK,no,Integer,,x,,Parent workflow (ON DELETE CASCADE)
-workflow_node,Weak,fk_management_status_id,FK,no,Integer,,x,,Management status this node represents
+workflow_node,Weak,fk_management_status_id,FK,no,Integer,,x,,"Management status this node represents. The live seeded graph stays: `Iniciada` as `INITIAL`; `En Tramite`, `Documentacion Completa`, `Gestion con Escritura Sin Firmar`, `Gestion con Escritura Firmada`, `Testimonio Generado`, and `Testimonio Ingresado a Inscripcion` as `INTERMEDIATE`; `Archivada` and `Testimonio Retirado` as `FINAL`."
 workflow_node,Weak,node_type,,no,Text,,,,"Node type: `INITIAL`, `INTERMEDIATE`, `FINAL`"
 workflow_node,Weak,position_x,,yes,Real,,,x,Visual X coordinate in the designer
 workflow_node,Weak,position_y,,yes,Real,,,x,Visual Y coordinate in the designer

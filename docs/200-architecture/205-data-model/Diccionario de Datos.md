@@ -271,8 +271,8 @@ File that groups one or more related procedures.
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the deed management |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
-| `number` | INTEGER | No | No | Yes | — | — | Yearly serial number of the management |
-| `start_date` | DATE | No | No | Yes | — | — | Date the file was opened |
+| `number` | INTEGER | No | No | Yes | — | — | Yearly serial number of the management. Seeded numbers `1001` and `1002` stay. |
+| `start_date` | DATE | No | No | Yes | — | — | Date the file was opened. Seeded dates `2026-05-02` and `2026-05-20` stay. |
 | `heading` | TEXT | No | No | Yes | — | — | Heading that describes the management. Stored values `Compraventa Lote 12 — Familia Pérez` and `Donación — Sucesión Gómez` stay. |
 | `notes` | TEXT | No | No | No | NULL | — | Working notes |
 | `fk_id_notary_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Notary in charge |
@@ -289,7 +289,7 @@ Chronological history of status changes for a deed management.
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | History-row id |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
-| `event_date` | DATE | No | No | Yes | — | — | Date of the status change |
+| `event_date` | DATE | No | No | Yes | — | — | Date of the status change. Seeded dates `2026-05-02`, `2026-05-09`, `2026-05-28`, `2026-05-20`, and `2026-06-01` stay. |
 | `notes` | TEXT | No | No | No | NULL | — | Reason or attestation for the status change. Stored notes `Apertura de la gestión`, `Trámite de compraventa en curso`, `Documentación completa recibida`, and `Trámite de donación en curso` stay. |
 | `fk_id_deed_management` | INTEGER | No | Yes | No | NULL | `deed_managements(id)` | Deed management that changed status |
 | `fk_id_management_status` | INTEGER | No | Yes | No | NULL | `management_statuses(id)` | Status reached |
@@ -581,7 +581,7 @@ Master catalog of notarial act types (V8). Stored names such as `Compraventa` st
 | `is_archived` | BOOLEAN | No | No | Yes | — | — | `true` when a physical binder is required. Seeded flags stay: `true` for `Compraventa`, `Donacion`, `Hipoteca`, and `Sucesion`, and `false` for `Poder`. |
 | `is_registered` | BOOLEAN | No | No | Yes | — | — | `true` when registry registration is required. Seeded flags stay: `true` for `Compraventa`, `Donacion`, and `Hipoteca`, and `false` for `Sucesion` and `Poder`. |
 | `associates_properties` | BOOLEAN | No | No | Yes | — | — | `true` when the act involves property. Seeded flags stay: `true` for `Compraventa`, `Donacion`, and `Hipoteca`, and `false` for `Sucesion` and `Poder`. |
-| `fk_workflow_definition_id` | INTEGER | No | Yes | No | NULL | `workflow_definition(id_workflow_definition)` | Workflow assigned to the procedure type (V8) |
+| `fk_workflow_definition_id` | INTEGER | No | Yes | No | NULL | `workflow_definition(id_workflow_definition)` | Workflow assigned to the procedure type (V8). The seeded workflow stays assigned to `Compraventa`, `Donacion`, and `Hipoteca`. `Sucesion` and `Poder` stay unassigned. |
 
 ---
 
@@ -606,7 +606,7 @@ One procedure instance (V13/V14).
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the procedure |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
-| `number` | INTEGER | No | No | No | NULL | — | Procedure serial number (optional since V13) |
+| `number` | INTEGER | No | No | No | NULL | — | Procedure serial number (optional since V13). Seeded numbers `1` and `2` stay. |
 | `name` | TEXT | No | No | No | NULL | — | Descriptive heading (optional since V13). Stored values `Compraventa inmueble Lote 12` and `Donación a herederos` stay. |
 | `notes` | TEXT | No | No | No | NULL | — | Instructions or observations |
 | `fk_id_procedure_type` | INTEGER | No | Yes | No | NULL | `procedure_types(id)` | Procedure type |
@@ -657,7 +657,7 @@ Workflow graph definitions (Flyway V7). The seeded name `Workflow de Gestión Es
 | `version` | INTEGER | No | No | Yes | 0 | — | Optimistic lock |
 | `name` | TEXT | No | No | Yes | — | — | Workflow name. The seeded value `Workflow de Gestión Estándar` stays. |
 | `description` | TEXT | No | No | No | NULL | — | Functional description of the process. The seeded value `Ciclo de vida estándar de una gestión de escritura` stays. |
-| `active` | BOOLEAN | No | No | Yes | false | — | `true` when the workflow is enabled |
+| `active` | BOOLEAN | No | No | Yes | false | — | `true` when the workflow is enabled. The seeded workflow stays `true`. |
 
 ---
 
@@ -670,7 +670,7 @@ Workflow nodes linked to management statuses (Flyway V7).
 | `id_workflow_node` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the node |
 | `version` | INTEGER | No | No | Yes | 0 | — | Optimistic lock |
 | `fk_workflow_definition_id` | INTEGER | No | Yes | Yes | — | `workflow_definition(id_workflow_definition)` | Parent workflow (ON DELETE CASCADE) |
-| `fk_management_status_id` | INTEGER | No | Yes | Yes | — | `management_statuses(id)` | Management status this node represents |
+| `fk_management_status_id` | INTEGER | No | Yes | Yes | — | `management_statuses(id)` | Management status this node represents. The live seeded graph stays: `Iniciada` as `INITIAL`; `En Tramite`, `Documentacion Completa`, `Gestion con Escritura Sin Firmar`, `Gestion con Escritura Firmada`, `Testimonio Generado`, and `Testimonio Ingresado a Inscripcion` as `INTERMEDIATE`; `Archivada` and `Testimonio Retirado` as `FINAL`. |
 | `node_type` | TEXT | No | No | Yes | — | — | Node type: `INITIAL`, `INTERMEDIATE`, `FINAL` |
 | `position_x` | REAL | No | No | No | NULL | — | Visual X coordinate in the designer |
 | `position_y` | REAL | No | No | No | NULL | — | Visual Y coordinate in the designer |
