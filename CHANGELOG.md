@@ -2728,6 +2728,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Upcoming-expirations alert on the dashboard** (issue #1556, CU42): the home dashboard shows
+  "N documentos vencen en los próximos 30 días" with the 3 nearest (document, management,
+  due date) and a link to `/dashboard/upcoming-expirations`. Same endpoint and window as that
+  page; hidden when there are none or the request fails. TS-0020 CU42-GW01 is implemented
+  (desktop and 390px), so the feature-gap skip inventory drops by one.
+
 - **Substitutions by year and notary** (issue #1546, CU59): `/dashboard/substitutions` has an
   Año selector (a substitution counts in every year its range overlaps) and an Escribano search
   over both sides, accent- and case-insensitive, kept in the URL, with a result count.

@@ -7,11 +7,11 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { FormField } from "@/theme/form-patterns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useUpcomingExpirations } from "@/hooks/useUpcomingExpirations";
+import { UPCOMING_EXPIRATIONS_DEFAULT_DAYS, useUpcomingExpirations } from "@/hooks/useUpcomingExpirations";
 import type { UpcomingExpiration } from "@/types";
 
 const WINDOW_OPTIONS = [7, 15, 30, 60, 90];
-const DEFAULT_WINDOW = 30;
+const DEFAULT_WINDOW = UPCOMING_EXPIRATIONS_DEFAULT_DAYS;
 
 export default function UpcomingExpirationsPage() {
   const fmt = useFormat();
