@@ -35,6 +35,19 @@ test.describe("TS-0148 - Workflow boxes and arrows (#1575)", () => {
     }
   });
 
+  test("the whole graph is fitted into the canvas on load", async ({ page }) => {
+    const nodes = await apiGet<Array<{ id: number }>>(page, "/workflow-node/by-workflow/1");
+    await page.goto("/dashboard/administration/workflows/1");
+    await expect(page.locator(".react-flow__node")).toHaveCount(nodes.data!.length, { timeout: 15000 });
+    await page.waitForTimeout(500);
+    const canvas = (await page.getByTestId("workflow-editor").boundingBox())!;
+    for (const n of nodes.data!) {
+      const b = (await page.getByTestId(`workflow-node-${n.id}`).boundingBox())!;
+      expect(b.x, `node ${n.id} left`).toBeGreaterThanOrEqual(canvas.x - 1);
+      expect(b.x + b.width, `node ${n.id} right`).toBeLessThanOrEqual(canvas.x + canvas.width + 1);
+    }
+  });
+
   test("selecting a box in edit mode highlights it", async ({ page }) => {
     const nodes = await apiGet<Array<{ id: number }>>(page, "/workflow-node/by-workflow/1");
     await page.goto("/dashboard/administration/workflows/1");

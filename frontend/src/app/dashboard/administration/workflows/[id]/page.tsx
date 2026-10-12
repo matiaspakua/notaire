@@ -53,7 +53,8 @@ export default function WorkflowEditorPage() {
 
   const { data: workflows = [] } = useWorkflowDefinitions();
   const workflow = workflows.find((wf) => wf.id === workflowId);
-  const { data: rawNodes = [], refetch: refetchNodes } = useWorkflowNodes(workflowId);
+  const { data: rawNodes = [], refetch: refetchNodes, isFetched: nodesFetched } = useWorkflowNodes(workflowId);
+  const { isFetched: transitionsFetched } = useWorkflowTransitions(workflowId);
   const { data: rawTransitions = [], refetch: refetchTransitions } = useWorkflowTransitions(workflowId);
 
   const { data: statuses = [] } = useManagementStatuses();
@@ -294,6 +295,8 @@ export default function WorkflowEditorPage() {
         className="rounded-xl border border-border overflow-hidden"
         data-testid="workflow-editor"
       >
+        {/* fitView only runs on mount: mount once the graph is loaded so it fits every box. */}
+        {nodesFetched && transitionsFetched && (
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -314,6 +317,7 @@ export default function WorkflowEditorPage() {
           <Controls />
           <MiniMap />
         </ReactFlow>
+        )}
       </div>
       {editMode && (
         <p className="text-xs text-muted-foreground mt-1">
