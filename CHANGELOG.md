@@ -64,6 +64,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded management-status catalog** (#1490, CU75): the status name also
+  lists `Documentacion Completa`, `Archivada`, `Gestion Modificada`,
+  `Gestion con Escritura Firmada`, `Gestion con Escritura Sin Firmar`,
+  `Gestion con Escritura Anulada`, `Gestion con Escritura No Paso`,
+  `Gestion con Escritura Inscripta`, `Testimonio Ingresado a Inscripcion`,
+  and `Testimonio Retirado`. `Iniciada`, `En Tramite`, and `Testimonio
+  Generado` stay.
 - **Seeded identification lengths** (#1490, CU75): the character mask cites
   `8` for `DNI`, `LE`, and `LC`, `12` for `Pasaporte`, and `11` for `CUIT`.
 - **Seeded person identity** (#1490, CU75): the person samples are
