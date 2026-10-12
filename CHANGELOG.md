@@ -64,6 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded workflow transitions** (#1490, CU75): the transition description
+  lists `Se asignan trámites y comienza la gestión`, `Toda la documentación
+  requerida fue presentada`, `Se redacta la escritura`, `Las partes firman la
+  escritura`, `La gestión se archiva sin escritura`, `Testimony generated
+  after deed signing`, `Testimony submitted for inscription`, and `Testimony
+  withdrawn after inscription cycle`.
 - **Seeded workflow description** (#1490, CU75): the workflow description
   names `Ciclo de vida estándar de una gestión de escritura`. The workflow
   name `Workflow de Gestión Estándar` stays.
