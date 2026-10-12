@@ -64,6 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Data dictionary status labels** (#1490, CU75): deed status names
+  `Sin Firmar`, `Firmada`, `Anulada`, `No Paso`, and `Inscripta`.
+  Management-status examples name `Iniciada`, `En Tramite`, and
+  `Testimonio Generado`. Folio status names `Nuevo`, `Utilizado`,
+  `Errose`, `no pasó`, and `Asignado a cuaderno`. Stored concept
+  `Honorarios` and procedure type `Compraventa` stay.
 - **Constitution workflow steps** (#1490, CU75): the SDLC step titles say
   `Refine requirement`, `Design test cases`, `Full regression`, and
   `Run the full pipeline`. E2E tests are described as `self-contained`.
