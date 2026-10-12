@@ -112,7 +112,7 @@ management_statuses,Strong,notes,,yes,Text,,,x,"Functional definition and condit
 history,Weak,version,,no,Integer,,,,Optimistic lock
 history,Weak,id,PK,no,Integer,x,,,History-row id
 history,Weak,event_date,,no,Date,,,,Date of the status change
-history,Weak,notes,,yes,Text,,,x,Reason or attestation for the status change
+history,Weak,notes,,yes,Text,,,x,"Reason or attestation for the status change. Stored notes `Apertura de la gestión`, `Trámite de compraventa en curso`, `Documentación completa recibida`, and `Trámite de donación en curso` stay."
 history,Weak,fk_id_deed_management,FK,yes,Integer,,x,x,Deed management that changed status
 history,Weak,fk_id_management_status,FK,yes,Integer,,x,x,Status reached
 procedure_types,Strong,version,,no,Integer,,,,Optimistic lock

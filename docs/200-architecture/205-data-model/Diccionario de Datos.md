@@ -290,7 +290,7 @@ Chronological history of status changes for a deed management.
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | History-row id |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
 | `event_date` | DATE | No | No | Yes | — | — | Date of the status change |
-| `notes` | TEXT | No | No | No | NULL | — | Reason or attestation for the status change |
+| `notes` | TEXT | No | No | No | NULL | — | Reason or attestation for the status change. Stored notes `Apertura de la gestión`, `Trámite de compraventa en curso`, `Documentación completa recibida`, and `Trámite de donación en curso` stay. |
 | `fk_id_deed_management` | INTEGER | No | Yes | No | NULL | `deed_managements(id)` | Deed management that changed status |
 | `fk_id_management_status` | INTEGER | No | Yes | No | NULL | `management_statuses(id)` | Status reached |
 
