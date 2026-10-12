@@ -656,7 +656,7 @@ Workflow graph definitions (Flyway V7). The seeded name `Workflow de Gestión Es
 | `id_workflow_definition` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the workflow |
 | `version` | INTEGER | No | No | Yes | 0 | — | Optimistic lock |
 | `name` | TEXT | No | No | Yes | — | — | Workflow name. The seeded value `Workflow de Gestión Estándar` stays. |
-| `description` | TEXT | No | No | No | NULL | — | Functional description of the process |
+| `description` | TEXT | No | No | No | NULL | — | Functional description of the process. The seeded value `Ciclo de vida estándar de una gestión de escritura` stays. |
 | `active` | BOOLEAN | No | No | Yes | false | — | `true` when the workflow is enabled |
 
 ---

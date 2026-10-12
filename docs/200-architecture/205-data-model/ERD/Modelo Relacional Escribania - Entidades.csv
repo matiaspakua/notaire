@@ -166,7 +166,7 @@ properties,Strong,boundaries,,yes,Text,,,x,Property boundaries
 workflow_definition,Strong,version,,no,Integer,,,,Optimistic lock
 workflow_definition,Strong,id_workflow_definition,PK,no,Integer,x,,,Unique id of the workflow
 workflow_definition,Strong,name,,no,Text,,,,Workflow name. The seeded value `Workflow de Gestión Estándar` stays.
-workflow_definition,Strong,description,,yes,Text,,,x,Functional description of the process
+workflow_definition,Strong,description,,yes,Text,,,x,Functional description of the process. The seeded value `Ciclo de vida estándar de una gestión de escritura` stays.
 workflow_definition,Strong,active,,no,Boolean,,,,`true` when the workflow is enabled
 workflow_node,Weak,version,,no,Integer,,,,Optimistic lock
 workflow_node,Weak,id_workflow_node,PK,no,Integer,x,,,Unique id of the node
