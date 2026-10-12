@@ -2174,6 +2174,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **An expired session always shows the "session expired" message** (issue #1548):
+  under load the edge proxy could answer `/login?expired=1` with a redirect to `/dashboard`
+  (the UX status cookie was still present), and the dashboard guard then sent the user to a
+  plain `/login`. The proxy now lets `/login?expired=1` through and clears the stale markers,
+  and the dashboard guard doesn't redirect while an expiry redirect is in flight. TS-0093
+  no longer races an aborted navigation (it failed on main run 38227311844).
+
 - **Deleting a testimony no longer erases its movement history** (issue #1364):
   `DELETE /api/v1/testimonies/{id}` answered 204 and cascade-deleted the testimony's registry
   movements and copies. It now answers 409 with the reason and keeps everything when the
@@ -2726,6 +2733,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   amount, outstanding balance and payment status, and lists only its payments, newest first.
   `GET /payments/budget/{id}` and `/balance` now have a UI caller (off the #1250 allowlist).
 
+- **Board Status / label / issue-state coherence gate** (#1550, CU76):
+  `python3 workspace/sdlc/check-board-status-label-coherence.py` enforces
+  CLOSED⇒Done+no WIP labels, OPEN WIP⇒In Progress+`in-progress`, and
+  `blocked` label (no Blocked Status column). Wired into Process Checks and
+  preflight (`--scope pr`; skips clearly without `gh` auth). Documented in
+  CONSTITUTION Gate 5, AI SDLC Cloud docs, and `docs/github/README.md`.
 - **Testimony edit, delete and movement history** (issue #1364, CU07 / CU44 / RF-31): on
   /dashboard/testimonies each row can open **Ver movimientos** (the testimony's registry
   movements, newest first, with the withdrawal card number), **Editar** (number and notes) and

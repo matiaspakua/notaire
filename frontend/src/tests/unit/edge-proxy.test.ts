@@ -48,6 +48,18 @@ describe("edge proxy route guards (issue #1056 / CU84)", () => {
     expect(locationOf(response)).toContain("/dashboard");
   });
 
+  it("lets /login?expired=1 through despite stale UX markers and clears them (#1548)", async () => {
+    const proxy = await loadProxy();
+    const response = proxy(
+      request("/login?expired=1", { [AUTH_STATUS_COOKIE]: "1", [AUTH_ROLE_COOKIE]: "ESCRIBANO" }),
+    );
+    expect(response.headers.get("location")).toBeNull();
+    const setCookie = response.headers.get("set-cookie") ?? "";
+    expect(setCookie).toContain(`${AUTH_STATUS_COOKIE}=`);
+    expect(setCookie).toContain(`${AUTH_ROLE_COOKIE}=`);
+    expect(setCookie).toMatch(/Max-Age=0|Expires=Thu, 01 Jan 1970/i);
+  });
+
   it("denies non-admin administration routes at the edge", async () => {
     const proxy = await loadProxy();
     const response = proxy(

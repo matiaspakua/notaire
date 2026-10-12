@@ -17,6 +17,9 @@
 7. **Docs are part of Done**; no secrets in git; design-system tokens on frontend.
 8. **Path-scoped CI (#1257)**: docs-only PRs skip Java/E2E leaves; aggregators accept `skipped`;
    `main` always full suite.
+9. **Board coherence (#1550)**: CLOSED⇒Done+no WIP labels; OPEN WIP⇒In Progress+`in-progress`;
+   blocked⇒`blocked` label (no Blocked column). Validate:
+   `python3 workspace/sdlc/check-board-status-label-coherence.py` (skips without `gh` auth).
 
 ## Workflow (abbrev)
 
@@ -32,6 +35,7 @@ docs → PR → merge → smoke.
 | Modules | `python3 workspace/modules.py …` / `workspace/modules.yaml` |
 | OpenSpec | `docs/openspec/` (run CLI from `docs/`) |
 | Preflight | `bash workspace/sdlc/preflight.sh` |
+| Board Status/labels | `python3 workspace/sdlc/check-board-status-label-coherence.py` |
 | Skills catalog | `.claude/skills/README.md` (load on demand) |
 
 *Keep this card ≤3 KB. Expand detail in CONSTITUTION.md, not here.*
