@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Unknown identification-type person** (#1490, CU75): the person posted
+  with an unknown identification type is named `Unknown Type E2E`. The
+  request still answers 400. The first name `Ana` stays, and omitting
+  the type still defaults to `DNI`.
 - **H2 seed address and email** (#1490, CU75): the seeded notary lives at
   `Main Avenue 123` with email `jcgarcia@notary.com`. The name
   `Juan Carlos Garcia`, marital status `Casado`, and type `Escribano`
