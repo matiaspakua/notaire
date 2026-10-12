@@ -1222,7 +1222,9 @@
           "INTERMEDIATE": "Intermediate",
           "FINAL": "Final"
         },
-        "nodeFallback": "Node {id}"
+        "nodeFallback": "Node {id}",
+        "autoLayout": "Auto-arrange",
+        "autoLayoutDone": "Diagram rearranged"
       }
     }
   },
