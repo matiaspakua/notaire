@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded person identity** (#1490, CU75): the person samples are
+  `Garcia`, `Juan Carlos`, `20123456`, `20-20123456-3`, `011-4555-1234`,
+  and `011-15-5555-1234`. `CUIT` and `CUIL` stay.
 - **Seeded person place** (#1490, CU75): locality and province cite
   `Buenos Aires`. Nationality cites `Argentina`.
 - **Seeded person sex code** (#1490, CU75): legal sex keeps `Masculino` and
