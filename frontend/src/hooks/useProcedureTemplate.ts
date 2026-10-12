@@ -1,7 +1,8 @@
 /**
  * React Query hooks for ProcedureTemplate: the required-documents checklist per procedure type
  * (CU03 read, CU55 admin #1362).
- * Endpoints: GET /api/v1/procedure-templates/procedure-types/{idProcedureType},
+ * Endpoints: GET /api/v1/procedure-templates (all rows, CU79 overview #1554),
+ * GET /api/v1/procedure-templates/procedure-types/{idProcedureType},
  * POST /api/v1/procedure-templates, PUT/DELETE /api/v1/procedure-templates/{idProcedureType}/{idDocumentType}
  *
  * The API answers flat rows (fkIdProcedureType, fkIdDocumentType, notes), so the document name,
@@ -14,6 +15,8 @@ import { useDocumentTypes } from "@/hooks/useDocuments";
 import type { ProcedureTemplate, ProcedureTemplateRow } from "@/types";
 
 export const procedureTemplateKeys = {
+  root: ["procedureTemplate"] as const,
+  all: ["procedureTemplate", "all"] as const,
   byProcedure: (idTypeProcedure: number) => ["procedureTemplate", "procedureType", idTypeProcedure] as const,
 };
 
@@ -32,6 +35,14 @@ export function useProcedureTemplate(idTypeProcedure: number | undefined) {
   return { ...templates, data };
 }
 
+/** Every required-document template across all procedure types (#1554). */
+export function useAllProcedureTemplates() {
+  return useQuery({
+    queryKey: procedureTemplateKeys.all,
+    queryFn: () => apiGet<ProcedureTemplate[]>("/procedure-templates"),
+  });
+}
+
 export interface RequiredDocumentKey {
   procedureTypeId: number;
   documentTypeId: number;
@@ -40,7 +51,10 @@ export interface RequiredDocumentKey {
 function useInvalidateChecklist() {
   const queryClient = useQueryClient();
   return (procedureTypeId: number) =>
-    queryClient.invalidateQueries({ queryKey: procedureTemplateKeys.byProcedure(procedureTypeId) });
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: procedureTemplateKeys.byProcedure(procedureTypeId) }),
+      queryClient.invalidateQueries({ queryKey: procedureTemplateKeys.all }),
+    ]);
 }
 
 export function useCreateProcedureTemplate() {
