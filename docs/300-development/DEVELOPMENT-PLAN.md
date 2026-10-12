@@ -79,8 +79,9 @@ and [ADR-005](../200-architecture/202-ADR/ADR-005-modern-frontend-migration.md).
 
 **Live status (single sources of truth):**
 
-- Delivery / issue status: [Notaire — Delivery Board](https://github.com/users/matiaspakua/projects/1)
-  and [docs/github/README.md](../github/README.md) (milestones + labels)
+- Delivery / issue status: [Notaire — Delivery Board](https://github.com/users/matiaspakua/projects/1),
+  [docs/github/README.md](../github/README.md), and the schedule in
+  [docs/github/PROJECT-MANAGEMENT.md](../github/PROJECT-MANAGEMENT.md)
 - Migration phase table: this section (and the aligned table in
   [SAD §4.3](../200-architecture/201-SAD/sad.md))
 - Archived snapshots (do not update): [`docs/000-archive/github/`](../000-archive/github/)

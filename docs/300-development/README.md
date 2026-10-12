@@ -20,7 +20,7 @@ which define the mandatory workflow.
 | [`MODULE-OWNERSHIP.md`](MODULE-OWNERSHIP.md) | In-repo module map (ADR-026): paths, fleets, verify, Mermaid deps — #1197 Phase 0 |
 | [`REPO-METRICS-BASELINE.md`](REPO-METRICS-BASELINE.md) | Reproducible repo metrics for topology decisions (#1256 / #1417) |
 | [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md) | Map of local checks (`workspace/sdlc/preflight.sh`) to CI jobs |
-| [`304-ai-sdlc-cloud/`](304-ai-sdlc-cloud/) | Cursor Cloud AI SDLC fleet: foreman, specialists, env checklist, [CI merge gate](304-ai-sdlc-cloud/CI-MERGE-GATE.md), validation (not `local-ai/`) |
+| [`304-ai-sdlc-cloud/`](304-ai-sdlc-cloud/) | Cursor Cloud AI SDLC fleet: foreman, specialists, env checklist, [CI merge gate](304-ai-sdlc-cloud/CI-MERGE-GATE.md), validation (not `local-ai/`). Agents pick by the lanes in [project management](../github/PROJECT-MANAGEMENT.md) |
 | [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md) | Permanent domain model. A change that moves a state updates this file in the same PR |
 | [`INGENIERIA.md`](INGENIERIA.md) | Artifact IDs, forward/back trace, and process boxes. Method from the specialization guide, fitted to this repo |
 | [`EVALUACION-INGENIERIA.md`](EVALUACION-INGENIERIA.md) | Which engineering documents exist, and which gaps are not a missing file |

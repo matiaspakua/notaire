@@ -22,6 +22,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Documentation
+
+- Project schedule for milestones, history, priority, and parallel-agent lanes
+  ([#1561](https://github.com/matiaspakua/notaire/issues/1561), RNF-21, RNF-22).
+  Handbook: `docs/github/PROJECT-MANAGEMENT.md`. Chart: GitHub Pages `/docs/management/`.
+  Apply on GitHub with `python3 workspace/sdlc/apply_milestone_policy.py --apply`.
+
 ### Breaking
 
 - **English HTTP paths, dashboard routes, and remaining schema names** (#1490, CU75):

@@ -52,15 +52,26 @@ stateDiagram-v2
 
 ## Milestones
 
-| Milestone | Contains |
-|-----------|----------|
-| v1.0 — Production Ready | Open `priority:critical` / `priority:high` work |
-| v1.1 — Hardening | Open `priority:medium` work |
-| Backlog | Open `priority:low` work |
+The schedule, the history of the two old phase schemes, priority, and the lanes
+agents use to work in parallel are in
+[PROJECT-MANAGEMENT.md](PROJECT-MANAGEMENT.md). Counts and the chart are on the
+GitHub Pages technical docs tab (`/docs/management/`).
 
-Anchor issues get no milestone. These are the traceability catalog: requirements RF/RNF
-(#3–#121, labels `requerimiento-funcional` / `requerimiento-no-funcional`) and use cases
-CU01–CU68 (#153–#221, label `CASO-DE-USO`). They stay open, and work issues reference them.
+Short version:
+
+| Train | Due | Holds |
+|-------|-----|--------|
+| 2026-11 · Release blockers | 2026-11-30 | Critical work and security NFRs |
+| 2026-12 · Frontend product | 2026-12-31 | Phase 4 scope: use cases, functional requirements, Next.js behavior |
+| 2027-01 · Quality & traceability | 2027-01-31 | Tests, docs, performance and process NFRs |
+| 2027-02 · Platform & operability | 2027-02-28 | CI and operability implementation |
+| 2027-03 · Legacy retirement | 2027-03-31 | `jpa` retirement (#899) |
+| 2027-06 · Backlog | 2027-06-30 | Low priority and environment NFRs |
+
+Requirements and use cases are **on** a train so scope is visible. They are not
+pickable. Apply the assignment with
+`python3 workspace/sdlc/apply_milestone_policy.py --apply`
+(needs Issues and Projects write). `--check` reports drift.
 
 ## Labels
 
@@ -72,6 +83,7 @@ CU01–CU68 (#153–#221, label `CASO-DE-USO`). They stay open, and work issues 
 | Concern | `security`, `a11y`, `i18n`, `risk` |
 | Workflow | `in-progress`, `in-review`, `blocked`, `needs-info`, `ready-for-dev` |
 | Traceability | `requerimiento-funcional`, `requerimiento-no-funcional`, `CASO-DE-USO` |
+| Historical | `phase:1-analysis` … `phase:6-deprecation` (do not schedule with these) |
 | Source | `audit-2026-09` (findings of the [2026-09 audit](PRODUCTION-READINESS-AUDIT-2026-09.md)) |
 
 Run `gh label list` for the live list. Do not create a label that repeats an existing one in
@@ -80,5 +92,7 @@ another language.
 ## Issue checklist
 
 Every work issue has: a Use Case reference (CU), acceptance criteria, one area label,
-one priority label and a milestone. Issue templates live in
+one priority label and a scheduled milestone. Catalog anchors (RF / RNF / CU) have a
+milestone and no priority. Issue templates live in
 [`.github/ISSUE_TEMPLATE/`](../../.github/ISSUE_TEMPLATE/).
+Lanes and the foreman pick rule: [PROJECT-MANAGEMENT.md](PROJECT-MANAGEMENT.md).

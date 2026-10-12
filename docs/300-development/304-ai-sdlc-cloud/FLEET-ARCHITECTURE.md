@@ -58,7 +58,7 @@ merge, or skip gates.
 
 | Phase | Foreman action | Deterministic check |
 |-------|----------------|---------------------|
-| **Pick** | Select one open issue that is not an epic/roadmap umbrella; verify Use Case (`CU-XX` / `RF-XX` / `RNF-XX`) in body | `gh issue view <n> --json title,body,labels,state` — state `OPEN`, UC present |
+| **Pick** | Select one open issue that is not an epic/roadmap umbrella or a catalog anchor; verify Use Case (`CU-XX` / `RF-XX` / `RNF-XX`) in body; one `in-progress` issue per [lane](../../github/PROJECT-MANAGEMENT.md) | `gh issue view <n> --json title,body,labels,state` — state `OPEN`, UC present, lane free |
 | **Triage** | Dispatch analyst / openspec-planner for refine + surface map (`backend` / `frontend` / both / `none`) | Written brief: issue #, UC, TYPE, SURFACE, acceptance criteria list |
 | **Gate 1** | Prefer `bash workspace/sdlc/seed-openspec-change.sh <change> --issue N --use-case "CU…" --branch … --create` then fill; ensure OpenSpec change exists (`schema: notaire-sdlc`); run plan validation | `openspec validate <change> --strict` + `bash workspace/sdlc/validate-sdlc-plan.sh <change>` |
 | **Branch** | Create `<type>/<issue-number>_<description>` from updated `main`; label `in-progress` | Branch name regex + `gh issue edit … --add-label in-progress` |

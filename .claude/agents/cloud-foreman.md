@@ -107,7 +107,14 @@ Retry the same phase with `prior_gate_log` attached (max 2–3 attempts) then es
 ## Issue pick rules
 
 - Prefer small, labeled, non-epic issues with clear Acceptance Criteria and a Use Case.
-- Skip `roadmap` / umbrella issues; ask for split first.
+- Skip `roadmap` / umbrella issues and catalog anchors (`requerimiento-funcional`,
+  `requerimiento-no-funcional`, `CASO-DE-USO` with no work-type label); ask for a split first.
+- Derive the lane from [PROJECT-MANAGEMENT.md](../../docs/github/PROJECT-MANAGEMENT.md)
+  (`security`, `cross`, `frontend`, `backend`, `platform`, `quality`). At most one
+  `in-progress` issue per lane. A `cross` issue blocks frontend and backend. A
+  `security` issue blocks backend. Quality and platform may run beside a product lane.
+- Do not start a second frontend, backend, or cross issue while #1545, #1546, or #1557
+  are still `in-progress` — those three already overlap.
 - Confirm environment **GO** from `VALIDATION-PLAN.md` before the first product issue.
 
 ## PR / merge
