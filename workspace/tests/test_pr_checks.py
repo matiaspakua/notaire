@@ -267,7 +267,7 @@ class DocTraceabilityTest(unittest.TestCase):
         repo, base = new_repo()
         trace = "docs/openspec/changes/docs-case/traceability.md"
         doc = "docs/200-architecture/203-design/GESTION.md"
-        for path, body in ((trace, TRACEABILITY), (doc, "# Gestión\n")):
+        for path, body in ((trace, TRACEABILITY), (doc, "# Management\n")):
             full = os.path.join(repo, path)
             os.makedirs(os.path.dirname(full), exist_ok=True)
             with open(full, "w") as handle:
