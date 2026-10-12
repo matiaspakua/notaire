@@ -45,7 +45,7 @@ export function ExpirationsAlertCard() {
         <Link
           href="/dashboard/upcoming-expirations"
           data-testid="expirations-alert-link"
-          className="inline-flex shrink-0 items-center gap-1 self-start rounded-full px-3 py-2 text-sm font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="inline-flex shrink-0 items-center gap-1 self-start rounded-full border border-black/5 bg-white px-3 py-2 text-sm font-semibold text-primary shadow-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           {t("vencimientos.verTodos")}
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
