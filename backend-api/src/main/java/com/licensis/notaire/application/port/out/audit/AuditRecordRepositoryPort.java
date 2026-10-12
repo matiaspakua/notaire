@@ -4,6 +4,7 @@ import com.licensis.notaire.business.AuditRecord;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +22,15 @@ public interface AuditRecordRepositoryPort {
     Page<AuditRecord> findAll(Pageable pageable);
 
     Page<AuditRecord> findByModule(String module, Pageable pageable);
+
+    /**
+     * Paged search; every filter is optional (null = no filter). #1545 / CU23.
+     *
+     * @param fromInclusive records at or after this instant
+     * @param toExclusive records strictly before this instant
+     */
+    Page<AuditRecord> search(String module, Integer idUser, Date fromInclusive, Date toExclusive,
+            Pageable pageable);
 
     Page<AuditRecord> findByFkIdUserIdUser(Integer idUser, Pageable pageable);
 

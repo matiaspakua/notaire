@@ -13,6 +13,7 @@ import type { AuditRecord } from "@/types";
 import { AUDIT_MODULES } from "@/lib/audit-modules";
 import { PAGE_SIZE_OPTIONS } from "@/components/shared/Pagination";
 import { useFormat } from "@/hooks/useFormat";
+import { useUsers } from "@/hooks/useUsers";
 
 const DEFAULT_SIZE = PAGE_SIZE_OPTIONS[0];
 
@@ -42,6 +43,16 @@ function AuditList() {
   const sizeParam = readInt(searchParams.get("size"), DEFAULT_SIZE);
   const size = (PAGE_SIZE_OPTIONS as readonly number[]).includes(sizeParam) ? sizeParam : DEFAULT_SIZE;
   const moduleFilter = searchParams.get("module") ?? "all";
+  // #1545 / CU23: user and inclusive day range, also in the URL.
+  const userParam = readInt(searchParams.get("user"), 0);
+  const userFilter = userParam > 0 ? userParam : undefined;
+  const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
+  const fromParam = searchParams.get("from") ?? "";
+  const toParam = searchParams.get("to") ?? "";
+  const from = ISO_DAY.test(fromParam) ? fromParam : "";
+  const to = ISO_DAY.test(toParam) ? toParam : "";
+  const rangeInvalid = !!from && !!to && from > to;
+  const { data: users = [] } = useUsers();
 
   function updateQuery(changes: Record<string, string | number | null>) {
     const next = new URLSearchParams(searchParams.toString());
@@ -57,6 +68,10 @@ function AuditList() {
     page,
     size,
     module: moduleFilter === "all" ? undefined : moduleFilter,
+    idUser: userFilter,
+    // An inverted range is shown as an error and not sent.
+    from: rangeInvalid ? undefined : from || undefined,
+    to: rangeInvalid ? undefined : to || undefined,
   });
   const records = data?.content ?? [];
   const [search, setSearch] = useState("");
@@ -123,7 +138,7 @@ function AuditList() {
         description={t("description")}
       />
 
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex flex-wrap items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-[360px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
           <Input
@@ -151,6 +166,47 @@ function AuditList() {
             ))}
           </select>
         </div>
+        <select
+          aria-label={t("userFilter")}
+          data-testid="select-audit-user"
+          className="h-12 rounded-lg border border-input bg-background px-4 text-sm text-foreground font-sans outline-none cursor-pointer focus:ring-2 focus:ring-ring"
+          value={userFilter ?? ""}
+          onChange={(e) => updateQuery({ user: e.target.value || null, page: null })}
+        >
+          <option value="">{t("allUsers")}</option>
+          {users.map((u) => (
+            <option key={u.idUser} value={u.idUser}>
+              {u.name}
+            </option>
+          ))}
+        </select>
+        <label className="flex items-center gap-2 text-sm text-muted-foreground">
+          {t("desde")}
+          <Input
+            type="date"
+            className="w-auto"
+            data-testid="input-audit-from"
+            aria-invalid={rangeInvalid}
+            value={from}
+            onChange={(e) => updateQuery({ from: e.target.value || null, page: null })}
+          />
+        </label>
+        <label className="flex items-center gap-2 text-sm text-muted-foreground">
+          {t("hasta")}
+          <Input
+            type="date"
+            className="w-auto"
+            data-testid="input-audit-to"
+            aria-invalid={rangeInvalid}
+            value={to}
+            onChange={(e) => updateQuery({ to: e.target.value || null, page: null })}
+          />
+        </label>
+        {rangeInvalid && (
+          <p role="alert" data-testid="audit-range-error" className="w-full text-sm text-destructive">
+            {t("rangoInvalido")}
+          </p>
+        )}
       </div>
 
       <DataTable

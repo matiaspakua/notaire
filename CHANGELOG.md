@@ -2732,6 +2732,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Año selector (a substitution counts in every year its range overlaps) and an Escribano search
   over both sides, accent- and case-insensitive, kept in the URL, with a result count.
 
+- **Audit log filter by user and date range** (issue #1545, CU23): `/dashboard/audit` has a
+  user selector and Desde/Hasta dates, kept in the URL. `GET /api/v1/audit-log` accepts optional
+  `from`/`to` (yyyy-MM-dd, inclusive), the filters now combine (module no longer overrides
+  `idUser`), and an inverted or malformed range answers 400.
 - **Consult a budget's payments** (issue #1544, CU47): the payments page has a
   "Consultar por presupuesto" picker (kept in `?budget=`). It shows the budget's total, paid
   amount, outstanding balance and payment status, and lists only its payments, newest first.

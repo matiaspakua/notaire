@@ -800,7 +800,12 @@
       "modulo": "Módulo"
     },
     "allModules": "Todos los módulos",
-    "moduleFilter": "Módulo"
+    "moduleFilter": "Módulo",
+    "userFilter": "Filtrar por usuario",
+    "allUsers": "Todos los usuarios",
+    "desde": "Desde",
+    "hasta": "Hasta",
+    "rangoInvalido": "La fecha \"desde\" debe ser anterior o igual a \"hasta\""
   },
   "administracion": {
     "title": "Administración",

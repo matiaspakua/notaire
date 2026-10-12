@@ -31,6 +31,7 @@ endpoints:
   "GET /api/v1/testimony-movements/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
   "PUT /api/v1/testimony-movements/{id}": "API-only (#1250 bucket A, Owner decision 2026-10-09, #1364): manual movement correction is API-only"
   "GET /api/v1/payments/date": "Likely redundant (#1250 bucket D): confirm, then remove with OpenAPI, Bruno and the CU-API matrix"
+  "GET /api/v1/audit-log/user/{idUser}": "API-only (#1250 bucket A, #1545): flat per-user list for integrations; the UI filters the paged GET /audit-log by idUser"
   "GET /api/v1/payments/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
   "GET /api/v1/budget-templates/procedure-types/{idProcedureType}": "Likely redundant (#1250 bucket D): confirm, then remove with OpenAPI, Bruno and the CU-API matrix"
   "GET /api/v1/procedure-templates": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"

@@ -97,8 +97,8 @@ TS-0139 to TS-0141    = Catalog / icons / complete-case feature specs (#1361, #1
 
 | TS | Filename | CU Coverage | Fixture Type | Skipped | Value |
 |----|----|-------|------|-------|-------|
-| **TS-0016** | `TS-0016-users-notaries-workflow.spec.ts` | CU20, CU21, CU23, CU48, CU51 | GherkinSteps + API | 3 intentional gaps cite #1146 (CU21 unskipped #1057) | **HIGH** |
-| **TS-0017** | `TS-0017-substitutions-workflow.spec.ts` | CU22, CU59 | Sidebar nav (`nav-suplencias`) + GherkinSteps | 2 intentional gaps cite #1146 | **MEDIUM** |
+| **TS-0016** | `TS-0016-users-notaries-workflow.spec.ts` | CU20, CU21, CU23, CU48, CU51 | GherkinSteps + API | 2 intentional gaps cite #1146 (CU21 unskipped #1057, CU23 #1545) | **HIGH** |
+| **TS-0017** | `TS-0017-substitutions-workflow.spec.ts` | CU22, CU59 | Sidebar nav (`nav-suplencias`) + GherkinSteps | no intentional gaps (CU59 implemented #1546) | **MEDIUM** |
 | **TS-0018** | `TS-0018-document-reentry-workflow.spec.ts` | CU43 | Direct nav + assertions | 0 | **MEDIUM** |
 | **TS-0019** | `TS-0019-properties-valuation-workflow.spec.ts` | CU69 | GherkinSteps | 0 | **MEDIUM** |
 
@@ -219,17 +219,16 @@ test("scenario", async ({ page }) => {
 
 ### Live inventory — intentional feature-gap skips (#1146 / CU76)
 
-**Twelve** static `test.skip` declarations remain in TS-0014 / TS-0016 /
+**Eleven** static `test.skip` declarations remain in TS-0014 / TS-0016 /
 TS-0017 / TS-0020. Each skip title cites `#1146` (tracker hygiene). **Product
 delivery stays on the owning CU** — do not unskip without real UI assertions.
 CU21 edit is **not** in this inventory (unskipped in #1057). Vitest
-`testing/tests/test_e2e_reliability.py` enforces `#\d+` citations and the count `12`.
+`testing/tests/test_e2e_reliability.py` enforces `#\d+` citations and the count `11`.
 
 | TS | Skip id | Owning CU | Product gap (summary) | Citation | Product tracking |
 |----|---------|-----------|-----------------------|----------|------------------|
 | TS-0014 | CU15-GW03 | CU15 | Payments rows have no “ver” detail control | #1146 | Owning CU15 (UI detail action) |
 | TS-0014 | CU47-GW01 | CU47 | Payments page has no “fecha desde” / “fecha hasta” filters | #1146 | Owning CU47 (date filter UI) |
-| TS-0016 | CU23-GW01 | CU23 | Users page has no “ver actividades” action | #1146 | Owning CU23 (activities UI) |
 | TS-0016 | CU48-GW01 | CU48 | No `/dashboard/administration/notaries` page. Notaries are managed as users. | #1146 | Owning CU48 (notary CRUD) |
 | TS-0016 | CU48-GW02 | CU48 | Same — create-notary flow is absent | #1146 | Owning CU48 |
 | TS-0020 | CU24-GW01 | CU24 | Reports (`nav-reportes`) has no “libro índices” named action | #1146 | Owning CU24 (report action/copy) |
@@ -247,6 +246,7 @@ CU21 edit is **not** in this inventory (unskipped in #1057). Vitest
 | TS-0016 | CU21 edit (icon-only unnamed) | Unskipped — #1057 (`aria-label` + `getByRole`) |
 | TS-0017 | CU59-GW01 (notary filter) | Implemented — #1546 (year + notary filters) |
 | TS-0017 | CU59-GW02 (detail) | Implemented — #1546 (the edit dialog is the detail view) |
+| TS-0016 | CU23-GW01 (activity log) | Implemented — #1545 (user + date-range filter on `/dashboard/audit`) |
 | TS-0021 | Conditional empty-table skip | Fixed — #1066 (`createWorkflowDefinition`) |
 | TS-0022 | Conditional empty-table skip | Fixed — #1066 (`createProcedureType`) |
 | TS-0010–TS-0015 historical design skips | Formerly listed in this doc | No static `test.skip` on current `main` |
