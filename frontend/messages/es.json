@@ -1505,7 +1505,15 @@
       "INTERMEDIATE": "Intermedio",
       "FINAL": "Final"
     },
-    "nodeAria": "Estado {name}, {type}"
+    "nodeAria": "Estado {name}, {type}",
+    "canvas": {
+      "controls": "Controles del diagrama",
+      "zoomIn": "Acercar",
+      "zoomOut": "Alejar",
+      "fitView": "Ajustar a la vista",
+      "interactive": "Bloquear o desbloquear el diagrama",
+      "minimap": "Minimapa del workflow"
+    }
   },
   "status": {
     "folio": {
