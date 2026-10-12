@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Fiscal valuation designation** (#1490, CU75): the property saved for the
+  fiscal valuation check uses the designation `Appraised house`. Visible
+  labels `Domicilio` and `Nomenclatura Catastral` stay.
 - **Concept edit fixture** (#1490, CU75): a concept that is in use is
   edited as `NameModified` and still answers 409. Stored concept names
   stay.
