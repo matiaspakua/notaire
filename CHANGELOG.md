@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Demo case addresses** (#1490, CU75): the seeded property street is
+  `Demo Avenue`, and the step titles say `Case`. Place abbreviation
+  `CABA`, name `María`, and procedure type `Compraventa` stay. Visible
+  matchers `domicilio` and `guardar|crear` stay.
 - **API coverage defect names** (#1490, CU75): the defect notes name
   `expires`, `DtoDocumentType.isExpires()`, `characters`,
   `associatesProperties`, `enabled`, `findFirstByFkIdPersonIdPerson`,
