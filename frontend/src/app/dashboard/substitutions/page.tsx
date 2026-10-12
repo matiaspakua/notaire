@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, UserCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -22,6 +23,7 @@ import type { Substitution } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue } from "@/lib/dates";
 import { useFormat } from "@/hooks/useFormat";
+import { filterSubstitutions, substitutionYears } from "@/lib/substitution-filter";
 
 const EMPTY: Partial<Substitution> = {
   dateStart: "",
@@ -33,12 +35,38 @@ function personName(p: Substitution["fkIdSubstituted"]): string {
   return [p.name, p.lastName].filter(Boolean).join(" ") || `#${p.personId}`;
 }
 
+// useSearchParams (?year=&notary=, #1546) needs a Suspense boundary for static prerendering.
 export default function SubstitutionsPage() {
+  return (
+    <Suspense>
+      <SubstitutionsList />
+    </Suspense>
+  );
+}
+
+function SubstitutionsList() {
   const fmt = useFormat();
   const t = useTranslations("suplencias");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
-  const { data: substitutions = [], isLoading } = useSubstitutions();
+  const { data: allSubstitutions = [], isLoading } = useSubstitutions();
+  // CU59 (#1546): year (overlap) and notary filters, kept in the URL.
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const yearParam = Number(searchParams.get("year"));
+  const year = Number.isInteger(yearParam) && yearParam > 0 ? yearParam : undefined;
+  // Local state so fast typing isn't lost while the URL catches up.
+  const [notary, setNotary] = useState(searchParams.get("notary") ?? "");
+  const years = substitutionYears(allSubstitutions, new Date().getFullYear());
+  const substitutions = filterSubstitutions(allSubstitutions, { year, notary });
+  function updateQuery(key: string, value: string) {
+    const next = new URLSearchParams(searchParams.toString());
+    if (value) next.set(key, value);
+    else next.delete(key);
+    const qs = next.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  }
   const createMutation = useCreateSubstitution();
   const updateMutation = useUpdateSubstitution();
   const deleteMutation = useDeleteSubstitution();
@@ -168,12 +196,50 @@ export default function SubstitutionsPage() {
         }
       />
 
+      <div className="mb-4 flex flex-wrap items-end gap-3">
+        <div className="w-40">
+          <FormField label={t("filtros.anio")}>
+            <select
+              data-testid="select-substitutions-year"
+              aria-label={t("filtros.anio")}
+              className="h-12 rounded-lg border border-input bg-background px-4 text-sm text-foreground font-sans outline-none cursor-pointer focus:ring-2 focus:ring-ring"
+              value={year ?? ""}
+              onChange={(e) => updateQuery("year", e.target.value)}
+            >
+              <option value="">{t("filtros.todosLosAnios")}</option>
+              {years.map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </select>
+          </FormField>
+        </div>
+        <div className="w-full sm:w-72">
+          <FormField label={t("filtros.escribano")}>
+            <Input
+              data-testid="input-substitutions-notary"
+              aria-label={t("filtros.escribano")}
+              placeholder={t("filtros.escribanoPlaceholder")}
+              value={notary}
+              onChange={(e) => {
+                setNotary(e.target.value);
+                updateQuery("notary", e.target.value);
+              }}
+            />
+          </FormField>
+        </div>
+        <p className="pb-3 text-sm text-muted-foreground" data-testid="substitutions-count" aria-live="polite">
+          {t("filtros.resultados", { count: substitutions.length })}
+        </p>
+      </div>
+
       <DataTable
         data={substitutions}
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(s) => s.idSubstitution!}
-        emptyMessage={t("noData")}
+        emptyMessage={year ? t("noDataYear", { year }) : t("noData")}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>

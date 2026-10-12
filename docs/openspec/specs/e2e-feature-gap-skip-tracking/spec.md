@@ -23,7 +23,7 @@ unless a more specific open issue replaces it).
 #### Scenario: Inventory count is stable and non-zero
 
 - **WHEN** the hygiene check inventories static skips in those four suites
-- **THEN** it finds exactly thirteen skips (2 + 2 + 2 + 7) and fails if a skip
+- **THEN** it finds exactly eleven skips (2 + 2 + 0 + 7) and fails if a skip
   loses its issue citation or the suite silently drops all intentional skips
   without updating the mapping
 
@@ -34,10 +34,10 @@ static feature-gap skip inventory for TS-0014/16/17/20, including count, skip
 id, owning CU, and that product work is tracked on the owning CU (not as UI
 work inside #1146).
 
-#### Scenario: Mapping lists thirteen feature-gap skips
+#### Scenario: Mapping lists eleven feature-gap skips
 
 - **WHEN** a reader opens the Skipped Tests Justification section
-- **THEN** it states that thirteen intentional feature-gap skips remain in
+- **THEN** it states that eleven intentional feature-gap skips remain in
   TS-0014/16/17/20 and lists each skip with owning CU and #1146 as the
   citation tracker
 
