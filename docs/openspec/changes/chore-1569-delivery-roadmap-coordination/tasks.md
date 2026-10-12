@@ -50,10 +50,10 @@
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api` — unit + integration
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
-- [ ] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
-- [ ] 6.4 `bash integration-test/scripts/test.sh` — HTTP/Bruno API suite
+- [x] 6.1 `mvn test -pl backend-api` — passed through the pipeline backend phase
+- [x] 6.2 `mvn jacoco:check -pl backend-api` — passed through Maven verify
+- [x] 6.3 `mvn verify -pl backend-api` — Checkstyle and SpotBugs passed
+- [ ] 6.4 `bash integration-test/scripts/test.sh` — requires Docker; daemon was unavailable
 - [ ] 6.5 No `@Disabled` or skipped tests without documented, approved justification
 
 ## 7. Ejecutar Playwright
@@ -70,14 +70,14 @@
 - [x] 8.3 Updated `CHANGELOG.md` (`[Unreleased]`)
 - [x] 8.4 Removed superseded generated files; no durable document needed archiving
 - [x] 8.5 Canonical rules live only in the project-management directory
-- [ ] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate
+- [ ] 8.6 `bash workspace/sdlc/preflight.sh --fix` — 25 checks passed; global archive hygiene is blocked by pre-existing closed-issue changes on `main`
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message ends with `Closes #<issue-number>`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.2 Every commit message ends with `Closes #<issue-number>`
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record the implementation commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
@@ -104,14 +104,14 @@
 
 <!-- Per CONSTITUTION.md §3. Every box must be checked before the change is Done. -->
 
-- [ ] Issue linked to a Use Case, with Acceptance Criteria
-- [ ] Specification written and reviewed (Gate 1)
-- [ ] Tests designed and written first, observed failing (Gate 2)
+- [x] Issue linked to a Use Case, with Acceptance Criteria
+- [x] Specification written and reviewed (Gate 1)
+- [x] Tests designed and written first, observed failing (Gate 2)
 - [ ] Full suite green: unit, integration, regression, E2E
 - [ ] Coverage at or above the JaCoCo ratchet floor
 - [ ] Playwright E2E green for UI changes
-- [ ] Permanent documentation updated, consistent, not duplicated (Gate 3)
-- [ ] Commits atomic and conventional, referencing the Issue
+- [x] Permanent documentation updated, consistent, not duplicated
+- [x] Commits atomic and conventional, referencing the Issue
 - [ ] PR created, CI green, review approved (Gate 4)
 - [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
 - [ ] `traceability.md` complete from Issue through Release

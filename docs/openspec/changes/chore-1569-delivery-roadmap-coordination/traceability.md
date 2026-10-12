@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/chore-1569-delivery-roadmap-coordination/` | Gate 1 passed |
 | Branch | `chore/1569_delivery_roadmap_coordination` | created |
 | Tasks | `tasks.md` | planning complete |
-| Commits | <!-- SHAs, one per line --> | pending |
+| Commits | `f20bfa8d`, `f8293bb` | implementation committed |
 | Pull Request | #<!-- number --> | pending |
 | CI run | <!-- workflow run URL --> | pending |
 | Merge commit | <!-- SHA --> | pending |
@@ -50,13 +50,13 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/300-development/305-project-management/` | yes | pending |
-| `docs/github/README.md` | yes | pending |
-| `docs/300-development/304-ai-sdlc-cloud/` | yes | pending |
-| `github-page/app/docs/roadmap/page.tsx` | yes | pending |
-| `AGENTS.md` | yes | pending |
-| `CONSTITUTION.md` | yes | pending |
-| `CHANGELOG.md` | yes | pending |
+| `docs/300-development/305-project-management/` | yes | `f20bfa8d` |
+| `docs/github/README.md` | yes | `f20bfa8d` |
+| `docs/300-development/304-ai-sdlc-cloud/` | yes | `f20bfa8d` |
+| `github-page/app/docs/roadmap/page.tsx` | yes | `f20bfa8d` |
+| `AGENTS.md` | yes | `f20bfa8d` |
+| `CONSTITUTION.md` | yes | `f20bfa8d` |
+| `CHANGELOG.md` | yes | `f20bfa8d` |
 
 ## Gate log
 
@@ -64,10 +64,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | strict OpenSpec + `validate-sdlc-plan.sh` |
 | 2 | Failing tests written, test cases designed | yes | red import/assertion failures recorded before implementation |
-| 3 | Suite green, coverage held, docs updated | <!-- --> | <!-- --> |
+| 3 | Suite green, coverage held, docs updated | blocked | Focused policy/release tests and docs build pass; Docker is unavailable and pre-existing OpenSpec archive debt on `main` blocks the global preflight |
 | 4 | CI green, review approved, no conflicts | <!-- --> | <!-- --> |
 | 5 | Deployed, smoke test passed, Issue closed | <!-- --> | <!-- --> |
 
 ## Exceptions
 
-None.
+- Docker-backed HTTP/Bruno regression could not run because the local daemon is unavailable.
+- Global SDLC validation finds active OpenSpec changes for already-closed issues on `main`; this change does not archive unrelated work.
