@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Synthetic person occupation** (#1490, CU75): person fixtures use `Clerk`.
+  The stored user type `Empleado` stays, along with `EMPLEADO`, `Soltero`,
+  and `Masculino`.
 - **Budget-procedure survey citation** (#1490, CU75): the living spec names
   `docs/openspec/explore.md`. The archived cardinality spec keeps
   `openspec/explore_functional_report.md`.

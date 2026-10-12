@@ -317,7 +317,7 @@ export const TestData = {
     taxId: "20-12345678-9",
     maritalStatus: "Soltero",
     sex: "Masculino",
-    occupation: "Empleado",
+    occupation: "Clerk",
     address: "Fake Street 123",
   },
   budget: {
