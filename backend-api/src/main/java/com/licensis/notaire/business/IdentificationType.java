@@ -54,7 +54,7 @@ public class IdentificationType implements Serializable, Persistable<Integer> {
     @NotBlank
     private String name;
     // Column is NOT NULL in the schema; map it so inserts populate it
-    // (previously missing → "null value in column caracteres" 500 on create).
+    // (previously missing → "null value in column characters" 500 on create).
     @Column(name = "characters")
     private String characters;
     @XmlTransient

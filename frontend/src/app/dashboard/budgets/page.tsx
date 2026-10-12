@@ -141,7 +141,7 @@ function BudgetsList() {
   );
   useClampPage(paging, byStatus || searchId !== null ? undefined : budgetsPage?.totalPages);
 
-  // CU60: the backend reads `status`; `estado` was ignored and returned every budget.
+  // CU60: the backend reads `status`. The retired query name was ignored and returned every budget.
   const { data: budgetsByStatus = [], isLoading: isLoadingByStatus } = useQuery({
     queryKey: ["budgets", "search", statusFilter],
     queryFn: () => apiGet<Budget[]>(`/budgets/search?status=${encodeURIComponent(statusFilter)}`),
