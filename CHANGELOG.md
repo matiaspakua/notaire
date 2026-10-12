@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **API coverage defect names** (#1490, CU75): the defect notes name
+  `expires`, `DtoDocumentType.isExpires()`, `characters`,
+  `associatesProperties`, `enabled`, `findFirstByFkIdPersonIdPerson`,
+  `password`, and `fkIdBudget`. Stored status `Firmada` stays.
 - **Retired query comments** (#1490, CU75): the budget filter comment names
   `status`, and the identification-type comment names the column
   `characters`. Catalog keys `estadoFilter` and `resumen.numeroGestion`
