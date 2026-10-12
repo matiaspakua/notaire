@@ -413,6 +413,20 @@
       "withdrawn": "Retiro",
       "card": "Cartón N.º",
       "observed": "Observado por el Registro"
+    },
+    "registrar": {
+      "button": "Registrar testimonio",
+      "title": "Registrar testimonio",
+      "deed": "Escritura",
+      "number": "Número",
+      "notes": "Observaciones",
+      "verified": "Verificado",
+      "deedRequired": "Seleccioná una escritura",
+      "numberRequired": "Ingresá un número mayor que cero",
+      "created": "Testimonio registrado",
+      "deedNotFound": "La escritura ya no existe",
+      "conflict": "No se pudo registrar: el testimonio entra en conflicto con otro",
+      "error": "No se pudo registrar el testimonio"
     }
   },
   "movimientosTestimonio": {

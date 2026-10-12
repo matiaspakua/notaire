@@ -2728,6 +2728,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Register a testimony manually** (issue #1555, CU07): `/dashboard/testimonies` has a
+  "Registrar testimonio" button. Its dialog takes a signed deed (required), number, notes and
+  a verified flag, and posts them with `POST /testimonies`, which is off the #1250 allowlist (bucket C).
+  Missing deed or number and 400 field errors show next to the field; 404 (deed gone) and 409 come
+  as a toast. The "Generar" flow is unchanged. New Playwright TS-0146.
+
 - **All document templates overview** (issue #1554, CU79): Administración → Plantillas has a
   "Todas las plantillas de documentos" table (procedure type, document type, condition, notes)
   read from `GET /procedure-templates`, which is off the #1250 allowlist (bucket C). It filters
