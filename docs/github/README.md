@@ -52,33 +52,46 @@ stateDiagram-v2
 
 ## Milestones
 
-| Milestone | Contains |
-|-----------|----------|
-| v1.0 — Production Ready | Open `priority:critical` / `priority:high` work |
-| v1.1 — Hardening | Open `priority:medium` work |
-| Backlog | Open `priority:low` work |
+Scheduling, history, and the requirements catalog are defined in
+[Project management](../300-development/305-project-management/README.md).
+Short form:
 
-Anchor issues get no milestone. These are the traceability catalog: requirements RF/RNF
-(#3–#121, labels `requerimiento-funcional` / `requerimiento-no-funcional`) and use cases
-CU01–CU68 (#153–#221, label `CASO-DE-USO`). They stay open, and work issues reference them.
+| Kind | Milestones |
+|------|------------|
+| Delivery (open, claimable) | Phase 4 — Modern Frontend, Phase 6 — Deprecation, v1.0 — Production Ready, v1.1 — Hardening, Backlog |
+| Scope (open, not claimable) | Scope — Functional requirements, Scope — Use cases, Scope — Non-functional requirements |
+| History (closed) | Close-date cohorts plus the older hyphen-titled milestones that already had issues |
+
+The September 2026 audit put every open work issue on v1.0 / v1.1 / Backlog by
+priority alone, and left catalog issues with no milestone. That priority rule
+still applies when no phase rule matches. Frontend slices, Phase 6 retirement,
+and the RF / CU / RNF catalogs have their own milestones so the roadmap can
+show progress. See [MILESTONES.md](../300-development/305-project-management/MILESTONES.md).
 
 ## Labels
 
 | Kind | Labels |
 |------|--------|
+| Lane (exactly one) | `lane:backend`, `lane:frontend`, `lane:fullstack`, `lane:devops`, `lane:docs`, `lane:test`, `lane:security`, `lane:owner` |
 | Area (one or more) | `BACKEND`, `FRONTEND`, `DB`, `DEVOPS`, `TEST`, `DOC` |
 | Type | `bug`, `enhancement`, `REFACTOR`, `tech-debt`, `chore`, `ci`, `dependencies`, `TAREA` |
-| Priority (exactly one) | `priority:critical`, `priority:high`, `priority:medium`, `priority:low` |
-| Concern | `security`, `a11y`, `i18n`, `risk` |
+| Priority (exactly one on claimable work) | `priority:critical`, `priority:high`, `priority:medium`, `priority:low` |
+| Concern | `security`, `a11y`, `i18n`, `risk`, `ux` |
+| Phase | `phase:1-analysis` through `phase:6-deprecation` |
 | Workflow | `in-progress`, `in-review`, `blocked`, `needs-info`, `ready-for-dev` |
 | Traceability | `requerimiento-funcional`, `requerimiento-no-funcional`, `CASO-DE-USO` |
-| Source | `audit-2026-09` (findings of the [2026-09 audit](PRODUCTION-READINESS-AUDIT-2026-09.md)) |
+| Source | `audit-2026-09` (findings of the [2026-09 audit](PRODUCTION-READINESS-AUDIT-2026-09.md)), `roadmap` |
+
+The full contract, including labels that must not be duplicated, is
+[LABELS.md](../300-development/305-project-management/LABELS.md).
+Parallel claims are [PARALLEL-AGENTS.md](../300-development/305-project-management/PARALLEL-AGENTS.md).
 
 Run `gh label list` for the live list. Do not create a label that repeats an existing one in
-another language.
+another language. `FRONTEND` means the Next.js client. Swing is not a target.
 
 ## Issue checklist
 
-Every work issue has: a Use Case reference (CU), acceptance criteria, one area label,
-one priority label and a milestone. Issue templates live in
+Every claimable work issue has: a Use Case reference (CU), acceptance criteria, one area label,
+one lane label, one priority label, and one delivery milestone. Catalog issues (RF, CU, RNF)
+use a Scope milestone and are not picked by agents. Issue templates live in
 [`.github/ISSUE_TEMPLATE/`](../../.github/ISSUE_TEMPLATE/).

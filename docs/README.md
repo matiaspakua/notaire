@@ -11,6 +11,7 @@ business, architecture, and development.
 | [`200-architecture/`](200-architecture/) | SAD (arc42), ADRs, design, diagrams, data model, security, monitoring, DevSecOps, and deployment |
 | [`300-development/`](300-development/) | Setup guides, code standards, testing, and the [AI SDLC Cloud fleet](300-development/304-ai-sdlc-cloud/); current audit: [DOCUMENTATION-AUDIT-2026-10.md](300-development/DOCUMENTATION-AUDIT-2026-10.md) |
 | [`github/`](github/) | GitHub organization (board, milestones, labels) and the September 2026 production-readiness audit |
+| [`300-development/305-project-management/`](300-development/305-project-management/) | Project scheduling: history, delivery trains, requirements catalog, roadmap chart |
 | [`000-archive/`](000-archive/) | Superseded legacy documents and artifacts, kept for historical traceability |
 
 ## Recommended entry point

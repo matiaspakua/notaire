@@ -6,7 +6,7 @@ This directory combines project-specific skills with generic lifecycle skills. T
 
 | Lifecycle concern | Skill | Notaire owner/artifacts | Gate |
 |---|---|---|---|
-| Business analysis and backlog | `analyst`, `product-owner`, `delivery-maturity-roadmap` | `docs/100-business/`, roadmap and Issue | 1 |
+| Business analysis and backlog | `analyst`, `product-owner`, `delivery-maturity-roadmap`, `project-management` | `docs/100-business/`, `docs/300-development/305-project-management/`, roadmap and Issue | 1 |
 | Traceability | `devsecops-traceability` | `docs/openspec/changes/*/traceability.md`, `docs/100-business/104-traceability/` | 1-5 |
 | Architecture and decisions | `architecture-decision-design`, `plantuml`, `hexagonal-arch` | `docs/200-architecture/`, `docs/200-architecture/202-ADR/`, diagrams | 1 |
 | Threats and security requirements | `secure-threat-modeling`, `backend`, `programming`, `devops` | security docs, `SR-*`, SAST/SCA/DAST evidence | 1-4 |

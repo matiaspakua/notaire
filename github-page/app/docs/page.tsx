@@ -27,6 +27,11 @@ const cards = [
     title: "Security & DevSecOps",
     body: "Auth, audit, CodeQL/Trivy/DAST, rulesets, and the security module map.",
   },
+  {
+    href: "/docs/roadmap/",
+    title: "Roadmap",
+    body: "Milestone history, delivery trains, requirements catalog, and parallel-agent lanes.",
+  },
 ];
 
 export default function DocsHomePage() {
