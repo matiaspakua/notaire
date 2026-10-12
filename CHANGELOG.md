@@ -64,6 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Procedure-folder status labels** (#1490, CU75): the procedure-folder
+  status names `Activa`, `Espera`, and `Archivada`.
 - **Registration-draft status labels** (#1490, CU75): the registration-draft
   status names `Generada`, `Presentado para inscripción`, `Observado`, and
   `Inscripto`. Deed status `Inscripta` stays.
