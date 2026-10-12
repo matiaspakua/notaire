@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded marital status and node layout** (#1490, CU75): the person sample
+  stays `Casado`. The login sample stays `Escribano`. The seeded workflow
+  uses `INITIAL`, `INTERMEDIATE`, and `FINAL`, and the seeded nodes stay
+  without designer coordinates.
 - **Seeded empty fields** (#1490, CU75): `Documentacion` stays at version
   `2`. The other seeded concepts stay at version `1`. The seeded person
   notes, management notes, procedure notes, and transition conditions stay
