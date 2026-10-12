@@ -1,0 +1,32 @@
+info:
+  name: Filter audit records by user and date range
+  type: http
+  seq: 5
+  description: |-
+      ## Filter audit records — GET /api/v1/audit-log?idUser=&from=&to=
+      Paged search combining module, user and an inclusive calendar-day range
+      (yyyy-MM-dd). Issue #1545. Traceability: CU23, CU73
+
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/audit-log?page=0&size=5&idUser=1&from=2000-01-01&to=2999-12-31"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+
+          test("Paged body; every row belongs to user 1", function () {
+            const body = res.getBody();
+            expect(body).to.have.property('content');
+            expect(body).to.have.property('totalElements');
+            body.content.forEach(function (r) {
+              expect(r.users.idUser).to.equal(1);
+            });
+          });
