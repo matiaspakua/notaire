@@ -594,7 +594,7 @@ Master catalog of identification document types. Stored names such as `DNI` and 
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the document type |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
 | `name` | TEXT | No | No | Yes | — | — | Name. Stored values `DNI`, `CUIT`, `CUIL`, `Pasaporte`, `CI`, `LC`, and `LE` stay. |
-| `characters` | TEXT | No | No | Yes | — | — | Format or alphanumeric mask |
+| `characters` | TEXT | No | No | Yes | — | — | Format or alphanumeric mask. Seeded lengths stay: `8` for `DNI`, `LE`, and `LC`; `12` for `Pasaporte`; and `11` for `CUIT`. |
 
 ---
 

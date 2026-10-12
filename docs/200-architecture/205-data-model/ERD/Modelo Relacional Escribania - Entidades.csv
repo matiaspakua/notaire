@@ -27,7 +27,7 @@ people,Strong,is_notary,,no,Boolean,,,,`true` when the person is a licensed nota
 identification_types,Strong,version,,no,Integer,,,,Optimistic lock
 identification_types,Strong,id,PK,no,Integer,x,,,Unique id of the document type
 identification_types,Strong,name,,no,Text,,,,"Name. Stored values `DNI`, `CUIT`, `CUIL`, `Pasaporte`, `CI`, `LC`, and `LE` stay."
-identification_types,Strong,characters,,no,Text,,,,Format or alphanumeric mask
+identification_types,Strong,characters,,no,Text,,,,"Format or alphanumeric mask. Seeded lengths stay: `8` for `DNI`, `LE`, and `LC`; `12` for `Pasaporte`; and `11` for `CUIT`."
 substitutions,Associative,version,,no,Integer,,,,Optimistic lock
 substitutions,Associative,id,PK,no,Integer,x,,,Unique id of the substitution
 substitutions,Associative,start_date,,no,Date,,,,Start date of the substitution
