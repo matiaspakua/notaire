@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Concept edit fixture** (#1490, CU75): a concept that is in use is
+  edited as `NameModified` and still answers 409. Stored concept names
+  stay.
 - **Doc-traceability fixture heading** (#1490, CU75): the temporary design
   file in the PR check is headed `# Management`. The claimed path stays
   `docs/200-architecture/203-design/GESTION.md`.
