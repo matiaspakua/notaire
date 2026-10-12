@@ -1125,6 +1125,18 @@
           "porcentajeVariable": "Porcentaje Variable",
           "valor": "Valor"
         }
+      },
+      "todas": {
+        "title": "Todas las plantillas de documentos",
+        "description": "Documentos requeridos por cada tipo de trámite. Seleccioná un trámite para editar su lista.",
+        "tipoTramite": "Tipo de trámite",
+        "tipoDocumento": "Tipo de documento",
+        "condicion": "Condición",
+        "requerido": "Requerido",
+        "notas": "Notas",
+        "filtroTramite": "Filtrar por trámite",
+        "filtroDocumento": "Filtrar por documento",
+        "noData": "No hay plantillas que coincidan"
       }
     },
     "roles": {

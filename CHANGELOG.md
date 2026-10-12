@@ -2734,6 +2734,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Missing deed or number and 400 field errors show next to the field; 404 (deed gone) and 409 come
   as a toast. The "Generar" flow is unchanged. New Playwright TS-0146.
 
+- **All document templates overview** (issue #1554, CU79): Administración → Plantillas has a
+  "Todas las plantillas de documentos" table (procedure type, document type, condition, notes)
+  read from `GET /procedure-templates`, which is off the #1250 allowlist (bucket C). It filters
+  client-side by procedure and document, and each row opens that procedure's "Documentos
+  requeridos" editor (`/dashboard/administration/procedures?checklist=<id>`). New Playwright TS-0145.
+
 - **Current status in the case summary** (issue #1553, CU14): the managements case summary
   has an "Estado actual" section (status, date, notes) read from
   `GET /managements/{id}/current-status`, which is off the #1250 allowlist (bucket C). It shows

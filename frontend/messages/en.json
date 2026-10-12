@@ -1125,6 +1125,18 @@
           "porcentajeVariable": "Variable Percentage",
           "valor": "Value"
         }
+      },
+      "todas": {
+        "title": "All document templates",
+        "description": "Documents required by each procedure type. Select a procedure to edit its list.",
+        "tipoTramite": "Procedure type",
+        "tipoDocumento": "Document type",
+        "condicion": "Condition",
+        "requerido": "Required",
+        "notas": "Notes",
+        "filtroTramite": "Filter by procedure",
+        "filtroDocumento": "Filter by document",
+        "noData": "No matching templates"
       }
     },
     "roles": {
