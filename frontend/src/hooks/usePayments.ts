@@ -25,6 +25,15 @@ export function usePaymentsByBudget(idBudget: number | null) {
     enabled: idBudget !== null,
   });
 }
+/** CU47 (#1557): payments between two days, both inclusive (yyyy-MM-dd). */
+export function usePaymentsByDate(from: string, to: string) {
+  return useQuery({
+    queryKey: [...paymentsKeys.all, "date", from, to],
+    queryFn: () =>
+      apiGet<Payment[]>(`/payments/date?startDate=${encodeURIComponent(from)}&endDate=${encodeURIComponent(to)}`),
+    enabled: !!from && !!to,
+  });
+}
 /** CU47 (#1544): a budget's outstanding balance. */
 export function useBudgetBalance(idBudget: number | null) {
   return useQuery({

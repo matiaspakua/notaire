@@ -525,7 +525,10 @@
       "paid": "Paid",
       "balance": "Balance",
       "status": "Payment status",
-      "sinPagos": "This budget has no payments"
+      "sinPagos": "This budget has no payments",
+      "desde": "From",
+      "hasta": "To",
+      "rangoInvalido": "The \"from\" date must be on or before \"to\""
     }
   },
   "protocolo": {

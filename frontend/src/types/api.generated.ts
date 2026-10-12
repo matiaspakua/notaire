@@ -1398,7 +1398,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get payments by date range */
+        /** CU47 - Get payments by date range (both days inclusive) */
         get: operations["getByDateRange"];
         put?: never;
         post?: never;
@@ -8089,6 +8089,15 @@ export interface operations {
         responses: {
             /** @description OK */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoPaymentResponse"][];
+                };
+            };
+            /** @description Malformed, missing or inverted date range */
+            400: {
                 headers: {
                     [name: string]: unknown;
                 };
