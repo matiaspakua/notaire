@@ -1211,7 +1211,7 @@
         "transitionDeleted": "Transition deleted",
         "errorDeleteTransition": "Error deleting transition",
         "consistencyErrors": "Consistency errors:",
-        "hint": "Double-click a node or edge to delete it. Drag from the side handle to create transitions.",
+        "hint": "Select a status or a transition to edit it in the panel. Drag from the side handle to create transitions.",
         "addNodeTitle": "Add Node to Workflow",
         "fields": {
           "estado": "Case Status",
@@ -1225,7 +1225,37 @@
         },
         "nodeFallback": "Node {id}",
         "autoLayout": "Auto-arrange",
-        "autoLayoutDone": "Diagram rearranged"
+        "autoLayoutDone": "Diagram rearranged",
+        "panel": {
+          "title": "Selection details",
+          "empty": "Select a status or a transition to see its details.",
+          "outgoing": "Outgoing transitions",
+          "incoming": "Incoming transitions",
+          "none": "None",
+          "addTransition": "Add transition",
+          "to": "Destination status",
+          "toPlaceholder": "Select destination...",
+          "description": "Description (optional)",
+          "add": "Add",
+          "save": "Save",
+          "deleteNode": "Delete status",
+          "deleteNodeTitle": "Delete status {name}?",
+          "deleteNodeDesc": "The status will be removed from the workflow.",
+          "deleteNodeHasTransitions": "This status has transitions: delete them first, otherwise the server will reject the deletion.",
+          "deleteTransition": "Delete transition",
+          "deleteTransitionTitle": "Delete the transition?",
+          "deleteTransitionDesc": "The transition {from} → {to} will be deleted.",
+          "transitionAdded": "Transition added",
+          "typeSaved": "Type updated",
+          "errorSaveType": "Error updating the type",
+          "descriptionSaved": "Description saved",
+          "errorSaveDescription": "Error saving the description",
+          "problem": {
+            "selfLoop": "A transition cannot return to the same status.",
+            "duplicate": "That transition already exists.",
+            "incomplete": "Select the destination status."
+          }
+        }
       }
     }
   },

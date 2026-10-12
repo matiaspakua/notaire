@@ -102,6 +102,17 @@ export function useCreateWorkflowTransition() {
   });
 }
 
+/** #1576: edit a transition's description (PUT needs origin and destination too). */
+export function useUpdateWorkflowTransition() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Partial<WorkflowTransition> }) =>
+      apiPut<WorkflowTransition>(`/workflow-transition/${id}`, data),
+    onSuccess: (_, vars) =>
+      qc.invalidateQueries({ queryKey: workflowKeys.transitions(vars.data.workflowDefinitionId ?? 0) }),
+  });
+}
+
 export function useDeleteWorkflowTransition() {
   const qc = useQueryClient();
   return useMutation({

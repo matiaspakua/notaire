@@ -2740,6 +2740,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Workflow visual editing** (issue #1576, epic #1573, CU70): selecting a status or a transition opens a
+  side panel to change the status type, add a transition (with an optional description), edit a
+  transition's description and delete either one. Every delete asks for confirmation; self-loops and
+  duplicate transitions are rejected with a message; double-click no longer deletes. Fixed a status
+  added in edit mode staying invisible until reload, and the view now re-fits after adding a status.
 - **Workflow status boxes and arrows** (issue #1575, epic #1573, CU70/CU71): workflow statuses are
   fixed-width boxes with a text type badge (Inicial / Intermedio / Final), a pill shape for the
   start and a double border for final nodes (not color alone), and a highlight when selected.
