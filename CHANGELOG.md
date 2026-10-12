@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded history notes** (#1490, CU75): the history notes list
+  `Apertura de la gestión`, `Trámite de compraventa en curso`,
+  `Documentación completa recibida`, and `Trámite de donación en curso`.
 - **Seeded management-status notes** (#1490, CU75): the status notes list
   `Inicio Gestion`, `Post-signing: testimony generated from signed deed`,
   `Post-signing: testimony submitted for inscription`, and `Post-signing:
