@@ -212,7 +212,7 @@ The source deed granted in the notarial protocol.
 | `number` | INTEGER | No | No | Yes | — | — | Yearly serial number of the deed in the protocol |
 | `deed_date` | DATE | No | No | Yes | — | — | Date the act was granted |
 | `body` | TEXT | No | No | Yes | — | — | Full legal text of the protocol deed |
-| `status` | TEXT | No | No | Yes | — | — | Deed status. Stored values `Preparada`, `Firmada`, `No Pasó`, and `Errose` stay. |
+| `status` | TEXT | No | No | Yes | — | — | Deed status. Stored values `Sin Firmar`, `Firmada`, `Anulada`, `No Paso`, and `Inscripta` stay. |
 | `registration_number` | TEXT | No | No | No | NULL | — | Registration number granted by the registry |
 | `registration_date` | DATE | No | No | No | NULL | — | Final registration date |
 | `notes` | TEXT | No | No | No | NULL | — | Marginal notes and notarial attestations |
@@ -227,7 +227,7 @@ Catalog of operational statuses a deed management can move through. Stored statu
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Management-status id |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
-| `name` | TEXT | No | No | Yes | — | — | Status name. Stored examples such as `Generado`, `En proceso`, and `Listo para firmar` stay. |
+| `name` | TEXT | No | No | Yes | — | — | Status name. Stored examples such as `Iniciada`, `En Tramite`, and `Testimonio Generado` stay. |
 | `notes` | TEXT | No | No | No | NULL | — | Functional definition and conditions |
 
 ---
@@ -242,7 +242,7 @@ Protocol sheets supplied for recording public deeds.
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
 | `number` | INTEGER | No | No | Yes | — | — | Official serial number printed on the sheet |
 | `year_number` | INTEGER | No | No | Yes | — | — | Calendar year of the protocol |
-| `status` | TEXT | No | No | Yes | — | — | Status. Stored values `Disponible`, `Usado`, `Errose`, and `No Pasó` stay. |
+| `status` | TEXT | No | No | Yes | — | — | Status. Stored values `Nuevo`, `Utilizado`, `Errose`, `no pasó`, and `Asignado a cuaderno` stay. |
 | `notes` | TEXT | No | No | No | NULL | — | Notes on exceptions or attestations |
 | `fk_id_deed` | INTEGER | No | Yes | No | NULL | `deeds(id)` | Deed that used this sheet |
 | `fk_id_folio_type` | INTEGER | No | Yes | Yes | — | `folio_types(id)` | How the sheet is classified |

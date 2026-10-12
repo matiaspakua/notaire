@@ -107,7 +107,7 @@ deed_managements,Strong,fk_id_management_status,FK,yes,Integer,,x,x,Current oper
 deed_managements,Strong,pending_debt_on_archive,,yes,Boolean,,,x,`true` when the management was archived with a pending debt
 management_statuses,Strong,version,,no,Integer,,,,Optimistic lock
 management_statuses,Strong,id,PK,no,Integer,x,,,Management-status id
-management_statuses,Strong,name,,no,Text,,,,"Status name. Stored examples such as `Generado`, `En proceso`, and `Listo para firmar` stay."
+management_statuses,Strong,name,,no,Text,,,,"Status name. Stored examples such as `Iniciada`, `En Tramite`, and `Testimonio Generado` stay."
 management_statuses,Strong,notes,,yes,Text,,,x,Functional definition and conditions
 history,Weak,version,,no,Integer,,,,Optimistic lock
 history,Weak,id,PK,no,Integer,x,,,History-row id
@@ -226,7 +226,7 @@ deeds,Strong,id,PK,no,Integer,x,,,Internal id of the source deed
 deeds,Strong,number,,no,Integer,,,,Yearly serial number of the deed in the protocol
 deeds,Strong,deed_date,,no,Date,,,,Date the act was granted
 deeds,Strong,body,,no,Text,,,,Full legal text of the protocol deed
-deeds,Strong,status,,no,Text,,,,"Deed status. Stored values `Preparada`, `Firmada`, `No Pasó`, and `Errose` stay."
+deeds,Strong,status,,no,Text,,,,"Deed status. Stored values `Sin Firmar`, `Firmada`, `Anulada`, `No Paso`, and `Inscripta` stay."
 deeds,Strong,registration_number,,yes,Text,,,x,Registration number granted by the registry
 deeds,Strong,registration_date,,yes,Date,,,x,Final registration date
 deeds,Strong,notes,,yes,Text,,,x,Marginal notes and notarial attestations
@@ -246,7 +246,7 @@ folios,Strong,version,,no,Integer,,,,Optimistic lock
 folios,Strong,id,PK,no,Integer,x,,,Unique id of the protocol sheet
 folios,Strong,number,,no,Integer,,,,Official serial number printed on the sheet
 folios,Strong,year_number,,no,Integer,,,,Calendar year of the protocol
-folios,Strong,status,,no,Text,,,,"Status. Stored values `Disponible`, `Usado`, `Errose`, and `No Pasó` stay."
+folios,Strong,status,,no,Text,,,,"Status. Stored values `Nuevo`, `Utilizado`, `Errose`, `no pasó`, and `Asignado a cuaderno` stay."
 folios,Strong,notes,,yes,Text,,,x,Notes on exceptions or attestations
 folios,Strong,fk_id_deed,FK,yes,Integer,,x,x,Deed that used this sheet
 folios,Strong,fk_id_folio_type,FK,no,Integer,,x,,How the sheet is classified
