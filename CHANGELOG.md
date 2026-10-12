@@ -22,6 +22,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Board Status / label / issue-state coherence gate** (#1550, CU76):
+  `python3 workspace/sdlc/check-board-status-label-coherence.py` enforces
+  CLOSED⇒Done+no WIP labels, OPEN WIP⇒In Progress+`in-progress`, and
+  `blocked` label (no Blocked Status column). Wired into Process Checks and
+  preflight (`--scope pr`; skips clearly without `gh` auth). Documented in
+  CONSTITUTION Gate 5, AI SDLC Cloud docs, and `docs/github/README.md`.
+
 ### Breaking
 
 - **English HTTP paths, dashboard routes, and remaining schema names** (#1490, CU75):

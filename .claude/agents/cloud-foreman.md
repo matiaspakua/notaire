@@ -124,7 +124,13 @@ Retry the same phase with `prior_gate_log` attached (max 2–3 attempts) then es
 - Serialize Playwright-heavy PRs; draft Dependabot floods when runners starve.
 - If a cloud worker’s `gh` returns 401, the **coordinator** (or a same-VM worker
   with working `gh`) owns `gh pr ready` / squash-merge after heavy-gate exit 0.
-- After merge: archive OpenSpec change when the issue is closed.
+- After merge: archive OpenSpec change when the issue is closed; ensure board
+  Status is **Done** and WIP labels (`in-progress`, `blocked`) are cleared.
+  Before merge/close and during board hygiene run
+  `python3 workspace/sdlc/check-board-status-label-coherence.py --scope pr`
+  (and `--scope wip` for the In Progress column). Project has no Blocked
+  Status — use the `blocked` label. If Issues/Projects write is 403, leave a
+  human paste; never invent Owner product scope.
 
 ## Module map
 
