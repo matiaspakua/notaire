@@ -521,7 +521,10 @@
       "paid": "Pagado",
       "balance": "Saldo",
       "status": "Estado de pago",
-      "sinPagos": "Este presupuesto no tiene pagos"
+      "sinPagos": "Este presupuesto no tiene pagos",
+      "desde": "Desde",
+      "hasta": "Hasta",
+      "rangoInvalido": "La fecha \"desde\" debe ser anterior o igual a \"hasta\""
     }
   },
   "protocolo": {

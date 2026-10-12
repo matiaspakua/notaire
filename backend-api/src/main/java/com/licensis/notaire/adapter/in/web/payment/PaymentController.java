@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.in.web.payment;
 
+import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.application.port.in.payment.DeletePaymentUseCase;
 import com.licensis.notaire.application.port.in.payment.EditPaymentCommand;
 import com.licensis.notaire.application.port.in.payment.EditPaymentUseCase;
@@ -143,12 +144,21 @@ public class PaymentController {
     }
 
     @GetMapping("/date")
-    @Operation(summary = "Get payments by date range")
+    @Operation(summary = "CU47 - Get payments by date range (both days inclusive)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Malformed, missing or inverted date range")
+    })
     public ResponseEntity<List<DtoPaymentResponse>> getByDateRange(
             @Parameter(description = "Start date (YYYY-MM-DD)")
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
             @Parameter(description = "End date (YYYY-MM-DD)")
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+        // #1557: an inverted range is a client error, not an empty list.
+        if (startDate.after(endDate)) {
+            throw new BusinessValidationException(
+                    "'startDate' must be on or before 'endDate'");
+        }
         try {
             return ResponseEntity.ok(
                     PaymentWebMapper.toDtoList(queryPaymentsUseCase.findByDateRange(startDate, endDate)));
