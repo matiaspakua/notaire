@@ -2174,6 +2174,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Workflow editor boxes no longer overlap** (issue #1574, epic #1573, CU70/CU71): the editor
+  canvas is derived from the loaded nodes and transitions (it used to keep its first, empty
+  state, so a direct load was blank and cached data stacked every box at 0,0). Nodes without a
+  saved position, or overlapping one, get an automatic left-to-right layout (dagre) that follows
+  the transitions; "Auto-organizar" re-lays out the whole graph and saves every position with
+  `PUT /workflow-node/{id}`; new nodes go to free space. The read-only `WorkflowViewer` uses the
+  same layout. New Playwright TS-0147.
+
 - **An expired session always shows the "session expired" message** (issue #1548):
   under load the edge proxy could answer `/login?expired=1` with a redirect to `/dashboard`
   (the UX status cookie was still present), and the dashboard guard then sent the user to a
