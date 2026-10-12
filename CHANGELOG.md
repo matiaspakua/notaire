@@ -2740,6 +2740,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Workflow editor on a phone** (issue #1580, epic #1573, CU70): on small screens the workflow editor
+  opens in the list view, where the workflow is edited; the diagram stays available read-only with
+  fit-to-view and pinch-zoom. Header buttons now wrap instead of running off the screen (all pages).
 - **Workflow list view** (issue #1578, epic #1573, CU70): a "Vista de lista" tab next to the workflow
   diagram lists statuses and transitions in tables where they can be added, retyped, described and
   deleted with the keyboard only; every control has an accessible name, and diagram boxes now read out
