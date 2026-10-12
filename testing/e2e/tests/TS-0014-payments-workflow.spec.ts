@@ -6,6 +6,7 @@
  * Issue #821 (payment-status badge: SIN_PAGOS / PARCIAL / SALDADO)
  * Issue #848 (overpayment rejection message)
  * Issue #1544 (CU47: consult one budget's payments, summary and balance)
+ * Issue #1557 (CU47: inclusive date-range filter, URL-persisted)
  */
 import { type Page, test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
@@ -248,8 +249,28 @@ test.describe("CU47 - Look up a payment (payment status #821)", () => {
     await expect(badge).toHaveText(/saldado/i);
   });
 
-  test.skip("CU47-GW01 (#1146): Given the payments page, When filtered by date, Then the filtered list is shown", () => {
-    // Skipped (#1146): the payments page has no date-from / date-to filter inputs.
+  test("CU47-GW01 (#1557): Given payments on several days, When filtered by date range, Then only the inclusive range is shown", async ({ page }) => {
+    const { idBudget } = await seedBudget(page, 100000);
+    for (const [date, amount] of [["2031-02-10", 1111], ["2031-02-15", 2222], ["2031-02-20", 3333]] as const) {
+      const r = await createPayment(page, idBudget, { amount, date });
+      if (!r.ok) throw new Error(`Failed to seed payment: ${r.error ?? JSON.stringify(r.data)}`);
+    }
+
+    // Given the budget is consulted and the range ends on the middle payment's day.
+    await steps.givenUserIsOnPage(`/dashboard/payments?budget=${idBudget}&from=2031-02-10&to=2031-02-15`);
+    const rows = page.locator("tbody tr");
+    // Then both boundary days are included and the later one is not.
+    await expect(rows).toHaveCount(2, { timeout: 10000 });
+
+    // When the "to" day moves back past "from", Then an inline error is shown.
+    await page.getByTestId("input-payments-to").fill("2031-02-01");
+    await expect(page.getByTestId("payments-range-error")).toBeVisible();
+    await expect(page).toHaveURL(/to=2031-02-01/);
+
+    // When the range is cleared, Then all three payments come back.
+    await page.getByTestId("input-payments-to").fill("");
+    await page.getByTestId("input-payments-from").fill("");
+    await expect(rows).toHaveCount(3, { timeout: 10000 });
   });
 });
 

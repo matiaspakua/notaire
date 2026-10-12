@@ -22,13 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Documentation
-
-- Project schedule for milestones, history, priority, and parallel-agent lanes
-  ([#1561](https://github.com/matiaspakua/notaire/issues/1561), RNF-21, RNF-22).
-  Handbook: `docs/github/PROJECT-MANAGEMENT.md`. Chart: GitHub Pages `/docs/management/`.
-  Apply on GitHub with `python3 workspace/sdlc/apply_milestone_policy.py --apply`.
-
 ### Breaking
 
 - **English HTTP paths, dashboard routes, and remaining schema names** (#1490, CU75):
@@ -2735,6 +2728,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Upcoming-expirations alert on the dashboard** (issue #1556, CU42): the home dashboard shows
+  "N documentos vencen en los próximos 30 días" with the 3 nearest (document, management,
+  due date) and a link to `/dashboard/upcoming-expirations`. Same endpoint and window as that
+  page; hidden when there are none or the request fails. TS-0020 CU42-GW01 is implemented
+  (desktop and 390px), so the feature-gap skip inventory drops by one.
+
+- **Filter payments by date** (issue #1557, CU47): the payments page has "Desde" / "Hasta"
+  date inputs (kept in `?from=&to=`), both days inclusive. Without a budget it lists
+  `GET /payments/date` (off the #1250 allowlist; the reachability scanner also counts that call for `GET /payments/{id}`, so that entry goes too); with a budget it narrows that budget's
+  payments. An inverted range shows an inline error and sends no request, and the API now
+  answers it with 400 instead of an empty list. TS-0014 CU47-GW01 is implemented (one fewer feature-gap skip).
+
+- **Substitutions by year and notary** (issue #1546, CU59): `/dashboard/substitutions` has an
+  Año selector (a substitution counts in every year its range overlaps) and an Escribano search
+  over both sides, accent- and case-insensitive, kept in the URL, with a result count.
+
+- **Audit log filter by user and date range** (issue #1545, CU23): `/dashboard/audit` has a
+  user selector and Desde/Hasta dates, kept in the URL. `GET /api/v1/audit-log` accepts optional
+  `from`/`to` (yyyy-MM-dd, inclusive), the filters now combine (module no longer overrides
+  `idUser`), and an inverted or malformed range answers 400.
 - **Consult a budget's payments** (issue #1544, CU47): the payments page has a
   "Consultar por presupuesto" picker (kept in `?budget=`). It shows the budget's total, paid
   amount, outstanding balance and payment status, and lists only its payments, newest first.

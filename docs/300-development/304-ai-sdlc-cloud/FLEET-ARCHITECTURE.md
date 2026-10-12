@@ -58,7 +58,7 @@ merge, or skip gates.
 
 | Phase | Foreman action | Deterministic check |
 |-------|----------------|---------------------|
-| **Pick** | Select one open issue that is not an epic/roadmap umbrella or a catalog anchor; verify Use Case (`CU-XX` / `RF-XX` / `RNF-XX`) in body; one `in-progress` issue per [lane](../../github/PROJECT-MANAGEMENT.md) | `gh issue view <n> --json title,body,labels,state` — state `OPEN`, UC present, lane free |
+| **Pick** | Select one open issue that is not an epic/roadmap umbrella; verify Use Case (`CU-XX` / `RF-XX` / `RNF-XX`) in body | `gh issue view <n> --json title,body,labels,state` — state `OPEN`, UC present |
 | **Triage** | Dispatch analyst / openspec-planner for refine + surface map (`backend` / `frontend` / both / `none`) | Written brief: issue #, UC, TYPE, SURFACE, acceptance criteria list |
 | **Gate 1** | Prefer `bash workspace/sdlc/seed-openspec-change.sh <change> --issue N --use-case "CU…" --branch … --create` then fill; ensure OpenSpec change exists (`schema: notaire-sdlc`); run plan validation | `openspec validate <change> --strict` + `bash workspace/sdlc/validate-sdlc-plan.sh <change>` |
 | **Branch** | Create `<type>/<issue-number>_<description>` from updated `main`; label `in-progress` | Branch name regex + `gh issue edit … --add-label in-progress` |
@@ -104,6 +104,7 @@ architecture or security review is blocked.
 | **Security** | `security-auditor` | `secure-threat-modeling`, `backend` | `claude-opus-5-5-medium` | `claude-opus-5-5-high` | Authz/secrets false negatives are expensive |
 | **Code Reviewer** | `code-reviewer` | `ai-agent-workflow`, `programming` | `claude-sonnet-5-5-high` | `claude-opus-5-5-medium` | Gate 4 needs careful diff reading |
 | **Issue Sync** | `sync_issues_and_code` | `devsecops-traceability`, `product-owner` | `composer-2.5-fast` | `claude-sonnet-5-5-low` | Label/link chores; cheapest reliable slug |
+| **Project manager** | `project-manager` | `project-management`, `product-owner`, `delivery-maturity-roadmap` | `claude-sonnet-5-5-medium` | `claude-opus-5-5-medium` | Milestone, priority, and lane scheduling. Does not write product code |
 | **CI Fix loop** | `backend-implementer` or `devops-engineer` | `ci-cd-quality-gates`, `maven-build` | `composer-2.5` | `claude-sonnet-5-5-medium` | Narrow log→patch cycles; Composer for cost |
 
 **General-purpose fallback:** `efficiency_config_agent` with `claude-sonnet-5-5-medium` when SURFACE is unclear or the change spans docs-only chores.
@@ -225,8 +226,10 @@ If a specialist finds itself reading `local-ai/` for product work, stop and re-r
 ## 8. Concurrency and isolation
 
 - Default: **one product issue per foreman run**.
+- Several foreman runs may work at once only on **different lanes**. A lane is free when no open issue in that lane has `in-progress`. `lane:fullstack` also occupies `lane:backend` and `lane:frontend`. `lane:security` is exclusive. `lane:owner` and milestones starting with `Scope —` are not claimable. Rules: [PARALLEL-AGENTS.md](../305-project-management/PARALLEL-AGENTS.md).
 - Parallel specialists on the **same** issue are allowed only for read-only review (security + code-review) or non-overlapping paths explicitly listed in the brief.
 - Never two writers on the same branch without foreman serialization.
+- Heavy CI stays one PR at a time even when lanes are free.
 
 ---
 

@@ -1,0 +1,256 @@
+{
+  "as_of": "2026-10-12",
+  "repo": "matiaspakua/notaire",
+  "issues": 799,
+  "open": 295,
+  "closed": 504,
+  "current_unassigned": 607,
+  "moves": 617,
+  "claimable_open": 108,
+  "by_milestone": [
+    {
+      "title": "Backlog",
+      "state": "open",
+      "kind": "delivery",
+      "open": 17,
+      "closed": 9,
+      "due_on": null,
+      "description": "Unscheduled low-priority work and issues that still need an owner decision."
+    },
+    {
+      "title": "Cloud AI SDLC",
+      "state": "closed",
+      "kind": "history",
+      "open": 0,
+      "closed": 117,
+      "due_on": "2026-10-31T00:00:00Z",
+      "description": "Closed historical cohort: October 2026 Cloud AI SDLC deliveries that had no milestone."
+    },
+    {
+      "title": "Phase 0 - Foundations",
+      "state": "closed",
+      "kind": "history",
+      "open": 0,
+      "closed": 6,
+      "due_on": null,
+      "description": ""
+    },
+    {
+      "title": "Phase 1 - Backend Complete",
+      "state": "closed",
+      "kind": "history",
+      "open": 0,
+      "closed": 15,
+      "due_on": null,
+      "description": ""
+    },
+    {
+      "title": "Phase 1 — Analysis & foundation",
+      "state": "closed",
+      "kind": "history",
+      "open": 0,
+      "closed": 31,
+      "due_on": "2026-05-31T00:00:00Z",
+      "description": "Closed historical cohort: work finished through May 2026 (analysis and early foundation) that had no milestone."
+    },
+    {
+      "title": "Phase 2 - Kubernetes & Observability",
+      "state": "closed",
+      "kind": "history",
+      "open": 0,
+      "closed": 5,
+      "due_on": null,
+      "description": ""
+    },
+    {
+      "title": "Phase 3 - Modern Frontend",
+      "state": "closed",
+      "kind": "history",
+      "open": 0,
+      "closed": 3,
+      "due_on": null,
+      "description": ""
+    },
+    {
+      "title": "Phase 3 — Backend API",
+      "state": "closed",
+      "kind": "history",
+      "open": 0,
+      "closed": 49,
+      "due_on": "2026-06-30T00:00:00Z",
+      "description": "Closed historical cohort: June 2026 backend API deliveries that had no milestone. SAD Phase 3."
+    },
+    {
+      "title": "Phase 4 - Production Ready",
+      "state": "closed",
+      "kind": "history",
+      "open": 0,
+      "closed": 2,
+      "due_on": null,
+      "description": ""
+    },
+    {
+      "title": "Phase 4 — Frontend deliveries (history)",
+      "state": "closed",
+      "kind": "history",
+      "open": 0,
+      "closed": 114,
+      "due_on": "2026-08-31T00:00:00Z",
+      "description": "Closed historical cohort: July–August 2026 frontend deliveries that had no milestone. Kept off the open Phase 4 train so progress is not inflated."
+    },
+    {
+      "title": "Phase 4 — Modern Frontend",
+      "state": "open",
+      "kind": "delivery",
+      "open": 15,
+      "closed": 15,
+      "due_on": "2026-12-31T00:00:00Z",
+      "description": "Remaining Next.js use-case screens. Reopen milestone #9. Historical July–August work is a separate closed milestone."
+    },
+    {
+      "title": "Phase 5 — Observability & production audit",
+      "state": "closed",
+      "kind": "history",
+      "open": 0,
+      "closed": 77,
+      "due_on": "2026-09-30T00:00:00Z",
+      "description": "Closed historical cohort: September 2026 observability work and the production-readiness audit wave."
+    },
+    {
+      "title": "Phase 6 — Deprecation",
+      "state": "open",
+      "kind": "delivery",
+      "open": 3,
+      "closed": 2,
+      "due_on": "2027-01-31T00:00:00Z",
+      "description": "Legacy retirement: jpa package and remaining deprecation. Critical production blockers stay on v1.0."
+    },
+    {
+      "title": "Scope — Functional requirements",
+      "state": "open",
+      "kind": "scope",
+      "open": 94,
+      "closed": 0,
+      "due_on": null,
+      "description": "Permanent functional-requirement catalog (RF-*). Not claimable delivery work. Stays open for traceability."
+    },
+    {
+      "title": "Scope — Non-functional requirements",
+      "state": "open",
+      "kind": "scope",
+      "open": 24,
+      "closed": 0,
+      "due_on": null,
+      "description": "Permanent non-functional catalog (RNF-*). Delivery assessment is recorded per theme (security→v1.0, experience→Phase 4, performance→v1.1, platform→Backlog) without moving the catalog onto those trains."
+    },
+    {
+      "title": "Scope — Use cases",
+      "state": "open",
+      "kind": "scope",
+      "open": 69,
+      "closed": 0,
+      "due_on": null,
+      "description": "Permanent use-case catalog (CU). Not claimable delivery work. Stays open for traceability."
+    },
+    {
+      "title": "v1.0 — Production Ready",
+      "state": "open",
+      "kind": "delivery",
+      "open": 33,
+      "closed": 32,
+      "due_on": "2027-03-31T00:00:00Z",
+      "description": "Production gate: critical and high security, data-integrity, and release blockers. Not the home of every high-priority feature."
+    },
+    {
+      "title": "v1.1 — Hardening",
+      "state": "open",
+      "kind": "delivery",
+      "open": 40,
+      "closed": 27,
+      "due_on": "2027-06-30T00:00:00Z",
+      "description": "Hardening after the production gate: medium quality, performance, tests, and docs."
+    }
+  ],
+  "by_lane_claimable_open": {
+    "lane:devops": 25,
+    "lane:security": 3,
+    "lane:docs": 19,
+    "lane:backend": 24,
+    "lane:frontend": 10,
+    "lane:test": 7,
+    "lane:owner": 14,
+    "lane:fullstack": 6
+  },
+  "nfr_trains": {
+    "v1.1 — Hardening": 4,
+    "Phase 4 — Modern Frontend": 6,
+    "v1.0 — Production Ready": 6,
+    "Backlog": 8
+  },
+  "move_reasons": {
+    "historical-close-date": 376,
+    "scope-rf": 94,
+    "scope-nfr": 24,
+    "scope-cu": 69,
+    "frontend-slice": 11,
+    "legacy-jpa": 2,
+    "priority-low": 4,
+    "fullstack-feature": 3,
+    "phase-4": 1,
+    "phase-6": 1,
+    "priority-medium": 9,
+    "priority-high": 3,
+    "historical-phase-label": 12,
+    "needs-triage": 4,
+    "unscoped-noise": 3,
+    "frontend-low": 1
+  },
+  "labels_to_add": [
+    {
+      "name": "lane:backend",
+      "color": "1d76db",
+      "description": "Parallel-agent lane. Exactly one per issue."
+    },
+    {
+      "name": "lane:frontend",
+      "color": "0096C7",
+      "description": "Parallel-agent lane. Exactly one per issue."
+    },
+    {
+      "name": "lane:fullstack",
+      "color": "0A84FF",
+      "description": "Parallel-agent lane. Exactly one per issue."
+    },
+    {
+      "name": "lane:devops",
+      "color": "7cd5b4",
+      "description": "Parallel-agent lane. Exactly one per issue."
+    },
+    {
+      "name": "lane:docs",
+      "color": "fad8c3",
+      "description": "Parallel-agent lane. Exactly one per issue."
+    },
+    {
+      "name": "lane:test",
+      "color": "9b59b6",
+      "description": "Parallel-agent lane. Exactly one per issue."
+    },
+    {
+      "name": "lane:security",
+      "color": "b60205",
+      "description": "Parallel-agent lane. Exactly one per issue."
+    },
+    {
+      "name": "lane:owner",
+      "color": "fbca04",
+      "description": "Parallel-agent lane. Exactly one per issue."
+    }
+  ],
+  "label_updates": [
+    {
+      "name": "FRONTEND",
+      "description": "Next.js web client, forms, and pages. Swing is not a target."
+    }
+  ]
+}

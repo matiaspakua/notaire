@@ -103,7 +103,7 @@ flowchart LR
 
 | Process | In | Out | Who uses it |
 |---------|----|-----|-------------|
-| Intake | Business request or an observed defect | Issue with `CU`, priority, area, milestone, and a lane | [Board](../github/README.md), [schedule](../github/PROJECT-MANAGEMENT.md) |
+| Intake | Business request or an observed defect | Issue with `CU`, priority, area, milestone | [Board](../github/README.md) |
 | Refinement | Open issue | OpenSpec: proposal, spec, design, tasks | Gate 1, `openspec validate` |
 | Construction | Spec and a failing test | Code, a migration if needed, `DOC-CICLO` if a state moved | TDD, branch from `main` |
 | Verification | Change on the branch | Unit, integration, contract, E2E, SAST | [CI-PREFLIGHT.md](CI-PREFLIGHT.md) |

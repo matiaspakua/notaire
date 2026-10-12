@@ -187,6 +187,10 @@
     "administracion": {
       "label": "Administration",
       "description": "Catalogs and system configuration"
+    },
+    "vencimientos": {
+      "titulo": "{count, plural, one {# document expires} other {# documents expire}} in the next {days} days",
+      "verTodos": "View all"
     }
   },
   "personas": {
@@ -521,7 +525,10 @@
       "paid": "Paid",
       "balance": "Balance",
       "status": "Payment status",
-      "sinPagos": "This budget has no payments"
+      "sinPagos": "This budget has no payments",
+      "desde": "From",
+      "hasta": "To",
+      "rangoInvalido": "The \"from\" date must be on or before \"to\""
     }
   },
   "protocolo": {
@@ -800,7 +807,12 @@
       "modulo": "Module"
     },
     "allModules": "All modules",
-    "moduleFilter": "Module"
+    "moduleFilter": "Module",
+    "userFilter": "Filter by user",
+    "allUsers": "All users",
+    "desde": "From",
+    "hasta": "To",
+    "rangoInvalido": "The \"from\" date must be on or before \"to\""
   },
   "administracion": {
     "title": "Administration",
@@ -1238,7 +1250,15 @@
       "desde": "From",
       "hasta": "To"
     },
-    "register": "Register"
+    "register": "Register",
+    "filtros": {
+      "anio": "Year",
+      "todosLosAnios": "All years",
+      "escribano": "Notary",
+      "escribanoPlaceholder": "Substituted or substitute",
+      "resultados": "{count, plural, one {# substitution} other {# substitutions}}"
+    },
+    "noDataYear": "No substitutions for {year}"
   },
   "reportes": {
     "title": "Reports",

@@ -2,9 +2,7 @@
 
 > **arc42 Template v8.2** — based on [docs.arc42.org](https://docs.arc42.org/home/)
 >
-> **Version:** 3.5 | **Date:** 2026-10-12 | **Author:** Architecture Team
->
-> **Changelog v3.5**: §11.3 no longer links milestones #6, #7, #8 and #10 (they do not exist). The delivery schedule is [PROJECT-MANAGEMENT.md](../../github/PROJECT-MANAGEMENT.md).
+> **Version:** 3.4 | **Date:** 2026-10-11 | **Author:** Architecture Team
 >
 > **Changelog v3.4**: §6 points at [GESTION.md](../203-design/GESTION.md) for the case-process analysis. States stay in CICLO-DE-VIDA.md.
 >
@@ -1131,24 +1129,22 @@ O --> (Deployability Docker)
 > [DEVELOPMENT-PLAN §5](../../300-development/DEVELOPMENT-PLAN.md).
 > Historical snapshots (do not update): [`docs/000-archive/github/`](../../000-archive/github/).
 >
-> The roadmap matches the GitHub milestones and the Delivery Board.
-> Each item has a tracking issue with acceptance criteria, labels, and a milestone.
+> The manager's roadmap is [Project management](../../300-development/305-project-management/README.md)
+> (history cohorts, delivery trains, requirements catalog, parallel-agent lanes).
+> Counts and the Pages chart live there. This section keeps the phase narrative.
+> Milestone numbers **#6, #7, #8, and #10** from earlier revisions were deleted.
+> Do not recreate those numbers.
 
-#### Migration Phases — Alignment with the delivery schedule
+#### Migration phases
 
-Architecture phases are the product narrative. GitHub milestones #6, #7, #8 and #10
-were cited here and do not exist. The closed milestones that do exist (#1–#5, #9, #11)
-are history and are renamed by the scheduling script. Forward work uses the trains in
-[PROJECT-MANAGEMENT.md](../../github/PROJECT-MANAGEMENT.md).
-
-| Phase | Schedule | Status | Tracking |
-|-------|----------|--------|----------|
-| Phase 1 — Analysis | History (closed foundations) | ✅ Complete | Legacy documented, 73 use cases catalogued |
-| Phase 2 — Foundation | History · Phase 0 / Phase 1 milestones | ✅ Complete | Shared DTO module (retired, ADR-025), Maven multi-module, Docker Compose |
-| Phase 3 — Backend API | History · Phase 1 Backend API | ✅ Complete | Controllers, repositories, entities, Flyway |
-| Phase 4 — Modern Frontend | 2026-12 · Frontend product | 🔄 In Progress | [#898](https://github.com/matiaspakua/notaire/issues/898) — 73 use cases in Next.js 16 |
-| Phase 5 — Observability | History · Phase 2 Platform | ✅ Complete | LPG stack + SonarQube + Homer |
-| Phase 6 — Deprecation | 2027-03 · Legacy retirement | 🔶 Partial | Swing removed; `jpa` cleanup is [#899](https://github.com/matiaspakua/notaire/issues/899). Critical defect [#574](https://github.com/matiaspakua/notaire/issues/574) is a release blocker |
+| Phase | Status | Where the work is tracked |
+|-------|--------|---------------------------|
+| Phase 1 — Analysis | Complete | Closed cohort "Phase 1 — Analysis & foundation" |
+| Phase 2 — Foundation | Complete | Shared DTO module retired (ADR-025); cohort "Phase 2 — Foundation" when a `phase:2-foundation` label is present |
+| Phase 3 — Backend API | Complete | Closed cohort "Phase 3 — Backend API" (June 2026). Not milestone #4, whose older title is "Phase 3 - Modern Frontend" |
+| Phase 4 — Modern Frontend | In progress | Open train "Phase 4 — Modern Frontend" (reopen milestone #9). Tracker [#898](https://github.com/matiaspakua/notaire/issues/898). July–August deliveries are a separate closed cohort so the progress bar is not inflated |
+| Phase 5 — Observability | Complete | Closed cohort "Phase 5 — Observability & production audit" |
+| Phase 6 — Deprecation | Partial | Open train "Phase 6 — Deprecation" (reopen milestone #11). Swing is gone; `jpa` cleanup remains ([#899](https://github.com/matiaspakua/notaire/issues/899)) |
 
 #### Short Term (Phase 4 — Modern Frontend)
 
@@ -1174,15 +1170,15 @@ are history and are renamed by the scheduling script. Forward work uses the trai
 
 | Severity | Item | GitHub Issue | Milestone |
 |----------|------|-------------|-----------|
-| ✅ Resolved | `ControllerNegocio` God class (5,337 lines) removed | [#568](https://github.com/matiaspakua/notaire/issues/568), [#900](https://github.com/matiaspakua/notaire/issues/900) | History |
-| 🔴 Critical | Controllers instantiate JPA directly (no Spring DI) | [#574](https://github.com/matiaspakua/notaire/issues/574) | 2026-11 · Release blockers |
-| ✅ Resolved | Raw-JDBC `Conexion` singleton bypasses HikariCP | [#575](https://github.com/matiaspakua/notaire/issues/575) | History · v1.0 priority bucket |
-| 🟠 High | 26 legacy JPA controllers | [#576](https://github.com/matiaspakua/notaire/issues/576) | 2027-03 · Legacy retirement |
-| 🟠 High | Business logic in controllers, not services | [#578](https://github.com/matiaspakua/notaire/issues/578) | 2027-03 · Legacy retirement |
-| 🟠 High | Controllers return JPA entities instead of DTOs | [#577](https://github.com/matiaspakua/notaire/issues/577) | 2027-03 · Legacy retirement |
-| 🟠 High | `GlobalExceptionHandler` bypassed in 26 controllers | [#579](https://github.com/matiaspakua/notaire/issues/579) | 2027-03 · Legacy retirement |
-| 🟡 Medium | `JpaAdministrator` singleton in service layer | [#584](https://github.com/matiaspakua/notaire/issues/584) | 2027-03 · Legacy retirement |
-| 🟡 Medium | Domain entities depend on DTOs (inverted dependency) | [#580](https://github.com/matiaspakua/notaire/issues/580) | 2027-03 · Legacy retirement |
+| ✅ Resolved | `ControllerNegocio` God class (5,337 lines) removed | [#568](https://github.com/matiaspakua/notaire/issues/568), [#900](https://github.com/matiaspakua/notaire/issues/900) | Phase 6 |
+| 🔴 Critical | Controllers instantiate JPA directly (no Spring DI) | [#574](https://github.com/matiaspakua/notaire/issues/574) | Phase 6 |
+| 🔴 Critical | Raw-JDBC `Conexion` singleton bypasses HikariCP | [#575](https://github.com/matiaspakua/notaire/issues/575) | Phase 6 |
+| 🟠 High | 26 legacy JPA controllers | [#576](https://github.com/matiaspakua/notaire/issues/576) | Phase 6 |
+| 🟠 High | Business logic in controllers, not services | [#578](https://github.com/matiaspakua/notaire/issues/578) | Phase 6 |
+| 🟠 High | Controllers return JPA entities instead of DTOs | [#577](https://github.com/matiaspakua/notaire/issues/577) | Phase 6 |
+| 🟠 High | `GlobalExceptionHandler` bypassed in 26 controllers | [#579](https://github.com/matiaspakua/notaire/issues/579) | Phase 6 |
+| 🟡 Medium | `JpaAdministrator` singleton in service layer | [#584](https://github.com/matiaspakua/notaire/issues/584) | Phase 6 |
+| 🟡 Medium | Domain entities depend on DTOs (inverted dependency) | [#580](https://github.com/matiaspakua/notaire/issues/580) | Phase 6 |
 
 ---
 

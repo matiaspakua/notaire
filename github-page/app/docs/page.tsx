@@ -28,9 +28,9 @@ const cards = [
     body: "Auth, audit, CodeQL/Trivy/DAST, rulesets, and the security module map.",
   },
   {
-    href: "/docs/management/",
-    title: "Schedule",
-    body: "Milestones, history, priority, and the lanes that let agents work in parallel.",
+    href: "/docs/roadmap/",
+    title: "Roadmap",
+    body: "Milestone history, delivery trains, requirements catalog, and parallel-agent lanes.",
   },
 ];
 
@@ -47,8 +47,8 @@ export default function DocsHomePage() {
           <a className="text-[#0A84FF] underline-offset-2 hover:underline" href={`${DOCS}`}>
             docs/
           </a>{" "}
-          on GitHub; this tab is the curated entry for business, modules, architecture, testing,
-          DevSecOps, and the delivery schedule.
+          on GitHub; this tab is the curated entry for business, modules, architecture, testing and
+          DevSecOps.
         </p>
       </header>
 

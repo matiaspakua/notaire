@@ -13,6 +13,7 @@ import { usePeoplePage } from "@/hooks/usePeople";
 import { useBudgetsPage } from "@/hooks/useBudgets";
 import { StatValue } from "@/components/dashboard/StatValue";
 import { WorkflowHero } from "@/components/workflow/WorkflowHero";
+import { ExpirationsAlertCard } from "@/components/dashboard/ExpirationsAlertCard";
 import { theme } from "@/theme/tokens";
 import { DASHBOARD_MODULES } from "@/lib/dashboard-nav";
 import { useFormat } from "@/hooks/useFormat";
@@ -73,6 +74,8 @@ export default function DashboardPage() {
           </p>
         </div>
       </div>
+
+      <ExpirationsAlertCard />
 
       <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {stats.map((stat) => {

@@ -24,12 +24,12 @@ DEMO_SPECS = (
     "TS-0090-demo-two-full-cases.spec.ts",
 )
 FEATURE_GAP_SKIPS = {
-    "TS-0014-payments-workflow.spec.ts": 2,
-    "TS-0016-users-notaries-workflow.spec.ts": 3,
-    "TS-0017-substitutions-workflow.spec.ts": 2,
-    "TS-0020-reports-admin-workflow.spec.ts": 7,
+    "TS-0014-payments-workflow.spec.ts": 1,
+    "TS-0016-users-notaries-workflow.spec.ts": 2,
+    "TS-0017-substitutions-workflow.spec.ts": 0,
+    "TS-0020-reports-admin-workflow.spec.ts": 6,
 }
-FEATURE_GAP_TOTAL = 14
+FEATURE_GAP_TOTAL = 9
 MAX_DEFAULT_TIMEOUT_MS = 120_000
 
 SKIP_BLOCK = re.compile(r"test\.skip\s*\(\s*[\"'`][\s\S]*?[\"'`]\s*,")
@@ -97,7 +97,7 @@ class FeatureGapSkipInventoryTest(unittest.TestCase):
             with self.subTest(spec=name):
                 self.assertEqual(expected, len(SKIP_BLOCK.findall(read_spec(name))))
 
-    def test_total_feature_gap_skips_is_fourteen(self):
+    def test_total_feature_gap_skips_matches_inventory(self):
         total = sum(len(SKIP_BLOCK.findall(read_spec(name))) for name in FEATURE_GAP_SKIPS)
         self.assertEqual(FEATURE_GAP_TOTAL, total)
 

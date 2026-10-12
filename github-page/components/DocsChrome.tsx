@@ -10,7 +10,7 @@ const links = [
   { href: "/docs/architecture/", label: "Architecture" },
   { href: "/docs/testing/", label: "Testing" },
   { href: "/docs/security/", label: "Security" },
-  { href: "/docs/management/", label: "Schedule" },
+  { href: "/docs/roadmap/", label: "Roadmap" },
 ];
 
 export function DocsChrome({ children }: { children: React.ReactNode }) {

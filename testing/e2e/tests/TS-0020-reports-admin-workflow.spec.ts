@@ -38,6 +38,7 @@
  */
 import { test, expect } from "@playwright/test";
 import { GherkinSteps, TestData } from "./gherkin-helpers";
+import { apiPost, createDocumentType, createProcedureType, uniqueId } from "./setup/api-helpers";
 
 test.describe("Reports — navigation discovery (#1058)", () => {
   let steps: GherkinSteps;
@@ -191,9 +192,47 @@ test.describe("CU42 - Report upcoming expirations", () => {
     await steps.givenUserIsOnPage("/dashboard");
   });
 
-  test.skip("CU42-GW01 (#1146): Given on dashboard, When view alerts, Then shows vencimientos", async () => {
-    // Skipped (#1146): the dashboard has no alerts button or upcoming-expirations section.
-  });
+  // #1556: the home dashboard alerts about documents due within the default 30-day window.
+  for (const vp of [{ name: "desktop", width: 1440, height: 900 }, { name: "390px", width: 390, height: 844 }]) {
+    test(`CU42-GW01 (#1556, ${vp.name}): Given a document due soon, When on the dashboard, Then an expirations alert links to the list`, async ({ page }) => {
+      await page.setViewportSize({ width: vp.width, height: vp.height });
+      // Given a document due in 2 days (seeded as in TS-0097).
+      const documentType = await createDocumentType(page, { expires: true, dueDays: 2 });
+      expect(documentType.ok, documentType.error ?? "createDocumentType failed").toBe(true);
+      const procedureType = await createProcedureType(page);
+      expect(procedureType.ok, procedureType.error ?? "createProcedureType failed").toBe(true);
+      const procedure = await apiPost<{ idProcedure: number }>(page, "/procedures", {
+        idProcedureType: procedureType.data!.idProcedureType,
+      });
+      expect(procedure.ok, procedure.error ?? "create procedure failed").toBe(true);
+      const name = `Alert E2E ${uniqueId()}`;
+      const seeded = await apiPost<{ idSubmittedDocument: number }>(page, "/submitted-documents", {
+        typeId: documentType.data!.idDocumentType,
+        procedureId: procedure.data!.idProcedure,
+        date: new Date().toISOString().split("T")[0],
+        delivered: false,
+        name,
+      });
+      expect(seeded.ok, seeded.error ?? "submitted document failed").toBe(true);
+
+      // When the dashboard home loads
+      await steps.givenUserIsOnPage("/dashboard");
+      const alert = page.getByTestId("expirations-alert");
+      // Then the alert shows a count and up to three items, without horizontal overflow
+      await expect(alert).toBeVisible({ timeout: 15000 });
+      await expect(alert).toContainText(/vencen? en los próximos 30 días/i);
+      const items = alert.getByTestId("expirations-alert-item");
+      expect(await items.count()).toBeGreaterThan(0);
+      expect(await items.count()).toBeLessThanOrEqual(3);
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      expect(overflow).toBeLessThanOrEqual(1);
+
+      // And its link opens the full list, where the seeded document is listed
+      await alert.getByTestId("expirations-alert-link").click();
+      await expect(page).toHaveURL(/\/dashboard\/upcoming-expirations$/);
+      await expect(page.getByText(name).first()).toBeVisible({ timeout: 15000 });
+    });
+  }
 });
 
 test.describe("CU60 - Search budgets", () => {

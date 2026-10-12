@@ -5,8 +5,7 @@ issue → OpenSpec Gate 1 → TDD → implement → preflight/CI → PR → revi
 
 | Document | Purpose |
 |----------|---------|
-| [`FLEET-ARCHITECTURE.md`](FLEET-ARCHITECTURE.md) | Foreman + specialist roles, model recommendations, handoffs, local-ai exclusion, process learnings, parallel lanes |
-| [Project management](../../github/PROJECT-MANAGEMENT.md) | Milestone trains, history, priority, and the lane rule that keeps agents off the same paths |
+| [`FLEET-ARCHITECTURE.md`](FLEET-ARCHITECTURE.md) | Foreman + specialist roles, model recommendations, handoffs, local-ai exclusion, process learnings |
 | [`ENVIRONMENT-CHECKLIST.md`](ENVIRONMENT-CHECKLIST.md) | Toolchain/secrets checklist for Cloud `environment.json` + Saved-card and ops pitfalls |
 | [`CI-MERGE-GATE.md`](CI-MERGE-GATE.md) | **Never merge on light-CI-only green** — `bash workspace/sdlc/check-heavy-ci.sh <pr>`; also verify OpenSpec archive hygiene / task groups 3–8 (`check-openspec-archive-hygiene.py`, #1252); rebase-first for stale Budget/person failures |
 | [`VALIDATION-PLAN.md`](VALIDATION-PLAN.md) | Prove the fleet is ready before picking the first GitHub issue |
@@ -25,7 +24,10 @@ issue → OpenSpec Gate 1 → TDD → implement → preflight/CI → PR → revi
 | Backend Implementer | [`.claude/agents/backend-implementer.md`](../../../.claude/agents/backend-implementer.md) |
 | Frontend Design | [`.claude/agents/frontend-design.md`](../../../.claude/agents/frontend-design.md) |
 | Testing / QA | [`.claude/agents/testing-qa.md`](../../../.claude/agents/testing-qa.md) |
+| Project manager | [`.claude/agents/project-manager.md`](../../../.claude/agents/project-manager.md) |
 | Existing specialists | [`.claude/agents/`](../../../.claude/agents/) (`java-architect`, `devops-engineer`, `security-auditor`, `code-reviewer`, `sync_issues_and_code`, `efficiency_config_agent`) |
+
+Scheduling, milestones, and lanes: [305-project-management](../305-project-management/README.md).
 
 ## Authority
 

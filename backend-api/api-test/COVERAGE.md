@@ -48,7 +48,7 @@ the value but update did not. Hardened in `setAttributes`.
 | Folder | Endpoint | CRUD | Filters / extras | Use Cases |
 |--------|----------|------|------------------|-----------|
 | 00-auth | `/users/login` | n/a | login, invalid, rate-limit lockout | CU78 |
-| audit-records | `/audit-log` | read-only | list; POST/PUT/DELETE → 405 (#1060) | CU73, CU23, CU78 |
+| audit-records | `/audit-log` | read-only | list; user + date-range filter, bad range → 400 (#1545); POST/PUT/DELETE → 405 (#1060) | CU73, CU23, CU78 |
 | auxiliary-protocol | `/auxiliary-protocol` | actions | available folios; start a deed | CU81 |
 | budget-templates | `/budget-templates` | ✅ | `procedure-types/{id}`; own procedure type + concept fixtures | CU26, CU29, CU39, CU55, CU49, CU37, CU57 |
 | budgets | `/budgets` | ✅ | `person/{id}`, `search?status=` | CU01, CU60, CU45 |
@@ -65,7 +65,7 @@ the value but update did not. Hardened in `setAttributes`.
 | management-statuses | `/management-statuses` | ✅ | — | CU30, CU67, CU35 |
 | managements | `/managements` | ✅ | by number; current-status (History latest or entity-status fallback when empty — #806); PUT update keeps same `managementStatusId` (status changes via `/transition` — #804); `/case-summary` lists the deeds, testimonies, and copies (#774) | CU02, CU07, CU13, CU14, CU53, CU83 |
 | notebooks | `/notebooks` | POST/GET | 10-folio fixture; cover PDF | CU80 |
-| payments | `/payments` | ✅ | `budget/{id}`, `balance`, `status`, over-limit 409, non-positive update 400, receipt PDF | CU01, CU15, CU47, CU45 |
+| payments | `/payments` | ✅ | `budget/{id}`, `balance`, `status`, `date` inverted range 400, over-limit 409, non-positive update 400, receipt PDF | CU01, CU15, CU47, CU45 |
 | people | `/people` | ✅ | `search?lastName=`, 409 duplicate, 400 unknown identification type (#1361) | CU17, CU18, CU61, CU46, CU54, CU41 |
 | procedure-folders | `/procedure-folders` | GET + wait | via complete-case fixture; `GET`/`PUT /managements/{id}/complete-case` full edit read-back (#1360) | CU85, CU53 |
 | procedure-templates | `/procedure-templates` | ✅ | list, `procedure-types/{id}`, 409 duplicate pair, PUT notes, DELETE then 404 (#1362) | CU79, CU03, CU55 |

@@ -187,6 +187,10 @@
     "administracion": {
       "label": "Administración",
       "description": "Catálogos y configuración del sistema"
+    },
+    "vencimientos": {
+      "titulo": "{count, plural, one {# documento vence} other {# documentos vencen}} en los próximos {days} días",
+      "verTodos": "Ver todos"
     }
   },
   "personas": {
@@ -521,7 +525,10 @@
       "paid": "Pagado",
       "balance": "Saldo",
       "status": "Estado de pago",
-      "sinPagos": "Este presupuesto no tiene pagos"
+      "sinPagos": "Este presupuesto no tiene pagos",
+      "desde": "Desde",
+      "hasta": "Hasta",
+      "rangoInvalido": "La fecha \"desde\" debe ser anterior o igual a \"hasta\""
     }
   },
   "protocolo": {
@@ -800,7 +807,12 @@
       "modulo": "Módulo"
     },
     "allModules": "Todos los módulos",
-    "moduleFilter": "Módulo"
+    "moduleFilter": "Módulo",
+    "userFilter": "Filtrar por usuario",
+    "allUsers": "Todos los usuarios",
+    "desde": "Desde",
+    "hasta": "Hasta",
+    "rangoInvalido": "La fecha \"desde\" debe ser anterior o igual a \"hasta\""
   },
   "administracion": {
     "title": "Administración",
@@ -1238,7 +1250,15 @@
       "desde": "Desde",
       "hasta": "Hasta"
     },
-    "register": "Registrar"
+    "register": "Registrar",
+    "filtros": {
+      "anio": "Año",
+      "todosLosAnios": "Todos los años",
+      "escribano": "Escribano",
+      "escribanoPlaceholder": "Titular o suplente",
+      "resultados": "{count, plural, one {# suplencia} other {# suplencias}}"
+    },
+    "noDataYear": "No hay suplencias para {year}"
   },
   "reportes": {
     "title": "Reportes",

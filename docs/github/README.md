@@ -52,47 +52,46 @@ stateDiagram-v2
 
 ## Milestones
 
-The schedule, the history of the two old phase schemes, priority, and the lanes
-agents use to work in parallel are in
-[PROJECT-MANAGEMENT.md](PROJECT-MANAGEMENT.md). Counts and the chart are on the
-GitHub Pages technical docs tab (`/docs/management/`).
+Scheduling, history, and the requirements catalog are defined in
+[Project management](../300-development/305-project-management/README.md).
+Short form:
 
-Short version:
+| Kind | Milestones |
+|------|------------|
+| Delivery (open, claimable) | Phase 4 — Modern Frontend, Phase 6 — Deprecation, v1.0 — Production Ready, v1.1 — Hardening, Backlog |
+| Scope (open, not claimable) | Scope — Functional requirements, Scope — Use cases, Scope — Non-functional requirements |
+| History (closed) | Close-date cohorts plus the older hyphen-titled milestones that already had issues |
 
-| Train | Due | Holds |
-|-------|-----|--------|
-| 2026-11 · Release blockers | 2026-11-30 | Critical work and security NFRs |
-| 2026-12 · Frontend product | 2026-12-31 | Phase 4 scope: use cases, functional requirements, Next.js behavior |
-| 2027-01 · Quality & traceability | 2027-01-31 | Tests, docs, performance and process NFRs |
-| 2027-02 · Platform & operability | 2027-02-28 | CI and operability implementation |
-| 2027-03 · Legacy retirement | 2027-03-31 | `jpa` retirement (#899) |
-| 2027-06 · Backlog | 2027-06-30 | Low priority and environment NFRs |
-
-Requirements and use cases are **on** a train so scope is visible. They are not
-pickable. Apply the assignment with
-`python3 workspace/sdlc/apply_milestone_policy.py --apply`
-(needs Issues and Projects write). `--check` reports drift.
+The September 2026 audit put every open work issue on v1.0 / v1.1 / Backlog by
+priority alone, and left catalog issues with no milestone. That priority rule
+still applies when no phase rule matches. Frontend slices, Phase 6 retirement,
+and the RF / CU / RNF catalogs have their own milestones so the roadmap can
+show progress. See [MILESTONES.md](../300-development/305-project-management/MILESTONES.md).
 
 ## Labels
 
 | Kind | Labels |
 |------|--------|
+| Lane (exactly one) | `lane:backend`, `lane:frontend`, `lane:fullstack`, `lane:devops`, `lane:docs`, `lane:test`, `lane:security`, `lane:owner` |
 | Area (one or more) | `BACKEND`, `FRONTEND`, `DB`, `DEVOPS`, `TEST`, `DOC` |
 | Type | `bug`, `enhancement`, `REFACTOR`, `tech-debt`, `chore`, `ci`, `dependencies`, `TAREA` |
-| Priority (exactly one) | `priority:critical`, `priority:high`, `priority:medium`, `priority:low` |
-| Concern | `security`, `a11y`, `i18n`, `risk` |
+| Priority (exactly one on claimable work) | `priority:critical`, `priority:high`, `priority:medium`, `priority:low` |
+| Concern | `security`, `a11y`, `i18n`, `risk`, `ux` |
+| Phase | `phase:1-analysis` through `phase:6-deprecation` |
 | Workflow | `in-progress`, `in-review`, `blocked`, `needs-info`, `ready-for-dev` |
 | Traceability | `requerimiento-funcional`, `requerimiento-no-funcional`, `CASO-DE-USO` |
-| Historical | `phase:1-analysis` … `phase:6-deprecation` (do not schedule with these) |
-| Source | `audit-2026-09` (findings of the [2026-09 audit](PRODUCTION-READINESS-AUDIT-2026-09.md)) |
+| Source | `audit-2026-09` (findings of the [2026-09 audit](PRODUCTION-READINESS-AUDIT-2026-09.md)), `roadmap` |
+
+The full contract, including labels that must not be duplicated, is
+[LABELS.md](../300-development/305-project-management/LABELS.md).
+Parallel claims are [PARALLEL-AGENTS.md](../300-development/305-project-management/PARALLEL-AGENTS.md).
 
 Run `gh label list` for the live list. Do not create a label that repeats an existing one in
-another language.
+another language. `FRONTEND` means the Next.js client. Swing is not a target.
 
 ## Issue checklist
 
-Every work issue has: a Use Case reference (CU), acceptance criteria, one area label,
-one priority label and a scheduled milestone. Catalog anchors (RF / RNF / CU) have a
-milestone and no priority. Issue templates live in
+Every claimable work issue has: a Use Case reference (CU), acceptance criteria, one area label,
+one lane label, one priority label, and one delivery milestone. Catalog issues (RF, CU, RNF)
+use a Scope milestone and are not picked by agents. Issue templates live in
 [`.github/ISSUE_TEMPLATE/`](../../.github/ISSUE_TEMPLATE/).
-Lanes and the foreman pick rule: [PROJECT-MANAGEMENT.md](PROJECT-MANAGEMENT.md).
