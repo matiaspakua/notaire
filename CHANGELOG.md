@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Constitution workflow steps** (#1490, CU75): the SDLC step titles say
+  `Refine requirement`, `Design test cases`, `Full regression`, and
+  `Run the full pipeline`. E2E tests are described as `self-contained`.
+  The Gate 3 heading `Actualizar documentación permanente` stays, along
+  with `Use Case (Caso de Uso)` and `hallazgo`.
 - **Zero-value concept fixture** (#1490, CU75): the concept whose value is
   zero is named `Exempt`. Seeded concept `Honorarios` stays, and the
   sample street `Av. Corrientes` stays.
