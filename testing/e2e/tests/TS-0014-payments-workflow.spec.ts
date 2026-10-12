@@ -5,6 +5,7 @@
  * Issue #796 (budget picker and pending-balance visibility)
  * Issue #821 (payment-status badge: SIN_PAGOS / PARCIAL / SALDADO)
  * Issue #848 (overpayment rejection message)
+ * Issue #1544 (CU47: consult one budget's payments, summary and balance)
  */
 import { type Page, test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
@@ -313,5 +314,57 @@ test.describe("CU47 - Payments table CRUD (list, edit, delete)", () => {
     await page.getByRole("button", { name: /confirmar|eliminar|s[ií]/i }).last().click();
 
     await expect(row).toBeHidden({ timeout: 5000 });
+  });
+});
+
+test.describe("CU47 - Consult payments by budget (#1544)", () => {
+  let steps: GherkinSteps;
+
+  test.beforeEach(async ({ page }) => {
+    steps = new GherkinSteps(page);
+    await steps.givenUserIsLoggedIn();
+  });
+
+  async function seedTwoPayments(page: Page) {
+    const seeded = await seedBudget(page, 50000);
+    for (const [amount, paymentMethod] of [[1000, "Efectivo"], [2000, "Transferencia"]] as const) {
+      const r = await createPayment(page, seeded.idBudget, { amount, paymentMethod });
+      if (!r.ok) throw new Error(`Failed to seed payment: ${r.error ?? JSON.stringify(r.data)}`);
+    }
+    return seeded;
+  }
+
+  test("CU47-BUDGET-01: Given a budget with 2 payments, When it is consulted, Then its summary and only its payments are shown", async ({ page }) => {
+    const { idBudget, lastName } = await seedTwoPayments(page);
+    await steps.givenUserIsOnPage("/dashboard/payments");
+
+    const picker = page.getByRole("combobox", { name: /consultar por presupuesto/i });
+    await picker.click();
+    await picker.fill(lastName);
+    await page.getByRole("option", { name: new RegExp(lastName, "i") }).click();
+
+    await expect(page).toHaveURL(new RegExp(`[?&]budget=${idBudget}`));
+    const summary = page.getByTestId("payment-budget-summary");
+    await expect(summary).toBeVisible();
+    await expect(page.getByTestId("payment-budget-status")).toHaveText(/parcial/i);
+    await expect(page.getByTestId("payment-budget-paid")).toContainText(/3[.,]?000/);
+    const rows = page.locator("table tbody tr");
+    await expect(rows).toHaveCount(2);
+
+    // Reload keeps the selection; clearing returns to the full list.
+    await page.reload();
+    await expect(page.getByTestId("payment-budget-summary")).toBeVisible();
+    await steps.givenUserIsOnPage("/dashboard/payments");
+    await expect(page.getByTestId("payment-budget-summary")).toHaveCount(0);
+  });
+
+  test("CU47-BUDGET-02: the consult works at 390px", async ({ page }) => {
+    const { idBudget } = await seedTwoPayments(page);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await steps.givenUserIsOnPage(`/dashboard/payments?budget=${idBudget}`);
+    await expect(page.getByTestId("payment-budget-summary")).toBeVisible();
+    await expect(page.getByTestId("payment-budget-status")).toHaveText(/parcial/i);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow).toBeLessThanOrEqual(1);
   });
 });

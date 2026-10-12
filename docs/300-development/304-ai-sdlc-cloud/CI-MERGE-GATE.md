@@ -79,6 +79,23 @@ python3 workspace/sdlc/check-openspec-archive-hygiene.py --inventory-only
 Agents must verify OpenSpec archive hygiene and task completion (or run that
 checker) before merge — same bar as heavy CI. See issue #1252 / CU76.
 
+## Board Status / label coherence (in addition to heavy CI)
+
+Before merge/close and during board hygiene, sync **Issue state**, Delivery
+Board **Status** (Todo / In Progress / Done), and workflow labels
+(`in-progress`, `blocked`). Project has **no Blocked Status** — use the
+`blocked` label. CLOSED leftovers must not stay In Progress; Done work should
+be CLOSED without WIP labels. Do not invent Owner product scope.
+
+```bash
+python3 workspace/sdlc/check-board-status-label-coherence.py --scope pr
+python3 workspace/sdlc/check-board-status-label-coherence.py --scope wip
+```
+
+Process Checks / preflight run `--scope pr` (skips clearly when `gh` auth or
+project access is missing). See issue #1550 / CU76 and
+[`docs/github/README.md`](../../github/README.md).
+
 ## Verify before merge
 
 ```bash
@@ -87,6 +104,8 @@ checker) before merge — same bar as heavy CI. See issue #1252 / CU76.
 bash workspace/sdlc/check-heavy-ci.sh <pr-number>
 # Also confirm OpenSpec archive / task-completion hygiene:
 python3 workspace/sdlc/check-openspec-archive-hygiene.py origin/main
+# Board Status / label coherence for PR-linked issues:
+python3 workspace/sdlc/check-board-status-label-coherence.py --scope pr
 
 # Or manually (still confirm the four required names are success):
 gh run list --branch <pr-head-branch> --limit 10

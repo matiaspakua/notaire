@@ -434,6 +434,10 @@ every condition is satisfied.
 - [ ] Deploy succeeded
 - [ ] Smoke test passed on the target environment
 - [ ] Issue closed
+- [ ] **Board Status / label coherence:** Issue `state`, Delivery Board
+      Status (Todo / In Progress / Done), and workflow labels stay aligned —
+      see [§10 Issue ↔ board ↔ labels](#10-ai-agent-rules) and
+      `python3 workspace/sdlc/check-board-status-label-coherence.py`
 
 ---
 
@@ -602,6 +606,19 @@ An AI agent **must**:
 - ✅ **Issue status sync** with sibling agents: prefer `in-progress` / board Status
   when the token allows; if Issues write is 403, keep status in the PR body and
   use `Closes #<n>` / `Refs #<n>` as the sync channel — never invent a parallel tracker
+- ✅ **Issue ↔ board Status ↔ labels coherence (#1550 / CU76):** one coherent
+  state per work item. Project Status options are **Todo / In Progress / Done**
+  only (no Blocked column — use the `blocked` label). Rules:
+  - `CLOSED` ⇒ Status **Done**; remove `in-progress` / `blocked` WIP labels
+  - `OPEN` + active WIP ⇒ Status **In Progress** ⇔ `in-progress` label
+  - Blocked work ⇒ `blocked` label; Status must not be Done while OPEN
+  - Acceptance criteria met ⇒ prefer **CLOSED** + Done (no WIP labels)
+  - Do not invent Owner product scope (#1445 / #1438 / #1226) — hygiene only
+  - Validate:
+    `python3 workspace/sdlc/check-board-status-label-coherence.py`
+    (`--scope pr` in Process Checks / preflight; `--scope wip` / `--scope all`
+    for board hygiene). Skips with a clear message when `gh` is not
+    authenticated / `GH_TOKEN` is absent (`SKIP_BOARD_COHERENCE=1` forces skip)
 - ✅ **Path-scoped CI on PRs (#1257 / #1197 P0.2):** docs / OpenSpec / agent-only
   path sets must not run Java Unit/Integration/Coverage or Playwright/Bruno leaf
   jobs. Required check *names* (`CI`, `Frontend CI`, `Playwright E2E`, …) stay
@@ -699,6 +716,7 @@ drift.
 | Process step / gate | Tooling |
 |---------------------|---------|
 | Issue + Use Case | GitHub Issues; `.github/ISSUE_TEMPLATE/issue.md`; `gh` CLI; multi-agent sync via labels/board Status or PR `Closes`/`Refs` when Issues write is denied |
+| Board Status / label coherence (Gate 5) | `python3 workspace/sdlc/check-board-status-label-coherence.py` (`--scope pr\|wip\|all`); Process Checks + preflight; contract in [`docs/github/README.md`](docs/github/README.md); fleet ops in [`docs/300-development/304-ai-sdlc-cloud/`](docs/300-development/304-ai-sdlc-cloud/) (#1550) |
 | Module map (Foreman) | `workspace/modules.yaml`; `python3 workspace/modules.py list\|affected\|verify`; [`MODULE-OWNERSHIP.md`](docs/300-development/MODULE-OWNERSHIP.md) |
 | Specification | OpenSpec under **`docs/openspec/`** (run CLI from `docs/`); schema `docs/openspec/schemas/notaire-sdlc`; `openspec new change`; section map in `docs/300-development/templates/specification-template.md` |
 | Constitution as agent context | `docs/openspec/config.yaml` (`context`, `rules`, `operations`) — injected by the CLI for every agent |

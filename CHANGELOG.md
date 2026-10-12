@@ -2732,6 +2732,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Año selector (a substitution counts in every year its range overlaps) and an Escribano search
   over both sides, accent- and case-insensitive, kept in the URL, with a result count.
 
+- **Consult a budget's payments** (issue #1544, CU47): the payments page has a
+  "Consultar por presupuesto" picker (kept in `?budget=`). It shows the budget's total, paid
+  amount, outstanding balance and payment status, and lists only its payments, newest first.
+  `GET /payments/budget/{id}` and `/balance` now have a UI caller (off the #1250 allowlist).
+
+- **Board Status / label / issue-state coherence gate** (#1550, CU76):
+  `python3 workspace/sdlc/check-board-status-label-coherence.py` enforces
+  CLOSED⇒Done+no WIP labels, OPEN WIP⇒In Progress+`in-progress`, and
+  `blocked` label (no Blocked Status column). Wired into Process Checks and
+  preflight (`--scope pr`; skips clearly without `gh` auth). Documented in
+  CONSTITUTION Gate 5, AI SDLC Cloud docs, and `docs/github/README.md`.
 - **Testimony edit, delete and movement history** (issue #1364, CU07 / CU44 / RF-31): on
   /dashboard/testimonies each row can open **Ver movimientos** (the testimony's registry
   movements, newest first, with the withdrawal card number), **Editar** (number and notes) and

@@ -18,6 +18,28 @@ Board status is the **work item** lifecycle. It is not a management state.
 `In Progress` on an issue is not `En Tramite` on a deed file. Domain states
 live in [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md).
 
+**Coherence (mandatory):** Issue `state`, Project Status, and workflow labels
+must stay aligned (CONSTITUTION Gate 5 / #1550). Project Status options are
+**Todo / In Progress / Done only** — there is no Blocked column; encode blocked
+work with the `blocked` label.
+
+| Signal | Status | Labels | Issue state |
+|--------|--------|--------|-------------|
+| Backlog / ready | Todo | domain labels only | OPEN |
+| Active WIP | In Progress | `in-progress` | OPEN |
+| Waiting on dependency | Todo *(or In Progress if still owned)* | `blocked` | OPEN |
+| Shipped / AC met | Done | no `in-progress` / `blocked` | **CLOSED** |
+
+Validate:
+
+```bash
+python3 workspace/sdlc/check-board-status-label-coherence.py --scope pr   # CI / preflight
+python3 workspace/sdlc/check-board-status-label-coherence.py --scope wip  # In Progress column
+python3 workspace/sdlc/check-board-status-label-coherence.py --scope all  # full board hygiene
+```
+
+Without `gh` auth the checker skips with a clear message (never silent pass).
+
 The `in-review` label marks a pull request under review. The board column
 stays In Progress until the issue is closed.
 
