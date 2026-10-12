@@ -184,7 +184,7 @@ workflow_transition,Weak,condition,,yes,Text,,,x,Guard condition for the transit
 workflow_transition,Weak,description,,yes,Text,,,x,Description of the action that advances the flow
 document_types,Strong,version,,no,Integer,,,,Optimistic lock
 document_types,Strong,id,PK,no,Integer,x,,,Unique id of the document type
-document_types,Strong,name,,no,Text,,,,Name of the document or certificate
+document_types,Strong,name,,no,Text,,,,"Name of the document or certificate. Stored values `Libre Deuda Municipal`, `Informe de Dominio`, `Certificado Catastral`, and `Fotocopia DNI` stay."
 document_types,Strong,returned,,no,Boolean,,,,`true` when the original must be returned to the client
 document_types,Strong,expires,,no,Boolean,,,,`true` when the certificate expires
 document_types,Strong,due_days,,yes,Integer,,,x,Legal validity in days

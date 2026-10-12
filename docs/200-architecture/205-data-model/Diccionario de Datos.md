@@ -542,7 +542,7 @@ Master catalog of documents, prior titles, and registry certificates.
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the document type |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
-| `name` | TEXT | No | No | Yes | — | — | Name of the document or certificate |
+| `name` | TEXT | No | No | Yes | — | — | Name of the document or certificate. Stored values `Libre Deuda Municipal`, `Informe de Dominio`, `Certificado Catastral`, and `Fotocopia DNI` stay. |
 | `returned` | BOOLEAN | No | No | Yes | — | — | `true` when the original must be returned to the client |
 | `expires` | BOOLEAN | No | No | Yes | — | — | `true` when the certificate expires |
 | `due_days` | INTEGER | No | No | No | NULL | — | Legal validity in days |
