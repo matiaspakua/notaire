@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Budget balance accessors** (#1490, CU75): the deprecated budget methods
+  are `getBalance` and `setBalance`. The JSON field stays `saldo`. The
+  catalog key `resumen.saldo` stays.
 - **Workflow active checkbox** (#1490, CU75): the workflow form checkbox
   test id is `checkbox-active-workflow`. The catalog namespace
   `administracion.workflows` stays. The visible label still comes from
