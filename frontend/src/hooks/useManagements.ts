@@ -16,6 +16,7 @@ export const managementsKeys = {
   byClient: (id: number) => ["managements", "client", id] as const,
   byNumber: (number: number) => ["managements", "number", number] as const,
   outstandingBalance: (id: number) => ["managements", id, "outstanding-balance"] as const,
+  currentStatus: (id: number) => ["managements", id, "current-status"] as const,
   page: (params: ManagementsPageParams) => ["managements", "page", params] as const,
 };
 
@@ -183,6 +184,20 @@ export function useTransitionManagement() {
       qc.invalidateQueries({ queryKey: managementWorkflowKeys.trace(id) });
       qc.invalidateQueries({ queryKey: historyKeys.byManagement(id) });
     },
+  });
+}
+
+/**
+ * CU14 (#1553) - current status of a management: the latest History row, or a summary
+ * built from its status (no `idHistory`). 404 when it has none. Lives under
+ * managementsKeys.all, so a CU83 transition refreshes it.
+ */
+export function useManagementCurrentStatus(managementId: number | undefined) {
+  return useQuery({
+    queryKey: managementsKeys.currentStatus(managementId ?? 0),
+    queryFn: () => apiGet<ManagementHistory>(`/managements/${managementId}/current-status`),
+    enabled: !!managementId,
+    retry: false,
   });
 }
 
