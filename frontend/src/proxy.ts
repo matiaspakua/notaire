@@ -66,6 +66,20 @@ export function proxy(req: NextRequest) {
     return withCsp(req, NextResponse.redirect(new URL("/login", req.url)));
   }
 
+  // #1548: /login?expired=1 is the session-expiry landing page. The UX markers
+  // may still be stale here (the client clears them while navigating), so don't
+  // bounce to /dashboard, which would drop the expired message. Clear them instead.
+  if (pathname === "/login" && req.nextUrl.searchParams.get("expired") === "1") {
+    const response = continueWithNonce(req);
+    if (authCookie) {
+      response.cookies.set(AUTH_STATUS_COOKIE, "", { path: "/", maxAge: 0 });
+    }
+    if (roleRaw) {
+      response.cookies.set(AUTH_ROLE_COOKIE, "", { path: "/", maxAge: 0 });
+    }
+    return response;
+  }
+
   if (authCookie && pathname === "/login") {
     return withCsp(req, NextResponse.redirect(new URL("/dashboard", req.url)));
   }
