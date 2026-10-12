@@ -47,7 +47,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | `docs/300-development/RELEASE.md` | yes | pending |
 | `CONSTITUTION.md` | yes | pending |
 | `docs/github/README.md` | yes | pending |
-| CU76 | yes | pending |
+| `docs/100-business/102-use-cases/CU76 – Quality Assurance and Testing Infrastructure.md` | yes | pending |
 | `CHANGELOG.md` | yes | pending |
 
 ## Gate log
