@@ -181,7 +181,7 @@ workflow_transition,Weak,fk_workflow_definition_id,FK,no,Integer,,x,,Parent work
 workflow_transition,Weak,fk_origin_node_id,FK,no,Integer,,x,,Origin node (ON DELETE CASCADE)
 workflow_transition,Weak,fk_destination_node_id,FK,no,Integer,,x,,Destination node (ON DELETE CASCADE)
 workflow_transition,Weak,condition,,yes,Text,,,x,Guard condition for the transition
-workflow_transition,Weak,description,,yes,Text,,,x,Description of the action that advances the flow
+workflow_transition,Weak,description,,yes,Text,,,x,"Description of the action that advances the flow. Stored values `Se asignan trámites y comienza la gestión`, `Toda la documentación requerida fue presentada`, `Se redacta la escritura`, `Las partes firman la escritura`, `La gestión se archiva sin escritura`, `Testimony generated after deed signing`, `Testimony submitted for inscription`, and `Testimony withdrawn after inscription cycle` stay."
 document_types,Strong,version,,no,Integer,,,,Optimistic lock
 document_types,Strong,id,PK,no,Integer,x,,,Unique id of the document type
 document_types,Strong,name,,no,Text,,,,"Name of the document or certificate. Stored values `Libre Deuda Municipal`, `Informe de Dominio`, `Certificado Catastral`, and `Fotocopia DNI` stay."

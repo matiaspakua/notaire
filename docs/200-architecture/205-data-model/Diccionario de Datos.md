@@ -689,7 +689,7 @@ Directed transitions between workflow nodes, with guard conditions (Flyway V7).
 | `fk_origin_node_id` | INTEGER | No | Yes | Yes | — | `workflow_node(id_workflow_node)` | Origin node (ON DELETE CASCADE) |
 | `fk_destination_node_id` | INTEGER | No | Yes | Yes | — | `workflow_node(id_workflow_node)` | Destination node (ON DELETE CASCADE) |
 | `condition` | TEXT | No | No | No | NULL | — | Guard condition for the transition |
-| `description` | TEXT | No | No | No | NULL | — | Description of the action that advances the flow |
+| `description` | TEXT | No | No | No | NULL | — | Description of the action that advances the flow. Stored values `Se asignan trámites y comienza la gestión`, `Toda la documentación requerida fue presentada`, `Se redacta la escritura`, `Las partes firman la escritura`, `La gestión se archiva sin escritura`, `Testimony generated after deed signing`, `Testimony submitted for inscription`, and `Testimony withdrawn after inscription cycle` stay. |
 
 ---
 
