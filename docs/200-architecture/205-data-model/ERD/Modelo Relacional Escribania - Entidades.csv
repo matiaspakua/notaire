@@ -118,7 +118,7 @@ history,Weak,fk_id_management_status,FK,yes,Integer,,x,x,Status reached
 procedure_types,Strong,version,,no,Integer,,,,Optimistic lock
 procedure_types,Strong,id,PK,no,Integer,x,,,Procedure-type id
 procedure_types,Strong,name,,no,Text,,,,Procedure-type name. Stored examples such as `Compraventa` and `Poder` stay.
-procedure_types,Strong,notes,,yes,Text,,,x,Rules and notarial description
+procedure_types,Strong,notes,,yes,Text,,,x,"Rules and notarial description. Stored notes `Tramite de compraventa de inmuebles`, `Tramite de donacion`, `Tramite de hipoteca`, `Tramite de sucesion`, and `Otorgamiento de poderes` stay."
 procedure_types,Strong,enabled,,no,Boolean,,,,`true` when new managements are allowed
 procedure_types,Strong,is_archived,,no,Boolean,,,,`true` when a physical binder is required
 procedure_types,Strong,is_registered,,no,Boolean,,,,`true` when registry registration is required

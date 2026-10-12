@@ -576,7 +576,7 @@ Master catalog of notarial act types (V8). Stored names such as `Compraventa` st
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Procedure-type id |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
 | `name` | TEXT | No | No | Yes | — | — | Procedure-type name. Stored examples such as `Compraventa` and `Poder` stay. |
-| `notes` | TEXT | No | No | No | NULL | — | Rules and notarial description |
+| `notes` | TEXT | No | No | No | NULL | — | Rules and notarial description. Stored notes `Tramite de compraventa de inmuebles`, `Tramite de donacion`, `Tramite de hipoteca`, `Tramite de sucesion`, and `Otorgamiento de poderes` stay. |
 | `enabled` | BOOLEAN | No | No | Yes | — | — | `true` when new managements are allowed |
 | `is_archived` | BOOLEAN | No | No | Yes | — | — | `true` when a physical binder is required |
 | `is_registered` | BOOLEAN | No | No | Yes | — | — | `true` when registry registration is required |
