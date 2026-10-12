@@ -329,13 +329,22 @@
       "preparado": "preparado",
       "liberado": "liberado",
       "entregado": "entregado",
-      "reingresado": "reingresado"
+      "reingresado": "reingresado",
+      "estadoActual": "Estado actual"
     },
     "clienteFilter": "Filtrar por cliente",
     "selectEstado": "Seleccionar estado...",
     "selectTramite": "Seleccionar trámite...",
     "selectInmueble": "Seleccionar inmueble...",
-    "inmuebleFallback": "Inmueble #{id}"
+    "inmuebleFallback": "Inmueble #{id}",
+    "estadoActual": {
+      "estado": "Estado",
+      "fecha": "Fecha",
+      "notas": "Notas",
+      "sinEstado": "Sin estado registrado",
+      "cargando": "Cargando estado…",
+      "error": "No se pudo cargar el estado"
+    }
   },
   "escrituras": {
     "title": "Escrituras",

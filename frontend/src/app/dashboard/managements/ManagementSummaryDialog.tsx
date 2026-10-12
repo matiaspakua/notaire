@@ -6,6 +6,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormHeader, FormSection } from "@/theme/form-patterns";
 import { useManagementCaseSummary, useManagementFinancialSummary } from "@/hooks/useManagementSummary";
 import type { CaseDocument } from "@/types";
+import { ManagementCurrentStatus } from "./ManagementCurrentStatus";
 
 function documentFlags(document: CaseDocument, t: (key: string) => string): string[] {
   const flags: [boolean, string][] = [
@@ -42,6 +43,11 @@ export function ManagementSummaryDialog({ managementId, onClose }: ManagementSum
             <p className="text-sm text-muted-foreground">{t("loading")}</p>
           ) : (
             <>
+              {managementId ? (
+                <FormSection title={t("estadoActual")}>
+                  <ManagementCurrentStatus managementId={managementId} />
+                </FormSection>
+              ) : null}
               <FormSection title={t("escrituras")}>
                 {deeds.length === 0 ? (
                   <p className="text-sm text-muted-foreground" data-testid="summary-empty-deeds">{t("sinEscrituras")}</p>
