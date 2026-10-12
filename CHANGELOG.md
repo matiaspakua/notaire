@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded procedure-type notes** (#1490, CU75): the procedure-type notes
+  list `Tramite de compraventa de inmuebles`, `Tramite de donacion`,
+  `Tramite de hipoteca`, `Tramite de sucesion`, and `Otorgamiento de poderes`.
 - **Seeded document delivery origin** (#1490, CU75): the document-type
   origin lists `Cliente`, `Entidad`, and `Entidad Externa`.
 - **Seeded concept labels** (#1490, CU75): the concept name lists `IVA`,
