@@ -41,6 +41,7 @@ import { workflowNodeTypes } from "@/components/workflow/WorkflowNodeBox";
 import { workflowEdge } from "@/components/workflow/workflow-edges";
 import { WorkflowSelectionPanel, type PanelSelection } from "@/components/workflow/WorkflowSelectionPanel";
 import { WORKFLOW_ZOOM, WORKFLOW_FIT, MINIMAP_CLASS, workflowAriaLabels, workflowMiniMapColor } from "@/components/workflow/workflow-canvas";
+import { validateWorkflow, nodeProblems } from "@/lib/workflow-validate";
 import { checkNewTransition } from "@/lib/workflow-edit";
 import { layoutWorkflow, nextFreePosition, NODE_WIDTH, NODE_HEIGHT, type Point } from "@/lib/workflow-layout";
 
@@ -77,6 +78,10 @@ export default function WorkflowEditorPage() {
 
   // #1574: the canvas is derived from the query data (useNodesState only kept its first,
   // empty value). Saved positions win; missing or overlapping ones get an automatic layout.
+  // #1577: live validation (same rules as the backend) drives the canvas marks and the list.
+  const validation = useMemo(() => validateWorkflow(rawNodes, rawTransitions), [rawNodes, rawTransitions]);
+  const problemsByNode = useMemo(() => nodeProblems(validation), [validation]);
+  const tProblem = useTranslations("workflowViewer.problemList");
   const layout = useMemo(() => layoutWorkflow(rawNodes, rawTransitions), [rawNodes, rawTransitions]);
   const [local, setLocal] = useState<Record<string, { position?: Point; dragging?: boolean; measured?: Node["measured"] }>>({});
   // #1576: one selection drives the highlight and the side panel, in view and edit mode.
@@ -106,10 +111,11 @@ export default function WorkflowEditorPage() {
               n.type ?? "INTERMEDIATE",
             ),
             type: n.type ?? "INTERMEDIATE",
+            problem: problemsByNode.get(Number(n.id)),
           },
         };
       }),
-    [rawNodes, layout, local, selection, t],
+    [rawNodes, layout, local, selection, problemsByNode, t],
   );
 
   const edges: Edge[] = useMemo(
@@ -335,6 +341,27 @@ export default function WorkflowEditorPage() {
           </div>
         }
       />
+
+      {nodesFetched && transitionsFetched && (
+        validation.valid ? (
+          <p className="mb-3 text-sm text-success" data-testid="workflow-validity">{tProblem("valid")}</p>
+        ) : (
+          <div role="status" className="mb-4 p-3 rounded-lg bg-destructive/10 border border-destructive/30" data-testid="workflow-problems">
+            <p className="text-sm font-semibold text-destructive mb-1">{tProblem("title")}</p>
+            <ul className="list-disc list-inside text-sm text-destructive">
+              {validation.problems.map((p) => (
+                <li key={p.code}>
+                  {tProblem(p.code, {
+                    names: p.nodeIds
+                      .map((id) => rawNodes.find((n) => Number(n.id) === id)?.statusManagementName ?? `#${id}`)
+                      .join(", "),
+                  })}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      )}
 
       {validationErrors.length > 0 && (
         <div className="mb-4 p-3 rounded-lg bg-destructive/10 border border-destructive/30" data-testid="validation-errors">

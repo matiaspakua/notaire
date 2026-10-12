@@ -1256,7 +1256,10 @@
             "incomplete": "Selecciona el estado destino."
           }
         }
-      }
+      },
+      "activateInvalid": "No se puede activar: el workflow no es válido.",
+      "activateNewHasNoNodes": "Un workflow nuevo todavía no tiene estados: créalo inactivo, arma el diagrama y actívalo después.",
+      "openEditorToFix": "Abrir el editor para corregirlo"
     }
   },
   "login": {
@@ -1513,6 +1516,22 @@
       "fitView": "Ajustar a la vista",
       "interactive": "Bloquear o desbloquear el diagrama",
       "minimap": "Minimapa del workflow"
+    },
+    "problem": {
+      "empty": "Sin estados",
+      "noStart": "Falta el inicio",
+      "multipleStart": "Más de un inicio",
+      "noFinal": "Falta un final",
+      "unreachable": "No alcanzable desde el inicio"
+    },
+    "problemList": {
+      "title": "El workflow no es válido:",
+      "valid": "✓ Workflow válido: un inicio, al menos un final y todos los estados alcanzables.",
+      "empty": "El workflow no tiene estados.",
+      "noStart": "Falta un estado inicial (debe haber exactamente uno).",
+      "multipleStart": "Hay más de un estado inicial: {names}.",
+      "noFinal": "Falta al menos un estado final.",
+      "unreachable": "Estos estados no se alcanzan desde el inicio: {names}."
     }
   },
   "status": {

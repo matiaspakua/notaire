@@ -1256,7 +1256,10 @@
             "incomplete": "Select the destination status."
           }
         }
-      }
+      },
+      "activateInvalid": "Cannot activate: the workflow is not valid.",
+      "activateNewHasNoNodes": "A new workflow has no statuses yet: create it inactive, build the diagram and activate it afterwards.",
+      "openEditorToFix": "Open the editor to fix it"
     }
   },
   "login": {
@@ -1513,6 +1516,22 @@
       "fitView": "Fit to view",
       "interactive": "Lock or unlock the diagram",
       "minimap": "Workflow minimap"
+    },
+    "problem": {
+      "empty": "No statuses",
+      "noStart": "Missing start",
+      "multipleStart": "More than one start",
+      "noFinal": "Missing final",
+      "unreachable": "Not reachable from the start"
+    },
+    "problemList": {
+      "title": "The workflow is not valid:",
+      "valid": "✓ Valid workflow: one start, at least one final and every status reachable.",
+      "empty": "The workflow has no statuses.",
+      "noStart": "A start status is missing (there must be exactly one).",
+      "multipleStart": "There is more than one start status: {names}.",
+      "noFinal": "At least one final status is missing.",
+      "unreachable": "These statuses are not reachable from the start: {names}."
     }
   },
   "status": {

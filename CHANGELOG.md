@@ -2740,6 +2740,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Workflow validation on the canvas** (issue #1577, epic #1573, CU70): the workflow editor checks the
+  workflow after every change (one start, at least one final, every status reachable) and marks the
+  statuses involved on the canvas with a Spanish/English message. A workflow can no longer be saved as
+  active while it is invalid; the workflows list shows the problems and links to the editor.
 - **Workflow zoom and fit-to-view** (issue #1579, epic #1573, CU70/CU71): the workflow graph's zoom is
   bounded (0.1–2), its controls have Spanish/English accessible names (Acercar, Alejar, Ajustar a la
   vista), fit-to-view shows every box on desktop and on a phone, and the MiniMap now draws every box
