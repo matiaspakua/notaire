@@ -404,6 +404,20 @@
       "withdrawn": "Withdrawn",
       "card": "Card no.",
       "observed": "Observed by the registry"
+    },
+    "registrar": {
+      "button": "Register testimony",
+      "title": "Register testimony",
+      "deed": "Deed",
+      "number": "Number",
+      "notes": "Notes",
+      "verified": "Verified",
+      "deedRequired": "Select a deed",
+      "numberRequired": "Enter a number greater than zero",
+      "created": "Testimony registered",
+      "deedNotFound": "The deed no longer exists",
+      "conflict": "Could not register: the testimony conflicts with another one",
+      "error": "Could not register the testimony"
     }
   },
   "movimientosTestimonio": {

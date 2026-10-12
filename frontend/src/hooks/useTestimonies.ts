@@ -22,6 +22,24 @@ export function useGenerateTestimony() {
   });
 }
 
+/** Body of the bare POST /testimonies (#1555): the deed is required, the rest as typed. */
+export interface TestimonyCreate {
+  deed: { idDeed: number };
+  number: number;
+  notes: string;
+  flagged: boolean;
+  verified: boolean;
+}
+
+/** CU07 (#1555) - Registers a testimony manually with chosen values (e.g. a historic one). */
+export function useCreateTestimony() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body: TestimonyCreate) => apiPost<Testimony>("/testimonies", body),
+    onSuccess: () => qc.invalidateQueries({ queryKey: testimoniesKeys.all }),
+  });
+}
+
 /** CU08 - Records testimony verification (flagged or not, with a reason). */
 export function useVerifyTestimony() {
   const qc = useQueryClient();

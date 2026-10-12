@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, CheckCircle2, Download, Pencil, Trash2, History } from "lucide-react";
+import { Plus, FilePlus2, CheckCircle2, Download, Pencil, Trash2, History } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -18,6 +18,7 @@ import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { ApiError } from "@/lib/api-client";
 import { TestimonyMovementsDialog } from "./TestimonyMovementsDialog";
+import { RegisterTestimonyDialog } from "./RegisterTestimonyDialog";
 import { DeedPicker } from "@/components/shared/DeedPicker";
 import { extractApiError } from "@/lib/utils";
 import type { Testimony } from "@/types";
@@ -45,6 +46,7 @@ export default function TestimoniesPage() {
   const [editNotes, setEditNotes] = useState("");
   const [deleting, setDeleting] = useState<Testimony | null>(null);
   const [movementsOf, setMovementsOf] = useState<Testimony | null>(null);
+  const [registerOpen, setRegisterOpen] = useState(false);
 
   function openEdit(testimony: Testimony) {
     setEditing(testimony);
@@ -208,10 +210,16 @@ export default function TestimoniesPage() {
       <AppHeader
         title={t("title")}
         actions={
-          <Button onClick={openGenerate} data-testid="btn-generate-testimony">
-            <Plus className="h-4 w-4" />
-            {t("newTestimonio")}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="secondary" onClick={() => setRegisterOpen(true)} data-testid="btn-register-testimony">
+              <FilePlus2 className="h-4 w-4" />
+              {t("registrar.button")}
+            </Button>
+            <Button onClick={openGenerate} data-testid="btn-generate-testimony">
+              <Plus className="h-4 w-4" />
+              {t("newTestimonio")}
+            </Button>
+          </div>
         }
       />
 
@@ -311,6 +319,7 @@ export default function TestimoniesPage() {
       />
 
       <TestimonyMovementsDialog testimony={movementsOf} onClose={() => setMovementsOf(null)} />
+      <RegisterTestimonyDialog open={registerOpen} onClose={() => setRegisterOpen(false)} />
     </div>
   );
 }
