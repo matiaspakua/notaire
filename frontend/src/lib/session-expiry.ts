@@ -10,6 +10,14 @@ export const SESSION_EXPIRED_LOGIN_URL = "/login?expired=1";
 
 let handlingSessionExpiry = false;
 
+/**
+ * True while a session-expiry redirect to /login?expired=1 is in flight (#1548).
+ * Auth guards must not race it with their own plain /login redirect.
+ */
+export function isSessionExpiryInProgress(): boolean {
+  return handlingSessionExpiry;
+}
+
 /** Test-only: reset the re-entrancy guard between cases. */
 export function resetSessionExpiryGuardForTests(): void {
   handlingSessionExpiry = false;

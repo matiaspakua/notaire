@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { isSessionExpiryInProgress } from "@/lib/session-expiry";
 import { useRouter, usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -38,7 +39,8 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (!mounted) return;
-    if (!isAuthenticated) {
+    // #1548: let an in-flight /login?expired=1 redirect win; don't drop its message.
+    if (!isAuthenticated && !isSessionExpiryInProgress()) {
       router.replace("/login");
     }
   }, [mounted, isAuthenticated, router]);

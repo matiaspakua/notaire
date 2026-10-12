@@ -58,6 +58,12 @@ jobs:
         if: ${{ !cancelled() }}
         run: python3 workspace/sdlc/check-openspec-archive-hygiene.py "$BASE_SHA"
 
+      - name: Board Status / label / issue-state coherence
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 workspace/sdlc/check-board-status-label-coherence.py --scope pr
+
       - name: Agent rule files are valid
         if: ${{ !cancelled() }}
         run: bash workspace/sdlc/check-agent-rules.sh
