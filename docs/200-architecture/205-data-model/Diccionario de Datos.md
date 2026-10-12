@@ -386,10 +386,10 @@ People, natural or legal, who take part in the practice.
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the person |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
-| `last_name` | TEXT | No | No | Yes | — | — | Last name or legal name |
-| `first_name` | TEXT | No | No | Yes | — | — | First name or trade name |
-| `identification_number` | TEXT | No | No | Yes | — | — | Primary identification number |
-| `tax_id` | TEXT | No | No | No | NULL | — | Tax id (`CUIT` / `CUIL`). Those stored names stay. |
+| `last_name` | TEXT | No | No | Yes | — | — | Last name or legal name. The seeded sample `Garcia` stays. |
+| `first_name` | TEXT | No | No | Yes | — | — | First name or trade name. The seeded sample `Juan Carlos` stays. |
+| `identification_number` | TEXT | No | No | Yes | — | — | Primary identification number. The seeded sample `20123456` stays. |
+| `tax_id` | TEXT | No | No | No | NULL | — | Tax id (`CUIT` / `CUIL`). Those stored names stay. The seeded sample `20-20123456-3` stays. |
 | `sex` | TEXT | No | No | No | NULL | — | Legal sex. Stored values `Masculino` and `Femenino` stay. The seeded sample `M` stays. |
 | `birth_date` | DATE | No | No | No | NULL | — | Birth date |
 | `marital_status` | TEXT | No | No | No | NULL | — | Marital status. Stored values `Soltero` and `Casado` stay. |
@@ -401,8 +401,8 @@ People, natural or legal, who take part in the practice.
 | `is_client` | BOOLEAN | No | No | Yes | false | — | `true` when the person is a client of the practice |
 | `locality` | TEXT | No | No | No | NULL | — | Locality. The seeded sample `Buenos Aires` stays. |
 | `province` | TEXT | No | No | No | NULL | — | Province. The seeded sample `Buenos Aires` stays. |
-| `phone` | TEXT | No | No | No | NULL | — | Landline |
-| `mobile_phone` | TEXT | No | No | No | NULL | — | Mobile phone |
+| `phone` | TEXT | No | No | No | NULL | — | Landline. The seeded sample `011-4555-1234` stays. |
+| `mobile_phone` | TEXT | No | No | No | NULL | — | Mobile phone. The seeded sample `011-15-5555-1234` stays. |
 | `secondary_email` | TEXT | No | No | No | NULL | — | Secondary or historical email. The seeded sample `jcgarcia@notaria.com` stays. |
 | `nationality` | TEXT | No | No | No | NULL | — | Nationality. The seeded sample `Argentina` stays. |
 | `profession` | TEXT | No | No | No | NULL | — | Profession or trade. Free text. The seeded sample `Escribano` stays. |
