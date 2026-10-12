@@ -64,6 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded procedure headings** (#1490, CU75): the procedure heading lists
+  `Compraventa inmueble Lote 12` and `Donación a herederos`.
 - **Seeded management headings** (#1490, CU75): the management heading lists
   `Compraventa Lote 12 — Familia Pérez` and `Donación — Sucesión Gómez`.
 - **Seeded history notes** (#1490, CU75): the history notes list
