@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Registration-draft status labels** (#1490, CU75): the registration-draft
+  status names `Generada`, `Presentado para inscripción`, `Observado`, and
+  `Inscripto`. Deed status `Inscripta` stays.
 - **Data dictionary status labels** (#1490, CU75): deed status names
   `Sin Firmar`, `Firmada`, `Anulada`, `No Paso`, and `Inscripta`.
   Management-status examples name `Iniciada`, `En Tramite`, and
