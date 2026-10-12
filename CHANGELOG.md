@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Zero-value concept fixture** (#1490, CU75): the concept whose value is
+  zero is named `Exempt`. Seeded concept `Honorarios` stays, and the
+  sample street `Av. Corrientes` stays.
 - **Demo case addresses** (#1490, CU75): the seeded property street is
   `Demo Avenue`, and the step titles say `Case`. Place abbreviation
   `CABA`, name `María`, and procedure type `Compraventa` stay. Visible
