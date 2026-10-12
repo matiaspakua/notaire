@@ -63,10 +63,10 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Conventional Commits
-- [ ] 9.2 `Refs #1248` (not `Closes #1248` — see Exceptions)
-- [ ] 9.3 No secrets
-- [ ] 9.4 Record SHAs after commit
+- [x] 9.1 Conventional Commits
+- [x] 9.2 `Refs #1248` (not `Closes #1248` — see Exceptions)
+- [x] 9.3 No secrets
+- [x] 9.4 `527fef7a` recorded in traceability.md
 
 ## 10. Pull Request y validación CI
 
