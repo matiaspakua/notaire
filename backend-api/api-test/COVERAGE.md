@@ -21,13 +21,13 @@ sorts first (login/rate-limit fixtures other folders depend on).
 
 | # | Endpoint | Defect | Fix |
 |---|----------|--------|-----|
-| 1 | `POST /document-types` | NPE unboxing null `Boolean vence` | `DtoTipoDeDocumento.isVence()` null-safe |
-| 2 | `POST /identification-types` | `null value in column "caracteres"` (entity didn't map the NOT-NULL column) | added `caracteres` field to `IdentificationType` |
-| 3 | `PUT /procedure-types/{id}` | NPE on null `asociaInmuebles` / `version` | `ProcedureType.setAttributes` null-safe (booleans + preserve version) |
-| 4 | `PUT /document-types/{id}` | NPE on null `habilitado` / `version` | `DocumentType.setAttributes` null-safe |
-| 5 | `GET /users/person/{id}` | `NonUniqueResult` 500 when a person has more than one user | `findFirstByFkIdPersonaIdPersona` |
-| 6 | `PUT /users/{id}` | omitting `contrasenia` → NOT-NULL 500 | preserve stored password when omitted |
-| 7 | `POST/PUT /items` | `fkIdPresupuesto` silently dropped (`@JsonIgnore` blocked the field on write, not just read) | `@JsonProperty(access = WRITE_ONLY)` |
+| 1 | `POST /document-types` | NPE unboxing null `Boolean expires` | `DtoDocumentType.isExpires()` null-safe |
+| 2 | `POST /identification-types` | `null value in column "characters"` (entity didn't map the NOT-NULL column) | added `characters` field to `IdentificationType` |
+| 3 | `PUT /procedure-types/{id}` | NPE on null `associatesProperties` / `version` | `ProcedureType.setAttributes` null-safe (booleans + preserve version) |
+| 4 | `PUT /document-types/{id}` | NPE on null `enabled` / `version` | `DocumentType.setAttributes` null-safe |
+| 5 | `GET /users/person/{id}` | `NonUniqueResult` 500 when a person has more than one user | `findFirstByFkIdPersonIdPerson` |
+| 6 | `PUT /users/{id}` | omitting `password` → NOT-NULL 500 | preserve stored password when omitted |
+| 7 | `POST/PUT /items` | `fkIdBudget` silently dropped (`@JsonIgnore` blocked the field on write, not just read) | `@JsonProperty(access = WRITE_ONLY)` |
 | 8 | `DELETE /history/{id}`, `/items/{id}`, `/payments/{id}`, `/procedures/{id}` | delete silently no-op'd for rows loaded fresh from the DB (Spring Data's default `isNew()` misreads a primitive `@Version` of 0 as "new") | implement `Persistable<Integer>` with an explicit `isNew()` |
 | 9 | `DELETE /history/{id}` | delete silently cancelled by Hibernate's cascade on the stale `ManagementStatus.historyList` collection | unlink the entity from that collection before `repository.delete()` |
 | 10 | `DELETE /{resource}/{id}` for 30 more entities (`Role`, `DocumentType`, `FolioType`, `ProcedureType`, `IdentificationType`, `ManagementStatus`, `WorkflowDefinition`/`Node`/`Transition`, `Person`, `User`, `Deed`, `DeedManagement`, `Budget`, `Testimony`, `Notebook`, `Folio`, `Property`, `RegistrationDraft`, `TestimonyMovement`, `SubmittedDocument`, `AuditRecord`, `Substitution`, `Concept`, `Copy`, plus 5 `@EmbeddedId` join entities) | same silent-delete-via-`isNew()` bug as defect #8, present across every remaining surrogate-key and composite-key entity | implement `Persistable<Integer>` (surrogate keys) or `Persistable<XxxPK>` with `@Transient boolean isNew` + `@PostLoad`/`@PrePersist` (composite keys) on all 30 entities (#957) |
