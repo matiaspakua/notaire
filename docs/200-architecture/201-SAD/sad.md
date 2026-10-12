@@ -1129,19 +1129,22 @@ O --> (Deployability Docker)
 > [DEVELOPMENT-PLAN §5](../../300-development/DEVELOPMENT-PLAN.md).
 > Historical snapshots (do not update): [`docs/000-archive/github/`](../../000-archive/github/).
 >
-> The roadmap matches the GitHub milestones and the Delivery Board.
-> Each item has a tracking issue with acceptance criteria, labels, and a milestone.
+> The manager's roadmap is [Project management](../../300-development/305-project-management/README.md)
+> (history cohorts, delivery trains, requirements catalog, parallel-agent lanes).
+> Counts and the Pages chart live there. This section keeps the phase narrative.
+> Milestone numbers **#6, #7, #8, and #10** from earlier revisions were deleted.
+> Do not recreate those numbers.
 
-#### Migration Phases — Alignment with GitHub Milestones
+#### Migration phases
 
-| Phase | GitHub Milestone | Status | Tracking Issue |
-|-------|-----------------|--------|----------------|
-| Phase 1 — Analysis | [#6 Phase 1 — Analysis](https://github.com/matiaspakua/notaire/milestone/6) | ✅ Complete | Legacy documented, 73 use cases catalogued |
-| Phase 2 — Foundation | [#7 Phase 2 — Foundation](https://github.com/matiaspakua/notaire/milestone/7) | ✅ Complete | Shared DTO module (retired, ADR-025), Maven multi-module, Docker Compose |
-| Phase 3 — Backend API | [#8 Phase 3 — Backend API](https://github.com/matiaspakua/notaire/milestone/8) | ✅ Complete | 31 controllers, 32 entities, Flyway V1 through V14 |
-| Phase 4 — Modern Frontend | [#9 Phase 4 — Modern Frontend](https://github.com/matiaspakua/notaire/milestone/9) | 🔄 In Progress | [#898](https://github.com/matiaspakua/notaire/issues/898) — 73 use cases in Next.js 16 |
-| Phase 5 — Observability | [#10 Phase 5 — Observability](https://github.com/matiaspakua/notaire/milestone/10) | ✅ Complete | LPG stack + SonarQube + Homer |
-| Phase 6 — Deprecation | [#11 Phase 6 — Deprecation](https://github.com/matiaspakua/notaire/milestone/11) | 🔶 Partial | Swing removed from active build; remaining work is `jpa` cleanup ([#899](https://github.com/matiaspakua/notaire/issues/899)) |
+| Phase | Status | Where the work is tracked |
+|-------|--------|---------------------------|
+| Phase 1 — Analysis | Complete | Closed cohort "Phase 1 — Analysis & foundation" |
+| Phase 2 — Foundation | Complete | Shared DTO module retired (ADR-025); cohort "Phase 2 — Foundation" when a `phase:2-foundation` label is present |
+| Phase 3 — Backend API | Complete | Closed cohort "Phase 3 — Backend API" (June 2026). Not milestone #4, whose older title is "Phase 3 - Modern Frontend" |
+| Phase 4 — Modern Frontend | In progress | Open train "Phase 4 — Modern Frontend" (reopen milestone #9). Tracker [#898](https://github.com/matiaspakua/notaire/issues/898). July–August deliveries are a separate closed cohort so the progress bar is not inflated |
+| Phase 5 — Observability | Complete | Closed cohort "Phase 5 — Observability & production audit" |
+| Phase 6 — Deprecation | Partial | Open train "Phase 6 — Deprecation" (reopen milestone #11). Swing is gone; `jpa` cleanup remains ([#899](https://github.com/matiaspakua/notaire/issues/899)) |
 
 #### Short Term (Phase 4 — Modern Frontend)
 

@@ -158,6 +158,18 @@ roles:
       - devsecops-traceability
     phases: [branch, pr, merge]
 
+  project-manager:
+    agent_file: .claude/agents/project-manager.md
+    model: claude-sonnet-5-5-medium
+    model_upgrade: claude-opus-5-5-medium
+    skills:
+      - project-management
+      - product-owner
+      - delivery-maturity-roadmap
+      - devsecops-traceability
+    phases: [triage]
+    when: milestones, roadmap, priority, label hygiene, parallel lanes
+
   efficiency-fallback:
     agent_file: .claude/agents/efficiency_config_agent.md
     model: claude-sonnet-5-5-medium
@@ -178,6 +190,8 @@ dispatch_rules:
     serialize: true
   - if: phase is spec
     primary: openspec-planner
+  - if: work is roadmap, milestone scheduling, or lane assignment
+    primary: project-manager
   - if: phase is review
     primary: [code-reviewer]
     optional: [security-auditor]

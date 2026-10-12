@@ -6,6 +6,9 @@ import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
 import type { UpcomingExpiration } from "@/types";
 
+/** Window shared by the upcoming-expirations page and the dashboard alert (#1556). */
+export const UPCOMING_EXPIRATIONS_DEFAULT_DAYS = 30;
+
 export const upcomingExpirationKeys = {
   byDays: (days: number) => ["upcomingExpirations", days] as const,
 };

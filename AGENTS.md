@@ -33,6 +33,7 @@ Operational detail (load when implementing): `.claude/rules/ai-agent-workflow.md
 | CI / Docker / observability | `.claude/agents/devops-engineer.md`, `.claude/skills/devops/SKILL.md` |
 | Security review | `.claude/agents/security-auditor.md`, `.claude/skills/secure-threat-modeling/SKILL.md` |
 | OpenSpec propose/apply | `.claude/skills/openspec-*/SKILL.md` |
+| Milestones, roadmap, lanes | `.claude/agents/project-manager.md`, `.claude/skills/project-management/SKILL.md`, `docs/300-development/305-project-management/` |
 
 General hygiene (short): `.claude/rules/general.md` — load at session start if needed;
 prefer skills over pasting full rule bodies into context.
