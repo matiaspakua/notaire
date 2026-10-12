@@ -5,7 +5,7 @@ people,Strong,last_name,,no,Text,,,,Last name or legal name
 people,Strong,first_name,,no,Text,,,,First name or trade name
 people,Strong,identification_number,,no,Text,,,,Primary identification number
 people,Strong,tax_id,,yes,Text,,,x,Tax id (`CUIT` / `CUIL`). Those stored names stay.
-people,Strong,sex,,yes,Text,,,x,Legal sex. Stored values `Masculino` and `Femenino` stay.
+people,Strong,sex,,yes,Text,,,x,Legal sex. Stored values `Masculino` and `Femenino` stay. The seeded sample `M` stays.
 people,Strong,birth_date,,yes,Date,,,x,Birth date
 people,Strong,marital_status,,yes,Text,,,x,Marital status. Stored values `Soltero` and `Casado` stay.
 people,Strong,marriage_count,,yes,Integer,,,x,Marriage count
