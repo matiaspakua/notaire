@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Pending open ledgers** (#1490, CU75): a traceability file whose permanent
+  documents are still pending can cite a live English Playwright filename.
+  The legacy `accepted-breaking-changes.txt` claim on the open #655 notes is
+  retired. Accepted breaking entries live in `accepted-breaking-changes.d/`.
+  `CHANGELOG.md` and `openapi.yaml` stay claimed on those notes.
 - **Seeded marital status and node layout** (#1490, CU75): the person sample
   stays `Casado`. The login sample stays `Escribano`. The seeded workflow
   uses `INITIAL`, `INTERMEDIATE`, and `FINAL`, and the seeded nodes stay
