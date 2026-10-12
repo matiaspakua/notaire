@@ -2734,6 +2734,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   payments. An inverted range shows an inline error and sends no request, and the API now
   answers it with 400 instead of an empty list. TS-0014 CU47-GW01 is implemented (one fewer feature-gap skip).
 
+- **Substitutions by year and notary** (issue #1546, CU59): `/dashboard/substitutions` has an
+  Año selector (a substitution counts in every year its range overlaps) and an Escribano search
+  over both sides, accent- and case-insensitive, kept in the URL, with a result count.
+
 - **Audit log filter by user and date range** (issue #1545, CU23): `/dashboard/audit` has a
   user selector and Desde/Hasta dates, kept in the URL. `GET /api/v1/audit-log` accepts optional
   `from`/`to` (yyyy-MM-dd, inclusive), the filters now combine (module no longer overrides

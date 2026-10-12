@@ -1246,7 +1246,15 @@
       "desde": "From",
       "hasta": "To"
     },
-    "register": "Register"
+    "register": "Register",
+    "filtros": {
+      "anio": "Year",
+      "todosLosAnios": "All years",
+      "escribano": "Notary",
+      "escribanoPlaceholder": "Substituted or substitute",
+      "resultados": "{count, plural, one {# substitution} other {# substitutions}}"
+    },
+    "noDataYear": "No substitutions for {year}"
   },
   "reportes": {
     "title": "Reports",

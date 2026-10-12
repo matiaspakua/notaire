@@ -1246,7 +1246,15 @@
       "desde": "Desde",
       "hasta": "Hasta"
     },
-    "register": "Registrar"
+    "register": "Registrar",
+    "filtros": {
+      "anio": "Año",
+      "todosLosAnios": "Todos los años",
+      "escribano": "Escribano",
+      "escribanoPlaceholder": "Titular o suplente",
+      "resultados": "{count, plural, one {# suplencia} other {# suplencias}}"
+    },
+    "noDataYear": "No hay suplencias para {year}"
   },
   "reportes": {
     "title": "Reportes",
