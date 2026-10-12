@@ -206,14 +206,14 @@ test.describe("CU42 - Report upcoming expirations", () => {
       });
       expect(procedure.ok, procedure.error ?? "create procedure failed").toBe(true);
       const name = `Alert E2E ${uniqueId()}`;
-      const document = await apiPost<{ idSubmittedDocument: number }>(page, "/submitted-documents", {
+      const seeded = await apiPost<{ idSubmittedDocument: number }>(page, "/submitted-documents", {
         typeId: documentType.data!.idDocumentType,
         procedureId: procedure.data!.idProcedure,
         date: new Date().toISOString().split("T")[0],
         delivered: false,
         name,
       });
-      expect(document.ok, document.error ?? "submitted document failed").toBe(true);
+      expect(seeded.ok, seeded.error ?? "submitted document failed").toBe(true);
 
       // When the dashboard home loads
       await steps.givenUserIsOnPage("/dashboard");
