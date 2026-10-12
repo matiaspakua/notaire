@@ -45,4 +45,3 @@ endpoints:
   "GET /api/v1/workflow-definition/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
   "GET /api/v1/workflow-node/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
   "GET /api/v1/workflow-transition/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
-  "PUT /api/v1/workflow-transition/{id}": "Likely redundant (#1250 bucket D): confirm, then remove with OpenAPI, Bruno and the CU-API matrix"
