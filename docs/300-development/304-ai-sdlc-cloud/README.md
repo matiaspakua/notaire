@@ -24,7 +24,10 @@ issue → OpenSpec Gate 1 → TDD → implement → preflight/CI → PR → revi
 | Backend Implementer | [`.claude/agents/backend-implementer.md`](../../../.claude/agents/backend-implementer.md) |
 | Frontend Design | [`.claude/agents/frontend-design.md`](../../../.claude/agents/frontend-design.md) |
 | Testing / QA | [`.claude/agents/testing-qa.md`](../../../.claude/agents/testing-qa.md) |
+| Project manager | [`.claude/agents/project-manager.md`](../../../.claude/agents/project-manager.md) |
 | Existing specialists | [`.claude/agents/`](../../../.claude/agents/) (`java-architect`, `devops-engineer`, `security-auditor`, `code-reviewer`, `sync_issues_and_code`, `efficiency_config_agent`) |
+
+Scheduling, milestones, and lanes: [305-project-management](../305-project-management/README.md).
 
 ## Authority
 
