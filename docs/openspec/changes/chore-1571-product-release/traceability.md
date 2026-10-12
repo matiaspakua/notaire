@@ -15,7 +15,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/chore-1571-product-release/` | Gate 1 |
 | Branch | `cursor/release-product-schema-db96` | from `origin/main` |
 | Tasks | `tasks.md` | groups 1–8 ticked; 9–12 pending PR/merge |
-| Commits | | pending |
+| Commits | `673be81d` | recorded |
 | Pull Request | | pending |
 | CI run | | pending |
 | Merge commit | | pending |
