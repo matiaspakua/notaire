@@ -289,7 +289,7 @@ folio_copies,Associative,fk_id_copy,PK,no,Integer,x,x,,Issued copy
 registration_drafts,Weak,id,PK,no,Integer,x,,,Unique id of the registration draft
 registration_drafts,Weak,number,,no,Integer,,,,Draft number
 registration_drafts,Weak,operation_price,,yes,Real,,,x,Price of the operation to register
-registration_drafts,Weak,status,,no,Text,,,,Draft status in the registration flow. Stored labels stay.
+registration_drafts,Weak,status,,no,Text,,,,"Draft status in the registration flow. Stored labels `Generada`, `Presentado para inscripción`, `Observado`, and `Inscripto` stay."
 registration_drafts,Weak,generation_date,,no,Date,,,,Date the draft was created
 registration_drafts,Weak,submission_date,,yes,Date,,,x,Date it was filed with the registry
 registration_drafts,Weak,registry_entry_number,,yes,Text,,,x,Intake number assigned by the registry

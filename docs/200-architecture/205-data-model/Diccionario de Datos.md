@@ -747,7 +747,7 @@ Registry registration drafts for a deed, and their follow-up.
 | `version` | INTEGER | No | No | Yes | 0 | — | Optimistic lock |
 | `number` | INTEGER | No | No | Yes | — | — | Draft number |
 | `operation_price` | NUMERIC(19,2) | No | No | No | NULL | — | Price of the operation to register |
-| `status` | VARCHAR(50) | No | No | Yes | — | — | Draft status in the registration flow. Stored labels stay. |
+| `status` | VARCHAR(50) | No | No | Yes | — | — | Draft status in the registration flow. Stored labels `Generada`, `Presentado para inscripción`, `Observado`, and `Inscripto` stay. |
 | `generation_date` | DATE | No | No | Yes | — | — | Date the draft was created |
 | `submission_date` | DATE | No | No | No | NULL | — | Date it was filed with the registry |
 | `registry_entry_number` | VARCHAR(255) | No | No | No | NULL | — | Intake number assigned by the registry |
