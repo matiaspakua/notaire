@@ -42,7 +42,7 @@ import { workflowEdge } from "@/components/workflow/workflow-edges";
 import { WorkflowSelectionPanel, type PanelSelection } from "@/components/workflow/WorkflowSelectionPanel";
 import { WORKFLOW_ZOOM, WORKFLOW_FIT, MINIMAP_CLASS, workflowAriaLabels, workflowMiniMapColor } from "@/components/workflow/workflow-canvas";
 import { checkNewTransition } from "@/lib/workflow-edit";
-import { layoutWorkflow, nextFreePosition, type Point } from "@/lib/workflow-layout";
+import { layoutWorkflow, nextFreePosition, NODE_WIDTH, NODE_HEIGHT, type Point } from "@/lib/workflow-layout";
 
 // #1575: shared status box (type badge, start/final shape, selection highlight).
 const nodeTypes = workflowNodeTypes;
@@ -96,6 +96,8 @@ export default function WorkflowEditorPage() {
           position: local[id]?.position ?? layout.get(id) ?? { x: 0, y: 0 },
           selected: selection?.kind === "node" && String(selection.id) === id,
           dragging: local[id]?.dragging ?? false,
+          initialWidth: NODE_WIDTH,
+          initialHeight: NODE_HEIGHT,
           // Keep React Flow's measured size; without it a node added in edit mode stays hidden.
           ...(local[id]?.measured ? { measured: local[id].measured } : {}),
           data: {

@@ -5,7 +5,8 @@
  */
 import { getNodeMeta } from "@/lib/workflow-node-meta";
 
-export const WORKFLOW_ZOOM = { minZoom: 0.2, maxZoom: 2 } as const;
+/** 0.1 so fit-to-view can still show a long workflow on a 390px phone. */
+export const WORKFLOW_ZOOM = { minZoom: 0.1, maxZoom: 2 } as const;
 
 export const WORKFLOW_FIT = { padding: 0.2 } as const;
 

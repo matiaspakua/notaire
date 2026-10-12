@@ -14,8 +14,8 @@ import {
 const t = (key: string) => `T:${key}`;
 
 describe("workflow canvas chrome (#1579)", () => {
-  it("bounds zoom between 0.2 and 2", () => {
-    expect(WORKFLOW_ZOOM).toEqual({ minZoom: 0.2, maxZoom: 2 });
+  it("bounds zoom between 0.1 and 2", () => {
+    expect(WORKFLOW_ZOOM).toEqual({ minZoom: 0.1, maxZoom: 2 });
   });
 
   it("gives every control a localized accessible name", () => {

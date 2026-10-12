@@ -13,7 +13,7 @@ import "@xyflow/react/dist/style.css";
 import { theme } from "@/theme/tokens";
 import { getNodeMeta, withNodeIcon } from "@/lib/workflow-node-meta";
 import type { WorkflowNode, WorkflowTransition } from "@/types";
-import { layoutWorkflow } from "@/lib/workflow-layout";
+import { layoutWorkflow, NODE_WIDTH, NODE_HEIGHT } from "@/lib/workflow-layout";
 import { workflowNodeTypes } from "@/components/workflow/WorkflowNodeBox";
 import { workflowEdge } from "@/components/workflow/workflow-edges";
 import { WORKFLOW_ZOOM, WORKFLOW_FIT, MINIMAP_CLASS, workflowAriaLabels, workflowMiniMapColor } from "@/components/workflow/workflow-canvas";
@@ -28,6 +28,9 @@ export function toFlowNodes(nodes: WorkflowNode[], transitions: WorkflowTransiti
       id: String(n.id),
       type: "workflowNode",
       position: layout.get(String(n.id)) ?? { x: 0, y: 0 },
+      // #1579: fixed box size, so the MiniMap draws nodes React Flow never reports as measured.
+      initialWidth: NODE_WIDTH,
+      initialHeight: NODE_HEIGHT,
       data: { label: withNodeIcon(n.statusManagementName ?? `Node ${n.id}`, type), type, meta: getNodeMeta(type) },
     };
   });
