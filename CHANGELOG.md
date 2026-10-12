@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded document-type fees** (#1490, CU75): returned and expires stay
+  `true` for `Libre Deuda Municipal`, `Informe de Dominio`, and
+  `Certificado Catastral`, and `false` for `Fotocopia DNI`. Validity stays
+  `30`, `60`, and `90` days. Fees stay `0`, `150`, `100`, and `0`.
+  `Fotocopia DNI` stays without a day count.
 - **Seeded concept amounts** (#1490, CU75): `IVA` is `0` at `20` percent,
   `Honorarios` is `0` at `5` percent, `Documentacion` is `500`, and
   `Protocolo` is `150`. `Documentacion` and `Protocolo` stay fixed amounts.
