@@ -107,7 +107,7 @@ deed_managements,Strong,fk_id_management_status,FK,yes,Integer,,x,x,Current oper
 deed_managements,Strong,pending_debt_on_archive,,yes,Boolean,,,x,`true` when the management was archived with a pending debt
 management_statuses,Strong,version,,no,Integer,,,,Optimistic lock
 management_statuses,Strong,id,PK,no,Integer,x,,,Management-status id
-management_statuses,Strong,name,,no,Text,,,,"Status name. Stored examples such as `Iniciada`, `En Tramite`, and `Testimonio Generado` stay."
+management_statuses,Strong,name,,no,Text,,,,"Status name. Stored examples such as `Iniciada`, `En Tramite`, and `Testimonio Generado` stay. The seeded catalog also keeps `Documentacion Completa`, `Archivada`, `Gestion Modificada`, `Gestion con Escritura Firmada`, `Gestion con Escritura Sin Firmar`, `Gestion con Escritura Anulada`, `Gestion con Escritura No Paso`, `Gestion con Escritura Inscripta`, `Testimonio Ingresado a Inscripcion`, and `Testimonio Retirado`."
 management_statuses,Strong,notes,,yes,Text,,,x,"Functional definition and conditions. Stored notes `Inicio Gestion`, `Post-signing: testimony generated from signed deed`, `Post-signing: testimony submitted for inscription`, and `Post-signing: testimony withdrawn after inscription cycle` stay."
 history,Weak,version,,no,Integer,,,,Optimistic lock
 history,Weak,id,PK,no,Integer,x,,,History-row id

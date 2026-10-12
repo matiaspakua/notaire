@@ -227,7 +227,7 @@ Catalog of operational statuses a deed management can move through. Stored statu
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Management-status id |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
-| `name` | TEXT | No | No | Yes | — | — | Status name. Stored examples such as `Iniciada`, `En Tramite`, and `Testimonio Generado` stay. |
+| `name` | TEXT | No | No | Yes | — | — | Status name. Stored examples such as `Iniciada`, `En Tramite`, and `Testimonio Generado` stay. The seeded catalog also keeps `Documentacion Completa`, `Archivada`, `Gestion Modificada`, `Gestion con Escritura Firmada`, `Gestion con Escritura Sin Firmar`, `Gestion con Escritura Anulada`, `Gestion con Escritura No Paso`, `Gestion con Escritura Inscripta`, `Testimonio Ingresado a Inscripcion`, and `Testimonio Retirado`. |
 | `notes` | TEXT | No | No | No | NULL | — | Functional definition and conditions. Stored notes `Inicio Gestion`, `Post-signing: testimony generated from signed deed`, `Post-signing: testimony submitted for inscription`, and `Post-signing: testimony withdrawn after inscription cycle` stay. |
 
 ---
