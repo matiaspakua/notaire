@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, FileText } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -11,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
-import { usePayments, useCreatePayment, useUpdatePayment, useDeletePayment, usePaymentStatus } from "@/hooks/usePayments";
+import { usePayments, usePaymentsByBudget, useBudgetBalance, useCreatePayment, useUpdatePayment, useDeletePayment, usePaymentStatus } from "@/hooks/usePayments";
 import { useBudgetSummary } from "@/hooks/useBudgets";
 import { BudgetPicker } from "@/components/shared/BudgetPicker";
 import { usePaymentReceipt } from "@/hooks/useReports";
@@ -26,13 +27,43 @@ const PAYMENT_FIELD_NAMES = ["amount", "date", "paymentMethod", "notes", "idBudg
 
 const EMPTY: Partial<Payment> = { idBudget: undefined, amount: undefined, date: "", paymentMethod: "", notes: "" };
 
+// useSearchParams (?budget=, #1544) needs a Suspense boundary for static prerendering.
 export default function PaymentsPage() {
+  return (
+    <Suspense>
+      <PaymentsPageContent />
+    </Suspense>
+  );
+}
+
+function PaymentsPageContent() {
   const fmt = useFormat();
   const t = useTranslations("pagos");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const { data: payments = [], isLoading } = usePayments();
+  // CU47 (#1544): consult one budget, kept in the URL (?budget=).
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const budgetParam = Number(searchParams.get("budget"));
+  const consultBudget = Number.isInteger(budgetParam) && budgetParam > 0 ? budgetParam : null;
+  function setConsultBudget(id: number | undefined) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (id) params.set("budget", String(id));
+    else params.delete("budget");
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  }
+  const allPayments = usePayments();
+  const byBudget = usePaymentsByBudget(consultBudget);
+  const { data: consultSummary } = useBudgetSummary(consultBudget);
+  const { data: consultBalance } = useBudgetBalance(consultBudget);
+  const { data: consultStatus } = usePaymentStatus(consultBudget);
+  const payments = consultBudget
+    ? [...(byBudget.data ?? [])].sort((a, b) => String(b.date ?? "").localeCompare(String(a.date ?? "")))
+    : (allPayments.data ?? []);
+  const isLoading = consultBudget ? byBudget.isLoading : allPayments.isLoading;
   const createMutation = useCreatePayment();
   const updateMutation = useUpdatePayment();
   const deleteMutation = useDeletePayment();
@@ -135,7 +166,47 @@ export default function PaymentsPage() {
         title={t("title")}
         actions={<Button onClick={openCreate} data-testid="btn-new-payment"><Plus className="h-4 w-4" />{t("newPago")}</Button>}
       />
-      <DataTable data={payments} columns={columns} isLoading={isLoading} keyExtractor={(p) => p.idPayment!} emptyMessage={t("noData")} />
+      <div className="mb-4 grid gap-3 md:grid-cols-[minmax(0,24rem)_1fr] md:items-start">
+        <FormField label={t("consulta.label")}>
+          <BudgetPicker
+            value={consultBudget ?? undefined}
+            onChange={(budget) => setConsultBudget(budget?.idBudget)}
+            allowClear
+            aria-label={t("consulta.label")}
+            data-testid="filter-budget-payments"
+          />
+        </FormField>
+        {consultBudget && (
+          <dl
+            data-testid="payment-budget-summary"
+            className="grid grid-cols-2 gap-3 rounded-lg border border-info/30 bg-info/10 p-3 text-sm sm:grid-cols-4"
+          >
+            <div>
+              <dt className="text-xs text-muted-foreground">{t("consulta.total")}</dt>
+              <dd className="font-semibold" data-testid="payment-budget-total">{fmt.currency(consultSummary?.total ?? 0)}</dd>
+            </div>
+            <div>
+              <dt className="text-xs text-muted-foreground">{t("consulta.paid")}</dt>
+              <dd className="font-semibold" data-testid="payment-budget-paid">
+                {fmt.currency((consultSummary?.total ?? 0) - (consultBalance ?? consultSummary?.pendingBalance ?? 0))}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-xs text-muted-foreground">{t("consulta.balance")}</dt>
+              <dd className="font-semibold" data-testid="payment-budget-balance">{fmt.currency(consultBalance ?? 0)}</dd>
+            </div>
+            <div>
+              <dt className="text-xs text-muted-foreground">{t("consulta.status")}</dt>
+              <dd>
+                <span data-testid="payment-budget-status" className="rounded-full bg-info/10 px-2 py-0.5 text-xs font-medium text-info">
+                  {consultStatus ? paymentStatusLabel[consultStatus] : "—"}
+                </span>
+              </dd>
+            </div>
+          </dl>
+        )}
+      </div>
+      <DataTable data={payments} columns={columns} isLoading={isLoading} keyExtractor={(p) => p.idPayment!} emptyMessage={consultBudget ? t("consulta.sinPagos") : t("noData")} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
