@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Flyway guide examples** (#1490, CU75): the migration guide examples
+  reference `users(id)`, `phone`, `mobile_phone`, and `procedure_types`.
+  Applied migrations `V1` and `V26` keep `usuarios`, `id_usuario`,
+  `tipos_de_tramite`, `habilitado`, and `asocia_inmuebles`.
 - **Unknown identification-type person** (#1490, CU75): the person posted
   with an unknown identification type is named `Unknown Type E2E`. The
   request still answers 400. The first name `Ana` stays, and omitting
