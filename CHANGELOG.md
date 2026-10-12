@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded empty fields** (#1490, CU75): `Documentacion` stays at version
+  `2`. The other seeded concepts stay at version `1`. The seeded person
+  notes, management notes, procedure notes, and transition conditions stay
+  empty.
 - **Seeded sample ownership** (#1490, CU75): seeded managements stay with
   notary `Garcia`. History and procedures stay on managements `1001` and
   `1002`. Seeded workflow rows stay on `Workflow de Gestión Estándar`.
