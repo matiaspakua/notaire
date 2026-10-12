@@ -190,7 +190,7 @@ document_types,Strong,expires,,no,Boolean,,,,`true` when the certificate expires
 document_types,Strong,due_days,,yes,Integer,,,x,Legal validity in days
 document_types,Strong,amount_to_pay,,yes,Real,,,x,Standard fee
 document_types,Strong,enabled,,no,Boolean,,,,`true` when it can be used on templates
-document_types,Strong,delivered_by,,no,Text,,,,Origin (`Cliente` or `Entidad Externa`). Those stored values stay.
+document_types,Strong,delivered_by,,no,Text,,,,"Origin. Stored values `Cliente`, `Entidad`, and `Entidad Externa` stay."
 procedure_templates,Associative,version,,no,Integer,,,,Optimistic lock
 procedure_templates,Associative,fk_id_procedure_type,PK,no,Integer,x,x,,Procedure type
 procedure_templates,Associative,fk_id_document_type,PK,no,Integer,x,x,,Required document or certificate

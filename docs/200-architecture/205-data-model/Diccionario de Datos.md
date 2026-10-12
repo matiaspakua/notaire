@@ -548,7 +548,7 @@ Master catalog of documents, prior titles, and registry certificates.
 | `due_days` | INTEGER | No | No | No | NULL | — | Legal validity in days |
 | `amount_to_pay` | NUMERIC(19,2) | No | No | No | NULL | — | Standard fee |
 | `enabled` | BOOLEAN | No | No | Yes | — | — | `true` when it can be used on templates |
-| `delivered_by` | TEXT | No | No | Yes | — | — | Origin (`Cliente` or `Entidad Externa`). Those stored values stay. |
+| `delivered_by` | TEXT | No | No | Yes | — | — | Origin. Stored values `Cliente`, `Entidad`, and `Entidad Externa` stay. |
 
 ---
 
