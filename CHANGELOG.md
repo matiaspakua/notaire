@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Constraint-name rollback script** (#1490, CU75): the database suite
+  treats `R46__rename_spanish_constraint_names.sql` as a manual rollback
+  Flyway ignores, alongside `R14` and `R45`. The testing inventory counts
+  the constraint-name unit test.
 - **English constraint names** (#1490, CU75): Flyway `V46` renames the
   Spanish constraint names PostgreSQL kept after the table and column
   renames (`users_pkey` and the names that follow the current tables).
