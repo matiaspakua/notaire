@@ -15,8 +15,6 @@ import {
   type Connection,
   type NodeChange,
   type EdgeChange,
-  Handle,
-  Position,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { AppHeader } from "@/components/layout/AppHeader";
@@ -38,39 +36,13 @@ import { presentMutationError } from "@/lib/mutation-error";
 import type { WorkflowNodeType } from "@/types";
 import { useManagementStatuses } from "@/hooks/useManagementStatuses";
 import { theme } from "@/theme/tokens";
-import { getNodeMeta, withNodeIcon } from "@/lib/workflow-node-meta";
-import { layoutWorkflow, nextFreePosition, NODE_WIDTH, NODE_HEIGHT, type Point } from "@/lib/workflow-layout";
+import { withNodeIcon } from "@/lib/workflow-node-meta";
+import { workflowNodeTypes } from "@/components/workflow/WorkflowNodeBox";
+import { workflowEdge } from "@/components/workflow/workflow-edges";
+import { layoutWorkflow, nextFreePosition, type Point } from "@/lib/workflow-layout";
 
-function WorkflowNodeComponent({ data }: { data: { label: string; type: string } }) {
-  const meta = getNodeMeta(data.type);
-  return (
-    <div
-      style={{
-        background: meta.background,
-        border: `2px solid ${meta.border}`,
-        color: meta.color,
-        borderRadius: "8px",
-        padding: "8px 12px",
-        fontWeight: 600,
-        fontSize: "13px",
-        width: `${NODE_WIDTH}px`,
-        minHeight: `${NODE_HEIGHT}px`,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        textAlign: "center",
-        lineHeight: 1.25,
-        overflowWrap: "anywhere",
-      }}
-    >
-      <Handle type="target" position={Position.Left} />
-      {data.label}
-      <Handle type="source" position={Position.Right} />
-    </div>
-  );
-}
-
-const nodeTypes = { workflowNode: WorkflowNodeComponent };
+// #1575: shared status box (type badge, start/final shape, selection highlight).
+const nodeTypes = workflowNodeTypes;
 
 export default function WorkflowEditorPage() {
   const t = useTranslations("administracion.workflows.editor");
@@ -127,15 +99,7 @@ export default function WorkflowEditorPage() {
 
   const edges: Edge[] = useMemo(
     () =>
-      rawTransitions.map((tr) => ({
-        id: String(tr.id),
-        source: String(tr.originNodeId),
-        target: String(tr.destinationNodeId),
-        label: tr.description ?? undefined,
-        animated: false,
-        selected: selectedEdges[String(tr.id)] ?? false,
-        style: { stroke: theme.colors.neutral[500] },
-      })),
+      rawTransitions.map((tr) => workflowEdge(tr, selectedEdges[String(tr.id)] ?? false)),
     [rawTransitions, selectedEdges],
   );
 

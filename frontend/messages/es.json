@@ -1469,7 +1469,13 @@
     }
   },
   "workflowViewer": {
-    "empty": "Sin nodos. Agrega estados al workflow."
+    "empty": "Sin nodos. Agrega estados al workflow.",
+    "types": {
+      "INITIAL": "Inicial",
+      "INTERMEDIATE": "Intermedio",
+      "FINAL": "Final"
+    },
+    "nodeAria": "Estado {name}, {type}"
   },
   "status": {
     "folio": {
