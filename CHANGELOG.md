@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0](https://github.com/matiaspakua/notaire/compare/v0.1.2...v0.2.0) (2026-10-12)
+
+
+### Features
+
+* **payments:** inclusive date-range filter on the payments page ([#1557](https://github.com/matiaspakua/notaire/issues/1557)) ([730b153](https://github.com/matiaspakua/notaire/commit/730b153723565f1a68fc00f2b9db2919afe8b80b))
+* **substitutions:** filter by year (overlap) and notary ([#1546](https://github.com/matiaspakua/notaire/issues/1546)) ([bc2e3fc](https://github.com/matiaspakua/notaire/commit/bc2e3fca7ec2ae009fdef2a8a71d29f3362d8b90))
+
+
+### Bug Fixes
+
+* **a11y:** text tokens reach WCAG AA contrast ([#1341](https://github.com/matiaspakua/notaire/issues/1341)) ([#1390](https://github.com/matiaspakua/notaire/issues/1390)) ([7f9f73b](https://github.com/matiaspakua/notaire/commit/7f9f73b44f4e1557505027d04477cfcdf27a1379))
+* **contracts:** drop GET /payments/{id} from the allowlist ([#1557](https://github.com/matiaspakua/notaire/issues/1557)) ([3bdf170](https://github.com/matiaspakua/notaire/commit/3bdf1704ee6de17c0adcf32c275134913721da26))
+* **security:** skip admin/admin seed outside dev/test environments ([#1305](https://github.com/matiaspakua/notaire/issues/1305)) ([7f7731e](https://github.com/matiaspakua/notaire/commit/7f7731e0fafae5a3f6a6cca6f82088d8c2349c91)), closes [#1249](https://github.com/matiaspakua/notaire/issues/1249)
+* **ui:** list rows render as cards on phones ([#1356](https://github.com/matiaspakua/notaire/issues/1356)) ([#1391](https://github.com/matiaspakua/notaire/issues/1391)) ([01b6360](https://github.com/matiaspakua/notaire/commit/01b6360a4edcb5dccd60d4664b87dce47af823a6))
+
 ## [0.1.2](https://github.com/matiaspakua/notaire/compare/notaire-v0.1.1...notaire-v0.1.2) (2026-10-10)
 
 
