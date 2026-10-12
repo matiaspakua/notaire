@@ -102,18 +102,18 @@ deed_managements,Strong,number,,no,Integer,,,,Yearly serial number of the manage
 deed_managements,Strong,start_date,,no,Date,,,,Date the file was opened. Seeded dates `2026-05-02` and `2026-05-20` stay.
 deed_managements,Strong,heading,,no,Text,,,,Heading that describes the management. Stored values `Compraventa Lote 12 — Familia Pérez` and `Donación — Sucesión Gómez` stay.
 deed_managements,Strong,notes,,yes,Text,,,x,Working notes
-deed_managements,Strong,fk_id_notary_person,FK,yes,Integer,,x,x,Notary in charge
+deed_managements,Strong,fk_id_notary_person,FK,yes,Integer,,x,x,Notary in charge. The seeded managements stay with `Garcia`.
 deed_managements,Strong,fk_id_management_status,FK,yes,Integer,,x,x,"Current operational status. Seeded samples stay `Documentacion Completa` for management `1001` and `En Tramite` for management `1002`."
 deed_managements,Strong,pending_debt_on_archive,,yes,Boolean,,,x,`true` when the management was archived with a pending debt
 management_statuses,Strong,version,,no,Integer,,,,Optimistic lock
 management_statuses,Strong,id,PK,no,Integer,x,,,Management-status id
 management_statuses,Strong,name,,no,Text,,,,"Status name. Stored examples such as `Iniciada`, `En Tramite`, and `Testimonio Generado` stay. The seeded catalog also keeps `Documentacion Completa`, `Archivada`, `Gestion Modificada`, `Gestion con Escritura Firmada`, `Gestion con Escritura Sin Firmar`, `Gestion con Escritura Anulada`, `Gestion con Escritura No Paso`, `Gestion con Escritura Inscripta`, `Testimonio Ingresado a Inscripcion`, and `Testimonio Retirado`."
-management_statuses,Strong,notes,,yes,Text,,,x,"Functional definition and conditions. Stored notes `Inicio Gestion`, `Post-signing: testimony generated from signed deed`, `Post-signing: testimony submitted for inscription`, and `Post-signing: testimony withdrawn after inscription cycle` stay."
+management_statuses,Strong,notes,,yes,Text,,,x,"Functional definition and conditions. Stored notes `Inicio Gestion`, `Post-signing: testimony generated from signed deed`, `Post-signing: testimony submitted for inscription`, and `Post-signing: testimony withdrawn after inscription cycle` stay. Seeded notes stay empty for `En Tramite`, `Documentacion Completa`, `Archivada`, `Gestion Modificada`, `Gestion con Escritura Firmada`, `Gestion con Escritura Sin Firmar`, `Gestion con Escritura Anulada`, `Gestion con Escritura No Paso`, and `Gestion con Escritura Inscripta`."
 history,Weak,version,,no,Integer,,,,Optimistic lock
 history,Weak,id,PK,no,Integer,x,,,History-row id
 history,Weak,event_date,,no,Date,,,,"Date of the status change. Seeded dates `2026-05-02`, `2026-05-09`, `2026-05-28`, `2026-05-20`, and `2026-06-01` stay."
 history,Weak,notes,,yes,Text,,,x,"Reason or attestation for the status change. Stored notes `Apertura de la gestión`, `Trámite de compraventa en curso`, `Documentación completa recibida`, and `Trámite de donación en curso` stay."
-history,Weak,fk_id_deed_management,FK,yes,Integer,,x,x,Deed management that changed status
+history,Weak,fk_id_deed_management,FK,yes,Integer,,x,x,Deed management that changed status. Seeded history stays on managements `1001` and `1002`.
 history,Weak,fk_id_management_status,FK,yes,Integer,,x,x,"Status reached. Seeded samples stay `Iniciada`, `En Tramite`, and `Documentacion Completa`."
 procedure_types,Strong,version,,no,Integer,,,,Optimistic lock
 procedure_types,Strong,id,PK,no,Integer,x,,,Procedure-type id
@@ -130,7 +130,7 @@ procedures,Strong,number,,yes,Integer,,,x,Procedure serial number (optional sinc
 procedures,Strong,name,,yes,Text,,,x,Descriptive heading (optional since V13). Stored values `Compraventa inmueble Lote 12` and `Donación a herederos` stay.
 procedures,Strong,notes,,yes,Text,,,x,Instructions or observations
 procedures,Strong,fk_id_procedure_type,FK,yes,Integer,,x,x,"Procedure type. Seeded samples stay `Compraventa` for procedure `1` and `Donacion` for procedure `2`."
-procedures,Strong,fk_id_deed_management,FK,yes,Integer,,x,x,Deed management that groups it (null for auxiliary work)
+procedures,Strong,fk_id_deed_management,FK,yes,Integer,,x,x,Deed management that groups it (null for auxiliary work). Seeded procedures stay on managements `1001` and `1002`.
 procedures,Strong,fk_id_deed,FK,yes,Integer,,x,x,Resulting deed
 procedures,Strong,fk_id_budget,FK,yes,Integer,,x,x,Base budget (V14)
 procedures,Strong,fk_id_property,FK,yes,Integer,,x,x,"Property the act concerns, when there is one"
@@ -170,14 +170,14 @@ workflow_definition,Strong,description,,yes,Text,,,x,Functional description of t
 workflow_definition,Strong,active,,no,Boolean,,,,`true` when the workflow is enabled. The seeded workflow stays `true`.
 workflow_node,Weak,version,,no,Integer,,,,Optimistic lock
 workflow_node,Weak,id_workflow_node,PK,no,Integer,x,,,Unique id of the node
-workflow_node,Weak,fk_workflow_definition_id,FK,no,Integer,,x,,Parent workflow (ON DELETE CASCADE)
+workflow_node,Weak,fk_workflow_definition_id,FK,no,Integer,,x,,Parent workflow (ON DELETE CASCADE). The seeded rows stay on `Workflow de Gestión Estándar`.
 workflow_node,Weak,fk_management_status_id,FK,no,Integer,,x,,"Management status this node represents. The live seeded graph stays: `Iniciada` as `INITIAL`; `En Tramite`, `Documentacion Completa`, `Gestion con Escritura Sin Firmar`, `Gestion con Escritura Firmada`, `Testimonio Generado`, and `Testimonio Ingresado a Inscripcion` as `INTERMEDIATE`; `Archivada` and `Testimonio Retirado` as `FINAL`."
 workflow_node,Weak,node_type,,no,Text,,,,"Node type: `INITIAL`, `INTERMEDIATE`, `FINAL`"
 workflow_node,Weak,position_x,,yes,Real,,,x,Visual X coordinate in the designer
 workflow_node,Weak,position_y,,yes,Real,,,x,Visual Y coordinate in the designer
 workflow_transition,Weak,version,,no,Integer,,,,Optimistic lock
 workflow_transition,Weak,id_workflow_transition,PK,no,Integer,x,,,Unique id of the transition
-workflow_transition,Weak,fk_workflow_definition_id,FK,no,Integer,,x,,Parent workflow (ON DELETE CASCADE)
+workflow_transition,Weak,fk_workflow_definition_id,FK,no,Integer,,x,,Parent workflow (ON DELETE CASCADE). The seeded rows stay on `Workflow de Gestión Estándar`.
 workflow_transition,Weak,fk_origin_node_id,FK,no,Integer,,x,,Origin node (ON DELETE CASCADE)
 workflow_transition,Weak,fk_destination_node_id,FK,no,Integer,,x,,Destination node (ON DELETE CASCADE)
 workflow_transition,Weak,condition,,yes,Text,,,x,Guard condition for the transition

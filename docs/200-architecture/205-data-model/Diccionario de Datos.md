@@ -228,7 +228,7 @@ Catalog of operational statuses a deed management can move through. Stored statu
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Management-status id |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
 | `name` | TEXT | No | No | Yes | — | — | Status name. Stored examples such as `Iniciada`, `En Tramite`, and `Testimonio Generado` stay. The seeded catalog also keeps `Documentacion Completa`, `Archivada`, `Gestion Modificada`, `Gestion con Escritura Firmada`, `Gestion con Escritura Sin Firmar`, `Gestion con Escritura Anulada`, `Gestion con Escritura No Paso`, `Gestion con Escritura Inscripta`, `Testimonio Ingresado a Inscripcion`, and `Testimonio Retirado`. |
-| `notes` | TEXT | No | No | No | NULL | — | Functional definition and conditions. Stored notes `Inicio Gestion`, `Post-signing: testimony generated from signed deed`, `Post-signing: testimony submitted for inscription`, and `Post-signing: testimony withdrawn after inscription cycle` stay. |
+| `notes` | TEXT | No | No | No | NULL | — | Functional definition and conditions. Stored notes `Inicio Gestion`, `Post-signing: testimony generated from signed deed`, `Post-signing: testimony submitted for inscription`, and `Post-signing: testimony withdrawn after inscription cycle` stay. Seeded notes stay empty for `En Tramite`, `Documentacion Completa`, `Archivada`, `Gestion Modificada`, `Gestion con Escritura Firmada`, `Gestion con Escritura Sin Firmar`, `Gestion con Escritura Anulada`, `Gestion con Escritura No Paso`, and `Gestion con Escritura Inscripta`. |
 
 ---
 
@@ -275,7 +275,7 @@ File that groups one or more related procedures.
 | `start_date` | DATE | No | No | Yes | — | — | Date the file was opened. Seeded dates `2026-05-02` and `2026-05-20` stay. |
 | `heading` | TEXT | No | No | Yes | — | — | Heading that describes the management. Stored values `Compraventa Lote 12 — Familia Pérez` and `Donación — Sucesión Gómez` stay. |
 | `notes` | TEXT | No | No | No | NULL | — | Working notes |
-| `fk_id_notary_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Notary in charge |
+| `fk_id_notary_person` | INTEGER | No | Yes | No | NULL | `people(id)` | Notary in charge. The seeded managements stay with `Garcia`. |
 | `fk_id_management_status` | INTEGER | No | Yes | No | NULL | `management_statuses(id)` | Current operational status. Seeded samples stay `Documentacion Completa` for management `1001` and `En Tramite` for management `1002`. |
 | `pending_debt_on_archive` | BOOLEAN | No | No | No | NULL | — | `true` when the management was archived with a pending debt |
 
@@ -291,7 +291,7 @@ Chronological history of status changes for a deed management.
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
 | `event_date` | DATE | No | No | Yes | — | — | Date of the status change. Seeded dates `2026-05-02`, `2026-05-09`, `2026-05-28`, `2026-05-20`, and `2026-06-01` stay. |
 | `notes` | TEXT | No | No | No | NULL | — | Reason or attestation for the status change. Stored notes `Apertura de la gestión`, `Trámite de compraventa en curso`, `Documentación completa recibida`, and `Trámite de donación en curso` stay. |
-| `fk_id_deed_management` | INTEGER | No | Yes | No | NULL | `deed_managements(id)` | Deed management that changed status |
+| `fk_id_deed_management` | INTEGER | No | Yes | No | NULL | `deed_managements(id)` | Deed management that changed status. Seeded history stays on managements `1001` and `1002`. |
 | `fk_id_management_status` | INTEGER | No | Yes | No | NULL | `management_statuses(id)` | Status reached. Seeded samples stay `Iniciada`, `En Tramite`, and `Documentacion Completa`. |
 
 ---
@@ -610,7 +610,7 @@ One procedure instance (V13/V14).
 | `name` | TEXT | No | No | No | NULL | — | Descriptive heading (optional since V13). Stored values `Compraventa inmueble Lote 12` and `Donación a herederos` stay. |
 | `notes` | TEXT | No | No | No | NULL | — | Instructions or observations |
 | `fk_id_procedure_type` | INTEGER | No | Yes | No | NULL | `procedure_types(id)` | Procedure type. Seeded samples stay `Compraventa` for procedure `1` and `Donacion` for procedure `2`. |
-| `fk_id_deed_management` | INTEGER | No | Yes | No | NULL | `deed_managements(id)` | Deed management that groups it (null for auxiliary work) |
+| `fk_id_deed_management` | INTEGER | No | Yes | No | NULL | `deed_managements(id)` | Deed management that groups it (null for auxiliary work). Seeded procedures stay on managements `1001` and `1002`. |
 | `fk_id_deed` | INTEGER | No | Yes | No | NULL | `deeds(id)` | Resulting deed |
 | `fk_id_budget` | INTEGER | No | Yes | No | NULL | `budgets(id)` | Base budget (V14) |
 | `fk_id_property` | INTEGER | No | Yes | No | NULL | `properties(id)` | Property the act concerns, when there is one |
@@ -669,7 +669,7 @@ Workflow nodes linked to management statuses (Flyway V7).
 |---|---|---|---|---|---|---|---|
 | `id_workflow_node` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the node |
 | `version` | INTEGER | No | No | Yes | 0 | — | Optimistic lock |
-| `fk_workflow_definition_id` | INTEGER | No | Yes | Yes | — | `workflow_definition(id_workflow_definition)` | Parent workflow (ON DELETE CASCADE) |
+| `fk_workflow_definition_id` | INTEGER | No | Yes | Yes | — | `workflow_definition(id_workflow_definition)` | Parent workflow (ON DELETE CASCADE). The seeded rows stay on `Workflow de Gestión Estándar`. |
 | `fk_management_status_id` | INTEGER | No | Yes | Yes | — | `management_statuses(id)` | Management status this node represents. The live seeded graph stays: `Iniciada` as `INITIAL`; `En Tramite`, `Documentacion Completa`, `Gestion con Escritura Sin Firmar`, `Gestion con Escritura Firmada`, `Testimonio Generado`, and `Testimonio Ingresado a Inscripcion` as `INTERMEDIATE`; `Archivada` and `Testimonio Retirado` as `FINAL`. |
 | `node_type` | TEXT | No | No | Yes | — | — | Node type: `INITIAL`, `INTERMEDIATE`, `FINAL` |
 | `position_x` | REAL | No | No | No | NULL | — | Visual X coordinate in the designer |
@@ -685,7 +685,7 @@ Directed transitions between workflow nodes, with guard conditions (Flyway V7).
 |---|---|---|---|---|---|---|---|
 | `id_workflow_transition` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the transition |
 | `version` | INTEGER | No | No | Yes | 0 | — | Optimistic lock |
-| `fk_workflow_definition_id` | INTEGER | No | Yes | Yes | — | `workflow_definition(id_workflow_definition)` | Parent workflow (ON DELETE CASCADE) |
+| `fk_workflow_definition_id` | INTEGER | No | Yes | Yes | — | `workflow_definition(id_workflow_definition)` | Parent workflow (ON DELETE CASCADE). The seeded rows stay on `Workflow de Gestión Estándar`. |
 | `fk_origin_node_id` | INTEGER | No | Yes | Yes | — | `workflow_node(id_workflow_node)` | Origin node (ON DELETE CASCADE) |
 | `fk_destination_node_id` | INTEGER | No | Yes | Yes | — | `workflow_node(id_workflow_node)` | Destination node (ON DELETE CASCADE) |
 | `condition` | TEXT | No | No | No | NULL | — | Guard condition for the transition |
