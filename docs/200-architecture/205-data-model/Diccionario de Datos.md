@@ -147,10 +147,10 @@ Master catalog of fee concepts, professional fees, contributions, and notarial t
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the fee concept |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock (Hibernate) |
 | `name` | TEXT | No | No | Yes | — | — | Concept name. Stored values `IVA`, `Honorarios`, `Documentacion`, and `Protocolo` stay. |
-| `amount` | NUMERIC(19,2) | No | No | Yes | 0 | — | Fixed reference amount |
-| `percentage` | INTEGER | No | No | Yes | 0 | — | Standard percentage applied to the act amount |
+| `amount` | NUMERIC(19,2) | No | No | Yes | 0 | — | Fixed reference amount. Seeded amounts stay: `0` for `IVA` and `Honorarios`, `500` for `Documentacion`, and `150` for `Protocolo`. |
+| `percentage` | INTEGER | No | No | Yes | 0 | — | Standard percentage applied to the act amount. Seeded percentages stay: `20` for `IVA`, `5` for `Honorarios`, and `0` for `Documentacion` and `Protocolo`. |
 | `enabled` | BOOLEAN | No | No | Yes | — | — | Whether the concept can be used on budgets |
-| `fixed_concept` | BOOLEAN | No | No | Yes | — | — | `true` when the amount is fixed, `false` when it is a percentage |
+| `fixed_concept` | BOOLEAN | No | No | Yes | — | — | `true` when the amount is fixed, `false` when it is a percentage. Seeded flags stay: `false` for `IVA` and `Honorarios`, and `true` for `Documentacion` and `Protocolo`. |
 
 ---
 

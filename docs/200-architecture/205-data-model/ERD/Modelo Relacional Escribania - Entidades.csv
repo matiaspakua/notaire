@@ -71,10 +71,10 @@ budgets,Strong,fk_id_person,FK,yes,Integer,,x,x,Requesting client
 concepts,Strong,version,,no,Integer,,,,Optimistic lock (Hibernate)
 concepts,Strong,id,PK,no,Integer,x,,,Unique id of the fee concept
 concepts,Strong,name,,no,Text,,,,"Concept name. Stored values `IVA`, `Honorarios`, `Documentacion`, and `Protocolo` stay."
-concepts,Strong,amount,,no,Real,,,,Fixed reference amount
-concepts,Strong,percentage,,no,Integer,,,,Standard percentage applied to the act amount
+concepts,Strong,amount,,no,Real,,,,"Fixed reference amount. Seeded amounts stay: `0` for `IVA` and `Honorarios`, `500` for `Documentacion`, and `150` for `Protocolo`."
+concepts,Strong,percentage,,no,Integer,,,,"Standard percentage applied to the act amount. Seeded percentages stay: `20` for `IVA`, `5` for `Honorarios`, and `0` for `Documentacion` and `Protocolo`."
 concepts,Strong,enabled,,no,Boolean,,,,Whether the concept can be used on budgets
-concepts,Strong,fixed_concept,,no,Boolean,,,,"`true` when the amount is fixed, `false` when it is a percentage"
+concepts,Strong,fixed_concept,,no,Boolean,,,,"`true` when the amount is fixed, `false` when it is a percentage. Seeded flags stay: `false` for `IVA` and `Honorarios`, and `true` for `Documentacion` and `Protocolo`."
 budget_templates,Associative,version,,no,Integer,,,,Optimistic lock
 budget_templates,Associative,fk_id_procedure_type,PK,no,Integer,x,x,,Procedure type
 budget_templates,Associative,fk_id_concept,PK,no,Integer,x,x,,Budgeted concept
