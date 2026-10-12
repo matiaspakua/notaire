@@ -48,6 +48,7 @@ export function ConfirmDialog({
               onConfirm();
             }}
             disabled={loading}
+            data-testid="confirm-dialog-confirm"
           >
             {confirmLabel ?? t("confirm")}
           </AlertDialogAction>

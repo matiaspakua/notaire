@@ -1211,7 +1211,7 @@
         "transitionDeleted": "Transición eliminada",
         "errorDeleteTransition": "Error al eliminar transición",
         "consistencyErrors": "Errores de consistencia:",
-        "hint": "Doble clic sobre un nodo o arista para eliminarlo. Arrastra desde el handle lateral para crear transiciones.",
+        "hint": "Selecciona un estado o una transición para editarlo en el panel. Arrastra desde el handle lateral para crear transiciones.",
         "addNodeTitle": "Agregar Nodo al Workflow",
         "fields": {
           "estado": "Estado de Gestión",
@@ -1225,7 +1225,37 @@
         },
         "nodeFallback": "Nodo {id}",
         "autoLayout": "Auto-organizar",
-        "autoLayoutDone": "Diagrama reorganizado"
+        "autoLayoutDone": "Diagrama reorganizado",
+        "panel": {
+          "title": "Detalle de la selección",
+          "empty": "Selecciona un estado o una transición para ver su detalle.",
+          "outgoing": "Transiciones salientes",
+          "incoming": "Transiciones entrantes",
+          "none": "Ninguna",
+          "addTransition": "Agregar transición",
+          "to": "Estado destino",
+          "toPlaceholder": "Seleccionar destino...",
+          "description": "Descripción (opcional)",
+          "add": "Agregar",
+          "save": "Guardar",
+          "deleteNode": "Eliminar estado",
+          "deleteNodeTitle": "¿Eliminar el estado {name}?",
+          "deleteNodeDesc": "El estado se quitará del workflow.",
+          "deleteNodeHasTransitions": "Este estado tiene transiciones: elimínalas primero, si no el servidor rechazará la eliminación.",
+          "deleteTransition": "Eliminar transición",
+          "deleteTransitionTitle": "¿Eliminar la transición?",
+          "deleteTransitionDesc": "Se eliminará la transición {from} → {to}.",
+          "transitionAdded": "Transición agregada",
+          "typeSaved": "Tipo actualizado",
+          "errorSaveType": "Error al actualizar el tipo",
+          "descriptionSaved": "Descripción guardada",
+          "errorSaveDescription": "Error al guardar la descripción",
+          "problem": {
+            "selfLoop": "Una transición no puede volver al mismo estado.",
+            "duplicate": "Esa transición ya existe.",
+            "incomplete": "Selecciona el estado destino."
+          }
+        }
       }
     }
   },
