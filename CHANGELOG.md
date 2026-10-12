@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded concept amounts** (#1490, CU75): `IVA` is `0` at `20` percent,
+  `Honorarios` is `0` at `5` percent, `Documentacion` is `500`, and
+  `Protocolo` is `150`. `Documentacion` and `Protocolo` stay fixed amounts.
 - **Seeded procedure-type catalog** (#1490, CU75): the procedure-type name
   also lists `Donacion`, `Hipoteca`, and `Sucesion`. `Compraventa` and
   `Poder` stay.
