@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Administrator seed name** (#1490, CU75): a newly created administrator
+  person is stored as `Admin System`. The login name `admin`, the type
+  `Escribano`, and the identification type `DNI` stay. An administrator
+  that already exists is left unchanged.
 - **Testimony seed helper** (#1490, CU75): the deed-required design names
   `createTestimony`. The retired helper name `createTestimonio` stays out
   of the seed. TS-0032 still posts a deed on the bare create.
