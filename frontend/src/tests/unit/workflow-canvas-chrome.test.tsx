@@ -38,3 +38,14 @@ describe("workflow canvas chrome (#1579)", () => {
     expect(MINIMAP_CLASS).toContain("max-md:hidden");
   });
 });
+
+import { toFlowNodes } from "@/components/shared/WorkflowViewer";
+import { NODE_WIDTH, NODE_HEIGHT } from "@/lib/workflow-layout";
+
+describe("MiniMap sees every box (#1579)", () => {
+  it("read-only nodes carry their fixed size, so the MiniMap can draw them before measuring", () => {
+    const [n] = toFlowNodes([{ id: 1, type: "INITIAL", statusManagementName: "Inicio" }]);
+    expect(n.initialWidth).toBe(NODE_WIDTH);
+    expect(n.initialHeight).toBe(NODE_HEIGHT);
+  });
+});
