@@ -64,6 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded concept labels** (#1490, CU75): the concept name lists `IVA`,
+  `Honorarios`, `Documentacion`, and `Protocolo`.
 - **Seeded document types** (#1490, CU75): the document-type name lists
   `Libre Deuda Municipal`, `Informe de Dominio`, `Certificado Catastral`,
   and `Fotocopia DNI`.
