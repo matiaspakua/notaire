@@ -140,7 +140,7 @@ person_procedures,Associative,fk_id_client_person,PK,no,Integer,x,x,,Person taki
 person_procedures,Associative,notes,,no,Text,,,,"Notarial role. Stored labels such as `Comprador`, `Vendedor`, `Donante`, and `Apoderado` stay."
 procedure_folders,Weak,id,PK,no,Integer,x,,,Unique id of the procedure folder
 procedure_folders,Weak,number,,no,Integer,,,,Folder serial number (its own sequence)
-procedure_folders,Weak,status,,no,Text,,,,Folder status
+procedure_folders,Weak,status,,no,Text,,,,"Folder status. Stored labels `Activa`, `Espera`, and `Archivada` stay."
 procedure_folders,Weak,wait_reason,,yes,Text,,,x,Reason the folder is waiting
 procedure_folders,Weak,fk_id_deed_management,FK,no,Integer,,x,,Deed management this folder belongs to
 procedure_folders,Weak,fk_id_procedure,FK,no,Integer,,x,,Procedure that created the folder

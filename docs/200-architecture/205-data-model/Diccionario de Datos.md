@@ -730,7 +730,7 @@ Numbered procedure folders inside a deed management (CU85).
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the procedure folder |
 | `number` | INTEGER | No | No | Yes | — | — | Folder serial number (its own sequence) |
-| `status` | VARCHAR(20) | No | No | Yes | — | — | Folder status |
+| `status` | VARCHAR(20) | No | No | Yes | — | — | Folder status. Stored labels `Activa`, `Espera`, and `Archivada` stay. |
 | `wait_reason` | TEXT | No | No | No | NULL | — | Reason the folder is waiting |
 | `fk_id_deed_management` | INTEGER | No | Yes | Yes | — | `deed_managements(id)` | Deed management this folder belongs to |
 | `fk_id_procedure` | INTEGER | No | Yes | Yes | — | `procedures(id)` | Procedure that created the folder |
