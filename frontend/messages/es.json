@@ -187,6 +187,10 @@
     "administracion": {
       "label": "Administración",
       "description": "Catálogos y configuración del sistema"
+    },
+    "vencimientos": {
+      "titulo": "{count, plural, one {# documento vence} other {# documentos vencen}} en los próximos {days} días",
+      "verTodos": "Ver todos"
     }
   },
   "personas": {

@@ -2734,6 +2734,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   client-side by procedure and document, and each row opens that procedure's "Documentos
   requeridos" editor (`/dashboard/administration/procedures?checklist=<id>`). New Playwright TS-0145.
 
+- **Upcoming-expirations alert on the dashboard** (issue #1556, CU42): the home dashboard shows
+  "N documentos vencen en los próximos 30 días" with the 3 nearest (document, management,
+  due date) and a link to `/dashboard/upcoming-expirations`. Same endpoint and window as that
+  page; hidden when there are none or the request fails. TS-0020 CU42-GW01 is implemented
+  (desktop and 390px), so the feature-gap skip inventory drops by one.
+
 - **Filter payments by date** (issue #1557, CU47): the payments page has "Desde" / "Hasta"
   date inputs (kept in `?from=&to=`), both days inclusive. Without a budget it lists
   `GET /payments/date` (off the #1250 allowlist; the reachability scanner also counts that call for `GET /payments/{id}`, so that entry goes too); with a budget it narrows that budget's

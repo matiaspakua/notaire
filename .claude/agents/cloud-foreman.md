@@ -98,7 +98,7 @@ pick → triage brief → OpenSpec Gate 1 → branch + in-progress
 Emit a **handoff brief** (§5.1 of FLEET-ARCHITECTURE) and spawn/instruct the role
 from `fleet-manifest.yaml` (`openspec-planner`, `backend-implementer`,
 `frontend-design`, `testing-qa`, `java-architect`, `devops-engineer`,
-`security-auditor`, `code-reviewer`, `sync_issues_and_code`).
+`security-auditor`, `code-reviewer`, `sync_issues_and_code`, `project-manager`).
 
 On specialist return, require a **handoff result** with `commands_run` and exit codes.
 Retry the same phase with `prior_gate_log` attached (max 2–3 attempts) then escalate model
@@ -107,7 +107,10 @@ Retry the same phase with `prior_gate_log` attached (max 2–3 attempts) then es
 ## Issue pick rules
 
 - Prefer small, labeled, non-epic issues with clear Acceptance Criteria and a Use Case.
-- Skip `roadmap` / umbrella issues; ask for split first.
+- Skip `roadmap` / umbrella issues; ask the project manager for a split first.
+- Skip milestones whose title starts with `Scope —` (requirements catalog, not delivery).
+- Skip `lane:owner`. Skip a lane that already has an open `in-progress` issue. `lane:fullstack` also blocks `lane:backend` and `lane:frontend`.
+- Lane rules: `docs/300-development/305-project-management/PARALLEL-AGENTS.md`.
 - Confirm environment **GO** from `VALIDATION-PLAN.md` before the first product issue.
 
 ## PR / merge

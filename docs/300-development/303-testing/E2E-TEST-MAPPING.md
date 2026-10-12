@@ -106,7 +106,7 @@ TS-0139 to TS-0141    = Catalog / icons / complete-case feature specs (#1361, #1
 
 | TS | Filename | CU Coverage | Fixture Type | Skipped | Value |
 |----|----|-------|------|-------|-------|
-| **TS-0020** | `TS-0020-reports-admin-workflow.spec.ts` | CU24–CU32, CU57–CU68 | Sidebar nav (`nav-reportes`) + GherkinSteps + API | 7 intentional gaps cite #1146 | **HIGH** |
+| **TS-0020** | `TS-0020-reports-admin-workflow.spec.ts` | CU24–CU32, CU57–CU68 | Sidebar nav (`nav-reportes`) + GherkinSteps + API | 6 intentional gaps cite #1146 (CU42 implemented #1556) | **HIGH** |
 | **TS-0021** | `TS-0021-workflow-editor-admin.spec.ts` | CU70, CU71 | API arrange + editor | 0 (self-seeds workflow; #1066) | **HIGH** |
 | **TS-0022** | `TS-0022-workflow-assignment-admin.spec.ts` | CU73 | API arrange + table | 0 (self-seeds a procedure type; #1066) | **MEDIUM** |
 | **TS-0023** | `TS-0023-roles-permissions-admin.spec.ts` | CU43.1 | Direct nav + form | 0 | **MEDIUM** |
@@ -219,11 +219,11 @@ test("scenario", async ({ page }) => {
 
 ### Live inventory — intentional feature-gap skips (#1146 / CU76)
 
-**Ten** static `test.skip` declarations remain in TS-0014 / TS-0016 /
+**Nine** static `test.skip` declarations remain in TS-0014 / TS-0016 /
 TS-0017 / TS-0020. Each skip title cites `#1146` (tracker hygiene). **Product
 delivery stays on the owning CU** — do not unskip without real UI assertions.
 CU21 edit is **not** in this inventory (unskipped in #1057). Vitest
-`testing/tests/test_e2e_reliability.py` enforces `#\d+` citations and the count `10`.
+`testing/tests/test_e2e_reliability.py` enforces `#\d+` citations and the count `9`.
 
 | TS | Skip id | Owning CU | Product gap (summary) | Citation | Product tracking |
 |----|---------|-----------|-----------------------|----------|------------------|
@@ -233,7 +233,6 @@ CU21 edit is **not** in this inventory (unskipped in #1057). Vitest
 | TS-0020 | CU24-GW01 | CU24 | Reports (`nav-reportes`) has no “libro índices” named action | #1146 | Owning CU24 (report action/copy) |
 | TS-0020 | CU25-GW01 | CU25 | Reports has no “mes” dropdown or “declaración jurada” button | #1146 | Owning CU25 |
 | TS-0020 | CU39-GW01 | CU39 | Budgets page has no templates button | #1146 | Owning CU39 |
-| TS-0020 | CU42-GW01 | CU42 | Dashboard has no alerts or upcoming-expirations section | #1146 | Owning CU42 |
 | TS-0020 | CU62-GW01 | CU62 | Deeds page has no search bar | #1146 | Owning CU62 |
 | TS-0020 | CU65-GW01 | CU65 | Document-types page has no search | #1146 | Owning CU65 |
 | TS-0020 | CU66-GW01 | CU66 | Concepts page has no search | #1146 | Owning CU66 |
@@ -245,6 +244,7 @@ CU21 edit is **not** in this inventory (unskipped in #1057). Vitest
 | TS-0016 | CU21 edit (icon-only unnamed) | Unskipped — #1057 (`aria-label` + `getByRole`) |
 | TS-0017 | CU59-GW01 (notary filter) | Implemented — #1546 (year + notary filters) |
 | TS-0017 | CU59-GW02 (detail) | Implemented — #1546 (the edit dialog is the detail view) |
+| TS-0020 | CU42-GW01 (dashboard alert) | Implemented — #1556 (expirations alert card on `/dashboard`) |
 | TS-0014 | CU47-GW01 (date filter) | Implemented — #1557 (Desde/Hasta on `/dashboard/payments`) |
 | TS-0016 | CU23-GW01 (activity log) | Implemented — #1545 (user + date-range filter on `/dashboard/audit`) |
 | TS-0021 | Conditional empty-table skip | Fixed — #1066 (`createWorkflowDefinition`) |
