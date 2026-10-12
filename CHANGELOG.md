@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Doc-traceability fixture heading** (#1490, CU75): the temporary design
+  file in the PR check is headed `# Management`. The claimed path stays
+  `docs/200-architecture/203-design/GESTION.md`.
 - **Budget balance accessors** (#1490, CU75): the deprecated budget methods
   are `getBalance` and `setBalance`. The JSON field stays `saldo`. The
   catalog key `resumen.saldo` stays.
