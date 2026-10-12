@@ -50,9 +50,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/300-development/305-project-management/` | yes | `f20bfa8d` |
+| `docs/300-development/305-project-management/README.md` | yes | `f20bfa8d` |
 | `docs/github/README.md` | yes | `f20bfa8d` |
-| `docs/300-development/304-ai-sdlc-cloud/` | yes | `f20bfa8d` |
+| `docs/300-development/304-ai-sdlc-cloud/README.md` | yes | `f20bfa8d` |
 | `github-page/app/docs/roadmap/page.tsx` | yes | `f20bfa8d` |
 | `AGENTS.md` | yes | `f20bfa8d` |
 | `CONSTITUTION.md` | yes | `f20bfa8d` |
