@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Seeded workflow description** (#1490, CU75): the workflow description
+  names `Ciclo de vida estándar de una gestión de escritura`. The workflow
+  name `Workflow de Gestión Estándar` stays.
 - **Seeded procedure-type notes** (#1490, CU75): the procedure-type notes
   list `Tramite de compraventa de inmuebles`, `Tramite de donacion`,
   `Tramite de hipoteca`, `Tramite de sucesion`, and `Otorgamiento de poderes`.
