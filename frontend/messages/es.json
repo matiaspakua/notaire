@@ -28,7 +28,8 @@
     "proximosVencimientos": "Próximos Vencimientos",
     "openMenu": "Abrir menú",
     "closeMenu": "Cerrar menú",
-    "mainNav": "Navegación principal"
+    "mainNav": "Navegación principal",
+    "productVersion": "Versión"
   },
   "navGroups": {
     "clientes": "Clientes",

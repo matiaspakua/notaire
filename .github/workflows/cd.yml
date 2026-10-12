@@ -11,6 +11,9 @@ on:
   push:
     tags:
       - 'v*'
+      # Releases through 0.1.2 used notaire-v* and never matched v*, so SBOM
+      # assets were not attached. Keep the legacy filter (#1571).
+      - 'notaire-v*'
   workflow_dispatch:
     inputs:
       version:
@@ -184,7 +187,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: build-and-publish
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/tags/notaire-v')
     permissions:
       contents: write
     steps:
@@ -208,6 +211,8 @@ jobs:
           if [ -f sboms/sbom-frontend/sbom.cdx.json ]; then
             cp sboms/sbom-frontend/sbom.cdx.json release-assets/sbom-frontend.cdx.json
           fi
+          python3 workspace/release/product_release.py --write-sbom release-assets
+          cp release/product-release.json release-assets/product-release.json
           ls -la release-assets
 
       - name: Attach SBOMs to Release
@@ -220,6 +225,9 @@ jobs:
           files: |
             release-assets/sbom-backend.cdx.json
             release-assets/sbom-frontend.cdx.json
+            release-assets/sbom-database.cdx.json
+            release-assets/sbom-notaire.cdx.json
+            release-assets/product-release.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

@@ -1131,6 +1131,7 @@ O --> (Deployability Docker)
 >
 > The manager's roadmap is [Project management](../../300-development/305-project-management/README.md)
 > (history cohorts, delivery trains, requirements catalog, parallel-agent lanes).
+> Product semver cuts are a separate clock ([RELEASES.md](../../300-development/305-project-management/RELEASES.md)).
 > Counts and the Pages chart live there. This section keeps the phase narrative.
 > Milestone numbers **#6, #7, #8, and #10** from earlier revisions were deleted.
 > Do not recreate those numbers.

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export function Footer() {
+export function Footer({ version }: { version?: string }) {
   return (
     <footer className="py-12 px-6 border-t" style={{ borderColor: "rgba(0,0,0,0.06)", background: "var(--bg-dark)" }}>
       <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -10,7 +10,9 @@ export function Footer() {
           </div>
           <div>
             <div className="text-neutral-900 font-semibold text-sm">Notaire</div>
-            <div className="text-neutral-500 text-xs">2014 – 2026</div>
+            <div className="text-neutral-500 text-xs">
+              2014 – 2026{version ? ` · v${version}` : ""}
+            </div>
           </div>
         </div>
 

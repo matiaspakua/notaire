@@ -17,6 +17,7 @@ import {
 } from "@/lib/dashboard-nav";
 import { useAuthStore } from "@/store/auth-store";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
+import { PRODUCT_VERSION } from "@/lib/product-version";
 
 /** Id of the mobile navigation sheet, for the toggle's aria-controls. */
 export const MOBILE_SIDEBAR_ID = "mobile-sidebar";
@@ -203,6 +204,12 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
 
       {/* Language switcher + Logout */}
       <div className="px-4 py-6 border-t border-[hsl(var(--sidebar-border))] space-y-3">
+        <p
+          data-testid="app-version"
+          className="px-4 text-[11px] font-medium text-[hsl(var(--sidebar-muted))]"
+        >
+          {t("productVersion")} {PRODUCT_VERSION}
+        </p>
         <LanguageSwitcher />
         <button
           data-testid="btn-logout"

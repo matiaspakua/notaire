@@ -151,11 +151,17 @@ Guarded by `workspace/tests/test_cd_pin_tested_sha.py` and
 
 - Workflow: `.github/workflows/release-please.yml` + `release-please-config.json`
 - Opens a release PR on Conventional Commits; merge creates `vX.Y.Z` + GitHub
-  Release and bumps Maven (`pom.xml` + module parent versions) and
-  `frontend/package.json` to `X.Y.Z`, rolling `CHANGELOG.md`.
-- CD on `v*` publishes both images; the CD `release` job **attaches SBOM
-  assets** only (release-please owns Release creation — no duplicate softprops
-  notes).
+  Release and bumps Maven (`pom.xml` + module parent versions),
+  `frontend/package.json`, and `release/product-release.json` to `X.Y.Z`,
+  rolling `CHANGELOG.md`. The Flyway schema id is recorded in that file and
+  is not rewritten to the semver. `include-component-in-tag` is false so the
+  tag is `vX.Y.Z` (cuts through 0.1.2 used `notaire-v*` and missed the `v*`
+  filter, so those releases shipped with no SBOM assets).
+- CD on `v*` and legacy `notaire-v*` publishes both images; the CD `release`
+  job **attaches SBOM assets** only (image bills, `sbom-database.cdx.json`,
+  `sbom-notaire.cdx.json`, and `product-release.json`). release-please owns
+  Release creation — no duplicate softprops notes. Definition:
+  [SBOM.md](../../300-development/SBOM.md).
 - Operator runbook: [docs/300-development/RELEASE.md](../../300-development/RELEASE.md).
 - Respects protect-main (#1040): release PRs use required checks; no durable
   Actions bypass.

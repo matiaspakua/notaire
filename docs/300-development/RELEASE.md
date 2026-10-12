@@ -1,7 +1,10 @@
 # Semver release runbook (issue #1043)
 
-Automated Semantic Versioning for Notaire via **release-please**, with CD
-publishing **both** backend and frontend images to GHCR on `v*` tags.
+Automated Semantic Versioning for Notaire via **release-please**. One product
+tag covers **backend, frontend, and the database schema**. CD publishes the
+backend and frontend images to GHCR and attaches the SBOM set. Delivery
+trains are milestones, not tags — see
+[RELEASES.md](305-project-management/RELEASES.md).
 
 Governed by [CONSTITUTION.md](../../CONSTITUTION.md) §11 Release Rules and
 [CU76](../100-business/102-use-cases/CU76%20–%20Quality%20Assurance%20and%20Testing%20Infrastructure.md).
@@ -13,11 +16,15 @@ Governed by [CONSTITUTION.md](../../CONSTITUTION.md) §11 Release Rules and
 | `.github/workflows/release-please.yml` | On push to `main`, opens/updates a release PR; after that PR merges, creates the GitHub Release and `vX.Y.Z` tag |
 | `release-please-config.json` | Changelog path, `include-v-in-tag`, Maven/npm `extra-files` bumps |
 | `.release-please-manifest.json` | Last released version (bootstrap `0.1.0`) |
-| `.github/workflows/cd.yml` | On `v*` (and CI success on `main` / dispatch): build, SBOM, cosign sign+attest, push `ghcr.io/<org>/notaire/backend` and `…/frontend` |
+| `.github/workflows/cd.yml` | On `v*` and legacy `notaire-v*` (and CI success on `main` / dispatch): build, SBOM, cosign sign+attest, push `ghcr.io/<org>/notaire/backend` and `…/frontend` |
+| `release/product-release.json` | Committed record of the three components. Regenerated with `python3 workspace/release/product_release.py --write` |
+| `workspace/release/product_release.py` | Checks that record, writes the Pages history, writes the product and database CycloneDX documents |
 
 release-please **owns** GitHub Release creation. The CD `release` job only
-**attaches** CycloneDX SBOM assets (`sbom-backend.cdx.json`,
-`sbom-frontend.cdx.json`) to the existing release (no duplicate notes).
+**attaches** assets (no duplicate notes): image SBOMs `sbom-backend.cdx.json`
+and `sbom-frontend.cdx.json`, schema bill `sbom-database.cdx.json`, product
+composition `sbom-notaire.cdx.json`, and `product-release.json`. The SBOM
+definition is [SBOM.md](SBOM.md).
 
 ## Version derivation contract
 
@@ -25,15 +32,28 @@ On the release commit for tag `vX.Y.Z`:
 
 | Artifact | Version |
 |----------|---------|
-| Git tag | `vX.Y.Z` |
-| Root `pom.xml` `<version>` | `X.Y.Z` |
+| Git tag | `vX.Y.Z` (cuts through 0.1.2 were `notaire-vX.Y.Z`; CD still accepts that prefix) |
+| Root `pom.xml` `<version>` | `X.Y.Z` — must already equal the manifest or release-please will not rewrite it |
 | `backend-api` parent `<version>` | `X.Y.Z` |
 | `frontend/package.json` `"version"` | `X.Y.Z` |
-| `CHANGELOG.md` | New `## [X.Y.Z] - YYYY-MM-DD` (or release-please equivalent) from prior unreleased commits; fresh unreleased section remains for new work |
+| `release/product-release.json` | `X.Y.Z` on `version`, `components.backend.version`, and `components.frontend.version` |
+| Flyway schema | Highest `V*` migration id, stored as `components.database.schemaVersion`. Not equal to `X.Y.Z` |
+| `CHANGELOG.md` | New `## [X.Y.Z](…) (YYYY-MM-DD)` from conventional commits |
+| Actuator `/info`, OpenAPI `info.version`, sidebar | `X.Y.Z`, plus the schema id on `/info` |
+| GitHub Pages | Version history generated from the changelog at site build |
 
 Between releases, main stays at the last released versions until the next
-release PR merges (release-please interim PR may bump versions on that branch
-only).
+release PR merges (release-please bumps versions on that branch only).
+
+`include-component-in-tag` is **false**. Leaving it on names the tag
+`notaire-vX.Y.Z`, which does not match a workflow filter of `v*` and never
+attaches SBOM assets (v0.1.2 shipped with an empty asset list).
+
+Check the record:
+
+```bash
+python3 workspace/release/product_release.py --check
+```
 
 ## Release PR permissions (#1264)
 

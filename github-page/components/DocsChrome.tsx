@@ -11,6 +11,7 @@ const links = [
   { href: "/docs/testing/", label: "Testing" },
   { href: "/docs/security/", label: "Security" },
   { href: "/docs/roadmap/", label: "Roadmap" },
+  { href: "/docs/releases/", label: "Releases" },
 ];
 
 export function DocsChrome({ children }: { children: React.ReactNode }) {

@@ -28,7 +28,8 @@
     "proximosVencimientos": "Upcoming Expirations",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "mainNav": "Main navigation"
+    "mainNav": "Main navigation",
+    "productVersion": "Version"
   },
   "navGroups": {
     "clientes": "Clients",

@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "python3 ../workspace/release/product_release.py --write-pages lib/releases.json",
+    "prebuild": "python3 ../workspace/release/product_release.py --write-pages lib/releases.json",
     "dev": "next dev",
     "build": "next build",
     "export": "next export",

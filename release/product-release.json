@@ -1,0 +1,19 @@
+{
+  "name": "notaire",
+  "version": "0.1.2",
+  "components": {
+    "backend": {
+      "version": "0.1.2",
+      "coordinates": "com.licensis:notaire-root"
+    },
+    "frontend": {
+      "version": "0.1.2",
+      "package": "notaire-frontend"
+    },
+    "database": {
+      "engine": "flyway",
+      "schemaVersion": "46",
+      "migrationCount": 46
+    }
+  }
+}

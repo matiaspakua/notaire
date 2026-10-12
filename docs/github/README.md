@@ -54,6 +54,8 @@ stateDiagram-v2
 
 Scheduling, history, and the requirements catalog are defined in
 [Project management](../300-development/305-project-management/README.md).
+A semver release is not a milestone
+([RELEASES.md](../300-development/305-project-management/RELEASES.md)).
 Short form:
 
 | Kind | Milestones |

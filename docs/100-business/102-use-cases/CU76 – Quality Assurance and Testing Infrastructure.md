@@ -98,6 +98,14 @@
 - [x] Imagen frontend publicada a GHCR con SBOM + cosign (parity con backend) y
   proceso semver documentado/automatizado con versiones Maven/npm derivadas
   del tag (issue #1043).
+- [x] Un corte de producto incluye backend (Maven), frontend (npm) y el esquema
+  Flyway (id de migración, no el semver). El tag es `vX.Y.Z` (los cortes
+  `notaire-v*` siguen disparando CD). El SBOM de producto y el de base de datos
+  se adjuntan al GitHub Release junto con los SBOM de imagen. La versión se ve
+  en `/actuator/info`, OpenAPI y el shell, y el historial en GitHub Pages.
+  Los hitos son trenes, no tags (issue #1571;
+  `docs/300-development/305-project-management/RELEASES.md`,
+  `docs/300-development/SBOM.md`).
 - [x] Higiene de repo: ignore rules permiten `requirements.txt`, `.serena/` no
   trackeado, CODEOWNERS sin `frontend-swing`, PDF de usuario fuera de blobs
   ordinarios, ADR-022 con decisión de rewrite (issue #1050).
