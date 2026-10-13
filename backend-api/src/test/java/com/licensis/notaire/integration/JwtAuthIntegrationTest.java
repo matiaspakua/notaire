@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -171,9 +170,9 @@ class JwtAuthIntegrationTest {
         String token = com.fasterxml.jackson.databind.json.JsonMapper.builder().build()
                 .readTree(loginResponse).get("token").asText();
 
-        // Create an inactive user using the admin token
+        // Create an inactive user using the admin token (Bearer clients are
+        // exempt from CSRF — issue #1620)
         mockMvc.perform(post("/api/v1/users")
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content("""
