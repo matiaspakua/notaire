@@ -4,4 +4,4 @@
 // Use escapeRegExp() from the project utility instead.
 
 // ruleid: notaire-regex-unescaped-input
-const pattern = new RegExp(someUrl.replace(/\//g, "\\/"));
+const pattern = new RegExp(someUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
