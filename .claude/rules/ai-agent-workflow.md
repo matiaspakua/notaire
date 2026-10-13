@@ -31,6 +31,8 @@ CONSTITUTION §10.
 
 Keep the branch conflict-free with `main`: `git fetch origin && git merge
 origin/main`, re-run the affected suites, then `git push -u origin <branch>`.
+Then confirm the push landed: `git ls-remote --heads origin <branch>`. Wrapped
+or filtered output (RTK) can print `ok` while the pre-push preflight rejected it.
 If an open PR shows `CONFLICTING`/`DIRTY`, fix it before starting other work.
 
 ## Checked mechanically
