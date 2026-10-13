@@ -13,7 +13,7 @@ updates:
       timezone: "America/Argentina/Buenos_Aires"
     open-pull-requests-limit: 10
     commit-message:
-      prefix: "deps"
+      prefix: "build"
       include: "scope"
     labels:
       - "dependencies"
@@ -51,7 +51,7 @@ updates:
       timezone: "America/Argentina/Buenos_Aires"
     open-pull-requests-limit: 5
     commit-message:
-      prefix: "deps"
+      prefix: "build"
       include: "scope"
     labels:
       - "dependencies"
@@ -82,11 +82,18 @@ updates:
       timezone: "America/Argentina/Buenos_Aires"
     open-pull-requests-limit: 5
     commit-message:
-      prefix: "deps"
+      prefix: "build"
       include: "scope"
     labels:
       - "dependencies"
       - "docker"
+    # The JDK major is the toolchain (jdk-toolchain spec, ADR-017). Moving it is a
+    # planned change across pom.xml, CI and both images, never a bot PR (#1621).
+    ignore:
+      - dependency-name: "eclipse-temurin"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "maven"
+        update-types: ["version-update:semver-major"]
     reviewers:
       - matiaspakua
 
@@ -99,7 +106,7 @@ updates:
       timezone: "America/Argentina/Buenos_Aires"
     open-pull-requests-limit: 5
     commit-message:
-      prefix: "deps"
+      prefix: "build"
       include: "scope"
     labels:
       - "dependencies"
