@@ -20,6 +20,9 @@ class ReportLocaleFormatsTest {
         assertThat(ReportLocaleFormats.money(new BigDecimal("-10.5"))).isEqualTo("$ -10,50");
         assertThat(ReportLocaleFormats.money(null)).isEqualTo("N/A");
         assertThat(ReportLocaleFormats.day(LocalDate.of(2026, 3, 15))).isEqualTo("15/03/2026");
+        assertThat(ReportLocaleFormats.day(java.sql.Date.valueOf(LocalDate.of(2026, 3, 15))))
+                .isEqualTo("15/03/2026");
+        assertThat(ReportLocaleFormats.day((java.util.Date) null)).isEqualTo("N/A");
         assertThat(ReportLocaleFormats.fallback(null)).isEqualTo("N/A");
         assertThat(ReportLocaleFormats.fallback("  ")).isEqualTo("N/A");
         assertThat(ReportLocaleFormats.generatedAt(

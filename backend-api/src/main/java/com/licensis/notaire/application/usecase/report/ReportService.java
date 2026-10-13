@@ -22,8 +22,6 @@ import com.licensis.notaire.application.port.out.report.ReportRenderer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.List;
 
 /**
@@ -164,15 +162,12 @@ public class ReportService {
                         .orElse("No concepts listed")
                 : "No concepts listed";
 
-        LocalDate paymentDay = payment.getDate() == null
-                ? null
-                : payment.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         return reportRenderer.render(new ReportDocument(
                 "Payment receipt",
                 "CU15",
                 List.of(new Fields("Receipt", List.of(
                         new Field("Client", nameClient),
-                        new Field("Payment date", ReportLocaleFormats.day(paymentDay)),
+                        new Field("Payment date", ReportLocaleFormats.day(payment.getDate())),
                         new Field("Concepts", concepts),
                         new Field("Amount paid", ReportLocaleFormats.money(payment.getAmount()))))),
                 Identity.of("CU15", "payment-" + payment.getIdPayment(), null)));

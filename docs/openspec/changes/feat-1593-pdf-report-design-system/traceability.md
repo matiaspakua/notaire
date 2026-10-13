@@ -46,7 +46,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | `docs/200-architecture/201-SAD/sad.md` | yes | branch |
 | `docs/200-architecture/206-security/INPUT-VALIDATION-STRATEGY.md` | yes | branch |
 | `CHANGELOG.md` | yes | branch |
-| CU76 | yes | branch |
+| `docs/100-business/102-use-cases/CU76 – Quality Assurance and Testing Infrastructure.md` | yes | branch |
 
 ## Gate log
 

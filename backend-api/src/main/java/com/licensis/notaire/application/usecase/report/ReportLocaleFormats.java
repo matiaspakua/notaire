@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -34,6 +35,23 @@ public final class ReportLocaleFormats {
 
     public static String day(LocalDate date) {
         return date == null ? NOT_RECORDED : DAY.format(date);
+    }
+
+    /**
+     * {@code java.sql.Date} (JPA {@code TemporalType.DATE}) rejects {@code toInstant()}.
+     */
+    public static LocalDate localDate(Date date) {
+        if (date == null) {
+            return null;
+        }
+        if (date instanceof java.sql.Date sqlDate) {
+            return sqlDate.toLocalDate();
+        }
+        return Instant.ofEpochMilli(date.getTime()).atZone(ZONE).toLocalDate();
+    }
+
+    public static String day(Date date) {
+        return day(localDate(date));
     }
 
     public static String fallback(String value) {

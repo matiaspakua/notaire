@@ -22,7 +22,6 @@ import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,7 +65,7 @@ class ReportServicePaymentReceiptTest {
         Payment payment = new Payment();
         payment.setIdPayment(idPayment);
         payment.setAmount(amount);
-        payment.setDate(new Date());
+        payment.setDate(java.sql.Date.valueOf(java.time.LocalDate.of(2026, 9, 5)));
         payment.setBudget(budget);
         return payment;
     }
@@ -97,6 +96,7 @@ class ReportServicePaymentReceiptTest {
         String content = extracted(pdf);
         assertThat(content).contains("Ana Gomez");
         assertThat(content).contains("Compraventa deed");
+        assertThat(content).contains("05/09/2026");
         assertThat(content).contains("500.000,00");
     }
 

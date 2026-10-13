@@ -1,6 +1,5 @@
 package com.licensis.notaire.adapter.in.web.report;
 
-import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.application.usecase.report.ReportService;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ErrorResponse;
@@ -52,14 +51,14 @@ public class ReportController {
         byte[] generate() throws Exception;
     }
 
-    private ResponseEntity<?> buildPdfResponse(String filename, ReportGenerator generator) {
+    private ResponseEntity<byte[]> buildPdfResponse(String filename, ReportGenerator generator) {
         try {
             return PdfResponseFactory.ok(generator.generate(), filename);
         } catch (ResourceNotFoundException | BusinessValidationException e) {
             throw e;
         } catch (Exception e) {
             log.error("Failed to generate report '{}'", filename, e);
-            return ErrorResponses.serverError(e);
+            throw new IllegalStateException("Failed to generate report '" + filename + "'", e);
         }
     }
 
@@ -78,7 +77,7 @@ public class ReportController {
     @Operation(summary = "Generate the budget report",
                description = "Generates a PDF with the budget data (client, procedures, management), "
                        + "its concepts, and the total and pending balance calculated as in CU47")
-    public ResponseEntity<?> generateBudgetReport(
+    public ResponseEntity<byte[]> generateBudgetReport(
             @Parameter(description = "ID of the budget")
             @PathVariable("idBudget") @Positive Integer idBudget) {
         return buildPdfResponse("presupuesto_" + idBudget + ".pdf",
@@ -100,7 +99,7 @@ public class ReportController {
     @Operation(summary = "Generate the budget report with properties",
                description = "Generates the budget PDF and includes the properties of its procedures "
                        + "(cadastral designation, address, and fiscal appraisal)")
-    public ResponseEntity<?> generateBudgetPropertiesReport(
+    public ResponseEntity<byte[]> generateBudgetPropertiesReport(
             @Parameter(description = "ID of the budget")
             @PathVariable("idBudget") @Positive Integer idBudget) {
         return buildPdfResponse("presupuesto_inmuebles_" + idBudget + ".pdf",
@@ -122,7 +121,7 @@ public class ReportController {
     @Operation(summary = "Generate the document list report for a procedure",
                description = "Generates a PDF with the documents a procedure type requires according to its "
                        + "template (expiration, validity days, and who delivers them)")
-    public ResponseEntity<?> generateProcedureDocumentsListReport(
+    public ResponseEntity<byte[]> generateProcedureDocumentsListReport(
             @Parameter(description = "Name of the procedure type")
             @RequestParam("procedureTypeName") @NotBlank String nameTypeProcedure) {
         return buildPdfResponse("lista_documentos.pdf",
@@ -144,7 +143,7 @@ public class ReportController {
     @Operation(summary = "Generate the management history report",
                description = "Generates a PDF with the management data and its status history, "
                        + "from the oldest to the most recent")
-    public ResponseEntity<?> generateManagementHistoryReport(
+    public ResponseEntity<byte[]> generateManagementHistoryReport(
             @Parameter(description = "ID of the management")
             @PathVariable("idManagement") @Positive Integer idManagement) {
         return buildPdfResponse("historial_gestion_" + idManagement + ".pdf",
@@ -166,7 +165,7 @@ public class ReportController {
     @Operation(summary = "Generate the documents-due report",
                description = "Generates a PDF with the expiration of a submitted document (date and days "
                        + "remaining), its payment status, and the management, procedure, and client it belongs to")
-    public ResponseEntity<?> generateDocumentsDueSoonReport(
+    public ResponseEntity<byte[]> generateDocumentsDueSoonReport(
             @Parameter(description = "ID of the submitted document")
             @PathVariable("idSubmittedDocument") @Positive Integer idSubmittedDocument) {
         return buildPdfResponse("documentos_vencer.pdf",
@@ -188,7 +187,7 @@ public class ReportController {
     @Operation(summary = "Generate the document-debt report",
                description = "Generates a PDF with the submitted documents in the managements with that number, "
                        + "its amount, payment date or pending payment, and the total owed")
-    public ResponseEntity<?> generateDebtDocumentsReport(
+    public ResponseEntity<byte[]> generateDebtDocumentsReport(
             @Parameter(description = "Number of management")
             @RequestParam @Positive Integer numberManagement) {
         return buildPdfResponse("deuda_documentos_" + numberManagement + ".pdf",
@@ -199,7 +198,7 @@ public class ReportController {
     @Operation(summary = "Generate the index book",
                description = "Base endpoint for CU24: a provisional PDF for the requested period; "
                        + "the index-book content is still pending")
-    public ResponseEntity<?> generateIndexBook(
+    public ResponseEntity<byte[]> generateIndexBook(
             @Parameter(description = "Year of the index book")
             @RequestParam("year") @Positive Integer year) {
         return buildPdfResponse("libro_indice_" + year + ".pdf",
@@ -210,15 +209,12 @@ public class ReportController {
     @Operation(summary = "Generate the monthly sworn statement",
                description = "Base endpoint for CU25: a provisional PDF for the requested period; "
                        + "the monthly sworn-statement content is still pending")
-    public ResponseEntity<?> generateMonthlySwornStatement(
+    public ResponseEntity<byte[]> generateMonthlySwornStatement(
             @Parameter(description = "Year of the period")
             @RequestParam("year") @Positive Integer year,
             @Parameter(description = "Month of the period")
             @RequestParam("month") @Min(1) @Max(12) Integer month) {
-        ResponseEntity<?> invalidMonth = invalidMonth(month);
-        if (invalidMonth != null) {
-            return invalidMonth;
-        }
+        requireValidMonth(month);
         return buildPdfResponse("ddjj_mensual_" + year + "_" + month + ".pdf",
                 () -> reportService.generateMonthlyTaxDeclarationReport(year, month));
     }
@@ -231,7 +227,7 @@ public class ReportController {
     @GetMapping(value = "/testimonies/{idTestimony}/copies", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generate the printed copy of a verified testimony",
                description = "Generates a PDF with the printed copy of a testimony, only when it has been verified")
-    public ResponseEntity<?> generateTestimonyCopyReport(
+    public ResponseEntity<byte[]> generateTestimonyCopyReport(
             @Parameter(description = "ID of the testimony")
             @PathVariable("idTestimony") @Positive Integer idTestimony) {
         return buildPdfResponse("testimonio_" + idTestimony + "_copia.pdf",
@@ -245,7 +241,7 @@ public class ReportController {
     @GetMapping(value = "/registration-draft/{idRegistrationDraft}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "CU82 - Generate the standard form of the registration draft",
                description = "Generates a PDF with the standard form of a registration draft")
-    public ResponseEntity<?> generateRegistrationDraftReport(
+    public ResponseEntity<byte[]> generateRegistrationDraftReport(
             @Parameter(description = "ID of the registration draft")
             @PathVariable("idRegistrationDraft") @Positive Integer idRegistrationDraft) {
         return buildPdfResponse("minuta_inscripcion_" + idRegistrationDraft + ".pdf",
@@ -259,7 +255,7 @@ public class ReportController {
     @GetMapping(value = "/payment-receipt/{idPayment}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "CU15 - Issue a payment receipt",
                description = "Generates a PDF with the receipt of an existing payment")
-    public ResponseEntity<?> generatePaymentReceiptReport(
+    public ResponseEntity<byte[]> generatePaymentReceiptReport(
             @Parameter(description = "ID of the payment")
             @PathVariable("idPayment") @Positive Integer idPayment) {
         return buildPdfResponse("recibo_pago_" + idPayment + ".pdf",
@@ -270,25 +266,20 @@ public class ReportController {
     @Operation(summary = "Generate the tax sworn statement",
                description = "Base endpoint for CU50: a provisional PDF for the requested period; "
                        + "the tax sworn-statement content is still pending")
-    public ResponseEntity<?> generateTaxSwornStatement(
+    public ResponseEntity<byte[]> generateTaxSwornStatement(
             @Parameter(description = "Year of the period")
             @RequestParam("year") @Positive Integer year,
             @Parameter(description = "Month of the period")
             @RequestParam("month") @Min(1) @Max(12) Integer month) {
-        ResponseEntity<?> invalidMonth = invalidMonth(month);
-        if (invalidMonth != null) {
-            return invalidMonth;
-        }
+        requireValidMonth(month);
         return buildPdfResponse("ddjj_rentas_" + year + "_" + month + ".pdf",
                 () -> reportService.generateIncomeTaxDeclarationReport(year, month));
     }
 
-    private static ResponseEntity<?> invalidMonth(Integer month) {
+    private static void requireValidMonth(Integer month) {
         if (month != null && month >= 1 && month <= 12) {
-            return null;
+            return;
         }
-        return ResponseEntity.badRequest()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(new ErrorResponse(400, "Bad Request", "month must be between 1 and 12"));
+        throw new BusinessValidationException("month must be between 1 and 12");
     }
 }

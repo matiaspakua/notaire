@@ -31,7 +31,7 @@
 ## 6. Ejecutar regresión
 
 - [x] 6.1 Targeted backend tests green
-- [ ] 6.2 `bash workspace/sdlc/run_pipeline.sh` as far as the environment allows
+- [x] 6.2 `bash workspace/sdlc/run_pipeline.sh` as far as the environment allows (targeted backend tests + CI heavy gate)
 
 ## 7. Ejecutar Playwright
 
