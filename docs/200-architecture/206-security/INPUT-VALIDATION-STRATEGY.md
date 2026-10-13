@@ -58,13 +58,28 @@ String safe = HtmlUtils.htmlEscape(userInput);  // Spring's HtmlUtils
 
 CSRF attacks target state-changing requests from authenticated sessions. Notaire's threat model:
 
-- **Current** — Stateless REST API with JWT bearer tokens (BCrypt password verification); no session cookie. CSRF does not apply to cookie-less JSON APIs.
-- **Future (if session/cookie auth is added)** — Enable Spring Security's CSRF filter and send the `X-CSRF-TOKEN` header from the frontend.
+- **Browser sessions** — HttpOnly JWT cookie via the same-origin Next proxy (#1051). Every API response issues a non-HttpOnly `XSRF-TOKEN` cookie and the client echoes its raw value in the `X-XSRF-TOKEN` header (double-submit, CU78 / #1618). Header-supplied values are resolved verbatim by `CsrfConfigurer.spa()`, so the cookie value is what must be sent, and the nonce is not rotated while the session is unchanged.
+- **Bearer-token clients** (Bruno API tests, mobile, server-to-server) — exempt from CSRF: a token the client must attach explicitly cannot be replayed by a third-party site (issue #1620).
+- **Login/logout** — exempt so a session can be bootstrapped and torn down.
 
-Current Spring Security configuration explicitly disables CSRF:
+Configured in `SecurityAndCorsConfig.apiSecurityFilterChain`:
+
 ```java
-http.csrf(AbstractHttpConfigurer::disable);  // safe for stateless JWT API
+http.csrf(csrf -> csrf
+        .spa()  // cookie repository + verbatim header resolution (Spring Security 7)
+        .sessionAuthenticationStrategy(KEEP_CSRF_TOKEN_ON_AUTHENTICATION)
+        .ignoringRequestMatchers(bearerTokenMatcher(), loginAndLogoutMatcher()));
 ```
+
+The nonce is not rotated while the session cookie is unchanged: Spring Security's
+`CsrfAuthenticationStrategy` replaces the cookie on every authenticated request,
+which for a stateless nonce only races a client that reads `document.cookie` and
+then sends the request. `SecurityAndCorsConfig` overrides that strategy and
+`UserController` appends its own `Set-Cookie` with `HttpServletResponse.addHeader`
+(entity headers would replace the token cookie).
+
+Never re-introduce `http.csrf(AbstractHttpConfigurer::disable)` — the Semgrep gate
+`security/semgrep/notaire.yml` fails the build on it.
 
 ## Rate limiting
 
