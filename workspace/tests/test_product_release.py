@@ -69,7 +69,8 @@ class RepositoryContractTest(unittest.TestCase):
 
     def test_manifest_matches_maven_npm_and_latest_changelog(self):
         version = self.snapshot["version"]
-        self.assertEqual(version, "0.2.0")
+        manifest = json.loads((self.root / ".release-please-manifest.json").read_text(encoding="utf-8"))
+        self.assertEqual(version, manifest["."])
         self.assertEqual(self.snapshot["components"]["backend"]["version"], version)
         self.assertEqual(self.snapshot["components"]["backend"]["parentVersion"], version)
         self.assertEqual(self.snapshot["components"]["frontend"]["version"], version)
@@ -131,7 +132,7 @@ class RepositoryContractTest(unittest.TestCase):
             [item["version"] for item in history["releases"]],
             [item["version"] for item in self.snapshot["releases"]],
         )
-        self.assertTrue(history["releases"][0]["url"].endswith("/v0.2.0"))
+        self.assertTrue(history["releases"][0]["url"].endswith(f"/v{self.snapshot['version']}"))
 
     def test_sbom_writer_is_deterministic(self):
         with tempfile.TemporaryDirectory() as directory:
