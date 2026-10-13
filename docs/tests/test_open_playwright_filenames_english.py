@@ -4,6 +4,8 @@
 import unittest
 from pathlib import Path
 
+from openspec_changes import change
+
 ROOT = Path(__file__).resolve().parents[2]
 CHANGES = ROOT / "docs" / "openspec" / "changes"
 
@@ -11,17 +13,16 @@ CHANGES = ROOT / "docs" / "openspec" / "changes"
 class OpenPlaywrightFilenamesEnglishTest(unittest.TestCase):
     def test_open_notes_cite_the_live_playwright_files(self):
         summary = (
-            CHANGES / "feat-774-gestion-resumen-caso" / "design.md"
+            change("feat-774-gestion-resumen-caso") / "design.md"
         ).read_text(encoding="utf-8")
         summary_ledger = (
-            CHANGES / "feat-774-gestion-resumen-caso" / "traceability.md"
+            change("feat-774-gestion-resumen-caso") / "traceability.md"
         ).read_text(encoding="utf-8")
         documents = (
-            CHANGES / "fix-655-submitted-document-required-fields" / "traceability.md"
+            change("fix-655-submitted-document-required-fields") / "traceability.md"
         ).read_text(encoding="utf-8")
         properties = (
-            CHANGES
-            / "fix-655-property-cadastral-designation-required"
+            change("fix-655-property-cadastral-designation-required")
             / "traceability.md"
         ).read_text(encoding="utf-8")
         live = {

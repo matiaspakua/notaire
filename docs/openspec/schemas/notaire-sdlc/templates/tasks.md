@@ -73,11 +73,12 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin <branch-name>`
-- [ ] 10.2 Open the PR titled `[#<issue>] <type>(<scope>): <description>`, referencing Issue and Use Case
-- [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
-- [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [ ] 10.1 Archive this change in the PR: `cd docs && openspec archive <change-name> --yes` (skip only if `.openspec.yaml` sets `multi_pr: true`)
+- [ ] 10.2 `git push -u origin <branch-name>`
+- [ ] 10.3 Open the PR titled `[#<issue>] <type>(<scope>): <description>`, referencing Issue and Use Case
+- [ ] 10.4 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
+- [ ] 10.5 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
+- [ ] 10.6 Record the PR number in the archived `traceability.md`
 
 ## 11. Deploy
 
@@ -90,7 +91,7 @@
 - [ ] 12.1 Run the smoke test on the target environment (health endpoint + the key flow of this change)
 - [ ] 12.2 Verify the rollback path is still available as described in design.md
 - [ ] 12.3 Close the GitHub Issue, referencing the PR
-- [ ] 12.4 Archive the change: `openspec archive <change-name>`
+- [ ] 12.4 Record deploy and smoke evidence in the archived `traceability.md`
 
 ## Definition of Done
 

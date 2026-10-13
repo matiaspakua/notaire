@@ -2,14 +2,13 @@
 """Open change specs name managements and procedures in English."""
 
 import unittest
-from pathlib import Path
 
-CHANGES = Path(__file__).resolve().parents[1] / "openspec" / "changes"
+from openspec_changes import change
 
 
 class OpenChangeSpecsEnglishTest(unittest.TestCase):
     def test_case_summary_spec_is_english_and_keeps_stored_states(self):
-        folder = CHANGES / "feat-774-gestion-resumen-caso"
+        folder = change("feat-774-gestion-resumen-caso")
         text = (folder / "specs" / "management-case-summary" / "spec.md").read_text(
             encoding="utf-8"
         )
@@ -34,8 +33,7 @@ class OpenChangeSpecsEnglishTest(unittest.TestCase):
 
     def test_submitted_document_delta_is_english(self):
         text = (
-            CHANGES
-            / "fix-655-submitted-document-required-fields"
+            change("fix-655-submitted-document-required-fields")
             / "specs"
             / "submitted-documents"
             / "spec.md"

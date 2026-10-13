@@ -5,9 +5,7 @@
 Protect REST write endpoints from mass assignment by accepting only validated
 request DTOs with client-writable fields, returning response DTOs, and keeping
 audit-log entries server-authored.
-
 ## Requirements
-
 ### Requirement: Controllers MUST bind validated request DTOs, not JPA entities
 
 Every create/update endpoint listed in issue #1068 (except audit-log create,
@@ -66,3 +64,33 @@ Audit rows SHALL be written only by server-side auditing (`AuditAspect`).
 - **WHEN** a client POSTs `/api/v1/audit-log` with any JSON body
 - **THEN** the server responds with `405 Method Not Allowed` or `404 Not Found`
   and no new audit row is created from that request
+
+### Requirement: Copy, registration draft and re-entry require their fields
+
+`POST /copies` and `PUT /copies/{id}` SHALL require `number` and `datePrinting`, `POST /registration-drafts` SHALL require `idDeed`, and `POST /managements/{id}/document-reentry` SHALL require `idProcedure` and `idDocumentType`; a missing field SHALL answer 400 naming it and store nothing, and the contract SHALL mark the fields required.
+
+#### Scenario: Empty copy
+
+- **WHEN** a copy create sends {}
+- **THEN** the response is 400 naming number and datePrinting and nothing is stored
+
+#### Scenario: Copy update without print date
+
+- **WHEN** a copy update omits datePrinting
+- **THEN** the response is 400 naming it
+
+#### Scenario: Registration draft and re-entry without ids
+
+- **WHEN** a registration draft or a document re-entry sends {}
+- **THEN** the response is 400 naming the missing ids
+
+#### Scenario: Copies dialog
+
+- **WHEN** the number or the print date is empty in the copies dialog
+- **THEN** Save is disabled
+
+#### Scenario: Contract
+
+- **WHEN** the OpenAPI document is generated
+- **THEN** the fields are required in the four request schemas
+

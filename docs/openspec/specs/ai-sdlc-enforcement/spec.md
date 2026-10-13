@@ -706,3 +706,105 @@ name the mechanical checker.
 - **WHEN** an agent reads CONSTITUTION Gate 5 / tooling map or the Cloud merge-gate doc
 - **THEN** the documents name board Status/label coherence and the checker command
 
+### Requirement: One Foreman merge rule across governance docs and harness
+
+The Constitution SHALL define a Foreman merge rule. The Foreman may merge a Worker PR only when every required `protect-main` check is green, `workspace/sdlc/check-heavy-ci.sh <pr>` exits 0, the PR is mergeable, and Gate 4 is clear. The Owner alone SHALL merge Constitution amendments, `sdlc-exception` PRs, and PRs that change the Foreman's harness or merge path. Every agent-facing governance document SHALL state this rule, and none SHALL keep an Owner-only merge rule. The local Foreman harness SHALL run the heavy-CI gate before it merges.
+
+#### Scenario: Harness runs the heavy-CI gate before merging
+
+- **WHEN** `merge_and_close` in `local-ai/sdlc/foreman.sh` is read
+- **THEN** it calls `check-heavy-ci.sh` before `gh pr merge`
+
+#### Scenario: Governance docs name the rule
+
+- **WHEN** `CONSTITUTION.md`, `CONSTITUTION-AGENT-CARD.md`, `.claude/rules/ai-agent-workflow.md`, `.claude/agents/cloud-foreman.md` and `CI-MERGE-GATE.md` are read
+- **THEN** each names the Foreman merge rule and `check-heavy-ci.sh`, and none says agents never merge or that only the Owner merges PRs
+
+#### Scenario: Owner-only merges stay explicit
+
+- **WHEN** the Constitution's Foreman merge rule is read
+- **THEN** it reserves Constitution amendments and `sdlc-exception` PRs for the Owner
+
+### Requirement: The implementing PR archives its OpenSpec change
+
+A pull request that adds or edits an active OpenSpec change SHALL archive it before merge, unless the change declares `multi_pr: true` in its `.openspec.yaml`. Archiving a change in the PR SHALL NOT fail the task-completion gate.
+
+#### Scenario: Touched change left active fails
+
+- **WHEN** a PR edits an active change without `multi_pr: true` and does not archive it
+- **THEN** the archive hygiene check fails and tells the author to archive it in this PR
+
+#### Scenario: Change archived in the PR passes
+
+- **WHEN** a PR moves its change to `changes/archive/`
+- **THEN** the check passes
+
+#### Scenario: Multi-PR change may stay active
+
+- **WHEN** the touched change sets `multi_pr: true`
+- **THEN** the check does not require it to be archived
+
+### Requirement: Another change's leftover does not block a PR
+
+On a pull request, an active change whose issue is closed SHALL be reported as a warning, both by the archive hygiene check and by plan validation of all changes. Inventory mode SHALL fail on it.
+
+#### Scenario: Leftover only warns on a pull request
+
+- **WHEN** a PR does not touch an active change whose issue is CLOSED
+- **THEN** the hygiene check passes and prints the leftover as a warning
+
+#### Scenario: Leftover fails in inventory mode
+
+- **WHEN** `check-openspec-archive-hygiene.py --inventory-only` finds that change
+- **THEN** it exits non-zero
+
+### Requirement: Delta operations match the main spec at Gate 1
+
+Plan validation SHALL fail when an `ADDED` requirement already exists in the main spec, or when a `MODIFIED`, `REMOVED` or `RENAMED` requirement or its spec does not exist.
+
+#### Scenario: MODIFIED on a missing spec fails
+
+- **WHEN** a delta declares `MODIFIED` for a capability with no main spec
+- **THEN** `check-delta-ops.py` reports it and `validate-sdlc-plan.sh` fails
+
+#### Scenario: ADDED on an existing requirement fails
+
+- **WHEN** a delta declares `ADDED` for a requirement already in the main spec
+- **THEN** the check reports it
+
+### Requirement: Process checks also run on main
+
+`sdlc-process.yml` SHALL run the process self-tests, plan validation and the strict OpenSpec inventory on every push to `main`, daily, and on demand, while the PR-only checks stay on pull requests.
+
+#### Scenario: Main health runs on push, schedule and dispatch
+
+- **WHEN** the workflow triggers are read
+- **THEN** they include `push` to `main`, a `schedule` and `workflow_dispatch`, and the `main-health` job runs the self-tests and `--inventory-only`
+
+### Requirement: Agent harness config is portable and within the context budget
+
+`opencode.json` SHALL contain no absolute user or home paths and SHALL load only the always-loaded set (`AGENTS.md`, `CONSTITUTION-AGENT-CARD.md`); skills load on demand.
+
+#### Scenario: opencode config is portable
+
+- **WHEN** `opencode.json` is read
+- **THEN** it holds no `/Users/` or `/home/` path and its instructions are exactly `AGENTS.md` and `CONSTITUTION-AGENT-CARD.md`
+
+### Requirement: Session start surfaces work that was never pushed
+
+The SessionStart hook SHALL list local branches without an upstream whose commits are on no remote branch, and SHALL still exit 0.
+
+#### Scenario: Never-pushed branch is listed
+
+- **WHEN** a local branch has commits and no upstream
+- **THEN** the hook output names the branch and says its commits were never pushed
+
+### Requirement: Pushes are verified on the remote
+
+The agent workflow rule SHALL tell agents to confirm a push with `git ls-remote --heads origin <branch>`.
+
+#### Scenario: Workflow rule names the verification
+
+- **WHEN** `.claude/rules/ai-agent-workflow.md` is read
+- **THEN** it contains `git ls-remote --heads origin`
+
