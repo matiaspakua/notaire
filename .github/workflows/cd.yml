@@ -30,6 +30,8 @@ jobs:
     name: Release identity coherence
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -310,6 +312,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     needs: build-and-publish
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -332,6 +336,9 @@ jobs:
     timeout-minutes: 10
     needs: [build-and-publish, release, update-description]
     if: always() && needs.build-and-publish.result != 'skipped'
+    permissions:
+      contents: read
+      actions: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v7

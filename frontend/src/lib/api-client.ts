@@ -25,7 +25,11 @@ const DEFAULT_FETCH_INIT: RequestInit = {
  * the verified JWT identity, not from any client-supplied header (issue #678).
  */
 function buildHeaders(base: Record<string, string> = {}): Record<string, string> {
-  return { ...base };
+  const csrfToken = document.cookie
+    .split("; ")
+    .find((cookie) => cookie.startsWith("XSRF-TOKEN="))
+    ?.split("=", 2)[1];
+  return csrfToken ? { ...base, "X-XSRF-TOKEN": decodeURIComponent(csrfToken) } : { ...base };
 }
 
 /**

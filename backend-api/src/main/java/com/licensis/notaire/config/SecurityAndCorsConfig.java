@@ -19,10 +19,20 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -87,7 +97,7 @@ public class SecurityAndCorsConfig {
     @Value("${cors.max-age:3600}")
     private long maxAge;
 
-    @Value("${cors.allowed-headers:Content-Type,Authorization}")
+    @Value("${cors.allowed-headers:Content-Type,Authorization,X-XSRF-TOKEN}")
     private String[] allowedHeaders;
 
     @Value("${actuator.security.username}")
@@ -143,7 +153,7 @@ public class SecurityAndCorsConfig {
             )
             .httpBasic(withDefaults())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .csrf(csrf -> csrf.disable())
+            .csrf(withDefaults())
             .cors(withDefaults());
         return http.build();
     }
@@ -200,7 +210,10 @@ public class SecurityAndCorsConfig {
                 .accessDeniedHandler(apiAccessDeniedHandler))
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .csrf(csrf -> csrf.disable())
+            .csrf(csrf -> csrf
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .ignoringRequestMatchers("/api/v1/users/login", "/api/v1/users/logout"))
+            .addFilterAfter(new CsrfCookieFilter(), CsrfFilter.class)
             .cors(withDefaults());
         return http.build();
     }
@@ -226,13 +239,30 @@ public class SecurityAndCorsConfig {
             })
             .httpBasic(withDefaults())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .csrf(csrf -> csrf.disable())
+            .csrf(withDefaults())
             .cors(withDefaults());
         return http.build();
     }
 
     private boolean isProduction() {
         return PRODUCTION_ENVIRONMENT.equalsIgnoreCase(environment);
+    }
+
+    /**
+     * Materializes the deferred token so the BFF can relay the non-HttpOnly
+     * double-submit cookie without exposing the HttpOnly JWT.
+     */
+    private static final class CsrfCookieFilter extends OncePerRequestFilter {
+
+        @Override
+        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                FilterChain filterChain) throws ServletException, IOException {
+            filterChain.doFilter(request, response);
+            CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
+            if (csrfToken != null) {
+                csrfToken.getToken();
+            }
+        }
     }
 
     /**

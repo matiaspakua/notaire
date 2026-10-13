@@ -89,8 +89,12 @@ async function exerciseCreateModal(page: Page, createTestId: string): Promise<vo
   await expect(dialog).toBeHidden({ timeout: 5000 });
 }
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 async function assertPageLoaded(page: Page, mod: Module): Promise<void> {
-  await expect(page).toHaveURL(new RegExp(mod.urlPart.replace(/\//g, "\\/")), { timeout: 10000 });
+  await expect(page).toHaveURL(new RegExp(escapeRegExp(mod.urlPart)), { timeout: 10000 });
   // Every dashboard page renders a single <h1> header.
   await expect(visibleHeading(page)).toBeVisible({ timeout: 10000 });
 }
