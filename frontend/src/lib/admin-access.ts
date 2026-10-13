@@ -11,7 +11,7 @@ export const AUTH_ROLE_COOKIE = "notaire-auth-role";
 export const FORBIDDEN_QUERY = "forbidden=1";
 export const ADMIN_ROUTE_PREFIXES = ["/dashboard/administration", "/dashboard/audit"] as const;
 
-const ADMIN_TYPES = new Set(["ADMIN", "ADMINISTRADOR", "ESCRIBANO"]);
+const ADMIN_TYPES = new Set(["ADMIN", "ADMINISTRADOR"]);
 
 export function isAdminType(userType?: string | null): boolean {
   if (!userType) {

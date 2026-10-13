@@ -109,7 +109,7 @@ export default function UsersPage() {
 
   const userTypeVariant = (userType?: string) => {
     const role = userType?.toUpperCase();
-    if (role === "ADMIN" || role === "ADMINISTRADOR" || role === "ESCRIBANO") return "default" as const;
+    if (role === "ADMIN" || role === "ADMINISTRADOR") return "default" as const;
     return "secondary" as const;
   };
 

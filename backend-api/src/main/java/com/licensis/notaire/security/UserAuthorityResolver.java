@@ -21,8 +21,12 @@ public class UserAuthorityResolver {
 
     public static final String ADMIN_ROLE = "ADMIN";
 
-    private static final Set<String> ADMINISTRATOR_TYPES = Set.of("ADMIN", "ADMINISTRADOR", "ESCRIBANO");
+    public static final String NOTARY_ROLE = "NOTARY";
+
+    private static final Set<String> ADMINISTRATOR_TYPES = Set.of("ADMIN", "ADMINISTRADOR");
+    private static final Set<String> NOTARY_TYPES = Set.of("ESCRIBANO");
     private static final GrantedAuthority ADMIN_AUTHORITY = new SimpleGrantedAuthority("ROLE_" + ADMIN_ROLE);
+    private static final GrantedAuthority NOTARY_AUTHORITY = new SimpleGrantedAuthority("ROLE_" + NOTARY_ROLE);
     private static final GrantedAuthority USER_AUTHORITY = new SimpleGrantedAuthority("ROLE_USER");
 
     private final UserRepository userRepository;
@@ -34,11 +38,14 @@ public class UserAuthorityResolver {
     public Optional<List<GrantedAuthority>> resolve(String username) {
         return userRepository.findByName(username)
                 .filter(User::getStatus)
-                .map(user -> List.of(isAdministrator(user) ? ADMIN_AUTHORITY : USER_AUTHORITY));
+                .map(user -> List.of(authorityOf(user)));
     }
 
-    private boolean isAdministrator(User user) {
-        return user.getType() != null
-                && ADMINISTRATOR_TYPES.contains(user.getType().trim().toUpperCase(Locale.ROOT));
+    private GrantedAuthority authorityOf(User user) {
+        String type = user.getType() == null ? "" : user.getType().trim().toUpperCase(Locale.ROOT);
+        if (ADMINISTRATOR_TYPES.contains(type)) {
+            return ADMIN_AUTHORITY;
+        }
+        return NOTARY_TYPES.contains(type) ? NOTARY_AUTHORITY : USER_AUTHORITY;
     }
 }
