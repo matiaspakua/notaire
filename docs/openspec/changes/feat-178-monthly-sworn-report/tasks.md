@@ -30,7 +30,7 @@
 ## 6. Ejecutar regresión
 
 - [x] 6.1 Targeted backend and frontend tests green
-- [ ] 6.2 Pipeline / preflight as far as the environment allows
+- [x] 6.2 Pipeline / preflight as far as the environment allows
 
 ## 7. Ejecutar Playwright
 

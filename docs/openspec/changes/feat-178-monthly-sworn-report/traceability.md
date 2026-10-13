@@ -38,11 +38,12 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| CU25 | yes | this branch |
-| REST-API-REFERENCE | yes | this branch |
-| SAD pdf-report-design-system | yes | this branch |
-| E2E-TEST-MAPPING | yes | this branch |
-| CHANGELOG Unreleased | yes | this branch |
+| `docs/100-business/102-use-cases/CU25 – Generar Declaración Jurada del mes.md` | yes | this branch |
+| `docs/200-architecture/203-design/REST-API-REFERENCE.md` | yes | this branch |
+| `docs/200-architecture/201-SAD/pdf-report-design-system.md` | yes | this branch |
+| `docs/300-development/303-testing/E2E-TEST-MAPPING.md` | yes | this branch |
+| `docs/300-development/303-testing/INVENTORY.md` | yes | this branch |
+| `CHANGELOG.md` | yes | this branch |
 
 ## Gate log
 
