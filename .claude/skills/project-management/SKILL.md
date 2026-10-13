@@ -48,8 +48,9 @@ the function disagree, fix both in the same change and extend
 4. Apply only with owner credentials; regenerate both snapshot JSON files.
 5. Do not close issues from a classification run.
 6. Do not pick catalog, epic, blocked, needs-info, or owner-decision work.
-7. Claim at most one issue per non-conflicting derived lane. Cross blocks
-   backend and frontend; security blocks backend.
+7. Claim at most one issue per non-conflicting derived lane, only through
+   `workspace/sdlc/claim-issue.py` (#1646). Cross blocks backend and frontend;
+   security blocks backend.
 
 ## Priority versus milestone
 

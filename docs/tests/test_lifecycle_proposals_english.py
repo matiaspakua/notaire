@@ -2,14 +2,13 @@
 """Lifecycle proposals name a management and keep stored statuses."""
 
 import unittest
-from pathlib import Path
 
-CHANGES = Path(__file__).resolve().parents[1] / "openspec" / "changes"
+from openspec_changes import change
 
 
 class LifecycleProposalsEnglishTest(unittest.TestCase):
     def test_assessment_proposal_names_a_management(self):
-        text = (CHANGES / "docs-921-business-assessment" / "proposal.md").read_text(
+        text = (change("docs-921-business-assessment") / "proposal.md").read_text(
             encoding="utf-8"
         )
         self.assertIn("## Objetivo", text)
@@ -26,7 +25,7 @@ class LifecycleProposalsEnglishTest(unittest.TestCase):
         self.assertNotIn("create-gestión", text)
 
     def test_lifecycle_proposal_names_a_management(self):
-        text = (CHANGES / "docs-921-domain-lifecycle" / "proposal.md").read_text(
+        text = (change("docs-921-domain-lifecycle") / "proposal.md").read_text(
             encoding="utf-8"
         )
         self.assertIn("## Objetivo", text)

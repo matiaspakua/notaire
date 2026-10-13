@@ -87,7 +87,7 @@ Also required **outside** `.env`:
 
 | Secret | Purpose |
 |--------|---------|
-| GitHub token / `gh` auth | Issue/PR/merge (Cloud agent identity) |
+| GitHub token / `gh` auth | Issue/PR/merge: `notaire-fleet` App via `workspace/sdlc/fleet-token.sh` ([FLEET-IDENTITY.md](FLEET-IDENTITY.md), #1648) |
 | Any Cursor Cloud secrets for private deps | If applicable |
 
 ---

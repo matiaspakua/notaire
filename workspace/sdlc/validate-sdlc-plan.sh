@@ -59,6 +59,7 @@ fi
 
 ERRORS=0
 CHECKED=0
+SINGLE_CHANGE=0
 
 section() { printf '\n%s=== %s ===%s\n' "$BLUE" "$1" "$NC"; }
 ok()      { printf '  %s✓%s %s\n' "$GREEN" "$NC" "$1"; }
@@ -100,6 +101,12 @@ check_issue_live() {
     return 1
   fi
   if [ "$state" != "OPEN" ]; then
+    # Validating every change (PR CI), a closed issue means another PR's change was
+    # never archived: warn, don't block this PR. Inventory on main fails on it (#1622/#1623).
+    if [ "$SINGLE_CHANGE" -eq 0 ]; then
+      note "proposal: Issue #$number is $state — Gate 5 leftover; archive it (check-openspec-archive-hygiene.py --inventory-only)"
+      return 0
+    fi
     bad "proposal: Issue #$number exists but is $state, not OPEN"
     return 1
   fi
@@ -262,6 +269,18 @@ validate_change() {
       else
         ok "specs: $spec_count file(s), $scenarios scenario(s) as Acceptance Criteria"
       fi
+      # Delta operation must match the main spec, or `openspec archive` aborts after merge (#1623).
+      local delta_check="$REPO_ROOT/workspace/sdlc/check-delta-ops.py"
+      if [ -f "$delta_check" ]; then
+        local delta_problems
+        if delta_problems="$(python3 "$delta_check" "$dir")"; then
+          ok "specs: delta operations match the main specs"
+        else
+          while IFS= read -r line; do bad "specs: $line"; done <<< "$delta_problems"
+        fi
+      else
+        note "specs: check-delta-ops.py not found — delta operations not verified"
+      fi
       # 3-hashtag scenarios fail silently in OpenSpec's parser.
       if grep -rqE '^### Scenario:' "$dir/specs" 2>/dev/null; then
         bad "specs: found '### Scenario:' — scenarios need exactly four hashtags or they are ignored"
@@ -340,6 +359,7 @@ if [ ! -d "$CHANGES_DIR" ]; then
 fi
 
 if [ -n "${1:-}" ]; then
+  SINGLE_CHANGE=1
   target="$CHANGES_DIR/$1"
   if [ ! -d "$target" ]; then
     printf '%sChange not found:%s %s\n' "$RED" "$NC" "$1"

@@ -26,6 +26,24 @@ else
     echo "(openspec CLI not found on PATH — install it to see in-flight change status)"
 fi
 
+# Finished work that never reached origin is invisible to every other agent
+# (#1620's fix sat in a local branch for hours; #1647).
+unpushed=""
+while IFS=' ' read -r branch upstream; do
+    # A branch with an upstream was pushed at least once (squash merges delete it remotely).
+    [ -n "$upstream" ] && continue
+    count="$(git -C "${CLAUDE_PROJECT_DIR:-.}" rev-list --count "$branch" --not --remotes 2>/dev/null || echo 0)"
+    if [ "${count:-0}" -gt 0 ]; then
+        when="$(git -C "${CLAUDE_PROJECT_DIR:-.}" log -1 --format=%cr "$branch" 2>/dev/null)"
+        unpushed="${unpushed}  - ${branch}: ${count} commit(s) never pushed (last ${when})"$'\n'
+    fi
+done < <(git -C "${CLAUDE_PROJECT_DIR:-.}" for-each-ref --format='%(refname:short) %(upstream)' refs/heads 2>/dev/null)
+if [ -n "$unpushed" ]; then
+    echo
+    echo "## Local commits never pushed (push them or they block the claimed lane)"
+    printf '%s' "$unpushed" | head -15
+fi
+
 echo
 echo "Reminder: CONSTITUTION.md at repo root governs every change. No code change"
 echo "without a linked GitHub Issue + Use Case + OpenSpec change (Gate 1)."
