@@ -60,14 +60,14 @@
 - [x] 8.3 `CHANGELOG.md` `[Unreleased]` Fixed entry for #1599
 - [x] 8.4 No documents to archive
 - [x] 8.5 No duplication — point at ADR-028 / RELEASE.md
-- [ ] 8.6 `bash workspace/sdlc/preflight.sh` process gates before push (Java/frontend skipped: no product code)
+- [x] 8.6 Process gates: `validate-sdlc-plan.sh` this change; 319 `workspace/tests`; changelog structure; TDD evidence; commit messages; doc traceability. Java/frontend `preflight` skipped (no product code; path-scoped CI)
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Conventional Commits; test observation then implementation
-- [ ] 9.2 Last commit ends with `Closes #1599`
-- [ ] 9.3 No secrets, no unrelated changes
-- [ ] 9.4 Record commit SHAs in `traceability.md`
+- [x] 9.1 Conventional Commits; test observed fail then `GH_REPO` set
+- [x] 9.2 Implementation commit ends with `Closes #1599`
+- [x] 9.3 No secrets, no unrelated changes
+- [x] 9.4 Record commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
