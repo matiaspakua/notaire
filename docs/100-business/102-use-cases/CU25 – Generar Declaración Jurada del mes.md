@@ -25,9 +25,19 @@
 
 | Paso | Condición / Evento | Acción del Sistema / Actor |
 |---|---|---|
-| - | Flujo estándar sin desvíos | La operación se completa según el curso normal de eventos. |
+| 4.1 | No existen escrituras para el mes y año indicados. | El sistema devuelve HTTP 200 y un PDF de estado vacío (no inventa 404). |
+| 4.2 | No hay tabla de tasa/impuesto ni entidad de anexo. | Las celdas de anexo, tasa e impuesto se muestran como `N/A`. No se inventa texto legal, pie ni firma. |
 
 ## Entrada en la UI (Next.js)
 
-Se accede desde **Reportes** en la navegación primaria
-(`/dashboard/reportes`) — issue #1058.
+Los reportes (índices, DDJJ, etc.) se alcanzan desde **Reportes** en la
+navegación primaria (`/dashboard/reportes`; live `/dashboard/reports`) y
+desde **Protocolo** (`/dashboard/protocol`) — issue #1058 / #178.
+
+`GET /api/v1/reports/monthly-sworn-statement` requiere `year` y `month`.
+`idNotary` y `idFolioType` son filtros opcionales para el registro y el
+tipo de protocolo. Titular y suplente salen de las personas y
+`substitutions` registradas. Precio de `registration_drafts.operation_price`
+cuando existe; valuación fiscal y nomenclatura del inmueble del trámite
+en protocolo no auxiliar. Un período sin escrituras notifica al usuario
+con el PDF de estado vacío.

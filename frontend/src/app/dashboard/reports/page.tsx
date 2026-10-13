@@ -159,6 +159,8 @@ export default function ReportsPage() {
   const [managementId, setManagementId] = useState("");
   const [monthlyYear, setMonthlyYear] = useState(currentYear());
   const [monthlyMonth, setMonthlyMonth] = useState(currentMonth());
+  const [monthlyNotary, setMonthlyNotary] = useState("");
+  const [monthlyFolioType, setMonthlyFolioType] = useState("");
   const [taxYear, setTaxYear] = useState(currentYear());
   const [taxMonth, setTaxMonth] = useState(currentMonth());
   const [indexYear, setIndexYear] = useState(currentYear());
@@ -267,13 +269,72 @@ export default function ReportsPage() {
           downloadTestId="btn-download-monthly-sworn"
           canDownload
           onDownload={() =>
-            handle(() => monthlySwornReport.download(Number(monthlyYear), Number(monthlyMonth)))
+            handle(() =>
+              monthlySwornReport.download(
+                Number(monthlyYear),
+                Number(monthlyMonth),
+                monthlyNotary ? Number(monthlyNotary) : undefined,
+                monthlyFolioType ? Number(monthlyFolioType) : undefined,
+              ),
+            )
           }
         >
           <div style={yearMonthGrid}>
-            <NumberField label={tc("year")} value={monthlyYear} onChange={setMonthlyYear} min="2000" max="2099" />
-            <NumberField label={tc("month")} value={monthlyMonth} onChange={setMonthlyMonth} min="1" max="12" />
+            <NumberField
+              label={tc("year")}
+              value={monthlyYear}
+              onChange={setMonthlyYear}
+              min="2000"
+              max="2099"
+              testId="input-report-monthly-year"
+              required
+            />
+            <NumberField
+              label={tc("month")}
+              value={monthlyMonth}
+              onChange={setMonthlyMonth}
+              min="1"
+              max="12"
+              testId="input-report-monthly-month"
+              required
+            />
           </div>
+          <FormField label={tf("fields.escribano")} helperText={tc("optional")}>
+            <Select
+              value={monthlyNotary || "all"}
+              onValueChange={(value) => setMonthlyNotary(value === "all" ? "" : value)}
+            >
+              <SelectTrigger data-testid="select-report-monthly-notary">
+                <SelectValue placeholder={tf("fields.escribanoPlaceholder")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{tc("all")}</SelectItem>
+                {notaries.map((notary) => (
+                  <SelectItem key={notary.personId} value={String(notary.personId)}>
+                    {notary.lastName} {notary.firstName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormField>
+          <FormField label={tf("fields.tipo")} helperText={tc("optional")}>
+            <Select
+              value={monthlyFolioType || "all"}
+              onValueChange={(value) => setMonthlyFolioType(value === "all" ? "" : value)}
+            >
+              <SelectTrigger data-testid="select-report-monthly-folio-type">
+                <SelectValue placeholder={tf("fields.tipoPlaceholder")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{tc("all")}</SelectItem>
+                {folioTypes.map((type) => (
+                  <SelectItem key={type.idFolioType} value={String(type.idFolioType)}>
+                    {type.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormField>
         </ReportCard>
 
         <ReportCard

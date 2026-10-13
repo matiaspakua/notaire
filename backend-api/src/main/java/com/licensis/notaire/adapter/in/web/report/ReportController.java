@@ -220,16 +220,21 @@ public class ReportController {
 
     @GetMapping(value = "/monthly-sworn-statement", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generate the monthly sworn statement",
-               description = "Base endpoint for CU25: a provisional PDF for the requested period; "
-                       + "the monthly sworn-statement content is still pending")
+               description = "CU25: recorded deeds for a year and month, optionally narrowed by notary "
+                       + "registry and protocol type. Tax, rate, and annex stay N/A until an Owner "
+                       + "tax table exists. An empty period returns 200 and an empty-state PDF")
     public ResponseEntity<byte[]> generateMonthlySwornStatement(
             @Parameter(description = "Year of the period")
             @RequestParam("year") @Positive Integer year,
             @Parameter(description = "Month of the period")
-            @RequestParam("month") @Min(1) @Max(12) Integer month) {
+            @RequestParam("month") @Min(1) @Max(12) Integer month,
+            @Parameter(description = "Optional notary person id (registry)")
+            @RequestParam(value = "idNotary", required = false) @Positive Integer idNotary,
+            @Parameter(description = "Optional folio / protocol type id")
+            @RequestParam(value = "idFolioType", required = false) @Positive Integer idFolioType) {
         requireValidMonth(month);
         return buildPdfResponse("ddjj_mensual_" + year + "_" + month + ".pdf",
-                () -> reportService.generateMonthlyTaxDeclarationReport(year, month));
+                () -> reportService.generateMonthlyTaxDeclarationReport(year, month, idNotary, idFolioType));
     }
 
     @ApiResponses({

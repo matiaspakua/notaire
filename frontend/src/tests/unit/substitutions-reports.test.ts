@@ -103,6 +103,15 @@ describe("Report URL construction", () => {
     expect(url).toContain("month=4");
   });
 
+  it("monthly sworn statement URL may add optional notary and protocol filters", () => {
+    const params = new URLSearchParams({ year: "2026", month: "3", idNotary: "4", idFolioType: "2" });
+    const url = `${BASE}/reports/monthly-sworn-statement?${params.toString()}`;
+    expect(url).toContain("year=2026");
+    expect(url).toContain("month=3");
+    expect(url).toContain("idNotary=4");
+    expect(url).toContain("idFolioType=2");
+  });
+
   it("tax sworn statement URL includes year and month", () => {
     const year = 2026;
     const month = 12;

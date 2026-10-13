@@ -60,8 +60,15 @@ export default function ProtocolPage() {
         url = `/reports/index-book?${params.toString()}`;
         filename = `libro_indice_${reportYear}.pdf`;
       } else if (reportDialog === "monthly-sworn-statement") {
-        url = `/reports/monthly-sworn-statement?year=${reportYear}&month=${reportMonth}`;
-        filename = `declaracion_jurada_mensual_${reportMonth}_${reportYear}.pdf`;
+        const params = new URLSearchParams({ year: reportYear, month: reportMonth });
+        if (reportNotary) {
+          params.set("idNotary", reportNotary);
+        }
+        if (reportFolioType) {
+          params.set("idFolioType", reportFolioType);
+        }
+        url = `/reports/monthly-sworn-statement?${params.toString()}`;
+        filename = `ddjj_mensual_${reportYear}_${reportMonth}.pdf`;
       } else if (reportDialog === "tax-sworn-statement") {
         url = `/reports/tax-sworn-statement?year=${reportYear}&month=${reportMonth}`;
         filename = `declaracion_jurada_rentas_${reportMonth}_${reportYear}.pdf`;
@@ -149,7 +156,7 @@ export default function ProtocolPage() {
                   data-testid="input-protocol-report-year"
                 />
               </FormField>
-              {reportDialog === "index-book" && (
+              {(reportDialog === "index-book" || reportDialog === "monthly-sworn-statement") && (
                 <>
                   <FormField label={tf("fields.escribano")} helperText={tc("optional")}>
                     <Select

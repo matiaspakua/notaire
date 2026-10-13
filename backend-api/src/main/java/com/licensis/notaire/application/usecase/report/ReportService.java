@@ -44,6 +44,7 @@ public class ReportService {
     private final ReportDocumentFactory reportDocuments;
     private final ReportRenderer reportRenderer;
     private final IndexBookReportBuilder indexBook;
+    private final MonthlySwornStatementReportBuilder monthlySworn;
 
     private static final int FOLIOS_PER_NOTEBOOK = 10;
 
@@ -54,7 +55,8 @@ public class ReportService {
                            ItemRepository itemRepository,
                            ReportDocumentFactory reportDocuments,
                            ReportRenderer reportRenderer,
-                           IndexBookReportBuilder indexBook) {
+                           IndexBookReportBuilder indexBook,
+                           MonthlySwornStatementReportBuilder monthlySworn) {
         this.testimonyRepository = testimonyRepository;
         this.notebookRepository = notebookRepository;
         this.registrationDraftRepository = registrationDraftRepository;
@@ -63,6 +65,7 @@ public class ReportService {
         this.reportDocuments = reportDocuments;
         this.reportRenderer = reportRenderer;
         this.indexBook = indexBook;
+        this.monthlySworn = monthlySworn;
     }
 
     public byte[] generateBudgetReport(Integer idBudget) {
@@ -99,8 +102,12 @@ public class ReportService {
     }
 
     public byte[] generateMonthlyTaxDeclarationReport(Integer year, Integer month) {
-        return renderPlaceholder("Monthly sworn statement", "CU25",
-                "monthly-sworn-" + year + "-" + month, "Period: " + month + "/" + year);
+        return generateMonthlyTaxDeclarationReport(year, month, null, null);
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] generateMonthlyTaxDeclarationReport(Integer year, Integer month, Integer idNotary, Integer idFolioType) {
+        return reportRenderer.render(monthlySworn.build(year, month, idNotary, idFolioType));
     }
 
     public byte[] generateTestimonyCopyReport(Integer idTestimony) {
