@@ -35,10 +35,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| scaffolded change passes plan validation | test_scaffold_openspec_change | pending |
-| scenarios become coverage rows | test_scaffold_openspec_change | pending |
-| complete ticks the implementation groups | test_scaffold_openspec_change | pending |
-| missing folder is created | test_scaffold_openspec_change | pending |
+| scaffolded change passes plan validation | test_scaffold_openspec_change | passing |
+| scenarios become coverage rows | test_scaffold_openspec_change | passing |
+| complete ticks the implementation groups | test_scaffold_openspec_change | passing |
+| missing folder is created | test_scaffold_openspec_change | passing |
 
 ## Permanent documentation updated
 
