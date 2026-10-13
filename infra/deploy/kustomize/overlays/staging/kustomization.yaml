@@ -13,15 +13,15 @@ resources:
 images:
   - name: notaire-backend
     newName: ghcr.io/matiaspakua/notaire/backend
-    newTag: 0.2.0 # x-release-please-version
+    newTag: 0.2.1 # x-release-please-version
   - name: notaire-frontend
     newName: ghcr.io/matiaspakua/notaire/frontend
-    newTag: 0.2.0 # x-release-please-version
+    newTag: 0.2.1 # x-release-please-version
 
 labels:
   - pairs:
       environment: staging
-      app.kubernetes.io/version: 0.2.0 # x-release-please-version
+      app.kubernetes.io/version: 0.2.1 # x-release-please-version
     includeSelectors: false
     includeTemplates: true
 

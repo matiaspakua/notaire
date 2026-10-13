@@ -2,6 +2,7 @@
  * #1260 / #1197 P0.5 — high-traffic hooks consume OpenAPI-generated aliases.
  */
 import { describe, expect, it } from "vitest";
+import type { paths } from "@/types/api.generated";
 import type {
   SubmittedDocument,
   DeedManagement,
@@ -37,5 +38,14 @@ describe("openapi generated types (#1260)", () => {
       { page: 0, size: 1 },
     ]);
     expect(submittedDocumentsKeys.all).toEqual(["submittedDocuments"]);
+  });
+});
+
+describe("openapi generated types: PDF report errors (#1593)", () => {
+  it("types the budget report 500 as an ErrorResponse body", () => {
+    type BudgetReport500 =
+      paths["/api/v1/reports/budget/{idBudget}"]["get"]["responses"][500]["content"]["application/json"];
+    const body: BudgetReport500 = { status: 500, message: "PDF failed" } as BudgetReport500;
+    expect(body.message).toBe("PDF failed");
   });
 });
