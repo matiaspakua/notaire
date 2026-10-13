@@ -108,10 +108,11 @@ class CsrfProtectionIntegrationTest {
         assertThat(setCookie).as("login must keep setting the session cookie")
                 .anyMatch(header -> header.startsWith(authCookieService.cookieName() + "="));
 
-        // The login response sets its own Set-Cookie header. If that is written
-        // through the ResponseEntity header map it replaces every Set-Cookie
-        // already on the response and silently drops the token cookie, leaving
-        // the browser unable to send X-XSRF-TOKEN until some later GET response.
+        // The login response sets its own Set-Cookie header. Written through the
+        // ResponseEntity header map it replaces every Set-Cookie already on the
+        // response, so the token cookie only survived while it happened to be
+        // appended after the controller ran. It must not depend on that order:
+        // the contract is that one login response carries both cookies.
         List<String> xsrfCookies = setCookie.stream()
                 .filter(header -> header.startsWith("XSRF-TOKEN="))
                 .toList();
