@@ -65,6 +65,10 @@ function visibleHeading(page: Page) {
   return page.locator("h1").filter({ hasText: /\S/ }).first();
 }
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 async function loginViaUI(page: Page): Promise<void> {
   await page.goto("/login");
   await expect(page.getByTestId("input-username")).toBeVisible();
@@ -90,7 +94,7 @@ async function exerciseCreateModal(page: Page, createTestId: string): Promise<vo
 }
 
 async function assertPageLoaded(page: Page, mod: Module): Promise<void> {
-  await expect(page).toHaveURL(new RegExp(mod.urlPart.replace(/\//g, "\\/")), { timeout: 10000 });
+  await expect(page).toHaveURL(new RegExp(escapeRegExp(mod.urlPart)), { timeout: 10000 });
   // Every dashboard page renders a single <h1> header.
   await expect(visibleHeading(page)).toBeVisible({ timeout: 10000 });
 }
