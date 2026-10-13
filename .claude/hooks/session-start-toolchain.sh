@@ -13,6 +13,8 @@ JDK_VERSION="26"
 OPENSPEC_VERSION="1.14.0"
 TRIVY_VERSION="0.75.0"
 KUSTOMIZE_VERSION="5.5.0"
+PROMETHEUS_VERSION="3.15.0"
+ALERTMANAGER_VERSION="0.34.1"
 
 [ "${CLAUDE_CODE_REMOTE:-}" = "true" ] || exit 0
 
@@ -63,6 +65,19 @@ install_trivy() {
         "$BIN" trivy || warn "trivy $TRIVY_VERSION" "download failed"
 }
 
+install_alert_tools() {
+    if ! [ -x "$BIN/promtool" ] && ! command -v promtool >/dev/null 2>&1; then
+        fetch "https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/prometheus-${PROMETHEUS_VERSION}.linux-amd64.tar.gz" \
+            "$BIN" --strip-components=1 "prometheus-${PROMETHEUS_VERSION}.linux-amd64/promtool" \
+            || warn "promtool $PROMETHEUS_VERSION" "download failed"
+    fi
+    if ! [ -x "$BIN/amtool" ] && ! command -v amtool >/dev/null 2>&1; then
+        fetch "https://github.com/prometheus/alertmanager/releases/download/v${ALERTMANAGER_VERSION}/alertmanager-${ALERTMANAGER_VERSION}.linux-amd64.tar.gz" \
+            "$BIN" --strip-components=1 "alertmanager-${ALERTMANAGER_VERSION}.linux-amd64/amtool" \
+            || warn "amtool $ALERTMANAGER_VERSION" "download failed"
+    fi
+}
+
 export_environment() {
     [ -n "${CLAUDE_ENV_FILE:-}" ] || return 0
     {
@@ -82,6 +97,7 @@ install_jdk
 install_openspec
 install_kustomize
 install_trivy
+install_alert_tools
 export_environment
 echo "toolchain ready: $TOOLS"
 exit 0
