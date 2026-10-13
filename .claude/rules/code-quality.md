@@ -58,18 +58,18 @@ Coverage reports are:
 Frontend unit coverage uses Vitest `@vitest/coverage-v8` with global thresholds in
 `frontend/vitest.config.ts`. Same policy as JaCoCo: **raise-only ratchet floor**.
 
-### Configuration (as of 2026-10-03, #976)
+### Configuration (as of 2026-10-13, #1663)
 
-| Metric | Enforced floor | Measured on `main` @ `68dc2cac` |
+| Metric | Enforced floor | Measured on `main` @ `38d5d93` |
 |--------|----------------|----------------------------------|
-| Statements | **14%** | 15.09% |
-| Branches | **9%** | 10.52% |
-| Functions | **10%** | 11.97% |
-| Lines | **14%** | 15.55% |
+| Statements | **50%** | 52.07% |
+| Branches | **46%** | 48.85% |
+| Functions | **44%** | 46.22% |
+| Lines | **50%** | 52.39% |
 
 - **Long-term target**: 80% line / 80% branch (aspirational; not this gate).
 - **Policy**: raise floors as coverage improves with ≥1 percentage point headroom
-  under a fresh `npx vitest run --coverage` measurement; **never lower** a floor
+  (2 points since #1663) under a fresh `npx vitest run --coverage` measurement; **never lower** a floor
   without an ADR or documented SDLC exception.
 - **Guard**: `frontend/src/tests/unit/vitest-coverage-thresholds.test.ts` asserts
   configured thresholds stay ≥ the documented floors.
