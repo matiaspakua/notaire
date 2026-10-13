@@ -31,7 +31,8 @@ the affected suites, push, then confirm it landed: `git ls-remote --heads origin
 
 Reproduce locally with `bash workspace/sdlc/preflight.sh` (mirrors CI) before pushing a fix.
 Fix the cause; never skip, `@Disabled` or quarantine a test, never push an empty commit.
-Typical Notaire causes: stale `docs/300-development/303-testing/INVENTORY.md`, Spotless format
+Typical Notaire causes: stale `docs/300-development/303-testing/INVENTORY.md`, a new Flyway migration
+without `python3 workspace/release/product_release.py --write` (product version coherence), Spotless format
 (`mvn spotless:apply -pl backend-api`), an unticked or unarchived OpenSpec change.
 
 ## 5. Commits and the OpenSpec change

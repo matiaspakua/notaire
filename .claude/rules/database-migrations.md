@@ -43,6 +43,11 @@ CREATE TABLE user_preferences (
 -- NEVER do this!
 ```
 
+### 2.1 Record the new schema version
+
+After adding a migration run `python3 workspace/release/product_release.py --write` and commit
+`release/product-release.json`; product version coherence and the packaged `app.version` check fail otherwise.
+
 ### 3. Migration Location
 
 All migrations MUST be placed in:
