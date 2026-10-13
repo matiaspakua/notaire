@@ -35,11 +35,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| short actuator password rejected | ProductionCredentialsGuardTest | pending |
-| deny-listed actuator password rejected | ProductionCredentialsGuardTest | pending |
-| empty actuator credentials rejected | ProductionCredentialsGuardTest | pending |
-| strong actuator credentials accepted | ProductionCredentialsGuardTest | pending |
-| development is not checked | ProductionCredentialsGuardTest | pending |
+| short actuator password rejected | ProductionCredentialsGuardTest | passing |
+| deny-listed actuator password rejected | ProductionCredentialsGuardTest | passing |
+| empty actuator credentials rejected | ProductionCredentialsGuardTest | passing |
+| strong actuator credentials accepted | ProductionCredentialsGuardTest | passing |
+| development is not checked | ProductionCredentialsGuardTest | passing |
 
 ## Permanent documentation updated
 
