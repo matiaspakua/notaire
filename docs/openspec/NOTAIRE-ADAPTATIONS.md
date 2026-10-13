@@ -428,7 +428,7 @@ operations:
           ▼
   opsx:apply (SKILL, vendor)
   Implement (make tests pass)
-  Refactor (KIS, SRP, remove dead/duplicated code)
+  Refactor (KISS, SRP, remove dead/duplicated code)
           │
           ▼
   GATE 3 — PR-ready

@@ -15,14 +15,14 @@
 
 ## 2. Crear branch
 
-- [ ] 2.1 Fetch current `main`; this branch was created from it by the Cursor fleet (`git fetch origin main && git merge origin/main` to stay conflict-free)
-- [ ] 2.2 Work on `cursor/semver-sbom-foundation-393d` (fleet-suffix form allowed by CONSTITUTION §4); one Issue, one branch
-- [ ] 2.3 Branch name is recorded in `traceability.md`
+- [x] 2.1 Fetch current `main`; this branch was created from it by the Cursor fleet (`git fetch origin main && git merge origin/main` to stay conflict-free)
+- [x] 2.2 Work on `cursor/semver-sbom-foundation-393d` (fleet-suffix form allowed by CONSTITUTION §4); one Issue, one branch
+- [x] 2.3 Branch name is recorded in `traceability.md`
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
 - [ ] 3.1 Cases enumerated in `design.md` Testing Strategy: happy path, edge, error and auth-free for every scenario
-- [ ] 3.2 Write `workspace/tests/test_product_version_coherence.py` (`CoherentTreeTest`, `VersionDriftTest`, `TagValidationTest`, `SbomAndAssetDriftTest`, `PackagedVersionTest`, `AuthFreeWiringTest`, `ReleaseCutSimulationTest`) with a temp-tree fixture builder
+- [x] 3.2 Write `workspace/tests/test_product_version_coherence.py` (`CoherentTreeTest`, `VersionDriftTest`, `TagValidationTest`, `SbomAndAssetDriftTest`, `PackagedVersionTest`, `AuthFreeWiringTest`, `ReleaseCutSimulationTest`) with a temp-tree fixture builder
 - [ ] 3.3 Write `workspace/tests/test_release_runtime_identity.py` (`RuntimeIdentityWiringTest`, `ImageIdentityTest`)
 - [ ] 3.4 Write `workspace/tests/test_release_asset_attachment.py` (`DispatchOnTagTest`, `FailClosedAttachTest`, `DeliveryOrderingTest`, `BackfillRunbookTest`, `LegacyBackfillPolicyTest`)
 - [ ] 3.5 Write `workspace/tests/test_governance_principles.py` (`KissSpellingTest`, `BoyScoutPrincipleTest`, `DigestBudgetTest`)

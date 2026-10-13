@@ -1,6 +1,6 @@
 # ADR-028: Release and Version Identity
 
-**Status:** Proposed (Accepted when the PR for #1591 merges)  
+**Status:** Accepted (PR for #1591)  
 **Date:** 2026-10-12  
 **Deciders:** Engineering, Owner review (issue #1591 / CU76)  
 **Related:** ADR-007 (Flyway), ADR-016 (observability), ADR-026 (module separation), #1043, #1571, #1572  

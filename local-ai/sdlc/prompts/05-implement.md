@@ -10,7 +10,7 @@ Spec: `docs/openspec/changes/{{CHANGE}}/`. Group 4 of `tasks.md` is your work li
 3. Run `{{TEST_CMD}}` until green, plus the existing test classes of the code you
    changed (`grep -rl <ClassName> backend-api/src/test`). Do NOT run the full
    suite — the foreman runs it and sends you any failure.
-4. Refactor what you touched: KIS, SRP, no duplication, no dead code.
+4. Refactor what you touched: KISS, SRP, no duplication, no dead code.
 5. Tick ONLY the group 4 and 5 items of `tasks.md` that are now true — change `[ ]` to `[x]`, nothing else
    in that line, no rewording, no new items. Groups 6 and later are ticked by the foreman after its own gates
    run them: never tick them, never write results you did not produce.

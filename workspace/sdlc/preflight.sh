@@ -43,6 +43,8 @@ Local check                     CI job                          Workflow
 ------------------------------  ------------------------------  --------------------
 branch naming                   Branch Naming Convention Check   pr-validation.yml  (warn)
 sdlc plan (openspec changes)    SDLC Plan Validation             pr-validation.yml  (BLOCKING)
+product version coherence       Process Checks / CD identity      sdlc-process.yml, cd.yml (BLOCKING)
+packaged app.version            Build & Compile                   ci.yml             (BLOCKING)
 CU-API matrix validation        Process Checks                    sdlc-process.yml   (BLOCKING)
 testing inventory validation    Process Checks / local            preflight + testing/tests (#1511)
 commit messages                 Process Checks                    sdlc-process.yml   (BLOCKING)
@@ -138,6 +140,8 @@ fi
 # Engineering Constitution: every active OpenSpec change must carry a complete
 # SDLC plan (CONSTITUTION.md §5, §6). Cheap and fails fast, so it runs first.
 run "sdlc plan validation" bash workspace/sdlc/validate-sdlc-plan.sh
+
+run "product version coherence" python3 workspace/sdlc/check-product-version-coherence.py
 
 # CU ↔ API matrix must track English adapter.in.web controllers (#1064, CU76).
 # Also exercised by process-script self-tests under workspace/tests/.
@@ -252,6 +256,9 @@ fi
 section "Backend"
 # ---------------------------------------------------------------------------
 run "backend compile" mvn clean compile -DskipTests "${MVN_FLAGS[@]}"
+
+run "packaged app.version" python3 workspace/sdlc/check-product-version-coherence.py \
+    --packaged backend-api/target/classes/application.properties
 
 if [ "$MODE_FAST" = "0" ]; then
     # `mvn verify` covers Unit Tests + Integration Tests (H2) + Coverage Gate.

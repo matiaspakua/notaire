@@ -39,6 +39,18 @@
           "type": "json",
           "path": "release/product-release.json",
           "jsonpath": "$.components.frontend.version"
+        },
+        {
+          "type": "generic",
+          "path": "docker-compose.yml"
+        },
+        {
+          "type": "generic",
+          "path": "docker-compose.prod.yml"
+        },
+        {
+          "type": "generic",
+          "path": "infra/deploy/kustomize/overlays/staging/kustomization.yaml"
         }
       ]
     }

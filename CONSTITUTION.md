@@ -55,7 +55,8 @@ No change is "done" unless it has passed the full process defined here.
 | # | Principle | Meaning |
 |---|-----------|---------|
 | P1 | **TDD first** | Write failing tests before implementation. A test you never saw fail proves nothing. |
-| P2 | **KIS — Keep It Simple** | The simplest solution that satisfies the Specification and passes all tests. Reject unnecessary complexity. |
+| P2 | **KISS — Keep It Simple** | The simplest solution that satisfies the Specification and passes all tests. Reject unnecessary complexity. |
+| P11 | **Boy Scout — leave it cleaner (bounded)** | Clean up only files and functions the change already modifies, in the same PR, with tests green and no behavior change; larger cleanup, architectural moves, or cross-module changes need their own Issue; P10 (adapt, do not replace) prevails. |
 | P3 | **SRP — Single Responsibility** | Each class, method, test, and module does exactly one thing. |
 | P4 | **Traceability** | Every change traces from Issue → Use Case (Caso de Uso) → Specification → tests → code → docs → PR → deploy. Every finding raised by exploration (`docs/openspec/explore*.md`) must resolve to a real GitHub Issue before it can become a change — a finding with no Issue is unfinished triage, not a rejected one (see §4, §13). |
 | P5 | **Clean code** | Self-explanatory code; comments only explain *why*, never *what*. Remove dead and duplicate code. |
@@ -746,6 +747,7 @@ drift.
 | Frontend | `frontend-ci.yml` (TypeScript, ESLint, Vitest, Next.js build) |
 | E2E | `playwright-e2e.yml` (Playwright suite in `testing/e2e` + Bruno API suite) |
 | Local preflight | `bash workspace/sdlc/preflight.sh [--fix / --fast / --full]`; pre-push hook |
+| Product version coherence (#1591) | `python3 workspace/sdlc/check-product-version-coherence.py` (`--tag`, `--packaged`); mirrored in `preflight.sh`, `sdlc-process.yml`, `ci.yml`, and `cd.yml` `release-identity` |
 | Pre-PR pipeline gate (Gate 3) | `bash workspace/sdlc/run_pipeline.sh` — composes `validate-sdlc-plan.sh` + `python3 security/run_gates.py --profile local` + `preflight.sh --full` + markdown-lint (ratchet vs `origin/main`); writes `reports/pipeline/<timestamp>/index.html` dashboard |
 | CI/CD | `ci.yml`, `pr-validation.yml`, `sdlc-process.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `cd.yml` |
 | **Merge gate (heavy CI)** | `bash workspace/sdlc/check-heavy-ci.sh <pr>` — Integration + Coverage + Bruno + Playwright must pass; light-only green is not mergeable ([CI-MERGE-GATE.md](docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md)) |
@@ -757,10 +759,9 @@ drift.
 
 ---
 
-*Last reviewed: 2026-10-12 (shared full-lifecycle roadmap and agent coordination
-#1569; product release = backend + frontend + database schema,
-trains ≠ tags, CycloneDX product SBOM, #1571; testing MTP / inventory #1511; AI SDLC tooling map,
-issue sync, Mermaid/modules, heavy-CI merge gate, path-scoped CI #1257 /
-#1197 P0.2). This Constitution supersedes the process summary in
+*Last reviewed: 2026-10-13 (release version coherence gate, runtime identity,
+fail-closed release assets, KISS/Boy Scout principles #1591; shared full-lifecycle
+roadmap #1569; product release #1571; testing inventory #1511; path-scoped CI
+#1257). This Constitution supersedes the process summary in
 `.claude/rules/ai-agent-workflow.md` where they conflict; that document remains
 the operational implementation.*

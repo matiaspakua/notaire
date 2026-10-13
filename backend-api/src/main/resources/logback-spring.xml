@@ -7,6 +7,7 @@
     <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
     <property name="LOG_SERVICE" value="${LOG_SERVICE:-notaire-backend}"/>
     <property name="LOG_ENV" value="${ENVIRONMENT:-development}"/>
+    <springProperty scope="context" name="APP_VERSION" source="app.version"/>
 
     <!-- Spring profiles: dev, test, prod -->
     <springProfile name="dev">
@@ -47,7 +48,7 @@
                 <thread>thread</thread>
                 <version>[ignore]</version>
             </fieldNames>
-            <customFields>{"service":"${LOG_SERVICE}","environment":"${LOG_ENV}"}</customFields>
+            <customFields>{"service":"${LOG_SERVICE}","environment":"${LOG_ENV}","serviceVersion":"${APP_VERSION}"}</customFields>
         </encoder>
     </appender>
 
