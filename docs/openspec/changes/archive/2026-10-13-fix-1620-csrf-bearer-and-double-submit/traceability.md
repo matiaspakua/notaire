@@ -20,9 +20,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `fix/1620_csrf-bearer-exemption` | created |
 | Tasks | `tasks.md` | 52/69 complete (groups 10-12 are post-PR/merge) |
 | Commits | `36419e6b`, `3bee6450`, `841d1b33`, `04fc5ec5`, `bbfb96ff`, `ce73b1e3`, `481d95c7`, `ec90b565`, `5dbe1787` + this ledger commit | local (unpushed) |
-| Pull Request | pending | pending |
-| CI run | pending | pending |
-| Merge commit | pending | pending |
+| Pull Request | #1642 | merged by Owner |
+| CI run | main 38442224583 / Playwright 38442224709 | in progress at archive time |
+| Merge commit | `ab015c02` | done |
 | Release / tag | pending | pending |
 | Smoke test | pending | pending |
 
@@ -59,8 +59,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | 1 | Issue + Specification + Acceptance Criteria | yes | `openspec validate --strict` + `workspace/sdlc/validate-sdlc-plan.sh fix-1620-csrf-bearer-and-double-submit` |
 | 2 | Failing tests written, test cases designed | yes | `CsrfProtectionIntegrationTest` observed failing before each fix (3 failures with the fix reverted) |
 | 3 | Suite green, coverage held, docs updated | yes | backend suite green at HEAD; `TS-0044` 7/7; `TS-0041` and `TS-0152` green locally; docs corrected |
-| 4 | CI green, review approved, no conflicts | pending | PR |
-| 5 | Deployed, smoke test passed, Issue closed | pending | — |
+| 4 | CI green, review approved, no conflicts | yes | #1642 merged by code owner |
+| 5 | Deployed, smoke test passed, Issue closed | partial | #1620 closed; main E2E run 38442224709 is the smoke evidence |
 
 ## Exceptions
 
