@@ -19,9 +19,9 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
@@ -81,6 +81,24 @@ public class SecurityAndCorsConfig {
     private static final HttpMethod[] WRITE_METHODS = {
         HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH, HttpMethod.DELETE
     };
+
+    /**
+     * Keeps the double-submit nonce stable across authenticated requests (issue #1620).
+     *
+     * <p>Spring Security's default {@code CsrfAuthenticationStrategy} deletes the
+     * {@code XSRF-TOKEN} cookie and issues a fresh value on every authenticated
+     * request. That is a session-fixation defence for a token bound to a session;
+     * here the token is a stateless nonce that the same client echoes back, so
+     * rotating it only races the client: a response completing between the
+     * client's {@code document.cookie} read and the request being sent makes the
+     * header and the cookie disagree, and the API answers 403 on the next write.
+     * The double-submit check itself is unaffected — the nonce is never a
+     * credential and is still required to match.</p>
+     */
+    private static final SessionAuthenticationStrategy KEEP_CSRF_TOKEN_ON_AUTHENTICATION =
+            (authentication, request, response) -> {
+                // Intentionally empty: nothing to rotate for a stateless nonce.
+            };
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -182,8 +200,21 @@ public class SecurityAndCorsConfig {
      * Security filter chain for API endpoints.
      * JWT filter authenticates from Bearer or the HttpOnly session cookie (#1051).
      * Login and logout (cookie clear) are reachable without prior auth; every other
-     * /api/** request must present a valid credential. CSRF stays disabled: browsers
-     * talk same-origin via the Next proxy with SameSite=Lax cookies (see TS-0044).
+     * /api/** request must present a valid credential.
+     *
+     * <p>CSRF protection uses the double-submit cookie pattern (CU78 / #1618):
+     * the {@code XSRF-TOKEN} cookie is set on every response and the browser BFF
+     * echoes the cookie value back as the {@code X-XSRF-TOKEN} request header
+     * (see {@code frontend/src/lib/api-client.ts}). Because the header carries a
+     * value the client read from the cookie, the API chain resolves
+     * header-supplied tokens verbatim via
+     * {@link org.springframework.security.config.annotation.web.configurers.CsrfConfigurer#spa()}
+     * instead of Spring Security's XOR-masked default (regression from #1619,
+     * issue #1620).</p>
+     *
+     * <p>Bearer-token clients (Bruno, mobile, server-to-server) are exempt
+     * because they are not vulnerable to CSRF — only ambient cookie-authenticated
+     * browser flows are (issue #1620).</p>
      */
     @Bean
     @Order(2)
@@ -211,8 +242,32 @@ public class SecurityAndCorsConfig {
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .csrf(csrf -> csrf
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers("/api/v1/users/login", "/api/v1/users/logout"))
+                // Framework defaults for a single-page app (issue #1620): the
+                // non-HttpOnly XSRF-TOKEN cookie plus a request handler that resolves
+                // a header-supplied token verbatim instead of expecting the XOR mask
+                // meant for server-rendered forms (CsrfConfigurer.spa()).
+                .spa()
+                // Spring Security replaces the CSRF cookie on every authenticated
+                // request (CsrfAuthenticationStrategy). That defends a
+                // session-scoped token against fixation; this nonce is not
+                // session-scoped, so rotation only churns the cookie and races with
+                // the client's read-then-send, leaving the echoed header and the
+                // browser cookie disagreeing (403) while the dashboard fires
+                // parallel requests.
+                .sessionAuthenticationStrategy(KEEP_CSRF_TOKEN_ON_AUTHENTICATION)
+                // Exempt login/logout (session bootstrap) and Bearer-token API clients.
+                // Bearer tokens are not vulnerable to CSRF — CSRF only affects ambient
+                // cookie-authenticated browser requests. See CU78 / issues #1618, #1620.
+                .ignoringRequestMatchers(
+                    request -> {
+                        String auth = request.getHeader("Authorization");
+                        return auth != null && auth.startsWith("Bearer ");
+                    },
+                    request -> {
+                        String path = request.getRequestURI();
+                        return path.equals("/api/v1/users/login") || path.equals("/api/v1/users/logout");
+                    }
+                ))
             .addFilterAfter(new CsrfCookieFilter(), CsrfFilter.class)
             .cors(withDefaults());
         return http.build();
@@ -249,19 +304,22 @@ public class SecurityAndCorsConfig {
     }
 
     /**
-     * Materializes the deferred token so the BFF can relay the non-HttpOnly
-     * double-submit cookie without exposing the HttpOnly JWT.
+     * Materializes the deferred token before the handler writes the response so
+     * the BFF can relay the non-HttpOnly double-submit cookie without exposing
+     * the HttpOnly JWT. Materializing after the chain would rely on the response
+     * not being committed yet, which is not guaranteed for large bodies
+     * (for example the PDF downloads served by {@code apiGetBytes}).
      */
     private static final class CsrfCookieFilter extends OncePerRequestFilter {
 
         @Override
         protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                 FilterChain filterChain) throws ServletException, IOException {
-            filterChain.doFilter(request, response);
             CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
             if (csrfToken != null) {
                 csrfToken.getToken();
             }
+            filterChain.doFilter(request, response);
         }
     }
 
