@@ -143,7 +143,7 @@ public class SecurityAndCorsConfig {
             )
             .httpBasic(withDefaults())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .csrf(csrf -> csrf.disable())
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/actuator/health", "/actuator/health/**", "/actuator/info"))
             .cors(withDefaults());
         return http.build();
     }
