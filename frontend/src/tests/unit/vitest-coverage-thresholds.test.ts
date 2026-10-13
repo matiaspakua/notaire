@@ -7,14 +7,14 @@ import { describe, expect, it } from "vitest";
  * Thresholds in vitest.config.ts must stay at or above these documented
  * floors (mirrors backend JaCoCo ratchet). Lowering requires ADR/exception.
  *
- * Floors set 2026-10-03 on origin/main @ 68dc2cac after re-measure:
- * Statements 15.09% / Branches 10.52% / Functions 11.97% / Lines 15.55%.
+ * Floors raised 2026-10-13 on origin/main @ 38d5d93 (issue #1663), two points below
+ * the measurement: Statements 52.07% / Branches 48.85% / Functions 46.22% / Lines 52.39%.
  */
 export const DOCUMENTED_VITEST_COVERAGE_FLOORS = {
-  statements: 14,
-  branches: 9,
-  functions: 10,
-  lines: 14,
+  statements: 50,
+  branches: 46,
+  functions: 44,
+  lines: 50,
 } as const;
 
 function readConfiguredThresholds(): Record<keyof typeof DOCUMENTED_VITEST_COVERAGE_FLOORS, number> {
