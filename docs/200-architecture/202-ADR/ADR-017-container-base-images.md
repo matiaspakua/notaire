@@ -27,7 +27,11 @@ service images such as postgres) MUST use a minor-version tag (preferred) or
 digest (`@sha256:…`). Do not use `:latest`, major-only floats, or bare
 channel tags. Compose/infra pins live in YAML and are bumped in-repo;
 Dependabot **docker** ecosystems for `/backend-api` and `/frontend` open PRs
-when Dockerfile bases change.
+when Dockerfile bases change. The backend entry ignores
+`version-update:semver-major` for `eclipse-temurin` and `maven`: the JDK major
+is the toolchain (`jdk-toolchain` spec), so moving it is a planned change to
+`pom.xml`, CI and both images together, not a bot PR. #1615/#1616 merged JDK 27
+bases and a floating `maven:3-…` tag over red checks; #1621 reverted them.
 
 ### Backend (`backend-api/Dockerfile`)
 
