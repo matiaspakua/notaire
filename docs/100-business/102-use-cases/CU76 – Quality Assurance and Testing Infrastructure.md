@@ -113,8 +113,9 @@
   registro, Flyway, tag, los cinco assets, identidad GHCR en compose/Kustomize
   y `app.version` empaquetado. OpenTelemetry `service.version` y el campo de
   log `serviceVersion` salen del jar filtrado; CD adjunta exactamente cinco
-  assets o falla; release-please despacha `cd.yml` en el tag; backfill no
-  destructivo documentado (issue #1591; `docs/300-development/RELEASE-BACKFILL.md`).
+  assets o falla; release-please despacha `cd.yml` en el tag con `GH_REPO`
+  (sin working tree; issue #1599); backfill no destructivo documentado
+  (issue #1591; `docs/300-development/RELEASE-BACKFILL.md`).
 - [x] Higiene de repo: ignore rules permiten `requirements.txt`, `.serena/` no
   trackeado, CODEOWNERS sin `frontend-swing`, PDF de usuario fuera de blobs
   ordinarios, ADR-022 con decisión de rewrite (issue #1050).

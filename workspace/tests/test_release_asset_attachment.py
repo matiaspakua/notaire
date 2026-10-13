@@ -30,6 +30,25 @@ class DispatchOnTagTest(unittest.TestCase):
         self.assertIn("release_created", dispatch[0].get("if", ""))
         self.assertIn("gh workflow run cd.yml", dispatch[0]["run"])
 
+    def test_dispatch_names_repository_without_git_checkout(self):
+        workflow = load_workflow("release-please.yml")
+        dispatch = [
+            step
+            for step in workflow["jobs"]["release-please"]["steps"]
+            if step.get("name") == "Dispatch CD on release tag"
+        ][0]
+        env = dispatch.get("env") or {}
+        run = dispatch.get("run") or ""
+        names_repo = env.get("GH_REPO") == "${{ github.repository }}" or (
+            "${{ github.repository }}" in run
+            and ("--repo" in run or " -R " in run)
+        )
+        self.assertTrue(
+            names_repo,
+            "dispatch must set GH_REPO or pass --repo so gh does not need a git checkout",
+        )
+        self.assertIn("--ref", run)
+
     def test_cd_keeps_tag_filters(self):
         workflow = load_workflow("cd.yml")
         tags = workflow["on"]["push"]["tags"]

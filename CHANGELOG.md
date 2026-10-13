@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.1](https://github.com/matiaspakua/notaire/compare/v0.2.0...v0.2.1) (2026-10-13)
 
 
+### Fixed
+
+- **release:** CD dispatch names `GH_REPO` so a release-please tag starts delivery without a git checkout ([#1599](https://github.com/matiaspakua/notaire/issues/1599))
+
 ### Features
 
 - **reports:** CU24 index book lists recorded deeds by involved person (year, optional notary and protocol) ([#177](https://github.com/matiaspakua/notaire/issues/177))
