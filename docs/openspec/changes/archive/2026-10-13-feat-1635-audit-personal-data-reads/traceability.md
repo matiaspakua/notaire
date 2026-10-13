@@ -35,11 +35,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| single read writes one row with the id | AuditPersonalDataReadTest | pending |
-| search writes one aggregated row without the search terms | AuditPersonalDataReadTest | pending |
-| list writes one aggregated row | AuditPersonalDataReadTest | pending |
-| unannotated reads stay unaudited | AuditPersonalDataReadTest | pending |
-| person read handlers carry the annotation | AuditPersonalDataReadTest | pending |
+| single read writes one row with the id | AuditPersonalDataReadTest | passing |
+| search writes one aggregated row without the search terms | AuditPersonalDataReadTest | passing |
+| list writes one aggregated row | AuditPersonalDataReadTest | passing |
+| unannotated reads stay unaudited | AuditPersonalDataReadTest | passing |
+| person read handlers carry the annotation | AuditPersonalDataReadTest | passing |
 
 ## Permanent documentation updated
 
