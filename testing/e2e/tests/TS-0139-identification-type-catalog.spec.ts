@@ -62,7 +62,8 @@ test.describe("TS-0139 - Identification type catalog (#1361)", () => {
     await expect(dialog).toBeHidden();
     const row = rowFor(page, name);
     await expect(row).toBeVisible({ timeout: 10000 });
-    await expect(row.getByRole("cell", { name: "10", exact: true })).toBeVisible();
+    // The id column also holds a number, so the length is the last cell that matches.
+    await expect(row.getByRole("cell", { name: "10", exact: true }).last()).toBeVisible();
 
     // WHEN: the admin changes the length
     await row.getByTestId("btn-edit-identification-type").click();
@@ -71,7 +72,7 @@ test.describe("TS-0139 - Identification type catalog (#1361)", () => {
     await dialog.getByTestId("input-identification-type-characters").fill("12");
     await dialog.getByTestId("btn-save-identification-type").click();
     await expect(dialog).toBeHidden();
-    await expect(rowFor(page, name).getByRole("cell", { name: "12", exact: true })).toBeVisible({ timeout: 10000 });
+    await expect(rowFor(page, name).getByRole("cell", { name: "12", exact: true }).last()).toBeVisible({ timeout: 10000 });
 
     // WHEN: the admin deletes it
     await rowFor(page, name).getByTestId("btn-delete-identification-type").click();
