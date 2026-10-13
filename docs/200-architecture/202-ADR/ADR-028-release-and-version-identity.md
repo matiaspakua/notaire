@@ -64,10 +64,12 @@ the record, the SBOM bills and the version surfaces, but left four gaps:
    equals Maven and npm.
 8. **Delivery is started explicitly and attaches five assets or fails.**
    `release-please.yml` dispatches `cd.yml` on the tag it creates, which is the
-   event GitHub allows for the repository token. The release job fails unless
-   exactly `sbom-notaire.cdx.json`, `sbom-database.cdx.json`,
-   `sbom-backend.cdx.json`, `sbom-frontend.cdx.json` and `product-release.json`
-   are attached.
+   event GitHub allows for the repository token. The dispatch sets
+   `GH_REPO: ${{ github.repository }}` because `googleapis/release-please-action`
+   leaves no git checkout and `gh` otherwise fails (`v0.2.1`, #1599). The
+   release job fails unless exactly `sbom-notaire.cdx.json`,
+   `sbom-database.cdx.json`, `sbom-backend.cdx.json`, `sbom-frontend.cdx.json`
+   and `product-release.json` are attached.
 9. **Repair is additive.** A missing asset set is backfilled from the images
    already published for the tagged commit, with no rebuild, no tag move, no
    release edit and no overwrite. Adding the semver image tag to an existing

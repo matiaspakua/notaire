@@ -13,7 +13,7 @@ Governed by [CONSTITUTION.md](../../CONSTITUTION.md) §11 Release Rules and
 
 | Piece | Role |
 |-------|------|
-| `.github/workflows/release-please.yml` | On push to `main`, opens/updates a release PR; after that PR merges, creates the GitHub Release and `vX.Y.Z` tag, then **dispatches** `cd.yml` on that tag (`actions: write`, #1591) |
+| `.github/workflows/release-please.yml` | On push to `main`, opens/updates a release PR; after that PR merges, creates the GitHub Release and `vX.Y.Z` tag, then **dispatches** `cd.yml` on that tag (`actions: write`, `GH_REPO` so `gh` needs no git checkout, #1591 / #1599) |
 | `release-please-config.json` | Changelog path, `include-v-in-tag`, Maven/npm `extra-files` bumps |
 | `.release-please-manifest.json` | Last released version (bootstrap `0.1.0`) |
 | `.github/workflows/cd.yml` | On `v*` and legacy `notaire-v*` (and CI success on `main` / dispatch): build, SBOM, cosign sign+attest, push `ghcr.io/<org>/notaire/backend` and `…/frontend` |
@@ -105,10 +105,14 @@ the chosen tag in the PR that cuts it.
 3. Review the release PR (CHANGELOG + version bumps in `pom.xml` /
    `frontend/package.json`). Merge it through the normal required checks.
 4. release-please creates `vX.Y.Z` + GitHub Release on the following run.
-5. Tag push triggers CD → backend **and** frontend images (SHA + semver tags;
-   `latest` only on the default-branch publish path, SHA-before-latest per #1042).
+5. The same job dispatches `cd.yml` on that tag (`GH_REPO` + repository token).
+   A `GITHUB_TOKEN` tag push does **not** start `push: tags` workflows; that is
+   why `v0.2.0` shipped empty and why `v0.2.1` stayed empty until `GH_REPO` was
+   set (#1599). CD then publishes backend **and** frontend images (SHA + semver
+   tags; `latest` only on the default-branch publish path, SHA-before-latest
+   per #1042) and attaches the five assets.
 6. Smoke: GHCR packages, cosign verify/attest, CHANGELOG section, Maven/npm =
-   `X.Y.Z`.
+   `X.Y.Z`, GitHub Release lists exactly five assets.
 
 ## Frontend image notes
 
