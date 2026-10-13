@@ -81,7 +81,7 @@ those scripts. Details: `docs/300-development/304-ai-sdlc-cloud/ENVIRONMENT-CHEC
 - `@.claude/skills/ai-agent-workflow/SKILL.md`
 - `@.claude/skills/devsecops-traceability/SKILL.md`
 - `@.claude/skills/ci-cd-quality-gates/SKILL.md`
-- `@.claude/skills/openspec-archive-change/SKILL.md` (after Gate 5)
+- `@.claude/skills/openspec-archive-change/SKILL.md` (in the implementing PR, before merge — #1623)
 
 ## Loop (one issue at a time)
 
@@ -89,7 +89,7 @@ those scripts. Details: `docs/300-development/304-ai-sdlc-cloud/ENVIRONMENT-CHEC
 pick → triage brief → OpenSpec Gate 1 → branch + in-progress
   → dispatch tests (red) → dispatch implement → docs
   → preflight → PR → CI watch → code-review (+ security if needed)
-  → merge → health smoke → close → archive → next
+  → archive in the PR → merge → health smoke → close → next
 ```
 
 ### Mechanical gates (trust exit codes, not prose)
@@ -142,7 +142,7 @@ Retry the same phase with `prior_gate_log` attached (max 2–3 attempts) then es
 - Serialize Playwright-heavy PRs; draft Dependabot floods when runners starve.
 - If a cloud worker’s `gh` returns 401, the **coordinator** (or a same-VM worker
   with working `gh`) owns `gh pr ready` / squash-merge after heavy-gate exit 0.
-- After merge: archive OpenSpec change when the issue is closed; ensure board
+- Before merge: the PR archives its OpenSpec change (#1623). After merge: ensure board
   Status is **Done** and WIP labels (`in-progress`, `blocked`) are cleared.
   Before merge/close and during board hygiene run
   `python3 workspace/sdlc/check-board-status-label-coherence.py --scope pr`

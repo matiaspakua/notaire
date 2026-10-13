@@ -70,9 +70,10 @@ Local mirror before push: [`CI-PREFLIGHT.md`](../CI-PREFLIGHT.md)
 
 Heavy CI green is not enough if the PR leaves OpenSpec lifecycle drift:
 
-- A shipped change whose GitHub Issue is **CLOSED** must not remain under
-  `docs/openspec/changes/<name>/` — archive it (`openspec archive`, syncing
-  delta specs when present).
+- **Archive in the PR (#1623):** a PR that adds or edits an active change must
+  archive it before merge (`cd docs && openspec archive <name> --yes`), unless
+  the change sets `multi_pr: true`. Another change's closed-issue leftover only
+  warns on a PR; `main` and the daily Main Health run fail on it (#1622).
 - A PR that touches an active change must have implementation task groups
   **3–8** checked in that change’s `tasks.md` (groups 1–2 and 9–12 may stay
   open until after merge), unless the PR carries `sdlc-exception`.

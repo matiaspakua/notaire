@@ -24,6 +24,7 @@ CONSTITUTION §10.
 | 18 PR | Title `[#<n>] <type>: <description>`, body from `.github/PULL_REQUEST_TEMPLATE.md` | `gh pr create`; then `gh pr view <n> --json mergeable,mergeStateStatus` must be `MERGEABLE` |
 | 19 CI green | Fix red CI before asking for review | `bash workspace/sdlc/preflight.sh` mirrors CI locally |
 | 20–21 Review + merge (**Gate 4**) | Foreman merge rule (CONSTITUTION §5 step 21): the Foreman merges a Worker PR when every required check is green and heavy CI passes; the Owner merges Constitution, `sdlc-exception` and harness PRs; Workers never merge | `bash workspace/sdlc/check-heavy-ci.sh <pr>` exit 0, then `gh pr merge` |
+| 18 Archive in the PR | Archive the implemented OpenSpec change before merge (`multi_pr: true` if later PRs continue it); the checker fails otherwise | `cd docs && openspec archive <change> --yes` |
 | 22–24 Deploy, smoke test, close (**Gate 5**) | The Issue closes after merge, deploy and smoke test — not when the PR is opened | `cd.yml` |
 
 ## Before pushing
