@@ -31,8 +31,8 @@
 ## Entrada en la UI (Next.js)
 
 Los reportes (índices, DDJJ, etc.) se alcanzan desde **Reportes** en la
-barra lateral / inicio (`/dashboard/reports`) y desde **Protocolo**
-(`/dashboard/protocol`) — issue #1058 / #177.
+navegación primaria (`/dashboard/reportes`; live `/dashboard/reports`) y
+desde **Protocolo** (`/dashboard/protocol`) — issue #1058 / #177.
 
 `GET /api/v1/reports/index-book` requiere `year`. `idNotary` y `idFolioType`
 son filtros opcionales para el registro y el tipo de protocolo. Un período

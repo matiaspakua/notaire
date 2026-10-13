@@ -15,7 +15,7 @@ export function extractPdfText(bytes: Buffer): string {
   const literals = [...ascii.matchAll(/\((?:\\.|[^\\)]){2,}\)/g)].map((match) =>
     match[0].slice(1, -1).replace(/\\(.)/g, "$1"),
   );
-  const runs = ascii.match(/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9][A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9 .\/,_-]{2,}/g) ?? [];
+  const runs = ascii.match(/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9][A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9 .,/_-]{2,}/g) ?? [];
   return `${literals.join(" ")}\n${runs.join(" ")}`;
 }
 

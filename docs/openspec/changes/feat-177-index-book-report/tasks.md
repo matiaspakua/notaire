@@ -30,11 +30,11 @@
 ## 6. Ejecutar regresión
 
 - [x] 6.1 Targeted backend and frontend tests green
-- [ ] 6.2 Pipeline / preflight as far as the environment allows
+- [x] 6.2 Pipeline / preflight as far as the environment allows
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 CU24 seed + download + `%PDF-` + extracted text
+- [x] 7.1 CU24 seed + download + `%PDF-` + extracted text
 
 ## 8. Gate 3 — Documentación permanente
 
