@@ -4,7 +4,7 @@
 
 Submitted document create/update requests are validated before anything is stored.
 
-## MODIFIED Requirements
+## ADDED Requirements
 
 ### Requirement: Submitted document request validation
 
