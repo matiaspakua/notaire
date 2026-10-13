@@ -9,7 +9,7 @@
 - [x] 1.2 Use Case documentation exists and is accurate — create or update it first if not
 - [x] 1.3 Acceptance Criteria defined as scenarios in the delta spec
 - [x] 1.4 Impact Analysis and affected modules confirmed in `proposal.md`
-- [x] 1.5 ADR recorded under `docs/200-architecture/202-ADR/` if the change is architectural — n/a: restores ADR-017; no new architecture
+- [x] 1.5 ADR recorded under `docs/200-architecture/202-ADR/` if the change is architectural — Constitution amendment instead of ADR (allowed by #1624)
 - [x] 1.6 Move the Issue to IN PROGRESS (`gh issue edit <n> --add-label "in-progress"`)
 
 ## 2. Crear branch
@@ -22,15 +22,15 @@
 
 - [x] 3.1 Enumerate test cases: happy path, edge cases, error paths
 - [x] 3.2 Write the unit tests for every scenario in the delta spec
-- [x] 3.3 Write the integration tests where applicable — n/a: config-only change, no integration surface
-- [x] 3.4 Run them and **observe them fail** — `mvn test -pl backend-api -Dtest=<NewTestClass>` — `python3 -m unittest security.tests.test_image_pins_and_dependabot` (6 failures) and `workspace/tests` (1 failure) before the change
+- [x] 3.3 Write the integration tests where applicable — n/a: docs + one harness line
+- [x] 3.4 Run them and **observe them fail** — `mvn test -pl backend-api -Dtest=<NewTestClass>` — `test_merge_authority.py`: 8 failures + 1 error before
 - [x] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
 
 ## 4. Implementación
 
-- [x] 4.1 Restore `maven:3.10.0-eclipse-temurin-26-alpine` / `eclipse-temurin:26.0.2.1_1-jre-alpine` in `backend-api/Dockerfile` and `Dockerfile.slim`
-- [x] 4.2 Set every Dependabot `commit-message.prefix: "deps"` to `"build"`
-- [x] 4.3 Ignore `version-update:semver-major` for `eclipse-temurin` and `maven` on the `/backend-api` docker entry
+- [x] 4.1 Amend CONSTITUTION (§5 steps 20–21 Foreman merge rule, Gate 4, §9, §10, §12)
+- [x] 4.2 Align agent card, `ai-agent-workflow.md`, `cloud-foreman.md`, `CI-MERGE-GATE.md`
+- [x] 4.3 `foreman.sh` `merge_and_close` runs `check-heavy-ci.sh` before `gh pr merge`
 
 ## 5. Actualizar tests existentes
 
@@ -40,27 +40,27 @@
 
 ## 6. Ejecutar regresión
 
-- [x] 6.1 `mvn test -pl backend-api` — unit + integration — n/a: no Java change; CI backend job still runs
-- [x] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor — n/a: no Java change
-- [x] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs) — n/a: no Java change
-- [x] 6.4 `bash testing/scripts/test.sh` — HTTP/Bruno API suite — n/a: no API change
+- [x] 6.1 `mvn test -pl backend-api` — unit + integration — n/a: no Java change
+- [x] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor — n/a
+- [x] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs) — n/a
+- [x] 6.4 `bash integration-test/scripts/test.sh` — HTTP/Bruno API suite — n/a: no API change
 - [x] 6.5 No `@Disabled` or skipped tests without documented, approved justification
 
 ## 7. Ejecutar Playwright
 
 - [x] 7.1 Add/update the E2E specs listed in design.md — Playwright Strategy — n/a: no UI surface
-- [x] 7.2 `cd testing/e2e && npx playwright test` — all green — n/a locally (no UI); the PR Playwright run boots the JDK 26 backend image
-- [x] 7.3 Verify the affected screens at 320px, 768px and 1024px — n/a: no screens
-- [x] 7.4 If the change has no UI surface, record "n/a — no UI surface" here with the reason — n/a — no UI surface (Dockerfile/Dependabot config only)
+- [x] 7.2 `cd testing/e2e && npx playwright test` — all green — n/a: no UI surface
+- [x] 7.3 Verify the affected screens at 320px, 768px and 1024px — n/a
+- [x] 7.4 If the change has no UI surface, record "n/a — no UI surface" here with the reason — n/a — no UI surface (governance docs + harness)
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
 - [x] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
-- [x] 8.2 Update OpenAPI/Swagger annotations if endpoints changed, and verify in Swagger UI — n/a: no endpoints
+- [x] 8.2 Update OpenAPI/Swagger annotations if endpoints changed, and verify in Swagger UI — n/a
 - [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes — n/a: not user visible
 - [x] 8.4 Archive superseded documents into `docs/000-archive/` — n/a: nothing superseded
 - [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
-- [x] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate — 28 passed; the only failures are repo-wide and pre-existing (32 shipped changes not archived, #1623)
+- [x] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate — see traceability Gate 3
 
 ## 9. Commits atómicos
 
