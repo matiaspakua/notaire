@@ -5,7 +5,9 @@
 Ensure Dependabot version updates cover the frontend npm tree and Docker
 Dockerfiles so image and JS dependency bumps arrive as PRs, not only Maven and
 GitHub Actions. Source: #1045; CU78.
+
 ## Requirements
+
 ### Requirement: Dependabot covers npm under frontend
 
 The repository Dependabot configuration MUST include a `package-ecosystem`
@@ -66,3 +68,20 @@ The `/backend-api` docker ecosystem MUST ignore `version-update:semver-major` fo
 - **WHEN** the docker ecosystem entry with `directory: "/backend-api"` is read
 - **THEN** its `ignore` list holds `eclipse-temurin` and `maven`, each with `version-update:semver-major` in `update-types`
 
+### Requirement: Dependabot ignores every maven builder update
+
+The `/backend-api` docker ecosystem MUST ignore all updates of the `maven` image (no `update-types` restriction), because Dependabot cannot read its `<maven>-eclipse-temurin-<jdk>` tag as semver, so a semver-major rule cannot keep the JDK fixed.
+
+#### Scenario: maven ignore has no update-type filter
+
+- **WHEN** the `ignore` list of the `/backend-api` docker entry is read
+- **THEN** it holds a `maven` rule without `update-types`
+
+### Requirement: npm minor and patch updates arrive as one PR
+
+The `/frontend` npm ecosystem MUST group all minor and patch updates into a single Dependabot PR, leaving major updates as separate PRs, so strict required checks do not force one rebase and full CI run per package.
+
+#### Scenario: frontend npm group covers minor and patch only
+
+- **WHEN** the `groups` of the `/frontend` npm entry are read
+- **THEN** one group matches pattern `*` with update types `minor` and `patch`, and not `major`
