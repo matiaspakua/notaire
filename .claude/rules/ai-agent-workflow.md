@@ -23,7 +23,7 @@ CONSTITUTION §10.
 | 17.5 Pipeline | Must exit 0 before the PR. Includes the security case catalog | `bash workspace/sdlc/run_pipeline.sh` (`python3 security/run_gates.py --profile local`) |
 | 18 PR | Title `[#<n>] <type>: <description>`, body from `.github/PULL_REQUEST_TEMPLATE.md` | `gh pr create`; then `gh pr view <n> --json mergeable,mergeStateStatus` must be `MERGEABLE` |
 | 19 CI green | Fix red CI before asking for review | `bash workspace/sdlc/preflight.sh` mirrors CI locally |
-| 20–21 Review + merge (**Gate 4**) | The Owner reviews and merges; agents never merge on their own authority | — |
+| 20–21 Review + merge (**Gate 4**) | Foreman merge rule (CONSTITUTION §5 step 21): the Foreman merges a Worker PR when every required check is green and heavy CI passes; the Owner merges Constitution, `sdlc-exception` and harness PRs; Workers never merge | `bash workspace/sdlc/check-heavy-ci.sh <pr>` exit 0, then `gh pr merge` |
 | 22–24 Deploy, smoke test, close (**Gate 5**) | The Issue closes after merge, deploy and smoke test — not when the PR is opened | `cd.yml` |
 
 ## Before pushing
@@ -47,7 +47,7 @@ These run in `sdlc-process.yml` on every PR and in `workspace/sdlc/preflight.sh`
 
 - ❌ Change code without an Issue, a Use Case and an OpenSpec change
 - ❌ Write production code before its failing test
-- ❌ Commit to or push to `main`; merge your own PR
+- ❌ Commit to or push to `main`; merge your own PR (Workers) or merge outside the Foreman merge rule (Foreman)
 - ❌ Commit failing tests, `@Disabled` tests without approval, or secrets
 - ❌ Leave dead code, duplicate code or outdated docs
 
