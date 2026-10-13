@@ -6,7 +6,7 @@ percentage.
 
 | ID | Risk | Control | Verification | Gap |
 |----|------|---------|--------------|-----|
-| A01 Broken access control | `ROLE_ADMIN` on admin paths and admin writes. Frontend admin routes redirect | `SecurityAndCorsConfig`, Playwright TS-0094 | Object-level IDOR (SR-11). `Escribano` is admin (SR-16) |
+| A01 Broken access control | `ROLE_ADMIN` on admin paths and admin writes. Frontend admin routes redirect | `SecurityAndCorsConfig`, Playwright TS-0094 | Object-level IDOR (SR-11). A notary is not an administrator (`ROLE_NOTARY`, SR-16 mitigated by #1638) |
 | A02 Cryptographic failures | BCrypt cost 12. TLS required in production by policy. JWT signed | `PasswordEncoderUtil`, #254 still open for the certificate guide | TLS material is an operator task |
 | A03 Injection | JPA parameters. Input validation strategy | [SQL-INJECTION-PREVENTION.md](SQL-INJECTION-PREVENTION.md), [INPUT-VALIDATION-STRATEGY.md](INPUT-VALIDATION-STRATEGY.md) | None known in Java query construction |
 | A04 Insecure design | STRIDE + LINDDUN models, `SR-*` register, Sec by Design program | This folder | Read audit and shared lockout still open |

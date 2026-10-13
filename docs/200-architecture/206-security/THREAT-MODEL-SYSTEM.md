@@ -43,7 +43,7 @@ already in the tree. No exploitation procedure is specified here.
 | AT-6 | Denial of service | Availability | Login lockout only | Open (SR-05, SR-15, #280) |
 | AT-7 | Dependency or image compromise | Tampering | Dependabot, Trivy, image pins, cosign | Partial (SR-13) |
 | AT-8 | Secret in git | Disclosure | This change's scanner; GitHub secret scanning is an admin setting | Partial (SR-14) |
-| AT-9 | Role conflation | Elevation | `Escribano` receives `ROLE_ADMIN` | Open (SR-16) |
+| AT-9 | Role conflation | Elevation | `Escribano` receives `ROLE_NOTARY`, not `ROLE_ADMIN` | Mitigated (SR-16, #1638) |
 
 ## STRIDE
 
@@ -54,7 +54,7 @@ already in the tree. No exploitation procedure is specified here.
 | SR-13 | Build | CI → registry | Vulnerable dependency or base image is published | High | Medium | Trivy report, Dependabot, pinned images, cosign SBOM | `security/tests/test_image_pins_and_dependabot.py` | Partial — Trivy does not fail CI |
 | SR-14 | Repository | Developer → git | Private key or token committed | High | Low | `python3 security/scan_secrets.py` fails the security job | `security/tests/test_security_policy.py` | Partial — push protection is outside git |
 | SR-15 | API availability | Internet → API | Expensive endpoints are called without a quota | Medium | Medium | No general limiter. Login lockout is SR-05 | Issue #280 | Open |
-| SR-16 | Admin capability | API | A user whose type is Escribano is granted `ROLE_ADMIN`, including user, role, and audit-log administration | High | Medium | Documented behavior of `UserAuthorityResolver` | Code review of `ADMINISTRATOR_TYPES` | Open — product decision, not an accident to "fix" silently |
+| SR-16 | Admin capability | API | A user whose type is Escribano was granted `ROLE_ADMIN`, including user, role, and audit-log administration | High | Medium | `UserAuthorityResolver` maps Escribano to `ROLE_NOTARY`; Flyway V49 promotes the seeded `admin`; other former administrators stored as Escribano must be promoted by `admin` | `UserAuthorityResolverTest`, `RbacIntegrationTest` (notary 403), `80_roles.sql` | Mitigated (#1638) |
 
 `SR-06` in the auth model is **Partial**, not open: `hasRole(ADMIN)` is
 enforced for the paths listed in the
