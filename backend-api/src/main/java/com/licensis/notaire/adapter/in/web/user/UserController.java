@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpHeaders;
@@ -204,7 +205,7 @@ public class UserController {
 })
     @PostMapping("/login")
     @Operation(summary = "Authenticate user")
-    public ResponseEntity<?> login(@RequestBody DtoUser loginRequest) {
+    public ResponseEntity<?> login(@RequestBody DtoUser loginRequest, HttpServletResponse httpResponse) {
         try {
             if (loginAttemptService.isLocked(loginRequest.getName())) {
                 log.warn("Login locked for '{}': too many failed attempts.", loginRequest.getName());
@@ -268,9 +269,11 @@ public class UserController {
                                 response.put("person", personMap);
                             }
                             ResponseCookie sessionCookie = authCookieService.createSessionCookie(jwt);
-                            return ResponseEntity.ok()
-                                    .header(HttpHeaders.SET_COOKIE, sessionCookie.toString())
-                                    .body(response);
+                            // addHeader, not the ResponseEntity header map: entity headers are
+                            // applied with set semantics and would drop the XSRF-TOKEN cookie
+                            // written by the security chain (issue #1620).
+                            httpResponse.addHeader(HttpHeaders.SET_COOKIE, sessionCookie.toString());
+                            return ResponseEntity.ok().body(response);
                         } else {
                             log.warn("Login failed for '{}': inactive user", user.getName());
                             metricsUtil.incrementCounter("login", "inactive");
@@ -307,14 +310,15 @@ public class UserController {
             description = "Revokes on the server the JWT sent by Bearer or cookie, so it cannot "
                     + "be reused even if it has not expired; the user's other sessions remain active. "
                     + "A missing or invalid token gets the same response (issue #676).")
-    public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request, HttpServletResponse httpResponse) {
         tokenRevocationService.revoke(RequestTokenResolver.resolve(request, authCookieService.cookieName()));
         ResponseCookie cleared = authCookieService.clearSessionCookie();
         Map<String, Object> body = new HashMap<>();
         body.put("ok", true);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cleared.toString())
-                .body(body);
+        // Same add-header rule as login: the entity header map would replace the
+        // XSRF-TOKEN cookie set by the security chain (issue #1620).
+        httpResponse.addHeader(HttpHeaders.SET_COOKIE, cleared.toString());
+        return ResponseEntity.ok().body(body);
     }
 
     private Map<String, Object> invalidLoginResponse() {

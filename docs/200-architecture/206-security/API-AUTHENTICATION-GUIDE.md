@@ -134,7 +134,7 @@ The `Role` entity is stored in the `roles` table. `UserController` exposes the r
 
 ### Current state
 
-`apiSecurityFilterChain` allows `POST /api/v1/users/login`, `POST /api/v1/users/logout` and CORS preflight (`OPTIONS`) without credentials and requires an authenticated user for everything else. A request without a valid cookie or Bearer token gets `401` before reaching a controller. CSRF stays disabled; browser traffic is same-origin via the Next proxy with SameSite=Lax cookies.
+`apiSecurityFilterChain` allows `POST /api/v1/users/login`, `POST /api/v1/users/logout` and CORS preflight (`OPTIONS`) without credentials and requires an authenticated user for everything else. A request without a valid cookie or Bearer token gets `401` before reaching a controller. CSRF protection is enabled with the double-submit cookie pattern (CU78 / #1618): every response issues a script-readable `XSRF-TOKEN` cookie that unsafe requests must echo in the `X-XSRF-TOKEN` header, and the nonce stays stable while the session is unchanged. Login/logout and Bearer-token clients are exempt (#1620); browser traffic is same-origin via the Next proxy with SameSite=Lax cookies.
 
 Authorization (#559): `JwtAuthenticationFilter` asks `UserAuthorityResolver` for the authority of the token's user on every request. Active users of type Administrador, Admin or Escribano (case-insensitive) get `ROLE_ADMIN`; other active users get `ROLE_USER`; a deleted or inactive user is not authenticated and gets `401`.
 
