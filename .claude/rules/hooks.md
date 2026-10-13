@@ -12,7 +12,7 @@ describes the hooks and why they exist — it does not duplicate the process.
 
 | Hook | Event | Script | Purpose |
 |------|-------|--------|---------|
-| OpenSpec status | `SessionStart` | `.claude/hooks/session-start-openspec-status.sh` | Prints in-flight `openspec` change status at the start of every session so the agent has awareness of active work without relying on memory. Informational only — never blocks session start. |
+| OpenSpec status | `SessionStart` | `.claude/hooks/session-start-openspec-status.sh` | Prints in-flight `openspec` change status and lists local branches with commits that were never pushed (no upstream; #1647), so finished work cannot sit invisible while its issue blocks a lane. Informational only — never blocks session start. |
 | Block push to main | `PreToolUse` (matcher: `Bash`) | `.claude/hooks/block-push-to-main.sh` | Detects a `git push` whose resolved target branch is `main`/`master` and denies the tool call (exit 2) with a message pointing at the PR workflow. |
 
 ## Why the push guard exists
