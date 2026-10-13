@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.exception.BusinessValidationException;
@@ -128,7 +129,9 @@ public class AuditRecordService {
                 .toList();
     }
 
-    @Transactional
+    // REQUIRES_NEW: Person reads run in a read-only transaction, and PostgreSQL refuses the audit INSERT there
+    // (H2 does not), which turned every audited read into a 500 (#1635).
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public AuditRecord save(AuditRecord auditRecord) {
         logger.debug("Saving AuditRecord: {}", auditRecord);
         return repository.save(auditRecord);
