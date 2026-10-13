@@ -32,7 +32,7 @@ This file is the process.
 | Security from design | [threat model](../200-architecture/206-security/THREAT-MODEL-AUTH-AUDIT.md), `SR-01`… |
 | Design to operate, and operate to design | [DEPLOYMENT-PLAN.md](DEPLOYMENT-PLAN.md), [monitoring](../200-architecture/207-monitoring/README.md) |
 | Pipeline with a feedback loop | §6 |
-| KIS: do not build a maze of folders | `100` / `200` / `300` stay |
+| KISS: do not build a maze of folders | `100` / `200` / `300` stay |
 
 ## 2. Identification
 

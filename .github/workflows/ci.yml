@@ -135,6 +135,11 @@ jobs:
       - name: Build with Maven (skip tests)
         run: mvn clean compile -DskipTests -q
 
+      - name: Packaged app.version coherence
+        run: |
+          python3 workspace/sdlc/check-product-version-coherence.py \
+            --packaged backend-api/target/classes/application.properties
+
       - name: Validate project structure
         run: |
           echo "=== Project Modules ==="

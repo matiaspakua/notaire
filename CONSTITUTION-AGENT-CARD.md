@@ -15,9 +15,10 @@
    heavy CI via `check-heavy-ci.sh` before merge.
 6. **Flyway** is schema source of truth; never edit applied migrations.
 7. **Docs are part of Done**; no secrets in git; design-system tokens on frontend.
-8. **Path-scoped CI (#1257)**: docs-only PRs skip Java/E2E leaves; aggregators accept `skipped`;
+8. **KISS** and bounded **Boy Scout** (CONSTITUTION §2 P2/P11): simplest fix; clean only what you touch in the same PR.
+9. **Path-scoped CI (#1257)**: docs-only PRs skip Java/E2E leaves; aggregators accept `skipped`;
    `main` always full suite.
-9. **Board coherence (#1550)**: CLOSED⇒Done+no WIP labels; OPEN WIP⇒In Progress+`in-progress`;
+10. **Board coherence (#1550)**: CLOSED⇒Done+no WIP labels; OPEN WIP⇒In Progress+`in-progress`;
    blocked⇒`blocked` label (no Blocked column). Validate:
    `python3 workspace/sdlc/check-board-status-label-coherence.py` (skips without `gh` auth).
 

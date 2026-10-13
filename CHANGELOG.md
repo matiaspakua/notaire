@@ -38,6 +38,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Release foundation (#1591, CU76):** blocking `check-product-version-coherence.py`
+  gate in preflight, `sdlc-process.yml`, `ci.yml`, and `cd.yml` `release-identity`;
+  OpenTelemetry `service.version` and log `serviceVersion` from packaged `app.version`;
+  semver GHCR image lines in Compose/Kustomize; fail-closed five-asset release attach;
+  `release-please` dispatches `cd.yml` on tag; [`RELEASE-BACKFILL.md`](docs/300-development/RELEASE-BACKFILL.md) runbook.
+
+### Changed
+
+- **Governance:** Constitution P2 spelling **KISS**; new bounded **Boy Scout** P11; tooling-map row for the coherence gate.
+
 ### Breaking
 
 - **English HTTP paths, dashboard routes, and remaining schema names** (#1490, CU75):

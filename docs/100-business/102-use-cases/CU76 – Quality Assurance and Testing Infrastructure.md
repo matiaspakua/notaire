@@ -106,6 +106,14 @@
   Los hitos son trenes, no tags (issue #1571;
   `docs/300-development/305-project-management/RELEASES.md`,
   `docs/300-development/SBOM.md`).
+- [x] La identidad de release es **bloqueante** y sin credenciales: el gate
+  `python3 workspace/sdlc/check-product-version-coherence.py` corre en
+  `preflight.sh`, CI y CD (`release-identity`); valida Maven/npm/manifest,
+  registro, Flyway, tag, los cinco assets, identidad GHCR en compose/Kustomize
+  y `app.version` empaquetado. OpenTelemetry `service.version` y el campo de
+  log `serviceVersion` salen del jar filtrado; CD adjunta exactamente cinco
+  assets o falla; release-please despacha `cd.yml` en el tag; backfill no
+  destructivo documentado (issue #1591; `docs/300-development/RELEASE-BACKFILL.md`).
 - [x] Higiene de repo: ignore rules permiten `requirements.txt`, `.serena/` no
   trackeado, CODEOWNERS sin `frontend-swing`, PDF de usuario fuera de blobs
   ordinarios, ADR-022 con decisión de rewrite (issue #1050).

@@ -17,6 +17,7 @@ Run with: python3 infra/tests/test_staging_kustomize.py
 """
 from __future__ import annotations
 
+import json
 import os
 import re
 import shutil
@@ -314,15 +315,35 @@ class StagingKustomizeTest(unittest.TestCase):
                 images[name] = containers[0].get("image", "")
         self.assertIn("ghcr.io/", images.get("backend", ""), images)
         self.assertIn("ghcr.io/", images.get("frontend", ""), images)
-        # SHA-style tag (full sha, short sha, or sha-<hex>) — not a mutable floating tag alone
+        manifest_path = os.path.join(REPO_ROOT, ".release-please-manifest.json")
+        with open(manifest_path, encoding="utf-8") as handle:
+            product_version = json.load(handle)["."]
+        semver = re.compile(r"^\d+\.\d+\.\d+$")
         for component in ("backend", "frontend"):
             image = images[component]
             tag = image.rsplit(":", 1)[-1] if ":" in image else ""
-            self.assertTrue(
-                re.fullmatch(r"(sha-[0-9a-f]{7,40}|[0-9a-f]{7,40})", tag)
-                or "PLACEHOLDER" in tag.upper(),
-                f"{component} image must use a GHCR SHA tag or explicit PLACEHOLDER, got: {image}",
+            self.assertRegex(
+                tag,
+                semver,
+                f"{component} image must use the released semver tag, got: {image}",
             )
+            self.assertEqual(
+                tag,
+                product_version,
+                f"{component} image tag must equal the product version {product_version}",
+            )
+        for deployment in resources_by_kind(docs, "Deployment"):
+            labels = (
+                ((deployment.get("spec") or {}).get("template") or {})
+                .get("metadata", {})
+                .get("labels", {})
+            )
+            if app_label(deployment) in ("backend", "frontend"):
+                self.assertEqual(
+                    labels.get("app.kubernetes.io/version"),
+                    product_version,
+                    deployment,
+                )
 
     def test_no_pgadmin_resources(self):
         docs = kustomize_build(STAGING_DIR)

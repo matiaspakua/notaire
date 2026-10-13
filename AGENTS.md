@@ -8,6 +8,9 @@ Single entry point for coding agents. `CLAUDE.md` imports this file.
 Always-loaded digest: [`CONSTITUTION-AGENT-CARD.md`](CONSTITUTION-AGENT-CARD.md).  
 Load the full Constitution when deciding gates, exceptions, or DoD.
 
+**Principles (CONSTITUTION §2):** KISS — Keep It Simple; bounded Boy Scout — leave
+touched code cleaner in the same PR without behavior change (see full Constitution).
+
 ## Mandatory workflow (load on change)
 
 Before any code change:

@@ -27,6 +27,7 @@ services:
     build:
       context: .
       dockerfile: backend-api/Dockerfile
+    image: ghcr.io/matiaspakua/notaire/backend:0.2.0 # x-release-please-version
     container_name: ${NOTAIRE_BACKEND_CONTAINER_NAME:-notary-backend}
     restart: unless-stopped
     deploy:
@@ -110,6 +111,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    image: ghcr.io/matiaspakua/notaire/frontend:0.2.0 # x-release-please-version
     container_name: ${NOTAIRE_FRONTEND_CONTAINER_NAME:-notaire-frontend}
     restart: unless-stopped
     ports:
