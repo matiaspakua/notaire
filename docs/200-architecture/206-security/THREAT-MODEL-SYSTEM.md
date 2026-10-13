@@ -73,7 +73,7 @@ remaining object-level gap that `SR-06` used to describe too broadly.
 | LD-6 | Detectability of abuse | Login failures | `notaire_operation_total` and Grafana | [MONITORING.md](MONITORING.md) | Partial — read access is not a metric |
 
 Non-repudiation of writes stays `SR-07` (mitigated); `SR-08` (`Person` reads) is
-mitigated by #1635 and `SR-09` is open in the auth and audit model.
+mitigated by #1635 and `SR-09` by #1636 in the auth and audit model.
 
 ## Assumptions
 

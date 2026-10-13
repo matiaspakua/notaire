@@ -13,7 +13,7 @@ percentage.
 | A05 Security misconfiguration | Prod compose without public DB or pgAdmin. Swagger denied in production. Security headers | image-pin tests, TS-0044, #1044, #671 | Actuator basic auth: `ProductionCredentialsGuard` refuses empty, <16-character, deny-listed or `change-me` passwords in production (#1639, ADR-019) |
 | A06 Vulnerable components | Dependabot, Trivy, image digests/pins, patched floors | `security/tests/`, `PatchedDependencyFloorTest` | Trivy is report-only (SR-13) |
 | A07 Identification and authentication failures | Lockout, generic login errors, HttpOnly session, logout revocation | `LoginAttemptServiceTest`, auth guide | Lockout is per JVM (SR-01). No MFA (not claimed) |
-| A08 Software and data integrity | cosign, CycloneDX SBOM, secret scan, protected `main` | `cd.yml`, `scan_secrets.py`, ruleset | Audit table is not append-only (SR-09) |
+| A08 Software and data integrity | cosign, CycloneDX SBOM, secret scan, protected `main` | `cd.yml`, `scan_secrets.py`, ruleset | Audit table is append-only through a trigger and REVOKE (V47, #1636, SR-09); no hash chain against a superuser |
 | A09 Logging and alerting failures | Audit aspect for writes and for `Person` reads (`@AuditPersonalDataRead`, #1635). Login metrics. Security dashboard | [MONITORING.md](MONITORING.md) | Reads of entities other than `Person` are not audited until they opt in |
 | A10 SSRF | No outbound HTTP client found in the API | Threat-model assumption | Re-check when an integration fetches a user-supplied URL |
 
