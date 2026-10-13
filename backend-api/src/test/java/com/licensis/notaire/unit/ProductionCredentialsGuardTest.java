@@ -14,7 +14,7 @@ class ProductionCredentialsGuardTest {
     private static final String SAFE_DATASOURCE_USERNAME = "notaire_app";
     private static final String SAFE_DATASOURCE_PASSWORD = "s3cur3-pass";
     private static final String SAFE_ACTUATOR_USERNAME = "custom-actuator";
-    private static final String SAFE_ACTUATOR_PASSWORD = "s3cur3-pass2";
+    private static final String SAFE_ACTUATOR_PASSWORD = "s3cur3-actuator-pass2";
     private static final String SAFE_ADMIN_USERNAME = "custom-admin";
     private static final String SAFE_ADMIN_PASSWORD = "s3cur3-pass3";
     private static final String SAFE_PGADMIN_PASSWORD = "s3cur3-pass4";
@@ -205,5 +205,74 @@ class ProductionCredentialsGuardTest {
                 SAFE_ACTUATOR_USERNAME, SAFE_ACTUATOR_PASSWORD, SAFE_ADMIN_USERNAME, SAFE_ADMIN_PASSWORD);
 
         assertThatThrownBy(guard::validateCredentials).isInstanceOf(IllegalStateException.class);
+    }
+
+    private ProductionCredentialsGuard guardWithActuator(String environment, String username, String password) {
+        return guardWith(environment, SAFE_DATASOURCE_USERNAME, SAFE_DATASOURCE_PASSWORD, username, password,
+                SAFE_ADMIN_USERNAME, SAFE_ADMIN_PASSWORD);
+    }
+
+    @Test
+    @DisplayName("Should reject actuator password shorter than 16 characters in production (issue #1639)")
+    void shouldRejectShortActuatorPasswordInProduction() {
+        ProductionCredentialsGuard guard = guardWithActuator("production", SAFE_ACTUATOR_USERNAME, "short-pass-15chr");
+
+        assertThatCode(guard::validateCredentials).doesNotThrowAnyException();
+
+        ProductionCredentialsGuard shortGuard = guardWithActuator("production", SAFE_ACTUATOR_USERNAME, "short-pass-15ch");
+
+        assertThatThrownBy(shortGuard::validateCredentials)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("actuator.security.password");
+    }
+
+    @Test
+    @DisplayName("Should reject deny-listed actuator password in production (issue #1639)")
+    void shouldRejectDenyListedActuatorPasswordInProduction() {
+        ProductionCredentialsGuard guard = guardWithActuator("production", SAFE_ACTUATOR_USERNAME, "PassWord");
+
+        assertThatThrownBy(guard::validateCredentials)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("actuator.security.password");
+    }
+
+    @Test
+    @DisplayName("Should reject the .env.example placeholder as actuator password in production (issue #1639)")
+    void shouldRejectPlaceholderActuatorPasswordInProduction() {
+        ProductionCredentialsGuard guard = guardWithActuator("production", SAFE_ACTUATOR_USERNAME,
+                "change-me-with-openssl-rand-hex-24");
+
+        assertThatThrownBy(guard::validateCredentials)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("actuator.security.password");
+    }
+
+    @Test
+    @DisplayName("Should reject empty actuator credentials in production (issue #1639)")
+    void shouldRejectEmptyActuatorCredentialsInProduction() {
+        ProductionCredentialsGuard guard = guardWithActuator("production", "", null);
+
+        assertThatThrownBy(guard::validateCredentials)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("actuator.security.username")
+                .hasMessageContaining("actuator.security.password");
+    }
+
+    @Test
+    @DisplayName("Should reject deny-listed actuator user in production (issue #1639)")
+    void shouldRejectDenyListedActuatorUserInProduction() {
+        ProductionCredentialsGuard guard = guardWithActuator("production", "root", SAFE_ACTUATOR_PASSWORD);
+
+        assertThatThrownBy(guard::validateCredentials)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("actuator.security.username");
+    }
+
+    @Test
+    @DisplayName("Should not check actuator strength outside production (issue #1639)")
+    void shouldSkipActuatorStrengthOutsideProduction() {
+        ProductionCredentialsGuard guard = guardWithActuator("development", "admin", "short");
+
+        assertThatCode(guard::validateCredentials).doesNotThrowAnyException();
     }
 }
