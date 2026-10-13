@@ -111,7 +111,16 @@ test.describe("Mobile/responsive viewport @mobile", () => {
     await loginAsAdmin(page);
     await page.setViewportSize({ width: 390, height: 844 });
     await page.getByTestId("btn-sidebar-toggle").click();
-    await page.getByRole("dialog").getByRole("button", { name: "Cerrar menú" }).click();
+    // The login success toast renders in a full-width top toaster on small
+    // viewports, and sonner pauses its auto-dismiss while the pointer hovers it
+    // (PauseOnHover). The parked mouse from the toggle click would otherwise
+    // keep the toast covering the drawer's top-right close button forever, so
+    // move the pointer away and let the toast detach before clicking.
+    await page.mouse.move(195, 760);
+    await expect(page.locator("[data-sonner-toast]")).toHaveCount(0);
+    const closeBtn = page.getByTestId("btn-sidebar-close");
+    await expect(closeBtn).toBeVisible();
+    await closeBtn.click();
     await expect(page.getByTestId("sidebar")).not.toBeVisible();
   });
 

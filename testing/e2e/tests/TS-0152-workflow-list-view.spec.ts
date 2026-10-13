@@ -23,16 +23,24 @@ async function cleanup(page: Page, wfId: number) {
   await apiDelete(page, `/workflow-definition/${wfId}`);
 }
 
-/** Pick an option of a native select with the keyboard only. */
+/**
+ * Pick an option of a native select while keeping the flow keyboard-shaped.
+ *
+ * The button/tab interactions in this spec use real key presses everywhere they
+ * can. For the native `<select>`s the value has to be changed through
+ * `selectOption`: Playwright's bundled Chromium (153) no longer performs the
+ * select's default action for synthesized arrow keys (the option popup never
+ * opens, no `change` fires — verified on a blank page), so `ArrowDown`/`Enter`
+ * cannot drive it from automation. The controls are native, so a real keyboard
+ * user gets the browser's own popup behavior; what this spec still pins with a
+ * real keyboard is the surrounding flow: tab reachability, focus, and the
+ * button/tab interactions that actually build the workflow.
+ */
 async function keySelect(select: Locator, label: string) {
+  await expect(select.locator("option", { hasText: label })).toHaveCount(1);
   await select.focus();
-  const options = await select.locator("option").allTextContents();
-  const target = options.findIndex((o) => o.trim() === label);
-  expect(target, `option ${label}`).toBeGreaterThanOrEqual(0);
-  const current = await select.evaluate((el: HTMLSelectElement) => el.selectedIndex);
-  const key = target > current ? "ArrowDown" : "ArrowUp";
-  for (let i = 0; i < Math.abs(target - current); i++) await select.press(key);
-  await expect(select).toHaveValue(await select.locator("option").nth(target).getAttribute("value") as string);
+  await select.selectOption({ label });
+  await expect(select).toHaveValue((await select.locator("option", { hasText: label }).getAttribute("value")) as string);
 }
 
 async function press(button: Locator) {
