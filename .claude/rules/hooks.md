@@ -17,12 +17,11 @@ describes the hooks and why they exist — it does not duplicate the process.
 
 ## Why the push guard exists
 
-The repository ruleset `protect-main` (id `24128115`) is meant to enforce
-pull-request-only merges, required status checks (`CI`, `Frontend CI`,
-`Playwright E2E`, `Code Lint`, `PR Validation`), and blocked
-force-push/deletion. As of 2026-10-13 only force-push/deletion are live
-(`security/assert-protect-main-ruleset.sh` fails; #1040). Until then, a red
-required check is a hard stop by policy (CONSTITUTION Gate 4), not by GitHub. Classic (legacy) branch protection is
+GitHub enforces protection on `main` via the repository ruleset `protect-main`
+(id `24128115`): pull-request-only merges, required status checks (`CI`,
+`Frontend CI`, `Playwright E2E`, `Code Lint`, `PR Validation`), and blocked
+force-push/deletion. Re-applied 2026-10-13 (#1040); verify with
+`bash security/assert-protect-main-ruleset.sh`. Classic (legacy) branch protection is
 intentionally unused — do not layer it on top of the ruleset. See
 `docs/200-architecture/208-devsecops/README.md` and issue #1040; apply/assert
 with `security/apply-protect-main-ruleset.sh` /
