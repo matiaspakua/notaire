@@ -35,11 +35,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| hook is registered for session start | test_cloud_toolchain_bootstrap | pending |
-| pins match their owners | test_cloud_toolchain_bootstrap | pending |
-| outside cloud sessions the hook does nothing | test_cloud_toolchain_bootstrap | pending |
-| an install failure does not block the session | test_cloud_toolchain_bootstrap | pending |
-| environment is exported | test_cloud_toolchain_bootstrap | pending |
+| hook is registered for session start | test_cloud_toolchain_bootstrap | passing |
+| pins match their owners | test_cloud_toolchain_bootstrap | passing |
+| outside cloud sessions the hook does nothing | test_cloud_toolchain_bootstrap | passing |
+| an install failure does not block the session | test_cloud_toolchain_bootstrap | passing |
+| environment is exported | test_cloud_toolchain_bootstrap | passing |
 
 ## Permanent documentation updated
 
