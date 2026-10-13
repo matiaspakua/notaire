@@ -7279,7 +7279,11 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: Budget not found
         '500':
-          description: Unexpected error generating the PDF (no body)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unexpected error generating the PDF
       summary: Generate the budget report with properties
       tags:
       - Reports
@@ -7318,7 +7322,11 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: Budget not found
         '500':
-          description: Unexpected error generating the PDF (no body)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unexpected error generating the PDF
       summary: Generate the budget report
       tags:
       - Reports
@@ -7357,7 +7365,11 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: There is no management with that number
         '500':
-          description: Unexpected error generating the PDF (no body)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unexpected error generating the PDF
       summary: Generate the document-debt report
       tags:
       - Reports
@@ -7396,7 +7408,11 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: Submitted document not found
         '500':
-          description: Unexpected error generating the PDF (no body)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unexpected error generating the PDF
       summary: Generate the documents-due report
       tags:
       - Reports
@@ -7458,7 +7474,11 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: Management not found
         '500':
-          description: Unexpected error generating the PDF (no body)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unexpected error generating the PDF
       summary: Generate the management history report
       tags:
       - Reports
@@ -7561,7 +7581,11 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: Procedure type not found
         '500':
-          description: Unexpected error generating the PDF (no body)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unexpected error generating the PDF
       summary: Generate the document list report for a procedure
       tags:
       - Reports

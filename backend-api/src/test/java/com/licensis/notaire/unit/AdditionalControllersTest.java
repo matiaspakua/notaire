@@ -15,6 +15,7 @@ import com.licensis.notaire.repository.HistoryRepository;
 import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort;
 import com.licensis.notaire.repository.UserRepository;
 import com.licensis.notaire.application.usecase.report.ReportService;
+import com.licensis.notaire.config.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -67,7 +68,9 @@ class AdditionalControllersTest {
         @DisplayName("All endpoints — success and failure paths")
         void all() throws Exception {
             ReportService service = mock(ReportService.class);
-            var mvc = standaloneSetup(new ReportController(service)).build();
+            var mvc = standaloneSetup(new ReportController(service))
+                    .setControllerAdvice(new GlobalExceptionHandler())
+                    .build();
             byte[] pdf = "PDF".getBytes();
             when(service.generateBudgetReport(anyInt())).thenReturn(pdf);
             when(service.generateBudgetPropertiesReport(anyInt())).thenReturn(pdf);

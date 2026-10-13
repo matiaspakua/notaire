@@ -4,6 +4,7 @@ import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.adapter.in.web.support.NotaryRef;
 import com.licensis.notaire.business.Notebook;
+import com.licensis.notaire.adapter.in.web.report.PdfResponseFactory;
 import com.licensis.notaire.application.usecase.notebook.NotebookService;
 import com.licensis.notaire.application.usecase.report.ReportService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,7 +14,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -112,10 +112,7 @@ public class NotebookController {
     public ResponseEntity<byte[]> getCover(@PathVariable Integer id) {
         try {
             byte[] pdf = reportService.generateNotebookCoverReport(id);
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"notebook_" + id + "_cover.pdf\"")
-                    .body(pdf);
+            return PdfResponseFactory.ok(pdf, "notebook_" + id + "_cover.pdf");
         } catch (ResourceNotFoundException e) {
             logger.info("Cover requested for a missing notebook: {}", id);
             return ResponseEntity.notFound().build();

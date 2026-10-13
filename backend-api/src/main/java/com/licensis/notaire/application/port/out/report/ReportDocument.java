@@ -14,14 +14,54 @@ import java.util.Objects;
  * @param title    report title, shown on the first page and stored as PDF metadata
  * @param subtitle optional line under the title, {@code null} when absent
  * @param sections sections in display order
+ * @param identity chrome metadata (type, identifier, period, orientation)
  */
-public record ReportDocument(String title, String subtitle, List<Section> sections) {
+public record ReportDocument(String title, String subtitle, List<Section> sections, Identity identity) {
 
     public ReportDocument {
         if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("A report needs a title");
         }
         sections = sections == null ? List.of() : List.copyOf(sections);
+        identity = identity == null ? Identity.untitled() : identity;
+    }
+
+    public ReportDocument(String title, String subtitle, List<Section> sections) {
+        this(title, subtitle, sections, Identity.untitled());
+    }
+
+    public enum PageOrientation {
+        PORTRAIT,
+        LANDSCAPE
+    }
+
+    /**
+     * Header/footer identity. Missing values are omitted from chrome rather than invented.
+     */
+    public record Identity(String reportType, String documentIdentifier, String periodOrAggregate,
+            String emptyStateMessage, PageOrientation orientation) {
+
+        public Identity {
+            if (orientation == null) {
+                orientation = PageOrientation.PORTRAIT;
+            }
+        }
+
+        public static Identity untitled() {
+            return new Identity(null, null, null, null, PageOrientation.PORTRAIT);
+        }
+
+        public static Identity of(String reportType, String documentIdentifier, String periodOrAggregate) {
+            return new Identity(reportType, documentIdentifier, periodOrAggregate, null, PageOrientation.PORTRAIT);
+        }
+
+        public static Identity landscape(String reportType, String documentIdentifier, String periodOrAggregate) {
+            return new Identity(reportType, documentIdentifier, periodOrAggregate, null, PageOrientation.LANDSCAPE);
+        }
+
+        public boolean landscape() {
+            return orientation == PageOrientation.LANDSCAPE;
+        }
     }
 
     /** A block of the report. */

@@ -47,7 +47,7 @@ Notaire does not render user input as HTML (the UI is Swing + REST JSON). There 
 
 1. **Log entries** — use parameterized SLF4J calls (`log.warn("msg {}", value)`), never string concatenation.
 2. **Next.js frontend** — React's default JSX escaping handles XSS for rendered user data. Never use `dangerouslySetInnerHTML` with user data.
-3. **PDF reports** — `PdfBoxReportRenderer` writes field values as PDF text operands only (no markup, scripts or form fields); control characters become spaces and characters outside the font encoding become `?` (#567).
+3. **PDF reports** — `PdfBoxReportRenderer` writes field values as PDF text operands only (no markup, scripts, form fields, or attachments). Control and bidirectional-override characters become spaces. User/domain text uses embedded Liberation Sans; Spanish/English fixtures are not replaced with `?`. Glyphs the font cannot encode still become `?` (#567, #1593). Logo and font bytes come only from immutable classpath assets.
 
 For any field that might be reflected back, apply:
 ```java
