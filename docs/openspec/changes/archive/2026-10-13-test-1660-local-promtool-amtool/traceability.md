@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| local promtool rejects a broken rule file | test_alertmanager | pending |
-| local amtool rejects a broken config | test_alertmanager | pending |
-| hook pins equal the compose image tags | test_cloud_toolchain_bootstrap | pending |
+| local promtool rejects a broken rule file | test_alertmanager | passing |
+| local amtool rejects a broken config | test_alertmanager | passing |
+| hook pins equal the compose image tags | test_cloud_toolchain_bootstrap | passing |
 
 ## Permanent documentation updated
 
