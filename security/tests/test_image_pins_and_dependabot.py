@@ -123,6 +123,14 @@ def dependabot_updates() -> list[dict]:
     return [u for u in updates if isinstance(u, dict)]
 
 
+def update_for(ecosystem: str, directory: str) -> dict:
+    return next(
+        u
+        for u in dependabot_updates()
+        if u.get("package-ecosystem") == ecosystem and str(u.get("directory", "")).rstrip("/") == directory
+    )
+
+
 def commit_types(path: Path) -> set[str]:
     match = TYPES_ASSIGNMENT.search(path.read_text(encoding="utf-8"))
     assert match, f"no TYPES= list in {path}"
@@ -342,20 +350,28 @@ class ImagePinsAndDependabotTest(unittest.TestCase):
                     )
 
     def test_backend_docker_ignores_jdk_major_bumps(self):
-        backend = next(
-            u
-            for u in dependabot_updates()
-            if u.get("package-ecosystem") == "docker"
-            and str(u.get("directory", "")).rstrip("/") == "/backend-api"
+        rules = {rule.get("dependency-name"): rule for rule in update_for("docker", "/backend-api").get("ignore") or []}
+        self.assertIn(
+            "version-update:semver-major",
+            (rules.get("eclipse-temurin") or {}).get("update-types") or [],
+            "JDK major bumps are an ADR decision, not a bot PR (#1621)",
         )
-        majors_ignored = {
-            rule.get("dependency-name")
-            for rule in backend.get("ignore") or []
-            if "version-update:semver-major" in (rule.get("update-types") or [])
-        }
+        self.assertIn("maven", rules, "maven builder must be ignored (#1643)")
+        self.assertNotIn(
+            "update-types",
+            rules["maven"],
+            "Dependabot cannot read 'maven:3.10.0-eclipse-temurin-26' as semver; ignore every update (#1643)",
+        )
+
+    def test_frontend_npm_groups_minor_and_patch_updates(self):
+        groups = (update_for("npm", "/frontend").get("groups") or {}).values()
         self.assertTrue(
-            {"eclipse-temurin", "maven"} <= majors_ignored,
-            f"JDK major bumps are an ADR decision, not a bot PR (#1621); ignored={majors_ignored}",
+            any(
+                "*" in (g.get("patterns") or []) and {"minor", "patch"} <= set(g.get("update-types") or [])
+                and "major" not in (g.get("update-types") or [])
+                for g in groups
+            ),
+            "strict required checks make N bot PRs cost N rebase+CI cycles; group npm minor/patch (#1643)",
         )
 
 

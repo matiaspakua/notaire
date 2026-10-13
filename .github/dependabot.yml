@@ -56,6 +56,15 @@ updates:
     labels:
       - "dependencies"
       - "javascript"
+    # protect-main requires up-to-date branches: N bot PRs would cost N serial
+    # rebase + full-CI cycles. One PR for all minor/patch bumps; majors stay alone (#1643).
+    groups:
+      frontend-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
     reviewers:
       - matiaspakua
 
@@ -89,11 +98,12 @@ updates:
       - "docker"
     # The JDK major is the toolchain (jdk-toolchain spec, ADR-017). Moving it is a
     # planned change across pom.xml, CI and both images, never a bot PR (#1621).
+    # Dependabot cannot read "maven:3.10.0-eclipse-temurin-26" as semver, so a
+    # semver-major rule never matches it (#1629); the builder pin moves by hand (#1643).
     ignore:
       - dependency-name: "eclipse-temurin"
         update-types: ["version-update:semver-major"]
       - dependency-name: "maven"
-        update-types: ["version-update:semver-major"]
     reviewers:
       - matiaspakua
 
