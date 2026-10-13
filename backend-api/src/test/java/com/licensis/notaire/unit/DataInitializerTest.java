@@ -111,7 +111,7 @@ class DataInitializerTest {
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userCaptor.capture());
         assertThat(userCaptor.getValue().getName()).isEqualTo("admin");
-        assertThat(userCaptor.getValue().getType()).isEqualTo("Escribano");
+        assertThat(userCaptor.getValue().getType()).isEqualTo("Administrador");
     }
 
     @Test

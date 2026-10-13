@@ -35,12 +35,21 @@ class UserAuthorityResolverTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"Escribano", "ESCRIBANO", "Admin", "administrador", " Administrador "})
-    @DisplayName("should grant administrator authority to administrator-capable types")
+    @ValueSource(strings = {"Admin", "ADMIN", "administrador", " Administrador "})
+    @DisplayName("should grant administrator authority to administrator types")
     void shouldGrantAdministratorAuthorityToAdministratorCapableTypes(String type) {
         when(userRepository.findByName("boss")).thenReturn(Optional.of(new User(1, "boss", "x", true, type)));
 
         assertThat(authoritiesOf("boss")).containsExactly("ROLE_ADMIN");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Escribano", "ESCRIBANO", " escribano "})
+    @DisplayName("should grant the notary authority, not the administrator one, to notaries (issue #1638)")
+    void shouldGrantTheNotaryAuthorityToNotaries(String type) {
+        when(userRepository.findByName("notary")).thenReturn(Optional.of(new User(5, "notary", "x", true, type)));
+
+        assertThat(authoritiesOf("notary")).containsExactly("ROLE_NOTARY");
     }
 
     @Test
