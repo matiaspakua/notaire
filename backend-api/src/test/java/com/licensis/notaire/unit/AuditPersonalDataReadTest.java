@@ -15,6 +15,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -144,5 +146,13 @@ class AuditPersonalDataReadTest {
                 .matches(m -> m.isAnnotationPresent(AuditPersonalDataRead.class));
         assertThat(PersonController.class.getDeclaredMethod("searchPeople", String.class, String.class, String.class,
                 Integer.class, Boolean.class)).matches(m -> m.isAnnotationPresent(AuditPersonalDataRead.class));
+    }
+
+    @Test
+    @DisplayName("Should write the audit row in its own transaction because Person reads are read-only")
+    void shouldWriteTheAuditRowInItsOwnTransaction() throws Exception {
+        Method save = AuditRecordService.class.getDeclaredMethod("save", AuditRecord.class);
+
+        assertThat(save.getAnnotation(Transactional.class).propagation()).isEqualTo(Propagation.REQUIRES_NEW);
     }
 }
