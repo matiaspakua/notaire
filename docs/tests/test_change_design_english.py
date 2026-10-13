@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Unarchived change designs name the live surface in English."""
+"""Change designs, active or archived, name the live surface in English."""
 
 import unittest
 from pathlib import Path
@@ -7,9 +7,20 @@ from pathlib import Path
 CHANGES = Path(__file__).resolve().parents[1] / "openspec" / "changes"
 
 
+def change_dir(name: str) -> Path:
+    """Gate 5 moves a change to ``archive/<date>-<name>``; the test follows it."""
+    active = CHANGES / name
+    if active.is_dir():
+        return active
+    archived = sorted((CHANGES / "archive").glob(f"*-{name}"))
+    if not archived:
+        raise FileNotFoundError(f"OpenSpec change {name} is neither active nor archived")
+    return archived[-1]
+
+
 class ChangeDesignEnglishTest(unittest.TestCase):
     def test_case_summary_design_names_the_managements_screen(self):
-        text = (CHANGES / "feat-774-gestion-resumen-caso" / "design.md").read_text(
+        text = (change_dir("feat-774-gestion-resumen-caso") / "design.md").read_text(
             encoding="utf-8"
         )
         for title in (
@@ -30,7 +41,7 @@ class ChangeDesignEnglishTest(unittest.TestCase):
             self.assertNotIn(retired, text, retired)
 
     def test_required_documents_design_names_the_screen(self):
-        folder = CHANGES / "feat-1362-procedure-template-admin"
+        folder = change_dir("feat-1362-procedure-template-admin")
         spec = (folder / "specs" / "ui-procedure-template-admin" / "spec.md").read_text(
             encoding="utf-8"
         )
@@ -49,7 +60,7 @@ class ChangeDesignEnglishTest(unittest.TestCase):
 
     def test_property_and_document_designs_name_the_live_surface(self):
         properties = (
-            CHANGES / "fix-655-property-cadastral-designation-required" / "design.md"
+            change_dir("fix-655-property-cadastral-designation-required") / "design.md"
         ).read_text(encoding="utf-8")
         self.assertIn("properties require `cadastralDesignation`", properties)
         self.assertIn("properties.nomenclature", properties)
@@ -57,7 +68,7 @@ class ChangeDesignEnglishTest(unittest.TestCase):
         self.assertNotIn("inmuebles", properties)
 
         documents = (
-            CHANGES / "fix-655-submitted-document-required-fields" / "design.md"
+            change_dir("fix-655-submitted-document-required-fields") / "design.md"
         ).read_text(encoding="utf-8")
         self.assertIn("`fk_id_tramite`", documents)
         self.assertIn("Documents screen", documents)
