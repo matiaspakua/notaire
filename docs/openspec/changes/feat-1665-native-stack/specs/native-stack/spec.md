@@ -21,7 +21,7 @@
 - **WHEN** the script is parsed with `bash -n`
 - **THEN** parsing succeeds
 
-#### Scenario: status of a stopped stack is non-zero
+#### Scenario: status exit code reflects what is running
 
-- **WHEN** `status` runs with no stack started
-- **THEN** it exits non-zero without an error trace
+- **WHEN** `status` runs
+- **THEN** it reports each service as up or down and exits 0 only when all are up

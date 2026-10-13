@@ -144,8 +144,11 @@ OpenCollection API tests work without relying on unpinned `npx @usebruno/cli`.
 `openspec`, `kustomize`, Trivy, `promtool` and `amtool` into `~/.cache/notaire-tools` (about 20 s cold,
 instant warm) and exports `JAVA_HOME`, `PATH`, `LC_ALL=C.UTF-8`, `KUSTOMIZE` and
 `OPENSPEC_TELEMETRY=0`. A failed download prints one warning and never blocks the
-session. There is no Docker daemon in that sandbox, so pg-integration, Playwright,
-Bruno, DAST and the Docker build stay CI-only; `infra/tests/test_alertmanager.py`
+session. There is no Docker daemon in that sandbox, so run the stack natively:
+`bash workspace/stack/native.sh up` starts PostgreSQL 16, the backend jar and Next.js with
+the CI values and shims the Playwright browser paths; then run Playwright, Bruno and the
+`testing/database/checks/*.sql` checks against it, and `… down` when done (#1665). Only the
+Docker build, DAST and Testcontainers-based pg-integration stay CI-only; `infra/tests/test_alertmanager.py`
 falls back to the local `promtool`/`amtool` (#1660).
 
 ## 5. Resource notes

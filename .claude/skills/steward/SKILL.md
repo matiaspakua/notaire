@@ -51,7 +51,9 @@ When only people are owed (approval, merge), say so once and wait.
 
 ## 7. Failures that are the environment, not the PR
 
-A Claude Code cloud sandbox has no Docker daemon: pg-integration, Playwright, Bruno, DAST and the
-Docker build are CI-only. `test_watchdog` fails there because PID 1 does not reap zombies. Spotless
+A Claude Code cloud sandbox has no Docker daemon: run Playwright, Bruno and the database checks
+against `bash workspace/stack/native.sh up` (PostgreSQL-only regressions that H2 hides show up
+there, e.g. #1635's read-only-transaction audit insert); pg-integration (Testcontainers), DAST and
+the Docker build are CI-only. `test_watchdog` fails there because PID 1 does not reap zombies. Spotless
 needs a UTF-8 locale. `.claude/hooks/session-start-toolchain.sh` installs JDK 26, `openspec`,
 `kustomize`, Trivy, `promtool` and `amtool` at session start; say so in the PR instead of hiding it.

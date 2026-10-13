@@ -45,7 +45,7 @@ class NativeStackTest(unittest.TestCase):
         result = subprocess.run(["bash", "-n", str(SCRIPT)], capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stderr)
 
-    def test_status_of_a_stopped_stack_is_non_zero_without_a_trace(self):
+    def test_status_exit_code_reflects_what_is_running(self):
         with tempfile.TemporaryDirectory() as empty:
             result = subprocess.run(
                 ["bash", str(SCRIPT), "status"],
@@ -54,8 +54,9 @@ class NativeStackTest(unittest.TestCase):
                 env={"PATH": "/usr/bin:/bin", "HOME": empty, "NOTAIRE_NATIVE_DIR": empty},
                 timeout=30,
             )
-        self.assertNotEqual(result.returncode, 0)
-        self.assertNotIn("Traceback", result.stderr)
+        for service in ("postgres", "backend", "frontend"):
+            self.assertRegex(result.stdout, rf"{service}: (up|down)")
+        self.assertEqual("down" not in result.stdout, result.returncode == 0)
         self.assertNotIn("unbound variable", result.stderr)
 
 
