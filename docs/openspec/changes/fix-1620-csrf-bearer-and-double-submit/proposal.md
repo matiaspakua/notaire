@@ -129,7 +129,8 @@ decision.
 ## Out of Scope
 
 - Archiving the 32 stale OpenSpec changes and unarchived `code-scanning-remediation`
-  (#1265) — pre-existing, reported separately.
+  (#1265): out of scope here; `main` archived and synced them in #1626 (`98bcb609`)
+  while this branch was open.
 - The actuator and default filter chains keep `csrf(withDefaults())`; their only
   reachable surfaces are GET/`permitAll` endpoints, so no browser double-submit
   applies there.

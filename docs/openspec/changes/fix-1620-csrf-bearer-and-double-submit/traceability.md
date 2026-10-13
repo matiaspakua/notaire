@@ -18,8 +18,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Use Case | CU78 – Security and Compliance | exists |
 | Specification | `docs/openspec/changes/fix-1620-csrf-bearer-and-double-submit/` | written |
 | Branch | `fix/1620_csrf-bearer-exemption` | created |
-| Tasks | `tasks.md` | 34/42 complete (gates 4-5 open) |
-| Commits | pending | pending |
+| Tasks | `tasks.md` | 49/69 complete (gates 4-5 open) |
+| Commits | `36419e6b`, `3bee6450`, `841d1b33`, `04fc5ec5`, `bbfb96ff`, `ce73b1e3`, `481d95c7`, `ec90b565` + this ledger commit | local (unpushed) |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -43,11 +43,13 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/200-architecture/206-security/API-AUTHENTICATION-GUIDE.md` | yes | pending |
-| `docs/200-architecture/206-security/INPUT-VALIDATION-STRATEGY.md` | yes | pending |
-| `testing/e2e/tests/TS-0044-security-csrf-cors-qa.spec.ts` | yes | pending |
-| `testing/e2e/tests/TS-0094-admin-route-guard.spec.ts` | yes | pending |
-| `CHANGELOG.md` | yes | pending |
+| `docs/200-architecture/206-security/API-AUTHENTICATION-GUIDE.md` | yes | `04fc5ec5` |
+| `docs/200-architecture/206-security/INPUT-VALIDATION-STRATEGY.md` | yes | `04fc5ec5`, `481d95c7` |
+| `testing/e2e/tests/TS-0044-security-csrf-cors-qa.spec.ts` | yes | `3bee6450` |
+| `testing/e2e/tests/TS-0094-admin-route-guard.spec.ts` | yes | `ce73b1e3` |
+| `testing/e2e/tests/TS-0041-responsive-viewport-qa.spec.ts` | yes | `ec90b565` |
+| `testing/e2e/tests/TS-0152-workflow-list-view.spec.ts` | yes | `ec90b565` |
+| `CHANGELOG.md` | yes | `04fc5ec5` |
 
 ## Gate log
 
@@ -55,20 +57,45 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | `openspec validate --strict` + `workspace/sdlc/validate-sdlc-plan.sh fix-1620-csrf-bearer-and-double-submit` |
 | 2 | Failing tests written, test cases designed | yes | `CsrfProtectionIntegrationTest` observed failing before each fix (3 failures with the fix reverted) |
-| 3 | Suite green, coverage held, docs updated | yes | backend `Tests run: 2356, Failures: 0`; `TS-0044` 7/7 locally; docs corrected |
+| 3 | Suite green, coverage held, docs updated | yes | backend suite green at HEAD; `TS-0044` 7/7; `TS-0041` and `TS-0152` green locally; docs corrected |
 | 4 | CI green, review approved, no conflicts | pending | PR |
 | 5 | Deployed, smoke test passed, Issue closed | pending | — |
 
 ## Exceptions
 
-No exception was taken. The pre-existing Gate-1 backlog of 32 stale changes
-(issue #1265) is unrelated to this change and is reported rather than repaired here.
+No exception was taken. The Gate-1 backlog of 32 stale changes that used to keep
+the full `validate-sdlc-plan.sh` red on `main` (issue #1265) was archived on
+`main` by #1626 (`98bcb609`) while this branch was open; it is rebased onto that
+commit, so the full validator no longer reports the backlog.
 
 ## Environment caveats
 
-- The full `validate-sdlc-plan.sh` run (no argument) stays red on `main` because
-  32 pre-existing changes reference CLOSED issues (#1265); the scoped run for this
-  change is the one used as Gate 1 evidence.
+- This branch is rebased onto `main` at `537f1d46`, which already carried two
+  unrelated fixes merged while it was open: #1626 (`98bcb609`) archived the #1265
+  Gate-1 backlog and #1625 (`537f1d46`) restored the pinned JDK 26 images. The
+  full `validate-sdlc-plan.sh` is therefore no longer red for that backlog, but it
+  still reports exactly one problem, and it is not this change: the change
+  directory `fix-1621-jdk26-pins-dependabot-prefix`, added by #1625 itself, is left
+  unarchived while its issue (#1621) is CLOSED. Archiving another team's
+  just-merged change is out of scope for a security remediation and is reported
+  instead; the scoped run for this change
+  (`validate-sdlc-plan.sh fix-1620-csrf-bearer-and-double-submit`) is green and is
+  the Gate 1 evidence.
 - The local backend suite ran with the sandbox Postgres container; the E2E stack
   (Postgres + backend jar + built frontend) was started locally to verify
   `TS-0044`.
+- `markdown-lint` (a local-only gate, not in CI) ratchets per changed file, so
+  touching `CHANGELOG.md` — Constitution-mandated for a user-visible change —
+  drags in the legacy block's pre-existing `MD012`/`MD004` findings, plus one
+  real duplicate `## [Unreleased]` heading (`MD024`) left by the pre-release-please
+  hand-maintained log. All markdown authored by this change is clean; the 53
+  legacy findings are reported, not reformatted, here: `MD004` conflicts with
+  release-please's own `*` bullet output, so correcting it is a gate-config
+  decision, not part of a security remediation.
+- Two full-suite E2E reds were repaired (`ec90b565`), not caused by this change:
+  `TS-0152` only became reachable once the Bearer CSRF exemption let its API
+  calls through (on `main` it dies earlier at the 403), and `TS-0041` fails on
+  `main` regardless; both reproduce deterministically and are classified as
+  pre-existing UI/test issues (hover-paused full-width login toast; Chromium 153
+  not running the native-select default action for synthesized arrow keys),
+  addressed with test-level fixes so the `playwright-e2e.yml` gate can go green.

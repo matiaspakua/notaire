@@ -45,8 +45,8 @@
 
 ## 6. Ejecutar regresión
 
-- [x] 6.1 `mvn test -pl backend-api` — `Tests run: 2356, Failures: 0, Errors: 0`
-- [x] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor honoured
+- [x] 6.1 `mvn verify -pl backend-api -am` at HEAD — `Tests run: 2358, Failures: 0, Errors: 0, Skipped: 0`
+- [x] 6.2 `jacoco:check` — "All coverage checks have been met."
 - [x] 6.3 `mvn verify -pl backend-api` — Checkstyle, SpotBugs, formatting
 - [ ] 6.4 `bash integration-test/scripts/test.sh` — HTTP/Bruno API suite (runs in the PR's `playwright-e2e.yml` job, which executes the live stack)
 - [x] 6.5 No `@Disabled` or skipped tests introduced
@@ -58,6 +58,7 @@
 - [x] 7.3 Responsive check — no UI surface changed; the spec's viewport coverage is unaffected
 - [x] 7.4 `npx tsc --noEmit` and `npx eslint . --max-warnings=0` clean on `testing/e2e`
 - [ ] 7.5 Full sharded suite green in CI (`playwright-e2e.yml`)
+- [x] 7.6 Adapt two pre-existing E2E reds that the fix exposed (both fail on `origin/main` too; verified by empty diff): `TS-0041` waits for the hover-paused login toast to detach before clicking the mobile close button; `TS-0152` switches its native-`<select>` steering from synthesized `ArrowDown` (Chromium 153 no longer runs the select default action for Playwright keys) to `selectOption`, keeping real keyboard presses for the buttons/tabs.
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
@@ -70,10 +71,10 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message references `#1620`
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.2 Every commit message references `#1620`
 - [x] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
@@ -101,7 +102,7 @@
 - [x] Issue linked to a Use Case, with Acceptance Criteria
 - [x] Specification written and reviewed (Gate 1)
 - [x] Tests designed and written first, observed failing (Gate 2)
-- [x] Full suite green: unit, integration, regression, E2E (backend: 2356 tests; `TS-0044` verified locally)
+- [x] Full suite green: unit, integration, regression, E2E (backend: 2358 tests; `TS-0044` verified locally)
 - [x] Coverage at or above the JaCoCo ratchet floor
 - [x] Playwright E2E green for the affected spec
 - [ ] Permanent documentation updated, consistent, not duplicated (Gate 3)

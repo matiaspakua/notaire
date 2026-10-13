@@ -53,7 +53,8 @@ a credential; Spring Security here is 7.1.1 (Spring Boot 4.1.1), so
 
 - No change to the CORS allow-list, to the JWT/cookie session design, or to any
   endpoint signature.
-- Not archiving the stale OpenSpec backlog (#1265) — reported separately.
+- Not archiving the stale OpenSpec backlog (#1265): out of scope for this change;
+  `main` archived and synced it in #1626 (`98bcb609`) while this branch was open.
 - Not touching `csrf(withDefaults())` on the actuator and default chains: their
   reachable surface is GET/`permitAll` only, so the SPA flow does not apply.
 - Not adding an SSR guard to `document.cookie` in `api-client.ts`: every consumer
@@ -152,7 +153,7 @@ before the implementation, then green after.
   `HistoryWriteAuthorizationIntegrationTest` and `CsrfProtectionIntegrationTest`:
   it reflectively replaces the shared `CsrfFilter`'s token repository, which
   disables enforcement for the rest of the JVM and *hides* this regression.
-- The full backend suite (2356 tests) stays green; no test was deleted.
+- The full backend suite (2358 tests) stays green; no test was deleted.
 - `TS-0094` (admin route guard) kept passing for the wrong reason once CSRF was
   enforced: its cookie-mode catalog write was refused by the CSRF filter before
   RBAC could refuse it. It now echoes the nonce, so the 403 under test is the
