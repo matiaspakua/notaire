@@ -58,7 +58,7 @@ class FoundAndReportLocalsEnglishTest(unittest.TestCase):
         self.assertNotIn('"libro-indice"', protocol)
         self.assertNotIn("declaracion-jurada", protocol)
         self.assertIn("libro_indice_", protocol)
-        self.assertIn("declaracion_jurada_mensual_", protocol)
+        self.assertIn("ddjj_mensual_", protocol)
         self.assertIn("declaracion_jurada_rentas_", protocol)
         self.assertIn('t("reports.libroIndice.title")', protocol)
         self.assertIn('t("reports.ddjjMensual.title")', protocol)

@@ -1,6 +1,7 @@
 package com.licensis.notaire.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -100,6 +101,7 @@ class RbacIntegrationTest {
         String name = "escalation-" + UUID.randomUUID();
 
         mockMvc.perform(post("/api/v1/users")
+                        .with(csrf())
                         .header("Authorization", "Bearer " + employeeToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"" + name + "\",\"password\":\"Test1234!\",\"type\":\"ESCRIBANO\","
@@ -138,6 +140,7 @@ class RbacIntegrationTest {
     @DisplayName("should let an administrator create a procedure type")
     void shouldLetAnAdministratorCreateAProcedureType() throws Exception {
         mockMvc.perform(post("/api/v1/procedure-types")
+                        .with(csrf())
                         .header("Authorization", "Bearer " + administratorToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"rbac-" + UUID.randomUUID()

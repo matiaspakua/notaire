@@ -104,6 +104,16 @@ describe("apiGet()", () => {
 });
 
 describe("apiPost()", () => {
+  it("forwards the browser CSRF token on an unsafe request", async () => {
+    document.cookie = "XSRF-TOKEN=csrf-test-token; path=/";
+    mockFetch.mockReturnValueOnce(makeResponse(""));
+
+    await apiPost("/managements", { number: 100 });
+
+    const headers = mockFetch.mock.calls[0][1].headers as Record<string, string>;
+    expect(headers["X-XSRF-TOKEN"]).toBe("csrf-test-token");
+  });
+
   it("sends POST with JSON body", async () => {
     mockFetch.mockReturnValueOnce(makeResponse(""));
     await apiPost("/managements", { number: 100 });

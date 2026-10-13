@@ -34,3 +34,37 @@ rules:
       - metavariable-regex:
           metavariable: $KEY
           regex: (?i)^['\"]?(token|access_token|accessToken|jwt|password|secret)['\"]?$
+
+  - id: notaire-spring-csrf-disabled
+    languages: [java]
+    severity: ERROR
+    message: >
+      Spring CSRF protection is disabled. Browser requests authenticated by an
+      HttpOnly cookie are vulnerable to cross-site request forgery. Use
+      CookieCsrfTokenRepository or another CSRF strategy instead of csrf.disable().
+      See docs/200-architecture/206-security/CYBERSECURITY-PROGRAM.md.
+    metadata:
+      cwe: "CWE-352: Cross-Site Request Forgery (CSRF)"
+      owasp: "A05:2021 – Security Misconfiguration"
+      security-case: SEC-SAST-01
+      category: security
+    patterns:
+      - pattern: $HTTP.csrf($CSRF -> $CSRF.disable())
+
+  - id: notaire-regex-unescaped-input
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: >
+      Dynamic text is interpolated into a RegExp without escaping regex
+      metacharacters. Use a helper such as escapeRegExp() before constructing
+      the pattern, or the expression may match unintended strings.
+    metadata:
+      cwe: "CWE-116: Improper Encoding or Escaping of Output"
+      security-case: SEC-SAST-01
+      category: security
+    patterns:
+      - pattern: new RegExp($STR.replace($PAT, $REPL))
+      - metavariable-regex:
+          metavariable: $PAT
+          # matches only the limited slash-escape that misses most metacharacters
+          regex: /\\\//g

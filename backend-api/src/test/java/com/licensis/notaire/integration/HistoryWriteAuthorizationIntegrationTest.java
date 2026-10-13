@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -137,6 +138,7 @@ class HistoryWriteAuthorizationIntegrationTest {
     @DisplayName("shouldLetAnAdministratorRewriteHistory")
     void shouldLetAnAdministratorRewriteHistory() throws Exception {
         mockMvc.perform(put("/api/v1/history/{id}", historyId)
+                        .with(csrf())
                         .header("Authorization", "Bearer " + administratorToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body("corrected")))
@@ -149,6 +151,7 @@ class HistoryWriteAuthorizationIntegrationTest {
     @DisplayName("shouldLetAnAdministratorDeleteHistory")
     void shouldLetAnAdministratorDeleteHistory() throws Exception {
         mockMvc.perform(delete("/api/v1/history/{id}", historyId)
+                        .with(csrf())
                         .header("Authorization", "Bearer " + administratorToken))
                 .andExpect(status().isNoContent());
     }
@@ -162,6 +165,7 @@ class HistoryWriteAuthorizationIntegrationTest {
         mockMvc.perform(get("/api/v1/history").header("Authorization", "Bearer " + employeeToken))
                 .andExpect(status().isOk());
         mockMvc.perform(post("/api/v1/history")
+                        .with(csrf())
                         .header("Authorization", "Bearer " + employeeToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body("recorded")))
