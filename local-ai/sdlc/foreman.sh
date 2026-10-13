@@ -778,6 +778,7 @@ main_run() {
 merge_and_close() {
     local pr sha id ok=1; pr="$(cat "$STATE/pr.number")" || fail "no PR recorded"
     [ "$(ci_state "$(ci_sha)")" = green ] || fail "CI not green on PR #$pr (Gate 4): $(cat "$STATE/gate-ci.out")"
+    (cd "$WT" && bash workspace/sdlc/check-heavy-ci.sh "$pr") || fail "heavy CI not green on PR #$pr (Foreman merge rule, #1624)"
     (cd "$WT" && gh pr merge "$pr" --merge) || fail "merge failed"
     gate_log merge "PASS :: PR #$pr merged"
     sha="$(cd "$WT" && gh pr view "$pr" --json mergeCommit --jq .mergeCommit.oid)"
