@@ -14,17 +14,17 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #1621 | in-progress |
+| Issue | #1621 | closed |
 | Use Case | CU78 — Security, Privacy and Compliance | exists |
 | Specification | `docs/openspec/changes/fix-1621-jdk26-pins-dependabot-prefix/` | drafted |
 | Branch | `fix/1621_jdk26-pins-dependabot-prefix` | created |
-| Tasks | `tasks.md` | in progress |
-| Commits | | pending |
-| Pull Request | | pending |
-| CI run | | pending |
-| Merge commit | | pending |
-| Release / tag | | pending |
-| Smoke test | | pending |
+| Tasks | `tasks.md` | complete |
+| Commits | `5ce9ffca` `9d1a9665` `c3668c64` `52f1ca54` `1c8617c3` `19c1ed21` | done |
+| Pull Request | #1625 | merged by Owner |
+| CI run | 38429467270 (main) | success |
+| Merge commit | `537f1d46` | done |
+| Release / tag | next release-please cut | pending |
+| Smoke test | CD 38429992159 success; process self-tests green on `main` | done |
 
 ## Requirement coverage
 
@@ -58,8 +58,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | 1 | Issue + Specification + Acceptance Criteria | yes | #1621; `validate-sdlc-plan.sh` on this change |
 | 2 | Failing tests written, test cases designed | yes | `security/tests` 6 FAIL + `workspace/tests` 1 FAIL before; all OK after |
 | 3 | Suite green, coverage held, docs updated | yes | 4 self-test suites OK; no Java delta |
-| 4 | CI green, review approved, no conflicts | | pending |
-| 5 | Deployed, smoke test passed, Issue closed | | pending |
+| 4 | CI green, review approved, no conflicts | yes | #1625 merged by code owner |
+| 5 | Deployed, smoke test passed, Issue closed | yes | CD 38429992159; #1621 closed |
 
 ## Exceptions
 
