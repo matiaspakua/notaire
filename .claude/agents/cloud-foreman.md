@@ -122,8 +122,10 @@ Retry the same phase with `prior_gate_log` attached (max 2–3 attempts) then es
   owner-decision work.
 - Derive the lane from existing area/type labels with
   `workspace/sdlc/milestone_policy.py`; do not expect or create `lane:*` labels.
-- Skip a lane that conflicts with any OPEN `in-progress` issue. Cross work
-  blocks backend and frontend; security blocks backend.
+- Before picking: `python3 workspace/sdlc/claim-issue.py --release-stale`. Claim
+  only with `python3 workspace/sdlc/claim-issue.py <n> --agent <id>`; on exit 1
+  pick another issue. It enforces the lane matrix (cross blocks backend and
+  frontend; security blocks backend) and wins races atomically (#1646).
 - Canonical rules:
   `docs/300-development/305-project-management/PARALLEL-AGENTS.md`.
 - Confirm environment **GO** from `VALIDATION-PLAN.md` before the first product issue.

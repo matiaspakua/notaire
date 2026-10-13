@@ -13,7 +13,11 @@ differently.
 5. A lane is free when no other OPEN issue in a conflicting derived lane has
    `in-progress`.
 6. Prefer `ready-for-dev`, then higher priority, then the earlier train.
-7. Claim atomically: add `in-progress` and set Project Status to In Progress.
+7. Claim with `python3 workspace/sdlc/claim-issue.py <n> --agent <id>` (#1646).
+   It refuses busy lanes, posts a claim marker, re-reads after a settle delay,
+   and only the earliest marker wins; the winner gets `in-progress` + Status
+   In Progress. Never add `in-progress` by hand: two agents can both read a
+   lane as free.
 8. Dispatch the matching specialist with the issue, OpenSpec change, branch,
    acceptance criteria, and prior gate evidence.
 
@@ -43,6 +47,10 @@ branch, and a second agent never claims a blocked lane.
 | Waiting but still owned | OPEN | In Progress | `in-progress`, `blocked` |
 | Released back to queue | OPEN | Todo | no WIP label |
 | Completed | CLOSED | Done | no `in-progress`, no `blocked` |
+
+A claim with no open PR after 24 h is released by
+`python3 workspace/sdlc/claim-issue.py --release-stale --hours 24` (the foreman
+runs it before picking work), so a dead agent cannot hold a lane.
 
 Validate synchronization with:
 
