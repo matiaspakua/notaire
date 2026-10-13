@@ -28,7 +28,9 @@ digest (`@sha256:…`). Do not use `:latest`, major-only floats, or bare
 channel tags. Compose/infra pins live in YAML and are bumped in-repo;
 Dependabot **docker** ecosystems for `/backend-api` and `/frontend` open PRs
 when Dockerfile bases change. The backend entry ignores
-`version-update:semver-major` for `eclipse-temurin` and `maven`: the JDK major
+`version-update:semver-major` for `eclipse-temurin` and **every** `maven` update
+(Dependabot cannot read `3.10.0-eclipse-temurin-26` as semver, so #1629 slipped
+past a semver-major rule; #1643): the JDK major
 is the toolchain (`jdk-toolchain` spec), so moving it is a planned change to
 `pom.xml`, CI and both images together, not a bot PR. #1615/#1616 merged JDK 27
 bases and a floating `maven:3-…` tag over red checks; #1621 reverted them.
