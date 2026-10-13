@@ -35,11 +35,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| a lock applies across instances | LoginAttemptSharedStoreIntegrationTest | pending |
-| a restart does not reset the lock | LoginAttemptSharedStoreIntegrationTest | pending |
-| a success clears the counter on every instance | LoginAttemptSharedStoreIntegrationTest | pending |
-| expired entries are purged | LoginAttemptSharedStoreIntegrationTest | pending |
-| the table holds no personal data beyond the username | LoginAttemptSharedStoreIntegrationTest | pending |
+| a lock applies across instances | LoginAttemptSharedStoreIntegrationTest | passing |
+| a restart does not reset the lock | LoginAttemptSharedStoreIntegrationTest | passing |
+| a success clears the counter on every instance | LoginAttemptSharedStoreIntegrationTest | passing |
+| expired entries are purged | LoginAttemptSharedStoreIntegrationTest | passing |
+| the table holds no personal data beyond the username | LoginAttemptSharedStoreIntegrationTest | passing |
 
 ## Permanent documentation updated
 
