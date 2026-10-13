@@ -155,6 +155,7 @@ export interface DeedPayload {
   status?: string;
   idFolio?: number;
   notes?: string;
+  number?: number;
 }
 
 export interface UserPayload {
@@ -433,10 +434,12 @@ export async function createProcedure(
   page: Page,
   managementId: number,
   procedureTypeId: number,
+  extra: { idDeed?: number; idBudget?: number } = {},
 ): Promise<ApiResult<{ idProcedure: number }>> {
   return apiPost(page, "/procedures", {
     idProcedureType: procedureTypeId,
     idManagement: managementId,
+    ...extra,
   });
 }
 
@@ -803,4 +806,99 @@ export async function brunoGetBudgetReport(
   budgetId: number,
 ): Promise<ApiResult> {
   return apiGet(page, `/reports/budget/${budgetId}`);
+}
+
+export interface ProtocolReportPeriod {
+  year: number;
+  lastName: string;
+  firstName: string;
+  procedureName: string;
+  deedNumber: number;
+  firstFolio: number;
+  signingDayMonth: string;
+  idNotary: number;
+  idFolioType: number;
+}
+
+/**
+ * Seeds a recorded deed + folio + procedure + budget client for CU24/CU25/CU50.
+ */
+export async function seedProtocolReportPeriod(
+  page: Page,
+  overrides: { year?: number } = {},
+): Promise<ProtocolReportPeriod> {
+  const year = overrides.year ?? new Date().getFullYear();
+  const suffix = uniqueId();
+  const lastName = `Zamora${suffix}`;
+  const firstName = "Lucia";
+  const procedureName = `Compraventa ${suffix}`;
+  const deedNumber = suffix % 1_000_000;
+  const firstFolio = 10 + (suffix % 80);
+
+  const client = await createPerson(page, { firstName, lastName, isClient: true });
+  if (!client.ok || !client.data?.personId) {
+    throw new Error(`seedProtocolReportPeriod client: ${client.error ?? JSON.stringify(client.data)}`);
+  }
+  const notary = await createPerson(page, {
+    firstName: "Notary",
+    lastName: `Index${suffix}`,
+    isClient: false,
+    notaryRegistrationNumber: suffix % 10_000,
+  });
+  if (!notary.ok || !notary.data?.personId) {
+    throw new Error(`seedProtocolReportPeriod notary: ${notary.error ?? JSON.stringify(notary.data)}`);
+  }
+  const folioType = await createFolioType(page, { name: `Protocol ${suffix}` });
+  if (!folioType.ok || !folioType.data?.idFolioType) {
+    throw new Error(`seedProtocolReportPeriod folio type: ${folioType.error ?? JSON.stringify(folioType.data)}`);
+  }
+  const budget = await createBudget(page, client.data.personId);
+  if (!budget.ok || !budget.data?.idBudget) {
+    throw new Error(`seedProtocolReportPeriod budget: ${budget.error ?? JSON.stringify(budget.data)}`);
+  }
+  const procedureType = await createProcedureType(page, { name: procedureName });
+  if (!procedureType.ok || !procedureType.data?.idProcedureType) {
+    throw new Error(
+      `seedProtocolReportPeriod procedure type: ${procedureType.error ?? JSON.stringify(procedureType.data)}`,
+    );
+  }
+  const deed = await createDeed(page, 0, client.data.personId, {
+    dateDeedrecording: `${year}-03-15`,
+    number: deedNumber,
+    body: `Index book seed ${suffix}`,
+  });
+  if (!deed.ok || !deed.data?.idDeed) {
+    throw new Error(`seedProtocolReportPeriod deed: ${deed.error ?? JSON.stringify(deed.data)}`);
+  }
+  const folio = await createFolio(page, notary.data.personId, {
+    number: firstFolio,
+    year,
+    status: "Utilizado",
+    typeFolioId: folioType.data.idFolioType,
+    notaryId: notary.data.personId,
+    deedId: deed.data.idDeed,
+  });
+  if (!folio.ok || !folio.data?.idFolio) {
+    throw new Error(`seedProtocolReportPeriod folio: ${folio.error ?? JSON.stringify(folio.data)}`);
+  }
+  const procedure = await apiPost<{ idProcedure: number }>(page, "/procedures", {
+    idProcedureType: procedureType.data.idProcedureType,
+    idDeed: deed.data.idDeed,
+    idBudget: budget.data.idBudget,
+  });
+  if (!procedure.ok) {
+    throw new Error(`seedProtocolReportPeriod procedure: ${procedure.error ?? JSON.stringify(procedure.data)}`);
+  }
+
+  return {
+    year,
+    lastName,
+    firstName,
+    procedureName,
+    deedNumber,
+    firstFolio,
+    signingDayMonth: "15/03",
+    idNotary: notary.data.personId,
+    idFolioType: folioType.data.idFolioType,
+  };
 }

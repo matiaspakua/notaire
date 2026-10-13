@@ -38,7 +38,8 @@
  */
 import { test, expect } from "@playwright/test";
 import { GherkinSteps, TestData } from "./gherkin-helpers";
-import { apiPost, createDocumentType, createProcedureType, uniqueId } from "./setup/api-helpers";
+import { apiPost, createDocumentType, createProcedureType, seedProtocolReportPeriod, uniqueId } from "./setup/api-helpers";
+import { assertPdfDownload } from "./setup/pdf-helpers";
 
 test.describe("Reports — navigation discovery (#1058)", () => {
   let steps: GherkinSteps;
@@ -66,9 +67,15 @@ test.describe("CU24 - Generate the index book", () => {
     await steps.whenUserOpensSidebarNav("reportes");
   });
 
-  test.skip("CU24-GW01 (#1146): Given reports, When the index book is requested, Then it is generated", async () => {
-    // Skipped (#1146): reports page uses "Descargar PDF" buttons — no "libro índices" button text.
-    // The report is triggered by filling the year field and clicking Descargar PDF.
+  test("CU24-GW01: Given a recorded period, When the index book is downloaded, Then the PDF lists the person", async ({
+    page,
+  }) => {
+    const seeded = await seedProtocolReportPeriod(page);
+    await page.getByTestId("input-report-index-year").fill(String(seeded.year));
+    const downloadPromise = page.waitForEvent("download");
+    await page.getByTestId("btn-download-index-book").click();
+    const download = await downloadPromise;
+    await assertPdfDownload(download, /libro_indice_.*\.pdf/, [seeded.lastName, seeded.procedureName, "Index book"]);
   });
 });
 

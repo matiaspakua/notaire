@@ -53,7 +53,8 @@ class ReportServicePaymentReceiptTest {
                 paymentRepository,
                 itemRepository,
                 reportDocuments,
-                new PdfBoxReportRenderer()
+                new PdfBoxReportRenderer(),
+                null
         );
     }
 

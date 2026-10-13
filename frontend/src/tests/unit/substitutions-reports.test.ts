@@ -117,6 +117,14 @@ describe("Report URL construction", () => {
     expect(url).toBe("http://localhost:8080/api/v1/reports/index-book?year=2025");
   });
 
+  it("index book URL may add optional notary and protocol filters", () => {
+    const params = new URLSearchParams({ year: "2026", idNotary: "4", idFolioType: "2" });
+    const url = `${BASE}/reports/index-book?${params.toString()}`;
+    expect(url).toContain("year=2026");
+    expect(url).toContain("idNotary=4");
+    expect(url).toContain("idFolioType=2");
+  });
+
   it("document debt URL includes the management number (numberManagement)", () => {
     const number = 1001;
     const url = `${BASE}/reports/document-debt?numberManagement=${number}`;

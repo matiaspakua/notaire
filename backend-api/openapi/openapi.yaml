@@ -7418,13 +7418,30 @@ paths:
       - Reports
   /api/v1/reports/index-book:
     get:
-      description: 'Base endpoint for CU24: a provisional PDF for the requested period; the index-book content is still pending'
+      description: 'CU24: index of recorded deeds for a year, optionally narrowed by notary registry and protocol type. An
+        empty period returns 200 and an empty-state PDF'
       operationId: generateIndexBook
       parameters:
       - description: Year of the index book
         in: query
         name: year
         required: true
+        schema:
+          exclusiveMinimum: 0
+          format: int32
+          type: integer
+      - description: Optional notary person id (registry)
+        in: query
+        name: idNotary
+        required: false
+        schema:
+          exclusiveMinimum: 0
+          format: int32
+          type: integer
+      - description: Optional folio / protocol type id
+        in: query
+        name: idFolioType
+        required: false
         schema:
           exclusiveMinimum: 0
           format: int32
@@ -7436,7 +7453,19 @@ paths:
               schema:
                 format: byte
                 type: string
-          description: OK
+          description: PDF of the index book
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid parameter
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unexpected error generating the PDF
       summary: Generate the index book
       tags:
       - Reports

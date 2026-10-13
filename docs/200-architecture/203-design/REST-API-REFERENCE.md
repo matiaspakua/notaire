@@ -302,7 +302,7 @@ These endpoints return `application/pdf` (errors are `ErrorResponse` JSON). The 
 | GET | `/reports/management-history/{idManagement}` | Management data and status history | CU13 |
 | GET | `/reports/documents-due/{idSubmittedDocument}` | Expiry, payment, and management of one submitted document | CU42 |
 | GET | `/reports/document-debt` | Document debt for a management number (`?numberManagement=`) | CU09 |
-| GET | `/reports/index-book` | Index book (`?year=`) | CU24 |
+| GET | `/reports/index-book` | Index book (`?year=` required; optional `idNotary`, `idFolioType`) | CU24 |
 | GET | `/reports/monthly-sworn-statement` | Monthly sworn statement (`?year=&month=`) | CU25 |
 | GET | `/reports/tax-sworn-statement` | Tax sworn statement (`?year=&month=`) | CU50 |
 

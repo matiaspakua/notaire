@@ -6,11 +6,15 @@ import { toast } from "sonner";
 import { FileDown, FileText, Book, ClipboardList, AlertCircle } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useQuery } from "@tanstack/react-query";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormField } from "@/theme/form-patterns";
 import { theme } from "@/theme/tokens";
+import { apiGet } from "@/lib/api-client";
+import type { FolioType, Person } from "@/types";
 import {
   useBudgetReport,
   useBudgetPropertiesReport,
@@ -141,6 +145,7 @@ const yearMonthGrid: React.CSSProperties = {
 export default function ReportsPage() {
   const t = useTranslations("reportes");
   const tc = useTranslations("common");
+  const tf = useTranslations("administracion.folios");
   const budgetReport = useBudgetReport();
   const budgetPropertiesReport = useBudgetPropertiesReport();
   const managementHistoryReport = useManagementHistoryReport();
@@ -157,7 +162,18 @@ export default function ReportsPage() {
   const [taxYear, setTaxYear] = useState(currentYear());
   const [taxMonth, setTaxMonth] = useState(currentMonth());
   const [indexYear, setIndexYear] = useState(currentYear());
+  const [indexNotary, setIndexNotary] = useState("");
+  const [indexFolioType, setIndexFolioType] = useState("");
   const [debtManagementNumber, setDebtManagementNumber] = useState("");
+
+  const { data: notaries = [] } = useQuery({
+    queryKey: ["availableNotaries"],
+    queryFn: () => apiGet<Person[]>("/deeds/available-notaries"),
+  });
+  const { data: folioTypes = [] } = useQuery({
+    queryKey: ["folioTypes"],
+    queryFn: () => apiGet<FolioType[]>("/folio-types"),
+  });
 
   async function handle(download: () => Promise<void>) {
     try {
@@ -284,9 +300,61 @@ export default function ReportsPage() {
           downloadLabel={downloadLabel}
           downloadTestId="btn-download-index-book"
           canDownload
-          onDownload={() => handle(() => indexBookReport.download(Number(indexYear)))}
+          onDownload={() =>
+            handle(() =>
+              indexBookReport.download(
+                Number(indexYear),
+                indexNotary ? Number(indexNotary) : undefined,
+                indexFolioType ? Number(indexFolioType) : undefined,
+              ),
+            )
+          }
         >
-          <NumberField label={tc("year")} value={indexYear} onChange={setIndexYear} min="2000" max="2099" />
+          <NumberField
+            label={tc("year")}
+            value={indexYear}
+            onChange={setIndexYear}
+            min="2000"
+            max="2099"
+            testId="input-report-index-year"
+            required
+          />
+          <FormField label={tf("fields.escribano")} helperText={tc("optional")}>
+            <Select
+              value={indexNotary || "all"}
+              onValueChange={(value) => setIndexNotary(value === "all" ? "" : value)}
+            >
+              <SelectTrigger data-testid="select-report-index-notary">
+                <SelectValue placeholder={tf("fields.escribanoPlaceholder")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{tc("all")}</SelectItem>
+                {notaries.map((notary) => (
+                  <SelectItem key={notary.personId} value={String(notary.personId)}>
+                    {notary.lastName} {notary.firstName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormField>
+          <FormField label={tf("fields.tipo")} helperText={tc("optional")}>
+            <Select
+              value={indexFolioType || "all"}
+              onValueChange={(value) => setIndexFolioType(value === "all" ? "" : value)}
+            >
+              <SelectTrigger data-testid="select-report-index-folio-type">
+                <SelectValue placeholder={tf("fields.tipoPlaceholder")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{tc("all")}</SelectItem>
+                {folioTypes.map((type) => (
+                  <SelectItem key={type.idFolioType} value={String(type.idFolioType)}>
+                    {type.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormField>
         </ReportCard>
 
         <ReportCard

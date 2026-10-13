@@ -50,5 +50,6 @@ title/header/table/footer reading order. PDF/UA-1 is **not** claimed.
 
 ## Out of scope for later slices
 
-CU24/CU25/CU50 business queries, CU08/CU80/CU82 legal forms, report
-authorization matrix, Owner-approved logo, UI download E2E (Slice 8).
+CU25/CU50 business queries, CU08/CU80/CU82 legal forms, report
+authorization matrix, Owner-approved logo. CU24 index-book content is
+implemented under [#177](https://github.com/matiaspakua/notaire/issues/177).

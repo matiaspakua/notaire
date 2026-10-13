@@ -1925,7 +1925,7 @@ export interface paths {
         };
         /**
          * Generate the index book
-         * @description Base endpoint for CU24: a provisional PDF for the requested period; the index-book content is still pending
+         * @description CU24: index of recorded deeds for a year, optionally narrowed by notary registry and protocol type. An empty period returns 200 and an empty-state PDF
          */
         get: operations["generateIndexBook"];
         put?: never;
@@ -9555,12 +9555,14 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Unexpected error generating the PDF (no body) */
+            /** @description Unexpected error generating the PDF */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
             };
         };
     };
@@ -9603,12 +9605,14 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Unexpected error generating the PDF (no body) */
+            /** @description Unexpected error generating the PDF */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
             };
         };
     };
@@ -9651,12 +9655,14 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Unexpected error generating the PDF (no body) */
+            /** @description Unexpected error generating the PDF */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
             };
         };
     };
@@ -9699,12 +9705,14 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Unexpected error generating the PDF (no body) */
+            /** @description Unexpected error generating the PDF */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
             };
         };
     };
@@ -9713,6 +9721,10 @@ export interface operations {
             query: {
                 /** @description Year of the index book */
                 year: number;
+                /** @description Optional notary person id (registry) */
+                idNotary?: number;
+                /** @description Optional folio / protocol type id */
+                idFolioType?: number;
             };
             header?: never;
             path?: never;
@@ -9720,13 +9732,31 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
+            /** @description PDF of the index book */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/pdf": string;
+                };
+            };
+            /** @description Invalid parameter */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected error generating the PDF */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
@@ -9770,12 +9800,14 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Unexpected error generating the PDF (no body) */
+            /** @description Unexpected error generating the PDF */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
             };
         };
     };
@@ -9875,12 +9907,14 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Unexpected error generating the PDF (no body) */
+            /** @description Unexpected error generating the PDF */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
             };
         };
     };

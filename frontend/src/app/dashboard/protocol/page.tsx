@@ -10,25 +10,37 @@ import { StatusBadge } from "@/components/shared/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
 import { apiGet, apiGetBytes } from "@/lib/api-client";
 import { presentMutationError } from "@/lib/mutation-error";
-import type { Folio } from "@/types";
+import type { Folio, FolioType, Person } from "@/types";
 import { FileText, Download, BookOpen, FilePlus } from "lucide-react";
 
 export default function ProtocolPage() {
   const t = useTranslations("protocolo");
   const tc = useTranslations("common");
+  const tf = useTranslations("administracion.folios");
 
   const { data: folios = [], isLoading } = useQuery({
     queryKey: ["folios"],
     queryFn: () => apiGet<Folio[]>("/folios"),
   });
+  const { data: notaries = [] } = useQuery({
+    queryKey: ["availableNotaries"],
+    queryFn: () => apiGet<Person[]>("/deeds/available-notaries"),
+  });
+  const { data: folioTypes = [] } = useQuery({
+    queryKey: ["folioTypes"],
+    queryFn: () => apiGet<FolioType[]>("/folio-types"),
+  });
 
   const [reportDialog, setReportDialog] = useState<string | null>(null);
   const [reportYear, setReportYear] = useState(new Date().getFullYear().toString());
   const [reportMonth, setReportMonth] = useState((new Date().getMonth() + 1).toString());
+  const [reportNotary, setReportNotary] = useState("");
+  const [reportFolioType, setReportFolioType] = useState("");
   const [downloading, setDownloading] = useState(false);
 
   async function handleDownloadReport() {
@@ -38,7 +50,14 @@ export default function ProtocolPage() {
       let url = "";
       let filename = "";
       if (reportDialog === "index-book") {
-        url = `/reports/index-book?year=${reportYear}`;
+        const params = new URLSearchParams({ year: reportYear });
+        if (reportNotary) {
+          params.set("idNotary", reportNotary);
+        }
+        if (reportFolioType) {
+          params.set("idFolioType", reportFolioType);
+        }
+        url = `/reports/index-book?${params.toString()}`;
         filename = `libro_indice_${reportYear}.pdf`;
       } else if (reportDialog === "monthly-sworn-statement") {
         url = `/reports/monthly-sworn-statement?year=${reportYear}&month=${reportMonth}`;
@@ -123,8 +142,53 @@ export default function ProtocolPage() {
           <FormContainer>
             <FormSection dialogTitle title={reportTitle}>
               <FormField label={tc("year")} required>
-                <Input type="number" value={reportYear} onChange={(e) => setReportYear(e.target.value)} />
+                <Input
+                  type="number"
+                  value={reportYear}
+                  onChange={(e) => setReportYear(e.target.value)}
+                  data-testid="input-protocol-report-year"
+                />
               </FormField>
+              {reportDialog === "index-book" && (
+                <>
+                  <FormField label={tf("fields.escribano")} helperText={tc("optional")}>
+                    <Select
+                      value={reportNotary || "all"}
+                      onValueChange={(value) => setReportNotary(value === "all" ? "" : value)}
+                    >
+                      <SelectTrigger data-testid="select-protocol-index-notary">
+                        <SelectValue placeholder={tf("fields.escribanoPlaceholder")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">{tc("all")}</SelectItem>
+                        {notaries.map((notary) => (
+                          <SelectItem key={notary.personId} value={String(notary.personId)}>
+                            {notary.lastName} {notary.firstName}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormField>
+                  <FormField label={tf("fields.tipo")} helperText={tc("optional")}>
+                    <Select
+                      value={reportFolioType || "all"}
+                      onValueChange={(value) => setReportFolioType(value === "all" ? "" : value)}
+                    >
+                      <SelectTrigger data-testid="select-protocol-index-folio-type">
+                        <SelectValue placeholder={tf("fields.tipoPlaceholder")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">{tc("all")}</SelectItem>
+                        {folioTypes.map((type) => (
+                          <SelectItem key={type.idFolioType} value={String(type.idFolioType)}>
+                            {type.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormField>
+                </>
+              )}
               {reportDialog !== "index-book" && (
                 <FormField label={tc("month")} required helperText="1 – 12">
                   <Input type="number" min="1" max="12" value={reportMonth} onChange={(e) => setReportMonth(e.target.value)} />

@@ -194,15 +194,28 @@ public class ReportController {
                 () -> reportService.generateDebtDocumentsReport(numberManagement));
     }
 
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "PDF of the index book"),
+        @ApiResponse(responseCode = "400", description = "Invalid parameter", content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF",
+                content = @Content(
+                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                        schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @GetMapping(value = "/index-book", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generate the index book",
-               description = "Base endpoint for CU24: a provisional PDF for the requested period; "
-                       + "the index-book content is still pending")
+               description = "CU24: index of recorded deeds for a year, optionally narrowed by notary "
+                       + "registry and protocol type. An empty period returns 200 and an empty-state PDF")
     public ResponseEntity<byte[]> generateIndexBook(
             @Parameter(description = "Year of the index book")
-            @RequestParam("year") @Positive Integer year) {
+            @RequestParam("year") @Positive Integer year,
+            @Parameter(description = "Optional notary person id (registry)")
+            @RequestParam(value = "idNotary", required = false) @Positive Integer idNotary,
+            @Parameter(description = "Optional folio / protocol type id")
+            @RequestParam(value = "idFolioType", required = false) @Positive Integer idFolioType) {
         return buildPdfResponse("libro_indice_" + year + ".pdf",
-                () -> reportService.generateIndexBookReport(year));
+                () -> reportService.generateIndexBookReport(year, idNotary, idFolioType));
     }
 
     @GetMapping(value = "/monthly-sworn-statement", produces = MediaType.APPLICATION_PDF_VALUE)

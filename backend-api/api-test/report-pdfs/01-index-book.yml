@@ -4,8 +4,9 @@ info:
   seq: 1
   description: |-
       ## GET /api/v1/reports/index-book?year=
-      Representative ReportController coverage (year-only fixture).
-      Traceability: CU24 (RF QA Bruno #953)
+      Year-only fixture remains valid. Optional idNotary and idFolioType
+      narrow the period. Empty years return 200 + empty-state PDF.
+      Traceability: CU24 / #177 (RF QA Bruno #953)
 http:
   method: GET
   url: "{{base_url}}/api/v1/reports/index-book?year=2026"

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Features
 
+- **reports:** CU24 index book lists recorded deeds by involved person (year, optional notary and protocol) ([#177](https://github.com/matiaspakua/notaire/issues/177))
 - **reports:** shared accessible deterministic PDF design system — embedded Liberation Sans, text wordmark, repeating chrome, `es-AR` metadata, centralized download headers ([#1593](https://github.com/matiaspakua/notaire/issues/1593))
 
 ## [0.2.0](https://github.com/matiaspakua/notaire/compare/v0.1.2...v0.2.0) (2026-10-12)

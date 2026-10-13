@@ -20,6 +20,7 @@ public final class ReportLocaleFormats {
     public static final String NOT_RECORDED = "N/A";
 
     private static final DateTimeFormatter DAY = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter DAY_MONTH = DateTimeFormatter.ofPattern("dd/MM");
     private static final DateTimeFormatter GENERATED = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private ReportLocaleFormats() {
@@ -52,6 +53,11 @@ public final class ReportLocaleFormats {
 
     public static String day(Date date) {
         return day(localDate(date));
+    }
+
+    public static String dayMonth(Date date) {
+        LocalDate local = localDate(date);
+        return local == null ? NOT_RECORDED : DAY_MONTH.format(local);
     }
 
     public static String fallback(String value) {

@@ -85,11 +85,16 @@ export function useTaxSwornStatementReport() {
 /** CU24 — Index book */
 export function useIndexBookReport() {
   return {
-    download: (year: number) =>
-      downloadPdf(
-        `/reports/index-book?year=${year}`,
-        `libro_indice_${year}.pdf`
-      ),
+    download: (year: number, idNotary?: number, idFolioType?: number) => {
+      const params = new URLSearchParams({ year: String(year) });
+      if (idNotary) {
+        params.set("idNotary", String(idNotary));
+      }
+      if (idFolioType) {
+        params.set("idFolioType", String(idFolioType));
+      }
+      return downloadPdf(`/reports/index-book?${params.toString()}`, `libro_indice_${year}.pdf`);
+    },
   };
 }
 
