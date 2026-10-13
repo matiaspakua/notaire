@@ -50,7 +50,9 @@ Validate synchronization with:
 python3 workspace/sdlc/check-board-status-label-coherence.py --scope wip
 ```
 
-If an agent token cannot write GitHub, the coordinator performs the Status and
+Agents act as the `notaire-fleet` GitHub App
+(`eval "$(bash workspace/sdlc/fleet-token.sh)"`; [FLEET-IDENTITY.md](../304-ai-sdlc-cloud/FLEET-IDENTITY.md), #1648).
+Only while the App is not configured does the coordinator perform the Status and
 label mutation. The PR body with `Closes #N` is the fallback synchronization
 channel, not a substitute board.
 
