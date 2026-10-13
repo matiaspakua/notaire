@@ -66,7 +66,7 @@ class UserControllerHashTest {
                 .thenReturn(org.springframework.http.ResponseCookie.from("notaire-auth-token", "x")
                         .httpOnly(true).path("/").sameSite("Lax").build());
         controller = new UserController(userRepository, jwtTokenService, metricsUtil, passwordEncoder,
-                new LoginAttemptService(5, 900000), authCookieService, tokenRevocationService);
+                new LoginAttemptService(5, 900000, new com.licensis.notaire.security.InMemoryLoginAttemptStore()), authCookieService, tokenRevocationService);
         mockMvc = standaloneSetup(controller).build();
     }
 

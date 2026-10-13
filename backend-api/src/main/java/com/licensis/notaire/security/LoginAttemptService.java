@@ -5,14 +5,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 /**
  * Tracks failed login attempts per username and locks an account out for a
  * configurable duration once a configurable threshold is reached (issue #560).
- * State is kept in-memory; this is a single-instance mitigation, not a
- * distributed rate limiter.
+ * The counters live in a {@link LoginAttemptStore}; in production that is the shared
+ * database table, so the lock holds across backend instances and restarts (issue #1634).
  */
 @Component
 public class LoginAttemptService {
@@ -20,53 +19,52 @@ public class LoginAttemptService {
     private final int maxAttempts;
     private final long lockoutDurationMillis;
     private final Supplier<Instant> clock;
-    private final ConcurrentHashMap<String, Attempt> attemptsByUsername = new ConcurrentHashMap<>();
+    private final LoginAttemptStore store;
 
     @Autowired
     public LoginAttemptService(
             @Value("${security.login.max-attempts:5}") int maxAttempts,
-            @Value("${security.login.lockout-duration-ms:900000}") long lockoutDurationMillis) {
-        this(maxAttempts, lockoutDurationMillis, Instant::now);
+            @Value("${security.login.lockout-duration-ms:900000}") long lockoutDurationMillis,
+            LoginAttemptStore store) {
+        this(maxAttempts, lockoutDurationMillis, Instant::now, store);
     }
 
     LoginAttemptService(int maxAttempts, long lockoutDurationMillis, Supplier<Instant> clock) {
+        this(maxAttempts, lockoutDurationMillis, clock, new InMemoryLoginAttemptStore());
+    }
+
+    public LoginAttemptService(int maxAttempts, long lockoutDurationMillis, Supplier<Instant> clock,
+            LoginAttemptStore store) {
         this.maxAttempts = maxAttempts;
         this.lockoutDurationMillis = lockoutDurationMillis;
         this.clock = clock;
+        this.store = store;
     }
 
     public boolean isLocked(String username) {
         String key = normalize(username);
-        Attempt attempt = attemptsByUsername.get(key);
-        if (attempt == null || attempt.lockedUntil == null) {
-            return false;
-        }
-        if (clock.get().isBefore(attempt.lockedUntil)) {
-            return true;
-        }
-        attemptsByUsername.remove(key);
-        return false;
+        return store.lockedUntil(key).map(lockedUntil -> isStillLocked(key, lockedUntil)).orElse(false);
     }
 
     public void onLoginFailed(String username) {
-        String key = normalize(username);
-        Attempt attempt = attemptsByUsername.computeIfAbsent(key, k -> new Attempt());
-        attempt.failedCount++;
-        if (attempt.failedCount >= maxAttempts) {
-            attempt.lockedUntil = clock.get().plusMillis(lockoutDurationMillis);
-        }
+        Instant now = clock.get();
+        store.purgeIdleSince(now.minusMillis(lockoutDurationMillis));
+        store.recordFailure(normalize(username), maxAttempts, now, now.plusMillis(lockoutDurationMillis));
     }
 
     public void onLoginSucceeded(String username) {
-        attemptsByUsername.remove(normalize(username));
+        store.clear(normalize(username));
+    }
+
+    private boolean isStillLocked(String key, Instant lockedUntil) {
+        if (clock.get().isBefore(lockedUntil)) {
+            return true;
+        }
+        store.clear(key);
+        return false;
     }
 
     private String normalize(String username) {
         return username == null ? "" : username.trim().toLowerCase();
-    }
-
-    private static final class Attempt {
-        private int failedCount;
-        private Instant lockedUntil;
     }
 }
