@@ -26,6 +26,33 @@ LEGACY_COMPONENT_TAGS = {
     "0.1.2": "notaire-v0.1.2",
 }
 
+RELEASE_ASSETS = (
+    "sbom-backend.cdx.json",
+    "sbom-frontend.cdx.json",
+    "sbom-database.cdx.json",
+    "sbom-notaire.cdx.json",
+    "product-release.json",
+)
+
+SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+$")
+V_TAG_RE = re.compile(r"^v(\d+\.\d+\.\d+)$")
+LEGACY_TAG_RE = re.compile(r"^notaire-v(\d+\.\d+\.\d+)$")
+GHCR_IMAGE_RE = re.compile(
+    r"ghcr\.io/matiaspakua/notaire/(backend|frontend):([^\s#]+)"
+)
+RELEASE_PLEASE_MARKER = "# x-release-please-version"
+GHCR_PREFIX = "ghcr.io/matiaspakua/notaire/"
+IDENTITY_COMPOSE_FILES = ("docker-compose.yml", "docker-compose.prod.yml")
+STAGING_KUSTOMIZE = "infra/deploy/kustomize/overlays/staging/kustomization.yaml"
+RELEASE_PLEASE_IDENTITY_PATHS = frozenset(
+    {
+        "docker-compose.yml",
+        "docker-compose.prod.yml",
+        STAGING_KUSTOMIZE,
+    }
+)
+UNFILTERED_MAVEN_TOKEN = "@project.version@"
+
 TRAIN_V10 = "2026-11 · Release blockers"
 TRAIN_V11 = "2027-01 · Quality & traceability"
 
@@ -68,6 +95,28 @@ def train_for(version: str) -> str:
 
 def tag_for(version: str) -> str:
     return LEGACY_COMPONENT_TAGS.get(version, f"v{version}")
+
+
+def tag_is_valid(tag: str, version: str | None = None) -> tuple[bool, str]:
+    """Return (ok, message). Legacy tags are shape-only; vX.Y.Z must match version when given."""
+    if tag in LEGACY_COMPONENT_TAGS.values():
+        match = LEGACY_TAG_RE.match(tag)
+        if not match:
+            return False, f"tag {tag} is not a valid legacy release tag"
+        legacy_version = match.group(1)
+        if legacy_version not in LEGACY_COMPONENT_TAGS:
+            return False, f"legacy tag {tag} is not in LEGACY_COMPONENT_TAGS"
+        return True, ""
+
+    match = V_TAG_RE.match(tag)
+    if not match:
+        return False, f"tag {tag} must be vX.Y.Z or a listed legacy notaire-v* tag"
+    semver = match.group(1)
+    if not SEMVER_RE.fullmatch(semver):
+        return False, f"tag {tag} does not use a three-part semver"
+    if version is not None and semver != version:
+        return False, f"tag {tag} != tree version {version}"
+    return True, ""
 
 
 def _read(path: Path) -> str:
@@ -337,6 +386,11 @@ def check(root: Path) -> list[str]:
     version = snapshot["version"]
     backend = snapshot["components"]["backend"]
     frontend = snapshot["components"]["frontend"]["version"]
+    if "SNAPSHOT" in backend["version"].upper():
+        errors.append(
+            f"root pom.xml version {backend['version']} is a snapshot; "
+            "release tags require a release semver"
+        )
     if backend["version"] != version:
         errors.append(
             f"root pom.xml version {backend['version']} != manifest {version} "
@@ -387,6 +441,188 @@ def check(root: Path) -> list[str]:
         if needle not in extra:
             errors.append(f"release-please extra-files missing {needle}")
 
+    return errors
+
+
+def _attach_asset_names_from_cd(text: str) -> set[str]:
+    marker = "name: Attach SBOMs to Release"
+    start = text.find(marker)
+    if start < 0:
+        return set()
+    block = text[start:]
+    files_idx = block.find("files:")
+    if files_idx < 0:
+        return set()
+    lines = block[files_idx:].splitlines()[1:]
+    names: set[str] = set()
+    for line in lines:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if not stripped.startswith("release-assets/"):
+            break
+        names.add(Path(stripped).name)
+    return names
+
+
+def check_sbom_snapshot(snapshot: dict) -> list[str]:
+    errors: list[str] = []
+    version = snapshot["version"]
+    schema = snapshot["components"]["database"]["schemaVersion"]
+    backend = snapshot["components"]["backend"]["version"]
+    frontend = snapshot["components"]["frontend"]["version"]
+    product = product_sbom(snapshot)
+    database = database_sbom(snapshot)
+    if product["metadata"]["component"]["version"] != version:
+        errors.append("generated product SBOM version does not match the manifest")
+    component_versions = {item["bom-ref"]: item["version"] for item in product["components"]}
+    if component_versions.get("backend") != backend:
+        errors.append("generated product SBOM backend version drift")
+    if component_versions.get("frontend") != frontend:
+        errors.append("generated product SBOM frontend version drift")
+    if component_versions.get("database") != schema:
+        errors.append("generated product SBOM database schema drift")
+    if len(database["components"]) != snapshot["components"]["database"]["migrationCount"]:
+        errors.append("generated database SBOM migration count drift")
+    return errors
+
+
+def check_cd_release_assets(root: Path) -> list[str]:
+    errors: list[str] = []
+    path = root / ".github" / "workflows" / "cd.yml"
+    if not path.is_file():
+        return [".github/workflows/cd.yml is missing"]
+    text = _read(path)
+    for asset in RELEASE_ASSETS:
+        if asset not in text:
+            errors.append(f"cd.yml does not reference release asset {asset}")
+    attached = _attach_asset_names_from_cd(text)
+    if attached and attached != set(RELEASE_ASSETS):
+        missing = set(RELEASE_ASSETS) - attached
+        extra = attached - set(RELEASE_ASSETS)
+        if missing:
+            errors.append(f"cd.yml attach list missing assets: {', '.join(sorted(missing))}")
+        if extra:
+            errors.append(f"cd.yml attach list has unexpected assets: {', '.join(sorted(extra))}")
+    if "fail_on_unmatched_files: true" not in text:
+        errors.append("cd.yml release upload must set fail_on_unmatched_files: true")
+    if "group: release-assets-${{ github.ref }}" not in text:
+        errors.append("cd.yml release job must declare concurrency group release-assets-${{ github.ref }}")
+    return errors
+
+
+def _image_tag_is_placeholder(tag: str) -> bool:
+    lower = tag.lower()
+    if lower == "latest":
+        return True
+    if "placeholder" in lower:
+        return True
+    if lower.startswith("sha-") or re.fullmatch(r"[0-9a-f]{7,40}", lower):
+        return True
+    return False
+
+
+def check_image_identity(root: Path, version: str) -> list[str]:
+    errors: list[str] = []
+    for relative in IDENTITY_COMPOSE_FILES:
+        path = root / relative
+        if not path.is_file():
+            errors.append(f"{relative} is missing")
+            continue
+        text = _read(path)
+        for match in GHCR_IMAGE_RE.finditer(text):
+            component, tag = match.group(1), match.group(2)
+            if _image_tag_is_placeholder(tag):
+                errors.append(
+                    f"{relative} {component} image tag {tag} is not the released semver"
+                )
+            elif tag != version:
+                errors.append(
+                    f"{relative} {component} image tag {tag} != product version {version}"
+                )
+        for component in ("backend", "frontend"):
+            needle = f"{GHCR_PREFIX}{component}:"
+            if needle not in text:
+                errors.append(f"{relative} missing ghcr image line for {component}")
+
+    overlay = root / STAGING_KUSTOMIZE
+    if not overlay.is_file():
+        errors.append(f"{STAGING_KUSTOMIZE} is missing")
+    else:
+        text = _read(overlay)
+        for line in text.splitlines():
+            if "newTag:" in line:
+                tag = line.split("newTag:", 1)[1].split("#", 1)[0].strip()
+                if _image_tag_is_placeholder(tag):
+                    errors.append(f"staging overlay newTag {tag} is not the released semver")
+                elif tag != version:
+                    errors.append(f"staging overlay newTag {tag} != product version {version}")
+        if "app.kubernetes.io/version" not in text:
+            errors.append("staging overlay must set app.kubernetes.io/version")
+        elif version not in text:
+            errors.append(f"staging overlay must reference product version {version}")
+
+    config_path = root / "release-please-config.json"
+    if config_path.is_file():
+        package = json.loads(_read(config_path)).get("packages", {}).get(".", {})
+        paths = {entry.get("path") for entry in package.get("extra-files", []) if entry.get("path")}
+        missing = RELEASE_PLEASE_IDENTITY_PATHS - paths
+        if missing:
+            errors.append(
+                "release-please extra-files missing identity paths: "
+                + ", ".join(sorted(missing))
+            )
+    return errors
+
+
+def check_packaged_version(packaged: Path, record_version: str) -> list[str]:
+    errors: list[str] = []
+    if not packaged.is_file():
+        return [f"packaged application.properties not found at {packaged}"]
+    app_version: str | None = None
+    for line in _read(packaged).splitlines():
+        stripped = line.strip()
+        if stripped.startswith("app.version="):
+            app_version = stripped.split("=", 1)[1].strip()
+            break
+    if app_version is None:
+        return ["packaged application.properties has no app.version"]
+    if app_version == UNFILTERED_MAVEN_TOKEN:
+        return ["packaged app.version is the unfiltered @project.version@ token"]
+    if app_version != record_version:
+        return [
+            f"packaged app.version {app_version} != release record version {record_version}"
+        ]
+    return errors
+
+
+def check_tag_argument(tag: str, tree_version: str) -> list[str]:
+    ok, message = tag_is_valid(tag, tree_version)
+    if ok:
+        if tag in LEGACY_COMPONENT_TAGS.values():
+            return []
+        return []
+    return [message]
+
+
+def coherence_errors(
+    root: Path,
+    *,
+    tag: str | None = None,
+    packaged: Path | None = None,
+) -> list[str]:
+    errors = list(check(root))
+    try:
+        snapshot = collect(root)
+    except ValueError:
+        return errors
+    errors.extend(check_sbom_snapshot(snapshot))
+    errors.extend(check_cd_release_assets(root))
+    errors.extend(check_image_identity(root, snapshot["version"]))
+    if tag:
+        errors.extend(check_tag_argument(tag, snapshot["version"]))
+    if packaged is not None:
+        errors.extend(check_packaged_version(packaged, snapshot["version"]))
     return errors
 
 

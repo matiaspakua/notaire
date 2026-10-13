@@ -6,6 +6,8 @@ workflow**; this file is only the operational cheat-sheet for it. Where they
 differ, the Constitution wins. Roles (Owner, Foreman, Worker) are defined in
 CONSTITUTION §10.
 
+**Principles:** KISS and bounded Boy Scout — see CONSTITUTION §2 (P2, P11).
+
 ## The steps and their commands
 
 | Constitution step | What to do | Command / artifact |

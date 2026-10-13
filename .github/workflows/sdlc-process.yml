@@ -68,6 +68,10 @@ jobs:
         if: ${{ !cancelled() }}
         run: bash workspace/sdlc/check-agent-rules.sh
 
+      - name: Product version coherence
+        if: ${{ !cancelled() }}
+        run: python3 workspace/sdlc/check-product-version-coherence.py
+
       - name: Process script and harness self-tests
         if: ${{ !cancelled() }}
         run: |

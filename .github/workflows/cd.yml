@@ -26,6 +26,23 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
+  release-identity:
+    name: Release identity coherence
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Product version coherence
+        run: |
+          set -euo pipefail
+          args=(python3 workspace/sdlc/check-product-version-coherence.py)
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            args+=(--tag "${GITHUB_REF_NAME}")
+          fi
+          "${args[@]}"
+
   # ==========================================
   # Build and Publish Docker Images (matrix)
   # ==========================================
@@ -33,6 +50,7 @@ jobs:
     name: Build & Publish (${{ matrix.component }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    needs: release-identity
     # On workflow_run, only publish when CI (all tests) succeeded.
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     permissions:
@@ -188,6 +206,9 @@ jobs:
     timeout-minutes: 10
     needs: build-and-publish
     if: startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/tags/notaire-v')
+    concurrency:
+      group: release-assets-${{ github.ref }}
+      cancel-in-progress: false
     permissions:
       contents: write
     steps:
@@ -205,14 +226,30 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p release-assets
-          if [ -f sboms/sbom-backend/sbom.cdx.json ]; then
-            cp sboms/sbom-backend/sbom.cdx.json release-assets/sbom-backend.cdx.json
-          fi
-          if [ -f sboms/sbom-frontend/sbom.cdx.json ]; then
-            cp sboms/sbom-frontend/sbom.cdx.json release-assets/sbom-frontend.cdx.json
-          fi
+          cp sboms/sbom-backend/sbom.cdx.json release-assets/sbom-backend.cdx.json
+          cp sboms/sbom-frontend/sbom.cdx.json release-assets/sbom-frontend.cdx.json
           python3 workspace/release/product_release.py --write-sbom release-assets
           cp release/product-release.json release-assets/product-release.json
+          python3 <<'PY'
+          import importlib.util
+          import sys
+          from pathlib import Path
+
+          spec = importlib.util.spec_from_file_location(
+              "product_release", "workspace/release/product_release.py"
+          )
+          mod = importlib.util.module_from_spec(spec)
+          assert spec.loader is not None
+          spec.loader.exec_module(mod)
+          missing = [
+              name
+              for name in mod.RELEASE_ASSETS
+              if not (Path("release-assets") / name).is_file()
+          ]
+          if missing:
+              print("missing release assets:", ", ".join(missing), file=sys.stderr)
+              sys.exit(1)
+          PY
           ls -la release-assets
 
       - name: Attach SBOMs to Release
@@ -222,6 +259,7 @@ jobs:
           draft: false
           prerelease: false
           generate_release_notes: false
+          fail_on_unmatched_files: true
           files: |
             release-assets/sbom-backend.cdx.json
             release-assets/sbom-frontend.cdx.json
@@ -230,6 +268,39 @@ jobs:
             release-assets/product-release.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify Release asset set
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          export TAG="${GITHUB_REF_NAME}"
+          python3 <<'PY'
+          import importlib.util
+          import json
+          import os
+          import subprocess
+          import sys
+
+          spec = importlib.util.spec_from_file_location(
+              "product_release", "workspace/release/product_release.py"
+          )
+          mod = importlib.util.module_from_spec(spec)
+          assert spec.loader is not None
+          spec.loader.exec_module(mod)
+          tag = os.environ["TAG"]
+          payload = subprocess.run(
+              ["gh", "release", "view", tag, "--json", "assets"],
+              check=True,
+              capture_output=True,
+              text=True,
+          )
+          names = sorted(item["name"] for item in json.loads(payload.stdout)["assets"])
+          expected = sorted(mod.RELEASE_ASSETS)
+          if names != expected:
+              print(f"release assets {names} != expected {expected}", file=sys.stderr)
+              sys.exit(1)
+          PY
 
   # ==========================================
   # Update Docker Hub Description

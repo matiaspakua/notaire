@@ -7,6 +7,7 @@ secrets via ${VAR:?}, least-privilege backend env, and Flyway baseline off.
 Plain stdlib unittest + PyYAML, consistent with infra/tests/test_infra_prometheus_hardening.py.
 Run with: python3 infra/tests/test_prod_compose.py
 """
+import json
 import os
 import re
 import unittest
@@ -202,6 +203,22 @@ class ProductionComposeTest(unittest.TestCase):
             "true",
             "SPRING_FLYWAY_BASELINE_ON_MIGRATE must never be true in production",
         )
+
+    def test_backend_and_frontend_name_released_ghcr_images(self):
+        compose = load_prod_compose()
+        with open(
+            os.path.join(REPO_ROOT, ".release-please-manifest.json"), encoding="utf-8"
+        ) as handle:
+            product_version = json.load(handle)["."]
+        semver = re.compile(r"^\d+\.\d+\.\d+$")
+        for service in ("backend", "frontend"):
+            definition = compose["services"][service]
+            self.assertIn("build", definition, f"{service} must keep local build for dev parity")
+            image = definition.get("image", "")
+            self.assertIn("ghcr.io/matiaspakua/notaire/", image)
+            tag = image.rsplit(":", 1)[-1].split("#", 1)[0].strip()
+            self.assertRegex(tag, semver)
+            self.assertEqual(tag, product_version)
 
     def test_deployment_guide_documents_prod_compose(self):
         self.assertTrue(os.path.isfile(DEPLOYMENT_GUIDE), f"missing {DEPLOYMENT_GUIDE}")

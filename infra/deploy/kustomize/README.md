@@ -1,6 +1,6 @@
 # Notaire Kustomize manifests (issue #901)
 
-KIS staging/production Kubernetes target mirroring
+KISS staging/production Kubernetes target mirroring
 [`docker-compose.prod.yml`](../../docker-compose.prod.yml) (#1044):
 
 | Service | Role | Service type |

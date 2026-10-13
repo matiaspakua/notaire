@@ -34,10 +34,12 @@ schema, because the schema is not a layer of either image.
 ## When they are written
 
 CD’s `release` job runs only on `v*` and legacy `notaire-v*` tags, after both
-images are published. It downloads the Trivy bills, generates the product and
-database bills from the tagged tree, and attaches all five files to the
-GitHub Release that release-please already created. It does not rewrite the
-release notes.
+images are published and the `release-identity` coherence check passes (#1591).
+It downloads the Trivy bills, generates the product and database bills from the
+tagged tree, asserts all five files exist, uploads with
+`fail_on_unmatched_files: true`, and verifies the Release asset set equals
+`RELEASE_ASSETS` exactly. It attaches to the GitHub Release that release-please
+already created and does not rewrite the release notes.
 
 Local preview:
 
