@@ -2,14 +2,13 @@
 """Unarchived task lists name the screen in English and keep template headings."""
 
 import unittest
-from pathlib import Path
 
-CHANGES = Path(__file__).resolve().parents[1] / "openspec" / "changes"
+from openspec_changes import change
 
 
 class ChangeTasksEnglishTest(unittest.TestCase):
     def test_case_summary_tasks_name_the_managements_screen(self):
-        text = (CHANGES / "feat-774-gestion-resumen-caso" / "tasks.md").read_text(
+        text = (change("feat-774-gestion-resumen-caso") / "tasks.md").read_text(
             encoding="utf-8"
         )
         self.assertIn("feat/774_gestion_workflow_links", text)
@@ -27,7 +26,7 @@ class ChangeTasksEnglishTest(unittest.TestCase):
             self.assertNotIn(retired, text, retired)
 
     def test_assessment_tasks_name_the_create_management_diagram(self):
-        text = (CHANGES / "docs-921-business-assessment" / "tasks.md").read_text(
+        text = (change("docs-921-business-assessment") / "tasks.md").read_text(
             encoding="utf-8"
         )
         self.assertIn("## 4. Implementación", text)

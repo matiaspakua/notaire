@@ -2,14 +2,13 @@
 """Unarchived change specs name the live contract in English."""
 
 import unittest
-from pathlib import Path
 
-CHANGES = Path(__file__).resolve().parents[1] / "openspec" / "changes"
+from openspec_changes import change
 
 
 class ChangeContractEnglishTest(unittest.TestCase):
     def test_archive_debt_change_spec_uses_the_live_fields(self):
-        folder = CHANGES / "gestion-archive-deuda-check"
+        folder = change("gestion-archive-deuda-check")
         text = (folder / "spec.md").read_text(encoding="utf-8")
         self.assertIn("CU16 – Archivar Gestión.md", text)
         self.assertIn("GestionArchiveIntegrationTest", text)
@@ -31,8 +30,7 @@ class ChangeContractEnglishTest(unittest.TestCase):
 
     def test_incomplete_put_delta_names_the_live_message(self):
         text = (
-            CHANGES
-            / "fix-655-put-rejects-incomplete-bodies"
+            change("fix-655-put-rejects-incomplete-bodies")
             / "specs"
             / "api-error-contract"
             / "spec.md"
@@ -61,7 +59,7 @@ class ChangeContractEnglishTest(unittest.TestCase):
 
     def test_people_list_delta_names_the_people_screen(self):
         text = (
-            CHANGES / "fix-596-people-pagination" / "specs" / "people-management" / "spec.md"
+            change("fix-596-people-pagination") / "specs" / "people-management" / "spec.md"
         ).read_text(encoding="utf-8")
         self.assertIn("GET /api/v1/people", text)
         self.assertIn("usePeople", text)

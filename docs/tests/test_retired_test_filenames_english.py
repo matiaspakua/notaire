@@ -2,14 +2,13 @@
 """Open change notes name the live test files."""
 
 import unittest
-from pathlib import Path
 
-CHANGES = Path(__file__).resolve().parents[1] / "openspec" / "changes"
+from openspec_changes import change
 
 
 class RetiredTestFilenamesEnglishTest(unittest.TestCase):
     def test_copies_change_names_the_live_playwright_file(self):
-        folder = CHANGES / "fix-655-required-ids-copy-draft-reentry"
+        folder = change("fix-655-required-ids-copy-draft-reentry")
         combined = "\n".join(
             (folder / name).read_text(encoding="utf-8")
             for name in ("proposal.md", "design.md", "tasks.md", "traceability.md")
@@ -19,7 +18,7 @@ class RetiredTestFilenamesEnglishTest(unittest.TestCase):
         self.assertIn("### Módulos afectados", (folder / "proposal.md").read_text(encoding="utf-8"))
 
     def test_people_pagination_names_the_live_unit_test(self):
-        folder = CHANGES / "fix-596-people-pagination"
+        folder = change("fix-596-people-pagination")
         design = (folder / "design.md").read_text(encoding="utf-8")
         ledger = (folder / "traceability.md").read_text(encoding="utf-8")
         combined = design + "\n" + ledger

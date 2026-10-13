@@ -4,14 +4,15 @@
 import unittest
 from pathlib import Path
 
+from openspec_changes import change
+
 ROOT = Path(__file__).resolve().parents[2]
 DIALOG = (
     ROOT
     / "frontend/src/app/dashboard/testimonies/TestimonyMovementsDialog.tsx"
 )
 PROPOSAL = (
-    ROOT
-    / "docs/openspec/changes/fix-579-constraint-errors-400-testimony-person/proposal.md"
+    change("fix-579-constraint-errors-400-testimony-person") / "proposal.md"
 )
 
 
