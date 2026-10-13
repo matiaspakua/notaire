@@ -43,6 +43,9 @@ implementing PR (`cd docs && openspec archive <change> --yes`) after ticking gro
 hygiene gate `workspace/sdlc/check-openspec-archive-hygiene.py` fails otherwise. Several issues
 may share one PR when each has its own change and commits. Never commit bot reports or `[skip ci]`.
 
+PR title: `[#<issue>] <type>(<single-scope>): <description>`; the PR Validation title check rejects a
+comma in the scope (`feat(a,b)`) — and keep the PR body filled from `.github/PULL_REQUEST_TEMPLATE.md`.
+
 ## 6. Who merges
 
 Workers never merge. The Foreman merges a Worker PR when every required check is green and
