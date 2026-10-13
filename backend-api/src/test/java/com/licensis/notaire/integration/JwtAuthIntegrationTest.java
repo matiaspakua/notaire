@@ -6,16 +6,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -171,9 +174,9 @@ class JwtAuthIntegrationTest {
         String token = com.fasterxml.jackson.databind.json.JsonMapper.builder().build()
                 .readTree(loginResponse).get("token").asText();
 
-        // Create an inactive user using the admin token
+        // Create an inactive user using the admin token (Bearer clients are
+        // exempt from CSRF — issue #1620)
         mockMvc.perform(post("/api/v1/users")
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content("""
@@ -201,10 +204,15 @@ class JwtAuthIntegrationTest {
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.valid").value(true))
-                .andExpect(header().string("Set-Cookie", containsString("notaire-auth-token=")))
-                .andExpect(header().string("Set-Cookie", containsString("HttpOnly")))
-                .andExpect(header().string("Set-Cookie", containsString("SameSite=Lax")))
-                .andExpect(header().string("Set-Cookie", containsString("Path=/")));
+                // Since #1618 the response also carries the script-readable
+                // XSRF-TOKEN cookie, so the session cookie is no longer the
+                // only — nor necessarily the first — Set-Cookie header
+                // (issue #1620).
+                .andExpect(header().stringValues(HttpHeaders.SET_COOKIE, hasItem(allOf(
+                        containsString("notaire-auth-token="),
+                        containsString("HttpOnly"),
+                        containsString("SameSite=Lax"),
+                        containsString("Path=/")))));
     }
 
     @Test
@@ -218,8 +226,7 @@ class JwtAuthIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String setCookie = loginResult.getResponse().getHeader("Set-Cookie");
-        String cookieValue = extractCookieValue(setCookie, "notaire-auth-token");
+        String cookieValue = authCookieValue(loginResult, "notaire-auth-token");
 
         mockMvc.perform(get("/api/v1/users")
                         .cookie(new jakarta.servlet.http.Cookie("notaire-auth-token", cookieValue)))
@@ -231,8 +238,25 @@ class JwtAuthIntegrationTest {
     void shouldClearAuthCookieOnLogout() throws Exception {
         mockMvc.perform(post("/api/v1/users/logout"))
                 .andExpect(status().isOk())
-                .andExpect(header().string("Set-Cookie", containsString("notaire-auth-token=")))
-                .andExpect(header().string("Set-Cookie", containsString("Max-Age=0")));
+                .andExpect(header().stringValues(HttpHeaders.SET_COOKIE, hasItem(allOf(
+                        containsString("notaire-auth-token="),
+                        containsString("Max-Age=0")))));
+    }
+
+    /**
+     * Returns the value of {@code name} from the response's {@code Set-Cookie}
+     * headers. A response can carry several of them — the session cookie plus
+     * {@code XSRF-TOKEN} since #1618 — so reading only the first one is wrong
+     * (issue #1620).
+     */
+    private static String authCookieValue(MvcResult result, String name) {
+        return result.getResponse().getHeaders(HttpHeaders.SET_COOKIE).stream()
+                .filter(cookie -> cookie.startsWith(name + "="))
+                .findFirst()
+                .map(cookie -> extractCookieValue(cookie, name))
+                .orElseThrow(() -> new IllegalStateException(
+                        "Cookie " + name + " missing from Set-Cookie: "
+                                + result.getResponse().getHeaders(HttpHeaders.SET_COOKIE)));
     }
 
     private static String extractCookieValue(String setCookieHeader, String name) {
