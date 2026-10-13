@@ -28,7 +28,7 @@
 
 ## 4. Implementación
 
-- [x] 4.1 Resolve `ESCRIBANO` to `ROLE_NOTARY` and seed the administrator as `Administrador`
+- [x] 4.1 Resolve `ESCRIBANO` to `ROLE_NOTARY` and seed the administrator as `ADMIN`
 - [x] 4.2 Add Flyway `V49__promote_seeded_admin.sql` and refresh `release/product-release.json`
 - [x] 4.3 Drop `ESCRIBANO` from the frontend admin types
 - [x] 4.4 Add `testing/database/checks/80_roles.sql`

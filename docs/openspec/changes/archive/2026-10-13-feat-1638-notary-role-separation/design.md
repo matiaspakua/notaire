@@ -43,7 +43,7 @@ Revert the PR.
 
 ## Migration Plan
 
-`V49__promote_seeded_admin.sql`: `UPDATE users SET user_type = 'Administrador' WHERE lower(username) = 'admin' AND lower(user_type) = 'escribano'`; idempotent.
+`V49__promote_seeded_admin.sql`: `UPDATE users SET user_type = 'ADMIN' WHERE lower(username) = 'admin' AND lower(user_type) = 'escribano'`; idempotent.
 
 ## Open Questions
 

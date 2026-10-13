@@ -17,7 +17,7 @@
 ## What Changes
 
 - `ADMIN`/`ADMINISTRADOR` map to `ROLE_ADMIN`; `ESCRIBANO` maps to a distinct `ROLE_NOTARY`; other types stay `ROLE_USER`. A notary keeps every non-administrative endpoint and is denied the admin paths.
-- Flyway `V49` promotes the account named `admin` from `Escribano` to `Administrador` so nobody is locked out; `DataInitializer` seeds `Administrador`. Other `Escribano` users become plain notaries.
+- Flyway `V49` promotes the account named `admin` from `Escribano` to `ADMIN` so nobody is locked out; `DataInitializer` seeds `ADMIN`. Other `Escribano` users become plain notaries.
 - The frontend admin guard (`ADMIN_TYPES`) drops `ESCRIBANO`; the users form keeps the notary type as a non-admin choice.
 - Database V&V check `80_roles.sql`: an administrator account exists and no account named `admin` is a notary.
 

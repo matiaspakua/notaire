@@ -7,7 +7,7 @@ TBD - created by archiving change feat-1638-notary-role-separation. Update Purpo
 
 ### Requirement: Notaries and administrators have distinct authorities
 
-User types `ADMIN` and `ADMINISTRADOR` MUST resolve to `ROLE_ADMIN`, the type `ESCRIBANO` MUST resolve to `ROLE_NOTARY` and every other type to `ROLE_USER` (case-insensitive, trimmed). A `ROLE_NOTARY` request MUST be rejected with 403 on the administrator-only paths and accepted on the non-administrative ones. The migration MUST promote the account named `admin` to `Administrador` and the seeded administrator MUST be created with that type, so a database always has an administrator.
+User types `ADMIN` and `ADMINISTRADOR` MUST resolve to `ROLE_ADMIN`, the type `ESCRIBANO` MUST resolve to `ROLE_NOTARY` and every other type to `ROLE_USER` (case-insensitive, trimmed). A `ROLE_NOTARY` request MUST be rejected with 403 on the administrator-only paths and accepted on the non-administrative ones. The migration MUST promote the account named `admin` to `ADMIN` and the seeded administrator MUST be created with that type, so a database always has an administrator.
 
 #### Scenario: administrator types resolve to the admin authority
 
@@ -32,7 +32,7 @@ User types `ADMIN` and `ADMINISTRADOR` MUST resolve to `ROLE_ADMIN`, the type `E
 #### Scenario: the seeded administrator is an administrator
 
 - **WHEN** the initializer creates the first account
-- **THEN** its type is Administrador
+- **THEN** its type is ADMIN
 
 #### Scenario: the frontend does not treat a notary as an administrator
 
