@@ -2,17 +2,16 @@
 """Open change records cite the official use-case titles, not half-translations."""
 
 import unittest
-from pathlib import Path
 
-CHANGES = Path(__file__).resolve().parents[1] / "openspec" / "changes"
+from openspec_changes import change
 
 FILES = (
-    CHANGES / "fix-596-people-pagination" / "proposal.md",
-    CHANGES / "fix-596-people-pagination" / "traceability.md",
-    CHANGES / "fix-655-testimony-requires-deed" / "proposal.md",
-    CHANGES / "fix-655-testimony-requires-deed" / "traceability.md",
-    CHANGES / "fix-1315-delete-returns-204" / "proposal.md",
-    CHANGES / "fix-1315-delete-returns-204" / "traceability.md",
+    change("fix-596-people-pagination") / "proposal.md",
+    change("fix-596-people-pagination") / "traceability.md",
+    change("fix-655-testimony-requires-deed") / "proposal.md",
+    change("fix-655-testimony-requires-deed") / "traceability.md",
+    change("fix-1315-delete-returns-204") / "proposal.md",
+    change("fix-1315-delete-returns-204") / "traceability.md",
 )
 
 

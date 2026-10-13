@@ -4,12 +4,14 @@
 import unittest
 from pathlib import Path
 
+from openspec_changes import change
+
 CHANGES = Path(__file__).resolve().parents[1] / "openspec" / "changes"
 
 
 class ChangeDesignEnglishTest(unittest.TestCase):
     def test_case_summary_design_names_the_managements_screen(self):
-        text = (CHANGES / "feat-774-gestion-resumen-caso" / "design.md").read_text(
+        text = (change("feat-774-gestion-resumen-caso") / "design.md").read_text(
             encoding="utf-8"
         )
         for title in (
@@ -51,7 +53,7 @@ class ChangeDesignEnglishTest(unittest.TestCase):
 
     def test_property_and_document_designs_name_the_live_surface(self):
         properties = (
-            CHANGES / "fix-655-property-cadastral-designation-required" / "design.md"
+            change("fix-655-property-cadastral-designation-required") / "design.md"
         ).read_text(encoding="utf-8")
         self.assertIn("properties require `cadastralDesignation`", properties)
         self.assertIn("properties.nomenclature", properties)
@@ -59,7 +61,7 @@ class ChangeDesignEnglishTest(unittest.TestCase):
         self.assertNotIn("inmuebles", properties)
 
         documents = (
-            CHANGES / "fix-655-submitted-document-required-fields" / "design.md"
+            change("fix-655-submitted-document-required-fields") / "design.md"
         ).read_text(encoding="utf-8")
         self.assertIn("`fk_id_tramite`", documents)
         self.assertIn("Documents screen", documents)

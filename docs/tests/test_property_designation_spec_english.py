@@ -2,13 +2,11 @@
 """The property-designation delta names the dialog and field in English."""
 
 import unittest
-from pathlib import Path
+
+from openspec_changes import change
 
 SPEC = (
-    Path(__file__).resolve().parents[1]
-    / "openspec"
-    / "changes"
-    / "fix-655-property-cadastral-designation-required"
+    change("fix-655-property-cadastral-designation-required")
     / "specs"
     / "properties"
     / "spec.md"

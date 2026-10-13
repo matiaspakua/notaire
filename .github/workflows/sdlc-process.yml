@@ -4,11 +4,19 @@ name: SDLC Process
 # E2, E3, S1, P2, P5). Separate from pr-validation.yml so that adding or removing
 # the `sdlc-exception` label re-runs only these checks. Mirrored locally by
 # workspace/sdlc/preflight.sh — keep the two in sync (preflight.sh --list).
+# `main-health` re-runs the repo-wide checks on main and daily: a PR merged over a
+# red check, or a merge that leaves an OpenSpec change active, shows up as a red
+# main run instead of silently breaking every other PR (#1622).
 
 on:
   pull_request:
     branches: [ main ]
     types: [ opened, synchronize, reopened, labeled, unlabeled ]
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '30 5 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,6 +26,7 @@ permissions:
 jobs:
   process-checks:
     name: Process Checks
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     env:
       BASE_SHA: ${{ github.event.pull_request.base.sha }}
@@ -71,6 +80,48 @@ jobs:
       - name: Product version coherence
         if: ${{ !cancelled() }}
         run: python3 workspace/sdlc/check-product-version-coherence.py
+
+      - name: Process script and harness self-tests
+        if: ${{ !cancelled() }}
+        run: |
+          python3 -m unittest discover -s local-ai/sdlc/tests
+          python3 -m unittest discover -s workspace/tests
+          python3 -m unittest discover -s contracts/tests
+          python3 -m unittest discover -s security/tests
+          python3 -m unittest discover -s infra/tests
+          python3 -m unittest discover -s testing/tests
+          python3 -m unittest discover -s docs/tests
+          python3 -m unittest discover -s backend-api/tools/tests
+
+      - name: CU-API matrix validation
+        if: ${{ !cancelled() }}
+        run: python3 workspace/sdlc/validate-cu-api-matrix.py
+
+  main-health:
+    name: Main Health
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Agent rule files are valid
+        if: ${{ !cancelled() }}
+        run: bash workspace/sdlc/check-agent-rules.sh
+
+      - name: Product version coherence
+        if: ${{ !cancelled() }}
+        run: python3 workspace/sdlc/check-product-version-coherence.py
+
+      - name: Active OpenSpec plans conform
+        if: ${{ !cancelled() }}
+        run: bash workspace/sdlc/validate-sdlc-plan.sh
+
+      - name: No OpenSpec change outlives its closed issue
+        if: ${{ !cancelled() }}
+        run: python3 workspace/sdlc/check-openspec-archive-hygiene.py --inventory-only
 
       - name: Process script and harness self-tests
         if: ${{ !cancelled() }}

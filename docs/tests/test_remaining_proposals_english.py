@@ -2,14 +2,13 @@
 """Remaining open proposals name the live surface and keep official titles."""
 
 import unittest
-from pathlib import Path
 
-CHANGES = Path(__file__).resolve().parents[1] / "openspec" / "changes"
+from openspec_changes import change
 
 
 class RemainingProposalsEnglishTest(unittest.TestCase):
     def test_archive_debt_proposal_names_the_live_fields(self):
-        text = (CHANGES / "gestion-archive-deuda-check" / "proposal.md").read_text(
+        text = (change("gestion-archive-deuda-check") / "proposal.md").read_text(
             encoding="utf-8"
         )
         self.assertIn("## Objetivo", text)
@@ -32,7 +31,7 @@ class RemainingProposalsEnglishTest(unittest.TestCase):
 
     def test_submitted_document_proposal_names_the_documents_screen(self):
         text = (
-            CHANGES / "fix-655-submitted-document-required-fields" / "proposal.md"
+            change("fix-655-submitted-document-required-fields") / "proposal.md"
         ).read_text(encoding="utf-8")
         self.assertIn("## Objetivo", text)
         self.assertIn("## Reglas de negocio", text)
@@ -47,7 +46,7 @@ class RemainingProposalsEnglishTest(unittest.TestCase):
 
     def test_property_proposal_names_the_properties_screen(self):
         text = (
-            CHANGES / "fix-655-property-cadastral-designation-required" / "proposal.md"
+            change("fix-655-property-cadastral-designation-required") / "proposal.md"
         ).read_text(encoding="utf-8")
         self.assertIn("## Objetivo", text)
         self.assertIn("## Reglas de negocio", text)

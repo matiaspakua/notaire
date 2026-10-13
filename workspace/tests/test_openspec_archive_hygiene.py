@@ -94,9 +94,11 @@ TASKS_TEMPLATE = textwrap.dedent(
 )
 
 
-def write_change(repo: str, name: str, issue: int, *, impl_ticked: bool) -> None:
+def write_change(repo: str, name: str, issue: int, *, impl_ticked: bool, multi_pr: bool = False) -> None:
     root = os.path.join(repo, "docs", "openspec", "changes", name)
     os.makedirs(root, exist_ok=True)
+    with open(os.path.join(root, ".openspec.yaml"), "w", encoding="utf-8") as fh:
+        fh.write("schema: notaire-sdlc\n" + ("multi_pr: true\n" if multi_pr else ""))
     mark = "x" if impl_ticked else " "
     with open(os.path.join(root, "proposal.md"), "w", encoding="utf-8") as fh:
         fh.write(
@@ -200,7 +202,7 @@ class TaskCompletionGateTest(unittest.TestCase):
     def test_implementation_groups_complete(self):
         repo, base = new_repo()
         try:
-            write_change(repo, "foo", 1252, impl_ticked=True)
+            write_change(repo, "foo", 1252, impl_ticked=True, multi_pr=True)
             commit_all(repo, "docs(openspec): plan foo")
             result = run_checker(repo, base)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
@@ -216,6 +218,71 @@ class TaskCompletionGateTest(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         finally:
             shutil.rmtree(repo, ignore_errors=True)
+
+
+class ArchiveInPullRequestTest(unittest.TestCase):
+    """#1623: the PR that implements a change archives it, so no leftover outlives the merge."""
+
+    def test_touched_change_left_active_fails(self):
+        repo, base = new_repo()
+        try:
+            write_change(repo, "foo", 1252, impl_ticked=True)
+            commit_all(repo, "docs(openspec): plan foo")
+            result = run_checker(repo, base, extra=["--skip-inventory"])
+            self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertIn("archive it in this PR", result.stdout)
+        finally:
+            shutil.rmtree(repo, ignore_errors=True)
+
+    def test_change_archived_in_pr_passes(self):
+        repo, _ = new_repo()
+        try:
+            write_change(repo, "foo", 1252, impl_ticked=True, multi_pr=True)
+            base = commit_all(repo, "docs(openspec): plan foo")
+            archive = os.path.join(repo, "docs", "openspec", "changes", "archive")
+            os.makedirs(archive)
+            git(repo, "mv", "docs/openspec/changes/foo", "docs/openspec/changes/archive/2026-10-13-foo")
+            commit_all(repo, "chore(openspec): archive foo")
+            result = run_checker(repo, base, extra=["--skip-inventory"])
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        finally:
+            shutil.rmtree(repo, ignore_errors=True)
+
+    def test_multi_pr_change_may_stay_active(self):
+        repo, base = new_repo()
+        try:
+            write_change(repo, "foo", 1252, impl_ticked=True, multi_pr=True)
+            commit_all(repo, "docs(openspec): plan foo")
+            result = run_checker(repo, base, extra=["--skip-inventory"])
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        finally:
+            shutil.rmtree(repo, ignore_errors=True)
+
+
+class InventoryBlastRadiusTest(unittest.TestCase):
+    """#1623/#1622: another change's leftover warns on a PR and fails only in inventory mode."""
+
+    def _run(self, argv):
+        repo, base = new_repo()
+        cwd = os.getcwd()
+        mod = load_checker()
+        try:
+            write_change(repo, "shipped", 99, impl_ticked=True)
+            base = commit_all(repo, "docs(openspec): shipped change")
+            Path(repo, "README.md").write_text("x\n", encoding="utf-8")
+            commit_all(repo, "docs: unrelated")
+            mod.resolve_issue_states = lambda issues: {99: "CLOSED"}
+            os.chdir(repo)
+            return mod.main([base] if argv is None else argv)
+        finally:
+            os.chdir(cwd)
+            shutil.rmtree(repo, ignore_errors=True)
+
+    def test_leftover_only_warns_on_a_pull_request(self):
+        self.assertEqual(self._run(None), 0)
+
+    def test_leftover_fails_in_inventory_mode(self):
+        self.assertEqual(self._run(["--inventory-only"]), 1)
 
 
 class MergeGateDocGuardTest(unittest.TestCase):
@@ -260,6 +327,11 @@ class SpecScenarioCoverageTest(unittest.TestCase):
         "Exception label bypass": "test_exception_label_bypass",
         "Merge-gate document names archive verification": "test_merge_gate_document_names_archive_verification",
         "Missing instruction fails the doc guard": "test_missing_instruction_fails_the_doc_guard",
+        "Touched change left active fails": "test_touched_change_left_active_fails",
+        "Change archived in the PR passes": "test_change_archived_in_pr_passes",
+        "Multi-PR change may stay active": "test_multi_pr_change_may_stay_active",
+        "Leftover only warns on a pull request": "test_leftover_only_warns_on_a_pull_request",
+        "Leftover fails in inventory mode": "test_leftover_fails_in_inventory_mode",
     }
 
     def test_every_scenario_has_a_named_test(self):
@@ -268,6 +340,8 @@ class SpecScenarioCoverageTest(unittest.TestCase):
         for cls in (
             InventoryHygieneTest,
             TaskCompletionGateTest,
+            ArchiveInPullRequestTest,
+            InventoryBlastRadiusTest,
             MergeGateDocGuardTest,
         ):
             methods |= {n for n in dir(cls) if n.startswith("test_")}

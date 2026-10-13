@@ -4,10 +4,11 @@
 import unittest
 from pathlib import Path
 
+from openspec_changes import change
+
 ROOT = Path(__file__).resolve().parents[2]
 DESIGN = (
-    ROOT
-    / "docs/openspec/changes/fix-655-testimony-requires-deed/design.md"
+    change("fix-655-testimony-requires-deed") / "design.md"
 )
 HELPERS = ROOT / "testing/e2e/tests/setup/api-helpers.ts"
 

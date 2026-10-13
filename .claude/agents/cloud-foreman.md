@@ -81,7 +81,7 @@ those scripts. Details: `docs/300-development/304-ai-sdlc-cloud/ENVIRONMENT-CHEC
 - `@.claude/skills/ai-agent-workflow/SKILL.md`
 - `@.claude/skills/devsecops-traceability/SKILL.md`
 - `@.claude/skills/ci-cd-quality-gates/SKILL.md`
-- `@.claude/skills/openspec-archive-change/SKILL.md` (after Gate 5)
+- `@.claude/skills/openspec-archive-change/SKILL.md` (in the implementing PR, before merge — #1623)
 
 ## Loop (one issue at a time)
 
@@ -89,7 +89,7 @@ those scripts. Details: `docs/300-development/304-ai-sdlc-cloud/ENVIRONMENT-CHEC
 pick → triage brief → OpenSpec Gate 1 → branch + in-progress
   → dispatch tests (red) → dispatch implement → docs
   → preflight → PR → CI watch → code-review (+ security if needed)
-  → merge → health smoke → close → archive → next
+  → archive in the PR → merge → health smoke → close → next
 ```
 
 ### Mechanical gates (trust exit codes, not prose)
@@ -117,13 +117,17 @@ Retry the same phase with `prior_gate_log` attached (max 2–3 attempts) then es
 
 - Prefer small, labeled, non-epic issues with clear Acceptance Criteria and a Use Case.
 - Skip `roadmap` / umbrella issues; ask the project manager for a split first.
+- Act as the fleet App before any GitHub write: `eval "$(bash workspace/sdlc/fleet-token.sh)"`
+  (`docs/300-development/304-ai-sdlc-cloud/FLEET-IDENTITY.md`, #1648).
 - Read the Roadmap, KANBAN, and Agent queue before selecting work.
 - Skip catalog anchors, roadmap epics, `blocked`, `needs-info`, and
   owner-decision work.
 - Derive the lane from existing area/type labels with
   `workspace/sdlc/milestone_policy.py`; do not expect or create `lane:*` labels.
-- Skip a lane that conflicts with any OPEN `in-progress` issue. Cross work
-  blocks backend and frontend; security blocks backend.
+- Before picking: `python3 workspace/sdlc/claim-issue.py --release-stale`. Claim
+  only with `python3 workspace/sdlc/claim-issue.py <n> --agent <id>`; on exit 1
+  pick another issue. It enforces the lane matrix (cross blocks backend and
+  frontend; security blocks backend) and wins races atomically (#1646).
 - Canonical rules:
   `docs/300-development/305-project-management/PARALLEL-AGENTS.md`.
 - Confirm environment **GO** from `VALIDATION-PLAN.md` before the first product issue.
@@ -142,7 +146,7 @@ Retry the same phase with `prior_gate_log` attached (max 2–3 attempts) then es
 - Serialize Playwright-heavy PRs; draft Dependabot floods when runners starve.
 - If a cloud worker’s `gh` returns 401, the **coordinator** (or a same-VM worker
   with working `gh`) owns `gh pr ready` / squash-merge after heavy-gate exit 0.
-- After merge: archive OpenSpec change when the issue is closed; ensure board
+- Before merge: the PR archives its OpenSpec change (#1623). After merge: ensure board
   Status is **Done** and WIP labels (`in-progress`, `blocked`) are cleared.
   Before merge/close and during board hygiene run
   `python3 workspace/sdlc/check-board-status-label-coherence.py --scope pr`

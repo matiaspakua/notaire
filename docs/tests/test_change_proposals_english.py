@@ -2,14 +2,13 @@
 """Open proposals name the live contract and keep required headings."""
 
 import unittest
-from pathlib import Path
 
-CHANGES = Path(__file__).resolve().parents[1] / "openspec" / "changes"
+from openspec_changes import change
 
 
 class ChangeProposalsEnglishTest(unittest.TestCase):
     def test_case_summary_proposal_names_the_live_summary(self):
-        text = (CHANGES / "feat-774-gestion-resumen-caso" / "proposal.md").read_text(
+        text = (change("feat-774-gestion-resumen-caso") / "proposal.md").read_text(
             encoding="utf-8"
         )
         self.assertIn("## Objetivo", text)
@@ -34,7 +33,7 @@ class ChangeProposalsEnglishTest(unittest.TestCase):
             self.assertNotIn(retired, text, retired)
 
     def test_paged_endpoints_proposal_names_the_live_paths(self):
-        text = (CHANGES / "fix-596-pageable-parameter-object" / "proposal.md").read_text(
+        text = (change("fix-596-pageable-parameter-object") / "proposal.md").read_text(
             encoding="utf-8"
         )
         self.assertIn("## Objetivo", text)
@@ -49,7 +48,7 @@ class ChangeProposalsEnglishTest(unittest.TestCase):
 
     def test_incomplete_put_proposal_names_the_live_message(self):
         text = (
-            CHANGES / "fix-655-put-rejects-incomplete-bodies" / "proposal.md"
+            change("fix-655-put-rejects-incomplete-bodies") / "proposal.md"
         ).read_text(encoding="utf-8")
         self.assertIn("## Objetivo", text)
         self.assertIn("## Reglas de negocio", text)

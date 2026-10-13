@@ -2,12 +2,12 @@
 """The constraint-error record cites CU07 as Testimonio, not the class name."""
 
 import unittest
-from pathlib import Path
 
-CHANGES = Path(__file__).resolve().parents[1] / "openspec" / "changes"
+from openspec_changes import change
+
 FILES = (
-    CHANGES / "fix-579-constraint-errors-400-testimony-person" / "proposal.md",
-    CHANGES / "fix-579-constraint-errors-400-testimony-person" / "traceability.md",
+    change("fix-579-constraint-errors-400-testimony-person") / "proposal.md",
+    change("fix-579-constraint-errors-400-testimony-person") / "traceability.md",
 )
 
 

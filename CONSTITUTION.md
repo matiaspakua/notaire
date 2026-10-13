@@ -306,6 +306,14 @@ label, and PRs that change the Foreman's own harness or merge path. A Worker
 never merges. The ruleset enforces the green-check part mechanically: GitHub
 refuses the merge otherwise.
 
+**Archive in the PR (#1623).** The PR that implements an OpenSpec change also
+archives it (`cd docs && openspec archive <change> --yes`) before it merges, so
+no active change outlives its merge and blocks other PRs. A change that later
+PRs continue declares `multi_pr: true` in its `.openspec.yaml` and is archived
+by its last PR. Deploy and smoke evidence (steps 22–23) is then recorded in the
+archived `traceability.md`. Enforced by `check-openspec-archive-hygiene.py`;
+`main` and a daily run fail on any leftover (`sdlc-process.yml`, Main Health).
+
 **22. Deploy.** The release pipeline deploys the merged change (CI → CD →
 Docker image; see [Release Rules](#11-release-rules)).
 
@@ -563,7 +571,8 @@ point at the permanent document and edit that one.
 
 Specifications describe **only the change** (they are not permanent
 documentation) and are stored as OpenSpec changes under `docs/openspec/changes/`;
-`openspec archive` moves them to `docs/openspec/changes/archive/`.
+`openspec archive` moves them to `docs/openspec/changes/archive/` in the PR
+that implements them (§5, Archive in the PR).
 
 ---
 
@@ -772,7 +781,7 @@ drift.
 
 ---
 
-*Last reviewed: 2026-10-13 (Foreman merge rule #1624; release version coherence gate, runtime identity,
+*Last reviewed: 2026-10-13 (archive in the PR #1623, Main Health #1622; Foreman merge rule #1624; release version coherence gate, runtime identity,
 fail-closed release assets, KISS/Boy Scout principles #1591; shared full-lifecycle
 roadmap #1569; product release #1571; testing inventory #1511; path-scoped CI
 #1257). This Constitution supersedes the process summary in
