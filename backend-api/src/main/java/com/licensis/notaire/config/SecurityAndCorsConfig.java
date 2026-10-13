@@ -200,7 +200,7 @@ public class SecurityAndCorsConfig {
                 .accessDeniedHandler(apiAccessDeniedHandler))
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .csrf(csrf -> csrf.disable())
+            .csrf(withDefaults())
             .cors(withDefaults());
         return http.build();
     }
@@ -225,8 +225,8 @@ public class SecurityAndCorsConfig {
                 auth.anyRequest().permitAll();
             })
             .httpBasic(withDefaults())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .csrf(csrf -> csrf.disable())
+            .sessionManagement(session -> session.sessionPolicy(SessionCreationPolicy.STATELESS))
+            .csrf(withDefaults())
             .cors(withDefaults());
         return http.build();
     }
