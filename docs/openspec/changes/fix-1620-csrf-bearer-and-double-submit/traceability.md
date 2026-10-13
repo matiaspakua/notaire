@@ -18,8 +18,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Use Case | CU78 – Security and Compliance | exists |
 | Specification | `docs/openspec/changes/fix-1620-csrf-bearer-and-double-submit/` | written |
 | Branch | `fix/1620_csrf-bearer-exemption` | created |
-| Tasks | `tasks.md` | 49/69 complete (gates 4-5 open) |
-| Commits | `36419e6b`, `3bee6450`, `841d1b33`, `04fc5ec5`, `bbfb96ff`, `ce73b1e3`, `481d95c7`, `ec90b565` + this ledger commit | local (unpushed) |
+| Tasks | `tasks.md` | 52/69 complete (groups 10-12 are post-PR/merge) |
+| Commits | `36419e6b`, `3bee6450`, `841d1b33`, `04fc5ec5`, `bbfb96ff`, `ce73b1e3`, `481d95c7`, `ec90b565`, `5dbe1787` + this ledger commit | local (unpushed) |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -50,6 +50,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | `testing/e2e/tests/TS-0041-responsive-viewport-qa.spec.ts` | yes | `ec90b565` |
 | `testing/e2e/tests/TS-0152-workflow-list-view.spec.ts` | yes | `ec90b565` |
 | `CHANGELOG.md` | yes | `04fc5ec5` |
+| `docs/tests/test_change_design_english.py` | yes | `5dbe1787` |
 
 ## Gate log
 
@@ -92,6 +93,12 @@ commit, so the full validator no longer reports the backlog.
   legacy findings are reported, not reformatted, here: `MD004` conflicts with
   release-please's own `*` bullet output, so correcting it is a gate-config
   decision, not part of a security remediation.
+- A third repo-wide red was repaired here (`5dbe1787`): #1626 archived the 32
+  shipped changes but left `docs/tests/test_change_design_english.py` reading the
+  removed active directory of `feat-1362-procedure-template-admin`, so the blocking
+  `Process script and harness self-tests` step failed for every PR on `main` with
+  `FileNotFoundError`. The shipped design keeps its English-naming ratchet by
+  reading the archive path, following the `test_retired_*_english.py` precedent.
 - Two full-suite E2E reds were repaired (`ec90b565`), not caused by this change:
   `TS-0152` only became reachable once the Bearer CSRF exemption let its API
   calls through (on `main` it dies earlier at the 403), and `TS-0041` fails on

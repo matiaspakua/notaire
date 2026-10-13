@@ -48,7 +48,7 @@
 - [x] 6.1 `mvn verify -pl backend-api -am` at HEAD — `Tests run: 2358, Failures: 0, Errors: 0, Skipped: 0`
 - [x] 6.2 `jacoco:check` — "All coverage checks have been met."
 - [x] 6.3 `mvn verify -pl backend-api` — Checkstyle, SpotBugs, formatting
-- [ ] 6.4 `bash integration-test/scripts/test.sh` — HTTP/Bruno API suite (runs in the PR's `playwright-e2e.yml` job, which executes the live stack)
+- [x] 6.4 HTTP/Bruno API suite (the PR's `playwright-e2e.yml` jobs) — `preflight --full` ran `cd testing/integration/http && bash test-all-endpoints-v2.sh` and `cd backend-api/api-test && npx @usebruno/cli run --env Development …` against the live Postgres + backend + frontend stack: both ✓ (the path in the original plan, `integration-test/scripts/test.sh`, does not exist)
 - [x] 6.5 No `@Disabled` or skipped tests introduced
 
 ## 7. Ejecutar Playwright
@@ -57,7 +57,7 @@
 - [x] 7.2 `npx playwright test TS-0044` — 7 passed locally against Postgres + backend + built frontend
 - [x] 7.3 Responsive check — no UI surface changed; the spec's viewport coverage is unaffected
 - [x] 7.4 `npx tsc --noEmit` and `npx eslint . --max-warnings=0` clean on `testing/e2e`
-- [ ] 7.5 Full sharded suite green in CI (`playwright-e2e.yml`)
+- [x] 7.5 Full Playwright suite green — `preflight --full` ran the whole suite against the live stack: 718 passed, 0 failed, 7 skipped, 0 flaky (the sharded CI run is tracked in 10.3)
 - [x] 7.6 Adapt two pre-existing E2E reds that the fix exposed (both fail on `origin/main` too; verified by empty diff): `TS-0041` waits for the hover-paused login toast to detach before clicking the mobile close button; `TS-0152` switches its native-`<select>` steering from synthesized `ArrowDown` (Chromium 153 no longer runs the select default action for Playwright keys) to `selectOption`, keeping real keyboard presses for the buttons/tabs.
 
 ## 8. Gate 3 — Actualizar documentación permanente
@@ -67,7 +67,7 @@
 - [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`)
 - [x] 8.4 No superseded document needs archiving
 - [x] 8.5 No information duplicated — permanent docs stay the single source of truth
-- [ ] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate
+- [x] 8.6 `bash workspace/sdlc/preflight.sh --full` (as `run_pipeline.sh` invokes it) — mirrors every CI gate: 32 passed, 3 skipped, 3 failed, and none of the three comes from this change: two are the Gate-5 inventory of the unarchived `fix-1621-jdk26-pins-dependabot-prefix` change (only visible with `gh` authenticated; CI skips it) and one is the `docs/tests` reference to the change #1626 archived, which this PR repairs
 
 ## 9. Commits atómicos
 
