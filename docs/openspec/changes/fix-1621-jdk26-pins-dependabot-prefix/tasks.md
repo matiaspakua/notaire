@@ -60,7 +60,7 @@
 - [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes — n/a: not user visible
 - [x] 8.4 Archive superseded documents into `docs/000-archive/` — n/a: nothing superseded
 - [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
-- [ ] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate
+- [x] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate — 28 passed; the only failures are repo-wide and pre-existing (32 shipped changes not archived, #1623)
 
 ## 9. Commits atómicos
 
