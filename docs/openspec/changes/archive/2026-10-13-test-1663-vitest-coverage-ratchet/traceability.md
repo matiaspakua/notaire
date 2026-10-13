@@ -35,8 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| configured thresholds meet the documented floors | vitest-coverage-thresholds | pending |
-| documented floors reflect the measurement | vitest-coverage-thresholds | pending |
+| configured thresholds meet the documented floors | vitest-coverage-thresholds | passing |
+| documented floors reflect the measurement | vitest-coverage-thresholds | passing |
 
 ## Permanent documentation updated
 
