@@ -10,10 +10,22 @@
  *
  * Server side (#559): the same EMPLEADO session gets 403 from the user, role and
  * audit-log APIs and cannot change a catalog, while catalog reads stay open.
+ * The catalog write echoes the double-submit nonce so its 403 is an RBAC denial
+ * and not the CSRF filter answering first (issue #1620).
  */
 import { test, expect, type Page } from "@playwright/test";
 import { createUser } from "./setup/api-helpers";
 import { authenticateAsAdmin } from "./setup/auth";
+
+/**
+ * Reads the non-HttpOnly double-submit nonce the login flow issues
+ * (`XSRF-TOKEN`), so a cookie-mode write can echo it in `X-XSRF-TOKEN`.
+ */
+async function xsrfToken(page: Page): Promise<string> {
+  const xsrf = (await page.context().cookies()).find((c) => c.name === "XSRF-TOKEN");
+  expect(xsrf, "the login flow must issue the XSRF-TOKEN cookie").toBeTruthy();
+  return xsrf!.value;
+}
 
 async function loginAs(page: Page, name: string, password: string) {
   await page.goto("/login");
@@ -79,6 +91,11 @@ test.describe("TS-0094 - Admin route guard (CU78 / #1052)", () => {
       expect(response.status(), `GET ${path}`).toBe(403);
     }
     const create = await page.request.post("/api/v1/procedure-types", {
+      // Echo the double-submit nonce so the 403 below is an authorization
+      // decision. Without the header the CSRF filter answers first, the test
+      // still passes, and its RBAC intent is silently masked (regression from
+      // #1619 — issue #1620).
+      headers: { "X-XSRF-TOKEN": await xsrfToken(page) },
       data: { name: `forbidden-${Date.now()}`, notes: "rbac", isArchived: false, isRegistered: false },
     });
     expect(create.status()).toBe(403);

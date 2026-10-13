@@ -1,11 +1,14 @@
 /**
- * E2E tests — CSRF protection posture and CORS enforcement (issue #691 / #1051)
+ * E2E tests — CSRF protection posture and CORS enforcement (issues #691 / #1051)
  * CU: User authentication / security
  *
- * Browser sessions now use an HttpOnly SameSite=Lax JWT cookie via the
- * same-origin Next proxy. CSRF remains disabled on the API; ambient cookie
- * risk is mitigated by SameSite=Lax + same-origin proxy + strict CORS
- * allowlist. These tests document that cookie-era posture.
+ * Browser sessions use an HttpOnly SameSite=Lax JWT cookie via the same-origin
+ * Next proxy. Since #1618/#1619 the backend also enforces CSRF with the
+ * double-submit cookie pattern (CU78): every API response issues a
+ * non-HttpOnly `XSRF-TOKEN` cookie and the client must echo its value in the
+ * `X-XSRF-TOKEN` header on unsafe requests (see frontend/src/lib/api-client.ts).
+ * Bearer-token clients are exempt because they are not vulnerable to CSRF
+ * (issue #1620).
  *
  * Requires: backend running at localhost:8080, frontend at localhost:3000
  */
@@ -57,6 +60,72 @@ test.describe("CSRF / cookie posture (issues #691 / #1051)", () => {
 
     const response = await page.request.get("http://localhost:3000/api/v1/people");
     expect(response.status()).toBe(200);
+  });
+
+  test("browser double-submit — the XSRF-TOKEN cookie echoed as X-XSRF-TOKEN is accepted (#1618)", async ({ page }) => {
+    await page.goto("/login");
+    await page.getByTestId("input-username").fill("admin");
+    await page.getByTestId("input-password").fill("admin");
+    await page.getByTestId("btn-sign-in").click();
+    await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
+
+    const xsrf = (await page.context().cookies()).find((c) => c.name === "XSRF-TOKEN");
+    expect(xsrf?.value).toBeTruthy();
+    expect(xsrf?.httpOnly).not.toBe(true);
+
+    const created = await page.request.post("/api/v1/procedure-types", {
+      headers: { "X-XSRF-TOKEN": xsrf!.value },
+      data: {
+        name: `e2e-csrf-${Date.now()}`,
+        notes: "e2e csrf probe",
+        isArchived: false,
+        isRegistered: false,
+      },
+    });
+    expect(created.status()).toBe(201);
+
+    // The nonce is a stateless double-submit value, so it must survive the
+    // request: a client that reads document.cookie just before sending must not
+    // be raced by its own parallel traffic (issue #1620).
+    const after = (await page.context().cookies()).find((c) => c.name === "XSRF-TOKEN");
+    expect(after?.value).toBe(xsrf!.value);
+  });
+
+  test("state-changing cookie request without X-XSRF-TOKEN is rejected with 403 (#1618)", async ({ page }) => {
+    await page.goto("/login");
+    await page.getByTestId("input-username").fill("admin");
+    await page.getByTestId("input-password").fill("admin");
+    await page.getByTestId("btn-sign-in").click();
+    await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
+
+    const rejected = await page.request.post("/api/v1/procedure-types", {
+      data: {
+        name: `e2e-csrf-blocked-${Date.now()}`,
+        notes: "e2e csrf probe",
+        isArchived: false,
+        isRegistered: false,
+      },
+    });
+    expect(rejected.status()).toBe(403);
+  });
+
+  test("Bearer-token client is exempt from CSRF (#1620)", async ({ request: apiRequest }) => {
+    const login = await apiRequest.post("/api/v1/users/login", {
+      data: { name: "admin", password: "admin" },
+    });
+    expect(login.ok()).toBeTruthy();
+    const { token } = (await login.json()) as { token: string };
+
+    const created = await apiRequest.post("/api/v1/procedure-types", {
+      headers: { Authorization: `Bearer ${token}` },
+      data: {
+        name: `e2e-bearer-${Date.now()}`,
+        notes: "e2e bearer probe",
+        isArchived: false,
+        isRegistered: false,
+      },
+    });
+    expect(created.status()).toBe(201);
   });
 });
 

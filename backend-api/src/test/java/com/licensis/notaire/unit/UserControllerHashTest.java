@@ -17,6 +17,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -115,7 +116,7 @@ class UserControllerHashTest {
         loginRequest.setName("juan");
         loginRequest.setPassword("secret");
 
-        ResponseEntity<?> response = controller.login(loginRequest);
+        ResponseEntity<?> response = controller.login(loginRequest, new MockHttpServletResponse());
 
         @SuppressWarnings("unchecked")
         Map<String, Object> body = (Map<String, Object>) response.getBody();
@@ -139,7 +140,7 @@ class UserControllerHashTest {
         loginRequest.setName("admin");
         loginRequest.setPassword("admin");
 
-        ResponseEntity<?> response = controller.login(loginRequest);
+        ResponseEntity<?> response = controller.login(loginRequest, new MockHttpServletResponse());
 
         @SuppressWarnings("unchecked")
         Map<String, Object> body = (Map<String, Object>) response.getBody();
@@ -162,7 +163,7 @@ class UserControllerHashTest {
         loginRequest.setName("juan");
         loginRequest.setPassword("wrong");
 
-        ResponseEntity<?> response = controller.login(loginRequest);
+        ResponseEntity<?> response = controller.login(loginRequest, new MockHttpServletResponse());
 
         @SuppressWarnings("unchecked")
         Map<String, Object> body = (Map<String, Object>) response.getBody();
