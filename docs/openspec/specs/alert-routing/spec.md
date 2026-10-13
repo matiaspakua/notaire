@@ -1,7 +1,7 @@
 # alert-routing Specification
 
 ## Purpose
-Route, group and expose Notaire alerts.
+Route, group and expose Notaire alerts through Alertmanager. Source: #1465; archived change `2026-10-11-feat-1465-alertmanager`.
 ## Requirements
 ### Requirement: Prometheus sends alerts to Alertmanager
 

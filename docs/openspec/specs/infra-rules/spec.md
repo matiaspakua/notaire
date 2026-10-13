@@ -1,7 +1,7 @@
 # infra-rules Specification
 
 ## Purpose
-Keep the infra module self-contained.
+Keep the infra module self-contained: its rules, dashboards and reports live under `infra/`. Source: #1509; archived change `2026-10-11-fix-1509-security-reports-infra-rules`.
 ## Requirements
 ### Requirement: Infra rules hold for the security reports service
 
