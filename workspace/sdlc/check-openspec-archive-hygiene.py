@@ -189,8 +189,29 @@ def shutil_which(name: str) -> str | None:
     return which(name)
 
 
+def is_multi_pr(change_dir: Path) -> bool:
+    meta = change_dir / ".openspec.yaml"
+    return meta.is_file() and any(
+        line.strip() == "multi_pr: true" for line in meta.read_text(encoding="utf-8").splitlines()
+    )
+
+
+def archive_errors_for_change(repo_root: Path, name: str) -> list[str]:
+    """#1623: the implementing PR archives its change; otherwise it outlives the merge."""
+    change_dir = repo_root / "docs" / "openspec" / "changes" / name
+    if not change_dir.is_dir() or is_multi_pr(change_dir):
+        return []
+    return [
+        f"{name}: still active — archive it in this PR (`cd docs && openspec archive {name} --yes`), "
+        "or set `multi_pr: true` in its .openspec.yaml when later PRs continue it"
+    ]
+
+
 def task_errors_for_change(repo_root: Path, name: str) -> list[str]:
-    tasks = repo_root / "docs" / "openspec" / "changes" / name / "tasks.md"
+    change_dir = repo_root / "docs" / "openspec" / "changes" / name
+    if not change_dir.is_dir():
+        return []
+    tasks = change_dir / "tasks.md"
     if not tasks.is_file():
         return [f"{name}: missing tasks.md"]
     unchecked = unchecked_impl_tasks(tasks.read_text(encoding="utf-8"))
@@ -248,15 +269,22 @@ def main(argv: list[str] | None = None) -> int:
         else:
             for name in sorted(touched):
                 errors.extend(task_errors_for_change(repo_root, name))
+                errors.extend(archive_errors_for_change(repo_root, name))
 
     if args.inventory_only or not skip_inventory:
         active = list_active_changes(repo_root)
         archived = list_archived_names(repo_root)
         issue_ids = {i for i in active.values() if i is not None}
         states = resolve_issue_states(issue_ids)
-        if states or args.inventory_only:
-            errors.extend(check_inventory(active, states, archived))
-        elif not skip_inventory:
+        leftovers = check_inventory(active, states, archived) if states else []
+        if args.inventory_only:
+            errors.extend(leftovers)
+        elif leftovers:
+            # Another PR's leftover must not block this one; main and the daily run fail on it (#1622).
+            print("! OpenSpec leftovers from merged work (not this PR's; inventory on main fails on them):")
+            for leftover in leftovers:
+                print(f"    {leftover}")
+        if not states and not args.inventory_only:
             print("! inventory skipped (no issue states resolved)", file=sys.stderr)
 
     if errors:
