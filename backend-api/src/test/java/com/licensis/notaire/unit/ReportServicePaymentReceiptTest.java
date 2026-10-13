@@ -8,7 +8,7 @@ import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.repository.PaymentRepository;
-import com.licensis.notaire.application.port.out.report.ReportRenderer;
+import com.licensis.notaire.adapter.out.pdf.PdfBoxReportRenderer;
 import com.licensis.notaire.application.usecase.report.ReportDocumentFactory;
 import com.licensis.notaire.application.usecase.report.ReportService;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +17,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 
 import java.util.Date;
 import java.util.List;
@@ -39,15 +43,10 @@ class ReportServicePaymentReceiptTest {
     @Mock
     private ReportDocumentFactory reportDocuments;
 
-    @Mock
-    private ReportRenderer reportRenderer;
-
     private ReportService reportService;
 
     @BeforeEach
     void setUp() {
-        // Provide all constructor arguments; mock objects are sufficient for
-        // the tests that rely only on paymentRepository and itemRepository.
         reportService = new ReportService(
                 null,
                 null,
@@ -55,7 +54,7 @@ class ReportServicePaymentReceiptTest {
                 paymentRepository,
                 itemRepository,
                 reportDocuments,
-                reportRenderer
+                new PdfBoxReportRenderer()
         );
     }
 
@@ -95,10 +94,10 @@ class ReportServicePaymentReceiptTest {
 
         assertThat(pdf).isNotEmpty();
         assertThat(new String(pdf, 0, Math.min(5, pdf.length))).startsWith("%PDF-");
-        String content = new String(pdf, java.nio.charset.StandardCharsets.US_ASCII);
+        String content = extracted(pdf);
         assertThat(content).contains("Ana Gomez");
         assertThat(content).contains("Compraventa deed");
-        assertThat(content).contains("500000");
+        assertThat(content).contains("500.000,00");
     }
 
     @Test
@@ -112,8 +111,13 @@ class ReportServicePaymentReceiptTest {
 
         byte[] pdf = reportService.generatePaymentReceiptReport(2);
 
-        String content = new String(pdf, java.nio.charset.StandardCharsets.US_ASCII);
-        assertThat(content).contains("100000");
+        assertThat(extracted(pdf)).contains("100.000,00");
+    }
+
+    private static String extracted(byte[] pdf) throws Exception {
+        try (PDDocument parsed = Loader.loadPDF(pdf)) {
+            return new PDFTextStripper().getText(parsed);
+        }
     }
 
     @Test

@@ -53,12 +53,15 @@ class ReportControllerTest {
         byte[] pdfBytes = {1, 2, 3};
         when(reportService.generateBudgetReport(42)).thenReturn(pdfBytes);
 
-        ResponseEntity<byte[]> response = controller.generateBudgetReport(42);
+        ResponseEntity<?> response = controller.generateBudgetReport(42);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(pdfBytes);
         assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_DISPOSITION))
                 .isEqualTo("inline; filename=\"presupuesto_42.pdf\"");
+        assertThat(response.getHeaders().getFirst(HttpHeaders.CACHE_CONTROL)).isEqualTo("private, no-store");
+        assertThat(response.getHeaders().getFirst("X-Content-Type-Options")).isEqualTo("nosniff");
+        assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).isEqualTo("application/pdf");
     }
 
     @Test
@@ -67,9 +70,10 @@ class ReportControllerTest {
         RuntimeException cause = new RuntimeException("pdf rendering failure");
         when(reportService.generateBudgetReport(42)).thenThrow(cause);
 
-        ResponseEntity<byte[]> response = controller.generateBudgetReport(42);
+        ResponseEntity<?> response = controller.generateBudgetReport(42);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getBody()).isNotNull();
         assertThat(logAppender.list)
                 .anySatisfy(event -> {
                     assertThat(event.getLevel()).isEqualTo(Level.ERROR);
@@ -82,7 +86,7 @@ class ReportControllerTest {
     void shouldReturn500AndLogWhenProcedureDocumentListReportFails() throws Exception {
         when(reportService.generateProcedureDocumentsListReport("Sale")).thenThrow(new RuntimeException("boom"));
 
-        ResponseEntity<byte[]> response = controller.generateProcedureDocumentsListReport("Sale");
+        ResponseEntity<?> response = controller.generateProcedureDocumentsListReport("Sale");
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
         assertThat(logAppender.list).isNotEmpty();
@@ -94,7 +98,7 @@ class ReportControllerTest {
         byte[] pdfBytes = {1, 2, 3};
         when(reportService.generateRegistrationDraftReport(1)).thenReturn(pdfBytes);
 
-        ResponseEntity<byte[]> response = controller.generateRegistrationDraftReport(1);
+        ResponseEntity<?> response = controller.generateRegistrationDraftReport(1);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(pdfBytes);
@@ -108,7 +112,7 @@ class ReportControllerTest {
         byte[] pdfBytes = {1, 2, 3};
         when(reportService.generatePaymentReceiptReport(1)).thenReturn(pdfBytes);
 
-        ResponseEntity<byte[]> response = controller.generatePaymentReceiptReport(1);
+        ResponseEntity<?> response = controller.generatePaymentReceiptReport(1);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(pdfBytes);

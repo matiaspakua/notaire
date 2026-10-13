@@ -751,7 +751,9 @@ FE --> U : Open/download PDF
 Reports are generated in-house since #567: the six JasperReports 3.5.3 templates queried
 the legacy MySQL schema and were replaced by `ReportDocumentFactory` (current domain model)
 and a PDFBox adapter behind the `ReportRenderer` outbound port. The PDF library stays out of
-the application layer.
+the application layer. Slice 1 (#1593) adds the shared design system — embedded Liberation
+Sans, text wordmark, repeating chrome, injected clock/zone, and centralized PDF headers.
+See [pdf-report-design-system.md](pdf-report-design-system.md).
 
 ---
 

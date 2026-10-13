@@ -14,13 +14,17 @@ import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.repository.RegistrationDraftRepository;
 import com.licensis.notaire.repository.PaymentRepository;
 import com.licensis.notaire.repository.TestimonyRepository;
+import com.licensis.notaire.application.port.out.report.ReportDocument;
+import com.licensis.notaire.application.port.out.report.ReportDocument.Field;
+import com.licensis.notaire.application.port.out.report.ReportDocument.Fields;
+import com.licensis.notaire.application.port.out.report.ReportDocument.Identity;
 import com.licensis.notaire.application.port.out.report.ReportRenderer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.time.ZoneId;
+import java.util.List;
 
 /**
  * Generates the report PDFs exposed by {@code /api/v1/reports}.
@@ -84,22 +88,13 @@ public class ReportService {
         return reportRenderer.render(reportDocuments.documentDebt(numberManagement));
     }
 
-    public byte[] generateIndexBookReport(Integer year) throws Exception {
-        return generateSimpleTextPdf(
-                "Index book",
-                "CU24",
-                "Period: " + year,
-                "Generated: " + LocalDate.now()
-        );
+    public byte[] generateIndexBookReport(Integer year) {
+        return renderPlaceholder("Index book", "CU24", "index-book-" + year, "Period: " + year);
     }
 
-    public byte[] generateMonthlyTaxDeclarationReport(Integer year, Integer month) throws Exception {
-        return generateSimpleTextPdf(
-                "Monthly sworn statement",
-                "CU25",
-                "Period: " + month + "/" + year,
-                "Generated: " + LocalDate.now()
-        );
+    public byte[] generateMonthlyTaxDeclarationReport(Integer year, Integer month) {
+        return renderPlaceholder("Monthly sworn statement", "CU25",
+                "monthly-sworn-" + year + "-" + month, "Period: " + month + "/" + year);
     }
 
     public byte[] generateTestimonyCopyReport(Integer idTestimony) {
@@ -111,12 +106,11 @@ public class ReportService {
                     "The testimony must be verified to issue the printed copy");
         }
 
-        return generateSimpleTextPdf(
+        return renderPlaceholder(
                 "Testimony copy No. " + testimony.getNumber(),
                 "CU08",
-                "Verified testimony",
-                "Generated: " + LocalDate.now()
-        );
+                "testimony-" + testimony.getNumber(),
+                "Verified testimony");
     }
 
     public byte[] generateNotebookCoverReport(Integer idNotebook) {
@@ -126,22 +120,17 @@ public class ReportService {
         int folioFrom = (notebook.getNumber() - 1) * FOLIOS_PER_NOTEBOOK + 1;
         int folioTo = notebook.getNumber() * FOLIOS_PER_NOTEBOOK;
 
-        return generateSimpleTextPdf(
+        return renderPlaceholder(
                 "Cover of notebook No. " + notebook.getNumber() + "/" + notebook.getYear(),
                 "CU80",
+                "notebook-" + notebook.getNumber(),
                 "Registry No. " + notebook.getFkIdNotaryPerson().getNotaryRegistrationNumber()
-                        + " - Folios " + folioFrom + " to " + folioTo,
-                "Generated: " + LocalDate.now()
-        );
+                        + " - Folios " + folioFrom + " to " + folioTo);
     }
 
-    public byte[] generateIncomeTaxDeclarationReport(Integer year, Integer month) throws Exception {
-        return generateSimpleTextPdf(
-                "Income tax sworn statement",
-                "CU50",
-                "Period: " + month + "/" + year,
-                "Generated: " + LocalDate.now()
-        );
+    public byte[] generateIncomeTaxDeclarationReport(Integer year, Integer month) {
+        return renderPlaceholder("Income tax sworn statement", "CU50",
+                "tax-sworn-" + year + "-" + month, "Period: " + month + "/" + year);
     }
 
     public byte[] generateRegistrationDraftReport(Integer idRegistrationDraft) {
@@ -149,12 +138,11 @@ public class ReportService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Registration draft not found with ID: " + idRegistrationDraft));
 
-        return generateSimpleTextPdf(
+        return renderPlaceholder(
                 "Registration draft N° " + draft.getNumber(),
                 "CU82",
-                "Deed N° " + draft.getFkIdDeed().getNumber() + " - Status: " + draft.getStatus(),
-                "Generated: " + LocalDate.now()
-        );
+                "registration-draft-" + draft.getNumber(),
+                "Deed N° " + draft.getFkIdDeed().getNumber() + " - Status: " + draft.getStatus());
     }
 
     @Transactional(readOnly = true)
@@ -176,106 +164,28 @@ public class ReportService {
                         .orElse("No concepts listed")
                 : "No concepts listed";
 
-        return generateReceiptPdf(nameClient, payment.getDate(), concepts, payment.getAmount());
+        LocalDate paymentDay = payment.getDate() == null
+                ? null
+                : payment.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return reportRenderer.render(new ReportDocument(
+                "Payment receipt",
+                "CU15",
+                List.of(new Fields("Receipt", List.of(
+                        new Field("Client", nameClient),
+                        new Field("Payment date", ReportLocaleFormats.day(paymentDay)),
+                        new Field("Concepts", concepts),
+                        new Field("Amount paid", ReportLocaleFormats.money(payment.getAmount()))))),
+                Identity.of("CU15", "payment-" + payment.getIdPayment(), null)));
     }
 
-    private byte[] generateReceiptPdf(String client, java.util.Date date, String concepts,
-            java.math.BigDecimal amount) {
-        try {
-            String amountText = amount == null
-                    ? "0.00"
-                    : amount.setScale(2, java.math.RoundingMode.HALF_UP).toPlainString();
-            StringBuilder stream = new StringBuilder();
-            stream.append("BT\n");
-            stream.append("/F1 20 Tf\n");
-            stream.append("50 760 Td\n");
-            stream.append("(Payment receipt) Tj\n");
-            stream.append("/F1 12 Tf\n");
-            stream.append("0 -30 Td\n");
-            stream.append("(Client: ").append(escapePdfText(client)).append(") Tj\n");
-            stream.append("0 -20 Td\n");
-            stream.append("(Payment date: ").append(escapePdfText(String.valueOf(date))).append(") Tj\n");
-            stream.append("0 -20 Td\n");
-            stream.append("(Concepts: ").append(escapePdfText(concepts)).append(") Tj\n");
-            stream.append("0 -20 Td\n");
-            stream.append("(Amount paid: ").append(escapePdfText(amountText)).append(") Tj\n");
-            stream.append("0 -40 Td\n");
-            stream.append("(Receipt generated by the backend API - CU15.) Tj\n");
-            stream.append("ET\n");
-
-            return buildPdf(stream.toString());
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to generate the payment receipt: " + e.getMessage(), e);
-        }
-    }
-
-    private byte[] generateSimpleTextPdf(String title, String cuId, String periodLine, String dateLine) {
-        try {
-            StringBuilder stream = new StringBuilder();
-            stream.append("BT\n");
-            stream.append("/F1 20 Tf\n");
-            stream.append("50 760 Td\n");
-            stream.append("(").append(escapePdfText(title)).append(") Tj\n");
-            stream.append("/F1 12 Tf\n");
-            stream.append("0 -30 Td\n");
-            stream.append("(Use case: ").append(escapePdfText(cuId)).append(") Tj\n");
-            stream.append("0 -20 Td\n");
-            stream.append("(").append(escapePdfText(periodLine)).append(") Tj\n");
-            stream.append("0 -20 Td\n");
-            stream.append("(").append(escapePdfText(dateLine)).append(") Tj\n");
-            stream.append("0 -40 Td\n");
-            stream.append("(Operational report generated by the backend API.) Tj\n");
-            stream.append("ET\n");
-
-            return buildPdf(stream.toString());
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to generate the text PDF: " + e.getMessage(), e);
-        }
-    }
-
-    private byte[] buildPdf(String contentStream) throws Exception {
-        ArrayList<Integer> xref = new ArrayList<>();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        write(out, "%PDF-1.4\n");
-
-        xref.add(out.size());
-        write(out, "1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n");
-
-        xref.add(out.size());
-        write(out, "2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n");
-
-        xref.add(out.size());
-        write(out, "3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>\nendobj\n");
-
-        byte[] streamBytes = contentStream.getBytes(java.nio.charset.StandardCharsets.US_ASCII);
-        xref.add(out.size());
-        write(out, "4 0 obj\n<< /Length " + streamBytes.length + " >>\nstream\n");
-        out.write(streamBytes);
-        write(out, "endstream\nendobj\n");
-
-        xref.add(out.size());
-        write(out, "5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n");
-
-        int xrefStart = out.size();
-        write(out, "xref\n0 6\n");
-        write(out, "0000000000 65535 f \n");
-        for (Integer offset : xref) {
-            write(out, String.format("%010d 00000 n \n", offset));
-        }
-        write(out, "trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n" + xrefStart + "\n%%EOF");
-
-        return out.toByteArray();
-    }
-
-    private void write(ByteArrayOutputStream out, String text) throws Exception {
-        out.write(text.getBytes(java.nio.charset.StandardCharsets.US_ASCII));
-    }
-
-    private String escapePdfText(String input) {
-        return input
-                .replace("\\", "\\\\")
-                .replace("(", "\\(")
-                .replace(")", "\\)");
+    private byte[] renderPlaceholder(String title, String cuId, String identifier, String periodLine) {
+        return reportRenderer.render(new ReportDocument(
+                title,
+                cuId,
+                List.of(new Fields(null, List.of(
+                        new Field("Use case", cuId),
+                        new Field("Detail", periodLine),
+                        new Field("Notes", "Operational report generated by the backend API.")))),
+                Identity.of(cuId, identifier, periodLine)));
     }
 }

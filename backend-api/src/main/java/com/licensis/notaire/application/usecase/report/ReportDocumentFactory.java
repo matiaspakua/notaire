@@ -6,6 +6,7 @@ import com.licensis.notaire.application.port.out.report.ReportDocument;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Column;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Field;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Fields;
+import com.licensis.notaire.application.port.out.report.ReportDocument.Identity;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Section;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Table;
 import com.licensis.notaire.business.Budget;
@@ -32,8 +33,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -43,7 +42,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -60,10 +58,9 @@ import java.util.function.Function;
 @Transactional(readOnly = true)
 public class ReportDocumentFactory {
 
-    static final String NOT_RECORDED = "N/A";
+    static final String NOT_RECORDED = ReportLocaleFormats.NOT_RECORDED;
     private static final String PAYMENT_PENDING = "Payment pending";
     private static final DateTimeFormatter DAY = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private static final Locale SPANISH_ARGENTINA = Locale.of("es", "AR");
 
     private final BudgetRepository budgetRepository;
     private final ProcedureRepository procedureRepository;
@@ -147,7 +144,9 @@ public class ReportDocumentFactory {
                         new Field("Pending balance", money(summary.pendingBalance())))));
 
         return new ReportDocument("Budget N° " + budget.getNumber(),
-                withProperties ? "Budget with properties (CU01)" : "Budget (CU01)", sections);
+                withProperties ? "Budget with properties (CU01)" : "Budget (CU01)", sections,
+                Identity.of(withProperties ? "CU01-properties" : "CU01",
+                        "budget-" + budget.getNumber(), null));
     }
 
     /** Documents a procedure type requires, from its procedure template (CU03). */
@@ -179,7 +178,8 @@ public class ReportDocumentFactory {
                         new Table("Required documents",
                                 List.of(Column.left("Document type", 3), Column.left("Expires", 1),
                                         Column.right("Validity days", 1.2f), Column.left("Delivered by", 2)),
-                                rows, "The procedure type does not have documents in its template", List.of())));
+                                rows, "The procedure type does not have documents in its template", List.of())),
+                Identity.of("CU03", "procedure-" + type.getName(), null));
     }
 
     /** State history of a management, oldest first (CU13). */
@@ -213,7 +213,8 @@ public class ReportDocumentFactory {
                         new Table("Status history",
                                 List.of(Column.left("Date", 1), Column.left("Status", 1.5f),
                                         Column.left("Notes", 4)),
-                                rows, "No recorded movements", List.of())));
+                                rows, "No recorded movements", List.of())),
+                Identity.of("CU13", "management-" + management.getNumber(), null));
     }
 
     /** Expiry, payment and management context of one submitted document (CU42). */
@@ -252,7 +253,8 @@ public class ReportDocumentFactory {
                         new Field("Heading", management == null ? NOT_RECORDED : orNotRecorded(management.getHeading())),
                         new Field("Procedure", procedure == null || procedure.getFkIdProcedureType() == null
                                 ? NOT_RECORDED : procedure.getFkIdProcedureType().getName()),
-                        new Field("Reference client", fullName(client))))));
+                        new Field("Reference client", fullName(client))))),
+                Identity.of("CU42", "submitted-document-" + idSubmittedDocument, null));
     }
 
     /** Amounts owed for the documents submitted under a management number (CU09). */
@@ -292,7 +294,8 @@ public class ReportDocumentFactory {
                                 List.of(Column.left("Procedure", 2), Column.left("Document", 2.5f),
                                         Column.right("Amount", 1.3f), Column.left("Payment date", 1.3f)),
                                 rows, "The management does not have submitted documents",
-                                List.of(new Field("Total owed", money(owed))))));
+                                List.of(new Field("Total owed", money(owed))))),
+                Identity.of("CU09", "management-" + managementNumber, null));
     }
 
     private static List<DeedManagement> sortedById(List<DeedManagement> managements) {
@@ -391,10 +394,6 @@ public class ReportDocumentFactory {
 
     /** Amounts in the Argentine format used across the UI: {@code $ 1.234,56}. */
     static String money(BigDecimal amount) {
-        if (amount == null) {
-            return NOT_RECORDED;
-        }
-        DecimalFormat format = new DecimalFormat("#,##0.00", DecimalFormatSymbols.getInstance(SPANISH_ARGENTINA));
-        return "$ " + format.format(amount);
+        return ReportLocaleFormats.money(amount);
     }
 }

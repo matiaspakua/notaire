@@ -4,69 +4,88 @@ import com.licensis.notaire.application.port.out.report.ReportDocument;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Column;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Field;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Fields;
+import com.licensis.notaire.application.port.out.report.ReportDocument.Identity;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Section;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Table;
 import com.licensis.notaire.application.port.out.report.ReportRenderer;
+import com.licensis.notaire.application.usecase.report.ReportLocaleFormats;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDMarkInfo;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.Clock;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
- * {@link ReportRenderer} on Apache PDFBox (Apache License 2.0), replacing the
- * JasperReports 3.5.3 templates (issue #567).
- *
- * <p>Renders A4 pages with the standard Helvetica font (WinAnsi encoding, which covers
- * Spanish text). Long values wrap, tables break across pages repeating their header,
- * and every page gets a footer with the generation time and "Page i of n".
- * Characters the standard font cannot encode are replaced with {@code ?} rather than
- * failing the whole report.
+ * {@link ReportRenderer} on Apache PDFBox using the shared design system (issue #1593).
  */
 @Component
 public class PdfBoxReportRenderer implements ReportRenderer {
 
-    private static final PDRectangle PAGE_SIZE = PDRectangle.A4;
-    private static final float MARGIN = 50f;
-    private static final float FOOTER_ZONE = 40f;
-    private static final float CONTENT_WIDTH = PAGE_SIZE.getWidth() - 2 * MARGIN;
-    private static final float TITLE_SIZE = 16f;
-    private static final float SUBTITLE_SIZE = 10f;
-    private static final float HEADING_SIZE = 12f;
-    private static final float BODY_SIZE = 10f;
-    private static final float TABLE_SIZE = 9f;
-    private static final float FOOTER_SIZE = 8f;
     private static final float LEADING_FACTOR = 1.3f;
-    private static final float CELL_PADDING = 4f;
     private static final float MAX_LABEL_SHARE = 0.4f;
-    private static final float GRAY = 0.4f;
-    private static final float HEADER_FILL = 0.9f;
-    private static final float RULE_GRAY = 0.75f;
-    private static final DateTimeFormatter GENERATED_AT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+    private final Clock clock;
+    private final ZoneId zone;
+    private final String productVersion;
+    private final ReportAssetCatalog assets;
+    private final ReportGenerationRecorder recorder;
+
+    public PdfBoxReportRenderer() {
+        this(Clock.system(ReportTheme.ZONE), ReportTheme.ZONE, "Notaire", new ReportAssetCatalog(), null);
+    }
+
+    public PdfBoxReportRenderer(Clock clock, ZoneId zone, String productVersion, ReportAssetCatalog assets) {
+        this(clock, zone, productVersion, assets, null);
+    }
+
+    @Autowired
+    public PdfBoxReportRenderer(Clock clock,
+            @Value("${app.version:unknown}") String productVersion,
+            ReportAssetCatalog assets,
+            ObjectProvider<ReportGenerationRecorder> recorder) {
+        this(clock, ReportTheme.ZONE, productVersion, assets, recorder.getIfAvailable());
+    }
+
+    PdfBoxReportRenderer(Clock clock, ZoneId zone, String productVersion, ReportAssetCatalog assets,
+            ReportGenerationRecorder recorder) {
+        this.clock = clock == null ? Clock.system(ReportTheme.ZONE) : clock;
+        this.zone = zone == null ? ReportTheme.ZONE : zone;
+        this.productVersion = productVersion == null || productVersion.isBlank() ? "Notaire" : productVersion;
+        this.assets = assets == null ? new ReportAssetCatalog() : assets;
+        this.recorder = recorder;
+    }
 
     @Override
     public byte[] render(ReportDocument document) {
+        long started = System.nanoTime();
+        String type = document.identity() == null || document.identity().reportType() == null
+                ? "report" : document.identity().reportType();
         try (PDDocument pdf = new PDDocument()) {
-            PDDocumentInformation info = pdf.getDocumentInformation();
-            info.setTitle(document.title());
-            info.setProducer("Notaire");
-            info.setCreationDate(Calendar.getInstance());
-
-            try (Layout layout = new Layout(pdf)) {
+            applyMetadata(pdf, document);
+            PDFont regular = PDType0Font.load(pdf, new ByteArrayInputStream(assets.regularFont()), true);
+            PDFont bold = PDType0Font.load(pdf, new ByteArrayInputStream(assets.boldFont()), true);
+            try (Layout layout = new Layout(pdf, document, regular, bold, assets.wordmark())) {
                 layout.title(document.title(), document.subtitle());
+                layout.emptyState(document.identity());
                 for (Section section : document.sections()) {
                     if (section instanceof Fields fields) {
                         layout.fields(fields);
@@ -75,79 +94,146 @@ public class PdfBoxReportRenderer implements ReportRenderer {
                     }
                 }
             }
-            addFooters(pdf, footerText());
-
+            addFooters(pdf, regular, document);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             pdf.save(out);
-            return out.toByteArray();
+            byte[] bytes = out.toByteArray();
+            if (recorder != null) {
+                recorder.recordSuccess(type, System.nanoTime() - started, pdf.getNumberOfPages(), rowCount(document));
+            }
+            return bytes;
         } catch (IOException e) {
+            if (recorder != null) {
+                recorder.recordFailure(type);
+            }
             throw new UncheckedIOException("Failed to generate the PDF report: " + document.title(), e);
         }
     }
 
-    private static String footerText() {
-        return "Notaire — generated on " + LocalDateTime.now().format(GENERATED_AT);
+    private void applyMetadata(PDDocument pdf, ReportDocument document) {
+        PDDocumentInformation info = pdf.getDocumentInformation();
+        info.setTitle(document.title());
+        info.setProducer("Notaire");
+        info.setCreator("Notaire " + productVersion);
+        Calendar created = Calendar.getInstance(TimeZone.getTimeZone(zone));
+        created.setTimeInMillis(clock.instant().toEpochMilli());
+        info.setCreationDate(created);
+        pdf.getDocumentCatalog().setLanguage(ReportTheme.LANGUAGE);
+        PDMarkInfo markInfo = new PDMarkInfo();
+        markInfo.setMarked(true);
+        pdf.getDocumentCatalog().setMarkInfo(markInfo);
     }
 
-    private static void addFooters(PDDocument pdf, String footerText) throws IOException {
-        PDType1Font font = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
+    private void addFooters(PDDocument pdf, PDFont font, ReportDocument document) throws IOException {
+        boolean landscape = document.identity().landscape();
+        float pageWidth = ReportTheme.pageWidthPt(landscape);
+        String generated = ReportLocaleFormats.generatedAt(clock.instant(), zone);
+        String left = assets.wordmark() + " " + productVersion + " — " + generated;
         int pages = pdf.getNumberOfPages();
         for (int i = 0; i < pages; i++) {
             PDPage page = pdf.getPage(i);
             try (PDPageContentStream stream = new PDPageContentStream(pdf, page, AppendMode.APPEND, true, true)) {
-                stream.setNonStrokingColor(GRAY, GRAY, GRAY);
-                float y = MARGIN / 2;
-                showText(stream, font, FOOTER_SIZE, MARGIN, y, sanitize(font, footerText));
-                String pageLabel = "Page " + (i + 1) + " of " + pages;
-                float width = width(font, FOOTER_SIZE, pageLabel);
-                showText(stream, font, FOOTER_SIZE, PAGE_SIZE.getWidth() - MARGIN - width, y, pageLabel);
+                stream.setNonStrokingColor(ReportTheme.MUTED_GRAY, ReportTheme.MUTED_GRAY, ReportTheme.MUTED_GRAY);
+                float y = ReportTheme.MARGIN_BOTTOM_PT / 2f;
+                showText(stream, font, ReportTheme.FOOTER_SIZE_PT, ReportTheme.MARGIN_SIDE_PT, y,
+                        ReportTextSanitizer.sanitize(font, left));
+                String pageLabel = String.format(ReportTheme.PAGE_LABEL_FORMAT, i + 1, pages);
+                float width = width(font, ReportTheme.FOOTER_SIZE_PT, pageLabel);
+                showText(stream, font, ReportTheme.FOOTER_SIZE_PT,
+                        pageWidth - ReportTheme.MARGIN_SIDE_PT - width, y, pageLabel);
             }
         }
+    }
+
+    private static int rowCount(ReportDocument document) {
+        int rows = 0;
+        for (Section section : document.sections()) {
+            if (section instanceof Table table) {
+                rows += table.rows().size();
+            }
+        }
+        return rows;
     }
 
     /** Cursor over the pages being written; opens a new page when the current one is full. */
     private static final class Layout implements AutoCloseable {
 
         private final PDDocument pdf;
-        private final PDType1Font regular = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
-        private final PDType1Font bold = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
+        private final ReportDocument document;
+        private final PDFont regular;
+        private final PDFont bold;
+        private final String wordmark;
+        private final boolean landscape;
+        private final float pageWidth;
+        private final float pageHeight;
+        private final float contentWidth;
+        private final float contentBottom;
         private PDPageContentStream stream;
         private float y;
 
-        Layout(PDDocument pdf) throws IOException {
+        Layout(PDDocument pdf, ReportDocument document, PDFont regular, PDFont bold, String wordmark)
+                throws IOException {
             this.pdf = pdf;
+            this.document = document;
+            this.regular = regular;
+            this.bold = bold;
+            this.wordmark = wordmark;
+            this.landscape = document.identity().landscape();
+            this.pageWidth = ReportTheme.pageWidthPt(landscape);
+            this.pageHeight = ReportTheme.pageHeightPt(landscape);
+            this.contentWidth = pageWidth - 2 * ReportTheme.MARGIN_SIDE_PT;
+            this.contentBottom = ReportTheme.MARGIN_BOTTOM_PT + ReportTheme.FOOTER_BAND_PT;
             newPage();
         }
 
         void title(String title, String subtitle) throws IOException {
-            writeWrapped(bold, TITLE_SIZE, title, MARGIN, CONTENT_WIDTH);
+            writeWrapped(bold, ReportTheme.TITLE_SIZE_PT, title, ReportTheme.MARGIN_SIDE_PT, contentWidth);
+            y -= ReportTheme.TITLE_META_GAP_PT;
             if (subtitle != null && !subtitle.isBlank()) {
-                stream.setNonStrokingColor(GRAY, GRAY, GRAY);
-                writeWrapped(regular, SUBTITLE_SIZE, subtitle, MARGIN, CONTENT_WIDTH);
-                stream.setNonStrokingColor(0f, 0f, 0f);
+                stream.setNonStrokingColor(ReportTheme.MUTED_GRAY, ReportTheme.MUTED_GRAY, ReportTheme.MUTED_GRAY);
+                writeWrapped(regular, ReportTheme.META_SIZE_PT, subtitle, ReportTheme.MARGIN_SIDE_PT, contentWidth);
+                stream.setNonStrokingColor(ReportTheme.TEXT_GRAY, ReportTheme.TEXT_GRAY, ReportTheme.TEXT_GRAY);
             }
-            y -= BODY_SIZE;
+            Identity identity = document.identity();
+            if (notBlank(identity.periodOrAggregate())) {
+                writeWrapped(regular, ReportTheme.META_SIZE_PT, identity.periodOrAggregate(),
+                        ReportTheme.MARGIN_SIDE_PT, contentWidth);
+            }
+            y -= ReportTheme.GRID_PT;
+        }
+
+        void emptyState(Identity identity) throws IOException {
+            if (identity == null || !notBlank(identity.emptyStateMessage())) {
+                return;
+            }
+            writeWrapped(regular, ReportTheme.BODY_SIZE_PT, identity.emptyStateMessage(),
+                    ReportTheme.MARGIN_SIDE_PT, contentWidth);
+            y -= ReportTheme.GRID_PT;
         }
 
         void fields(Fields section) throws IOException {
             heading(section.heading());
             float labelWidth = 0;
             for (Field field : section.fields()) {
-                labelWidth = Math.max(labelWidth, width(bold, BODY_SIZE, sanitize(bold, field.label())));
+                labelWidth = Math.max(labelWidth, width(bold, ReportTheme.BODY_SIZE_PT,
+                        ReportTextSanitizer.sanitize(bold, field.label())));
             }
-            labelWidth = Math.min(labelWidth + 2 * CELL_PADDING, CONTENT_WIDTH * MAX_LABEL_SHARE);
-            float leading = BODY_SIZE * LEADING_FACTOR;
+            labelWidth = Math.min(labelWidth + 2 * ReportTheme.CELL_PADDING_PT, contentWidth * MAX_LABEL_SHARE);
+            float leading = ReportTheme.BODY_LEADING_PT;
             for (Field field : section.fields()) {
-                List<String> labelLines = wrap(bold, BODY_SIZE, field.label(), labelWidth - CELL_PADDING);
-                List<String> valueLines = wrap(regular, BODY_SIZE, field.value(), CONTENT_WIDTH - labelWidth);
+                List<String> labelLines = wrap(bold, ReportTheme.BODY_SIZE_PT, field.label(),
+                        labelWidth - ReportTheme.CELL_PADDING_PT);
+                List<String> valueLines = wrap(regular, ReportTheme.BODY_SIZE_PT, field.value(),
+                        contentWidth - labelWidth);
                 int lines = Math.max(labelLines.size(), valueLines.size());
                 ensureSpace(lines * leading);
                 float top = y;
-                drawLines(bold, BODY_SIZE, labelLines, MARGIN, top, leading);
-                drawLines(regular, BODY_SIZE, valueLines, MARGIN + labelWidth, top, leading);
+                drawLines(bold, ReportTheme.BODY_SIZE_PT, labelLines, ReportTheme.MARGIN_SIDE_PT, top, leading);
+                drawLines(regular, ReportTheme.BODY_SIZE_PT, valueLines, ReportTheme.MARGIN_SIDE_PT + labelWidth, top,
+                        leading);
                 y = top - lines * leading;
             }
-            y -= BODY_SIZE;
+            y -= ReportTheme.GRID_PT;
         }
 
         void table(Table table) throws IOException {
@@ -156,87 +242,94 @@ public class PdfBoxReportRenderer implements ReportRenderer {
             drawHeaderRow(table.columns(), widths);
             if (table.rows().isEmpty()) {
                 String message = table.emptyMessage() == null ? "" : table.emptyMessage();
-                writeWrapped(regular, TABLE_SIZE, message, MARGIN + CELL_PADDING, CONTENT_WIDTH - 2 * CELL_PADDING);
+                writeWrapped(regular, ReportTheme.TABLE_SIZE_PT, message,
+                        ReportTheme.MARGIN_SIDE_PT + ReportTheme.CELL_PADDING_PT,
+                        contentWidth - 2 * ReportTheme.CELL_PADDING_PT);
             }
             for (List<String> row : table.rows()) {
                 List<List<String>> cells = new ArrayList<>();
                 int lines = 1;
                 for (int c = 0; c < widths.length; c++) {
-                    List<String> cell = wrap(regular, TABLE_SIZE, row.get(c), widths[c] - 2 * CELL_PADDING);
+                    List<String> cell = wrap(regular, ReportTheme.TABLE_SIZE_PT, row.get(c),
+                            widths[c] - 2 * ReportTheme.CELL_PADDING_PT);
                     cells.add(cell);
                     lines = Math.max(lines, cell.size());
                 }
-                float rowHeight = lines * TABLE_SIZE * LEADING_FACTOR + 2 * CELL_PADDING;
-                if (y - rowHeight < MARGIN + FOOTER_ZONE) {
+                float rowHeight = lines * ReportTheme.TABLE_SIZE_PT * LEADING_FACTOR
+                        + 2 * ReportTheme.CELL_PADDING_PT;
+                if (y - rowHeight < contentBottom) {
                     newPage();
                     drawHeaderRow(table.columns(), widths);
                 }
                 drawRow(regular, table.columns(), widths, cells, rowHeight);
             }
             for (Field total : table.totals()) {
-                String text = sanitize(bold, total.label() + ": " + (total.value() == null ? "" : total.value()));
-                float leading = BODY_SIZE * LEADING_FACTOR;
-                ensureSpace(leading + CELL_PADDING);
-                y -= CELL_PADDING;
-                showText(stream, bold, BODY_SIZE, MARGIN + CONTENT_WIDTH - width(bold, BODY_SIZE, text),
-                        y - BODY_SIZE, text);
+                String text = ReportTextSanitizer.sanitize(bold,
+                        total.label() + ": " + (total.value() == null ? "" : total.value()));
+                float leading = ReportTheme.BODY_LEADING_PT;
+                ensureSpace(leading + ReportTheme.CELL_PADDING_PT);
+                y -= ReportTheme.CELL_PADDING_PT;
+                showText(stream, bold, ReportTheme.BODY_SIZE_PT,
+                        ReportTheme.MARGIN_SIDE_PT + contentWidth - width(bold, ReportTheme.BODY_SIZE_PT, text),
+                        y - ReportTheme.BODY_SIZE_PT, text);
                 y -= leading;
             }
-            y -= BODY_SIZE;
+            y -= ReportTheme.GRID_PT;
         }
 
         private void heading(String heading) throws IOException {
             if (heading == null || heading.isBlank()) {
                 return;
             }
-            // Keep a heading together with at least a couple of lines of its content.
-            ensureSpace(HEADING_SIZE * LEADING_FACTOR + 3 * TABLE_SIZE * LEADING_FACTOR);
-            writeWrapped(bold, HEADING_SIZE, heading, MARGIN, CONTENT_WIDTH);
-            y -= CELL_PADDING;
+            ensureSpace(ReportTheme.HEADING_SIZE_PT * LEADING_FACTOR + 3 * ReportTheme.TABLE_SIZE_PT * LEADING_FACTOR);
+            stream.setNonStrokingColor(ReportTheme.ACCENT_R, ReportTheme.ACCENT_G, ReportTheme.ACCENT_B);
+            writeWrapped(bold, ReportTheme.HEADING_SIZE_PT, heading, ReportTheme.MARGIN_SIDE_PT, contentWidth);
+            stream.setNonStrokingColor(ReportTheme.TEXT_GRAY, ReportTheme.TEXT_GRAY, ReportTheme.TEXT_GRAY);
+            y -= ReportTheme.CELL_PADDING_PT;
         }
 
         private void drawHeaderRow(List<Column> columns, float[] widths) throws IOException {
             List<List<String>> cells = new ArrayList<>();
             int lines = 1;
             for (int c = 0; c < widths.length; c++) {
-                List<String> cell = wrap(bold, TABLE_SIZE, columns.get(c).header(), widths[c] - 2 * CELL_PADDING);
+                List<String> cell = wrap(bold, ReportTheme.TABLE_SIZE_PT, columns.get(c).header(),
+                        widths[c] - 2 * ReportTheme.CELL_PADDING_PT);
                 cells.add(cell);
                 lines = Math.max(lines, cell.size());
             }
-            float rowHeight = lines * TABLE_SIZE * LEADING_FACTOR + 2 * CELL_PADDING;
-            ensureSpace(rowHeight + TABLE_SIZE * LEADING_FACTOR + 2 * CELL_PADDING);
-            stream.setNonStrokingColor(HEADER_FILL, HEADER_FILL, HEADER_FILL);
-            stream.addRect(MARGIN, y - rowHeight, CONTENT_WIDTH, rowHeight);
+            float rowHeight = lines * ReportTheme.TABLE_SIZE_PT * LEADING_FACTOR + 2 * ReportTheme.CELL_PADDING_PT;
+            ensureSpace(rowHeight + ReportTheme.TABLE_SIZE_PT * LEADING_FACTOR + 2 * ReportTheme.CELL_PADDING_PT);
+            stream.setNonStrokingColor(ReportTheme.HEADER_FILL, ReportTheme.HEADER_FILL, ReportTheme.HEADER_FILL);
+            stream.addRect(ReportTheme.MARGIN_SIDE_PT, y - rowHeight, contentWidth, rowHeight);
             stream.fill();
-            stream.setNonStrokingColor(0f, 0f, 0f);
+            stream.setNonStrokingColor(ReportTheme.TEXT_GRAY, ReportTheme.TEXT_GRAY, ReportTheme.TEXT_GRAY);
             drawRow(bold, columns, widths, cells, rowHeight);
         }
 
-        private void drawRow(PDType1Font font, List<Column> columns, float[] widths, List<List<String>> cells,
+        private void drawRow(PDFont font, List<Column> columns, float[] widths, List<List<String>> cells,
                 float rowHeight) throws IOException {
-            float leading = TABLE_SIZE * LEADING_FACTOR;
-            float x = MARGIN;
+            float leading = ReportTheme.TABLE_SIZE_PT * LEADING_FACTOR;
+            float x = ReportTheme.MARGIN_SIDE_PT;
             for (int c = 0; c < widths.length; c++) {
-                float lineTop = y - CELL_PADDING;
+                float lineTop = y - ReportTheme.CELL_PADDING_PT;
                 for (String line : cells.get(c)) {
                     float textX = columns.get(c).alignRight()
-                            ? x + widths[c] - CELL_PADDING - width(font, TABLE_SIZE, line)
-                            : x + CELL_PADDING;
-                    showText(stream, font, TABLE_SIZE, textX, lineTop - TABLE_SIZE, line);
+                            ? x + widths[c] - ReportTheme.CELL_PADDING_PT - width(font, ReportTheme.TABLE_SIZE_PT, line)
+                            : x + ReportTheme.CELL_PADDING_PT;
+                    showText(stream, font, ReportTheme.TABLE_SIZE_PT, textX, lineTop - ReportTheme.TABLE_SIZE_PT, line);
                     lineTop -= leading;
                 }
                 x += widths[c];
             }
             y -= rowHeight;
-            stream.setStrokingColor(RULE_GRAY, RULE_GRAY, RULE_GRAY);
+            stream.setStrokingColor(ReportTheme.RULE_GRAY, ReportTheme.RULE_GRAY, ReportTheme.RULE_GRAY);
             stream.setLineWidth(0.5f);
-            stream.moveTo(MARGIN, y);
-            stream.lineTo(MARGIN + CONTENT_WIDTH, y);
+            stream.moveTo(ReportTheme.MARGIN_SIDE_PT, y);
+            stream.lineTo(ReportTheme.MARGIN_SIDE_PT + contentWidth, y);
             stream.stroke();
         }
 
-        private void writeWrapped(PDType1Font font, float size, String text, float x, float maxWidth)
-                throws IOException {
+        private void writeWrapped(PDFont font, float size, String text, float x, float maxWidth) throws IOException {
             float leading = size * LEADING_FACTOR;
             for (String line : wrap(font, size, text, maxWidth)) {
                 ensureSpace(leading);
@@ -245,7 +338,7 @@ public class PdfBoxReportRenderer implements ReportRenderer {
             }
         }
 
-        private void drawLines(PDType1Font font, float size, List<String> lines, float x, float top, float leading)
+        private void drawLines(PDFont font, float size, List<String> lines, float x, float top, float leading)
                 throws IOException {
             float lineTop = top;
             for (String line : lines) {
@@ -255,7 +348,7 @@ public class PdfBoxReportRenderer implements ReportRenderer {
         }
 
         private void ensureSpace(float height) throws IOException {
-            if (y - height < MARGIN + FOOTER_ZONE) {
+            if (y - height < contentBottom) {
                 newPage();
             }
         }
@@ -264,20 +357,44 @@ public class PdfBoxReportRenderer implements ReportRenderer {
             if (stream != null) {
                 stream.close();
             }
-            PDPage page = new PDPage(PAGE_SIZE);
+            PDPage page = new PDPage(new PDRectangle(pageWidth, pageHeight));
             pdf.addPage(page);
             stream = new PDPageContentStream(pdf, page);
-            y = PAGE_SIZE.getHeight() - MARGIN;
+            stream.setNonStrokingColor(ReportTheme.TEXT_GRAY, ReportTheme.TEXT_GRAY, ReportTheme.TEXT_GRAY);
+            y = pageHeight - ReportTheme.MARGIN_TOP_PT;
+            drawRepeatingHeader();
         }
 
-        private static float[] columnWidths(List<Column> columns) {
+        private void drawRepeatingHeader() throws IOException {
+            stream.setNonStrokingColor(ReportTheme.ACCENT_R, ReportTheme.ACCENT_G, ReportTheme.ACCENT_B);
+            showText(stream, bold, ReportTheme.WORDMARK_SIZE_PT, ReportTheme.MARGIN_SIDE_PT,
+                    y - ReportTheme.WORDMARK_SIZE_PT, ReportTextSanitizer.sanitize(bold, wordmark));
+            Identity identity = document.identity();
+            String right = joinChrome(identity.reportType(), identity.documentIdentifier());
+            if (notBlank(right)) {
+                String sanitized = ReportTextSanitizer.sanitize(regular, right);
+                float width = width(regular, ReportTheme.META_SIZE_PT, sanitized);
+                showText(stream, regular, ReportTheme.META_SIZE_PT,
+                        pageWidth - ReportTheme.MARGIN_SIDE_PT - width, y - ReportTheme.WORDMARK_SIZE_PT, sanitized);
+            }
+            y -= ReportTheme.HEADER_BAND_PT;
+            stream.setStrokingColor(ReportTheme.ACCENT_R, ReportTheme.ACCENT_G, ReportTheme.ACCENT_B);
+            stream.setLineWidth(1f);
+            stream.moveTo(ReportTheme.MARGIN_SIDE_PT, y);
+            stream.lineTo(pageWidth - ReportTheme.MARGIN_SIDE_PT, y);
+            stream.stroke();
+            stream.setNonStrokingColor(ReportTheme.TEXT_GRAY, ReportTheme.TEXT_GRAY, ReportTheme.TEXT_GRAY);
+            y -= ReportTheme.GRID_PT;
+        }
+
+        private float[] columnWidths(List<Column> columns) {
             float totalWeight = 0;
             for (Column column : columns) {
                 totalWeight += column.weight();
             }
             float[] widths = new float[columns.size()];
             for (int c = 0; c < widths.length; c++) {
-                widths[c] = CONTENT_WIDTH * columns.get(c).weight() / totalWeight;
+                widths[c] = contentWidth * columns.get(c).weight() / totalWeight;
             }
             return widths;
         }
@@ -288,9 +405,20 @@ public class PdfBoxReportRenderer implements ReportRenderer {
         }
     }
 
-    private static void showText(PDPageContentStream stream, PDType1Font font, float size, float x, float y,
-            String text) throws IOException {
-        if (text.isEmpty()) {
+    private static String joinChrome(String left, String right) {
+        if (notBlank(left) && notBlank(right)) {
+            return left + " · " + right;
+        }
+        return notBlank(left) ? left : (notBlank(right) ? right : "");
+    }
+
+    private static boolean notBlank(String value) {
+        return value != null && !value.isBlank();
+    }
+
+    private static void showText(PDPageContentStream stream, PDFont font, float size, float x, float y, String text)
+            throws IOException {
+        if (text == null || text.isEmpty()) {
             return;
         }
         stream.beginText();
@@ -304,10 +432,10 @@ public class PdfBoxReportRenderer implements ReportRenderer {
      * Splits text into lines no wider than {@code maxWidth}, breaking at spaces and, for a
      * single word wider than a line, inside the word. Always returns at least one line.
      */
-    static List<String> wrap(PDType1Font font, float size, String text, float maxWidth) throws IOException {
+    static List<String> wrap(PDFont font, float size, String text, float maxWidth) throws IOException {
         List<String> lines = new ArrayList<>();
         StringBuilder line = new StringBuilder();
-        for (String word : sanitize(font, text).split(" ")) {
+        for (String word : ReportTextSanitizer.sanitize(font, text).split(" ")) {
             if (word.isEmpty()) {
                 continue;
             }
@@ -338,32 +466,10 @@ public class PdfBoxReportRenderer implements ReportRenderer {
         return lines;
     }
 
-    /**
-     * Makes text printable with a standard 14 font: control characters become spaces and
-     * characters outside its encoding become {@code ?}.
-     */
-    static String sanitize(PDType1Font font, String text) {
-        if (text == null) {
-            return "";
+    private static float width(PDFont font, float size, String text) throws IOException {
+        if (text == null || text.isEmpty()) {
+            return 0f;
         }
-        StringBuilder out = new StringBuilder(text.length());
-        text.codePoints().forEach(codePoint -> {
-            if (Character.isISOControl(codePoint) || Character.isWhitespace(codePoint)) {
-                out.append(' ');
-                return;
-            }
-            String character = new String(Character.toChars(codePoint));
-            try {
-                font.encode(character);
-                out.append(character);
-            } catch (IOException | IllegalArgumentException e) {
-                out.append('?');
-            }
-        });
-        return out.toString().replaceAll(" {2,}", " ").trim();
-    }
-
-    private static float width(PDType1Font font, float size, String text) throws IOException {
         return font.getStringWidth(text) / 1000f * size;
     }
 }
