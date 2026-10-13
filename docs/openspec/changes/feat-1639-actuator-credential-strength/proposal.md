@@ -17,7 +17,7 @@
 ## What Changes
 
 - Under `app.environment=production` the backend refuses to start when the actuator password is empty, shorter than 16 characters or on a deny-list, or when the actuator user is empty or on the deny-list.
-- `.env.example` uses `change-me-…` placeholders plus a generation hint; dev compose keeps its dev-only default with a comment.
+- `.env.example` and dev compose keep their dev-only `admin` values but gain comments with the production rule and a generation hint.
 - ADR-019 and `OWASP-TOP10.md` (A05 row) updated.
 
 ## Reglas de negocio
@@ -69,3 +69,4 @@ Extends the existing guard (ADR-019); no new ADR.
 
 - Strength rules for datasource, admin seed, Grafana or pgAdmin credentials (tracked separately; still rejected when equal to `admin`).
 - Rotating secrets in shared environments.
+- Replacing the `.env.example` actuator values with `change-me-…` placeholders: the dev Prometheus scrape hardcodes `admin`/`admin` in `infra/observability/prometheus/prometheus.yml`, so a placeholder would silently stop dev metrics. Needs Prometheus to read the credentials from the environment first (follow-up issue).

@@ -10,7 +10,7 @@ percentage.
 | A02 Cryptographic failures | BCrypt cost 12. TLS required in production by policy. JWT signed | `PasswordEncoderUtil`, #254 still open for the certificate guide | TLS material is an operator task |
 | A03 Injection | JPA parameters. Input validation strategy | [SQL-INJECTION-PREVENTION.md](SQL-INJECTION-PREVENTION.md), [INPUT-VALIDATION-STRATEGY.md](INPUT-VALIDATION-STRATEGY.md) | None known in Java query construction |
 | A04 Insecure design | STRIDE + LINDDUN models, `SR-*` register, Sec by Design program | This folder | Read audit and shared lockout still open |
-| A05 Security misconfiguration | Prod compose without public DB or pgAdmin. Swagger denied in production. Security headers | image-pin tests, TS-0044, #1044, #671 | Actuator basic auth must not keep a default password (ADR-019) |
+| A05 Security misconfiguration | Prod compose without public DB or pgAdmin. Swagger denied in production. Security headers | image-pin tests, TS-0044, #1044, #671 | Actuator basic auth: `ProductionCredentialsGuard` refuses empty, <16-character, deny-listed or `change-me` passwords in production (#1639, ADR-019) |
 | A06 Vulnerable components | Dependabot, Trivy, image digests/pins, patched floors | `security/tests/`, `PatchedDependencyFloorTest` | Trivy is report-only (SR-13) |
 | A07 Identification and authentication failures | Lockout, generic login errors, HttpOnly session, logout revocation | `LoginAttemptServiceTest`, auth guide | Lockout is per JVM (SR-01). No MFA (not claimed) |
 | A08 Software and data integrity | cosign, CycloneDX SBOM, secret scan, protected `main` | `cd.yml`, `scan_secrets.py`, ruleset | Audit table is not append-only (SR-09) |

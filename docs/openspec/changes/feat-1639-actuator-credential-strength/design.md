@@ -14,6 +14,7 @@
 1. **Extend the existing guard.** One class already owns production credential checks; a second validator would split the rule.
 2. **Length ≥ 16 plus a small deny-list and the `change-me` placeholder prefix.** Cheap, deterministic, testable. The prefix check refuses the `.env.example` placeholder, which is longer than 16 characters.
 3. **Same deny-list for the actuator user**, plus non-empty.
+4. **Keep the dev `admin` defaults.** Prometheus hardcodes `admin`/`admin` for the actuator scrape; changing `.env.example` would break dev metrics. The guard already stops those values reaching production.
 
 ## Riesgos / Trade-offs
 

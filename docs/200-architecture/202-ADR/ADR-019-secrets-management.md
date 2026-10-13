@@ -40,6 +40,13 @@ equal the literal default value `"admin"` — if so, it throws
 fail-closed guard against deploying with `.env.example`'s placeholder values
 unchanged.
 
+The actuator credentials get a stricter check (issue #1639): in production the
+password must have at least 16 characters, must not be `admin`, `password`,
+`changeme`, `secret` or `root` (any case) and must not start with a
+`change-me` placeholder; the user must be non-empty and not on the same list.
+Generate a password with `openssl rand -hex 24`. Dev defaults stay `admin`
+because the dev Prometheus scrape hardcodes them.
+
 `DataInitializer` adds a second, environment-wide check (issue #1249): outside
 `app.environment` values `development`, `dev`, `local` and `test`, it does not
 seed the initial admin user when `APP_ADMIN_PASSWORD` is blank or the literal

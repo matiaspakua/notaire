@@ -32,7 +32,7 @@
      by dependency. Write only the code needed to make the tests of group 3 pass. -->
 
 - [ ] 4.1 Extend `ProductionCredentialsGuard` with the actuator strength rule
-- [ ] 4.2 Replace the `.env.example` actuator values with `change-me-…` placeholders and a generation hint; comment the dev-only compose default
+- [ ] 4.2 Document the production rule and a generation hint beside the dev-only `.env.example` and compose defaults
 - [ ] 4.3 Update ADR-019 and the OWASP-TOP10 A05 row
 
 ## 5. Actualizar tests existentes

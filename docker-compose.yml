@@ -44,6 +44,7 @@ services:
       SPRING_FLYWAY_ENABLED: true
       SPRING_FLYWAY_BASELINE_ON_MIGRATE: true
       JWT_SECRET: ${JWT_SECRET}
+      # Dev-only defaults; production is refused by ProductionCredentialsGuard (#1639).
       ACTUATOR_USER: ${ACTUATOR_USER:-admin}
       ACTUATOR_PASSWORD: ${ACTUATOR_PASSWORD:-admin}
       APP_ADMIN_USER: ${APP_ADMIN_USER:-admin}
