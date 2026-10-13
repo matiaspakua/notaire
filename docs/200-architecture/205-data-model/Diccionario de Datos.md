@@ -30,7 +30,7 @@ This data dictionary lists the tables, columns, data types, constraints, and for
 
 ---
 
-## 2. Table index (37 tables, Flyway V1–V46)
+## 2. Table index (38 tables, Flyway V1–V49)
 
 **Legacy entity:** `identificaciones` was documented earlier and exists in archived init scripts and in the JPA entity. Flyway V1–V44 never create it. See section 6.1.
 
@@ -73,6 +73,7 @@ This data dictionary lists the tables, columns, data types, constraints, and for
 | 35 | [procedure_folders](#35-procedure_folders) | Deed management | Weak | Numbered folders for the procedures of a management |
 | 36 | [registration_drafts](#36-registration_drafts) | Protocol | Weak | Registry registration drafts for deeds |
 | 37 | [revoked_tokens](#37-revoked_tokens) | Security | Strong | JWT ids revoked at logout until they expire |
+| 38 | [login_attempts](#38-login_attempts) | Security | Strong | Failed-login counters and lock expiry shared by every instance |
 
 ---
 
@@ -80,7 +81,7 @@ This data dictionary lists the tables, columns, data types, constraints, and for
 
 ### Active schema
 
-The database is the result of Flyway V1–V46. Changes that matter for this model:
+The database is the result of Flyway V1–V49. Changes that matter for this model:
 
 - V1: base relational schema for people, protocol, procedures, budgets, and documents.
 - V3/V4: missing columns on `items`, `folio_types`, and `testimonies`.
@@ -91,6 +92,9 @@ The database is the result of Flyway V1–V46. Changes that matter for this mode
 - V13: `procedures.name` and `procedures.number` become optional. Those columns were renamed from `nombre` and `numero` in V31.
 - V14: `budgets.fk_id_tramite` was removed. The canonical link is `procedures.fk_id_budget` (one to many).
 - V43: `revoked_tokens`, the JWT revocation list for logout (issue #676); no foreign key.
+- V47: `audit_records` becomes append-only: a trigger rejects UPDATE, DELETE and TRUNCATE (issue #1636).
+- V48: `login_attempts`, the shared failed-login counters behind the account lockout (issue #1634); no foreign key.
+- V49: data migration that promotes the seeded `admin` account to `Administrador` (issue #1638).
 - V45: renames the remaining Spanish columns (`fk_id_budget`, `birth_date`, `node_type`, and the rest). Applied migration filenames V1–V44 stay as recorded.
 - V46: renames the Spanish constraint names PostgreSQL kept after the table and column renames (`users_pkey` and the names that follow the current tables). Applied migration files V1–V45 stay as recorded.
 
@@ -772,6 +776,19 @@ JWT revocation list (issue #676). Logout stores the presented token's `jti` unti
 
 ---
 
+### 38. `login_attempts`
+
+Failed-login counters and lock expiry, shared by every backend instance (issue #1634). One row per normalised username; no other personal data is stored. Rows idle for longer than the lock duration are purged on the next failure.
+
+| Column | Data type | PK | FK | Not null | Default | Reference | Description |
+|---|---|---|---|---|---|---|---|
+| `username` | VARCHAR(255) | Yes | No | Yes | — | — | Normalised (trimmed, lower-case) login name |
+| `failed_count` | INTEGER | No | No | Yes | 0 | — | Failed logins since the last success or purge |
+| `locked_until` | TIMESTAMP WITH TIME ZONE | No | No | No | NULL | — | End of the lock once the threshold is reached |
+| `updated_at` | TIMESTAMP WITH TIME ZONE | No | No | Yes | — | — | Time of the last failure; drives the purge |
+
+---
+
 ## 5. Referential integrity matrix
 
 | Source table | FK column | Target table | PK column | ON DELETE |
@@ -846,7 +863,7 @@ These 20 entities (61% of the tables) have no use case of their own. They are **
 |-----------|-----------|-------------|
 | **Master catalogs** | `document_types`, `folio_types`, `procedure_types`, `identification_types`, `concepts`, `management_statuses` | Created through administrative CRUD and referenced by business use cases. |
 | **Templates** | `budget_templates`, `procedure_templates` | Defined once and reused by several use cases (budgeting, documents). |
-| **Compensation and security** | `roles`, `role_modules`, `audit_records`, `users`, `revoked_tokens`, `workflow_definition`, `workflow_node`, `workflow_transition` | Created during setup, or automatically by audit and workflows. |
+| **Compensation and security** | `roles`, `role_modules`, `audit_records`, `users`, `revoked_tokens`, `login_attempts`, `workflow_definition`, `workflow_node`, `workflow_transition` | Created during setup, or automatically by audit and workflows. |
 | **Operational associations** | `submitted_documents`, `person_procedures`, `folio_copies`, `testimony_movements`, `substitutions`, `history`, `properties`, `items`, `payments` | Weak or association tables created by use cases that manage strong entities (procedures, deeds, budgets). |
 
 **Coverage pattern:**
