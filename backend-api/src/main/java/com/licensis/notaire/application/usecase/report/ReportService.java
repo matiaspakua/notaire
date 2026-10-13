@@ -43,6 +43,7 @@ public class ReportService {
     private final ItemRepository itemRepository;
     private final ReportDocumentFactory reportDocuments;
     private final ReportRenderer reportRenderer;
+    private final IndexBookReportBuilder indexBook;
 
     private static final int FOLIOS_PER_NOTEBOOK = 10;
 
@@ -52,7 +53,8 @@ public class ReportService {
                            PaymentRepository paymentRepository,
                            ItemRepository itemRepository,
                            ReportDocumentFactory reportDocuments,
-                           ReportRenderer reportRenderer) {
+                           ReportRenderer reportRenderer,
+                           IndexBookReportBuilder indexBook) {
         this.testimonyRepository = testimonyRepository;
         this.notebookRepository = notebookRepository;
         this.registrationDraftRepository = registrationDraftRepository;
@@ -60,6 +62,7 @@ public class ReportService {
         this.itemRepository = itemRepository;
         this.reportDocuments = reportDocuments;
         this.reportRenderer = reportRenderer;
+        this.indexBook = indexBook;
     }
 
     public byte[] generateBudgetReport(Integer idBudget) {
@@ -87,7 +90,12 @@ public class ReportService {
     }
 
     public byte[] generateIndexBookReport(Integer year) {
-        return renderPlaceholder("Index book", "CU24", "index-book-" + year, "Period: " + year);
+        return generateIndexBookReport(year, null, null);
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] generateIndexBookReport(Integer year, Integer idNotary, Integer idFolioType) {
+        return reportRenderer.render(indexBook.build(year, idNotary, idFolioType));
     }
 
     public byte[] generateMonthlyTaxDeclarationReport(Integer year, Integer month) {

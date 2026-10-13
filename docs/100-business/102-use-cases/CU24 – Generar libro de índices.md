@@ -25,10 +25,16 @@
 
 | Paso | Condición / Evento | Acción del Sistema / Actor |
 |---|---|---|
-| 4.1 | No existen escrituras para el año y registro indicados. | El sistema gestiona la excepción y notifica al usuario. |
-| 4.2 | Reporte con ID inexistente | La API devuelve 404 Not Found. |
+| 4.1 | No existen escrituras para el año y registro indicados. | El sistema devuelve HTTP 200 y un PDF de estado vacío (no inventa 404). |
+| 4.2 | Reporte con ID inexistente | No aplica: el libro de índice se filtra por período, no por un ID de reporte. |
 
 ## Entrada en la UI (Next.js)
 
 Los reportes (índices, DDJJ, etc.) se alcanzan desde **Reportes** en la
-barra lateral / inicio (`/dashboard/reportes`) — issue #1058.
+barra lateral / inicio (`/dashboard/reports`) y desde **Protocolo**
+(`/dashboard/protocol`) — issue #1058 / #177.
+
+`GET /api/v1/reports/index-book` requiere `year`. `idNotary` y `idFolioType`
+son filtros opcionales para el registro y el tipo de protocolo. Un período
+sin escrituras notifica al usuario con el PDF de estado vacío. No se inventa
+texto legal de pie o firma.

@@ -78,7 +78,7 @@ class AdditionalControllersTest {
             when(service.generateManagementHistoryReport(anyInt())).thenReturn(pdf);
             when(service.generateDocumentsDueSoonReport(anyInt())).thenReturn(pdf);
             when(service.generateDebtDocumentsReport(anyInt())).thenReturn(pdf);
-            when(service.generateIndexBookReport(anyInt())).thenReturn(pdf);
+            when(service.generateIndexBookReport(anyInt(), any(), any())).thenReturn(pdf);
             when(service.generateMonthlyTaxDeclarationReport(anyInt(), anyInt())).thenReturn(pdf);
             when(service.generateIncomeTaxDeclarationReport(anyInt(), anyInt())).thenReturn(pdf);
 
@@ -107,7 +107,7 @@ class AdditionalControllersTest {
             when(service.generateManagementHistoryReport(anyInt())).thenThrow(new RuntimeException("e"));
             when(service.generateDocumentsDueSoonReport(anyInt())).thenThrow(new RuntimeException("e"));
             when(service.generateDebtDocumentsReport(anyInt())).thenThrow(new RuntimeException("e"));
-            when(service.generateIndexBookReport(anyInt())).thenThrow(new RuntimeException("e"));
+            when(service.generateIndexBookReport(anyInt(), any(), any())).thenThrow(new RuntimeException("e"));
             when(service.generateMonthlyTaxDeclarationReport(anyInt(), anyInt())).thenThrow(new RuntimeException("e"));
             when(service.generateIncomeTaxDeclarationReport(anyInt(), anyInt())).thenThrow(new RuntimeException("e"));
 

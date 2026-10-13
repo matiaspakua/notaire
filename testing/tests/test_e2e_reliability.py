@@ -27,9 +27,9 @@ FEATURE_GAP_SKIPS = {
     "TS-0014-payments-workflow.spec.ts": 1,
     "TS-0016-users-notaries-workflow.spec.ts": 2,
     "TS-0017-substitutions-workflow.spec.ts": 0,
-    "TS-0020-reports-admin-workflow.spec.ts": 6,
+    "TS-0020-reports-admin-workflow.spec.ts": 5,
 }
-FEATURE_GAP_TOTAL = 9
+FEATURE_GAP_TOTAL = 8
 MAX_DEFAULT_TIMEOUT_MS = 120_000
 
 SKIP_BLOCK = re.compile(r"test\.skip\s*\(\s*[\"'`][\s\S]*?[\"'`]\s*,")
