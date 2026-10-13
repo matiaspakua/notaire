@@ -37,9 +37,11 @@
 
 ## 5. Actualizar tests existentes
 
-- [x] 5.1 Identify affected tests: `RbacIntegrationTest`, `JwtAuthIntegrationTest`, `HistoryWriteAuthorizationIntegrationTest`, `CsrfProtectionIntegrationTest`, `UserControllerHashTest`
+- [x] 5.1 Identify affected tests: `RbacIntegrationTest`, `JwtAuthIntegrationTest`, `HistoryWriteAuthorizationIntegrationTest`, `CsrfProtectionIntegrationTest`, `UserControllerHashTest`, `TS-0044`, `TS-0094`
 - [x] 5.2 Update them without weakening assertions — the four `MockMvc` classes now authenticate with real cookies/Bearer instead of the permissive `csrf()` post-processor; no expected status was relaxed
 - [x] 5.3 Reason documented: `SecurityMockMvcRequestPostProcessors.csrf()` reflectively swaps the shared `CsrfFilter` token repository, disabling enforcement for the rest of the JVM and hiding exactly this regression
+- [x] 5.4 Restore the masked intent of `TS-0094`: its cookie-mode catalog write now echoes `X-XSRF-TOKEN`, so the expected 403 is an RBAC denial instead of the CSRF filter answering first (it kept passing for the wrong reason)
+- [x] 5.5 Adapt `JwtAuthIntegrationTest` (3 cases) to a multi-cookie response: it read only the *first* `Set-Cookie` header, which is now `XSRF-TOKEN`; the assertions match the session cookie among all headers instead of weakening them
 
 ## 6. Ejecutar regresión
 

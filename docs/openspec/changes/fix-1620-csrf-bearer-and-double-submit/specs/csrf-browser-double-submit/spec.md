@@ -4,8 +4,8 @@
 
 Define how the `/api/**` filter chain proves same-origin intent for
 cookie-authenticated browser requests (double-submit cookie) while keeping
-Bearer-token API clients working. Completes the CSRF enforcement introduced by
-#1618/#1619 for the two client types the product actually ships (CU78).
+Bearer-token API clients working. Completes the CSRF enforcement introduced
+by #1618 and #1619 for the two client types the product actually ships (CU78).
 
 ## ADDED Requirements
 

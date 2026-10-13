@@ -8,7 +8,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -46,6 +46,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | `docs/200-architecture/206-security/API-AUTHENTICATION-GUIDE.md` | yes | pending |
 | `docs/200-architecture/206-security/INPUT-VALIDATION-STRATEGY.md` | yes | pending |
 | `testing/e2e/tests/TS-0044-security-csrf-cors-qa.spec.ts` | yes | pending |
+| `testing/e2e/tests/TS-0094-admin-route-guard.spec.ts` | yes | pending |
 | `CHANGELOG.md` | yes | pending |
 
 ## Gate log
@@ -60,8 +61,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 ## Exceptions
 
-No exception was taken. The pre-existing Gate-1 backlog (32 stale changes,
-#1265) is unrelated to this change and is reported rather than repaired here.
+No exception was taken. The pre-existing Gate-1 backlog of 32 stale changes
+(issue #1265) is unrelated to this change and is reported rather than repaired here.
 
 ## Environment caveats
 

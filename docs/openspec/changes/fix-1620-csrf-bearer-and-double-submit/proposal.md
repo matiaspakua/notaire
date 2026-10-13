@@ -41,12 +41,14 @@ and all three UI E2E shards) because of it.
 - Materialize the token in `CsrfCookieFilter` **before** `filterChain.doFilter`,
   so the `XSRF-TOKEN` cookie is written even when the handler commits a large
   body (PDF downloads through `apiGetBytes`).
-- Stop dropping the `XSRF-TOKEN` cookie on `POST /api/v1/users/login` and
-  `POST /api/v1/users/logout`: those endpoints wrote their `Set-Cookie` through
-  the `ResponseEntity` header map, which replaces every `Set-Cookie` already on
-  the response (including the one the security chain had just added). They now
-  append it to the `HttpServletResponse`.
-- Replace the `csr()`-style test shortcuts: remove
+- Make the session-cookie write additive. `POST /api/v1/users/login` and
+  `POST /api/v1/users/logout` wrote their `Set-Cookie` through the
+  `ResponseEntity` header map, which replaces every `Set-Cookie` already on the
+  response. The token cookie only survived because it was materialized *after*
+  the controller had run; materializing it before the chain (needed for committed
+  bodies) exposed that ordering trap. Both endpoints now append their cookie to
+  the `HttpServletResponse`, so delivery no longer depends on the order.
+- Replace the `csrf()`-style test shortcuts: remove
   `SecurityMockMvcRequestPostProcessors.csrf()` (it reflectively replaces the
   shared `CsrfFilter` token repository, disabling enforcement for the rest of the
   JVM) and use real cookies/tokens instead.

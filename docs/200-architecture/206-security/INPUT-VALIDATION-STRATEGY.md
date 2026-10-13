@@ -50,6 +50,7 @@ Notaire does not render user input as HTML (the UI is Swing + REST JSON). There 
 3. **PDF reports** — `PdfBoxReportRenderer` writes field values as PDF text operands only (no markup, scripts, form fields, or attachments). Control and bidirectional-override characters become spaces. User/domain text uses embedded Liberation Sans; Spanish/English fixtures are not replaced with `?`. Glyphs the font cannot encode still become `?` (#567, #1593). Logo and font bytes come only from immutable classpath assets.
 
 For any field that might be reflected back, apply:
+
 ```java
 String safe = HtmlUtils.htmlEscape(userInput);  // Spring's HtmlUtils
 ```
@@ -90,6 +91,7 @@ Rate limiting is a deployment-level concern. Implement via:
 - **Monitoring** — Prometheus alert `SuspiciousLoginActivity` fires when bad-credential login rate exceeds 30/min.
 
 Priority endpoints for rate limiting:
+
 1. `POST /api/v1/users/login` — brute-force target
 2. `GET /api/v1/reports/*` — expensive PDF generation
 

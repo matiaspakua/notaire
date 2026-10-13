@@ -14,8 +14,8 @@ shipped client does:
   and no CSRF token at all.
 
 `main` is therefore red in `Playwright E2E — Full Suite`: every mutating request
-in the Bruno suite and in all three UI shards returns 403. Three distinct defects
-sit behind that one symptom, and they must be fixed together:
+in the Bruno suite and in all three UI shards returns 403. Two defects explain
+that one symptom, and fixing them surfaced a third that must be fixed with them:
 
 1. **Bearer clients have no exemption.** A credential the client must attach
    explicitly cannot be replayed by a third-party site, so CSRF does not apply.
@@ -23,12 +23,14 @@ sit behind that one symptom, and they must be fixed together:
    `XorCsrfTokenRequestAttributeHandler` expects the mask that
    `CsrfFilter` renders into server-side forms; the raw cookie value fails to
    resolve, so the browser flow is always 403.
-3. **The cookie is not delivered where the browser needs it, and it is rotated.**
-   `POST /api/v1/users/login` and `/logout` write their `Set-Cookie` through the
-   `ResponseEntity` header map, which is applied with *set* semantics and wipes
-   the token cookie the security chain had just added. Independently, Spring
-   Security's `CsrfAuthenticationStrategy` re-issues the token on every
-   authenticated request.
+3. **The session-cookie write is not additive.** `POST /api/v1/users/login` and
+   `/logout` write their `Set-Cookie` through the `ResponseEntity` header map,
+   which is applied with *set* semantics and clears every `Set-Cookie` already on
+   the response. The token cookie only survived on `main` because it happened to
+   be materialized *after* the controller ran; materializing it before the chain
+   (required so a committed/large body still carries it) turns that accident into
+   a lost cookie. Independently, Spring Security's `CsrfAuthenticationStrategy`
+   re-issues the token on every authenticated request.
 
 Constraints: no client signature may change; the frontend must not start holding
 a credential; Spring Security here is 7.1.1 (Spring Boot 4.1.1), so
@@ -121,9 +123,9 @@ matcher agree with the authorization policy.
 - [The `spa()` handler leaves the token unmaterialized on safe methods] → The
   chain's `CsrfCookieFilter` materializes it; verified by the "safe request issues
   the token cookie" scenario.
-- [E2E tests cannot all be exercised locally] → The stack (Postgres + backend jar
-  + built frontend) was run locally and `TS-0044` plus the three new tests pass;
-  the full sharded suite is verified in CI.
+- [E2E tests cannot all be exercised locally] → The stack (Postgres + backend
+  jar + built frontend) was run locally and `TS-0044` plus the three new tests
+  pass; the full sharded suite is verified in CI.
 
 ## Testing Strategy
 
@@ -151,6 +153,11 @@ before the implementation, then green after.
   it reflectively replaces the shared `CsrfFilter`'s token repository, which
   disables enforcement for the rest of the JVM and *hides* this regression.
 - The full backend suite (2356 tests) stays green; no test was deleted.
+- `TS-0094` (admin route guard) kept passing for the wrong reason once CSRF was
+  enforced: its cookie-mode catalog write was refused by the CSRF filter before
+  RBAC could refuse it. It now echoes the nonce, so the 403 under test is the
+  authorization decision it was written for. `TS-0044` additionally asserts that
+  the nonce survives a request.
 
 ## Playwright Strategy
 
