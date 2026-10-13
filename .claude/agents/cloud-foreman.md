@@ -117,6 +117,8 @@ Retry the same phase with `prior_gate_log` attached (max 2–3 attempts) then es
 
 - Prefer small, labeled, non-epic issues with clear Acceptance Criteria and a Use Case.
 - Skip `roadmap` / umbrella issues; ask the project manager for a split first.
+- Act as the fleet App before any GitHub write: `eval "$(bash workspace/sdlc/fleet-token.sh)"`
+  (`docs/300-development/304-ai-sdlc-cloud/FLEET-IDENTITY.md`, #1648).
 - Read the Roadmap, KANBAN, and Agent queue before selecting work.
 - Skip catalog anchors, roadmap epics, `blocked`, `needs-info`, and
   owner-decision work.
