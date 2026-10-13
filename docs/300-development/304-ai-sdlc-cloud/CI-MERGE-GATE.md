@@ -31,6 +31,15 @@ Playwright are still **pending** or not yet in the rollup. That delivery is
 `gh pr checks` has the same blind spot when heavy jobs are missing or still
 queued. Count of green checks ≠ heavy gate.
 
+## Who may merge
+
+The **Foreman merge rule** (CONSTITUTION §5 step 21, #1624): the Foreman merges
+a Worker PR once the hard rule below holds and `check-heavy-ci.sh` exits 0. The
+Owner merges Constitution amendments, `sdlc-exception` PRs and PRs that change
+the Foreman's harness or merge path. Workers never merge. The `protect-main`
+ruleset requires the five status checks, so GitHub refuses a merge that skips
+them.
+
 ## Hard rule
 
 **Never merge** until every required check below is terminal **success**

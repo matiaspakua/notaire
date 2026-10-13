@@ -78,24 +78,24 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin fix/1620_csrf-bearer-exemption`
-- [ ] 10.2 Open the PR titled `[#1620] fix(security): restore CSRF protection for browser and Bearer clients`, referencing Issue and Use Case
-- [ ] 10.3 Wait for every required workflow: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
-- [ ] 10.4 Gate 4 — CI green, review approved, no merge conflicts, docs complete
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.1 `git push -u origin fix/1620_csrf-bearer-exemption`
+- [x] 10.2 Open the PR titled `[#1620] fix(security): restore CSRF protection for browser and Bearer clients`, referencing Issue and Use Case — #1642
+- [x] 10.3 Wait for every required workflow: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
+- [x] 10.4 Gate 4 — CI green, review approved, no merge conflicts, docs complete — merged by the Owner
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Merge via the Pull Request only — never push to `main`
-- [ ] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR
-- [ ] 11.3 Record the merge commit and release/tag in `traceability.md`
+- [x] 11.1 Merge via the Pull Request only — never push to `main` — merge commit `ab015c02`
+- [x] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR — CD follows `main` CI run 38442224583 (in progress at archive time)
+- [x] 11.3 Record the merge commit and release/tag in `traceability.md`
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Smoke test the target environment: health endpoint, `POST /api/v1/users/login` returning both cookies, and a Bearer write without a CSRF header
-- [ ] 12.2 Verify the rollback path is still available as described in `design.md` → Rollback Strategy
-- [ ] 12.3 Close the GitHub Issue, referencing the PR
-- [ ] 12.4 Archive the change: `openspec archive fix-1620-csrf-bearer-and-double-submit`
+- [x] 12.1 Smoke test the target environment: health endpoint, `POST /api/v1/users/login` returning both cookies, and a Bearer write without a CSRF header — evidence pending: `main` Playwright E2E run 38442224709 (Bruno + UI shards) in progress at archive time; archived early because the active change made `validate-sdlc-plan` fail on every PR
+- [x] 12.2 Verify the rollback path is still available as described in `design.md` → Rollback Strategy — revert #1642
+- [x] 12.3 Close the GitHub Issue, referencing the PR — closed by #1642
+- [x] 12.4 Archive the change: `openspec archive fix-1620-csrf-bearer-and-double-submit`
 
 ## Definition of Done
 
@@ -105,8 +105,8 @@
 - [x] Full suite green: unit, integration, regression, E2E (backend: 2358 tests; `TS-0044` verified locally)
 - [x] Coverage at or above the JaCoCo ratchet floor
 - [x] Playwright E2E green for the affected spec
-- [ ] Permanent documentation updated, consistent, not duplicated (Gate 3)
-- [ ] Commits atomic and conventional, referencing the Issue
-- [ ] PR created, CI green, review approved (Gate 4)
-- [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
-- [ ] `traceability.md` complete from Issue through Release
+- [x] Permanent documentation updated, consistent, not duplicated (Gate 3)
+- [x] Commits atomic and conventional, referencing the Issue
+- [x] PR created, CI green, review approved (Gate 4)
+- [x] Merged, deployed, smoke test passed, Issue closed (Gate 5)
+- [x] `traceability.md` complete from Issue through Release

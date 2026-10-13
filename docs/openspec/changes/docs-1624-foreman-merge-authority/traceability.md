@@ -14,17 +14,17 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #1621 | in-progress |
-| Use Case | CU78 — Security, Privacy and Compliance | exists |
-| Specification | `docs/openspec/changes/fix-1621-jdk26-pins-dependabot-prefix/` | drafted |
-| Branch | `fix/1621_jdk26-pins-dependabot-prefix` | created |
+| Issue | #1624 | in-progress |
+| Use Case | CU76 — Quality Assurance and Testing Infrastructure | exists |
+| Specification | `docs/openspec/changes/docs-1624-foreman-merge-authority/` | drafted |
+| Branch | `docs/1624_foreman-merge-authority` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | | pending |
-| Pull Request | | pending |
-| CI run | | pending |
-| Merge commit | | pending |
-| Release / tag | | pending |
-| Smoke test | | pending |
+| Commits |  | pending |
+| Pull Request |  | pending |
+| CI run |  | pending |
+| Merge commit |  | pending |
+| Release / tag |  | pending |
+| Smoke test |  | pending |
 
 ## Requirement coverage
 
@@ -35,10 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Every Dependabot prefix is an allowed type | `ImagePinsAndDependabotTest.test_dependabot_commit_prefixes_are_allowed_conventional_types` | passing |
-| Backend docker entry ignores JDK majors | `ImagePinsAndDependabotTest.test_backend_docker_ignores_jdk_major_bumps` | passing |
-| Docker bases are pinned JDK 26 (`jdk-toolchain`) | `Jdk26ToolchainTest.test_docker_bases_are_jdk_26_and_pinned` | passing |
-| Dockerfile bases minor-or-digest pinned (#1045) | `ImagePinsAndDependabotTest.test_backend_dockerfile_bases_are_pinned` | passing |
+| Harness runs the heavy-CI gate before merging | `MergeAuthorityTest.test_local_foreman_runs_heavy_ci_gate_before_merging` | passing |
+| Governance docs name the rule | `test_rule_docs_name_the_foreman_merge_rule`, `test_no_doc_keeps_the_owner_only_merge_rule` | passing |
+| Owner-only merges stay explicit | `test_constitution_keeps_owner_only_merges_for_amendments_and_exceptions` | passing |
 
 ## Permanent documentation updated
 
@@ -47,18 +46,16 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/200-architecture/202-ADR/ADR-017-container-base-images.md` | yes | this PR |
-| `docs/200-architecture/208-devsecops/README.md` | yes | this PR |
-| `.claude/rules/hooks.md` | yes | this PR |
+| <!-- path --> | <!-- yes/no --> |  |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | yes | #1621; `validate-sdlc-plan.sh` on this change |
-| 2 | Failing tests written, test cases designed | yes | `security/tests` 6 FAIL + `workspace/tests` 1 FAIL before; all OK after |
-| 3 | Suite green, coverage held, docs updated | yes | 4 self-test suites OK; no Java delta |
-| 4 | CI green, review approved, no conflicts | | pending |
+| 1 | Issue + Specification + Acceptance Criteria | yes | #1624 Owner decision (b); `validate-sdlc-plan.sh` |
+| 2 | Failing tests written, test cases designed | yes | `test_merge_authority.py` 8 FAIL + 1 ERROR before |
+| 3 | Suite green, coverage held, docs updated | yes | process self-tests OK |
+| 4 | CI green, review approved, no conflicts | | pending — **Owner merges** (Constitution amendment) |
 | 5 | Deployed, smoke test passed, Issue closed | | pending |
 
 ## Exceptions

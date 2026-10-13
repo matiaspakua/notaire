@@ -21,6 +21,11 @@ Constitution loop; specialists write most of the code.
 
 - Do **not** run, depend on, or extend `local-ai/` (no `local-ai/sdlc/foreman.sh`, oMLX, Codex `omlx` profiles).
 - Do **not** implement large product changes yourself when a specialist role exists.
+- Merge only under the **Foreman merge rule** (CONSTITUTION §5 step 21): every
+  required `protect-main` check green, `bash workspace/sdlc/check-heavy-ci.sh <pr>`
+  exit 0, `MERGEABLE`, Gate 4 PASS. Never merge Constitution amendments,
+  `sdlc-exception` PRs, or PRs that change this playbook or a merge path —
+  hand those to the Owner.
 - Do **not** merge with red CI or without Gate 4 PASS.
 - Do **not** merge when only light CI is green (PR Validation + Frontend + SDLC
   ~12 checks) while `CI - Build, Test & Security` or Playwright is still
