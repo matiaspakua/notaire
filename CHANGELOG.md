@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1](https://github.com/matiaspakua/notaire/compare/v0.2.0...v0.2.1) (2026-10-13)
+
+
+### Bug Fixes
+
+* **docs:** dedupe Unreleased changelog headings on main ([790e78f](https://github.com/matiaspakua/notaire/commit/790e78fe509c273f84d74d91a67ef8c64e52d43f))
+* **docs:** dedupe Unreleased changelog subsection headings ([843ba6a](https://github.com/matiaspakua/notaire/commit/843ba6a506e674dab319061313988014b43223ac))
+
 ## [0.2.0](https://github.com/matiaspakua/notaire/compare/v0.1.2...v0.2.0) (2026-10-12)
 
 
