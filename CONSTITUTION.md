@@ -286,17 +286,25 @@ CI is red. Locally, run `bash workspace/sdlc/preflight.sh` before pushing (insta
 pre-push hook enforces it).
 
 **20. Code Review.** Address review feedback in new commits. The PR is ready to
-merge only when approved by the code owner. In this repository the code owner
-(`CODEOWNERS`) is also the person who merges; a separate formal GitHub
-"Approve" review is not required as long as the code owner is the one who
-merges the PR — that act **is** the approval. Record this plainly in
-`traceability.md` (e.g. "merged by code owner directly; no formal GitHub
-review recorded") rather than treating it as a gap to explain away — it is
-the expected shape of review in a solo-maintainer repo, not an exception.
-→ **Gate 4.**
+merge when it is reviewed by the code owner **or** passes the Foreman's Gate 4
+review (review notes written, no unresolved finding). A separate formal GitHub
+"Approve" review is not required: the act of merging by the code owner, or by
+the Foreman under the rule below, **is** the approval. Record who merged in
+`traceability.md` (e.g. "merged by Foreman under the Foreman merge rule" or
+"merged by code owner directly") — this is the expected shape of review in a
+solo-maintainer repo with an AI fleet, not an exception. → **Gate 4.**
 
 **21. Merge.** Merge via the PR only (squash or merge commit consistent with
 repo history). Never push directly to `main`.
+
+**Foreman merge rule.** The Owner delegates merge authority to the Foreman
+(#1624). The Foreman may merge a Worker's PR only when every required status
+check of the `protect-main` ruleset is green, `bash workspace/sdlc/check-heavy-ci.sh <pr>`
+exits 0, the PR is `MERGEABLE`, and Gate 4 has no open item. The Owner alone
+merges PRs that amend this Constitution, PRs that carry the `sdlc-exception`
+label, and PRs that change the Foreman's own harness or merge path. A Worker
+never merges. The ruleset enforces the green-check part mechanically: GitHub
+refuses the merge otherwise.
 
 **22. Deploy.** The release pipeline deploys the merged change (CI → CD →
 Docker image; see [Release Rules](#11-release-rules)).
@@ -424,9 +432,9 @@ every condition is satisfied.
 ### Gate 4 — Do not merge if
 
 - [ ] CI/CD is failing or not yet green
-- [ ] Code review is pending or unresolved (in this repo, the code owner
-      merging the PR themselves — see step 20 — counts as review approval;
-      it is not "pending")
+- [ ] Code review is pending or unresolved (the code owner merging, or the
+      Foreman merging under the Foreman merge rule — see steps 20–21 — counts
+      as review approval; it is not "pending")
 - [ ] Merge conflicts exist
 - [ ] Documentation updates are pending
 
@@ -568,7 +576,8 @@ Mandatory:
 - Branches: `<type>/<issue-number>_<description>`, created from an updated `main`.
 - Commits: atomic, descriptive, Conventional Commits, referencing the issue.
 - PRs: mandatory for every change; merge only via Pull Request.
-- Merge requires: green CI, code review approval, no conflicts (Gate 4).
+- Merge requires: green CI, code review approval, no conflicts (Gate 4); the
+  Owner or, under the Foreman merge rule (§5 step 21), the Foreman merges.
 - No secrets in commits; `.env` is git-ignored.
 - Before pushing, run the local CI gates: `bash workspace/sdlc/preflight.sh`
   (enforced by the `pre-push` hook after `bash workspace/sdlc/install-git-hooks.sh`).
@@ -596,7 +605,8 @@ An AI agent **must**:
 - ✅ Adapt to the existing project architecture and conventions (do not replace them)
 - ✅ Reference the existing rule files (`AGENTS.md`, `.claude/rules/*`) for operational detail
 - ✅ Treat human review as authoritative when conflicts arise
-- ✅ **Merge authority:** never treat light CI as mergeable — require
+- ✅ **Merge authority:** only the Foreman merges, and only under the Foreman
+  merge rule (§5 step 21); never treat light CI as mergeable — require
   `bash workspace/sdlc/check-heavy-ci.sh <pr>` exit 0 (Integration + Coverage +
   Bruno + Playwright). Details:
   [`docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md`](docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md)
@@ -662,8 +672,8 @@ Agent-specific entry points:
 
 | Role | Who | Responsibilities |
 |------|-----|------------------|
-| **Owner** | The human code owner (`CODEOWNERS`) | Approves specifications and merges PRs; the only role that may grant an exception ([section 12](#12-governance-exceptions-and-enforcement)) |
-| **Foreman** | Supervising AI agent | Runs and validates the gates, writes review notes, and changes the harness only through its own Issue and PR; does not implement the change under review |
+| **Owner** | The human code owner (`CODEOWNERS`) | Approves specifications; merges Constitution amendments, `sdlc-exception` PRs and harness/merge-path PRs; may merge any PR; the only role that may grant an exception ([section 12](#12-governance-exceptions-and-enforcement)) |
+| **Foreman** | Supervising AI agent | Runs and validates the gates, writes review notes, merges Worker PRs under the Foreman merge rule (§5 step 21), and changes the harness only through its own Issue and PR (Owner-merged); does not implement the change under review |
 | **Worker** | Implementing AI agent | Implements the change phase by phase and answers review notes; never merges, pushes to `main` or grants itself an exception |
 
 ---
@@ -714,7 +724,10 @@ Agent-specific entry points:
   - CI: GitHub Actions workflows block PRs that violate quality gates;
     `sdlc-process.yml` checks the process itself (commit messages, TDD
     evidence, the exception label, agent rule files).
-  - Human: code review by code owner (`CODEOWNERS`) before merge.
+  - GitHub: the `protect-main` ruleset requires PRs and the required status
+    checks (`security/assert-protect-main-ruleset.sh`).
+  - Review: the code owner (`CODEOWNERS`), or the Foreman under the Foreman
+    merge rule, before merge.
 
 ---
 
@@ -759,7 +772,7 @@ drift.
 
 ---
 
-*Last reviewed: 2026-10-13 (release version coherence gate, runtime identity,
+*Last reviewed: 2026-10-13 (Foreman merge rule #1624; release version coherence gate, runtime identity,
 fail-closed release assets, KISS/Boy Scout principles #1591; shared full-lifecycle
 roadmap #1569; product release #1571; testing inventory #1511; path-scoped CI
 #1257). This Constitution supersedes the process summary in
