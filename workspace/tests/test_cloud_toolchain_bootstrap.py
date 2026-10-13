@@ -57,6 +57,14 @@ class ToolchainBootstrapTest(unittest.TestCase):
         self.assertEqual(openspec, pin(hook, "OPENSPEC_VERSION"))
         self.assertEqual(pin(ENSURE_TOOLS.read_text(encoding="utf-8"), "TRIVY_VERSION"), pin(hook, "TRIVY_VERSION"))
 
+    def test_alert_tool_pins_equal_the_compose_image_tags(self):
+        hook = HOOK.read_text(encoding="utf-8")
+        compose = (REPO_ROOT / "infra" / "observability" / "docker-compose.yml").read_text(encoding="utf-8")
+        prometheus = re.search(r"image: prom/prometheus:v([\d.]+)", compose).group(1)
+        alertmanager = re.search(r"image: prom/alertmanager:v([\d.]+)", compose).group(1)
+        self.assertEqual(prometheus, pin(hook, "PROMETHEUS_VERSION"))
+        self.assertEqual(alertmanager, pin(hook, "ALERTMANAGER_VERSION"))
+
     def test_outside_cloud_sessions_the_hook_does_nothing(self):
         result = run_hook({"HOME": str(self.home), "CLAUDE_ENV_FILE": str(self.env_file)}, "/usr/bin:/bin")
         self.assertEqual(result.returncode, 0)
@@ -76,7 +84,7 @@ class ToolchainBootstrapTest(unittest.TestCase):
 
     def test_environment_is_exported_from_the_cache(self):
         stub(self.tools / "jdk" / "bin" / "java")
-        for tool in ("openspec", "kustomize", "trivy"):
+        for tool in ("openspec", "kustomize", "trivy", "promtool", "amtool"):
             stub(self.tools / "bin" / tool)
         result = run_hook(
             {"HOME": str(self.home), "CLAUDE_CODE_REMOTE": "true", "CLAUDE_ENV_FILE": str(self.env_file)},
