@@ -35,13 +35,13 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| administrator types resolve to the admin authority | UserAuthorityResolverTest | pending |
-| the notary type resolves to the notary authority | UserAuthorityResolverTest | pending |
-| a notary is denied administrator paths | UserAuthorityResolverTest | pending |
-| a notary keeps notarial endpoints | UserAuthorityResolverTest | pending |
-| the seeded administrator is an administrator | UserAuthorityResolverTest | pending |
-| the frontend does not treat a notary as an administrator | UserAuthorityResolverTest | pending |
-| an administrator survives the migration | UserAuthorityResolverTest | pending |
+| administrator types resolve to the admin authority | UserAuthorityResolverTest | passing |
+| the notary type resolves to the notary authority | UserAuthorityResolverTest | passing |
+| a notary is denied administrator paths | UserAuthorityResolverTest | passing |
+| a notary keeps notarial endpoints | UserAuthorityResolverTest | passing |
+| the seeded administrator is an administrator | UserAuthorityResolverTest | passing |
+| the frontend does not treat a notary as an administrator | UserAuthorityResolverTest | passing |
+| an administrator survives the migration | UserAuthorityResolverTest | passing |
 
 ## Permanent documentation updated
 
