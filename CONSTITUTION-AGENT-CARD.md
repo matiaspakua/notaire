@@ -13,6 +13,9 @@
    local security cases via `python3 security/run_gates.py --profile local` inside
    `bash workspace/sdlc/run_pipeline.sh`; `bash workspace/sdlc/preflight.sh` before push;
    heavy CI via `check-heavy-ci.sh` before merge.
+   **Foreman merge rule (#1624):** the Foreman merges Worker PRs only when all
+   required checks are green + `check-heavy-ci.sh` exits 0; the Owner merges
+   Constitution, `sdlc-exception` and harness PRs; Workers never merge.
 6. **Flyway** is schema source of truth; never edit applied migrations.
 7. **Docs are part of Done**; no secrets in git; design-system tokens on frontend.
 8. **KISS** and bounded **Boy Scout** (CONSTITUTION §2 P2/P11): simplest fix; clean only what you touch in the same PR.
