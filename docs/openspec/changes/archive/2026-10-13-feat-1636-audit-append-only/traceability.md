@@ -35,10 +35,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| update is rejected | 60_audit_append_only | pending |
-| delete is rejected | 60_audit_append_only | pending |
-| truncate is rejected | 60_audit_append_only | pending |
-| insert and select still work | 60_audit_append_only | pending |
+| update is rejected | 60_audit_append_only | passing |
+| delete is rejected | 60_audit_append_only | passing |
+| truncate is rejected | 60_audit_append_only | passing |
+| insert and select still work | 60_audit_append_only | passing |
 
 ## Permanent documentation updated
 
