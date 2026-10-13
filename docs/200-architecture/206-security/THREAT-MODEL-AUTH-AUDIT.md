@@ -23,7 +23,7 @@ rectangle "Trust boundary: public internet" as TB1 {
 }
 rectangle "Trust boundary: backend-api process" as TB2 {
   component "JwtAuthenticationFilter" as Filter
-  component "LoginAttemptService\n(in-memory)" as LoginAttempt
+  component "LoginAttemptService\n(login_attempts table)" as LoginAttempt
   component "JwtTokenService" as JwtService
   component "AuditAspect" as AuditAspect
   component "AuditRecordService" as AuditService
@@ -64,7 +64,7 @@ Two trust boundaries matter here:
 
 | # | STRIDE | Threat | Mitigation | Status |
 |---|--------|--------|------------|--------|
-| SR-01 | Spoofing | Attacker guesses/brute-forces a user's password | `LoginAttemptService` locks an account after `security.login.max-attempts` (default 5) failures for `security.login.lockout-duration-ms` (default 15 min) | Partial — in-memory `ConcurrentHashMap`, single-instance only; a horizontally scaled deployment or process restart resets the counter (see [ADR-018](../202-ADR/ADR-018-rate-limiting-policy.md)) |
+| SR-01 | Spoofing | Attacker guesses/brute-forces a user's password | `LoginAttemptService` locks an account after `security.login.max-attempts` (default 5) failures for `security.login.lockout-duration-ms` (default 15 min) | **Mitigated** for the lock itself (#1634): counters live in the `login_attempts` table (Flyway `V48`), so a lock holds across instances and restarts; idle counters expire after one lock duration. Still no per-IP limiting (see [ADR-018](../202-ADR/ADR-018-rate-limiting-policy.md)) |
 | SR-02 | Spoofing | Attacker forges a JWT to impersonate a user | `JwtTokenService` signs tokens with a server-held secret; `JwtAuthenticationFilter` validates signature + expiry on every `/api/**` request | Mitigated |
 | SR-03 | Tampering | Attacker modifies a JWT payload (e.g. escalate role claim) | Signature validation rejects any payload change | Mitigated |
 | SR-04 | Information Disclosure | Credentials or JWT secret leak via logs, error responses, or default `.env` values | `ProductionCredentialsGuard` blocks startup on the literal default password/secret in production; secrets never committed (`.env` is git-ignored, see [ADR-019](../202-ADR/ADR-019-secrets-management.md)) | Partial — only catches the literal known-default value, not other weak-but-non-default secrets |
@@ -82,8 +82,8 @@ Two trust boundaries matter here:
 
 ## Summary
 
-- **Mitigated**: SR-02, SR-03, SR-07, SR-08, SR-09, SR-10 (6)
-- **Partial**: SR-01, SR-04, SR-06 (3)
+- **Mitigated**: SR-01, SR-02, SR-03, SR-07, SR-08, SR-09, SR-10 (7)
+- **Partial**: SR-04, SR-06 (2)
 - **Open**: SR-05 (1)
 
 SR-06 moved to Partial when function-level RBAC landed (#559). The object-level

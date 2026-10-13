@@ -20,7 +20,7 @@ production pentest.
 
 | Area | Exposure today | Protection in the tree | Status |
 |------|----------------|------------------------|--------|
-| Identity | Login, JWT, cookie session | BCrypt cost 12, `LoginAttemptService`, JWT signature and expiry, HttpOnly cookie (#1051) | Partial — lockout is one JVM (#1028, SR-01) |
+| Identity | Login, JWT, cookie session | BCrypt cost 12, `LoginAttemptService`, JWT signature and expiry, HttpOnly cookie (#1051) | Partial — lockout is shared through the database (SR-01, #1634); no MFA |
 | Authorization | Every `/api/**` call except login/logout | `ROLE_ADMIN` on admin paths and admin writes (#559). `Escribano` is treated as admin | Partial — no object-level checks (SR-11) |
 | Injection | JPA queries | Parameterized persistence. See [SQL injection prevention](SQL-INJECTION-PREVENTION.md) | Mitigated for known query paths |
 | Secrets | Env and CI | `.env` gitignored, `ProductionCredentialsGuard`, this change's secret scan | Partial — GitHub push protection is an admin setting |

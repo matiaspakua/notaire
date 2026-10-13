@@ -35,7 +35,7 @@ already in the tree. No exploitation procedure is specified here.
 
 | ID | Class | Property | Control in tree | Status |
 |----|-------|----------|-----------------|--------|
-| AT-1 | Credential abuse | Spoofing | BCrypt, lockout, JWT validation | Partial (SR-01, SR-02) |
+| AT-1 | Credential abuse | Spoofing | BCrypt, lockout, JWT validation | Partial (SR-02; SR-01 mitigated by #1634) |
 | AT-2 | IDOR / object access | Elevation | Authenticated route only, except admin paths | Open (SR-11) |
 | AT-3 | Injection | Tampering | JPA parameters | Mitigated — [SQL-INJECTION-PREVENTION.md](SQL-INJECTION-PREVENTION.md) |
 | AT-4 | XSS | Tampering / disclosure | Production CSP nonce, no `unsafe-eval` (#1051) | Partial — encoding still required on every render |
