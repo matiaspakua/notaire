@@ -350,10 +350,10 @@ settings. The pieces that belong in git are already in the tree:
 | Setting | Where it lives |
 |---------|----------------|
 | Code scanning | `.github/workflows/codeql.yml` (advanced setup). Do not also enable default setup. |
-| Dependabot version updates | `.github/dependabot.yml` (Maven, npm under `frontend/`, Docker for `/backend-api` + `/frontend`, GitHub Actions) |
+| Dependabot version updates | `.github/dependabot.yml` (Maven, npm under `frontend/`, Docker for `/backend-api` + `/frontend`, GitHub Actions). Commit prefixes are allowed Conventional Commit types (`build(deps): …`, `ci: …`) so bot PRs can pass `PR Validation` and `Process Checks`. JDK majors for `eclipse-temurin` / `maven` are ignored (ADR-017). Guard: `security/tests/test_image_pins_and_dependabot.py` (#1621) |
 | Private vulnerability reporting | Already enabled. Policy: `SECURITY.md` |
 | Secret-scanning push protection, Dependabot alerts and security updates | GitHub settings. An admin runs `bash security/enable-gh-secure.sh --apply` |
-| Branch protection / ruleset | Classic branch protection is **not** enabled by the script unless `--with-branch-protection` is passed (and must stay unused). Active ruleset `protect-main` (id `24128115`) on `~DEFAULT_BRANCH` enforces PR-only merges, required checks `CI` / `Frontend CI` / `Playwright E2E` / `Code Lint` / `PR Validation`, and blocks force-push/deletion; `bypass_actors` empty after #1041. Desired state: `security/rulesets/protect-main.desired.json`. Admin apply: `bash security/apply-protect-main-ruleset.sh --apply` then `bash security/assert-protect-main-ruleset.sh` (#1040) |
+| Branch protection / ruleset | Classic branch protection is **not** enabled by the script unless `--with-branch-protection` is passed (and must stay unused). Ruleset `protect-main` (id `24128115`) on `~DEFAULT_BRANCH` is **desired** to enforce PR-only merges, required checks `CI` / `Frontend CI` / `Playwright E2E` / `Code Lint` / `PR Validation`, and block force-push/deletion; `bypass_actors` empty after #1041. **Live state (2026-10-13): only deletion + force-push are blocked** — `assert-protect-main-ruleset.sh` fails; re-enforcement is #1040 (blocked on #1621). Desired state: `security/rulesets/protect-main.desired.json`. Admin apply: `bash security/apply-protect-main-ruleset.sh --apply` then `bash security/assert-protect-main-ruleset.sh` (#1040) |
 
 ```bash
 bash security/enable-gh-secure.sh            # status

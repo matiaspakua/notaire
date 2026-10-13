@@ -39,6 +39,9 @@ CI_WORKFLOWS = (
     REPO_ROOT / ".github" / "workflows" / "performance-test.yml",
 )
 DEPENDABOT = REPO_ROOT / ".github" / "dependabot.yml"
+COMMIT_CHECK = REPO_ROOT / "workspace" / "sdlc" / "check-commit-messages.sh"
+PR_VALIDATION = REPO_ROOT / ".github" / "workflows" / "pr-validation.yml"
+TYPES_ASSIGNMENT = re.compile(r"TYPES=[\"']([a-z|]+)[\"']")
 
 # Image refs that look pinned: digest, or tag with at least major.minor
 DIGEST_REF = re.compile(r".+@sha256:[0-9a-f]{64}$", re.IGNORECASE)
@@ -118,6 +121,12 @@ def dependabot_updates() -> list[dict]:
     updates = data.get("updates") or []
     assert isinstance(updates, list)
     return [u for u in updates if isinstance(u, dict)]
+
+
+def commit_types(path: Path) -> set[str]:
+    match = TYPES_ASSIGNMENT.search(path.read_text(encoding="utf-8"))
+    assert match, f"no TYPES= list in {path}"
+    return set(match.group(1).split("|"))
 
 
 class ImagePinsAndDependabotTest(unittest.TestCase):
@@ -315,6 +324,38 @@ class ImagePinsAndDependabotTest(unittest.TestCase):
             len(dirs),
             len(set(dirs)),
             f"docker ecosystem directories must be unique (#1045); got {dirs}",
+        )
+
+    def test_dependabot_commit_prefixes_are_allowed_conventional_types(self):
+        allowed = commit_types(COMMIT_CHECK) & commit_types(PR_VALIDATION)
+        for update in dependabot_updates():
+            message = update.get("commit-message") or {}
+            for key in ("prefix", "prefix-development"):
+                prefix = message.get(key)
+                if prefix is None:
+                    continue
+                with self.subTest(ecosystem=update.get("package-ecosystem"), key=key):
+                    self.assertIn(
+                        prefix,
+                        allowed,
+                        f"Dependabot {key} '{prefix}' fails PR title/commit checks (#1621)",
+                    )
+
+    def test_backend_docker_ignores_jdk_major_bumps(self):
+        backend = next(
+            u
+            for u in dependabot_updates()
+            if u.get("package-ecosystem") == "docker"
+            and str(u.get("directory", "")).rstrip("/") == "/backend-api"
+        )
+        majors_ignored = {
+            rule.get("dependency-name")
+            for rule in backend.get("ignore") or []
+            if "version-update:semver-major" in (rule.get("update-types") or [])
+        }
+        self.assertTrue(
+            {"eclipse-temurin", "maven"} <= majors_ignored,
+            f"JDK major bumps are an ADR decision, not a bot PR (#1621); ignored={majors_ignored}",
         )
 
 
