@@ -35,10 +35,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| backend flags equal the CI workflow | test_native_stack | pending |
-| usage lists every command | test_native_stack | pending |
-| script is valid bash | test_native_stack | pending |
-| status exit code reflects what is running | test_native_stack | pending |
+| backend flags equal the CI workflow | test_native_stack | passing |
+| usage lists every command | test_native_stack | passing |
+| script is valid bash | test_native_stack | passing |
+| status exit code reflects what is running | test_native_stack | passing |
 
 ## Permanent documentation updated
 
