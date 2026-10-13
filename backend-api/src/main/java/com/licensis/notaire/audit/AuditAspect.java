@@ -77,17 +77,17 @@ public class AuditAspect {
             MethodSignature signature = (MethodSignature) joinPoint.getSignature();
             Method method = signature.getMethod();
 
-            // Only business operations are audited: create / update / delete and
-            // authentication events. Read-only queries (GET) are intentionally
-            // skipped so the audit trail stays focused and is not flooded by the
-            // many list refreshes the UI performs.
+            // Only business operations are audited: create / update / delete,
+            // authentication events and reads annotated @AuditPersonalDataRead.
+            // Other read-only queries (GET) are intentionally skipped so the audit
+            // trail is not flooded by the many list refreshes the UI performs.
             if (!isAuditableOperation(method)) {
                 return;
             }
 
             String controllerName = resolveControllerSimpleName(joinPoint);
             String module = AuditModuleResolver.resolve(controllerName);
-            String detail = AuditOperationDescriber.describe(method, joinPoint.getArgs(), module);
+            String detail = describe(method, joinPoint.getArgs(), module);
 
             User user = resolveCurrentUser().orElse(null);
             if (user == null) {
@@ -108,6 +108,13 @@ public class AuditAspect {
             // Never break functional flows because of audit failures.
             log.warn("Could not write audit record: {}", ex.getMessage());
         }
+    }
+
+    private String describe(Method method, Object[] args, String module) {
+        if (method.isAnnotationPresent(AuditPersonalDataRead.class)) {
+            return PersonalDataReadDescriber.describe(args);
+        }
+        return AuditOperationDescriber.describe(method, args, module);
     }
 
     /**
@@ -135,8 +142,8 @@ public class AuditAspect {
 
     /**
      * Only audit state-changing business operations (create / update / delete)
-     * and authentication events (login / logout). Read-only GET endpoints are
-     * not auditable.
+     * authentication events (login / logout) and reads of personal data. Other
+     * read-only GET endpoints are not auditable.
      */
     private boolean isAuditableOperation(Method method) {
         if (method == null) {
@@ -146,7 +153,8 @@ public class AuditAspect {
         if (name.contains("login") || name.contains("logout")) {
             return true;
         }
-        return method.isAnnotationPresent(PostMapping.class)
+        return method.isAnnotationPresent(AuditPersonalDataRead.class)
+                || method.isAnnotationPresent(PostMapping.class)
                 || method.isAnnotationPresent(PutMapping.class)
                 || method.isAnnotationPresent(PatchMapping.class)
                 || method.isAnnotationPresent(DeleteMapping.class);

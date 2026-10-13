@@ -5,6 +5,7 @@ import com.licensis.notaire.exception.DuplicatePersonException;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.repository.IdentificationTypeRepository;
+import com.licensis.notaire.audit.AuditPersonalDataRead;
 import com.licensis.notaire.application.usecase.person.PersonService;
 import com.licensis.notaire.exception.BusinessValidationException;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -177,6 +178,7 @@ public class PersonController {
                 });
     }
 
+    @AuditPersonalDataRead
     @GetMapping
     @Operation(summary = "Get people, one page at a time (default 20, sorted by id)")
     @Transactional(readOnly = true)
@@ -189,6 +191,7 @@ public class PersonController {
         @ApiResponse(responseCode = "200", description = "OK"),
         @ApiResponse(responseCode = "404", description = "Not found")
     })
+    @AuditPersonalDataRead
     @GetMapping("/{id}")
     @Operation(summary = "Get person by ID")
     @Transactional(readOnly = true)
@@ -269,6 +272,7 @@ public class PersonController {
         }
     }
 
+    @AuditPersonalDataRead
     @GetMapping("/search")
     @Operation(summary = "Search people by first name, last name, identification number or type (CU61)")
     @Transactional(readOnly = true)
