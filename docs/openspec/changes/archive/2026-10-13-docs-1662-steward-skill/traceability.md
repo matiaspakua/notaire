@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| skill has frontmatter | test_steward_skill | pending |
-| cited paths exist | test_steward_skill | pending |
-| skill covers the required topics | test_steward_skill | pending |
+| skill has frontmatter | test_steward_skill | passing |
+| cited paths exist | test_steward_skill | passing |
+| skill covers the required topics | test_steward_skill | passing |
 
 ## Permanent documentation updated
 
