@@ -85,6 +85,10 @@ stays the narrative; it is not rewritten when a tag is cut.
 ## Check
 
 ```bash
+python3 workspace/sdlc/check-product-version-coherence.py
 python3 workspace/release/product_release.py --check
 python3 -m unittest workspace.tests.test_product_release
 ```
+
+Tags must be `vX.Y.Z` equal to the tree version; legacy `notaire-v0.1.1` and
+`notaire-v0.1.2` are shape-only exceptions (#1591).

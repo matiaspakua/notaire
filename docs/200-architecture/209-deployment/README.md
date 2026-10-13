@@ -158,8 +158,9 @@ only works with the default container names. `docker-compose.prod.yml` and
 
 - **Base** (`infra/deploy/kustomize/base`): same four services as `docker-compose.prod.yml`
   (postgres, backend, frontend, reverse-proxy) — **no pgAdmin**
-- **Staging overlay** (`infra/deploy/kustomize/overlays/staging`): GHCR SHA image tags for
-  backend/frontend; `environment: staging` labels
+- **Staging overlay** (`infra/deploy/kustomize/overlays/staging`): GHCR **semver**
+  image tags for backend/frontend (release-please markers, #1591);
+  `app.kubernetes.io/version` on workloads; `environment: staging` labels
 - **Service isolation**: postgres/backend/frontend are `ClusterIP` (internal-only);
   reverse-proxy is the sole external `LoadBalancer`
 - **Secrets**: `notaire-secrets` uses **placeholders only** (`PLACEHOLDER_SET_AT_APPLY_TIME`);

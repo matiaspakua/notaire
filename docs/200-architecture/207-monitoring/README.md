@@ -79,8 +79,9 @@ cAdvisor and node-exporter cover containers and the host. On Docker Desktop the 
 OTLP export needs both `micrometer-registry-otlp` and `spring-boot-opentelemetry` on the backend classpath.
 
 **Tracing topology:** the backend uses the OpenTelemetry tracer (replacing Brave/Zipkin) and exports spans over OTLP to
-the collector, which forwards them to Tempo. In Grafana, Explore -> Tempo finds traces by service/name; a trace links to
-its Loki logs by `service`. Frontend spans are not instrumented yet.
+the collector, which forwards them to Tempo. Resource attribute `service.version` equals the packaged Maven
+`app.version` (#1591). JSON logs include `serviceVersion` with the same value. In Grafana, Explore -> Tempo finds traces
+by service/name; a trace links to its Loki logs by `service`. Frontend spans are not instrumented yet.
 
 **Alerting:** Prometheus evaluates `alert-rules.yml` and `alert-rules-stack.yml` and sends firing alerts to Alertmanager
 (http://localhost:9093). Catalogue: `ServiceDown` and `TargetDown` (availability), `HighHttp5xxRatio`, `HighApiLatency`,

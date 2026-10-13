@@ -13,7 +13,7 @@ Governed by [CONSTITUTION.md](../../CONSTITUTION.md) §11 Release Rules and
 
 | Piece | Role |
 |-------|------|
-| `.github/workflows/release-please.yml` | On push to `main`, opens/updates a release PR; after that PR merges, creates the GitHub Release and `vX.Y.Z` tag |
+| `.github/workflows/release-please.yml` | On push to `main`, opens/updates a release PR; after that PR merges, creates the GitHub Release and `vX.Y.Z` tag, then **dispatches** `cd.yml` on that tag (`actions: write`, #1591) |
 | `release-please-config.json` | Changelog path, `include-v-in-tag`, Maven/npm `extra-files` bumps |
 | `.release-please-manifest.json` | Last released version (bootstrap `0.1.0`) |
 | `.github/workflows/cd.yml` | On `v*` and legacy `notaire-v*` (and CI success on `main` / dispatch): build, SBOM, cosign sign+attest, push `ghcr.io/<org>/notaire/backend` and `…/frontend` |
@@ -49,11 +49,15 @@ release PR merges (release-please bumps versions on that branch only).
 `notaire-vX.Y.Z`, which does not match a workflow filter of `v*` and never
 attaches SBOM assets (v0.1.2 shipped with an empty asset list).
 
-Check the record:
+Check the record and the full tree (blocking in preflight and CI, #1591):
 
 ```bash
+python3 workspace/sdlc/check-product-version-coherence.py
 python3 workspace/release/product_release.py --check
 ```
+
+After a cut, if assets are missing, follow [RELEASE-BACKFILL.md](RELEASE-BACKFILL.md)
+(non-destructive; never `--clobber` or re-run CD at an old tag).
 
 ## Release PR permissions (#1264)
 
