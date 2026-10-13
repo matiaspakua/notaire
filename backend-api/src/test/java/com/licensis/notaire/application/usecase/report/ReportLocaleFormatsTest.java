@@ -26,6 +26,9 @@ class ReportLocaleFormatsTest {
         assertThat(ReportLocaleFormats.dayMonth(java.sql.Date.valueOf(LocalDate.of(2026, 6, 2))))
                 .isEqualTo("02/06");
         assertThat(ReportLocaleFormats.dayMonth((java.util.Date) null)).isEqualTo("N/A");
+        assertThat(ReportLocaleFormats.dayOfMonth(java.sql.Date.valueOf(LocalDate.of(2026, 3, 15))))
+                .isEqualTo("15");
+        assertThat(ReportLocaleFormats.dayOfMonth((java.util.Date) null)).isEqualTo("N/A");
         assertThat(ReportLocaleFormats.fallback(null)).isEqualTo("N/A");
         assertThat(ReportLocaleFormats.fallback("  ")).isEqualTo("N/A");
         assertThat(ReportLocaleFormats.generatedAt(

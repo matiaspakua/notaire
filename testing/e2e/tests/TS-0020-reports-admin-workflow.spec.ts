@@ -89,9 +89,20 @@ test.describe("CU25 - Generate the monthly sworn statement", () => {
     await steps.whenUserOpensSidebarNav("reportes");
   });
 
-  test.skip("CU25-GW01 (#1146): Given reports, When select month and generate, Then creates", async () => {
-    // Skipped (#1146): the reports page has no month dropdown or "declaración jurada" button.
-    // The monthly affidavit section uses number inputs for year and month and a "Descargar PDF" button.
+  test("CU25-GW01: Given a recorded March, When the monthly sworn statement is downloaded, Then the PDF lists the person", async ({
+    page,
+  }) => {
+    const seeded = await seedProtocolReportPeriod(page);
+    await page.getByTestId("input-report-monthly-year").fill(String(seeded.year));
+    await page.getByTestId("input-report-monthly-month").fill("3");
+    const downloadPromise = page.waitForEvent("download");
+    await page.getByTestId("btn-download-monthly-sworn").click();
+    const download = await downloadPromise;
+    await assertPdfDownload(download, /ddjj_mensual_.*\.pdf/, [
+      seeded.lastName,
+      seeded.procedureName,
+      "Monthly sworn statement",
+    ]);
   });
 });
 

@@ -63,11 +63,19 @@ export function useManagementHistoryReport() {
 /** CU25 — Monthly sworn statement */
 export function useMonthlySwornStatementReport() {
   return {
-    download: (year: number, month: number) =>
-      downloadPdf(
-        `/reports/monthly-sworn-statement?year=${year}&month=${month}`,
-        `ddjj_mensual_${year}_${month}.pdf`
-      ),
+    download: (year: number, month: number, idNotary?: number, idFolioType?: number) => {
+      const params = new URLSearchParams({ year: String(year), month: String(month) });
+      if (idNotary) {
+        params.set("idNotary", String(idNotary));
+      }
+      if (idFolioType) {
+        params.set("idFolioType", String(idFolioType));
+      }
+      return downloadPdf(
+        `/reports/monthly-sworn-statement?${params.toString()}`,
+        `ddjj_mensual_${year}_${month}.pdf`,
+      );
+    },
   };
 }
 

@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const downloads = vi.hoisted(() => ({
   budget: vi.fn().mockResolvedValue(undefined),
   indexBook: vi.fn().mockResolvedValue(undefined),
+  monthly: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock("next-intl", () => ({ useTranslations: () => (key: string) => key }));
@@ -22,7 +23,7 @@ vi.mock("@/hooks/useReports", () => {
     useBudgetReport: () => ({ download: downloads.budget }),
     useBudgetPropertiesReport: unused,
     useManagementHistoryReport: unused,
-    useMonthlySwornStatementReport: unused,
+    useMonthlySwornStatementReport: () => ({ download: downloads.monthly }),
     useTaxSwornStatementReport: unused,
     useIndexBookReport: () => ({ download: downloads.indexBook }),
     useDocumentDebtReport: unused,
@@ -77,5 +78,19 @@ describe("Reports page (/dashboard/reports)", () => {
     await userEvent.click(screen.getByTestId("btn-download-index-book"));
 
     expect(downloads.indexBook).toHaveBeenCalledWith(2026, undefined, undefined);
+  });
+
+  it("shouldDownloadTheMonthlySwornStatementForTheEnteredPeriod", async () => {
+    renderReports();
+
+    const year = screen.getByTestId("input-report-monthly-year");
+    const month = screen.getByTestId("input-report-monthly-month");
+    await userEvent.clear(year);
+    await userEvent.type(year, "2026");
+    await userEvent.clear(month);
+    await userEvent.type(month, "3");
+    await userEvent.click(screen.getByTestId("btn-download-monthly-sworn"));
+
+    expect(downloads.monthly).toHaveBeenCalledWith(2026, 3, undefined, undefined);
   });
 });

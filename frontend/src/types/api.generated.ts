@@ -1965,7 +1965,7 @@ export interface paths {
         };
         /**
          * Generate the monthly sworn statement
-         * @description Base endpoint for CU25: a provisional PDF for the requested period; the monthly sworn-statement content is still pending
+         * @description CU25: recorded deeds for a year and month, optionally narrowed by notary registry and protocol type. Tax, rate, and annex stay N/A until an Owner tax table exists. An empty period returns 200 and an empty-state PDF
          */
         get: operations["generateMonthlySwornStatement"];
         put?: never;
@@ -9818,6 +9818,10 @@ export interface operations {
                 year: number;
                 /** @description Month of the period */
                 month: number;
+                /** @description Optional notary person id (registry) */
+                idNotary?: number;
+                /** @description Optional folio / protocol type id */
+                idFolioType?: number;
             };
             header?: never;
             path?: never;

@@ -60,6 +60,11 @@ public final class ReportLocaleFormats {
         return local == null ? NOT_RECORDED : DAY_MONTH.format(local);
     }
 
+    public static String dayOfMonth(Date date) {
+        LocalDate local = localDate(date);
+        return local == null ? NOT_RECORDED : String.valueOf(local.getDayOfMonth());
+    }
+
     public static String fallback(String value) {
         return value == null || value.isBlank() ? NOT_RECORDED : value;
     }
