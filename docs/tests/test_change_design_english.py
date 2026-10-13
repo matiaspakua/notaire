@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Unarchived change designs name the live surface in English."""
+"""Change designs name the live surface in English, archived ones included."""
 
 import unittest
 from pathlib import Path
@@ -30,7 +30,9 @@ class ChangeDesignEnglishTest(unittest.TestCase):
             self.assertNotIn(retired, text, retired)
 
     def test_required_documents_design_names_the_screen(self):
-        folder = CHANGES / "feat-1362-procedure-template-admin"
+        # Archived on 2026-10-13 by #1626; the shipped design keeps its English
+        # naming ratchet, following the test_retired_*_english.py precedent.
+        folder = CHANGES / "archive" / "2026-10-13-feat-1362-procedure-template-admin"
         spec = (folder / "specs" / "ui-procedure-template-admin" / "spec.md").read_text(
             encoding="utf-8"
         )
