@@ -16,9 +16,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `fix/655_submitted_document_request_validation` | created from updated `main` |
 | Tasks | `tasks.md` | in progress |
 | Commits | see branch | local, not pushed |
-| Pull Request | — | pending (Owner approval) |
+| Pull Request | #1320 | merged 2026-10-07 |
 | CI run | — | pending |
-| Merge commit | — | pending |
+| Merge commit | `aee66cbe` | done |
 | Release / tag | — | pending |
 | Smoke test | — | pending |
 

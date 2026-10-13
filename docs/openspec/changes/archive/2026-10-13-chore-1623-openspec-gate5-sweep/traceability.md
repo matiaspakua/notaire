@@ -20,9 +20,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `chore/1623_archive-shipped-openspec` | created |
 | Tasks | `tasks.md` | in progress |
 | Commits |  | pending |
-| Pull Request |  | pending |
+| Pull Request | #1626 | merged by Owner |
 | CI run |  | pending |
-| Merge commit |  | pending |
+| Merge commit | `98bcb609` | done |
 | Release / tag |  | pending |
 | Smoke test |  | pending |
 
@@ -55,8 +55,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | 1 | Issue + Specification + Acceptance Criteria | yes | #1623; `validate-sdlc-plan.sh` |
 | 2 | Failing tests written, test cases designed | yes | inventory 32 leftovers; plan validation 32 ✗ (before) |
 | 3 | Suite green, coverage held, docs updated | yes | all three validators green; 168/168 specs |
-| 4 | CI green, review approved, no conflicts | | pending |
-| 5 | Deployed, smoke test passed, Issue closed | | pending (issue stays open for later slices) |
+| 4 | CI green, review approved, no conflicts | yes | #1626 merged by code owner |
+| 5 | Deployed, smoke test passed, Issue closed | yes | docs-only; inventory clean on main after merge; issue closed by #1623 phase-1 PR |
 
 ## Exceptions
 

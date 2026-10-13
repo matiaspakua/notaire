@@ -65,43 +65,43 @@
 ## 9. Commits atómicos
 
 - [x] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message ends with `Closes #<issue-number>`
+- [x] 9.2 Every commit message ends with `Closes #<issue-number>`
 - [x] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin <branch-name>`
-- [ ] 10.2 Open the PR titled `[#<issue>] <type>(<scope>): <description>`, referencing Issue and Use Case
-- [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
-- [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.1 `git push -u origin <branch-name>`
+- [x] 10.2 Open the PR titled `[#<issue>] <type>(<scope>): <description>`, referencing Issue and Use Case
+- [x] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
+- [x] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Merge via the Pull Request only — never push to `main`
-- [ ] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR
-- [ ] 11.3 Record the merge commit and release/tag in `traceability.md`
+- [x] 11.1 Merge via the Pull Request only — never push to `main`
+- [x] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR
+- [x] 11.3 Record the merge commit and release/tag in `traceability.md`
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Run the smoke test on the target environment (health endpoint + the key flow of this change)
-- [ ] 12.2 Verify the rollback path is still available as described in design.md
-- [ ] 12.3 Close the GitHub Issue, referencing the PR
-- [ ] 12.4 Archive the change: `openspec archive <change-name>`
+- [x] 12.1 Run the smoke test on the target environment (health endpoint + the key flow of this change)
+- [x] 12.2 Verify the rollback path is still available as described in design.md
+- [x] 12.3 Close the GitHub Issue, referencing the PR
+- [x] 12.4 Archive the change: `openspec archive <change-name>`
 
 ## Definition of Done
 
 <!-- Per CONSTITUTION.md §3. Every box must be checked before the change is Done. -->
 
-- [ ] Issue linked to a Use Case, with Acceptance Criteria
-- [ ] Specification written and reviewed (Gate 1)
-- [ ] Tests designed and written first, observed failing (Gate 2)
-- [ ] Full suite green: unit, integration, regression, E2E
-- [ ] Coverage at or above the JaCoCo ratchet floor
-- [ ] Playwright E2E green for UI changes
-- [ ] Permanent documentation updated, consistent, not duplicated (Gate 3)
-- [ ] Commits atomic and conventional, referencing the Issue
-- [ ] PR created, CI green, review approved (Gate 4)
-- [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
-- [ ] `traceability.md` complete from Issue through Release
+- [x] Issue linked to a Use Case, with Acceptance Criteria
+- [x] Specification written and reviewed (Gate 1)
+- [x] Tests designed and written first, observed failing (Gate 2)
+- [x] Full suite green: unit, integration, regression, E2E
+- [x] Coverage at or above the JaCoCo ratchet floor
+- [x] Playwright E2E green for UI changes
+- [x] Permanent documentation updated, consistent, not duplicated (Gate 3)
+- [x] Commits atomic and conventional, referencing the Issue
+- [x] PR created, CI green, review approved (Gate 4)
+- [x] Merged, deployed, smoke test passed, Issue closed (Gate 5)
+- [x] `traceability.md` complete from Issue through Release
