@@ -22,3 +22,22 @@ On devices whose primary pointer is coarse, every small button and the rows-per-
 - **WHEN** a user opens /dashboard/people with a mouse at 1440px
 - **THEN** the row actions stay 32px tall
 
+### Requirement: Visible row action icons
+
+An icon inside a row action button SHALL render at its declared size regardless of the column width; it SHALL NOT collapse to 0px.
+
+#### Scenario: Desktop table
+
+- **WHEN** an admin opens Management Statuses at 1440px
+- **THEN** the edit and delete icons in each row are 16x16
+
+#### Scenario: Mobile cards
+
+- **WHEN** an admin opens Concepts at 390px
+- **THEN** the card action icons are 16x16
+
+#### Scenario: Guard
+
+- **WHEN** someone removes shrink-0 or max-w-none from NotaireIcon
+- **THEN** the unit suite fails
+

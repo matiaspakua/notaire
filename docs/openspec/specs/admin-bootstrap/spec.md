@@ -1,7 +1,7 @@
 # admin-bootstrap Specification
 
 ## Purpose
-Initial administrator seeding at startup.
+Initial administrator seeding at startup, without a shipped default password. Source: #1249; archived change `2026-10-07-fix-1249-admin-default-seed`.
 ## Requirements
 ### Requirement: No default admin password outside dev/test
 

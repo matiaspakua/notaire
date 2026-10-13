@@ -1,0 +1,5 @@
+schema: notaire-sdlc
+created: 2026-10-13
+# Process/doc change: archives shipped changes and syncs their already-reviewed
+# deltas. It introduces no requirement of its own.
+skip_specs: true
