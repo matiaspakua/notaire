@@ -72,8 +72,8 @@ remaining object-level gap that `SR-06` used to describe too broadly.
 | LD-5 | Non-compliance | Retention and statute mapping | Notarial retention is indefinite by SAD §2.3. A statute map is not an engineering claim | Issue #309 | Open |
 | LD-6 | Detectability of abuse | Login failures | `notaire_operation_total` and Grafana | [MONITORING.md](MONITORING.md) | Partial — read access is not a metric |
 
-Non-repudiation of writes stays `SR-07` (mitigated) and `SR-08` / `SR-09`
-(open) in the auth and audit model.
+Non-repudiation of writes stays `SR-07` (mitigated); `SR-08` (`Person` reads) is
+mitigated by #1635 and `SR-09` is open in the auth and audit model.
 
 ## Assumptions
 

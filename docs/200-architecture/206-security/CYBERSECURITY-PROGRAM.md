@@ -25,7 +25,7 @@ production pentest.
 | Injection | JPA queries | Parameterized persistence. See [SQL injection prevention](SQL-INJECTION-PREVENTION.md) | Mitigated for known query paths |
 | Secrets | Env and CI | `.env` gitignored, `ProductionCredentialsGuard`, this change's secret scan | Partial — GitHub push protection is an admin setting |
 | Dependencies | Maven, npm, images | Dependabot, Trivy (report-only), image pins | Partial — Trivy does not fail the build |
-| Privacy | `Person` DNI and email; notarial records | Auth gate, request logs omit query, headers, and body (#1463) | Partial — reads of PII are not audited (SR-08) |
+| Privacy | `Person` DNI and email; notarial records | Auth gate, request logs omit query, headers, and body (#1463) | Partial — `Person` reads are audited without PII (SR-08, #1635); other entities opt in |
 | Runtime | Login metrics | Prometheus alerts and Grafana `notaire-auth` | Partial — no general API rate limit (#280) |
 
 Function-level RBAC is recorded in the

@@ -14,7 +14,7 @@ percentage.
 | A06 Vulnerable components | Dependabot, Trivy, image digests/pins, patched floors | `security/tests/`, `PatchedDependencyFloorTest` | Trivy is report-only (SR-13) |
 | A07 Identification and authentication failures | Lockout, generic login errors, HttpOnly session, logout revocation | `LoginAttemptServiceTest`, auth guide | Lockout is per JVM (SR-01). No MFA (not claimed) |
 | A08 Software and data integrity | cosign, CycloneDX SBOM, secret scan, protected `main` | `cd.yml`, `scan_secrets.py`, ruleset | Audit table is not append-only (SR-09) |
-| A09 Logging and alerting failures | Audit aspect for writes. Login metrics. Security dashboard | [MONITORING.md](MONITORING.md) | GET of PII is not audited (SR-08) |
+| A09 Logging and alerting failures | Audit aspect for writes and for `Person` reads (`@AuditPersonalDataRead`, #1635). Login metrics. Security dashboard | [MONITORING.md](MONITORING.md) | Reads of entities other than `Person` are not audited until they opt in |
 | A10 SSRF | No outbound HTTP client found in the API | Threat-model assumption | Re-check when an integration fetches a user-supplied URL |
 
 Automated checks added with this program: secret scan, policy file, dashboard

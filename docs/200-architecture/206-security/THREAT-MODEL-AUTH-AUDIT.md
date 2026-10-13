@@ -76,18 +76,18 @@ Two trust boundaries matter here:
 | # | STRIDE | Threat | Mitigation | Status |
 |---|--------|--------|------------|--------|
 | SR-07 | Repudiation | A user denies performing an action, or an attacker forges the acting-user attribution on an audit record | `AuditAspect` reads the acting user exclusively from `SecurityContextHolder` (the authenticated JWT identity); the legacy `X-Notaire-User` client header is explicitly ignored for attribution (issue #555). HTTP forge via `POST`/`PUT`/`DELETE` on `/api/v1/audit-log` is closed (405; issues #1124 / #1060) — rows are server-authored only | Mitigated |
-| SR-08 | Information Disclosure / Repudiation | Read (GET) access to sensitive `Person`/`Deed` data is not logged, so unauthorized *reading* of PII leaves no trail | Create/update/delete operations are audited; GETs are intentionally excluded (by design, for volume reasons) | **Open** (by design, documented trade-off) — acceptable today because access is already gated by JWT + the coarse-grained authorization of SR-06, but becomes a bigger gap once per-role authorization (SR-06) exists and read access itself needs accountability; tracked as follow-up |
+| SR-08 | Information Disclosure / Repudiation | Read (GET) access to sensitive `Person`/`Deed` data is not logged, so unauthorized *reading* of PII leaves no trail | Create/update/delete operations are audited; GETs are excluded by default for volume reasons, but handlers annotated `@AuditPersonalDataRead` (the three `Person` reads) write one PII-free audit row per request, with no search terms and one aggregated row per list or search (#1635) | **Mitigated** for `Person`; other entities opt in with the annotation |
 | SR-09 | Tampering | Attacker or malicious insider directly modifies `audit_records` rows in the database to cover tracks | Standard PostgreSQL access controls (only the backend service account has write access); no append-only/immutable log mechanism (e.g. no DB-level trigger preventing UPDATE/DELETE on the table) | **Open** — no dedicated tamper-evidence control beyond normal DB permissions; tracked as follow-up |
 | SR-10 | Denial of Service | `AuditAspect` failures cascade and break functional flows | Aspect is intentionally tolerant: any audit-write failure is caught, logged at WARN, and swallowed rather than propagated | Mitigated |
 
 ## Summary
 
-- **Mitigated**: SR-02, SR-03, SR-07, SR-10 (4)
+- **Mitigated**: SR-02, SR-03, SR-07, SR-08, SR-10 (5)
 - **Partial**: SR-01, SR-04, SR-06 (3)
-- **Open**: SR-05, SR-08, SR-09 (3)
+- **Open**: SR-05, SR-09 (2)
 
 SR-06 moved to Partial when function-level RBAC landed (#559). The object-level
 gap is SR-11 in the system model. The remaining Open items are the login
-flood/lockout-griefing case, unaudited reads, and audit-log tamper evidence.
+flood/lockout-griefing case and audit-log tamper evidence (SR-08, unaudited reads, was mitigated by #1635).
 None are fixed by this change — see issue #1028's follow-up
 recommendations for how each should be triaged into its own issue.
