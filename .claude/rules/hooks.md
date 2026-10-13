@@ -13,6 +13,7 @@ describes the hooks and why they exist — it does not duplicate the process.
 | Hook | Event | Script | Purpose |
 |------|-------|--------|---------|
 | OpenSpec status | `SessionStart` | `.claude/hooks/session-start-openspec-status.sh` | Prints in-flight `openspec` change status and lists local branches with commits that were never pushed (no upstream; #1647), so finished work cannot sit invisible while its issue blocks a lane. Informational only — never blocks session start. |
+| Cloud toolchain | `SessionStart` | `.claude/hooks/session-start-toolchain.sh` | In Claude Code cloud sessions only (`CLAUDE_CODE_REMOTE=true`), idempotently installs the pinned Temurin 26, `openspec`, `kustomize` and Trivy into `~/.cache/notaire-tools` and exports the environment through `CLAUDE_ENV_FILE` (#1659). Never blocks session start; pins are guarded by `workspace/tests/test_cloud_toolchain_bootstrap.py`. |
 | Block push to main | `PreToolUse` (matcher: `Bash`) | `.claude/hooks/block-push-to-main.sh` | Detects a `git push` whose resolved target branch is `main`/`master` and denies the tool call (exit 2) with a message pointing at the PR workflow. |
 
 ## Why the push guard exists
