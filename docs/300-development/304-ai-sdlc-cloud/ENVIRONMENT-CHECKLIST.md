@@ -141,11 +141,12 @@ OpenCollection API tests work without relying on unpinned `npx @usebruno/cli`.
 `.cursor/install.sh` covers Cursor Cloud only. In a Claude Code cloud session
 (`CLAUDE_CODE_REMOTE=true`) the `SessionStart` hook
 `.claude/hooks/session-start-toolchain.sh` installs Temurin 26, the pinned
-`openspec`, `kustomize` and Trivy into `~/.cache/notaire-tools` (about 20 s cold,
+`openspec`, `kustomize`, Trivy, `promtool` and `amtool` into `~/.cache/notaire-tools` (about 20 s cold,
 instant warm) and exports `JAVA_HOME`, `PATH`, `LC_ALL=C.UTF-8`, `KUSTOMIZE` and
 `OPENSPEC_TELEMETRY=0`. A failed download prints one warning and never blocks the
 session. There is no Docker daemon in that sandbox, so pg-integration, Playwright,
-Bruno, DAST and the Docker build stay CI-only.
+Bruno, DAST and the Docker build stay CI-only; `infra/tests/test_alertmanager.py`
+falls back to the local `promtool`/`amtool` (#1660).
 
 ## 5. Resource notes
 
