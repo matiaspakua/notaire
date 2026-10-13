@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @DisplayName("ReportController unit tests")
@@ -59,6 +60,9 @@ class ReportControllerTest {
         assertThat(response.getBody()).isEqualTo(pdfBytes);
         assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_DISPOSITION))
                 .isEqualTo("inline; filename=\"presupuesto_42.pdf\"");
+        assertThat(response.getHeaders().getFirst(HttpHeaders.CACHE_CONTROL)).isEqualTo("private, no-store");
+        assertThat(response.getHeaders().getFirst("X-Content-Type-Options")).isEqualTo("nosniff");
+        assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).isEqualTo("application/pdf");
     }
 
     @Test
@@ -67,9 +71,9 @@ class ReportControllerTest {
         RuntimeException cause = new RuntimeException("pdf rendering failure");
         when(reportService.generateBudgetReport(42)).thenThrow(cause);
 
-        ResponseEntity<byte[]> response = controller.generateBudgetReport(42);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThatThrownBy(() -> controller.generateBudgetReport(42))
+                .isInstanceOf(IllegalStateException.class)
+                .hasCause(cause);
         assertThat(logAppender.list)
                 .anySatisfy(event -> {
                     assertThat(event.getLevel()).isEqualTo(Level.ERROR);
@@ -78,13 +82,12 @@ class ReportControllerTest {
     }
 
     @Test
-    @DisplayName("Should return 500 and log when the procedure document-list report fails")
+    @DisplayName("Should wrap and log when the procedure document-list report fails")
     void shouldReturn500AndLogWhenProcedureDocumentListReportFails() throws Exception {
         when(reportService.generateProcedureDocumentsListReport("Sale")).thenThrow(new RuntimeException("boom"));
 
-        ResponseEntity<byte[]> response = controller.generateProcedureDocumentsListReport("Sale");
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThatThrownBy(() -> controller.generateProcedureDocumentsListReport("Sale"))
+                .isInstanceOf(IllegalStateException.class);
         assertThat(logAppender.list).isNotEmpty();
     }
 

@@ -10,11 +10,12 @@
 | **Descripción** | Define las prácticas de prueba, estándares visuales de formularios secuenciales y control de calidad requeridos para validar cada caso de uso y requerimiento del sistema. |
 | **Tipo** | Soporte / Calidad |
 | **Referencias Cruzadas** | RF #74 (Aspecto visual), RF #75 (Diseño de ventanas), RF #76 (Diseño de campos y combos), RF #77 (Especificación de campos a completar), RF #78 (Uso de colores en la GUI), RF #79 (Seguimiento del trabajo sobre ventanas), RF #80 (Identificación de sesión), RF #86 (Java VM), RF #87 (Sistema operativo), RF #90 (Metodología de desarrollo), RF #91 (Modelo de desarrollo), RF #92 (Lenguaje de programación) |
-| **GitHub ID** | #1511, #276, #295, #296, #594, #1047, #1042, #1041, #1043, #1050, #1059, #1066, #1146, #1186, #1185, #1191, #1192, #1252 |
+| **GitHub ID** | #1511, #276, #295, #296, #594, #1047, #1042, #1041, #1043, #1050, #1059, #1066, #1146, #1186, #1185, #1191, #1192, #1252, #1593 |
 
 ## Alcance de Calidad e Interfaz
 
 - Pruebas unitarias de servicios y lógica de dominio con JUnit 5 y Mockito.
+- Shared PDF design-system tests (metadata, embedded font, structural raster, headers) for issue #1593.
 - Pruebas de integración con base de datos real en contenedores (Testcontainers/PostgreSQL).
 - Pruebas End-to-End (E2E) con Playwright para validar flujos de usuario completos.
 - Validación de accesibilidad, navegación por teclado (Tab) y formularios secuenciales claros.

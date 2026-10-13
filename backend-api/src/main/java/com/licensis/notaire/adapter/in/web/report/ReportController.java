@@ -1,6 +1,7 @@
 package com.licensis.notaire.adapter.in.web.report;
 
 import com.licensis.notaire.application.usecase.report.ReportService;
+import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ErrorResponse;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,7 +17,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -53,16 +53,12 @@ public class ReportController {
 
     private ResponseEntity<byte[]> buildPdfResponse(String filename, ReportGenerator generator) {
         try {
-            byte[] pdfBytes = generator.generate();
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
-                    .body(pdfBytes);
-        } catch (ResourceNotFoundException e) {
+            return PdfResponseFactory.ok(generator.generate(), filename);
+        } catch (ResourceNotFoundException | BusinessValidationException e) {
             throw e;
         } catch (Exception e) {
             log.error("Failed to generate report '{}'", filename, e);
-            return ResponseEntity.internalServerError().build();
+            throw new IllegalStateException("Failed to generate report '" + filename + "'", e);
         }
     }
 
@@ -72,8 +68,10 @@ public class ReportController {
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
         @ApiResponse(responseCode = "404", description = "Budget not found", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF (no body)",
-                content = @Content)
+        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF",
+                content = @Content(
+                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                        schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping(value = "/budget/{idBudget}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generate the budget report",
@@ -92,8 +90,10 @@ public class ReportController {
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
         @ApiResponse(responseCode = "404", description = "Budget not found", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF (no body)",
-                content = @Content)
+        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF",
+                content = @Content(
+                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                        schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping(value = "/budget-properties/{idBudget}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generate the budget report with properties",
@@ -112,8 +112,10 @@ public class ReportController {
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
         @ApiResponse(responseCode = "404", description = "Procedure type not found", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF (no body)",
-                content = @Content)
+        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF",
+                content = @Content(
+                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                        schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping(value = "/procedure-document-list", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generate the document list report for a procedure",
@@ -132,8 +134,10 @@ public class ReportController {
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
         @ApiResponse(responseCode = "404", description = "Management not found", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF (no body)",
-                content = @Content)
+        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF",
+                content = @Content(
+                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                        schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping(value = "/management-history/{idManagement}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generate the management history report",
@@ -152,8 +156,10 @@ public class ReportController {
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
         @ApiResponse(responseCode = "404", description = "Submitted document not found", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF (no body)",
-                content = @Content)
+        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF",
+                content = @Content(
+                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                        schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping(value = "/documents-due/{idSubmittedDocument}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generate the documents-due report",
@@ -172,8 +178,10 @@ public class ReportController {
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
         @ApiResponse(responseCode = "404", description = "There is no management with that number", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF (no body)",
-                content = @Content)
+        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF",
+                content = @Content(
+                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                        schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping(value = "/document-debt", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generate the document-debt report",
@@ -206,9 +214,7 @@ public class ReportController {
             @RequestParam("year") @Positive Integer year,
             @Parameter(description = "Month of the period")
             @RequestParam("month") @Min(1) @Max(12) Integer month) {
-        if (month < 1 || month > 12) {
-            return ResponseEntity.badRequest().build();
-        }
+        requireValidMonth(month);
         return buildPdfResponse("ddjj_mensual_" + year + "_" + month + ".pdf",
                 () -> reportService.generateMonthlyTaxDeclarationReport(year, month));
     }
@@ -224,11 +230,8 @@ public class ReportController {
     public ResponseEntity<byte[]> generateTestimonyCopyReport(
             @Parameter(description = "ID of the testimony")
             @PathVariable("idTestimony") @Positive Integer idTestimony) {
-        byte[] pdfBytes = reportService.generateTestimonyCopyReport(idTestimony);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"testimonio_" + idTestimony + "_copia.pdf\"")
-                .body(pdfBytes);
+        return buildPdfResponse("testimonio_" + idTestimony + "_copia.pdf",
+                () -> reportService.generateTestimonyCopyReport(idTestimony));
     }
 
     @ApiResponses({
@@ -241,12 +244,8 @@ public class ReportController {
     public ResponseEntity<byte[]> generateRegistrationDraftReport(
             @Parameter(description = "ID of the registration draft")
             @PathVariable("idRegistrationDraft") @Positive Integer idRegistrationDraft) {
-        byte[] pdfBytes = reportService.generateRegistrationDraftReport(idRegistrationDraft);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "inline; filename=\"minuta_inscripcion_" + idRegistrationDraft + ".pdf\"")
-                .body(pdfBytes);
+        return buildPdfResponse("minuta_inscripcion_" + idRegistrationDraft + ".pdf",
+                () -> reportService.generateRegistrationDraftReport(idRegistrationDraft));
     }
 
     @ApiResponses({
@@ -259,11 +258,8 @@ public class ReportController {
     public ResponseEntity<byte[]> generatePaymentReceiptReport(
             @Parameter(description = "ID of the payment")
             @PathVariable("idPayment") @Positive Integer idPayment) {
-        byte[] pdfBytes = reportService.generatePaymentReceiptReport(idPayment);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"recibo_pago_" + idPayment + ".pdf\"")
-                .body(pdfBytes);
+        return buildPdfResponse("recibo_pago_" + idPayment + ".pdf",
+                () -> reportService.generatePaymentReceiptReport(idPayment));
     }
 
     @GetMapping(value = "/tax-sworn-statement", produces = MediaType.APPLICATION_PDF_VALUE)
@@ -275,10 +271,15 @@ public class ReportController {
             @RequestParam("year") @Positive Integer year,
             @Parameter(description = "Month of the period")
             @RequestParam("month") @Min(1) @Max(12) Integer month) {
-        if (month < 1 || month > 12) {
-            return ResponseEntity.badRequest().build();
-        }
+        requireValidMonth(month);
         return buildPdfResponse("ddjj_rentas_" + year + "_" + month + ".pdf",
                 () -> reportService.generateIncomeTaxDeclarationReport(year, month));
+    }
+
+    private static void requireValidMonth(Integer month) {
+        if (month != null && month >= 1 && month <= 12) {
+            return;
+        }
+        throw new BusinessValidationException("month must be between 1 and 12");
     }
 }

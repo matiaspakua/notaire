@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * **docs:** dedupe Unreleased changelog headings on main ([790e78f](https://github.com/matiaspakua/notaire/commit/790e78fe509c273f84d74d91a67ef8c64e52d43f))
 * **docs:** dedupe Unreleased changelog subsection headings ([843ba6a](https://github.com/matiaspakua/notaire/commit/843ba6a506e674dab319061313988014b43223ac))
+## [Unreleased]
+
+### Features
+
+- **reports:** shared accessible deterministic PDF design system — embedded Liberation Sans, text wordmark, repeating chrome, `es-AR` metadata, centralized download headers ([#1593](https://github.com/matiaspakua/notaire/issues/1593))
 
 ## [0.2.0](https://github.com/matiaspakua/notaire/compare/v0.1.2...v0.2.0) (2026-10-12)
 
