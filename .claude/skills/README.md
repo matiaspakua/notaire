@@ -14,6 +14,7 @@ This directory combines project-specific skills with generic lifecycle skills. T
 | API contracts | `api-contract-testing`, `api-rest` | OpenAPI/Swagger, Bruno and UI traceability | 2-3 |
 | CI/CD quality gates | `ci-cd-quality-gates`, `devops` | `workspace/sdlc/preflight.sh`, `workspace/sdlc/run_pipeline.sh`, CI workflows | 3-4 |
 | Operations and incidents | `operations-observability-readiness`, `devops` | `infra/`, runbooks, SLOs, incident/postmortem evidence | 3-5 |
+| PR stewardship | `steward` | `workspace/sdlc/check-heavy-ci.sh`, `workspace/sdlc/preflight.sh`, `CI-MERGE-GATE.md` | 4 |
 | Specification lifecycle | OpenSpec vendor skills + `openspec-triage` | `docs/openspec/changes/`, `docs/openspec/specs/` | 1-5 |
 
 ## Selection rule
