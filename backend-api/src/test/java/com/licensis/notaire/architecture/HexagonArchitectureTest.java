@@ -13,6 +13,7 @@ import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -164,6 +165,21 @@ class HexagonArchitectureTest {
     void legacyPackagesGainNoDependents() {
         assertAgainstBaseline("R6", dependencies(type -> in(type, ROOT) && !in(type, LEGACY_JPA, LEGACY_SERVICE),
                 target -> in(target, LEGACY_JPA, LEGACY_SERVICE)));
+    }
+
+    @AfterAll
+    static void writeBaseline() throws IOException {
+        if (WRITE_MODE.isEmpty()) {
+            return;
+        }
+        Set<String> next = new TreeSet<>(allViolations);
+        if ("shrink".equals(WRITE_MODE)) {
+            next.retainAll(baseline);
+        } else if (!"init".equals(WRITE_MODE)) {
+            throw new IllegalArgumentException("architecture.baseline must be 'init' or 'shrink'");
+        }
+        Files.write(Path.of(BASELINE_FILE), (String.join("\n", next) + (next.isEmpty() ? "" : "\n"))
+                .getBytes(StandardCharsets.UTF_8));
     }
 
     @Test
