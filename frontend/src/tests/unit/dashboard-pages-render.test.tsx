@@ -4,7 +4,13 @@
  * by the Playwright suite.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ComponentType, ReactNode } from "react";
 
@@ -117,6 +123,7 @@ const ROW = {
   isArchived: false,
   number: 1,
   amount: 100,
+  budgetTemplatePK: { fkIdProcedureType: 1, fkIdConcept: 1 },
   nodes: [],
   edges: [],
   steps: [],
@@ -199,6 +206,30 @@ describe("dashboard list pages render (#1667)", () => {
       await screen
         .findAllByText(/Fila/, {}, { timeout: 1500 })
         .catch(() => undefined);
+      expect(screen.queryByText(/Application error/i)).toBeNull();
+    },
+  );
+
+  it.each(Object.keys(PAGES))(
+    "%s opens every dialog its buttons lead to",
+    async (name) => {
+      mockFetch.mockImplementation((input: RequestInfo | URL) =>
+        populatedResponse(String(input)),
+      );
+      const { default: Page } = await PAGES[name]();
+      render(<Page />, { wrapper });
+      await screen
+        .findAllByText(/Fila/, {}, { timeout: 1500 })
+        .catch(() => undefined);
+
+      for (const button of screen.queryAllByRole("button")) {
+        if (button.isConnected && !(button as HTMLButtonElement).disabled) {
+          await act(async () => {
+            fireEvent.click(button);
+          });
+        }
+      }
+
       expect(screen.queryByText(/Application error/i)).toBeNull();
     },
   );
