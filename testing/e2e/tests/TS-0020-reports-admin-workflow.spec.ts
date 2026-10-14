@@ -38,7 +38,17 @@
  */
 import { test, expect } from "@playwright/test";
 import { GherkinSteps, TestData } from "./gherkin-helpers";
-import { apiPost, createDocumentType, createProcedureType, seedProtocolReportPeriod, uniqueId } from "./setup/api-helpers";
+import {
+  apiPost,
+  createConcept,
+  createDeed,
+  createDocumentType,
+  createProcedureType,
+  seedProtocolReportPeriod,
+  uniqueId,
+  uniqueLabel,
+} from "./setup/api-helpers";
+import { rowWithCell } from "./setup/rows";
 import { assertPdfDownload } from "./setup/pdf-helpers";
 
 test.describe("Reports — navigation discovery (#1058)", () => {
@@ -196,9 +206,8 @@ test.describe("CU39 - Create a budget template", () => {
     await steps.givenUserIsOnPage("/dashboard/budgets");
   });
 
-  test.skip("CU39-GW01 (#1146): Given budgets, When templates is clicked, Then the templates are shown", async () => {
-    // Skipped (#1146): the budgets page has no templates button in the current UI.
-  });
+  // CU39 has no templates button on the budgets page by design: templates are created under
+  // /dashboard/administration/templates and covered by TS-0024 and TS-0133 (#1243).
 });
 
 test.describe("CU42 - Report upcoming expirations", () => {
@@ -283,8 +292,23 @@ test.describe("CU62 - Search deeds", () => {
     await steps.givenUserIsOnPage("/dashboard/deeds");
   });
 
-  test.skip("CU62-GW01 (#1146): Given deeds, When search by number, Then shows results", async () => {
-    // Skipped (#1146): deeds page has no search bar in the current UI.
+  test("CU62-GW01 (#1243): Given deeds, When searching by number, Then only that deed is listed", async ({ page }) => {
+    // Given
+    const number = uniqueId() % 1_000_000;
+    const created = await createDeed(page, 0, 0, { number });
+    expect(created.ok).toBeTruthy();
+
+    // When
+    await page.getByTestId("input-search-deed").fill(String(number));
+
+    // Then
+    await expect(rowWithCell(page, number)).toBeVisible();
+
+    // When
+    await page.getByTestId("input-search-deed").fill(String(number + 1));
+
+    // Then
+    await expect(rowWithCell(page, number)).toBeHidden();
   });
 });
 
@@ -297,8 +321,19 @@ test.describe("CU65 - Search document types", () => {
     await steps.givenUserIsOnPage("/dashboard/administration/documents");
   });
 
-  test.skip("CU65-GW01 (#1146): Given document types, When searching, Then results are shown", async () => {
-    // Skipped (#1146): the administration/documents page has no search bar in the current UI.
+  test("CU65-GW01 (#1243): Given document types, When searching by name, Then only the match is listed", async ({ page }) => {
+    // Given
+    const wanted = uniqueLabel("DocSearchWanted");
+    const other = uniqueLabel("DocSearchOther");
+    expect((await createDocumentType(page, { name: wanted })).ok).toBeTruthy();
+    expect((await createDocumentType(page, { name: other })).ok).toBeTruthy();
+
+    // When
+    await page.getByTestId("input-search-document").fill(wanted);
+
+    // Then
+    await expect(rowWithCell(page, wanted)).toBeVisible();
+    await expect(rowWithCell(page, other)).toBeHidden();
   });
 });
 
@@ -311,7 +346,18 @@ test.describe("CU66 - Search concepts", () => {
     await steps.givenUserIsOnPage("/dashboard/administration/concepts");
   });
 
-  test.skip("CU66-GW01 (#1146): Given concepts, When search, Then shows results", async () => {
-    // Skipped (#1146): the administration/concepts page has no search bar in the current UI.
+  test("CU66-GW01 (#1243): Given concepts, When searching by name, Then only the match is listed", async ({ page }) => {
+    // Given
+    const wanted = uniqueLabel("ConceptSearchWanted");
+    const other = uniqueLabel("ConceptSearchOther");
+    expect((await createConcept(page, { name: wanted })).ok).toBeTruthy();
+    expect((await createConcept(page, { name: other })).ok).toBeTruthy();
+
+    // When
+    await page.getByTestId("input-search-concept").fill(wanted);
+
+    // Then
+    await expect(rowWithCell(page, wanted)).toBeVisible();
+    await expect(rowWithCell(page, other)).toBeHidden();
   });
 });
