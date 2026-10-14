@@ -8,7 +8,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -35,10 +35,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| new violation fails | HexagonArchitectureTest | pending |
-| stale baseline entry fails | HexagonArchitectureTest | pending |
-| current state passes | HexagonArchitectureTest | pending |
-| allow-list | HexagonArchitectureTest | pending |
+| new violation fails | HexagonArchitectureTest | passing |
+| stale baseline entry fails | HexagonArchitectureTest | passing |
+| current state passes | HexagonArchitectureTest | passing |
+| allow-list | HexagonArchitectureTest | passing |
 
 ## Permanent documentation updated
 

@@ -31,6 +31,7 @@ The backend is only partly hexagonal (epic #1693): controllers reach repositorie
 ## Capabilities
 
 ### New Capabilities
+
 - `hexagon-architecture-guard`: the enforced dependency rules of the backend hexagon.
 
 ### Modified Capabilities
