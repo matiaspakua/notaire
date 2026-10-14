@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| archive asks again after a conflict | managements-page-actions | pending |
-| a hold needs a reason | managements-page-actions | pending |
-| an item in use is not deleted | managements-page-actions | pending |
+| archive asks again after a conflict | managements-page-actions | passing |
+| a hold needs a reason | managements-page-actions | passing |
+| an item in use is not deleted | managements-page-actions | passing |
 
 ## Permanent documentation updated
 
