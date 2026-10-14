@@ -10,6 +10,7 @@ The project uses the following code quality tools:
 |------|---------|-------------|
 | **JaCoCo** | Backend code coverage analysis | `pom.xml` |
 | **Vitest coverage** | Frontend unit coverage ratchet | `frontend/vitest.config.ts` |
+| **ESLint boundaries** | Frontend hexagon import rules with a shrink-only baseline (#1696) | `frontend/eslint.config.mjs`, `frontend/eslint-suppressions.json` |
 | **Checkstyle** | Code style enforcement | `checkstyle.xml` |
 | **SpotBugs** | Static bug detection | `spotbugs-exclude.xml` |
 | **Trivy** | Vulnerability scanning | Built-in |
@@ -52,6 +53,26 @@ Coverage reports are:
 - Generated in CI pipeline
 - Uploaded as artifacts
 - Commented on PRs via madrapps/jacoco-action
+
+## ESLint — Frontend hexagon boundaries (shrink-only)
+
+`npm run lint` (CI job Frontend CI) enforces the import boundaries of ADR-030 (epic #1693):
+
+- `src/app/**`, `src/components/**`, `src/hooks/**` may not import `lib/api-client` or call `fetch`; they call
+  use cases. Only `adapters/http` may import the client.
+- `src/core/**` may not import React, Next, TanStack, `lib`, adapters or UI code, nor use `fetch` or browser
+  globals.
+
+Violations that exist today are recorded by ESLint's own suppression file `frontend/eslint-suppressions.json`
+(counted per file and rule). A **new** violation fails the lint, and so does a suppression whose violation no
+longer exists (exit code 2). After fixing a violation, shrink the baseline and commit the smaller file:
+
+```bash
+cd frontend && npx eslint src --prune-suppressions
+```
+
+Never add suppressions by hand; `--suppress-rule` is only for the first generation. The goal is an empty file.
+`frontend/src/tests/unit/architecture-boundaries.test.ts` pins the rules.
 
 ## Vitest — Frontend coverage floor (raise-only)
 
