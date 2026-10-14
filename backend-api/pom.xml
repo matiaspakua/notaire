@@ -270,6 +270,14 @@
                         reverse). Alphabetical keeps every environment running the same order.
                     -->
                     <runOrder>alphabetical</runOrder>
+                    <!--
+                        H2 TIMESTAMP WITH TIME ZONE round-trips an Instant through the JVM
+                        zone, so lockout timestamps drifted on non-UTC developer machines
+                        while CI (UTC) passed. Pin the zone so every environment agrees.
+                    -->
+                    <environmentVariables>
+                        <TZ>UTC</TZ>
+                    </environmentVariables>
                 </configuration>
             </plugin>
             <plugin>
