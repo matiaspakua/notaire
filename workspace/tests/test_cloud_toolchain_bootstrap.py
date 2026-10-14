@@ -67,7 +67,8 @@ class ToolchainBootstrapTest(unittest.TestCase):
 
     def test_hook_installs_the_prometheus_binary_from_the_release_tarball(self):
         hook = HOOK.read_text(encoding="utf-8")
-        self.assertIn("linux-amd64/prometheus", hook.replace('"', ""))
+        self.assertIn('"$prometheus_dir/prometheus"', hook)
+        self.assertIn("prometheus-${PROMETHEUS_VERSION}.linux-amd64", hook)
         self.assertRegex(hook, r'\[ -x "\$BIN/prometheus" \]')
 
     def test_outside_cloud_sessions_the_hook_does_nothing(self):

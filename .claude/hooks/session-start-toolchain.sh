@@ -66,10 +66,12 @@ install_trivy() {
 }
 
 install_alert_tools() {
-    if ! [ -x "$BIN/promtool" ] && ! command -v promtool >/dev/null 2>&1; then
-        fetch "https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/prometheus-${PROMETHEUS_VERSION}.linux-amd64.tar.gz" \
-            "$BIN" --strip-components=1 "prometheus-${PROMETHEUS_VERSION}.linux-amd64/promtool" \
-            || warn "promtool $PROMETHEUS_VERSION" "download failed"
+    local prometheus_dir="prometheus-${PROMETHEUS_VERSION}.linux-amd64"
+    if { ! [ -x "$BIN/promtool" ] && ! command -v promtool >/dev/null 2>&1; } \
+        || { ! [ -x "$BIN/prometheus" ] && ! command -v prometheus >/dev/null 2>&1; }; then
+        fetch "https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/${prometheus_dir}.tar.gz" \
+            "$BIN" --strip-components=1 "$prometheus_dir/promtool" "$prometheus_dir/prometheus" \
+            || warn "promtool/prometheus $PROMETHEUS_VERSION" "download failed"
     fi
     if ! [ -x "$BIN/amtool" ] && ! command -v amtool >/dev/null 2>&1; then
         fetch "https://github.com/prometheus/alertmanager/releases/download/v${ALERTMANAGER_VERSION}/alertmanager-${ALERTMANAGER_VERSION}.linux-amd64.tar.gz" \
