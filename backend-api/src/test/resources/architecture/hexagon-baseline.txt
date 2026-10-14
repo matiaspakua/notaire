@@ -69,9 +69,6 @@ R1 | com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMappe
 R1 | com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper -> com.licensis.notaire.business.ManagementStatus
 R1 | com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper -> com.licensis.notaire.repository.DeedManagementRepository
 R1 | com.licensis.notaire.adapter.in.web.notebook.NotebookController -> com.licensis.notaire.business.Notebook
-R1 | com.licensis.notaire.adapter.in.web.person.IdentificationTypeController -> com.licensis.notaire.business.IdentificationType
-R1 | com.licensis.notaire.adapter.in.web.person.IdentificationTypeController -> com.licensis.notaire.repository.IdentificationTypeRepository
-R1 | com.licensis.notaire.adapter.in.web.person.IdentificationTypeController -> com.licensis.notaire.repository.PersonRepository
 R1 | com.licensis.notaire.adapter.in.web.person.PersonController -> com.licensis.notaire.business.IdentificationType
 R1 | com.licensis.notaire.adapter.in.web.person.PersonController -> com.licensis.notaire.business.Person
 R1 | com.licensis.notaire.adapter.in.web.person.PersonController -> com.licensis.notaire.repository.IdentificationTypeRepository

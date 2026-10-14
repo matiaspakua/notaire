@@ -12,7 +12,6 @@ import com.licensis.notaire.adapter.in.web.testimony.TestimonyController;
 import com.licensis.notaire.adapter.in.web.document.DocumentTypeController;
 import com.licensis.notaire.adapter.in.web.folio.FolioTypeController;
 import com.licensis.notaire.adapter.in.web.procedure.ProcedureTypeController;
-import com.licensis.notaire.adapter.in.web.person.IdentificationTypeController;
 import com.licensis.notaire.adapter.in.web.procedure.ProcedureController;
 import com.licensis.notaire.application.usecase.copy.CopyService;
 import com.licensis.notaire.dto.DtoManagementStatus;
@@ -878,71 +877,6 @@ class SimpleControllersTest {
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isInternalServerError());
             when(templateRepo.findByProcedureTypeIdProcedureType(1)).thenReturn(List.of(new com.licensis.notaire.business.ProcedureTemplate()));
             mvc.perform(delete("/api/v1/procedure-types/1")).andExpect(status().isConflict());
-        }
-    }
-
-    @Nested
-    @DisplayName("IdentificationTypeController")
-    class IdentificationTypeControllerTests {
-        private final IdentificationTypeRepository repo = mock(IdentificationTypeRepository.class);
-        private final com.licensis.notaire.repository.PersonRepository people =
-                mock(com.licensis.notaire.repository.PersonRepository.class);
-        private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new IdentificationTypeController(repo, people))
-                        .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
-                        .build();
-
-        @Test
-        @DisplayName("Cover happy paths")
-        void all() throws Exception {
-            IdentificationType t = new IdentificationType();
-            t.setIdIdentificationType(1);
-            t.setName("DNI");
-
-            when(repo.findAll()).thenReturn(List.of(t));
-            when(repo.findById(1)).thenReturn(Optional.of(t));
-            when(repo.findById(2)).thenReturn(Optional.empty());
-            when(repo.existsById(1)).thenReturn(true);
-            when(repo.existsById(2)).thenReturn(false);
-            when(repo.save(any(IdentificationType.class))).thenReturn(t);
-
-            mvc.perform(get("/api/v1/identification-types")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/identification-types/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/identification-types/2")).andExpect(status().isNotFound());
-
-            String typeBody = "{\"name\":\"DNI\",\"characters\":\"8\"}";
-            mvc.perform(post("/api/v1/identification-types").contentType("application/json")
-                    .content("{\"name\":\"CUIT\",\"characters\":\"11\"}")).andExpect(status().isCreated());
-            // #1361: one row per name in any letter case; a type people use is not deleted.
-            mvc.perform(post("/api/v1/identification-types").contentType("application/json")
-                    .content("{\"name\":\" dni \",\"characters\":\"8\"}")).andExpect(status().isConflict());
-            when(people.existsByFkIdIdentificationTypeIdIdentificationType(1)).thenReturn(true);
-            mvc.perform(delete("/api/v1/identification-types/1")).andExpect(status().isConflict());
-            when(people.existsByFkIdIdentificationTypeIdIdentificationType(1)).thenReturn(false);
-            mvc.perform(put("/api/v1/identification-types/1").contentType("application/json")
-                    .content(typeBody)).andExpect(status().isOk());
-            mvc.perform(put("/api/v1/identification-types/2").contentType("application/json")
-                    .content(typeBody)).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/v1/identification-types/1")).andExpect(status().isNoContent());
-            mvc.perform(delete("/api/v1/identification-types/2")).andExpect(status().isNotFound());
-        }
-
-        @Test
-        @DisplayName("Cover error paths without polluting happy stubs (#916)")
-        void allErrorPaths() throws Exception {
-            IdentificationType t = new IdentificationType();
-            t.setIdIdentificationType(1);
-            t.setName("DNI");
-            when(repo.findById(1)).thenReturn(Optional.of(t));
-            when(repo.existsById(1)).thenReturn(true);
-            String typeBody = "{\"name\":\"DNI\",\"characters\":\"8\"}";
-            when(repo.save(any(IdentificationType.class))).thenThrow(new RuntimeException("x"));
-            mvc.perform(post("/api/v1/identification-types").contentType("application/json")
-                    .content(typeBody)).andExpect(status().isInternalServerError());
-            mvc.perform(put("/api/v1/identification-types/1").contentType("application/json")
-                    .content(typeBody)).andExpect(status().isInternalServerError());
-            doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
-            mvc.perform(delete("/api/v1/identification-types/1")).andExpect(status().isConflict());
         }
     }
 
