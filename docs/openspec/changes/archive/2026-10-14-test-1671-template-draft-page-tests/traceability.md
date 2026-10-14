@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| a template is edited through its key | registration-drafts-page | pending |
-| a status offers one step | registration-drafts-page | pending |
-| a step needs its fields | registration-drafts-page | pending |
+| a template is edited through its key | registration-drafts-page | passing |
+| a status offers one step | registration-drafts-page | passing |
+| a step needs its fields | registration-drafts-page | passing |
 
 ## Permanent documentation updated
 
