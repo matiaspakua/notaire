@@ -21,7 +21,7 @@ production pentest.
 | Area | Exposure today | Protection in the tree | Status |
 |------|----------------|------------------------|--------|
 | Identity | Login, JWT, cookie session | BCrypt cost 12, `LoginAttemptService`, JWT signature and expiry, HttpOnly cookie (#1051) | Partial — lockout is shared through the database (SR-01, #1634); no MFA |
-| Authorization | Every `/api/**` call except login/logout | `ROLE_ADMIN` on admin paths and admin writes (#559). `Escribano` resolves to `ROLE_NOTARY`, not admin (#1638) | Partial — no object-level checks (SR-11) |
+| Authorization | Every `/api/**` call except login/logout | `ROLE_ADMIN` on admin paths and admin writes (#559). `Escribano` resolves to `ROLE_NOTARY`, not admin (#1638) | Partial — tenant isolation by deployment; module grants not yet enforced (ADR-029 W2) |
 | Injection | JPA queries | Parameterized persistence. See [SQL injection prevention](SQL-INJECTION-PREVENTION.md) | Mitigated for known query paths |
 | Secrets | Env and CI | `.env` gitignored, `ProductionCredentialsGuard`, this change's secret scan | Partial — GitHub push protection is an admin setting |
 | Dependencies | Maven, npm, images | Dependabot, Trivy (source scan blocks on CRITICAL/HIGH, image scan report-only), image pins | Partial — the image scan does not fail the build |
@@ -30,7 +30,7 @@ production pentest.
 
 Function-level RBAC is recorded in the
 [auth threat model](THREAT-MODEL-AUTH-AUDIT.md) and in SAD §8.1. Object-level
-authorization does not exist yet (SR-11).
+authorization is not built by design: one installation serves one notary and the office shares its files (SR-11, ADR-029).
 
 ## 2. SAMM snapshot
 
@@ -158,7 +158,7 @@ each `SR-*` row.
 | Build | Policy as code | `security-policy.yml` enforced by tests and CI | FindSecBugs only if CodeQL leaves a repeated Java gap |
 | Test | ZAP baseline | Weekly artifact, does not fail the PR | Fail on agreed high findings (#281) |
 | Production | Runtime scan, CIS, compliance packs | Not claimed | Falco is the OSS candidate from the guide §4.9; legal mapping stays #309 |
-| Production | Access control | Function-level RBAC | Object-level checks (SR-11) |
+| Production | Access control | Function-level RBAC | Server-side module grants (ADR-029 W2) |
 | Production | Alerts and review | Login alerts, local Alertmanager | External paging is an owner decision (#1465) |
 
 ## 6. Operations, monitoring, and the dashboard

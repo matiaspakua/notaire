@@ -36,7 +36,7 @@ already in the tree. No exploitation procedure is specified here.
 | ID | Class | Property | Control in tree | Status |
 |----|-------|----------|-----------------|--------|
 | AT-1 | Credential abuse | Spoofing | BCrypt, lockout, JWT validation | Partial (SR-02; SR-01 mitigated by #1634) |
-| AT-2 | IDOR / object access | Elevation | Authenticated route only, except admin paths | Open (SR-11) |
+| AT-2 | IDOR / object access | Elevation | Authenticated route only, except admin paths; tenants are isolated by deployment (ADR-029) | Mitigated (cross-tenant); accepted (intra-tenant, SR-11) |
 | AT-3 | Injection | Tampering | JPA parameters | Mitigated — [SQL-INJECTION-PREVENTION.md](SQL-INJECTION-PREVENTION.md) |
 | AT-4 | XSS | Tampering / disclosure | Production CSP nonce, no `unsafe-eval` (#1051) | Partial — encoding still required on every render |
 | AT-5 | Cookie and session theft | Spoofing | HttpOnly, SameSite, Secure in production; logout revocation | Partial (SR-12) |
@@ -49,7 +49,7 @@ already in the tree. No exploitation procedure is specified here.
 
 | ID | Asset | Boundary | Threat | Impact | Likelihood | Mitigation | Verification | Residual |
 |----|-------|----------|--------|--------|------------|------------|--------------|----------|
-| SR-11 | Person, Deed | API | Authenticated user reads or changes another client's record by changing an id (IDOR) | High | Medium | Function-level RBAC only. Object ownership is not checked | No object-level test yet. Gap is explicit | Open |
+| SR-11 | Person, Deed | API | Authenticated user reads or changes another client's record by changing an id (IDOR) | High | Medium | Single tenant per notary (ADR-029): no two notaries share a database or signing secret, so cross-notary access cannot happen. Inside a tenant the office shares its files; access is role-based | Isolation checklist (ADR-029 W3); module RBAC enforcement pending (W1, W2) | Cross-tenant: Mitigated by architecture. Intra-tenant: Accepted by design |
 | SR-12 | Session | Browser → BFF | Stolen JWT from script-readable storage, or a long-lived Bearer token | High | Low | HttpOnly cookie for the browser (#1051). API clients still receive a token in the login JSON | `frontend` security-header tests; auth guide | Partial |
 | SR-13 | Build | CI → registry | Vulnerable dependency or base image is published | High | Medium | Trivy report, Dependabot, pinned images, cosign SBOM | `security/tests/test_image_pins_and_dependabot.py` | Partial — Trivy does not fail CI |
 | SR-14 | Repository | Developer → git | Private key or token committed | High | Low | `python3 security/scan_secrets.py` fails the security job | `security/tests/test_security_policy.py` | Partial — push protection is outside git |
@@ -58,8 +58,8 @@ already in the tree. No exploitation procedure is specified here.
 
 `SR-06` in the auth model is **Partial**, not open: `hasRole(ADMIN)` is
 enforced for the paths listed in the
-[API authentication guide](API-AUTHENTICATION-GUIDE.md). `SR-11` is the
-remaining object-level gap that `SR-06` used to describe too broadly.
+[API authentication guide](API-AUTHENTICATION-GUIDE.md). `SR-11` records the
+object-level question that `SR-06` used to describe too broadly; ADR-029 closes it by tenancy model.
 
 ## LINDDUN
 
