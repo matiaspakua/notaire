@@ -1,8 +1,11 @@
 # continuous-publication Specification
 
 ## Purpose
+
 TBD - created by archiving change chore-1681-continuous-publication-rule. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: Progress is published to the branch and the issue
 
 The publish helper MUST push the current branch, confirm the remote head equals the local head, and comment on the issue with the branch, last commit and stage.
@@ -30,4 +33,3 @@ The Constitution, the Agent Card and the operational rules MUST state the rule.
 
 - **WHEN** the four documents are read
 - **THEN** each mentions publishing the branch immediately and commenting on the issue at each stage
-

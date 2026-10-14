@@ -28,6 +28,7 @@ An agent that stops suddenly loses everything that only exists locally, and the 
 ## Capabilities
 
 ### New Capabilities
+
 - `continuous-publication`: the push-and-comment rule that keeps GitHub the source of truth for resuming work.
 
 ### Modified Capabilities
