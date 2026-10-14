@@ -178,7 +178,7 @@ public class PersonController {
                 });
     }
 
-    @AuditPersonalDataRead
+    @AuditPersonalDataRead(aggregated = true)
     @GetMapping
     @Operation(summary = "Get people, one page at a time (default 20, sorted by id)")
     @Transactional(readOnly = true)
