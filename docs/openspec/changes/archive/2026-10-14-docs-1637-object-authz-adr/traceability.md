@@ -35,8 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| the ADR is indexed | docs-tests | pending |
-| the ADR states the open question | docs-tests | pending |
+| the ADR is indexed | docs-tests | passing |
+| the ADR states the open question | docs-tests | passing |
 
 ## Permanent documentation updated
 
