@@ -35,8 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| buttons are clicked without error | dashboard-pages-render | pending |
-| the floors follow the measurement | dashboard-pages-render | pending |
+| buttons are clicked without error | dashboard-pages-render | passing |
+| the floors follow the measurement | dashboard-pages-render | passing |
 
 ## Permanent documentation updated
 
