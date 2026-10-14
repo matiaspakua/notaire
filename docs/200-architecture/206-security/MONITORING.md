@@ -62,6 +62,6 @@ model. That is the guide §3.7 template, kept short on purpose.
 ## What this does not monitor
 
 - Read access to entities other than `Person`; `Person` reads are audited (SR-08, #1635) but not exported as a metric.
-- Object-level authorization failures, until those checks exist (SR-11).
+- Module-permission denials, once server-side grants are enforced (ADR-029 W2).
 - Container syscalls (Falco is a later candidate).
 - General API rate-limit breaches (#280).
