@@ -31,6 +31,7 @@ FolioTypeController injects two repositories, uses the legacy entity's DTO conve
 ## Capabilities
 
 ### New Capabilities
+
 - `folio-type-hexagon`: the folio type catalog behind ports and adapters.
 
 ### Modified Capabilities

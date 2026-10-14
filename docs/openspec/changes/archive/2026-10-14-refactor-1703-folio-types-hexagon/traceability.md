@@ -8,7 +8,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -35,11 +35,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| read search and in-use | FolioTypeApiCharacterizationTest | pending |
-| a type used by folios is locked | FolioTypeApiCharacterizationTest | pending |
-| stale version | FolioTypeApiCharacterizationTest | pending |
-| use cases without Spring | FolioTypeApiCharacterizationTest | pending |
-| architecture baseline shrinks | FolioTypeApiCharacterizationTest | pending |
+| read search and in-use | FolioTypeApiCharacterizationTest | passing |
+| a type used by folios is locked | FolioTypeApiCharacterizationTest | passing |
+| stale version | FolioTypeApiCharacterizationTest | passing |
+| use cases without Spring | FolioTypeApiCharacterizationTest | passing |
+| architecture baseline shrinks | FolioTypeApiCharacterizationTest | passing |
 
 ## Permanent documentation updated
 
