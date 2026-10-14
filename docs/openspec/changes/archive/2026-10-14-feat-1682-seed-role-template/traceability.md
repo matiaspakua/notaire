@@ -35,10 +35,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| fresh database | RoleTemplateMigrationIntegrationTest | pending |
-| seeded admin is an Administrator | RoleTemplateMigrationIntegrationTest | pending |
-| existing role keeps its grants | RoleTemplateMigrationIntegrationTest | pending |
-| other template roles are still seeded | RoleTemplateMigrationIntegrationTest | pending |
+| fresh database | RoleTemplateMigrationIntegrationTest | passing |
+| seeded admin is an Administrator | RoleTemplateMigrationIntegrationTest | passing |
+| existing role keeps its grants | RoleTemplateMigrationIntegrationTest | passing |
+| other template roles are still seeded | RoleTemplateMigrationIntegrationTest | passing |
 
 ## Permanent documentation updated
 
