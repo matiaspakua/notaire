@@ -35,10 +35,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| repeated list reads inside the window write one row | AuditPersonalDataReadTest | pending |
-| a list read after the window writes a new row | AuditPersonalDataReadTest | pending |
-| another user is not suppressed | AuditPersonalDataReadTest | pending |
-| searches and single reads are never aggregated | AuditPersonalDataReadTest | pending |
+| repeated list reads inside the window write one row | AuditPersonalDataReadTest | passing |
+| a list read after the window writes a new row | AuditPersonalDataReadTest | passing |
+| another user is not suppressed | AuditPersonalDataReadTest | passing |
+| searches and single reads are never aggregated | AuditPersonalDataReadTest | passing |
 
 ## Permanent documentation updated
 
