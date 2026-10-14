@@ -31,10 +31,10 @@ export default defineConfig({
       // Statements 61.34% / Branches 54.39% / Functions 51.51% / Lines 62.34%.
       // Floors sit ~2pp below measured coverage for headroom.
       thresholds: {
-        statements: 59,
-        branches: 52,
-        functions: 49,
-        lines: 60,
+        statements: 62,
+        branches: 55,
+        functions: 57,
+        lines: 63,
       },
     },
   },
