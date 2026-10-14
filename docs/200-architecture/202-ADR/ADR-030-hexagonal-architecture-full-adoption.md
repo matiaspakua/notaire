@@ -142,6 +142,23 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   - The HTTP error mapping of a failed create (`ErrorResponses.createFailed`) stays in the controller for now;
     removing the try/catch is the separate #579 work.
 
+- **Slice 3, folio types (#1703):** the first catalog with an edit lock and optimistic locking.
+  - Domain exceptions can share a base class (`FolioTypeException`) so the controller's remaining ad-hoc catch can
+    let them through with one `catch`, until #579 removes the catches.
+  - Optimistic locking moved into the use case as an explicit version comparison. The order of the checks
+    (not found, then locked, then stale version) is part of the contract and is pinned by tests.
+  - A "referenced" failure (the store refused a delete) is a subtype of "in use", so the advice can answer it with
+    its own legacy plain-text body while a generic in-use answers the `{"error": …}` body.
+  - The name rule is "not null", not "not blank": that is what the database column enforced, and tightening it
+    would change behaviour. Tightening is a separate decision.
+  - Tests that built the controller with mocked repositories were replaced by tests over the ports; the leak
+    test (SQL errors never reach the client) was kept and rewritten, because that guarantee is worth keeping.
+  - The same shape (search, in-use, locked when in use, delete guard) now exists twice (identification types
+    and folio types) and appears again in document type and management status; extract the shared rule after
+    the fourth, not before.
+  - Lesson on process: read build exit codes and fresh log summaries, not `surefire-reports`, which keeps stale
+    files from earlier runs when test compilation fails.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers
