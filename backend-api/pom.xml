@@ -15,6 +15,7 @@
 
     <properties>
         <skipSpotBugs>true</skipSpotBugs>
+        <archunit.version>1.5.1</archunit.version>
         <sonar.projectKey>notaire-backend</sonar.projectKey>
         <sonar.projectName>Notaire Backend</sonar.projectName>
         <sonar.sources>src/main/java,src/main/resources</sonar.sources>
@@ -137,6 +138,12 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5</artifactId>
+            <version>${archunit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
