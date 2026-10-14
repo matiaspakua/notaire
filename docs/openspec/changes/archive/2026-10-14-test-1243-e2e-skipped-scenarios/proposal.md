@@ -29,6 +29,7 @@ Seven Playwright scenarios are unconditional test.skip placeholders citing missi
 ## Capabilities
 
 ### New Capabilities
+
 - `e2e-skip-hygiene`: the inventory of intentionally skipped E2E scenarios.
 
 ### Modified Capabilities

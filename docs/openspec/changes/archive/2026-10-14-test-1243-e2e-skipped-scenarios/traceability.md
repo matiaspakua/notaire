@@ -8,7 +8,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| searches run | test_e2e_reliability | pending |
-| template action runs | test_e2e_reliability | pending |
-| inventory matches the sources | test_e2e_reliability | pending |
+| searches run | test_e2e_reliability | passing |
+| template action runs | test_e2e_reliability | passing |
+| inventory matches the sources | test_e2e_reliability | passing |
 
 ## Permanent documentation updated
 
