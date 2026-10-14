@@ -8,7 +8,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -35,11 +35,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| not found answers are empty 404 | IdentificationTypeApiCharacterizationTest | pending |
-| conflicts keep their reason | IdentificationTypeApiCharacterizationTest | pending |
-| unique name | IdentificationTypeApiCharacterizationTest | pending |
-| in use | IdentificationTypeApiCharacterizationTest | pending |
-| architecture baseline shrinks | IdentificationTypeApiCharacterizationTest | pending |
+| not found answers are empty 404 | IdentificationTypeApiCharacterizationTest | passing |
+| conflicts keep their reason | IdentificationTypeApiCharacterizationTest | passing |
+| unique name | IdentificationTypeApiCharacterizationTest | passing |
+| in use | IdentificationTypeApiCharacterizationTest | passing |
+| architecture baseline shrinks | IdentificationTypeApiCharacterizationTest | passing |
 
 ## Permanent documentation updated
 

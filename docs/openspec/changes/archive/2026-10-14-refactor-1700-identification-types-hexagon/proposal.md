@@ -31,6 +31,7 @@ IdentificationTypeController injects two repositories, imports the JPA entity an
 ## Capabilities
 
 ### New Capabilities
+
 - `identification-type-hexagon`: the identification type catalog behind ports and adapters.
 
 ### Modified Capabilities
