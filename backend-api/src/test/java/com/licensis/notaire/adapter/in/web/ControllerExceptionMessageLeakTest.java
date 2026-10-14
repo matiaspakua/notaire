@@ -6,12 +6,11 @@ import com.licensis.notaire.adapter.in.web.folio.FolioTypeController;
 import com.licensis.notaire.adapter.in.web.workflow.WorkflowDefinitionController;
 import com.licensis.notaire.application.usecase.concept.ConceptService;
 import com.licensis.notaire.business.DocumentType;
-import com.licensis.notaire.business.FolioType;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.repository.BudgetTemplateRepository;
 import com.licensis.notaire.repository.DocumentTypeRepository;
-import com.licensis.notaire.repository.FolioRepository;
-import com.licensis.notaire.repository.FolioTypeRepository;
+import com.licensis.notaire.application.port.in.folio.ManageFolioTypesUseCase;
+import com.licensis.notaire.application.port.in.folio.QueryFolioTypesUseCase;
 import com.licensis.notaire.repository.ProcedureTemplateRepository;
 import com.licensis.notaire.repository.SubmittedDocumentRepository;
 import com.licensis.notaire.repository.WorkflowDefinitionRepository;
@@ -36,6 +35,8 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -67,9 +68,9 @@ class ControllerExceptionMessageLeakTest {
     @Test
     @DisplayName("POST /folio-types keeps 409 but no longer echoes the SQL error")
     void folioTypeCreate() throws Exception {
-        FolioTypeRepository repo = mock(FolioTypeRepository.class);
-        when(repo.save(any())).thenThrow(new DataIntegrityViolationException(SQL_LEAK));
-        MockMvc mvc = standaloneSetup(new FolioTypeController(repo, mock(FolioRepository.class))).build();
+        ManageFolioTypesUseCase manage = mock(ManageFolioTypesUseCase.class);
+        when(manage.create(any())).thenThrow(new DataIntegrityViolationException(SQL_LEAK));
+        MockMvc mvc = standaloneSetup(new FolioTypeController(mock(QueryFolioTypesUseCase.class), manage)).build();
 
         MvcResult result = mvc.perform(post("/api/v1/folio-types").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":null}"))
@@ -83,12 +84,9 @@ class ControllerExceptionMessageLeakTest {
     @Test
     @DisplayName("PUT /folio-types/{id} keeps 500 but no longer echoes the SQL error")
     void folioTypeUpdate() throws Exception {
-        FolioTypeRepository repo = mock(FolioTypeRepository.class);
-        FolioRepository folios = mock(FolioRepository.class);
-        when(repo.findById(1)).thenReturn(Optional.of(new FolioType()));
-        when(folios.findByFkIdFolioTypeIdFolioType(1)).thenReturn(List.of());
-        when(repo.save(any())).thenThrow(new DataIntegrityViolationException(SQL_LEAK));
-        MockMvc mvc = standaloneSetup(new FolioTypeController(repo, folios)).build();
+        ManageFolioTypesUseCase manage = mock(ManageFolioTypesUseCase.class);
+        doThrow(new DataIntegrityViolationException(SQL_LEAK)).when(manage).update(eq(1), any());
+        MockMvc mvc = standaloneSetup(new FolioTypeController(mock(QueryFolioTypesUseCase.class), manage)).build();
 
         MvcResult result = mvc.perform(put("/api/v1/folio-types/1").contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
