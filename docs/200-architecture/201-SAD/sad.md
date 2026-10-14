@@ -52,7 +52,7 @@ The system originated as a monolithic Java Swing desktop application with direct
 |----------|-------------|----------|
 | 1 | **Maintainability** | New features delivered in < 6 months; developers onboard in < 2 weeks |
 | 2 | **Testability** | ≥ 80% code coverage; all changes validated by unit, integration, and E2E tests |
-| 3 | **Security** | JWT authentication, `ROLE_ADMIN` on admin paths and admin writes, full audit trail for legal compliance. Object-level checks remain open (SR-11) |
+| 3 | **Security** | JWT authentication, `ROLE_ADMIN` on admin paths and admin writes, full audit trail for legal compliance. Tenants are isolated by deployment; module grants are not yet enforced server-side (ADR-029) |
 | 4 | **Scalability** | Backend scales horizontally via stateless containers |
 | 5 | **Observability** | Real-time metrics, structured logs, and alerts via LPG stack |
 
@@ -98,7 +98,7 @@ The system originated as a monolithic Java Swing desktop application with direct
 |-----------|-------------|
 | Audit trail | All CRUD operations must be recorded for legal compliance |
 | Data retention | Notarial records must be preserved indefinitely |
-| Access control | Authenticated access to sensitive notarial data. `ROLE_ADMIN` guards admin paths and admin writes; object-level checks are still open (SR-11) |
+| Access control | Authenticated access to sensitive notarial data. `ROLE_ADMIN` guards admin paths and admin writes; each installation serves one notary (ADR-029); module grants are not yet enforced server-side |
 
 ---
 
@@ -848,6 +848,17 @@ Loki --> Graf : depends_on
 @enduml
 ```
 
+### 7.5 Tenancy and Isolation
+
+The system is **single tenant per notary** (ADR-029). Every installation runs the same versioned product
+release (backend, frontend, data model; ADR-028) but owns its data: database, `JWT_SECRET`, actuator
+credentials, application admin account, backups and observability stack. Installations never share a
+database or a signing secret, so a token or an id from one notary is meaningless in another installation.
+
+The standard roles and permissions are part of database initialization (Flyway, insert-if-absent), so a new
+installation starts with a working default configuration that the tenant can later customize. Upgrades never
+overwrite a tenant's changes.
+
 ---
 
 ## 8. Cross-cutting Concepts
@@ -870,11 +881,16 @@ Loki --> Graf : depends_on
 **Authorization:**
 
 - Every `/api/**` request must be authenticated (valid JWT), except login and logout.
-- `UserAuthorityResolver` grants `ROLE_ADMIN` to active users of type Administrador,
-  Admin, or Escribano, and `ROLE_USER` to other active users. `SecurityAndCorsConfig`
-  requires `ROLE_ADMIN` for user, role, and audit-log paths and for admin catalog
-  writes (#559). Other business records are reachable by any authenticated user
-  (object-level gap SR-11).
+- `UserAuthorityResolver` grants `ROLE_ADMIN` to active users of type Administrador or Admin,
+  `ROLE_NOTARY` to type Escribano (#1638) and `ROLE_USER` to other active users.
+  `SecurityAndCorsConfig` requires `ROLE_ADMIN` for user, role, and audit-log paths and for admin
+  catalog writes (#559).
+- Tenancy (ADR-029): one installation serves one notary; the office shares its files, so there is no
+  per-record ownership check. Cross-notary isolation comes from the deployment (section 7.5).
+- Roles and their module grants (`roles`, `role_modules`) are the customizable permission model: a
+  standard template is seeded at database initialization and each tenant may change it. Server-side
+  enforcement of the grants is planned work (ADR-029 W1, W2); until then module access is not
+  restricted beyond the checks above.
 - Extending enforcement means adding a path in `SecurityAndCorsConfig` and a case
   in `RbacIntegrationTest` (see [API Authentication Guide](../206-security/API-AUTHENTICATION-GUIDE.md#extending-rbac)).
 
