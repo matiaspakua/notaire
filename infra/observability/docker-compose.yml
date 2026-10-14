@@ -105,6 +105,9 @@ services:
       - ./prometheus/alert-rules.yml:/etc/prometheus/alert-rules.yml
       - ./prometheus/alert-rules-stack.yml:/etc/prometheus/alert-rules-stack.yml
       - prometheus_data:/prometheus
+    secrets:
+      - actuator_user
+      - actuator_password
     ports:
       - "9090:9090"
     command:
@@ -318,6 +321,13 @@ configs:
         index index.html;
         location /reports/ { autoindex on; }
       }
+
+secrets:
+  # Prometheus does not expand env vars in its config; it reads these files instead (#1657).
+  actuator_user:
+    environment: ACTUATOR_USER
+  actuator_password:
+    environment: ACTUATOR_PASSWORD
 
 networks:
   devsecops-network:
