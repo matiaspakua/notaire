@@ -1,14 +1,8 @@
 package com.licensis.notaire.adapter.in.web.folio;
 
-import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
-import com.licensis.notaire.dto.DtoFolioType;
-import com.licensis.notaire.business.FolioType;
-import com.licensis.notaire.repository.FolioRepository;
-import com.licensis.notaire.repository.FolioTypeRepository;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,54 +14,72 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
+import com.licensis.notaire.application.port.in.folio.ManageFolioTypesUseCase;
+import com.licensis.notaire.application.port.in.folio.ManageFolioTypesUseCase.SaveFolioTypeCommand;
+import com.licensis.notaire.application.port.in.folio.QueryFolioTypesUseCase;
+import com.licensis.notaire.domain.folio.FolioType;
+import com.licensis.notaire.domain.folio.FolioTypeException;
+import com.licensis.notaire.dto.DtoFolioType;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+/**
+ * Folio type catalog. Calls the inbound ports and maps to the wire DTO; the rules live in the use cases and the
+ * domain exceptions are mapped by {@link FolioTypeExceptionHandler} (slice 3 of the hexagon, issue #1703).
+ *
+ * <p>The try/catch blocks around create and update keep the persistence-failure mapping of
+ * {@link ErrorResponses} until the ad-hoc catches are removed (issue #579); domain exceptions pass through.
+ */
 @RestController
 @RequestMapping("/api/v1/folio-types")
 @Tag(name = "Folio type", description = "API for folio types")
 public class FolioTypeController {
 
-    private final FolioTypeRepository repository;
-    private final FolioRepository folioRepository;
+    private final QueryFolioTypesUseCase query;
+    private final ManageFolioTypesUseCase manage;
 
-    public FolioTypeController(FolioTypeRepository repository, FolioRepository folioRepository) {
-        this.repository = repository;
-        this.folioRepository = folioRepository;
+    public FolioTypeController(QueryFolioTypesUseCase query, ManageFolioTypesUseCase manage) {
+        this.query = query;
+        this.manage = manage;
+    }
+
+    private DtoFolioType toDto(FolioType type) {
+        DtoFolioType dto = new DtoFolioType();
+        dto.setIdFolioType(type.id());
+        dto.setName(type.name());
+        dto.setNotes(type.notes());
+        dto.setEnabled(type.enabled());
+        dto.setIsAuxiliary(type.auxiliary());
+        dto.setVersion(type.version());
+        return dto;
+    }
+
+    private SaveFolioTypeCommand toCommand(DtoFolioType dto) {
+        int version = dto.getVersion() == null ? 0 : dto.getVersion();
+        return new SaveFolioTypeCommand(dto.getName(), dto.getNotes(), dto.isEnabled(), dto.isIsAuxiliary(), version);
     }
 
     @GetMapping
     @Operation(summary = "Get all folio types")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoFolioType>> getAll() {
-        List<DtoFolioType> result = repository.findAll().stream()
-                .map(FolioType::getDto)
-                .toList();
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(query.findAll().stream().map(this::toDto).toList());
     }
 
     @GetMapping("/search")
     @Operation(summary = "Search folio types by name")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoFolioType>> search(@RequestParam String name) {
-        List<DtoFolioType> result = repository.findByNameContaining(name).stream()
-                .map(FolioType::getDto)
-                .toList();
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(query.searchByName(name).stream().map(this::toDto).toList());
     }
 
     @GetMapping("/{id}/in-use")
     @Operation(summary = "Check whether a folio type is in use")
-    @Transactional(readOnly = true)
     public ResponseEntity<Map<String, Boolean>> isInUse(@PathVariable Integer id) {
-        if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        boolean inUse = !folioRepository.findByFkIdFolioTypeIdFolioType(id).isEmpty();
-        return ResponseEntity.ok(Map.of("inUse", inUse));
+        return ResponseEntity.ok(Map.of("inUse", query.isInUse(id)));
     }
 
     @ApiResponses({
@@ -76,11 +88,8 @@ public class FolioTypeController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Get folio type by ID")
-    @Transactional(readOnly = true)
     public ResponseEntity<DtoFolioType> getById(@PathVariable Integer id) {
-        return repository.findById(id)
-                .map(e -> ResponseEntity.ok(e.getDto()))
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(toDto(query.getById(id)));
     }
 
     @ApiResponses({
@@ -92,10 +101,9 @@ public class FolioTypeController {
     @Operation(summary = "Create folio type")
     public ResponseEntity<Object> create(@RequestBody DtoFolioType dto) {
         try {
-            FolioType entity = new FolioType();
-            entity.setAttributes(dto);
-            entity = repository.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
+            return ResponseEntity.status(HttpStatus.CREATED).body(toDto(manage.create(toCommand(dto))));
+        } catch (FolioTypeException domainFailure) {
+            throw domainFailure;
         } catch (Exception e) {
             return ErrorResponses.createFailed(e);
         }
@@ -110,20 +118,11 @@ public class FolioTypeController {
     @PutMapping("/{id}")
     @Operation(summary = "Update folio type")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoFolioType dto) {
-        Optional<FolioType> existing = repository.findById(id);
-        if (existing.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        if (!folioRepository.findByFkIdFolioTypeIdFolioType(id).isEmpty()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "This folio type is in use and cannot be modified. Create a new one."));
-        }
         try {
-            FolioType entity = existing.get();
-            dto.setIdFolioType(id);
-            entity.setAttributes(dto);
-            repository.save(entity);
+            manage.update(id, toCommand(dto));
             return ResponseEntity.ok().build();
+        } catch (FolioTypeException domainFailure) {
+            throw domainFailure;
         } catch (Exception e) {
             return ErrorResponses.updateFailed(e);
         }
@@ -136,19 +135,7 @@ public class FolioTypeController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete folio type")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
-        if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        if (!folioRepository.findByFkIdFolioTypeIdFolioType(id).isEmpty()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "Cannot delete: the folio type is in use by folios."));
-        }
-        try {
-            repository.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Cannot delete: the folio type is referenced by other records.");
-        }
+        manage.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

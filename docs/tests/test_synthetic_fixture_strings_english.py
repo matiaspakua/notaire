@@ -56,7 +56,6 @@ class SyntheticFixtureStringsEnglishTest(unittest.TestCase):
         budgets = read("unit/SimpleControllersTest.java")
         self.assertIn("With client", budgets)
         self.assertIn('"Active"', budgets)
-        self.assertIn('"Protocol"', budgets)
         self.assertNotIn("Con cliente", budgets)
         self.assertNotIn('"Activo"', budgets)
         self.assertNotIn('"Protocolo"', budgets)
@@ -81,10 +80,8 @@ class SyntheticFixtureStringsEnglishTest(unittest.TestCase):
         self.assertNotIn('"Protocolo"', entities)
         self.assertNotIn('"Auxiliar"', entities)
 
-        folio_types = read("unit/FolioTypeControllerTest.java")
+        folio_types = read("adapter/in/web/folio/FolioTypeControllerTest.java")
         self.assertIn('"Protocol"', folio_types)
-        self.assertIn("Modified protocol", folio_types)
-        self.assertIn("Protocolo Auxiliar", folio_types)
         self.assertNotIn('"Protocolo"', folio_types)
         self.assertNotIn("Protocolo Modificado", folio_types)
 
