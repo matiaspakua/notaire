@@ -57,11 +57,13 @@ describe("frontend import boundaries (ADR-030)", () => {
 describe("the shrink-only baseline", () => {
   const file = resolve(root, "eslint-suppressions.json");
 
-  it("exists and only suppresses the boundary rules", () => {
+  it("exists, is not empty and only suppresses the boundary rules", () => {
     expect(existsSync(file)).toBe(true);
     const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, Record<string, unknown>>;
     const rules = new Set(Object.values(entries).flatMap((byRule) => Object.keys(byRule)));
-    expect([...rules].sort()).toEqual(["no-restricted-globals", "no-restricted-imports"]);
+    const boundaryRules = new Set(["no-restricted-globals", "no-restricted-imports"]);
+    expect([...rules].filter((rule) => !boundaryRules.has(rule))).toEqual([]);
+    expect(rules.size).toBeGreaterThan(0);
   });
 
   it("lists only files that still exist", () => {
