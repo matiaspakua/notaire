@@ -35,11 +35,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| scrape config uses credential files | test_prometheus_actuator_credentials | pending |
-| files come from the environment | test_prometheus_actuator_credentials | pending |
-| placeholder in both templates | test_prometheus_actuator_credentials | pending |
-| placeholder replaced | test_prometheus_actuator_credentials | pending |
-| real value kept | test_prometheus_actuator_credentials | pending |
+| scrape config uses credential files | test_prometheus_actuator_credentials | passing |
+| files come from the environment | test_prometheus_actuator_credentials | passing |
+| placeholder in both templates | test_prometheus_actuator_credentials | passing |
+| placeholder replaced | test_prometheus_actuator_credentials | passing |
+| real value kept | test_prometheus_actuator_credentials | passing |
 
 ## Permanent documentation updated
 
