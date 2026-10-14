@@ -127,11 +127,13 @@ class PropertyApiCharacterizationTest {
     }
 
     @Test
-    @DisplayName("KNOWN DEFECT, kept by the refactor: creating without an address answers 500, not 400")
-    void createWithoutAddressAnswers500() throws Exception {
+    @DisplayName("creating without an address answers 400 with the constraint message (was 500 before #1702)")
+    void createWithoutAddressAnswers400() throws Exception {
         mvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON)
                 .content("{\"cadastralDesignation\": \"NOADDR-" + suffix + "\"}"))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status", is(400)))
+                .andExpect(jsonPath("$.message", is("The submitted data violates a database constraint")));
     }
 
     @Test
