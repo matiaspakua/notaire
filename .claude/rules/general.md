@@ -10,6 +10,8 @@
 
 5. After creating the branch and starting work, move the GitHub issue to **IN PROGRESS**.
 
+5.1. **Continuous publication (mandatory).** Push the branch immediately after creating it. After each group of atomic commits (spec, failing tests, implementation, docs) push and comment on the issue with `bash workspace/sdlc/publish-progress.sh <issue> "<stage; what remains>"`. GitHub always holds the current state so another person or agent can resume.
+
 6. Write clear and concise commit messages following Conventional Commits format (`<type>(<scope>): <description>`, ending with `Closes #<issue-number>`).
 
 6.1. **Commits must be atomic — no exceptions.** One logical change per commit: a commit that mixes unrelated concerns (e.g. a rule change and an unrelated data fix, or two independent features) must be split. This keeps `git log`, `git bisect`, and `git revert` useful, and makes PR review tractable. Only the commit(s) that actually close the issue carry `Closes #<issue-number>`; a commit that is one atomic step of a larger issue references the issue number without `Closes`.
