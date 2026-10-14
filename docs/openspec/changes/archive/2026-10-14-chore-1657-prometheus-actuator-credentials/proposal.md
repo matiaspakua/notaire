@@ -30,6 +30,7 @@ prometheus.yml hardcodes basic_auth admin/admin for the backend actuator scrape 
 ## Capabilities
 
 ### New Capabilities
+
 - `prometheus-actuator-credentials`: the dev Prometheus actuator scrape credential comes from the environment.
 
 ### Modified Capabilities

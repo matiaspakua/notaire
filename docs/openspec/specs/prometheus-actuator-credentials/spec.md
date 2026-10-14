@@ -1,8 +1,11 @@
 # prometheus-actuator-credentials Specification
 
 ## Purpose
+
 TBD - created by archiving change chore-1657-prometheus-actuator-credentials. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: Prometheus has no hardcoded actuator credential
 
 The Prometheus configuration MUST read the actuator scrape credential from files, and the repository MUST NOT contain a literal actuator password in it.
@@ -39,4 +42,3 @@ The bootstrap helper MUST replace a missing or placeholder ACTUATOR_PASSWORD wit
 
 - **WHEN** the helper runs on an env file with a custom ACTUATOR_PASSWORD
 - **THEN** the file is unchanged
-
