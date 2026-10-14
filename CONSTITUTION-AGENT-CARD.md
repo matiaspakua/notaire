@@ -27,6 +27,10 @@
    blocked⇒`blocked` label (no Blocked column). Validate:
    `python3 workspace/sdlc/check-board-status-label-coherence.py` (skips without `gh` auth).
 
+12. **Continuous publication (#1681):** push the branch immediately after creating it; after each
+   group of atomic commits push and comment on the Issue (stage, last commit, what remains) with
+   `bash workspace/sdlc/publish-progress.sh <issue> "<stage>"`. GitHub always holds the current state.
+
 ## Workflow (abbrev)
 
 Issue → OpenSpec → branch → TDD → implement → refactor → all tests → commit → push →
