@@ -11,10 +11,10 @@ import { describe, expect, it } from "vitest";
  * smoke tests: Statements 61.34% / Branches 54.39% / Functions 51.51% / Lines 62.34%.
  */
 export const DOCUMENTED_VITEST_COVERAGE_FLOORS = {
-  statements: 69,
-  branches: 62,
-  functions: 65,
-  lines: 70,
+  statements: 70,
+  branches: 63,
+  functions: 66,
+  lines: 71,
 } as const;
 
 function readConfiguredThresholds(): Record<keyof typeof DOCUMENTED_VITEST_COVERAGE_FLOORS, number> {
