@@ -61,7 +61,7 @@ spotless format                 Code Lint / Format Check         pr-validation.y
 checkstyle                      Code Lint / Checkstyle           pr-validation.yml  (warn, CI uses || true)
 dependency analysis             Dependency Analysis              pr-validation.yml  (warn, CI uses || true)
 spotbugs                        Code Quality / SpotBugs          ci.yml             (warn, report-only)
-trivy filesystem scan           Security Scan                    ci.yml             (warn, report-only)
+trivy filesystem scan           Security Scan                    ci.yml             (BLOCKING in CI on CRITICAL/HIGH; warn locally)
 backend compile                 Build & Compile / Quick Build    ci.yml, pr-validation.yml
 backend unit+integration+cov    Unit Tests, Integration Tests,   ci.yml
                                 Coverage Gate (mvn verify)
@@ -243,7 +243,7 @@ if [ "$MODE_FAST" = "0" ]; then
     run_warn "dependency analysis" mvn dependency:analyze -pl backend-api -am "${MVN_FLAGS[@]}"
     run_warn "spotbugs" mvn compile com.github.spotbugs:spotbugs-maven-plugin:spotbugs -pl backend-api -am -DskipSpotBugs=false "${MVN_FLAGS[@]}"
     if command -v trivy >/dev/null 2>&1; then
-        run_warn "trivy filesystem scan" trivy fs . --exit-code 0 --ignore-unfixed --quiet
+        run_warn "trivy filesystem scan" trivy fs . --severity CRITICAL,HIGH --exit-code 1 --ignore-unfixed --quiet
     else
         skip "trivy filesystem scan" "trivy not installed — CI WILL run this"
     fi

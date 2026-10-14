@@ -199,7 +199,7 @@ def assess_sca(repo: Path, trivy_bin: str | None, profile: str = "local") -> Cas
     if "aquasecurity/trivy-action" not in text:
         return _result(case, "FAIL", "ci.yml does not run trivy-action")
     if profile == "ci":
-        return _result(case, "PASS", "CI runs aquasecurity/trivy-action (report-only, SR-13)")
+        return _result(case, "PASS", "CI runs aquasecurity/trivy-action (blocking on CRITICAL/HIGH, SR-13)")
     if not trivy_bin:
         return _result(case, "FAIL", "trivy is not installed; run security/tools/ensure_local_tools.sh")
     try:
@@ -211,8 +211,10 @@ def assess_sca(repo: Path, trivy_bin: str | None, profile: str = "local") -> Cas
                 "--scanners",
                 "vuln",
                 "--ignore-unfixed",
+                "--severity",
+                "CRITICAL,HIGH",
                 "--exit-code",
-                "0",
+                "1",
                 "--quiet",
                 "--skip-dirs",
                 "security/.tools",
@@ -226,7 +228,7 @@ def assess_sca(repo: Path, trivy_bin: str | None, profile: str = "local") -> Cas
         return _result(case, "FAIL", f"trivy failed to start: {error.__class__.__name__}")
     if completed.returncode != 0:
         return _result(case, "FAIL", (completed.stderr or completed.stdout or "trivy failed").strip()[-500:])
-    return _result(case, "PASS", "trivy exited 0 (findings stay report-only until #282)")
+    return _result(case, "PASS", "trivy found no fixed CRITICAL/HIGH vulnerabilities")
 
 
 def assess_dast(repo: Path, base_url: str | None, skip: bool, profile: str) -> CaseResult:
