@@ -590,6 +590,13 @@ Mandatory:
 - No secrets in commits; `.env` is git-ignored.
 - Before pushing, run the local CI gates: `bash workspace/sdlc/preflight.sh`
   (enforced by the `pre-push` hook after `bash workspace/sdlc/install-git-hooks.sh`).
+- **Continuous publication (#1681):** work lives on GitHub, not only on a disk. Push
+  the branch **immediately** after creating it; after **each group of atomic commits**
+  (spec, failing tests, implementation, docs) push the commits **and** comment on the
+  Issue with the branch, last commit, stage reached and what remains. Use
+  `bash workspace/sdlc/publish-progress.sh <issue> "<stage; what remains>"`, which pushes,
+  verifies the remote head and posts the comment. If an agent stops suddenly, the remote
+  branch and the Issue comment are the only state another person or agent resumes from.
 
 ---
 
@@ -610,6 +617,9 @@ the full workflow in [section 5](#5-official-sdlc-workflow) and may **never**:
 
 An AI agent **must**:
 
+- ✅ **Continuous publication (§9, #1681):** push a new branch at once and, after every
+  group of atomic commits, push and comment on the Issue
+  (`bash workspace/sdlc/publish-progress.sh`); never leave a stage only on local disk
 - ✅ Read and follow this Constitution at the start of any task
 - ✅ Adapt to the existing project architecture and conventions (do not replace them)
 - ✅ Reference the existing rule files (`AGENTS.md`, `.claude/rules/*`) for operational detail

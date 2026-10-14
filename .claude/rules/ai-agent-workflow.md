@@ -27,6 +27,20 @@ CONSTITUTION §10.
 | 18 Archive in the PR | Archive the implemented OpenSpec change before merge (`multi_pr: true` if later PRs continue it); the checker fails otherwise | `cd docs && openspec archive <change> --yes` |
 | 22–24 Deploy, smoke test, close (**Gate 5**) | The Issue closes after merge, deploy and smoke test — not when the PR is opened | `cd.yml` |
 
+## Continuous publication (mandatory, #1681)
+
+Applies to every agent at every moment. GitHub must always hold the current state, so a sudden stop
+loses nothing and another person or agent resumes from the Issue.
+
+1. Created a branch → push it **immediately**: `git push -u origin <branch>`.
+2. After **each group of atomic commits** (spec, failing tests, implementation, docs) → push **and**
+   comment on the Issue: `bash workspace/sdlc/publish-progress.sh <issue> "<stage; what remains>"`.
+   It pushes, checks `git ls-remote` equals `HEAD`, and posts branch, last commit, stage and the
+   resume command. No comment is posted when the push is rejected.
+3. A stage that only exists locally is not done. If the pre-push preflight rejects a push, report it on
+   the Issue and fix the cause; never skip the hook (`PREFLIGHT_SKIP`, `--no-verify`) without the
+   Owner's approval.
+
 ## Before pushing
 
 Keep the branch conflict-free with `main`: `git fetch origin && git merge
