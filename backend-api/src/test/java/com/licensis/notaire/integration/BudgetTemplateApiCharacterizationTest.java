@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.business.Concept;
 import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.repository.ConceptRepository;
