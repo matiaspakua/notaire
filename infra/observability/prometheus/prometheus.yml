@@ -29,8 +29,8 @@ scrape_configs:
     scrape_timeout: 5s
     scheme: http
     basic_auth:
-      username: admin
-      password: admin
+      username_file: /run/secrets/actuator_user
+      password_file: /run/secrets/actuator_password
     static_configs:
       - targets: ['notary-backend:8080']
         labels:
