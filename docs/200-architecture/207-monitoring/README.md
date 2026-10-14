@@ -62,7 +62,11 @@ authoritative, up-to-date service list, ports, and credentials.
 **Metrics Collection:** Spring Boot Actuator with Micrometer
 
 - **Endpoint:** `http://localhost:8080/actuator/prometheus`
-- **Auth:** Basic Auth via `ACTUATOR_USER` / `ACTUATOR_PASSWORD` (set in `.env`)
+- **Auth:** Basic Auth via `ACTUATOR_USER` / `ACTUATOR_PASSWORD` (set in `.env`). Prometheus reads the same two values as
+  Compose secrets (`username_file` / `password_file` under `/run/secrets`), so no credential is committed in
+  `prometheus.yml` (#1657). `.env.example` ships a `change-me-actuator` placeholder; `start-infra.sh` and
+  `workspace/stack/start.sh` call `infra/scripts/ensure-actuator-credentials.sh`, which replaces a missing or
+  placeholder password with a random one and keeps any real value. Restart the backend after the value changes.
 - **Scrape Interval:** Every 10 seconds
 
 **Metrics Exposed:**
