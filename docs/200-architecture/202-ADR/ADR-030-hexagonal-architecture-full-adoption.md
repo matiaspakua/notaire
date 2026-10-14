@@ -1,0 +1,149 @@
+# ADR-030: Full Ports & Adapters architecture for backend and frontend
+
+**Status:** Accepted — Owner directive of 2026-10-14 (epic #1693, child #1694)  
+**Date:** 2026-10-14  
+**Deciders:** Owner (product), Engineering  
+**Related:** ADR-021 (pilot), ADR-002 (module structure), ADR-023 (REST naming), ADR-025/026, ADR-027 (Mermaid), ADR-029 (tenancy), #984, #993, #995, #1695, #1696  
+**Supersedes:** the scope limit of ADR-021 ("payment slice only"; "decide whether to extend") and the layered `api → service → repository` structure of ADR-002 for `backend-api`.
+
+## Context
+
+Notaire shall be an exemplary Ports & Adapters system: modular, extensible and generic. The Owner made this the
+top priority of the project (#1693).
+
+ADR-021 proved the pattern on the payment slice and left open whether to extend it. Waves #993 and #995 added
+ports for several domains. A measurement of `main` @ `3c1f99ce` (details and commands in #1693) shows the result
+is partial in the backend and absent in the frontend:
+
+- 38 web controllers: 25 use the application layer, 27 touch `repository` or `jpa` directly, only 6 are clean;
+  31 import JPA entities; 31 web classes carry `@Transactional`.
+- `application`: 81 of 108 files import JPA entities, 24 import Spring Data repositories. 41 of 60 port files
+  expose entities, so ports do not speak domain types.
+- `domain/` holds 7 pure files; the real model is `business/` with 38 `@Entity` classes, 34 of 49 files coupled
+  to Spring or Jackson. `jpa` (35 files), `repository` (37) and `service` (3) remain.
+- Frontend: 22 files under `app/` and 43 of 49 hooks import `api-client` directly; no ports, no domain module,
+  no composition root, no boundary lint.
+- Nothing enforces any boundary, so leaks grow back.
+
+## Decision
+
+Adopt **full Ports & Adapters in both tiers**, enforced by tests that can only ratchet toward zero, and reach it
+by strangler slices that keep the REST contract unchanged.
+
+### 1. Backend (`backend-api`, root package `com.licensis.notaire`)
+
+Dependencies point inward only: `adapter` → `application` → `domain`.
+
+| Package | Contents | May depend on |
+|---|---|---|
+| `domain.<context>` | Entities, value objects, domain services, domain exceptions. Plain Java. | JDK only |
+| `application.port.in.<context>` | Inbound ports: one interface per use case, plus command and result records. | `domain` |
+| `application.port.out.<context>` | Outbound ports: what the use cases need (repositories, gateways, clock, ids), in domain terms. | `domain` |
+| `application.usecase.<context>` | Use-case classes implementing inbound ports, using outbound ports. `@Service` and `@Transactional` only. | `domain`, ports |
+| `adapter.in.web.<context>` | Controllers, web DTOs, web mappers, request validation. Call inbound ports only. | inbound ports, `domain` types they map |
+| `adapter.out.persistence.<context>` | `<Name>JpaEntity`, `<Name>JpaRepository`, `<Name>Mapper`, `<Name>PersistenceAdapter` implementing outbound ports. | outbound ports, `domain` |
+| `adapter.out.<other>` | PDF, storage, notification and other infrastructure adapters. | outbound ports, `domain` |
+| `config` | Spring wiring, security configuration, OpenAPI. The composition root. | everything |
+
+Rules:
+
+1. **Controllers call inbound ports only.** No `repository`, `jpa`, `EntityManager`, entity or `@Transactional` in
+   an inbound adapter. Request validation (`@Valid`) and HTTP status mapping stay there.
+2. **Use cases own the transaction.** `@Transactional` on the use case. Use cases of one context call another
+   context only through its inbound ports, never its repositories.
+3. **Ports speak domain types.** A port never mentions a JPA entity, a Spring Data type or a web DTO.
+4. **Persistence entities live inside the adapter.** `domain.Person` is not a JPA class; `PersonJpaEntity` is, and
+   a mapper converts. Replacing JPA, or testing with an in-memory adapter, touches only `adapter.out.persistence`.
+5. **Domain exceptions carry no HTTP status.** The inbound adapter maps them (the global exception handler).
+   `NotaireException(int statusCode, …)` is a transport leak to be retired slice by slice.
+6. **Framework use in `application` is an allow-list:** `@Service` and `@Transactional` (kept from ADR-021 by the
+   Owner). Any other Spring, JPA, Hibernate or Jackson type is a violation.
+7. **Cross-cutting concerns are adapters.** Authentication filters and authority resolution are inbound
+   adapters; the audit aspect and observability are outbound/cross-cutting adapters. They never hold business
+   rules.
+8. **Legacy packages are closed.** `jpa`, `service`, the top-level `repository`, `business` (as model) and the
+   top-level `dto` receive no new dependents and are deleted when empty.
+
+### 2. Frontend (`frontend/src`)
+
+| Area | Contents | May import |
+|---|---|---|
+| `core/<context>/domain` | Types, value objects, pure rules and validation. No React, no `fetch`. | nothing outside `core` (plus `zod`) |
+| `core/<context>/application` | Use cases as functions or classes, and `ports.ts` with the interfaces they need. | `core` |
+| `adapters/http/<context>` | Implements the ports with `lib/api-client`; maps transport shapes to domain types. | `core`, `lib/api-client` |
+| `adapters/ui` (`app/`, `components/`, `hooks/`) | Pages, components and React Query hooks that call use cases. | `core/**/application`, `theme`, `store` |
+| `composition/` | Builds the use cases with the http adapters; exposed through one React provider. | everything |
+
+Rules:
+
+1. `app/`, `components/` and `hooks/` never import `lib/api-client` or call `fetch`.
+2. `core/**` never imports React, Next, `adapters/**` or `lib/**`.
+3. Hooks get use cases from the composition provider, so tests replace an adapter without module mocking.
+4. A backend contract change is absorbed by `adapters/http` mappers, not by pages.
+
+### 3. Enforcement (the refactor can only move forward)
+
+- **Backend:** ArchUnit `HexagonArchitectureTest` (#1695) with a shrink-only baseline. R1 enforces backend
+  rule 1; R2 enforces rules 3 and 6; R3 enforces the pure domain of rule 4; R4 and R5 keep the two adapter
+  families independent; R6 enforces rule 8. Rules 2, 5 and 7 are checked in review until a rule is added.
+- **Frontend:** import-boundary lint with a shrink-only baseline (#1696).
+- Each slice deletes its entries from the baselines; a new violation or a stale entry fails the build.
+- Still to add as slices land: a rule that the model is out of `business` and a no-cycles rule between
+  use-case slices (tracked on #1693).
+
+### 4. Migration method
+
+Strangler, one bounded context per slice, never a big bang. A slice is **done** only when all of these hold:
+
+1. Characterization tests of the current REST behaviour exist first and stay green (status codes and success
+   bodies unchanged; the OpenAPI diff is empty).
+2. The context has inbound ports, outbound ports and use cases; its controllers call ports only.
+3. Its model is in `domain.<context>`, pure; its persistence entities, repositories and mappers are in
+   `adapter.out.persistence.<context>`.
+4. The legacy classes of that context (`jpa`, `service`, `repository`, `business`) are deleted, not left behind.
+5. Its ArchUnit baseline entries are removed (`-Darchitecture.baseline=shrink`) and the frontend counterpart,
+   when the context has a UI, follows the same steps in `core` and `adapters`.
+6. The slice archives its OpenSpec change and updates the SAD only where the picture changed.
+
+Suggested order, from the measured data: (a) the 13 controllers that bypass the application layer entirely
+(workflow, catalogs such as folio, document type, identification type, management status, property, submitted
+document, budget template), (b) users and roles, together with #1683, (c) the 14 mixed controllers, (d) model
+extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
+
+## Options considered
+
+- **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers
+  or duplicate classes) and what most of the backend already approximates. Rejected: the domain stays coupled to
+  Hibernate and Jackson, the 41 entity-exposing ports stay, and it cannot serve as an exemplary reference.
+- **Strict hexagon (chosen).** Costs a mapper per aggregate and duplicate classes, and buys a pure domain,
+  replaceable persistence and tests without a database.
+- **Application layer with no framework annotations at all, Spring only in `@Configuration` classes.** Purer.
+  Rejected by the Owner on #1693 in favour of ADR-021's `@Service` and `@Transactional`, enforced as an allow-list.
+- **Big-bang rewrite.** Rejected again for the reasons in ADR-021: unreviewable, no way to validate the port
+  design incrementally.
+- **Hexagon for the backend only.** Rejected: the frontend is where most coupling to the API shape lives.
+
+## Consequences
+
+### Easier
+
+- A use case is tested without Spring or a database; a second driving adapter (CLI, batch, queue) reuses the
+  inbound ports; JPA, the PDF engine or the HTTP client can be replaced behind a port.
+- The boundaries are executable: the baselines make progress measurable and regressions impossible.
+- New contributors and agents follow one procedure per slice.
+
+### Harder
+
+- More files per feature (port, use case, mapper, adapter) and duplicated classes (domain and persistence entity).
+- A long transition with mixed conventions; whoever touches an unmigrated context must follow the slice
+  procedure or leave it untouched.
+- Mappers must be tested, or they hide bugs; they are written by hand and covered by unit tests. MapStruct is not
+  adopted without a separate decision.
+
+### Open points
+
+- The no-cycles rule and the model-extraction rule are added to the ArchUnit suite when the first slice that
+  needs them lands.
+- The exact shape of the frontend composition provider is validated by the first frontend slice and recorded
+  here if it changes.
+- Multi-notary hosting is out of scope (ADR-029): one installation serves one notary.
