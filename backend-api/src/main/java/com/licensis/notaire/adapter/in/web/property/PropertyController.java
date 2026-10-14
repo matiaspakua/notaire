@@ -1,7 +1,10 @@
 package com.licensis.notaire.adapter.in.web.property;
 
-import com.licensis.notaire.business.Property;
-import com.licensis.notaire.repository.PropertyRepository;
+import com.licensis.notaire.application.port.in.property.ManagePropertiesUseCase;
+import com.licensis.notaire.application.port.in.property.QueryPropertiesUseCase;
+import com.licensis.notaire.domain.property.Property;
+import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
+import com.licensis.notaire.domain.property.PropertyDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -11,7 +14,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,40 +57,43 @@ public class PropertyController {
             String boundaries,
             int version) {}
 
-    private final PropertyRepository repository;
+    private final QueryPropertiesUseCase query;
+    private final ManagePropertiesUseCase manage;
 
-    public PropertyController(PropertyRepository repository) {
-        this.repository = repository;
+    public PropertyController(QueryPropertiesUseCase query, ManagePropertiesUseCase manage) {
+        this.query = query;
+        this.manage = manage;
     }
 
-    private PropertyResponse toResponse(Property entity) {
+    private PropertyResponse toResponse(Property property) {
+        PropertyDetails details = property.details();
         return new PropertyResponse(
-                entity.getIdProperty(),
-                entity.getCadastralDesignation(),
-                entity.getFiscalAppraisal(),
-                entity.getAddress(),
-                entity.getNotes(),
-                entity.getRegistrationNumber(),
-                entity.getVolumeFolioLandRecord(),
-                entity.getBoundaries(),
-                entity.getVersion());
+                property.id(),
+                details.cadastralDesignation(),
+                details.fiscalAppraisal(),
+                details.address(),
+                details.notes(),
+                details.registrationNumber(),
+                details.volumeFolioLandRecord(),
+                details.boundaries(),
+                property.version());
     }
 
-    private void applyRequest(Property entity, PropertyRequest request) {
-        entity.setCadastralDesignation(request.cadastralDesignation());
-        entity.setFiscalAppraisal(request.fiscalAppraisal());
-        entity.setAddress(request.address());
-        entity.setNotes(request.notes());
-        entity.setRegistrationNumber(request.registrationNumber());
-        entity.setVolumeFolioLandRecord(request.volumeFolioLandRecord());
-        entity.setBoundaries(request.boundaries());
+    private PropertyDetails toDetails(PropertyRequest request) {
+        return new PropertyDetails(
+                request.cadastralDesignation(),
+                request.fiscalAppraisal(),
+                request.address(),
+                request.notes(),
+                request.registrationNumber(),
+                request.volumeFolioLandRecord(),
+                request.boundaries());
     }
 
     @GetMapping
     @Operation(summary = "Get all property")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<PropertyResponse>> getAll() {
-        return ResponseEntity.ok(repository.findAll().stream().map(this::toResponse).toList());
+        return ResponseEntity.ok(query.findAll().stream().map(this::toResponse).toList());
     }
 
     @ApiResponses({
@@ -97,12 +102,8 @@ public class PropertyController {
     })
     @GetMapping("/{id}")
     @Operation(summary = "Get property by ID")
-    @Transactional(readOnly = true)
     public ResponseEntity<PropertyResponse> getById(@PathVariable Integer id) {
-        return repository.findById(id)
-                .map(this::toResponse)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(toResponse(query.getById(id)));
     }
 
     @ApiResponses({
@@ -114,12 +115,9 @@ public class PropertyController {
     @Operation(summary = "Create property")
     public ResponseEntity<Object> create(@Valid @RequestBody PropertyRequest request) {
         try {
-            Property entity = new Property();
-            applyRequest(entity, request);
-            Property saved = repository.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(saved));
+            return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(manage.create(toDetails(request))));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            return ErrorResponses.createFailed(e);
         }
     }
 
@@ -131,11 +129,8 @@ public class PropertyController {
     @PutMapping("/{id}")
     @Operation(summary = "Update property")
     public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody PropertyRequest request) {
-        return repository.findById(id).map(existing -> {
-            applyRequest(existing, request);
-            repository.save(existing);
-            return ResponseEntity.ok().<Void>build();
-        }).orElse(ResponseEntity.notFound().build());
+        manage.update(id, toDetails(request));
+        return ResponseEntity.ok().build();
     }
 
     @ApiResponses({
@@ -145,10 +140,7 @@ public class PropertyController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete property")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        repository.deleteById(id);
+        manage.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

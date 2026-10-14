@@ -329,7 +329,8 @@ flowchart TB
 
 | Aspect | Today |
 |---|---|
-| Inbound ports / outbound ports / persistence adapters | 18 / 42 / 36 |
+| Port interfaces, inbound / outbound | 14 / 39 at the time of the first measurement (the earlier "18 / 42 / 36" counted files, including command and result records) |
+| Ports that are real ports | 34 of 39 outbound interfaces import JPA entities, so they are not domain-typed; some are pass-through CRUD wrappers (the property wrapper was unused and was removed in #1702) |
 | Web controllers using the application layer | 25 of 38; 27 still touch `repository` or `jpa`; 6 are clean |
 | Application files importing JPA entities / Spring Data | 81 of 108 / 24 |
 | Pure `domain` files | 7; the model is still `business` (38 `@Entity`) |

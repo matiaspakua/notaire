@@ -80,8 +80,6 @@ R1 | com.licensis.notaire.adapter.in.web.procedure.ProcedureTypeController -> co
 R1 | com.licensis.notaire.adapter.in.web.procedure.ProcedureTypeController -> com.licensis.notaire.business.WorkflowDefinition
 R1 | com.licensis.notaire.adapter.in.web.procedure.ProcedureTypeController -> com.licensis.notaire.repository.BudgetTemplateRepository
 R1 | com.licensis.notaire.adapter.in.web.procedure.ProcedureTypeController -> com.licensis.notaire.repository.WorkflowDefinitionRepository
-R1 | com.licensis.notaire.adapter.in.web.property.PropertyController -> com.licensis.notaire.business.Property
-R1 | com.licensis.notaire.adapter.in.web.property.PropertyController -> com.licensis.notaire.repository.PropertyRepository
 R1 | com.licensis.notaire.adapter.in.web.registrationdraft.RegistrationDraftController -> com.licensis.notaire.business.RegistrationDraft
 R1 | com.licensis.notaire.adapter.in.web.substitution.SubstitutionController -> com.licensis.notaire.business.Person
 R1 | com.licensis.notaire.adapter.in.web.substitution.SubstitutionController -> com.licensis.notaire.business.Substitution
@@ -129,7 +127,6 @@ R2 | com.licensis.notaire.application.port.in.deed.CalculateNextDeedNumberUseCas
 R2 | com.licensis.notaire.application.port.in.deed.ValidateDeedNumberingUseCase -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.port.in.history.HistoryUseCase -> com.licensis.notaire.business.History
 R2 | com.licensis.notaire.application.port.in.person.PersonUseCase -> com.licensis.notaire.business.Person
-R2 | com.licensis.notaire.application.port.in.property.PropertyUseCase -> com.licensis.notaire.business.Property
 R2 | com.licensis.notaire.application.port.in.testimony.TestimonyMovementUseCase -> com.licensis.notaire.business.TestimonyMovement
 R2 | com.licensis.notaire.application.port.in.testimony.TestimonyUseCase -> com.licensis.notaire.business.Testimony
 R2 | com.licensis.notaire.application.port.out.audit.AuditRecordRepositoryPort -> com.licensis.notaire.business.AuditRecord
@@ -310,7 +307,6 @@ R2 | com.licensis.notaire.application.usecase.procedure.RequiredDocumentationOnC
 R2 | com.licensis.notaire.application.usecase.procedure.RequiredDocumentationOnConfirmService -> com.licensis.notaire.business.SubmittedDocument
 R2 | com.licensis.notaire.application.usecase.procedure.RequiredDocumentationOnConfirmService -> com.licensis.notaire.repository.ProcedureTemplateRepository
 R2 | com.licensis.notaire.application.usecase.procedure.RequiredDocumentationOnConfirmService -> com.licensis.notaire.repository.SubmittedDocumentRepository
-R2 | com.licensis.notaire.application.usecase.property.PropertyService -> com.licensis.notaire.business.Property
 R2 | com.licensis.notaire.application.usecase.registrationdraft.RegistrationDraftService -> com.licensis.notaire.business.Deed
 R2 | com.licensis.notaire.application.usecase.registrationdraft.RegistrationDraftService -> com.licensis.notaire.business.Procedure
 R2 | com.licensis.notaire.application.usecase.registrationdraft.RegistrationDraftService -> com.licensis.notaire.business.Property
