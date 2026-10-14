@@ -126,9 +126,18 @@ const ROW = {
 
 function populatedResponse(url: string) {
   const rows = [ROW];
-  const body = /[?&](page|size)=/.test(url)
-    ? { content: rows, totalElements: 1, totalPages: 1, number: 0, size: 20 }
-    : rows;
+  let body: unknown = rows;
+  if (url.includes("/workflow-trace")) {
+    body = { ...ROW, transitions: [] };
+  } else if (/[?&](page|size)=/.test(url)) {
+    body = {
+      content: rows,
+      totalElements: 1,
+      totalPages: 1,
+      number: 0,
+      size: 20,
+    };
+  }
   return Promise.resolve({
     ok: true,
     status: 200,
