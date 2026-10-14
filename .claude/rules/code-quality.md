@@ -13,6 +13,7 @@ The project uses the following code quality tools:
 | **Checkstyle** | Code style enforcement | `checkstyle.xml` |
 | **SpotBugs** | Static bug detection | `spotbugs-exclude.xml` |
 | **Trivy** | Vulnerability scanning | Built-in |
+| **ArchUnit** | Backend hexagon dependency rules with a shrink-only baseline (#1695) | `HexagonArchitectureTest`, `src/test/resources/architecture/hexagon-baseline.txt` |
 | **SonarQube** | Backend + frontend analysis, quality gate on new code (`bash infra/scripts/run-sonar.sh`) | `backend-api/pom.xml`, `frontend/sonar-project.properties` |
 
 ## JaCoCo - Code Coverage
@@ -97,6 +98,25 @@ open coverage/index.html
 
 Frontend CI runs Vitest with `--coverage`; the job fails if any metric dips under
 the configured thresholds.
+
+## ArchUnit — Hexagon guard (shrink-only)
+
+`HexagonArchitectureTest` (epic #1693, ADR-030) runs in `mvn test` and checks six rules on production classes:
+R1 inbound adapters do not reach repositories, legacy `jpa` or entities; R2 the application layer depends on
+domain and ports only (Spring is limited to `@Service` and `@Transactional`, ADR-021); R3 the domain depends on
+the JDK only; R4 and R5 inbound and outbound adapters do not know each other; R6 nothing new depends on the
+legacy `jpa` and `service` packages.
+
+Violations that exist today are listed in `src/test/resources/architecture/hexagon-baseline.txt`
+(`R<n> | origin -> target`). The rule is a ratchet: a **new** violation fails the build, and so does a baseline
+entry that no longer exists. After fixing a violation run
+
+```bash
+mvn test -pl backend-api -Dtest=HexagonArchitectureTest -Darchitecture.baseline=shrink
+```
+
+and commit the smaller file. Never add a line by hand; `-Darchitecture.baseline=init` is only for the first
+generation. The goal is an empty baseline.
 
 ## Checkstyle - Code Style
 
