@@ -97,6 +97,8 @@ if [ ! -f ".env" ]; then
   cp .env.example .env"
 fi
 
+bash "$REPO_DIR/infra/scripts/ensure-actuator-credentials.sh" .env
+
 POSTGRES_USER="$(env_value POSTGRES_USER admin)"
 POSTGRES_DB="$(env_value POSTGRES_DB notaire)"
 PGADMIN_EMAIL="$(env_value PGADMIN_DEFAULT_EMAIL admin@notaire.com)"

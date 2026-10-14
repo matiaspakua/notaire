@@ -26,7 +26,7 @@ read from this one file — there is no separate `infra/.env`.
 | `PGADMIN_DEFAULT_EMAIL/PASSWORD` | pgAdmin |
 | `APP_ADMIN_USER/PASSWORD` | Seeded admin user (stored as BCrypt hash in DB, issue #554; seeded once on first startup, issue #651) |
 | `JWT_SECRET` | Token signing key — **mandatory**, backend refuses to start if blank, &lt;32 bytes, or left as the example value |
-| `ACTUATOR_USER/PASSWORD` | HTTP Basic auth for `/actuator/prometheus`, also referenced by `infra/observability/prometheus/prometheus.yml`'s `basic_auth` block |
+| `ACTUATOR_USER/PASSWORD` | HTTP Basic auth for `/actuator/prometheus`, read by Prometheus from Compose secrets (`basic_auth` `username_file`/`password_file`, #1657); the start scripts generate a random dev password |
 | `GRAFANA_ADMIN_USER/PASSWORD` | Grafana |
 | `POSTGRES_EXPORTER_USER/PASSWORD` | Least-privilege `pg_monitor`-only role for `postgres-exporter`, created by Flyway `V12` (issue #675) — deliberately **not** `POSTGRES_USER`, so a compromised exporter never gets full DB access |
 | `SONAR_DB_USER/PASSWORD`, `SONAR_ADMIN_USER/PASSWORD`, `SONAR_TOKEN` | SonarQube's own database + admin account; `scripts/run-sonar.sh` handles SonarQube's forced first-login password change |
