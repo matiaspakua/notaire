@@ -203,7 +203,7 @@ describe("add status dialog", () => {
   });
 
   it("keeps the dialog open and reports when the node cannot be created", async () => {
-    apiPost.mockRejectedValue(new ApiError(409, "dup", { message: "Estado repetido" }));
+    apiPost.mockRejectedValue(new ApiError(409, "dup", JSON.stringify({ message: "Estado repetido" })));
     await openDialog();
     fireEvent.change(screen.getByTestId("select-status-node"), { target: { value: "7" } });
 

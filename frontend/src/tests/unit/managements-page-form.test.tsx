@@ -332,7 +332,7 @@ describe("transition", () => {
   });
 
   it("shows the server message when the transition is refused and keeps the dialog open", async () => {
-    apiPost.mockRejectedValue(new ApiError(422, "refused", { message: "Falta documentación" }));
+    apiPost.mockRejectedValue(new ApiError(422, "refused", JSON.stringify({ message: "Falta documentación" })));
     await renderPage();
     fireEvent.click(screen.getByTestId("btn-change-status-1"));
     fireEvent.click(await screen.findByTestId("select-new-status"));
