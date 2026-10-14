@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| a fixed HIGH finding fails the build | test_trivy_blocking | pending |
-| the report survives a failure | test_trivy_blocking | pending |
-| the local gate matches CI | test_trivy_blocking | pending |
+| a fixed HIGH finding fails the build | test_trivy_blocking | passing |
+| the report survives a failure | test_trivy_blocking | passing |
+| the local gate matches CI | test_trivy_blocking | passing |
 
 ## Permanent documentation updated
 
