@@ -37,7 +37,7 @@ Dependencies point inward only: `adapter` → `application` → `domain`.
 | Package | Contents | May depend on |
 |---|---|---|
 | `domain.<context>` | Entities, value objects, domain services, domain exceptions. Plain Java. | JDK only |
-| `application.port.in.<context>` | Inbound ports: one interface per use case, plus command and result records. | `domain` |
+| `application.port.in.<context>` | Inbound ports: one interface per use case, plus command and result records. A catalog's CRUD may share two cohesive interfaces, query and manage. | `domain` |
 | `application.port.out.<context>` | Outbound ports: what the use cases need (repositories, gateways, clock, ids), in domain terms. | `domain` |
 | `application.usecase.<context>` | Use-case classes implementing inbound ports, using outbound ports. `@Service` and `@Transactional` only. | `domain`, ports |
 | `adapter.in.web.<context>` | Controllers, web DTOs, web mappers, request validation. Call inbound ports only. | inbound ports, `domain` types they map |
@@ -109,6 +109,25 @@ Suggested order, from the measured data: (a) the 13 controllers that bypass the 
 (workflow, catalogs such as folio, document type, identification type, management status, property, submitted
 document, budget template), (b) users and roles, together with #1683, (c) the 14 mixed controllers, (d) model
 extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
+
+## Slice log (what each slice taught)
+
+- **Slice 1, identification types (#1700):** the first strict-form slice, reference implementation of the
+  conventions above.
+  - The legacy JPA entity stays in `business` while other aggregates (Person, Procedure, DeedManagement)
+    reference it; the persistence adapter maps it to the pure domain type. The entity moves into
+    `adapter.out.persistence` when its last legacy user migrates.
+  - Domain factories separate creation (validates) from restoration (does not), so legacy rows never fail on read.
+  - Domain exceptions carry no status. A controller-scoped advice with highest precedence maps them and delegates
+    to the global handler, so the 404 and 409 bodies stay byte-identical; without the precedence the generic
+    handler would take them.
+  - The adapter flushes inside `deleteById` so a foreign key violation becomes the domain exception instead of
+    surfacing at commit.
+  - In-memory port adapters live in `src/test/.../testing`; use-case tests run with no Spring and no mocks.
+  - The ArchUnit allow-list for `@Transactional` had to include its attribute types (`Propagation`,
+    `Isolation`): 84 baseline entries were noise and were removed.
+  - Behaviour note: a delete that fails for a reason other than a foreign key violation now answers 500 instead of
+    409, which is the accurate status.
 
 ## Options considered
 

@@ -49,9 +49,13 @@ class HexagonArchitectureTest {
     private static final String SPRING_DATA_REPOSITORIES = ROOT + ".repository";
     private static final String JPA_ENTITIES = ROOT + ".business";
 
+    // Propagation and Isolation are the attribute types of @Transactional: ArchUnit counts them as dependencies
+    // of every class that carries the annotation, so allowing the annotation means allowing them too.
     private static final Set<String> ALLOWED_SPRING_IN_APPLICATION = Set.of(
             "org.springframework.stereotype.Service",
-            "org.springframework.transaction.annotation.Transactional");
+            "org.springframework.transaction.annotation.Transactional",
+            "org.springframework.transaction.annotation.Propagation",
+            "org.springframework.transaction.annotation.Isolation");
 
     private static JavaClasses production;
     private static Set<String> baseline;
