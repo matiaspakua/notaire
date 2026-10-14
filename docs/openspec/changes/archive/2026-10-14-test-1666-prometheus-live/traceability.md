@@ -35,10 +35,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| the backend target is scraped | test_prometheus_live | pending |
-| every alert rule is healthy | test_prometheus_live | pending |
-| alert metric families exist | test_prometheus_live | pending |
-| the hook installs prometheus at the image version | test_prometheus_live | pending |
+| the backend target is scraped | test_prometheus_live | passing |
+| every alert rule is healthy | test_prometheus_live | passing |
+| alert metric families exist | test_prometheus_live | passing |
+| the hook installs prometheus at the image version | test_prometheus_live | passing |
 
 ## Permanent documentation updated
 
