@@ -8,7 +8,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| ADR is accepted and complete | docs/tests | pending |
-| agents are routed to the rule | docs/tests | pending |
-| no contradiction | docs/tests | pending |
+| ADR is accepted and complete | docs/tests | passing |
+| agents are routed to the rule | docs/tests | passing |
+| no contradiction | docs/tests | passing |
 
 ## Permanent documentation updated
 

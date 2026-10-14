@@ -31,6 +31,7 @@ The Owner made a full Ports and Adapters architecture, in backend and frontend, 
 ## Capabilities
 
 ### New Capabilities
+
 - `hexagonal-architecture-governance`: the documented target, rules and procedure of the hexagonal refactor.
 
 ### Modified Capabilities
