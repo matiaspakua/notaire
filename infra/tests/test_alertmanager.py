@@ -9,6 +9,7 @@ Run with: python3 infra/tests/test_alertmanager.py
 import os
 import shutil
 import subprocess
+import tempfile
 import unittest
 
 import yaml
@@ -37,10 +38,13 @@ def all_alerts():
     return alerts
 
 
-def docker_run(image, entrypoint, args, mount):
-    if not shutil.which("docker") or subprocess.run(["docker", "info"], capture_output=True).returncode:
-        raise unittest.SkipTest("docker is not available")
-    cmd = ["docker", "run", "--rm", "--entrypoint", entrypoint, "-v", f"{mount}:/cfg:ro", image] + args
+def run_tool(image, tool, args, mount):
+    if shutil.which("docker") and subprocess.run(["docker", "info"], capture_output=True).returncode == 0:
+        cmd = ["docker", "run", "--rm", "--entrypoint", tool, "-v", f"{mount}:/cfg:ro", image] + args
+    elif shutil.which(tool):
+        cmd = [tool] + [arg.replace("/cfg/", f"{mount}/") for arg in args]
+    else:
+        raise unittest.SkipTest(f"neither docker nor a local {tool} is available")
     return subprocess.run(cmd, capture_output=True, text=True)
 
 
@@ -62,7 +66,7 @@ class AlertmanagerTest(unittest.TestCase):
             self.assertTrue(alert["annotations"].get("description"), alert["alert"])
 
     def test_promtool_accepts_rules(self):
-        result = docker_run(PROMETHEUS_IMAGE, "promtool", ["check", "rules", "/cfg/alert-rules.yml", "/cfg/alert-rules-stack.yml"], PROM)
+        result = run_tool(PROMETHEUS_IMAGE, "promtool", ["check", "rules", "/cfg/alert-rules.yml", "/cfg/alert-rules-stack.yml"], PROM)
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
 
     def test_routing_groups_and_inhibits(self):
@@ -74,8 +78,22 @@ class AlertmanagerTest(unittest.TestCase):
             self.assertFalse({"email_configs", "slack_configs", "webhook_configs", "pagerduty_configs"} & set(receiver))
 
     def test_amtool_accepts_config(self):
-        result = docker_run(ALERTMANAGER_IMAGE, "amtool", ["check-config", "/cfg/alertmanager.yml"], os.path.join(OBS, "alertmanager"))
+        result = run_tool(ALERTMANAGER_IMAGE, "amtool", ["check-config", "/cfg/alertmanager.yml"], os.path.join(OBS, "alertmanager"))
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+
+    def test_promtool_rejects_a_broken_rule_file(self):
+        with tempfile.TemporaryDirectory() as mount:
+            with open(os.path.join(mount, "broken.yml"), "w", encoding="utf-8") as f:
+                f.write("groups:\n  - name: broken\n    rules:\n      - alert: Broken\n        expr: up ===\n")
+            result = run_tool(PROMETHEUS_IMAGE, "promtool", ["check", "rules", "/cfg/broken.yml"], mount)
+        self.assertNotEqual(0, result.returncode)
+
+    def test_amtool_rejects_a_broken_config(self):
+        with tempfile.TemporaryDirectory() as mount:
+            with open(os.path.join(mount, "broken.yml"), "w", encoding="utf-8") as f:
+                f.write("route:\n  receiver: missing\nreceivers:\n  - name: other\n")
+            result = run_tool(ALERTMANAGER_IMAGE, "amtool", ["check-config", "/cfg/broken.yml"], mount)
+        self.assertNotEqual(0, result.returncode)
 
     def test_grafana_alertmanager_datasource(self):
         sources = load_yaml(OBS, "grafana", "provisioning", "datasources", "datasources.yml")["datasources"]

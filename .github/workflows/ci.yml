@@ -296,7 +296,7 @@ jobs:
           retention-days: 30
 
   # ==========================================
-  # JOB 5: Security Scan (Trivy) — report-only
+  # JOB 5: Security Scan (Trivy) — blocks on CRITICAL/HIGH (#712)
   # ==========================================
   security:
     name: Security Scan
@@ -351,11 +351,12 @@ jobs:
           scan-ref: '.'
           format: 'json'
           output: 'trivy-results.json'
-          # Report-only: found vulnerabilities are surfaced but do not block CI.
-          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
           ignore-unfixed: true
 
       - name: Display Trivy Results
+        if: always()
         run: |
           if [ -f trivy-results.json ]; then
             echo "=== Trivy Scan Results ==="
@@ -363,6 +364,7 @@ jobs:
           fi
 
       - name: Upload Trivy Results
+        if: always()
         uses: actions/upload-artifact@v7
         with:
           name: trivy-results

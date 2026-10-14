@@ -63,7 +63,7 @@ public interface BusinessConstants
     public String RegistrationDraftObserved = "Observado";
     public String RegistrationDraftRegistered = "Inscripto";
     /**
-     * User types. {@code Escribano} is an administrator type.
+     * User types. {@code Escribano} is the notary type; it is not an administrator (issue #1638).
      */
     public String UserEmployee = "Empleado";
     public String UserNotary = "Escribano";

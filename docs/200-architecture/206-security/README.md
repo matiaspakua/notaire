@@ -114,7 +114,7 @@ When deploying Notaire:
 
 3. **API Security**
    - JWT authentication on every `/api/**` endpoint (see [API Authentication Guide](API-AUTHENTICATION-GUIDE.md))
-   - Login brute-force lockout per username (`LoginAttemptService`, in-memory, single-instance)
+   - Login brute-force lockout per username (`LoginAttemptService`, counters in the shared `login_attempts` table)
    - Enable HTTPS in production
    - General API rate limiting (not yet implemented — only login attempts are throttled)
 

@@ -67,7 +67,7 @@ lint gate), `frontend-ci.yml`, `playwright-e2e.yml`, `sdlc-process.yml`, and the
 
 #### 5. Security Scan
 
-- Runs Trivy vulnerability scanner on source code (report-only)
+- Runs Trivy vulnerability scanner on source code; fails the build on fixed CRITICAL/HIGH findings (#712). The image scan in `docker-build` stays report-only
 - Uploads JSON results as artifact
 
 #### 6. Build Docker Image

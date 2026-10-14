@@ -13,7 +13,7 @@ CONSTITUTION §10.
 | Constitution step | What to do | Command / artifact |
 |---|---|---|
 | 1–2 Issue + Use Case | Find or create the Issue; it must name a Use Case (`CU-XX`) from `docs/100-business/`. No Use Case → write it first | `gh issue list --search "<task>"`; `gh issue create` with `.github/ISSUE_TEMPLATE/issue.md`; labels from `gh label list` |
-| 3–5, 7 Specification (**Gate 1**) | OpenSpec change: proposal, traceability, specs, design, tasks | `openspec new change "<name>"`; `openspec validate <name> --strict`; `bash workspace/sdlc/validate-sdlc-plan.sh <name>` |
+| 3–5, 7 Specification (**Gate 1**) | OpenSpec change: proposal, traceability, specs, design, tasks | `bash workspace/sdlc/seed-openspec-change.sh <name> --issue N --use-case "…" --branch <b> --create`, then fill it in one step with `python3 workspace/sdlc/scaffold-openspec-change.py scaffold <spec.json>` (after the suites pass, `… complete <name> --test <TestName>` ticks groups 1-8); `openspec validate <name> --strict`; `bash workspace/sdlc/validate-sdlc-plan.sh <name>` |
 | 6 Branch | From updated `main`; move the Issue to in progress | `git checkout main && git pull origin main`; `git checkout -b <type>/<issue>_<desc>`; `gh issue edit <n> --add-label in-progress` |
 | 8–10 Failing tests first (**Gate 2**) | Write tests, run them, watch them fail; commit them before the production code | `mvn test -pl backend-api -Dtest=<NewTest>` (must fail) |
 | 11–12 Implement | Minimum code to pass; update affected tests without weakening them | — |

@@ -23,7 +23,7 @@ rectangle "Trust boundary: public internet" as TB1 {
 }
 rectangle "Trust boundary: backend-api process" as TB2 {
   component "JwtAuthenticationFilter" as Filter
-  component "LoginAttemptService\n(in-memory)" as LoginAttempt
+  component "LoginAttemptService\n(login_attempts table)" as LoginAttempt
   component "JwtTokenService" as JwtService
   component "AuditAspect" as AuditAspect
   component "AuditRecordService" as AuditService
@@ -64,7 +64,7 @@ Two trust boundaries matter here:
 
 | # | STRIDE | Threat | Mitigation | Status |
 |---|--------|--------|------------|--------|
-| SR-01 | Spoofing | Attacker guesses/brute-forces a user's password | `LoginAttemptService` locks an account after `security.login.max-attempts` (default 5) failures for `security.login.lockout-duration-ms` (default 15 min) | Partial — in-memory `ConcurrentHashMap`, single-instance only; a horizontally scaled deployment or process restart resets the counter (see [ADR-018](../202-ADR/ADR-018-rate-limiting-policy.md)) |
+| SR-01 | Spoofing | Attacker guesses/brute-forces a user's password | `LoginAttemptService` locks an account after `security.login.max-attempts` (default 5) failures for `security.login.lockout-duration-ms` (default 15 min) | **Mitigated** for the lock itself (#1634): counters live in the `login_attempts` table (Flyway `V48`), so a lock holds across instances and restarts; idle counters expire after one lock duration. Still no per-IP limiting (see [ADR-018](../202-ADR/ADR-018-rate-limiting-policy.md)) |
 | SR-02 | Spoofing | Attacker forges a JWT to impersonate a user | `JwtTokenService` signs tokens with a server-held secret; `JwtAuthenticationFilter` validates signature + expiry on every `/api/**` request | Mitigated |
 | SR-03 | Tampering | Attacker modifies a JWT payload (e.g. escalate role claim) | Signature validation rejects any payload change | Mitigated |
 | SR-04 | Information Disclosure | Credentials or JWT secret leak via logs, error responses, or default `.env` values | `ProductionCredentialsGuard` blocks startup on the literal default password/secret in production; secrets never committed (`.env` is git-ignored, see [ADR-019](../202-ADR/ADR-019-secrets-management.md)) | Partial — only catches the literal known-default value, not other weak-but-non-default secrets |
@@ -76,18 +76,18 @@ Two trust boundaries matter here:
 | # | STRIDE | Threat | Mitigation | Status |
 |---|--------|--------|------------|--------|
 | SR-07 | Repudiation | A user denies performing an action, or an attacker forges the acting-user attribution on an audit record | `AuditAspect` reads the acting user exclusively from `SecurityContextHolder` (the authenticated JWT identity); the legacy `X-Notaire-User` client header is explicitly ignored for attribution (issue #555). HTTP forge via `POST`/`PUT`/`DELETE` on `/api/v1/audit-log` is closed (405; issues #1124 / #1060) — rows are server-authored only | Mitigated |
-| SR-08 | Information Disclosure / Repudiation | Read (GET) access to sensitive `Person`/`Deed` data is not logged, so unauthorized *reading* of PII leaves no trail | Create/update/delete operations are audited; GETs are intentionally excluded (by design, for volume reasons) | **Open** (by design, documented trade-off) — acceptable today because access is already gated by JWT + the coarse-grained authorization of SR-06, but becomes a bigger gap once per-role authorization (SR-06) exists and read access itself needs accountability; tracked as follow-up |
-| SR-09 | Tampering | Attacker or malicious insider directly modifies `audit_records` rows in the database to cover tracks | Standard PostgreSQL access controls (only the backend service account has write access); no append-only/immutable log mechanism (e.g. no DB-level trigger preventing UPDATE/DELETE on the table) | **Open** — no dedicated tamper-evidence control beyond normal DB permissions; tracked as follow-up |
+| SR-08 | Information Disclosure / Repudiation | Read (GET) access to sensitive `Person`/`Deed` data is not logged, so unauthorized *reading* of PII leaves no trail | Create/update/delete operations are audited; GETs are excluded by default for volume reasons, but handlers annotated `@AuditPersonalDataRead` (the three `Person` reads) write one PII-free audit row per request, with no search terms; single reads and searches are one row each, and a user's repeated list reads inside one window (default 60 s, `security.audit.list-read-window-seconds`) are one row because UI pickers reload the list constantly (#1635, #1664) | **Mitigated** for `Person`; other entities opt in with the annotation |
+| SR-09 | Tampering | Attacker or malicious insider directly modifies `audit_records` rows in the database to cover tracks | Migration V47 (#1636): a trigger rejects row UPDATE and DELETE and statement TRUNCATE, and those privileges are revoked from PUBLIC and the migrating role. Purge path: only the table owner, by disabling the trigger (`ALTER TABLE audit_records DISABLE TRIGGER USER`) in a reviewed maintenance window and enabling it again. No hash chain: a superuser who disables the trigger is not detected (deferred) | **Mitigated** against the application role and ordinary DB users; tamper evidence against a superuser is out of scope |
 | SR-10 | Denial of Service | `AuditAspect` failures cascade and break functional flows | Aspect is intentionally tolerant: any audit-write failure is caught, logged at WARN, and swallowed rather than propagated | Mitigated |
 
 ## Summary
 
-- **Mitigated**: SR-02, SR-03, SR-07, SR-10 (4)
-- **Partial**: SR-01, SR-04, SR-06 (3)
-- **Open**: SR-05, SR-08, SR-09 (3)
+- **Mitigated**: SR-01, SR-02, SR-03, SR-07, SR-08, SR-09, SR-10 (7)
+- **Partial**: SR-04, SR-06 (2)
+- **Open**: SR-05 (1)
 
 SR-06 moved to Partial when function-level RBAC landed (#559). The object-level
-gap is SR-11 in the system model. The remaining Open items are the login
-flood/lockout-griefing case, unaudited reads, and audit-log tamper evidence.
+gap is SR-11 in the system model. The remaining Open item is the login
+flood/lockout-griefing case (SR-08, unaudited reads, was mitigated by #1635; SR-09, audit tampering, by #1636).
 None are fixed by this change — see issue #1028's follow-up
 recommendations for how each should be triaged into its own issue.

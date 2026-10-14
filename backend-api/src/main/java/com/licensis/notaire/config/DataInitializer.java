@@ -94,7 +94,7 @@ public class DataInitializer implements ApplicationRunner {
         admin.setName(adminUsername);
         admin.setPassword(passwordEncoder.encode(adminPassword));
         admin.setStatus(true);
-        admin.setType("Escribano");
+        admin.setType("ADMIN");
         admin.setFkIdPerson(adminPerson);
         userRepository.save(admin);
         log.info("Initial administrator '{}' was created.", adminUsername);

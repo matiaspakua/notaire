@@ -40,6 +40,7 @@ package "Subjects and Security" {
   entity "role_modules" as role_modules
   entity "audit_records" as audit_records
   entity "revoked_tokens" as revoked_tokens
+  entity "login_attempts" as login_attempts
 }
 
 package "Budgeting and Payments" {
@@ -113,9 +114,9 @@ procedures ||--o| procedure_folders
 document_types ||--o{ procedure_templates
 procedure_types ||--o{ procedure_templates
 workflow_definition |o--o{ procedure_types
+budgets |o--o{ procedures
 deeds |o--o{ procedures
 deed_managements |o--o{ procedures
-budgets |o--o{ procedures
 procedure_types |o--o{ procedures
 properties |o--o{ procedures
 deeds ||--o| registration_drafts

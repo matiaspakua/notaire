@@ -35,7 +35,7 @@ already in the tree. No exploitation procedure is specified here.
 
 | ID | Class | Property | Control in tree | Status |
 |----|-------|----------|-----------------|--------|
-| AT-1 | Credential abuse | Spoofing | BCrypt, lockout, JWT validation | Partial (SR-01, SR-02) |
+| AT-1 | Credential abuse | Spoofing | BCrypt, lockout, JWT validation | Partial (SR-02; SR-01 mitigated by #1634) |
 | AT-2 | IDOR / object access | Elevation | Authenticated route only, except admin paths | Open (SR-11) |
 | AT-3 | Injection | Tampering | JPA parameters | Mitigated — [SQL-INJECTION-PREVENTION.md](SQL-INJECTION-PREVENTION.md) |
 | AT-4 | XSS | Tampering / disclosure | Production CSP nonce, no `unsafe-eval` (#1051) | Partial — encoding still required on every render |
@@ -43,7 +43,7 @@ already in the tree. No exploitation procedure is specified here.
 | AT-6 | Denial of service | Availability | Login lockout only | Open (SR-05, SR-15, #280) |
 | AT-7 | Dependency or image compromise | Tampering | Dependabot, Trivy, image pins, cosign | Partial (SR-13) |
 | AT-8 | Secret in git | Disclosure | This change's scanner; GitHub secret scanning is an admin setting | Partial (SR-14) |
-| AT-9 | Role conflation | Elevation | `Escribano` receives `ROLE_ADMIN` | Open (SR-16) |
+| AT-9 | Role conflation | Elevation | `Escribano` receives `ROLE_NOTARY`, not `ROLE_ADMIN` | Mitigated (SR-16, #1638) |
 
 ## STRIDE
 
@@ -54,7 +54,7 @@ already in the tree. No exploitation procedure is specified here.
 | SR-13 | Build | CI → registry | Vulnerable dependency or base image is published | High | Medium | Trivy report, Dependabot, pinned images, cosign SBOM | `security/tests/test_image_pins_and_dependabot.py` | Partial — Trivy does not fail CI |
 | SR-14 | Repository | Developer → git | Private key or token committed | High | Low | `python3 security/scan_secrets.py` fails the security job | `security/tests/test_security_policy.py` | Partial — push protection is outside git |
 | SR-15 | API availability | Internet → API | Expensive endpoints are called without a quota | Medium | Medium | No general limiter. Login lockout is SR-05 | Issue #280 | Open |
-| SR-16 | Admin capability | API | A user whose type is Escribano is granted `ROLE_ADMIN`, including user, role, and audit-log administration | High | Medium | Documented behavior of `UserAuthorityResolver` | Code review of `ADMINISTRATOR_TYPES` | Open — product decision, not an accident to "fix" silently |
+| SR-16 | Admin capability | API | A user whose type is Escribano was granted `ROLE_ADMIN`, including user, role, and audit-log administration | High | Medium | `UserAuthorityResolver` maps Escribano to `ROLE_NOTARY`; Flyway V49 promotes the seeded `admin`; other former administrators stored as Escribano must be promoted by `admin` | `UserAuthorityResolverTest`, `RbacIntegrationTest` (notary 403), `80_roles.sql` | Mitigated (#1638) |
 
 `SR-06` in the auth model is **Partial**, not open: `hasRole(ADMIN)` is
 enforced for the paths listed in the
@@ -72,8 +72,8 @@ remaining object-level gap that `SR-06` used to describe too broadly.
 | LD-5 | Non-compliance | Retention and statute mapping | Notarial retention is indefinite by SAD §2.3. A statute map is not an engineering claim | Issue #309 | Open |
 | LD-6 | Detectability of abuse | Login failures | `notaire_operation_total` and Grafana | [MONITORING.md](MONITORING.md) | Partial — read access is not a metric |
 
-Non-repudiation of writes stays `SR-07` (mitigated) and `SR-08` / `SR-09`
-(open) in the auth and audit model.
+Non-repudiation of writes stays `SR-07` (mitigated); `SR-08` (`Person` reads) is
+mitigated by #1635 and `SR-09` by #1636 in the auth and audit model.
 
 ## Assumptions
 

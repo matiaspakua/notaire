@@ -123,6 +123,14 @@ package "Subjects and Security" {
     * expires_at : TIMESTAMP
     * revoked_at : TIMESTAMP
   }
+
+  entity "login_attempts" as login_attempts {
+    * username : TEXT <<PK>>
+    --
+    * failed_count : INT
+    locked_until : TIMESTAMP
+    * updated_at : TIMESTAMP
+  }
 }
 
 package "Budgeting and Payments" {
@@ -519,9 +527,9 @@ procedures ||--o| procedure_folders : "fk_id_procedure"
 document_types ||--o{ procedure_templates : "fk_id_document_type"
 procedure_types ||--o{ procedure_templates : "fk_id_procedure_type"
 workflow_definition |o--o{ procedure_types : "fk_workflow_definition_id"
+budgets |o--o{ procedures : "fk_id_budget"
 deeds |o--o{ procedures : "fk_id_deed"
 deed_managements |o--o{ procedures : "fk_id_deed_management"
-budgets |o--o{ procedures : "fk_id_budget"
 procedure_types |o--o{ procedures : "fk_id_procedure_type"
 properties |o--o{ procedures : "fk_id_property"
 deeds ||--o| registration_drafts : "fk_id_deed"

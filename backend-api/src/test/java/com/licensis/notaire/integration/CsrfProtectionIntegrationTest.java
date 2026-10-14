@@ -74,7 +74,7 @@ class CsrfProtectionIntegrationTest {
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
         String name = "csrf-" + UUID.randomUUID();
-        userRepository.save(new User(null, name, "not-a-login-password", true, "Escribano"));
+        userRepository.save(new User(null, name, "not-a-login-password", true, "Administrador"));
         adminToken = jwtTokenService.generateToken(name);
     }
 

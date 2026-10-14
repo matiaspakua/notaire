@@ -114,9 +114,9 @@ describe("useAuthStore — isAdmin()", () => {
     expect(useAuthStore.getState().isAdmin()).toBe(true);
   });
 
-  it("returns true for type ESCRIBANO", () => {
+  it("returns false for type ESCRIBANO: a notary is not an administrator (issue #1638)", () => {
     useAuthStore.setState({ user: { ...adminUser, type: "ESCRIBANO" }, isAuthenticated: true });
-    expect(useAuthStore.getState().isAdmin()).toBe(true);
+    expect(useAuthStore.getState().isAdmin()).toBe(false);
   });
 
   it("returns true for type ADMINISTRADOR", () => {

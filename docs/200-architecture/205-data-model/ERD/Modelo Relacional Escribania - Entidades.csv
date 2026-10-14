@@ -59,6 +59,10 @@ audit_records,Weak,fk_id_user,FK,yes,Integer,,x,x,Operator who performed the act
 revoked_tokens,Strong,jti,PK,no,Text,x,,,Unique id of the revoked JWT (`jti` claim)
 revoked_tokens,Strong,expires_at,,no,Timestamp,,,,Token expiry; the row may be purged after this date
 revoked_tokens,Strong,revoked_at,,no,Timestamp,,,,Logout time that revoked the token
+login_attempts,Strong,username,PK,no,Text,x,,,"Normalised (trimmed, lower-case) login name"
+login_attempts,Strong,failed_count,,no,Integer,,,,Failed logins since the last success or purge
+login_attempts,Strong,locked_until,,yes,Timestamp,,,x,End of the lock once the threshold is reached
+login_attempts,Strong,updated_at,,no,Timestamp,,,,Time of the last failure; drives the purge
 budgets,Strong,version,,no,Integer,,,,Optimistic lock
 budgets,Strong,id,PK,no,Integer,x,,,Unique id of the budget
 budgets,Strong,number,,no,Integer,,,,Budget serial number
@@ -68,7 +72,7 @@ budgets,Strong,notes,,yes,Text,,,x,Validity conditions and deadlines
 budgets,Strong,status,,no,Text,,,,"Status. Stored codes `BORRADOR`, `PENDIENTE`, `APROBADO`, `RECHAZADO`, and `FACTURADO` stay."
 budgets,Strong,property_amount,,yes,Real,,,x,Declared property amount
 budgets,Strong,fk_id_person,FK,yes,Integer,,x,x,Requesting client
-concepts,Strong,version,,no,Integer,,,,"Optimistic lock (Hibernate). The seeded `Documentacion` row stays at version `2`. The other seeded concepts stay at version `1`."
+concepts,Strong,version,,no,Integer,,,,Optimistic lock (Hibernate). The seeded `Documentacion` row stays at version `2`. The other seeded concepts stay at version `1`.
 concepts,Strong,id,PK,no,Integer,x,,,Unique id of the fee concept
 concepts,Strong,name,,no,Text,,,,"Concept name. Stored values `IVA`, `Honorarios`, `Documentacion`, and `Protocolo` stay."
 concepts,Strong,amount,,no,Real,,,,"Fixed reference amount. Seeded amounts stay: `0` for `IVA` and `Honorarios`, `500` for `Documentacion`, and `150` for `Protocolo`."
@@ -103,7 +107,7 @@ deed_managements,Strong,start_date,,no,Date,,,,Date the file was opened. Seeded 
 deed_managements,Strong,heading,,no,Text,,,,Heading that describes the management. Stored values `Compraventa Lote 12 — Familia Pérez` and `Donación — Sucesión Gómez` stay.
 deed_managements,Strong,notes,,yes,Text,,,x,Working notes. The seeded samples stay empty.
 deed_managements,Strong,fk_id_notary_person,FK,yes,Integer,,x,x,Notary in charge. The seeded managements stay with `Garcia`.
-deed_managements,Strong,fk_id_management_status,FK,yes,Integer,,x,x,"Current operational status. Seeded samples stay `Documentacion Completa` for management `1001` and `En Tramite` for management `1002`."
+deed_managements,Strong,fk_id_management_status,FK,yes,Integer,,x,x,Current operational status. Seeded samples stay `Documentacion Completa` for management `1001` and `En Tramite` for management `1002`.
 deed_managements,Strong,pending_debt_on_archive,,yes,Boolean,,,x,`true` when the management was archived with a pending debt
 management_statuses,Strong,version,,no,Integer,,,,Optimistic lock
 management_statuses,Strong,id,PK,no,Integer,x,,,Management-status id
@@ -129,7 +133,7 @@ procedures,Strong,id,PK,no,Integer,x,,,Unique id of the procedure
 procedures,Strong,number,,yes,Integer,,,x,Procedure serial number (optional since V13). Seeded numbers `1` and `2` stay.
 procedures,Strong,name,,yes,Text,,,x,Descriptive heading (optional since V13). Stored values `Compraventa inmueble Lote 12` and `Donación a herederos` stay.
 procedures,Strong,notes,,yes,Text,,,x,Instructions or observations. The seeded samples stay empty.
-procedures,Strong,fk_id_procedure_type,FK,yes,Integer,,x,x,"Procedure type. Seeded samples stay `Compraventa` for procedure `1` and `Donacion` for procedure `2`."
+procedures,Strong,fk_id_procedure_type,FK,yes,Integer,,x,x,Procedure type. Seeded samples stay `Compraventa` for procedure `1` and `Donacion` for procedure `2`.
 procedures,Strong,fk_id_deed_management,FK,yes,Integer,,x,x,Deed management that groups it (null for auxiliary work). Seeded procedures stay on managements `1001` and `1002`.
 procedures,Strong,fk_id_deed,FK,yes,Integer,,x,x,Resulting deed
 procedures,Strong,fk_id_budget,FK,yes,Integer,,x,x,Base budget (V14)

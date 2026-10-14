@@ -11,6 +11,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -22,7 +24,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.Locale;
+import java.time.Instant;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 /**
  * Spring AOP aspect that writes a business audit record to the
@@ -47,12 +52,31 @@ public class AuditAspect {
      */
     public static final String ACTING_USER_HEADER = "X-Notaire-User";
 
+    private static final long DEFAULT_LIST_READ_WINDOW_SECONDS = 60;
+
     private final AuditRecordService auditService;
     private final UserRepository userRepository;
 
+    private final Supplier<Instant> clock;
+    private final long listReadWindowSeconds;
+    private final ConcurrentHashMap<String, Instant> lastListReadByUser = new ConcurrentHashMap<>();
+
     public AuditAspect(AuditRecordService auditService, UserRepository userRepository) {
+        this(auditService, userRepository, Instant::now, DEFAULT_LIST_READ_WINDOW_SECONDS);
+    }
+
+    @Autowired
+    public AuditAspect(AuditRecordService auditService, UserRepository userRepository,
+            @Value("${security.audit.list-read-window-seconds:60}") long listReadWindowSeconds) {
+        this(auditService, userRepository, Instant::now, listReadWindowSeconds);
+    }
+
+    public AuditAspect(AuditRecordService auditService, UserRepository userRepository, Supplier<Instant> clock,
+            long listReadWindowSeconds) {
         this.auditService = auditService;
         this.userRepository = userRepository;
+        this.clock = clock;
+        this.listReadWindowSeconds = listReadWindowSeconds;
     }
 
     /**
@@ -77,21 +101,25 @@ public class AuditAspect {
             MethodSignature signature = (MethodSignature) joinPoint.getSignature();
             Method method = signature.getMethod();
 
-            // Only business operations are audited: create / update / delete and
-            // authentication events. Read-only queries (GET) are intentionally
-            // skipped so the audit trail stays focused and is not flooded by the
-            // many list refreshes the UI performs.
+            // Only business operations are audited: create / update / delete,
+            // authentication events and reads annotated @AuditPersonalDataRead.
+            // Other read-only queries (GET) are intentionally skipped so the audit
+            // trail is not flooded by the many list refreshes the UI performs.
             if (!isAuditableOperation(method)) {
                 return;
             }
 
             String controllerName = resolveControllerSimpleName(joinPoint);
             String module = AuditModuleResolver.resolve(controllerName);
-            String detail = AuditOperationDescriber.describe(method, joinPoint.getArgs(), module);
+            String detail = describe(method, joinPoint.getArgs(), module);
 
             User user = resolveCurrentUser().orElse(null);
             if (user == null) {
                 log.debug("Skipping audit for {} — no acting user", controllerName);
+                return;
+            }
+
+            if (isRepeatedListRead(method, user)) {
                 return;
             }
 
@@ -108,6 +136,33 @@ public class AuditAspect {
             // Never break functional flows because of audit failures.
             log.warn("Could not write audit record: {}", ex.getMessage());
         }
+    }
+
+    /**
+     * A user's list reads inside the window after the first one are not audited again (issue #1664).
+     */
+    private boolean isRepeatedListRead(Method method, User user) {
+        AuditPersonalDataRead read = method.getAnnotation(AuditPersonalDataRead.class);
+        if (read == null || !read.aggregated()) {
+            return false;
+        }
+        Instant now = clock.get();
+        boolean[] repeated = {false};
+        lastListReadByUser.compute(user.getName(), (name, last) -> {
+            if (last != null && now.isBefore(last.plusSeconds(listReadWindowSeconds))) {
+                repeated[0] = true;
+                return last;
+            }
+            return now;
+        });
+        return repeated[0];
+    }
+
+    private String describe(Method method, Object[] args, String module) {
+        if (method.isAnnotationPresent(AuditPersonalDataRead.class)) {
+            return PersonalDataReadDescriber.describe(args);
+        }
+        return AuditOperationDescriber.describe(method, args, module);
     }
 
     /**
@@ -135,8 +190,8 @@ public class AuditAspect {
 
     /**
      * Only audit state-changing business operations (create / update / delete)
-     * and authentication events (login / logout). Read-only GET endpoints are
-     * not auditable.
+     * authentication events (login / logout) and reads of personal data. Other
+     * read-only GET endpoints are not auditable.
      */
     private boolean isAuditableOperation(Method method) {
         if (method == null) {
@@ -146,7 +201,8 @@ public class AuditAspect {
         if (name.contains("login") || name.contains("logout")) {
             return true;
         }
-        return method.isAnnotationPresent(PostMapping.class)
+        return method.isAnnotationPresent(AuditPersonalDataRead.class)
+                || method.isAnnotationPresent(PostMapping.class)
                 || method.isAnnotationPresent(PutMapping.class)
                 || method.isAnnotationPresent(PatchMapping.class)
                 || method.isAnnotationPresent(DeleteMapping.class);

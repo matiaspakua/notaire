@@ -136,6 +136,23 @@ OpenCollection API tests work without relying on unpinned `npx @usebruno/cli`.
 
 ---
 
+## 4.1 Claude Code cloud sessions (#1659)
+
+`.cursor/install.sh` covers Cursor Cloud only. In a Claude Code cloud session
+(`CLAUDE_CODE_REMOTE=true`) the `SessionStart` hook
+`.claude/hooks/session-start-toolchain.sh` installs Temurin 26, the pinned
+`openspec`, `kustomize`, Trivy, `prometheus`, `promtool` and `amtool` into `~/.cache/notaire-tools` (about 20 s cold,
+instant warm) and exports `JAVA_HOME`, `PATH`, `LC_ALL=C.UTF-8`, `KUSTOMIZE` and
+`OPENSPEC_TELEMETRY=0`. A failed download prints one warning and never blocks the
+session. There is no Docker daemon in that sandbox, so run the stack natively:
+`bash workspace/stack/native.sh up` starts PostgreSQL 16, the backend jar and Next.js with
+the CI values and shims the Playwright browser paths; then run Playwright, Bruno and the
+`testing/database/checks/*.sql` checks against it, and `… down` when done (#1665). Only the
+Docker build, DAST and Testcontainers-based pg-integration stay CI-only; `infra/tests/test_alertmanager.py`
+falls back to the local `promtool`/`amtool` (#1660), and with the native stack up
+`infra/tests/test_prometheus_live.py` scrapes the live backend with the repository's Prometheus
+configuration and checks the alert rules and metric families (#1666).
+
 ## 5. Resource notes
 
 | Resource | Guidance |

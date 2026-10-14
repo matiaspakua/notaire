@@ -44,6 +44,7 @@ class RbacIntegrationTest {
     private MockMvc mockMvc;
     private String employeeToken;
     private String administratorToken;
+    private String notaryToken;
 
     @BeforeEach
     void setUp() {
@@ -51,7 +52,8 @@ class RbacIntegrationTest {
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
         employeeToken = tokenForNewUser("EMPLEADO", true);
-        administratorToken = tokenForNewUser("Escribano", true);
+        administratorToken = tokenForNewUser("Administrador", true);
+        notaryToken = tokenForNewUser("Escribano", true);
     }
 
     private String tokenForNewUser(String type, boolean active) {
@@ -92,6 +94,36 @@ class RbacIntegrationTest {
     void shouldForbidAnEmployeeOnAdministrativeFamilies(String method, String path) throws Exception {
         mockMvc.perform(request(HttpMethod.valueOf(method), path, employeeToken))
                 .andExpect(status().isForbidden());
+    }
+
+    @ParameterizedTest(name = "notary {0} {1} -> 403")
+    @CsvSource({
+        "GET,/api/v1/users",
+        "PUT,/api/v1/users/1",
+        "DELETE,/api/v1/users/999999",
+        "GET,/api/v1/roles",
+        "POST,/api/v1/roles",
+        "GET,/api/v1/audit-log",
+        "POST,/api/v1/procedure-types",
+        "POST,/api/v1/workflow-definition"
+    })
+    @DisplayName("should forbid a notary on administrative families (issue #1638)")
+    void shouldForbidANotaryOnAdministrativeFamilies(String method, String path) throws Exception {
+        mockMvc.perform(request(HttpMethod.valueOf(method), path, notaryToken))
+                .andExpect(status().isForbidden());
+    }
+
+    @ParameterizedTest(name = "notary GET {0} -> 200")
+    @CsvSource({
+        "/api/v1/people",
+        "/api/v1/deeds",
+        "/api/v1/budgets",
+        "/api/v1/procedure-types"
+    })
+    @DisplayName("should let a notary use the notarial endpoints (issue #1638)")
+    void shouldLetANotaryUseTheNotarialEndpoints(String path) throws Exception {
+        mockMvc.perform(get(path).header("Authorization", "Bearer " + notaryToken))
+                .andExpect(status().isOk());
     }
 
     @Test

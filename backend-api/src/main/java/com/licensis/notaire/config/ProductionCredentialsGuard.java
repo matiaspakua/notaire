@@ -6,12 +6,17 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 @Component
 public class ProductionCredentialsGuard {
 
     private static final String PRODUCTION_ENVIRONMENT = "production";
     private static final String INSECURE_DEFAULT_VALUE = "admin";
+    private static final int MIN_ACTUATOR_PASSWORD_LENGTH = 16;
+    private static final Set<String> WEAK_ACTUATOR_VALUES = Set.of("admin", "password", "changeme", "secret", "root");
+    private static final List<String> PLACEHOLDER_PREFIXES = List.of("change-me", "changeme");
 
     @Value("${app.environment:development}")
     private String environment;
@@ -60,8 +65,8 @@ public class ProductionCredentialsGuard {
         List<String> insecureProperties = new ArrayList<>();
         addIfDefault(insecureProperties, "spring.datasource.username", datasourceUsername);
         addIfDefault(insecureProperties, "spring.datasource.password", datasourcePassword);
-        addIfDefault(insecureProperties, "actuator.security.username", actuatorUsername);
-        addIfDefault(insecureProperties, "actuator.security.password", actuatorPassword);
+        addIfWeakActuatorUsername(insecureProperties);
+        addIfWeakActuatorPassword(insecureProperties);
         addIfDefault(insecureProperties, "app.admin.username", adminUsername);
         addIfDefault(insecureProperties, "app.admin.password", adminPassword);
         addIfConfiguredDefault(insecureProperties, "pgadmin.admin.password", pgAdminPassword);
@@ -75,6 +80,32 @@ public class ProductionCredentialsGuard {
                     "Insecure credentials detected in production: " + String.join(", ", insecureProperties)
                     + ". Set private values before starting the application in this environment.");
         }
+    }
+
+    private void addIfWeakActuatorUsername(List<String> insecureProperties) {
+        if (isBlank(actuatorUsername) || isWeakValue(actuatorUsername)) {
+            insecureProperties.add("actuator.security.username");
+        }
+    }
+
+    private void addIfWeakActuatorPassword(List<String> insecureProperties) {
+        if (isBlank(actuatorPassword) || actuatorPassword.length() < MIN_ACTUATOR_PASSWORD_LENGTH
+                || isWeakValue(actuatorPassword) || hasPlaceholderPrefix(actuatorPassword)) {
+            insecureProperties.add("actuator.security.password");
+        }
+    }
+
+    private static boolean isBlank(String value) {
+        return value == null || value.isBlank();
+    }
+
+    private static boolean isWeakValue(String value) {
+        return WEAK_ACTUATOR_VALUES.contains(value.toLowerCase(Locale.ROOT));
+    }
+
+    private static boolean hasPlaceholderPrefix(String value) {
+        String lowerCased = value.toLowerCase(Locale.ROOT);
+        return PLACEHOLDER_PREFIXES.stream().anyMatch(lowerCased::startsWith);
     }
 
     private void addIfDefault(List<String> insecureProperties, String propertyName, String value) {

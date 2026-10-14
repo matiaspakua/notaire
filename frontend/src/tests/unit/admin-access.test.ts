@@ -15,10 +15,14 @@ import {
 } from "@/lib/admin-access";
 
 describe("isAdminType", () => {
-  it("returns true for ADMIN, ADMINISTRADOR, ESCRIBANO (case-insensitive)", () => {
+  it("returns true for ADMIN and ADMINISTRADOR (case-insensitive)", () => {
     expect(isAdminType("ADMIN")).toBe(true);
     expect(isAdminType("administrador")).toBe(true);
-    expect(isAdminType("Escribano")).toBe(true);
+  });
+
+  it("returns false for ESCRIBANO: a notary is not an administrator (issue #1638)", () => {
+    expect(isAdminType("Escribano")).toBe(false);
+    expect(isAdminType("ESCRIBANO")).toBe(false);
   });
 
   it("returns false for EMPLEADO and empty", () => {
@@ -55,8 +59,14 @@ describe("shouldDenyAdminRoute (edge decision)", () => {
       shouldDenyAdminRoute("/dashboard/administration/users", "1", "ADMIN"),
     ).toBe(false);
     expect(
-      shouldDenyAdminRoute("/dashboard/administration", "authenticated", "ESCRIBANO"),
+      shouldDenyAdminRoute("/dashboard/administration", "authenticated", "ADMINISTRADOR"),
     ).toBe(false);
+  });
+
+  it("denies a notary on an administration path (issue #1638)", () => {
+    expect(
+      shouldDenyAdminRoute("/dashboard/administration", "authenticated", "ESCRIBANO"),
+    ).toBe(true);
   });
 
   it("denies admin path when role cookie is missing", () => {

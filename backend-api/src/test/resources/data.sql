@@ -47,7 +47,7 @@ INSERT INTO people (
 -- Entity columns: version, id (auto), username, password, status, user_type, fk_id_person
 -- MD5("admin") = 21232f297a57a5a743894a0e4a801fc3
 INSERT INTO users (version, username, password, user_type, status, fk_id_person) VALUES
-(0, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Escribano', true, 1);
+(0, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'ADMIN', true, 1);
 
 -- Seed Data: Budget — required by Payment FK
 -- Entity columns: version, id (auto), number, budget_date, heading, notes, status, property_amount
