@@ -7,8 +7,10 @@ Skips unless a `prometheus` binary and a backend answering on localhost:8080 exi
 stack with `bash workspace/stack/native.sh up`, the binary comes from the cloud toolchain hook).
 Run with: python3 infra/tests/test_prometheus_live.py
 """
+import glob
 import json
 import os
+import re
 import shutil
 import socket
 import subprocess
@@ -22,6 +24,7 @@ import yaml
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PROMETHEUS_DIR = os.path.join(REPO_ROOT, "infra", "observability", "prometheus")
+DASHBOARDS = os.path.join(REPO_ROOT, "infra", "observability", "grafana", "provisioning", "dashboards", "*.json")
 BACKEND_HEALTH = "http://localhost:8080/actuator/health"
 ACTUATOR_USER = os.environ.get("ACTUATOR_USER", "ci-e2e-actuator-user")
 ACTUATOR_PASSWORD = os.environ.get("ACTUATOR_PASSWORD", "ci-e2e-actuator-pass")
@@ -49,6 +52,24 @@ def free_port():
 def get_json(url):
     with urllib.request.urlopen(url, timeout=5) as response:
         return json.load(response)
+
+
+def dashboard_prometheus_queries():
+    """PromQL of every Prometheus panel target, with Grafana macros and variables made concrete."""
+    queries = []
+    for path in sorted(glob.glob(DASHBOARDS)):
+        with open(path, encoding="utf-8") as handle:
+            dashboard = json.load(handle)
+        stack = list(dashboard.get("panels", []))
+        while stack:
+            panel = stack.pop()
+            stack.extend(panel.get("panels", []))
+            for target in panel.get("targets", []):
+                datasource = json.dumps([panel.get("datasource", ""), target.get("datasource", "")]).lower()
+                if target.get("expr") and "prometheus" in datasource:
+                    expression = re.sub(r"\$__rate_interval|\$__interval", "5m", target["expr"])
+                    queries.append(re.sub(r"\$\{?\w+\}?", ".*", expression))
+    return queries
 
 
 class PrometheusLiveTest(unittest.TestCase):
@@ -126,6 +147,16 @@ class PrometheusLiveTest(unittest.TestCase):
             if missing:
                 time.sleep(2)
         self.assertEqual([], missing)
+
+    def test_every_dashboard_query_is_valid_promql(self):
+        failures = []
+        for query in dashboard_prometheus_queries():
+            url = f"{self.base}/api/v1/query?" + urllib.parse.urlencode({"query": query})
+            try:
+                get_json(url)
+            except OSError as error:
+                failures.append(f"{query[:80]}: {error}")
+        self.assertEqual([], failures)
 
     def series(self, query):
         url = f"{self.base}/api/v1/query?" + urllib.parse.urlencode({"query": query})
