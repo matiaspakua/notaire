@@ -33,9 +33,6 @@ R1 | com.licensis.notaire.adapter.in.web.folio.FolioController -> com.licensis.n
 R1 | com.licensis.notaire.adapter.in.web.folio.FolioController -> com.licensis.notaire.repository.FolioRepository
 R1 | com.licensis.notaire.adapter.in.web.folio.FolioController -> com.licensis.notaire.repository.FolioTypeRepository
 R1 | com.licensis.notaire.adapter.in.web.folio.FolioController -> com.licensis.notaire.repository.PersonRepository
-R1 | com.licensis.notaire.adapter.in.web.folio.FolioTypeController -> com.licensis.notaire.business.FolioType
-R1 | com.licensis.notaire.adapter.in.web.folio.FolioTypeController -> com.licensis.notaire.repository.FolioRepository
-R1 | com.licensis.notaire.adapter.in.web.folio.FolioTypeController -> com.licensis.notaire.repository.FolioTypeRepository
 R1 | com.licensis.notaire.adapter.in.web.history.HistoryController -> com.licensis.notaire.business.History
 R1 | com.licensis.notaire.adapter.in.web.history.HistoryController -> com.licensis.notaire.business.HistoryOrder
 R1 | com.licensis.notaire.adapter.in.web.history.HistoryController -> com.licensis.notaire.business.ManagementStatus
