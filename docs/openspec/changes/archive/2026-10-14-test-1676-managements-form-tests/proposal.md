@@ -27,6 +27,7 @@ The managements page had 57.54% branch coverage (76 uncovered branches, the larg
 ## Capabilities
 
 ### New Capabilities
+
 - `managements-form-tests`: behaviour tests for the managements create, edit, transition and client filter.
 
 ### Modified Capabilities
