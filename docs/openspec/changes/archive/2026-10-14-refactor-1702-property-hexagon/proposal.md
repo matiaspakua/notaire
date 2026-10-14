@@ -32,6 +32,7 @@ Property already has a use case, a service, an outbound port and an adapter, but
 ## Capabilities
 
 ### New Capabilities
+
 - `property-hexagon`: the property context behind ports and adapters.
 
 ### Modified Capabilities

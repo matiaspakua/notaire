@@ -8,7 +8,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -35,11 +35,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| create read update delete | PropertyApiCharacterizationTest | pending |
-| missing cadastral designation | PropertyApiCharacterizationTest | pending |
-| unknown id | PropertyApiCharacterizationTest | pending |
-| use cases without Spring | PropertyApiCharacterizationTest | pending |
-| dead wrappers are gone | PropertyApiCharacterizationTest | pending |
+| create read update delete | PropertyApiCharacterizationTest | passing |
+| missing cadastral designation | PropertyApiCharacterizationTest | passing |
+| unknown id | PropertyApiCharacterizationTest | passing |
+| use cases without Spring | PropertyApiCharacterizationTest | passing |
+| dead wrappers are gone | PropertyApiCharacterizationTest | passing |
 
 ## Permanent documentation updated
 
