@@ -43,7 +43,7 @@ function wrapper({ children }: { children: ReactNode }) {
 async function openReport(buttonKey: string) {
   render(<ProtocolPage />, { wrapper });
   await screen.findByText("77");
-  fireEvent.click(screen.getByRole("button", { name: new RegExp(buttonKey.replace(/\./g, "\\.")) }));
+  fireEvent.click(screen.getByRole("button", { name: buttonKey }));
   return screen.findByRole("dialog");
 }
 
