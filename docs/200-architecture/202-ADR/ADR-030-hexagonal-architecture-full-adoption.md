@@ -129,6 +129,19 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   - Behaviour note: a delete that fails for a reason other than a foreign key violation now answers 500 instead of
     409, which is the accurate status.
 
+- **Slice 2, property (#1702):** replaced a fake hexagon. `PropertyUseCase`, `PropertyService` and
+  `PropertyRepositoryPort` were pass-through wrappers over the JPA entity and nothing called the use case, because
+  the controller injected the repository. Lessons:
+  - "Has a port" is not the criterion: count interfaces that speak domain types, not files.
+  - A domain-typed port can live next to the old entity-returning one (`PropertyCatalogPort` beside
+    `PropertyRepositoryPort`) while eleven other classes migrate; the old port is debt that shrinks with them.
+  - Moving the repository call into a `@Transactional` use case can change the exception class the controller sees.
+    Here a create without the required address changed from 500 to 400 with the standard constraint message,
+    because the exception is now translated to a data-integrity violation. The characterization test caught it;
+    it was accepted deliberately, as a correction, and called out in the PR.
+  - The HTTP error mapping of a failed create (`ErrorResponses.createFailed`) stays in the controller for now;
+    removing the try/catch is the separate #579 work.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers
