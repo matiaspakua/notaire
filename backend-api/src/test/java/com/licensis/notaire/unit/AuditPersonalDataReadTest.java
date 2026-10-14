@@ -29,6 +29,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.lang.reflect.Method;
+import java.time.Instant;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -154,5 +155,90 @@ class AuditPersonalDataReadTest {
         Method save = AuditRecordService.class.getDeclaredMethod("save", AuditRecord.class);
 
         assertThat(save.getAnnotation(Transactional.class).propagation()).isEqualTo(Propagation.REQUIRES_NEW);
+    }
+
+    private AuditAspect windowedAspect(Instant[] clock) {
+        User other = new User();
+        other.setIdUser(2);
+        other.setName("other");
+        User admin = new User();
+        admin.setIdUser(1);
+        admin.setName("admin");
+        lenient().when(userRepository.findAll()).thenReturn(List.of(admin, other));
+        return new AuditAspect(auditService, userRepository, () -> clock[0], 60);
+    }
+
+    private void listAs(AuditAspect windowed, String username) throws Exception {
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
+                username, "secret", AuthorityUtils.createAuthorityList("ROLE_USER")));
+        bindRequest("/api/v1/people", null);
+        lenient().when(joinPoint.getTarget()).thenReturn(org.mockito.Mockito.mock(PersonController.class));
+        lenient().when(joinPoint.getSignature()).thenReturn(signature);
+        lenient().when(joinPoint.getArgs()).thenReturn(new Object[] {Pageable.unpaged()});
+        lenient().when(signature.getMethod())
+                .thenReturn(PersonController.class.getDeclaredMethod("getAllPeople", Pageable.class));
+        windowed.auditAfterControllerInvocation(joinPoint);
+    }
+
+    @Test
+    @DisplayName("Should write one row for repeated list reads inside the window (issue #1664)")
+    void shouldWriteOneRowForRepeatedListReadsInsideTheWindow() throws Exception {
+        Instant[] clock = {Instant.parse("2026-01-01T00:00:00Z")};
+        AuditAspect windowed = windowedAspect(clock);
+
+        listAs(windowed, "admin");
+        clock[0] = clock[0].plusSeconds(59);
+        listAs(windowed, "admin");
+
+        verify(auditService, times(1)).save(any());
+    }
+
+    @Test
+    @DisplayName("Should write a new row for a list read after the window (issue #1664)")
+    void shouldWriteANewRowAfterTheWindow() throws Exception {
+        Instant[] clock = {Instant.parse("2026-01-01T00:00:00Z")};
+        AuditAspect windowed = windowedAspect(clock);
+
+        listAs(windowed, "admin");
+        clock[0] = clock[0].plusSeconds(61);
+        listAs(windowed, "admin");
+
+        verify(auditService, times(2)).save(any());
+    }
+
+    @Test
+    @DisplayName("Should not suppress another user's list read (issue #1664)")
+    void shouldNotSuppressAnotherUsersListRead() throws Exception {
+        Instant[] clock = {Instant.parse("2026-01-01T00:00:00Z")};
+        AuditAspect windowed = windowedAspect(clock);
+
+        listAs(windowed, "admin");
+        listAs(windowed, "other");
+
+        verify(auditService, times(2)).save(any());
+    }
+
+    @Test
+    @DisplayName("Should never aggregate searches or single reads (issue #1664)")
+    void shouldNeverAggregateSearchesOrSingleReads() throws Exception {
+        Instant[] clock = {Instant.parse("2026-01-01T00:00:00Z")};
+        AuditAspect windowed = windowedAspect(clock);
+        Method search = PersonController.class.getDeclaredMethod("searchPeople", String.class, String.class,
+                String.class, Integer.class, Boolean.class);
+        Method byId = PersonController.class.getDeclaredMethod("getPersonById", Integer.class);
+        lenient().when(joinPoint.getTarget()).thenReturn(org.mockito.Mockito.mock(PersonController.class));
+        lenient().when(joinPoint.getSignature()).thenReturn(signature);
+        bindRequest("/api/v1/people/search", null);
+
+        for (int i = 0; i < 2; i++) {
+            lenient().when(joinPoint.getArgs()).thenReturn(new Object[] {null, null, DNI, null, null});
+            lenient().when(signature.getMethod()).thenReturn(search);
+            windowed.auditAfterControllerInvocation(joinPoint);
+            lenient().when(joinPoint.getArgs()).thenReturn(new Object[] {7});
+            lenient().when(signature.getMethod()).thenReturn(byId);
+            windowed.auditAfterControllerInvocation(joinPoint);
+        }
+
+        verify(auditService, times(4)).save(any());
     }
 }
