@@ -8,7 +8,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| branch that merged main still shows its OpenSpec path | test_pr_checks | pending |
-| CI merge checkout keeps its behaviour | test_pr_checks | pending |
-| archive hygiene and doc traceability follow the same rule | test_pr_checks | pending |
+| branch that merged main still shows its OpenSpec path | test_pr_checks | passing |
+| CI merge checkout keeps its behaviour | test_pr_checks | passing |
+| archive hygiene and doc traceability follow the same rule | test_pr_checks | passing |
 
 ## Permanent documentation updated
 

@@ -29,6 +29,7 @@ check-sdlc-exception.sh, check-openspec-archive-hygiene.py and check-doc-traceab
 ## Capabilities
 
 ### New Capabilities
+
 - `preflight-local-merge-base`: the diff range used by the PR process checks outside CI.
 
 ### Modified Capabilities
