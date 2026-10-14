@@ -11,9 +11,9 @@
 | Suite | Count | Location |
 |-------|------:|----------|
 | Playwright E2E specs | 100 | `testing/e2e/tests/*.spec.ts` |
-| Backend `*Test.java` (all) | 293 | `backend-api/src/test` |
+| Backend `*Test.java` (all) | 294 | `backend-api/src/test` |
 | Backend unit-path | 114 | `.../unit/*Test.java` |
-| Backend integration-path | 132 | `.../integration/*Test.java` |
+| Backend integration-path | 133 | `.../integration/*Test.java` |
 | Frontend Vitest files | 125 | `frontend/src/**/*.test.ts(x)` |
 | Bruno YAML requests | 423 | `backend-api/api-test/**/*.yml` |
 
