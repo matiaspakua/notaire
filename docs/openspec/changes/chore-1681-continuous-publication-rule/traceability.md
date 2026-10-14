@@ -35,10 +35,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| push and comment | test_publish_progress | pending |
-| main is refused | test_publish_progress | pending |
-| failed push is reported | test_publish_progress | pending |
-| rule present in every document | test_publish_progress | pending |
+| push and comment | test_publish_progress | passing |
+| main is refused | test_publish_progress | passing |
+| failed push is reported | test_publish_progress | passing |
+| rule present in every document | test_publish_progress | passing |
 
 ## Permanent documentation updated
 
