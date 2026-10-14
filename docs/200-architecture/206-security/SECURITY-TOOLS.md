@@ -24,8 +24,9 @@ vendor account.
 
 Severity SLA in the policy file: critical 7 days, high 30 days, medium 90,
 low 180. The clock starts when the alert is visible (Dependabot, CodeQL, or a
-failed secret scan). Trivy is still report-only, so its clock is not enforced
-yet. That gap is `SR-13`.
+failed secret scan, or a Trivy source scan). The Trivy source scan blocks on
+fixed CRITICAL/HIGH findings (#712); the image scan is still report-only, which is
+what remains of `SR-13`.
 
 ## Considered and not adopted
 

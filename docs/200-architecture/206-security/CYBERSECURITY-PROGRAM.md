@@ -24,7 +24,7 @@ production pentest.
 | Authorization | Every `/api/**` call except login/logout | `ROLE_ADMIN` on admin paths and admin writes (#559). `Escribano` resolves to `ROLE_NOTARY`, not admin (#1638) | Partial — no object-level checks (SR-11) |
 | Injection | JPA queries | Parameterized persistence. See [SQL injection prevention](SQL-INJECTION-PREVENTION.md) | Mitigated for known query paths |
 | Secrets | Env and CI | `.env` gitignored, `ProductionCredentialsGuard`, this change's secret scan | Partial — GitHub push protection is an admin setting |
-| Dependencies | Maven, npm, images | Dependabot, Trivy (report-only), image pins | Partial — Trivy does not fail the build |
+| Dependencies | Maven, npm, images | Dependabot, Trivy (source scan blocks on CRITICAL/HIGH, image scan report-only), image pins | Partial — the image scan does not fail the build |
 | Privacy | `Person` DNI and email; notarial records | Auth gate, request logs omit query, headers, and body (#1463) | Partial — `Person` reads are audited without PII (SR-08, #1635); other entities opt in |
 | Runtime | Login metrics | Prometheus alerts and Grafana `notaire-auth` | Partial — no general API rate limit (#280) |
 
@@ -48,7 +48,7 @@ measured and improved. They are not a certified score.
 | Security architecture | Interceptor-validator in `SecurityAndCorsConfig`; trust-boundary diagram | 2 |
 | Secure build | CodeQL, SpotBugs, secret scan failing in CI | 2 |
 | Secure deployment | Pinned images, prod compose without public DB, cosign + SBOM on CD | 2 |
-| Defect management | Dependabot and CodeQL alerts; Trivy and ZAP are report-only | 1 |
+| Defect management | Dependabot and CodeQL alerts; the Trivy image scan and ZAP are report-only | 1 |
 | Security testing | JUnit security tests, Playwright TS-0044, ZAP baseline, Bruno | 2 |
 | Incident management | CU77, Alertmanager local UI, no external paging | 1 |
 | Environment and operations | Grafana, Loki, Prometheus, OpenTelemetry | 2 |
