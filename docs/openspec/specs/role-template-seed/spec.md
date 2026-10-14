@@ -1,8 +1,11 @@
 # role-template-seed Specification
 
 ## Purpose
+
 TBD - created by archiving change feat-1682-seed-role-template. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: A new installation has the standard role template
 
 After all migrations on an empty database, the roles Administrator, Notary and Office Staff MUST exist with their module grants.
@@ -30,4 +33,3 @@ V50 MUST insert a template role only when no role has that name and MUST NOT tou
 
 - **WHEN** a role named Notary already exists before V50
 - **THEN** Administrator and Office Staff are still created
-

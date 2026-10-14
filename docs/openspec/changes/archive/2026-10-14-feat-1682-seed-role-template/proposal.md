@@ -30,6 +30,7 @@ ADR-029 makes every installation single tenant with a standard role template tha
 ## Capabilities
 
 ### New Capabilities
+
 - `role-template-seed`: the seeded standard roles and their module grants.
 
 ### Modified Capabilities
