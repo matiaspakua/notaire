@@ -31,7 +31,7 @@
 - [ ] 4.1 Write the failing pg-integration test
 - [ ] 4.2 Add Flyway V50
 - [ ] 4.3 Record the schema version
-- [ ] 4.4 Document the template in the SAD
+- [ ] 4.4 Document the template in ROLE-TEMPLATE.md
 
 ## 5. Actualizar tests existentes
 

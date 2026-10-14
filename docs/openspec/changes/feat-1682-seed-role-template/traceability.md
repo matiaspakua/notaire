@@ -47,7 +47,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/200-architecture/201-SAD/sad.md` | no | pending |
+| `docs/200-architecture/206-security/ROLE-TEMPLATE.md` | no | pending |
 | `release/product-release.json` | no | pending |
 
 ## Gate log
