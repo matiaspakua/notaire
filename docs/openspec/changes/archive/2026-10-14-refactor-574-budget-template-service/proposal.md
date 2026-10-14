@@ -31,6 +31,7 @@ BudgetTemplateController builds a legacy BudgetTemplateJpaController per call fr
 ## Capabilities
 
 ### New Capabilities
+
 - `budget-template-service`: budget template management behind a service and repository.
 
 ### Modified Capabilities

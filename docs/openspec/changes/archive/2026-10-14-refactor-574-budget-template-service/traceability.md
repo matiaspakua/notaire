@@ -8,7 +8,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -35,10 +35,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| create then list | BudgetTemplateApiCharacterizationTest | pending |
-| invalid and duplicate create | BudgetTemplateApiCharacterizationTest | pending |
-| update and delete | BudgetTemplateApiCharacterizationTest | pending |
-| architecture guard | BudgetTemplateApiCharacterizationTest | pending |
+| create then list | BudgetTemplateApiCharacterizationTest | passing |
+| invalid and duplicate create | BudgetTemplateApiCharacterizationTest | passing |
+| update and delete | BudgetTemplateApiCharacterizationTest | passing |
+| architecture guard | BudgetTemplateApiCharacterizationTest | passing |
 
 ## Permanent documentation updated
 
