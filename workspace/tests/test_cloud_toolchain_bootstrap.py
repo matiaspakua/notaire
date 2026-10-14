@@ -65,6 +65,11 @@ class ToolchainBootstrapTest(unittest.TestCase):
         self.assertEqual(prometheus, pin(hook, "PROMETHEUS_VERSION"))
         self.assertEqual(alertmanager, pin(hook, "ALERTMANAGER_VERSION"))
 
+    def test_hook_installs_the_prometheus_binary_from_the_release_tarball(self):
+        hook = HOOK.read_text(encoding="utf-8")
+        self.assertIn("linux-amd64/prometheus", hook.replace('"', ""))
+        self.assertRegex(hook, r'\[ -x "\$BIN/prometheus" \]')
+
     def test_outside_cloud_sessions_the_hook_does_nothing(self):
         result = run_hook({"HOME": str(self.home), "CLAUDE_ENV_FILE": str(self.env_file)}, "/usr/bin:/bin")
         self.assertEqual(result.returncode, 0)
@@ -84,7 +89,7 @@ class ToolchainBootstrapTest(unittest.TestCase):
 
     def test_environment_is_exported_from_the_cache(self):
         stub(self.tools / "jdk" / "bin" / "java")
-        for tool in ("openspec", "kustomize", "trivy", "promtool", "amtool"):
+        for tool in ("openspec", "kustomize", "trivy", "promtool", "amtool", "prometheus"):
             stub(self.tools / "bin" / tool)
         result = run_hook(
             {"HOME": str(self.home), "CLAUDE_CODE_REMOTE": "true", "CLAUDE_ENV_FILE": str(self.env_file)},
