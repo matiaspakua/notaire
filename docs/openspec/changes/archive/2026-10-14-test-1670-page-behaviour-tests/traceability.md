@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| a status offers one action | folios-admin-page | pending |
-| a folio in use is protected | folios-admin-page | pending |
-| a type edit resends the version | folios-admin-page | pending |
+| a status offers one action | folios-admin-page | passing |
+| a folio in use is protected | folios-admin-page | passing |
+| a type edit resends the version | folios-admin-page | passing |
 
 ## Permanent documentation updated
 
