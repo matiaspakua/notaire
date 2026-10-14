@@ -47,7 +47,7 @@ application data.
 | Threat | Mitigation | Gap |
 |--------|-----------|-----|
 | Credential stuffing / brute force on login | `LoginAttemptService` lockout (5 attempts / 15 min) | Single-instance only — see [ADR-018](../202-ADR/ADR-018-rate-limiting-policy.md) |
-| Unauthorized data access | JWT on `/api/**` plus `ROLE_ADMIN` for admin paths and admin writes (#559) | Object-level access (one user, another client's record) is still open — see [THREAT-MODEL-SYSTEM.md](THREAT-MODEL-SYSTEM.md) SR-11 |
+| Unauthorized data access | JWT on `/api/**` plus `ROLE_ADMIN` for admin paths and admin writes (#559) | Module grants are not yet enforced server-side (ADR-029 W2); cross-notary access is excluded by single-tenant deployment — see [THREAT-MODEL-SYSTEM.md](THREAT-MODEL-SYSTEM.md) SR-11 |
 | Credential leakage via defaults | `ProductionCredentialsGuard` blocks startup on default `.env` values in production | Only catches the literal `"admin"` default, not weak passwords generally — see [ADR-019](../202-ADR/ADR-019-secrets-management.md) |
 | API surface reconnaissance | Swagger UI/spec denied in production | Non-production environments remain fully open — see [ADR-020](../202-ADR/ADR-020-openapi-exposure-policy.md) |
 | SQL injection | JPA/Hibernate parameterized queries throughout (see [SQL Injection Prevention](SQL-INJECTION-PREVENTION.md)) | None known |
