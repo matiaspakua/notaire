@@ -30,6 +30,7 @@ The frontend has no hexagon (epic #1693): 22 files under app, 43 hooks and 1 com
 ## Capabilities
 
 ### New Capabilities
+
 - `frontend-boundary-lint`: the enforced import boundaries of the frontend hexagon.
 
 ### Modified Capabilities

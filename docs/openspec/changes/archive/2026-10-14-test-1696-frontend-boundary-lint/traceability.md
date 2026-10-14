@@ -8,7 +8,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -35,10 +35,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| new violation fails | architecture-boundaries | pending |
-| adapters may import the client | architecture-boundaries | pending |
-| core stays pure | architecture-boundaries | pending |
-| baseline is well formed | architecture-boundaries | pending |
+| new violation fails | architecture-boundaries | passing |
+| adapters may import the client | architecture-boundaries | passing |
+| core stays pure | architecture-boundaries | passing |
+| baseline is well formed | architecture-boundaries | passing |
 
 ## Permanent documentation updated
 
