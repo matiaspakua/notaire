@@ -73,6 +73,8 @@ class ScaffoldOpenspecChangeTest(unittest.TestCase):
         self.spec_file.write_text(json.dumps(SPEC), encoding="utf-8")
         self.change = openspec / "changes" / NAME
         self.env = {**os.environ, "NOTAIRE_REPO_ROOT": str(self.root)}
+        self.offline_env = {k: v for k, v in self.env.items() if k not in ("GH_TOKEN", "GITHUB_TOKEN")}
+        self.offline_env["GH_CONFIG_DIR"] = str(self.root / "no-gh-config")
 
     def run_tool(self, *args: str) -> subprocess.CompletedProcess:
         return subprocess.run(
@@ -91,7 +93,9 @@ class ScaffoldOpenspecChangeTest(unittest.TestCase):
     def test_scaffolded_change_passes_plan_validation(self):
         self.scaffold()
         validator = self.root / "workspace" / "sdlc" / "validate-sdlc-plan.sh"
-        result = subprocess.run(["bash", str(validator), NAME], capture_output=True, text=True, timeout=120)
+        result = subprocess.run(
+            ["bash", str(validator), NAME], capture_output=True, text=True, env=self.offline_env, timeout=120
+        )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_scenarios_become_coverage_rows(self):
