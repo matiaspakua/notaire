@@ -54,6 +54,8 @@ def git(args: list[str], *, cwd: str | None = None) -> str:
 
 
 def diff_base(base: str, head: str) -> str:
+    if os.environ.get("GITHUB_ACTIONS") != "true":
+        return base
     parents = subprocess.run(
         ["git", "rev-parse", "--verify", "--quiet", f"{head}^2"],
         capture_output=True,
