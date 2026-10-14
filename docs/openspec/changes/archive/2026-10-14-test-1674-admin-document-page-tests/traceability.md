@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| an expiring document type needs its due days | required-documents-page | pending |
-| a user keeps its role when edited | required-documents-page | pending |
-| required documents wait for a procedure type | required-documents-page | pending |
+| an expiring document type needs its due days | required-documents-page | passing |
+| a user keeps its role when edited | required-documents-page | passing |
+| required documents wait for a procedure type | required-documents-page | passing |
 
 ## Permanent documentation updated
 
