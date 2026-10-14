@@ -4,7 +4,16 @@ The generic skill explains the pattern. This file fixes the conventions of this 
 the shape of a slice. The skeletons are illustrative, not existing code; the reference implementation that
 exists today is the payment slice.
 
-## Reference slice that exists: payment (ADR-021)
+## Reference slices that exist
+
+**Strict form, start here: identification types (#1700).** `domain/identification` (pure record with `create` and
+`restore` factories, domain exceptions), `application/port/in|out/identification`, `application/usecase/identification`,
+`adapter/in/web/identification` (controller plus a controller-scoped exception advice),
+`adapter/out/persistence/identification` (adapter over the legacy entity), and `src/test/.../testing/InMemoryIdentificationTypeCatalog`
+used by `IdentificationTypeUseCasesTest`. Its characterization test (`IdentificationTypeApiCharacterizationTest`)
+passed on the old code and stayed green.
+
+## Earlier slice: payment (ADR-021)
 
 | Layer | Where |
 |---|---|
@@ -19,6 +28,8 @@ What it still lacks to be the target: its adapters use the legacy JPA entities f
 the persistence entity and the domain model are not yet separate classes (ADR-030 backend rule 4).
 
 ## Backend slice skeleton (strict form)
+
+The real slice above is the authoritative example; this skeleton is the shortest shape of it.
 
 ```java
 // domain.concept — plain Java
