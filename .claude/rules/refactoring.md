@@ -21,7 +21,8 @@ alwaysApply: false
 - Responsibilities: business logic, validation, persistence, REST endpoints, security
 - No Swing (or any desktop UI) dependencies
 - Stateless and horizontally scalable
-- Prefer Spring Data `repository` over the legacy `jpa` package for new data access
+- Architecture: full Ports & Adapters (ADR-030, epic #1693). Load `.claude/rules/hexagonal-architecture.md`
+  before touching backend or frontend code; `HexagonArchitectureTest` enforces it
 
 ### DTO contracts (in `backend-api`)
 
@@ -47,16 +48,17 @@ alwaysApply: false
 
 | Package | Role |
 |---------|------|
-| `adapter.in.web` | REST controllers (`@RestController`) |
-| `service` / `application` | Use-case / application services |
-| `repository` | Spring Data JPA — **use for new code** |
-| `business` / `domain` | JPA entities and domain model |
-| `jpa` | Legacy `*JpaController` data-access — **do not extend**; migrate callers to `repository` + `service` |
-| `config` | Spring configuration |
-| `security` | Authn/authz (JWT) |
+| `domain.<context>` | Pure domain model (JDK only) |
+| `application.port.in.<context>` / `port.out.<context>` | Use-case interfaces / what the use cases need |
+| `application.usecase.<context>` | Use cases (`@Service` + `@Transactional` only) |
+| `adapter.in.web.<context>` | REST controllers, web DTOs, mappers — call inbound ports only |
+| `adapter.out.persistence.<context>` | JPA entities, Spring Data repositories, mappers, port adapters |
+| `config` | Spring wiring (composition root) |
+| `security` | Authn/authz (JWT) — an inbound adapter |
+| `jpa`, `service`, `repository`, `business`, `dto` | **Legacy** — receive no new dependents; deleted slice by slice |
 
-When hexagonal ports/adapters already exist for a capability (`application.port`,
-`adapter.out`), extend that shape rather than inventing a parallel layer.
+Never extend a legacy package. Migrate the context you touch following the slice procedure in
+`.claude/rules/hexagonal-architecture.md`.
 
 ## REST API Design
 
@@ -88,33 +90,34 @@ documented in OpenAPI/Swagger (CONSTITUTION.md §4).
 
 ## Backend Implementation Rules
 
-### Controllers
+### Controllers (`adapter.in.web`)
 
-- Thin: validate input (`@Valid`), call a service, return `ResponseEntity`
+- Thin: validate input (`@Valid`), call an **inbound port**, map to a web DTO, return `ResponseEntity`
 - Constructor injection only
-- No business logic, no `EntityManager`, no direct repository calls when a
-  service already owns the use case
+- No business logic, no `EntityManager`, no repository, no `jpa`, no JPA entity, no `@Transactional`
 
-### Services
+### Use cases (`application.usecase`)
 
-- Own business rules and transactions (`@Transactional` where needed)
-- No HTTP types (`HttpServletRequest`, `ResponseEntity`) inside services
-- Throw domain/application exceptions; map them in `@ControllerAdvice`
+- Own business rules orchestration and the transaction (`@Transactional`)
+- No HTTP types (`HttpServletRequest`, `ResponseEntity`) and no persistence types
+- Reach other contexts only through their inbound ports
+- Throw domain/application exceptions without an HTTP status; the inbound adapter maps them
 
-### Repositories
+### Persistence (`adapter.out.persistence`)
 
-- Extend `JpaRepository` / Spring Data interfaces
+- `FooJpaEntity`, `FooJpaRepository` (Spring Data), `FooMapper`, `FooPersistenceAdapter` implementing the port
 - Query methods or `@Query` only — no business rules
+- Nothing outside this package sees a JPA entity or a Spring Data repository
 
-### Legacy `jpa` package
+### Legacy packages (`jpa`, `service`, `repository`, `business`, `dto`)
 
-- Treat as migration debt: wrap or replace with `repository` + `service`
-- Do not add new `*JpaController` classes or expand their APIs
-- Prefer extracting behaviour into services covered by unit tests first (TDD)
+- Migration debt: do not extend, do not add dependents
+- Extract behaviour into a use case with characterization tests first (TDD), then delete the legacy classes
 
 ## Frontend Implementation Rules
 
-- Call the backend through the existing API client utilities under `frontend/src/lib/`
+- Call the backend only through use cases and `adapters/http` (ADR-030); `app/`, `components/` and `hooks/`
+  never import `lib/api-client`
 - Handle loading, error, and empty states explicitly
 - Keep auth tokens out of logs and local storage patterns that contradict
   `docs/200-architecture/206-security/`
@@ -145,8 +148,8 @@ documented in OpenAPI/Swagger (CONSTITUTION.md §4).
 
 ## Refactoring Strategy (ongoing)
 
-1. **Prefer `repository` + `service`** over extending `jpa`.
-2. **Keep controllers thin**; move logic down, covered by tests.
+1. **Migrate by slice** (one bounded context, ports first, REST contract unchanged), never by big bang.
+2. **Controllers call inbound ports only**; move logic down into use cases, covered by tests.
 3. **One concern per change** (KIS / SRP); remove dead and duplicate code in the
    same PR that makes it unreachable.
 4. **Do not resurrect Swing** or any desktop client module.
@@ -158,9 +161,9 @@ documented in OpenAPI/Swagger (CONSTITUTION.md §4).
 ### Backend
 
 - Controllers: `FooController`
-- Services: `FooService` (interfaces only when there is a real second impl)
-- Repositories: `FooRepository`
-- Entities: domain names (`Person`, `Deed`, …)
+- Inbound ports: `FooUseCase`; implementations: `FooService`
+- Outbound ports: `FooRepositoryPort`; adapters: `FooPersistenceAdapter`
+- Domain model: domain names (`Person`, `Deed`, …); persistence: `PersonJpaEntity`, `PersonJpaRepository`
 - DTOs: `DtoPerson`, `DtoDeed`, …
 - Exceptions: `FooNotFoundException`, `InvalidFooException`
 
