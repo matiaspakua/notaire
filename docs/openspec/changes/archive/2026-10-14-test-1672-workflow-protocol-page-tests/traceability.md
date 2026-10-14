@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| a new workflow cannot be active | workflows-admin-page | pending |
-| an invalid workflow stays inactive | workflows-admin-page | pending |
-| a report offers its own filters | workflows-admin-page | pending |
+| a new workflow cannot be active | workflows-admin-page | passing |
+| an invalid workflow stays inactive | workflows-admin-page | passing |
+| a report offers its own filters | workflows-admin-page | passing |
 
 ## Permanent documentation updated
 
