@@ -260,217 +260,115 @@ Live delivery status: [Delivery Board](https://github.com/users/matiaspakua/proj
 
 ### 5.1 Level 1 — System Decomposition
 
-```plantuml
-@startuml
-title Building Block View — Level 1
-
-package "Notaire System" {
-
-  package "frontend\n(Next.js 16)" as FE {
-    [App Router Pages]
-    [React Components]
-    [Theme / Design Tokens]
-    [API Client + Hooks]
-  }
-
-  package "backend-api\n(Spring Boot 4.1)" as BE {
-    [REST API Layer]
-    [Business Services]
-    [Data Access Layer]
-    [Security & Config]
-  }
-
-  database "PostgreSQL 16" as DB
-}
-
-FE --> BE : HTTP/JSON (JWT)
-BE --> DB : Flyway + Hibernate
-@enduml
+```mermaid
+flowchart LR
+    user([Notary office staff]) -->|browser| FE
+    subgraph FE["frontend (Next.js 16)"]
+        ui["UI adapters: pages, components, hooks"]
+        core_fe["core: domain + use cases + ports"]
+        http_fe["HTTP adapters"]
+        ui --> core_fe
+        http_fe -.implements ports.-> core_fe
+    end
+    subgraph BE["backend-api (Spring Boot 4.1)"]
+        in_be["inbound adapters: REST, security"]
+        app_be["application: use cases + ports"]
+        dom_be["domain"]
+        out_be["outbound adapters: persistence, PDF"]
+        in_be --> app_be --> dom_be
+        out_be -.implements ports.-> app_be
+    end
+    http_fe -->|HTTP/JSON, JWT| in_be
+    out_be -->|Flyway + Hibernate| DB[(PostgreSQL 16)]
 ```
+
+Both tiers follow Ports & Adapters (ADR-030). Dependencies point inward; infrastructure is reached only through
+ports. This is the target; sections 5.2 and 5.3 state how far each tier is from it.
 
 ### 5.2 Level 2 — Backend API Internal Structure
 
-```plantuml
-@startuml
-title Building Block View — Level 2: backend-api
+Target (ADR-030). Root package `com.licensis.notaire`.
 
-package "com.licensis.notaire" {
-
-  package "api\n(31 REST Controllers)" as api {
-    [ManagementController]
-    [PersonController]
-    [DeedController]
-    [BudgetController]
-    [UserController]
-    [ReportController]
-    [FolioController]
-    [PaymentController]
-    [WorkflowDefinitionController]
-    [WorkflowNodeController]
-    [WorkflowTransitionController]
-    [WorkflowValidationController]
-    [... +19 more]
-  }
-
-  package "service\n(Business Logic)" as svc {
-    [PaymentQueryService]
-    [PersonService]
-    [DeedService]
-    [BudgetService]
-    [ReportService]
-    [AuditRecordService]
-    [WorkflowTraceService]
-    [WorkflowValidationService]
-    [ManagementQueryService]
-    [JpaAdministrator]
-    [ValidationAdministrator]
-  }
-
-  package "repository\n(31 Spring Data JPA)" as repo {
-    [DeedManagementRepository]
-    [PersonRepository]
-    [DeedRepository]
-    [BudgetRepository]
-    [UserRepository]
-    [... +26 more]
-  }
-
-  package "business\n(32 Domain Entities)" as dom #LightYellow {
-    [DeedManagement]
-    [Person]
-    [Deed]
-    [Budget]
-    [Procedure]
-    [User]
-    [WorkflowDefinition]
-    [WorkflowNode]
-    [WorkflowTransition]
-    [... +31 more]
-  }
-
-  package "jpa\n(Legacy — being replaced)" as jpa #LightGray {
-    [26 JpaController classes]
-    [exceptions/]
-    [interfaz/]
-  }
-
-  package "config" as cfg {
-    [SecurityAndCorsConfig]
-    [JwtAuthenticationFilter]
-    [JwtTokenService]
-    [GlobalExceptionHandler]
-    [OpenApiConfig]
-    [ObservabilityConfig]
-    [DataInitializer]
-    [ProductionCredentialsGuard]
-  }
-
-  package "security" as sec {
-    [LoginAttemptService]
-    [PasswordEncoderUtil]
-  }
-
-  package "exception" as exc {
-    [NotaireException]
-    [BusinessValidationException]
-    [ResourceNotFoundException]
-    [ErrorResponse]
-  }
-
-  package "audit" as aud {
-    [AuditAspect]
-    [AuditModuleResolver]
-    [AuditOperationDescriber]
-  }
-
-  package "observability" as obs {
-    [ApplicationHealthIndicator]
-    [MetricsUtil]
-    [SharedModuleMetrics]
-    [StructuredLogger]
-  }
-}
-
-api -down-> svc : delegates
-svc -down-> repo : persists
-repo -down-> dom : maps
-svc .right.> jpa : legacy fallback
-cfg -left-> sec : JWT config
-aud --> repo : audit trail
-obs ..> api : health/metrics
-@enduml
+```mermaid
+flowchart TB
+    subgraph IN["adapter.in.* (driving)"]
+        web["web.&lt;context&gt;: controllers, web DTOs, mappers"]
+        sec["security: JWT filter, authority resolution"]
+    end
+    subgraph APP["application"]
+        pin["port.in.&lt;context&gt;: use-case interfaces"]
+        uc["usecase.&lt;context&gt;: @Service + @Transactional"]
+        pout["port.out.&lt;context&gt;: repository and gateway interfaces"]
+    end
+    subgraph DOM["domain.&lt;context&gt;: entities, value objects, rules (JDK only)"]
+    end
+    subgraph OUT["adapter.out.* (driven)"]
+        per["persistence.&lt;context&gt;: JpaEntity, JpaRepository, Mapper, Adapter"]
+        pdf["pdf, storage, other gateways"]
+    end
+    web --> pin
+    sec --> pin
+    uc -.implements.-> pin
+    uc --> pout
+    uc --> DOM
+    per -.implements.-> pout
+    pdf -.implements.-> pout
+    per --> DOM
+    cfg["config: composition root (Spring wiring, security, OpenAPI)"] -.wires.-> IN
+    cfg -.wires.-> OUT
 ```
+
+| Package | Role |
+|---|---|
+| `config` | Composition root: Spring wiring, security configuration, OpenAPI, global exception handler |
+| `exception` | Application and domain exceptions; HTTP status mapping belongs to the inbound adapter |
+| `audit`, `observability` | Cross-cutting adapters (audit aspect, metrics, structured logging); no business rules |
+
+**Current state** (measured on `main` @ `3c1f99ce`, epic #1693; the executable truth is the ArchUnit baseline
+`src/test/resources/architecture/hexagon-baseline.txt`, #1695):
+
+| Aspect | Today |
+|---|---|
+| Inbound ports / outbound ports / persistence adapters | 18 / 42 / 36 |
+| Web controllers using the application layer | 25 of 38; 27 still touch `repository` or `jpa`; 6 are clean |
+| Application files importing JPA entities / Spring Data | 81 of 108 / 24 |
+| Pure `domain` files | 7; the model is still `business` (38 `@Entity`) |
+| Legacy packages still present | `jpa` (35 files), `repository` (37), `service` (3), top-level `dto` (53) |
+
+Each migrated slice removes its entries from the baseline; the goal is an empty baseline and no legacy packages.
 
 ### 5.3 Level 2 — Frontend Internal Structure
 
-```plantuml
-@startuml
-title Building Block View — Level 2: frontend (Next.js 16)
+Target (ADR-030). `frontend/src`:
 
-package "frontend/src" {
-
-  package "app\n(Next.js App Router)" as app {
-    [layout.tsx — Root layout]
-    [page.tsx — Home redirect]
-    [login/ — Authentication page]
-    [dashboard/ — Main dashboard]
-    [auditoria/ — Audit trail view]
-    [globals.css]
-    [providers.tsx]
-  }
-
-  package "components" as comp {
-    [layout/ — Page layouts]
-    [ui/ — Design system components]
-    [shared/ — Reusable elements]
-    [motion/ — Animations]
-  }
-
-  package "hooks\n(20 TanStack Query hooks)" as hooks {
-    [useManagements]
-    [usePeople]
-    [useDeeds]
-    [useBudgets]
-    [usePayments]
-    [useUsers]
-    [useWorkflow]
-    [useReports]
-    [useAudit]
-    [... +11 more]
-  }
-
-  package "theme" as theme {
-    [tokens.ts — Design tokens]
-    [index.ts — Theme utilities]
-    [form-patterns.tsx — Form components]
-  }
-
-  package "lib" as lib {
-    [api-client.ts — HTTP client]
-    [query-client.ts — TanStack setup]
-    [logger.ts — Client logging]
-    [utils.ts]
-  }
-
-  package "i18n" as i18n {
-    [Locale files]
-  }
-
-  package "store" as store {
-    [Client state]
-  }
-
-  package "types" as types {
-    [TypeScript interfaces]
-  }
-}
-
-app --> comp : renders
-app --> hooks : data fetching
-hooks --> lib : API calls
-comp --> theme : styling
-@enduml
+```mermaid
+flowchart TB
+    subgraph UI["adapters/ui: app/, components/, hooks/ (driving)"]
+        pages["pages and components"]
+        hooks["React Query hooks"]
+    end
+    subgraph CORE["core/&lt;context&gt;"]
+        usecases["application: use cases + ports.ts"]
+        domain["domain: types, pure rules (no React, no fetch)"]
+    end
+    subgraph HTTP["adapters/http/&lt;context&gt; (driven)"]
+        impl["port implementations + mappers"]
+    end
+    comp["composition/: builds use cases, one React provider"]
+    pages --> hooks --> usecases --> domain
+    impl -.implements.-> usecases
+    impl --> api["lib/api-client"]
+    comp -.wires.-> hooks
+    comp -.wires.-> impl
 ```
+
+Supporting areas stay as they are: `theme` (design tokens and form patterns), `i18n` (locale files), `store`
+(client state), `lib` (API client, query client, logger, utilities).
+
+**Current state** (same measurement): 22 files under `app/` and 43 of 49 hooks import `lib/api-client`
+directly; 12 files use `useQuery` or `useMutation` inline in pages; there are no ports, no domain module and no
+composition root. The import-boundary lint with a shrink-only baseline (#1696) turns these counts into a
+ratchet.
 
 ### 5.4 Level 2 — Shared Module (retired)
 

@@ -32,6 +32,7 @@ Operational detail (load when implementing): `.claude/rules/ai-agent-workflow.md
 | Any Java/backend | `.claude/rules/programming.md`, `.claude/rules/code-quality.md`, `.claude/skills/java/SKILL.md`, `.claude/skills/backend/SKILL.md` |
 | Flyway / schema | `.claude/rules/database-migrations.md`, `.claude/skills/flyway/SKILL.md` |
 | Frontend / forms / theme | `.claude/rules/ui-ux-design.md`, `.claude/skills/frontend-design/SKILL.md` |
+| Any backend/frontend structure, ports, adapters | `.claude/rules/hexagonal-architecture.md`, `.claude/skills/hexagonal-arch/SKILL.md` (ADR-030) |
 | Refactors | `.claude/rules/refactoring.md` |
 | CI / Docker / observability | `.claude/agents/devops-engineer.md`, `.claude/skills/devops/SKILL.md` |
 | Security review | `.claude/agents/security-auditor.md`, `.claude/skills/secure-threat-modeling/SKILL.md` |
