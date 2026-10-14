@@ -1,8 +1,11 @@
 # tenancy-authorization-decision Specification
 
 ## Purpose
+
 TBD - created by archiving change docs-1637-single-tenant-authorization-decision. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: The tenancy model is documented consistently
 
 The ADR, the SAD and the security register MUST describe one installation per notary and MUST NOT describe an assigned-notary ownership check as planned.
@@ -21,4 +24,3 @@ The ADR, the SAD and the security register MUST describe one installation per no
 
 - **WHEN** the SAD deployment view is read
 - **THEN** section 7.5 describes per-installation data and the standard role template
-

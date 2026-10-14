@@ -28,6 +28,7 @@ The Owner decided on #1637 that each notary runs an independent installation, wi
 ## Capabilities
 
 ### New Capabilities
+
 - `tenancy-authorization-decision`: the documented tenancy and authorization model.
 
 ### Modified Capabilities
