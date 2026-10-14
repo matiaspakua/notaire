@@ -13,6 +13,7 @@ USAGE
 
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 import sys
@@ -36,7 +37,9 @@ def git(args: list[str]) -> str:
 
 
 def diff_base(base: str, head: str) -> str:
-    """On a pull-request merge checkout, diff from the merge parent."""
+    """On CI's pull-request merge checkout, diff from the merge parent (#1655)."""
+    if os.environ.get("GITHUB_ACTIONS") != "true":
+        return base
     parents = subprocess.run(
         ["git", "rev-parse", "--verify", "--quiet", f"{head}^2"],
         capture_output=True,

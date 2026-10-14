@@ -17,7 +17,9 @@ HEAD="${2:-HEAD}"
 # is the base the PR was actually merged into, which can be newer than the
 # event's base SHA. Diffing from the stale SHA counts files that landed on main
 # (including someone else's docs/openspec/changes/ path) as if this PR added them.
-if git rev-parse --verify --quiet "${HEAD}^2" >/dev/null 2>&1; then
+# Only in CI: locally a merge commit is a branch that merged main, whose first parent
+# is its own previous tip, and BASE...HEAD already diffs from the merge base (#1655).
+if [ "${GITHUB_ACTIONS:-}" = "true" ] && git rev-parse --verify --quiet "${HEAD}^2" >/dev/null 2>&1; then
   BASE="$(git rev-parse "${HEAD}^1")"
 fi
 
