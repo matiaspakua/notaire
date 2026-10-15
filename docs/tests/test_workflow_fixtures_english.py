@@ -28,13 +28,12 @@ class WorkflowFixturesEnglishTest(unittest.TestCase):
         self.assertNotIn("inicio a proceso", text)
 
     def test_validation_fixtures_use_english_names(self):
-        text = read("service/unit/WorkflowValidationServiceTest.java")
-        self.assertIn("status1", text)
-        self.assertIn('"Status1"', text)
-        self.assertIn('"Status"', text)
+        # Domain-typed fixtures live under unit/ after #1770 (ports-only validation).
+        text = read("unit/WorkflowValidationServiceTest.java")
         self.assertIn('"Start"', text)
         self.assertIn('"End"', text)
         self.assertIn('"Isolated"', text)
+        self.assertIn('"Mid"', text)
         self.assertNotIn("estado1", text)
         self.assertNotIn('"Estado1"', text)
         self.assertNotIn('"Inicio"', text)

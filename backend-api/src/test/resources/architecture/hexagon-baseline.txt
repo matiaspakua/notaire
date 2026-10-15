@@ -78,9 +78,6 @@ R1 | com.licensis.notaire.adapter.in.web.testimony.TestimonyController -> com.li
 R1 | com.licensis.notaire.adapter.in.web.testimony.TestimonyController -> com.licensis.notaire.repository.TestimonyRepository
 R1 | com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementController -> com.licensis.notaire.business.TestimonyMovement
 R1 | com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementController -> com.licensis.notaire.repository.TestimonyMovementRepository
-R1 | com.licensis.notaire.adapter.in.web.workflow.WorkflowValidationController -> com.licensis.notaire.repository.WorkflowDefinitionRepository
-R1 | com.licensis.notaire.adapter.in.web.workflow.WorkflowValidationController -> com.licensis.notaire.repository.WorkflowNodeRepository
-R1 | com.licensis.notaire.adapter.in.web.workflow.WorkflowValidationController -> com.licensis.notaire.repository.WorkflowTransitionRepository
 R2 | com.licensis.notaire.application.port.in.deed.CalculateNextDeedNumberUseCase -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.port.in.deed.ValidateDeedNumberingUseCase -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.port.in.history.HistoryUseCase -> com.licensis.notaire.business.History
@@ -362,9 +359,5 @@ R2 | com.licensis.notaire.application.usecase.workflow.WorkflowTraceService -> c
 R2 | com.licensis.notaire.application.usecase.workflow.WorkflowTraceService -> com.licensis.notaire.repository.HistoryRepository
 R2 | com.licensis.notaire.application.usecase.workflow.WorkflowTraceService -> com.licensis.notaire.repository.WorkflowNodeRepository
 R2 | com.licensis.notaire.application.usecase.workflow.WorkflowTraceService -> com.licensis.notaire.repository.WorkflowTransitionRepository
-R2 | com.licensis.notaire.application.usecase.workflow.WorkflowValidationService -> com.licensis.notaire.business.ManagementStatus
-R2 | com.licensis.notaire.application.usecase.workflow.WorkflowValidationService -> com.licensis.notaire.business.WorkflowNode
-R2 | com.licensis.notaire.application.usecase.workflow.WorkflowValidationService -> com.licensis.notaire.business.WorkflowNodeType
-R2 | com.licensis.notaire.application.usecase.workflow.WorkflowValidationService -> com.licensis.notaire.business.WorkflowTransition
 R6 | com.licensis.notaire.business.IdentificationTypeLookup -> com.licensis.notaire.jpa.IdentificationTypeJpaController
 R6 | com.licensis.notaire.config.JpaConfig -> com.licensis.notaire.service.JpaAdministrator

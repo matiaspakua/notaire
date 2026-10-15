@@ -1,11 +1,12 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.adapter.in.web.workflow.WorkflowValidationController;
-import com.licensis.notaire.repository.WorkflowDefinitionRepository;
-import com.licensis.notaire.repository.WorkflowNodeRepository;
-import com.licensis.notaire.repository.WorkflowTransitionRepository;
-import com.licensis.notaire.application.usecase.workflow.WorkflowValidationService;
-import com.licensis.notaire.application.usecase.workflow.WorkflowValidationService.ValidationResult;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,43 +16,29 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.List;
+import com.licensis.notaire.adapter.in.web.workflow.WorkflowValidationController;
+import com.licensis.notaire.application.port.in.workflow.ValidateWorkflowUseCase;
+import com.licensis.notaire.application.port.in.workflow.ValidateWorkflowUseCase.Result;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@DisplayName("CU83 - WorkflowValidationController unit tests")
+@DisplayName("CU72 - WorkflowValidationController unit tests (issue #1770)")
 @ExtendWith(MockitoExtension.class)
 class WorkflowValidationControllerTest {
 
     @Mock
-    private WorkflowDefinitionRepository workflowRepository;
-    @Mock
-    private WorkflowNodeRepository nodeRepository;
-    @Mock
-    private WorkflowTransitionRepository transitionRepository;
-    @Mock
-    private WorkflowValidationService validationService;
+    private ValidateWorkflowUseCase validateWorkflow;
 
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        WorkflowValidationController controller = new WorkflowValidationController(
-                workflowRepository, nodeRepository, transitionRepository, validationService);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new WorkflowValidationController(validateWorkflow))
+                .build();
     }
 
     @Test
     @DisplayName("POST /api/v1/workflow-definition/{id}/validate should return 200 when valid")
     void shouldReturnValidWhenWorkflowIsConsistent() throws Exception {
-        when(workflowRepository.existsById(1)).thenReturn(true);
-        when(nodeRepository.findByWorkflowDefinitionId(1)).thenReturn(List.of());
-        when(transitionRepository.findByWorkflowDefinitionId(1)).thenReturn(List.of());
-        when(validationService.validate(any(), any())).thenReturn(ValidationResult.valid());
+        when(validateWorkflow.validate(1)).thenReturn(new Result.Ok(true, List.of()));
 
         mockMvc.perform(post("/api/v1/workflow-definition/1/validate"))
                 .andExpect(status().isOk())
@@ -62,11 +49,8 @@ class WorkflowValidationControllerTest {
     @Test
     @DisplayName("POST /api/v1/workflow-definition/{id}/validate should return 200 with errors when invalid")
     void shouldReturnErrorsWhenWorkflowIsInconsistent() throws Exception {
-        when(workflowRepository.existsById(1)).thenReturn(true);
-        when(nodeRepository.findByWorkflowDefinitionId(1)).thenReturn(List.of());
-        when(transitionRepository.findByWorkflowDefinitionId(1)).thenReturn(List.of());
-        when(validationService.validate(any(), any())).thenReturn(
-                ValidationResult.invalid(List.of("Missing initial node", "Missing final node")));
+        when(validateWorkflow.validate(1))
+                .thenReturn(new Result.Ok(false, List.of("Missing initial node", "Missing final node")));
 
         mockMvc.perform(post("/api/v1/workflow-definition/1/validate"))
                 .andExpect(status().isOk())
@@ -77,7 +61,7 @@ class WorkflowValidationControllerTest {
     @Test
     @DisplayName("POST /api/v1/workflow-definition/{id}/validate should return 404 when workflow missing")
     void shouldReturn404WhenWorkflowMissing() throws Exception {
-        when(workflowRepository.existsById(99)).thenReturn(false);
+        when(validateWorkflow.validate(99)).thenReturn(new Result.NotFound());
         mockMvc.perform(post("/api/v1/workflow-definition/99/validate"))
                 .andExpect(status().isNotFound());
     }
