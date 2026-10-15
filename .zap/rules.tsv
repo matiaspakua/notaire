@@ -1,0 +1,4 @@
+# OWASP ZAP baseline allowlist for the unauthenticated API target (#1738 / CU78).
+# Format: alertId<TAB>action<TAB>(reason) — see zaproxy/action-baseline rules_file_name.
+# Reviewed under Sec by Design: only accept noise that cannot apply to this scan surface.
+90005	IGNORE	(Sec-Fetch-* request headers — browser-only; not meaningful for server API baseline)
