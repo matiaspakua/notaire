@@ -206,6 +206,11 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `WorkflowDefinitionRepositoryPort` remains for other consumers. Sibling node/transition slices stay
   separate (#1729 / #1730).
 
+- **Workflow node (#1729):** largest remaining workflow R1 hotspot (~6 edges). Controller was repo-only;
+  now ports-only with domain `WorkflowNode` / `WorkflowNodeKind`, delete-guard when transitions exist,
+  and `WorkflowNodeCatalogPort`. Reuses `WorkflowDefinitionCatalogPort` and `ManagementStatusCatalogPort`
+  for create lookups. Legacy `WorkflowNodeRepositoryPort` remains for other consumers.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers
