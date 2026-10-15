@@ -58,6 +58,24 @@ class SonarAnalysisTest(unittest.TestCase):
         for image in images:
             self.assertNotIn(":latest", image)
 
+    def test_script_ratchets_new_blocker_critical_major(self):
+        """Issue #1737: Notaire way fails when new high-severity issues appear."""
+        script = read(SCRIPT)
+        for metric in (
+            "new_blocker_violations",
+            "new_critical_violations",
+            "new_major_violations",
+        ):
+            self.assertIn(metric, script, metric)
+        self.assertIn('error=0', script)
+        report = os.path.join(REPO_ROOT, "infra", "scripts", "sonar-severity-report.py")
+        self.assertTrue(os.path.isfile(report), "sonar-severity-report.py")
+        body = read(report)
+        self.assertIn("notaire-backend", body)
+        self.assertIn("notaire-frontend", body)
+        for severity in ("BLOCKER", "CRITICAL", "MAJOR"):
+            self.assertIn(severity, body)
+
     def test_script_exposes_git_scm_to_frontend_scanner(self):
         """Issue #1680: without SCM, the whole tree is 'new code' and the gate fails."""
         script = read(SCRIPT)
