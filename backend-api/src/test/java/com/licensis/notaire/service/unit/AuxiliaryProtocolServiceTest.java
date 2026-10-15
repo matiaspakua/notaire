@@ -1,5 +1,6 @@
 package com.licensis.notaire.service.unit;
 
+import com.licensis.notaire.application.port.out.folio.FolioCatalogPort;
 import com.licensis.notaire.application.port.out.folio.FolioRepositoryPort;
 import com.licensis.notaire.application.port.out.notebook.DeedOperationPort;
 import com.licensis.notaire.exception.BusinessValidationException;
@@ -31,13 +32,16 @@ class AuxiliaryProtocolServiceTest {
     private FolioRepositoryPort folioRepository;
 
     @Mock
+    private FolioCatalogPort folioCatalog;
+
+    @Mock
     private DeedOperationPort deedRepository;
 
     private AuxiliaryProtocolService auxiliaryProtocolService;
 
     @BeforeEach
     void setUp() {
-        auxiliaryProtocolService = new AuxiliaryProtocolService(folioRepository, deedRepository);
+        auxiliaryProtocolService = new AuxiliaryProtocolService(folioRepository, folioCatalog, deedRepository);
     }
 
     private Folio availableAuxiliaryFolio() {

@@ -189,6 +189,17 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   - Characterization suites for folio, document, management status and identification remain the HTTP contract;
     no status or body drift.
 
+- **Submitted document (#1726):** instance aggregate (not a catalog). Controller was repo-only; now
+  ports-only with domain `SubmittedDocument`, due inheritance in the use case, and a thin
+  `ProcedureLookupPort`. Legacy `business.SubmittedDocument` remains for reports / external-entity /
+  other consumers.
+
+- **Folio instance (#1727):** instance aggregate (folio types already clean in #1703). Controller was the
+  largest folio R1 hotspot (~7 edges); now ports-only with domain `Folio`, Utilizado lock and deed-link
+  forcing in the use cases, `FolioCatalogPort`, and thin person/deed lookup ports. Legacy
+  `FolioRepositoryPort` remains for AuxiliaryProtocol `startDeed`; available-auxiliary listing goes
+  through the domain catalog so `FolioResponse` stays domain-only.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers
@@ -218,8 +229,6 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   procedure or leave it untouched.
 - Mappers must be tested, or they hide bugs; they are written by hand and covered by unit tests. MapStruct is not
   adopted without a separate decision.
-
-#- **Submitted document (#1726):** instance aggregate (not a catalog). Controller was repo-only; now ports-only with domain `SubmittedDocument`, due inheritance in the use case, and a thin `ProcedureLookupPort`. Legacy `business.SubmittedDocument` remains for reports / external-entity / other consumers.
 
 ## Open points
 

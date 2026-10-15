@@ -1,17 +1,19 @@
 package com.licensis.notaire.adapter.out.persistence.folio;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Component;
+
 import com.licensis.notaire.application.port.out.folio.FolioRepositoryPort;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.FolioType;
 import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.repository.FolioTypeRepository;
-import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
- * Persistence adapter for folio slice.
+ * Legacy entity-shaped folio port (AuxiliaryProtocol and other mid-strangler consumers). Domain catalog mapping lives
+ * in {@link FolioCatalogPersistenceAdapter} (issue #1727).
  */
 @Component
 public class FolioPersistenceAdapter implements FolioRepositoryPort {
