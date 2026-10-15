@@ -47,18 +47,13 @@ class UsersRolesUseCasesTest {
             }
 
             @Override
-            public boolean matchesBcrypt(String rawPassword, String storedHash) {
-                return storedHash.equals("enc:" + rawPassword);
+            public boolean passwordMatches(String rawPassword, String storedHash) {
+                return storedHash != null && storedHash.equals("enc:" + rawPassword);
             }
 
             @Override
             public boolean isBcryptHash(String hash) {
                 return hash != null && hash.startsWith("enc:");
-            }
-
-            @Override
-            public String legacyMd5Hash(String rawPassword) {
-                return "md5:" + rawPassword;
             }
         };
         userManage = new UserManagementService(users, hasher);

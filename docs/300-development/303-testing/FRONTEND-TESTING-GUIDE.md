@@ -230,7 +230,7 @@ Unit tests use mocked data via `vi.mock()` and direct object construction. E2E t
 
 Key default test data:
 - Seeded user (`V2__initial_data.sql`, renamed by `V37`): login name `admin`,
-  password `admin` (plaintext login value; stored as an MD5 hash), stored type
+  password `admin` (plaintext login value; stored as BCrypt after V52 / #1762), stored type
   `Escribano`. Live columns are `users.username`, `users.password`, and
   `users.user_type`. The V2 script still inserts into `usuarios`
   (`nombre`, `contrasenia`, `tipo`); that file is an applied migration.

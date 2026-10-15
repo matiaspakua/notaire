@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Legacy MD5 locals and testimony-movement test names are English."""
+"""Password verify path and testimony-movement test names are English."""
 
 import unittest
 from pathlib import Path
@@ -12,20 +12,39 @@ def read(relative: str) -> str:
 
 
 class HashAndMovementNamesEnglishTest(unittest.TestCase):
-    def test_legacy_hash_locals_are_english(self):
-        # MD5 verify-only lives in PasswordHasherAdapter after the users hexagon (#1731).
+    def test_password_verify_has_no_legacy_md5_or_spanish_locals(self):
+        # #1762 hard cutoff: MessageDigest MD5 verify removed; Spanish MD5
+        # locals from the Swing-era helper must not return.
+        # After #1731, verify lives in PasswordHasherAdapter (ports-only UserController).
         source = read(
             "backend-api/src/main/java/com/licensis/notaire/adapter/out/persistence/user/"
             "PasswordHasherAdapter.java"
         )
-        self.assertIn("plainText", source)
-        self.assertIn("md5Hex", source)
-        self.assertIn("lowNibble", source)
-        self.assertIn("highNibble", source)
+        self.assertIn("passwordMatches", source)
+        self.assertIn("isBcryptHash", source)
+        self.assertNotIn("MessageDigest", source)
+        self.assertNotIn('getInstance("MD5")', source)
+        self.assertNotIn("legacyMd5Hash", source)
         self.assertNotIn("stringAEncriptar", source)
         self.assertNotIn("CadenaMD5", source)
         self.assertNotIn("int bajo", source)
         self.assertNotIn("int alto", source)
+
+        auth = read(
+            "backend-api/src/main/java/com/licensis/notaire/application/usecase/user/"
+            "AuthenticateUserService.java"
+        )
+        self.assertNotIn("MessageDigest", auth)
+        self.assertNotIn("legacyMd5Hash", auth)
+        self.assertNotIn('getInstance("MD5")', auth)
+
+        controller = read(
+            "backend-api/src/main/java/com/licensis/notaire/adapter/in/web/user/"
+            "UserController.java"
+        )
+        self.assertNotIn("MessageDigest", controller)
+        self.assertNotIn("legacyMd5Hash", controller)
+        self.assertNotIn('getInstance("MD5")', controller)
 
     def test_movement_names_and_receipt_heading_are_english(self):
         broken = read(

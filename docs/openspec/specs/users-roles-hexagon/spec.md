@@ -7,12 +7,12 @@ TBD - created by archiving change refactor-1731-users-roles-hexagon. Update Purp
 
 ### Requirement: Users and roles are managed through domain-typed ports
 
-The user and role HTTP adapters MUST call inbound ports only. Use cases MUST own persistence transactions. Login password verification (BCrypt and legacy MD5 upgrade) MUST live in the application layer behind a password hasher port. Role module lists MAY be stored and returned as today but MUST NOT gain new enforcement in this change (fenced for #1683).
+The user and role HTTP adapters MUST call inbound ports only. Use cases MUST own persistence transactions. Login password verification (BCrypt only; legacy MD5 verify removed per #1762) MUST live in the application layer behind a password hasher port. Role module lists MAY be stored and returned as today but MUST NOT gain new enforcement in this change (fenced for #1683).
 
 #### Scenario: User CRUD and login keep the wire contract
 
 - **WHEN** a client lists, gets, creates, updates, deletes users, or logs in / out
-- **THEN** status codes and JSON fields match the pre-refactor contract (including login valid/token/cookie and MD5→BCrypt upgrade)
+- **THEN** status codes and JSON fields match the pre-refactor contract (including login valid/token/cookie; legacy MD5 credentials are rejected)
 
 #### Scenario: Role CRUD and assign keep the wire contract
 

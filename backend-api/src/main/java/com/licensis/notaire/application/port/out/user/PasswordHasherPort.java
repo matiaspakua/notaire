@@ -1,17 +1,18 @@
 package com.licensis.notaire.application.port.out.user;
 
 /**
- * Password hashing for user credentials (issue #1731). BCrypt for new hashes; legacy MD5 verify-only
- * for pre-migration rows (#554).
+ * Password hashing for user credentials (issue #1731). BCrypt only — legacy MD5 verify
+ * was removed (hard cutoff, issue #1762 / java:S4790).
  */
 public interface PasswordHasherPort {
 
     String encode(String rawPassword);
 
-    boolean matchesBcrypt(String rawPassword, String storedHash);
+    /**
+     * Checks the submitted password against the stored BCrypt hash.
+     * Non-BCrypt stored values (including legacy MD5) never match.
+     */
+    boolean passwordMatches(String rawPassword, String storedHash);
 
     boolean isBcryptHash(String hash);
-
-    /** Verify-only for pre-BCrypt rows; never used to create new hashes. */
-    String legacyMd5Hash(String rawPassword);
 }

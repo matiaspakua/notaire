@@ -9,7 +9,7 @@ import com.licensis.notaire.application.port.out.user.UserCatalogPort;
 import com.licensis.notaire.domain.user.User;
 
 /**
- * Login credential check with BCrypt and transparent MD5→BCrypt upgrade (#554 / #1731).
+ * Login credential check with BCrypt only (issue #1731 / #1762).
  */
 @Service
 @Transactional
@@ -35,26 +35,13 @@ public class AuthenticateUserService implements AuthenticateUserUseCase {
         if (match == null) {
             return new Result.Failed(Failure.NOT_FOUND);
         }
-        if (!passwordMatches(rawPassword, match)) {
+        if (!passwords.passwordMatches(rawPassword, match.passwordHash())) {
             return new Result.Failed(Failure.BAD_CREDENTIALS);
         }
         if (!match.active()) {
             return new Result.Failed(Failure.INACTIVE);
         }
-        // Reload so callers see upgraded hash / current identity after MD5 migration.
         User current = catalog.findById(match.id()).orElse(match);
         return new Result.Success(current);
-    }
-
-    private boolean passwordMatches(String rawPassword, User user) {
-        String storedHash = user.passwordHash();
-        if (passwords.isBcryptHash(storedHash)) {
-            return passwords.matchesBcrypt(rawPassword, storedHash);
-        }
-        if (!passwords.legacyMd5Hash(rawPassword).equals(storedHash)) {
-            return false;
-        }
-        catalog.save(user.withPasswordHash(passwords.encode(rawPassword)));
-        return true;
     }
 }

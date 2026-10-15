@@ -324,6 +324,7 @@ class AdditionalControllersTest {
             mvc.perform(post("/api/v1/users/login").contentType("application/json")
                     .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
 
+            // User found, valid login — BCrypt only (legacy MD5 verify removed, #1762)
             loginDto.setPassword("admin");
             when(authenticate.authenticate(any(), any())).thenReturn(new Result.Success(u));
             mvc.perform(post("/api/v1/users/login").contentType("application/json")

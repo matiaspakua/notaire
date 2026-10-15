@@ -138,11 +138,9 @@ class UserControllerHashTest {
     }
 
     @Test
-    @DisplayName("login should succeed for a legacy MD5 hash and transparently upgrade it to BCrypt")
-    void loginShouldUpgradeLegacyMd5HashOnSuccess() {
+    @DisplayName("login should reject a legacy MD5 hash (hard cutoff — issue #1762)")
+    void loginShouldRejectLegacyMd5Hash() {
         catalog.save(User.restore(1, "admin", LEGACY_MD5_ADMIN, true, "Escribano", null, null, null, null, null, 0));
-        when(passwordEncoder.encode("admin")).thenReturn(BCRYPT_HASH);
-        when(jwtTokenService.generateToken("admin")).thenReturn("jwt-token");
 
         DtoUser loginRequest = new DtoUser();
         loginRequest.setName("admin");
@@ -152,8 +150,12 @@ class UserControllerHashTest {
 
         @SuppressWarnings("unchecked")
         Map<String, Object> body = (Map<String, Object>) response.getBody();
-        assertThat(body).containsEntry("valid", true);
-        assertThat(catalog.findById(1)).hasValueSatisfying(u -> assertThat(u.passwordHash()).isEqualTo(BCRYPT_HASH));
+        assertThat(body).containsEntry("valid", false);
+        assertThat(catalog.findById(1))
+                .hasValueSatisfying(u -> assertThat(u.passwordHash()).isEqualTo(LEGACY_MD5_ADMIN));
+        assertThat(catalog.saveCount()).isEqualTo(1); // only the initial seed — no upgrade save
+        verify(passwordEncoder, never()).matches(anyString(), anyString());
+        verify(passwordEncoder, never()).encode(anyString());
     }
 
     @Test

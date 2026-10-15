@@ -13,8 +13,7 @@ Client ──POST /api/v1/users/login──► UserController
                                               │
                                     ──────────▼──────────
                                     │ passwordMatches()   │
-                                    │ BCrypt (legacy MD5  │
-                                    │ auto-migrated)      │
+                                    │ BCrypt only (#1762) │
                                     └──────────┬──────────┘
                                                │
                                     ──────────▼──────────

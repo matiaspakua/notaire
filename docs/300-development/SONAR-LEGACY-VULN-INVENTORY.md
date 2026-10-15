@@ -13,7 +13,9 @@ python3 infra/scripts/sonar-legacy-inventory.py --write
 
 Classification values (English): `fix` | `false_positive` | `accepted_risk` | `defer_hexagon`.
 
-Last live refresh: **live Sonar @ http://localhost:9000** (702 inventory rows).
+Last live refresh: **live Sonar @ http://localhost:9000** (702 inventory rows;
+`java:S4790` on `UserController` removed after #1762 MD5 hard cutoff — expect
+absent on next Sonar analysis; 701 open rows below).
 
 | project | rule | severity | type | component | message | classification | rationale |
 |---------|------|----------|------|-----------|---------|----------------|-----------|
@@ -276,7 +278,6 @@ Last live refresh: **live Sonar @ http://localhost:9000** (702 inventory rows).
 | notaire-backend | java:S3776 | CRITICAL | CODE_SMELL | `notaire-backend:backend-api/src/main/java/com/licensis/notaire/jpa/TestimonyJpaController.java` | Refactor this method to reduce its Cognitive Complexity from 42 to the 15 allowed. | defer_hexagon | legacy JpaController — hexagonal epic #1693 |
 | notaire-backend | java:S3776 | CRITICAL | CODE_SMELL | `notaire-backend:backend-api/src/main/java/com/licensis/notaire/jpa/TestimonyMovementJpaController.java` | Refactor this method to reduce its Cognitive Complexity from 18 to the 15 allowed. | defer_hexagon | legacy JpaController — hexagonal epic #1693 |
 | notaire-backend | java:S3776 | CRITICAL | CODE_SMELL | `notaire-backend:backend-api/src/main/java/com/licensis/notaire/jpa/UserJpaController.java` | Refactor this method to reduce its Cognitive Complexity from 28 to the 15 allowed. | defer_hexagon | legacy JpaController — hexagonal epic #1693 |
-| notaire-backend | java:S4790 | CRITICAL | VULNERABILITY | `notaire-backend:backend-api/src/main/java/com/licensis/notaire/adapter/in/web/user/UserController.java` | Make sure this weak hash algorithm is not used in a sensitive context here. | fix | legacy MD5 password verify path remains after BCrypt migration (#554); child #1762 |
 | notaire-backend | java:S5826 | CRITICAL | CODE_SMELL | `notaire-backend:backend-api/src/test/java/com/licensis/notaire/integration/ApiH2IntegrationTest.java` | Annotate this method with JUnit5 '@org.junit.jupiter.api.BeforeEach' or rename it to avoid confusion. | accepted_risk | triaged in slice 1 inventory (live Sonar @ http://localhost:9000) |
 | notaire-backend | java:S5826 | CRITICAL | CODE_SMELL | `notaire-backend:backend-api/src/test/java/com/licensis/notaire/integration/ApiIntegrationTest.java` | Annotate this method with JUnit5 '@org.junit.jupiter.api.BeforeEach' or rename it to avoid confusion. | accepted_risk | triaged in slice 1 inventory (live Sonar @ http://localhost:9000) |
 | notaire-backend | java:S5826 | CRITICAL | CODE_SMELL | `notaire-backend:backend-api/src/test/java/com/licensis/notaire/integration/CorsPreflightIntegrationTest.java` | Annotate this method with JUnit5 '@org.junit.jupiter.api.BeforeEach' or rename it to avoid confusion. | accepted_risk | triaged in slice 1 inventory (live Sonar @ http://localhost:9000) |

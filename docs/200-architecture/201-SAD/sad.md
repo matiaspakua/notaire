@@ -571,7 +571,7 @@ alt Too many attempts (5 failures / 15 min lockout)
 else
   Ctrl -> DB : find user by name
   DB --> Ctrl : User entity
-  Ctrl -> Ctrl : BCrypt.matches(password)\n(or legacy MD5 auto-migration)
+  Ctrl -> Ctrl : BCrypt.matches(password)\n(BCrypt only; MD5 removed #1762)
   alt Valid credentials
     Ctrl -> Login : onLoginSucceeded(name)
     Ctrl -> JWT : generateToken(name)
