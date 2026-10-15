@@ -35,10 +35,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| CRUD keeps the wire contract | WorkflowTransitionControllerTest | pending |
-| missing workflow or node on create answers 404 | WorkflowTransitionControllerTest | pending |
-| missing transition or node on update answers 404 | WorkflowTransitionControllerTest | pending |
-| controller has no persistence imports | WorkflowTransitionControllerTest | pending |
+| CRUD keeps the wire contract | WorkflowTransitionControllerTest | passing |
+| missing workflow or node on create answers 404 | WorkflowTransitionControllerTest | passing |
+| missing transition or node on update answers 404 | WorkflowTransitionControllerTest | passing |
+| controller has no persistence imports | WorkflowTransitionControllerTest | passing |
 
 ## Permanent documentation updated
 
