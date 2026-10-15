@@ -16,7 +16,8 @@ set -uo pipefail
 BASE="${1:?usage: check-tdd-evidence.sh <base> [head]}"
 HEAD="${2:-HEAD}"
 PROD='^backend-api/src/main/|^frontend/src/'
-TEST='/src/test/|\.test\.tsx?$|^testing/e2e/tests/|/__tests__/'
+# infra/tests covers observability/provisioning guards (e.g. #1746 postgres panels).
+TEST='/src/test/|\.test\.tsx?$|^testing/e2e/tests/|/__tests__/|^infra/tests/|^testing/database/'
 
 if grep -qw 'sdlc-exception' <<< "${PR_LABELS:-}"; then
   echo "✓ sdlc-exception label set — TDD evidence check waived"

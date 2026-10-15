@@ -15,3 +15,12 @@ SELECT CASE WHEN COALESCE(
            WHERE u.rolname = :'exporter'), '{}') = ARRAY['pg_monitor']::name[]
        THEN 'PASS' ELSE 'FAIL' END
        || ' exporter role is a member of pg_monitor only';
+
+-- V51 (#1746): least-privilege SELECT for business extend-query gauges.
+SELECT CASE WHEN count(*) = 4 THEN 'PASS' ELSE 'FAIL' END
+       || ' exporter has SELECT on deeds, budgets, people, users'
+FROM information_schema.role_table_grants
+WHERE grantee = :'exporter'
+  AND privilege_type = 'SELECT'
+  AND table_schema = 'public'
+  AND table_name IN ('deeds', 'budgets', 'people', 'users');
