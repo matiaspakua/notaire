@@ -1,11 +1,12 @@
 package com.licensis.notaire.application.usecase.notebook;
 
+import com.licensis.notaire.application.port.out.folio.FolioCatalogPort;
 import com.licensis.notaire.application.port.out.folio.FolioRepositoryPort;
 import com.licensis.notaire.application.port.out.notebook.DeedOperationPort;
-import com.licensis.notaire.exception.BusinessValidationException;
-import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
+import com.licensis.notaire.exception.BusinessValidationException;
+import com.licensis.notaire.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,16 +21,25 @@ import java.util.List;
 public class AuxiliaryProtocolService {
 
     private final FolioRepositoryPort folioRepository;
+    private final FolioCatalogPort folioCatalog;
     private final DeedOperationPort deedRepository;
 
-    public AuxiliaryProtocolService(FolioRepositoryPort folioRepository, DeedOperationPort deedRepository) {
+    public AuxiliaryProtocolService(
+            FolioRepositoryPort folioRepository,
+            FolioCatalogPort folioCatalog,
+            DeedOperationPort deedRepository) {
         this.folioRepository = folioRepository;
+        this.folioCatalog = folioCatalog;
         this.deedRepository = deedRepository;
     }
 
+    /**
+     * Available auxiliary folios as domain records so the HTTP adapter can reuse {@code FolioResponse}
+     * without the ports-only {@code FolioController} depending on JPA entities (issue #1727).
+     */
     @Transactional(readOnly = true)
-    public List<Folio> listAvailableFolios() {
-        return folioRepository.findAvailableAuxiliaryFolios();
+    public List<com.licensis.notaire.domain.folio.Folio> listAvailableFolios() {
+        return folioCatalog.findAvailableAuxiliaryFolios();
     }
 
     public int calculateNextAuxiliaryNumber() {
