@@ -103,17 +103,51 @@ if [ -z "$SONAR_TOKEN" ]; then
     exit 1
 fi
 
-# 4. Quality gate ("Notaire way" = copy of "Sonar way" with new-code coverage >= 70%) and new-code period
+# 4. Quality gate ("Notaire way" = copy of "Sonar way" with new-code coverage >= 70%
+#    and new BLOCKER/CRITICAL/MAJOR = 0 — issue #1737) and new-code period
 api() { curl -s -u "$SONAR_USER:$WORKING_PASS" -X POST "$SONAR_URL/api/$1" "${@:2}"; }
+
+gate_json() {
+    curl -s -u "$SONAR_USER:$WORKING_PASS" \
+        "$SONAR_URL/api/qualitygates/show?name=$(echo "$GATE_NAME" | sed 's/ /%20/g')"
+}
+
+ensure_severity_conditions() {
+    # Idempotent: create or update GT/0 conditions for new high-severity metrics (#1737).
+    local json metric cond_id
+    json=$(gate_json)
+    for metric in new_blocker_violations new_critical_violations new_major_violations; do
+        cond_id=$(printf '%s' "$json" | python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+print(next((str(c['id']) for c in data.get('conditions', []) if c.get('metric') == '$metric'), ''))
+")
+        if [ -n "$cond_id" ]; then
+            api qualitygates/update_condition \
+                --data-urlencode "id=$cond_id" \
+                --data-urlencode "metric=$metric" \
+                --data-urlencode "op=GT" \
+                --data-urlencode "error=0" >/dev/null || true
+        else
+            api qualitygates/create_condition \
+                --data-urlencode "gateName=$GATE_NAME" \
+                --data-urlencode "metric=$metric" \
+                --data-urlencode "op=GT" \
+                --data-urlencode "error=0" >/dev/null || true
+        fi
+    done
+}
 
 if ! curl -s -u "$SONAR_USER:$WORKING_PASS" "$SONAR_URL/api/qualitygates/list" | grep -q "\"name\":\"$GATE_NAME\""; then
     api qualitygates/copy --data-urlencode "sourceName=Sonar way" --data-urlencode "name=$GATE_NAME" >/dev/null
-    COVERAGE_ID=$(curl -s -u "$SONAR_USER:$WORKING_PASS" "$SONAR_URL/api/qualitygates/show?name=$(echo "$GATE_NAME" | sed 's/ /%20/g')" \
+    COVERAGE_ID=$(gate_json \
         | python3 -c "import sys,json;print(next((c['id'] for c in json.load(sys.stdin)['conditions'] if c['metric']=='new_coverage'),''))")
     [ -n "$COVERAGE_ID" ] && api qualitygates/update_condition --data-urlencode "id=$COVERAGE_ID" \
         --data-urlencode "metric=new_coverage" --data-urlencode "op=LT" --data-urlencode "error=70" >/dev/null
     echo -e "${GREEN}✓ Quality gate '$GATE_NAME' created${NC}"
 fi
+ensure_severity_conditions
+echo -e "${GREEN}✓ Quality gate '$GATE_NAME' ratchets new_blocker/critical/major (error=0)${NC}"
 for KEY in "$BACKEND_KEY" "$FRONTEND_KEY"; do
     api projects/create --data-urlencode "project=$KEY" --data-urlencode "name=$KEY" >/dev/null 2>&1 || true
     api qualitygates/select --data-urlencode "gateName=$GATE_NAME" --data-urlencode "projectKey=$KEY" >/dev/null
