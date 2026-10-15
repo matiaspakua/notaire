@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+- **api:** `GET /managements/{id}/workflow-trace` no longer owns a controller transaction that turns expected 400s into `UnexpectedRollbackException` ERROR spam ([#1745](https://github.com/matiaspakua/notaire/issues/1745))
 - **api:** expected client failures (HTTP 4xx `NotaireException` and management delete FK conflicts) log as WARN instead of ERROR ([#1712](https://github.com/matiaspakua/notaire/issues/1712))
 - **openapi:** prune merged `accepted-breaking-changes.d` files so the ignore list stays empty on main ([#1713](https://github.com/matiaspakua/notaire/issues/1713))
 - **observability:** load postgres-exporter custom queries, fix empty Postgres PromQL panels, surface packaged SEMVER on Grafana, add Sonar quality dashboard, and drop deprecated piechart plugin install noise ([#1707](https://github.com/matiaspakua/notaire/issues/1707))
