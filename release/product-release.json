@@ -12,8 +12,8 @@
     },
     "database": {
       "engine": "flyway",
-      "schemaVersion": "51",
-      "migrationCount": 51
+      "schemaVersion": "52",
+      "migrationCount": 52
     }
   }
 }
