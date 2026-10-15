@@ -13,8 +13,10 @@ def read(relative: str) -> str:
 
 class HashAndMovementNamesEnglishTest(unittest.TestCase):
     def test_legacy_hash_locals_are_english(self):
+        # MD5 verify-only lives in PasswordHasherAdapter after the users hexagon (#1731).
         source = read(
-            "backend-api/src/main/java/com/licensis/notaire/adapter/in/web/user/UserController.java"
+            "backend-api/src/main/java/com/licensis/notaire/adapter/out/persistence/user/"
+            "PasswordHasherAdapter.java"
         )
         self.assertIn("plainText", source)
         self.assertIn("md5Hex", source)
