@@ -586,7 +586,9 @@ public class ManagementController {
                     + "`transitions` whose `originNodeId` matches the current node (the node whose "
                     + "status equals `currentStatus`). The managements UI must offer only those "
                     + "destinations when changing status via POST /{id}/transition.")
-    @Transactional(readOnly = true)
+    // TX lives on WorkflowTraceService.buildTrace only. A controller @Transactional here
+    // joins that TX; catching IllegalArgumentException then marks rollback-only and the
+    // interceptor commit throws UnexpectedRollbackException (#1745 / CU77).
     public ResponseEntity<Object> getWorkflowTrace(@PathVariable Integer id) {
         try {
             DtoManagementWorkflowTrace trace = workflowTraceService.buildTrace(id);
