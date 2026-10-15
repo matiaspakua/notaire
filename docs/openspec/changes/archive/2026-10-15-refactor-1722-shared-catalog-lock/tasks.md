@@ -73,7 +73,7 @@
 - [x] 8.2 Update OpenAPI/Swagger annotations if endpoints changed, and verify in Swagger UI
   (signatures unchanged)
 - [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
-  (**omit** while #1721 holds the CHANGELOG lane; no user-visible behaviour change)
+  ([x] CHANGELOG Unreleased added after #1721 merged)
 - [x] 8.4 Archive superseded documents into `docs/000-archive/`
   (n/a)
 - [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth

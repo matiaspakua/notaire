@@ -30,7 +30,7 @@
 | Document | Updated | Commit |
 |----------|---------|--------|
 | `docs/200-architecture/202-ADR/ADR-030-hexagonal-architecture-full-adoption.md` | yes | `8c689258` |
-| `CHANGELOG.md` | skipped (#1721) | n/a |
+| `CHANGELOG.md` | Unreleased Changed | tip |
 | `docs/openspec/specs/shared-catalog-lock/spec.md` | created on archive | tip |
 
 ## Gate log
@@ -44,4 +44,4 @@
 
 ## Exceptions
 
-CHANGELOG omitted while #1721 is open (Owner serialize preference). Pure internal refactor — no REST behaviour change.
+CHANGELOG Unreleased added after #1721 merged. Pure internal refactor — no REST behaviour change.
