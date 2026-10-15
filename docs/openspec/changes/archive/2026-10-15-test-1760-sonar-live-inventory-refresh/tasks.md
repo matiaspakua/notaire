@@ -62,13 +62,13 @@
 - [x] 8.3 `CHANGELOG.md` — n/a (CHANGELOG-free)
 - [x] 8.4 No archives superseded
 - [x] 8.5 Single inventory source of truth retained
-- [ ] 8.6 `bash workspace/sdlc/preflight.sh` before push
+- [x] 8.6 `bash workspace/sdlc/preflight.sh` before push
 
 ## 9. Atomic commits
 
-- [ ] 9.1 Conventional Commits; English messages
-- [ ] 9.2 `Closes #1760` / `Refs #1535` / `Refs #1762`
-- [ ] 9.3 No secrets committed (`.env` token stays local)
+- [x] 9.1 Conventional Commits; English messages
+- [x] 9.2 `Closes #1760` / `Refs #1535` / `Refs #1762`
+- [x] 9.3 No secrets committed (`.env` token stays local)
 - [ ] 9.4 Record commit SHAs in `traceability.md`
 
 ## 10. Pull Request and CI validation
