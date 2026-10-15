@@ -200,6 +200,12 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `FolioRepositoryPort` remains for AuxiliaryProtocol `startDeed`; available-auxiliary listing goes
   through the domain catalog so `FolioResponse` stays domain-only.
 
+- **Workflow definition (#1728):** catalog-like aggregate (CU70). Controller was repo-only (~4 R1 edges,
+  including an unused transition repository injection); now ports-only with domain `WorkflowDefinition`,
+  delete-guard when nodes exist in the use case, and `WorkflowDefinitionCatalogPort`. Legacy
+  `WorkflowDefinitionRepositoryPort` remains for other consumers. Sibling node/transition slices stay
+  separate (#1729 / #1730).
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers
