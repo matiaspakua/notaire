@@ -1,8 +1,8 @@
 package com.licensis.notaire.domain.folio;
 
 /**
- * A folio instance (protocol entry). Plain Java (issue #1727, ADR-030). Status {@code Utilizado} means the folio is
- * linked to a deed and locked against unrelated edits/deletes.
+ * A folio instance (protocol entry). Plain Java (issue #1727, ADR-030). {@link #STATUS_USED} means the folio is
+ * linked to a deed and locked against unrelated edits/deletes (wire value remains the legacy status string).
  */
 public record Folio(
         Integer id,

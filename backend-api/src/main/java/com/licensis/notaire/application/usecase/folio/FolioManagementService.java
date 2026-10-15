@@ -14,8 +14,8 @@ import com.licensis.notaire.domain.folio.FolioInvalidException;
 import com.licensis.notaire.domain.folio.FolioNotFoundException;
 
 /**
- * Folio instance administration. A Utilizado folio is locked except for an idempotent re-save of the same deed link
- * (issue #1727).
+ * Folio instance administration. A used ({@code STATUS_USED}) folio is locked except for an idempotent re-save of
+ * the same deed link (issue #1727).
  */
 @Service
 @Transactional

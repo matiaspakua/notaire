@@ -36,7 +36,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 
 /**
- * Folio instances. Calls inbound ports only; Utilizado lock and deed-link rules live in the use cases (issue #1727).
+ * Folio instances. Calls inbound ports only; used-status lock and deed-link rules live in the use cases (issue #1727).
  */
 @RestController
 @RequestMapping("/api/v1/folios")

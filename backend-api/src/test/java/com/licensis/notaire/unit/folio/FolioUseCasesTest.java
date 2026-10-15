@@ -55,7 +55,7 @@ class FolioUseCasesTest {
     }
 
     @Test
-    @DisplayName("create forces Utilizado when a deed is linked")
+    @DisplayName("create forces STATUS_USED when a deed is linked")
     void createWithDeed() {
         deeds.add(10);
         Folio created = manage.create(cmd(1, "New", 10));
@@ -64,7 +64,7 @@ class FolioUseCasesTest {
     }
 
     @Test
-    @DisplayName("Utilizado folio cannot be deleted")
+    @DisplayName("used folio cannot be deleted")
     void cannotDeleteUsed() {
         Folio created = manage.create(cmd(2, Folio.STATUS_USED, null));
         assertThatThrownBy(() -> manage.delete(created.id())).isInstanceOf(FolioInUseException.class);
@@ -78,7 +78,7 @@ class FolioUseCasesTest {
     }
 
     @Test
-    @DisplayName("in-use query follows Utilizado status")
+    @DisplayName("in-use query follows STATUS_USED")
     void inUse() {
         Folio created = manage.create(cmd(3, "New", null));
         assertThat(query.isInUse(created.id())).contains(false);
@@ -96,7 +96,7 @@ class FolioUseCasesTest {
     }
 
     @Test
-    @DisplayName("different deed while Utilizado is refused")
+    @DisplayName("different deed while used is refused")
     void otherDeedRefused() {
         deeds.add(6);
         deeds.add(7);

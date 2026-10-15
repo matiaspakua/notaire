@@ -1,6 +1,6 @@
 package com.licensis.notaire.domain.folio;
 
-/** Raised when a Utilizado folio cannot be changed or deleted (issue #1727). */
+/** Raised when a used ({@code STATUS_USED}) folio cannot be changed or deleted (issue #1727). */
 public class FolioInUseException extends RuntimeException {
 
     public FolioInUseException(String message) {
