@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.out.persistence.procedure;
 
+import com.licensis.notaire.application.port.out.procedure.ProcedureLookupPort;
 import com.licensis.notaire.application.port.out.procedure.ProcedureRepositoryPort;
 import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.repository.ProcedureRepository;
@@ -14,7 +15,7 @@ import java.util.Optional;
  * Persistence adapter for the procedure slice.
  */
 @Component
-public class ProcedurePersistenceAdapter implements ProcedureRepositoryPort {
+public class ProcedurePersistenceAdapter implements ProcedureRepositoryPort, ProcedureLookupPort {
 
     private final ProcedureRepository procedureRepository;
 

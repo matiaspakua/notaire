@@ -35,12 +35,12 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| list and get return the same JSON shape | SubmittedDocumentControllerTest | pending |
-| create requires type and procedure and inherits due fields | SubmittedDocumentControllerTest | pending |
-| create rejects invalid date or missing refs | SubmittedDocumentControllerTest | pending |
-| partial update preserves omitted fields | SubmittedDocumentControllerTest | pending |
-| delete returns 204 or 404 | SubmittedDocumentControllerTest | pending |
-| controller has no persistence imports | SubmittedDocumentControllerTest | pending |
+| list and get return the same JSON shape | SubmittedDocumentControllerTest | passing |
+| create requires type and procedure and inherits due fields | SubmittedDocumentControllerTest | passing |
+| create rejects invalid date or missing refs | SubmittedDocumentControllerTest | passing |
+| partial update preserves omitted fields | SubmittedDocumentControllerTest | passing |
+| delete returns 204 or 404 | SubmittedDocumentControllerTest | passing |
+| controller has no persistence imports | SubmittedDocumentControllerTest | passing |
 
 ## Permanent documentation updated
 
