@@ -1,4 +1,4 @@
-> Governed by [CONSTITUTION.md](../../../../CONSTITUTION.md) — §5 Official SDLC
+> Governed by [CONSTITUTION.md](../../../../../CONSTITUTION.md) — §5 Official SDLC
 > Workflow, §6 Quality Gates. Groups 1-12 are **mandatory**: a plan that omits one
 > is incomplete and `workspace/sdlc/validate-sdlc-plan.sh` will reject it. Add
 > change-specific work inside group 4; do not renumber the mandatory groups.
@@ -72,11 +72,11 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Push `1753/fix/release-please-version-files`
-- [ ] 10.2 Open PR `[#1753] fix(release): release-please bumps POMs/OpenAPI; release PR exempt`
+- [x] 10.1 Push `1753/fix/release-please-version-files`
+- [x] 10.2 Open PR #1754 `[#1753] fix(release): release-please bumps POMs/OpenAPI; release PR exempt`
 - [ ] 10.3 Wait for required workflows
 - [ ] 10.4 Gate 4 — CI green, no conflicts, docs complete
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 

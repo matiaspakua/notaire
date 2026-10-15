@@ -1,6 +1,6 @@
 # Traceability
 
-> Governed by [CONSTITUTION.md](../../../../CONSTITUTION.md) — P4 Traceability.
+> Governed by [CONSTITUTION.md](../../../../../CONSTITUTION.md) — P4 Traceability.
 
 ## Chain
 
@@ -12,11 +12,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|
 | Issue | #1753 | open |
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure | exists |
-| Specification | `docs/openspec/changes/fix-1753-release-please-version-files/` | drafted |
+| Specification | `docs/openspec/changes/archive/2026-10-15-fix-1753-release-please-version-files/` | drafted |
 | Branch | `1753/fix/release-please-version-files` | created |
 | Tasks | `tasks.md` | in progress |
 | Commits | `5a13ff939` test, `ae0180665` fix | done |
-| Pull Request | | pending |
+| Pull Request | #1754 | open |
 | CI run | | pending |
 | Merge commit | | pending |
 | Release / tag | next release-please PR | pending |
