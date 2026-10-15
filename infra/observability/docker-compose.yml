@@ -141,8 +141,11 @@ services:
       # sslmode is still "disable": the notary-postgres container has no TLS
       # configured yet, tracked separately by issue #684.
       DATA_SOURCE_NAME: "postgresql://${POSTGRES_EXPORTER_USER:-notaire_exporter}:${POSTGRES_EXPORTER_PASSWORD:-admin}@notary-postgres:5432/${POSTGRES_DB:-notaire}?sslmode=disable"
+      # Mount alone does nothing: the exporter only reads custom SQL when the
+      # extend-query path is set (#1707). Format: metric-key YAML (not custom_queries).
+      PG_EXPORTER_EXTEND_QUERY_PATH: /etc/postgres_exporter/queries.yml
     volumes:
-      - ./prometheus/postgres_exporter.yml:/etc/postgres_exporter/queries.yml
+      - ./prometheus/postgres_exporter.yml:/etc/postgres_exporter/queries.yml:ro
     labels:
       service: "postgres-exporter"
       app: "monitoring"
@@ -260,7 +263,8 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
-      - GF_INSTALL_PLUGINS=grafana-piechart-panel
+      # Native Grafana piechart panels only — do not install the deprecated
+      # grafana-piechart-panel plugin (install/log noise on Grafana 12, #1707).
     depends_on:
       - prometheus
       - loki

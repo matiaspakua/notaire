@@ -77,6 +77,13 @@
       "url": "/d/notaire-security",
       "icon": "dashboard",
       "targetBlank": false
+    },
+    {
+      "title": "Quality (Sonar)",
+      "type": "link",
+      "url": "/d/notaire-quality",
+      "icon": "dashboard",
+      "targetBlank": false
     }
   ],
   "panels": [
@@ -400,7 +407,7 @@
       "gridPos": {
         "x": 16,
         "y": 0,
-        "w": 4,
+        "w": 3,
         "h": 4
       },
       "targets": [
@@ -451,6 +458,56 @@
       }
     },
     {
+      "id": 14,
+      "type": "stat",
+      "title": "Product version",
+      "description": "Packaged SEMVER (Micrometer version tag = app.version)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 18,
+        "y": 0,
+        "w": 3,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "max by (version) (jvm_memory_used_bytes{application=\"notaire-backend\", area=\"heap\", version!=\"\"})",
+          "legendFormat": "{{version}}",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "textMode": "name",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      }
+    },
+    {
       "id": 6,
       "type": "stat",
       "title": "Errors (last 15m)",
@@ -460,9 +517,9 @@
         "uid": "loki"
       },
       "gridPos": {
-        "x": 20,
+        "x": 21,
         "y": 0,
-        "w": 4,
+        "w": 3,
         "h": 4
       },
       "targets": [
