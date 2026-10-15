@@ -122,25 +122,38 @@ done
 
 FAILED=0
 
-# 5. Backend: tests + JaCoCo report, then the Maven scanner (settings live in backend-api/pom.xml)
+# 5. Backend: tests + JaCoCo report, then the Maven scanner (settings live in backend-api/pom.xml).
+# Force projectKey so the reactor root (notaire-root) does not steal the dashboard from
+# the gate selected for notaire-backend (#1535 triage).
 echo -e "${YELLOW}Backend: Maven build + Sonar analysis (this can take a few minutes)...${NC}"
 mvn -B -pl backend-api -am clean test \
     org.jacoco:jacoco-maven-plugin:report \
     org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
     -Dsonar.host.url="$SONAR_URL" \
     -Dsonar.token="$SONAR_TOKEN" \
+    -Dsonar.projectKey="$BACKEND_KEY" \
+    -Dsonar.projectName="$BACKEND_KEY" \
+    -Dsonar.scm.provider=git \
     -Dsonar.qualitygate.wait=true || FAILED=1
 
-# 6. Frontend: Vitest lcov + ESLint JSON report, then the scanner container on the Sonar network
+# 6. Frontend: Vitest lcov + ESLint JSON report, then the scanner container on the Sonar network.
+# Mount the monorepo (not only frontend/) so the scanner can see .git. Without SCM,
+# Community "new code" covers the whole tree and the quality gate fails with dozens of
+# legacy violations (#1680).
 echo -e "${YELLOW}Frontend: Vitest coverage + ESLint report + Sonar analysis...${NC}"
 (
     cd frontend
     npm run test:coverage --silent
     npx eslint src -f json -o coverage/eslint-report.json || true
 )
-docker run --rm --network "$SONAR_NETWORK" -v "$APP_DIR/frontend:/usr/src" \
+docker run --rm --network "$SONAR_NETWORK" \
+    -v "$APP_DIR:/usr/src" \
+    -w /usr/src/frontend \
     -e SONAR_HOST_URL="http://devsecops-sonarqube:9000" -e SONAR_TOKEN="$SONAR_TOKEN" \
-    "$SCANNER_IMAGE" -Dsonar.qualitygate.wait=true || FAILED=1
+    "$SCANNER_IMAGE" \
+    -Dsonar.projectBaseDir=/usr/src/frontend \
+    -Dsonar.scm.provider=git \
+    -Dsonar.qualitygate.wait=true || FAILED=1
 
 echo ""
 if [ "$FAILED" = "0" ]; then

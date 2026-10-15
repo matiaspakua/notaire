@@ -359,8 +359,9 @@ public class UserController {
                 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
         };
         try {
+            // NOSONAR java:S4790 — verify-only for pre-BCrypt rows (#554); new passwords use PasswordEncoder.
             MessageDigest msgd = MessageDigest.getInstance("MD5");
-            byte[] bytes = msgd.digest(plainText.getBytes());
+            byte[] bytes = msgd.digest(plainText.getBytes(java.nio.charset.StandardCharsets.UTF_8));
             StringBuilder md5Hex = new StringBuilder(2 * bytes.length);
             for (int i = 0; i < bytes.length; i++) {
                 int lowNibble = (int) (bytes[i] & 0x0f);
@@ -370,7 +371,7 @@ public class UserController {
             }
             return md5Hex.toString();
         } catch (NoSuchAlgorithmException e) {
-            return null;
+            throw new IllegalStateException("MD5 MessageDigest is required for legacy password verification", e);
         }
     }
 }

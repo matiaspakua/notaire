@@ -258,7 +258,8 @@ public class SecurityAndCorsConfig {
                 // Exempt login/logout (session bootstrap) and Bearer-token API clients.
                 // Bearer tokens are not vulnerable to CSRF — CSRF only affects ambient
                 // cookie-authenticated browser requests. See CU78 / issues #1618, #1620.
-                .ignoringRequestMatchers(
+                // CSRF stays enabled for cookie SPA clients (.spa() above); this is not a global disable.
+                .ignoringRequestMatchers( // NOSONAR java:S4502 — scoped Bearer/login exemptions only (#1620)
                     request -> {
                         String auth = request.getHeader("Authorization");
                         return auth != null && auth.startsWith("Bearer ");

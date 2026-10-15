@@ -45,6 +45,7 @@ class SonarAnalysisTest(unittest.TestCase):
         self.assertEqual("src", props["sonar.sources"])
         self.assertEqual("coverage/lcov.info", props["sonar.javascript.lcov.reportPaths"])
         self.assertTrue(props["sonar.eslint.reportPaths"].endswith(".json"))
+        self.assertEqual("git", props.get("sonar.scm.provider"), "#1680 SCM must be explicit")
 
     def test_script_enforces_quality_gate(self):
         script = read(SCRIPT)
@@ -56,6 +57,18 @@ class SonarAnalysisTest(unittest.TestCase):
         self.assertTrue(images, "frontend must use the scanner container")
         for image in images:
             self.assertNotIn(":latest", image)
+
+    def test_script_exposes_git_scm_to_frontend_scanner(self):
+        """Issue #1680: without SCM, the whole tree is 'new code' and the gate fails."""
+        script = read(SCRIPT)
+        self.assertIn("sonar.scm.provider=git", script)
+        self.assertRegex(
+            script,
+            r"-v\s+\"\$APP_DIR:/usr/src\"|-v\s+\$APP_DIR:/usr/src",
+            "scanner must mount the monorepo (with .git), not only frontend/",
+        )
+        self.assertIn("sonar.projectBaseDir=/usr/src/frontend", script)
+        self.assertIn('sonar.projectKey="$BACKEND_KEY"', script)
 
     def test_no_credentials_in_configuration(self):
         for path in (POM, FRONTEND_PROPS):

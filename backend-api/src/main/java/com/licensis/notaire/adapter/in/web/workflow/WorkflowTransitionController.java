@@ -126,8 +126,12 @@ public class WorkflowTransitionController {
         if (destination.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+        Optional<WorkflowTransition> existing = repository.findById(id);
+        if (existing.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         try {
-            WorkflowTransition transition = repository.findById(id).get();
+            WorkflowTransition transition = existing.get();
             transition.setOriginNode(origin.get());
             transition.setDestinationNode(destination.get());
             transition.setCondition(dto.getCondition());
