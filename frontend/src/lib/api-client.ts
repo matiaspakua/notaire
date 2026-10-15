@@ -5,9 +5,12 @@
  * Browser auth uses the HttpOnly session cookie (#1051) via credentials: 'include'
  * through the Next.js same-origin proxy. Do not read JWT from localStorage.
  */
+import { ApiError } from "@/lib/api-error";
 import { logger } from "@/lib/logger";
 import { reportClientError } from "@/lib/report-client-error";
 import { handleAuthenticatedSessionExpiry } from "@/lib/session-expiry";
+
+export { ApiError } from "@/lib/api-error";
 
 // Same-origin /api/v1 — proxied at request time by the App Router BFF
 // (src/app/api/v1/[...path]) using server-only BACKEND_URL (issue #1055).
@@ -30,25 +33,6 @@ function buildHeaders(base: Record<string, string> = {}): Record<string, string>
     .find((cookie) => cookie.startsWith("XSRF-TOKEN="))
     ?.split("=", 2)[1];
   return csrfToken ? { ...base, "X-XSRF-TOKEN": decodeURIComponent(csrfToken) } : { ...base };
-}
-
-/**
- * Thrown for any non-2xx response, carrying the HTTP status and raw response
- * body so callers can distinguish e.g. a 429 lockout from a generic failure
- * instead of collapsing every error into the same message (issue #756).
- */
-export class ApiError extends Error {
-  readonly status: number;
-  readonly path: string;
-  readonly body: string;
-
-  constructor(status: number, path: string, body: string) {
-    super(`[${status}] ${path}: ${body}`);
-    this.name = "ApiError";
-    this.status = status;
-    this.path = path;
-    this.body = body;
-  }
 }
 
 function rejectApiFailure(status: number, path: string, body: string): never {

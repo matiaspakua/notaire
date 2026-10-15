@@ -14,11 +14,6 @@
       "count": 1
     }
   },
-  "src/app/dashboard/administration/identification-types/page.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/app/dashboard/administration/management-statuses/page.tsx": {
     "no-restricted-imports": {
       "count": 1
@@ -175,11 +170,6 @@
     }
   },
   "src/hooks/useExternalEntityDocuments.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useIdentificationTypes.ts": {
     "no-restricted-imports": {
       "count": 1
     }

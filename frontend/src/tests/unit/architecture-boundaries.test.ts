@@ -71,4 +71,11 @@ describe("the shrink-only baseline", () => {
     const missing = Object.keys(entries).filter((path) => !existsSync(resolve(root, path)));
     expect(missing).toEqual([]);
   });
+
+  it("identification-type catalog left the baseline (#1732)", () => {
+    const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
+    expect(entries["src/hooks/useIdentificationTypes.ts"]).toBeUndefined();
+    expect(entries["src/app/dashboard/administration/identification-types/page.tsx"]).toBeUndefined();
+    expect(Object.keys(entries).length).toBeLessThan(66);
+  });
 });
