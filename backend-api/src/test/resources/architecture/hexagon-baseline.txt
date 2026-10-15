@@ -78,14 +78,6 @@ R1 | com.licensis.notaire.adapter.in.web.testimony.TestimonyController -> com.li
 R1 | com.licensis.notaire.adapter.in.web.testimony.TestimonyController -> com.licensis.notaire.repository.TestimonyRepository
 R1 | com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementController -> com.licensis.notaire.business.TestimonyMovement
 R1 | com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementController -> com.licensis.notaire.repository.TestimonyMovementRepository
-R1 | com.licensis.notaire.adapter.in.web.user.RoleController -> com.licensis.notaire.business.Role
-R1 | com.licensis.notaire.adapter.in.web.user.RoleController -> com.licensis.notaire.business.User
-R1 | com.licensis.notaire.adapter.in.web.user.RoleController -> com.licensis.notaire.repository.RoleRepository
-R1 | com.licensis.notaire.adapter.in.web.user.RoleController -> com.licensis.notaire.repository.UserRepository
-R1 | com.licensis.notaire.adapter.in.web.user.UserController -> com.licensis.notaire.business.Person
-R1 | com.licensis.notaire.adapter.in.web.user.UserController -> com.licensis.notaire.business.Role
-R1 | com.licensis.notaire.adapter.in.web.user.UserController -> com.licensis.notaire.business.User
-R1 | com.licensis.notaire.adapter.in.web.user.UserController -> com.licensis.notaire.repository.UserRepository
 R1 | com.licensis.notaire.adapter.in.web.workflow.WorkflowValidationController -> com.licensis.notaire.repository.WorkflowDefinitionRepository
 R1 | com.licensis.notaire.adapter.in.web.workflow.WorkflowValidationController -> com.licensis.notaire.repository.WorkflowNodeRepository
 R1 | com.licensis.notaire.adapter.in.web.workflow.WorkflowValidationController -> com.licensis.notaire.repository.WorkflowTransitionRepository

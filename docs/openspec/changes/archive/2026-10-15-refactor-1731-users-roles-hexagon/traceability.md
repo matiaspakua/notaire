@@ -35,10 +35,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| User CRUD and login keep the wire contract | RoleControllerTest | pending |
-| Role CRUD and assign keep the wire contract | RoleControllerTest | pending |
-| controllers have no persistence imports | RoleControllerTest | pending |
-| module grants stay storage-only | RoleControllerTest | pending |
+| User CRUD and login keep the wire contract | RoleControllerTest | passing |
+| Role CRUD and assign keep the wire contract | RoleControllerTest | passing |
+| controllers have no persistence imports | RoleControllerTest | passing |
+| module grants stay storage-only | RoleControllerTest | passing |
 
 ## Permanent documentation updated
 

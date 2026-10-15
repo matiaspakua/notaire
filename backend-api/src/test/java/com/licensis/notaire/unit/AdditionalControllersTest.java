@@ -5,15 +5,21 @@ import com.licensis.notaire.adapter.in.web.management.ManagementController;
 import com.licensis.notaire.adapter.in.web.procedure.ProcedureTemplateController;
 import com.licensis.notaire.adapter.in.web.report.ReportController;
 import com.licensis.notaire.adapter.in.web.user.UserController;
+import com.licensis.notaire.application.port.in.user.AuthenticateUserUseCase;
+import com.licensis.notaire.application.port.in.user.AuthenticateUserUseCase.Result;
+import com.licensis.notaire.application.port.in.user.ManageUsersUseCase;
+import com.licensis.notaire.application.port.in.user.ManageUsersUseCase.CreateUserCommand;
+import com.licensis.notaire.application.port.in.user.ManageUsersUseCase.UpdateUserCommand;
+import com.licensis.notaire.application.port.in.user.QueryUsersUseCase;
 import com.licensis.notaire.dto.DtoUser;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.History;
 import com.licensis.notaire.business.ProcedureTemplate;
-import com.licensis.notaire.business.User;
+import com.licensis.notaire.domain.user.User;
+import com.licensis.notaire.domain.user.UserNotFoundException;
 import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.HistoryRepository;
 import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort;
-import com.licensis.notaire.repository.UserRepository;
 import com.licensis.notaire.application.usecase.report.ReportService;
 import com.licensis.notaire.config.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +32,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -243,28 +250,34 @@ class AdditionalControllersTest {
         @Test
         @DisplayName("All endpoints")
         void all() throws Exception {
-            UserRepository repo = mock(UserRepository.class);
+            QueryUsersUseCase query = mock(QueryUsersUseCase.class);
+            ManageUsersUseCase manage = mock(ManageUsersUseCase.class);
+            AuthenticateUserUseCase authenticate = mock(AuthenticateUserUseCase.class);
             var jwtSvc = mock(com.licensis.notaire.config.JwtTokenService.class);
             when(jwtSvc.generateToken(any())).thenReturn("mock-jwt-token");
             var metrics = mock(com.licensis.notaire.observability.MetricsUtil.class);
-            var passwordEncoder = mock(org.springframework.security.crypto.password.PasswordEncoder.class);
             var authCookies = mock(com.licensis.notaire.config.AuthCookieService.class);
             when(authCookies.createSessionCookie(any())).thenReturn(
                     org.springframework.http.ResponseCookie.from("notaire-auth-token", "mock")
                             .httpOnly(true).path("/").sameSite("Lax").build());
-            var mvc = standaloneSetup(new UserController(repo, jwtSvc, metrics, passwordEncoder,
-                    new com.licensis.notaire.security.LoginAttemptService(5, 900000,
-                            new com.licensis.notaire.security.InMemoryLoginAttemptStore()), authCookies,
-                    mock(com.licensis.notaire.config.TokenRevocationService.class))).build();
-            User u = new User(1, "admin", "abc", true, "Escribano");
+            var mvc = standaloneSetup(new UserController(
+                            query,
+                            manage,
+                            authenticate,
+                            jwtSvc,
+                            metrics,
+                            new com.licensis.notaire.security.LoginAttemptService(
+                                    5, 900000, new com.licensis.notaire.security.InMemoryLoginAttemptStore()),
+                            authCookies,
+                            mock(com.licensis.notaire.config.TokenRevocationService.class)))
+                    .build();
+            User u = User.restore(1, "admin", "abc", true, "Escribano", null, null, null, null, null, 0);
 
-            when(repo.findAll()).thenReturn(List.of(u));
-            when(repo.findById(1)).thenReturn(Optional.of(u));
-            when(repo.findById(2)).thenReturn(Optional.empty());
-            when(repo.findFirstByFkIdPersonIdPerson(10)).thenReturn(Optional.of(u));
-            when(repo.findFirstByFkIdPersonIdPerson(99)).thenReturn(Optional.empty());
-            when(repo.existsById(1)).thenReturn(true);
-            when(repo.existsById(2)).thenReturn(false);
+            when(query.findAll()).thenReturn(List.of(u));
+            when(query.findById(1)).thenReturn(Optional.of(u));
+            when(query.findById(2)).thenReturn(Optional.empty());
+            when(query.findByPersonId(10)).thenReturn(Optional.of(u));
+            when(query.findByPersonId(99)).thenReturn(Optional.empty());
 
             mvc.perform(get("/api/v1/users")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/users/1")).andExpect(status().isOk());
@@ -272,14 +285,12 @@ class AdditionalControllersTest {
             mvc.perform(get("/api/v1/users/person/10")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/users/person/99")).andExpect(status().isNotFound());
 
-            // create with no password — uses UserRequest format (field active)
             String noPwdJson = """
                     {"name":"user","password":"","type":"Notary","active":true}
                     """;
-            when(repo.save(any(User.class))).thenReturn(u);
+            when(manage.create(any(CreateUserCommand.class))).thenReturn(u);
             mvc.perform(post("/api/v1/users").contentType("application/json")
                     .content(noPwdJson)).andExpect(status().isCreated());
-            // create with password
             String withPwdJson = """
                     {"name":"user","password":"pwd","type":"Notary","active":true}
                     """;
@@ -291,51 +302,48 @@ class AdditionalControllersTest {
                     """;
             mvc.perform(put("/api/v1/users/1").contentType("application/json")
                     .content(updateJson)).andExpect(status().isOk());
+            doThrow(new UserNotFoundException(2)).when(manage).update(eq(2), any(UpdateUserCommand.class));
             mvc.perform(put("/api/v1/users/2").contentType("application/json")
                     .content(updateJson)).andExpect(status().isNotFound());
 
             mvc.perform(delete("/api/v1/users/1")).andExpect(status().isNoContent());
+            doThrow(new UserNotFoundException(2)).when(manage).delete(2);
             mvc.perform(delete("/api/v1/users/2")).andExpect(status().isNotFound());
 
-            // Login flow - all branches
-            // Empty users list
-            when(repo.findAll()).thenReturn(List.of());
             DtoUser loginDto = new DtoUser();
             loginDto.setName("admin");
             loginDto.setPassword("admin");
+            when(authenticate.authenticate(any(), any()))
+                    .thenReturn(new Result.Failed(AuthenticateUserUseCase.Failure.NOT_FOUND));
             mvc.perform(post("/api/v1/users/login").contentType("application/json")
                     .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
 
-            // User found, wrong password
-            when(repo.findAll()).thenReturn(List.of(u));
             loginDto.setPassword("wrong");
+            when(authenticate.authenticate(any(), any()))
+                    .thenReturn(new Result.Failed(AuthenticateUserUseCase.Failure.BAD_CREDENTIALS));
             mvc.perform(post("/api/v1/users/login").contentType("application/json")
                     .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
 
-            // User found, valid login - the password 'admin' has known MD5
-            // 21232f297a57a5a743894a0e4a801fc3 is MD5("admin")
-            u.setPassword("21232f297a57a5a743894a0e4a801fc3");
-            u.setStatus(true);
             loginDto.setPassword("admin");
+            when(authenticate.authenticate(any(), any())).thenReturn(new Result.Success(u));
             mvc.perform(post("/api/v1/users/login").contentType("application/json")
                     .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
 
-            // User inactive
-            u.setStatus(false);
+            when(authenticate.authenticate(any(), any()))
+                    .thenReturn(new Result.Failed(AuthenticateUserUseCase.Failure.INACTIVE));
             mvc.perform(post("/api/v1/users/login").contentType("application/json")
                     .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
 
-            // Failure paths
-            when(repo.save(any(User.class))).thenThrow(new RuntimeException("x"));
+            when(manage.create(any(CreateUserCommand.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/users").contentType("application/json")
                     .content(noPwdJson)).andExpect(status().isInternalServerError());
+            doThrow(new RuntimeException("x")).when(manage).update(eq(1), any(UpdateUserCommand.class));
             mvc.perform(put("/api/v1/users/1").contentType("application/json")
                     .content(updateJson)).andExpect(status().isInternalServerError());
-            doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
+            doThrow(new RuntimeException("fk")).when(manage).delete(1);
             mvc.perform(delete("/api/v1/users/1")).andExpect(status().isConflict());
 
-            // Exception during login should still return 200 with valid=false
-            when(repo.findAll()).thenThrow(new RuntimeException("db down"));
+            when(authenticate.authenticate(any(), any())).thenThrow(new RuntimeException("db down"));
             mvc.perform(post("/api/v1/users/login").contentType("application/json")
                     .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
         }

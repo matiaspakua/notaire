@@ -216,6 +216,12 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `WorkflowDefinitionCatalogPort` and `WorkflowNodeCatalogPort` for create/update lookups. Legacy
   `WorkflowTransitionRepositoryPort` remains for other consumers.
 
+- **Users + roles (#1731):** security-sensitive dual-controller slice (~4 R1 edges each). Controllers
+  were repo-only; now ports-only with domain `User` / `Role`, catalog ports, and `PasswordHasherPort`
+  (BCrypt + legacy MD5 upgrade in `AuthenticateUserUseCase`). JWT/cookies/metrics/lockout stay in the
+  HTTP adapter. Role `modules` are stored/returned as today; server-side grant enforcement is fenced
+  for sibling [#1683](https://github.com/matiaspakua/notaire/issues/1683). Legacy repository ports remain.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers
