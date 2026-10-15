@@ -35,7 +35,16 @@ BACKEND_KEY="notaire-backend"
 FRONTEND_KEY="notaire-frontend"
 GATE_NAME="Notaire way"
 SCANNER_IMAGE="sonarsource/sonar-scanner-cli:12.2.0.4256_8.1.0"
-SONAR_NETWORK="${SONAR_DOCKER_NETWORK:-infra_devsecops-network}"
+# Compose project name varies (notaire_ vs infra_); prefer an existing network.
+if [ -n "${SONAR_DOCKER_NETWORK:-}" ]; then
+    SONAR_NETWORK="$SONAR_DOCKER_NETWORK"
+elif docker network inspect notaire_devsecops-network >/dev/null 2>&1; then
+    SONAR_NETWORK="notaire_devsecops-network"
+elif docker network inspect infra_devsecops-network >/dev/null 2>&1; then
+    SONAR_NETWORK="infra_devsecops-network"
+else
+    SONAR_NETWORK="notaire_devsecops-network"
+fi
 
 echo -e "${BLUE}=== SonarQube analysis for Notaire (backend + frontend) ===${NC}\n"
 
