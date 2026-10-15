@@ -40,7 +40,7 @@ def commit(repo, message, *paths):
 
 def run(script, *args, cwd, **env):
     return subprocess.run(["bash", os.path.join(SCRIPTS, script), *args], cwd=cwd, capture_output=True,
-                          text=True, env={**os.environ, "PR_LABELS": "", "PR_AUTHOR": "someone", **env})
+                          text=True, env={**os.environ, "PR_LABELS": "", "PR_AUTHOR": "someone", "PR_HEAD_REF": "", **env})
 
 
 class CommitMessagesTest(unittest.TestCase):
@@ -134,6 +134,29 @@ class SdlcExceptionTest(unittest.TestCase):
         repo, base = new_repo()
         commit(repo, "chore(deps): bump", "frontend/package.json")
         self.assertEqual(run("check-sdlc-exception.sh", base, cwd=repo, PR_AUTHOR="dependabot[bot]").returncode, 0)
+
+    def test_accepts_release_please_pr(self):
+        """#1753: the release-please PR carries no OpenSpec change and must not need the Owner's label."""
+        repo, base = new_repo()
+        commit(repo, "chore(main): release 0.2.3", "CHANGELOG.md")
+        result = run("check-sdlc-exception.sh", base, cwd=repo, PR_AUTHOR="github-actions[bot]",
+                     PR_HEAD_REF="release-please--branches--main--components--notaire")
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertIn("release-please", result.stdout)
+
+    def test_rejects_actions_bot_pr_that_is_not_release_please(self):
+        repo, base = new_repo()
+        commit(repo, "chore: something", "CHANGELOG.md")
+        result = run("check-sdlc-exception.sh", base, cwd=repo, PR_AUTHOR="github-actions[bot]",
+                     PR_HEAD_REF="some-other-branch")
+        self.assertNotEqual(result.returncode, 0)
+
+    def test_rejects_release_please_branch_from_a_human(self):
+        repo, base = new_repo()
+        commit(repo, "chore: something", "CHANGELOG.md")
+        result = run("check-sdlc-exception.sh", base, cwd=repo, PR_AUTHOR="someone",
+                     PR_HEAD_REF="release-please--branches--main--components--notaire")
+        self.assertNotEqual(result.returncode, 0)
 
     def test_merge_checkout_ignores_openspec_files_that_landed_on_main(self):
         """Actions checks out refs/pull/N/merge. A stale event base SHA must not
