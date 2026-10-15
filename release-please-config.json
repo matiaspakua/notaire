@@ -13,12 +13,12 @@
         {
           "type": "xml",
           "path": "pom.xml",
-          "xpath": "/project/version"
+          "xpath": "/*[local-name()='project']/*[local-name()='version']"
         },
         {
           "type": "xml",
           "path": "backend-api/pom.xml",
-          "xpath": "/project/parent/version"
+          "xpath": "/*[local-name()='project']/*[local-name()='parent']/*[local-name()='version']"
         },
         {
           "type": "json",
