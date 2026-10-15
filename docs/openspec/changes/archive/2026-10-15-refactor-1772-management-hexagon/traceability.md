@@ -35,11 +35,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| list and get management summaries | ManagementControllerDeleteLogTest | pending |
-| create complete case | ManagementControllerDeleteLogTest | pending |
-| invalid complete-case dependencies | ManagementControllerDeleteLogTest | pending |
-| transition mapper has no repository imports | ManagementControllerDeleteLogTest | pending |
-| controller has no repository or entity imports | ManagementControllerDeleteLogTest | pending |
+| list and get management summaries | ManagementControllerDeleteLogTest | passing |
+| create complete case | ManagementControllerDeleteLogTest | passing |
+| invalid complete-case dependencies | ManagementControllerDeleteLogTest | passing |
+| transition mapper has no repository imports | ManagementControllerDeleteLogTest | passing |
+| controller has no repository or entity imports | ManagementControllerDeleteLogTest | passing |
 
 ## Permanent documentation updated
 
