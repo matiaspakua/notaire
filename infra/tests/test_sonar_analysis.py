@@ -75,6 +75,8 @@ class SonarAnalysisTest(unittest.TestCase):
         self.assertIn("notaire-frontend", body)
         for severity in ("BLOCKER", "CRITICAL", "MAJOR"):
             self.assertIn(severity, body)
+        inventory = os.path.join(REPO_ROOT, "infra", "scripts", "sonar-legacy-inventory.py")
+        self.assertTrue(os.path.isfile(inventory), "sonar-legacy-inventory.py (#1535)")
 
     def test_script_exposes_git_scm_to_frontend_scanner(self):
         """Issue #1680: without SCM, the whole tree is 'new code' and the gate fails."""
