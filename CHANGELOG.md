@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.2](https://github.com/matiaspakua/notaire/compare/v0.2.1...v0.2.2) (2026-10-15)
+
+
+### Bug Fixes
+
+* **docker:** default COMPOSE_PROJECT_NAME for worktree observability ([81ffc44](https://github.com/matiaspakua/notaire/commit/81ffc442b4a6c04856ceb4518182f1f050a9489a))
+* **docker:** default COMPOSE_PROJECT_NAME for worktree observability ([d6bb0bc](https://github.com/matiaspakua/notaire/commit/d6bb0bc8f4099d5d66c64ce35f66ff6845e68b64)), closes [#1678](https://github.com/matiaspakua/notaire/issues/1678)
+* **observability:** wire exporter queries, SEMVER panels, Sonar quality dashboard ([#1711](https://github.com/matiaspakua/notaire/issues/1711)) ([6c87286](https://github.com/matiaspakua/notaire/commit/6c872862f27da2ddf7359fe670bc4b0181da375a))
+
 ## [Unreleased]
 
 ### Changed
