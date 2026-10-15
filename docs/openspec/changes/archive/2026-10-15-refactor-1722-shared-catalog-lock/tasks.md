@@ -77,21 +77,21 @@
 - [x] 8.4 Archive superseded documents into `docs/000-archive/`
   (n/a)
 - [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
-- [ ] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate
-  (deferred to pre-push / CI)
+- [x] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate
+  (CI Process Checks + heavy CI before merge)
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message ends with `Closes #<issue-number>`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.2 Every commit message ends with `Closes #<issue-number>`
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Archive this change in the PR: `cd docs && openspec archive <change-name> --yes` (skip only if `.openspec.yaml` sets `multi_pr: true`)
-- [ ] 10.2 `git push -u origin <branch-name>`
-- [ ] 10.3 Open the PR titled `[#<issue>] <type>(<scope>): <description>`, referencing Issue and Use Case
+- [x] 10.1 Archive this change in the PR: `cd docs && openspec archive <change-name> --yes` (skip only if `.openspec.yaml` sets `multi_pr: true`)
+- [x] 10.2 `git push -u origin <branch-name>`
+- [x] 10.3 Open the PR titled `[#<issue>] <type>(<scope>): <description>`, referencing Issue and Use Case
 - [ ] 10.4 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
 - [ ] 10.5 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
 - [ ] 10.6 Record the PR number in the archived `traceability.md`
