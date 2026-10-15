@@ -15,8 +15,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/archive/2026-10-15-feat-1739-frontend-otel-spans/` | archived |
 | Branch | `cursor/feat-1739-frontend-otel-2ea7` | created |
 | Tasks | `tasks.md` | implementation complete; CI pending |
-| Commits | `558ac823`, `3d04d671` | done |
-| Pull Request | pending after push | pending |
+| Commits | `558ac823`, `3d04d671`, `21674d83` | done |
+| Pull Request | [#1751](https://github.com/matiaspakua/notaire/pull/1751) | open (draft) |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |
