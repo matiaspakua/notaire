@@ -35,11 +35,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Generated draft prints recorded cadastral designation | RegistrationDraftReportAdapterTest | pending |
-| Missing optional fields stay N/A | RegistrationDraftReportAdapterTest | pending |
-| Unknown draft is 404 | RegistrationDraftReportAdapterTest | pending |
-| Registry notes appear | RegistrationDraftReportAdapterTest | pending |
-| Download contains cadastral text | RegistrationDraftReportAdapterTest | pending |
+| Generated draft prints recorded cadastral designation | RegistrationDraftReportAdapterTest | passing |
+| Missing optional fields stay N/A | RegistrationDraftReportAdapterTest | passing |
+| Unknown draft is 404 | RegistrationDraftReportAdapterTest | passing |
+| Registry notes appear | RegistrationDraftReportAdapterTest | passing |
+| Download contains cadastral text | RegistrationDraftReportAdapterTest | passing |
 
 ## Permanent documentation updated
 

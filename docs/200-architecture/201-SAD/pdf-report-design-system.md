@@ -50,10 +50,13 @@ title/header/table/footer reading order. PDF/UA-1 is **not** claimed.
 
 ## Out of scope for later slices
 
-CU80/CU82 legal forms, report authorization matrix, Owner-approved
+CU80 legal form, report authorization matrix, Owner-approved
 logo. CU08 testimony copy prints recorded testimony/deed fields under
 [#119](https://github.com/matiaspakua/notaire/issues/119); special-sheet
-geometry and signature language stay Owner-pending. CU24 index-book content is implemented under
+geometry and signature language stay Owner-pending.
+CU82 registration-draft print uses recorded draft/deed/party/property
+fields under [#116](https://github.com/matiaspakua/notaire/issues/116);
+official minuta geometry and signature language stay Owner-pending. CU24 index-book content is implemented under
 [#177](https://github.com/matiaspakua/notaire/issues/177).
 CU25 monthly sworn-statement content is implemented under
 [#178](https://github.com/matiaspakua/notaire/issues/178); tax, rate, and
