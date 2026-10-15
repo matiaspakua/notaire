@@ -33,8 +33,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -328,50 +326,18 @@ public class UserController {
     }
 
     /**
-     * Checks the submitted password against the stored hash. Accepts BCrypt and
-     * the legacy MD5 form (issue #554). When the stored hash is still MD5 and the
-     * password matches, it re-encodes the password as BCrypt and saves it, so the
-     * credential migrates without a reset.
+     * Checks the submitted password against the stored BCrypt hash.
+     * Legacy MD5 verification was removed (hard cutoff, issue #1762 / java:S4790).
      */
     private boolean passwordMatches(String rawPassword, User user) {
         String storedHash = user.getPassword();
-        if (isBcryptHash(storedHash)) {
-            return passwordEncoder.matches(rawPassword, storedHash);
-        }
-        if (!legacyMd5Hash(rawPassword).equals(storedHash)) {
+        if (!isBcryptHash(storedHash)) {
             return false;
         }
-        user.setPassword(passwordEncoder.encode(rawPassword));
-        userRepository.save(user);
-        return true;
+        return passwordEncoder.matches(rawPassword, storedHash);
     }
 
     private boolean isBcryptHash(String hash) {
         return hash != null && hash.startsWith("$2");
-    }
-
-    /**
-     * Legacy MD5 hash, kept only to check credentials seeded before the BCrypt
-     * migration (issue #554). It is not used to create new hashes.
-     */
-    private String legacyMd5Hash(String plainText) {
-        char[] hexChars = {
-                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
-        };
-        try {
-            // NOSONAR java:S4790 — verify-only for pre-BCrypt rows (#554); new passwords use PasswordEncoder.
-            MessageDigest msgd = MessageDigest.getInstance("MD5");
-            byte[] bytes = msgd.digest(plainText.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            StringBuilder md5Hex = new StringBuilder(2 * bytes.length);
-            for (int i = 0; i < bytes.length; i++) {
-                int lowNibble = (int) (bytes[i] & 0x0f);
-                int highNibble = (int) ((bytes[i] & 0xf0) >> 4);
-                md5Hex.append(hexChars[highNibble]);
-                md5Hex.append(hexChars[lowNibble]);
-            }
-            return md5Hex.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("MD5 MessageDigest is required for legacy password verification", e);
-        }
     }
 }

@@ -312,10 +312,11 @@ class AdditionalControllersTest {
             mvc.perform(post("/api/v1/users/login").contentType("application/json")
                     .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
 
-            // User found, valid login - the password 'admin' has known MD5
-            // 21232f297a57a5a743894a0e4a801fc3 is MD5("admin")
-            u.setPassword("21232f297a57a5a743894a0e4a801fc3");
+            // User found, valid login — BCrypt only (legacy MD5 verify removed, #1762)
+            String bcryptAdmin = "$2a$12$MzGVbtKng5BRII/pfWCJpOE.hkzzYSLroZOjzATlTdRyygKG8Z0e6";
+            u.setPassword(bcryptAdmin);
             u.setStatus(true);
+            when(passwordEncoder.matches("admin", bcryptAdmin)).thenReturn(true);
             loginDto.setPassword("admin");
             mvc.perform(post("/api/v1/users/login").contentType("application/json")
                     .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
