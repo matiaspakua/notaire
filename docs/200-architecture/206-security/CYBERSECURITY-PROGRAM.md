@@ -48,7 +48,7 @@ measured and improved. They are not a certified score.
 | Security architecture | Interceptor-validator in `SecurityAndCorsConfig`; trust-boundary diagram | 2 |
 | Secure build | CodeQL, SpotBugs, secret scan failing in CI | 2 |
 | Secure deployment | Pinned images, prod compose without public DB, cosign + SBOM on CD | 2 |
-| Defect management | Dependabot and CodeQL alerts; the Trivy image scan and ZAP are report-only | 1 |
+| Defect management | Dependabot and CodeQL alerts; Trivy image scan report-only until #282; ZAP weekly fails on non-allowlisted alerts (#1738) | 1 |
 | Security testing | JUnit security tests, Playwright TS-0044, ZAP baseline, Bruno | 2 |
 | Incident management | CU77, Alertmanager local UI, no external paging | 1 |
 | Environment and operations | Grafana, Loki, Prometheus, OpenTelemetry | 2 |
@@ -99,7 +99,7 @@ a written decision adds them.
 | Family | Selected practice | Evidence | Not selected, and why |
 |--------|-------------------|----------|------------------------|
 | SAST | CodeQL advanced workflow; SpotBugs report | `.github/workflows/codeql.yml`, CI quality job | FindSecBugs is a candidate Java complement, not a second mandatory scanner |
-| DAST | OWASP ZAP baseline, weekly, warn-first | `.github/workflows/dast-zap.yml` | Exploitation scanners are not CI jobs |
+| DAST | OWASP ZAP baseline, weekly, fails on non-allowlisted alerts (`fail_action: true`, `.zap/rules.tsv`) | `.github/workflows/dast-zap.yml` | Exploitation scanners are not CI jobs |
 | IAST | None | — | Needs an agent in the test JVM; no current signal that CodeQL plus ZAP miss a class of defect we can name |
 | RASP | None | — | Runtime blocking agents are a later production control, not a test |
 | SCA | Trivy fs and image; Dependabot | `ci.yml`, `.github/dependabot.yml` | Commercial SCA was not added beside Trivy |
@@ -156,7 +156,7 @@ each `SR-*` row.
 | Phase | Practice | Now | Next, tracked |
 |-------|----------|-----|----------------|
 | Build | Policy as code | `security-policy.yml` enforced by tests and CI | FindSecBugs only if CodeQL leaves a repeated Java gap |
-| Test | ZAP baseline | Weekly artifact, does not fail the PR | Fail on agreed high findings (#281) |
+| Test | ZAP baseline | Weekly workflow fails on non-allowlisted alerts (#1738); not on every PR | Authenticated ZAP (future) |
 | Production | Runtime scan, CIS, compliance packs | Not claimed | Falco is the OSS candidate from the guide §4.9; legal mapping stays #309 |
 | Production | Access control | Function-level RBAC | Server-side module grants (ADR-029 W2) |
 | Production | Alerts and review | Login alerts, local Alertmanager | External paging is an owner decision (#1465) |
@@ -210,7 +210,7 @@ Tool choice, including what was rejected, is
 | #254 | Production TLS material and the operator guide |
 | #267 | Human sign-off of the Top 10 checklist |
 | #280 | General API rate limiting (SR-05, SR-15) |
-| #281 | ZAP from warn-first to a failing gate |
+| #1738 | ZAP blocking allowlist ratchet (supersedes warn-first #281 docs) |
 | #282 | Remediation SLA tracked on a live vulnerability board |
 | #283 | Rotation runbook and a vault, if the owner chooses one |
 | #309 | Privacy statute mapping and audit retention reporting |
