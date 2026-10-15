@@ -36,6 +36,8 @@ import jakarta.transaction.UserTransaction;
 public class ProcedureJpaController implements Serializable, JpaPersistence
 {
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ProcedureJpaController.class);
+
     public ProcedureJpaController(UserTransaction utx, EntityManagerFactory emf)
     {
         this.utx = utx;
@@ -380,7 +382,7 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            log.error("Failed to edit procedure deed/management links", e);
         }
         return modified;
     }
@@ -405,7 +407,7 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            log.error("Failed to edit procedure management link", e);
         }
         return modified;
     }

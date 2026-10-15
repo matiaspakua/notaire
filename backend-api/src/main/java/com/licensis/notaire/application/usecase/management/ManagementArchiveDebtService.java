@@ -84,6 +84,7 @@ public class ManagementArchiveDebtService {
      * CU16 — Archives the management without requiring confirmation of folders in wait.
      * Equivalent to {@code archiving(idManagement, false)}.
      */
+    @Transactional
     public ArchiveResult archiving(Integer idManagement) {
         return archiving(idManagement, false);
     }

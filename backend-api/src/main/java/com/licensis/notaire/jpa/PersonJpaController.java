@@ -40,6 +40,8 @@ import jakarta.transaction.UserTransaction;
  */
 public class PersonJpaController implements Serializable, JpaPersistence {
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PersonJpaController.class);
+
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
     private static PersonJpaController instance = null;
@@ -764,8 +766,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                     em.getTransaction().commit();
                     em.close();
                 } catch (PersistenceException ex) {
-                    System.out.println("Persistence error: PersonJpaController method modifyPerson");
-                    ex.printStackTrace();
+                    log.error("Persistence error in modifyPerson", ex);
                 }
             }
         } else // Already deleted: throw
@@ -947,7 +948,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
 
             people = query.getResultList();
         } catch (PersistenceException ex) {
-            ex.printStackTrace();
+            log.error("Failed to list persons", ex);
         }
         return people;
     }
