@@ -54,14 +54,14 @@ class RoleControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(new RoleController(query, manage)).build();
     }
 
-    private Role domain(Integer id, String name) {
+    private Role buildRole(Integer id, String name) {
         return Role.restore(id, name, "Description of " + name, true, List.of("administracion", "users"), 0);
     }
 
     @Test
     @DisplayName("Should return all roles")
     void shouldReturnAllRoles() throws Exception {
-        when(query.findAll()).thenReturn(List.of(domain(1, "ADMIN"), domain(2, "OPERATOR")));
+        when(query.findAll()).thenReturn(List.of(buildRole(1, "ADMIN"), buildRole(2, "OPERATOR")));
 
         mockMvc.perform(get("/api/v1/roles"))
                 .andExpect(status().isOk())
@@ -71,7 +71,7 @@ class RoleControllerTest {
     @Test
     @DisplayName("Should return role by ID")
     void shouldReturnRoleById() throws Exception {
-        when(query.findById(1)).thenReturn(Optional.of(domain(1, "ADMIN")));
+        when(query.findById(1)).thenReturn(Optional.of(buildRole(1, "ADMIN")));
 
         mockMvc.perform(get("/api/v1/roles/1"))
                 .andExpect(status().isOk())
@@ -90,7 +90,7 @@ class RoleControllerTest {
     @Test
     @DisplayName("Should create role and return 201")
     void shouldCreateRole() throws Exception {
-        when(manage.create(any(CreateRoleCommand.class))).thenReturn(domain(1, "ADMIN"));
+        when(manage.create(any(CreateRoleCommand.class))).thenReturn(buildRole(1, "ADMIN"));
 
         Map<String, Object> body = Map.of(
                 "name", "ADMIN",
@@ -121,7 +121,7 @@ class RoleControllerTest {
     @Test
     @DisplayName("Should update role and return 200")
     void shouldUpdateRole() throws Exception {
-        when(manage.update(eq(1), any(UpdateRoleCommand.class))).thenReturn(domain(1, "ADMIN_UPDATED"));
+        when(manage.update(eq(1), any(UpdateRoleCommand.class))).thenReturn(buildRole(1, "ADMIN_UPDATED"));
 
         Map<String, Object> body = Map.of(
                 "name",

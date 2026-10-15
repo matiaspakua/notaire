@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.out.persistence.user;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,7 +49,8 @@ public class RoleCatalogPersistenceAdapter implements RoleCatalogPort {
         entity.setName(role.name());
         entity.setDescription(role.description());
         entity.setActive(role.active());
-        entity.setModulos(role.modules());
+        // Hibernate ElementCollection needs a mutable list (domain Role uses an immutable copy).
+        entity.setModulos(role.modules() == null ? new ArrayList<>() : new ArrayList<>(role.modules()));
         return toDomain(roles.save(entity));
     }
 
