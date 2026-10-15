@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.licensis.notaire.application.port.in.management.ManageManagementStatusesUseCase;
 import com.licensis.notaire.application.port.out.management.ManagementStatusCatalogPort;
 import com.licensis.notaire.application.port.out.management.ManagementStatusUsagePort;
+import com.licensis.notaire.application.usecase.catalog.CatalogLockSupport;
 import com.licensis.notaire.domain.management.ManagementStatus;
 import com.licensis.notaire.domain.management.ManagementStatusInUseException;
 import com.licensis.notaire.domain.management.ManagementStatusNotFoundException;
@@ -34,24 +35,27 @@ public class ManagementStatusManagementService implements ManageManagementStatus
 
     @Override
     public void update(int id, SaveManagementStatusCommand command) {
-        ManagementStatus existing = catalog.findById(id).orElseThrow(() -> new ManagementStatusNotFoundException(id));
-        if (usage.isUsedByDeedManagements(id)) {
-            throw ManagementStatusInUseException.lockedForEdit();
-        }
-        if (existing.version() != command.version()) {
-            throw new ManagementStatusStaleVersionException(id, existing.version(), command.version());
-        }
-        catalog.save(existing.changeTo(command.name(), command.notes()));
+        CatalogLockSupport.update(
+                id,
+                catalog::findById,
+                usage::isUsedByDeedManagements,
+                ManagementStatus::version,
+                command.version(),
+                () -> new ManagementStatusNotFoundException(id),
+                ManagementStatusInUseException::lockedForEdit,
+                ManagementStatusStaleVersionException::new,
+                existing -> existing.changeTo(command.name(), command.notes()),
+                catalog::save);
     }
 
     @Override
     public void delete(int id) {
-        catalog.findById(id).orElseThrow(() -> new ManagementStatusNotFoundException(id));
-        if (usage.isUsedByDeedManagements(id)) {
-            throw ManagementStatusInUseException.cannotDelete();
-        }
-        if (!catalog.deleteById(id)) {
-            throw new ManagementStatusNotFoundException(id);
-        }
+        CatalogLockSupport.delete(
+                id,
+                catalog::findById,
+                usage::isUsedByDeedManagements,
+                () -> new ManagementStatusNotFoundException(id),
+                ManagementStatusInUseException::cannotDelete,
+                catalog::deleteById);
     }
 }

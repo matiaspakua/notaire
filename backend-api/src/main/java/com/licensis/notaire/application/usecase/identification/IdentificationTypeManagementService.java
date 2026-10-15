@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.licensis.notaire.application.port.in.identification.ManageIdentificationTypesUseCase;
 import com.licensis.notaire.application.port.out.identification.IdentificationTypeCatalogPort;
 import com.licensis.notaire.application.port.out.identification.IdentificationTypeUsagePort;
+import com.licensis.notaire.application.usecase.catalog.CatalogLockSupport;
 import com.licensis.notaire.domain.identification.IdentificationType;
 import com.licensis.notaire.domain.identification.IdentificationTypeInUseException;
 import com.licensis.notaire.domain.identification.IdentificationTypeNameTakenException;
@@ -45,13 +46,17 @@ public class IdentificationTypeManagementService implements ManageIdentification
 
     @Override
     public void delete(int id) {
-        if (!catalog.existsById(id)) {
-            throw new IdentificationTypeNotFoundException(id);
-        }
-        if (usage.isUsedByPeople(id)) {
-            throw new IdentificationTypeInUseException();
-        }
-        catalog.deleteById(id);
+        // Port delete is void (no boolean race signal); always report deleted after the load+lock checks.
+        CatalogLockSupport.delete(
+                id,
+                catalog::findById,
+                usage::isUsedByPeople,
+                () -> new IdentificationTypeNotFoundException(id),
+                IdentificationTypeInUseException::new,
+                deleteId -> {
+                    catalog.deleteById(deleteId);
+                    return true;
+                });
     }
 
     private void requireNameAvailable(String name, Integer ownId) {

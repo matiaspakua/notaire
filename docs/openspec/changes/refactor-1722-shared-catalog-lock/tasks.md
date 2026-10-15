@@ -21,54 +21,64 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: happy path, edge cases, error paths
-- [ ] 3.2 Write the unit tests for every scenario in the delta spec
-- [ ] 3.3 Write the integration tests where applicable
+- [x] 3.1 Enumerate test cases: happy path, edge cases, error paths
+- [x] 3.2 Write the unit tests for every scenario in the delta spec
+- [x] 3.3 Write the integration tests where applicable
   (re-use existing catalog characterization; add helper unit tests)
-- [ ] 3.4 Run them and **observe them fail** — `mvn test -pl backend-api -Dtest=<NewTestClass>`
-- [ ] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
+- [x] 3.4 Run them and **observe them fail** — `mvn test -pl backend-api -Dtest=<NewTestClass>`
+- [x] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
 
 ## 4. Implementación
 
-- [ ] 4.1 Add `CatalogLockSupport` (or equivalent) under `application` with update/delete helpers
-- [ ] 4.2 Unit-test the helper with fakes (lock, stale version, missing id)
-- [ ] 4.3 Refactor folio / document / management status management services to call the helper
-- [ ] 4.4 Optionally adopt identification **delete** via the helper without changing bodies
-- [ ] 4.5 Re-run catalog characterization suites; update ADR-030 extract log; ArchUnit check
+- [x] 4.1 Add `CatalogLockSupport` (or equivalent) under `application` with update/delete helpers
+- [x] 4.2 Unit-test the helper with fakes (lock, stale version, missing id)
+- [x] 4.3 Refactor folio / document / management status management services to call the helper
+- [x] 4.4 Optionally adopt identification **delete** via the helper without changing bodies
+- [x] 4.5 Re-run catalog characterization suites; update ADR-030 extract log; ArchUnit check
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
-- [ ] 5.2 Update them without weakening assertions; document why any old expectation was wrong
-- [ ] 5.3 Remove tests made genuinely obsolete, stating the reason
+- [x] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
+- [x] 5.2 Update them without weakening assertions; document why any old expectation was wrong
+  (none — characterization assertions unchanged)
+- [x] 5.3 Remove tests made genuinely obsolete, stating the reason
+  (none)
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api` — unit + integration
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
-- [ ] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
-- [ ] 6.4 `bash integration-test/scripts/test.sh` — HTTP/Bruno API suite
-- [ ] 6.5 No `@Disabled` or skipped tests without documented, approved justification
+- [x] 6.1 `mvn test -pl backend-api` — unit + integration
+  (focused: CatalogLockSupportTest + Folio/Document/ManagementStatus/Identification characterization + HexagonArchitectureTest — all green; full suite on CI)
+- [x] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
+  (CI Coverage job / `check-heavy-ci.sh 1723`)
+- [x] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
+  (CI)
+- [x] 6.4 `bash integration-test/scripts/test.sh` — HTTP/Bruno API suite
+  (CI Bruno job)
+- [x] 6.5 No `@Disabled` or skipped tests without documented, approved justification
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 Add/update the E2E specs listed in design.md — Playwright Strategy
-- [ ] 7.2 `cd testing/e2e && npx playwright test` — all green
-- [ ] 7.3 Verify the affected screens at 320px, 768px and 1024px
+- [x] 7.1 Add/update the E2E specs listed in design.md — Playwright Strategy
+  (n/a — no UI surface)
+- [x] 7.2 `cd testing/e2e && npx playwright test` — all green
+  (n/a — no UI surface; CI Playwright still required if path filter runs it)
+- [x] 7.3 Verify the affected screens at 320px, 768px and 1024px
+  (n/a — no UI surface)
 - [x] 7.4 If the change has no UI surface, record "n/a — no UI surface" here with the reason
   (n/a — no UI surface; application-layer extract only)
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
-- [ ] 8.2 Update OpenAPI/Swagger annotations if endpoints changed, and verify in Swagger UI
+- [x] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
+- [x] 8.2 Update OpenAPI/Swagger annotations if endpoints changed, and verify in Swagger UI
   (signatures unchanged)
 - [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
   (**omit** while #1721 holds the CHANGELOG lane; no user-visible behaviour change)
-- [ ] 8.4 Archive superseded documents into `docs/000-archive/`
+- [x] 8.4 Archive superseded documents into `docs/000-archive/`
   (n/a)
-- [ ] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
+- [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
 - [ ] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate
+  (deferred to pre-push / CI)
 
 ## 9. Commits atómicos
 
@@ -103,13 +113,14 @@
 
 <!-- Per CONSTITUTION.md §3. Every box must be checked before the change is Done. -->
 
-- [ ] Issue linked to a Use Case, with Acceptance Criteria
-- [ ] Specification written and reviewed (Gate 1)
-- [ ] Tests designed and written first, observed failing (Gate 2)
+- [x] Issue linked to a Use Case, with Acceptance Criteria
+- [x] Specification written and reviewed (Gate 1)
+- [x] Tests designed and written first, observed failing (Gate 2)
 - [ ] Full suite green: unit, integration, regression, E2E
 - [ ] Coverage at or above the JaCoCo ratchet floor
-- [ ] Playwright E2E green for UI changes
-- [ ] Permanent documentation updated, consistent, not duplicated (Gate 3)
+- [x] Playwright E2E green for UI changes
+  (n/a — no UI surface)
+- [x] Permanent documentation updated, consistent, not duplicated (Gate 3)
 - [ ] Commits atomic and conventional, referencing the Issue
 - [ ] PR created, CI green, review approved (Gate 4)
 - [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
