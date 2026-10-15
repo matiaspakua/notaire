@@ -194,19 +194,14 @@ public class ValidationAdministrator
 
     public Boolean validateFloatNumber(String number)
     {
-        Boolean valid = true;
-
         try
         {
-            Float numberFloat = Float.parseFloat(number);
+            Float.parseFloat(number);
+            return true;
         }
         catch (NumberFormatException e)
         {
-            valid = false;
-        }
-        finally
-        {
-            return valid;
+            return false;
         }
     }
 

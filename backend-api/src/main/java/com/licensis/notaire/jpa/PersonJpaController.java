@@ -9,7 +9,6 @@ import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.IdentificationTypeLookup;
 import com.licensis.notaire.business.Copy;
 import com.licensis.notaire.business.Folio;
@@ -39,6 +38,8 @@ import jakarta.transaction.UserTransaction;
  * @author matias
  */
 public class PersonJpaController implements Serializable, JpaPersistence {
+
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PersonJpaController.class);
 
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
@@ -764,8 +765,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                     em.getTransaction().commit();
                     em.close();
                 } catch (PersistenceException ex) {
-                    System.out.println("Persistence error: PersonJpaController method modifyPerson");
-                    ex.printStackTrace();
+                    log.error("Persistence error in modifyPerson", ex);
                 }
             }
         } else // Already deleted: throw
@@ -947,7 +947,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
 
             people = query.getResultList();
         } catch (PersistenceException ex) {
-            ex.printStackTrace();
+            log.error("Failed to list persons", ex);
         }
         return people;
     }

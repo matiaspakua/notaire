@@ -6,7 +6,6 @@ package com.licensis.notaire.jpa;
 
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.SubmittedDocument;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.DeedManagement;
@@ -35,6 +34,8 @@ import jakarta.transaction.UserTransaction;
  */
 public class ProcedureJpaController implements Serializable, JpaPersistence
 {
+
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ProcedureJpaController.class);
 
     public ProcedureJpaController(UserTransaction utx, EntityManagerFactory emf)
     {
@@ -380,7 +381,7 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            log.error("Failed to edit procedure deed/management links", e);
         }
         return modified;
     }
@@ -405,7 +406,7 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            log.error("Failed to edit procedure management link", e);
         }
         return modified;
     }

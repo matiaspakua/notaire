@@ -96,6 +96,7 @@ public class ReportService {
         return reportRenderer.render(reportDocuments.documentDebt(numberManagement));
     }
 
+    @Transactional(readOnly = true)
     public byte[] generateIndexBookReport(Integer year) {
         return generateIndexBookReport(year, null, null);
     }
@@ -105,6 +106,7 @@ public class ReportService {
         return reportRenderer.render(indexBook.build(year, idNotary, idFolioType));
     }
 
+    @Transactional(readOnly = true)
     public byte[] generateMonthlyTaxDeclarationReport(Integer year, Integer month) {
         return generateMonthlyTaxDeclarationReport(year, month, null, null);
     }

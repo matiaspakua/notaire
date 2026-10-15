@@ -39,9 +39,17 @@ class SubmittedDocumentEntityTest {
         @Test
         @DisplayName("Should initialize with full constructor")
         void shouldInitializeWithFullConstructor() {
-            SubmittedDocument doc = new SubmittedDocument(10, "Doc test", null, false, false, false, false);
+            java.util.Date entry = new java.util.Date(1_700_000_000_000L);
+            SubmittedDocument doc = new SubmittedDocument(10, "Doc test", entry, true, false, true, false);
             assertThat(doc.getIdSubmittedDocument()).isEqualTo(10);
             assertThat(doc.getName()).isEqualTo("Doc test");
+            assertThat(doc.getDateEntry()).isEqualTo(entry);
+            assertThat(doc.getPrepared()).isTrue();
+            assertThat(doc.getExpires()).isFalse();
+            assertThat(doc.getReleased()).isTrue();
+            assertThat(doc.getFlagged()).isFalse();
+            // Self-assignment of reentered was a Sonar java:S1656 / SpotBugs bug (#1535).
+            assertThat(doc.getReentered()).isNull();
         }
     }
 

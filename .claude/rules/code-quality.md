@@ -17,6 +17,15 @@ The project uses the following code quality tools:
 | **ArchUnit** | Backend hexagon dependency rules with a shrink-only baseline (#1695) | `HexagonArchitectureTest`, `src/test/resources/architecture/hexagon-baseline.txt` |
 | **SonarQube** | Backend + frontend analysis, quality gate on new code (`bash infra/scripts/run-sonar.sh`) | `backend-api/pom.xml`, `frontend/sonar-project.properties` |
 
+### SonarQube new-code and SCM (#1680)
+
+The quality gate judges **new code** only. `infra/scripts/run-sonar.sh` must mount
+the monorepo (so `.git` is visible) and set `sonar.scm.provider=git` for the
+frontend scanner container. Mounting only `frontend/` leaves SCM undetected, so
+Community treats the whole tree as new and the gate fails with legacy
+violations. Backend analysis forces `-Dsonar.projectKey=notaire-backend` so the
+Maven reactor root does not publish under `notaire-root`.
+
 ## JaCoCo - Code Coverage
 
 JaCoCo is used to measure code coverage during test execution.
