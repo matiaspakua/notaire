@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+- **release:** release-please now bumps the namespaced Maven POMs and syncs the OpenAPI `info.version`, and its PR no longer needs the `sdlc-exception` label ([#1753](https://github.com/matiaspakua/notaire/issues/1753))
 - **observability:** notaire-postgres panels — fix extend-query double-prefix metric names, grant exporter SELECT on business tables, and point ops-rate at `notaire_operation_total` ([#1746](https://github.com/matiaspakua/notaire/issues/1746))
 - **api:** `GET /managements/{id}/workflow-trace` no longer owns a controller transaction that turns expected 400s into `UnexpectedRollbackException` ERROR spam ([#1745](https://github.com/matiaspakua/notaire/issues/1745))
 - **api:** expected client failures (HTTP 4xx `NotaireException` and management delete FK conflicts) log as WARN instead of ERROR ([#1712](https://github.com/matiaspakua/notaire/issues/1712))
