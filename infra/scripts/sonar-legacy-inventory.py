@@ -85,6 +85,28 @@ def select_inventory_rows(issues: list[dict[str, Any]]) -> list[dict[str, str]]:
     return selected
 
 
+def suggest_vulnerability_classification(row: dict[str, str]) -> tuple[str, str] | None:
+    """Return (classification, rationale) for known live Sonar vuln clusters (#1760)."""
+    rule = row.get("rule", "")
+    component = row.get("component", "")
+    if rule == "secrets:S6703" and ".github/workflows/" in component:
+        return (
+            "accepted_risk",
+            "ephemeral GitHub Actions Postgres service password (throwaway CI DB)",
+        )
+    if rule == "java:S4790" and "UserController.java" in component:
+        return (
+            "fix",
+            "legacy MD5 password verify path remains after BCrypt migration (#554); child #1762",
+        )
+    if rule == "typescript:S5332" and "otel/otlp-proxy.ts" in component:
+        return (
+            "accepted_risk",
+            "docker-internal OTLP HTTP to collector (compose network; not public egress)",
+        )
+    return None
+
+
 def apply_classifications(
     rows: list[dict[str, str]],
     existing: dict[str, tuple[str, str]],
@@ -102,8 +124,12 @@ def apply_classifications(
                 row["classification"] = "defer_hexagon"
                 row["rationale"] = "legacy JpaController equality — hexagonal epic #1693"
             elif row["type"] == "VULNERABILITY":
-                row["classification"] = ""
-                row["rationale"] = ""
+                suggested = suggest_vulnerability_classification(row)
+                if suggested:
+                    row["classification"], row["rationale"] = suggested
+                else:
+                    row["classification"] = ""
+                    row["rationale"] = ""
             else:
                 row["classification"] = ""
                 row["rationale"] = ""
@@ -121,7 +147,7 @@ def all_vulnerabilities_classified(rows: list[dict[str, str]]) -> bool:
     return True
 
 
-def render_markdown(rows: list[dict[str, str]]) -> str:
+def render_markdown(rows: list[dict[str, str]], source_note: str | None = None) -> str:
     lines = [
         "# Sonar legacy vulnerability / high-severity inventory",
         "",
@@ -132,14 +158,26 @@ def render_markdown(rows: list[dict[str, str]]) -> str:
         "Refresh (Sonar up):",
         "",
         "```bash",
+        "bash infra/scripts/run-sonar.sh",
         "python3 infra/scripts/sonar-legacy-inventory.py --write",
         "```",
         "",
         "Classification values (English): `fix` | `false_positive` | `accepted_risk` | `defer_hexagon`.",
         "",
-        "| project | rule | severity | type | component | message | classification | rationale |",
-        "|---------|------|----------|------|-----------|---------|----------------|-----------|",
     ]
+    if source_note:
+        lines.extend(
+            [
+                f"Last live refresh: **{source_note}** ({len(rows)} inventory rows).",
+                "",
+            ]
+        )
+    lines.extend(
+        [
+            "| project | rule | severity | type | component | message | classification | rationale |",
+            "|---------|------|----------|------|-----------|---------|----------------|-----------|",
+        ]
+    )
     for row in rows:
         lines.append(
             "| {project} | {rule} | {severity} | {type} | `{component}` | {message} | {classification} | {rationale} |".format(
@@ -319,8 +357,12 @@ def main(argv: list[str] | None = None) -> int:
     # Fill empty vuln classifications for seed-only empty Sonar with accepted_risk note.
     for row in rows:
         if row["type"] == "VULNERABILITY" and row.get("classification") not in VALID_CLASSIFICATIONS:
-            row["classification"] = "fix"
-            row["rationale"] = "needs product fix — open child issue from this inventory"
+            suggested = suggest_vulnerability_classification(row)
+            if suggested:
+                row["classification"], row["rationale"] = suggested
+            else:
+                row["classification"] = "fix"
+                row["rationale"] = "needs product fix — open child issue from this inventory"
         if row["type"] != "VULNERABILITY" and row.get("classification") not in VALID_CLASSIFICATIONS:
             if "jpa/" in row["component"]:
                 row["classification"] = "defer_hexagon"
@@ -329,7 +371,7 @@ def main(argv: list[str] | None = None) -> int:
                 row["classification"] = "accepted_risk"
                 row["rationale"] = f"triaged in slice 1 inventory ({source_note})"
 
-    md = render_markdown(rows)
+    md = render_markdown(rows, source_note=source_note)
     if not all_vulnerabilities_classified(rows):
         print("warning: some VULNERABILITY rows lack classification", file=sys.stderr)
 
