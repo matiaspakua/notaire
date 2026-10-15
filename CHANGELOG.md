@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+- **observability:** load postgres-exporter custom queries, fix empty Postgres PromQL panels, surface packaged SEMVER on Grafana, add Sonar quality dashboard, and drop deprecated piechart plugin install noise ([#1707](https://github.com/matiaspakua/notaire/issues/1707))
 - **security:** CSRF now accepts the browser double-submit cookie and exempts Bearer-token clients; login/logout also return the `XSRF-TOKEN` cookie and the nonce is no longer rotated on every request ([#1620](https://github.com/matiaspakua/notaire/issues/1620))
 
 ### Features

@@ -22,15 +22,22 @@ class PostgresExporterEnglishTest(unittest.TestCase):
     def test_custom_queries_use_live_english_tables(self):
         with open(QUERIES, encoding="utf-8") as handle:
             document = yaml.safe_load(handle)
-        sql = "\n".join(item["query"] for item in document["custom_queries"])
+        self.assertNotIn("custom_queries", document)
+        sql = "\n".join(
+            entry["query"]
+            for key, entry in document.items()
+            if isinstance(entry, dict) and "query" in entry
+        )
         for table in LIVE_TABLES:
             self.assertIn(f"FROM {table}", sql)
         for table in SPANISH_TABLES:
             self.assertNotIn(table, sql)
         for metric in METRICS:
+            self.assertIn(metric, document)
             self.assertIn(metric, sql)
         for metric in SPANISH_METRICS:
             self.assertNotIn(metric, sql)
+            self.assertNotIn(metric, document)
 
     def test_postgres_dashboard_reads_the_english_metrics(self):
         with open(DASHBOARD, encoding="utf-8") as handle:
