@@ -1,6 +1,5 @@
 package com.licensis.notaire.application.usecase.report;
 
-import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Notebook;
 import com.licensis.notaire.business.Item;
@@ -8,18 +7,17 @@ import com.licensis.notaire.business.RegistrationDraft;
 import com.licensis.notaire.business.Payment;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Budget;
-import com.licensis.notaire.business.Testimony;
 import com.licensis.notaire.repository.NotebookRepository;
 import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.repository.RegistrationDraftRepository;
 import com.licensis.notaire.repository.PaymentRepository;
-import com.licensis.notaire.repository.TestimonyRepository;
 import com.licensis.notaire.application.port.out.report.ReportDocument;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Field;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Fields;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Identity;
 import com.licensis.notaire.application.port.out.report.ReportRenderer;
 import com.licensis.notaire.application.port.out.report.TaxSwornStatementReportPort;
+import com.licensis.notaire.application.port.out.report.TestimonyCopyReportPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +35,6 @@ import java.util.List;
 @Service
 public class ReportService {
 
-    private final TestimonyRepository testimonyRepository;
     private final NotebookRepository notebookRepository;
     private final RegistrationDraftRepository registrationDraftRepository;
     private final PaymentRepository paymentRepository;
@@ -47,11 +44,11 @@ public class ReportService {
     private final IndexBookReportBuilder indexBook;
     private final MonthlySwornStatementReportBuilder monthlySworn;
     private final TaxSwornStatementReportPort taxSworn;
+    private final TestimonyCopyReportPort testimonyCopy;
 
     private static final int FOLIOS_PER_NOTEBOOK = 10;
 
-    public ReportService(TestimonyRepository testimonyRepository,
-                           NotebookRepository notebookRepository,
+    public ReportService(NotebookRepository notebookRepository,
                            RegistrationDraftRepository registrationDraftRepository,
                            PaymentRepository paymentRepository,
                            ItemRepository itemRepository,
@@ -59,8 +56,8 @@ public class ReportService {
                            ReportRenderer reportRenderer,
                            IndexBookReportBuilder indexBook,
                            MonthlySwornStatementReportBuilder monthlySworn,
-                           TaxSwornStatementReportPort taxSworn) {
-        this.testimonyRepository = testimonyRepository;
+                           TaxSwornStatementReportPort taxSworn,
+                           TestimonyCopyReportPort testimonyCopy) {
         this.notebookRepository = notebookRepository;
         this.registrationDraftRepository = registrationDraftRepository;
         this.paymentRepository = paymentRepository;
@@ -70,6 +67,7 @@ public class ReportService {
         this.indexBook = indexBook;
         this.monthlySworn = monthlySworn;
         this.taxSworn = taxSworn;
+        this.testimonyCopy = testimonyCopy;
     }
 
     public byte[] generateBudgetReport(Integer idBudget) {
@@ -116,20 +114,9 @@ public class ReportService {
         return reportRenderer.render(monthlySworn.build(year, month, idNotary, idFolioType));
     }
 
+    @Transactional(readOnly = true)
     public byte[] generateTestimonyCopyReport(Integer idTestimony) {
-        Testimony testimony = testimonyRepository.findById(idTestimony)
-                .orElseThrow(() -> new ResourceNotFoundException("Testimony not found with ID: " + idTestimony));
-
-        if (!testimony.getVerified()) {
-            throw new BusinessValidationException(
-                    "The testimony must be verified to issue the printed copy");
-        }
-
-        return renderPlaceholder(
-                "Testimony copy No. " + testimony.getNumber(),
-                "CU08",
-                "testimony-" + testimony.getNumber(),
-                "Verified testimony");
+        return reportRenderer.render(testimonyCopy.build(idTestimony));
     }
 
     public byte[] generateNotebookCoverReport(Integer idNotebook) {
