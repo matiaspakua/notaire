@@ -81,7 +81,8 @@ class RemainingFixtureNamesEnglishTest(unittest.TestCase):
         self.assertNotIn("archivada", archive)
 
         workflow = read("unit/WorkflowValidationServiceTest.java")
-        self.assertIn('"Status " + id', workflow)
+        self.assertIn('"Start"', workflow)
+        self.assertIn('"Isolated"', workflow)
         self.assertNotIn("Estado", workflow)
 
         missing = read("unit/AdditionalControllersTest.java")

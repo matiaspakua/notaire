@@ -228,8 +228,9 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `api-client` (eslint suppressions shrink by two). `ApiError` moved to `lib/api-error` so UI can keep
   HTTP-status handling without importing the client. Other FE catalogs remain on the suppressions baseline.
 
-- **Workflow validation (#1770):** last repo-only web controller. Ports-only with `ValidateWorkflowUseCase`,
-  domain-typed graph checks, reusing workflow catalog ports from #1728–#1730.
+- **Workflow validation (#1770):** last repo-only web controller after the workflow trio. Controller
+  now calls `ValidateWorkflowUseCase` only; graph load uses `Workflow*CatalogPort`; validation runs on
+  domain `WorkflowNode` / `WorkflowTransition`. ArchUnit R1 clears its three repository edges.
 
 - **Management mixed controller (#1772):** largest remaining R1 hotspot (~17 edges plus
   `TransitionManagementWebMapper`). Controller and transition web mapper are ports-only via
