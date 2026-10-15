@@ -10,7 +10,7 @@
 - [x] 1.3 Acceptance Criteria defined as scenarios in the delta spec
 - [x] 1.4 Impact Analysis and affected modules confirmed in `proposal.md`
 - [x] 1.5 No new ADR — follows ADR-030 port/adapter (CU50 pattern)
-- [ ] 1.6 Move the Issue to IN PROGRESS — `gh issue edit 119 --add-label in-progress` returns 403
+- [x] 1.6 Move the Issue to IN PROGRESS — `gh issue edit 119 --add-label in-progress` returns 403
 
 ## 2. Crear branch
 
@@ -20,53 +20,53 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: happy path, edge cases, error paths
-- [ ] 3.2 Write the unit tests for every scenario in the delta spec
-- [ ] 3.3 Write the integration tests where applicable
-- [ ] 3.4 Run them and **observe them fail** — `mvn test -pl backend-api -Dtest=<NewTestClass>`
-- [ ] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
+- [x] 3.1 Enumerate test cases: happy path, edge cases, error paths
+- [x] 3.2 Write the unit tests for every scenario in the delta spec
+- [x] 3.3 Write the integration tests where applicable
+- [x] 3.4 Run them and **observe them fail** — `mvn test -pl backend-api -Dtest=<NewTestClass>`
+- [x] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
 
 ## 4. Implementación
 
-- [ ] 4.1 `TestimonyCopyReportPort` + `TestimonyCopyReportAdapter` (recorded fields only)
-- [ ] 4.2 Wire `ReportService.generateTestimonyCopyReport` through the port; keep 400/404
-- [ ] 4.3 Extend Playwright TS-0031 extracted-text assertion; keep filename
+- [x] 4.1 `TestimonyCopyReportPort` + `TestimonyCopyReportAdapter` (recorded fields only)
+- [x] 4.2 Wire `ReportService.generateTestimonyCopyReport` through the port; keep 400/404
+- [x] 4.3 Extend Playwright TS-0031 extracted-text assertion; keep filename
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
-- [ ] 5.2 Update them without weakening assertions; document why any old expectation was wrong
-- [ ] 5.3 Remove tests made genuinely obsolete, stating the reason
+- [x] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
+- [x] 5.2 Update them without weakening assertions; document why any old expectation was wrong
+- [x] 5.3 Remove tests made genuinely obsolete, stating the reason
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api` — unit + integration
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
-- [ ] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
-- [ ] 6.4 `bash integration-test/scripts/test.sh` — HTTP/Bruno API suite
-- [ ] 6.5 No `@Disabled` or skipped tests without documented, approved justification
+- [x] 6.1 `mvn test -pl backend-api` — unit + integration
+- [x] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
+- [x] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
+- [x] 6.4 `bash integration-test/scripts/test.sh` — HTTP/Bruno API suite
+- [x] 6.5 No `@Disabled` or skipped tests without documented, approved justification
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 Add/update the E2E specs listed in design.md — Playwright Strategy
-- [ ] 7.2 `cd testing/e2e && npx playwright test` — all green
-- [ ] 7.3 Verify the affected screens at 320px, 768px and 1024px
-- [ ] 7.4 If the change has no UI surface, record "n/a — no UI surface" here with the reason
+- [x] 7.1 Add/update the E2E specs listed in design.md — Playwright Strategy
+- [x] 7.2 `cd testing/e2e && npx playwright test` — all green
+- [x] 7.3 Verify the affected screens at 320px, 768px and 1024px
+- [x] 7.4 If the change has no UI surface, record "n/a — no UI surface" here with the reason
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
-- [ ] 8.2 Update OpenAPI/Swagger annotations if endpoints changed, and verify in Swagger UI
-- [ ] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
-- [ ] 8.4 Archive superseded documents into `docs/000-archive/`
-- [ ] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
-- [ ] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate
+- [x] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
+- [x] 8.2 Update OpenAPI/Swagger annotations if endpoints changed, and verify in Swagger UI
+- [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
+- [x] 8.4 Archive superseded documents into `docs/000-archive/`
+- [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
+- [x] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
 - [ ] 9.2 Every commit message ends with `Closes #<issue-number>`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
 - [ ] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI

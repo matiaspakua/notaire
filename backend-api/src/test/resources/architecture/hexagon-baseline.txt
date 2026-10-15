@@ -363,12 +363,10 @@ R2 | com.licensis.notaire.application.usecase.report.ReportService -> com.licens
 R2 | com.licensis.notaire.application.usecase.report.ReportService -> com.licensis.notaire.business.Payment
 R2 | com.licensis.notaire.application.usecase.report.ReportService -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.usecase.report.ReportService -> com.licensis.notaire.business.RegistrationDraft
-R2 | com.licensis.notaire.application.usecase.report.ReportService -> com.licensis.notaire.business.Testimony
 R2 | com.licensis.notaire.application.usecase.report.ReportService -> com.licensis.notaire.repository.ItemRepository
 R2 | com.licensis.notaire.application.usecase.report.ReportService -> com.licensis.notaire.repository.NotebookRepository
 R2 | com.licensis.notaire.application.usecase.report.ReportService -> com.licensis.notaire.repository.PaymentRepository
 R2 | com.licensis.notaire.application.usecase.report.ReportService -> com.licensis.notaire.repository.RegistrationDraftRepository
-R2 | com.licensis.notaire.application.usecase.report.ReportService -> com.licensis.notaire.repository.TestimonyRepository
 R2 | com.licensis.notaire.application.usecase.substitution.SubstitutionService -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.usecase.substitution.SubstitutionService -> com.licensis.notaire.business.Substitution
 R2 | com.licensis.notaire.application.usecase.testimony.TestimonyGenerationVerificationService -> com.licensis.notaire.business.Deed

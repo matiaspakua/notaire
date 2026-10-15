@@ -2,6 +2,9 @@ package com.licensis.notaire.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.testing.RequirementCoverage;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -80,7 +83,13 @@ class TestimonyCopyReportIntegrationTest extends ServiceIntegrationTest {
                 .andExpect(header().string("Content-Type", MediaType.APPLICATION_PDF_VALUE))
                 .andReturn();
 
-        assertThat(result.getResponse().getContentAsByteArray()).isNotEmpty();
+        byte[] pdf = result.getResponse().getContentAsByteArray();
+        assertThat(pdf).isNotEmpty();
+        try (PDDocument document = Loader.loadPDF(pdf)) {
+            String text = new PDFTextStripper().getText(document);
+            assertThat(text).contains("Testimony copy");
+            assertThat(text).contains("Signed deed for a testimony copy");
+        }
     }
 
     @Test

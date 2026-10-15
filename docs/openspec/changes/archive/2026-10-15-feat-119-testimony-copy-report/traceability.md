@@ -19,8 +19,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/feat-119-testimony-copy-report/` | passed |
 | Branch | `cursor/119-testimony-copy-5fcb` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
-| Pull Request | pending | pending |
+| Commits | this branch | in progress |
+| Pull Request | #1721 | draft |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |
@@ -30,12 +30,12 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Verified testimony prints recorded deed body | TestimonyCopyReportAdapterTest | pending |
-| Missing deed fields stay N/A | TestimonyCopyReportAdapterTest | pending |
-| Unverified testimony is 400 | TestimonyCopyReportIntegrationTest | pending |
-| Unknown testimony is 404 | TestimonyCopyReportIntegrationTest | pending |
-| Observed notes appear | TestimonyCopyReportAdapterTest | pending |
-| Issue-copy download contains deed text | Playwright TS-0031 | pending |
+| Verified testimony prints recorded deed body | TestimonyCopyReportAdapterTest | passing |
+| Missing deed fields stay N/A | TestimonyCopyReportAdapterTest | passing |
+| Unverified testimony is 400 | TestimonyCopyReportIntegrationTest | passing |
+| Unknown testimony is 404 | TestimonyCopyReportIntegrationTest | passing |
+| Observed notes appear | TestimonyCopyReportAdapterTest | passing |
+| Issue-copy download contains deed text | Playwright TS-0031 | passing |
 
 ## Permanent documentation updated
 

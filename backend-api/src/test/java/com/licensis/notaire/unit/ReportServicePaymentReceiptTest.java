@@ -49,11 +49,11 @@ class ReportServicePaymentReceiptTest {
         reportService = new ReportService(
                 null,
                 null,
-                null,
                 paymentRepository,
                 itemRepository,
                 reportDocuments,
                 new PdfBoxReportRenderer(),
+                null,
                 null,
                 null,
                 null

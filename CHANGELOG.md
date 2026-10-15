@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Features
 
+- **reports:** CU08 testimony copy PDF prints recorded testimony and deed fields for a verified testimony; unverified stays 400 ([#119](https://github.com/matiaspakua/notaire/issues/119))
 - **reports:** CU50 tax sworn statement lists recorded deeds for a year and month (optional notary and protocol); operation, payment form, and tax stay N/A ([#203](https://github.com/matiaspakua/notaire/issues/203))
 - **reports:** CU25 monthly sworn statement lists recorded deeds for a year and month (optional notary and protocol); tax, rate, and annex stay N/A ([#178](https://github.com/matiaspakua/notaire/issues/178))
 
