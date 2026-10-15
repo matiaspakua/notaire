@@ -14,7 +14,7 @@ The project uses the following code quality tools:
 | **Checkstyle** | Code style enforcement | `checkstyle.xml` |
 | **SpotBugs** | Static bug detection | `spotbugs-exclude.xml` |
 | **Trivy** | Vulnerability scanning | Built-in |
-| **ArchUnit** | Backend hexagon dependency rules with a shrink-only baseline (#1695) | `HexagonArchitectureTest`, `src/test/resources/architecture/hexagon-baseline.txt` |
+| **ArchUnit** | Backend hexagon dependency rules with a shrink-only baseline (#1695); use-case slice no-cycles (#1725) | `HexagonArchitectureTest` + `hexagon-baseline.txt`; `UseCaseSliceCycleArchitectureTest` + `usecase-cycle-baseline.txt` |
 | **SonarQube** | Backend + frontend analysis, quality gate on new code (`bash infra/scripts/run-sonar.sh`) | `backend-api/pom.xml`, `frontend/sonar-project.properties` |
 
 ### SonarQube new-code and SCM (#1680)
@@ -147,6 +147,19 @@ mvn test -pl backend-api -Dtest=HexagonArchitectureTest -Darchitecture.baseline=
 
 and commit the smaller file. Never add a line by hand; `-Darchitecture.baseline=init` is only for the first
 generation. The goal is an empty baseline.
+
+### Use-case slice no-cycles (R7, #1725)
+
+`UseCaseSliceCycleArchitectureTest` fails when `application.usecase.<slice>` packages form a dependency cycle.
+Cycles are recorded as **canonical slice rings** (not class pairs) in
+`src/test/resources/architecture/usecase-cycle-baseline.txt`. Same ratchet flags:
+
+```bash
+mvn test -pl backend-api -Dtest=UseCaseSliceCycleArchitectureTest -Darchitecture.baseline=shrink
+```
+
+One-way edges (for example catalogs → `catalog.CatalogLockSupport`) are allowed; only closed cycles fail.
+An empty baseline means no known cycles.
 
 ## Checkstyle - Code Style
 
