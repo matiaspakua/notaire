@@ -7,7 +7,7 @@
 |-------|-------|
 | GitHub Issue | #1753 |
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure |
-| Branch | `fix/release-please-followup` |
+| Branch | `1753/fix/release-please-version-files` |
 | Gate 1 status | passed |
 | SURFACE | CI/CD (no UI surface) |
 

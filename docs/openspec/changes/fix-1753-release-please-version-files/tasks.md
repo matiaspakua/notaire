@@ -15,7 +15,7 @@
 ## 2. Crear branch
 
 - [x] 2.1 Branch from `origin/main` (`e0236cd15`)
-- [x] 2.2 `git checkout -b fix/release-please-followup`
+- [x] 2.2 `git checkout -b 1753/fix/release-please-version-files`
 - [x] 2.3 Record the branch name in `traceability.md`
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
@@ -72,7 +72,7 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Push `fix/release-please-followup`
+- [ ] 10.1 Push `1753/fix/release-please-version-files`
 - [ ] 10.2 Open PR `[#1753] fix(release): release-please bumps POMs/OpenAPI; release PR exempt`
 - [ ] 10.3 Wait for required workflows
 - [ ] 10.4 Gate 4 — CI green, no conflicts, docs complete

@@ -13,7 +13,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Issue | #1753 | open |
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure | exists |
 | Specification | `docs/openspec/changes/fix-1753-release-please-version-files/` | drafted |
-| Branch | `fix/release-please-followup` | created |
+| Branch | `1753/fix/release-please-version-files` | created |
 | Tasks | `tasks.md` | in progress |
 | Commits | `5a13ff939` test, `ae0180665` fix | done |
 | Pull Request | | pending |
