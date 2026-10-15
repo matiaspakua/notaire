@@ -159,6 +159,20 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   - Lesson on process: read build exit codes and fresh log summaries, not `surefire-reports`, which keeps stale
     files from earlier runs when test compilation fails.
 
+- **Slice 4, document types (#1705):** third catalog on the locked-when-in-use shape; usage spans **two** tables
+  (procedure templates and submitted documents).
+  - More fields than folio (`expires`, `dueDays`, `deliveredBy`, `enabled`, `returned`); create defaults for the
+    three wire flags stay in the inbound adapter so OpenAPI clients keep the same omit-means-default behaviour.
+  - Explicit version check in the use case is a **deliberate correction**: the legacy controller copied
+    `dto.version` onto the entity and a stale client version still answered 200. Characterization first pinned
+    that, then the assertion moved to 409.
+  - A characterization put that does not dirty any field does not bump `@Version`; the stale-version scenario
+    must change a field on the first update (same hazard as any JPA optimistic-lock test).
+  - Shared lock/in-use rule now exists three times (identification, folio, document). Extract after management
+    status makes four, not before.
+  - Legacy `business.DocumentType` stays for submitted documents, case summary, reports, reentry and
+    required-documentation services.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers
