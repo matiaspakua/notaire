@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **arch:** shared catalog write-lock control flow extracted to `CatalogLockSupport` (folio, document, management-status update/delete; identification delete); REST bodies unchanged ([#1722](https://github.com/matiaspakua/notaire/issues/1722), epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030).
 - **arch:** management status catalog moved behind a full hexagon (domain, ports, use cases, persistence adapter); ArchUnit baseline shrinks for `ManagementStatusController` ([#1719](https://github.com/matiaspakua/notaire/issues/1719), epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030). A stale client `version` on `PUT /api/v1/management-statuses/{id}` now answers **409** (legacy copied the DTO version onto the entity and still answered 200).
 
 ### Bug Fixes
