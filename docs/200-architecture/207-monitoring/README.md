@@ -81,9 +81,13 @@ authoritative, up-to-date service list, ports, and credentials.
 `devsecops-otel-collector`, which Prometheus scrapes. The frontend serves Node runtime metrics at `/api/metrics`;
 cAdvisor and node-exporter cover containers and the host. On Docker Desktop the last two describe the Linux VM.
 OTLP export needs both `micrometer-registry-otlp` and `spring-boot-opentelemetry` on the backend classpath.
+OTLP metrics push is **opt-in** (`MANAGEMENT_OTLP_METRICS_EXPORT_ENABLED=true`); root `docker-compose.yml` enables it
+with the collector URL. When the flag is false (bare jar, ZAP CI, partial stack), the backend does not open the
+exporter and does not spam `UnknownHostException` ERROR (#1736). Actuator scrape stays on either way.
 
 **Tracing topology:** the backend uses the OpenTelemetry tracer (replacing Brave/Zipkin) and exports spans over OTLP to
-the collector, which forwards them to Tempo. Resource attribute `service.version` equals the packaged Maven
+the collector, which forwards them to Tempo when `MANAGEMENT_TRACING_EXPORT_OTLP_ENABLED=true` (set by Compose).
+Resource attribute `service.version` equals the packaged Maven
 `app.version` (#1591). JSON logs include `serviceVersion` with the same value. In Grafana, Explore -> Tempo finds traces
 by service/name; a trace links to its Loki logs by `service`. Frontend spans are not instrumented yet.
 
