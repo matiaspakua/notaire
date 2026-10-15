@@ -1,8 +1,10 @@
 package com.licensis.notaire.application.usecase.report;
 
+import com.licensis.notaire.adapter.out.report.TaxSwornStatementReportAdapter;
 import com.licensis.notaire.application.port.out.report.ReportDocument;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Fields;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Table;
+import com.licensis.notaire.application.port.out.report.TaxSwornStatementReportPort;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
@@ -140,13 +142,13 @@ class TaxSwornStatementReportBuilderTest {
 
         ReportDocument document = builder().build(1999, 4, null, null);
         assertThat(document.identity().emptyStateMessage())
-                .isEqualTo(TaxSwornStatementReportBuilder.EMPTY_PERIOD);
+                .isEqualTo(TaxSwornStatementReportPort.EMPTY_PERIOD);
         Table table = (Table) document.sections().get(1);
         assertThat(table.rows()).isEmpty();
     }
 
-    private TaxSwornStatementReportBuilder builder() {
-        return new TaxSwornStatementReportBuilder(
+    private TaxSwornStatementReportAdapter builder() {
+        return new TaxSwornStatementReportAdapter(
                 folioRepository, procedureRepository, substitutionRepository, registrationDraftRepository);
     }
 

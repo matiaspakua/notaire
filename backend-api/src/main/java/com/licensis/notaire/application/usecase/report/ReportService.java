@@ -19,6 +19,7 @@ import com.licensis.notaire.application.port.out.report.ReportDocument.Field;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Fields;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Identity;
 import com.licensis.notaire.application.port.out.report.ReportRenderer;
+import com.licensis.notaire.application.port.out.report.TaxSwornStatementReportPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +46,7 @@ public class ReportService {
     private final ReportRenderer reportRenderer;
     private final IndexBookReportBuilder indexBook;
     private final MonthlySwornStatementReportBuilder monthlySworn;
-    private final TaxSwornStatementReportBuilder taxSworn;
+    private final TaxSwornStatementReportPort taxSworn;
 
     private static final int FOLIOS_PER_NOTEBOOK = 10;
 
@@ -58,7 +59,7 @@ public class ReportService {
                            ReportRenderer reportRenderer,
                            IndexBookReportBuilder indexBook,
                            MonthlySwornStatementReportBuilder monthlySworn,
-                           TaxSwornStatementReportBuilder taxSworn) {
+                           TaxSwornStatementReportPort taxSworn) {
         this.testimonyRepository = testimonyRepository;
         this.notebookRepository = notebookRepository;
         this.registrationDraftRepository = registrationDraftRepository;

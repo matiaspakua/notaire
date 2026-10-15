@@ -1,4 +1,4 @@
-package com.licensis.notaire.application.usecase.report;
+package com.licensis.notaire.adapter.out.report;
 
 import com.licensis.notaire.application.port.out.report.ReportDocument;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Column;
@@ -6,6 +6,8 @@ import com.licensis.notaire.application.port.out.report.ReportDocument.Field;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Fields;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Identity;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Table;
+import com.licensis.notaire.application.port.out.report.TaxSwornStatementReportPort;
+import com.licensis.notaire.application.usecase.report.ReportLocaleFormats;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
@@ -36,9 +38,7 @@ import java.util.Objects;
  * Assembles the CU50 tax sworn-statement {@link ReportDocument} from recorded folios.
  */
 @Component
-public class TaxSwornStatementReportBuilder {
-
-    static final String EMPTY_PERIOD = "No deeds were recorded for the requested period.";
+public class TaxSwornStatementReportAdapter implements TaxSwornStatementReportPort {
 
     private static final List<Column> COLUMNS = List.of(
             Column.right("Deed", 0.9f),
@@ -55,7 +55,7 @@ public class TaxSwornStatementReportBuilder {
     private final SubstitutionRepository substitutionRepository;
     private final RegistrationDraftRepository registrationDraftRepository;
 
-    public TaxSwornStatementReportBuilder(FolioRepository folioRepository,
+    public TaxSwornStatementReportAdapter(FolioRepository folioRepository,
                                           ProcedureRepository procedureRepository,
                                           SubstitutionRepository substitutionRepository,
                                           RegistrationDraftRepository registrationDraftRepository) {
@@ -65,6 +65,7 @@ public class TaxSwornStatementReportBuilder {
         this.registrationDraftRepository = registrationDraftRepository;
     }
 
+    @Override
     public ReportDocument build(Integer year, Integer month, Integer idNotary, Integer idFolioType) {
         int periodYear = year == null ? 0 : year;
         int periodMonth = month == null ? 0 : month;
@@ -95,7 +96,7 @@ public class TaxSwornStatementReportBuilder {
         List<Field> header = new ArrayList<>();
         header.add(new Field("Year", String.valueOf(periodYear)));
         header.add(new Field("Month", String.valueOf(periodMonth)));
-        header.add(new Field("Titular", ReportDocumentFactory.fullName(titular)));
+        header.add(new Field("Titular", fullName(titular)));
         header.add(new Field("Registration", registrationLabel(titular)));
         header.add(new Field("Substitute", substituteLabel(titular, periodYear, periodMonth)));
         if (idNotary != null) {
@@ -128,7 +129,7 @@ public class TaxSwornStatementReportBuilder {
 
         String parties = procedures.stream()
                 .flatMap(procedure -> involvedPeople(procedure).stream())
-                .map(ReportDocumentFactory::fullName)
+                .map(TaxSwornStatementReportAdapter::fullName)
                 .filter(name -> !ReportLocaleFormats.NOT_RECORDED.equals(name))
                 .distinct()
                 .reduce((left, right) -> left + ", " + right)
@@ -179,7 +180,7 @@ public class TaxSwornStatementReportBuilder {
         if (covering.isEmpty()) {
             return ReportLocaleFormats.NOT_RECORDED;
         }
-        return ReportDocumentFactory.fullName(covering.getFirst().getFkIdSubstitute());
+        return fullName(covering.getFirst().getFkIdSubstitute());
     }
 
     private static Person resolveTitular(Integer idNotary, List<Folio> recorded) {
@@ -265,6 +266,15 @@ public class TaxSwornStatementReportBuilder {
             return ReportLocaleFormats.NOT_RECORDED;
         }
         return String.valueOf(titular.getNotaryRegistrationNumber());
+    }
+
+    private static String fullName(Person person) {
+        if (person == null) {
+            return ReportLocaleFormats.NOT_RECORDED;
+        }
+        String name = (Objects.toString(person.getFirstName(), "") + " "
+                + Objects.toString(person.getLastName(), "")).trim();
+        return name.isEmpty() ? ReportLocaleFormats.NOT_RECORDED : name;
     }
 
     private static BigDecimal sumRecorded(BigDecimal total, BigDecimal value) {
