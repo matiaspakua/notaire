@@ -14,6 +14,8 @@ adapter.out.* ->  application (port.out)  ->  domain
 - Controllers call **inbound ports only**: no repository, `jpa`, entity, `EntityManager` or `@Transactional`.
 - Use cases (`application.usecase`) are `@Service` + `@Transactional` and nothing else from Spring; no JPA,
   Hibernate or Jackson; they reach other contexts only through inbound ports.
+- Use-case packages under `application.usecase.<slice>` must not form dependency cycles; ArchUnit R7
+  (`UseCaseSliceCycleArchitectureTest`, #1725) enforces this with a shrink-only ring baseline.
 - Ports speak domain types: never an entity, a Spring Data type or a web DTO.
 - The domain is plain Java. JPA entities (`FooJpaEntity`), Spring Data repositories and mappers live in
   `adapter.out.persistence.<context>`.
@@ -37,8 +39,8 @@ adapter.out.* ->  application (port.out)  ->  domain
    `adapter.out.persistence.<context>`; mapper unit tests.
 5. Controller reduced to validation, port call and web DTO mapping.
 6. Delete the legacy classes of the context. Run
-   `mvn test -pl backend-api -Dtest=HexagonArchitectureTest -Darchitecture.baseline=shrink` and commit the
-   smaller baseline. Frontend: the same with the lint baseline (#1696).
+   `mvn test -pl backend-api -Dtest=HexagonArchitectureTest,UseCaseSliceCycleArchitectureTest -Darchitecture.baseline=shrink` and commit the
+   smaller baselines. Frontend: the same with the lint baseline (#1696).
 7. `mvn verify -pl backend-api` (JaCoCo gate), OpenAPI export unchanged, Playwright for any UI change.
 
 ## Never
