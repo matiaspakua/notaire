@@ -75,11 +75,13 @@ class PostgresExporterWiringTest(unittest.TestCase):
         self.assertIsInstance(document, dict)
         self.assertNotIn("custom_queries", document)
         for metric in BUSINESS_METRICS:
-            self.assertIn(metric, document, f"missing extend-query metric key {metric}")
-            entry = document[metric]
+            group = metric.removesuffix("_total")
+            self.assertIn(group, document, f"missing extend-query group {group} for {metric}")
+            entry = document[group]
             self.assertIn("query", entry)
             self.assertIn("metrics", entry)
-            self.assertIn(f"FROM {metric.removesuffix('_total')}", entry["query"])
+            self.assertIn(f"FROM {group}", entry["query"])
+            self.assertIn("AS total", entry["query"])
 
 
 class PostgresDashboardPromqlTest(unittest.TestCase):

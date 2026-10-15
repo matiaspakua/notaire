@@ -1,47 +1,51 @@
 # Custom queries for postgres-exporter (--extend.query-path / PG_EXPORTER_EXTEND_QUERY_PATH).
 # Format: metric-group key -> query + metrics (see prometheus-community/postgres_exporter queries.yaml).
 # Built-in collectors (pg_stat_database, settings, …) stay enabled by default; this file only adds Notaire business and connection-state gauges.
+#
+# Naming (#1746): scraped series = {group}_{gauge_column}. Use group without `_total` and
+# gauge column `total` so Grafana PromQL (`deeds_total`, `pg_connections_total`, …) matches
+# without the double-prefix (`deeds_total_deeds_total`) that empty panels saw on Mac smoke.
 
-deeds_total:
+deeds:
   query: |
-    SELECT status::text AS status, COUNT(*)::float AS deeds_total
+    SELECT COALESCE(status::text, 'unknown') AS status, COUNT(*)::float AS total
     FROM deeds
     GROUP BY status
   metrics:
     - status:
         usage: "LABEL"
         description: "Deed status"
-    - deeds_total:
+    - total:
         usage: "GAUGE"
         description: "Total number of deeds by status"
 
-budgets_total:
+budgets:
   query: |
-    SELECT COUNT(*)::float AS budgets_total FROM budgets
+    SELECT COUNT(*)::float AS total FROM budgets
   metrics:
-    - budgets_total:
+    - total:
         usage: "GAUGE"
         description: "Total number of budgets"
 
-users_total:
+users:
   query: |
-    SELECT COUNT(*)::float AS users_total FROM users
+    SELECT COUNT(*)::float AS total FROM users
   metrics:
-    - users_total:
+    - total:
         usage: "GAUGE"
         description: "Total number of users"
 
-people_total:
+people:
   query: |
-    SELECT COUNT(*)::float AS people_total FROM people
+    SELECT COUNT(*)::float AS total FROM people
   metrics:
-    - people_total:
+    - total:
         usage: "GAUGE"
         description: "Total number of people"
 
-pg_connections_total:
+pg_connections:
   query: |
-    SELECT COALESCE(state, 'unknown')::text AS state, COUNT(*)::float AS pg_connections_total
+    SELECT COALESCE(state, 'unknown')::text AS state, COUNT(*)::float AS total
     FROM pg_stat_activity
     WHERE datname = current_database()
     GROUP BY state
@@ -49,6 +53,6 @@ pg_connections_total:
     - state:
         usage: "LABEL"
         description: "Connection state"
-    - pg_connections_total:
+    - total:
         usage: "GAUGE"
         description: "Number of connections by state"

@@ -14,6 +14,8 @@ DASHBOARD = os.path.join(
 
 LIVE_TABLES = ("deeds", "budgets", "users", "people")
 SPANISH_TABLES = ("escritura", "presupuesto", "usuario", "persona", "estado_de_gestion")
+# Extend-query group keys (#1746): scraped series = {group}_total for Grafana.
+QUERY_GROUPS = ("deeds", "budgets", "users", "people")
 METRICS = ("deeds_total", "budgets_total", "users_total", "people_total")
 SPANISH_METRICS = ("escrituras_total", "presupuestos_total", "usuarios_total", "personas_total")
 
@@ -32,9 +34,9 @@ class PostgresExporterEnglishTest(unittest.TestCase):
             self.assertIn(f"FROM {table}", sql)
         for table in SPANISH_TABLES:
             self.assertNotIn(table, sql)
-        for metric in METRICS:
-            self.assertIn(metric, document)
-            self.assertIn(metric, sql)
+        for group in QUERY_GROUPS:
+            self.assertIn(group, document)
+            self.assertIn("AS total", document[group]["query"])
         for metric in SPANISH_METRICS:
             self.assertNotIn(metric, sql)
             self.assertNotIn(metric, document)
