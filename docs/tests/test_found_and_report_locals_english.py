@@ -25,12 +25,17 @@ class FoundAndReportLocalsEnglishTest(unittest.TestCase):
         self.assertIn("PersonProcedure found", person_procedure)
         self.assertNotIn("encontrado", person_procedure)
 
-        folio = read(
+        # Utilizado lock lives on the domain type after the folio-instance hexagon (#1727).
+        folio_domain = read(
+            "backend-api/src/main/java/com/licensis/notaire/domain/folio/Folio.java"
+        )
+        self.assertIn("STATUS_USED", folio_domain)
+        self.assertIn('"Utilizado"', folio_domain)
+        self.assertNotIn("StatusUTILIZADO", folio_domain)
+        folio_controller = read(
             "backend-api/src/main/java/com/licensis/notaire/adapter/in/web/folio/FolioController.java"
         )
-        self.assertIn("STATUS_USED", folio)
-        self.assertIn('"Utilizado"', folio)
-        self.assertNotIn("StatusUTILIZADO", folio)
+        self.assertNotIn("StatusUTILIZADO", folio_controller)
 
     def test_sworn_statement_methods_and_dialog_keys_are_english(self):
         reports = read(
