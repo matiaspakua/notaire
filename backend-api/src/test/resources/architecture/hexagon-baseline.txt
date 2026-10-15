@@ -55,9 +55,6 @@ R1 | com.licensis.notaire.adapter.in.web.management.ManagementController -> com.
 R1 | com.licensis.notaire.adapter.in.web.management.ManagementController -> com.licensis.notaire.repository.ProcedureRepository
 R1 | com.licensis.notaire.adapter.in.web.management.ManagementController -> com.licensis.notaire.repository.ProcedureTypeRepository
 R1 | com.licensis.notaire.adapter.in.web.management.ManagementController -> com.licensis.notaire.repository.PropertyRepository
-R1 | com.licensis.notaire.adapter.in.web.management.ManagementStatusController -> com.licensis.notaire.business.ManagementStatus
-R1 | com.licensis.notaire.adapter.in.web.management.ManagementStatusController -> com.licensis.notaire.repository.DeedManagementRepository
-R1 | com.licensis.notaire.adapter.in.web.management.ManagementStatusController -> com.licensis.notaire.repository.ManagementStatusRepository
 R1 | com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper -> com.licensis.notaire.business.DeedManagement
 R1 | com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper -> com.licensis.notaire.business.ManagementStatus
 R1 | com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper -> com.licensis.notaire.repository.DeedManagementRepository

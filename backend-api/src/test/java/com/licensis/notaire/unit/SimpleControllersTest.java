@@ -3,7 +3,6 @@ package com.licensis.notaire.unit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.adapter.in.web.copy.CopyController;
 import com.licensis.notaire.adapter.in.web.deed.DeedController;
-import com.licensis.notaire.adapter.in.web.management.ManagementStatusController;
 import com.licensis.notaire.adapter.in.web.history.HistoryController;
 import com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementController;
 import com.licensis.notaire.adapter.in.web.person.PersonController;
@@ -12,16 +11,15 @@ import com.licensis.notaire.adapter.in.web.testimony.TestimonyController;
 import com.licensis.notaire.adapter.in.web.procedure.ProcedureTypeController;
 import com.licensis.notaire.adapter.in.web.procedure.ProcedureController;
 import com.licensis.notaire.application.usecase.copy.CopyService;
-import com.licensis.notaire.dto.DtoManagementStatus;
 import com.licensis.notaire.dto.DtoTestimonyMovement;
 import com.licensis.notaire.dto.DtoTestimony;
 import com.licensis.notaire.dto.DtoProcedureType;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Copy;
 import com.licensis.notaire.business.Deed;
-import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.History;
+import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.TestimonyMovement;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Budget;
@@ -174,91 +172,6 @@ class SimpleControllersTest {
             mvc.perform(delete("/api/v1/copies/2")).andExpect(status().isNotFound());
             doThrow(new RuntimeException("fk")).when(service).deleteById(1);
             mvc.perform(delete("/api/v1/copies/1")).andExpect(status().isConflict());
-        }
-    }
-
-    @Nested
-    @DisplayName("ManagementStatusController")
-    class ManagementStatusControllerTests {
-        private final ManagementStatusRepository repo = mock(ManagementStatusRepository.class);
-        private final DeedManagementRepository managementRepo = mock(DeedManagementRepository.class);
-        private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new ManagementStatusController(repo, managementRepo)).build();
-
-        private ManagementStatus build() {
-            ManagementStatus e = new ManagementStatus(1, "Active");
-            return e;
-        }
-
-        @Test
-        @DisplayName("GET all should return list of DTOs")
-        void getAll() throws Exception {
-            when(repo.findAll()).thenReturn(List.of(build()));
-            mvc.perform(get("/api/v1/management-statuses"))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].idManagementStatus").value(1));
-        }
-
-        @Test
-        @DisplayName("GET by id should return 200 when found and 404 when not")
-        void getById() throws Exception {
-            when(repo.findById(1)).thenReturn(Optional.of(build()));
-            when(repo.findById(2)).thenReturn(Optional.empty());
-            mvc.perform(get("/api/v1/management-statuses/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/management-statuses/2")).andExpect(status().isNotFound());
-        }
-
-        @Test
-        @DisplayName("POST should return 201 when valid")
-        void create() throws Exception {
-            DtoManagementStatus dto = new DtoManagementStatus();
-            dto.setIdManagementStatus(1);
-            dto.setName("Active");
-            when(repo.save(any(ManagementStatus.class))).thenReturn(build());
-            mvc.perform(post("/api/v1/management-statuses").contentType("application/json")
-                    .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
-        }
-
-        @Test
-        @DisplayName("POST should return 409 when save fails (#916)")
-        void createErrorOnSave() throws Exception {
-            DtoManagementStatus dto = new DtoManagementStatus();
-            dto.setIdManagementStatus(1);
-            dto.setName("Active");
-            when(repo.save(any(ManagementStatus.class))).thenThrow(new RuntimeException("x"));
-            mvc.perform(post("/api/v1/management-statuses").contentType("application/json")
-                    .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
-        }
-
-        @Test
-        @DisplayName("PUT should return 200 when present and not in-use, 404 when missing, 409 when in-use")
-        void update() throws Exception {
-            DtoManagementStatus dto = new DtoManagementStatus();
-            dto.setName("Updated");
-            when(repo.findById(1)).thenReturn(Optional.of(build()));
-            when(repo.findById(2)).thenReturn(Optional.empty());
-            when(managementRepo.findByFkIdManagementStatusIdManagementStatus(anyInt())).thenReturn(List.of());
-            mvc.perform(put("/api/v1/management-statuses/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(dto))).andExpect(status().isOk());
-            mvc.perform(put("/api/v1/management-statuses/2").contentType("application/json")
-                    .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
-            when(managementRepo.findByFkIdManagementStatusIdManagementStatus(1))
-                    .thenReturn(List.of(new com.licensis.notaire.business.DeedManagement()));
-            mvc.perform(put("/api/v1/management-statuses/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
-        }
-
-        @Test
-        @DisplayName("DELETE should return 200, 404, or 409 appropriately")
-        void deleteOne() throws Exception {
-            when(repo.existsById(1)).thenReturn(true);
-            when(repo.existsById(2)).thenReturn(false);
-            when(managementRepo.findByFkIdManagementStatusIdManagementStatus(anyInt())).thenReturn(List.of());
-            mvc.perform(delete("/api/v1/management-statuses/1")).andExpect(status().isNoContent());
-            mvc.perform(delete("/api/v1/management-statuses/2")).andExpect(status().isNotFound());
-            when(managementRepo.findByFkIdManagementStatusIdManagementStatus(1))
-                    .thenReturn(List.of(new com.licensis.notaire.business.DeedManagement()));
-            mvc.perform(delete("/api/v1/management-statuses/1")).andExpect(status().isConflict());
         }
     }
 
