@@ -18,6 +18,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$REPO_DIR"
 
+# Compose derives the project name from the directory by default. Git worktrees
+# (e.g. notaire-wt-*) would then publish <dir>_notary-network instead of
+# notaire_notary-network, so Prometheus/OTel (external network in infra/) cannot
+# resolve the app. Keep overrides for parallel stacks (#1186 / #1678).
+export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-notaire}"
+
 # Colors for output
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'

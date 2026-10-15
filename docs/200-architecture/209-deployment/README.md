@@ -138,7 +138,9 @@ bash workspace/stack/start.sh
 
 A distinct `COMPOSE_PROJECT_NAME` also separates volumes and the network. The observability
 stack (`infra/`) scrapes `notary-backend` and `notary-postgres` on `notaire_notary-network`, so it
-only works with the default container names. `docker-compose.prod.yml` and
+only works with the default container names. `workspace/stack/start.sh` defaults
+`COMPOSE_PROJECT_NAME` to `notaire` so git worktrees still publish that network; override it
+only for intentional parallel stacks. `docker-compose.prod.yml` and
 `docker-compose.cloud.yml` are not affected.
 
 ### docker-compose.prod.yml (production entrypoint — issue #1044)
