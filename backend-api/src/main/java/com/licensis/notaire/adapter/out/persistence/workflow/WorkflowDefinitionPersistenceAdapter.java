@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Persistence adapter for the workflow definition slice.
+ * Legacy entity-shaped workflow definition port. Domain catalog mapping lives in
+ * {@link WorkflowDefinitionCatalogPersistenceAdapter} (issue #1728).
  */
 @Component
 public class WorkflowDefinitionPersistenceAdapter implements WorkflowDefinitionRepositoryPort {

@@ -12,9 +12,8 @@ import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.repository.BudgetTemplateRepository;
 import com.licensis.notaire.application.port.in.folio.ManageFolioTypesUseCase;
 import com.licensis.notaire.application.port.in.folio.QueryFolioTypesUseCase;
-import com.licensis.notaire.repository.WorkflowDefinitionRepository;
-import com.licensis.notaire.repository.WorkflowNodeRepository;
-import com.licensis.notaire.repository.WorkflowTransitionRepository;
+import com.licensis.notaire.application.port.in.workflow.ManageWorkflowDefinitionsUseCase;
+import com.licensis.notaire.application.port.in.workflow.QueryWorkflowDefinitionsUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -115,10 +114,10 @@ class ControllerExceptionMessageLeakTest {
     @Test
     @DisplayName("POST /workflow-definition answers 400 on a constraint and the error body carries no SQL text")
     void workflowDefinitionCreate() throws Exception {
-        WorkflowDefinitionRepository repo = mock(WorkflowDefinitionRepository.class);
-        when(repo.save(any())).thenThrow(new DataIntegrityViolationException(SQL_LEAK));
-        MockMvc mvc = standaloneSetup(new WorkflowDefinitionController(repo, mock(WorkflowNodeRepository.class),
-                mock(WorkflowTransitionRepository.class))).build();
+        QueryWorkflowDefinitionsUseCase query = mock(QueryWorkflowDefinitionsUseCase.class);
+        ManageWorkflowDefinitionsUseCase manage = mock(ManageWorkflowDefinitionsUseCase.class);
+        when(manage.create(any())).thenThrow(new DataIntegrityViolationException(SQL_LEAK));
+        MockMvc mvc = standaloneSetup(new WorkflowDefinitionController(query, manage)).build();
 
         MvcResult result = mvc.perform(post("/api/v1/workflow-definition").contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))

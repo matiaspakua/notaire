@@ -86,10 +86,6 @@ R1 | com.licensis.notaire.adapter.in.web.user.UserController -> com.licensis.not
 R1 | com.licensis.notaire.adapter.in.web.user.UserController -> com.licensis.notaire.business.Role
 R1 | com.licensis.notaire.adapter.in.web.user.UserController -> com.licensis.notaire.business.User
 R1 | com.licensis.notaire.adapter.in.web.user.UserController -> com.licensis.notaire.repository.UserRepository
-R1 | com.licensis.notaire.adapter.in.web.workflow.WorkflowDefinitionController -> com.licensis.notaire.business.WorkflowDefinition
-R1 | com.licensis.notaire.adapter.in.web.workflow.WorkflowDefinitionController -> com.licensis.notaire.repository.WorkflowDefinitionRepository
-R1 | com.licensis.notaire.adapter.in.web.workflow.WorkflowDefinitionController -> com.licensis.notaire.repository.WorkflowNodeRepository
-R1 | com.licensis.notaire.adapter.in.web.workflow.WorkflowDefinitionController -> com.licensis.notaire.repository.WorkflowTransitionRepository
 R1 | com.licensis.notaire.adapter.in.web.workflow.WorkflowNodeController -> com.licensis.notaire.business.WorkflowNode
 R1 | com.licensis.notaire.adapter.in.web.workflow.WorkflowNodeController -> com.licensis.notaire.business.WorkflowNodeType
 R1 | com.licensis.notaire.adapter.in.web.workflow.WorkflowNodeController -> com.licensis.notaire.repository.ManagementStatusRepository

@@ -1,12 +1,21 @@
 package com.licensis.notaire.unit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.licensis.notaire.adapter.in.web.workflow.WorkflowDefinitionController;
-import com.licensis.notaire.dto.DtoWorkflowDefinition;
-import com.licensis.notaire.business.WorkflowDefinition;
-import com.licensis.notaire.repository.WorkflowDefinitionRepository;
-import com.licensis.notaire.repository.WorkflowNodeRepository;
-import com.licensis.notaire.repository.WorkflowTransitionRepository;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,47 +25,37 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.licensis.notaire.adapter.in.web.workflow.WorkflowDefinitionController;
+import com.licensis.notaire.application.port.in.workflow.ManageWorkflowDefinitionsUseCase;
+import com.licensis.notaire.application.port.in.workflow.ManageWorkflowDefinitionsUseCase.SaveWorkflowDefinitionCommand;
+import com.licensis.notaire.application.port.in.workflow.QueryWorkflowDefinitionsUseCase;
+import com.licensis.notaire.domain.workflow.WorkflowDefinition;
+import com.licensis.notaire.domain.workflow.WorkflowDefinitionInUseException;
+import com.licensis.notaire.domain.workflow.WorkflowDefinitionNotFoundException;
+import com.licensis.notaire.dto.DtoWorkflowDefinition;
 
 @DisplayName("CU83 - WorkflowDefinitionController unit tests")
 @ExtendWith(MockitoExtension.class)
 class WorkflowDefinitionControllerTest {
 
     @Mock
-    private WorkflowDefinitionRepository repository;
+    private QueryWorkflowDefinitionsUseCase query;
+
     @Mock
-    private WorkflowNodeRepository nodeRepository;
-    @Mock
-    private WorkflowTransitionRepository transitionRepository;
+    private ManageWorkflowDefinitionsUseCase manage;
 
     private MockMvc mockMvc;
     private ObjectMapper mapper;
 
     @BeforeEach
     void setUp() {
-        WorkflowDefinitionController controller = new WorkflowDefinitionController(
-                repository, nodeRepository, transitionRepository);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new WorkflowDefinitionController(query, manage)).build();
         mapper = new ObjectMapper();
     }
 
-    private WorkflowDefinition buildEntity() {
-        WorkflowDefinition wf = new WorkflowDefinition();
-        wf.setId(1);
-        wf.setName("Workflow Compraventa");
-        wf.setDescription("Standard workflow");
-        wf.setActive(false);
-        return wf;
+    private WorkflowDefinition domain() {
+        return WorkflowDefinition.restore(1, "Workflow Compraventa", "Standard workflow", false, 0);
     }
 
     private DtoWorkflowDefinition buildDto() {
@@ -71,7 +70,7 @@ class WorkflowDefinitionControllerTest {
     @Test
     @DisplayName("GET /api/v1/workflow-definition should return 200 with list")
     void shouldReturnAllWorkflows() throws Exception {
-        when(repository.findAll()).thenReturn(List.of(buildEntity()));
+        when(query.findAll()).thenReturn(List.of(domain()));
         mockMvc.perform(get("/api/v1/workflow-definition"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Workflow Compraventa"));
@@ -80,7 +79,7 @@ class WorkflowDefinitionControllerTest {
     @Test
     @DisplayName("GET /api/v1/workflow-definition/{id} should return 200 when found")
     void shouldReturnWorkflowById() throws Exception {
-        when(repository.findById(1)).thenReturn(Optional.of(buildEntity()));
+        when(query.findById(1)).thenReturn(Optional.of(domain()));
         mockMvc.perform(get("/api/v1/workflow-definition/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Workflow Compraventa"));
@@ -89,16 +88,14 @@ class WorkflowDefinitionControllerTest {
     @Test
     @DisplayName("GET /api/v1/workflow-definition/{id} should return 404 when missing")
     void shouldReturn404WhenWorkflowMissing() throws Exception {
-        when(repository.findById(99)).thenReturn(Optional.empty());
-        mockMvc.perform(get("/api/v1/workflow-definition/99"))
-                .andExpect(status().isNotFound());
+        when(query.findById(99)).thenReturn(Optional.empty());
+        mockMvc.perform(get("/api/v1/workflow-definition/99")).andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("POST /api/v1/workflow-definition should return 201 when created")
     void shouldCreateWorkflow() throws Exception {
-        WorkflowDefinition saved = buildEntity();
-        when(repository.save(any(WorkflowDefinition.class))).thenReturn(saved);
+        when(manage.create(any(SaveWorkflowDefinitionCommand.class))).thenReturn(domain());
         mockMvc.perform(post("/api/v1/workflow-definition")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(buildDto())))
@@ -109,7 +106,7 @@ class WorkflowDefinitionControllerTest {
     @Test
     @DisplayName("POST /api/v1/workflow-definition should return 409 when save fails")
     void shouldReturn409WhenCreateFails() throws Exception {
-        when(repository.save(any(WorkflowDefinition.class))).thenThrow(new RuntimeException("conflict"));
+        when(manage.create(any(SaveWorkflowDefinitionCommand.class))).thenThrow(new RuntimeException("conflict"));
         mockMvc.perform(post("/api/v1/workflow-definition")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(buildDto())))
@@ -119,9 +116,7 @@ class WorkflowDefinitionControllerTest {
     @Test
     @DisplayName("PUT /api/v1/workflow-definition/{id} should return 200 when updated")
     void shouldUpdateWorkflow() throws Exception {
-        WorkflowDefinition existing = buildEntity();
-        when(repository.findById(1)).thenReturn(Optional.of(existing));
-        when(repository.save(any(WorkflowDefinition.class))).thenReturn(existing);
+        doNothing().when(manage).update(eq(1), any(SaveWorkflowDefinitionCommand.class));
         mockMvc.perform(put("/api/v1/workflow-definition/1")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(buildDto())))
@@ -131,7 +126,9 @@ class WorkflowDefinitionControllerTest {
     @Test
     @DisplayName("PUT /api/v1/workflow-definition/{id} should return 404 when missing")
     void shouldReturn404WhenUpdatingMissingWorkflow() throws Exception {
-        when(repository.findById(99)).thenReturn(Optional.empty());
+        doThrow(new WorkflowDefinitionNotFoundException(99))
+                .when(manage)
+                .update(eq(99), any(SaveWorkflowDefinitionCommand.class));
         mockMvc.perform(put("/api/v1/workflow-definition/99")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(buildDto())))
@@ -139,19 +136,25 @@ class WorkflowDefinitionControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /api/v1/workflow-definition/{id} should return 200 when deleted")
+    @DisplayName("DELETE /api/v1/workflow-definition/{id} should return 204 when deleted")
     void shouldDeleteWorkflow() throws Exception {
-        when(repository.existsById(1)).thenReturn(true);
-        when(nodeRepository.findByWorkflowDefinitionId(1)).thenReturn(List.of());
-        mockMvc.perform(delete("/api/v1/workflow-definition/1"))
-                .andExpect(status().isNoContent());
+        doNothing().when(manage).delete(1);
+        mockMvc.perform(delete("/api/v1/workflow-definition/1")).andExpect(status().isNoContent());
     }
 
     @Test
     @DisplayName("DELETE /api/v1/workflow-definition/{id} should return 404 when missing")
     void shouldReturn404WhenDeletingMissingWorkflow() throws Exception {
-        when(repository.existsById(99)).thenReturn(false);
-        mockMvc.perform(delete("/api/v1/workflow-definition/99"))
-                .andExpect(status().isNotFound());
+        doThrow(new WorkflowDefinitionNotFoundException(99)).when(manage).delete(99);
+        mockMvc.perform(delete("/api/v1/workflow-definition/99")).andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/workflow-definition/{id} should return 409 when nodes exist")
+    void shouldReturn409WhenDeletingWorkflowWithNodes() throws Exception {
+        doThrow(WorkflowDefinitionInUseException.cannotDelete()).when(manage).delete(anyInt());
+        mockMvc.perform(delete("/api/v1/workflow-definition/1"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.error").value(WorkflowDefinitionInUseException.DELETE_MESSAGE));
     }
 }
