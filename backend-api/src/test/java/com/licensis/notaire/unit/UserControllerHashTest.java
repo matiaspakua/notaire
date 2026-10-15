@@ -125,16 +125,14 @@ class UserControllerHashTest {
     }
 
     @Test
-    @DisplayName("login should succeed for a legacy MD5 hash and transparently upgrade it to BCrypt")
-    void loginShouldUpgradeLegacyMd5HashOnSuccess() {
+    @DisplayName("login should reject a legacy MD5 hash (hard cutoff — issue #1762)")
+    void loginShouldRejectLegacyMd5Hash() {
         User user = new User(1);
         user.setName("admin");
         user.setPassword(LEGACY_MD5_ADMIN);
         user.setStatus(true);
         user.setType("Escribano");
         when(userRepository.findAll()).thenReturn(List.of(user));
-        when(passwordEncoder.encode("admin")).thenReturn(BCRYPT_HASH);
-        when(jwtTokenService.generateToken("admin")).thenReturn("jwt-token");
 
         DtoUser loginRequest = new DtoUser();
         loginRequest.setName("admin");
@@ -144,9 +142,11 @@ class UserControllerHashTest {
 
         @SuppressWarnings("unchecked")
         Map<String, Object> body = (Map<String, Object>) response.getBody();
-        assertThat(body).containsEntry("valid", true);
-        assertThat(user.getPassword()).isEqualTo(BCRYPT_HASH);
-        verify(userRepository).save(user);
+        assertThat(body).containsEntry("valid", false);
+        assertThat(user.getPassword()).isEqualTo(LEGACY_MD5_ADMIN);
+        verify(userRepository, never()).save(any());
+        verify(passwordEncoder, never()).matches(anyString(), anyString());
+        verify(passwordEncoder, never()).encode(anyString());
     }
 
     @Test
