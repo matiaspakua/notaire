@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.licensis.notaire.application.port.in.folio.ManageFolioTypesUseCase;
 import com.licensis.notaire.application.port.out.folio.FolioTypeCatalogPort;
 import com.licensis.notaire.application.port.out.folio.FolioTypeUsagePort;
+import com.licensis.notaire.application.usecase.catalog.CatalogLockSupport;
 import com.licensis.notaire.domain.folio.FolioType;
 import com.licensis.notaire.domain.folio.FolioTypeInUseException;
 import com.licensis.notaire.domain.folio.FolioTypeNotFoundException;
@@ -34,24 +35,27 @@ public class FolioTypeManagementService implements ManageFolioTypesUseCase {
 
     @Override
     public void update(int id, SaveFolioTypeCommand command) {
-        FolioType existing = catalog.findById(id).orElseThrow(() -> new FolioTypeNotFoundException(id));
-        if (usage.isUsedByFolios(id)) {
-            throw FolioTypeInUseException.lockedForEdit();
-        }
-        if (existing.version() != command.version()) {
-            throw new FolioTypeStaleVersionException(id, existing.version(), command.version());
-        }
-        catalog.save(existing.changeTo(command.name(), command.notes(), command.enabled(), command.auxiliary()));
+        CatalogLockSupport.update(
+                id,
+                catalog::findById,
+                usage::isUsedByFolios,
+                FolioType::version,
+                command.version(),
+                () -> new FolioTypeNotFoundException(id),
+                FolioTypeInUseException::lockedForEdit,
+                FolioTypeStaleVersionException::new,
+                existing -> existing.changeTo(command.name(), command.notes(), command.enabled(), command.auxiliary()),
+                catalog::save);
     }
 
     @Override
     public void delete(int id) {
-        catalog.findById(id).orElseThrow(() -> new FolioTypeNotFoundException(id));
-        if (usage.isUsedByFolios(id)) {
-            throw FolioTypeInUseException.cannotDelete();
-        }
-        if (!catalog.deleteById(id)) {
-            throw new FolioTypeNotFoundException(id);
-        }
+        CatalogLockSupport.delete(
+                id,
+                catalog::findById,
+                usage::isUsedByFolios,
+                () -> new FolioTypeNotFoundException(id),
+                FolioTypeInUseException::cannotDelete,
+                catalog::deleteById);
     }
 }

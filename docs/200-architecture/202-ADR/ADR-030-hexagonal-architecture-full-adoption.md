@@ -181,6 +181,14 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
     is a follow-up after this green merge; do not diverge the shape in the meantime.
   - Legacy `business.ManagementStatus` stays for deed management, history and workflow consumers.
 
+- **Extract, shared catalog lock (#1722):** after four green catalogs, folio / document / management status
+  `update` and `delete` call `application.usecase.catalog.CatalogLockSupport`. Domain exception types and
+  messages stay catalog-owned; the helper only owns load → lock → version → save/delete.
+  - Identification adopts the **delete** half only (name uniqueness stays local on create/update). Its catalog
+    port’s `deleteById` is void, so the call site always reports deleted after the load+lock checks.
+  - Characterization suites for folio, document, management status and identification remain the HTTP contract;
+    no status or body drift.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers

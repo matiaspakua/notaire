@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.licensis.notaire.application.port.in.document.ManageDocumentTypesUseCase;
 import com.licensis.notaire.application.port.out.document.DocumentTypeCatalogPort;
 import com.licensis.notaire.application.port.out.document.DocumentTypeUsagePort;
+import com.licensis.notaire.application.usecase.catalog.CatalogLockSupport;
 import com.licensis.notaire.domain.document.DocumentType;
 import com.licensis.notaire.domain.document.DocumentTypeInUseException;
 import com.licensis.notaire.domain.document.DocumentTypeNotFoundException;
@@ -41,30 +42,33 @@ public class DocumentTypeManagementService implements ManageDocumentTypesUseCase
 
     @Override
     public void update(int id, SaveDocumentTypeCommand command) {
-        DocumentType existing = catalog.findById(id).orElseThrow(() -> new DocumentTypeNotFoundException(id));
-        if (usage.isInUse(id)) {
-            throw DocumentTypeInUseException.lockedForEdit();
-        }
-        if (existing.version() != command.version()) {
-            throw new DocumentTypeStaleVersionException(id, existing.version(), command.version());
-        }
-        catalog.save(existing.changeTo(
-                command.name(),
-                command.expires(),
-                command.dueDays(),
-                command.deliveredBy(),
-                command.enabled(),
-                command.returned()));
+        CatalogLockSupport.update(
+                id,
+                catalog::findById,
+                usage::isInUse,
+                DocumentType::version,
+                command.version(),
+                () -> new DocumentTypeNotFoundException(id),
+                DocumentTypeInUseException::lockedForEdit,
+                DocumentTypeStaleVersionException::new,
+                existing -> existing.changeTo(
+                        command.name(),
+                        command.expires(),
+                        command.dueDays(),
+                        command.deliveredBy(),
+                        command.enabled(),
+                        command.returned()),
+                catalog::save);
     }
 
     @Override
     public void delete(int id) {
-        catalog.findById(id).orElseThrow(() -> new DocumentTypeNotFoundException(id));
-        if (usage.isInUse(id)) {
-            throw DocumentTypeInUseException.cannotDelete();
-        }
-        if (!catalog.deleteById(id)) {
-            throw new DocumentTypeNotFoundException(id);
-        }
+        CatalogLockSupport.delete(
+                id,
+                catalog::findById,
+                usage::isInUse,
+                () -> new DocumentTypeNotFoundException(id),
+                DocumentTypeInUseException::cannotDelete,
+                catalog::deleteById);
     }
 }
