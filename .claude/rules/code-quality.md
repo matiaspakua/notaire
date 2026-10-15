@@ -26,6 +26,19 @@ Community treats the whole tree as new and the gate fails with legacy
 violations. Backend analysis forces `-Dsonar.projectKey=notaire-backend` so the
 Maven reactor root does not publish under `notaire-root`.
 
+### SonarQube severity ratchet (#1737)
+
+The **Notaire way** gate (applied by `run-sonar.sh`) also fails when **new**
+`BLOCKER`, `CRITICAL`, or `MAJOR` violations exceed zero
+(`new_blocker_violations` / `new_critical_violations` / `new_major_violations`).
+Overall (legacy) severity inventory remains under [#1535](https://github.com/matiaspakua/notaire/issues/1535);
+jpa `S4973` / SpotBugs RC wait for hexagonal [#1693](https://github.com/matiaspakua/notaire/issues/1693).
+After a local Sonar run, print open severity counts with:
+
+```bash
+python3 infra/scripts/sonar-severity-report.py
+```
+
 ## JaCoCo - Code Coverage
 
 JaCoCo is used to measure code coverage during test execution.
