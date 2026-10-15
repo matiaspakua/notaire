@@ -11,7 +11,8 @@ export const BROWSER_OTLP_PATH = "/api/otlp/v1/traces";
 let started = false;
 
 export function isBrowserOtelEnabled(
-  env: { NEXT_PUBLIC_OTEL_TRACES_ENABLED?: string } = typeof process !== "undefined"
+  env: NodeJS.ProcessEnv | Record<string, string | undefined> = typeof process !==
+  "undefined"
     ? process.env
     : {},
 ): boolean {
