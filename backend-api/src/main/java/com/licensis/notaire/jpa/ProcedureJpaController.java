@@ -6,7 +6,6 @@ package com.licensis.notaire.jpa;
 
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.SubmittedDocument;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.DeedManagement;
