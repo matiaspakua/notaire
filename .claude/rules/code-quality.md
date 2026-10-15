@@ -39,6 +39,15 @@ After a local Sonar run, print open severity counts with:
 python3 infra/scripts/sonar-severity-report.py
 ```
 
+Refresh the checked-in vulnerability / high-severity inventory (classifications
+`fix` | `false_positive` | `accepted_risk` | `defer_hexagon`) with:
+
+```bash
+python3 infra/scripts/sonar-legacy-inventory.py --write
+```
+
+Inventory path: `docs/300-development/SONAR-LEGACY-VULN-INVENTORY.md` (#1535 slice 1).
+
 ## JaCoCo - Code Coverage
 
 JaCoCo is used to measure code coverage during test execution.
