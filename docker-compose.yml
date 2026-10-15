@@ -123,6 +123,10 @@ services:
       # Server-only — read by the /api/v1 Route Handler BFF at request time.
       BACKEND_URL: http://backend:8080/api/v1
       HOSTNAME: "0.0.0.0"
+      # Browser OTel (#1739): layout reads this at request time and passes to the
+      # client provider; BFF forwards OTLP to the collector on the shared network.
+      NEXT_PUBLIC_OTEL_TRACES_ENABLED: ${NEXT_PUBLIC_OTEL_TRACES_ENABLED:-true}
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: ${OTEL_TRACES_URL:-http://devsecops-otel-collector:4318/v1/traces}
     depends_on:
       backend:
         condition: service_healthy
