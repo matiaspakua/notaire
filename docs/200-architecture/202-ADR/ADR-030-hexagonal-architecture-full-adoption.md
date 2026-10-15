@@ -173,6 +173,14 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   - Legacy `business.DocumentType` stays for submitted documents, case summary, reports, reentry and
     required-documentation services.
 
+- **Slice 5, management status (#1719):** fourth catalog on the locked-when-in-use shape; usage is **one** table
+  (deed managements). Fields are only `name` and `notes`.
+  - Explicit version check in the use case is the same **deliberate correction** as document types: the legacy
+    controller copied `dto.version` onto the entity and a stale client version still answered 200.
+  - Shared lock/in-use rule now exists four times (identification, folio, document, management status). Extract
+    is a follow-up after this green merge; do not diverge the shape in the meantime.
+  - Legacy `business.ManagementStatus` stays for deed management, history and workflow consumers.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers
