@@ -55,6 +55,7 @@ class ReportServicePaymentReceiptTest {
                 reportDocuments,
                 new PdfBoxReportRenderer(),
                 null,
+                null,
                 null
         );
     }

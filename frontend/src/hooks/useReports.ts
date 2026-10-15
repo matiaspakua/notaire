@@ -82,11 +82,19 @@ export function useMonthlySwornStatementReport() {
 /** CU50 — Tax sworn statement */
 export function useTaxSwornStatementReport() {
   return {
-    download: (year: number, month: number) =>
-      downloadPdf(
-        `/reports/tax-sworn-statement?year=${year}&month=${month}`,
-        `ddjj_rentas_${year}_${month}.pdf`
-      ),
+    download: (year: number, month: number, idNotary?: number, idFolioType?: number) => {
+      const params = new URLSearchParams({ year: String(year), month: String(month) });
+      if (idNotary) {
+        params.set("idNotary", String(idNotary));
+      }
+      if (idFolioType) {
+        params.set("idFolioType", String(idFolioType));
+      }
+      return downloadPdf(
+        `/reports/tax-sworn-statement?${params.toString()}`,
+        `ddjj_rentas_${year}_${month}.pdf`,
+      );
+    },
   };
 }
 

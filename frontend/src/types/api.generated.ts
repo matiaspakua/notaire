@@ -2045,7 +2045,7 @@ export interface paths {
         };
         /**
          * Generate the tax sworn statement
-         * @description Base endpoint for CU50: a provisional PDF for the requested period; the tax sworn-statement content is still pending
+         * @description CU50: recorded deeds for a year and month, optionally narrowed by notary registry and protocol type. Operation classification, payment form, and tax stay N/A until an Owner Rentas table exists. An empty period returns 200 and an empty-state PDF
          */
         get: operations["generateTaxSwornStatement"];
         put?: never;
@@ -9961,6 +9961,10 @@ export interface operations {
                 year: number;
                 /** @description Month of the period */
                 month: number;
+                /** @description Optional notary person id (registry) */
+                idNotary?: number;
+                /** @description Optional folio / protocol type id */
+                idFolioType?: number;
             };
             header?: never;
             path?: never;
