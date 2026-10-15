@@ -222,6 +222,12 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   HTTP adapter. Role `modules` are stored/returned as today; server-side grant enforcement is fenced
   for sibling [#1683](https://github.com/matiaspakua/notaire/issues/1683). Legacy repository ports remain.
 
+- **Frontend first catalog — identification types (#1732):** first concrete FE hexagon after the #1696
+  lint ratchet. `core/identification-type` (domain + gateway port + use cases), `adapters/http/identification-type`,
+  and `composition/identification-type` wire the catalog; hooks and the admin page no longer import
+  `api-client` (eslint suppressions shrink by two). `ApiError` moved to `lib/api-error` so UI can keep
+  HTTP-status handling without importing the client. Other FE catalogs remain on the suppressions baseline.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers

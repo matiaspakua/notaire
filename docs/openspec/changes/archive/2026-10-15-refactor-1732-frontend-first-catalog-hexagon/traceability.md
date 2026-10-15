@@ -35,10 +35,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| core has no framework or transport imports | identificationTypeUseCases | pending |
-| hooks and admin page leave the lint baseline | identificationTypeUseCases | pending |
-| catalog CRUD behaviour unchanged | identificationTypeUseCases | pending |
-| architecture pin test records the shrink | identificationTypeUseCases | pending |
+| core has no framework or transport imports | identificationTypeUseCases | passing |
+| hooks and admin page leave the lint baseline | identificationTypeUseCases | passing |
+| catalog CRUD behaviour unchanged | identificationTypeUseCases | passing |
+| architecture pin test records the shrink | identificationTypeUseCases | passing |
 
 ## Permanent documentation updated
 
