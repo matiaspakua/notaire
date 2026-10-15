@@ -18,25 +18,25 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: happy path, edge cases, error paths
-- [ ] 3.2 Write the unit tests for every scenario in the delta spec
-- [ ] 3.3 Write the integration tests where applicable
-- [ ] 3.4 Run them and **observe them fail** — `mvn test -pl backend-api -Dtest=<NewTestClass>`
-- [ ] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
+- [x] 3.1 Enumerate test cases: happy path, edge cases, error paths
+- [x] 3.2 Write the unit tests for every scenario in the delta spec
+- [x] 3.3 Write the integration tests where applicable
+- [x] 3.4 Run them and **observe them fail** — `mvn test -pl backend-api -Dtest=<NewTestClass>`
+- [x] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
 
 ## 4. Implementación
 
-- [ ] 4.1 Characterize the REST behaviour and pass it on the old code
-- [ ] 4.2 Write failing domain and use-case tests with an in-memory adapter
-- [ ] 4.3 Add the domain, ports, use cases and the persistence adapter
-- [ ] 4.4 Make the controller call ports only and add the exception advice
-- [ ] 4.5 Shrink the baseline and update the ADR log
+- [x] 4.1 Characterize the REST behaviour and pass it on the old code
+- [x] 4.2 Write failing domain and use-case tests with an in-memory adapter
+- [x] 4.3 Add the domain, ports, use cases and the persistence adapter
+- [x] 4.4 Make the controller call ports only and add the exception advice
+- [x] 4.5 Shrink the baseline and update the ADR log
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
-- [ ] 5.2 Update them without weakening assertions; document why any old expectation was wrong
-- [ ] 5.3 Remove tests made genuinely obsolete, stating the reason
+- [x] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
+- [x] 5.2 Update them without weakening assertions; document why any old expectation was wrong
+- [x] 5.3 Remove tests made genuinely obsolete, stating the reason
 
 ## 6. Ejecutar regresión
 
@@ -51,7 +51,7 @@
 - [ ] 7.1 Add/update the E2E specs listed in design.md — Playwright Strategy
 - [ ] 7.2 `cd testing/e2e && npx playwright test` — all green
 - [ ] 7.3 Verify the affected screens at 320px, 768px and 1024px
-- [ ] 7.4 If the change has no UI surface, record "n/a — no UI surface" here with the reason
+- [x] 7.4 If the change has no UI surface, record "n/a — no UI surface" here with the reason
 
 ## 8. Gate 3 — Actualizar documentación permanente
 

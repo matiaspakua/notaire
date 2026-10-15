@@ -4,15 +4,14 @@ import com.licensis.notaire.adapter.in.web.concept.ConceptController;
 import com.licensis.notaire.adapter.in.web.document.DocumentTypeController;
 import com.licensis.notaire.adapter.in.web.folio.FolioTypeController;
 import com.licensis.notaire.adapter.in.web.workflow.WorkflowDefinitionController;
+import com.licensis.notaire.application.port.in.document.ManageDocumentTypesUseCase;
+import com.licensis.notaire.application.port.in.document.QueryDocumentTypesUseCase;
 import com.licensis.notaire.application.usecase.concept.ConceptService;
-import com.licensis.notaire.business.DocumentType;
+import com.licensis.notaire.domain.document.DocumentType;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.repository.BudgetTemplateRepository;
-import com.licensis.notaire.repository.DocumentTypeRepository;
 import com.licensis.notaire.application.port.in.folio.ManageFolioTypesUseCase;
 import com.licensis.notaire.application.port.in.folio.QueryFolioTypesUseCase;
-import com.licensis.notaire.repository.ProcedureTemplateRepository;
-import com.licensis.notaire.repository.SubmittedDocumentRepository;
 import com.licensis.notaire.repository.WorkflowDefinitionRepository;
 import com.licensis.notaire.repository.WorkflowNodeRepository;
 import com.licensis.notaire.repository.WorkflowTransitionRepository;
@@ -100,14 +99,11 @@ class ControllerExceptionMessageLeakTest {
     @Test
     @DisplayName("PUT /document-types/{id} keeps 500 but no longer echoes the SQL error")
     void documentTypeUpdate() throws Exception {
-        DocumentTypeRepository repo = mock(DocumentTypeRepository.class);
-        ProcedureTemplateRepository templates = mock(ProcedureTemplateRepository.class);
-        SubmittedDocumentRepository submitted = mock(SubmittedDocumentRepository.class);
-        when(repo.findById(1)).thenReturn(Optional.of(new DocumentType()));
-        when(templates.findByDocumentTypeIdDocumentType(1)).thenReturn(List.of());
-        when(submitted.existsByDocumentTypeIdDocumentType(1)).thenReturn(false);
-        when(repo.save(any())).thenThrow(new DataIntegrityViolationException(SQL_LEAK));
-        MockMvc mvc = standaloneSetup(new DocumentTypeController(repo, templates, submitted)).build();
+        QueryDocumentTypesUseCase query = mock(QueryDocumentTypesUseCase.class);
+        ManageDocumentTypesUseCase manage = mock(ManageDocumentTypesUseCase.class);
+        when(query.getById(1)).thenReturn(DocumentType.restore(1, "ID", false, null, "", true, false, 0));
+        doThrow(new DataIntegrityViolationException(SQL_LEAK)).when(manage).update(eq(1), any());
+        MockMvc mvc = standaloneSetup(new DocumentTypeController(query, manage)).build();
 
         MvcResult result = mvc.perform(put("/api/v1/document-types/1").contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))

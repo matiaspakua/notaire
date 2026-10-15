@@ -181,18 +181,22 @@ class DocumentTypeApiCharacterizationTest {
     }
 
     @Test
-    @DisplayName("legacy update ignored a stale client version (200); hexagon will refuse it with 409 — see deliberate correction")
-    void staleVersionLegacyAllowsOverwrite() throws Exception {
-        // Measured on the pre-hexagon controller: copying dto.version onto the entity did not yield a 409.
-        // Slice 4 adds an explicit version check in the use case (same as folio types #1703); the assertion
-        // below is updated when that lands, and the PR calls out the correction.
+    @DisplayName("update with a version that is not the stored one answers 409 with the stale-version message")
+    void staleVersion() throws Exception {
+        // Deliberate correction vs pre-hexagon controller: copying dto.version onto the entity did not
+        // yield a 409. The use case now compares versions explicitly (same as folio types #1703).
+        // First put must dirty a field so the persistence @Version actually bumps.
         int id = create("Stale " + suffix);
         mvc.perform(put(BASE + "/" + id).contentType(MediaType.APPLICATION_JSON)
-                .content(body("Stale " + suffix, false, null, "", true, false, 0))).andExpect(status().isOk());
+                .content(body("Stale " + suffix, false, null, "CHANGED", true, false, 0)))
+                .andExpect(status().isOk());
 
         mvc.perform(put(BASE + "/" + id).contentType(MediaType.APPLICATION_JSON)
-                .content(body("Stale again " + suffix, false, null, "", true, false, 0)))
-                .andExpect(status().isOk());
+                .content(body("Stale again " + suffix, false, null, "CHANGED", true, false, 0)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status", is(409)))
+                .andExpect(jsonPath("$.message",
+                        is("The record was modified by another user; reload it and try again")));
     }
 
     @Test

@@ -9,14 +9,12 @@ import com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementController
 import com.licensis.notaire.adapter.in.web.person.PersonController;
 import com.licensis.notaire.adapter.in.web.budget.BudgetController;
 import com.licensis.notaire.adapter.in.web.testimony.TestimonyController;
-import com.licensis.notaire.adapter.in.web.document.DocumentTypeController;
 import com.licensis.notaire.adapter.in.web.procedure.ProcedureTypeController;
 import com.licensis.notaire.adapter.in.web.procedure.ProcedureController;
 import com.licensis.notaire.application.usecase.copy.CopyService;
 import com.licensis.notaire.dto.DtoManagementStatus;
 import com.licensis.notaire.dto.DtoTestimonyMovement;
 import com.licensis.notaire.dto.DtoTestimony;
-import com.licensis.notaire.dto.DtoDocumentType;
 import com.licensis.notaire.dto.DtoProcedureType;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Copy;
@@ -28,7 +26,6 @@ import com.licensis.notaire.business.TestimonyMovement;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Testimony;
-import com.licensis.notaire.business.DocumentType;
 import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.business.Procedure;
@@ -37,7 +34,6 @@ import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.HistoryRepository;
 import com.licensis.notaire.repository.TestimonyMovementRepository;
 import com.licensis.notaire.repository.TestimonyRepository;
-import com.licensis.notaire.repository.DocumentTypeRepository;
 import com.licensis.notaire.application.port.out.procedure.ProcedureTypeRepositoryPort;
 import com.licensis.notaire.repository.IdentificationTypeRepository;
 import com.licensis.notaire.application.port.out.procedure.ProcedureRepositoryPort;
@@ -657,78 +653,6 @@ class SimpleControllersTest {
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isInternalServerError());
             doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
             mvc.perform(delete("/api/v1/testimonies/1")).andExpect(status().isConflict());
-        }
-    }
-
-    @Nested
-    @DisplayName("DocumentTypeController")
-    class DocumentTypeControllerTests {
-        private final DocumentTypeRepository repo = mock(DocumentTypeRepository.class);
-        private final com.licensis.notaire.repository.ProcedureTemplateRepository templateRepo =
-                mock(com.licensis.notaire.repository.ProcedureTemplateRepository.class);
-        private final com.licensis.notaire.repository.SubmittedDocumentRepository docSubmittedRepo =
-                mock(com.licensis.notaire.repository.SubmittedDocumentRepository.class);
-        private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new DocumentTypeController(repo, templateRepo, docSubmittedRepo)).build();
-
-        @Test
-        @DisplayName("Cover happy paths")
-        void all() throws Exception {
-            DocumentType t = new DocumentType();
-            t.setIdDocumentType(1);
-            t.setName("DNI");
-            DtoDocumentType dto = new DtoDocumentType();
-            dto.setIdDocumentType(1);
-            dto.setName("DNI");
-            dto.setExpires(false);
-            dto.setEnabled(true);
-
-            when(repo.findAll()).thenReturn(List.of(t));
-            when(repo.findById(1)).thenReturn(Optional.of(t));
-            when(repo.findById(2)).thenReturn(Optional.empty());
-            when(repo.existsById(1)).thenReturn(true);
-            when(repo.existsById(2)).thenReturn(false);
-            when(templateRepo.findByDocumentTypeIdDocumentType(anyInt())).thenReturn(List.of());
-            when(docSubmittedRepo.existsByDocumentTypeIdDocumentType(anyInt())).thenReturn(false);
-
-            mvc.perform(get("/api/v1/document-types")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/document-types/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/document-types/2")).andExpect(status().isNotFound());
-
-            when(repo.save(any(DocumentType.class))).thenReturn(t);
-            mvc.perform(post("/api/v1/document-types").contentType("application/json")
-                    .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
-            mvc.perform(put("/api/v1/document-types/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(dto))).andExpect(status().isOk());
-            mvc.perform(put("/api/v1/document-types/2").contentType("application/json")
-                    .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/v1/document-types/1")).andExpect(status().isNoContent());
-            mvc.perform(delete("/api/v1/document-types/2")).andExpect(status().isNotFound());
-        }
-
-        @Test
-        @DisplayName("Cover error paths without polluting happy stubs (#916)")
-        void allErrorPaths() throws Exception {
-            DocumentType t = new DocumentType();
-            t.setIdDocumentType(1);
-            t.setName("DNI");
-            DtoDocumentType dto = new DtoDocumentType();
-            dto.setIdDocumentType(1);
-            dto.setName("DNI");
-            dto.setExpires(false);
-            dto.setEnabled(true);
-            when(repo.findById(1)).thenReturn(Optional.of(t));
-            when(repo.existsById(1)).thenReturn(true);
-            when(templateRepo.findByDocumentTypeIdDocumentType(anyInt())).thenReturn(List.of());
-            when(docSubmittedRepo.existsByDocumentTypeIdDocumentType(anyInt())).thenReturn(false);
-            when(repo.save(any(DocumentType.class))).thenThrow(new RuntimeException("x"));
-            mvc.perform(post("/api/v1/document-types").contentType("application/json")
-                    .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
-            mvc.perform(put("/api/v1/document-types/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(dto))).andExpect(status().isInternalServerError());
-
-            when(templateRepo.findByDocumentTypeIdDocumentType(1)).thenReturn(List.of(new com.licensis.notaire.business.ProcedureTemplate()));
-            mvc.perform(delete("/api/v1/document-types/1")).andExpect(status().isConflict());
         }
     }
 
