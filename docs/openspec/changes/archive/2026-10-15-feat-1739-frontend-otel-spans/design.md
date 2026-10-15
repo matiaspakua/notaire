@@ -2,18 +2,18 @@
 
 ## Context
 
-Hex fleet running (#1727+); omit CHANGELOG Unreleased this PR.
+Release-please #1718 cleared CHANGELOG Unreleased; Features line lands with this PR.
 
 ## Goals / Non-Goals
 
-**Goals:** FE spans in Tempo as notaire-frontend after page load + API proxy.
-**Non-Goals:** CHANGELOG Features line; Mac re-smoke ownership.
+**Goals:** FE spans in Tempo as notaire-frontend after page load + API proxy; Unreleased Features.
+**Non-Goals:** Mac re-smoke ownership (#1740).
 
 ## Decisions
 
 1. BFF proxy (not published collector port) so browser never sees Docker DNS.
 2. Opt-in public flag; compose sets true for full stack.
-3. Omit CHANGELOG while hex implementer is active.
+3. CHANGELOG Unreleased Features after #1718 freed the lane.
 
 ## Risks / Trade-offs
 

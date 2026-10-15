@@ -31,7 +31,7 @@
 - [x] 4.1 Failing vitest for OTLP BFF proxy and browser init config
 - [x] 4.2 Implement otlp proxy + browser tracing + Providers hook
 - [x] 4.3 Compose env + monitoring README
-- [x] 4.4 Skip CHANGELOG (hex fence)
+- [x] 4.4 CHANGELOG Unreleased Features (after #1718 released the lane)
 
 ## 5. Update existing tests
 
@@ -58,7 +58,7 @@
 
 - [x] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
 - [x] 8.2 Update OpenAPI/Swagger annotations if endpoints changed, and verify in Swagger UI
-- [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) — **skipped** (hex #1727+ Unreleased fence; Features follow-up when free)
+- [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) Features for browser OTel (#1739)
 - [x] 8.4 Archive superseded documents into `docs/000-archive/`
 - [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
 - [x] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate (CI)

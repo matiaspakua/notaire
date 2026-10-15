@@ -35,7 +35,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |----------|---------|--------|
 | `docs/200-architecture/207-monitoring/README.md` | yes | pending |
 | `frontend/README.md` / `.env.example` / `.env.local.example` | yes | pending |
-| `CHANGELOG.md` | **omitted** — hex #1727+ Unreleased fence | n/a |
+| `CHANGELOG.md` | yes — Unreleased Features | pending |
 
 ## Gate log
 
@@ -43,10 +43,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | #1739, archived change |
 | 2 | Failing tests written, test cases designed | yes | vitest otlp-proxy + otel-browser-tracing |
-| 3 | Suite green, coverage held, docs updated | yes | vitest 4/4; CHANGELOG skipped |
+| 3 | Suite green, coverage held, docs updated | yes | vitest 4/4; CHANGELOG Features after #1718 |
 | 4 | CI green, review approved, no conflicts | pending | pending |
 | 5 | Deployed, smoke test passed, Issue closed | pending | pending |
 
 ## Exceptions
 
-- CHANGELOG `[Unreleased]` Features line deferred while hex slices #1727–#1731 are open.
+None.
