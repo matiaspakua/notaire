@@ -110,11 +110,11 @@
       "gridPos": { "h": 8, "w": 8, "x": 8, "y": 12 },
       "targets": [
         {
-          "expr": "rate(notaire_database_operation_duration_sum[1m])",
-          "legendFormat": "{{operation}} - {{table}}"
+          "expr": "sum by (operation) (rate(notaire_operation_total{application=\"notaire-backend\"}[1m]))",
+          "legendFormat": "{{operation}}"
         }
       ],
-      "description": "Database operation rates by type and table"
+      "description": "Application operation rates from Micrometer (notaire_operation_total). The unused notaire_database_operation_duration timer left this panel No data (#1746)."
     },
     {
       "title": "Block I/O",
