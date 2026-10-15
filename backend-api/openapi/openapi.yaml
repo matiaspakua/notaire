@@ -7667,8 +7667,9 @@ paths:
       - Reports
   /api/v1/reports/tax-sworn-statement:
     get:
-      description: 'Base endpoint for CU50: a provisional PDF for the requested period; the tax sworn-statement content is
-        still pending'
+      description: 'CU50: recorded deeds for a year and month, optionally narrowed by notary registry and protocol type. Operation
+        classification, payment form, and tax stay N/A until an Owner Rentas table exists. An empty period returns 200 and
+        an empty-state PDF'
       operationId: generateTaxSwornStatement
       parameters:
       - description: Year of the period
@@ -7687,6 +7688,22 @@ paths:
           format: int32
           maximum: 12
           minimum: 1
+          type: integer
+      - description: Optional notary person id (registry)
+        in: query
+        name: idNotary
+        required: false
+        schema:
+          exclusiveMinimum: 0
+          format: int32
+          type: integer
+      - description: Optional folio / protocol type id
+        in: query
+        name: idFolioType
+        required: false
+        schema:
+          exclusiveMinimum: 0
+          format: int32
           type: integer
       responses:
         '200':

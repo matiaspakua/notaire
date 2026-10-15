@@ -282,16 +282,22 @@ public class ReportController {
 
     @GetMapping(value = "/tax-sworn-statement", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generate the tax sworn statement",
-               description = "Base endpoint for CU50: a provisional PDF for the requested period; "
-                       + "the tax sworn-statement content is still pending")
+               description = "CU50: recorded deeds for a year and month, optionally narrowed by notary "
+                       + "registry and protocol type. Operation classification, payment form, and tax "
+                       + "stay N/A until an Owner Rentas table exists. An empty period returns 200 "
+                       + "and an empty-state PDF")
     public ResponseEntity<byte[]> generateTaxSwornStatement(
             @Parameter(description = "Year of the period")
             @RequestParam("year") @Positive Integer year,
             @Parameter(description = "Month of the period")
-            @RequestParam("month") @Min(1) @Max(12) Integer month) {
+            @RequestParam("month") @Min(1) @Max(12) Integer month,
+            @Parameter(description = "Optional notary person id (registry)")
+            @RequestParam(value = "idNotary", required = false) @Positive Integer idNotary,
+            @Parameter(description = "Optional folio / protocol type id")
+            @RequestParam(value = "idFolioType", required = false) @Positive Integer idFolioType) {
         requireValidMonth(month);
         return buildPdfResponse("ddjj_rentas_" + year + "_" + month + ".pdf",
-                () -> reportService.generateIncomeTaxDeclarationReport(year, month));
+                () -> reportService.generateIncomeTaxDeclarationReport(year, month, idNotary, idFolioType));
     }
 
     private static void requireValidMonth(Integer month) {

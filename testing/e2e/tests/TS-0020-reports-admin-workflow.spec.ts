@@ -116,6 +116,32 @@ test.describe("CU25 - Generate the monthly sworn statement", () => {
   });
 });
 
+test.describe("CU50 - Generate the tax sworn statement", () => {
+  let steps: GherkinSteps;
+
+  test.beforeEach(async ({ page }) => {
+    steps = new GherkinSteps(page);
+    await steps.givenUserIsLoggedIn();
+    await steps.givenDashboardIsLoaded();
+    await steps.whenUserOpensSidebarNav("reportes");
+  });
+
+  test("CU50-GW01: Given a recorded March, When the tax sworn statement is downloaded, Then the PDF lists the person", async ({
+    page,
+  }) => {
+    const seeded = await seedProtocolReportPeriod(page);
+    await page.getByTestId("input-report-tax-year").fill(String(seeded.year));
+    await page.getByTestId("input-report-tax-month").fill("3");
+    const downloadPromise = page.waitForEvent("download");
+    await page.getByTestId("btn-download-tax-sworn").click();
+    const download = await downloadPromise;
+    await assertPdfDownload(download, /ddjj_rentas_.*\.pdf/, [
+      seeded.lastName,
+      "Tax sworn statement",
+    ]);
+  });
+});
+
 test.describe("CU26 - Enter a new procedure type", () => {
   let steps: GherkinSteps;
 

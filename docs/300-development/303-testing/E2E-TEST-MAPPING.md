@@ -106,7 +106,7 @@ TS-0139 to TS-0141    = Catalog / icons / complete-case feature specs (#1361, #1
 
 | TS | Filename | CU Coverage | Fixture Type | Skipped | Value |
 |----|----|-------|------|-------|-------|
-| **TS-0020** | `TS-0020-reports-admin-workflow.spec.ts` | CU24–CU32, CU57–CU68 | Sidebar nav (`nav-reportes`) + GherkinSteps + API | no skips (CU24 implemented #177; CU25 implemented #178; CU42 implemented #1556; CU62, CU65, CU66 search implemented #1243; CU39 template creation lives under administration, covered by TS-0024 and TS-0133) | **HIGH** |
+| **TS-0020** | `TS-0020-reports-admin-workflow.spec.ts` | CU24–CU32, CU50, CU57–CU68 | Sidebar nav (`nav-reportes`) + GherkinSteps + API | no skips (CU24 implemented #177; CU25 implemented #178; CU50 implemented #203; CU42 implemented #1556; CU62, CU65, CU66 search implemented #1243; CU39 template creation lives under administration, covered by TS-0024 and TS-0133) | **HIGH** |
 | **TS-0021** | `TS-0021-workflow-editor-admin.spec.ts` | CU70, CU71 | API arrange + editor | 0 (self-seeds workflow; #1066) | **HIGH** |
 | **TS-0022** | `TS-0022-workflow-assignment-admin.spec.ts` | CU73 | API arrange + table | 0 (self-seeds a procedure type; #1066) | **MEDIUM** |
 | **TS-0023** | `TS-0023-roles-permissions-admin.spec.ts` | CU43.1 | Direct nav + form | 0 | **MEDIUM** |
@@ -243,6 +243,7 @@ citations and the count `3`.
 | TS-0020 | CU39-GW01 (templates button) | Removed — #1243: no such button by design; template creation is under `/dashboard/administration/templates`, covered by TS-0024 and TS-0133 |
 | TS-0020 | CU24-GW01 (index book) | Implemented — #177 (`seedProtocolReportPeriod` + download assertions) |
 | TS-0020 | CU25-GW01 (monthly sworn statement) | Implemented — #178 (`seedProtocolReportPeriod` + download assertions) |
+| TS-0020 | CU50-GW01 (tax sworn statement) | Implemented — #203 (`seedProtocolReportPeriod` + download assertions) |
 | TS-0020 | CU42-GW01 (dashboard alert) | Implemented — #1556 (expirations alert card on `/dashboard`) |
 | TS-0014 | CU47-GW01 (date filter) | Implemented — #1557 (Desde/Hasta on `/dashboard/payments`) |
 | TS-0016 | CU23-GW01 (activity log) | Implemented — #1545 (user + date-range filter on `/dashboard/audit`) |
