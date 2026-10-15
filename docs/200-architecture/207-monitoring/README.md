@@ -89,7 +89,16 @@ exporter and does not spam `UnknownHostException` ERROR (#1736). Actuator scrape
 the collector, which forwards them to Tempo when `MANAGEMENT_TRACING_EXPORT_OTLP_ENABLED=true` (set by Compose).
 Resource attribute `service.version` equals the packaged Maven
 `app.version` (#1591). JSON logs include `serviceVersion` with the same value. In Grafana, Explore -> Tempo finds traces
-by service/name; a trace links to its Loki logs by `service`. Frontend spans are not instrumented yet.
+by service/name; a trace links to its Loki logs by `service`. Frontend browser spans
+are opt-in via `NEXT_PUBLIC_OTEL_TRACES_ENABLED=true` (#1739): the Next.js layout
+passes the flag into a client `WebTracerProvider` (`service.name=notaire-frontend`)
+with fetch instrumentation; the browser posts OTLP to same-origin
+`POST /api/otlp/v1/traces`, and the Route Handler proxies to
+`OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` (Compose default:
+`http://devsecops-otel-collector:4318/v1/traces`). No PII attributes — only
+resource `service.name` / `service.version` and standard fetch span names.
+Root `docker-compose.yml` enables the flag for the full stack; without a collector
+the proxy returns 503 and the UI stays up.
 
 **Alerting:** Prometheus evaluates `alert-rules.yml` and `alert-rules-stack.yml` and sends firing alerts to Alertmanager
 (http://localhost:9093). Catalogue: `ServiceDown` and `TargetDown` (availability), `HighHttp5xxRatio`, `HighApiLatency`,

@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Features
 
+- **observability:** browser OpenTelemetry spans (`service.name=notaire-frontend`) via same-origin BFF `POST /api/otlp/v1/traces` to the collector; opt-in with `NEXT_PUBLIC_OTEL_TRACES_ENABLED` ([#1739](https://github.com/matiaspakua/notaire/issues/1739))
 - **reports:** CU82 registration draft PDF prints recorded draft, deed, party, and property fields; missing values stay N/A ([#116](https://github.com/matiaspakua/notaire/issues/116))
 - **reports:** CU08 testimony copy PDF prints recorded testimony and deed fields for a verified testimony; unverified stays 400 ([#119](https://github.com/matiaspakua/notaire/issues/119))
 - **reports:** CU50 tax sworn statement lists recorded deeds for a year and month (optional notary and protocol); operation, payment form, and tax stay N/A ([#203](https://github.com/matiaspakua/notaire/issues/203))
