@@ -16,13 +16,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **arch:** shared catalog write-lock control flow extracted to `CatalogLockSupport` (folio, document, management-status update/delete; identification delete); REST bodies unchanged ([#1722](https://github.com/matiaspakua/notaire/issues/1722), epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030).
+- **arch:** management status catalog moved behind a full hexagon (domain, ports, use cases, persistence adapter); ArchUnit baseline shrinks for `ManagementStatusController` ([#1719](https://github.com/matiaspakua/notaire/issues/1719), epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030). A stale client `version` on `PUT /api/v1/management-statuses/{id}` now answers **409** (legacy copied the DTO version onto the entity and still answered 200).
+
 ### Bug Fixes
 
+- **api:** expected client failures (HTTP 4xx `NotaireException` and management delete FK conflicts) log as WARN instead of ERROR ([#1712](https://github.com/matiaspakua/notaire/issues/1712))
+- **openapi:** prune merged `accepted-breaking-changes.d` files so the ignore list stays empty on main ([#1713](https://github.com/matiaspakua/notaire/issues/1713))
 - **observability:** load postgres-exporter custom queries, fix empty Postgres PromQL panels, surface packaged SEMVER on Grafana, add Sonar quality dashboard, and drop deprecated piechart plugin install noise ([#1707](https://github.com/matiaspakua/notaire/issues/1707))
 - **security:** CSRF now accepts the browser double-submit cookie and exempts Bearer-token clients; login/logout also return the `XSRF-TOKEN` cookie and the nonce is no longer rotated on every request ([#1620](https://github.com/matiaspakua/notaire/issues/1620))
 
 ### Features
 
+- **reports:** CU82 registration draft PDF prints recorded draft, deed, party, and property fields; missing values stay N/A ([#116](https://github.com/matiaspakua/notaire/issues/116))
+- **reports:** CU08 testimony copy PDF prints recorded testimony and deed fields for a verified testimony; unverified stays 400 ([#119](https://github.com/matiaspakua/notaire/issues/119))
 - **reports:** CU50 tax sworn statement lists recorded deeds for a year and month (optional notary and protocol); operation, payment form, and tax stay N/A ([#203](https://github.com/matiaspakua/notaire/issues/203))
 - **reports:** CU25 monthly sworn statement lists recorded deeds for a year and month (optional notary and protocol); tax, rate, and annex stay N/A ([#178](https://github.com/matiaspakua/notaire/issues/178))
 

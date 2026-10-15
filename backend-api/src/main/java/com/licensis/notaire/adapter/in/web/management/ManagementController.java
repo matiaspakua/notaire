@@ -569,7 +569,8 @@ public class ManagementController {
             repository.deleteById(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            log.error("Failed to delete management id {}", id, e);
+            // FK / integrity conflict answers 409 — client fault, not a server ERROR (#1712).
+            log.warn("Failed to delete management id {}", id, e);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }

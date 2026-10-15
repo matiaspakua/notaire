@@ -55,10 +55,15 @@ class SyntheticFixtureStringsEnglishTest(unittest.TestCase):
     def test_budget_heading_and_concept_names_are_english(self):
         budgets = read("unit/SimpleControllersTest.java")
         self.assertIn("With client", budgets)
-        self.assertIn('"Active"', budgets)
         self.assertNotIn("Con cliente", budgets)
         self.assertNotIn('"Activo"', budgets)
         self.assertNotIn('"Protocolo"', budgets)
+
+        # Management status fixtures moved out of SimpleControllersTest with the
+        # hexagon slice (#1719); keep the English name pin on the dedicated test.
+        management_status = read("adapter/in/web/management/ManagementStatusControllerTest.java")
+        self.assertIn('"Active"', management_status)
+        self.assertNotIn('"Activo"', management_status)
 
         concepts = read("unit/application/usecase/concept/ConceptServiceTest.java")
         self.assertIn("Notary office", concepts)

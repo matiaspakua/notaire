@@ -305,6 +305,8 @@ These endpoints return `application/pdf` (errors are `ErrorResponse` JSON). The 
 | GET | `/reports/index-book` | Index book (`?year=` required; optional `idNotary`, `idFolioType`) | CU24 |
 | GET | `/reports/monthly-sworn-statement` | Monthly sworn statement (`?year=&month=` required; optional `idNotary`, `idFolioType`) | CU25 |
 | GET | `/reports/tax-sworn-statement` | Tax sworn statement (`?year=&month=` required; optional `idNotary`, `idFolioType`) | CU50 |
+| GET | `/reports/testimonies/{idTestimony}/copies` | Verified testimony copy (recorded fields; 400 if unverified) | CU08, RF-94 |
+| GET | `/reports/registration-draft/{idRegistrationDraft}` | Registration draft PDF (recorded draft/deed/property fields; 404 if missing) | CU82, RF-91 |
 
 ---
 

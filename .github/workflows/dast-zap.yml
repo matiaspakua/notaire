@@ -72,15 +72,16 @@ jobs:
           ADMIN_PASSWORD: ci-zap-admin-pass
 
       - name: OWASP ZAP baseline scan
-        # Warn-first policy (#1067): publish the report; do not fail the job on
-        # baseline alerts until an allowlist/ratchet lands. Fail only if ZAP
-        # itself cannot run.
+        # Blocking ratchet (#1738): fail the job on non-allowlisted alerts.
+        # Allowlist: .zap/rules.tsv (Sec-Fetch informational noise for API baseline).
+        # Evidence baseline: run 38249512129 — High/Medium/Low = 0.
         uses: zaproxy/action-baseline@v0.15.0
         with:
           target: 'http://localhost:8080'
           cmd_options: '-a'
           allow_issue_writing: false
-          fail_action: false
+          fail_action: true
+          rules_file_name: '.zap/rules.tsv'
           artifact_name: zap-baseline-report
 
       - name: Upload ZAP report files
