@@ -8,7 +8,6 @@ import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.Testimony;
@@ -149,7 +148,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
             version = persistentDeed.getVersion(); // Version of the object in the database
             oldVersion = deed.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) // Versions differ: someone else modified the object
+            if (OptimisticLockVersions.differ(version, oldVersion)) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException();
 
@@ -428,7 +427,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
             version = persistentDeed.getVersion(); // Version of the object in the database
             oldVersion = deed.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) // Versions differ: someone else modified the object
+            if (OptimisticLockVersions.differ(version, oldVersion)) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException();
 
@@ -483,7 +482,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
             version = persistentDeed.getVersion(); // Version of the object in the database
             oldVersion = deed.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) // Versions differ: someone else modified the object
+            if (OptimisticLockVersions.differ(version, oldVersion)) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException();
 

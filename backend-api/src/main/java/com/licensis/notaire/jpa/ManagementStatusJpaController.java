@@ -9,7 +9,6 @@ import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
-import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.History;
 import java.io.Serializable;
@@ -101,7 +100,7 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
             version = persistentManagementStatus.getVersion();
             oldVersion = managementStatus.getVersion();
 
-            if (version != oldVersion) // Versions differ: someone else modified or deleted the object
+            if (OptimisticLockVersions.differ(version, oldVersion)) // Versions differ: someone else modified or deleted the object
             {
                 if (em != null) {
                     em.close();

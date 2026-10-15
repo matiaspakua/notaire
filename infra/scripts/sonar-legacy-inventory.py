@@ -329,8 +329,8 @@ def main(argv: list[str] | None = None) -> int:
     # Always merge known seed classifications for documented residuals.
     seed_defaults = {
         "notaire-backend|java:S4973|notaire-backend:src/main/java/com/licensis/notaire/jpa/DocumentTypeJpaController.java": (
-            "defer_hexagon",
-            "legacy JpaController equality — hexagonal epic #1693 / #1714+",
+            "fix",
+            "Integer optimistic-lock compares use OptimisticLockVersions/Objects.equals (#1758)",
         ),
         "notaire-backend|java:S6863|notaire-backend:src/main/java/com/licensis/notaire/adapter/in/web/auth/AuthController.java": (
             "accepted_risk",
