@@ -145,6 +145,16 @@ class SonarLegacyInventoryTest(unittest.TestCase):
             },
             {
                 "key": "V2",
+                "rule": "typescript:S5332",
+                "severity": "MINOR",
+                "type": "VULNERABILITY",
+                "component": "notaire-frontend:src/lib/otel/otlp-proxy.ts",
+                "message": "Using http protocol is insecure. Use https instead.",
+                "project": "notaire-frontend",
+            },
+            {
+                # #1762 removed MD5 verify — heuristic must not auto-FIX S4790 anymore
+                "key": "V3",
                 "rule": "java:S4790",
                 "severity": "CRITICAL",
                 "type": "VULNERABILITY",
@@ -155,26 +165,20 @@ class SonarLegacyInventoryTest(unittest.TestCase):
                 "message": "Make sure this weak hash algorithm is not used in a sensitive context here.",
                 "project": "notaire-backend",
             },
-            {
-                "key": "V3",
-                "rule": "typescript:S5332",
-                "severity": "MINOR",
-                "type": "VULNERABILITY",
-                "component": "notaire-frontend:src/lib/otel/otlp-proxy.ts",
-                "message": "Using http protocol is insecure. Use https instead.",
-                "project": "notaire-frontend",
-            },
         ]
         rows = mod.apply_classifications(mod.select_inventory_rows(issues), {})
         by_rule = {row["rule"]: row for row in rows}
         self.assertEqual(by_rule["secrets:S6703"]["classification"], "accepted_risk")
         self.assertIn("ephemeral", by_rule["secrets:S6703"]["rationale"].lower())
-        self.assertEqual(by_rule["java:S4790"]["classification"], "fix")
-        self.assertIn("MD5", by_rule["java:S4790"]["rationale"])
-        self.assertIn("#1762", by_rule["java:S4790"]["rationale"])
         self.assertEqual(by_rule["typescript:S5332"]["classification"], "accepted_risk")
         self.assertIn("OTLP", by_rule["typescript:S5332"]["rationale"])
-        self.assertTrue(mod.all_vulnerabilities_classified(rows))
+        self.assertEqual(by_rule["java:S4790"]["classification"], "")
+        self.assertIsNone(
+            mod.suggest_vulnerability_classification(by_rule["java:S4790"])
+        )
+        # S4790 left unclassified (finding resolved by #1762; no auto-FIX heuristic)
+        vuln_classified = [r for r in rows if r["rule"] != "java:S4790"]
+        self.assertTrue(mod.all_vulnerabilities_classified(vuln_classified))
 
     def test_render_markdown_includes_live_refresh_note(self):
         mod = load_module()

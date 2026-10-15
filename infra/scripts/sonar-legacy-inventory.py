@@ -94,11 +94,7 @@ def suggest_vulnerability_classification(row: dict[str, str]) -> tuple[str, str]
             "accepted_risk",
             "ephemeral GitHub Actions Postgres service password (throwaway CI DB)",
         )
-    if rule == "java:S4790" and "UserController.java" in component:
-        return (
-            "fix",
-            "legacy MD5 password verify path remains after BCrypt migration (#554); child #1762",
-        )
+    # java:S4790 on UserController resolved by #1762 (MD5 verify removed).
     if rule == "typescript:S5332" and "otel/otlp-proxy.ts" in component:
         return (
             "accepted_risk",
