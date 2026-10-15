@@ -10,7 +10,7 @@
 | Branch | `cursor/feat-1739-frontend-otel-2ea7` |
 | Gate 1 status | passed |
 
-## Objetivo
+## Why
 
 Backend already exports OTLP traces to Tempo. Monitoring README notes frontend spans are not instrumented — gap vs full integrated observability (browser → collector → Tempo).
 
@@ -21,7 +21,7 @@ Backend already exports OTLP traces to Tempo. Monitoring README notes frontend s
 - Opt-in NEXT_PUBLIC_OTEL_TRACES_ENABLED; compose enables it
 - Guards + monitoring README; CHANGELOG omitted (hex Unreleased fence — add Features later)
 
-## Reglas de negocio
+## Business rules
 
 | Rule | Source | New / Changed / Made explicit |
 |------|--------|-------------------------------|
@@ -36,7 +36,7 @@ Backend already exports OTLP traces to Tempo. Monitoring README notes frontend s
 
 ## Impact Analysis
 
-### Módulos afectados
+### Affected modules
 
 | Module | Touched | What changes |
 |--------|---------|--------------|

@@ -12,13 +12,13 @@
 - [x] 1.5 ADR recorded under `docs/200-architecture/202-ADR/` if the change is architectural
 - [x] 1.6 Move the Issue to IN PROGRESS (`gh issue edit <n> --add-label "in-progress"`)
 
-## 2. Crear branch
+## 2. Create branch
 
 - [x] 2.1 `git checkout main && git pull origin main`
 - [x] 2.2 `git checkout -b <type>/<issue-number>_<description>`
 - [x] 2.3 Record the branch name in `traceability.md`
 
-## 3. Gate 2 — Escribir tests (TDD, failing first)
+## 3. Gate 2 — Write tests (TDD, failing first)
 
 - [x] 3.1 Enumerate test cases: happy path, edge cases, error paths
 - [x] 3.2 Write the unit tests for every scenario in the delta spec
@@ -26,20 +26,20 @@
 - [x] 3.4 Run them and **observe them fail** — vitest before implementation
 - [x] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
 
-## 4. Implementación
+## 4. Implementation
 
 - [x] 4.1 Failing vitest for OTLP BFF proxy and browser init config
 - [x] 4.2 Implement otlp proxy + browser tracing + Providers hook
 - [x] 4.3 Compose env + monitoring README
 - [x] 4.4 Skip CHANGELOG (hex fence)
 
-## 5. Actualizar tests existentes
+## 5. Update existing tests
 
 - [x] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
 - [x] 5.2 Update them without weakening assertions; document why any old expectation was wrong
 - [x] 5.3 Remove tests made genuinely obsolete, stating the reason
 
-## 6. Ejecutar regresión
+## 6. Run regression
 
 - [x] 6.1 `mvn test -pl backend-api` — n/a backend untouched
 - [x] 6.2 `mvn jacoco:check -pl backend-api` — n/a backend untouched
@@ -47,14 +47,14 @@
 - [x] 6.4 `bash integration-test/scripts/test.sh` — n/a no API contract change
 - [x] 6.5 No `@Disabled` or skipped tests without documented, approved justification
 
-## 7. Ejecutar Playwright
+## 7. Run Playwright
 
 - [x] 7.1 Add/update the E2E specs listed in design.md — Playwright Strategy
 - [x] 7.2 `cd testing/e2e && npx playwright test` — n/a — no UI surface
 - [x] 7.3 Verify the affected screens at 320px, 768px and 1024px — n/a
 - [x] 7.4 If the change has no UI surface, record "n/a — no UI surface" here with the reason
 
-## 8. Gate 3 — Actualizar documentación permanente
+## 8. Gate 3 — Update permanent documentation
 
 - [x] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
 - [x] 8.2 Update OpenAPI/Swagger annotations if endpoints changed, and verify in Swagger UI
@@ -63,14 +63,14 @@
 - [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
 - [x] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate (CI)
 
-## 9. Commits atómicos
+## 9. Atomic commits
 
 - [x] 9.1 Commit in small, self-contained units, Conventional Commits format
 - [x] 9.2 Every commit message ends with `Closes #<issue-number>`
 - [x] 9.3 No secrets, no commented-out code, no unrelated changes
 - [x] 9.4 Record the commit SHAs in `traceability.md`
 
-## 10. Pull Request y validación CI
+## 10. Pull Request and CI validation
 
 - [x] 10.1 Archive this change in the PR: `cd docs && openspec archive <change-name> --yes`
 - [x] 10.2 `git push -u origin <branch-name>`
@@ -85,7 +85,7 @@
 - [ ] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR
 - [ ] 11.3 Record the merge commit and release/tag in `traceability.md`
 
-## 12. Gate 5 — Smoke test y cierre
+## 12. Gate 5 — Smoke test and close
 
 - [ ] 12.1 Run the smoke test on the target environment (health endpoint + the key flow of this change)
 - [ ] 12.2 Verify the rollback path is still available as described in design.md

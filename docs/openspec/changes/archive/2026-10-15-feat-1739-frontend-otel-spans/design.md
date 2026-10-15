@@ -15,7 +15,7 @@ Hex fleet running (#1727+); omit CHANGELOG Unreleased this PR.
 2. Opt-in public flag; compose sets true for full stack.
 3. Omit CHANGELOG while hex implementer is active.
 
-## Riesgos / Trade-offs
+## Risks / Trade-offs
 
 Without collector, proxy returns 503 — exporters should not crash the UI.
 
