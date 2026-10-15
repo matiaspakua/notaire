@@ -33,6 +33,27 @@ curl http://localhost:3100/ready
 curl http://localhost:9187/metrics | head
 ```
 
+## Prove Grafana panels hold data (#1735)
+
+After the stack is up and traffic has run (Bruno, Playwright, or
+`verify-signals.sh --with-e2e`), assert that key provisioned dashboards are
+present in Grafana and that their panel PromQL returns series (same queries the
+UI renders):
+
+```bash
+python3 infra/scripts/verify_grafana_panels.py
+# or after signal checks:
+bash infra/scripts/verify-signals.sh --with-grafana-panels
+# traffic + signals + panels:
+bash infra/scripts/verify-signals.sh --with-e2e --with-grafana-panels
+```
+
+Covers `notaire-status`, `notaire-postgres`, `notaire-backend`, and
+`notaire-quality`. Uses `GRAFANA_ADMIN_*` / Prometheus at `localhost:3001` /
+`9090` (override with `GRAFANA_URL` / `PROMETHEUS_URL`). Inventory lives in
+`infra/scripts/grafana_panel_inventory.py` (guarded by
+`infra/tests/test_grafana_panel_proof.py`).
+
 ## Dashboards and logs
 
 - Start here: stack overview http://localhost:3001/d/notaire-stack-status, Notaire only
