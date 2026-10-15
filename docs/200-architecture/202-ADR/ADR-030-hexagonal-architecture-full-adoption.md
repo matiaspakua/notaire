@@ -211,6 +211,11 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   and `WorkflowNodeCatalogPort`. Reuses `WorkflowDefinitionCatalogPort` and `ManagementStatusCatalogPort`
   for create lookups. Legacy `WorkflowNodeRepositoryPort` remains for other consumers.
 
+- **Workflow transition (#1730):** last workflow-trio R1 hotspot (~4 edges). Controller was repo-only;
+  now ports-only with domain `WorkflowTransition`, and `WorkflowTransitionCatalogPort`. Reuses
+  `WorkflowDefinitionCatalogPort` and `WorkflowNodeCatalogPort` for create/update lookups. Legacy
+  `WorkflowTransitionRepositoryPort` remains for other consumers.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers
