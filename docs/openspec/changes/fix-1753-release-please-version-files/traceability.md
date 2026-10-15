@@ -1,6 +1,6 @@
 # Traceability
 
-> Governed by [CONSTITUTION.md](../../../CONSTITUTION.md) — P4 Traceability.
+> Governed by [CONSTITUTION.md](../../../../CONSTITUTION.md) — P4 Traceability.
 
 ## Chain
 

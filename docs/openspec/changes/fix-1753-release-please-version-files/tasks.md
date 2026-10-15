@@ -1,4 +1,4 @@
-> Governed by [CONSTITUTION.md](../../../CONSTITUTION.md) — §5 Official SDLC
+> Governed by [CONSTITUTION.md](../../../../CONSTITUTION.md) — §5 Official SDLC
 > Workflow, §6 Quality Gates. Groups 1-12 are **mandatory**: a plan that omits one
 > is incomplete and `workspace/sdlc/validate-sdlc-plan.sh` will reject it. Add
 > change-specific work inside group 4; do not renumber the mandatory groups.
