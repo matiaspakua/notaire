@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **arch:** workflow transition moved behind a full hexagon (domain `WorkflowTransition`, ports, use cases, catalog adapter); `WorkflowTransitionController` is ports-only and ArchUnit R1 clears its four prior baseline edges; REST contract unchanged ([#1730](https://github.com/matiaspakua/notaire/issues/1730), epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030).
 - **arch:** workflow node moved behind a full hexagon (domain `WorkflowNode`, ports, use cases, catalog adapter); `WorkflowNodeController` is ports-only and ArchUnit R1 clears its six prior baseline edges; REST contract unchanged ([#1729](https://github.com/matiaspakua/notaire/issues/1729), epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030).
 - **quality:** checked-in Sonar legacy vulnerability / high-severity inventory plus `infra/scripts/sonar-legacy-inventory.py` (classifications: fix, false_positive, accepted_risk, defer_hexagon) for overall findings under [#1535](https://github.com/matiaspakua/notaire/issues/1535)
 - **arch:** workflow definition moved behind a full hexagon (domain `WorkflowDefinition`, ports, use cases, catalog adapter); `WorkflowDefinitionController` is ports-only and ArchUnit R1 clears its four prior baseline edges; REST contract unchanged ([#1728](https://github.com/matiaspakua/notaire/issues/1728), epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030).
