@@ -219,7 +219,9 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
 - Mappers must be tested, or they hide bugs; they are written by hand and covered by unit tests. MapStruct is not
   adopted without a separate decision.
 
-### Open points
+#- **Submitted document (#1726):** instance aggregate (not a catalog). Controller was repo-only; now ports-only with domain `SubmittedDocument`, due inheritance in the use case, and a thin `ProcedureLookupPort`. Legacy `business.SubmittedDocument` remains for reports / external-entity / other consumers.
+
+## Open points
 
 - The no-cycles rule and the model-extraction rule are added to the ArchUnit suite when the first slice that
   needs them lands.

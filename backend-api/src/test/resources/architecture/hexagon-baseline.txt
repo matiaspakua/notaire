@@ -16,12 +16,6 @@ R1 | com.licensis.notaire.adapter.in.web.deed.DeedController -> com.licensis.not
 R1 | com.licensis.notaire.adapter.in.web.deed.DeedController -> com.licensis.notaire.repository.FolioRepository
 R1 | com.licensis.notaire.adapter.in.web.document.DocumentCostTemplateController -> com.licensis.notaire.business.DocumentCostTemplate
 R1 | com.licensis.notaire.adapter.in.web.document.DocumentCostTemplateController -> com.licensis.notaire.business.DocumentCostTemplatePK
-R1 | com.licensis.notaire.adapter.in.web.document.SubmittedDocumentController -> com.licensis.notaire.business.DocumentType
-R1 | com.licensis.notaire.adapter.in.web.document.SubmittedDocumentController -> com.licensis.notaire.business.Procedure
-R1 | com.licensis.notaire.adapter.in.web.document.SubmittedDocumentController -> com.licensis.notaire.business.SubmittedDocument
-R1 | com.licensis.notaire.adapter.in.web.document.SubmittedDocumentController -> com.licensis.notaire.repository.DocumentTypeRepository
-R1 | com.licensis.notaire.adapter.in.web.document.SubmittedDocumentController -> com.licensis.notaire.repository.ProcedureRepository
-R1 | com.licensis.notaire.adapter.in.web.document.SubmittedDocumentController -> com.licensis.notaire.repository.SubmittedDocumentRepository
 R1 | com.licensis.notaire.adapter.in.web.folio.FolioController -> com.licensis.notaire.business.Deed
 R1 | com.licensis.notaire.adapter.in.web.folio.FolioController -> com.licensis.notaire.business.Folio
 R1 | com.licensis.notaire.adapter.in.web.folio.FolioController -> com.licensis.notaire.business.FolioType
@@ -138,7 +132,6 @@ R2 | com.licensis.notaire.application.port.out.document.DocumentRepositoryPort -
 R2 | com.licensis.notaire.application.port.out.document.ExternalDocumentRepositoryPort -> com.licensis.notaire.business.DeedManagement
 R2 | com.licensis.notaire.application.port.out.document.ExternalDocumentRepositoryPort -> com.licensis.notaire.business.Procedure
 R2 | com.licensis.notaire.application.port.out.document.ExternalDocumentRepositoryPort -> com.licensis.notaire.business.SubmittedDocument
-R2 | com.licensis.notaire.application.port.out.document.SubmittedDocumentRepositoryPort -> com.licensis.notaire.business.SubmittedDocument
 R2 | com.licensis.notaire.application.port.out.folio.FolioRepositoryPort -> com.licensis.notaire.business.Folio
 R2 | com.licensis.notaire.application.port.out.folio.FolioRepositoryPort -> com.licensis.notaire.business.FolioType
 R2 | com.licensis.notaire.application.port.out.history.HistoryRepositoryPort -> com.licensis.notaire.business.History
