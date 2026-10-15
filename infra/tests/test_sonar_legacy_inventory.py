@@ -130,6 +130,61 @@ class SonarLegacyInventoryTest(unittest.TestCase):
             parsed = mod.parse_classifications(path.read_text(encoding="utf-8"))
             self.assertGreaterEqual(len(parsed), 1)
 
+    def test_live_refresh_vuln_heuristics(self):
+        """Live Sonar #1760 clusters: CI secrets, legacy MD5, docker OTLP HTTP."""
+        mod = load_module()
+        issues = [
+            {
+                "key": "V1",
+                "rule": "secrets:S6703",
+                "severity": "BLOCKER",
+                "type": "VULNERABILITY",
+                "component": "notaire-backend:.github/workflows/playwright-e2e.yml",
+                "message": "Make sure this database password gets changed and removed from the code.",
+                "project": "notaire-backend",
+            },
+            {
+                "key": "V2",
+                "rule": "java:S4790",
+                "severity": "CRITICAL",
+                "type": "VULNERABILITY",
+                "component": (
+                    "notaire-backend:backend-api/src/main/java/com/licensis/"
+                    "notaire/adapter/in/web/user/UserController.java"
+                ),
+                "message": "Make sure this weak hash algorithm is not used in a sensitive context here.",
+                "project": "notaire-backend",
+            },
+            {
+                "key": "V3",
+                "rule": "typescript:S5332",
+                "severity": "MINOR",
+                "type": "VULNERABILITY",
+                "component": "notaire-frontend:src/lib/otel/otlp-proxy.ts",
+                "message": "Using http protocol is insecure. Use https instead.",
+                "project": "notaire-frontend",
+            },
+        ]
+        rows = mod.apply_classifications(mod.select_inventory_rows(issues), {})
+        by_rule = {row["rule"]: row for row in rows}
+        self.assertEqual(by_rule["secrets:S6703"]["classification"], "accepted_risk")
+        self.assertIn("ephemeral", by_rule["secrets:S6703"]["rationale"].lower())
+        self.assertEqual(by_rule["java:S4790"]["classification"], "fix")
+        self.assertIn("MD5", by_rule["java:S4790"]["rationale"])
+        self.assertIn("#1762", by_rule["java:S4790"]["rationale"])
+        self.assertEqual(by_rule["typescript:S5332"]["classification"], "accepted_risk")
+        self.assertIn("OTLP", by_rule["typescript:S5332"]["rationale"])
+        self.assertTrue(mod.all_vulnerabilities_classified(rows))
+
+    def test_render_markdown_includes_live_refresh_note(self):
+        mod = load_module()
+        rows = mod.select_inventory_rows(FIXTURE_ISSUES["issues"][:1])
+        rows[0]["classification"] = "fix"
+        rows[0]["rationale"] = "example"
+        md = mod.render_markdown(rows, source_note="live Sonar @ http://localhost:9000")
+        self.assertIn("live Sonar @ http://localhost:9000", md)
+        self.assertIn("Last live refresh", md)
+
 
 if __name__ == "__main__":
     unittest.main()
