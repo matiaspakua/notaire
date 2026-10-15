@@ -15,8 +15,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/archive/2026-10-15-fix-1745-workflow-trace-rollback/` | archived |
 | Branch | `cursor/fix-1745-workflow-trace-rollback-2ea7` | created |
 | Tasks | `tasks.md` | implemented |
-| Commits | pending push | pending |
-| Pull Request | pending | pending |
+| Commits | `4cc35489`, `11100509` | pushed |
+| Pull Request | pending create | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |
