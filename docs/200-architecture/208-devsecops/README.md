@@ -322,7 +322,7 @@ env:
 | `sdlc-process.yml` | PR opened/synchronized/reopened/labeled | CONSTITUTION process gates: commit messages, TDD evidence, `sdlc-exception` label, agent-rule file lint, plus the scripts' self-tests |
 | `test-coverage-report.yml` | Daily schedule (02:00 UTC), manual dispatch | Publishes a standalone coverage report artifact |
 | `performance-test.yml` | Weekly schedule (Mondays 04:00 UTC) | k6 load test |
-| `dast-zap.yml` | Weekly schedule (Mondays 05:00 UTC) + manual dispatch | OWASP ZAP baseline DAST against a live API (report artifact; warn-first policy — does not gate every PR). See [DAST / OpenAPI / backup-restore](#dast--openapi--backup-restore-issue-1067). |
+| `dast-zap.yml` | Weekly schedule (Mondays 05:00 UTC) + manual dispatch | OWASP ZAP baseline DAST against a live API (blocking on non-allowlisted alerts via `.zap/rules.tsv` — not on every PR). See [DAST / OpenAPI / backup-restore](#dast--openapi--backup-restore-issue-1067). |
 | `openapi-contract.yml` | PR into `main` + manual dispatch | Regenerates OpenAPI from springdoc, fails if `backend-api/openapi/openapi.yaml` is stale, and fails on breaking changes vs the base branch (`oasdiff`) unless the pull request lists them in its own file under `backend-api/openapi/accepted-breaking-changes.d/` |
 | `backup-restore-smoke.yml` | Weekly schedule (Sundays 03:00 UTC) + manual dispatch | Backup→restore→smoke once `#256` lands (`infra/scripts/backup-postgres.sh`); until then skips with an explicit blocked-on-#256 notice (no false-green restore) |
 | `deploy-github-page.yml` | After CI succeeds on `main` | Publishes the GitHub Pages documentation site |
@@ -334,7 +334,7 @@ env:
 
 | Gate | How to run | Policy |
 |------|------------|--------|
-| **OWASP ZAP baseline** | Actions → `DAST — OWASP ZAP Baseline` (schedule/`workflow_dispatch`) | Targets `http://localhost:8080` after starting the API + Postgres service. Uploads the ZAP report artifact. **Warn-first** (`fail_action: false`) until an allowlist/ratchet is agreed; Trivy SCA in `ci.yml` remains. Full prose operator guide may remain #281. |
+| **OWASP ZAP baseline** | Actions → `DAST — OWASP ZAP Baseline` (schedule/`workflow_dispatch`) | Targets `http://localhost:8080` after starting the API + Postgres service. Uploads the ZAP report artifact. **Blocking** (`fail_action: true`) with allowlist `.zap/rules.tsv` (#1738); Trivy SCA in `ci.yml` remains. |
 | **OpenAPI contract** | Every PR (`openapi-contract.yml`); locally: `bash backend-api/tools/export-openapi.sh`, and `bash workspace/sdlc/preflight.sh` runs the same accepted-list check and breaking diff when `oasdiff` is installed (`--fix` also deletes merged accepted files) | Committed SSOT: `backend-api/openapi/openapi.yaml`. After API changes, regenerate and commit in the same PR. CI fails on stale artifact or `oasdiff` ERR-level breaking diffs vs base. An intended break is accepted **in one file per pull request**, `backend-api/openapi/accepted-breaking-changes.d/<issue>-<slug>.txt` (#1315): the exact `oasdiff` line under a `# #<issue>` comment that says why no working client breaks, plus a CHANGELOG entry and an issue comment; the Owner approves it in review. Any break not listed still fails. Because no two pull requests edit the same file, accepting a break no longer conflicts with every other open branch (the old single `accepted-breaking-changes.txt` did). `workspace/sdlc/check-accepted-breaking-changes.py` (step "Accepted breaking changes: assemble and check", and preflight) treats a file unchanged on the base branch as merged: its break is already in the base spec, so it is never ignored (it could only hide a later break with the same text) and is listed for deletion. Every other file must hold only entries that still match a current break, under an issue comment, in a file named after the issue; those entries alone go to `.openapi-ci/accepted-breaking-changes.txt`, the `--err-ignore` list. On `main` every file is merged, so the effective list is **empty by default**. Rules and an example: `backend-api/openapi/accepted-breaking-changes.d/README.md`. |
 | **Backup→restore smoke** | Schedule/`workflow_dispatch` | Gated on #256. Sentinel path: `infra/scripts/backup-postgres.sh`. While absent, the job exits 0 with a clear skip/blocked message and does **not** claim a successful restore. |
 
@@ -363,7 +363,7 @@ bash security/enable-gh-secure.sh --apply    # needs admin or maintain
 
 ## Future Enhancements
 
-1. Ratchet OWASP ZAP baseline from warn-first to fail on CRITICAL/HIGH (allowlist as needed) — CI job already landed in #1067
+1. ~~Ratchet OWASP ZAP baseline from warn-first to fail on non-allowlisted alerts~~ — done in #1738 (`.zap/rules.tsv`, `fail_action: true`)
 2. Keep Trivy as the open-source SCA scanner. A commercial SCA product is not
    required beside it (see [SECURITY-TOOLS.md](../206-security/SECURITY-TOOLS.md))
 3. Add dependency review action
