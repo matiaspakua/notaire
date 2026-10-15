@@ -1,96 +1,54 @@
-# PostgreSQL Exporter Configuration
-# Queries to collect metrics from the Notaire PostgreSQL database
+# Custom queries for postgres-exporter (--extend.query-path / PG_EXPORTER_EXTEND_QUERY_PATH).
+# Format: metric-group key -> query + metrics (see prometheus-community/postgres_exporter queries.yaml).
+# Built-in collectors (pg_stat_database, settings, …) stay enabled by default; this file only adds Notaire business and connection-state gauges.
 
-pg_settings: true
-pg_stat_user_tables: true
-pg_stat_user_indexes: true
-pg_stat_database: true
-pg_stat_statements: true
-pg_stat_replication: true
-pg_stat_bgwriter: true
-pg_statio_user_tables: true
-pg_statio_user_indexes: true
-pg_statio_user_sequences: true
+deeds_total:
+  query: |
+    SELECT status::text AS status, COUNT(*)::float AS deeds_total
+    FROM deeds
+    GROUP BY status
+  metrics:
+    - status:
+        usage: "LABEL"
+        description: "Deed status"
+    - deeds_total:
+        usage: "GAUGE"
+        description: "Total number of deeds by status"
 
-# Custom queries specific to Notaire business metrics
-custom_queries:
-  # Deeds by stored status
-  - query: |
-      SELECT status, COUNT(*) AS deeds_total
-      FROM deeds
-      GROUP BY status
-    metrics:
-      - deeds_total:
-          usage: "COUNTER"
-          description: "Total number of deeds by status"
-      - status:
-          usage: "LABEL"
-          description: "Deed status"
+budgets_total:
+  query: |
+    SELECT COUNT(*)::float AS budgets_total FROM budgets
+  metrics:
+    - budgets_total:
+        usage: "GAUGE"
+        description: "Total number of budgets"
 
-  # Budgets
-  - query: |
-      SELECT COUNT(*) AS budgets_total FROM budgets
-    metrics:
-      - budgets_total:
-          usage: "COUNTER"
-          description: "Total number of budgets"
+users_total:
+  query: |
+    SELECT COUNT(*)::float AS users_total FROM users
+  metrics:
+    - users_total:
+        usage: "GAUGE"
+        description: "Total number of users"
 
-  # Users
-  - query: |
-      SELECT COUNT(*) AS users_total FROM users
-    metrics:
-      - users_total:
-          usage: "COUNTER"
-          description: "Total number of users"
+people_total:
+  query: |
+    SELECT COUNT(*)::float AS people_total FROM people
+  metrics:
+    - people_total:
+        usage: "GAUGE"
+        description: "Total number of people"
 
-  # People
-  - query: |
-      SELECT COUNT(*) AS people_total FROM people
-    metrics:
-      - people_total:
-          usage: "COUNTER"
-          description: "Total number of people"
-
-  # Database size
-  - query: |
-      SELECT pg_database_size(current_database()) as bytes
-    metrics:
-      - database_size_bytes:
-          usage: "GAUGE"
-          description: "Database size in bytes"
-
-  # Connection count by state
-  - query: |
-      SELECT state, COUNT(*) as total
-      FROM pg_stat_activity
-      WHERE datname = current_database()
-      GROUP BY state
-    metrics:
-      - pg_connections_total:
-          usage: "GAUGE"
-          description: "Number of connections by state"
-      - state:
-          usage: "LABEL"
-          description: "Connection state"
-
-  # Transaction metrics
-  - query: |
-      SELECT datname, xact_commit, xact_rollback, blks_read, blks_hit
-      FROM pg_stat_database
-      WHERE datname = current_database()
-    metrics:
-      - transactions_committed:
-          usage: "COUNTER"
-          description: "Total transactions committed"
-      - transactions_rolled_back:
-          usage: "COUNTER"
-          description: "Total transactions rolled back"
-      - blocks_read:
-          usage: "COUNTER"
-          description: "Total blocks read"
-      - blocks_hit:
-          usage: "COUNTER"
-          description: "Total blocks hit (cache)"
-      - datname:
-          usage: "LABEL"
-          description: "Database name"
+pg_connections_total:
+  query: |
+    SELECT COALESCE(state, 'unknown')::text AS state, COUNT(*)::float AS pg_connections_total
+    FROM pg_stat_activity
+    WHERE datname = current_database()
+    GROUP BY state
+  metrics:
+    - state:
+        usage: "LABEL"
+        description: "Connection state"
+    - pg_connections_total:
+        usage: "GAUGE"
+        description: "Number of connections by state"

@@ -113,7 +113,10 @@ in its message, because Promtail keeps only the message and dashboards parse it 
 
 **Overview dashboards (start here):** `notaire-stack-status` (every service in the stack) and
 `notaire-status` (Notaire only). Both show availability from blackbox probes, firing alerts and recent
-errors, and link to the specialist dashboards below.
+errors, and link to the specialist dashboards below. `notaire-status` and `notaire-backend` also show
+the packaged product version (Micrometer tag `version=${app.version}`, same value as OTel
+`service.version`). Quality tooling: `notaire-quality` (SonarQube / sonar-db probes and how to run
+`bash infra/scripts/run-sonar.sh`).
 
 **Grafana Dashboard:** `notaire-backend` (pre-provisioned)
 

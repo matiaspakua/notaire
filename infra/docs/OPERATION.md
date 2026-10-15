@@ -45,12 +45,28 @@ curl http://localhost:9187/metrics | head
   with `amtool` or the UI. Prometheus' own view is http://localhost:9090/alerts.
 - Drill-down: http://localhost:3001/d/notaire-infra-resources (host), `/d/notaire-frontend`,
   `/d/notaire-observability-health` (are the monitoring tools themselves healthy?), `/d/notaire-traces`.
-- Backend: http://localhost:3001/d/notaire-backend
-- PostgreSQL: http://localhost:3001/d/notaire-postgres
+- Backend: http://localhost:3001/d/notaire-backend (includes **Product version** from Micrometer `version=${app.version}`)
+- PostgreSQL: http://localhost:3001/d/notaire-postgres — business counts need the exporter
+  extend-query path (`PG_EXPORTER_EXTEND_QUERY_PATH`); recreate `postgres-exporter` after pull.
+- Quality / SonarQube: http://localhost:3001/d/notaire-quality (probes + markdown load guide)
 - Auth and security: http://localhost:3001/d/notaire-auth
 - Logs: Grafana → Explore → Loki, for example
   `{container_name="notary-backend"} | json` or `{service="notaire"}`
   (labels: `container`, `container_name`, `service`, `app`, `level`).
+  JSON lines also carry `serviceVersion` (same packaged SEMVER).
+
+### Loading provisioned dashboards
+
+Dashboards are Git-managed under
+`infra/observability/grafana/provisioning/dashboards/` and loaded automatically when
+Grafana starts (`dashboard.yml` provider). There is no manual import step. After
+changing JSON on disk, recreate Grafana:
+
+```bash
+docker compose -f infra/observability/docker-compose.yml --env-file infra/.env up -d --force-recreate grafana
+```
+
+Guards: `python3 infra/tests/test_obs_dashboard_wiring.py` (and `bash infra/verify.sh`).
 
 ## Code quality (SonarQube)
 

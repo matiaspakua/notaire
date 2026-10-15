@@ -1,15 +1,8 @@
 package com.licensis.notaire.adapter.in.web.document;
 
-import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
-import com.licensis.notaire.dto.DtoDocumentType;
-import com.licensis.notaire.business.DocumentType;
-import com.licensis.notaire.repository.SubmittedDocumentRepository;
-import com.licensis.notaire.repository.ProcedureTemplateRepository;
-import com.licensis.notaire.repository.DocumentTypeRepository;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,148 +14,163 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
+import com.licensis.notaire.application.port.in.document.ManageDocumentTypesUseCase;
+import com.licensis.notaire.application.port.in.document.ManageDocumentTypesUseCase.SaveDocumentTypeCommand;
+import com.licensis.notaire.application.port.in.document.QueryDocumentTypesUseCase;
+import com.licensis.notaire.domain.document.DocumentType;
+import com.licensis.notaire.domain.document.DocumentTypeException;
+import com.licensis.notaire.dto.DtoDocumentType;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+/**
+ * Document type catalog. Calls the inbound ports and maps to the wire DTO; the rules live in the use cases and the
+ * domain exceptions are mapped by {@link DocumentTypeExceptionHandler} (slice 4 of the hexagon, issue #1705).
+ *
+ * <p>Wire defaults for create ({@code deliveredBy}, {@code enabled}, {@code returned}) stay here so OpenAPI and the
+ * legacy clients keep the same behaviour. The try/catch blocks around create and update keep the persistence-failure
+ * mapping of {@link ErrorResponses} until the ad-hoc catches are removed (issue #579); domain exceptions pass through.
+ */
 @RestController
 @RequestMapping("/api/v1/document-types")
 @Tag(name = "DocumentType", description = "API to manage document types")
 public class DocumentTypeController {
 
-    private final DocumentTypeRepository repository;
-    private final ProcedureTemplateRepository procedureTemplateRepository;
-    private final SubmittedDocumentRepository submittedDocumentRepository;
+    private final QueryDocumentTypesUseCase query;
+    private final ManageDocumentTypesUseCase manage;
 
-    public DocumentTypeController(DocumentTypeRepository repository,
-                                     ProcedureTemplateRepository procedureTemplateRepository,
-                                     SubmittedDocumentRepository submittedDocumentRepository) {
-        this.repository = repository;
-        this.procedureTemplateRepository = procedureTemplateRepository;
-        this.submittedDocumentRepository = submittedDocumentRepository;
+    public DocumentTypeController(QueryDocumentTypesUseCase query, ManageDocumentTypesUseCase manage) {
+        this.query = query;
+        this.manage = manage;
+    }
+
+    private DtoDocumentType toDto(DocumentType type) {
+        DtoDocumentType dto = new DtoDocumentType();
+        dto.setIdDocumentType(type.id());
+        dto.setName(type.name());
+        dto.setExpires(type.expires());
+        dto.setDueDays(type.dueDays());
+        dto.setDeliveredBy(type.deliveredBy());
+        dto.setEnabled(type.enabled());
+        dto.setReturned(type.returned());
+        dto.setVersion(type.version());
+        return dto;
+    }
+
+    private SaveDocumentTypeCommand toCommand(DtoDocumentType dto) {
+        int version = dto.getVersion() == null ? 0 : dto.getVersion();
+        String deliveredBy = dto.getDeliveredBy() == null ? "" : dto.getDeliveredBy();
+        boolean enabled = dto.getEnabled() == null || dto.getEnabled();
+        boolean returned = dto.getReturned() != null && dto.getReturned();
+        return new SaveDocumentTypeCommand(
+                dto.getName(), dto.isExpires(), dto.getDueDays(), deliveredBy, enabled, returned, version);
+    }
+
+    private SaveDocumentTypeCommand toCreateCommand(DtoDocumentType dto) {
+        // Default only when omitted — do not overwrite an explicit enabled=false (#800).
+        if (dto.getDeliveredBy() == null) {
+            dto.setDeliveredBy("");
+        }
+        if (dto.getEnabled() == null) {
+            dto.setEnabled(true);
+        }
+        if (dto.getReturned() == null) {
+            dto.setReturned(false);
+        }
+        return toCommand(dto);
+    }
+
+    private SaveDocumentTypeCommand toUpdateCommand(DtoDocumentType dto, DocumentType existing) {
+        if (dto.getDeliveredBy() == null) {
+            dto.setDeliveredBy(existing.deliveredBy());
+        }
+        if (dto.getEnabled() == null) {
+            dto.setEnabled(existing.enabled());
+        }
+        if (dto.getReturned() == null) {
+            dto.setReturned(existing.returned());
+        }
+        return toCommand(dto);
     }
 
     @GetMapping
     @Operation(summary = "List all document types")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoDocumentType>> getAll() {
-        return ResponseEntity.ok(repository.findAll().stream()
-                .map(DocumentType::getDto)
-                .toList());
+        return ResponseEntity.ok(query.findAll().stream().map(this::toDto).toList());
     }
 
     @GetMapping("/search")
     @Operation(summary = "Search document types by name")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoDocumentType>> search(@RequestParam String name) {
-        return ResponseEntity.ok(repository.findByNameContaining(name).stream()
-                .map(DocumentType::getDto)
-                .toList());
+        return ResponseEntity.ok(query.searchByName(name).stream().map(this::toDto).toList());
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "Not found")
-})
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @GetMapping("/{id}")
     @Operation(summary = "Get document type by ID")
-    @Transactional(readOnly = true)
     public ResponseEntity<DtoDocumentType> getById(@PathVariable Integer id) {
-        return repository.findById(id)
-                .map(e -> ResponseEntity.ok(e.getDto()))
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(toDto(query.getById(id)));
     }
 
     @GetMapping("/{id}/in-use")
     @Operation(summary = "Check whether the document type is in use")
-    @Transactional(readOnly = true)
     public ResponseEntity<Map<String, Boolean>> isInUse(@PathVariable Integer id) {
-        if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        boolean inUse = !procedureTemplateRepository.findByDocumentTypeIdDocumentType(id).isEmpty()
-                || submittedDocumentRepository.existsByDocumentTypeIdDocumentType(id);
-        return ResponseEntity.ok(Map.of("inUse", inUse));
+        return ResponseEntity.ok(Map.of("inUse", query.isInUse(id)));
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Created"),
-    @ApiResponse(responseCode = "400", description = "Bad request"),
-    @ApiResponse(responseCode = "409", description = "Conflict")
-})
+            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "409", description = "Conflict")
+    })
     @PostMapping
     @Operation(summary = "Create a new document type")
     public ResponseEntity<Object> create(@RequestBody DtoDocumentType dto) {
         try {
-            if (dto.getDeliveredBy() == null) {
-                dto.setDeliveredBy("");
-            }
-            // Default only when omitted — do not overwrite an explicit enabled=false (#800).
-            if (dto.getEnabled() == null) {
-                dto.setEnabled(true);
-            }
-            if (dto.getReturned() == null) {
-                dto.setReturned(false);
-            }
-            DocumentType entity = new DocumentType();
-            entity.setAttributes(dto);
-            entity = repository.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
+            return ResponseEntity.status(HttpStatus.CREATED).body(toDto(manage.create(toCreateCommand(dto))));
+        } catch (DocumentTypeException domainFailure) {
+            throw domainFailure;
         } catch (Exception e) {
             return ErrorResponses.createFailed(e);
         }
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Bad request"),
-    @ApiResponse(responseCode = "404", description = "Not found"),
-    @ApiResponse(responseCode = "409", description = "version is not the stored one: another user modified the record")
-})
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "409", description = "version is not the stored one: another user modified the record")
+    })
     @PutMapping("/{id}")
     @Operation(summary = "Update document type")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoDocumentType dto) {
-        Optional<DocumentType> existing = repository.findById(id);
-        if (existing.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        if (!procedureTemplateRepository.findByDocumentTypeIdDocumentType(id).isEmpty()
-                || submittedDocumentRepository.existsByDocumentTypeIdDocumentType(id)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "This document type is in use and cannot be modified. Create a new one."));
-        }
         try {
-            DocumentType entity = existing.get();
-            dto.setIdDocumentType(id);
-            if (dto.getDeliveredBy() == null) {
-                dto.setDeliveredBy(entity.getDeliveredBy());
-            }
-            entity.setAttributes(dto);
-            repository.save(entity);
+            DocumentType existing = query.getById(id);
+            manage.update(id, toUpdateCommand(dto, existing));
             return ResponseEntity.ok().build();
+        } catch (DocumentTypeException domainFailure) {
+            throw domainFailure;
         } catch (Exception e) {
             return ErrorResponses.updateFailed(e);
         }
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Deleted"),
-    @ApiResponse(responseCode = "404", description = "Not found")
-})
+            @ApiResponse(responseCode = "204", description = "Deleted"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete document type")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
-        if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        if (!procedureTemplateRepository.findByDocumentTypeIdDocumentType(id).isEmpty()
-                || submittedDocumentRepository.existsByDocumentTypeIdDocumentType(id)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "Cannot delete: the document type is used by procedure templates or submitted documents."));
-        }
-        repository.deleteById(id);
+        manage.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

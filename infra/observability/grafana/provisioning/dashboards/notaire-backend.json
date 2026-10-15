@@ -3,15 +3,73 @@
   "version": 1,
   "uid": "notaire-backend",
   "description": "Monitoring dashboard for Notaire Backend API",
-  "tags": ["notaire", "spring-boot", "backend"],
+  "tags": [
+    "notaire",
+    "spring-boot",
+    "backend"
+  ],
   "schemaVersion": 36,
   "timezone": "browser",
   "editable": true,
   "panels": [
     {
+      "title": "Product version",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 24
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "max by (version) (jvm_memory_used_bytes{application=\"notaire-backend\", area=\"heap\", version!=\"\"})",
+          "legendFormat": "{{version}}",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "textMode": "name",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "description": "Packaged SEMVER from Micrometer tag version=${app.version} (#1707 / ADR-028)"
+    },
+    {
       "title": "API Request Rate",
       "type": "graph",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
       "targets": [
         {
           "expr": "rate(http_server_requests_seconds_count{application='notaire-backend'}[1m])",
@@ -24,7 +82,12 @@
     {
       "title": "API Response Time (P95)",
       "type": "graph",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
       "targets": [
         {
           "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{application='notaire-backend'}[1m])) by (le, uri, method))",
@@ -37,7 +100,12 @@
     {
       "title": "JVM Memory Usage",
       "type": "graph",
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 8 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
       "targets": [
         {
           "expr": "jvm_memory_used_bytes{application='notaire-backend', area='heap'}",
@@ -57,7 +125,12 @@
     {
       "title": "JVM Garbage Collection",
       "type": "graph",
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 8 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 8
+      },
       "targets": [
         {
           "expr": "rate(jvm_gc_pause_seconds_sum{application='notaire-backend'}[1m])",
@@ -73,7 +146,12 @@
     {
       "title": "Active Threads",
       "type": "graph",
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 8 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 8
+      },
       "targets": [
         {
           "expr": "jvm_threads_live_threads{application='notaire-backend'}",
@@ -89,7 +167,12 @@
     {
       "title": "Database Connection Pool",
       "type": "graph",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
       "targets": [
         {
           "expr": "hikaricp_connections_active{application='notaire-backend'}",
@@ -113,7 +196,12 @@
     {
       "title": "HTTP Error Rate",
       "type": "graph",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
       "targets": [
         {
           "expr": "rate(http_server_requests_seconds_count{application='notaire-backend', status=~'4..|5..'}[1m])",
@@ -125,7 +213,12 @@
     {
       "title": "Application Health Status",
       "type": "stat",
-      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 24 },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 24
+      },
       "targets": [
         {
           "expr": "probe_success{job='notaire-backend'}",
@@ -137,7 +230,12 @@
     {
       "title": "Uptime",
       "type": "stat",
-      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 24 },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 24
+      },
       "targets": [
         {
           "expr": "process_uptime_seconds{application='notaire-backend'}",
@@ -149,7 +247,12 @@
     {
       "title": "CPU Usage",
       "type": "gauge",
-      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 24 },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 24
+      },
       "targets": [
         {
           "expr": "system_cpu_usage{application='notaire-backend'}",
@@ -165,7 +268,12 @@
     {
       "title": "Log Rate (by level)",
       "type": "graph",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 28 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 28
+      },
       "targets": [
         {
           "expr": "rate(logback_events_total{application='notaire-backend'}[1m])",
@@ -177,7 +285,12 @@
     {
       "title": "Custom Business Metrics",
       "type": "graph",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 28 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 28
+      },
       "targets": [
         {
           "expr": "notaire_operation_total{application='notaire-backend'}",

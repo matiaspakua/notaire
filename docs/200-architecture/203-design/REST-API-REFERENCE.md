@@ -304,7 +304,7 @@ These endpoints return `application/pdf` (errors are `ErrorResponse` JSON). The 
 | GET | `/reports/document-debt` | Document debt for a management number (`?numberManagement=`) | CU09 |
 | GET | `/reports/index-book` | Index book (`?year=` required; optional `idNotary`, `idFolioType`) | CU24 |
 | GET | `/reports/monthly-sworn-statement` | Monthly sworn statement (`?year=&month=` required; optional `idNotary`, `idFolioType`) | CU25 |
-| GET | `/reports/tax-sworn-statement` | Tax sworn statement (`?year=&month=`) | CU50 |
+| GET | `/reports/tax-sworn-statement` | Tax sworn statement (`?year=&month=` required; optional `idNotary`, `idFolioType`) | CU50 |
 
 ---
 

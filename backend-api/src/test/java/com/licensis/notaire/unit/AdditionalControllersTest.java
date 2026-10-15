@@ -80,7 +80,7 @@ class AdditionalControllersTest {
             when(service.generateDebtDocumentsReport(anyInt())).thenReturn(pdf);
             when(service.generateIndexBookReport(anyInt(), any(), any())).thenReturn(pdf);
             when(service.generateMonthlyTaxDeclarationReport(anyInt(), anyInt(), any(), any())).thenReturn(pdf);
-            when(service.generateIncomeTaxDeclarationReport(anyInt(), anyInt())).thenReturn(pdf);
+            when(service.generateIncomeTaxDeclarationReport(anyInt(), anyInt(), any(), any())).thenReturn(pdf);
 
             mvc.perform(get("/api/v1/reports/budget/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/reports/budget-properties/1")).andExpect(status().isOk());
@@ -109,7 +109,7 @@ class AdditionalControllersTest {
             when(service.generateDebtDocumentsReport(anyInt())).thenThrow(new RuntimeException("e"));
             when(service.generateIndexBookReport(anyInt(), any(), any())).thenThrow(new RuntimeException("e"));
             when(service.generateMonthlyTaxDeclarationReport(anyInt(), anyInt(), any(), any())).thenThrow(new RuntimeException("e"));
-            when(service.generateIncomeTaxDeclarationReport(anyInt(), anyInt())).thenThrow(new RuntimeException("e"));
+            when(service.generateIncomeTaxDeclarationReport(anyInt(), anyInt(), any(), any())).thenThrow(new RuntimeException("e"));
 
             mvc.perform(get("/api/v1/reports/budget/1")).andExpect(status().isInternalServerError());
             mvc.perform(get("/api/v1/reports/budget-properties/1")).andExpect(status().isInternalServerError());

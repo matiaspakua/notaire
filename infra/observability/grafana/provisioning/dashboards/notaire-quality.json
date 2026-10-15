@@ -1,0 +1,196 @@
+{
+  "uid": "notaire-quality",
+  "title": "Notaire - Quality (SonarQube)",
+  "description": "SonarQube and quality-gate reachability for the local DevSecOps stack. Analysis results live in SonarQube; this dashboard proves the quality tools are up and links operators to the projects (#1707, CU76/CU77).",
+  "tags": ["notaire", "quality", "sonarqube"],
+  "schemaVersion": 36,
+  "version": 1,
+  "timezone": "browser",
+  "editable": true,
+  "refresh": "30s",
+  "time": { "from": "now-6h", "to": "now" },
+  "links": [
+    { "title": "Stack Status", "type": "link", "url": "/d/notaire-stack-status", "icon": "dashboard", "targetBlank": false },
+    { "title": "Notaire Status", "type": "link", "url": "/d/notaire-status", "icon": "dashboard", "targetBlank": false },
+    { "title": "Security posture", "type": "link", "url": "/d/notaire-security", "icon": "dashboard", "targetBlank": false },
+    { "title": "Observability health", "type": "link", "url": "/d/notaire-observability-health", "icon": "dashboard", "targetBlank": false }
+  ],
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "SonarQube",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "max(probe_success{service=\"sonarqube\"}) or max(up{job=\"probe-sonarqube\"}) or vector(0)",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "NO DATA",
+          "mappings": [
+            { "type": "value", "options": { "1": { "text": "UP", "color": "green", "index": 0 }, "0": { "text": "DOWN", "color": "red", "index": 1 } } }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": null }, { "color": "green", "value": 1 } ] },
+          "color": { "mode": "thresholds" }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Sonar DB",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "max(probe_success{service=\"sonar-db\"}) or vector(0)",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "NO DATA",
+          "mappings": [
+            { "type": "value", "options": { "1": { "text": "UP", "color": "green", "index": 0 }, "0": { "text": "DOWN", "color": "red", "index": 1 } } }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": null }, { "color": "green", "value": 1 } ] },
+          "color": { "mode": "thresholds" }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Product version (backend)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "max by (version) (jvm_memory_used_bytes{application=\"notaire-backend\", area=\"heap\", version!=\"\"})",
+          "legendFormat": "{{version}}",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "noValue": "NO DATA", "color": { "mode": "fixed", "fixedColor": "text" } },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "textMode": "name",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Firing quality-related alerts",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "x": 18, "y": 0, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "count(ALERTS{alertstate=\"firing\",alertname=~\"ServiceDown|TargetDown|BackendDown\"}) or vector(0)",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "0",
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 1 } ] },
+          "color": { "mode": "thresholds" }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+      }
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "SonarQube availability (probe)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "probe_success{service=\"sonarqube\"}",
+          "legendFormat": "sonarqube"
+        },
+        {
+          "refId": "B",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "probe_success{service=\"sonar-db\"}",
+          "legendFormat": "sonar-db"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "noValue": "NO DATA", "min": 0, "max": 1 },
+        "overrides": []
+      },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } }
+    },
+    {
+      "id": 6,
+      "type": "logs",
+      "title": "Recent Sonar / quality log lines",
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "{container=~\"devsecops-sonar.*\"}"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "wrapLogMessage": true,
+        "sortOrder": "Descending",
+        "enableLogDetails": true
+      }
+    },
+    {
+      "id": 7,
+      "type": "text",
+      "title": "How to load quality results",
+      "gridPos": { "x": 0, "y": 12, "w": 24, "h": 6 },
+      "options": {
+        "mode": "markdown",
+        "content": "## SonarQube projects\n\n1. Start the stack: `bash workspace/stack/start-all.sh` (app) then `bash infra/scripts/start-infra.sh`.\n2. Open SonarQube anonymously on loopback: http://127.0.0.1:9000 (#1413).\n3. Run analysis: `bash infra/scripts/run-sonar.sh` — creates/updates `notaire-backend` and `notaire-frontend`, applies the Notaire quality gate, exits non-zero on gate failure.\n4. Project dashboards: [backend](http://127.0.0.1:9000/dashboard?id=notaire-backend) · [frontend](http://127.0.0.1:9000/dashboard?id=notaire-frontend).\n5. Prove signals: `bash infra/scripts/verify-signals.sh` (Sonar is SKIP until `run-sonar.sh` has run once).\n\nGrafana provisions this dashboard from `infra/observability/grafana/provisioning/dashboards/notaire-quality.json` on container start — no manual import."
+      }
+    }
+  ],
+  "templating": { "list": [] },
+  "annotations": { "list": [] }
+}

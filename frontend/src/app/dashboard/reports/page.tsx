@@ -163,6 +163,8 @@ export default function ReportsPage() {
   const [monthlyFolioType, setMonthlyFolioType] = useState("");
   const [taxYear, setTaxYear] = useState(currentYear());
   const [taxMonth, setTaxMonth] = useState(currentMonth());
+  const [taxNotary, setTaxNotary] = useState("");
+  const [taxFolioType, setTaxFolioType] = useState("");
   const [indexYear, setIndexYear] = useState(currentYear());
   const [indexNotary, setIndexNotary] = useState("");
   const [indexFolioType, setIndexFolioType] = useState("");
@@ -345,12 +347,73 @@ export default function ReportsPage() {
           downloadLabel={downloadLabel}
           downloadTestId="btn-download-tax-sworn"
           canDownload
-          onDownload={() => handle(() => taxSwornReport.download(Number(taxYear), Number(taxMonth)))}
+          onDownload={() =>
+            handle(() =>
+              taxSwornReport.download(
+                Number(taxYear),
+                Number(taxMonth),
+                taxNotary ? Number(taxNotary) : undefined,
+                taxFolioType ? Number(taxFolioType) : undefined,
+              ),
+            )
+          }
         >
           <div style={yearMonthGrid}>
-            <NumberField label={tc("year")} value={taxYear} onChange={setTaxYear} min="2000" max="2099" />
-            <NumberField label={tc("month")} value={taxMonth} onChange={setTaxMonth} min="1" max="12" />
+            <NumberField
+              label={tc("year")}
+              value={taxYear}
+              onChange={setTaxYear}
+              min="2000"
+              max="2099"
+              testId="input-report-tax-year"
+              required
+            />
+            <NumberField
+              label={tc("month")}
+              value={taxMonth}
+              onChange={setTaxMonth}
+              min="1"
+              max="12"
+              testId="input-report-tax-month"
+              required
+            />
           </div>
+          <FormField label={tf("fields.escribano")} helperText={tc("optional")}>
+            <Select
+              value={taxNotary || "all"}
+              onValueChange={(value) => setTaxNotary(value === "all" ? "" : value)}
+            >
+              <SelectTrigger data-testid="select-report-tax-notary">
+                <SelectValue placeholder={tf("fields.escribanoPlaceholder")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{tc("all")}</SelectItem>
+                {notaries.map((notary) => (
+                  <SelectItem key={notary.personId} value={String(notary.personId)}>
+                    {notary.lastName} {notary.firstName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormField>
+          <FormField label={tf("fields.tipo")} helperText={tc("optional")}>
+            <Select
+              value={taxFolioType || "all"}
+              onValueChange={(value) => setTaxFolioType(value === "all" ? "" : value)}
+            >
+              <SelectTrigger data-testid="select-report-tax-folio-type">
+                <SelectValue placeholder={tf("fields.tipoPlaceholder")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{tc("all")}</SelectItem>
+                {folioTypes.map((type) => (
+                  <SelectItem key={type.idFolioType} value={String(type.idFolioType)}>
+                    {type.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormField>
         </ReportCard>
 
         <ReportCard

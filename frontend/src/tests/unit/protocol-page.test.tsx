@@ -96,17 +96,17 @@ describe("protocol page", () => {
     expect(clicked[0].download).toBe(`ddjj_mensual_${YEAR}_${MONTH}.pdf`);
   });
 
-  it("downloads the tax statement without the notary and folio type filters", async () => {
+  it("downloads the tax statement with the year, the month and both optional filters offered", async () => {
     const dialog = await openReport("protocolo.reports.ddjjRentas.button");
 
-    expect(within(dialog).queryByTestId("select-protocol-index-notary")).toBeNull();
-    expect(within(dialog).queryByTestId("select-protocol-index-folio-type")).toBeNull();
+    expect(within(dialog).getByTestId("select-protocol-index-notary")).toBeInTheDocument();
+    expect(within(dialog).getByTestId("select-protocol-index-folio-type")).toBeInTheDocument();
     fireEvent.click(within(dialog).getByRole("button", { name: /common\.downloadPdf/ }));
 
     await waitFor(() =>
       expect(apiGetBytes).toHaveBeenCalledWith(`/reports/tax-sworn-statement?year=${YEAR}&month=${MONTH}`),
     );
-    expect(clicked[0].download).toBe(`declaracion_jurada_rentas_${MONTH}_${YEAR}.pdf`);
+    expect(clicked[0].download).toBe(`ddjj_rentas_${YEAR}_${MONTH}.pdf`);
   });
 
   it("reports a failed download and keeps the dialog open", async () => {

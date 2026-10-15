@@ -203,7 +203,7 @@ export function SearchCombobox<T>({
       )}
       {open && (
         <div
-          onClick={(e) => e.preventDefault()}
+          onMouseDown={(e) => e.preventDefault()}
           className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-[12px] border border-[hsl(var(--border))] bg-white shadow-lg animate-in fade-in slide-in-from-top-1 duration-base ease-standard motion-reduce:animate-none"
         >
           <ul id={listId} role="listbox" aria-label={ariaLabel} className="max-h-64 overflow-y-auto p-1">
@@ -214,6 +214,7 @@ export function SearchCombobox<T>({
                   key={getKey(o)}
                   id={optionId(o)}
                   role="option"
+                  tabIndex={-1}
                   aria-selected={i === active}
                   aria-describedby={detail != null && detail !== "" ? `${optionId(o)}-detail` : undefined}
                   data-key={getKey(o)}
@@ -224,6 +225,12 @@ export function SearchCombobox<T>({
                     // be forwarded to the input and reopen the list.
                     e.preventDefault();
                     choose(o);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      choose(o);
+                    }
                   }}
                   className={cn(
                     "flex cursor-pointer select-none items-center justify-between gap-3 rounded-[8px] px-3 py-2 text-sm transition-colors duration-fast",

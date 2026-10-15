@@ -38,11 +38,19 @@
       "gridPos": { "h": 4, "w": 4, "x": 8, "y": 0 },
       "targets": [
         {
-          "expr": "(sum(blks_hit) / (sum(blks_hit) + sum(blks_read))) * 100",
+          "expr": "(sum(pg_stat_database_blks_hit{datname='notaire'}) / clamp_min(sum(pg_stat_database_blks_hit{datname='notaire'}) + sum(pg_stat_database_blks_read{datname='notaire'}), 1)) * 100",
           "legendFormat": "Hit ratio"
         }
       ],
-      "description": "PostgreSQL buffer cache hit ratio"
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "NO DATA",
+          "unit": "percent",
+          "min": 0,
+          "max": 100
+        }
+      },
+      "description": "PostgreSQL buffer cache hit ratio (built-in pg_stat_database series)"
     },
     {
       "title": "Transactions",
@@ -66,11 +74,11 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
       "targets": [
         {
-          "expr": "pg_connections_total{datname='notaire'}",
+          "expr": "pg_connections_total",
           "legendFormat": "{{state}}"
         }
       ],
-      "description": "Connection count by state"
+      "description": "Connection count by state (extend-query gauge from postgres_exporter.yml)"
     },
     {
       "title": "Notaire Business Metrics - Tables",

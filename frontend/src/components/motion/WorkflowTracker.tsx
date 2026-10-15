@@ -99,7 +99,7 @@ function computeLayers(nodes: WorkflowNode[], transitions: WorkflowTransition[])
   const layers = new Map<number, number>();
   for (const n of nodes) {
     if (n.id != null) {
-      layers.set(n.id, n.type === "INITIAL" ? 0 : 0);
+      layers.set(n.id, 0);
     }
   }
   for (let i = 0; i < nodes.length; i++) {
