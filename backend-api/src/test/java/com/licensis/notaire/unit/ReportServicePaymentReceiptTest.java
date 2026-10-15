@@ -48,11 +48,11 @@ class ReportServicePaymentReceiptTest {
     void setUp() {
         reportService = new ReportService(
                 null,
-                null,
                 paymentRepository,
                 itemRepository,
                 reportDocuments,
                 new PdfBoxReportRenderer(),
+                null,
                 null,
                 null,
                 null,

@@ -3,14 +3,13 @@ package com.licensis.notaire.application.usecase.report;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Notebook;
 import com.licensis.notaire.business.Item;
-import com.licensis.notaire.business.RegistrationDraft;
 import com.licensis.notaire.business.Payment;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.repository.NotebookRepository;
 import com.licensis.notaire.repository.ItemRepository;
-import com.licensis.notaire.repository.RegistrationDraftRepository;
 import com.licensis.notaire.repository.PaymentRepository;
+import com.licensis.notaire.application.port.out.report.RegistrationDraftReportPort;
 import com.licensis.notaire.application.port.out.report.ReportDocument;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Field;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Fields;
@@ -36,7 +35,6 @@ import java.util.List;
 public class ReportService {
 
     private final NotebookRepository notebookRepository;
-    private final RegistrationDraftRepository registrationDraftRepository;
     private final PaymentRepository paymentRepository;
     private final ItemRepository itemRepository;
     private final ReportDocumentFactory reportDocuments;
@@ -45,11 +43,11 @@ public class ReportService {
     private final MonthlySwornStatementReportBuilder monthlySworn;
     private final TaxSwornStatementReportPort taxSworn;
     private final TestimonyCopyReportPort testimonyCopy;
+    private final RegistrationDraftReportPort registrationDraft;
 
     private static final int FOLIOS_PER_NOTEBOOK = 10;
 
     public ReportService(NotebookRepository notebookRepository,
-                           RegistrationDraftRepository registrationDraftRepository,
                            PaymentRepository paymentRepository,
                            ItemRepository itemRepository,
                            ReportDocumentFactory reportDocuments,
@@ -57,9 +55,9 @@ public class ReportService {
                            IndexBookReportBuilder indexBook,
                            MonthlySwornStatementReportBuilder monthlySworn,
                            TaxSwornStatementReportPort taxSworn,
-                           TestimonyCopyReportPort testimonyCopy) {
+                           TestimonyCopyReportPort testimonyCopy,
+                           RegistrationDraftReportPort registrationDraft) {
         this.notebookRepository = notebookRepository;
-        this.registrationDraftRepository = registrationDraftRepository;
         this.paymentRepository = paymentRepository;
         this.itemRepository = itemRepository;
         this.reportDocuments = reportDocuments;
@@ -68,6 +66,7 @@ public class ReportService {
         this.monthlySworn = monthlySworn;
         this.taxSworn = taxSworn;
         this.testimonyCopy = testimonyCopy;
+        this.registrationDraft = registrationDraft;
     }
 
     public byte[] generateBudgetReport(Integer idBudget) {
@@ -143,16 +142,9 @@ public class ReportService {
         return reportRenderer.render(taxSworn.build(year, month, idNotary, idFolioType));
     }
 
+    @Transactional(readOnly = true)
     public byte[] generateRegistrationDraftReport(Integer idRegistrationDraft) {
-        RegistrationDraft draft = registrationDraftRepository.findById(idRegistrationDraft)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Registration draft not found with ID: " + idRegistrationDraft));
-
-        return renderPlaceholder(
-                "Registration draft N° " + draft.getNumber(),
-                "CU82",
-                "registration-draft-" + draft.getNumber(),
-                "Deed N° " + draft.getFkIdDeed().getNumber() + " - Status: " + draft.getStatus());
+        return reportRenderer.render(registrationDraft.build(idRegistrationDraft));
     }
 
     @Transactional(readOnly = true)

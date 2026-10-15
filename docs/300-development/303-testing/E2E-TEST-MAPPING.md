@@ -114,6 +114,7 @@ TS-0139 to TS-0141    = Catalog / icons / complete-case feature specs (#1361, #1
 | **TS-0028** | `TS-0028-management-history-feature.spec.ts` | CU13 | GherkinSteps + API seed | 0 | **MEDIUM** |
 | **TS-0029** | `TS-0029-management-status-transition-feature.spec.ts` | CU83 | GherkinSteps + API seed | 0 | **MEDIUM** |
 | **TS-0031** | `TS-0031-testimony-generation-verification-feature.spec.ts` | CU07, CU08 | GherkinSteps + API | 0 | **HIGH** — copy download asserts `%PDF-` and seeded deed body (#119) |
+| **TS-0082** | `TS-0082-registration-draft-feature.spec.ts` | CU82 | GherkinSteps + API | 0 | **HIGH** — download asserts `%PDF-` and seeded cadastral designation (#116) |
 | **TS-0032** | `TS-0032-testimony-registration-feature.spec.ts` | CU11, CU12, CU44 | GherkinSteps + API | 0 | **HIGH** |
 | **TS-0033** | `TS-0033-external-entity-documents-feature.spec.ts` | CU10 | GherkinSteps + API | 0 | **MEDIUM** |
 | **TS-0035** | `TS-0035-workflow-tracker-visualization-feature.spec.ts` | CU70, CU71 | Direct nav + assertions | 0 | **LOW** |
