@@ -746,7 +746,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
             version = persistentPerson.getVersion(); // Version of the object in the database
             oldVersion = pPerson.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) // Versions differ: someone else modified the object
+            if (OptimisticLockVersions.differ(version, oldVersion)) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException("The indicated person has already been modified");
             } else {
@@ -789,7 +789,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
             version = persistentPerson.getVersion(); // Version of the object in the database
             oldVersion = notary.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) // Versions differ: someone else modified the object
+            if (OptimisticLockVersions.differ(version, oldVersion)) // Versions differ: someone else modified the object
             {
                 if (em != null) {
                     em.close();
@@ -829,7 +829,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
             version = persistentPerson.getVersion(); // Version of the object in the database
             oldVersion = pClient.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) // Versions differ: someone else modified the object
+            if (OptimisticLockVersions.differ(version, oldVersion)) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException("The indicated client has already been modified");
 
@@ -898,7 +898,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
 
         if (!people.isEmpty()) {
             for (int i = 0; i < people.size(); i++) {
-                if (people.get(i).getFkIdIdentificationType().getIdIdentificationType() == idIdentificationType) {
+                if (java.util.Objects.equals(people.get(i).getFkIdIdentificationType().getIdIdentificationType(), idIdentificationType)) {
                     person = people.get(i);
                 }
 

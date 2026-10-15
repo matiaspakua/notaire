@@ -17,7 +17,6 @@ import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.AuditRecord;
 import com.licensis.notaire.business.User;
@@ -303,7 +302,7 @@ public class UserJpaController implements Serializable, JpaPersistence {
                 version = persistenUser.getVersion();
                 oldVersion = pUser.getVersion();
 
-                if (version != oldVersion) {
+                if (OptimisticLockVersions.differ(version, oldVersion)) {
                     throw new ClassModifiedException("The indicated user has been modified by another user");
                 } else {
                     em.getTransaction().begin();

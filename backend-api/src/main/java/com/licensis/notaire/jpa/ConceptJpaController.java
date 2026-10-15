@@ -108,7 +108,7 @@ public class ConceptJpaController implements Serializable, JpaPersistence
             version = persistentConcept.getVersion(); // Version of the object in the database
             oldVersion = concept.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) // Versions differ: someone else modified the object
+            if (OptimisticLockVersions.differ(version, oldVersion)) // Versions differ: someone else modified the object
             {
                 if (em != null)
                 {

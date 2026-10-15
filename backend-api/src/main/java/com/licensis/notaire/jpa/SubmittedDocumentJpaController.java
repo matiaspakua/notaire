@@ -16,7 +16,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.SubmittedDocument;
 import com.licensis.notaire.business.Procedure;
 import org.hibernate.StaleObjectStateException;
@@ -106,7 +105,7 @@ public class SubmittedDocumentJpaController implements Serializable, JpaPersiste
             version = persistSubmittedDocument.getVersion(); // Version of the object in the database
             oldVersion = submittedDocument.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) // Versions differ: someone else modified the object
+            if (OptimisticLockVersions.differ(version, oldVersion)) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException("The indicated document has been modified by another user");
 

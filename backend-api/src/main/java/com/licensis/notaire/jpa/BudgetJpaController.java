@@ -7,7 +7,6 @@ package com.licensis.notaire.jpa;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Item;
 import com.licensis.notaire.business.Payment;
 import com.licensis.notaire.business.Person;
@@ -139,7 +138,7 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
             version = persistentBudget.getVersion(); // Version of the object in the database
             oldVersion = budget.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) // Versions differ: someone else modified the object
+            if (OptimisticLockVersions.differ(version, oldVersion)) // Versions differ: someone else modified the object
             {
                 if (em != null) {
                     em.close();

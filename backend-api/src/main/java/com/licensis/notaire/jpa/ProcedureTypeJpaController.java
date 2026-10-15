@@ -8,7 +8,6 @@ import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.BudgetTemplate;
 import com.licensis.notaire.business.ProcedureTemplate;
 import com.licensis.notaire.business.ProcedureType;
@@ -148,7 +147,7 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
             version = foundProcedureType.getVersion(); // Version of the object in the database
             oldVersion = procedureType.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) // Versions differ: someone else modified the object
+            if (OptimisticLockVersions.differ(version, oldVersion)) // Versions differ: someone else modified the object
             {
                 if (em != null)
                 {

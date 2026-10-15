@@ -154,7 +154,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
                 version = persistentManagement.getVersion();
                 oldVersion = updatedManagement.getVersion();
 
-                if (version != oldVersion)
+                if (OptimisticLockVersions.differ(version, oldVersion))
                 {
                     throw new ClassModifiedException();
                 }
@@ -501,7 +501,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
             version = persistentManagement.getVersion(); // Version of the object in the database
             oldVersion = managementToArchive.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) // Versions differ: someone else modified the object
+            if (OptimisticLockVersions.differ(version, oldVersion)) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException("The indicated management was modified by another user");
 
@@ -556,7 +556,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
                 version = persistentManagement.getVersion();
                 oldVersion = updatedManagement.getVersion();
 
-                if (version != oldVersion)
+                if (OptimisticLockVersions.differ(version, oldVersion))
                 {
                     throw new ClassModifiedException();
                 }
@@ -609,7 +609,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
                 version = persistentManagement.getVersion();
                 oldVersion = updatedManagement.getVersion();
 
-                if (version != oldVersion)
+                if (OptimisticLockVersions.differ(version, oldVersion))
                 {
                     throw new ClassModifiedException();
                 }

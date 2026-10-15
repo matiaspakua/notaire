@@ -7,7 +7,6 @@ package com.licensis.notaire.jpa;
 import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Copy;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.Person;
@@ -351,7 +350,7 @@ public class CopyJpaController implements Serializable, JpaPersistence
             version = persistentCopy.getVersion(); // Version of the object in the database
             oldVersion = copy.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) // Versions differ: someone else modified the object
+            if (OptimisticLockVersions.differ(version, oldVersion)) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException();
             }

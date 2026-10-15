@@ -9,7 +9,6 @@ import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
-import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.FolioType;
 import java.io.Serializable;
@@ -107,7 +106,7 @@ public class FolioTypeJpaController implements Serializable, JpaPersistence
             version = persistenFolioType.getVersion();
             oldVersion = folioType.getVersion();
 
-            if (version != oldVersion)
+            if (OptimisticLockVersions.differ(version, oldVersion))
             {
                 if (em != null)
                 {
