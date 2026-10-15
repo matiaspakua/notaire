@@ -41,7 +41,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Document | Updated | Commit |
 |----------|---------|--------|
 | `docs/200-architecture/202-ADR/ADR-030-hexagonal-architecture-full-adoption.md` | yes | pending |
-| `CHANGELOG.md` | n/a — #1718 holds Unreleased | — |
+| `CHANGELOG.md` | yes — Unreleased after #1718 merged | pending |
 
 ## Gate log
 
