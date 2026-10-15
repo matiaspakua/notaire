@@ -1,16 +1,21 @@
 package com.licensis.notaire.unit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.licensis.notaire.adapter.in.web.workflow.WorkflowNodeController;
-import com.licensis.notaire.dto.DtoWorkflowNode;
-import com.licensis.notaire.business.ManagementStatus;
-import com.licensis.notaire.business.WorkflowDefinition;
-import com.licensis.notaire.business.WorkflowNode;
-import com.licensis.notaire.business.WorkflowNodeType;
-import com.licensis.notaire.repository.ManagementStatusRepository;
-import com.licensis.notaire.repository.WorkflowDefinitionRepository;
-import com.licensis.notaire.repository.WorkflowNodeRepository;
-import com.licensis.notaire.repository.WorkflowTransitionRepository;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,54 +25,39 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.licensis.notaire.adapter.in.web.workflow.WorkflowNodeController;
+import com.licensis.notaire.application.port.in.workflow.ManageWorkflowNodesUseCase;
+import com.licensis.notaire.application.port.in.workflow.ManageWorkflowNodesUseCase.CreateWorkflowNodeCommand;
+import com.licensis.notaire.application.port.in.workflow.ManageWorkflowNodesUseCase.UpdateWorkflowNodeCommand;
+import com.licensis.notaire.application.port.in.workflow.QueryWorkflowNodesUseCase;
+import com.licensis.notaire.domain.workflow.WorkflowNode;
+import com.licensis.notaire.domain.workflow.WorkflowNodeInUseException;
+import com.licensis.notaire.domain.workflow.WorkflowNodeInvalidException;
+import com.licensis.notaire.domain.workflow.WorkflowNodeKind;
+import com.licensis.notaire.dto.DtoWorkflowNode;
 
 @DisplayName("CU83 - WorkflowNodeController unit tests")
 @ExtendWith(MockitoExtension.class)
 class WorkflowNodeControllerTest {
 
     @Mock
-    private WorkflowNodeRepository repository;
+    private QueryWorkflowNodesUseCase query;
+
     @Mock
-    private WorkflowDefinitionRepository workflowRepository;
-    @Mock
-    private ManagementStatusRepository statusRepository;
-    @Mock
-    private WorkflowTransitionRepository transitionRepository;
+    private ManageWorkflowNodesUseCase manage;
 
     private MockMvc mockMvc;
     private ObjectMapper mapper;
 
     @BeforeEach
     void setUp() {
-        WorkflowNodeController controller = new WorkflowNodeController(
-                repository, workflowRepository, statusRepository, transitionRepository);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new WorkflowNodeController(query, manage)).build();
         mapper = new ObjectMapper();
     }
 
-    private WorkflowNode buildEntity() {
-        WorkflowDefinition wf = new WorkflowDefinition(1);
-        ManagementStatus status = new ManagementStatus(10);
-        status.setName("Started");
-        WorkflowNode node = new WorkflowNode();
-        node.setId(1);
-        node.setWorkflowDefinition(wf);
-        node.setManagementStatus(status);
-        node.setType(WorkflowNodeType.INITIAL);
-        node.setPositionX(100f);
-        node.setPositionY(200f);
-        return node;
+    private WorkflowNode domain() {
+        return WorkflowNode.restore(1, 1, 10, "Started", WorkflowNodeKind.INITIAL, 100f, 200f, 0);
     }
 
     private DtoWorkflowNode buildDto() {
@@ -84,7 +74,7 @@ class WorkflowNodeControllerTest {
     @Test
     @DisplayName("GET /api/v1/workflow-node/by-workflow/{id} should return nodes for workflow")
     void shouldReturnNodesForWorkflow() throws Exception {
-        when(repository.findByWorkflowDefinitionId(1)).thenReturn(List.of(buildEntity()));
+        when(query.findByWorkflowDefinitionId(1)).thenReturn(List.of(domain()));
         mockMvc.perform(get("/api/v1/workflow-node/by-workflow/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].type").value("INITIAL"));
@@ -93,7 +83,7 @@ class WorkflowNodeControllerTest {
     @Test
     @DisplayName("GET /api/v1/workflow-node/{id} should return 200 when found")
     void shouldReturnNodeById() throws Exception {
-        when(repository.findById(1)).thenReturn(Optional.of(buildEntity()));
+        when(query.findById(1)).thenReturn(Optional.of(domain()));
         mockMvc.perform(get("/api/v1/workflow-node/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.type").value("INITIAL"));
@@ -102,20 +92,14 @@ class WorkflowNodeControllerTest {
     @Test
     @DisplayName("GET /api/v1/workflow-node/{id} should return 404 when missing")
     void shouldReturn404WhenNodeMissing() throws Exception {
-        when(repository.findById(99)).thenReturn(Optional.empty());
-        mockMvc.perform(get("/api/v1/workflow-node/99"))
-                .andExpect(status().isNotFound());
+        when(query.findById(99)).thenReturn(Optional.empty());
+        mockMvc.perform(get("/api/v1/workflow-node/99")).andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("POST /api/v1/workflow-node should return 201 when created")
     void shouldCreateNode() throws Exception {
-        WorkflowDefinition wf = new WorkflowDefinition(1);
-        ManagementStatus status = new ManagementStatus(10);
-        WorkflowNode saved = buildEntity();
-        when(workflowRepository.findById(1)).thenReturn(Optional.of(wf));
-        when(statusRepository.findById(10)).thenReturn(Optional.of(status));
-        when(repository.save(any(WorkflowNode.class))).thenReturn(saved);
+        when(manage.create(any(CreateWorkflowNodeCommand.class))).thenReturn(domain());
         mockMvc.perform(post("/api/v1/workflow-node")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(buildDto())))
@@ -125,7 +109,8 @@ class WorkflowNodeControllerTest {
     @Test
     @DisplayName("POST /api/v1/workflow-node should return 404 when workflow not found")
     void shouldReturn404WhenWorkflowMissing() throws Exception {
-        when(workflowRepository.findById(1)).thenReturn(Optional.empty());
+        when(manage.create(any(CreateWorkflowNodeCommand.class)))
+                .thenThrow(WorkflowNodeInvalidException.missingWorkflow());
         mockMvc.perform(post("/api/v1/workflow-node")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(buildDto())))
@@ -135,9 +120,7 @@ class WorkflowNodeControllerTest {
     @Test
     @DisplayName("PUT /api/v1/workflow-node/{id} should return 200 when updated")
     void shouldUpdateNode() throws Exception {
-        WorkflowNode existing = buildEntity();
-        when(repository.findById(1)).thenReturn(Optional.of(existing));
-        when(repository.save(any(WorkflowNode.class))).thenReturn(existing);
+        doNothing().when(manage).update(eq(1), any(UpdateWorkflowNodeCommand.class));
         mockMvc.perform(put("/api/v1/workflow-node/1")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(buildDto())))
@@ -145,20 +128,16 @@ class WorkflowNodeControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /api/v1/workflow-node/{id} should return 200 when deleted")
+    @DisplayName("DELETE /api/v1/workflow-node/{id} should return 204 when deleted")
     void shouldDeleteNode() throws Exception {
-        when(repository.existsById(1)).thenReturn(true);
-        when(transitionRepository.existsByOriginNodeIdOrDestinationNodeId(1, 1)).thenReturn(false);
-        mockMvc.perform(delete("/api/v1/workflow-node/1"))
-                .andExpect(status().isNoContent());
+        doNothing().when(manage).delete(1);
+        mockMvc.perform(delete("/api/v1/workflow-node/1")).andExpect(status().isNoContent());
     }
 
     @Test
     @DisplayName("DELETE /api/v1/workflow-node/{id} should return 409 when node has transitions")
     void shouldReturn409WhenNodeHasTransitions() throws Exception {
-        when(repository.existsById(1)).thenReturn(true);
-        when(transitionRepository.existsByOriginNodeIdOrDestinationNodeId(1, 1)).thenReturn(true);
-        mockMvc.perform(delete("/api/v1/workflow-node/1"))
-                .andExpect(status().isConflict());
+        doThrow(WorkflowNodeInUseException.cannotDelete()).when(manage).delete(anyInt());
+        mockMvc.perform(delete("/api/v1/workflow-node/1")).andExpect(status().isConflict());
     }
 }
