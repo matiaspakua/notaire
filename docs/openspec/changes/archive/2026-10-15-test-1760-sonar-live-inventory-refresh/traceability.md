@@ -10,13 +10,13 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #1760 | in progress |
+| Issue | #1760 | PR open |
 | Use Case | CU78 / CU76 | exists |
 | Specification | `docs/openspec/changes/test-1760-sonar-live-inventory-refresh/` | ready |
 | Branch | `cursor/1760-sonar-live-inventory-refresh-69d3` | created |
 | Tasks | `tasks.md` | mostly complete; PR pending |
-| Commits | pending | pending |
-| Pull Request | pending | pending |
+| Commits | `7e3df51c`, `3255d954` | pushed |
+| Pull Request | [#1764](https://github.com/matiaspakua/notaire/pull/1764) | open |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |
