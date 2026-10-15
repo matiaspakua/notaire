@@ -111,6 +111,11 @@ class StartScriptTest(unittest.TestCase):
         for key in ("POSTGRES_PORT", "BACKEND_PORT", "PGADMIN_PORT", "FRONTEND_PORT"):
             self.assertIn(key, text)
 
+    def test_start_script_defaults_compose_project_name_for_observability(self):
+        """Worktrees must still publish notaire_notary-network for infra scrapes (#1678)."""
+        text = START_SCRIPT.read_text(encoding="utf-8")
+        self.assertIn('COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-notaire}"', text)
+
 
 class DocumentationTest(unittest.TestCase):
     def test_env_example_lists_every_override_key(self):
