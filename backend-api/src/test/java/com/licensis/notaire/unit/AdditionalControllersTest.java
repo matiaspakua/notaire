@@ -141,12 +141,12 @@ class AdditionalControllersTest {
         void all() throws Exception {
             var query = mock(com.licensis.notaire.application.port.in.management.QueryManagementsUseCase.class);
             var manage = mock(com.licensis.notaire.application.port.in.management.ManageManagementsUseCase.class);
-            var traceService = mock(com.licensis.notaire.application.usecase.workflow.WorkflowTraceService.class);
+            var traceService = mock(com.licensis.notaire.application.port.in.workflow.QueryWorkflowTraceUseCase.class);
             var transitionUseCase = mock(com.licensis.notaire.application.port.in.management.TransitionManagementUseCase.class);
             var transitionWebMapper =
                     mock(com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper.class);
             var externalEntityDocumentService = mock(com.licensis.notaire.application.usecase.document.ExternalEntityDocumentService.class);
-            var documentReentryService = mock(com.licensis.notaire.application.usecase.workflow.DocumentReentryService.class);
+            var documentReentryService = mock(com.licensis.notaire.application.port.in.workflow.DocumentReentryUseCase.class);
             var mvc = standaloneSetup(new ManagementController(
                     query,
                     manage,

@@ -84,11 +84,11 @@ class ManagementControllerDeleteLogTest {
         MockMvc mvc = standaloneSetup(new ManagementController(
                 mock(QueryManagementsUseCase.class),
                 new ManagementWriteService(ops),
-                mock(com.licensis.notaire.application.usecase.workflow.WorkflowTraceService.class),
+                mock(com.licensis.notaire.application.port.in.workflow.QueryWorkflowTraceUseCase.class),
                 mock(com.licensis.notaire.application.port.in.management.TransitionManagementUseCase.class),
                 mock(TransitionManagementWebMapper.class),
                 mock(com.licensis.notaire.application.usecase.document.ExternalEntityDocumentService.class),
-                mock(com.licensis.notaire.application.usecase.workflow.DocumentReentryService.class)))
+                mock(com.licensis.notaire.application.port.in.workflow.DocumentReentryUseCase.class)))
                 .build();
 
         mvc.perform(delete("/api/v1/managements/5")).andExpect(status().isConflict());
