@@ -123,6 +123,7 @@ Hexagonal architecture epic [#1693](https://github.com/matiaspakua/notaire/issue
 
 ### Fixed
 
+- **pm:** the milestone apply deletes empty merged-away milestones (the History buckets folded into H8), and `--check` reports them and board views outside the 9-view contract ([#1847](https://github.com/matiaspakua/notaire/issues/1847))
 - **pm:** the milestone apply run creates Backlog/Catalog without a null `due_on`, so H0, v0.1, v0.2 and Catalog are created and issues move ([#1847](https://github.com/matiaspakua/notaire/issues/1847))
 - **release:** CD dispatch names `GH_REPO` so a release-please tag starts delivery without a git checkout ([#1599](https://github.com/matiaspakua/notaire/issues/1599))
 
