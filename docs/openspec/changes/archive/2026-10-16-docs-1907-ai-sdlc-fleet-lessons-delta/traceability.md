@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/docs-1907-ai-sdlc-fleet-lessons-delta/` | Gate 1 |
 | Branch | `cursor/docs-ai-sdlc-lessons-delta-69d3` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
+| Commits | `3cc99874` Gate 1 + guard; `50732131` encode lessons | done |
 | Pull Request | pending push | pending |
 | CI run | <!-- workflow run URL --> | pending |
 | Merge commit | <!-- SHA --> | pending |
