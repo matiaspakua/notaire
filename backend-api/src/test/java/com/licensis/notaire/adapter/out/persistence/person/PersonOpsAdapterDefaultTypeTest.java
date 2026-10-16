@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 
 import com.licensis.notaire.application.port.out.person.PersonOpsPort.PersonCommand;
 import com.licensis.notaire.application.port.out.person.PersonOpsPort.SaveResult;
-import com.licensis.notaire.application.usecase.person.PersonService;
 import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.repository.IdentificationTypeRepository;

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.out.person.PersonOpsPort;
-import com.licensis.notaire.application.usecase.person.PersonService;
 import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.exception.BusinessValidationException;

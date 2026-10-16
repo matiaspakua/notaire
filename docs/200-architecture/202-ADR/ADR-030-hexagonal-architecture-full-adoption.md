@@ -919,6 +919,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   DeedOperationPort / NotebookFolioOperationPort (helpers use Spring Data); keep
   NotebookOpsPort / AuxiliaryProtocolOpsPort. Clears ~10 R2 edges (R2 56→46).
 
+- **Backend R2 shrink — person (#1881):** move PersonService to `adapter.out.persistence.person`;
+  delete dead entity-speaking PersonUseCase / PersonRepositoryPort; keep PersonOpsPort /
+  PersonLookupPort. Clears ~8 R2 edges (R2 46→38).
+
 
 ## Options considered
 

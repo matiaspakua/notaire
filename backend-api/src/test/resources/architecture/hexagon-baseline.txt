@@ -1,5 +1,4 @@
 R2 | com.licensis.notaire.application.port.in.history.HistoryUseCase -> com.licensis.notaire.business.History
-R2 | com.licensis.notaire.application.port.in.person.PersonUseCase -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.port.out.audit.AuditRecordRepositoryPort -> com.licensis.notaire.business.AuditRecord
 R2 | com.licensis.notaire.application.port.out.audit.AuditRecordRepositoryPort -> org.springframework.data.domain.Page
 R2 | com.licensis.notaire.application.port.out.audit.AuditRecordRepositoryPort -> org.springframework.data.domain.Pageable
@@ -10,7 +9,6 @@ R2 | com.licensis.notaire.application.port.out.folio.FolioRepositoryPort -> com.
 R2 | com.licensis.notaire.application.port.out.folio.FolioRepositoryPort -> com.licensis.notaire.business.FolioType
 R2 | com.licensis.notaire.application.port.out.history.HistoryRepositoryPort -> com.licensis.notaire.business.History
 R2 | com.licensis.notaire.application.port.out.item.ItemRepositoryPort -> com.licensis.notaire.business.Item
-R2 | com.licensis.notaire.application.port.out.person.PersonRepositoryPort -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.port.out.property.PropertyRepositoryPort -> com.licensis.notaire.business.Property
 R2 | com.licensis.notaire.application.port.out.registrationdraft.RegistrationDraftRepositoryPort -> com.licensis.notaire.business.RegistrationDraft
 R2 | com.licensis.notaire.application.port.out.substitution.SubstitutionRepositoryPort -> com.licensis.notaire.business.Person
@@ -29,12 +27,6 @@ R2 | com.licensis.notaire.application.usecase.history.HistoryMapper -> com.licen
 R2 | com.licensis.notaire.application.usecase.history.HistoryMapper -> com.licensis.notaire.business.History
 R2 | com.licensis.notaire.application.usecase.history.HistoryMapper -> com.licensis.notaire.business.ManagementStatus
 R2 | com.licensis.notaire.application.usecase.item.ItemService -> com.licensis.notaire.business.Item
-R2 | com.licensis.notaire.application.usecase.person.PersonService -> com.licensis.notaire.business.IdentificationType
-R2 | com.licensis.notaire.application.usecase.person.PersonService -> com.licensis.notaire.business.Person
-R2 | com.licensis.notaire.application.usecase.person.PersonService -> com.licensis.notaire.repository.PersonRepository
-R2 | com.licensis.notaire.application.usecase.person.PersonService -> org.springframework.dao.DataIntegrityViolationException
-R2 | com.licensis.notaire.application.usecase.person.PersonService -> org.springframework.data.domain.Page
-R2 | com.licensis.notaire.application.usecase.person.PersonService -> org.springframework.data.domain.Pageable
 R2 | com.licensis.notaire.application.usecase.registrationdraft.RegistrationDraftService -> com.licensis.notaire.business.Deed
 R2 | com.licensis.notaire.application.usecase.registrationdraft.RegistrationDraftService -> com.licensis.notaire.business.Procedure
 R2 | com.licensis.notaire.application.usecase.registrationdraft.RegistrationDraftService -> com.licensis.notaire.business.Property
