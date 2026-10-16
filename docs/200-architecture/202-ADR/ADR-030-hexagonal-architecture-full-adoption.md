@@ -232,6 +232,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   (#1719) into `core/management-status`, `adapters/http/management-status`, and `composition/management-status`.
   Admin page and `useManagementStatuses` no longer import `api-client` (eslint suppressions shrink by two).
 
+- **Frontend templates admin (#1788):** `core/procedure-template`, `core/budget-template`,
+  `core/document-cost-template`, HTTP adapters, and composition. Templates page and
+  `useProcedureTemplate` no longer import `api-client` (eslint suppressions shrink by three).
+
 - **Frontend third catalog — document types (#1777):** `core/document-type`, `adapters/http/document-type`,
   and `composition/document-type`. Documents admin page and `useDocuments` no longer import `api-client`
   (eslint suppressions shrink by two).
