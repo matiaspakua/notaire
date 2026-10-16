@@ -14,13 +14,10 @@ import com.licensis.notaire.dto.DtoTestimonyMovement;
 import com.licensis.notaire.dto.DtoTestimony;
 import com.licensis.notaire.dto.DtoProcedureType;
 import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.repository.IdentificationTypeRepository;
-import com.licensis.notaire.application.usecase.deed.DeedSigningService;
-import com.licensis.notaire.application.usecase.deed.DeedService;
 import com.licensis.notaire.application.usecase.person.PersonService;
 import com.licensis.notaire.application.usecase.budget.BudgetService;
 import org.junit.jupiter.api.DisplayName;
@@ -307,30 +304,44 @@ class SimpleControllersTest {
     @Nested
     @DisplayName("DeedController")
     class DeedControllerTests {
-        private final DeedService service = mock(DeedService.class);
-        private final DeedSigningService signingService = mock(DeedSigningService.class);
-        private final com.licensis.notaire.repository.FolioRepository folioRepository =
-                mock(com.licensis.notaire.repository.FolioRepository.class);
+        private final com.licensis.notaire.application.port.in.deed.QueryDeedsUseCase query =
+                mock(com.licensis.notaire.application.port.in.deed.QueryDeedsUseCase.class);
+        private final com.licensis.notaire.application.port.in.deed.ManageDeedsUseCase manage =
+                mock(com.licensis.notaire.application.port.in.deed.ManageDeedsUseCase.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new DeedController(service, signingService, folioRepository))
+                standaloneSetup(new DeedController(query, manage))
                         .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
 
+        private static com.licensis.notaire.application.port.out.deed.DeedOpsPort.DeedView view(
+                int id, String status, int number) {
+            return new com.licensis.notaire.application.port.out.deed.DeedOpsPort.DeedView(
+                    id, number, "x", status, null, null, null, null, 0);
+        }
+
         @Test
         @DisplayName("Should cover happy paths")
         void allPaths() throws Exception {
-            Deed e = new Deed();
-            e.setIdDeed(1);
-            e.setStatus("BORRADOR");
-            e.setNumber(10);
-            // GET /deeds without ?status= asks the service for every status (#1340).
-            when(service.findAllPaged(isNull(), any(Pageable.class))).thenReturn(new PageImpl<>(List.of(e), PageRequest.of(0, 20), 1));
-            when(service.findById(1)).thenReturn(Optional.of(e));
-            when(service.findById(2)).thenReturn(Optional.empty());
-            when(service.findAvailableNotaries()).thenReturn(List.of());
-            when(service.searchByNumber(any())).thenReturn(List.of(e));
-            when(service.save(any(Deed.class))).thenReturn(e);
+            var e = view(1, "BORRADOR", 10);
+            // GET /deeds without ?status= asks for every status (#1340).
+            when(query.findAll(isNull(), anyInt(), anyInt(), any()))
+                    .thenReturn(new com.licensis.notaire.application.port.out.deed.DeedOpsPort.PageResult(
+                            List.of(e), 0, 20, 1));
+            when(query.findById(1)).thenReturn(Optional.of(e));
+            when(query.findById(2)).thenReturn(Optional.empty());
+            when(query.findAvailableNotaries()).thenReturn(List.of());
+            when(query.searchByNumber(any())).thenReturn(List.of(e));
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.deed.DeedOpsPort.SaveResult.Created(e));
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.deed.DeedOpsPort.SaveResult.Updated(e));
+            when(manage.update(eq(2), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.deed.DeedOpsPort.SaveResult.NotFound());
+            when(manage.delete(1)).thenReturn(
+                    new com.licensis.notaire.application.port.out.deed.DeedOpsPort.DeleteResult.Deleted());
+            when(manage.delete(2)).thenReturn(
+                    new com.licensis.notaire.application.port.out.deed.DeedOpsPort.DeleteResult.NotFound());
 
             mvc.perform(get("/api/v1/deeds")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/deeds/1")).andExpect(status().isOk());
@@ -352,20 +363,18 @@ class SimpleControllersTest {
         @Test
         @DisplayName("Should return 500 when deed save throws (#916)")
         void allPathsErrorOnSave() throws Exception {
-            when(service.save(any(Deed.class))).thenThrow(new RuntimeException("x"));
+            when(manage.create(any())).thenThrow(new RuntimeException("x"));
             String deedBody = "{\"number\":10,\"status\":\"BORRADOR\",\"body\":\"x\"}";
             mvc.perform(post("/api/v1/deeds").contentType("application/json")
                     .content(deedBody)).andExpect(status().isInternalServerError());
         }
 
         @Test
-        @DisplayName("Should default status to Sin Firmar when frontend omits it (CU05 / #1124 fallout)")
+        @DisplayName("Should map Sin Firmar when create omits status (CU05 / #1124 fallout)")
         void shouldDefaultStatusWhenOmittedOnCreate() throws Exception {
-            when(service.save(any(Deed.class))).thenAnswer(invocation -> {
-                Deed saved = invocation.getArgument(0);
-                saved.setIdDeed(42);
-                return saved;
-            });
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.deed.DeedOpsPort.SaveResult.Created(
+                            view(42, "Sin Firmar", 55)));
 
             mvc.perform(post("/api/v1/deeds").contentType("application/json")
                             .content("""
