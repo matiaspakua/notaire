@@ -10,10 +10,6 @@ R2 | com.licensis.notaire.application.port.out.folio.FolioRepositoryPort -> com.
 R2 | com.licensis.notaire.application.port.out.folio.FolioRepositoryPort -> com.licensis.notaire.business.FolioType
 R2 | com.licensis.notaire.application.port.out.history.HistoryRepositoryPort -> com.licensis.notaire.business.History
 R2 | com.licensis.notaire.application.port.out.item.ItemRepositoryPort -> com.licensis.notaire.business.Item
-R2 | com.licensis.notaire.application.port.out.notebook.DeedOperationPort -> com.licensis.notaire.business.Deed
-R2 | com.licensis.notaire.application.port.out.notebook.NotebookFolioOperationPort -> com.licensis.notaire.business.Folio
-R2 | com.licensis.notaire.application.port.out.notebook.NotebookRepositoryPort -> com.licensis.notaire.business.Notebook
-R2 | com.licensis.notaire.application.port.out.notebook.NotebookRepositoryPort -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.port.out.person.PersonRepositoryPort -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.port.out.property.PropertyRepositoryPort -> com.licensis.notaire.business.Property
 R2 | com.licensis.notaire.application.port.out.registrationdraft.RegistrationDraftRepositoryPort -> com.licensis.notaire.business.RegistrationDraft
@@ -33,12 +29,6 @@ R2 | com.licensis.notaire.application.usecase.history.HistoryMapper -> com.licen
 R2 | com.licensis.notaire.application.usecase.history.HistoryMapper -> com.licensis.notaire.business.History
 R2 | com.licensis.notaire.application.usecase.history.HistoryMapper -> com.licensis.notaire.business.ManagementStatus
 R2 | com.licensis.notaire.application.usecase.item.ItemService -> com.licensis.notaire.business.Item
-R2 | com.licensis.notaire.application.usecase.notebook.AuxiliaryProtocolService -> com.licensis.notaire.business.Deed
-R2 | com.licensis.notaire.application.usecase.notebook.AuxiliaryProtocolService -> com.licensis.notaire.business.Folio
-R2 | com.licensis.notaire.application.usecase.notebook.AuxiliaryProtocolService -> com.licensis.notaire.business.FolioType
-R2 | com.licensis.notaire.application.usecase.notebook.NotebookService -> com.licensis.notaire.business.Folio
-R2 | com.licensis.notaire.application.usecase.notebook.NotebookService -> com.licensis.notaire.business.Notebook
-R2 | com.licensis.notaire.application.usecase.notebook.NotebookService -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.usecase.person.PersonService -> com.licensis.notaire.business.IdentificationType
 R2 | com.licensis.notaire.application.usecase.person.PersonService -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.usecase.person.PersonService -> com.licensis.notaire.repository.PersonRepository

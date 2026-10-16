@@ -1,14 +1,14 @@
 package com.licensis.notaire.service.unit;
 
+import com.licensis.notaire.adapter.out.persistence.notebook.AuxiliaryProtocolService;
 import com.licensis.notaire.application.port.out.folio.FolioCatalogPort;
 import com.licensis.notaire.application.port.out.folio.FolioRepositoryPort;
-import com.licensis.notaire.application.port.out.notebook.DeedOperationPort;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.FolioType;
-import com.licensis.notaire.application.usecase.notebook.AuxiliaryProtocolService;
+import com.licensis.notaire.repository.DeedRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class AuxiliaryProtocolServiceTest {
     private FolioCatalogPort folioCatalog;
 
     @Mock
-    private DeedOperationPort deedRepository;
+    private DeedRepository deedRepository;
 
     private AuxiliaryProtocolService auxiliaryProtocolService;
 
