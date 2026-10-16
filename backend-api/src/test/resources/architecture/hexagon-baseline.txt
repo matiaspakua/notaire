@@ -5,9 +5,6 @@ R1 | com.licensis.notaire.adapter.in.web.item.ItemResponse -> com.licensis.notai
 R1 | com.licensis.notaire.adapter.in.web.person.PersonController -> com.licensis.notaire.business.IdentificationType
 R1 | com.licensis.notaire.adapter.in.web.person.PersonController -> com.licensis.notaire.business.Person
 R1 | com.licensis.notaire.adapter.in.web.person.PersonController -> com.licensis.notaire.repository.IdentificationTypeRepository
-R1 | com.licensis.notaire.adapter.in.web.substitution.SubstitutionController -> com.licensis.notaire.business.Person
-R1 | com.licensis.notaire.adapter.in.web.substitution.SubstitutionController -> com.licensis.notaire.business.Substitution
-R1 | com.licensis.notaire.adapter.in.web.substitution.SubstitutionController -> com.licensis.notaire.repository.PersonRepository
 R1 | com.licensis.notaire.adapter.in.web.support.DeedRef -> com.licensis.notaire.business.Deed
 R1 | com.licensis.notaire.adapter.in.web.support.DocumentTypeRef -> com.licensis.notaire.business.DocumentType
 R1 | com.licensis.notaire.adapter.in.web.support.ErrorResponses -> jakarta.persistence.OptimisticLockException
