@@ -281,6 +281,11 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   calls `QueryProcedureFoldersUseCase` / `ManageProcedureFoldersUseCase` only; entity access and DTO
   mapping live behind `ProcedureFolderOpsPort`. ArchUnit R1 clears its ProcedureFolder entity edge.
 
+- **DocumentCostTemplate ports-only (#1821):** CU27/CU39 mixed controller R1 hotspot (2 edges).
+  `DocumentCostTemplateController` calls Query/Manage inbound ports only; `DocumentCostTemplateOpsAdapter`
+  wraps `DocumentCostTemplateService` and maps entities to views. ArchUnit R1 clears its entity/PK edges.
+  REST unchanged.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers
