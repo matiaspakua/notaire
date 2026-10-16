@@ -14,11 +14,6 @@
       "count": 1
     }
   },
-  "src/app/dashboard/administration/management-statuses/page.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/app/dashboard/administration/procedures/RequiredDocumentsDialog.tsx": {
     "no-restricted-imports": {
       "count": 1
@@ -180,11 +175,6 @@
     }
   },
   "src/hooks/useManagementSearch.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useManagementStatuses.ts": {
     "no-restricted-imports": {
       "count": 1
     }
