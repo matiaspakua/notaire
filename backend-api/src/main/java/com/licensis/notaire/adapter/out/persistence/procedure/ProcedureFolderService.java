@@ -1,10 +1,10 @@
-package com.licensis.notaire.application.usecase.procedure;
+package com.licensis.notaire.adapter.out.persistence.procedure;
 
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.ProcedureFolder;
 import com.licensis.notaire.business.Procedure;
-import com.licensis.notaire.application.port.out.procedure.ProcedureFolderRepositoryPort;
+import com.licensis.notaire.repository.ProcedureFolderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -14,8 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * CU85 - Manage procedure folders: generates a folder for each new procedure
- * and manages its lifecycle (active, on hold, archived).
+ * CU85 — Manage procedure folders. Outbound persistence helper (issue #1867).
  */
 @Service
 @Transactional
@@ -26,9 +25,9 @@ public class ProcedureFolderService {
 
     private static final Logger log = LoggerFactory.getLogger(ProcedureFolderService.class);
 
-    private final ProcedureFolderRepositoryPort procedureFolderRepository;
+    private final ProcedureFolderRepository procedureFolderRepository;
 
-    public ProcedureFolderService(ProcedureFolderRepositoryPort procedureFolderRepository) {
+    public ProcedureFolderService(ProcedureFolderRepository procedureFolderRepository) {
         this.procedureFolderRepository = procedureFolderRepository;
     }
 

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.out.procedure.ProcedureFolderOpsPort;
-import com.licensis.notaire.application.usecase.procedure.ProcedureFolderService;
 import com.licensis.notaire.business.ProcedureFolder;
 import com.licensis.notaire.dto.DtoProcedureFolder;
 import com.licensis.notaire.exception.BusinessValidationException;

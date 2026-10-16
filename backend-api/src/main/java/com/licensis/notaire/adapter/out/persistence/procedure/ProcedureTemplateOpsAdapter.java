@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateOpsPort;
-import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort;
 import com.licensis.notaire.business.ProcedureTemplate;
 import com.licensis.notaire.business.ProcedureTemplatePK;
+import com.licensis.notaire.repository.ProcedureTemplateRepository;
 
 /**
  * Persistence/ops adapter for procedure templates. Holds entity access previously on
@@ -18,9 +18,9 @@ import com.licensis.notaire.business.ProcedureTemplatePK;
 @Component
 public class ProcedureTemplateOpsAdapter implements ProcedureTemplateOpsPort {
 
-    private final ProcedureTemplateRepositoryPort repository;
+    private final ProcedureTemplateRepository repository;
 
-    public ProcedureTemplateOpsAdapter(ProcedureTemplateRepositoryPort repository) {
+    public ProcedureTemplateOpsAdapter(ProcedureTemplateRepository repository) {
         this.repository = repository;
     }
 
@@ -79,7 +79,7 @@ public class ProcedureTemplateOpsAdapter implements ProcedureTemplateOpsPort {
         if (!repository.existsById(pk)) {
             return new DeleteResult.NotFound();
         }
-        repository.deleteById(pk);
+        repository.deleteByPk(pk);
         return new DeleteResult.Deleted();
     }
 }

@@ -1,4 +1,4 @@
-package com.licensis.notaire.application.usecase.procedure;
+package com.licensis.notaire.adapter.out.persistence.procedure;
 
 import com.licensis.notaire.business.DocumentType;
 import com.licensis.notaire.business.Procedure;
@@ -13,9 +13,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Issue #773 (CU02/CU03) - When a procedure is created on case confirmation, materializes one
+ * Issue #773 (CU02/CU03) — When a procedure is created on case confirmation, materializes one
  * pending {@code SubmittedDocument} per document type required by the procedure type's
- * {@code ProcedureTemplate}. Idempotent on (procedure, document type).
+ * {@code ProcedureTemplate}. Outbound persistence helper (issue #1867).
  */
 @Service
 public class RequiredDocumentationOnConfirmService {

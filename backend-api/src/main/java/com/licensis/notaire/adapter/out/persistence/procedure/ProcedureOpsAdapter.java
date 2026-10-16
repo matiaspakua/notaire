@@ -11,8 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.out.procedure.ProcedureOpsPort;
-import com.licensis.notaire.application.port.out.procedure.ProcedureRepositoryPort;
-import com.licensis.notaire.application.port.out.procedure.ProcedureTypeRepositoryPort;
 import com.licensis.notaire.application.port.out.property.PropertyRepositoryPort;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Deed;
@@ -23,6 +21,8 @@ import com.licensis.notaire.business.Property;
 import com.licensis.notaire.repository.BudgetRepository;
 import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.DeedRepository;
+import com.licensis.notaire.repository.ProcedureRepository;
+import com.licensis.notaire.repository.ProcedureTypeRepository;
 
 /**
  * Persistence/ops adapter for procedures. Holds entity/repository access previously on
@@ -33,16 +33,16 @@ public class ProcedureOpsAdapter implements ProcedureOpsPort {
 
     private static final Logger log = LoggerFactory.getLogger(ProcedureOpsAdapter.class);
 
-    private final ProcedureRepositoryPort repository;
-    private final ProcedureTypeRepositoryPort procedureTypeRepository;
+    private final ProcedureRepository repository;
+    private final ProcedureTypeRepository procedureTypeRepository;
     private final PropertyRepositoryPort propertyRepository;
     private final BudgetRepository budgetRepository;
     private final DeedRepository deedRepository;
     private final DeedManagementRepository deedManagementRepository;
 
     public ProcedureOpsAdapter(
-            ProcedureRepositoryPort repository,
-            ProcedureTypeRepositoryPort procedureTypeRepository,
+            ProcedureRepository repository,
+            ProcedureTypeRepository procedureTypeRepository,
             PropertyRepositoryPort propertyRepository,
             BudgetRepository budgetRepository,
             DeedRepository deedRepository,

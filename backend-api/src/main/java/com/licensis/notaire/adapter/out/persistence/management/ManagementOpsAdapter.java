@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.out.management.ManagementOpsPort;
 import com.licensis.notaire.application.usecase.history.HistoryMapper;
-import com.licensis.notaire.application.usecase.procedure.ProcedureFolderService;
-import com.licensis.notaire.application.usecase.procedure.RequiredDocumentationOnConfirmService;
+import com.licensis.notaire.adapter.out.persistence.procedure.ProcedureFolderService;
+import com.licensis.notaire.adapter.out.persistence.procedure.RequiredDocumentationOnConfirmService;
 import com.licensis.notaire.business.History;
 import com.licensis.notaire.business.HistoryOrder;
 import com.licensis.notaire.dto.DtoHistorySummary;

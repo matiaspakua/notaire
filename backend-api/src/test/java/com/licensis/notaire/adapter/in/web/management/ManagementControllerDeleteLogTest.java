@@ -78,8 +78,8 @@ class ManagementControllerDeleteLogTest {
                 mock(com.licensis.notaire.adapter.out.persistence.management.ManagementSubstitutionService.class),
                 mock(com.licensis.notaire.adapter.out.persistence.management.ManagementStatusLogService.class),
                 mock(com.licensis.notaire.adapter.out.persistence.management.ManagementStatusWriteGuard.class),
-                mock(com.licensis.notaire.application.usecase.procedure.ProcedureFolderService.class),
-                mock(com.licensis.notaire.application.usecase.procedure.RequiredDocumentationOnConfirmService.class));
+                mock(com.licensis.notaire.adapter.out.persistence.procedure.ProcedureFolderService.class),
+                mock(com.licensis.notaire.adapter.out.persistence.procedure.RequiredDocumentationOnConfirmService.class));
 
         MockMvc mvc = standaloneSetup(new ManagementController(
                 mock(QueryManagementsUseCase.class),
