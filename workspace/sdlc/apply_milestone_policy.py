@@ -66,6 +66,8 @@ def milestone_payload(title: str) -> dict:
         "due_on": MILESTONE_DUE.get(title),
         "state": "closed" if title in CLOSED_BY_DEFINITION else "open",
     }
+
+
 VIEW_ALIASES = {
     "Agent queue": "Delivery schedule",
     "Needs triage": "Triage",
