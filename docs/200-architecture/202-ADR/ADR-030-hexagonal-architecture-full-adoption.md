@@ -314,7 +314,8 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
 - **Workflow definition (#1728):** catalog-like aggregate (CU70). Controller was repo-only (~4 R1 edges,
   including an unused transition repository injection); now ports-only with domain `WorkflowDefinition`,
   delete-guard when nodes exist in the use case, and `WorkflowDefinitionCatalogPort`. Legacy
-  `WorkflowDefinitionRepositoryPort` remains for other consumers. Sibling node/transition slices stay
+  `WorkflowDefinitionRepositoryPort` was later removed in #1851 (no remaining
+  consumers; catalog ports are the live path). Sibling node/transition slices stay
   separate (#1729 / #1730).
 
 
@@ -881,6 +882,13 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `adapter.out.persistence.management`; OpsPort/inbound gain case-summary,
   financial summary, pending balance; `ManagementAutoTransitionPort` for
   document-slice auto-transition. Clears ~56 R2 edges (R2 210→154).
+
+- **Backend R2 shrink — workflow (#1851):** delete dead entity-speaking
+  `Workflow*RepositoryPort` + legacy adapters (superseded by `*CatalogPort`);
+  move `WorkflowTraceService` / `DocumentReentryService` to
+  `adapter.out.persistence.workflow` implementing inbound
+  `QueryWorkflowTraceUseCase` / `DocumentReentryUseCase`. Clears ~30 R2 edges
+  (R2 154→124).
 
 
 ## Options considered

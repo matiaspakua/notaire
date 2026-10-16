@@ -1,5 +1,6 @@
-package com.licensis.notaire.application.usecase.workflow;
+package com.licensis.notaire.adapter.out.persistence.workflow;
 
+import com.licensis.notaire.application.port.in.workflow.QueryWorkflowTraceUseCase;
 import com.licensis.notaire.dto.DtoManagementWorkflowTrace;
 import com.licensis.notaire.dto.DtoManagementWorkflowTrace.DtoHistoryEntry;
 import com.licensis.notaire.dto.DtoManagementWorkflowTrace.DtoTestimonyMovementEntry;
@@ -31,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class WorkflowTraceService {
+public class WorkflowTraceService implements QueryWorkflowTraceUseCase {
 
     private final DeedManagementRepository managementRepository;
     private final HistoryRepository historyRepository;
@@ -56,6 +57,7 @@ public class WorkflowTraceService {
      * LAZY associations ({@code DeedManagement.procedureList} and
      * {@code ProcedureType.workflowDefinition}) inside the same persistence context.
      */
+    @Override
     @Transactional(readOnly = true)
     public DtoManagementWorkflowTrace buildTrace(Integer managementId) {
         DeedManagement management = managementRepository.findById(managementId)

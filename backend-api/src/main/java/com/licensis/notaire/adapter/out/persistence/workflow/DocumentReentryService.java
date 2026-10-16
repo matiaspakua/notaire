@@ -1,5 +1,6 @@
-package com.licensis.notaire.application.usecase.workflow;
+package com.licensis.notaire.adapter.out.persistence.workflow;
 
+import com.licensis.notaire.application.port.in.workflow.DocumentReentryUseCase;
 import com.licensis.notaire.dto.DtoRequiredDocument;
 import com.licensis.notaire.dto.DtoDocumentReentered;
 import com.licensis.notaire.dto.DtoManagementDocumentReentry;
@@ -28,7 +29,7 @@ import java.util.List;
  * type by creating a {@code SubmittedDocument} with {@code reentered=true}.
  */
 @Service
-public class DocumentReentryService {
+public class DocumentReentryService implements DocumentReentryUseCase {
 
     private final DeedManagementRepository managementRepository;
     private final ProcedureRepository procedureRepository;
@@ -44,6 +45,7 @@ public class DocumentReentryService {
         this.submittedDocumentRepository = submittedDocumentRepository;
     }
 
+    @Override
     @Transactional(readOnly = true)
     public DtoManagementDocumentReentry getRequiredDocumentation(Integer idManagement) {
         DeedManagement management = findManagementOrThrow(idManagement);
@@ -55,6 +57,7 @@ public class DocumentReentryService {
                 management.getHeading(), procedures);
     }
 
+    @Override
     @Transactional
     public DtoDocumentReentered reenter(Integer idManagement, DtoDocumentReentryRequest request) {
         findManagementOrThrow(idManagement);
