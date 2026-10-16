@@ -1,4 +1,4 @@
-package com.licensis.notaire.application.usecase.deed;
+package com.licensis.notaire.adapter.out.persistence.deed;
 
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;

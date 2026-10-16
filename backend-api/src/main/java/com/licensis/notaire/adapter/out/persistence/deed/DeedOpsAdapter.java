@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.out.deed.DeedOpsPort;
-import com.licensis.notaire.application.usecase.deed.DeedService;
-import com.licensis.notaire.application.usecase.deed.DeedSigningService;
 import com.licensis.notaire.business.BusinessConstants;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Person;

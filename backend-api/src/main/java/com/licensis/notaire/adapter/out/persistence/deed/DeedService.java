@@ -1,4 +1,4 @@
-package com.licensis.notaire.application.usecase.deed;
+package com.licensis.notaire.adapter.out.persistence.deed;
 
 import com.licensis.notaire.application.port.in.deed.ValidateDeedNumberingUseCase;
 import com.licensis.notaire.domain.deed.DeedNumberingValidationResult;
@@ -75,7 +75,7 @@ public class DeedService {
             }
             boolean isAuxiliary = folio.getFkIdFolioType() != null && folio.getFkIdFolioType().isIsAuxiliary();
             DeedNumberingValidationResult result = validateDeedNumberingUseCase.validate(
-                    entity.getNumber(), notary, folio.getYear(), isAuxiliary,
+                    entity.getNumber(), notary.getPersonId(), folio.getYear(), isAuxiliary,
                     entity.getNotes(), entity.getIdDeed());
 
             if (result == DeedNumberingValidationResult.DUPLICATE) {

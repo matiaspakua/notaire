@@ -2,7 +2,6 @@ package com.licensis.notaire.unit;
 
 import com.licensis.notaire.application.port.out.deed.DeedNumberingPort;
 import com.licensis.notaire.application.usecase.deed.DeedNumberingUseCaseImpl;
-import com.licensis.notaire.business.Person;
 import com.licensis.notaire.domain.deed.DeedNumberingValidationResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,9 +28,7 @@ class DeedNumberingUseCaseTest {
     @Test
     @DisplayName("Should start the sequence at one when no deed exists yet in scope")
     void shouldStartSequenceAtOneWhenScopeIsEmpty() {
-        Person notary = createNotary(1);
-
-        int next = deedNumberingUseCase.calculateNextSequenceNumber(notary, 2026, false);
+        int next = deedNumberingUseCase.calculateNextSequenceNumber(1, 2026, false);
 
         assertThat(next).isEqualTo(1);
     }
@@ -39,11 +36,10 @@ class DeedNumberingUseCaseTest {
     @Test
     @DisplayName("Should accept a number matching the expected sequence")
     void shouldAcceptNumberMatchingExpectedSequence() {
-        Person notary = createNotary(1);
         inMemoryPort.recordMaxNumber(1, 2026, false, null, 5);
 
         DeedNumberingValidationResult result = deedNumberingUseCase.validate(
-                6, notary, 2026, false, null, null);
+                6, 1, 2026, false, null, null);
 
         assertThat(result).isEqualTo(DeedNumberingValidationResult.OK);
     }
@@ -51,11 +47,10 @@ class DeedNumberingUseCaseTest {
     @Test
     @DisplayName("Should reject a number already used within the same scope")
     void shouldRejectDuplicateNumber() {
-        Person notary = createNotary(1);
         inMemoryPort.recordDuplicate(5, 1, 2026, false, null);
 
         DeedNumberingValidationResult result = deedNumberingUseCase.validate(
-                5, notary, 2026, false, null, null);
+                5, 1, 2026, false, null, null);
 
         assertThat(result).isEqualTo(DeedNumberingValidationResult.DUPLICATE);
     }
@@ -63,11 +58,10 @@ class DeedNumberingUseCaseTest {
     @Test
     @DisplayName("Should require a justification when the number leaves a gap")
     void shouldRequireJustificationForGap() {
-        Person notary = createNotary(1);
         inMemoryPort.recordMaxNumber(1, 2026, false, null, 5);
 
         DeedNumberingValidationResult result = deedNumberingUseCase.validate(
-                9, notary, 2026, false, null, null);
+                9, 1, 2026, false, null, null);
 
         assertThat(result).isEqualTo(DeedNumberingValidationResult.SKIP_UNJUSTIFIED);
     }
@@ -75,11 +69,10 @@ class DeedNumberingUseCaseTest {
     @Test
     @DisplayName("Should accept a gap when a justification is provided")
     void shouldAcceptGapWithJustification() {
-        Person notary = createNotary(1);
         inMemoryPort.recordMaxNumber(1, 2026, false, null, 5);
 
         DeedNumberingValidationResult result = deedNumberingUseCase.validate(
-                9, notary, 2026, false, "Voided deed No. 6 to 8", null);
+                9, 1, 2026, false, "Voided deed No. 6 to 8", null);
 
         assertThat(result).isEqualTo(DeedNumberingValidationResult.SKIP_JUSTIFIED);
     }
@@ -87,23 +80,16 @@ class DeedNumberingUseCaseTest {
     @Test
     @DisplayName("Should keep Protocolo Auxiliar numbering independent of Protocolo Principal")
     void shouldKeepAuxiliaryNumberingIndependentFromPrincipal() {
-        Person notary = createNotary(1);
         inMemoryPort.recordMaxNumber(1, 2026, true, null, 2);
         inMemoryPort.recordMaxNumber(1, 2026, false, null, 40);
 
-        int nextAuxiliary = deedNumberingUseCase.calculateNextSequenceNumber(notary, 2026, true);
-        int nextPrincipal = deedNumberingUseCase.calculateNextSequenceNumber(notary, 2026, false);
+        int nextAuxiliary = deedNumberingUseCase.calculateNextSequenceNumber(1, 2026, true);
+        int nextPrincipal = deedNumberingUseCase.calculateNextSequenceNumber(1, 2026, false);
 
         assertThat(nextAuxiliary).isEqualTo(3);
         assertThat(nextPrincipal).isEqualTo(41);
     }
 
-    private Person createNotary(int notaryId) {
-        Person notary = new Person();
-        notary.setPersonId(notaryId);
-        notary.setNotaryRegistrationNumber(100);
-        return notary;
-    }
 
     /**
      * In-memory fake implementation of DeedNumberingPort for testing.
