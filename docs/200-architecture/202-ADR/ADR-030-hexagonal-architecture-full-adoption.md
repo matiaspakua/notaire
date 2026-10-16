@@ -242,6 +242,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   (`ManagementOpsAdapter`). Application services stay free of new R2 entity/repository edges;
   entity access stays in the outbound adapter. Domain `DeedManagement` extraction remains deferred.
 
+- **Testimony ports-only (#1783):** mid-size mixed R1 hotspot (~5 edges). `TestimonyController` calls
+  `QueryTestimoniesUseCase` / `ManageTestimoniesUseCase` only; CRUD, generate/verify, and #1364 in-use
+  delete live behind `TestimonyOpsPort`. ArchUnit R1 clears its five baseline edges.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers
