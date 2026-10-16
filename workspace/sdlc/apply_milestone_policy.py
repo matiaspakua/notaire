@@ -68,6 +68,16 @@ def milestone_payload(title: str) -> dict:
     }
 
 
+def create_body(title: str) -> dict:
+    """POST body: created open so issues can be moved in, closed at the end of the run.
+
+    The first Owner run stopped at the first create with ``"due_on": null``
+    (Catalog); a continuous milestone omits the key instead.
+    """
+    body = {**milestone_payload(title), "state": "open"}
+    return {key: value for key, value in body.items() if value is not None}
+
+
 VIEW_ALIASES = {
     "Agent queue": "Delivery schedule",
     "Needs triage": "Triage",
@@ -181,8 +191,7 @@ def ensure_milestones(gh: GitHub, apply: bool) -> dict[str, dict]:
             if not apply:
                 by_title[title] = {"number": -1, "title": title, "state": payload["state"]}
                 continue
-            # Created open so issues can be moved in; closed at the end of the run.
-            _, created = gh.request("POST", f"/repos/{REPO}/milestones", {**payload, "state": "open"})
+            _, created = gh.request("POST", f"/repos/{REPO}/milestones", create_body(title))
             if not isinstance(created, dict):
                 raise SystemExit(f"create failed for {title}")
             by_title[title] = created
