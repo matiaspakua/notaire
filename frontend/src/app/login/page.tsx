@@ -11,8 +11,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuthStore } from "@/store/auth-store";
-import { apiPost, ApiError } from "@/lib/api-client";
+import { authUseCases } from "@/composition/auth";
 import type { DtoLoginUser } from "@/types";
+
+/** Duck-type HTTP status/body without importing api-client (ADR-030). */
+function httpStatus(err: unknown): number | undefined {
+  if (typeof err === "object" && err !== null && "status" in err) {
+    const status = (err as { status: unknown }).status;
+    return typeof status === "number" ? status : undefined;
+  }
+  return undefined;
+}
+
+function errorBody(err: unknown): string {
+  if (typeof err === "object" && err !== null && "body" in err) {
+    const body = (err as { body: unknown }).body;
+    return typeof body === "string" ? body : "";
+  }
+  return "";
+}
 
 /** Reads the backend's `message` field from a lockout response body, if present. */
 function lockoutMessage(body: string, fallback: string): string {
@@ -42,10 +59,10 @@ function LoginForm() {
     }
     setLoading(true);
     try {
-      const result = await apiPost<DtoLoginUser>("/users/login", {
+      const result = (await authUseCases.login({
         name: username.trim(),
         password: password.trim(),
-      });
+      })) as DtoLoginUser;
 
       if (result.valid) {
         // UX cookies for edge gating are set inside auth-store.login (#1052).
@@ -57,8 +74,8 @@ function LoginForm() {
         toast.error(t("error"));
       }
     } catch (error) {
-      if (error instanceof ApiError && error.status === 429) {
-        toast.error(lockoutMessage(error.body, t("lockoutError")));
+      if (httpStatus(error) === 429) {
+        toast.error(lockoutMessage(errorBody(error), t("lockoutError")));
       } else {
         toast.error(t("connectionError"));
       }
