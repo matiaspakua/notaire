@@ -19,21 +19,6 @@
       "count": 1
     }
   },
-  "src/hooks/useCopies.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useItems.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useProperties.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/hooks/useRegistrationDrafts.ts": {
     "no-restricted-imports": {
       "count": 1
@@ -45,11 +30,6 @@
     }
   },
   "src/hooks/useRoles.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useSubstitutions.ts": {
     "no-restricted-imports": {
       "count": 1
     }
