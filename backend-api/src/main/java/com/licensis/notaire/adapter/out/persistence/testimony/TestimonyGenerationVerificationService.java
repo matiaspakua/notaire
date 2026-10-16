@@ -1,4 +1,4 @@
-package com.licensis.notaire.application.usecase.testimony;
+package com.licensis.notaire.adapter.out.persistence.testimony;
 
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Generates and verifies testimonies of a signed deed (CU07, CU08).
+ * Outbound persistence helper (issue #1879).
  */
 @Service
 @Transactional

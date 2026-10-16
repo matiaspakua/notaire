@@ -909,6 +909,11 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   delete entity-speaking Procedure*RepositoryPort (OpsAdapters use Spring Data);
   keep ProcedureLookupPort. Clears ~17 R2 edges (R2 85→68).
 
+- **Backend R2 shrink — testimony (#1879):** move TestimonyGenerationVerificationService /
+  TestimonyMovementService to `adapter.out.persistence.testimony`; delete dead
+  entity-speaking Testimony*UseCase / Testimony*RepositoryPort (+ PersistenceAdapters);
+  keep DTO OpsPorts and TestimonyReentry. Clears ~12 R2 edges (R2 68→56).
+
 
 ## Options considered
 
