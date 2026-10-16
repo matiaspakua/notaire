@@ -274,6 +274,11 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   calls `QueryProcedureFoldersUseCase` / `ManageProcedureFoldersUseCase` only; entity access and DTO
   mapping live behind `ProcedureFolderOpsPort`. ArchUnit R1 clears its ProcedureFolder entity edge.
 
+- **RegistrationDraft ports-only (#1819):** CU82 mixed controller R1 hotspot (1 edge). 
+  `RegistrationDraftController` calls `QueryRegistrationDraftsUseCase` / `ManageRegistrationDraftsUseCase`
+  only; `RegistrationDraftOpsAdapter` wraps `RegistrationDraftService` and maps entities/exceptions to
+  DTO sealed results. ArchUnit R1 clears its RegistrationDraft entity edge. REST unchanged.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers
