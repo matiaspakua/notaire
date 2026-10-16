@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 import com.licensis.notaire.application.port.out.registrationdraft.RegistrationDraftOpsPort;
-import com.licensis.notaire.application.usecase.registrationdraft.RegistrationDraftService;
 import com.licensis.notaire.dto.DtoRegistrationDraft;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;

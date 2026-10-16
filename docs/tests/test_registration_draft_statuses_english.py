@@ -18,7 +18,7 @@ class RegistrationDraftStatusesEnglishTest(unittest.TestCase):
     def test_comments_and_diagram_quote_the_stored_statuses(self):
         sources = [
             JAVA / "business" / "RegistrationDraft.java",
-            JAVA / "application" / "usecase" / "registrationdraft" / "RegistrationDraftService.java",
+            JAVA / "adapter" / "out" / "persistence" / "registrationdraft" / "RegistrationDraftService.java",
             ROOT / "docs" / "200-architecture" / "203-design" / "CICLO-DE-VIDA.md",
             ROOT / "docs" / "300-development" / "EVALUACION-INGENIERIA.md",
         ]
