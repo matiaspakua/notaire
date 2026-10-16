@@ -18,8 +18,6 @@ R1 | com.licensis.notaire.adapter.in.web.notebook.NotebookController -> com.lice
 R1 | com.licensis.notaire.adapter.in.web.person.PersonController -> com.licensis.notaire.business.IdentificationType
 R1 | com.licensis.notaire.adapter.in.web.person.PersonController -> com.licensis.notaire.business.Person
 R1 | com.licensis.notaire.adapter.in.web.person.PersonController -> com.licensis.notaire.repository.IdentificationTypeRepository
-R1 | com.licensis.notaire.adapter.in.web.procedure.ProcedureTemplateController -> com.licensis.notaire.business.ProcedureTemplate
-R1 | com.licensis.notaire.adapter.in.web.procedure.ProcedureTemplateController -> com.licensis.notaire.business.ProcedureTemplatePK
 R1 | com.licensis.notaire.adapter.in.web.registrationdraft.RegistrationDraftController -> com.licensis.notaire.business.RegistrationDraft
 R1 | com.licensis.notaire.adapter.in.web.support.DeedRef -> com.licensis.notaire.business.Deed
 R1 | com.licensis.notaire.adapter.in.web.support.DocumentTypeRef -> com.licensis.notaire.business.DocumentType
