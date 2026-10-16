@@ -301,7 +301,7 @@ class ApplyTests(unittest.TestCase):
 
 
 class CreateBodyTests(unittest.TestCase):
-    """GitHub rejects ``"due_on": null`` on POST; the first Owner run stopped at Catalog."""
+    """The first Owner run stopped creating Catalog, the only POST with ``"due_on": null``."""
 
     def test_continuous_milestone_is_created_without_a_due_on_key(self):
         body = create_body(CATALOG)
