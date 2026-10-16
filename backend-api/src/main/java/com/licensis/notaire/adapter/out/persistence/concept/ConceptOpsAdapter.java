@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.out.concept.ConceptOpsPort;
-import com.licensis.notaire.application.usecase.concept.ConceptService;
 import com.licensis.notaire.business.Concept;
 import com.licensis.notaire.dto.DtoConcept;
 import com.licensis.notaire.repository.BudgetTemplateRepository;

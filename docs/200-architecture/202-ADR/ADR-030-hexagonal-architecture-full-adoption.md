@@ -947,6 +947,11 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   delete entity-speaking SubstitutionRepositoryPort and unused PersistenceAdapter; keep
   view-safe SubstitutionOpsPort. Clears ~4 R2 edges (R2 13→9).
 
+- **Backend R2 shrink — concept (#1899):** move ConceptService to
+  `adapter.out.persistence.concept` (Spring Data ConceptRepository locally); delete
+  entity-speaking ConceptRepositoryPort and unused PersistenceAdapter; keep view-safe
+  ConceptOpsPort. Clears ~2 R2 edges (R2 9→7).
+
 
 ## Options considered
 

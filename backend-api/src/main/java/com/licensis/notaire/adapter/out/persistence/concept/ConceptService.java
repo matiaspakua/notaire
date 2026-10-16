@@ -1,8 +1,8 @@
-package com.licensis.notaire.application.usecase.concept;
+package com.licensis.notaire.adapter.out.persistence.concept;
 
 import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.application.port.out.concept.ConceptRepositoryPort;
 import com.licensis.notaire.business.Concept;
+import com.licensis.notaire.repository.ConceptRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -21,9 +21,9 @@ public class ConceptService {
 
     private static final Logger log = LoggerFactory.getLogger(ConceptService.class);
 
-    private final ConceptRepositoryPort conceptRepository;
+    private final ConceptRepository conceptRepository;
 
-    public ConceptService(ConceptRepositoryPort conceptRepository) {
+    public ConceptService(ConceptRepository conceptRepository) {
         this.conceptRepository = conceptRepository;
     }
 
@@ -71,7 +71,7 @@ public class ConceptService {
     public Concept create(Concept concept) {
         log.info("Creating concept: {}", concept.getName());
         concept.setEnabled(true);
-        return conceptRepository.create(concept);
+        return conceptRepository.save(concept);
     }
 
     /**
@@ -87,7 +87,8 @@ public class ConceptService {
             throw new ResourceNotFoundException("Concept not found with ID: " + id);
         }
         log.info("Updating concept id: {}", id);
-        return conceptRepository.update(id, concept);
+        concept.setIdConcept(id);
+        return conceptRepository.save(concept);
     }
 
     /**
