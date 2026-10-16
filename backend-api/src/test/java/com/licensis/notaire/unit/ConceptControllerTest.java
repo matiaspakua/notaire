@@ -124,6 +124,8 @@ class ConceptControllerTest {
     @Test
     @DisplayName("PUT /api/v1/concepts/{id} should return 200 when payload omits enabled")
     void shouldUpdateConceptWhenEnabledOmitted() throws Exception {
+        // Regression: a payload without 'enabled' must not NPE while unboxing
+        // a null Boolean — the adapter preserves the existing enabled state.
         when(manageConcepts.update(eq(1), any())).thenReturn(new SaveResult.Updated());
         DtoConcept partial = buildDto();
         partial.setEnabled(null);
