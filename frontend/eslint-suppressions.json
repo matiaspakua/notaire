@@ -9,11 +9,6 @@
       "count": 1
     }
   },
-  "src/app/dashboard/administration/templates/page.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/app/dashboard/budgets/page.tsx": {
     "no-restricted-imports": {
       "count": 1
@@ -180,16 +175,6 @@
     }
   },
   "src/hooks/usePersonSearch.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useProcedureTemplate.test.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useProcedureTemplate.ts": {
     "no-restricted-imports": {
       "count": 1
     }

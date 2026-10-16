@@ -112,6 +112,15 @@ describe("the shrink-only baseline", () => {
     expect(entries["src/hooks/useManagementWorkflow.ts"]).toBeUndefined();
     expect(entries["src/app/dashboard/administration/workflows/page.tsx"]).toBeUndefined();
     expect(entries["src/app/dashboard/administration/workflows/[id]/page.tsx"]).toBeUndefined();
-    expect(Object.keys(entries).length).toBeLessThan(56);
+    expect(Object.keys(entries).length).toBeLessThan(54);
+  });
+
+  it("templates admin left the baseline (#1788)", () => {
+    const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
+    expect(entries["src/hooks/useProcedureTemplate.ts"]).toBeUndefined();
+    expect(entries["src/hooks/useProcedureTemplate.test.tsx"]).toBeUndefined();
+    expect(entries["src/app/dashboard/administration/templates/page.tsx"]).toBeUndefined();
+    expect(Object.keys(entries).length).toBeLessThan(54);
+  });
   });
 });
