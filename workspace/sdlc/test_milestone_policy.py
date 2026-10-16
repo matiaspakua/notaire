@@ -35,7 +35,7 @@ from milestone_policy import (
     shipped_train,
     suggested_priority,
 )
-from apply_milestone_policy import milestone_payload, missing_project_issues, target_for
+from apply_milestone_policy import create_body, milestone_payload, missing_project_issues, target_for
 
 
 class ClassifyOpenTests(unittest.TestCase):
@@ -300,6 +300,22 @@ class ApplyTests(unittest.TestCase):
         self.assertEqual(milestone_payload(RELEASE)["due_on"], MILESTONE_DUE[RELEASE])
 
 
+class CreateBodyTests(unittest.TestCase):
+    """The first Owner run stopped creating Catalog, the only POST with ``"due_on": null``."""
+
+    def test_continuous_milestone_is_created_without_a_due_on_key(self):
+        body = create_body(CATALOG)
+        self.assertNotIn("due_on", body)
+        self.assertEqual(body["state"], "open")
+        self.assertEqual(body["title"], CATALOG)
+
+    def test_closed_milestones_are_created_open_with_their_due_date(self):
+        body = create_body(SHIPPED[0])
+        self.assertEqual(body["state"], "open")
+        self.assertEqual(body["due_on"], MILESTONE_DUE[SHIPPED[0]])
+        self.assertTrue(all(value is not None for value in body.values()))
+
+
 class RoadmapContractTests(unittest.TestCase):
     def test_full_lifecycle_view_requires_every_issue_on_the_project(self):
         issues = [{"number": 2}, {"number": 226}, {"number": 499}]
@@ -321,29 +337,43 @@ class RoadmapContractTests(unittest.TestCase):
             "requerimiento-funcional",
             "requerimiento-no-funcional",
             "CASO-DE-USO",
+            "trace:rf",
+            "trace:rnf",
+            "trace:cu",
         ):
-            self.assertIn(f"-label:{catalog_label}", FULL_LIFECYCLE_FILTER)
-            self.assertIn(f"-label:{catalog_label}", DELIVERY_FILTER)
+            self.assertIn(catalog_label, FULL_LIFECYCLE_FILTER)
+            self.assertIn(catalog_label, DELIVERY_FILTER)
+        self.assertTrue(FULL_LIFECYCLE_FILTER.startswith("-label:"))
 
     def test_view_contract_separates_history_from_execution(self):
         self.assertEqual(
-            VIEW_CONTRACTS["Roadmap"],
-            ("ROADMAP_LAYOUT", FULL_LIFECYCLE_FILTER),
+            VIEW_CONTRACTS["Release roadmap"],
+            ("ROADMAP_LAYOUT", f'{FULL_LIFECYCLE_FILTER} -milestone:"{BACKLOG}"'),
         )
-        self.assertEqual(
-            VIEW_CONTRACTS["KANBAN"],
-            ("BOARD_LAYOUT", DELIVERY_FILTER),
-        )
-        self.assertEqual(
-            VIEW_CONTRACTS["Agent queue"],
-            ("TABLE_LAYOUT", DELIVERY_FILTER),
-        )
+        self.assertEqual(VIEW_CONTRACTS["Kanban"], ("BOARD_LAYOUT", DELIVERY_FILTER))
+        self.assertIn("status:Todo", VIEW_CONTRACTS["Agent queue"][1])
 
-    def test_views_expose_only_the_fields_needed_for_their_job(self):
-        self.assertNotIn("Roadmap", VIEW_FIELDS)
-        self.assertIn("Priority", VIEW_FIELDS["Agent queue"])
-        self.assertIn("Area", VIEW_FIELDS["Agent queue"])
-        self.assertNotIn("Start", VIEW_FIELDS["KANBAN"])
+    def test_nine_views_from_the_label_taxonomy(self):
+        # #1860: the approved board views; filters name old AND new labels (comma = OR).
+        self.assertEqual(
+            list(VIEW_CONTRACTS),
+            ["Kanban", "Current train", "Agent queue", "In flight", "Needs triage",
+             "Blocked / needs info", "Release roadmap", "Shipped", "Catalog"],
+        )
+        self.assertIn("label:status:ready,ready-for-dev", VIEW_CONTRACTS["Agent queue"][1])
+        self.assertIn(f'milestone:"{RELEASE}"', VIEW_CONTRACTS["Current train"][1])
+        self.assertIn("is:closed", VIEW_CONTRACTS["Shipped"][1])
+        self.assertIn(f'milestone:"{CATALOG}"', VIEW_CONTRACTS["Catalog"][1])
+        for name in ("trace:rf", "requerimiento-funcional", "trace:cu", "CASO-DE-USO"):
+            self.assertIn(name, DELIVERY_FILTER)
+
+    def test_views_do_not_use_deleted_board_fields(self):
+        # #1860: Priority/Area/Kind project fields are deleted; labels carry them.
+        self.assertNotIn("Release roadmap", VIEW_FIELDS)
+        for fields in VIEW_FIELDS.values():
+            self.assertFalse({"Priority", "Area", "Kind"} & set(fields))
+        self.assertIn("Labels", VIEW_FIELDS["Agent queue"])
+        self.assertNotIn("Start", VIEW_FIELDS["Kanban"])
 
 
 class LaneTests(unittest.TestCase):

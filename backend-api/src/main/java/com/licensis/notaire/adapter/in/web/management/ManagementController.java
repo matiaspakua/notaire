@@ -35,10 +35,8 @@ import com.licensis.notaire.application.port.out.management.ManagementOpsPort.Ma
 import com.licensis.notaire.application.port.out.management.ManagementOpsPort.ManagementView;
 import com.licensis.notaire.application.port.out.management.ManagementOpsPort.SaveResult;
 import com.licensis.notaire.application.usecase.document.ExternalEntityDocumentService;
-import com.licensis.notaire.application.usecase.management.ManagementArchiveDebtService;
-import com.licensis.notaire.application.usecase.management.ManagementFinancialSummaryService;
-import com.licensis.notaire.application.usecase.workflow.DocumentReentryService;
-import com.licensis.notaire.application.usecase.workflow.WorkflowTraceService;
+import com.licensis.notaire.application.port.in.workflow.DocumentReentryUseCase;
+import com.licensis.notaire.application.port.in.workflow.QueryWorkflowTraceUseCase;
 import com.licensis.notaire.dto.DtoDocumentReentered;
 import com.licensis.notaire.dto.DtoDocumentReentryRequest;
 import com.licensis.notaire.dto.DtoExternalEntityDocument;
@@ -70,33 +68,27 @@ public class ManagementController {
 
     private final QueryManagementsUseCase queryManagements;
     private final ManageManagementsUseCase manageManagements;
-    private final WorkflowTraceService workflowTraceService;
-    private final ManagementArchiveDebtService managementArchiveDebtService;
-    private final ManagementFinancialSummaryService financialSummaryService;
+    private final QueryWorkflowTraceUseCase workflowTrace;
     private final TransitionManagementUseCase transitionManagementUseCase;
     private final TransitionManagementWebMapper transitionManagementWebMapper;
     private final ExternalEntityDocumentService externalEntityDocumentService;
-    private final DocumentReentryService documentReentryService;
+    private final DocumentReentryUseCase documentReentry;
 
     public ManagementController(
             QueryManagementsUseCase queryManagements,
             ManageManagementsUseCase manageManagements,
-            WorkflowTraceService workflowTraceService,
-            ManagementArchiveDebtService managementArchiveDebtService,
-            ManagementFinancialSummaryService financialSummaryService,
+            QueryWorkflowTraceUseCase workflowTrace,
             TransitionManagementUseCase transitionManagementUseCase,
             TransitionManagementWebMapper transitionManagementWebMapper,
             ExternalEntityDocumentService externalEntityDocumentService,
-            DocumentReentryService documentReentryService) {
+            DocumentReentryUseCase documentReentry) {
         this.queryManagements = queryManagements;
         this.manageManagements = manageManagements;
-        this.workflowTraceService = workflowTraceService;
-        this.managementArchiveDebtService = managementArchiveDebtService;
-        this.financialSummaryService = financialSummaryService;
+        this.workflowTrace = workflowTrace;
         this.transitionManagementUseCase = transitionManagementUseCase;
         this.transitionManagementWebMapper = transitionManagementWebMapper;
         this.externalEntityDocumentService = externalEntityDocumentService;
-        this.documentReentryService = documentReentryService;
+        this.documentReentry = documentReentry;
     }
 
     public record DtoPendingBalance(java.math.BigDecimal pendingBalance) {}
@@ -334,7 +326,7 @@ public class ManagementController {
                     + "destinations when changing status via POST /{id}/transition.")
     public ResponseEntity<Object> getWorkflowTrace(@PathVariable Integer id) {
         try {
-            DtoManagementWorkflowTrace trace = workflowTraceService.buildTrace(id);
+            DtoManagementWorkflowTrace trace = workflowTrace.buildTrace(id);
             return ResponseEntity.ok(trace);
         } catch (IllegalArgumentException e) {
             log.warn("Cannot build workflow trace for management {}: {}", id, e.getMessage());
@@ -353,7 +345,7 @@ public class ManagementController {
     @Operation(summary = "CU16 - Calculate aggregated pending balance for a management (RF-22)")
     public ResponseEntity<DtoPendingBalance> getPendingBalance(@PathVariable Integer id) {
         try {
-            java.math.BigDecimal pendingBalance = managementArchiveDebtService.calculatePendingBalance(id);
+            java.math.BigDecimal pendingBalance = queryManagements.calculatePendingBalance(id);
             return ResponseEntity.ok(new DtoPendingBalance(pendingBalance));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
@@ -368,7 +360,7 @@ public class ManagementController {
     @Operation(summary = "CU47/CU02 - Get aggregated financial summary for a management")
     public ResponseEntity<DtoManagementFinancialSummary> getFinancialSummary(@PathVariable Integer id) {
         try {
-            return ResponseEntity.ok(financialSummaryService.getSummary(id));
+            return ResponseEntity.ok(queryManagements.getFinancialSummary(id));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
@@ -457,7 +449,7 @@ public class ManagementController {
     @Operation(summary = "CU43 - Get management procedures with required documentation")
     public ResponseEntity<DtoManagementDocumentReentry> getRequiredDocumentationForReentry(
             @PathVariable Integer id) {
-        return ResponseEntity.ok(documentReentryService.getRequiredDocumentation(id));
+        return ResponseEntity.ok(documentReentry.getRequiredDocumentation(id));
     }
 
     @ApiResponses({
@@ -469,7 +461,7 @@ public class ManagementController {
     @Operation(summary = "CU43 - Re-enter a document type for a management procedure")
     public ResponseEntity<DtoDocumentReentered> reenterDocumentation(@PathVariable Integer id,
             @Valid @RequestBody DtoDocumentReentryRequest request) {
-        DtoDocumentReentered result = documentReentryService.reenter(id, request);
+        DtoDocumentReentered result = documentReentry.reenter(id, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 }

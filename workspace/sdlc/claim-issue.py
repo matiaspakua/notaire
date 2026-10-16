@@ -23,14 +23,17 @@ import sys
 import time
 import uuid
 from datetime import datetime, timezone
+from urllib.parse import quote
 
+from label_taxonomy import expand, wip_label
 from milestone_policy import lane, lanes_blocked_by
 
 REPO = "matiaspakua/notaire"
 PROJECT_ID = "PVT_kwHOATJKDs4BRC9u"
 STATUS_FIELD = "PVTSSF_lAHOATJKDs4BRC9uzg-_XNo"
 STATUS_OPTIONS = {"Todo": "f75ad846", "In Progress": "47fc9ee4", "Done": "98236657"}
-REFUSED_LABELS = ("blocked", "needs-info")
+REFUSED_LABELS = ("blocked", "needs-info")  # legacy names; expand() adds status:*
+READY_LABEL = "status:ready"  # or legacy ready-for-dev (#1860)
 RELEASE_MARKER = "<!-- notaire-release -->"
 CLAIM = re.compile(r"<!-- notaire-claim agent=(\S+) nonce=(\S+) -->")
 
@@ -42,11 +45,15 @@ def claim_marker(agent: str, nonce: str) -> str:
 def refusal(issue: dict) -> str | None:
     if issue["state"] != "OPEN":
         return "issue is not open"
-    labels = set(issue["labels"])
+    labels = expand(issue["labels"])
     if lane(labels, issue["number"], issue["title"]) in {"catalog", "epic"}:
         return "catalog anchors and roadmap epics are not claimable"
     held = labels & set(REFUSED_LABELS)
-    return f"issue carries {sorted(held)}" if held else None
+    if held:
+        return f"issue carries {sorted(held)}"
+    if READY_LABEL not in labels:
+        return "issue is not status:ready (or ready-for-dev)"
+    return None
 
 
 def lane_holder(issue: dict, wip: list[dict]) -> int | None:
@@ -100,7 +107,7 @@ def claim(gh, number: int, agent: str, *, settle: float) -> int:
         gh.delete_comment(mine)
         print(f"✗ #{number} claimed first by another agent; withdrew")
         return 1
-    gh.add_label(number, "in-progress")
+    gh.add_label(number, wip_label(gh.repo_labels()))
     if not gh.set_status(number, "In Progress"):
         print(f"! handoff: set #{number} Status to In Progress (token cannot write the Project)")
     print(f"✓ #{number} claimed by {agent}")
@@ -115,7 +122,9 @@ def release_stale(gh, hours: float) -> int:
         claimed_at = min(claims)[0] if claims else None
         if claimed_at is None or not is_stale(claimed_at, now, hours=hours, open_prs=gh.open_prs_closing(number)):
             continue
-        gh.remove_label(number, "in-progress")
+        for name in ("in-progress", "status:in-progress"):
+            if name in issue["labels"]:
+                gh.remove_label(number, name)
         gh.comment(number, f"{RELEASE_MARKER}\nReleased: claimed {claimed_at}, no open PR after {hours:g} h (#1646).")
         if not gh.set_status(number, "Todo"):
             print(f"! handoff: set #{number} Status to Todo")
@@ -143,7 +152,11 @@ class Gh:
         return self._issue(self._api(f"repos/{REPO}/issues/{number}"))
 
     def open_wip(self) -> list[dict]:
-        raw = self._api(f"repos/{REPO}/issues?state=open&labels=in-progress&per_page=100")
+        raw = [
+            item
+            for name in ("in-progress", "status:in-progress")
+            for item in self._api(f"repos/{REPO}/issues?state=open&labels={name}&per_page=100")
+        ]
         return [self._issue(item) for item in raw if "pull_request" not in item]
 
     def comments(self, number: int) -> list[dict]:
@@ -159,7 +172,10 @@ class Gh:
         self._api("-X", "POST", f"repos/{REPO}/issues/{number}/labels", "-f", f"labels[]={label}")
 
     def remove_label(self, number: int, label: str) -> None:
-        self._api("-X", "DELETE", f"repos/{REPO}/issues/{number}/labels/{label}")
+        self._api("-X", "DELETE", f"repos/{REPO}/issues/{number}/labels/{quote(label, safe='')}")
+
+    def repo_labels(self) -> set[str]:
+        return {label["name"] for label in self._api("--paginate", f"repos/{REPO}/labels?per_page=100")}
 
     def open_prs_closing(self, number: int) -> int:
         found = self._api("search/issues", "-f", f"q=repo:{REPO} is:pr is:open {number} in:body")

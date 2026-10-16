@@ -26,6 +26,8 @@ check runs and require `Unit Tests`, `Integration Tests`, `Coverage Gate (mvn ve
 merge `origin/main` into the branch, never rebase or force-push a pushed branch. Regenerate
 generated files with their tool (`python3 workspace/sdlc/generate-testing-inventory.py`), rerun
 the affected suites, push, then confirm it landed: `git ls-remote --heads origin <branch>`.
+After **each land** on `main`, sync remaining open tips the same way before more pushes
+(`docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md`).
 
 ## 4. CI red
 
@@ -34,6 +36,8 @@ Fix the cause; never skip, `@Disabled` or quarantine a test, never push an empty
 Typical Notaire causes: stale `docs/300-development/303-testing/INVENTORY.md`, a new Flyway migration
 without `python3 workspace/release/product_release.py --write` (product version coherence), Spotless format
 (`mvn spotless:apply -pl backend-api`), an unticked or unarchived OpenSpec change.
+If preflight fails once with `Issue #N was not found on GitHub`, re-run
+`validate-sdlc-plan.sh` (transient `gh` flake) before declaring a product defect.
 
 ## 5. Commits and the OpenSpec change
 
@@ -47,11 +51,24 @@ may share one PR when each has its own change and commits. Never commit bot repo
 PR title: `[#<issue>] <type>(<single-scope>): <description>`; the PR Validation title check rejects a
 comma in the scope (`feat(a,b)`) — and keep the PR body filled from `.github/PULL_REQUEST_TEMPLATE.md`.
 
+**CHANGELOG `[Unreleased]` fence:** only one open PR edits Unreleased; omit or wait while Release
+Please holds it. Never commit on `release-please--branches--*`.
+
+## 5b. Process Checks before ready
+
+Do not mark the PR ready until Process Checks are green: OpenSpec archive hygiene, Spotless when
+Java changed, INVENTORY regen when architecture/test inventory drifted, Conventional Commits.
+Advisory / light checks are not merge authority — still require `check-heavy-ci.sh` exit 0.
+Hex FE ratchet Done only when `eslint-suppressions.json` is `{}` (count 0). Full checklist:
+`docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md`.
+
 ## 6. Who merges
 
 Workers never merge. The Foreman merges a Worker PR when every required check is green and
 `check-heavy-ci.sh` exits 0; the Owner merges Constitution, `sdlc-exception` and harness PRs.
 When only people are owed (approval, merge), say so once and wait.
+If Issues/Projects write returns **403**, leave a **human paste** (Status/labels/close); never open
+a probe issue to test permissions.
 
 ## 7. Failures that are the environment, not the PR
 
@@ -61,3 +78,7 @@ there, e.g. #1635's read-only-transaction audit insert); pg-integration (Testcon
 the Docker build are CI-only. `test_watchdog` fails there because PID 1 does not reap zombies. Spotless
 needs a UTF-8 locale. `.claude/hooks/session-start-toolchain.sh` installs JDK 26, `openspec`,
 `kustomize`, Trivy, `promtool` and `amtool` at session start; say so in the PR instead of hiding it.
+Mac vs CI ownership for hex/R2: `docs/300-development/304-ai-sdlc-cloud/MAC-LOCAL-VS-CI.md`.
+If Build Docker Image fails on `spring-boot-starter-parent` “absent” while unit/integration
+are green, verify Central has that version before changing `pom.xml` — usually Dockerfile
+`-U` / go-offline cache (`FLEET-LESSONS-HEX-1693.md`).

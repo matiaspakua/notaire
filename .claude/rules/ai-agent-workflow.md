@@ -60,6 +60,14 @@ These run in `sdlc-process.yml` on every PR and in `workspace/sdlc/preflight.sh`
 
 `validate-sdlc-plan.sh` (in `pr-validation.yml`) checks every OpenSpec change.
 
+## Fleet lessons (#1693)
+
+For multi-agent / hex cadence (heavy-CI serialize, merge-main-never-rebase, CHANGELOG
+Unreleased fence, Mac vs CI, R2 one-domain slices, human paste on 403, no probe Issues):
+`docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md` and
+`docs/300-development/304-ai-sdlc-cloud/MAC-LOCAL-VS-CI.md`. Steward checklist:
+`.claude/skills/steward/SKILL.md`.
+
 ## Never
 
 - ❌ Change code without an Issue, a Use Case and an OpenSpec change
@@ -67,6 +75,8 @@ These run in `sdlc-process.yml` on every PR and in `workspace/sdlc/preflight.sh`
 - ❌ Commit to or push to `main`; merge your own PR (Workers) or merge outside the Foreman merge rule (Foreman)
 - ❌ Commit failing tests, `@Disabled` tests without approval, or secrets
 - ❌ Leave dead code, duplicate code or outdated docs
+- ❌ Open probe Issues to test permissions, or start the next hex domain before the current PR merges
+- ❌ Trust light/advisory CI as merge-ready — require `check-heavy-ci.sh` + Process Checks
 
 ## Exceptions
 

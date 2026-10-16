@@ -19,7 +19,7 @@ PROD='^backend-api/src/main/|^frontend/src/'
 # infra/tests covers observability/provisioning guards (e.g. #1746 postgres panels).
 TEST='/src/test/|\.test\.tsx?$|^testing/e2e/tests/|/__tests__/|^infra/tests/|^testing/database/'
 
-if grep -qw 'sdlc-exception' <<< "${PR_LABELS:-}"; then
+if grep -qwE '(process:)?sdlc-exception' <<< "${PR_LABELS:-}"; then
   echo "✓ sdlc-exception label set — TDD evidence check waived"
   exit 0
 fi

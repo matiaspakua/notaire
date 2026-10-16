@@ -105,6 +105,7 @@ Hexagonal architecture epic [#1693](https://github.com/matiaspakua/notaire/issue
 
 ### Changed
 
+- **pm:** label taxonomy phase 1 — scripts read legacy and prefixed names (`type:`, `area:`, `status:`, `concern:`, `trace:`); claims need `status:ready`; coherence rules R6–R8; nine board views without Priority/Area/Kind fields ([#1860](https://github.com/matiaspakua/notaire/issues/1860))
 - **arch:** shared catalog write-lock control flow extracted to `CatalogLockSupport` (folio, document, management-status update/delete; identification delete); REST bodies unchanged ([#1722](https://github.com/matiaspakua/notaire/issues/1722), epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030).
 - **arch:** management status catalog moved behind a full hexagon (domain, ports, use cases, persistence adapter); ArchUnit baseline shrinks for `ManagementStatusController` ([#1719](https://github.com/matiaspakua/notaire/issues/1719), epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030). A stale client `version` on `PUT /api/v1/management-statuses/{id}` now answers **409** (legacy copied the DTO version onto the entity and still answered 200).
 
@@ -122,6 +123,7 @@ Hexagonal architecture epic [#1693](https://github.com/matiaspakua/notaire/issue
 
 ### Fixed
 
+- **pm:** the milestone apply run creates Backlog/Catalog without a null `due_on`, so H0, v0.1, v0.2 and Catalog are created and issues move ([#1847](https://github.com/matiaspakua/notaire/issues/1847))
 - **release:** CD dispatch names `GH_REPO` so a release-please tag starts delivery without a git checkout ([#1599](https://github.com/matiaspakua/notaire/issues/1599))
 
 ### Features

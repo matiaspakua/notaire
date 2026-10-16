@@ -5,7 +5,7 @@ import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.History;
 import com.licensis.notaire.repository.HistoryRepository;
-import com.licensis.notaire.application.usecase.management.ManagementStatusLogService;
+import com.licensis.notaire.adapter.out.persistence.management.ManagementStatusLogService;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

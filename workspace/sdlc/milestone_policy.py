@@ -7,6 +7,8 @@ from __future__ import annotations
 
 import re
 
+from label_taxonomy import expand
+
 # Nomenclature: docs/300-development/305-project-management/MILESTONE-NOMENCLATURE.md
 # Open trains are version first: ``v<MAJOR>.<MINOR> · <Theme> (<YYYY-MM>)``.
 RELEASE = "v0.3 · Hexagonal core & security (2026-11)"
@@ -53,41 +55,32 @@ def is_history(title: str) -> bool:
     return bool(re.match(r"^(H\d* · |History · )", title or ""))
 
 
-CATALOG_EXCLUSIONS = (
-    "-label:requerimiento-funcional "
-    "-label:requerimiento-no-funcional "
-    "-label:CASO-DE-USO"
-)
+# #1860: filters name the legacy AND taxonomy labels; in Project filters a comma is OR,
+# so each filter works before and after notaire-labels-apply.sh.
+CATALOG_TRACE = "requerimiento-funcional,requerimiento-no-funcional,CASO-DE-USO,trace:rf,trace:rnf,trace:cu"
+CATALOG_EXCLUSIONS = f"-label:{CATALOG_TRACE}"
 FULL_LIFECYCLE_FILTER = CATALOG_EXCLUSIONS
 DELIVERY_FILTER = f"is:open {CATALOG_EXCLUSIONS}"
-TRIAGE_FILTER = (
-    f"{DELIVERY_FILTER} "
-    "-label:priority:critical -label:priority:high "
-    "-label:priority:medium -label:priority:low"
-)
-TODO_FILTER = f"is:open status:Todo {CATALOG_EXCLUSIONS}"
+TRIAGE_FILTER = f"{DELIVERY_FILTER} -label:priority:critical,priority:high,priority:medium,priority:low"
+HOLD_LABELS = "status:blocked,blocked,status:needs-info,needs-info"
+AGENT_QUEUE_FILTER = f"is:open status:Todo label:status:ready,ready-for-dev -label:{HOLD_LABELS} {CATALOG_EXCLUSIONS}"
 VIEW_CONTRACTS = {
-    "Roadmap": ("ROADMAP_LAYOUT", FULL_LIFECYCLE_FILTER),
-    "KANBAN": ("BOARD_LAYOUT", DELIVERY_FILTER),
-    "Agent queue": ("TABLE_LAYOUT", DELIVERY_FILTER),
+    "Kanban": ("BOARD_LAYOUT", DELIVERY_FILTER),
+    "Current train": ("TABLE_LAYOUT", f'is:open milestone:"{RELEASE}" {CATALOG_EXCLUSIONS}'),
+    "Agent queue": ("TABLE_LAYOUT", AGENT_QUEUE_FILTER),
+    "In flight": ("TABLE_LAYOUT", f'is:open status:"In Progress" {CATALOG_EXCLUSIONS}'),
     "Needs triage": ("TABLE_LAYOUT", TRIAGE_FILTER),
-    "Todo by priority": ("TABLE_LAYOUT", TODO_FILTER),
+    "Blocked / needs info": ("TABLE_LAYOUT", f"is:open label:{HOLD_LABELS}"),
+    "Release roadmap": ("ROADMAP_LAYOUT", f'{FULL_LIFECYCLE_FILTER} -milestone:"{BACKLOG}"'),
+    "Shipped": ("TABLE_LAYOUT", f'is:closed milestone:"{V01}","{V02}"'),
+    "Catalog": ("TABLE_LAYOUT", f'milestone:"{CATALOG}"'),
 }
 VIEW_FIELDS = {
-    "KANBAN": ("Title", "Assignees", "Labels", "Milestone", "Priority", "Area"),
-    "Agent queue": (
-        "Title",
-        "Assignees",
-        "Status",
-        "Labels",
-        "Milestone",
-        "Priority",
-        "Area",
-        "Start",
-        "Target",
-    ),
-    "Needs triage": ("Title", "Status", "Labels", "Milestone", "Priority", "Area"),
-    "Todo by priority": ("Title", "Assignees", "Status", "Labels", "Milestone", "Priority", "Area"),
+    "Kanban": ("Title", "Assignees", "Labels", "Milestone"),
+    "Current train": ("Title", "Assignees", "Status", "Labels", "Linked pull requests"),
+    "Agent queue": ("Title", "Assignees", "Status", "Labels", "Milestone", "Start", "Target"),
+    "In flight": ("Title", "Assignees", "Labels", "Linked pull requests", "Milestone"),
+    "Needs triage": ("Title", "Status", "Labels", "Milestone"),
 }
 
 # Old title -> new title. Several buckets merge into H8; renames are one hop.
@@ -221,7 +214,7 @@ _AREAS = frozenset({"BACKEND", "FRONTEND", "DB", "DEVOPS", "TEST", "DOC", "secur
 
 
 def _names(labels: list[str] | set[str]) -> set[str]:
-    names = set(labels)
+    names = expand(labels)
     if "documentation" in names:
         names.add("DOC")
     return names
@@ -334,7 +327,7 @@ def lanes_blocked_by(active_lane: str) -> frozenset[str]:
 
 def suggested_priority(number: int, title: str, labels: list[str] | set[str], milestone: str) -> str | None:
     """A single priority for work that has none. Catalog anchors stay unlabeled."""
-    names = set(labels)
+    names = _names(labels)
     if any(name in names for name in PRIORITIES):
         return None
     if lane(names, number, title) in {"catalog", "epic"}:

@@ -68,10 +68,22 @@ def milestone_payload(title: str) -> dict:
     }
 
 
+def create_body(title: str) -> dict:
+    """POST body: created open so issues can be moved in, closed at the end of the run.
+
+    The first Owner run stopped at the first create with ``"due_on": null``
+    (Catalog); a continuous milestone omits the key instead.
+    """
+    body = {**milestone_payload(title), "state": "open"}
+    return {key: value for key, value in body.items() if value is not None}
+
+
+# New view name -> existing view it renames (#1860 board views).
 VIEW_ALIASES = {
-    "Agent queue": "Delivery schedule",
-    "Needs triage": "Triage",
-    "Todo by priority": "Backlog by priority",
+    "Kanban": "KANBAN",
+    "Current train": "Todo by priority",
+    "Release roadmap": "Roadmap",
+    "Catalog": "Requerimientos Func.",
 }
 
 
@@ -181,8 +193,7 @@ def ensure_milestones(gh: GitHub, apply: bool) -> dict[str, dict]:
             if not apply:
                 by_title[title] = {"number": -1, "title": title, "state": payload["state"]}
                 continue
-            # Created open so issues can be moved in; closed at the end of the run.
-            _, created = gh.request("POST", f"/repos/{REPO}/milestones", {**payload, "state": "open"})
+            _, created = gh.request("POST", f"/repos/{REPO}/milestones", create_body(title))
             if not isinstance(created, dict):
                 raise SystemExit(f"create failed for {title}")
             by_title[title] = created
@@ -224,33 +235,25 @@ def assign_issues(gh: GitHub, issues: list[dict], milestones: dict[str, dict], a
 
 
 def fix_labels(gh: GitHub, issues: list[dict], apply: bool) -> None:
+    # #1860: area:frontend once notaire-labels-apply.sh has renamed FRONTEND.
+    # phase:* labels are deleted by that script, so they are no longer touched here.
+    _status, existing = gh.request("GET", f"/repos/{REPO}/labels?per_page=100")
+    names = {label["name"] for label in existing or []}
+    frontend = "area:frontend" if "area:frontend" in names else "FRONTEND"
     gh.request(
         "PATCH",
-        f"/repos/{REPO}/labels/{urllib.parse.quote('FRONTEND')}",
+        f"/repos/{REPO}/labels/{urllib.parse.quote(frontend, safe='')}",
         {"description": "Next.js web client: pages, forms, and dashboard UI"},
-    ) if apply else print("would update FRONTEND label description")
-    for name in (
-        "phase:1-analysis",
-        "phase:2-foundation",
-        "phase:3-backend-api",
-        "phase:4-frontend",
-        "phase:5-observability",
-        "phase:6-deprecation",
-    ):
-        if apply:
-            gh.request(
-                "PATCH",
-                f"/repos/{REPO}/labels/{urllib.parse.quote(name)}",
-                {"description": "Historical phase alias. Schedule work with a milestone, not this label."},
-            )
+    ) if apply else print(f"would update {frontend} label description")
     for issue in issues:
         labels = [node["name"] for node in issue["labels"]["nodes"]]
         number = issue["number"]
-        if number in STRIP_USE_CASE_LABEL and "CASO-DE-USO" in labels:
-            print(f"remove CASO-DE-USO from #{number}")
-            if apply:
-                gh.request("DELETE", f"/repos/{REPO}/issues/{number}/labels/{urllib.parse.quote('CASO-DE-USO')}")
-            labels = [name for name in labels if name != "CASO-DE-USO"]
+        for use_case in ("CASO-DE-USO", "trace:cu"):
+            if number in STRIP_USE_CASE_LABEL and use_case in labels:
+                print(f"remove {use_case} from #{number}")
+                if apply:
+                    gh.request("DELETE", f"/repos/{REPO}/issues/{number}/labels/{urllib.parse.quote(use_case, safe='')}")
+                labels = [name for name in labels if name != use_case]
         if "documentation" in labels:
             print(f"replace documentation with DOC on #{number}")
             if apply:
@@ -553,13 +556,13 @@ def check_views(gh: GitHub) -> int:
             if visible != VIEW_FIELDS[name]:
                 print(f"project view {name} fields are {visible!r}, wants {VIEW_FIELDS[name]!r}")
                 bad += 1
-    roadmap = by_name.get("Roadmap")
+    roadmap = by_name.get("Release roadmap")
     if roadmap and [node["name"] for node in roadmap["groupByFields"]["nodes"]] != ["Milestone"]:
-        print("project view Roadmap must be grouped by Milestone")
+        print("project view Release roadmap must be grouped by Milestone")
         bad += 1
-    kanban = by_name.get("KANBAN")
+    kanban = by_name.get("Kanban")
     if kanban and [node["name"] for node in kanban["verticalGroupByFields"]["nodes"]] != ["Status"]:
-        print("project view KANBAN must be grouped vertically by Status")
+        print("project view Kanban must be grouped vertically by Status")
         bad += 1
     return bad
 

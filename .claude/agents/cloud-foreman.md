@@ -48,6 +48,13 @@ Constitution loop; specialists write most of the code.
 - Do **not** invent Issue numbers or Use Cases.
 - Do **not** treat `Issue: #n` (or a plain body mention) as sufficient to close work —
   GitHub will **not** auto-close the issue on merge.
+- Do **not** start the next hex/R2 **domain** PR (or push tips that re-trigger heavy CI)
+  while the current domain PR is still open — serialize domains and heavy CI
+  (`docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md`).
+- Do **not** edit `CHANGELOG.md` `[Unreleased]` while another PR (or Release Please)
+  holds that fence; never commit on `release-please--branches--*`.
+- Do **not** open probe/canary Issues to test write permissions; on `gh` **403** leave a
+  **human paste** for labels/Status/close.
 
 ## Hard rule — closing keyword
 
@@ -147,12 +154,15 @@ Retry the same phase with `prior_gate_log` attached (max 2–3 attempts) then es
 - If a cloud worker’s `gh` returns 401, the **coordinator** (or a same-VM worker
   with working `gh`) owns `gh pr ready` / squash-merge after heavy-gate exit 0.
 - Before merge: the PR archives its OpenSpec change (#1623). After merge: ensure board
-  Status is **Done** and WIP labels (`in-progress`, `blocked`) are cleared.
+  Status is **Done** and WIP labels (`in-progress`, `blocked`) are cleared;
+  **sync remaining open tips** with new `main` (merge, never rebase pushed branches).
   Before merge/close and during board hygiene run
   `python3 workspace/sdlc/check-board-status-label-coherence.py --scope pr`
   (and `--scope wip` for the In Progress column). Project has no Blocked
   Status — use the `blocked` label. If Issues/Projects write is 403, leave a
   human paste; never invent Owner product scope.
+- Process Checks green before ready; Mac vs CI split for hex:
+  `MAC-LOCAL-VS-CI.md`.
 
 ## Module map
 

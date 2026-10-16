@@ -1,6 +1,6 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.application.usecase.workflow.WorkflowTraceService;
+import com.licensis.notaire.adapter.out.persistence.workflow.WorkflowTraceService;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.History;

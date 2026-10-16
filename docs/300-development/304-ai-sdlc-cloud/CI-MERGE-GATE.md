@@ -131,11 +131,12 @@ prints `pending (workflow …)` instead of bare `missing` — still not mergeabl
 Also confirm no required check on the head SHA is still `pending` / `queued` /
 `in_progress`.
 
-## Stale PR diagnosis — rebase before inventing product fixes
+## Stale PR diagnosis — sync `main` before inventing product fixes
 
 If **Integration** and/or **Playwright** fail with Budget/person /
 `undefined, undefined` symptoms (budget pickers showing missing client
-names) and the branch is **behind `main`**, **rebase onto `main` first**.
+names) and the branch is **behind `main`**, **merge `origin/main` first**.
+On a **pushed** branch: merge, never rebase or force-push (steward rule).
 
 Do not invent product fixes for a class of failures already fixed on `main`.
 [#1132](https://github.com/matiaspakua/notaire/pull/1132) nested
@@ -145,8 +146,28 @@ Do not invent product fixes for a class of failures already fixed on `main`.
 Checklist when Integration/Playwright go red on a long-lived tip:
 
 1. `git fetch origin main && git merge-base --is-ancestor origin/main HEAD`
-   (if not ancestor → rebase/merge `main`).
+   (if not ancestor → `git merge origin/main`; never rebase a pushed branch).
 2. Re-run heavy CI; only then debug product code.
+
+## CHANGELOG `[Unreleased]` fence (#1693 / Release Please)
+
+Only **one** open PR may edit `CHANGELOG.md` `[Unreleased]`. While a release-cut
+or Release Please PR holds that section, other PRs omit Unreleased entries or
+wait. Never commit on `release-please--branches--*`. Details:
+[`FLEET-LESSONS-HEX-1693.md`](FLEET-LESSONS-HEX-1693.md).
+
+## Sync after each land
+
+After a squash lands on `main`, every open tip that still needs work must
+**merge `origin/main`** before the next push. Do not start the next hex/R2
+domain PR until the in-flight one merges (serialize domains + heavy CI).
+
+## Process Checks before ready
+
+Before `gh pr ready` / merge, Process Checks and OpenSpec archive hygiene must
+be green (Spotless, Conventional Commits, archive groups 3–8, INVENTORY regen
+when test/architecture inventory drifted). Light advisory checks are **not**
+merge authority — see [`FLEET-LESSONS-HEX-1693.md`](FLEET-LESSONS-HEX-1693.md).
 
 ## Context
 
@@ -187,6 +208,16 @@ suites and starve feature tips. Convert those Dependabot PRs to **draft** so
 new runs stop competing (agents often cannot cancel in-flight runs — HTTP 403).
 Re-ready them only after the product PR’s heavy gate is green or merged.
 (Observed #1139–#1144 vs #1137/#1138, 2026-10-02.)
+
+## Docker image vs heavy tests (#1859)
+
+`check-heavy-ci.sh` does **not** require Build Docker Image. Unit/Integration/Coverage/
+Bruno/Playwright can be green while Docker fails on a transient Maven Central resolve
+of an otherwise valid Boot parent (cached after `go-offline || true`). Before changing
+the Boot pin in `pom.xml`, confirm the artifact exists on Central and that `main`’s
+Docker job recently passed the same version — then fix `backend-api/Dockerfile` with
+`-U` (see [`FLEET-LESSONS-HEX-1693.md`](FLEET-LESSONS-HEX-1693.md) — Docker Build Image).
+Required `protect-main` aggregators may still need Docker/CI green to merge.
 
 ## Related: CodeQL advanced vs default setup
 
