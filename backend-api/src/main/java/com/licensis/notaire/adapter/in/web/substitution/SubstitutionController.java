@@ -1,18 +1,8 @@
 package com.licensis.notaire.adapter.in.web.substitution;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.licensis.notaire.application.usecase.substitution.SubstitutionService;
-import com.licensis.notaire.business.Substitution;
-import com.licensis.notaire.business.Person;
-import com.licensis.notaire.repository.PersonRepository;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,17 +13,31 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.licensis.notaire.application.port.in.substitution.ManageSubstitutionsUseCase;
+import com.licensis.notaire.application.port.in.substitution.QuerySubstitutionsUseCase;
+import com.licensis.notaire.application.port.out.substitution.SubstitutionOpsPort.DeleteResult;
+import com.licensis.notaire.application.port.out.substitution.SubstitutionOpsPort.PersonView;
+import com.licensis.notaire.application.port.out.substitution.SubstitutionOpsPort.SaveResult;
+import com.licensis.notaire.application.port.out.substitution.SubstitutionOpsPort.SubstitutionCommand;
+import com.licensis.notaire.application.port.out.substitution.SubstitutionOpsPort.SubstitutionView;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
+/**
+ * Substitutions. Calls inbound ports only; person hydration and persistence live behind
+ * {@code SubstitutionOpsPort} (issue #1807).
+ */
 @RestController
 @RequestMapping("/api/v1/substitutions")
 @Tag(name = "Substitution", description = "API for managing substitution")
 public class SubstitutionController {
-
-    private static final Logger log = LoggerFactory.getLogger(SubstitutionController.class);
 
     /**
      * Nested person shape for frontend {@code Substitution.fkIdSubstitute/fkIdSubstituted}
@@ -71,12 +75,13 @@ public class SubstitutionController {
             PersonRef fkIdSubstituted,
             int version) {}
 
-    private final SubstitutionService service;
-    private final PersonRepository personRepository;
+    private final QuerySubstitutionsUseCase querySubstitutions;
+    private final ManageSubstitutionsUseCase manageSubstitutions;
 
-    public SubstitutionController(SubstitutionService service, PersonRepository personRepository) {
-        this.service = service;
-        this.personRepository = personRepository;
+    public SubstitutionController(
+            QuerySubstitutionsUseCase querySubstitutions, ManageSubstitutionsUseCase manageSubstitutions) {
+        this.querySubstitutions = querySubstitutions;
+        this.manageSubstitutions = manageSubstitutions;
     }
 
     private Integer resolveSubstituteId(SubstitutionRequest request) {
@@ -93,138 +98,98 @@ public class SubstitutionController {
         return request.fkIdSubstituted() != null ? request.fkIdSubstituted().personId() : null;
     }
 
-    private PersonRef toPersonRef(Person person) {
-        if (person == null || person.getPersonId() == null) {
+    private SubstitutionCommand toCommand(SubstitutionRequest request) {
+        return new SubstitutionCommand(
+                request.dateStart(),
+                request.dateEnd(),
+                request.notes(),
+                resolveSubstituteId(request),
+                resolveSubstitutedId(request));
+    }
+
+    private PersonRef toPersonRef(PersonView person) {
+        if (person == null || person.personId() == null) {
             return null;
         }
-        return new PersonRef(person.getPersonId(), person.getFirstName(), person.getLastName());
+        return new PersonRef(person.personId(), person.name(), person.lastName());
     }
 
-    private SubstitutionResponse toResponse(Substitution entity) {
-        Person substitute = entity.getFkIdSubstitute();
-        Person substituted = entity.getFkIdSubstituted();
-        Integer substituteId = substitute != null ? substitute.getPersonId() : null;
-        Integer substitutedId = substituted != null ? substituted.getPersonId() : null;
+    private SubstitutionResponse toResponse(SubstitutionView view) {
         return new SubstitutionResponse(
-                entity.getIdSubstitution(),
-                entity.getDateStart(),
-                entity.getDateEnd(),
-                entity.getNotes(),
-                substituteId,
-                substitutedId,
-                toPersonRef(substitute),
-                toPersonRef(substituted),
-                entity.getVersion());
-    }
-
-    private boolean applyRequest(Substitution entity, SubstitutionRequest request) {
-        Integer substituteId = resolveSubstituteId(request);
-        Integer substitutedId = resolveSubstitutedId(request);
-        if (substituteId == null || substitutedId == null) {
-            return false;
-        }
-        Person substitute = personRepository.findById(substituteId).orElse(null);
-        Person substituted = personRepository.findById(substitutedId).orElse(null);
-        if (substitute == null || substituted == null) {
-            return false;
-        }
-        entity.setDateStart(request.dateStart());
-        entity.setDateEnd(request.dateEnd());
-        entity.setNotes(request.notes());
-        entity.setFkIdSubstitute(substitute);
-        entity.setFkIdSubstituted(substituted);
-        return true;
+                view.idSubstitution(),
+                view.dateStart(),
+                view.dateEnd(),
+                view.notes(),
+                view.substitutePersonId(),
+                view.substitutedPersonId(),
+                toPersonRef(view.substitute()),
+                toPersonRef(view.substituted()),
+                view.version());
     }
 
     @GetMapping
     @Operation(summary = "Get all substitution")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<SubstitutionResponse>> getAll() {
-        try {
-            return ResponseEntity.ok(service.findAll().stream().map(this::toResponse).toList());
-        } catch (Exception e) {
-            log.error("Failed to get all substitutions", e);
-            return ResponseEntity.internalServerError().build();
-        }
+        return ResponseEntity.ok(querySubstitutions.findAll().stream().map(this::toResponse).toList());
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "Not found")
-})
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @GetMapping("/{id}")
     @Operation(summary = "Get substitution by ID")
-    @Transactional(readOnly = true)
     public ResponseEntity<SubstitutionResponse> getById(@PathVariable Integer id) {
-        try {
-            return service.findById(id)
-                    .map(this::toResponse)
-                    .map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
-        } catch (Exception e) {
-            log.error("Failed to get substitution by id {}", id, e);
-            return ResponseEntity.notFound().build();
-        }
+        return querySubstitutions.findById(id)
+                .map(this::toResponse)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Created"),
-    @ApiResponse(responseCode = "400", description = "Invalid request"),
-    @ApiResponse(responseCode = "409", description = "Conflict")
-})
+            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "409", description = "Conflict")
+    })
     @PostMapping
     @Operation(summary = "Create substitution")
     public ResponseEntity<Object> create(@Valid @RequestBody SubstitutionRequest request) {
-        try {
-            Substitution entity = new Substitution();
-            if (!applyRequest(entity, request)) {
-                return ResponseEntity.badRequest().build();
-            }
-            Substitution saved = service.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(saved));
-        } catch (Exception e) {
-            log.error("Failed to create substitution", e);
-            return ResponseEntity.internalServerError().build();
-        }
+        return switch (manageSubstitutions.create(toCommand(request))) {
+            case SaveResult.Created created -> ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created.view()));
+            case SaveResult.BadRequest ignored -> ResponseEntity.badRequest().build();
+            case SaveResult.ServerError ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.Updated ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
+        };
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "Not found")
-})
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @PutMapping("/{id}")
     @Operation(summary = "Update substitution")
     public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody SubstitutionRequest request) {
-        return service.findById(id).map(existing -> {
-            try {
-                if (!applyRequest(existing, request)) {
-                    return ResponseEntity.badRequest().<Void>build();
-                }
-                service.save(existing);
-                return ResponseEntity.ok().<Void>build();
-            } catch (Exception e) {
-                log.error("Failed to update substitution id {}", id, e);
-                return ResponseEntity.internalServerError().<Void>build();
-            }
-        }).orElse(ResponseEntity.notFound().build());
+        return switch (manageSubstitutions.update(id, toCommand(request))) {
+            case SaveResult.Updated ignored -> ResponseEntity.ok().build();
+            case SaveResult.BadRequest ignored -> ResponseEntity.badRequest().build();
+            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
+            case SaveResult.ServerError ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.Created ignored -> ResponseEntity.internalServerError().build();
+        };
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Deleted"),
-    @ApiResponse(responseCode = "404", description = "Not found")
-})
+            @ApiResponse(responseCode = "204", description = "Deleted"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete substitution")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        try {
-            if (!service.existsById(id)) {
-                return ResponseEntity.notFound().build();
-            }
-            service.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            log.error("Failed to delete substitution id {}", id, e);
-            return ResponseEntity.internalServerError().build();
-        }
+        return switch (manageSubstitutions.delete(id)) {
+            case DeleteResult.Deleted ignored -> ResponseEntity.noContent().build();
+            case DeleteResult.NotFound ignored -> ResponseEntity.notFound().build();
+            case DeleteResult.ServerError ignored -> ResponseEntity.internalServerError().build();
+        };
     }
 }
