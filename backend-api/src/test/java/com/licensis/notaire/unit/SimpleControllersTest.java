@@ -13,10 +13,6 @@ import com.licensis.notaire.adapter.in.web.procedure.ProcedureController;
 import com.licensis.notaire.dto.DtoTestimonyMovement;
 import com.licensis.notaire.dto.DtoTestimony;
 import com.licensis.notaire.dto.DtoProcedureType;
-import com.licensis.notaire.business.Person;
-import com.licensis.notaire.business.IdentificationType;
-import com.licensis.notaire.repository.IdentificationTypeRepository;
-import com.licensis.notaire.application.usecase.person.PersonService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,9 +20,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 
 import static org.mockito.ArgumentMatchers.any;
