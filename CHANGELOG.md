@@ -5,6 +5,68 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.3](https://github.com/matiaspakua/notaire/compare/v0.2.2...v0.2.3) (2026-10-16)
+
+
+### Features
+
+* **observability:** browser OpenTelemetry spans (`service.name=notaire-frontend`) via the same-origin BFF `POST /api/otlp/v1/traces`; opt-in with `NEXT_PUBLIC_OTEL_TRACES_ENABLED` ([#1739](https://github.com/matiaspakua/notaire/issues/1739)) ([#1751](https://github.com/matiaspakua/notaire/pull/1751)) ([98b99c4](https://github.com/matiaspakua/notaire/commit/98b99c40760d503e6cf072279314737d91bde0b8))
+
+
+### Bug Fixes
+
+* **security:** remove legacy MD5 password verification; only BCrypt hashes match, and Flyway V52 migrates the seeded admin password to BCrypt ([#1762](https://github.com/matiaspakua/notaire/issues/1762)) ([#1765](https://github.com/matiaspakua/notaire/pull/1765)) ([c88e2f0](https://github.com/matiaspakua/notaire/commit/c88e2f0b27e54c73848888b3adbfc8f6b109547d))
+* **quality:** JpaController boxed version equals (Sonar S4973) ([#1758](https://github.com/matiaspakua/notaire/issues/1758)) ([#1768](https://github.com/matiaspakua/notaire/pull/1768)) ([191834a](https://github.com/matiaspakua/notaire/commit/191834ac85cf9afc8aa10700ed0f392926166233))
+* **release:** release-please bumps the namespaced Maven POMs and syncs the OpenAPI `info.version`; its PR no longer needs the `sdlc-exception` label ([#1753](https://github.com/matiaspakua/notaire/issues/1753)) ([#1754](https://github.com/matiaspakua/notaire/pull/1754)) ([298134a](https://github.com/matiaspakua/notaire/commit/298134ad080ca54f1b100f88a3b5de5f9808f538))
+* **fe:** mock composition in the useProcedureTemplate test ([#1788](https://github.com/matiaspakua/notaire/issues/1788)) ([#1790](https://github.com/matiaspakua/notaire/pull/1790)) ([dc32b3d](https://github.com/matiaspakua/notaire/commit/dc32b3d39f2fe39199becf00ddbb82d2c15da0b0))
+
+
+### Code Refactoring
+
+Hexagonal architecture epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030. REST and OpenAPI contracts are unchanged.
+
+* **arch:** folio instance as a full hexagon ([#1727](https://github.com/matiaspakua/notaire/issues/1727)) ([#1752](https://github.com/matiaspakua/notaire/pull/1752)) ([646d8de](https://github.com/matiaspakua/notaire/commit/646d8def03b817d7da2b96cd47c9ecfe311bcfab))
+* **arch:** workflow definition as a full hexagon ([#1728](https://github.com/matiaspakua/notaire/issues/1728)) ([#1755](https://github.com/matiaspakua/notaire/pull/1755)) ([4f52f1b](https://github.com/matiaspakua/notaire/commit/4f52f1b34f0a49909073d44f391dff25cabe5e84))
+* **arch:** workflow node as a full hexagon ([#1729](https://github.com/matiaspakua/notaire/issues/1729)) ([#1757](https://github.com/matiaspakua/notaire/pull/1757)) ([661532f](https://github.com/matiaspakua/notaire/commit/661532faddf148677e384890b6cdbca5e08f64c8))
+* **arch:** workflow transition as a full hexagon ([#1730](https://github.com/matiaspakua/notaire/issues/1730)) ([#1761](https://github.com/matiaspakua/notaire/pull/1761)) ([b8b812d](https://github.com/matiaspakua/notaire/commit/b8b812d53b0c5c0252df6dbd8a39975c326ba127))
+* **arch:** users and roles as a full hexagon (login/REST contract unchanged) ([#1731](https://github.com/matiaspakua/notaire/issues/1731)) ([#1763](https://github.com/matiaspakua/notaire/pull/1763)) ([1933668](https://github.com/matiaspakua/notaire/commit/1933668cf1636d4db18ab3e733469a70c7fa77c3))
+* **arch:** workflow validation ports-only hexagon ([#1770](https://github.com/matiaspakua/notaire/issues/1770)) ([#1771](https://github.com/matiaspakua/notaire/pull/1771)) ([ded7bde](https://github.com/matiaspakua/notaire/commit/ded7bdecb765fbe4131690067e59a6c26192e521))
+* **arch:** management controller ports-only ([#1772](https://github.com/matiaspakua/notaire/issues/1772)) ([#1773](https://github.com/matiaspakua/notaire/pull/1773)) ([bbd1f4c](https://github.com/matiaspakua/notaire/commit/bbd1f4cbcffe99369c83e36258fcaf164997bfc2))
+* **arch:** history controller ports-only ([#1775](https://github.com/matiaspakua/notaire/issues/1775)) ([#1776](https://github.com/matiaspakua/notaire/pull/1776)) ([be18ac7](https://github.com/matiaspakua/notaire/commit/be18ac71700bd86a5a0cd3b15321e98bc6534cb6))
+* **arch:** copy controller ports-only ([#1779](https://github.com/matiaspakua/notaire/issues/1779)) ([#1780](https://github.com/matiaspakua/notaire/pull/1780)) ([c193a01](https://github.com/matiaspakua/notaire/commit/c193a015a0a779ca93511fee98028370590db67e))
+* **arch:** testimony controller ports-only ([#1783](https://github.com/matiaspakua/notaire/issues/1783)) ([#1784](https://github.com/matiaspakua/notaire/pull/1784)) ([2117403](https://github.com/matiaspakua/notaire/commit/2117403e77639d2de92cc10592451786ec4a39c4))
+* **arch:** procedure-folder controller ports-only ([#1795](https://github.com/matiaspakua/notaire/issues/1795)) ([#1797](https://github.com/matiaspakua/notaire/pull/1797)) ([fe8659c](https://github.com/matiaspakua/notaire/commit/fe8659cc2f11d6c58ef0885ed4180e2311f13840))
+* **arch:** procedure-type controller ports-only ([#1791](https://github.com/matiaspakua/notaire/issues/1791)) ([#1793](https://github.com/matiaspakua/notaire/pull/1793)) ([1117b20](https://github.com/matiaspakua/notaire/commit/1117b20003929af2cea7fd7e4a337dd323ed8d28))
+* **arch:** procedure controller ports-only ([#1801](https://github.com/matiaspakua/notaire/issues/1801)) ([#1802](https://github.com/matiaspakua/notaire/pull/1802)) ([0d4d1cd](https://github.com/matiaspakua/notaire/commit/0d4d1cde727d82cacf2c826ffa6fe1ab50e94df9))
+* **arch:** testimony-movement controller ports-only ([#1787](https://github.com/matiaspakua/notaire/issues/1787)) ([#1789](https://github.com/matiaspakua/notaire/pull/1789)) ([da86497](https://github.com/matiaspakua/notaire/commit/da86497a4a8289752709b572a5a8c81e8433a8eb))
+* **arch:** procedure-template controller ports-only ([#1798](https://github.com/matiaspakua/notaire/issues/1798)) ([#1800](https://github.com/matiaspakua/notaire/pull/1800)) ([d4dbe3e](https://github.com/matiaspakua/notaire/commit/d4dbe3e974f7f328bc100e974b22979ace8091fd))
+* **arch:** budget-template controller ports-only ([#1803](https://github.com/matiaspakua/notaire/issues/1803)) ([#1804](https://github.com/matiaspakua/notaire/pull/1804)) ([e2d3942](https://github.com/matiaspakua/notaire/commit/e2d3942f12017c17b0870419266ac2a6cb68cf1f))
+* **arch:** registration-draft controller ports-only ([#1819](https://github.com/matiaspakua/notaire/issues/1819)) ([#1820](https://github.com/matiaspakua/notaire/pull/1820)) ([c1fd86c](https://github.com/matiaspakua/notaire/commit/c1fd86cee0bad796a43e8df95ae5c04dba727dda))
+* **arch:** deed controller ports-only ([#1811](https://github.com/matiaspakua/notaire/issues/1811)) ([#1812](https://github.com/matiaspakua/notaire/pull/1812)) ([eb78d11](https://github.com/matiaspakua/notaire/commit/eb78d11fe1e032e4ac888284135aeee35762d4ca))
+* **arch:** concept controller ports-only ([#1815](https://github.com/matiaspakua/notaire/issues/1815)) ([#1816](https://github.com/matiaspakua/notaire/pull/1816)) ([b63677a](https://github.com/matiaspakua/notaire/commit/b63677ae35e17504fb781430d6c2e82099cdf7d5))
+* **arch:** item controller ports-only ([#1809](https://github.com/matiaspakua/notaire/issues/1809)) ([#1810](https://github.com/matiaspakua/notaire/pull/1810)) ([6609f87](https://github.com/matiaspakua/notaire/commit/6609f87ad73a765a4ed4aed04d2bfc672c9c8877))
+* **arch:** budget controller ports-only ([#1805](https://github.com/matiaspakua/notaire/issues/1805)) ([#1806](https://github.com/matiaspakua/notaire/pull/1806)) ([f0a07d0](https://github.com/matiaspakua/notaire/commit/f0a07d075c2a7d4a64a5d3e020c1fff0968c68ab))
+* **arch:** substitution controller ports-only ([#1807](https://github.com/matiaspakua/notaire/issues/1807)) ([#1808](https://github.com/matiaspakua/notaire/pull/1808)) ([d2e0906](https://github.com/matiaspakua/notaire/commit/d2e0906d717279b0f4c8feedd450476e35eff925))
+* **arch:** document-cost-template controller ports-only ([#1821](https://github.com/matiaspakua/notaire/issues/1821)) ([#1822](https://github.com/matiaspakua/notaire/pull/1822)) ([87c3bd9](https://github.com/matiaspakua/notaire/commit/87c3bd9228373c7ca3ee8b223e8b996698ec609f))
+* **arch:** person controller ports-only ([#1813](https://github.com/matiaspakua/notaire/issues/1813)) ([#1814](https://github.com/matiaspakua/notaire/pull/1814)) ([39ac641](https://github.com/matiaspakua/notaire/commit/39ac64196e5bad4162068f4b12323d113239fa9d))
+* **arch:** notebook controller ports-only ([#1817](https://github.com/matiaspakua/notaire/issues/1817)) ([#1818](https://github.com/matiaspakua/notaire/pull/1818)) ([2cfb591](https://github.com/matiaspakua/notaire/commit/2cfb59171b7fa659d95479e13b0c2b2eb27d33e4))
+* **arch:** auxiliary-protocol controller ports-only ([#1825](https://github.com/matiaspakua/notaire/issues/1825)) ([#1828](https://github.com/matiaspakua/notaire/pull/1828)) ([3674aa9](https://github.com/matiaspakua/notaire/commit/3674aa99200c72e0b5100dcfca2a437dc986581b))
+* **arch:** frontend identification-types catalog into core + adapters ([#1732](https://github.com/matiaspakua/notaire/issues/1732)) ([#1767](https://github.com/matiaspakua/notaire/pull/1767)) ([87f1388](https://github.com/matiaspakua/notaire/commit/87f1388adda27b1152638b9d424745eebcb10c0e))
+* **arch:** frontend management-status catalog into core + adapters ([#1769](https://github.com/matiaspakua/notaire/issues/1769)) ([#1774](https://github.com/matiaspakua/notaire/pull/1774)) ([fd8df25](https://github.com/matiaspakua/notaire/commit/fd8df2516f629db59cbcfa364e349b81a1494791))
+* **arch:** frontend document-type catalog into core + adapters ([#1777](https://github.com/matiaspakua/notaire/issues/1777)) ([#1778](https://github.com/matiaspakua/notaire/pull/1778)) ([728979f](https://github.com/matiaspakua/notaire/commit/728979f81d02a219a20111ac75e66ee23698a8c1))
+* **arch:** frontend concept catalog into core + adapters ([#1781](https://github.com/matiaspakua/notaire/issues/1781)) ([#1782](https://github.com/matiaspakua/notaire/pull/1782)) ([95c673a](https://github.com/matiaspakua/notaire/commit/95c673af85da7289ac235efb500c02225a917b4a))
+* **arch:** frontend folios admin into core + adapters ([#1785](https://github.com/matiaspakua/notaire/issues/1785)) ([#1786](https://github.com/matiaspakua/notaire/pull/1786)) ([fd3f462](https://github.com/matiaspakua/notaire/commit/fd3f4625d9f6147abb327c6d8f60533892ca18dd))
+* **arch:** frontend templates admin into core + adapters ([#1788](https://github.com/matiaspakua/notaire/issues/1788)) ([#1790](https://github.com/matiaspakua/notaire/pull/1790)) ([dc32b3d](https://github.com/matiaspakua/notaire/commit/dc32b3d39f2fe39199becf00ddbb82d2c15da0b0))
+* **arch:** frontend procedures admin into core + adapters ([#1796](https://github.com/matiaspakua/notaire/issues/1796)) ([#1799](https://github.com/matiaspakua/notaire/pull/1799)) ([862ccd5](https://github.com/matiaspakua/notaire/commit/862ccd53fe704b7f65a445589e24952d79dca8c7))
+* **arch:** frontend workflows admin into core + adapters ([#1792](https://github.com/matiaspakua/notaire/issues/1792)) ([#1794](https://github.com/matiaspakua/notaire/pull/1794)) ([8ce04d6](https://github.com/matiaspakua/notaire/commit/8ce04d65f505f5acb505d9a188bc8511e9b0d8e1))
+* **arch:** frontend people into core + adapters ([#1823](https://github.com/matiaspakua/notaire/issues/1823)) ([#1824](https://github.com/matiaspakua/notaire/pull/1824)) ([fa02216](https://github.com/matiaspakua/notaire/commit/fa02216958aa3a4fdcf0d6aab1caeecf65e258df))
+
+
+### Miscellaneous Chores
+
+* **quality:** checked-in Sonar legacy vulnerability inventory ([#1535](https://github.com/matiaspakua/notaire/issues/1535)) ([#1756](https://github.com/matiaspakua/notaire/pull/1756)) ([d66e98d](https://github.com/matiaspakua/notaire/commit/d66e98d83f2a1568ba2f0e30638685dcc946b73a))
+* **quality:** refresh the Sonar legacy inventory from live analysis ([#1760](https://github.com/matiaspakua/notaire/issues/1760)) ([#1764](https://github.com/matiaspakua/notaire/pull/1764)) ([3cb60de](https://github.com/matiaspakua/notaire/commit/3cb60de2e601e574a5bb2e27e98fa3379eeff8fd))
+
 ## [0.2.2](https://github.com/matiaspakua/notaire/compare/v0.2.1...v0.2.2) (2026-10-15)
 
 
@@ -13,23 +75,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **docker:** default COMPOSE_PROJECT_NAME for worktree observability ([81ffc44](https://github.com/matiaspakua/notaire/commit/81ffc442b4a6c04856ceb4518182f1f050a9489a))
 * **docker:** default COMPOSE_PROJECT_NAME for worktree observability ([d6bb0bc](https://github.com/matiaspakua/notaire/commit/d6bb0bc8f4099d5d66c64ce35f66ff6845e68b64)), closes [#1678](https://github.com/matiaspakua/notaire/issues/1678)
 * **observability:** wire exporter queries, SEMVER panels, Sonar quality dashboard ([#1711](https://github.com/matiaspakua/notaire/issues/1711)) ([6c87286](https://github.com/matiaspakua/notaire/commit/6c872862f27da2ddf7359fe670bc4b0181da375a))
-
-## [Unreleased]
-
-### Changed
-
-- **arch:** users and roles moved behind a full hexagon (domain `User`/`Role`, catalog ports, use cases, password hasher port); `UserController` and `RoleController` are ports-only and ArchUnit R1 clears eight prior baseline edges; login/REST contract unchanged; role module grant enforcement left to [#1683](https://github.com/matiaspakua/notaire/issues/1683) ([#1731](https://github.com/matiaspakua/notaire/issues/1731), epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030).
-- **arch:** workflow transition moved behind a full hexagon (domain `WorkflowTransition`, ports, use cases, catalog adapter); `WorkflowTransitionController` is ports-only and ArchUnit R1 clears its four prior baseline edges; REST contract unchanged ([#1730](https://github.com/matiaspakua/notaire/issues/1730), epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030).
-- **arch:** workflow node moved behind a full hexagon (domain `WorkflowNode`, ports, use cases, catalog adapter); `WorkflowNodeController` is ports-only and ArchUnit R1 clears its six prior baseline edges; REST contract unchanged ([#1729](https://github.com/matiaspakua/notaire/issues/1729), epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030).
-- **quality:** checked-in Sonar legacy vulnerability / high-severity inventory plus `infra/scripts/sonar-legacy-inventory.py` (classifications: fix, false_positive, accepted_risk, defer_hexagon) for overall findings under [#1535](https://github.com/matiaspakua/notaire/issues/1535)
-- **arch:** workflow definition moved behind a full hexagon (domain `WorkflowDefinition`, ports, use cases, catalog adapter); `WorkflowDefinitionController` is ports-only and ArchUnit R1 clears its four prior baseline edges; REST contract unchanged ([#1728](https://github.com/matiaspakua/notaire/issues/1728), epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030).
-- **arch:** folio instance aggregate moved behind a full hexagon (domain `Folio`, ports, use cases, catalog/lookup adapters); `FolioController` is ports-only and ArchUnit R1 clears all seven prior `FolioController` baseline edges; REST contract unchanged ([#1727](https://github.com/matiaspakua/notaire/issues/1727), epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030).
-- **arch:** shared catalog write-lock control flow extracted to `CatalogLockSupport` (folio, document, management-status update/delete; identification delete); REST bodies unchanged ([#1722](https://github.com/matiaspakua/notaire/issues/1722), epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030).
-- **arch:** management status catalog moved behind a full hexagon (domain, ports, use cases, persistence adapter); ArchUnit baseline shrinks for `ManagementStatusController` ([#1719](https://github.com/matiaspakua/notaire/issues/1719), epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030). A stale client `version` on `PUT /api/v1/management-statuses/{id}` now answers **409** (legacy copied the DTO version onto the entity and still answered 200).
-
-### Bug Fixes
-
-- **release:** release-please now bumps the namespaced Maven POMs and syncs the OpenAPI `info.version`, and its PR no longer needs the `sdlc-exception` label ([#1753](https://github.com/matiaspakua/notaire/issues/1753))
 - **observability:** notaire-postgres panels — fix extend-query double-prefix metric names, grant exporter SELECT on business tables, and point ops-rate at `notaire_operation_total` ([#1746](https://github.com/matiaspakua/notaire/issues/1746))
 - **api:** `GET /managements/{id}/workflow-trace` no longer owns a controller transaction that turns expected 400s into `UnexpectedRollbackException` ERROR spam ([#1745](https://github.com/matiaspakua/notaire/issues/1745))
 - **api:** expected client failures (HTTP 4xx `NotaireException` and management delete FK conflicts) log as WARN instead of ERROR ([#1712](https://github.com/matiaspakua/notaire/issues/1712))
@@ -37,13 +82,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **observability:** load postgres-exporter custom queries, fix empty Postgres PromQL panels, surface packaged SEMVER on Grafana, add Sonar quality dashboard, and drop deprecated piechart plugin install noise ([#1707](https://github.com/matiaspakua/notaire/issues/1707))
 - **security:** CSRF now accepts the browser double-submit cookie and exempts Bearer-token clients; login/logout also return the `XSRF-TOKEN` cookie and the nonce is no longer rotated on every request ([#1620](https://github.com/matiaspakua/notaire/issues/1620))
 
+### Changed
+
+- **arch:** shared catalog write-lock control flow extracted to `CatalogLockSupport` (folio, document, management-status update/delete; identification delete); REST bodies unchanged ([#1722](https://github.com/matiaspakua/notaire/issues/1722), epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030).
+- **arch:** management status catalog moved behind a full hexagon (domain, ports, use cases, persistence adapter); ArchUnit baseline shrinks for `ManagementStatusController` ([#1719](https://github.com/matiaspakua/notaire/issues/1719), epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030). A stale client `version` on `PUT /api/v1/management-statuses/{id}` now answers **409** (legacy copied the DTO version onto the entity and still answered 200).
+
 ### Features
 
-- **observability:** browser OpenTelemetry spans (`service.name=notaire-frontend`) via same-origin BFF `POST /api/otlp/v1/traces` to the collector; opt-in with `NEXT_PUBLIC_OTEL_TRACES_ENABLED` ([#1739](https://github.com/matiaspakua/notaire/issues/1739))
 - **reports:** CU82 registration draft PDF prints recorded draft, deed, party, and property fields; missing values stay N/A ([#116](https://github.com/matiaspakua/notaire/issues/116))
 - **reports:** CU08 testimony copy PDF prints recorded testimony and deed fields for a verified testimony; unverified stays 400 ([#119](https://github.com/matiaspakua/notaire/issues/119))
 - **reports:** CU50 tax sworn statement lists recorded deeds for a year and month (optional notary and protocol); operation, payment form, and tax stay N/A ([#203](https://github.com/matiaspakua/notaire/issues/203))
 - **reports:** CU25 monthly sworn statement lists recorded deeds for a year and month (optional notary and protocol); tax, rate, and annex stay N/A ([#178](https://github.com/matiaspakua/notaire/issues/178))
+
+## [Unreleased]
 
 ## [0.2.1](https://github.com/matiaspakua/notaire/compare/v0.2.0...v0.2.1) (2026-10-13)
 
