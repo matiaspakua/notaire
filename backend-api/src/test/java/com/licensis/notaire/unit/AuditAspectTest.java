@@ -6,7 +6,7 @@ import com.licensis.notaire.adapter.in.web.user.UserController;
 import com.licensis.notaire.business.AuditRecord;
 import com.licensis.notaire.business.User;
 import com.licensis.notaire.repository.UserRepository;
-import com.licensis.notaire.application.usecase.audit.AuditRecordService;
+import com.licensis.notaire.adapter.out.persistence.audit.AuditRecordService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.jupiter.api.AfterEach;

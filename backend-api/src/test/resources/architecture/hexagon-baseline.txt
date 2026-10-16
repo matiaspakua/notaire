@@ -1,7 +1,4 @@
 R2 | com.licensis.notaire.application.port.in.history.HistoryUseCase -> com.licensis.notaire.business.History
-R2 | com.licensis.notaire.application.port.out.audit.AuditRecordRepositoryPort -> com.licensis.notaire.business.AuditRecord
-R2 | com.licensis.notaire.application.port.out.audit.AuditRecordRepositoryPort -> org.springframework.data.domain.Page
-R2 | com.licensis.notaire.application.port.out.audit.AuditRecordRepositoryPort -> org.springframework.data.domain.Pageable
 R2 | com.licensis.notaire.application.port.out.concept.ConceptRepositoryPort -> com.licensis.notaire.business.Concept
 R2 | com.licensis.notaire.application.port.out.copy.CopyRepositoryPort -> com.licensis.notaire.business.Copy
 R2 | com.licensis.notaire.application.port.out.copy.CopyRepositoryPort -> com.licensis.notaire.business.Testimony
@@ -15,11 +12,6 @@ R2 | com.licensis.notaire.application.port.out.substitution.SubstitutionReposito
 R2 | com.licensis.notaire.application.port.out.substitution.SubstitutionRepositoryPort -> com.licensis.notaire.business.Substitution
 R2 | com.licensis.notaire.application.port.out.user.RoleRepositoryPort -> com.licensis.notaire.business.Role
 R2 | com.licensis.notaire.application.port.out.user.UserRepositoryPort -> com.licensis.notaire.business.User
-R2 | com.licensis.notaire.application.usecase.audit.AuditRecordService -> com.licensis.notaire.business.AuditRecord
-R2 | com.licensis.notaire.application.usecase.audit.AuditRecordService -> com.licensis.notaire.business.Person
-R2 | com.licensis.notaire.application.usecase.audit.AuditRecordService -> com.licensis.notaire.business.User
-R2 | com.licensis.notaire.application.usecase.audit.AuditRecordService -> org.springframework.data.domain.Page
-R2 | com.licensis.notaire.application.usecase.audit.AuditRecordService -> org.springframework.data.domain.Pageable
 R2 | com.licensis.notaire.application.usecase.concept.ConceptService -> com.licensis.notaire.business.Concept
 R2 | com.licensis.notaire.application.usecase.copy.CopyService -> com.licensis.notaire.business.Copy
 R2 | com.licensis.notaire.application.usecase.copy.CopyService -> com.licensis.notaire.repository.TestimonyMovementRepository

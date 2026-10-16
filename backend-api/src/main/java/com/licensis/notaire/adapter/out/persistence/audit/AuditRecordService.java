@@ -1,36 +1,41 @@
-package com.licensis.notaire.application.usecase.audit;
+package com.licensis.notaire.adapter.out.persistence.audit;
 
-import com.licensis.notaire.application.port.out.audit.AuditRecordRepositoryPort;
 import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoAuditRecord;
 import com.licensis.notaire.dto.DtoUser;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.AuditRecord;
 import com.licensis.notaire.business.User;
+import com.licensis.notaire.exception.BusinessValidationException;
+import com.licensis.notaire.repository.AuditRecordRepository;
+import jakarta.persistence.criteria.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.licensis.notaire.exception.BusinessValidationException;
-
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Audit persistence helper (CU23). Outbound adapter helper (issue #1890).
+ */
 @Service
 public class AuditRecordService {
 
     private static final Logger logger = LoggerFactory.getLogger(AuditRecordService.class);
 
-    private final AuditRecordRepositoryPort repository;
+    private final AuditRecordRepository repository;
 
-    public AuditRecordService(AuditRecordRepositoryPort repository) {
+    public AuditRecordService(AuditRecordRepository repository) {
         this.repository = repository;
     }
 
@@ -99,7 +104,7 @@ public class AuditRecordService {
         Date fromInclusive = from == null ? null : Date.from(from.atStartOfDay(zone).toInstant());
         Date toExclusive = to == null ? null : Date.from(to.plusDays(1).atStartOfDay(zone).toInstant());
         String moduleFilter = module == null || module.isBlank() ? null : module;
-        return repository.search(moduleFilter, idUser, fromInclusive, toExclusive, pageable)
+        return search(moduleFilter, idUser, fromInclusive, toExclusive, pageable)
                 .map(AuditRecordService::toDto);
     }
 
@@ -135,6 +140,27 @@ public class AuditRecordService {
     public AuditRecord save(AuditRecord auditRecord) {
         logger.debug("Saving AuditRecord: {}", auditRecord);
         return repository.save(auditRecord);
+    }
+
+    private Page<AuditRecord> search(String module, Integer idUser, Date fromInclusive, Date toExclusive,
+            Pageable pageable) {
+        Specification<AuditRecord> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (module != null) {
+                predicates.add(cb.equal(root.get("module"), module));
+            }
+            if (idUser != null) {
+                predicates.add(cb.equal(root.get("fkIdUser").get("idUser"), idUser));
+            }
+            if (fromInclusive != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.<Date>get("date"), fromInclusive));
+            }
+            if (toExclusive != null) {
+                predicates.add(cb.lessThan(root.<Date>get("date"), toExclusive));
+            }
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+        return repository.findAll(spec, pageable);
     }
 
     /**

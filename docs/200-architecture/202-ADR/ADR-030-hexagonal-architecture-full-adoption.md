@@ -923,6 +923,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   delete dead entity-speaking PersonUseCase / PersonRepositoryPort; keep PersonOpsPort /
   PersonLookupPort. Clears ~8 R2 edges (R2 46→38).
 
+- **Backend R2 shrink — audit (#1890):** move AuditRecordService to `adapter.out.persistence.audit`
+  (Spring Data locally); delete entity-speaking AuditRecordRepositoryPort; add view-safe
+  AuditRecordOpsPort for the HTTP adapter. Clears ~8 R2 edges (R2 38→30).
+
 
 ## Options considered
 
