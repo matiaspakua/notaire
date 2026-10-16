@@ -18,6 +18,7 @@ from milestone_policy import lane  # noqa: E402
 def load(name: str, file: str):
     spec = importlib.util.spec_from_file_location(name, SDLC / file)
     module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
     assert spec.loader is not None
     spec.loader.exec_module(module)
     return module

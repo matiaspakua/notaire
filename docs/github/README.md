@@ -68,26 +68,34 @@ Every issue has exactly one milestone. The full list, assignment precedence,
 and read-only verification are in
 [MILESTONES.md](../300-development/305-project-management/MILESTONES.md).
 
-The Project views separate concerns:
+The Project views (#1860; set up in the UI, filters checked by
+`apply_milestone_policy.py --check`):
 
-- **Roadmap** — closed history through future delivery, grouped by Milestone
-- **KANBAN** — open non-catalog work, grouped by Status
-- **Agent queue** — open candidates
-- **Needs triage** — open candidates missing priority metadata
-- RF / CU / RNF — dedicated catalog views, never an agent queue
+- **Kanban** — open non-catalog work, columns by Status
+- **Current train** — the open train (`v0.3` today), grouped by Status; retarget each train
+- **Agent queue** — Todo, `status:ready`, not blocked / needs-info
+- **In flight** — Status In Progress, with linked PRs
+- **Needs triage** — open work without a priority label
+- **Blocked / needs info** — open work held by a person or dependency
+- **Release roadmap** — history through v1.0, grouped by Milestone, Backlog excluded
+- **Shipped** — closed work of v0.1/v0.2, grouped by Milestone (CHANGELOG check)
+- **Catalog** — RF / RNF / CU anchors, never an agent queue
+
+Priority, area and kind are labels; the project has no Priority/Area/Kind fields.
 
 ## Labels
 
-| Kind | Labels |
-|------|--------|
-| Area (one or more) | `BACKEND`, `FRONTEND`, `DB`, `DEVOPS`, `TEST`, `DOC` |
-| Type | `bug`, `enhancement`, `REFACTOR`, `tech-debt`, `chore`, `ci`, `dependencies`, `TAREA` |
-| Priority (exactly one on claimable work) | `priority:critical`, `priority:high`, `priority:medium`, `priority:low` |
-| Concern | `security`, `a11y`, `i18n`, `risk`, `ux` |
-| Phase | `phase:1-analysis` through `phase:6-deprecation` |
-| Workflow | `in-progress`, `in-review`, `blocked`, `needs-info`, `ready-for-dev` |
-| Traceability | `requerimiento-funcional`, `requerimiento-no-funcional`, `CASO-DE-USO` |
-| Source | `audit-2026-09` (findings of the [2026-09 audit](PRODUCTION-READINESS-AUDIT-2026-09.md)), `roadmap` |
+Prefixed families; until phase 2 every legacy name (right) is still read as its new name.
+
+| Kind | Labels | Legacy |
+|------|--------|--------|
+| Type (exactly one) | `type:feature`, `type:bug`, `type:refactor`, `type:chore`, `type:ci`, `type:epic` | `enhancement`, `bug`, `REFACTOR`, `chore`/`TAREA`, `ci`, `roadmap` |
+| Area (one or more) | `area:backend`, `area:frontend`, `area:db`, `area:devops`, `area:test`, `area:docs` | `BACKEND` … `DOC` |
+| Priority (exactly one on claimable work) | `priority:critical`, `priority:high`, `priority:medium`, `priority:low` | unchanged |
+| Status (workflow) | `status:ready`, `status:in-progress`, `status:in-review`, `status:blocked`, `status:needs-info` | `ready-for-dev`, `in-progress`, `in-review`, `blocked`, `needs-info` |
+| Concern | `concern:security`, `concern:a11y`, `concern:i18n`, `concern:ux`, `concern:risk`, `concern:tech-debt` | unprefixed |
+| Traceability | `trace:rf`, `trace:rnf`, `trace:cu` | `requerimiento-funcional`, `requerimiento-no-funcional`, `CASO-DE-USO` |
+| Source / process / release | `source:audit-2026-09`, `process:sdlc-exception`, `release:breaking` | `audit-2026-09`, `sdlc-exception` |
 
 Agent lanes are derived from area/type labels; `lane:*` labels do not exist.
 The full contract, including labels that must not be duplicated, is

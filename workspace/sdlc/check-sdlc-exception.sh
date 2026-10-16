@@ -28,7 +28,7 @@ CHANGED="$(git diff --name-only "$BASE...$HEAD")"
 
 if grep -q '^docs/openspec/changes/' <<< "$CHANGED"; then
   echo "✓ PR carries an OpenSpec change"
-elif grep -qw 'sdlc-exception' <<< "${PR_LABELS:-}"; then
+elif grep -qwE '(process:)?sdlc-exception' <<< "${PR_LABELS:-}"; then
   echo "✓ no OpenSpec change; sdlc-exception label set by a human"
 elif grep -qE '^(dependabot|renovate)\[bot\]$' <<< "${PR_AUTHOR:-}"; then
   echo "✓ dependency bot PR — exempt"
