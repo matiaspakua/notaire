@@ -250,6 +250,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   calls `QueryHistoriesUseCase` / `ManageHistoriesUseCase` only; persistence and CU13 chronological order
   live behind `HistoryOpsPort`. ArchUnit R1 clears its six baseline edges. REST `/api/v1/history` unchanged.
 
+- **Copy ports-only (#1779):** mid-size mixed R1 hotspot (~5 edges). `CopyController` calls
+  `QueryCopiesUseCase` / `ManageCopiesUseCase` only; person/testimony FK resolution and CU87 conflict
+  live behind `CopyOpsPort`. ArchUnit R1 clears its five baseline edges. REST `/api/v1/copies` unchanged.
+
 - **Testimony ports-only (#1783):** mid-size mixed R1 hotspot (~5 edges). `TestimonyController` calls
   `QueryTestimoniesUseCase` / `ManageTestimoniesUseCase` only; CRUD, generate/verify, and #1364 in-use
   delete live behind `TestimonyOpsPort`. ArchUnit R1 clears its five baseline edges.
