@@ -1,25 +1,21 @@
 package com.licensis.notaire.adapter.in.web.audit;
 
+import com.licensis.notaire.application.port.out.audit.AuditRecordOpsPort;
+import com.licensis.notaire.application.port.out.audit.AuditRecordOpsPort.PageResult;
 import com.licensis.notaire.dto.DtoAuditRecord;
-import com.licensis.notaire.application.usecase.audit.AuditRecordService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.transaction.annotation.Transactional;
-
-import io.swagger.v3.oas.annotations.Parameter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -31,10 +27,10 @@ import java.util.Map;
 @Tag(name = "AuditRecord", description = "API for querying user audit records (read only; mutations are denied)")
 public class AuditRecordController {
 
-    private final AuditRecordService service;
+    private final AuditRecordOpsPort ops;
 
-    public AuditRecordController(AuditRecordService service) {
-        this.service = service;
+    public AuditRecordController(AuditRecordOpsPort ops) {
+        this.ops = ops;
     }
 
     /**
@@ -60,12 +56,12 @@ public class AuditRecordController {
     ) {
         boolean paginated = page != null || size != null;
         if (!paginated) {
-            List<DtoAuditRecord> dtos = service.findAllAsDto();
-            return ResponseEntity.ok(dtos);
+            return ResponseEntity.ok(ops.findAll());
         }
 
-        Pageable pageable = buildPageable(page, size, sort);
-        Page<DtoAuditRecord> result = service.searchAsDto(module, idUser, from, to, pageable);
+        int safePage = page == null || page < 0 ? 0 : page;
+        int safeSize = size == null || size <= 0 ? 20 : size;
+        PageResult result = ops.search(module, idUser, from, to, safePage, safeSize, sort);
         return ResponseEntity.ok(toPageResponse(result));
     }
 
@@ -77,7 +73,7 @@ public class AuditRecordController {
     @Operation(summary = "Get an audit record by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<DtoAuditRecord> getById(@PathVariable Integer id) {
-        return service.findByIdAsDto(id)
+        return ops.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -86,42 +82,18 @@ public class AuditRecordController {
     @Operation(summary = "Get audit records by user")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoAuditRecord>> getByUser(@PathVariable Integer idUser) {
-        return ResponseEntity.ok(service.findByUserIdAsDto(idUser));
+        return ResponseEntity.ok(ops.findByUserId(idUser));
     }
 
-    private Pageable buildPageable(Integer page, Integer size, String sort) {
-        int safePage = page == null || page < 0 ? 0 : page;
-        int safeSize = size == null || size <= 0 ? 20 : size;
-        Sort sortSpec = parseSort(sort);
-        return PageRequest.of(safePage, safeSize, sortSpec);
-    }
-
-    private Sort parseSort(String sort) {
-        if (sort == null || sort.isBlank()) {
-            return Sort.by(Sort.Direction.DESC, "date");
-        }
-        String[] parts = sort.split(",");
-        String property = parts[0].trim();
-        Sort.Direction direction = Sort.Direction.DESC;
-        if (parts.length > 1) {
-            try {
-                direction = Sort.Direction.fromString(parts[1].trim());
-            } catch (IllegalArgumentException ex) {
-                direction = Sort.Direction.DESC;
-            }
-        }
-        return Sort.by(direction, property);
-    }
-
-    private Map<String, Object> toPageResponse(Page<DtoAuditRecord> page) {
+    private Map<String, Object> toPageResponse(PageResult page) {
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("content", page.getContent());
-        response.put("page", page.getNumber());
-        response.put("size", page.getSize());
-        response.put("totalElements", page.getTotalElements());
-        response.put("totalPages", page.getTotalPages());
-        response.put("first", page.isFirst());
-        response.put("last", page.isLast());
+        response.put("content", page.content());
+        response.put("page", page.number());
+        response.put("size", page.size());
+        response.put("totalElements", page.totalElements());
+        response.put("totalPages", page.totalPages());
+        response.put("first", page.first());
+        response.put("last", page.last());
         return response;
     }
 }

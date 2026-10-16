@@ -3,7 +3,7 @@ package com.licensis.notaire.audit;
 import com.licensis.notaire.business.AuditRecord;
 import com.licensis.notaire.business.User;
 import com.licensis.notaire.repository.UserRepository;
-import com.licensis.notaire.application.usecase.audit.AuditRecordService;
+import com.licensis.notaire.adapter.out.persistence.audit.AuditRecordService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
