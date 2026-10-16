@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.out.copy.CopyOpsPort;
-import com.licensis.notaire.application.usecase.copy.CopyService;
 import com.licensis.notaire.business.Copy;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Testimony;

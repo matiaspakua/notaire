@@ -937,6 +937,11 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `adapter.out.persistence.history`; keep view-safe HistoryOpsPort. Clears ~5 R2
   edges (R2 22→17).
 
+- **Backend R2 shrink — copy (#1897):** move CopyService to `adapter.out.persistence.copy`
+  (Spring Data CopyRepository locally); delete entity-speaking CopyRepositoryPort and
+  unused PersistenceAdapter; keep view-safe CopyOpsPort. Clears ~4 R2 edges
+  (R2 17→13).
+
 
 ## Options considered
 

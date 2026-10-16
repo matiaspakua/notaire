@@ -1,6 +1,4 @@
 R2 | com.licensis.notaire.application.port.out.concept.ConceptRepositoryPort -> com.licensis.notaire.business.Concept
-R2 | com.licensis.notaire.application.port.out.copy.CopyRepositoryPort -> com.licensis.notaire.business.Copy
-R2 | com.licensis.notaire.application.port.out.copy.CopyRepositoryPort -> com.licensis.notaire.business.Testimony
 R2 | com.licensis.notaire.application.port.out.folio.FolioRepositoryPort -> com.licensis.notaire.business.Folio
 R2 | com.licensis.notaire.application.port.out.folio.FolioRepositoryPort -> com.licensis.notaire.business.FolioType
 R2 | com.licensis.notaire.application.port.out.item.ItemRepositoryPort -> com.licensis.notaire.business.Item
@@ -10,8 +8,6 @@ R2 | com.licensis.notaire.application.port.out.substitution.SubstitutionReposito
 R2 | com.licensis.notaire.application.port.out.user.RoleRepositoryPort -> com.licensis.notaire.business.Role
 R2 | com.licensis.notaire.application.port.out.user.UserRepositoryPort -> com.licensis.notaire.business.User
 R2 | com.licensis.notaire.application.usecase.concept.ConceptService -> com.licensis.notaire.business.Concept
-R2 | com.licensis.notaire.application.usecase.copy.CopyService -> com.licensis.notaire.business.Copy
-R2 | com.licensis.notaire.application.usecase.copy.CopyService -> com.licensis.notaire.repository.TestimonyMovementRepository
 R2 | com.licensis.notaire.application.usecase.item.ItemService -> com.licensis.notaire.business.Item
 R2 | com.licensis.notaire.application.usecase.substitution.SubstitutionService -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.usecase.substitution.SubstitutionService -> com.licensis.notaire.business.Substitution
