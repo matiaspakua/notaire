@@ -163,4 +163,12 @@ describe("the shrink-only baseline", () => {
     expect(entries["src/app/dashboard/payments/page.tsx"]).toBeUndefined();
     expect(Object.keys(entries).length).toBeLessThan(40);
   });
+
+  it("protocol pages left the baseline (#1833)", () => {
+    const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
+    expect(entries["src/app/dashboard/protocol/page.tsx"]).toBeUndefined();
+    expect(entries["src/app/dashboard/protocol/notebooks/page.tsx"]).toBeUndefined();
+    expect(entries["src/app/dashboard/protocol/auxiliary/page.tsx"]).toBeUndefined();
+    expect(Object.keys(entries).length).toBeLessThan(37);
+  });
 });

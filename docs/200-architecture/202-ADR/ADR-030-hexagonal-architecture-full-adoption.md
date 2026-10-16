@@ -840,6 +840,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `composition/payment`. `usePayments` and the payments dashboard no longer
   import `api-client` (eslint suppressions shrink by two).
 
+- **Frontend protocol pages (#1833):** `core/notebook`, `core/auxiliary-protocol`,
+  `core/protocol-report` (+ HTTP adapters); protocol home reuses folio/folio-type
+  composition. Three protocol pages leave the eslint baseline.
+
 
 ## Options considered
 

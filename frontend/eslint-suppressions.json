@@ -9,21 +9,6 @@
       "count": 1
     }
   },
-  "src/app/dashboard/protocol/auxiliary/page.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/app/dashboard/protocol/notebooks/page.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/app/dashboard/protocol/page.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/app/dashboard/reports/page.tsx": {
     "no-restricted-imports": {
       "count": 1
