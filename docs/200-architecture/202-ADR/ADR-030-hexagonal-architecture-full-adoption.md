@@ -274,6 +274,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   calls `QueryProcedureFoldersUseCase` / `ManageProcedureFoldersUseCase` only; entity access and DTO
   mapping live behind `ProcedureFolderOpsPort`. ArchUnit R1 clears its ProcedureFolder entity edge.
 
+- **Concept ports-only (#1815):** small mixed R1 hotspot (~2 edges). `ConceptController` calls
+  `QueryConceptsUseCase` / `ManageConceptsUseCase` only; BudgetTemplate in-use checks and persistence
+  live behind `ConceptOpsPort`. ArchUnit R1 clears Concept/BudgetTemplateRepository edges.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers

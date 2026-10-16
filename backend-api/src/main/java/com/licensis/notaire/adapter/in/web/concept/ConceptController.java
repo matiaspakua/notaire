@@ -1,19 +1,10 @@
 package com.licensis.notaire.adapter.in.web.concept;
 
-import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
-import com.licensis.notaire.dto.DtoConcept;
-import com.licensis.notaire.application.usecase.concept.ConceptService;
-import com.licensis.notaire.business.Concept;
-import com.licensis.notaire.repository.BudgetTemplateRepository;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,143 +15,120 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Map;
+import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
+import com.licensis.notaire.application.port.in.concept.ManageConceptsUseCase;
+import com.licensis.notaire.application.port.in.concept.QueryConceptsUseCase;
+import com.licensis.notaire.application.port.out.concept.ConceptOpsPort.DeleteResult;
+import com.licensis.notaire.application.port.out.concept.ConceptOpsPort.InUseResult;
+import com.licensis.notaire.application.port.out.concept.ConceptOpsPort.SaveResult;
+import com.licensis.notaire.dto.DtoConcept;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+/**
+ * Concepts. Calls inbound ports only; entity and BudgetTemplateRepository access live behind
+ * {@code ConceptOpsPort} (issue #1815).
+ */
 @RestController
 @RequestMapping("/api/v1/concepts")
 @Tag(name = "Concepts", description = "API for managing concepts")
 public class ConceptController {
 
-    private static final Logger log = LoggerFactory.getLogger(ConceptController.class);
+    private final QueryConceptsUseCase queryConcepts;
+    private final ManageConceptsUseCase manageConcepts;
 
-    private final ConceptService service;
-    private final BudgetTemplateRepository templateRepository;
-
-    public ConceptController(ConceptService service,
-            BudgetTemplateRepository templateRepository) {
-        this.service = service;
-        this.templateRepository = templateRepository;
+    public ConceptController(QueryConceptsUseCase queryConcepts, ManageConceptsUseCase manageConcepts) {
+        this.queryConcepts = queryConcepts;
+        this.manageConcepts = manageConcepts;
     }
 
     @GetMapping
     @Operation(summary = "Get all concepts")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoConcept>> getAllConcepts() {
-        List<DtoConcept> result = service.findAll().stream()
-                .map(Concept::getDto)
-                .toList();
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(queryConcepts.findAll());
     }
 
     @GetMapping("/search")
     @Operation(summary = "Search concepts by name")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoConcept>> searchConcepts(@RequestParam String name) {
-        List<DtoConcept> result = service.searchByName(name).stream()
-                .map(Concept::getDto)
-                .toList();
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(queryConcepts.searchByName(name));
     }
 
     @GetMapping("/{id}/in-use")
     @Operation(summary = "Check whether a concept is in use")
-    @Transactional(readOnly = true)
     public ResponseEntity<Map<String, Boolean>> isConceptInUse(@PathVariable Integer id) {
-        if (service.findById(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        boolean inUse = !templateRepository.findByConceptIdConcept(id).isEmpty();
-        return ResponseEntity.ok(Map.of("inUse", inUse));
+        return switch (queryConcepts.isInUse(id)) {
+            case InUseResult.Ok ok -> ResponseEntity.ok(Map.of("inUse", ok.inUse()));
+            case InUseResult.NotFound ignored -> ResponseEntity.notFound().build();
+        };
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "Not found")
-})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @GetMapping("/{id}")
     @Operation(summary = "Get concept by ID")
-    @Transactional(readOnly = true)
     public ResponseEntity<DtoConcept> getConceptById(@PathVariable Integer id) {
-        return service.findById(id)
-                .map(e -> ResponseEntity.ok(e.getDto()))
+        return queryConcepts.findById(id)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Created"),
-    @ApiResponse(responseCode = "400", description = "Invalid request"),
-    @ApiResponse(responseCode = "409", description = "Conflict")
-})
+        @ApiResponse(responseCode = "201", description = "Created"),
+        @ApiResponse(responseCode = "400", description = "Invalid request"),
+        @ApiResponse(responseCode = "409", description = "Conflict")
+    })
     @PostMapping
     @Operation(summary = "Create concept")
     public ResponseEntity<Object> createConcept(@RequestBody DtoConcept dto) {
-        try {
-            if (dto.getEnabled() == null) {
-                dto.setEnabled(true);
-            }
-            Concept entity = new Concept();
-            entity.setAttributes(dto);
-            entity = service.create(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
-        } catch (Exception e) {
-            log.warn("Error creating concept: {}", e.getMessage());
-            return ErrorResponses.createFailed(e);
-        }
+        return switch (manageConcepts.create(dto)) {
+            case SaveResult.Created created ->
+                ResponseEntity.status(HttpStatus.CREATED).body(created.dto());
+            case SaveResult.Failed failed -> ErrorResponses.createFailed(failed.cause());
+            case SaveResult.Updated ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
+            case SaveResult.InUse inUse ->
+                ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", inUse.error()));
+        };
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Invalid request"),
-    @ApiResponse(responseCode = "404", description = "Not found"),
-    @ApiResponse(responseCode = "409", description = "version is not the stored one: another user modified the record")
-})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Invalid request"),
+        @ApiResponse(responseCode = "404", description = "Not found"),
+        @ApiResponse(responseCode = "409", description = "version is not the stored one: another user modified the record")
+    })
     @PutMapping("/{id}")
     @Operation(summary = "Update concept")
     public ResponseEntity<Object> updateConcept(@PathVariable Integer id, @RequestBody DtoConcept dto) {
-        try {
-            var existing = service.findById(id);
-            if (existing.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            if (!templateRepository.findByConceptIdConcept(id).isEmpty()) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body(Map.of("error", "This concept is in use and cannot be modified. Create a new concept."));
-            }
-            dto.setIdConcept(id);
-            Concept entity = existing.get();
-            if (dto.getEnabled() == null) {
-                dto.setEnabled(entity.getEnabled());
-            }
-            entity.setAttributes(dto);
-            service.update(id, entity);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            log.error("Error updating concept id {}: {}", id, e.getMessage());
-            return ErrorResponses.updateFailed(e);
-        }
+        return switch (manageConcepts.update(id, dto)) {
+            case SaveResult.Updated ignored -> ResponseEntity.ok().build();
+            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
+            case SaveResult.InUse inUse ->
+                ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", inUse.error()));
+            case SaveResult.Failed failed -> ErrorResponses.updateFailed(failed.cause());
+            case SaveResult.Created ignored -> ResponseEntity.internalServerError().build();
+        };
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Deleted"),
-    @ApiResponse(responseCode = "404", description = "Not found")
-})
+        @ApiResponse(responseCode = "204", description = "Deleted"),
+        @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete concept")
     public ResponseEntity<Object> deleteConcept(@PathVariable Integer id) {
-        try {
-            if (service.findById(id).isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            if (!templateRepository.findByConceptIdConcept(id).isEmpty()) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body(Map.of("error", "Cannot delete: the concept is in use on budget templates."));
-            }
-            service.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            log.error("Error deleting concept id {}: {}", id, e.getMessage());
-            return ErrorResponses.conflict(e);
-        }
+        return switch (manageConcepts.delete(id)) {
+            case DeleteResult.Deleted ignored -> ResponseEntity.noContent().build();
+            case DeleteResult.NotFound ignored -> ResponseEntity.notFound().build();
+            case DeleteResult.InUse inUse ->
+                ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", inUse.error()));
+            case DeleteResult.Conflict conflict -> ErrorResponses.conflict(conflict.cause());
+        };
     }
 }
