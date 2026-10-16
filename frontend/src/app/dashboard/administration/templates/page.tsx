@@ -12,7 +12,12 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions, RadioField } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
-import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { budgetTemplateUseCases } from "@/composition/budget-template";
+import { documentCostTemplateUseCases } from "@/composition/document-cost-template";
+import { templatesCatalog } from "@/composition/templates-catalog";
+import type { BudgetTemplate as DomainBudgetTemplate } from "@/core/budget-template/domain/budget-template";
+import type { DocumentCostTemplate as DomainDocumentCostTemplate } from "@/core/document-cost-template/domain/document-cost-template";
+import type { DocumentType as DomainDocumentType } from "@/core/document-type/domain/document-type";
 import { presentMutationError } from "@/lib/mutation-error";
 import type { BudgetTemplate, ProcedureType, Concept, DocumentType, DocumentCostTemplate } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
@@ -23,6 +28,40 @@ interface TemplateKey {
   conceptId: number;
 }
 
+function toWireBudget(b: DomainBudgetTemplate): BudgetTemplate {
+  return {
+    budgetTemplatePK: { fkIdProcedureType: b.procedureTypeId, fkIdConcept: b.conceptId },
+    procedureType: { idProcedureType: b.procedureTypeId, name: b.procedureTypeName },
+    concept: { idConcept: b.conceptId, name: b.conceptName },
+    notes: b.notes,
+    version: b.version,
+  };
+}
+
+function toWireCost(c: DomainDocumentCostTemplate): DocumentCostTemplate {
+  return {
+    documentCostTemplatePK: {
+      fkIdProcedureType: c.procedureTypeId,
+      fkIdDocumentType: c.documentTypeId,
+    },
+    fixedAmount: c.fixedAmount ?? undefined,
+    variablePercentage: c.variablePercentage ?? undefined,
+    version: c.version,
+  };
+}
+
+function toWireDocumentType(d: DomainDocumentType): DocumentType {
+  return {
+    idDocumentType: d.id,
+    name: d.name,
+    expires: d.expires,
+    dueDays: d.dueDays,
+    deliveredBy: d.deliveredBy ?? undefined,
+    enabled: d.enabled,
+    returned: d.returned,
+  };
+}
+
 export default function TemplatesPage() {
   const t = useTranslations("administracion.plantillas");
   const showDeleteError = useDeleteError();
@@ -30,19 +69,19 @@ export default function TemplatesPage() {
 
   const { data = [], isLoading, refetch } = useQuery({
     queryKey: ["budget-templates"],
-    queryFn: () => apiGet<BudgetTemplate[]>("/budget-templates"),
+    queryFn: async () => (await budgetTemplateUseCases.list()).map(toWireBudget),
   });
   const { data: procedureTypes = [] } = useQuery({
     queryKey: ["procedure-types"],
-    queryFn: () => apiGet<ProcedureType[]>("/procedure-types"),
+    queryFn: () => templatesCatalog.listProcedureTypes() as Promise<ProcedureType[]>,
   });
   const { data: concepts = [] } = useQuery({
     queryKey: ["concepts"],
-    queryFn: () => apiGet<Concept[]>("/concepts"),
+    queryFn: () => templatesCatalog.listConcepts() as Promise<Concept[]>,
   });
   const { data: documentTypes = [] } = useQuery({
     queryKey: ["document-types"],
-    queryFn: () => apiGet<DocumentType[]>("/document-types"),
+    queryFn: async () => (await templatesCatalog.listDocumentTypes()).map(toWireDocumentType),
   });
 
   const [costProcedureId, setCostProcedureId] = useState("");
@@ -52,8 +91,8 @@ export default function TemplatesPage() {
     refetch: refetchCosts,
   } = useQuery({
     queryKey: ["document-cost-templates", costProcedureId],
-    queryFn: () =>
-      apiGet<DocumentCostTemplate[]>(`/document-cost-templates/procedure-types/${costProcedureId}`),
+    queryFn: async () =>
+      (await documentCostTemplateUseCases.listByProcedureType(Number(costProcedureId))).map(toWireCost),
     enabled: !!costProcedureId,
   });
   const [costModalOpen, setCostModalOpen] = useState(false);
@@ -78,9 +117,9 @@ export default function TemplatesPage() {
     }
     setSavingCost(true);
     try {
-      await apiPost("/document-cost-templates", {
-        idProcedureType: Number(costProcedureId),
-        idDocumentType: idTypeDocument,
+      await documentCostTemplateUseCases.create({
+        procedureTypeId: Number(costProcedureId),
+        documentTypeId: idTypeDocument,
         fixedAmount: costKind === "fixed" ? amount : null,
         variablePercentage: costKind === "variable" ? amount : null,
       });
@@ -96,7 +135,6 @@ export default function TemplatesPage() {
 
   const typeDocumentName = (id?: number) =>
     documentTypes.find((x) => x.idDocumentType === id)?.name ?? `#${id}`;
-
   const [modalOpen, setModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [procedureTypeId, setProcedureTypeId] = useState("");
@@ -131,20 +169,16 @@ export default function TemplatesPage() {
     }
     setSaving(true);
     try {
-      // The backend derives the composite PK from the related entities. It reads
-      // ProcedureType via getIdProcedureType(), so the relation must carry the
-      // idProcedureType key.
-      const body: BudgetTemplate = {
-        budgetTemplatePK: { fkIdProcedureType: tt, fkIdConcept: cc },
-        procedureType: { idProcedureType: tt },
-        concept: { idConcept: cc },
+      const input = {
+        procedureTypeId: tt,
+        conceptId: cc,
         notes: notes.trim() || undefined,
       };
       if (isEditMode) {
-        await apiPut(`/budget-templates/procedure-types/${tt}/concept/${cc}`, body);
+        await budgetTemplateUseCases.update(input);
         toast.success(t("updated"));
       } else {
-        await apiPost("/budget-templates", body);
+        await budgetTemplateUseCases.create(input);
         toast.success(t("created"));
       }
       setModalOpen(false);
@@ -160,7 +194,7 @@ export default function TemplatesPage() {
     if (!deleteKey) return;
     setDeleting(true);
     try {
-      await apiDelete(`/budget-templates/procedure-types/${deleteKey.procedureTypeId}/concept/${deleteKey.conceptId}`);
+      await budgetTemplateUseCases.delete(deleteKey.procedureTypeId, deleteKey.conceptId);
       toast.success(t("deleted"));
       refetch();
     } catch (err) {
