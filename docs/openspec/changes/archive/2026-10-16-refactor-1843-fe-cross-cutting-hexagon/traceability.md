@@ -35,8 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Cross-cutting files leave the eslint baseline | cross-cutting use cases / architecture-boundaries | pending |
-| REST behaviour unchanged | cross-cutting use cases / architecture-boundaries | pending |
+| Cross-cutting files leave the eslint baseline | cross-cutting use cases / architecture-boundaries | passing |
+| REST behaviour unchanged | cross-cutting use cases / architecture-boundaries | passing |
 
 ## Permanent documentation updated
 
