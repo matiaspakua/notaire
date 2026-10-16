@@ -14,16 +14,6 @@
       "count": 1
     }
   },
-  "src/app/dashboard/testimonies/RegisterTestimonyDialog.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/app/dashboard/testimonies/page.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/app/login/page.tsx": {
     "no-restricted-imports": {
       "count": 1
@@ -130,16 +120,6 @@
     }
   },
   "src/hooks/useSubstitutions.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useTestimonies.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useTestimonyMovements.ts": {
     "no-restricted-imports": {
       "count": 1
     }

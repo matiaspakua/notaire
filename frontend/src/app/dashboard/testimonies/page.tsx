@@ -16,12 +16,20 @@ import { useTestimonies, useGenerateTestimony, useVerifyTestimony, useUpdateTest
 import { Input } from "@/components/ui/input";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { useDeleteError } from "@/hooks/useDeleteError";
-import { ApiError } from "@/lib/api-client";
 import { TestimonyMovementsDialog } from "./TestimonyMovementsDialog";
 import { RegisterTestimonyDialog } from "./RegisterTestimonyDialog";
 import { DeedPicker } from "@/components/shared/DeedPicker";
 import { extractApiError } from "@/lib/utils";
 import type { Testimony } from "@/types";
+
+/** Duck-type HTTP status without importing api-client (ADR-030). */
+function httpStatus(err: unknown): number | undefined {
+  if (typeof err === "object" && err !== null && "status" in err) {
+    const status = (err as { status: unknown }).status;
+    return typeof status === "number" ? status : undefined;
+  }
+  return undefined;
+}
 
 export default function TestimoniesPage() {
   const t = useTranslations("testimonios");
@@ -75,7 +83,7 @@ export default function TestimoniesPage() {
       toast.success(t("updated"));
       setEditing(null);
     } catch (err) {
-      toast.error(err instanceof ApiError && err.status === 409 ? t("staleVersion") : extractApiError(err) ?? t("errorUpdate"));
+      toast.error(httpStatus(err) === 409 ? t("staleVersion") : extractApiError(err) ?? t("errorUpdate"));
     }
   }
 
@@ -85,7 +93,7 @@ export default function TestimoniesPage() {
       await deleteMutation.mutateAsync(deleting.idTestimony);
       toast.success(t("deleted"));
     } catch (err) {
-      if (err instanceof ApiError && err.status === 409) toast.warning(t("deleteInUse"));
+      if (httpStatus(err) === 409) toast.warning(t("deleteInUse"));
       else showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleting(null);

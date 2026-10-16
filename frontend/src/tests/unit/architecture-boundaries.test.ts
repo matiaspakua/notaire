@@ -171,4 +171,13 @@ describe("the shrink-only baseline", () => {
     expect(entries["src/app/dashboard/protocol/auxiliary/page.tsx"]).toBeUndefined();
     expect(Object.keys(entries).length).toBeLessThan(37);
   });
+
+  it("testimony hooks and pages left the baseline (#1834)", () => {
+    const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
+    expect(entries["src/hooks/useTestimonies.ts"]).toBeUndefined();
+    expect(entries["src/hooks/useTestimonyMovements.ts"]).toBeUndefined();
+    expect(entries["src/app/dashboard/testimonies/page.tsx"]).toBeUndefined();
+    expect(entries["src/app/dashboard/testimonies/RegisterTestimonyDialog.tsx"]).toBeUndefined();
+    expect(Object.keys(entries).length).toBeLessThan(33);
+  });
 });
