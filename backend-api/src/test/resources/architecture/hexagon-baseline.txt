@@ -29,8 +29,6 @@ R1 | com.licensis.notaire.adapter.in.web.support.ManagementRef -> com.licensis.n
 R1 | com.licensis.notaire.adapter.in.web.support.NotaryRef -> com.licensis.notaire.business.Person
 R1 | com.licensis.notaire.adapter.in.web.support.ProcedureTypeRef -> com.licensis.notaire.business.ProcedureType
 R1 | com.licensis.notaire.adapter.in.web.support.PropertyRef -> com.licensis.notaire.business.Property
-R1 | com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementController -> com.licensis.notaire.business.TestimonyMovement
-R1 | com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementController -> com.licensis.notaire.repository.TestimonyMovementRepository
 R2 | com.licensis.notaire.application.port.in.deed.CalculateNextDeedNumberUseCase -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.port.in.deed.ValidateDeedNumberingUseCase -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.port.in.history.HistoryUseCase -> com.licensis.notaire.business.History
