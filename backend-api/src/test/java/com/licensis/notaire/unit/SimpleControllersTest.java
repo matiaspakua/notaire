@@ -17,12 +17,10 @@ import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Budget;
-import com.licensis.notaire.business.Testimony;
 import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.repository.DeedManagementRepository;
-import com.licensis.notaire.repository.TestimonyRepository;
 import com.licensis.notaire.application.port.out.procedure.ProcedureTypeRepositoryPort;
 import com.licensis.notaire.repository.IdentificationTypeRepository;
 import com.licensis.notaire.application.port.out.procedure.ProcedureRepositoryPort;
@@ -33,7 +31,6 @@ import com.licensis.notaire.application.usecase.deed.DeedSigningService;
 import com.licensis.notaire.application.usecase.deed.DeedService;
 import com.licensis.notaire.application.usecase.person.PersonService;
 import com.licensis.notaire.application.usecase.budget.BudgetService;
-import com.licensis.notaire.application.usecase.testimony.TestimonyGenerationVerificationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -485,24 +482,12 @@ class SimpleControllersTest {
     @Nested
     @DisplayName("TestimonyController")
     class TestimonyControllerTests {
-        private final TestimonyRepository repo = mock(TestimonyRepository.class);
-        private final com.licensis.notaire.repository.TestimonyMovementRepository movementRepo =
-                mock(com.licensis.notaire.repository.TestimonyMovementRepository.class);
-        private final com.licensis.notaire.repository.CopyRepository copyRepo =
-                mock(com.licensis.notaire.repository.CopyRepository.class);
-        private final TestimonyGenerationVerificationService generationVerificationService =
-                mock(TestimonyGenerationVerificationService.class);
-        private final com.licensis.notaire.repository.DeedRepository deedRepo =
-                mock(com.licensis.notaire.repository.DeedRepository.class);
+        private final com.licensis.notaire.application.port.in.testimony.QueryTestimoniesUseCase query =
+                mock(com.licensis.notaire.application.port.in.testimony.QueryTestimoniesUseCase.class);
+        private final com.licensis.notaire.application.port.in.testimony.ManageTestimoniesUseCase manage =
+                mock(com.licensis.notaire.application.port.in.testimony.ManageTestimoniesUseCase.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new TestimonyController(repo, generationVerificationService, deedRepo,
-                        movementRepo, copyRepo)).build();
-
-        private Testimony build() {
-            Testimony t = new Testimony();
-            t.setIdTestimony(1);
-            return t;
-        }
+                standaloneSetup(new TestimonyController(query, manage)).build();
 
         @Test
         @DisplayName("Cover happy paths")
@@ -512,18 +497,27 @@ class SimpleControllersTest {
             com.licensis.notaire.dto.DtoDeed deed = new com.licensis.notaire.dto.DtoDeed();
             deed.setIdDeed(5);
             dto.setDeed(deed);
-            when(deedRepo.existsById(5)).thenReturn(true);
-            when(repo.findAll()).thenReturn(List.of(build()));
-            when(repo.findById(1)).thenReturn(Optional.of(build()));
-            when(repo.findById(2)).thenReturn(Optional.empty());
-            when(repo.existsById(1)).thenReturn(true);
-            when(repo.existsById(2)).thenReturn(false);
+            when(query.findAll()).thenReturn(List.of(dto));
+            when(query.findById(1)).thenReturn(Optional.of(dto));
+            when(query.findById(2)).thenReturn(Optional.empty());
 
             mvc.perform(get("/api/v1/testimonies")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/testimonies/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/testimonies/2")).andExpect(status().isNotFound());
 
-            when(repo.save(any(Testimony.class))).thenReturn(build());
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.testimony.TestimonyOpsPort.SaveResult.Created(dto));
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.testimony.TestimonyOpsPort.SaveResult.Updated());
+            when(manage.update(eq(2), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.testimony.TestimonyOpsPort.SaveResult.NotFound());
+            when(manage.delete(1)).thenReturn(
+                    new com.licensis.notaire.application.port.out.testimony.TestimonyOpsPort.DeleteResult.Deleted(),
+                    new com.licensis.notaire.application.port.out.testimony.TestimonyOpsPort.DeleteResult.InUse(
+                            com.licensis.notaire.application.port.out.testimony.TestimonyOpsPort.IN_USE_MESSAGE));
+            when(manage.delete(2)).thenReturn(
+                    new com.licensis.notaire.application.port.out.testimony.TestimonyOpsPort.DeleteResult.NotFound());
+
             mvc.perform(post("/api/v1/testimonies").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/testimonies/1").contentType("application/json")
@@ -532,9 +526,7 @@ class SimpleControllersTest {
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
             mvc.perform(delete("/api/v1/testimonies/1")).andExpect(status().isNoContent());
             // #1364: a testimony with registry movements is kept (409 with the reason)
-            when(movementRepo.existsByFkIdTestimonyIdTestimony(1)).thenReturn(true);
             mvc.perform(delete("/api/v1/testimonies/1")).andExpect(status().isConflict());
-            when(movementRepo.existsByFkIdTestimonyIdTestimony(1)).thenReturn(false);
             mvc.perform(delete("/api/v1/testimonies/2")).andExpect(status().isNotFound());
         }
 
@@ -546,15 +538,19 @@ class SimpleControllersTest {
             com.licensis.notaire.dto.DtoDeed deed = new com.licensis.notaire.dto.DtoDeed();
             deed.setIdDeed(5);
             dto.setDeed(deed);
-            when(deedRepo.existsById(5)).thenReturn(true);
-            when(repo.findById(1)).thenReturn(Optional.of(build()));
-            when(repo.existsById(1)).thenReturn(true);
-            when(repo.save(any(Testimony.class))).thenThrow(new RuntimeException("x"));
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.testimony.TestimonyOpsPort.SaveResult.Failed(
+                            new RuntimeException("x")));
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.testimony.TestimonyOpsPort.SaveResult.Failed(
+                            new RuntimeException("x")));
+            when(manage.delete(1)).thenReturn(
+                    new com.licensis.notaire.application.port.out.testimony.TestimonyOpsPort.DeleteResult.Conflict(
+                            "Cannot delete: the testimony is referenced by other records."));
             mvc.perform(post("/api/v1/testimonies").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
             mvc.perform(put("/api/v1/testimonies/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isInternalServerError());
-            doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
             mvc.perform(delete("/api/v1/testimonies/1")).andExpect(status().isConflict());
         }
     }

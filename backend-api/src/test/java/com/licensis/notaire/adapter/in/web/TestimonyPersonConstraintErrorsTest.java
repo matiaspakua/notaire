@@ -6,10 +6,7 @@ import com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementController
 import com.licensis.notaire.application.usecase.person.PersonService;
 import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.business.Person;
-import com.licensis.notaire.business.Testimony;
-import com.licensis.notaire.repository.DeedRepository;
 import com.licensis.notaire.repository.IdentificationTypeRepository;
-import com.licensis.notaire.repository.TestimonyRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -87,12 +84,13 @@ class TestimonyPersonConstraintErrorsTest {
     }
 
     private static MockMvc testimonies(RuntimeException failure) throws Exception {
-        TestimonyRepository repo = mock(TestimonyRepository.class);
-        when(repo.findById(anyInt())).thenReturn(Optional.of(new Testimony()));
-        when(repo.save(any())).thenThrow(failure);
-        DeedRepository deeds = mock(DeedRepository.class);
-        when(deeds.existsById(anyInt())).thenReturn(true);
-        return mvc(TestimonyController.class, Map.of(TestimonyRepository.class, repo, DeedRepository.class, deeds));
+        var manage = mock(com.licensis.notaire.application.port.in.testimony.ManageTestimoniesUseCase.class);
+        when(manage.create(any())).thenReturn(
+                new com.licensis.notaire.application.port.out.testimony.TestimonyOpsPort.SaveResult.Failed(failure));
+        when(manage.update(anyInt(), any())).thenReturn(
+                new com.licensis.notaire.application.port.out.testimony.TestimonyOpsPort.SaveResult.Failed(failure));
+        return mvc(TestimonyController.class, Map.of(
+                com.licensis.notaire.application.port.in.testimony.ManageTestimoniesUseCase.class, manage));
     }
 
     private static MockMvc people(RuntimeException failure) throws Exception {
