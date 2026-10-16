@@ -1,5 +1,6 @@
 """Scheduling rules for milestones, catalog assessment, and agent lanes."""
 
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -8,21 +9,27 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from milestone_policy import (
     BACKLOG,
+    CATALOG,
     DELIVERY_FILTER,
     FRONTEND,
     FULL_LIFECYCLE_FILTER,
     HISTORY_ERAS,
-    LEGACY,
+    GA,
+    HISTORY_STAGES,
+    MILESTONE_DESCRIPTION,
+    MILESTONE_DUE,
     MILESTONE_WINDOW,
     PLATFORM,
     QUALITY,
     RELEASE,
     RENAMES,
     SCHEDULED,
+    SHIPPED,
     VIEW_CONTRACTS,
     VIEW_FIELDS,
     classify_closed,
     classify_open,
+    is_history,
     lane,
     lanes_blocked_by,
     suggested_priority,
@@ -31,45 +38,19 @@ from apply_milestone_policy import missing_project_issues
 
 
 class ClassifyOpenTests(unittest.TestCase):
-    def test_security_rnf_is_a_release_blocker(self):
-        self.assertEqual(
-            classify_open(81, "RNF-12: Seguridad y privacidad", ["requerimiento-no-funcional"]),
-            RELEASE,
-        )
+    def test_catalog_anchors_live_on_the_catalog_milestone(self):
+        for number, title, label in (
+            (81, "RNF-12: Seguridad y privacidad", "requerimiento-no-funcional"),
+            (74, "RNF-05: Aspecto Visual", "requerimiento-no-funcional"),
+            (70, "RNF-01: Uso de Memoria RAM", "requerimiento-no-funcional"),
+            (3, "RF-01: Gestionar Trámites", "requerimiento-funcional"),
+            (162, "CU09 – Registrar deudas documentos de Cliente", "CASO-DE-USO"),
+        ):
+            self.assertEqual(classify_open(number, title, [label]), CATALOG, title)
 
-    def test_visual_rnf_belongs_to_the_frontend_product(self):
+    def test_catalog_anchor_with_work_labels_is_delivery_work(self):
         self.assertEqual(
-            classify_open(74, "RNF-05: Aspecto Visual", ["requerimiento-no-funcional"]),
-            FRONTEND,
-        )
-
-    def test_performance_and_process_rnfs_are_quality(self):
-        self.assertEqual(
-            classify_open(70, "RNF-01: Uso de Memoria RAM", ["requerimiento-no-funcional"]),
-            QUALITY,
-        )
-        self.assertEqual(
-            classify_open(89, "RNF-21: Metodología de desarrollo", ["requerimiento-no-funcional"]),
-            QUALITY,
-        )
-
-    def test_environment_rnfs_stay_on_the_backlog(self):
-        self.assertEqual(
-            classify_open(85, "RNF-17: Java VM", ["requerimiento-no-funcional"]),
-            BACKLOG,
-        )
-        self.assertEqual(
-            classify_open(92, "RNF-24: Motor de Base de datos", ["requerimiento-no-funcional"]),
-            BACKLOG,
-        )
-
-    def test_functional_requirements_and_use_cases_are_frontend_scope(self):
-        self.assertEqual(
-            classify_open(3, "RF-01: Gestionar Trámites", ["requerimiento-funcional"]),
-            FRONTEND,
-        )
-        self.assertEqual(
-            classify_open(153, "CU01: Preparar Presupuesto", ["CASO-DE-USO"]),
+            classify_open(611, "login page bypasses FormContainer", ["CASO-DE-USO", "FRONTEND", "bug", "priority:medium"]),
             FRONTEND,
         )
 
@@ -95,14 +76,17 @@ class ClassifyOpenTests(unittest.TestCase):
             RELEASE,
         )
 
-    def test_jpa_retirement_is_the_legacy_milestone(self):
-        self.assertEqual(
-            classify_open(576, "arch(jpa): retire legacy jpa package", ["BACKEND", "priority:high", "tech-debt"]),
-            LEGACY,
-        )
+    def test_jpa_retirement_moved_into_the_hexagonal_train(self):
+        for number in (571, 576, 577, 578, 579, 580):
+            self.assertEqual(
+                classify_open(number, "arch(jpa): legacy layering", ["BACKEND", "priority:high", "tech-debt"]),
+                RELEASE,
+            )
+
+    def test_phase_6_deprecation_epic_is_the_ga_train(self):
         self.assertEqual(
             classify_open(899, "Phase 6 — Deprecation", ["roadmap", "phase:6-deprecation", "priority:medium"]),
-            LEGACY,
+            GA,
         )
 
     def test_high_security_title_is_a_release_blocker(self):
@@ -166,10 +150,79 @@ class ClassifyClosedTests(unittest.TestCase):
         self.assertIsNone(classify_closed("2026-05-01T00:00:00Z", True))
 
     def test_groups_unmilestoned_history_by_close_date(self):
-        self.assertEqual(classify_closed("2026-06-30T12:00:00Z", False), "History · 2026 Q2 — Foundations & API")
-        self.assertEqual(classify_closed("2026-07-01T00:00:00Z", False), "History · 2026 Q3 — Product build")
-        self.assertEqual(classify_closed("2026-09-30T00:00:00Z", False), "History · 2026 Q3 — Product build")
-        self.assertEqual(classify_closed("2026-10-01T00:00:00Z", False), "History · 2026 Q4 — Cloud AI SDLC")
+        self.assertEqual(classify_closed("2026-06-30T12:00:00Z", False), "H · 2026 Q2 cohort: foundations & API")
+        self.assertEqual(classify_closed("2026-07-01T00:00:00Z", False), "H · 2026 Q3 cohort: product build & UI/UX")
+        self.assertEqual(classify_closed("2026-09-30T00:00:00Z", False), "H · 2026 Q3 cohort: product build & UI/UX")
+        self.assertEqual(classify_closed("2026-10-01T00:00:00Z", False), "H · 2026 Q4 cohort: cloud AI SDLC")
+
+
+class NomenclatureTests(unittest.TestCase):
+    TRAIN = re.compile(r"^v\d+\.\d+ · \S.* \(\d{4}-\d{2}\)$")
+    STAGE = re.compile(r"^H\d+ · \S.* \(\d{4}(-\d{2})?–\d{4}(-\d{2})?\)$|^H\d+ · \S.* \(\d{4}-\d{2}\)$")
+
+    def test_open_trains_are_version_first_and_ordered(self):
+        self.assertEqual(
+            SCHEDULED,
+            (
+                "v0.3 · Hexagonal core & security (2026-11)",
+                "v0.4 · Product completeness (2026-12)",
+                "v0.5 · Quality & traceability (2027-01)",
+                "v0.6 · Platform & operability (2027-02)",
+                "v1.0 · GA: legacy-free (2027-03)",
+            ),
+        )
+        for title in SCHEDULED + SHIPPED:
+            self.assertRegex(title, self.TRAIN)
+
+    def test_shipped_cuts_have_their_own_closed_trains(self):
+        self.assertEqual(
+            SHIPPED,
+            ("v0.1 · First release cuts (2026-10)", "v0.2 · Release identity & product forms (2026-10)"),
+        )
+
+    def test_history_stages_run_from_the_swing_monolith_to_pre_release_hardening(self):
+        self.assertEqual(HISTORY_STAGES[0], "H0 · Swing monolith (2014–2018)")
+        self.assertEqual(HISTORY_STAGES[-1], "H8 · Pre-release hardening (2026-09–2026-10)")
+        self.assertEqual([t.split(" ")[0] for t in HISTORY_STAGES], [f"H{n}" for n in range(9)])
+        for title in HISTORY_STAGES:
+            self.assertRegex(title, self.STAGE)
+
+    def test_backlog_and_catalog_are_continuous_without_due_date(self):
+        self.assertEqual(BACKLOG, "Backlog · Unscheduled")
+        self.assertEqual(CATALOG, "Catalog · Requirements & use cases")
+        self.assertNotIn(BACKLOG, MILESTONE_DUE)
+        self.assertNotIn(CATALOG, MILESTONE_DUE)
+        self.assertNotIn(BACKLOG, MILESTONE_WINDOW)
+
+    def test_every_train_and_stage_has_a_due_date_equal_to_its_window_end(self):
+        for title in SCHEDULED + SHIPPED + HISTORY_STAGES + HISTORY_ERAS:
+            self.assertEqual(MILESTONE_DUE[title][:10], MILESTONE_WINDOW[title][1], title)
+
+    def test_descriptions_follow_the_template(self):
+        for title in SCHEDULED + SHIPPED + HISTORY_STAGES:
+            text = MILESTONE_DESCRIPTION[title]
+            self.assertTrue(text.startswith("Goal: "), title)
+            for part in ("Window: ", "Key deliverables: ", "Exit: "):
+                self.assertIn(part, text, title)
+
+    def test_old_titles_rename_to_the_new_nomenclature(self):
+        self.assertEqual(RENAMES["2026-11 · Release blockers"], RELEASE)
+        self.assertEqual(RENAMES["2027-03 · Legacy retirement"], GA)
+        self.assertEqual(RENAMES["2027-06 · Backlog"], BACKLOG)
+        self.assertEqual(RENAMES["History · Phase 0 Foundations"], HISTORY_STAGES[1])
+        self.assertEqual(RENAMES["Phase 0 - Foundations"], HISTORY_STAGES[1])
+        for bucket in ("History · v1.0 priority bucket", "History · v1.1 priority bucket", "History · Backlog priority bucket"):
+            self.assertEqual(RENAMES[bucket], HISTORY_STAGES[8])
+        self.assertEqual(RENAMES["History · 2026 Q4 — Cloud AI SDLC"], HISTORY_ERAS[2])
+        for old, new in RENAMES.items():
+            self.assertNotIn(new, RENAMES, f"{old} renames to a title that is itself renamed")
+
+    def test_history_is_recognised_by_prefix(self):
+        self.assertTrue(is_history("H0 · Swing monolith (2014–2018)"))
+        self.assertTrue(is_history("H · 2026 Q3 cohort: product build & UI/UX"))
+        self.assertTrue(is_history("History · Phase 0 Foundations"))
+        self.assertFalse(is_history("v0.3 · Hexagonal core & security (2026-11)"))
+        self.assertFalse(is_history(BACKLOG))
 
 
 class RoadmapContractTests(unittest.TestCase):
@@ -181,7 +234,7 @@ class RoadmapContractTests(unittest.TestCase):
         )
 
     def test_every_history_and_delivery_milestone_has_a_roadmap_window(self):
-        expected = set(SCHEDULED) | set(HISTORY_ERAS) | set(RENAMES.values())
+        expected = set(SCHEDULED) | set(HISTORY_ERAS) | set(HISTORY_STAGES) | set(SHIPPED)
         self.assertEqual(set(MILESTONE_WINDOW), expected)
         for start, target in MILESTONE_WINDOW.values():
             self.assertLessEqual(start, target)

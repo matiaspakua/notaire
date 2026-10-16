@@ -41,20 +41,25 @@ class TrainAndTagTest(unittest.TestCase):
     def setUp(self):
         self.mod = load_module()
 
-    def test_pre_one_and_one_zero_advance_the_release_blockers_train(self):
-        self.assertEqual(self.mod.TRAIN_V10, "2026-11 · Release blockers")
-        self.assertEqual(self.mod.train_for("0.1.2"), self.mod.TRAIN_V10)
-        self.assertEqual(self.mod.train_for("0.2.0"), self.mod.TRAIN_V10)
-        self.assertEqual(self.mod.train_for("1.0.0"), self.mod.TRAIN_V10)
-        self.assertEqual(self.mod.train_for("1.0.4"), self.mod.TRAIN_V10)
+    def test_train_is_the_milestone_with_the_version_prefix(self):
+        self.assertEqual(self.mod.train_for("0.1.2"), "v0.1 · First release cuts (2026-10)")
+        self.assertEqual(self.mod.train_for("0.2.0"), "v0.2 · Release identity & product forms (2026-10)")
+        self.assertEqual(self.mod.train_for("0.2.3"), "v0.2 · Release identity & product forms (2026-10)")
+        self.assertEqual(self.mod.train_for("0.3.0"), "v0.3 · Hexagonal core & security (2026-11)")
+        self.assertEqual(self.mod.train_for("1.0.4"), "v1.0 · GA: legacy-free (2027-03)")
 
-    def test_one_one_advances_the_quality_train(self):
-        self.assertEqual(self.mod.TRAIN_V11, "2027-01 · Quality & traceability")
-        self.assertEqual(self.mod.train_for("1.1.0"), self.mod.TRAIN_V11)
+    def test_release_trains_match_the_milestone_policy(self):
+        sys.path.insert(0, os.path.join(REPO_ROOT, "workspace", "sdlc"))
+        import milestone_policy
+
+        self.assertEqual(
+            set(self.mod.RELEASE_TRAINS),
+            set(milestone_policy.SHIPPED) | set(milestone_policy.SCHEDULED),
+        )
 
     def test_unmapped_minor_fails_closed(self):
         with self.assertRaises(ValueError):
-            self.mod.train_for("1.2.0")
+            self.mod.train_for("1.1.0")
 
     def test_legacy_component_tags_stay_addressable(self):
         self.assertEqual(self.mod.tag_for("0.1.2"), "notaire-v0.1.2")
@@ -108,7 +113,7 @@ class RepositoryContractTest(unittest.TestCase):
             for prop in sbom["metadata"]["properties"]
             if prop["name"] == "notaire:release-train"
         ]
-        self.assertEqual(trains, [self.mod.TRAIN_V10])
+        self.assertEqual(trains, [self.mod.train_for(self.snapshot["version"])])
         database = sbom["components"][2]
         self.assertEqual(database["version"], self.snapshot["components"]["database"]["schemaVersion"])
         self.assertNotEqual(database["version"], self.snapshot["version"])
@@ -123,7 +128,7 @@ class RepositoryContractTest(unittest.TestCase):
     def test_pages_history_is_append_only_semver(self):
         history = self.mod.pages_history(self.snapshot)
         self.assertEqual(history["productVersion"], self.snapshot["version"])
-        self.assertEqual(history["train"], self.mod.TRAIN_V10)
+        self.assertEqual(history["train"], self.mod.train_for(self.snapshot["version"]))
         self.assertEqual(
             history["components"]["databaseSchema"],
             self.snapshot["components"]["database"]["schemaVersion"],
