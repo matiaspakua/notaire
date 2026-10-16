@@ -7,19 +7,51 @@ from __future__ import annotations
 
 import re
 
-RELEASE = "2026-11 · Release blockers"
-FRONTEND = "2026-12 · Frontend product"
-QUALITY = "2027-01 · Quality & traceability"
-PLATFORM = "2027-02 · Platform & operability"
-LEGACY = "2027-03 · Legacy retirement"
-BACKLOG = "2027-06 · Backlog"
+# Nomenclature: docs/300-development/305-project-management/MILESTONE-NOMENCLATURE.md
+# Open trains are version first: ``v<MAJOR>.<MINOR> · <Theme> (<YYYY-MM>)``.
+RELEASE = "v0.3 · Hexagonal core & security (2026-11)"
+FRONTEND = "v0.4 · Product completeness (2026-12)"
+QUALITY = "v0.5 · Quality & traceability (2027-01)"
+PLATFORM = "v0.6 · Platform & operability (2027-02)"
+GA = "v1.0 · GA: legacy-free (2027-03)"
+BACKLOG = "Backlog · Unscheduled"
+CATALOG = "Catalog · Requirements & use cases"
 
-HISTORY_Q2 = "History · 2026 Q2 — Foundations & API"
-HISTORY_Q3 = "History · 2026 Q3 — Product build"
-HISTORY_Q4 = "History · 2026 Q4 — Cloud AI SDLC"
+V01 = "v0.1 · First release cuts (2026-10)"
+V02 = "v0.2 · Release identity & product forms (2026-10)"
 
-SCHEDULED = (RELEASE, FRONTEND, QUALITY, PLATFORM, LEGACY, BACKLOG)
+H0 = "H0 · Swing monolith (2014–2018)"
+H1 = "H1 · Revival & foundations (2026-03–2026-04)"
+H2 = "H2 · REST API migration (2026-05)"
+H3 = "H3 · Platform & observability (2026-06)"
+H4 = "H4 · Web frontend slice (2026-07)"
+H5 = "H5 · Web frontend wave (2026-07–2026-08)"
+H6 = "H6 · Production slice (2026-08–2026-09)"
+H7 = "H7 · Swing deprecation start (2026-09)"
+H8 = "H8 · Pre-release hardening (2026-09–2026-10)"
+
+HISTORY_Q2 = "H · 2026 Q2 cohort: foundations & API"
+HISTORY_Q3 = "H · 2026 Q3 cohort: product build & UI/UX"
+HISTORY_Q4 = "H · 2026 Q4 cohort: cloud AI SDLC"
+
+SCHEDULED = (RELEASE, FRONTEND, QUALITY, PLATFORM, GA)
+CONTINUOUS = (BACKLOG, CATALOG)
+SHIPPED = (V01, V02)
+HISTORY_STAGES = (H0, H1, H2, H3, H4, H5, H6, H7, H8)
 HISTORY_ERAS = (HISTORY_Q2, HISTORY_Q3, HISTORY_Q4)
+
+# Last tag of each shipped minor, in UTC. A closed issue up to that instant
+# (and after the previous cut) shipped in that train.
+CUT_WINDOWS = (
+    (V01, "2026-10-01T00:00:00Z", "2026-10-10T14:45:19Z"),  # notaire-v0.1.1, notaire-v0.1.2
+    (V02, "2026-10-10T14:45:20Z", "2026-10-16T11:26:32Z"),  # v0.2.0 … v0.2.3
+)
+
+
+def is_history(title: str) -> bool:
+    """History milestones start with ``H<n> ·``, ``H ·`` or the retired ``History ·``."""
+    return bool(re.match(r"^(H\d* · |History · )", title or ""))
+
 
 CATALOG_EXCLUSIONS = (
     "-label:requerimiento-funcional "
@@ -58,77 +90,113 @@ VIEW_FIELDS = {
     "Todo by priority": ("Title", "Assignees", "Status", "Labels", "Milestone", "Priority", "Area"),
 }
 
-# Closed milestone titles that already group a curated set. Renamed, not emptied.
+# Old title -> new title. Several buckets merge into H8; renames are one hop.
 RENAMES = {
-    "Phase 0 - Foundations": "History · Phase 0 Foundations",
-    "Phase 1 - Backend Complete": "History · Phase 1 Backend API",
-    "Phase 2 - Kubernetes & Observability": "History · Phase 2 Platform & observability",
-    "Phase 3 - Modern Frontend": "History · Phase 3 Frontend slice",
-    "Phase 4 - Production Ready": "History · Phase 4 Production slice",
-    "Phase 4 — Modern Frontend": "History · Phase 4 Frontend wave",
-    "Phase 6 — Deprecation": "History · Phase 6 Deprecation start",
-    "v1.0 — Production Ready": "History · v1.0 priority bucket",
-    "v1.1 — Hardening": "History · v1.1 priority bucket",
-    "Backlog": "History · Backlog priority bucket",
+    "2026-11 · Release blockers": RELEASE,
+    "2026-12 · Frontend product": FRONTEND,
+    "2027-01 · Quality & traceability": QUALITY,
+    "2027-02 · Platform & operability": PLATFORM,
+    "2027-03 · Legacy retirement": GA,
+    "2027-06 · Backlog": BACKLOG,
+    "Phase 0 - Foundations": H1,
+    "History · Phase 0 Foundations": H1,
+    "Phase 1 - Backend Complete": H2,
+    "History · Phase 1 Backend API": H2,
+    "Phase 2 - Kubernetes & Observability": H3,
+    "History · Phase 2 Platform & observability": H3,
+    "Phase 3 - Modern Frontend": H4,
+    "History · Phase 3 Frontend slice": H4,
+    "Phase 4 — Modern Frontend": H5,
+    "History · Phase 4 Frontend wave": H5,
+    "Phase 4 - Production Ready": H6,
+    "History · Phase 4 Production slice": H6,
+    "Phase 6 — Deprecation": H7,
+    "History · Phase 6 Deprecation start": H7,
+    "v1.0 — Production Ready": H8,
+    "History · v1.0 priority bucket": H8,
+    "v1.1 — Hardening": H8,
+    "History · v1.1 priority bucket": H8,
+    "Backlog": H8,
+    "History · Backlog priority bucket": H8,
+    "History · 2026 Q2 — Foundations & API": HISTORY_Q2,
+    "History · 2026 Q3 — Product build": HISTORY_Q3,
+    "History · 2026 Q4 — Cloud AI SDLC": HISTORY_Q4,
 }
 
-# Due dates are what the board ROADMAP plots. History eras close after backfill.
-MILESTONE_DUE = {
-    RELEASE: "2026-11-30T00:00:00Z",
-    FRONTEND: "2026-12-31T00:00:00Z",
-    QUALITY: "2027-01-31T00:00:00Z",
-    PLATFORM: "2027-02-28T00:00:00Z",
-    LEGACY: "2027-03-31T00:00:00Z",
-    BACKLOG: "2027-06-30T00:00:00Z",
-    HISTORY_Q2: "2026-06-30T00:00:00Z",
-    HISTORY_Q3: "2026-09-30T00:00:00Z",
-    HISTORY_Q4: "2026-10-12T00:00:00Z",
-}
-
-# Bars on the roadmap for open delivery work (catalog anchors are filtered out).
-ROADMAP_WINDOW = {
+# Start and end of each milestone (Project Start/Target fields). Due = end.
+MILESTONE_WINDOW = {
+    H0: ("2014-03-01", "2018-12-31"),
+    H1: ("2026-03-01", "2026-04-30"),
+    H2: ("2026-05-01", "2026-05-31"),
+    H3: ("2026-06-01", "2026-06-30"),
+    H4: ("2026-07-01", "2026-07-31"),
+    H5: ("2026-07-01", "2026-08-31"),
+    H6: ("2026-08-01", "2026-09-30"),
+    H7: ("2026-09-01", "2026-09-30"),
+    H8: ("2026-09-01", "2026-10-12"),
+    HISTORY_Q2: ("2026-03-01", "2026-06-30"),
+    HISTORY_Q3: ("2026-07-01", "2026-09-30"),
+    HISTORY_Q4: ("2026-10-01", "2026-10-12"),
+    V01: ("2026-10-01", "2026-10-10"),
+    V02: ("2026-10-10", "2026-10-16"),
     RELEASE: ("2026-10-13", "2026-11-30"),
     FRONTEND: ("2026-10-13", "2026-12-31"),
     QUALITY: ("2027-01-01", "2027-01-31"),
     PLATFORM: ("2027-02-01", "2027-02-28"),
-    LEGACY: ("2027-03-01", "2027-03-31"),
-    BACKLOG: ("2027-04-01", "2027-06-30"),
+    GA: ("2027-03-01", "2027-03-31"),
 }
+ROADMAP_WINDOW = {title: MILESTONE_WINDOW[title] for title in SCHEDULED}
 
-# GitHub's roadmap plots item date fields, not milestone due dates. These
-# windows make one view tell the whole story from the first issue to future
-# delivery. Curated legacy buckets intentionally overlap their broader era.
-MILESTONE_WINDOW = {
-    "History · Phase 0 Foundations": ("2026-03-01", "2026-04-30"),
-    "History · Phase 1 Backend API": ("2026-05-01", "2026-05-31"),
-    "History · Phase 2 Platform & observability": ("2026-06-01", "2026-06-30"),
-    "History · Phase 3 Frontend slice": ("2026-07-01", "2026-07-31"),
-    "History · Phase 4 Production slice": ("2026-08-01", "2026-09-30"),
-    "History · Phase 4 Frontend wave": ("2026-07-01", "2026-08-31"),
-    "History · Phase 6 Deprecation start": ("2026-09-01", "2026-09-30"),
-    "History · v1.0 priority bucket": ("2026-09-01", "2026-10-12"),
-    "History · v1.1 priority bucket": ("2026-09-01", "2026-10-12"),
-    "History · Backlog priority bucket": ("2026-09-01", "2026-10-12"),
-    HISTORY_Q2: ("2026-03-01", "2026-06-30"),
-    HISTORY_Q3: ("2026-07-01", "2026-09-30"),
-    HISTORY_Q4: ("2026-10-01", "2026-10-12"),
-    **ROADMAP_WINDOW,
-}
+# Backlog and Catalog are continuous: no due date.
+MILESTONE_DUE = {title: f"{end}T12:00:00Z" for title, (_start, end) in MILESTONE_WINDOW.items()}
+
+
+def _describe(goal: str, window: str, deliverables: str, exit_: str, nxt: str) -> str:
+    return f"Goal: {goal}. Window: {window}. Key deliverables: {deliverables}. Exit: {exit_}. Next: {nxt}."
+
 
 MILESTONE_DESCRIPTION = {
-    RELEASE: "Open priority:critical work, security fixes, and security NFRs (RNF-11–16). Exit: no open critical issue.",
-    FRONTEND: "Phase 4 product scope: open use cases, functional requirements, and Next.js behavior (#898). Visual NFRs (RNF-05–10) live here.",
-    QUALITY: "Tests, traceability, documentation, performance NFRs (RNF-01–04) and process NFRs (RNF-21–22).",
-    PLATFORM: "CI, observability, and operability implementation that is not a critical release blocker.",
-    LEGACY: "jpa retirement and the Phase 6 deprecation epic (#899). Critical legacy defects stay on Release blockers until they land.",
-    BACKLOG: "priority:low work and environment NFRs (RNF-17–20, RNF-23–24) with no earlier train.",
-    HISTORY_Q2: "Closed issues that had no milestone and were closed before 2026-07-01.",
-    HISTORY_Q3: "Closed issues that had no milestone and were closed from 2026-07-01 through 2026-09-30.",
-    HISTORY_Q4: "Closed issues that had no milestone and were closed on or after 2026-10-01.",
+    RELEASE: _describe("Ports & Adapters core and release-blocking security", "v0.3.z cuts, 2026-10-13 → 2026-11-30",
+                       "#1693 hexagonal slices, jpa retirement #571–#580, #1683, #1684, #1640, #655, #254, RNF-11–16",
+                       "no open priority:critical issue; ArchUnit baseline shrinking", FRONTEND),
+    FRONTEND: _describe("every use case complete end to end in the web client", "v0.4.z cuts, 2026-10-13 → 2026-12-31",
+                        "#771, #774, #611, UI E2E for remaining CUs, RNF-05–10", "no open product gap against CU01–CU87", QUALITY),
+    QUALITY: _describe("tests, traceability and documentation at target", "v0.5.z cuts, 2027-01-01 → 2027-01-31",
+                       "#1246 coverage 80%, #1251 a11y, #1244 CU-API matrix, #1535 Sonar, #288, #306, #292",
+                       "quality gates green at target values", PLATFORM),
+    PLATFORM: _describe("CI, observability and operability enforced", "v0.6.z cuts, 2027-02-01 → 2027-02-28",
+                        "#1315 OpenAPI coherence, #566/#710/#711 static analysis gates, #1707 observability",
+                        "Checkstyle, SpotBugs and Trivy fail the build", GA),
+    GA: _describe("general availability with no legacy code", "v1.0.z cuts, 2027-03-01 → 2027-03-31",
+                  "#899 Phase 6 deprecation, legacy packages removed, Owner GA decision",
+                  "Owner tags v1.0.0", "next minor train"),
+    BACKLOG: "Continuous. priority:low work and Owner decisions not yet scheduled. Scheduling = moving the issue into a vX.Y train.",
+    CATALOG: "Continuous. RF / RNF / CU requirement anchors (SRS traceability). Closed per anchor with evidence, never by a release.",
+    V01: _describe("first semver cuts of the three-tier product", "notaire-v0.1.1 (2026-10-07), notaire-v0.1.2 (2026-10-10)",
+                   "release-please, product identity, CHANGELOG", "shipped", V02),
+    V02: _describe("release identity and the missing product forms", "v0.2.0 (2026-10-12) … v0.2.3 (2026-10-16)",
+                   "#1547 missing forms, #1573 workflow editor, #1593 PDF design system, SBOM and version surfaces",
+                   "shipped", RELEASE),
+    H0: _describe("academic Swing + MySQL desktop monolith", "2014–2018",
+                  "SRS, RF/RNF/CU catalog, Swing client (removed)", "superseded by the three-tier rewrite", H1),
+    H1: _describe("revive the codebase and set foundations", "2026-03 → 2026-04",
+                  "docs, standards, base CI, Java 21 / Spring Boot upgrade", "closed", H2),
+    H2: _describe("REST API over the legacy domain", "2026-05", "REST endpoints, JWT, Swagger, Flyway", "closed", H3),
+    H3: _describe("platform and observability", "2026-06", "k3d, Prometheus/Grafana, OpenTelemetry", "closed", H4),
+    H4: _describe("first Swing→Next.js slice", "2026-07", "Next.js frontend module", "closed", H5),
+    H5: _describe("web frontend wave", "2026-07 → 2026-08", "Next.js 16 / React 19 screens for the use cases", "closed", H6),
+    H6: _describe("production slice", "2026-08 → 2026-09", "E2E, OWASP review, DR", "closed", H7),
+    H7: _describe("start Swing deprecation", "2026-09", "Swing client removal", "closed", H8),
+    H8: _describe("pre-release hardening by priority (merged v1.0/v1.1/backlog buckets)", "2026-09 → 2026-10-12",
+                  "critical/high, medium and low hardening items; priority labels keep the split", "closed", V01),
+    HISTORY_Q2: "Close-date cohort: closed issues that had no milestone and were closed before 2026-07-01.",
+    HISTORY_Q3: "Close-date cohort: closed issues that had no milestone and were closed from 2026-07-01 through 2026-09-30.",
+    HISTORY_Q4: "Close-date cohort: closed issues that had no milestone, closed from 2026-10-01 and not part of a cut.",
 }
 
-# jpa / Phase 6 items. Critical ones are pulled forward by the critical rule.
-LEGACY_NUMBERS = frozenset({571, 576, 577, 578, 579, 580, 584, 595, 899})
+# jpa retirement moved into the hexagonal train (#1693). Phase 6 is GA.
+JPA_NUMBERS = frozenset({571, 576, 577, 578, 579, 580, 584, 595})
+GA_NUMBERS = frozenset({899})
 FRONTEND_NUMBERS = frozenset({611, 771, 774, 898, 1224, 1250, 1545, 1546, 1547, 1553, 1554, 1555, 1556, 1557})
 QUALITY_NUMBERS = frozenset({902, 921})
 
@@ -138,11 +206,6 @@ WORK_LABELS = frozenset(
 )
 PRIORITIES = ("priority:critical", "priority:high", "priority:medium", "priority:low")
 
-_RNF = re.compile(r"RNF-(\d+)")
-SECURITY_RNF = frozenset({11, 12, 13, 14, 15, 16})
-VISUAL_RNF = frozenset({5, 6, 7, 8, 9, 10})
-QUALITY_RNF = frozenset({1, 2, 3, 4, 21, 22})
-ENV_RNF = frozenset({17, 18, 19, 20, 23, 24})
 
 # Mis-tagged as use cases; they are epics / audits.
 STRIP_USE_CASE_LABEL = frozenset({898, 921})
@@ -152,10 +215,6 @@ def priority_of(labels: set[str] | list[str]) -> str | None:
     found = [name for name in PRIORITIES if name in labels]
     return found[0] if len(found) == 1 else (found[0] if found else None)
 
-
-def rnf_number(title: str) -> int | None:
-    match = _RNF.search(title or "")
-    return int(match.group(1)) if match else None
 
 
 _AREAS = frozenset({"BACKEND", "FRONTEND", "DB", "DEVOPS", "TEST", "DOC", "security"})
@@ -174,16 +233,8 @@ def classify_open(number: int, title: str, labels: list[str] | set[str]) -> str:
     if number in QUALITY_NUMBERS:
         return QUALITY
 
-    rnf = rnf_number(title)
-    if rnf is not None and "requerimiento-no-funcional" in names:
-        if rnf in SECURITY_RNF:
-            return RELEASE
-        if rnf in VISUAL_RNF:
-            return FRONTEND
-        if rnf in QUALITY_RNF:
-            return QUALITY
-        if rnf in ENV_RNF:
-            return BACKLOG
+    if names & CATALOG_LABELS and not names & WORK_LABELS:
+        return CATALOG
 
     pri = priority_of(names)
     if pri == "priority:low":
@@ -192,8 +243,10 @@ def classify_open(number: int, title: str, labels: list[str] | set[str]) -> str:
         return RELEASE
     if pri == "priority:high" and "security(" in (title or "").lower():
         return RELEASE
-    if number in LEGACY_NUMBERS or "phase:6-deprecation" in names:
-        return LEGACY
+    if number in JPA_NUMBERS:
+        return RELEASE
+    if number in GA_NUMBERS or "phase:6-deprecation" in names:
+        return GA
     if number in FRONTEND_NUMBERS:
         return FRONTEND
     if not names & _AREAS and not names & CATALOG_LABELS and priority_of(names) is None:
@@ -216,7 +269,26 @@ def classify_closed(closed_at: str, has_milestone: bool) -> str | None:
         return HISTORY_Q2
     if day < "2026-10-01":
         return HISTORY_Q3
-    return HISTORY_Q4
+    return shipped_train(closed_at, None) or SCHEDULED[0]
+
+
+_MOVABLE = frozenset({None, HISTORY_Q4, "History · 2026 Q4 — Cloud AI SDLC"}) | set(SCHEDULED) | set(CONTINUOUS)
+
+
+def shipped_train(closed_at: str, current: str | None) -> str | None:
+    """The shipped vX.Y train of an issue closed inside a cut window, else None.
+
+    Only unmilestoned issues, the Q4 cohort and delivery trains move; curated
+    history and shipped trains keep their milestone.
+    """
+    if not closed_at:
+        return None
+    if current is not None and current not in _MOVABLE and RENAMES.get(current) not in _MOVABLE - {None}:
+        return None
+    for train, start, end in CUT_WINDOWS:
+        if start <= closed_at <= end:
+            return train
+    return None
 
 
 def lane(labels: list[str] | set[str], number: int, title: str) -> str:

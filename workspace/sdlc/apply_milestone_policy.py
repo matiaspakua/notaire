@@ -26,20 +26,24 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from milestone_policy import (  # noqa: E402
+    CONTINUOUS,
     DELIVERY_FILTER,
     FULL_LIFECYCLE_FILTER,
     HISTORY_ERAS,
+    HISTORY_STAGES,
     MILESTONE_DESCRIPTION,
     MILESTONE_DUE,
     MILESTONE_WINDOW,
     RENAMES,
     SCHEDULED,
+    SHIPPED,
     STRIP_USE_CASE_LABEL,
     VIEW_CONTRACTS,
     VIEW_FIELDS,
     classify_closed,
     classify_open,
     lane,
+    shipped_train,
     suggested_priority,
 )
 
@@ -49,7 +53,21 @@ PROJECT_ID = "PVT_kwHOATJKDs4BRC9u"
 SNAPSHOT = Path(__file__).resolve().parents[2] / "docs" / "github" / "milestone-snapshot.json"
 PAGE_SNAPSHOT = Path(__file__).resolve().parents[2] / "github-page" / "lib" / "milestone-snapshot.json"
 
-CLOSE_WHEN_EMPTY = set(RENAMES.values()) | set(HISTORY_ERAS)
+CLOSED_BY_DEFINITION = frozenset(HISTORY_STAGES) | frozenset(SHIPPED)
+CLOSE_WHEN_EMPTY = set(CLOSED_BY_DEFINITION) | set(HISTORY_ERAS)
+WANTED = tuple(SCHEDULED) + tuple(CONTINUOUS) + tuple(SHIPPED) + tuple(HISTORY_STAGES) + tuple(HISTORY_ERAS)
+
+
+def milestone_payload(title: str) -> dict:
+    """Title, template description, due date (None = continuous) and state."""
+    return {
+        "title": title,
+        "description": MILESTONE_DESCRIPTION[title],
+        "due_on": MILESTONE_DUE.get(title),
+        "state": "closed" if title in CLOSED_BY_DEFINITION else "open",
+    }
+
+
 VIEW_ALIASES = {
     "Agent queue": "Delivery schedule",
     "Needs triage": "Triage",
@@ -129,7 +147,14 @@ def target_for(issue: dict) -> str | None:
     labels = [node["name"] for node in issue["labels"]["nodes"]]
     if issue["state"] == "OPEN":
         return classify_open(issue["number"], issue["title"], labels)
-    return classify_closed(issue["closedAt"] or "", issue["milestone"] is not None)
+    current = issue["milestone"]["title"] if issue["milestone"] else None
+    closed_at = issue["closedAt"] or ""
+    shipped = shipped_train(closed_at, current)
+    if shipped:
+        return shipped
+    if current in RENAMES:
+        return RENAMES[current]
+    return classify_closed(closed_at, current is not None)
 
 
 def ensure_milestones(gh: GitHub, apply: bool) -> dict[str, dict]:
@@ -148,27 +173,31 @@ def ensure_milestones(gh: GitHub, apply: bool) -> dict[str, dict]:
                 )
             by_title[new] = by_title.pop(old)
             by_title[new]["title"] = new
-    wanted = list(SCHEDULED) + list(HISTORY_ERAS)
-    for title in wanted:
-        if title in by_title:
+    for title in WANTED:
+        payload = milestone_payload(title)
+        row = by_title.get(title)
+        if row is None:
+            print(f"create milestone {title}")
+            if not apply:
+                by_title[title] = {"number": -1, "title": title, "state": payload["state"]}
+                continue
+            # Created open so issues can be moved in; closed at the end of the run.
+            _, created = gh.request("POST", f"/repos/{REPO}/milestones", {**payload, "state": "open"})
+            if not isinstance(created, dict):
+                raise SystemExit(f"create failed for {title}")
+            by_title[title] = created
             continue
-        print(f"create milestone {title}")
-        if not apply:
-            by_title[title] = {"number": -1, "title": title, "state": "open"}
-            continue
-        _, created = gh.request(
-            "POST",
-            f"/repos/{REPO}/milestones",
-            {
-                "title": title,
-                "description": MILESTONE_DESCRIPTION[title],
-                "due_on": MILESTONE_DUE[title],
-                "state": "open",
-            },
-        )
-        if not isinstance(created, dict):
-            raise SystemExit(f"create failed for {title}")
-        by_title[title] = created
+        drift = {
+            key: value
+            for key, value in payload.items()
+            if key != "state" and (row.get(key) or None) != value and not (
+                key == "due_on" and value and (row.get(key) or "")[:10] == value[:10]
+            )
+        }
+        if drift and row.get("number", -1) > 0:
+            print(f"update milestone {title}: {', '.join(sorted(drift))}")
+            if apply:
+                gh.request("PATCH", f"/repos/{REPO}/milestones/{row['number']}", drift)
     return by_title
 
 
@@ -247,7 +276,9 @@ def close_empty_history(gh: GitHub, apply: bool) -> None:
     for row in rows:
         if row["title"] not in CLOSE_WHEN_EMPTY:
             continue
-        if row["open_issues"] != 0 or row["state"] == "closed":
+        if row["state"] == "closed":
+            continue
+        if row["open_issues"] != 0 and row["title"] not in CLOSED_BY_DEFINITION:
             continue
         print(f"close milestone {row['title']}")
         if apply:

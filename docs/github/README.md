@@ -60,8 +60,9 @@ Short form:
 
 | Kind | Milestones |
 |------|------------|
-| Delivery (open) | Six dated trains from `2026-11 · Release blockers` through `2027-06 · Backlog` |
-| History (closed) | Curated phase buckets plus Q2, Q3, and Q4 close-date cohorts |
+| Release trains (open) | `v0.3 · Hexagonal core & security (2026-11)` through `v1.0 · GA: legacy-free (2027-03)` |
+| Continuous (open) | `Backlog · Unscheduled`, `Catalog · Requirements & use cases` |
+| History (closed) | Stages `H0`–`H8`, shipped cuts `v0.1`/`v0.2`, and Q2/Q3/Q4 close-date cohorts |
 
 Every issue has exactly one milestone. The full list, assignment precedence,
 and read-only verification are in

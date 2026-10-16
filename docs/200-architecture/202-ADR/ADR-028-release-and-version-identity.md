@@ -40,10 +40,11 @@ the record, the SBOM bills and the version surfaces, but left four gaps:
    legacy tag without comparing it to the current tree. A later version with
    that prefix is rejected. Legacy releases get only the assets their tree can
    prove; the backfill runbook lists each omission.
-4. **0.x to 1.0.** `0.x` and `1.0.x` advance the `2026-11 · Release blockers`
-   train and do not close it. `v1.0.0` is an Owner decision when the blockers
-   are closed or deferred. A minor with no train mapping fails closed until the
-   map and `RELEASES.md` name its train. Breaking changes before 1.0 bump the
+4. **0.x to 1.0.** *Amended 2026-10-16 (#1847):* each minor has its own
+   version-first train (`vX.Y · <Theme> (<YYYY-MM>)`, see
+   `MILESTONE-NOMENCLATURE.md`); every patch advances it and no tag closes it.
+   `v1.0.0` is an Owner decision. A minor with no train fails closed until the
+   nomenclature and `RELEASES.md` name its train. Breaking changes before 1.0 bump the
    minor (`bump-minor-pre-major`).
 5. **The running version comes from the artifact.** The backend reports the
    Maven-filtered `app.version` that is packaged in the jar as the
