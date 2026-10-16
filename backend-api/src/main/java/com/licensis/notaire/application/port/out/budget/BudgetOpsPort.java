@@ -62,4 +62,7 @@ public interface BudgetOpsPort {
     SaveResult update(Integer id, BudgetCommand command);
 
     DeleteResult delete(Integer id);
+
+    /** Existence check for other application slices (issue #1865). */
+    boolean existsById(Integer id);
 }

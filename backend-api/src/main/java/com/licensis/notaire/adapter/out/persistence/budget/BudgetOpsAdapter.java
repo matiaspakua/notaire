@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.out.budget.BudgetOpsPort;
-import com.licensis.notaire.application.usecase.budget.BudgetService;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.BudgetStatus;
 import com.licensis.notaire.business.Person;
@@ -85,6 +84,12 @@ public class BudgetOpsAdapter implements BudgetOpsPort {
         } catch (ResourceNotFoundException e) {
             return new DeleteResult.NotFound();
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsById(Integer id) {
+        return budgetService.findById(id).isPresent();
     }
 
     private static Sort parseSort(String sort) {

@@ -4,7 +4,7 @@ import com.licensis.notaire.dto.TypeItem;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.application.port.out.item.ItemRepositoryPort;
-import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
+import com.licensis.notaire.application.port.out.budget.BudgetOpsPort;
 import com.licensis.notaire.business.Item;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +24,11 @@ public class ItemService {
     private static final Logger log = LoggerFactory.getLogger(ItemService.class);
 
     private final ItemRepositoryPort itemRepository;
-    private final BudgetRepositoryPort budgetRepository;
+    private final BudgetOpsPort budgetOps;
 
-    public ItemService(ItemRepositoryPort itemRepository, BudgetRepositoryPort budgetRepository) {
+    public ItemService(ItemRepositoryPort itemRepository, BudgetOpsPort budgetOps) {
         this.itemRepository = itemRepository;
-        this.budgetRepository = budgetRepository;
+        this.budgetOps = budgetOps;
     }
 
     @Transactional(readOnly = true)
@@ -52,7 +52,7 @@ public class ItemService {
      */
     @Transactional(readOnly = true)
     public List<Item> findDiscountsAndSurchargesByBudget(Integer idBudget) {
-        if (!budgetRepository.existsById(idBudget)) {
+        if (!budgetOps.existsById(idBudget)) {
             throw new ResourceNotFoundException("Budget not found with ID: " + idBudget);
         }
         return itemRepository.findByBudgetId(idBudget).stream()

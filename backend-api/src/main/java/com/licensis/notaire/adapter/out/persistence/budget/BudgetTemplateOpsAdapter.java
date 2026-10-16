@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.licensis.notaire.application.port.out.budget.BudgetTemplateOpsPort;
-import com.licensis.notaire.application.usecase.budget.BudgetTemplateCatalogService;
 import com.licensis.notaire.business.BudgetTemplate;
 import com.licensis.notaire.business.BudgetTemplatePK;
 

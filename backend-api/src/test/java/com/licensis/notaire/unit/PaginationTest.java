@@ -25,8 +25,8 @@ import com.licensis.notaire.application.port.in.budget.QueryBudgetsUseCase;
 import com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase;
 import com.licensis.notaire.application.port.out.budget.BudgetOpsPort.BudgetView;
 import com.licensis.notaire.application.port.out.budget.BudgetOpsPort.PageResult;
-import com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService;
-import com.licensis.notaire.application.usecase.budget.BudgetTemplateService;
+import com.licensis.notaire.application.port.in.budget.AddBudgetItemsFromCatalogUseCase;
+import com.licensis.notaire.application.port.in.budget.LoadBudgetItemsFromTemplateUseCase;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Pagination support on list endpoints")
@@ -42,10 +42,10 @@ class PaginationTest {
     private GetBudgetSummaryUseCase budgetSummaryUseCase;
 
     @Mock
-    private BudgetTemplateService budgetTemplateService;
+    private LoadBudgetItemsFromTemplateUseCase loadBudgetItemsFromTemplate;
 
     @Mock
-    private BudgetCatalogItemsService budgetCatalogItemsService;
+    private AddBudgetItemsFromCatalogUseCase addBudgetItemsFromCatalog;
 
     private MockMvc mockMvc;
 
@@ -53,7 +53,7 @@ class PaginationTest {
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(
                 new BudgetController(queryBudgets, manageBudgets, budgetSummaryUseCase,
-                        budgetTemplateService, budgetCatalogItemsService))
+                        loadBudgetItemsFromTemplate, addBudgetItemsFromCatalog))
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }

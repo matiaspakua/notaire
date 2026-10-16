@@ -890,6 +890,12 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `QueryWorkflowTraceUseCase` / `DocumentReentryUseCase`. Clears ~30 R2 edges
   (R2 154→124).
 
+- **Backend R2 shrink — budget (#1865):** move BudgetService /
+  BudgetTemplateCatalogService / BudgetTemplateService /
+  BudgetCatalogItemsService to `adapter.out.persistence.budget`; delete
+  entity-speaking `BudgetRepositoryPort`; inbound CU39/CU71 ports; `BudgetOpsPort.existsById`
+  for ItemService. Clears ~20 R2 edges (R2 124→104).
+
 
 ## Options considered
 
