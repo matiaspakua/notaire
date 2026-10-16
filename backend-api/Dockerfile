@@ -9,14 +9,16 @@ WORKDIR /build
 COPY pom.xml pom.xml
 COPY backend-api/pom.xml backend-api/pom.xml
 
-# Download dependencies (cached in Docker layer)
-RUN mvn dependency:go-offline -B -q || true
+# Warm the dependency layer. `|| true` keeps a transient Central blip from
+# failing the layer, but a failed parent-POM resolve can leave *.lastUpdated
+# markers — the package step must use -U so it re-fetches (seen on #1859).
+RUN mvn dependency:go-offline -B -q -U || true
 
 # Copy source code
 COPY backend-api/src backend-api/src
 
-# Build the application (skip tests)
-RUN mvn package -pl backend-api -am -DskipTests -B -q
+# Build the application (skip tests). -U forces update past cached resolve failures.
+RUN mvn package -pl backend-api -am -DskipTests -B -q -U
 
 # =============================================
 # Stage 2: Runtime - Minimal JRE image

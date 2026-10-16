@@ -36,6 +36,8 @@ class FleetLessons1858Test(unittest.TestCase):
             "human paste",
             "probe issue",
             "eslint-suppressions",
+            "docker",
+            "go-offline",
         ):
             self.assertIn(needle, lower, f"lessons doc must mention {needle!r}")
 

@@ -209,6 +209,16 @@ new runs stop competing (agents often cannot cancel in-flight runs — HTTP 403)
 Re-ready them only after the product PR’s heavy gate is green or merged.
 (Observed #1139–#1144 vs #1137/#1138, 2026-10-02.)
 
+## Docker image vs heavy tests (#1859)
+
+`check-heavy-ci.sh` does **not** require Build Docker Image. Unit/Integration/Coverage/
+Bruno/Playwright can be green while Docker fails on a transient Maven Central resolve
+of an otherwise valid Boot parent (cached after `go-offline || true`). Before changing
+the Boot pin in `pom.xml`, confirm the artifact exists on Central and that `main`’s
+Docker job recently passed the same version — then fix `backend-api/Dockerfile` with
+`-U` (see [`FLEET-LESSONS-HEX-1693.md`](FLEET-LESSONS-HEX-1693.md) — Docker Build Image).
+Required `protect-main` aggregators may still need Docker/CI green to merge.
+
 ## Related: CodeQL advanced vs default setup
 
 Adding `.github/workflows/codeql.yml` while GitHub Code Scanning **default

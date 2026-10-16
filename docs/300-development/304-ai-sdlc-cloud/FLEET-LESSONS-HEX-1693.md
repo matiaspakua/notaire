@@ -44,6 +44,19 @@
 
 See [`MAC-LOCAL-VS-CI.md`](MAC-LOCAL-VS-CI.md). Trust Mac for ArchUnit / unit / pg-integration / Spotless / FE typecheck+lint+Vitest+build / security `--profile local` when freshly re-run on tip. Still let CI own CodeQL, full Bruno, Playwright, DAST/ZAP, image build/smoke, and `gh`-dependent Process Checks (can flake locally).
 
+## Docker Build Image + Boot parent “not found”
+
+When **Unit / Integration / Coverage** are green but **Build Docker Image** fails with
+`Non-resolvable parent POM` / `spring-boot-starter-parent:X.Y.Z` absent from Central:
+
+| Check | Action |
+|-------|--------|
+| Does `https://repo.maven.apache.org/maven2/org/springframework/boot/spring-boot-starter-parent/X.Y.Z/` return **200**? | Yes → **not** a bad pin; do not change `pom.xml` Boot version |
+| Did `main` tip’s Docker job recently pass on the same pin? | Yes → treat as Docker-layer Maven resolve flake |
+| Dockerfile has `mvn dependency:go-offline … \|\| true` then `mvn package` without `-U`? | Failed go-offline can cache `*.lastUpdated`; package must use **`-U`** (or clear the cache) |
+
+Do **not** “fix” a green CI suite by downgrading Boot. Prefer Dockerfile `-U` on package (and go-offline). Aggregate `CI` fails when Docker fails even if heavy tests passed — still fix Docker before merge.
+
 ## Issue hygiene when the bot cannot close
 
 Fleet App / agent `gh` often returns **403** on label edit, board Status, or issue close. Then:

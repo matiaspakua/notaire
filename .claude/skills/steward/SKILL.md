@@ -79,3 +79,6 @@ the Docker build are CI-only. `test_watchdog` fails there because PID 1 does not
 needs a UTF-8 locale. `.claude/hooks/session-start-toolchain.sh` installs JDK 26, `openspec`,
 `kustomize`, Trivy, `promtool` and `amtool` at session start; say so in the PR instead of hiding it.
 Mac vs CI ownership for hex/R2: `docs/300-development/304-ai-sdlc-cloud/MAC-LOCAL-VS-CI.md`.
+If Build Docker Image fails on `spring-boot-starter-parent` “absent” while unit/integration
+are green, verify Central has that version before changing `pom.xml` — usually Dockerfile
+`-U` / go-offline cache (`FLEET-LESSONS-HEX-1693.md`).
