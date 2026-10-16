@@ -40,6 +40,12 @@ describe("procedureTypeHttpGateway (#1796)", () => {
       workflowDefinitionId: 9,
     });
     expect(apiPut).toHaveBeenCalledWith("/procedure-types/3/workflow", { workflowDefinitionId: 9 });
+
+    vi.mocked(apiPut).mockResolvedValueOnce({ idProcedureType: 3, name: "Sale", workflowDefinitionId: null });
+    await procedureTypeHttpGateway.assignWorkflow(3, null);
+    const body = vi.mocked(apiPut).mock.calls.at(-1)?.[1];
+    expect(body).toEqual({ workflowDefinitionId: null });
+    expect(JSON.stringify(body)).toBe('{"workflowDefinitionId":null}');
   });
 
   it("deletes by id", async () => {
