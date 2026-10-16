@@ -92,4 +92,13 @@ describe("the shrink-only baseline", () => {
     expect(entries["src/app/dashboard/administration/documents/page.tsx"]).toBeUndefined();
     expect(Object.keys(entries).length).toBeLessThan(62);
   });
+
+  it("workflows admin left the baseline (#1792)", () => {
+    const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
+    expect(entries["src/hooks/useWorkflow.ts"]).toBeUndefined();
+    expect(entries["src/hooks/useManagementWorkflow.ts"]).toBeUndefined();
+    expect(entries["src/app/dashboard/administration/workflows/page.tsx"]).toBeUndefined();
+    expect(entries["src/app/dashboard/administration/workflows/[id]/page.tsx"]).toBeUndefined();
+    expect(Object.keys(entries).length).toBeLessThan(57);
+  });
 });

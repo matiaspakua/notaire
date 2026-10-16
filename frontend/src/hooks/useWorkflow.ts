@@ -1,9 +1,9 @@
 /**
  * React Query hooks for workflow (CU70, CU71 — manage status workflows).
- * Endpoints: /api/v1/workflow-definition, /api/v1/workflow-node, /api/v1/workflow-transition
+ * Hexagon wiring: #1792 / ADR-030.
  */
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { workflowUseCases } from "@/composition/workflow";
 import type { WorkflowDefinition, WorkflowNode, WorkflowTransition } from "@/types";
 
 export const workflowKeys = {
@@ -16,14 +16,14 @@ export const workflowKeys = {
 export function useWorkflowDefinitions() {
   return useQuery({
     queryKey: workflowKeys.allDefinitions,
-    queryFn: () => apiGet<WorkflowDefinition[]>("/workflow-definition"),
+    queryFn: () => workflowUseCases.listDefinitions() as Promise<WorkflowDefinition[]>,
   });
 }
 
 export function useWorkflowNodes(workflowId: number | undefined) {
   return useQuery({
     queryKey: workflowKeys.nodes(workflowId ?? 0),
-    queryFn: () => apiGet<WorkflowNode[]>(`/workflow-node/by-workflow/${workflowId}`),
+    queryFn: () => workflowUseCases.listNodesByWorkflow(workflowId!) as Promise<WorkflowNode[]>,
     enabled: !!workflowId,
   });
 }
@@ -31,7 +31,8 @@ export function useWorkflowNodes(workflowId: number | undefined) {
 export function useWorkflowTransitions(workflowId: number | undefined) {
   return useQuery({
     queryKey: workflowKeys.transitions(workflowId ?? 0),
-    queryFn: () => apiGet<WorkflowTransition[]>(`/workflow-transition/by-workflow/${workflowId}`),
+    queryFn: () =>
+      workflowUseCases.listTransitionsByWorkflow(workflowId!) as Promise<WorkflowTransition[]>,
     enabled: !!workflowId,
   });
 }
@@ -39,8 +40,7 @@ export function useWorkflowTransitions(workflowId: number | undefined) {
 export function useCreateWorkflowDefinition() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<WorkflowDefinition>) =>
-      apiPost<WorkflowDefinition>("/workflow-definition", data),
+    mutationFn: (data: Partial<WorkflowDefinition>) => workflowUseCases.createDefinition(data),
     onSuccess: () => qc.invalidateQueries({ queryKey: workflowKeys.allDefinitions }),
   });
 }
@@ -49,7 +49,7 @@ export function useUpdateWorkflowDefinition() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<WorkflowDefinition> }) =>
-      apiPut<void>(`/workflow-definition/${id}`, data),
+      workflowUseCases.updateDefinition(id, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: workflowKeys.allDefinitions }),
   });
 }
@@ -57,7 +57,7 @@ export function useUpdateWorkflowDefinition() {
 export function useDeleteWorkflowDefinition() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => apiDelete(`/workflow-definition/${id}`),
+    mutationFn: (id: number) => workflowUseCases.deleteDefinition(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: workflowKeys.allDefinitions }),
   });
 }
@@ -65,8 +65,7 @@ export function useDeleteWorkflowDefinition() {
 export function useCreateWorkflowNode() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<WorkflowNode>) =>
-      apiPost<WorkflowNode>("/workflow-node", data),
+    mutationFn: (data: Partial<WorkflowNode>) => workflowUseCases.createNode(data),
     onSuccess: (_, vars) =>
       qc.invalidateQueries({ queryKey: workflowKeys.nodes(vars.workflowDefinitionId ?? 0) }),
   });
@@ -76,7 +75,7 @@ export function useUpdateWorkflowNode() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<WorkflowNode> }) =>
-      apiPut<void>(`/workflow-node/${id}`, data),
+      workflowUseCases.updateNode(id, data),
     onSuccess: (_, vars) =>
       qc.invalidateQueries({ queryKey: workflowKeys.nodes(vars.data.workflowDefinitionId ?? 0) }),
   });
@@ -85,18 +84,15 @@ export function useUpdateWorkflowNode() {
 export function useDeleteWorkflowNode() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id }: { id: number; workflowId: number }) =>
-      apiDelete(`/workflow-node/${id}`),
-    onSuccess: (_, vars) =>
-      qc.invalidateQueries({ queryKey: workflowKeys.nodes(vars.workflowId) }),
+    mutationFn: ({ id }: { id: number; workflowId: number }) => workflowUseCases.deleteNode(id),
+    onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: workflowKeys.nodes(vars.workflowId) }),
   });
 }
 
 export function useCreateWorkflowTransition() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<WorkflowTransition>) =>
-      apiPost<WorkflowTransition>("/workflow-transition", data),
+    mutationFn: (data: Partial<WorkflowTransition>) => workflowUseCases.createTransition(data),
     onSuccess: (_, vars) =>
       qc.invalidateQueries({ queryKey: workflowKeys.transitions(vars.workflowDefinitionId ?? 0) }),
   });
@@ -107,7 +103,7 @@ export function useUpdateWorkflowTransition() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<WorkflowTransition> }) =>
-      apiPut<WorkflowTransition>(`/workflow-transition/${id}`, data),
+      workflowUseCases.updateTransition(id, data),
     onSuccess: (_, vars) =>
       qc.invalidateQueries({ queryKey: workflowKeys.transitions(vars.data.workflowDefinitionId ?? 0) }),
   });
@@ -117,7 +113,7 @@ export function useDeleteWorkflowTransition() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id }: { id: number; workflowId: number }) =>
-      apiDelete(`/workflow-transition/${id}`),
+      workflowUseCases.deleteTransition(id),
     onSuccess: (_, vars) =>
       qc.invalidateQueries({ queryKey: workflowKeys.transitions(vars.workflowId) }),
   });
