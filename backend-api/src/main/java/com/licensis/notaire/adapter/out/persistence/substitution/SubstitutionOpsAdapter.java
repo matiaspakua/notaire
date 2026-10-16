@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.out.substitution.SubstitutionOpsPort;
-import com.licensis.notaire.application.usecase.substitution.SubstitutionService;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Substitution;
 import com.licensis.notaire.repository.PersonRepository;

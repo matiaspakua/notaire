@@ -1,8 +1,8 @@
-package com.licensis.notaire.application.usecase.substitution;
+package com.licensis.notaire.adapter.out.persistence.substitution;
 
-import com.licensis.notaire.application.port.out.substitution.SubstitutionRepositoryPort;
 import com.licensis.notaire.business.Substitution;
 import com.licensis.notaire.business.Person;
+import com.licensis.notaire.repository.SubstitutionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,9 +17,9 @@ public class SubstitutionService {
 
     private static final Logger logger = LoggerFactory.getLogger(SubstitutionService.class);
 
-    private final SubstitutionRepositoryPort repository;
+    private final SubstitutionRepository repository;
 
-    public SubstitutionService(SubstitutionRepositoryPort repository) {
+    public SubstitutionService(SubstitutionRepository repository) {
         this.repository = repository;
     }
 
