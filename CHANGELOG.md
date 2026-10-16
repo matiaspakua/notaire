@@ -16,6 +16,7 @@ Hexagonal architecture epic [#1693](https://github.com/matiaspakua/notaire/issue
 * **arch:** frontend deeds into core + adapters ([#1831](https://github.com/matiaspakua/notaire/issues/1831))
 * **arch:** frontend payments into core + adapters ([#1832](https://github.com/matiaspakua/notaire/issues/1832))
 * **arch:** frontend protocol pages into core + adapters ([#1833](https://github.com/matiaspakua/notaire/issues/1833))
+* **arch:** frontend testimonies into core + adapters ([#1834](https://github.com/matiaspakua/notaire/issues/1834))
 
 ## [0.2.3](https://github.com/matiaspakua/notaire/compare/v0.2.2...v0.2.3) (2026-10-16)
 

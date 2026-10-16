@@ -13,11 +13,19 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import { DeedPicker } from "@/components/shared/DeedPicker";
 import { useCreateTestimony } from "@/hooks/useTestimonies";
-import { ApiError } from "@/lib/api-client";
 import { extractApiError } from "@/lib/utils";
 import { parseFieldErrors } from "@/lib/mutation-error";
 
 const FIELDS = ["deed", "deed.idDeed", "number", "notes"];
+
+/** Duck-type HTTP status without importing api-client (ADR-030). */
+function httpStatus(err: unknown): number | undefined {
+  if (typeof err === "object" && err !== null && "status" in err) {
+    const status = (err as { status: unknown }).status;
+    return typeof status === "number" ? status : undefined;
+  }
+  return undefined;
+}
 
 export function RegisterTestimonyDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const t = useTranslations("testimonios.registrar");
@@ -54,11 +62,12 @@ export function RegisterTestimonyDialog({ open, onClose }: { open: boolean; onCl
       toast.success(t("created"));
       close();
     } catch (err) {
-      if (err instanceof ApiError && err.status === 404) {
+      const status = httpStatus(err);
+      if (status === 404) {
         toast.error(t("deedNotFound"));
         return;
       }
-      if (err instanceof ApiError && err.status === 409) {
+      if (status === 409) {
         toast.error(t("conflict"));
         return;
       }

@@ -844,6 +844,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `core/protocol-report` (+ HTTP adapters); protocol home reuses folio/folio-type
   composition. Three protocol pages leave the eslint baseline.
 
+- **Frontend testimonies (#1834):** `core/testimony` + `core/testimony-movement`
+  (+ HTTP adapters); hooks and testimonies pages leave the eslint baseline
+  (suppressions shrink by four).
+
 
 ## Options considered
 
