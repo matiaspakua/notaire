@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort;
-import com.licensis.notaire.application.usecase.testimony.TestimonyMovementService;
 import com.licensis.notaire.application.usecase.testimony.TestimonyReentry;
 import com.licensis.notaire.business.TestimonyMovement;
 import com.licensis.notaire.dto.DtoTestimonyMovement;

@@ -1,7 +1,5 @@
 R2 | com.licensis.notaire.application.port.in.history.HistoryUseCase -> com.licensis.notaire.business.History
 R2 | com.licensis.notaire.application.port.in.person.PersonUseCase -> com.licensis.notaire.business.Person
-R2 | com.licensis.notaire.application.port.in.testimony.TestimonyMovementUseCase -> com.licensis.notaire.business.TestimonyMovement
-R2 | com.licensis.notaire.application.port.in.testimony.TestimonyUseCase -> com.licensis.notaire.business.Testimony
 R2 | com.licensis.notaire.application.port.out.audit.AuditRecordRepositoryPort -> com.licensis.notaire.business.AuditRecord
 R2 | com.licensis.notaire.application.port.out.audit.AuditRecordRepositoryPort -> org.springframework.data.domain.Page
 R2 | com.licensis.notaire.application.port.out.audit.AuditRecordRepositoryPort -> org.springframework.data.domain.Pageable
@@ -21,8 +19,6 @@ R2 | com.licensis.notaire.application.port.out.property.PropertyRepositoryPort -
 R2 | com.licensis.notaire.application.port.out.registrationdraft.RegistrationDraftRepositoryPort -> com.licensis.notaire.business.RegistrationDraft
 R2 | com.licensis.notaire.application.port.out.substitution.SubstitutionRepositoryPort -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.port.out.substitution.SubstitutionRepositoryPort -> com.licensis.notaire.business.Substitution
-R2 | com.licensis.notaire.application.port.out.testimony.TestimonyMovementRepositoryPort -> com.licensis.notaire.business.TestimonyMovement
-R2 | com.licensis.notaire.application.port.out.testimony.TestimonyRepositoryPort -> com.licensis.notaire.business.Testimony
 R2 | com.licensis.notaire.application.port.out.user.RoleRepositoryPort -> com.licensis.notaire.business.Role
 R2 | com.licensis.notaire.application.port.out.user.UserRepositoryPort -> com.licensis.notaire.business.User
 R2 | com.licensis.notaire.application.usecase.audit.AuditRecordService -> com.licensis.notaire.business.AuditRecord
@@ -58,13 +54,5 @@ R2 | com.licensis.notaire.application.usecase.registrationdraft.RegistrationDraf
 R2 | com.licensis.notaire.application.usecase.registrationdraft.RegistrationDraftService -> com.licensis.notaire.repository.RegistrationDraftRepository
 R2 | com.licensis.notaire.application.usecase.substitution.SubstitutionService -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.usecase.substitution.SubstitutionService -> com.licensis.notaire.business.Substitution
-R2 | com.licensis.notaire.application.usecase.testimony.TestimonyGenerationVerificationService -> com.licensis.notaire.business.Deed
-R2 | com.licensis.notaire.application.usecase.testimony.TestimonyGenerationVerificationService -> com.licensis.notaire.business.Testimony
-R2 | com.licensis.notaire.application.usecase.testimony.TestimonyGenerationVerificationService -> com.licensis.notaire.repository.DeedRepository
-R2 | com.licensis.notaire.application.usecase.testimony.TestimonyGenerationVerificationService -> com.licensis.notaire.repository.TestimonyRepository
-R2 | com.licensis.notaire.application.usecase.testimony.TestimonyMovementService -> com.licensis.notaire.business.Testimony
-R2 | com.licensis.notaire.application.usecase.testimony.TestimonyMovementService -> com.licensis.notaire.business.TestimonyMovement
-R2 | com.licensis.notaire.application.usecase.testimony.TestimonyMovementService -> com.licensis.notaire.repository.TestimonyMovementRepository
-R2 | com.licensis.notaire.application.usecase.testimony.TestimonyMovementService -> com.licensis.notaire.repository.TestimonyRepository
 R6 | com.licensis.notaire.business.IdentificationTypeLookup -> com.licensis.notaire.jpa.IdentificationTypeJpaController
 R6 | com.licensis.notaire.config.JpaConfig -> com.licensis.notaire.service.JpaAdministrator

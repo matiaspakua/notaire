@@ -1,5 +1,6 @@
-package com.licensis.notaire.application.usecase.testimony;
+package com.licensis.notaire.adapter.out.persistence.testimony;
 
+import com.licensis.notaire.application.usecase.testimony.TestimonyReentry;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.TestimonyMovement;
@@ -17,6 +18,7 @@ import java.util.Optional;
 /**
  * Validates and applies the testimony movement circuit through the property registry:
  * entry, registration, withdrawal, and re-entry (CU11, CU12, CU44).
+ * Outbound persistence helper (issue #1879).
  */
 @Service
 @Transactional
