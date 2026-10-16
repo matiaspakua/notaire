@@ -20,11 +20,10 @@ import {
 } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { FormContainer, FormSection, FormField, FormActions, FormHeader } from "@/theme/form-patterns";
-import { useQuery } from "@tanstack/react-query";
-import { apiGet, ApiError } from "@/lib/api-client";
 import { presentMutationError } from "@/lib/mutation-error";
 import {
   useBudgetsPage,
+  useBudgetsByStatus,
   useBudgetSummary,
   useCreateBudget,
   useUpdateBudget,
@@ -32,6 +31,7 @@ import {
   useLoadItemsFromTemplate,
   useAddItemsFromCatalog,
 } from "@/hooks/useBudgets";
+import { useBudgetFind } from "@/hooks/useBudgetSearch";
 import { PersonPicker } from "@/components/shared/PersonPicker";
 import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { useItems, useItemsByBudget } from "@/hooks/useItems";
@@ -102,7 +102,8 @@ function BudgetsList() {
     } catch (e) {
       // CU39: keep curated Spanish for "no template" (400). Server body is
       // terse and would otherwise replace items.errorNoPlantilla via extractApiError.
-      const noTemplate = e instanceof ApiError && e.status === 400;
+      const noTemplate =
+        typeof e === "object" && e !== null && "status" in e && (e as { status: number }).status === 400;
       presentMutationError(e, {
         fallback: noTemplate ? t("items.errorNoPlantilla") : t("items.errorCargar"),
         preferFallback: noTemplate,
@@ -142,22 +143,12 @@ function BudgetsList() {
   useClampPage(paging, byStatus || searchId !== null ? undefined : budgetsPage?.totalPages);
 
   // CU60: the backend reads `status`. The retired query name was ignored and returned every budget.
-  const { data: budgetsByStatus = [], isLoading: isLoadingByStatus } = useQuery({
-    queryKey: ["budgets", "search", statusFilter],
-    queryFn: () => apiGet<Budget[]>(`/budgets/search?status=${encodeURIComponent(statusFilter)}`),
+  const { data: budgetsByStatus = [], isLoading: isLoadingByStatus } = useBudgetsByStatus(statusFilter, {
     enabled: byStatus,
   });
 
   // A budget number is looked up on the server, so it is found on any page.
-  const { data: byId = null, isLoading: isLoadingId } = useQuery({
-    queryKey: ["budgets", searchId ?? 0, "search"],
-    queryFn: () =>
-      apiGet<Budget>(`/budgets/${searchId}`).catch((e) => {
-        if (e instanceof ApiError && e.status === 404) return null;
-        throw e;
-      }),
-    enabled: searchId !== null,
-  });
+  const { data: byId = null, isLoading: isLoadingId } = useBudgetFind(searchId);
 
   const shown = byStatus ? budgetsByStatus : budgetsPage?.content ?? [];
   const isLoading = searchId !== null ? isLoadingId : byStatus ? isLoadingByStatus : isLoadingPage;
@@ -434,7 +425,10 @@ function BudgetsList() {
             )}
             {summaryError && (
               <p className="text-sm text-destructive" data-testid="summary-not-found">
-                {summaryError instanceof ApiError && summaryError.status === 404
+                {typeof summaryError === "object" &&
+                summaryError !== null &&
+                "status" in summaryError &&
+                (summaryError as { status: number }).status === 404
                   ? t("resumen.notFound")
                   : t("errorSave")}
               </p>

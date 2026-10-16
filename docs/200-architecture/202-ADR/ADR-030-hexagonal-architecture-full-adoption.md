@@ -828,6 +828,11 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `composition/person`. `usePeople` and `usePersonSearch` no longer import `api-client`
   (eslint suppressions shrink by two).
 
+
+- **Frontend budgets (#1827):** `core/budget`, `adapters/http/budget`, and
+  `composition/budget`. `useBudgets`, `useBudgetSearch`, and the budgets dashboard no
+  longer import `api-client` (eslint suppressions shrink by four).
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers

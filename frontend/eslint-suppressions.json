@@ -1,9 +1,4 @@
 {
-  "src/app/dashboard/budgets/page.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/app/dashboard/deeds/page.tsx": {
     "no-restricted-imports": {
       "count": 1
@@ -65,21 +60,6 @@
     }
   },
   "src/hooks/useAudit.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useBudgetSearch.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useBudgets.test.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useBudgets.ts": {
     "no-restricted-imports": {
       "count": 1
     }
