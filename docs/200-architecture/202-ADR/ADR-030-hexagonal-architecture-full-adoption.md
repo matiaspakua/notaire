@@ -836,6 +836,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `composition/deed`. `useDeeds`, `useDeedSearch`, and the deeds dashboard no
   longer import `api-client` (eslint suppressions shrink by three; folios for the
   deed form reuse `folioUseCases`).
+- **Frontend payments (#1832):** `core/payment`, `adapters/http/payment`, and
+  `composition/payment`. `usePayments` and the payments dashboard no longer
+  import `api-client` (eslint suppressions shrink by two).
+
 
 ## Options considered
 

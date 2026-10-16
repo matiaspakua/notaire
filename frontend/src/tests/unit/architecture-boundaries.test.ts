@@ -156,4 +156,11 @@ describe("the shrink-only baseline", () => {
     expect(entries["src/app/dashboard/deeds/page.tsx"]).toBeUndefined();
     expect(Object.keys(entries).length).toBeLessThan(42);
   });
+
+  it("payment hooks and dashboard left the baseline (#1832)", () => {
+    const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
+    expect(entries["src/hooks/usePayments.ts"]).toBeUndefined();
+    expect(entries["src/app/dashboard/payments/page.tsx"]).toBeUndefined();
+    expect(Object.keys(entries).length).toBeLessThan(40);
+  });
 });
