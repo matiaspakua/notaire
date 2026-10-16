@@ -1,4 +1,4 @@
-package com.licensis.notaire.application.usecase.budget;
+package com.licensis.notaire.adapter.out.persistence.budget;
 
 import com.licensis.notaire.business.BudgetTemplate;
 import com.licensis.notaire.business.BudgetTemplatePK;

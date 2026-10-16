@@ -1,9 +1,9 @@
 package com.licensis.notaire.service.unit;
 
 import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
+import com.licensis.notaire.repository.BudgetRepository;
+import com.licensis.notaire.adapter.out.persistence.budget.BudgetService;
 import com.licensis.notaire.business.Budget;
-import com.licensis.notaire.application.usecase.budget.BudgetService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 class BudgetServiceTest {
 
     @Mock
-    private BudgetRepositoryPort budgetRepository;
+    private BudgetRepository budgetRepository;
 
     private BudgetService budgetService;
 
@@ -80,7 +80,7 @@ class BudgetServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Budget> page = new PageImpl<>(List.of(testBudget), pageable, 1);
 
-        when(budgetRepository.findAllPaged(pageable)).thenReturn(page);
+        when(budgetRepository.findAll(pageable)).thenReturn(page);
 
         Page<Budget> result = budgetService.findAllPaged(pageable);
 
@@ -90,7 +90,7 @@ class BudgetServiceTest {
         assertThat(result.getTotalElements()).isEqualTo(1);
         assertThat(result.getPageable().getPageNumber()).isEqualTo(0);
 
-        verify(budgetRepository, times(1)).findAllPaged(pageable);
+        verify(budgetRepository, times(1)).findAll(pageable);
     }
 
     @Test
@@ -124,7 +124,7 @@ class BudgetServiceTest {
         List<Budget> budgets = new ArrayList<>();
         budgets.add(testBudget);
 
-        when(budgetRepository.findByPersonId(1))
+        when(budgetRepository.findByFkIdPersonIdPerson(1))
                 .thenReturn(budgets);
 
         List<Budget> result = budgetService.findByPerson(1);
@@ -133,13 +133,13 @@ class BudgetServiceTest {
                 .hasSize(1)
                 .contains(testBudget);
 
-        verify(budgetRepository, times(1)).findByPersonId(1);
+        verify(budgetRepository, times(1)).findByFkIdPersonIdPerson(1);
     }
 
     @Test
     @DisplayName("Should return empty list when person has not budgets")
     void shouldReturnEmptyListWhenPersonHasNoBudgets() {
-        when(budgetRepository.findByPersonId(999))
+        when(budgetRepository.findByFkIdPersonIdPerson(999))
                 .thenReturn(new ArrayList<>());
 
         List<Budget> result = budgetService.findByPerson(999);
@@ -147,7 +147,7 @@ class BudgetServiceTest {
         assertThat(result).isNotNull()
                 .isEmpty();
 
-        verify(budgetRepository, times(1)).findByPersonId(999);
+        verify(budgetRepository, times(1)).findByFkIdPersonIdPerson(999);
     }
 
     @Test
@@ -212,7 +212,7 @@ class BudgetServiceTest {
         newBudget.setHeading(null);
         newBudget.setNumber(0);
 
-        when(budgetRepository.create(any(Budget.class)))
+        when(budgetRepository.save(any(Budget.class)))
                 .thenAnswer(inv -> {
                     Budget p = inv.getArgument(0);
                     p.setIdBudget(1);
@@ -226,7 +226,7 @@ class BudgetServiceTest {
                 .isEqualTo("Budget");
         assertThat(result.getNumber()).isNotEqualTo(0);
 
-        verify(budgetRepository, times(1)).create(any(Budget.class));
+        verify(budgetRepository, times(1)).save(any(Budget.class));
     }
 
     @Test
@@ -236,7 +236,7 @@ class BudgetServiceTest {
         newBudget.setHeading("Custom");
         newBudget.setNumber(0);
 
-        when(budgetRepository.create(any(Budget.class)))
+        when(budgetRepository.save(any(Budget.class)))
                 .thenAnswer(inv -> {
                     Budget p = inv.getArgument(0);
                     p.setIdBudget(1);
@@ -249,7 +249,7 @@ class BudgetServiceTest {
                 .extracting(Budget::getHeading)
                 .isEqualTo("Custom");
 
-        verify(budgetRepository, times(1)).create(any(Budget.class));
+        verify(budgetRepository, times(1)).save(any(Budget.class));
     }
 
     @Test
@@ -259,7 +259,7 @@ class BudgetServiceTest {
         newBudget.setHeading("Test");
         newBudget.setNumber(0);
 
-        when(budgetRepository.create(any(Budget.class)))
+        when(budgetRepository.save(any(Budget.class)))
                 .thenAnswer(inv -> {
                     Budget p = inv.getArgument(0);
                     p.setIdBudget(1);
@@ -271,7 +271,7 @@ class BudgetServiceTest {
         assertThat(result.getNumber()).isGreaterThan(0)
                 .isLessThan(Integer.MAX_VALUE);
 
-        verify(budgetRepository, times(1)).create(any(Budget.class));
+        verify(budgetRepository, times(1)).save(any(Budget.class));
     }
 
     @Test
@@ -282,7 +282,7 @@ class BudgetServiceTest {
         updatedBudget.setStatus("RECHAZADO");
 
         when(budgetRepository.existsById(1)).thenReturn(true);
-        when(budgetRepository.update(eq(1), any(Budget.class)))
+        when(budgetRepository.save(any(Budget.class)))
                 .thenReturn(updatedBudget);
 
         Budget result = budgetService.update(1, updatedBudget);
@@ -293,7 +293,7 @@ class BudgetServiceTest {
         assertThat(result.getStatus()).isEqualTo("RECHAZADO");
 
         verify(budgetRepository, times(1)).existsById(1);
-        verify(budgetRepository, times(1)).update(eq(1), any(Budget.class));
+        verify(budgetRepository, times(1)).save(any(Budget.class));
     }
 
     @Test
@@ -306,7 +306,7 @@ class BudgetServiceTest {
                 .hasMessageContaining("Budget not found");
 
         verify(budgetRepository, times(1)).existsById(999);
-        verify(budgetRepository, never()).update(anyInt(), any(Budget.class));
+        verify(budgetRepository, never()).save(any(Budget.class));
     }
 
     @Test

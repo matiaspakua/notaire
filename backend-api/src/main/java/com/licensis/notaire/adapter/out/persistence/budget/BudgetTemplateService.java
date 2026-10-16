@@ -1,11 +1,11 @@
-package com.licensis.notaire.application.usecase.budget;
+package com.licensis.notaire.adapter.out.persistence.budget;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
+import com.licensis.notaire.application.port.in.budget.LoadBudgetItemsFromTemplateUseCase;
 import com.licensis.notaire.application.port.out.item.ItemOpsPort.ItemView;
 import com.licensis.notaire.application.port.out.item.ItemRepositoryPort;
 import com.licensis.notaire.business.Budget;
@@ -14,22 +14,23 @@ import com.licensis.notaire.business.Concept;
 import com.licensis.notaire.business.Item;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
+import com.licensis.notaire.repository.BudgetRepository;
 import com.licensis.notaire.repository.BudgetTemplateRepository;
 
 /**
  * Loads the concepts of a ProcedureType's BudgetTemplate as Items of a
- * real Budget (CU39). Returns {@link ItemView} for inbound adapters (issue #1826).
+ * real Budget (CU39). Outbound adapter implementing the inbound port (issue #1865).
  */
 @Service
 @Transactional
-public class BudgetTemplateService {
+public class BudgetTemplateService implements LoadBudgetItemsFromTemplateUseCase {
 
-    private final BudgetRepositoryPort budgetRepository;
+    private final BudgetRepository budgetRepository;
     private final BudgetTemplateRepository budgetTemplateRepository;
     private final ItemRepositoryPort itemRepository;
 
     public BudgetTemplateService(
-            BudgetRepositoryPort budgetRepository,
+            BudgetRepository budgetRepository,
             BudgetTemplateRepository budgetTemplateRepository,
             ItemRepositoryPort itemRepository) {
         this.budgetRepository = budgetRepository;
@@ -37,6 +38,7 @@ public class BudgetTemplateService {
         this.itemRepository = itemRepository;
     }
 
+    @Override
     public List<ItemView> loadItemsFromTemplate(Integer idBudget, Integer typeProcedureId) {
         Budget budget = budgetRepository
                 .findById(idBudget)

@@ -34,8 +34,8 @@ import com.licensis.notaire.application.port.out.budget.BudgetOpsPort.BudgetView
 import com.licensis.notaire.application.port.out.budget.BudgetOpsPort.DeleteResult;
 import com.licensis.notaire.application.port.out.budget.BudgetOpsPort.PersonView;
 import com.licensis.notaire.application.port.out.budget.BudgetOpsPort.SaveResult;
-import com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService;
-import com.licensis.notaire.application.usecase.budget.BudgetTemplateService;
+import com.licensis.notaire.application.port.in.budget.AddBudgetItemsFromCatalogUseCase;
+import com.licensis.notaire.application.port.in.budget.LoadBudgetItemsFromTemplateUseCase;
 import com.licensis.notaire.dto.DtoBudgetSummary;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -94,20 +94,20 @@ public class BudgetController {
     private final QueryBudgetsUseCase queryBudgets;
     private final ManageBudgetsUseCase manageBudgets;
     private final GetBudgetSummaryUseCase budgetSummaryUseCase;
-    private final BudgetTemplateService budgetTemplateService;
-    private final BudgetCatalogItemsService budgetCatalogItemsService;
+    private final LoadBudgetItemsFromTemplateUseCase loadBudgetItemsFromTemplate;
+    private final AddBudgetItemsFromCatalogUseCase addBudgetItemsFromCatalog;
 
     public BudgetController(
             QueryBudgetsUseCase queryBudgets,
             ManageBudgetsUseCase manageBudgets,
             GetBudgetSummaryUseCase budgetSummaryUseCase,
-            BudgetTemplateService budgetTemplateService,
-            BudgetCatalogItemsService budgetCatalogItemsService) {
+            LoadBudgetItemsFromTemplateUseCase loadBudgetItemsFromTemplate,
+            AddBudgetItemsFromCatalogUseCase addBudgetItemsFromCatalog) {
         this.queryBudgets = queryBudgets;
         this.manageBudgets = manageBudgets;
         this.budgetSummaryUseCase = budgetSummaryUseCase;
-        this.budgetTemplateService = budgetTemplateService;
-        this.budgetCatalogItemsService = budgetCatalogItemsService;
+        this.loadBudgetItemsFromTemplate = loadBudgetItemsFromTemplate;
+        this.addBudgetItemsFromCatalog = addBudgetItemsFromCatalog;
     }
 
     private Integer resolvePersonId(BudgetRequest request) {
@@ -261,7 +261,7 @@ public class BudgetController {
             @PathVariable Integer id,
             @Parameter(description = "ID of the procedure type")
             @RequestParam("procedureTypeId") Integer typeProcedureId) {
-        return ResponseEntity.ok(budgetTemplateService.loadItemsFromTemplate(id, typeProcedureId).stream()
+        return ResponseEntity.ok(loadBudgetItemsFromTemplate.loadItemsFromTemplate(id, typeProcedureId).stream()
                 .map(ItemResponse::from).toList());
     }
 
@@ -274,7 +274,7 @@ public class BudgetController {
     public ResponseEntity<List<ItemResponse>> addItemsFromCatalog(
             @PathVariable Integer id,
             @RequestBody List<Integer> idItems) {
-        return ResponseEntity.ok(budgetCatalogItemsService.addItemsFromCatalog(id, idItems).stream()
+        return ResponseEntity.ok(addBudgetItemsFromCatalog.addItemsFromCatalog(id, idItems).stream()
                 .map(ItemResponse::from).toList());
     }
 }

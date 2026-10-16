@@ -15,10 +15,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
+import com.licensis.notaire.repository.BudgetRepository;
 import com.licensis.notaire.application.port.out.item.ItemOpsPort.ItemView;
 import com.licensis.notaire.application.port.out.item.ItemRepositoryPort;
-import com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService;
+import com.licensis.notaire.adapter.out.persistence.budget.BudgetCatalogItemsService;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Item;
 import com.licensis.notaire.exception.ResourceNotFoundException;
@@ -28,7 +28,7 @@ import com.licensis.notaire.exception.ResourceNotFoundException;
 class BudgetCatalogItemsServiceTest {
 
     @Mock
-    private BudgetRepositoryPort budgetRepository;
+    private BudgetRepository budgetRepository;
 
     @Mock
     private ItemRepositoryPort itemRepository;

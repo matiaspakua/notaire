@@ -2,8 +2,8 @@ package com.licensis.notaire.unit;
 
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Budget;
-import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
-import com.licensis.notaire.application.usecase.budget.BudgetService;
+import com.licensis.notaire.adapter.out.persistence.budget.BudgetService;
+import com.licensis.notaire.repository.BudgetRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,7 +20,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -32,7 +31,7 @@ import com.licensis.notaire.testing.RequirementCoverage;
 class BudgetServiceTest {
 
     @Mock
-    private BudgetRepositoryPort budgetRepository;
+    private BudgetRepository budgetRepository;
 
     @InjectMocks
     private BudgetService budgetService;
@@ -101,7 +100,7 @@ class BudgetServiceTest {
         @Test
         @DisplayName("Should return budgets for a given person")
         void shouldReturnBudgetsForPerson() {
-            when(budgetRepository.findByPersonId(5)).thenReturn(List.of(testBudget));
+            when(budgetRepository.findByFkIdPersonIdPerson(5)).thenReturn(List.of(testBudget));
 
             List<Budget> result = budgetService.findByPerson(5);
 
@@ -111,7 +110,7 @@ class BudgetServiceTest {
         @Test
         @DisplayName("Should return empty list when person has not budgets")
         void shouldReturnEmptyWhenPersonHasNoBudgets() {
-            when(budgetRepository.findByPersonId(99)).thenReturn(List.of());
+            when(budgetRepository.findByFkIdPersonIdPerson(99)).thenReturn(List.of());
 
             assertThat(budgetService.findByPerson(99)).isEmpty();
         }
@@ -161,13 +160,13 @@ class BudgetServiceTest {
         @Test
         @DisplayName("Should save budget and return it with generated ID")
         void shouldCreateBudget() {
-            when(budgetRepository.create(any(Budget.class))).thenReturn(testBudget);
+            when(budgetRepository.save(any(Budget.class))).thenReturn(testBudget);
 
             Budget result = budgetService.create(testBudget);
 
             assertThat(result).isNotNull();
             assertThat(result.getIdBudget()).isEqualTo(1);
-            verify(budgetRepository).create(testBudget);
+            verify(budgetRepository).save(testBudget);
         }
 
         @Test
@@ -177,7 +176,7 @@ class BudgetServiceTest {
             p.setNumber(100);
             p.setStatus("PENDIENTE");
             p.setDate(new Date());
-            when(budgetRepository.create(any(Budget.class))).thenAnswer(inv -> inv.getArgument(0));
+            when(budgetRepository.save(any(Budget.class))).thenAnswer(inv -> inv.getArgument(0));
 
             Budget result = budgetService.create(p);
 
@@ -192,7 +191,7 @@ class BudgetServiceTest {
             p.setStatus("PENDIENTE");
             p.setDate(new Date());
             p.setNumber(0);
-            when(budgetRepository.create(any(Budget.class))).thenAnswer(inv -> inv.getArgument(0));
+            when(budgetRepository.save(any(Budget.class))).thenAnswer(inv -> inv.getArgument(0));
 
             Budget result = budgetService.create(p);
 
@@ -203,7 +202,7 @@ class BudgetServiceTest {
         @DisplayName("Should keep provided heading when not blank")
         void shouldKeepProvidedHeading() {
             testBudget.setHeading("Specific budget");
-            when(budgetRepository.create(any(Budget.class))).thenReturn(testBudget);
+            when(budgetRepository.save(any(Budget.class))).thenReturn(testBudget);
 
             Budget result = budgetService.create(testBudget);
 
@@ -219,13 +218,13 @@ class BudgetServiceTest {
         @DisplayName("Should update and return budget when it exists")
         void shouldUpdateWhenExists() {
             when(budgetRepository.existsById(1)).thenReturn(true);
-            when(budgetRepository.update(eq(1), any(Budget.class))).thenReturn(testBudget);
+            when(budgetRepository.save(any(Budget.class))).thenReturn(testBudget);
 
             Budget result = budgetService.update(1, testBudget);
 
             assertThat(result).isNotNull();
             assertThat(result.getIdBudget()).isEqualTo(1);
-            verify(budgetRepository).update(1, testBudget);
+            verify(budgetRepository).save(testBudget);
         }
 
         @Test
@@ -234,7 +233,7 @@ class BudgetServiceTest {
             Budget incoming = new Budget();
             incoming.setStatus("APROBADO");
             when(budgetRepository.existsById(1)).thenReturn(true);
-            when(budgetRepository.update(eq(1), any(Budget.class))).thenAnswer(inv -> inv.getArgument(1));
+            when(budgetRepository.save(any(Budget.class))).thenAnswer(inv -> inv.getArgument(0));
 
             Budget result = budgetService.update(1, incoming);
 

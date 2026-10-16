@@ -382,10 +382,10 @@ class SimpleControllersTest {
                 mock(com.licensis.notaire.application.port.in.budget.ManageBudgetsUseCase.class);
         private final com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase budgetSummaryUseCase =
                 mock(com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase.class);
-        private final com.licensis.notaire.application.usecase.budget.BudgetTemplateService budgetTemplateService =
-                mock(com.licensis.notaire.application.usecase.budget.BudgetTemplateService.class);
-        private final com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService budgetCatalogItemsService =
-                mock(com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService.class);
+        private final com.licensis.notaire.application.port.in.budget.LoadBudgetItemsFromTemplateUseCase budgetTemplateService =
+                mock(com.licensis.notaire.application.port.in.budget.LoadBudgetItemsFromTemplateUseCase.class);
+        private final com.licensis.notaire.application.port.in.budget.AddBudgetItemsFromCatalogUseCase budgetCatalogItemsService =
+                mock(com.licensis.notaire.application.port.in.budget.AddBudgetItemsFromCatalogUseCase.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
                 standaloneSetup(new BudgetController(query, manage, budgetSummaryUseCase,
                         budgetTemplateService, budgetCatalogItemsService))
