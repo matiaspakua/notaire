@@ -1,5 +1,3 @@
-R1 | com.licensis.notaire.adapter.in.web.concept.ConceptController -> com.licensis.notaire.business.Concept
-R1 | com.licensis.notaire.adapter.in.web.concept.ConceptController -> com.licensis.notaire.repository.BudgetTemplateRepository
 R1 | com.licensis.notaire.adapter.in.web.document.DocumentCostTemplateController -> com.licensis.notaire.business.DocumentCostTemplate
 R1 | com.licensis.notaire.adapter.in.web.document.DocumentCostTemplateController -> com.licensis.notaire.business.DocumentCostTemplatePK
 R1 | com.licensis.notaire.adapter.in.web.item.ItemController -> com.licensis.notaire.business.Budget
