@@ -242,6 +242,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   (`ManagementOpsAdapter`). Application services stay free of new R2 entity/repository edges;
   entity access stays in the outbound adapter. Domain `DeedManagement` extraction remains deferred.
 
+- **Copy ports-only (#1779):** mid-size mixed R1 hotspot (~5 edges). `CopyController` calls
+  `QueryCopiesUseCase` / `ManageCopiesUseCase` only; person/testimony FK resolution and CU87 conflict
+  live behind `CopyOpsPort`. ArchUnit R1 clears its five baseline edges. REST `/api/v1/copies` unchanged.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers
