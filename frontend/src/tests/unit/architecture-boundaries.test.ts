@@ -90,7 +90,14 @@ describe("the shrink-only baseline", () => {
     const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
     expect(entries["src/hooks/useDocuments.ts"]).toBeUndefined();
     expect(entries["src/app/dashboard/administration/documents/page.tsx"]).toBeUndefined();
-    expect(Object.keys(entries).length).toBeLessThan(62);
+    expect(Object.keys(entries).length).toBeLessThan(61);
+  });
+
+  it("concept catalog left the baseline (#1781)", () => {
+    const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
+    expect(entries["src/hooks/useConcepts.ts"]).toBeUndefined();
+    expect(entries["src/app/dashboard/administration/concepts/page.tsx"]).toBeUndefined();
+    expect(Object.keys(entries).length).toBeLessThan(59);
   });
 
   it("workflows admin left the baseline (#1792)", () => {
