@@ -113,6 +113,7 @@ describe("the shrink-only baseline", () => {
     expect(entries["src/app/dashboard/administration/procedures/page.tsx"]).toBeUndefined();
     expect(entries["src/app/dashboard/administration/procedures/RequiredDocumentsDialog.tsx"]).toBeUndefined();
     expect(Object.keys(entries).length).toBeLessThan(54);
+  });
 
   it("templates admin left the baseline (#1788)", () => {
     const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
@@ -120,6 +121,5 @@ describe("the shrink-only baseline", () => {
     expect(entries["src/hooks/useProcedureTemplate.test.tsx"]).toBeUndefined();
     expect(entries["src/app/dashboard/administration/templates/page.tsx"]).toBeUndefined();
     expect(Object.keys(entries).length).toBeLessThan(54);
-
   });
 });
