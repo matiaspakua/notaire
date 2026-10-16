@@ -44,7 +44,9 @@ class WorkflowAssignmentEnglishTest(unittest.TestCase):
 
     def test_inactive_fixture_is_english(self):
         source = read(ASSIGNMENT_TEST)
-        self.assertIn("Inactive workflow", source)
+        # Ports-only fixture returns sealed Inactive(); DisplayName keeps English "inactive".
+        self.assertIn("WorkflowAssignResult.Inactive", source)
+        self.assertIn("inactive workflow", source.lower())
         self.assertNotIn("Inactivo", source)
 
 
