@@ -832,6 +832,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
 - **Frontend budgets (#1827):** `core/budget`, `adapters/http/budget`, and
   `composition/budget`. `useBudgets`, `useBudgetSearch`, and the budgets dashboard no
   longer import `api-client` (eslint suppressions shrink by four).
+- **Frontend deeds (#1831):** `core/deed`, `adapters/http/deed`, and
+  `composition/deed`. `useDeeds`, `useDeedSearch`, and the deeds dashboard no
+  longer import `api-client` (eslint suppressions shrink by three; folios for the
+  deed form reuse `folioUseCases`).
 
 ## Options considered
 

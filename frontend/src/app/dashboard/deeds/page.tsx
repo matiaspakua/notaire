@@ -13,7 +13,9 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
-import { apiGet } from "@/lib/api-client";
+import { deedUseCases } from "@/composition/deed";
+import { folioUseCases } from "@/composition/folio";
+import type { Folio as DomainFolio } from "@/core/folio/domain/folio";
 import {
   useDeedsPage,
   useCreateDeed,
@@ -27,6 +29,10 @@ import type { Deed, Folio } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue } from "@/lib/dates";
 import { useFormat } from "@/hooks/useFormat";
+
+function toWireFolio(f: DomainFolio): Folio {
+  return f as Folio;
+}
 
 const EMPTY: Partial<Deed> = { number: undefined, dateDeedrecording: "", body: "" };
 const UNSIGNED_STATUS = "Sin Firmar";
@@ -47,7 +53,7 @@ function DeedsList() {
 
   const { data: folios = [] } = useQuery({
     queryKey: ["folios"],
-    queryFn: () => apiGet<Folio[]>("/folios"),
+    queryFn: async () => (await folioUseCases.list()).map(toWireFolio),
   });
   const createMutation = useCreateDeed();
   const updateMutation = useUpdateDeed();
@@ -74,7 +80,20 @@ function DeedsList() {
   // The backend reads `number`. Any other query name is ignored and returns every deed.
   const { data: found = [], isLoading: isLoadingSearch } = useQuery({
     queryKey: ["deeds", "search", number],
-    queryFn: () => apiGet<Deed[]>(`/deeds/search?number=${encodeURIComponent(number)}`),
+    queryFn: async () => {
+      const rows = await deedUseCases.searchByNumber(number);
+      return rows.map(
+        (d): Deed => ({
+          idDeed: d.idDeed,
+          number: d.number,
+          dateDeedrecording: d.dateDeedrecording,
+          body: d.body,
+          notes: d.notes,
+          registrationEntryNumber: d.registrationEntryNumber,
+          status: d.status,
+        }),
+      );
+    },
     enabled: /^\d+$/.test(number),
   });
   const filteredDeeds = number ? (/^\d+$/.test(number) ? found : []) : deedsPage?.content ?? [];
