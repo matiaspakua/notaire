@@ -5,18 +5,19 @@ import com.licensis.notaire.adapter.in.web.management.ManagementController;
 import com.licensis.notaire.adapter.in.web.procedure.ProcedureTemplateController;
 import com.licensis.notaire.adapter.in.web.report.ReportController;
 import com.licensis.notaire.adapter.in.web.user.UserController;
+import com.licensis.notaire.application.port.in.procedure.ManageProcedureTemplatesUseCase;
+import com.licensis.notaire.application.port.in.procedure.QueryProcedureTemplatesUseCase;
 import com.licensis.notaire.application.port.in.user.AuthenticateUserUseCase;
 import com.licensis.notaire.application.port.in.user.AuthenticateUserUseCase.Result;
 import com.licensis.notaire.application.port.in.user.ManageUsersUseCase;
 import com.licensis.notaire.application.port.in.user.ManageUsersUseCase.CreateUserCommand;
 import com.licensis.notaire.application.port.in.user.ManageUsersUseCase.UpdateUserCommand;
 import com.licensis.notaire.application.port.in.user.QueryUsersUseCase;
+import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateOpsPort.TemplateView;
+import com.licensis.notaire.application.usecase.report.ReportService;
 import com.licensis.notaire.dto.DtoUser;
-import com.licensis.notaire.business.ProcedureTemplate;
 import com.licensis.notaire.domain.user.User;
 import com.licensis.notaire.domain.user.UserNotFoundException;
-import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort;
-import com.licensis.notaire.application.usecase.report.ReportService;
 import com.licensis.notaire.config.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -52,10 +53,12 @@ class AdditionalControllersTest {
         @Test
         @DisplayName("getAll and getByProcedureType endpoints")
         void all() throws Exception {
-            ProcedureTemplateRepositoryPort repo = mock(ProcedureTemplateRepositoryPort.class);
-            var mvc = standaloneSetup(new ProcedureTemplateController(repo)).build();
-            when(repo.findAll()).thenReturn(List.of(new ProcedureTemplate()));
-            when(repo.findByProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of(new ProcedureTemplate()));
+            QueryProcedureTemplatesUseCase query = mock(QueryProcedureTemplatesUseCase.class);
+            ManageProcedureTemplatesUseCase manage = mock(ManageProcedureTemplatesUseCase.class);
+            var mvc = standaloneSetup(new ProcedureTemplateController(query, manage)).build();
+            TemplateView view = new TemplateView(1, 2, null, 0);
+            when(query.findAll()).thenReturn(List.of(view));
+            when(query.findByProcedureType(anyInt())).thenReturn(List.of(view));
 
             mvc.perform(get("/api/v1/procedure-templates")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/procedure-templates/procedure-types/1")).andExpect(status().isOk());
