@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.out.notebook.AuxiliaryProtocolOpsPort;
-import com.licensis.notaire.application.usecase.notebook.AuxiliaryProtocolService;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.domain.folio.Folio;
 import com.licensis.notaire.exception.BusinessValidationException;

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.out.notebook.NotebookOpsPort;
-import com.licensis.notaire.application.usecase.notebook.NotebookService;
 import com.licensis.notaire.business.Notebook;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.exception.BusinessValidationException;

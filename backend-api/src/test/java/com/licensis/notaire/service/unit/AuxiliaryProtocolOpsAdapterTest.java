@@ -16,8 +16,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.licensis.notaire.adapter.out.persistence.notebook.AuxiliaryProtocolOpsAdapter;
+import com.licensis.notaire.adapter.out.persistence.notebook.AuxiliaryProtocolService;
 import com.licensis.notaire.application.port.out.notebook.AuxiliaryProtocolOpsPort.StartResult;
-import com.licensis.notaire.application.usecase.notebook.AuxiliaryProtocolService;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.domain.folio.Folio;
 import com.licensis.notaire.exception.BusinessValidationException;

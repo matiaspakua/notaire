@@ -1,12 +1,13 @@
-package com.licensis.notaire.application.usecase.notebook;
+package com.licensis.notaire.adapter.out.persistence.notebook;
 
-import com.licensis.notaire.application.port.out.notebook.NotebookRepositoryPort;
-import com.licensis.notaire.application.port.out.notebook.NotebookFolioOperationPort;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Notebook;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.Person;
+import com.licensis.notaire.repository.FolioRepository;
+import com.licensis.notaire.repository.NotebookRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * CU — create and query notebooks. Outbound persistence helper (issue #1880).
+ */
 @Service
 @Transactional
 public class NotebookService {
@@ -26,13 +30,17 @@ public class NotebookService {
 
     private static final Logger logger = LoggerFactory.getLogger(NotebookService.class);
 
-    private final NotebookRepositoryPort notebookRepository;
-    private final NotebookFolioOperationPort folioRepository;
+    private final NotebookRepository notebookRepository;
+    private final FolioRepository folioRepository;
+    private final PersonRepository personRepository;
 
-    public NotebookService(NotebookRepositoryPort notebookRepository,
-                            NotebookFolioOperationPort folioRepository) {
+    public NotebookService(
+            NotebookRepository notebookRepository,
+            FolioRepository folioRepository,
+            PersonRepository personRepository) {
         this.notebookRepository = notebookRepository;
         this.folioRepository = folioRepository;
+        this.personRepository = personRepository;
     }
 
     @Transactional(readOnly = true)
@@ -46,10 +54,10 @@ public class NotebookService {
     }
 
     public Notebook createNotebook(List<Integer> idsFolio, Integer idNotary, int year, String notes) {
-        Person notary = notebookRepository.findPersonById(idNotary)
+        Person notary = personRepository.findById(idNotary)
                 .orElseThrow(() -> new ResourceNotFoundException("There is no the person notary with ID: " + idNotary));
 
-        List<Folio> folios = folioRepository.findAllById(idsFolio);
+        List<Folio> folios = folioRepository.findAllByIdFolioIn(idsFolio);
         if (folios.size() != idsFolio.size()) {
             throw new ResourceNotFoundException("One or more of the given folios do not exist");
         }
@@ -77,8 +85,8 @@ public class NotebookService {
     }
 
     public int calculateNextNumber(int year, Person notary) {
-        int candidate = notebookRepository.findByYearAndNotary(year, notary).size() + 1;
-        while (notebookRepository.existsByNumberYearAndNotary(candidate, year, notary)) {
+        int candidate = notebookRepository.findByYearAndFkIdNotaryPerson(year, notary).size() + 1;
+        while (notebookRepository.existsByNumberAndYearAndFkIdNotaryPerson(candidate, year, notary)) {
             candidate++;
         }
         return candidate;
@@ -89,7 +97,7 @@ public class NotebookService {
             folio.setFkIdNotebook(notebook);
             folio.setStatus(StatusAssignedToNotebook);
         }
-        folioRepository.saveAllFolios(folios);
+        folioRepository.saveAll(folios);
     }
 
     private void validateFolioCount(List<Folio> folios) {

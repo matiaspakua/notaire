@@ -1,12 +1,12 @@
-package com.licensis.notaire.application.usecase.notebook;
+package com.licensis.notaire.adapter.out.persistence.notebook;
 
 import com.licensis.notaire.application.port.out.folio.FolioCatalogPort;
 import com.licensis.notaire.application.port.out.folio.FolioRepositoryPort;
-import com.licensis.notaire.application.port.out.notebook.DeedOperationPort;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
+import com.licensis.notaire.repository.DeedRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Creates procedures in the auxiliary protocol (CU81).
+ * Creates procedures in the auxiliary protocol (CU81). Outbound persistence helper (issue #1880).
  */
 @Service
 @Transactional
@@ -22,12 +22,12 @@ public class AuxiliaryProtocolService {
 
     private final FolioRepositoryPort folioRepository;
     private final FolioCatalogPort folioCatalog;
-    private final DeedOperationPort deedRepository;
+    private final DeedRepository deedRepository;
 
     public AuxiliaryProtocolService(
             FolioRepositoryPort folioRepository,
             FolioCatalogPort folioCatalog,
-            DeedOperationPort deedRepository) {
+            DeedRepository deedRepository) {
         this.folioRepository = folioRepository;
         this.folioCatalog = folioCatalog;
         this.deedRepository = deedRepository;
