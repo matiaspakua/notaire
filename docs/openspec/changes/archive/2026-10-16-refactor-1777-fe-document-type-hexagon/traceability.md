@@ -14,12 +14,12 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #<!-- number --> | <!-- open / in-progress / closed --> |
+| Issue | #1777 | open |
 | Use Case | Architectural refactor under epic #1693 (ADR-030); CU27 / CU65 document types — no behaviour change | exists |
-| Specification | `docs/openspec/changes/refactor-1777-fe-document-type-hexagon/` | passed |
+| Specification | `docs/openspec/changes/archive/2026-10-16-refactor-1777-fe-document-type-hexagon/` | passed |
 | Branch | `cursor/1777-fe-document-type-a603` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
+| Commits | `c203cb58` | pushed |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -46,7 +46,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/200-architecture/202-ADR/ADR-030-hexagonal-architecture-full-adoption.md` | no | pending |
+| `docs/200-architecture/202-ADR/ADR-030-hexagonal-architecture-full-adoption.md` | yes | `c203cb58` |
 
 ## Gate log
 
