@@ -14,12 +14,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { folioTypeUseCases } from "@/composition/folio-type";
+import { folioUseCases } from "@/composition/folio";
+import type { FolioType as DomainFolioType } from "@/core/folio-type/domain/folio-type";
+import type { Folio as DomainFolio } from "@/core/folio/domain/folio";
 import { extractApiError } from "@/lib/utils";
 import { DeedPicker } from "@/components/shared/DeedPicker";
-import type { Deed, Folio, Person } from "@/types";
+import type { Deed, Folio } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 
+/** Backend folio status values (wire contract — do not localize). */
 const FOLIO_STATUSES = ["Nuevo", "Utilizado", "Errose"] as const;
 const STATUS_IN_USE = "Utilizado";
 
@@ -31,6 +35,21 @@ interface FolioTypeRow {
   enabled?: boolean;
   /** Optimistic-lock version read from the list; the full update sends it back (#655). */
   version?: number;
+}
+
+function toTypeRow(t: DomainFolioType): FolioTypeRow {
+  return {
+    idFolioType: t.id,
+    name: t.name,
+    isAuxiliary: t.isAuxiliary,
+    notes: t.notes,
+    enabled: t.enabled,
+    version: t.version,
+  };
+}
+
+function toWireFolio(f: DomainFolio): Folio {
+  return f as Folio;
 }
 
 interface FolioFormState {
@@ -64,15 +83,16 @@ export default function FoliosAdminPage() {
 
   const { data = [], isLoading, refetch } = useQuery({
     queryKey: ["folios", statusFilter],
-    queryFn: () =>
-      statusFilter
-        ? apiGet<Folio[]>(`/folios/search?status=${encodeURIComponent(statusFilter)}`)
-        : apiGet<Folio[]>("/folios"),
+    queryFn: async () =>
+      (statusFilter
+        ? await folioUseCases.searchByStatus(statusFilter)
+        : await folioUseCases.list()
+      ).map(toWireFolio),
   });
 
   const { data: folioTypes = [], refetch: refetchFolioTypes } = useQuery({
     queryKey: ["folioTypes"],
-    queryFn: () => apiGet<FolioTypeRow[]>("/folio-types"),
+    queryFn: async () => (await folioTypeUseCases.list()).map(toTypeRow),
   });
 
   const [typeSearch, setTypeSearch] = useState("");
@@ -86,10 +106,10 @@ export default function FoliosAdminPage() {
 
   const { data: filteredFolioTypes = [] } = useQuery({
     queryKey: ["folioTypes", "search", typeSearch, folioTypes],
-    queryFn: () =>
+    queryFn: async () =>
       typeSearch
-        ? apiGet<FolioTypeRow[]>(`/folio-types/search?name=${encodeURIComponent(typeSearch)}`)
-        : Promise.resolve(folioTypes),
+        ? (await folioTypeUseCases.searchByName(typeSearch)).map(toTypeRow)
+        : folioTypes,
   });
 
   function openCreateType() {
@@ -116,14 +136,16 @@ export default function FoliosAdminPage() {
       if (typeEditing) {
         // PUT replaces the row: send the loaded fields (notes, enabled, version) with the edited ones,
         // otherwise version reads as 0 and every edit after the first answers 409 (#655).
-        await apiPut(`/folio-types/${typeEditing.idFolioType}`, {
-          ...typeEditing,
+        await folioTypeUseCases.update(typeEditing.idFolioType, {
           name: typeName,
           isAuxiliary: typeIsAuxiliary,
+          notes: typeEditing.notes,
+          enabled: typeEditing.enabled,
+          version: typeEditing.version,
         });
         toast.success(t("tiposDeFolio.updated"));
       } else {
-        await apiPost("/folio-types", { name: typeName, isAuxiliary: typeIsAuxiliary });
+        await folioTypeUseCases.create({ name: typeName, isAuxiliary: typeIsAuxiliary });
         toast.success(t("tiposDeFolio.created"));
       }
       setTypeModalOpen(false);
@@ -137,7 +159,7 @@ export default function FoliosAdminPage() {
 
   async function handleDeleteTypeClick(tf: FolioTypeRow) {
     try {
-      const { inUse } = await apiGet<{ inUse: boolean }>(`/folio-types/${tf.idFolioType}/in-use`);
+      const inUse = await folioTypeUseCases.isInUse(tf.idFolioType);
       if (inUse) {
         toast.warning(t("tiposDeFolio.inUseCannotDelete"));
         return;
@@ -152,7 +174,7 @@ export default function FoliosAdminPage() {
     if (!typeDeleteId) return;
     setTypeDeleting(true);
     try {
-      await apiDelete(`/folio-types/${typeDeleteId}`);
+      await folioTypeUseCases.delete(typeDeleteId);
       toast.success(t("tiposDeFolio.deleted"));
       refetchFolioTypes();
     } catch (err) {
@@ -165,12 +187,12 @@ export default function FoliosAdminPage() {
 
   const { data: notaries = [] } = useQuery({
     queryKey: ["availableNotaries"],
-    queryFn: () => apiGet<Person[]>("/deeds/available-notaries"),
+    queryFn: () => folioUseCases.listAvailableNotaries(),
   });
 
   const { data: allFolios = [] } = useQuery({
     queryKey: ["folios"],
-    queryFn: () => apiGet<Folio[]>("/folios"),
+    queryFn: async () => (await folioUseCases.list()).map(toWireFolio),
   });
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -229,10 +251,10 @@ export default function FoliosAdminPage() {
         deedId: form.deedId,
       };
       if (isEditMode && form.idFolio) {
-        await apiPut(`/folios/${form.idFolio}`, body);
+        await folioUseCases.update(form.idFolio, body);
         toast.success(t("updated"));
       } else {
-        await apiPost("/folios", body);
+        await folioUseCases.create(body);
         toast.success(t("created"));
       }
       setModalOpen(false);
@@ -249,7 +271,7 @@ export default function FoliosAdminPage() {
     if (!deleteId) return;
     setDeleting(true);
     try {
-      await apiDelete(`/folios/${deleteId}`);
+      await folioUseCases.delete(deleteId);
       toast.success(t("deleted"));
       refetch();
     } catch (err) {
