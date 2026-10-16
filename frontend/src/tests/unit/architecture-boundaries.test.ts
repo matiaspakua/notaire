@@ -206,4 +206,17 @@ describe("the shrink-only baseline", () => {
     expect(entries["src/hooks/useUpcomingExpirations.test.tsx"]).toBeUndefined();
     expect(Object.keys(entries).length).toBeLessThan(17);
   });
+
+  it("cross-cutting hooks and pages left the baseline (#1843)", () => {
+    const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
+    expect(entries["src/hooks/useUsers.ts"]).toBeUndefined();
+    expect(entries["src/hooks/useRoles.ts"]).toBeUndefined();
+    expect(entries["src/hooks/useAudit.ts"]).toBeUndefined();
+    expect(entries["src/hooks/useReports.ts"]).toBeUndefined();
+    expect(entries["src/hooks/useRegistrationDrafts.ts"]).toBeUndefined();
+    expect(entries["src/app/login/page.tsx"]).toBeUndefined();
+    expect(entries["src/components/layout/AppSidebar.tsx"]).toBeUndefined();
+    expect(entries["src/app/dashboard/reports/page.tsx"]).toBeUndefined();
+    expect(Object.keys(entries).length).toBeLessThan(9);
+  });
 });
