@@ -1,18 +1,17 @@
 package com.licensis.notaire.adapter.in.web.document;
 
-import com.licensis.notaire.exception.BusinessValidationException;
-import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.adapter.in.web.support.DocumentTypeRef;
 import com.licensis.notaire.adapter.in.web.support.ProcedureTypeRef;
-import com.licensis.notaire.business.DocumentCostTemplate;
-import com.licensis.notaire.application.usecase.document.DocumentCostTemplateService;
+import com.licensis.notaire.application.port.in.documentcosttemplate.ManageDocumentCostTemplatesUseCase;
+import com.licensis.notaire.application.port.in.documentcosttemplate.QueryDocumentCostTemplatesUseCase;
+import com.licensis.notaire.application.port.out.documentcosttemplate.DocumentCostTemplateOpsPort.CostTemplateView;
+import com.licensis.notaire.application.port.out.documentcosttemplate.DocumentCostTemplateOpsPort.CreateResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,16 +24,22 @@ import java.util.Map;
 
 /**
  * REST API for managing expected document costs by procedure type (CU27/CU39).
+ * Calls inbound ports only; entity access lives behind {@code DocumentCostTemplateOpsPort}
+ * (issue #1821).
  */
 @RestController
 @RequestMapping("/api/v1/document-cost-templates")
 @Tag(name = "Document cost template", description = "API for managing expected document costs by procedure type")
 public class DocumentCostTemplateController {
 
-    private final DocumentCostTemplateService documentCostTemplateService;
+    private final QueryDocumentCostTemplatesUseCase queryDocumentCostTemplates;
+    private final ManageDocumentCostTemplatesUseCase manageDocumentCostTemplates;
 
-    public DocumentCostTemplateController(DocumentCostTemplateService documentCostTemplateService) {
-        this.documentCostTemplateService = documentCostTemplateService;
+    public DocumentCostTemplateController(
+            QueryDocumentCostTemplatesUseCase queryDocumentCostTemplates,
+            ManageDocumentCostTemplatesUseCase manageDocumentCostTemplates) {
+        this.queryDocumentCostTemplates = queryDocumentCostTemplates;
+        this.manageDocumentCostTemplates = manageDocumentCostTemplates;
     }
 
     public record CostTemplateKey(int fkIdProcedureType, int fkIdDocumentType) {
@@ -43,12 +48,34 @@ public class DocumentCostTemplateController {
     public record CostTemplateResponse(CostTemplateKey documentCostTemplatePK, ProcedureTypeRef procedureType,
             DocumentTypeRef documentType, java.math.BigDecimal fixedAmount,
             java.math.BigDecimal variablePercentage, int version) {
-        public static CostTemplateResponse from(DocumentCostTemplate cost) {
+        public static CostTemplateResponse from(CostTemplateView view) {
+            ProcedureTypeRef procedureType = view.procedureTypeRefId() == null
+                    ? null
+                    : new ProcedureTypeRef(
+                            view.procedureTypeRefId(),
+                            view.procedureTypeName(),
+                            view.procedureTypeNotes(),
+                            view.procedureTypeArchived(),
+                            view.procedureTypeRegistered(),
+                            view.procedureTypeAssociatesProperties(),
+                            view.procedureTypeEnabled());
+            DocumentTypeRef documentType = view.documentTypeRefId() == null
+                    ? null
+                    : new DocumentTypeRef(
+                            view.documentTypeRefId(),
+                            view.documentTypeName(),
+                            view.documentTypeExpires(),
+                            view.documentTypeDueDays(),
+                            view.documentTypeDeliveredBy(),
+                            view.documentTypeReturned(),
+                            view.documentTypeEnabled());
             return new CostTemplateResponse(
-                    new CostTemplateKey(cost.getDocumentCostTemplatePK().getFkIdProcedureType(),
-                            cost.getDocumentCostTemplatePK().getFkIdDocumentType()),
-                    ProcedureTypeRef.from(cost.getProcedureType()), DocumentTypeRef.from(cost.getDocumentType()),
-                    cost.getFixedAmount(), cost.getVariablePercentage(), cost.getVersion());
+                    new CostTemplateKey(view.procedureTypeId(), view.documentTypeId()),
+                    procedureType,
+                    documentType,
+                    view.fixedAmount(),
+                    view.variablePercentage(),
+                    view.version());
         }
     }
 
@@ -67,16 +94,18 @@ public class DocumentCostTemplateController {
     @PostMapping
     @Operation(summary = "Define the fixed or variable cost of a document type in a procedure type template")
     public ResponseEntity<Object> createCost(@RequestBody CreateCostRequest request) {
-        try {
-            DocumentCostTemplate created = documentCostTemplateService.create(
-                    request.idProcedureType(), request.idDocumentType(),
-                    request.fixedAmount(), request.variablePercentage());
-            return ResponseEntity.status(HttpStatus.CREATED).body(CostTemplateResponse.from(created));
-        } catch (BusinessValidationException e) {
-            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
-        }
+        return switch (manageDocumentCostTemplates.create(
+                request.idProcedureType(),
+                request.idDocumentType(),
+                request.fixedAmount(),
+                request.variablePercentage())) {
+            case CreateResult.Created created ->
+                    ResponseEntity.status(HttpStatus.CREATED).body(CostTemplateResponse.from(created.view()));
+            case CreateResult.Invalid invalid ->
+                    ResponseEntity.badRequest().body(Map.of("message", invalid.message()));
+            case CreateResult.NotFound notFound ->
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", notFound.message()));
+        };
     }
 
     @ApiResponses({
@@ -84,10 +113,10 @@ public class DocumentCostTemplateController {
     })
     @GetMapping("/procedure-types/{idProcedureType}")
     @Operation(summary = "Get the document costs defined for a procedure type")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<CostTemplateResponse>> getCostosByTypeProcedure(
             @PathVariable Integer idProcedureType) {
-        return ResponseEntity.ok(documentCostTemplateService.findByTypeProcedure(idProcedureType).stream()
-                .map(CostTemplateResponse::from).toList());
+        return ResponseEntity.ok(queryDocumentCostTemplates.findByProcedureType(idProcedureType).stream()
+                .map(CostTemplateResponse::from)
+                .toList());
     }
 }
