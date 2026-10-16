@@ -1,7 +1,7 @@
-package com.licensis.notaire.application.usecase.copy;
+package com.licensis.notaire.adapter.out.persistence.copy;
 
-import com.licensis.notaire.application.port.out.copy.CopyRepositoryPort;
 import com.licensis.notaire.business.Copy;
+import com.licensis.notaire.repository.CopyRepository;
 import com.licensis.notaire.repository.TestimonyMovementRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +16,10 @@ public class CopyService {
 
     private static final Logger logger = LoggerFactory.getLogger(CopyService.class);
 
-    private final CopyRepositoryPort repository;
+    private final CopyRepository repository;
     private final TestimonyMovementRepository testimonyMovementRepository;
 
-    public CopyService(CopyRepositoryPort repository,
+    public CopyService(CopyRepository repository,
                        TestimonyMovementRepository testimonyMovementRepository) {
         this.repository = repository;
         this.testimonyMovementRepository = testimonyMovementRepository;
