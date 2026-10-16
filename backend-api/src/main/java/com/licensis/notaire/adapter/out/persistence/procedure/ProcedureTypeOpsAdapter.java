@@ -6,14 +6,14 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.licensis.notaire.application.port.out.procedure.ProcedureRepositoryPort;
-import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort;
 import com.licensis.notaire.application.port.out.procedure.ProcedureTypeOpsPort;
-import com.licensis.notaire.application.port.out.procedure.ProcedureTypeRepositoryPort;
 import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.business.WorkflowDefinition;
 import com.licensis.notaire.dto.DtoProcedureType;
 import com.licensis.notaire.repository.BudgetTemplateRepository;
+import com.licensis.notaire.repository.ProcedureRepository;
+import com.licensis.notaire.repository.ProcedureTemplateRepository;
+import com.licensis.notaire.repository.ProcedureTypeRepository;
 import com.licensis.notaire.repository.WorkflowDefinitionRepository;
 
 /**
@@ -23,17 +23,17 @@ import com.licensis.notaire.repository.WorkflowDefinitionRepository;
 @Component
 public class ProcedureTypeOpsAdapter implements ProcedureTypeOpsPort {
 
-    private final ProcedureTypeRepositoryPort repository;
+    private final ProcedureTypeRepository repository;
     private final BudgetTemplateRepository budgetTemplateRepository;
-    private final ProcedureRepositoryPort procedureRepository;
-    private final ProcedureTemplateRepositoryPort procedureTemplateRepository;
+    private final ProcedureRepository procedureRepository;
+    private final ProcedureTemplateRepository procedureTemplateRepository;
     private final WorkflowDefinitionRepository workflowDefinitionRepository;
 
     public ProcedureTypeOpsAdapter(
-            ProcedureTypeRepositoryPort repository,
+            ProcedureTypeRepository repository,
             BudgetTemplateRepository budgetTemplateRepository,
-            ProcedureRepositoryPort procedureRepository,
-            ProcedureTemplateRepositoryPort procedureTemplateRepository,
+            ProcedureRepository procedureRepository,
+            ProcedureTemplateRepository procedureTemplateRepository,
             WorkflowDefinitionRepository workflowDefinitionRepository) {
         this.repository = repository;
         this.budgetTemplateRepository = budgetTemplateRepository;

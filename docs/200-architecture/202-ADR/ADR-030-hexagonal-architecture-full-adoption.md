@@ -904,6 +904,12 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   (R2 104→85).
 
 
+- **Backend R2 shrink — procedure (#1867):** move ProcedureFolderService /
+  RequiredDocumentationOnConfirmService to `adapter.out.persistence.procedure`;
+  delete entity-speaking Procedure*RepositoryPort (OpsAdapters use Spring Data);
+  keep ProcedureLookupPort. Clears ~17 R2 edges (R2 85→68).
+
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers
