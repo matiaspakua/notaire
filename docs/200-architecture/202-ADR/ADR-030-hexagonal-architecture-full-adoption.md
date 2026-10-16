@@ -932,6 +932,11 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   RegistrationDraftRepositoryPort and unused PersistenceAdapter; keep view-safe
   RegistrationDraftOpsPort. Clears ~8 R2 edges (R2 30→22).
 
+- **Backend R2 shrink — history (#1892):** delete dead entity-speaking HistoryUseCase /
+  HistoryRepositoryPort (+ unused PersistenceAdapter); move HistoryMapper to
+  `adapter.out.persistence.history`; keep view-safe HistoryOpsPort. Clears ~5 R2
+  edges (R2 22→17).
+
 
 ## Options considered
 

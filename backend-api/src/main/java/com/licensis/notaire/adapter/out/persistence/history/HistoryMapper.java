@@ -1,4 +1,4 @@
-package com.licensis.notaire.application.usecase.history;
+package com.licensis.notaire.adapter.out.persistence.history;
 
 import com.licensis.notaire.dto.DtoHistorySummary;
 import com.licensis.notaire.business.History;

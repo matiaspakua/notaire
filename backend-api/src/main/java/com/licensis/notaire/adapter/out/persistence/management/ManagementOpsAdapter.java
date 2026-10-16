@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.out.management.ManagementOpsPort;
-import com.licensis.notaire.application.usecase.history.HistoryMapper;
+import com.licensis.notaire.adapter.out.persistence.history.HistoryMapper;
 import com.licensis.notaire.adapter.out.persistence.procedure.ProcedureFolderService;
 import com.licensis.notaire.adapter.out.persistence.procedure.RequiredDocumentationOnConfirmService;
 import com.licensis.notaire.business.History;
