@@ -7,6 +7,7 @@ import java.util.Date;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.licensis.notaire.adapter.out.persistence.history.HistoryMapper;
 import com.licensis.notaire.dto.DtoHistorySummary;
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.DeedManagement;
