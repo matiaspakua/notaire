@@ -1,5 +1,6 @@
-package com.licensis.notaire.application.usecase.document;
+package com.licensis.notaire.adapter.out.persistence.document;
 
+import com.licensis.notaire.application.port.in.document.QueryUpcomingExpirationsUseCase;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.SubmittedDocument;
 import com.licensis.notaire.dto.DtoUpcomingExpiration;
@@ -15,12 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * CU42 - Upcoming expirations: lists the unreleased submitted documents whose due date falls between
- * today and today plus a window of days, both inclusive.
+ * CU42 — Upcoming expirations. Outbound adapter implementing the inbound port (issue #1866).
  */
 @Service
 @Transactional(readOnly = true)
-public class UpcomingExpirationService {
+public class UpcomingExpirationService implements QueryUpcomingExpirationsUseCase {
 
     public static final int DEFAULT_WINDOW_DAYS = 30;
     public static final int MAX_WINDOW_DAYS = 365;
@@ -37,6 +37,7 @@ public class UpcomingExpirationService {
      * @return the upcoming expirations ordered by due date
      * @throws BusinessValidationException if the window is outside the allowed range
      */
+    @Override
     public List<DtoUpcomingExpiration> findUpcoming(Integer days, LocalDate today) {
         int window = days == null ? DEFAULT_WINDOW_DAYS : days;
         if (window < 1 || window > MAX_WINDOW_DAYS) {

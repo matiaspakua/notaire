@@ -1,6 +1,6 @@
 package com.licensis.notaire.adapter.in.web.document;
 
-import com.licensis.notaire.application.usecase.document.UpcomingExpirationService;
+import com.licensis.notaire.application.port.in.document.QueryUpcomingExpirationsUseCase;
 import com.licensis.notaire.dto.DtoUpcomingExpiration;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "SubmittedDocument", description = "API for managing submitted documents")
 public class UpcomingExpirationController {
 
-    private final UpcomingExpirationService upcomingExpirationService;
+    private final QueryUpcomingExpirationsUseCase queryUpcomingExpirations;
 
-    public UpcomingExpirationController(UpcomingExpirationService upcomingExpirationService) {
-        this.upcomingExpirationService = upcomingExpirationService;
+    public UpcomingExpirationController(QueryUpcomingExpirationsUseCase queryUpcomingExpirations) {
+        this.queryUpcomingExpirations = queryUpcomingExpirations;
     }
 
     @ApiResponses({
@@ -35,6 +35,6 @@ public class UpcomingExpirationController {
                        + "not released, ordered by expiration date")
     public ResponseEntity<List<DtoUpcomingExpiration>> getUpcoming(
             @RequestParam(name = "days", required = false) Integer days) {
-        return ResponseEntity.ok(upcomingExpirationService.findUpcoming(days, LocalDate.now()));
+        return ResponseEntity.ok(queryUpcomingExpirations.findUpcoming(days, LocalDate.now()));
     }
 }

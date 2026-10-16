@@ -897,6 +897,13 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   for ItemService. Clears ~20 R2 edges (R2 124→104).
 
 
+- **Backend R2 shrink — document (#1866):** move DocumentCostTemplateService /
+  ExternalEntityDocumentService / UpcomingExpirationService to
+  `adapter.out.persistence`; delete entity-speaking `DocumentRepositoryPort` /
+  `ExternalDocumentRepositoryPort`; inbound CU10/CU42 ports. Clears ~19 R2 edges
+  (R2 104→85).
+
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers

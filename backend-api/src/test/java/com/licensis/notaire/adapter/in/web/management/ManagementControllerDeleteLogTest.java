@@ -87,7 +87,7 @@ class ManagementControllerDeleteLogTest {
                 mock(com.licensis.notaire.application.port.in.workflow.QueryWorkflowTraceUseCase.class),
                 mock(com.licensis.notaire.application.port.in.management.TransitionManagementUseCase.class),
                 mock(TransitionManagementWebMapper.class),
-                mock(com.licensis.notaire.application.usecase.document.ExternalEntityDocumentService.class),
+                mock(com.licensis.notaire.application.port.in.document.ExternalEntityDocumentUseCase.class),
                 mock(com.licensis.notaire.application.port.in.workflow.DocumentReentryUseCase.class)))
                 .build();
 
