@@ -46,8 +46,9 @@ public class TestimonyMovementOpsAdapter implements TestimonyMovementOpsPort {
     }
 
     @Override
-    @Transactional
     public SaveResult create(DtoTestimonyMovement dto) {
+        // No outer @Transactional: catching constraint failures into SaveResult.Failed must not
+        // mark the Spring TX rollback-only (UnexpectedRollbackException → 500 instead of 400).
         try {
             TestimonyMovement entity = new TestimonyMovement();
             entity.setAttributes(dto);
@@ -59,7 +60,6 @@ public class TestimonyMovementOpsAdapter implements TestimonyMovementOpsPort {
     }
 
     @Override
-    @Transactional
     public SaveResult update(Integer id, DtoTestimonyMovement dto) {
         Optional<TestimonyMovement> existing = repository.findById(id);
         if (existing.isEmpty()) {
@@ -80,7 +80,6 @@ public class TestimonyMovementOpsAdapter implements TestimonyMovementOpsPort {
     }
 
     @Override
-    @Transactional
     public DeleteResult delete(Integer id) {
         if (!repository.existsById(id)) {
             return new DeleteResult.NotFound();
