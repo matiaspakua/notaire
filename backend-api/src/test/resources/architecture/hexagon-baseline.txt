@@ -4,9 +4,8 @@ R1 | com.licensis.notaire.adapter.in.web.budget.BudgetController -> com.licensis
 R1 | com.licensis.notaire.adapter.in.web.budget.BudgetController -> com.licensis.notaire.repository.PersonRepository
 R1 | com.licensis.notaire.adapter.in.web.document.DocumentCostTemplateController -> com.licensis.notaire.business.DocumentCostTemplate
 R1 | com.licensis.notaire.adapter.in.web.document.DocumentCostTemplateController -> com.licensis.notaire.business.DocumentCostTemplatePK
-R1 | com.licensis.notaire.adapter.in.web.item.ItemController -> com.licensis.notaire.business.Budget
-R1 | com.licensis.notaire.adapter.in.web.item.ItemController -> com.licensis.notaire.business.Item
-R1 | com.licensis.notaire.adapter.in.web.item.ItemController -> com.licensis.notaire.repository.BudgetRepository
+R1 | com.licensis.notaire.adapter.in.web.item.ItemResponse -> com.licensis.notaire.business.Budget
+R1 | com.licensis.notaire.adapter.in.web.item.ItemResponse -> com.licensis.notaire.business.Item
 R1 | com.licensis.notaire.adapter.in.web.notebook.NotebookController -> com.licensis.notaire.business.Notebook
 R1 | com.licensis.notaire.adapter.in.web.person.PersonController -> com.licensis.notaire.business.IdentificationType
 R1 | com.licensis.notaire.adapter.in.web.person.PersonController -> com.licensis.notaire.business.Person
