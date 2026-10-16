@@ -52,7 +52,7 @@ class ExpandTests(unittest.TestCase):
 
     def test_delete_list_has_phase_labels_and_no_bot_labels(self):
         self.assertIn("phase:5-observability", lt.DELETE)
-        for bot in ("dependencies", "java", "javascript", "autorelease: pending"):
+        for bot in ("dependencies", "java", "javascript", "maven", "autorelease: pending"):
             self.assertNotIn(bot, lt.DELETE)
             self.assertNotIn(bot, lt.RENAMES)
 
