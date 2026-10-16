@@ -1,14 +1,4 @@
 {
-  "src/app/dashboard/managements/ManagementCurrentStatus.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/app/dashboard/managements/page.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/app/dashboard/reports/page.tsx": {
     "no-restricted-imports": {
       "count": 1
@@ -55,36 +45,6 @@
     }
   },
   "src/hooks/useItems.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useManagementSearch.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useManagementSummary.test.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useManagementSummary.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useManagements.complete-case.test.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useManagements.create-wire.test.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useManagements.ts": {
     "no-restricted-imports": {
       "count": 1
     }
