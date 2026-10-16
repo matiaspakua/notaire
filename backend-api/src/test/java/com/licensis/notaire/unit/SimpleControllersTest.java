@@ -557,24 +557,16 @@ class SimpleControllersTest {
     @Nested
     @DisplayName("ProcedureTypeController")
     class ProcedureTypeControllerTests {
-        private final ProcedureTypeRepositoryPort repo = mock(ProcedureTypeRepositoryPort.class);
-        private final com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort templateRepo =
-                mock(com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort.class);
-        private final com.licensis.notaire.repository.BudgetTemplateRepository budgetRepo =
-                mock(com.licensis.notaire.repository.BudgetTemplateRepository.class);
-        private final com.licensis.notaire.application.port.out.procedure.ProcedureRepositoryPort procedureRepo =
-                mock(com.licensis.notaire.application.port.out.procedure.ProcedureRepositoryPort.class);
-        private final com.licensis.notaire.repository.WorkflowDefinitionRepository workflowRepo =
-                mock(com.licensis.notaire.repository.WorkflowDefinitionRepository.class);
+        private final com.licensis.notaire.application.port.in.procedure.QueryProcedureTypesUseCase query =
+                mock(com.licensis.notaire.application.port.in.procedure.QueryProcedureTypesUseCase.class);
+        private final com.licensis.notaire.application.port.in.procedure.ManageProcedureTypesUseCase manage =
+                mock(com.licensis.notaire.application.port.in.procedure.ManageProcedureTypesUseCase.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new ProcedureTypeController(repo, budgetRepo, procedureRepo, templateRepo, workflowRepo)).build();
+                standaloneSetup(new ProcedureTypeController(query, manage)).build();
 
         @Test
         @DisplayName("Cover happy paths")
         void all() throws Exception {
-            ProcedureType t = new ProcedureType();
-            t.setIdProcedureType(1);
-            t.setName("Compraventa");
             DtoProcedureType dto = new DtoProcedureType();
             dto.setIdProcedureType(1);
             dto.setName("Compraventa");
@@ -584,20 +576,24 @@ class SimpleControllersTest {
             dto.setEnabled(true);
             dto.setVersion(0);
 
-            when(repo.findAll()).thenReturn(List.of(t));
-            when(repo.findById(1)).thenReturn(Optional.of(t));
-            when(repo.findById(2)).thenReturn(Optional.empty());
-            when(repo.existsById(1)).thenReturn(true);
-            when(repo.existsById(2)).thenReturn(false);
-            when(templateRepo.findByProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of());
-            when(budgetRepo.findByProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of());
-            when(procedureRepo.findByFkIdProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of());
+            when(query.findAll()).thenReturn(List.of(dto));
+            when(query.findById(1)).thenReturn(Optional.of(dto));
+            when(query.findById(2)).thenReturn(Optional.empty());
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.procedure.ProcedureTypeOpsPort.SaveResult.Created(dto));
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.procedure.ProcedureTypeOpsPort.SaveResult.Updated());
+            when(manage.update(eq(2), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.procedure.ProcedureTypeOpsPort.SaveResult.NotFound());
+            when(manage.delete(1)).thenReturn(
+                    new com.licensis.notaire.application.port.out.procedure.ProcedureTypeOpsPort.DeleteResult.Deleted());
+            when(manage.delete(2)).thenReturn(
+                    new com.licensis.notaire.application.port.out.procedure.ProcedureTypeOpsPort.DeleteResult.NotFound());
 
             mvc.perform(get("/api/v1/procedure-types")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/procedure-types/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/procedure-types/2")).andExpect(status().isNotFound());
 
-            when(repo.save(any(ProcedureType.class))).thenReturn(t);
             mvc.perform(post("/api/v1/procedure-types").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/procedure-types/1").contentType("application/json")
@@ -611,9 +607,6 @@ class SimpleControllersTest {
         @Test
         @DisplayName("Cover error paths without polluting happy stubs (#916)")
         void allErrorPaths() throws Exception {
-            ProcedureType t = new ProcedureType();
-            t.setIdProcedureType(1);
-            t.setName("Compraventa");
             DtoProcedureType dto = new DtoProcedureType();
             dto.setIdProcedureType(1);
             dto.setName("Compraventa");
@@ -622,17 +615,19 @@ class SimpleControllersTest {
             dto.setAssociatesProperties(false);
             dto.setEnabled(true);
             dto.setVersion(0);
-            when(repo.findById(1)).thenReturn(Optional.of(t));
-            when(repo.existsById(1)).thenReturn(true);
-            when(templateRepo.findByProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of());
-            when(budgetRepo.findByProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of());
-            when(procedureRepo.findByFkIdProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of());
-            when(repo.save(any(ProcedureType.class))).thenThrow(new RuntimeException("x"));
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.procedure.ProcedureTypeOpsPort.SaveResult.Failed(
+                            new RuntimeException("x")));
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.procedure.ProcedureTypeOpsPort.SaveResult.Failed(
+                            new RuntimeException("x")));
+            when(manage.delete(1)).thenReturn(
+                    new com.licensis.notaire.application.port.out.procedure.ProcedureTypeOpsPort.DeleteResult.InUse(
+                            "in use"));
             mvc.perform(post("/api/v1/procedure-types").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
             mvc.perform(put("/api/v1/procedure-types/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isInternalServerError());
-            when(templateRepo.findByProcedureTypeIdProcedureType(1)).thenReturn(List.of(new com.licensis.notaire.business.ProcedureTemplate()));
             mvc.perform(delete("/api/v1/procedure-types/1")).andExpect(status().isConflict());
         }
     }
