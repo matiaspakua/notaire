@@ -35,11 +35,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| list and get history summaries | SimpleControllersTest | pending |
-| get history by management | SimpleControllersTest | pending |
-| create history with valid dependencies | SimpleControllersTest | pending |
-| create history with missing dependencies | SimpleControllersTest | pending |
-| controller has no repository or entity imports | SimpleControllersTest | pending |
+| list and get history summaries | SimpleControllersTest | passing |
+| get history by management | SimpleControllersTest | passing |
+| create history with valid dependencies | SimpleControllersTest | passing |
+| create history with missing dependencies | SimpleControllersTest | passing |
+| controller has no repository or entity imports | SimpleControllersTest | passing |
 
 ## Permanent documentation updated
 

@@ -236,6 +236,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   now calls `ValidateWorkflowUseCase` only; graph load uses `Workflow*CatalogPort`; validation runs on
   domain `WorkflowNode` / `WorkflowTransition`. ArchUnit R1 clears its three repository edges.
 
+- **History ports-only (#1775):** next mixed/repo-like R1 hotspot after Management. `HistoryController`
+  calls `QueryHistoriesUseCase` / `ManageHistoriesUseCase` only; persistence and CU13 chronological order
+  live behind `HistoryOpsPort`. ArchUnit R1 clears its six baseline edges. REST `/api/v1/history` unchanged.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers
