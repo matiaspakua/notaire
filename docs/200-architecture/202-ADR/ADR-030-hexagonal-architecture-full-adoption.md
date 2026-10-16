@@ -293,9 +293,9 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
 
 - **Folio instance (#1727):** instance aggregate (folio types already clean in #1703). Controller was the
   largest folio R1 hotspot (~7 edges); now ports-only with domain `Folio`, Utilizado lock and deed-link
-  forcing in the use cases, `FolioCatalogPort`, and thin person/deed lookup ports. Legacy
-  `FolioRepositoryPort` remains for AuxiliaryProtocol `startDeed`; available-auxiliary listing goes
-  through the domain catalog so `FolioResponse` stays domain-only.
+  forcing in the use cases, `FolioCatalogPort`, and thin person/deed lookup ports. Available-auxiliary
+  listing goes through the domain catalog so `FolioResponse` stays domain-only. Entity-speaking
+  `FolioRepositoryPort` removed in #1903 (AuxiliaryProtocol uses Spring Data locally).
 
 
 
@@ -951,6 +951,11 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `adapter.out.persistence.concept` (Spring Data ConceptRepository locally); delete
   entity-speaking ConceptRepositoryPort and unused PersistenceAdapter; keep view-safe
   ConceptOpsPort. Clears ~2 R2 edges (R2 9→7).
+
+- **Backend R2 shrink — folio (#1903):** inject Spring Data FolioRepository into
+  `AuxiliaryProtocolService` (already under `adapter.out.persistence.notebook`); delete
+  entity-speaking FolioRepositoryPort and FolioPersistenceAdapter; keep domain
+  FolioCatalogPort / FolioTypeCatalogPort. Clears ~2 R2 edges (R2 7→5).
 
 
 ## Options considered

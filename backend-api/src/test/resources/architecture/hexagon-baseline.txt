@@ -1,5 +1,3 @@
-R2 | com.licensis.notaire.application.port.out.folio.FolioRepositoryPort -> com.licensis.notaire.business.Folio
-R2 | com.licensis.notaire.application.port.out.folio.FolioRepositoryPort -> com.licensis.notaire.business.FolioType
 R2 | com.licensis.notaire.application.port.out.item.ItemRepositoryPort -> com.licensis.notaire.business.Item
 R2 | com.licensis.notaire.application.port.out.property.PropertyRepositoryPort -> com.licensis.notaire.business.Property
 R2 | com.licensis.notaire.application.port.out.user.RoleRepositoryPort -> com.licensis.notaire.business.Role

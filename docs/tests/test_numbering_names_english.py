@@ -15,8 +15,6 @@ class NumberingNamesEnglishTest(unittest.TestCase):
     def test_auxiliary_numbering_names_are_english(self):
         names = (
             "backend-api/src/main/java/com/licensis/notaire/repository/FolioRepository.java",
-            "backend-api/src/main/java/com/licensis/notaire/application/port/out/folio/FolioRepositoryPort.java",
-            "backend-api/src/main/java/com/licensis/notaire/adapter/out/persistence/folio/FolioPersistenceAdapter.java",
             "backend-api/src/main/java/com/licensis/notaire/adapter/out/persistence/notebook/AuxiliaryProtocolService.java",
             "backend-api/src/test/java/com/licensis/notaire/service/unit/AuxiliaryProtocolServiceTest.java",
         )
@@ -25,7 +23,7 @@ class NumberingNamesEnglishTest(unittest.TestCase):
             self.assertNotIn("findMaxNumberDeedAuxiliary", source, relative)
             self.assertNotIn("calculateNextNumberAuxiliary", source, relative)
         self.assertIn("findMaxAuxiliaryDeedNumber", read(names[0]))
-        service = read(names[3])
+        service = read(names[1])
         self.assertIn("calculateNextAuxiliaryNumber", service)
         self.assertIn("findMaxAuxiliaryDeedNumber", service)
 
