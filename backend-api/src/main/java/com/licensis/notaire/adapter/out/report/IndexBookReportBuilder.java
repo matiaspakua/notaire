@@ -1,4 +1,6 @@
-package com.licensis.notaire.application.usecase.report;
+package com.licensis.notaire.adapter.out.report;
+
+import com.licensis.notaire.application.usecase.report.ReportLocaleFormats;
 
 import com.licensis.notaire.application.port.out.report.ReportDocument;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Column;
@@ -32,7 +34,7 @@ import java.util.Objects;
 @Component
 public class IndexBookReportBuilder {
 
-    static final String EMPTY_PERIOD = "No deeds were recorded for the requested period.";
+    public static final String EMPTY_PERIOD = "No deeds were recorded for the requested period.";
 
     private static final List<Column> COLUMNS = List.of(
             Column.left("Person", 3f),

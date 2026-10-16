@@ -1,4 +1,6 @@
-package com.licensis.notaire.application.usecase.report;
+package com.licensis.notaire.adapter.out.report;
+
+import com.licensis.notaire.application.usecase.report.ReportLocaleFormats;
 
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Notebook;
@@ -9,6 +11,7 @@ import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.repository.NotebookRepository;
 import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.repository.PaymentRepository;
+import com.licensis.notaire.application.port.in.report.GenerateReportsUseCase;
 import com.licensis.notaire.application.port.out.report.RegistrationDraftReportPort;
 import com.licensis.notaire.application.port.out.report.ReportDocument;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Field;
@@ -23,16 +26,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Generates the report PDFs exposed by {@code /api/v1/reports}.
+ * Outbound adapter implementing {@link GenerateReportsUseCase} for {@code /api/v1/reports}.
  *
  * <p>The six reports that were JasperReports 3.5.3 templates over the legacy schema
  * (budget, budget with properties, procedure documents, management history, document
  * expiry and document debt) are built from the current domain model by
  * {@link ReportDocumentFactory} and rendered through the {@link ReportRenderer} port
- * (issue #567).
+ * (issue #567). Entity/repository access stays here (issue #1849 / ADR-030 R2+R5).
  */
 @Service
-public class ReportService {
+public class ReportService implements GenerateReportsUseCase {
 
     private final NotebookRepository notebookRepository;
     private final PaymentRepository paymentRepository;

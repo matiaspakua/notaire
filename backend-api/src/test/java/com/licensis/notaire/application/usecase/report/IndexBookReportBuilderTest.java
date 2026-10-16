@@ -1,5 +1,6 @@
 package com.licensis.notaire.application.usecase.report;
 
+import com.licensis.notaire.adapter.out.report.IndexBookReportBuilder;
 import com.licensis.notaire.application.port.out.report.ReportDocument;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Table;
 import com.licensis.notaire.business.Budget;

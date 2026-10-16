@@ -1,6 +1,6 @@
 package com.licensis.notaire.adapter.in.web.report;
 
-import com.licensis.notaire.application.usecase.report.ReportService;
+import com.licensis.notaire.application.port.in.report.GenerateReportsUseCase;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ErrorResponse;
 import com.licensis.notaire.exception.ResourceNotFoundException;
@@ -40,9 +40,9 @@ public class ReportController {
 
     private static final Logger log = LoggerFactory.getLogger(ReportController.class);
 
-    private final ReportService reportService;
+    private final GenerateReportsUseCase reportService;
 
-    public ReportController(ReportService reportService) {
+    public ReportController(GenerateReportsUseCase reportService) {
         this.reportService = reportService;
     }
 
