@@ -240,6 +240,12 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   now calls `ValidateWorkflowUseCase` only; graph load uses `Workflow*CatalogPort`; validation runs on
   domain `WorkflowNode` / `WorkflowTransition`. ArchUnit R1 clears its three repository edges.
 
+- **Management mixed controller (#1772):** largest remaining R1 hotspot (~17 edges plus
+  `TransitionManagementWebMapper`). Controller and transition web mapper are ports-only via
+  `ManageManagementsUseCase` / `QueryManagementsUseCase` and outbound `ManagementOpsPort`
+  (`ManagementOpsAdapter`). Application services stay free of new R2 entity/repository edges;
+  entity access stays in the outbound adapter. Domain `DeedManagement` extraction remains deferred.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers

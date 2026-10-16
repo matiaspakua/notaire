@@ -12,13 +12,9 @@ import com.licensis.notaire.application.port.in.user.ManageUsersUseCase.CreateUs
 import com.licensis.notaire.application.port.in.user.ManageUsersUseCase.UpdateUserCommand;
 import com.licensis.notaire.application.port.in.user.QueryUsersUseCase;
 import com.licensis.notaire.dto.DtoUser;
-import com.licensis.notaire.business.DeedManagement;
-import com.licensis.notaire.business.History;
 import com.licensis.notaire.business.ProcedureTemplate;
 import com.licensis.notaire.domain.user.User;
 import com.licensis.notaire.domain.user.UserNotFoundException;
-import com.licensis.notaire.repository.DeedManagementRepository;
-import com.licensis.notaire.repository.HistoryRepository;
 import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort;
 import com.licensis.notaire.application.usecase.report.ReportService;
 import com.licensis.notaire.config.GlobalExceptionHandler;
@@ -41,7 +37,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
@@ -141,56 +136,55 @@ class AdditionalControllersTest {
         @Test
         @DisplayName("All paths")
         void all() throws Exception {
-            DeedManagementRepository repo = mock(DeedManagementRepository.class);
-            HistoryRepository histRepo = mock(HistoryRepository.class);
+            var query = mock(com.licensis.notaire.application.port.in.management.QueryManagementsUseCase.class);
+            var manage = mock(com.licensis.notaire.application.port.in.management.ManageManagementsUseCase.class);
             var traceService = mock(com.licensis.notaire.application.usecase.workflow.WorkflowTraceService.class);
-            var queryService = mock(com.licensis.notaire.application.usecase.management.ManagementQueryService.class);
             var transitionUseCase = mock(com.licensis.notaire.application.port.in.management.TransitionManagementUseCase.class);
             var transitionWebMapper =
                     mock(com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper.class);
-            var statusLogService = mock(com.licensis.notaire.application.usecase.management.ManagementStatusLogService.class);
-            var statusWriteGuard = mock(com.licensis.notaire.application.usecase.management.ManagementStatusWriteGuard.class);
             var externalEntityDocumentService = mock(com.licensis.notaire.application.usecase.document.ExternalEntityDocumentService.class);
             var documentReentryService = mock(com.licensis.notaire.application.usecase.workflow.DocumentReentryService.class);
-            var mvc = standaloneSetup(new ManagementController(repo, histRepo, traceService, queryService,
-                    mock(com.licensis.notaire.repository.PersonRepository.class),
-                    mock(com.licensis.notaire.repository.ManagementStatusRepository.class),
-                    mock(com.licensis.notaire.repository.BudgetRepository.class),
-                    mock(com.licensis.notaire.repository.ProcedureTypeRepository.class),
-                    mock(com.licensis.notaire.repository.ProcedureRepository.class),
-                    mock(com.licensis.notaire.repository.PropertyRepository.class),
+            var mvc = standaloneSetup(new ManagementController(
+                    query,
+                    manage,
+                    traceService,
                     mock(com.licensis.notaire.application.usecase.management.ManagementArchiveDebtService.class),
-                    mock(com.licensis.notaire.application.usecase.management.ManagementSubstitutionService.class),
                     mock(com.licensis.notaire.application.usecase.management.ManagementFinancialSummaryService.class),
-                    statusLogService, statusWriteGuard, transitionUseCase, transitionWebMapper,
-                    externalEntityDocumentService, documentReentryService,
-                    mock(com.licensis.notaire.application.usecase.procedure.ProcedureFolderService.class),
-                    mock(com.licensis.notaire.application.usecase.procedure.RequiredDocumentationOnConfirmService.class)))
+                    transitionUseCase,
+                    transitionWebMapper,
+                    externalEntityDocumentService,
+                    documentReentryService))
                     .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                     .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                     .build();
 
-            DeedManagement g = new DeedManagement(1);
-            com.licensis.notaire.business.Person escr = new com.licensis.notaire.business.Person();
-            escr.setPersonId(99);
-            g.setFkIdNotaryPerson(escr);
             var summary = new com.licensis.notaire.dto.DtoManagementSummary(1, 10, "Management", new Date(), null, 0, null);
-            when(queryService.findAll(any(org.springframework.data.domain.Pageable.class)))
-                    .thenReturn(new PageImpl<>(List.of(summary), org.springframework.data.domain.PageRequest.of(0, 20), 1));
-            when(queryService.findById(1)).thenReturn(Optional.of(summary));
-            when(queryService.findById(2)).thenReturn(Optional.empty());
-            when(queryService.findByNumber(10)).thenReturn(Optional.of(summary));
-            when(queryService.findByNumber(99)).thenReturn(Optional.empty());
-            when(repo.existsById(1)).thenReturn(true);
-            when(repo.existsById(2)).thenReturn(false);
-            when(repo.findById(1)).thenReturn(Optional.of(g));
-            when(repo.findById(2)).thenReturn(Optional.empty());
-            when(repo.save(any(DeedManagement.class))).thenReturn(g);
-            History h = new History();
-            h.setIdHistory(1);
-            h.setDate(new Date());
-            when(histRepo.findByFkIdManagementIdManagement(1)).thenReturn(List.of(h));
-            when(histRepo.findByFkIdManagementIdManagement(2)).thenReturn(List.of());
+            var view = new com.licensis.notaire.application.port.out.management.ManagementOpsPort.ManagementView(
+                    1, 10, "Management", new Date(), null, 99, null, null, 0);
+            var history = new com.licensis.notaire.dto.DtoHistorySummary(1, new Date(), null, 1, null, null);
+            when(query.findAll(anyInt(), anyInt(), any()))
+                    .thenReturn(new com.licensis.notaire.application.port.out.management.ManagementOpsPort.PageResult(
+                            List.of(summary), 0, 20, 1));
+            when(query.findById(1)).thenReturn(Optional.of(summary));
+            when(query.findById(2)).thenReturn(Optional.empty());
+            when(query.findByNumber(10)).thenReturn(Optional.of(summary));
+            when(query.findByNumber(99)).thenReturn(Optional.empty());
+            when(query.findByClientPersonId(5)).thenReturn(List.of(view));
+            when(query.findCurrentStatus(1)).thenReturn(Optional.of(history));
+            when(query.findCurrentStatus(2)).thenReturn(Optional.empty());
+            when(query.findHistory(1)).thenReturn(Optional.of(List.of(history)));
+            when(query.findHistory(2)).thenReturn(Optional.empty());
+
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.management.ManagementOpsPort.SaveResult.Created(view));
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.management.ManagementOpsPort.SaveResult.Updated());
+            when(manage.update(eq(2), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.management.ManagementOpsPort.SaveResult.NotFound());
+            when(manage.delete(1)).thenReturn(
+                    new com.licensis.notaire.application.port.out.management.ManagementOpsPort.DeleteResult.Deleted());
+            when(manage.delete(2)).thenReturn(
+                    new com.licensis.notaire.application.port.out.management.ManagementOpsPort.DeleteResult.NotFound());
 
             mvc.perform(get("/api/v1/managements")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/managements/1")).andExpect(status().isOk());
@@ -233,12 +227,16 @@ class AdditionalControllersTest {
             mvc.perform(get("/api/v1/managements/1/history")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/managements/2/history")).andExpect(status().isNotFound());
 
-            when(repo.save(any(DeedManagement.class))).thenThrow(new RuntimeException("x"));
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.management.ManagementOpsPort.SaveResult.ServerError());
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.management.ManagementOpsPort.SaveResult.ServerError());
+            when(manage.delete(1)).thenReturn(
+                    new com.licensis.notaire.application.port.out.management.ManagementOpsPort.DeleteResult.Conflict());
             mvc.perform(post("/api/v1/managements").contentType("application/json")
                     .content(managementBody)).andExpect(status().isInternalServerError());
             mvc.perform(put("/api/v1/managements/1").contentType("application/json")
                     .content(managementBody)).andExpect(status().isInternalServerError());
-            doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
             mvc.perform(delete("/api/v1/managements/1")).andExpect(status().isConflict());
         }
     }
