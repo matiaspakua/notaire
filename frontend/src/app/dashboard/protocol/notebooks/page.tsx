@@ -11,12 +11,23 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
-import { apiGet, apiGetBytes, apiPost } from "@/lib/api-client";
+import { folioUseCases } from "@/composition/folio";
+import { notebookUseCases } from "@/composition/notebook";
+import type { Folio as DomainFolio } from "@/core/folio/domain/folio";
+import type { Notebook as DomainNotebook } from "@/core/notebook/domain/notebook";
 import { extractApiError } from "@/lib/utils";
 import type { Notebook, Folio } from "@/types";
 import { Download, FolderPlus } from "lucide-react";
 
 const DAMAGED_STATUSES = ["Errose", "no pasó"];
+
+function toWireNotebook(n: DomainNotebook): Notebook {
+  return n as Notebook;
+}
+
+function toWireFolio(f: DomainFolio): Folio {
+  return f as Folio;
+}
 
 export default function NotebooksPage() {
   const t = useTranslations("protocolo.cuadernos");
@@ -24,12 +35,12 @@ export default function NotebooksPage() {
 
   const { data: notebooks = [], isLoading, refetch } = useQuery({
     queryKey: ["notebooks"],
-    queryFn: () => apiGet<Notebook[]>("/notebooks"),
+    queryFn: async () => (await notebookUseCases.list()).map(toWireNotebook),
   });
 
   const { data: folios = [] } = useQuery({
     queryKey: ["folios"],
-    queryFn: () => apiGet<Folio[]>("/folios"),
+    queryFn: async () => (await folioUseCases.list()).map(toWireFolio),
   });
 
   const availableFolios = useMemo(
@@ -63,7 +74,7 @@ export default function NotebooksPage() {
     }
     setSaving(true);
     try {
-      await apiPost("/notebooks", {
+      await notebookUseCases.create({
         idsFolio: selectedIds,
         idNotary: notaryId,
         year: new Date().getFullYear(),
@@ -82,7 +93,7 @@ export default function NotebooksPage() {
   async function handleDownloadCover(idNotebook: number) {
     setDownloadingId(idNotebook);
     try {
-      const blob = await apiGetBytes(`/notebooks/${idNotebook}/cover`);
+      const blob = await notebookUseCases.downloadCover(idNotebook);
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = `notebook_${idNotebook}_cover.pdf`;
