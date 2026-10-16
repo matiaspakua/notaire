@@ -3,10 +3,6 @@ package com.licensis.notaire.adapter.in.web;
 import com.licensis.notaire.adapter.in.web.person.PersonController;
 import com.licensis.notaire.adapter.in.web.testimony.TestimonyController;
 import com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementController;
-import com.licensis.notaire.application.usecase.person.PersonService;
-import com.licensis.notaire.business.IdentificationType;
-import com.licensis.notaire.business.Person;
-import com.licensis.notaire.repository.IdentificationTypeRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,7 +12,6 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -94,15 +89,13 @@ class TestimonyPersonConstraintErrorsTest {
     }
 
     private static MockMvc people(RuntimeException failure) throws Exception {
-        PersonService service = mock(PersonService.class);
-        Person existing = new Person();
-        existing.setPersonId(1);
-        when(service.findById(1)).thenReturn(Optional.of(existing));
-        when(service.save(any())).thenThrow(failure);
-        IdentificationTypeRepository types = mock(IdentificationTypeRepository.class);
-        when(types.findById(anyInt())).thenReturn(Optional.of(new IdentificationType(1, "DNI")));
-        return mvc(PersonController.class, Map.of(PersonService.class, service,
-                IdentificationTypeRepository.class, types));
+        var manage = mock(com.licensis.notaire.application.port.in.person.ManagePeopleUseCase.class);
+        when(manage.create(any())).thenReturn(
+                new com.licensis.notaire.application.port.out.person.PersonOpsPort.SaveResult.Failed(failure, true));
+        when(manage.update(anyInt(), any())).thenReturn(
+                new com.licensis.notaire.application.port.out.person.PersonOpsPort.SaveResult.Failed(failure, false));
+        return mvc(PersonController.class, Map.of(
+                com.licensis.notaire.application.port.in.person.ManagePeopleUseCase.class, manage));
     }
 
     private static final String PERSON = "{\"firstName\":\"Ana\",\"lastName\":\"Paz\",\"identificationNumber\":\"1\","
