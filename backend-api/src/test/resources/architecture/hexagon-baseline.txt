@@ -14,16 +14,8 @@ R1 | com.licensis.notaire.adapter.in.web.notebook.NotebookController -> com.lice
 R1 | com.licensis.notaire.adapter.in.web.person.PersonController -> com.licensis.notaire.business.IdentificationType
 R1 | com.licensis.notaire.adapter.in.web.person.PersonController -> com.licensis.notaire.business.Person
 R1 | com.licensis.notaire.adapter.in.web.person.PersonController -> com.licensis.notaire.repository.IdentificationTypeRepository
-R1 | com.licensis.notaire.adapter.in.web.procedure.ProcedureController -> com.licensis.notaire.business.Budget
-R1 | com.licensis.notaire.adapter.in.web.procedure.ProcedureController -> com.licensis.notaire.business.Procedure
-R1 | com.licensis.notaire.adapter.in.web.procedure.ProcedureController -> com.licensis.notaire.repository.DeedManagementRepository
-R1 | com.licensis.notaire.adapter.in.web.procedure.ProcedureController -> com.licensis.notaire.repository.DeedRepository
 R1 | com.licensis.notaire.adapter.in.web.procedure.ProcedureTemplateController -> com.licensis.notaire.business.ProcedureTemplate
 R1 | com.licensis.notaire.adapter.in.web.procedure.ProcedureTemplateController -> com.licensis.notaire.business.ProcedureTemplatePK
-R1 | com.licensis.notaire.adapter.in.web.procedure.ProcedureTypeController -> com.licensis.notaire.business.ProcedureType
-R1 | com.licensis.notaire.adapter.in.web.procedure.ProcedureTypeController -> com.licensis.notaire.business.WorkflowDefinition
-R1 | com.licensis.notaire.adapter.in.web.procedure.ProcedureTypeController -> com.licensis.notaire.repository.BudgetTemplateRepository
-R1 | com.licensis.notaire.adapter.in.web.procedure.ProcedureTypeController -> com.licensis.notaire.repository.WorkflowDefinitionRepository
 R1 | com.licensis.notaire.adapter.in.web.registrationdraft.RegistrationDraftController -> com.licensis.notaire.business.RegistrationDraft
 R1 | com.licensis.notaire.adapter.in.web.substitution.SubstitutionController -> com.licensis.notaire.business.Person
 R1 | com.licensis.notaire.adapter.in.web.substitution.SubstitutionController -> com.licensis.notaire.business.Substitution
