@@ -24,26 +24,6 @@
       "count": 1
     }
   },
-  "src/hooks/useDocumentReentry.test.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useDocumentReentry.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useExternalEntityDocuments.test.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useExternalEntityDocuments.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/hooks/useItems.ts": {
     "no-restricted-imports": {
       "count": 1
@@ -69,27 +49,7 @@
       "count": 1
     }
   },
-  "src/hooks/useSubmittedDocuments.test.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useSubmittedDocuments.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/hooks/useSubstitutions.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useUpcomingExpirations.test.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useUpcomingExpirations.ts": {
     "no-restricted-imports": {
       "count": 1
     }
