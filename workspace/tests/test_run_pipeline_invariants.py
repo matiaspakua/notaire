@@ -14,6 +14,7 @@ Run with: python3 workspace/tests/test_run_pipeline_invariants.py
 """
 import os
 import stat
+import subprocess
 import unittest
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -102,6 +103,52 @@ class RunPipelinePrunesOldRunsTest(unittest.TestCase):
         prune = content.index('find "$REPO_ROOT/reports/pipeline"')
         create = content.index('mkdir -p "$REPORT_DIR"')
         self.assertLess(prune, create)
+
+
+class RunPipelineModeContractsTest(unittest.TestCase):
+    """Requested modes must not silently weaken the quality evidence."""
+
+    def setUp(self):
+        self.content = load_script()
+
+    def test_with_infra_requires_sonarqube_quality_gate(self):
+        self.assertRegex(
+            self.content,
+            r"--with-infra\) WITH_INFRA=1; REQUIRE_SONAR=1",
+            "--with-infra must make the requested SonarQube quality gate blocking",
+        )
+
+    def test_fast_mode_skips_server_backed_phases(self):
+        self.assertRegex(
+            self.content,
+            r'if \[ "\$FAST_MODE" -eq 1 \]; then\s+'
+            r'phase_skip "docker stack up"',
+            "--fast must not start the application Docker stack",
+        )
+        self.assertRegex(
+            self.content,
+            r'phase_skip "security dast baseline" "--fast"',
+            "--fast must not run live DAST",
+        )
+
+    def test_conflicting_sonarqube_flags_fail_with_usage_status(self):
+        self.assertRegex(
+            self.content,
+            r'--skip-sonar cannot be combined with --with-infra or --require-sonar',
+        )
+        self.assertRegex(
+            self.content,
+            r'--skip-sonar cannot be combined[\s\S]{0,300}exit 2',
+            "conflicting quality-gate flags must fail before executing phases",
+        )
+
+    def test_help_lists_every_option(self):
+        result = subprocess.run(
+            ["bash", SCRIPT_PATH, "--help"], capture_output=True, text=True, check=False
+        )
+        self.assertEqual(result.returncode, 0)
+        for option in ("--with-infra", "--require-sonar", "--skip-sonar", "--fast", "--fix"):
+            self.assertIn(option, result.stdout, f"--help must document {option}")
 
 
 if __name__ == "__main__":
