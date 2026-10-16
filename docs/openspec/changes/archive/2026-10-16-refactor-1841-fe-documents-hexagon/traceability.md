@@ -35,8 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Document hooks leave the eslint baseline | document use cases / architecture-boundaries | pending |
-| REST behaviour unchanged | document use cases / architecture-boundaries | pending |
+| Document hooks leave the eslint baseline | document use cases / architecture-boundaries | passing |
+| REST behaviour unchanged | document use cases / architecture-boundaries | passing |
 
 ## Permanent documentation updated
 

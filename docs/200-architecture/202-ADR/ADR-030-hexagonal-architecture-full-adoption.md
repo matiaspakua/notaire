@@ -852,6 +852,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   (`useManagements`, search, summary) and managements pages leave the eslint
   baseline (suppressions shrink by eight).
 
+- **Frontend documents (#1841):** `core/submitted-document`, `core/document-reentry`,
+  `core/external-entity-document` (+ HTTP adapters); document hooks leave the
+  eslint baseline (suppressions shrink by eight).
+
 
 ## Options considered
 
