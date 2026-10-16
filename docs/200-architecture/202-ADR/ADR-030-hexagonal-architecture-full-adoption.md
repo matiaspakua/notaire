@@ -111,7 +111,6 @@ document, budget template), (b) users and roles, together with #1683, (c) the 14
 extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
 
 ## Slice log (what each slice taught)
-
 - **Slice 1, identification types (#1700):** the first strict-form slice, reference implementation of the
   conventions above.
   - The legacy JPA entity stays in `business` while other aggregates (Person, Procedure, DeedManagement)
@@ -129,6 +128,8 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   - Behaviour note: a delete that fails for a reason other than a foreign key violation now answers 500 instead of
     409, which is the accurate status.
 
+
+
 - **Slice 2, property (#1702):** replaced a fake hexagon. `PropertyUseCase`, `PropertyService` and
   `PropertyRepositoryPort` were pass-through wrappers over the JPA entity and nothing called the use case, because
   the controller injected the repository. Lessons:
@@ -141,6 +142,8 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
     it was accepted deliberately, as a correction, and called out in the PR.
   - The HTTP error mapping of a failed create (`ErrorResponses.createFailed`) stays in the controller for now;
     removing the try/catch is the separate #579 work.
+
+
 
 - **Slice 3, folio types (#1703):** the first catalog with an edit lock and optimistic locking.
   - Domain exceptions can share a base class (`FolioTypeException`) so the controller's remaining ad-hoc catch can
@@ -159,6 +162,8 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   - Lesson on process: read build exit codes and fresh log summaries, not `surefire-reports`, which keeps stale
     files from earlier runs when test compilation fails.
 
+
+
 - **Slice 4, document types (#1705):** third catalog on the locked-when-in-use shape; usage spans **two** tables
   (procedure templates and submitted documents).
   - More fields than folio (`expires`, `dueDays`, `deliveredBy`, `enabled`, `returned`); create defaults for the
@@ -173,6 +178,8 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   - Legacy `business.DocumentType` stays for submitted documents, case summary, reports, reentry and
     required-documentation services.
 
+
+
 - **Slice 5, management status (#1719):** fourth catalog on the locked-when-in-use shape; usage is **one** table
   (deed managements). Fields are only `name` and `notes`.
   - Explicit version check in the use case is the same **deliberate correction** as document types: the legacy
@@ -180,6 +187,8 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   - Shared lock/in-use rule now exists four times (identification, folio, document, management status). Extract
     is a follow-up after this green merge; do not diverge the shape in the meantime.
   - Legacy `business.ManagementStatus` stays for deed management, history and workflow consumers.
+
+
 
 - **Extract, shared catalog lock (#1722):** after four green catalogs, folio / document / management status
   `update` and `delete` call `application.usecase.catalog.CatalogLockSupport`. Domain exception types and
@@ -189,10 +198,14 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   - Characterization suites for folio, document, management status and identification remain the HTTP contract;
     no status or body drift.
 
+
+
 - **Submitted document (#1726):** instance aggregate (not a catalog). Controller was repo-only; now
   ports-only with domain `SubmittedDocument`, due inheritance in the use case, and a thin
   `ProcedureLookupPort`. Legacy `business.SubmittedDocument` remains for reports / external-entity /
   other consumers.
+
+
 
 - **Folio instance (#1727):** instance aggregate (folio types already clean in #1703). Controller was the
   largest folio R1 hotspot (~7 edges); now ports-only with domain `Folio`, Utilizado lock and deed-link
@@ -200,21 +213,29 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `FolioRepositoryPort` remains for AuxiliaryProtocol `startDeed`; available-auxiliary listing goes
   through the domain catalog so `FolioResponse` stays domain-only.
 
+
+
 - **Workflow definition (#1728):** catalog-like aggregate (CU70). Controller was repo-only (~4 R1 edges,
   including an unused transition repository injection); now ports-only with domain `WorkflowDefinition`,
   delete-guard when nodes exist in the use case, and `WorkflowDefinitionCatalogPort`. Legacy
   `WorkflowDefinitionRepositoryPort` remains for other consumers. Sibling node/transition slices stay
   separate (#1729 / #1730).
 
+
+
 - **Workflow node (#1729):** largest remaining workflow R1 hotspot (~6 edges). Controller was repo-only;
   now ports-only with domain `WorkflowNode` / `WorkflowNodeKind`, delete-guard when transitions exist,
   and `WorkflowNodeCatalogPort`. Reuses `WorkflowDefinitionCatalogPort` and `ManagementStatusCatalogPort`
   for create lookups. Legacy `WorkflowNodeRepositoryPort` remains for other consumers.
 
+
+
 - **Workflow transition (#1730):** last workflow-trio R1 hotspot (~4 edges). Controller was repo-only;
   now ports-only with domain `WorkflowTransition`, and `WorkflowTransitionCatalogPort`. Reuses
   `WorkflowDefinitionCatalogPort` and `WorkflowNodeCatalogPort` for create/update lookups. Legacy
   `WorkflowTransitionRepositoryPort` remains for other consumers.
+
+
 
 - **Users + roles (#1731):** security-sensitive dual-controller slice (~4 R1 edges each). Controllers
   were repo-only; now ports-only with domain `User` / `Role`, catalog ports, and `PasswordHasherPort`
@@ -222,35 +243,51 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   HTTP adapter. Role `modules` are stored/returned as today; server-side grant enforcement is fenced
   for sibling [#1683](https://github.com/matiaspakua/notaire/issues/1683). Legacy repository ports remain.
 
+
+
 - **Frontend first catalog — identification types (#1732):** first concrete FE hexagon after the #1696
   lint ratchet. `core/identification-type` (domain + gateway port + use cases), `adapters/http/identification-type`,
   and `composition/identification-type` wire the catalog; hooks and the admin page no longer import
   `api-client` (eslint suppressions shrink by two). `ApiError` moved to `lib/api-error` so UI can keep
   HTTP-status handling without importing the client. Other FE catalogs remain on the suppressions baseline.
 
+
+
 - **Frontend second catalog — management statuses (#1769):** mirrors backend-clean management status
   (#1719) into `core/management-status`, `adapters/http/management-status`, and `composition/management-status`.
   Admin page and `useManagementStatuses` no longer import `api-client` (eslint suppressions shrink by two).
+
+
 
 - **Frontend templates admin (#1788):** `core/procedure-template`, `core/budget-template`,
   `core/document-cost-template`, HTTP adapters, and composition. Templates page and
   `useProcedureTemplate` no longer import `api-client` (eslint suppressions shrink by three).
 
+
+
 - **Frontend third catalog — document types (#1777):** `core/document-type`, `adapters/http/document-type`,
   and `composition/document-type`. Documents admin page and `useDocuments` no longer import `api-client`
   (eslint suppressions shrink by two).
+
+
 
 - **Frontend fourth catalog — concepts (#1781):** `core/concept`, `adapters/http/concept`, and
   `composition/concept`. Concepts admin page and `useConcepts` no longer import `api-client`
   (eslint suppressions shrink by two).
 
+
+
 - **Frontend folios admin (#1785):** `core/folio-type` + `core/folio`, HTTP adapters, and composition
   roots. The mixed folios administration page (types + instances + available notaries) no longer
   imports `api-client` (eslint suppressions shrink by one).
 
+
+
 - **Workflow validation (#1770):** last repo-only web controller after the workflow trio. Controller
   now calls `ValidateWorkflowUseCase` only; graph load uses `Workflow*CatalogPort`; validation runs on
   domain `WorkflowNode` / `WorkflowTransition`. ArchUnit R1 clears its three repository edges.
+
+
 
 - **Management mixed controller (#1772):** largest remaining R1 hotspot (~17 edges plus
   `TransitionManagementWebMapper`). Controller and transition web mapper are ports-only via
@@ -258,32 +295,53 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   (`ManagementOpsAdapter`). Application services stay free of new R2 entity/repository edges;
   entity access stays in the outbound adapter. Domain `DeedManagement` extraction remains deferred.
 
+
+
 - **History ports-only (#1775):** next mixed/repo-like R1 hotspot after Management. `HistoryController`
   calls `QueryHistoriesUseCase` / `ManageHistoriesUseCase` only; persistence and CU13 chronological order
   live behind `HistoryOpsPort`. ArchUnit R1 clears its six baseline edges. REST `/api/v1/history` unchanged.
+
+
 
 - **ProcedureType ports-only (#1791):** first Procedure* R1 hotspot (~4 edges). `ProcedureTypeController`
   calls `QueryProcedureTypesUseCase` / `ManageProcedureTypesUseCase` only; CRUD, in-use, and CU83 workflow
   assignment live behind `ProcedureTypeOpsPort`. ArchUnit R1 clears its four baseline edges.
 
+
+
 - **Copy ports-only (#1779):** mid-size mixed R1 hotspot (~5 edges). `CopyController` calls
   `QueryCopiesUseCase` / `ManageCopiesUseCase` only; person/testimony FK resolution and CU87 conflict
   live behind `CopyOpsPort`. ArchUnit R1 clears its five baseline edges. REST `/api/v1/copies` unchanged.
+
+
 
 - **Frontend procedures admin (#1796):** `core/procedure-type`, `adapters/http/procedure-type`, and
   `composition/procedure-type`. Procedures admin page and `useProcedureTypes` no longer import
   `api-client` (eslint suppressions shrink; procedure-template remains on #1788).
 
+
+
 - **Testimony ports-only (#1783):** mid-size mixed R1 hotspot (~5 edges). `TestimonyController` calls
   `QueryTestimoniesUseCase` / `ManageTestimoniesUseCase` only; CRUD, generate/verify, and #1364 in-use
   delete live behind `TestimonyOpsPort`. ArchUnit R1 clears its five baseline edges.
 
+
+
 - **Procedure ports-only (#1801):** Procedure* aggregate R1 hotspot (~4 edges). `ProcedureController`
   calls `QueryProceduresUseCase` / `ManageProceduresUseCase` only; association hydration (#981) and
   persistence live behind `ProcedureOpsPort`. ArchUnit R1 clears its four baseline edges.
+
+
 - **ProcedureFolder ports-only (#1795):** smallest Procedure* R1 hotspot (1 edge). `ProcedureFolderController`
   calls `QueryProcedureFoldersUseCase` / `ManageProcedureFoldersUseCase` only; entity access and DTO
   mapping live behind `ProcedureFolderOpsPort`. ArchUnit R1 clears its ProcedureFolder entity edge.
+
+
+
+- **Frontend workflows admin (#1792):** `core/workflow`, `adapters/http/workflow`, and
+  `composition/workflow`. Workflows list/editor pages, `useWorkflow`, and `useManagementWorkflow`
+  no longer import `api-client` (eslint suppressions shrink by four).
+
 
 - **DocumentCostTemplate ports-only (#1821):** CU27/CU39 mixed controller R1 hotspot (2 edges).
   `DocumentCostTemplateController` calls Query/Manage inbound ports only; `DocumentCostTemplateOpsAdapter`
