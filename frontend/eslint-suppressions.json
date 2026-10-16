@@ -9,11 +9,6 @@
       "count": 1
     }
   },
-  "src/app/dashboard/payments/page.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/app/dashboard/protocol/auxiliary/page.tsx": {
     "no-restricted-imports": {
       "count": 1
@@ -115,11 +110,6 @@
     }
   },
   "src/hooks/useManagements.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/usePayments.ts": {
     "no-restricted-imports": {
       "count": 1
     }

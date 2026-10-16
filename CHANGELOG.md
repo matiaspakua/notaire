@@ -14,6 +14,7 @@ Hexagonal architecture epic [#1693](https://github.com/matiaspakua/notaire/issue
 * **arch:** shrink ArchUnit R1 wire DTOs (`ItemResponse` + support `*Ref` / `ErrorResponses`) ([#1826](https://github.com/matiaspakua/notaire/issues/1826)) ([#1829](https://github.com/matiaspakua/notaire/pull/1829))
 * **arch:** frontend budgets into core + adapters ([#1827](https://github.com/matiaspakua/notaire/issues/1827)) ([#1830](https://github.com/matiaspakua/notaire/pull/1830))
 * **arch:** frontend deeds into core + adapters ([#1831](https://github.com/matiaspakua/notaire/issues/1831))
+* **arch:** frontend payments into core + adapters ([#1832](https://github.com/matiaspakua/notaire/issues/1832))
 
 ## [0.2.3](https://github.com/matiaspakua/notaire/compare/v0.2.2...v0.2.3) (2026-10-16)
 

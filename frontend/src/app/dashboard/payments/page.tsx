@@ -16,7 +16,6 @@ import { usePayments, usePaymentsByBudget, usePaymentsByDate, useBudgetBalance, 
 import { useBudgetSummary } from "@/hooks/useBudgets";
 import { BudgetPicker } from "@/components/shared/BudgetPicker";
 import { usePaymentReceipt } from "@/hooks/useReports";
-import { ApiError } from "@/lib/api-client";
 import { presentMutationError } from "@/lib/mutation-error";
 import type { Payment } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
@@ -24,6 +23,15 @@ import { toDateInputValue } from "@/lib/dates";
 import { useFormat } from "@/hooks/useFormat";
 
 const PAYMENT_FIELD_NAMES = ["amount", "date", "paymentMethod", "notes", "idBudget"];
+
+/** Duck-type HTTP status without importing api-client (ADR-030). */
+function httpStatus(err: unknown): number | undefined {
+  if (typeof err === "object" && err !== null && "status" in err) {
+    const status = (err as { status: unknown }).status;
+    return typeof status === "number" ? status : undefined;
+  }
+  return undefined;
+}
 
 const EMPTY: Partial<Payment> = { idBudget: undefined, amount: undefined, date: "", paymentMethod: "", notes: "" };
 
@@ -141,8 +149,7 @@ function PaymentsPageContent() {
       setModalOpen(false);
     } catch (err) {
       presentMutationError(err, {
-        fallback:
-          err instanceof ApiError && err.status === 409 ? t("saldoExcedido") : t("errorSave"),
+        fallback: httpStatus(err) === 409 ? t("saldoExcedido") : t("errorSave"),
         fieldNames: PAYMENT_FIELD_NAMES,
         setFieldErrors,
       });
