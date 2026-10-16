@@ -1,12 +1,12 @@
 package com.licensis.notaire.adapter.out.persistence.notebook;
 
 import com.licensis.notaire.application.port.out.folio.FolioCatalogPort;
-import com.licensis.notaire.application.port.out.folio.FolioRepositoryPort;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.repository.DeedRepository;
+import com.licensis.notaire.repository.FolioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,18 +14,19 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Creates procedures in the auxiliary protocol (CU81). Outbound persistence helper (issue #1880).
+ * Creates procedures in the auxiliary protocol (CU81). Outbound persistence helper
+ * (issues #1880 / #1903 — Spring Data FolioRepository locally; no entity-speaking application port).
  */
 @Service
 @Transactional
 public class AuxiliaryProtocolService {
 
-    private final FolioRepositoryPort folioRepository;
+    private final FolioRepository folioRepository;
     private final FolioCatalogPort folioCatalog;
     private final DeedRepository deedRepository;
 
     public AuxiliaryProtocolService(
-            FolioRepositoryPort folioRepository,
+            FolioRepository folioRepository,
             FolioCatalogPort folioCatalog,
             DeedRepository deedRepository) {
         this.folioRepository = folioRepository;
