@@ -55,8 +55,9 @@ public class ConceptOpsAdapter implements ConceptOpsPort {
     }
 
     @Override
-    @Transactional
     public SaveResult create(DtoConcept dto) {
+        // No outer @Transactional: catching failures into SaveResult.Failed must not mark the
+        // Spring TX rollback-only (UnexpectedRollbackException → 500 instead of 400).
         try {
             if (dto.getEnabled() == null) {
                 dto.setEnabled(true);
@@ -70,7 +71,6 @@ public class ConceptOpsAdapter implements ConceptOpsPort {
     }
 
     @Override
-    @Transactional
     public SaveResult update(Integer id, DtoConcept dto) {
         try {
             var existing = service.findById(id);
@@ -94,7 +94,6 @@ public class ConceptOpsAdapter implements ConceptOpsPort {
     }
 
     @Override
-    @Transactional
     public DeleteResult delete(Integer id) {
         try {
             if (service.findById(id).isEmpty()) {
