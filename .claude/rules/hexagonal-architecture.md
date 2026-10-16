@@ -43,9 +43,19 @@ adapter.out.* ->  application (port.out)  ->  domain
    smaller baselines. Frontend: the same with the lint baseline (#1696).
 7. `mvn verify -pl backend-api` (JaCoCo gate), OpenAPI export unchanged, Playwright for any UI change.
 
+## R2 shrink slices (ArchUnit application-layer ratchet, epic #1693)
+
+- **One domain per PR** (one `application.usecase.<slice>` / port family). Hold the next domain until merge.
+- Ports and use cases: **domain views only** — no JPA entity, no Spring Data `Page`/`Pageable`, no `business.*` on
+  port signatures; map in `adapter.out.persistence.<slice>`.
+- Commit the **shrunk** R2 baseline in the same PR; never raise counts by hand.
+- FE hex suppressions ratchet is **Done** only when `frontend/eslint-suppressions.json` is `{}` (**count 0**).
+- Fleet cadence: `docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md`.
+
 ## Never
 
 - Add a line to a baseline by hand, or `@Suppress` a rule: fix the dependency instead.
 - Keep a legacy class "for now" after its callers are gone.
 - Put a business rule in an adapter, a mapper or a hook.
 - Return a JPA entity, or accept one, in a controller or a port.
+- Mix several R2 domains in one PR, or start the next domain before the current PR merges.
