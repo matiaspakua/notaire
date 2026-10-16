@@ -10,6 +10,10 @@ Normative rules (internal/board-status-label-audit.md + docs/github/README.md):
   R2 OPEN WIP ⇒ Status In Progress ⇔ `in-progress` label; must not be Done
   R3 Blocked via `blocked` label (no Blocked Status column); not Done while OPEN;
      prefer not combining `blocked` + `in-progress`
+  R6 `status:in-review` needs an open linked PR (when the PR count is known)
+  R7 `status:ready` and `status:blocked` are mutually exclusive
+  R8 a `status:ready` issue carries at most one `type:` label
+  Legacy and taxonomy label names are equivalent (#1860, label_taxonomy.py)
   R4 Done / AC met ⇒ no WIP labels; prefer CLOSED + Done
   R5 Do not invent Owner product scope — coherence only
   Fail when drift is detected for items in scope; skip clearly without gh auth
@@ -41,6 +45,9 @@ from dataclasses import dataclass
 from shutil import which
 from typing import Iterable
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from label_taxonomy import expand, type_labels  # noqa: E402
+
 IN_PROGRESS_LABEL = "in-progress"
 BLOCKED_LABEL = "blocked"
 STATUS_TODO = "Todo"
@@ -64,6 +71,7 @@ class BoardItem:
     labels: frozenset[str]
     title: str = ""
     content_type: str = "Issue"
+    open_prs: int | None = None  # R6 only when known
 
 
 def evaluate_item(item: BoardItem) -> list[str]:
@@ -74,9 +82,20 @@ def evaluate_item(item: BoardItem) -> list[str]:
     errors: list[str] = []
     state = (item.state or "").upper()
     status = item.status
-    labels = {label.lower() for label in item.labels}
+    # #1860: legacy and taxonomy names (status:in-progress, status:blocked) both count.
+    labels = {label.lower() for label in expand(item.labels)}
     has_wip = IN_PROGRESS_LABEL in labels
     has_blocked = BLOCKED_LABEL in labels
+    has_ready = "status:ready" in labels
+    if state == "OPEN":
+        if "status:in-review" in labels and item.open_prs == 0:
+            errors.append("R6: `status:in-review` (in-review) requires an open linked PR")
+        if has_ready and has_blocked:
+            errors.append("R7: `status:ready` and `status:blocked` are mutually exclusive")
+        if has_ready and len(type_labels(item.labels)) > 1:
+            errors.append(
+                f"R8: a ready issue carries at most one type label (found {sorted(type_labels(item.labels))})"
+            )
 
     if state == "CLOSED":
         if status != STATUS_DONE:

@@ -244,6 +244,8 @@ def main(argv: list[str] | None = None) -> int:
 
     repo_root = Path(git(["rev-parse", "--show-toplevel"]).strip())
     labels = {part.strip() for part in os.environ.get("PR_LABELS", "").split(",") if part.strip()}
+    if "process:sdlc-exception" in labels:  # #1860 taxonomy name
+        labels.add("sdlc-exception")
     skip_inventory = (
         args.skip_inventory
         or os.environ.get("SKIP_INVENTORY", "") == "1"
