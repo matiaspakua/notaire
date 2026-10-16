@@ -1,7 +1,6 @@
 package com.licensis.notaire.application.usecase.deed;
 
 import com.licensis.notaire.application.port.in.deed.ValidateDeedNumberingUseCase;
-import com.licensis.notaire.application.port.out.person.PersonOpsPort.PersonView;
 import com.licensis.notaire.domain.deed.DeedNumberingValidationResult;
 import com.licensis.notaire.exception.DuplicateDeedNumberException;
 import com.licensis.notaire.exception.UnjustifiedNumberingGapException;
@@ -108,36 +107,9 @@ public class DeedService {
     }
 
     @Transactional(readOnly = true)
-    public List<PersonView> findAvailableNotaries() {
+    public List<Person> findAvailableNotaries() {
         logger.debug("Finding all available notaries");
-        return personRepository.findAllNotaries().stream().map(this::toPersonView).toList();
-    }
-
-    /**
-     * Maps a persistence person to the person-ops view shape for the available-notaries wire DTO.
-     * Identification type id is omitted here so this use-case stays free of {@code IdentificationType}
-     * (full person mapping lives on {@code PersonOpsAdapter}).
-     */
-    private PersonView toPersonView(Person person) {
-        return new PersonView(
-                person.getPersonId(),
-                person.getFirstName(),
-                person.getLastName(),
-                person.getIdentificationNumber(),
-                person.getIsClient(),
-                person.getNationality(),
-                person.getTaxId(),
-                person.getSex(),
-                person.getBirthDate(),
-                person.getMaritalStatus(),
-                person.getMarriageCount(),
-                person.getOccupation(),
-                person.getAddress(),
-                person.getPhone(),
-                person.getEmail(),
-                person.getNotaryRegistrationNumber(),
-                null,
-                person.getVersion());
+        return personRepository.findAllNotaries();
     }
 
     @Transactional(readOnly = true)

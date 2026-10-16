@@ -139,7 +139,7 @@ class DeedServiceTest {
     class FindAvailableNotaries {
 
         @Test
-        @DisplayName("Should return all notaries from repository as person views")
+        @DisplayName("Should return all notaries from repository")
         void shouldReturnAllNotaries() {
             Person notary = new Person();
             notary.setPersonId(1);
@@ -148,11 +148,11 @@ class DeedServiceTest {
             notary.setNotaryRegistrationNumber(1001);
             when(personRepository.findAllNotaries()).thenReturn(List.of(notary));
 
-            var result = deedService.findAvailableNotaries();
+            List<Person> result = deedService.findAvailableNotaries();
 
             assertThat(result).hasSize(1);
-            assertThat(result.get(0).notaryRegistrationNumber()).isEqualTo(1001);
-            assertThat(result.get(0).firstName()).isEqualTo("Jane");
+            assertThat(result.get(0).getNotaryRegistrationNumber()).isEqualTo(1001);
+            assertThat(result.get(0).getFirstName()).isEqualTo("Jane");
         }
 
         @Test
@@ -160,7 +160,7 @@ class DeedServiceTest {
         void shouldReturnEmptyListWhenNoNotaries() {
             when(personRepository.findAllNotaries()).thenReturn(Collections.emptyList());
 
-            var result = deedService.findAvailableNotaries();
+            List<Person> result = deedService.findAvailableNotaries();
 
             assertThat(result).isEmpty();
         }
