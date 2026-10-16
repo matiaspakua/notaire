@@ -9,16 +9,6 @@
       "count": 1
     }
   },
-  "src/app/dashboard/administration/procedures/RequiredDocumentsDialog.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/app/dashboard/administration/procedures/page.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/app/dashboard/administration/templates/page.tsx": {
     "no-restricted-imports": {
       "count": 1
@@ -220,16 +210,6 @@
     }
   },
   "src/hooks/useProcedureTemplate.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useProcedureTypes.test.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useProcedureTypes.ts": {
     "no-restricted-imports": {
       "count": 1
     }

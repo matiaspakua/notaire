@@ -11,9 +11,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
-import { useQuery } from "@tanstack/react-query";
-import { apiGet } from "@/lib/api-client";
-import { useProcedureTypes, useCreateProcedureType, useUpdateProcedureType, useDeleteProcedureType, useAssignWorkflowToProcedureType } from "@/hooks/useProcedureTypes";
+import {
+  useProcedureTypes,
+  useSearchProcedureTypes,
+  useCreateProcedureType,
+  useUpdateProcedureType,
+  useDeleteProcedureType,
+  useAssignWorkflowToProcedureType,
+  useProcedureTypeInUse,
+} from "@/hooks/useProcedureTypes";
 import { useWorkflowDefinitions } from "@/hooks/useWorkflow";
 import { extractApiError } from "@/lib/utils";
 import type { ProcedureType } from "@/types";
@@ -41,6 +47,7 @@ function ProceduresList() {
   const updateMutation = useUpdateProcedureType();
   const deleteMutation = useDeleteProcedureType();
   const assignWorkflowMutation = useAssignWorkflowToProcedureType();
+  const inUse = useProcedureTypeInUse();
   const { data: workflows = [] } = useWorkflowDefinitions();
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -58,13 +65,7 @@ function ProceduresList() {
   const deepLinkTarget = !deepLinkDismissed && deepLinkId ? (data.find((p) => p.idProcedureType === deepLinkId) ?? null) : null;
   const dialogFor = checklistFor ?? deepLinkTarget;
 
-  const { data: filtered = data } = useQuery({
-    queryKey: ["procedureTypes", "search", search, data],
-    queryFn: () =>
-      search.trim()
-        ? apiGet<ProcedureType[]>(`/procedure-types/search?name=${encodeURIComponent(search.trim())}`)
-        : Promise.resolve(data),
-  });
+  const { data: filtered = data } = useSearchProcedureTypes(search, data);
 
   function openCreate() { setEditing(EMPTY); setIsEditMode(false); setSelectedWorkflowId(""); setModalOpen(true); }
   function openEdit(item: ProcedureType) { setEditing(item); setIsEditMode(true); setSelectedWorkflowId(item.workflowDefinitionId ? String(item.workflowDefinitionId) : ""); setModalOpen(true); }
@@ -97,8 +98,7 @@ function ProceduresList() {
 
   async function handleDeleteClick(item: ProcedureType) {
     try {
-      const { inUse } = await apiGet<{ inUse: boolean }>(`/procedure-types/${item.idProcedureType}/in-use`);
-      if (inUse) {
+      if (await inUse.check(item.idProcedureType!)) {
         toast.warning(t("inUseCannotDelete"));
         return;
       }
