@@ -1,20 +1,9 @@
 package com.licensis.notaire.adapter.in.web.copy;
 
-import com.licensis.notaire.application.usecase.copy.CopyService;
-import com.licensis.notaire.business.Copy;
-import com.licensis.notaire.business.Person;
-import com.licensis.notaire.business.Testimony;
-import com.licensis.notaire.repository.PersonRepository;
-import com.licensis.notaire.repository.TestimonyRepository;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,18 +14,30 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import com.licensis.notaire.application.port.in.copy.ManageCopiesUseCase;
+import com.licensis.notaire.application.port.in.copy.QueryCopiesUseCase;
+import com.licensis.notaire.application.port.out.copy.CopyOpsPort.CopyCommand;
+import com.licensis.notaire.application.port.out.copy.CopyOpsPort.CopyView;
+import com.licensis.notaire.application.port.out.copy.CopyOpsPort.DeleteResult;
+import com.licensis.notaire.application.port.out.copy.CopyOpsPort.SaveResult;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
+/**
+ * Copies. Calls inbound ports only; orchestration and persistence live in the use cases
+ * (issue #1779).
+ */
 @RestController
 @RequestMapping("/api/v1/copies")
 @Tag(name = "Copy", description = "API for managing copies")
 public class CopyController {
-
-    private static final Logger log = LoggerFactory.getLogger(CopyController.class);
 
     /**
      * Create and update body. The copy number and print date are NOT NULL columns and PUT
@@ -62,132 +63,100 @@ public class CopyController {
             Integer testimonyId,
             int version) {}
 
-    private final CopyService service;
-    private final PersonRepository personRepository;
-    private final TestimonyRepository testimonyRepository;
+    private final QueryCopiesUseCase queryCopies;
+    private final ManageCopiesUseCase manageCopies;
 
-    public CopyController(CopyService service, PersonRepository personRepository,
-            TestimonyRepository testimonyRepository) {
-        this.service = service;
-        this.personRepository = personRepository;
-        this.testimonyRepository = testimonyRepository;
-    }
-
-    private CopyResponse toResponse(Copy copy) {
-        Integer personId = copy.getFkIdPerson() != null ? copy.getFkIdPerson().getPersonId() : null;
-        Integer testimonyId = copy.getFkIdTestimony() != null ? copy.getFkIdTestimony().getIdTestimony() : null;
-        return new CopyResponse(
-                copy.getIdCopy(),
-                copy.getNumber(),
-                copy.getDatePrinting(),
-                copy.getDateWithdrawal(),
-                copy.getNotes(),
-                personId,
-                testimonyId,
-                copy.getVersion());
-    }
-
-    private void applyRequest(Copy copy, CopyRequest request) {
-        if (request.number() != null) {
-            copy.setNumber(request.number());
-        }
-        copy.setDatePrinting(request.datePrinting());
-        copy.setDateWithdrawal(request.dateWithdrawal());
-        copy.setNotes(request.notes());
-        if (request.personId() != null) {
-            Person person = personRepository.findById(request.personId()).orElse(null);
-            copy.setFkIdPerson(person);
-        } else {
-            copy.setFkIdPerson(null);
-        }
-        if (request.testimonyId() != null) {
-            Testimony testimony = testimonyRepository.findById(request.testimonyId()).orElse(null);
-            copy.setFkIdTestimony(testimony);
-        } else {
-            copy.setFkIdTestimony(null);
-        }
+    public CopyController(QueryCopiesUseCase queryCopies, ManageCopiesUseCase manageCopies) {
+        this.queryCopies = queryCopies;
+        this.manageCopies = manageCopies;
     }
 
     @GetMapping
     @Operation(summary = "Get all copies")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<CopyResponse>> getAll() {
-        return ResponseEntity.ok(service.findAll().stream().map(this::toResponse).toList());
+        return ResponseEntity.ok(queryCopies.findAll().stream().map(this::toResponse).toList());
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "Not found")
-})
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @GetMapping("/{id}")
     @Operation(summary = "Get copy by ID")
-    @Transactional(readOnly = true)
     public ResponseEntity<CopyResponse> getById(@PathVariable Integer id) {
-        return service.findById(id)
+        return queryCopies.findById(id)
                 .map(this::toResponse)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Created"),
-    @ApiResponse(responseCode = "400", description = "Invalid request"),
-    @ApiResponse(responseCode = "409", description = "Conflict")
-})
+            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "409", description = "Conflict")
+    })
     @PostMapping
     @Operation(summary = "Create copy")
     public ResponseEntity<Object> create(@Valid @RequestBody CopyRequest request) {
-        if (request.testimonyId() != null
-                && !service.canCreateCopyForTestimony(request.testimonyId())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "The testimony already has a registered movement and does not accept new copies."));
-        }
-        try {
-            Copy entity = new Copy();
-            applyRequest(entity, request);
-            entity = service.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(entity));
-        } catch (Exception e) {
-            log.error("Failed to create copy", e);
-            return ResponseEntity.internalServerError().build();
-        }
+        return switch (manageCopies.create(toCommand(request))) {
+            case SaveResult.Created created -> ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created.view()));
+            case SaveResult.Conflict conflict -> ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", conflict.message()));
+            case SaveResult.ServerError ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.Updated ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
+        };
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "Not found")
-})
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @PutMapping("/{id}")
     @Operation(summary = "Update copy")
     public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody CopyRequest request) {
-        return service.findById(id).map(existing -> {
-            try {
-                applyRequest(existing, request);
-                service.save(existing);
-                return ResponseEntity.ok().<Void>build();
-            } catch (Exception e) {
-                log.error("Failed to update copy id {}", id, e);
-                return ResponseEntity.internalServerError().<Void>build();
-            }
-        }).orElse(ResponseEntity.notFound().build());
+        return switch (manageCopies.update(id, toCommand(request))) {
+            case SaveResult.Updated ignored -> ResponseEntity.ok().build();
+            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
+            case SaveResult.ServerError ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.Created ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.Conflict ignored -> ResponseEntity.status(HttpStatus.CONFLICT).build();
+        };
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Deleted"),
-    @ApiResponse(responseCode = "404", description = "Not found")
-})
+            @ApiResponse(responseCode = "204", description = "Deleted"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete copy")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        if (!service.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        try {
-            service.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            log.error("Failed to delete copy id {}", id, e);
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+        return switch (manageCopies.delete(id)) {
+            case DeleteResult.Deleted ignored -> ResponseEntity.noContent().build();
+            case DeleteResult.NotFound ignored -> ResponseEntity.notFound().build();
+            case DeleteResult.Conflict ignored -> ResponseEntity.status(HttpStatus.CONFLICT).build();
+        };
+    }
+
+    private CopyResponse toResponse(CopyView view) {
+        return new CopyResponse(
+                view.idCopy(),
+                view.number(),
+                view.datePrinting(),
+                view.dateWithdrawal(),
+                view.notes(),
+                view.personId(),
+                view.testimonyId(),
+                view.version());
+    }
+
+    private static CopyCommand toCommand(CopyRequest request) {
+        return new CopyCommand(
+                request.number(),
+                request.datePrinting(),
+                request.dateWithdrawal(),
+                request.notes(),
+                request.personId(),
+                request.testimonyId());
     }
 }
