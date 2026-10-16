@@ -169,6 +169,38 @@ def target_for(issue: dict) -> str | None:
     return classify_closed(closed_at, current is not None)
 
 
+def retired_milestones(rows: list[dict]) -> list[dict]:
+    """Old titles whose RENAMES target already exists: merged away, left behind (#1847)."""
+    titles = {row["title"] for row in rows}
+    return [row for row in rows if row["title"] in RENAMES and RENAMES[row["title"]] in titles]
+
+
+def stale_views(names: list[str]) -> list[str]:
+    """Views outside VIEW_CONTRACTS, except an alias whose new view is still to be created."""
+    present = set(names)
+    alias_of = {old: new for new, old in VIEW_ALIASES.items()}
+    return [
+        name
+        for name in names
+        if name not in VIEW_CONTRACTS and not (name in alias_of and alias_of[name] not in present)
+    ]
+
+
+def retire_milestones(gh: GitHub, apply: bool) -> int:
+    """Delete empty merged-away milestones; report non-empty ones (their issues move first)."""
+    _, rows = gh.request("GET", f"/repos/{REPO}/milestones?state=all&per_page=100")
+    left = 0
+    for row in retired_milestones(rows if isinstance(rows, list) else []):
+        if row["open_issues"] + row["closed_issues"]:
+            print(f"retired milestone {row['number']} {row['title']!r} still has issues")
+            left += 1
+            continue
+        print(f"delete empty retired milestone {row['number']}: {row['title']}")
+        if apply:
+            gh.request("DELETE", f"/repos/{REPO}/milestones/{row['number']}")
+    return left
+
+
 def ensure_milestones(gh: GitHub, apply: bool) -> dict[str, dict]:
     status, rows = gh.request("GET", f"/repos/{REPO}/milestones?state=all&per_page=100")
     if status != 200 or not isinstance(rows, list):
@@ -556,6 +588,9 @@ def check_views(gh: GitHub) -> int:
             if visible != VIEW_FIELDS[name]:
                 print(f"project view {name} fields are {visible!r}, wants {VIEW_FIELDS[name]!r}")
                 bad += 1
+    for name in stale_views(list(by_name)):
+        print(f"project view {name} is not in the view contract (delete it)")
+        bad += 1
     roadmap = by_name.get("Release roadmap")
     if roadmap and [node["name"] for node in roadmap["groupByFields"]["nodes"]] != ["Milestone"]:
         print("project view Release roadmap must be grouped by Milestone")
@@ -586,6 +621,10 @@ def check(gh: GitHub, issues: list[dict]) -> int:
         print(f"issue #{issue['number']} is missing from Project #1")
     bad += len(missing_items)
     bad += check_views(gh)
+    _, rows = gh.request("GET", f"/repos/{REPO}/milestones?state=all&per_page=100")
+    for row in retired_milestones(rows if isinstance(rows, list) else []):
+        print(f"retired milestone {row['number']} {row['title']!r} still exists")
+        bad += 1
     print(f"mismatches: {bad}")
     return 1 if bad else 0
 
@@ -612,6 +651,7 @@ def main() -> int:
         print(f"{count:4}  {key}")
     print(f"moves: {sum(moves.values())}")
     fix_labels(gh, issues, apply)
+    retire_milestones(gh, apply)
     if not apply:
         return 0
     close_empty_history(gh, True)

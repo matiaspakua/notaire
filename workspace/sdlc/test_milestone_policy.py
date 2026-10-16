@@ -35,7 +35,14 @@ from milestone_policy import (
     shipped_train,
     suggested_priority,
 )
-from apply_milestone_policy import create_body, milestone_payload, missing_project_issues, target_for
+from apply_milestone_policy import (
+    create_body,
+    milestone_payload,
+    missing_project_issues,
+    retired_milestones,
+    stale_views,
+    target_for,
+)
 
 
 class ClassifyOpenTests(unittest.TestCase):
@@ -314,6 +321,32 @@ class CreateBodyTests(unittest.TestCase):
         self.assertEqual(body["state"], "open")
         self.assertEqual(body["due_on"], MILESTONE_DUE[SHIPPED[0]])
         self.assertTrue(all(value is not None for value in body.values()))
+
+
+class ConsolidationTests(unittest.TestCase):
+    """#1847: merged-away milestones and pre-taxonomy views do not linger."""
+
+    def row(self, number, title, open_issues=0, closed_issues=0):
+        return {"number": number, "title": title, "open_issues": open_issues, "closed_issues": closed_issues}
+
+    def test_merged_bucket_is_retired_once_its_target_exists(self):
+        rows = [self.row(12, "H8 · Pre-release hardening (2026-09–2026-10)"),
+                self.row(13, "History · v1.1 priority bucket")]
+        self.assertEqual([r["number"] for r in retired_milestones(rows)], [13])
+
+    def test_bucket_is_not_retired_before_its_target_exists(self):
+        self.assertEqual(retired_milestones([self.row(13, "History · v1.1 priority bucket")]), [])
+
+    def test_policy_milestones_are_never_retired(self):
+        rows = [self.row(n, t) for n, t in enumerate(SCHEDULED, 1)]
+        self.assertEqual(retired_milestones(rows), [])
+
+    def test_views_outside_the_contract_are_stale(self):
+        names = ["Kanban", "Casos de Uso", "RNF", "Catalog", "KANBAN"]
+        self.assertEqual(stale_views(names), ["Casos de Uso", "RNF", "KANBAN"])
+
+    def test_alias_is_not_stale_while_its_new_view_is_missing(self):
+        self.assertEqual(stale_views(["KANBAN", "Requerimientos Func."]), [])
 
 
 class RoadmapContractTests(unittest.TestCase):
