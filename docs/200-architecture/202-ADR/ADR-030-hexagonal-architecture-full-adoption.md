@@ -244,6 +244,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `composition/concept`. Concepts admin page and `useConcepts` no longer import `api-client`
   (eslint suppressions shrink by two).
 
+- **Frontend people list/search (#1823):** `core/person`, `adapters/http/person`, and
+  `composition/person`. `usePeople` and `usePersonSearch` no longer import `api-client`
+  (eslint suppressions shrink by two).
+
 - **Frontend folios admin (#1785):** `core/folio-type` + `core/folio`, HTTP adapters, and composition
   roots. The mixed folios administration page (types + instances + available notaries) no longer
   imports `api-client` (eslint suppressions shrink by one).

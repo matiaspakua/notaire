@@ -184,16 +184,6 @@
       "count": 1
     }
   },
-  "src/hooks/usePeople.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/usePersonSearch.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/hooks/useProcedureTypes.test.tsx": {
     "no-restricted-imports": {
       "count": 1
