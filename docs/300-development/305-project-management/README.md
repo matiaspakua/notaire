@@ -5,7 +5,8 @@ fleet read history, coordinate current work, and select what comes next.
 
 | Start here | Question answered |
 |------------|-------------------|
-| [MILESTONES.md](MILESTONES.md) | Which history cohort or delivery train owns an issue? |
+| [MILESTONE-NOMENCLATURE.md](MILESTONE-NOMENCLATURE.md) | How is a milestone named, and what does each name mean? |
+| [MILESTONES.md](MILESTONES.md) | Which history stage or release train owns an issue? |
 | [ROADMAP.md](ROADMAP.md) | Which GitHub Project view answers history, execution, queue, or triage? |
 | [PARALLEL-AGENTS.md](PARALLEL-AGENTS.md) | May another agent claim this work now? |
 | [LABELS.md](LABELS.md) | Which labels express area, urgency, concern, and workflow? |

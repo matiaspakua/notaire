@@ -1,32 +1,53 @@
 {
-  "productVersion": "0.2.0",
-  "train": "2026-11 · Release blockers",
-  "tag": "v0.2.0",
+  "productVersion": "0.2.3",
+  "train": "v0.2 · Release identity & product forms (2026-10)",
+  "tag": "v0.2.3",
   "components": {
-    "backend": "0.2.0",
-    "frontend": "0.2.0",
-    "databaseSchema": "46"
+    "backend": "0.2.3",
+    "frontend": "0.2.3",
+    "databaseSchema": "52"
   },
   "releases": [
+    {
+      "version": "0.2.3",
+      "date": "2026-10-16",
+      "tag": "v0.2.3",
+      "train": "v0.2 · Release identity & product forms (2026-10)",
+      "url": "https://github.com/matiaspakua/notaire/releases/tag/v0.2.3"
+    },
+    {
+      "version": "0.2.2",
+      "date": "2026-10-15",
+      "tag": "v0.2.2",
+      "train": "v0.2 · Release identity & product forms (2026-10)",
+      "url": "https://github.com/matiaspakua/notaire/releases/tag/v0.2.2"
+    },
+    {
+      "version": "0.2.1",
+      "date": "2026-10-13",
+      "tag": "v0.2.1",
+      "train": "v0.2 · Release identity & product forms (2026-10)",
+      "url": "https://github.com/matiaspakua/notaire/releases/tag/v0.2.1"
+    },
     {
       "version": "0.2.0",
       "date": "2026-10-12",
       "tag": "v0.2.0",
-      "train": "2026-11 · Release blockers",
+      "train": "v0.2 · Release identity & product forms (2026-10)",
       "url": "https://github.com/matiaspakua/notaire/releases/tag/v0.2.0"
     },
     {
       "version": "0.1.2",
       "date": "2026-10-10",
       "tag": "notaire-v0.1.2",
-      "train": "2026-11 · Release blockers",
+      "train": "v0.1 · First release cuts (2026-10)",
       "url": "https://github.com/matiaspakua/notaire/releases/tag/notaire-v0.1.2"
     },
     {
       "version": "0.1.1",
       "date": "2026-10-07",
       "tag": "notaire-v0.1.1",
-      "train": "2026-11 · Release blockers",
+      "train": "v0.1 · First release cuts (2026-10)",
       "url": "https://github.com/matiaspakua/notaire/releases/tag/notaire-v0.1.1"
     }
   ]

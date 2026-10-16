@@ -6,7 +6,7 @@ They are different clocks.
 
 | Clock | Example | Closes when |
 |-------|---------|-------------|
-| Release gate train | `2026-11 · Release blockers` | A person closes the milestone after its exit criteria, not when a tag is pushed |
+| Release train | `v0.3 · Hexagonal core & security (2026-11)` | A person closes the milestone after its exit criteria, not when a tag is pushed |
 | Product semver | `v0.1.2` today; `vX.Y.Z` from the next cut | release-please merges the release PR |
 | Database schema | Flyway `V46` | A migration is applied. The number is not the semver |
 
@@ -56,11 +56,12 @@ Reviewed against the 0.2.0 release-please pull request and the live releases:
 - The database component is `components.database.schemaVersion` (highest
   Flyway `V*`). It is allowed to differ from the semver. It must be updated
   in the same change as a new migration (`python3 workspace/release/product_release.py --write`).
-- `0.x` and `1.0.x` advance gate train `2026-11 · Release blockers`. They do not close it.
-  `v1.0.0` is a human decision when release blockers are closed
-  or explicitly deferred.
-- `1.1.x` advances `2027-01 · Quality & traceability`. Any other minor fails
-  `train_for()` until this file and the function name the new train.
+- Each minor has one train titled `vX.Y · <Theme> (<YYYY-MM>)`; every `vX.Y.z`
+  patch advances it ([MILESTONE-NOMENCLATURE.md](MILESTONE-NOMENCLATURE.md)).
+  `train_for()` matches the `vX.Y · ` prefix and fails closed for a minor
+  with no train. Tags do not close milestones.
+- `v1.0.0` is a human decision once `v0.3`…`v0.6` are closed or explicitly
+  deferred.
 - Tags from the next cut are `vX.Y.Z` (`include-component-in-tag: false`).
   CD still accepts `notaire-v*` so 0.1.1 and 0.1.2 can be republished.
 - A release does not move the board and does not close RF, CU, or RNF anchors.

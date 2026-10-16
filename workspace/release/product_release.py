@@ -8,7 +8,7 @@ A release is one semver tag with three components:
 - database — highest Flyway migration id, recorded beside the tag
 
 Delivery milestones are trains, not tags. ``train_for`` is the only map from
-a product version to a train title in ``MILESTONES.md``.
+a product version to a train title (``MILESTONE-NOMENCLATURE.md``).
 """
 
 from __future__ import annotations
@@ -53,8 +53,17 @@ RELEASE_PLEASE_IDENTITY_PATHS = frozenset(
 )
 UNFILTERED_MAVEN_TOKEN = "@project.version@"
 
-TRAIN_V10 = "2026-11 · Release blockers"
-TRAIN_V11 = "2027-01 · Quality & traceability"
+# Version-first milestones (MILESTONE-NOMENCLATURE.md); kept equal to
+# workspace/sdlc/milestone_policy.py SHIPPED + SCHEDULED by a test.
+RELEASE_TRAINS = (
+    "v0.1 · First release cuts (2026-10)",
+    "v0.2 · Release identity & product forms (2026-10)",
+    "v0.3 · Hexagonal core & security (2026-11)",
+    "v0.4 · Product completeness (2026-12)",
+    "v0.5 · Quality & traceability (2027-01)",
+    "v0.6 · Platform & operability (2027-02)",
+    "v1.0 · GA: legacy-free (2027-03)",
+)
 
 RELEASE_HEADING = re.compile(
     r"^## \[(\d+\.\d+\.\d+)\]\([^)]*\) \((\d{4}-\d{2}-\d{2})\)\s*$",
@@ -75,21 +84,20 @@ def repo_root_from_here() -> Path:
 
 
 def train_for(version: str) -> str:
-    """Map a product semver to a delivery-train title.
+    """The milestone of a product semver: the train titled ``v<MAJOR>.<MINOR> · …``.
 
-    0.x and 1.0.x advance the release-blocker gate. They do not close it.
-    1.1.x advances the quality gate. Any other minor fails closed so a new
-    release-gate mapping is an explicit decision, not an accident.
+    Every patch of a minor belongs to that minor's train. A minor with no
+    train fails closed so a new train is an explicit decision, not an accident.
     """
-    major_s, minor_s, *_rest = version.split(".")
-    major, minor = int(major_s), int(minor_s)
-    if major < 1 or (major == 1 and minor == 0):
-        return TRAIN_V10
-    if major == 1 and minor == 1:
-        return TRAIN_V11
+    major, minor, *_rest = version.split(".")
+    prefix = f"v{int(major)}.{int(minor)} · "
+    for title in RELEASE_TRAINS:
+        if title.startswith(prefix):
+            return title
     raise ValueError(
-        f"no delivery train mapped for {version}; add the train in "
-        "docs/300-development/305-project-management/RELEASES.md and train_for()"
+        f"no milestone titled {prefix}… for {version}; add the train in "
+        "docs/300-development/305-project-management/MILESTONE-NOMENCLATURE.md, "
+        "milestone_policy.py and RELEASE_TRAINS"
     )
 
 

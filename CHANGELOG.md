@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Documentation
+
+* **pm:** version-first milestone nomenclature — `vX.Y · <Theme> (<YYYY-MM>)` trains (v0.3 … v1.0), `H0`–`H8` history stages, closed `v0.1`/`v0.2` cuts, continuous `Backlog · Unscheduled` and `Catalog · Requirements & use cases`; `train_for()` reads the version prefix ([#1847](https://github.com/matiaspakua/notaire/issues/1847))
+
 ### Code Refactoring
 
 Hexagonal architecture epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030. REST and OpenAPI contracts are unchanged.

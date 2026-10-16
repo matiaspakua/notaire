@@ -1057,21 +1057,21 @@ O --> (Deployability Docker)
 
 | Phase | Status | Where the work is tracked |
 |-------|--------|---------------------------|
-| Phase 1 — Analysis | Complete | `History · Phase 0 Foundations` and the Q2 history cohort |
+| Phase 1 — Analysis | Complete | `H1 · Revival & foundations (2026-03–2026-04)` and the Q2 cohort |
 | Phase 2 — Foundation | Complete | Shared DTO module retired (ADR-025); preserved in Q2 history |
-| Phase 3 — Backend API | Complete | `History · Phase 1 Backend API` and the Q2 history cohort |
-| Phase 4 — Modern Frontend | In progress | `2026-12 · Frontend product`; tracker [#898](https://github.com/matiaspakua/notaire/issues/898) |
-| Phase 5 — Observability | Complete | `History · Phase 2 Platform & observability` and Q3 history |
-| Phase 6 — Deprecation | Partial | `2027-03 · Legacy retirement`; Swing is gone and `jpa` cleanup remains ([#899](https://github.com/matiaspakua/notaire/issues/899)) |
+| Phase 3 — Backend API | Complete | `H2 · REST API migration (2026-05)` and the Q2 cohort |
+| Phase 4 — Modern Frontend | In progress | `v0.4 · Product completeness (2026-12)`; tracker [#898](https://github.com/matiaspakua/notaire/issues/898) |
+| Phase 5 — Observability | Complete | `H3 · Platform & observability (2026-06)` and the Q3 cohort |
+| Phase 6 — Deprecation | Partial | `v1.0 · GA: legacy-free (2027-03)`; Swing is gone and `jpa` cleanup moved into `v0.3` with #1693 ([#899](https://github.com/matiaspakua/notaire/issues/899)) |
 
-#### Short Term (`2026-12 · Frontend product`)
+#### Short Term (`v0.4 · Product completeness (2026-12)`)
 
 1. **Complete Next.js frontend pages for all 73 use cases** — tracking issue [#898](https://github.com/matiaspakua/notaire/issues/898).
    Key open items: deed managements (#804, #806), deeds (#838, #839), budgets (#797, #821, #822, #823), people (#829, #835).
 2. **Fix critical bugs blocking frontend** — #829 (Person create), #835 (person deduplication), #799 (uniqueness), #801 (SubmittedDocument mapping).
 3. ~~Extract `ControllerNegocio` logic into dedicated service classes~~ — resolved by deleting the class ([#900](https://github.com/matiaspakua/notaire/issues/900)); its only live behaviour moved to `IdentificationTypeLookup`.
 
-#### Medium Term (`2027-03 · Legacy retirement`)
+#### Medium Term (`v1.0 · GA: legacy-free (2027-03)`)
 
 1. **Replace all `jpa` package controllers** with `repository` + `service` — [#576](https://github.com/matiaspakua/notaire/issues/576).
 2. **Swing client retirement** — complete: directory removed under [#1046](https://github.com/matiaspakua/notaire/issues/1046) (do not recreate). Remaining Phase 6 focus is `jpa` cleanup — [#899](https://github.com/matiaspakua/notaire/issues/899).
@@ -1089,14 +1089,14 @@ O --> (Deployability Docker)
 | Severity | Item | GitHub Issue | Scheduling rule |
 |----------|------|-------------|-----------|
 | ✅ Resolved | `ControllerNegocio` God class (5,337 lines) removed | [#568](https://github.com/matiaspakua/notaire/issues/568), [#900](https://github.com/matiaspakua/notaire/issues/900) | Closed history |
-| 🔴 Critical | Controllers instantiate JPA directly (no Spring DI) | [#574](https://github.com/matiaspakua/notaire/issues/574) | Release blockers |
-| 🔴 Critical | Raw-JDBC `Conexion` singleton bypasses HikariCP | [#575](https://github.com/matiaspakua/notaire/issues/575) | Release blockers |
-| 🟠 High | 26 legacy JPA controllers | [#576](https://github.com/matiaspakua/notaire/issues/576) | Legacy retirement |
-| 🟠 High | Business logic in controllers, not services | [#578](https://github.com/matiaspakua/notaire/issues/578) | Legacy retirement |
-| 🟠 High | Controllers return JPA entities instead of DTOs | [#577](https://github.com/matiaspakua/notaire/issues/577) | Legacy retirement |
-| 🟠 High | `GlobalExceptionHandler` bypassed in 26 controllers | [#579](https://github.com/matiaspakua/notaire/issues/579) | Legacy retirement |
-| 🟡 Medium | `JpaAdministrator` singleton in service layer | [#584](https://github.com/matiaspakua/notaire/issues/584) | Legacy retirement |
-| 🟡 Medium | Domain entities depend on DTOs (inverted dependency) | [#580](https://github.com/matiaspakua/notaire/issues/580) | Legacy retirement |
+| 🔴 Critical | Controllers instantiate JPA directly (no Spring DI) | [#574](https://github.com/matiaspakua/notaire/issues/574) | v0.3 |
+| 🔴 Critical | Raw-JDBC `Conexion` singleton bypasses HikariCP | [#575](https://github.com/matiaspakua/notaire/issues/575) | v0.3 |
+| 🟠 High | 26 legacy JPA controllers | [#576](https://github.com/matiaspakua/notaire/issues/576) | v0.3 |
+| 🟠 High | Business logic in controllers, not services | [#578](https://github.com/matiaspakua/notaire/issues/578) | v0.3 |
+| 🟠 High | Controllers return JPA entities instead of DTOs | [#577](https://github.com/matiaspakua/notaire/issues/577) | v0.3 |
+| 🟠 High | `GlobalExceptionHandler` bypassed in 26 controllers | [#579](https://github.com/matiaspakua/notaire/issues/579) | v0.3 |
+| 🟡 Medium | `JpaAdministrator` singleton in service layer | [#584](https://github.com/matiaspakua/notaire/issues/584) | v0.3 |
+| 🟡 Medium | Domain entities depend on DTOs (inverted dependency) | [#580](https://github.com/matiaspakua/notaire/issues/580) | v0.3 |
 
 ---
 

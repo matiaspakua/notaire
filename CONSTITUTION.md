@@ -702,9 +702,11 @@ Agent-specific entry points:
 - Versioning follows **Semantic Versioning** (SemVer): `MAJOR.MINOR.PATCH`.
   One tag is the product. It includes the backend (Maven), the frontend (npm),
   and the database (Flyway schema id recorded beside the tag, not equal to it).
-- Delivery milestones are dated trains, not tags. `2026-11 · Release blockers`
-  is not `v1.0.0`. See
-  [RELEASES.md](docs/300-development/305-project-management/RELEASES.md).
+- Milestones are version-first release trains (`vX.Y · <Theme> (<YYYY-MM>)`),
+  one per minor; every `vX.Y.z` tag advances its train, and tags do not
+  close milestones. History is `H<n> · <Stage>`. See
+  [MILESTONE-NOMENCLATURE.md](docs/300-development/305-project-management/MILESTONE-NOMENCLATURE.md)
+  and [RELEASES.md](docs/300-development/305-project-management/RELEASES.md).
 - `CHANGELOG.md` follows **Keep a Changelog** and is updated with every
   user-visible change; the `[Unreleased]` section is curated per release.
 - Releases are tagged `vX.Y.Z`. Tags through `notaire-v0.1.2` keep that
