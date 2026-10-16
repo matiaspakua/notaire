@@ -376,12 +376,30 @@ public class ManagementOpsAdapter implements ManagementOpsPort {
     @Override
     @Transactional(readOnly = true)
     public PageResult findAll(int page, int size, String sort) {
-        Sort springSort = (sort == null || sort.isBlank())
-                ? Sort.by("idManagement").ascending()
-                : Sort.by(sort.split(",")[0]);
+        Sort springSort = parseSort(sort);
         var pageable = PageRequest.of(Math.max(page, 0), size > 0 ? size : 20, springSort);
         var result = managementQueryService.findAll(pageable);
         return new PageResult(result.getContent(), result.getNumber(), result.getSize(), result.getTotalElements());
+    }
+
+    /** Parses {@code property} or {@code property,asc|desc}; default newest-first (#1340). */
+    static Sort parseSort(String sort) {
+        if (sort == null || sort.isBlank()) {
+            return Sort.by(Sort.Direction.DESC, "idManagement");
+        }
+        String[] parts = sort.split(",", 2);
+        String property = parts[0].trim();
+        if (property.isEmpty()) {
+            property = "idManagement";
+        }
+        Sort.Direction direction = Sort.Direction.ASC;
+        if (parts.length > 1 && "desc".equalsIgnoreCase(parts[1].trim())) {
+            direction = Sort.Direction.DESC;
+        } else if (parts.length == 1) {
+            // Bare property from callers that omit direction: keep newest-first default.
+            direction = Sort.Direction.DESC;
+        }
+        return Sort.by(direction, property);
     }
 
     @Override

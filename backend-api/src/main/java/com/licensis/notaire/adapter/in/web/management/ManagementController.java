@@ -215,9 +215,11 @@ public class ManagementController {
     @Operation(summary = "List all managements")
     public ResponseEntity<Page<DtoManagementSummary>> getAll(
             @ParameterObject @PageableDefault(size = 20) Pageable pageable) {
-        var sort = pageable.getSort().stream().findFirst()
-                .map(o -> o.getProperty())
-                .orElse("idManagement");
+        // Preserve Spring sort direction (e.g. idManagement,desc) for newest-first lists (#1340 / #1347).
+        var order = pageable.getSort().stream().findFirst().orElse(null);
+        String sort = order == null
+                ? "idManagement,desc"
+                : order.getProperty() + "," + order.getDirection().name().toLowerCase();
         var result = queryManagements.findAll(pageable.getPageNumber(), pageable.getPageSize(), sort);
         return ResponseEntity.ok(new PageImpl<>(result.content(), pageable, result.totalElements()));
     }
