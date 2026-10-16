@@ -11,12 +11,36 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { documentTypeUseCases } from "@/composition/document-type";
+import type { DocumentType as DomainDocumentType } from "@/core/document-type/domain/document-type";
 import { extractApiError } from "@/lib/utils";
 import { EMPTY_DOCUMENT_TYPE } from "@/lib/document-type-form";
 import type { DocumentType } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { documentsKeys } from "@/hooks/useDocuments";
+
+function toWire(doc: DomainDocumentType): DocumentType {
+  return {
+    idDocumentType: doc.id,
+    name: doc.name,
+    expires: doc.expires,
+    dueDays: doc.dueDays,
+    deliveredBy: doc.deliveredBy ?? undefined,
+    enabled: doc.enabled,
+    returned: doc.returned,
+  };
+}
+
+function toInput(editing: Partial<DocumentType>) {
+  return {
+    name: editing.name?.trim() ?? "",
+    expires: editing.expires,
+    dueDays: editing.dueDays,
+    deliveredBy: editing.deliveredBy,
+    enabled: editing.enabled,
+    returned: editing.returned,
+  };
+}
 
 export default function DocumentsPage() {
   const t = useTranslations("administracion.documentos");
@@ -26,20 +50,20 @@ export default function DocumentsPage() {
   const qc = useQueryClient();
   const { data: documentTypes = [], isLoading } = useQuery({
     queryKey: documentsKeys.all,
-    queryFn: () => apiGet<DocumentType[]>("/document-types"),
+    queryFn: async () => (await documentTypeUseCases.list()).map(toWire),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: Partial<DocumentType>) => apiPost<void>("/document-types", data),
+    mutationFn: (data: Partial<DocumentType>) => documentTypeUseCases.create(toInput(data)),
     onSuccess: () => qc.invalidateQueries({ queryKey: documentsKeys.all }),
   });
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<DocumentType> }) =>
-      apiPut<void>(`/document-types/${id}`, data),
+      documentTypeUseCases.update(id, toInput(data)),
     onSuccess: () => qc.invalidateQueries({ queryKey: documentsKeys.all }),
   });
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => apiDelete(`/document-types/${id}`),
+    mutationFn: (id: number) => documentTypeUseCases.delete(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: documentsKeys.all }),
   });
 
@@ -51,10 +75,10 @@ export default function DocumentsPage() {
 
   const { data: filtered = documentTypes } = useQuery({
     queryKey: [...documentsKeys.all, "search", search, documentTypes],
-    queryFn: () =>
+    queryFn: async () =>
       search.trim()
-        ? apiGet<DocumentType[]>(`/document-types/search?name=${encodeURIComponent(search.trim())}`)
-        : Promise.resolve(documentTypes),
+        ? (await documentTypeUseCases.searchByName(search.trim())).map(toWire)
+        : documentTypes,
   });
 
   function openCreate() {
@@ -92,7 +116,7 @@ export default function DocumentsPage() {
 
   async function handleDeleteClick(documentType: DocumentType) {
     try {
-      const { inUse } = await apiGet<{ inUse: boolean }>(`/document-types/${documentType.idDocumentType}/in-use`);
+      const inUse = await documentTypeUseCases.isInUse(documentType.idDocumentType!);
       if (inUse) {
         toast.warning(t("inUseCannotDelete"));
         return;

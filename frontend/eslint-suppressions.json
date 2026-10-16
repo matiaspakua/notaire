@@ -4,11 +4,6 @@
       "count": 1
     }
   },
-  "src/app/dashboard/administration/documents/page.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/app/dashboard/administration/folios/page.tsx": {
     "no-restricted-imports": {
       "count": 1
@@ -150,11 +145,6 @@
     }
   },
   "src/hooks/useDocumentReentry.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useDocuments.ts": {
     "no-restricted-imports": {
       "count": 1
     }

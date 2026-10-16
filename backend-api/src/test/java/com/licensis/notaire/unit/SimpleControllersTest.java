@@ -17,9 +17,6 @@ import com.licensis.notaire.dto.DtoProcedureType;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Copy;
 import com.licensis.notaire.business.Deed;
-import com.licensis.notaire.business.DeedManagement;
-import com.licensis.notaire.business.History;
-import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.TestimonyMovement;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Budget;
@@ -27,9 +24,7 @@ import com.licensis.notaire.business.Testimony;
 import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.business.Procedure;
-import com.licensis.notaire.repository.ManagementStatusRepository;
 import com.licensis.notaire.repository.DeedManagementRepository;
-import com.licensis.notaire.repository.HistoryRepository;
 import com.licensis.notaire.repository.TestimonyMovementRepository;
 import com.licensis.notaire.application.port.out.procedure.ProcedureTypeRepositoryPort;
 import com.licensis.notaire.repository.IdentificationTypeRepository;
@@ -176,11 +171,12 @@ class SimpleControllersTest {
     @Nested
     @DisplayName("HistoryController")
     class HistoryControllerTests {
-        private final HistoryRepository repo = mock(HistoryRepository.class);
-        private final ManagementStatusRepository statusRepo = mock(ManagementStatusRepository.class);
-        private final DeedManagementRepository managementRepo = mock(DeedManagementRepository.class);
+        private final com.licensis.notaire.application.port.in.history.QueryHistoriesUseCase query =
+                mock(com.licensis.notaire.application.port.in.history.QueryHistoriesUseCase.class);
+        private final com.licensis.notaire.application.port.in.history.ManageHistoriesUseCase manage =
+                mock(com.licensis.notaire.application.port.in.history.ManageHistoriesUseCase.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new HistoryController(repo, statusRepo, managementRepo))
+                standaloneSetup(new HistoryController(query, manage))
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                         .build();
@@ -188,13 +184,13 @@ class SimpleControllersTest {
         @Test
         @DisplayName("GET all and by id and by management should work")
         void getEndpoints() throws Exception {
-            History h = new History();
-            h.setIdHistory(1);
-            when(repo.findAll(any(Pageable.class)))
-                    .thenReturn(new PageImpl<>(List.of(h), PageRequest.of(0, 20), 1));
-            when(repo.findById(1)).thenReturn(Optional.of(h));
-            when(repo.findById(2)).thenReturn(Optional.empty());
-            when(repo.findByFkIdManagementIdManagement(10)).thenReturn(List.of(h));
+            var summary = new com.licensis.notaire.dto.DtoHistorySummary(1, null, null, null, null, null);
+            when(query.findAll(anyInt(), anyInt(), any()))
+                    .thenReturn(new com.licensis.notaire.application.port.out.history.HistoryOpsPort.PageResult(
+                            List.of(summary), 0, 20, 1));
+            when(query.findById(1)).thenReturn(Optional.of(summary));
+            when(query.findById(2)).thenReturn(Optional.empty());
+            when(query.findByManagementId(10)).thenReturn(List.of(summary));
             mvc.perform(get("/api/v1/history")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/history/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/history/2")).andExpect(status().isNotFound());
@@ -205,15 +201,17 @@ class SimpleControllersTest {
         @DisplayName("POST/PUT/DELETE should cover happy paths")
         void writeEndpoints() throws Exception {
             String body = "{\"notes\":\"n\",\"managementStatusId\":1,\"managementId\":2}";
-            ManagementStatus status = new ManagementStatus();
-            DeedManagement management = new DeedManagement();
-            when(statusRepo.findById(1)).thenReturn(Optional.of(status));
-            when(managementRepo.findById(2)).thenReturn(Optional.of(management));
-            History saved = new History();
-            saved.setIdHistory(1);
-            when(repo.save(any(History.class))).thenReturn(saved);
-            when(repo.findById(1)).thenReturn(Optional.of(saved));
-            when(repo.findById(2)).thenReturn(Optional.empty());
+            var summary = new com.licensis.notaire.dto.DtoHistorySummary(1, null, "n", 2, 1, null);
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.history.HistoryOpsPort.SaveResult.Created(summary));
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.history.HistoryOpsPort.SaveResult.Updated());
+            when(manage.update(eq(2), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.history.HistoryOpsPort.SaveResult.NotFound());
+            when(manage.delete(1)).thenReturn(
+                    new com.licensis.notaire.application.port.out.history.HistoryOpsPort.DeleteResult.Deleted());
+            when(manage.delete(2)).thenReturn(
+                    new com.licensis.notaire.application.port.out.history.HistoryOpsPort.DeleteResult.NotFound());
 
             mvc.perform(post("/api/v1/history").contentType("application/json")
                     .content(body)).andExpect(status().isCreated());
@@ -221,11 +219,6 @@ class SimpleControllersTest {
                     .content(body)).andExpect(status().isOk());
             mvc.perform(put("/api/v1/history/2").contentType("application/json")
                     .content(body)).andExpect(status().isNotFound());
-
-            History toDelete = new History();
-            status.setHistoryList(new java.util.HashSet<>(List.of(toDelete)));
-            toDelete.setFkIdManagementStatus(status);
-            when(repo.findById(1)).thenReturn(Optional.of(toDelete));
             mvc.perform(delete("/api/v1/history/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/history/2")).andExpect(status().isNotFound());
         }
@@ -234,21 +227,17 @@ class SimpleControllersTest {
         @DisplayName("POST/PUT/DELETE error paths without polluting happy stubs (#916)")
         void writeEndpointsErrorPaths() throws Exception {
             String body = "{\"notes\":\"n\",\"managementStatusId\":1,\"managementId\":2}";
-            ManagementStatus status = new ManagementStatus();
-            DeedManagement management = new DeedManagement();
-            when(statusRepo.findById(1)).thenReturn(Optional.of(status));
-            when(managementRepo.findById(2)).thenReturn(Optional.of(management));
-            History toDelete = new History();
-            status.setHistoryList(new java.util.HashSet<>(List.of(toDelete)));
-            toDelete.setFkIdManagementStatus(status);
-            when(repo.findById(1)).thenReturn(Optional.of(toDelete));
-            when(repo.save(any(History.class))).thenThrow(new RuntimeException("x"));
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.history.HistoryOpsPort.SaveResult.ServerError());
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.history.HistoryOpsPort.SaveResult.ServerError());
+            when(manage.delete(1)).thenReturn(
+                    new com.licensis.notaire.application.port.out.history.HistoryOpsPort.DeleteResult.Conflict());
+
             mvc.perform(post("/api/v1/history").contentType("application/json")
                     .content(body)).andExpect(status().isInternalServerError());
             mvc.perform(put("/api/v1/history/1").contentType("application/json")
                     .content(body)).andExpect(status().isInternalServerError());
-
-            doThrow(new RuntimeException("fk")).when(repo).delete(toDelete);
             mvc.perform(delete("/api/v1/history/1")).andExpect(status().isConflict());
         }
     }

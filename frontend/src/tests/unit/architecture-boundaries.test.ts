@@ -85,4 +85,11 @@ describe("the shrink-only baseline", () => {
     expect(entries["src/app/dashboard/administration/management-statuses/page.tsx"]).toBeUndefined();
     expect(Object.keys(entries).length).toBeLessThan(64);
   });
+
+  it("document-type catalog left the baseline (#1777)", () => {
+    const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
+    expect(entries["src/hooks/useDocuments.ts"]).toBeUndefined();
+    expect(entries["src/app/dashboard/administration/documents/page.tsx"]).toBeUndefined();
+    expect(Object.keys(entries).length).toBeLessThan(62);
+  });
 });
