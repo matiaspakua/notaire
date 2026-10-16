@@ -1,6 +1,6 @@
-package com.licensis.notaire.application.usecase.document;
+package com.licensis.notaire.adapter.out.persistence.document;
 
-import com.licensis.notaire.application.port.out.document.ExternalDocumentRepositoryPort;
+import com.licensis.notaire.application.port.in.document.ExternalEntityDocumentUseCase;
 import com.licensis.notaire.dto.DtoExternalEntityDocument;
 import com.licensis.notaire.dto.DtoManagementExternalEntityDocuments;
 import com.licensis.notaire.dto.DtoExternalEntityDocumentMovement;
@@ -12,6 +12,9 @@ import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.Property;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Procedure;
+import com.licensis.notaire.repository.DeedManagementRepository;
+import com.licensis.notaire.repository.ProcedureRepository;
+import com.licensis.notaire.repository.SubmittedDocumentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -21,46 +24,53 @@ import com.licensis.notaire.application.port.out.management.ManagementAutoTransi
 import java.util.List;
 
 /**
- * CU10 — Record movements of external-entity documentation. Exposes the
- * documents a management must present to an external entity (registry,
- * cadastre) and records each movement. When every such document is delivered,
- * it tries an automatic transition to the stored status "Documentacion Completa".
+ * CU10 — Record movements of external-entity documentation. Outbound adapter
+ * implementing the inbound port (issue #1866).
  */
 @Service
-public class ExternalEntityDocumentService {
+public class ExternalEntityDocumentService implements ExternalEntityDocumentUseCase {
 
     private static final Logger log = LoggerFactory.getLogger(ExternalEntityDocumentService.class);
 
-    private final ExternalDocumentRepositoryPort documentRepository;
+    private final SubmittedDocumentRepository submittedDocumentRepository;
+    private final DeedManagementRepository managementRepository;
+    private final ProcedureRepository procedureRepository;
     private final ManagementAutoTransitionPort managementAutoTransition;
 
-    public ExternalEntityDocumentService(ExternalDocumentRepositoryPort documentRepository,
+    public ExternalEntityDocumentService(
+            SubmittedDocumentRepository submittedDocumentRepository,
+            DeedManagementRepository managementRepository,
+            ProcedureRepository procedureRepository,
             ManagementAutoTransitionPort managementAutoTransition) {
-        this.documentRepository = documentRepository;
+        this.submittedDocumentRepository = submittedDocumentRepository;
+        this.managementRepository = managementRepository;
+        this.procedureRepository = procedureRepository;
         this.managementAutoTransition = managementAutoTransition;
     }
 
+    @Override
     @Transactional(readOnly = true)
     public DtoManagementExternalEntityDocuments getDocuments(Integer idManagement) {
         DeedManagement management = findManagementOrThrow(idManagement);
-        List<SubmittedDocument> documents = documentRepository
-                .findByManagementAndDeliveredBy(idManagement,
-                        BusinessConstants.DocumentationExternalEntity);
+        List<SubmittedDocument> documents = submittedDocumentRepository
+                .findByFkIdProcedureFkIdManagementIdManagementAndDeliveredBy(
+                        idManagement, BusinessConstants.DocumentationExternalEntity);
         return toDto(management, documents);
     }
 
+    @Override
     @Transactional
     public DtoExternalEntityDocument registerMovement(Integer idManagement, Integer idSubmittedDocument,
             DtoExternalEntityDocumentMovement movement) {
         findManagementOrThrow(idManagement);
-        SubmittedDocument document = documentRepository.findSubmittedDocumentById(idSubmittedDocument)
+        SubmittedDocument document = submittedDocumentRepository.findById(idSubmittedDocument)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Submitted document not found with ID: " + idSubmittedDocument));
         validateBelongsToManagement(document, idManagement);
         validateIsExternalEntity(document);
 
         applyMovement(document, movement);
-        SubmittedDocument saved = documentRepository.saveSubmittedDocument(document);
+        SubmittedDocument saved = submittedDocumentRepository.save(document);
 
         return toDto(saved);
     }
@@ -68,17 +78,13 @@ public class ExternalEntityDocumentService {
     /**
      * Tries to move the management to the stored status "Documentacion Completa"
      * when every external-entity document has been delivered. Called as its own
-     * step after {@link #registerMovement}, in a separate top-level transaction:
-     * a transition the workflow does not define is a best-effort side effect and
-     * must not invalidate the movement already saved. Only a call outside the
-     * {@code registerMovement} transaction keeps Spring from marking that
-     * transaction rollback-only when {@link ManagementTransitionService#transition}
-     * fails.
+     * step after {@link #registerMovement}, in a separate top-level transaction.
      */
+    @Override
     public void tryCompleteDocumentation(Integer idManagement) {
-        List<SubmittedDocument> documents = documentRepository
-                .findByManagementAndDeliveredBy(idManagement,
-                        BusinessConstants.DocumentationExternalEntity);
+        List<SubmittedDocument> documents = submittedDocumentRepository
+                .findByFkIdProcedureFkIdManagementIdManagementAndDeliveredBy(
+                        idManagement, BusinessConstants.DocumentationExternalEntity);
         boolean allDelivered = !documents.isEmpty()
                 && documents.stream().allMatch(doc -> Boolean.TRUE.equals(doc.getDelivered()));
         if (!allDelivered) {
@@ -93,7 +99,7 @@ public class ExternalEntityDocumentService {
     }
 
     private DeedManagement findManagementOrThrow(Integer idManagement) {
-        return documentRepository.findManagementById(idManagement)
+        return managementRepository.findById(idManagement)
                 .orElseThrow(() -> new ResourceNotFoundException("Management not found with ID: " + idManagement));
     }
 
@@ -150,7 +156,7 @@ public class ExternalEntityDocumentService {
     }
 
     private String resolveCadastralDesignation(Integer idManagement) {
-        return documentRepository.findProceduresByManagementId(idManagement).stream()
+        return procedureRepository.findByFkIdManagementIdManagement(idManagement).stream()
                 .map(Procedure::getFkIdProperty)
                 .filter(java.util.Objects::nonNull)
                 .map(Property::getCadastralDesignation)

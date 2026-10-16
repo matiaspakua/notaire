@@ -34,7 +34,7 @@ import com.licensis.notaire.application.port.out.management.ManagementOpsPort.De
 import com.licensis.notaire.application.port.out.management.ManagementOpsPort.ManagementCommand;
 import com.licensis.notaire.application.port.out.management.ManagementOpsPort.ManagementView;
 import com.licensis.notaire.application.port.out.management.ManagementOpsPort.SaveResult;
-import com.licensis.notaire.application.usecase.document.ExternalEntityDocumentService;
+import com.licensis.notaire.application.port.in.document.ExternalEntityDocumentUseCase;
 import com.licensis.notaire.application.port.in.workflow.DocumentReentryUseCase;
 import com.licensis.notaire.application.port.in.workflow.QueryWorkflowTraceUseCase;
 import com.licensis.notaire.dto.DtoDocumentReentered;
@@ -71,7 +71,7 @@ public class ManagementController {
     private final QueryWorkflowTraceUseCase workflowTrace;
     private final TransitionManagementUseCase transitionManagementUseCase;
     private final TransitionManagementWebMapper transitionManagementWebMapper;
-    private final ExternalEntityDocumentService externalEntityDocumentService;
+    private final ExternalEntityDocumentUseCase externalEntityDocuments;
     private final DocumentReentryUseCase documentReentry;
 
     public ManagementController(
@@ -80,14 +80,14 @@ public class ManagementController {
             QueryWorkflowTraceUseCase workflowTrace,
             TransitionManagementUseCase transitionManagementUseCase,
             TransitionManagementWebMapper transitionManagementWebMapper,
-            ExternalEntityDocumentService externalEntityDocumentService,
+            ExternalEntityDocumentUseCase externalEntityDocuments,
             DocumentReentryUseCase documentReentry) {
         this.queryManagements = queryManagements;
         this.manageManagements = manageManagements;
         this.workflowTrace = workflowTrace;
         this.transitionManagementUseCase = transitionManagementUseCase;
         this.transitionManagementWebMapper = transitionManagementWebMapper;
-        this.externalEntityDocumentService = externalEntityDocumentService;
+        this.externalEntityDocuments = externalEntityDocuments;
         this.documentReentry = documentReentry;
     }
 
@@ -422,7 +422,7 @@ public class ManagementController {
     @Operation(summary = "CU10 - Get management documentation handled by external entities")
     public ResponseEntity<DtoManagementExternalEntityDocuments> getExternalEntityDocuments(
             @PathVariable Integer id) {
-        return ResponseEntity.ok(externalEntityDocumentService.getDocuments(id));
+        return ResponseEntity.ok(externalEntityDocuments.getDocuments(id));
     }
 
     @ApiResponses({
@@ -436,8 +436,8 @@ public class ManagementController {
             @PathVariable Integer id, @PathVariable Integer idSubmittedDocument,
             @RequestBody DtoExternalEntityDocumentMovement movement) {
         DtoExternalEntityDocument result =
-                externalEntityDocumentService.registerMovement(id, idSubmittedDocument, movement);
-        externalEntityDocumentService.tryCompleteDocumentation(id);
+                externalEntityDocuments.registerMovement(id, idSubmittedDocument, movement);
+        externalEntityDocuments.tryCompleteDocumentation(id);
         return ResponseEntity.ok(result);
     }
 

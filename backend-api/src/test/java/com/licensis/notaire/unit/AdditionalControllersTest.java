@@ -145,7 +145,7 @@ class AdditionalControllersTest {
             var transitionUseCase = mock(com.licensis.notaire.application.port.in.management.TransitionManagementUseCase.class);
             var transitionWebMapper =
                     mock(com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper.class);
-            var externalEntityDocumentService = mock(com.licensis.notaire.application.usecase.document.ExternalEntityDocumentService.class);
+            var externalEntityDocumentService = mock(com.licensis.notaire.application.port.in.document.ExternalEntityDocumentUseCase.class);
             var documentReentryService = mock(com.licensis.notaire.application.port.in.workflow.DocumentReentryUseCase.class);
             var mvc = standaloneSetup(new ManagementController(
                     query,

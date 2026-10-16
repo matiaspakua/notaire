@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.out.documentcosttemplate.DocumentCostTemplateOpsPort;
-import com.licensis.notaire.application.usecase.document.DocumentCostTemplateService;
 import com.licensis.notaire.business.DocumentCostTemplate;
 import com.licensis.notaire.business.DocumentType;
 import com.licensis.notaire.business.ProcedureType;

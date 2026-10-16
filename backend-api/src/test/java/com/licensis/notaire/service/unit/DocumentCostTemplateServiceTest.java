@@ -1,12 +1,13 @@
 package com.licensis.notaire.service.unit;
 
-
-import com.licensis.notaire.application.port.out.document.DocumentRepositoryPort;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.business.DocumentCostTemplate;
 import com.licensis.notaire.business.DocumentType;
 import com.licensis.notaire.business.ProcedureType;
-import com.licensis.notaire.application.usecase.document.DocumentCostTemplateService;
+import com.licensis.notaire.adapter.out.persistence.documentcosttemplate.DocumentCostTemplateService;
+import com.licensis.notaire.repository.DocumentCostTemplateRepository;
+import com.licensis.notaire.repository.DocumentTypeRepository;
+import com.licensis.notaire.repository.ProcedureTypeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,13 @@ import static org.mockito.Mockito.when;
 class DocumentCostTemplateServiceTest {
 
     @Mock
-    private DocumentRepositoryPort documentRepository;
+    private DocumentCostTemplateRepository costTemplateRepository;
+
+    @Mock
+    private DocumentTypeRepository documentTypeRepository;
+
+    @Mock
+    private ProcedureTypeRepository procedureTypeRepository;
 
     private DocumentCostTemplateService documentCostTemplateService;
 
@@ -35,7 +42,8 @@ class DocumentCostTemplateServiceTest {
 
     @BeforeEach
     void setUp() {
-        documentCostTemplateService = new DocumentCostTemplateService(documentRepository);
+        documentCostTemplateService = new DocumentCostTemplateService(
+                costTemplateRepository, documentTypeRepository, procedureTypeRepository);
 
         procedureType = new ProcedureType();
         procedureType.setIdProcedureType(1);
@@ -47,9 +55,9 @@ class DocumentCostTemplateServiceTest {
     @Test
     @DisplayName("Should accept fixed cost for document type")
     void shouldAcceptFixedCostForTypeDocument() {
-        when(documentRepository.findProcedureTypeById(1)).thenReturn(Optional.of(procedureType));
-        when(documentRepository.findDocumentTypeById(1)).thenReturn(Optional.of(documentType));
-        when(documentRepository.saveCostTemplate(any(DocumentCostTemplate.class)))
+        when(procedureTypeRepository.findById(1)).thenReturn(Optional.of(procedureType));
+        when(documentTypeRepository.findById(1)).thenReturn(Optional.of(documentType));
+        when(costTemplateRepository.save(any(DocumentCostTemplate.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         DocumentCostTemplate result = documentCostTemplateService.create(1, 1, new java.math.BigDecimal("1500"), null);
@@ -61,9 +69,9 @@ class DocumentCostTemplateServiceTest {
     @Test
     @DisplayName("Should accept variable cost for document type")
     void shouldAcceptVariableCostForTypeDocument() {
-        when(documentRepository.findProcedureTypeById(1)).thenReturn(Optional.of(procedureType));
-        when(documentRepository.findDocumentTypeById(1)).thenReturn(Optional.of(documentType));
-        when(documentRepository.saveCostTemplate(any(DocumentCostTemplate.class)))
+        when(procedureTypeRepository.findById(1)).thenReturn(Optional.of(procedureType));
+        when(documentTypeRepository.findById(1)).thenReturn(Optional.of(documentType));
+        when(costTemplateRepository.save(any(DocumentCostTemplate.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         DocumentCostTemplate result = documentCostTemplateService.create(1, 1, null, new java.math.BigDecimal("5"));
