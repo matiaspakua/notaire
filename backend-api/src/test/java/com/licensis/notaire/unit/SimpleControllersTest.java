@@ -14,20 +14,10 @@ import com.licensis.notaire.dto.DtoTestimonyMovement;
 import com.licensis.notaire.dto.DtoTestimony;
 import com.licensis.notaire.dto.DtoProcedureType;
 import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.business.TestimonyMovement;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Budget;
-import com.licensis.notaire.business.Testimony;
-import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.business.IdentificationType;
-import com.licensis.notaire.repository.TestimonyMovementRepository;
-import com.licensis.notaire.application.port.out.procedure.ProcedureTypeRepositoryPort;
 import com.licensis.notaire.repository.IdentificationTypeRepository;
-import com.licensis.notaire.application.port.out.procedure.ProcedureRepositoryPort;
-import com.licensis.notaire.application.port.out.property.PropertyRepositoryPort;
-import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
-import com.licensis.notaire.repository.DeedRepository;
-import com.licensis.notaire.application.usecase.testimony.TestimonyMovementService;
 import com.licensis.notaire.application.usecase.person.PersonService;
 import com.licensis.notaire.application.usecase.budget.BudgetService;
 import org.junit.jupiter.api.DisplayName;
@@ -239,26 +229,25 @@ class SimpleControllersTest {
     @Nested
     @DisplayName("TestimonyMovementController")
     class TestimonyMovementControllerTests {
-        private final TestimonyMovementRepository repo = mock(TestimonyMovementRepository.class);
-        private final TestimonyMovementService testimonyMovementService = mock(TestimonyMovementService.class);
+        private final com.licensis.notaire.application.port.in.testimony.QueryTestimonyMovementsUseCase query =
+                mock(com.licensis.notaire.application.port.in.testimony.QueryTestimonyMovementsUseCase.class);
+        private final com.licensis.notaire.application.port.in.testimony.ManageTestimonyMovementsUseCase manage =
+                mock(com.licensis.notaire.application.port.in.testimony.ManageTestimonyMovementsUseCase.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new TestimonyMovementController(repo, testimonyMovementService)).build();
+                standaloneSetup(new TestimonyMovementController(query, manage)).build();
 
-        private TestimonyMovement build() {
-            TestimonyMovement m = new TestimonyMovement();
-            m.setIdTestimonyMovement(1);
-            Testimony t = new Testimony();
-            t.setIdTestimony(1);
-            m.setTestimony(t);
-            return m;
+        private DtoTestimonyMovement buildDto() {
+            DtoTestimonyMovement dto = new DtoTestimonyMovement();
+            dto.setIdTestimonyMovement(1);
+            return dto;
         }
 
         @Test
         @DisplayName("GET endpoints should work")
         void getEndpoints() throws Exception {
-            when(repo.findAll()).thenReturn(List.of(build()));
-            when(repo.findById(1)).thenReturn(Optional.of(build()));
-            when(repo.findById(2)).thenReturn(Optional.empty());
+            when(query.findAll()).thenReturn(List.of(buildDto()));
+            when(query.findById(1)).thenReturn(Optional.of(buildDto()));
+            when(query.findById(2)).thenReturn(Optional.empty());
             mvc.perform(get("/api/v1/testimony-movements")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/testimony-movements/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/testimony-movements/2")).andExpect(status().isNotFound());
@@ -267,14 +256,19 @@ class SimpleControllersTest {
         @Test
         @DisplayName("POST/PUT/DELETE happy paths")
         void writeEndpoints() throws Exception {
-            DtoTestimonyMovement dto = new DtoTestimonyMovement();
-            dto.setIdTestimonyMovement(1);
-            when(repo.findById(1)).thenReturn(Optional.of(build()));
-            when(repo.findById(2)).thenReturn(Optional.empty());
-            when(repo.existsById(1)).thenReturn(true);
-            when(repo.existsById(2)).thenReturn(false);
+            DtoTestimonyMovement dto = buildDto();
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort.SaveResult.Created(
+                            dto));
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort.SaveResult.Updated());
+            when(manage.update(eq(2), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort.SaveResult.NotFound());
+            when(manage.delete(1)).thenReturn(
+                    new com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort.DeleteResult.Deleted());
+            when(manage.delete(2)).thenReturn(
+                    new com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort.DeleteResult.NotFound());
 
-            when(repo.save(any(TestimonyMovement.class))).thenReturn(build());
             mvc.perform(post("/api/v1/testimony-movements").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/testimony-movements/1").contentType("application/json")
@@ -288,17 +282,21 @@ class SimpleControllersTest {
         @Test
         @DisplayName("POST/PUT/DELETE error paths without polluting happy stubs (#916)")
         void writeEndpointsErrorPaths() throws Exception {
-            DtoTestimonyMovement dto = new DtoTestimonyMovement();
-            dto.setIdTestimonyMovement(1);
-            when(repo.findById(1)).thenReturn(Optional.of(build()));
-            when(repo.existsById(1)).thenReturn(true);
-            when(repo.save(any(TestimonyMovement.class))).thenThrow(new RuntimeException("x"));
+            DtoTestimonyMovement dto = buildDto();
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort.SaveResult.Failed(
+                            new RuntimeException("x")));
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort.SaveResult.Failed(
+                            new RuntimeException("x")));
+            when(manage.delete(1)).thenReturn(
+                    new com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort.DeleteResult.Conflict(
+                            "fk"));
+
             mvc.perform(post("/api/v1/testimony-movements").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
             mvc.perform(put("/api/v1/testimony-movements/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isInternalServerError());
-
-            doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
             mvc.perform(delete("/api/v1/testimony-movements/1")).andExpect(status().isConflict());
         }
     }
