@@ -180,4 +180,17 @@ describe("the shrink-only baseline", () => {
     expect(entries["src/app/dashboard/testimonies/RegisterTestimonyDialog.tsx"]).toBeUndefined();
     expect(Object.keys(entries).length).toBeLessThan(33);
   });
+
+  it("management hooks and pages left the baseline (#1839)", () => {
+    const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
+    expect(entries["src/hooks/useManagements.ts"]).toBeUndefined();
+    expect(entries["src/hooks/useManagements.create-wire.test.tsx"]).toBeUndefined();
+    expect(entries["src/hooks/useManagements.complete-case.test.tsx"]).toBeUndefined();
+    expect(entries["src/hooks/useManagementSearch.ts"]).toBeUndefined();
+    expect(entries["src/hooks/useManagementSummary.ts"]).toBeUndefined();
+    expect(entries["src/hooks/useManagementSummary.test.tsx"]).toBeUndefined();
+    expect(entries["src/app/dashboard/managements/page.tsx"]).toBeUndefined();
+    expect(entries["src/app/dashboard/managements/ManagementCurrentStatus.tsx"]).toBeUndefined();
+    expect(Object.keys(entries).length).toBeLessThan(25);
+  });
 });

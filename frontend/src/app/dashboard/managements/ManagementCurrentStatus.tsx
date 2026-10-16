@@ -1,9 +1,17 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { ApiError } from "@/lib/api-client";
 import { useFormat } from "@/hooks/useFormat";
 import { useManagementCurrentStatus } from "@/hooks/useManagements";
+
+/** Duck-type HTTP status without importing api-client (ADR-030). */
+function httpStatus(err: unknown): number | undefined {
+  if (typeof err === "object" && err !== null && "status" in err) {
+    const status = (err as { status: unknown }).status;
+    return typeof status === "number" ? status : undefined;
+  }
+  return undefined;
+}
 
 /** CU14 (#1553): "Estado actual" of a management in the case summary. */
 export function ManagementCurrentStatus({ managementId }: { managementId: number }) {
@@ -12,7 +20,7 @@ export function ManagementCurrentStatus({ managementId }: { managementId: number
   const { data, isLoading, error } = useManagementCurrentStatus(managementId);
 
   if (isLoading) return <p className="text-sm text-muted-foreground">{t("cargando")}</p>;
-  if (error instanceof ApiError && error.status === 404) {
+  if (httpStatus(error) === 404) {
     return (
       <p className="text-sm text-muted-foreground" data-testid="management-current-status-empty">
         {t("sinEstado")}

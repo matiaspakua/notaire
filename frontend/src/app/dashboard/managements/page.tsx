@@ -34,12 +34,20 @@ import { BudgetPicker } from "@/components/shared/BudgetPicker";
 import { useManagementStatuses } from "@/hooks/useManagementStatuses";
 import { useProcedureTypes } from "@/hooks/useProcedureTypes";
 import { useProperties } from "@/hooks/useProperties";
-import { ApiError } from "@/lib/api-client";
 import { extractApiError } from "@/lib/utils";
 import type { DeedManagement } from "@/types";
 import { ManagementSummaryDialog } from "./ManagementSummaryDialog";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { useFormat } from "@/hooks/useFormat";
+
+/** Duck-type HTTP status without importing api-client (ADR-030). */
+function httpStatus(err: unknown): number | undefined {
+  if (typeof err === "object" && err !== null && "status" in err) {
+    const status = (err as { status: unknown }).status;
+    return typeof status === "number" ? status : undefined;
+  }
+  return undefined;
+}
 
 const STATUS_FOLDER_ACTIVE = "Activa";
 
@@ -223,7 +231,7 @@ function ManagementsList() {
       setArchiveId(null);
       setArchiveConflict(null);
     } catch (err) {
-      if (err instanceof ApiError && err.status === 409) {
+      if (httpStatus(err) === 409) {
         setArchiveConflict(extractApiError(err) ?? t("archiveConflictTitle"));
         return;
       }
