@@ -269,6 +269,9 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
 - **Procedure ports-only (#1801):** Procedure* aggregate R1 hotspot (~4 edges). `ProcedureController`
   calls `QueryProceduresUseCase` / `ManageProceduresUseCase` only; association hydration (#981) and
   persistence live behind `ProcedureOpsPort`. ArchUnit R1 clears its four baseline edges.
+- **ProcedureFolder ports-only (#1795):** smallest Procedure* R1 hotspot (1 edge). `ProcedureFolderController`
+  calls `QueryProcedureFoldersUseCase` / `ManageProcedureFoldersUseCase` only; entity access and DTO
+  mapping live behind `ProcedureFolderOpsPort`. ArchUnit R1 clears its ProcedureFolder entity edge.
 
 ## Options considered
 
