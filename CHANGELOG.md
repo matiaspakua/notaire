@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.3](https://github.com/matiaspakua/notaire/compare/v0.2.2...v0.2.3) (2026-10-16)
+
+
+### Bug Fixes
+
+* **fe:** mock composition in useProcedureTemplate test ([e9d33b8](https://github.com/matiaspakua/notaire/commit/e9d33b82f9e41f330d9b08d5307fa710a85fa972)), closes [#1788](https://github.com/matiaspakua/notaire/issues/1788)
+* **quality:** JpaController boxed version equals (S4973) ([ec427b9](https://github.com/matiaspakua/notaire/commit/ec427b9f41b430a323997c6759ea98a51d45223a)), closes [#1758](https://github.com/matiaspakua/notaire/issues/1758)
+* **security:** remove legacy MD5 password verification ([#1762](https://github.com/matiaspakua/notaire/issues/1762)) ([62dd3c1](https://github.com/matiaspakua/notaire/commit/62dd3c1e8de52a5e34322b2024e69c476cd2fb31))
+
 ## [0.2.2](https://github.com/matiaspakua/notaire/compare/v0.2.1...v0.2.2) (2026-10-15)
 
 
