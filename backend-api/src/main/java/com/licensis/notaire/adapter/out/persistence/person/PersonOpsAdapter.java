@@ -63,7 +63,8 @@ public class PersonOpsAdapter implements PersonOpsPort {
     }
 
     @Override
-    @Transactional
+    // No outer @Transactional: catching into SaveResult must not mark TX rollback-only
+    // (UnexpectedRollbackException → 500 instead of 4xx).
     public SaveResult create(PersonCommand command) {
         IdentificationType type = resolveType(command, this::defaultIdentificationType);
         try {
@@ -78,7 +79,6 @@ public class PersonOpsAdapter implements PersonOpsPort {
     }
 
     @Override
-    @Transactional
     public SaveResult update(Integer id, PersonCommand command) {
         return personService.findById(id).<SaveResult>map(existing -> {
             IdentificationType type = resolveType(command, existing::getFkIdIdentificationType);
@@ -94,7 +94,6 @@ public class PersonOpsAdapter implements PersonOpsPort {
     }
 
     @Override
-    @Transactional
     public DeleteResult delete(Integer id) {
         if (personService.findById(id).isEmpty()) {
             return new DeleteResult.NotFound();
