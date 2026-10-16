@@ -1,24 +1,7 @@
 package com.licensis.notaire.unit;
 
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.licensis.notaire.adapter.in.web.concept.ConceptController;
-import com.licensis.notaire.application.usecase.concept.ConceptService;
-import com.licensis.notaire.dto.DtoConcept;
-import com.licensis.notaire.business.Concept;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.List;
-import java.util.Optional;
-
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -28,65 +11,49 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.licensis.notaire.adapter.in.web.concept.ConceptController;
+import com.licensis.notaire.application.port.in.concept.ManageConceptsUseCase;
+import com.licensis.notaire.application.port.in.concept.QueryConceptsUseCase;
+import com.licensis.notaire.application.port.out.concept.ConceptOpsPort.DeleteResult;
+import com.licensis.notaire.application.port.out.concept.ConceptOpsPort.SaveResult;
+import com.licensis.notaire.dto.DtoConcept;
+
 @DisplayName("ConceptController unit tests")
 @ExtendWith(MockitoExtension.class)
 class ConceptControllerTest {
 
     @Mock
-    private ConceptService service;
+    private QueryConceptsUseCase queryConcepts;
 
     @Mock
-    private com.licensis.notaire.repository.BudgetTemplateRepository templateRepository;
+    private ManageConceptsUseCase manageConcepts;
 
     private MockMvc mockMvc;
     private ObjectMapper mapper;
 
     @BeforeEach
     void setUp() {
-        ConceptController controller = new ConceptController(service, templateRepository);
+        ConceptController controller = new ConceptController(queryConcepts, manageConcepts);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
         mapper = new ObjectMapper();
     }
 
-    private Concept buildEntity() {
-        Concept c = new Concept();
-        c.setIdConcept(1);
-        c.setName("Honorarios");
-        c.setValue(new java.math.BigDecimal("100.0"));
-        c.setPercentage(0);
-        c.setEnabled(true);
-        return c;
-    }
-
-    @Test
-    @DisplayName("GET /api/v1/concepts should return 200 with mapped DTOs")
-    void shouldReturnAllConcepts() throws Exception {
-        when(service.findAll()).thenReturn(List.of(buildEntity()));
-        mockMvc.perform(get("/api/v1/concepts"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].idConcept").value(1))
-                .andExpect(jsonPath("$[0].name").value("Honorarios"));
-    }
-
-    @Test
-    @DisplayName("GET /api/v1/concepts/{id} should return 200 when found")
-    void shouldReturnConceptByIdWhenFound() throws Exception {
-        when(service.findById(1)).thenReturn(Optional.of(buildEntity()));
-        mockMvc.perform(get("/api/v1/concepts/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.idConcept").value(1));
-    }
-
-    @Test
-    @DisplayName("GET /api/v1/concepts/{id} should return 404 when not found")
-    void shouldReturn404WhenConceptMissing() throws Exception {
-        when(service.findById(999)).thenReturn(Optional.empty());
-        mockMvc.perform(get("/api/v1/concepts/999"))
-                .andExpect(status().isNotFound());
-    }
-
     private DtoConcept buildDto() {
         DtoConcept dto = new DtoConcept();
+        dto.setIdConcept(1);
         dto.setName("Honorarios");
         dto.setValue(new java.math.BigDecimal("100"));
         dto.setPercentage(0);
@@ -97,9 +64,36 @@ class ConceptControllerTest {
     }
 
     @Test
+    @DisplayName("GET /api/v1/concepts should return 200 with mapped DTOs")
+    void shouldReturnAllConcepts() throws Exception {
+        when(queryConcepts.findAll()).thenReturn(List.of(buildDto()));
+        mockMvc.perform(get("/api/v1/concepts"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].idConcept").value(1))
+                .andExpect(jsonPath("$[0].name").value("Honorarios"));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/concepts/{id} should return 200 when found")
+    void shouldReturnConceptByIdWhenFound() throws Exception {
+        when(queryConcepts.findById(1)).thenReturn(Optional.of(buildDto()));
+        mockMvc.perform(get("/api/v1/concepts/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.idConcept").value(1));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/concepts/{id} should return 404 when not found")
+    void shouldReturn404WhenConceptMissing() throws Exception {
+        when(queryConcepts.findById(999)).thenReturn(Optional.empty());
+        mockMvc.perform(get("/api/v1/concepts/999"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("POST /api/v1/concepts should return 201 when created")
     void shouldCreateConcept() throws Exception {
-        when(service.create(any(Concept.class))).thenReturn(buildEntity());
+        when(manageConcepts.create(any())).thenReturn(new SaveResult.Created(buildDto()));
         mockMvc.perform(post("/api/v1/concepts")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(buildDto())))
@@ -109,7 +103,8 @@ class ConceptControllerTest {
     @Test
     @DisplayName("POST /api/v1/concepts should return 409 when save fails")
     void shouldReturn409WhenCreateFails() throws Exception {
-        when(service.create(any(Concept.class))).thenThrow(new RuntimeException("boom"));
+        when(manageConcepts.create(any()))
+                .thenReturn(new SaveResult.Failed(new RuntimeException("boom"), true));
         mockMvc.perform(post("/api/v1/concepts")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(buildDto())))
@@ -119,10 +114,7 @@ class ConceptControllerTest {
     @Test
     @DisplayName("PUT /api/v1/concepts/{id} should return 200 when update succeeds")
     void shouldUpdateConcept() throws Exception {
-        Concept existing = buildEntity();
-        when(service.findById(1)).thenReturn(Optional.of(existing));
-        when(service.update(1, existing)).thenReturn(existing);
-
+        when(manageConcepts.update(eq(1), any())).thenReturn(new SaveResult.Updated());
         mockMvc.perform(put("/api/v1/concepts/1")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(buildDto())))
@@ -133,14 +125,10 @@ class ConceptControllerTest {
     @DisplayName("PUT /api/v1/concepts/{id} should return 200 when payload omits enabled")
     void shouldUpdateConceptWhenEnabledOmitted() throws Exception {
         // Regression: a payload without 'enabled' must not NPE while unboxing
-        // a null Boolean — the controller preserves the existing enabled state.
-        Concept existing = buildEntity();
-        when(service.findById(1)).thenReturn(Optional.of(existing));
-        when(service.update(1, existing)).thenReturn(existing);
-
+        // a null Boolean — the adapter preserves the existing enabled state.
+        when(manageConcepts.update(eq(1), any())).thenReturn(new SaveResult.Updated());
         DtoConcept partial = buildDto();
         partial.setEnabled(null);
-
         mockMvc.perform(put("/api/v1/concepts/1")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(partial)))
@@ -150,7 +138,7 @@ class ConceptControllerTest {
     @Test
     @DisplayName("PUT /api/v1/concepts/{id} should return 404 when not found")
     void shouldReturn404WhenUpdatingMissingConcept() throws Exception {
-        when(service.findById(99)).thenReturn(Optional.empty());
+        when(manageConcepts.update(eq(99), any())).thenReturn(new SaveResult.NotFound());
         mockMvc.perform(put("/api/v1/concepts/99")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(buildDto())))
@@ -160,10 +148,8 @@ class ConceptControllerTest {
     @Test
     @DisplayName("PUT /api/v1/concepts/{id} should return 500 when save fails")
     void shouldReturn500WhenUpdateSaveFails() throws Exception {
-        Concept existing = buildEntity();
-        when(service.findById(1)).thenReturn(Optional.of(existing));
-        when(service.update(1, existing)).thenThrow(new RuntimeException("boom"));
-
+        when(manageConcepts.update(eq(1), any()))
+                .thenReturn(new SaveResult.Failed(new RuntimeException("boom"), false));
         mockMvc.perform(put("/api/v1/concepts/1")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(buildDto())))
@@ -173,16 +159,16 @@ class ConceptControllerTest {
     @Test
     @DisplayName("DELETE /api/v1/concepts/{id} should return 204 when deleted")
     void shouldDeleteConcept() throws Exception {
-        when(service.findById(1)).thenReturn(Optional.of(buildEntity()));
+        when(manageConcepts.delete(1)).thenReturn(new DeleteResult.Deleted());
         mockMvc.perform(delete("/api/v1/concepts/1"))
                 .andExpect(status().isNoContent());
-        verify(service).deleteById(1);
+        verify(manageConcepts).delete(1);
     }
 
     @Test
     @DisplayName("DELETE /api/v1/concepts/{id} should return 404 when missing")
     void shouldReturn404WhenDeletingMissingConcept() throws Exception {
-        when(service.findById(99)).thenReturn(Optional.empty());
+        when(manageConcepts.delete(99)).thenReturn(new DeleteResult.NotFound());
         mockMvc.perform(delete("/api/v1/concepts/99"))
                 .andExpect(status().isNotFound());
     }
@@ -190,9 +176,8 @@ class ConceptControllerTest {
     @Test
     @DisplayName("DELETE /api/v1/concepts/{id} should return 409 when the concept is in use")
     void shouldReturn409WhenConceptIsInUse() throws Exception {
-        com.licensis.notaire.business.BudgetTemplate pp = new com.licensis.notaire.business.BudgetTemplate();
-        when(service.findById(1)).thenReturn(Optional.of(buildEntity()));
-        when(templateRepository.findByConceptIdConcept(1)).thenReturn(List.of(pp));
+        when(manageConcepts.delete(1))
+                .thenReturn(new DeleteResult.InUse("Cannot delete: the concept is in use on budget templates."));
         mockMvc.perform(delete("/api/v1/concepts/1"))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error").exists());
