@@ -262,6 +262,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   calls `QueryHistoriesUseCase` / `ManageHistoriesUseCase` only; persistence and CU13 chronological order
   live behind `HistoryOpsPort`. ArchUnit R1 clears its six baseline edges. REST `/api/v1/history` unchanged.
 
+- **ProcedureType ports-only (#1791):** first Procedure* R1 hotspot (~4 edges). `ProcedureTypeController`
+  calls `QueryProcedureTypesUseCase` / `ManageProcedureTypesUseCase` only; CRUD, in-use, and CU83 workflow
+  assignment live behind `ProcedureTypeOpsPort`. ArchUnit R1 clears its four baseline edges.
+
 - **Copy ports-only (#1779):** mid-size mixed R1 hotspot (~5 edges). `CopyController` calls
   `QueryCopiesUseCase` / `ManageCopiesUseCase` only; person/testimony FK resolution and CU87 conflict
   live behind `CopyOpsPort`. ArchUnit R1 clears its five baseline edges. REST `/api/v1/copies` unchanged.
@@ -270,6 +274,9 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `QueryTestimoniesUseCase` / `ManageTestimoniesUseCase` only; CRUD, generate/verify, and #1364 in-use
   delete live behind `TestimonyOpsPort`. ArchUnit R1 clears its five baseline edges.
 
+- **Procedure ports-only (#1801):** Procedure* aggregate R1 hotspot (~4 edges). `ProcedureController`
+  calls `QueryProceduresUseCase` / `ManageProceduresUseCase` only; association hydration (#981) and
+  persistence live behind `ProcedureOpsPort`. ArchUnit R1 clears its four baseline edges.
 - **ProcedureFolder ports-only (#1795):** smallest Procedure* R1 hotspot (1 edge). `ProcedureFolderController`
   calls `QueryProcedureFoldersUseCase` / `ManageProcedureFoldersUseCase` only; entity access and DTO
   mapping live behind `ProcedureFolderOpsPort`. ArchUnit R1 clears its ProcedureFolder entity edge.
