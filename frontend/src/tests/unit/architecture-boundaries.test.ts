@@ -106,11 +106,37 @@ describe("the shrink-only baseline", () => {
     expect(Object.keys(entries).length).toBeLessThan(58);
   });
 
+  it("workflows admin left the baseline (#1792)", () => {
+    const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
+    expect(entries["src/hooks/useWorkflow.ts"]).toBeUndefined();
+    expect(entries["src/hooks/useManagementWorkflow.ts"]).toBeUndefined();
+    expect(entries["src/app/dashboard/administration/workflows/page.tsx"]).toBeUndefined();
+    expect(entries["src/app/dashboard/administration/workflows/[id]/page.tsx"]).toBeUndefined();
+    expect(Object.keys(entries).length).toBeLessThan(54);
+  });
+
+
+  it("procedures admin left the baseline (#1796)", () => {
+    const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
+    expect(entries["src/hooks/useProcedureTypes.ts"]).toBeUndefined();
+    expect(entries["src/hooks/useProcedureTypes.test.tsx"]).toBeUndefined();
+    expect(entries["src/app/dashboard/administration/procedures/page.tsx"]).toBeUndefined();
+    expect(entries["src/app/dashboard/administration/procedures/RequiredDocumentsDialog.tsx"]).toBeUndefined();
+    expect(Object.keys(entries).length).toBeLessThan(54);
+  });
+
   it("templates admin left the baseline (#1788)", () => {
     const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
     expect(entries["src/hooks/useProcedureTemplate.ts"]).toBeUndefined();
     expect(entries["src/hooks/useProcedureTemplate.test.tsx"]).toBeUndefined();
     expect(entries["src/app/dashboard/administration/templates/page.tsx"]).toBeUndefined();
-    expect(Object.keys(entries).length).toBeLessThan(57);
+    expect(Object.keys(entries).length).toBeLessThan(54);
+  });
+
+  it("people hooks left the baseline (#1823)", () => {
+    const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
+    expect(entries["src/hooks/usePeople.ts"]).toBeUndefined();
+    expect(entries["src/hooks/usePersonSearch.ts"]).toBeUndefined();
+    expect(Object.keys(entries).length).toBeLessThan(53);
   });
 });

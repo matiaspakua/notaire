@@ -17,9 +17,8 @@ import {
   useDeleteWorkflowDefinition,
 } from "@/hooks/useWorkflow";
 import { presentMutationError } from "@/lib/mutation-error";
-import { apiGet, apiPost } from "@/lib/api-client";
+import { workflowUseCases } from "@/composition/workflow";
 import { validateWorkflow } from "@/lib/workflow-validate";
-import type { WorkflowNode, WorkflowTransition } from "@/types";
 import type { WorkflowDefinition } from "@/types";
 
 const EMPTY: Partial<WorkflowDefinition> = { name: "", description: "", active: false };
@@ -65,8 +64,8 @@ export default function WorkflowsPage() {
     if (!id) return fallback.length ? fallback : [t("activateInvalid")];
     try {
       const [nodes, transitions] = await Promise.all([
-        apiGet<WorkflowNode[]>(`/workflow-node/by-workflow/${id}`),
-        apiGet<WorkflowTransition[]>(`/workflow-transition/by-workflow/${id}`),
+        workflowUseCases.listNodesByWorkflow(id),
+        workflowUseCases.listTransitionsByWorkflow(id),
       ]);
       const { problems } = validateWorkflow(nodes, transitions);
       if (problems.length === 0) return fallback;
@@ -89,7 +88,7 @@ export default function WorkflowsPage() {
     try {
       if (editing.active) {
         const result = isEditMode && editing.id
-          ? await apiPost<{ valid: boolean; errors: string[] }>(`/workflow-definition/${editing.id}/validate`, {})
+          ? await workflowUseCases.validateDefinition(editing.id)
           : { valid: false, errors: [t("activateNewHasNoNodes")] };
         if (!result.valid) {
           setActivateErrors(await localizedProblems(editing.id, result.errors ?? []));

@@ -1,5 +1,11 @@
+/**
+ * React Query hooks for people.
+ * Hexagon wiring: #1823 / ADR-030.
+ * Endpoint: GET/POST/PUT/DELETE /api/v1/people
+ */
 import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiGetPage, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { personUseCases } from "@/composition/person";
+import type { Person as DomainPerson } from "@/core/person/domain/person";
 import type { Person } from "@/types";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
@@ -21,6 +27,59 @@ export interface PeopleSearchParams {
 /** Wait after the last keystroke before searching (#1357). */
 export const PEOPLE_SEARCH_DEBOUNCE_MS = 300;
 
+function toWire(p: DomainPerson): Person {
+  return {
+    personId: p.id,
+    firstName: p.firstName,
+    lastName: p.lastName,
+    nationality: p.nationality,
+    identificationNumber: p.identificationNumber,
+    taxId: p.taxId,
+    sex: p.sex,
+    birthDate: p.birthDate,
+    maritalStatus: p.maritalStatus,
+    marriageCount: p.marriageCount,
+    occupation: p.occupation,
+    address: p.address,
+    phone: p.phone,
+    email: p.email,
+    notaryRegistrationNumber: p.notaryRegistrationNumber,
+    isClient: p.isClient,
+    identificationTypeId: p.identificationTypeId,
+    fkIdIdentificationType:
+      p.identificationTypeId != null || p.identificationTypeName
+        ? {
+            idIdentificationType: p.identificationTypeId ?? undefined,
+            name: p.identificationTypeName,
+            characters: p.identificationTypeCharacters,
+          }
+        : undefined,
+    version: p.version,
+  };
+}
+
+function toInput(data: Partial<Person>) {
+  return {
+    firstName: data.firstName,
+    lastName: data.lastName,
+    nationality: data.nationality,
+    identificationNumber: data.identificationNumber,
+    taxId: data.taxId,
+    sex: data.sex,
+    birthDate: data.birthDate,
+    maritalStatus: data.maritalStatus,
+    marriageCount: data.marriageCount,
+    occupation: data.occupation,
+    address: data.address,
+    phone: data.phone,
+    email: data.email,
+    notaryRegistrationNumber: data.notaryRegistrationNumber,
+    isClient: data.isClient,
+    identificationTypeId: data.identificationTypeId,
+    version: data.version,
+  };
+}
+
 /**
  * GET /people/search for the people list (#1357). The criteria are debounced,
  * so typing a surname sends one request; the previous results stay on screen
@@ -39,15 +98,15 @@ export function useSearchPeople(params: PeopleSearchParams) {
   const query = useQuery({
     queryKey: peopleKeys.search(settled),
     enabled: active,
-    queryFn: () => {
-      // Backend route is /people/search (PersonController#searchPeople).
-      const qs = new URLSearchParams();
-      if (settled.firstName) qs.set("firstName", settled.firstName);
-      if (settled.lastName) qs.set("lastName", settled.lastName);
-      if (settled.identificationNumber) qs.set("identificationNumber", settled.identificationNumber);
-      if (settled.onlyClients) qs.set("isClient", "true");
-      return apiGet<Person[]>(`/people/search?${qs.toString()}`);
-    },
+    queryFn: async () =>
+      (
+        await personUseCases.search({
+          firstName: settled.firstName || undefined,
+          lastName: settled.lastName || undefined,
+          identificationNumber: settled.identificationNumber || undefined,
+          isClient: settled.onlyClients || undefined,
+        })
+      ).map(toWire),
     placeholderData: keepPreviousData,
   });
   return { active, results: query.data ?? [], isLoading: query.isLoading, isFetching: query.isFetching };
@@ -69,21 +128,33 @@ export function usePeoplePage(params: PeoplePageParams, options: { enabled?: boo
   return useQuery({
     enabled: options.enabled ?? true,
     queryKey: peopleKeys.page(params),
-    queryFn: () =>
-      apiGetPage<Person>("/people", { page: params.page, size: params.size, sort: PEOPLE_SORT }),
+    queryFn: async () => {
+      const page = await personUseCases.listPage({
+        page: params.page,
+        size: params.size,
+        sort: PEOPLE_SORT,
+      });
+      return {
+        content: page.content.map(toWire),
+        totalElements: page.totalElements,
+        totalPages: page.totalPages,
+        number: page.number,
+        size: page.size,
+      };
+    },
     placeholderData: keepPreviousData,
   });
 }
 
 /** One person by id, for links to a record that is not on the loaded page. */
 export function fetchPerson(id: number) {
-  return apiGet<Person>(`/people/${id}`);
+  return personUseCases.getById(id).then(toWire);
 }
 
 export function useCreatePerson() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<Person>) => apiPost<void>("/people", data),
+    mutationFn: (data: Partial<Person>) => personUseCases.create(toInput(data)),
     onSuccess: () => qc.invalidateQueries({ queryKey: peopleKeys.all }),
   });
 }
@@ -92,7 +163,7 @@ export function useUpdatePerson() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<Person> }) =>
-      apiPut<void>(`/people/${id}`, data),
+      personUseCases.update(id, toInput(data)),
     onSuccess: () => qc.invalidateQueries({ queryKey: peopleKeys.all }),
   });
 }
@@ -100,7 +171,7 @@ export function useUpdatePerson() {
 export function useDeletePerson() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => apiDelete(`/people/${id}`),
+    mutationFn: (id: number) => personUseCases.delete(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: peopleKeys.all }),
   });
 }

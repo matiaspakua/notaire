@@ -247,8 +247,7 @@ class DeedServiceTest {
 
         List<Person> result = deedService.findAvailableNotaries();
 
-        assertThat(result).isNotNull()
-                .isEmpty();
+        assertThat(result).isNotNull().isEmpty();
 
         verify(personRepository, times(1)).findAllNotaries();
     }

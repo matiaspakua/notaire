@@ -1,14 +1,8 @@
 package com.licensis.notaire.adapter.in.web.budget;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.licensis.notaire.application.usecase.budget.BudgetTemplateCatalogService;
-import com.licensis.notaire.business.BudgetTemplate;
-import com.licensis.notaire.business.BudgetTemplatePK;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,15 +14,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.licensis.notaire.application.port.in.budget.ManageBudgetTemplatesUseCase;
+import com.licensis.notaire.application.port.in.budget.QueryBudgetTemplatesUseCase;
+import com.licensis.notaire.application.port.out.budget.BudgetTemplateOpsPort.TemplateView;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 /**
  * REST controller for BudgetTemplate (Budget Templates).
  *
- * Covers use cases: CU39, CU49, CU55 (Budget template management). Business rules and
- * transactions live in {@link BudgetTemplateCatalogService}; failures are mapped by the
- * global exception handler (#574).
+ * Covers use cases: CU39, CU49, CU55. Calls inbound ports only; persistence and
+ * business rules live behind {@code BudgetTemplateOpsPort} (issue #1803).
  */
 @RestController
 @RequestMapping("/api/v1/budget-templates")
@@ -51,10 +52,14 @@ public class BudgetTemplateController {
             String notes,
             int version) {}
 
-    private final BudgetTemplateCatalogService service;
+    private final QueryBudgetTemplatesUseCase queryBudgetTemplates;
+    private final ManageBudgetTemplatesUseCase manageBudgetTemplates;
 
-    public BudgetTemplateController(BudgetTemplateCatalogService service) {
-        this.service = service;
+    public BudgetTemplateController(
+            QueryBudgetTemplatesUseCase queryBudgetTemplates,
+            ManageBudgetTemplatesUseCase manageBudgetTemplates) {
+        this.queryBudgetTemplates = queryBudgetTemplates;
+        this.manageBudgetTemplates = manageBudgetTemplates;
     }
 
     private Integer resolveProcedureTypeId(BudgetTemplateRequest request) {
@@ -73,42 +78,42 @@ public class BudgetTemplateController {
                 ? request.budgetTemplatePK().fkIdConcept() : null;
     }
 
-    private BudgetTemplateResponse toResponse(BudgetTemplate entity) {
-        BudgetTemplatePK pk = entity.getBudgetTemplatePK();
+    private BudgetTemplateResponse toResponse(TemplateView view) {
         return new BudgetTemplateResponse(
-                pk != null ? pk.getFkIdProcedureType() : null,
-                pk != null ? pk.getFkIdConcept() : null,
-                entity.getNotes(),
-                entity.getVersion());
+                view.procedureTypeId(),
+                view.conceptId(),
+                view.notes(),
+                view.version());
     }
 
     @GetMapping
     @Operation(summary = "Get all budget templates")
     public ResponseEntity<List<BudgetTemplateResponse>> getAll() {
-        return ResponseEntity.ok(service.findAll().stream().map(this::toResponse).toList());
+        return ResponseEntity.ok(queryBudgetTemplates.findAll().stream().map(this::toResponse).toList());
     }
 
     @GetMapping("/procedure-types/{idProcedureType}")
     @Operation(summary = "Get budget templates by procedure type")
     public ResponseEntity<List<BudgetTemplateResponse>> getByTypeProcedure(
             @PathVariable Integer idProcedureType) {
-        return ResponseEntity.ok(service.findByProcedureType(idProcedureType).stream()
+        return ResponseEntity.ok(queryBudgetTemplates.findByProcedureType(idProcedureType).stream()
                 .map(this::toResponse).toList());
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Created"),
-    @ApiResponse(responseCode = "400", description = "Invalid request"),
-    @ApiResponse(responseCode = "409", description = "Conflict")
-})
+            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "409", description = "Conflict")
+    })
     @PostMapping
     @Operation(summary = "Create budget template")
     public ResponseEntity<?> create(@Valid @RequestBody BudgetTemplateRequest request) {
-        BudgetTemplatePK pk = service.create(
-                resolveProcedureTypeId(request), resolveConceptId(request), request.notes())
-                .getBudgetTemplatePK();
+        TemplateView created = manageBudgetTemplates.create(
+                resolveProcedureTypeId(request), resolveConceptId(request), request.notes());
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Map.of("fkIdProcedureType", pk.getFkIdProcedureType(), "fkIdConcept", pk.getFkIdConcept()));
+                .body(Map.of(
+                        "fkIdProcedureType", created.procedureTypeId(),
+                        "fkIdConcept", created.conceptId()));
     }
 
     @PutMapping("/procedure-types/{idProcedureType}/concept/{idConcept}")
@@ -116,20 +121,20 @@ public class BudgetTemplateController {
     public ResponseEntity<?> update(
             @PathVariable Integer idProcedureType,
             @PathVariable Integer idConcept,
-            @Valid @RequestBody BudgetTemplateRequest request
-    ) {
-        service.updateNotes(new BudgetTemplatePK(idProcedureType, idConcept), request.notes());
+            @Valid @RequestBody BudgetTemplateRequest request) {
+        manageBudgetTemplates.updateNotes(idProcedureType, idConcept, request.notes());
         return ResponseEntity.ok().build();
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "204", description = "Deleted"),
-        @ApiResponse(responseCode = "404", description = "Not found")
+            @ApiResponse(responseCode = "204", description = "Deleted"),
+            @ApiResponse(responseCode = "404", description = "Not found")
     })
     @DeleteMapping("/procedure-types/{idProcedureType}/concept/{idConcept}")
     @Operation(summary = "Delete budget template")
-    public ResponseEntity<?> delete(@PathVariable Integer idProcedureType, @PathVariable Integer idConcept) {
-        service.delete(new BudgetTemplatePK(idProcedureType, idConcept));
+    public ResponseEntity<?> delete(
+            @PathVariable Integer idProcedureType, @PathVariable Integer idConcept) {
+        manageBudgetTemplates.delete(idProcedureType, idConcept);
         return ResponseEntity.noContent().build();
     }
 }

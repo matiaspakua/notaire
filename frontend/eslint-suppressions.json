@@ -1,24 +1,4 @@
 {
-  "src/app/dashboard/administration/procedures/RequiredDocumentsDialog.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/app/dashboard/administration/procedures/page.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/app/dashboard/administration/workflows/[id]/page.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/app/dashboard/administration/workflows/page.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/app/dashboard/budgets/page.tsx": {
     "no-restricted-imports": {
       "count": 1
@@ -159,11 +139,6 @@
       "count": 1
     }
   },
-  "src/hooks/useManagementWorkflow.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/hooks/useManagements.complete-case.test.tsx": {
     "no-restricted-imports": {
       "count": 1
@@ -180,26 +155,6 @@
     }
   },
   "src/hooks/usePayments.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/usePeople.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/usePersonSearch.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useProcedureTypes.test.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useProcedureTypes.ts": {
     "no-restricted-imports": {
       "count": 1
     }
@@ -260,11 +215,6 @@
     }
   },
   "src/hooks/useUsers.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useWorkflow.ts": {
     "no-restricted-imports": {
       "count": 1
     }
