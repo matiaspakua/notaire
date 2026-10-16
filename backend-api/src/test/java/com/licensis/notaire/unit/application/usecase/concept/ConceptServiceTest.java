@@ -1,9 +1,9 @@
 package com.licensis.notaire.unit.application.usecase.concept;
 
 import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.application.port.out.concept.ConceptRepositoryPort;
-import com.licensis.notaire.application.usecase.concept.ConceptService;
+import com.licensis.notaire.adapter.out.persistence.concept.ConceptService;
 import com.licensis.notaire.business.Concept;
+import com.licensis.notaire.repository.ConceptRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 class ConceptServiceTest {
 
     @Mock
-    private ConceptRepositoryPort repository;
+    private ConceptRepository repository;
 
     private ConceptService service;
 
@@ -88,14 +88,14 @@ class ConceptServiceTest {
         savedConcept.setName("Notary office");
         savedConcept.setEnabled(true);
 
-        when(repository.create(concept)).thenReturn(savedConcept);
+        when(repository.save(concept)).thenReturn(savedConcept);
 
         Concept result = service.create(concept);
 
         assertThat(result).isNotNull();
         assertThat(result.getIdConcept()).isEqualTo(1);
         assertThat(result.getEnabled()).isTrue();
-        verify(repository).create(concept);
+        verify(repository).save(concept);
     }
 
     @Test
@@ -108,13 +108,14 @@ class ConceptServiceTest {
         updated.setName("Updated");
 
         when(repository.existsById(1)).thenReturn(true);
-        when(repository.update(1, concept)).thenReturn(updated);
+        when(repository.save(concept)).thenReturn(updated);
 
         Concept result = service.update(1, concept);
 
         assertThat(result.getIdConcept()).isEqualTo(1);
+        assertThat(concept.getIdConcept()).isEqualTo(1);
         verify(repository).existsById(1);
-        verify(repository).update(1, concept);
+        verify(repository).save(concept);
     }
 
     @Test
