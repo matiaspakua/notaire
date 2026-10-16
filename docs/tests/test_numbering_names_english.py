@@ -17,7 +17,7 @@ class NumberingNamesEnglishTest(unittest.TestCase):
             "backend-api/src/main/java/com/licensis/notaire/repository/FolioRepository.java",
             "backend-api/src/main/java/com/licensis/notaire/application/port/out/folio/FolioRepositoryPort.java",
             "backend-api/src/main/java/com/licensis/notaire/adapter/out/persistence/folio/FolioPersistenceAdapter.java",
-            "backend-api/src/main/java/com/licensis/notaire/application/usecase/notebook/AuxiliaryProtocolService.java",
+            "backend-api/src/main/java/com/licensis/notaire/adapter/out/persistence/notebook/AuxiliaryProtocolService.java",
             "backend-api/src/test/java/com/licensis/notaire/service/unit/AuxiliaryProtocolServiceTest.java",
         )
         for relative in names:
