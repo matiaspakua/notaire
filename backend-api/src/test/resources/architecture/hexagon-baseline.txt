@@ -11,12 +11,6 @@ R1 | com.licensis.notaire.adapter.in.web.deed.DeedController -> com.licensis.not
 R1 | com.licensis.notaire.adapter.in.web.deed.DeedController -> com.licensis.notaire.repository.FolioRepository
 R1 | com.licensis.notaire.adapter.in.web.document.DocumentCostTemplateController -> com.licensis.notaire.business.DocumentCostTemplate
 R1 | com.licensis.notaire.adapter.in.web.document.DocumentCostTemplateController -> com.licensis.notaire.business.DocumentCostTemplatePK
-R1 | com.licensis.notaire.adapter.in.web.history.HistoryController -> com.licensis.notaire.business.History
-R1 | com.licensis.notaire.adapter.in.web.history.HistoryController -> com.licensis.notaire.business.HistoryOrder
-R1 | com.licensis.notaire.adapter.in.web.history.HistoryController -> com.licensis.notaire.business.ManagementStatus
-R1 | com.licensis.notaire.adapter.in.web.history.HistoryController -> com.licensis.notaire.repository.DeedManagementRepository
-R1 | com.licensis.notaire.adapter.in.web.history.HistoryController -> com.licensis.notaire.repository.HistoryRepository
-R1 | com.licensis.notaire.adapter.in.web.history.HistoryController -> com.licensis.notaire.repository.ManagementStatusRepository
 R1 | com.licensis.notaire.adapter.in.web.item.ItemController -> com.licensis.notaire.business.Budget
 R1 | com.licensis.notaire.adapter.in.web.item.ItemController -> com.licensis.notaire.business.Item
 R1 | com.licensis.notaire.adapter.in.web.item.ItemController -> com.licensis.notaire.repository.BudgetRepository

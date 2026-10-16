@@ -232,6 +232,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   (#1719) into `core/management-status`, `adapters/http/management-status`, and `composition/management-status`.
   Admin page and `useManagementStatuses` no longer import `api-client` (eslint suppressions shrink by two).
 
+- **Frontend third catalog — document types (#1777):** `core/document-type`, `adapters/http/document-type`,
+  and `composition/document-type`. Documents admin page and `useDocuments` no longer import `api-client`
+  (eslint suppressions shrink by two).
+
 - **Workflow validation (#1770):** last repo-only web controller after the workflow trio. Controller
   now calls `ValidateWorkflowUseCase` only; graph load uses `Workflow*CatalogPort`; validation runs on
   domain `WorkflowNode` / `WorkflowTransition`. ArchUnit R1 clears its three repository edges.
@@ -241,6 +245,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `ManageManagementsUseCase` / `QueryManagementsUseCase` and outbound `ManagementOpsPort`
   (`ManagementOpsAdapter`). Application services stay free of new R2 entity/repository edges;
   entity access stays in the outbound adapter. Domain `DeedManagement` extraction remains deferred.
+
+- **History ports-only (#1775):** next mixed/repo-like R1 hotspot after Management. `HistoryController`
+  calls `QueryHistoriesUseCase` / `ManageHistoriesUseCase` only; persistence and CU13 chronological order
+  live behind `HistoryOpsPort`. ArchUnit R1 clears its six baseline edges. REST `/api/v1/history` unchanged.
 
 - **Copy ports-only (#1779):** mid-size mixed R1 hotspot (~5 edges). `CopyController` calls
   `QueryCopiesUseCase` / `ManageCopiesUseCase` only; person/testimony FK resolution and CU87 conflict
