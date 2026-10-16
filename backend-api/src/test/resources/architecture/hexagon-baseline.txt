@@ -3,13 +3,9 @@ R2 | com.licensis.notaire.application.port.out.folio.FolioRepositoryPort -> com.
 R2 | com.licensis.notaire.application.port.out.folio.FolioRepositoryPort -> com.licensis.notaire.business.FolioType
 R2 | com.licensis.notaire.application.port.out.item.ItemRepositoryPort -> com.licensis.notaire.business.Item
 R2 | com.licensis.notaire.application.port.out.property.PropertyRepositoryPort -> com.licensis.notaire.business.Property
-R2 | com.licensis.notaire.application.port.out.substitution.SubstitutionRepositoryPort -> com.licensis.notaire.business.Person
-R2 | com.licensis.notaire.application.port.out.substitution.SubstitutionRepositoryPort -> com.licensis.notaire.business.Substitution
 R2 | com.licensis.notaire.application.port.out.user.RoleRepositoryPort -> com.licensis.notaire.business.Role
 R2 | com.licensis.notaire.application.port.out.user.UserRepositoryPort -> com.licensis.notaire.business.User
 R2 | com.licensis.notaire.application.usecase.concept.ConceptService -> com.licensis.notaire.business.Concept
 R2 | com.licensis.notaire.application.usecase.item.ItemService -> com.licensis.notaire.business.Item
-R2 | com.licensis.notaire.application.usecase.substitution.SubstitutionService -> com.licensis.notaire.business.Person
-R2 | com.licensis.notaire.application.usecase.substitution.SubstitutionService -> com.licensis.notaire.business.Substitution
 R6 | com.licensis.notaire.business.IdentificationTypeLookup -> com.licensis.notaire.jpa.IdentificationTypeJpaController
 R6 | com.licensis.notaire.config.JpaConfig -> com.licensis.notaire.service.JpaAdministrator
