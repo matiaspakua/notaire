@@ -93,19 +93,20 @@ gh_available() {
 # Resolves the Issue on GitHub and requires it to exist and be open.
 # Caller must confirm gh_available first; this only queries.
 # Retries transient gh/API flakes (Mac preflight: "Issue #N was not found" once, then OK — #1858).
+# Cap raised to 5 with longer backoff when many leftovers are checked in one preflight (#1907).
 check_issue_live() {
   local number="$1"
   local state=""
   local attempt
-  local max_attempts=3
-  for attempt in 1 2 3; do
+  local max_attempts=5
+  for attempt in 1 2 3 4 5; do
     state="$(gh issue view "$number" --json state --jq '.state' 2>/dev/null || true)"
     if [ -n "$state" ]; then
       break
     fi
     if [ "$attempt" -lt "$max_attempts" ]; then
       note "proposal: gh issue view #$number empty (attempt $attempt/$max_attempts) — retrying transient flake"
-      sleep "$attempt"
+      sleep $((attempt * 2))
     fi
   done
   if [ -z "$state" ]; then

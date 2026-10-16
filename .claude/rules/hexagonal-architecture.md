@@ -48,6 +48,9 @@ adapter.out.* ->  application (port.out)  ->  domain
 - **One domain per PR** (one `application.usecase.<slice>` / port family). Hold the next domain until merge.
 - Ports and use cases: **domain views only** — no JPA entity, no Spring Data `Page`/`Pageable`, no `business.*` on
   port signatures; map in `adapter.out.persistence.<slice>`.
+- Entity-bound **helpers / services** move under `adapter.out.persistence.<slice>` (not the application layer).
+- After a package move: update english-locals / `docs/tests` path refs, numbered docs, and regen `INVENTORY.md`
+  before Process Checks (see `FLEET-LESSONS-HEX-1693.md` — R2 path hygiene / #1894).
 - Commit the **shrunk** R2 baseline in the same PR; never raise counts by hand.
 - FE hex suppressions ratchet is **Done** only when `frontend/eslint-suppressions.json` is `{}` (**count 0**).
 - Fleet cadence: `docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md`.

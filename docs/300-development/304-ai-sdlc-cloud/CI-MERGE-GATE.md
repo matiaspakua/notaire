@@ -166,8 +166,14 @@ domain PR until the in-flight one merges (serialize domains + heavy CI).
 
 Before `gh pr ready` / merge, Process Checks and OpenSpec archive hygiene must
 be green (Spotless, Conventional Commits, archive groups 3–8, INVENTORY regen
-when test/architecture inventory drifted). Light advisory checks are **not**
-merge authority — see [`FLEET-LESSONS-HEX-1693.md`](FLEET-LESSONS-HEX-1693.md).
+when test/architecture inventory drifted). After Java **package moves**, update
+english-locals / `docs/tests` path refs in the same PR (#1894 / #1907). Light
+advisory checks are **not** merge authority — see
+[`FLEET-LESSONS-HEX-1693.md`](FLEET-LESSONS-HEX-1693.md).
+
+**Cost:** prefer one heavy-CI PR and domain-sized slices; docs-only tips should
+rely on path-scoped skips (#1257) instead of re-running full Bruno/Playwright
+locally when CI already skips them.
 
 ## Context
 

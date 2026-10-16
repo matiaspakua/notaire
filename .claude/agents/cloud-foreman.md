@@ -54,7 +54,10 @@ Constitution loop; specialists write most of the code.
 - Do **not** edit `CHANGELOG.md` `[Unreleased]` while another PR (or Release Please)
   holds that fence; never commit on `release-please--branches--*`.
 - Do **not** open probe/canary Issues to test write permissions; on `gh` **403** leave a
-  **human paste** for labels/Status/close.
+  **human paste** for labels/Status/close (templates in `FLEET-LESSONS-HEX-1693.md`).
+- Do **not** open parallel heavy-CI product tips “to go faster” — serialize merges and prefer
+  **domain-sized** slices (fleet cost / `FLEET-LESSONS-HEX-1693.md` Performance section).
+- Do **not** treat Mac local green as CI merge-ready (`MAC-LOCAL-VS-CI.md`).
 
 ## Hard rule — closing keyword
 
