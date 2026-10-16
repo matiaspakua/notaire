@@ -19,8 +19,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/docs-1858-ai-sdlc-hex-fleet-lessons/` | Gate 1 |
 | Branch | `docs/1858_ai_sdlc_hex_fleet_lessons` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | <!-- SHAs, one per line --> | pending |
-| Pull Request | #<!-- number --> | pending |
+| Commits | `0013a842` Gate 1 + guard; `c394eb2e` encode lessons | done |
+| Pull Request | pending push | pending |
 | CI run | <!-- workflow run URL --> | pending |
 | Merge commit | <!-- SHA --> | pending |
 | Release / tag | n/a — docs/process | pending |
