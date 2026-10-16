@@ -20,7 +20,7 @@ import {
   useProcedureTemplate,
   useUpdateProcedureTemplate,
 } from "@/hooks/useProcedureTemplate";
-import { ApiError } from "@/lib/api-error";
+import { ApiError } from "@/lib/api-client";
 import type { ProcedureType, ProcedureTemplateRow } from "@/types";
 
 interface Props {

@@ -31,7 +31,7 @@ import {
   useDeleteWorkflowTransition,
   useUpdateWorkflowTransition,
 } from "@/hooks/useWorkflow";
-import { workflowUseCases } from "@/composition/workflow";
+import { apiPost } from "@/lib/api-client";
 import { presentMutationError } from "@/lib/mutation-error";
 import type { WorkflowNodeType } from "@/types";
 import { useManagementStatuses } from "@/hooks/useManagementStatuses";
@@ -310,7 +310,10 @@ export default function WorkflowEditorPage() {
 
   async function handleValidate() {
     try {
-      const result = await workflowUseCases.validateDefinition(workflowId);
+      const result = await apiPost<{ valid: boolean; errors: string[] }>(
+        `/workflow-definition/${workflowId}/validate`,
+        {}
+      );
       setValidationErrors(result.errors ?? []);
       if (result.valid) {
         toast.success(t("valid"));

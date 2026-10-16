@@ -1,9 +1,9 @@
 /**
  * React Query hook for the management workflow trace (dashboard).
- * Hexagon wiring: #1792 / ADR-030.
+ * Fetches GET /api/v1/managements/{id}/workflow-trace.
  */
 import { useQuery } from "@tanstack/react-query";
-import { managementWorkflowUseCases } from "@/composition/workflow";
+import { apiGet, apiGetPage } from "@/lib/api-client";
 import { MANAGEMENTS_SORT } from "@/hooks/useManagements";
 import type { ManagementWorkflowTrace } from "@/types";
 
@@ -15,8 +15,7 @@ export const managementWorkflowKeys = {
 export function useManagementWorkflowTrace(managementId: number | undefined) {
   return useQuery({
     queryKey: managementWorkflowKeys.trace(managementId ?? 0),
-    queryFn: () =>
-      managementWorkflowUseCases.getTrace(managementId!) as Promise<ManagementWorkflowTrace>,
+    queryFn: () => apiGet<ManagementWorkflowTrace>(`/managements/${managementId}/workflow-trace`),
     enabled: !!managementId,
   });
 }
@@ -38,12 +37,23 @@ export interface LatestTracedManagement {
  * Null when none of the newest LATEST_TRACE_CANDIDATES has a workflow.
  */
 export async function findLatestTracedManagement(): Promise<LatestTracedManagement | null> {
-  const hit = await managementWorkflowUseCases.findLatestTraced(
-    LATEST_TRACE_CANDIDATES,
-    TRACE_BATCH,
-    MANAGEMENTS_SORT,
-  );
-  return hit as LatestTracedManagement | null;
+  const page = await apiGetPage<{ idManagement?: number }>("/managements", {
+    page: 0,
+    size: LATEST_TRACE_CANDIDATES,
+    sort: MANAGEMENTS_SORT,
+  });
+  const ids = page.content.map((g) => g.idManagement).filter((id): id is number => id != null);
+  for (let i = 0; i < ids.length; i += TRACE_BATCH) {
+    const batch = ids.slice(i, i + TRACE_BATCH);
+    const results = await Promise.allSettled(
+      batch.map((id) => apiGet<ManagementWorkflowTrace>(`/managements/${id}/workflow-trace`)),
+    );
+    const hit = results.findIndex((r) => r.status === "fulfilled");
+    if (hit >= 0) {
+      return { managementId: batch[hit], trace: (results[hit] as PromiseFulfilledResult<ManagementWorkflowTrace>).value };
+    }
+  }
+  return null;
 }
 
 export function useLatestTracedManagement(enabled = true) {
