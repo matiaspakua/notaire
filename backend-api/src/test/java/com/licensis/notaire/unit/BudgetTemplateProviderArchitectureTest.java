@@ -19,12 +19,12 @@ class BudgetTemplateProviderArchitectureTest {
     }
 
     @Test
-    @DisplayName("the controller depends on a service, not on the legacy JPA controller")
-    void controllerDependsOnTheService() throws ClassNotFoundException {
+    @DisplayName("the controller depends on inbound ports, not on the legacy JPA controller")
+    void controllerDependsOnInboundPorts() throws ClassNotFoundException {
         Class<?> controller = Class.forName(CONTROLLER);
 
         assertThat(controller.getDeclaredConstructors()[0].getParameterTypes())
                 .extracting(Class::getSimpleName)
-                .contains("BudgetTemplateCatalogService");
+                .containsExactlyInAnyOrder("QueryBudgetTemplatesUseCase", "ManageBudgetTemplatesUseCase");
     }
 }
