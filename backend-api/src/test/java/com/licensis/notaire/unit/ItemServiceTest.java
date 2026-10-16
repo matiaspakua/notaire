@@ -6,7 +6,7 @@ import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Item;
 import com.licensis.notaire.application.port.out.item.ItemRepositoryPort;
-import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
+import com.licensis.notaire.application.port.out.budget.BudgetOpsPort;
 import com.licensis.notaire.application.usecase.item.ItemService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class ItemServiceTest {
     private ItemRepositoryPort itemRepository;
 
     @Mock
-    private BudgetRepositoryPort budgetRepository;
+    private BudgetOpsPort budgetOps;
 
     @InjectMocks
     private ItemService itemService;
@@ -135,7 +135,7 @@ class ItemServiceTest {
     @Test
     @DisplayName("Should return only discount and surcharge items for a budget")
     void shouldReturnDiscountsAndSurchargesForBudget() {
-        when(budgetRepository.existsById(1)).thenReturn(true);
+        when(budgetOps.existsById(1)).thenReturn(true);
         when(itemRepository.findByBudgetId(1)).thenReturn(List.of(
                 buildItem(TypeItem.NORMAL, null),
                 buildItem(TypeItem.DESCUENTO, "Discount"),
@@ -152,7 +152,7 @@ class ItemServiceTest {
     @Test
     @DisplayName("Should return an empty list when budget has no discounts or surcharges")
     void shouldReturnEmptyListWhenNoDiscountsOrSurcharges() {
-        when(budgetRepository.existsById(1)).thenReturn(true);
+        when(budgetOps.existsById(1)).thenReturn(true);
         when(itemRepository.findByBudgetId(1)).thenReturn(List.of(
                 buildItem(TypeItem.NORMAL, null)
         ));
@@ -165,7 +165,7 @@ class ItemServiceTest {
     @Test
     @DisplayName("Should throw when budget does not exist for the discounts/surcharges report")
     void shouldThrowWhenBudgetDoesNotExistForReport() {
-        when(budgetRepository.existsById(999)).thenReturn(false);
+        when(budgetOps.existsById(999)).thenReturn(false);
 
         assertThatThrownBy(() -> itemService.findDiscountsAndSurchargesByBudget(999))
                 .isInstanceOf(ResourceNotFoundException.class);

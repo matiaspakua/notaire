@@ -25,10 +25,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.licensis.notaire.adapter.in.web.budget.BudgetController;
 import com.licensis.notaire.adapter.out.persistence.budget.BudgetOpsAdapter;
 import com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase;
-import com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService;
+import com.licensis.notaire.application.port.in.budget.AddBudgetItemsFromCatalogUseCase;
 import com.licensis.notaire.application.usecase.budget.BudgetQueryUseCaseService;
-import com.licensis.notaire.application.usecase.budget.BudgetService;
-import com.licensis.notaire.application.usecase.budget.BudgetTemplateService;
+import com.licensis.notaire.adapter.out.persistence.budget.BudgetService;
+import com.licensis.notaire.application.port.in.budget.LoadBudgetItemsFromTemplateUseCase;
 import com.licensis.notaire.application.usecase.budget.BudgetWriteUseCaseService;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.BudgetStatus;
@@ -55,8 +55,8 @@ class BudgetStatusVocabularyTest {
                 new BudgetQueryUseCaseService(ops),
                 new BudgetWriteUseCaseService(ops),
                 mock(GetBudgetSummaryUseCase.class),
-                mock(BudgetTemplateService.class),
-                mock(BudgetCatalogItemsService.class));
+                mock(LoadBudgetItemsFromTemplateUseCase.class),
+                mock(AddBudgetItemsFromCatalogUseCase.class));
         return standaloneSetup(controller).setControllerAdvice(new GlobalExceptionHandler()).build();
     }
 

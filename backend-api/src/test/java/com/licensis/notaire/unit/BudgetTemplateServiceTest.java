@@ -15,10 +15,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
+import com.licensis.notaire.repository.BudgetRepository;
 import com.licensis.notaire.application.port.out.item.ItemOpsPort.ItemView;
 import com.licensis.notaire.application.port.out.item.ItemRepositoryPort;
-import com.licensis.notaire.application.usecase.budget.BudgetTemplateService;
+import com.licensis.notaire.adapter.out.persistence.budget.BudgetTemplateService;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.BudgetTemplate;
 import com.licensis.notaire.business.Concept;
@@ -31,7 +31,7 @@ import com.licensis.notaire.repository.BudgetTemplateRepository;
 class BudgetTemplateServiceTest {
 
     @Mock
-    private BudgetRepositoryPort budgetRepository;
+    private BudgetRepository budgetRepository;
 
     @Mock
     private BudgetTemplateRepository budgetTemplateRepository;
