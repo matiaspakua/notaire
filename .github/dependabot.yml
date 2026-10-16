@@ -65,6 +65,11 @@ updates:
         update-types:
           - "minor"
           - "patch"
+    ignore:
+      # TS7 ships no compiler API (createProgram); Next.js type-check, openapi-typescript
+      # (peer typescript ^5) and eslint-config-next need it. Drop when they support TS7 (#1883, #1871).
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
     reviewers:
       - matiaspakua
 
