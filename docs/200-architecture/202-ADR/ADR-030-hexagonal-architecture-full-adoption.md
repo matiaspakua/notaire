@@ -274,6 +274,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   calls `QueryProcedureFoldersUseCase` / `ManageProcedureFoldersUseCase` only; entity access and DTO
   mapping live behind `ProcedureFolderOpsPort`. ArchUnit R1 clears its ProcedureFolder entity edge.
 
+- **Notebook ports-only (#1817):** smallest remaining R1 hotspot (1 edge). `NotebookController` CRUD calls
+  `QueryNotebooksUseCase` / `ManageNotebooksUseCase` only; entity access lives behind `NotebookOpsPort`.
+  Cover PDF keeps `ReportService` (no R1 edge). ArchUnit R1 clears Notebook entity edge.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers

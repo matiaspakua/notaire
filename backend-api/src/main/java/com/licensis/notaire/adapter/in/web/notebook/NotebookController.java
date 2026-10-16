@@ -1,23 +1,13 @@
 package com.licensis.notaire.adapter.in.web.notebook;
 
-import com.licensis.notaire.exception.BusinessValidationException;
-import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.adapter.in.web.support.NotaryRef;
-import com.licensis.notaire.business.Notebook;
-import com.licensis.notaire.adapter.in.web.report.PdfResponseFactory;
-import com.licensis.notaire.application.usecase.notebook.NotebookService;
-import com.licensis.notaire.application.usecase.report.ReportService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotEmpty;
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,11 +16,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Map;
+import com.licensis.notaire.adapter.in.web.report.PdfResponseFactory;
+import com.licensis.notaire.adapter.in.web.support.NotaryRef;
+import com.licensis.notaire.application.port.in.notebook.ManageNotebooksUseCase;
+import com.licensis.notaire.application.port.in.notebook.QueryNotebooksUseCase;
+import com.licensis.notaire.application.port.out.notebook.NotebookOpsPort.CreateResult;
+import com.licensis.notaire.application.port.out.notebook.NotebookOpsPort.NotebookView;
+import com.licensis.notaire.application.usecase.report.ReportService;
+import com.licensis.notaire.exception.ResourceNotFoundException;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotEmpty;
 
 /**
- * REST API for managing folio notebooks (CU80).
+ * Folio notebooks (CU80). CRUD calls inbound ports only; cover PDF keeps {@link ReportService}
+ * (issue #1817).
  */
 @RestController
 @RequestMapping("/api/v1/notebooks")
@@ -40,34 +43,43 @@ public class NotebookController {
 
     private static final Logger logger = LoggerFactory.getLogger(NotebookController.class);
 
-    private final NotebookService notebookService;
+    private final QueryNotebooksUseCase queryNotebooks;
+    private final ManageNotebooksUseCase manageNotebooks;
     private final ReportService reportService;
 
-    public NotebookController(NotebookService notebookService, ReportService reportService) {
-        this.notebookService = notebookService;
+    public NotebookController(
+            QueryNotebooksUseCase queryNotebooks,
+            ManageNotebooksUseCase manageNotebooks,
+            ReportService reportService) {
+        this.queryNotebooks = queryNotebooks;
+        this.manageNotebooks = manageNotebooks;
         this.reportService = reportService;
     }
 
-    public record NotebookResponse(Integer idNotebook, int number, int year, String notes,
-            NotaryRef fkIdNotaryPerson, int version) {
-        public static NotebookResponse from(Notebook notebook) {
-            return new NotebookResponse(notebook.getIdNotebook(), notebook.getNumber(), notebook.getYear(),
-                    notebook.getNotes(), NotaryRef.from(notebook.getFkIdNotaryPerson()), notebook.getVersion());
+    public record NotebookResponse(
+            Integer idNotebook, int number, int year, String notes, NotaryRef fkIdNotaryPerson, int version) {
+        static NotebookResponse from(NotebookView view) {
+            var n = view.notary();
+            NotaryRef notary = n == null
+                    ? null
+                    : new NotaryRef(
+                            n.personId(),
+                            n.firstName(),
+                            n.lastName(),
+                            n.identificationNumber(),
+                            n.notaryRegistrationNumber());
+            return new NotebookResponse(
+                    view.idNotebook(), view.number(), view.year(), view.notes(), notary, view.version());
         }
     }
 
     public record CreateNotebookRequest(
-            @NotEmpty List<Integer> idsFolio,
-            Integer idNotary,
-            int year,
-            String notes) {
-    }
+            @NotEmpty List<Integer> idsFolio, Integer idNotary, int year, String notes) {}
 
     @GetMapping
     @Operation(summary = "Get all notebooks")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<NotebookResponse>> getAllNotebooks() {
-        return ResponseEntity.ok(notebookService.findAll().stream().map(NotebookResponse::from).toList());
+        return ResponseEntity.ok(queryNotebooks.findAll().stream().map(NotebookResponse::from).toList());
     }
 
     @ApiResponses({
@@ -76,10 +88,11 @@ public class NotebookController {
     })
     @GetMapping("/{id}")
     @Operation(summary = "Get notebook by ID")
-    @Transactional(readOnly = true)
     public ResponseEntity<NotebookResponse> getNotebookById(@PathVariable Integer id) {
-        return notebookService.findById(id)
-                .map(notebook -> ResponseEntity.ok(NotebookResponse.from(notebook)))
+        return queryNotebooks
+                .findById(id)
+                .map(NotebookResponse::from)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -87,20 +100,22 @@ public class NotebookController {
         @ApiResponse(responseCode = "201", description = "Created"),
         @ApiResponse(responseCode = "400", description = "Invalid request"),
         @ApiResponse(responseCode = "404", description = "Notary or folio not found"),
-        @ApiResponse(responseCode = "409", description = "A notebook already exists with that number for the year and notary")
+        @ApiResponse(
+                responseCode = "409",
+                description = "A notebook already exists with that number for the year and notary")
     })
     @PostMapping
     @Operation(summary = "Create a notebook from ten consecutive folios")
     public ResponseEntity<Object> createNotebook(@RequestBody CreateNotebookRequest request) {
-        try {
-            Notebook created = notebookService.createNotebook(
-                    request.idsFolio(), request.idNotary(), request.year(), request.notes());
-            return ResponseEntity.status(HttpStatus.CREATED).body(NotebookResponse.from(created));
-        } catch (BusinessValidationException e) {
-            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
-        }
+        return switch (manageNotebooks.create(
+                request.idsFolio(), request.idNotary(), request.year(), request.notes())) {
+            case CreateResult.Created created ->
+                ResponseEntity.status(HttpStatus.CREATED).body(NotebookResponse.from(created.view()));
+            case CreateResult.BadRequest bad ->
+                ResponseEntity.badRequest().body(Map.of("message", bad.message()));
+            case CreateResult.NotFound notFound ->
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", notFound.message()));
+        };
     }
 
     @ApiResponses({
