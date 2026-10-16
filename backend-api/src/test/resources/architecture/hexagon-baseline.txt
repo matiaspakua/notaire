@@ -2,8 +2,6 @@ R1 | com.licensis.notaire.adapter.in.web.budget.BudgetController -> com.licensis
 R1 | com.licensis.notaire.adapter.in.web.budget.BudgetController -> com.licensis.notaire.business.BudgetStatus
 R1 | com.licensis.notaire.adapter.in.web.budget.BudgetController -> com.licensis.notaire.business.Person
 R1 | com.licensis.notaire.adapter.in.web.budget.BudgetController -> com.licensis.notaire.repository.PersonRepository
-R1 | com.licensis.notaire.adapter.in.web.budget.BudgetTemplateController -> com.licensis.notaire.business.BudgetTemplate
-R1 | com.licensis.notaire.adapter.in.web.budget.BudgetTemplateController -> com.licensis.notaire.business.BudgetTemplatePK
 R1 | com.licensis.notaire.adapter.in.web.deed.DeedController -> com.licensis.notaire.business.Deed
 R1 | com.licensis.notaire.adapter.in.web.deed.DeedController -> com.licensis.notaire.business.Folio
 R1 | com.licensis.notaire.adapter.in.web.deed.DeedController -> com.licensis.notaire.repository.FolioRepository
