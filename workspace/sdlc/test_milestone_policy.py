@@ -35,7 +35,7 @@ from milestone_policy import (
     shipped_train,
     suggested_priority,
 )
-from apply_milestone_policy import missing_project_issues
+from apply_milestone_policy import milestone_payload, missing_project_issues, target_for
 
 
 class ClassifyOpenTests(unittest.TestCase):
@@ -154,7 +154,11 @@ class ClassifyClosedTests(unittest.TestCase):
         self.assertEqual(classify_closed("2026-06-30T12:00:00Z", False), "H · 2026 Q2 cohort: foundations & API")
         self.assertEqual(classify_closed("2026-07-01T00:00:00Z", False), "H · 2026 Q3 cohort: product build & UI/UX")
         self.assertEqual(classify_closed("2026-09-30T00:00:00Z", False), "H · 2026 Q3 cohort: product build & UI/UX")
-        self.assertEqual(classify_closed("2026-10-01T00:00:00Z", False), "H · 2026 Q4 cohort: cloud AI SDLC")
+        self.assertEqual(classify_closed("2026-10-01T00:00:00Z", False), "v0.1 · First release cuts (2026-10)")
+        self.assertEqual(classify_closed("2026-10-12T00:00:00Z", False), "v0.2 · Release identity & product forms (2026-10)")
+
+    def test_unmilestoned_work_closed_after_the_last_cut_ships_with_the_current_train(self):
+        self.assertEqual(classify_closed("2026-10-17T00:00:00Z", False), RELEASE)
 
 
 class NomenclatureTests(unittest.TestCase):
@@ -248,6 +252,52 @@ class ShippedTrainTests(unittest.TestCase):
         self.assertIsNone(shipped_train("2026-10-05T00:00:00Z", "H8 · Pre-release hardening (2026-09–2026-10)"))
         self.assertIsNone(shipped_train("2026-10-05T00:00:00Z", "History · v1.0 priority bucket"))
         self.assertIsNone(shipped_train("2026-10-14T00:00:00Z", self.V02))
+
+
+class ApplyTests(unittest.TestCase):
+    @staticmethod
+    def issue(state, milestone=None, closed_at=None, labels=(), number=1000, title="x"):
+        return {
+            "number": number,
+            "title": title,
+            "state": state,
+            "closedAt": closed_at,
+            "milestone": {"title": milestone} if milestone else None,
+            "labels": {"nodes": [{"name": name} for name in labels]},
+        }
+
+    def test_merged_bucket_issues_move_to_h8(self):
+        for bucket in ("History · v1.1 priority bucket", "History · Backlog priority bucket"):
+            self.assertEqual(
+                target_for(self.issue("CLOSED", bucket, "2026-10-05T00:00:00Z")),
+                "H8 · Pre-release hardening (2026-09–2026-10)",
+            )
+
+    def test_closed_cohort_issue_in_a_cut_window_moves_to_the_shipped_train(self):
+        self.assertEqual(
+            target_for(self.issue("CLOSED", "History · 2026 Q4 — Cloud AI SDLC", "2026-10-11T00:00:00Z")),
+            "v0.2 · Release identity & product forms (2026-10)",
+        )
+
+    def test_curated_history_issue_keeps_its_renamed_stage(self):
+        self.assertEqual(
+            target_for(self.issue("CLOSED", "History · Phase 1 Backend API", "2026-05-02T00:00:00Z")),
+            "H2 · REST API migration (2026-05)",
+        )
+
+    def test_open_catalog_anchor_targets_the_catalog(self):
+        self.assertEqual(
+            target_for(self.issue("OPEN", "2026-12 · Frontend product", labels=["CASO-DE-USO"], number=162, title="CU09")),
+            CATALOG,
+        )
+
+    def test_payload_closes_history_and_shipped_and_leaves_continuous_undated(self):
+        self.assertEqual(milestone_payload(HISTORY_STAGES[0])["state"], "closed")
+        self.assertEqual(milestone_payload(SHIPPED[1])["state"], "closed")
+        self.assertEqual(milestone_payload(RELEASE)["state"], "open")
+        self.assertIsNone(milestone_payload(BACKLOG)["due_on"])
+        self.assertIsNone(milestone_payload(CATALOG)["due_on"])
+        self.assertEqual(milestone_payload(RELEASE)["due_on"], MILESTONE_DUE[RELEASE])
 
 
 class RoadmapContractTests(unittest.TestCase):
