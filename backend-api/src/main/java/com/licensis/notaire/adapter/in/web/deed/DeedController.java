@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.licensis.notaire.adapter.in.web.person.PersonController.PersonResponse;
+import com.licensis.notaire.adapter.in.web.person.PersonResponse;
 import com.licensis.notaire.application.port.in.deed.ManageDeedsUseCase;
 import com.licensis.notaire.application.port.in.deed.QueryDeedsUseCase;
 import com.licensis.notaire.application.port.out.deed.DeedOpsPort.DeedCommand;
