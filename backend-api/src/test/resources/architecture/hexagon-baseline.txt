@@ -15,6 +15,8 @@ R1 | com.licensis.notaire.adapter.in.web.item.ItemController -> com.licensis.not
 R1 | com.licensis.notaire.adapter.in.web.item.ItemController -> com.licensis.notaire.business.Item
 R1 | com.licensis.notaire.adapter.in.web.item.ItemController -> com.licensis.notaire.repository.BudgetRepository
 R1 | com.licensis.notaire.adapter.in.web.notebook.NotebookController -> com.licensis.notaire.business.Notebook
+R1 | com.licensis.notaire.adapter.in.web.person.PersonResponse -> com.licensis.notaire.business.IdentificationType
+R1 | com.licensis.notaire.adapter.in.web.person.PersonResponse -> com.licensis.notaire.business.Person
 R1 | com.licensis.notaire.adapter.in.web.procedure.ProcedureTemplateController -> com.licensis.notaire.business.ProcedureTemplate
 R1 | com.licensis.notaire.adapter.in.web.procedure.ProcedureTemplateController -> com.licensis.notaire.business.ProcedureTemplatePK
 R1 | com.licensis.notaire.adapter.in.web.registrationdraft.RegistrationDraftController -> com.licensis.notaire.business.RegistrationDraft
