@@ -1,4 +1,4 @@
-package com.licensis.notaire.application.usecase.person;
+package com.licensis.notaire.adapter.out.persistence.person;
 
 import com.licensis.notaire.exception.DuplicatePersonException;
 import com.licensis.notaire.business.Person;
@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Person persistence helper (CU17/CU18). Outbound adapter helper (issue #1881).
+ */
 @Service
 @Transactional
 public class PersonService {
