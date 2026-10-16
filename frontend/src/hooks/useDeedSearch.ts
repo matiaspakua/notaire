@@ -26,6 +26,7 @@ function toWire(d: DomainDeed): Deed {
     notes: d.notes,
     registrationEntryNumber: d.registrationEntryNumber,
     status: d.status,
+    idFolio: d.idFolio,
   };
 }
 

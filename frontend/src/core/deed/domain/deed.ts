@@ -13,5 +13,7 @@ export interface Deed {
   notes?: string;
   registrationEntryNumber?: string;
   status?: string;
+  /** Folio to link on create (DeedRequest.idFolio); required for signing. */
+  idFolio?: number;
   version?: number;
 }

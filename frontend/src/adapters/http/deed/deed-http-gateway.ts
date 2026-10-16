@@ -19,6 +19,7 @@ function toDomain(dto: DeedDto): Deed {
     notes: dto.notes,
     registrationEntryNumber: dto.registrationEntryNumber,
     status: dto.status,
+    idFolio: dto.idFolio,
     version: dto.version,
   };
 }
@@ -33,6 +34,7 @@ function toWire(input: DeedInput): DeedDto {
     notes: input.notes,
     registrationEntryNumber: input.registrationEntryNumber,
     status: input.status,
+    idFolio: input.idFolio,
     version: input.version,
   };
 }

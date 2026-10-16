@@ -91,6 +91,7 @@ function DeedsList() {
           notes: d.notes,
           registrationEntryNumber: d.registrationEntryNumber,
           status: d.status,
+          idFolio: d.idFolio,
         }),
       );
     },

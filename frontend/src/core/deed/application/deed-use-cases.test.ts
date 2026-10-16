@@ -69,8 +69,9 @@ describe("deed use cases (#1831)", () => {
     await expect(uc.searchByNumber("77")).resolves.toHaveLength(1);
     await expect(uc.searchByNumber("99")).resolves.toHaveLength(0);
 
-    await uc.create({ number: 88, status: "Sin Firmar" });
+    await uc.create({ number: 88, status: "Sin Firmar", idFolio: 9 });
     expect(gateway.store).toHaveLength(2);
+    expect(gateway.store[1]).toMatchObject({ number: 88, idFolio: 9 });
 
     await expect(uc.sign(1)).resolves.toMatchObject({ status: "Firmada" });
 

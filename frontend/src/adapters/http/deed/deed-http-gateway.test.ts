@@ -64,8 +64,12 @@ describe("deedHttpGateway", () => {
     expect(apiGetMock).toHaveBeenCalledWith("/deeds/search?number=77");
 
     apiPostMock.mockResolvedValue(undefined);
-    await deedHttpGateway.create({ number: 88, status: "Sin Firmar" });
-    expect(apiPostMock).toHaveBeenCalledWith("/deeds", { number: 88, status: "Sin Firmar" });
+    await deedHttpGateway.create({ number: 88, status: "Sin Firmar", idFolio: 5 });
+    expect(apiPostMock).toHaveBeenCalledWith("/deeds", {
+      number: 88,
+      status: "Sin Firmar",
+      idFolio: 5,
+    });
 
     apiPutMock.mockResolvedValue(undefined);
     await deedHttpGateway.update(12, { notes: "ok" });
