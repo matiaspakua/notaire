@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Documentation
 
+* **sdlc:** encode post-#1859 fleet lessons — R2 package-move path hygiene, human paste templates, performance/cost serialize, Mac≠CI green, `validate-sdlc-plan` gh retry harden ([#1907](https://github.com/matiaspakua/notaire/issues/1907))
 * **pm:** version-first milestone nomenclature — `vX.Y · <Theme> (<YYYY-MM>)` trains (v0.3 … v1.0), `H0`–`H8` history stages, closed `v0.1`/`v0.2` cuts, continuous `Backlog · Unscheduled` and `Catalog · Requirements & use cases`; `train_for()` reads the version prefix ([#1847](https://github.com/matiaspakua/notaire/issues/1847))
 
 ### Code Refactoring

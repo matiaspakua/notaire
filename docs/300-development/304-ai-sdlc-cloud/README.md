@@ -8,8 +8,8 @@ issue → OpenSpec Gate 1 → TDD → implement → preflight/CI → PR → revi
 | [`FLEET-ARCHITECTURE.md`](FLEET-ARCHITECTURE.md) | Foreman + specialist roles, model recommendations, handoffs, local-ai exclusion, process learnings |
 | [`ENVIRONMENT-CHECKLIST.md`](ENVIRONMENT-CHECKLIST.md) | Toolchain/secrets checklist for Cloud `environment.json` + Saved-card and ops pitfalls |
 | [`CI-MERGE-GATE.md`](CI-MERGE-GATE.md) | **Never merge on light-CI-only green** — `bash workspace/sdlc/check-heavy-ci.sh <pr>`; also verify OpenSpec archive hygiene / task groups 3–8 (`check-openspec-archive-hygiene.py`, #1252); merge-`main`-first for stale Budget/person failures; CHANGELOG Unreleased fence |
-| [`FLEET-LESSONS-HEX-1693.md`](FLEET-LESSONS-HEX-1693.md) | **#1693 hex-fleet do/don’t** — steward cadence, Process Checks before ready, R2 one-domain slices, FE suppressions `{}`, issue paste on 403, anti-patterns |
-| [`MAC-LOCAL-VS-CI.md`](MAC-LOCAL-VS-CI.md) | What Mac local gates can prove for hex/R2 vs what CI must still own |
+| [`FLEET-LESSONS-HEX-1693.md`](FLEET-LESSONS-HEX-1693.md) | **#1693 hex-fleet do/don’t** — steward cadence, Process Checks before ready, R2 one-domain slices + path hygiene, FE suppressions `{}`, human paste templates, performance/cost serialize, anti-patterns (#1858/#1907) |
+| [`MAC-LOCAL-VS-CI.md`](MAC-LOCAL-VS-CI.md) | What Mac local gates can prove for hex/R2 vs what CI must still own — **Mac green ≠ CI green** |
 | [`FLEET-IDENTITY.md`](FLEET-IDENTITY.md) | `notaire-fleet` GitHub App: least-privilege permissions, Owner setup, `workspace/sdlc/fleet-token.sh` (#1648) |
 | [`VALIDATION-PLAN.md`](VALIDATION-PLAN.md) | Prove the fleet is ready before picking the first GitHub issue |
 | [`fleet-manifest.yaml`](fleet-manifest.yaml) | Machine-readable role → skills → model map |

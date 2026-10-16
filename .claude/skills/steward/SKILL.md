@@ -58,8 +58,11 @@ Please holds it. Never commit on `release-please--branches--*`.
 
 Do not mark the PR ready until Process Checks are green: OpenSpec archive hygiene, Spotless when
 Java changed, INVENTORY regen when architecture/test inventory drifted, Conventional Commits.
-Advisory / light checks are not merge authority — still require `check-heavy-ci.sh` exit 0.
-Hex FE ratchet Done only when `eslint-suppressions.json` is `{}` (count 0). Full checklist:
+After moving helpers to `adapter.out.persistence.<slice>`, fix english-locals / `docs/tests` path
+refs in the same PR (`python3 -m unittest discover -s docs/tests`). Advisory / light checks are
+not merge authority — still require `check-heavy-ci.sh` exit 0. Mac local green is **not** CI
+green. Prefer one heavy tip and domain-sized slices (cost). Hex FE ratchet Done only when
+`eslint-suppressions.json` is `{}` (count 0). Full checklist + paste templates:
 `docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md`.
 
 ## 6. Who merges
@@ -67,8 +70,9 @@ Hex FE ratchet Done only when `eslint-suppressions.json` is `{}` (count 0). Full
 Workers never merge. The Foreman merges a Worker PR when every required check is green and
 `check-heavy-ci.sh` exits 0; the Owner merges Constitution, `sdlc-exception` and harness PRs.
 When only people are owed (approval, merge), say so once and wait.
-If Issues/Projects write returns **403**, leave a **human paste** (Status/labels/close); never open
-a probe issue to test permissions.
+If Issues/Projects write returns **403**, leave a **human paste** using the templates in
+`FLEET-LESSONS-HEX-1693.md` (Issue #… Status/labels/close); never open a probe issue to test
+permissions.
 
 ## 7. Failures that are the environment, not the PR
 

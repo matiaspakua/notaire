@@ -9,6 +9,12 @@ When a self-hosted Mac (Docker OK) just re-ran the left column on clean
 CI still owns the right column — do not skip those jobs or merge without them
 when they are required for the PR path set.
 
+**Mac green does not replace CI green.** A green Mac ArchUnit / unit / FE / local
+security run is evidence for those columns only. It is **not** merge authority
+and does **not** mean Bruno full, Playwright, CodeQL, DAST, or image build are
+safe to skip. Always run `bash workspace/sdlc/check-heavy-ci.sh <pr>` on the
+PR head before merge.
+
 ## Safe to lean on Mac (when freshly green on tip)
 
 | Area | Typical command / note |
@@ -38,4 +44,7 @@ when they are required for the PR path set.
 1. Mac (or Cloud with Docker) proves ArchUnit shrink + unit/pg + FE lint/tests before push.
 2. Steward still waits for `bash workspace/sdlc/check-heavy-ci.sh <pr>` on the PR head.
 3. Do not open a “Mac failed preflight once on `gh`” product bug — re-run
-   `validate-sdlc-plan.sh` (retries are built in after #1858).
+   `validate-sdlc-plan.sh` (retries are built in after #1858; hardened further in #1907).
+4. After package moves to `adapter.out.persistence.*`, Mac/Cloud must also refresh
+   english-locals / `docs/tests` path refs and INVENTORY before Process Checks
+   (`FLEET-LESSONS-HEX-1693.md` — R2 path hygiene).

@@ -63,7 +63,9 @@ These run in `sdlc-process.yml` on every PR and in `workspace/sdlc/preflight.sh`
 ## Fleet lessons (#1693)
 
 For multi-agent / hex cadence (heavy-CI serialize, merge-main-never-rebase, CHANGELOG
-Unreleased fence, Mac vs CI, R2 one-domain slices, human paste on 403, no probe Issues):
+Unreleased fence, Mac vs CI, R2 one-domain slices, path hygiene after
+`adapter.out.persistence` moves, human paste templates on 403, fleet/cost serialize,
+no probe Issues):
 `docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md` and
 `docs/300-development/304-ai-sdlc-cloud/MAC-LOCAL-VS-CI.md`. Steward checklist:
 `.claude/skills/steward/SKILL.md`.
@@ -77,6 +79,8 @@ Unreleased fence, Mac vs CI, R2 one-domain slices, human paste on 403, no probe 
 - ❌ Leave dead code, duplicate code or outdated docs
 - ❌ Open probe Issues to test permissions, or start the next hex domain before the current PR merges
 - ❌ Trust light/advisory CI as merge-ready — require `check-heavy-ci.sh` + Process Checks
+- ❌ Claim Mac local green equals CI green, or move packages without updating `docs/tests` path refs
+- ❌ Open parallel heavy-CI PRs when one tip is still queued (fleet cost)
 
 ## Exceptions
 
