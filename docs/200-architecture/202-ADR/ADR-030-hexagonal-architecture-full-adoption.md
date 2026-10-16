@@ -856,6 +856,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `core/external-entity-document` (+ HTTP adapters); document hooks leave the
   eslint baseline (suppressions shrink by eight).
 
+- **Frontend cross-cutting (#1843):** `core/user`, `core/role`, `core/audit`,
+  `core/registration-draft`, `core/auth` (+ HTTP adapters); reports reuse
+  protocol-report and folio/folio-type composition; suppressions shrink by eight.
+
 - **Frontend catalog leftovers (#1845):** `core/item`, `core/copy`, `core/substitution`,
   `core/property` (+ HTTP adapters); last four catalog suppressions leave the
   baseline.

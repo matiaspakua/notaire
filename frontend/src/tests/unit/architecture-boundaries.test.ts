@@ -57,13 +57,13 @@ describe("frontend import boundaries (ADR-030)", () => {
 describe("the shrink-only baseline", () => {
   const file = resolve(root, "eslint-suppressions.json");
 
-  it("exists, is not empty and only suppresses the boundary rules", () => {
+  it("exists and only suppresses the boundary rules (empty when FE hexagon complete)", () => {
     expect(existsSync(file)).toBe(true);
     const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, Record<string, unknown>>;
     const rules = new Set(Object.values(entries).flatMap((byRule) => Object.keys(byRule)));
     const boundaryRules = new Set(["no-restricted-globals", "no-restricted-imports"]);
     expect([...rules].filter((rule) => !boundaryRules.has(rule))).toEqual([]);
-    expect(rules.size).toBeGreaterThan(0);
+    // #1845: last FE suppressions cleared — empty baseline is the success state.
   });
 
   it("lists only files that still exist", () => {
@@ -207,12 +207,25 @@ describe("the shrink-only baseline", () => {
     expect(Object.keys(entries).length).toBeLessThan(17);
   });
 
+  it("cross-cutting hooks and pages left the baseline (#1843)", () => {
+    const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
+    expect(entries["src/hooks/useUsers.ts"]).toBeUndefined();
+    expect(entries["src/hooks/useRoles.ts"]).toBeUndefined();
+    expect(entries["src/hooks/useAudit.ts"]).toBeUndefined();
+    expect(entries["src/hooks/useReports.ts"]).toBeUndefined();
+    expect(entries["src/hooks/useRegistrationDrafts.ts"]).toBeUndefined();
+    expect(entries["src/app/login/page.tsx"]).toBeUndefined();
+    expect(entries["src/components/layout/AppSidebar.tsx"]).toBeUndefined();
+    expect(entries["src/app/dashboard/reports/page.tsx"]).toBeUndefined();
+    expect(Object.keys(entries).length).toBeLessThan(9);
+  });
+
   it("catalog leftover hooks left the baseline (#1845)", () => {
     const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
     expect(entries["src/hooks/useItems.ts"]).toBeUndefined();
     expect(entries["src/hooks/useCopies.ts"]).toBeUndefined();
     expect(entries["src/hooks/useSubstitutions.ts"]).toBeUndefined();
     expect(entries["src/hooks/useProperties.ts"]).toBeUndefined();
-    expect(Object.keys(entries).length).toBeLessThan(9);
+    expect(Object.keys(entries).length).toBe(0);
   });
 });

@@ -13,7 +13,9 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormField } from "@/theme/form-patterns";
 import { theme } from "@/theme/tokens";
-import { apiGet } from "@/lib/api-client";
+import { folioUseCases } from "@/composition/folio";
+import { folioTypeUseCases } from "@/composition/folio-type";
+import type { FolioType as DomainFolioType } from "@/core/folio-type/domain/folio-type";
 import type { FolioType, Person } from "@/types";
 import {
   useBudgetReport,
@@ -25,6 +27,16 @@ import {
   useDocumentDebtReport,
 } from "@/hooks/useReports";
 import { presentMutationError } from "@/lib/mutation-error";
+
+function toWireFolioType(t: DomainFolioType): FolioType {
+  return {
+    idFolioType: t.id,
+    name: t.name,
+    isAuxiliary: t.isAuxiliary,
+    notes: t.notes,
+    enabled: t.enabled,
+  };
+}
 
 const cardStyle: React.CSSProperties = {
   backgroundColor: theme.semantic.card.bg,
@@ -172,11 +184,11 @@ export default function ReportsPage() {
 
   const { data: notaries = [] } = useQuery({
     queryKey: ["availableNotaries"],
-    queryFn: () => apiGet<Person[]>("/deeds/available-notaries"),
+    queryFn: async () => (await folioUseCases.listAvailableNotaries()) as Person[],
   });
   const { data: folioTypes = [] } = useQuery({
     queryKey: ["folioTypes"],
-    queryFn: () => apiGet<FolioType[]>("/folio-types"),
+    queryFn: async () => (await folioTypeUseCases.list()).map(toWireFolioType),
   });
 
   async function handle(download: () => Promise<void>) {

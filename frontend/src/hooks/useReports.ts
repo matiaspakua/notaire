@@ -1,11 +1,11 @@
 /**
- * useReports — PDF report download hooks
- * Wraps /api/v1/reports/* endpoints that return application/pdf
+ * useReports — PDF report download hooks.
+ * Hexagon wiring: #1843 / ADR-030 (reuses protocol-report composition).
  */
-import { apiGetBytes } from "@/lib/api-client";
+import { protocolReportUseCases } from "@/composition/protocol-report";
 
 async function downloadPdf(path: string, filename: string): Promise<void> {
-  const blob = await apiGetBytes(path);
+  const blob = await protocolReportUseCases.download(path);
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -20,10 +20,7 @@ async function downloadPdf(path: string, filename: string): Promise<void> {
 export function useBudgetReport() {
   return {
     download: (idBudget: number) =>
-      downloadPdf(
-        `/reports/budget/${idBudget}`,
-        `presupuesto_${idBudget}.pdf`
-      ),
+      downloadPdf(`/reports/budget/${idBudget}`, `presupuesto_${idBudget}.pdf`),
   };
 }
 
@@ -31,10 +28,7 @@ export function useBudgetReport() {
 export function useBudgetPropertiesReport() {
   return {
     download: (idBudget: number) =>
-      downloadPdf(
-        `/reports/budget-properties/${idBudget}`,
-        `presupuesto_inmuebles_${idBudget}.pdf`
-      ),
+      downloadPdf(`/reports/budget-properties/${idBudget}`, `presupuesto_inmuebles_${idBudget}.pdf`),
   };
 }
 
@@ -44,7 +38,7 @@ export function useDocumentListReport() {
     download: (procedureTypeName: string) =>
       downloadPdf(
         `/reports/procedure-document-list?procedureTypeName=${encodeURIComponent(procedureTypeName)}`,
-        `lista_documentos_${procedureTypeName}.pdf`
+        `lista_documentos_${procedureTypeName}.pdf`,
       ),
   };
 }
@@ -53,10 +47,7 @@ export function useDocumentListReport() {
 export function useManagementHistoryReport() {
   return {
     download: (idManagement: number) =>
-      downloadPdf(
-        `/reports/management-history/${idManagement}`,
-        `historial_gestion_${idManagement}.pdf`
-      ),
+      downloadPdf(`/reports/management-history/${idManagement}`, `historial_gestion_${idManagement}.pdf`),
   };
 }
 
@@ -65,12 +56,8 @@ export function useMonthlySwornStatementReport() {
   return {
     download: (year: number, month: number, idNotary?: number, idFolioType?: number) => {
       const params = new URLSearchParams({ year: String(year), month: String(month) });
-      if (idNotary) {
-        params.set("idNotary", String(idNotary));
-      }
-      if (idFolioType) {
-        params.set("idFolioType", String(idFolioType));
-      }
+      if (idNotary) params.set("idNotary", String(idNotary));
+      if (idFolioType) params.set("idFolioType", String(idFolioType));
       return downloadPdf(
         `/reports/monthly-sworn-statement?${params.toString()}`,
         `ddjj_mensual_${year}_${month}.pdf`,
@@ -84,12 +71,8 @@ export function useTaxSwornStatementReport() {
   return {
     download: (year: number, month: number, idNotary?: number, idFolioType?: number) => {
       const params = new URLSearchParams({ year: String(year), month: String(month) });
-      if (idNotary) {
-        params.set("idNotary", String(idNotary));
-      }
-      if (idFolioType) {
-        params.set("idFolioType", String(idFolioType));
-      }
+      if (idNotary) params.set("idNotary", String(idNotary));
+      if (idFolioType) params.set("idFolioType", String(idFolioType));
       return downloadPdf(
         `/reports/tax-sworn-statement?${params.toString()}`,
         `ddjj_rentas_${year}_${month}.pdf`,
@@ -103,12 +86,8 @@ export function useIndexBookReport() {
   return {
     download: (year: number, idNotary?: number, idFolioType?: number) => {
       const params = new URLSearchParams({ year: String(year) });
-      if (idNotary) {
-        params.set("idNotary", String(idNotary));
-      }
-      if (idFolioType) {
-        params.set("idFolioType", String(idFolioType));
-      }
+      if (idNotary) params.set("idNotary", String(idNotary));
+      if (idFolioType) params.set("idFolioType", String(idFolioType));
       return downloadPdf(`/reports/index-book?${params.toString()}`, `libro_indice_${year}.pdf`);
     },
   };
@@ -120,7 +99,7 @@ export function useDocumentDebtReport() {
     download: (numberManagement: number) =>
       downloadPdf(
         `/reports/document-debt?numberManagement=${numberManagement}`,
-        `deuda_documentos_${numberManagement}.pdf`
+        `deuda_documentos_${numberManagement}.pdf`,
       ),
   };
 }
@@ -129,9 +108,6 @@ export function useDocumentDebtReport() {
 export function usePaymentReceipt() {
   return {
     download: (idPayment: number) =>
-      downloadPdf(
-        `/reports/payment-receipt/${idPayment}`,
-        `recibo_pago_${idPayment}.pdf`
-      ),
+      downloadPdf(`/reports/payment-receipt/${idPayment}`, `recibo_pago_${idPayment}.pdf`),
   };
 }

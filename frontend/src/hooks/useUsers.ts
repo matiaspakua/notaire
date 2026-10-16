@@ -1,20 +1,30 @@
+/**
+ * React Query hooks for users.
+ * Hexagon wiring: #1843 / ADR-030.
+ */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { userUseCases } from "@/composition/user";
+import type { UserAccount as DomainUser, UserInput } from "@/core/user/domain/user";
 import type { UserAccount } from "@/types";
 
 export const usersKeys = { all: ["users"] as const };
 
+function toWire(u: DomainUser): UserAccount {
+  return u as UserAccount;
+}
+
 export function useUsers() {
   return useQuery({
     queryKey: usersKeys.all,
-    queryFn: () => apiGet<UserAccount[]>("/users"),
+    queryFn: async () => (await userUseCases.list()).map(toWire),
   });
 }
 
 export function useCreateUser() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<UserAccount>) => apiPost<UserAccount>("/users", data),
+    mutationFn: async (data: Partial<UserAccount>) =>
+      toWire(await userUseCases.create(data as UserInput)),
     onSuccess: () => qc.invalidateQueries({ queryKey: usersKeys.all }),
   });
 }
@@ -23,7 +33,7 @@ export function useUpdateUser() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<UserAccount> }) =>
-      apiPut<void>(`/users/${id}`, data),
+      userUseCases.update(id, data as UserInput),
     onSuccess: () => qc.invalidateQueries({ queryKey: usersKeys.all }),
   });
 }
@@ -31,7 +41,7 @@ export function useUpdateUser() {
 export function useDeleteUser() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => apiDelete(`/users/${id}`),
+    mutationFn: (id: number) => userUseCases.delete(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: usersKeys.all }),
   });
 }
