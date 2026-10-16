@@ -13,7 +13,6 @@ import com.licensis.notaire.adapter.in.web.procedure.ProcedureController;
 import com.licensis.notaire.dto.DtoTestimonyMovement;
 import com.licensis.notaire.dto.DtoTestimony;
 import com.licensis.notaire.dto.DtoProcedureType;
-import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.repository.IdentificationTypeRepository;
