@@ -14,7 +14,7 @@ def read(relative: str) -> str:
 
 class SigningIdentifiersEnglishTest(unittest.TestCase):
     def test_signing_names_are_english(self):
-        service = read("main/java/com/licensis/notaire/application/usecase/deed/DeedSigningService.java")
+        service = read("main/java/com/licensis/notaire/adapter/out/persistence/deed/DeedSigningService.java")
         self.assertIn("Sign a deed", service)
         self.assertIn("Sin Firmar", service)
         self.assertNotIn("Firmar deed", service)

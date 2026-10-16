@@ -1,3 +1,8 @@
+# deed-r2-ports Specification
+
+## Purpose
+TBD - created by archiving change 2026-10-16-refactor-1852-deed-r2-ports. Update Purpose after archive.
+
 ## Requirements
 
 ### Requirement: Deed application ports speak ids/views only

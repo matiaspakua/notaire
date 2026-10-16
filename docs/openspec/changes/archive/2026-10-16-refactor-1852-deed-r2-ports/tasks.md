@@ -8,7 +8,7 @@
 - [x] 1.3 Acceptance Criteria defined in the delta spec
 - [x] 1.4 Impact Analysis in `proposal.md`
 - [x] 1.5 ADR-030 slice log
-- [ ] 1.6 Move Issue to IN PROGRESS (gh label may be blocked for this token)
+- [x] 1.6 Move Issue to IN PROGRESS (gh label may be blocked for this token)
 
 ## 2. Crear branch
 
@@ -35,8 +35,8 @@
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 Focused unit + HexagonArchitectureTest
-- [ ] 6.2 `mvn test -pl backend-api -Dtest=DeedNumberingUseCaseTest,DeedServiceTest,DeedSigningServiceTest,HexagonArchitectureTest` (and related)
+- [x] 6.1 Focused unit + HexagonArchitectureTest
+- [x] 6.2 `mvn test -pl backend-api -Dtest=DeedNumberingUseCaseTest,DeedServiceTest,DeedSigningServiceTest,HexagonArchitectureTest` (and related)
 
 ## 7. Ejecutar Playwright
 
@@ -49,9 +49,9 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
 - [ ] 9.2 Every commit message ends with `Closes #<issue-number>`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
 - [ ] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI

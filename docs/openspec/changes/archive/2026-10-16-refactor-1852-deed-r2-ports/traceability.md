@@ -20,7 +20,7 @@
 |----------|------|--------|
 | Numbering ports have no Person import | HexagonArchitectureTest R2 shrink + port compile | pending |
 | DeedService left the application layer | HexagonArchitectureTest R2 shrink | pending |
-| Numbering behaviour unchanged | DeedNumberingUseCaseTest | pending |
+| Numbering behaviour unchanged | DeedNumberingUseCaseTest | passing |
 
 ## Permanent documentation updated
 
