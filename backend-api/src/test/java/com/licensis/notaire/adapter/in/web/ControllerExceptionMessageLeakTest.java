@@ -6,10 +6,8 @@ import com.licensis.notaire.adapter.in.web.folio.FolioTypeController;
 import com.licensis.notaire.adapter.in.web.workflow.WorkflowDefinitionController;
 import com.licensis.notaire.application.port.in.document.ManageDocumentTypesUseCase;
 import com.licensis.notaire.application.port.in.document.QueryDocumentTypesUseCase;
-import com.licensis.notaire.application.usecase.concept.ConceptService;
 import com.licensis.notaire.domain.document.DocumentType;
 import com.licensis.notaire.exception.BusinessValidationException;
-import com.licensis.notaire.repository.BudgetTemplateRepository;
 import com.licensis.notaire.application.port.in.folio.ManageFolioTypesUseCase;
 import com.licensis.notaire.application.port.in.folio.QueryFolioTypesUseCase;
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowDefinitionsUseCase;
@@ -130,9 +128,13 @@ class ControllerExceptionMessageLeakTest {
     @Test
     @DisplayName("POST /concepts keeps an application-authored message for the user")
     void conceptCreateKeepsBusinessMessage() throws Exception {
-        ConceptService service = mock(ConceptService.class);
-        when(service.create(any())).thenThrow(new BusinessValidationException("Already exists a concept with that name"));
-        MockMvc mvc = standaloneSetup(new ConceptController(service, mock(BudgetTemplateRepository.class))).build();
+        var manage = mock(com.licensis.notaire.application.port.in.concept.ManageConceptsUseCase.class);
+        when(manage.create(any())).thenReturn(
+                new com.licensis.notaire.application.port.out.concept.ConceptOpsPort.SaveResult.Failed(
+                        new BusinessValidationException("Already exists a concept with that name"), true));
+        MockMvc mvc = standaloneSetup(new ConceptController(
+                        mock(com.licensis.notaire.application.port.in.concept.QueryConceptsUseCase.class), manage))
+                .build();
 
         mvc.perform(post("/api/v1/concepts").contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"X\"}"))
                 .andExpect(status().isConflict())
