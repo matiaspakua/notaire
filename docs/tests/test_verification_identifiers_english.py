@@ -13,16 +13,18 @@ def read(relative: str) -> str:
 
 class VerificationIdentifiersEnglishTest(unittest.TestCase):
     def test_verification_field_and_class_are_english(self):
-        controller = read(
-            "backend-api/src/main/java/com/licensis/notaire/adapter/in/web/testimony/TestimonyController.java"
+        # After #1783 the field lives on TestimonyOpsAdapter (controller is ports-only).
+        adapter = read(
+            "backend-api/src/main/java/com/licensis/notaire/adapter/out/persistence/testimony/"
+            "TestimonyOpsAdapter.java"
         )
-        self.assertIn("generationVerificationService", controller)
-        self.assertNotIn("generationVerificacionService", controller)
+        self.assertIn("generationVerificationService", adapter)
+        self.assertNotIn("generationVerificacionService", adapter)
 
         simple = read(
             "backend-api/src/test/java/com/licensis/notaire/unit/SimpleControllersTest.java"
         )
-        self.assertIn("generationVerificationService", simple)
+        self.assertIn("ManageTestimoniesUseCase", simple)
         self.assertNotIn("generationVerificacionService", simple)
 
         renamed = ROOT / (
