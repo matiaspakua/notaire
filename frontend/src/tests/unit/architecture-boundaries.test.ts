@@ -122,5 +122,4 @@ describe("the shrink-only baseline", () => {
     expect(entries["src/app/dashboard/administration/templates/page.tsx"]).toBeUndefined();
     expect(Object.keys(entries).length).toBeLessThan(54);
   });
-  });
 });
