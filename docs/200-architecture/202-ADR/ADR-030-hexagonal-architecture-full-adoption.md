@@ -270,6 +270,9 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `QueryBudgetsUseCase` / `ManageBudgetsUseCase` only; person hydration and status canonicalization
   live behind `BudgetOpsPort`. Template/catalog item endpoints keep existing application services.
   ArchUnit R1 clears its four baseline edges.
+- **ProcedureFolder ports-only (#1795):** smallest Procedure* R1 hotspot (1 edge). `ProcedureFolderController`
+  calls `QueryProcedureFoldersUseCase` / `ManageProcedureFoldersUseCase` only; entity access and DTO
+  mapping live behind `ProcedureFolderOpsPort`. ArchUnit R1 clears its ProcedureFolder entity edge.
 
 ## Options considered
 
