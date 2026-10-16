@@ -100,12 +100,18 @@ describe("the shrink-only baseline", () => {
     expect(Object.keys(entries).length).toBeLessThan(59);
   });
 
+  it("folios admin left the baseline (#1785)", () => {
+    const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
+    expect(entries["src/app/dashboard/administration/folios/page.tsx"]).toBeUndefined();
+    expect(Object.keys(entries).length).toBeLessThan(58);
+  });
+
   it("workflows admin left the baseline (#1792)", () => {
     const entries = JSON.parse(readFileSync(file, "utf-8")) as Record<string, unknown>;
     expect(entries["src/hooks/useWorkflow.ts"]).toBeUndefined();
     expect(entries["src/hooks/useManagementWorkflow.ts"]).toBeUndefined();
     expect(entries["src/app/dashboard/administration/workflows/page.tsx"]).toBeUndefined();
     expect(entries["src/app/dashboard/administration/workflows/[id]/page.tsx"]).toBeUndefined();
-    expect(Object.keys(entries).length).toBeLessThan(57);
+    expect(Object.keys(entries).length).toBeLessThan(56);
   });
 });
