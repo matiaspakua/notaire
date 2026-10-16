@@ -1,37 +1,8 @@
 package com.licensis.notaire.adapter.in.web.budget;
 
-<<<<<<< HEAD
 import java.util.Date;
 import java.util.List;
 
-=======
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.licensis.notaire.adapter.in.web.payment.PaymentWebMapper;
-import com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase;
-import com.licensis.notaire.dto.DtoBudgetSummary;
-import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.adapter.in.web.item.ItemResponse;
-import com.licensis.notaire.adapter.in.web.support.RequiredFields;
-import com.licensis.notaire.business.Budget;
-import com.licensis.notaire.business.BudgetStatus;
-import com.licensis.notaire.business.Person;
-import com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService;
-import com.licensis.notaire.application.usecase.budget.BudgetTemplateService;
-import com.licensis.notaire.application.usecase.budget.BudgetService;
-import com.licensis.notaire.repository.PersonRepository;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
->>>>>>> origin/main
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -53,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.licensis.notaire.adapter.in.web.item.ItemController.ItemResponse;
+import com.licensis.notaire.adapter.in.web.item.ItemResponse;
 import com.licensis.notaire.adapter.in.web.payment.PaymentWebMapper;
 import com.licensis.notaire.application.port.in.budget.ManageBudgetsUseCase;
 import com.licensis.notaire.application.port.in.budget.QueryBudgetsUseCase;
