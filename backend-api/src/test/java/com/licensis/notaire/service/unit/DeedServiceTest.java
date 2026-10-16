@@ -223,19 +223,18 @@ class DeedServiceTest {
     }
 
     @Test
-    @DisplayName("Should find all available notaries")
+    @DisplayName("Should find all available notaries as person views")
     void shouldFindAvailableNotaries() {
         List<Person> notaries = new ArrayList<>();
         notaries.add(testNotary);
 
         when(personRepository.findAllNotaries()).thenReturn(notaries);
 
-        List<Person> result = deedService.findAvailableNotaries();
+        var result = deedService.findAvailableNotaries();
 
-        assertThat(result).isNotNull()
-                .hasSize(1)
-                .contains(testNotary)
-                .allMatch(p -> p.getNotaryRegistrationNumber() != null);
+        assertThat(result).isNotNull().hasSize(1);
+        assertThat(result.get(0).personId()).isEqualTo(testNotary.getPersonId());
+        assertThat(result.get(0).notaryRegistrationNumber()).isNotNull();
 
         verify(personRepository, times(1)).findAllNotaries();
     }
@@ -245,10 +244,9 @@ class DeedServiceTest {
     void shouldReturnEmptyListWhenNoNotariesAvailable() {
         when(personRepository.findAllNotaries()).thenReturn(new ArrayList<>());
 
-        List<Person> result = deedService.findAvailableNotaries();
+        var result = deedService.findAvailableNotaries();
 
-        assertThat(result).isNotNull()
-                .isEmpty();
+        assertThat(result).isNotNull().isEmpty();
 
         verify(personRepository, times(1)).findAllNotaries();
     }

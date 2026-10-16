@@ -3,13 +3,12 @@ package com.licensis.notaire.adapter.in.web.person;
 import java.util.Date;
 
 import com.licensis.notaire.application.port.out.person.PersonOpsPort.PersonView;
-import com.licensis.notaire.business.Person;
 
 import jakarta.validation.constraints.NotBlank;
 
 /**
- * Wire DTO for people. {@link #from(Person)} remains for DeedController available-notaries until
- * that surface is ports-only (issue #1813).
+ * Wire DTO for people. Built only from {@link PersonView} so the inbound adapter stays ports-only
+ * (issue #1813).
  */
 public record PersonResponse(
         Integer personId,
@@ -51,30 +50,5 @@ public record PersonResponse(
                 view.notaryRegistrationNumber(),
                 view.identificationTypeId(),
                 view.version());
-    }
-
-    public static PersonResponse from(Person person) {
-        Integer typeId = person.getFkIdIdentificationType() != null
-                ? person.getFkIdIdentificationType().getIdIdentificationType()
-                : null;
-        return new PersonResponse(
-                person.getPersonId(),
-                person.getFirstName(),
-                person.getLastName(),
-                person.getIdentificationNumber(),
-                person.getIsClient(),
-                person.getNationality(),
-                person.getTaxId(),
-                person.getSex(),
-                person.getBirthDate(),
-                person.getMaritalStatus(),
-                person.getMarriageCount(),
-                person.getOccupation(),
-                person.getAddress(),
-                person.getPhone(),
-                person.getEmail(),
-                person.getNotaryRegistrationNumber(),
-                typeId,
-                person.getVersion());
     }
 }
