@@ -1,7 +1,7 @@
 package com.licensis.notaire.adapter.in.web.deed;
 
 import com.licensis.notaire.business.Deed;
-import com.licensis.notaire.adapter.in.web.person.PersonController.PersonResponse;
+import com.licensis.notaire.adapter.in.web.person.PersonResponse;
 import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.application.usecase.deed.DeedSigningService;
 import com.licensis.notaire.application.usecase.deed.DeedService;

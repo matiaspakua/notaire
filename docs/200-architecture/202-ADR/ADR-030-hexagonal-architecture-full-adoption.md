@@ -270,6 +270,12 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   calls `QueryProcedureFoldersUseCase` / `ManageProcedureFoldersUseCase` only; entity access and DTO
   mapping live behind `ProcedureFolderOpsPort`. ArchUnit R1 clears its ProcedureFolder entity edge.
 
+- **Person ports-only (#1813):** mixed R1 hotspot (~3 edges). `PersonController` calls
+  `QueryPeopleUseCase` / `ManagePeopleUseCase` only; identification-type resolution, duplicate conflict,
+  and persistence live behind `PersonOpsPort`. Wire `PersonResponse` extracted top-level with
+  `from(Person)` for DeedController available-notaries until that surface is ports-only (net R1 shrink).
+  ArchUnit R1 clears PersonController's three edges.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers

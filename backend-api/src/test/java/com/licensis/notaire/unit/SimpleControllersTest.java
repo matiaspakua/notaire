@@ -20,12 +20,10 @@ import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Testimony;
 import com.licensis.notaire.business.ProcedureType;
-import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.TestimonyMovementRepository;
 import com.licensis.notaire.application.port.out.procedure.ProcedureTypeRepositoryPort;
-import com.licensis.notaire.repository.IdentificationTypeRepository;
 import com.licensis.notaire.application.port.out.procedure.ProcedureRepositoryPort;
 import com.licensis.notaire.application.port.out.property.PropertyRepositoryPort;
 import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
@@ -33,7 +31,6 @@ import com.licensis.notaire.repository.DeedRepository;
 import com.licensis.notaire.application.usecase.deed.DeedSigningService;
 import com.licensis.notaire.application.usecase.deed.DeedService;
 import com.licensis.notaire.application.usecase.testimony.TestimonyMovementService;
-import com.licensis.notaire.application.usecase.person.PersonService;
 import com.licensis.notaire.application.usecase.budget.BudgetService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -54,7 +51,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -712,31 +708,41 @@ class SimpleControllersTest {
     @Nested
     @DisplayName("PersonController")
     class PersonControllerTests {
-        private final PersonService service = mock(PersonService.class);
-        private final IdentificationTypeRepository typeRepo = mock(IdentificationTypeRepository.class);
+        private final com.licensis.notaire.application.port.in.person.QueryPeopleUseCase query =
+                mock(com.licensis.notaire.application.port.in.person.QueryPeopleUseCase.class);
+        private final com.licensis.notaire.application.port.in.person.ManagePeopleUseCase manage =
+                mock(com.licensis.notaire.application.port.in.person.ManagePeopleUseCase.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new PersonController(service, typeRepo))
+                standaloneSetup(new PersonController(query, manage))
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
 
-        @Test
-        @DisplayName("Cover happy paths including search and default type identification")
-        void all() throws Exception {
-            Person p = new Person();
-            p.setPersonId(1);
-            p.setFirstName("Juan");
-            p.setLastName("Perez");
-            p.setIdentificationNumber("12345678");
-            IdentificationType type = new IdentificationType(1, "DNI");
-            p.setFkIdIdentificationType(type);
+        private static com.licensis.notaire.application.port.out.person.PersonOpsPort.PersonView view(int id) {
+            return new com.licensis.notaire.application.port.out.person.PersonOpsPort.PersonView(
+                    id, "Juan", "Perez", "12345678", true, null, null, null, null, null, null, null, null, null,
+                    null, null, 1, 0);
+        }
 
-            when(service.findAll(any(Pageable.class)))
-                    .thenReturn(new PageImpl<>(List.of(p), PageRequest.of(0, 20), 1));
-            when(service.findById(1)).thenReturn(Optional.of(p));
-            when(service.findById(2)).thenReturn(Optional.empty());
-            when(service.save(any(Person.class))).thenReturn(p);
-            when(service.search(any(), any(), any(), any(), any())).thenReturn(List.of(p));
-            when(typeRepo.findById(1)).thenReturn(Optional.of(type));
+        @Test
+        @DisplayName("Cover happy paths including search")
+        void all() throws Exception {
+            var p = view(1);
+            when(query.findAll(anyInt(), anyInt(), any()))
+                    .thenReturn(new com.licensis.notaire.application.port.out.person.PersonOpsPort.PageResult(
+                            List.of(p), 0, 20, 1));
+            when(query.findById(1)).thenReturn(Optional.of(p));
+            when(query.findById(2)).thenReturn(Optional.empty());
+            when(query.search(any(), any(), any(), any(), any())).thenReturn(List.of(p));
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.person.PersonOpsPort.SaveResult.Created(p));
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.person.PersonOpsPort.SaveResult.Updated(p));
+            when(manage.update(eq(2), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.person.PersonOpsPort.SaveResult.NotFound());
+            when(manage.delete(1)).thenReturn(
+                    new com.licensis.notaire.application.port.out.person.PersonOpsPort.DeleteResult.Deleted());
+            when(manage.delete(2)).thenReturn(
+                    new com.licensis.notaire.application.port.out.person.PersonOpsPort.DeleteResult.NotFound());
 
             mvc.perform(get("/api/v1/people")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/people/1")).andExpect(status().isOk());
@@ -755,7 +761,6 @@ class SimpleControllersTest {
             mvc.perform(delete("/api/v1/people/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/people/2")).andExpect(status().isNotFound());
 
-            // POST with missing identification type should use default
             String person2Body = """
                     {"firstName":"Ana","lastName":"Gomez","identificationNumber":"87654321","isClient":false}
                     """;
@@ -766,36 +771,14 @@ class SimpleControllersTest {
         @Test
         @DisplayName("Cover person save error path without polluting happy stubs (#916)")
         void allErrorPaths() throws Exception {
-            IdentificationType type = new IdentificationType(1, "DNI");
-            when(typeRepo.findById(1)).thenReturn(Optional.of(type));
             String personBody = """
                     {"firstName":"Juan","lastName":"Perez","identificationNumber":"12345678","isClient":true}
                     """;
-            when(service.save(any(Person.class))).thenThrow(new RuntimeException("x"));
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.person.PersonOpsPort.SaveResult.Failed(
+                            new RuntimeException("x"), true));
             mvc.perform(post("/api/v1/people").contentType("application/json")
                     .content(personBody)).andExpect(status().isConflict());
-        }
-
-        @Test
-        @DisplayName("POST should create default type identification when missing in DB")
-        void postShouldCreateDefaultType() throws Exception {
-            Person p = new Person();
-            p.setFirstName("Juan");
-            p.setLastName("Perez");
-            p.setIdentificationNumber("12345678");
-            when(typeRepo.findById(1)).thenReturn(Optional.empty());
-            IdentificationType created = new IdentificationType();
-            created.setIdIdentificationType(1);
-            created.setName("DNI");
-            when(typeRepo.save(any(IdentificationType.class))).thenReturn(created);
-            when(service.save(any(Person.class))).thenReturn(p);
-
-            String personBody = """
-                    {"firstName":"Juan","lastName":"Perez","identificationNumber":"12345678","isClient":true}
-                    """;
-            mvc.perform(post("/api/v1/people").contentType("application/json")
-                    .content(personBody)).andExpect(status().isCreated());
-            verify(typeRepo).save(any(IdentificationType.class));
         }
     }
 }
