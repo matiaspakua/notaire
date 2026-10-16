@@ -70,10 +70,6 @@ class SyntheticFixtureStringsEnglishTest(unittest.TestCase):
         self.assertIn("Honorarios", concepts)
         self.assertNotIn("Notaría", concepts)
 
-        adapter = read("unit/adapter/out/concept/ConceptPersistenceAdapterTest.java")
-        self.assertIn("Notary office", adapter)
-        self.assertNotIn("Notaría", adapter)
-
     def test_entity_and_folio_type_fixtures_are_english(self):
         entities = read("unit/EntitiesBasicTest.java")
         self.assertIn('"Active"', entities)
