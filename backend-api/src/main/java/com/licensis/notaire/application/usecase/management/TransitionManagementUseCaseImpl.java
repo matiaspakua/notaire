@@ -7,9 +7,8 @@ import com.licensis.notaire.application.port.out.management.ManagementRepository
 import com.licensis.notaire.application.port.out.management.StatusRepositoryPort;
 import com.licensis.notaire.application.port.out.management.WorkflowLookupPort;
 import com.licensis.notaire.application.port.out.management.WorkflowTransitionValidatorPort;
-import com.licensis.notaire.business.DeedManagement;
-import com.licensis.notaire.business.ManagementStatus;
-import com.licensis.notaire.business.WorkflowDefinition;
+import com.licensis.notaire.domain.management.ManagementStatus;
+import com.licensis.notaire.domain.management.ManagementTransitionSnapshot;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
@@ -19,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Use case orchestration for CU83 — management status transition.
  * Validates and applies status transitions for a management against its workflow definition.
+ * Speaks domain views only (issue #1850).
  */
 public class TransitionManagementUseCaseImpl implements TransitionManagementUseCase {
 
@@ -40,40 +40,38 @@ public class TransitionManagementUseCaseImpl implements TransitionManagementUseC
         this.statusLog = statusLog;
     }
 
-    // Without a transaction, managementRepository.findById(...) returns a DeedManagement whose
-    // session closes before workflowLookup.resolveWorkflowDefinition(...) touches the lazy
-    // procedureList collection, throwing LazyInitializationException (see #1006).
+    // Without a transaction, findById may return a snapshot whose related workflow load in
+    // resolveWorkflowDefinitionId would otherwise see a closed session (see #1006).
     @Override
     @Transactional
     public TransitionManagementOutput execute(Integer managementId, String statusDestination) {
-        DeedManagement management = managementRepository.findById(managementId);
+        ManagementTransitionSnapshot management = managementRepository.findById(managementId);
         if (management == null) {
             throw new ResourceNotFoundException("Management not found with ID: " + managementId);
         }
 
-        WorkflowDefinition workflowDefinition = workflowLookup.resolveWorkflowDefinition(management);
+        Integer workflowDefinitionId = workflowLookup.resolveWorkflowDefinitionId(managementId);
 
-        ManagementStatus currentStatus = management.getFkIdManagementStatus();
         ManagementStatus destination = statusRepository.findByName(statusDestination);
         if (destination == null) {
             throw new BusinessValidationException(
                     "Destination status '" + statusDestination + "' is not defined in the system");
         }
 
-        if (!transitionValidator.isTransitionValid(workflowDefinition, currentStatus, destination)) {
-            throw new BusinessValidationException("Transition from '" + statusName(currentStatus)
-                    + "' to '" + destination.getName() + "' is not allowed");
+        if (!transitionValidator.isTransitionValid(workflowDefinitionId, management.statusId(), destination.id())) {
+            throw new BusinessValidationException("Transition from '" + statusName(management)
+                    + "' to '" + destination.name() + "' is not allowed");
         }
 
-        management.setFkIdManagementStatus(destination);
-        DeedManagement transitioned = managementRepository.save(management);
-        statusLog.registerStatus(transitioned, null);
-        LOG.info("Management {} transitioned to status '{}'", managementId, destination.getName());
+        ManagementTransitionSnapshot transitioned =
+                managementRepository.saveStatus(managementId, destination.id());
+        statusLog.registerStatus(transitioned.idManagement(), null);
+        LOG.info("Management {} transitioned to status '{}'", managementId, destination.name());
 
-        return new TransitionManagementOutput(transitioned.getIdManagement());
+        return new TransitionManagementOutput(transitioned.idManagement());
     }
 
-    private static String statusName(ManagementStatus status) {
-        return status != null ? status.getName() : "no status";
+    private static String statusName(ManagementTransitionSnapshot management) {
+        return management.statusName() != null ? management.statusName() : "no status";
     }
 }

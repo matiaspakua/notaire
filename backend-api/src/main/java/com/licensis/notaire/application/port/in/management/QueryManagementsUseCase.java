@@ -1,5 +1,6 @@
 package com.licensis.notaire.application.port.in.management;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,6 +8,8 @@ import com.licensis.notaire.application.port.out.management.ManagementOpsPort.Co
 import com.licensis.notaire.application.port.out.management.ManagementOpsPort.ManagementView;
 import com.licensis.notaire.application.port.out.management.ManagementOpsPort.PageResult;
 import com.licensis.notaire.dto.DtoHistorySummary;
+import com.licensis.notaire.dto.DtoManagementCaseSummary;
+import com.licensis.notaire.dto.DtoManagementFinancialSummary;
 import com.licensis.notaire.dto.DtoManagementSummary;
 
 /**
@@ -30,4 +33,10 @@ public interface QueryManagementsUseCase {
 
     /** Lightweight status name for transition HTTP mapping. */
     Optional<String> findCurrentStatusName(Integer id);
+
+    DtoManagementCaseSummary getCaseSummary(Integer id);
+
+    DtoManagementFinancialSummary getFinancialSummary(Integer id);
+
+    BigDecimal calculatePendingBalance(Integer id);
 }

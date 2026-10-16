@@ -11,17 +11,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.out.management.ManagementOpsPort;
 import com.licensis.notaire.application.usecase.history.HistoryMapper;
-import com.licensis.notaire.application.usecase.management.ManagementArchiveDebtService;
-import com.licensis.notaire.application.usecase.management.ManagementQueryService;
-import com.licensis.notaire.application.usecase.management.ManagementStatusLogService;
-import com.licensis.notaire.application.usecase.management.ManagementStatusWriteGuard;
-import com.licensis.notaire.application.usecase.management.ManagementSubstitutionService;
 import com.licensis.notaire.application.usecase.procedure.ProcedureFolderService;
 import com.licensis.notaire.application.usecase.procedure.RequiredDocumentationOnConfirmService;
 import com.licensis.notaire.business.History;
 import com.licensis.notaire.business.HistoryOrder;
 import com.licensis.notaire.dto.DtoHistorySummary;
+import com.licensis.notaire.dto.DtoManagementCaseSummary;
+import com.licensis.notaire.dto.DtoManagementFinancialSummary;
 import com.licensis.notaire.dto.DtoManagementSummary;
+import java.math.BigDecimal;
 import com.licensis.notaire.repository.HistoryRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -61,6 +59,8 @@ public class ManagementOpsAdapter implements ManagementOpsPort {
     private final PropertyRepository propertyRepository;
     private final ManagementQueryService managementQueryService;
     private final ManagementArchiveDebtService managementArchiveDebtService;
+    private final ManagementCaseSummaryService managementCaseSummaryService;
+    private final ManagementFinancialSummaryService managementFinancialSummaryService;
     private final ManagementSubstitutionService managementSubstitutionService;
     private final ManagementStatusLogService statusLogService;
     private final ManagementStatusWriteGuard managementStatusWriteGuard;
@@ -78,6 +78,8 @@ public class ManagementOpsAdapter implements ManagementOpsPort {
             PropertyRepository propertyRepository,
             ManagementQueryService managementQueryService,
             ManagementArchiveDebtService managementArchiveDebtService,
+            ManagementCaseSummaryService managementCaseSummaryService,
+            ManagementFinancialSummaryService managementFinancialSummaryService,
             ManagementSubstitutionService managementSubstitutionService,
             ManagementStatusLogService statusLogService,
             ManagementStatusWriteGuard managementStatusWriteGuard,
@@ -93,6 +95,8 @@ public class ManagementOpsAdapter implements ManagementOpsPort {
         this.propertyRepository = propertyRepository;
         this.managementQueryService = managementQueryService;
         this.managementArchiveDebtService = managementArchiveDebtService;
+        this.managementCaseSummaryService = managementCaseSummaryService;
+        this.managementFinancialSummaryService = managementFinancialSummaryService;
         this.managementSubstitutionService = managementSubstitutionService;
         this.statusLogService = statusLogService;
         this.managementStatusWriteGuard = managementStatusWriteGuard;
@@ -371,6 +375,24 @@ public class ManagementOpsAdapter implements ManagementOpsPort {
                     .toList();
             return new ArchiveResult.WaitingFolders(e.getMessage(), waitingFolderNumbers);
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public DtoManagementCaseSummary getCaseSummary(Integer id) {
+        return managementCaseSummaryService.getSummary(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public DtoManagementFinancialSummary getFinancialSummary(Integer id) {
+        return managementFinancialSummaryService.getSummary(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BigDecimal calculatePendingBalance(Integer id) {
+        return managementArchiveDebtService.calculatePendingBalance(id);
     }
 
     @Override

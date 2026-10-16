@@ -13,7 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.licensis.notaire.application.usecase.management.ManagementStatusWriteGuard;
+import com.licensis.notaire.adapter.out.persistence.management.ManagementStatusWriteGuard;
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.WorkflowDefinition;
 import com.licensis.notaire.business.WorkflowNode;

@@ -14,7 +14,7 @@ import com.licensis.notaire.business.Property;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.application.usecase.document.ExternalEntityDocumentService;
-import com.licensis.notaire.application.usecase.management.ManagementTransitionService;
+import com.licensis.notaire.application.port.out.management.ManagementAutoTransitionPort;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -48,7 +48,7 @@ class ExternalEntityDocumentServiceTest {
     private ExternalDocumentRepositoryPort documentRepository;
 
     @Mock
-    private ManagementTransitionService managementTransitionService;
+    private ManagementAutoTransitionPort managementAutoTransition;
 
     private ExternalEntityDocumentService externalEntityDocumentService;
 
@@ -59,7 +59,7 @@ class ExternalEntityDocumentServiceTest {
     @BeforeEach
     void setUp() {
         externalEntityDocumentService = new ExternalEntityDocumentService(documentRepository,
-            managementTransitionService);
+            managementAutoTransition);
 
         Person notary = new Person();
         notary.setFirstName("Ana");
@@ -159,7 +159,7 @@ class ExternalEntityDocumentServiceTest {
             assertThat(result.amountToPay()).isEqualByComparingTo(new java.math.BigDecimal("1500"));
             assertThat(result.notes()).isEqualTo("Withdrawn on time");
             assertThat(result.delivered()).isFalse();
-            verify(managementTransitionService, never()).transition(anyInt(), any());
+            verify(managementAutoTransition, never()).transition(anyInt(), any());
         }
 
         @Test
@@ -226,7 +226,7 @@ class ExternalEntityDocumentServiceTest {
 
             ArgumentCaptor<Integer> idManagementCaptor = ArgumentCaptor.forClass(Integer.class);
             ArgumentCaptor<String> statusCaptor = ArgumentCaptor.forClass(String.class);
-            verify(managementTransitionService, times(1)).transition(idManagementCaptor.capture(), statusCaptor.capture());
+            verify(managementAutoTransition, times(1)).transition(idManagementCaptor.capture(), statusCaptor.capture());
             assertThat(idManagementCaptor.getValue()).isEqualTo(1);
             assertThat(statusCaptor.getValue()).isEqualTo(BusinessConstants.ManagementWithCompleteDocumentation);
         }
@@ -239,7 +239,7 @@ class ExternalEntityDocumentServiceTest {
 
             externalEntityDocumentService.tryCompleteDocumentation(1);
 
-            verify(managementTransitionService, never()).transition(anyInt(), any());
+            verify(managementAutoTransition, never()).transition(anyInt(), any());
         }
 
         @Test
@@ -248,12 +248,13 @@ class ExternalEntityDocumentServiceTest {
             document.setDelivered(true);
             when(documentRepository.findByManagementAndDeliveredBy(
                     1, BusinessConstants.DocumentationExternalEntity)).thenReturn(List.of(document));
-            when(managementTransitionService.transition(eq(1), eq(BusinessConstants.ManagementWithCompleteDocumentation)))
-                    .thenThrow(new BusinessValidationException("Transition is not allowed"));
+            org.mockito.Mockito.doThrow(new BusinessValidationException("Transition is not allowed"))
+                    .when(managementAutoTransition)
+                    .transition(eq(1), eq(BusinessConstants.ManagementWithCompleteDocumentation));
 
             externalEntityDocumentService.tryCompleteDocumentation(1);
 
-            verify(managementTransitionService, times(1)).transition(1, BusinessConstants.ManagementWithCompleteDocumentation);
+            verify(managementAutoTransition, times(1)).transition(1, BusinessConstants.ManagementWithCompleteDocumentation);
         }
     }
 }

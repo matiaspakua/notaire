@@ -151,8 +151,6 @@ class AdditionalControllersTest {
                     query,
                     manage,
                     traceService,
-                    mock(com.licensis.notaire.application.usecase.management.ManagementArchiveDebtService.class),
-                    mock(com.licensis.notaire.application.usecase.management.ManagementFinancialSummaryService.class),
                     transitionUseCase,
                     transitionWebMapper,
                     externalEntityDocumentService,

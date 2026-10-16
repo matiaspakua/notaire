@@ -35,8 +35,6 @@ import com.licensis.notaire.application.port.out.management.ManagementOpsPort.Ma
 import com.licensis.notaire.application.port.out.management.ManagementOpsPort.ManagementView;
 import com.licensis.notaire.application.port.out.management.ManagementOpsPort.SaveResult;
 import com.licensis.notaire.application.usecase.document.ExternalEntityDocumentService;
-import com.licensis.notaire.application.usecase.management.ManagementArchiveDebtService;
-import com.licensis.notaire.application.usecase.management.ManagementFinancialSummaryService;
 import com.licensis.notaire.application.usecase.workflow.DocumentReentryService;
 import com.licensis.notaire.application.usecase.workflow.WorkflowTraceService;
 import com.licensis.notaire.dto.DtoDocumentReentered;
@@ -71,8 +69,6 @@ public class ManagementController {
     private final QueryManagementsUseCase queryManagements;
     private final ManageManagementsUseCase manageManagements;
     private final WorkflowTraceService workflowTraceService;
-    private final ManagementArchiveDebtService managementArchiveDebtService;
-    private final ManagementFinancialSummaryService financialSummaryService;
     private final TransitionManagementUseCase transitionManagementUseCase;
     private final TransitionManagementWebMapper transitionManagementWebMapper;
     private final ExternalEntityDocumentService externalEntityDocumentService;
@@ -82,8 +78,6 @@ public class ManagementController {
             QueryManagementsUseCase queryManagements,
             ManageManagementsUseCase manageManagements,
             WorkflowTraceService workflowTraceService,
-            ManagementArchiveDebtService managementArchiveDebtService,
-            ManagementFinancialSummaryService financialSummaryService,
             TransitionManagementUseCase transitionManagementUseCase,
             TransitionManagementWebMapper transitionManagementWebMapper,
             ExternalEntityDocumentService externalEntityDocumentService,
@@ -91,8 +85,6 @@ public class ManagementController {
         this.queryManagements = queryManagements;
         this.manageManagements = manageManagements;
         this.workflowTraceService = workflowTraceService;
-        this.managementArchiveDebtService = managementArchiveDebtService;
-        this.financialSummaryService = financialSummaryService;
         this.transitionManagementUseCase = transitionManagementUseCase;
         this.transitionManagementWebMapper = transitionManagementWebMapper;
         this.externalEntityDocumentService = externalEntityDocumentService;
@@ -353,7 +345,7 @@ public class ManagementController {
     @Operation(summary = "CU16 - Calculate aggregated pending balance for a management (RF-22)")
     public ResponseEntity<DtoPendingBalance> getPendingBalance(@PathVariable Integer id) {
         try {
-            java.math.BigDecimal pendingBalance = managementArchiveDebtService.calculatePendingBalance(id);
+            java.math.BigDecimal pendingBalance = queryManagements.calculatePendingBalance(id);
             return ResponseEntity.ok(new DtoPendingBalance(pendingBalance));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
@@ -368,7 +360,7 @@ public class ManagementController {
     @Operation(summary = "CU47/CU02 - Get aggregated financial summary for a management")
     public ResponseEntity<DtoManagementFinancialSummary> getFinancialSummary(@PathVariable Integer id) {
         try {
-            return ResponseEntity.ok(financialSummaryService.getSummary(id));
+            return ResponseEntity.ok(queryManagements.getFinancialSummary(id));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }

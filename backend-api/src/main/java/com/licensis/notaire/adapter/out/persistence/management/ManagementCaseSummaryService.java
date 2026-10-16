@@ -1,4 +1,4 @@
-package com.licensis.notaire.application.usecase.management;
+package com.licensis.notaire.adapter.out.persistence.management;
 
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.DeedManagement;
