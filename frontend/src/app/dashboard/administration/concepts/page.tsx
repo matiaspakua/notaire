@@ -12,7 +12,8 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
-import { apiGet } from "@/lib/api-client";
+import { conceptUseCases } from "@/composition/concept";
+import type { Concept as DomainConcept } from "@/core/concept/domain/concept";
 import { useConcepts, useCreateConcept, useUpdateConcept, useDeleteConcept } from "@/hooks/useConcepts";
 import { extractApiError } from "@/lib/utils";
 import type { Concept } from "@/types";
@@ -20,6 +21,18 @@ import { useDeleteError } from "@/hooks/useDeleteError";
 import { useFormat } from "@/hooks/useFormat";
 
 const EMPTY: Partial<Concept> = { name: "", value: undefined };
+
+function toWire(c: DomainConcept): Concept {
+  return {
+    idConcept: c.id,
+    name: c.name,
+    value: c.value,
+    percentage: c.percentage,
+    fixed: c.fixed,
+    enabled: c.enabled,
+    version: c.version,
+  };
+}
 
 export default function ConceptsPage() {
   const fmt = useFormat();
@@ -40,10 +53,10 @@ export default function ConceptsPage() {
 
   const { data: filtered = concepts } = useQuery({
     queryKey: ["concepts", "search", search, concepts],
-    queryFn: () =>
+    queryFn: async () =>
       search
-        ? apiGet<Concept[]>(`/concepts/search?name=${encodeURIComponent(search)}`)
-        : Promise.resolve(concepts),
+        ? (await conceptUseCases.searchByName(search)).map(toWire)
+        : concepts,
   });
 
   function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
@@ -72,7 +85,7 @@ export default function ConceptsPage() {
 
   async function handleDeleteClick(c: Concept) {
     try {
-      const { inUse } = await apiGet<{ inUse: boolean }>(`/concepts/${c.idConcept}/in-use`);
+      const inUse = await conceptUseCases.isInUse(c.idConcept!);
       if (inUse) {
         toast.warning(t("inUseCannotDelete"));
         return;
