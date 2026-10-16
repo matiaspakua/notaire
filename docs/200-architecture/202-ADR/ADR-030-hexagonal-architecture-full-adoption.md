@@ -269,6 +269,9 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
 - **Frontend workflows admin (#1792):** `core/workflow`, `adapters/http/workflow`, and
   `composition/workflow`. Workflows list/editor pages, `useWorkflow`, and `useManagementWorkflow`
   no longer import `api-client` (eslint suppressions shrink by four).
+- **ProcedureFolder ports-only (#1795):** smallest Procedure* R1 hotspot (1 edge). `ProcedureFolderController`
+  calls `QueryProcedureFoldersUseCase` / `ManageProcedureFoldersUseCase` only; entity access and DTO
+  mapping live behind `ProcedureFolderOpsPort`. ArchUnit R1 clears its ProcedureFolder entity edge.
 
 ## Options considered
 
