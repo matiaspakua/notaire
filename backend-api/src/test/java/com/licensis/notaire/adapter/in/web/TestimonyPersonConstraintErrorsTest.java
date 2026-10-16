@@ -3,8 +3,6 @@ package com.licensis.notaire.adapter.in.web;
 import com.licensis.notaire.adapter.in.web.person.PersonController;
 import com.licensis.notaire.adapter.in.web.testimony.TestimonyController;
 import com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementController;
-import com.licensis.notaire.business.TestimonyMovement;
-import com.licensis.notaire.repository.TestimonyMovementRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -14,7 +12,6 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -70,10 +67,15 @@ class TestimonyPersonConstraintErrorsTest {
     }
 
     private static MockMvc movements(RuntimeException failure) throws Exception {
-        TestimonyMovementRepository repo = mock(TestimonyMovementRepository.class);
-        when(repo.findById(anyInt())).thenReturn(Optional.of(new TestimonyMovement()));
-        when(repo.save(any())).thenThrow(failure);
-        return mvc(TestimonyMovementController.class, Map.of(TestimonyMovementRepository.class, repo));
+        var manage = mock(com.licensis.notaire.application.port.in.testimony.ManageTestimonyMovementsUseCase.class);
+        when(manage.create(any())).thenReturn(
+                new com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort.SaveResult.Failed(
+                        failure));
+        when(manage.update(anyInt(), any())).thenReturn(
+                new com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort.SaveResult.Failed(
+                        failure));
+        return mvc(TestimonyMovementController.class, Map.of(
+                com.licensis.notaire.application.port.in.testimony.ManageTestimonyMovementsUseCase.class, manage));
     }
 
     private static MockMvc testimonies(RuntimeException failure) throws Exception {
