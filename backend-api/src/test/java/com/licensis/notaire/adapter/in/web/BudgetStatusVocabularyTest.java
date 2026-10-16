@@ -1,19 +1,5 @@
 package com.licensis.notaire.adapter.in.web;
 
-import com.licensis.notaire.adapter.in.web.budget.BudgetController;
-import com.licensis.notaire.application.usecase.budget.BudgetService;
-import com.licensis.notaire.business.Budget;
-import com.licensis.notaire.business.BudgetStatus;
-import com.licensis.notaire.config.GlobalExceptionHandler;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
-import java.lang.reflect.Constructor;
-import java.util.List;
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -28,11 +14,34 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.licensis.notaire.adapter.in.web.budget.BudgetController;
+import com.licensis.notaire.adapter.out.persistence.budget.BudgetOpsAdapter;
+import com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase;
+import com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService;
+import com.licensis.notaire.application.usecase.budget.BudgetQueryUseCaseService;
+import com.licensis.notaire.application.usecase.budget.BudgetService;
+import com.licensis.notaire.application.usecase.budget.BudgetTemplateService;
+import com.licensis.notaire.application.usecase.budget.BudgetWriteUseCaseService;
+import com.licensis.notaire.business.Budget;
+import com.licensis.notaire.business.BudgetStatus;
+import com.licensis.notaire.config.GlobalExceptionHandler;
+import com.licensis.notaire.repository.PersonRepository;
+
 /**
  * Issue #1346 (Owner default 2026-10-10: the stored vocabulary): a budget status is one of
  * BORRADOR, PENDIENTE, APROBADO, RECHAZADO, FACTURADO. Writes accept any letter case and store
  * the canonical code; anything else answers 400 naming the accepted values. The status search
  * matches whatever case the caller sends.
+ *
+ * After #1805 the controller is ports-only; canonicalization lives in {@link BudgetOpsAdapter}.
  */
 @DisplayName("Budget status vocabulary (issue #1346)")
 class BudgetStatusVocabularyTest {
@@ -41,18 +50,14 @@ class BudgetStatusVocabularyTest {
     private final MockMvc mvc = build();
 
     private MockMvc build() {
-        try {
-            Constructor<?> constructor = BudgetController.class.getConstructors()[0];
-            Object[] args = new Object[constructor.getParameterCount()];
-            for (int i = 0; i < args.length; i++) {
-                Class<?> parameter = constructor.getParameterTypes()[i];
-                args[i] = parameter == BudgetService.class ? service : mock(parameter);
-            }
-            return standaloneSetup(constructor.newInstance(args))
-                    .setControllerAdvice(new GlobalExceptionHandler()).build();
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException(e);
-        }
+        BudgetOpsAdapter ops = new BudgetOpsAdapter(service, mock(PersonRepository.class));
+        BudgetController controller = new BudgetController(
+                new BudgetQueryUseCaseService(ops),
+                new BudgetWriteUseCaseService(ops),
+                mock(GetBudgetSummaryUseCase.class),
+                mock(BudgetTemplateService.class),
+                mock(BudgetCatalogItemsService.class));
+        return standaloneSetup(controller).setControllerAdvice(new GlobalExceptionHandler()).build();
     }
 
     private static String body(String status) {
@@ -69,7 +74,11 @@ class BudgetStatusVocabularyTest {
     @Test
     @DisplayName("POST stores the canonical code whatever the letter case")
     void createNormalizesCase() throws Exception {
-        when(service.create(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(service.create(any())).thenAnswer(inv -> {
+            Budget budget = inv.getArgument(0);
+            budget.setIdBudget(1);
+            return budget;
+        });
         mvc.perform(post("/api/v1/budgets").contentType(MediaType.APPLICATION_JSON).content(body("Pendiente")))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status").value("PENDIENTE"));
