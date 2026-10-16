@@ -240,6 +240,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   and `composition/document-type`. Documents admin page and `useDocuments` no longer import `api-client`
   (eslint suppressions shrink by two).
 
+- **Frontend fourth catalog — concepts (#1781):** `core/concept`, `adapters/http/concept`, and
+  `composition/concept`. Concepts admin page and `useConcepts` no longer import `api-client`
+  (eslint suppressions shrink by two).
+
 - **Workflow validation (#1770):** last repo-only web controller after the workflow trio. Controller
   now calls `ValidateWorkflowUseCase` only; graph load uses `Workflow*CatalogPort`; validation runs on
   domain `WorkflowNode` / `WorkflowTransition`. ArchUnit R1 clears its three repository edges.
