@@ -58,7 +58,7 @@ describe("budgetHttpGateway", () => {
   });
 
   it("returns null on findById 404 and lists by status", async () => {
-    apiGetMock.mockRejectedValueOnce(new ApiError(404, "missing"));
+    apiGetMock.mockRejectedValueOnce(new ApiError(404, "/budgets/99", "missing"));
     await expect(budgetHttpGateway.findById(99)).resolves.toBeNull();
 
     apiGetMock.mockResolvedValueOnce([{ idBudget: 3, status: "PENDIENTE" }]);
