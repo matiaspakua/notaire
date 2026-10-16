@@ -39,8 +39,9 @@ public class NotebookOpsAdapter implements NotebookOpsPort {
     }
 
     @Override
-    @Transactional
     public CreateResult create(List<Integer> idsFolio, Integer idNotary, int year, String notes) {
+        // No outer @Transactional: catching BusinessValidationException into BadRequest must not
+        // mark the Spring TX rollback-only (UnexpectedRollbackException → 500 instead of 400).
         try {
             Notebook created = notebookService.createNotebook(idsFolio, idNotary, year, notes);
             return new CreateResult.Created(toView(created));
