@@ -812,6 +812,12 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   Cover PDF keeps `ReportService` (no R1 edge). ArchUnit R1 clears Notebook entity edge.
 
 
+- **Auxiliary protocol ports-only (#1825):** `AuxiliaryProtocolController` calls
+  `QueryAuxiliaryProtocolUseCase` / `ManageAuxiliaryProtocolUseCase` only; entity access and deed mapping
+  live behind `AuxiliaryProtocolOpsPort`. Start-deed returns a wire `DeedResponse` (keeps `idDeed`).
+  ArchUnit R1 does not grow; controller no longer depends on `business.Deed`.
+
+
 - **Frontend people list/search (#1823):** `core/person`, `adapters/http/person`, and
   `composition/person`. `usePeople` and `usePersonSearch` no longer import `api-client`
   (eslint suppressions shrink by two).
