@@ -13,10 +13,10 @@ import com.licensis.notaire.adapter.in.web.procedure.ProcedureController;
 import com.licensis.notaire.dto.DtoTestimonyMovement;
 import com.licensis.notaire.dto.DtoTestimony;
 import com.licensis.notaire.dto.DtoProcedureType;
-import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Person;
-import com.licensis.notaire.business.Budget;
-import com.licensis.notaire.application.usecase.budget.BudgetService;
+import com.licensis.notaire.business.IdentificationType;
+import com.licensis.notaire.repository.IdentificationTypeRepository;
+import com.licensis.notaire.application.usecase.person.PersonService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -384,36 +383,51 @@ class SimpleControllersTest {
     @Nested
     @DisplayName("BudgetController")
     class BudgetControllerTests {
-        private final BudgetService service = mock(BudgetService.class);
+        private final com.licensis.notaire.application.port.in.budget.QueryBudgetsUseCase query =
+                mock(com.licensis.notaire.application.port.in.budget.QueryBudgetsUseCase.class);
+        private final com.licensis.notaire.application.port.in.budget.ManageBudgetsUseCase manage =
+                mock(com.licensis.notaire.application.port.in.budget.ManageBudgetsUseCase.class);
         private final com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase budgetSummaryUseCase =
                 mock(com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase.class);
         private final com.licensis.notaire.application.usecase.budget.BudgetTemplateService budgetTemplateService =
                 mock(com.licensis.notaire.application.usecase.budget.BudgetTemplateService.class);
         private final com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService budgetCatalogItemsService =
                 mock(com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService.class);
-        private final com.licensis.notaire.repository.PersonRepository personRepository =
-                mock(com.licensis.notaire.repository.PersonRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new BudgetController(service, budgetSummaryUseCase,
-                        budgetTemplateService, budgetCatalogItemsService, personRepository))
+                standaloneSetup(new BudgetController(query, manage, budgetSummaryUseCase,
+                        budgetTemplateService, budgetCatalogItemsService))
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
+
+        private static com.licensis.notaire.application.port.out.budget.BudgetOpsPort.BudgetView view(
+                int id, String status, String heading, int number,
+                com.licensis.notaire.application.port.out.budget.BudgetOpsPort.PersonView person) {
+            return new com.licensis.notaire.application.port.out.budget.BudgetOpsPort.BudgetView(
+                    id, number, null, heading, status, null, null, person, 0);
+        }
 
         @Test
         @DisplayName("Should cover all paths")
         void allPaths() throws Exception {
-            Budget p = new Budget();
-            p.setIdBudget(1);
-            p.setStatus("Pending");
-            p.setHeading("Test");
-            p.setNumber(1);
-            when(service.findAllPaged(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(p), PageRequest.of(0, 20), 1));
-            when(service.findById(1)).thenReturn(Optional.of(p));
-            when(service.findById(2)).thenReturn(Optional.empty());
-            when(service.findByPerson(5)).thenReturn(List.of(p));
-            when(service.findByStatus(any())).thenReturn(List.of(p));
-            when(service.create(any(Budget.class))).thenReturn(p);
-            when(service.update(any(Integer.class), any(Budget.class))).thenReturn(p);
+            var p = view(1, "Pending", "Test", 1, null);
+            when(query.findAll(anyInt(), anyInt(), any()))
+                    .thenReturn(new com.licensis.notaire.application.port.out.budget.BudgetOpsPort.PageResult(
+                            List.of(p), 0, 20, 1));
+            when(query.findById(1)).thenReturn(Optional.of(p));
+            when(query.findById(2)).thenReturn(Optional.empty());
+            when(query.findByPerson(5)).thenReturn(List.of(p));
+            when(query.findByStatus(any())).thenReturn(List.of(p));
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.budget.BudgetOpsPort.SaveResult.Created(p));
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.budget.BudgetOpsPort.SaveResult.Updated(p));
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.budget.BudgetOpsPort.SaveResult.Updated(p),
+                    new com.licensis.notaire.application.port.out.budget.BudgetOpsPort.SaveResult.NotFound());
+            when(manage.delete(1)).thenReturn(
+                    new com.licensis.notaire.application.port.out.budget.BudgetOpsPort.DeleteResult.Deleted());
+            when(manage.delete(99)).thenReturn(
+                    new com.licensis.notaire.application.port.out.budget.BudgetOpsPort.DeleteResult.NotFound());
 
             mvc.perform(get("/api/v1/budgets")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/budgets/1")).andExpect(status().isOk());
@@ -428,14 +442,10 @@ class SimpleControllersTest {
                     .content(budgetBody)).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/budgets/1").contentType("application/json")
                     .content(budgetBody)).andExpect(status().isOk());
-
-            when(service.findById(1)).thenReturn(Optional.empty());
             mvc.perform(put("/api/v1/budgets/1").contentType("application/json")
                     .content(budgetBody)).andExpect(status().isNotFound());
-            when(service.findById(1)).thenReturn(Optional.of(p));
 
             mvc.perform(delete("/api/v1/budgets/1")).andExpect(status().isNoContent());
-            doThrow(new ResourceNotFoundException("not found")).when(service).deleteById(99);
             mvc.perform(delete("/api/v1/budgets/99")).andExpect(status().isNotFound());
 
             com.licensis.notaire.business.Item item = new com.licensis.notaire.business.Item(
@@ -454,19 +464,10 @@ class SimpleControllersTest {
         @Test
         @DisplayName("Should expose person name and lastName on BudgetResponse (DtoPerson)")
         void shouldExposePersonNameAndLastNameOnGetById() throws Exception {
-            Person client = new Person();
-            client.setPersonId(42);
-            client.setFirstName("Ana");
-            client.setLastName("García");
-
-            Budget budget = new Budget();
-            budget.setIdBudget(7);
-            budget.setNumber(7);
-            budget.setStatus("BORRADOR");
-            budget.setHeading("With client");
-            budget.setFkIdPerson(client);
-
-            when(service.findById(7)).thenReturn(Optional.of(budget));
+            when(query.findById(7)).thenReturn(Optional.of(view(
+                    7, "BORRADOR", "With client", 7,
+                    new com.licensis.notaire.application.port.out.budget.BudgetOpsPort.PersonView(
+                            42, "Ana", "García"))));
 
             mvc.perform(get("/api/v1/budgets/7"))
                     .andExpect(status().isOk())
