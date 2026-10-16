@@ -6,6 +6,7 @@ import com.licensis.notaire.adapter.out.persistence.management.ManagementReposit
 import com.licensis.notaire.adapter.out.persistence.management.StatusRepositoryAdapter;
 import com.licensis.notaire.adapter.out.persistence.management.WorkflowLookupAdapter;
 import com.licensis.notaire.adapter.out.persistence.management.WorkflowTransitionValidatorAdapter;
+import com.licensis.notaire.application.port.in.management.QueryManagementsUseCase;
 import com.licensis.notaire.application.port.in.management.TransitionManagementUseCase;
 import com.licensis.notaire.application.usecase.management.TransitionManagementUseCaseImpl;
 import com.licensis.notaire.repository.DeedManagementRepository;
@@ -48,7 +49,7 @@ public class ManagementCompositionConfig {
      */
     @Bean
     public TransitionManagementWebMapper transitionManagementWebMapper(
-            DeedManagementRepository managementRepository) {
-        return new TransitionManagementWebMapper(managementRepository);
+            QueryManagementsUseCase queryManagements) {
+        return new TransitionManagementWebMapper(queryManagements);
     }
 }

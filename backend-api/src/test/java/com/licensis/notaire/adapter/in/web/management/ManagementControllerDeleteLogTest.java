@@ -19,8 +19,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.licensis.notaire.adapter.out.persistence.management.ManagementOpsAdapter;
+import com.licensis.notaire.application.port.in.management.QueryManagementsUseCase;
+import com.licensis.notaire.application.usecase.management.ManagementWriteService;
 import com.licensis.notaire.repository.DeedManagementRepository;
-import com.licensis.notaire.repository.HistoryRepository;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -29,27 +31,28 @@ import ch.qos.logback.core.read.ListAppender;
 
 /**
  * #1712: FK conflict on delete answers 409 and must log WARN, not ERROR.
+ * Logging lives in {@link ManagementOpsAdapter} after the #1772 ports-only move.
  */
 class ManagementControllerDeleteLogTest {
 
-    private Logger controllerLogger;
+    private Logger writeLogger;
     private Level originalLevel;
     private ListAppender<ILoggingEvent> appender;
 
     @BeforeEach
     void attachAppender() {
-        controllerLogger = (Logger) LoggerFactory.getLogger(ManagementController.class);
-        originalLevel = controllerLogger.getLevel();
-        controllerLogger.setLevel(Level.TRACE);
+        writeLogger = (Logger) LoggerFactory.getLogger(ManagementOpsAdapter.class);
+        originalLevel = writeLogger.getLevel();
+        writeLogger.setLevel(Level.TRACE);
         appender = new ListAppender<>();
         appender.start();
-        controllerLogger.addAppender(appender);
+        writeLogger.addAppender(appender);
     }
 
     @AfterEach
     void detachAppender() {
-        controllerLogger.detachAppender(appender);
-        controllerLogger.setLevel(originalLevel);
+        writeLogger.detachAppender(appender);
+        writeLogger.setLevel(originalLevel);
     }
 
     @Test
@@ -59,28 +62,33 @@ class ManagementControllerDeleteLogTest {
         when(repo.existsById(5)).thenReturn(true);
         doThrow(new DataIntegrityViolationException("fk")).when(repo).deleteById(anyInt());
 
-        MockMvc mvc = standaloneSetup(new ManagementController(
+        ManagementOpsAdapter ops = new ManagementOpsAdapter(
                 repo,
-                mock(HistoryRepository.class),
-                mock(com.licensis.notaire.application.usecase.workflow.WorkflowTraceService.class),
-                mock(com.licensis.notaire.application.usecase.management.ManagementQueryService.class),
+                mock(com.licensis.notaire.repository.HistoryRepository.class),
                 mock(com.licensis.notaire.repository.PersonRepository.class),
                 mock(com.licensis.notaire.repository.ManagementStatusRepository.class),
                 mock(com.licensis.notaire.repository.BudgetRepository.class),
                 mock(com.licensis.notaire.repository.ProcedureTypeRepository.class),
                 mock(com.licensis.notaire.repository.ProcedureRepository.class),
                 mock(com.licensis.notaire.repository.PropertyRepository.class),
+                mock(com.licensis.notaire.application.usecase.management.ManagementQueryService.class),
                 mock(com.licensis.notaire.application.usecase.management.ManagementArchiveDebtService.class),
                 mock(com.licensis.notaire.application.usecase.management.ManagementSubstitutionService.class),
-                mock(com.licensis.notaire.application.usecase.management.ManagementFinancialSummaryService.class),
                 mock(com.licensis.notaire.application.usecase.management.ManagementStatusLogService.class),
                 mock(com.licensis.notaire.application.usecase.management.ManagementStatusWriteGuard.class),
+                mock(com.licensis.notaire.application.usecase.procedure.ProcedureFolderService.class),
+                mock(com.licensis.notaire.application.usecase.procedure.RequiredDocumentationOnConfirmService.class));
+
+        MockMvc mvc = standaloneSetup(new ManagementController(
+                mock(QueryManagementsUseCase.class),
+                new ManagementWriteService(ops),
+                mock(com.licensis.notaire.application.usecase.workflow.WorkflowTraceService.class),
+                mock(com.licensis.notaire.application.usecase.management.ManagementArchiveDebtService.class),
+                mock(com.licensis.notaire.application.usecase.management.ManagementFinancialSummaryService.class),
                 mock(com.licensis.notaire.application.port.in.management.TransitionManagementUseCase.class),
                 mock(TransitionManagementWebMapper.class),
                 mock(com.licensis.notaire.application.usecase.document.ExternalEntityDocumentService.class),
-                mock(com.licensis.notaire.application.usecase.workflow.DocumentReentryService.class),
-                mock(com.licensis.notaire.application.usecase.procedure.ProcedureFolderService.class),
-                mock(com.licensis.notaire.application.usecase.procedure.RequiredDocumentationOnConfirmService.class)))
+                mock(com.licensis.notaire.application.usecase.workflow.DocumentReentryService.class)))
                 .build();
 
         mvc.perform(delete("/api/v1/managements/5")).andExpect(status().isConflict());
