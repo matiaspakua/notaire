@@ -246,6 +246,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   (`ManagementOpsAdapter`). Application services stay free of new R2 entity/repository edges;
   entity access stays in the outbound adapter. Domain `DeedManagement` extraction remains deferred.
 
+- **TestimonyMovement ports-only (#1787):** mid-size mixed R1 hotspot (~2 edges). `TestimonyMovementController` calls
+  `QueryTestimonyMovementsUseCase` / `ManageTestimonyMovementsUseCase` only; CRUD and CU11/CU12/CU44 circuit
+  live behind `TestimonyMovementOpsPort`. ArchUnit R1 clears its two baseline edges. REST `/api/v1/testimony-movements` unchanged.
+
 - **History ports-only (#1775):** next mixed/repo-like R1 hotspot after Management. `HistoryController`
   calls `QueryHistoriesUseCase` / `ManageHistoriesUseCase` only; persistence and CU13 chronological order
   live behind `HistoryOpsPort`. ArchUnit R1 clears its six baseline edges. REST `/api/v1/history` unchanged.

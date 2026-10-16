@@ -7,10 +7,8 @@ import com.licensis.notaire.application.usecase.person.PersonService;
 import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Testimony;
-import com.licensis.notaire.business.TestimonyMovement;
 import com.licensis.notaire.repository.DeedRepository;
 import com.licensis.notaire.repository.IdentificationTypeRepository;
-import com.licensis.notaire.repository.TestimonyMovementRepository;
 import com.licensis.notaire.repository.TestimonyRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -77,10 +75,15 @@ class TestimonyPersonConstraintErrorsTest {
     }
 
     private static MockMvc movements(RuntimeException failure) throws Exception {
-        TestimonyMovementRepository repo = mock(TestimonyMovementRepository.class);
-        when(repo.findById(anyInt())).thenReturn(Optional.of(new TestimonyMovement()));
-        when(repo.save(any())).thenThrow(failure);
-        return mvc(TestimonyMovementController.class, Map.of(TestimonyMovementRepository.class, repo));
+        var manage = mock(com.licensis.notaire.application.port.in.testimony.ManageTestimonyMovementsUseCase.class);
+        when(manage.create(any())).thenReturn(
+                new com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort.SaveResult.Failed(
+                        failure));
+        when(manage.update(anyInt(), any())).thenReturn(
+                new com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort.SaveResult.Failed(
+                        failure));
+        return mvc(TestimonyMovementController.class, Map.of(
+                com.licensis.notaire.application.port.in.testimony.ManageTestimonyMovementsUseCase.class, manage));
     }
 
     private static MockMvc testimonies(RuntimeException failure) throws Exception {

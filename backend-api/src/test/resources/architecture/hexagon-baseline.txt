@@ -50,8 +50,6 @@ R1 | com.licensis.notaire.adapter.in.web.testimony.TestimonyController -> com.li
 R1 | com.licensis.notaire.adapter.in.web.testimony.TestimonyController -> com.licensis.notaire.repository.DeedRepository
 R1 | com.licensis.notaire.adapter.in.web.testimony.TestimonyController -> com.licensis.notaire.repository.TestimonyMovementRepository
 R1 | com.licensis.notaire.adapter.in.web.testimony.TestimonyController -> com.licensis.notaire.repository.TestimonyRepository
-R1 | com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementController -> com.licensis.notaire.business.TestimonyMovement
-R1 | com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementController -> com.licensis.notaire.repository.TestimonyMovementRepository
 R2 | com.licensis.notaire.application.port.in.deed.CalculateNextDeedNumberUseCase -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.port.in.deed.ValidateDeedNumberingUseCase -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.port.in.history.HistoryUseCase -> com.licensis.notaire.business.History
