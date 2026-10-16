@@ -6,11 +6,6 @@ R1 | com.licensis.notaire.adapter.in.web.budget.BudgetTemplateController -> com.
 R1 | com.licensis.notaire.adapter.in.web.budget.BudgetTemplateController -> com.licensis.notaire.business.BudgetTemplatePK
 R1 | com.licensis.notaire.adapter.in.web.concept.ConceptController -> com.licensis.notaire.business.Concept
 R1 | com.licensis.notaire.adapter.in.web.concept.ConceptController -> com.licensis.notaire.repository.BudgetTemplateRepository
-R1 | com.licensis.notaire.adapter.in.web.copy.CopyController -> com.licensis.notaire.business.Copy
-R1 | com.licensis.notaire.adapter.in.web.copy.CopyController -> com.licensis.notaire.business.Person
-R1 | com.licensis.notaire.adapter.in.web.copy.CopyController -> com.licensis.notaire.business.Testimony
-R1 | com.licensis.notaire.adapter.in.web.copy.CopyController -> com.licensis.notaire.repository.PersonRepository
-R1 | com.licensis.notaire.adapter.in.web.copy.CopyController -> com.licensis.notaire.repository.TestimonyRepository
 R1 | com.licensis.notaire.adapter.in.web.deed.DeedController -> com.licensis.notaire.business.Deed
 R1 | com.licensis.notaire.adapter.in.web.deed.DeedController -> com.licensis.notaire.business.Folio
 R1 | com.licensis.notaire.adapter.in.web.deed.DeedController -> com.licensis.notaire.repository.FolioRepository
