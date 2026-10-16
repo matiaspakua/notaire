@@ -14,7 +14,7 @@ import com.licensis.notaire.application.port.in.user.ManageUsersUseCase.CreateUs
 import com.licensis.notaire.application.port.in.user.ManageUsersUseCase.UpdateUserCommand;
 import com.licensis.notaire.application.port.in.user.QueryUsersUseCase;
 import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateOpsPort.TemplateView;
-import com.licensis.notaire.application.usecase.report.ReportService;
+import com.licensis.notaire.application.port.in.report.GenerateReportsUseCase;
 import com.licensis.notaire.dto.DtoUser;
 import com.licensis.notaire.domain.user.User;
 import com.licensis.notaire.domain.user.UserNotFoundException;
@@ -72,7 +72,7 @@ class AdditionalControllersTest {
         @Test
         @DisplayName("All endpoints — success and failure paths")
         void all() throws Exception {
-            ReportService service = mock(ReportService.class);
+            GenerateReportsUseCase service = mock(GenerateReportsUseCase.class);
             var mvc = standaloneSetup(new ReportController(service))
                     .setControllerAdvice(new GlobalExceptionHandler())
                     .build();

@@ -22,7 +22,7 @@ import com.licensis.notaire.application.port.in.notebook.ManageNotebooksUseCase;
 import com.licensis.notaire.application.port.in.notebook.QueryNotebooksUseCase;
 import com.licensis.notaire.application.port.out.notebook.NotebookOpsPort.CreateResult;
 import com.licensis.notaire.application.port.out.notebook.NotebookOpsPort.NotebookView;
-import com.licensis.notaire.application.usecase.report.ReportService;
+import com.licensis.notaire.application.port.in.report.GenerateReportsUseCase;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,7 +32,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotEmpty;
 
 /**
- * Folio notebooks (CU80). CRUD calls inbound ports only; cover PDF keeps {@link ReportService}
+ * Folio notebooks (CU80). CRUD calls inbound ports only; cover PDF keeps {@link GenerateReportsUseCase}
  * (issue #1817).
  */
 @RestController
@@ -45,12 +45,12 @@ public class NotebookController {
 
     private final QueryNotebooksUseCase queryNotebooks;
     private final ManageNotebooksUseCase manageNotebooks;
-    private final ReportService reportService;
+    private final GenerateReportsUseCase reportService;
 
     public NotebookController(
             QueryNotebooksUseCase queryNotebooks,
             ManageNotebooksUseCase manageNotebooks,
-            ReportService reportService) {
+            GenerateReportsUseCase reportService) {
         this.queryNotebooks = queryNotebooks;
         this.manageNotebooks = manageNotebooks;
         this.reportService = reportService;

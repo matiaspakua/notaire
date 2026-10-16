@@ -1,4 +1,6 @@
-package com.licensis.notaire.application.usecase.report;
+package com.licensis.notaire.adapter.out.report;
+
+import com.licensis.notaire.application.usecase.report.ReportLocaleFormats;
 
 import com.licensis.notaire.application.port.in.payment.BudgetSummary;
 import com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase;

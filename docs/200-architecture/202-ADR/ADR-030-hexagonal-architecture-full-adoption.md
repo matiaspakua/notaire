@@ -870,6 +870,11 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   R2 edges. First slice of the post-FE R2 wave (#1849 report, #1850 management,
   #1851 workflow, #1852 deed).
 
+- **Backend R2 shrink — report (#1849):** move `ReportService` / builders to
+  `adapter.out.report`; inbound `GenerateReportsUseCase` returns PDF bytes so web
+  adapters stay free of outbound imports (R5); delete dead entity-speaking
+  `DocumentCostTemplateRepositoryPort`. Clears ~56 R2 edges (highest-fan domain).
+
 
 ## Options considered
 
