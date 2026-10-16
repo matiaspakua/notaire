@@ -32,6 +32,7 @@ from milestone_policy import (
     is_history,
     lane,
     lanes_blocked_by,
+    shipped_train,
     suggested_priority,
 )
 from apply_milestone_policy import missing_project_issues
@@ -223,6 +224,30 @@ class NomenclatureTests(unittest.TestCase):
         self.assertTrue(is_history("History · Phase 0 Foundations"))
         self.assertFalse(is_history("v0.3 · Hexagonal core & security (2026-11)"))
         self.assertFalse(is_history(BACKLOG))
+
+
+class ShippedTrainTests(unittest.TestCase):
+    V01 = "v0.1 · First release cuts (2026-10)"
+    V02 = "v0.2 · Release identity & product forms (2026-10)"
+    Q4 = "H · 2026 Q4 cohort: cloud AI SDLC"
+
+    def test_issues_closed_up_to_the_last_v0_1_tag_shipped_in_v0_1(self):
+        self.assertEqual(shipped_train("2026-10-01T00:00:00Z", None), self.V01)
+        self.assertEqual(shipped_train("2026-10-10T14:45:19Z", self.Q4), self.V01)
+
+    def test_issues_closed_after_v0_1_up_to_v0_2_3_shipped_in_v0_2(self):
+        self.assertEqual(shipped_train("2026-10-10T15:00:00Z", "2026-11 · Release blockers"), self.V02)
+        self.assertEqual(shipped_train("2026-10-16T11:26:32Z", RELEASE), self.V02)
+
+    def test_outside_the_cut_windows_nothing_moves(self):
+        self.assertIsNone(shipped_train("2026-09-30T23:59:59Z", None))
+        self.assertIsNone(shipped_train("2026-10-16T11:26:33Z", None))
+        self.assertIsNone(shipped_train("", None))
+
+    def test_curated_history_and_shipped_trains_are_kept(self):
+        self.assertIsNone(shipped_train("2026-10-05T00:00:00Z", "H8 · Pre-release hardening (2026-09–2026-10)"))
+        self.assertIsNone(shipped_train("2026-10-05T00:00:00Z", "History · v1.0 priority bucket"))
+        self.assertIsNone(shipped_train("2026-10-14T00:00:00Z", self.V02))
 
 
 class RoadmapContractTests(unittest.TestCase):
