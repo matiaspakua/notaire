@@ -1,9 +1,4 @@
 {
-  "src/app/dashboard/administration/folios/page.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/app/dashboard/administration/templates/page.tsx": {
     "no-restricted-imports": {
       "count": 1
