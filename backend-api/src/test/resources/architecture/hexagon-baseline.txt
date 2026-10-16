@@ -1,5 +1,3 @@
-R2 | com.licensis.notaire.application.port.in.deed.CalculateNextDeedNumberUseCase -> com.licensis.notaire.business.Person
-R2 | com.licensis.notaire.application.port.in.deed.ValidateDeedNumberingUseCase -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.port.in.history.HistoryUseCase -> com.licensis.notaire.business.History
 R2 | com.licensis.notaire.application.port.in.person.PersonUseCase -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.port.in.testimony.TestimonyMovementUseCase -> com.licensis.notaire.business.TestimonyMovement
@@ -81,19 +79,6 @@ R2 | com.licensis.notaire.application.usecase.budget.BudgetTemplateService -> co
 R2 | com.licensis.notaire.application.usecase.concept.ConceptService -> com.licensis.notaire.business.Concept
 R2 | com.licensis.notaire.application.usecase.copy.CopyService -> com.licensis.notaire.business.Copy
 R2 | com.licensis.notaire.application.usecase.copy.CopyService -> com.licensis.notaire.repository.TestimonyMovementRepository
-R2 | com.licensis.notaire.application.usecase.deed.DeedNumberingUseCaseImpl -> com.licensis.notaire.business.Person
-R2 | com.licensis.notaire.application.usecase.deed.DeedService -> com.licensis.notaire.business.Deed
-R2 | com.licensis.notaire.application.usecase.deed.DeedService -> com.licensis.notaire.business.Folio
-R2 | com.licensis.notaire.application.usecase.deed.DeedService -> com.licensis.notaire.business.FolioType
-R2 | com.licensis.notaire.application.usecase.deed.DeedService -> com.licensis.notaire.business.Person
-R2 | com.licensis.notaire.application.usecase.deed.DeedService -> com.licensis.notaire.repository.DeedRepository
-R2 | com.licensis.notaire.application.usecase.deed.DeedService -> com.licensis.notaire.repository.FolioRepository
-R2 | com.licensis.notaire.application.usecase.deed.DeedService -> com.licensis.notaire.repository.PersonRepository
-R2 | com.licensis.notaire.application.usecase.deed.DeedService -> org.springframework.data.domain.Page
-R2 | com.licensis.notaire.application.usecase.deed.DeedService -> org.springframework.data.domain.Pageable
-R2 | com.licensis.notaire.application.usecase.deed.DeedSigningService -> com.licensis.notaire.business.Deed
-R2 | com.licensis.notaire.application.usecase.deed.DeedSigningService -> com.licensis.notaire.repository.DeedRepository
-R2 | com.licensis.notaire.application.usecase.deed.DeedSigningService -> com.licensis.notaire.repository.FolioRepository
 R2 | com.licensis.notaire.application.usecase.document.DocumentCostTemplateService -> com.licensis.notaire.business.DocumentCostTemplate
 R2 | com.licensis.notaire.application.usecase.document.DocumentCostTemplateService -> com.licensis.notaire.business.DocumentType
 R2 | com.licensis.notaire.application.usecase.document.DocumentCostTemplateService -> com.licensis.notaire.business.ProcedureType

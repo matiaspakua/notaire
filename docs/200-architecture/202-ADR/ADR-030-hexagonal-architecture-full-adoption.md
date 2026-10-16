@@ -864,6 +864,12 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `core/property` (+ HTTP adapters); last four catalog suppressions leave the
   baseline.
 
+- **Backend R2 shrink — deed (#1852):** numbering inbound ports take `Integer notaryId`
+  (no `business.Person`); `DeedService` / `DeedSigningService` move to
+  `adapter.out.persistence.deed` so application.usecase.deed has no entity/repository
+  R2 edges. First slice of the post-FE R2 wave (#1849 report, #1850 management,
+  #1851 workflow, #1852 deed).
+
 
 ## Options considered
 

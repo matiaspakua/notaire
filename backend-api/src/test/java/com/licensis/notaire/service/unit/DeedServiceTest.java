@@ -11,7 +11,7 @@ import com.licensis.notaire.business.FolioType;
 import com.licensis.notaire.repository.DeedRepository;
 import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.repository.PersonRepository;
-import com.licensis.notaire.application.usecase.deed.DeedService;
+import com.licensis.notaire.adapter.out.persistence.deed.DeedService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -163,7 +163,7 @@ class DeedServiceTest {
         Folio folio = folioWithNotary(testNotary, 2026, false);
         testDeed.setIdFolio(10);
         when(folioRepository.findById(10)).thenReturn(Optional.of(folio));
-        when(validateDeedNumberingUseCase.validate(100, testNotary, 2026, false, null, 1))
+        when(validateDeedNumberingUseCase.validate(100, testNotary.getPersonId(), 2026, false, null, 1))
                 .thenReturn(DeedNumberingValidationResult.DUPLICATE);
 
         assertThatThrownBy(() -> deedService.save(testDeed))
@@ -178,7 +178,7 @@ class DeedServiceTest {
         Folio folio = folioWithNotary(testNotary, 2026, false);
         testDeed.setIdFolio(10);
         when(folioRepository.findById(10)).thenReturn(Optional.of(folio));
-        when(validateDeedNumberingUseCase.validate(100, testNotary, 2026, false, null, 1))
+        when(validateDeedNumberingUseCase.validate(100, testNotary.getPersonId(), 2026, false, null, 1))
                 .thenReturn(DeedNumberingValidationResult.SKIP_UNJUSTIFIED);
 
         assertThatThrownBy(() -> deedService.save(testDeed))
@@ -193,7 +193,7 @@ class DeedServiceTest {
         Folio folio = folioWithNotary(testNotary, 2026, false);
         testDeed.setIdFolio(10);
         when(folioRepository.findById(10)).thenReturn(Optional.of(folio));
-        when(validateDeedNumberingUseCase.validate(100, testNotary, 2026, false, null, 1))
+        when(validateDeedNumberingUseCase.validate(100, testNotary.getPersonId(), 2026, false, null, 1))
                 .thenReturn(DeedNumberingValidationResult.OK);
         when(deedRepository.save(testDeed)).thenReturn(testDeed);
 

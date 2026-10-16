@@ -13,8 +13,6 @@ import org.mockito.ArgumentCaptor;
 
 import com.licensis.notaire.application.port.out.deed.DeedOpsPort.DeedCommand;
 import com.licensis.notaire.application.port.out.deed.DeedOpsPort.SaveResult;
-import com.licensis.notaire.application.usecase.deed.DeedService;
-import com.licensis.notaire.application.usecase.deed.DeedSigningService;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.repository.FolioRepository;
