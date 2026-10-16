@@ -1,14 +1,14 @@
 package com.licensis.notaire.unit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.licensis.notaire.adapter.in.web.procedure.ProcedureFolderController;
-import com.licensis.notaire.exception.BusinessValidationException;
-import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.business.ProcedureFolder;
-import com.licensis.notaire.business.DeedManagement;
-import com.licensis.notaire.business.Procedure;
-import com.licensis.notaire.application.usecase.procedure.ProcedureFolderService;
-import com.licensis.notaire.testing.RequirementCoverage;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,14 +19,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.licensis.notaire.adapter.in.web.procedure.ProcedureFolderController;
+import com.licensis.notaire.application.port.in.procedure.ManageProcedureFoldersUseCase;
+import com.licensis.notaire.application.port.in.procedure.QueryProcedureFoldersUseCase;
+import com.licensis.notaire.application.port.out.procedure.ProcedureFolderOpsPort.HoldResult;
+import com.licensis.notaire.dto.DtoProcedureFolder;
+import com.licensis.notaire.testing.RequirementCoverage;
 
 @RequirementCoverage({"CU85"})
 @ExtendWith(MockitoExtension.class)
@@ -34,35 +33,36 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ProcedureFolderControllerTest {
 
     @Mock
-    private ProcedureFolderService procedureFolderService;
+    private QueryProcedureFoldersUseCase queryProcedureFolders;
+
+    @Mock
+    private ManageProcedureFoldersUseCase manageProcedureFolders;
 
     private MockMvc mockMvc;
     private ObjectMapper mapper;
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new ProcedureFolderController(procedureFolderService)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(
+                        new ProcedureFolderController(queryProcedureFolders, manageProcedureFolders))
+                .build();
         mapper = new ObjectMapper();
     }
 
-    private ProcedureFolder buildFolder(Integer idFolder, int number, String status) {
-        DeedManagement management = new DeedManagement();
-        management.setIdManagement(1);
-        Procedure procedure = new Procedure();
-        procedure.setIdProcedure(10);
-        ProcedureFolder folder = new ProcedureFolder();
-        folder.setIdFolder(idFolder);
-        folder.setNumber(number);
-        folder.setStatus(status);
-        folder.setFkIdManagement(management);
-        folder.setFkIdProcedure(procedure);
-        return folder;
+    private DtoProcedureFolder buildFolder(Integer idFolder, int number, String status) {
+        DtoProcedureFolder dto = new DtoProcedureFolder();
+        dto.setIdFolder(idFolder);
+        dto.setNumber(number);
+        dto.setStatus(status);
+        dto.setIdManagement(1);
+        dto.setIdProcedure(10);
+        return dto;
     }
 
     @Test
     @DisplayName("GET /api/v1/procedure-folders/{id} returns the folder when found")
     void shouldReturnFolderById() throws Exception {
-        when(procedureFolderService.findById(1)).thenReturn(Optional.of(buildFolder(1, 1, "Activa")));
+        when(queryProcedureFolders.findById(1)).thenReturn(Optional.of(buildFolder(1, 1, "Activa")));
 
         mockMvc.perform(get("/api/v1/procedure-folders/1"))
                 .andExpect(status().isOk())
@@ -72,7 +72,7 @@ class ProcedureFolderControllerTest {
     @Test
     @DisplayName("GET /api/v1/procedure-folders/{id} returns 404 when not found")
     void shouldReturnNotFoundWhenFolderMissing() throws Exception {
-        when(procedureFolderService.findById(999)).thenReturn(Optional.empty());
+        when(queryProcedureFolders.findById(999)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/v1/procedure-folders/999"))
                 .andExpect(status().isNotFound());
@@ -81,7 +81,7 @@ class ProcedureFolderControllerTest {
     @Test
     @DisplayName("GET /api/v1/procedure-folders?procedureId= returns the matching folder")
     void shouldSearchByProcedureId() throws Exception {
-        when(procedureFolderService.findByProcedure(10)).thenReturn(Optional.of(buildFolder(1, 1, "Activa")));
+        when(queryProcedureFolders.search(null, 10)).thenReturn(List.of(buildFolder(1, 1, "Activa")));
 
         mockMvc.perform(get("/api/v1/procedure-folders").param("procedureId", "10"))
                 .andExpect(status().isOk())
@@ -91,7 +91,7 @@ class ProcedureFolderControllerTest {
     @Test
     @DisplayName("GET /api/v1/procedure-folders?managementId= returns all folders of a management")
     void shouldSearchByManagementId() throws Exception {
-        when(procedureFolderService.findByManagement(1)).thenReturn(List.of(buildFolder(1, 1, "Activa")));
+        when(queryProcedureFolders.search(1, null)).thenReturn(List.of(buildFolder(1, 1, "Activa")));
 
         mockMvc.perform(get("/api/v1/procedure-folders").param("managementId", "1"))
                 .andExpect(status().isOk())
@@ -101,6 +101,8 @@ class ProcedureFolderControllerTest {
     @Test
     @DisplayName("GET /api/v1/procedure-folders without filters returns empty list")
     void shouldReturnEmptyListWithoutFilters() throws Exception {
+        when(queryProcedureFolders.search(null, null)).thenReturn(List.of());
+
         mockMvc.perform(get("/api/v1/procedure-folders"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
@@ -110,8 +112,8 @@ class ProcedureFolderControllerTest {
     @Test
     @DisplayName("PUT /api/v1/procedure-folders/{id}/wait puts the folder on hold when a reason is provided")
     void shouldPutFolderOnHold() throws Exception {
-        when(procedureFolderService.putOnHold(1, "Missing documentation"))
-                .thenReturn(buildFolder(1, 1, "Espera"));
+        when(manageProcedureFolders.putOnHold(1, "Missing documentation"))
+                .thenReturn(new HoldResult.Ok(buildFolder(1, 1, "Espera")));
 
         mockMvc.perform(put("/api/v1/procedure-folders/1/wait")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -124,8 +126,8 @@ class ProcedureFolderControllerTest {
     @Test
     @DisplayName("PUT /api/v1/procedure-folders/{id}/wait returns 400 when the reason is missing")
     void shouldRejectWaitWithoutReason() throws Exception {
-        when(procedureFolderService.putOnHold(1, null))
-                .thenThrow(new BusinessValidationException("The reason is required to put a folder on hold"));
+        when(manageProcedureFolders.putOnHold(1, null))
+                .thenReturn(new HoldResult.BadRequest("The reason is required to put a folder on hold"));
 
         mockMvc.perform(put("/api/v1/procedure-folders/1/wait")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -137,8 +139,7 @@ class ProcedureFolderControllerTest {
     @Test
     @DisplayName("PUT /api/v1/procedure-folders/{id}/wait returns 404 when the folder does not exist")
     void shouldReturnNotFoundWhenPuttingWaitOnMissingFolder() throws Exception {
-        when(procedureFolderService.putOnHold(999, "Reason"))
-                .thenThrow(new ResourceNotFoundException("Folder not found with ID: 999"));
+        when(manageProcedureFolders.putOnHold(999, "Reason")).thenReturn(new HoldResult.NotFound());
 
         mockMvc.perform(put("/api/v1/procedure-folders/999/wait")
                         .contentType(MediaType.APPLICATION_JSON)
