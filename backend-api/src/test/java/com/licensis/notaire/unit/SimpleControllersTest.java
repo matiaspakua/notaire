@@ -749,6 +749,7 @@ class SimpleControllersTest {
             mvc.perform(get("/api/v1/people/2")).andExpect(status().isNotFound());
             mvc.perform(get("/api/v1/people/search?firstName=Juan")).andExpect(status().isOk());
 
+            // POST with missing identification type should use default (ports adapter, #1361)
             String personBody = """
                     {"firstName":"Juan","lastName":"Perez","identificationNumber":"12345678","isClient":true}
                     """;
