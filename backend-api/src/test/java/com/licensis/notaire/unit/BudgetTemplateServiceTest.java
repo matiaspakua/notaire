@@ -16,8 +16,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.licensis.notaire.repository.BudgetRepository;
+import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.application.port.out.item.ItemOpsPort.ItemView;
-import com.licensis.notaire.application.port.out.item.ItemRepositoryPort;
 import com.licensis.notaire.adapter.out.persistence.budget.BudgetTemplateService;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.BudgetTemplate;
@@ -37,7 +37,7 @@ class BudgetTemplateServiceTest {
     private BudgetTemplateRepository budgetTemplateRepository;
 
     @Mock
-    private ItemRepositoryPort itemRepository;
+    private ItemRepository itemRepository;
 
     @InjectMocks
     private BudgetTemplateService budgetTemplateService;
@@ -63,7 +63,7 @@ class BudgetTemplateServiceTest {
                 .thenReturn(List.of(
                         buildTemplate("Honorarios", new java.math.BigDecimal("1000"), 10),
                         buildTemplate("Stamp duty", new java.math.BigDecimal("500"), 0)));
-        when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(itemRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<ItemView> items = budgetTemplateService.loadItemsFromTemplate(1, 5);
 
@@ -83,7 +83,7 @@ class BudgetTemplateServiceTest {
         BudgetTemplate template = buildTemplate("Honorarios", new java.math.BigDecimal("1000"), 10);
         when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
         when(budgetTemplateRepository.findByProcedureTypeIdProcedureType(5)).thenReturn(List.of(template));
-        when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(itemRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<ItemView> items = budgetTemplateService.loadItemsFromTemplate(1, 5);
 

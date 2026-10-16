@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.in.budget.LoadBudgetItemsFromTemplateUseCase;
 import com.licensis.notaire.application.port.out.item.ItemOpsPort.ItemView;
-import com.licensis.notaire.application.port.out.item.ItemRepositoryPort;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.BudgetTemplate;
 import com.licensis.notaire.business.Concept;
@@ -16,10 +15,11 @@ import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.repository.BudgetRepository;
 import com.licensis.notaire.repository.BudgetTemplateRepository;
+import com.licensis.notaire.repository.ItemRepository;
 
 /**
  * Loads the concepts of a ProcedureType's BudgetTemplate as Items of a
- * real Budget (CU39). Outbound adapter implementing the inbound port (issue #1865).
+ * real Budget (CU39). Outbound adapter implementing the inbound port (issue #1865 / #1904).
  */
 @Service
 @Transactional
@@ -27,12 +27,12 @@ public class BudgetTemplateService implements LoadBudgetItemsFromTemplateUseCase
 
     private final BudgetRepository budgetRepository;
     private final BudgetTemplateRepository budgetTemplateRepository;
-    private final ItemRepositoryPort itemRepository;
+    private final ItemRepository itemRepository;
 
     public BudgetTemplateService(
             BudgetRepository budgetRepository,
             BudgetTemplateRepository budgetTemplateRepository,
-            ItemRepositoryPort itemRepository) {
+            ItemRepository itemRepository) {
         this.budgetRepository = budgetRepository;
         this.budgetTemplateRepository = budgetTemplateRepository;
         this.itemRepository = itemRepository;
@@ -54,7 +54,7 @@ public class BudgetTemplateService implements LoadBudgetItemsFromTemplateUseCase
         List<Item> items =
                 templates.stream().map(template -> createItemFromConcept(budget, template.getConcept())).toList();
 
-        return itemRepository.createAll(items).stream().map(BudgetTemplateService::toView).toList();
+        return itemRepository.saveAll(items).stream().map(BudgetTemplateService::toView).toList();
     }
 
     private Item createItemFromConcept(Budget budget, Concept concept) {

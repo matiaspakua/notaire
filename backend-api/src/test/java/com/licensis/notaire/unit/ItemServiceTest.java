@@ -5,9 +5,9 @@ import com.licensis.notaire.dto.TypeItem;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Item;
-import com.licensis.notaire.application.port.out.item.ItemRepositoryPort;
 import com.licensis.notaire.application.port.out.budget.BudgetOpsPort;
-import com.licensis.notaire.application.usecase.item.ItemService;
+import com.licensis.notaire.adapter.out.persistence.item.ItemService;
+import com.licensis.notaire.repository.ItemRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 class ItemServiceTest {
 
     @Mock
-    private ItemRepositoryPort itemRepository;
+    private ItemRepository itemRepository;
 
     @Mock
     private BudgetOpsPort budgetOps;
@@ -52,7 +52,7 @@ class ItemServiceTest {
         item.setName("Item without a type");
         item.setValue(new java.math.BigDecimal("500"));
 
-        when(itemRepository.create(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(itemRepository.save(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Item saved = itemService.create(item);
 
@@ -63,7 +63,7 @@ class ItemServiceTest {
     @DisplayName("Should accept a discount item with a reason")
     void shouldAcceptDiscountItemWithReason() {
         Item item = buildItem(TypeItem.DESCUENTO, "Discount for early payment");
-        when(itemRepository.create(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(itemRepository.save(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Item saved = itemService.create(item);
 
@@ -75,7 +75,7 @@ class ItemServiceTest {
     @DisplayName("Should accept a surcharge item with a reason")
     void shouldAcceptSurchargeItemWithReason() {
         Item item = buildItem(TypeItem.RECARGO, "Surcharge for late payment");
-        when(itemRepository.create(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(itemRepository.save(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Item saved = itemService.create(item);
 
@@ -107,7 +107,7 @@ class ItemServiceTest {
     @DisplayName("Should accept a normal item without a reason")
     void shouldAcceptNormalItemWithoutReason() {
         Item item = buildItem(TypeItem.NORMAL, null);
-        when(itemRepository.create(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(itemRepository.save(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Item saved = itemService.create(item);
 
@@ -136,7 +136,7 @@ class ItemServiceTest {
     @DisplayName("Should return only discount and surcharge items for a budget")
     void shouldReturnDiscountsAndSurchargesForBudget() {
         when(budgetOps.existsById(1)).thenReturn(true);
-        when(itemRepository.findByBudgetId(1)).thenReturn(List.of(
+        when(itemRepository.findByFkIdBudgetIdBudget(1)).thenReturn(List.of(
                 buildItem(TypeItem.NORMAL, null),
                 buildItem(TypeItem.DESCUENTO, "Discount"),
                 buildItem(TypeItem.RECARGO, "Surcharge")
@@ -153,7 +153,7 @@ class ItemServiceTest {
     @DisplayName("Should return an empty list when budget has no discounts or surcharges")
     void shouldReturnEmptyListWhenNoDiscountsOrSurcharges() {
         when(budgetOps.existsById(1)).thenReturn(true);
-        when(itemRepository.findByBudgetId(1)).thenReturn(List.of(
+        when(itemRepository.findByFkIdBudgetIdBudget(1)).thenReturn(List.of(
                 buildItem(TypeItem.NORMAL, null)
         ));
 
