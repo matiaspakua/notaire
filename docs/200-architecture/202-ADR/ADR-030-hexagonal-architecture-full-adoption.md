@@ -818,6 +818,12 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   ArchUnit R1 does not grow; controller no longer depends on `business.Deed`.
 
 
+- **R1 wire DTOs (#1826):** clear remaining inbound-adapter R1 edges on `ItemResponse` (drop
+  `from(Item)` — Budget template/catalog return `ItemView`), support `*Ref` (remove dead
+  `from(entity)` factories), and `ErrorResponses` (JPA optimistic-lock by class name).
+  ArchUnit R1 shrinks to zero for those nine edges.
+
+
 - **Frontend people list/search (#1823):** `core/person`, `adapters/http/person`, and
   `composition/person`. `usePeople` and `usePersonSearch` no longer import `api-client`
   (eslint suppressions shrink by two).

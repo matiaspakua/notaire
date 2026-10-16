@@ -1,12 +1,10 @@
 package com.licensis.notaire.adapter.in.web.item;
 
 import com.licensis.notaire.application.port.out.item.ItemOpsPort.ItemView;
-import com.licensis.notaire.business.Item;
 import com.licensis.notaire.dto.TypeItem;
 
 /**
- * Wire shape for budget items. {@link #from(Item)} remains for BudgetController template/catalog
- * endpoints that still return entities; ItemController maps from {@link ItemView} (issue #1809).
+ * Wire shape for budget items. Maps from {@link ItemView} only (issue #1826 / ArchUnit R1).
  */
 public record ItemResponse(
         Integer idItem,
@@ -19,21 +17,6 @@ public record ItemResponse(
         boolean fixedConcept,
         Integer budgetId,
         int version) {
-
-    public static ItemResponse from(Item item) {
-        Integer budgetId = item.getFkIdBudget() != null ? item.getFkIdBudget().getIdBudget() : null;
-        return new ItemResponse(
-                item.getIdItem(),
-                item.getName(),
-                item.getValue(),
-                item.getPercentage(),
-                item.getNotes(),
-                item.getType(),
-                item.getReason(),
-                item.isFixed(),
-                budgetId,
-                item.getVersion());
-    }
 
     public static ItemResponse from(ItemView view) {
         return new ItemResponse(
