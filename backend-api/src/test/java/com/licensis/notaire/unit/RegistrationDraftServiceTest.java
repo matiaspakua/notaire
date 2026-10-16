@@ -118,7 +118,8 @@ class RegistrationDraftServiceTest {
         when(deedRepository.findById(999)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> registrationDraftService.generate(999))
-                .isInstanceOf(ResourceNotFoundException.class);
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("Deed not found with ID: 999");
     }
 
     @Test
