@@ -262,6 +262,11 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `QueryTestimoniesUseCase` / `ManageTestimoniesUseCase` only; CRUD, generate/verify, and #1364 in-use
   delete live behind `TestimonyOpsPort`. ArchUnit R1 clears its five baseline edges.
 
+- **BudgetTemplate ports-only (#1803):** Budget* R1 hotspot (~2 edges). `BudgetTemplateController` calls
+  `QueryBudgetTemplatesUseCase` / `ManageBudgetTemplatesUseCase` only; entity access lives behind
+  `BudgetTemplateOpsPort` (delegates to `BudgetTemplateCatalogService`). ArchUnit R1 clears its two
+  baseline edges.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers
