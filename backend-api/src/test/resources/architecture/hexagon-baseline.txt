@@ -1,12 +1,3 @@
-R1 | com.licensis.notaire.adapter.in.web.item.ItemResponse -> com.licensis.notaire.business.Budget
-R1 | com.licensis.notaire.adapter.in.web.item.ItemResponse -> com.licensis.notaire.business.Item
-R1 | com.licensis.notaire.adapter.in.web.support.DeedRef -> com.licensis.notaire.business.Deed
-R1 | com.licensis.notaire.adapter.in.web.support.DocumentTypeRef -> com.licensis.notaire.business.DocumentType
-R1 | com.licensis.notaire.adapter.in.web.support.ErrorResponses -> jakarta.persistence.OptimisticLockException
-R1 | com.licensis.notaire.adapter.in.web.support.ManagementRef -> com.licensis.notaire.business.DeedManagement
-R1 | com.licensis.notaire.adapter.in.web.support.NotaryRef -> com.licensis.notaire.business.Person
-R1 | com.licensis.notaire.adapter.in.web.support.ProcedureTypeRef -> com.licensis.notaire.business.ProcedureType
-R1 | com.licensis.notaire.adapter.in.web.support.PropertyRef -> com.licensis.notaire.business.Property
 R2 | com.licensis.notaire.application.port.in.deed.CalculateNextDeedNumberUseCase -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.port.in.deed.ValidateDeedNumberingUseCase -> com.licensis.notaire.business.Person
 R2 | com.licensis.notaire.application.port.in.history.HistoryUseCase -> com.licensis.notaire.business.History

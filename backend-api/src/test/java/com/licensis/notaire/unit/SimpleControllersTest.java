@@ -441,14 +441,23 @@ class SimpleControllersTest {
             mvc.perform(delete("/api/v1/budgets/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/budgets/99")).andExpect(status().isNotFound());
 
-            com.licensis.notaire.business.Item item = new com.licensis.notaire.business.Item(
-                    1, "Stamp duty", new java.math.BigDecimal("500"));
-            when(budgetTemplateService.loadItemsFromTemplate(1, 5)).thenReturn(List.of(item));
+            var itemView = new com.licensis.notaire.application.port.out.item.ItemOpsPort.ItemView(
+                    1,
+                    "Stamp duty",
+                    new java.math.BigDecimal("500"),
+                    null,
+                    null,
+                    null,
+                    null,
+                    false,
+                    1,
+                    0);
+            when(budgetTemplateService.loadItemsFromTemplate(1, 5)).thenReturn(List.of(itemView));
             mvc.perform(post("/api/v1/budgets/1/items-from-template?procedureTypeId=5"))
                     .andExpect(status().isOk());
 
             when(budgetCatalogItemsService.addItemsFromCatalog(eq(1), anyList()))
-                    .thenReturn(List.of(item));
+                    .thenReturn(List.of(itemView));
             mvc.perform(post("/api/v1/budgets/1/items-from-catalog").contentType("application/json")
                     .content(mapper.writeValueAsString(List.of(1))))
                     .andExpect(status().isOk());
