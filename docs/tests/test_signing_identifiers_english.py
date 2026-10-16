@@ -28,13 +28,18 @@ class SigningIdentifiersEnglishTest(unittest.TestCase):
         self.assertNotIn("firmada", signing)
 
         controller = read("main/java/com/licensis/notaire/adapter/in/web/deed/DeedController.java")
-        self.assertIn("deedSigningService", controller)
+        self.assertIn("manageDeeds.sign", controller)
         self.assertIn("Sin Firmar", controller)
         self.assertIn("Firmada", controller)
         self.assertNotIn("deedFirma", controller)
+        self.assertNotIn("deedSigningService", controller)
+
+        adapter = read("main/java/com/licensis/notaire/adapter/out/persistence/deed/DeedOpsAdapter.java")
+        self.assertIn("deedSigningService", adapter)
+        self.assertNotIn("deedFirma", adapter)
 
         controllers = read("test/java/com/licensis/notaire/unit/SimpleControllersTest.java")
-        self.assertIn("signingService", controllers)
+        self.assertIn("ManageDeedsUseCase", controllers)
         self.assertNotIn("firmaService", controllers)
 
         draft = read("test/java/com/licensis/notaire/unit/RegistrationDraftServiceTest.java")
