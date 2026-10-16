@@ -1,9 +1,4 @@
 {
-  "src/app/dashboard/administration/concepts/page.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/app/dashboard/administration/documents/page.tsx": {
     "no-restricted-imports": {
       "count": 1
@@ -120,11 +115,6 @@
     }
   },
   "src/hooks/useBudgets.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useConcepts.ts": {
     "no-restricted-imports": {
       "count": 1
     }
