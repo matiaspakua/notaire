@@ -21,15 +21,9 @@ import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Testimony;
 import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.business.IdentificationType;
-import com.licensis.notaire.business.Procedure;
-import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.TestimonyMovementRepository;
 import com.licensis.notaire.application.port.out.procedure.ProcedureTypeRepositoryPort;
 import com.licensis.notaire.repository.IdentificationTypeRepository;
-import com.licensis.notaire.application.port.out.procedure.ProcedureRepositoryPort;
-import com.licensis.notaire.application.port.out.property.PropertyRepositoryPort;
-import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
-import com.licensis.notaire.repository.DeedRepository;
 import com.licensis.notaire.application.usecase.deed.DeedSigningService;
 import com.licensis.notaire.application.usecase.deed.DeedService;
 import com.licensis.notaire.application.usecase.testimony.TestimonyMovementService;
@@ -637,33 +631,42 @@ class SimpleControllersTest {
     @Nested
     @DisplayName("ProcedureController")
     class ProcedureControllerTests {
-        private final ProcedureRepositoryPort repo = mock(ProcedureRepositoryPort.class);
-        private final ProcedureTypeRepositoryPort typeRepo = mock(ProcedureTypeRepositoryPort.class);
-        private final PropertyRepositoryPort propertyRepo = mock(PropertyRepositoryPort.class);
-        private final BudgetRepositoryPort budgetRepo = mock(BudgetRepositoryPort.class);
-        private final DeedRepository deedRepo = mock(DeedRepository.class);
-        private final DeedManagementRepository managementRepo = mock(DeedManagementRepository.class);
+        private final com.licensis.notaire.application.port.in.procedure.QueryProceduresUseCase query =
+                mock(com.licensis.notaire.application.port.in.procedure.QueryProceduresUseCase.class);
+        private final com.licensis.notaire.application.port.in.procedure.ManageProceduresUseCase manage =
+                mock(com.licensis.notaire.application.port.in.procedure.ManageProceduresUseCase.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new ProcedureController(repo, typeRepo, propertyRepo, budgetRepo, deedRepo,
-                        managementRepo))
+                standaloneSetup(new ProcedureController(query, manage))
                         .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
 
+        private static com.licensis.notaire.application.port.out.procedure.ProcedureOpsPort.ProcedureView view(
+                int id) {
+            return new com.licensis.notaire.application.port.out.procedure.ProcedureOpsPort.ProcedureView(
+                    id, "n", null, null, null, null, null, 0);
+        }
+
         @Test
         @DisplayName("Cover happy paths")
         void all() throws Exception {
-            Procedure t = new Procedure();
-            t.setIdProcedure(1);
-            ProcedureType type = new ProcedureType();
-            type.setIdProcedureType(1);
-            when(repo.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(t), PageRequest.of(0, 20), 1));
-            when(repo.findById(1)).thenReturn(Optional.of(t));
-            when(repo.findById(2)).thenReturn(Optional.empty());
-            when(repo.existsById(1)).thenReturn(true);
-            when(repo.existsById(2)).thenReturn(false);
-            when(typeRepo.findById(1)).thenReturn(Optional.of(type));
-            when(repo.save(any(Procedure.class))).thenReturn(t);
+            when(query.findAll(anyInt(), anyInt(), any()))
+                    .thenReturn(new com.licensis.notaire.application.port.out.procedure.ProcedureOpsPort.PageResult(
+                            List.of(view(1)), 0, 20, 1));
+            when(query.findById(1)).thenReturn(Optional.of(view(1)));
+            when(query.findById(2)).thenReturn(Optional.empty());
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.procedure.ProcedureOpsPort.SaveResult.Created(
+                            view(1)));
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.procedure.ProcedureOpsPort.SaveResult.Updated(
+                            view(1)));
+            when(manage.update(eq(2), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.procedure.ProcedureOpsPort.SaveResult.NotFound());
+            when(manage.delete(1)).thenReturn(
+                    new com.licensis.notaire.application.port.out.procedure.ProcedureOpsPort.DeleteResult.Deleted());
+            when(manage.delete(2)).thenReturn(
+                    new com.licensis.notaire.application.port.out.procedure.ProcedureOpsPort.DeleteResult.NotFound());
 
             String requestBody = """
                     {"idProcedureType": 1}
@@ -689,22 +692,19 @@ class SimpleControllersTest {
         @Test
         @DisplayName("Cover error paths without polluting happy stubs (#916)")
         void allErrorPaths() throws Exception {
-            Procedure t = new Procedure();
-            t.setIdProcedure(1);
-            ProcedureType type = new ProcedureType();
-            type.setIdProcedureType(1);
-            when(repo.findById(1)).thenReturn(Optional.of(t));
-            when(repo.existsById(1)).thenReturn(true);
-            when(typeRepo.findById(1)).thenReturn(Optional.of(type));
             String requestBody = """
                     {"idProcedureType": 1}
                     """;
-            when(repo.save(any(Procedure.class))).thenThrow(new RuntimeException("x"));
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.procedure.ProcedureOpsPort.SaveResult.ServerError());
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.procedure.ProcedureOpsPort.SaveResult.ServerError());
+            when(manage.delete(1)).thenReturn(
+                    new com.licensis.notaire.application.port.out.procedure.ProcedureOpsPort.DeleteResult.Conflict());
             mvc.perform(post("/api/v1/procedures").contentType("application/json")
                     .content(requestBody)).andExpect(status().isInternalServerError());
             mvc.perform(put("/api/v1/procedures/1").contentType("application/json")
                     .content(requestBody)).andExpect(status().isInternalServerError());
-            doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
             mvc.perform(delete("/api/v1/procedures/1")).andExpect(status().isConflict());
         }
     }

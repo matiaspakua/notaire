@@ -262,6 +262,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   `QueryTestimoniesUseCase` / `ManageTestimoniesUseCase` only; CRUD, generate/verify, and #1364 in-use
   delete live behind `TestimonyOpsPort`. ArchUnit R1 clears its five baseline edges.
 
+- **Procedure ports-only (#1801):** Procedure* aggregate R1 hotspot (~4 edges). `ProcedureController`
+  calls `QueryProceduresUseCase` / `ManageProceduresUseCase` only; association hydration (#981) and
+  persistence live behind `ProcedureOpsPort`. ArchUnit R1 clears its four baseline edges.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers
