@@ -10,12 +10,10 @@ import com.licensis.notaire.adapter.in.web.budget.BudgetController;
 import com.licensis.notaire.adapter.in.web.testimony.TestimonyController;
 import com.licensis.notaire.adapter.in.web.procedure.ProcedureTypeController;
 import com.licensis.notaire.adapter.in.web.procedure.ProcedureController;
-import com.licensis.notaire.application.usecase.copy.CopyService;
 import com.licensis.notaire.dto.DtoTestimonyMovement;
 import com.licensis.notaire.dto.DtoTestimony;
 import com.licensis.notaire.dto.DtoProcedureType;
 import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.business.Copy;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.TestimonyMovement;
 import com.licensis.notaire.business.Person;
@@ -78,32 +76,32 @@ class SimpleControllersTest {
     @Nested
     @DisplayName("CopyController")
     class CopyControllerTests {
-        private final CopyService service = mock(CopyService.class);
-        private final com.licensis.notaire.repository.PersonRepository personRepository =
-                mock(com.licensis.notaire.repository.PersonRepository.class);
-        private final com.licensis.notaire.repository.TestimonyRepository testimonyRepository =
-                mock(com.licensis.notaire.repository.TestimonyRepository.class);
+        private final com.licensis.notaire.application.port.in.copy.QueryCopiesUseCase query =
+                mock(com.licensis.notaire.application.port.in.copy.QueryCopiesUseCase.class);
+        private final com.licensis.notaire.application.port.in.copy.ManageCopiesUseCase manage =
+                mock(com.licensis.notaire.application.port.in.copy.ManageCopiesUseCase.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new CopyController(service, personRepository, testimonyRepository))
+                standaloneSetup(new CopyController(query, manage))
                         .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                         .build();
+
+        private static com.licensis.notaire.application.port.out.copy.CopyOpsPort.CopyView view(int id) {
+            return new com.licensis.notaire.application.port.out.copy.CopyOpsPort.CopyView(
+                    id, 1, null, null, "n", null, null, 0);
+        }
 
         @Test
         @DisplayName("GET all should return 200")
         void getAll() throws Exception {
-            Copy c = new Copy();
-            c.setIdCopy(1);
-            when(service.findAll()).thenReturn(List.of(c));
+            when(query.findAll()).thenReturn(List.of(view(1)));
             mvc.perform(get("/api/v1/copies")).andExpect(status().isOk());
         }
 
         @Test
         @DisplayName("GET by id should return 200 when found and 404 when not")
         void getById() throws Exception {
-            Copy c = new Copy();
-            c.setIdCopy(1);
-            when(service.findById(1)).thenReturn(Optional.of(c));
-            when(service.findById(2)).thenReturn(Optional.empty());
+            when(query.findById(1)).thenReturn(Optional.of(view(1)));
+            when(query.findById(2)).thenReturn(Optional.empty());
             mvc.perform(get("/api/v1/copies/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/copies/2")).andExpect(status().isNotFound());
         }
@@ -111,10 +109,8 @@ class SimpleControllersTest {
         @Test
         @DisplayName("POST should return 201 on success")
         void create() throws Exception {
-            Copy c = new Copy();
-            c.setNumber(1);
-            when(service.save(any(Copy.class))).thenReturn(c);
-            when(service.canCreateCopyForTestimony(any())).thenReturn(true);
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.copy.CopyOpsPort.SaveResult.Created(view(1)));
             String body = "{\"number\":1,\"datePrinting\":\"2026-10-09\",\"notes\":\"n\"}";
             mvc.perform(post("/api/v1/copies").contentType("application/json")
                             .content(body))
@@ -124,8 +120,8 @@ class SimpleControllersTest {
         @Test
         @DisplayName("POST should return 500 on save failure (#916)")
         void createErrorOnSave() throws Exception {
-            when(service.canCreateCopyForTestimony(any())).thenReturn(true);
-            when(service.save(any(Copy.class))).thenThrow(new RuntimeException("x"));
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.copy.CopyOpsPort.SaveResult.ServerError());
             String body = "{\"number\":1,\"datePrinting\":\"2026-10-09\",\"notes\":\"n\"}";
             mvc.perform(post("/api/v1/copies").contentType("application/json")
                             .content(body))
@@ -135,10 +131,10 @@ class SimpleControllersTest {
         @Test
         @DisplayName("PUT should return 200 when present, 404 when missing")
         void update() throws Exception {
-            Copy c = new Copy();
-            c.setNumber(1);
-            when(service.findById(1)).thenReturn(Optional.of(c));
-            when(service.findById(2)).thenReturn(Optional.empty());
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.copy.CopyOpsPort.SaveResult.Updated());
+            when(manage.update(eq(2), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.copy.CopyOpsPort.SaveResult.NotFound());
             String body = "{\"number\":1,\"datePrinting\":\"2026-10-09\",\"notes\":\"n\"}";
             mvc.perform(put("/api/v1/copies/1").contentType("application/json")
                     .content(body)).andExpect(status().isOk());
@@ -149,10 +145,8 @@ class SimpleControllersTest {
         @Test
         @DisplayName("PUT should return 500 on save failure (#916)")
         void updateErrorOnSave() throws Exception {
-            Copy c = new Copy();
-            c.setNumber(1);
-            when(service.findById(1)).thenReturn(Optional.of(c));
-            when(service.save(any(Copy.class))).thenThrow(new RuntimeException("x"));
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.copy.CopyOpsPort.SaveResult.ServerError());
             String body = "{\"number\":1,\"datePrinting\":\"2026-10-09\",\"notes\":\"n\"}";
             mvc.perform(put("/api/v1/copies/1").contentType("application/json")
                     .content(body)).andExpect(status().isInternalServerError());
@@ -161,11 +155,13 @@ class SimpleControllersTest {
         @Test
         @DisplayName("DELETE should return 200 when present, 404 when not, 409 on failure")
         void deleteCopy() throws Exception {
-            when(service.existsById(1)).thenReturn(true);
-            when(service.existsById(2)).thenReturn(false);
+            when(manage.delete(1)).thenReturn(
+                    new com.licensis.notaire.application.port.out.copy.CopyOpsPort.DeleteResult.Deleted(),
+                    new com.licensis.notaire.application.port.out.copy.CopyOpsPort.DeleteResult.Conflict());
+            when(manage.delete(2)).thenReturn(
+                    new com.licensis.notaire.application.port.out.copy.CopyOpsPort.DeleteResult.NotFound());
             mvc.perform(delete("/api/v1/copies/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/copies/2")).andExpect(status().isNotFound());
-            doThrow(new RuntimeException("fk")).when(service).deleteById(1);
             mvc.perform(delete("/api/v1/copies/1")).andExpect(status().isConflict());
         }
     }
