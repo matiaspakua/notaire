@@ -50,10 +50,11 @@ CREATE: dict[str, tuple[str, str]] = {
 }
 
 # Deleted by the Owner script (phase:* and labels with no or negligible use).
+# Bot labels (dependencies, java, javascript, maven, autorelease:*) are never touched.
 DELETE: tuple[str, ...] = (
     "phase:1-analysis", "phase:2-foundation", "phase:3-backend-api",
     "phase:4-frontend", "phase:5-observability", "phase:6-deprecation",
-    "Cursor", "maven", "duplicate", "invalid", "question",
+    "Cursor", "duplicate", "invalid", "question",
     "good first issue", "help wanted",
 )
 

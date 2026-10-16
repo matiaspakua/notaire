@@ -28,7 +28,7 @@ uses the new name once it exists.
 Scope-catalog issues (milestone `Catalog · Requirements & use cases`) carry a
 `trace:` label, need no priority, and are not claimable.
 
-Deleted: `phase:*` (milestones schedule work), `Cursor`, `maven`, `duplicate`,
+Deleted: `phase:*` (milestones schedule work), `Cursor`, `duplicate`,
 `invalid`, `question`, `good first issue`, `help wanted`. `wontfix` stays as a
 close reason.
 
@@ -103,7 +103,7 @@ Leave these in place. Agents do not apply them to product work.
 
 | Label | Owner |
 |-------|--------|
-| `javascript`, `java` | Dependabot |
+| `javascript`, `java`, `maven` | Dependabot |
 | `autorelease: pending`, `autorelease: tagged` | Release automation |
 | `dependencies` | Dependency updates |
 

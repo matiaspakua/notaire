@@ -76,7 +76,7 @@ updates:
     commit-message:
       prefix: "ci"
     labels:
-      - "ci"
+      - "type:ci"  # #1860 taxonomy (legacy: ci)
       - "dependencies"
     reviewers:
       - matiaspakua
