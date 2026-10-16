@@ -1,27 +1,9 @@
 package com.licensis.notaire.adapter.in.web.testimony;
 
-import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
-import com.licensis.notaire.dto.DtoTestimony;
-import com.licensis.notaire.business.Testimony;
-import com.licensis.notaire.adapter.in.web.support.RequiredFields;
-import com.licensis.notaire.repository.TestimonyRepository;
-import com.licensis.notaire.application.usecase.testimony.TestimonyGenerationVerificationService;
-import com.licensis.notaire.dto.DtoDeed;
-import com.licensis.notaire.exception.BusinessValidationException;
-import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.repository.CopyRepository;
-import com.licensis.notaire.repository.DeedRepository;
-import com.licensis.notaire.repository.TestimonyMovementRepository;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,9 +13,27 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Optional;
+import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
+import com.licensis.notaire.adapter.in.web.support.RequiredFields;
+import com.licensis.notaire.application.port.in.testimony.ManageTestimoniesUseCase;
+import com.licensis.notaire.application.port.in.testimony.QueryTestimoniesUseCase;
+import com.licensis.notaire.application.port.out.testimony.TestimonyOpsPort.DeleteResult;
+import com.licensis.notaire.application.port.out.testimony.TestimonyOpsPort.SaveResult;
+import com.licensis.notaire.dto.DtoDeed;
+import com.licensis.notaire.dto.DtoTestimony;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
+/**
+ * Testimonies. Calls inbound ports only; orchestration and persistence live in the use cases
+ * (issue #1783).
+ */
 @RestController
 @RequestMapping("/api/v1/testimonies")
 @Tag(name = "Testimony", description = "API for managing testimony")
@@ -128,159 +128,114 @@ public class TestimonyController {
         }
     }
 
-    private final TestimonyRepository repository;
-    private final TestimonyGenerationVerificationService generationVerificationService;
-    private final DeedRepository deedRepository;
-    private final TestimonyMovementRepository movementRepository;
-    private final CopyRepository copyRepository;
+    private final QueryTestimoniesUseCase queryTestimonies;
+    private final ManageTestimoniesUseCase manageTestimonies;
 
-    /** Reason for a 409 on delete (issue #1364): the testimony is part of the deed's history. */
-    static final String IN_USE_MESSAGE =
-            "Cannot delete: the testimony has registry movements or issued copies";
-
-    public TestimonyController(TestimonyRepository repository,
-            TestimonyGenerationVerificationService generationVerificationService,
-            DeedRepository deedRepository,
-            TestimonyMovementRepository movementRepository,
-            CopyRepository copyRepository) {
-        this.repository = repository;
-        this.generationVerificationService = generationVerificationService;
-        this.deedRepository = deedRepository;
-        this.movementRepository = movementRepository;
-        this.copyRepository = copyRepository;
+    public TestimonyController(
+            QueryTestimoniesUseCase queryTestimonies,
+            ManageTestimoniesUseCase manageTestimonies) {
+        this.queryTestimonies = queryTestimonies;
+        this.manageTestimonies = manageTestimonies;
     }
 
     @GetMapping
     @Operation(summary = "Get all testimony")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoTestimony>> getAll() {
-        List<DtoTestimony> result = repository.findAll().stream()
-                .map(Testimony::getDto)
-                .toList();
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(queryTestimonies.findAll());
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "Not found")
-})
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @GetMapping("/{id}")
     @Operation(summary = "Get testimony by ID")
-    @Transactional(readOnly = true)
     public ResponseEntity<DtoTestimony> getById(@PathVariable Integer id) {
-        return repository.findById(id)
-                .map(e -> ResponseEntity.ok(e.getDto()))
+        return queryTestimonies.findById(id)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Created"),
-    @ApiResponse(responseCode = "400", description = "Invalid request (the deed or its idDeed is missing)"),
-    @ApiResponse(responseCode = "404", description = "Deed not found"),
-    @ApiResponse(responseCode = "409", description = "Conflict")
-})
+            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "400", description = "Invalid request (the deed or its idDeed is missing)"),
+            @ApiResponse(responseCode = "404", description = "Deed not found"),
+            @ApiResponse(responseCode = "409", description = "Conflict")
+    })
     @PostMapping
     @Operation(summary = "Create testimony")
     public ResponseEntity<Object> create(@Valid @RequestBody TestimonyCreateRequest dto) {
-        Integer idDeed = dto.getDeed().getIdDeed();
-        if (idDeed == null) {
-            throw new BusinessValidationException("deed.idDeed: is required");
-        }
-        if (!deedRepository.existsById(idDeed)) {
-            throw new ResourceNotFoundException("Deed not found: " + idDeed);
-        }
-        try {
-            Testimony entity = new Testimony();
-            entity.setAttributes(dto);
-            entity = repository.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
-        } catch (Exception e) {
-            return ErrorResponses.createFailed(e);
-        }
+        return switch (manageTestimonies.create(dto)) {
+            case SaveResult.Created created -> ResponseEntity.status(HttpStatus.CREATED).body(created.dto());
+            case SaveResult.Failed failed -> ErrorResponses.createFailed(failed.cause());
+            case SaveResult.Updated ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
+            case SaveResult.StaleVersion ignored -> ErrorResponses.staleVersion();
+        };
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Empty or incomplete body: number, flagged, verified, and version are "
-            + "required"),
-    @ApiResponse(responseCode = "404", description = "Not found"),
-    @ApiResponse(responseCode = "409", description = "version is not the stored one: another user modified the testimony")
-})
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Empty or incomplete body: number, flagged, verified, and version are "
+                    + "required"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "409", description = "version is not the stored one: another user modified the testimony")
+    })
     @PutMapping("/{id}")
     @Operation(summary = "Update testimony",
-               description = "Replaces the testimony. number, flagged, verified, and version are required (400 if "
-                       + "any of them is missing); notes are stored as sent, and a missing deed keeps the current one. "
-                       + "version is the one that was read: a mismatch with the stored version responds 409 (optimistic lock).")
+            description = "Replaces the testimony. number, flagged, verified, and version are required (400 if "
+                    + "any of them is missing); notes are stored as sent, and a missing deed keeps the current one. "
+                    + "version is the one that was read: a mismatch with the stored version responds 409 (optimistic lock).")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody TestimonyUpdateRequest dto) {
         dto.requireComplete();
-        Optional<Testimony> existing = repository.findById(id);
-        if (existing.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        Testimony entity = existing.get();
-        if (entity.getVersion() != dto.getVersion()) {
-            return ErrorResponses.staleVersion();
-        }
-        try {
-            dto.setIdTestimony(id);
-            entity.setAttributes(dto);
-            repository.save(entity);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ErrorResponses.updateFailed(e);
-        }
+        return switch (manageTestimonies.update(id, dto)) {
+            case SaveResult.Updated ignored -> ResponseEntity.ok().build();
+            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
+            case SaveResult.StaleVersion ignored -> ErrorResponses.staleVersion();
+            case SaveResult.Failed failed -> ErrorResponses.updateFailed(failed.cause());
+            case SaveResult.Created ignored -> ResponseEntity.internalServerError().build();
+        };
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Deleted"),
-    @ApiResponse(responseCode = "404", description = "Not found"),
-    @ApiResponse(responseCode = "409", description = "The testimony has registry movements or issued copies (issue #1364)")
-})
+            @ApiResponse(responseCode = "204", description = "Deleted"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "409", description = "The testimony has registry movements or issued copies (issue #1364)")
+    })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete testimony",
-               description = "Deletes a testimony that has no registry movements and no issued copies. Otherwise "
-                       + "answers 409 with the reason and keeps everything: they are part of the deed's history.")
+            description = "Deletes a testimony that has no registry movements and no issued copies. Otherwise "
+                    + "answers 409 with the reason and keeps everything: they are part of the deed's history.")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
-        if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        if (movementRepository.existsByFkIdTestimonyIdTestimony(id) || copyRepository.existsByFkIdTestimonyIdTestimony(id)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(IN_USE_MESSAGE);
-        }
-        try {
-            repository.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Cannot delete: the testimony is referenced by other records.");
-        }
+        return switch (manageTestimonies.delete(id)) {
+            case DeleteResult.Deleted ignored -> ResponseEntity.noContent().build();
+            case DeleteResult.NotFound ignored -> ResponseEntity.notFound().build();
+            case DeleteResult.InUse inUse -> ResponseEntity.status(HttpStatus.CONFLICT).body(inUse.message());
+            case DeleteResult.Conflict conflict -> ResponseEntity.status(HttpStatus.CONFLICT).body(conflict.message());
+        };
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Created"),
-    @ApiResponse(responseCode = "400", description = "The deed is not in status 'Firmada'"),
-    @ApiResponse(responseCode = "404", description = "Deed not found")
-})
+            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "400", description = "The deed is not in status 'Firmada'"),
+            @ApiResponse(responseCode = "404", description = "Deed not found")
+    })
     @PostMapping("/{idDeed}/generate")
     @Operation(summary = "Generate a testimony from a signed deed",
-               description = "Generates a testimony with a number assigned by the system from a deed "
-                       + "'Firmada'")
-    @Transactional
+            description = "Generates a testimony with a number assigned by the system from a deed "
+                    + "'Firmada'")
     public ResponseEntity<DtoTestimony> generate(@PathVariable Integer idDeed) {
-        Testimony testimony = generationVerificationService.generate(idDeed);
-        return ResponseEntity.status(HttpStatus.CREATED).body(testimony.getDto());
+        return ResponseEntity.status(HttpStatus.CREATED).body(manageTestimonies.generate(idDeed));
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "Testimony not found")
-})
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Testimony not found")
+    })
     @PostMapping("/{id}/verify")
     @Operation(summary = "Check testimony",
-               description = "Records the verification of a testimony, marking whether it was observed and why")
-    @Transactional
+            description = "Records the verification of a testimony, marking whether it was observed and why")
     public ResponseEntity<DtoTestimony> verify(@PathVariable Integer id, @RequestBody DtoTestimony dto) {
-        Testimony testimony = generationVerificationService.verify(id, dto.isFlagged(), dto.getNotes());
-        return ResponseEntity.ok(testimony.getDto());
+        return ResponseEntity.ok(manageTestimonies.verify(id, dto.isFlagged(), dto.getNotes()));
     }
 }
