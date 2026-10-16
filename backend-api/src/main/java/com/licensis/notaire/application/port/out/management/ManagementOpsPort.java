@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 import com.licensis.notaire.dto.DtoHistorySummary;
+import com.licensis.notaire.dto.DtoManagementCaseSummary;
+import com.licensis.notaire.dto.DtoManagementFinancialSummary;
 import com.licensis.notaire.dto.DtoManagementSummary;
 
 /**
@@ -116,4 +118,10 @@ public interface ManagementOpsPort {
     DeleteResult delete(Integer id);
 
     ArchiveResult archive(Integer id, boolean confirmed);
+
+    DtoManagementCaseSummary getCaseSummary(Integer id);
+
+    DtoManagementFinancialSummary getFinancialSummary(Integer id);
+
+    BigDecimal calculatePendingBalance(Integer id);
 }

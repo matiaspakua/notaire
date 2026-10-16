@@ -1,6 +1,6 @@
 package com.licensis.notaire.adapter.in.web.management;
 
-import com.licensis.notaire.application.usecase.management.ManagementCaseSummaryService;
+import com.licensis.notaire.application.port.in.management.QueryManagementsUseCase;
 import com.licensis.notaire.dto.DtoManagementCaseSummary;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Managements", description = "API for deed managements")
 public class ManagementCaseSummaryController {
 
-    private final ManagementCaseSummaryService managementCaseSummaryService;
+    private final QueryManagementsUseCase queryManagements;
 
-    public ManagementCaseSummaryController(ManagementCaseSummaryService managementCaseSummaryService) {
-        this.managementCaseSummaryService = managementCaseSummaryService;
+    public ManagementCaseSummaryController(QueryManagementsUseCase queryManagements) {
+        this.queryManagements = queryManagements;
     }
 
     @ApiResponses({
@@ -30,6 +30,6 @@ public class ManagementCaseSummaryController {
     @GetMapping("/{id}/case-summary")
     @Operation(summary = "CU07/CU11/CU12/CU70 - Get the deeds, testimonies and copies of a management")
     public ResponseEntity<DtoManagementCaseSummary> getCaseSummary(@PathVariable Integer id) {
-        return ResponseEntity.ok(managementCaseSummaryService.getSummary(id));
+        return ResponseEntity.ok(queryManagements.getCaseSummary(id));
     }
 }

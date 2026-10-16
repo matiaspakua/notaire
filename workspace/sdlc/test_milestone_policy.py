@@ -35,7 +35,7 @@ from milestone_policy import (
     shipped_train,
     suggested_priority,
 )
-from apply_milestone_policy import milestone_payload, missing_project_issues, target_for
+from apply_milestone_policy import create_body, milestone_payload, missing_project_issues, target_for
 
 
 class ClassifyOpenTests(unittest.TestCase):
@@ -298,6 +298,22 @@ class ApplyTests(unittest.TestCase):
         self.assertIsNone(milestone_payload(BACKLOG)["due_on"])
         self.assertIsNone(milestone_payload(CATALOG)["due_on"])
         self.assertEqual(milestone_payload(RELEASE)["due_on"], MILESTONE_DUE[RELEASE])
+
+
+class CreateBodyTests(unittest.TestCase):
+    """The first Owner run stopped creating Catalog, the only POST with ``"due_on": null``."""
+
+    def test_continuous_milestone_is_created_without_a_due_on_key(self):
+        body = create_body(CATALOG)
+        self.assertNotIn("due_on", body)
+        self.assertEqual(body["state"], "open")
+        self.assertEqual(body["title"], CATALOG)
+
+    def test_closed_milestones_are_created_open_with_their_due_date(self):
+        body = create_body(SHIPPED[0])
+        self.assertEqual(body["state"], "open")
+        self.assertEqual(body["due_on"], MILESTONE_DUE[SHIPPED[0]])
+        self.assertTrue(all(value is not None for value in body.values()))
 
 
 class RoadmapContractTests(unittest.TestCase):

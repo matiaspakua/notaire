@@ -875,6 +875,13 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   adapters stay free of outbound imports (R5); delete dead entity-speaking
   `DocumentCostTemplateRepositoryPort`. Clears ~56 R2 edges (highest-fan domain).
 
+- **Backend R2 shrink — management (#1850):** CU83 outbound ports speak
+  `ManagementTransitionSnapshot` / `domain.management.ManagementStatus` / ids
+  only; entity-bound `Management*Service` helpers move to
+  `adapter.out.persistence.management`; OpsPort/inbound gain case-summary,
+  financial summary, pending balance; `ManagementAutoTransitionPort` for
+  document-slice auto-transition. Clears ~56 R2 edges (R2 210→154).
+
 
 ## Options considered
 

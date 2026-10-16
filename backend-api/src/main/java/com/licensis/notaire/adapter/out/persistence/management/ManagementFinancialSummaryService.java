@@ -1,4 +1,4 @@
-package com.licensis.notaire.application.usecase.management;
+package com.licensis.notaire.adapter.out.persistence.management;
 
 import com.licensis.notaire.application.port.in.payment.GetPaymentStatusUseCase;
 import com.licensis.notaire.application.port.in.payment.QueryPaymentsUseCase;
