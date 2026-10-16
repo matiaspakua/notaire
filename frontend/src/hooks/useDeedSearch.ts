@@ -3,10 +3,13 @@
  * table (GET /deeds?size=1000 filtered to signed deeds in the browser left
  * every deed after the 1000th out): they show the newest signed deeds
  * (GET /deeds?status=Firmada) and search any other by number.
+ *
+ * Hexagon wiring: #1831 / ADR-030.
  */
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { apiGet, apiGetPage } from "@/lib/api-client";
+import { deedUseCases } from "@/composition/deed";
 import { DEEDS_SORT, deedsKeys } from "@/hooks/useDeeds";
+import type { Deed as DomainDeed } from "@/core/deed/domain/deed";
 import type { Deed } from "@/types";
 
 /** Newest signed deeds listed before the user types. */
@@ -14,13 +17,26 @@ export const DEED_PICKER_RECENT_SIZE = 20;
 /** The only deeds a testimony, registration draft or folio can use (BusinessConstants.DeedSigned). */
 export const DEED_STATUS_SIGNED = "Firmada";
 
+function toWire(d: DomainDeed): Deed {
+  return {
+    idDeed: d.idDeed,
+    number: d.number,
+    dateDeedrecording: d.dateDeedrecording,
+    body: d.body,
+    notes: d.notes,
+    registrationEntryNumber: d.registrationEntryNumber,
+    status: d.status,
+    idFolio: d.idFolio,
+  };
+}
+
 const isSigned = (deed: Deed) => deed.status === DEED_STATUS_SIGNED;
 
 /** Signed deeds whose number is `raw` (GET /deeds/search); text that is not a number matches none. */
 export async function searchSignedDeeds(raw: string): Promise<Deed[]> {
   const q = raw.trim();
   if (!/^\d+$/.test(q)) return [];
-  const found = await apiGet<Deed[]>(`/deeds/search?number=${encodeURIComponent(q)}`);
+  const found = (await deedUseCases.searchByNumber(q)).map(toWire);
   return found.filter(isSigned).sort((a, b) => (b.idDeed ?? 0) - (a.idDeed ?? 0));
 }
 
@@ -38,13 +54,18 @@ export function useDeedSearch(query: string, enabled: boolean) {
 export function useRecentSignedDeeds(enabled: boolean) {
   return useQuery({
     queryKey: ["deeds", "picker-recent", DEED_STATUS_SIGNED],
-    queryFn: () =>
-      apiGetPage<Deed>("/deeds", {
+    queryFn: async () => {
+      const page = await deedUseCases.listPage({
         page: 0,
         size: DEED_PICKER_RECENT_SIZE,
         sort: DEEDS_SORT,
         params: { status: DEED_STATUS_SIGNED },
-      }),
+      });
+      return {
+        ...page,
+        content: page.content.map(toWire),
+      };
+    },
     enabled,
   });
 }
@@ -53,7 +74,7 @@ export function useRecentSignedDeeds(enabled: boolean) {
 export function useDeed(id: number | undefined, enabled = true) {
   return useQuery({
     queryKey: deedsKeys.detail(id ?? -1),
-    queryFn: () => apiGet<Deed>(`/deeds/${id}`),
+    queryFn: async () => toWire(await deedUseCases.getById(id!)),
     enabled: enabled && id != null,
     staleTime: 60_000,
   });

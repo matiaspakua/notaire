@@ -1,9 +1,4 @@
 {
-  "src/app/dashboard/deeds/page.tsx": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/app/dashboard/managements/ManagementCurrentStatus.tsx": {
     "no-restricted-imports": {
       "count": 1
@@ -65,16 +60,6 @@
     }
   },
   "src/hooks/useCopies.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useDeedSearch.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/useDeeds.ts": {
     "no-restricted-imports": {
       "count": 1
     }
