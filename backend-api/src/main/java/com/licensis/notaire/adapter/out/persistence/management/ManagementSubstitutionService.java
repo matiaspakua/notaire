@@ -1,4 +1,4 @@
-package com.licensis.notaire.application.usecase.management;
+package com.licensis.notaire.adapter.out.persistence.management;
 
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Substitution;

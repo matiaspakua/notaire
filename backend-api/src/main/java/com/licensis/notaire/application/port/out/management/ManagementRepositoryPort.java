@@ -1,25 +1,26 @@
 package com.licensis.notaire.application.port.out.management;
 
-import com.licensis.notaire.business.DeedManagement;
+import com.licensis.notaire.domain.management.ManagementTransitionSnapshot;
 
 /**
- * Outbound port for persisting and retrieving management entities.
+ * Outbound port for persisting and retrieving management transition state (issue #1850).
  */
 public interface ManagementRepositoryPort {
 
     /**
-     * Retrieve a management by ID.
+     * Retrieve a management transition snapshot by ID.
      *
      * @param managementId the management ID
-     * @return the management, or null if not found
+     * @return the snapshot, or null if not found
      */
-    DeedManagement findById(Integer managementId);
+    ManagementTransitionSnapshot findById(Integer managementId);
 
     /**
-     * Save (persist or update) a management entity.
+     * Persist a new status on the management and return the updated snapshot.
      *
-     * @param management the management to save
-     * @return the saved management
+     * @param managementId the management ID
+     * @param statusId the destination status ID
+     * @return the saved snapshot
      */
-    DeedManagement save(DeedManagement management);
+    ManagementTransitionSnapshot saveStatus(Integer managementId, Integer statusId);
 }

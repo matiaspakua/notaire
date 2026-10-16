@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.licensis.notaire.application.usecase.management.ManagementTransitionService;
+import com.licensis.notaire.application.port.out.management.ManagementAutoTransitionPort;
 
 import java.util.List;
 
@@ -32,12 +32,12 @@ public class ExternalEntityDocumentService {
     private static final Logger log = LoggerFactory.getLogger(ExternalEntityDocumentService.class);
 
     private final ExternalDocumentRepositoryPort documentRepository;
-    private final ManagementTransitionService managementTransitionService;
+    private final ManagementAutoTransitionPort managementAutoTransition;
 
     public ExternalEntityDocumentService(ExternalDocumentRepositoryPort documentRepository,
-            ManagementTransitionService managementTransitionService) {
+            ManagementAutoTransitionPort managementAutoTransition) {
         this.documentRepository = documentRepository;
-        this.managementTransitionService = managementTransitionService;
+        this.managementAutoTransition = managementAutoTransition;
     }
 
     @Transactional(readOnly = true)
@@ -85,7 +85,7 @@ public class ExternalEntityDocumentService {
             return;
         }
         try {
-            managementTransitionService.transition(idManagement, BusinessConstants.ManagementWithCompleteDocumentation);
+            managementAutoTransition.transition(idManagement, BusinessConstants.ManagementWithCompleteDocumentation);
         } catch (BusinessValidationException | ResourceNotFoundException e) {
             log.warn("Could not automatically transition management {} to '{}': {}", idManagement,
                     BusinessConstants.ManagementWithCompleteDocumentation, e.getMessage());

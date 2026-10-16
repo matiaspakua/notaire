@@ -1,5 +1,6 @@
 package com.licensis.notaire.application.usecase.management;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,6 +13,8 @@ import com.licensis.notaire.application.port.out.management.ManagementOpsPort.Co
 import com.licensis.notaire.application.port.out.management.ManagementOpsPort.ManagementView;
 import com.licensis.notaire.application.port.out.management.ManagementOpsPort.PageResult;
 import com.licensis.notaire.dto.DtoHistorySummary;
+import com.licensis.notaire.dto.DtoManagementCaseSummary;
+import com.licensis.notaire.dto.DtoManagementFinancialSummary;
 import com.licensis.notaire.dto.DtoManagementSummary;
 
 /**
@@ -72,5 +75,23 @@ public class ManagementQueryUseCaseService implements QueryManagementsUseCase {
     @Transactional(readOnly = true)
     public Optional<String> findCurrentStatusName(Integer id) {
         return ops.findCurrentStatusName(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public DtoManagementCaseSummary getCaseSummary(Integer id) {
+        return ops.getCaseSummary(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public DtoManagementFinancialSummary getFinancialSummary(Integer id) {
+        return ops.getFinancialSummary(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BigDecimal calculatePendingBalance(Integer id) {
+        return ops.calculatePendingBalance(id);
     }
 }
