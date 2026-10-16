@@ -848,6 +848,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   (+ HTTP adapters); hooks and testimonies pages leave the eslint baseline
   (suppressions shrink by four).
 
+- **Frontend managements (#1839):** `core/management` (+ HTTP adapter); hooks
+  (`useManagements`, search, summary) and managements pages leave the eslint
+  baseline (suppressions shrink by eight).
+
 
 ## Options considered
 

@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Management hooks leave the eslint baseline | management use cases / architecture-boundaries | pending |
-| Managements pages leave the eslint baseline | management use cases / architecture-boundaries | pending |
-| REST behaviour unchanged | management use cases / architecture-boundaries | pending |
+| Management hooks leave the eslint baseline | management use cases / architecture-boundaries | passing |
+| Managements pages leave the eslint baseline | management use cases / architecture-boundaries | passing |
+| REST behaviour unchanged | management use cases / architecture-boundaries | passing |
 
 ## Permanent documentation updated
 
