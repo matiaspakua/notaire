@@ -46,6 +46,7 @@
 #   bash workspace/sdlc/run_pipeline.sh                 # default mandatory pre-PR run
 #   bash workspace/sdlc/run_pipeline.sh --with-infra    # boot infra (SonarQube) and enforce Sonar QG
 #   bash workspace/sdlc/run_pipeline.sh --require-sonar # fail if SonarQube is unreachable or fails QG
+#   bash workspace/sdlc/run_pipeline.sh --skip-sonar    # skip the SonarQube gate (not with the two above)
 #   bash workspace/sdlc/run_pipeline.sh --fast          # fast local checks (skip server-backed suites)
 #   bash workspace/sdlc/run_pipeline.sh --fix           # auto-fix what is fixable before validating
 #
@@ -60,19 +61,25 @@ cd "$REPO_ROOT" || exit 1
 WITH_INFRA=0
 REQUIRE_SONAR=0
 SKIP_SONAR=0
+FAST_MODE=0
 PREFLIGHT_ARGS=("--full")
 
 for arg in "$@"; do
     case "$arg" in
-        -h|--help) sed -n '3,45p' "${BASH_SOURCE[0]}"; exit 0 ;;
-        --with-infra) WITH_INFRA=1 ;;
+        -h|--help) sed -n '3,56p' "${BASH_SOURCE[0]}"; exit 0 ;;
+        --with-infra) WITH_INFRA=1; REQUIRE_SONAR=1 ;;
         --require-sonar) REQUIRE_SONAR=1 ;;
         --skip-sonar) SKIP_SONAR=1 ;;
-        --fast) PREFLIGHT_ARGS=("--fast") ;;
+        --fast) FAST_MODE=1; PREFLIGHT_ARGS=("--fast") ;;
         --fix) PREFLIGHT_ARGS=("--fix") ;;
         *) echo "unknown option: $arg (try --help)"; exit 2 ;;
     esac
 done
+
+if [ "$SKIP_SONAR" -eq 1 ] && { [ "$WITH_INFRA" -eq 1 ] || [ "$REQUIRE_SONAR" -eq 1 ]; }; then
+    echo "--skip-sonar cannot be combined with --with-infra or --require-sonar" >&2
+    exit 2
+fi
 
 RED=$'\033[0;31m'; GREEN=$'\033[0;32m'; YELLOW=$'\033[1;33m'; BLUE=$'\033[0;34m'; NC=$'\033[0m'
 
@@ -148,9 +155,13 @@ phase "security gates" python3 security/run_gates.py --profile local --skip-dast
 export NOTAIRE_SECURITY_GATES_DONE=1
 
 # -----------------------------------------------------------------------------
-# 4. Bring the Application Docker stack up (idempotent; blocks until backend+frontend are healthy)
+# 4. Bring the Application Docker stack up (idempotent; blocks until backend+frontend are healthy).
+#    Fast mode deliberately avoids every live-server phase.
 # -----------------------------------------------------------------------------
-if docker info >/dev/null 2>&1; then
+if [ "$FAST_MODE" -eq 1 ]; then
+    phase_skip "docker stack up" "--fast"
+    phase_skip "security dast baseline" "--fast"
+elif docker info >/dev/null 2>&1; then
     phase "docker stack up" bash workspace/stack/start.sh || OVERALL_FAILED=1
     phase "security dast baseline" python3 security/run_gates.py --profile local --only dast --no-install --base-url "http://127.0.0.1:${BACKEND_PORT:-8080}" --report-dir "$REPORT_DIR/security-dast" || OVERALL_FAILED=1
 else
