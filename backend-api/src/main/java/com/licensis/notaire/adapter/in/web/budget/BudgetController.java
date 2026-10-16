@@ -7,7 +7,7 @@ import com.licensis.notaire.adapter.in.web.payment.PaymentWebMapper;
 import com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase;
 import com.licensis.notaire.dto.DtoBudgetSummary;
 import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.adapter.in.web.item.ItemController.ItemResponse;
+import com.licensis.notaire.adapter.in.web.item.ItemResponse;
 import com.licensis.notaire.adapter.in.web.support.RequiredFields;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.BudgetStatus;
