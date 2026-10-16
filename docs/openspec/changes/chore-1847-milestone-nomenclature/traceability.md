@@ -46,10 +46,16 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/300-development/305-project-management/MILESTONE-NOMENCLATURE.md` | yes (new) | this PR |
-| `MILESTONES.md`, `RELEASES.md`, `README.md` (305) | yes | this PR |
-| `CONSTITUTION.md` §11 | yes | this PR |
-| SAD, ADR-028, SBOM.md, docs/github/README.md | yes | this PR |
+| `docs/300-development/305-project-management/MILESTONE-NOMENCLATURE.md` | yes | this PR |
+| `docs/300-development/305-project-management/MILESTONES.md` | yes | this PR |
+| `docs/300-development/305-project-management/RELEASES.md` | yes | this PR |
+| `docs/300-development/305-project-management/README.md` | yes | this PR |
+| `docs/300-development/305-project-management/ROADMAP.md` | yes | this PR |
+| `CONSTITUTION.md` | yes | this PR |
+| `docs/200-architecture/201-SAD/sad.md` | yes | this PR |
+| `docs/200-architecture/202-ADR/ADR-028-release-and-version-identity.md` | yes | this PR |
+| `docs/300-development/SBOM.md` | yes | this PR |
+| `docs/github/README.md` | yes | this PR |
 | `CHANGELOG.md` | yes | this PR |
 
 ## Gate log
