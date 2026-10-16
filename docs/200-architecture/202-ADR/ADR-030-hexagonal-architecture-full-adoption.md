@@ -927,6 +927,11 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   (Spring Data locally); delete entity-speaking AuditRecordRepositoryPort; add view-safe
   AuditRecordOpsPort for the HTTP adapter. Clears ~8 R2 edges (R2 38→30).
 
+- **Backend R2 shrink — registrationdraft (#1891):** move RegistrationDraftService to
+  `adapter.out.persistence.registrationdraft`; delete entity-speaking
+  RegistrationDraftRepositoryPort and unused PersistenceAdapter; keep view-safe
+  RegistrationDraftOpsPort. Clears ~8 R2 edges (R2 30→22).
+
 
 ## Options considered
 

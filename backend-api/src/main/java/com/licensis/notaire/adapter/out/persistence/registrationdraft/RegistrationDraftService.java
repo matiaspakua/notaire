@@ -1,4 +1,4 @@
-package com.licensis.notaire.application.usecase.registrationdraft;
+package com.licensis.notaire.adapter.out.persistence.registrationdraft;
 
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
