@@ -270,6 +270,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   calls `QueryProcedureFoldersUseCase` / `ManageProcedureFoldersUseCase` only; entity access and DTO
   mapping live behind `ProcedureFolderOpsPort`. ArchUnit R1 clears its ProcedureFolder entity edge.
 
+- **Deed ports-only (#1811):** mixed R1 hotspot (~3 edges). `DeedController` calls
+  `QueryDeedsUseCase` / `ManageDeedsUseCase` only; folio link, status vocabulary, signing, and notary
+  listing live behind `DeedOpsPort`. ArchUnit R1 clears Deed/Folio/FolioRepository edges.
+
 ## Options considered
 
 - **Pragmatic hexagon: ports and use cases, but JPA entities double as the domain model.** Cheaper (no mappers
