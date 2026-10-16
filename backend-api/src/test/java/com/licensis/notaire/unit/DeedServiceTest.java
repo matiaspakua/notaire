@@ -143,8 +143,8 @@ class DeedServiceTest {
         void shouldReturnAllNotaries() {
             Person notary = new Person();
             notary.setPersonId(1);
-            notary.setFirstName("Juan");
-            notary.setLastName("García");
+            notary.setFirstName("Jane");
+            notary.setLastName("Doe");
             notary.setNotaryRegistrationNumber(1001);
             when(personRepository.findAllNotaries()).thenReturn(List.of(notary));
 
@@ -152,6 +152,7 @@ class DeedServiceTest {
 
             assertThat(result).hasSize(1);
             assertThat(result.get(0).getNotaryRegistrationNumber()).isEqualTo(1001);
+            assertThat(result.get(0).getFirstName()).isEqualTo("Jane");
         }
 
         @Test
