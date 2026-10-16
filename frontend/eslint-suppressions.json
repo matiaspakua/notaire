@@ -159,16 +159,6 @@
       "count": 1
     }
   },
-  "src/hooks/usePeople.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
-  "src/hooks/usePersonSearch.ts": {
-    "no-restricted-imports": {
-      "count": 1
-    }
-  },
   "src/hooks/useProperties.ts": {
     "no-restricted-imports": {
       "count": 1
