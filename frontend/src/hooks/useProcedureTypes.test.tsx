@@ -2,21 +2,27 @@
  * Unit tests for useAssignWorkflowToProcedureType (CU26, issue #655).
  * PUT /procedure-types/{id}/workflow answers 400 when the body has no `workflowDefinitionId`
  * (Owner decision Oct 9), so the hook must always send the key: a number to assign, or an
- * explicit null to unassign.
+ * explicit null to unassign. Mocks composition (ADR-030); HTTP is covered by the gateway test.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 
-vi.mock("@/lib/api-client", () => ({
-  apiGet: vi.fn(),
-  apiPost: vi.fn(),
-  apiPut: vi.fn(),
-  apiDelete: vi.fn(),
+const assignWorkflow = vi.fn();
+
+vi.mock("@/composition/procedure-type", () => ({
+  procedureTypeUseCases: {
+    list: vi.fn(),
+    searchByName: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+    isInUse: vi.fn(),
+    assignWorkflow: (...args: unknown[]) => assignWorkflow(...args),
+  },
 }));
 
-import { apiPut } from "@/lib/api-client";
 import { useAssignWorkflowToProcedureType } from "@/hooks/useProcedureTypes";
 
 function createWrapper() {
@@ -33,24 +39,23 @@ describe("useAssignWorkflowToProcedureType (CU26, #655)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("sends the workflow id to assign it", async () => {
-    vi.mocked(apiPut).mockResolvedValue({ idProcedureType: 3 });
+    assignWorkflow.mockResolvedValue({ id: 3, name: "Sale", workflowDefinitionId: 9 });
 
     const { result } = renderHook(() => useAssignWorkflowToProcedureType(), { wrapper: createWrapper() });
     result.current.mutate({ id: 3, workflowDefinitionId: 9 });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(apiPut).toHaveBeenCalledWith("/procedure-types/3/workflow", { workflowDefinitionId: 9 });
+    expect(assignWorkflow).toHaveBeenCalledWith(3, 9);
   });
 
   it("sends an explicit null, never an empty body, to unassign", async () => {
-    vi.mocked(apiPut).mockResolvedValue({ idProcedureType: 3 });
+    assignWorkflow.mockResolvedValue({ id: 3, name: "Sale", workflowDefinitionId: null });
 
     const { result } = renderHook(() => useAssignWorkflowToProcedureType(), { wrapper: createWrapper() });
     result.current.mutate({ id: 3, workflowDefinitionId: null });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    const body = vi.mocked(apiPut).mock.calls[0][1];
-    expect(body).toEqual({ workflowDefinitionId: null });
-    expect(JSON.stringify(body)).toBe('{"workflowDefinitionId":null}');
+    expect(assignWorkflow).toHaveBeenCalledWith(3, null);
+    expect(JSON.stringify(assignWorkflow.mock.calls[0][1])).toBe("null");
   });
 });
