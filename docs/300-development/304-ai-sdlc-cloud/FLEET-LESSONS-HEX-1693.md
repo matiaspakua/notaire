@@ -1,8 +1,14 @@
 # Fleet lessons from hexagonal epic #1693
 
+> **Status (2026-10-17):** ArchUnit R1–R6 baseline **empty** on `main` @ `6ffe578fe`
+> (#1914 / PR #1915). Epic ArchUnit DoD **MET**. Residual `jpa`/`service` EMF path
+> documented in ADR-030 Open points; tracked by [#576](https://github.com/matiaspakua/notaire/issues/576)
+> and residual slice [#1918](https://github.com/matiaspakua/notaire/issues/1918).
+>
 > Durable do/don’t for Cursor Cloud agents. Evidence: FE drain (#1844–#1846),
 > R2 deed/report (#1854/#1855), Mac local validation, CI stewardship,
-> **post-#1859 R2 wave** (#1857–#1902; Process Checks path hygiene on #1894).
+> **post-#1859 R2 wave** (#1857–#1902; Process Checks path hygiene on #1894);
+> R2 leftovers #1903–#1906; R6 clear #1914.
 > Index: [`README.md`](README.md). Companion: [`MAC-LOCAL-VS-CI.md`](MAC-LOCAL-VS-CI.md),
 > [`CI-MERGE-GATE.md`](CI-MERGE-GATE.md), `.claude/skills/steward/SKILL.md`.
 > Baseline lessons: issue [#1858](https://github.com/matiaspakua/notaire/issues/1858) /

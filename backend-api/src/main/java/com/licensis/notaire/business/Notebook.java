@@ -1,6 +1,6 @@
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.jpa.PersistenceConstants;
+import com.licensis.notaire.persistence.PersistenceConstants;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

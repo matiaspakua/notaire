@@ -248,7 +248,7 @@ rectangle "Phase 6\nDeprecation" #Gray {
 | Phase 3: Backend API | ✅ Complete | Controllers, repositories, entities, Flyway migrations |
 | Phase 4: Frontend | 🔄 In Progress | Next.js 16 app (`frontend/`) — Swing is not a target client |
 | Phase 5: Observability | ✅ Complete | Full LPG stack + SonarQube + Homer dashboard |
-| Phase 6: Deprecation | 🔶 Partial | Swing client removed from the active build; `jpa` → `repository` migration ongoing |
+| Phase 6: Deprecation | 🔶 Partial | Swing gone; ArchUnit hex DoD MET (#1693); residual `jpa` controllers until [#576](https://github.com/matiaspakua/notaire/issues/576) |
 
 Live delivery status: [Delivery Board](https://github.com/users/matiaspakua/projects/1) /
 [docs/github/README.md](../../github/README.md). Phase narrative:
@@ -324,19 +324,18 @@ flowchart TB
 | `exception` | Application and domain exceptions; HTTP status mapping belongs to the inbound adapter |
 | `audit`, `observability` | Cross-cutting adapters (audit aspect, metrics, structured logging); no business rules |
 
-**Current state** (measured on `main` @ `3c1f99ce`, epic #1693; the executable truth is the ArchUnit baseline
-`src/test/resources/architecture/hexagon-baseline.txt`, #1695):
+**Current state** (measured on `main` post-#1915 @ `6ffe578fe`, epic #1693; the executable truth is the ArchUnit baseline
+`src/test/resources/architecture/hexagon-baseline.txt`, #1695 — **empty**, R1–R6 = 0):
 
 | Aspect | Today |
 |---|---|
-| Port interfaces, inbound / outbound | 14 / 39 at the time of the first measurement (the earlier "18 / 42 / 36" counted files, including command and result records) |
-| Ports that are real ports | 34 of 39 outbound interfaces import JPA entities, so they are not domain-typed; some are pass-through CRUD wrappers (the property wrapper was unused and was removed in #1702) |
-| Web controllers using the application layer | 25 of 38; 27 still touch `repository` or `jpa`; 6 are clean |
-| Application files importing JPA entities / Spring Data | 81 of 108 / 24 |
-| Pure `domain` files | 7; the model is still `business` (38 `@Entity`) |
-| Legacy packages still present | `jpa` (35 files), `repository` (37), `service` (3), top-level `dto` (53) |
+| ArchUnit R1–R6 | Empty baseline (DoD MET). Controllers / ports / use cases ratcheted via strangler slices under #1693 |
+| Ports speak domain / views | Entity-speaking ports removed for migrated contexts; helpers live under `adapter.out.persistence.*` |
+| Web controllers | Call inbound ports (R1 clear); REST contracts unchanged |
+| Pure `domain` vs `business` | Model remains `business` `@Entity` (model extraction is a later rule, not ArchUnit DoD) |
+| Legacy packages still present | `jpa` (~35 `*JpaController`s) + `service` (`JpaAdministrator`, `LegacyJpaEmfConfig`) — Owner-accepted residual until [#576](https://github.com/matiaspakua/notaire/issues/576) / [#1918](https://github.com/matiaspakua/notaire/issues/1918); `persistence.PersistenceConstants` moved out of `jpa` |
 
-Each migrated slice removes its entries from the baseline; the goal is an empty baseline and no legacy packages.
+ArchUnit DoD for #1693 is **MET**. Residual package delete is #576, not a re-open of the baseline.
 
 ### 5.3 Level 2 — Frontend Internal Structure
 
@@ -1031,11 +1030,11 @@ O --> (Deployability Docker)
 
 | Item | Location | Severity | Effort |
 |------|----------|----------|--------|
-| 26 legacy JPA controllers | `com.licensis.notaire.jpa` | High | Large — one per entity |
+| ~35 legacy JPA controllers | `com.licensis.notaire.jpa` | High | Large — tracked by [#576](https://github.com/matiaspakua/notaire/issues/576) |
 | ~~`ControllerNegocio.java` God class (5,337 lines)~~ | removed in #900 (`business/BusinessController.java` deleted) | Resolved | — |
-| `JpaAdministrator` in service layer | `service/JpaAdministrator.java` | Medium | Medium |
-| `ValidationAdministrator` mixed concerns | `service/ValidationAdministrator.java` | Medium | Medium |
-| Missing service classes for some entities | `service/` | Medium | Medium |
+| `JpaAdministrator` + `LegacyJpaEmfConfig` | `service/` | Medium | Medium — residual until #576 (#1918) |
+| ~~`ValidationAdministrator` / `SessionAdministrator`~~ | deleted in #1918 | Resolved | — |
+| Missing service classes for some entities | `service/` | Low | Superseded by hex adapters |
 | Legacy Swing tree deleted from `main` (#1046) | git history only | Resolved | — |
 | `GuiConstants.java` in audit package | `audit/GuiConstants.java` | Low | Small |
 

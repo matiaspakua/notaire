@@ -4,6 +4,8 @@
  */
 package com.licensis.notaire.jpa;
 
+import com.licensis.notaire.persistence.PersistenceConstants;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
