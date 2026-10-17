@@ -109,12 +109,14 @@ VIEW_LAYOUT = {
     "Shipped": {"group": ("Milestone",), "vertical_group": (), "sort": (("Closed at", "DESC"),)},
     "Catalog": {"group": (), "vertical_group": (), "sort": (("Title", "ASC"),)},
 }
-# Settings updateProjectV2View cannot set or reliably read — UI-only (docs/github/README.md).
+# Settings updateProjectV2View cannot set — UI-only after each Owner apply
+# (docs/github/README.md). --check prints "UI step" when group/sort is empty.
 VIEW_UI_ONLY = (
+    "horizontal group-by on table views (Agent queue / Needs triage / Shipped / …)",
+    "table sort when sortByFields is empty on the view node",
     "column width / order beyond visibleFieldIds",
     "roadmap date-field mapping (Start/Target on the roadmap axis)",
     "board card fields beyond Status columns",
-    "sort when the API omits sortByFields on the view node",
 )
 
 # Old title -> new title. Several buckets merge into H8; renames are one hop.

@@ -742,11 +742,17 @@ def check_views(gh: GitHub) -> int:
                 print(f"project view {name} fields are {visible!r}, wants {VIEW_FIELDS[name]!r}")
                 bad += 1
         wanted = VIEW_LAYOUT.get(name) or {}
+        # Horizontal groupBy / table sort cannot be written via updateProjectV2View
+        # (configuration only accepts visibleFieldIds). Fail only when the API
+        # returns a non-empty value that disagrees; empty means "Owner UI step".
         if wanted.get("group") is not None and "groupByFields" in view:
             got = tuple(_field_names(view, "groupByFields"))
-            if got != tuple(wanted["group"]):
-                print(f"project view {name} groupBy is {got!r}, wants {wanted['group']!r}")
+            want = tuple(wanted["group"])
+            if got and got != want:
+                print(f"project view {name} groupBy is {got!r}, wants {want!r}")
                 bad += 1
+            elif not got and want:
+                print(f"project view {name}: UI step — group by {', '.join(want)}")
         if wanted.get("vertical_group") is not None and "verticalGroupByFields" in view:
             got = tuple(_field_names(view, "verticalGroupByFields"))
             if got != tuple(wanted["vertical_group"]):
@@ -761,9 +767,15 @@ def check_views(gh: GitHub) -> int:
                 for node in view["sortByFields"]["nodes"]
                 if node.get("field")
             )
-            if got != tuple(wanted["sort"]):
-                print(f"project view {name} sort is {got!r}, wants {wanted['sort']!r}")
+            want = tuple(wanted["sort"])
+            if got and got != want:
+                print(f"project view {name} sort is {got!r}, wants {want!r}")
                 bad += 1
+            elif not got and want:
+                print(
+                    f"project view {name}: UI step — sort by "
+                    + ", ".join(f"{field} {direction}" for field, direction in want)
+                )
     for name in stale_views(list(by_name)):
         print(f"project view {name} is not in the view contract (delete it)")
         bad += 1

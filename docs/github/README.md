@@ -86,13 +86,16 @@ The Project views (#1860; filters and readable group/sort checked by
 | Shipped | group by Milestone | Closed at DESC |
 | Catalog | — | Title ASC |
 
-**UI-only** (GraphQL `updateProjectV2View` cannot set or reliably read these —
-confirm in the Project UI after each Owner apply):
+**UI-only** (GraphQL `updateProjectV2View` only sets name/layout/filter/
+`visibleFieldIds` — confirm in the Project UI after each Owner apply).
+`--check` prints `UI step — …` when group/sort is still empty (not a mismatch);
+it fails when the API returns a non-empty value that disagrees with `VIEW_LAYOUT`:
 
+- horizontal group-by on table views (Agent queue, Needs triage, Shipped, …)
+- table sort when `sortByFields` is empty
 - column width / order beyond `visibleFieldIds`
 - roadmap date-field mapping (Start/Target on the roadmap axis)
 - board card fields beyond Status columns
-- sort when the API omits `sortByFields` on the view node
 
 Owner scripts: `workspace/sdlc/owner/` (preview default; see that README).
 Closed issues stuck off Done: `python3 workspace/sdlc/sync_closed_status_done.py`.
