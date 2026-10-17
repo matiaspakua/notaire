@@ -1,5 +1,6 @@
 package com.licensis.notaire.service;
 
+import com.licensis.notaire.business.IdentificationTypeLookup;
 import com.licensis.notaire.jpa.ConceptJpaController;
 import com.licensis.notaire.jpa.CopyJpaController;
 import com.licensis.notaire.jpa.SubmittedDocumentJpaController;
@@ -43,6 +44,9 @@ public class JpaAdministrator {
 
     public static void setEmf(EntityManagerFactory factory) {
         emf = factory;
+        // Keep IdentificationTypeLookup free of jpa.* imports (ArchUnit R6 / #1914).
+        IdentificationTypeLookup.wireCatalog(
+                () -> IdentificationTypeJpaController.getInstance().findIdentificationTypeEntities());
         if (instance != null) {
             loadJpaList();
         }

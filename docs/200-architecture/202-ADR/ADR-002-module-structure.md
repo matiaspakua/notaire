@@ -121,7 +121,7 @@ business/
 
 ```text
 config/
-├── JpaConfig.java
+├── service/LegacyJpaEmfConfig.java  (was config/JpaConfig; R6 #1914)
 ├── SecurityAndCorsConfig.java
 ├── OpenApiConfig.java
 └── ObservabilityConfig.java

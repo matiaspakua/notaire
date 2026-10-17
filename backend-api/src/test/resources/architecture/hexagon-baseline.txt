@@ -1,2 +1,0 @@
-R6 | com.licensis.notaire.business.IdentificationTypeLookup -> com.licensis.notaire.jpa.IdentificationTypeJpaController
-R6 | com.licensis.notaire.config.JpaConfig -> com.licensis.notaire.service.JpaAdministrator
