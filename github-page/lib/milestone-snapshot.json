@@ -1,11 +1,11 @@
 {
   "generated": "2026-10-17",
-  "open": 178,
-  "closed": 790,
+  "open": 175,
+  "closed": 794,
   "plannedOpen": {
     "Catalog · Requirements & use cases": 112,
-    "Backlog · Unscheduled": 25,
-    "v0.5 · Quality & traceability (2027-01)": 19,
+    "Backlog · Unscheduled": 23,
+    "v0.5 · Quality & traceability (2027-01)": 18,
     "v0.3 · Hexagonal core & security (2026-11)": 14,
     "v0.6 · Platform & operability (2027-02)": 4,
     "v0.4 · Product completeness (2026-12)": 3,
@@ -22,16 +22,16 @@
     "H5 · Web frontend wave (2026-07–2026-08)": 15,
     "H1 · Revival & foundations (2026-03–2026-04)": 6,
     "H3 · Platform & observability (2026-06)": 5,
+    "Backlog · Unscheduled": 5,
     "H4 · Web frontend slice (2026-07)": 3,
     "H6 · Production slice (2026-08–2026-09)": 2,
     "H7 · Swing deprecation start (2026-09)": 2,
-    "Backlog · Unscheduled": 2,
-    "v0.5 · Quality & traceability (2027-01)": 1
+    "v0.5 · Quality & traceability (2027-01)": 2
   },
   "openByMilestone": {
     "Catalog · Requirements & use cases": 112,
-    "Backlog · Unscheduled": 25,
-    "v0.5 · Quality & traceability (2027-01)": 19,
+    "Backlog · Unscheduled": 23,
+    "v0.5 · Quality & traceability (2027-01)": 18,
     "v0.3 · Hexagonal core & security (2026-11)": 14,
     "v0.6 · Platform & operability (2027-02)": 4,
     "v0.4 · Product completeness (2026-12)": 3,
@@ -48,16 +48,16 @@
     "H5 · Web frontend wave (2026-07–2026-08)": 15,
     "H1 · Revival & foundations (2026-03–2026-04)": 6,
     "H3 · Platform & observability (2026-06)": 5,
+    "Backlog · Unscheduled": 5,
     "H4 · Web frontend slice (2026-07)": 3,
     "H6 · Production slice (2026-08–2026-09)": 2,
     "H7 · Swing deprecation start (2026-09)": 2,
-    "Backlog · Unscheduled": 2,
-    "v0.5 · Quality & traceability (2027-01)": 1
+    "v0.5 · Quality & traceability (2027-01)": 2
   },
   "plannedLanes": {
-    "catalog": 125,
+    "catalog": 123,
     "backend": 16,
-    "quality": 13,
+    "quality": 12,
     "platform": 8,
     "frontend": 6,
     "security": 4,
@@ -65,9 +65,9 @@
     "cross": 2
   },
   "openByLane": {
-    "catalog": 125,
+    "catalog": 123,
     "backend": 16,
-    "quality": 13,
+    "quality": 12,
     "platform": 8,
     "frontend": 6,
     "security": 4,
