@@ -957,6 +957,11 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   entity-speaking FolioRepositoryPort and FolioPersistenceAdapter; keep domain
   FolioCatalogPort / FolioTypeCatalogPort. Clears ~2 R2 edges (R2 7→5).
 
+- **Backend R2 shrink — item (#1904):** move ItemService to
+  `adapter.out.persistence.item` (Spring Data ItemRepository locally); delete
+  entity-speaking ItemRepositoryPort and ItemPersistenceAdapter; budget catalog/template
+  helpers inject ItemRepository; keep view-safe ItemOpsPort. Clears ~2 R2 edges (R2 5→3).
+
 
 ## Options considered
 

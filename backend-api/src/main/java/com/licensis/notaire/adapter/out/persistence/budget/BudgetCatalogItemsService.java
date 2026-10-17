@@ -7,24 +7,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.in.budget.AddBudgetItemsFromCatalogUseCase;
 import com.licensis.notaire.application.port.out.item.ItemOpsPort.ItemView;
-import com.licensis.notaire.application.port.out.item.ItemRepositoryPort;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Item;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.repository.BudgetRepository;
+import com.licensis.notaire.repository.ItemRepository;
 
 /**
  * Adds copies of existing catalog Items (CU71) to a real Budget.
- * Outbound adapter implementing the inbound port (issue #1865).
+ * Outbound adapter implementing the inbound port (issue #1865 / #1904).
  */
 @Service
 @Transactional
 public class BudgetCatalogItemsService implements AddBudgetItemsFromCatalogUseCase {
 
     private final BudgetRepository budgetRepository;
-    private final ItemRepositoryPort itemRepository;
+    private final ItemRepository itemRepository;
 
-    public BudgetCatalogItemsService(BudgetRepository budgetRepository, ItemRepositoryPort itemRepository) {
+    public BudgetCatalogItemsService(BudgetRepository budgetRepository, ItemRepository itemRepository) {
         this.budgetRepository = budgetRepository;
         this.itemRepository = itemRepository;
     }
@@ -37,7 +37,7 @@ public class BudgetCatalogItemsService implements AddBudgetItemsFromCatalogUseCa
 
         List<Item> copies = idItems.stream().map(idItem -> copyItemFromCatalog(budget, idItem)).toList();
 
-        return itemRepository.createAll(copies).stream().map(BudgetCatalogItemsService::toView).toList();
+        return itemRepository.saveAll(copies).stream().map(BudgetCatalogItemsService::toView).toList();
     }
 
     private Item copyItemFromCatalog(Budget budget, Integer idItem) {

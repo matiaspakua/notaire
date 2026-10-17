@@ -16,8 +16,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.licensis.notaire.repository.BudgetRepository;
+import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.application.port.out.item.ItemOpsPort.ItemView;
-import com.licensis.notaire.application.port.out.item.ItemRepositoryPort;
 import com.licensis.notaire.adapter.out.persistence.budget.BudgetCatalogItemsService;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Item;
@@ -31,7 +31,7 @@ class BudgetCatalogItemsServiceTest {
     private BudgetRepository budgetRepository;
 
     @Mock
-    private ItemRepositoryPort itemRepository;
+    private ItemRepository itemRepository;
 
     @InjectMocks
     private BudgetCatalogItemsService budgetCatalogItemsService;
@@ -51,7 +51,7 @@ class BudgetCatalogItemsServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
         when(itemRepository.findById(10))
                 .thenReturn(Optional.of(buildCatalogItem(10, "Stamp duty", new java.math.BigDecimal("500"))));
-        when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(itemRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<ItemView> result = budgetCatalogItemsService.addItemsFromCatalog(1, List.of(10));
 
@@ -73,7 +73,7 @@ class BudgetCatalogItemsServiceTest {
                 .thenReturn(Optional.of(buildCatalogItem(10, "Stamp duty", new java.math.BigDecimal("500"))));
         when(itemRepository.findById(11))
                 .thenReturn(Optional.of(buildCatalogItem(11, "Honorarios", new java.math.BigDecimal("1000"))));
-        when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(itemRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<ItemView> result = budgetCatalogItemsService.addItemsFromCatalog(1, List.of(10, 11));
 

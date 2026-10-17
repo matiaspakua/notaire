@@ -1,11 +1,11 @@
-package com.licensis.notaire.application.usecase.item;
+package com.licensis.notaire.adapter.out.persistence.item;
 
 import com.licensis.notaire.dto.TypeItem;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.application.port.out.item.ItemRepositoryPort;
 import com.licensis.notaire.application.port.out.budget.BudgetOpsPort;
 import com.licensis.notaire.business.Item;
+import com.licensis.notaire.repository.ItemRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,18 +15,19 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * CU45/CU71 - Service layer for Item domain operations, including the
- * discount/surcharge classification and its mandatory reason.
+ * CU45/CU71 - Outbound persistence helper for Item domain operations, including the
+ * discount/surcharge classification and its mandatory reason (issue #1904 — Spring Data
+ * ItemRepository locally; no entity-speaking application port).
  */
 @Service
 public class ItemService {
 
     private static final Logger log = LoggerFactory.getLogger(ItemService.class);
 
-    private final ItemRepositoryPort itemRepository;
+    private final ItemRepository itemRepository;
     private final BudgetOpsPort budgetOps;
 
-    public ItemService(ItemRepositoryPort itemRepository, BudgetOpsPort budgetOps) {
+    public ItemService(ItemRepository itemRepository, BudgetOpsPort budgetOps) {
         this.itemRepository = itemRepository;
         this.budgetOps = budgetOps;
     }
@@ -43,7 +44,7 @@ public class ItemService {
 
     @Transactional(readOnly = true)
     public List<Item> findByBudget(Integer idBudget) {
-        return itemRepository.findByBudgetId(idBudget);
+        return itemRepository.findByFkIdBudgetIdBudget(idBudget);
     }
 
     /**
@@ -55,7 +56,7 @@ public class ItemService {
         if (!budgetOps.existsById(idBudget)) {
             throw new ResourceNotFoundException("Budget not found with ID: " + idBudget);
         }
-        return itemRepository.findByBudgetId(idBudget).stream()
+        return itemRepository.findByFkIdBudgetIdBudget(idBudget).stream()
                 .filter(item -> item.getType() == TypeItem.DESCUENTO || item.getType() == TypeItem.RECARGO)
                 .toList();
     }
@@ -63,7 +64,7 @@ public class ItemService {
     @Transactional
     public Item create(Item item) {
         validateReason(item);
-        return itemRepository.create(item);
+        return itemRepository.save(item);
     }
 
     @Transactional
@@ -73,7 +74,7 @@ public class ItemService {
         }
         validateReason(item);
         item.setIdItem(id);
-        return itemRepository.update(id, item);
+        return itemRepository.save(item);
     }
 
     @Transactional
