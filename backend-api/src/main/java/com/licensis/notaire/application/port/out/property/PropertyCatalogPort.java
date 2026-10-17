@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import com.licensis.notaire.domain.property.Property;
 
-/** Property storage in domain terms. The entity-returning {@code PropertyRepositoryPort} remains for legacy callers. */
+/** Property storage in domain terms (issue #1906 — entity-speaking PropertyRepositoryPort removed). */
 public interface PropertyCatalogPort {
 
     List<Property> findAll();

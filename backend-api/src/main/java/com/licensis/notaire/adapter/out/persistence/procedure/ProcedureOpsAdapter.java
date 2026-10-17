@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.out.procedure.ProcedureOpsPort;
-import com.licensis.notaire.application.port.out.property.PropertyRepositoryPort;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.DeedManagement;
@@ -23,10 +22,11 @@ import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.DeedRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
 import com.licensis.notaire.repository.ProcedureTypeRepository;
+import com.licensis.notaire.repository.PropertyRepository;
 
 /**
  * Persistence/ops adapter for procedures. Holds entity/repository access previously on
- * {@code ProcedureController} (issue #1801).
+ * {@code ProcedureController} (issues #1801 / #1906 — Spring Data PropertyRepository locally).
  */
 @Component
 public class ProcedureOpsAdapter implements ProcedureOpsPort {
@@ -35,7 +35,7 @@ public class ProcedureOpsAdapter implements ProcedureOpsPort {
 
     private final ProcedureRepository repository;
     private final ProcedureTypeRepository procedureTypeRepository;
-    private final PropertyRepositoryPort propertyRepository;
+    private final PropertyRepository propertyRepository;
     private final BudgetRepository budgetRepository;
     private final DeedRepository deedRepository;
     private final DeedManagementRepository deedManagementRepository;
@@ -43,7 +43,7 @@ public class ProcedureOpsAdapter implements ProcedureOpsPort {
     public ProcedureOpsAdapter(
             ProcedureRepository repository,
             ProcedureTypeRepository procedureTypeRepository,
-            PropertyRepositoryPort propertyRepository,
+            PropertyRepository propertyRepository,
             BudgetRepository budgetRepository,
             DeedRepository deedRepository,
             DeedManagementRepository deedManagementRepository) {
