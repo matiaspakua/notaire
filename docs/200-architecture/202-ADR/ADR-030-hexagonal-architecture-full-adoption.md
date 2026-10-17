@@ -966,6 +966,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   RoleRepositoryPort and their PersistenceAdapters; keep domain UserCatalogPort /
   RoleCatalogPort. Clears ~2 R2 edges (R2 3→1).
 
+- **Backend R2 shrink — property (#1906):** inject Spring Data PropertyRepository into
+  ProcedureOpsAdapter; delete entity-speaking PropertyRepositoryPort and
+  PropertyPersistenceAdapter; keep PropertyCatalogPort. Clears last R2 edge (R2 1→0).
+
 
 ## Options considered
 

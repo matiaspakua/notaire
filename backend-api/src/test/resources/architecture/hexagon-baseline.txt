@@ -1,3 +1,2 @@
-R2 | com.licensis.notaire.application.port.out.property.PropertyRepositoryPort -> com.licensis.notaire.business.Property
 R6 | com.licensis.notaire.business.IdentificationTypeLookup -> com.licensis.notaire.jpa.IdentificationTypeJpaController
 R6 | com.licensis.notaire.config.JpaConfig -> com.licensis.notaire.service.JpaAdministrator
