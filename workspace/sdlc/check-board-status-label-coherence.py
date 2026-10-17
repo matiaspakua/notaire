@@ -230,7 +230,41 @@ def fetch_issue(repo: str, number: int) -> dict:
     return json.loads(result.stdout)
 
 
-def board_item_from_project_row(row: dict, issue_meta: dict | None = None) -> BoardItem | None:
+def count_open_prs(linked: object) -> int | None:
+    """Count OPEN linked pull requests from a GraphQL or REST-shaped payload."""
+    if linked is None:
+        return None
+    if isinstance(linked, int):
+        return linked
+    nodes = linked
+    if isinstance(linked, dict):
+        nodes = linked.get("nodes") or linked.get("edges") or []
+    if not isinstance(nodes, list):
+        return None
+    open_count = 0
+    known = False
+    for node in nodes:
+        pr = node.get("node", node) if isinstance(node, dict) else None
+        if not isinstance(pr, dict):
+            continue
+        known = True
+        state = str(pr.get("state") or pr.get("reviewDecision") or "").upper()
+        # GraphQL PullRequest.state is OPEN/CLOSED/MERGED; REST uses open/closed.
+        if state in {"OPEN", "OPENED"} or pr.get("state") == "open":
+            if pr.get("closed") is True or pr.get("merged") is True:
+                continue
+            open_count += 1
+        elif "state" not in pr and pr.get("url"):
+            open_count += 1
+    return open_count if known else None
+
+
+def board_item_from_project_row(
+    row: dict,
+    issue_meta: dict | None = None,
+    *,
+    open_prs: int | None = None,
+) -> BoardItem | None:
     content = row.get("content") or {}
     content_type = content.get("type") or "Issue"
     number = content.get("number")
@@ -249,6 +283,10 @@ def board_item_from_project_row(row: dict, issue_meta: dict | None = None) -> Bo
             label_names.append(str(lab))
     state = (issue_meta or {}).get("state") or content.get("state") or "UNKNOWN"
     title = (issue_meta or {}).get("title") or content.get("title") or row.get("title") or ""
+    if open_prs is None:
+        open_prs = count_open_prs(row.get("linkedPullRequests") or row.get("open_prs"))
+        if open_prs is None and issue_meta:
+            open_prs = count_open_prs(issue_meta.get("linkedPullRequests") or issue_meta.get("open_prs"))
     return BoardItem(
         number=int(number),
         state=str(state).upper(),
@@ -256,7 +294,114 @@ def board_item_from_project_row(row: dict, issue_meta: dict | None = None) -> Bo
         labels=frozenset(name for name in label_names if name),
         title=str(title)[:80],
         content_type=str(content_type),
+        open_prs=open_prs,
     )
+
+
+PROJECT_ITEMS_GRAPHQL = """
+query($owner: String!, $number: Int!, $cursor: String) {
+  user(login: $owner) {
+    projectV2(number: $number) {
+      items(first: 100, after: $cursor) {
+        pageInfo { hasNextPage endCursor }
+        nodes {
+          fieldValueByName(name: "Status") {
+            ... on ProjectV2ItemFieldSingleSelectValue { name }
+          }
+          content {
+            __typename
+            ... on Issue {
+              number title state
+              labels(first: 40) { nodes { name } }
+              closed
+              pullRequests: timelineItems(itemTypes: [CROSS_REFERENCED_EVENT], first: 20) {
+                nodes {
+                  ... on CrossReferencedEvent {
+                    source { ... on PullRequest { state } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+"""
+
+
+def fetch_project_items_graphql(*, owner: str, project: int) -> list[dict]:
+    """Paginated ProjectV2 items with issue state, labels, Status, and linked PRs.
+
+    Used by ``--scope all`` so we do not issue one ``gh issue view`` per row.
+    """
+    cursor = None
+    rows: list[dict] = []
+    page = 0
+    while True:
+        page += 1
+        payload = {
+            "query": PROJECT_ITEMS_GRAPHQL,
+            "variables": {"owner": owner, "number": project, "cursor": cursor},
+        }
+        proc = subprocess.run(
+            ["gh", "api", "graphql", "--input", "-"],
+            input=json.dumps(payload),
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if proc.returncode != 0:
+            raise RuntimeError(proc.stderr.strip() or proc.stdout.strip() or "graphql failed")
+        data = json.loads(proc.stdout or "{}")
+        if data.get("errors"):
+            raise RuntimeError(json.dumps(data["errors"])[:500])
+        project_node = (((data.get("data") or {}).get("user") or {}).get("projectV2")) or {}
+        conn = project_node.get("items") or {}
+        nodes = conn.get("nodes") or []
+        print(f"board coherence: loaded GraphQL page {page} ({len(nodes)} items)", flush=True)
+        for node in nodes:
+            content = node.get("content") or {}
+            if content.get("__typename") and content.get("__typename") != "Issue":
+                continue
+            if not content.get("number"):
+                continue
+            status = (node.get("fieldValueByName") or {}).get("name")
+            labels = [lab["name"] for lab in (content.get("labels") or {}).get("nodes") or []]
+            open_prs = 0
+            known_prs = "pullRequests" in content
+            for event in (content.get("pullRequests") or {}).get("nodes") or []:
+                source = (event or {}).get("source") or {}
+                if str(source.get("state", "")).upper() == "OPEN":
+                    open_prs += 1
+            rows.append(
+                {
+                    "status": status,
+                    "content": {
+                        "type": "Issue",
+                        "number": content["number"],
+                        "state": content.get("state")
+                        or ("CLOSED" if content.get("closed") else "OPEN"),
+                        "title": content.get("title") or "",
+                    },
+                    "labels": labels,
+                    "open_prs": open_prs if known_prs else None,
+                }
+            )
+        page_info = conn.get("pageInfo") or {}
+        if not page_info.get("hasNextPage"):
+            return rows
+        cursor = page_info.get("endCursor")
+
+
+def board_items_from_graphql_rows(rows: list[dict]) -> list[BoardItem]:
+    items: list[BoardItem] = []
+    for row in rows:
+        item = board_item_from_project_row(row, open_prs=row.get("open_prs"))
+        if item:
+            items.append(item)
+    return items
 
 
 def load_wip_items(*, owner: str, project: int, repo: str) -> list[BoardItem]:
@@ -279,20 +424,11 @@ def load_wip_items(*, owner: str, project: int, repo: str) -> list[BoardItem]:
 
 
 def load_all_issue_items(*, owner: str, project: int, repo: str) -> list[BoardItem]:
-    rows = fetch_project_items(owner=owner, project=project)
-    items: list[BoardItem] = []
-    for row in rows:
-        content = row.get("content") or {}
-        if (content.get("type") or "Issue") != "Issue":
-            continue
-        number = content.get("number")
-        if not number:
-            continue
-        meta = fetch_issue(repo, int(number))
-        item = board_item_from_project_row(row, meta)
-        if item:
-            items.append(item)
-    return items
+    """Full-board load via paginated GraphQL (no per-issue ``gh issue view``)."""
+    del repo  # state/labels come from GraphQL content
+    return board_items_from_graphql_rows(
+        fetch_project_items_graphql(owner=owner, project=project)
+    )
 
 
 def load_pr_linked_items(*, repo: str, owner: str, project: int) -> list[BoardItem]:
