@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.4](https://github.com/matiaspakua/notaire/compare/v0.2.3...v0.2.4) (2026-10-17)
+
+
+### Bug Fixes
+
+* **infra:** harden Sonar token/new-code and Playwright browser path ([#1924](https://github.com/matiaspakua/notaire/issues/1924)) ([27a67b1](https://github.com/matiaspakua/notaire/commit/27a67b1fc5ae0932af460f69199bade1621b1b2d)), closes [#1862](https://github.com/matiaspakua/notaire/issues/1862)
+
 ## [Unreleased]
 
 ### Bug Fixes
