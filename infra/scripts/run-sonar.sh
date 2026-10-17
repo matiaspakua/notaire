@@ -87,7 +87,21 @@ else
     exit 1
 fi
 
-# 3. Generate / reuse an analysis token
+# 3. Generate / reuse an analysis token.
+# A persisted SONAR_TOKEN can go stale when the Sonar volume is recreated (#1862
+# pipeline: HTTP 200 + valid:false → frontend scanner 401). Validate before reuse.
+token_works() {
+    local token="$1"
+    [ -n "$token" ] || return 1
+    curl -s -m 5 -u "$token:" "$SONAR_URL/api/authentication/validate" 2>/dev/null \
+        | grep -q '"valid":true'
+}
+
+if [ -n "${SONAR_TOKEN:-}" ] && ! token_works "$SONAR_TOKEN"; then
+    echo -e "${YELLOW}Stored SONAR_TOKEN is invalid — regenerating...${NC}"
+    SONAR_TOKEN=""
+fi
+
 if [ -z "${SONAR_TOKEN:-}" ]; then
     echo -e "${YELLOW}Generating analysis token...${NC}"
     # Revoke any existing token with the same name, then (re)generate.
@@ -155,12 +169,29 @@ if ! curl -s -u "$SONAR_USER:$WORKING_PASS" "$SONAR_URL/api/qualitygates/list" |
         --data-urlencode "metric=new_coverage" --data-urlencode "op=LT" --data-urlencode "error=70" >/dev/null
     echo -e "${GREEN}✓ Quality gate '$GATE_NAME' created${NC}"
 fi
+# Sonar way ships new_violations=0 (any severity). Notaire way (#1737) ratchets
+# BLOCKER/CRITICAL/MAJOR only — drop the catch-all so MINOR/INFO noise does not
+# fail the gate while the severity conditions still do.
+NEW_VIOLATIONS_ID=$(gate_json | python3 -c "
+import sys, json
+print(next((str(c['id']) for c in json.load(sys.stdin).get('conditions', []) if c.get('metric') == 'new_violations'), ''))
+")
+if [ -n "$NEW_VIOLATIONS_ID" ]; then
+    api qualitygates/delete_condition --data-urlencode "id=$NEW_VIOLATIONS_ID" >/dev/null || true
+fi
 ensure_severity_conditions
 echo -e "${GREEN}✓ Quality gate '$GATE_NAME' ratchets new_blocker/critical/major (error=0)${NC}"
+# Community Edition only honours the GLOBAL new-code definition; a project-level
+# set returns 200 but leaves the inherited default. Prefer PREVIOUS_VERSION so the
+# severity ratchet (#1737) measures changes since the last product version event,
+# not an accidental whole-tree leak after a snapshot→semver bump (#1862 hygiene).
+api new_code_periods/set --data-urlencode "type=PREVIOUS_VERSION" >/dev/null
+echo -e "${GREEN}✓ Global new-code period set to PREVIOUS_VERSION${NC}"
+PRODUCT_VERSION="$(mvn -q -DforceStdout -Dexpression=project.version help:evaluate 2>/dev/null || true)"
+PRODUCT_VERSION="${SONAR_PROJECT_VERSION:-${PRODUCT_VERSION:-0.0.0}}"
 for KEY in "$BACKEND_KEY" "$FRONTEND_KEY"; do
     api projects/create --data-urlencode "project=$KEY" --data-urlencode "name=$KEY" >/dev/null 2>&1 || true
     api qualitygates/select --data-urlencode "gateName=$GATE_NAME" --data-urlencode "projectKey=$KEY" >/dev/null
-    api new_code_periods/set --data-urlencode "project=$KEY" --data-urlencode "type=NUMBER_OF_DAYS" --data-urlencode "value=30" >/dev/null
 done
 
 FAILED=0
@@ -176,6 +207,7 @@ mvn -B -pl backend-api -am clean test \
     -Dsonar.token="$SONAR_TOKEN" \
     -Dsonar.projectKey="$BACKEND_KEY" \
     -Dsonar.projectName="$BACKEND_KEY" \
+    -Dsonar.projectVersion="$PRODUCT_VERSION" \
     -Dsonar.scm.provider=git \
     -Dsonar.qualitygate.wait=true || FAILED=1
 
@@ -189,12 +221,16 @@ echo -e "${YELLOW}Frontend: Vitest coverage + ESLint report + Sonar analysis...$
     npm run test:coverage --silent
     npx eslint src -f json -o coverage/eslint-report.json || true
 )
+# Give the JS/TS bridge enough heap; the default OOMs on this monorepo
+# ("bridge server is unresponsive", #1862 hygiene re-run).
 docker run --rm --network "$SONAR_NETWORK" \
     -v "$APP_DIR:/usr/src" \
     -w /usr/src/frontend \
     -e SONAR_HOST_URL="http://devsecops-sonarqube:9000" -e SONAR_TOKEN="$SONAR_TOKEN" \
+    -e SONAR_SCANNER_JAVA_OPTS="${SONAR_SCANNER_JAVA_OPTS:--Xmx2g}" \
     "$SCANNER_IMAGE" \
     -Dsonar.projectBaseDir=/usr/src/frontend \
+    -Dsonar.projectVersion="$PRODUCT_VERSION" \
     -Dsonar.scm.provider=git \
     -Dsonar.qualitygate.wait=true || FAILED=1
 

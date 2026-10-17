@@ -94,6 +94,33 @@ class SonarAnalysisTest(unittest.TestCase):
         for path in (POM, FRONTEND_PROPS):
             self.assertIsNone(SECRET.search(read(path)), path)
 
+    def test_script_regenerates_invalid_analysis_token(self):
+        """Stale SONAR_TOKEN after a Sonar volume recreate must not 401 the scanner.
+
+        Observed on the #1862 --with-infra pipeline: a persisted token returned
+        HTTP 200 with valid:false, so the frontend scanner failed with 401 while
+        password auth still worked. The script must validate the token and
+        regenerate when it is empty or invalid.
+        """
+        script = read(SCRIPT)
+        self.assertIn("token_works", script)
+        self.assertIn("Stored SONAR_TOKEN is invalid", script)
+        self.assertIn("regenerating", script)
+        self.assertIn('"valid":true', script)
+
+    def test_script_sets_global_previous_version_new_code(self):
+        """Community Edition ignores project-level new-code; set global PREVIOUS_VERSION."""
+        script = read(SCRIPT)
+        self.assertIn("type=PREVIOUS_VERSION", script)
+        self.assertIn("Global new-code period", script)
+        self.assertIn("SONAR_SCANNER_JAVA_OPTS", script)
+        self.assertIn("sonar.projectVersion", script)
+        self.assertNotRegex(
+            script,
+            r"new_code_periods/set[^\n]*project=\$KEY",
+            msg="project-scoped new_code_periods/set is a no-op on Community Edition",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
