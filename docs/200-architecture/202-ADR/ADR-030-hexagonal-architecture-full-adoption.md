@@ -962,6 +962,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   entity-speaking ItemRepositoryPort and ItemPersistenceAdapter; budget catalog/template
   helpers inject ItemRepository; keep view-safe ItemOpsPort. Clears ~2 R2 edges (R2 5→3).
 
+- **Backend R2 shrink — user (#1905):** delete unused entity-speaking UserRepositoryPort /
+  RoleRepositoryPort and their PersistenceAdapters; keep domain UserCatalogPort /
+  RoleCatalogPort. Clears ~2 R2 edges (R2 3→1).
+
 
 ## Options considered
 
