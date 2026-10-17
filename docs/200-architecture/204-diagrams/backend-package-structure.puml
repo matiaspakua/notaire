@@ -47,8 +47,11 @@ package "com.licensis.notaire" {
 
   package "service" as admins #LightGreen {
     [JpaAdministrator]
-    [SessionAdministrator]
-    [ValidationAdministrator]
+    [LegacyJpaEmfConfig]
+  }
+
+  package "persistence" as pers #LightGreen {
+    [PersistenceConstants]
   }
 
   package "jpa\n(26 legacy controllers)" as jpa #LightGray {

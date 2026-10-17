@@ -1,9 +1,13 @@
 # ADR-030: Full Ports & Adapters architecture for backend and frontend
 
-**Status:** Accepted — Owner directive of 2026-10-14 (epic #1693, child #1694)  
+**Status:** Accepted — Owner directive of 2026-10-14 (epic #1693, child #1694).  
+**ArchUnit DoD:** MET — R1–R6 baseline empty on `main` @ `6ffe578fe` (#1914 / PR #1915).  
+**Residual (Owner-accepted):** legacy `jpa` `*JpaController`s + `service.JpaAdministrator` /
+`LegacyJpaEmfConfig` remain until [#576](https://github.com/matiaspakua/notaire/issues/576);
+tracked under #1693 via [#1918](https://github.com/matiaspakua/notaire/issues/1918).  
 **Date:** 2026-10-14  
 **Deciders:** Owner (product), Engineering  
-**Related:** ADR-021 (pilot), ADR-002 (module structure), ADR-023 (REST naming), ADR-025/026, ADR-027 (Mermaid), ADR-029 (tenancy), #984, #993, #995, #1695, #1696  
+**Related:** ADR-021 (pilot), ADR-002 (module structure), ADR-023 (REST naming), ADR-025/026, ADR-027 (Mermaid), ADR-029 (tenancy), #984, #993, #995, #1695, #1696, #576, #1918  
 **Supersedes:** the scope limit of ADR-021 ("payment slice only"; "decide whether to extend") and the layered `api → service → repository` structure of ADR-002 for `backend-api`.
 
 ## Context
@@ -974,6 +978,12 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   (no `jpa.*` import in business); move EMF bootstrap to `service.LegacyJpaEmfConfig`
   (delete `config.JpaConfig`). Clears both R6 edges (R6 2→0). ArchUnit R1–R6 empty.
 
+- **Residual cleanup (#1918):** delete unused `SessionAdministrator` /
+  `ValidationAdministrator`; move `PersistenceConstants` to
+  `com.licensis.notaire.persistence` so `business` does not import `jpa`.
+  Document Owner-accepted residual: remaining `jpa` controllers +
+  `JpaAdministrator` / `LegacyJpaEmfConfig` until #576. ArchUnit stays empty.
+
 
 ## Options considered
 
@@ -1007,8 +1017,11 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
 
 ## Open points
 
+- **Residual packages (Owner-accepted until #576):** `com.licensis.notaire.jpa` (~35
+  `*JpaController`s) and `service.JpaAdministrator` / `LegacyJpaEmfConfig` remain for EMF
+  bootstrap and IdentificationTypeLookup wiring. They gain **no new external dependents**
+  (ArchUnit R6 empty). Full deletion is [#576](https://github.com/matiaspakua/notaire/issues/576),
+  not a re-open of the ArchUnit baseline.
 - The no-cycles rule and the model-extraction rule are added to the ArchUnit suite when the first slice that
   needs them lands.
-- The exact shape of the frontend composition provider is validated by the first frontend slice and recorded
-  here if it changes.
 - Multi-notary hosting is out of scope (ADR-029): one installation serves one notary.

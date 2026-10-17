@@ -53,7 +53,8 @@ notaire/ (aggregator pom.xml)
 │   │   ├── config/           # Spring configuration
 │   │   ├── exception/        # custom exceptions
 │   │   ├── jpa/              # legacy JPA controllers
-│   │   ├── service/          # JpaAdministrator, SessionAdministrator, ValidationAdministrator
+│   │   ├── service/          # JpaAdministrator, LegacyJpaEmfConfig (residual until #576)
+│   │   ├── persistence/      # PersistenceConstants (shared version init)
 │   │   └── util/             # utilities
 │   └── src/test/java/com/licensis/notaire/
 │       ├── unit/             # unit tests
@@ -67,8 +68,9 @@ notaire/ (aggregator pom.xml)
 ```
 
 The coverage exclusion `service.Administrador*` stays as the JaCoCo rule name.
-The classes in that package are `JpaAdministrator`, `SessionAdministrator`, and
-`ValidationAdministrator`.
+The live classes in that package are `JpaAdministrator` and `LegacyJpaEmfConfig`
+(residual until #576). Dead `SessionAdministrator` / `ValidationAdministrator`
+were removed in #1918.
 
 ### Backend-API: internal layers
 

@@ -16,11 +16,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **sdlc:** encode post-#1859 fleet lessons — R2 package-move path hygiene, human paste templates, performance/cost serialize, Mac≠CI green, `validate-sdlc-plan` gh retry harden ([#1907](https://github.com/matiaspakua/notaire/issues/1907))
 * **pm:** version-first milestone nomenclature — `vX.Y · <Theme> (<YYYY-MM>)` trains (v0.3 … v1.0), `H0`–`H8` history stages, closed `v0.1`/`v0.2` cuts, continuous `Backlog · Unscheduled` and `Catalog · Requirements & use cases`; `train_for()` reads the version prefix ([#1847](https://github.com/matiaspakua/notaire/issues/1847))
 * **pm:** VIEW_LAYOUT group/sort contracts and UI-only notes; Owner script paths under `workspace/sdlc/owner/` ([#1878](https://github.com/matiaspakua/notaire/issues/1878))
+* **arch:** ADR-030 / SAD / FLEET-LESSONS — ArchUnit R1–R6 DoD MET; Owner-accepted residual `jpa`/`service` until [#576](https://github.com/matiaspakua/notaire/issues/576) ([#1918](https://github.com/matiaspakua/notaire/issues/1918))
 
 ### Code Refactoring
 
 Hexagonal architecture epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030. REST and OpenAPI contracts are unchanged.
 
+* **arch:** residual hex cleanup — delete dead `SessionAdministrator` / `ValidationAdministrator`; move `PersistenceConstants` to `com.licensis.notaire.persistence` ([#1918](https://github.com/matiaspakua/notaire/issues/1918))
 * **arch:** shrink ArchUnit R1 wire DTOs (`ItemResponse` + support `*Ref` / `ErrorResponses`) ([#1826](https://github.com/matiaspakua/notaire/issues/1826)) ([#1829](https://github.com/matiaspakua/notaire/pull/1829))
 * **arch:** frontend budgets into core + adapters ([#1827](https://github.com/matiaspakua/notaire/issues/1827)) ([#1830](https://github.com/matiaspakua/notaire/pull/1830))
 * **arch:** frontend deeds into core + adapters ([#1831](https://github.com/matiaspakua/notaire/issues/1831))

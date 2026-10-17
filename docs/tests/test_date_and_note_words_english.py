@@ -13,18 +13,20 @@ def read(relative: str) -> str:
 
 class DateAndNoteWordsEnglishTest(unittest.TestCase):
     def test_date_parameters_are_english(self):
-        source = read(
-            "backend-api/src/main/java/com/licensis/notaire/service/ValidationAdministrator.java"
+        # ValidationAdministrator was deleted in #1918 (dead residual).
+        # Pin that Spanish date-parameter debt cannot return via that path.
+        gone = ROOT / (
+            "backend-api/src/main/java/com/licensis/notaire/service/"
+            "ValidationAdministrator.java"
         )
-        self.assertIn("Date startDate, Date endDate", source)
-        self.assertIn("endDate.after(startDate)", source)
-        self.assertIn("Date today", source)
-        self.assertIn("today.before(year)", source)
+        self.assertFalse(gone.exists(), "ValidationAdministrator must stay deleted (#1918)")
+        # Spot-check a live entity for Spanish date leftovers.
+        source = read(
+            "backend-api/src/main/java/com/licensis/notaire/business/Folio.java"
+        )
         self.assertNotIn("dateDesde", source)
         self.assertNotIn("dateHasta", source)
         self.assertNotIn("Date actual", source)
-        self.assertIn("'¿'", source)
-        self.assertIn("'¡'", source)
 
     def test_note_fixtures_say_notes(self):
         for relative in (

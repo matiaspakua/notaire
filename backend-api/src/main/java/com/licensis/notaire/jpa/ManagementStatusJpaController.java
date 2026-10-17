@@ -4,6 +4,8 @@
  */
 package com.licensis.notaire.jpa;
 
+import com.licensis.notaire.persistence.PersistenceConstants;
+
 import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
