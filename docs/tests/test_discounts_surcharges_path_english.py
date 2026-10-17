@@ -27,7 +27,8 @@ DESIGN = (
     / "docs"
     / "openspec"
     / "changes"
-    / "docs-921-engineering-sequences"
+    / "archive"
+    / "2026-10-17-docs-921-engineering-sequences"
     / "design.md"
 )
 CU45 = (
