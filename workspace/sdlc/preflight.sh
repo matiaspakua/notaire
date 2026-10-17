@@ -324,7 +324,17 @@ if [ "$MODE_FULL" = "1" ]; then
     if curl -sf http://localhost:8080/actuator/health >/dev/null 2>&1 \
        && curl -sf -o /dev/null http://localhost:3000 2>/dev/null; then
         run "http integration suite" bash -c "cd testing/integration/http && bash test-all-endpoints-v2.sh"
-        run "playwright e2e" bash -c "cd testing/e2e && ./node_modules/.bin/playwright test"
+        # Cursor (and some sandboxes) set PLAYWRIGHT_BROWSERS_PATH to an empty
+        # cache dir; Chromium then fails to launch even when the user cache has
+        # browsers. Drop an unusable override so Playwright uses its default.
+        run "playwright e2e" bash -c '
+            if [ -n "${PLAYWRIGHT_BROWSERS_PATH:-}" ]; then
+                if ! find "$PLAYWRIGHT_BROWSERS_PATH" -type f -name chrome-headless-shell 2>/dev/null | grep -q .; then
+                    unset PLAYWRIGHT_BROWSERS_PATH
+                fi
+            fi
+            cd testing/e2e && ./node_modules/.bin/playwright test
+        '
 
         # Mirrors playwright-e2e.yml's "API Tests (Bruno)" job: fetch a JWT up
         # front (the collection sends it on every request; folders run
