@@ -970,6 +970,10 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
   ProcedureOpsAdapter; delete entity-speaking PropertyRepositoryPort and
   PropertyPersistenceAdapter; keep PropertyCatalogPort. Clears last R2 edge (R2 1→0).
 
+- **Backend R6 clear (#1914):** wire IdentificationTypeLookup catalog from JpaAdministrator
+  (no `jpa.*` import in business); move EMF bootstrap to `service.LegacyJpaEmfConfig`
+  (delete `config.JpaConfig`). Clears both R6 edges (R6 2→0). ArchUnit R1–R6 empty.
+
 
 ## Options considered
 

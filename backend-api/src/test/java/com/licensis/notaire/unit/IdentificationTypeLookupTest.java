@@ -54,4 +54,15 @@ class IdentificationTypeLookupTest {
         assertThat(empty.nameOf(1)).isNull();
         assertThat(empty.idOf("DNI")).isZero();
     }
+
+    @Test
+    @DisplayName("wireCatalog installs the supplier used by shared()")
+    void shouldUseWiredCatalogForSharedLookup() {
+        IdentificationTypeLookup.wireCatalog(() -> List.of(new IdentificationType(7, "Wired")));
+
+        assertThat(IdentificationTypeLookup.shared().nameOf(7)).isEqualTo("Wired");
+        assertThat(IdentificationTypeLookup.shared().idOf("wired")).isEqualTo(7);
+
+        IdentificationTypeLookup.wireCatalog(List::of);
+    }
 }
