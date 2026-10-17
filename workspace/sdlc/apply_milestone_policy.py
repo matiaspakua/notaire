@@ -20,6 +20,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from collections import Counter
+from collections.abc import Iterable
 from datetime import date
 from pathlib import Path
 
@@ -40,12 +41,16 @@ from milestone_policy import (  # noqa: E402
     STRIP_USE_CASE_LABEL,
     VIEW_CONTRACTS,
     VIEW_FIELDS,
+    VIEW_LAYOUT,
     classify_closed,
     classify_open,
     lane,
     shipped_train,
     suggested_priority,
 )
+
+REQUIRED_SCOPES = ("repo", "project")
+STATUS_LABEL_PREFIX = "status:"
 
 REPO = "matiaspakua/notaire"
 OWNER = "matiaspakua"
@@ -87,11 +92,102 @@ VIEW_ALIASES = {
 }
 
 
+def http_error_message(step: str, method: str, path: str, code: int, detail: str, obj: str = "") -> str:
+    """Named step + object so an aborted apply shows what failed and what is left."""
+    target = f" ({obj})" if obj else ""
+    return f"step={step}{target}: {method} {path} -> {code} {detail[:800]}"
+
+
+def missing_scopes(have: Iterable[str], required: Iterable[str] = REQUIRED_SCOPES) -> list[str]:
+    have_set = {scope.strip().lower() for scope in have if scope and scope.strip()}
+    # classic PAT may list "repo"; fine-grained may list "project" alone — require both names.
+    return [scope for scope in required if scope.lower() not in have_set]
+
+
+def milestone_field_drift(row: dict, payload: dict) -> dict:
+    """Description / due_on keys that differ from policy (due compared by date prefix)."""
+    drift: dict = {}
+    for key, value in payload.items():
+        if key == "state":
+            continue
+        current = row.get(key) or None
+        if key == "due_on":
+            if value is None and current is None:
+                continue
+            if value and current and str(current)[:10] == str(value)[:10]:
+                continue
+            if value is None and current:
+                drift[key] = value
+                continue
+            if value != current:
+                drift[key] = value
+            continue
+        if current != value:
+            drift[key] = value
+    return drift
+
+
+def closed_issues_with_status_labels(issues: list[dict]) -> list[tuple[int, list[str]]]:
+    found: list[tuple[int, list[str]]] = []
+    for issue in issues:
+        if issue.get("state") != "CLOSED":
+            continue
+        labels = [node["name"] for node in issue["labels"]["nodes"]]
+        status = [name for name in labels if name.lower().startswith(STATUS_LABEL_PREFIX)]
+        if status:
+            found.append((issue["number"], status))
+    return found
+
+
+def assignment_bucket_summary(issues: list[dict]) -> Counter:
+    """Counts of (current milestone → policy target) for mismatched issues."""
+    buckets: Counter = Counter()
+    for issue in issues:
+        title = target_for(issue)
+        current = issue["milestone"]["title"] if issue.get("milestone") else None
+        if title is None:
+            continue
+        if current == title:
+            continue
+        buckets[f"{current or '(none)'} -> {title}"] += 1
+    return buckets
+
+
+def snapshot_freshness_errors(committed: dict, live: dict) -> list[str]:
+    """Fail when committed snapshot drifts from a freshly built live payload."""
+    errors: list[str] = []
+    for key in ("open", "closed"):
+        if committed.get(key) != live.get(key):
+            errors.append(
+                f"snapshot {key} is {committed.get(key)!r}, live is {live.get(key)!r} "
+                "(commit the Owner apply snapshot PR)"
+            )
+    committed_numbers = committed.get("milestoneNumbers") or {}
+    live_numbers = live.get("milestoneNumbers") or {}
+    if set(committed_numbers) != set(live_numbers):
+        missing = sorted(set(live_numbers) - set(committed_numbers))
+        extra = sorted(set(committed_numbers) - set(live_numbers))
+        errors.append(f"snapshot milestone titles drift (missing={missing[:8]} extra={extra[:8]})")
+    return errors
+
+
+def missing_wanted_titles(by_title: dict[str, dict]) -> list[str]:
+    return [title for title in WANTED if title not in by_title]
+
+
 class GitHub:
     def __init__(self) -> None:
         self.token = subprocess.check_output(["gh", "auth", "token"], text=True).strip()
+        self.step = "init"
 
-    def request(self, method: str, path: str, body: dict | None = None) -> tuple[int, dict | list | None]:
+    def request(
+        self,
+        method: str,
+        path: str,
+        body: dict | None = None,
+        *,
+        obj: str = "",
+    ) -> tuple[int, dict | list | None]:
         data = None if body is None else json.dumps(body).encode()
         url = path if path.startswith("https://") else f"https://api.github.com{path}"
         req = urllib.request.Request(
@@ -116,15 +212,41 @@ class GitHub:
                 if exc.code in {403, 429, 500, 502, 503, 504} and attempt < 5:
                     time.sleep(2 ** attempt)
                     continue
-                raise SystemExit(f"{method} {path} -> {exc.code} {detail[:500]}") from exc
-        raise SystemExit(f"{method} {path} failed")
+                raise SystemExit(
+                    http_error_message(self.step, method, path, exc.code, detail, obj=obj)
+                ) from exc
+        raise SystemExit(http_error_message(self.step, method, path, 0, "failed", obj=obj))
+
+    def oauth_scopes(self) -> list[str]:
+        req = urllib.request.Request(
+            "https://api.github.com/user",
+            headers={
+                "Authorization": f"Bearer {self.token}",
+                "Accept": "application/vnd.github+json",
+                "User-Agent": "notaire-milestone-policy",
+            },
+        )
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            raw = resp.headers.get("X-OAuth-Scopes") or ""
+        return [part.strip() for part in raw.split(",") if part.strip()]
+
+    def require_write_scopes(self) -> None:
+        missing = missing_scopes(self.oauth_scopes())
+        if missing:
+            raise SystemExit(
+                "token missing required scope(s): "
+                + ", ".join(missing)
+                + " (gh auth refresh -s repo -s project)"
+            )
 
     def graphql(self, query: str, variables: dict | None = None) -> dict:
         status, payload = self.request("POST", "/graphql", {"query": query, "variables": variables or {}})
         if status != 200 or not isinstance(payload, dict):
-            raise SystemExit(f"graphql status {status}")
+            raise SystemExit(http_error_message(self.step, "POST", "/graphql", status, "bad payload"))
         if payload.get("errors"):
-            raise SystemExit(json.dumps(payload["errors"])[:800])
+            raise SystemExit(
+                http_error_message(self.step, "POST", "/graphql", 200, json.dumps(payload["errors"])[:800])
+            )
         return payload["data"]
 
 
@@ -188,24 +310,35 @@ def stale_views(names: list[str]) -> list[str]:
 
 def retire_milestones(gh: GitHub, apply: bool) -> int:
     """Delete empty merged-away milestones; report non-empty ones (their issues move first)."""
+    gh.step = "retire_milestones"
     _, rows = gh.request("GET", f"/repos/{REPO}/milestones?state=all&per_page=100")
+    retired = retired_milestones(rows if isinstance(rows, list) else [])
+    print(f"== retire_milestones (candidates left={len(retired)})")
     left = 0
-    for row in retired_milestones(rows if isinstance(rows, list) else []):
+    for row in retired:
         if row["open_issues"] + row["closed_issues"]:
             print(f"retired milestone {row['number']} {row['title']!r} still has issues")
             left += 1
             continue
         print(f"delete empty retired milestone {row['number']}: {row['title']}")
         if apply:
-            gh.request("DELETE", f"/repos/{REPO}/milestones/{row['number']}")
+            gh.request(
+                "DELETE",
+                f"/repos/{REPO}/milestones/{row['number']}",
+                obj=row["title"],
+            )
     return left
 
 
 def ensure_milestones(gh: GitHub, apply: bool) -> dict[str, dict]:
+    gh.step = "ensure_milestones"
     status, rows = gh.request("GET", f"/repos/{REPO}/milestones?state=all&per_page=100")
     if status != 200 or not isinstance(rows, list):
         raise SystemExit("could not list milestones")
     by_title = {row["title"]: row for row in rows}
+    pending_renames = sum(1 for old, new in RENAMES.items() if old in by_title and new not in by_title)
+    pending_creates = sum(1 for title in WANTED if title not in by_title)
+    print(f"== ensure_milestones (renames left={pending_renames}, creates left={pending_creates})")
     for old, new in RENAMES.items():
         if old in by_title and new not in by_title:
             print(f"rename milestone {by_title[old]['number']}: {old} -> {new}")
@@ -214,6 +347,7 @@ def ensure_milestones(gh: GitHub, apply: bool) -> dict[str, dict]:
                     "PATCH",
                     f"/repos/{REPO}/milestones/{by_title[old]['number']}",
                     {"title": new},
+                    obj=old,
                 )
             by_title[new] = by_title.pop(old)
             by_title[new]["title"] = new
@@ -225,27 +359,36 @@ def ensure_milestones(gh: GitHub, apply: bool) -> dict[str, dict]:
             if not apply:
                 by_title[title] = {"number": -1, "title": title, "state": payload["state"]}
                 continue
-            _, created = gh.request("POST", f"/repos/{REPO}/milestones", create_body(title))
+            _, created = gh.request(
+                "POST", f"/repos/{REPO}/milestones", create_body(title), obj=title
+            )
             if not isinstance(created, dict):
                 raise SystemExit(f"create failed for {title}")
             by_title[title] = created
             continue
-        drift = {
-            key: value
-            for key, value in payload.items()
-            if key != "state" and (row.get(key) or None) != value and not (
-                key == "due_on" and value and (row.get(key) or "")[:10] == value[:10]
-            )
-        }
+        drift = milestone_field_drift(row, payload)
         if drift and row.get("number", -1) > 0:
             print(f"update milestone {title}: {', '.join(sorted(drift))}")
             if apply:
-                gh.request("PATCH", f"/repos/{REPO}/milestones/{row['number']}", drift)
+                gh.request(
+                    "PATCH", f"/repos/{REPO}/milestones/{row['number']}", drift, obj=title
+                )
     return by_title
 
 
 def assign_issues(gh: GitHub, issues: list[dict], milestones: dict[str, dict], apply: bool) -> Counter:
+    gh.step = "assign_issues"
     moves: Counter = Counter()
+    pending = 0
+    for issue in issues:
+        title = target_for(issue)
+        if title is None:
+            continue
+        current = issue["milestone"]["title"] if issue["milestone"] else None
+        if current == title:
+            continue
+        pending += 1
+    print(f"== assign_issues (moves left={pending})")
     done = 0
     for issue in issues:
         title = target_for(issue)
@@ -259,7 +402,12 @@ def assign_issues(gh: GitHub, issues: list[dict], milestones: dict[str, dict], a
         if apply:
             if number < 0:
                 raise SystemExit("dry-run milestone number used during apply")
-            gh.request("PATCH", f"/repos/{REPO}/issues/{issue['number']}", {"milestone": number})
+            gh.request(
+                "PATCH",
+                f"/repos/{REPO}/issues/{issue['number']}",
+                {"milestone": number},
+                obj=f"#{issue['number']}",
+            )
             done += 1
             if done % 50 == 0:
                 print(f"assigned {done}", flush=True)
@@ -568,6 +716,11 @@ def write_snapshot(payload: dict) -> None:
     PAGE_SNAPSHOT.write_text(text)
 
 
+def _field_names(view: dict, key: str) -> list[str]:
+    nodes = (view.get(key) or {}).get("nodes") or []
+    return [node["name"] for node in nodes if node.get("name")]
+
+
 def check_views(gh: GitHub) -> int:
     bad = 0
     by_name = {view["name"]: view for view in project_views(gh)}
@@ -588,42 +741,110 @@ def check_views(gh: GitHub) -> int:
             if visible != VIEW_FIELDS[name]:
                 print(f"project view {name} fields are {visible!r}, wants {VIEW_FIELDS[name]!r}")
                 bad += 1
+        wanted = VIEW_LAYOUT.get(name) or {}
+        # Horizontal groupBy / table sort cannot be written via updateProjectV2View
+        # (configuration only accepts visibleFieldIds). Fail only when the API
+        # returns a non-empty value that disagrees; empty means "Owner UI step".
+        if wanted.get("group") is not None and "groupByFields" in view:
+            got = tuple(_field_names(view, "groupByFields"))
+            want = tuple(wanted["group"])
+            if got and got != want:
+                print(f"project view {name} groupBy is {got!r}, wants {want!r}")
+                bad += 1
+            elif not got and want:
+                print(f"project view {name}: UI step — group by {', '.join(want)}")
+        if wanted.get("vertical_group") is not None and "verticalGroupByFields" in view:
+            got = tuple(_field_names(view, "verticalGroupByFields"))
+            if got != tuple(wanted["vertical_group"]):
+                print(
+                    f"project view {name} verticalGroupBy is {got!r}, "
+                    f"wants {wanted['vertical_group']!r}"
+                )
+                bad += 1
+        if wanted.get("sort") and view.get("sortByFields"):
+            got = tuple(
+                (node["field"]["name"], node.get("direction", "ASC"))
+                for node in view["sortByFields"]["nodes"]
+                if node.get("field")
+            )
+            want = tuple(wanted["sort"])
+            if got and got != want:
+                print(f"project view {name} sort is {got!r}, wants {want!r}")
+                bad += 1
+            elif not got and want:
+                print(
+                    f"project view {name}: UI step — sort by "
+                    + ", ".join(f"{field} {direction}" for field, direction in want)
+                )
     for name in stale_views(list(by_name)):
         print(f"project view {name} is not in the view contract (delete it)")
         bad += 1
-    roadmap = by_name.get("Release roadmap")
-    if roadmap and [node["name"] for node in roadmap["groupByFields"]["nodes"]] != ["Milestone"]:
-        print("project view Release roadmap must be grouped by Milestone")
+    return bad
+
+
+def check_milestone_metadata(rows: list[dict]) -> int:
+    bad = 0
+    by_title = {row["title"]: row for row in rows}
+    for title in missing_wanted_titles(by_title):
+        print(f"policy milestone missing: {title}")
         bad += 1
-    kanban = by_name.get("Kanban")
-    if kanban and [node["name"] for node in kanban["verticalGroupByFields"]["nodes"]] != ["Status"]:
-        print("project view Kanban must be grouped vertically by Status")
+    for title in WANTED:
+        row = by_title.get(title)
+        if row is None:
+            continue
+        drift = milestone_field_drift(row, milestone_payload(title))
+        if drift:
+            print(f"milestone {title} drift: {', '.join(sorted(drift))}")
+            bad += 1
+    for row in retired_milestones(rows):
+        print(f"retired milestone {row['number']} {row['title']!r} still exists")
         bad += 1
     return bad
 
 
 def check(gh: GitHub, issues: list[dict]) -> int:
+    gh.step = "check"
     bad = 0
+    shown = 0
     for issue in issues:
         title = target_for(issue)
         current = issue["milestone"]["title"] if issue["milestone"] else None
         if issue["state"] == "OPEN":
             if current != title:
                 bad += 1
-                if bad <= 15:
+                if shown < 15:
                     print(f"open #{issue['number']} has {current!r}, policy wants {title}")
+                    shown += 1
         elif title is not None and current != title:
             bad += 1
-            if bad <= 15:
+            if shown < 15:
                 print(f"closed #{issue['number']} has {current!r}, policy wants {title}")
+                shown += 1
+    buckets = assignment_bucket_summary(issues)
+    if buckets:
+        print("per-bucket summary (current -> target):")
+        for key, count in buckets.most_common():
+            print(f"  {count:4}  {key}")
+    for number, labels in closed_issues_with_status_labels(issues):
+        print(f"closed #{number} still has status labels: {', '.join(labels)}")
+        bad += 1
     missing_items = missing_project_issues(issues, project_items(gh))
     for issue in missing_items:
         print(f"issue #{issue['number']} is missing from Project #1")
     bad += len(missing_items)
     bad += check_views(gh)
     _, rows = gh.request("GET", f"/repos/{REPO}/milestones?state=all&per_page=100")
-    for row in retired_milestones(rows if isinstance(rows, list) else []):
-        print(f"retired milestone {row['number']} {row['title']!r} still exists")
+    row_list = rows if isinstance(rows, list) else []
+    bad += check_milestone_metadata(row_list)
+    milestones = {row["title"]: row for row in row_list}
+    live_snap = snapshot(issues, milestones)
+    if SNAPSHOT.is_file():
+        committed = json.loads(SNAPSHOT.read_text())
+        for err in snapshot_freshness_errors(committed, live_snap):
+            print(err)
+            bad += 1
+    else:
+        print(f"committed snapshot missing: {SNAPSHOT}")
         bad += 1
     print(f"mismatches: {bad}")
     return 1 if bad else 0
@@ -641,6 +862,10 @@ def main() -> int:
     except subprocess.CalledProcessError:
         print("milestone policy check skipped: gh auth token unavailable")
         return 0
+    if args.apply:
+        gh.step = "scope_preflight"
+        print("== scope_preflight (require repo, project)")
+        gh.require_write_scopes()
     issues = load_issues(gh)
     if args.check:
         return check(gh, issues)
@@ -650,19 +875,33 @@ def main() -> int:
     for key, count in moves.most_common():
         print(f"{count:4}  {key}")
     print(f"moves: {sum(moves.values())}")
+    gh.step = "fix_labels"
+    print("== fix_labels")
     fix_labels(gh, issues, apply)
     retire_milestones(gh, apply)
     if not apply:
         return 0
+    gh.step = "close_empty_history"
+    print("== close_empty_history")
     close_empty_history(gh, True)
+    gh.step = "ensure_project_items"
+    print("== ensure_project_items")
     items = project_items(gh)
     items = ensure_project_items(gh, issues, items)
+    gh.step = "ensure_date_fields"
+    print("== ensure_date_fields")
     start_id, target_id = ensure_date_fields(gh)
     # Reload so dates follow the milestones just written.
     issues = load_issues(gh)
     milestones = ensure_milestones(gh, True)
+    gh.step = "set_roadmap_dates"
+    print("== set_roadmap_dates")
     set_roadmap_dates(gh, issues, items, start_id, target_id)
+    gh.step = "configure_views"
+    print("== configure_views")
     configure_views(gh)
+    gh.step = "write_snapshot"
+    print("== write_snapshot")
     write_snapshot(snapshot(issues, milestones))
     print(f"wrote {SNAPSHOT}")
     return 0

@@ -27,8 +27,11 @@ from milestone_policy import (
     SHIPPED,
     VIEW_CONTRACTS,
     VIEW_FIELDS,
+    VIEW_LAYOUT,
+    VIEW_UI_ONLY,
     classify_closed,
     classify_open,
+    current_train,
     is_history,
     lane,
     lanes_blocked_by,
@@ -36,10 +39,20 @@ from milestone_policy import (
     suggested_priority,
 )
 from apply_milestone_policy import (
+    WANTED,
+    assignment_bucket_summary,
+    closed_issues_with_status_labels,
     create_body,
+    ensure_milestones,
+    http_error_message,
+    milestone_field_drift,
     milestone_payload,
     missing_project_issues,
+    missing_scopes,
+    missing_wanted_titles,
+    retire_milestones,
     retired_milestones,
+    snapshot_freshness_errors,
     stale_views,
     target_for,
 )
@@ -394,7 +407,7 @@ class RoadmapContractTests(unittest.TestCase):
              "Blocked / needs info", "Release roadmap", "Shipped", "Catalog"],
         )
         self.assertIn("label:status:ready,ready-for-dev", VIEW_CONTRACTS["Agent queue"][1])
-        self.assertIn(f'milestone:"{RELEASE}"', VIEW_CONTRACTS["Current train"][1])
+        self.assertIn(f'milestone:"{current_train()}"', VIEW_CONTRACTS["Current train"][1])
         self.assertIn("is:closed", VIEW_CONTRACTS["Shipped"][1])
         self.assertIn(f'milestone:"{CATALOG}"', VIEW_CONTRACTS["Catalog"][1])
         for name in ("trace:rf", "requerimiento-funcional", "trace:cu", "CASO-DE-USO"):
@@ -407,6 +420,16 @@ class RoadmapContractTests(unittest.TestCase):
             self.assertFalse({"Priority", "Area", "Kind"} & set(fields))
         self.assertIn("Labels", VIEW_FIELDS["Agent queue"])
         self.assertNotIn("Start", VIEW_FIELDS["Kanban"])
+
+    def test_view_layout_covers_all_nine_views(self):
+        self.assertEqual(set(VIEW_LAYOUT), set(VIEW_CONTRACTS))
+        self.assertEqual(VIEW_LAYOUT["Kanban"]["vertical_group"], ("Status",))
+        self.assertEqual(VIEW_LAYOUT["Release roadmap"]["group"], ("Milestone",))
+        self.assertTrue(VIEW_UI_ONLY)
+
+    def test_current_train_is_the_earliest_scheduled(self):
+        self.assertEqual(current_train(), SCHEDULED[0])
+        self.assertEqual(current_train(), RELEASE)
 
 
 class LaneTests(unittest.TestCase):
@@ -469,5 +492,143 @@ class PriorityTests(unittest.TestCase):
         )
 
 
+class RicherCheckHelpersTests(unittest.TestCase):
+    def test_description_and_due_drift(self):
+        row = {"title": RELEASE, "description": "stale", "due_on": "2099-01-01T00:00:00Z"}
+        drift = milestone_field_drift(row, milestone_payload(RELEASE))
+        self.assertIn("description", drift)
+        self.assertIn("due_on", drift)
+
+    def test_closed_with_status_labels(self):
+        issues = [
+            {
+                "number": 1,
+                "state": "CLOSED",
+                "labels": {"nodes": [{"name": "status:in-progress"}, {"name": "bug"}]},
+                "milestone": None,
+            },
+            {
+                "number": 2,
+                "state": "OPEN",
+                "labels": {"nodes": [{"name": "status:ready"}]},
+                "milestone": None,
+            },
+        ]
+        self.assertEqual(closed_issues_with_status_labels(issues), [(1, ["status:in-progress"])])
+
+    def test_bucket_summary_and_missing_milestones(self):
+        issues = [
+            {
+                "number": 3,
+                "state": "OPEN",
+                "title": "RF-01",
+                "labels": {"nodes": [{"name": "requerimiento-funcional"}]},
+                "milestone": {"title": BACKLOG},
+            }
+        ]
+        summary = assignment_bucket_summary(issues)
+        self.assertEqual(summary[f"{BACKLOG} -> {CATALOG}"], 1)
+        self.assertEqual(missing_wanted_titles({}), list(WANTED))
+
+    def test_snapshot_freshness(self):
+        committed = {"open": 1, "closed": 2, "milestoneNumbers": {"A": 1}}
+        live = {"open": 9, "closed": 2, "milestoneNumbers": {"A": 1, "B": 2}}
+        errors = snapshot_freshness_errors(committed, live)
+        self.assertTrue(any("open" in e for e in errors))
+        self.assertTrue(any("milestone titles" in e for e in errors))
+
+    def test_missing_scopes_and_http_error_name_step(self):
+        self.assertEqual(missing_scopes(["repo"]), ["project"])
+        self.assertEqual(missing_scopes(["repo", "project"]), [])
+        msg = http_error_message("ensure_milestones", "POST", "/repos/x/milestones", 422, "due_on", obj=CATALOG)
+        self.assertIn("ensure_milestones", msg)
+        self.assertIn(CATALOG, msg)
+
+
+class FakeGitHub:
+    """Rejects ``due_on: null`` on POST the way the live API did on the first Owner run."""
+
+    def __init__(self) -> None:
+        self.step = "init"
+        self.milestones: dict[str, dict] = {}
+        self.next_number = 1
+        self.posts: list[dict] = []
+
+    def request(self, method: str, path: str, body: dict | None = None, *, obj: str = ""):
+        if method == "GET" and path.endswith("/milestones?state=all&per_page=100"):
+            return 200, list(self.milestones.values())
+        if method == "POST" and path.endswith("/milestones"):
+            assert body is not None
+            if "due_on" in body and body["due_on"] is None:
+                raise SystemExit(f"step={self.step}: rejected due_on null for {obj or body.get('title')}")
+            self.posts.append(body)
+            row = {
+                "number": self.next_number,
+                "title": body["title"],
+                "description": body.get("description"),
+                "due_on": body.get("due_on"),
+                "state": body.get("state", "open"),
+                "open_issues": 0,
+                "closed_issues": 0,
+            }
+            self.next_number += 1
+            self.milestones[row["title"]] = row
+            return 201, row
+        if method == "PATCH" and "/milestones/" in path:
+            number = int(path.rsplit("/", 1)[-1])
+            row = next(r for r in self.milestones.values() if r["number"] == number)
+            row.update(body or {})
+            return 200, row
+        if method == "DELETE" and "/milestones/" in path:
+            number = int(path.rsplit("/", 1)[-1])
+            title = next(t for t, r in self.milestones.items() if r["number"] == number)
+            del self.milestones[title]
+            return 204, None
+        raise AssertionError(f"unexpected {method} {path}")
+
+    def graphql(self, query: str, variables: dict | None = None) -> dict:
+        raise AssertionError("graphql unused in whole-run fixture")
+
+
+class WholeRunFakeGitHubTests(unittest.TestCase):
+    def test_whole_run_survives_due_on_null_rejection_and_ends_clean(self):
+        gh = FakeGitHub()
+        # Pre-seed a merged-away empty bucket so retire has work.
+        gh.milestones["History · v1.1 priority bucket"] = {
+            "number": 99,
+            "title": "History · v1.1 priority bucket",
+            "open_issues": 0,
+            "closed_issues": 0,
+            "description": "old",
+            "due_on": None,
+            "state": "open",
+        }
+        # Target of the rename must exist so the old title is retired.
+        gh.milestones[RENAMES["History · v1.1 priority bucket"]] = {
+            "number": 12,
+            "title": RENAMES["History · v1.1 priority bucket"],
+            "open_issues": 0,
+            "closed_issues": 0,
+            "description": MILESTONE_DESCRIPTION[RENAMES["History · v1.1 priority bucket"]],
+            "due_on": MILESTONE_DUE.get(RENAMES["History · v1.1 priority bucket"]),
+            "state": "closed",
+        }
+        by_title = ensure_milestones(gh, apply=True)
+        for title in WANTED:
+            self.assertIn(title, by_title)
+        for body in gh.posts:
+            self.assertFalse("due_on" in body and body["due_on"] is None, body)
+            if body["title"] in (BACKLOG, CATALOG):
+                self.assertNotIn("due_on", body)
+        left = retire_milestones(gh, apply=True)
+        self.assertEqual(left, 0)
+        self.assertNotIn("History · v1.1 priority bucket", gh.milestones)
+        # Zero metadata mismatches against the fake catalogue.
+        from apply_milestone_policy import check_milestone_metadata
+
+        self.assertEqual(check_milestone_metadata(list(gh.milestones.values())), 0)
+
+
 if __name__ == "__main__":
     unittest.main()
+

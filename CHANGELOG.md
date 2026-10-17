@@ -7,10 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Bug Fixes
+
+* **pm:** harden milestone / board Owner tooling — whole-run `due_on` safety, richer `--check`, scope preflight, GraphQL board coherence with `open_prs`/R6, Status Done sync tool, Closes/Refs guard, versioned `workspace/sdlc/owner/` scripts ([#1878](https://github.com/matiaspakua/notaire/issues/1878))
+
 ### Documentation
 
 * **sdlc:** encode post-#1859 fleet lessons — R2 package-move path hygiene, human paste templates, performance/cost serialize, Mac≠CI green, `validate-sdlc-plan` gh retry harden ([#1907](https://github.com/matiaspakua/notaire/issues/1907))
 * **pm:** version-first milestone nomenclature — `vX.Y · <Theme> (<YYYY-MM>)` trains (v0.3 … v1.0), `H0`–`H8` history stages, closed `v0.1`/`v0.2` cuts, continuous `Backlog · Unscheduled` and `Catalog · Requirements & use cases`; `train_for()` reads the version prefix ([#1847](https://github.com/matiaspakua/notaire/issues/1847))
+* **pm:** VIEW_LAYOUT group/sort contracts and UI-only notes; Owner script paths under `workspace/sdlc/owner/` ([#1878](https://github.com/matiaspakua/notaire/issues/1878))
 
 ### Code Refactoring
 

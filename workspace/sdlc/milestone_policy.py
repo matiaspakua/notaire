@@ -42,6 +42,15 @@ SHIPPED = (V01, V02)
 HISTORY_STAGES = (H0, H1, H2, H3, H4, H5, H6, H7, H8)
 HISTORY_ERAS = (HISTORY_Q2, HISTORY_Q3, HISTORY_Q4)
 
+
+def current_train() -> str:
+    """Earliest open delivery train. ``SCHEDULED`` is ordered current → future.
+
+    A train cut updates ``SCHEDULED`` (and ``RELEASE``); the Current train view
+    filter is rebuilt from this helper so it does not hardcode a version string.
+    """
+    return SCHEDULED[0]
+
 # Last tag of each shipped minor, in UTC. A closed issue up to that instant
 # (and after the previous cut) shipped in that train.
 CUT_WINDOWS = (
@@ -64,17 +73,22 @@ DELIVERY_FILTER = f"is:open {CATALOG_EXCLUSIONS}"
 TRIAGE_FILTER = f"{DELIVERY_FILTER} -label:priority:critical,priority:high,priority:medium,priority:low"
 HOLD_LABELS = "status:blocked,blocked,status:needs-info,needs-info"
 AGENT_QUEUE_FILTER = f"is:open status:Todo label:status:ready,ready-for-dev -label:{HOLD_LABELS} {CATALOG_EXCLUSIONS}"
-VIEW_CONTRACTS = {
-    "Kanban": ("BOARD_LAYOUT", DELIVERY_FILTER),
-    "Current train": ("TABLE_LAYOUT", f'is:open milestone:"{RELEASE}" {CATALOG_EXCLUSIONS}'),
-    "Agent queue": ("TABLE_LAYOUT", AGENT_QUEUE_FILTER),
-    "In flight": ("TABLE_LAYOUT", f'is:open status:"In Progress" {CATALOG_EXCLUSIONS}'),
-    "Needs triage": ("TABLE_LAYOUT", TRIAGE_FILTER),
-    "Blocked / needs info": ("TABLE_LAYOUT", f"is:open label:{HOLD_LABELS}"),
-    "Release roadmap": ("ROADMAP_LAYOUT", f'{FULL_LIFECYCLE_FILTER} -milestone:"{BACKLOG}"'),
-    "Shipped": ("TABLE_LAYOUT", f'is:closed milestone:"{V01}","{V02}"'),
-    "Catalog": ("TABLE_LAYOUT", f'milestone:"{CATALOG}"'),
-}
+def _view_contracts() -> dict[str, tuple[str, str]]:
+    train = current_train()
+    return {
+        "Kanban": ("BOARD_LAYOUT", DELIVERY_FILTER),
+        "Current train": ("TABLE_LAYOUT", f'is:open milestone:"{train}" {CATALOG_EXCLUSIONS}'),
+        "Agent queue": ("TABLE_LAYOUT", AGENT_QUEUE_FILTER),
+        "In flight": ("TABLE_LAYOUT", f'is:open status:"In Progress" {CATALOG_EXCLUSIONS}'),
+        "Needs triage": ("TABLE_LAYOUT", TRIAGE_FILTER),
+        "Blocked / needs info": ("TABLE_LAYOUT", f"is:open label:{HOLD_LABELS}"),
+        "Release roadmap": ("ROADMAP_LAYOUT", f'{FULL_LIFECYCLE_FILTER} -milestone:"{BACKLOG}"'),
+        "Shipped": ("TABLE_LAYOUT", f'is:closed milestone:"{V01}","{V02}"'),
+        "Catalog": ("TABLE_LAYOUT", f'milestone:"{CATALOG}"'),
+    }
+
+
+VIEW_CONTRACTS = _view_contracts()
 VIEW_FIELDS = {
     "Kanban": ("Title", "Assignees", "Labels", "Milestone"),
     "Current train": ("Title", "Assignees", "Status", "Labels", "Linked pull requests"),
@@ -82,6 +96,28 @@ VIEW_FIELDS = {
     "In flight": ("Title", "Assignees", "Labels", "Linked pull requests", "Milestone"),
     "Needs triage": ("Title", "Status", "Labels", "Milestone"),
 }
+# Group / sort / column expectations the GraphQL API can read (#1878).
+# Keys: group (horizontal), vertical_group (board columns), sort (field, direction).
+VIEW_LAYOUT = {
+    "Kanban": {"group": (), "vertical_group": ("Status",), "sort": (("Milestone", "ASC"),)},
+    "Current train": {"group": ("Status",), "vertical_group": (), "sort": (("Priority", "DESC"),)},
+    "Agent queue": {"group": ("Milestone",), "vertical_group": (), "sort": (("Priority", "DESC"),)},
+    "In flight": {"group": (), "vertical_group": (), "sort": (("Updated at", "DESC"),)},
+    "Needs triage": {"group": ("Milestone",), "vertical_group": (), "sort": (("Created at", "ASC"),)},
+    "Blocked / needs info": {"group": (), "vertical_group": (), "sort": (("Updated at", "DESC"),)},
+    "Release roadmap": {"group": ("Milestone",), "vertical_group": (), "sort": ()},
+    "Shipped": {"group": ("Milestone",), "vertical_group": (), "sort": (("Closed at", "DESC"),)},
+    "Catalog": {"group": (), "vertical_group": (), "sort": (("Title", "ASC"),)},
+}
+# Settings updateProjectV2View cannot set — UI-only after each Owner apply
+# (docs/github/README.md). --check prints "UI step" when group/sort is empty.
+VIEW_UI_ONLY = (
+    "horizontal group-by on table views (Agent queue / Needs triage / Shipped / …)",
+    "table sort when sortByFields is empty on the view node",
+    "column width / order beyond visibleFieldIds",
+    "roadmap date-field mapping (Start/Target on the roadmap axis)",
+    "board card fields beyond Status columns",
+)
 
 # Old title -> new title. Several buckets merge into H8; renames are one hop.
 RENAMES = {

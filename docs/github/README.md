@@ -68,18 +68,37 @@ Every issue has exactly one milestone. The full list, assignment precedence,
 and read-only verification are in
 [MILESTONES.md](../300-development/305-project-management/MILESTONES.md).
 
-The Project views (#1860; set up in the UI, filters checked by
-`apply_milestone_policy.py --check`):
+The Project views (#1860; filters and readable group/sort checked by
+`apply_milestone_policy.py --check`). Contracts live in
+`workspace/sdlc/milestone_policy.py` (`VIEW_CONTRACTS`, `VIEW_FIELDS`,
+`VIEW_LAYOUT`). **Current train** uses `current_train()` (earliest open entry in
+`SCHEDULED`); a train cut updates `SCHEDULED` / `RELEASE` and the filter follows.
 
-- **Kanban** — open non-catalog work, columns by Status
-- **Current train** — the open train (`v0.3` today), grouped by Status; retarget each train
-- **Agent queue** — Todo, `status:ready`, not blocked / needs-info
-- **In flight** — Status In Progress, with linked PRs
-- **Needs triage** — open work without a priority label
-- **Blocked / needs info** — open work held by a person or dependency
-- **Release roadmap** — history through v1.0, grouped by Milestone, Backlog excluded
-- **Shipped** — closed work of v0.1/v0.2, grouped by Milestone (CHANGELOG check)
-- **Catalog** — RF / RNF / CU anchors, never an agent queue
+| View | Group / columns | Sort (when API returns it) |
+|------|-----------------|----------------------------|
+| Kanban | columns by Status | Milestone ASC |
+| Current train | group by Status | Priority DESC |
+| Agent queue | group by Milestone | Priority DESC |
+| In flight | — | Updated at DESC |
+| Needs triage | group by Milestone | Created at ASC |
+| Blocked / needs info | — | Updated at DESC |
+| Release roadmap | group by Milestone | — |
+| Shipped | group by Milestone | Closed at DESC |
+| Catalog | — | Title ASC |
+
+**UI-only** (GraphQL `updateProjectV2View` only sets name/layout/filter/
+`visibleFieldIds` — confirm in the Project UI after each Owner apply).
+`--check` prints `UI step — …` when group/sort is still empty (not a mismatch);
+it fails when the API returns a non-empty value that disagrees with `VIEW_LAYOUT`:
+
+- horizontal group-by on table views (Agent queue, Needs triage, Shipped, …)
+- table sort when `sortByFields` is empty
+- column width / order beyond `visibleFieldIds`
+- roadmap date-field mapping (Start/Target on the roadmap axis)
+- board card fields beyond Status columns
+
+Owner scripts: `workspace/sdlc/owner/` (preview default; see that README).
+Closed issues stuck off Done: `python3 workspace/sdlc/sync_closed_status_done.py`.
 
 Priority, area and kind are labels; the project has no Priority/Area/Kind fields.
 
