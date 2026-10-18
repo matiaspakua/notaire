@@ -15,7 +15,8 @@ which define the mandatory workflow.
 | [`302-code-standards/`](302-code-standards/) | Code standards: DTO mapping, error handling, JPA lazy loading, Spring transactions |
 | [`303-testing/`](303-testing/) | Test suites, the use-case-to-API matrix, and QA guides |
 | [`templates/`](templates/) | Templates for OpenSpec specifications |
-| [`ASSESSMENT-2026-10.md`](ASSESSMENT-2026-10.md) | System assessment (October 2026): test results, findings by dimension, and linked issues |
+| [`ASSESSMENT-REFRESH-2026-10-18.md`](ASSESSMENT-REFRESH-2026-10-18.md) | Current PE assessment (2026-10-18): live gate evidence, corrected RBAC/hex/coverage claims |
+| [`ASSESSMENT-2026-10.md`](ASSESSMENT-2026-10.md) | Historical baseline assessment (2026-10-04); superseded by the refresh above |
 | [`REPO-SPLIT-PLAN.md`](REPO-SPLIT-PLAN.md) | Phased plan and exit criteria for the repository topology (#1197, ADR-024) |
 | [`MODULE-OWNERSHIP.md`](MODULE-OWNERSHIP.md) | In-repo module map (ADR-026): paths, fleets, verify, Mermaid deps — #1197 Phase 0 |
 | [`REPO-METRICS-BASELINE.md`](REPO-METRICS-BASELINE.md) | Reproducible repo metrics for topology decisions (#1256 / #1417) |
