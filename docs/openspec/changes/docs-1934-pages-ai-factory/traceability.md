@@ -40,6 +40,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | `docs/300-development/304-ai-sdlc-cloud/FLEET-ARCHITECTURE.md` | yes | this PR |
 | `docs/300-development/304-ai-sdlc-cloud/ENVIRONMENT-CHECKLIST.md` | yes | this PR |
 | `docs/300-development/304-ai-sdlc-cloud/README.md` | yes | this PR |
+| `docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md` | yes | this PR |
 | `github-page/README.md` | yes | this PR |
 
 ## Gate log

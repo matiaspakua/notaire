@@ -180,7 +180,7 @@ locally when CI already skips them.
 Observed 2026-10-02 on PRs around #1126 / #1128 / #1132 / #1136 / #1137:
 premature merge was avoided after light CI (~12–18 checks) or a CI
 subscription “all N checks success” while backend CI and Playwright were still
-pending; stale tips looked like product bugs until rebased onto #1132. Applies
+pending; stale tips looked like product bugs until updated from `main` (merge, not rebase) to pick up #1132. Applies
 to all future autonomous merges.
 
 ## Runner contention — serialize heavy CI
@@ -196,7 +196,7 @@ heavy workflows are still pending). That is **not** mergeable — always run
 | Priority | Do |
 |----------|----|
 | In-flight product / hotfix PR waiting on Integration or Playwright | Let its heavy suite finish (or fail) before pushing more tips that enqueue another full suite |
-| Docs / rebase / low-priority PRs | Wait — do not push commits that re-trigger Playwright while a higher-priority tip is queued |
+| Docs / stale-tip / low-priority PRs | Wait — do not push commits that re-trigger Playwright while a higher-priority tip is queued |
 | New product work | Do **not** open a new product PR until the in-flight heavy suite finishes |
 | Dependabot / bulk dependency PRs | Convert to draft while a feature PR’s heavy suite is queued or running |
 
