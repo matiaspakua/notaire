@@ -38,7 +38,7 @@ passed its thresholds but failed on `Upload k6 results`: *Artifact storage quota
 
 ### Modified Capabilities
 
-- none; CI configuration only (`skip_specs: true`).
+- `zap-dast-ratchet`: ADDED requirements for the reviewed allowlist set and best-effort report uploads.
 
 ## Impact Analysis
 
