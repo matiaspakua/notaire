@@ -70,7 +70,7 @@ class AiSdlcSectionStructureTest(unittest.TestCase):
     def test_content_declares_every_required_diagram_as_mermaid(self):
         text = CONTENT.read_text(encoding="utf-8")
         for name in DIAGRAMS:
-            match = re.search(rf"export const {name} = `\s*(\w+)", text)
+            match = re.search(rf"export const {name} = `\s*([\w-]+)", text)
             self.assertIsNotNone(match, f"diagram {name} missing")
             self.assertIn(
                 match.group(1),
@@ -79,10 +79,11 @@ class AiSdlcSectionStructureTest(unittest.TestCase):
             )
 
     def test_every_diagram_is_rendered_by_a_page(self):
+        ui = (PAGE / "components" / "FactoryUI.tsx").read_text(encoding="utf-8")
+        self.assertIn("<MermaidDiagram", ui, "the section's Diagram must render through MermaidDiagram")
         pages = "\n".join(p.read_text(encoding="utf-8") for p in SECTION.rglob("page.tsx"))
-        self.assertIn("MermaidDiagram", pages)
         for name in DIAGRAMS:
-            self.assertIn(name, pages, f"diagram {name} is declared but no page renders it")
+            self.assertRegex(pages, rf"<Diagram chart=\{{{name}\}}", f"diagram {name} is declared but no page renders it")
 
 
 class AiSdlcSectionGroundingTest(unittest.TestCase):

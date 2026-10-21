@@ -55,6 +55,12 @@ export function Nav() {
             </a>
           ))}
           <Link
+            href="/ai-sdlc/"
+            className="px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 text-violet-700 hover:text-violet-900 hover:bg-violet-500/10"
+          >
+            AI Factory
+          </Link>
+          <Link
             href="/docs/"
             className="px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-900/5"
           >

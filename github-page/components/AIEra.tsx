@@ -29,7 +29,7 @@ const features = [
   {
     icon: "📖",
     title: "Living Documentation",
-    desc: "87 use cases, 121 functional/non-functional requirements, 21 ADRs. Documentation updated with every PR.",
+    desc: "Use cases, functional and non-functional requirements, and ADRs live in docs/ and change in the same PR as the code. The AI Factory section counts them live.",
     color: "#ff9500",
   },
   {
