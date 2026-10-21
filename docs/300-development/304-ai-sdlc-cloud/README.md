@@ -3,6 +3,10 @@
 Configuration for Notaire's **Cursor Cloud** autonomous SDLC path:
 issue → OpenSpec Gate 1 → TDD → implement → preflight/CI → PR → review → merge.
 
+> **Public overview:** the [AI Factory section](https://matiaspakua.github.io/notaire/ai-sdlc/) of the
+> GitHub Pages site (source: [`github-page/app/ai-sdlc/`](../../../github-page/app/ai-sdlc/)) explains this
+> SDLC with diagrams, apart from the product docs. These files stay the source of truth (#1934).
+
 | Document | Purpose |
 |----------|---------|
 | [`FLEET-ARCHITECTURE.md`](FLEET-ARCHITECTURE.md) | Foreman + specialist roles, model recommendations, handoffs, local-ai exclusion, process learnings |

@@ -31,12 +31,20 @@ export function DocsChrome({ children }: { children: React.ReactNode }) {
             <span className="text-neutral-300">/</span>
             <span className="text-sm text-neutral-600">Technical Docs</span>
           </div>
-          <Link
-            href="/"
-            className="text-sm text-neutral-600 hover:text-[#0A84FF] transition-colors"
-          >
-            ← Story site
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/ai-sdlc/"
+              className="text-sm font-medium text-violet-700 hover:text-violet-900 transition-colors"
+            >
+              AI Factory (how Notaire is built) →
+            </Link>
+            <Link
+              href="/"
+              className="text-sm text-neutral-600 hover:text-[#0A84FF] transition-colors"
+            >
+              ← Story site
+            </Link>
+          </div>
         </div>
         <nav className="max-w-5xl mx-auto px-6 pb-3 flex flex-wrap gap-1">
           {links.map((l) => {

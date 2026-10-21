@@ -5,9 +5,11 @@ import { useEffect, useId, useRef, useState } from "react";
 type Props = {
   chart: string;
   className?: string;
+  /** Extra flowchart options, e.g. a wider label wrap for text-heavy diagrams (#1934). */
+  flowchart?: { wrappingWidth?: number; nodeSpacing?: number; rankSpacing?: number };
 };
 
-export function MermaidDiagram({ chart, className }: Props) {
+export function MermaidDiagram({ chart, className, flowchart }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
   const reactId = useId().replace(/:/g, "");
   const [error, setError] = useState<string | null>(null);
@@ -22,6 +24,7 @@ export function MermaidDiagram({ chart, className }: Props) {
           theme: "neutral",
           securityLevel: "strict",
           fontFamily: "var(--font-body)",
+          ...(flowchart ? { flowchart } : {}),
         });
         const id = `mmd-${reactId}`;
         const { svg } = await mermaid.render(id, chart.trim());
@@ -38,7 +41,7 @@ export function MermaidDiagram({ chart, className }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [chart, reactId]);
+  }, [chart, reactId, flowchart]);
 
   if (error) {
     return (
