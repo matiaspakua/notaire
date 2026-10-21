@@ -2,3 +2,4 @@
 # Format: alertId<TAB>action<TAB>(reason) — see zaproxy/action-baseline rules_file_name.
 # Reviewed under Sec by Design: only accept noise that cannot apply to this scan surface.
 90005	IGNORE	(Sec-Fetch-* request headers — browser-only; not meaningful for server API baseline)
+10049	IGNORE	(Non-Storable Content — informational; 404 JSON answers on /, robots.txt and sitemap.xml must not be stored by shared caches, #1932)

@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **ci:** weekly DAST ZAP and k6 runs stay green on reviewed noise — allowlist informational ZAP 10049 (Non-Storable Content on 404s) with a pinned reviewed set; report uploads are `continue-on-error` so an artifact-quota outage cannot turn a passing run red ([#1932](https://github.com/matiaspakua/notaire/issues/1932))
 * **pm:** harden milestone / board Owner tooling — whole-run `due_on` safety, richer `--check`, scope preflight, GraphQL board coherence with `open_prs`/R6, Status Done sync tool, Closes/Refs guard, versioned `workspace/sdlc/owner/` scripts ([#1878](https://github.com/matiaspakua/notaire/issues/1878))
 
 ### Documentation
