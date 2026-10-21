@@ -17,7 +17,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `fix/1932_dast_k6_weekly_red` | from `origin/main` |
 | Tasks | `tasks.md` | groups 1–9 done; 10–12 at PR/merge |
 | Commits | see PR | recorded in PR |
-| Pull Request | see PR for #1932 | pending |
+| Pull Request | #1933 | open |
 | CI run | PR checks | pending |
 | Merge commit | Owner merge | pending |
 | Release / tag | next cut | pending |
