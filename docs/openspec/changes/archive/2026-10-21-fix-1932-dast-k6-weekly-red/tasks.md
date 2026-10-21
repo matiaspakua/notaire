@@ -50,10 +50,10 @@
 
 ## 7. Ejecutar Playwright
 
-- [x] 7.1 Add/update the E2E specs listed in design.md — Playwright Strategy
-- [x] 7.2 `cd testing/e2e && npx playwright test` — all green
-- [x] 7.3 Verify the affected screens at 320px, 768px and 1024px
-- [x] 7.4 n/a — no UI surface (process tooling and docs)
+- [x] 7.1 n/a — no UI surface
+- [x] 7.2 n/a — no UI surface
+- [x] 7.3 n/a — no UI surface
+- [x] 7.4 n/a — CI configuration only
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
