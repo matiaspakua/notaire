@@ -1,4 +1,4 @@
-> Governed by [CONSTITUTION.md](../../../../CONSTITUTION.md) — §5 Official SDLC
+> Governed by [CONSTITUTION.md](../../../../../CONSTITUTION.md) — §5 Official SDLC
 > Workflow, §6 Quality Gates. Groups 1-12 are **mandatory**: a plan that omits one
 > is incomplete and `workspace/sdlc/validate-sdlc-plan.sh` will reject it. Add
 > change-specific work inside group 4; do not renumber the mandatory groups.
@@ -75,8 +75,8 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Archive this change in the PR: `cd docs && openspec archive <change-name> --yes` (skip only if `.openspec.yaml` sets `multi_pr: true`)
-- [ ] 10.2 `git push -u origin <branch-name>`
+- [x] 10.1 Archive this change in the PR: `cd docs && openspec archive <change-name> --yes` (skip only if `.openspec.yaml` sets `multi_pr: true`)
+- [x] 10.2 `git push -u origin <branch-name>`
 - [ ] 10.3 Open the PR titled `[#<issue>] <type>(<scope>): <description>`, referencing Issue and Use Case
 - [ ] 10.4 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
 - [ ] 10.5 Gate 4 — CI green, code review approved, no merge conflicts, docs complete

@@ -1,6 +1,6 @@
 # Pages "AI Factory" section — the AI SDLC that builds Notaire
 
-> Governed by [CONSTITUTION.md](../../../../CONSTITUTION.md). This proposal documents
+> Governed by [CONSTITUTION.md](../../../../../CONSTITUTION.md). This proposal documents
 > **only this change**; permanent documentation remains the single source of truth.
 
 | Field | Value |
