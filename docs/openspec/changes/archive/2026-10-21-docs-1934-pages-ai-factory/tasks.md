@@ -77,10 +77,10 @@
 
 - [x] 10.1 Archive this change in the PR: `cd docs && openspec archive <change-name> --yes` (skip only if `.openspec.yaml` sets `multi_pr: true`)
 - [x] 10.2 `git push -u origin <branch-name>`
-- [ ] 10.3 Open the PR titled `[#<issue>] <type>(<scope>): <description>`, referencing Issue and Use Case
+- [x] 10.3 Open the PR titled `[#<issue>] <type>(<scope>): <description>`, referencing Issue and Use Case
 - [ ] 10.4 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
 - [ ] 10.5 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
-- [ ] 10.6 Record the PR number in the archived `traceability.md`
+- [x] 10.6 Record the PR number in the archived `traceability.md`
 
 ## 11. Deploy
 

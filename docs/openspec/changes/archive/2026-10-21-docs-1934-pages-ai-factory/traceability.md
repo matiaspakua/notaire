@@ -17,7 +17,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `docs/1934_ai_factory_pages` | from `origin/main` |
 | Tasks | `tasks.md` | groups 1–9 done; 10–12 at PR/merge |
 | Commits | see PR | recorded in PR |
-| Pull Request | see PR for #1934 | pending |
+| Pull Request | #1935 | open |
 | CI run | PR checks | pending |
 | Merge commit | Owner merge | pending |
 | Release / tag | next cut | pending |
