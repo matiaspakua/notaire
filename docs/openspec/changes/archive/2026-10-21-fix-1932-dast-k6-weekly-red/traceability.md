@@ -1,6 +1,6 @@
 # Traceability
 
-> Governed by [CONSTITUTION.md](../../../CONSTITUTION.md) — P4 Traceability.
+> Governed by [CONSTITUTION.md](../../../../../CONSTITUTION.md) — P4 Traceability.
 > Rows below Tasks stay `pending` until the corresponding step actually happens.
 
 ## Chain
@@ -13,7 +13,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|
 | Issue | #1932 | in-progress |
 | Use Case | CU78 — Security · CU74 — Performance | exists |
-| Specification | `docs/openspec/changes/fix-1932-dast-k6-weekly-red/` | Gate 1 |
+| Specification | `docs/openspec/changes/archive/2026-10-21-fix-1932-dast-k6-weekly-red/` | Gate 1 |
 | Branch | `fix/1932_dast_k6_weekly_red` | from `origin/main` |
 | Tasks | `tasks.md` | groups 1–9 done; 10–12 at PR/merge |
 | Commits | see PR | recorded in PR |
