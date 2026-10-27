@@ -48,8 +48,15 @@ export async function startBrowserTracing(options?: {
     return true;
   }
 
-  const { WebTracerProvider } = await import("@opentelemetry/sdk-trace-web");
-  const { BatchSpanProcessor } = await import("@opentelemetry/sdk-trace-base");
+  const { context, propagation, trace } = await import("@opentelemetry/api");
+  const {
+    CompositePropagator,
+    W3CBaggagePropagator,
+    W3CTraceContextPropagator,
+  } = await import("@opentelemetry/core");
+  const { BatchSpanProcessor, StackContextManager, TracerProvider } = await import(
+    "@opentelemetry/sdk-trace"
+  );
   const { OTLPTraceExporter } = await import(
     "@opentelemetry/exporter-trace-otlp-http"
   );
@@ -73,15 +80,21 @@ export async function startBrowserTracing(options?: {
     url: browserOtlpUrl(),
   });
 
-  const provider = new WebTracerProvider({
+  const provider = new TracerProvider({
     resource: resourceFromAttributes({
       [ATTR_SERVICE_NAME]: FRONTEND_SERVICE_NAME,
       [ATTR_SERVICE_VERSION]: version,
     }),
-    spanProcessors: [new BatchSpanProcessor(exporter)],
+    spanProcessors: [new BatchSpanProcessor({ exporter })],
   });
 
-  provider.register();
+  trace.setGlobalTracerProvider(provider);
+  context.setGlobalContextManager(new StackContextManager().enable());
+  propagation.setGlobalPropagator(
+    new CompositePropagator({
+      propagators: [new W3CTraceContextPropagator(), new W3CBaggagePropagator()],
+    }),
+  );
 
   registerInstrumentations({
     instrumentations: [
