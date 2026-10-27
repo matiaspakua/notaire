@@ -109,7 +109,14 @@ export function useSearchPeople(params: PeopleSearchParams) {
       ).map(toWire),
     placeholderData: keepPreviousData,
   });
-  return { active, results: query.data ?? [], isLoading: query.isLoading, isFetching: query.isFetching };
+  return {
+    active,
+    results: query.data ?? [],
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    isError: query.isError,
+    refetch: query.refetch,
+  };
 }
 
 export interface PeoplePageParams {

@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/table";
 import { Pagination, type PaginationProps } from "@/components/shared/Pagination";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { ErrorState } from "@/components/shared/ErrorState";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const MotionTableRow = motion.create(TableRow);
@@ -42,6 +44,9 @@ interface DataTableProps<T> {
   isFetching?: boolean;
   /** Server-side pagination footer (#1340); omit for lists rendered whole. */
   pagination?: PaginationProps;
+  /** Query failure message; when set, ErrorState replaces empty/rows (#1947). */
+  error?: string;
+  onRetry?: () => void;
 }
 
 export function DataTable<T>({
@@ -52,8 +57,17 @@ export function DataTable<T>({
   keyExtractor,
   isFetching,
   pagination,
+  error,
+  onRetry,
 }: DataTableProps<T>) {
   const isMobile = useMediaQuery(MOBILE_QUERY);
+  if (error) {
+    return (
+      <div className="rounded-[24px] border border-border/40 overflow-hidden bg-white apple-shadow">
+        <TableError message={error} onRetry={onRetry} />
+      </div>
+    );
+  }
   if (isMobile) {
     return (
       <MobileCards
@@ -128,6 +142,23 @@ function TableEmpty({ emptyMessage }: { emptyMessage?: string }) {
     <EmptyState
       title={emptyMessage ?? tc("noData")}
       icon={<TableIcon className="h-8 w-8 opacity-40" aria-hidden />}
+    />
+  );
+}
+
+/** Query failure for table and card layouts (#1947). */
+function TableError({ message, onRetry }: { message: string; onRetry?: () => void }) {
+  const tc = useTranslations("common");
+  return (
+    <ErrorState
+      title={message}
+      action={
+        onRetry ? (
+          <Button type="button" variant="secondary" onClick={onRetry} data-testid="btn-retry">
+            {tc("retry")}
+          </Button>
+        ) : undefined
+      }
     />
   );
 }

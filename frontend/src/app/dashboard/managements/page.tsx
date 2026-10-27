@@ -69,7 +69,13 @@ function ManagementsList() {
   // One server page at a time, page and size in the URL (#1340): the list used
   // to load size=1000, hiding older managements and rendering 1000 rows.
   const paging = useUrlPagination();
-  const { data: managementsPage, isLoading, isFetching } = useManagementsPage({ page: paging.page, size: paging.size });
+  const {
+    data: managementsPage,
+    isLoading,
+    isFetching,
+    isError: isManagementsError,
+    refetch: refetchManagements,
+  } = useManagementsPage({ page: paging.page, size: paging.size });
   const managements = managementsPage?.content ?? [];
   useClampPage(paging, managementsPage?.totalPages);
   const { data: statuses = [] } = useManagementStatuses();
@@ -122,9 +128,12 @@ function ManagementsList() {
     setPropertyId(editCase.propertyId != null ? String(editCase.propertyId) : "");
   }
 
-  const { data: managementsByClient = [], isLoading: isLoadingByClient } = useManagementsByClient(
-    clientFilter ? Number(clientFilter) : 0
-  );
+  const {
+    data: managementsByClient = [],
+    isLoading: isLoadingByClient,
+    isError: isByClientError,
+    refetch: refetchByClient,
+  } = useManagementsByClient(clientFilter ? Number(clientFilter) : 0);
   const { data: outstandingBalance } = useOutstandingBalance(archiveId ?? undefined);
   const { data: trace } = useManagementWorkflowTrace(transitionId ?? undefined);
   const { data: history = [] } = useHistory(historyId ?? undefined);
@@ -441,6 +450,19 @@ function ManagementsList() {
         isFetching={!clientFilter && isFetching}
         keyExtractor={(g) => g.idManagement!}
         emptyMessage={t("noData")}
+        error={
+          clientFilter
+            ? isByClientError
+              ? t("loadError")
+              : undefined
+            : isManagementsError
+              ? t("loadError")
+              : undefined
+        }
+        onRetry={() => {
+          if (clientFilter) void refetchByClient();
+          else void refetchManagements();
+        }}
         pagination={
           clientFilter
             ? undefined
