@@ -1,6 +1,6 @@
 # Frontend lockfile pins a patched katex under markdownlint-cli2
 
-> Governed by [CONSTITUTION.md](../../../../CONSTITUTION.md). This proposal documents
+> Governed by [CONSTITUTION.md](../../../../../CONSTITUTION.md). This proposal documents
 > **only this change**; permanent documentation remains the single source of truth.
 
 | Field | Value |

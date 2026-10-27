@@ -1,6 +1,6 @@
 # Traceability
 
-> Governed by [CONSTITUTION.md](../../../../CONSTITUTION.md) — P4 Traceability.
+> Governed by [CONSTITUTION.md](../../../../../CONSTITUTION.md) — P4 Traceability.
 > Rows below Tasks stay `pending` until the corresponding step actually happens.
 
 ## Chain
@@ -13,7 +13,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|
 | Issue | #1943 | in-progress |
 | Use Case | CU78 — Security | exists |
-| Specification | `docs/openspec/changes/fix-1943-katex-override/` | Gate 1 |
+| Specification | `docs/openspec/changes/archive/2026-10-27-fix-1943-katex-override/` | Gate 1 |
 | Branch | `fix/1943_katex_override` | from `origin/main` |
 | Tasks | `tasks.md` | groups 1–9 done; 10–12 at PR/merge |
 | Commits | see PR | recorded in PR |
