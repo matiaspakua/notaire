@@ -9,6 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Stagger, StaggerItem, HoverLift } from "@/components/motion";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { PageSection } from "@/components/shared/PageSection";
+import { ErrorState } from "@/components/shared/ErrorState";
+import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/auth-store";
 import { useManagementsPage } from "@/hooks/useManagements";
 import { usePeoplePage } from "@/hooks/usePeople";
@@ -39,6 +41,7 @@ function AccessDeniedBanner() {
 
 export default function DashboardPage() {
   const td = useTranslations("dashboard");
+  const tc = useTranslations("common");
   const { user, isAdmin } = useAuthStore();
   // Only the totals are needed: size=1 pages, never the lists (#1340, #1358).
   const managementsPage = useManagementsPage({ page: 0, size: 1 });
@@ -48,6 +51,8 @@ export default function DashboardPage() {
   // One config for the sidebar and this grid (#1367).
   const visibleModules = DASHBOARD_MODULES.filter((m) => !m.adminOnly || isAdmin());
   const fmt = useFormat();
+  const homeLoadError =
+    managementsPage.isError || peoplePage.isError || budgetsPage.isError;
 
   const stats = [
     { labelKey: "gestiones.label", query: managementsPage, icon: FolderKanban, tint: "bg-primary/10", iconColor: "text-primary" },
@@ -75,6 +80,28 @@ export default function DashboardPage() {
       />
 
       <ExpirationsAlertCard />
+
+      {homeLoadError ? (
+        <div className="rounded-[24px] border border-border/40 bg-white apple-shadow">
+          <ErrorState
+            title={td("loadError")}
+            action={
+              <Button
+                type="button"
+                variant="secondary"
+                data-testid="btn-retry-dashboard-stats"
+                onClick={() => {
+                  void managementsPage.refetch();
+                  void peoplePage.refetch();
+                  void budgetsPage.refetch();
+                }}
+              >
+                {tc("retry")}
+              </Button>
+            }
+          />
+        </div>
+      ) : null}
 
       <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {stats.map((stat) => {

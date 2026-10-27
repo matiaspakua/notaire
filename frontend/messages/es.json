@@ -50,7 +50,9 @@
     "add": "Agregar",
     "search": "Buscar",
     "loading": "Cargando...",
+    "retry": "Reintentar",
     "generating": "Generando...",
+
     "id": "ID",
     "name": "Nombre",
     "description": "Descripción",
@@ -96,6 +98,7 @@
     "hello": "Hola",
     "today": "Resumen de actividad para hoy",
     "availableModules": "Módulos disponibles",
+    "loadError": "No se pudieron cargar algunos totales del panel",
     "accessDenied": "No tiene permisos para acceder a esa sección de administración.",
     "workflowProgress": "Progreso del workflow",
     "workflow": {

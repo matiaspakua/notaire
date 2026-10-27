@@ -54,7 +54,13 @@ function PeopleList() {
   // One server page at a time, page and size in the URL (#1340): the list used
   // to load size=1000 and silently hide everyone after the 1000th person.
   const paging = useUrlPagination();
-  const { data: peoplePage, isLoading, isFetching } = usePeoplePage({ page: paging.page, size: paging.size });
+  const {
+    data: peoplePage,
+    isLoading,
+    isFetching,
+    isError: isPeopleError,
+    refetch: refetchPeople,
+  } = usePeoplePage({ page: paging.page, size: paging.size });
   const people = peoplePage?.content ?? [];
   useClampPage(paging, peoplePage?.totalPages);
   const createMutation = useCreatePerson();
@@ -262,6 +268,17 @@ function PeopleList() {
         isFetching={hasSearchCriteria ? search.isFetching : isFetching}
         keyExtractor={(p) => p.personId!}
         emptyMessage={t("noData")}
+        error={
+          !hasSearchCriteria && isPeopleError
+            ? t("loadError")
+            : hasSearchCriteria && search.isError
+              ? t("loadError")
+              : undefined
+        }
+        onRetry={() => {
+          if (hasSearchCriteria) void search.refetch();
+          else void refetchPeople();
+        }}
         pagination={
           hasSearchCriteria
             ? undefined

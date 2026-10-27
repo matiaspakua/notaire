@@ -50,7 +50,9 @@
     "add": "Add",
     "search": "Search",
     "loading": "Loading...",
+    "retry": "Retry",
     "generating": "Generating...",
+
     "id": "ID",
     "name": "Name",
     "description": "Description",
@@ -96,6 +98,7 @@
     "hello": "Hello",
     "today": "Today's activity summary",
     "availableModules": "Available modules",
+    "loadError": "Some dashboard totals could not be loaded",
     "accessDenied": "You do not have permission to access that administration section.",
     "workflowProgress": "Workflow progress",
     "workflow": {

@@ -387,10 +387,13 @@ Dark mode is not yet active, but tokens are structured to support it:
 | `PageHeader` | `components/shared/PageHeader.tsx` | Title + optional description + actions (`size="display"` on home) |
 | `EmptyState` | `components/shared/EmptyState.tsx` | Empty invitation; optional primary action |
 | `PageSection` | `components/shared/PageSection.tsx` | One-job section with token spacing |
+| `LoadingState` | `components/shared/LoadingState.tsx` | Busy panel with skeletons + accessible loading label (#1947) |
+| `ErrorState` | `components/shared/ErrorState.tsx` | Failure invitation; optional retry action (#1947) |
 
 `AppHeader` composes `PageHeader` inside sticky glass chrome. `DataTable` empty
-rows/cards use `EmptyState`. Prefer sentence case — never decorative ALL-CAPS
-labels on chrome or table headers.
+rows/cards use `EmptyState`; query failures use `ErrorState` via `error` /
+`onRetry`. Prefer sentence case — never decorative ALL-CAPS labels on chrome or
+table headers.
 
 ### Form Structure
 
