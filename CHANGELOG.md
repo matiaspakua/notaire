@@ -181,7 +181,7 @@ Hexagonal architecture epic [#1693](https://github.com/matiaspakua/notaire/issue
 
 * **security:** skip admin/admin seed outside dev/test environments ([#1305](https://github.com/matiaspakua/notaire/issues/1305)) ([7f7731e](https://github.com/matiaspakua/notaire/commit/7f7731e0fafae5a3f6a6cca6f82088d8c2349c91)), closes [#1249](https://github.com/matiaspakua/notaire/issues/1249)
 
-## [Unreleased]
+## [Historical notes · pre-0.1.1]
 
 ### Breaking
 
