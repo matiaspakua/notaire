@@ -72,6 +72,7 @@
     "vitest": "^5.0.3"
   },
   "overrides": {
-    "smol-toml": "^1.9.0"
+    "smol-toml": "^1.9.0",
+    "katex": "^0.18.2"
   }
 }
