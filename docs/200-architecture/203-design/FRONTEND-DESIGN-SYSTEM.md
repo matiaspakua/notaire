@@ -380,6 +380,18 @@ Dark mode is not yet active, but tokens are structured to support it:
 
 ## Component Patterns
 
+### Page chrome (#1942)
+
+| Primitive | File | Use |
+|-----------|------|-----|
+| `PageHeader` | `components/shared/PageHeader.tsx` | Title + optional description + actions (`size="display"` on home) |
+| `EmptyState` | `components/shared/EmptyState.tsx` | Empty invitation; optional primary action |
+| `PageSection` | `components/shared/PageSection.tsx` | One-job section with token spacing |
+
+`AppHeader` composes `PageHeader` inside sticky glass chrome. `DataTable` empty
+rows/cards use `EmptyState`. Prefer sentence case — never decorative ALL-CAPS
+labels on chrome or table headers.
+
 ### Form Structure
 
 All forms follow this structure — see [Quick Reference](#quick-reference)

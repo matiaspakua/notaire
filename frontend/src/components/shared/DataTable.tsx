@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Pagination, type PaginationProps } from "@/components/shared/Pagination";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const MotionTableRow = motion.create(TableRow);
@@ -72,7 +73,7 @@ export function DataTable<T>({
             {columns.map((col) => (
               <TableHead
                 key={col.key}
-                className={cn("font-bold text-[13px] uppercase tracking-wider text-muted-foreground py-5 px-6", col.className)}
+                className={cn("font-semibold text-[13px] tracking-tight text-muted-foreground py-5 px-6", col.className)}
               >
                 {col.header}
               </TableHead>
@@ -92,16 +93,8 @@ export function DataTable<T>({
             ))
           ) : data.length === 0 ? (
             <TableRow>
-              <TableCell
-                colSpan={columns.length}
-                className="h-64 text-center"
-              >
-                <div className="flex flex-col items-center justify-center gap-3 text-muted-foreground">
-                  <div className="bg-secondary p-4 rounded-full">
-                    <TableIcon className="h-8 w-8 opacity-20" />
-                  </div>
-                  <p className="text-lg font-medium"><EmptyMessage text={emptyMessage} /></p>
-                </div>
+              <TableCell colSpan={columns.length} className="h-64 p-0">
+                <TableEmpty emptyMessage={emptyMessage} />
               </TableCell>
             </TableRow>
           ) : (
@@ -128,14 +121,15 @@ export function DataTable<T>({
   );
 }
 
-/** Caller's message, or the translated default (#1354). */
-function EmptyMessage({ text }: { text?: string }) {
-  return text ? <>{text}</> : <DefaultEmptyMessage />;
-}
-
-function DefaultEmptyMessage() {
+/** Empty invitation for table and card layouts (#1942 / #1354). */
+function TableEmpty({ emptyMessage }: { emptyMessage?: string }) {
   const tc = useTranslations("common");
-  return <>{tc("noData")}</>;
+  return (
+    <EmptyState
+      title={emptyMessage ?? tc("noData")}
+      icon={<TableIcon className="h-8 w-8 opacity-40" aria-hidden />}
+    />
+  );
 }
 
 function isActions<T>(col: Column<T>) {
@@ -175,11 +169,8 @@ function MobileCards<T>({
 
   if (data.length === 0) {
     return (
-      <div className="rounded-2xl border border-border/40 bg-white apple-shadow h-48 flex flex-col items-center justify-center gap-3 text-muted-foreground">
-        <div className="bg-secondary p-4 rounded-full">
-          <TableIcon className="h-8 w-8 opacity-20" />
-        </div>
-        <p className="text-lg font-medium"><EmptyMessage text={emptyMessage} /></p>
+      <div className="rounded-2xl border border-border/40 bg-white apple-shadow">
+        <TableEmpty emptyMessage={emptyMessage} />
       </div>
     );
   }
