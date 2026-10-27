@@ -1,10 +1,10 @@
-# ui-workflow-chrome — delta
+# ui-workflow-chrome Specification
 
 ## Purpose
 
 Align workflow viewer and dashboard hero empty/loading/error chrome with the shared design system.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: WorkflowViewer empty uses EmptyState
 
