@@ -7,6 +7,8 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Stagger, StaggerItem, HoverLift } from "@/components/motion";
+import { PageHeader } from "@/components/shared/PageHeader";
+import { PageSection } from "@/components/shared/PageSection";
 import { useAuthStore } from "@/store/auth-store";
 import { useManagementsPage } from "@/hooks/useManagements";
 import { usePeoplePage } from "@/hooks/usePeople";
@@ -58,22 +60,19 @@ export default function DashboardPage() {
       <Suspense fallback={null}>
         <AccessDeniedBanner />
       </Suspense>
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div className="space-y-1.5">
-          <h1 className="text-4xl font-semibold tracking-tight text-foreground">
-            {td("hello")}, {user?.name?.split(" ")[0]}
-          </h1>
-          <p className="text-xl text-muted-foreground font-medium">{td("today")}</p>
-        </div>
-        <div className="bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-black/5 shadow-sm">
-          <p
-            className="text-sm font-semibold"
-            style={{ color: theme.colors.neutral[800] }}
-          >
-            {fmt.longDate(new Date())}
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title={`${td("hello")}, ${user?.name?.split(" ")[0] ?? ""}`.trim()}
+        description={td("today")}
+        size="display"
+        className="items-end"
+        actions={
+          <div className="bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-black/5 shadow-sm">
+            <p className="text-sm font-semibold" style={{ color: theme.colors.neutral[800] }}>
+              {fmt.longDate(new Date())}
+            </p>
+          </div>
+        }
+      />
 
       <ExpirationsAlertCard />
 
@@ -86,7 +85,7 @@ export default function DashboardPage() {
                 <Card className="bg-white border-none apple-shadow rounded-[28px] overflow-hidden">
                   <CardContent className="p-8 flex items-center justify-between">
                     <div className="space-y-1">
-                      <p className="text-[13px] font-bold uppercase tracking-widest text-muted-foreground">
+                      <p className="text-[13px] font-semibold tracking-tight text-muted-foreground">
                         {td(stat.labelKey as Parameters<typeof td>[0])}
                       </p>
                       <StatValue
@@ -108,43 +107,39 @@ export default function DashboardPage() {
 
       <WorkflowHero />
 
-      <div className="space-y-6">
-        <div className="flex items-center justify-between px-2">
-          <h2 className="text-2xl font-semibold tracking-tight text-foreground">{td("availableModules")}</h2>
-        </div>
-
+      <PageSection title={td("availableModules")}>
         <div data-testid="dashboard-modules">
-        <Stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {visibleModules.map((mod) => {
-            const Icon = mod.icon;
-            return (
-              <StaggerItem key={mod.href}>
-                <HoverLift className="h-full">
-                  <Link href={mod.href} className="group block h-full">
-                    <Card className="h-full bg-white border-none apple-shadow rounded-[28px] hover:apple-shadow-lg transition-shadow duration-base ease-standard relative overflow-hidden">
-                      <div className="absolute top-0 left-0 w-1.5 h-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-base ease-standard" />
-                      <CardHeader className="pb-4 p-8">
-                        <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 bg-primary/10 text-primary transition-transform duration-base ease-standard group-hover:scale-110">
-                          <Icon className="h-7 w-7" />
-                        </div>
-                        <CardTitle className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-fast">
-                          {td(`${mod.labelKey}.label` as Parameters<typeof td>[0])}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="px-8 pb-8 pt-0">
-                        <CardDescription className="text-base text-muted-foreground leading-relaxed">
-                          {td(`${mod.labelKey}.description` as Parameters<typeof td>[0])}
-                        </CardDescription>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                </HoverLift>
-              </StaggerItem>
-            );
-          })}
-        </Stagger>
+          <Stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {visibleModules.map((mod) => {
+              const Icon = mod.icon;
+              return (
+                <StaggerItem key={mod.href}>
+                  <HoverLift className="h-full">
+                    <Link href={mod.href} className="group block h-full">
+                      <Card className="h-full bg-white border-none apple-shadow rounded-[28px] hover:apple-shadow-lg transition-shadow duration-base ease-standard relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-1.5 h-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-base ease-standard" />
+                        <CardHeader className="pb-4 p-8">
+                          <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 bg-primary/10 text-primary transition-transform duration-base ease-standard group-hover:scale-110">
+                            <Icon className="h-7 w-7" />
+                          </div>
+                          <CardTitle className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-fast">
+                            {td(`${mod.labelKey}.label` as Parameters<typeof td>[0])}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="px-8 pb-8 pt-0">
+                          <CardDescription className="text-base text-muted-foreground leading-relaxed">
+                            {td(`${mod.labelKey}.description` as Parameters<typeof td>[0])}
+                          </CardDescription>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  </HoverLift>
+                </StaggerItem>
+              );
+            })}
+          </Stagger>
         </div>
-      </div>
+      </PageSection>
     </div>
   );
 }

@@ -28,6 +28,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **pm:** VIEW_LAYOUT group/sort contracts and UI-only notes; Owner script paths under `workspace/sdlc/owner/` ([#1878](https://github.com/matiaspakua/notaire/issues/1878))
 * **arch:** ADR-030 / SAD / FLEET-LESSONS — ArchUnit R1–R6 DoD MET; Owner-accepted residual `jpa`/`service` until [#576](https://github.com/matiaspakua/notaire/issues/576) ([#1918](https://github.com/matiaspakua/notaire/issues/1918))
 
+### Features
+
+* **fe:** shared `PageHeader`, `EmptyState`, and `PageSection` chrome primitives (RNF-09; uplift epic [#1941](https://github.com/matiaspakua/notaire/issues/1941)) ([#1942](https://github.com/matiaspakua/notaire/issues/1942))
+
 ### Code Refactoring
 
 Hexagonal architecture epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030. REST and OpenAPI contracts are unchanged.
