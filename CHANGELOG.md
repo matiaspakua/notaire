@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **security:** frontend lockfile resolves patched `katex` 0.18.x via an npm `overrides` pin — `markdownlint-cli2@0.24.0` (latest) still pulls `katex@^0.16.0` through `micromark-extension-math`, so Dependabot's security update could not apply ([#1943](https://github.com/matiaspakua/notaire/issues/1943))
 * **ci:** weekly DAST ZAP and k6 runs stay green on reviewed noise — allowlist informational ZAP 10049 (Non-Storable Content on 404s) with a pinned reviewed set; report uploads are `continue-on-error` so an artifact-quota outage cannot turn a passing run red ([#1932](https://github.com/matiaspakua/notaire/issues/1932))
 * **pm:** harden milestone / board Owner tooling — whole-run `due_on` safety, richer `--check`, scope preflight, GraphQL board coherence with `open_prs`/R6, Status Done sync tool, Closes/Refs guard, versioned `workspace/sdlc/owner/` scripts ([#1878](https://github.com/matiaspakua/notaire/issues/1878))
 
