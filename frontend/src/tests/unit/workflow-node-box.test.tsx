@@ -31,6 +31,11 @@ describe("WorkflowNodeBox (#1575)", () => {
     expect(screen.getByTestId("workflow-node-badge-7")).toHaveTextContent("workflowViewer.types.INITIAL");
   });
 
+  it("does not use decorative ALL-CAPS transform on the type badge (#1949)", () => {
+    box("INITIAL");
+    expect(screen.getByTestId("workflow-node-badge-7")).not.toHaveStyle({ textTransform: "uppercase" });
+  });
+
   it("has an accessible name with the status and its type", () => {
     box("FINAL");
     expect(screen.getByTestId("workflow-node-7")).toHaveAttribute(

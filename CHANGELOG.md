@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Features
 
+* **fe:** workflow viewer/hero use shared EmptyState / LoadingState / ErrorState; node badges drop decorative ALL-CAPS (RNF-09; uplift epic [#1941](https://github.com/matiaspakua/notaire/issues/1941)) ([#1949](https://github.com/matiaspakua/notaire/issues/1949))
 * **fe:** shared `LoadingState` / `ErrorState` and DataTable query-error retry (RNF-09; uplift epic [#1941](https://github.com/matiaspakua/notaire/issues/1941)) ([#1947](https://github.com/matiaspakua/notaire/issues/1947))
 * **fe:** shared `PageHeader`, `EmptyState`, and `PageSection` chrome primitives (RNF-09; uplift epic [#1941](https://github.com/matiaspakua/notaire/issues/1941)) ([#1942](https://github.com/matiaspakua/notaire/issues/1942))
 

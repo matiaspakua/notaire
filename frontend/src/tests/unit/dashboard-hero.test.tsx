@@ -99,6 +99,13 @@ describe("WorkflowHero (#1347)", () => {
     expect(screen.getByRole("link", { name: "dashboard.workflow.openGestiones" })).toHaveAttribute("href", "/dashboard/managements");
     expect(screen.queryByTestId("workflow-tracker")).not.toBeInTheDocument();
   });
+
+  it("composes EmptyState for the no-recent-workflow case (#1949)", async () => {
+    mockFetch.mockImplementation(routes([2, 1], []));
+    render(<WorkflowHero />, { wrapper });
+    await screen.findByTestId("workflow-empty");
+    expect(screen.getByTestId("empty-state")).toBeInTheDocument();
+  });
 });
 
 describe("dashboard page (#1347)", () => {

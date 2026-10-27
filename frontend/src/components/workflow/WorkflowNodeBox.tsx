@@ -65,7 +65,7 @@ export function WorkflowNodeBox({ id, data, selected }: NodeProps) {
       <Handle type="target" position={Position.Left} />
       <span
         data-testid={`workflow-node-badge-${id}`}
-        style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", opacity: 0.85 }}
+        style={{ fontSize: "10px", fontWeight: 600, letterSpacing: "0.01em", opacity: 0.85 }}
       >
         {typeName}
       </span>
