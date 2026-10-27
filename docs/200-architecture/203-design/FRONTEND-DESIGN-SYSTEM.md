@@ -447,10 +447,17 @@ idiomatic React/Tailwind. Dashboard shell/home (`dashboard/layout.tsx`,
 
 Use this checklist when creating or updating any form in the Notaire frontend.
 
+**Reference consumer:** `/login` (CU84, #611) composes credentials with
+`FormContainer` → `FormField` → `FormActions`. The brand mark stays outside
+`FormHeader` so the page keeps a single `h1`. Labels use sentence case — never
+decorative ALL-CAPS. Prefer `FormSection` only when the form has more than one
+logical group (dialogs and multi-section pages); a single-task surface like
+login omits it.
+
 ### Structure & Layout
 
 - [ ] **Use FormContainer**: All form content wrapped in `<FormContainer>`
-- [ ] **Use FormHeader**: Add title, subtitle, description for context
+- [ ] **Use FormHeader**: Add title, subtitle, description for context (skip when a brand/page `h1` already names the surface)
 - [ ] **Use FormSection**: Group related fields logically, with a visual divider between sections
 - [ ] **Responsive layout**: Content stacks vertically on mobile
 - [ ] **Max width**: Form content limited to 600px for readability

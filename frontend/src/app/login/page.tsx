@@ -8,8 +8,7 @@ import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
+import { FormContainer, FormField, FormActions } from "@/theme/form-patterns";
 import { useAuthStore } from "@/store/auth-store";
 import { authUseCases } from "@/composition/auth";
 import type { DtoLoginUser } from "@/types";
@@ -115,66 +114,56 @@ function LoginForm() {
           </p>
         )}
 
-        <Card className="border-none shadow-none bg-transparent">
-          <CardContent className="p-0">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="username" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">
-                    {t("username")}
-                  </Label>
-                  <Input
-                    id="username"
-                    data-testid="input-username"
-                    placeholder={t("username").toLowerCase()}
-                    className="h-12 rounded-[12px] bg-white text-lg apple-focus"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    autoComplete="username"
-                    disabled={loading}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">
-                    {t("password")}
-                  </Label>
-                  <Input
-                    id="password"
-                    data-testid="input-password"
-                    type="password"
-                    placeholder="••••••••"
-                    className="h-12 rounded-[12px] bg-white text-lg apple-focus"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    autoComplete="current-password"
-                    disabled={loading}
-                  />
-                </div>
-              </div>
+        <form onSubmit={handleSubmit}>
+          <FormContainer>
+            <FormField label={t("username")} required>
+              <Input
+                data-testid="input-username"
+                placeholder={t("username").toLowerCase()}
+                className="h-12 text-lg"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoComplete="username"
+                disabled={loading}
+              />
+            </FormField>
 
-              <div className="space-y-4 pt-2">
+            <FormField label={t("password")} required>
+              <Input
+                data-testid="input-password"
+                type="password"
+                placeholder="••••••••"
+                className="h-12 text-lg"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                disabled={loading}
+              />
+            </FormField>
+
+            <FormActions align="center">
+              <div data-testid="login-form-actions" className="flex w-full flex-col gap-4">
                 <Button
                   type="submit"
                   size="lg"
                   variant="apple"
-                  className="w-full h-12 text-lg font-semibold rounded-[12px]"
+                  className="w-full h-12 text-lg font-semibold"
                   disabled={loading}
                   data-testid="btn-sign-in"
                 >
                   {loading && <Loader2 className="h-5 w-5 animate-spin mr-2" />}
                   {loading ? "..." : t("submit")}
                 </Button>
-
                 <p className="text-sm text-muted-foreground text-center font-medium">
                   {t("forgotPassword")}
                 </p>
               </div>
-            </form>
-          </CardContent>
-        </Card>
+            </FormActions>
+          </FormContainer>
+        </form>
 
         <div className="pt-12 text-center border-t border-border">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+          <p className="text-xs font-medium text-muted-foreground">
             {t("footerSecure")}
           </p>
         </div>
