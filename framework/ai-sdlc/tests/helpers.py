@@ -28,7 +28,7 @@ def git(root: Path, *args: str) -> str:
 class Repo:
     """A temporary git repository with an `aisdlc.toml` profile at its root."""
 
-    def __init__(self, test: unittest.TestCase, profile: str = "") -> None:
+    def __init__(self, test: unittest.TestCase, profile: str | None = None) -> None:
         self.root = Path(tempfile.mkdtemp(prefix="aisdlc-"))
         test.addCleanup(shutil.rmtree, self.root, ignore_errors=True)
         git(self.root, "init", "-q", "-b", "main")
@@ -36,7 +36,7 @@ class Repo:
         git(self.root, "config", "user.name", "Test")
         git(self.root, "config", "commit.gpgsign", "false")
         self.write("POLICY.md", POLICY)
-        if profile:
+        if profile is not None:
             self.profile(profile)
         self.base = self.commit("chore: initial commit")
 

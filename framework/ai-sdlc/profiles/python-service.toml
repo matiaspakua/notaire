@@ -1,0 +1,64 @@
+# Example: a Python service (pytest, ruff, coverage.py). Level 2: gated.
+[project]
+name = "python-service"
+policy = "CONSTITUTION.md"
+level = 2
+
+[tracker]
+verify = "gh issue view {issue} --json number"
+
+[tdd]
+production = ["src/**"]
+tests = ["tests/**"]
+
+[context]
+max_tokens = 8000
+files = ["AGENTS.md", "AGENT-CARD.md"]
+
+[[gates]]
+name = "change record complete"
+stage = "plan"
+run = "aisdlc change check"
+
+[[gates]]
+name = "new test fails"
+stage = "red"
+run = "pytest -q {test}"
+expect = "fail"
+
+[[gates]]
+name = "lint"
+stage = "pre-push"
+run = "ruff check ."
+
+[[gates]]
+name = "tests come with code"
+stage = "pre-push"
+run = "aisdlc tdd --base {base}"
+
+[[gates]]
+name = "unit tests"
+stage = "pre-push"
+run = "pytest -q"
+paths = ["src/**", "tests/**", "pyproject.toml"]
+
+[[gates]]
+name = "ratchets"
+stage = "pre-push"
+run = "aisdlc ratchet --base {base}"
+
+[[gates]]
+name = "integration tests"
+stage = "pre-pr"
+run = "pytest -q -m integration"
+
+[[ratchets]]
+name = "mypy baseline"
+kind = "baseline"
+file = "mypy-baseline.txt"
+
+[[ratchets]]
+name = "line coverage"
+kind = "floor"
+run = "coverage report --format=total"
+floor = 82.0
