@@ -85,7 +85,7 @@ export function GateFlow() {
       <ol className="sm:hidden space-y-2" aria-label="Stages and gates">
         {STAGES.map((s) => (
           <li key={s.name} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-xs font-bold text-white">{s.gate}</span>
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-700 text-xs font-bold text-white">{s.gate}</span>
             <span>
               <span className="block text-sm font-semibold text-slate-900">{s.name}</span>
               <span className="block text-xs text-slate-600">{s.proof}</span>

@@ -1,0 +1,100 @@
+name: Pages CI — Build, Lint, Test & Links
+
+# Checks the public GitHub Pages app (github-page/) on every pull request (#1970):
+# typecheck, ESLint, Vitest component tests, the production static export, an internal
+# link check over the export, and a Playwright + axe smoke suite at 375 and 1280 px.
+# It never deploys: publishing stays in deploy-github-page.yml after CI on main.
+# Mirrored locally by workspace/sdlc/preflight.sh ("pages …" checks).
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Path filter
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      pages: ${{ steps.out.outputs.pages }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: filter
+        if: github.event_name == 'pull_request'
+        uses: dorny/paths-filter@v4
+        with:
+          filters: |
+            pages:
+              - 'github-page/**'
+              - '.github/workflows/pages-ci.yml'
+              - '.claude/skills/**'
+              - '.claude/agents/**'
+              - 'docs/openspec/**'
+              - 'CHANGELOG.md'
+              - 'CONSTITUTION.md'
+      - id: out
+        run: |
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo "pages=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "pages=${{ steps.filter.outputs.pages }}" >> "$GITHUB_OUTPUT"
+          fi
+
+  pages:
+    name: Pages build, tests and links
+    needs: changes
+    if: needs.changes.outputs.pages == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: github-page
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: github-page/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Component tests (Vitest)
+        run: npm test
+
+      - name: Build the static export
+        run: npm run build
+
+      - name: Internal link check
+        run: npm run check:links
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Smoke tests at 375 and 1280 px (Playwright + axe)
+        run: npm run test:smoke
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pages-playwright-report
+          path: github-page/playwright-report
+          retention-days: 7

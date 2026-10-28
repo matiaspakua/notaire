@@ -1,5 +1,8 @@
 import { LESSONS, issue } from "@/lib/ai-sdlc-content";
 import { Card, PageHeader, Sources } from "@/components/FactoryUI";
+import { pageMetadata } from "@/lib/site";
+
+export const metadata = pageMetadata("/ai-sdlc/lessons/");
 
 export default function LessonsPage() {
   return (

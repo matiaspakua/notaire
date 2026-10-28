@@ -5,7 +5,7 @@
 # WHY
 # ---
 # CI spreads its gates across ci.yml, pr-validation.yml, frontend-ci.yml,
-# playwright-e2e.yml, sdlc-process.yml, and codeql.yml. Some of those gates are NOT reachable
+# playwright-e2e.yml, sdlc-process.yml, pages-ci.yml and codeql.yml. Some of those gates are NOT reachable
 # through the commands developers normally run: `mvn verify` does not invoke
 # Spotless (it is deliberately unbound in backend-api/pom.xml, see #705), so a
 # branch can be fully green locally and still fail "Code Lint" in CI. This script
@@ -80,6 +80,9 @@ frontend vitest                 Unit Tests (Vitest)              frontend-ci.yml
 frontend build                  Build (Next.js)                  frontend-ci.yml
 e2e typecheck                   UI E2E Tests (Playwright)        playwright-e2e.yml (fails before the stack starts)
 e2e eslint                      UI E2E Tests (Playwright)        playwright-e2e.yml (fails before the stack starts)
+pages typecheck/lint/vitest     Pages build, tests and links     pages-ci.yml       (BLOCKING; #1970)
+pages build + link check        Pages build, tests and links     pages-ci.yml       (BLOCKING; #1970)
+pages playwright + axe  (--full) Pages build, tests and links    pages-ci.yml       (needs Chromium; #1970)
 http integration suite (--full) (legacy cURL smoke; no CI job)   n/a
 database v&v suite      (--full) Database V&V                    database-vv.yml    (needs Docker, not the stack)
 playwright e2e          (--full) UI E2E Tests (Playwright)       playwright-e2e.yml
@@ -329,6 +332,28 @@ if [ ! -d testing/e2e/node_modules ]; then
 fi
 run "e2e typecheck" bash -c "cd testing/e2e && ./node_modules/.bin/tsc --noEmit"
 run "e2e eslint" bash -c "cd testing/e2e && ./node_modules/.bin/eslint . --max-warnings=0"
+
+# ---------------------------------------------------------------------------
+section "GitHub Pages app (github-page)"
+# ---------------------------------------------------------------------------
+# Mirrors pages-ci.yml (#1970). Local binaries, like the frontend section above.
+if [ ! -d github-page/node_modules ]; then
+    echo "installing github-page deps (npm ci)…"
+    (cd github-page && npm ci) >/dev/null 2>&1 || warn "npm ci failed (github-page)"
+fi
+run "pages typecheck" bash -c "cd github-page && ./node_modules/.bin/tsc --noEmit"
+run "pages eslint" bash -c "cd github-page && ./node_modules/.bin/eslint ."
+if [ "$MODE_FAST" = "0" ]; then
+    run "pages vitest" bash -c "cd github-page && ./node_modules/.bin/vitest run"
+    run "pages build + link check" bash -c "cd github-page && ./node_modules/.bin/next build && node scripts/check-links.mjs out"
+    if [ "$MODE_FULL" = "1" ]; then
+        run "pages playwright + axe" bash -c "cd github-page && ./node_modules/.bin/playwright test"
+    else
+        skip "pages playwright + axe" "not --full; CI WILL run this (pages-ci.yml)"
+    fi
+else
+    skip "pages vitest / build / links" "--fast"
+fi
 
 # ---------------------------------------------------------------------------
 section "Server-backed suites"

@@ -176,7 +176,7 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
     <section className="py-32 px-6" style={{ background: "var(--bg-dark)" }}>
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <p className="text-[#0A84FF] text-sm font-mono font-bold tracking-widest mb-4 uppercase">Quality Metrics</p>
+          <p className="text-brand-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">Quality Metrics</p>
           <h2
             ref={headingRef}
             className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4"
@@ -202,41 +202,41 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <h4 className="text-[#0A84FF] text-sm font-semibold mb-4">Backend Testing</h4>
+              <h4 className="text-brand-700 text-sm font-semibold mb-4">Backend Testing</h4>
               <ul className="space-y-3 text-sm">
                 <li className="flex justify-between items-center">
                   <span className="text-neutral-600">Unit + Integration (JUnit 5)</span>
-                  <span className="text-[#0A84FF] font-mono">{metrics.backendTestClasses} classes</span>
+                  <span className="text-brand-700 font-mono">{metrics.backendTestClasses} classes</span>
                 </li>
                 <li className="flex justify-between items-center">
                   <span className="text-neutral-600">Integration Tests</span>
-                  <span className="text-[#0A84FF] font-mono">H2 + Postgres</span>
+                  <span className="text-brand-700 font-mono">H2 + Postgres</span>
                 </li>
                 <li className="flex justify-between items-center">
                   <span className="text-neutral-600">JaCoCo Enforcement</span>
-                  <span className="text-[#0A84FF] font-mono">70% line / 25% branch floor</span>
+                  <span className="text-brand-700 font-mono">70% line / 25% branch floor</span>
                 </li>
                 <li className="flex justify-between items-center">
                   <span className="text-neutral-600">Target Coverage</span>
-                  <span className="text-[#34C759] font-mono">80%</span>
+                  <span className="text-emerald-700 font-mono">80%</span>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h4 className="text-[#34C759] text-sm font-semibold mb-4">Frontend Testing</h4>
+              <h4 className="text-emerald-700 text-sm font-semibold mb-4">Frontend Testing</h4>
               <ul className="space-y-3 text-sm">
                 <li className="flex justify-between items-center">
                   <span className="text-neutral-600">Component Coverage (Vitest)</span>
-                  <span className="text-[#34C759] font-mono">{metrics.coverage.frontendComponent}%</span>
+                  <span className="text-emerald-700 font-mono">{metrics.coverage.frontendComponent}%</span>
                 </li>
                 <li className="flex justify-between items-center">
                   <span className="text-neutral-600">E2E Suites (Playwright)</span>
-                  <span className="text-[#34C759] font-mono">{metrics.frontendTestClasses} spec files</span>
+                  <span className="text-emerald-700 font-mono">{metrics.frontendTestClasses} spec files</span>
                 </li>
                 <li className="flex justify-between items-center">
                   <span className="text-neutral-600">API Tests</span>
-                  <span className="text-[#34C759] font-mono">{metrics.apiTestFiles} request files</span>
+                  <span className="text-emerald-700 font-mono">{metrics.apiTestFiles} request files</span>
                 </li>
               </ul>
             </div>

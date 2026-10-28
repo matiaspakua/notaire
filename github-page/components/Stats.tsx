@@ -138,7 +138,7 @@ export function Stats({ metrics }: { metrics: SiteMetrics }) {
     <section id="today" className="py-32 px-6" style={{ background: "var(--bg-dark)" }}>
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <p className="text-[#0A84FF] text-sm font-mono font-bold tracking-widest mb-4 uppercase">By The Numbers</p>
+          <p className="text-brand-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">By The Numbers</p>
           <h2
             ref={headingRef}
             className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4"

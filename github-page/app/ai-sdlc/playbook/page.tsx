@@ -1,5 +1,8 @@
 import { PLAYBOOK, PRODUCTION_READY, src } from "@/lib/ai-sdlc-content";
 import { Card, PageHeader, SectionTitle, Sources } from "@/components/FactoryUI";
+import { pageMetadata } from "@/lib/site";
+
+export const metadata = pageMetadata("/ai-sdlc/playbook/");
 
 export default function PlaybookPage() {
   return (
@@ -31,7 +34,7 @@ export default function PlaybookPage() {
         ))}
       </ol>
 
-      <SectionTitle>What "production-ready" means here</SectionTitle>
+      <SectionTitle>What “production-ready” means here</SectionTitle>
       <p className="text-sm text-slate-600 max-w-3xl">
         The factory is only as good as the evidence it leaves. These are the artifacts Notaire&apos;s gates produce or check
         before a change counts as shipped.

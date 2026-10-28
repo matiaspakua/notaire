@@ -89,7 +89,7 @@ export function HistoryChart({ from = "2026-03" }: { from?: string }) {
       </div>
       <details className="mt-2 text-sm">
         <summary className="cursor-pointer text-xs font-medium text-violet-700 hover:underline">Show the data as a table</summary>
-        <div className="mt-2 overflow-x-auto rounded-xl border border-slate-200 bg-white">
+        <div className="mt-2 overflow-x-auto rounded-xl border border-slate-200 bg-white" tabIndex={0} role="region" aria-label="Monthly delivery data">
           <table className="min-w-full text-xs">
             <caption className="sr-only">Monthly delivery data</caption>
             <thead className="bg-slate-50 text-left text-slate-600">
