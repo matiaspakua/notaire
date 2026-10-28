@@ -7,12 +7,14 @@
  * workflow.
  */
 import { useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { EmptyState } from "@/components/shared/EmptyState";
+import { ErrorState } from "@/components/shared/ErrorState";
+import { LoadingState } from "@/components/shared/LoadingState";
 import WorkflowTracker from "@/components/motion/WorkflowTracker";
 import { useManagementByNumber } from "@/hooks/useManagements";
 import { useManagementWorkflowTrace, useLatestTracedManagement } from "@/hooks/useManagementWorkflow";
@@ -84,27 +86,33 @@ export function WorkflowHero() {
       </div>
 
       {notFound && (
-        <p role="alert" className="text-sm font-medium text-destructive" data-testid="workflow-not-found">
-          {tw("notFound")}
-        </p>
+        <div data-testid="workflow-not-found">
+          <ErrorState title={tw("notFound")} />
+        </div>
       )}
 
       {noRecentWorkflow && (
-        <div
-          data-testid="workflow-empty"
-          className="flex flex-col items-start gap-3 rounded-[28px] border border-dashed border-[hsl(var(--border))] bg-white/60 p-8 text-sm text-muted-foreground"
-        >
-          <p>{tw("noRecentWorkflow")}</p>
-          <Link href="/dashboard/managements" className="font-semibold text-primary-text underline-offset-4 hover:underline apple-focus rounded">
-            {tw("openGestiones")}
-          </Link>
+        <div data-testid="workflow-empty" className="rounded-[24px] border border-border/40 bg-white apple-shadow overflow-hidden">
+          <EmptyState
+            title={tw("noRecentWorkflow")}
+            action={
+              <Link
+                href="/dashboard/managements"
+                className="font-semibold text-primary-text underline-offset-4 hover:underline apple-focus rounded"
+              >
+                {tw("openGestiones")}
+              </Link>
+            }
+          />
         </div>
       )}
 
       {trace && !notFound && <WorkflowTracker trace={trace} />}
 
       {loading && !trace && (
-        <Skeleton className="h-[320px] bg-muted rounded-[28px]" data-testid="workflow-skeleton" />
+        <div data-testid="workflow-skeleton">
+          <LoadingState rows={4} />
+        </div>
       )}
     </section>
   );

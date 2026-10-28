@@ -135,29 +135,38 @@ export function DataTable<T>({
   );
 }
 
+const emptyIcon = <TableIcon className="h-8 w-8 opacity-40" aria-hidden />;
+
 /** Empty invitation for table and card layouts (#1942 / #1354). */
 function TableEmpty({ emptyMessage }: { emptyMessage?: string }) {
+  if (emptyMessage) {
+    return <EmptyState title={emptyMessage} icon={emptyIcon} />;
+  }
+  return <TableEmptyDefault />;
+}
+
+function TableEmptyDefault() {
   const tc = useTranslations("common");
-  return (
-    <EmptyState
-      title={emptyMessage ?? tc("noData")}
-      icon={<TableIcon className="h-8 w-8 opacity-40" aria-hidden />}
-    />
-  );
+  return <EmptyState title={tc("noData")} icon={emptyIcon} />;
 }
 
 /** Query failure for table and card layouts (#1947). */
 function TableError({ message, onRetry }: { message: string; onRetry?: () => void }) {
+  if (!onRetry) {
+    return <ErrorState title={message} />;
+  }
+  return <TableErrorWithRetry message={message} onRetry={onRetry} />;
+}
+
+function TableErrorWithRetry({ message, onRetry }: { message: string; onRetry: () => void }) {
   const tc = useTranslations("common");
   return (
     <ErrorState
       title={message}
       action={
-        onRetry ? (
-          <Button type="button" variant="secondary" onClick={onRetry} data-testid="btn-retry">
-            {tc("retry")}
-          </Button>
-        ) : undefined
+        <Button type="button" variant="secondary" onClick={onRetry} data-testid="btn-retry">
+          {tc("retry")}
+        </Button>
       }
     />
   );

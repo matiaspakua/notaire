@@ -395,6 +395,10 @@ rows/cards use `EmptyState`; query failures use `ErrorState` via `error` /
 `onRetry`. Prefer sentence case — never decorative ALL-CAPS labels on chrome or
 table headers.
 
+**Workflow chrome (#1949):** `WorkflowViewer` empty canvases and `WorkflowHero`
+empty / not-found / loading use `EmptyState` / `ErrorState` / `LoadingState`.
+Workflow node type badges must not use CSS `text-transform: uppercase`.
+
 ### Form Structure
 
 All forms follow this structure — see [Quick Reference](#quick-reference)
