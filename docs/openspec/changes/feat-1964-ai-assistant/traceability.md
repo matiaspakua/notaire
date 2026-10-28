@@ -19,8 +19,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/feat-1964-ai-assistant/` | proposed (Gate 1 owner-pending) |
 | Branch | `feat/1964_ai_assistant` | created |
 | Tasks | `tasks.md` | phase 0 planning done; implementation pending Gate 1 |
-| Commits | <!-- SHAs, one per line --> | pending |
-| Pull Request | #<!-- number --> | pending |
+| Commits | `77806189f` (intent) | in-progress |
+| Pull Request | #1965 (intent, phase 0) | open |
 | CI run | <!-- workflow run URL --> | pending |
 | Merge commit | <!-- SHA --> | pending |
 | Release / tag | <!-- vX.Y.Z --> | pending |
