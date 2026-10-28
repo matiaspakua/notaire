@@ -808,7 +808,7 @@ export const CASE_CHAPTERS: Chapter[] = [
       label: "Gate 1 until #793 — a format check",
       lang: "bash",
       code: "# A real issue number, not the template placeholder.\nif grep -qE '^\\|[[:space:]]*GitHub Issue[[:space:]]*\\|[[:space:]]*#[0-9]+' \"$proposal\"; then\n  ok \"proposal: GitHub Issue referenced\"",
-      source: { label: "validate-sdlc-plan.sh @ 8c339d17", href: `${REPO}/blob/8c339d17/scripts/validate-sdlc-plan.sh` },
+      source: { label: "Gate 1 as introduced in #784 (8c339d17)", href: `${REPO}/commit/8c339d17` },
     },
     after: {
       label: "the issue must exist on GitHub",
