@@ -24,6 +24,7 @@ import {
 import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { fullName } from "@/lib/utils";
 import { presentPersonSaveError } from "@/lib/person-save-error";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import type { Person } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { defaultIdentificationTypeId, useIdentificationTypes } from "@/hooks/useIdentificationTypes";
@@ -113,11 +114,19 @@ function PeopleList() {
     editing.identificationTypeId ?? (isEditMode ? undefined : defaultIdentificationTypeId(identificationTypes));
 
   async function handleSave() {
-    setFieldErrors({});
+    const errors = requiredFieldErrors(
+      {
+        firstName: editing.firstName,
+        lastName: editing.lastName,
+        identificationTypeId: selectedTypeId,
+      },
+      tc("fieldRequired"),
+    );
     if (selectedTypeId == null) {
-      setFieldErrors({ identificationTypeId: t("validation.tipoIdentificacionRequired") });
-      return;
+      errors.identificationTypeId = t("validation.tipoIdentificacionRequired");
     }
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
     const data: Partial<Person> = { ...editing, identificationTypeId: selectedTypeId };
     delete data.fkIdIdentificationType;
     try {

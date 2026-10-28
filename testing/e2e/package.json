@@ -11,6 +11,7 @@
     "test:helpers": "node --experimental-strip-types --test tests/setup/pdf-helpers.test.ts"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@eslint/js": "^9.17.0",
     "@playwright/test": "^1.49.1",
     "@types/node": "^22.10.1",
