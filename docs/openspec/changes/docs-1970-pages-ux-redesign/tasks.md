@@ -31,20 +31,20 @@
 <!-- Change-specific work goes here. Break it into small, verifiable tasks ordered
      by dependency. Write only the code needed to make the tests of group 3 pass. -->
 
-- [ ] 4.1 UX assessment at 375/768/1280 px with axe: `github-page/docs/ux-assessment.md`
-- [ ] 4.2 Site map `lib/site.ts` (sections, five acts, search index, breadcrumbs, previous/next)
-- [ ] 4.3 Design tokens in `app/globals.css`; fonts; remove the custom cursor
-- [ ] 4.4 `components/site/`: `SiteHeader` (drawer, focus trap, search), `SiteFooter`, `DocShell`, `Breadcrumbs`, `Sidebar`, `PrevNext`, `ReadingProgress`
-- [ ] 4.5 Replace `Nav`, `FactoryChrome`, `DocsChrome`, `Footer`; per-page metadata
-- [ ] 4.6 Mermaid theme from tokens, `role="img"`, mobile scroll; `GuardrailStack` and `Swimlane` SVG diagrams
-- [ ] 4.7 AI Factory story: overview problem and act map, `/ai-sdlc/results/`, contrast and overflow fixes
-- [ ] 4.8 Tooling: ESLint, Vitest, Playwright, link checker, `pages-ci.yml`, `preflight.sh`
+- [x] 4.1 UX assessment at 375/768/1280 px with axe: `github-page/docs/ux-assessment.md`
+- [x] 4.2 Site map `lib/site.ts` (sections, five acts, search index, breadcrumbs, previous/next)
+- [x] 4.3 Design tokens in `app/globals.css`; fonts; remove the custom cursor
+- [x] 4.4 `components/site/`: `SiteHeader` (drawer, focus trap, search), `SiteFooter`, `DocShell`, `Breadcrumbs`, `Sidebar`, `PrevNext`, `ReadingProgress`
+- [x] 4.5 Replace `Nav`, `FactoryChrome`, `DocsChrome`, `Footer`; per-page metadata
+- [x] 4.6 Mermaid theme from tokens, `role="img"`, mobile scroll; `GuardrailStack` and `Swimlane` SVG diagrams
+- [x] 4.7 AI Factory story: overview problem and act map, `/ai-sdlc/results/`, contrast and overflow fixes
+- [x] 4.8 Tooling: ESLint, Vitest, Playwright, link checker, `pages-ci.yml`, `preflight.sh`
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
-- [ ] 5.2 Update them without weakening assertions; document why any old expectation was wrong
-- [ ] 5.3 Remove tests made genuinely obsolete, stating the reason
+- [x] 5.1 Affected: `test_pages_ai_sdlc.py` (nav now in `SiteHeader`/`site.ts`), `test_pages_business_docs.py` (chrome now `lib/site.ts`)
+- [x] 5.2 Updated to the new file that owns the behaviour; assertions kept or added (results, SVG diagrams, Mermaid theme)
+- [x] 5.3 None removed
 
 ## 6. Ejecutar regresión
 
@@ -52,29 +52,29 @@
 - [x] 6.2 n/a — no backend change
 - [x] 6.3 n/a — no backend change
 - [x] 6.4 n/a — no backend change
-- [ ] 6.5 No `@Disabled` or skipped tests without documented, approved justification
+- [x] 6.5 No `@Disabled` or skipped tests without documented, approved justification
 
 ## 7. Ejecutar Playwright
 
 - [x] 7.1 n/a — no product UI change; `testing/e2e` does not cover the Pages site
-- [ ] 7.2 `github-page` Playwright smoke (`npm run test:e2e`) green at 375 and 1280 px
-- [ ] 7.3 Before/after screenshots at 375 and 1280 px
-- [ ] 7.4 axe: no WCAG A/AA violations on the audited pages
+- [x] 7.2 `github-page` Playwright smoke (`npm run test:e2e`) green at 375 and 1280 px
+- [x] 7.3 Before/after screenshots at 375 and 1280 px
+- [x] 7.4 axe: no WCAG A/AA violations on the audited pages
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
+- [x] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
 - [x] 8.2 n/a — no endpoint change
-- [ ] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
+- [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
 - [x] 8.4 n/a — nothing superseded
-- [ ] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
+- [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
 - [ ] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
 - [ ] 9.2 Every commit message ends with `Closes #<issue-number>`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
 - [ ] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI

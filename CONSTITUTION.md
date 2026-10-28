@@ -788,15 +788,15 @@ drift.
 | Pre-PR pipeline gate (Gate 3) | `bash workspace/sdlc/run_pipeline.sh` — composes `validate-sdlc-plan.sh` + `python3 security/run_gates.py --profile local` + `preflight.sh --full` + markdown-lint (ratchet vs `origin/main`); writes `reports/pipeline/<timestamp>/index.html` dashboard |
 | CI/CD | `ci.yml`, `pr-validation.yml`, `sdlc-process.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `cd.yml` |
 | **Merge gate (heavy CI)** | `bash workspace/sdlc/check-heavy-ci.sh <pr>` — Integration + Coverage + Bruno + Playwright must pass; light-only green is not mergeable ([CI-MERGE-GATE.md](docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md)) |
-| Path-scoped CI | `dorny/paths-filter` job `changes` in `ci.yml` / `frontend-ci.yml` / `playwright-e2e.yml` / `openapi-contract.yml`; aggregators accept `success\|skipped`; invariants in `workspace/tests/test_ci_workflow_invariants.py` (#1257) |
+| Path-scoped CI | `dorny/paths-filter` job `changes` in `ci.yml` / `frontend-ci.yml` / `playwright-e2e.yml` / `openapi-contract.yml` / `pages-ci.yml`; aggregators accept `success\|skipped`; invariants in `workspace/tests/test_ci_workflow_invariants.py` (#1257) |
 | Security | Local case catalog `security/cases/catalog.yml` via `python3 security/run_gates.py` (Semgrep, secret scan, Trivy, DAST baseline). CI adds CodeQL and OWASP ZAP and runs the same catalog. `security/` module for rulesets-as-code |
 | Deploy | `cd.yml` → build, scan, sign (cosign) and publish backend and frontend images to GHCR; attach product, database, and image SBOMs on `v*` / `notaire-v*`; no automated smoke test |
-| Public documentation site | `deploy-github-page.yml` → https://matiaspakua.github.io/notaire/ (story) and `/docs/` (technical Docs tab) |
+| Public documentation site | `deploy-github-page.yml` → https://matiaspakua.github.io/notaire/ after CI on `main`. Top level: **AI Factory** `/ai-sdlc/` (the AI SDLC, in five acts), **Product** `/`, **Technical docs** `/docs/`, **Releases** `/docs/releases/`; one shell, search and page registry in `github-page/lib/site.ts`. PRs touching `github-page/` run `pages-ci.yml` (typecheck, ESLint, Vitest, export, link check, Playwright + axe at 375/1280 px), mirrored in `preflight.sh` (#1970) |
 | Agent rules | `AGENTS.md`, `.claude/rules/*`, `.claude/skills/*`, `.claude/agents/*`; Cursor Cloud fleet: `docs/300-development/304-ai-sdlc-cloud/` |
 
 ---
 
-*Last reviewed: 2026-10-28 (stack-agnostic framework, baseline ratchet and skills lint #1958; archive in the PR #1623, Main Health #1622; Foreman merge rule #1624; release version coherence gate, runtime identity,
+*Last reviewed: 2026-10-28 (Pages site shell, IA and pages-ci #1970; stack-agnostic framework, baseline ratchet and skills lint #1958; archive in the PR #1623, Main Health #1622; Foreman merge rule #1624; release version coherence gate, runtime identity,
 fail-closed release assets, KISS/Boy Scout principles #1591; shared full-lifecycle
 roadmap #1569; product release #1571; testing inventory #1511; path-scoped CI #1257). This Constitution supersedes the process summary in
 `.claude/rules/ai-agent-workflow.md` where they conflict; that document remains
