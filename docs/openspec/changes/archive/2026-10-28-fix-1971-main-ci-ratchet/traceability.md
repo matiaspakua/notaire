@@ -41,6 +41,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Config builds with JWT filter only | `SecurityAndCorsConfigTest` | passing |
 | Checkstyle ≤ 3157 / SpotBugs ≤ 1183 | CI Coverage Gate / Code Quality | passing locally (3141 / 1180) |
 | Generated types match `openapi.yaml` | Frontend CI TypeScript Check | passing locally |
+| Runtime images upgrade Alpine packages | `workspace/tests/test_backend_image_os_patches.py` | passing |
 
 ## Permanent documentation updated
 

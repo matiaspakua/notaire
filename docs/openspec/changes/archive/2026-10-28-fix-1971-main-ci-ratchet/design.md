@@ -37,6 +37,8 @@ run 40758857667 (job 123065101239) on `b11667c91`.
 | Config builds with the JWT filter only | unit | `unit/SecurityAndCorsConfigTest` |
 | Checkstyle ≤ 3157, SpotBugs ≤ 1183 | CI gate | `ci.yml` Coverage Gate, Code Quality |
 | Generated types match `openapi.yaml` | CI gate | `frontend-ci.yml` TypeScript Check |
+| Runtime images upgrade Alpine packages before `USER` | unit | `workspace/tests/test_backend_image_os_patches.py` |
+| Image has no fixable CRITICAL CVE | CI gate | `ci.yml` Build Docker Image (Trivy) |
 
 - Coverage impact: neutral to positive.
 

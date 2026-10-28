@@ -29,6 +29,7 @@ This change removes the regressions so the required checks and the Pages deploy 
   - `IllegalArgumentResponses.isMissingResource` uses `toLowerCase(Locale.ROOT)` — `DM_CONVERT_CASE`.
 - `frontend/src/types/api.generated.ts` regenerated with `npm run openapi:types`.
 - `frontend/package-lock.json`: dev-only transitive `zod` 4.4.3 → 4.6.7 (GHSA-mrhx-c7xc-m3w5).
+- `backend-api/Dockerfile` and `Dockerfile.slim`: the runtime stage runs `apk upgrade --no-cache`. CI `Build Docker Image` (which never ran on `main` while the gates were red) failed its CRITICAL Trivy scan on Alpine `brotli-libs` 1.2.0-r1 (CVE-2026-111497, fixed in 1.2.1-r0).
 
 No **BREAKING** change: the HTTP contract, the module-grant filter order and the defaults are unchanged.
 
@@ -58,7 +59,7 @@ None — restores existing behavior (`skip_specs: true`).
 | `backend-api` | yes | Formatting and SpotBugs fixes in 11 classes; 3 test classes |
 | `frontend` | yes | Regenerated `api.generated.ts`; lockfile `zod` bump |
 | `frontend-swing` | no | — |
-| `infra` / observability | no | — |
+| `infra` / observability | yes | Backend runtime images run `apk upgrade` |
 | CI/CD (`.github/workflows`) | no | Workflows unchanged; they pass again |
 
 ### Surface area

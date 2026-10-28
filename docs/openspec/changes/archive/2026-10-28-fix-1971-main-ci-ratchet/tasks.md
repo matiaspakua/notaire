@@ -30,6 +30,7 @@
 - [x] 4.2 SpotBugs fixes in `BudgetController`, `SecurityAndCorsConfig`, `ConceptController`, `DocumentTypeController`, `IllegalArgumentResponses` (1187 → 1180)
 - [x] 4.3 `npm run openapi:types` and `npm run openapi:types:check` pass
 - [x] 4.4 `npm audit fix --package-lock-only` (dev-only `zod`)
+- [x] 4.5 `apk upgrade --no-cache` in the backend runtime images (Trivy CRITICAL CVE-2026-111497); guarded by `test_backend_image_os_patches.py`, observed failing first
 
 ## 5. Actualizar tests existentes
 
