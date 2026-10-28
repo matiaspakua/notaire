@@ -405,6 +405,12 @@ so empty required values surface on `FormField` `error` before the mutation runs
 Budgets and deeds lists pass DataTable `error` / `onRetry` like people and
 managements. Prefer `common.fieldRequired` for the shared message.
 
+**Reports & metrics (#1953):** Home totals use shared `MetricCard` (apple-shadow
+tile + tinted icon well + `StatValue`). PDF download surfaces use shared
+`ReportCard` grouped with `PageSection`. Catalog filter loads use
+`LoadingState` / `ErrorState`. No chart library yet — future charts should reuse
+the same primary tint, muted labels, and rounded-28 card language.
+
 ### Form Structure
 
 All forms follow this structure — see [Quick Reference](#quick-reference)

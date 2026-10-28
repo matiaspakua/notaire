@@ -10,6 +10,7 @@ import { Stagger, StaggerItem, HoverLift } from "@/components/motion";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { PageSection } from "@/components/shared/PageSection";
 import { ErrorState } from "@/components/shared/ErrorState";
+import { MetricCard } from "@/components/shared/MetricCard";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/auth-store";
 import { useManagementsPage } from "@/hooks/useManagements";
@@ -109,23 +110,17 @@ export default function DashboardPage() {
           return (
             <StaggerItem key={stat.labelKey}>
               <HoverLift lift={4}>
-                <Card className="bg-white border-none apple-shadow rounded-[28px] overflow-hidden">
-                  <CardContent className="p-8 flex items-center justify-between">
-                    <div className="space-y-1">
-                      <p className="text-[13px] font-semibold tracking-tight text-muted-foreground">
-                        {td(stat.labelKey as Parameters<typeof td>[0])}
-                      </p>
-                      <StatValue
-                        value={stat.query.data?.totalElements}
-                        isLoading={stat.query.isLoading}
-                        isError={stat.query.isError}
-                      />
-                    </div>
-                    <div className={`${stat.tint} p-5 rounded-3xl`}>
-                      <StatIcon className={`h-8 w-8 ${stat.iconColor}`} />
-                    </div>
-                  </CardContent>
-                </Card>
+                <MetricCard
+                  label={td(stat.labelKey as Parameters<typeof td>[0])}
+                  icon={<StatIcon className={`h-8 w-8 ${stat.iconColor}`} />}
+                  iconWellClassName={stat.tint}
+                >
+                  <StatValue
+                    value={stat.query.data?.totalElements}
+                    isLoading={stat.query.isLoading}
+                    isError={stat.query.isError}
+                  />
+                </MetricCard>
               </HoverLift>
             </StaggerItem>
           );
