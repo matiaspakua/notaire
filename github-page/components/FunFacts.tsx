@@ -113,7 +113,7 @@ export function FunFacts({ metrics }: { metrics: SiteMetrics }) {
 
         {/* Fun facts */}
         <div className="text-center mb-14">
-          <p className="text-yellow-600 text-sm font-mono font-bold tracking-widest mb-4 uppercase">Trivia</p>
+          <p className="text-amber-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">Trivia</p>
           <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
             Fun <span className="grad-gold">Facts</span>
           </h2>
@@ -146,8 +146,8 @@ export function FunFacts({ metrics }: { metrics: SiteMetrics }) {
               <div className="flex items-start gap-4">
                 <span className={`flex-none mt-0.5 px-2 py-1 rounded text-xs font-mono font-bold ${
                   c.severity === "HIGH" ? "bg-red-500/10 text-red-600" :
-                  c.severity === "MED" ? "bg-yellow-500/10 text-yellow-600" :
-                  "bg-[#0A84FF]/10 text-[#0A84FF]"
+                  c.severity === "MED" ? "bg-yellow-500/10 text-amber-700" :
+                  "bg-brand-600/10 text-brand-700"
                 }`}>{c.severity}</span>
                 <div>
                   <h3 className="text-neutral-900 font-bold mb-2">{c.title}</h3>

@@ -1,6 +1,9 @@
 import { MermaidDiagram } from "@/components/MermaidDiagram";
 import { DOCS } from "@/lib/docs-content";
 import snapshot from "@/lib/milestone-snapshot.json";
+import { pageMetadata } from "@/lib/site";
+
+export const metadata = pageMetadata("/docs/roadmap/");
 
 const SEQUENCE = `
 flowchart LR
@@ -51,7 +54,7 @@ export default function DocsRoadmapPage() {
   return (
     <div className="space-y-10">
       <header className="space-y-3">
-        <p className="text-xs uppercase tracking-[0.2em] text-[#0A84FF] font-semibold">
+        <p className="text-xs uppercase tracking-[0.2em] text-brand-700 font-semibold">
           Project chart · {data.generated}
         </p>
         <h1
@@ -66,7 +69,7 @@ export default function DocsRoadmapPage() {
           {claimable} open issues are delivery work; {catalog} are catalog anchors.
         </p>
         <a
-          className="text-sm text-[#0A84FF] hover:underline"
+          className="text-sm text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
           href={`${DOCS}/300-development/305-project-management/README.md`}
         >
           Project management docs →
@@ -90,7 +93,7 @@ export default function DocsRoadmapPage() {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold text-neutral-900">Delivery sequence</h2>
         <MermaidDiagram chart={SEQUENCE} />
-        <div className="overflow-x-auto rounded-2xl border border-neutral-200 bg-white">
+        <div className="overflow-x-auto rounded-2xl border border-neutral-200 bg-white" tabIndex={0} role="region" aria-label="Scrollable table">
           <table className="min-w-full text-sm">
             <thead className="bg-neutral-50 text-left text-neutral-500">
               <tr>

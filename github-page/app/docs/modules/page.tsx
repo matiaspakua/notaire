@@ -1,5 +1,8 @@
 import { MermaidDiagram } from "@/components/MermaidDiagram";
 import { DOCS, MODULE_OWNERSHIP_CHART, MODULES } from "@/lib/docs-content";
+import { pageMetadata } from "@/lib/site";
+
+export const metadata = pageMetadata("/docs/modules/");
 
 export default function DocsModulesPage() {
   return (
@@ -12,7 +15,7 @@ export default function DocsModulesPage() {
           Phase 0 of repository topology: keep one monorepo, give every folder a clear
           responsibility (ADR-026). Live Owner umbrella{" "}
           <a
-            className="text-[#0A84FF] hover:underline"
+            className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
             href="https://github.com/matiaspakua/notaire/issues/1445"
           >
             #1445
@@ -22,19 +25,19 @@ export default function DocsModulesPage() {
         </p>
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
           <a
-            className="text-[#0A84FF] hover:underline"
+            className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
             href={`${DOCS}/300-development/MODULE-OWNERSHIP.md`}
           >
             MODULE-OWNERSHIP.md →
           </a>
           <a
-            className="text-[#0A84FF] hover:underline"
+            className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
             href={`${DOCS}/300-development/REPO-SPLIT-PLAN.md`}
           >
             REPO-SPLIT-PLAN.md →
           </a>
           <a
-            className="text-[#0A84FF] hover:underline"
+            className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
             href={`${DOCS}/300-development/REPO-METRICS-BASELINE.md`}
           >
             REPO-METRICS-BASELINE.md (6/17 path-scoped) →
@@ -47,7 +50,7 @@ export default function DocsModulesPage() {
         <MermaidDiagram chart={MODULE_OWNERSHIP_CHART} />
       </section>
 
-      <section className="overflow-x-auto rounded-2xl border border-neutral-200 bg-white">
+      <section className="overflow-x-auto rounded-2xl border border-neutral-200 bg-white" tabIndex={0} aria-label="Scrollable table">
         <table className="min-w-full text-sm">
           <thead className="bg-neutral-50 text-left text-neutral-500">
             <tr>
@@ -70,7 +73,7 @@ export default function DocsModulesPage() {
         </table>
       </section>
 
-      <pre className="rounded-xl bg-neutral-900 text-neutral-100 text-xs p-4 overflow-x-auto">{`python3 workspace/modules.py list
+      <pre className="rounded-xl bg-neutral-900 text-neutral-100 text-xs p-4 overflow-x-auto" tabIndex={0} aria-label="Module commands">{`python3 workspace/modules.py list
 python3 workspace/modules.py verify --all`}</pre>
     </div>
   );

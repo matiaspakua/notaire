@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { DocsChrome } from "@/components/DocsChrome";
+import { DocShell } from "@/components/site/DocShell";
 
 export default function DocsLayout({ children }: { children: ReactNode }) {
-  return <DocsChrome>{children}</DocsChrome>;
+  return <DocShell>{children}</DocShell>;
 }

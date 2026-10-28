@@ -1,4 +1,7 @@
 import { loadReleaseHistory } from "@/lib/releases";
+import { pageMetadata } from "@/lib/site";
+
+export const metadata = pageMetadata("/docs/releases/");
 
 export default function ReleasesDocPage() {
   const history = loadReleaseHistory();
@@ -6,7 +9,7 @@ export default function ReleasesDocPage() {
   return (
     <div className="space-y-8">
       <header className="space-y-3">
-        <p className="text-xs uppercase tracking-[0.2em] text-[#0A84FF] font-semibold">Versions</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-brand-700 font-semibold">Versions</p>
         <h1
           className="text-4xl font-semibold tracking-tight text-neutral-900"
           style={{ fontFamily: "var(--font-display)" }}
@@ -47,7 +50,7 @@ export default function ReleasesDocPage() {
           {history.releases.map((release) => (
             <tr key={release.version} className="border-b border-neutral-100">
               <td className="py-3 pr-4">
-                <a className="text-[#0A84FF] hover:underline font-mono" href={release.url}>
+                <a className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current font-mono" href={release.url}>
                   {release.tag}
                 </a>
               </td>

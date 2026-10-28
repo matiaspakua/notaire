@@ -1,4 +1,7 @@
 import { DOCS, REPO } from "@/lib/docs-content";
+import { pageMetadata } from "@/lib/site";
+
+export const metadata = pageMetadata("/docs/testing/");
 
 const pyramid = [
   { layer: "Unit", owner: "backend-api / frontend", cmd: "mvn test · npm test (Vitest)" },
@@ -21,7 +24,7 @@ export default function DocsTestingPage() {
         </p>
       </header>
 
-      <section className="overflow-x-auto rounded-2xl border border-neutral-200 bg-white">
+      <section className="overflow-x-auto rounded-2xl border border-neutral-200 bg-white" tabIndex={0} aria-label="Scrollable table">
         <table className="min-w-full text-sm">
           <thead className="bg-neutral-50 text-left text-neutral-500">
             <tr>
@@ -48,7 +51,7 @@ export default function DocsTestingPage() {
           <li>
             Local mirror of CI:{" "}
             <code className="bg-neutral-100 px-1 rounded text-xs">bash workspace/sdlc/preflight.sh</code>{" "}
-            (<a className="text-[#0A84FF] hover:underline" href={`${DOCS}/300-development/CI-PREFLIGHT.md`}>
+            (<a className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current" href={`${DOCS}/300-development/CI-PREFLIGHT.md`}>
               (CI-PREFLIGHT)
             </a>
           </li>
@@ -59,7 +62,7 @@ export default function DocsTestingPage() {
             </code>{" "}
             — Integration + Coverage + Bruno + Playwright must be green (
             <a
-              className="text-[#0A84FF] hover:underline"
+              className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
               href={`${DOCS}/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md`}
             >
               CI-MERGE-GATE
@@ -68,14 +71,14 @@ export default function DocsTestingPage() {
           </li>
           <li>
             Test plan:{" "}
-            <a className="text-[#0A84FF] hover:underline" href={`${DOCS}/300-development/303-testing/TEST-PLAN.md`}>
+            <a className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current" href={`${DOCS}/300-development/303-testing/TEST-PLAN.md`}>
               TEST-PLAN.md
             </a>
           </li>
         </ol>
       </section>
 
-      <a className="text-sm text-[#0A84FF] hover:underline" href={`${REPO}/tree/main/testing`}>
+      <a className="text-sm text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current" href={`${REPO}/tree/main/testing`}>
         testing/ module on GitHub →
       </a>
     </div>

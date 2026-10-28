@@ -78,7 +78,7 @@ export function AIEra() {
 
       <div className="max-w-6xl mx-auto">
         <div ref={headerRef} className="text-center mb-16">
-          <p className="text-[#AF52DE] text-sm font-mono font-bold tracking-widest mb-4 uppercase">The AI Era</p>
+          <p className="text-factory-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">The AI Era</p>
           <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
             Built with <span className="grad-cyan">Artificial Intelligence</span>
           </h2>
@@ -89,7 +89,7 @@ export function AIEra() {
         </div>
 
         {/* Workflow banner */}
-        <div className="mb-16 glass rounded-2xl p-6 border border-[#AF52DE]/20 overflow-hidden relative">
+        <div className="mb-16 glass rounded-2xl p-6 border border-factory-600/20 overflow-hidden relative">
           <div className="absolute inset-0 shimmer" />
           <div className="relative z-10 flex items-center gap-3 flex-wrap justify-center text-sm font-mono text-neutral-600">
             {["GitHub Issue", "→", "Use Case (CU-XX)", "→", "OpenSpec Gate 1", "→", "Feature Branch", "→", "TDD", "→", "Implementation", "→", "E2E + Bruno", "→", "Heavy-CI", "→", "Merged"].map((step, i) => (

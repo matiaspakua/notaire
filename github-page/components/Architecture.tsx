@@ -67,7 +67,7 @@ export function Architecture() {
     <section id="architecture" className="py-32 px-6" style={{ background: "var(--bg-dark)" }}>
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
-          <p className="text-[#34C759] text-sm font-mono font-bold tracking-widest mb-4 uppercase">System Architecture</p>
+          <p className="text-emerald-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">System Architecture</p>
           <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
             Modern <span className="grad-green">Microservices</span>
           </h2>

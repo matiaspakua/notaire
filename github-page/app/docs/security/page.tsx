@@ -1,4 +1,7 @@
 import { DOCS, REPO } from "@/lib/docs-content";
+import { pageMetadata } from "@/lib/site";
+
+export const metadata = pageMetadata("/docs/security/");
 
 const controls = [
   {
@@ -48,22 +51,22 @@ export default function DocsSecurityPage() {
 
       <ul className="space-y-2 text-sm">
         <li>
-          <a className="text-[#0A84FF] hover:underline" href={`${DOCS}/200-architecture/206-security/`}>
+          <a className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current" href={`${DOCS}/200-architecture/206-security/`}>
             Security architecture docs
           </a>
         </li>
         <li>
-          <a className="text-[#0A84FF] hover:underline" href={`${DOCS}/200-architecture/208-devsecops/README.md`}>
+          <a className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current" href={`${DOCS}/200-architecture/208-devsecops/README.md`}>
             DevSecOps README
           </a>
         </li>
         <li>
-          <a className="text-[#0A84FF] hover:underline" href={`${REPO}/blob/main/SECURITY.md`}>
+          <a className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current" href={`${REPO}/blob/main/SECURITY.md`}>
             SECURITY.md
           </a>
         </li>
         <li>
-          <a className="text-[#0A84FF] hover:underline" href={`${REPO}/tree/main/security`}>
+          <a className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current" href={`${REPO}/tree/main/security`}>
             security/ module
           </a>
         </li>

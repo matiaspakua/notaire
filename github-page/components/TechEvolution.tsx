@@ -142,7 +142,7 @@ export function TechEvolution() {
     <section id="evolution" className="py-32 px-6" style={{ background: "var(--bg-mid)" }}>
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <p className="text-[#AF52DE] text-sm font-mono font-bold tracking-widest mb-4 uppercase">Tech Evolution</p>
+          <p className="text-factory-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">Tech Evolution</p>
           <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
             Three <span className="grad-green">Generations</span>
           </h2>

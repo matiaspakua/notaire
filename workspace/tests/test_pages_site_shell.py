@@ -41,10 +41,12 @@ class SiteShellTest(unittest.TestCase):
 
     def test_mobile_menu_is_an_accessible_dialog(self):
         header = read(SITE / "SiteHeader.tsx")
-        for needle in ("aria-expanded", "aria-controls", 'aria-modal="true"', 'role="dialog"', "Escape"):
+        for needle in ("aria-expanded", "aria-controls", 'aria-modal="true"', 'role="dialog"'):
             self.assertIn(needle, header)
         self.assertIn("useFocusTrap", header)
-        self.assertTrue((SITE / "useFocusTrap.ts").is_file())
+        trap = read(SITE / "useFocusTrap.ts")
+        for needle in ('"Escape"', '"Tab"', "shiftKey"):
+            self.assertIn(needle, trap)
 
     def test_site_map_has_the_four_top_level_entries(self):
         site = read(PAGE / "lib" / "site.ts")

@@ -36,7 +36,7 @@ test("mobile drawer traps focus, closes on Escape and returns focus", async ({ p
   await button.click();
   const drawer = page.getByRole("dialog", { name: /site menu/i });
   await expect(drawer).toBeVisible();
-  await expect(page.getByRole("button", { name: /close menu/i })).toHaveAttribute("aria-expanded", "true");
+  await expect(page.getByRole("banner").getByRole("button", { name: /close menu/i })).toHaveAttribute("aria-expanded", "true");
   for (let i = 0; i < 40; i += 1) {
     await page.keyboard.press("Tab");
     expect(await drawer.evaluate((d) => d.contains(document.activeElement))).toBe(true);

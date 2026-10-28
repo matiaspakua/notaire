@@ -1,5 +1,8 @@
 import { MermaidDiagram } from "@/components/MermaidDiagram";
 import { DOCS, SYSTEM_CONTEXT_CHART } from "@/lib/docs-content";
+import { pageMetadata } from "@/lib/site";
+
+export const metadata = pageMetadata("/docs/architecture/");
 
 const adrs = [
   {
@@ -62,14 +65,14 @@ export default function DocsArchitecturePage() {
           Topology prep Phase 0 is on main (<strong>P0.1–P0.5 Done</strong>); these Owner choices
           still block marking the work done. Agents must not invent answers. Evidence:{" "}
           <a
-            className="text-[#0A84FF] hover:underline"
+            className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
             href={`${DOCS}/300-development/REPO-METRICS-BASELINE.md`}
           >
             REPO-METRICS-BASELINE.md
           </a>{" "}
           (path-scoped workflows <strong>6/17</strong>, ~2k always-loaded tokens) and{" "}
           <a
-            className="text-[#0A84FF] hover:underline"
+            className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
             href={`${DOCS}/300-development/REPO-SPLIT-PLAN.md`}
           >
             REPO-SPLIT-PLAN.md
@@ -79,7 +82,7 @@ export default function DocsArchitecturePage() {
         <ul className="space-y-2 text-sm">
           <li>
             <a
-              className="text-[#0A84FF] hover:underline"
+              className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
               href="https://github.com/matiaspakua/notaire/issues/1445"
             >
               #1445
@@ -89,7 +92,7 @@ export default function DocsArchitecturePage() {
           </li>
           <li>
             <a
-              className="text-[#0A84FF] hover:underline"
+              className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
               href="https://github.com/matiaspakua/notaire/issues/1438"
             >
               #1438
@@ -100,7 +103,7 @@ export default function DocsArchitecturePage() {
           </li>
           <li>
             <a
-              className="text-[#0A84FF] hover:underline"
+              className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
               href="https://github.com/matiaspakua/notaire/issues/1226"
             >
               #1226
@@ -120,7 +123,7 @@ export default function DocsArchitecturePage() {
         <ul className="space-y-2 text-sm">
           <li>
             <a
-              className="text-[#0A84FF] hover:underline"
+              className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
               href={`${DOCS}/300-development/ASSESSMENT-2026-10.md`}
             >
               ASSESSMENT-2026-10.md
@@ -130,7 +133,7 @@ export default function DocsArchitecturePage() {
           </li>
           <li>
             <a
-              className="text-[#0A84FF] hover:underline"
+              className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
               href={`${DOCS}/300-development/DOCUMENTATION-AUDIT-2026-10.md`}
             >
               DOCUMENTATION-AUDIT-2026-10.md
@@ -147,7 +150,7 @@ export default function DocsArchitecturePage() {
           {adrs.map((a) => (
             <li key={a.id}>
               <a
-                className="text-sm text-[#0A84FF] hover:underline"
+                className="text-sm text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
                 href={`${DOCS}/200-architecture/202-ADR/${a.file}`}
               >
                 ADR-{a.id} — {a.title}

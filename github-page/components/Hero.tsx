@@ -40,7 +40,7 @@ export function Hero() {
   }, []);
 
   return (
-    <section id="top" className="relative min-h-screen flex items-center justify-center overflow-hidden grid-pattern">
+    <section id="top" className="relative min-h-[calc(100svh-var(--header-h))] py-16 flex items-center justify-center overflow-hidden grid-pattern">
       <ParticleField />
       {/* Radial glow */}
       <div className="absolute inset-0 pointer-events-none">
@@ -62,7 +62,7 @@ export function Hero() {
 
         <p ref={subtitleRef} className="text-neutral-600 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed mb-10">
           From a Java Swing university project in 2014 to a modern,{" "}
-          <span className="text-[#0A84FF] font-medium">AI-accelerated</span> microservices platform—
+          <span className="text-brand-700 font-medium">AI-accelerated</span> microservices platform—
           a decade of evolution, one commit at a time.
         </p>
 
@@ -82,7 +82,7 @@ export function Hero() {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-neutral-500 text-xs">
+        <div aria-hidden="true" className="absolute -bottom-24 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 text-neutral-500 text-xs">
           <span>Scroll to discover</span>
           <div className="w-px h-12 bg-gradient-to-b from-cyan-500/50 to-transparent animate-pulse" />
         </div>

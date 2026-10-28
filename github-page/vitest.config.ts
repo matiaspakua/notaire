@@ -9,5 +9,7 @@ export default defineConfig({
     environment: "jsdom",
     include: ["tests/**/*.test.{ts,tsx}"],
     setupFiles: ["tests/setup.ts"],
+    // Mirror next.config (trailingSlash: true) so next/link renders the same hrefs as the export.
+    env: { __NEXT_TRAILING_SLASH: "true" },
   },
 });
