@@ -12,6 +12,7 @@ const pages = [
   { href: "/ai-sdlc/governance/", title: "Governance", body: "Issue lifecycle, label families, milestone trains, branch/commit/PR conventions, and the PR flow end to end." },
   { href: "/ai-sdlc/lessons/", title: "Lessons learned", body: "Incidents that became rules: light-green merges, invented issue numbers, models claiming unearned success, and more." },
   { href: "/ai-sdlc/playbook/", title: "Playbook", body: "How to apply an AI SDLC to your own project and reach production-ready software." },
+  { href: "/ai-sdlc/case-study/", title: "Case study", body: "Problem → solution narrative, before/after, real examples, lessons and build-time metrics (#1958)." },
 ];
 
 const principles = [

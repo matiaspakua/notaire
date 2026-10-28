@@ -1,0 +1,14 @@
+# Notaire adopter profile for the generic AI SDLC kit (#1958).
+# Product-specific paths and commands live ONLY here.
+name: notaire
+description: Notaire monorepo — Constitution + OpenSpec + workspace/sdlc gates
+constitution: CONSTITUTION.md
+gates:
+  - id: sdlc-plan
+    command: bash workspace/sdlc/validate-sdlc-plan.sh
+  - id: openspec-archive-hygiene
+    command: python3 workspace/sdlc/check-openspec-archive-hygiene.py --inventory-only
+  - id: preflight
+    command: bash workspace/sdlc/preflight.sh
+  - id: local-pipeline
+    command: bash workspace/sdlc/run_pipeline.sh

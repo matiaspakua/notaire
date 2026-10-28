@@ -6,6 +6,10 @@ issue → OpenSpec Gate 1 → TDD → implement → preflight/CI → PR → revi
 > **Public overview:** the [AI Factory section](https://matiaspakua.github.io/notaire/ai-sdlc/) of the
 > GitHub Pages site (source: [`github-page/app/ai-sdlc/`](../../../github-page/app/ai-sdlc/)) explains this
 > SDLC with diagrams, apart from the product docs. These files stay the source of truth (#1934).
+>
+> **Reusable kit (#1958):** [`framework/ai-sdlc/`](../../../framework/ai-sdlc/) (profile-driven gates),
+> report [`ai_sdlc_framework.md`](../../../ai_sdlc_framework.md), and the Pages
+> [case study](https://matiaspakua.github.io/notaire/ai-sdlc/case-study/).
 
 | Document | Purpose |
 |----------|---------|

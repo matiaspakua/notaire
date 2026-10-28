@@ -37,6 +37,7 @@ export const FACTORY_NAV = [
   { href: "/ai-sdlc/governance/", label: "Governance" },
   { href: "/ai-sdlc/lessons/", label: "Lessons" },
   { href: "/ai-sdlc/playbook/", label: "Playbook" },
+  { href: "/ai-sdlc/case-study/", label: "Case study" },
 ] as const;
 
 /* ───────────────────────────── Diagrams (Mermaid, ADR-027) ───────────────────────────── */
