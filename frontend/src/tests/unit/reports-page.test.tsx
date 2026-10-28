@@ -18,6 +18,12 @@ vi.mock("@/components/layout/AppHeader", () => ({
 vi.mock("@/lib/api-client", () => ({
   apiGet: vi.fn().mockResolvedValue([]),
 }));
+vi.mock("@/composition/folio", () => ({
+  folioUseCases: { listAvailableNotaries: vi.fn().mockResolvedValue([]) },
+}));
+vi.mock("@/composition/folio-type", () => ({
+  folioTypeUseCases: { list: vi.fn().mockResolvedValue([]) },
+}));
 vi.mock("@/hooks/useReports", () => {
   const unused = () => ({ download: vi.fn().mockResolvedValue(undefined) });
   return {

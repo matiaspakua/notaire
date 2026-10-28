@@ -1364,6 +1364,11 @@
     "description": "Generación de reportes y documentos PDF",
     "generated": "PDF generado y descargado",
     "errorGenerate": "Error al generar el reporte (backend necesario)",
+    "catalogLoadError": "No se pudieron cargar escribanos o tipos de folio para los filtros",
+    "sections": {
+      "quotesAndCases": "Presupuestos y gestiones",
+      "swornAndBooks": "Declaraciones juradas y libros"
+    },
     "fields": {
       "presupuestoId": "ID Presupuesto",
       "gestionId": "ID Gestión",

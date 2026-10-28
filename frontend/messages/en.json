@@ -1364,6 +1364,11 @@
     "description": "Generate reports and PDF documents",
     "generated": "PDF generated and downloaded",
     "errorGenerate": "Error generating report (backend required)",
+    "catalogLoadError": "Could not load notaries or folio types for the report filters",
+    "sections": {
+      "quotesAndCases": "Quotes and cases",
+      "swornAndBooks": "Sworn statements and books"
+    },
     "fields": {
       "presupuestoId": "Budget ID",
       "gestionId": "Case ID",
