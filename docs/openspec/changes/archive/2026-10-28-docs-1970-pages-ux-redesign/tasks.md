@@ -57,7 +57,7 @@
 ## 7. Ejecutar Playwright
 
 - [x] 7.1 n/a — no product UI change; `testing/e2e` does not cover the Pages site
-- [x] 7.2 `github-page` Playwright smoke (`npm run test:e2e`) green at 375 and 1280 px
+- [x] 7.2 `github-page` Playwright smoke (`npm run test:smoke`) green at 375 and 1280 px
 - [x] 7.3 Before/after screenshots at 375 and 1280 px
 - [x] 7.4 axe: no WCAG A/AA violations on the audited pages
 

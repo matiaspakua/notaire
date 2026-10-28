@@ -89,7 +89,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Smoke tests at 375 and 1280 px (Playwright + axe)
-        run: npm run test:e2e
+        run: npm run test:smoke
 
       - name: Upload Playwright report
         if: failure()

@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-/** Smoke suite for the static export (#1970): build first (`npm run build`), then `npm run test:e2e`. */
+/** Smoke suite for the static export (#1970): build first (`npm run build`), then `npm run test:smoke`. */
 export default defineConfig({
   testDir: "e2e",
   timeout: 60_000,

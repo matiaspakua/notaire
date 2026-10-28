@@ -44,7 +44,7 @@ Severity: **P0** blocks a task or excludes a user group, **P1** hurts findabilit
 
 On the local production build, axe reports **no WCAG 2 A/AA violations** on all 21 routes at 375
 and 1280 px, no page scrolls sideways, and the drawer, search and pager tests pass
-(`npm run test:e2e`). `npm run check:links` resolves every internal link and fragment.
+(`npm run test:smoke`). `npm run check:links` resolves every internal link and fragment.
 
 ## Not done here (decisions for the Owner)
 

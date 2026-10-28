@@ -53,7 +53,7 @@ npm run typecheck && npm run lint && npm test   # tsc, ESLint, Vitest
 NODE_ENV=production npm run build   # static export into out/
 npm run check:links                 # every internal href and #fragment in out/ resolves
 npx playwright install chromium     # once
-npm run test:e2e                    # Playwright + axe at 375 and 1280 px, served under /notaire
+npm run test:smoke                    # Playwright + axe at 375 and 1280 px, served under /notaire
 python3 -m pytest ../workspace/tests/test_pages_ai_sdlc.py ../workspace/tests/test_pages_site_shell.py -q
 ```
 

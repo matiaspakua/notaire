@@ -79,7 +79,7 @@ class SiteShellTest(unittest.TestCase):
 class PagesCiTest(unittest.TestCase):
     def test_package_scripts_cover_typecheck_lint_tests_links(self):
         scripts = json.loads(read(PAGE / "package.json"))["scripts"]
-        for name in ("typecheck", "lint", "test", "test:e2e", "check:links", "build"):
+        for name in ("typecheck", "lint", "test", "test:smoke", "check:links", "build"):
             self.assertIn(name, scripts)
 
     def test_pull_requests_touching_pages_run_the_checks(self):
@@ -87,7 +87,7 @@ class PagesCiTest(unittest.TestCase):
         text = read(WORKFLOW)
         self.assertIn("pull_request", text)
         self.assertIn("github-page/**", text)
-        for step in ("npm run typecheck", "npm run lint", "npm test", "npm run build", "npm run check:links", "npm run test:e2e"):
+        for step in ("npm run typecheck", "npm run lint", "npm test", "npm run build", "npm run check:links", "npm run test:smoke"):
             self.assertIn(step, text)
         self.assertNotIn("pages: write", text, "the PR check never deploys")
 
