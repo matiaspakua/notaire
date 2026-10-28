@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **ci:** `main` is green again after #1966 — fixed the Checkstyle `{}` record-body violations (3173 → 3141) and the 7 SpotBugs findings (1187 → 1180) that #1966 added under its own shrink-only ratchet (floors unchanged), regenerated `frontend/src/types/api.generated.ts` from `openapi.yaml`, and bumped the dev-only `zod` lock entry past GHSA-mrhx-c7xc-m3w5; Deploy GitHub Page runs again once CI succeeds ([#1971](https://github.com/matiaspakua/notaire/issues/1971))
 * **openapi:** prune Wave 9 accepted-breaking entries from `main` so the ignore list stays empty; land a user-facing Conventional Commit so release-please can open the next cut ([#1967](https://github.com/matiaspakua/notaire/issues/1967))
 * **api:** Budget, Management and Payment map invalid `IllegalArgumentException` to 400 and not-found to 404 ([#1921](https://github.com/matiaspakua/notaire/issues/1921), [#1315](https://github.com/matiaspakua/notaire/issues/1315), [#1963](https://github.com/matiaspakua/notaire/issues/1963))
 * **jpa:** unbounded EAGER `@OneToMany` on Concept and DocumentType switched to LAZY ([#595](https://github.com/matiaspakua/notaire/issues/595), [#1963](https://github.com/matiaspakua/notaire/issues/1963))
