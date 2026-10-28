@@ -20,7 +20,7 @@ Evidence gathered for #1958: 2,182 commits, 954 merged PRs and 985 issues; proce
 
 ## Riesgos / Trade-offs
 
-- [`origin/main` unavailable in a shallow clone] → ratchet falls back to skipping with a clear message only when the base ref is missing; Process Checks checks out with `fetch-depth: 0`.
+- [`origin/main` unavailable in a shallow clone] → the ratchet fails closed (exit 2) naming the missing base revision; Process Checks checks out with `fetch-depth: 0`.
 - [Skills lint fails on legacy skills] → the three skills without description gain one in this PR.
 - [Pages build size] → no new dependencies; history is a committed JSON snapshot with provenance.
 
