@@ -1,0 +1,202 @@
+{
+  "generated_at": "2026-10-28T14:28:38+00:00",
+  "generated_by": "python3 workspace/ci/generate-ai-sdlc-history.py",
+  "notes": "process_prs: merged PR titles naming the SDLC itself (sdlc, openspec, agents, fleet, harness, constitution, preflight, skills, archive\u2026); bug_issues: issues labelled type:bug by creation month; Dependabot PRs excluded.",
+  "legacy_commits": 24,
+  "totals": {
+    "commits": 2187,
+    "merged_prs": 954,
+    "merged_prs_without_bots": 834,
+    "issues": 985,
+    "bug_issues": 169
+  },
+  "months": [
+    {
+      "month": "2025-12",
+      "commits": 14,
+      "merged_prs": 1,
+      "process_prs": 0,
+      "bug_issues": 0
+    },
+    {
+      "month": "2026-01",
+      "commits": 1,
+      "merged_prs": 0,
+      "process_prs": 0,
+      "bug_issues": 0
+    },
+    {
+      "month": "2026-02",
+      "commits": 39,
+      "merged_prs": 0,
+      "process_prs": 0,
+      "bug_issues": 0
+    },
+    {
+      "month": "2026-03",
+      "commits": 87,
+      "merged_prs": 15,
+      "process_prs": 1,
+      "bug_issues": 0
+    },
+    {
+      "month": "2026-04",
+      "commits": 133,
+      "merged_prs": 38,
+      "process_prs": 6,
+      "bug_issues": 6
+    },
+    {
+      "month": "2026-05",
+      "commits": 50,
+      "merged_prs": 33,
+      "process_prs": 0,
+      "bug_issues": 3
+    },
+    {
+      "month": "2026-06",
+      "commits": 191,
+      "merged_prs": 94,
+      "process_prs": 2,
+      "bug_issues": 17
+    },
+    {
+      "month": "2026-07",
+      "commits": 149,
+      "merged_prs": 69,
+      "process_prs": 5,
+      "bug_issues": 54
+    },
+    {
+      "month": "2026-08",
+      "commits": 135,
+      "merged_prs": 52,
+      "process_prs": 18,
+      "bug_issues": 17
+    },
+    {
+      "month": "2026-09",
+      "commits": 694,
+      "merged_prs": 97,
+      "process_prs": 34,
+      "bug_issues": 32
+    },
+    {
+      "month": "2026-10",
+      "commits": 670,
+      "merged_prs": 435,
+      "process_prs": 69,
+      "bug_issues": 40
+    }
+  ],
+  "mechanisms": [
+    {
+      "date": "2025-12-22",
+      "label": "First agent entry file",
+      "issue": null,
+      "path": "AGENTS.md"
+    },
+    {
+      "date": "2026-07-25",
+      "label": "Local preflight mirrors CI",
+      "issue": 720,
+      "path": "workspace/sdlc/preflight.sh"
+    },
+    {
+      "date": "2026-08-08",
+      "label": "Engineering Constitution",
+      "issue": 781,
+      "path": "CONSTITUTION.md"
+    },
+    {
+      "date": "2026-08-08",
+      "label": "Constitution wired into OpenSpec (Gate 1)",
+      "issue": 783,
+      "path": "workspace/sdlc/validate-sdlc-plan.sh"
+    },
+    {
+      "date": "2026-08-28",
+      "label": "Dashboarded pre-PR pipeline",
+      "issue": 856,
+      "path": "workspace/sdlc/run_pipeline.sh"
+    },
+    {
+      "date": "2026-09-22",
+      "label": "Harness hooks enforce the workflow",
+      "issue": 1027,
+      "path": ".claude/hooks/block-push-to-main.sh"
+    },
+    {
+      "date": "2026-09-28",
+      "label": "Process checks in CI",
+      "issue": null,
+      "path": ".github/workflows/sdlc-process.yml"
+    },
+    {
+      "date": "2026-09-28",
+      "label": "Local-model foreman/worker harness",
+      "issue": 1074,
+      "path": "local-ai"
+    },
+    {
+      "date": "2026-10-02",
+      "label": "Cloud agent fleet",
+      "issue": 1114,
+      "path": "docs/300-development/304-ai-sdlc-cloud"
+    },
+    {
+      "date": "2026-10-03",
+      "label": "Heavy-CI merge gate",
+      "issue": 1133,
+      "path": "workspace/sdlc/check-heavy-ci.sh"
+    },
+    {
+      "date": "2026-10-10",
+      "label": "Context budget: 16k \u2192 8k tokens",
+      "issue": 1259,
+      "path": "CONSTITUTION-AGENT-CARD.md"
+    },
+    {
+      "date": "2026-10-11",
+      "label": "Security case catalog before every PR",
+      "issue": 1500,
+      "path": "security/cases/catalog.yml"
+    },
+    {
+      "date": "2026-10-11",
+      "label": "Archive-in-the-PR hygiene",
+      "issue": 1252,
+      "path": "workspace/sdlc/check-openspec-archive-hygiene.py"
+    },
+    {
+      "date": "2026-10-13",
+      "label": "Atomic issue claim and lanes",
+      "issue": 1623,
+      "path": "workspace/sdlc/claim-issue.py"
+    },
+    {
+      "date": "2026-10-14",
+      "label": "Continuous publication",
+      "issue": 1681,
+      "path": "workspace/sdlc/publish-progress.sh"
+    },
+    {
+      "date": "2026-10-14",
+      "label": "Shrink-only ArchUnit baseline",
+      "issue": 1695,
+      "path": "backend-api/src/test/resources/architecture/hexagon-baseline.txt"
+    },
+    {
+      "date": "2026-10-14",
+      "label": "Shrink-only frontend boundary baseline",
+      "issue": 1696,
+      "path": "frontend/eslint-suppressions.json"
+    },
+    {
+      "date": "2026-10-28",
+      "label": "Stack-agnostic framework extracted",
+      "issue": 1958,
+      "path": "framework/ai-sdlc"
+    }
+  ]
+}
