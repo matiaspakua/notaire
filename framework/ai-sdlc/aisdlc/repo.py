@@ -2,16 +2,24 @@
 from __future__ import annotations
 
 import fnmatch
+import os
 import subprocess
 from pathlib import Path
+
+# Git hooks export these; inherited, they would point every query at the hook's repository.
+LOCATION_VARIABLES = ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_COMMON_DIR", "GIT_PREFIX")
 
 
 class GitError(Exception):
     """A git query failed (missing ref, not a repository)."""
 
 
+def clean_env() -> dict[str, str]:
+    return {k: v for k, v in os.environ.items() if k not in LOCATION_VARIABLES}
+
+
 def _git(root: Path, *args: str) -> subprocess.CompletedProcess:
-    return subprocess.run(["git", *args], cwd=root, capture_output=True, text=True)
+    return subprocess.run(["git", *args], cwd=root, capture_output=True, text=True, env=clean_env())
 
 
 def toplevel(cwd: Path) -> Path | None:

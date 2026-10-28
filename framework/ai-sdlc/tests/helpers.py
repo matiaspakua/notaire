@@ -6,6 +6,7 @@ the kit must run on a project with no particular stack.
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -18,10 +19,12 @@ KIT = Path(__file__).resolve().parents[1]
 BIN = KIT / "bin" / "aisdlc"
 
 POLICY = "# Policy\n\nGates are absolute.\n"
+# A pre-push hook exports GIT_DIR; inherited, `git init` here would rewrite the real repository.
+ENV = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
 
 
 def git(root: Path, *args: str) -> str:
-    out = subprocess.run(["git", *args], cwd=root, check=True, capture_output=True, text=True)
+    out = subprocess.run(["git", *args], cwd=root, check=True, capture_output=True, text=True, env=ENV)
     return out.stdout.strip()
 
 
@@ -65,6 +68,7 @@ class Repo:
         return subprocess.run(
             [sys.executable, str(BIN), "--root", str(self.root), *args],
             cwd=self.root,
+            env=ENV,
             capture_output=True,
             text=True,
         )

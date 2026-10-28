@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from aisdlc.profile import Profile
+from aisdlc.repo import clean_env
 
 KIT_BIN = Path(__file__).resolve().parents[1] / "bin" / "aisdlc"
 TAIL_LINES = 40
@@ -60,7 +61,7 @@ def run_shell(command: str, cwd: Path, timeout: int, stream: bool = False) -> Co
     started = time.monotonic()
     tail: deque[str] = deque(maxlen=TAIL_LINES)
     proc = subprocess.Popen(command, shell=True, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                            text=True, errors="replace", start_new_session=True)
+                            text=True, errors="replace", start_new_session=True, env=clean_env())
     expired = threading.Event()
 
     def kill() -> None:

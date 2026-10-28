@@ -30,6 +30,10 @@ set -uo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$REPO_ROOT"
+# The pre-push hook exports GIT_DIR (in a linked worktree: .git/worktrees/<name>). Self-tests
+# that build throwaway repositories would run git init/config against it and rewrite the shared
+# .git/config (core.bare = true, fixture identity). From the root, discovery is correct (#1958).
+unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_PREFIX
 
 MODE_FIX=0; MODE_FAST=0; MODE_FULL=0
 for arg in "$@"; do
