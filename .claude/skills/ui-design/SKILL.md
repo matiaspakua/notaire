@@ -1,5 +1,5 @@
 ---
-name: frontend-design
+name: ui-design
 description: Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications.
 ---
 
@@ -8,6 +8,7 @@ This skill guides creation of distinctive, production-grade frontend interfaces 
 ## Design Thinking
 
 Before coding, understand the context and commit to a BOLD aesthetic direction:
+
 - **Purpose**: What problem does this interface solve? Who uses it?
 - **Tone**: Pick an extreme: brutally minimal, maximalist chaos, retro-futuristic, organic/natural, luxury/refined, playful/toy-like, editorial/magazine, brutalist/raw, art deco/geometric, soft/pastel, industrial/utilitarian, etc.
 - **Constraints**: Technical requirements (framework, performance, accessibility).
@@ -18,6 +19,7 @@ Before coding, understand the context and commit to a BOLD aesthetic direction:
 ## Frontend Aesthetics Guidelines
 
 Focus on:
+
 - **Typography**: Choose fonts that are beautiful, unique, and interesting. Avoid generic fonts like Arial and Inter; opt instead for distinctive choices that elevate the frontend's aesthetics.
 - **Color & Theme**: Commit to a cohesive aesthetic. Use CSS variables for consistency. Dominant colors with sharp accents outperform timid, evenly-distributed palettes.
 - **Motion**: Use animations for effects and micro-interactions. Focus on high-impact moments: one well-orchestrated page load with staggered reveals creates more delight than scattered micro-interactions.
