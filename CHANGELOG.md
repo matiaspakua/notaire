@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Features
 
+* **fe:** high-traffic business forms audit — required-field FormField errors on budgets/deeds/managements; list ErrorState+retry on budgets/deeds; shared `requiredFieldErrors` helper (RNF-09; uplift epic [#1941](https://github.com/matiaspakua/notaire/issues/1941)) ([#1951](https://github.com/matiaspakua/notaire/issues/1951))
 * **fe:** workflow viewer/hero use shared EmptyState / LoadingState / ErrorState; node badges drop decorative ALL-CAPS (RNF-09; uplift epic [#1941](https://github.com/matiaspakua/notaire/issues/1941)) ([#1949](https://github.com/matiaspakua/notaire/issues/1949))
 * **fe:** shared `LoadingState` / `ErrorState` and DataTable query-error retry (RNF-09; uplift epic [#1941](https://github.com/matiaspakua/notaire/issues/1941)) ([#1947](https://github.com/matiaspakua/notaire/issues/1947))
 * **fe:** shared `PageHeader`, `EmptyState`, and `PageSection` chrome primitives (RNF-09; uplift epic [#1941](https://github.com/matiaspakua/notaire/issues/1941)) ([#1942](https://github.com/matiaspakua/notaire/issues/1942))
