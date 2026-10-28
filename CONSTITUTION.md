@@ -453,7 +453,7 @@ every condition is satisfied.
 - [ ] Issue closed
 - [ ] **Board Status / label coherence:** Issue `state`, Delivery Board
       Status (Todo / In Progress / Done), and workflow labels stay aligned —
-      see [§10 Issue ↔ board ↔ labels](#10-ai-agent-rules) and
+      see [§10 Issue ↔ board ↔ labels](#10-rules-for-ai-agents) and
       `python3 workspace/sdlc/check-board-status-label-coherence.py`
 
 ---
@@ -774,6 +774,9 @@ drift.
 | Branch + commits | Git; Conventional Commits; branch `<type>/<issue-number>_<description>`; `workspace/sdlc/check-commit-messages.sh` (`sdlc-process.yml`) |
 | TDD evidence (Gate 2) | `workspace/sdlc/check-tdd-evidence.sh` — a PR that changes production code must change tests too (`sdlc-process.yml`) |
 | Agent rule files | `workspace/sdlc/check-agent-rules.sh` — broken paths and stale module names (`sdlc-process.yml`) |
+| Stack-agnostic framework (#1958) | `framework/ai-sdlc/` (`aisdlc` kit) with Notaire's profile `.aisdlc/aisdlc.toml`: stages map onto the scripts in this table; report `docs/300-development/306-ai-sdlc-framework/ai_sdlc_framework.md` |
+| Baselines only shrink (#1958) | `aisdlc ratchet --base <base>` — ArchUnit and ESLint baselines may not gain an entry versus `main` (`preflight.sh`, Process Checks); the owning tests still fail stale entries |
+| Skills catalog lint (#1958) | `aisdlc skills` — every skill has a `SKILL.md` with a description, names are unique, generic skills carry no Notaire-only pattern (`preflight.sh`, Process Checks, Main Health) |
 | Local-AI harness | `local-ai/sdlc/foreman.sh`; harness self-tests in `local-ai/sdlc/tests/` |
 | Unit + Integration tests | `mvn test -pl backend-api`; `mvn verify -pl backend-api` |
 | Coverage | JaCoCo ratchet floor (`mvn jacoco:check`); CI job `coverage` |
@@ -793,9 +796,8 @@ drift.
 
 ---
 
-*Last reviewed: 2026-10-13 (archive in the PR #1623, Main Health #1622; Foreman merge rule #1624; release version coherence gate, runtime identity,
+*Last reviewed: 2026-10-28 (stack-agnostic framework, baseline ratchet and skills lint #1958; archive in the PR #1623, Main Health #1622; Foreman merge rule #1624; release version coherence gate, runtime identity,
 fail-closed release assets, KISS/Boy Scout principles #1591; shared full-lifecycle
-roadmap #1569; product release #1571; testing inventory #1511; path-scoped CI
-#1257). This Constitution supersedes the process summary in
+roadmap #1569; product release #1571; testing inventory #1511; path-scoped CI #1257). This Constitution supersedes the process summary in
 `.claude/rules/ai-agent-workflow.md` where they conflict; that document remains
 the operational implementation.*

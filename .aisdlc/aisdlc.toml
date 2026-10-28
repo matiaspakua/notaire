@@ -1,0 +1,155 @@
+# Notaire's profile for the stack-agnostic AI SDLC framework (framework/ai-sdlc, #1958).
+# Notaire is the framework's first adopter: the stages map onto the scripts that already
+# implement CONSTITUTION.md (P10: adapt, do not replace). The kit adds what was prose only:
+# baselines that may only shrink against main, and a linted skills catalog.
+#
+#   python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml doctor
+#   python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml gate --list
+#
+# The local-AI harness keeps its own adapter (.aisdlc/project.yml); the Cursor Cloud fleet keeps
+# docs/300-development/304-ai-sdlc-cloud/fleet-manifest.yaml.
+
+[project]
+name = "notaire"
+policy = "CONSTITUTION.md"
+level = 3                        # fleet: Owner + Foreman + Workers, Foreman merge rule (#1624)
+base = "origin/main"
+
+[tracker]
+issue_pattern = '#(\d+)'
+verify = "gh issue view {issue} --repo matiaspakua/notaire --json number"
+
+[spec]
+# Notaire uses OpenSpec (schema notaire-sdlc); the plan gate calls its validator.
+dir = "docs/openspec/changes"
+
+[tdd]
+production = ["backend-api/src/main/**", "frontend/src/**"]
+tests = ["backend-api/src/test/**", "frontend/src/**/*.test.ts", "frontend/src/**/*.test.tsx",
+         "frontend/src/tests/**", "testing/**"]
+
+[skills]
+dir = ".claude/skills"
+generic = [
+  "api-contract-testing", "architecture-decision-design", "ci-cd-quality-gates",
+  "delivery-maturity-roadmap", "devsecops-traceability", "operations-observability-readiness",
+  "qa-automation-strategy", "secure-threat-modeling", "ui-design", "motion-design",
+]
+forbid_in_generic = ['notaire', 'backend-api', 'workspace/sdlc', 'docs/openspec', '\bCU-?\d{2}\b']
+
+[evidence]
+dir = ".aisdlc/evidence"
+
+[roles.owner]
+tier = "human"
+may_merge = true
+
+[roles.cloud-foreman]
+tier = "mid"
+model = "claude-sonnet-5-5"
+may_merge = true                 # only under the Foreman merge rule (CONSTITUTION §5 step 21)
+
+[roles.openspec-planner]
+tier = "mid"
+model = "claude-sonnet-5-5"
+
+[roles.backend-implementer]
+tier = "mid"
+
+[roles.frontend-design]
+tier = "mid"
+
+[roles.testing-qa]
+tier = "mid"
+
+[roles.code-reviewer]
+tier = "top"
+model = "claude-opus-5-5"
+
+# ── G1 specified ─────────────────────────────────────────────────────────────
+[[gates]]
+name = "OpenSpec plans conform (live issue check)"
+stage = "plan"
+run = "bash workspace/sdlc/validate-sdlc-plan.sh"
+
+# ── G2 tests fail first (pass --var test=<Class or file>) ────────────────────
+[[gates]]
+name = "backend test fails"
+stage = "red"
+run = "mvn -q -B test -pl backend-api -Dtest={test}"
+expect = "fail"
+paths = ["backend-api/src/test/**"]
+
+[[gates]]
+name = "frontend test fails"
+stage = "red"
+run = "cd frontend && npx vitest run {test}"
+expect = "fail"
+paths = ["frontend/src/**/*.test.ts", "frontend/src/**/*.test.tsx"]
+
+# ── G3 verified ──────────────────────────────────────────────────────────────
+# preflight.sh mirrors every blocking CI gate, including the ratchet and skills lint below.
+[[gates]]
+name = "preflight (local mirror of CI)"
+stage = "pre-push"
+run = "bash workspace/sdlc/preflight.sh"
+timeout = 3600
+
+[[gates]]
+name = "always-loaded context ≤ 8k tokens"
+stage = "pre-push"
+run = "python3 workspace/ci/agent-context-budget.py --max-tokens 8000"
+
+[[gates]]
+name = "dashboarded pipeline (stack, security cases, E2E)"
+stage = "pre-pr"
+run = "bash workspace/sdlc/run_pipeline.sh"
+timeout = 7200
+
+# ── G4 reviewed (pass --var pr=<number>) ─────────────────────────────────────
+[[gates]]
+name = "heavy CI green on the PR head"
+stage = "merge"
+run = "bash workspace/sdlc/check-heavy-ci.sh {pr}"
+
+[[gates]]
+name = "OpenSpec archived in the PR"
+stage = "merge"
+run = "python3 workspace/sdlc/check-openspec-archive-hygiene.py origin/main"
+
+# ── G5 shipped ───────────────────────────────────────────────────────────────
+[[gates]]
+name = "product version coherence"
+stage = "release"
+run = "python3 workspace/sdlc/check-product-version-coherence.py"
+
+[[gates]]
+name = "smoke: API health (pass --var health_url=…)"
+stage = "release"
+run = "curl -fsS {health_url}"
+
+# ── Ratchets: known violations may only disappear (ADR-030, #1695, #1696, #1725) ─────
+[[ratchets]]
+name = "ArchUnit hexagon baseline (R1–R6)"
+kind = "baseline"
+file = "backend-api/src/test/resources/architecture/hexagon-baseline.txt"
+
+[[ratchets]]
+name = "use-case slice cycles (R7)"
+kind = "baseline"
+file = "backend-api/src/test/resources/architecture/usecase-cycle-baseline.txt"
+
+[[ratchets]]
+name = "controller loose returns"
+kind = "baseline"
+file = "backend-api/src/test/resources/architecture/controller-loose-returns.txt"
+
+[[ratchets]]
+name = "entity to DTO mapping debt"
+kind = "baseline"
+file = "backend-api/src/test/resources/architecture/entity-dto-mapping.txt"
+
+[[ratchets]]
+name = "frontend hexagon ESLint suppressions"
+kind = "baseline"
+file = "frontend/eslint-suppressions.json"

@@ -58,10 +58,16 @@ See `workspace/modules.yaml` and each module’s `MODULE.md`.
 
 ## Cloud fleet
 
-Cursor Cloud AI SDLC: `docs/300-development/304-ai-sdlc-cloud/`. 
+Cursor Cloud AI SDLC: `docs/300-development/304-ai-sdlc-cloud/`.
 Foreman: `.claude/agents/cloud-foreman.md`. Does not use `local-ai/`.
 Hex-fleet do/don’t (#1693): `docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md`
 (+ `MAC-LOCAL-VS-CI.md`).
+
+## AI SDLC framework (#1958)
+
+Stack-agnostic kit `framework/ai-sdlc/` (Notaire profile `.aisdlc/aisdlc.toml`):
+`python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml gate --list`.
+Baselines only shrink (`… ratchet`); the skills catalog is linted (`… skills`).
 
 ## Context budget (#1259)
 

@@ -1,3 +1,8 @@
+---
+name: motion-design
+description: Motion design and creative coding for premium, immersive websites (animation, typography, composition, interaction, performance) with open-source libraries. Use for showcase pages such as GitHub Pages, not for product forms.
+---
+
 # Motion Design for the Web
 
 Skill for AI agents that build visually strong websites through motion design, creative coding, and interactive web design. It produces modern, immersive, fast, and maintainable web experiences with free and open-source tools.

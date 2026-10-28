@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 320" role="img" aria-labelledby="t d" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+<title id="t">A change moving through the seven stages and five hard gates of the AI SDLC framework</title>
+<desc id="d">Animated: a change token travels from Intake (G0) through Plan (G1), Red (G2), Verify and Pre-PR (G3), Merge (G4) to Release (G5). Each gate turns green only when its command exits as expected. Release feeds incidents back to Intake as new issues. With reduced motion every gate is shown green.</desc>
+<style>.lb{font-size:14px;font-weight:600}.sm{font-size:11.5px}.gt{font-size:13px;font-weight:700}.tok{animation:travel 16.0s linear infinite}@keyframes travel{0%{transform:translateX(0)}2.50%{transform:translateX(0.0px)}5.62%{transform:translateX(0.0px)}12.50%{transform:translateX(134.7px)}15.62%{transform:translateX(134.7px)}22.50%{transform:translateX(269.3px)}25.62%{transform:translateX(269.3px)}32.50%{transform:translateX(404.0px)}35.63%{transform:translateX(404.0px)}42.50%{transform:translateX(538.7px)}45.63%{transform:translateX(538.7px)}52.50%{transform:translateX(673.3px)}55.62%{transform:translateX(673.3px)}62.50%{transform:translateX(808.0px)}65.63%{transform:translateX(808.0px)}100%{transform:translateX(808.0px)}}.c0{opacity:0;animation:chk0 16.0s step-end infinite}@keyframes chk0{0%{opacity:0}4.06%{opacity:1}97%{opacity:0}}.c1{opacity:0;animation:chk1 16.0s step-end infinite}@keyframes chk1{0%{opacity:0}14.06%{opacity:1}97%{opacity:0}}.c2{opacity:0;animation:chk2 16.0s step-end infinite}@keyframes chk2{0%{opacity:0}24.06%{opacity:1}97%{opacity:0}}.c3{opacity:0;animation:chk3 16.0s step-end infinite}@keyframes chk3{0%{opacity:0}34.06%{opacity:1}97%{opacity:0}}.c4{opacity:0;animation:chk4 16.0s step-end infinite}@keyframes chk4{0%{opacity:0}44.06%{opacity:1}97%{opacity:0}}.c5{opacity:0;animation:chk5 16.0s step-end infinite}@keyframes chk5{0%{opacity:0}54.06%{opacity:1}97%{opacity:0}}.c6{opacity:0;animation:chk6 16.0s step-end infinite}@keyframes chk6{0%{opacity:0}64.06%{opacity:1}97%{opacity:0}}.bg{fill:#ffffff}.lb{fill:#0f172a}.sm{fill:#475569}.gt{fill:#0f172a}.trk{stroke:#cbd5e1}.node{stroke:#cbd5e1}.g0{fill:#e2e8f0;animation:lit0 16.0s step-end infinite}@keyframes lit0{0%{fill:#e2e8f0}4.06%{fill:#16a34a}97%{fill:#e2e8f0}}.g1{fill:#e2e8f0;animation:lit1 16.0s step-end infinite}@keyframes lit1{0%{fill:#e2e8f0}14.06%{fill:#16a34a}97%{fill:#e2e8f0}}.g2{fill:#e2e8f0;animation:lit2 16.0s step-end infinite}@keyframes lit2{0%{fill:#e2e8f0}24.06%{fill:#16a34a}97%{fill:#e2e8f0}}.g3{fill:#e2e8f0;animation:lit3 16.0s step-end infinite}@keyframes lit3{0%{fill:#e2e8f0}34.06%{fill:#16a34a}97%{fill:#e2e8f0}}.g4{fill:#e2e8f0;animation:lit4 16.0s step-end infinite}@keyframes lit4{0%{fill:#e2e8f0}44.06%{fill:#16a34a}97%{fill:#e2e8f0}}.g5{fill:#e2e8f0;animation:lit5 16.0s step-end infinite}@keyframes lit5{0%{fill:#e2e8f0}54.06%{fill:#16a34a}97%{fill:#e2e8f0}}.g6{fill:#e2e8f0;animation:lit6 16.0s step-end infinite}@keyframes lit6{0%{fill:#e2e8f0}64.06%{fill:#16a34a}97%{fill:#e2e8f0}}@media (prefers-color-scheme:dark){.bg{fill:#0f172a}.lb{fill:#f1f5f9}.sm{fill:#cbd5e1}.gt{fill:#f1f5f9}.trk{stroke:#475569}.node{stroke:#475569}.g0{fill:#334155;animation:lit0d 16.0s step-end infinite}@keyframes lit0d{0%{fill:#334155}4.06%{fill:#16a34a}97%{fill:#334155}}.g1{fill:#334155;animation:lit1d 16.0s step-end infinite}@keyframes lit1d{0%{fill:#334155}14.06%{fill:#16a34a}97%{fill:#334155}}.g2{fill:#334155;animation:lit2d 16.0s step-end infinite}@keyframes lit2d{0%{fill:#334155}24.06%{fill:#16a34a}97%{fill:#334155}}.g3{fill:#334155;animation:lit3d 16.0s step-end infinite}@keyframes lit3d{0%{fill:#334155}34.06%{fill:#16a34a}97%{fill:#334155}}.g4{fill:#334155;animation:lit4d 16.0s step-end infinite}@keyframes lit4d{0%{fill:#334155}44.06%{fill:#16a34a}97%{fill:#334155}}.g5{fill:#334155;animation:lit5d 16.0s step-end infinite}@keyframes lit5d{0%{fill:#334155}54.06%{fill:#16a34a}97%{fill:#334155}}.g6{fill:#334155;animation:lit6d 16.0s step-end infinite}@keyframes lit6d{0%{fill:#334155}64.06%{fill:#16a34a}97%{fill:#334155}}}@media (prefers-reduced-motion:reduce){.tok{animation:none;transform:translateX(808.0px)}.g0{animation:none;fill:#16a34a}.c0{animation:none;opacity:1}.g1{animation:none;fill:#16a34a}.c1{animation:none;opacity:1}.g2{animation:none;fill:#16a34a}.c2{animation:none;opacity:1}.g3{animation:none;fill:#16a34a}.c3{animation:none;opacity:1}.g4{animation:none;fill:#16a34a}.c4{animation:none;opacity:1}.g5{animation:none;fill:#16a34a}.c5{animation:none;opacity:1}.g6{animation:none;fill:#16a34a}.c6{animation:none;opacity:1}}</style>
+<rect class="bg" fill="#ffffff" width="980" height="320" rx="16"/>
+<text class="lb" fill="#0f172a" x="46" y="36">Machines check machines: a gate opens only on the expected exit code</text>
+<line class="trk" x1="86.0" y1="128" x2="894.0" y2="128" stroke="#cbd5e1" stroke-width="6" stroke-linecap="round"/>
+<circle class="node g0" cx="86.0" cy="128" r="28" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2"/>
+<text class="gt" fill="#0f172a" x="86.0" y="133" text-anchor="middle">G0</text>
+<path class="c0" d="M100.0 98 l5 5 l9 -11" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text class="lb" fill="#0f172a" x="86.0" y="184" text-anchor="middle">Intake</text>
+<text class="sm" fill="#475569" x="86.0" y="202" text-anchor="middle">issue + requirement</text>
+<circle class="node g1" cx="220.7" cy="128" r="28" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2"/>
+<text class="gt" fill="#0f172a" x="220.7" y="133" text-anchor="middle">G1</text>
+<path class="c1" d="M234.7 98 l5 5 l9 -11" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text class="lb" fill="#0f172a" x="220.7" y="184" text-anchor="middle">Plan</text>
+<text class="sm" fill="#475569" x="220.7" y="202" text-anchor="middle">change record, real issue</text>
+<circle class="node g2" cx="355.3" cy="128" r="28" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2"/>
+<text class="gt" fill="#0f172a" x="355.3" y="133" text-anchor="middle">G2</text>
+<path class="c2" d="M369.3 98 l5 5 l9 -11" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text class="lb" fill="#0f172a" x="355.3" y="184" text-anchor="middle">Red</text>
+<text class="sm" fill="#475569" x="355.3" y="202" text-anchor="middle">new tests fail</text>
+<circle class="node g3" cx="490.0" cy="128" r="28" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2"/>
+<text class="gt" fill="#0f172a" x="490.0" y="133" text-anchor="middle">G3</text>
+<path class="c3" d="M504.0 98 l5 5 l9 -11" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text class="lb" fill="#0f172a" x="490.0" y="184" text-anchor="middle">Verify</text>
+<text class="sm" fill="#475569" x="490.0" y="202" text-anchor="middle">suite · lint · ratchets</text>
+<circle class="node g4" cx="624.7" cy="128" r="28" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2"/>
+<text class="gt" fill="#0f172a" x="624.7" y="133" text-anchor="middle">G3</text>
+<path class="c4" d="M638.7 98 l5 5 l9 -11" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text class="lb" fill="#0f172a" x="624.7" y="184" text-anchor="middle">Pre-PR</text>
+<text class="sm" fill="#475569" x="624.7" y="202" text-anchor="middle">pipeline · docs</text>
+<circle class="node g5" cx="759.3" cy="128" r="28" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2"/>
+<text class="gt" fill="#0f172a" x="759.3" y="133" text-anchor="middle">G4</text>
+<path class="c5" d="M773.3 98 l5 5 l9 -11" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text class="lb" fill="#0f172a" x="759.3" y="184" text-anchor="middle">Merge</text>
+<text class="sm" fill="#475569" x="759.3" y="202" text-anchor="middle">heavy CI · review</text>
+<circle class="node g6" cx="894.0" cy="128" r="28" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2"/>
+<text class="gt" fill="#0f172a" x="894.0" y="133" text-anchor="middle">G5</text>
+<path class="c6" d="M908.0 98 l5 5 l9 -11" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text class="lb" fill="#0f172a" x="894.0" y="184" text-anchor="middle">Release</text>
+<text class="sm" fill="#475569" x="894.0" y="202" text-anchor="middle">deploy · smoke</text>
+<circle class="tok" cx="86" cy="128" r="10" fill="#f59e0b" stroke="#78350f" stroke-width="2"/>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#b45309"/></marker></defs>
+<path d="M894.0 220 C 894.0 306, 86.0 306, 86.0 220" fill="none" stroke="#b45309" stroke-width="2" stroke-dasharray="6 6" marker-end="url(#ah)"/>
+<text class="sm" fill="#475569" x="490" y="298" text-anchor="middle">incidents, review notes and metrics become new issues, then new gates (learning loop)</text>
+</svg>

@@ -18,6 +18,9 @@ PAGE = REPO / "github-page"
 SECTION = PAGE / "app" / "ai-sdlc"
 CONTENT = PAGE / "lib" / "ai-sdlc-content.ts"
 FACTS = PAGE / "lib" / "ai-sdlc-facts.ts"
+HISTORY = PAGE / "lib" / "ai-sdlc-history.json"
+HISTORY_GENERATOR = REPO / "workspace" / "ci" / "generate-ai-sdlc-history.py"
+GATE_FLOW = PAGE / "components" / "GateFlow.tsx"
 
 SUBPAGES = (
     "lifecycle",
@@ -28,6 +31,8 @@ SUBPAGES = (
     "governance",
     "lessons",
     "playbook",
+    "case-study",
+    "framework",
 )
 DIAGRAMS = (
     "FACTORY_VS_PRODUCT",
@@ -38,6 +43,9 @@ DIAGRAMS = (
     "OPENSPEC_FLOW",
     "ISSUE_STATE_MACHINE",
     "PR_SEQUENCE",
+    "FRAMEWORK_ARCHITECTURE",
+    "LEARNING_LOOP",
+    "ADOPTION_LEVELS",
 )
 SRC = re.compile(r'src\(\s*"([^"]+)"\s*\)')
 SKILL = re.compile(r'skill\(\s*"([^"]+)"\s*\)')
@@ -46,7 +54,7 @@ WORKFLOW = re.compile(r'workflow\(\s*"([^"]+)"\s*\)')
 
 
 def section_sources() -> list[Path]:
-    return [CONTENT, FACTS, *sorted(SECTION.rglob("*.tsx"))]
+    return [CONTENT, FACTS, GATE_FLOW, *sorted(SECTION.rglob("*.tsx"))]
 
 
 def read_all() -> str:
@@ -105,6 +113,40 @@ class AiSdlcSectionGroundingTest(unittest.TestCase):
         self.assertIn('from "node:fs"', facts)
         for root in (".claude/skills", ".claude/agents", ".github/workflows", "docs/openspec/changes/archive"):
             self.assertIn(root, facts, f"facts must count {root} from the repo")
+
+
+class AiSdlcCaseStudyTest(unittest.TestCase):
+    """#1958: the case study and the reusable framework, grounded in data and the repository."""
+
+    def test_history_snapshot_records_its_provenance(self):
+        import json
+
+        data = json.loads(HISTORY.read_text(encoding="utf-8"))
+        self.assertIn("generated_at", data)
+        self.assertIn("generate-ai-sdlc-history.py", data["generated_by"])
+        self.assertTrue(HISTORY_GENERATOR.is_file())
+        months = data["months"]
+        self.assertGreaterEqual(len(months), 6)
+        for row in months:
+            for key in ("month", "commits", "merged_prs", "process_prs", "bug_issues"):
+                self.assertIn(key, row)
+
+    def test_case_study_reads_history_from_the_snapshot(self):
+        page = (SECTION / "case-study" / "page.tsx").read_text(encoding="utf-8")
+        self.assertIn("ai-sdlc-history.json", read_all() + page)
+        self.assertIn("issue(", page, "the page must link the issues it cites")
+        chapters = CONTENT.read_text(encoding="utf-8").split("export const CASE_CHAPTERS", 1)[1].split("\n];", 1)[0]
+        self.assertGreaterEqual(len(re.findall(r"refs: \[\d+", chapters)), 6, "chapters must cite real issues")
+
+    def test_framework_page_cites_the_kit_and_the_report(self):
+        page = (SECTION / "framework" / "page.tsx").read_text(encoding="utf-8")
+        self.assertIn('src("framework/ai-sdlc/")', page)
+        self.assertIn('src("docs/300-development/306-ai-sdlc-framework/ai_sdlc_framework.md")', page)
+
+    def test_gate_flow_animation_respects_reduced_motion(self):
+        text = GATE_FLOW.read_text(encoding="utf-8")
+        self.assertIn("prefers-reduced-motion", text)
+        self.assertIn('role="img"', text)
 
 
 if __name__ == "__main__":

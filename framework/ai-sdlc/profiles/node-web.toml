@@ -1,0 +1,83 @@
+# Example: a TypeScript web app (npm, Vitest, ESLint with suppressions, Playwright). Level 3: fleet.
+[project]
+name = "node-web"
+policy = "CONSTITUTION.md"
+level = 3
+
+[tracker]
+verify = "gh issue view {issue} --json number"
+
+[tdd]
+production = ["src/**"]
+tests = ["**/*.test.ts", "**/*.test.tsx", "e2e/**"]
+
+[context]
+max_tokens = 8000
+files = ["AGENTS.md", "AGENT-CARD.md"]
+
+[skills]
+dir = ".claude/skills"
+generic = ["qa-automation-strategy", "ci-cd-quality-gates"]
+forbid_in_generic = ['node-web', 'src/app/']
+
+[roles.owner]
+tier = "human"
+may_merge = true
+
+[roles.foreman]
+tier = "mid"
+model = "mid-tier-model"
+may_merge = true
+
+[roles.implementer]
+tier = "mid"
+
+[roles.reviewer]
+tier = "top"
+
+[[gates]]
+name = "change record complete"
+stage = "plan"
+run = "aisdlc change check"
+
+[[gates]]
+name = "new test fails"
+stage = "red"
+run = "npx vitest run {test}"
+expect = "fail"
+
+[[gates]]
+name = "typecheck and lint"
+stage = "pre-push"
+run = "npm run typecheck && npm run lint"
+
+[[gates]]
+name = "unit tests"
+stage = "pre-push"
+run = "npx vitest run"
+
+[[gates]]
+name = "ratchets"
+stage = "pre-push"
+run = "aisdlc ratchet --base {base}"
+
+[[gates]]
+name = "e2e"
+stage = "pre-pr"
+run = "npx playwright test"
+paths = ["src/**", "e2e/**"]
+timeout = 3600
+
+[[gates]]
+name = "required checks green"
+stage = "merge"
+run = "gh pr checks {pr} --required"
+
+[[ratchets]]
+name = "eslint suppressions"
+kind = "baseline"
+file = "eslint-suppressions.json"
+
+[cost.prices."mid-tier-model"]
+input = 3.0
+output = 15.0

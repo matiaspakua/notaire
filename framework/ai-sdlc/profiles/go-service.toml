@@ -1,0 +1,31 @@
+# Example: a Go service with Jira-style commits and no GitHub. Level 1: guided.
+[project]
+name = "go-service"
+policy = "docs/PROCESS.md"
+level = 1
+base = "origin/trunk"
+
+[tracker]
+issue_pattern = '(PAY-\d+)'
+
+[commits]
+pattern = '^PAY-[0-9]+ .+'
+
+[tdd]
+production = ["**/*.go"]
+tests = ["**/*_test.go"]
+
+[[gates]]
+name = "change record complete"
+stage = "plan"
+run = "aisdlc change check"
+
+[[gates]]
+name = "vet and test"
+stage = "pre-push"
+run = "go vet ./... && go test ./..."
+
+[[gates]]
+name = "commit subjects"
+stage = "pre-push"
+run = "aisdlc commits --base {base}"

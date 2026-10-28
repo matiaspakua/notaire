@@ -76,3 +76,6 @@ back to `alwaysApply: true`.
 - [← Development docs](../)
 - [CI Preflight](../CI-PREFLIGHT.md)
 - [OpenSpec adaptations](../../openspec/NOTAIRE-ADAPTATIONS.md)
+
+The stack-agnostic generalization of this process (one policy, one profile, the `aisdlc` kit) is
+[`../306-ai-sdlc-framework/ai_sdlc_framework.md`](../306-ai-sdlc-framework/ai_sdlc_framework.md) (#1958).

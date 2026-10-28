@@ -1,0 +1,103 @@
+# AI SDLC profile for {{project}}: the only project-specific input of the framework.
+# Every command the process needs is declared here; CONSTITUTION.md never names a tool.
+# Validate with `aisdlc doctor`; list stages with `aisdlc gate --list`.
+
+[project]
+name = "{{project}}"
+policy = "CONSTITUTION.md"
+level = {{level}}                # 1 guided · 2 gated · 3 fleet · 4 autonomous
+base = "origin/main"             # base revision for diffs, path scoping and ratchets
+
+[tracker]
+issue_pattern = '#(\d+)'
+# verify = "gh issue view {issue} --json number"   # fail Gate 1 on an invented issue number
+
+[spec]
+dir = ".aisdlc/changes"
+sections = ["Why", "What changes", "Acceptance scenarios", "Test plan", "Traceability"]
+
+[tdd]
+production = ["src/**"]
+tests = ["tests/**", "test/**", "**/*_test.*", "**/*.test.*", "**/*.spec.*"]
+
+[context]
+max_tokens = 8000
+files = ["AGENTS.md", "AGENT-CARD.md"]
+
+# [skills]
+# dir = ".claude/skills"
+# generic = ["qa-automation-strategy"]
+# forbid_in_generic = ['{{project}}']
+
+[evidence]
+dir = ".aisdlc/evidence"
+
+[roles.owner]
+tier = "human"
+may_merge = true
+
+[roles.foreman]
+tier = "mid"
+may_merge = true
+
+[roles.worker]
+tier = "mid"
+
+[roles.reviewer]
+tier = "top"
+
+# ── G1 specified ─────────────────────────────────────────────────────────────
+[[gates]]
+name = "change record complete"
+stage = "plan"
+run = "aisdlc change check"
+
+# ── G2 tests fail first ──────────────────────────────────────────────────────
+[[gates]]
+name = "new test fails"
+stage = "red"
+run = "make test TEST={test}"
+expect = "fail"
+placeholder = true               # replace with your single-test command, then delete this line
+
+# ── G3 verified ──────────────────────────────────────────────────────────────
+[[gates]]
+name = "commit subjects"
+stage = "pre-push"
+run = "aisdlc commits --base {base}"
+
+[[gates]]
+name = "tests come with code"
+stage = "pre-push"
+run = "aisdlc tdd --base {base}"
+
+[[gates]]
+name = "agent context budget"
+stage = "pre-push"
+run = "aisdlc budget"
+
+[[gates]]
+name = "ratchets"
+stage = "pre-push"
+run = "aisdlc ratchet --base {base}"
+
+[[gates]]
+name = "test suite"
+stage = "pre-push"
+run = "make test"
+placeholder = true               # replace with your full suite command, then delete this line
+
+# [[ratchets]]
+# name = "lint baseline"
+# kind = "baseline"              # entries may only disappear versus the base revision
+# file = "lint-baseline.txt"     # .json files are compared by leaf counts
+#
+# [[ratchets]]
+# name = "line coverage"
+# kind = "floor"                 # the last number the command prints must stay >= floor
+# run = "make coverage-percent"
+# floor = 70.0
+
+# [cost.prices."model-id"]        # USD per million tokens, for `aisdlc cost`
+# input = 3.0
+# output = 15.0
