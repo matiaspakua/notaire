@@ -1,5 +1,9 @@
 import { GUARDRAILS, GUARDRAIL_LAYERS, NEVER_LIST, src } from "@/lib/ai-sdlc-content";
 import { Card, Diagram, PageHeader, SectionTitle, Sources } from "@/components/FactoryUI";
+import { pageMetadata } from "@/lib/site";
+import { GuardrailStack } from "@/components/GuardrailStack";
+
+export const metadata = pageMetadata("/ai-sdlc/guardrails/");
 
 export default function GuardrailsPage() {
   return (
@@ -15,6 +19,9 @@ export default function GuardrailsPage() {
           </>
         }
       />
+      <GuardrailStack />
+
+      <SectionTitle>How the layers connect</SectionTitle>
       <Diagram chart={GUARDRAIL_LAYERS} caption="Purple: policy and context. Blue: mechanical enforcement. Red: the human Owner." />
 
       <SectionTitle>Layer by layer</SectionTitle>

@@ -1,5 +1,8 @@
 import { GATES, LIFECYCLE_FLOW, LIFECYCLE_PHASES, src } from "@/lib/ai-sdlc-content";
 import { Card, Code, Diagram, PageHeader, SectionTitle, Sources } from "@/components/FactoryUI";
+import { pageMetadata } from "@/lib/site";
+
+export const metadata = pageMetadata("/ai-sdlc/lifecycle/");
 
 const tone: Record<string, string> = {
   violet: "border-violet-300 bg-violet-50 text-violet-800",
@@ -38,7 +41,7 @@ export default function LifecyclePage() {
               <li key={s.n}>
                 <Card className="h-full">
                   <div className="flex items-center gap-3">
-                    <span className="font-mono text-xs text-slate-400">step {s.n}</span>
+                    <span className="font-mono text-xs text-slate-500">step {s.n}</span>
                     {s.gate && (
                       <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-800">
                         Gate {s.gate}

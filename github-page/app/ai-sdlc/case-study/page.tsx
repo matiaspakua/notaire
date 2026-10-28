@@ -27,14 +27,14 @@ export default function CaseStudyPage() {
 
   return (
     <div>
-      <section className="relative overflow-hidden rounded-3xl bg-slate-950 px-6 py-12 text-white shadow-xl sm:px-10 sm:py-16">
+      <section className="relative overflow-hidden rounded-3xl bg-factory-950 px-6 py-12 text-white shadow-xl sm:px-10 sm:py-16">
         <div className="absolute inset-0 opacity-[0.07]" aria-hidden style={{ backgroundImage: "repeating-linear-gradient(0deg,#fff 0 1px,transparent 1px 28px),repeating-linear-gradient(90deg,#fff 0 1px,transparent 1px 28px)" }} />
-        <div className="absolute -right-20 -top-24 h-72 w-72 rounded-full bg-amber-500/25 blur-3xl" aria-hidden />
+        <div className="absolute -right-20 -top-24 h-72 w-72 rounded-full bg-factory-400/30 blur-3xl" aria-hidden />
         <div className="relative max-w-3xl space-y-5">
-          <p className="font-mono text-xs uppercase tracking-[0.25em] text-amber-300">Case study · Notaire · 2014 → 2026</p>
+          <p className="font-mono text-xs uppercase tracking-[0.25em] text-factory-200">Case study · Notaire · 2014 → 2026</p>
           <h1 className="text-4xl font-semibold tracking-tight sm:text-6xl" style={{ fontFamily: "var(--font-display)" }}>
             Fast agents, slow trust.
-            <span className="block text-slate-400">How Notaire learned to ship AI-written code.</span>
+            <span className="block text-factory-200">How Notaire learned to ship AI-written code.</span>
           </h1>
           <p className="text-lg leading-relaxed text-slate-300">
             A legacy Java desktop app was rebuilt as Spring Boot, Next.js and PostgreSQL, mostly by AI agents and one human
@@ -42,10 +42,10 @@ export default function CaseStudyPage() {
             and how the lessons became a framework any repository can adopt.
           </p>
           <div className="flex flex-wrap gap-3 pt-1">
-            <a href="#legacy" className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-slate-900 hover:bg-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-300">
+            <a href="#legacy" className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-slate-900 hover:bg-factory-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-factory-200">
               Start at chapter 1 ↓
             </a>
-            <Link href="/ai-sdlc/framework/" className="rounded-full border border-white/30 px-5 py-2 text-sm font-semibold text-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-300">
+            <Link href="/ai-sdlc/framework/" className="rounded-full border border-white/30 px-5 py-2 text-sm font-semibold text-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-factory-200">
               Skip to the framework
             </Link>
           </div>
@@ -75,8 +75,8 @@ export default function CaseStudyPage() {
         <ol className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {CASE_CHAPTERS.map((c, i) => (
             <li key={c.id}>
-              <a href={`#${c.id}`} className="group flex h-full gap-3 rounded-xl border border-slate-200 bg-white p-3 hover:border-amber-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-600">
-                <span className="font-mono text-sm font-semibold text-amber-700">{String(i + 1).padStart(2, "0")}</span>
+              <a href={`#${c.id}`} className="group flex h-full gap-3 rounded-xl border border-slate-200 bg-white p-3 hover:border-factory-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-600">
+                <span className="font-mono text-sm font-semibold text-factory-700">{String(i + 1).padStart(2, "0")}</span>
                 <span className="text-sm leading-snug text-slate-700 group-hover:text-slate-900">{c.title}</span>
               </a>
             </li>
@@ -133,7 +133,7 @@ export default function CaseStudyPage() {
             <h3 className="font-semibold text-slate-900">{l.title}</h3>
             <p className="mt-2 text-sm leading-relaxed text-slate-600">{l.body}</p>
             <p className="mt-3 border-t border-slate-100 pt-3 text-xs leading-relaxed text-slate-500">
-              <span className="font-semibold uppercase tracking-wider text-amber-700">Trade-off · </span>
+              <span className="font-semibold uppercase tracking-wider text-factory-700">Trade-off · </span>
               {l.tradeoff}
             </p>
           </Card>

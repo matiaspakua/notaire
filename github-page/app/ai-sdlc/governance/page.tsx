@@ -1,5 +1,8 @@
 import { CONVENTIONS, ISSUE_STATE_MACHINE, LABEL_FAMILIES, MILESTONE_KINDS, PR_SEQUENCE, src } from "@/lib/ai-sdlc-content";
 import { Card, Code, Diagram, PageHeader, SectionTitle, Sources, Table } from "@/components/FactoryUI";
+import { pageMetadata } from "@/lib/site";
+
+export const metadata = pageMetadata("/ai-sdlc/governance/");
 
 export default function GovernancePage() {
   return (

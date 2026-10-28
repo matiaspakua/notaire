@@ -27,20 +27,6 @@ export function issue(n: number): string {
 
 export type Source = { label: string; href: string };
 
-export const FACTORY_NAV = [
-  { href: "/ai-sdlc/", label: "Overview" },
-  { href: "/ai-sdlc/case-study/", label: "Case study" },
-  { href: "/ai-sdlc/framework/", label: "Framework" },
-  { href: "/ai-sdlc/lifecycle/", label: "Lifecycle" },
-  { href: "/ai-sdlc/guardrails/", label: "Guardrails" },
-  { href: "/ai-sdlc/quality-gates/", label: "Quality gates" },
-  { href: "/ai-sdlc/openspec/", label: "OpenSpec" },
-  { href: "/ai-sdlc/agents/", label: "Agents & skills" },
-  { href: "/ai-sdlc/governance/", label: "Governance" },
-  { href: "/ai-sdlc/lessons/", label: "Lessons" },
-  { href: "/ai-sdlc/playbook/", label: "Playbook" },
-] as const;
-
 /* ───────────────────────────── Diagrams (Mermaid, ADR-027) ───────────────────────────── */
 
 export const FACTORY_VS_PRODUCT = `

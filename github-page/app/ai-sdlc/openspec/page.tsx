@@ -1,6 +1,9 @@
 import { OPENSPEC_FLOW, skill, src } from "@/lib/ai-sdlc-content";
 import { fmt, loadFactoryFacts } from "@/lib/ai-sdlc-facts";
 import { Card, Code, Diagram, PageHeader, SectionTitle, Sources, Table } from "@/components/FactoryUI";
+import { pageMetadata } from "@/lib/site";
+
+export const metadata = pageMetadata("/ai-sdlc/openspec/");
 
 export default function OpenSpecPage() {
   const f = loadFactoryFacts();
@@ -90,7 +93,7 @@ export default function OpenSpecPage() {
 
       <SectionTitle>Commands</SectionTitle>
       <Card>
-        <pre className="overflow-x-auto text-xs leading-relaxed text-slate-800">{`cd docs
+        <pre className="overflow-x-auto text-xs leading-relaxed text-slate-800" tabIndex={0} aria-label="OpenSpec commands">{`cd docs
 openspec new change "<kebab-name>"                       # or: bash workspace/sdlc/seed-openspec-change.sh <name> --issue N --create
 openspec validate <change> --strict                     # structure
 bash ../workspace/sdlc/validate-sdlc-plan.sh <change>   # Constitution completeness + live Issue

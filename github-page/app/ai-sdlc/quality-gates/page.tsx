@@ -1,6 +1,9 @@
 import { QUALITY_GATE_PIPELINE, WORKFLOWS, src, workflow } from "@/lib/ai-sdlc-content";
 import { loadFactoryFacts } from "@/lib/ai-sdlc-facts";
 import { Card, Code, Diagram, PageHeader, SectionTitle, Sources, Table } from "@/components/FactoryUI";
+import { pageMetadata } from "@/lib/site";
+
+export const metadata = pageMetadata("/ai-sdlc/quality-gates/");
 
 const tierLabel: Record<string, string> = {
   light: "bg-sky-100 text-sky-800",
@@ -93,7 +96,7 @@ export default function QualityGatesPage() {
         rows={WORKFLOWS.map((w) => [
           <a key={w.file} className="hover:text-violet-700" href={workflow(w.file)}>
             {w.name}
-            <div className="font-mono text-[11px] text-slate-400">{w.file}</div>
+            <div className="font-mono text-[11px] text-slate-500">{w.file}</div>
           </a>,
           w.when,
           w.role,

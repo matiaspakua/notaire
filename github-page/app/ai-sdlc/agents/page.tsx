@@ -1,6 +1,10 @@
 import { CREW, ENTRY_POINTS, HARNESS_PHASES, ROLES_CHART, SKILL_STAGES, agent, skill, src } from "@/lib/ai-sdlc-content";
 import { fmt, loadFactoryFacts } from "@/lib/ai-sdlc-facts";
 import { Card, Code, Diagram, PageHeader, SectionTitle, Sources, Table } from "@/components/FactoryUI";
+import { pageMetadata } from "@/lib/site";
+import { Swimlane } from "@/components/Swimlane";
+
+export const metadata = pageMetadata("/ai-sdlc/agents/");
 
 export default function AgentsPage() {
   const f = loadFactoryFacts();
@@ -18,6 +22,12 @@ export default function AgentsPage() {
         }
       />
       <Diagram chart={ROLES_CHART} caption="The Foreman briefs specialists and reviews their evidence. The Owner holds the decisions." />
+
+      <SectionTitle id="swimlane">One change, four lanes</SectionTitle>
+      <p className="leading-relaxed text-slate-700">
+        Follow a single Issue from the Owner&apos;s backlog to a closed Issue. Each lane can only do what its role allows.
+      </p>
+      <Swimlane />
 
       <SectionTitle>Roles and authority</SectionTitle>
       <Table
