@@ -134,7 +134,9 @@ class AiSdlcCaseStudyTest(unittest.TestCase):
     def test_case_study_reads_history_from_the_snapshot(self):
         page = (SECTION / "case-study" / "page.tsx").read_text(encoding="utf-8")
         self.assertIn("ai-sdlc-history.json", read_all() + page)
-        self.assertRegex(page, r"issue\(\d+\)", "chapters must cite real issues")
+        self.assertIn("issue(", page, "the page must link the issues it cites")
+        chapters = CONTENT.read_text(encoding="utf-8").split("export const CASE_CHAPTERS", 1)[1].split("\n];", 1)[0]
+        self.assertGreaterEqual(len(re.findall(r"refs: \[\d+", chapters)), 6, "chapters must cite real issues")
 
     def test_framework_page_cites_the_kit_and_the_report(self):
         page = (SECTION / "framework" / "page.tsx").read_text(encoding="utf-8")

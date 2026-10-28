@@ -4,6 +4,8 @@ import { fmt, loadFactoryFacts } from "@/lib/ai-sdlc-facts";
 import { Card, Diagram, PageHeader, SectionTitle, Sources } from "@/components/FactoryUI";
 
 const pages = [
+  { href: "/ai-sdlc/case-study/", title: "Case study", body: "Step by step, with the data: from prompts to a Constitution, gates, fleets and ratchets — and what each failure taught." },
+  { href: "/ai-sdlc/framework/", title: "Framework", body: "The process with Notaire taken out: one policy, one profile, one zero-dependency kit, four adoption levels." },
   { href: "/ai-sdlc/lifecycle/", title: "Lifecycle", body: "The 24 mandatory steps from Issue to closed Issue, grouped into Plan, Prove, Publish and Ship, with the five hard gates." },
   { href: "/ai-sdlc/guardrails/", title: "Guardrails", body: "Nine layers, from the Constitution to the Owner, that keep agents inside the process. Each layer is enforced by a file you can read." },
   { href: "/ai-sdlc/quality-gates/", title: "Quality gates & CI", body: "Local gates, light and heavy CI, the merge gate, path-scoped CI, security cases, release and deploy." },
@@ -53,10 +55,13 @@ export default function FactoryHome() {
             from a GitHub Issue to a deployed, smoke-tested release, with a human Owner on every decision that matters.
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
-            <Link href="/ai-sdlc/lifecycle/" className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-slate-900 hover:bg-violet-100">
-              Walk the lifecycle →
+            <Link href="/ai-sdlc/case-study/" className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-slate-900 hover:bg-violet-100">
+              Read the case study →
             </Link>
-            <Link href="/ai-sdlc/playbook/" className="rounded-full border border-white/30 px-5 py-2 text-sm font-semibold text-white hover:bg-white/10">
+            <Link href="/ai-sdlc/lifecycle/" className="rounded-full border border-white/30 px-5 py-2 text-sm font-semibold text-white hover:bg-white/10">
+              Walk the lifecycle
+            </Link>
+            <Link href="/ai-sdlc/framework/" className="rounded-full border border-white/30 px-5 py-2 text-sm font-semibold text-white hover:bg-white/10">
               Apply it to your project
             </Link>
           </div>

@@ -29,6 +29,8 @@ export type Source = { label: string; href: string };
 
 export const FACTORY_NAV = [
   { href: "/ai-sdlc/", label: "Overview" },
+  { href: "/ai-sdlc/case-study/", label: "Case study" },
+  { href: "/ai-sdlc/framework/", label: "Framework" },
   { href: "/ai-sdlc/lifecycle/", label: "Lifecycle" },
   { href: "/ai-sdlc/guardrails/", label: "Guardrails" },
   { href: "/ai-sdlc/quality-gates/", label: "Quality gates" },
@@ -680,3 +682,313 @@ export const SOURCES_OF_TRUTH: Source[] = [
   { label: "Milestone nomenclature", href: src("docs/300-development/305-project-management/MILESTONE-NOMENCLATURE.md") },
   { label: "Engineering practice", href: src("docs/300-development/INGENIERIA.md") },
 ];
+
+/* ───────────────────── Case study and reusable framework (#1958) ───────────────────── */
+
+export const FRAMEWORK_ARCHITECTURE = `
+flowchart TB
+  subgraph runtime["Agent runtimes — interchangeable"]
+    direction LR
+    CC["Claude Code"] --- CU["Cursor"] --- CX["Codex · OpenCode"] --- LM["Local models"]
+  end
+  subgraph governance["Governance"]
+    direction LR
+    POL["Policy<br/>CONSTITUTION.md"] --> CARD["Agent card<br/>≤ 3 KB"]
+    ROLES["Roles<br/>Owner · Foreman · Workers · Reviewer"]
+  end
+  subgraph kit["aisdlc kit — stdlib only"]
+    direction LR
+    PROF["Profile<br/>aisdlc.toml"] --> GATE["gate"] & RAT["ratchet"] & CHG["change"] & LINT["skills · budget<br/>commits · tdd"]
+    GATE --> LED[("Evidence ledger")]
+    LED --> REP["report · cost"]
+  end
+  subgraph tools["Your toolchain — unchanged"]
+    direction LR
+    T1["tests · linters"] --- T2["spec engine"] --- T3["CI · tracker · deploy"]
+  end
+  runtime -->|"read"| governance
+  runtime -->|"run stages"| kit
+  kit -->|"calls"| tools
+  REP -.->|"learning loop"| POL
+  classDef gov fill:#ede9fe,stroke:#6d28d9,color:#2e1065
+  classDef k fill:#dcfce7,stroke:#15803d,color:#052e16
+  class POL,CARD,ROLES gov
+  class PROF,GATE,RAT,CHG,LINT,REP k
+`;
+
+export const LEARNING_LOOP = `
+flowchart LR
+  E["Incident · review note<br/>gate failure · metric"] --> L["Lesson<br/>what happened → why"]
+  L --> Q{"Can a command<br/>detect it?"}
+  Q -->|yes| G["New gate or ratchet<br/>in the profile"]
+  Q -->|no| P["Policy line or<br/>role instruction"]
+  G --> T["Test the check<br/>it must be able to fail"]
+  P --> R["Each release:<br/>can it be mechanized now?"]
+  T --> M["Measure in the ledger"]
+  R --> Q
+  M --> E
+  classDef yes fill:#dcfce7,stroke:#15803d,color:#052e16
+  class G,T,M yes
+`;
+
+export const ADOPTION_LEVELS = `
+flowchart TD
+  S(["Start"]) --> A{"More than one agent<br/>working at once?"}
+  A -->|no| B{"Legacy debt or<br/>regulated domain?"}
+  B -->|no| L1["Level 1 · Guided"]
+  B -->|yes| L2["Level 2 · Gated"]
+  A -->|yes| C{"Runs without a human<br/>between stages?"}
+  C -->|no| L3["Level 3 · Fleet"]
+  C -->|yes| D{"Pass-without-notes<br/>≥ 80% per stage?"}
+  D -->|no| L3
+  D -->|yes| L4["Level 4 · Autonomous"]
+  classDef lvl fill:#fde68a,stroke:#b45309,color:#451a03
+  class L1,L2,L3,L4 lvl
+`;
+
+export type Snippet = { label: string; lang: string; code: string; source: Source };
+export type Chapter = {
+  id: string;
+  period: string;
+  title: string;
+  problem: string;
+  move: string;
+  result: string;
+  refs: number[];
+  before?: Snippet;
+  after?: Snippet;
+  sources: Source[];
+};
+
+export const CASE_CHAPTERS: Chapter[] = [
+  {
+    id: "legacy",
+    period: "2014 → Dec 2025",
+    title: "A university desktop app nobody could change safely",
+    problem:
+      "Notaire began in 2014 as a Java Swing monolith with direct database access: 24 commits, no tests, no pipeline. Rebuilding it as Spring Boot, Next.js and PostgreSQL was a multi-year job for one maintainer.",
+    move: "December 2025: the first agent entry file lands, and AI assistants start writing most of the new code.",
+    result: "The bet: agents bring the speed. The open question: who proves the work is right?",
+    refs: [],
+    sources: [{ label: "CONSTITUTION.md §1", href: src("CONSTITUTION.md") }, { label: "AGENTS.md", href: src("AGENTS.md") }],
+  },
+  {
+    id: "speed",
+    period: "Mar → Jul 2026",
+    title: "Speed without proof",
+    problem:
+      "Merged PRs grew from 15 to 94 a month with rule files and prompts, but the rules disagreed with each other and nothing enforced them. In July, 54 bug issues were opened against 69 merged PRs.",
+    move: "A local preflight began to mirror CI, so a push that passes locally passes on the server.",
+    result: "Lesson: prose rules are wishes. The always-loaded context also grew past 16k tokens of imported rules.",
+    refs: [588, 703, 720],
+    before: {
+      label: "AGENTS.md until #1259 — 16,737 bytes, every rule imported up front",
+      lang: "markdown",
+      code: "@CONSTITUTION.md\n@.claude/rules/ai-agent-workflow.md\n@.claude/skills/ai-agent-workflow/SKILL.md\n…\n@.claude/rules/general.md\n@.claude/rules/programming.md\n@.claude/rules/code-quality.md\n@.claude/rules/refactoring.md\n@.claude/rules/ui-ux-design.md",
+      source: { label: "git show 6e817569^:AGENTS.md", href: `${REPO}/commit/6e817569414ad5b5967d64e630268159eb6d7b28` },
+    },
+    after: {
+      label: "3,385 bytes, a 3 KB card, rules on demand, budget checked in CI",
+      lang: "markdown",
+      code: "**CONSTITUTION.md is highest process authority.**\nAlways-loaded digest: CONSTITUTION-AGENT-CARD.md.\n\n| When touching | Load |\n| Any Java/backend | .claude/rules/programming.md, … |\n| Flyway / schema  | .claude/rules/database-migrations.md |\n\n# guard: agent-context-budget.py --max-tokens 8000",
+      source: { label: "AGENTS.md", href: src("AGENTS.md") },
+    },
+    sources: [{ label: "agent-context-budget.py", href: src("workspace/ci/agent-context-budget.py") }],
+  },
+  {
+    id: "constitution",
+    period: "Aug 2026",
+    title: "One Constitution, and a Gate 1 that cannot be fooled",
+    problem:
+      "Specifications were optional and Gate 1 only checked that a proposal cited something shaped like an issue number. An agent could cite #999999 and pass.",
+    move: "An agent-agnostic Engineering Constitution became the single authority, wired into OpenSpec so every agent receives it, and Gate 1 began resolving the issue live on GitHub.",
+    result: "Bug issues per merged PR fell from 0.78 to 0.33 the next month, while the process itself took a third of all PRs.",
+    refs: [781, 783, 793, 856],
+    before: {
+      label: "Gate 1 until #793 — a format check",
+      lang: "bash",
+      code: "# A real issue number, not the template placeholder.\nif grep -qE '^\\|[[:space:]]*GitHub Issue[[:space:]]*\\|[[:space:]]*#[0-9]+' \"$proposal\"; then\n  ok \"proposal: GitHub Issue referenced\"",
+      source: { label: "validate-sdlc-plan.sh @ 8c339d17", href: `${REPO}/blob/8c339d17/scripts/validate-sdlc-plan.sh` },
+    },
+    after: {
+      label: "the issue must exist on GitHub",
+      lang: "bash",
+      code: "check_issue_live() {\n  local number=\"$1\"\n  state=\"$(gh issue view \"$number\" --json state --jq '.state')\"\n  if [ -z \"$state\" ]; then\n    bad \"proposal: Issue #$number was not found on GitHub\"\n    return 1",
+      source: { label: "validate-sdlc-plan.sh", href: src("workspace/sdlc/validate-sdlc-plan.sh") },
+    },
+    sources: [{ label: "CONSTITUTION.md", href: src("CONSTITUTION.md") }, { label: "NOTAIRE-ADAPTATIONS.md", href: src("docs/openspec/NOTAIRE-ADAPTATIONS.md") }],
+  },
+  {
+    id: "mechanize",
+    period: "Sep 2026",
+    title: "Mechanize every rule that can fail",
+    problem: "Agents skipped steps the Constitution required, and security skills were used aspirationally rather than applied.",
+    move: "Harness hooks block pushes to main, CI checks the process itself (commit subjects, tests with code, spec or exception), and a dashboarded pipeline runs the security case catalog before every PR.",
+    result: "Each rule moved from a sentence into a command with an exit code, and therefore into every agent's path.",
+    refs: [1027, 1028, 1209, 1500],
+    sources: [{ label: "sdlc-process.yml", href: workflow("sdlc-process.yml") }, { label: "block-push-to-main.sh", href: src(".claude/hooks/block-push-to-main.sh") }, { label: "run_pipeline.sh", href: src("workspace/sdlc/run_pipeline.sh") }],
+  },
+  {
+    id: "harness",
+    period: "Sep 2026",
+    title: "Models that claim success they have not earned",
+    problem:
+      "A local 9B-to-20B model wrote \"1,940 tests pass\" and \"PR created\" into its task list, copied commit SHAs from main and reported changes its commits never made. One issue took 16 worker runs, 17 retries and 3 foreman stops.",
+    move: "A foreman/worker harness took the truth away from the worker: one phase per run, frozen test commands, scope and ref guards, a harness-owned ledger, harness-owned pushes, and review notes with CHECK/EXPECTED lines.",
+    result: "Gates caught every observed failure, but not every cheap pass: a duplicate test and an absolute path still needed a reviewer. Review cannot be removed; it can be made checkable.",
+    refs: [1049, 1063, 1074, 1102],
+    sources: [{ label: "local-ai/sdlc/AI-SDLC.md", href: src("local-ai/sdlc/AI-SDLC.md") }, { label: "local-ai/AUDIT.md", href: src("local-ai/AUDIT.md") }],
+  },
+  {
+    id: "fleet",
+    period: "Oct 2026",
+    title: "A fleet, and the discipline to serialize it",
+    problem:
+      "Cloud agents worked in parallel and merged 435 PRs in a month. One merged on \"all 18 checks success\" while integration and E2E suites were still running; parallel heavy PRs queued behind each other; closed issues left specs that blocked every other PR.",
+    move: "A heavy-CI merge gate, one written Foreman merge rule, an atomic claim protocol, archive-in-the-PR, continuous publication, and one heavy PR at a time.",
+    result: "Throughput rose six-fold over July while bug issues per merged PR fell to 0.09. The process share of PRs dropped from 35% to 16% as its toil was automated.",
+    refs: [1114, 1133, 1257, 1623, 1624, 1646, 1681],
+    sources: [{ label: "CI-MERGE-GATE.md", href: src("docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md") }, { label: "check-heavy-ci.sh", href: src("workspace/sdlc/check-heavy-ci.sh") }, { label: "FLEET-LESSONS-HEX-1693.md", href: src("docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md") }],
+  },
+  {
+    id: "ratchets",
+    period: "14 → 17 Oct 2026",
+    title: "Ratchets: 512 architecture violations to zero in four days",
+    problem:
+      "The top-priority goal was a full Ports & Adapters system, but the code had 512 known violations. A big-bang rewrite by parallel agents would have been unreviewable.",
+    move: "ArchUnit and ESLint rules landed on day one with a shrink-only baseline: a new violation fails the build, a fixed one must be removed from the file. One domain per PR.",
+    result: "The hexagon baseline went from 512 entries to 0, and frontend boundary suppressions from 66 to 0.",
+    refs: [1693, 1695, 1696, 1914],
+    before: {
+      label: "hexagon-baseline.txt at #1695 — 512 entries (133 R1, 377 R2, 2 R6)",
+      lang: "text",
+      code: "R1 | …adapter.in.web.budget.BudgetController -> …business.Budget\nR1 | …adapter.in.web.budget.BudgetController -> …business.BudgetStatus\nR1 | …adapter.in.web.budget.BudgetController -> …business.Person\nR1 | …adapter.in.web.budget.BudgetController -> …repository.PersonRepository\n… 508 more",
+      source: { label: "hexagon-baseline.txt @ 217f83cd", href: `${REPO}/blob/217f83cd/backend-api/src/test/resources/architecture/hexagon-baseline.txt` },
+    },
+    after: {
+      label: "#1914 — empty, and now it can only stay empty",
+      lang: "text",
+      code: "$ aisdlc ratchet --base origin/main\n  PASS  ArchUnit hexagon baseline (R1–R6) — 0 entries (base 0)\n  PASS  frontend hexagon ESLint suppressions — 0 entries (base 0)\nratchets: PASSED",
+      source: { label: "hexagon-baseline.txt", href: src("backend-api/src/test/resources/architecture/hexagon-baseline.txt") },
+    },
+    sources: [{ label: "hexagonal-architecture.md", href: src(".claude/rules/hexagonal-architecture.md") }],
+  },
+  {
+    id: "extract",
+    period: "28 Oct 2026",
+    title: "Extracting a framework any repository can adopt",
+    problem:
+      "The process worked, but it was welded to Notaire: the Constitution named Maven and Playwright, and three agent runtimes kept three configurations. A rule like \"never add a line to a baseline by hand\" was still only prose.",
+    move: "One policy, one TOML profile, one zero-dependency kit. Notaire became its first adopter: the kit runs Notaire's existing scripts and adds the checks that were missing.",
+    result: "On its first run the kit found four real defects in the skills catalog, and it now fails any hand-added baseline line in preflight and CI.",
+    refs: [1958],
+    sources: [{ label: "framework/ai-sdlc/", href: src("framework/ai-sdlc/") }, { label: ".aisdlc/aisdlc.toml", href: src(".aisdlc/aisdlc.toml") }],
+  },
+];
+
+export const CASE_TERMINALS: { title: string; caption: string; lines: string[] }[] = [
+  {
+    title: "A hand-added baseline line, caught",
+    caption: "Real output: a violation appended to Notaire's hexagon baseline, then checked against main.",
+    lines: [
+      "$ aisdlc --profile .aisdlc/aisdlc.toml ratchet --base origin/main",
+      "  FAIL  ArchUnit hexagon baseline (R1–R6) — 1 entry added to",
+      "        backend-api/src/test/resources/architecture/hexagon-baseline.txt since origin/main;",
+      "        fix the violation instead of listing it:",
+      "        + R1 | adapter.in.web.FooController -> jpa.FooJpaController (+1)",
+      "ratchets: FAILED (ArchUnit hexagon baseline (R1–R6))",
+    ],
+  },
+  {
+    title: "Code without a test, in a brand-new repository",
+    caption: "Real output: `aisdlc init` in an empty repository, then a commit that adds code and no test.",
+    lines: [
+      "$ aisdlc gate pre-push --base HEAD~1",
+      "stage pre-push · G3 verified",
+      "  PASS  commit subjects (exit 0, 0.1s)",
+      "  FAIL  tests come with code (exit 1, 0.1s)",
+      "        |   FAIL  production code changed without any test change:",
+      "        |         src/app.py",
+      "  PASS  agent context budget (exit 0, 0.0s)",
+      "  PASS  ratchets (exit 0, 0.1s)",
+      "  TODO  test suite — placeholder; configure its command in the profile",
+      "stage pre-push: FAILED",
+    ],
+  },
+];
+
+export const CASE_LESSONS: { title: string; body: string; tradeoff: string }[] = [
+  { title: "A rule without an exit code is a wish", body: "Every rule that held in Notaire became a script or a test. The ones that stayed prose were the ones agents broke.", tradeoff: "Writing and maintaining checks is real work; budget for it." },
+  { title: "Agents are not witnesses", body: "A model's report of its own success is not evidence. The harness, not the worker, owns ledgers, pushes and results.", tradeoff: "Harness code grows; it needs its own tests and its own review." },
+  { title: "Gates tell pass from fail, not right from cheap", body: "Duplicate tests, absolute paths and invented scope pass gates. An independent reviewer with checkable notes catches them.", tradeoff: "Human review time stays in the loop for anything high-risk." },
+  { title: "Serialize what is scarce", body: "Parallel agents scale only when heavy CI, shared files and merges are serialized and work is published continuously.", tradeoff: "Some agents wait; that is cheaper than conflict storms." },
+  { title: "Ratchet, do not big-bang", body: "Freeze today's violations, forbid new ones, and let every PR shrink the list. 512 became 0 in four days.", tradeoff: "Baselines need a guard against hand edits — now added." },
+  { title: "Size the process to the project", body: "The process took a third of all PRs while it was being built. Adoption levels keep a small project from paying for a fleet.", tradeoff: "Lower levels accept more risk; raise the level on evidence." },
+];
+
+export const FRAMEWORK_PRINCIPLES = [
+  { k: "Policy first", v: "One document prevails over every agent file, rule and prompt — and names no tool." },
+  { k: "Spec before code, red before green", v: "No code without a change record; no implementation before a failing test." },
+  { k: "Mechanical over aspirational", v: "A rule that can be a command is a gate. Prose is for what cannot be checked." },
+  { k: "Machines check machines, humans check meaning", v: "Agents' claims are never evidence; reviewers check what gates cannot." },
+  { k: "Gate integrity", v: "Final commit, full suite, live references. Light green is not green." },
+  { k: "Ratchet, do not big-bang", v: "Debt shrinks monotonically; quality floors only rise." },
+  { k: "Serialize scarce, publish in-flight", v: "Heavy CI, shared files and merges go one at a time; work lives on the remote." },
+  { k: "Least context, least privilege", v: "A small always-loaded card; rules and skills on demand; narrow tokens." },
+  { k: "Traceable end to end", v: "Issue → change record → tests → commits → PR → release evidence." },
+  { k: "Size the process, measure its tax", v: "Pick an adoption level; track the share of work spent on the process itself." },
+];
+
+export const FRAMEWORK_STAGES: { stage: string; gate: string; done: string; notaire: string }[] = [
+  { stage: "intake", gate: "G0 ready", done: "Issue exists, states the problem, links its requirement", notaire: "Issue template + Use Case" },
+  { stage: "plan", gate: "G1 specified", done: "Change record complete; the issue resolves live", notaire: "validate-sdlc-plan.sh" },
+  { stage: "red", gate: "G2 tests fail first", done: "New tests exist and fail (expect = \"fail\")", notaire: "mvn / vitest single test, path-scoped" },
+  { stage: "pre-push", gate: "G3 verified", done: "Suite, lint, ratchets, process checks", notaire: "preflight.sh (+ ratchet, skills lint)" },
+  { stage: "pre-pr", gate: "G3 verified", done: "Full local pipeline, docs updated", notaire: "run_pipeline.sh" },
+  { stage: "merge", gate: "G4 reviewed", done: "Full CI on the final commit, review resolved", notaire: "check-heavy-ci.sh, archive hygiene" },
+  { stage: "release", gate: "G5 shipped", done: "Deployed, smoke-tested, issue closed", notaire: "version coherence, health smoke" },
+];
+
+export const FRAMEWORK_LEVELS: { level: string; name: string; fits: string; adds: string }[] = [
+  { level: "1", name: "Guided", fits: "One developer with an assistant", adds: "Policy, card, profile, change records, plan and pre-push gates" },
+  { level: "2", name: "Gated", fits: "Small team; agents write most code", adds: "Red gates, ratchets, CI mirror, evidence report" },
+  { level: "3", name: "Fleet", fits: "Parallel agents, one human Owner", adds: "Roles with a merge rule, merge gate, serialization, claims, continuous publication" },
+  { level: "4", name: "Autonomous", fits: "Bounded autonomous runs", adds: "Release gate, cost prices, harness-owned ledgers, measured autonomy" },
+];
+
+export const FRAMEWORK_COMMANDS: { cmd: string; does: string }[] = [
+  { cmd: "init --name N --level L", does: "Scaffold policy, agent card, AGENTS.md, profile, role agents" },
+  { cmd: "doctor", does: "Validate the profile; warn on placeholders and what the level lacks" },
+  { cmd: "gate <stage>", does: "Run the stage's gates by exit code; path-scoped; one ledger record" },
+  { cmd: "ratchet", does: "Baselines may not grow against the base; floors must hold" },
+  { cmd: "change new | check", does: "Built-in change records with a live issue check" },
+  { cmd: "skills · budget · commits · tdd", does: "Catalog lint, context budget, commit subjects, tests with code" },
+  { cmd: "report · cost", does: "Gate pass rates and durations; token cost per model and agent" },
+];
+
+export const NOTAIRE_PROFILE_EXCERPT = `[project]
+name = "notaire"
+policy = "CONSTITUTION.md"
+level = 3                     # fleet: Owner + Foreman + Workers
+
+[[gates]]
+name = "OpenSpec plans conform (live issue check)"
+stage = "plan"
+run = "bash workspace/sdlc/validate-sdlc-plan.sh"
+
+[[gates]]
+name = "backend test fails"
+stage = "red"
+run = "mvn -q -B test -pl backend-api -Dtest={test}"
+expect = "fail"
+paths = ["backend-api/src/test/**"]
+
+[[gates]]
+name = "heavy CI green on the PR head"
+stage = "merge"
+run = "bash workspace/sdlc/check-heavy-ci.sh {pr}"
+
+[[ratchets]]
+name = "ArchUnit hexagon baseline (R1–R6)"
+kind = "baseline"
+file = "backend-api/src/test/resources/architecture/hexagon-baseline.txt"`;
