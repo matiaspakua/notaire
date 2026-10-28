@@ -453,7 +453,7 @@ every condition is satisfied.
 - [ ] Issue closed
 - [ ] **Board Status / label coherence:** Issue `state`, Delivery Board
       Status (Todo / In Progress / Done), and workflow labels stay aligned —
-      see [§10 Issue ↔ board ↔ labels](#10-ai-agent-rules) and
+      see [§10 Issue ↔ board ↔ labels](#10-rules-for-ai-agents) and
       `python3 workspace/sdlc/check-board-status-label-coherence.py`
 
 ---
@@ -798,7 +798,6 @@ drift.
 
 *Last reviewed: 2026-10-28 (stack-agnostic framework, baseline ratchet and skills lint #1958; archive in the PR #1623, Main Health #1622; Foreman merge rule #1624; release version coherence gate, runtime identity,
 fail-closed release assets, KISS/Boy Scout principles #1591; shared full-lifecycle
-roadmap #1569; product release #1571; testing inventory #1511; path-scoped CI
-#1257). This Constitution supersedes the process summary in
+roadmap #1569; product release #1571; testing inventory #1511; path-scoped CI #1257). This Constitution supersedes the process summary in
 `.claude/rules/ai-agent-workflow.md` where they conflict; that document remains
 the operational implementation.*
