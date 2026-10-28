@@ -30,10 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Documentation
-
-* **pages:** refresh `releases.json` and attribute Wave 9 notes under `[0.2.5]` so the public site matches the tagged cut ([#1974](https://github.com/matiaspakua/notaire/issues/1974))
-
 ### Bug Fixes
 
 * **ci:** `main` is green again after #1966 — fixed the Checkstyle `{}` record-body violations (3173 → 3141) and the 7 SpotBugs findings (1187 → 1180) that #1966 added under its own shrink-only ratchet (floors unchanged), regenerated `frontend/src/types/api.generated.ts` from `openapi.yaml`, bumped the dev-only `zod` lock entry past GHSA-mrhx-c7xc-m3w5, and the backend runtime images run `apk upgrade` so the CI image scan no longer fails on Alpine `brotli-libs` CVE-2026-111497 (CRITICAL); Deploy GitHub Page runs again once CI succeeds ([#1971](https://github.com/matiaspakua/notaire/issues/1971))
@@ -44,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Documentation
 
+* **pages:** refresh `releases.json` and attribute Wave 9 notes under `[0.2.5]` so the public site matches the tagged cut ([#1974](https://github.com/matiaspakua/notaire/issues/1974))
 * **pages:** one site shell and an AI Factory story. Every page now has the same header, footer and design tokens. The mobile menu is an accessible drawer (it was cut off at 375 px). The top level is AI Factory, Product, Technical docs and Releases, with site search, breadcrumbs, a sidebar and previous/next links. The AI Factory is told in five acts, with new guardrail-ring and agent/human swimlane SVGs, Mermaid themed from the tokens, and a **Results** page that prints only numbers read at build time. The custom cursor is gone and axe reports no WCAG A/AA violations. A new `pages-ci.yml` runs typecheck, lint, Vitest, the export, a link check, and Playwright + axe at 375/1280 px on PRs, mirrored in `preflight.sh`. Audit: [`github-page/docs/ux-assessment.md`](github-page/docs/ux-assessment.md) ([#1970](https://github.com/matiaspakua/notaire/issues/1970))
 * **sdlc:** stack-agnostic AI SDLC framework extracted from Notaire — report [`ai_sdlc_framework.md`](docs/300-development/306-ai-sdlc-framework/ai_sdlc_framework.md) (evidence, inference and open questions; three iterations; Mermaid and SVG diagrams) and the Pages AI Factory **Case study** and **Framework** pages with a reproducible history snapshot ([#1958](https://github.com/matiaspakua/notaire/issues/1958))
 * **pages:** AI Factory section `/ai-sdlc/`, kept apart from the product docs. It has 8 pages on the AI SDLC that builds Notaire: lifecycle, guardrails, quality gates, OpenSpec, agents and skills, governance, lessons and playbook. It includes Mermaid diagrams, source citations checked by a test, and counts computed at build time. The site's release data is refreshed to v0.2.4. The stale "rebase" guidance in the fleet docs now says merge `origin/main`. The `github-page/README.md` boilerplate is replaced ([#1934](https://github.com/matiaspakua/notaire/issues/1934))
