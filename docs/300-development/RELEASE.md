@@ -101,7 +101,12 @@ the chosen tag in the PR that cuts it.
 
 1. Land features/fixes on `main` via PRs with Conventional Commits
    (`feat:`, `fix:`, `feat!:`, …). **protect-main** (#1040) requires PR checks;
-   release-please does **not** need a durable Actions bypass.
+   release-please does **not** need a durable Actions bypass. Squash titles
+   may start with an optional `[#n]` for Notaire gates, but release-please
+   only treats the commit as user-facing when the type (`feat`/`fix`/…) is
+   the first token — a leading `[#n]` before `feat:`/`fix:` is ignored and
+   skips the cut (#1967). Prefer `feat(scope): … (#n)` on the merge commit,
+   or land a follow-up `fix:`/`feat:` commit without a leading `[#n]`.
 2. Wait for `Release Please` workflow on `main` to open/update the release PR.
 3. Review the release PR (CHANGELOG + version bumps in `pom.xml` /
    `frontend/package.json`). Merge it through the normal required checks.
