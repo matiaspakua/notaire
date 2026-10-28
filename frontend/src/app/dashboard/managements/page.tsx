@@ -35,6 +35,7 @@ import { useManagementStatuses } from "@/hooks/useManagementStatuses";
 import { useProcedureTypes } from "@/hooks/useProcedureTypes";
 import { useProperties } from "@/hooks/useProperties";
 import { extractApiError } from "@/lib/utils";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import type { DeedManagement } from "@/types";
 import { ManagementSummaryDialog } from "./ManagementSummaryDialog";
 import { useDeleteError } from "@/hooks/useDeleteError";
@@ -107,6 +108,7 @@ function ManagementsList() {
   const [statusId, setStatusId] = useState("");
   const [procedureTypeId, setProcedureTypeId] = useState("");
   const [propertyId, setPropertyId] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   // Full edit (#1360): prefill once per opened management from GET /complete-case.
   const { data: editCase, isLoading: isLoadingEditCase } = useManagementCompleteCase(
     modalOpen ? editing?.idManagement : undefined,
@@ -158,6 +160,7 @@ function ManagementsList() {
     setStatusId("");
     setProcedureTypeId("");
     setPropertyId("");
+    setFieldErrors({});
     setModalOpen(true);
   }
 
@@ -170,10 +173,23 @@ function ManagementsList() {
     setStatusId("");
     setProcedureTypeId("");
     setPropertyId("");
+    setFieldErrors({});
     setModalOpen(true);
   }
 
   async function handleSave() {
+    const errors = requiredFieldErrors(
+      {
+        number,
+        budgetId,
+        notaryId,
+        statusId,
+        procedureTypeId,
+      },
+      tc("fieldRequired"),
+    );
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
     try {
       if (editing?.idManagement) {
         // Heading and notes are not edited here; send them back so the PUT keeps them.
@@ -206,10 +222,9 @@ function ManagementsList() {
         toast.success(t("created"));
         notifySubstitutionRedirect(created.notes);
       }
+      setModalOpen(false);
     } catch {
       toast.error(t("errorSave"));
-    } finally {
-      setModalOpen(false);
     }
   }
 
@@ -480,7 +495,7 @@ function ManagementsList() {
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={editing ? t("editGestion") : t("newGestion")}>
-              <FormField label={t("fields.numero")} required>
+              <FormField label={t("fields.numero")} required error={fieldErrors.number}>
                 <Input
                   type="number"
                   value={number}
@@ -489,7 +504,7 @@ function ManagementsList() {
                   data-testid="input-management-number"
                 />
               </FormField>
-              <FormField label={t("fields.presupuesto")} required>
+              <FormField label={t("fields.presupuesto")} required error={fieldErrors.budgetId}>
                 {/* Server search instead of the first 1000 budgets (#1340). */}
                 <BudgetPicker
                   value={budgetId ? Number(budgetId) : undefined}
@@ -498,7 +513,7 @@ function ManagementsList() {
                   data-testid="select-budget-management"
                 />
               </FormField>
-              <FormField label={t("fields.escribano")} required>
+              <FormField label={t("fields.escribano")} required error={fieldErrors.notaryId}>
                 <PersonPicker
                   value={notaryId ? Number(notaryId) : undefined}
                   onChange={(person) => setNotaryId(person?.personId != null ? String(person.personId) : "")}
@@ -510,6 +525,7 @@ function ManagementsList() {
                 label={t("fields.estado")}
                 required
                 helperText={editing ? t("estadoViaTransition") : undefined}
+                error={fieldErrors.statusId}
               >
                 {/* CU83: an edit keeps the status; it changes through the workflow transition. */}
                 <Select value={statusId} onValueChange={setStatusId} disabled={!!editing}>
@@ -517,7 +533,7 @@ function ManagementsList() {
                   <SelectContent>{statuses.map((e) => <SelectItem key={e.idManagementStatus} value={String(e.idManagementStatus)}>{e.name}</SelectItem>)}</SelectContent>
                 </Select>
               </FormField>
-              <FormField label={t("fields.tipo")} required>
+              <FormField label={t("fields.tipo")} required error={fieldErrors.procedureTypeId}>
                 <Select value={procedureTypeId} onValueChange={setProcedureTypeId}>
                   <SelectTrigger data-testid="select-procedure-type-management"><SelectValue placeholder={t("selectTramite")} /></SelectTrigger>
                   <SelectContent>{procedureTypes.map((tt) => <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>{tt.name}</SelectItem>)}</SelectContent>

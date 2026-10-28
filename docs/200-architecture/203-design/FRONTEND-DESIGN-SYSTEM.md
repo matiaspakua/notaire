@@ -399,6 +399,12 @@ table headers.
 empty / not-found / loading use `EmptyState` / `ErrorState` / `LoadingState`.
 Workflow node type badges must not use CSS `text-transform: uppercase`.
 
+**Business forms (#1951):** High-traffic create/edit dialogs (cases, budgets,
+deeds, people) use `requiredFieldErrors` (`frontend/src/lib/required-field-errors.ts`)
+so empty required values surface on `FormField` `error` before the mutation runs.
+Budgets and deeds lists pass DataTable `error` / `onRetry` like people and
+managements. Prefer `common.fieldRequired` for the shared message.
+
 ### Form Structure
 
 All forms follow this structure — see [Quick Reference](#quick-reference)
