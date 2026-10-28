@@ -118,6 +118,7 @@ function PeopleList() {
       {
         firstName: editing.firstName,
         lastName: editing.lastName,
+        identificationNumber: editing.identificationNumber,
         identificationTypeId: selectedTypeId,
       },
       tc("fieldRequired"),
@@ -341,7 +342,7 @@ function PeopleList() {
                     </SelectContent>
                   </Select>
                 </FormField>
-                <FormField label={t("fields.numeroIdentificacion")} error={fieldErrors.identificationNumber}>
+                <FormField label={t("fields.numeroIdentificacion")} required error={fieldErrors.identificationNumber}>
                   <Input
                     value={editing.identificationNumber ?? ""}
                     onChange={(e) => setEditing({ ...editing, identificationNumber: e.target.value })}

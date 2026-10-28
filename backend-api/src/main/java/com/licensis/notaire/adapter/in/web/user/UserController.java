@@ -31,7 +31,6 @@ import com.licensis.notaire.config.RequestTokenResolver;
 import com.licensis.notaire.config.TokenRevocationService;
 import com.licensis.notaire.domain.user.User;
 import com.licensis.notaire.domain.user.UserNotFoundException;
-import com.licensis.notaire.dto.DtoUser;
 import com.licensis.notaire.observability.MetricsUtil;
 import com.licensis.notaire.security.LoginAttemptService;
 
@@ -81,6 +80,8 @@ public class UserController {
         this.authCookieService = authCookieService;
         this.tokenRevocationService = tokenRevocationService;
     }
+
+    public record LoginRequest(@NotBlank String name, @NotBlank String password) {}
 
     record PersonInfo(Integer idPerson, String name, String lastName) {}
 
@@ -192,10 +193,10 @@ public class UserController {
     })
     @PostMapping("/login")
     @Operation(summary = "Authenticate user")
-    public ResponseEntity<?> login(@RequestBody DtoUser loginRequest, HttpServletResponse httpResponse) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse httpResponse) {
         try {
-            if (loginAttemptService.isLocked(loginRequest.getName())) {
-                log.warn("Login locked for '{}': too many failed attempts.", loginRequest.getName());
+            if (loginAttemptService.isLocked(loginRequest.name())) {
+                log.warn("Login locked for '{}': too many failed attempts.", loginRequest.name());
                 metricsUtil.incrementCounter("login", "locked");
                 Map<String, Object> lockedResponse = new HashMap<>();
                 lockedResponse.put("valid", false);
@@ -203,9 +204,9 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(lockedResponse);
             }
 
-            Result result = authenticate.authenticate(loginRequest.getName(), loginRequest.getPassword());
+            Result result = authenticate.authenticate(loginRequest.name(), loginRequest.password());
             if (result instanceof Result.Failed failed) {
-                return handleAuthFailure(failed.failure(), loginRequest.getName());
+                return handleAuthFailure(failed.failure(), loginRequest.name());
             }
             User user = ((Result.Success) result).user();
             log.info("Login succeeded for user: '{}'", user.name());
@@ -236,7 +237,7 @@ public class UserController {
             httpResponse.addHeader(HttpHeaders.SET_COOKIE, sessionCookie.toString());
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
-            log.error("Failed to process login for {}", loginRequest.getName(), e);
+            log.error("Failed to process login for {}", loginRequest.name(), e);
             metricsUtil.incrementCounter("login", "error");
             return ResponseEntity.ok(invalidLoginResponse());
         }

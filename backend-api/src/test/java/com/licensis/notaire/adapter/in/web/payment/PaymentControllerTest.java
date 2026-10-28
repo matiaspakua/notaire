@@ -425,6 +425,23 @@ class PaymentControllerTest {
     }
 
     @Test
+    @DisplayName("PUT /api/v1/payments/{id} returns 400 when use case rejects amount (#1921)")
+    void shouldReturn400WhenUseCaseRejectsAmount() throws Exception {
+        when(editPaymentUseCase.edit(any(EditPaymentCommand.class)))
+                .thenThrow(new IllegalArgumentException("The payment amount must be greater than zero"));
+
+        mockMvc.perform(put("/api/v1/payments/1")
+                .contentType("application/json")
+                .content("""
+                        {
+                            "amount": 600.0,
+                            "notes": "Updated"
+                        }
+                        """))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     @DisplayName("PUT /api/v1/payments/{id} should return 404 when the payment is not found")
     void shouldReturn404OnUpdateNotFound() throws Exception {
         when(editPaymentUseCase.edit(any(EditPaymentCommand.class)))

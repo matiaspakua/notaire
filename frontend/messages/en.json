@@ -247,6 +247,7 @@
   },
   "gestiones": {
     "title": "Cases",
+    "defaultHeadingLabel": "Case",
     "newGestion": "New case",
     "editGestion": "Edit case",
     "created": "Case created",

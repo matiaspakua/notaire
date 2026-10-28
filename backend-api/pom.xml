@@ -14,6 +14,9 @@
 
     <properties>
         <skipSpotBugs>true</skipSpotBugs>
+        <!-- CI passes stricter values (#566 ratchet); local defaults stay permissive. -->
+        <checkstyle.maxAllowedViolations>999999</checkstyle.maxAllowedViolations>
+        <checkstyle.failOnViolation>false</checkstyle.failOnViolation>
         <archunit.version>1.5.1</archunit.version>
         <sonar.projectKey>notaire-backend</sonar.projectKey>
         <sonar.projectName>Notaire Backend</sonar.projectName>
@@ -408,8 +411,9 @@
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
                     <violationSeverity>warning</violationSeverity>
-                    <failOnViolation>false</failOnViolation>
-                    <failsOnError>false</failsOnError>
+                    <maxAllowedViolations>${checkstyle.maxAllowedViolations}</maxAllowedViolations>
+                    <failOnViolation>${checkstyle.failOnViolation}</failOnViolation>
+                    <failsOnError>${checkstyle.failOnViolation}</failsOnError>
                 </configuration>
                 <executions>
                     <execution>

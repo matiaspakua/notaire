@@ -84,8 +84,10 @@ class RoleTemplateMigrationIntegrationTest {
             }
             assertThat(names).containsExactlyInAnyOrder("Administrator", "Notary", "Office Staff");
             assertThat(modulesOf(statement, "Administrator")).isEqualTo(ALL_MODULES);
-            assertThat(modulesOf(statement, "Office Staff")).isSubsetOf(ALL_MODULES).doesNotContain("administracion",
-                    "usuarios");
+            // V53: Office Staff may read catalogs (administracion); writes stay ADMIN-only in Spring Security.
+            assertThat(modulesOf(statement, "Office Staff")).isSubsetOf(ALL_MODULES)
+                    .contains("administracion")
+                    .doesNotContain("usuarios");
         }
     }
 

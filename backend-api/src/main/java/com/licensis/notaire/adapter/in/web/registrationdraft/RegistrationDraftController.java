@@ -106,7 +106,7 @@ public class RegistrationDraftController {
     })
     @PutMapping("/{id}/submit")
     @Operation(summary = "CU82 - Record the registration draft submission to the registry")
-    public ResponseEntity<Object> submit(@PathVariable Integer id, @RequestBody SubmitRequest request) {
+    public ResponseEntity<Object> submit(@PathVariable Integer id, @Valid @RequestBody SubmitRequest request) {
         return toResponse(manageRegistrationDrafts.submit(id, request.dateSubmission(), request.registryEntryNumber()));
     }
 
@@ -117,7 +117,7 @@ public class RegistrationDraftController {
     })
     @PutMapping("/{id}/observe")
     @Operation(summary = "CU82 - Record an observation issued by the registry")
-    public ResponseEntity<Object> observe(@PathVariable Integer id, @RequestBody ObserveRequest request) {
+    public ResponseEntity<Object> observe(@PathVariable Integer id, @Valid @RequestBody ObserveRequest request) {
         return toResponse(manageRegistrationDrafts.observe(id, request.registryNotes(), request.dateCorrection()));
     }
 
@@ -128,7 +128,8 @@ public class RegistrationDraftController {
     })
     @PutMapping("/{id}/register")
     @Operation(summary = "CU82 - Record the final registration of the registration draft")
-    public ResponseEntity<Object> recordRegistration(@PathVariable Integer id, @RequestBody RegisterRequest request) {
+    public ResponseEntity<Object> recordRegistration(
+            @PathVariable Integer id, @Valid @RequestBody RegisterRequest request) {
         return toResponse(
                 manageRegistrationDrafts.recordRegistration(
                         id, request.dateReception(), request.finalRegistrationNumber()));

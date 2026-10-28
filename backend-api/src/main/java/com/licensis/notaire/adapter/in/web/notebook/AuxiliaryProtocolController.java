@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import com.licensis.notaire.adapter.in.web.folio.FolioController.FolioResponse;
 import com.licensis.notaire.application.port.in.notebook.ManageAuxiliaryProtocolUseCase;
 import com.licensis.notaire.application.port.in.notebook.QueryAuxiliaryProtocolUseCase;
@@ -42,7 +44,7 @@ public class AuxiliaryProtocolController {
         this.manageAuxiliaryProtocol = manageAuxiliaryProtocol;
     }
 
-    public record StartDeedRequest(Integer idFolio, String body) {}
+    public record StartDeedRequest(@NotNull Integer idFolio, String body) {}
 
     public record DeedResponse(
             Integer idDeed,
@@ -82,7 +84,7 @@ public class AuxiliaryProtocolController {
     })
     @PostMapping("/deeds")
     @Operation(summary = "Start an auxiliary-protocol deed on an available folio")
-    public ResponseEntity<Object> startDeed(@RequestBody StartDeedRequest request) {
+    public ResponseEntity<Object> startDeed(@Valid @RequestBody StartDeedRequest request) {
         return switch (manageAuxiliaryProtocol.startDeed(request.idFolio(), request.body(), new Date())) {
             case StartResult.Created created ->
                 ResponseEntity.status(HttpStatus.CREATED).body(DeedResponse.from(created.view()));

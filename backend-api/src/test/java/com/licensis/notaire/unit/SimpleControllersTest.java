@@ -227,6 +227,10 @@ class SimpleControllersTest {
         private DtoTestimonyMovement buildDto() {
             DtoTestimonyMovement dto = new DtoTestimonyMovement();
             dto.setIdTestimonyMovement(1);
+            DtoTestimony testimony = new DtoTestimony();
+            testimony.setIdTestimony(1);
+            dto.setTestimony(testimony);
+            dto.setDateEntry(new java.util.Date());
             return dto;
         }
 
@@ -459,7 +463,7 @@ class SimpleControllersTest {
             when(budgetCatalogItemsService.addItemsFromCatalog(eq(1), anyList()))
                     .thenReturn(List.of(itemView));
             mvc.perform(post("/api/v1/budgets/1/items-from-catalog").contentType("application/json")
-                    .content(mapper.writeValueAsString(List.of(1))))
+                    .content("{\"idItems\":[1]}"))
                     .andExpect(status().isOk());
         }
 

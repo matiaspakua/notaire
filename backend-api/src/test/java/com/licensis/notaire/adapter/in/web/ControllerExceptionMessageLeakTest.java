@@ -4,6 +4,7 @@ import com.licensis.notaire.adapter.in.web.concept.ConceptController;
 import com.licensis.notaire.adapter.in.web.document.DocumentTypeController;
 import com.licensis.notaire.adapter.in.web.folio.FolioTypeController;
 import com.licensis.notaire.adapter.in.web.workflow.WorkflowDefinitionController;
+import com.licensis.notaire.config.GlobalExceptionHandler;
 import com.licensis.notaire.application.port.in.document.ManageDocumentTypesUseCase;
 import com.licensis.notaire.application.port.in.document.QueryDocumentTypesUseCase;
 import com.licensis.notaire.domain.document.DocumentType;
@@ -65,10 +66,12 @@ class ControllerExceptionMessageLeakTest {
     void folioTypeCreate() throws Exception {
         ManageFolioTypesUseCase manage = mock(ManageFolioTypesUseCase.class);
         when(manage.create(any())).thenThrow(new DataIntegrityViolationException(SQL_LEAK));
-        MockMvc mvc = standaloneSetup(new FolioTypeController(mock(QueryFolioTypesUseCase.class), manage)).build();
+        MockMvc mvc = standaloneSetup(new FolioTypeController(mock(QueryFolioTypesUseCase.class), manage))
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
 
         MvcResult result = mvc.perform(post("/api/v1/folio-types").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":null}"))
+                        .content("{\"name\":\"Test\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value(GENERIC_CONSTRAINT))
@@ -81,10 +84,12 @@ class ControllerExceptionMessageLeakTest {
     void folioTypeUpdate() throws Exception {
         ManageFolioTypesUseCase manage = mock(ManageFolioTypesUseCase.class);
         doThrow(new DataIntegrityViolationException(SQL_LEAK)).when(manage).update(eq(1), any());
-        MockMvc mvc = standaloneSetup(new FolioTypeController(mock(QueryFolioTypesUseCase.class), manage)).build();
+        MockMvc mvc = standaloneSetup(new FolioTypeController(mock(QueryFolioTypesUseCase.class), manage))
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
 
         MvcResult result = mvc.perform(put("/api/v1/folio-types/1").contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
+                        .content("{\"name\":\"Test\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value(GENERIC_CONSTRAINT))
@@ -99,10 +104,12 @@ class ControllerExceptionMessageLeakTest {
         ManageDocumentTypesUseCase manage = mock(ManageDocumentTypesUseCase.class);
         when(query.getById(1)).thenReturn(DocumentType.restore(1, "ID", false, null, "", true, false, 0));
         doThrow(new DataIntegrityViolationException(SQL_LEAK)).when(manage).update(eq(1), any());
-        MockMvc mvc = standaloneSetup(new DocumentTypeController(query, manage)).build();
+        MockMvc mvc = standaloneSetup(new DocumentTypeController(query, manage))
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
 
         MvcResult result = mvc.perform(put("/api/v1/document-types/1").contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
+                        .content("{\"name\":\"ID\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(GENERIC_CONSTRAINT))
                 .andReturn();
@@ -115,10 +122,12 @@ class ControllerExceptionMessageLeakTest {
         QueryWorkflowDefinitionsUseCase query = mock(QueryWorkflowDefinitionsUseCase.class);
         ManageWorkflowDefinitionsUseCase manage = mock(ManageWorkflowDefinitionsUseCase.class);
         when(manage.create(any())).thenThrow(new DataIntegrityViolationException(SQL_LEAK));
-        MockMvc mvc = standaloneSetup(new WorkflowDefinitionController(query, manage)).build();
+        MockMvc mvc = standaloneSetup(new WorkflowDefinitionController(query, manage))
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
 
         MvcResult result = mvc.perform(post("/api/v1/workflow-definition").contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
+                        .content("{\"name\":\"Flow\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(GENERIC_CONSTRAINT))
                 .andReturn();
@@ -134,9 +143,11 @@ class ControllerExceptionMessageLeakTest {
                         new BusinessValidationException("Already exists a concept with that name"), true));
         MockMvc mvc = standaloneSetup(new ConceptController(
                         mock(com.licensis.notaire.application.port.in.concept.QueryConceptsUseCase.class), manage))
+                .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
 
-        mvc.perform(post("/api/v1/concepts").contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"X\"}"))
+        mvc.perform(post("/api/v1/concepts").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"X\",\"value\":1}"))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value("Already exists a concept with that name"));
     }

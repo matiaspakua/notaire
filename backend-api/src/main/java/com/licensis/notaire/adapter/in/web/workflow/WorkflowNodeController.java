@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.adapter.in.web.support.RequiredFields;
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowNodesUseCase;
@@ -41,6 +44,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/api/v1/workflow-node")
 @Tag(name = "Workflow Node", description = "CU70/CU71 - Workflow status nodes")
 public class WorkflowNodeController {
+
+    public record WorkflowNodeCreateRequest(
+            @NotNull Integer workflowDefinitionId,
+            @NotNull Integer statusManagementId,
+            @NotBlank String type,
+            Float positionX,
+            Float positionY) {}
 
     private final QueryWorkflowNodesUseCase query;
     private final ManageWorkflowNodesUseCase manage;
@@ -92,13 +102,15 @@ public class WorkflowNodeController {
     })
     @PostMapping
     @Operation(summary = "Create node in a workflow")
-    public ResponseEntity<Object> create(@RequestBody DtoWorkflowNode dto) {
-        Integer workflowId = RequiredFields.require(dto.getWorkflowDefinitionId(), "workflowDefinitionId");
-        Integer statusId = RequiredFields.require(dto.getStatusManagementId(), "statusManagementId");
-        WorkflowNodeKind kind = RequiredFields.requireEnum(dto.getType(), WorkflowNodeKind.class, "type");
+    public ResponseEntity<Object> create(@Valid @RequestBody WorkflowNodeCreateRequest request) {
+        WorkflowNodeKind kind = RequiredFields.requireEnum(request.type(), WorkflowNodeKind.class, "type");
         try {
             WorkflowNode saved = manage.create(new CreateWorkflowNodeCommand(
-                    workflowId, statusId, kind, dto.getPositionX(), dto.getPositionY()));
+                    request.workflowDefinitionId(),
+                    request.statusManagementId(),
+                    kind,
+                    request.positionX(),
+                    request.positionY()));
             return ResponseEntity.status(HttpStatus.CREATED).body(toDto(saved));
         } catch (WorkflowNodeInvalidException e) {
             return ResponseEntity.notFound().build();
@@ -117,7 +129,7 @@ public class WorkflowNodeController {
     })
     @PutMapping("/{id}")
     @Operation(summary = "Update node")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoWorkflowNode dto) {
+    public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody DtoWorkflowNode dto) {
         if (dto.getType() == null && dto.getPositionX() == null && dto.getPositionY() == null) {
             throw new BusinessValidationException(
                     "type, positionX, positionY: provide at least one field to update");

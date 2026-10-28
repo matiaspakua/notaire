@@ -186,7 +186,7 @@ public class TestimonyController {
             description = "Replaces the testimony. number, flagged, verified, and version are required (400 if "
                     + "any of them is missing); notes are stored as sent, and a missing deed keeps the current one. "
                     + "version is the one that was read: a mismatch with the stored version responds 409 (optimistic lock).")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody TestimonyUpdateRequest dto) {
+    public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody TestimonyUpdateRequest dto) {
         dto.requireComplete();
         return switch (manageTestimonies.update(id, dto)) {
             case SaveResult.Updated ignored -> ResponseEntity.ok().build();
@@ -235,7 +235,7 @@ public class TestimonyController {
     @PostMapping("/{id}/verify")
     @Operation(summary = "Check testimony",
             description = "Records the verification of a testimony, marking whether it was observed and why")
-    public ResponseEntity<DtoTestimony> verify(@PathVariable Integer id, @RequestBody DtoTestimony dto) {
+    public ResponseEntity<DtoTestimony> verify(@PathVariable Integer id, @Valid @RequestBody DtoTestimony dto) {
         return ResponseEntity.ok(manageTestimonies.verify(id, dto.isFlagged(), dto.getNotes()));
     }
 }

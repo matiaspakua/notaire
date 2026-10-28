@@ -1,0 +1,10 @@
+{
+  "checkstyle_max_violations": 3157,
+  "spotbugs_max_bug_instances": 1183,
+  "zero_debt_issues": {
+    "checkstyle": 710,
+    "spotbugs": 711,
+    "ci_policy": 566
+  },
+  "notes": "Floors may only shrink. Zero-debt cleanup is tracked in #710 and #711."
+}

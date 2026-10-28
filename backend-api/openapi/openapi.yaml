@@ -145,12 +145,24 @@ components:
           format: int32
           type: integer
       type: object
+    CatalogItemsRequest:
+      properties:
+        idItems:
+          items:
+            format: int32
+            type: integer
+          minItems: 1
+          type: array
+      required:
+      - idItems
+      type: object
     CompleteCaseRequest:
       properties:
         budgetId:
           format: int32
           type: integer
         heading:
+          minLength: 1
           type: string
         notaryId:
           format: int32
@@ -169,6 +181,9 @@ components:
         typeProcedureId:
           format: int32
           type: integer
+      required:
+      - heading
+      - number
       type: object
     CompleteCaseResponse:
       properties:
@@ -197,6 +212,27 @@ components:
         typeProcedureId:
           format: int32
           type: integer
+      type: object
+    ConceptWriteRequest:
+      properties:
+        enabled:
+          type: boolean
+        fixed:
+          type: boolean
+        name:
+          minLength: 1
+          type: string
+        percentage:
+          format: int32
+          type: integer
+        value:
+          type: number
+        version:
+          format: int32
+          type: integer
+      required:
+      - name
+      - value
       type: object
     CopyRequest:
       properties:
@@ -286,6 +322,9 @@ components:
           type: integer
         variablePercentage:
           type: number
+      required:
+      - idDocumentType
+      - idProcedureType
       type: object
     CreateNotebookRequest:
       properties:
@@ -384,6 +423,28 @@ components:
           type: string
         returned:
           type: boolean
+      type: object
+    DocumentTypeWriteRequest:
+      properties:
+        deliveredBy:
+          type: string
+        dueDays:
+          format: int32
+          type: integer
+        enabled:
+          type: boolean
+        expires:
+          type: boolean
+        name:
+          minLength: 1
+          type: string
+        returned:
+          type: boolean
+        version:
+          format: int32
+          type: integer
+      required:
+      - name
       type: object
     DtoAuditRecord:
       properties:
@@ -1495,7 +1556,10 @@ components:
     DtoTransitionRequest:
       properties:
         statusDestination:
+          minLength: 1
           type: string
+      required:
+      - statusDestination
       type: object
     DtoUpcomingExpiration:
       properties:
@@ -1712,6 +1776,23 @@ components:
         notes:
           type: string
       type: object
+    FolioTypeWriteRequest:
+      properties:
+        enabled:
+          type: boolean
+        isAuxiliary:
+          type: boolean
+        name:
+          minLength: 1
+          type: string
+        notes:
+          type: string
+        version:
+          format: int32
+          type: integer
+      required:
+      - name
+      type: object
     GenerateRequest:
       properties:
         idDeed:
@@ -1833,6 +1914,18 @@ components:
           format: int32
           type: integer
       type: object
+    LoginRequest:
+      properties:
+        name:
+          minLength: 1
+          type: string
+        password:
+          minLength: 1
+          type: string
+      required:
+      - name
+      - password
+      type: object
     ManagementRef:
       properties:
         heading:
@@ -1894,6 +1987,19 @@ components:
         version:
           format: int32
           type: integer
+      type: object
+    ManagementStatusWriteRequest:
+      properties:
+        name:
+          minLength: 1
+          type: string
+        notes:
+          type: string
+        version:
+          format: int32
+          type: integer
+      required:
+      - name
       type: object
     NotaryRef:
       properties:
@@ -2403,6 +2509,27 @@ components:
         notes:
           type: string
       type: object
+    ProcedureTypeWriteRequest:
+      properties:
+        associatesProperties:
+          type: boolean
+        enabled:
+          type: boolean
+        isArchived:
+          type: boolean
+        isRegistered:
+          type: boolean
+        name:
+          minLength: 1
+          type: string
+        notes:
+          type: string
+        version:
+          format: int32
+          type: integer
+      required:
+      - name
+      type: object
     PropertyRef:
       properties:
         address:
@@ -2523,6 +2650,8 @@ components:
         idFolio:
           format: int32
           type: integer
+      required:
+      - idFolio
       type: object
     SubmitRequest:
       properties:
@@ -2675,6 +2804,40 @@ components:
       required:
       - deed
       type: object
+    TestimonyMovementWriteRequest:
+      properties:
+        cardNumber:
+          format: int32
+          type: integer
+        dateEntry:
+          format: date-time
+          type: string
+        dateExit:
+          format: date-time
+          type: string
+        dateRegistration:
+          format: date-time
+          type: string
+        idTestimonyMovement:
+          format: int32
+          type: integer
+        notes:
+          type: string
+        observedByRegistry:
+          type: boolean
+        registered:
+          type: boolean
+        testimony:
+          $ref: '#/components/schemas/DtoTestimony'
+        valid:
+          type: boolean
+        version:
+          format: int32
+          type: integer
+      required:
+      - dateEntry
+      - testimony
+      type: object
     TestimonyUpdateRequest:
       properties:
         copies:
@@ -2757,7 +2920,10 @@ components:
     WaitRequest:
       properties:
         reason:
+          minLength: 1
           type: string
+      required:
+      - reason
       type: object
     WorkflowAssignmentRequest:
       properties:
@@ -2769,6 +2935,79 @@ components:
           - 'null'
       required:
       - workflowDefinitionId
+      type: object
+    WorkflowDefinitionWriteRequest:
+      properties:
+        active:
+          type: boolean
+        description:
+          type: string
+        name:
+          minLength: 1
+          type: string
+        version:
+          format: int32
+          type: integer
+      required:
+      - name
+      type: object
+    WorkflowNodeCreateRequest:
+      properties:
+        positionX:
+          format: float
+          type: number
+        positionY:
+          format: float
+          type: number
+        statusManagementId:
+          format: int32
+          type: integer
+        type:
+          minLength: 1
+          type: string
+        workflowDefinitionId:
+          format: int32
+          type: integer
+      required:
+      - statusManagementId
+      - type
+      - workflowDefinitionId
+      type: object
+    WorkflowTransitionCreateRequest:
+      properties:
+        condition:
+          type: string
+        description:
+          type: string
+        destinationNodeId:
+          format: int32
+          type: integer
+        originNodeId:
+          format: int32
+          type: integer
+        workflowDefinitionId:
+          format: int32
+          type: integer
+      required:
+      - destinationNodeId
+      - originNodeId
+      - workflowDefinitionId
+      type: object
+    WorkflowTransitionUpdateRequest:
+      properties:
+        condition:
+          type: string
+        description:
+          type: string
+        destinationNodeId:
+          format: int32
+          type: integer
+        originNodeId:
+          format: int32
+          type: integer
+      required:
+      - destinationNodeId
+      - originNodeId
       type: object
 info:
   contact:
@@ -3289,10 +3528,7 @@ paths:
         content:
           application/json:
             schema:
-              items:
-                format: int32
-                type: integer
-              type: array
+              $ref: '#/components/schemas/CatalogItemsRequest'
         required: true
       responses:
         '200':
@@ -3303,14 +3539,6 @@ paths:
                   $ref: '#/components/schemas/ItemResponse'
                 type: array
           description: OK
-        '404':
-          content:
-            '*/*':
-              schema:
-                items:
-                  $ref: '#/components/schemas/ItemResponse'
-                type: array
-          description: Budget or catalog item not found
       summary: CU71 - Add catalog item copies to the budget
       tags:
       - Budgets
@@ -3376,6 +3604,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/DtoBudgetSummary'
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DtoBudgetSummary'
+          description: Invalid request
         '404':
           content:
             '*/*':
@@ -3406,7 +3640,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoConcept'
+              $ref: '#/components/schemas/ConceptWriteRequest'
         required: true
       responses:
         '201':
@@ -3515,7 +3749,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoConcept'
+              $ref: '#/components/schemas/ConceptWriteRequest'
         required: true
       responses:
         '200':
@@ -3983,7 +4217,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoDocumentType'
+              $ref: '#/components/schemas/DocumentTypeWriteRequest'
         required: true
       responses:
         '201':
@@ -4092,7 +4326,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoDocumentType'
+              $ref: '#/components/schemas/DocumentTypeWriteRequest'
         required: true
       responses:
         '200':
@@ -4165,7 +4399,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoFolioType'
+              $ref: '#/components/schemas/FolioTypeWriteRequest'
         required: true
       responses:
         '201':
@@ -4274,7 +4508,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoFolioType'
+              $ref: '#/components/schemas/FolioTypeWriteRequest'
         required: true
       responses:
         '200':
@@ -4974,7 +5208,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoManagementStatus'
+              $ref: '#/components/schemas/ManagementStatusWriteRequest'
         required: true
       responses:
         '201':
@@ -5083,7 +5317,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoManagementStatus'
+              $ref: '#/components/schemas/ManagementStatusWriteRequest'
         required: true
       responses:
         '200':
@@ -5637,6 +5871,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/DtoManagementFinancialSummary'
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DtoManagementFinancialSummary'
+          description: Invalid request
         '404':
           content:
             '*/*':
@@ -5693,6 +5933,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/DtoPendingBalance'
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DtoPendingBalance'
+          description: Invalid request
         '404':
           content:
             '*/*':
@@ -6104,6 +6350,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/DtoPaymentResponse'
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DtoPaymentResponse'
+          description: Invalid request
         '404':
           content:
             '*/*':
@@ -6592,7 +6844,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoProcedureType'
+              $ref: '#/components/schemas/ProcedureTypeWriteRequest'
         required: true
       responses:
         '201':
@@ -6701,7 +6953,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoProcedureType'
+              $ref: '#/components/schemas/ProcedureTypeWriteRequest'
         required: true
       responses:
         '200':
@@ -8434,7 +8686,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoTestimonyMovement'
+              $ref: '#/components/schemas/TestimonyMovementWriteRequest'
         required: true
       responses:
         '201':
@@ -8666,7 +8918,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoTestimonyMovement'
+              $ref: '#/components/schemas/TestimonyMovementWriteRequest'
         required: true
       responses:
         '200':
@@ -8748,7 +9000,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoUser'
+              $ref: '#/components/schemas/LoginRequest'
         required: true
       responses:
         '200':
@@ -8889,7 +9141,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoWorkflowDefinition'
+              $ref: '#/components/schemas/WorkflowDefinitionWriteRequest'
         required: true
       responses:
         '201':
@@ -8977,7 +9229,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoWorkflowDefinition'
+              $ref: '#/components/schemas/WorkflowDefinitionWriteRequest'
         required: true
       responses:
         '200':
@@ -9035,7 +9287,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoWorkflowNode'
+              $ref: '#/components/schemas/WorkflowNodeCreateRequest'
         required: true
       responses:
         '201':
@@ -9178,7 +9430,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoWorkflowTransition'
+              $ref: '#/components/schemas/WorkflowTransitionCreateRequest'
         required: true
       responses:
         '201':
@@ -9288,7 +9540,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoWorkflowTransition'
+              $ref: '#/components/schemas/WorkflowTransitionUpdateRequest'
         required: true
       responses:
         '200':

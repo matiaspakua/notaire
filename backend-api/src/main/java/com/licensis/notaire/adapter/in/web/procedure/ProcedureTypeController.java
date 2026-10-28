@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.adapter.in.web.support.RequiredFields;
 import com.licensis.notaire.application.port.in.procedure.ManageProcedureTypesUseCase;
@@ -41,6 +43,28 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/api/v1/procedure-types")
 @Tag(name = "Procedure type", description = "API for procedure types")
 public class ProcedureTypeController {
+
+    public record ProcedureTypeWriteRequest(
+            @NotBlank String name,
+            Boolean isArchived,
+            Boolean isRegistered,
+            Boolean associatesProperties,
+            String notes,
+            Boolean enabled,
+            Integer version) {
+
+        DtoProcedureType toDto() {
+            DtoProcedureType dto = new DtoProcedureType();
+            dto.setName(name);
+            dto.setIsArchived(isArchived);
+            dto.setIsRegistered(isRegistered);
+            dto.setAssociatesProperties(associatesProperties);
+            dto.setNotes(notes);
+            dto.setEnabled(enabled);
+            dto.setVersion(version);
+            return dto;
+        }
+    }
 
     private final QueryProcedureTypesUseCase queryProcedureTypes;
     private final ManageProcedureTypesUseCase manageProcedureTypes;
@@ -90,8 +114,8 @@ public class ProcedureTypeController {
     })
     @PostMapping
     @Operation(summary = "Create procedure type")
-    public ResponseEntity<Object> create(@RequestBody DtoProcedureType dto) {
-        return switch (manageProcedureTypes.create(dto)) {
+    public ResponseEntity<Object> create(@Valid @RequestBody ProcedureTypeWriteRequest request) {
+        return switch (manageProcedureTypes.create(request.toDto())) {
             case SaveResult.Created created -> ResponseEntity.status(HttpStatus.CREATED).body(created.dto());
             case SaveResult.Failed failed -> ErrorResponses.createFailed(failed.cause());
             case SaveResult.Updated ignored -> ResponseEntity.internalServerError().build();
@@ -108,8 +132,8 @@ public class ProcedureTypeController {
     })
     @PutMapping("/{id}")
     @Operation(summary = "Update procedure type")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoProcedureType dto) {
-        return switch (manageProcedureTypes.update(id, dto)) {
+    public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody ProcedureTypeWriteRequest request) {
+        return switch (manageProcedureTypes.update(id, request.toDto())) {
             case SaveResult.Updated ignored -> ResponseEntity.ok().build();
             case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
             case SaveResult.InUse inUse -> ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", inUse.message()));

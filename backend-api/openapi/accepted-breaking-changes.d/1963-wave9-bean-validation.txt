@@ -1,0 +1,59 @@
+# #1963 / #655: Wave 9 bean validation — required WriteRequest fields; no working client sent empty bodies.
+POST /api/v1/auxiliary-protocol/deeds the request property `idFolio` became required
+POST /api/v1/budgets/{id}/items-from-catalog added the new required request property `idItems`
+POST /api/v1/budgets/{id}/items-from-catalog the request's body `type` changed from `array<integer/int32>` to `object`
+POST /api/v1/concepts the request property `name` became required
+POST /api/v1/concepts the request property `value` became required
+POST /api/v1/concepts the `name` request property's minLength was set to `1`
+PUT /api/v1/concepts/{id} the request property `name` became required
+PUT /api/v1/concepts/{id} the request property `value` became required
+PUT /api/v1/concepts/{id} the `name` request property's minLength was set to `1`
+POST /api/v1/document-cost-templates the request property `idDocumentType` became required
+POST /api/v1/document-cost-templates the request property `idProcedureType` became required
+POST /api/v1/document-types the request property `name` became required
+POST /api/v1/document-types the `name` request property's minLength was set to `1`
+PUT /api/v1/document-types/{id} the request property `name` became required
+PUT /api/v1/document-types/{id} the `name` request property's minLength was set to `1`
+POST /api/v1/folio-types the request property `name` became required
+POST /api/v1/folio-types the `name` request property's minLength was set to `1`
+PUT /api/v1/folio-types/{id} the request property `name` became required
+PUT /api/v1/folio-types/{id} the `name` request property's minLength was set to `1`
+POST /api/v1/management-statuses the request property `name` became required
+POST /api/v1/management-statuses the `name` request property's minLength was set to `1`
+PUT /api/v1/management-statuses/{id} the request property `name` became required
+PUT /api/v1/management-statuses/{id} the `name` request property's minLength was set to `1`
+POST /api/v1/managements/complete-case the request property `heading` became required
+POST /api/v1/managements/complete-case the request property `number` became required
+POST /api/v1/managements/complete-case the `heading` request property's minLength was set to `1`
+PUT /api/v1/managements/{id}/complete-case the request property `heading` became required
+PUT /api/v1/managements/{id}/complete-case the request property `number` became required
+PUT /api/v1/managements/{id}/complete-case the `heading` request property's minLength was set to `1`
+POST /api/v1/managements/{id}/transition the request property `statusDestination` became required
+POST /api/v1/managements/{id}/transition the `statusDestination` request property's minLength was set to `1`
+PUT /api/v1/procedure-folders/{id}/wait the request property `reason` became required
+PUT /api/v1/procedure-folders/{id}/wait the `reason` request property's minLength was set to `1`
+POST /api/v1/procedure-types the request property `name` became required
+POST /api/v1/procedure-types the `name` request property's minLength was set to `1`
+PUT /api/v1/procedure-types/{id} the request property `name` became required
+PUT /api/v1/procedure-types/{id} the `name` request property's minLength was set to `1`
+POST /api/v1/testimony-movements the request property `dateEntry` became required
+POST /api/v1/testimony-movements the request property `testimony` became required
+PUT /api/v1/testimony-movements/{id} the request property `dateEntry` became required
+PUT /api/v1/testimony-movements/{id} the request property `testimony` became required
+POST /api/v1/users/login the request property `name` became required
+POST /api/v1/users/login the request property `password` became required
+POST /api/v1/users/login the `name` request property's minLength was set to `1`
+POST /api/v1/users/login the `password` request property's minLength was set to `1`
+POST /api/v1/workflow-definition the request property `name` became required
+POST /api/v1/workflow-definition the `name` request property's minLength was set to `1`
+PUT /api/v1/workflow-definition/{id} the request property `name` became required
+PUT /api/v1/workflow-definition/{id} the `name` request property's minLength was set to `1`
+POST /api/v1/workflow-node the request property `statusManagementId` became required
+POST /api/v1/workflow-node the request property `type` became required
+POST /api/v1/workflow-node the request property `workflowDefinitionId` became required
+POST /api/v1/workflow-node the `type` request property's minLength was set to `1`
+POST /api/v1/workflow-transition the request property `destinationNodeId` became required
+POST /api/v1/workflow-transition the request property `originNodeId` became required
+POST /api/v1/workflow-transition the request property `workflowDefinitionId` became required
+PUT /api/v1/workflow-transition/{id} the request property `destinationNodeId` became required
+PUT /api/v1/workflow-transition/{id} the request property `originNodeId` became required

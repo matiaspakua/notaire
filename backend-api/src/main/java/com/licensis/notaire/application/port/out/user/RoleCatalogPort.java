@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import com.licensis.notaire.domain.user.Role;
 
-/** Role storage in domain terms (issue #1731). Module grants are stored only; enforcement is #1683. */
+/** Role storage in domain terms (issue #1731). Module grants are enforced server-side (#1683). */
 public interface RoleCatalogPort {
 
     List<Role> findAll();

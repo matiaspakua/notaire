@@ -39,7 +39,6 @@ import com.licensis.notaire.config.AuthCookieService;
 import com.licensis.notaire.config.JwtTokenService;
 import com.licensis.notaire.config.TokenRevocationService;
 import com.licensis.notaire.domain.user.User;
-import com.licensis.notaire.dto.DtoUser;
 import com.licensis.notaire.observability.MetricsUtil;
 import com.licensis.notaire.security.InMemoryLoginAttemptStore;
 import com.licensis.notaire.security.LoginAttemptService;
@@ -125,11 +124,8 @@ class UserControllerHashTest {
         when(passwordEncoder.matches("secret", BCRYPT_HASH)).thenReturn(true);
         when(jwtTokenService.generateToken("juan")).thenReturn("jwt-token");
 
-        DtoUser loginRequest = new DtoUser();
-        loginRequest.setName("juan");
-        loginRequest.setPassword("secret");
-
-        ResponseEntity<?> response = controller.login(loginRequest, new MockHttpServletResponse());
+        ResponseEntity<?> response = controller.login(
+                new UserController.LoginRequest("juan", "secret"), new MockHttpServletResponse());
 
         @SuppressWarnings("unchecked")
         Map<String, Object> body = (Map<String, Object>) response.getBody();
@@ -142,11 +138,8 @@ class UserControllerHashTest {
     void loginShouldRejectLegacyMd5Hash() {
         catalog.save(User.restore(1, "admin", LEGACY_MD5_ADMIN, true, "Escribano", null, null, null, null, null, 0));
 
-        DtoUser loginRequest = new DtoUser();
-        loginRequest.setName("admin");
-        loginRequest.setPassword("admin");
-
-        ResponseEntity<?> response = controller.login(loginRequest, new MockHttpServletResponse());
+        ResponseEntity<?> response = controller.login(
+                new UserController.LoginRequest("admin", "admin"), new MockHttpServletResponse());
 
         @SuppressWarnings("unchecked")
         Map<String, Object> body = (Map<String, Object>) response.getBody();
@@ -164,11 +157,8 @@ class UserControllerHashTest {
         catalog.save(User.restore(1, "juan", BCRYPT_HASH, true, "Escribano", null, null, null, null, null, 0));
         when(passwordEncoder.matches(eq("wrong"), eq(BCRYPT_HASH))).thenReturn(false);
 
-        DtoUser loginRequest = new DtoUser();
-        loginRequest.setName("juan");
-        loginRequest.setPassword("wrong");
-
-        ResponseEntity<?> response = controller.login(loginRequest, new MockHttpServletResponse());
+        ResponseEntity<?> response = controller.login(
+                new UserController.LoginRequest("juan", "wrong"), new MockHttpServletResponse());
 
         @SuppressWarnings("unchecked")
         Map<String, Object> body = (Map<String, Object>) response.getBody();

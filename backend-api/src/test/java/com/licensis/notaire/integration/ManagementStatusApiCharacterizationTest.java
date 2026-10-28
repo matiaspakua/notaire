@@ -226,6 +226,6 @@ class ManagementStatusApiCharacterizationTest {
         mvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON).content("{\"notes\": \"x\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status", is(400)))
-                .andExpect(jsonPath("$.message", is("The submitted data violates a database constraint")));
+                .andExpect(jsonPath("$.message", is("name: must not be blank")));
     }
 }

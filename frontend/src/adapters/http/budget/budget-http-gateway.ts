@@ -114,5 +114,5 @@ export const budgetHttpGateway: BudgetGateway = {
       undefined,
     )).map(toItem),
   addItemsFromCatalog: async (idBudget: number, idItems: number[]) =>
-    (await apiPost<BudgetItemDto[]>(`/budgets/${idBudget}/items-from-catalog`, idItems)).map(toItem),
+    (await apiPost<BudgetItemDto[]>(`/budgets/${idBudget}/items-from-catalog`, { idItems })).map(toItem),
 };

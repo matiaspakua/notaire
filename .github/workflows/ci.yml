@@ -274,6 +274,8 @@ jobs:
         run: >
           mvn verify -pl backend-api -am
           -Dsurefire.failIfNoSpecifiedTests=false
+          -Dcheckstyle.maxAllowedViolations=3157
+          -Dcheckstyle.failOnViolation=true
 
       - name: Generate coverage snapshot
         if: always()
@@ -423,8 +425,8 @@ jobs:
           image-ref: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
           format: 'json'
           output: 'trivy-image-results.json'
-          # Report-only for now, tracked alongside the fs scan's blocking-policy decision (#705).
-          exit-code: '0'
+          severity: 'CRITICAL'
+          exit-code: '1'
           ignore-unfixed: true
 
       - name: Upload Image Scan Results
@@ -436,7 +438,7 @@ jobs:
           retention-days: 30
 
   # ==========================================
-  # JOB 7: Quality Checks (SpotBugs) — report-only
+  # JOB 7: Quality Checks (SpotBugs) — shrink-only ratchet (#566; zero-debt #711)
   # ==========================================
   quality:
     name: Code Quality
@@ -458,10 +460,11 @@ jobs:
       # default plugin-prefix search list, so the `spotbugs:spotbugs` shorthand
       # fails with "No plugin found for prefix" unless a matching pluginGroup is
       # configured in settings.xml — not guaranteed on a fresh CI runner.
-      - name: Generate SpotBugs Report
-        run: mvn compile com.github.spotbugs:spotbugs-maven-plugin:spotbugs -pl backend-api -am -DskipSpotBugs=false -q
+      - name: SpotBugs (ratchet)
+        run: python3 workspace/ci/enforce-quality-ratchet.py --tool spotbugs
 
       - name: Summarize SpotBugs findings
+        if: always()
         run: |
           if [ -f backend-api/target/spotbugsXml.xml ]; then
             BUGS=$(grep -c "<BugInstance" backend-api/target/spotbugsXml.xml || true)

@@ -32,6 +32,7 @@ import com.licensis.notaire.domain.document.DocumentTypeInUseException;
 import com.licensis.notaire.domain.document.DocumentTypeInvalidException;
 import com.licensis.notaire.domain.document.DocumentTypeNotFoundException;
 import com.licensis.notaire.domain.document.DocumentTypeReferencedException;
+import com.licensis.notaire.config.GlobalExceptionHandler;
 import com.licensis.notaire.domain.document.DocumentTypeStaleVersionException;
 
 /**
@@ -44,7 +45,8 @@ class DocumentTypeControllerTest {
     private final QueryDocumentTypesUseCase query = mock(QueryDocumentTypesUseCase.class);
     private final ManageDocumentTypesUseCase manage = mock(ManageDocumentTypesUseCase.class);
     private final MockMvc mvc = standaloneSetup(new DocumentTypeController(query, manage))
-            .setControllerAdvice(new DocumentTypeExceptionHandler()).build();
+            .setControllerAdvice(new GlobalExceptionHandler(), new DocumentTypeExceptionHandler())
+            .build();
 
     private static final String BODY =
             "{\"name\": \"ID card\", \"expires\": true, \"dueDays\": 30, \"deliveredBy\": \"CLIENT\", "
@@ -148,6 +150,6 @@ class DocumentTypeControllerTest {
 
         mvc.perform(post("/api/v1/document-types").contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("The submitted data violates a database constraint"));
+                .andExpect(jsonPath("$.message").value("name: must not be blank"));
     }
 }

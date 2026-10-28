@@ -3,7 +3,7 @@ package com.licensis.notaire.domain.user;
 import java.util.List;
 
 /**
- * Application role with optional module grant list (storage only until #1683). Plain Java (issue #1731).
+ * Application role with module grant list enforced server-side (#1683). Plain Java (issue #1731).
  */
 public record Role(
         Integer id, String name, String description, boolean active, List<String> modules, int version) {

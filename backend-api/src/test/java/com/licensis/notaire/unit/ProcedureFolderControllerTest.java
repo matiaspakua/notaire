@@ -24,6 +24,7 @@ import com.licensis.notaire.adapter.in.web.procedure.ProcedureFolderController;
 import com.licensis.notaire.application.port.in.procedure.ManageProcedureFoldersUseCase;
 import com.licensis.notaire.application.port.in.procedure.QueryProcedureFoldersUseCase;
 import com.licensis.notaire.application.port.out.procedure.ProcedureFolderOpsPort.HoldResult;
+import com.licensis.notaire.config.GlobalExceptionHandler;
 import com.licensis.notaire.dto.DtoProcedureFolder;
 import com.licensis.notaire.testing.RequirementCoverage;
 
@@ -45,6 +46,7 @@ class ProcedureFolderControllerTest {
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(
                         new ProcedureFolderController(queryProcedureFolders, manageProcedureFolders))
+                .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
         mapper = new ObjectMapper();
     }
@@ -126,14 +128,11 @@ class ProcedureFolderControllerTest {
     @Test
     @DisplayName("PUT /api/v1/procedure-folders/{id}/wait returns 400 when the reason is missing")
     void shouldRejectWaitWithoutReason() throws Exception {
-        when(manageProcedureFolders.putOnHold(1, null))
-                .thenReturn(new HoldResult.BadRequest("The reason is required to put a folder on hold"));
-
         mockMvc.perform(put("/api/v1/procedure-folders/1/wait")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new ProcedureFolderController.WaitRequest(null))))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("The reason is required to put a folder on hold"));
+                .andExpect(jsonPath("$.message").value("reason: must not be blank"));
     }
 
     @Test

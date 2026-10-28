@@ -231,6 +231,14 @@ class SubmittedDocumentEntityTest {
             assertThat(oneToMany).isNotNull();
             assertThat(oneToMany.mappedBy()).isEqualTo("documentType");
         }
+
+        @Test
+        @DisplayName("DocumentType.procedureTemplateList is LAZY (#595)")
+        void shouldLoadProcedureTemplatesLazily() throws Exception {
+            Field field = DocumentType.class.getDeclaredField("procedureTemplateList");
+            OneToMany oneToMany = field.getAnnotation(OneToMany.class);
+            assertThat(oneToMany.fetch()).isEqualTo(jakarta.persistence.FetchType.LAZY);
+        }
     }
 
     @Nested

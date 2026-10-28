@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.licensis.notaire.adapter.in.web.item.ItemResponse;
+import com.licensis.notaire.adapter.in.web.support.IllegalArgumentResponses;
 import com.licensis.notaire.adapter.in.web.payment.PaymentWebMapper;
 import com.licensis.notaire.application.port.in.budget.ManageBudgetsUseCase;
 import com.licensis.notaire.application.port.in.budget.QueryBudgetsUseCase;
@@ -46,6 +47,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 
 /**
  * Budgets. CRUD/search call inbound ports only; person hydration and status canonicalization
@@ -175,6 +177,7 @@ public class BudgetController {
 
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "404", description = "Not found")
     })
     @GetMapping("/{id}/summary")
@@ -183,7 +186,7 @@ public class BudgetController {
         try {
             return ResponseEntity.ok(PaymentWebMapper.toDto(budgetSummaryUseCase.summary(id)));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
+            return IllegalArgumentResponses.toEmptyBody(e);
         }
     }
 
@@ -269,12 +272,13 @@ public class BudgetController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Budget or catalog item not found")
     })
+    public record CatalogItemsRequest(@NotEmpty List<Integer> idItems) {}
+
     @PostMapping("/{id}/items-from-catalog")
     @Operation(summary = "CU71 - Add catalog item copies to the budget")
     public ResponseEntity<List<ItemResponse>> addItemsFromCatalog(
-            @PathVariable Integer id,
-            @RequestBody List<Integer> idItems) {
-        return ResponseEntity.ok(addBudgetItemsFromCatalog.addItemsFromCatalog(id, idItems).stream()
+            @PathVariable Integer id, @Valid @RequestBody CatalogItemsRequest request) {
+        return ResponseEntity.ok(addBudgetItemsFromCatalog.addItemsFromCatalog(id, request.idItems()).stream()
                 .map(ItemResponse::from).toList());
     }
 }

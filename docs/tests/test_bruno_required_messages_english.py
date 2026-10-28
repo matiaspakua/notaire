@@ -9,7 +9,6 @@ API = ROOT / "backend-api" / "api-test"
 FILES = (
     API / "testimonies" / "04a-update-empty-body-rejected.yml",
     API / "testimonies" / "04c-update-missing-version-rejected.yml",
-    API / "procedures" / "04a-update-empty-body-rejected.yml",
     API / "procedure-types" / "04a-assign-workflow-empty-body-rejected.yml",
 )
 

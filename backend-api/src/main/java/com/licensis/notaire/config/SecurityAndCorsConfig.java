@@ -1,5 +1,6 @@
 package com.licensis.notaire.config;
 
+import com.licensis.notaire.security.RoleModuleAuthorizationFilter;
 import com.licensis.notaire.security.UserAuthorityResolver;
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
@@ -101,9 +102,12 @@ public class SecurityAndCorsConfig {
             };
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final RoleModuleAuthorizationFilter roleModuleAuthorizationFilter;
 
-    public SecurityAndCorsConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityAndCorsConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+            RoleModuleAuthorizationFilter roleModuleAuthorizationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.roleModuleAuthorizationFilter = roleModuleAuthorizationFilter;
     }
 
     @Value("${cors.allowed-origins:http://localhost:3000,http://localhost:8080}")
@@ -240,6 +244,7 @@ public class SecurityAndCorsConfig {
                 .authenticationEntryPoint(apiAuthenticationEntryPoint)
                 .accessDeniedHandler(apiAccessDeniedHandler))
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(roleModuleAuthorizationFilter, JwtAuthenticationFilter.class)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .csrf(csrf -> csrf
                 // Framework defaults for a single-page app (issue #1620): the

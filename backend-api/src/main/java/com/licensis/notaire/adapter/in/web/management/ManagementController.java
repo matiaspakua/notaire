@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.licensis.notaire.adapter.in.web.support.IllegalArgumentResponses;
 import com.licensis.notaire.application.port.in.management.ManageManagementsUseCase;
 import com.licensis.notaire.application.port.in.management.QueryManagementsUseCase;
 import com.licensis.notaire.application.port.in.management.TransitionManagementUseCase;
@@ -54,6 +55,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Deed managements. Calls inbound ports only; orchestration and persistence live in the use cases
@@ -96,10 +98,16 @@ public class ManagementController {
     public record DtoArchivedManagement(Integer idManagement, java.math.BigDecimal pendingBalance,
             boolean pendingDebtAtArchiving) {}
 
-    public record DtoTransitionRequest(String statusDestination) {}
+    public record DtoTransitionRequest(@NotBlank String statusDestination) {}
 
-    public record CompleteCaseRequest(Integer number, String heading, String notes,
-            Integer budgetId, Integer notaryId, Integer statusManagementId, Integer typeProcedureId,
+    public record CompleteCaseRequest(
+            @NotNull Integer number,
+            @NotBlank String heading,
+            String notes,
+            Integer budgetId,
+            Integer notaryId,
+            Integer statusManagementId,
+            Integer typeProcedureId,
             Integer propertyId) {}
 
     /**
@@ -162,7 +170,7 @@ public class ManagementController {
                     + "start date, the management is redirected to the substitute and a note is recorded. "
                     + "CU83 - When the procedure type has a workflow, the initial status must be a start node. "
                     + "CU13 - Initial status is appended to History.")
-    public ResponseEntity<Object> createCompleteCase(@RequestBody CompleteCaseRequest request) {
+    public ResponseEntity<Object> createCompleteCase(@Valid @RequestBody CompleteCaseRequest request) {
         return switch (manageManagements.createCompleteCase(toCommand(request))) {
             case CompleteCaseResult.Created created -> ResponseEntity.status(HttpStatus.CREATED)
                     .body(created.summary());
@@ -193,8 +201,8 @@ public class ManagementController {
                     + "start date, the management is redirected to the substitute and a note is recorded. "
                     + "CU83 **BREAKING** - Changing statusManagementId is rejected; use "
                     + "POST /{id}/transition. Same-status updates remain allowed.")
-    public ResponseEntity<Object> updateCompleteCase(@PathVariable Integer id,
-            @RequestBody CompleteCaseRequest request) {
+    public ResponseEntity<Object> updateCompleteCase(
+            @PathVariable Integer id, @Valid @RequestBody CompleteCaseRequest request) {
         return switch (manageManagements.updateCompleteCase(id, toCommand(request))) {
             case CompleteCaseResult.Updated updated -> ResponseEntity.ok(updated.summary());
             case CompleteCaseResult.BadRequest ignored -> ResponseEntity.badRequest().build();
@@ -339,6 +347,7 @@ public class ManagementController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Invalid request"),
         @ApiResponse(responseCode = "404", description = "Management not found")
     })
     @GetMapping("/{id}/outstanding-balance")
@@ -348,12 +357,13 @@ public class ManagementController {
             java.math.BigDecimal pendingBalance = queryManagements.calculatePendingBalance(id);
             return ResponseEntity.ok(new DtoPendingBalance(pendingBalance));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
+            return IllegalArgumentResponses.toEmptyBody(e);
         }
     }
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Invalid request"),
         @ApiResponse(responseCode = "404", description = "Management not found")
     })
     @GetMapping("/{id}/financial-summary")
@@ -362,7 +372,7 @@ public class ManagementController {
         try {
             return ResponseEntity.ok(queryManagements.getFinancialSummary(id));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
+            return IllegalArgumentResponses.toEmptyBody(e);
         }
     }
 
@@ -396,8 +406,7 @@ public class ManagementController {
     })
     @PostMapping("/{id}/transition")
     @Operation(summary = "CU83 - Transition management status validating the defined workflow")
-    public ResponseEntity<?> transition(@PathVariable Integer id,
-            @RequestBody DtoTransitionRequest request) {
+    public ResponseEntity<?> transition(@PathVariable Integer id, @Valid @RequestBody DtoTransitionRequest request) {
         var output = transitionManagementUseCase.execute(id, request.statusDestination());
         return ResponseEntity.ok(transitionManagementWebMapper.mapToHttpResponse(output));
     }
@@ -434,7 +443,7 @@ public class ManagementController {
     @Operation(summary = "CU10 - Register movement of an external-entity document")
     public ResponseEntity<DtoExternalEntityDocument> registerExternalEntityDocumentMovement(
             @PathVariable Integer id, @PathVariable Integer idSubmittedDocument,
-            @RequestBody DtoExternalEntityDocumentMovement movement) {
+            @Valid @RequestBody DtoExternalEntityDocumentMovement movement) {
         DtoExternalEntityDocument result =
                 externalEntityDocuments.registerMovement(id, idSubmittedDocument, movement);
         externalEntityDocuments.tryCompleteDocumentation(id);

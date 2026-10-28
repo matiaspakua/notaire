@@ -241,6 +241,6 @@ class DocumentTypeApiCharacterizationTest {
                 .content("{\"expires\": false, \"deliveredBy\": \"\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status", is(400)))
-                .andExpect(jsonPath("$.message", is("The submitted data violates a database constraint")));
+                .andExpect(jsonPath("$.message", is("name: must not be blank")));
     }
 }

@@ -47,7 +47,9 @@ class ConceptControllerTest {
     @BeforeEach
     void setUp() {
         ConceptController controller = new ConceptController(queryConcepts, manageConcepts);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
+                .build();
         mapper = new ObjectMapper();
     }
 
@@ -88,6 +90,15 @@ class ConceptControllerTest {
         when(queryConcepts.findById(999)).thenReturn(Optional.empty());
         mockMvc.perform(get("/api/v1/concepts/999"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/concepts returns 400 for empty body (#655)")
+    void shouldRejectEmptyCreateBody() throws Exception {
+        mockMvc.perform(post("/api/v1/concepts")
+                        .contentType("application/json")
+                        .content("{}"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

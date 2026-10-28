@@ -52,6 +52,15 @@ class DocumentCostTemplateControllerTest {
         procedureType = procedureTypeRepository.findById(1).orElseThrow();
     }
 
+    @Test
+    @DisplayName("POST /api/v1/document-cost-templates returns 400 for empty body (#655)")
+    void shouldRejectEmptyCreateBody() throws Exception {
+        mockMvc.perform(post("/api/v1/document-cost-templates")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isBadRequest());
+    }
+
     private DocumentType createDocumentType(String name) {
         DocumentType documentType = new DocumentType();
         documentType.setName(name);

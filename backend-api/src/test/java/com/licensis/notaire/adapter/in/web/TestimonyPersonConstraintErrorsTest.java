@@ -3,6 +3,7 @@ package com.licensis.notaire.adapter.in.web;
 import com.licensis.notaire.adapter.in.web.person.PersonController;
 import com.licensis.notaire.adapter.in.web.testimony.TestimonyController;
 import com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementController;
+import com.licensis.notaire.config.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -49,7 +50,9 @@ class TestimonyPersonConstraintErrorsTest {
             Class<?> parameter = constructor.getParameterTypes()[i];
             args[i] = collaborators.containsKey(parameter) ? collaborators.get(parameter) : mock(parameter);
         }
-        return standaloneSetup(constructor.newInstance(args)).build();
+        return standaloneSetup(constructor.newInstance(args))
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
     }
 
     private static ResultActions send(MockMvc mvc, boolean update, String url, String body) throws Exception {
@@ -100,6 +103,7 @@ class TestimonyPersonConstraintErrorsTest {
 
     private static final String PERSON = "{\"firstName\":\"Ana\",\"lastName\":\"Paz\",\"identificationNumber\":\"1\","
             + "\"isClient\":false}";
+    private static final String MOVEMENT = "{\"testimony\":{\"idTestimony\":1},\"dateEntry\":\"2026-01-01T12:00:00.000+00:00\"}";
     private static final String TESTIMONY = "{\"number\":1,\"deed\":{\"idDeed\":1,\"number\":1}}";
     /** PUT /testimonies/{id} requires number, flagged, verified and version (#655). */
     private static final String TESTIMONY_UPDATE = "{\"number\":1,\"flagged\":false,\"verified\":false,\"version\":0,"
@@ -109,14 +113,14 @@ class TestimonyPersonConstraintErrorsTest {
     @DisplayName("POST /testimony-movements answers 400, not 409, on a constraint violation")
     void movementCreate() throws Exception {
         assertConstraint400(send(movements(new DataIntegrityViolationException(SQL_LEAK)), false,
-                "/api/v1/testimony-movements", "{}"));
+                "/api/v1/testimony-movements", MOVEMENT));
     }
 
     @Test
     @DisplayName("PUT /testimony-movements/{id} answers 400, not 500, on a constraint violation")
     void movementUpdate() throws Exception {
         assertConstraint400(send(movements(new DataIntegrityViolationException(SQL_LEAK)), true,
-                "/api/v1/testimony-movements/1", "{}"));
+                "/api/v1/testimony-movements/1", MOVEMENT));
     }
 
     @Test
@@ -151,8 +155,8 @@ class TestimonyPersonConstraintErrorsTest {
     @DisplayName("other failures keep their status: 409 on create, 500 on testimony updates, 409 on person updates")
     void otherFailuresKeepTheirStatus() throws Exception {
         RuntimeException boom = new IllegalStateException(SQL_LEAK);
-        send(movements(boom), false, "/api/v1/testimony-movements", "{}").andExpect(status().isConflict());
-        send(movements(boom), true, "/api/v1/testimony-movements/1", "{}")
+        send(movements(boom), false, "/api/v1/testimony-movements", MOVEMENT).andExpect(status().isConflict());
+        send(movements(boom), true, "/api/v1/testimony-movements/1", MOVEMENT)
                 .andExpect(status().isInternalServerError());
         send(testimonies(boom), false, "/api/v1/testimonies", TESTIMONY).andExpect(status().isConflict());
         send(testimonies(boom), true, "/api/v1/testimonies/1", TESTIMONY_UPDATE).andExpect(status().isInternalServerError());
