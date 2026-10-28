@@ -35,6 +35,7 @@ Architecture Decision Records document the important architecture decisions for 
 | [027](ADR-027-mermaid-diagrams.md) | Mermaid as the canonical diagram language | Accepted | 2026-10-10 | Documentation |
 | [028](ADR-028-release-and-version-identity.md) | Release and version identity | Accepted | 2026-10-13 | DevOps and release |
 | [029](ADR-029-object-level-authorization.md) | Object-level authorization (record ownership) | Proposed | 2026-10-14 | Security |
+| [031](ADR-031-local-ai-assistant.md) | Local AI assistant through Spring AI behind hexagonal ports | Proposed | 2026-10-28 | Architecture / AI |
 
 Dates for ADR-005, ADR-006, and ADR-007 match the date in each decision file.
 

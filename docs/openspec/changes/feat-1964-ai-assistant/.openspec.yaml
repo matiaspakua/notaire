@@ -1,0 +1,5 @@
+schema: notaire-sdlc
+created: 2026-10-28
+# Phased change (#1964): this PR carries the intent (Gate 1 pending Owner approval);
+# phase 1 implementation continues on later PRs, the last one archives it.
+multi_pr: true
