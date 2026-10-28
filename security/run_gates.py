@@ -216,10 +216,18 @@ def assess_sca(repo: Path, trivy_bin: str | None, profile: str = "local") -> Cas
                 "--exit-code",
                 "1",
                 "--quiet",
+                # Product tree only: ignore local tooling / agent scratch that is
+                # gitignored or not shipped (stale worktrees otherwise fail SEC-SCA-01).
                 "--skip-dirs",
                 "security/.tools",
                 "--skip-dirs",
                 "reports",
+                "--skip-dirs",
+                ".claude/worktrees",
+                "--skip-dirs",
+                "local-ai",
+                "--skip-dirs",
+                ".opencode",
             ],
             repo,
             900,
