@@ -10,6 +10,10 @@
 | Branch | `docs/1974_pages_v025_release_record` |
 | Gate 1 status | passed |
 
+## Why
+
+Pages release identity and CHANGELOG attribution must match the tagged `v0.2.5` cut so visitors and operators see one version.
+
 ## Objetivo
 
 `v0.2.5` is tagged on GitHub, but the public Pages site still listed product version
