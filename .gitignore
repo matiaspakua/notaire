@@ -98,3 +98,6 @@ testing/.env
 frontend/playwright-report/
 frontend/test-results/
 frontend/tests/e2e/fixtures/
+
+# AI SDLC framework evidence ledger and cost log (local audit trail, #1958)
+.aisdlc/evidence/

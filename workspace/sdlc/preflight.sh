@@ -56,6 +56,8 @@ board Status/label coherence    Process Checks                    sdlc-process.y
 Closes/Fixes multi_pr guard     Process Checks                    sdlc-process.yml   (BLOCKING; #1878)
 Owner scripts bash -n           Process Checks                    sdlc-process.yml   (BLOCKING; #1878)
 agent rule files                Process Checks                    sdlc-process.yml   (BLOCKING)
+baseline ratchet (shrink-only)  Process Checks                    sdlc-process.yml   (BLOCKING; #1958)
+skills catalog lint             Process Checks / Main Health      sdlc-process.yml   (BLOCKING; #1958)
 process script self-tests       Process Checks                    sdlc-process.yml   (BLOCKING)
 openapi breaking diff           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; export freshness CI-only)
 openapi accepted list           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; stale entries, #1315)
@@ -173,8 +175,15 @@ else
     skip "sdlc exception label" "no PR yet — CI WILL run this"
 fi
 run "agent rule files" bash workspace/sdlc/check-agent-rules.sh
+# AI SDLC framework (#1958): architecture/lint baselines only shrink against main, and the
+# skills catalog stays unique, described and generic where it claims to be.
+run "baseline ratchet (shrink-only)" \
+    python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml ratchet --base origin/main
+run "skills catalog lint" \
+    python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml skills
 run "process script self-tests" bash -c \
     "python3 -m unittest discover -s local-ai/sdlc/tests \
+     && python3 -m unittest discover -s framework/ai-sdlc/tests \
      && python3 -m unittest discover -s workspace/tests \
      && python3 -m unittest workspace.sdlc.test_milestone_policy \
      && python3 -m unittest discover -s contracts/tests \
