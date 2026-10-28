@@ -13,8 +13,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+* **auth:** role module grants in `role_modules` are enforced on the API after JWT authentication — missing module → 403 (ADR-029 W2) ([#1683](https://github.com/matiaspakua/notaire/issues/1683), [#1963](https://github.com/matiaspakua/notaire/issues/1963))
+* **ops:** verifiable per-installation isolation checklist fails on missing/default JWT, admin password, or actuator credentials (ADR-029 W3) ([#1684](https://github.com/matiaspakua/notaire/issues/1684), [#1963](https://github.com/matiaspakua/notaire/issues/1963))
+* **ops:** HTTPS Spring profile, local self-signed keystore script, and production TLS runbook ([#254](https://github.com/matiaspakua/notaire/issues/254), [#1963](https://github.com/matiaspakua/notaire/issues/1963))
+* **api:** Bean Validation (`@Valid`) on remaining write controllers — empty bodies answer 400; OpenAPI marks required write fields (accepted oasdiff under #1963 until pruned on main) ([#655](https://github.com/matiaspakua/notaire/issues/655), [#1963](https://github.com/matiaspakua/notaire/issues/1963))
+
 ### Bug Fixes
 
+* **api:** Budget, Management and Payment map invalid `IllegalArgumentException` to 400 and not-found to 404 ([#1921](https://github.com/matiaspakua/notaire/issues/1921), [#1315](https://github.com/matiaspakua/notaire/issues/1315), [#1963](https://github.com/matiaspakua/notaire/issues/1963))
+* **jpa:** unbounded EAGER `@OneToMany` on Concept and DocumentType switched to LAZY ([#595](https://github.com/matiaspakua/notaire/issues/595), [#1963](https://github.com/matiaspakua/notaire/issues/1963))
+* **ci:** Trivy image scan fails on CRITICAL; Checkstyle/SpotBugs fail when findings exceed ratchet baselines ([#566](https://github.com/matiaspakua/notaire/issues/566), [#1963](https://github.com/matiaspakua/notaire/issues/1963))
+* **openapi:** accepted-breaking ignore list stays empty on main; guard test proves no active `*.txt` entries ([#1920](https://github.com/matiaspakua/notaire/issues/1920), [#1315](https://github.com/matiaspakua/notaire/issues/1315), [#1963](https://github.com/matiaspakua/notaire/issues/1963))
 * **sdlc:** pushing from a linked worktree no longer corrupts the shared `.git/config` — `preflight.sh` drops the `GIT_DIR` the pre-push hook exports, so self-tests that build throwaway repositories cannot set `core.bare = true` or a fixture identity ([#1958](https://github.com/matiaspakua/notaire/issues/1958))
 * **security:** frontend lockfile resolves patched `katex` 0.18.x via an npm `overrides` pin — `markdownlint-cli2@0.24.0` (latest) still pulls `katex@^0.16.0` through `micromark-extension-math`, so Dependabot's security update could not apply ([#1943](https://github.com/matiaspakua/notaire/issues/1943))
 * **ci:** weekly DAST ZAP and k6 runs stay green on reviewed noise — allowlist informational ZAP 10049 (Non-Storable Content on 404s) with a pinned reviewed set; report uploads are `continue-on-error` so an artifact-quota outage cannot turn a passing run red ([#1932](https://github.com/matiaspakua/notaire/issues/1932))

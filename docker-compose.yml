@@ -44,6 +44,8 @@ services:
       SPRING_FLYWAY_ENABLED: true
       SPRING_FLYWAY_BASELINE_ON_MIGRATE: true
       JWT_SECRET: ${JWT_SECRET}
+      # Optional backend TLS prove-out (#254): SPRING_PROFILES_ACTIVE=https plus a mounted
+      # PKCS#12 keystore (see docs/200-architecture/206-security/HTTPS-TLS-RUNBOOK.md).
       # Dev-only defaults; production is refused by ProductionCredentialsGuard (#1639).
       ACTUATOR_USER: ${ACTUATOR_USER:-admin}
       ACTUATOR_PASSWORD: ${ACTUATOR_PASSWORD:-admin}

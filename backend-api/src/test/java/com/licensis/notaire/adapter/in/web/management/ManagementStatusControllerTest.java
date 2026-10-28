@@ -32,6 +32,7 @@ import com.licensis.notaire.domain.management.ManagementStatusInUseException;
 import com.licensis.notaire.domain.management.ManagementStatusInvalidException;
 import com.licensis.notaire.domain.management.ManagementStatusNotFoundException;
 import com.licensis.notaire.domain.management.ManagementStatusReferencedException;
+import com.licensis.notaire.config.GlobalExceptionHandler;
 import com.licensis.notaire.domain.management.ManagementStatusStaleVersionException;
 
 /**
@@ -44,7 +45,7 @@ class ManagementStatusControllerTest {
     private final QueryManagementStatusesUseCase query = mock(QueryManagementStatusesUseCase.class);
     private final ManageManagementStatusesUseCase manage = mock(ManageManagementStatusesUseCase.class);
     private final MockMvc mvc = standaloneSetup(new ManagementStatusController(query, manage))
-            .setControllerAdvice(new ManagementStatusExceptionHandler())
+            .setControllerAdvice(new GlobalExceptionHandler(), new ManagementStatusExceptionHandler())
             .build();
 
     private static final String BODY = "{\"name\": \"Active\", \"notes\": \"n\", \"version\": 3}";
@@ -145,7 +146,7 @@ class ManagementStatusControllerTest {
 
         mvc.perform(post("/api/v1/management-statuses").contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("The submitted data violates a database constraint"));
+                .andExpect(jsonPath("$.message").value("name: must not be blank"));
     }
 
     @Test

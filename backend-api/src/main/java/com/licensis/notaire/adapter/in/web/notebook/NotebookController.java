@@ -29,6 +29,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 
 /**
@@ -106,7 +107,7 @@ public class NotebookController {
     })
     @PostMapping
     @Operation(summary = "Create a notebook from ten consecutive folios")
-    public ResponseEntity<Object> createNotebook(@RequestBody CreateNotebookRequest request) {
+    public ResponseEntity<Object> createNotebook(@Valid @RequestBody CreateNotebookRequest request) {
         return switch (manageNotebooks.create(
                 request.idsFolio(), request.idNotary(), request.year(), request.notes())) {
             case CreateResult.Created created ->

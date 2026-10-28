@@ -247,6 +247,7 @@
   },
   "gestiones": {
     "title": "Gestiones",
+    "defaultHeadingLabel": "Gestión",
     "newGestion": "Nueva gestión",
     "editGestion": "Editar gestión",
     "created": "Gestión creada",

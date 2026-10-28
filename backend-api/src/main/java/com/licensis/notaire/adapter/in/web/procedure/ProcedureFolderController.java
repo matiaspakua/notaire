@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import com.licensis.notaire.application.port.in.procedure.ManageProcedureFoldersUseCase;
 import com.licensis.notaire.application.port.in.procedure.QueryProcedureFoldersUseCase;
 import com.licensis.notaire.application.port.out.procedure.ProcedureFolderOpsPort.HoldResult;
@@ -40,8 +42,7 @@ public class ProcedureFolderController {
         this.manageProcedureFolders = manageProcedureFolders;
     }
 
-    public record WaitRequest(String reason) {
-    }
+    public record WaitRequest(@NotBlank String reason) {}
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
@@ -73,7 +74,7 @@ public class ProcedureFolderController {
     })
     @PutMapping("/{id}/wait")
     @Operation(summary = "CU85 - Put a procedure folder on hold; a reason is required")
-    public ResponseEntity<Object> putOnHold(@PathVariable Integer id, @RequestBody WaitRequest request) {
+    public ResponseEntity<Object> putOnHold(@PathVariable Integer id, @Valid @RequestBody WaitRequest request) {
         return switch (manageProcedureFolders.putOnHold(id, request.reason())) {
             case HoldResult.Ok ok -> ResponseEntity.ok(ok.dto());
             case HoldResult.NotFound ignored -> ResponseEntity.notFound().build();

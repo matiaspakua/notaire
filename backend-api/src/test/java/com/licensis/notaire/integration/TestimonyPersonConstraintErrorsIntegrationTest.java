@@ -50,8 +50,7 @@ class TestimonyPersonConstraintErrorsIntegrationTest {
     void emptyMovementIsBadRequest() throws Exception {
         mockMvc.perform(post("/api/v1/testimony-movements").contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.message").value("The submitted data violates a database constraint"));
+                .andExpect(jsonPath("$.status").value(400));
     }
 
     @ParameterizedTest(name = "contract of {0} documents 400 on POST and PUT")

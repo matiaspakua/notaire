@@ -154,7 +154,7 @@ class IncompletePutBodiesIntegrationTest {
             mockMvc.perform(put("/api/v1/procedures/" + id).contentType(MediaType.APPLICATION_JSON).content(body))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.status").value(400))
-                    .andExpect(jsonPath("$.message").value("idProcedureType: is required"));
+                    .andExpect(jsonPath("$.message").value("idProcedureType: must not be null"));
         }
         assertThat(getJson("/api/v1/procedures/" + id).get("notes").asText()).isEqualTo("keep");
 
@@ -170,7 +170,7 @@ class IncompletePutBodiesIntegrationTest {
         mockMvc.perform(post("/api/v1/procedures").contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.message").value("idProcedureType: is required"));
+                .andExpect(jsonPath("$.message").value("idProcedureType: must not be null"));
     }
 
     // ---------------------------------------------------------------- PUT /procedure-types/{id}/workflow

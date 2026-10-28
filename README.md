@@ -179,7 +179,8 @@ Local ↔ CI mapping of each gate: [`docs/300-development/CI-PREFLIGHT.md`](docs
 - **Observability**: metrics (Prometheus), structured JSON logs (Loki),
   dashboards (Grafana) — see [`docs/200-architecture/207-monitoring/`](docs/200-architecture/207-monitoring/).
 - **Security**: BCrypt, Spring Security, CORS, input validation, Trivy
-  scanning — see [`docs/200-architecture/206-security/`](docs/200-architecture/206-security/).
+  scanning — see [`docs/200-architecture/206-security/`](docs/200-architecture/206-security/)
+  (HTTPS/TLS runbook, installation isolation checklist, security tools).
 - **DevSecOps / deployment**: [`docs/200-architecture/208-devsecops/`](docs/200-architecture/208-devsecops/) and [`docs/200-architecture/209-deployment/`](docs/200-architecture/209-deployment/).
 
 ## 📚 Documentation

@@ -216,7 +216,10 @@ function BudgetsList() {
         toast.success(t("updated"));
       } else {
         const procedureTypeId = newProcedureTypeId === NO_TEMPLATE ? undefined : Number(newProcedureTypeId);
-        const { itemsLoaded } = await createMutation.mutateAsync({ data: editing, procedureTypeId });
+        const { itemsLoaded } = await createMutation.mutateAsync({
+          data: { ...editing, status: editing.status ?? DEFAULT_BUDGET_STATUS },
+          procedureTypeId,
+        });
         toast.success(t("created"));
         if (procedureTypeId !== undefined && !itemsLoaded) toast.warning(t("itemsNotLoaded"));
       }

@@ -85,4 +85,12 @@ describe("budgetHttpGateway", () => {
       { idItem: 1, name: "Fee" },
     ]);
   });
+
+  it("POSTs catalog item ids as { idItems } (#1963)", async () => {
+    apiPostMock.mockResolvedValueOnce([{ idItem: 2, name: "Stamp", value: 750 }]);
+    await expect(budgetHttpGateway.addItemsFromCatalog(8, [2, 5])).resolves.toMatchObject([
+      { idItem: 2, name: "Stamp" },
+    ]);
+    expect(apiPostMock).toHaveBeenCalledWith("/budgets/8/items-from-catalog", { idItems: [2, 5] });
+  });
 });

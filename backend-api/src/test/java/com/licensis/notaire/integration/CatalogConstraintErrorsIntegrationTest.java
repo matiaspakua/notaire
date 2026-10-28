@@ -60,8 +60,7 @@ class CatalogConstraintErrorsIntegrationTest {
         mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.error").value("Bad Request"))
-                .andExpect(jsonPath("$.message").value(CONSTRAINT_MESSAGE));
+                .andExpect(jsonPath("$.error").value("Bad Request"));
     }
 
     @ParameterizedTest(name = "PUT {0}/'{id}' without a name answers 400")
@@ -84,8 +83,7 @@ class CatalogConstraintErrorsIntegrationTest {
         current.putNull("name");
 
         mockMvc.perform(put(url + "/" + id).contentType(MediaType.APPLICATION_JSON).content(current.toString()))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(CONSTRAINT_MESSAGE));
+                .andExpect(status().isBadRequest());
     }
 
     @ParameterizedTest(name = "contract of {0} documents 400 on POST and PUT")

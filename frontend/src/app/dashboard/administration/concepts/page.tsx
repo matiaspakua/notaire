@@ -75,7 +75,10 @@ export default function ConceptsPage() {
   }
 
   async function handleSave() {
-    const required = requiredFieldErrors({ name: editing.name }, tc("fieldRequired"));
+    const required = requiredFieldErrors(
+      { name: editing.name, value: editing.value },
+      tc("fieldRequired"),
+    );
     setFieldErrors(required);
     if (Object.keys(required).length > 0) return;
     try {
@@ -171,12 +174,14 @@ export default function ConceptsPage() {
                   aria-invalid={!!fieldErrors.name}
                 />
               </FormField>
-              <FormField label={t("fields.valorBaseInput")}>
+              <FormField label={t("fields.valorBaseInput")} required error={fieldErrors.value}>
                 <Input
                   type="number"
                   step="0.01"
                   value={editing.value ?? ""}
                   onChange={(e) => setEditing({ ...editing, value: parseFloat(e.target.value) })}
+                  data-testid="input-value-concept"
+                  aria-invalid={!!fieldErrors.value}
                 />
               </FormField>
             </FormSection>

@@ -1,8 +1,12 @@
 package com.licensis.notaire.adapter.in.web.concept;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,6 +40,19 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/api/v1/concepts")
 @Tag(name = "Concepts", description = "API for managing concepts")
 public class ConceptController {
+
+    /**
+     * Write body for create/update (#655). Same JSON fields as {@link DtoConcept}; validation runs
+     * before the use case.
+     */
+    public record ConceptWriteRequest(
+            @NotBlank String name,
+            @NotNull BigDecimal value,
+            Integer percentage,
+            Boolean enabled,
+            @com.fasterxml.jackson.annotation.JsonAlias("fixedConcept") Boolean fixed,
+            Integer version) {
+    }
 
     private final QueryConceptsUseCase queryConcepts;
     private final ManageConceptsUseCase manageConcepts;
@@ -85,8 +102,8 @@ public class ConceptController {
     })
     @PostMapping
     @Operation(summary = "Create concept")
-    public ResponseEntity<Object> createConcept(@RequestBody DtoConcept dto) {
-        return switch (manageConcepts.create(dto)) {
+    public ResponseEntity<Object> createConcept(@Valid @RequestBody ConceptWriteRequest request) {
+        return switch (manageConcepts.create(toDto(request))) {
             case SaveResult.Created created ->
                 ResponseEntity.status(HttpStatus.CREATED).body(created.dto());
             case SaveResult.Failed failed -> ErrorResponses.createFailed(failed.cause());
@@ -105,8 +122,9 @@ public class ConceptController {
     })
     @PutMapping("/{id}")
     @Operation(summary = "Update concept")
-    public ResponseEntity<Object> updateConcept(@PathVariable Integer id, @RequestBody DtoConcept dto) {
-        return switch (manageConcepts.update(id, dto)) {
+    public ResponseEntity<Object> updateConcept(@PathVariable Integer id,
+            @Valid @RequestBody ConceptWriteRequest request) {
+        return switch (manageConcepts.update(id, toDto(request))) {
             case SaveResult.Updated ignored -> ResponseEntity.ok().build();
             case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
             case SaveResult.InUse inUse ->
@@ -130,5 +148,16 @@ public class ConceptController {
                 ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", inUse.error()));
             case DeleteResult.Conflict conflict -> ErrorResponses.conflict(conflict.cause());
         };
+    }
+
+    private static DtoConcept toDto(ConceptWriteRequest request) {
+        DtoConcept dto = new DtoConcept();
+        dto.setName(request.name());
+        dto.setValue(request.value());
+        dto.setPercentage(request.percentage());
+        dto.setEnabled(request.enabled() != null ? request.enabled() : Boolean.TRUE);
+        dto.setFixed(request.fixed() != null ? request.fixed() : Boolean.FALSE);
+        dto.setVersion(request.version() == null ? 0 : request.version());
+        return dto;
     }
 }

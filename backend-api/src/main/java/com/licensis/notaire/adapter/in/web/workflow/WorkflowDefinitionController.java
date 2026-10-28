@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowDefinitionsUseCase;
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowDefinitionsUseCase.SaveWorkflowDefinitionCommand;
@@ -37,6 +39,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Workflow Definition", description = "CU70 - Management of status workflows")
 public class WorkflowDefinitionController {
 
+    public record WorkflowDefinitionWriteRequest(
+            @NotBlank String name, String description, Boolean active, Integer version) {}
+
     private final QueryWorkflowDefinitionsUseCase query;
     private final ManageWorkflowDefinitionsUseCase manage;
 
@@ -56,9 +61,10 @@ public class WorkflowDefinitionController {
         return dto;
     }
 
-    private SaveWorkflowDefinitionCommand toCommand(DtoWorkflowDefinition dto) {
-        return new SaveWorkflowDefinitionCommand(
-                dto.getName(), dto.getDescription(), dto.isActive(), dto.getVersion());
+    private SaveWorkflowDefinitionCommand toCommand(WorkflowDefinitionWriteRequest request) {
+        boolean active = request.active() == null || request.active();
+        int version = request.version() == null ? 0 : request.version();
+        return new SaveWorkflowDefinitionCommand(request.name(), request.description(), active, version);
     }
 
     @GetMapping
@@ -86,9 +92,9 @@ public class WorkflowDefinitionController {
     })
     @PostMapping
     @Operation(summary = "Create workflow")
-    public ResponseEntity<Object> create(@RequestBody DtoWorkflowDefinition dto) {
+    public ResponseEntity<Object> create(@Valid @RequestBody WorkflowDefinitionWriteRequest request) {
         try {
-            WorkflowDefinition saved = manage.create(toCommand(dto));
+            WorkflowDefinition saved = manage.create(toCommand(request));
             return ResponseEntity.status(HttpStatus.CREATED).body(toDto(saved));
         } catch (Exception e) {
             return ErrorResponses.createFailed(e);
@@ -105,9 +111,10 @@ public class WorkflowDefinitionController {
     })
     @PutMapping("/{id}")
     @Operation(summary = "Update workflow")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoWorkflowDefinition dto) {
+    public ResponseEntity<Object> update(
+            @PathVariable Integer id, @Valid @RequestBody WorkflowDefinitionWriteRequest request) {
         try {
-            manage.update(id, toCommand(dto));
+            manage.update(id, toCommand(request));
             return ResponseEntity.ok().build();
         } catch (WorkflowDefinitionNotFoundException e) {
             return ResponseEntity.notFound().build();

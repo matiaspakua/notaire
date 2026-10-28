@@ -54,6 +54,12 @@ const STATUS_FOLDER_ACTIVE = "Activa";
 
 const STATUS_ARCHIVED = "Archivada";
 
+/** Backend CompleteCaseRequest requires a non-blank heading (#1963 / @Valid). */
+function defaultCaseHeading(caseNumber: string, label: string): string {
+  const trimmed = caseNumber.trim();
+  return trimmed ? `${label} ${trimmed}` : label;
+}
+
 export default function ManagementsPage() {
   return (
     <Suspense>
@@ -190,6 +196,8 @@ function ManagementsList() {
     );
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) return;
+    const heading =
+      editCase?.heading?.trim() || defaultCaseHeading(number, t("defaultHeadingLabel"));
     try {
       if (editing?.idManagement) {
         // Heading and notes are not edited here; send them back so the PUT keeps them.
@@ -198,7 +206,7 @@ function ManagementsList() {
           id: editing.idManagement,
           data: {
             number: Number(number),
-            heading: editCase?.heading ?? undefined,
+            heading,
             notes: sentNotes,
             budgetId: Number(budgetId),
             notaryId: Number(notaryId),
@@ -213,6 +221,7 @@ function ManagementsList() {
       } else {
         const created = await createCompleteMutation.mutateAsync({
           number: Number(number),
+          heading,
           budgetId: Number(budgetId),
           notaryId: Number(notaryId),
           statusManagementId: Number(statusId),

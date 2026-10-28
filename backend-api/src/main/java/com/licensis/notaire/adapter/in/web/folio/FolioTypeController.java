@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.application.port.in.folio.ManageFolioTypesUseCase;
 import com.licensis.notaire.application.port.in.folio.ManageFolioTypesUseCase.SaveFolioTypeCommand;
@@ -40,6 +42,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Folio type", description = "API for folio types")
 public class FolioTypeController {
 
+    /** Write body for create/update (#655). */
+    public record FolioTypeWriteRequest(
+            @NotBlank String name,
+            String notes,
+            Boolean enabled,
+            Boolean isAuxiliary,
+            Integer version) {
+    }
+
     private final QueryFolioTypesUseCase query;
     private final ManageFolioTypesUseCase manage;
 
@@ -59,9 +70,12 @@ public class FolioTypeController {
         return dto;
     }
 
-    private SaveFolioTypeCommand toCommand(DtoFolioType dto) {
-        int version = dto.getVersion() == null ? 0 : dto.getVersion();
-        return new SaveFolioTypeCommand(dto.getName(), dto.getNotes(), dto.isEnabled(), dto.isIsAuxiliary(), version);
+    private SaveFolioTypeCommand toCommand(FolioTypeWriteRequest request) {
+        int version = request.version() == null ? 0 : request.version();
+        boolean enabled = request.enabled() == null || request.enabled();
+        boolean auxiliary = request.isAuxiliary() != null && request.isAuxiliary();
+        return new SaveFolioTypeCommand(
+                request.name(), request.notes(), enabled, auxiliary, version);
     }
 
     @GetMapping
@@ -99,9 +113,9 @@ public class FolioTypeController {
 })
     @PostMapping
     @Operation(summary = "Create folio type")
-    public ResponseEntity<Object> create(@RequestBody DtoFolioType dto) {
+    public ResponseEntity<Object> create(@Valid @RequestBody FolioTypeWriteRequest request) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(toDto(manage.create(toCommand(dto))));
+            return ResponseEntity.status(HttpStatus.CREATED).body(toDto(manage.create(toCommand(request))));
         } catch (FolioTypeException domainFailure) {
             throw domainFailure;
         } catch (Exception e) {
@@ -117,9 +131,9 @@ public class FolioTypeController {
 })
     @PutMapping("/{id}")
     @Operation(summary = "Update folio type")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoFolioType dto) {
+    public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody FolioTypeWriteRequest request) {
         try {
-            manage.update(id, toCommand(dto));
+            manage.update(id, toCommand(request));
             return ResponseEntity.ok().build();
         } catch (FolioTypeException domainFailure) {
             throw domainFailure;

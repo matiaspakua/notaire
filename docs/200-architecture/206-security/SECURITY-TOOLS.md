@@ -24,9 +24,10 @@ vendor account.
 
 Severity SLA in the policy file: critical 7 days, high 30 days, medium 90,
 low 180. The clock starts when the alert is visible (Dependabot, CodeQL, or a
-failed secret scan, or a Trivy source scan). The Trivy source scan blocks on
-fixed CRITICAL/HIGH findings (#712); the image scan is still report-only, which is
-what remains of `SR-13`.
+failed secret scan, or a Trivy source scan). The Trivy filesystem scan blocks on
+fixed CRITICAL/HIGH findings (#712). The Docker image scan blocks on CRITICAL
+(#566). Checkstyle and SpotBugs use shrink-only ratchets in CI (`workspace/ci/quality-ratchet-baseline.json`);
+absolute zero-debt is tracked in #710 and #711.
 
 ## Considered and not adopted
 

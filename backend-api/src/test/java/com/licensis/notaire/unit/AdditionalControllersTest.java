@@ -15,7 +15,6 @@ import com.licensis.notaire.application.port.in.user.ManageUsersUseCase.UpdateUs
 import com.licensis.notaire.application.port.in.user.QueryUsersUseCase;
 import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateOpsPort.TemplateView;
 import com.licensis.notaire.application.port.in.report.GenerateReportsUseCase;
-import com.licensis.notaire.dto.DtoUser;
 import com.licensis.notaire.domain.user.User;
 import com.licensis.notaire.domain.user.UserNotFoundException;
 import com.licensis.notaire.config.GlobalExceptionHandler;
@@ -309,30 +308,30 @@ class AdditionalControllersTest {
             doThrow(new UserNotFoundException(2)).when(manage).delete(2);
             mvc.perform(delete("/api/v1/users/2")).andExpect(status().isNotFound());
 
-            DtoUser loginDto = new DtoUser();
-            loginDto.setName("admin");
-            loginDto.setPassword("admin");
+            String loginJson = """
+                    {"name":"admin","password":"admin"}
+                    """;
             when(authenticate.authenticate(any(), any()))
                     .thenReturn(new Result.Failed(AuthenticateUserUseCase.Failure.NOT_FOUND));
             mvc.perform(post("/api/v1/users/login").contentType("application/json")
-                    .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
+                    .content(loginJson)).andExpect(status().isOk());
 
-            loginDto.setPassword("wrong");
             when(authenticate.authenticate(any(), any()))
                     .thenReturn(new Result.Failed(AuthenticateUserUseCase.Failure.BAD_CREDENTIALS));
             mvc.perform(post("/api/v1/users/login").contentType("application/json")
-                    .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
+                    .content("""
+                            {"name":"admin","password":"wrong"}
+                            """)).andExpect(status().isOk());
 
             // User found, valid login — BCrypt only (legacy MD5 verify removed, #1762)
-            loginDto.setPassword("admin");
             when(authenticate.authenticate(any(), any())).thenReturn(new Result.Success(u));
             mvc.perform(post("/api/v1/users/login").contentType("application/json")
-                    .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
+                    .content(loginJson)).andExpect(status().isOk());
 
             when(authenticate.authenticate(any(), any()))
                     .thenReturn(new Result.Failed(AuthenticateUserUseCase.Failure.INACTIVE));
             mvc.perform(post("/api/v1/users/login").contentType("application/json")
-                    .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
+                    .content(loginJson)).andExpect(status().isOk());
 
             when(manage.create(any(CreateUserCommand.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/users").contentType("application/json")
@@ -345,7 +344,7 @@ class AdditionalControllersTest {
 
             when(authenticate.authenticate(any(), any())).thenThrow(new RuntimeException("db down"));
             mvc.perform(post("/api/v1/users/login").contentType("application/json")
-                    .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
+                    .content(loginJson)).andExpect(status().isOk());
         }
     }
 }

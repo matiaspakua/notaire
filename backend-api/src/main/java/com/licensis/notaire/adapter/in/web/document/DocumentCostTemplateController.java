@@ -6,6 +6,8 @@ import com.licensis.notaire.application.port.in.documentcosttemplate.ManageDocum
 import com.licensis.notaire.application.port.in.documentcosttemplate.QueryDocumentCostTemplatesUseCase;
 import com.licensis.notaire.application.port.out.documentcosttemplate.DocumentCostTemplateOpsPort.CostTemplateView;
 import com.licensis.notaire.application.port.out.documentcosttemplate.DocumentCostTemplateOpsPort.CreateResult;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -80,8 +82,8 @@ public class DocumentCostTemplateController {
     }
 
     public record CreateCostRequest(
-            Integer idProcedureType,
-            Integer idDocumentType,
+            @NotNull Integer idProcedureType,
+            @NotNull Integer idDocumentType,
             java.math.BigDecimal fixedAmount,
             java.math.BigDecimal variablePercentage) {
     }
@@ -93,7 +95,7 @@ public class DocumentCostTemplateController {
     })
     @PostMapping
     @Operation(summary = "Define the fixed or variable cost of a document type in a procedure type template")
-    public ResponseEntity<Object> createCost(@RequestBody CreateCostRequest request) {
+    public ResponseEntity<Object> createCost(@Valid @RequestBody CreateCostRequest request) {
         return switch (manageDocumentCostTemplates.create(
                 request.idProcedureType(),
                 request.idDocumentType(),

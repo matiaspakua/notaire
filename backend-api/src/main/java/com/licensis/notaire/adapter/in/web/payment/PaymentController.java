@@ -9,6 +9,7 @@ import com.licensis.notaire.application.port.in.payment.ProcessPaymentCommand;
 import com.licensis.notaire.application.port.in.payment.ProcessPaymentUseCase;
 import com.licensis.notaire.application.port.in.payment.QueryPaymentsUseCase;
 import com.licensis.notaire.adapter.in.web.support.CreatedResponses;
+import com.licensis.notaire.adapter.in.web.support.IllegalArgumentResponses;
 import com.licensis.notaire.domain.payment.PaymentDetails;
 import com.licensis.notaire.domain.payment.PaymentStatus;
 import com.licensis.notaire.dto.DtoPaymentResponse;
@@ -119,7 +120,7 @@ public class PaymentController {
         try {
             return ResponseEntity.ok(paymentStatusUseCase.pendingBalance(idBudget));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
+            return IllegalArgumentResponses.toEmptyBody(e);
         } catch (Exception e) {
             log.error("Failed to calculate the pending balance", e);
             return ResponseEntity.internalServerError().build();
@@ -136,7 +137,7 @@ public class PaymentController {
         try {
             return ResponseEntity.ok(paymentStatusUseCase.status(idBudget));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
+            return IllegalArgumentResponses.toEmptyBody(e);
         } catch (Exception e) {
             log.error("Failed to calculate the payment status", e);
             return ResponseEntity.internalServerError().build();
@@ -189,8 +190,8 @@ public class PaymentController {
             log.warn("Payment rejected because it exceeds the outstanding balance: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (IllegalArgumentException e) {
-            log.warn("Validation error while processing the payment: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
+            log.warn("Payment rejected: {}", e.getMessage());
+            return IllegalArgumentResponses.toEmptyBody(e);
         } catch (Exception e) {
             log.error("Failed to process the payment", e);
             return ResponseEntity.internalServerError().build();
@@ -199,6 +200,7 @@ public class PaymentController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Invalid request"),
         @ApiResponse(responseCode = "404", description = "Not found")
     })
     @PutMapping("/{id}")
@@ -210,7 +212,7 @@ public class PaymentController {
                     id, request.amount(), request.date(), request.notes(), request.paymentMethod()));
             return ResponseEntity.ok(PaymentWebMapper.toDto(updated));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
+            return IllegalArgumentResponses.toEmptyBody(e);
         } catch (Exception e) {
             log.error("Failed to update payment ID={}", id, e);
             return ResponseEntity.internalServerError().build();
@@ -228,7 +230,7 @@ public class PaymentController {
             deletePaymentUseCase.delete(id);
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
+            return IllegalArgumentResponses.toEmptyBody(e);
         } catch (Exception e) {
             log.error("Failed to delete payment ID={}", id, e);
             return ResponseEntity.internalServerError().build();

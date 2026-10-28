@@ -202,7 +202,8 @@ public class SubmittedDocumentController {
     })
     @PutMapping("/{id}")
     @Operation(summary = "Update submitted document")
-    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody SubmittedDocumentRequest request) {
+    public ResponseEntity<Void> update(
+            @PathVariable Integer id, @Valid @RequestBody SubmittedDocumentRequest request) {
         if (query.findById(id).isEmpty()) {
             return ResponseEntity.notFound().build();
         }

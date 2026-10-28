@@ -13,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
-import com.licensis.notaire.adapter.in.web.support.RequiredFields;
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowTransitionsUseCase;
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowTransitionsUseCase.CreateWorkflowTransitionCommand;
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowTransitionsUseCase.UpdateWorkflowTransitionCommand;
@@ -37,6 +38,19 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/api/v1/workflow-transition")
 @Tag(name = "Workflow Transition", description = "CU71 - Transitions between statuses of a workflow")
 public class WorkflowTransitionController {
+
+    public record WorkflowTransitionCreateRequest(
+            @NotNull Integer workflowDefinitionId,
+            @NotNull Integer originNodeId,
+            @NotNull Integer destinationNodeId,
+            String condition,
+            String description) {}
+
+    public record WorkflowTransitionUpdateRequest(
+            @NotNull Integer originNodeId,
+            @NotNull Integer destinationNodeId,
+            String condition,
+            String description) {}
 
     private final QueryWorkflowTransitionsUseCase query;
     private final ManageWorkflowTransitionsUseCase manage;
@@ -88,13 +102,14 @@ public class WorkflowTransitionController {
     })
     @PostMapping
     @Operation(summary = "Create a transition between two nodes")
-    public ResponseEntity<Object> create(@RequestBody DtoWorkflowTransition dto) {
-        Integer workflowId = RequiredFields.require(dto.getWorkflowDefinitionId(), "workflowDefinitionId");
-        Integer originId = RequiredFields.require(dto.getOriginNodeId(), "originNodeId");
-        Integer destinationId = RequiredFields.require(dto.getDestinationNodeId(), "destinationNodeId");
+    public ResponseEntity<Object> create(@Valid @RequestBody WorkflowTransitionCreateRequest request) {
         try {
             WorkflowTransition saved = manage.create(new CreateWorkflowTransitionCommand(
-                    workflowId, originId, destinationId, dto.getCondition(), dto.getDescription()));
+                    request.workflowDefinitionId(),
+                    request.originNodeId(),
+                    request.destinationNodeId(),
+                    request.condition(),
+                    request.description()));
             return ResponseEntity.status(HttpStatus.CREATED).body(toDto(saved));
         } catch (WorkflowTransitionInvalidException e) {
             return ResponseEntity.notFound().build();
@@ -112,14 +127,16 @@ public class WorkflowTransitionController {
     })
     @PutMapping("/{id}")
     @Operation(summary = "Update transition")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoWorkflowTransition dto) {
-        Integer originId = RequiredFields.require(dto.getOriginNodeId(), "originNodeId");
-        Integer destinationId = RequiredFields.require(dto.getDestinationNodeId(), "destinationNodeId");
+    public ResponseEntity<Object> update(
+            @PathVariable Integer id, @Valid @RequestBody WorkflowTransitionUpdateRequest request) {
         try {
             WorkflowTransition saved = manage.update(
                     id,
                     new UpdateWorkflowTransitionCommand(
-                            originId, destinationId, dto.getCondition(), dto.getDescription()));
+                            request.originNodeId(),
+                            request.destinationNodeId(),
+                            request.condition(),
+                            request.description()));
             return ResponseEntity.ok(toDto(saved));
         } catch (WorkflowTransitionNotFoundException | WorkflowTransitionInvalidException e) {
             return ResponseEntity.notFound().build();

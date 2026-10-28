@@ -1,5 +1,7 @@
 package com.licensis.notaire.adapter.in.web.procedure;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,7 +22,6 @@ import com.licensis.notaire.adapter.in.web.support.DeedRef;
 import com.licensis.notaire.adapter.in.web.support.ManagementRef;
 import com.licensis.notaire.adapter.in.web.support.ProcedureTypeRef;
 import com.licensis.notaire.adapter.in.web.support.PropertyRef;
-import com.licensis.notaire.adapter.in.web.support.RequiredFields;
 import com.licensis.notaire.application.port.in.procedure.ManageProceduresUseCase;
 import com.licensis.notaire.application.port.in.procedure.QueryProceduresUseCase;
 import com.licensis.notaire.application.port.out.procedure.ProcedureOpsPort.BudgetView;
@@ -67,6 +68,7 @@ public class ProcedureController {
      * sent; an absent association id keeps the stored association.
      */
     public record ProcedureRequest(
+            @NotNull
             @Schema(description = "Procedure type; must existir (404 if not)",
                     requiredMode = Schema.RequiredMode.REQUIRED)
             Integer idProcedureType,
@@ -115,8 +117,7 @@ public class ProcedureController {
     })
     @PostMapping
     @Operation(summary = "Create procedure")
-    public ResponseEntity<Object> create(@RequestBody ProcedureRequest request) {
-        RequiredFields.require(request.idProcedureType(), "idProcedureType");
+    public ResponseEntity<Object> create(@Valid @RequestBody ProcedureRequest request) {
         return switch (manageProcedures.create(toCommand(request))) {
             case SaveResult.Created created -> ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created.view()));
             case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
@@ -134,8 +135,7 @@ public class ProcedureController {
     @Operation(summary = "Update procedure",
             description = "idProcedureType is required (400 if it is missing); notes are stored as sent and "
                     + "a missing association keeps the current one.")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody ProcedureRequest request) {
-        RequiredFields.require(request.idProcedureType(), "idProcedureType");
+    public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody ProcedureRequest request) {
         return switch (manageProcedures.update(id, toCommand(request))) {
             case SaveResult.Updated updated -> ResponseEntity.ok(toResponse(updated.view()));
             case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();

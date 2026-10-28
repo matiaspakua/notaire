@@ -31,8 +31,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 
 /**
- * Roles. Calls inbound ports only. Module grant lists are stored/returned as today; enforcement is
- * fenced for #1683 (issue #1731).
+ * Roles. Calls inbound ports only. Module grant lists are stored, returned and enforced server-side
+ * (issue #1683 / #1731).
  */
 @RestController
 @RequestMapping("/api/v1/roles")

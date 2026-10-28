@@ -10,13 +10,31 @@ CI_WORKFLOW = os.path.join(REPO_ROOT, ".github", "workflows", "ci.yml")
 RUN_GATES = os.path.join(REPO_ROOT, "security", "run_gates.py")
 
 
-def trivy_fs_step() -> dict:
+def trivy_steps() -> list[dict]:
     with open(CI_WORKFLOW, encoding="utf-8") as handle:
         workflow = yaml.safe_load(handle)
-    for step in workflow["jobs"]["security"]["steps"]:
-        if str(step.get("uses", "")).startswith("aquasecurity/trivy-action"):
+    steps = []
+    for job in workflow["jobs"].values():
+        for step in job.get("steps", []):
+            if str(step.get("uses", "")).startswith("aquasecurity/trivy-action"):
+                steps.append(step)
+    if not steps:
+        raise AssertionError("ci.yml has no trivy-action step")
+    return steps
+
+
+def trivy_fs_step() -> dict:
+    for step in trivy_steps():
+        if step.get("with", {}).get("scan-type") == "fs":
             return step
-    raise AssertionError("security job has no trivy-action step")
+    raise AssertionError("security job has no filesystem trivy-action step")
+
+
+def trivy_image_step() -> dict:
+    for step in trivy_steps():
+        if step.get("with", {}).get("scan-type") == "image":
+            return step
+    raise AssertionError("docker-build job has no image trivy-action step")
 
 
 class TrivyBlockingTest(unittest.TestCase):
@@ -50,6 +68,11 @@ class TrivyBlockingTest(unittest.TestCase):
             text = handle.read()
         self.assertIn('"CRITICAL,HIGH"', text)
         self.assertNotIn("report-only until #282", text)
+
+    def test_image_scan_fails_on_critical(self):
+        step = trivy_image_step()["with"]
+        self.assertEqual(str(step["exit-code"]), "1")
+        self.assertEqual(step["severity"], "CRITICAL")
 
 
 if __name__ == "__main__":

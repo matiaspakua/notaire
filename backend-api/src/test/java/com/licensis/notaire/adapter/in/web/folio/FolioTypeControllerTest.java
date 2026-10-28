@@ -32,6 +32,7 @@ import com.licensis.notaire.domain.folio.FolioTypeInUseException;
 import com.licensis.notaire.domain.folio.FolioTypeInvalidException;
 import com.licensis.notaire.domain.folio.FolioTypeNotFoundException;
 import com.licensis.notaire.domain.folio.FolioTypeReferencedException;
+import com.licensis.notaire.config.GlobalExceptionHandler;
 import com.licensis.notaire.domain.folio.FolioTypeStaleVersionException;
 
 /**
@@ -45,7 +46,8 @@ class FolioTypeControllerTest {
     private final QueryFolioTypesUseCase query = mock(QueryFolioTypesUseCase.class);
     private final ManageFolioTypesUseCase manage = mock(ManageFolioTypesUseCase.class);
     private final MockMvc mvc = standaloneSetup(new FolioTypeController(query, manage))
-            .setControllerAdvice(new FolioTypeExceptionHandler()).build();
+            .setControllerAdvice(new GlobalExceptionHandler(), new FolioTypeExceptionHandler())
+            .build();
 
     private static final String BODY =
             "{\"name\": \"Protocol\", \"notes\": \"n\", \"enabled\": true, \"isAuxiliary\": true, \"version\": 3}";
@@ -150,6 +152,6 @@ class FolioTypeControllerTest {
 
         mvc.perform(post("/api/v1/folio-types").contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("The submitted data violates a database constraint"));
+                .andExpect(jsonPath("$.message").value("name: must not be blank"));
     }
 }

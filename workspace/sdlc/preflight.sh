@@ -66,9 +66,9 @@ process script self-tests       Process Checks                    sdlc-process.y
 openapi breaking diff           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; export freshness CI-only)
 openapi accepted list           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; stale entries, #1315)
 spotless format                 Code Lint / Format Check         pr-validation.yml  (BLOCKING)
-checkstyle                      Code Lint / Checkstyle           pr-validation.yml  (warn, CI uses || true)
+checkstyle                      Code Lint / Checkstyle           pr-validation.yml  (BLOCKING ratchet #566)
 dependency analysis             Dependency Analysis              pr-validation.yml  (warn, CI uses || true)
-spotbugs                        Code Quality / SpotBugs          ci.yml             (warn, report-only)
+spotbugs                        Code Quality / SpotBugs          ci.yml             (BLOCKING ratchet #566)
 trivy filesystem scan           Security Scan                    ci.yml             (BLOCKING in CI on CRITICAL/HIGH; warn locally)
 backend compile                 Build & Compile / Quick Build    ci.yml, pr-validation.yml
 backend unit+integration+cov    Unit Tests, Integration Tests,   ci.yml

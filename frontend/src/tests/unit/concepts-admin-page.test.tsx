@@ -79,14 +79,14 @@ beforeEach(() => {
 });
 
 describe("concepts", () => {
-  it("needs a name", async () => {
+  it("needs a name and base value", async () => {
     await renderPage();
     fireEvent.click(newConceptButton());
     await screen.findByRole("dialog");
 
     fireEvent.click(saveButton());
 
-    expect(await screen.findByText("common.fieldRequired")).toBeTruthy();
+    expect(screen.getAllByText("common.fieldRequired").length).toBeGreaterThanOrEqual(1);
     expect(apiPost).not.toHaveBeenCalled();
   });
 
@@ -95,9 +95,15 @@ describe("concepts", () => {
     fireEvent.click(newConceptButton());
 
     fireEvent.change(await screen.findByTestId("input-name-concept"), { target: { value: "Timbrado" } });
+    fireEvent.change(await screen.findByTestId("input-value-concept"), { target: { value: "100" } });
     fireEvent.click(saveButton());
 
-    await waitFor(() => expect(apiPost).toHaveBeenCalledWith("/concepts", expect.objectContaining({ name: "Timbrado" })));
+    await waitFor(() =>
+      expect(apiPost).toHaveBeenCalledWith(
+        "/concepts",
+        expect.objectContaining({ name: "Timbrado", value: 100 }),
+      ),
+    );
     expect(toast.success).toHaveBeenCalledWith("administracion.conceptos.created");
   });
 
@@ -106,6 +112,7 @@ describe("concepts", () => {
     await renderPage();
     fireEvent.click(newConceptButton());
     fireEvent.change(await screen.findByTestId("input-name-concept"), { target: { value: "Sellado" } });
+    fireEvent.change(await screen.findByTestId("input-value-concept"), { target: { value: "50" } });
 
     fireEvent.click(saveButton());
 
@@ -117,6 +124,7 @@ describe("concepts", () => {
     await renderPage();
     fireEvent.click(newConceptButton());
     fireEvent.change(await screen.findByTestId("input-name-concept"), { target: { value: "Otro" } });
+    fireEvent.change(await screen.findByTestId("input-value-concept"), { target: { value: "1" } });
 
     fireEvent.click(saveButton());
 

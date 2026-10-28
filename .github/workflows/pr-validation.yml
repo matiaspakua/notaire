@@ -183,10 +183,9 @@ jobs:
           java-version: '26'
           cache: 'maven'
 
-      # Advisory only for now — 3,066 pre-existing violations, tracked in #705
-      # pending a blocking-policy decision (ratchet / hard-block / diff-scoped).
-      - name: Checkstyle
-        run: mvn checkstyle:check -pl backend-api -q || true
+      # Shrink-only ratchet (#566): new violations fail; zero-debt tracked in #710.
+      - name: Checkstyle (ratchet)
+        run: python3 workspace/ci/enforce-quality-ratchet.py --tool checkstyle
 
       - name: Upload Checkstyle Results
         uses: actions/upload-artifact@v7

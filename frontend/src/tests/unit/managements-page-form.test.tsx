@@ -184,6 +184,7 @@ describe("create", () => {
     await waitFor(() =>
       expect(apiPost).toHaveBeenCalledWith("/managements/complete-case", {
         number: 5100,
+        heading: "gestiones.defaultHeadingLabel 5100",
         budgetId: 21,
         notaryId: 31,
         statusManagementId: 4,

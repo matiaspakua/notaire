@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.application.port.in.document.ManageDocumentTypesUseCase;
 import com.licensis.notaire.application.port.in.document.ManageDocumentTypesUseCase.SaveDocumentTypeCommand;
@@ -41,6 +43,17 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "DocumentType", description = "API to manage document types")
 public class DocumentTypeController {
 
+    /** Write body for create/update (#655). */
+    public record DocumentTypeWriteRequest(
+            @NotBlank String name,
+            Boolean expires,
+            Integer dueDays,
+            String deliveredBy,
+            Boolean enabled,
+            Boolean returned,
+            Integer version) {
+    }
+
     private final QueryDocumentTypesUseCase query;
     private final ManageDocumentTypesUseCase manage;
 
@@ -62,40 +75,43 @@ public class DocumentTypeController {
         return dto;
     }
 
-    private SaveDocumentTypeCommand toCommand(DtoDocumentType dto) {
-        int version = dto.getVersion() == null ? 0 : dto.getVersion();
-        String deliveredBy = dto.getDeliveredBy() == null ? "" : dto.getDeliveredBy();
-        boolean enabled = dto.getEnabled() == null || dto.getEnabled();
-        boolean returned = dto.getReturned() != null && dto.getReturned();
+    private SaveDocumentTypeCommand toCommand(DocumentTypeWriteRequest request) {
+        int version = request.version() == null ? 0 : request.version();
+        String deliveredBy = request.deliveredBy() == null ? "" : request.deliveredBy();
+        boolean enabled = request.enabled() == null || request.enabled();
+        boolean returned = request.returned() != null && request.returned();
+        boolean expires = request.expires() != null && request.expires();
         return new SaveDocumentTypeCommand(
-                dto.getName(), dto.isExpires(), dto.getDueDays(), deliveredBy, enabled, returned, version);
+                request.name(), expires, request.dueDays(), deliveredBy, enabled, returned, version);
     }
 
-    private SaveDocumentTypeCommand toCreateCommand(DtoDocumentType dto) {
-        // Default only when omitted — do not overwrite an explicit enabled=false (#800).
-        if (dto.getDeliveredBy() == null) {
-            dto.setDeliveredBy("");
-        }
-        if (dto.getEnabled() == null) {
-            dto.setEnabled(true);
-        }
-        if (dto.getReturned() == null) {
-            dto.setReturned(false);
-        }
-        return toCommand(dto);
+    private SaveDocumentTypeCommand toCreateCommand(DocumentTypeWriteRequest request) {
+        String deliveredBy = request.deliveredBy() == null ? "" : request.deliveredBy();
+        Boolean enabled = request.enabled() == null ? true : request.enabled();
+        Boolean returned = request.returned() == null ? false : request.returned();
+        return toCommand(new DocumentTypeWriteRequest(
+                request.name(),
+                request.expires(),
+                request.dueDays(),
+                deliveredBy,
+                enabled,
+                returned,
+                request.version()));
     }
 
-    private SaveDocumentTypeCommand toUpdateCommand(DtoDocumentType dto, DocumentType existing) {
-        if (dto.getDeliveredBy() == null) {
-            dto.setDeliveredBy(existing.deliveredBy());
-        }
-        if (dto.getEnabled() == null) {
-            dto.setEnabled(existing.enabled());
-        }
-        if (dto.getReturned() == null) {
-            dto.setReturned(existing.returned());
-        }
-        return toCommand(dto);
+    private SaveDocumentTypeCommand toUpdateCommand(DocumentTypeWriteRequest request, DocumentType existing) {
+        String deliveredBy = request.deliveredBy() == null ? existing.deliveredBy() : request.deliveredBy();
+        Boolean enabled = request.enabled() == null ? existing.enabled() : request.enabled();
+        Boolean returned = request.returned() == null ? existing.returned() : request.returned();
+        Boolean expires = request.expires() == null ? existing.expires() : request.expires();
+        return toCommand(new DocumentTypeWriteRequest(
+                request.name(),
+                expires,
+                request.dueDays(),
+                deliveredBy,
+                enabled,
+                returned,
+                request.version()));
     }
 
     @GetMapping
@@ -133,9 +149,10 @@ public class DocumentTypeController {
     })
     @PostMapping
     @Operation(summary = "Create a new document type")
-    public ResponseEntity<Object> create(@RequestBody DtoDocumentType dto) {
+    public ResponseEntity<Object> create(@Valid @RequestBody DocumentTypeWriteRequest request) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(toDto(manage.create(toCreateCommand(dto))));
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(toDto(manage.create(toCreateCommand(request))));
         } catch (DocumentTypeException domainFailure) {
             throw domainFailure;
         } catch (Exception e) {
@@ -151,10 +168,11 @@ public class DocumentTypeController {
     })
     @PutMapping("/{id}")
     @Operation(summary = "Update document type")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoDocumentType dto) {
+    public ResponseEntity<Object> update(
+            @PathVariable Integer id, @Valid @RequestBody DocumentTypeWriteRequest request) {
         try {
             DocumentType existing = query.getById(id);
-            manage.update(id, toUpdateCommand(dto, existing));
+            manage.update(id, toUpdateCommand(request, existing));
             return ResponseEntity.ok().build();
         } catch (DocumentTypeException domainFailure) {
             throw domainFailure;

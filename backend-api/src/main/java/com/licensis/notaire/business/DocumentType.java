@@ -75,7 +75,7 @@ public class DocumentType implements Serializable, Persistable<Integer>
     @Basic(optional = false)
     @Column(name = "returned")
     private boolean returned;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "documentType", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "documentType", fetch = FetchType.LAZY)
     private List<ProcedureTemplate> procedureTemplateList = new ArrayList<>();
 
     public DocumentType()
