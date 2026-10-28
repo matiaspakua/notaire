@@ -41,7 +41,7 @@ export default function ProtocolPage() {
   const tc = useTranslations("common");
   const tf = useTranslations("administracion.folios");
 
-  const { data: folios = [], isLoading } = useQuery({
+  const { data: folios = [], isLoading, isError, refetch } = useQuery({
     queryKey: ["folios"],
     queryFn: async () => (await folioUseCases.list()).map(toWireFolio),
   });
@@ -167,6 +167,9 @@ export default function ProtocolPage() {
         isLoading={isLoading}
         keyExtractor={(f) => f.idFolio!}
         emptyMessage={t("noData")}
+      
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
       />
 
       <Dialog open={!!reportDialog} onOpenChange={(v) => !v && setReportDialog(null)}>

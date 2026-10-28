@@ -33,7 +33,7 @@ export default function NotebooksPage() {
   const t = useTranslations("protocolo.cuadernos");
   const tc = useTranslations("common");
 
-  const { data: notebooks = [], isLoading, refetch } = useQuery({
+  const { data: notebooks = [], isLoading, refetch, isError } = useQuery({
     queryKey: ["notebooks"],
     queryFn: async () => (await notebookUseCases.list()).map(toWireNotebook),
   });
@@ -150,6 +150,9 @@ export default function NotebooksPage() {
         isLoading={isLoading}
         keyExtractor={(c) => c.idNotebook!}
         emptyMessage={t("noData")}
+      
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>

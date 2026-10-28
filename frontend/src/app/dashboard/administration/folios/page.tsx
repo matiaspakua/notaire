@@ -81,7 +81,7 @@ export default function FoliosAdminPage() {
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState<string>("");
 
-  const { data = [], isLoading, refetch } = useQuery({
+  const { data = [], isLoading, refetch, isError } = useQuery({
     queryKey: ["folios", statusFilter],
     queryFn: async () =>
       (statusFilter
@@ -360,7 +360,10 @@ export default function FoliosAdminPage() {
         </Select>
       </div>
 
-      <DataTable data={data} columns={columns} isLoading={isLoading} keyExtractor={(f) => f.idFolio!} emptyMessage={t("noData")} />
+      <DataTable data={data} columns={columns} isLoading={isLoading} keyExtractor={(f) => f.idFolio!} emptyMessage={t("noData")} 
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
+      />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>

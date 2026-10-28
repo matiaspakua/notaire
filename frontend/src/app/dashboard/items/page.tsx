@@ -43,7 +43,7 @@ export default function ItemsPage() {
   const t = useTranslations("items");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
-  const { data: items = [], isLoading } = useItems();
+  const { data: items = [], isLoading, isError, refetch } = useItems();
   const createMutation = useCreateItem();
   const updateMutation = useUpdateItem();
   const deleteMutation = useDeleteItem();
@@ -182,6 +182,9 @@ export default function ItemsPage() {
         isLoading={isLoading}
         keyExtractor={(i) => i.idItem!}
         emptyMessage={t("noData")}
+      
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
       />
 
       <FormContainer>

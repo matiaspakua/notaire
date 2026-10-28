@@ -42,7 +42,7 @@ function ProceduresList() {
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const { data = [], isLoading } = useProcedureTypes();
+  const { data = [], isLoading, isError, refetch } = useProcedureTypes();
   const createMutation = useCreateProcedureType();
   const updateMutation = useUpdateProcedureType();
   const deleteMutation = useDeleteProcedureType();
@@ -179,6 +179,9 @@ function ProceduresList() {
         isLoading={isLoading}
         keyExtractor={(item) => item.idProcedureType!}
         emptyMessage={t("noData")}
+      
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
       />
 
       <RequiredDocumentsDialog

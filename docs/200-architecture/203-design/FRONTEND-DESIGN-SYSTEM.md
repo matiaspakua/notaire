@@ -399,11 +399,16 @@ table headers.
 empty / not-found / loading use `EmptyState` / `ErrorState` / `LoadingState`.
 Workflow node type badges must not use CSS `text-transform: uppercase`.
 
-**Business forms (#1951):** High-traffic create/edit dialogs (cases, budgets,
-deeds, people) use `requiredFieldErrors` (`frontend/src/lib/required-field-errors.ts`)
-so empty required values surface on `FormField` `error` before the mutation runs.
-Budgets and deeds lists pass DataTable `error` / `onRetry` like people and
-managements. Prefer `common.fieldRequired` for the shared message.
+**Business forms (#1951 / Wave 8 #1961):** Create/edit dialogs use
+`requiredFieldErrors` (`frontend/src/lib/required-field-errors.ts`) so empty
+required values surface on `FormField` `error` before the mutation runs —
+high-traffic modules (cases, budgets, deeds, people) plus secondary surfaces
+(payments, copies, admin catalogs, …). Prefer `common.fieldRequired`.
+
+**List query failures (Wave 8 #1961):** Dashboard `DataTable` lists pass
+`error={isError ? tc("loadError") : undefined}` and `onRetry={() => void refetch()}`.
+REST error/retry layers are documented in
+[`frontend-rest-client-errors.md`](../../300-development/frontend-rest-client-errors.md) (#293).
 
 **Reports & metrics (#1953):** Home totals use shared `MetricCard` (apple-shadow
 tile + tinted icon well + `StatValue`). PDF download surfaces use shared

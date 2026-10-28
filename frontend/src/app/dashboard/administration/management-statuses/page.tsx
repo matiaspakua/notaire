@@ -35,7 +35,7 @@ export default function StatusesManagementPage() {
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const { data = [], isLoading, refetch } = useQuery({
+  const { data = [], isLoading, refetch, isError } = useQuery({
     queryKey: ["managementStatuses"],
     queryFn: async () => (await managementStatusUseCases.list()).map(toWire),
   });
@@ -178,7 +178,10 @@ export default function StatusesManagementPage() {
           data-testid="search-statuses"
         />
       </div>
-      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idManagementStatus!} emptyMessage={t("noData")} />
+      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idManagementStatus!} emptyMessage={t("noData")} 
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
+      />
 
       {workflows.length > 0 && (
         <div className="mt-8">

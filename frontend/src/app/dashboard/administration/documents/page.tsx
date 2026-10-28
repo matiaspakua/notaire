@@ -48,7 +48,7 @@ export default function DocumentsPage() {
   const tc = useTranslations("common");
 
   const qc = useQueryClient();
-  const { data: documentTypes = [], isLoading } = useQuery({
+  const { data: documentTypes = [], isLoading, isError, refetch } = useQuery({
     queryKey: documentsKeys.all,
     queryFn: async () => (await documentTypeUseCases.list()).map(toWire),
   });
@@ -185,6 +185,9 @@ export default function DocumentsPage() {
         isLoading={isLoading}
         keyExtractor={(documentType) => documentType.idDocumentType!}
         emptyMessage={t("noData")}
+      
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>

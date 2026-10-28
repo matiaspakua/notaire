@@ -18,6 +18,7 @@ import {
   useDeleteCopy,
 } from "@/hooks/useCopies";
 import { presentMutationError } from "@/lib/mutation-error";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import type { Copy } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue, todayInputValue } from "@/lib/dates";
@@ -29,7 +30,7 @@ export default function CopiesPage() {
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const { data: copies = [], isLoading } = useCopies();
+  const { data: copies = [], isLoading, isError, refetch } = useCopies();
   const createMutation = useCreateCopy();
   const updateMutation = useUpdateCopy();
   const deleteMutation = useDeleteCopy();
@@ -37,6 +38,7 @@ export default function CopiesPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Copy | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [form, setForm] = useState({
     number: "",
     datePrinting: "",
@@ -46,12 +48,14 @@ export default function CopiesPage() {
 
   function openCreate() {
     setEditing(null);
+    setFieldErrors({});
     setForm({ number: "", datePrinting: todayInputValue(), dateWithdrawal: "", notes: "" });
     setModalOpen(true);
   }
 
   function openEdit(c: Copy) {
     setEditing(c);
+    setFieldErrors({});
     setForm({
       number: c.number?.toString() ?? "",
       datePrinting: toDateInputValue(c.datePrinting),
@@ -61,10 +65,13 @@ export default function CopiesPage() {
     setModalOpen(true);
   }
 
-  // The copy number and print date are required by the API on create and update (#655).
-  const canSave = form.number.trim() !== "" && form.datePrinting !== "";
-
   async function handleSave() {
+    const required = requiredFieldErrors(
+      { number: form.number, datePrinting: form.datePrinting },
+      tc("fieldRequired"),
+    );
+    setFieldErrors(required);
+    if (Object.keys(required).length > 0) return;
     const data: Partial<Copy> = {
       number: form.number ? Number(form.number) : undefined,
       datePrinting: form.datePrinting || undefined,
@@ -153,7 +160,7 @@ export default function CopiesPage() {
       <AppHeader
         title={t("title")}
         actions={
-          <Button onClick={openCreate}>
+          <Button onClick={openCreate} data-testid="btn-new-copy">
             <Plus className="h-4 w-4" />
             {t("newCopia")}
           </Button>
@@ -166,25 +173,31 @@ export default function CopiesPage() {
         isLoading={isLoading}
         keyExtractor={(c) => c.idCopy!}
         emptyMessage={t("noData")}
+      
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={editing ? t("editCopia") : t("newCopia")}>
-              <FormField label={tc("number")} required>
+              <FormField label={tc("number")} required error={fieldErrors.number}>
                 <Input
                   type="number"
                   value={form.number}
                   onChange={(e) => setForm({ ...form, number: e.target.value })}
+                  aria-invalid={!!fieldErrors.number}
+                  data-testid="input-number-copy"
                 />
               </FormField>
               <div className="grid grid-cols-2 gap-3">
-                <FormField label={t("fields.fechaImpresion")} required>
+                <FormField label={t("fields.fechaImpresion")} required error={fieldErrors.datePrinting}>
                   <Input
                     type="date"
                     value={form.datePrinting}
                     onChange={(e) => setForm({ ...form, datePrinting: e.target.value })}
+                    aria-invalid={!!fieldErrors.datePrinting}
                   />
                 </FormField>
                 <FormField label={t("fields.fechaRetiro")}>
@@ -208,7 +221,8 @@ export default function CopiesPage() {
               </Button>
               <Button
                 onClick={handleSave}
-                disabled={!canSave || createMutation.isPending || updateMutation.isPending}
+                disabled={createMutation.isPending || updateMutation.isPending}
+                data-testid="btn-save-copy"
               >
                 {editing ? tc("update") : tc("create")}
               </Button>

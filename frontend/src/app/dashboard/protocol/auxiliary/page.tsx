@@ -26,6 +26,7 @@ export default function AuxiliaryProtocolPage() {
   const {
     data: availableFolios = [],
     isLoading,
+    isError,
     refetch,
   } = useQuery({
     queryKey: ["auxiliary-protocol", "available-folios"],
@@ -91,6 +92,8 @@ export default function AuxiliaryProtocolPage() {
         isLoading={isLoading}
         keyExtractor={(f) => f.idFolio!}
         emptyMessage={t("noData")}
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
       />
 
       <Dialog open={!!selectedFolio} onOpenChange={(v) => !v && setSelectedFolio(null)}>

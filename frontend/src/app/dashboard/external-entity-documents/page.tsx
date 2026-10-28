@@ -54,7 +54,7 @@ function ExternalEntityDocumentsList() {
   // One server page at a time, newest first, page and size in the URL (#1340):
   // the list used to load size=1000 and silently miss every later case.
   const paging = useUrlPagination();
-  const { data: managementsPage, isLoading, isFetching } = useManagementsPage({ page: paging.page, size: paging.size });
+  const { data: managementsPage, isLoading, isFetching, isError, refetch } = useManagementsPage({ page: paging.page, size: paging.size });
   const managements = managementsPage?.content ?? [];
   useClampPage(paging, managementsPage?.totalPages);
 
@@ -171,6 +171,9 @@ function ExternalEntityDocumentsList() {
           onPageChange: paging.setPage,
           onSizeChange: paging.setSize,
         }}
+      
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
       />
 
       <Dialog open={!!selectedManagementId} onOpenChange={(v) => !v && setSelectedManagementId(null)}>

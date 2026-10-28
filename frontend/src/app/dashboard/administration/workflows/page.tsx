@@ -27,7 +27,7 @@ export default function WorkflowsPage() {
   const t = useTranslations("administracion.workflows");
   const tProblem = useTranslations("workflowViewer.problemList");
   const tc = useTranslations("common");
-  const { data = [], isLoading } = useWorkflowDefinitions();
+  const { data = [], isLoading, isError, refetch } = useWorkflowDefinitions();
   const createWf = useCreateWorkflowDefinition();
   const updateWf = useUpdateWorkflowDefinition();
   const deleteWf = useDeleteWorkflowDefinition();
@@ -187,7 +187,10 @@ export default function WorkflowsPage() {
           data-testid="search-workflows"
         />
       </div>
-      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(wf) => wf.id!} emptyMessage={t("noData")} />
+      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(wf) => wf.id!} emptyMessage={t("noData")} 
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
+      />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>

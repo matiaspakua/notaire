@@ -49,7 +49,7 @@ function SubstitutionsList() {
   const t = useTranslations("suplencias");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
-  const { data: allSubstitutions = [], isLoading } = useSubstitutions();
+  const { data: allSubstitutions = [], isLoading, isError, refetch } = useSubstitutions();
   // CU59 (#1546): year (overlap) and notary filters, kept in the URL.
   const router = useRouter();
   const pathname = usePathname();
@@ -240,6 +240,9 @@ function SubstitutionsList() {
         isLoading={isLoading}
         keyExtractor={(s) => s.idSubstitution!}
         emptyMessage={year ? t("noDataYear", { year }) : t("noData")}
+      
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>

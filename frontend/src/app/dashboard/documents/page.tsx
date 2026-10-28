@@ -46,7 +46,7 @@ export default function DocumentsPage() {
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const { data: documents = [], isLoading } = useSubmittedDocuments();
+  const { data: documents = [], isLoading, isError, refetch } = useSubmittedDocuments();
   const { data: documentTypes = [] } = useDocumentTypes();
   const createMutation = useCreateSubmittedDocument();
   const updateMutation = useUpdateSubmittedDocument();
@@ -184,6 +184,9 @@ export default function DocumentsPage() {
         isLoading={isLoading}
         keyExtractor={(d) => d.idSubmittedDocument!}
         emptyMessage={t("noData")}
+      
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
