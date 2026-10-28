@@ -84,6 +84,7 @@ def proposal(c: dict) -> str:
 ## Capabilities
 
 ### New Capabilities
+
 - `{c['cap']}`: {c['cap_desc']}
 
 ### Modified Capabilities
