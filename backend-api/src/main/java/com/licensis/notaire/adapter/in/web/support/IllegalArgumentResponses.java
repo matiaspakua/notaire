@@ -1,5 +1,7 @@
 package com.licensis.notaire.adapter.in.web.support;
 
+import java.util.Locale;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -16,7 +18,7 @@ public final class IllegalArgumentResponses {
 
     public static boolean isMissingResource(IllegalArgumentException exception) {
         String message = exception.getMessage();
-        return message != null && message.toLowerCase().contains("not found");
+        return message != null && message.toLowerCase(Locale.ROOT).contains("not found");
     }
 
     public static ResponseEntity<Void> toResponse(IllegalArgumentException exception) {

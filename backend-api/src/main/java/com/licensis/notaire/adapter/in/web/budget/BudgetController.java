@@ -63,7 +63,7 @@ public class BudgetController {
      * Nested client on budget payloads. Wire keys match frontend {@code DtoPerson}:
      * {@code personId}, {@code name}, {@code lastName}.
      */
-    record PersonRef(Integer personId, String name, String lastName) {}
+    record PersonRef(Integer personId, String name, String lastName) { }
 
     record BudgetRequest(
             Integer number,
@@ -77,7 +77,7 @@ public class BudgetController {
             @JsonAlias("amount") java.math.BigDecimal propertyAmount,
             String notes,
             Integer personId,
-            @JsonProperty("person") PersonRef person) {}
+            @JsonProperty("person") PersonRef person) { }
 
     // NON_NULL so omitted client association is absent (not "person": null) — matches CU01 /
     // frontend Budget.person?: DtoPerson and BudgetPersonAssociationPgIntegrationTest.
@@ -91,7 +91,7 @@ public class BudgetController {
             java.math.BigDecimal propertyAmount,
             String notes,
             PersonRef person,
-            int version) {}
+            int version) { }
 
     private final QueryBudgetsUseCase queryBudgets;
     private final ManageBudgetsUseCase manageBudgets;
@@ -272,7 +272,12 @@ public class BudgetController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Budget or catalog item not found")
     })
-    public record CatalogItemsRequest(@NotEmpty List<Integer> idItems) {}
+    public record CatalogItemsRequest(@NotEmpty List<Integer> idItems) {
+        /** Defensive, unmodifiable copy; {@code null} is kept so {@code @NotEmpty} reports it (#1971). */
+        public CatalogItemsRequest {
+            idItems = idItems == null ? null : List.copyOf(idItems);
+        }
+    }
 
     @PostMapping("/{id}/items-from-catalog")
     @Operation(summary = "CU71 - Add catalog item copies to the budget")

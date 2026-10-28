@@ -40,7 +40,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class WorkflowDefinitionController {
 
     public record WorkflowDefinitionWriteRequest(
-            @NotBlank String name, String description, Boolean active, Integer version) {}
+            @NotBlank String name, String description, Boolean active, Integer version) { }
 
     private final QueryWorkflowDefinitionsUseCase query;
     private final ManageWorkflowDefinitionsUseCase manage;

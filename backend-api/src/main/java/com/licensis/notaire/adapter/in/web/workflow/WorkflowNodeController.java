@@ -50,7 +50,7 @@ public class WorkflowNodeController {
             @NotNull Integer statusManagementId,
             @NotBlank String type,
             Float positionX,
-            Float positionY) {}
+            Float positionY) { }
 
     private final QueryWorkflowNodesUseCase query;
     private final ManageWorkflowNodesUseCase manage;

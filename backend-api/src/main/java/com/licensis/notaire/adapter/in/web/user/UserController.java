@@ -81,16 +81,16 @@ public class UserController {
         this.tokenRevocationService = tokenRevocationService;
     }
 
-    public record LoginRequest(@NotBlank String name, @NotBlank String password) {}
+    public record LoginRequest(@NotBlank String name, @NotBlank String password) { }
 
-    record PersonInfo(Integer idPerson, String name, String lastName) {}
+    record PersonInfo(Integer idPerson, String name, String lastName) { }
 
-    record RoleInfo(Integer idRole, String name) {}
+    record RoleInfo(Integer idRole, String name) { }
 
     record UserResponse(
-            Integer idUser, String name, String type, boolean active, PersonInfo person, RoleInfo role) {}
+            Integer idUser, String name, String type, boolean active, PersonInfo person, RoleInfo role) { }
 
-    record UserRequest(@NotBlank String name, String password, @NotBlank String type, boolean active) {}
+    record UserRequest(@NotBlank String name, String password, @NotBlank String type, boolean active) { }
 
     private UserResponse toResponse(User u) {
         PersonInfo person = null;
