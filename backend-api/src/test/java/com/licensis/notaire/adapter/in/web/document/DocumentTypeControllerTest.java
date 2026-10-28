@@ -152,4 +152,35 @@ class DocumentTypeControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("name: must not be blank"));
     }
+
+    @Test
+    @DisplayName("create defaults omitted flags to enabled and not returned (#1971)")
+    void createDefaultsOmittedFlags() throws Exception {
+        when(manage.create(any())).thenReturn(DocumentType.restore(9, "Deed", false, null, "", true, false, 0));
+
+        mvc.perform(post("/api/v1/document-types").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"Deed\"}"))
+                .andExpect(status().is2xxSuccessful());
+
+        ArgumentCaptor<SaveDocumentTypeCommand> command = ArgumentCaptor.forClass(SaveDocumentTypeCommand.class);
+        verify(manage).create(command.capture());
+        org.assertj.core.api.Assertions.assertThat(command.getValue().enabled()).isTrue();
+        org.assertj.core.api.Assertions.assertThat(command.getValue().returned()).isFalse();
+        org.assertj.core.api.Assertions.assertThat(command.getValue().expires()).isFalse();
+    }
+
+    @Test
+    @DisplayName("update keeps the stored flags when the payload omits them (#1971)")
+    void updateKeepsStoredFlagsWhenOmitted() throws Exception {
+        when(query.getById(1)).thenReturn(DocumentType.restore(1, "Old", true, 10, "NOTARY", false, true, 3));
+
+        mvc.perform(put("/api/v1/document-types/1").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"New\", \"version\": 3}"))
+                .andExpect(status().isOk());
+
+        ArgumentCaptor<SaveDocumentTypeCommand> command = ArgumentCaptor.forClass(SaveDocumentTypeCommand.class);
+        verify(manage).update(eq(1), command.capture());
+        org.assertj.core.api.Assertions.assertThat(command.getValue())
+                .isEqualTo(new SaveDocumentTypeCommand("New", true, null, "NOTARY", false, true, 3));
+    }
 }

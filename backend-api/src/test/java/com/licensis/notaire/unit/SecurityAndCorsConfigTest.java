@@ -2,7 +2,6 @@ package com.licensis.notaire.unit;
 
 import com.licensis.notaire.config.JwtAuthenticationFilter;
 import com.licensis.notaire.config.SecurityAndCorsConfig;
-import com.licensis.notaire.security.RoleModuleAuthorizationFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,8 +24,7 @@ class SecurityAndCorsConfigTest {
 
     @BeforeEach
     void setUp() {
-        config = new SecurityAndCorsConfig(
-                mock(JwtAuthenticationFilter.class), mock(RoleModuleAuthorizationFilter.class));
+        config = new SecurityAndCorsConfig(mock(JwtAuthenticationFilter.class));
     }
 
     @Test
