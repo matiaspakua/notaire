@@ -15,6 +15,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SCAFFOLD = REPO_ROOT / "workspace" / "sdlc" / "scaffold-openspec-change.py"
 HYGIENE = REPO_ROOT / "workspace" / "sdlc" / "check-openspec-archive-hygiene.py"
+MARKDOWNLINT = REPO_ROOT / "frontend" / "node_modules" / ".bin" / "markdownlint-cli2"
+TEMPLATES = REPO_ROOT / "docs" / "openspec" / "schemas" / "notaire-sdlc" / "templates"
 NAME = "feat-9999-example-change"
 
 SPEC = {
@@ -33,7 +35,9 @@ SPEC = {
     "docs": [["docs/example.md", "mention the tool"]],
     "oos": "- Nothing else.",
     "spec": (
-        "<!-- Governed by CONSTITUTION.md. CU76, issue #9999. -->\n\n## ADDED Requirements\n\n"
+        "<!-- Governed by CONSTITUTION.md. CU76, issue #9999. -->\n\n"
+        "## Purpose\n\nAn example capability used only by the scaffold unit test.\n\n"
+        "## ADDED Requirements\n\n"
         "### Requirement: Example holds\n\nThe example MUST hold.\n\n"
         "#### Scenario: first\n\n- **WHEN** a\n- **THEN** b\n\n"
         "#### Scenario: second\n\n- **WHEN** c\n- **THEN** d\n\n"
@@ -119,6 +123,37 @@ class ScaffoldOpenspecChangeTest(unittest.TestCase):
         traceability = (self.change / "traceability.md").read_text(encoding="utf-8")
         self.assertIn("| first | ExampleTest | passing |", traceability)
         self.assertIn("- [ ] 10.", tasks)
+
+    def test_scaffolded_change_passes_markdownlint(self):
+        """#1689: fresh scaffold must not invent markdownlint debt."""
+        if not MARKDOWNLINT.is_file():
+            self.skipTest("frontend/node_modules/.bin/markdownlint-cli2 not installed")
+        self.scaffold()
+        files = sorted(str(path) for path in self.change.rglob("*.md"))
+        result = subprocess.run(
+            [str(MARKDOWNLINT), "--no-globs", *files],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        self.assertEqual(
+            result.returncode,
+            0,
+            result.stdout + result.stderr,
+        )
+
+    def test_schema_templates_pass_markdownlint(self):
+        """#1689: seed templates must lint clean before agents fill them."""
+        if not MARKDOWNLINT.is_file():
+            self.skipTest("frontend/node_modules/.bin/markdownlint-cli2 not installed")
+        files = sorted(str(path) for path in TEMPLATES.glob("*.md"))
+        result = subprocess.run(
+            [str(MARKDOWNLINT), "--no-globs", *files],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
 
 if __name__ == "__main__":
