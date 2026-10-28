@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Features
 
+* **test:** Playwright axe WCAG 2.1 AA on login + featured routes (allowlist) and required-field FormField E2E for people/budgets/deeds/managements (CU76; uplift epic [#1941](https://github.com/matiaspakua/notaire/issues/1941)) ([#1955](https://github.com/matiaspakua/notaire/issues/1955), [#1251](https://github.com/matiaspakua/notaire/issues/1251), [#615](https://github.com/matiaspakua/notaire/issues/615))
 * **fe:** reports MetricCard / ReportCard visual language + PageSection groups and catalog LoadingState/ErrorState (RNF-09; uplift epic [#1941](https://github.com/matiaspakua/notaire/issues/1941)) ([#1953](https://github.com/matiaspakua/notaire/issues/1953))
 * **fe:** high-traffic business forms audit — required-field FormField errors on budgets/deeds/managements; list ErrorState+retry on budgets/deeds; shared `requiredFieldErrors` helper (RNF-09; uplift epic [#1941](https://github.com/matiaspakua/notaire/issues/1941)) ([#1951](https://github.com/matiaspakua/notaire/issues/1951))
 * **fe:** workflow viewer/hero use shared EmptyState / LoadingState / ErrorState; node badges drop decorative ALL-CAPS (RNF-09; uplift epic [#1941](https://github.com/matiaspakua/notaire/issues/1941)) ([#1949](https://github.com/matiaspakua/notaire/issues/1949))
