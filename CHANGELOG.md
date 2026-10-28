@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **openapi:** prune Wave 9 accepted-breaking entries from `main` so the ignore list stays empty; land a user-facing Conventional Commit so release-please can open the next cut ([#1967](https://github.com/matiaspakua/notaire/issues/1967))
 * **api:** Budget, Management and Payment map invalid `IllegalArgumentException` to 400 and not-found to 404 ([#1921](https://github.com/matiaspakua/notaire/issues/1921), [#1315](https://github.com/matiaspakua/notaire/issues/1315), [#1963](https://github.com/matiaspakua/notaire/issues/1963))
 * **jpa:** unbounded EAGER `@OneToMany` on Concept and DocumentType switched to LAZY ([#595](https://github.com/matiaspakua/notaire/issues/595), [#1963](https://github.com/matiaspakua/notaire/issues/1963))
 * **ci:** Trivy image scan fails on CRITICAL; Checkstyle/SpotBugs fail when findings exceed ratchet baselines ([#566](https://github.com/matiaspakua/notaire/issues/566), [#1963](https://github.com/matiaspakua/notaire/issues/1963))
