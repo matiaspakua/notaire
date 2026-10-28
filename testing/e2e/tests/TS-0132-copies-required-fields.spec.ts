@@ -1,9 +1,8 @@
 /**
  * Copies: required fields (Gherkin style)
  *
- * Covers Issue #655: the copy number and print date are NOT NULL columns, and
- * POST/PUT /api/v1/copies without them answered 500. The API now answers 400,
- * and the dialog keeps Save disabled until both are filled.
+ * Covers Issue #655 / Wave 8 #1961: the copy number and print date are required.
+ * Save stays enabled; empty required fields surface FormField errors and block the mutation.
  */
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
@@ -21,16 +20,17 @@ test.describe("Copies: required number and print date (#655)", () => {
     await steps.whenUserClicksButton("nueva copia");
     await steps.thenModalIsVisible();
 
-    const save = page.getByRole("dialog").getByRole("button", { name: /^(crear|create)$/i });
-    await expect(save).toBeDisabled();
-
-    await steps.whenUserFillsField("Número", "7");
+    const dialog = page.getByRole("dialog");
+    const save = dialog.getByTestId("btn-save-copy");
     await expect(save).toBeEnabled();
 
-    await steps.whenUserFillsField("Fecha de Impresión", "");
-    await expect(save).toBeDisabled();
+    await dialog.getByTestId("input-number-copy").fill("");
+    await dialog.locator('input[type="date"]').first().fill("");
+    await save.click();
+    await expect(dialog.getByRole("alert").first()).toBeVisible();
 
-    await steps.whenUserFillsField("Fecha de Impresión", "2026-10-09");
-    await expect(save).toBeEnabled();
+    await dialog.getByTestId("input-number-copy").fill("7");
+    await dialog.locator('input[type="date"]').first().fill("2026-10-09");
+    await expect(dialog.getByRole("alert")).toHaveCount(0);
   });
 });

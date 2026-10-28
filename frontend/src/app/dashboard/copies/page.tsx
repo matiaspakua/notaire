@@ -186,7 +186,14 @@ export default function CopiesPage() {
                 <Input
                   type="number"
                   value={form.number}
-                  onChange={(e) => setForm({ ...form, number: e.target.value })}
+                  onChange={(e) => {
+                    setForm({ ...form, number: e.target.value });
+                    setFieldErrors((prev) => {
+                      const next = { ...prev };
+                      delete next.number;
+                      return next;
+                    });
+                  }}
                   aria-invalid={!!fieldErrors.number}
                   data-testid="input-number-copy"
                 />
@@ -196,7 +203,14 @@ export default function CopiesPage() {
                   <Input
                     type="date"
                     value={form.datePrinting}
-                    onChange={(e) => setForm({ ...form, datePrinting: e.target.value })}
+                    onChange={(e) => {
+                      setForm({ ...form, datePrinting: e.target.value });
+                      setFieldErrors((prev) => {
+                        const next = { ...prev };
+                        delete next.datePrinting;
+                        return next;
+                      });
+                    }}
                     aria-invalid={!!fieldErrors.datePrinting}
                   />
                 </FormField>
