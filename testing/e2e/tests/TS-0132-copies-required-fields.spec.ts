@@ -27,10 +27,13 @@ test.describe("Copies: required number and print date (#655)", () => {
     await dialog.getByTestId("input-number-copy").fill("");
     await dialog.locator('input[type="date"]').first().fill("");
     await save.click();
-    await expect(dialog.getByRole("alert").first()).toBeVisible();
+    // FormField errors use role="alert"; both required fields should complain.
+    await expect(dialog.getByRole("alert")).toHaveCount(2);
 
     await dialog.getByTestId("input-number-copy").fill("7");
     await dialog.locator('input[type="date"]').first().fill("2026-10-09");
-    await expect(dialog.getByRole("alert")).toHaveCount(0);
+    await save.click();
+    // Successful create closes the dialog (mutation runs once fields are valid).
+    await expect(dialog).toBeHidden({ timeout: 10000 });
   });
 });
