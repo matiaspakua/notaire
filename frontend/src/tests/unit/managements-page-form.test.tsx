@@ -219,7 +219,7 @@ describe("create", () => {
     );
   });
 
-  it("reports a failed save and closes the form", async () => {
+  it("reports a failed save and keeps the form open (#1951)", async () => {
     apiPost.mockRejectedValue(new Error("boom"));
     await renderPage();
     await fillCreateForm(false);
@@ -228,7 +228,7 @@ describe("create", () => {
 
     await waitFor(() => expect(toast.error).toHaveBeenCalledWith("gestiones.errorSave"));
     expect(toast.success).not.toHaveBeenCalled();
-    await waitFor(() => expect(screen.queryByTestId("btn-save-management")).toBeNull());
+    expect(screen.getByTestId("btn-save-management")).toBeDefined();
   });
 
   it("starts empty every time the form opens", async () => {
