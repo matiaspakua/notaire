@@ -23,6 +23,7 @@ which define the mandatory workflow.
 | [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md) | Map of local checks (`workspace/sdlc/preflight.sh`) to CI jobs |
 | [`304-ai-sdlc-cloud/`](304-ai-sdlc-cloud/) | Cursor Cloud AI SDLC fleet: foreman, specialists, env checklist, [CI merge gate](304-ai-sdlc-cloud/CI-MERGE-GATE.md), validation (not `local-ai/`) |
 | [`305-project-management/`](305-project-management/) | Milestones, labels, roadmap chart, parallel-agent lanes, and [how releases differ from trains](305-project-management/RELEASES.md) |
+| [`306-ai-sdlc-framework/`](306-ai-sdlc-framework/) | Stack-agnostic AI SDLC framework derived from Notaire: [report](306-ai-sdlc-framework/ai_sdlc_framework.md); kit in [`framework/ai-sdlc/`](../../framework/ai-sdlc/), Notaire profile [`.aisdlc/aisdlc.toml`](../../.aisdlc/aisdlc.toml) |
 | [`SBOM.md`](SBOM.md) | CycloneDX product, database, and image bills |
 | [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md) | Permanent domain model. A change that moves a state updates this file in the same PR |
 | [`INGENIERIA.md`](INGENIERIA.md) | Artifact IDs, forward/back trace, and process boxes. Method from the specialization guide, fitted to this repo |
