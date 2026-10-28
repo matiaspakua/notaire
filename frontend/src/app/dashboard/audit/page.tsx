@@ -64,7 +64,7 @@ function AuditList() {
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   }
 
-  const { data, isLoading, isFetching } = useAudit({
+  const { data, isLoading, isFetching, isError, refetch } = useAudit({
     page,
     size,
     module: moduleFilter === "all" ? undefined : moduleFilter,
@@ -223,6 +223,9 @@ function AuditList() {
           onPageChange: (next) => updateQuery({ page: next === 0 ? null : next }),
           onSizeChange: (next) => updateQuery({ size: next === DEFAULT_SIZE ? null : next, page: null }),
         }}
+      
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
       />
 
       <div className="mt-6 rounded-2xl border border-border bg-card shadow-sm p-6">

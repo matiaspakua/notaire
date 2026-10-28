@@ -51,6 +51,7 @@
     "search": "Search",
     "loading": "Loading...",
     "retry": "Retry",
+    "loadError": "Could not load the list",
     "generating": "Generating...",
 
     "id": "ID",

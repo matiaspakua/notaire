@@ -31,7 +31,7 @@ function DocumentReentryList() {
   // One server page at a time, newest first, page and size in the URL (#1340):
   // the list used to load size=1000 and silently miss every later case.
   const paging = useUrlPagination();
-  const { data: managementsPage, isLoading, isFetching } = useManagementsPage({ page: paging.page, size: paging.size });
+  const { data: managementsPage, isLoading, isFetching, isError, refetch } = useManagementsPage({ page: paging.page, size: paging.size });
   const managements = managementsPage?.content ?? [];
   useClampPage(paging, managementsPage?.totalPages);
 
@@ -128,7 +128,10 @@ function DocumentReentryList() {
             data={procedure.requiredDocuments}
             columns={documentColumns(procedure.idProcedure)}
             keyExtractor={(d) => d.idDocumentType}
-          />
+          
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
+      />
         )}
       </div>
     );

@@ -40,7 +40,7 @@ export default function MovementsTestimonyPage() {
   const t = useTranslations("movimientosTestimonio");
   const tc = useTranslations("common");
 
-  const { data: testimonies = [], isLoading } = useTestimonies();
+  const { data: testimonies = [], isLoading, isError, refetch } = useTestimonies();
   const verified = testimonies.filter((te) => te.verified);
 
   const enterMutation = useEnterRegistration();
@@ -142,7 +142,10 @@ export default function MovementsTestimonyPage() {
   return (
     <div>
       <AppHeader title={t("title")} />
-      <DataTable data={verified} columns={columns} isLoading={isLoading} keyExtractor={(te) => te.idTestimony!} emptyMessage={t("noData")} />
+      <DataTable data={verified} columns={columns} isLoading={isLoading} keyExtractor={(te) => te.idTestimony!} emptyMessage={t("noData")} 
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
+      />
 
       <Dialog open={!!withdrawId} onOpenChange={(v) => !v && setWithdrawId(null)}>
         <DialogContent>

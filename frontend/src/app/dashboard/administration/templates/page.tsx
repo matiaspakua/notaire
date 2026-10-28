@@ -67,7 +67,7 @@ export default function TemplatesPage() {
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const { data = [], isLoading, refetch } = useQuery({
+  const { data = [], isLoading, refetch, isError } = useQuery({
     queryKey: ["budget-templates"],
     queryFn: async () => (await budgetTemplateUseCases.list()).map(toWireBudget),
   });
@@ -267,6 +267,9 @@ export default function TemplatesPage() {
         isLoading={isLoading}
         keyExtractor={(p) => `${p.budgetTemplatePK?.fkIdProcedureType}-${p.budgetTemplatePK?.fkIdConcept}`}
         emptyMessage={t("noData")}
+      
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>

@@ -36,7 +36,7 @@ export default function TestimoniesPage() {
   const tc = useTranslations("common");
   const themeClass = useThemeClasses();
 
-  const { data: testimonies = [], isLoading } = useTestimonies();
+  const { data: testimonies = [], isLoading, isError, refetch } = useTestimonies();
   const generateMutation = useGenerateTestimony();
   const verifyMutation = useVerifyTestimony();
   const updateMutation = useUpdateTestimony();
@@ -231,7 +231,10 @@ export default function TestimoniesPage() {
         }
       />
 
-      <DataTable data={testimonies} columns={columns} isLoading={isLoading} keyExtractor={(te) => te.idTestimony!} emptyMessage={t("noData")} />
+      <DataTable data={testimonies} columns={columns} isLoading={isLoading} keyExtractor={(te) => te.idTestimony!} emptyMessage={t("noData")} 
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
+      />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>

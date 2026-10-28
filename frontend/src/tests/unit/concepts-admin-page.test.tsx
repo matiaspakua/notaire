@@ -86,7 +86,7 @@ describe("concepts", () => {
 
     fireEvent.click(saveButton());
 
-    expect(toast.error).toHaveBeenCalledWith("administracion.conceptos.nameRequired");
+    expect(await screen.findByText("common.fieldRequired")).toBeTruthy();
     expect(apiPost).not.toHaveBeenCalled();
   });
 

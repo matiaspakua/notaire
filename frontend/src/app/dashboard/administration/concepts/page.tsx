@@ -16,6 +16,7 @@ import { conceptUseCases } from "@/composition/concept";
 import type { Concept as DomainConcept } from "@/core/concept/domain/concept";
 import { useConcepts, useCreateConcept, useUpdateConcept, useDeleteConcept } from "@/hooks/useConcepts";
 import { extractApiError } from "@/lib/utils";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import type { Concept } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { useFormat } from "@/hooks/useFormat";
@@ -40,7 +41,7 @@ export default function ConceptsPage() {
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const { data: concepts = [], isLoading } = useConcepts();
+  const { data: concepts = [], isLoading, isError, refetch } = useConcepts();
   const createMutation = useCreateConcept();
   const updateMutation = useUpdateConcept();
   const deleteMutation = useDeleteConcept();
@@ -49,6 +50,7 @@ export default function ConceptsPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Concept>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [search, setSearch] = useState("");
 
   const { data: filtered = concepts } = useQuery({
@@ -59,11 +61,23 @@ export default function ConceptsPage() {
         : concepts,
   });
 
-  function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
-  function openEdit(c: Concept) { setEditing(c); setIsEditMode(true); setModalOpen(true); }
+  function openCreate() {
+    setEditing(EMPTY);
+    setIsEditMode(false);
+    setFieldErrors({});
+    setModalOpen(true);
+  }
+  function openEdit(c: Concept) {
+    setEditing(c);
+    setIsEditMode(true);
+    setFieldErrors({});
+    setModalOpen(true);
+  }
 
   async function handleSave() {
-    if (!editing.name?.trim()) { toast.error(t("nameRequired")); return; }
+    const required = requiredFieldErrors({ name: editing.name }, tc("fieldRequired"));
+    setFieldErrors(required);
+    if (Object.keys(required).length > 0) return;
     try {
       if (isEditMode && editing.idConcept) {
         await updateMutation.mutateAsync({ id: editing.idConcept, data: editing });
@@ -140,17 +154,21 @@ export default function ConceptsPage() {
         />
       </div>
 
-      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(c) => c.idConcept!} emptyMessage={t("noData")} />
+      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(c) => c.idConcept!} emptyMessage={t("noData")} 
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
+      />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={isEditMode ? t("editConcepto") : t("newConcepto")}>
-              <FormField label={t("fields.nombre")} required>
+              <FormField label={t("fields.nombre")} required error={fieldErrors.name}>
                 <Input
                   value={editing.name ?? ""}
                   onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                   data-testid="input-name-concept"
+                  aria-invalid={!!fieldErrors.name}
                 />
               </FormField>
               <FormField label={t("fields.valorBaseInput")}>

@@ -17,6 +17,7 @@ import { useBudgetSummary } from "@/hooks/useBudgets";
 import { BudgetPicker } from "@/components/shared/BudgetPicker";
 import { usePaymentReceipt } from "@/hooks/useReports";
 import { presentMutationError } from "@/lib/mutation-error";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import type { Payment } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue } from "@/lib/dates";
@@ -99,6 +100,8 @@ function PaymentsPageContent() {
     ? [...filteredRows].sort((a, b) => String(b.date ?? "").localeCompare(String(a.date ?? "")))
     : filteredRows;
   const isLoading = source.isLoading;
+  const isError = source.isError;
+  const refetch = source.refetch;
   const createMutation = useCreatePayment();
   const updateMutation = useUpdatePayment();
   const deleteMutation = useDeletePayment();
@@ -137,7 +140,16 @@ function PaymentsPageContent() {
   }
 
   async function handleSave() {
-    setFieldErrors({});
+    const required = requiredFieldErrors(
+      {
+        idBudget: editing.idBudget,
+        date: editing.date,
+        amount: editing.amount,
+      },
+      tc("fieldRequired"),
+    );
+    setFieldErrors(required);
+    if (Object.keys(required).length > 0) return;
     try {
       if (isEditMode && editing.idPayment) {
         await updateMutation.mutateAsync({ id: editing.idPayment, data: editing });
@@ -275,14 +287,22 @@ function PaymentsPageContent() {
           </p>
         )}
       </div>
-      <DataTable data={payments} columns={columns} isLoading={isLoading} keyExtractor={(p) => p.idPayment!} emptyMessage={consultBudget ? t("consulta.sinPagos") : t("noData")} />
+      <DataTable
+        data={payments}
+        columns={columns}
+        isLoading={isLoading}
+        keyExtractor={(p) => p.idPayment!}
+        emptyMessage={consultBudget ? t("consulta.sinPagos") : t("noData")}
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
+      />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={isEditMode ? t("editPago") : t("newPago")}>
               {/* Issue #796: Replace numeric ID input with budget picker */}
-              <FormField label={t("fields.presupuesto")} required>
+              <FormField label={t("fields.presupuesto")} required error={fieldErrors.idBudget}>
                 {/* Server search instead of the first 1000 budgets (#1340). */}
                 <BudgetPicker
                   value={editing.idBudget ?? undefined}
