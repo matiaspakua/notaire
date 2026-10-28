@@ -10,7 +10,7 @@
 
     <groupId>com.licensis</groupId>
     <artifactId>notaire-root</artifactId>
-    <version>0.2.4</version>
+    <version>0.2.5</version>
     <packaging>pom</packaging>
 
     <name>Notaire Root</name>
