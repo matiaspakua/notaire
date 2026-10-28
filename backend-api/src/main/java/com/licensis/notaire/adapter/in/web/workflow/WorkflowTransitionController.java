@@ -44,13 +44,13 @@ public class WorkflowTransitionController {
             @NotNull Integer originNodeId,
             @NotNull Integer destinationNodeId,
             String condition,
-            String description) {}
+            String description) { }
 
     public record WorkflowTransitionUpdateRequest(
             @NotNull Integer originNodeId,
             @NotNull Integer destinationNodeId,
             String condition,
-            String description) {}
+            String description) { }
 
     private final QueryWorkflowTransitionsUseCase query;
     private final ManageWorkflowTransitionsUseCase manage;

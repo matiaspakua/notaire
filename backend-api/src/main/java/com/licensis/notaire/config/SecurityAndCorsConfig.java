@@ -102,12 +102,9 @@ public class SecurityAndCorsConfig {
             };
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final RoleModuleAuthorizationFilter roleModuleAuthorizationFilter;
 
-    public SecurityAndCorsConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
-            RoleModuleAuthorizationFilter roleModuleAuthorizationFilter) {
+    public SecurityAndCorsConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.roleModuleAuthorizationFilter = roleModuleAuthorizationFilter;
     }
 
     @Value("${cors.allowed-origins:http://localhost:3000,http://localhost:8080}")
@@ -224,7 +221,8 @@ public class SecurityAndCorsConfig {
     @Order(2)
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http,
             AuthenticationEntryPoint apiAuthenticationEntryPoint,
-            AccessDeniedHandler apiAccessDeniedHandler) throws Exception {
+            AccessDeniedHandler apiAccessDeniedHandler,
+            RoleModuleAuthorizationFilter roleModuleAuthorizationFilter) throws Exception {
         http
             .securityMatcher("/api/**")
             .authorizeHttpRequests(auth -> {

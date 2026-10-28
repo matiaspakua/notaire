@@ -11,7 +11,7 @@ import java.util.Optional;
  */
 public final class ApiModulePathRegistry {
 
-    private record PrefixRule(String prefix, String module) {}
+    private record PrefixRule(String prefix, String module) { }
 
     private static final List<PrefixRule> RULES = buildRules();
 

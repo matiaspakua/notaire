@@ -2755,15 +2755,18 @@ export interface components {
             /** Format: int32 */
             version?: number;
         };
+        CatalogItemsRequest: {
+            idItems: number[];
+        };
         CompleteCaseRequest: {
             /** Format: int32 */
             budgetId?: number;
-            heading?: string;
+            heading: string;
             /** Format: int32 */
             notaryId?: number;
             notes?: string;
             /** Format: int32 */
-            number?: number;
+            number: number;
             /** Format: int32 */
             propertyId?: number;
             /** Format: int32 */
@@ -2788,6 +2791,16 @@ export interface components {
             statusManagementId?: number;
             /** Format: int32 */
             typeProcedureId?: number;
+        };
+        ConceptWriteRequest: {
+            enabled?: boolean;
+            fixed?: boolean;
+            name: string;
+            /** Format: int32 */
+            percentage?: number;
+            value: number;
+            /** Format: int32 */
+            version?: number;
         };
         CopyRequest: {
             /**
@@ -2843,9 +2856,9 @@ export interface components {
         CreateCostRequest: {
             fixedAmount?: number;
             /** Format: int32 */
-            idDocumentType?: number;
+            idDocumentType: number;
             /** Format: int32 */
-            idProcedureType?: number;
+            idProcedureType: number;
             variablePercentage?: number;
         };
         CreateNotebookRequest: {
@@ -2903,6 +2916,17 @@ export interface components {
             idDocumentType?: number;
             name?: string;
             returned?: boolean;
+        };
+        DocumentTypeWriteRequest: {
+            deliveredBy?: string;
+            /** Format: int32 */
+            dueDays?: number;
+            enabled?: boolean;
+            expires?: boolean;
+            name: string;
+            returned?: boolean;
+            /** Format: int32 */
+            version?: number;
         };
         DtoAuditRecord: {
             /** Format: date-time */
@@ -3511,7 +3535,7 @@ export interface components {
             version?: number;
         };
         DtoTransitionRequest: {
-            statusDestination?: string;
+            statusDestination: string;
         };
         DtoUpcomingExpiration: {
             amountToPay?: number;
@@ -3643,6 +3667,14 @@ export interface components {
             name?: string;
             notes?: string;
         };
+        FolioTypeWriteRequest: {
+            enabled?: boolean;
+            isAuxiliary?: boolean;
+            name: string;
+            notes?: string;
+            /** Format: int32 */
+            version?: number;
+        };
         GenerateRequest: {
             /**
              * Format: int32
@@ -3710,6 +3742,10 @@ export interface components {
             /** Format: int32 */
             version?: number;
         };
+        LoginRequest: {
+            name: string;
+            password: string;
+        };
         ManagementRef: {
             heading?: string;
             /** Format: int32 */
@@ -3744,6 +3780,12 @@ export interface components {
             /** Format: int32 */
             number?: number;
             pendingDebtAtArchiving?: boolean;
+            /** Format: int32 */
+            version?: number;
+        };
+        ManagementStatusWriteRequest: {
+            name: string;
+            notes?: string;
             /** Format: int32 */
             version?: number;
         };
@@ -4034,6 +4076,16 @@ export interface components {
             name?: string;
             notes?: string;
         };
+        ProcedureTypeWriteRequest: {
+            associatesProperties?: boolean;
+            enabled?: boolean;
+            isArchived?: boolean;
+            isRegistered?: boolean;
+            name: string;
+            notes?: string;
+            /** Format: int32 */
+            version?: number;
+        };
         PropertyRef: {
             address?: string;
             cadastralDesignation?: string;
@@ -4096,7 +4148,7 @@ export interface components {
         StartDeedRequest: {
             body?: string;
             /** Format: int32 */
-            idFolio?: number;
+            idFolio: number;
         };
         SubmitRequest: {
             /** Format: date-time */
@@ -4192,6 +4244,25 @@ export interface components {
             /** Format: int32 */
             version?: number;
         };
+        TestimonyMovementWriteRequest: {
+            /** Format: int32 */
+            cardNumber?: number;
+            /** Format: date-time */
+            dateEntry: string;
+            /** Format: date-time */
+            dateExit?: string;
+            /** Format: date-time */
+            dateRegistration?: string;
+            /** Format: int32 */
+            idTestimonyMovement?: number;
+            notes?: string;
+            observedByRegistry?: boolean;
+            registered?: boolean;
+            testimony: components["schemas"]["DtoTestimony"];
+            valid?: boolean;
+            /** Format: int32 */
+            version?: number;
+        };
         TestimonyUpdateRequest: {
             copies?: components["schemas"]["DtoCopy"][];
             deed?: components["schemas"]["DtoDeed"];
@@ -4236,7 +4307,7 @@ export interface components {
             type?: string;
         };
         WaitRequest: {
-            reason?: string;
+            reason: string;
         };
         WorkflowAssignmentRequest: {
             /**
@@ -4244,6 +4315,42 @@ export interface components {
              * @description Active workflow to assign, or null to unassign the current one
              */
             workflowDefinitionId: number | null;
+        };
+        WorkflowDefinitionWriteRequest: {
+            active?: boolean;
+            description?: string;
+            name: string;
+            /** Format: int32 */
+            version?: number;
+        };
+        WorkflowNodeCreateRequest: {
+            /** Format: float */
+            positionX?: number;
+            /** Format: float */
+            positionY?: number;
+            /** Format: int32 */
+            statusManagementId: number;
+            type: string;
+            /** Format: int32 */
+            workflowDefinitionId: number;
+        };
+        WorkflowTransitionCreateRequest: {
+            condition?: string;
+            description?: string;
+            /** Format: int32 */
+            destinationNodeId: number;
+            /** Format: int32 */
+            originNodeId: number;
+            /** Format: int32 */
+            workflowDefinitionId: number;
+        };
+        WorkflowTransitionUpdateRequest: {
+            condition?: string;
+            description?: string;
+            /** Format: int32 */
+            destinationNodeId: number;
+            /** Format: int32 */
+            originNodeId: number;
         };
     };
     responses: {
@@ -4839,21 +4946,12 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": number[];
+                "application/json": components["schemas"]["CatalogItemsRequest"];
             };
         };
         responses: {
             /** @description OK */
             200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ItemResponse"][];
-                };
-            };
-            /** @description Budget or catalog item not found */
-            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4926,6 +5024,15 @@ export interface operations {
                     "*/*": components["schemas"]["DtoBudgetSummary"];
                 };
             };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoBudgetSummary"];
+                };
+            };
             /** @description Not found */
             404: {
                 headers: {
@@ -4966,7 +5073,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoConcept"];
+                "application/json": components["schemas"]["ConceptWriteRequest"];
             };
         };
         responses: {
@@ -5063,7 +5170,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoConcept"];
+                "application/json": components["schemas"]["ConceptWriteRequest"];
             };
         };
         responses: {
@@ -5659,7 +5766,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoDocumentType"];
+                "application/json": components["schemas"]["DocumentTypeWriteRequest"];
             };
         };
         responses: {
@@ -5756,7 +5863,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoDocumentType"];
+                "application/json": components["schemas"]["DocumentTypeWriteRequest"];
             };
         };
         responses: {
@@ -5882,7 +5989,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoFolioType"];
+                "application/json": components["schemas"]["FolioTypeWriteRequest"];
             };
         };
         responses: {
@@ -5979,7 +6086,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoFolioType"];
+                "application/json": components["schemas"]["FolioTypeWriteRequest"];
             };
         };
         responses: {
@@ -6896,7 +7003,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoManagementStatus"];
+                "application/json": components["schemas"]["ManagementStatusWriteRequest"];
             };
         };
         responses: {
@@ -6993,7 +7100,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoManagementStatus"];
+                "application/json": components["schemas"]["ManagementStatusWriteRequest"];
             };
         };
         responses: {
@@ -7646,6 +7753,15 @@ export interface operations {
                     "*/*": components["schemas"]["DtoManagementFinancialSummary"];
                 };
             };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoManagementFinancialSummary"];
+                };
+            };
             /** @description Management not found */
             404: {
                 headers: {
@@ -7701,6 +7817,15 @@ export interface operations {
         responses: {
             /** @description OK */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoPendingBalance"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8155,6 +8280,15 @@ export interface operations {
         responses: {
             /** @description OK */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DtoPaymentResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8717,7 +8851,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoProcedureType"];
+                "application/json": components["schemas"]["ProcedureTypeWriteRequest"];
             };
         };
         responses: {
@@ -8814,7 +8948,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoProcedureType"];
+                "application/json": components["schemas"]["ProcedureTypeWriteRequest"];
             };
         };
         responses: {
@@ -10895,7 +11029,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoTestimonyMovement"];
+                "application/json": components["schemas"]["TestimonyMovementWriteRequest"];
             };
         };
         responses: {
@@ -11138,7 +11272,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoTestimonyMovement"];
+                "application/json": components["schemas"]["TestimonyMovementWriteRequest"];
             };
         };
         responses: {
@@ -11282,7 +11416,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoUser"];
+                "application/json": components["schemas"]["LoginRequest"];
             };
         };
         responses: {
@@ -11468,7 +11602,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoWorkflowDefinition"];
+                "application/json": components["schemas"]["WorkflowDefinitionWriteRequest"];
             };
         };
         responses: {
@@ -11543,7 +11677,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoWorkflowDefinition"];
+                "application/json": components["schemas"]["WorkflowDefinitionWriteRequest"];
             };
         };
         responses: {
@@ -11649,7 +11783,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoWorkflowNode"];
+                "application/json": components["schemas"]["WorkflowNodeCreateRequest"];
             };
         };
         responses: {
@@ -11819,7 +11953,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoWorkflowTransition"];
+                "application/json": components["schemas"]["WorkflowTransitionCreateRequest"];
             };
         };
         responses: {
@@ -11916,7 +12050,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DtoWorkflowTransition"];
+                "application/json": components["schemas"]["WorkflowTransitionUpdateRequest"];
             };
         };
         responses: {

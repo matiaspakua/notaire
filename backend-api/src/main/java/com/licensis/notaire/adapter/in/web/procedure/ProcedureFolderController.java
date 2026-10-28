@@ -42,7 +42,7 @@ public class ProcedureFolderController {
         this.manageProcedureFolders = manageProcedureFolders;
     }
 
-    public record WaitRequest(@NotBlank String reason) {}
+    public record WaitRequest(@NotBlank String reason) { }
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),

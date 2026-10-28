@@ -3,6 +3,7 @@ package com.licensis.notaire.adapter.in.web.concept;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -157,7 +158,7 @@ public class ConceptController {
         dto.setPercentage(request.percentage());
         dto.setEnabled(request.enabled() != null ? request.enabled() : Boolean.TRUE);
         dto.setFixed(request.fixed() != null ? request.fixed() : Boolean.FALSE);
-        dto.setVersion(request.version() == null ? 0 : request.version());
+        dto.setVersion(Objects.requireNonNullElse(request.version(), 0));
         return dto;
     }
 }

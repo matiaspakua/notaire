@@ -25,8 +25,9 @@ RUN mvn package -pl backend-api -am -DskipTests -B -q -U
 # =============================================
 FROM eclipse-temurin:26.0.2.1_1-jre-alpine AS runner
 
-# Install wget for healthcheck
-RUN apk add --no-cache wget
+# Apply Alpine security fixes published after the pinned base (CI Trivy gate, #1971)
+# and install wget for the healthcheck
+RUN apk upgrade --no-cache && apk add --no-cache wget
 
 WORKDIR /app
 

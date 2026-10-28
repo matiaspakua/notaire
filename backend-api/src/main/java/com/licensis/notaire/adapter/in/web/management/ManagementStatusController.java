@@ -42,7 +42,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Management status", description = "API for management")
 public class ManagementStatusController {
 
-    public record ManagementStatusWriteRequest(@NotBlank String name, String notes, Integer version) {}
+    public record ManagementStatusWriteRequest(@NotBlank String name, String notes, Integer version) { }
 
     private final QueryManagementStatusesUseCase query;
     private final ManageManagementStatusesUseCase manage;

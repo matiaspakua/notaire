@@ -2,6 +2,7 @@ package com.licensis.notaire.adapter.in.web.document;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -87,8 +88,8 @@ public class DocumentTypeController {
 
     private SaveDocumentTypeCommand toCreateCommand(DocumentTypeWriteRequest request) {
         String deliveredBy = request.deliveredBy() == null ? "" : request.deliveredBy();
-        Boolean enabled = request.enabled() == null ? true : request.enabled();
-        Boolean returned = request.returned() == null ? false : request.returned();
+        Boolean enabled = Objects.requireNonNullElse(request.enabled(), Boolean.TRUE);
+        Boolean returned = Objects.requireNonNullElse(request.returned(), Boolean.FALSE);
         return toCommand(new DocumentTypeWriteRequest(
                 request.name(),
                 request.expires(),
@@ -101,9 +102,9 @@ public class DocumentTypeController {
 
     private SaveDocumentTypeCommand toUpdateCommand(DocumentTypeWriteRequest request, DocumentType existing) {
         String deliveredBy = request.deliveredBy() == null ? existing.deliveredBy() : request.deliveredBy();
-        Boolean enabled = request.enabled() == null ? existing.enabled() : request.enabled();
-        Boolean returned = request.returned() == null ? existing.returned() : request.returned();
-        Boolean expires = request.expires() == null ? existing.expires() : request.expires();
+        Boolean enabled = Objects.requireNonNullElse(request.enabled(), existing.enabled());
+        Boolean returned = Objects.requireNonNullElse(request.returned(), existing.returned());
+        Boolean expires = Objects.requireNonNullElse(request.expires(), existing.expires());
         return toCommand(new DocumentTypeWriteRequest(
                 request.name(),
                 expires,

@@ -1,7 +1,8 @@
 # Slim Dockerfile: copies pre-built JAR (no Maven build inside Docker)
 FROM eclipse-temurin:26.0.2.1_1-jre-alpine
 
-RUN apk add --no-cache wget
+# Apply Alpine security fixes published after the pinned base (#1971)
+RUN apk upgrade --no-cache && apk add --no-cache wget
 
 WORKDIR /app
 
