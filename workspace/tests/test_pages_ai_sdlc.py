@@ -21,6 +21,7 @@ FACTS = PAGE / "lib" / "ai-sdlc-facts.ts"
 HISTORY = PAGE / "lib" / "ai-sdlc-history.json"
 HISTORY_GENERATOR = REPO / "workspace" / "ci" / "generate-ai-sdlc-history.py"
 GATE_FLOW = PAGE / "components" / "GateFlow.tsx"
+SVG_DIAGRAMS = (PAGE / "components" / "GuardrailStack.tsx", PAGE / "components" / "Swimlane.tsx")
 
 SUBPAGES = (
     "lifecycle",
@@ -33,6 +34,7 @@ SUBPAGES = (
     "playbook",
     "case-study",
     "framework",
+    "results",
 )
 DIAGRAMS = (
     "FACTORY_VS_PRODUCT",
@@ -54,7 +56,7 @@ WORKFLOW = re.compile(r'workflow\(\s*"([^"]+)"\s*\)')
 
 
 def section_sources() -> list[Path]:
-    return [CONTENT, FACTS, GATE_FLOW, *sorted(SECTION.rglob("*.tsx"))]
+    return [CONTENT, FACTS, GATE_FLOW, *SVG_DIAGRAMS, *sorted(SECTION.rglob("*.tsx"))]
 
 
 def read_all() -> str:
@@ -72,8 +74,10 @@ class AiSdlcSectionStructureTest(unittest.TestCase):
             self.assertTrue((SECTION / name / "page.tsx").is_file(), f"missing app/ai-sdlc/{name}/page.tsx")
 
     def test_story_nav_and_docs_tab_link_the_factory(self):
-        for path in (PAGE / "components" / "Nav.tsx", PAGE / "components" / "DocsChrome.tsx"):
-            self.assertIn("/ai-sdlc/", path.read_text(encoding="utf-8"), path.name)
+        # #1970: one header on every page (story, Docs tab, factory) reads the site map.
+        header = PAGE / "components" / "site" / "SiteHeader.tsx"
+        self.assertIn("PRIMARY_NAV", header.read_text(encoding="utf-8"))
+        self.assertIn('href: "/ai-sdlc/"', (PAGE / "lib" / "site.ts").read_text(encoding="utf-8"))
 
     def test_content_declares_every_required_diagram_as_mermaid(self):
         text = CONTENT.read_text(encoding="utf-8")
@@ -147,6 +151,35 @@ class AiSdlcCaseStudyTest(unittest.TestCase):
         text = GATE_FLOW.read_text(encoding="utf-8")
         self.assertIn("prefers-reduced-motion", text)
         self.assertIn('role="img"', text)
+
+
+class AiSdlcStorytellingTest(unittest.TestCase):
+    """#1970: themed diagrams, SVG explainers and a results chapter read from the repository."""
+
+    def test_mermaid_uses_one_theme_from_the_design_tokens(self):
+        text = (PAGE / "components" / "MermaidDiagram.tsx").read_text(encoding="utf-8")
+        self.assertIn('theme: "base"', text)
+        self.assertIn("themeVariables", text)
+        self.assertIn("getComputedStyle", text, "colours come from the CSS tokens, not literals")
+
+    def test_svg_diagrams_are_accessible_and_rendered(self):
+        pages = "\n".join(p.read_text(encoding="utf-8") for p in SECTION.rglob("page.tsx"))
+        for path in SVG_DIAGRAMS:
+            text = path.read_text(encoding="utf-8")
+            self.assertIn('role="img"', text, path.name)
+            self.assertIn("<title", text, path.name)
+            self.assertIn(f"<{path.stem}", pages, f"{path.stem} is not rendered by any page")
+
+    def test_swimlane_lanes_match_the_constitution_roles(self):
+        text = (PAGE / "components" / "Swimlane.tsx").read_text(encoding="utf-8")
+        for lane in ("Owner", "Worker", "Foreman", "CI"):
+            self.assertIn(lane, text)
+
+    def test_results_are_read_from_the_repository(self):
+        page = (SECTION / "results" / "page.tsx").read_text(encoding="utf-8")
+        self.assertIn("loadFactoryFacts", page)
+        self.assertIn("HISTORY", page)
+        self.assertNotRegex(page, r">\s*\d{3,}\s*<", "no hard-coded totals in markup")
 
 
 if __name__ == "__main__":
