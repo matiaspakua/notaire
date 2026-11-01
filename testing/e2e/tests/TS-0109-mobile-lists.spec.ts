@@ -9,9 +9,11 @@
  * on seed data, then assert at 390x844 that the row is a card, its edit button
  * is inside the viewport, and the page does not scroll horizontally.
  */
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 
 const ROW_ID = 990_109;
+/** Written by global-setup; avoids per-test UI login races / lockouts on the mobile project. */
+const ADMIN_AUTH = "tests/fixtures/admin-auth.json";
 
 const PAGES: { route: string; api: string; paged: boolean; row: Record<string, unknown> }[] = [
   {
@@ -46,20 +48,14 @@ const PAGES: { route: string; api: string; paged: boolean; row: Record<string, u
   },
 ];
 
-async function loginAsAdmin(page: Page) {
-  await page.goto("/login");
-  await page.getByTestId("input-username").fill("admin");
-  await page.getByTestId("input-password").fill("admin");
-  await page.getByTestId("btn-sign-in").click();
-  await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
-}
-
 test.describe("TS-0109 - list pages at 390px (#1356)", () => {
-  test.use({ viewport: { width: 390, height: 844 } });
+  test.use({
+    viewport: { width: 390, height: 844 },
+    storageState: ADMIN_AUTH,
+  });
 
   for (const p of PAGES) {
     test(`${p.route}: rows are cards with reachable actions and no horizontal overflow`, async ({ page }) => {
-      await loginAsAdmin(page);
       await page.route(p.api, async (route) => {
         if (route.request().method() !== "GET") return route.continue();
         await route.fulfill({
@@ -92,8 +88,8 @@ test.describe("TS-0109 - list pages at 390px (#1356)", () => {
 
   test("desktop keeps the table", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await loginAsAdmin(page);
     await page.goto("/dashboard/people");
+    await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
     await expect(page.getByRole("table")).toBeVisible({ timeout: 15000 });
     await expect(page.getByTestId("data-table-cards")).toHaveCount(0);
   });
