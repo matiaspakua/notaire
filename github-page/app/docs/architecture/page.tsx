@@ -117,7 +117,7 @@ export default function DocsArchitecturePage() {
               {i > 0 && " · "}
               <a
                 className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
-                href={`${DOCS}/200-architecture/202-ADR/${a.file}`}
+                href={`${DOCS}/200-architecture/202-ADR/${encodeURIComponent(a.file)}`}
               >
                 ADR-{a.id} — {a.title}
               </a>
@@ -169,7 +169,7 @@ export default function DocsArchitecturePage() {
               <span className="w-16 shrink-0 font-mono text-xs text-neutral-500">ADR-{a.id}</span>
               <a
                 className="min-w-0 flex-1 text-sm text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
-                href={`${DOCS}/200-architecture/202-ADR/${a.file}`}
+                href={`${DOCS}/200-architecture/202-ADR/${encodeURIComponent(a.file)}`}
               >
                 {a.title}
               </a>

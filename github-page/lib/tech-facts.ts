@@ -63,8 +63,12 @@ function pomProperty(pom: string, name: string): string | null {
   return read(pom).match(new RegExp(`<${name}>([^<]+)</${name}>`))?.[1] ?? null;
 }
 
+function escapeRegExp(text: string): string {
+  return text.replace(/[\\^$.*+?()[\]{}|/-]/g, "\\$&");
+}
+
 function image(compose: string, repo: string): string | null {
-  const tag = read(compose).match(new RegExp(`image:\\s*${repo.replace(/[/.]/g, "\\$&")}:([\\w.\\-]+)`))?.[1];
+  const tag = read(compose).match(new RegExp(`image:\\s*${escapeRegExp(repo)}:([\\w.\\-]+)`))?.[1];
   return tag ? tag.replace(/^v(?=\d)/, "") : null;
 }
 
