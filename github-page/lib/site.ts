@@ -4,7 +4,8 @@
  * Add a page here and it appears everywhere; a href with no page file fails the tests.
  */
 
-export type SectionKey = "factory" | "product" | "docs" | "releases";
+/** `home` is the landing page at `/`; it belongs to no section and shows no sidebar. */
+export type SectionKey = "home" | "factory" | "product" | "docs" | "releases";
 
 export type SitePage = {
   href: string;
@@ -19,9 +20,9 @@ export type PageGroup = { label: string; pages: SitePage[] };
 
 export const REPO_URL = "https://github.com/matiaspakua/notaire";
 
-export const PRIMARY_NAV: { key: SectionKey; label: string; href: string; blurb: string }[] = [
+export const PRIMARY_NAV: { key: Exclude<SectionKey, "home">; label: string; href: string; blurb: string }[] = [
   { key: "factory", label: "AI Factory", href: "/ai-sdlc/", blurb: "The AI SDLC that builds Notaire" },
-  { key: "product", label: "Product", href: "/", blurb: "The Notaire system and its story" },
+  { key: "product", label: "Product", href: "/product/", blurb: "What Notaire does, its story and its numbers" },
   { key: "docs", label: "Technical docs", href: "/docs/", blurb: "Architecture, modules, testing, security" },
   { key: "releases", label: "Releases", href: "/docs/releases/", blurb: "Every product cut and its parts" },
 ];
@@ -70,20 +71,31 @@ export const FACTORY_ACTS: PageGroup[] = [
 export const DOCS_GROUPS: PageGroup[] = [
   {
     label: "Start here",
-    pages: [{ href: "/docs/", title: "Overview", summary: "Map of the technical documentation.", keywords: "docs index start" }],
+    pages: [
+      { href: "/docs/", title: "Overview", summary: "Map of the technical documentation.", keywords: "docs index start" },
+      { href: "/docs/stack/", title: "Technology stack", summary: "Every major technology and pattern, with versions read from the repo.", keywords: "stack technologies versions java spring next react postgres patterns assessment" },
+    ],
   },
   {
     label: "The system",
     pages: [
       { href: "/docs/business/", title: "Business", summary: "Requirements, use cases, actors and manuals.", keywords: "use cases cu rf rnf requirements" },
       { href: "/docs/modules/", title: "Modules", summary: "Module ownership and boundaries.", keywords: "frontend backend modules ownership" },
-      { href: "/docs/architecture/", title: "Architecture", summary: "System context, ADRs and diagrams.", keywords: "adr hexagonal sad c4 diagrams" },
+      { href: "/docs/architecture/", title: "Architecture", summary: "System context, every ADR and the SAD.", keywords: "adr decisions sad c4 diagrams" },
+    ],
+  },
+  {
+    label: "Architecture internals",
+    pages: [
+      { href: "/docs/hexagonal/", title: "Hexagonal architecture", summary: "Ports, adapters and use cases, enforced by ArchUnit and ESLint.", keywords: "hexagonal ports adapters archunit use cases domain adr-030" },
+      { href: "/docs/database/", title: "Database & Flyway", summary: "PostgreSQL schema versioned by Flyway migrations.", keywords: "flyway migrations postgresql schema sql versioning" },
+      { href: "/docs/api/", title: "API contract & Bruno", summary: "The OpenAPI contract, generated types and the Bruno API suite.", keywords: "openapi swagger springdoc bruno api rest contract oasdiff types" },
     ],
   },
   {
     label: "Quality & operations",
     pages: [
-      { href: "/docs/testing/", title: "Testing", summary: "Test plan, pyramid and suites.", keywords: "tests playwright junit vitest bruno" },
+      { href: "/docs/testing/", title: "Testing", summary: "Test plan, pyramid and suites.", keywords: "tests playwright junit vitest" },
       { href: "/docs/security/", title: "Security", summary: "Authentication, audit, SAST/SCA/DAST, repository protection.", keywords: "devsecops codeql zap trivy" },
     ],
   },
@@ -96,14 +108,17 @@ export const DOCS_GROUPS: PageGroup[] = [
   },
 ];
 
-/** The product story on the home page: anchors into one long page. */
-export const PRODUCT_CHAPTERS: SitePage[] = [
-  { href: "/#origin", title: "Origin", summary: "2014: a Java Swing university project.", keywords: "swing history" },
-  { href: "/#versions", title: "Versions", summary: "Product cut history.", keywords: "releases" },
-  { href: "/#evolution", title: "Evolution", summary: "How the stack changed.", keywords: "stack technology" },
-  { href: "/#ai", title: "AI era", summary: "When AI agents joined the work.", keywords: "ai agents" },
-  { href: "/#architecture", title: "Architecture", summary: "The three tiers today.", keywords: "spring next postgres" },
-  { href: "/#today", title: "Today", summary: "The numbers, read from the repository.", keywords: "stats metrics" },
+/** The Product section (#1976): four pages in the shared document shell. */
+export const PRODUCT_GROUPS: PageGroup[] = [
+  {
+    label: "The product",
+    pages: [
+      { href: "/product/", title: "Overview", summary: "What Notaire does for a notary office, and who uses it.", keywords: "product features screenshots notary cases quotes deeds" },
+      { href: "/product/story/", title: "Story", summary: "From a 2014 Swing project to an AI-built platform.", keywords: "history origin swing evolution ai era timeline" },
+      { href: "/product/platform/", title: "Platform", summary: "The three tiers and the infrastructure around them.", keywords: "architecture tiers infrastructure observability docker" },
+      { href: "/product/numbers/", title: "Numbers", summary: "Versions, coverage and statistics read from the repository.", keywords: "stats metrics coverage versions" },
+    ],
+  },
 ];
 
 /** Static reports copied into the export by deploy-github-page.yml (not Next routes). */
@@ -115,6 +130,7 @@ export const REPORTS: { href: string; title: string; summary: string }[] = [
 
 export const FACTORY_PAGES: SitePage[] = FACTORY_ACTS.flatMap((g) => g.pages);
 export const DOCS_PAGES: SitePage[] = DOCS_GROUPS.flatMap((g) => g.pages);
+export const PRODUCT_PAGES: SitePage[] = PRODUCT_GROUPS.flatMap((g) => g.pages);
 
 function norm(p: string): string {
   const path = (p || "/").split("#")[0].split("?")[0];
@@ -126,24 +142,27 @@ export function sectionOf(pathname: string): SectionKey {
   if (p.startsWith("/ai-sdlc/")) return "factory";
   if (p.startsWith("/docs/releases/")) return "releases";
   if (p.startsWith("/docs/")) return "docs";
-  return "product";
+  if (p.startsWith("/product/")) return "product";
+  return "home";
 }
 
 /** Sidebar groups for the section a path belongs to (releases live inside the docs). */
 export function groupsFor(section: SectionKey): PageGroup[] {
   if (section === "factory") return FACTORY_ACTS;
   if (section === "docs" || section === "releases") return DOCS_GROUPS;
-  return [{ label: "The story", pages: PRODUCT_CHAPTERS }];
+  if (section === "product") return PRODUCT_GROUPS;
+  return [];
 }
 
 export function findPage(pathname: string): SitePage | undefined {
   const p = norm(pathname);
-  return [...FACTORY_PAGES, ...DOCS_PAGES].find((x) => x.href === p);
+  return [...FACTORY_PAGES, ...DOCS_PAGES, ...PRODUCT_PAGES].find((x) => x.href === p);
 }
 
 export function prevNext(pathname: string): { prev?: SitePage; next?: SitePage } {
   const p = norm(pathname);
-  const list = sectionOf(p) === "factory" ? FACTORY_PAGES : DOCS_PAGES;
+  const section = sectionOf(p);
+  const list = section === "factory" ? FACTORY_PAGES : section === "product" ? PRODUCT_PAGES : DOCS_PAGES;
   const i = list.findIndex((x) => x.href === p);
   if (i < 0) return {};
   return { prev: list[i - 1], next: list[i + 1] };
@@ -158,7 +177,7 @@ export function breadcrumbs(pathname: string): { href: string; label: string }[]
   const p = norm(pathname);
   const section = sectionOf(p);
   const root = PRIMARY_NAV.find((n) => n.key === (section === "releases" ? "docs" : section));
-  if (!root || section === "product") return [];
+  if (!root) return [];
   const crumbs = [{ href: "/", label: "Home" }, { href: root.href, label: root.label }];
   const page = findPage(p);
   if (page && page.href !== root.href) crumbs.push({ href: page.href, label: page.title });
@@ -174,7 +193,7 @@ export type SearchEntry = SitePage & { section: string };
 export const SEARCH_INDEX: SearchEntry[] = [
   ...FACTORY_PAGES.map((p) => ({ ...p, section: "AI Factory" })),
   ...DOCS_PAGES.map((p) => ({ ...p, section: "Technical docs" })),
-  ...PRODUCT_CHAPTERS.map((p) => ({ ...p, section: "Product story" })),
+  ...PRODUCT_PAGES.map((p) => ({ ...p, section: "Product" })),
   ...REPORTS.map((r) => ({ ...r, section: "Reports" })),
 ];
 
@@ -197,7 +216,8 @@ export function search(query: string, limit = 8): SearchEntry[] {
 export function pageMetadata(href: string): { title: string; description: string } {
   const page = findPage(href);
   if (!page) throw new Error(`pageMetadata: ${href} is not in lib/site.ts`);
-  const section = sectionOf(href) === "factory" ? "AI Factory" : "Technical docs";
-  const isRoot = page.href === "/ai-sdlc/" || page.href === "/docs/";
+  const key = sectionOf(href);
+  const section = key === "factory" ? "AI Factory" : key === "product" ? "Product" : "Technical docs";
+  const isRoot = page.href === "/ai-sdlc/" || page.href === "/docs/" || page.href === "/product/";
   return { title: isRoot ? section : `${page.title} — ${section}`, description: page.summary };
 }

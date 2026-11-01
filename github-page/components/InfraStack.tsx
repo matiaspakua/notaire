@@ -27,9 +27,9 @@ const services = [
     category: "App",
   },
   {
-    name: "PostgreSQL 16",
+    name: "PostgreSQL",
     port: "5432",
-    role: "Primary database. Managed by Flyway migrations + init-db scripts",
+    role: "Primary database. Schema owned by Flyway migrations only",
     icon: "🐘",
     color: "#336791",
     category: "Data",
@@ -93,7 +93,8 @@ const alerts = [
 
 const categories = ["All", "App", "Data", "Observability", "Quality", "Dashboard"] as const;
 
-export function InfraStack() {
+/** `serviceCount` is the number of services in the two compose files, read at build time (#1976). */
+export function InfraStack({ serviceCount }: { serviceCount: number }) {
   const [active, setActive] = useState<string>("All");
   const ref = useRef<HTMLDivElement>(null);
 
@@ -125,7 +126,7 @@ export function InfraStack() {
             DevSecOps <span className="grad-cyan">Platform</span>
           </h2>
           <p className="text-neutral-600 max-w-2xl mx-auto">
-            10 containerized services. Two Docker Compose stacks. One command to run everything.
+            {serviceCount} containerized services in two Docker Compose stacks: the application and the observability platform.
             From a university project with <em>no infrastructure</em> to a full observability platform.
           </p>
         </div>

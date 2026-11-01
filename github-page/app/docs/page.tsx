@@ -6,6 +6,11 @@ export const metadata = pageMetadata("/docs/");
 
 const cards = [
   {
+    href: "/docs/stack/",
+    title: "Technology stack",
+    body: "Every technology and the job it does, with versions read from pom.xml, package.json and Compose at build time.",
+  },
+  {
     href: "/docs/business/",
     title: "Business",
     body: "Requirements, use cases (CUxx), actors, traceability matrix and manuals under docs/100-business/.",
@@ -18,7 +23,22 @@ const cards = [
   {
     href: "/docs/architecture/",
     title: "Architecture",
-    body: "SAD overview, ADR index, Mermaid as the active diagram language (ADR-027).",
+    body: "SAD overview, every ADR with its status, Mermaid as the active diagram language (ADR-027).",
+  },
+  {
+    href: "/docs/hexagonal/",
+    title: "Hexagonal architecture",
+    body: "Ports and adapters in the backend and front end, one request traced through a slice, and the ArchUnit rules that hold it.",
+  },
+  {
+    href: "/docs/database/",
+    title: "Database & Flyway",
+    body: "How a schema change ships, the Flyway settings and why, and the full migration history.",
+  },
+  {
+    href: "/docs/api/",
+    title: "API contract & Bruno",
+    body: "Code-first OpenAPI with breaking-change, type and reachability checks, and the Bruno suite that calls the live API.",
   },
   {
     href: "/docs/testing/",

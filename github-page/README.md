@@ -18,8 +18,9 @@ The site has three parts. They are kept apart on purpose:
 
 | Route | What it is | Source |
 |-------|------------|--------|
-| `/` | The story of the product | [`app/page.tsx`](app/page.tsx), `components/` |
-| `/docs/` | **Product** docs: what Notaire does and how it is built (domain, architecture, API, operations) | [`app/docs/`](app/docs/), `lib/docs-content.ts` |
+| `/` | Landing: what Notaire is, and the three doors below | [`app/page.tsx`](app/page.tsx) |
+| `/product/` | **Product**: overview, story, platform, numbers — four pages sharing one sidebar | [`app/product/`](app/product/), `components/` |
+| `/docs/` | **Technical docs**: domain, architecture, the internals (hexagonal, Flyway, API contract and Bruno, stack), quality and operations. Versions and counts come from [`lib/tech-facts.ts`](lib/tech-facts.ts), which reads the repository at build time | [`app/docs/`](app/docs/), `lib/docs-content.ts` |
 | `/ai-sdlc/` | **AI Factory**: the AI SDLC that builds Notaire, told in five acts (problem → how a change flows → what keeps it safe → what we learned and the results → how to apply it) | [`app/ai-sdlc/`](app/ai-sdlc/), [`lib/ai-sdlc-content.ts`](lib/ai-sdlc-content.ts), [`lib/ai-sdlc-facts.ts`](lib/ai-sdlc-facts.ts) |
 
 The AI Factory pages only summarise. Every claim cites a repository file through

@@ -6,7 +6,7 @@ export const metadata = pageMetadata("/docs/testing/");
 const pyramid = [
   { layer: "Unit", owner: "backend-api / frontend", cmd: "mvn test · npm test (Vitest)" },
   { layer: "Integration (H2)", owner: "backend-api", cmd: "mvn test · integration suite" },
-  { layer: "API (Bruno)", owner: "backend-api/api-test", cmd: "bru run (stays with backend per #1190)" },
+  { layer: "API (Bruno)", owner: "backend-api/api-test", cmd: "npx @usebruno/cli run . -r --env Development (stays with backend per #1190)" },
   { layer: "E2E (Playwright)", owner: "testing/e2e", cmd: "npx playwright test" },
   { layer: "DB V&V", owner: "testing + Flyway guard", cmd: "testing/scripts · pg-integration" },
 ];
