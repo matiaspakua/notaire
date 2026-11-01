@@ -44,10 +44,9 @@ import java.util.List;
 /**
  * Inbound web adapter for the payment slice (CU15, CU47).
  *
- * <p>It only translates: HTTP in, use-case command out, DTO back. Every business rule
- * lives behind the inbound ports, so this class holds no transaction, no repository and
- * no entity. The URLs, status codes and JSON shapes are unchanged from the previous
- * layered implementation.
+ * <p>It only translates: HTTP in, use-case command out, DTO back. Unexpected failures
+ * propagate to {@code GlobalExceptionHandler} (#579 payment slice) so clients get a
+ * standard {@code ErrorResponse} instead of an empty 500 body.
  */
 @RestController
 @RequestMapping("/api/v1/payments")
@@ -77,12 +76,7 @@ public class PaymentController {
     @GetMapping
     @Operation(summary = "Get all payments")
     public ResponseEntity<List<DtoPaymentResponse>> getAll() {
-        try {
-            return ResponseEntity.ok(PaymentWebMapper.toDtoList(queryPaymentsUseCase.findAll()));
-        } catch (Exception e) {
-            log.error("Failed to list payments", e);
-            return ResponseEntity.internalServerError().build();
-        }
+        return ResponseEntity.ok(PaymentWebMapper.toDtoList(queryPaymentsUseCase.findAll()));
     }
 
     @ApiResponses({
@@ -92,26 +86,16 @@ public class PaymentController {
     @GetMapping("/{id}")
     @Operation(summary = "CU47 - Query payment by ID")
     public ResponseEntity<DtoPaymentResponse> getById(@PathVariable Integer id) {
-        try {
-            return queryPaymentsUseCase.findById(id)
-                    .map(PaymentWebMapper::toDto)
-                    .map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
-        } catch (Exception e) {
-            log.error("Failed to look up payment ID={}", id, e);
-            return ResponseEntity.internalServerError().build();
-        }
+        return queryPaymentsUseCase.findById(id)
+                .map(PaymentWebMapper::toDto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/budget/{idBudget}")
     @Operation(summary = "Get payments by budget")
     public ResponseEntity<List<DtoPaymentResponse>> getByBudget(@PathVariable Integer idBudget) {
-        try {
-            return ResponseEntity.ok(PaymentWebMapper.toDtoList(queryPaymentsUseCase.findByBudget(idBudget)));
-        } catch (Exception e) {
-            log.error("Failed to list payments for budget ID={}", idBudget, e);
-            return ResponseEntity.internalServerError().build();
-        }
+        return ResponseEntity.ok(PaymentWebMapper.toDtoList(queryPaymentsUseCase.findByBudget(idBudget)));
     }
 
     @GetMapping("/budget/{idBudget}/balance")
@@ -121,9 +105,6 @@ public class PaymentController {
             return ResponseEntity.ok(paymentStatusUseCase.pendingBalance(idBudget));
         } catch (IllegalArgumentException e) {
             return IllegalArgumentResponses.toEmptyBody(e);
-        } catch (Exception e) {
-            log.error("Failed to calculate the pending balance", e);
-            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -138,9 +119,6 @@ public class PaymentController {
             return ResponseEntity.ok(paymentStatusUseCase.status(idBudget));
         } catch (IllegalArgumentException e) {
             return IllegalArgumentResponses.toEmptyBody(e);
-        } catch (Exception e) {
-            log.error("Failed to calculate the payment status", e);
-            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -160,13 +138,8 @@ public class PaymentController {
             throw new BusinessValidationException(
                     "'startDate' must be on or before 'endDate'");
         }
-        try {
-            return ResponseEntity.ok(
-                    PaymentWebMapper.toDtoList(queryPaymentsUseCase.findByDateRange(startDate, endDate)));
-        } catch (Exception e) {
-            log.error("Failed to list payments by date", e);
-            return ResponseEntity.internalServerError().build();
-        }
+        return ResponseEntity.ok(
+                PaymentWebMapper.toDtoList(queryPaymentsUseCase.findByDateRange(startDate, endDate)));
     }
 
     @ApiResponses({
@@ -192,9 +165,6 @@ public class PaymentController {
         } catch (IllegalArgumentException e) {
             log.warn("Payment rejected: {}", e.getMessage());
             return IllegalArgumentResponses.toEmptyBody(e);
-        } catch (Exception e) {
-            log.error("Failed to process the payment", e);
-            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -213,9 +183,6 @@ public class PaymentController {
             return ResponseEntity.ok(PaymentWebMapper.toDto(updated));
         } catch (IllegalArgumentException e) {
             return IllegalArgumentResponses.toEmptyBody(e);
-        } catch (Exception e) {
-            log.error("Failed to update payment ID={}", id, e);
-            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -231,9 +198,6 @@ public class PaymentController {
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
             return IllegalArgumentResponses.toEmptyBody(e);
-        } catch (Exception e) {
-            log.error("Failed to delete payment ID={}", id, e);
-            return ResponseEntity.internalServerError().build();
         }
     }
 
