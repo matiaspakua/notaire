@@ -1,9 +1,10 @@
 # Fleet lessons from hexagonal epic #1693
 
-> **Status (2026-10-17):** ArchUnit R1–R6 baseline **empty** on `main` @ `6ffe578fe`
-> (#1914 / PR #1915). Epic ArchUnit DoD **MET**. Residual `jpa`/`service` EMF path
-> documented in ADR-030 Open points; tracked by [#576](https://github.com/matiaspakua/notaire/issues/576)
-> and residual slice [#1918](https://github.com/matiaspakua/notaire/issues/1918).
+> **Status (2026-11-01):** ArchUnit R1–R6 baseline **empty** (#1914 / PR #1915).
+> Legacy `jpa` / `JpaAdministrator` / `LegacyJpaEmfConfig` **retired** (#576):
+> `IdentificationTypeLookup` wires from Spring Data. Epic package-retirement DoD
+> for those paths **MET**; remaining #1693 gaps are entity/DTO debt (#580 family),
+> not ArchUnit baseline.
 >
 > Durable do/don’t for Cursor Cloud agents. Evidence: FE drain (#1844–#1846),
 > R2 deed/report (#1854/#1855), Mac local validation, CI stewardship,

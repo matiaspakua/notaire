@@ -6,8 +6,8 @@ import java.util.function.Supplier;
 
 /**
  * Resolves identification-type names and ids from the catalog. Entities are not Spring beans, so they reach the
- * default instance through {@link #shared()}. The catalog supplier is wired from the legacy JPA side
- * ({@code JpaAdministrator#setEmf}) so this class stays free of {@code jpa.*} imports (ArchUnit R6 / #1914).
+ * default instance through {@link #shared()}. The catalog supplier is wired at startup from
+ * {@code IdentificationTypeRepository} ({@code IdentificationTypeLookupConfig}, #576).
  */
 public final class IdentificationTypeLookup {
 
@@ -22,7 +22,7 @@ public final class IdentificationTypeLookup {
     }
 
     /**
-     * Installs the live catalog supplier used by {@link #shared()}. Called once when the legacy EMF is set.
+     * Installs the live catalog supplier used by {@link #shared()}. Called once from Spring configuration.
      */
     public static void wireCatalog(Supplier<List<IdentificationType>> catalog) {
         catalogSupplier = Objects.requireNonNull(catalog, "catalog");

@@ -37,7 +37,9 @@ class SonarAnalysisTest(unittest.TestCase):
         pom = read(POM)
         self.assertIn("<sonar.projectKey>notaire-backend</sonar.projectKey>", pom)
         self.assertIn("sonar.coverage.jacoco.xmlReportPaths", pom)
-        self.assertRegex(pom, r"<sonar.coverage.exclusions>[^<]*com/licensis/notaire/jpa/")
+        # #576 retired jpa; coverage exclusions keep only dto (and similar) filters.
+        self.assertRegex(pom, r"<sonar.coverage.exclusions>[^<]*com/licensis/notaire/dto/")
+        self.assertNotRegex(pom, r"<sonar.coverage.exclusions>[^<]*com/licensis/notaire/jpa/")
 
     def test_frontend_properties_and_reports(self):
         props = load_properties(FRONTEND_PROPS)
