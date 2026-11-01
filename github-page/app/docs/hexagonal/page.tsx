@@ -3,6 +3,9 @@ import { Callout, StatGrid } from "@/components/DocsUI";
 import { src } from "@/lib/ai-sdlc-content";
 import { pageMetadata } from "@/lib/site";
 import { hexagon, versions } from "@/lib/tech-facts";
+import { FlowDiagram } from "@/components/diagrams/FlowDiagram";
+import { HexagonMap } from "@/components/diagrams/HexagonMap";
+import { requestFlow } from "@/lib/diagram-flows";
 
 export const metadata = pageMetadata("/docs/hexagonal/");
 
@@ -34,23 +37,6 @@ flowchart LR
   PER --> DB
 `;
 
-const PAYMENT_FLOW = `
-sequenceDiagram
-  autonumber
-  participant C as PaymentController
-  participant P as ProcessPaymentUseCase (port.in)
-  participant S as ProcessPaymentService (usecase)
-  participant D as domain.payment
-  participant R as PaymentRepositoryPort (port.out)
-  participant A as PaymentPersistenceAdapter
-  C->>P: ProcessPaymentCommand
-  P->>S: process(command)
-  S->>D: BudgetCharges / Money rules
-  S->>R: save(NewPayment)
-  R->>A: implemented by
-  A-->>S: PaymentDetails
-  S-->>C: result, mapped by PaymentWebMapper
-`;
 
 const RULES: [string, string][] = [
   ["R1", "Inbound adapters do not reach repositories, legacy JPA or entities."],
@@ -92,8 +78,19 @@ export default function HexagonalPage() {
       <p>
         Dependencies point inward only: <Code>adapter</Code> → <Code>application</Code> → <Code>domain</Code>. A
         controller never sees a JPA entity; a use case never sees HTTP. <Code>config</Code> is the composition root
-        that wires the adapters to the ports.
+        that wires the adapters to the ports. Step through the rings, or click one.
       </p>
+      <HexagonMap
+        facts={h}
+        sources={{
+          domain: src("backend-api/src/main/java/com/licensis/notaire/domain/"),
+          usecase: src("backend-api/src/main/java/com/licensis/notaire/application/usecase/"),
+          port: src("backend-api/src/main/java/com/licensis/notaire/application/port/"),
+          adapter: src("backend-api/src/main/java/com/licensis/notaire/adapter/"),
+          rules: src("backend-api/src/test/java/com/licensis/notaire/architecture/HexagonArchitectureTest.java"),
+        }}
+      />
+      <p>The package detail, as a static chart:</p>
       <Diagram chart={HEXAGON_CHART} caption="Backend packages under com.licensis.notaire and the direction of their dependencies (ADR-030)." />
       <Table
         head={["Package", "Holds", "May depend on"]}
@@ -118,7 +115,13 @@ export default function HexagonalPage() {
 
       <SectionTitle id="slice">One request through a slice</SectionTitle>
       <p>The payment slice, the first one migrated, shows the whole path of a request:</p>
-      <Diagram chart={PAYMENT_FLOW} caption="POST a payment: controller → inbound port → use case → domain → outbound port → persistence adapter." />
+      <FlowDiagram
+        id="request"
+        title="One payment request through the hexagon"
+        desc="POST /api/v1/payments goes from the Next.js app through PaymentController, the ProcessPaymentUseCase in-port and ProcessPaymentService, which uses two out-ports implemented by persistence adapters over PostgreSQL."
+        caption="Every box is a real class in the payment slice; the step panel links its file."
+        {...requestFlow()}
+      />
       <Sources
         items={[
           { label: "PaymentController.java", href: src("backend-api/src/main/java/com/licensis/notaire/adapter/in/web/payment/PaymentController.java") },

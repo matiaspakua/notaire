@@ -1,22 +1,13 @@
-import { Code, Diagram, PageHeader, SectionTitle, Sources, Table } from "@/components/FactoryUI";
+import { Code, PageHeader, SectionTitle, Sources, Table } from "@/components/FactoryUI";
 import { Callout, StatGrid } from "@/components/DocsUI";
 import { src } from "@/lib/ai-sdlc-content";
 import { pageMetadata } from "@/lib/site";
+import { FlowDiagram } from "@/components/diagrams/FlowDiagram";
+import { contractFlow } from "@/lib/diagram-flows";
 import { BRUNO_SAMPLE_FILE, bruno, brunoDefectsFixed, brunoSample, openapi, versions } from "@/lib/tech-facts";
 
 export const metadata = pageMetadata("/docs/api/");
 
-const CONTRACT_FLOW = `
-flowchart LR
-  CODE["Spring controllers<br/>+ springdoc annotations"] -->|export-openapi.sh on H2| SPEC["backend-api/openapi/<br/>openapi.yaml (committed)"]
-  SPEC -->|openapi-typescript| TYPES["frontend/src/types/<br/>api.generated.ts"]
-  TYPES --> HTTP["frontend adapters/http"]
-  SPEC -->|oasdiff vs base branch| BREAK{"breaking change?"}
-  BREAK -->|listed in accepted-breaking-changes.d| OK["allowed, with an issue"]
-  BREAK -->|not listed| FAIL["PR fails"]
-  SPEC --> REACH["contracts: every endpoint<br/>has a UI caller or a reason"]
-  SPEC -. exercised by .-> BRU["Bruno suite<br/>backend-api/api-test"]
-`;
 
 export default function ApiPage() {
   const api = openapi();
@@ -46,7 +37,13 @@ export default function ApiPage() {
       />
 
       <SectionTitle id="contract">One contract, four checks</SectionTitle>
-      <Diagram chart={CONTRACT_FLOW} caption="The committed OpenAPI document sits between the backend and everything that depends on it." />
+      <FlowDiagram
+        id="contract"
+        title="The OpenAPI contract and its checks"
+        desc="Spring controllers export openapi.yaml; oasdiff, generated front-end types and a reachability test check it, and the Bruno suite calls the running API."
+        caption="The committed OpenAPI document sits between the backend and everything that depends on it."
+        {...contractFlow(api, b.requests)}
+      />
       <Table
         head={["Check", "Fails when", "Where"]}
         rows={[

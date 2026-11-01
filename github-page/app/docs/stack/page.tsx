@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { Code, PageHeader, SectionTitle, Sources, Table } from "@/components/FactoryUI";
 import { Callout, StatGrid } from "@/components/DocsUI";
-import { src } from "@/lib/ai-sdlc-content";
+import { REPO, src } from "@/lib/ai-sdlc-content";
 import { pageMetadata } from "@/lib/site";
-import { adrs, services, testCounts, versions, workflows } from "@/lib/tech-facts";
+import { adrs, services, testCounts, versions, workflowTriggers, workflows } from "@/lib/tech-facts";
+import { PipelineMap } from "@/components/diagrams/PipelineMap";
 
 export const metadata = pageMetadata("/docs/stack/");
 
@@ -154,7 +155,9 @@ export default function StackPage() {
         </section>
       ))}
 
-      <SectionTitle id="workflows">CI workflows</SectionTitle>
+      <SectionTitle id="workflows">CI/CD workflows</SectionTitle>
+      <p>What starts each workflow, read from its <Code>on:</Code> block. Step through the columns from pull request to schedule.</p>
+      <PipelineMap workflows={workflowTriggers()} repoHref={REPO} />
       <ul className="my-4 grid gap-2 sm:grid-cols-2">
         {wf.map((w) => (
           <li key={w.file} className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm">

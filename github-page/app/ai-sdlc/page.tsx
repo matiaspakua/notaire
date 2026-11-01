@@ -3,7 +3,8 @@ import { FACTORY_VS_PRODUCT, LESSONS, SOURCES_OF_TRUTH, src } from "@/lib/ai-sdl
 import { fmt, loadFactoryFacts } from "@/lib/ai-sdlc-facts";
 import { Card, Diagram, SectionTitle, Sources } from "@/components/FactoryUI";
 import { FACTORY_ACTS, pageMetadata } from "@/lib/site";
-import { GateFlow } from "@/components/GateFlow";
+import { FlowDiagram } from "@/components/diagrams/FlowDiagram";
+import { factoryFlow } from "@/lib/diagram-flows";
 
 export const metadata = pageMetadata("/ai-sdlc/");
 
@@ -89,7 +90,13 @@ export default function FactoryHome() {
       <p className="leading-relaxed text-slate-700">
         Every change, by a human or an agent, takes the same path. A gate opens only when its command exits as expected.
       </p>
-      <GateFlow />
+      <FlowDiagram
+        id="factory"
+        title="The AI SDLC factory"
+        desc="A change goes from a real issue through five gates: plan, failing tests, the local pipeline, CI and review, then release and smoke test. A failed gate sends it back."
+        caption="Step through the gates; each one is a command with an exit code."
+        {...factoryFlow()}
+      />
 
       <SectionTitle id="story">The story in five acts</SectionTitle>
       <ol className="relative mt-6 space-y-4 border-l-2 border-factory-200 pl-6 sm:pl-8">

@@ -52,3 +52,17 @@ and 1280 px, no page scrolls sideways, and the drawer, search and pager tests pa
   theme doubles the visual QA. Left for a follow-up.
 - **Lighthouse.** Not run in CI (it needs a stable runner budget); axe covers the accessibility half.
 - **Required check.** `pages-ci.yml` is not yet a required status check on `main`.
+
+## Follow-up: interactive diagrams and portfolio landing (#1977)
+
+| # | Finding | Fix |
+|---|---------|-----|
+| 1 | The hero animation and particle canvas ran on load and ignored `prefers-reduced-motion`. | Removed; the landing is static and the only motion is what the reader starts. |
+| 2 | Diagrams were static Mermaid, or a looping gate animation with no pause or keyboard control. | `components/diagrams/`: one stepper (`useStepper`, `StepControls`) with Prev/Play/Next, arrow keys, an `aria-live` step panel and a step list; Play runs once and stops. |
+| 3 | The testing page had a broken `(` link and no visual of the layers. | Rewritten around `TestPyramid` and counts from `testCounts()`. |
+| 4 | Dimming inactive CI stages with opacity dropped text below 4.5:1 (axe `color-contrast`). | Inactive stages keep full-contrast text; the active one is marked by border and number colour. |
+| 5 | Scaling an SVG node used the view-box origin, so outer nodes slid off the edge. | `transform-box: fill-box` with a centred origin. |
+
+Checks: `e2e/site.spec.ts` adds `/docs/testing/` to the axe sweep, steps the request diagram with the
+keyboard (and waits to prove nothing autoplays) and steps the pipeline under `reducedMotion: "reduce"`.
+The portfolio critique is in [`portfolio-review.md`](portfolio-review.md).

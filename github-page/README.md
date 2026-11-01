@@ -40,8 +40,17 @@ The **framework** page (`/ai-sdlc/framework/`) presents [`framework/ai-sdlc/`](.
 Structural diagrams are Mermaid strings rendered on the client by
 [`components/MermaidDiagram.tsx`](components/MermaidDiagram.tsx), themed from the CSS tokens.
 Explainers are hand-built inline SVG with a `<title>`, a `<desc>` and a list fallback on narrow
-screens: [`GateFlow`](components/GateFlow.tsx), [`GuardrailStack`](components/GuardrailStack.tsx)
-and [`Swimlane`](components/Swimlane.tsx). Animations stop under `prefers-reduced-motion`.
+screens: [`GuardrailStack`](components/GuardrailStack.tsx) and [`Swimlane`](components/Swimlane.tsx).
+The interactive diagrams (#1977) live in [`components/diagrams/`](components/diagrams/): a shared
+stepper ([`useStepper`](components/diagrams/useStepper.ts), [`StepControls`](components/diagrams/StepControls.tsx)),
+a node-and-edge [`FlowDiagram`](components/diagrams/FlowDiagram.tsx) fed by
+[`lib/diagram-flows.ts`](lib/diagram-flows.ts) (request, contract and factory flows), and
+[`HexagonMap`](components/diagrams/HexagonMap.tsx), [`FlywayTimeline`](components/diagrams/FlywayTimeline.tsx),
+[`TestPyramid`](components/diagrams/TestPyramid.tsx) and [`PipelineMap`](components/diagrams/PipelineMap.tsx),
+which take their counts from `lib/tech-facts.ts` as props. Nothing plays until the reader asks;
+each step is announced in an `aria-live` region and links its source; under
+`prefers-reduced-motion` steps change instantly. Product screenshots for the landing are in
+`public/screenshots/` (demo data); prefix public paths with `ASSET_BASE` from `lib/site.ts`.
 The **results** page (`/ai-sdlc/results/`) prints only numbers read at build time.
 
 ## Local build

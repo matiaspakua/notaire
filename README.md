@@ -53,7 +53,7 @@ containers and no automated tests.
 - **Frontend**: **Next.js 16** + **React 19** + **TypeScript** + **Tailwind CSS 4**, with a custom design system inspired by Apple.
 - **Active client**: the Next.js frontend only. The legacy Swing client was removed from the tree (#1046); do not recreate it.
 - **Database**: **PostgreSQL 16** with **Flyway** as the only source of truth for the schema.
-- **Infrastructure**: multi-stage Docker Compose, 11 GitHub Actions workflows, Prometheus/Grafana/Loki observability.
+- **Infrastructure**: multi-stage Docker Compose, 19 GitHub Actions workflows, Prometheus/Grafana/Loki observability.
 
 ## 🏗️ Architecture
 
@@ -113,7 +113,7 @@ notaire/
 | **Testing** | JUnit 5 + Mockito + Testcontainers (backend), Vitest + Playwright (frontend), Bruno (API) |
 | **Quality** | JaCoCo, Checkstyle, SpotBugs, Trivy |
 | **Observability** | Micrometer, Prometheus, Loki + Promtail, Grafana |
-| **CI/CD** | GitHub Actions (11 workflows), multi-stage Docker |
+| **CI/CD** | GitHub Actions (19 workflows), multi-stage Docker |
 
 Full detail and the reason for each choice: [ADRs](docs/200-architecture/202-ADR/).
 
