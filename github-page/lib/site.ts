@@ -20,6 +20,9 @@ export type PageGroup = { label: string; pages: SitePage[] };
 
 export const REPO_URL = "https://github.com/matiaspakua/notaire";
 
+/** Prefix for files in public/: the export is served under /notaire (next.config.ts). */
+export const ASSET_BASE = process.env.NODE_ENV === "production" ? "/notaire" : "";
+
 export const PRIMARY_NAV: { key: Exclude<SectionKey, "home">; label: string; href: string; blurb: string }[] = [
   { key: "factory", label: "AI Factory", href: "/ai-sdlc/", blurb: "The AI SDLC that builds Notaire" },
   { key: "product", label: "Product", href: "/product/", blurb: "What Notaire does, its story and its numbers" },

@@ -11,7 +11,8 @@ import {
   src,
 } from "@/lib/ai-sdlc-content";
 import { Card, Code, Diagram, PageHeader, SectionTitle, Sources, Table } from "@/components/FactoryUI";
-import { GateFlow } from "@/components/GateFlow";
+import { FlowDiagram } from "@/components/diagrams/FlowDiagram";
+import { factoryFlow } from "@/lib/diagram-flows";
 import { Terminal } from "@/components/CaseStudy";
 
 export const metadata = {
@@ -61,7 +62,13 @@ export default function FrameworkPage() {
         </Link>
       </div>
 
-      <GateFlow />
+      <FlowDiagram
+        id="factory"
+        title="The AI SDLC factory"
+        desc="A change goes from a real issue through five gates: plan, failing tests, the local pipeline, CI and review, then release and smoke test. A failed gate sends it back."
+        caption="Step through the gates; each one is a command with an exit code."
+        {...factoryFlow()}
+      />
 
       <SectionTitle id="principles">Ten principles, each earned by an incident</SectionTitle>
       <ol className="grid gap-3 md:grid-cols-2">

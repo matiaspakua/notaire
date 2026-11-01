@@ -1,6 +1,7 @@
 import { Code, Diagram, PageHeader, SectionTitle, Sources, Table } from "@/components/FactoryUI";
 import { Callout, StatGrid } from "@/components/DocsUI";
-import { src } from "@/lib/ai-sdlc-content";
+import { issue, src } from "@/lib/ai-sdlc-content";
+import { FlywayTimeline } from "@/components/diagrams/FlywayTimeline";
 import { pageMetadata } from "@/lib/site";
 import { flywaySettings, migrations, rollbackScripts, versions } from "@/lib/tech-facts";
 
@@ -100,6 +101,11 @@ export default function DatabasePage() {
 
       <SectionTitle id="history">The schema history</SectionTitle>
       <p>Every migration on main, grouped by what it did. The list is read from the migration folder when the site is built.</p>
+      <FlywayTimeline
+        migrations={list.map((m) => ({ version: m.version, name: m.name }))}
+        phases={PHASES}
+        sourceHref={src("backend-api/src/main/resources/db/migration/")}
+      />
       <div className="my-6 space-y-6">
         {PHASES.map((phase) => {
           const items = list.filter((m) => m.version >= phase.from && m.version <= phase.to);
@@ -145,7 +151,8 @@ export default function DatabasePage() {
       />
       <Callout title="Known gap">
         Some CI jobs still start the backend with Hibernate&apos;s <Code>ddl-auto=update</Code>, which can hide a
-        missing migration in those runs; production uses <Code>none</Code>. It is tracked as its own issue.
+        missing migration in those runs; production uses <Code>none</Code>. It is tracked in{" "}
+        <a href={issue(1979)}>#1979</a>.
       </Callout>
     </>
   );

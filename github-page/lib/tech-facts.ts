@@ -227,6 +227,24 @@ export function workflows(): { file: string; name: string }[] {
     .map((file) => ({ file, name: read(`${dir}/${file}`).match(/^name:\s*["']?(.+?)["']?\s*$/m)?.[1] ?? file }));
 }
 
+/** Trigger keys under each workflow's top-level `on:` block, for the CI/CD diagram (#1977). */
+export function workflowTriggers(): { file: string; name: string; triggers: string[] }[] {
+  const dir = ".github/workflows";
+  return workflows().map((w) => {
+    const text = read(`${dir}/${w.file}`);
+    const inline = text.match(/^(?:on|"on"|true):\s*\[?([\w, ]+)\]?\s*$/m);
+    if (inline) return { ...w, triggers: inline[1].split(",").map((t) => t.trim()).filter(Boolean) };
+    const block = text.split(/^(?:on|"on"|true):\s*$/m)[1] ?? "";
+    const triggers: string[] = [];
+    for (const line of block.split("\n").slice(1)) {
+      if (/^\S/.test(line)) break;
+      const m = line.match(/^ {2}([a-z_]+):/);
+      if (m) triggers.push(m[1]);
+    }
+    return { ...w, triggers };
+  });
+}
+
 export function services(): { app: string[]; observability: string[] } {
   return { app: composeServices("docker-compose.yml"), observability: composeServices("infra/observability/docker-compose.yml") };
 }
