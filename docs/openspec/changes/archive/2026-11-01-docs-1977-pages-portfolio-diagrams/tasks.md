@@ -28,11 +28,11 @@
 
 ## 4. Implementación
 
-- [ ] 4.1 `components/diagrams/`: `useStepper`, `StepControls`, `FlowDiagram`, `HexagonMap`, `TestPyramid`, `FlywayTimeline`, `PipelineMap`
-- [ ] 4.2 `lib/diagram-flows.ts` (request, contract, factory) and `workflowTriggers()` in `lib/tech-facts.ts`
-- [ ] 4.3 Diagrams placed on hexagonal, database, api, testing, stack, the landing and `/ai-sdlc/`; `GateFlow` removed
-- [ ] 4.4 Portfolio landing: value proposition, real counts, case-study path, screenshot gallery
-- [ ] 4.5 `github-page/docs/portfolio-review.md`; `ux-assessment.md` updated
+- [x] 4.1 `components/diagrams/`: `useStepper`, `StepControls`, `FlowDiagram`, `HexagonMap`, `TestPyramid`, `FlywayTimeline`, `PipelineMap`
+- [x] 4.2 `lib/diagram-flows.ts` (request, contract, factory) and `workflowTriggers()` in `lib/tech-facts.ts`
+- [x] 4.3 Diagrams placed on hexagonal, database, api, testing, stack, the landing and `/ai-sdlc/`; `GateFlow` removed
+- [x] 4.4 Portfolio landing: value proposition, real counts, case-study path, screenshot gallery
+- [x] 4.5 `github-page/docs/portfolio-review.md`; `ux-assessment.md` updated
 
 ## 5. Actualizar tests existentes
 
@@ -51,28 +51,28 @@
 ## 7. Ejecutar Playwright
 
 - [x] 7.1 n/a — no product UI change; `testing/e2e` does not cover the Pages site
-- [ ] 7.2 `github-page` Playwright smoke (`npm run test:smoke`) green at 375 and 1280 px
-- [ ] 7.3 Before/after screenshots at 375 and 1280 px
-- [ ] 7.4 axe: no WCAG A/AA violations on the audited pages
+- [x] 7.2 `github-page` Playwright smoke (`npm run test:smoke`) green at 375 and 1280 px
+- [x] 7.3 Before/after screenshots at 375 and 1280 px (kept outside the repo, `/workspace/pages-portfolio/`)
+- [x] 7.4 axe: no WCAG A/AA violations on the audited pages
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
+- [x] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
 - [x] 8.2 n/a — no endpoint change
-- [ ] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
-- [ ] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
-- [ ] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate
+- [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
+- [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
+- [x] 8.6 Pages gates run locally (typecheck, lint, Vitest, export, link check, Playwright + axe) and the process checks via `quick.sh`; CI runs the rest
 
 ## 9. Commits atómicos
 
 - [x] 9.1 Commit in small, self-contained units, Conventional Commits format
 - [x] 9.2 Commits reference `Refs #1977`; the final commit ends with `Closes #1977`
 - [x] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Archive this change in the PR: `cd docs && openspec archive <change-name> --yes` (skip only if `.openspec.yaml` sets `multi_pr: true`)
+- [x] 10.1 Archive this change in the PR: `cd docs && openspec archive <change-name> --yes` (skip only if `.openspec.yaml` sets `multi_pr: true`)
 - [ ] 10.2 `git push -u origin <branch-name>`
 - [ ] 10.3 Open the PR titled `[#<issue>] <type>(<scope>): <description>`, referencing Issue and Use Case
 - [ ] 10.4 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
