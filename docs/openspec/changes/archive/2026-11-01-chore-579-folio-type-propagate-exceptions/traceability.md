@@ -12,10 +12,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|
 | Issue | #579 | in-progress |
 | Use Case | CU76 – Quality Assurance and Testing Infrastructure | exists |
-| Specification | `docs/openspec/changes/chore-579-folio-type-propagate-exceptions/` | passed |
+| Specification | `docs/openspec/changes/archive/2026-11-01-chore-579-folio-type-propagate-exceptions/` | archived |
 | Branch | `chore/579_folio-type-propagate-exceptions` | created |
-| Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
+| Tasks | `tasks.md` | complete for this slice |
+| Commits | `2b57712b` | landed |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -26,21 +26,21 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Create folio type unexpected failure returns ErrorResponse | FolioTypeControllerTest.unexpectedCreateFailureUsesGlobalHandler | pending |
+| Create folio type unexpected failure returns ErrorResponse | FolioTypeControllerTest.unexpectedCreateFailureUsesGlobalHandler | passing |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| CHANGELOG | deferred (Unreleased fence held by #1990) | — |
+| CHANGELOG | yes (Unreleased) | pending |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | #579, this folder |
-| 2 | Failing tests written | pending | FolioTypeControllerTest |
-| 3 | Suite green, docs | pending | pending |
+| 2 | Failing tests written | yes | red then green FolioTypeControllerTest |
+| 3 | Suite green, docs | yes | FolioTypeControllerTest + CHANGELOG |
 | 4 | CI green | pending | pending |
 | 5 | Deployed | pending | pending |
 
