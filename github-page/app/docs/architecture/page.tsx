@@ -5,6 +5,12 @@ import { adrs, sadVersion } from "@/lib/tech-facts";
 
 export const metadata = pageMetadata("/docs/architecture/");
 
+/** Records the Owner decisions below hinge on (kept as explicit links; the full list follows). */
+const OWNER_ADRS = [
+  { id: "022", title: "Git history and large binaries (#1438)", file: "ADR-022-git-history-rewrite-and-large-binaries.md" },
+  { id: "024", title: "Repository topology (#1445)", file: "ADR-024-repository-topology.md" },
+];
+
 const STATUS_STYLE: Record<string, string> = {
   Accepted: "bg-emerald-50 text-emerald-800 border-emerald-200",
   Proposed: "bg-amber-50 text-amber-800 border-amber-200",
@@ -62,7 +68,7 @@ export default function DocsArchitecturePage() {
           >
             REPO-METRICS-BASELINE.md
           </a>{" "}
-          and{" "}
+          (path-scoped workflows <strong>6/17</strong> when that baseline was measured) and{" "}
           <a
             className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
             href={`${DOCS}/300-development/REPO-SPLIT-PLAN.md`}
@@ -104,6 +110,20 @@ export default function DocsArchitecturePage() {
             LICENSE file (README already links one that does not exist)
           </li>
         </ul>
+        <p className="text-sm text-neutral-600">
+          Records involved:{" "}
+          {OWNER_ADRS.map((a, i) => (
+            <span key={a.id}>
+              {i > 0 && " · "}
+              <a
+                className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
+                href={`${DOCS}/200-architecture/202-ADR/${a.file}`}
+              >
+                ADR-{a.id} — {a.title}
+              </a>
+            </span>
+          ))}
+        </p>
       </section>
 
       <section className="space-y-3">
