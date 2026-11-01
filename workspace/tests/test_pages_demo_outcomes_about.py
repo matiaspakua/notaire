@@ -80,6 +80,9 @@ class DemoBuild(unittest.TestCase):
             self.assertIn("frontend/package-lock.json", text, wf)
         pkg = json.loads((PAGE / "package.json").read_text())
         self.assertIn("build:demo", pkg["scripts"])
+        # Local preflight must match pages-ci so /notaire/demo/ links resolve (#576 hygiene).
+        preflight = (REPO / "workspace" / "sdlc" / "preflight.sh").read_text()
+        self.assertIn("npm run build:demo", preflight)
 
     def test_demo_is_documented(self):
         doc = (PAGE / "docs" / "demo.md").read_text()
