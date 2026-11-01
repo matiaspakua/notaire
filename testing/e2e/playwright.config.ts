@@ -55,12 +55,14 @@ export default defineConfig({
     {
       name: "chromium",
       testMatch: "**/*.spec.ts",
+      // Mobile viewport specs run only under the `mobile` (iPhone SE) project (#1983).
+      testIgnore: ["**/*mobile*.spec.ts"],
       grepInvert: /@smoke|@health/,
       use: { ...devices["Desktop Chrome"] },
     },
     {
       name: "mobile",
-      testMatch: "**/mobile-viewport.spec.ts",
+      testMatch: "**/*mobile*.spec.ts",
       use: { ...devices["iPhone SE"] },
     },
   ],
