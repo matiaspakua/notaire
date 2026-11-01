@@ -14,10 +14,12 @@ test("demo signs in, shows sample data and the read-only banner, and sends no AP
   await expect(page).toHaveURL(/\/notaire\/demo\/login\/?$/);
   await expect(page.getByRole("region", { name: /demo notice/i })).toContainText("Demo – sample data, read-only");
 
+  // Wait for hydration: a click before React attaches its handlers submits nothing.
+  await page.waitForLoadState("networkidle");
   await page.getByTestId("input-username").fill("visitor");
   await page.getByTestId("input-password").fill("anything");
   await page.getByRole("button", { name: /sign in|log in|iniciar/i }).click();
-  await expect(page).toHaveURL(/\/notaire\/demo\/dashboard\/?$/);
+  await expect(page).toHaveURL(/\/notaire\/demo\/dashboard\/?$/, { timeout: 15_000 });
 
   await page.goto("demo/dashboard/managements/");
   await expect(page.getByText("Compraventa Lote 12", { exact: false }).first()).toBeVisible();

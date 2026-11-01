@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:smoke": "playwright test",
-    "check:links": "node scripts/check-links.mjs out"
+    "check:links": "node scripts/check-links.mjs out",
+    "build:demo": "node demo/build-demo.mjs"
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "^5.3.0",

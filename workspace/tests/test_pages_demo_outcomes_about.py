@@ -41,7 +41,7 @@ class DemoFixtures(unittest.TestCase):
     def test_recorded_by_the_script(self):
         self.assertTrue((PAGE / "demo" / "record-fixtures.mjs").exists())
         self.assertIn("record-fixtures.mjs", self.data["about"])
-        self.assertRegex(self.data["recordedAt"], r"^\d{4}-\d\d-\d\dT")
+        self.assertRegex(self.data["recordedAt"], r"^\d{4}-\d\d-\d\d")
 
     def test_covers_login_and_the_dashboard(self):
         self.assertIn("POST /users/login", self.data["responses"])

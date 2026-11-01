@@ -1,0 +1,142 @@
+{
+  "generated_at": "2026-11-01T10:56:11+00:00",
+  "generated_by": "python3 workspace/ci/generate-delivery-metrics.py",
+  "repository": "matiaspakua/notaire",
+  "window": {
+    "from": "2026-08-03",
+    "to": "2026-11-01",
+    "days": 90
+  },
+  "method": {
+    "lead_time": "Merged PRs in the window, opened to merged, in hours. Bot PRs (Dependabot) excluded. Median and nearest-rank p90.",
+    "throughput": "Merged non-bot PRs per ISO week; weeks with no merge count as 0.",
+    "change_failure": "Proxy: merged PRs whose title starts with 'Revert' or contains 'hotfix', as a share of merged non-bot PRs.",
+    "restore_main": "Runs of ci.yml on pushes to main. A red episode starts when a run fails while main is green and ends when the next run succeeds; time between the two run ends, in hours. Cancelled runs are ignored.",
+    "first_push_ci": "For each merged PR, the earliest ci.yml run triggered by the PR; it passes if that run succeeded. Cancelled or skipped first runs are not judged.",
+    "issues_closed": "Issues closed as completed in the window (GitHub search).",
+    "releases": "Published, non-draft GitHub releases in the window."
+  },
+  "lead_time_hours": {
+    "n": 584,
+    "median": 0.5,
+    "p90": 5.5
+  },
+  "throughput": {
+    "merged_prs": 584,
+    "bot_prs_excluded": 87,
+    "weeks": 13,
+    "median_per_week": 14,
+    "series": [
+      {
+        "week": "2026-W32",
+        "merged": 14
+      },
+      {
+        "week": "2026-W33",
+        "merged": 2
+      },
+      {
+        "week": "2026-W34",
+        "merged": 10
+      },
+      {
+        "week": "2026-W35",
+        "merged": 13
+      },
+      {
+        "week": "2026-W36",
+        "merged": 44
+      },
+      {
+        "week": "2026-W37",
+        "merged": 10
+      },
+      {
+        "week": "2026-W38",
+        "merged": 14
+      },
+      {
+        "week": "2026-W39",
+        "merged": 20
+      },
+      {
+        "week": "2026-W40",
+        "merged": 110
+      },
+      {
+        "week": "2026-W41",
+        "merged": 166
+      },
+      {
+        "week": "2026-W42",
+        "merged": 160
+      },
+      {
+        "week": "2026-W43",
+        "merged": 2
+      },
+      {
+        "week": "2026-W44",
+        "merged": 19
+      }
+    ]
+  },
+  "change_failure": {
+    "failure_prs": 1,
+    "merged_prs": 584,
+    "rate_pct": 0.2,
+    "examples": [
+      "#1204"
+    ]
+  },
+  "restore_main_hours": {
+    "available": false,
+    "reason": "Not derivable: .github/workflows/leanup-actions.yml deletes all but the latest ci.yml run every night, so only runs since 2026-10-28 remain for a window that starts 2026-08-03."
+  },
+  "first_push_ci": {
+    "available": false,
+    "reason": "Not derivable: .github/workflows/leanup-actions.yml deletes all but the latest ci.yml run every night, so only runs since 2026-11-01 remain for a window that starts 2026-08-03."
+  },
+  "issues_closed": 598,
+  "releases": {
+    "count": 9,
+    "tags": [
+      {
+        "tag": "docs-manuals",
+        "published": "2026-10-03"
+      },
+      {
+        "tag": "notaire-v0.1.1",
+        "published": "2026-10-07"
+      },
+      {
+        "tag": "notaire-v0.1.2",
+        "published": "2026-10-10"
+      },
+      {
+        "tag": "v0.2.0",
+        "published": "2026-10-12"
+      },
+      {
+        "tag": "v0.2.1",
+        "published": "2026-10-13"
+      },
+      {
+        "tag": "v0.2.2",
+        "published": "2026-10-15"
+      },
+      {
+        "tag": "v0.2.3",
+        "published": "2026-10-16"
+      },
+      {
+        "tag": "v0.2.4",
+        "published": "2026-10-17"
+      },
+      {
+        "tag": "v0.2.5",
+        "published": "2026-10-28"
+      }
+    ]
+  }
+}

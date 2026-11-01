@@ -13,6 +13,10 @@ on:
 
 permissions:
   contents: read
+  # Read-only GitHub data for the delivery-outcomes snapshot (#1985) and the report downloads.
+  actions: read
+  issues: read
+  pull-requests: read
   pages: write
   id-token: write
 
@@ -37,7 +41,9 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: github-page/package-lock.json
+          cache-dependency-path: |
+            github-page/package-lock.json
+            frontend/package-lock.json
 
       - uses: actions/setup-java@v6
         with:
@@ -165,8 +171,24 @@ jobs:
           GH_REPO: ${{ github.repository }}
         run: bash workspace/ci/generate-github-page-metrics.sh
 
+      # ── Refresh the delivery-outcomes snapshot (#1985) ──
+      # Read-only: the committed lib/delivery-metrics.json is overwritten in the runner only, so the
+      # published numbers are never older than this deploy. On a GitHub API failure the script writes
+      # nothing and the committed snapshot (with its own date range) is published instead.
+      - name: Refresh delivery outcomes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          python3 workspace/ci/generate-delivery-metrics.py \
+            || echo "::warning::delivery metrics not refreshed; publishing the committed snapshot"
+
       - name: Install dependencies
         working-directory: github-page
+        run: npm ci
+
+      - name: Install the frontend (for the demo build)
+        working-directory: frontend
         run: npm ci
 
       - name: Build static site
@@ -174,6 +196,10 @@ jobs:
         run: npm run build
         env:
           NODE_ENV: production
+
+      - name: Build the read-only demo into the export (#1985)
+        working-directory: github-page
+        run: npm run build:demo
 
       - name: Validate build output
         working-directory: github-page

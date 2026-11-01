@@ -2,6 +2,8 @@ import Link from "next/link";
 import { issue, src } from "@/lib/ai-sdlc-content";
 import { fmt, loadFactoryFacts } from "@/lib/ai-sdlc-facts";
 import { loadMetrics } from "@/lib/metrics";
+import { loadOutcomes } from "@/lib/outcomes";
+import { OutcomesSection } from "@/components/Outcomes";
 import { HISTORY, HistoryChart } from "@/components/CaseStudy";
 import { Card, PageHeader, SectionTitle, Sources } from "@/components/FactoryUI";
 import { pageMetadata } from "@/lib/site";
@@ -11,7 +13,8 @@ export const metadata = pageMetadata("/ai-sdlc/results/");
 /**
  * Results (#1970): what the factory produced. Every number on this page is read at build time,
  * from the repository (lib/ai-sdlc-facts.ts), the committed history snapshot with its provenance
- * (lib/ai-sdlc-history.json) or the deploy-time metrics file (public/metrics.json). None is typed here.
+ * (lib/ai-sdlc-history.json), the delivery-outcomes snapshot (lib/delivery-metrics.json, #1985) or the
+ * deploy-time metrics file (public/metrics.json). None is typed here.
  */
 export default function ResultsPage() {
   const f = loadFactoryFacts();
@@ -72,6 +75,8 @@ export default function ResultsPage() {
           : `The busiest month is ${busiest.month}, with ${fmt(busiest.merged_prs)} merged PRs; the latest, ${last.month}, has ${fmt(last.merged_prs)}.`}
       </p>
       <HistoryChart />
+
+      <OutcomesSection data={loadOutcomes()} />
 
       <SectionTitle id="factory">The factory itself</SectionTitle>
       <p className="leading-relaxed text-slate-700">
