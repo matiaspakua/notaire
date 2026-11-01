@@ -3,6 +3,8 @@ name: Pages CI — Build, Lint, Test & Links
 # Checks the public GitHub Pages app (github-page/) on every pull request (#1970):
 # typecheck, ESLint, Vitest component tests, the production static export, an internal
 # link check over the export, and a Playwright + axe smoke suite at 375 and 1280 px.
+# Since #1985 it also builds the read-only demo (the real frontend under /demo/), so a frontend
+# change that breaks the demo patches fails here, before merge.
 # It never deploys: publishing stays in deploy-github-page.yml after CI on main.
 # Mirrored locally by workspace/sdlc/preflight.sh ("pages …" checks).
 on:
@@ -35,6 +37,8 @@ jobs:
           filters: |
             pages:
               - 'github-page/**'
+              - 'frontend/**'
+              - 'workspace/ci/generate-delivery-metrics.py'
               - '.github/workflows/pages-ci.yml'
               - '.claude/skills/**'
               - '.claude/agents/**'
@@ -65,9 +69,15 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: github-page/package-lock.json
+          cache-dependency-path: |
+            github-page/package-lock.json
+            frontend/package-lock.json
 
       - name: Install
+        run: npm ci
+
+      - name: Install the frontend (for the demo build)
+        working-directory: frontend
         run: npm ci
 
       - name: Typecheck
@@ -81,6 +91,9 @@ jobs:
 
       - name: Build the static export
         run: npm run build
+
+      - name: Build the read-only demo into the export
+        run: npm run build:demo
 
       - name: Internal link check
         run: npm run check:links

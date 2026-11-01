@@ -3,7 +3,9 @@ import Link from "next/link";
 import { FlowDiagram } from "@/components/diagrams/FlowDiagram";
 import { loadFactoryFacts } from "@/lib/ai-sdlc-facts";
 import { factoryFlow } from "@/lib/diagram-flows";
-import { ASSET_BASE, PRIMARY_NAV, REPO_URL } from "@/lib/site";
+import { ASSET_BASE, DEMO, PRIMARY_NAV, REPO_URL } from "@/lib/site";
+import { fact, loadAbout } from "@/lib/about";
+import { hoursText, loadOutcomes, pctText } from "@/lib/outcomes";
 import { migrations, openapi, services, testCounts, versions } from "@/lib/tech-facts";
 
 const SCREENSHOTS = [
@@ -76,6 +78,18 @@ export default function Home() {
   ];
 
   const f = factoryFlow();
+  const out = loadOutcomes();
+  const outcomes = [
+    { value: hoursText(out.lead_time_hours.median), label: "median PR lead time, opened to merged" },
+    { value: hoursText(out.lead_time_hours.p90), label: "p90 PR lead time" },
+    { value: String(out.throughput.median_per_week ?? "n/a"), label: "merged PRs in a median week" },
+    { value: pctText(out.change_failure.rate_pct), label: "of merged PRs were reverts or hotfixes" },
+    { value: n(out.issues_closed), label: "issues closed" },
+    { value: n(out.releases.count), label: "releases" },
+  ];
+  const about = loadAbout();
+  const role = fact("On this project");
+  const contacts = about.facts.filter((x) => x.href);
 
   return (
     <div className="pb-24">
@@ -97,6 +111,9 @@ export default function Home() {
             <Link href="/ai-sdlc/case-study/" className="rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 transition-colors duration-200 hover:border-brand-500">
               Read the case study
             </Link>
+            <a href={`${ASSET_BASE}${DEMO.href}`} className="rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 transition-colors duration-200 hover:border-brand-500">
+              Try the live demo
+            </a>
             <a href={REPO_URL} className="rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 transition-colors duration-200 hover:border-brand-500">
               Code on GitHub ↗
             </a>
@@ -176,7 +193,10 @@ export default function Home() {
 
         <section aria-labelledby="shots-title" className="pt-16">
           <h2 id="shots-title" className="font-display text-3xl font-semibold text-slate-900">The product, running</h2>
-          <p className="mt-3 max-w-3xl text-slate-700">Screens of the Next.js app on the local Docker stack with demo data.</p>
+          <p className="mt-3 max-w-3xl text-slate-700">
+            Screens of the Next.js app on the local Docker stack with demo data. Or{" "}
+            <a href={`${ASSET_BASE}${DEMO.href}`}>open the live demo</a>: the same app, read-only, with sample data.
+          </p>
           <ul className="mt-6 grid gap-6 md:grid-cols-2">
             {SCREENSHOTS.map((s) => (
               <li key={s.file}>
@@ -194,6 +214,22 @@ export default function Home() {
                     <span className="text-slate-600"> · {s.caption}</span>
                   </figcaption>
                 </figure>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section aria-labelledby="outcomes-title" className="pt-16">
+          <h2 id="outcomes-title" className="font-display text-3xl font-semibold text-slate-900">Delivery outcomes</h2>
+          <p className="mt-3 max-w-3xl text-slate-700">
+            From GitHub, {out.window.from} to {out.window.to}, Dependabot PRs excluded.{" "}
+            <Link href="/ai-sdlc/results/#outcomes">How each number is computed</Link>.
+          </p>
+          <ul className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+            {outcomes.map((o) => (
+              <li key={o.label} className="rounded-2xl border border-slate-200 bg-white p-4">
+                <span className="block font-display text-3xl font-semibold tabular-nums text-slate-900">{o.value}</span>
+                <span className="mt-1 block text-xs leading-snug text-slate-600">{o.label}</span>
               </li>
             ))}
           </ul>
@@ -221,6 +257,22 @@ export default function Home() {
                 <span className="mt-5 text-sm font-semibold text-brand-700 group-hover:underline">Open {d.eyebrow} →</span>
               </Link>
             ))}
+          </div>
+        </section>
+
+        <section aria-labelledby="about-title" className="pt-16">
+          <h2 id="about-title" className="font-display text-3xl font-semibold text-slate-900">About the author</h2>
+          <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-[var(--shadow-card)]">
+            <p className="font-display text-2xl font-semibold text-slate-900">{about.name}</p>
+            {role && <p className="mt-2 max-w-3xl text-slate-700">{role.value}</p>}
+            <p className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
+              {contacts.map((c) => (
+                <a key={c.label} href={c.href}>
+                  {c.label} ↗
+                </a>
+              ))}
+              <Link href="/about/">More about him, with sources</Link>
+            </p>
           </div>
         </section>
       </div>

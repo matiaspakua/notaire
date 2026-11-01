@@ -1,0 +1,46 @@
+{
+  "about": "The single source for the site's About section (#1985). Every fact names where it comes from. 'placeholders' lists what no public source states; the site never renders them. To add one, give it a value and a source and move it to 'facts'.",
+  "checked": "2026-11-01",
+  "name": "Matias Miguez",
+  "facts": [
+    {
+      "label": "Name",
+      "value": "Matias Miguez",
+      "source": { "label": "GitHub profile", "href": "https://github.com/matiaspakua" }
+    },
+    {
+      "label": "Based in",
+      "value": "Barcelona, Spain",
+      "source": { "label": "GitHub profile", "href": "https://github.com/matiaspakua" }
+    },
+    {
+      "label": "On this project",
+      "value": "Builds and maintains Notaire. In its AI SDLC he is the Owner: he approves the specifications and, as code owner, merges the changes.",
+      "source": { "label": "README.md and CONSTITUTION.md roles", "href": "https://github.com/matiaspakua/notaire/blob/main/CONSTITUTION.md" }
+    },
+    {
+      "label": "Where Notaire began",
+      "value": "A 2012 course project in the Licenciatura en Sistemas at Universidad FASTA, San Carlos de Bariloche, written with Juan Carlos Ramos and Estefanía Klein.",
+      "source": { "label": "Manual de Sistema (2012)", "href": "https://github.com/matiaspakua/notaire/blob/main/docs/100-business/105-manuals/B_Manual%20de%20Sistema/Manual%20de%20Sistema.doc.md" }
+    },
+    {
+      "label": "LinkedIn",
+      "value": "linkedin.com/in/matiasmiguez",
+      "href": "https://www.linkedin.com/in/matiasmiguez/",
+      "source": { "label": "website field of the GitHub profile", "href": "https://github.com/matiaspakua" }
+    },
+    {
+      "label": "GitHub",
+      "value": "github.com/matiaspakua",
+      "href": "https://github.com/matiaspakua",
+      "source": { "label": "GitHub profile", "href": "https://github.com/matiaspakua" }
+    }
+  ],
+  "placeholders": [
+    { "field": "role", "todo": "TODO(Owner): current job title. The GitHub profile and the repository do not state it." },
+    { "field": "employer", "todo": "TODO(Owner): current employer, or leave out. The GitHub 'company' field is empty." },
+    { "field": "contactEmail", "todo": "TODO(Owner): a public contact email, if wanted. The GitHub profile shows none; the commit email was not published without consent." },
+    { "field": "bio", "todo": "TODO(Owner): a one- or two-sentence bio in your words. The GitHub bio is empty." },
+    { "field": "lookingFor", "todo": "TODO(Owner): optional, what kind of work or collaboration you are open to." }
+  ]
+}

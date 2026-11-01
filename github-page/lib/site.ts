@@ -131,6 +131,17 @@ export const REPORTS: { href: string; title: string; summary: string }[] = [
   { href: "/cicd-reports/", title: "CI/CD reports", summary: "Latest pipeline reports." },
 ];
 
+/** Pages outside the three sections (#1985): no sidebar, but searchable and titled. */
+export const OTHER_PAGES: SitePage[] = [
+  { href: "/about/", title: "About", summary: "Who built Notaire, from sourced facts only.", keywords: "author matias miguez contact linkedin github about me" },
+];
+
+/**
+ * The read-only demo (#1985): the real frontend exported under /demo/ by demo/build-demo.mjs.
+ * Not a Next route of this app, so link it with a plain <a href={ASSET_BASE + DEMO.href}>.
+ */
+export const DEMO = { href: "/demo/", title: "Live demo", summary: "The real Notaire app with sample data, read-only. Sign in with any name." };
+
 export const FACTORY_PAGES: SitePage[] = FACTORY_ACTS.flatMap((g) => g.pages);
 export const DOCS_PAGES: SitePage[] = DOCS_GROUPS.flatMap((g) => g.pages);
 export const PRODUCT_PAGES: SitePage[] = PRODUCT_GROUPS.flatMap((g) => g.pages);
@@ -159,7 +170,7 @@ export function groupsFor(section: SectionKey): PageGroup[] {
 
 export function findPage(pathname: string): SitePage | undefined {
   const p = norm(pathname);
-  return [...FACTORY_PAGES, ...DOCS_PAGES, ...PRODUCT_PAGES].find((x) => x.href === p);
+  return [...FACTORY_PAGES, ...DOCS_PAGES, ...PRODUCT_PAGES, ...OTHER_PAGES].find((x) => x.href === p);
 }
 
 export function prevNext(pathname: string): { prev?: SitePage; next?: SitePage } {
@@ -197,6 +208,8 @@ export const SEARCH_INDEX: SearchEntry[] = [
   ...FACTORY_PAGES.map((p) => ({ ...p, section: "AI Factory" })),
   ...DOCS_PAGES.map((p) => ({ ...p, section: "Technical docs" })),
   ...PRODUCT_PAGES.map((p) => ({ ...p, section: "Product" })),
+  ...OTHER_PAGES.map((p) => ({ ...p, section: "Project" })),
+  { ...DEMO, keywords: "demo try app live sample", section: "Project" },
   ...REPORTS.map((r) => ({ ...r, section: "Reports" })),
 ];
 
@@ -220,6 +233,7 @@ export function pageMetadata(href: string): { title: string; description: string
   const page = findPage(href);
   if (!page) throw new Error(`pageMetadata: ${href} is not in lib/site.ts`);
   const key = sectionOf(href);
+  if (OTHER_PAGES.includes(page)) return { title: page.title, description: page.summary };
   const section = key === "factory" ? "AI Factory" : key === "product" ? "Product" : "Technical docs";
   const isRoot = page.href === "/ai-sdlc/" || page.href === "/docs/" || page.href === "/product/";
   return { title: isRoot ? section : `${page.title} — ${section}`, description: page.summary };

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { DOCS_PAGES, FACTORY_ACTS, REPORTS, REPO_URL } from "@/lib/site";
+import { ASSET_BASE, DEMO, DOCS_PAGES, FACTORY_ACTS, REPORTS, REPO_URL } from "@/lib/site";
 import { GitHubIcon, Logo } from "./icons";
 
 /** The one site footer (#1970). */
@@ -24,6 +24,14 @@ export function SiteFooter({ version }: { version?: string }) {
           <a href={REPO_URL} className="inline-flex items-center gap-2 text-sm font-medium text-slate-700 hover:text-slate-900">
             <GitHubIcon className="h-4 w-4" /> matiaspakua/notaire
           </a>
+          <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+            <a href={`${ASSET_BASE}${DEMO.href}`} className="font-medium text-slate-700 hover:text-slate-900 hover:underline">
+              {DEMO.title}
+            </a>
+            <Link href="/about/" prefetch={false} className="font-medium text-slate-700 hover:text-slate-900 hover:underline">
+              About the author
+            </Link>
+          </p>
         </div>
         {cols.map((c) => (
           <div key={c.title}>

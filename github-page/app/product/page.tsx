@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Card, PageHeader, SectionTitle, Sources } from "@/components/FactoryUI";
 import { StatGrid } from "@/components/DocsUI";
 import { src } from "@/lib/ai-sdlc-content";
-import { pageMetadata } from "@/lib/site";
+import { pageMetadata, ASSET_BASE, DEMO } from "@/lib/site";
 import { openapi, productModules, testCounts, useCaseCount, versions } from "@/lib/tech-facts";
 
 export const metadata = pageMetadata("/product/");
@@ -45,7 +45,7 @@ export default function ProductOverviewPage() {
             Notaire runs the daily work of an Argentine notary office (<em>escribanía</em>): the people and properties
             involved, each case from quote to archive, the deeds and their testimonies, payments, deadlines and an
             audit trail. It is a web app — a Next.js front end over a Spring Boot API and PostgreSQL — in English and
-            Spanish.
+            Spanish. <a href={`${ASSET_BASE}${DEMO.href}`}>Try the live demo</a>: the real app with sample data, read-only.
           </>
         }
       />

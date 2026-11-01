@@ -53,6 +53,19 @@ each step is announced in an `aria-live` region and links its source; under
 `public/screenshots/` (demo data); prefix public paths with `ASSET_BASE` from `lib/site.ts`.
 The **results** page (`/ai-sdlc/results/`) prints only numbers read at build time.
 
+**Delivery outcomes** (#1985) on the results page and the landing come from
+[`lib/delivery-metrics.json`](lib/delivery-metrics.json): PR lead time (median, p90), weekly throughput, a
+change-failure proxy, time to restore `main`, first-push CI pass rate, issues closed and releases, with the window
+and the method of each. Refresh it with `python3 workspace/ci/generate-delivery-metrics.py` (needs an authenticated
+`gh`); the Pages deploy re-runs it before every build. Metrics the GitHub data cannot support are stored as
+unavailable with the reason (today: Actions run history is pruned nightly by `leanup-actions.yml`).
+
+**About** (`/about/` and the landing) renders [`lib/about.json`](lib/about.json): each fact names its source;
+`placeholders` lists what no public source states and is never rendered.
+
+The **live demo** (`/demo/`) is the real frontend exported with recorded sample data and a read-only fetch shim.
+How it works and why: [`docs/demo.md`](docs/demo.md).
+
 ## Local build
 
 ```bash
@@ -61,10 +74,12 @@ npm ci
 npm run dev                         # http://localhost:3000/ (no basePath in dev)
 npm run typecheck && npm run lint && npm test   # tsc, ESLint, Vitest
 NODE_ENV=production npm run build   # static export into out/
+(cd ../frontend && npm ci)          # once, for the demo
+npm run build:demo                  # the read-only demo into out/demo/ (docs/demo.md)
 npm run check:links                 # every internal href and #fragment in out/ resolves
 npx playwright install chromium     # once
 npm run test:smoke                    # Playwright + axe at 375 and 1280 px, served under /notaire
-python3 -m pytest ../workspace/tests/test_pages_ai_sdlc.py ../workspace/tests/test_pages_site_shell.py -q
+python3 -m pytest ../workspace/tests/test_pages_*.py -q
 ```
 
 Pull requests run all of the above in [`pages-ci.yml`](../.github/workflows/pages-ci.yml);
