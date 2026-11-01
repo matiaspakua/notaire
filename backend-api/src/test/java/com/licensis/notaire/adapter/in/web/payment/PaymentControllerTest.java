@@ -101,11 +101,13 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/payments should return 500 on service error")
+    @DisplayName("GET /api/v1/payments should return 500 ErrorResponse via GlobalExceptionHandler (#579)")
     void shouldReturnServerErrorWhenGetAllFails() throws Exception {
         when(queryPaymentsUseCase.findAll()).thenThrow(new RuntimeException("Database error"));
         mockMvc.perform(get("/api/v1/payments"))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.message").value("An unexpected error occurred"));
     }
 
     @Test
