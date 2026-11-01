@@ -18,12 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.application.port.in.document.ManageDocumentTypesUseCase;
 import com.licensis.notaire.application.port.in.document.ManageDocumentTypesUseCase.SaveDocumentTypeCommand;
 import com.licensis.notaire.application.port.in.document.QueryDocumentTypesUseCase;
 import com.licensis.notaire.domain.document.DocumentType;
-import com.licensis.notaire.domain.document.DocumentTypeException;
 import com.licensis.notaire.dto.DtoDocumentType;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,8 +34,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * domain exceptions are mapped by {@link DocumentTypeExceptionHandler} (slice 4 of the hexagon, issue #1705).
  *
  * <p>Wire defaults for create ({@code deliveredBy}, {@code enabled}, {@code returned}) stay here so OpenAPI and the
- * legacy clients keep the same behaviour. The try/catch blocks around create and update keep the persistence-failure
- * mapping of {@link ErrorResponses} until the ad-hoc catches are removed (issue #579); domain exceptions pass through.
+ * legacy clients keep the same behaviour. Unexpected persistence failures propagate to
+ * {@code GlobalExceptionHandler} (#579 document-type slice).
  */
 @RestController
 @RequestMapping("/api/v1/document-types")
@@ -151,14 +149,8 @@ public class DocumentTypeController {
     @PostMapping
     @Operation(summary = "Create a new document type")
     public ResponseEntity<Object> create(@Valid @RequestBody DocumentTypeWriteRequest request) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(toDto(manage.create(toCreateCommand(request))));
-        } catch (DocumentTypeException domainFailure) {
-            throw domainFailure;
-        } catch (Exception e) {
-            return ErrorResponses.createFailed(e);
-        }
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(toDto(manage.create(toCreateCommand(request))));
     }
 
     @ApiResponses({
@@ -171,15 +163,9 @@ public class DocumentTypeController {
     @Operation(summary = "Update document type")
     public ResponseEntity<Object> update(
             @PathVariable Integer id, @Valid @RequestBody DocumentTypeWriteRequest request) {
-        try {
-            DocumentType existing = query.getById(id);
-            manage.update(id, toUpdateCommand(request, existing));
-            return ResponseEntity.ok().build();
-        } catch (DocumentTypeException domainFailure) {
-            throw domainFailure;
-        } catch (Exception e) {
-            return ErrorResponses.updateFailed(e);
-        }
+        DocumentType existing = query.getById(id);
+        manage.update(id, toUpdateCommand(request, existing));
+        return ResponseEntity.ok().build();
     }
 
     @ApiResponses({
