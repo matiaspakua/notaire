@@ -71,9 +71,15 @@ class SyntheticNotesEnglishTest(unittest.TestCase):
         self.assertIn("nomenclatura catastral", cadastral)
 
     def test_query_alias_and_hero_fixture_are_english(self):
-        controller = (ROOT / "backend-api/src/main/java/com/licensis/notaire/jpa/DeedManagementJpaController.java").read_text(encoding="utf-8")
-        self.assertIn("as latestManagement", controller)
-        self.assertNotIn("ultimaGestion", controller)
+        # #576 deleted DeedManagementJpaController; keep the hero + integration asserts.
+        self.assertFalse(
+            (
+                ROOT
+                / "backend-api/src/main/java/com/licensis/notaire/jpa/"
+                "DeedManagementJpaController.java"
+            ).exists(),
+            "DeedManagementJpaController must stay deleted after #576",
+        )
 
         hero = (ROOT / "frontend/src/tests/unit/dashboard-hero.test.tsx").read_text(encoding="utf-8")
         self.assertIn("findLatestTracedManagement (#1347)", hero)

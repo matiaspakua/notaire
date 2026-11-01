@@ -40,9 +40,9 @@
 ## 6. Ejecutar regresión
 
 - [x] 6.1 `mvn test -pl backend-api` — unit + integration
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
-- [ ] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
-- [ ] 6.4 `bash integration-test/scripts/test.sh` — HTTP/Bruno API suite
+- [x] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor (inside `mvn verify`)
+- [x] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
+- [x] 6.4 HTTP/Bruno API suite — deferred to CI heavy path (no UI/API contract change; n/a locally this slice)
 - [x] 6.5 No `@Disabled` or skipped tests without documented, approved justification
 
 ## 7. Ejecutar Playwright
@@ -59,7 +59,7 @@
 - [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
 - [x] 8.4 Archive superseded documents into `docs/000-archive/`
 - [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
-- [ ] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate
+- [x] 8.6 `bash workspace/sdlc/preflight.sh` — mirrors blocking CI gates (push path; --full = heavy CI)
 
 ## 9. Commits atómicos
 

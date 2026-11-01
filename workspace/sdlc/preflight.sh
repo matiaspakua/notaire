@@ -345,7 +345,9 @@ run "pages typecheck" bash -c "cd github-page && ./node_modules/.bin/tsc --noEmi
 run "pages eslint" bash -c "cd github-page && ./node_modules/.bin/eslint ."
 if [ "$MODE_FAST" = "0" ]; then
     run "pages vitest" bash -c "cd github-page && ./node_modules/.bin/vitest run"
-    run "pages build + link check" bash -c "cd github-page && ./node_modules/.bin/next build && node scripts/check-links.mjs out"
+    # Match pages-ci.yml (#1985): the export links to /notaire/demo/, so the demo
+    # must be built into out/ before check-links runs.
+    run "pages build + link check" bash -c "cd github-page && ./node_modules/.bin/next build && npm run build:demo && node scripts/check-links.mjs out"
     if [ "$MODE_FULL" = "1" ]; then
         run "pages playwright + axe" bash -c "cd github-page && ./node_modules/.bin/playwright test"
     else
