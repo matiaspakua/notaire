@@ -13,17 +13,15 @@ def read(relative: str) -> str:
 
 class FoundAndReportLocalsEnglishTest(unittest.TestCase):
     def test_found_locals_and_used_status_are_english(self):
-        procedure_type = read(
-            "backend-api/src/main/java/com/licensis/notaire/jpa/ProcedureTypeJpaController.java"
-        )
-        self.assertIn("foundProcedureType", procedure_type)
-        self.assertNotIn("procedureTypeEncontrado", procedure_type)
-
-        person_procedure = read(
-            "backend-api/src/main/java/com/licensis/notaire/jpa/PersonProcedureJpaController.java"
-        )
-        self.assertIn("PersonProcedure found", person_procedure)
-        self.assertNotIn("encontrado", person_procedure)
+        # #576 retired the legacy jpa controllers that used to carry these locals.
+        for relative in (
+            "backend-api/src/main/java/com/licensis/notaire/jpa/ProcedureTypeJpaController.java",
+            "backend-api/src/main/java/com/licensis/notaire/jpa/PersonProcedureJpaController.java",
+        ):
+            self.assertFalse(
+                (ROOT / relative).exists(),
+                f"{relative} must stay deleted after legacy jpa retirement (#576)",
+            )
 
         # Utilizado lock lives on the domain type after the folio-instance hexagon (#1727).
         folio_domain = read(

@@ -51,11 +51,14 @@ class VerificationIdentifiersEnglishTest(unittest.TestCase):
         self.assertIn("shouldRejectWithdrawalWhenTestimonyNotFound", movement)
         self.assertNotIn("shouldRejectRetirarWhenTestimonyNotFound", movement)
 
-        jpa = read(
-            "backend-api/src/test/java/com/licensis/notaire/unit/jpa/JpaAdministratorTest.java"
+        # #576 retired JpaAdministratorTest with the legacy jpa package; keep the
+        # english-name assertion on the still-present movement service test above.
+        retirement = read(
+            "backend-api/src/test/java/com/licensis/notaire/unit/architecture/"
+            "LegacyJpaRetirementTest.java"
         )
-        self.assertIn("class LoadJpaList", jpa)
-        self.assertNotIn("CargarListaJpas", jpa)
+        self.assertIn("class LegacyJpaRetirementTest", retirement)
+        self.assertNotIn("CargarListaJpas", retirement)
 
         audit = read(
             "backend-api/src/test/java/com/licensis/notaire/integration/"

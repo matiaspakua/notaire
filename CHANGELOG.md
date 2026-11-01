@@ -67,6 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Hexagonal architecture epic [#1693](https://github.com/matiaspakua/notaire/issues/1693), ADR-030. REST and OpenAPI contracts are unchanged.
 
+* **arch:** retire legacy `com.licensis.notaire.jpa` (~10k LOC) and `JpaAdministrator` / `LegacyJpaEmfConfig`; wire `IdentificationTypeLookup` from Spring Data `IdentificationTypeRepository` ([#576](https://github.com/matiaspakua/notaire/issues/576))
 * **fe:** login uses mandated `FormContainer` / `FormField` / `FormActions` (CU84, design-system uplift epic [#1941](https://github.com/matiaspakua/notaire/issues/1941)) ([#611](https://github.com/matiaspakua/notaire/issues/611))
 * **arch:** residual hex cleanup — delete dead `SessionAdministrator` / `ValidationAdministrator`; move `PersistenceConstants` to `com.licensis.notaire.persistence` ([#1918](https://github.com/matiaspakua/notaire/issues/1918))
 * **arch:** shrink ArchUnit R1 wire DTOs (`ItemResponse` + support `*Ref` / `ErrorResponses`) ([#1826](https://github.com/matiaspakua/notaire/issues/1826)) ([#1829](https://github.com/matiaspakua/notaire/pull/1829))

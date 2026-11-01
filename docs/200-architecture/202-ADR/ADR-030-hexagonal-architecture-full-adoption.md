@@ -2,9 +2,8 @@
 
 **Status:** Accepted — Owner directive of 2026-10-14 (epic #1693, child #1694).  
 **ArchUnit DoD:** MET — R1–R6 baseline empty on `main` @ `6ffe578fe` (#1914 / PR #1915).  
-**Residual (Owner-accepted):** legacy `jpa` `*JpaController`s + `service.JpaAdministrator` /
-`LegacyJpaEmfConfig` remain until [#576](https://github.com/matiaspakua/notaire/issues/576);
-tracked under #1693 via [#1918](https://github.com/matiaspakua/notaire/issues/1918).  
+**Legacy jpa retirement:** MET — `com.licensis.notaire.jpa` and `service.JpaAdministrator` /
+`LegacyJpaEmfConfig` removed; `IdentificationTypeLookup` wired from Spring Data (#576).  
 **Date:** 2026-10-14  
 **Deciders:** Owner (product), Engineering  
 **Related:** ADR-021 (pilot), ADR-002 (module structure), ADR-023 (REST naming), ADR-025/026, ADR-027 (Mermaid), ADR-029 (tenancy), #984, #993, #995, #1695, #1696, #576, #1918  
@@ -1017,11 +1016,9 @@ extraction per aggregate, (e) deletion of `jpa`, `service` and `dto`.
 
 ## Open points
 
-- **Residual packages (Owner-accepted until #576):** `com.licensis.notaire.jpa` (~35
-  `*JpaController`s) and `service.JpaAdministrator` / `LegacyJpaEmfConfig` remain for EMF
-  bootstrap and IdentificationTypeLookup wiring. They gain **no new external dependents**
-  (ArchUnit R6 empty). Full deletion is [#576](https://github.com/matiaspakua/notaire/issues/576),
-  not a re-open of the ArchUnit baseline.
-- The no-cycles rule and the model-extraction rule are added to the ArchUnit suite when the first slice that
-  needs them lands.
+- **Legacy jpa retirement (#576):** closed — `com.licensis.notaire.jpa` and
+  `service.JpaAdministrator` / `LegacyJpaEmfConfig` deleted;
+  `IdentificationTypeLookup` is wired from `IdentificationTypeRepository`.
+- Remaining model debt: `business.*` entities still couple to transport DTOs (#580);
+  not an ArchUnit baseline reopen.
 - Multi-notary hosting is out of scope (ADR-029): one installation serves one notary.
