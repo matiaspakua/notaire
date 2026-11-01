@@ -161,7 +161,7 @@ export default function StackPage() {
       <ul className="my-4 grid gap-2 sm:grid-cols-2">
         {wf.map((w) => (
           <li key={w.file} className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm">
-            <a className="font-medium text-slate-900 hover:text-[var(--accent-700)]" href={src(`.github/workflows/${w.file}`)}>{w.name}</a>
+            <a className="font-medium text-slate-900 hover:text-[var(--accent-700)]" href={src(`.github/workflows/${encodeURIComponent(w.file)}`)}>{w.name}</a>
             <span className="block font-mono text-xs text-slate-500">{w.file}</span>
           </li>
         ))}
