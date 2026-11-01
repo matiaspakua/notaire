@@ -55,7 +55,7 @@ jobs:
             --spring.datasource.url=jdbc:postgresql://localhost:5432/notaire \
             --spring.datasource.username=notaire \
             --spring.datasource.password=notaire \
-            --spring.jpa.hibernate.ddl-auto=update \
+            --spring.jpa.hibernate.ddl-auto=none \
             --jwt.secret="${JWT_SECRET}" \
             --actuator.security.username="${ACTUATOR_USER}" \
             --actuator.security.password="${ACTUATOR_PASSWORD}" \
