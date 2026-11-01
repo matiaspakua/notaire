@@ -173,6 +173,13 @@ run "board Status/label coherence" \
     python3 workspace/sdlc/check-board-status-label-coherence.py --scope pr
 run "Closes/Fixes multi_pr guard" \
     python3 workspace/sdlc/check-closes-refs-guard.py --base-sha origin/main
+# One open PR may edit CHANGELOG [Unreleased] (FLEET-LESSONS / #1693).
+if gh pr view >/dev/null 2>&1; then
+    run "CHANGELOG Unreleased fence" \
+        python3 workspace/sdlc/check-changelog-unreleased-fence.py
+else
+    skip "CHANGELOG Unreleased fence" "no open PR for this tip"
+fi
 run "Owner scripts bash -n" bash -c \
     'for s in workspace/sdlc/owner/*.sh; do [ -f "$s" ] || continue; bash -n "$s"; done'
 run "tdd evidence" bash workspace/sdlc/check-tdd-evidence.sh origin/main
