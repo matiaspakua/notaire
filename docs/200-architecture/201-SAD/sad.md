@@ -2,7 +2,9 @@
 
 > **arc42 Template v8.2** — based on [docs.arc42.org](https://docs.arc42.org/home/)
 >
-> **Version:** 3.4 | **Date:** 2026-10-11 | **Author:** Architecture Team
+> **Version:** 3.5 | **Date:** 2026-11-01 | **Author:** Architecture Team
+>
+> **Changelog v3.5**: Spring Boot 4.1.2, Flyway through V53, and the technology assessment in [TECHNOLOGY-STACK.md](../TECHNOLOGY-STACK.md) (#1976).
 >
 > **Changelog v3.4**: §6 points at [GESTION.md](../203-design/GESTION.md) for the case-process analysis. States stay in CICLO-DE-VIDA.md.
 >
@@ -75,7 +77,7 @@ The system originated as a monolithic Java Swing desktop application with direct
 | Constraint | Description |
 |-----------|-------------|
 | Java 26 | Backend runtime, from the root `pom.xml` |
-| Spring Boot 4.1.1 | Backend framework |
+| Spring Boot 4.1.2 | Backend framework |
 | PostgreSQL 16 | Database — migrated from MySQL 5.7 |
 | Next.js 16 / React 19 | Frontend framework with App Router |
 | Docker / Docker Compose | Containerization for all services |
@@ -175,7 +177,7 @@ Graf --> Loki : Log queries
 
 | Decision | Rationale | ADR |
 |----------|-----------|-----|
-| Spring Boot 4.1.1 + Java 26 | Current platform in the root `pom.xml` | ADR-001 |
+| Spring Boot 4.1.2 + Java 26 | Current platform in the root `pom.xml` | ADR-001 |
 | Maven multi-module | Separation of shared, backend, and frontend concerns | ADR-002 |
 | URL-path API versioning (`/api/v1`) | Simple, explicit, cacheable | ADR-003 |
 | PostgreSQL 16 (from MySQL 5.7) | Superior JSON support, CTEs, full-text search | ADR-004 |
@@ -834,7 +836,7 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 
 - **Flyway** is the single source of truth for database schema.
 - Migrations located at `backend-api/src/main/resources/db/migration/`.
-- Docker starts PostgreSQL **empty**; Flyway applies the versioned migrations on backend startup, through V46. Applied files V1–V45 stay immutable.
+- Docker starts PostgreSQL **empty**; Flyway applies the versioned migrations on backend startup, through V53 at the time of v3.5. Applied files stay immutable. The full, current list is rendered on GitHub Pages at `/docs/database/`, straight from `db/migration/`.
 - Historical `init-db/` scripts archived at `docs/000-archive/init-db/`.
 - Repeatable migrations (`R__`) used for reversible operations.
 
@@ -859,6 +861,7 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 | R14 | Manual rollback script that restores `budgets.fk_id_tramite`. Flyway does not run it |
 | V45 | Rename the remaining Spanish identifiers. `R45` reverses that rename |
 | V46 | Rename Spanish constraint names. `R46` restores the previous names |
+| V47–V53 | Append-only audit, login attempts, admin promotion, standard role template, exporter grants (`R51`), bcrypt seed password, office staff catalog module |
 
 ### 8.5 Observability
 

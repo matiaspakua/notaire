@@ -42,7 +42,7 @@ observability/quality infrastructure stack.
 ### Prerequisites
 
 - Docker and Docker Compose v2+
-- Java 21+ (for local development)
+- Java 26 (the release pinned in the root `pom.xml`) (for local development)
 - Maven 3.9+ (for local builds)
 
 ### 1. Build Application

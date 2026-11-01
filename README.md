@@ -3,7 +3,7 @@
 <div align="center">
 
 [![Java](https://img.shields.io/badge/Java-26-%23ED8B00?logo=openjdk&logoColor=white)](https://openjdk.org/projects/jdk/26/)
-[![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.1.1-%236DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.1.2-%236DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
 [![Next.js](https://img.shields.io/badge/Next.js-16-%23000000?logo=nextdotjs&logoColor=white)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-%2361DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-%234169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
@@ -49,7 +49,7 @@ containers and no automated tests.
 
 **Notaire** is the result of moving it to:
 
-- **Backend**: REST API with **Spring Boot 4.1.1** and **Java 26**.
+- **Backend**: REST API with **Spring Boot 4.1.2** and **Java 26**.
 - **Frontend**: **Next.js 16** + **React 19** + **TypeScript** + **Tailwind CSS 4**, with a custom design system inspired by Apple.
 - **Active client**: the Next.js frontend only. The legacy Swing client was removed from the tree (#1046); do not recreate it.
 - **Database**: **PostgreSQL 16** with **Flyway** as the only source of truth for the schema.
@@ -106,7 +106,7 @@ notaire/
 
 | Layer | Technologies |
 |:-----|:------------|
-| **Backend** | Java 26, Spring Boot 4.1.1 (Web, Data JPA, Security, Actuator), SpringDoc OpenAPI |
+| **Backend** | Java 26, Spring Boot 4.1.2 (Web, Data JPA, Security, Actuator), SpringDoc OpenAPI |
 | **Persistence** | PostgreSQL 16, Flyway, HikariCP |
 | **PDF reports** | Apache PDFBox (generated in-process, no templates) |
 | **Frontend** | Next.js 16, React 19, TypeScript 5.7, Tailwind CSS 4, TanStack Query, shadcn/ui, Zustand |
