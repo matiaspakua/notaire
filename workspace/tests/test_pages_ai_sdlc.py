@@ -20,7 +20,10 @@ CONTENT = PAGE / "lib" / "ai-sdlc-content.ts"
 FACTS = PAGE / "lib" / "ai-sdlc-facts.ts"
 HISTORY = PAGE / "lib" / "ai-sdlc-history.json"
 HISTORY_GENERATOR = REPO / "workspace" / "ci" / "generate-ai-sdlc-history.py"
-GATE_FLOW = PAGE / "components" / "GateFlow.tsx"
+# #1977: the looping GateFlow became the reader-driven factory diagram.
+GATE_FLOW = PAGE / "lib" / "diagram-flows.ts"
+FLOW_DIAGRAM = PAGE / "components" / "diagrams" / "FlowDiagram.tsx"
+STEPPER = PAGE / "components" / "diagrams" / "useStepper.ts"
 SVG_DIAGRAMS = (PAGE / "components" / "GuardrailStack.tsx", PAGE / "components" / "Swimlane.tsx")
 
 SUBPAGES = (
@@ -148,9 +151,10 @@ class AiSdlcCaseStudyTest(unittest.TestCase):
         self.assertIn('src("docs/300-development/306-ai-sdlc-framework/ai_sdlc_framework.md")', page)
 
     def test_gate_flow_animation_respects_reduced_motion(self):
-        text = GATE_FLOW.read_text(encoding="utf-8")
-        self.assertIn("prefers-reduced-motion", text)
-        self.assertIn('role="img"', text)
+        self.assertIn("export function factoryFlow()", GATE_FLOW.read_text(encoding="utf-8"))
+        self.assertIn("useReducedMotion", STEPPER.read_text(encoding="utf-8"))
+        self.assertIn('role="img"', FLOW_DIAGRAM.read_text(encoding="utf-8"))
+        self.assertIn("factoryFlow()", (SECTION / "page.tsx").read_text(encoding="utf-8"))
 
 
 class AiSdlcStorytellingTest(unittest.TestCase):

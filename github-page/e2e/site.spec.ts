@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-const PAGES = ["", "product/", "product/story/", "product/platform/", "product/numbers/", "docs/", "docs/stack/", "docs/hexagonal/", "docs/database/", "docs/api/", "docs/architecture/", "docs/releases/", "ai-sdlc/", "ai-sdlc/lifecycle/", "ai-sdlc/guardrails/", "ai-sdlc/agents/", "ai-sdlc/results/", "ai-sdlc/case-study/"];
+const PAGES = ["", "product/", "product/story/", "product/platform/", "product/numbers/", "docs/", "docs/stack/", "docs/hexagonal/", "docs/database/", "docs/api/", "docs/architecture/", "docs/testing/", "docs/releases/", "ai-sdlc/", "ai-sdlc/lifecycle/", "ai-sdlc/guardrails/", "ai-sdlc/agents/", "ai-sdlc/results/", "ai-sdlc/case-study/"];
 
 for (const p of PAGES) {
   test(`/${p} has one header, no horizontal scroll and no axe violations`, async ({ page }) => {
@@ -70,4 +70,27 @@ test("product pages share the sidebar and the pager (#1976)", async ({ page, isM
   }
   const pager = page.getByRole("navigation", { name: /previous and next/i });
   await expect(pager.getByRole("link", { name: /Platform/ })).toBeVisible();
+});
+
+test("diagrams step with the keyboard and announce each step (#1977)", async ({ page, isMobile }) => {
+  await page.goto("docs/hexagonal/");
+  const figure = page.locator('[data-diagram="request"]');
+  const live = figure.locator("#request-live");
+  await expect(live).toContainText("The UI posts a payment");
+  await page.waitForTimeout(3000);
+  await expect(live, "nothing autoplays").toContainText("The UI posts a payment");
+  await figure.getByRole("button", { name: /next step/i }).focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(live).toContainText("The controller makes a command");
+  await expect(figure.getByRole("img")).toBeVisible({ visible: !isMobile });
+});
+
+test("reduced motion still steps, instantly (#1977)", async ({ browser }) => {
+  const context = await browser.newContext({ reducedMotion: "reduce" });
+  const page = await context.newPage();
+  await page.goto("http://localhost:4173/notaire/docs/stack/");
+  const figure = page.locator('[data-diagram="pipeline"]');
+  await figure.getByRole("button", { name: /next step/i }).click();
+  await expect(figure.locator("#pipeline-live")).toContainText("Push");
+  await context.close();
 });
