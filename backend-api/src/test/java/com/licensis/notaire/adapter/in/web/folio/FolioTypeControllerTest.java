@@ -154,4 +154,15 @@ class FolioTypeControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("name: must not be blank"));
     }
+
+    @Test
+    @DisplayName("unexpected create failure returns 500 ErrorResponse via GlobalExceptionHandler (#579)")
+    void unexpectedCreateFailureUsesGlobalHandler() throws Exception {
+        when(manage.create(any())).thenThrow(new RuntimeException("Database error"));
+
+        mvc.perform(post("/api/v1/folio-types").contentType(MediaType.APPLICATION_JSON).content(BODY))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.message").value("An unexpected error occurred"));
+    }
 }

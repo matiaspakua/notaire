@@ -63,7 +63,12 @@ export default defineConfig({
     {
       name: "mobile",
       testMatch: "**/*mobile*.spec.ts",
-      use: { ...devices["iPhone SE"] },
+      use: {
+        ...devices["iPhone SE"],
+        // Same admin session global-setup writes for chromium workers (#1983 flake:
+        // per-test UI login on mobile hit /login lockout under shard load).
+        storageState: "tests/fixtures/admin-auth.json",
+      },
     },
   ],
   // Skip webServer since we're using Docker

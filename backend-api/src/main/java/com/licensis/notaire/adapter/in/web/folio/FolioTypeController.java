@@ -17,12 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.application.port.in.folio.ManageFolioTypesUseCase;
 import com.licensis.notaire.application.port.in.folio.ManageFolioTypesUseCase.SaveFolioTypeCommand;
 import com.licensis.notaire.application.port.in.folio.QueryFolioTypesUseCase;
 import com.licensis.notaire.domain.folio.FolioType;
-import com.licensis.notaire.domain.folio.FolioTypeException;
 import com.licensis.notaire.dto.DtoFolioType;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,8 +32,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * Folio type catalog. Calls the inbound ports and maps to the wire DTO; the rules live in the use cases and the
  * domain exceptions are mapped by {@link FolioTypeExceptionHandler} (slice 3 of the hexagon, issue #1703).
  *
- * <p>The try/catch blocks around create and update keep the persistence-failure mapping of
- * {@link ErrorResponses} until the ad-hoc catches are removed (issue #579); domain exceptions pass through.
+ * <p>Unexpected persistence failures propagate to {@code GlobalExceptionHandler} (#579 folio-type slice)
+ * so clients get a standard {@code ErrorResponse} instead of a misleading 409 from
+ * {@code ErrorResponses.createFailed}.
  */
 @RestController
 @RequestMapping("/api/v1/folio-types")
@@ -114,13 +113,7 @@ public class FolioTypeController {
     @PostMapping
     @Operation(summary = "Create folio type")
     public ResponseEntity<Object> create(@Valid @RequestBody FolioTypeWriteRequest request) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(toDto(manage.create(toCommand(request))));
-        } catch (FolioTypeException domainFailure) {
-            throw domainFailure;
-        } catch (Exception e) {
-            return ErrorResponses.createFailed(e);
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(toDto(manage.create(toCommand(request))));
     }
 
     @ApiResponses({
@@ -132,14 +125,8 @@ public class FolioTypeController {
     @PutMapping("/{id}")
     @Operation(summary = "Update folio type")
     public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody FolioTypeWriteRequest request) {
-        try {
-            manage.update(id, toCommand(request));
-            return ResponseEntity.ok().build();
-        } catch (FolioTypeException domainFailure) {
-            throw domainFailure;
-        } catch (Exception e) {
-            return ErrorResponses.updateFailed(e);
-        }
+        manage.update(id, toCommand(request));
+        return ResponseEntity.ok().build();
     }
 
     @ApiResponses({

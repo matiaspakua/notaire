@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **api:** folio-type unexpected create/update failures return standard `ErrorResponse` via `GlobalExceptionHandler` instead of a misleading 409 from `ErrorResponses` (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **test:** Playwright `mobile` project runs real `*mobile*` specs on iPhone SE (was pointing at missing `mobile-viewport.spec.ts`); chromium excludes them; Process Checks fail if any project matches zero tests ([#1983](https://github.com/matiaspakua/notaire/issues/1983))
 * **api:** payment unexpected failures return standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500 body (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **ci:** E2E, DAST and k6 start the backend with `ddl-auto=none` (Flyway-only), guarded by `CiDdlAutoNoneTest` so Hibernate `update` cannot hide missing migrations again ([#1979](https://github.com/matiaspakua/notaire/issues/1979))
