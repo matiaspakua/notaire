@@ -10,15 +10,18 @@ import { ReadingProgress } from "./ReadingProgress";
 import { Sidebar } from "./Sidebar";
 
 /**
- * Long-form layout for the Technical docs and the AI Factory (#1970): breadcrumbs, a sidebar
- * of the section's pages (the factory's grouped as five acts), reading progress, a readable
- * measure and previous/next links. The factory gets the violet accent.
+ * Long-form layout for the Technical docs, the AI Factory (#1970) and the Product section (#1976):
+ * breadcrumbs, a sidebar of the section's pages (the factory's grouped as five acts), reading
+ * progress, a readable measure and previous/next links. The factory gets the violet accent;
+ * Product pages get a wider body for their visual sections.
  */
 export function DocShell({ children }: { children: ReactNode }) {
   const raw = usePathname() || "/";
   const pathname = raw.endsWith("/") ? raw : `${raw}/`;
   const section = sectionOf(pathname);
   const factory = section === "factory";
+  const product = section === "product";
+  const title = factory ? "The AI Factory" : product ? "Product" : "Technical docs";
   const act = factory ? actOf(pathname) : undefined;
 
   return (
@@ -27,13 +30,13 @@ export function DocShell({ children }: { children: ReactNode }) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:grid lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-12">
         <aside className="hidden lg:block">
           <div className="sticky top-[calc(var(--header-h)+1.5rem)] max-h-[calc(100vh-var(--header-h)-3rem)] overflow-y-auto py-10 pr-2">
-            <p className="mb-5 px-3 text-sm font-semibold text-slate-900">{factory ? "The AI Factory" : "Technical docs"}</p>
+            <p className="mb-5 px-3 text-sm font-semibold text-slate-900">{title}</p>
             <Sidebar
-              label={factory ? "AI Factory chapters" : "Technical docs pages"}
+              label={factory ? "AI Factory chapters" : `${title} pages`}
               groups={groupsFor(section)}
               pathname={pathname}
               footer={
-                !factory && (
+                !factory && !product && (
                   <div className="mb-6">
                     <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Live reports</p>
                     <ul className="space-y-0.5 border-l border-slate-200">
@@ -59,7 +62,7 @@ export function DocShell({ children }: { children: ReactNode }) {
               Act {act}
             </p>
           )}
-          <div className="doc-body">{children}</div>
+          <div className={product ? "product-body" : "doc-body"}>{children}</div>
           <PrevNext pathname={pathname} />
         </div>
       </div>

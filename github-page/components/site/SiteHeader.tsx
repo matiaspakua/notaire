@@ -164,6 +164,7 @@ export function SiteHeader() {
             </ul>
           </nav>
 
+          {groups.length > 0 && (
           <nav aria-label={`${currentLabel ?? "Section"} pages`} className="flex-1 p-3">
             {groups.map((g) => (
               <div key={g.label} className="mb-4">
@@ -190,6 +191,7 @@ export function SiteHeader() {
               </div>
             ))}
           </nav>
+          )}
 
           <div className="border-t border-slate-200 p-4">
             <a href={REPO_URL} className="flex items-center gap-2 text-sm font-medium text-slate-700 hover:text-slate-900">

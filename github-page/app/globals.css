@@ -146,6 +146,15 @@ body {
 }
 .doc-body :where(a:not([class])):hover { text-decoration-thickness: 2px; }
 
+/* Product pages (#1976): the story's full-bleed sections sit inside the document shell,
+   so they drop their own page padding and background and share the docs' rhythm. */
+.product-body > section,
+.product-body > div > section { padding: 2.5rem 0 !important; background: transparent !important; }
+.product-body > section:first-child { padding-top: 0 !important; }
+.product-body section > div { max-width: none; }
+.product-body section h2 { font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.5rem); }
+.product-body section + section { border-top: 1px solid var(--color-slate-200, #e2e8f0); }
+
 /* Mermaid figures: keep text readable on phones and scroll sideways inside the figure. */
 .diagram-frame { overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
 .diagram-frame svg { max-width: 100%; height: auto; margin-inline: auto; }

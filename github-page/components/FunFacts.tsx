@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import type { SiteMetrics } from "@/lib/metrics";
 
-function buildFacts(metrics: SiteMetrics) {
+function buildFacts(metrics: SiteMetrics, java: string | null) {
   return [
     {
       emoji: "😴",
@@ -30,8 +30,8 @@ function buildFacts(metrics: SiteMetrics) {
     },
     {
       emoji: "☕",
-      title: "Java 1.6 → Java 21",
-      desc: "15 major Java versions. From brittle Swing event handlers to records, sealed classes, and virtual threads.",
+      title: `Java 1.6 → Java ${java ?? "—"}`,
+      desc: `${java ? `${Number(java) - 6} major Java versions` : "Every major Java version"}. From brittle Swing event handlers to records, sealed classes, and virtual threads.`,
       color: "var(--java-orange)",
     },
     {
@@ -76,8 +76,8 @@ const challenges = [
   },
 ];
 
-export function FunFacts({ metrics }: { metrics: SiteMetrics }) {
-  const facts = buildFacts(metrics);
+export function FunFacts({ metrics, java }: { metrics: SiteMetrics; java: string | null }) {
+  const facts = buildFacts(metrics, java);
   const factsRef = useRef<HTMLDivElement>(null);
   const challengesRef = useRef<HTMLDivElement>(null);
 

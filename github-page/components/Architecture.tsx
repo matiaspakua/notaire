@@ -1,40 +1,48 @@
 "use client";
 import { useEffect, useRef } from "react";
+import type { Versions } from "@/lib/tech-facts";
 
-const layers = [
+/** Versions come from the repository at build time (#1976); "—" means the file could not be read. */
+const layersFor = (v: Versions) => [
   {
     label: "Frontend",
     color: "var(--ai-cyan)",
-    items: ["Next.js 15", "React 19", "TypeScript", "Tailwind CSS", "Zustand"],
+    ink: "#0e7490",
+    items: [`Next.js ${v.next ?? "—"}`, `React ${v.react ?? "—"}`, `TypeScript ${v.typescript ?? "—"}`, "TanStack Query", "Zustand"],
     icon: "🌐",
   },
   {
-    label: "API Gateway",
+    label: "REST API",
     color: "#ff9500",
-    items: ["Spring Boot 4", "REST Controllers", "JWT Auth", "OpenAPI / Swagger"],
+    ink: "#b45309",
+    items: [`Spring Boot ${v.springBoot ?? "—"}`, `Java ${v.java ?? "—"}`, "JWT (HS256)", "OpenAPI (springdoc)"],
     icon: "⚙️",
   },
   {
-    label: "Services",
+    label: "Application core",
     color: "var(--spring-green)",
-    items: ["Business Logic", "Audit Aspect", "PDF Reports", "Email Service"],
+    ink: "#15803d",
+    items: ["Use cases + ports", "Domain model", "Workflow engine", "PDF reports (PDFBox)"],
     icon: "🧩",
   },
   {
     label: "Persistence",
     color: "var(--ai-purple)",
-    items: ["PostgreSQL 16", "Spring Data JPA", "Flyway Migrations", "HikariCP"],
+    ink: "#7e22ce",
+    items: [`PostgreSQL ${v.postgres ?? "—"}`, "Spring Data JPA", "Flyway migrations", "Append-only audit"],
     icon: "🗄️",
   },
   {
     label: "Observability",
     color: "#ff375f",
-    items: ["Prometheus", "Grafana", "Loki", "SonarQube"],
+    ink: "#be123c",
+    items: ["OpenTelemetry", "Prometheus", "Grafana · Loki · Tempo", "SonarQube"],
     icon: "📡",
   },
 ];
 
-export function Architecture() {
+export function Architecture({ versions }: { versions: Versions }) {
+  const layers = layersFor(versions);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -76,15 +84,15 @@ export function Architecture() {
 
         <div ref={ref} className="flex flex-col gap-4">
           {layers.map((layer, i) => (
-            <div key={i} className="arch-card glass rounded-2xl p-5 border flex items-center gap-6" style={{ borderColor: `${layer.color}25` }}>
+            <div key={i} className="arch-card glass rounded-2xl p-5 border flex items-center gap-6" style={{ borderColor: `color-mix(in srgb, ${layer.color} 15%, transparent)` }}>
               <div className="flex-none w-24 text-center">
                 <div className="text-2xl mb-1">{layer.icon}</div>
-                <div className="text-xs font-bold font-mono tracking-wider" style={{ color: layer.color }}>{layer.label}</div>
+                <div className="text-xs font-bold font-mono tracking-wider" style={{ color: layer.ink }}>{layer.label}</div>
               </div>
-              <div className="h-8 w-px" style={{ background: `${layer.color}30` }} />
+              <div className="h-8 w-px" style={{ background: `color-mix(in srgb, ${layer.color} 19%, transparent)` }} />
               <div className="flex flex-wrap gap-2">
                 {layer.items.map(item => (
-                  <span key={item} className="tech-badge" style={{ background: `${layer.color}10`, color: layer.color, border: `1px solid ${layer.color}20` }}>
+                  <span key={item} className="tech-badge" style={{ background: `color-mix(in srgb, ${layer.color} 6%, transparent)`, color: layer.ink, border: `1px solid color-mix(in srgb, ${layer.color} 13%, transparent)` }}>
                     {item}
                   </span>
                 ))}

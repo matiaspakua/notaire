@@ -18,6 +18,7 @@ security, observability, DevSecOps, and deployment.
 | [`207-monitoring/`](207-monitoring/) | Observability: Prometheus, Grafana, Loki |
 | [`208-devsecops/`](208-devsecops/) | Docker infrastructure and DevSecOps practices |
 | [`209-deployment/`](209-deployment/) | Deployment strategy and guide |
+| [`TECHNOLOGY-STACK.md`](TECHNOLOGY-STACK.md) | Every technology and pattern in use, what it does here, and the assessment of where the architecture stands |
 
 ## Entry point
 

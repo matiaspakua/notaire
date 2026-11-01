@@ -50,11 +50,11 @@ class SiteShellTest(unittest.TestCase):
 
     def test_site_map_has_the_four_top_level_entries(self):
         site = read(PAGE / "lib" / "site.ts")
-        for label, href in (("AI Factory", "/ai-sdlc/"), ("Product", "/"), ("Technical docs", "/docs/"), ("Releases", "/docs/releases/")):
+        for label, href in (("AI Factory", "/ai-sdlc/"), ("Product", "/product/"), ("Technical docs", "/docs/"), ("Releases", "/docs/releases/")):
             self.assertRegex(site, rf'label: "{label}", href: "{re.escape(href)}"')
 
     def test_docs_and_factory_share_one_document_shell(self):
-        for layout in ("docs", "ai-sdlc"):
+        for layout in ("docs", "ai-sdlc", "product"):
             text = read(PAGE / "app" / layout / "layout.tsx")
             self.assertIn("<DocShell", text, f"app/{layout}/layout.tsx")
         shell = read(SITE / "DocShell.tsx")
