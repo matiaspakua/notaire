@@ -42,14 +42,17 @@ class PlaywrightProjectsNonEmptyTest(unittest.TestCase):
     def test_each_named_project_lists_at_least_one_test(self) -> None:
         """Fail when a Playwright project matches zero tests (acceptance criterion #1983)."""
         playwright = E2E_ROOT / "node_modules" / ".bin" / "playwright"
-        # Default reporters (incl. coverage-report) hide the listing; force `list`.
-        cmd = (
-            [str(playwright), "test", "--list", "--reporter=list"]
-            if playwright.is_file()
-            else ["npx", "--no-install", "playwright", "test", "--list", "--reporter=list"]
+        # Require the local install. Falling back to `npx --no-install` resolves a
+        # global Playwright that cannot load this tree's `@playwright/test` and
+        # fails Process Checks in fresh worktrees (seen after #1983).
+        self.assertTrue(
+            playwright.is_file(),
+            "testing/e2e/node_modules/.bin/playwright missing — run: "
+            "cd testing/e2e && npm ci",
         )
+        # Default reporters (incl. coverage-report) hide the listing; force `list`.
         listed = subprocess.run(
-            cmd,
+            [str(playwright), "test", "--list", "--reporter=list"],
             cwd=E2E_ROOT,
             capture_output=True,
             text=True,
