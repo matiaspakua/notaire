@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-const PAGES = ["", "product/", "product/story/", "product/platform/", "product/numbers/", "docs/", "docs/stack/", "docs/hexagonal/", "docs/database/", "docs/api/", "docs/architecture/", "docs/testing/", "docs/releases/", "ai-sdlc/", "ai-sdlc/lifecycle/", "ai-sdlc/guardrails/", "ai-sdlc/agents/", "ai-sdlc/results/", "ai-sdlc/case-study/"];
+const PAGES = ["", "product/", "product/story/", "product/platform/", "product/numbers/", "docs/", "docs/stack/", "docs/hexagonal/", "docs/database/", "docs/api/", "docs/architecture/", "docs/testing/", "docs/releases/", "ai-sdlc/", "ai-sdlc/lifecycle/", "ai-sdlc/guardrails/", "ai-sdlc/agents/", "ai-sdlc/results/", "ai-sdlc/case-study/", "about/"];
 
 for (const p of PAGES) {
   test(`/${p} has one header, no horizontal scroll and no axe violations`, async ({ page }) => {
