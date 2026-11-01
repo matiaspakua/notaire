@@ -5,11 +5,11 @@
 
 ## 1. Gate 1 — Prerequisites
 
-- [x] 1.1 GitHub Issue exists, labeled, and linked to a Use Case (`CU-XX` / `RF-XX` / `RNF-XX`)
+- [x] 1.1 GitHub Issue exists, labeled, and linked to a Use Case (`CU-XX` / `RF-XX` / `RNF-XX`) — #1976, CU76; labels and milestone refused by the token, noted in the PR
 - [x] 1.2 Use Case documentation exists and is accurate — create or update it first if not
 - [x] 1.3 Acceptance Criteria defined as scenarios in the delta spec
 - [x] 1.4 Impact Analysis and affected modules confirmed in `proposal.md`
-- [x] 1.5 Not architectural; no ADR (Mermaid stays per ADR-027; inline SVG like `GateFlow`)
+- [x] 1.5 Not architectural; no ADR (documents existing decisions ADR-007, ADR-020, ADR-023, ADR-030)
 - [x] 1.6 Move the Issue to IN PROGRESS (`status:in-progress`) — label API refused (403); noted in the PR
 
 ## 2. Crear branch
@@ -20,30 +20,26 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [x] 3.1 Enumerate test cases: happy path, edge cases, error paths
-- [x] 3.2 Write the unit tests for every scenario in the delta spec
-- [x] 3.3 Component tests (Vitest, Testing Library) for the header, drawer and search; Playwright smoke in `github-page/e2e/`
-- [x] 3.4 Observed failing: no `SiteHeader`, no `DocShell`, no results page, no Pages CI
+- [x] 3.1 Enumerate test cases: product sidebar, landing outside any section, internals pages, cited paths, no typed-in facts
+- [x] 3.2 `github-page/tests/site.test.ts`: product section, pages, pager, breadcrumbs, metadata, search for flyway/bruno/hexagonal
+- [x] 3.3 `github-page/e2e/site.spec.ts`: new pages in the axe sweep, product sidebar and pager; `workspace/tests/test_pages_tech_docs.py`; `test_pages_site_shell.py` updated
+- [x] 3.4 Observed failing in the test commit (no `/product/` pages, no internals pages, no `tech-facts`)
 - [x] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
 
 ## 4. Implementación
 
-<!-- Change-specific work goes here. Break it into small, verifiable tasks ordered
-     by dependency. Write only the code needed to make the tests of group 3 pass. -->
-
-- [x] 4.1 UX assessment at 375/768/1280 px with axe: `github-page/docs/ux-assessment.md`
-- [x] 4.2 Site map `lib/site.ts` (sections, five acts, search index, breadcrumbs, previous/next)
-- [x] 4.3 Design tokens in `app/globals.css`; fonts; remove the custom cursor
-- [x] 4.4 `components/site/`: `SiteHeader` (drawer, focus trap, search), `SiteFooter`, `DocShell`, `Breadcrumbs`, `Sidebar`, `PrevNext`, `ReadingProgress`
-- [x] 4.5 Replace `Nav`, `FactoryChrome`, `DocsChrome`, `Footer`; per-page metadata
-- [x] 4.6 Mermaid theme from tokens, `role="img"`, mobile scroll; `GuardrailStack` and `Swimlane` SVG diagrams
-- [x] 4.7 AI Factory story: overview problem and act map, `/ai-sdlc/results/`, contrast and overflow fixes
-- [x] 4.8 Tooling: ESLint, Vitest, Playwright, link checker, `pages-ci.yml`, `preflight.sh`
+- [x] 4.1 `lib/site.ts`: `home` and `product` sections, `PRODUCT_GROUPS`, "Architecture internals" docs group
+- [x] 4.2 `DocShell` product variant; drawer hides the page list on the landing
+- [x] 4.3 `/` landing and `/product/` overview, story, platform, numbers
+- [x] 4.4 `lib/tech-facts.ts`: versions, migrations, Flyway settings, OpenAPI, Bruno, hexagon, tests, workflows, services, ADRs, modules — read at build time
+- [x] 4.5 Stale component claims replaced by facts (Architecture, TechEvolution, InfraStack, FunFacts, Hero)
+- [x] 4.6 `/docs/stack/`, `/docs/hexagonal/`, `/docs/database/`, `/docs/api/`; architecture page lists every ADR with its status
+- [x] 4.7 `docs/200-architecture/TECHNOLOGY-STACK.md` assessment
 
 ## 5. Actualizar tests existentes
 
-- [x] 5.1 Affected: `test_pages_ai_sdlc.py` (nav now in `SiteHeader`/`site.ts`), `test_pages_business_docs.py` (chrome now `lib/site.ts`)
-- [x] 5.2 Updated to the new file that owns the behaviour; assertions kept or added (results, SVG diagrams, Mermaid theme)
+- [x] 5.1 Affected: `test_pages_site_shell.py` (Product href and DocShell layouts), `site.test.ts` (`/` is no longer Product)
+- [x] 5.2 Assertions moved to the new behaviour, none weakened
 - [x] 5.3 None removed
 
 ## 6. Ejecutar regresión
@@ -66,16 +62,16 @@
 - [x] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
 - [x] 8.2 n/a — no endpoint change
 - [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
-- [x] 8.4 n/a — nothing superseded
+- [x] 8.4 Stale versions corrected in README, SAD (v3.5) and the deployment guide
 - [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
 - [ ] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate
 
 ## 9. Commits atómicos
 
 - [x] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message ends with `Closes #<issue-number>`
+- [x] 9.2 Commits reference `Refs #1976`; the final commit ends with `Closes #1976`
 - [x] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
