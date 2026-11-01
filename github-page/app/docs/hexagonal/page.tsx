@@ -192,7 +192,8 @@ export default function HexagonalPage() {
         <p>
           The domain has {h.domainContexts} extracted contexts while the use cases span {h.useCaseContexts}; the rest
           still work on legacy entities. The legacy packages are closed — rule R6 and ADR-030 rule 8 allow no new
-          dependents — and are deleted context by context. The remaining legacy JPA package is tracked in #576.
+          dependents — and are deleted context by context. The legacy `jpa` package and
+          `JpaAdministrator` were retired in #576; remaining model debt is entity/DTO coupling (#580).
         </p>
       </Callout>
       <Table head={["Legacy package", "Java files left"]} rows={h.legacy.map((l) => [<Code key={l.pkg}>{l.pkg}</Code>, String(l.files)])} />
