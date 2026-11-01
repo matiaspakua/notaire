@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-const PAGES = ["", "docs/", "docs/architecture/", "docs/releases/", "ai-sdlc/", "ai-sdlc/lifecycle/", "ai-sdlc/guardrails/", "ai-sdlc/agents/", "ai-sdlc/results/", "ai-sdlc/case-study/"];
+const PAGES = ["", "product/", "product/story/", "product/platform/", "product/numbers/", "docs/", "docs/stack/", "docs/hexagonal/", "docs/database/", "docs/api/", "docs/architecture/", "docs/releases/", "ai-sdlc/", "ai-sdlc/lifecycle/", "ai-sdlc/guardrails/", "ai-sdlc/agents/", "ai-sdlc/results/", "ai-sdlc/case-study/"];
 
 for (const p of PAGES) {
   test(`/${p} has one header, no horizontal scroll and no axe violations`, async ({ page }) => {
@@ -60,4 +60,14 @@ test("factory pages show reading progress and previous/next links", async ({ pag
   await expect(pager.getByRole("link", { name: /OpenSpec/ })).toBeVisible();
   await expect(pager.getByRole("link", { name: /Case study/ })).toBeVisible();
   await expect(page.locator("[data-reading-progress]")).toHaveCount(1);
+});
+
+test("product pages share the sidebar and the pager (#1976)", async ({ page, isMobile }) => {
+  await page.goto("product/story/");
+  if (!isMobile) {
+    const sidebar = page.getByRole("navigation", { name: /product pages/i });
+    for (const name of ["Overview", "Story", "Platform", "Numbers"]) await expect(sidebar.getByRole("link", { name })).toBeVisible();
+  }
+  const pager = page.getByRole("navigation", { name: /previous and next/i });
+  await expect(pager.getByRole("link", { name: /Platform/ })).toBeVisible();
 });
