@@ -75,6 +75,21 @@ class TechDocsTest(unittest.TestCase):
         self.assertIn("TECHNOLOGY-STACK.md", index)
 
 
+    def test_file_names_read_from_disk_are_encoded_in_links(self):
+        # CodeQL js/stored-xss: names read from the repo must not reach an href raw (#1976).
+        arch = read(PAGE / "app" / "docs" / "architecture" / "page.tsx")
+        stack = read(PAGE / "app" / "docs" / "stack" / "page.tsx")
+        self.assertNotIn("202-ADR/${a.file}", arch)
+        self.assertIn("encodeURIComponent(a.file)", arch)
+        self.assertNotIn("workflows/${w.file}", stack)
+        self.assertIn("encodeURIComponent(w.file)", stack)
+
+    def test_compose_image_lookup_escapes_every_regex_metacharacter(self):
+        facts = read(PAGE / "lib" / "tech-facts.ts")
+        self.assertNotIn('repo.replace(/[/.]/g', facts)
+        self.assertIn("escapeRegExp(repo)", facts)
+
+
 class ProductSectionTest(unittest.TestCase):
     def test_product_has_four_pages_in_the_document_shell(self):
         self.assertIn("<DocShell", read(PRODUCT_APP / "layout.tsx"))
