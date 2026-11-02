@@ -144,14 +144,14 @@ def first_push_ci(runs: list[dict], merged: set[int]) -> dict:
 def history_gap(runs: list[dict], since: str) -> str | None:
     """Why run-based metrics cannot cover the window, or None when they can.
 
-    leanup-actions.yml deletes every completed run but the latest per workflow each night, and the
+    cleanup-actions.yml deletes every completed run but the latest per workflow each night, and the
     check runs go with them, so older CI outcomes are unrecoverable. A metric computed from the few
     surviving runs would look like a 90-day figure while describing a day or two, so it is withheld.
     """
     earliest = min((r["created_at"][:10] for r in runs), default=None)
     limit = (dt.date.fromisoformat(since) + dt.timedelta(days=7)).isoformat()
     if earliest is None or earliest > limit:
-        return (f"Not derivable: .github/workflows/leanup-actions.yml deletes all but the latest {CI_WORKFLOW} "
+        return (f"Not derivable: .github/workflows/cleanup-actions.yml deletes all but the latest {CI_WORKFLOW} "
                 f"run every night, so only runs since {earliest or 'none'} remain for a window that starts {since}.")
     return None
 
