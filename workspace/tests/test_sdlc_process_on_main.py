@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Guards #1622 (CU76): process self-tests and the OpenSpec inventory also run on main.
+"""Guards #1622 (CU76), retargeted by #2001.
 
-On 2026-10-13 `main` failed two self-tests while every main workflow was green,
-because `sdlc-process.yml` ran only on pull requests.
+Process self-tests still exist for a non-pull-request run (version tag or
+manual dispatch). They no longer run on push to main or on a daily cron.
+Pull-request proof is local preflight.
 """
 
 from __future__ import annotations
@@ -29,10 +30,14 @@ class SdlcProcessOnMainTest(unittest.TestCase):
     def setUp(self):
         self.workflow = load()
 
-    def test_runs_on_push_to_main_daily_and_on_demand(self):
+    def test_runs_on_version_tags_and_on_demand_not_daily(self):
         triggers = self.workflow["on"]
-        self.assertIn("main", triggers["push"]["branches"])
-        self.assertTrue(triggers["schedule"])
+        self.assertNotIn("pull_request", triggers)
+        self.assertNotIn("schedule", triggers)
+        self.assertNotIn("branches", triggers.get("push") or {})
+        tags = triggers["push"]["tags"]
+        self.assertIn("v*", tags)
+        self.assertIn("notaire-v*", tags)
         self.assertIn("workflow_dispatch", triggers)
 
     def test_pull_request_job_stays_pull_request_only(self):

@@ -29,6 +29,7 @@ class DispatchOnTagTest(unittest.TestCase):
         self.assertEqual(len(dispatch), 1)
         self.assertIn("release_created", dispatch[0].get("if", ""))
         self.assertIn("gh workflow run cd.yml", dispatch[0]["run"])
+        self.assertIn("gh workflow run ci.yml", dispatch[0]["run"])
 
     def test_dispatch_names_repository_without_git_checkout(self):
         workflow = load_workflow("release-please.yml")
@@ -54,6 +55,7 @@ class DispatchOnTagTest(unittest.TestCase):
         tags = workflow["on"]["push"]["tags"]
         self.assertIn("v*", tags)
         self.assertIn("notaire-v*", tags)
+        self.assertNotIn("workflow_run", workflow["on"])
 
 
 class FailClosedAttachTest(unittest.TestCase):
