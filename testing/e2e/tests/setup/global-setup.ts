@@ -83,7 +83,20 @@ async function authenticateAdmin(page: Page): Promise<void> {
       { name: "notaire-auth-role", value: (type ?? "ADMIN").toUpperCase(), domain: "localhost", path: "/" },
     ]);
     // Persist client profile only — never the JWT in localStorage (#1051).
-    // Only hydrate when the UX status cookie is present (same as setup/auth.ts).
+    // Write localStorage on the current page AND via initScript for later
+    // navigations. addInitScript alone does not run before storageState() is
+    // saved, so admin-auth.json lacked Zustand state and the mobile project
+    // stayed on AppShellSkeleton (#1994 / CU76).
+    const persistedUser = { name, type, valid: true, idUser };
+    await page.evaluate((user) => {
+      localStorage.setItem(
+        "notaire-auth",
+        JSON.stringify({
+          state: { user, isAuthenticated: true },
+          version: 0,
+        }),
+      );
+    }, persistedUser);
     await page.addInitScript(
       ([user]) => {
         if (!document.cookie.split(";").some((c) => c.trim().startsWith("notaire-auth-status="))) {
@@ -97,7 +110,7 @@ async function authenticateAdmin(page: Page): Promise<void> {
           })
         );
       },
-      [{ name, type, valid: true, idUser }] as const
+      [persistedUser] as const
     );
     seedData.adminAuth = { token, user: { idUser, name, type } };
     // Visible to every worker process spawned after global-setup completes — read by
