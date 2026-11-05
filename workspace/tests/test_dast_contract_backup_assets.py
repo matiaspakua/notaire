@@ -87,7 +87,7 @@ class ZapDastWorkflowTest(unittest.TestCase):
         self.assertNotIn(
             "pull_request",
             triggers,
-            "ZAP baseline must not gate every PR (OpenAPI diff does)",
+            "ZAP baseline must not gate every PR (OpenAPI diff is local preflight)",
         )
         self.assertIn("zaproxy", raw.lower())
         self.assertRegex(raw, r"8080|localhost", "must target the running API")
@@ -134,14 +134,17 @@ class OpenApiContractTest(unittest.TestCase):
         self.assertIn("backend-api/openapi/openapi.yaml", script)
         self.assertIn("v3/api-docs", script)
 
-    def test_openapi_contract_workflow_on_pull_request(self):
+    def test_openapi_contract_workflow_on_version_tags(self):
         raw, workflow = _load_workflow(OPENAPI_WORKFLOW)
         triggers = _triggers(workflow)
-        self.assertIn(
+        self.assertNotIn(
             "pull_request",
             triggers,
-            "OpenAPI contract must run on pull requests",
+            "OpenAPI contract must not run on pull requests",
         )
+        tags = (triggers.get("push") or {}).get("tags") or []
+        self.assertIn("v*", tags)
+        self.assertIn("notaire-v*", tags)
         self.assertRegex(raw, r"(?i)oasdiff|openapi-diff|breaking")
         self.assertIn("backend-api/openapi/openapi.yaml", raw)
         self.assertIn("export-openapi", raw)

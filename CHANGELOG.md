@@ -30,6 +30,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+* **ci:** GitHub product CI and GHCR publish run on version tags (`v*` / `notaire-v*`) and manual dispatch, not on every pull request or push to `main`. The mandatory local gate is `bash workspace/sdlc/preflight.sh --full`. GitHub Pages still deploys on push to `main`. The Owner must update the `protect-main` ruleset (#1040) after merge or no pull request can merge ([#2001](https://github.com/matiaspakua/notaire/issues/2001))
+
 ### Bug Fixes
 
 * **api:** property unexpected create failures return standard `ErrorResponse` via `GlobalExceptionHandler` instead of a misleading 409 from `ErrorResponses` (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))

@@ -1,23 +1,24 @@
 name: CI - Build, Test & Security
 
-# Full test pipeline: runs on every PR into main and every merge to main, plus
-# manual dispatch. Test failures FAIL the pipeline — no failure-ignore flags.
+# Full test pipeline for a version release (tags v* / notaire-v*) and manual
+# dispatch. It does not run on pull_request or on push to a branch. Day-to-day
+# proof is `bash workspace/sdlc/preflight.sh --full`. Test failures FAIL the
+# pipeline — no failure-ignore flags.
 # The only tolerated skip is -Dsurefire.failIfNoSpecifiedTests=false, which
 # allows a module that has no tests matching a filter; it never masks a
 # failing test.
 #
-# Report jobs (generate-reports/publish-reports) run only on push-to-main or
+# Report jobs (generate-reports/publish-reports) run on a version tag or
 # workflow_dispatch. They publish workflow artifacts + $GITHUB_STEP_SUMMARY —
 # never git-commit into docs/wiki/cicd-reports/ (issue #1041).
 #
-# GitHub Pages deployment no longer lives here (see issue #778): the single
-# source of truth is deploy-github-page.yml, which auto-runs after this
-# workflow completes successfully on main.
+# GitHub Pages deployment does not wait for this workflow (issue #778 / #2001):
+# deploy-github-page.yml runs on push to main.
 on:
-  pull_request:
-    branches: [ main ]
   push:
-    branches: [ main ]
+    tags:
+      - 'v*'
+      - 'notaire-v*'
   workflow_dispatch:
 
 permissions:
@@ -575,7 +576,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: [generate-reports]
-    if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: >
+      always() && (
+        github.event_name == 'workflow_dispatch'
+        || startsWith(github.ref, 'refs/tags/v')
+        || startsWith(github.ref, 'refs/tags/notaire-v')
+      )
     permissions:
       contents: read
     continue-on-error: true

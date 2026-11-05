@@ -1,27 +1,18 @@
 #!/usr/bin/env python3
 """
-Guards the GitHub Actions workflow layout for issue #778:
+Guards the GitHub Actions workflow layout (#778, retargeted by #2001):
 
-Goal: (1) CI/quality/test workflows run on every PR and are mandatory on main;
-(2) the GitHub Page is always deployed on every main merge, gated on CI
-success; (3) Playwright E2E tests run on main and produce a report.
+Goal: (1) product CI/quality/test workflows run on a version tag (v* /
+notaire-v*) and on workflow_dispatch, not on pull_request or branch push;
+(2) the GitHub Page deploys on every push to main (and manual dispatch),
+without waiting for CI; (3) Playwright E2E has no weekday cron and still
+records its report as a workflow artifact on a non-PR event.
 
-Invariants enforced here:
-- ci.yml runs on every PR into main and every push to main, and is the single
-  CI gate; it must NOT contain a deploy-pages job nor hold pages/id-token
-  permissions (the page deploy lives only in deploy-github-page.yml).
-- deploy-github-page.yml triggers on workflow_run of the CI workflow on main
-  (completed) and on workflow_dispatch; its deploy job only runs after the CI
-  workflow concludes successfully (or on manual dispatch), and it holds the
-  pages/id-token permissions + github-pages environment.
-- playwright-e2e.yml runs on PR/main push/schedule/manual and its
-  coverage-report job produces the report on non-PR events as a workflow
-  artifact + $GITHUB_STEP_SUMMARY (never git-commits into docs/wiki/ —
-  issue #1041), so the Playwright/Bruno coverage record is retained for main.
+Day-to-day proof is bash workspace/sdlc/preflight.sh --full. There is no
+GitHub re-run of that suite on a pull request.
 
-Plain stdlib unittest, consistent with this project's other one-off CI/config
-validation scripts (see workspace/tests/test_report_job_needs_dependencies.py).
-Run with: python3 workspace/tests/test_ci_workflow_invariants.py
+Plain stdlib unittest. Run with:
+python3 workspace/tests/test_ci_workflow_invariants.py
 """
 import os
 import unittest
@@ -61,8 +52,20 @@ def _aggregator_run_script(workflow_file, job_id):
     return ""
 
 
-# The page deploy workflow must watch this CI workflow (its `name:`).
-CI_WORKFLOW_NAME = "CI - Build, Test & Security"
+RELEASE_TAGS = ("v*", "notaire-v*")
+
+# Heavy product workflows: tags + manual dispatch only (#2001).
+RELEASE_ONLY_WORKFLOWS = (
+    CI_WORKFLOW,
+    FRONTEND_WORKFLOW,
+    PLAYWRIGHT_WORKFLOW,
+    OPENAPI_WORKFLOW,
+    "pr-validation.yml",
+    "pages-ci.yml",
+    "database-vv.yml",
+    "sdlc-process.yml",
+    "test-coverage-report.yml",
+)
 
 
 def load_workflow(workflow_file):
@@ -87,17 +90,29 @@ def branches_for(workflow, event_type):
     return event.get("branches", [])
 
 
+def assert_release_only(test, workflow):
+    on = workflow.get("on", {})
+    test.assertNotIn("pull_request", on)
+    test.assertNotIn("workflow_run", on)
+    test.assertNotIn("schedule", on)
+    test.assertIn("workflow_dispatch", on)
+    push = on.get("push")
+    test.assertIsInstance(push, dict)
+    test.assertNotIn("branches", push)
+    test.assertNotIn("paths", push)
+    tags = push.get("tags") or []
+    for tag in RELEASE_TAGS:
+        test.assertIn(tag, tags)
+
+
 class CiWorkflowInvariantsTest(unittest.TestCase):
-    """ci.yml runs on PR + main and is the single CI gate (no page deploy)."""
+    """ci.yml is the CI gate on a version tag (no page deploy)."""
 
     def setUp(self):
         self.ci = load_workflow(CI_WORKFLOW)
 
-    def test_ci_workflow_runs_on_pull_request_to_main(self):
-        self.assertIn("main", branches_for(self.ci, "pull_request"))
-
-    def test_ci_workflow_runs_on_push_to_main(self):
-        self.assertIn("main", branches_for(self.ci, "push"))
+    def test_ci_workflow_is_release_only(self):
+        assert_release_only(self, self.ci)
 
     def test_ci_workflow_has_no_deploy_pages_job(self):
         self.assertNotIn("deploy-pages", self.ci.get("jobs", {}))
@@ -117,7 +132,7 @@ class CiWorkflowInvariantsTest(unittest.TestCase):
 
 
 class PageDeployWorkflowInvariantsTest(unittest.TestCase):
-    """deploy-github-page.yml auto-deploys on main after CI success."""
+    """deploy-github-page.yml deploys on push to main, not after CI."""
 
     def setUp(self):
         self.page = load_workflow(PAGE_WORKFLOW)
@@ -125,18 +140,16 @@ class PageDeployWorkflowInvariantsTest(unittest.TestCase):
     def test_page_deploy_workflow_has_workflow_dispatch_trigger(self):
         self.assertIn("workflow_dispatch", trigger_types(self.page))
 
-    def test_page_deploy_workflow_watches_ci_workflow_on_main(self):
-        run = self.page.get("on", {}).get("workflow_run", {})
-        self.assertIn(CI_WORKFLOW_NAME, run.get("workflows", []))
-        self.assertIn("main", run.get("branches", []))
-        self.assertIn("completed", run.get("types", []))
+    def test_page_deploy_runs_on_push_to_main_without_ci_workflow_run(self):
+        on = self.page.get("on", {})
+        self.assertNotIn("workflow_run", on)
+        self.assertIn("main", branches_for(self.page, "push"))
 
-    def test_page_deploy_job_gated_on_ci_success(self):
+    def test_page_deploy_job_is_not_gated_on_ci_workflow_run(self):
         deploy = self.page.get("jobs", {}).get("deploy", {})
         self.assertIsNotNone(deploy)
-        job_if = deploy.get("if", "")
-        self.assertIn("workflow_run.conclusion", job_if)
-        self.assertIn("success", job_if)
+        job_if = deploy.get("if") or ""
+        self.assertNotIn("workflow_run", job_if)
 
     def test_page_deploy_workflow_holds_pages_permissions(self):
         permissions = self.page.get("permissions", {})
@@ -149,16 +162,17 @@ class PageDeployWorkflowInvariantsTest(unittest.TestCase):
 
 
 class PlaywrightWorkflowInvariantsTest(unittest.TestCase):
-    """playwright-e2e.yml runs on PR/main and records the report for main."""
+    """playwright-e2e.yml runs on a version tag and records the report."""
 
     def setUp(self):
         self.pw = load_workflow(PLAYWRIGHT_WORKFLOW)
 
-    def test_playwright_runs_on_pull_request_to_main(self):
-        self.assertIn("main", branches_for(self.pw, "pull_request"))
-
-    def test_playwright_runs_on_push_to_main(self):
-        self.assertIn("main", branches_for(self.pw, "push"))
+    def test_playwright_is_release_only_without_weekday_cron(self):
+        assert_release_only(self, self.pw)
+        raw_path = os.path.join(WORKFLOWS_DIR, PLAYWRIGHT_WORKFLOW)
+        with open(raw_path, encoding="utf-8") as handle:
+            raw = handle.read()
+        self.assertNotIn("0 6 * * 1-5", raw)
 
     def test_playwright_has_coverage_report_job_skipping_pr(self):
         job = self.pw.get("jobs", {}).get("coverage-report")
@@ -211,15 +225,53 @@ class PathScopedCiInvariantsTest(unittest.TestCase):
                 job_if = jobs[job_id].get("if", "")
                 self.assertIn("changes.outputs.product", job_if)
 
-    def test_workflows_do_not_use_on_paths_that_starve_main(self):
-        """Job-level if is OK; workflow-level on.paths would drop required checks on main."""
+    def test_workflows_do_not_use_on_paths_that_suppress_tags(self):
+        """Tag pushes ignore paths filters; a paths key would skip the release run."""
         for name in PATH_FILTER_WORKFLOWS:
             with self.subTest(workflow=name):
                 on = load_workflow(name).get("on", {})
-                for event in ("pull_request", "push"):
-                    cfg = on.get(event)
-                    if isinstance(cfg, dict):
-                        self.assertNotIn("paths", cfg)
+                self.assertNotIn("pull_request", on)
+                push = on.get("push")
+                if isinstance(push, dict):
+                    self.assertNotIn("paths", push)
+
+
+class ReleaseOnlyWorkflowTriggersTest(unittest.TestCase):
+    """#2001 — product CI is tag + workflow_dispatch, CodeQL keeps Monday."""
+
+    def test_heavy_workflows_are_release_only(self):
+        for name in RELEASE_ONLY_WORKFLOWS:
+            with self.subTest(workflow=name):
+                assert_release_only(self, load_workflow(name))
+
+    def test_codeql_keeps_monday_and_drops_pull_request(self):
+        codeql = load_workflow("codeql.yml")
+        on = codeql.get("on", {})
+        self.assertNotIn("pull_request", on)
+        self.assertIn("workflow_dispatch", on)
+        push = on.get("push") or {}
+        self.assertNotIn("branches", push)
+        for tag in RELEASE_TAGS:
+            self.assertIn(tag, push.get("tags") or [])
+        crons = [item.get("cron") for item in (on.get("schedule") or [])]
+        self.assertIn("30 6 * * 1", crons)
+
+    def test_release_please_still_runs_on_main(self):
+        release = load_workflow("release-please.yml")
+        self.assertIn("main", branches_for(release, "push"))
+        self.assertIn("workflow_dispatch", trigger_types(release))
+
+    def test_operational_schedules_remain(self):
+        for name, cron in (
+            ("cleanup-actions.yml", None),
+            ("dast-zap.yml", None),
+            ("performance-test.yml", None),
+            ("backup-restore-smoke.yml", None),
+        ):
+            with self.subTest(workflow=name):
+                on = load_workflow(name).get("on", {})
+                self.assertIn("schedule", on)
+                self.assertNotIn("pull_request", on)
 
 
 

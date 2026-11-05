@@ -6,49 +6,26 @@ TBD - created by archiving change fix-1042-cd-tested-sha. Update Purpose after a
 
 ## Requirements
 
-### Requirement: CD builds the CI-tested SHA on workflow_run
-
-When CD is triggered by a successful CI `workflow_run` on `main`, the
-`build-and-publish` job MUST check out and build
-`github.event.workflow_run.head_sha` — not the moving tip of `main` at CD
-start time — so the signed GHCR image matches the commit CI tested.
-
-#### Scenario: Checkout pins workflow_run head SHA
-
-- **WHEN** `.github/workflows/cd.yml` job `build-and-publish` runs the
-  `actions/checkout` step on a `workflow_run` trigger
-- **THEN** that step sets `with.ref` to an expression that resolves to
-  `${{ github.event.workflow_run.head_sha }}` for `workflow_run` (tag /
-  `workflow_dispatch` MAY fall back to `${{ github.sha }}`)
-
-#### Scenario: Image is tagged with the publish SHA
-
-- **WHEN** CD publishes the backend image after a `workflow_run` CI success
-- **THEN** the published tags include the same publish SHA used for checkout
-  (explicit raw/SHA tag derived from `workflow_run.head_sha`, not metadata
-  defaults that read tip-of-default-branch `github.sha` under `workflow_run`)
-
 ### Requirement: latest moves only after the SHA tag succeeds
 
-Mutable `latest` MUST NOT be the sole or first tag push for a CD publish of a
-CI-tested commit. The SHA-tagged image push MUST succeed before `latest` is
-moved to that digest.
+Mutable `latest` MUST NOT be the sole or first tag push for a CD publish. The SHA-tagged image push MUST succeed before `latest` is moved to that digest. `latest` SHALL move when the ref is a `v*` or `notaire-v*` tag (including a `workflow_dispatch` whose ref is that tag) or when the ref is the default branch. It SHALL NOT move merely because CI finished on `main`.
 
 #### Scenario: latest is gated after SHA-tagged push
 
-- **WHEN** CD publishes from a successful CI `workflow_run` on the default branch
-- **THEN** the workflow pushes (or builds+pushes) the SHA-tagged image first,
-  and only a later step tags/pushes `latest` to the same digest (or equivalently
-  depends on the SHA push succeeding before `latest` is applied)
+- **WHEN** CD publishes from a version tag
+- **THEN** the workflow pushes the SHA-tagged image first, and only a later step tags `latest` to the same digest
+- **AND** that later step's condition includes `refs/tags/v` and does not depend on `workflow_run`
 
-### Requirement: CD skips publish when CI did not succeed
+### Requirement: CD publishes on version tags and manual dispatch only
 
-CD MUST NOT publish when the triggering CI `workflow_run` concluded with any
-result other than `success`.
+`cd.yml` SHALL trigger on `push` tags `v*` and `notaire-v*` and on `workflow_dispatch`. It SHALL NOT trigger on `workflow_run` or on push to a branch. Checkout and the publish SHA SHALL use `github.sha` and SHALL NOT read `github.event.workflow_run.head_sha`.
 
-#### Scenario: Non-success CI skips build-and-publish
+#### Scenario: No workflow_run trigger
 
-- **WHEN** CD is triggered by `workflow_run` and
-  `github.event.workflow_run.conclusion` is not `success`
-- **THEN** job `build-and-publish` is skipped via its `if` condition
-  (`github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'`)
+- **WHEN** `.github/workflows/cd.yml` triggers are read
+- **THEN** `workflow_run` is absent, `push.tags` includes `v*` and `notaire-v*`, and `workflow_dispatch` is present
+
+#### Scenario: Publish SHA is the tag commit
+
+- **WHEN** the `build-and-publish` checkout and publish-SHA step are read
+- **THEN** they do not reference `workflow_run`, and the publish SHA is `github.sha`

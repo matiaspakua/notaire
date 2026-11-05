@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 #
-# check-heavy-ci.sh — refuse merge on light-only green PRs.
+# check-heavy-ci.sh — heavy-suite status for a pull request.
 #
-# Exit 0 only when Integration, Coverage Gate, Bruno, and Playwright are all
-# success for the PR head. Docker is optional. Used by fleet agents before
-# `gh pr merge`. See docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md.
-#
-# When a required check is missing from `gh pr checks`, also inspect
-# `gh run list` for the parent heavy workflows so queued/pending runs are
-# reported as pending (not bare missing) — still fails the gate.
+# Product CI does not run on pull_request (#2001). The merge gate is
+# `bash workspace/sdlc/preflight.sh --full` locally. This script still fails
+# when a heavy workflow was started on the PR head and is pending or red.
+# Missing checks with no workflow run are success: GitHub will not report them.
+# The Owner must drop retired required checks from protect-main (#1040) or
+# GitHub still refuses the merge. See CI-MERGE-GATE.md.
 #
 # USAGE  bash workspace/sdlc/check-heavy-ci.sh <pr-number>
 set -euo pipefail
@@ -39,10 +38,6 @@ workflow_for() {
 
 # Tab-separated: name, state, ...
 checks="$(gh pr checks "$PR" 2>/dev/null || true)"
-if [[ -z "$checks" ]]; then
-  echo "✗ no checks returned for PR #$PR (queued or inaccessible)" >&2
-  exit 1
-fi
 
 pr_meta="$(gh pr view "$PR" --json headRefName,headRefOid -q '.headRefName + "\t" + .headRefOid')"
 branch="${pr_meta%%$'\t'*}"
@@ -85,12 +80,20 @@ for name in "${REQUIRED[@]}"; do
       case "$wst" in
         queued|pending|in_progress|waiting|requested)
           echo "  ✗ $name (pending — workflow ${wf}: ${wst})" >&2
+          fail=1
+          ;;
+        failure|cancelled|timed_out|startup_failure|stale)
+          echo "  ✗ $name (workflow ${wf}: ${wst})" >&2
+          fail=1
+          ;;
+        "")
+          echo "  ✓ $name (not run on pull requests — local preflight --full is the gate)"
           ;;
         *)
-          echo "  ✗ $name (missing)" >&2
+          echo "  ✗ $name (workflow ${wf}: ${wst})" >&2
+          fail=1
           ;;
       esac
-      fail=1
       ;;
     *)
       echo "  ✗ $name ($st)" >&2
@@ -100,10 +103,17 @@ for name in "${REQUIRED[@]}"; do
 done
 
 if [[ "$fail" -ne 0 ]]; then
-  echo "✗ not merge-ready — wait for Integration + Coverage + Bruno + Playwright" >&2
-  echo "  (light checks / subscription success alone are insufficient; see CI-MERGE-GATE.md)" >&2
+  echo "✗ not merge-ready — a heavy workflow on this head is pending or failed" >&2
+  echo "  Local gate: bash workspace/sdlc/preflight.sh --full (see CI-MERGE-GATE.md)" >&2
   exit 1
 fi
 
-echo "✓ heavy CI green — safe to consider merge (still verify head SHA)"
+if [[ -z "$checks" && -z "$runs" ]]; then
+  echo "✓ no GitHub heavy CI on PR #$PR (suites run on version tags, not on pull requests)"
+  echo "  Local gate: bash workspace/sdlc/preflight.sh --full"
+  echo "  If protect-main still requires CI, Frontend CI, Playwright E2E, Code Lint, or PR Validation, the Owner must update the ruleset (#1040)."
+  exit 0
+fi
+
+echo "✓ heavy-suite gate clear — local preflight --full remains the pull-request proof"
 exit 0
