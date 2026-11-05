@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/ci-2001-release-only-actions/` | drafted |
 | Branch | `cursor/ci-2001-release-only-d385` | pushed |
 | Tasks | `tasks.md` | groups 1–8 complete |
-| Commits | `fce889d7` tests; implementation commit follows | in progress |
+| Commits | `fce889d7` tests, `7b4c3c64` implementation | done |
 | Pull Request | recorded after open | pending |
 | CI run | local workflow unit tests; GitHub does not re-run the suite on the PR | passing |
 | Merge commit | Owner only | pending |
