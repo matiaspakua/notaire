@@ -35,7 +35,8 @@ const layersFor = (v: Versions) => [
   {
     label: "Observability",
     color: "#ff375f",
-    ink: "#be123c",
+    // Darker than rose-700 so axe WCAG AA passes on glass + pink badge tint (#2014).
+    ink: "#9f1239",
     items: ["OpenTelemetry", "Prometheus", "Grafana · Loki · Tempo", "SonarQube"],
     icon: "📡",
   },
@@ -49,12 +50,17 @@ export function Architecture({ versions }: { versions: Versions }) {
     const cards = ref.current?.querySelectorAll(".arch-card");
     if (!cards) return;
 
+    // Transform-only entrance: never opacity:0 — axe samples the last staggered
+    // card while it is still transparent and fails color-contrast (#2014).
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
         cards.forEach((card, i) => {
           setTimeout(() => {
-            (card as HTMLElement).style.transition = "opacity 0.5s, transform 0.5s cubic-bezier(0.16,1,0.3,1)";
-            (card as HTMLElement).style.opacity = "1";
+            (card as HTMLElement).style.transition = "transform 0.5s cubic-bezier(0.16,1,0.3,1)";
             (card as HTMLElement).style.transform = "translateY(0) scale(1)";
           }, i * 100);
         });
@@ -63,7 +69,6 @@ export function Architecture({ versions }: { versions: Versions }) {
     }, { threshold: 0.1 });
 
     cards.forEach(card => {
-      (card as HTMLElement).style.opacity = "0";
       (card as HTMLElement).style.transform = "translateY(30px) scale(0.95)";
     });
 

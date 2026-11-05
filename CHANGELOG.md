@@ -37,6 +37,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **infra:** Docker Compose passes `TZ` into postgres/backend/frontend; `start.sh` derives the host IANA zone when unset so CU23 audit day filters match the browser calendar ([#2013](https://github.com/matiaspakua/notaire/issues/2013))
+* **a11y:** Architecture cards on `/product/platform/` animate with transform only (no `opacity:0`), and Observability ink is darkened, so pages axe WCAG AA color-contrast passes ([#2014](https://github.com/matiaspakua/notaire/issues/2014))
 * **api:** document-type unexpected create/update failures return standard `ErrorResponse` via `GlobalExceptionHandler` instead of a misleading 409 from `ErrorResponses` (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **api:** property unexpected create failures return standard `ErrorResponse` via `GlobalExceptionHandler` instead of a misleading 409 from `ErrorResponses` (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **test:** Playwright `admin-auth.json` now persists Zustand `notaire-auth` so the mobile project leaves `AppShellSkeleton`; TS-0109 waits for the shell and stubs list APIs with or without query strings ([#1994](https://github.com/matiaspakua/notaire/issues/1994))
