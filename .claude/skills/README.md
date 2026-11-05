@@ -9,7 +9,7 @@ This directory combines project-specific skills with generic lifecycle skills. T
 | Business analysis and backlog | `analyst`, `product-owner`, `delivery-maturity-roadmap`, `project-management` | `docs/100-business/`, `docs/300-development/305-project-management/`, roadmap and Issue | 1 |
 | Traceability | `devsecops-traceability` | `docs/openspec/changes/*/traceability.md`, `docs/100-business/104-traceability/` | 1-5 |
 | Architecture and decisions | `architecture-decision-design`, `plantuml`, `hexagonal-arch` | `docs/200-architecture/`, `docs/200-architecture/202-ADR/`, diagrams | 1 |
-| Threats and security requirements | `secure-threat-modeling`, `backend`, `programming`, `devops` | security docs, `SR-*`, SAST/SCA/DAST evidence | 1-4 |
+| Threats and security requirements | `secure-threat-modeling`, `notaire-cybersec`, `backend`, `programming`, `devops` | security docs, `SR-*`, SAST/SCA/DAST evidence, local `security/run_gates.py` | 1-4 |
 | QA strategy and tests | `qa-automation-strategy`, `testing`, `maven-build`, `api-rest` | MTP, JUnit, Vitest, Bruno, Playwright | 2-3 |
 | API contracts | `api-contract-testing`, `api-rest` | OpenAPI/Swagger, Bruno and UI traceability | 2-3 |
 | CI/CD quality gates | `ci-cd-quality-gates`, `devops` | `workspace/sdlc/preflight.sh`, `workspace/sdlc/run_pipeline.sh`, CI workflows | 3-4 |

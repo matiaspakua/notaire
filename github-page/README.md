@@ -82,8 +82,10 @@ npm run test:smoke                    # Playwright + axe at 375 and 1280 px, ser
 python3 -m pytest ../workspace/tests/test_pages_*.py -q
 ```
 
-Pull requests run all of the above in [`pages-ci.yml`](../.github/workflows/pages-ci.yml);
-`bash workspace/sdlc/preflight.sh` mirrors it (`--full` adds Playwright).
+`bash workspace/sdlc/preflight.sh` runs the checks above before a pull request
+(`--full` adds Playwright). [`pages-ci.yml`](../.github/workflows/pages-ci.yml)
+runs them on a version tag, not on the pull request. The site itself deploys
+on push to `main`.
 
 `prebuild` regenerates `lib/releases.json` from the product release manifest
 (`workspace/release/product_release.py`).

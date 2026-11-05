@@ -34,11 +34,19 @@ if ! git rev-parse --verify --quiet "$RATCHET_REF" >/dev/null; then
     exit 2
 fi
 
-mapfile -t FILES < <(git diff --name-only "${RATCHET_REF}...HEAD" -- 'backend-api/**/*.java' 'backend-api/*.java'; \
-                     git diff --name-only -- 'backend-api/**/*.java' 'backend-api/*.java'; \
-                     git diff --name-only --cached -- 'backend-api/**/*.java' 'backend-api/*.java')
-# de-dup, keep only files that still exist
-mapfile -t FILES < <(printf '%s\n' "${FILES[@]}" | sort -u | while read -r f; do [ -n "$f" ] && [ -f "$f" ] && echo "$f"; done)
+# Portable under macOS /bin/bash 3.2 (no `mapfile`). Collect changed Java paths,
+# de-dup, keep only files that still exist.
+FILES=()
+while IFS= read -r f; do
+    [ -n "$f" ] && [ -f "$f" ] || continue
+    FILES+=("$f")
+done < <(
+    {
+        git diff --name-only "${RATCHET_REF}...HEAD" -- 'backend-api/**/*.java' 'backend-api/*.java'
+        git diff --name-only -- 'backend-api/**/*.java' 'backend-api/*.java'
+        git diff --name-only --cached -- 'backend-api/**/*.java' 'backend-api/*.java'
+    } | sort -u
+)
 
 if [ "${#FILES[@]}" -eq 0 ]; then
     echo "spotless-fallback: no changed Java files under backend-api/ — nothing to do."

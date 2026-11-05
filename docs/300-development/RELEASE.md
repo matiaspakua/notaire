@@ -68,12 +68,12 @@ Actions to create and approve pull requests** is enabled; turning it off makes
 every `Release Please` run fail with "GitHub Actions is not permitted to create
 or approve pull requests".
 
-A PR opened or updated with `GITHUB_TOKEN` does not trigger other workflows, so
-the release PR starts without the checks protect-main requires (#1040). Before
-merging it, the Owner closes and reopens the release PR (or pushes a commit to
-its branch) so `CI`, `Frontend CI`, `Playwright E2E`, `Code Lint` and
-`PR Validation` run. Switching the action's `token` to a fine-grained token or
-GitHub App would remove this manual step.
+A PR opened or updated with `GITHUB_TOKEN` does not trigger other workflows.
+Product CI no longer runs on pull requests (#2001). The release PR is ready
+when `bash workspace/sdlc/preflight.sh --full` has passed on its branch. The
+Owner must drop retired required checks from `protect-main` (#1040) or the
+release PR cannot merge. Switching the action's `token` to a fine-grained token
+or GitHub App is not required for those checks.
 
 `release-please-config.json` sets `bootstrap-sha` to the commit that introduced
 release-please (`8ab8a6e`, #1043), so older merge commits are not parsed into
@@ -100,8 +100,9 @@ the chosen tag in the PR that cuts it.
 ## Operator steps (ongoing)
 
 1. Land features/fixes on `main` via PRs with Conventional Commits
-   (`feat:`, `fix:`, `feat!:`, …). **protect-main** (#1040) requires PR checks;
-   release-please does **not** need a durable Actions bypass. Squash titles
+   (`feat:`, `fix:`, `feat!:`, …). The gate is local
+   `bash workspace/sdlc/preflight.sh --full`. **protect-main** (#1040) must not
+   require checks the pull request does not report. Squash titles
    may start with an optional `[#n]` for Notaire gates, but release-please
    only treats the commit as user-facing when the type (`feat`/`fix`/…) is
    the first token — a leading `[#n]` before `feat:`/`fix:` is ignored and
@@ -109,14 +110,15 @@ the chosen tag in the PR that cuts it.
    or land a follow-up `fix:`/`feat:` commit without a leading `[#n]`.
 2. Wait for `Release Please` workflow on `main` to open/update the release PR.
 3. Review the release PR (CHANGELOG + version bumps in `pom.xml` /
-   `frontend/package.json`). Merge it through the normal required checks.
+   `frontend/package.json`). Merge it after local `--full` preflight. A merge
+   to `main` does not publish images.
 4. release-please creates `vX.Y.Z` + GitHub Release on the following run.
-5. The same job dispatches `cd.yml` on that tag (`GH_REPO` + repository token).
-   A `GITHUB_TOKEN` tag push does **not** start `push: tags` workflows; that is
-   why `v0.2.0` shipped empty and why `v0.2.1` stayed empty until `GH_REPO` was
-   set (#1599). CD then publishes backend **and** frontend images (SHA + semver
-   tags; `latest` only on the default-branch publish path, SHA-before-latest
-   per #1042) and attaches the five assets.
+5. The same job dispatches `cd.yml` and the heavy release workflows on that tag
+   (`GH_REPO` + repository token). A `GITHUB_TOKEN` tag push does **not** start
+   `push: tags` workflows; that is why `v0.2.0` shipped empty and why `v0.2.1`
+   stayed empty until `GH_REPO` was set (#1599). CD then publishes backend
+   **and** frontend images (SHA + semver tags; `:latest` moves on the version
+   tag after the SHA tag, per #1042 / #2001) and attaches the five assets.
 6. Smoke: GHCR packages, cosign verify/attest, CHANGELOG section, Maven/npm =
    `X.Y.Z`, GitHub Release lists exactly five assets.
 
@@ -132,8 +134,9 @@ the chosen tag in the PR that cuts it.
 
 ## protect-main interaction (#1040)
 
-- Release PRs are normal PRs: required checks `CI`, `Frontend CI`,
-  `Playwright E2E`, `Code Lint`, `PR Validation`.
+- Release PRs are normal PRs. They are gated by `preflight.sh --full`, not by
+  GitHub checks named `CI`, `Frontend CI`, `Playwright E2E`, `Code Lint`, or
+  `PR Validation` (#2001). The Owner updates `protect-main` (#1040).
 - Tag + Release creation uses `contents: write` on the release-please workflow
   only (least privilege). No durable ruleset bypass for Actions bots.
 

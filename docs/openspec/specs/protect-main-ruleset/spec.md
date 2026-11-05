@@ -20,22 +20,18 @@ to `main` MUST be rejected for non-bypass actors.
 
 ### Requirement: Ruleset requires the five named status checks
 
-Merges into `main` MUST require these exact GitHub check-run names to pass:
-`CI`, `Frontend CI`, `Playwright E2E`, `Code Lint`, and `PR Validation`.
+The desired `protect-main` ruleset SHALL NOT require status checks that product workflows no longer report on a pull request. The contexts `CI`, `Frontend CI`, `Playwright E2E`, `Code Lint`, and `PR Validation` SHALL be absent from `security/rulesets/protect-main.desired.json`. Those job names SHALL remain in the workflow files so a version-tag run can still publish them. Applying the desired ruleset to GitHub is an Owner action after merge (#1040); this change SHALL NOT call the ruleset API.
 
 #### Scenario: Ruleset lists the five exact check names
 
-- **WHEN** the live ruleset `protect-main` required status checks are listed
-- **THEN** the required check contexts include exactly the names `CI`,
-  `Frontend CI`, `Playwright E2E`, `Code Lint`, and `PR Validation` (each
-  present; no substitution by unrelated job titles)
+- **WHEN** `security/rulesets/protect-main.desired.json` required status checks are listed
+- **THEN** the contexts `CI`, `Frontend CI`, `Playwright E2E`, `Code Lint`, and `PR Validation` are absent (pull requests no longer produce them)
+- **AND** the file still requires a pull request and still blocks deletion and non-fast-forward pushes
 
 #### Scenario: Aggregator jobs publish those check names
 
-- **WHEN** the workflow files on `main` are inspected
-- **THEN** jobs exist with `name:` values `CI`, `Frontend CI`,
-  `Playwright E2E`, and `PR Validation` that `needs` their suite's blocking
-  jobs, and `Code Lint` continues to exist as the PR Validation lint job name
+- **WHEN** the workflow files are inspected
+- **THEN** jobs exist with `name:` values `CI`, `Frontend CI`, `Playwright E2E`, and `PR Validation` that `needs` their suite's blocking jobs, and `Code Lint` continues to exist as the PR Validation lint job name
 
 ### Requirement: Force-push and deletion remain blocked
 

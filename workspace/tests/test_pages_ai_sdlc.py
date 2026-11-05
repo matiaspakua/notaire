@@ -30,6 +30,7 @@ SUBPAGES = (
     "lifecycle",
     "guardrails",
     "quality-gates",
+    "security-gates",
     "openspec",
     "agents",
     "governance",

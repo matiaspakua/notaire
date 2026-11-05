@@ -21,7 +21,8 @@ export function DocShell({ children }: { children: ReactNode }) {
   const section = sectionOf(pathname);
   const factory = section === "factory";
   const product = section === "product";
-  const title = factory ? "The AI Factory" : product ? "Product" : "Technical docs";
+  const security = section === "security";
+  const title = factory ? "The AI Factory" : product ? "Product" : security ? "Security" : "Technical docs";
   const act = factory ? actOf(pathname) : undefined;
 
   return (
@@ -36,7 +37,7 @@ export function DocShell({ children }: { children: ReactNode }) {
               groups={groupsFor(section)}
               pathname={pathname}
               footer={
-                !factory && !product && (
+                !factory && !product && !security && (
                   <div className="mb-6">
                     <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Live reports</p>
                     <ul className="space-y-0.5 border-l border-slate-200">

@@ -8,6 +8,8 @@ their own register: [THREAT-MODEL-AUTH-AUDIT.md](THREAT-MODEL-AUTH-AUDIT.md)
 (`SR-01`..`SR-10`). This file continues at `SR-11`.
 
 Diagram: [diagrams/trust-boundaries.puml](diagrams/trust-boundaries.puml).
+Id register: [threat-model/system.stride.yml](threat-model/system.stride.yml).
+Assessment dated 2026-11-05: [ASSESSMENT-2026-11-05.md](ASSESSMENT-2026-11-05.md).
 
 Owners: the Security Officer for acceptance, the Development Team for the
 control. Likelihood and impact are ordinal (low, medium, high). They are not
@@ -40,7 +42,7 @@ already in the tree. No exploitation procedure is specified here.
 | AT-3 | Injection | Tampering | JPA parameters | Mitigated — [SQL-INJECTION-PREVENTION.md](SQL-INJECTION-PREVENTION.md) |
 | AT-4 | XSS | Tampering / disclosure | Production CSP nonce, no `unsafe-eval` (#1051) | Partial — encoding still required on every render |
 | AT-5 | Cookie and session theft | Spoofing | HttpOnly, SameSite, Secure in production; logout revocation | Partial (SR-12) |
-| AT-6 | Denial of service | Availability | Login lockout only | Open (SR-05, SR-15, #280) |
+| AT-6 | Denial of service | Availability | Login lockout only | Open (SR-05, SR-15, #2010) |
 | AT-7 | Dependency or image compromise | Tampering | Dependabot, Trivy, image pins, cosign | Partial (SR-13) |
 | AT-8 | Secret in git | Disclosure | This change's scanner; GitHub secret scanning is an admin setting | Partial (SR-14) |
 | AT-9 | Role conflation | Elevation | `Escribano` receives `ROLE_NOTARY`, not `ROLE_ADMIN` | Mitigated (SR-16, #1638) |
@@ -49,11 +51,11 @@ already in the tree. No exploitation procedure is specified here.
 
 | ID | Asset | Boundary | Threat | Impact | Likelihood | Mitigation | Verification | Residual |
 |----|-------|----------|--------|--------|------------|------------|--------------|----------|
-| SR-11 | Person, Deed | API | Authenticated user reads or changes another client's record by changing an id (IDOR) | High | Medium | Single tenant per notary (ADR-029): no two notaries share a database or signing secret, so cross-notary access cannot happen. Inside a tenant the office shares its files; access is role-based | Isolation checklist (ADR-029 W3); module RBAC enforcement pending (W1, W2) | Cross-tenant: Mitigated by architecture. Intra-tenant: Accepted by design |
+| SR-11 | Person, Deed | API | Authenticated user reads or changes another client's record by changing an id (IDOR) | High | Medium | Single tenant per notary (ADR-029): no two notaries share a database or signing secret, so cross-notary access cannot happen. Inside a tenant the office shares its files. `RoleModuleAuthorizationFilter` enforces the caller's module grant (#1683) | Isolation checklist (ADR-029 W3); `RoleModuleGrantIntegrationTest` | Cross-tenant: Mitigated by architecture. Intra-tenant: Accepted by design. Function grants: Mitigated (#1683) |
 | SR-12 | Session | Browser → BFF | Stolen JWT from script-readable storage, or a long-lived Bearer token | High | Low | HttpOnly cookie for the browser (#1051). API clients still receive a token in the login JSON | `frontend` security-header tests; auth guide | Partial |
-| SR-13 | Build | CI → registry | Vulnerable dependency or base image is published | High | Medium | Trivy report, Dependabot, pinned images, cosign SBOM | `security/tests/test_image_pins_and_dependabot.py` | Partial — Trivy does not fail CI |
+| SR-13 | Build | CI → registry | Vulnerable dependency or base image is published | High | Medium | Trivy filesystem scan fails the release job on fixed CRITICAL/HIGH. The image scan fails that job on CRITICAL. Dependabot, pinned images, cosign SBOM | `ci.yml` `exit-code: '1'`; `security/tests/test_image_pins_and_dependabot.py` | Partial — the blocking scans run on a version tag or manual dispatch, not on a pull request (#2001) |
 | SR-14 | Repository | Developer → git | Private key or token committed | High | Low | `python3 security/scan_secrets.py` fails the security job | `security/tests/test_security_policy.py` | Partial — push protection is outside git |
-| SR-15 | API availability | Internet → API | Expensive endpoints are called without a quota | Medium | Medium | No general limiter. Login lockout is SR-05 | Issue #280 | Open |
+| SR-15 | API availability | Internet → API | Expensive endpoints are called without a quota | Medium | Medium | No general limiter. Login lockout is SR-05 | Issue #2010 (#280 is closed and was a guide, not this control) | Open |
 | SR-16 | Admin capability | API | A user whose type is Escribano was granted `ROLE_ADMIN`, including user, role, and audit-log administration | High | Medium | `UserAuthorityResolver` maps Escribano to `ROLE_NOTARY`; Flyway V49 promotes the seeded `admin`; other former administrators stored as Escribano must be promoted by `admin` | `UserAuthorityResolverTest`, `RbacIntegrationTest` (notary 403), `80_roles.sql` | Mitigated (#1638) |
 
 `SR-06` in the auth model is **Partial**, not open: `hasRole(ADMIN)` is
@@ -68,8 +70,8 @@ object-level question that `SR-06` used to describe too broadly; ADR-029 closes 
 | LD-1 | Identifiability | DNI, email, name | Access requires a JWT. Field-level minimization is not implemented | Schema and API responses still return identifiers to any authenticated caller | Open |
 | LD-2 | Linkability | Same person across management, deed, and budget | Identifiers are stable keys. That is required for the notarial record | SAD data model | Accepted for the notarial purpose |
 | LD-3 | Disclosure | Request logs | `RequestLoggingFilter` logs method, path, status, and duration. It does not log query, headers, or body (#1463) | `RequestLoggingFilterTest` | Partial — the path can still contain a record id |
-| LD-4 | Unawareness | Data subjects | No in-product privacy notice | Issue #309 | Open |
-| LD-5 | Non-compliance | Retention and statute mapping | Notarial retention is indefinite by SAD §2.3. A statute map is not an engineering claim | Issue #309 | Open |
+| LD-4 | Unawareness | Data subjects | No in-product privacy notice | Issue #2007 (#309 is closed and did not add a notice) | Open |
+| LD-5 | Non-compliance | Retention and statute mapping | Notarial retention is indefinite by SAD §2.3. A statute map is not an engineering claim | Issue #2007. Counsel owns the statute. This row is not legal advice | Open |
 | LD-6 | Detectability of abuse | Login failures | `notaire_operation_total` and Grafana | [MONITORING.md](MONITORING.md) | Partial — read access is not a metric |
 
 Non-repudiation of writes stays `SR-07` (mitigated); `SR-08` (`Person` reads) is

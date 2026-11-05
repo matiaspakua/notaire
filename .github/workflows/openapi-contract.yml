@@ -1,8 +1,8 @@
 name: OpenAPI Contract
 
-# Issue #1067 / CU76. On every PR: regenerate OpenAPI from the backend and
-# fail if the committed artifact is stale or introduces breaking changes vs
-# the base branch's committed spec.
+# Issue #1067 / CU76. On a version tag or manual dispatch: regenerate OpenAPI
+# from the backend and fail if the committed artifact is stale or introduces
+# breaking changes vs main. Pull requests are checked by preflight.sh (#2001).
 #
 # Bootstrap: when the base ref does not yet contain
 # backend-api/openapi/openapi.yaml (first introduction), skip the breaking
@@ -13,8 +13,10 @@ name: OpenAPI Contract
 # backend-api/openapi/accepted-breaking-changes.d/<issue>-<slug>.txt (#1315,
 # see the README there).
 on:
-  pull_request:
-    branches: [ main ]
+  push:
+    tags:
+      - 'v*'
+      - 'notaire-v*'
   workflow_dispatch:
 
 permissions:

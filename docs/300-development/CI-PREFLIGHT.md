@@ -1,8 +1,14 @@
-# CI Preflight — make CI failures impossible to push
+# CI Preflight — the pull-request gate
 
 ## The problem this solves
 
-CI spreads its gates across these workflows:
+GitHub Actions does not re-run product CI on a pull request or on push to `main`
+(#2001). Those workflows run on a version tag (`v*` / `notaire-v*`) or on
+`workflow_dispatch`. This script is the gate. A run **without `--full` is not
+sufficient to open a pull request**. There is no GitHub safety net for the
+suites `--full` adds.
+
+The release workflows are:
 
 | Workflow | Gates |
 |---|---|
@@ -24,7 +30,7 @@ mvn verify -pl backend-api   # ✅ green locally
 git push                     # ❌ "Code Lint" fails in CI
 ```
 
-That happened on PR #721 and is the exact gap `workspace/sdlc/preflight.sh` closes.
+That happened on PR #721. `workspace/sdlc/preflight.sh --full` is now the only run of those gates before a pull request.
 
 ## Usage
 
@@ -35,17 +41,17 @@ bash workspace/sdlc/install-git-hooks.sh
 ```
 
 That sets `core.hooksPath=.githooks`, so the hooks are version-controlled, apply
-to every worktree, and update on `git pull`. From then on `git push` runs the
-gates automatically and refuses to push a branch CI would reject.
+to every worktree, and update on `git pull`. From then on `git push` runs
+`preflight.sh --full` and refuses a push that would open an unproven pull request.
 
 Run it by hand any time:
 
 ```bash
-bash workspace/sdlc/preflight.sh            # every blocking gate except server-backed suites
+bash workspace/sdlc/preflight.sh            # NOT sufficient to open a pull request
 bash workspace/sdlc/preflight.sh --fix      # auto-fix what is fixable, then verify
-bash workspace/sdlc/preflight.sh --fast     # format/lint/compile/typecheck only
-bash workspace/sdlc/preflight.sh --full     # adds Playwright E2E + Bruno API tests + Docker build/smoke test
-bash workspace/sdlc/preflight.sh --list     # local check -> CI job mapping
+bash workspace/sdlc/preflight.sh --fast     # format/lint/compile/typecheck only; NOT sufficient to open a PR
+bash workspace/sdlc/preflight.sh --full     # mandatory before push/PR
+bash workspace/sdlc/preflight.sh --list     # local check -> release-workflow mapping
 ```
 
 `--full` needs the stack running (`bash workspace/stack/start.sh`): backend on `:8080`,
@@ -68,10 +74,15 @@ CodeQL (`codeql.yml`) is listed by `--list` and skipped locally. It needs the
 GitHub-hosted CodeQL bundle and `security-events: write` to upload results, so
 a laptop run would not match CI.
 
-## Path-scoped CI on pull requests (#1257 / #1197 P0.2)
+## Path filters on a release run (#1257, #2001)
 
-On **pull_request** events, `ci.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, and
-`openapi-contract.yml` classify changed paths with a `Path filter` (`changes`) job:
+Product workflows no longer run on `pull_request`. Their `Path filter` job still
+exists. On a tag or `workflow_dispatch` (any event other than `pull_request`)
+every filter output is forced true, so the release run is the full suite. Do
+**not** add workflow-level `on.paths`: GitHub does not apply paths to tag pushes.
+
+Historical pull-request behavior, kept so a future `pull_request` trigger would
+still classify paths:
 
 | Filter output | Typical paths | Effect when false (and `ci` false) |
 |---------------|---------------|-------------------------------------|
@@ -82,16 +93,12 @@ On **pull_request** events, `ci.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, a
 | `docs` | `docs/**`, `CONSTITUTION.md`, `AGENTS.md`, `.claude/**`, `github-page/**` | Alone → all heavy leaves skip |
 | `ci` | `.github/workflows/**`, `workspace/sdlc/**`, `workspace/tests/**`, … | Forces full relevant suites |
 
-**`push` to `main`, `workflow_dispatch`, and `schedule` always run the full suite**
-(filter outputs forced true).
+Suite aggregator names (`CI`, `Frontend CI`, `Playwright E2E`, …) stay so a tag
+run can still publish them. They are not required on pull requests. The Owner
+drops them from `protect-main` (#1040).
 
-Required check **names** (`CI`, `Frontend CI`, `Playwright E2E`, …) stay green because
-suite aggregators treat intentional `skipped` as success. Do **not** add workflow-level
-`on.paths` that omit an entire required workflow on `main`.
-
-Local `preflight.sh` still mirrors the full gate set for developers who run it; path
-scoping is a CI wall-clock optimization, not a license to skip local verification before
-pushing product changes.
+Local `preflight.sh --full` is the pull-request gate. Path filters are not a
+license to skip it.
 
 Guards: `python3 workspace/tests/test_ci_workflow_invariants.py`.
 
@@ -204,19 +211,17 @@ The `sdlc-process.yml` checks run locally against `origin/main..HEAD`. The
 `sdlc-exception` label check needs the PR's labels, so preflight reads them
 with `gh pr view` and skips that one check while the branch has no PR yet.
 
-## Merge gate (after CI runs on the PR)
+## Merge gate
 
-`preflight.sh` predicts push-time failures. It does **not** replace waiting for
-remote heavy CI before squash-merge. Light-only green (~12 quick checks) is
-insufficient — see
-[`304-ai-sdlc-cloud/CI-MERGE-GATE.md`](304-ai-sdlc-cloud/CI-MERGE-GATE.md):
+`bash workspace/sdlc/preflight.sh --full` is the proof. GitHub does not re-run
+it on the pull request. `check-heavy-ci.sh` exits 0 when those workflows were
+not started on the head, and fails if one was started and is pending or red.
+See [`304-ai-sdlc-cloud/CI-MERGE-GATE.md`](304-ai-sdlc-cloud/CI-MERGE-GATE.md).
 
 ```bash
+bash workspace/sdlc/preflight.sh --full
 bash workspace/sdlc/check-heavy-ci.sh <pr-number>
 ```
 
-Required terminal success (or path-scoped `skip`/`skipped`): Integration Tests,
-Coverage Gate (`mvn verify`), API Tests (Bruno), UI E2E Tests (Playwright).
-Docs-only PRs skip those leaves via #1257. If product jobs fail with
-Budget/person / `undefined, undefined` on a tip behind `main`, rebase onto
-`main` first (#1132).
+If product jobs on a tag fail with Budget/person / `undefined, undefined` on a
+tip behind `main`, merge `origin/main` into the branch first (#1132). Do not rebase.

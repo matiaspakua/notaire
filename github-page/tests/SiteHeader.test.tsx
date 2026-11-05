@@ -21,7 +21,7 @@ describe("SiteHeader mobile menu (#1970)", () => {
     await userEvent.click(screen.getByRole("button", { name: /open menu/i }));
     const drawer = screen.getByRole("dialog", { name: /site menu/i });
     expect(drawer).toHaveAttribute("aria-modal", "true");
-    for (const label of ["AI Factory", "Product", "Technical docs", "Releases"]) {
+    for (const label of ["AI Factory", "Product", "Security", "Technical docs", "Releases"]) {
       expect(within(drawer).getAllByRole("link", { name: new RegExp(label, "i") }).length).toBeGreaterThan(0);
     }
     expect(within(drawer).getByRole("link", { name: /^Lessons/ })).toHaveAttribute("aria-current", "page");

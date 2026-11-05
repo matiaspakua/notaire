@@ -1,5 +1,6 @@
 import { Architecture } from "@/components/Architecture";
 import { InfraStack } from "@/components/InfraStack";
+import { TrustShortcut } from "@/components/product/TrustShortcut";
 import { pageMetadata } from "@/lib/site";
 import { services, versions } from "@/lib/tech-facts";
 
@@ -10,6 +11,7 @@ export default function ProductPlatformPage() {
   return (
     <>
       <Architecture versions={versions()} />
+      <TrustShortcut />
       <InfraStack serviceCount={s.app.length + s.observability.length} />
     </>
   );

@@ -1,0 +1,123 @@
+{
+  "assessed": "2026-11-05",
+  "disclaimer": "Public cadence for the portfolio. This is not a live scan and it contains no findings.",
+  "entries": [
+    {
+      "id": "secrets",
+      "tool": "scan_secrets.py",
+      "family": "secrets",
+      "where": "Local preflight and the release security job",
+      "trigger": "release",
+      "workflow": "ci.yml",
+      "local": "python3 security/run_gates.py --profile local"
+    },
+    {
+      "id": "semgrep",
+      "tool": "Semgrep",
+      "family": "sast",
+      "where": "Local preflight and the release security job",
+      "trigger": "release",
+      "workflow": "ci.yml",
+      "local": "python3 security/run_gates.py --profile local"
+    },
+    {
+      "id": "trivy-fs",
+      "tool": "Trivy filesystem",
+      "family": "sca",
+      "where": "Local preflight and the release security job. Fixed critical and high fail the job.",
+      "trigger": "release",
+      "workflow": "ci.yml",
+      "local": "python3 security/run_gates.py --profile local"
+    },
+    {
+      "id": "trivy-image",
+      "tool": "Trivy image",
+      "family": "sca",
+      "where": "Release docker-build job. Critical findings fail the job.",
+      "trigger": "release",
+      "workflow": "ci.yml",
+      "local": null
+    },
+    {
+      "id": "codeql",
+      "tool": "CodeQL",
+      "family": "sast",
+      "where": "Version tag, Monday 06:30 UTC, and manual dispatch. Findings upload to the Security tab.",
+      "trigger": "release-schedule",
+      "workflow": "codeql.yml",
+      "local": null
+    },
+    {
+      "id": "zap",
+      "tool": "OWASP ZAP baseline",
+      "family": "dast",
+      "where": "Monday 05:00 UTC and manual dispatch. Not on the version tag.",
+      "trigger": "schedule",
+      "workflow": "dast-zap.yml",
+      "local": null
+    },
+    {
+      "id": "dast-baseline",
+      "tool": "dast_baseline.py",
+      "family": "dast",
+      "where": "Local pipeline after the stack is up. Health and an anonymous 401.",
+      "trigger": "local",
+      "workflow": null,
+      "local": "python3 security/run_gates.py --profile local --only dast"
+    },
+    {
+      "id": "cosign",
+      "tool": "cosign and CycloneDX",
+      "family": "supply-chain",
+      "where": "Version tag or manual dispatch. A merge to main does not publish images.",
+      "trigger": "release",
+      "workflow": "cd.yml",
+      "local": null
+    },
+    {
+      "id": "pages",
+      "tool": "GitHub Pages",
+      "family": "publish",
+      "where": "Every push to main, and manual dispatch. Portfolio only.",
+      "trigger": "main",
+      "workflow": "deploy-github-page.yml",
+      "local": null
+    },
+    {
+      "id": "release-please",
+      "tool": "Release Please",
+      "family": "release",
+      "where": "Push to main. It opens the release pull request and dispatches the tag workflows.",
+      "trigger": "main",
+      "workflow": "release-please.yml",
+      "local": null
+    },
+    {
+      "id": "k6",
+      "tool": "k6",
+      "family": "performance",
+      "where": "Monday 04:00 UTC and manual dispatch.",
+      "trigger": "schedule",
+      "workflow": "performance-test.yml",
+      "local": null
+    },
+    {
+      "id": "backup",
+      "tool": "Backup restore smoke",
+      "family": "resilience",
+      "where": "Sunday 03:00 UTC and manual dispatch.",
+      "trigger": "schedule",
+      "workflow": "backup-restore-smoke.yml",
+      "local": null
+    },
+    {
+      "id": "dependabot",
+      "tool": "Dependabot",
+      "family": "sca",
+      "where": "GitHub Dependabot alerts and update pull requests. Not a workflow in this repository.",
+      "trigger": "platform",
+      "workflow": null,
+      "local": null
+    }
+  ]
+}

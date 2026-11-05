@@ -156,7 +156,7 @@ export default function StackPage() {
       ))}
 
       <SectionTitle id="workflows">CI/CD workflows</SectionTitle>
-      <p>What starts each workflow, read from its <Code>on:</Code> block. Step through the columns from pull request to schedule.</p>
+      <p>What starts each workflow, read from its <Code>on:</Code> block. Product workflows sit on the tag and on manual dispatch, not on the pull request.</p>
       <PipelineMap workflows={workflowTriggers()} repoHref={REPO} />
       <ul className="my-4 grid gap-2 sm:grid-cols-2">
         {wf.map((w) => (

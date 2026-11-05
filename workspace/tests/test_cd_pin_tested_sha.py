@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-Guards issue #1042 (CU76): CD must publish the CI-tested SHA, not tip of main.
+Guards issue #1042 (CU76), retargeted by #2001.
 
-Under workflow_run, github.sha is the tip of the default branch at CD schedule
-time — not workflow_run.head_sha. This suite asserts:
+CD publishes the tag commit (github.sha), not a workflow_run head. A merge to
+main must not publish images. This suite asserts:
 
-1. build-and-publish checkout pins workflow_run.head_sha (fallback github.sha)
-2. An explicit publish SHA step wires tags to that SHA (not tip type=sha alone)
+1. cd.yml has no workflow_run trigger
+2. checkout and the publish SHA use github.sha and do not read workflow_run
 3. Immutable SHA-tagged image is pushed before latest is moved to that digest
-4. build-and-publish skips when workflow_run.conclusion != success
+4. latest moves on a v* / notaire-v* tag, not because CI finished on main
 
 Run with: python3 workspace/tests/test_cd_pin_tested_sha.py
 """
@@ -22,12 +22,6 @@ import yaml
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CD_WORKFLOW = os.path.join(REPO_ROOT, ".github", "workflows", "cd.yml")
-
-SUCCESS_IF = (
-    "github.event_name != 'workflow_run' || "
-    "github.event.workflow_run.conclusion == 'success'"
-)
-
 
 def load_workflow(path: str) -> dict:
     with open(path, encoding="utf-8") as f:
@@ -81,7 +75,7 @@ def step_index(steps: list, predicate) -> int:
 
 
 class CdPinTestedShaTest(unittest.TestCase):
-    """cd.yml build-and-publish pins CI-tested SHA and orders latest after SHA."""
+    """cd.yml publishes the tag SHA and orders latest after that SHA."""
 
     def setUp(self):
         self.assertTrue(os.path.isfile(CD_WORKFLOW), CD_WORKFLOW)
@@ -91,38 +85,24 @@ class CdPinTestedShaTest(unittest.TestCase):
         self.assertTrue(self.job, "missing build-and-publish job")
         self.assertTrue(self.steps, "build-and-publish has no steps")
 
-    def test_skips_publish_when_ci_not_success(self):
+    def test_publishes_on_tags_without_workflow_run(self):
+        on = self.cd.get("on", {})
+        self.assertNotIn("workflow_run", on)
+        self.assertNotIn("pull_request", on)
+        tags = (on.get("push") or {}).get("tags") or []
+        self.assertIn("v*", tags)
+        self.assertIn("notaire-v*", tags)
+        self.assertIn("workflow_dispatch", on)
         condition = " ".join(str(self.job.get("if", "")).split())
-        self.assertIn(
-            "github.event.workflow_run.conclusion == 'success'",
-            condition,
-            "build-and-publish must gate on workflow_run conclusion == success",
-        )
-        self.assertIn(
-            "github.event_name != 'workflow_run'",
-            condition,
-            "build-and-publish must still allow tag/dispatch without workflow_run",
-        )
-        # Normalize spaces for exact contract match from #1042 AC / design.md
-        self.assertEqual(condition, SUCCESS_IF)
+        self.assertNotIn("workflow_run", condition)
 
-    def test_checkout_pins_workflow_run_head_sha(self):
+    def test_checkout_uses_github_sha_not_workflow_run(self):
         checkouts = checkout_steps(self.steps)
         self.assertTrue(checkouts, "build-and-publish must checkout the repo")
-        checkout = checkouts[0]
-        ref = str((checkout.get("with") or {}).get("ref", ""))
-        self.assertIn(
-            "workflow_run.head_sha",
-            ref,
-            "checkout with.ref must resolve workflow_run.head_sha on workflow_run",
-        )
-        self.assertIn(
-            "github.sha",
-            ref,
-            "checkout with.ref must fall back to github.sha for tag/dispatch",
-        )
+        blob = str(checkouts[0])
+        self.assertNotIn("workflow_run", blob)
 
-    def test_resolve_publish_sha_step_uses_head_sha_on_workflow_run(self):
+    def test_resolve_publish_sha_step_uses_github_sha(self):
         idx = step_index(
             self.steps,
             lambda s: "publish" in step_name(s).lower()
@@ -135,8 +115,7 @@ class CdPinTestedShaTest(unittest.TestCase):
         )
         step = self.steps[idx]
         run = str(step.get("run", ""))
-        self.assertIn("workflow_run", run)
-        self.assertIn("head_sha", run)
+        self.assertNotIn("workflow_run", run)
         self.assertIn("github.sha", run)
         step_id = step.get("id")
         self.assertTrue(step_id, "publish SHA step must set an id for outputs")
@@ -216,6 +195,10 @@ class CdPinTestedShaTest(unittest.TestCase):
             0,
             "after SHA push, a later step must tag/push latest to the same digest",
         )
+        latest_step = later[latest_idx]
+        latest_if = " ".join(str(latest_step.get("if", "")).split())
+        self.assertIn("refs/tags/v", latest_if)
+        self.assertNotIn("workflow_run", latest_if)
 
         # If a second metadata-action exists for latest, it must come after first build.
         if len(meta := metadata_steps(self.steps)) >= 2:

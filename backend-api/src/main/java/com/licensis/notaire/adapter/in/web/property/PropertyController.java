@@ -3,7 +3,6 @@ package com.licensis.notaire.adapter.in.web.property;
 import com.licensis.notaire.application.port.in.property.ManagePropertiesUseCase;
 import com.licensis.notaire.application.port.in.property.QueryPropertiesUseCase;
 import com.licensis.notaire.domain.property.Property;
-import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.domain.property.PropertyDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -114,11 +113,8 @@ public class PropertyController {
     @PostMapping
     @Operation(summary = "Create property")
     public ResponseEntity<Object> create(@Valid @RequestBody PropertyRequest request) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(manage.create(toDetails(request))));
-        } catch (Exception e) {
-            return ErrorResponses.createFailed(e);
-        }
+        // Unexpected failures propagate to GlobalExceptionHandler (#579 property slice).
+        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(manage.create(toDetails(request))));
     }
 
     @ApiResponses({

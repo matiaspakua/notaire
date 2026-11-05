@@ -4,7 +4,7 @@
 The story, the Technical docs and the AI Factory share one header (with an accessible
 mobile drawer and search), one footer and one set of design tokens; the site map in
 ``github-page/lib/site.ts`` drives navigation; and the Pages app is built, linted,
-tested and link-checked on every pull request that touches it.
+tested and link-checked by preflight.sh before a pull request, and by pages-ci.yml on a version tag (#2001).
 
 Run with: python3 workspace/tests/test_pages_site_shell.py
 """
@@ -48,13 +48,19 @@ class SiteShellTest(unittest.TestCase):
         for needle in ('"Escape"', '"Tab"', "shiftKey"):
             self.assertIn(needle, trap)
 
-    def test_site_map_has_the_four_top_level_entries(self):
+    def test_site_map_has_the_primary_entries(self):
         site = read(PAGE / "lib" / "site.ts")
-        for label, href in (("AI Factory", "/ai-sdlc/"), ("Product", "/product/"), ("Technical docs", "/docs/"), ("Releases", "/docs/releases/")):
+        for label, href in (
+            ("AI Factory", "/ai-sdlc/"),
+            ("Product", "/product/"),
+            ("Security", "/security/"),
+            ("Technical docs", "/docs/"),
+            ("Releases", "/docs/releases/"),
+        ):
             self.assertRegex(site, rf'label: "{label}", href: "{re.escape(href)}"')
 
     def test_docs_and_factory_share_one_document_shell(self):
-        for layout in ("docs", "ai-sdlc", "product"):
+        for layout in ("docs", "ai-sdlc", "product", "security"):
             text = read(PAGE / "app" / layout / "layout.tsx")
             self.assertIn("<DocShell", text, f"app/{layout}/layout.tsx")
         shell = read(SITE / "DocShell.tsx")
@@ -82,10 +88,12 @@ class PagesCiTest(unittest.TestCase):
         for name in ("typecheck", "lint", "test", "test:smoke", "check:links", "build"):
             self.assertIn(name, scripts)
 
-    def test_pull_requests_touching_pages_run_the_checks(self):
+    def test_release_tags_run_the_checks_not_pull_requests(self):
         self.assertTrue(WORKFLOW.is_file(), "missing .github/workflows/pages-ci.yml")
         text = read(WORKFLOW)
-        self.assertIn("pull_request", text)
+        self.assertNotIn("pull_request:", text)
+        self.assertIn("v*", text)
+        self.assertIn("notaire-v*", text)
         self.assertIn("github-page/**", text)
         for step in ("npm run typecheck", "npm run lint", "npm test", "npm run build", "npm run check:links", "npm run test:smoke"):
             self.assertIn(step, text)

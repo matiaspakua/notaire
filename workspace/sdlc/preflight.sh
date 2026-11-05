@@ -1,29 +1,31 @@
 #!/usr/bin/env bash
 #
-# preflight.sh — run the same gates CI runs, locally, before pushing.
+# preflight.sh — the local gate for every pull request (#2001).
 #
 # WHY
 # ---
-# CI spreads its gates across ci.yml, pr-validation.yml, frontend-ci.yml,
-# playwright-e2e.yml, sdlc-process.yml, pages-ci.yml and codeql.yml. Some of those gates are NOT reachable
-# through the commands developers normally run: `mvn verify` does not invoke
-# Spotless (it is deliberately unbound in backend-api/pom.xml, see #705), so a
-# branch can be fully green locally and still fail "Code Lint" in CI. This script
-# is the single local entry point that covers every blocking gate, so a push that
-# passes here passes CI.
+# GitHub Actions does not re-run product CI on a pull request or on push to
+# main. The heavy workflows run on a version tag (v* / notaire-v*) or on
+# workflow_dispatch. This script is the gate that used to be those jobs.
+# `mvn verify` does not invoke Spotless (unbound in backend-api/pom.xml, #705),
+# so a branch can look green under Maven and still fail format here.
+#
+# A run WITHOUT --full is NOT sufficient to open a pull request. There is no
+# GitHub safety net on the pull request for the suites --full adds.
 #
 # KEEPING IT HONEST
 # -----------------
-# Each check below records the CI job it mirrors. If you add or change a gate in
-# .github/workflows/, update the matching check here in the same PR — otherwise
-# the local/CI gap reopens. `--list` prints the mapping.
+# Each check below records the release-workflow job it mirrors. If you add or
+# change a gate in .github/workflows/, update the matching check here in the
+# same PR. `--list` prints the mapping. CodeQL is the exception: it stays on
+# GitHub (weekly Monday plus version tags) and is not replicated locally.
 #
 # USAGE
-#   bash workspace/sdlc/preflight.sh            # everything except server-backed suites
+#   bash workspace/sdlc/preflight.sh            # not sufficient to open a pull request
 #   bash workspace/sdlc/preflight.sh --fix      # auto-fix what is fixable, then verify
-#   bash workspace/sdlc/preflight.sh --fast     # format/lint/compile/typecheck only
-#   bash workspace/sdlc/preflight.sh --full     # adds Playwright E2E + Bruno API tests + Docker build/smoke test
-#   bash workspace/sdlc/preflight.sh --list     # show local-check -> CI-job mapping
+#   bash workspace/sdlc/preflight.sh --fast     # format/lint/compile/typecheck only; not sufficient to open a pull request
+#   bash workspace/sdlc/preflight.sh --full     # mandatory before push/PR: Playwright, Bruno, Docker, database V&V
+#   bash workspace/sdlc/preflight.sh --list     # show local-check -> release-workflow mapping
 #
 # Exit code is non-zero if any blocking check fails.
 set -uo pipefail
@@ -186,7 +188,7 @@ run "tdd evidence" bash workspace/sdlc/check-tdd-evidence.sh origin/main
 if gh pr view >/dev/null 2>&1; then
     run "sdlc exception label" bash workspace/sdlc/check-sdlc-exception.sh origin/main
 else
-    skip "sdlc exception label" "no PR yet — CI WILL run this"
+    skip "sdlc exception label" "no PR yet — re-run after the PR exists; GitHub will not run this on the pull request"
 fi
 run "agent rule files" bash workspace/sdlc/check-agent-rules.sh
 # AI SDLC framework (#1958): architecture/lint baselines only shrink against main, and the
@@ -224,7 +226,7 @@ fi
 # them). The export-freshness half needs a springdoc export and runs in CI only.
 OPENAPI_SPEC="backend-api/openapi/openapi.yaml"
 if ! command -v oasdiff >/dev/null 2>&1; then
-    skip "openapi breaking diff" "oasdiff not installed — CI WILL run this"
+    skip "openapi breaking diff" "oasdiff not installed — install it; GitHub will not run this on the pull request"
 elif ! git cat-file -e "origin/main:$OPENAPI_SPEC" 2>/dev/null; then
     skip "openapi breaking diff" "no $OPENAPI_SPEC on origin/main yet"
 else
@@ -234,9 +236,10 @@ else
     [ "$MODE_FIX" = "1" ] && OPENAPI_PRUNE=(--prune)
     git show "origin/main:$OPENAPI_SPEC" > "$OPENAPI_BASE"
     # Mirrors: "Accepted breaking changes: assemble and check" (openapi-contract.yml).
+    # ${arr[@]+…}: empty OPENAPI_PRUNE under `set -u` otherwise aborts the script.
     run "openapi accepted breaking changes (accepted-breaking-changes.d)" \
         python3 workspace/sdlc/check-accepted-breaking-changes.py "$OPENAPI_BASE" "$OPENAPI_SPEC" \
-        --base-ref origin/main --write-ignore "$OPENAPI_IGNORE" "${OPENAPI_PRUNE[@]}"
+        --base-ref origin/main --write-ignore "$OPENAPI_IGNORE" ${OPENAPI_PRUNE[@]+"${OPENAPI_PRUNE[@]}"}
     run "openapi breaking diff" oasdiff breaking "$OPENAPI_BASE" "$OPENAPI_SPEC" \
         --fail-on ERR --err-ignore "$OPENAPI_IGNORE"
     rm -f "$OPENAPI_BASE" "$OPENAPI_IGNORE"
@@ -276,9 +279,9 @@ if [ "$MODE_FAST" = "0" ]; then
     if command -v trivy >/dev/null 2>&1; then
         run_warn "trivy filesystem scan" trivy fs . --severity CRITICAL,HIGH --exit-code 1 --ignore-unfixed --quiet
     else
-        skip "trivy filesystem scan" "trivy not installed — CI WILL run this"
+        skip "trivy filesystem scan" "trivy not installed — install it; GitHub will not run this on the pull request"
     fi
-    skip "codeql analysis" "GitHub-hosted CodeQL (codeql.yml) — CI WILL run this"
+    skip "codeql analysis" "GitHub-hosted CodeQL runs weekly and on version tags, not on pull requests"
 else
     skip "dependency analysis / spotbugs / trivy fs / codeql" "--fast"
 fi
@@ -299,7 +302,7 @@ if [ "$MODE_FAST" = "0" ]; then
     if docker info >/dev/null 2>&1; then
         run "backend pg-integration tests" mvn test -pl backend-api -am -Ppg-integration "${MVN_FLAGS[@]}"
     else
-        skip "backend pg-integration tests" "docker not running — CI WILL run these"
+        skip "backend pg-integration tests" "docker not running — start Docker; GitHub will not run this on the pull request"
     fi
 else
     skip "backend tests" "--fast"
@@ -358,7 +361,7 @@ if [ "$MODE_FAST" = "0" ]; then
     if [ "$MODE_FULL" = "1" ]; then
         run "pages playwright + axe" bash -c "cd github-page && ./node_modules/.bin/playwright test"
     else
-        skip "pages playwright + axe" "not --full; CI WILL run this (pages-ci.yml)"
+        skip "pages playwright + axe" "not --full; this run is not sufficient to open a pull request"
     fi
 else
     skip "pages vitest / build / links" "--fast"
@@ -402,7 +405,7 @@ if [ "$MODE_FULL" = "1" ]; then
     if docker info >/dev/null 2>&1; then
         run "database v&v suite" bash testing/scripts/run.sh database
     else
-        skip "database v&v suite" "docker not running — CI WILL run this (database-vv.yml)"
+        fail "database v&v suite: docker not running — start Docker; GitHub will not run this on the pull request"
     fi
 
     if docker info >/dev/null 2>&1; then
@@ -410,10 +413,10 @@ if [ "$MODE_FULL" = "1" ]; then
         run "docker compose smoke test" bash -c \
             'docker compose up -d && sleep 10 && docker compose ps && docker compose down'
     else
-        skip "docker build/smoke test" "docker not running — CI WILL run this (docker-build job)"
+        fail "docker build/smoke test: docker not running — start Docker; GitHub will not run this on the pull request"
     fi
 else
-    skip "playwright e2e / bruno api / docker build" "not --full; CI WILL run these"
+    skip "playwright e2e / bruno api / docker build" "not --full; this run is not sufficient to open a pull request"
 fi
 
 # ---------------------------------------------------------------------------
@@ -425,13 +428,14 @@ printf '%spassed:%s  %d\n' "$GREEN" "$NC" "${#PASSED[@]}"
 if [ "${#FAILED[@]}" -gt 0 ]; then
     printf '%sfailed:%s  %d\n' "$RED" "$NC" "${#FAILED[@]}"
     printf '  ✗ %s\n' "${FAILED[@]}"
-    printf '\n%sPREFLIGHT FAILED — these would fail in CI.%s\n' "$RED" "$NC"
+    printf '\n%sPREFLIGHT FAILED — these fail the local pull-request gate.%s\n' "$RED" "$NC"
     printf 'Try: bash workspace/sdlc/preflight.sh --fix\n'
     exit 1
 fi
 
 printf '\n%sPREFLIGHT PASSED%s\n' "$GREEN" "$NC"
 if [ "$MODE_FAST" = "1" ] || [ "$MODE_FULL" = "0" ]; then
-    printf '%sNote:%s some CI gates were skipped above — see the skipped list.\n' "$YELLOW" "$NC"
+    printf '%sNote:%s this run is not sufficient to open a pull request. GitHub will not re-run the skipped suites.\n' "$YELLOW" "$NC"
+    printf 'Run: bash workspace/sdlc/preflight.sh --full\n'
 fi
 exit 0

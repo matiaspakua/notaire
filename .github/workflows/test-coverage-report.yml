@@ -2,12 +2,13 @@ name: Test Coverage Report
 
 # Aggregates backend (JaCoCo), frontend (Vitest) and E2E coverage into a
 # single artifact. Report-only: test enforcement happens in ci.yml,
-# frontend-ci.yml and playwright-e2e.yml.
+# frontend-ci.yml and playwright-e2e.yml, on a version tag or manual dispatch.
+# No daily cron and no push-to-main run (#2001).
 on:
   push:
-    branches: [ main ]
-  schedule:
-    - cron: '0 2 * * *'
+    tags:
+      - 'v*'
+      - 'notaire-v*'
   workflow_dispatch:
 
 permissions:

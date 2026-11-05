@@ -4,8 +4,8 @@
 #
 # Updates repository ruleset id 24128115 to enforce:
 #   - pull_request (PR-only merges; no required approving reviews)
-#   - required_status_checks: CI, Frontend CI, Playwright E2E, Code Lint,
-#     PR Validation (strict)
+#   - no required status checks (product CI no longer runs on pull_request;
+#     #2001). The Owner applies this after merge (#1040).
 #   - deletion + non_fast_forward (kept)
 #   - bypass_actors empty (after #1041 — no durable Actions bypass)
 #

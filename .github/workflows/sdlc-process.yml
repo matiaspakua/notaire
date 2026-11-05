@@ -1,21 +1,16 @@
 name: SDLC Process
 
-# Mechanical checks of the CONSTITUTION process on every PR (local-ai/AUDIT.md
-# E2, E3, S1, P2, P5). Separate from pr-validation.yml so that adding or removing
-# the `sdlc-exception` label re-runs only these checks. Mirrored locally by
-# workspace/sdlc/preflight.sh — keep the two in sync (preflight.sh --list).
-# `main-health` re-runs the repo-wide checks on main and daily: a PR merged over a
-# red check, or a merge that leaves an OpenSpec change active, shows up as a red
-# main run instead of silently breaking every other PR (#1622).
+# Mechanical checks of the CONSTITUTION process (local-ai/AUDIT.md E2, E3, S1,
+# P2, P5). Mirrored locally by workspace/sdlc/preflight.sh — keep the two in
+# sync (preflight.sh --list). Pull requests are not re-checked here (#2001).
+# `main-health` runs on a version tag and on manual dispatch (not on a daily
+# cron): a release that leaves an OpenSpec change active still fails (#1622).
 
 on:
-  pull_request:
-    branches: [ main ]
-    types: [ opened, synchronize, reopened, labeled, unlabeled ]
   push:
-    branches: [ main ]
-  schedule:
-    - cron: '30 5 * * *'
+    tags:
+      - 'v*'
+      - 'notaire-v*'
   workflow_dispatch:
 
 permissions:
