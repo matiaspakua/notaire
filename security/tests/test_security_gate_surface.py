@@ -64,7 +64,9 @@ class GatePresenceTest(unittest.TestCase):
 
     def test_codeql_and_zap_workflows_are_enabled(self):
         codeql = load_workflow(CODEQL)
-        self.assertIn("pull_request", codeql["on"])
+        self.assertNotIn("pull_request", codeql["on"])
+        self.assertIn("workflow_dispatch", codeql["on"])
+        self.assertIn("v*", codeql["on"]["push"]["tags"])
         self.assertIn("schedule", codeql["on"])
         codeql_text = CODEQL.read_text(encoding="utf-8")
         self.assertIn("github/codeql-action/analyze", codeql_text)

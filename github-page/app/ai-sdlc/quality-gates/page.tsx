@@ -6,10 +6,10 @@ import { pageMetadata } from "@/lib/site";
 export const metadata = pageMetadata("/ai-sdlc/quality-gates/");
 
 const tierLabel: Record<string, string> = {
-  light: "bg-sky-100 text-sky-800",
-  heavy: "bg-violet-100 text-violet-800",
-  after: "bg-emerald-100 text-emerald-800",
-  scheduled: "bg-slate-200 text-slate-700",
+  release: "bg-violet-100 text-violet-800",
+  main: "bg-emerald-100 text-emerald-800",
+  schedule: "bg-slate-200 text-slate-700",
+  event: "bg-sky-100 text-sky-800",
 };
 
 export default function QualityGatesPage() {
@@ -21,13 +21,13 @@ export default function QualityGatesPage() {
         title="Gates are commands, not opinions"
         lead={
           <>
-            Each gate is a script or a workflow that exits non-zero. The same checks run on the agent&apos;s machine before a
-            push and again in GitHub Actions, and the repository refuses a merge that skipped them. When a CI gate is added
-            or changed, <Code>preflight.sh</Code> changes in the same PR, so local and CI never drift.
+            Each gate is a script that exits non-zero. The pull-request proof is <Code>preflight.sh --full</Code> on the
+            agent machine. GitHub runs the product workflows on a version tag or when someone dispatches them. When a gate
+            is added or changed, <Code>preflight.sh</Code> changes in the same pull request.
           </>
         }
       />
-      <Diagram chart={QUALITY_GATE_PIPELINE} caption="Local gates → light CI → heavy CI → merge gate → post-merge release, deploy and weekly checks." />
+      <Diagram chart={QUALITY_GATE_PIPELINE} caption="Local preflight is the pull-request proof. Product CI and image publish run on a version tag. Pages and Release Please run on main. ZAP and CodeQL also have a Monday schedule." />
 
       <SectionTitle>Before the push</SectionTitle>
       <div className="grid md:grid-cols-3 gap-4">
@@ -48,22 +48,22 @@ export default function QualityGatesPage() {
         </Card>
       </div>
 
-      <SectionTitle>Light CI is not enough</SectionTitle>
+      <SectionTitle>A quiet pull request is expected</SectionTitle>
       <Card className="border-violet-200">
         <p className="text-sm text-slate-700 leading-relaxed">
-          PR Validation, Frontend CI and Process Checks finish first and can report &quot;all N checks success&quot; while the
-          backend Integration suite and Playwright are still queued. A merge needs the heavy set to be terminal success:
-          Unit, Integration, Coverage Gate, Bruno API and Playwright UI. <Code>check-heavy-ci.sh &lt;pr&gt;</Code> must exit 0.
-          The <Code>protect-main</Code> ruleset also requires five named checks: CI, Frontend CI, Playwright E2E, Code Lint and PR Validation.
+          Product workflows do not start on <Code>pull_request</Code>. <Code>check-heavy-ci.sh</Code> exits 0 when those
+          runs are simply absent, and it fails if a run on that commit is pending or red. The desired <Code>protect-main</Code>{" "}
+          ruleset in git no longer lists the old required checks. The live ruleset is an Owner step (#2001): if GitHub still
+          demands checks that never start, the pull request cannot merge.
         </p>
-        <Sources items={[{ label: "CI-MERGE-GATE.md", href: src("docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md") }, { label: "check-heavy-ci.sh", href: src("workspace/sdlc/check-heavy-ci.sh") }, { label: "protect-main.desired.json", href: src("security/rulesets/protect-main.desired.json") }]} />
+        <Sources items={[{ label: "CI-MERGE-GATE.md", href: src("docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md") }, { label: "check-heavy-ci.sh", href: src("workspace/sdlc/check-heavy-ci.sh") }, { label: "SECURITY-GATES.md", href: src("docs/300-development/304-ai-sdlc-cloud/SECURITY-GATES.md") }, { label: "protect-main.desired.json", href: src("security/rulesets/protect-main.desired.json") }]} />
       </Card>
 
-      <SectionTitle>Path-scoped CI</SectionTitle>
+      <SectionTitle>Path filters on a release run</SectionTitle>
       <p className="text-sm text-slate-600 max-w-3xl leading-relaxed">
-        On pull requests, docs, OpenSpec and agent-only paths skip the Java and Playwright leaf jobs. Suite aggregators keep
-        the required check names green by treating an intentional <em>skipped</em> as success. Pushes to main, schedules and
-        manual dispatch always run the full suite, and a test guards those invariants.
+        Inside the version-tag workflows, a path filter can skip a leaf job. It cannot skip the tag itself. Local{" "}
+        <Code>preflight.sh --full</Code> does not use that filter: the agent runs the suite the pull request will not
+        re-run.
       </p>
       <Sources items={[{ label: "test_ci_workflow_invariants.py", href: src("workspace/tests/test_ci_workflow_invariants.py") }]} />
 
@@ -82,11 +82,12 @@ export default function QualityGatesPage() {
 
       <SectionTitle>Security by design</SectionTitle>
       <p className="text-sm text-slate-600 max-w-3xl leading-relaxed">
-        One security case catalog runs locally and in CI. Its families are{" "}
-        {facts.securityFamilies.length > 0 ? facts.securityFamilies.join(", ") : "listed in the catalog"}. CI adds CodeQL
-        (advanced setup only) and a blocking weekly OWASP ZAP baseline with a reviewed allowlist. A diff that touches
-        authentication, authorization, personal data, secrets, dependencies or a public endpoint updates the threat model
-        and the catalog in the same change. SonarQube runs in the local quality stack under <Code>infra/</Code>.
+        One security case catalog runs in preflight. Its families are{" "}
+        {facts.securityFamilies.length > 0 ? facts.securityFamilies.join(", ") : "listed in the catalog"}. The release job
+        runs the same catalog. CodeQL runs on the tag and on Monday and uploads SARIF. ZAP is the Monday baseline and does
+        not run on the tag. A diff that touches authentication, authorization, personal data, secrets, dependencies or a
+        public endpoint updates the threat model and the YAML register in the same change. SonarQube runs in the local
+        quality stack under <Code>infra/</Code>.
       </p>
       <Sources items={[{ label: "security/cases/catalog.yml", href: src("security/cases/catalog.yml") }, { label: "codeql.yml", href: workflow("codeql.yml") }, { label: ".zap/rules.tsv", href: src(".zap/rules.tsv") }, { label: "run-sonar.sh", href: src("infra/scripts/run-sonar.sh") }, { label: "DevSecOps", href: src("docs/200-architecture/208-devsecops/README.md") }]} />
 
@@ -120,7 +121,7 @@ export default function QualityGatesPage() {
         </Card>
         <Card>
           <h3 className="font-semibold">Signed images</h3>
-          <p className="mt-2 text-sm text-slate-600">CD runs only after CI succeeds on main. It builds, scans, signs with cosign and publishes the images to GHCR, and attaches product, database and image SBOMs to releases.</p>
+          <p className="mt-2 text-sm text-slate-600">CD runs on a version tag or manual dispatch. It builds, scans, signs with cosign and publishes the images to GHCR, and attaches SBOMs to the release. A merge to main does not publish.</p>
           <Sources items={[{ label: "cd.yml", href: workflow("cd.yml") }, { label: "SBOM.md", href: src("docs/300-development/SBOM.md") }]} />
         </Card>
       </div>

@@ -18,6 +18,8 @@ cases:
         must_contain: [STRIDE, LINDDUN, SR-11, SR-16, LD-1, Escribano]
       - path: docs/200-architecture/206-security/diagrams/trust-boundaries.puml
         must_contain: [JwtAuthenticationFilter]
+      - path: docs/200-architecture/206-security/threat-model/system.stride.yml
+        must_contain: [STRIDE, LINDDUN, SR-11, LD-1]
 
   - id: SEC-SEC-01
     family: secrets
@@ -45,7 +47,8 @@ cases:
     local_tool: trivy
     ci_tool: trivy-action
     blocking: true
-    fail_on_findings: false
+    # The runner invokes Trivy with --exit-code 1. This flag records that choice.
+    fail_on_findings: true
 
   - id: SEC-DAST-01
     family: dast

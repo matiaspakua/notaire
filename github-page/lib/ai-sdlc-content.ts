@@ -64,10 +64,10 @@ flowchart TB
   J --> K["16 · Permanent documentation"]
   K --> G3{{"GATE 3<br/>green suite · coverage · docs"}}
   G3 --> L["17 · Atomic commits<br/>17.5 · run_pipeline.sh"]
-  L --> M["18 · Pull request<br/>19 · Green CI"]
-  M --> G4{{"GATE 4<br/>heavy CI · review · no conflicts"}}
+  L --> M["18 · Pull request<br/>19 · preflight.sh --full"]
+  M --> G4{{"GATE 4<br/>review · local evidence<br/>product CI is the tag"}}
   G4 --> N["21 · Merge via PR"]
-  N --> O["22 · Deploy (CD → GHCR)"]
+  N --> O["22 · Pages on main<br/>product CI + GHCR on the tag"]
   O --> G5{{"GATE 5<br/>smoke test · issue closed"}}
   G5 --> P(["24 · Close issue · archive spec"])
   classDef gate fill:#fde68a,stroke:#b45309,color:#451a03,font-weight:bold
@@ -77,9 +77,9 @@ flowchart TB
 export const GUARDRAIL_LAYERS = `
 flowchart TB
   H["9 · Human Owner<br/>approves specs · grants exceptions · merges policy"]
-  R["8 · Repository rules<br/>protect-main: PR only · 5 required checks · no force-push"]
-  CQ["7 · CI quality & security<br/>unit · integration · coverage · E2E · CodeQL · Trivy · ZAP"]
-  CP["6 · CI process checks<br/>commits · TDD evidence · OpenSpec · traceability · board"]
+  R["8 · Repository rules<br/>protect-main: PR only · no force-push · live checks are Owner-owned"]
+  CQ["7 · Release-tag quality<br/>tests · Trivy · CodeQL · Monday ZAP"]
+  CP["6 · Process checks<br/>preflight locally · the workflow on the version tag"]
   LG["5 · Local gates<br/>preflight.sh pre-push · run_pipeline.sh · validate-sdlc-plan.sh"]
   HK["4 · Agent-side hooks & harness<br/>block push to main · scope/ref guards · frozen TEST_CMD"]
   SK["3 · Skills & agents catalog<br/>.claude/skills · .claude/agents · fleet manifest"]
@@ -96,35 +96,34 @@ flowchart TB
 
 export const QUALITY_GATE_PIPELINE = `
 flowchart TB
-  subgraph local["On the agent's machine"]
+  subgraph local["On the agent's machine — the pull-request proof"]
     direction LR
-    T1["validate-sdlc-plan.sh<br/>live Issue check"] --> T2["unit + integration<br/>TDD red → green"] --> T3["preflight.sh<br/>pre-push hook"] --> T4["run_pipeline.sh<br/>stack · security cases · dashboard"]
+    T1["validate-sdlc-plan.sh"] --> T2["tests, red then green"] --> T3["preflight.sh --full<br/>includes security cases"] --> T4["run_pipeline.sh<br/>when the stack is up"]
   end
-  subgraph light["Light CI — fast feedback"]
+  MERGE{{"Owner review<br/>check-heavy-ci.sh = 0<br/>missing runs are expected"}}
+  subgraph release["Version tag or manual dispatch"]
     direction LR
-    L1["PR Validation<br/>branch · plan · lint"]
-    L2["SDLC Process Checks"]
-    L3["Frontend CI<br/>tsc · ESLint · Vitest · build"]
-    L4["OpenAPI Contract<br/>oasdiff"]
-    L1 ~~~ L2 ~~~ L3 ~~~ L4
-  end
-  subgraph heavy["Heavy CI — the merge gate"]
-    direction LR
-    H1["CI: Unit · Integration<br/>Coverage Gate (mvn verify)"]
-    H2["Security Scan<br/>secrets · Semgrep · Trivy"]
-    H3["Playwright E2E<br/>Bruno API + 3 UI shards"]
-    H4["CodeQL"]
+    H1["CI: tests, Trivy,<br/>secrets, Semgrep"]
+    H2["Playwright + Bruno"]
+    H3["CodeQL"]
+    H4["CD: sign + GHCR"]
     H1 ~~~ H2 ~~~ H3 ~~~ H4
   end
-  MERGE{{"check-heavy-ci.sh = 0<br/>+ Gate 4 review → merge"}}
-  subgraph after["After merge on main"]
+  subgraph main["Push to main"]
     direction LR
-    A1["CD: sign + publish images<br/>SBOM on tags"] --> A2["Release Please<br/>semver + CHANGELOG"]
-    A1 --> A3["Pages deploy"]
-    A4["Weekly: ZAP · k6 · backup-restore"]
-    A3 ~~~ A4
+    A2["Release Please"]
+    A3["Pages deploy"]
+    A2 ~~~ A3
   end
-  local --> light --> heavy --> MERGE --> after
+  subgraph weekly["Schedule"]
+    direction LR
+    A4["ZAP · CodeQL Monday"]
+    A5["k6 · backup-restore"]
+    A4 ~~~ A5
+  end
+  local --> MERGE --> release
+  MERGE --> main
+  release ~~~ weekly
   classDef gate fill:#fde68a,stroke:#b45309,color:#451a03
   class MERGE gate
 `;
@@ -367,23 +366,26 @@ export const NEVER_LIST = [
 
 /* ───────────────────────────── Workflows ───────────────────────────── */
 
-export const WORKFLOWS: { file: string; name: string; when: string; role: string; tier: "light" | "heavy" | "after" | "scheduled" }[] = [
-  { file: "pr-validation.yml", name: "PR Validation", when: "PR", role: "Title, branch naming, SDLC plan validation, Spotless/Checkstyle lint, quick build", tier: "light" },
-  { file: "sdlc-process.yml", name: "SDLC Process", when: "PR · push · daily", role: "Process Checks on PRs; Main Health on main (archive hygiene, plans conform, harness self-tests)", tier: "light" },
-  { file: "frontend-ci.yml", name: "Frontend CI", when: "PR · push", role: "TypeScript, ESLint, Vitest with raise-only coverage floors, Next.js build", tier: "light" },
-  { file: "openapi-contract.yml", name: "OpenAPI Contract", when: "PR", role: "Committed OpenAPI matches the code; oasdiff flags breaking changes", tier: "light" },
-  { file: "ci.yml", name: "CI - Build, Test & Security", when: "PR · push", role: "Build, unit, integration, coverage gate (mvn verify), security scan, Docker image, reports", tier: "heavy" },
-  { file: "playwright-e2e.yml", name: "Playwright E2E — Full Suite", when: "PR · push · schedule", role: "Bruno API suite and Playwright UI in 3 shards, business coverage report", tier: "heavy" },
-  { file: "codeql.yml", name: "CodeQL", when: "PR · push · schedule", role: "Advanced-setup static analysis (never alongside default setup)", tier: "heavy" },
-  { file: "database-vv.yml", name: "Database V&V", when: "PR · push", role: "Flyway migrations verified against PostgreSQL", tier: "heavy" },
-  { file: "cd.yml", name: "CD - Build & Publish Docker", when: "after CI on main · tags", role: "Release identity, sign and publish images to GHCR, SBOM assets on releases", tier: "after" },
-  { file: "release-please.yml", name: "Release Please", when: "push to main", role: "Semver release PR: poms, frontend package.json, release/product-release.json and CHANGELOG from merged commits", tier: "after" },
-  { file: "deploy-github-page.yml", name: "Deploy GitHub Page", when: "after CI on main", role: "Builds this site with fresh coverage and E2E reports", tier: "after" },
-  { file: "dast-zap.yml", name: "DAST — OWASP ZAP Baseline", when: "weekly", role: "Blocking ZAP baseline with a reviewed allowlist", tier: "scheduled" },
-  { file: "performance-test.yml", name: "Performance - k6 Load Test", when: "weekly", role: "k6 load test against a live API", tier: "scheduled" },
-  { file: "backup-restore-smoke.yml", name: "Backup → Restore → Smoke", when: "weekly", role: "Restores a backup and smoke-tests it", tier: "scheduled" },
-  { file: "test-coverage-report.yml", name: "Test Coverage Report", when: "push · schedule", role: "Coverage trend for the site and reports", tier: "scheduled" },
-  { file: "cleanup-actions.yml", name: "Cleanup Actions artifacts and logs", when: "schedule", role: "Keeps artifact storage under quota", tier: "scheduled" },
+export const WORKFLOWS: { file: string; name: string; when: string; role: string; tier: "release" | "main" | "schedule" | "event" }[] = [
+  { file: "ci.yml", name: "CI - Build, Test & Security", when: "version tag · manual", role: "Build, unit, integration, coverage gate, secrets, Semgrep, Trivy, image scan", tier: "release" },
+  { file: "frontend-ci.yml", name: "Frontend CI", when: "version tag · manual", role: "TypeScript, ESLint, Vitest with raise-only coverage floors, Next.js build", tier: "release" },
+  { file: "playwright-e2e.yml", name: "Playwright E2E — Full Suite", when: "version tag · manual", role: "Bruno API suite and Playwright UI, business coverage report", tier: "release" },
+  { file: "pr-validation.yml", name: "PR Validation", when: "version tag · manual", role: "Title, branch naming, SDLC plan, Spotless/Checkstyle, quick build", tier: "release" },
+  { file: "sdlc-process.yml", name: "SDLC Process", when: "version tag · manual", role: "Process checks and main-health. Not a pull-request workflow", tier: "release" },
+  { file: "openapi-contract.yml", name: "OpenAPI Contract", when: "version tag · manual", role: "Committed OpenAPI matches the code; oasdiff flags breaking changes", tier: "release" },
+  { file: "database-vv.yml", name: "Database V&V", when: "version tag · manual", role: "Flyway migrations verified against PostgreSQL", tier: "release" },
+  { file: "pages-ci.yml", name: "Pages CI", when: "version tag · manual", role: "This site: typecheck, lint, Vitest, export, links, Playwright and axe. Does not deploy", tier: "release" },
+  { file: "cd.yml", name: "CD - Build & Publish Docker", when: "version tag · manual", role: "Sign and publish images to GHCR. A merge to main does not publish", tier: "release" },
+  { file: "codeql.yml", name: "CodeQL", when: "version tag · Monday 06:30 UTC · manual", role: "Advanced-setup static analysis. Uploads SARIF. Does not fail on findings. Never beside default setup", tier: "release" },
+  { file: "test-coverage-report.yml", name: "Test Coverage Report", when: "version tag · manual", role: "Coverage artifact. Enforcement stays in the test workflows", tier: "release" },
+  { file: "release-please.yml", name: "Release Please", when: "push to main · manual", role: "Release pull request from Conventional Commits, then the tag that dispatches product CI", tier: "main" },
+  { file: "deploy-github-page.yml", name: "Deploy GitHub Page", when: "push to main · manual", role: "Publishes this portfolio. Does not wait for product CI", tier: "main" },
+  { file: "dast-zap.yml", name: "DAST — OWASP ZAP Baseline", when: "Monday 05:00 UTC · manual", role: "Blocking ZAP baseline with a reviewed allowlist. Not on the version tag", tier: "schedule" },
+  { file: "performance-test.yml", name: "Performance - k6 Load Test", when: "Monday 04:00 UTC · manual", role: "k6 load test against a live API", tier: "schedule" },
+  { file: "backup-restore-smoke.yml", name: "Backup → Restore → Smoke", when: "Sunday 03:00 UTC · manual", role: "Restores a backup and smoke-tests it, or skips with an explicit reason", tier: "schedule" },
+  { file: "cleanup-actions.yml", name: "Cleanup Actions artifacts and logs", when: "daily 03:00 UTC · manual", role: "Keeps artifact storage under quota", tier: "schedule" },
+  { file: "opencode.yml", name: "opencode", when: "issue or review comment", role: "Runs only when a comment contains /oc or /opencode", tier: "event" },
+  { file: "copilot-setup-steps.yml", name: "Copilot Setup Steps", when: "manual · its own file on push or pull request", role: "Installs the OpenSpec CLI for GitHub Copilot. Not a product test", tier: "event" },
 ];
 
 /* ───────────────────────────── Agents, skills, runtimes ───────────────────────────── */
@@ -396,7 +398,7 @@ export const CREW: { name: string; role: string; skills: string[] }[] = [
   { name: "frontend-design", role: "Next.js UI with the design-system tokens", skills: ["frontend-design", "motion-design"] },
   { name: "testing-qa", role: "Test design and red proof; Bruno and Playwright", skills: ["testing", "qa-automation-strategy", "api-contract-testing"] },
   { name: "devops-engineer", role: "Compose, CI and observability", skills: ["devops", "ci-cd-quality-gates", "operations-observability-readiness"] },
-  { name: "security-auditor", role: "Threat model, authz and secrets review", skills: ["secure-threat-modeling", "backend"] },
+  { name: "security-auditor", role: "Threat model, authz and secrets review", skills: ["notaire-cybersec", "secure-threat-modeling", "backend"] },
   { name: "code-reviewer", role: "Gate 4 diff review", skills: ["ai-agent-workflow", "programming"] },
   { name: "project-manager", role: "Milestones, priority and lanes; no product code", skills: ["project-management", "product-owner", "delivery-maturity-roadmap"] },
   { name: "sync_issues_and_code", role: "Issue, label and board hygiene", skills: ["devsecops-traceability", "product-owner"] },
@@ -407,7 +409,7 @@ export const SKILL_STAGES: { stage: string; skills: string[]; output: string }[]
   { stage: "Traceability", skills: ["devsecops-traceability", "openspec-triage"], output: "IDs, traceability ledger, impact map" },
   { stage: "Specification", skills: ["openspec-propose"], output: "proposal, delta specs, scenarios" },
   { stage: "Architecture", skills: ["architecture-decision-design", "hexagonal-arch", "design-doc-mermaid"], output: "design, ADR, Mermaid/C4 views" },
-  { stage: "Security design", skills: ["secure-threat-modeling"], output: "threat model, risk register, SR-* requirements" },
+  { stage: "Security design", skills: ["secure-threat-modeling", "notaire-cybersec"], output: "threat model, risk register, SR-* requirements, local security gate" },
   { stage: "Test design", skills: ["qa-automation-strategy", "testing"], output: "test plan, cases, fixtures" },
   { stage: "Implementation", skills: ["openspec-apply-change", "programming", "java", "frontend-design"], output: "failing tests, implementation, updated ledger" },
   { stage: "Contract & integration", skills: ["api-contract-testing", "api-rest"], output: "OpenAPI, Bruno and contract evidence" },
@@ -426,7 +428,7 @@ export const HARNESS_PHASES: { phase: string; who: string; gate: string }[] = [
   { phase: "quality", who: "harness → worker", gate: "preflight.sh" },
   { phase: "pipeline", who: "harness → worker", gate: "run_pipeline.sh (stack + E2E + Bruno) → Gate 3" },
   { phase: "pr", who: "worker", gate: "PR title, body references issue, branch pushed" },
-  { phase: "ci", who: "harness → worker", gate: "check runs on the last non-[skip ci] commit settle green" },
+  { phase: "ci", who: "harness → worker", gate: "preflight.sh --full is the pull-request proof; product workflows run on the version tag" },
   { phase: "review", who: "foreman", gate: "diff review → Gate 4; findings go back via fix" },
   { phase: "merge", who: "harness", gate: "CI + CD green, /actuator/health UP, issue closed → Gate 5" },
 ];
@@ -476,9 +478,16 @@ export const LESSONS: Lesson[] = [
   {
     title: "Light green is not mergeable",
     happened: "A CI subscription reported \"all 18 checks success\" while the backend Integration suite and Playwright were still pending.",
-    rule: "Merge only when check-heavy-ci.sh exits 0: Unit, Integration, Coverage Gate, Bruno and Playwright are terminal success.",
+    rule: "check-heavy-ci.sh fails a pending or red heavy run. A missing run is success: product CI does not start on the pull request. The local proof is preflight.sh --full.",
     refs: [1126, 1128, 1134, 1137],
     source: { label: "CI-MERGE-GATE.md", href: src("docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md") },
+  },
+  {
+    title: "Product CI does not run on the pull request",
+    happened: "Every pull request and every push to main ran the full suite and published images, and the Actions quota filled up.",
+    rule: "preflight.sh --full is the pull-request proof. Product workflows run on a version tag or manual dispatch. Pages and Release Please still run on main.",
+    refs: [2001, 2003],
+    source: { label: "SECURITY-GATES.md", href: src("docs/300-development/304-ai-sdlc-cloud/SECURITY-GATES.md") },
   },
   {
     title: "`Issue: #N` does not close anything",
@@ -497,7 +506,7 @@ export const LESSONS: Lesson[] = [
   {
     title: "A stale tip is not a product bug",
     happened: "Integration and Playwright failures (Budget/person, undefined, undefined) on branches behind main were already fixed on main.",
-    rule: "Merge origin/main first and re-run heavy CI before touching product code. Never rebase a pushed branch.",
+    rule: "Merge origin/main first and re-run preflight.sh --full before touching product code. Never rebase a pushed branch.",
     refs: [1132],
     source: { label: "CI-MERGE-GATE.md", href: src("docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md") },
   },

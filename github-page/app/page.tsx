@@ -75,6 +75,7 @@ export default function Home() {
     { href: "/product/", eyebrow: "Product", title: "What Notaire does", body: blurb("product"), facts: [`v${v.product ?? "—"}`, `${n(api?.paths)} API paths`, `${list.length} migrations`] },
     { href: "/docs/", eyebrow: "Technical docs", title: "How it is built", body: blurb("docs"), facts: [`Java ${v.java ?? "—"}`, `Spring Boot ${v.springBoot ?? "—"}`, `Next.js ${v.next ?? "—"}`] },
     { href: "/ai-sdlc/", eyebrow: "AI Factory", title: "How AI agents ship it", body: blurb("factory"), facts: [`${n(factory.skills)} skills`, `${n(factory.agents)} agents`, `${n(factory.livingSpecs)} living specs`] },
+    { href: "/security/", eyebrow: "Security", title: "How the record is protected", body: blurb("security"), facts: ["STRIDE", "local gates", "release scans"] },
   ];
 
   const f = factoryFlow();
@@ -237,7 +238,7 @@ export default function Home() {
 
         <section aria-labelledby="sections-title" className="pt-16">
           <h2 id="sections-title" className="font-display text-3xl font-semibold text-slate-900">Explore</h2>
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
+          <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {doors.map((d) => (
               <Link
                 key={d.href}

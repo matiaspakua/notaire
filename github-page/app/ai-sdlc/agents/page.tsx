@@ -34,7 +34,7 @@ export default function AgentsPage() {
         head={["Role", "Who", "May", "May never"]}
         rows={[
           ["Owner", "The human code owner (CODEOWNERS)", "Approve specs; grant exceptions; merge Constitution, sdlc-exception and harness PRs; merge any PR", "—"],
-          ["Foreman", "Supervising AI agent", "Run and validate gates, write review notes, merge Worker PRs when all required checks are green and check-heavy-ci.sh exits 0 (#1624)", "Implement the change it reviews; merge policy or its own harness"],
+          ["Foreman", "Supervising AI agent", "Run local gates, write review notes. check-heavy-ci.sh exits 0 when product CI simply did not start (#2001). The Owner merges.", "Implement the change it reviews; merge policy or its own harness"],
           ["Worker", "Implementing AI agent", "Implement phase by phase; answer review notes", "Merge, push to main, grant itself an exception"],
         ]}
       />
