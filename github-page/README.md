@@ -58,7 +58,7 @@ The **results** page (`/ai-sdlc/results/`) prints only numbers read at build tim
 change-failure proxy, time to restore `main`, first-push CI pass rate, issues closed and releases, with the window
 and the method of each. Refresh it with `python3 workspace/ci/generate-delivery-metrics.py` (needs an authenticated
 `gh`); the Pages deploy re-runs it before every build. Metrics the GitHub data cannot support are stored as
-unavailable with the reason (today: Actions run history is pruned nightly by `leanup-actions.yml`).
+unavailable with the reason (today: Actions run history is pruned nightly by `cleanup-actions.yml`).
 
 **About** (`/about/` and the landing) renders [`lib/about.json`](lib/about.json): each fact names its source;
 `placeholders` lists what no public source states and is never rendered.

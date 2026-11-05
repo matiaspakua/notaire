@@ -383,7 +383,7 @@ export const WORKFLOWS: { file: string; name: string; when: string; role: string
   { file: "performance-test.yml", name: "Performance - k6 Load Test", when: "weekly", role: "k6 load test against a live API", tier: "scheduled" },
   { file: "backup-restore-smoke.yml", name: "Backup → Restore → Smoke", when: "weekly", role: "Restores a backup and smoke-tests it", tier: "scheduled" },
   { file: "test-coverage-report.yml", name: "Test Coverage Report", when: "push · schedule", role: "Coverage trend for the site and reports", tier: "scheduled" },
-  { file: "leanup-actions.yml", name: "Cleanup Actions artifacts and logs", when: "schedule", role: "Keeps artifact storage under quota", tier: "scheduled" },
+  { file: "cleanup-actions.yml", name: "Cleanup Actions artifacts and logs", when: "schedule", role: "Keeps artifact storage under quota", tier: "scheduled" },
 ];
 
 /* ───────────────────────────── Agents, skills, runtimes ───────────────────────────── */
