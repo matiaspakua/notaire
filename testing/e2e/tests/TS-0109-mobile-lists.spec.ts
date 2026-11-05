@@ -70,7 +70,7 @@ test.describe("TS-0109 - list pages at 390px (#1356)", () => {
       await page.goto(p.route);
       // storageState must hydrate Zustand; otherwise dashboard stays on AppShellSkeleton (#1994).
       await expect(page.getByTestId("app-shell-skeleton")).toHaveCount(0, { timeout: 15000 });
-      await expect(page).toHaveURL(new RegExp(p.route.replace(/\//g, "\\/")));
+      await expect(page).toHaveURL((url) => url.pathname === p.route);
 
       const cards = page.getByTestId("data-table-cards");
       await expect(cards).toBeVisible({ timeout: 15000 });
