@@ -35,7 +35,9 @@ ARGS=()
 echo "pre-push: running local CI gates (workspace/sdlc/preflight.sh ${ARGS[*]:-})…"
 echo "          skip with PREFLIGHT_SKIP=1, or git push --no-verify"
 
-if bash "$REPO_ROOT/workspace/sdlc/preflight.sh" "${ARGS[@]}"; then
+# Under `set -u`, expanding an empty "${ARGS[@]}" is an unbound-variable error
+# on bash 3.2/macOS — use the ${arr[@]+…} form so a plain push (no PREFLIGHT_FAST) works.
+if bash "$REPO_ROOT/workspace/sdlc/preflight.sh" ${ARGS[@]+"${ARGS[@]}"}; then
     exit 0
 fi
 

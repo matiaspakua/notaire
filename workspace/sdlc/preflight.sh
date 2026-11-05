@@ -234,9 +234,10 @@ else
     [ "$MODE_FIX" = "1" ] && OPENAPI_PRUNE=(--prune)
     git show "origin/main:$OPENAPI_SPEC" > "$OPENAPI_BASE"
     # Mirrors: "Accepted breaking changes: assemble and check" (openapi-contract.yml).
+    # ${arr[@]+…}: empty OPENAPI_PRUNE under `set -u` otherwise aborts the script.
     run "openapi accepted breaking changes (accepted-breaking-changes.d)" \
         python3 workspace/sdlc/check-accepted-breaking-changes.py "$OPENAPI_BASE" "$OPENAPI_SPEC" \
-        --base-ref origin/main --write-ignore "$OPENAPI_IGNORE" "${OPENAPI_PRUNE[@]}"
+        --base-ref origin/main --write-ignore "$OPENAPI_IGNORE" ${OPENAPI_PRUNE[@]+"${OPENAPI_PRUNE[@]}"}
     run "openapi breaking diff" oasdiff breaking "$OPENAPI_BASE" "$OPENAPI_SPEC" \
         --fail-on ERR --err-ignore "$OPENAPI_IGNORE"
     rm -f "$OPENAPI_BASE" "$OPENAPI_IGNORE"
