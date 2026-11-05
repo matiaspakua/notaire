@@ -183,4 +183,15 @@ class DocumentTypeControllerTest {
         org.assertj.core.api.Assertions.assertThat(command.getValue())
                 .isEqualTo(new SaveDocumentTypeCommand("New", true, null, "NOTARY", false, true, 3));
     }
+
+    @Test
+    @DisplayName("unexpected create failure returns 500 ErrorResponse via GlobalExceptionHandler (#579)")
+    void unexpectedCreateFailureUsesGlobalHandler() throws Exception {
+        when(manage.create(any())).thenThrow(new RuntimeException("Database error"));
+
+        mvc.perform(post("/api/v1/document-types").contentType(MediaType.APPLICATION_JSON).content(BODY))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.message").value("An unexpected error occurred"));
+    }
 }
