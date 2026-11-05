@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `cursor/ci-2001-release-only-d385` | pushed |
 | Tasks | `tasks.md` | groups 1–8 complete |
 | Commits | `fce889d7` tests, `7b4c3c64` implementation | done |
-| Pull Request | recorded after open | pending |
+| Pull Request | #2002 | open, not merged |
 | CI run | local workflow unit tests; GitHub does not re-run the suite on the PR | passing |
 | Merge commit | Owner only | pending |
 | Release / tag | not this PR | pending |
