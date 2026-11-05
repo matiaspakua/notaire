@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **api:** document-type unexpected create/update failures return standard `ErrorResponse` via `GlobalExceptionHandler` instead of a misleading 409 from `ErrorResponses` (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **api:** property unexpected create failures return standard `ErrorResponse` via `GlobalExceptionHandler` instead of a misleading 409 from `ErrorResponses` (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **test:** Playwright `admin-auth.json` now persists Zustand `notaire-auth` so the mobile project leaves `AppShellSkeleton`; TS-0109 waits for the shell and stubs list APIs with or without query strings ([#1994](https://github.com/matiaspakua/notaire/issues/1994))
 * **ci:** rename scheduled Actions cleanup workflow file to `cleanup-actions.yml` (leading-`c` typo) and ratchet permanent references ([#1981](https://github.com/matiaspakua/notaire/issues/1981))
