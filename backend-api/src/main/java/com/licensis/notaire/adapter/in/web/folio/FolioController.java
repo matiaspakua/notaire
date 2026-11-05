@@ -3,8 +3,6 @@ package com.licensis.notaire.adapter.in.web.folio;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,7 +41,6 @@ import jakarta.validation.constraints.NotBlank;
 @Tag(name = "Folio", description = "API for managing folio")
 public class FolioController {
 
-    private static final Logger log = LoggerFactory.getLogger(FolioController.class);
 
     public record FolioTypeRef(Integer idFolioType, String name, String notes, boolean enabled, boolean isAuxiliary) {
         public static FolioTypeRef from(Folio folio) {
@@ -128,12 +125,8 @@ public class FolioController {
     @GetMapping
     @Operation(summary = "Get all folios")
     public ResponseEntity<List<FolioResponse>> getAll() {
-        try {
-            return ResponseEntity.ok(query.findAll().stream().map(FolioResponse::from).toList());
-        } catch (Exception e) {
-            log.error("Failed to list folios", e);
-            return ResponseEntity.internalServerError().build();
-        }
+        // Unexpected failures propagate to GlobalExceptionHandler (#579).
+        return ResponseEntity.ok(query.findAll().stream().map(FolioResponse::from).toList());
     }
 
     @GetMapping("/search")
@@ -175,10 +168,8 @@ public class FolioController {
             return CreatedResponses.of(FolioResponse.from(saved), "/api/v1/folios", saved.id());
         } catch (FolioInvalidException e) {
             return ResponseEntity.badRequest().build();
-        } catch (Exception e) {
-            log.error("Failed to create folio", e);
-            return ResponseEntity.internalServerError().build();
         }
+        // Unexpected failures propagate to GlobalExceptionHandler (#579).
     }
 
     @ApiResponses({
@@ -198,10 +189,8 @@ public class FolioController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
         } catch (FolioInvalidException e) {
             return ResponseEntity.badRequest().build();
-        } catch (Exception e) {
-            log.error("Failed to update folio {}", id, e);
-            return ResponseEntity.internalServerError().build();
         }
+        // Unexpected failures propagate to GlobalExceptionHandler (#579).
     }
 
     @ApiResponses({
@@ -218,9 +207,7 @@ public class FolioController {
             return ResponseEntity.notFound().build();
         } catch (FolioInUseException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            log.error("Failed to delete folio {}", id, e);
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
+        // Unexpected failures propagate to GlobalExceptionHandler (#579).
     }
 }
