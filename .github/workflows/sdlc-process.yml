@@ -81,6 +81,12 @@ jobs:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: python3 workspace/sdlc/check-closes-refs-guard.py --base-sha "$BASE_SHA"
 
+      - name: CHANGELOG Unreleased single-writer fence
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 workspace/sdlc/check-changelog-unreleased-fence.py
+
       - name: Owner shell scripts syntax (bash -n / shellcheck)
         if: ${{ !cancelled() }}
         run: |
@@ -117,6 +123,11 @@ jobs:
       - name: Product version coherence
         if: ${{ !cancelled() }}
         run: python3 workspace/sdlc/check-product-version-coherence.py
+
+      - name: Install Playwright CLI for testing/ process ratchets
+        if: ${{ !cancelled() }}
+        working-directory: testing/e2e
+        run: npm ci --ignore-scripts
 
       - name: Process script and harness self-tests
         if: ${{ !cancelled() }}
@@ -165,6 +176,11 @@ jobs:
       - name: No OpenSpec change outlives its closed issue
         if: ${{ !cancelled() }}
         run: python3 workspace/sdlc/check-openspec-archive-hygiene.py --inventory-only
+
+      - name: Install Playwright CLI for testing/ process ratchets
+        if: ${{ !cancelled() }}
+        working-directory: testing/e2e
+        run: npm ci --ignore-scripts
 
       - name: Process script and harness self-tests
         if: ${{ !cancelled() }}

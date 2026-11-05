@@ -102,6 +102,56 @@ def _chat(messages, *, tools=None, tool_choice=None, max_tokens=128, temperature
         return json.load(resp)
 
 
+def _assistant_text(resp: dict) -> str:
+    """Return visible assistant text from a chat completion.
+
+    Ternary-Bonsai (and similar reasoning models) often fill ``reasoning_content``
+    before ``content``. When ``max_tokens`` is too low, ``content`` is missing and
+    ``finish_reason`` is ``length`` — treat that as a test budget error, not a
+    KeyError that reds Process Checks while oMLX is merely warming up.
+    """
+    choice = resp["choices"][0]
+    msg = choice["message"]
+    content = msg.get("content")
+    if isinstance(content, str) and content.strip():
+        return content.strip()
+    reasoning = msg.get("reasoning_content")
+    if isinstance(reasoning, str) and reasoning.strip():
+        if choice.get("finish_reason") == "length":
+            raise AssertionError(
+                "model spent the whole max_tokens budget on reasoning_content "
+                f"with no content (finish_reason=length). Increase max_tokens. "
+                f"reasoning={reasoning[:200]!r}"
+            )
+        return reasoning.strip()
+    raise AssertionError(
+        f"chat completion has neither content nor reasoning_content: {msg!r}"
+    )
+
+
+class AssistantTextHelperTest(unittest.TestCase):
+    """Offline: _assistant_text must stay green in Process Checks without oMLX."""
+
+    def test_prefers_content(self):
+        text = _assistant_text(
+            {"choices": [{"finish_reason": "stop", "message": {"content": "PONG", "reasoning_content": "think"}}]}
+        )
+        self.assertEqual(text, "PONG")
+
+    def test_length_budget_on_reasoning_only_is_explicit(self):
+        with self.assertRaisesRegex(AssertionError, "Increase max_tokens"):
+            _assistant_text(
+                {
+                    "choices": [
+                        {
+                            "finish_reason": "length",
+                            "message": {"reasoning_content": "We need to reply…"},
+                        }
+                    ]
+                }
+            )
+
+
 # ---------------------------------------------------------------------------
 # 1. Server Reachability
 # ---------------------------------------------------------------------------
@@ -187,27 +237,31 @@ class ChatCompletionTest(unittest.TestCase):
     """Basic chat completions: echo, arithmetic, code generation, multi-turn."""
 
     def test_echo_reply_pong(self):
-        resp = _chat([{"role": "user", "content": "Reply with exactly: PONG"}], max_tokens=20)
-        content = resp["choices"][0]["message"]["content"].strip()
+        # max_tokens must clear Bonsai's reasoning preamble or content is omitted.
+        resp = _chat(
+            [{"role": "user", "content": "Reply with exactly: PONG"}],
+            max_tokens=80,
+        )
+        content = _assistant_text(resp)
         self.assertIn("PONG", content, f"Expected PONG in {content!r}")
 
     def test_arithmetic_7_times_8(self):
-        # max_tokens=60: Bonsai may emit a reasoning preamble ("We need to answer…")
+        # max_tokens=80: Bonsai may emit a reasoning preamble ("We need to answer…")
         # before the actual answer on the first call after a context switch.
         # The answer "56" must appear somewhere in the output.
         resp = _chat(
             [{"role": "user", "content": "What is 7 * 8? Reply with only the number."}],
-            max_tokens=60,
+            max_tokens=80,
         )
-        content = resp["choices"][0]["message"]["content"].strip()
+        content = _assistant_text(resp)
         self.assertIn("56", content, f"Expected 56 in {content!r}")
 
     def test_code_generation_simple_function(self):
         resp = _chat(
             [{"role": "user", "content": "Write a Python function `add(a, b)` that returns a+b. No explanation."}],
-            max_tokens=100,
+            max_tokens=120,
         )
-        content = resp["choices"][0]["message"]["content"]
+        content = _assistant_text(resp)
         self.assertIn("def add", content, "Expected function definition in response")
         self.assertIn("return", content, "Expected return statement in response")
 
@@ -221,7 +275,7 @@ class ChatCompletionTest(unittest.TestCase):
             ],
             max_tokens=80,
         )
-        content = resp["choices"][0]["message"]["content"].strip()
+        content = _assistant_text(resp)
         self.assertIn("Alice", content, f"Expected Alice in multi-turn reply, got {content!r}")
 
     def test_finish_reason_stop_on_short_answer(self):

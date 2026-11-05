@@ -91,11 +91,11 @@
   },
   "restore_main_hours": {
     "available": false,
-    "reason": "Not derivable: .github/workflows/leanup-actions.yml deletes all but the latest ci.yml run every night, so only runs since 2026-10-28 remain for a window that starts 2026-08-03."
+    "reason": "Not derivable: .github/workflows/cleanup-actions.yml deletes all but the latest ci.yml run every night, so only runs since 2026-10-28 remain for a window that starts 2026-08-03."
   },
   "first_push_ci": {
     "available": false,
-    "reason": "Not derivable: .github/workflows/leanup-actions.yml deletes all but the latest ci.yml run every night, so only runs since 2026-11-01 remain for a window that starts 2026-08-03."
+    "reason": "Not derivable: .github/workflows/cleanup-actions.yml deletes all but the latest ci.yml run every night, so only runs since 2026-11-01 remain for a window that starts 2026-08-03."
   },
   "issues_closed": 598,
   "releases": {
