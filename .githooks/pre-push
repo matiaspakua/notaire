@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 #
-# pre-push — run the CI gates locally before anything reaches the remote.
+# pre-push — run the pull-request gate locally before anything reaches the remote.
 #
 # Installed by: bash workspace/sdlc/install-git-hooks.sh  (sets core.hooksPath=.githooks)
 #
-# Runs workspace/sdlc/preflight.sh in its default mode: every blocking CI gate that does
-# not need a running app stack. A push is aborted if any of them fail, so a PR is
-# never opened against a branch that CI would reject.
+# Runs `bash workspace/sdlc/preflight.sh --full`. That is the mandatory gate
+# (#2001). GitHub Actions does not re-run the suite on the pull request.
+# A push is aborted if any check fails.
 #
-# Escape hatches (use deliberately, not habitually):
+# Escape hatches (use deliberately, not habitually; not sufficient to open a PR):
 #   PREFLIGHT_SKIP=1 git push …    skip entirely (e.g. pushing a WIP spike)
 #   PREFLIGHT_FAST=1 git push …    format/lint/compile/typecheck only
 #   git push --no-verify …         bypass all hooks (git built-in)
@@ -29,10 +29,13 @@ while read -r _local_ref local_sha _remote_ref _remote_sha; do
 done
 [ "$ONLY_DELETES" = "1" ] && exit 0
 
-ARGS=()
-[ "${PREFLIGHT_FAST:-0}" = "1" ] && ARGS+=(--fast)
+if [ "${PREFLIGHT_FAST:-0}" = "1" ]; then
+    ARGS=(--fast)
+else
+    ARGS=(--full)
+fi
 
-echo "pre-push: running local CI gates (workspace/sdlc/preflight.sh ${ARGS[*]:-})…"
+echo "pre-push: running local CI gates (workspace/sdlc/preflight.sh ${ARGS[*]})…"
 echo "          skip with PREFLIGHT_SKIP=1, or git push --no-verify"
 
 if bash "$REPO_ROOT/workspace/sdlc/preflight.sh" "${ARGS[@]}"; then
@@ -41,11 +44,11 @@ fi
 
 cat <<'MSG'
 
-pre-push: BLOCKED — the checks above are the same ones CI runs, so this push
-would produce a red PR.
+pre-push: BLOCKED — these checks are the pull-request gate. GitHub will not
+re-run them on the pull request.
 
   fix automatically :  bash workspace/sdlc/preflight.sh --fix
-  re-check          :  bash workspace/sdlc/preflight.sh
+  re-check          :  bash workspace/sdlc/preflight.sh --full
   push anyway       :  PREFLIGHT_SKIP=1 git push …   (or: git push --no-verify)
 MSG
 exit 1

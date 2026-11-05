@@ -11,15 +11,17 @@ Owners: `CONSTITUTION.md` §5, `docs/300-development/304-ai-sdlc-cloud/CI-MERGE-
 
 ## 1. Read the whole PR first
 
-Merge state, checks on the **current head**, open review threads. Light-only green is not
-green: `bash workspace/sdlc/check-heavy-ci.sh <pr>` must exit 0 (needs `gh`; without it read the
-check runs and require `Unit Tests`, `Integration Tests`, `Coverage Gate (mvn verify)`,
-`API Tests (Bruno)` and `UI E2E Tests (Playwright)` to be success or workflow-skipped).
+Merge state and open review threads. A PR is ready when `bash workspace/sdlc/preflight.sh --full`
+has passed on the head. `bash workspace/sdlc/check-heavy-ci.sh <pr>` must exit 0 (needs `gh`).
+Product workflows do not run on the pull request (#2001). The script fails only when a heavy
+workflow was started on that head and is pending or red.
 
-## 2. Required checks on `main`
+## 2. Ruleset
 
-`CI`, `Frontend CI`, `Playwright E2E`, `Code Lint`, `PR Validation` and `Process Checks`
-(ruleset `protect-main`, strict: the branch must contain current `main`).
+`protect-main` must not require checks the pull request will never report. Desired state drops
+`CI`, `Frontend CI`, `Playwright E2E`, `Code Lint`, and `PR Validation` (#2001). The Owner applies
+that file after merge (#1040). Until then GitHub refuses every merge. The branch must still
+contain current `main` when the ruleset is strict.
 
 ## 3. Behind or conflicting with `main`
 
@@ -29,9 +31,10 @@ the affected suites, push, then confirm it landed: `git ls-remote --heads origin
 After **each land** on `main`, sync remaining open tips the same way before more pushes
 (`docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md`).
 
-## 4. CI red
+## 4. Local gate red
 
-Reproduce locally with `bash workspace/sdlc/preflight.sh` (mirrors CI) before pushing a fix.
+Reproduce with `bash workspace/sdlc/preflight.sh --full` before pushing a fix. A run without
+`--full` is not sufficient to open a pull request. GitHub will not re-run the suite.
 Fix the cause; never skip, `@Disabled` or quarantine a test, never push an empty commit.
 Typical Notaire causes: stale `docs/300-development/303-testing/INVENTORY.md`, a new Flyway migration
 without `python3 workspace/release/product_release.py --write` (product version coherence), Spotless format
@@ -56,18 +59,17 @@ Please holds it. Never commit on `release-please--branches--*`.
 
 ## 5b. Process Checks before ready
 
-Do not mark the PR ready until Process Checks are green: OpenSpec archive hygiene, Spotless when
+Do not mark the PR ready until `preflight.sh --full` is green: OpenSpec archive hygiene, Spotless when
 Java changed, INVENTORY regen when architecture/test inventory drifted, Conventional Commits.
 After moving helpers to `adapter.out.persistence.<slice>`, fix english-locals / `docs/tests` path
-refs in the same PR (`python3 -m unittest discover -s docs/tests`). Advisory / light checks are
-not merge authority — still require `check-heavy-ci.sh` exit 0. Mac local green is **not** CI
-green. Prefer one heavy tip and domain-sized slices (cost). Hex FE ratchet Done only when
+refs in the same PR (`python3 -m unittest discover -s docs/tests`). `check-heavy-ci.sh` must exit 0.
+Prefer one product tip at a time. Hex FE ratchet Done only when
 `eslint-suppressions.json` is `{}` (count 0). Full checklist + paste templates:
 `docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md`.
 
 ## 6. Who merges
 
-Workers never merge. The Foreman merges a Worker PR when every required check is green and
+Workers never merge. The Foreman merges a Worker PR when `preflight.sh --full` has passed and
 `check-heavy-ci.sh` exits 0; the Owner merges Constitution, `sdlc-exception` and harness PRs.
 When only people are owed (approval, merge), say so once and wait.
 If Issues/Projects write returns **403**, leave a **human paste** using the templates in

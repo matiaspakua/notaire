@@ -18,11 +18,14 @@ name: CodeQL
 # fail the job after a successful analysis+upload; findings land once default
 # setup is off. Local preflight does not run CodeQL. See workspace/sdlc/preflight.sh.
 
+# Local preflight cannot run CodeQL. Weekly Monday scan stays so security
+# findings land between releases. Version tags and manual dispatch also run it.
+# Not on pull_request and not on push to a branch (#2001).
 on:
-  pull_request:
-    branches: [ main ]
   push:
-    branches: [ main ]
+    tags:
+      - 'v*'
+      - 'notaire-v*'
   schedule:
     # Weekly, after the Monday performance-test window.
     - cron: "30 6 * * 1"

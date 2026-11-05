@@ -1,13 +1,10 @@
 name: CD - Build & Publish Docker
 
-# Publishes backend and frontend Docker images only AFTER the CI test pipeline
-# has succeeded on main (workflow_run gate). Tag pushes and manual dispatch
-# also publish.
+# Publishes backend and frontend Docker images on a version tag (v* /
+# notaire-v*) or manual dispatch. A merge to main does not publish (#2001).
+# Release Please dispatches this workflow on the tag it creates, because a
+# GITHUB_TOKEN tag push does not start on.push.tags workflows (#1599).
 on:
-  workflow_run:
-    workflows: ["CI - Build, Test & Security"]
-    types: [completed]
-    branches: [main]
   push:
     tags:
       - 'v*'
@@ -53,8 +50,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     needs: release-identity
-    # On workflow_run, only publish when CI (all tests) succeeded.
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     permissions:
       contents: read
       packages: write
@@ -74,13 +69,10 @@ jobs:
             sbom_artifact: sbom-frontend
             scan_artifact: published-image-scan-frontend
     steps:
-      # Pin checkout to the CI-tested commit on workflow_run. Under that event,
-      # github.sha is tip-of-default-branch at CD schedule time — not the SHA CI
-      # tested. Tag / workflow_dispatch fall back to github.sha (#1042).
+      # Tag and workflow_dispatch both publish github.sha, the commit the
+      # ref points at (#1042, #2001). There is no workflow_run head to pin.
       - name: Checkout code
         uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -92,16 +84,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Explicit publish SHA: do not trust metadata type=sha / github.sha under
-      # workflow_run (those track tip-of-default-branch).
+      # Explicit publish SHA: the tag or dispatch commit, not a moving tip.
       - name: Resolve publish SHA
         id: publish_sha
         run: |
-          if [ "${{ github.event_name }}" = "workflow_run" ]; then
-            SHA="${{ github.event.workflow_run.head_sha }}"
-          else
-            SHA="${{ github.sha }}"
-          fi
+          SHA="${{ github.sha }}"
           echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
           echo "sha_short=${SHA:0:7}" >> "$GITHUB_OUTPUT"
 
@@ -133,9 +120,12 @@ jobs:
             VERSION=${{ github.ref_name }}
 
       # Move mutable latest only after the SHA-tagged push succeeded (same digest).
+      # Version tags (including Release Please's dispatch on the tag) and a
+      # manual dispatch from the default branch. Not every merge to main.
       - name: Tag and push latest
         if: >
-          github.event_name == 'workflow_run'
+          startsWith(github.ref, 'refs/tags/v')
+          || startsWith(github.ref, 'refs/tags/notaire-v')
           || github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
         run: |
           docker buildx imagetools create \
@@ -381,7 +371,7 @@ jobs:
       always()
       && needs.generate-report.result == 'success'
       && (
-        (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+        github.event_name == 'push'
         || github.event_name == 'workflow_dispatch'
       )
     permissions:

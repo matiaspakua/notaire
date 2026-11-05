@@ -1,17 +1,16 @@
 name: Pages CI — Build, Lint, Test & Links
 
-# Checks the public GitHub Pages app (github-page/) on every pull request (#1970):
-# typecheck, ESLint, Vitest component tests, the production static export, an internal
-# link check over the export, and a Playwright + axe smoke suite at 375 and 1280 px.
-# Since #1985 it also builds the read-only demo (the real frontend under /demo/), so a frontend
-# change that breaks the demo patches fails here, before merge.
-# It never deploys: publishing stays in deploy-github-page.yml after CI on main.
-# Mirrored locally by workspace/sdlc/preflight.sh ("pages …" checks).
+# Checks the public GitHub Pages app (github-page/) on a version tag and on
+# manual dispatch (#1970 / #2001): typecheck, ESLint, Vitest, the production
+# static export, an internal link check, and Playwright + axe at 375 and 1280 px.
+# Since #1985 it also builds the read-only demo (the real frontend under /demo/).
+# It never deploys. Publishing is deploy-github-page.yml on push to main.
+# Day-to-day proof is workspace/sdlc/preflight.sh ("pages …" checks; --full adds Playwright).
 on:
-  pull_request:
-    branches: [ main ]
   push:
-    branches: [ main ]
+    tags:
+      - 'v*'
+      - 'notaire-v*'
   workflow_dispatch:
 
 permissions:

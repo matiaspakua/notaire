@@ -280,10 +280,12 @@ adds CodeQL and OWASP ZAP.
 **18. Create the pull request.** Open a PR from the branch to `main` using
 `.github/PULL_REQUEST_TEMPLATE.md`, referencing the Issue and Use Case.
 
-**19. Wait for green CI/CD.** Wait for all required GitHub Actions workflows to
-pass (see [Tooling Map](#13-tooling-map)). Do not request review or merge while
-CI is red. Locally, run `bash workspace/sdlc/preflight.sh` before pushing (installed
-pre-push hook enforces it).
+**19. Local full preflight.** A pull request is ready when
+`bash workspace/sdlc/preflight.sh --full` has passed on the branch. GitHub
+Actions does not re-run that suite on the pull request or on push to `main`
+(#2001). The pre-push hook runs `--full`. A run without `--full` is not
+sufficient to open a pull request. CodeQL stays on GitHub (weekly Monday and
+on version tags) and is not replicated locally.
 
 **20. Code Review.** Address review feedback in new commits. The PR is ready to
 merge when it is reviewed by the code owner **or** passes the Foreman's Gate 4
@@ -298,13 +300,17 @@ solo-maintainer repo with an AI fleet, not an exception. → **Gate 4.**
 repo history). Never push directly to `main`.
 
 **Foreman merge rule.** The Owner delegates merge authority to the Foreman
-(#1624). The Foreman may merge a Worker's PR only when every required status
-check of the `protect-main` ruleset is green, `bash workspace/sdlc/check-heavy-ci.sh <pr>`
-exits 0, the PR is `MERGEABLE`, and Gate 4 has no open item. The Owner alone
-merges PRs that amend this Constitution, PRs that carry the `sdlc-exception`
-label, and PRs that change the Foreman's own harness or merge path. A Worker
-never merges. The ruleset enforces the green-check part mechanically: GitHub
-refuses the merge otherwise.
+(#1624). The Foreman may merge a Worker's PR only when
+`bash workspace/sdlc/preflight.sh --full` has passed on the head,
+`bash workspace/sdlc/check-heavy-ci.sh <pr>` exits 0, the PR is `MERGEABLE`,
+and Gate 4 has no open item. Product CI does not run on the pull request
+(#2001); `check-heavy-ci.sh` fails only when a heavy workflow was actually
+started on that head and is pending or red. The Owner alone merges PRs that
+amend this Constitution, PRs that carry the `sdlc-exception` label, and PRs
+that change the Foreman's own harness or merge path. A Worker never merges.
+The Owner must keep `protect-main` aligned with checks pull requests still
+report (#1040). Until that ruleset drops `CI`, `Frontend CI`, `Playwright E2E`,
+`Code Lint`, and `PR Validation`, GitHub refuses every merge.
 
 **Archive in the PR (#1623).** The PR that implements an OpenSpec change also
 archives it (`cd docs && openspec archive <change> --yes`) before it merges, so
@@ -314,8 +320,9 @@ by its last PR. Deploy and smoke evidence (steps 22–23) is then recorded in th
 archived `traceability.md`. Enforced by `check-openspec-archive-hygiene.py`;
 `main` and a daily run fail on any leftover (`sdlc-process.yml`, Main Health).
 
-**22. Deploy.** The release pipeline deploys the merged change (CI → CD →
-Docker image; see [Release Rules](#11-release-rules)).
+**22. Deploy.** A merge to `main` updates GitHub Pages. Product images publish
+on the next version tag (Release Please dispatches `cd.yml`), not on the merge
+(see [Release Rules](#11-release-rules)).
 
 **23. Smoke Test.** Verify the deployed change on the target environment
 (endpoint health, key flow of the change). → **Gate 5.**
@@ -585,11 +592,14 @@ Mandatory:
 - Branches: `<type>/<issue-number>_<description>`, created from an updated `main`.
 - Commits: atomic, descriptive, Conventional Commits, referencing the issue.
 - PRs: mandatory for every change; merge only via Pull Request.
-- Merge requires: green CI, code review approval, no conflicts (Gate 4); the
-  Owner or, under the Foreman merge rule (§5 step 21), the Foreman merges.
+- Merge requires: `bash workspace/sdlc/preflight.sh --full` passed, code review
+  approval, no conflicts (Gate 4); the Owner or, under the Foreman merge rule
+  (§5 step 21), the Foreman merges. GitHub does not re-run that suite on the PR.
 - No secrets in commits; `.env` is git-ignored.
-- Before pushing, run the local CI gates: `bash workspace/sdlc/preflight.sh`
-  (enforced by the `pre-push` hook after `bash workspace/sdlc/install-git-hooks.sh`).
+- Before pushing or opening a pull request, run
+  `bash workspace/sdlc/preflight.sh --full` (the `pre-push` hook does this after
+  `bash workspace/sdlc/install-git-hooks.sh`). A run without `--full` is not
+  sufficient to open a pull request.
 - **Continuous publication (#1681):** work lives on GitHub, not only on a disk. Push
   the branch **immediately** after creating it; after **each group of atomic commits**
   (spec, failing tests, implementation, docs) push the commits **and** comment on the
@@ -610,7 +620,7 @@ the full workflow in [section 5](#5-official-sdlc-workflow) and may **never**:
 - ❌ Generate code without a Specification (Gate 1)
 - ❌ Write code before its failing tests (Gate 2)
 - ❌ Ignore any Quality Gate
-- ❌ Create a PR with failing CI, missing/outdated docs, or reduced coverage
+- ❌ Create a PR before `bash workspace/sdlc/preflight.sh --full` passes, or with missing/outdated docs or reduced coverage
 - ❌ Skip the documentation update step
 - ❌ Commit to `main`, skip tests, or leave failing tests
 - ❌ Mark an Issue closed before deploy + smoke test (Gate 5)
@@ -625,9 +635,9 @@ An AI agent **must**:
 - ✅ Reference the existing rule files (`AGENTS.md`, `.claude/rules/*`) for operational detail
 - ✅ Treat human review as authoritative when conflicts arise
 - ✅ **Merge authority:** only the Foreman merges, and only under the Foreman
-  merge rule (§5 step 21); never treat light CI as mergeable — require
-  `bash workspace/sdlc/check-heavy-ci.sh <pr>` exit 0 (Integration + Coverage +
-  Bruno + Playwright). Details:
+  merge rule (§5 step 21). A PR is ready when `bash workspace/sdlc/preflight.sh --full`
+  has passed. `bash workspace/sdlc/check-heavy-ci.sh <pr>` must exit 0; it does
+  not wait for GitHub jobs that no longer run on pull requests. Details:
   [`docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md`](docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md)
 - ✅ **Serialize** Playwright-heavy PRs (one at a time on shared runners); draft
   Dependabot PRs when they starve the queue
@@ -649,13 +659,13 @@ An AI agent **must**:
     (`--scope pr` in Process Checks / preflight; `--scope wip` / `--scope all`
     for board hygiene). Skips with a clear message when `gh` is not
     authenticated / `GH_TOKEN` is absent (`SKIP_BOARD_COHERENCE=1` forces skip)
-- ✅ **Path-scoped CI on PRs (#1257 / #1197 P0.2):** docs / OpenSpec / agent-only
-  path sets must not run Java Unit/Integration/Coverage or Playwright/Bruno leaf
-  jobs. Required check *names* (`CI`, `Frontend CI`, `Playwright E2E`, …) stay
-  green via suite aggregators that treat intentional `skipped` as success.
-  `push` to `main`, `workflow_dispatch`, and `schedule` always run the full
-  suite. Never use workflow-level `on.paths` that would omit a required check
-  on `main`. Guards: `workspace/tests/test_ci_workflow_invariants.py`.
+- ✅ **Release-only GitHub CI (#2001):** product workflows do not run on
+  pull requests or on push to a branch. They run on tags `v*` / `notaire-v*`
+  and on `workflow_dispatch`. A tag run is the full suite (path filters apply
+  only to a `pull_request` event, which these workflows no longer use). Never
+  add workflow-level `on.paths` on a tag trigger: GitHub does not apply paths
+  to tag pushes and the release run would be skipped. Guards:
+  `workspace/tests/test_ci_workflow_invariants.py`.
 
 Before acting, the agent must select the applicable skills using
 `.claude/skills/README.md`, load their references only when needed, and state
@@ -716,8 +726,10 @@ Agent-specific entry points:
 - The running system shows the product version on `/actuator/info`, in the
   OpenAPI document, and in the frontend shell. GitHub Pages lists the cut history.
 - The CD pipeline (`cd.yml`) publishes the backend and frontend images to GHCR
-  **only after** CI on `main` succeeds (or on version tags / manual dispatch).
-- GitHub Pages documentation deployment is handled by `deploy-github-page.yml`.
+  **only** on version tags (`v*` / `notaire-v*`) or manual dispatch. A merge to
+  `main` does not publish images (#2001).
+- GitHub Pages documentation deployment is handled by `deploy-github-page.yml`
+  on every push to `main` (and on manual dispatch). It does not wait for product CI.
 - Every release/deploy must pass a **smoke test** before the associated Issues
   are closed (Gate 5).
 - Emergency hotfixes still follow this workflow, with the minimum viable
@@ -739,14 +751,17 @@ Agent-specific entry points:
   label. A PR that carries no OpenSpec change must have that label, and the
   label is only valid on such a PR (`workspace/sdlc/check-sdlc-exception.sh`).
 - **Enforcement:**
-  - Local: `workspace/sdlc/preflight.sh` + pre-push git hook (mirrors CI gates);
-    `workspace/sdlc/run_pipeline.sh` is the mandatory, dashboarded final check
-    before opening a PR (→ Gate 3).
-  - CI: GitHub Actions workflows block PRs that violate quality gates;
-    `sdlc-process.yml` checks the process itself (commit messages, TDD
-    evidence, the exception label, agent rule files).
-  - GitHub: the `protect-main` ruleset requires PRs and the required status
-    checks (`security/assert-protect-main-ruleset.sh`).
+  - Local: `workspace/sdlc/preflight.sh --full` + pre-push git hook. A run
+    without `--full` is not sufficient to open a PR.
+    `workspace/sdlc/run_pipeline.sh` is the dashboarded final check before
+    opening a PR (→ Gate 3) and already includes `preflight.sh --full`.
+  - Release CI: GitHub Actions product workflows run on version tags and
+    manual dispatch, not on pull requests. `sdlc-process.yml` checks the
+    process on a tag; the same checks run in preflight on every PR.
+  - GitHub: the `protect-main` ruleset requires PRs. Desired state no longer
+    requires the product-CI check names (#2001). The Owner applies it
+    (`security/apply-protect-main-ruleset.sh`); `security/assert-protect-main-ruleset.sh`
+    confirms the live ruleset.
   - Review: the code owner (`CODEOWNERS`), or the Foreman under the Foreman
     merge rule, before merge.
 
@@ -783,20 +798,20 @@ drift.
 | Lint / format | Spotless (CI "Code Lint"), Checkstyle, ESLint |
 | Frontend | `frontend-ci.yml` (TypeScript, ESLint, Vitest, Next.js build) |
 | E2E | `playwright-e2e.yml` (Playwright suite in `testing/e2e` + Bruno API suite) |
-| Local preflight | `bash workspace/sdlc/preflight.sh [--fix / --fast / --full]`; pre-push hook |
+| Local preflight | `bash workspace/sdlc/preflight.sh --full` is mandatory before push/PR (`--fix` / `--fast` are not sufficient to open a PR); pre-push hook runs `--full` |
 | Product version coherence (#1591) | `python3 workspace/sdlc/check-product-version-coherence.py` (`--tag`, `--packaged`); mirrored in `preflight.sh`, `sdlc-process.yml`, `ci.yml`, and `cd.yml` `release-identity` |
 | Pre-PR pipeline gate (Gate 3) | `bash workspace/sdlc/run_pipeline.sh` — composes `validate-sdlc-plan.sh` + `python3 security/run_gates.py --profile local` + `preflight.sh --full` + markdown-lint (ratchet vs `origin/main`); writes `reports/pipeline/<timestamp>/index.html` dashboard |
-| CI/CD | `ci.yml`, `pr-validation.yml`, `sdlc-process.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `cd.yml` |
-| **Merge gate (heavy CI)** | `bash workspace/sdlc/check-heavy-ci.sh <pr>` — Integration + Coverage + Bruno + Playwright must pass; light-only green is not mergeable ([CI-MERGE-GATE.md](docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md)) |
-| Path-scoped CI | `dorny/paths-filter` job `changes` in `ci.yml` / `frontend-ci.yml` / `playwright-e2e.yml` / `openapi-contract.yml` / `pages-ci.yml`; aggregators accept `success\|skipped`; invariants in `workspace/tests/test_ci_workflow_invariants.py` (#1257) |
+| CI/CD | Product workflows (`ci.yml`, `pr-validation.yml`, `sdlc-process.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `cd.yml`, …) run on tags `v*` / `notaire-v*` and `workflow_dispatch`, not on pull requests (#2001). `cd.yml` publishes images only then. Release Please stays on push to `main`. |
+| **Merge gate** | `bash workspace/sdlc/preflight.sh --full` on the branch. `bash workspace/sdlc/check-heavy-ci.sh <pr>` exits 0 when GitHub did not start the heavy suite ([CI-MERGE-GATE.md](docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md)) |
+| Release-only triggers | Tag + `workflow_dispatch` for product CI; path-filter jobs still force a full suite when the event is not `pull_request`. Invariants in `workspace/tests/test_ci_workflow_invariants.py` (#2001, formerly path-scoped #1257) |
 | Security | Local case catalog `security/cases/catalog.yml` via `python3 security/run_gates.py` (Semgrep, secret scan, Trivy, DAST baseline). CI adds CodeQL and OWASP ZAP and runs the same catalog. `security/` module for rulesets-as-code |
-| Deploy | `cd.yml` → build, scan, sign (cosign) and publish backend and frontend images to GHCR; attach product, database, and image SBOMs on `v*` / `notaire-v*`; no automated smoke test |
-| Public documentation site | `deploy-github-page.yml` → https://matiaspakua.github.io/notaire/ after CI on `main`. Top level: **AI Factory** `/ai-sdlc/` (the AI SDLC, in five acts), landing `/`, **Product** `/product/` (four pages with their own sidebar), **Technical docs** `/docs/` (with architecture internals: hexagonal, Flyway, API contract and Bruno, technology stack, facts read from the repo at build time by `github-page/lib/tech-facts.ts`, #1976), **Releases** `/docs/releases/`; one shell, search and page registry in `github-page/lib/site.ts`. PRs touching `github-page/` run `pages-ci.yml` (typecheck, ESLint, Vitest, export, link check, Playwright + axe at 375/1280 px), mirrored in `preflight.sh` (#1970) |
+| Deploy | `cd.yml` → build, scan, sign (cosign) and publish backend and frontend images to GHCR on `v*` / `notaire-v*` or `workflow_dispatch` only; attach product, database, and image SBOMs on those tags; no automated smoke test; no publish on merge to `main` |
+| Public documentation site | `deploy-github-page.yml` → https://matiaspakua.github.io/notaire/ on push to `main`. Top level: **AI Factory** `/ai-sdlc/` (the AI SDLC, in five acts), landing `/`, **Product** `/product/` (four pages with their own sidebar), **Technical docs** `/docs/` (with architecture internals: hexagonal, Flyway, API contract and Bruno, technology stack, facts read from the repo at build time by `github-page/lib/tech-facts.ts`, #1976), **Releases** `/docs/releases/`; one shell, search and page registry in `github-page/lib/site.ts`. `pages-ci.yml` runs on a version tag (typecheck, ESLint, Vitest, export, link check, Playwright + axe at 375/1280 px), mirrored in `preflight.sh` (#1970, #2001) |
 | Agent rules | `AGENTS.md`, `.claude/rules/*`, `.claude/skills/*`, `.claude/agents/*`; Cursor Cloud fleet: `docs/300-development/304-ai-sdlc-cloud/` |
 
 ---
 
-*Last reviewed: 2026-10-28 (Pages site shell, IA and pages-ci #1970; stack-agnostic framework, baseline ratchet and skills lint #1958; archive in the PR #1623, Main Health #1622; Foreman merge rule #1624; release version coherence gate, runtime identity,
+*Last reviewed: 2026-11-05 (release-only GitHub Actions #2001; Pages site shell, IA and pages-ci #1970; stack-agnostic framework, baseline ratchet and skills lint #1958; archive in the PR #1623, Main Health #1622; Foreman merge rule #1624; release version coherence gate, runtime identity,
 fail-closed release assets, KISS/Boy Scout principles #1591; shared full-lifecycle
 roadmap #1569; product release #1571; testing inventory #1511; path-scoped CI #1257). This Constitution supersedes the process summary in
 `.claude/rules/ai-agent-workflow.md` where they conflict; that document remains

@@ -1,70 +1,45 @@
-# CI merge gate — do not trust light-only green
+# Merge gate — local full preflight
 
-> Fleet process rule for Cursor Cloud foreman / merge-when-green.
+> Fleet process rule for Cursor Cloud foreman / merge-when-ready.
 > Also indexed from [`ENVIRONMENT-CHECKLIST.md` §7](ENVIRONMENT-CHECKLIST.md) and
 > [`FLEET-ARCHITECTURE.md` §9](FLEET-ARCHITECTURE.md).
 
-## False positive
+## The gate (#2001)
 
-**Light CI can look fully green while heavy CI is still pending.**
+Product GitHub workflows do not run on a pull request or on push to `main`.
+A pull request is ready when this has passed on the head:
 
-After a PR push, these often finish first (~12–18 checks):
+```bash
+bash workspace/sdlc/preflight.sh --full
+```
 
-- PR Validation
-- Frontend (Vitest / TypeScript / lint)
-- SDLC Process Checks
-- Other fast jobs (CodeQL Analyze matrix, Dependabot submit, …)
+A run without `--full` is not sufficient. GitHub will not re-run the skipped
+suites. CodeQL stays weekly (and on version tags) and is not local.
 
-Meanwhile these may still be **pending** (or not yet reported to the
-subscription):
-
-- `CI - Build, Test & Security` (backend Unit, Integration, Coverage Gate, …)
-- `Playwright E2E — Full Suite` (Bruno API + UI E2E)
-
-**Do not trust CI subscription success alone.** Cursor / GitHub CI subscriptions
-can deliver “all N checks success” (e.g. **18 checks** on #1137) when they only
-see the completed light suite — while `CI - Build, Test & Security` and/or
-Playwright are still **pending** or not yet in the rollup. That delivery is
-**not** mergeable. Always run `bash workspace/sdlc/check-heavy-ci.sh <pr>` before
-`gh pr merge`; ignore subscription “success” unless that script exits 0.
-
-`gh pr checks` has the same blind spot when heavy jobs are missing or still
-queued. Count of green checks ≠ heavy gate.
+`bash workspace/sdlc/check-heavy-ci.sh <pr>` exits 0 when those workflows were
+not started for the head. It still fails if one was dispatched and is pending
+or red. Do not wait for check names that will never appear.
 
 ## Who may merge
 
 The **Foreman merge rule** (CONSTITUTION §5 step 21, #1624): the Foreman merges
-a Worker PR once the hard rule below holds and `check-heavy-ci.sh` exits 0. The
-Owner merges Constitution amendments, `sdlc-exception` PRs and PRs that change
-the Foreman's harness or merge path. Workers never merge. The `protect-main`
-ruleset requires the five status checks, so GitHub refuses a merge that skips
-them.
+a Worker PR once `preflight.sh --full` has passed and `check-heavy-ci.sh` exits 0.
+The Owner merges Constitution amendments, `sdlc-exception` PRs and PRs that change
+the Foreman's harness or merge path. Workers never merge.
 
-## Hard rule
+## Ruleset (#1040)
 
-**Never merge** until every required check below is terminal **success**
-(or explicitly workflow-skipped):
+Desired `protect-main` no longer requires `CI`, `Frontend CI`, `Playwright E2E`,
+`Code Lint`, or `PR Validation`, because pull requests do not report them.
+The Owner applies `bash security/apply-protect-main-ruleset.sh --apply` after
+the #2001 merge. Until then GitHub refuses every merge. If the live ruleset
+also requires `OpenAPI Contract`, remove that context too.
 
-| Required check | Workflow |
-|----------------|----------|
-| Unit Tests (backend) | `CI - Build, Test & Security` |
-| Integration Tests | `CI - Build, Test & Security` |
-| Coverage Gate (`mvn verify`) | `CI - Build, Test & Security` |
-| API Tests (Bruno) | `Playwright E2E — Full Suite` (when that workflow runs) |
-| UI E2E Tests (Playwright) | `Playwright E2E — Full Suite` |
+## What --full covers
 
-Light-only green (Validate PR, Code Lint, Frontend Vitest/TypeScript, Process
-Checks, CodeQL Analyze, …) is **insufficient** — even when a subscription says
-“all N checks success.”
-
-Docs-only PRs (path-scoped CI #1257): leaf Java/Bruno/Playwright jobs are
-**skipped**; suite aggregators and `check-heavy-ci.sh` treat `skip`/`skipped`/`skipping`
-(as printed by `gh pr checks`) as
-success. Product PRs still require Bruno + `UI E2E Tests (Playwright)` (the
-merge job after #1258 shards) to be success.
-
-Local mirror before push: [`CI-PREFLIGHT.md`](../CI-PREFLIGHT.md)
-(`bash workspace/sdlc/preflight.sh`, optionally `--full`).
+Integration, coverage, Bruno, and Playwright run inside
+`bash workspace/sdlc/preflight.sh --full` ([`CI-PREFLIGHT.md`](../CI-PREFLIGHT.md)).
+They also run on a version tag. They do not run on the pull request.
 
 ## OpenSpec archive hygiene (in addition to heavy CI)
 
@@ -73,7 +48,7 @@ Heavy CI green is not enough if the PR leaves OpenSpec lifecycle drift:
 - **Archive in the PR (#1623):** a PR that adds or edits an active change must
   archive it before merge (`cd docs && openspec archive <name> --yes`), unless
   the change sets `multi_pr: true`. Another change's closed-issue leftover only
-  warns on a PR; `main` and the daily Main Health run fail on it (#1622).
+  warns on a PR; a version-tag Main Health run fails on it (#1622, #2001).
 - A PR that touches an active change must have implementation task groups
   **3–8** checked in that change’s `tasks.md` (groups 1–2 and 9–12 may stay
   open until after merge), unless the PR carries `sdlc-exception`.

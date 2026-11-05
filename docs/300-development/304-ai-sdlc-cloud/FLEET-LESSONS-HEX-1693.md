@@ -19,7 +19,7 @@
 
 | Do | Don't |
 |----|-------|
-| Prefer **one heavy-CI PR at a time**; wait for `check-heavy-ci.sh` exit 0 | Open the next product tip while another heavy suite is queued |
+| Prefer **one product PR at a time**; `preflight.sh --full` is the gate (#2001) | Open the next product tip before `--full` has passed |
 | **merge `origin/main`** into a pushed branch; confirm with `git ls-remote` | **never rebase** / force-push a pushed branch |
 | After each land, **sync open tips** with new `main` before more work | Start the next domain slice before the current PR merges |
 | Mark ready only when **Process Checks** + OpenSpec archive hygiene are green | Treat light-only green or advisory checks as merge authority |
@@ -68,7 +68,7 @@ Do **not** mark ready with a green unit suite while docs Process Checks still po
 ## Mac local vs CI
 
 See [`MAC-LOCAL-VS-CI.md`](MAC-LOCAL-VS-CI.md). Trust Mac for ArchUnit / unit / pg-integration / Spotless / FE typecheck+lint+Vitest+build / security `--profile local` when freshly re-run on tip. Still let CI own CodeQL, full Bruno, Playwright, DAST/ZAP, image build/smoke, and `gh`-dependent Process Checks (can flake locally).
-**Mac green is not CI green** — still run `check-heavy-ci.sh` on the PR head.
+**Mac green is not `--full` green** — run `bash workspace/sdlc/preflight.sh --full` on the PR head. GitHub does not re-run it (#2001).
 
 ## Performance / cost (fleet)
 

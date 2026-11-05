@@ -1,12 +1,15 @@
 name: Release Please
 
 # Opens/updates a release PR from Conventional Commits, then creates the v*
-# GitHub Release + tag when that PR merges. Does not bypass protect-main:
-# the release PR must pass required checks like any other PR (#1040).
+# GitHub Release + tag when that PR merges. Does not bypass protect-main.
+# Day-to-day and release PRs are gated by `bash workspace/sdlc/preflight.sh --full`.
+# After #2001 the heavy workflows do not run on pull_request, so the Owner must
+# drop the retired required checks from protect-main (#1040) or the release PR
+# cannot merge.
 # Uses the default GITHUB_TOKEN; the repository setting "Allow GitHub Actions to
-# create and approve pull requests" must stay enabled (#1264). A PR opened with
-# GITHUB_TOKEN triggers no other workflow, so the Owner starts the required
-# checks on the release PR by hand (close and reopen it); see RELEASE.md.
+# create and approve pull requests" must stay enabled (#1264). A tag created
+# with GITHUB_TOKEN does not start on.push.tags workflows (#1599); this job
+# dispatches them. See RELEASE.md.
 on:
   push:
     branches: [main]
@@ -64,4 +67,14 @@ jobs:
         run: |
           set -euo pipefail
           TAG="${{ steps.release.outputs.tag_name }}"
+          # GITHUB_TOKEN tag pushes do not start on.push.tags (#1599).
+          gh workflow run ci.yml --ref "$TAG"
+          gh workflow run frontend-ci.yml --ref "$TAG"
+          gh workflow run playwright-e2e.yml --ref "$TAG"
+          gh workflow run pages-ci.yml --ref "$TAG"
+          gh workflow run openapi-contract.yml --ref "$TAG"
+          gh workflow run database-vv.yml --ref "$TAG"
+          gh workflow run sdlc-process.yml --ref "$TAG"
+          gh workflow run test-coverage-report.yml --ref "$TAG"
+          gh workflow run codeql.yml --ref "$TAG"
           gh workflow run cd.yml --ref "$TAG"

@@ -1,13 +1,14 @@
 name: Frontend CI — Build, Typecheck & Test
 
 # Frontend static checks, unit tests (with coverage) and production build.
-# Runs on every PR into main and every merge to main, plus manual dispatch.
+# Runs on a version tag (v* / notaire-v*) and on manual dispatch, not on
+# pull_request or branch push. Day-to-day proof is preflight.sh --full.
 # Failures FAIL the pipeline. UI E2E tests live in playwright-e2e.yml.
 on:
-  pull_request:
-    branches: [ main ]
   push:
-    branches: [ main ]
+    tags:
+      - 'v*'
+      - 'notaire-v*'
   workflow_dispatch:
 
 permissions:
