@@ -8,6 +8,7 @@ import {
   FACTORY_PAGES,
   PRIMARY_NAV,
   PRODUCT_PAGES,
+  SECURITY_PAGES,
   breadcrumbs,
   pageMetadata,
   prevNext,
@@ -18,12 +19,12 @@ import {
 const pageFile = (href: string) => path.join(__dirname, "..", "app", href.split("#")[0], "page.tsx");
 
 describe("site map (#1970)", () => {
-  it("has the four top-level entries the Owner asked for", () => {
-    expect(PRIMARY_NAV.map((n) => n.label)).toEqual(["AI Factory", "Product", "Technical docs", "Releases"]);
+  it("has the primary entries, including Security", () => {
+    expect(PRIMARY_NAV.map((n) => n.label)).toEqual(["AI Factory", "Product", "Security", "Technical docs", "Releases"]);
   });
 
-  it("points every factory, docs and top-level href at a real page", () => {
-    for (const p of [...FACTORY_PAGES, ...DOCS_PAGES, ...PRODUCT_PAGES, ...PRIMARY_NAV]) {
+  it("points every factory, docs, security and top-level href at a real page", () => {
+    for (const p of [...FACTORY_PAGES, ...DOCS_PAGES, ...PRODUCT_PAGES, ...SECURITY_PAGES, ...PRIMARY_NAV]) {
       expect(existsSync(pageFile(p.href)), p.href).toBe(true);
     }
   });
@@ -40,6 +41,8 @@ describe("site map (#1970)", () => {
     expect(sectionOf("/product/")).toBe("product");
     expect(sectionOf("/product/story")).toBe("product");
     expect(sectionOf("/ai-sdlc/lessons")).toBe("factory");
+    expect(sectionOf("/security/threats/")).toBe("security");
+    expect(sectionOf("/docs/security/")).toBe("docs");
     expect(sectionOf("/docs/testing/")).toBe("docs");
     expect(sectionOf("/docs/releases/")).toBe("releases");
   });
@@ -60,6 +63,7 @@ describe("site map (#1970)", () => {
 
   it("finds pages by title, summary or keyword, ignoring case", () => {
     expect(search("GATES").map((r) => r.href)).toContain("/ai-sdlc/quality-gates/");
+    expect(search("stride").map((r) => r.href)).toContain("/security/threats/");
     expect(search("playwright").map((r) => r.href)).toContain("/docs/testing/");
     expect(search("adr")[0].href).toBe("/docs/architecture/");
     expect(search("flyway")[0].href).toBe("/docs/database/");
@@ -75,6 +79,16 @@ describe("site map (#1970)", () => {
     expect(prevNext("/product/story/").prev?.href).toBe("/product/");
     expect(prevNext("/product/story/").next?.href).toBe("/product/platform/");
     expect(pageMetadata("/product/numbers/").title).toBe("Numbers — Product");
+    expect(pageMetadata("/security/").title).toBe("Security");
+    expect(SECURITY_PAGES.map((p) => p.href)).toEqual([
+      "/security/",
+      "/security/architecture/",
+      "/security/threats/",
+      "/security/toolchain/",
+      "/security/posture/",
+    ]);
+    expect(prevNext("/security/threats/").prev?.href).toBe("/security/architecture/");
+    expect(breadcrumbs("/security/toolchain/").map((c) => c.label)).toEqual(["Home", "Security", "Toolchain"]);
   });
 
   it("groups the architecture internals in the Technical docs (#1976)", () => {

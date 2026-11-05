@@ -160,8 +160,8 @@ export function factoryFlow(): Flow {
     { id: "g2", label: "G2 Red", sub: "tests fail first", x: xs[2], y, w: 130, kind: "fail" },
     { id: "impl", label: "Implement", sub: "agent + skills", x: xs[3], y, w: 130, kind: "core" },
     { id: "g3", label: "G3 Pre-PR", sub: "run_pipeline.sh", x: xs[4], y, w: 130, kind: "port" },
-    { id: "g4", label: "G4 Merge", sub: "CI + review", x: xs[5], y, w: 130, kind: "port" },
-    { id: "g5", label: "G5 Release", sub: "deploy + smoke", x: xs[6], y, w: 130, kind: "ok" },
+    { id: "g4", label: "G4 Merge", sub: "Owner merges", x: xs[5], y, w: 140, kind: "port" },
+    { id: "g5", label: "G5 Release", sub: "tag CI + pages", x: xs[6], y, w: 140, kind: "ok" },
     { id: "done", label: "Done", sub: "issue closed", x: xs[7], y, w: 120, kind: "ok" },
     { id: "back", label: "Gate refuses", sub: "exit code ≠ 0 → back to work", x: 605, y: 240, w: 240, kind: "fail" },
   ];
@@ -213,4 +213,57 @@ export function factoryFlow(): Flow {
     },
   ];
   return { nodes, edges, steps, width: 1210, height: 290 };
+}
+
+/** Browser to database, the same boundaries as docs/200-architecture/206-security/diagrams/trust-boundaries.puml. */
+export function trustBoundaryFlow(): Flow {
+  const y = 150;
+  const nodes: FlowNode[] = [
+    { id: "staff", label: "Notary browser", sub: "HttpOnly cookie", x: 110, y, w: 160, kind: "actor" },
+    { id: "bff", label: "Next.js BFF", sub: "/api/v1 proxy", x: 320, y, w: 160, kind: "adapter" },
+    { id: "jwt", label: "JWT filter", sub: "authenticates", x: 530, y, w: 160, kind: "check" },
+    { id: "grant", label: "Module grant", sub: "403 if missing", x: 750, y, w: 170, kind: "check" },
+    { id: "uc", label: "Use cases", sub: "Person, deed, budget", x: 970, y, w: 180, kind: "core" },
+    { id: "db", label: "PostgreSQL", sub: "PII and deeds", x: 1180, y, w: 150, kind: "store" },
+  ];
+  const edges: FlowEdge[] = [
+    { from: "staff", to: "bff", label: "HTTPS" },
+    { from: "bff", to: "jwt" },
+    { from: "jwt", to: "grant" },
+    { from: "grant", to: "uc" },
+    { from: "uc", to: "db", label: "parameterized SQL" },
+  ];
+  const steps: FlowStep[] = [
+    {
+      title: "The browser is outside the trust boundary",
+      body: "Staff send the session cookie. Headers, the body, and the query are data. A client header is not an identity.",
+      nodes: ["staff"],
+      edges: [0],
+    },
+    {
+      title: "The BFF proxies on the server",
+      body: "Next.js calls the API with the runtime backend address. The public login page does not reveal that host.",
+      nodes: ["bff"],
+      edges: [1],
+    },
+    {
+      title: "The JWT filter authenticates",
+      body: "JwtAuthenticationFilter checks the cookie or the bearer token before a use case runs.",
+      nodes: ["jwt"],
+      edges: [2],
+    },
+    {
+      title: "The module grant authorizes the path",
+      body: "RoleModuleAuthorizationFilter returns 403 when the role does not hold the module for that path. A notary is not an administrator.",
+      nodes: ["grant"],
+      edges: [3],
+    },
+    {
+      title: "The use case writes through parameters",
+      body: "The use case reaches PostgreSQL with parameterized JPA. Personal data and notarial records stay inside this last boundary.",
+      nodes: ["uc", "db"],
+      edges: [4],
+    },
+  ];
+  return { nodes, edges, steps, width: 1320, height: 260 };
 }

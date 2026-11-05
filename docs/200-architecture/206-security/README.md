@@ -2,7 +2,8 @@
 
 The cybersecurity program (Sec by Design, SAMM snapshot, toolchain, monitoring)
 is [CYBERSECURITY-PROGRAM.md](CYBERSECURITY-PROGRAM.md). The system threat model
-is [THREAT-MODEL-SYSTEM.md](THREAT-MODEL-SYSTEM.md).
+is [THREAT-MODEL-SYSTEM.md](THREAT-MODEL-SYSTEM.md). The 2026-11-05 evidence
+review is [ASSESSMENT-2026-11-05.md](ASSESSMENT-2026-11-05.md).
 
 ## Supported Versions
 
@@ -47,7 +48,7 @@ application data.
 | Threat | Mitigation | Gap |
 |--------|-----------|-----|
 | Credential stuffing / brute force on login | `LoginAttemptService` lockout (5 attempts / 15 min) | Single-instance only — see [ADR-018](../202-ADR/ADR-018-rate-limiting-policy.md) |
-| Unauthorized data access | JWT on `/api/**` plus `ROLE_ADMIN` for admin paths and admin writes (#559) | Module grants are not yet enforced server-side (ADR-029 W2); cross-notary access is excluded by single-tenant deployment — see [THREAT-MODEL-SYSTEM.md](THREAT-MODEL-SYSTEM.md) SR-11 |
+| Unauthorized data access | JWT on `/api/**`, `ROLE_ADMIN` for admin paths and admin writes (#559), and module grants in `RoleModuleAuthorizationFilter` (#1683) | Cross-notary access is excluded by single-tenant deployment. Inside the office, object sharing is accepted (SR-11). See [THREAT-MODEL-SYSTEM.md](THREAT-MODEL-SYSTEM.md) |
 | Credential leakage via defaults | `ProductionCredentialsGuard` blocks startup on default `.env` values in production | Only catches the literal `"admin"` default, not weak passwords generally — see [ADR-019](../202-ADR/ADR-019-secrets-management.md) |
 | API surface reconnaissance | Swagger UI/spec denied in production | Non-production environments remain fully open — see [ADR-020](../202-ADR/ADR-020-openapi-exposure-policy.md) |
 | SQL injection | JPA/Hibernate parameterized queries throughout (see [SQL Injection Prevention](SQL-INJECTION-PREVENTION.md)) | None known |
@@ -117,7 +118,7 @@ When deploying Notaire:
    - Login brute-force lockout per username (`LoginAttemptService`, counters in the shared `login_attempts` table)
    - Enable HTTPS in production ([HTTPS-TLS-RUNBOOK.md](./HTTPS-TLS-RUNBOOK.md))
    - Run the [installation isolation checklist](./INSTALLATION-ISOLATION-CHECKLIST.md) before go-live
-   - General API rate limiting (not yet implemented — only login attempts are throttled)
+   - General API rate limiting is not implemented. Only login attempts are throttled (#2010)
 
 4. **Docker**
    - Run containers as non-root

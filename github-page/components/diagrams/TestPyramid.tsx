@@ -33,7 +33,7 @@ export function TestPyramid({ facts, sources }: { facts: TestFacts; sources: Rec
       fill: "#d1fae5",
       ink: "#064e3b",
       title: "Backend unit and slice tests",
-      body: `${facts.backend} JUnit test classes cover domain rules, use cases with mocked ports, and adapters on H2 or, for PostgreSQL-specific behaviour, Testcontainers. ci.yml runs them on every pull request.`,
+      body: `${facts.backend} JUnit test classes cover domain rules, use cases with mocked ports, and adapters on H2 or, for PostgreSQL-specific behaviour, Testcontainers. preflight.sh runs them before a pull request. ci.yml runs them again on a version tag.`,
       source: { label: "backend-api/src/test", href: sources.backend },
     },
     {

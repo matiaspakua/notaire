@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { QuestionPicker } from "@/components/docs/QuestionPicker";
 import { DOCS, REPO } from "@/lib/docs-content";
 import { pageMetadata } from "@/lib/site";
 
@@ -43,12 +44,12 @@ const cards = [
   {
     href: "/docs/testing/",
     title: "Testing",
-    body: "Pyramid, preflight, heavy-CI merge gate, Bruno and Playwright ownership.",
+    body: "Pyramid, local preflight, and the release-tag suites. Bruno and Playwright stay with the testing module.",
   },
   {
     href: "/docs/security/",
-    title: "Security & DevSecOps",
-    body: "Auth, audit, CodeQL/Trivy/DAST, rulesets, and the security module map.",
+    title: "Security docs",
+    body: "Bridge from this tab to the interactive Security section and the architecture notes.",
   },
   {
     href: "/docs/roadmap/",
@@ -79,6 +80,8 @@ export default function DocsHomePage() {
           DevSecOps.
         </p>
       </header>
+
+      <QuestionPicker />
 
       <div className="grid sm:grid-cols-2 gap-4">
         {cards.map((c) => (

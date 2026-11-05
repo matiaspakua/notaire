@@ -16,6 +16,7 @@ rectangle "Trust boundary: Next.js frontend" as fe {
 rectangle "Trust boundary: backend-api" as api {
   component "Interceptor\nJwtAuthenticationFilter" as filter
   component "Validator\nROLE_ADMIN / ROLE_USER" as rbac
+  component "RoleModuleAuthorizationFilter\nmodule grant (#1683)" as modules
   component "Use cases\nPerson, Deed, Budget" as uc
 }
 
@@ -25,7 +26,8 @@ staff --> bff : HTTPS cookie
 apiClient --> filter : Bearer JWT
 bff --> filter : server-side HTTP
 filter --> rbac : authenticated identity
-rbac --> uc : authorized request
+rbac --> modules : role
+modules --> uc : module grant
 uc --> db : parameterized SQL
 
 note bottom of edge

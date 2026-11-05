@@ -83,6 +83,10 @@ class CatalogSchemaTest(unittest.TestCase):
         self.assertEqual("semgrep", cases["SEC-SAST-01"]["local_tool"])
         self.assertIn("codeql", cases["SEC-SAST-01"]["ci_tool"])
         self.assertEqual("trivy", cases["SEC-SCA-01"]["local_tool"])
+        self.assertTrue(cases["SEC-SCA-01"]["fail_on_findings"])
+        runner = RUNNER.read_text(encoding="utf-8")
+        self.assertIn('"--exit-code"', runner)
+        self.assertIn('"1"', runner)
         self.assertIn("zap", cases["SEC-DAST-01"]["ci_tool"].lower())
         self.assertIn("scan_secrets.py", cases["SEC-SEC-01"]["local_tool"])
 

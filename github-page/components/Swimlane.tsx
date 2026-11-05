@@ -21,13 +21,13 @@ const STEPS: Step[] = [
   { lane: "foreman", title: "Pick & brief", detail: "issue · use case · AC" },
   { lane: "worker", title: "Plan, then red tests", detail: "OpenSpec change, tests first" },
   { lane: "worker", title: "Code & open PR", detail: "[#N] type(scope) · Closes #N" },
-  { lane: "ci", title: "Light + heavy CI", detail: "every required check" },
+  { lane: "ci", title: "Local preflight --full", detail: "the pull-request proof" },
   { lane: "worker", title: "Fix from red logs", detail: "merge main in, never rebase", kind: "loop" },
   { lane: "ci", title: "All checks green", detail: "exit code, not opinion" },
-  { lane: "foreman", title: "Gate 4 review", detail: "heavy CI · archive · board" },
+  { lane: "foreman", title: "Gate 4 review", detail: "local evidence · archive · board" },
   { lane: "foreman", title: "Merge Worker PR", detail: "Foreman merge rule" },
   { lane: "owner", title: "Merge protected PRs", detail: "Constitution · exception · harness", kind: "alt" },
-  { lane: "ci", title: "CD · Pages · Release", detail: "on main" },
+  { lane: "ci", title: "Pages on main, CI on the tag", detail: "images publish with the version" },
   { lane: "foreman", title: "Smoke & close", detail: "evidence, Issue closed" },
 ];
 
@@ -168,8 +168,8 @@ export function Swimlane() {
         })}
       </ol>
       <figcaption className="mt-3 text-center text-sm text-slate-600">
-        The Worker never merges; the Foreman merges only on green heavy CI; the Owner alone merges Constitution,
-        exception and harness changes. Sources:{" "}
+        The Worker never merges. Product CI runs on a version tag. The pull-request proof is preflight.sh --full.
+        The Owner merges. Sources:{" "}
         <a className="underline" href={src("CONSTITUTION.md")}>
           CONSTITUTION.md §10 Roles
         </a>

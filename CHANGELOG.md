@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **security:** evidence assessment dated 2026-11-05 (architecture, STRIDE/LINDDUN register, testing cadence, reporting). Program and threat-model docs match release-only CI and the module grants that already ship. The portfolio gains an interactive Security section, and agents get a project skill for the local gates ([#2003](https://github.com/matiaspakua/notaire/issues/2003))
 * **ci:** GitHub product CI and GHCR publish run on version tags (`v*` / `notaire-v*`) and manual dispatch, not on every pull request or push to `main`. The mandatory local gate is `bash workspace/sdlc/preflight.sh --full`. GitHub Pages still deploys on push to `main`. The Owner must update the `protect-main` ruleset (#1040) after merge or no pull request can merge ([#2001](https://github.com/matiaspakua/notaire/issues/2001))
 
 ### Bug Fixes

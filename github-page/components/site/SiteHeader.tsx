@@ -75,7 +75,7 @@ export function SiteHeader() {
                   key={item.key}
                   href={item.href}
                   aria-current={active ? "true" : undefined}
-                  className={`relative rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
+                  className={`relative rounded-full px-2.5 py-2 text-sm font-medium transition-colors ${
                     active ? `${accent} bg-slate-100` : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                   }`}
                 >
@@ -92,7 +92,7 @@ export function SiteHeader() {
               onClick={() => setSearchOpen(true)}
               aria-label="Search the site"
               aria-haspopup="dialog"
-              className="flex h-10 items-center gap-2 rounded-full border border-slate-200 bg-white px-3 text-sm text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-900 sm:w-56"
+              className="flex h-10 items-center gap-2 rounded-full border border-slate-200 bg-white px-3 text-sm text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-900 xl:w-56"
             >
               <SearchIcon />
               <span className="hidden sm:inline">Search</span>

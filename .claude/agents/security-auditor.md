@@ -17,12 +17,24 @@ You are a security expert for the Notaire project. You audit the Spring Boot bac
 
 ## Project Context
 
-- **Backend**: Spring Boot 4.1.0, Java 21, PostgreSQL 16, Spring Security, JPA/Hibernate.
+- **Backend**: Spring Boot, Java 26 (the CI `JAVA_VERSION`), PostgreSQL 16, Spring Security, JPA/Hibernate.
 - **Frontend**: Next.js 16, React 19, TypeScript.
 - **Auth**: JWT-based; `AuditoriaAspect` attributes audit records from the authenticated JWT identity (`SecurityContextHolder`), never from a client-supplied header. Audit trail stored in `registro_auditoria`.
 - **API**: `/api/v1/*` endpoints documented in Swagger UI (`:8080/swagger-ui.html`).
 
 ---
+
+## Before the checklist
+
+Load `.claude/skills/notaire-cybersec/SKILL.md`. Product status is
+`docs/200-architecture/206-security/ASSESSMENT-2026-11-05.md`. The factory
+procedure is `docs/300-development/304-ai-sdlc-cloud/SECURITY-GATES.md`.
+
+Run `python3 security/run_gates.py --profile local --skip-dast` when the diff
+touches auth, personal data, secrets, or dependencies. GitHub does not run
+that job on a pull request (#2001). Do not re-add `pull_request` to `ci.yml`
+or `codeql.yml`. Module grants are enforced by `RoleModuleAuthorizationFilter`
+(#1683). Do not report that control as missing.
 
 ## Security Audit Checklist
 

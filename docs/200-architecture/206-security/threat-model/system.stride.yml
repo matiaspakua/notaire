@@ -1,0 +1,89 @@
+# Structured STRIDE / LINDDUN register for the Notaire system (CU78, #2003).
+# Prose and the diagram stay in THREAT-MODEL-SYSTEM.md and diagrams/trust-boundaries.puml.
+# This file is the id register a test can check. It is not a Threat Dragon or
+# Threagile model. No procedures and no secrets.
+version: 1
+assessed: "2026-11-05"
+use_case: CU78
+procedures: none
+method:
+  primary: STRIDE
+  privacy: LINDDUN
+  evaluated_not_adopted:
+    - name: OWASP Threat Dragon
+      reason: Diagram JSON needs the Threat Dragon editor. CI here has no Dragon binary. Follow-up #2009.
+    - name: pytm
+      reason: A second diagram generator beside the PlantUML the repository already checks.
+    - name: Threagile
+      reason: Useful YAML risk model, but it needs its own schema and a Go binary. This register stays small enough for unittest.
+requirements:
+  - id: SR-07
+    stride: Repudiation
+    asset: audit-trail
+    status: Mitigated
+    verification: THREAT-MODEL-AUTH-AUDIT.md
+  - id: SR-11
+    stride: Elevation of privilege
+    asset: person
+    status: Accepted
+    verification: RoleModuleAuthorizationFilter (#1683); intra-tenant object sharing accepted by ADR-029
+  - id: SR-12
+    stride: Spoofing
+    asset: session
+    status: Partial
+    verification: frontend HttpOnly cookie tests; API login JSON still returns a bearer token
+  - id: SR-13
+    stride: Tampering
+    asset: build
+    status: Partial
+    verification: ci.yml trivy-action exit-code 1; security/tests/test_image_pins_and_dependabot.py
+  - id: SR-14
+    stride: Information disclosure
+    asset: repository
+    status: Partial
+    verification: security/scan_secrets.py
+  - id: SR-15
+    stride: Denial of service
+    asset: api
+    status: Open
+    verification: "no general limiter; follow-up #2010"
+  - id: SR-16
+    stride: Elevation of privilege
+    asset: admin
+    status: Mitigated
+    verification: UserAuthorityResolver maps Escribano to ROLE_NOTARY (#1638)
+linddun:
+  - id: LD-1
+    threat: Identifiability of Person fields
+    status: Open
+  - id: LD-2
+    threat: Linkability required by the notarial record
+    status: Accepted
+  - id: LD-3
+    threat: Disclosure through request logs
+    status: Partial
+  - id: LD-4
+    threat: Unawareness of data subjects
+    status: Open
+  - id: LD-5
+    threat: Non-compliance is a counsel question, not an engineering claim
+    status: Open
+  - id: LD-6
+    threat: Detectability of abuse beyond login failures
+    status: Partial
+attack_names:
+  - id: T1110
+    name: Brute Force
+    maps_to: SR-01
+  - id: T1078
+    name: Valid Accounts
+    maps_to: SR-12
+  - id: T1190
+    name: Exploit Public-Facing Application
+    maps_to: SR-13
+  - id: T1552
+    name: Unsecured Credentials
+    maps_to: SR-14
+  - id: T1195
+    name: Supply Chain Compromise
+    maps_to: SR-13
