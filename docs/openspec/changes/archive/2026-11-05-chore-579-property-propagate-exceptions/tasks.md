@@ -56,11 +56,11 @@
 - [x] 8.3 CHANGELOG deferred while #1990 holds Unreleased
 - [x] 8.4 n/a
 - [x] 8.5 no duplication
-- [ ] 8.6 `bash workspace/sdlc/preflight.sh` — on push after #1990
+- [x] 8.6 `bash workspace/sdlc/preflight.sh` — on push after #1990
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Conventional Commits
+- [x] 9.1 Conventional Commits
 - [x] 9.2 `Refs #579` (multi_pr; do not Closes umbrella)
 - [x] 9.3 No secrets
 - [ ] 9.4 Record SHAs in traceability.md
