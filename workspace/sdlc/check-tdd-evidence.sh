@@ -17,7 +17,8 @@ BASE="${1:?usage: check-tdd-evidence.sh <base> [head]}"
 HEAD="${2:-HEAD}"
 PROD='^backend-api/src/main/|^frontend/src/'
 # infra/tests covers observability/provisioning guards (e.g. #1746 postgres panels).
-TEST='/src/test/|\.test\.tsx?$|^testing/e2e/tests/|/__tests__/|^infra/tests/|^testing/database/'
+# docs/tests/ counts: permanent docs guards are red-first evidence (#2023 / #1980).
+TEST='/src/test/|\.test\.tsx?$|^testing/e2e/tests/|/__tests__/|^infra/tests/|^testing/database/|^docs/tests/'
 
 if grep -qwE '(process:)?sdlc-exception' <<< "${PR_LABELS:-}"; then
   echo "✓ sdlc-exception label set — TDD evidence check waived"

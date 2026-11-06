@@ -65,6 +65,7 @@ No change is "done" unless it has passed the full process defined here.
 | P8 | **Quality gates are absolute** | No skipping, no "it works on my machine". |
 | P9 | **Least privilege & no secrets** | Credentials only in the git-ignored `.env`; never hardcode secrets. |
 | P10 | **Adapt, don't replace** | Follow existing architecture (`repository` over legacy `jpa`, design system tokens, etc.). |
+| P12 | **Self-improve while delivering** | Every agent improves the AI SDLC and the system as it works: when a gate, tool, doc, test, security check, UX path or infra step fails or wastes time, capture the lesson (*what happened → rule → check*), fix it in the same PR when Boy Scout–bounded (P11), or open a follow-on Issue when not; prefer mechanizing the lesson as a gate or ratchet over prose-only advice. Applies to product code, documentation, QA, security, UI/UX, infra and the process harness itself (CONSTITUTION, `framework/ai-sdlc`, skills, scripts). |
 
 ---
 
@@ -627,6 +628,12 @@ the full workflow in [section 5](#5-official-sdlc-workflow) and may **never**:
 
 An AI agent **must**:
 
+- ✅ **Self-improve while delivering (P12):** treat every friction, flake, false red,
+  redundant gate, stale doc or security near-miss as input. In the same tip when
+  bounded (P11), update the gate/script/skill/doc that would have prevented the
+  mistake; otherwise file a follow-on Issue before moving on. Do not leave tribal
+  knowledge only in chat. The stack-agnostic kit (`framework/ai-sdlc`) Learning
+  loop and this Constitution stay aligned.
 - ✅ **Continuous publication (§9, #1681):** push a new branch at once and, after every
   group of atomic commits, push and comment on the Issue
   (`bash workspace/sdlc/publish-progress.sh`); never leave a stage only on local disk

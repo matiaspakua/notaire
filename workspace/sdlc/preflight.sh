@@ -296,11 +296,20 @@ run "packaged app.version" python3 workspace/sdlc/check-product-version-coherenc
 
 if [ "$MODE_FAST" = "0" ]; then
     # `mvn verify` covers Unit Tests + Integration Tests (H2) + Coverage Gate.
-    run "backend verify (tests + coverage gate)" mvn verify -pl backend-api -am "${MVN_FLAGS[@]}"
+    # Drop Compose/stack datasource overrides: if SPRING_DATASOURCE_URL points at
+    # Postgres while tests use the PostgreSQL driver name, H2 profiles explode with
+    # "Driver org.postgresql.Driver claims to not accept jdbcUrl, jdbc:h2:…" (#2023).
+    run "backend verify (tests + coverage gate)" \
+        env -u SPRING_DATASOURCE_URL -u SPRING_DATASOURCE_USERNAME -u SPRING_DATASOURCE_PASSWORD \
+            -u SPRING_DATASOURCE_DRIVER_CLASS_NAME \
+            mvn verify -pl backend-api -am "${MVN_FLAGS[@]}"
 
     # Testcontainers-backed; needs a working Docker daemon.
     if docker info >/dev/null 2>&1; then
-        run "backend pg-integration tests" mvn test -pl backend-api -am -Ppg-integration "${MVN_FLAGS[@]}"
+        run "backend pg-integration tests" \
+            env -u SPRING_DATASOURCE_URL -u SPRING_DATASOURCE_USERNAME -u SPRING_DATASOURCE_PASSWORD \
+                -u SPRING_DATASOURCE_DRIVER_CLASS_NAME \
+                mvn test -pl backend-api -am -Ppg-integration "${MVN_FLAGS[@]}"
     else
         skip "backend pg-integration tests" "docker not running — start Docker; GitHub will not run this on the pull request"
     fi
