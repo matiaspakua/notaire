@@ -123,7 +123,7 @@ public class ItemController {
     })
     @PostMapping
     @Operation(summary = "Create item")
-    public ResponseEntity<Object> create(@Valid @RequestBody ItemRequest request) {
+    public ResponseEntity<ItemResponse> create(@Valid @RequestBody ItemRequest request) {
         return switch (manageItems.create(toCommand(request))) {
             case SaveResult.Created created -> ResponseEntity.status(HttpStatus.CREATED).body(ItemResponse.from(created.view()));
             case SaveResult.BadRequest ignored -> ResponseEntity.badRequest().build();

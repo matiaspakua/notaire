@@ -3,7 +3,6 @@ package com.licensis.notaire.adapter.in.web.folio;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +21,6 @@ import com.licensis.notaire.application.port.in.folio.ManageFoliosUseCase;
 import com.licensis.notaire.application.port.in.folio.ManageFoliosUseCase.SaveFolioCommand;
 import com.licensis.notaire.application.port.in.folio.QueryFoliosUseCase;
 import com.licensis.notaire.domain.folio.Folio;
-import com.licensis.notaire.domain.folio.FolioInUseException;
-import com.licensis.notaire.domain.folio.FolioInvalidException;
-import com.licensis.notaire.domain.folio.FolioNotFoundException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -163,13 +159,9 @@ public class FolioController {
     @PostMapping
     @Operation(summary = "Create folio")
     public ResponseEntity<FolioResponse> create(@Valid @RequestBody FolioRequest request) {
-        try {
-            Folio saved = manage.create(toCommand(request));
-            return CreatedResponses.of(FolioResponse.from(saved), "/api/v1/folios", saved.id());
-        } catch (FolioInvalidException e) {
-            return ResponseEntity.badRequest().build();
-        }
-        // Unexpected failures propagate to GlobalExceptionHandler (#579).
+        Folio saved = manage.create(toCommand(request));
+        return CreatedResponses.of(FolioResponse.from(saved), "/api/v1/folios", saved.id());
+        // FolioInvalid → FolioExceptionHandler; unexpected → GEH (#577/#579).
     }
 
     @ApiResponses({
@@ -179,18 +171,10 @@ public class FolioController {
     })
     @PutMapping("/{id}")
     @Operation(summary = "Update folio")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody FolioRequest request) {
-        try {
-            Folio saved = manage.update(id, toCommand(request));
-            return ResponseEntity.ok(FolioResponse.from(saved));
-        } catch (FolioNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (FolioInUseException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
-        } catch (FolioInvalidException e) {
-            return ResponseEntity.badRequest().build();
-        }
-        // Unexpected failures propagate to GlobalExceptionHandler (#579).
+    public ResponseEntity<FolioResponse> update(@PathVariable Integer id, @Valid @RequestBody FolioRequest request) {
+        Folio saved = manage.update(id, toCommand(request));
+        return ResponseEntity.ok(FolioResponse.from(saved));
+        // FolioNotFound / InUse / Invalid → FolioExceptionHandler; other failures → GEH (#577/#579).
     }
 
     @ApiResponses({
@@ -199,15 +183,9 @@ public class FolioController {
     })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete folio")
-    public ResponseEntity<Object> delete(@PathVariable Integer id) {
-        try {
-            manage.delete(id);
-            return ResponseEntity.noContent().build();
-        } catch (FolioNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (FolioInUseException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
-        }
-        // Unexpected failures propagate to GlobalExceptionHandler (#579).
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        manage.delete(id);
+        return ResponseEntity.noContent().build();
+        // FolioNotFound / InUse → FolioExceptionHandler; other failures → GEH (#577/#579).
     }
 }

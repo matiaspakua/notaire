@@ -11,14 +11,11 @@ DocumentCostTemplateController#createCost
 DocumentTypeController#create
 DocumentTypeController#delete
 DocumentTypeController#update
-FolioController#delete
-FolioController#update
 FolioTypeController#create
 FolioTypeController#delete
 FolioTypeController#update
 HistoryController#create
 IdentificationTypeController#create
-ItemController#create
 ManagementController#archiving
 ManagementController#create
 ManagementController#createCompleteCase
