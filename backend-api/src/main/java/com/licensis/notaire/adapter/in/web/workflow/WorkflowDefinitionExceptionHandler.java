@@ -17,7 +17,7 @@ import com.licensis.notaire.domain.workflow.WorkflowDefinitionNotFoundException;
  */
 @RestControllerAdvice(assignableTypes = WorkflowDefinitionController.class)
 @Order(Ordered.HIGHEST_PRECEDENCE)
-class WorkflowDefinitionExceptionHandler {
+public class WorkflowDefinitionExceptionHandler {
 
     @ExceptionHandler(WorkflowDefinitionNotFoundException.class)
     ResponseEntity<Void> notFound() {

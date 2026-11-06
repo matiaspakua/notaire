@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.adapter.in.web.workflow.WorkflowNodeController;
+import com.licensis.notaire.adapter.in.web.workflow.WorkflowNodeExceptionHandler;
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowNodesUseCase;
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowNodesUseCase.CreateWorkflowNodeCommand;
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowNodesUseCase.UpdateWorkflowNodeCommand;
@@ -52,7 +53,9 @@ class WorkflowNodeControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new WorkflowNodeController(query, manage)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new WorkflowNodeController(query, manage))
+                .setControllerAdvice(new WorkflowNodeExceptionHandler())
+                .build();
         mapper = new ObjectMapper();
     }
 
