@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **api:** history create/update `ServerError` returns standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500 body (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **api:** copy create/update `ServerError` returns standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500 body (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **security:** prune Wave 9 accepted-breaking list and unblock the next cut ([#1968](https://github.com/matiaspakua/notaire/issues/1968)) ([9719856](https://github.com/matiaspakua/notaire/commit/97198564b458d395ce73daf3de7b884c2402f944)), closes [#1967](https://github.com/matiaspakua/notaire/issues/1967)
 * **api:** Budget, Management and Payment map invalid `IllegalArgumentException` to 400 and not-found to 404 ([#1921](https://github.com/matiaspakua/notaire/issues/1921), [#1315](https://github.com/matiaspakua/notaire/issues/1315), [#1963](https://github.com/matiaspakua/notaire/issues/1963))
