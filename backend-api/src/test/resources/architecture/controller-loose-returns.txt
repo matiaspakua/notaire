@@ -51,7 +51,6 @@ TestimonyController#update
 TestimonyMovementController#create
 TestimonyMovementController#delete
 TestimonyMovementController#update
-UserController#createUser
 UserController#login
 UserController#logout
 WorkflowDefinitionController#delete

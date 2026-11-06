@@ -268,6 +268,7 @@ class AdditionalControllersTest {
                                     5, 900000, new com.licensis.notaire.security.InMemoryLoginAttemptStore()),
                             authCookies,
                             mock(com.licensis.notaire.config.TokenRevocationService.class)))
+                    .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                     .build();
             User u = User.restore(1, "admin", "abc", true, "Escribano", null, null, null, null, null, 0);
 
@@ -340,7 +341,7 @@ class AdditionalControllersTest {
             mvc.perform(put("/api/v1/users/1").contentType("application/json")
                     .content(updateJson)).andExpect(status().isInternalServerError());
             doThrow(new RuntimeException("fk")).when(manage).delete(1);
-            mvc.perform(delete("/api/v1/users/1")).andExpect(status().isConflict());
+            mvc.perform(delete("/api/v1/users/1")).andExpect(status().isInternalServerError());
 
             when(authenticate.authenticate(any(), any())).thenThrow(new RuntimeException("db down"));
             mvc.perform(post("/api/v1/users/login").contentType("application/json")

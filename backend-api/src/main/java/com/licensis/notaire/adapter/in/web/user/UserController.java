@@ -139,15 +139,10 @@ public class UserController {
     })
     @PostMapping
     @Operation(summary = "Create user")
-    public ResponseEntity<Object> createUser(@Valid @RequestBody UserRequest request) {
-        try {
-            User saved = manage.create(
-                    new CreateUserCommand(request.name(), request.password(), request.type(), request.active()));
-            return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(saved));
-        } catch (Exception e) {
-            log.error("Failed to create user", e);
-            return ResponseEntity.internalServerError().build();
-        }
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest request) {
+        User saved = manage.create(
+                new CreateUserCommand(request.name(), request.password(), request.type(), request.active()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(saved));
     }
 
     @ApiResponses({
@@ -163,9 +158,6 @@ public class UserController {
             return ResponseEntity.ok().build();
         } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            log.error("Failed to update user id {}", id, e);
-            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -181,9 +173,6 @@ public class UserController {
             return ResponseEntity.noContent().build();
         } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            log.error("Failed to delete user id {}", id, e);
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
 
