@@ -116,6 +116,21 @@ class StartScriptTest(unittest.TestCase):
         text = START_SCRIPT.read_text(encoding="utf-8")
         self.assertIn('COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-notaire}"', text)
 
+    def test_start_script_derives_host_tz_when_unset(self):
+        """CU23 audit day filters need container TZ aligned with the browser (#2013)."""
+        text = START_SCRIPT.read_text(encoding="utf-8")
+        self.assertIn('if [ -z "${TZ:-}" ]; then', text)
+        self.assertIn("zoneinfo/", text)
+        self.assertIn("export TZ", text)
+
+
+class ComposeTimezoneTest(unittest.TestCase):
+    def test_postgres_backend_frontend_receive_tz(self):
+        services = raw_services()
+        for name in ("postgres", "backend", "frontend"):
+            env = services[name].get("environment") or {}
+            self.assertEqual("${TZ:-UTC}", env.get("TZ"), name)
+
 
 class DocumentationTest(unittest.TestCase):
     def test_env_example_lists_every_override_key(self):

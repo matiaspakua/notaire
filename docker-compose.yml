@@ -4,6 +4,8 @@ services:
     container_name: ${NOTAIRE_POSTGRES_CONTAINER_NAME:-notary-postgres}
     restart: unless-stopped
     environment:
+      # Calendar day filters (CU23 audit) use the JVM/OS zone; inherit host TZ (#2013).
+      TZ: ${TZ:-UTC}
       POSTGRES_DB: ${POSTGRES_DB:-notaire}
       POSTGRES_USER: ${POSTGRES_USER:-admin}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
@@ -37,6 +39,8 @@ services:
         reservations:
           memory: 512m
     environment:
+      # Match browser/host calendar for CU23 from/to (#2013). start.sh derives host TZ when unset.
+      TZ: ${TZ:-UTC}
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-notaire}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-admin}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-admin}
@@ -122,6 +126,7 @@ services:
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
     environment:
+      TZ: ${TZ:-UTC}
       # Server-only — read by the /api/v1 Route Handler BFF at request time.
       BACKEND_URL: http://backend:8080/api/v1
       HOSTNAME: "0.0.0.0"
