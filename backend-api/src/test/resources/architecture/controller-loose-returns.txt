@@ -30,8 +30,6 @@ RegistrationDraftController#generate
 RegistrationDraftController#observe
 RegistrationDraftController#recordRegistration
 RegistrationDraftController#submit
-RoleController#assignRoleToUser
-RoleController#createRole
 SubstitutionController#create
 TestimonyController#create
 TestimonyController#delete

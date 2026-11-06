@@ -29,6 +29,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.adapter.in.web.user.RoleController;
+import com.licensis.notaire.adapter.in.web.user.RoleExceptionHandler;
 import com.licensis.notaire.application.port.in.user.ManageRolesUseCase;
 import com.licensis.notaire.application.port.in.user.ManageRolesUseCase.CreateRoleCommand;
 import com.licensis.notaire.application.port.in.user.ManageRolesUseCase.UpdateRoleCommand;
@@ -51,7 +52,9 @@ class RoleControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new RoleController(query, manage)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new RoleController(query, manage))
+                .setControllerAdvice(new RoleExceptionHandler())
+                .build();
     }
 
     private Role buildRole(Integer id, String name) {
