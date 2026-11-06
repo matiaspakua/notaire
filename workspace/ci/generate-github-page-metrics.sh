@@ -28,8 +28,10 @@ COMMIT_COUNT=$(git rev-list --count HEAD)
 PR_COUNT=$(gh api "search/issues?q=repo:${REPO}+type:pr&per_page=1" --jq '.total_count' 2>/dev/null || echo "0")
 MD_COUNT=$(find . -name "*.md" -not -path "*/node_modules/*" -not -path "*/.git/*" | wc -l | tr -d ' ')
 BACKEND_TEST_COUNT=$(find backend-api/src/test -name "*Test.java" 2>/dev/null | wc -l | tr -d ' ')
-FRONTEND_TEST_COUNT=$(find testing/e2e/tests -name "*.spec.*" 2>/dev/null | wc -l | tr -d ' ')
-TEST_COUNT=$(( BACKEND_TEST_COUNT + FRONTEND_TEST_COUNT ))
+# Vitest unit/component tests (issue #1982) — not Playwright.
+FRONTEND_TEST_COUNT=$(find frontend/src \( -name "*.test.ts" -o -name "*.test.tsx" \) 2>/dev/null | wc -l | tr -d ' ')
+E2E_SPEC_COUNT=$(find testing/e2e/tests -name "*.spec.*" 2>/dev/null | wc -l | tr -d ' ')
+TEST_COUNT=$(( BACKEND_TEST_COUNT + FRONTEND_TEST_COUNT + E2E_SPEC_COUNT ))
 API_TEST_COUNT=$(find backend-api/api-test -name "*.yml" -not -name "folder.yml" 2>/dev/null | wc -l | tr -d ' ')
 ADR_COUNT=$(find docs -name "ADR-*.md" 2>/dev/null | wc -l | tr -d ' ')
 UC_COUNT=$(find docs/100-business/102-use-cases -type f -name "CU*.md" 2>/dev/null | wc -l | tr -d ' ')
@@ -103,6 +105,7 @@ GENERATED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
   printf '  "testClasses": %s,\n' "${TEST_COUNT}"
   printf '  "backendTestClasses": %s,\n' "${BACKEND_TEST_COUNT}"
   printf '  "frontendTestClasses": %s,\n' "${FRONTEND_TEST_COUNT}"
+  printf '  "e2eSpecFiles": %s,\n' "${E2E_SPEC_COUNT}"
   printf '  "apiTestFiles": %s,\n' "${API_TEST_COUNT}"
   printf '  "adrCount": %s,\n' "${ADR_COUNT}"
   printf '  "useCases": %s,\n' "${UC_COUNT}"
