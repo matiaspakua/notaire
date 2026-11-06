@@ -121,15 +121,16 @@ public class ProcedureController {
         return switch (manageProcedures.create(toCommand(request))) {
             case SaveResult.Created created -> ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created.view()));
             case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case SaveResult.ServerError ignored -> ResponseEntity.internalServerError().build();
-            case SaveResult.Updated ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.ServerError ignored -> throw new IllegalStateException("Procedure create failed");
+            case SaveResult.Updated ignored -> throw new IllegalStateException("Unexpected Updated on procedure create");
         };
     }
 
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Empty or incomplete body: idProcedureType is required"),
-            @ApiResponse(responseCode = "404", description = "Procedure or reference not found")
+            @ApiResponse(responseCode = "404", description = "Procedure or reference not found"),
+            @ApiResponse(responseCode = "500", description = "Unexpected server error")
     })
     @PutMapping("/{id}")
     @Operation(summary = "Update procedure",
@@ -139,8 +140,8 @@ public class ProcedureController {
         return switch (manageProcedures.update(id, toCommand(request))) {
             case SaveResult.Updated updated -> ResponseEntity.ok(toResponse(updated.view()));
             case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case SaveResult.ServerError ignored -> ResponseEntity.internalServerError().build();
-            case SaveResult.Created ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.ServerError ignored -> throw new IllegalStateException("Procedure update failed");
+            case SaveResult.Created ignored -> throw new IllegalStateException("Unexpected Created on procedure update");
         };
     }
 
