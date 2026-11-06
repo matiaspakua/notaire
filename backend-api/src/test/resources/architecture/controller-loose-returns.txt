@@ -27,7 +27,6 @@ ProcedureTypeController#assignWorkflow
 ProcedureTypeController#create
 ProcedureTypeController#delete
 ProcedureTypeController#update
-PropertyController#create
 RegistrationDraftController#generate
 RegistrationDraftController#observe
 RegistrationDraftController#recordRegistration
