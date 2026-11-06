@@ -10,8 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
-* **api:** substitution create/update/delete `ServerError` returns standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500 body (GEH multi_pr slice; tracking issue 579 — do not close until catch(Exception) leftovers are done)
-* **api:** copy ServerError returns ErrorResponse via GEH ([#2028](https://github.com/matiaspakua/notaire/issues/2028)) ([bd1f13e](https://github.com/matiaspakua/notaire/commit/bd1f13e31bddc4f6a427f0f6c2301f793f0fc57b)), closes [#579](https://github.com/matiaspakua/notaire/issues/579)
+* **api:** copy ServerError returns ErrorResponse via GEH ([#2028](https://github.com/matiaspakua/notaire/issues/2028)) ([bd1f13e](https://github.com/matiaspakua/notaire/commit/bd1f13e31bddc4f6a427f0f6c2301f793f0fc57b))
 
 ## [0.2.5](https://github.com/matiaspakua/notaire/compare/v0.2.4...v0.2.5) (2026-10-28)
 
