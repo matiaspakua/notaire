@@ -35,8 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| docs/tests counts for TDD evidence | test_pr_checks | pending |
-| Constitution names self-improvement | test_pr_checks | pending |
+| docs/tests counts for TDD evidence | test_pr_checks | passing |
+| Constitution names self-improvement | test_pr_checks | passing |
 
 ## Permanent documentation updated
 
