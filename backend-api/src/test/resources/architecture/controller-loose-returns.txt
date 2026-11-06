@@ -15,7 +15,6 @@ ManagementController#createCompleteCase
 ManagementController#getWorkflowTrace
 ManagementController#transition
 ManagementController#updateCompleteCase
-ManagementStatusController#delete
 NotebookController#createNotebook
 PersonController#createPerson
 PersonController#deletePerson
@@ -44,5 +43,4 @@ UserController#login
 UserController#logout
 WorkflowDefinitionController#delete
 WorkflowNodeController#delete
-WorkflowTransitionController#delete
 WorkflowValidationController#validate

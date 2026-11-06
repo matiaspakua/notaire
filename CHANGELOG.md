@@ -49,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **api:** type `ManagementStatusController#delete` and `WorkflowTransitionController#delete` as `Void` (tracking issue 577)
 * **api:** type `PropertyController#create` as `PropertyResponse`; shrink the loose-return baseline by one (tracking issue 577)
 * **api:** type `IdentificationTypeController#create` as `IdentificationTypeResponse`; shrink the loose-return baseline by one (tracking issue 577)
 * **docs:** linked git worktrees need their own `.env` (copy from the primary checkout) before `preflight.sh --full` docker compose smoke — compose reads `JWT_SECRET` from the worktree cwd (tracking issue 577)

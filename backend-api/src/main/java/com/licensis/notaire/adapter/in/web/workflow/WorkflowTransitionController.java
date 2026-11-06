@@ -146,7 +146,7 @@ public class WorkflowTransitionController {
     })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete transition")
-    public ResponseEntity<Object> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         try {
             manage.delete(id);
             return ResponseEntity.noContent().build();
