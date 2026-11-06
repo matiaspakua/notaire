@@ -9,7 +9,6 @@ ConceptController#updateConcept
 CopyController#create
 DocumentCostTemplateController#createCost
 HistoryController#create
-IdentificationTypeController#create
 ManagementController#archiving
 ManagementController#create
 ManagementController#createCompleteCase
