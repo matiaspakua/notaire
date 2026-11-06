@@ -107,7 +107,7 @@ public class BudgetTemplateController {
     })
     @PostMapping
     @Operation(summary = "Create budget template")
-    public ResponseEntity<?> create(@Valid @RequestBody BudgetTemplateRequest request) {
+    public ResponseEntity<Map<String, Integer>> create(@Valid @RequestBody BudgetTemplateRequest request) {
         TemplateView created = manageBudgetTemplates.create(
                 resolveProcedureTypeId(request), resolveConceptId(request), request.notes());
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -118,7 +118,7 @@ public class BudgetTemplateController {
 
     @PutMapping("/procedure-types/{idProcedureType}/concept/{idConcept}")
     @Operation(summary = "Update budget template")
-    public ResponseEntity<?> update(
+    public ResponseEntity<Void> update(
             @PathVariable Integer idProcedureType,
             @PathVariable Integer idConcept,
             @Valid @RequestBody BudgetTemplateRequest request) {
@@ -132,7 +132,7 @@ public class BudgetTemplateController {
     })
     @DeleteMapping("/procedure-types/{idProcedureType}/concept/{idConcept}")
     @Operation(summary = "Delete budget template")
-    public ResponseEntity<?> delete(
+    public ResponseEntity<Void> delete(
             @PathVariable Integer idProcedureType, @PathVariable Integer idConcept) {
         manageBudgetTemplates.delete(idProcedureType, idConcept);
         return ResponseEntity.noContent().build();
