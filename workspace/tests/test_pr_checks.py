@@ -86,6 +86,13 @@ class TddEvidenceTest(unittest.TestCase):
         commit(repo, "feat: foo", self.MAIN)
         self.assertEqual(run("check-tdd-evidence.sh", base, cwd=repo).returncode, 0)
 
+    def test_accepts_docs_tests_as_tdd_evidence(self):
+        """docs/tests guards count as tests (#2023 — session lesson from #1980)."""
+        repo, base = new_repo()
+        commit(repo, "test: docs guard red", "docs/tests/test_flyway_docs_no_stale_version_range.py")
+        commit(repo, "docs: refresh properties comment", "backend-api/src/main/resources/application.properties")
+        self.assertEqual(run("check-tdd-evidence.sh", base, cwd=repo).returncode, 0)
+
     def test_rejects_code_before_tests_and_names_commit(self):
         repo, base = new_repo()
         sha = commit(repo, "feat: foo", self.MAIN)
