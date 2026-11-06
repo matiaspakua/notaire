@@ -25,9 +25,7 @@ ManagementController#createCompleteCase
 ManagementController#getWorkflowTrace
 ManagementController#transition
 ManagementController#updateCompleteCase
-ManagementStatusController#create
 ManagementStatusController#delete
-ManagementStatusController#update
 NotebookController#createNotebook
 PersonController#createPerson
 PersonController#deletePerson
