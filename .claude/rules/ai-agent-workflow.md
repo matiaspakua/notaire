@@ -65,7 +65,7 @@ These run in `workspace/sdlc/preflight.sh` on every pull request and in `sdlc-pr
 ## Fleet lessons (#1693)
 
 For multi-agent / hex cadence (heavy-CI serialize, merge-main-never-rebase, CHANGELOG
-Unreleased fence, Mac vs CI, R2 one-domain slices, path hygiene after
+Unreleased fence, multi_pr CHANGELOG hygiene (#2033), Mac vs CI, R2 one-domain slices, path hygiene after
 `adapter.out.persistence` moves, human paste templates on 403, fleet/cost serialize,
 no probe Issues):
 `docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md` and
@@ -83,6 +83,7 @@ no probe Issues):
 - ❌ Open a PR before `preflight.sh --full` passes — GitHub will not re-run the suite
 - ❌ Claim Mac local green equals CI green, or move packages without updating `docs/tests` path refs
 - ❌ Open parallel heavy-CI PRs when one tip is still queued (fleet cost)
+- ❌ Put `closes #N` (or markdown `#N` links for open multi_pr epics) in CHANGELOG `[Unreleased]` — Release Please will close the issue early (#2033)
 
 ## Exceptions
 

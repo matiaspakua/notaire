@@ -64,6 +64,12 @@ comma in the scope (`feat(a,b)`) — and keep the PR body filled from `.github/P
 **CHANGELOG `[Unreleased]` fence:** only one open PR edits Unreleased; omit or wait while Release
 Please holds it. Never commit on `release-please--branches--*`.
 
+**multi_pr / epic CHANGELOG hygiene (#2033):** Unreleased must not contain `closes #N` (docs
+test enforces). Prefer prose like `tracking issue N` until the epic is Done. Markdown
+`[#N](url)` links in Unreleased also feed Release Please closing text — avoid them on
+open multi_pr issues; use `Refs #N` only in commits. If a release PR body still says
+`closes #<epic>`, strip it before merge (Owner/Foreman).
+
 ## 5b. Process Checks before ready
 
 Do not mark the PR ready until `preflight.sh --full` is green: OpenSpec archive hygiene, Spotless when
