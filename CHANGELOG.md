@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **api:** user unexpected create/update/delete failures return standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500/409 body (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **api:** workflow-definition/node/transition unexpected create/update failures return standard `ErrorResponse` via `GlobalExceptionHandler` instead of a misleading 409 from `ErrorResponses` (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **api:** submitted-document unexpected create/update/delete failures return standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500/409 body (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **api:** management-status unexpected create/update failures return standard `ErrorResponse` via `GlobalExceptionHandler` instead of a misleading 409 from `ErrorResponses` (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
