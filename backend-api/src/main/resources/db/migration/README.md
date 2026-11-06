@@ -4,32 +4,34 @@ This directory contains all database schema migrations managed by Flyway.
 
 ## Overview
 
-The Notaire project uses **Flyway** for database schema versioning. All database changes are version-controlled and automatically applied on application startup.
+The Notaire project uses **Flyway** for database schema versioning. All database
+changes are version-controlled and automatically applied on application startup.
+PostgreSQL starts empty in Docker; Flyway applies every pending `V{n}__*.sql`
+script in version order and records them in `flyway_schema_history`.
 
-## Migration Files
+Do **not** maintain a hand-kept table of migrations here. The generated inventory
+on GitHub Pages is the live list:
 
-| Version | File | Description |
-|---------|------|-------------|
-| V1 | `V1__initial_schema.sql` | Complete database schema (24 tables) |
-| V2 | `V2__initial_data.sql` | Initial reference data and admin user |
+- **Pages:** [`/docs/database/`](https://matiaspakua.github.io/notaire/docs/database/)
+- **Source tree:** `ls backend-api/src/main/resources/db/migration/V*.sql`
 
 ## Creating a New Migration
 
 ### 1. Determine Next Version
 
-Check the current highest version:
 ```bash
-ls backend-api/src/main/resources/db/migration/
+ls backend-api/src/main/resources/db/migration/V*.sql | sort -V | tail -5
 ```
 
-If the highest is V2, your new migration will be V3.
+Use the next integer after the highest `V{n}` already present (and after any
+in-flight branch migrations that will land first).
 
 ### 2. Create Migration File
 
-Create a file with the naming convention: `V{n}__{description}.sql`
+Naming convention: `V{n}__{description}.sql`
 
 ```bash
-touch backend-api/src/main/resources/db/migration/V3__add_user_preferences.sql
+touch backend-api/src/main/resources/db/migration/V{n}__add_user_preferences.sql
 ```
 
 ### 3. Follow the Template
@@ -38,7 +40,7 @@ Every migration must include this header:
 
 ```sql
 -- =============================================================================
--- V3__add_user_preferences.sql
+-- V{n}__add_user_preferences.sql
 -- =============================================================================
 -- Author: Your Name
 -- Date: 2026-04-14
@@ -70,8 +72,16 @@ CREATE INDEX idx_user_prefs_user_id ON user_preferences(user_id);
 
 | Type | Format | Example |
 |------|--------|---------|
-| Forward | `V{n}__{description}.sql` | `V3__add_index.sql` |
-| Rollback | `R{n}__{description}.sql` | `R3__rollback_index.sql` |
+| Forward | `V{n}__{description}.sql` | `V53__example.sql` |
+| Rollback | `R{n}__{description}.sql` | `R51__rollback_example.sql` |
+
+### Rollback scripts (`R{n}`)
+
+Optional companion scripts undo a forward migration for local recovery or
+documented rollback drills. Name them `R{n}__*.sql` with the **same `n`** as the
+`V{n}` they reverse. Examples already in tree include `R14`, `R45`, `R46`, and
+`R51`. Flyway does not auto-apply `R*` scripts on startup — operators run them
+deliberately when rolling back.
 
 ## Best Practices
 
@@ -144,6 +154,7 @@ mvn flyway:info
 | Non-idempotent SQL | Use IF EXISTS/NOT EXISTS |
 | Skip version numbers | Use sequential versioning |
 | Large migrations | Split into smaller ones |
+| Hand-kept version tables in this README | Link to Pages `/docs/database/` |
 
 ## Documentation for AI Agents
 
@@ -156,5 +167,4 @@ AI agents should consult:
 ## Related Documentation
 
 - [Flyway Documentation](https://flywaydb.org/documentation/)
-- [Flyway + Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#io.flyway)
-- ADR-007: Database Schema Versioning with Flyway
+- Generated schema inventory: GitHub Pages `/docs/database/`
