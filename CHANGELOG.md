@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **api:** submitted-document unexpected create/update/delete failures return standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500/409 body (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **api:** management-status unexpected create/update failures return standard `ErrorResponse` via `GlobalExceptionHandler` instead of a misleading 409 from `ErrorResponses` (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **api:** folio unexpected list/create/update/delete failures return standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500/409 body (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **infra:** Docker Compose passes `TZ` into postgres/backend/frontend; `start.sh` derives the host IANA zone when unset so CU23 audit day filters match the browser calendar ([#2013](https://github.com/matiaspakua/notaire/issues/2013))

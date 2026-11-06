@@ -44,7 +44,6 @@ RegistrationDraftController#recordRegistration
 RegistrationDraftController#submit
 RoleController#assignRoleToUser
 RoleController#createRole
-SubmittedDocumentController#create
 SubstitutionController#create
 TestimonyController#create
 TestimonyController#delete
