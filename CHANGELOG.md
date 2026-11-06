@@ -41,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **security:** Next.js static headers add `Referrer-Policy: strict-origin-when-cross-origin` and a restrictive `Permissions-Policy` (camera/microphone/geolocation/payment/usb disabled) ([#2005](https://github.com/matiaspakua/notaire/issues/2005))
 * **api:** audit-log reads use `QueryAuditRecordsUseCase` with read-only TX in the application layer; `AuditRecordController` no longer declares `@Transactional` (tracking issue 578)
 * **sdlc:** Unreleased CHANGELOG must not use `closes #N` (docs test); steward documents multi_pr epic hygiene so Release Please does not auto-close open epics ([#2033](https://github.com/matiaspakua/notaire/issues/2033))
 * **sdlc:** `preflight.sh --full` docker compose smoke tears down the local stack first so it does not conflict with `workspace/stack/start.sh` container names (slice of [#2023](https://github.com/matiaspakua/notaire/issues/2023))
