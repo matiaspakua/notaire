@@ -102,8 +102,8 @@ public class CopyController {
             case SaveResult.Created created -> ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created.view()));
             case SaveResult.Conflict conflict -> ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error", conflict.message()));
-            case SaveResult.ServerError ignored -> ResponseEntity.internalServerError().build();
-            case SaveResult.Updated ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.ServerError ignored -> throw new IllegalStateException("Copy create failed");
+            case SaveResult.Updated ignored -> throw new IllegalStateException("Unexpected Updated on copy create");
             case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
         };
     }
@@ -118,8 +118,8 @@ public class CopyController {
         return switch (manageCopies.update(id, toCommand(request))) {
             case SaveResult.Updated ignored -> ResponseEntity.ok().build();
             case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case SaveResult.ServerError ignored -> ResponseEntity.internalServerError().build();
-            case SaveResult.Created ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.ServerError ignored -> throw new IllegalStateException("Copy update failed");
+            case SaveResult.Created ignored -> throw new IllegalStateException("Unexpected Created on copy update");
             case SaveResult.Conflict ignored -> ResponseEntity.status(HttpStatus.CONFLICT).build();
         };
     }
