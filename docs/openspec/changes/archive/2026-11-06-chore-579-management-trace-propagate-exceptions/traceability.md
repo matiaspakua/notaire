@@ -35,7 +35,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Unexpected workflow-trace failure | ManagementControllerExceptionPropagationTest | pending |
+| Unexpected workflow-trace failure | ManagementControllerExceptionPropagationTest | passing |
 
 ## Permanent documentation updated
 
