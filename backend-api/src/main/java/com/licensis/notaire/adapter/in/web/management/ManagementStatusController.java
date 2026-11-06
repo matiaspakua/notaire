@@ -17,12 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.application.port.in.management.ManageManagementStatusesUseCase;
 import com.licensis.notaire.application.port.in.management.ManageManagementStatusesUseCase.SaveManagementStatusCommand;
 import com.licensis.notaire.application.port.in.management.QueryManagementStatusesUseCase;
 import com.licensis.notaire.domain.management.ManagementStatus;
-import com.licensis.notaire.domain.management.ManagementStatusException;
 import com.licensis.notaire.dto.DtoManagementStatus;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,9 +31,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 /**
  * Management status catalog. Calls the inbound ports and maps to the wire DTO; the rules live in the use cases and
  * the domain exceptions are mapped by {@link ManagementStatusExceptionHandler} (slice 5 of the hexagon, issue #1719).
- *
- * <p>The try/catch blocks around create and update keep the persistence-failure mapping of {@link ErrorResponses}
- * until the ad-hoc catches are removed (issue #579); domain exceptions pass through.
+ * Unexpected failures propagate to {@code GlobalExceptionHandler} (#579).
  */
 @RestController
 @RequestMapping("/api/v1/management-statuses")
@@ -101,14 +97,8 @@ public class ManagementStatusController {
     })
     @PostMapping
     @Operation(summary = "Create management status")
-    public ResponseEntity<Object> create(@Valid @RequestBody ManagementStatusWriteRequest request) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(toDto(manage.create(toCommand(request))));
-        } catch (ManagementStatusException domainFailure) {
-            throw domainFailure;
-        } catch (Exception e) {
-            return ErrorResponses.createFailed(e);
-        }
+    public ResponseEntity<DtoManagementStatus> create(@Valid @RequestBody ManagementStatusWriteRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(toDto(manage.create(toCommand(request))));
     }
 
     @ApiResponses({
@@ -119,16 +109,10 @@ public class ManagementStatusController {
     })
     @PutMapping("/{id}")
     @Operation(summary = "Update management status")
-    public ResponseEntity<Object> update(
+    public ResponseEntity<Void> update(
             @PathVariable Integer id, @Valid @RequestBody ManagementStatusWriteRequest request) {
-        try {
-            manage.update(id, toCommand(request));
-            return ResponseEntity.ok().build();
-        } catch (ManagementStatusException domainFailure) {
-            throw domainFailure;
-        } catch (Exception e) {
-            return ErrorResponses.updateFailed(e);
-        }
+        manage.update(id, toCommand(request));
+        return ResponseEntity.ok().build();
     }
 
     @ApiResponses({
