@@ -35,7 +35,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Unexpected create failure | UserControllerExceptionPropagationTest | pending |
+| Unexpected create failure | UserControllerExceptionPropagationTest | passing |
 
 ## Permanent documentation updated
 
