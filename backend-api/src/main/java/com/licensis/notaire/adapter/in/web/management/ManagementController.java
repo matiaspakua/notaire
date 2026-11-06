@@ -279,7 +279,7 @@ public class ManagementController {
             case SaveResult.Created created -> ResponseEntity.status(HttpStatus.CREATED)
                     .body(toResponse(created.view()));
             case SaveResult.BadRequest ignored -> ResponseEntity.badRequest().build();
-            case SaveResult.ServerError ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.ServerError ignored -> throw new IllegalStateException("Management create failed");
             case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
             case SaveResult.Updated ignored -> ResponseEntity.ok().build();
         };
@@ -288,7 +288,8 @@ public class ManagementController {
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
         @ApiResponse(responseCode = "400", description = "Status mutation rejected — use POST /{id}/transition"),
-        @ApiResponse(responseCode = "404", description = "Not found")
+        @ApiResponse(responseCode = "404", description = "Not found"),
+        @ApiResponse(responseCode = "500", description = "Unexpected server error")
     })
     @PutMapping("/{id}")
     @Operation(summary = "CU53 - Update a management",
@@ -302,7 +303,7 @@ public class ManagementController {
             case SaveResult.Updated ignored -> ResponseEntity.ok().build();
             case SaveResult.BadRequest ignored -> ResponseEntity.badRequest().build();
             case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case SaveResult.ServerError ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.ServerError ignored -> throw new IllegalStateException("Management update failed");
             case SaveResult.Created ignored -> ResponseEntity.status(HttpStatus.CREATED).build();
         };
     }
