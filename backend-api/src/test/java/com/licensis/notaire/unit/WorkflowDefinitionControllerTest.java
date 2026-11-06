@@ -31,6 +31,7 @@ import com.licensis.notaire.application.port.in.workflow.ManageWorkflowDefinitio
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowDefinitionsUseCase.SaveWorkflowDefinitionCommand;
 import com.licensis.notaire.application.port.in.workflow.QueryWorkflowDefinitionsUseCase;
 import com.licensis.notaire.domain.workflow.WorkflowDefinition;
+import com.licensis.notaire.config.GlobalExceptionHandler;
 import com.licensis.notaire.domain.workflow.WorkflowDefinitionInUseException;
 import com.licensis.notaire.domain.workflow.WorkflowDefinitionNotFoundException;
 import com.licensis.notaire.dto.DtoWorkflowDefinition;
@@ -50,7 +51,9 @@ class WorkflowDefinitionControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new WorkflowDefinitionController(query, manage)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new WorkflowDefinitionController(query, manage))
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
         mapper = new ObjectMapper();
     }
 
@@ -104,13 +107,15 @@ class WorkflowDefinitionControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/v1/workflow-definition should return 409 when save fails")
-    void shouldReturn409WhenCreateFails() throws Exception {
+    @DisplayName("POST /api/v1/workflow-definition should return 500 ErrorResponse when save fails unexpectedly (#579)")
+    void shouldReturn500WhenCreateFailsUnexpectedly() throws Exception {
         when(manage.create(any(SaveWorkflowDefinitionCommand.class))).thenThrow(new RuntimeException("conflict"));
         mockMvc.perform(post("/api/v1/workflow-definition")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(buildDto())))
-                .andExpect(status().isConflict());
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.message").value("An unexpected error occurred"));
     }
 
     @Test

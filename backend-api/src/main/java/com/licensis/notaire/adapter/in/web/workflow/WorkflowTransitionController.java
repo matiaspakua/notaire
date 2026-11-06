@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowTransitionsUseCase;
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowTransitionsUseCase.CreateWorkflowTransitionCommand;
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowTransitionsUseCase.UpdateWorkflowTransitionCommand;
@@ -32,7 +31,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Workflow transitions. Calls inbound ports only; workflow and node reference checks live in the use
- * case (issue #1730).
+ * case (issue #1730). Unexpected failures propagate to {@code GlobalExceptionHandler} (#579).
  */
 @RestController
 @RequestMapping("/api/v1/workflow-transition")
@@ -102,7 +101,7 @@ public class WorkflowTransitionController {
     })
     @PostMapping
     @Operation(summary = "Create a transition between two nodes")
-    public ResponseEntity<Object> create(@Valid @RequestBody WorkflowTransitionCreateRequest request) {
+    public ResponseEntity<DtoWorkflowTransition> create(@Valid @RequestBody WorkflowTransitionCreateRequest request) {
         try {
             WorkflowTransition saved = manage.create(new CreateWorkflowTransitionCommand(
                     request.workflowDefinitionId(),
@@ -113,8 +112,6 @@ public class WorkflowTransitionController {
             return ResponseEntity.status(HttpStatus.CREATED).body(toDto(saved));
         } catch (WorkflowTransitionInvalidException e) {
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ErrorResponses.createFailed(e);
         }
     }
 
@@ -127,7 +124,7 @@ public class WorkflowTransitionController {
     })
     @PutMapping("/{id}")
     @Operation(summary = "Update transition")
-    public ResponseEntity<Object> update(
+    public ResponseEntity<DtoWorkflowTransition> update(
             @PathVariable Integer id, @Valid @RequestBody WorkflowTransitionUpdateRequest request) {
         try {
             WorkflowTransition saved = manage.update(
@@ -140,9 +137,6 @@ public class WorkflowTransitionController {
             return ResponseEntity.ok(toDto(saved));
         } catch (WorkflowTransitionNotFoundException | WorkflowTransitionInvalidException e) {
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            // A data constraint answers 400; any other failure keeps 409 (issue #579, slice 3).
-            return ErrorResponses.createFailed(e);
         }
     }
 
