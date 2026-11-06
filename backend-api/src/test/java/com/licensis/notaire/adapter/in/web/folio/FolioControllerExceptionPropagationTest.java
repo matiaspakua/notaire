@@ -23,7 +23,7 @@ class FolioControllerExceptionPropagationTest {
     private final QueryFoliosUseCase query = mock(QueryFoliosUseCase.class);
     private final ManageFoliosUseCase manage = mock(ManageFoliosUseCase.class);
     private final MockMvc mvc = standaloneSetup(new FolioController(query, manage))
-            .setControllerAdvice(new GlobalExceptionHandler())
+            .setControllerAdvice(new FolioExceptionHandler(), new GlobalExceptionHandler())
             .build();
 
     private static final String BODY =
