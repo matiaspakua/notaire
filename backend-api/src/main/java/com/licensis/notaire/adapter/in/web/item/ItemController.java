@@ -127,8 +127,8 @@ public class ItemController {
         return switch (manageItems.create(toCommand(request))) {
             case SaveResult.Created created -> ResponseEntity.status(HttpStatus.CREATED).body(ItemResponse.from(created.view()));
             case SaveResult.BadRequest ignored -> ResponseEntity.badRequest().build();
-            case SaveResult.ServerError ignored -> ResponseEntity.internalServerError().build();
-            case SaveResult.Updated ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.ServerError ignored -> throw new IllegalStateException("Item create failed");
+            case SaveResult.Updated ignored -> throw new IllegalStateException("Unexpected Updated on item create");
             case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
         };
     }
@@ -145,8 +145,8 @@ public class ItemController {
             case SaveResult.Updated ignored -> ResponseEntity.ok().build();
             case SaveResult.BadRequest ignored -> ResponseEntity.badRequest().build();
             case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case SaveResult.ServerError ignored -> ResponseEntity.internalServerError().build();
-            case SaveResult.Created ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.ServerError ignored -> throw new IllegalStateException("Item update failed");
+            case SaveResult.Created ignored -> throw new IllegalStateException("Unexpected Created on item update");
         };
     }
 

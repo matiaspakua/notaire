@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **sdlc:** `preflight.sh --full` docker compose smoke tears down the local stack first so it does not conflict with `workspace/stack/start.sh` container names (slice of [#2023](https://github.com/matiaspakua/notaire/issues/2023))
 * **sdlc:** mandatory self-improvement while delivering (CONSTITUTION P12 + framework Learning loop); `docs/tests/` counts for TDD evidence; steward may `PREFLIGHT_SKIP=1` after a green local `--full` on the same tip; preflight clears stack `SPRING_DATASOURCE_*` before `mvn verify` ([#2023](https://github.com/matiaspakua/notaire/issues/2023))
 * **docs:** Flyway migration README, database-migrations rule, and `application.properties` comment no longer hard-code V1–V2 / `V1→V11+`; README points to Pages `/docs/database/` and documents `R{n}` rollbacks ([#1980](https://github.com/matiaspakua/notaire/issues/1980))
 * **security:** evidence assessment dated 2026-11-05 (architecture, STRIDE/LINDDUN register, testing cadence, reporting). Program and threat-model docs match release-only CI and the module grants that already ship. The portfolio gains an interactive Security section, and agents get a project skill for the local gates ([#2003](https://github.com/matiaspakua/notaire/issues/2003))
@@ -39,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **api:** item create/update `ServerError` returns standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500 body (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **api:** procedure create/update `ServerError` returns standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500 body (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **api:** management create/update `ServerError` returns standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500 body (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **api:** management workflow-trace unexpected failures return standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500 body (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
