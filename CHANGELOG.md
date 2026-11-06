@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **pages:** `frontendTestClasses` counts Vitest files; add `e2eSpecFiles` for Playwright; refresh committed metrics and Coverage labels ([#1982](https://github.com/matiaspakua/notaire/issues/1982))
 * **api:** history ServerError returns ErrorResponse via GEH ([#2030](https://github.com/matiaspakua/notaire/issues/2030)) ([2febdc9](https://github.com/matiaspakua/notaire/commit/2febdc92aa845c82f34697f2633c14a011a12797)), closes [#579](https://github.com/matiaspakua/notaire/issues/579)
 
 ## [0.2.6](https://github.com/matiaspakua/notaire/compare/v0.2.5...v0.2.6) (2026-11-06)
