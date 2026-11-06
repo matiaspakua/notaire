@@ -20,7 +20,9 @@
    (`openspec archive <c> --yes`) unless the change sets `multi_pr: true`.
 6. **Flyway** is schema source of truth; never edit applied migrations.
 7. **Docs are part of Done**; no secrets in git; design-system tokens on frontend.
-8. **KISS** and bounded **Boy Scout** (CONSTITUTION §2 P2/P11): simplest fix; clean only what you touch in the same PR.
+8. **KISS**, bounded **Boy Scout**, and **self-improve while delivering**
+   (CONSTITUTION §2 P2/P11/P12): simplest fix; clean only what you touch in the same PR;
+   when a gate/tool/doc wastes time or fails for the wrong reason, fix or Issue it before moving on.
 9. **Path-scoped CI (#1257)**: docs-only PRs skip Java/E2E leaves; aggregators accept `skipped`;
    `main` always full suite.
 10. **Board coherence (#1550)**: CLOSED⇒Done+no WIP labels; OPEN WIP⇒In Progress+`in-progress`;

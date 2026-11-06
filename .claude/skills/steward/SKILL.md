@@ -36,6 +36,13 @@ After **each land** on `main`, sync remaining open tips the same way before more
 Reproduce with `bash workspace/sdlc/preflight.sh --full` before pushing a fix. A run without
 `--full` is not sufficient to open a pull request. GitHub will not re-run the suite.
 Fix the cause; never skip, `@Disabled` or quarantine a test, never push an empty commit.
+
+**Redundant pre-push `--full` (#2023):** the pre-push hook also runs `--full`. When the
+same tip already has a **green** `preflight.sh --full` in this session (log shows
+`PREFLIGHT PASSED`) and the working tree has not changed since that run, you may
+push with `PREFLIGHT_SKIP=1` to avoid a second 15–30 min suite. The proof of readiness
+remains that local `--full` log — never skip to hide a red gate. If the tip changed
+after the green run, run `--full` again.
 Typical Notaire causes: stale `docs/300-development/303-testing/INVENTORY.md`, a new Flyway migration
 without `python3 workspace/release/product_release.py --write` (product version coherence), Spotless format
 (`mvn spotless:apply -pl backend-api`), an unticked or unarchived OpenSpec change.

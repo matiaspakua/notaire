@@ -18,6 +18,7 @@
 | P8 | Humans own decisions | The Owner approves specifications, grants exceptions and owns the merge rule. |
 | P9 | Publish continuously | Work lives on the remote, not on one disk: push at branch creation and after each stage. |
 | P10 | Least privilege, no secrets | Agents get the narrowest tools and tokens; secrets never enter the repository. |
+| P11 | Self-improve while delivering | Every agent improves the process and the system as it works: capture friction as *what happened → rule → check*; fix it in the same change when Boy Scout–bounded (P6), or open a follow-on issue when not; prefer a gate or ratchet over prose-only advice. Covers product code, docs, QA, security, UI/UX, infra and the harness itself. |
 
 ## 2. Roles
 
@@ -60,19 +61,24 @@ changes to this document, to the harness and merge path, and any change carrying
 ## 6. Rules for AI agents
 
 Agents must read this document and `AGENT-CARD.md` first, load rules and skills on demand only,
-and state which stage and gate their work addresses. Agents must never:
+and state which stage and gate their work addresses. Agents must **self-improve while
+delivering (P11)** — feed friction into gates, docs and follow-on issues. Agents must never:
 
 - implement without a change record, or write code before its failing test;
 - report a gate as passed without running it, or edit evidence, ledgers or baselines by hand;
 - skip, weaken or disable a test or a gate to get green;
 - commit to the default branch, rewrite pushed history, or merge outside the merge rule;
-- invent issue numbers, requirements or scope the Owner did not ask for.
+- invent issue numbers, requirements or scope the Owner did not ask for;
+- move on from a process or tool failure without capturing the lesson (P11).
 
-## 7. Learning loop
+## 7. Learning loop (P11)
 
-Every incident, review note or near miss is written down as *what happened → rule → check*.
-A rule that can be a command becomes a gate or a ratchet in `aisdlc.toml`; a rule that cannot
-stays in this document. Prose-only rules are reviewed each release for mechanization.
+Self-improvement is mandatory while delivering (P11), not a post-mortem hobby.
+Every incident, review note, false red, redundant gate run or near miss is written
+down as *what happened → rule → check*. A rule that can be a command becomes a gate
+or a ratchet in `aisdlc.toml`; a rule that cannot stays in this document. Prose-only
+rules are reviewed each release for mechanization. Agents must not leave the lesson
+only in chat.
 
 ## 8. Exceptions
 
