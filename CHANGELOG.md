@@ -49,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **api:** substitution create/update/delete `ServerError` returns standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500 body (GEH multi_pr slice; tracking issue 579 — do not close until catch(Exception) leftovers are done)
 * **api:** item create/update `ServerError` returns standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500 body (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **api:** procedure create/update `ServerError` returns standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500 body (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **api:** management create/update `ServerError` returns standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500 body (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
