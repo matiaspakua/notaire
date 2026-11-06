@@ -1,7 +1,6 @@
 package com.licensis.notaire.adapter.in.web.workflow;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +22,8 @@ import com.licensis.notaire.application.port.in.workflow.ManageWorkflowNodesUseC
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowNodesUseCase.UpdateWorkflowNodeCommand;
 import com.licensis.notaire.application.port.in.workflow.QueryWorkflowNodesUseCase;
 import com.licensis.notaire.domain.workflow.WorkflowNode;
-import com.licensis.notaire.domain.workflow.WorkflowNodeInUseException;
 import com.licensis.notaire.domain.workflow.WorkflowNodeInvalidException;
 import com.licensis.notaire.domain.workflow.WorkflowNodeKind;
-import com.licensis.notaire.domain.workflow.WorkflowNodeNotFoundException;
 import com.licensis.notaire.dto.DtoWorkflowNode;
 import com.licensis.notaire.exception.BusinessValidationException;
 
@@ -37,7 +34,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Workflow nodes. Calls inbound ports only; delete-guard for associated transitions lives in the use case
- * (issue #1729). Unexpected failures propagate to {@code GlobalExceptionHandler} (#579).
+ * (issue #1729). Domain NotFound/InUse map via {@link WorkflowNodeExceptionHandler} (#577).
+ * Unexpected failures propagate to {@code GlobalExceptionHandler} (#579).
  */
 @RestController
 @RequestMapping("/api/v1/workflow-node")
@@ -134,28 +132,19 @@ public class WorkflowNodeController {
         WorkflowNodeKind kind = dto.getType() == null
                 ? null
                 : RequiredFields.parseEnum(dto.getType(), WorkflowNodeKind.class, "type");
-        try {
-            manage.update(id, new UpdateWorkflowNodeCommand(kind, dto.getPositionX(), dto.getPositionY()));
-            return ResponseEntity.ok().build();
-        } catch (WorkflowNodeNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        manage.update(id, new UpdateWorkflowNodeCommand(kind, dto.getPositionX(), dto.getPositionY()));
+        return ResponseEntity.ok().build();
     }
 
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Deleted"),
-        @ApiResponse(responseCode = "404", description = "Not found")
+        @ApiResponse(responseCode = "404", description = "Not found"),
+        @ApiResponse(responseCode = "409", description = "Node has associated transitions")
     })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete node")
-    public ResponseEntity<Object> delete(@PathVariable Integer id) {
-        try {
-            manage.delete(id);
-            return ResponseEntity.noContent().build();
-        } catch (WorkflowNodeNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (WorkflowNodeInUseException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        manage.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

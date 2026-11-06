@@ -41,6 +41,4 @@ TestimonyMovementController#delete
 TestimonyMovementController#update
 UserController#login
 UserController#logout
-WorkflowDefinitionController#delete
-WorkflowNodeController#delete
 WorkflowValidationController#validate
