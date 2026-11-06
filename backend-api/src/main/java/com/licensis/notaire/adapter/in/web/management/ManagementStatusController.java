@@ -121,7 +121,7 @@ public class ManagementStatusController {
     })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete management status")
-    public ResponseEntity<Object> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         manage.delete(id);
         return ResponseEntity.noContent().build();
     }
