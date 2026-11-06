@@ -419,8 +419,14 @@ if [ "$MODE_FULL" = "1" ]; then
 
     if docker info >/dev/null 2>&1; then
         run "docker compose build" docker compose build --no-cache
+        # Server-backed suites above need workspace/stack/start.sh (same container
+        # names as compose). Tear that stack down before smoke or `up -d` conflicts.
         run "docker compose smoke test" bash -c \
-            'docker compose up -d && sleep 10 && docker compose ps && docker compose down'
+            'docker compose down --remove-orphans 2>/dev/null || true
+             for c in notary-postgres notary-backend notary-pgadmin notaire-frontend; do
+               docker rm -f "$c" 2>/dev/null || true
+             done
+             docker compose up -d && sleep 10 && docker compose ps && docker compose down'
     else
         fail "docker build/smoke test: docker not running — start Docker; GitHub will not run this on the pull request"
     fi
