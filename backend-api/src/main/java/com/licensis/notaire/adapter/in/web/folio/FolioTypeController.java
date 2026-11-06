@@ -112,7 +112,7 @@ public class FolioTypeController {
 })
     @PostMapping
     @Operation(summary = "Create folio type")
-    public ResponseEntity<Object> create(@Valid @RequestBody FolioTypeWriteRequest request) {
+    public ResponseEntity<DtoFolioType> create(@Valid @RequestBody FolioTypeWriteRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(toDto(manage.create(toCommand(request))));
     }
 
@@ -124,7 +124,7 @@ public class FolioTypeController {
 })
     @PutMapping("/{id}")
     @Operation(summary = "Update folio type")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody FolioTypeWriteRequest request) {
+    public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody FolioTypeWriteRequest request) {
         manage.update(id, toCommand(request));
         return ResponseEntity.ok().build();
     }
@@ -135,7 +135,7 @@ public class FolioTypeController {
 })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete folio type")
-    public ResponseEntity<Object> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         manage.delete(id);
         return ResponseEntity.noContent().build();
     }

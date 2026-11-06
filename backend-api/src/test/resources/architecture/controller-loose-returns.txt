@@ -8,12 +8,6 @@ ConceptController#deleteConcept
 ConceptController#updateConcept
 CopyController#create
 DocumentCostTemplateController#createCost
-DocumentTypeController#create
-DocumentTypeController#delete
-DocumentTypeController#update
-FolioTypeController#create
-FolioTypeController#delete
-FolioTypeController#update
 HistoryController#create
 IdentificationTypeController#create
 ManagementController#archiving

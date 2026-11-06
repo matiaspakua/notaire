@@ -148,7 +148,7 @@ public class DocumentTypeController {
     })
     @PostMapping
     @Operation(summary = "Create a new document type")
-    public ResponseEntity<Object> create(@Valid @RequestBody DocumentTypeWriteRequest request) {
+    public ResponseEntity<DtoDocumentType> create(@Valid @RequestBody DocumentTypeWriteRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(toDto(manage.create(toCreateCommand(request))));
     }
@@ -161,7 +161,7 @@ public class DocumentTypeController {
     })
     @PutMapping("/{id}")
     @Operation(summary = "Update document type")
-    public ResponseEntity<Object> update(
+    public ResponseEntity<Void> update(
             @PathVariable Integer id, @Valid @RequestBody DocumentTypeWriteRequest request) {
         DocumentType existing = query.getById(id);
         manage.update(id, toUpdateCommand(request, existing));
@@ -174,7 +174,7 @@ public class DocumentTypeController {
     })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete document type")
-    public ResponseEntity<Object> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         manage.delete(id);
         return ResponseEntity.noContent().build();
     }

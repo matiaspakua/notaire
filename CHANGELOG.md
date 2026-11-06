@@ -41,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **api:** type `FolioTypeController` and `DocumentTypeController` create/update/delete returns (DTO / `Void`); shrink the loose-return baseline by six (tracking issue 577)
 * **api:** type `ItemController#create` and `FolioController` update/delete returns; map Folio domain exceptions via `FolioExceptionHandler` (tracking issue 577)
 * **security:** Next.js static headers add `Referrer-Policy: strict-origin-when-cross-origin` and a restrictive `Permissions-Policy` (camera/microphone/geolocation/payment/usb disabled) ([#2005](https://github.com/matiaspakua/notaire/issues/2005))
 * **api:** audit-log reads use `QueryAuditRecordsUseCase` with read-only TX in the application layer; `AuditRecordController` no longer declares `@Transactional` (tracking issue 578)
