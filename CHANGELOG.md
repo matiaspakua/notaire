@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **api:** folio unexpected list/create/update/delete failures return standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500/409 body (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **infra:** Docker Compose passes `TZ` into postgres/backend/frontend; `start.sh` derives the host IANA zone when unset so CU23 audit day filters match the browser calendar ([#2013](https://github.com/matiaspakua/notaire/issues/2013))
 * **test:** Bruno `audit-records/01-list` uses the paged `audit-log` API so QuickJS does not abort on multi-megabyte flat lists after a full E2E run (local `preflight.sh --full` gate)
 * **a11y:** Architecture cards on `/product/platform/` animate with transform only (no `opacity:0`), and Observability ink is darkened, so pages axe WCAG AA color-contrast passes ([#2014](https://github.com/matiaspakua/notaire/issues/2014))
