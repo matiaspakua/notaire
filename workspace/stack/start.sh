@@ -24,6 +24,27 @@ cd "$REPO_DIR"
 # resolve the app. Keep overrides for parallel stacks (#1186 / #1678).
 export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-notaire}"
 
+# CU23 audit day filters use the JVM default zone inside the backend container.
+# Compose defaults TZ to UTC when unset; derive the host IANA zone so Playwright
+# (browser calendar) and the API agree after local midnight (#2013).
+if [ -z "${TZ:-}" ]; then
+    _tz_link=""
+    if [ -L /etc/localtime ]; then
+        _tz_link="$(readlink /etc/localtime 2>/dev/null || true)"
+    elif command -v readlink >/dev/null 2>&1; then
+        _tz_link="$(readlink -f /etc/localtime 2>/dev/null || true)"
+    fi
+    if [ -n "$_tz_link" ]; then
+        case "$_tz_link" in
+            *zoneinfo/*)
+                TZ="${_tz_link#*zoneinfo/}"
+                export TZ
+                ;;
+        esac
+    fi
+    unset _tz_link
+fi
+
 # Colors for output
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
