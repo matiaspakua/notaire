@@ -35,7 +35,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Create ServerError returns ErrorResponse | ManagementControllerServerErrorResponseTest | pending |
+| Create ServerError returns ErrorResponse | ManagementControllerServerErrorResponseTest | passing |
 
 ## Permanent documentation updated
 
