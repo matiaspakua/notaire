@@ -41,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **sdlc:** Unreleased CHANGELOG must not use `closes #N` (docs test); steward documents multi_pr epic hygiene so Release Please does not auto-close open epics ([#2033](https://github.com/matiaspakua/notaire/issues/2033))
 * **sdlc:** `preflight.sh --full` docker compose smoke tears down the local stack first so it does not conflict with `workspace/stack/start.sh` container names (slice of [#2023](https://github.com/matiaspakua/notaire/issues/2023))
 * **sdlc:** mandatory self-improvement while delivering (CONSTITUTION P12 + framework Learning loop); `docs/tests/` counts for TDD evidence; steward may `PREFLIGHT_SKIP=1` after a green local `--full` on the same tip; preflight clears stack `SPRING_DATASOURCE_*` before `mvn verify` ([#2023](https://github.com/matiaspakua/notaire/issues/2023))
 * **docs:** Flyway migration README, database-migrations rule, and `application.properties` comment no longer hard-code V1–V2 / `V1→V11+`; README points to Pages `/docs/database/` and documents `R{n}` rollbacks ([#1980](https://github.com/matiaspakua/notaire/issues/1980))
