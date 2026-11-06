@@ -54,13 +54,7 @@ TestimonyMovementController#update
 UserController#createUser
 UserController#login
 UserController#logout
-WorkflowDefinitionController#create
 WorkflowDefinitionController#delete
-WorkflowDefinitionController#update
-WorkflowNodeController#create
 WorkflowNodeController#delete
-WorkflowNodeController#update
-WorkflowTransitionController#create
 WorkflowTransitionController#delete
-WorkflowTransitionController#update
 WorkflowValidationController#validate

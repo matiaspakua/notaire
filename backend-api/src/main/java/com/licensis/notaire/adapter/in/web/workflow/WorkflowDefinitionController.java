@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowDefinitionsUseCase;
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowDefinitionsUseCase.SaveWorkflowDefinitionCommand;
 import com.licensis.notaire.application.port.in.workflow.QueryWorkflowDefinitionsUseCase;
@@ -32,7 +31,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Workflow definitions. Calls inbound ports only; delete-guard for associated nodes lives in the use case
- * (issue #1728).
+ * (issue #1728). Unexpected failures propagate to {@code GlobalExceptionHandler} (#579).
  */
 @RestController
 @RequestMapping("/api/v1/workflow-definition")
@@ -92,13 +91,9 @@ public class WorkflowDefinitionController {
     })
     @PostMapping
     @Operation(summary = "Create workflow")
-    public ResponseEntity<Object> create(@Valid @RequestBody WorkflowDefinitionWriteRequest request) {
-        try {
-            WorkflowDefinition saved = manage.create(toCommand(request));
-            return ResponseEntity.status(HttpStatus.CREATED).body(toDto(saved));
-        } catch (Exception e) {
-            return ErrorResponses.createFailed(e);
-        }
+    public ResponseEntity<DtoWorkflowDefinition> create(@Valid @RequestBody WorkflowDefinitionWriteRequest request) {
+        WorkflowDefinition saved = manage.create(toCommand(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(toDto(saved));
     }
 
     @ApiResponses({
@@ -111,15 +106,13 @@ public class WorkflowDefinitionController {
     })
     @PutMapping("/{id}")
     @Operation(summary = "Update workflow")
-    public ResponseEntity<Object> update(
+    public ResponseEntity<Void> update(
             @PathVariable Integer id, @Valid @RequestBody WorkflowDefinitionWriteRequest request) {
         try {
             manage.update(id, toCommand(request));
             return ResponseEntity.ok().build();
         } catch (WorkflowDefinitionNotFoundException e) {
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ErrorResponses.updateFailed(e);
         }
     }
 

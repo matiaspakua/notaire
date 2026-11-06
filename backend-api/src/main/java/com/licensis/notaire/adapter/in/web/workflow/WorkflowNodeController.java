@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.adapter.in.web.support.RequiredFields;
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowNodesUseCase;
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowNodesUseCase.CreateWorkflowNodeCommand;
@@ -38,7 +37,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Workflow nodes. Calls inbound ports only; delete-guard for associated transitions lives in the use case
- * (issue #1729).
+ * (issue #1729). Unexpected failures propagate to {@code GlobalExceptionHandler} (#579).
  */
 @RestController
 @RequestMapping("/api/v1/workflow-node")
@@ -102,7 +101,7 @@ public class WorkflowNodeController {
     })
     @PostMapping
     @Operation(summary = "Create node in a workflow")
-    public ResponseEntity<Object> create(@Valid @RequestBody WorkflowNodeCreateRequest request) {
+    public ResponseEntity<DtoWorkflowNode> create(@Valid @RequestBody WorkflowNodeCreateRequest request) {
         WorkflowNodeKind kind = RequiredFields.requireEnum(request.type(), WorkflowNodeKind.class, "type");
         try {
             WorkflowNode saved = manage.create(new CreateWorkflowNodeCommand(
@@ -114,8 +113,6 @@ public class WorkflowNodeController {
             return ResponseEntity.status(HttpStatus.CREATED).body(toDto(saved));
         } catch (WorkflowNodeInvalidException e) {
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ErrorResponses.createFailed(e);
         }
     }
 
@@ -129,7 +126,7 @@ public class WorkflowNodeController {
     })
     @PutMapping("/{id}")
     @Operation(summary = "Update node")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody DtoWorkflowNode dto) {
+    public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody DtoWorkflowNode dto) {
         if (dto.getType() == null && dto.getPositionX() == null && dto.getPositionY() == null) {
             throw new BusinessValidationException(
                     "type, positionX, positionY: provide at least one field to update");
@@ -142,8 +139,6 @@ public class WorkflowNodeController {
             return ResponseEntity.ok().build();
         } catch (WorkflowNodeNotFoundException e) {
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ErrorResponses.updateFailed(e);
         }
     }
 
