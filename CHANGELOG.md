@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **api:** procedure create/update `ServerError` returns standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500 body (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **api:** management create/update `ServerError` returns standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500 body (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **api:** management workflow-trace unexpected failures return standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500 body (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
 * **api:** user unexpected create/update/delete failures return standard `ErrorResponse` via `GlobalExceptionHandler` instead of an empty 500/409 body (slice of [#579](https://github.com/matiaspakua/notaire/issues/579))
