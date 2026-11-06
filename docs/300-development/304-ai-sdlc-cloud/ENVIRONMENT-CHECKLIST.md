@@ -74,6 +74,12 @@ Saving the card.
 Copy `.env.example` → `.env` in the environment (git-ignored). Minimum keys the
 fleet needs for autonomous Gate 3 / smoke:
 
+**Linked git worktrees:** each worktree is a separate cwd. `docker compose` (and
+`preflight.sh --full` smoke) read `.env` from that worktree, not from the primary
+checkout. After `git worktree add …`, copy `.env` from the main working tree (or
+re-run `.cursor/install.sh` / seed from `.env.example`) before relying on compose
+smoke — missing `JWT_SECRET` makes `notary-backend` unhealthy.
+
 | Key (from `.env.example`) | Used by |
 |---------------------------|---------|
 | `POSTGRES_*` | Docker DB |

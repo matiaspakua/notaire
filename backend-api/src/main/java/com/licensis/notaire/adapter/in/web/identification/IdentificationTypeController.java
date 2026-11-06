@@ -93,7 +93,7 @@ public class IdentificationTypeController {
 })
     @PostMapping
     @Operation(summary = "Create identification type")
-    public ResponseEntity<Object> create(@Valid @RequestBody IdentificationTypeRequest request) {
+    public ResponseEntity<IdentificationTypeResponse> create(@Valid @RequestBody IdentificationTypeRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(manage.create(toCommand(request))));
     }
 
