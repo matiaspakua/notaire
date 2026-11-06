@@ -1,7 +1,6 @@
 package com.licensis.notaire.adapter.in.web.workflow;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +19,6 @@ import com.licensis.notaire.application.port.in.workflow.ManageWorkflowDefinitio
 import com.licensis.notaire.application.port.in.workflow.ManageWorkflowDefinitionsUseCase.SaveWorkflowDefinitionCommand;
 import com.licensis.notaire.application.port.in.workflow.QueryWorkflowDefinitionsUseCase;
 import com.licensis.notaire.domain.workflow.WorkflowDefinition;
-import com.licensis.notaire.domain.workflow.WorkflowDefinitionInUseException;
-import com.licensis.notaire.domain.workflow.WorkflowDefinitionNotFoundException;
 import com.licensis.notaire.dto.DtoWorkflowDefinition;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,7 +28,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Workflow definitions. Calls inbound ports only; delete-guard for associated nodes lives in the use case
- * (issue #1728). Unexpected failures propagate to {@code GlobalExceptionHandler} (#579).
+ * (issue #1728). Domain NotFound/InUse map via {@link WorkflowDefinitionExceptionHandler} (#577).
+ * Unexpected failures propagate to {@code GlobalExceptionHandler} (#579).
  */
 @RestController
 @RequestMapping("/api/v1/workflow-definition")
@@ -108,28 +106,19 @@ public class WorkflowDefinitionController {
     @Operation(summary = "Update workflow")
     public ResponseEntity<Void> update(
             @PathVariable Integer id, @Valid @RequestBody WorkflowDefinitionWriteRequest request) {
-        try {
-            manage.update(id, toCommand(request));
-            return ResponseEntity.ok().build();
-        } catch (WorkflowDefinitionNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        manage.update(id, toCommand(request));
+        return ResponseEntity.ok().build();
     }
 
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Deleted"),
-        @ApiResponse(responseCode = "404", description = "Not found")
+        @ApiResponse(responseCode = "404", description = "Not found"),
+        @ApiResponse(responseCode = "409", description = "Workflow has associated nodes")
     })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete workflow")
-    public ResponseEntity<Object> delete(@PathVariable Integer id) {
-        try {
-            manage.delete(id);
-            return ResponseEntity.noContent().build();
-        } catch (WorkflowDefinitionNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (WorkflowDefinitionInUseException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        manage.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
