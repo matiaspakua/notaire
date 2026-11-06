@@ -6,8 +6,6 @@ import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,7 +22,6 @@ import com.licensis.notaire.application.port.in.document.ManageSubmittedDocument
 import com.licensis.notaire.application.port.in.document.QuerySubmittedDocumentsUseCase;
 import com.licensis.notaire.domain.document.SubmittedDocument;
 import com.licensis.notaire.exception.BusinessValidationException;
-import com.licensis.notaire.exception.ResourceNotFoundException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -36,14 +33,13 @@ import jakarta.validation.constraints.NotNull;
 
 /**
  * Submitted documents. Calls inbound ports only; due inheritance and persistence live in the use cases (issue #1726).
- * Create/update try/catch keep the legacy persistence-failure mapping until ad-hoc catches are removed (#579).
+ * Unexpected failures propagate to {@code GlobalExceptionHandler} (#579).
  */
 @RestController
 @RequestMapping("/api/v1/submitted-documents")
 @Tag(name = "SubmittedDocument", description = "API for managing submitted documents")
 public class SubmittedDocumentController {
 
-    private static final Logger log = LoggerFactory.getLogger(SubmittedDocumentController.class);
     /** Strict ISO day; thread-safe, unlike the shared SimpleDateFormat it replaces (issue #655). */
     private static final DateTimeFormatter DATE_FORMAT =
             DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT);
@@ -183,16 +179,9 @@ public class SubmittedDocumentController {
     })
     @PostMapping
     @Operation(summary = "Create submitted document")
-    public ResponseEntity<Object> create(@Valid @RequestBody SubmittedDocumentCreateRequest body) {
-        try {
-            SubmittedDocument created = manage.create(toCreateCommand(body.toRequest()));
-            return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created));
-        } catch (ResourceNotFoundException | BusinessValidationException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to create submitted document", e);
-            return ResponseEntity.internalServerError().build();
-        }
+    public ResponseEntity<SubmittedDocumentResponse> create(@Valid @RequestBody SubmittedDocumentCreateRequest body) {
+        SubmittedDocument created = manage.create(toCreateCommand(body.toRequest()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created));
     }
 
     @ApiResponses({
@@ -207,15 +196,8 @@ public class SubmittedDocumentController {
         if (query.findById(id).isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        try {
-            manage.update(id, toUpdateCommand(request));
-            return ResponseEntity.ok().build();
-        } catch (ResourceNotFoundException | BusinessValidationException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to update submitted document id {}", id, e);
-            return ResponseEntity.internalServerError().build();
-        }
+        manage.update(id, toUpdateCommand(request));
+        return ResponseEntity.ok().build();
     }
 
     @ApiResponses({
@@ -225,14 +207,9 @@ public class SubmittedDocumentController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete submitted document")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        try {
-            if (!manage.delete(id)) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            log.error("Failed to delete submitted document id {}", id, e);
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        if (!manage.delete(id)) {
+            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.noContent().build();
     }
 }
