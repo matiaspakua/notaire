@@ -100,8 +100,8 @@ public class HistoryController {
         return switch (manageHistories.create(toCommand(request))) {
             case SaveResult.Created created -> ResponseEntity.status(HttpStatus.CREATED).body(created.summary());
             case SaveResult.BadRequest ignored -> ResponseEntity.badRequest().build();
-            case SaveResult.ServerError ignored -> ResponseEntity.internalServerError().build();
-            case SaveResult.Updated ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.ServerError ignored -> throw new IllegalStateException("History create failed");
+            case SaveResult.Updated ignored -> throw new IllegalStateException("Unexpected Updated on history create");
             case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
         };
     }
@@ -120,8 +120,8 @@ public class HistoryController {
             case SaveResult.Updated ignored -> ResponseEntity.ok().build();
             case SaveResult.BadRequest ignored -> ResponseEntity.badRequest().build();
             case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case SaveResult.ServerError ignored -> ResponseEntity.internalServerError().build();
-            case SaveResult.Created ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.ServerError ignored -> throw new IllegalStateException("History update failed");
+            case SaveResult.Created ignored -> throw new IllegalStateException("Unexpected Created on history update");
         };
     }
 
