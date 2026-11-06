@@ -1,13 +1,13 @@
 {
   "name": "notaire",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "components": {
     "backend": {
-      "version": "0.2.6",
+      "version": "0.2.7",
       "coordinates": "com.licensis:notaire-root"
     },
     "frontend": {
-      "version": "0.2.6",
+      "version": "0.2.7",
       "package": "notaire-frontend"
     },
     "database": {
