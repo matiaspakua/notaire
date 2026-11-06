@@ -19,9 +19,6 @@ import com.licensis.notaire.application.port.in.user.ManageRolesUseCase.CreateRo
 import com.licensis.notaire.application.port.in.user.ManageRolesUseCase.UpdateRoleCommand;
 import com.licensis.notaire.application.port.in.user.QueryRolesUseCase;
 import com.licensis.notaire.domain.user.Role;
-import com.licensis.notaire.domain.user.RoleNameConflictException;
-import com.licensis.notaire.domain.user.RoleNotFoundException;
-import com.licensis.notaire.domain.user.UserNotFoundException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -32,7 +29,7 @@ import jakarta.validation.constraints.NotBlank;
 
 /**
  * Roles. Calls inbound ports only. Module grant lists are stored, returned and enforced server-side
- * (issue #1683 / #1731).
+ * (issue #1683 / #1731). Domain conflict/not-found map via {@link RoleExceptionHandler} (#577).
  */
 @RestController
 @RequestMapping("/api/v1/roles")
@@ -82,14 +79,10 @@ public class RoleController {
     })
     @PostMapping
     @Operation(summary = "Create role")
-    public ResponseEntity<Object> createRole(@Valid @RequestBody RoleRequest request) {
-        try {
-            Role saved = manage.create(
-                    new CreateRoleCommand(request.name(), request.description(), request.active(), request.modulos()));
-            return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(saved));
-        } catch (RoleNameConflictException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<RoleResponse> createRole(@Valid @RequestBody RoleRequest request) {
+        Role saved = manage.create(
+                new CreateRoleCommand(request.name(), request.description(), request.active(), request.modulos()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(saved));
     }
 
     @ApiResponses({
@@ -101,14 +94,10 @@ public class RoleController {
     @PutMapping("/{id}")
     @Operation(summary = "Update role")
     public ResponseEntity<RoleResponse> updateRole(@PathVariable Integer id, @Valid @RequestBody RoleRequest request) {
-        try {
-            Role saved = manage.update(
-                    id,
-                    new UpdateRoleCommand(request.name(), request.description(), request.active(), request.modulos()));
-            return ResponseEntity.ok(toResponse(saved));
-        } catch (RoleNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        Role saved = manage.update(
+                id,
+                new UpdateRoleCommand(request.name(), request.description(), request.active(), request.modulos()));
+        return ResponseEntity.ok(toResponse(saved));
     }
 
     @ApiResponses({
@@ -118,23 +107,20 @@ public class RoleController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete role")
     public ResponseEntity<Void> deleteRole(@PathVariable Integer id) {
-        try {
-            manage.delete(id);
-            return ResponseEntity.noContent().build();
-        } catch (RoleNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        manage.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Assigned"),
+        @ApiResponse(responseCode = "404", description = "Role or user not found")
+    })
     @PutMapping("/{idRole}/users/{idUser}")
     @Operation(summary = "Assign role to a user")
-    public ResponseEntity<Object> assignRoleToUser(@PathVariable Integer idRole, @PathVariable Integer idUser) {
-        try {
-            manage.assignRoleToUser(idRole, idUser);
-            return ResponseEntity.ok(Map.of("idUser", idUser, "idRole", idRole));
-        } catch (RoleNotFoundException | UserNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Map<String, Integer>> assignRoleToUser(
+            @PathVariable Integer idRole, @PathVariable Integer idUser) {
+        manage.assignRoleToUser(idRole, idUser);
+        return ResponseEntity.ok(Map.of("idUser", idUser, "idRole", idRole));
     }
 
     @ApiResponses({
@@ -144,11 +130,7 @@ public class RoleController {
     @DeleteMapping("/users/{idUser}")
     @Operation(summary = "Unassign role of the user")
     public ResponseEntity<Void> unassignRoleFromUser(@PathVariable Integer idUser) {
-        try {
-            manage.unassignRoleFromUser(idUser);
-            return ResponseEntity.noContent().build();
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        manage.unassignRoleFromUser(idUser);
+        return ResponseEntity.noContent().build();
     }
 }

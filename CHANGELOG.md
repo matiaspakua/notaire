@@ -49,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **api:** type `RoleController#createRole` / `#assignRoleToUser`; map conflict/not-found via `RoleExceptionHandler` (tracking issue 577)
 * **api:** type `WorkflowDefinitionController#delete` and `WorkflowNodeController#delete` as `Void`; map NotFound/InUse via advice (tracking issue 577)
 * **api:** type `ManagementStatusController#delete` and `WorkflowTransitionController#delete` as `Void` (tracking issue 577)
 * **api:** type `PropertyController#create` as `PropertyResponse`; shrink the loose-return baseline by one (tracking issue 577)
