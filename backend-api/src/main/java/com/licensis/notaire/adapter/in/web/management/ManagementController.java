@@ -339,9 +339,6 @@ public class ManagementController {
         } catch (IllegalArgumentException e) {
             log.warn("Cannot build workflow trace for management {}: {}", id, e.getMessage());
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            log.error("Failed to build workflow trace for management id {}", id, e);
-            return ResponseEntity.internalServerError().build();
         }
     }
 
