@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Governance principles KISS and Boy Scout (#1591)."""
+"""Governance principles KISS, Boy Scout (#1591) and self-improve (#2023)."""
 
 from __future__ import annotations
 
@@ -47,10 +47,14 @@ class BoyScoutPrincipleTest(unittest.TestCase):
         text = (REPO_ROOT / "CONSTITUTION.md").read_text(encoding="utf-8")
         self.assertIn("| P10 |", text)
         self.assertIn("| P11 |", text)
-        self.assertNotIn("| P12 |", text.split("## 3.", 1)[0])
+        principles = text.split("## 3.", 1)[0]
+        self.assertIn("| P12 |", principles)
         p11 = text.split("| P11 |", 1)[1].split("\n", 1)[0]
         for needle in ("same PR", "no behavior change", "P10"):
             self.assertIn(needle, p11, msg=needle)
+        p12 = text.split("| P12 |", 1)[1].split("\n", 1)[0]
+        for needle in ("Self-improve", "gate", "Boy Scout"):
+            self.assertIn(needle, p12, msg=needle)
 
 
 class DigestBudgetTest(unittest.TestCase):
@@ -64,6 +68,7 @@ class DigestBudgetTest(unittest.TestCase):
             self.assertIn("KISS", text)
             self.assertIn("Boy Scout", text)
             self.assertIn("CONSTITUTION", text)
+            self.assertIn("self-improve", text.lower())
 
     def test_context_budget_script_passes(self):
         result = subprocess.run(
