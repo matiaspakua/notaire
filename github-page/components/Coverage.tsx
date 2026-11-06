@@ -36,7 +36,7 @@ function buildCoverageData(metrics: SiteMetrics): CoverageMetric[] {
       lastUpdate: coverage.lastUpdated,
     },
     {
-      name: "Frontend (Jest)",
+      name: "Frontend (Vitest)",
       type: "Component Coverage",
       percentage: coverage.frontendComponent,
       color: "var(--spring-green)",
@@ -231,8 +231,12 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
                   <span className="text-emerald-700 font-mono">{metrics.coverage.frontendComponent}%</span>
                 </li>
                 <li className="flex justify-between items-center">
+                  <span className="text-neutral-600">Unit / component tests (Vitest)</span>
+                  <span className="text-emerald-700 font-mono">{metrics.frontendTestClasses} test files</span>
+                </li>
+                <li className="flex justify-between items-center">
                   <span className="text-neutral-600">E2E Suites (Playwright)</span>
-                  <span className="text-emerald-700 font-mono">{metrics.frontendTestClasses} spec files</span>
+                  <span className="text-emerald-700 font-mono">{metrics.e2eSpecFiles} spec files</span>
                 </li>
                 <li className="flex justify-between items-center">
                   <span className="text-neutral-600">API Tests</span>

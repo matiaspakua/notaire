@@ -18,6 +18,8 @@ export interface SiteMetrics {
   testClasses: number;
   backendTestClasses: number;
   frontendTestClasses: number;
+  /** Playwright specs under testing/e2e (issue #1982). */
+  e2eSpecFiles: number;
   apiTestFiles: number;
   adrCount: number;
   useCases: number;
@@ -35,11 +37,12 @@ const DEFAULTS: SiteMetrics = {
   commits: 1350,
   pullRequests: 210,
   markdownFiles: 260,
-  testClasses: 422,
-  backendTestClasses: 300,
-  frontendTestClasses: 122,
+  testClasses: 660,
+  backendTestClasses: 361,
+  frontendTestClasses: 197,
+  e2eSpecFiles: 102,
   apiTestFiles: 99,
-  adrCount: 18,
+  adrCount: 31,
   useCases: 96,
   functionalRequirements: 112,
   dockerServices: 16,
