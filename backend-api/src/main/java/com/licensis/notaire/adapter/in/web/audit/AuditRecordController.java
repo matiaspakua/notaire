@@ -1,6 +1,6 @@
 package com.licensis.notaire.adapter.in.web.audit;
 
-import com.licensis.notaire.application.port.out.audit.AuditRecordOpsPort;
+import com.licensis.notaire.application.port.in.audit.QueryAuditRecordsUseCase;
 import com.licensis.notaire.application.port.out.audit.AuditRecordOpsPort.PageResult;
 import com.licensis.notaire.dto.DtoAuditRecord;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,15 +21,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Audit log HTTP adapter. Calls {@link QueryAuditRecordsUseCase} only; transactions
+ * live on the application use case (issue #578).
+ */
 @RestController
 @RequestMapping("/api/v1/audit-log")
 @Tag(name = "AuditRecord", description = "API for querying user audit records (read only; mutations are denied)")
 public class AuditRecordController {
 
-    private final AuditRecordOpsPort ops;
+    private final QueryAuditRecordsUseCase queryAuditRecords;
 
-    public AuditRecordController(AuditRecordOpsPort ops) {
-        this.ops = ops;
+    public AuditRecordController(QueryAuditRecordsUseCase queryAuditRecords) {
+        this.queryAuditRecords = queryAuditRecords;
     }
 
     /**
@@ -42,7 +45,6 @@ public class AuditRecordController {
      */
     @GetMapping
     @Operation(summary = "Get audit records with pagination and optional filters")
-    @Transactional(readOnly = true)
     public ResponseEntity<?> getAll(
             @RequestParam(required = false) Integer page,
             @RequestParam(required = false) Integer size,
@@ -56,12 +58,12 @@ public class AuditRecordController {
     ) {
         boolean paginated = page != null || size != null;
         if (!paginated) {
-            return ResponseEntity.ok(ops.findAll());
+            return ResponseEntity.ok(queryAuditRecords.findAll());
         }
 
         int safePage = page == null || page < 0 ? 0 : page;
         int safeSize = size == null || size <= 0 ? 20 : size;
-        PageResult result = ops.search(module, idUser, from, to, safePage, safeSize, sort);
+        PageResult result = queryAuditRecords.search(module, idUser, from, to, safePage, safeSize, sort);
         return ResponseEntity.ok(toPageResponse(result));
     }
 
@@ -71,18 +73,16 @@ public class AuditRecordController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Get an audit record by ID")
-    @Transactional(readOnly = true)
     public ResponseEntity<DtoAuditRecord> getById(@PathVariable Integer id) {
-        return ops.findById(id)
+        return queryAuditRecords.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/user/{idUser}")
     @Operation(summary = "Get audit records by user")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoAuditRecord>> getByUser(@PathVariable Integer idUser) {
-        return ResponseEntity.ok(ops.findByUserId(idUser));
+        return ResponseEntity.ok(queryAuditRecords.findByUserId(idUser));
     }
 
     private Map<String, Object> toPageResponse(PageResult page) {

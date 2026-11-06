@@ -2,7 +2,7 @@ package com.licensis.notaire.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.adapter.in.web.audit.AuditRecordController;
-import com.licensis.notaire.application.port.out.audit.AuditRecordOpsPort;
+import com.licensis.notaire.application.port.in.audit.QueryAuditRecordsUseCase;
 import com.licensis.notaire.application.port.out.audit.AuditRecordOpsPort.PageResult;
 import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoAuditRecord;
@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AuditRecordControllerTest {
 
     @Mock
-    private AuditRecordOpsPort ops;
+    private QueryAuditRecordsUseCase queryAuditRecords;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -52,7 +52,7 @@ class AuditRecordControllerTest {
 
     @BeforeEach
     void setUp() {
-        AuditRecordController controller = new AuditRecordController(ops);
+        AuditRecordController controller = new AuditRecordController(queryAuditRecords);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
         objectMapper = new ObjectMapper();
 
@@ -89,7 +89,7 @@ class AuditRecordControllerTest {
     @Test
     @DisplayName("Should return a list of DTOs without pagination params")
     void shouldReturnFlatListWhenNoPaginationParams() throws Exception {
-        when(ops.findAll()).thenReturn(List.of(sampleDto));
+        when(queryAuditRecords.findAll()).thenReturn(List.of(sampleDto));
 
         mockMvc.perform(get("/api/v1/audit-log"))
                 .andExpect(status().isOk())
@@ -103,7 +103,7 @@ class AuditRecordControllerTest {
     @Test
     @DisplayName("Should return a paginated response when page parameter is provided")
     void shouldReturnPagedResponseWhenPageProvided() throws Exception {
-        when(ops.search(isNull(), isNull(), isNull(), isNull(), eq(0), eq(20), anyString())).thenReturn(pageOf(sampleDto));
+        when(queryAuditRecords.search(isNull(), isNull(), isNull(), isNull(), eq(0), eq(20), anyString())).thenReturn(pageOf(sampleDto));
 
         mockMvc.perform(get("/api/v1/audit-log?page=0&size=20"))
                 .andExpect(status().isOk())
@@ -119,32 +119,32 @@ class AuditRecordControllerTest {
     @Test
     @DisplayName("Should filter by module when module param is set with pagination")
     void shouldFilterByModuleWhenParamSet() throws Exception {
-        when(ops.search(eq("Deeds"), isNull(), isNull(), isNull(), eq(0), eq(20), anyString())).thenReturn(pageOf(sampleDto));
+        when(queryAuditRecords.search(eq("Deeds"), isNull(), isNull(), isNull(), eq(0), eq(20), anyString())).thenReturn(pageOf(sampleDto));
 
         mockMvc.perform(get("/api/v1/audit-log?page=0&size=20&module=Deeds"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].module").value("Deeds"));
 
-        verify(ops).search(eq("Deeds"), isNull(), isNull(), isNull(), eq(0), eq(20), anyString());
-        verify(ops, never()).findAll();
+        verify(queryAuditRecords).search(eq("Deeds"), isNull(), isNull(), isNull(), eq(0), eq(20), anyString());
+        verify(queryAuditRecords, never()).findAll();
     }
 
     @Test
     @DisplayName("Should filter by idUser when idUser param is set with pagination")
     void shouldFilterByIdUserWhenParamSet() throws Exception {
-        when(ops.search(isNull(), eq(1), isNull(), isNull(), eq(0), eq(20), anyString())).thenReturn(pageOf(sampleDto));
+        when(queryAuditRecords.search(isNull(), eq(1), isNull(), isNull(), eq(0), eq(20), anyString())).thenReturn(pageOf(sampleDto));
 
         mockMvc.perform(get("/api/v1/audit-log?page=0&size=20&idUser=1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].users.idUser").value(1));
 
-        verify(ops).search(isNull(), eq(1), isNull(), isNull(), eq(0), eq(20), anyString());
+        verify(queryAuditRecords).search(isNull(), eq(1), isNull(), isNull(), eq(0), eq(20), anyString());
     }
 
     @Test
     @DisplayName("Should return the audit record by id when found")
     void shouldReturnRecordByIdWhenFound() throws Exception {
-        when(ops.findById(100)).thenReturn(Optional.of(sampleDto));
+        when(queryAuditRecords.findById(100)).thenReturn(Optional.of(sampleDto));
 
         mockMvc.perform(get("/api/v1/audit-log/100"))
                 .andExpect(status().isOk())
@@ -154,7 +154,7 @@ class AuditRecordControllerTest {
     @Test
     @DisplayName("Should return 404 when the audit record id is not found")
     void shouldReturn404WhenIdNotFound() throws Exception {
-        when(ops.findById(999)).thenReturn(Optional.empty());
+        when(queryAuditRecords.findById(999)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/v1/audit-log/999"))
                 .andExpect(status().isNotFound());
@@ -163,7 +163,7 @@ class AuditRecordControllerTest {
     @Test
     @DisplayName("Should return audit records by user id")
     void shouldReturnRecordsByUserId() throws Exception {
-        when(ops.findByUserId(1)).thenReturn(List.of(sampleDto));
+        when(queryAuditRecords.findByUserId(1)).thenReturn(List.of(sampleDto));
 
         mockMvc.perform(get("/api/v1/audit-log/user/1"))
                 .andExpect(status().isOk())
@@ -177,7 +177,7 @@ class AuditRecordControllerTest {
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(sampleEntity)))
                 .andExpect(status().isMethodNotAllowed());
-        verify(ops, never()).findAll();
+        verify(queryAuditRecords, never()).findAll();
     }
 
     @Test
@@ -187,7 +187,7 @@ class AuditRecordControllerTest {
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(sampleEntity)))
                 .andExpect(status().isMethodNotAllowed());
-        verify(ops, never()).findById(anyInt());
+        verify(queryAuditRecords, never()).findById(anyInt());
     }
 
     @Test
@@ -211,7 +211,7 @@ class AuditRecordControllerTest {
     @Test
     @DisplayName("Should fall back to default sort on invalid sort parameter")
     void shouldFallBackToDefaultSortOnInvalidParameter() throws Exception {
-        when(ops.search(isNull(), isNull(), isNull(), isNull(), eq(0), eq(20), anyString())).thenReturn(pageOf(sampleDto));
+        when(queryAuditRecords.search(isNull(), isNull(), isNull(), isNull(), eq(0), eq(20), anyString())).thenReturn(pageOf(sampleDto));
 
         mockMvc.perform(get("/api/v1/audit-log?page=0&size=20&sort=date,unknown"))
                 .andExpect(status().isOk());
@@ -220,7 +220,7 @@ class AuditRecordControllerTest {
     @Test
     @DisplayName("Should accept negative page or zero size and normalize")
     void shouldNormalizeInvalidPaginationValues() throws Exception {
-        when(ops.search(isNull(), isNull(), isNull(), isNull(), eq(0), eq(20), anyString())).thenReturn(pageOf(sampleDto));
+        when(queryAuditRecords.search(isNull(), isNull(), isNull(), isNull(), eq(0), eq(20), anyString())).thenReturn(pageOf(sampleDto));
 
         mockMvc.perform(get("/api/v1/audit-log?page=-1&size=0"))
                 .andExpect(status().isOk());
