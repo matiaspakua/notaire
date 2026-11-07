@@ -193,19 +193,17 @@ sequenceDiagram
   participant O as Owner
   W->>GH: push branch type/N_desc (continuous publication #1681)
   W->>GH: comment on Issue: stage + what remains
+  W->>W: preflight.sh --full passes (the PR proof, #2001)
   W->>GH: open PR "[#N] type(scope): …" with Closes #N
-  GH->>CI: light + heavy workflows
-  CI-->>W: red job logs
   W->>GH: fix commits (merge main in, never rebase)
-  CI-->>F: all required checks green
-  F->>F: check-heavy-ci.sh N = 0 · archive hygiene · board coherence
+  F->>F: check-heavy-ci.sh N = 0 · aisdlc protected · archive hygiene
   F->>GH: Gate 4 review notes
   alt Worker PR under Foreman rule
     F->>GH: merge
   else Constitution / sdlc-exception / harness PR
     O->>GH: merge
   end
-  GH->>CI: CD + Pages + Release Please on main
+  GH->>CI: Pages + Release Please on main; product CI and CD on the version tag
   F->>GH: smoke evidence, close Issue, board Done
 `;
 
@@ -246,7 +244,7 @@ export const LIFECYCLE_PHASES: { phase: string; tone: string; steps: Step[] }[] 
       { n: "16", title: "Permanent documentation", gate: 3, what: "Update the docs the change affects, in the same diff. Never duplicate; point at the permanent document.", check: "check-doc-traceability.py" },
       { n: "17", title: "Atomic commits", what: "Conventional Commits; Refs #N on intermediate commits, Closes #N on the closing one.", check: "check-commit-messages.sh" },
       { n: "17.5", title: "Full local pipeline", what: "One dashboarded pre-PR gate: plan check, security cases, preflight --full, markdown lint.", check: "bash workspace/sdlc/run_pipeline.sh" },
-      { n: "18–19", title: "Pull request and green CI", what: "PR titled [#N] type(scope): description, with the PR template; wait for every required workflow." },
+      { n: "18–19", title: "Pull request and local full preflight", what: "PR titled [#N] type(scope): description, with the PR template. GitHub does not re-run the product suite on a pull request (#2001): the PR is ready when preflight --full has passed locally and the required process checks are green.", check: "bash workspace/sdlc/preflight.sh --full" },
     ],
   },
   {
@@ -254,7 +252,7 @@ export const LIFECYCLE_PHASES: { phase: string; tone: string; steps: Step[] }[] 
     tone: "amber",
     steps: [
       { n: "20", title: "Code review", gate: 4, what: "Code owner, or the Foreman's Gate 4 review with no open finding. Heavy CI must be terminal success.", check: "check-heavy-ci.sh <pr>" },
-      { n: "21", title: "Merge", what: "Via the PR only. The OpenSpec change is archived in that same PR (#1623)." },
+      { n: "21", title: "Merge", what: "Via the PR only, by the Owner or by the Foreman under its merge rule; Workers never merge. The OpenSpec change is archived in that same PR (#1623)." },
       { n: "22", title: "Deploy", what: "CI → CD builds, signs (cosign) and publishes images to GHCR; SBOMs on version tags." },
       { n: "23", title: "Smoke test", gate: 5, what: "Health endpoint and the key flow of the change on the target environment." },
       { n: "24", title: "Close the issue", what: "Only after deploy and smoke. Board Status Done, WIP labels removed." },
@@ -266,7 +264,7 @@ export const GATES = [
   { n: 1, name: "Do not start implementation without", items: ["Issue linked to a Use Case", "Specification written", "Acceptance criteria defined"], machine: "validate-sdlc-plan.sh resolves the Issue live with gh: an invented or closed number fails" },
   { n: 2, name: "Do not implement without", items: ["Test cases designed", "Unit tests written and observed failing", "Integration tests where applicable"], machine: "check-tdd-evidence.sh; the local harness requires TEST_CMD to fail" },
   { n: 3, name: "Do not create a PR if", items: ["Docs not updated", "Any test failing", "Coverage below the JaCoCo ratchet", "Lint/format failing", "run_pipeline.sh not run or red"], machine: "preflight.sh pre-push hook + run_pipeline.sh dashboard" },
-  { n: 4, name: "Do not merge if", items: ["CI red or pending", "Review unresolved", "Merge conflicts", "Docs pending"], machine: "protect-main ruleset (5 required checks) + check-heavy-ci.sh" },
+  { n: 4, name: "Do not merge if", items: ["CI red or pending", "Review unresolved", "Merge conflicts", "Docs pending"], machine: "check-heavy-ci.sh; aisdlc protected sends owner-only paths to the Owner; aisdlc evidence verify checks the ledger chain; the protect-main ruleset requires a pull request" },
   { n: 5, name: "Not finished until", items: ["Deploy succeeded", "Smoke test passed", "Issue closed", "Board Status and labels coherent"], machine: "check-board-status-label-coherence.py; archive hygiene on main (Main Health)" },
 ];
 
@@ -302,26 +300,28 @@ export const GUARDRAILS: { layer: string; what: string; sources: Source[] }[] = 
   },
   {
     layer: "4 · Agent-side hooks & harness",
-    what: "Claude Code hooks refuse a push to main. The local-AI harness reverts out-of-scope edits, refuses branch switches and history rewrites, freezes the red-proven TEST_CMD and owns the ledger, because a model's own claims are never trusted.",
+    what: "Claude Code hooks refuse a push to main, and a Stop hook blocks a session from ending once while its Issue branch holds commits that are on no remote (#2052), so a sudden stop loses nothing. The local-AI harness reverts out-of-scope edits, refuses branch switches and history rewrites, freezes the red-proven TEST_CMD and owns the ledger, because a model's own claims are never trusted.",
     sources: [
       { label: "block-push-to-main.sh", href: src(".claude/hooks/block-push-to-main.sh") },
+      { label: "stop-unpublished-work.sh", href: src(".claude/hooks/stop-unpublished-work.sh") },
       { label: "local-ai/sdlc/AI-SDLC.md", href: src("local-ai/sdlc/AI-SDLC.md") },
       { label: "local-ai/sdlc/githooks/", href: src("local-ai/sdlc/githooks/") },
     ],
   },
   {
     layer: "5 · Local gates",
-    what: "preflight.sh mirrors CI and runs as the pre-push hook. run_pipeline.sh is the dashboarded pre-PR gate. validate-sdlc-plan.sh rejects an incomplete plan or an Issue that does not exist.",
+    what: "preflight.sh runs the product suite as the pre-push hook; its --full run is the pull-request proof, because GitHub does not re-run that suite on a pull request (#2001). run_pipeline.sh is the dashboarded pre-PR gate. validate-sdlc-plan.sh rejects an incomplete plan or an Issue that does not exist. The aisdlc kit adds two advisory pre-PR checks: the diff stays inside the proposal's write set, and under a 400-line review budget (#2052).",
     sources: [
       { label: "preflight.sh", href: src("workspace/sdlc/preflight.sh") },
       { label: "run_pipeline.sh", href: src("workspace/sdlc/run_pipeline.sh") },
       { label: "validate-sdlc-plan.sh", href: src("workspace/sdlc/validate-sdlc-plan.sh") },
       { label: "install-git-hooks.sh", href: src("workspace/sdlc/install-git-hooks.sh") },
+      { label: ".aisdlc/aisdlc.toml", href: src(".aisdlc/aisdlc.toml") },
     ],
   },
   {
-    layer: "6 · CI process checks",
-    what: "The process itself is tested on every PR: Conventional Commits, tests before production code, an OpenSpec change or an approved exception, traceability claims, archive hygiene, board coherence, Closes/Refs guard, agent rule files and product version coherence.",
+    layer: "6 · Process checks",
+    what: "The process itself is tested: by preflight before every pull request, and by sdlc-process.yml on a version tag. Conventional Commits, tests before production code, an OpenSpec change or an approved exception, traceability claims, archive hygiene, board coherence, Closes/Refs guard, agent rule files and product version coherence.",
     sources: [
       { label: "sdlc-process.yml", href: workflow("sdlc-process.yml") },
       { label: "pr-validation.yml", href: workflow("pr-validation.yml") },
@@ -330,7 +330,7 @@ export const GUARDRAILS: { layer: string; what: string; sources: Source[] }[] = 
   },
   {
     layer: "7 · CI quality & security",
-    what: "Backend unit, integration and coverage gate; frontend typecheck, lint, Vitest and build; Bruno and Playwright; OpenAPI breaking-diff; CodeQL; the security case catalog; weekly ZAP, k6 and backup-restore.",
+    what: "On a version tag (#2001): backend unit, integration and coverage gate; frontend typecheck, lint, Vitest and build; Bruno and Playwright; OpenAPI breaking-diff; CodeQL; the security case catalog. On a schedule: ZAP, k6 and backup-restore.",
     sources: [
       { label: "ci.yml", href: workflow("ci.yml") },
       { label: "playwright-e2e.yml", href: workflow("playwright-e2e.yml") },
@@ -339,7 +339,7 @@ export const GUARDRAILS: { layer: string; what: string; sources: Source[] }[] = 
   },
   {
     layer: "8 · Repository rules",
-    what: "The protect-main ruleset requires a pull request and five status checks (CI, Frontend CI, Playwright E2E, Code Lint, PR Validation), and blocks deletion and non-fast-forward pushes. The desired state is code, and a script asserts it.",
+    what: "The protect-main ruleset requires a pull request and blocks deletion and non-fast-forward pushes. It requires no status checks: product CI runs on a version tag, and the local full preflight is the pull-request proof (#2001). The desired state is code, and a script asserts it.",
     sources: [
       { label: "protect-main.desired.json", href: src("security/rulesets/protect-main.desired.json") },
       { label: "assert-protect-main-ruleset.sh", href: src("security/assert-protect-main-ruleset.sh") },
@@ -348,8 +348,11 @@ export const GUARDRAILS: { layer: string; what: string; sources: Source[] }[] = 
   },
   {
     layer: "9 · Human Owner",
-    what: "Approves specifications, is the only role that grants an exception (sdlc-exception), and alone merges Constitution amendments, exception PRs and changes to the Foreman's own harness or merge path.",
-    sources: [{ label: "Constitution §10 Roles, §12", href: src("CONSTITUTION.md") }],
+    what: "Approves specifications, is the only role that grants an exception (sdlc-exception), and alone merges Constitution amendments, exception PRs and changes to the Foreman's own harness or merge path. Those owner-only paths are listed in the aisdlc profile: a PR that touches one fails aisdlc protected at the merge stage and goes to the Owner (#2052). When an agent needs the Owner it sends one decision packet: context with evidence, options with consequences, a recommendation.",
+    sources: [
+      { label: "Constitution §10 Roles, §12", href: src("CONSTITUTION.md") },
+      { label: "ai-agent-workflow.md: decision packet", href: src(".claude/rules/ai-agent-workflow.md") },
+    ],
   },
 ];
 

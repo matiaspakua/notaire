@@ -49,7 +49,7 @@ export default function Home() {
     },
     {
       title: "AI with guardrails",
-      body: "Agents write most of the code, but every change passes the same machine-checked gates: a real issue, a spec, failing tests first, green CI, and a human merge.",
+      body: "Agents write most of the code, but every change passes the same machine-checked gates: a real issue, a spec, failing tests first, a green local pipeline, and a reviewed merge.",
       href: "/ai-sdlc/guardrails/",
       link: "The guardrails",
     },

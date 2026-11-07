@@ -1,6 +1,7 @@
 import { GATES, LIFECYCLE_FLOW, LIFECYCLE_PHASES, src } from "@/lib/ai-sdlc-content";
 import { Card, Code, Diagram, PageHeader, SectionTitle, Sources } from "@/components/FactoryUI";
 import { pageMetadata } from "@/lib/site";
+import { GateLine } from "@/components/figures/gateline/figure";
 
 export const metadata = pageMetadata("/ai-sdlc/lifecycle/");
 
@@ -25,6 +26,8 @@ export default function LifecyclePage() {
           </>
         }
       />
+      <GateLine />
+
       <Diagram chart={LIFECYCLE_FLOW} caption="CONSTITUTION.md §5 Official SDLC Workflow. The yellow hexagons are the hard gates of §6." />
 
       {LIFECYCLE_PHASES.map((ph) => (
