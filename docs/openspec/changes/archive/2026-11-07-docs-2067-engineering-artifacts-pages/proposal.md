@@ -63,7 +63,9 @@ Add an Engineering artifacts page to the Technical docs that tells the artifact 
 - `docs/100-business/101-requirements/**`
 - `docs/README.md`
 - `docs/openspec/**`
-- `CHANGELOG.md`
+- `docs/tests/**`
+- `docs/tools/generate_traceability_matrix.py`
+- `docs/verify.sh`
 
 ### Architecture review
 

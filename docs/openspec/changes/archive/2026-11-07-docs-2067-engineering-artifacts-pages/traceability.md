@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/docs-2067-engineering-artifacts-pages/` | passed |
 | Branch | `docs/2067_engineering-artifacts-pages` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
+| Commits | `8c62c268` (tests), `6cd01460` (docs and audit), `bda848cf` (artifacts page), `392181c0` (lifecycle figure and claims), archive commit | done |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -35,10 +35,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| A reader looks for the threat model | artifacts.test.ts | pending |
-| A use case is added | artifacts.test.ts | pending |
-| Reduced motion | artifacts.test.ts | pending |
-| Keyboard | artifacts.test.ts | pending |
+| A reader looks for the threat model | artifacts.test.ts | passing |
+| A use case is added | artifacts.test.ts | passing |
+| Reduced motion | artifacts.test.ts | passing |
+| Keyboard | artifacts.test.ts | passing |
 
 ## Permanent documentation updated
 
