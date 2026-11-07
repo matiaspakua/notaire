@@ -6,8 +6,6 @@ ManagementController#createCompleteCase
 ManagementController#getWorkflowTrace
 ManagementController#transition
 ManagementController#updateCompleteCase
-ProcedureController#create
-ProcedureController#update
 ProcedureFolderController#putOnHold
 RegistrationDraftController#generate
 RegistrationDraftController#observe

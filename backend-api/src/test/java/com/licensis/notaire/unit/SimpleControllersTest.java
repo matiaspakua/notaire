@@ -653,7 +653,9 @@ class SimpleControllersTest {
                 mock(com.licensis.notaire.application.port.in.procedure.ManageProceduresUseCase.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
                 standaloneSetup(new ProcedureController(query, manage))
-                        .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
+                        .setControllerAdvice(
+                                new com.licensis.notaire.adapter.in.web.procedure.ProcedureExceptionHandler(),
+                                new com.licensis.notaire.config.GlobalExceptionHandler())
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
 

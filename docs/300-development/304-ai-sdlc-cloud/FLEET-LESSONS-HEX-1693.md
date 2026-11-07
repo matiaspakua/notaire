@@ -142,6 +142,7 @@ Friction captured while draining GEH / typed-return tips and enforcing Owner **>
 | Multi-PR epics / umbrellas: PR body **`Refs #n`** — never `Closes` / `closes` (Release Please and merge auto-close burn the epic) | Put `closes #579`-style footer on release or tip PRs that only slice an epic |
 | Coverage: document Owner **>90% target** separately from enforced floors; ratchet JaCoCo/Vitest raise-only with measured headroom (#2046) | Jump floors to 90% overnight or leave docs claiming 80%/14% while tools enforce higher |
 | OpenSpec: author under `docs/openspec/changes/` (`.aisdlc` `spec.dir`); run `openspec archive` from `docs/` | Run bare `openspec new change` at repo root — CLI scaffolds a stray `openspec/` tree that is not the Notaire planning home |
+| After #2052/#2056: every tip proposal carries `### Write set` (globs); PR body has Deviations, AI assistance, Review budget (`aisdlc size`), Risk line, and Evidence digest when `aisdlc evidence verify` prints one | Ship tip PRs without Write set / Risk — `aisdlc scope` stays NOT EVALUABLE and review misses contract risk |
 
 ## Anti-patterns (observed)
 
@@ -159,6 +160,7 @@ Friction captured while draining GEH / typed-return tips and enforcing Owner **>
 | Claiming “90% coverage” while JaCoCo/Vitest floors lag | Ratchet floors; track gap under #2046 |
 | `Closes` on a multi_pr epic from a tip or Release Please PR | `Refs` only; keep epic open until DoD |
 | Committing a repo-root `openspec/` scaffold from CLI default | Delete it; keep plans in `docs/openspec/` only |
+| Touching `[protected]` paths in a Worker tip | Split: product tip stays Worker-mergeable; policy/harness goes Owner-merge only (`aisdlc protected`) |
 
 ## Related
 
