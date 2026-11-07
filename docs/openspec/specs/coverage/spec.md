@@ -3,13 +3,13 @@
 ## Purpose
 
 Defines JaCoCo coverage thresholds and validation for the Notaire project.
-
 ## Requirements
-
 ### Requirement: JaCoCo SHALL enforce minimum coverage thresholds via pom.xml
 
 Any Spring Boot module with JPA entities or service code SHALL declare
-minimum coverage thresholds in `pom.xml` JaCoCo plugin configuration.
+minimum coverage thresholds in `pom.xml` JaCoCo plugin configuration. The
+enforced BUNDLE floor SHALL be at least **85% line** and **70% branch**
+(Owner target >90% is documented separately; floors ratchet raise-only).
 
 #### Scenario: Line coverage floor is enforced
 
@@ -52,3 +52,4 @@ quality floors in `.claude/rules/code-quality.md` and
 - **WHEN** running `mvn test -pl backend-api -Dtest=JacocoCoverageConfigConsistencyTest#shouldMatchConstitutionFloorToPom`
 - **THEN** the test confirms `CONSTITUTION.md` floor values (line 496)
   match `backend-api/pom.xml` thresholds
+
