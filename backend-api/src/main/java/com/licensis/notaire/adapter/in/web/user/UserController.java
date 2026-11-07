@@ -1,8 +1,6 @@
 package com.licensis.notaire.adapter.in.web.user;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +85,8 @@ public class UserController {
     public record LoginRequest(@NotBlank String name, @NotBlank String password) { }
 
     public record LoginPerson(Integer idPerson, String firstName, String lastName) { }
+
+    public record LogoutResponse(boolean ok) { }
 
     public record LoginSuccessResponse(
             boolean valid,
@@ -232,15 +232,13 @@ public class UserController {
             description = "Revokes on the server the JWT sent by Bearer or cookie, so it cannot "
                     + "be reused even if it has not expired; the user's other sessions remain active. "
                     + "A missing or invalid token gets the same response (issue #676).")
-    public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request, HttpServletResponse httpResponse) {
+    public ResponseEntity<LogoutResponse> logout(HttpServletRequest request, HttpServletResponse httpResponse) {
         tokenRevocationService.revoke(RequestTokenResolver.resolve(request, authCookieService.cookieName()));
         ResponseCookie cleared = authCookieService.clearSessionCookie();
-        Map<String, Object> body = new HashMap<>();
-        body.put("ok", true);
         // Same add-header rule as login: the entity header map would replace the
         // XSRF-TOKEN cookie set by the security chain (issue #1620).
         httpResponse.addHeader(HttpHeaders.SET_COOKIE, cleared.toString());
-        return ResponseEntity.ok().body(body);
+        return ResponseEntity.ok(new LogoutResponse(true));
     }
 
     private Result authenticateSafely(LoginRequest loginRequest) {
