@@ -94,6 +94,21 @@ describe("LoginPage", () => {
     expect(source).not.toMatch(/uppercase tracking-wider/);
   });
 
+  it("presents one desk card, a single product heading, and a token-timed seal (#2069)", () => {
+    const source = readFileSync(resolve(__dirname, "../../app/login/page.tsx"), "utf8");
+    expect(source).toMatch(/from ["']@\/theme\/motion["']/);
+    expect(source).not.toMatch(/rotate:/);
+    expect(source).not.toMatch(/type:\s*"spring"/);
+
+    render(<LoginPage />, { wrapper });
+    const card = screen.getByTestId("login-card");
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    expect(screen.getByRole("heading", { level: 1, name: "Notaire" })).toBeInTheDocument();
+    expect(card).toContainElement(screen.getByRole("heading", { level: 2, name: /iniciar sesión/i }));
+    expect(card).toContainElement(screen.getByTestId("btn-sign-in"));
+    expect(screen.getByTestId("login-mark")).toBeInTheDocument();
+  });
+
   it("associates username and password via FormField labels (#611)", () => {
     render(<LoginPage />, { wrapper });
     expect(screen.getByLabelText(/^Usuario/i)).toHaveAttribute("data-testid", "input-username");

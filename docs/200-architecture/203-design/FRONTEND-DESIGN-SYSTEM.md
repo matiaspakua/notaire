@@ -39,6 +39,16 @@ truth: `frontend/src/theme/`.
 - **Accessible**: WCAG AA compliant color contrasts
 - **Responsive**: Works seamlessly on desktop, tablet, and mobile
 
+### Operate surfaces
+
+Authenticated screens and login stay in Operate mode: scanability and the
+tokens in `frontend/src/theme/` outrank expression. Root `DESIGN.md` is the
+scan of those tokens for agents; this document remains the implementation
+guide and does not restate the palette. The login task sits on one white
+card (28px radius, `apple-shadow`). Its seal moves with `theme/motion.ts`
+(opacity and a 4px rise, 240ms, no rotation). `github-page/` is a separate
+Persuade surface and is not governed by this restraint.
+
 ---
 
 ## Design Principles

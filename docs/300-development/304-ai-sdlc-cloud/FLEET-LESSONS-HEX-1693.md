@@ -144,6 +144,22 @@ Friction captured while draining GEH / typed-return tips and enforcing Owner **>
 | OpenSpec: author under `docs/openspec/changes/` (`.aisdlc` `spec.dir`); run `openspec archive` from `docs/` | Run bare `openspec new change` at repo root — CLI scaffolds a stray `openspec/` tree that is not the Notaire planning home |
 | After #2052/#2056: every tip proposal carries `### Write set` (globs); PR body has Deviations, AI assistance, Review budget (`aisdlc size`), Risk line, and Evidence digest when `aisdlc evidence verify` prints one | Ship tip PRs without Write set / Risk — `aisdlc scope` stays NOT EVALUABLE and review misses contract risk |
 
+## Operate UI tips (#2069) — 2026-11
+
+Friction captured while scoring the product UI: the login seal used a spring
+and a rotation even though `frontend/src/theme/motion.ts` and
+`MotionConfig reducedMotion="user"` already existed (#1368). A second motion
+language arrives as polish and fails the reduced-motion check.
+
+| Do | Don't |
+|----|-------|
+| Operate entrances use `theme/motion.ts` (opacity + 4px, 120–240ms) and the existing MotionConfig | Add a spring, a rotation, or a page-load sequence on login, the shell, or a form |
+| One task, one card, one `h1`; the task title is an `h2` inside the card | Stack the product name, a subtitle, and the task title as peers |
+| When `DESIGN.md` is missing, scan the incumbent tokens into it and point at it from `FRONTEND-DESIGN-SYSTEM.md` | Invent a palette, or paste the token catalog into a second permanent doc |
+| File the rest of a ranked UI pass as separate issues | Fold tables, empty states, and the home grid into the login tip |
+
+Check: a login or shell diff that introduces `rotate` or `type: "spring"` outside `theme/motion.ts` is drift. The unit test on `frontend/src/app/login/page.tsx` rejects both.
+
 ## Anti-patterns (observed)
 
 | Anti-pattern | Instead |
