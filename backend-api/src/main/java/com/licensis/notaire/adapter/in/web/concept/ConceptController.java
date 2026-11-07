@@ -20,12 +20,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.application.port.in.concept.ManageConceptsUseCase;
 import com.licensis.notaire.application.port.in.concept.QueryConceptsUseCase;
 import com.licensis.notaire.application.port.out.concept.ConceptOpsPort.DeleteResult;
 import com.licensis.notaire.application.port.out.concept.ConceptOpsPort.InUseResult;
 import com.licensis.notaire.application.port.out.concept.ConceptOpsPort.SaveResult;
+import com.licensis.notaire.domain.concept.ConceptInUseException;
+import com.licensis.notaire.domain.concept.ConceptNotFoundException;
+import com.licensis.notaire.domain.concept.ConceptOperationFailedException;
 import com.licensis.notaire.dto.DtoConcept;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,7 +37,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Concepts. Calls inbound ports only; entity and BudgetTemplateRepository access live behind
- * {@code ConceptOpsPort} (issue #1815).
+ * {@code ConceptOpsPort} (issue #1815). Write failures throw domain exceptions mapped by
+ * {@link ConceptExceptionHandler} (#577).
  */
 @RestController
 @RequestMapping("/api/v1/concepts")
@@ -103,15 +106,17 @@ public class ConceptController {
     })
     @PostMapping
     @Operation(summary = "Create concept")
-    public ResponseEntity<Object> createConcept(@Valid @RequestBody ConceptWriteRequest request) {
+    public ResponseEntity<DtoConcept> createConcept(@Valid @RequestBody ConceptWriteRequest request) {
         return switch (manageConcepts.create(toDto(request))) {
             case SaveResult.Created created ->
                 ResponseEntity.status(HttpStatus.CREATED).body(created.dto());
-            case SaveResult.Failed failed -> ErrorResponses.createFailed(failed.cause());
-            case SaveResult.Updated ignored -> ResponseEntity.internalServerError().build();
-            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case SaveResult.InUse inUse ->
-                ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", inUse.error()));
+            case SaveResult.Failed failed ->
+                throw new ConceptOperationFailedException(ConceptOperationFailedException.Operation.CREATE, failed.cause());
+            case SaveResult.InUse inUse -> throw new ConceptInUseException(inUse.error());
+            case SaveResult.NotFound ignored -> throw new ConceptNotFoundException();
+            case SaveResult.Updated ignored ->
+                throw new ConceptOperationFailedException(
+                        ConceptOperationFailedException.Operation.CREATE, new IllegalStateException("unexpected Updated"));
         };
     }
 
@@ -123,16 +128,20 @@ public class ConceptController {
     })
     @PutMapping("/{id}")
     @Operation(summary = "Update concept")
-    public ResponseEntity<Object> updateConcept(@PathVariable Integer id,
+    public ResponseEntity<Void> updateConcept(@PathVariable Integer id,
             @Valid @RequestBody ConceptWriteRequest request) {
-        return switch (manageConcepts.update(id, toDto(request))) {
-            case SaveResult.Updated ignored -> ResponseEntity.ok().build();
-            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case SaveResult.InUse inUse ->
-                ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", inUse.error()));
-            case SaveResult.Failed failed -> ErrorResponses.updateFailed(failed.cause());
-            case SaveResult.Created ignored -> ResponseEntity.internalServerError().build();
-        };
+        switch (manageConcepts.update(id, toDto(request))) {
+            case SaveResult.Updated ignored -> {
+                return ResponseEntity.ok().build();
+            }
+            case SaveResult.NotFound ignored -> throw new ConceptNotFoundException();
+            case SaveResult.InUse inUse -> throw new ConceptInUseException(inUse.error());
+            case SaveResult.Failed failed ->
+                throw new ConceptOperationFailedException(ConceptOperationFailedException.Operation.UPDATE, failed.cause());
+            case SaveResult.Created ignored ->
+                throw new ConceptOperationFailedException(
+                        ConceptOperationFailedException.Operation.UPDATE, new IllegalStateException("unexpected Created"));
+        }
     }
 
     @ApiResponses({
@@ -141,14 +150,17 @@ public class ConceptController {
     })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete concept")
-    public ResponseEntity<Object> deleteConcept(@PathVariable Integer id) {
-        return switch (manageConcepts.delete(id)) {
-            case DeleteResult.Deleted ignored -> ResponseEntity.noContent().build();
-            case DeleteResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case DeleteResult.InUse inUse ->
-                ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", inUse.error()));
-            case DeleteResult.Conflict conflict -> ErrorResponses.conflict(conflict.cause());
-        };
+    public ResponseEntity<Void> deleteConcept(@PathVariable Integer id) {
+        switch (manageConcepts.delete(id)) {
+            case DeleteResult.Deleted ignored -> {
+                return ResponseEntity.noContent().build();
+            }
+            case DeleteResult.NotFound ignored -> throw new ConceptNotFoundException();
+            case DeleteResult.InUse inUse -> throw new ConceptInUseException(inUse.error());
+            case DeleteResult.Conflict conflict ->
+                throw new ConceptOperationFailedException(
+                        ConceptOperationFailedException.Operation.DELETE, conflict.cause());
+        }
     }
 
     private static DtoConcept toDto(ConceptWriteRequest request) {

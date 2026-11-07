@@ -1,8 +1,5 @@
 AuditRecordController#getAll
 AuxiliaryProtocolController#startDeed
-ConceptController#createConcept
-ConceptController#deleteConcept
-ConceptController#updateConcept
 CopyController#create
 DocumentCostTemplateController#createCost
 HistoryController#create
