@@ -91,6 +91,9 @@ def _warnings(ctx: Context) -> list[str]:
         warnings.append("level 2 expects ratchets for legacy debt (baselines that only shrink, floors that only rise)")
     if p.level >= 3 and not any(r.may_merge for r in p.roles):
         warnings.append("level 3 expects a role with may_merge = true (the merge rule)")
+    if p.level >= 3 and any(r.may_merge and r.tier != "human" for r in p.roles) and not p.protected_paths:
+        warnings.append("an agent role may merge but no owner-only paths are declared ([protected] paths): "
+                        "it could merge a change to its own policy, gates or harness")
     return warnings
 
 

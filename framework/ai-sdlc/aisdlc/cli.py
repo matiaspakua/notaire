@@ -4,7 +4,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from aisdlc import __version__, adopt, change, checks, evidence, gates, ratchet, repo, skills
+from aisdlc import __version__, adopt, change, checks, diffchecks, evidence, gates, ratchet, repo, skills
 from aisdlc.context import Context
 from aisdlc.profile import ProfileError, find_profile, load_profile
 
@@ -39,6 +39,16 @@ def build_parser() -> argparse.ArgumentParser:
     for name, text in (("commits", "check commit subjects since the base"),
                        ("tdd", "production changes must come with test changes")):
         sub.add_parser(name, help=text).add_argument("--base")
+    sub.add_parser("protected", help="owner-only paths changed since the base").add_argument("--base")
+    p = sub.add_parser("size", help="changed lines since the base stay within the review budget")
+    p.add_argument("--base")
+    p.add_argument("--limit", type=int, help="override [size] limit")
+    p = sub.add_parser("scope", help="changed paths stay inside the change record's write set")
+    p.add_argument("--base")
+    p.add_argument("--strict", action="store_true", help="fail when no change record declares a write set")
+
+    p = sub.add_parser("evidence", help="evidence ledger integrity")
+    p.add_subparsers(dest="action", required=True).add_parser("verify", help="check the hash chain of the ledger")
 
     p = sub.add_parser("change", help="built-in change records")
     change_sub = p.add_subparsers(dest="action", required=True)
@@ -99,6 +109,10 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "commits": lambda: checks.commits(ctx, args.base),
         "tdd": lambda: checks.tdd(ctx, args.base),
         "report": lambda: evidence.report(ctx, args.json, args.since),
+        "protected": lambda: diffchecks.protected(ctx, args.base),
+        "size": lambda: diffchecks.size(ctx, args.base, args.limit),
+        "scope": lambda: diffchecks.scope(ctx, args.base, args.strict),
+        "evidence": lambda: evidence.verify(ctx),
     }
     return simple[args.command]()
 
