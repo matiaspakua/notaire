@@ -127,20 +127,23 @@ class MasterTestPlanDocsTest(unittest.TestCase):
 
     def test_coverage_floors_documented_match_tools(self):
         constitution = CONSTITUTION.read_text(encoding="utf-8")
-        self.assertRegex(constitution, r"80%\s*line\s*/\s*65%\s*branch")
-        # Enforced Vitest floors are raise-only teens, not a false 75%.
+        self.assertRegex(constitution, r"85%\s*line\s*/\s*70%\s*branch")
+        # Owner target >90% (#2046) must stay labeled separately from floors.
+        self.assertRegex(constitution, r">\s*90%|#2046")
+        # Enforced Vitest floors match vitest.config.ts (not a false absolute 90%).
         self.assertNotRegex(
             constitution,
-            r"\|\s*Vitest\s*\|[^|\n]*\|\s*75%\s*line",
-            msg="CONSTITUTION Coverage Enforcement must not claim Vitest 75%",
+            r"\|\s*Vitest\s*\|[^|\n]*\|\s*90%\s*line",
+            msg="CONSTITUTION must not claim Vitest floor already equals 90%",
         )
         self.assertRegex(
             constitution,
-            r"raise-only|statements:\s*14|14%\s*line",
-            msg="CONSTITUTION must document Vitest raise-only floors",
+            r"raise-only|statements\s*\*\*76%\*\*|76%",
+            msg="CONSTITUTION must document current Vitest raise-only floors",
         )
         mtp = (TESTING_DOCS / "TEST-PLAN.md").read_text(encoding="utf-8")
-        self.assertRegex(mtp, r"80%\s*line\s*/\s*65%\s*branch")
+        self.assertRegex(mtp, r"85%\s*line\s*/\s*70%\s*branch")
+        self.assertRegex(mtp, r">\s*90%|#2046")
         self.assertRegex(mtp, r"raise-only|enforced floor|vitest\.config", re.IGNORECASE)
 
 

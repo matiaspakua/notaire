@@ -22,7 +22,7 @@ Before any code change:
 3. Branch `<type>/<#>_description` from updated `main`.
 4. TDD — failing tests first, then implement.
 5. Full suite + Playwright for UI. A PR is ready when `bash workspace/sdlc/preflight.sh --full` has passed locally. GitHub does not re-run that suite on the pull request (#2001). Before a PR, `bash workspace/sdlc/run_pipeline.sh` (security phase: `python3 security/run_gates.py --profile local`; it includes `preflight.sh --full`). A preflight run without `--full` is not sufficient to open a PR.
-6. Permanent docs + Conventional Commits + PR (`Closes #…`).
+6. Permanent docs + Conventional Commits + PR (`Closes #…`). Owner coverage **target >90%** across the pyramid (#2046); enforced JaCoCo/Vitest floors are raise-only and may lag — never lower without ADR; never claim 90% while floors lag.
 
 Operational detail (load when implementing): `.claude/rules/ai-agent-workflow.md` and
 `.claude/skills/ai-agent-workflow/SKILL.md`.

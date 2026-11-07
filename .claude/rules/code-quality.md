@@ -54,16 +54,15 @@ JaCoCo is used to measure code coverage during test execution.
 
 ### Configuration
 
-Coverage is split into an **aspirational target** and an **enforced ratchet floor**:
+Coverage is split into an **Owner target** and an **enforced ratchet floor**:
 
-- **Long-term target**: 80% line / 80% branch.
-- **Enforced gate** (`jacoco:check`, bound to `mvn verify`, BUNDLE scope, legacy
-  `jpa`/`service.Administrador*` packages excluded): a ratchet floor of
-  **80% line / 65% branch** as of 2026-09-28 (#1063) (actual: ~84% line / ~74% branch
-  as of 2026-07-23). The build fails if coverage drops below the floor.
-- **Policy**: raise the floor as coverage improves; never lower it. The historical
-  per-class 80% rule was bound to `<phase>none</phase>` and never ran, so the prior
-  "80% enforced" claim was inaccurate.
+- **Owner target**: **>90%** across the test pyramid (#2046). Floors lag and ratchet toward it.
+- **Enforced gate** (`jacoco:check`, bound to `mvn verify`, BUNDLE scope): a ratchet floor of
+  **85% line / 70% branch** as of 2026-11-07 (#2046; was 80/65 via #1063). Measured headroom
+  at ratchet time was ~86% line / ~71% branch. The build fails if coverage drops below the floor.
+- **Policy**: raise the floor as coverage improves; never lower without an ADR. The historical
+  per-class 80% rule was bound to `<phase>none</phase>` and never ran, so early
+  "80% enforced" claims were inaccurate.
 
 ### Running Coverage
 
@@ -120,7 +119,7 @@ Frontend unit coverage uses Vitest `@vitest/coverage-v8` with global thresholds 
 | Functions | **72%** | 74.16% |
 | Lines | **78%** | 80.02% |
 
-- **Long-term target**: 80% line / 80% branch (aspirational; not this gate).
+- **Owner target**: **>90%** (#2046); current floors lag (see `vitest.config.ts`).
 - **Policy**: raise floors as coverage improves with ≥1 percentage point headroom
   (2 points since #1663) under a fresh `npx vitest run --coverage` measurement; **never lower** a floor
   without an ADR or documented SDLC exception.
@@ -312,7 +311,7 @@ The complete quality gate in CI:
 1. **Build** - Compilation
 2. **Unit Tests** - JUnit tests
 3. **Integration Tests** - Spring Boot tests
-4. **Coverage** - JaCoCo (backend) + Vitest thresholds (frontend); raise-only floors; 80% target
+4. **Coverage** - JaCoCo (backend) + Vitest thresholds (frontend); raise-only floors; Owner **>90%** target (#2046)
 5. **Security** - Trivy vulnerability scan
 6. **Code Quality** - Checkstyle + SpotBugs
 

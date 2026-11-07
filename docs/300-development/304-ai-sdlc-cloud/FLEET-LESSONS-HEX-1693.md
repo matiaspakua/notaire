@@ -129,6 +129,19 @@ Issue #<n> is CLOSED on GitHub but Board Status still In Progress — set Status
 
 `validate-sdlc-plan.sh` may print `Issue #N was not found on GitHub` under transient API/lookup failure (worse when many OpenSpec leftovers are checked in one preflight). The script retries with backoff (**5** attempts after #1907). **Re-run** the validator if it still flakes once. Do not treat a single flake as a missing Issue or product regression.
 
+## Typed-controller tips (#577) + coverage mandate (#2046) — 2026-11
+
+Friction captured while draining GEH / typed-return tips and enforcing Owner **>90%** coverage:
+
+| Do | Don't |
+|----|-------|
+| Copy `.env` into **each** git worktree before `preflight.sh --full` Docker smoke | Assume the primary checkout `.env` is visible to a sibling worktree (missing `JWT_SECRET` → unhealthy backend) |
+| Wire public `@ControllerAdvice` / GEH handlers into standalone MockMvc unit tests when asserting typed error bodies | Expect controller-only MockMvc to map domain exceptions without advice → opaque 500s |
+| Regen `INVENTORY.md` (`generate-testing-inventory.py`) when architecture or test discovery drifts | Hand-edit inventory or leave Process Checks red after package/controller moves |
+| After a green `preflight.sh --full`, use documented `PREFLIGHT_SKIP_*` only for the same tip head | Skip heavy suites before the first green `--full` on that head (#2001) |
+| Multi-PR epics / umbrellas: PR body **`Refs #n`** — never `Closes` / `closes` (Release Please and merge auto-close burn the epic) | Put `closes #579`-style footer on release or tip PRs that only slice an epic |
+| Coverage: document Owner **>90% target** separately from enforced floors; ratchet JaCoCo/Vitest raise-only with measured headroom (#2046) | Jump floors to 90% overnight or leave docs claiming 80%/14% while tools enforce higher |
+
 ## Anti-patterns (observed)
 
 | Anti-pattern | Instead |
@@ -142,6 +155,8 @@ Issue #<n> is CLOSED on GitHub but Board Status still In Progress — set Status
 | Claiming Mac local green means CI is merge-ready | CI still owns Bruno full + Playwright + CodeQL |
 | Moving a helper to `adapter.out.persistence` without updating `docs/tests` path refs | Same-PR path hygiene + INVENTORY regen |
 | Opening parallel heavy PRs “to go faster” | Serialize; domain-sized slices; lower CI cost |
+| Claiming “90% coverage” while JaCoCo/Vitest floors lag | Ratchet floors; track gap under #2046 |
+| `Closes` on a multi_pr epic from a tip or Release Please PR | `Refs` only; keep epic open until DoD |
 
 ## Related
 
