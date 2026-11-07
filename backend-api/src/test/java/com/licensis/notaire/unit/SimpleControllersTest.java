@@ -567,7 +567,9 @@ class SimpleControllersTest {
         private final com.licensis.notaire.application.port.in.procedure.ManageProcedureTypesUseCase manage =
                 mock(com.licensis.notaire.application.port.in.procedure.ManageProcedureTypesUseCase.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new ProcedureTypeController(query, manage)).build();
+                standaloneSetup(new ProcedureTypeController(query, manage))
+                        .setControllerAdvice(new com.licensis.notaire.adapter.in.web.procedure.ProcedureTypeExceptionHandler())
+                        .build();
 
         @Test
         @DisplayName("Cover happy paths")
@@ -727,6 +729,7 @@ class SimpleControllersTest {
                 mock(com.licensis.notaire.application.port.in.person.ManagePeopleUseCase.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
                 standaloneSetup(new PersonController(query, manage))
+                        .setControllerAdvice(new com.licensis.notaire.adapter.in.web.person.PersonExceptionHandler())
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
 

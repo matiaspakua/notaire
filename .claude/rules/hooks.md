@@ -15,6 +15,7 @@ describes the hooks and why they exist — it does not duplicate the process.
 | OpenSpec status | `SessionStart` | `.claude/hooks/session-start-openspec-status.sh` | Prints in-flight `openspec` change status and lists local branches with commits that were never pushed (no upstream; #1647), so finished work cannot sit invisible while its issue blocks a lane. Informational only — never blocks session start. |
 | Cloud toolchain | `SessionStart` | `.claude/hooks/session-start-toolchain.sh` | In Claude Code cloud sessions only (`CLAUDE_CODE_REMOTE=true`), idempotently installs the pinned Temurin 26, `openspec`, `kustomize`, Trivy, `prometheus`, `promtool` and `amtool` into `~/.cache/notaire-tools` and exports the environment through `CLAUDE_ENV_FILE` (#1659). Never blocks session start; pins are guarded by `workspace/tests/test_cloud_toolchain_bootstrap.py`. |
 | Block push to main | `PreToolUse` (matcher: `Bash`) | `.claude/hooks/block-push-to-main.sh` | Detects a `git push` whose resolved target branch is `main`/`master` and denies the tool call (exit 2) with a message pointing at the PR workflow. |
+| Unpublished work | `Stop` | `.claude/hooks/stop-unpublished-work.sh` | On an Issue branch (`<type>/<n>_…`) whose commits are on no remote, blocks the stop **once** (exit 2) and names `publish-progress.sh <n>` (#1681; audit E4). The retry (`stop_hook_active`) always passes, so a session told not to push explains why instead of being trapped. Ignores `main`, non-Issue branches and uncommitted edits. Guarded by `workspace/tests/test_stop_hook_publication.py`. |
 
 ## Why the push guard exists
 
@@ -54,6 +55,14 @@ purpose. The `SessionStart` status hook plus the existing
 (`workspace/sdlc/preflight.sh`, installed via `workspace/sdlc/install-git-hooks.sh`) already
 cover this at a coarser, non-annoying granularity. Full rationale in
 `docs/openspec/changes/archive/2026-09-23-enforce-workflow-gates-via-hooks/proposal.md` (Out of Scope).
+
+## Why the Stop hook is narrow
+
+The audit (#1079, E4) proposed a `Stop` hook that runs the preflight. That costs minutes on every
+turn and fires on legitimate mid-work stops — the noise this file warns against. The hook that
+landed checks one cheap, unambiguous fact the Constitution already makes mandatory (#1681): an
+Issue branch with commits that exist nowhere but this disk. It is the publication rule, enforced at
+the moment an agent would otherwise walk away from local-only work.
 
 ## How these were tested
 

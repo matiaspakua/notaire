@@ -1,7 +1,6 @@
 package com.licensis.notaire.adapter.in.web.notebook;
 
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.licensis.notaire.adapter.in.web.report.PdfResponseFactory;
 import com.licensis.notaire.adapter.in.web.support.NotaryRef;
 import com.licensis.notaire.application.port.in.notebook.ManageNotebooksUseCase;
+import com.licensis.notaire.domain.notebook.NotebookBadRequestException;
+import com.licensis.notaire.domain.notebook.NotebookNotFoundException;
 import com.licensis.notaire.application.port.in.notebook.QueryNotebooksUseCase;
 import com.licensis.notaire.application.port.out.notebook.NotebookOpsPort.CreateResult;
 import com.licensis.notaire.application.port.out.notebook.NotebookOpsPort.NotebookView;
@@ -107,15 +108,13 @@ public class NotebookController {
     })
     @PostMapping
     @Operation(summary = "Create a notebook from ten consecutive folios")
-    public ResponseEntity<Object> createNotebook(@Valid @RequestBody CreateNotebookRequest request) {
+    public ResponseEntity<NotebookResponse> createNotebook(@Valid @RequestBody CreateNotebookRequest request) {
         return switch (manageNotebooks.create(
                 request.idsFolio(), request.idNotary(), request.year(), request.notes())) {
             case CreateResult.Created created ->
                 ResponseEntity.status(HttpStatus.CREATED).body(NotebookResponse.from(created.view()));
-            case CreateResult.BadRequest bad ->
-                ResponseEntity.badRequest().body(Map.of("message", bad.message()));
-            case CreateResult.NotFound notFound ->
-                ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", notFound.message()));
+            case CreateResult.BadRequest bad -> throw new NotebookBadRequestException(bad.message());
+            case CreateResult.NotFound notFound -> throw new NotebookNotFoundException(notFound.message());
         };
     }
 

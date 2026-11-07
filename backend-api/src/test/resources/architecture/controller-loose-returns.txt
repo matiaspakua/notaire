@@ -1,6 +1,5 @@
 AuditRecordController#getAll
 AuxiliaryProtocolController#startDeed
-CopyController#create
 DocumentCostTemplateController#createCost
 HistoryController#create
 ManagementController#archiving
@@ -9,17 +8,10 @@ ManagementController#createCompleteCase
 ManagementController#getWorkflowTrace
 ManagementController#transition
 ManagementController#updateCompleteCase
-NotebookController#createNotebook
-PersonController#createPerson
-PersonController#deletePerson
-PersonController#updatePerson
 ProcedureController#create
 ProcedureController#update
 ProcedureFolderController#putOnHold
 ProcedureTypeController#assignWorkflow
-ProcedureTypeController#create
-ProcedureTypeController#delete
-ProcedureTypeController#update
 RegistrationDraftController#generate
 RegistrationDraftController#observe
 RegistrationDraftController#recordRegistration

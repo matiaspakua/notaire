@@ -2,7 +2,6 @@ package com.licensis.notaire.adapter.in.web.person;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -22,13 +21,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.application.port.in.person.ManagePeopleUseCase;
 import com.licensis.notaire.application.port.in.person.QueryPeopleUseCase;
 import com.licensis.notaire.application.port.out.person.PersonOpsPort.DeleteResult;
 import com.licensis.notaire.application.port.out.person.PersonOpsPort.PersonCommand;
 import com.licensis.notaire.application.port.out.person.PersonOpsPort.SaveResult;
 import com.licensis.notaire.audit.AuditPersonalDataRead;
+import com.licensis.notaire.domain.person.PersonDuplicateException;
+import com.licensis.notaire.domain.person.PersonInUseException;
+import com.licensis.notaire.domain.person.PersonNotFoundException;
+import com.licensis.notaire.domain.person.PersonOperationFailedException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,7 +42,8 @@ import jakarta.validation.constraints.NotBlank;
 
 /**
  * People. Calls inbound ports only; identification-type resolution and persistence live behind
- * {@code PersonOpsPort} (issue #1813).
+ * {@code PersonOpsPort} (issue #1813). Write failures throw domain exceptions mapped by
+ * {@link PersonExceptionHandler} (#577).
  */
 @RestController
 @RequestMapping("/api/v1/people")
@@ -103,10 +106,6 @@ public class PersonController {
                 nested);
     }
 
-    private Map<String, Object> duplicateBody(SaveResult.Duplicate duplicate) {
-        return Map.of("message", duplicate.message(), "existingPersonId", duplicate.existingPersonId());
-    }
-
     @AuditPersonalDataRead(aggregated = true)
     @GetMapping
     @Operation(summary = "Get people, one page at a time (default 20, sorted by id)")
@@ -142,15 +141,16 @@ public class PersonController {
     })
     @PostMapping
     @Operation(summary = "Create new person")
-    public ResponseEntity<Object> createPerson(@Valid @RequestBody PersonRequest request) {
+    public ResponseEntity<PersonResponse> createPerson(@Valid @RequestBody PersonRequest request) {
         return switch (managePeople.create(toCommand(request))) {
             case SaveResult.Created created ->
                 ResponseEntity.status(HttpStatus.CREATED).body(PersonResponse.from(created.view()));
             case SaveResult.Duplicate duplicate ->
-                ResponseEntity.status(HttpStatus.CONFLICT).body(duplicateBody(duplicate));
-            case SaveResult.Failed failed -> ErrorResponses.createFailed(failed.cause());
-            case SaveResult.Updated ignored -> ResponseEntity.internalServerError().build();
-            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
+                throw new PersonDuplicateException(duplicate.message(), duplicate.existingPersonId());
+            case SaveResult.Failed failed -> throw new PersonOperationFailedException(failed.cause());
+            case SaveResult.Updated ignored ->
+                throw new PersonOperationFailedException(new IllegalStateException("unexpected Updated"));
+            case SaveResult.NotFound ignored -> throw new PersonNotFoundException();
         };
     }
 
@@ -162,17 +162,17 @@ public class PersonController {
     })
     @PutMapping("/{id}")
     @Operation(summary = "Update person")
-    public ResponseEntity<Object> updatePerson(@PathVariable Integer id, @Valid @RequestBody PersonRequest request) {
+    public ResponseEntity<PersonResponse> updatePerson(@PathVariable Integer id, @Valid @RequestBody PersonRequest request) {
         return switch (managePeople.update(id, toCommand(request))) {
             case SaveResult.Updated updated -> ResponseEntity.ok(PersonResponse.from(updated.view()));
-            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
+            case SaveResult.NotFound ignored -> throw new PersonNotFoundException();
             case SaveResult.Duplicate duplicate ->
-                ResponseEntity.status(HttpStatus.CONFLICT).body(duplicateBody(duplicate));
+                throw new PersonDuplicateException(duplicate.message(), duplicate.existingPersonId());
             case SaveResult.Failed failed ->
-                // A data constraint answers 400; any other failure keeps 409 on create path historically;
-                // update used createFailed for non-duplicate exceptions (issue #579).
-                ErrorResponses.createFailed(failed.cause());
-            case SaveResult.Created ignored -> ResponseEntity.internalServerError().build();
+                // A data constraint answers 400; any other failure keeps 409 (issue #579).
+                throw new PersonOperationFailedException(failed.cause());
+            case SaveResult.Created ignored ->
+                throw new PersonOperationFailedException(new IllegalStateException("unexpected Created"));
         };
     }
 
@@ -182,12 +182,11 @@ public class PersonController {
     })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete person")
-    public ResponseEntity<Object> deletePerson(@PathVariable Integer id) {
+    public ResponseEntity<Void> deletePerson(@PathVariable Integer id) {
         return switch (managePeople.delete(id)) {
             case DeleteResult.Deleted ignored -> ResponseEntity.noContent().build();
-            case DeleteResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case DeleteResult.Conflict conflict ->
-                ResponseEntity.status(HttpStatus.CONFLICT).body(conflict.message());
+            case DeleteResult.NotFound ignored -> throw new PersonNotFoundException();
+            case DeleteResult.Conflict conflict -> throw new PersonInUseException(conflict.message());
         };
     }
 
