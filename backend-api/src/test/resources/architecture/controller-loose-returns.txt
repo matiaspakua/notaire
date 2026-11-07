@@ -1,7 +1,6 @@
 AuditRecordController#getAll
 AuxiliaryProtocolController#startDeed
 DocumentCostTemplateController#createCost
-HistoryController#create
 ManagementController#archiving
 ManagementController#create
 ManagementController#createCompleteCase

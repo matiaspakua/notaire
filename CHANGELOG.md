@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **api:** History create returns typed DtoHistorySummary via HistoryExceptionHandler (Refs #577)
 * **api:** Copy create returns typed CopyResponse via CopyExceptionHandler (Refs #577)
 * **api:** ProcedureType create/update/delete return typed DTO/Void via ProcedureTypeExceptionHandler (Refs #577)
 * **api:** Notebook create returns typed NotebookResponse via NotebookExceptionHandler (Refs #577)

@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.licensis.notaire.application.port.in.history.ManageHistoriesUseCase;
+import com.licensis.notaire.domain.history.HistoryBadRequestException;
+import com.licensis.notaire.domain.history.HistoryNotFoundException;
 import com.licensis.notaire.application.port.in.history.QueryHistoriesUseCase;
 import com.licensis.notaire.application.port.out.history.HistoryOpsPort.DeleteResult;
 import com.licensis.notaire.application.port.out.history.HistoryOpsPort.HistoryCommand;
@@ -96,13 +98,13 @@ public class HistoryController {
     })
     @PostMapping
     @Operation(summary = "Create a history record")
-    public ResponseEntity<Object> create(@Valid @RequestBody HistoryRequest request) {
+    public ResponseEntity<DtoHistorySummary> create(@Valid @RequestBody HistoryRequest request) {
         return switch (manageHistories.create(toCommand(request))) {
             case SaveResult.Created created -> ResponseEntity.status(HttpStatus.CREATED).body(created.summary());
-            case SaveResult.BadRequest ignored -> ResponseEntity.badRequest().build();
+            case SaveResult.BadRequest ignored -> throw new HistoryBadRequestException();
             case SaveResult.ServerError ignored -> throw new IllegalStateException("History create failed");
             case SaveResult.Updated ignored -> throw new IllegalStateException("Unexpected Updated on history create");
-            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
+            case SaveResult.NotFound ignored -> throw new HistoryNotFoundException();
         };
     }
 
