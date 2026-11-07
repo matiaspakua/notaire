@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.adapter.in.web.procedure.ProcedureTypeController;
+import com.licensis.notaire.adapter.in.web.procedure.ProcedureTypeExceptionHandler;
 import com.licensis.notaire.application.port.in.procedure.ManageProcedureTypesUseCase;
 import com.licensis.notaire.application.port.in.procedure.QueryProcedureTypesUseCase;
 import com.licensis.notaire.application.port.out.procedure.ProcedureTypeOpsPort.WorkflowAssignResult;
@@ -38,7 +39,9 @@ class ProcedureTypeWorkflowAssignmentTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new ProcedureTypeController(query, manage)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new ProcedureTypeController(query, manage))
+                .setControllerAdvice(new ProcedureTypeExceptionHandler())
+                .build();
         mapper = new ObjectMapper();
     }
 
