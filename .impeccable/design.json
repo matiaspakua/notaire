@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-07T18:35:00Z",
+  "title": "Design System: Notaire",
+  "extensions": {
+    "colorMeta": {
+      "san-francisco-blue": {
+        "role": "primary",
+        "displayName": "San Francisco Blue",
+        "canonical": "#0071E3",
+        "tonalRamp": ["#004BA0", "#005CC2", "#0066D6", "#0071E3", "#0A84FF", "#419BFF", "#A3CDFF", "#EBF4FF"]
+      },
+      "apple-blue": {
+        "role": "primary",
+        "displayName": "Apple Blue",
+        "canonical": "#0A84FF",
+        "tonalRamp": ["#004BA0", "#0066D6", "#0071E3", "#0A84FF", "#419BFF", "#72B4FF", "#D4E6FF", "#EBF4FF"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#1D1D1F",
+        "tonalRamp": ["#1D1D1F", "#3A3A3C", "#5A5A5F", "#6E6E73", "#A2A2A6", "#D2D2D7", "#E5E5EA", "#F5F5F7"]
+      },
+      "secondary-ink": {
+        "role": "neutral",
+        "displayName": "Secondary Ink",
+        "canonical": "#6E6E73",
+        "tonalRamp": ["#1D1D1F", "#3A3A3C", "#5A5A5F", "#6E6E73", "#A2A2A6", "#D2D2D7", "#EBEBF0", "#F5F5F7"]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#FBFBFD",
+        "tonalRamp": ["#1D1D1F", "#3A3A3C", "#6E6E73", "#A2A2A6", "#D2D2D7", "#E5E5EA", "#F5F5F7", "#FBFBFD"]
+      },
+      "mist": {
+        "role": "neutral",
+        "displayName": "Mist",
+        "canonical": "#F5F5F7",
+        "tonalRamp": ["#1D1D1F", "#3A3A3C", "#6E6E73", "#A2A2A6", "#D2D2D7", "#E5E5EA", "#F5F5F7", "#FFFFFF"]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "White",
+        "canonical": "#FFFFFF",
+        "tonalRamp": ["#3A3A3C", "#6E6E73", "#A2A2A6", "#D2D2D7", "#E5E5EA", "#EBEBF0", "#F5F5F7", "#FFFFFF"]
+      },
+      "success": {
+        "role": "success",
+        "displayName": "Apple Green",
+        "canonical": "#34C759",
+        "tonalRamp": ["#1A6E2E", "#30B14B", "#34C759", "#8ED9A0", "#D1ECDA", "#E8F6EB", "#F4FBF6", "#FFFFFF"]
+      },
+      "warning": {
+        "role": "warning",
+        "displayName": "Apple Orange",
+        "canonical": "#FF9500",
+        "tonalRamp": ["#9A5000", "#E68400", "#FF9500", "#FFC266", "#FFF0CC", "#FFF8E6", "#FFFCF5", "#FFFFFF"]
+      },
+      "error-text": {
+        "role": "error",
+        "displayName": "Error Text",
+        "canonical": "#C81E1E",
+        "tonalRamp": ["#8E1212", "#C81E1E", "#FF3B30", "#FF453A", "#FFD1D1", "#FFE8E8", "#FFF5F5", "#FFFFFF"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Page title. One h1 per screen." },
+      "title": { "displayName": "Title", "purpose": "Task heading inside a card." },
+      "body": { "displayName": "Body", "purpose": "Prose and input text." },
+      "label": { "displayName": "Label", "purpose": "Field labels in sentence case." }
+    },
+    "shadows": [
+      {
+        "name": "resting-card",
+        "value": "0 0 0 1px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04), 0 8px 16px rgba(0,0,0,0.04)",
+        "purpose": "Cards and the login desk at rest."
+      },
+      {
+        "name": "raised-card",
+        "value": "0 0 0 1px rgba(0,0,0,0.06), 0 4px 8px rgba(0,0,0,0.06), 0 16px 32px rgba(0,0,0,0.08)",
+        "purpose": "Hovered card or dialog."
+      }
+    ],
+    "motion": [
+      { "name": "duration-fast", "value": "120ms", "purpose": "Hover, press, and the session-expired status." },
+      { "name": "duration-base", "value": "180ms", "purpose": "Card entrance and popovers." },
+      { "name": "duration-slow", "value": "240ms", "purpose": "Seal entrance and dialogs." },
+      { "name": "ease-standard", "value": "cubic-bezier(0.2, 0, 0, 1)", "purpose": "Default Operate easing." },
+      { "name": "ease-emphasized", "value": "cubic-bezier(0.3, 0, 0, 1)", "purpose": "The single emphasized beat, such as the login seal." }
+    ],
+    "breakpoints": [
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one primary action on a task, such as sign-in.",
+      "html": "<button class=\"ds-btn-primary\">Ingresar</button>",
+      "css": ".ds-btn-primary { background: #0071E3; color: #FFFFFF; height: 48px; padding: 0 24px; border: none; border-radius: 16px; font-family: \"SF Pro Text\", -apple-system, sans-serif; font-size: 16px; font-weight: 600; letter-spacing: -0.01em; cursor: pointer; transition: background-color 120ms cubic-bezier(0.2, 0, 0, 1), transform 120ms cubic-bezier(0.2, 0, 0, 1); } .ds-btn-primary:hover { background: #0A84FF; } .ds-btn-primary:focus-visible { outline: 2px solid #0071E3; outline-offset: 2px; } .ds-btn-primary:active { transform: scale(0.98); }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Credential and form field.",
+      "html": "<label class=\"ds-field\"><span>Usuario</span><input class=\"ds-input\" placeholder=\"usuario\"></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 8px; font-family: \"SF Pro Text\", -apple-system, sans-serif; } .ds-field span { color: #1D1D1F; font-size: 14px; font-weight: 600; letter-spacing: -0.01em; } .ds-input { height: 48px; padding: 0 16px; border-radius: 12px; border: 1px solid #D2D2D7; background: #FFFFFF; color: #1D1D1F; font-size: 16px; } .ds-input:focus { outline: none; border-color: #0071E3; box-shadow: 0 0 0 3px rgba(0,113,227,0.3); }"
+    },
+    {
+      "name": "Desk Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "One task on a white card. Login uses this for the sign-in form.",
+      "html": "<section class=\"ds-card\"><h2>Iniciar sesión</h2><p>Usuario y contraseña en una sola superficie.</p></section>",
+      "css": ".ds-card { background: #FFFFFF; color: #1D1D1F; border-radius: 28px; padding: 32px; box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04), 0 8px 16px rgba(0,0,0,0.04); font-family: \"SF Pro Text\", -apple-system, sans-serif; } .ds-card h2 { margin: 0 0 8px; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; } .ds-card p { margin: 0; color: #6E6E73; font-size: 14px; line-height: 1.5; }"
+    },
+    {
+      "name": "Sidebar Item",
+      "kind": "nav",
+      "refersTo": "button-primary",
+      "description": "Current destination in the desk sidebar.",
+      "html": "<a class=\"ds-nav-active\">Inicio</a>",
+      "css": ".ds-nav-active { display: inline-flex; align-items: center; height: 40px; padding: 0 16px; border-radius: 12px; background: #0071E3; color: #FFFFFF; font-family: \"SF Pro Text\", -apple-system, sans-serif; font-size: 14px; font-weight: 500; text-decoration: none; } .ds-nav-active:focus-visible { outline: 2px solid #0071E3; outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Quiet Protocol Desk",
+    "overview": "The name is inferred from the incumbent system, not from an interview. tokens.ts already commits the product app to macOS Sequoia: SF Pro, San Francisco Blue (#0071E3, owner decision #1365), paper neutrals, and soft elevation. The desk metaphor is the notary's working surface. One seal color. Generous margins. The task sits on a white card. Chrome recedes.\n\nOperate mode governs login, the shell, forms, tables, and the dashboard. Scanability and the existing tokens outrank expression. GitHub Pages (github-page/) is a separate Persuade surface and is not described here.\n\nDensity is comfortable, not sparse: 16px between fields, 24px between sections, 32px inside a card. Motion is a short rise (4px, 120–240ms) that confirms a state. It does not spin, spring, or play a page-load sequence.",
+    "keyCharacteristics": [
+      "One accent, used for the primary action, the current nav item, and links.",
+      "Paper (#FBFBFD / #F5F5F7) behind white cards.",
+      "SF Pro for every UI role. No display face in labels or tables.",
+      "28px card radius (the token 2xl), 16px buttons, 12px fields.",
+      "Opacity and transform only, from frontend/src/theme/motion.ts."
+    ],
+    "rules": [
+      { "name": "The One Seal Rule", "body": "San Francisco Blue covers the primary action, the current navigation item, and focus. It is not a tint for every icon well, and it is not a gradient.", "section": "colors" },
+      { "name": "The Status Is Not Brand Rule", "body": "Success, warning, and error-text are status only. Error text uses colors.error-text so it stays above 4.5:1 on white.", "section": "colors" },
+      { "name": "The One Heading Rule", "body": "A screen has one h1. The task title inside a card is an h2. Do not stack a product name, a subtitle, and the task title at neighboring sizes with no grouping.", "section": "typography" },
+      { "name": "The Flat-Until-Lifted Rule", "body": "A control does not float at rest. Hover may lift a dashboard card by a few pixels; press is scale(0.98). Login does not lift.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do take color, type, radius, spacing, and motion from frontend/src/theme/tokens.ts and motion.ts.",
+      "Do build forms as FormContainer, FormSection, FormField, FormActions.",
+      "Do give an empty list a title, a reason, and one next action when the screen can offer one.",
+      "Do keep primary buttons at least 44px tall on touch (sizes.button.lg is 48px)."
+    ],
+    "donts": [
+      "Don't introduce a second accent, a purple gradient, or a cream AI palette. The paper neutrals are already the warmth.",
+      "Don't rotate, spring, or stagger more than six items at 30ms on an Operate surface.",
+      "Don't set body or label text in neutral.500 (#A2A2A6).",
+      "Don't put the task title, the product name, and a subtitle in one undifferentiated stack.",
+      "Don't copy this Operate restraint onto github-page/ as if it were the same mode."
+    ]
+  }
+}
