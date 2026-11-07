@@ -93,6 +93,12 @@ class Profile:
     skills_forbid: tuple[str, ...] = ()
     evidence_dir: str = ".aisdlc/evidence"
     prices: dict[str, dict[str, float]] = field(default_factory=dict)
+    protected_paths: tuple[str, ...] = ()
+    protected_owner: str = "the Owner"
+    size_limit: int | None = None
+    size_exclude: tuple[str, ...] = ()
+    scope_heading: str = "Write set"
+    scope_always: tuple[str, ...] = ()
 
     def stages(self) -> list[str]:
         declared = {g.stage for g in self.gates}
@@ -138,6 +144,7 @@ def _build(data: dict, errors: list[str]) -> Profile:
         level = 1
     tracker, spec, commits = data.get("tracker", {}), data.get("spec", {}), data.get("commits", {})
     tdd, context, skills = data.get("tdd", {}), data.get("context", {}), data.get("skills", {})
+    protected, size, scope = data.get("protected", {}), data.get("size", {}), data.get("scope", {})
     profile = Profile(
         name=name,
         policy=project.get("policy"),
@@ -157,12 +164,27 @@ def _build(data: dict, errors: list[str]) -> Profile:
         skills_forbid=tuple(_regex(p, "skills.forbid_in_generic", errors) for p in skills.get("forbid_in_generic", ())),
         evidence_dir=data.get("evidence", {}).get("dir", ".aisdlc/evidence"),
         prices=data.get("cost", {}).get("prices", {}),
+        protected_paths=tuple(protected.get("paths", ())),
+        protected_owner=protected.get("owner", "the Owner"),
+        size_limit=_positive(size.get("limit"), "size.limit", errors),
+        size_exclude=tuple(size.get("exclude", ())),
+        scope_heading=scope.get("heading", "Write set"),
+        scope_always=tuple(scope.get("always", ())),
     )
     profile.gates = _gates(data.get("gates", []), errors)
     profile.ratchets = _ratchets(data.get("ratchets", []), errors)
     profile.roles = _roles(data.get("roles", {}), errors)
     _check_prices(profile.prices, errors)
     return profile
+
+
+def _positive(value, where: str, errors: list[str]) -> int | None:
+    if value is None:
+        return None
+    if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
+        errors.append(f"{where} must be a positive integer, got {value!r}")
+        return None
+    return value
 
 
 def _regex(pattern: str, where: str, errors: list[str]) -> str:

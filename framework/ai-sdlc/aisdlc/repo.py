@@ -49,6 +49,19 @@ def changed_files(root: Path, base: str) -> list[str]:
     return [line for line in result.stdout.splitlines() if line]
 
 
+def numstat(root: Path, base: str) -> list[tuple[int | None, int | None, str]]:
+    """(added, deleted, path) per changed file since the merge base; None for binary files."""
+    require_ref(root, base)
+    result = _git(root, "diff", "--numstat", "--no-renames", f"{base}...HEAD")
+    if result.returncode != 0:
+        raise GitError(result.stderr.strip())
+    rows = []
+    for line in result.stdout.splitlines():
+        added, deleted, path = line.split("\t", 2)
+        rows.append((None if added == "-" else int(added), None if deleted == "-" else int(deleted), path))
+    return rows
+
+
 def subjects(root: Path, base: str) -> list[str]:
     require_ref(root, base)
     result = _git(root, "log", "--no-merges", "--format=%s", f"{base}..HEAD")

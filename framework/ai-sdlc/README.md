@@ -45,7 +45,7 @@ and locally with [`templates/integrations/pre-push`](templates/integrations/pre-
 | **Ratchet** | Legacy debt as a baseline that may only shrink, or a metric with a floor that may only rise. | `[[ratchets]]` |
 | **Change record** | Why, what, acceptance scenarios, test plan, traceability — for one change only, citing a real issue. | `.aisdlc/changes/` or your spec engine |
 | **Roles** | Owner (human), Foreman (orchestrates, merges under the rule), Workers (implement), Reviewer. | `[roles.*]`, `.aisdlc/agents/` |
-| **Evidence** | Append-only JSONL of every stage run and every priced agent run; `aisdlc report` reads it. | `.aisdlc/evidence/` |
+| **Evidence** | Append-only, hash-chained JSONL of every stage run and every priced agent run; `aisdlc report` reads it, `aisdlc evidence verify` checks it. | `.aisdlc/evidence/` |
 
 ## Commands
 
@@ -59,6 +59,10 @@ and locally with [`templates/integrations/pre-push`](templates/integrations/pre-
 | `budget` | Always-loaded files ≤ `max_tokens` (bytes/4). | over budget or a file is missing |
 | `commits [--base R]` | Commit subjects match `[commits] pattern` (Conventional Commits by default). | a subject does not match |
 | `tdd [--base R]` | Production globs changed ⇒ test globs changed too. | code without tests |
+| `protected [--base R]` | Owner-only paths (`[protected] paths`) changed since the base: the policy, gates, harness and merge path. Agents may propose such a change; a person merges it. | an owner-only path changed |
+| `size [--base R] [--limit N]` | Changed lines since the base stay within the review budget (`[size] limit`, default 400); `exclude` globs and binary files do not count. | over the budget |
+| `scope [--base R] [--strict]` | Changed paths stay inside the write set that the change record declares under `[scope] heading` (default `### Write set`, globs in backticks; HTML comments ignored). No record with a write set ⇒ *not evaluable* (exit 0, or 1 with `--strict`). | a path outside the write set |
+| `evidence verify [--anchor D]` | The ledger and the cost log are hash-chained (`prev` = SHA-256 of the line before); reports any edited, deleted or reordered record and prints the head digest. A chain cannot see a truncated tail, so anchor the digest outside the agents' reach (PR body, commit) and pass it back with `--anchor`: the check fails if that record is gone. An empty ledger reports NO EVIDENCE, never PASSED. | the chain is broken, or an anchored record is missing |
 | `change new NAME --issue N` · `change check [NAME…]` | Built-in change records; `check` needs every section filled and the issue resolvable by `[tracker] verify`. | an empty section, no issue, an unresolvable issue |
 | `report [--json] [--since DATE]` | Pass rate, median duration and last status per gate; cost per model and agent. | — |
 | `cost --agent A --model M --input N --output N [--usd X] [--issue N]` | Records an agent run's tokens, priced from `[cost.prices]` when `--usd` is omitted. | — |
@@ -110,6 +114,18 @@ forbid_in_generic = ['acme', 'services/billing/']
 [evidence]
 dir = ".aisdlc/evidence"
 
+[protected]                   # owner-only paths: policy, gates, harness, merge path
+paths = ["CONSTITUTION.md", "aisdlc.toml", ".github/workflows/**"]
+owner = "the Owner"
+
+[size]                        # review budget
+limit = 400
+exclude = ["**/*.lock", "docs/changes/**"]
+
+[scope]                       # write set declared by the change record
+heading = "Write set"
+always = ["CHANGELOG.md"]
+
 [roles.foreman]
 tier = "mid"                  # human | top | mid | low
 model = "model-id"
@@ -157,6 +173,10 @@ Pick the level that matches team size, risk and how much agents do. Each level a
 | 4 | Autonomous | Bounded autonomous runs (e.g. local models) | `release` gate with smoke tests, cost prices, a harness that owns ledgers and pushes, measured autonomy per stage |
 
 Do not adopt a level for prestige: Notaire's history shows the process tax is real (see the report, §7).
+
+A level is earned and lost per operation: it rises only with ledger evidence, and an incident (an
+operation outside its level, or a merge that had to be reverted) lowers it until its cause is fixed.
+At level 3 and above, an agent role that may merge needs `[protected]` paths; `doctor` warns otherwise.
 
 ## Extending
 

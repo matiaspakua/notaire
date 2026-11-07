@@ -57,6 +57,8 @@ profile declares for it exits as expected (`aisdlc gate <stage>`).
 The Foreman may merge a Worker's pull request only when every required check is green on the
 final commit, the `merge` stage passes, and no review note is open. The Owner alone merges
 changes to this document, to the harness and merge path, and any change carrying an exception.
+Those paths are listed in `[protected]` of `aisdlc.toml`; the `merge` stage runs `aisdlc protected`,
+so the rule is an exit code, not a sentence.
 
 ## 6. Rules for AI agents
 
@@ -71,6 +73,24 @@ delivering (P11)** — feed friction into gates, docs and follow-on issues. Agen
 - invent issue numbers, requirements or scope the Owner did not ask for;
 - move on from a process or tool failure without capturing the lesson (P11).
 
+When an agent needs a person, it stops with a **decision packet**: the context in plain words,
+two or three alternatives each with its consequence, and a recommendation marked as a proposal;
+at most three related questions per message. A routine detail inside the task is not asked: it is
+resolved with a sensible default and recorded.
+
+A **deviation** from the approved change record is *mechanical* when it only applies what the
+record, its tests or an already recorded decision say; it is recorded with what was checked. It is
+a *decision*, and goes to the Owner before the commit, when it changes the objective, the scope, a
+contract, the data, permissions or an accepted risk. Missing information never makes a deviation
+mechanical.
+
+Corrections are **bounded**: one batch for all blocking review notes and one re-check limited to
+them; a second round only when the same blocker still fails; then the work stops with a decision
+packet instead of a third attempt.
+
+Every change closes with a **risk line**: `Risk: <item> (<reason>)` or `Risk: none`, checked
+against existing behavior the request did not mention.
+
 ## 7. Learning loop (P11)
 
 Self-improvement is mandatory while delivering (P11), not a post-mortem hobby.
@@ -79,6 +99,10 @@ down as *what happened → rule → check*. A rule that can be a command becomes
 or a ratchet in `aisdlc.toml`; a rule that cannot stays in this document. Prose-only
 rules are reviewed each release for mechanization. Agents must not leave the lesson
 only in chat.
+
+Autonomy is earned and lost per operation: a level rises only with evidence from the ledger
+(`aisdlc report`), and an incident (an operation outside its level, or a merge that had to be
+reverted) lowers it until its cause is understood and corrected.
 
 ## 8. Exceptions
 
