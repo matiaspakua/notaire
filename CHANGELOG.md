@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **api:** Testimony create/update/delete return typed DtoTestimony/Void via TestimonyExceptionHandler (Refs #577)
 * **api:** Substitution create returns typed SubstitutionResponse via SubstitutionExceptionHandler (Refs #577)
 * **api:** DocumentCostTemplate createCost returns typed CostTemplateResponse via advice (Refs #577)
 * **api:** History create returns typed DtoHistorySummary via HistoryExceptionHandler (Refs #577)
