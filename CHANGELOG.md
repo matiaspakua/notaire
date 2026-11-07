@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **api:** User login returns typed LoginSuccessResponse via UserLoginExceptionHandler (Refs #577)
 * **frontend:** Login presents one desk card and a token-timed seal with no rotation (Refs #2069)
 * **api:** Management archive returns typed DtoArchivedManagement via ManagementArchiveExceptionHandler (Refs #577)
 * **api:** RegistrationDraft generate/submit/observe/recordRegistration return typed DtoRegistrationDraft via advice (Refs #577)
