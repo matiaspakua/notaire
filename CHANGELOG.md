@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **api:** Management archive returns typed DtoArchivedManagement via ManagementArchiveExceptionHandler (Refs #577)
 * **api:** RegistrationDraft generate/submit/observe/recordRegistration return typed DtoRegistrationDraft via advice (Refs #577)
 * **api:** ProcedureFolder putOnHold returns typed DtoProcedureFolder via advice (Refs #577)
 * **api:** Procedure create/update return typed ProcedureResponse via ProcedureExceptionHandler (Refs #577)
