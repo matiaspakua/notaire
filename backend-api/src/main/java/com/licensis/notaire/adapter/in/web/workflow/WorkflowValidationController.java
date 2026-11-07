@@ -1,6 +1,6 @@
 package com.licensis.notaire.adapter.in.web.workflow;
 
-import java.util.Map;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +22,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Workflow Validation", description = "CU72 - Workflow consistency validation")
 public class WorkflowValidationController {
 
+    /** JSON body for {@code POST …/validate} — same keys clients already consume (#577). */
+    public record WorkflowValidationResponse(boolean valid, List<String> errors) {
+    }
+
     private final ValidateWorkflowUseCase validateWorkflow;
 
     public WorkflowValidationController(ValidateWorkflowUseCase validateWorkflow) {
@@ -30,14 +34,10 @@ public class WorkflowValidationController {
 
     @PostMapping("/{id}/validate")
     @Operation(summary = "Validate the consistency of a workflow")
-    public ResponseEntity<Map<String, Object>> validate(@PathVariable Integer id) {
-        Result result = validateWorkflow.validate(id);
-        if (result instanceof Result.NotFound) {
-            return ResponseEntity.notFound().build();
-        }
-        Result.Ok ok = (Result.Ok) result;
-        return ResponseEntity.ok(Map.of(
-                "valid", ok.valid(),
-                "errors", ok.errors()));
+    public ResponseEntity<WorkflowValidationResponse> validate(@PathVariable Integer id) {
+        return switch (validateWorkflow.validate(id)) {
+            case Result.Ok ok -> ResponseEntity.ok(new WorkflowValidationResponse(ok.valid(), ok.errors()));
+            case Result.NotFound ignored -> ResponseEntity.notFound().build();
+        };
     }
 }
