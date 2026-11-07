@@ -38,6 +38,8 @@ import com.licensis.notaire.application.port.out.management.ManagementOpsPort.Sa
 import com.licensis.notaire.application.port.in.document.ExternalEntityDocumentUseCase;
 import com.licensis.notaire.application.port.in.workflow.DocumentReentryUseCase;
 import com.licensis.notaire.application.port.in.workflow.QueryWorkflowTraceUseCase;
+import com.licensis.notaire.domain.management.ManagementArchiveConflictException;
+import com.licensis.notaire.domain.management.ManagementArchiveNotFoundException;
 import com.licensis.notaire.dto.DtoDocumentReentered;
 import com.licensis.notaire.dto.DtoDocumentReentryRequest;
 import com.licensis.notaire.dto.DtoExternalEntityDocument;
@@ -59,7 +61,8 @@ import jakarta.validation.constraints.NotNull;
 
 /**
  * Deed managements. Calls inbound ports only; orchestration and persistence live in the use cases
- * (issue #1772).
+ * (issue #1772). Archive failures throw domain exceptions mapped by
+ * {@link ManagementArchiveExceptionHandler} (#577).
  */
 @RestController
 @RequestMapping("/api/v1/managements")
@@ -383,17 +386,15 @@ public class ManagementController {
     @PostMapping("/{id}/archive")
     @Operation(summary = "CU16 - Archive a management, warning and recording pending debt (RF-22, RF-37); "
             + "cascades to CU85 procedure folders")
-    public ResponseEntity<Object> archiving(@PathVariable Integer id,
+    public ResponseEntity<DtoArchivedManagement> archiving(@PathVariable Integer id,
             @RequestParam(name = "confirmado", defaultValue = "false") boolean confirmed) {
         return switch (manageManagements.archive(id, confirmed)) {
             case ArchiveResult.Ok ok -> ResponseEntity.ok(new DtoArchivedManagement(
                     ok.view().idManagement(), ok.view().pendingBalance(),
                     ok.view().pendingDebtAtArchiving()));
-            case ArchiveResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case ArchiveResult.WaitingFolders waiting -> ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of(
-                            "message", waiting.message(),
-                            "waitingFolderNumbers", waiting.waitingFolderNumbers()));
+            case ArchiveResult.NotFound ignored -> throw new ManagementArchiveNotFoundException();
+            case ArchiveResult.WaitingFolders waiting -> throw new ManagementArchiveConflictException(
+                    waiting.message(), waiting.waitingFolderNumbers());
         };
     }
 
