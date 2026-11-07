@@ -77,7 +77,7 @@ A change is **Done** only when **all** of the following are true:
 - [ ] Specification written and reviewed (Gate 1)
 - [ ] Test cases designed; Unit + Integration tests written first (Gate 2)
 - [ ] Implementation passes the full test suite: unit, integration, regression, E2E (Gate 3)
-- [ ] Coverage gate satisfied (JaCoCo ratchet floor; 80% target)
+- [ ] Coverage gate satisfied (JaCoCo / Vitest raise-only floors; Owner **>90%** target — #2046)
 - [ ] Playwright E2E passed for UI changes
 - [ ] Permanent documentation updated and consistent (no duplication)
 - [ ] Commits atomic, Conventional Commits format, `Closes #<issue>`
@@ -439,7 +439,7 @@ every condition is satisfied.
 
 - [ ] Permanent documentation is not updated and consistent
 - [ ] Any test is failing (unit, integration, regression)
-- [ ] Coverage is reduced below the JaCoCo ratchet floor (80% target)
+- [ ] Coverage is reduced below the JaCoCo ratchet floor (Owner **>90%** target; #2046)
 - [ ] Playwright E2E is failing for UI changes
 - [ ] Checkstyle / Spotless / lint gates fail
 - [ ] `bash workspace/sdlc/run_pipeline.sh` has not been run, or last failed
@@ -538,12 +538,13 @@ Execution Strategy:
 
 ### Coverage Enforcement
 
-| Tool | Check | Enforced at | Ratchet Floor |
-|------|-------|-------------|---------------|
-| JaCoCo | Line + branch coverage (backend) | `mvn verify` (Gate 3) | 80% line / 65% branch |
-| Vitest | Coverage thresholds (frontend) | CI job `frontend-ci` | raise-only: statements/lines **14%**, branches **9%**, functions **10%** (`vitest.config.ts`); aspirational 80% is #1246 |
-| Bruno | REST endpoint coverage | CI job `playwright-e2e` + CU matrix | Matrix complete or `MISSING`+#953 |
-| Playwright | E2E workflow coverage | CI job `playwright-e2e` | 1+ test per critical Use Case; TS-nnnn naming |
+| Tool | Check | Enforced at | Ratchet Floor / Owner target |
+|------|-------|-------------|------------------------------|
+| JaCoCo | Line + branch coverage (backend) | `mvn verify` (Gate 3) | Floor **85% line / 70% branch**; Owner target **>90%** (#2046) |
+| Vitest | Coverage thresholds (frontend) | CI job `frontend-ci` | Floor raise-only in `vitest.config.ts` (statements **76%**, branches **68%**, functions **72%**, lines **78%**); Owner target **>90%** (#2046; #1246 superseded for target) |
+| Bruno | REST endpoint coverage | CI job `playwright-e2e` + CU matrix | Matrix complete or `MISSING`+#953; Owner target **>90%** endpoint/CU coverage |
+| Playwright | E2E workflow coverage | CI job `playwright-e2e` | 1+ test per critical Use Case; TS-nnnn naming; Owner target **>90%** critical CU coverage |
+| Security / Perf | SAST/SCA/DAST + k6 | `security/run_gates.py`, weekly ZAP/k6 | Gates green; coverage of critical surfaces tracked under #2046 |
 
 ---
 

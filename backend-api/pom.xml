@@ -331,9 +331,9 @@
                         <id>check</id>
                         <!--
                             Enforced ratchet floor (runs on `mvn verify`).
-                            Enforced floor: 80% line / 65% branch (#1511 aligns docs).
-                            Long-term target: 80% line / 80% branch.
-                            Raise these minimums as coverage improves; never lower.
+                            Enforced floor: 85% line / 70% branch (#2046; was 80/65).
+                            Owner target: >90% across the test pyramid (floors ratchet toward it).
+                            Raise these minimums as coverage improves; never lower without ADR.
                             Legacy jpa / JpaAdministrator retired in #576 — no longer excluded.
                         -->
                         <phase>verify</phase>
@@ -351,12 +351,12 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.80</minimum>
+                                            <minimum>0.85</minimum>
                                         </limit>
                                         <limit>
                                             <counter>BRANCH</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.65</minimum>
+                                            <minimum>0.70</minimum>
                                         </limit>
                                     </limits>
                                 </rule>

@@ -38,7 +38,7 @@
 
 - New unit tests (`src/test/java/.../unit/`):
 - New integration tests (`src/test/java/.../integration/`):
-- Coverage impact (JaCoCo ratchet floor; 80% target):
+- Coverage impact (JaCoCo raise-only floor; Owner >90% target #2046):
 
 ## Regression Strategy
 

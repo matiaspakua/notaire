@@ -51,7 +51,7 @@ Developers, QA, AI coding agents, and reviewers operating under the AI SDLC
 
 - Retired Swing / Robot E2E (`testing/e2e-swing/`) — ADR-012 / #811
 - Production data as fixtures (synthetic / seeded only)
-- Raising Vitest floors to 80% in this document (tracked #1246)
+- Jumping all pyramid gates to **>90%** overnight (tracked under umbrella #2046; raise-only child tips)
 
 ---
 
@@ -109,16 +109,24 @@ Forward/backward: every Essential CU appears in
 
 ---
 
-## 4. Coverage floors (enforced vs aspirational)
+## 4. Coverage floors (enforced vs Owner target)
 
-| Tool | Enforced floor | Aspirational target | Source of truth |
-|------|----------------|---------------------|-----------------|
-| JaCoCo (backend) | **80% line / 65% branch** | 80% / 80% | `backend-api/pom.xml` |
-| Vitest (frontend) | **raise-only** `statements/lines 14`, `branches 9`, `functions 10` | 80% line (#1246) | `frontend/vitest.config.ts` |
-| Bruno | Matrix drift guard; gaps as `MISSING`+#953 | 100% endpoints | `validate-cu-api-matrix.py` |
-| Playwright | ≥1 suite per critical CU workflow; TS naming | Full CU matrix | INVENTORY + E2E mapping |
+Owner mandate (#2046): **>90%** coverage across unit, integration, API (Bruno),
+E2E UI (Playwright), security, and performance suites where measured. **Floors**
+are what tools enforce today; they **ratchet raise-only** toward the target and
+must never be lowered without an ADR. Do not claim the project is at 90% while
+floors lag.
 
-Never document a floor that tools do not enforce.
+| Tool | Enforced floor | Owner target | Source of truth |
+|------|----------------|--------------|-----------------|
+| JaCoCo (backend) | **85% line / 70% branch** | **>90%** (#2046) | `backend-api/pom.xml` |
+| Vitest (frontend) | statements **76** / branches **68** / functions **72** / lines **78** | **>90%** (#2046) | `frontend/vitest.config.ts` |
+| Bruno | Matrix drift guard; gaps as `MISSING`+#953 | **>90%** endpoints / CU matrix | `validate-cu-api-matrix.py` |
+| Playwright | ≥1 suite per critical CU workflow; TS naming | **>90%** critical CU workflows | INVENTORY + E2E mapping |
+| Security / Perf | Local security gates + weekly ZAP / k6 | Critical-surface coverage under #2046 | `security/`, `infra/performance/` |
+
+Never document a floor that tools do not enforce. #1246 title/floor numbers are
+stale relative to current Vitest thresholds; prefer child tips under #2046.
 
 ---
 
