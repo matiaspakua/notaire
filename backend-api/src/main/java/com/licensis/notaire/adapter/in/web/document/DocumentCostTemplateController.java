@@ -6,6 +6,8 @@ import com.licensis.notaire.application.port.in.documentcosttemplate.ManageDocum
 import com.licensis.notaire.application.port.in.documentcosttemplate.QueryDocumentCostTemplatesUseCase;
 import com.licensis.notaire.application.port.out.documentcosttemplate.DocumentCostTemplateOpsPort.CostTemplateView;
 import com.licensis.notaire.application.port.out.documentcosttemplate.DocumentCostTemplateOpsPort.CreateResult;
+import com.licensis.notaire.domain.document.DocumentCostTemplateInvalidException;
+import com.licensis.notaire.domain.document.DocumentCostTemplateNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,12 +24,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * REST API for managing expected document costs by procedure type (CU27/CU39).
  * Calls inbound ports only; entity access lives behind {@code DocumentCostTemplateOpsPort}
- * (issue #1821).
+ * (issue #1821). Create failures throw domain exceptions mapped by
+ * {@link DocumentCostTemplateExceptionHandler} (#577).
  */
 @RestController
 @RequestMapping("/api/v1/document-cost-templates")
@@ -95,7 +97,7 @@ public class DocumentCostTemplateController {
     })
     @PostMapping
     @Operation(summary = "Define the fixed or variable cost of a document type in a procedure type template")
-    public ResponseEntity<Object> createCost(@Valid @RequestBody CreateCostRequest request) {
+    public ResponseEntity<CostTemplateResponse> createCost(@Valid @RequestBody CreateCostRequest request) {
         return switch (manageDocumentCostTemplates.create(
                 request.idProcedureType(),
                 request.idDocumentType(),
@@ -104,9 +106,9 @@ public class DocumentCostTemplateController {
             case CreateResult.Created created ->
                     ResponseEntity.status(HttpStatus.CREATED).body(CostTemplateResponse.from(created.view()));
             case CreateResult.Invalid invalid ->
-                    ResponseEntity.badRequest().body(Map.of("message", invalid.message()));
+                    throw new DocumentCostTemplateInvalidException(invalid.message());
             case CreateResult.NotFound notFound ->
-                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", notFound.message()));
+                    throw new DocumentCostTemplateNotFoundException(notFound.message());
         };
     }
 
