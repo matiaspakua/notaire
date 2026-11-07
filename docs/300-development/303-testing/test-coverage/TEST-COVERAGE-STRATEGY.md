@@ -42,8 +42,8 @@ open backend-api/target/site/jacoco/index.html
 
 ### Coverage Enforcement
 
-- Ratchet floor: **80% line / 65% branch** (enforced via `mvn verify`; raised as coverage improves, never lowered)
-- Target: 80% line / 80% branch (aspirational)
+- Ratchet floor: **85% line / 70% branch** (enforced via `mvn verify`; raised as coverage improves, never lowered without ADR)
+- Owner target: **>90%** across the pyramid (#2046); floors lag and ratchet
 - Excluded: legacy `jpa` and `service.Administrador*` packages
 
 ## Frontend Testing (React + Vitest)

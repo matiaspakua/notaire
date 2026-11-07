@@ -47,9 +47,9 @@ Enforced floors only (see MTP §4):
 
 | Tool | Floor |
 |------|-------|
-| JaCoCo | 80% line / 65% branch |
-| Vitest | raise-only 14/9/10/14 (statements/branches/functions/lines) |
-| Aspirational | 80% / 80% backend branch; 80% Vitest (#1246) |
+| JaCoCo | 85% line / 70% branch |
+| Vitest | raise-only 76/68/72/78 (statements/branches/functions/lines) |
+| Owner target | **>90%** across the pyramid (#2046); floors ratchet raise-only |
 
 ## CI/CD
 
