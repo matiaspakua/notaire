@@ -62,6 +62,7 @@
 - `backend-api/src/main/java/com/licensis/notaire/domain/management/ManagementArchive*.java`
 - `backend-api/src/test/java/com/licensis/notaire/unit/ManagementArchiveControllerTest.java`
 - `backend-api/src/test/resources/architecture/controller-loose-returns.txt`
+- `docs/300-development/303-testing/INVENTORY.md`
 - `CHANGELOG.md`
 - `docs/openspec/**`
 
