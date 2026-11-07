@@ -66,6 +66,7 @@ Add an Engineering artifacts page to the Technical docs that tells the artifact 
 - `docs/tests/**`
 - `docs/tools/generate_traceability_matrix.py`
 - `docs/verify.sh`
+- `docs/300-development/INGENIERIA.md`
 
 ### Architecture review
 

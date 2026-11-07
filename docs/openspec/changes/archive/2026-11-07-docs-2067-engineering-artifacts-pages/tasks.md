@@ -124,4 +124,7 @@
   home claim, and added the #2052 protocol now on `main`. Applies the proposal's lifecycle correction.
 - *Mechanical* — `test_docs_links.py` required the October audit to be the one linked from `docs/README.md`;
   it now requires both the November and the October audit.
+- *Mechanical* — the testing page, lifecycle step 20 and `INGENIERIA.md` §4 still said heavy CI gates the merge.
+  Per `CI-MERGE-GATE.md` (#2001) the pull-request proof is `preflight.sh --full` and `check-heavy-ci.sh` fails
+  only on a started heavy workflow that is pending or red. Wording corrected; write set widened to `INGENIERIA.md`.
 

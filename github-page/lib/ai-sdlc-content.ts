@@ -251,7 +251,7 @@ export const LIFECYCLE_PHASES: { phase: string; tone: string; steps: Step[] }[] 
     phase: "Ship",
     tone: "amber",
     steps: [
-      { n: "20", title: "Code review", gate: 4, what: "Code owner, or the Foreman's Gate 4 review with no open finding. Heavy CI must be terminal success.", check: "check-heavy-ci.sh <pr>" },
+      { n: "20", title: "Code review", gate: 4, what: "Code owner, or the Foreman's Gate 4 review with no open finding, after preflight --full passed on the head. check-heavy-ci.sh fails only if a heavy workflow started on the PR and is pending or red.", check: "check-heavy-ci.sh <pr>" },
       { n: "21", title: "Merge", what: "Via the PR only, by the Owner or by the Foreman under its merge rule; Workers never merge. The OpenSpec change is archived in that same PR (#1623)." },
       { n: "22", title: "Deploy", what: "CI → CD builds, signs (cosign) and publishes images to GHCR; SBOMs on version tags." },
       { n: "23", title: "Smoke test", gate: 5, what: "Health endpoint and the key flow of the change on the target environment." },

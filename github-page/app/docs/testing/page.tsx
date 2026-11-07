@@ -25,7 +25,7 @@ export default function DocsTestingPage() {
         lead={
           <>
             Tests come first, by rule (CONSTITUTION §6, Gate 2): a change starts with tests that fail. The suites are
-            layered from cheap static checks to full-stack browser journeys, and the heavy layers gate every merge.
+            layered from cheap static checks to full-stack browser journeys. The heavy layers run locally in preflight --full before every pull request (#2001), and again on every version tag.
           </>
         }
       />
@@ -60,11 +60,13 @@ export default function DocsTestingPage() {
       <SectionTitle id="gates">Gates agents must run</SectionTitle>
       <ol className="list-decimal space-y-2 pl-5">
         <li>
-          The local mirror of CI: <Code>bash workspace/sdlc/preflight.sh</Code> (see CI-PREFLIGHT).
+          The pull-request proof: <Code>bash workspace/sdlc/preflight.sh --full</Code>. GitHub does not re-run the
+          product suite on a pull request (#2001), so a run without <Code>--full</Code> is not enough (CI-PREFLIGHT).
         </li>
         <li>
-          Merge authority: <Code>bash workspace/sdlc/check-heavy-ci.sh &lt;pr&gt;</Code>. Integration, coverage, Bruno
-          and Playwright must be green (CI-MERGE-GATE).
+          Merge check: <Code>bash workspace/sdlc/check-heavy-ci.sh &lt;pr&gt;</Code> fails only when a heavy workflow was
+          started on the pull request head and is pending or red; checks that never start are not waited for
+          (CI-MERGE-GATE).
         </li>
         <li>The test plan: TEST-PLAN.</li>
       </ol>
