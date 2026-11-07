@@ -48,7 +48,9 @@ class ConceptControllerTest {
     void setUp() {
         ConceptController controller = new ConceptController(queryConcepts, manageConcepts);
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
-                .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
+                .setControllerAdvice(
+                        new com.licensis.notaire.adapter.in.web.concept.ConceptExceptionHandler(),
+                        new com.licensis.notaire.config.GlobalExceptionHandler())
                 .build();
         mapper = new ObjectMapper();
     }

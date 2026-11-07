@@ -143,7 +143,9 @@ class ControllerExceptionMessageLeakTest {
                         new BusinessValidationException("Already exists a concept with that name"), true));
         MockMvc mvc = standaloneSetup(new ConceptController(
                         mock(com.licensis.notaire.application.port.in.concept.QueryConceptsUseCase.class), manage))
-                .setControllerAdvice(new GlobalExceptionHandler())
+                .setControllerAdvice(
+                        new com.licensis.notaire.adapter.in.web.concept.ConceptExceptionHandler(),
+                        new GlobalExceptionHandler())
                 .build();
 
         mvc.perform(post("/api/v1/concepts").contentType(MediaType.APPLICATION_JSON)
