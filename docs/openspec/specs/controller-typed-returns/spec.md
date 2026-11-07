@@ -181,3 +181,13 @@ Typed write handler returns; shrink the Object loose-return baseline.
 - **WHEN** the suite runs after this change
 - **THEN** `DocumentCostTemplateController#createCost` is absent from the baseline and is not loosely typed
 
+### Requirement: Substitution create handler is typed
+
+`SubstitutionController#create` SHALL NOT appear in `controller-loose-returns.txt`. Its declared return type SHALL NOT be `ResponseEntity<Object>` or `ResponseEntity<?>`.
+
+#### Scenario: Substitution create leaves the loose baseline
+
+- **GIVEN** the controller signature architecture test and baseline file
+- **WHEN** the suite runs after this change
+- **THEN** `SubstitutionController#create` is absent from the baseline and is not loosely typed
+
