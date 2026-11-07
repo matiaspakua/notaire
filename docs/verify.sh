@@ -6,6 +6,8 @@ cd "$ROOT"
 
 python3 docs/tests/test_docs_links.py
 python3 docs/tests/test_business_docs_traceability.py
+python3 docs/tests/test_traceability_matrix_current.py
+python3 docs/tests/test_adr_index_complete.py
 python3 docs/tests/test_changelog_structure.py
 python3 docs/tests/test_erd_current_schema.py
 python3 docs/tests/test_compensation_diagram.py

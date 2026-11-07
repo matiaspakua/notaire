@@ -7,6 +7,13 @@
 **Fecha de revisión:** Agosto 2026  
 **Estado:** Completado y validado contra fuente de requisitos CSV y RS
 
+> **Línea base histórica (auditoría de noviembre de 2026, #2067).** Este SRS describe el sistema de
+> escritorio original y conserva sus decisiones técnicas de entonces (por ejemplo, MySQL). No es la
+> fuente de verdad del stack actual: los requisitos vivos están en
+> [`requerimientos.csv`](requerimientos.csv), su cobertura en la
+> [matriz de trazabilidad](../104-traceability/Matriz%20de%20Trazabilidad%20Requerimientos-Casos%20de%20Uso.md)
+> y la tecnología vigente en [TECHNOLOGY-STACK.md](../../200-architecture/TECHNOLOGY-STACK.md).
+
 ---
 
 ## Tabla de Contenido

@@ -1,11 +1,17 @@
 import Link from "next/link";
 import { QuestionPicker } from "@/components/docs/QuestionPicker";
+import { READING_PATH } from "@/lib/artifacts-content";
 import { DOCS, REPO } from "@/lib/docs-content";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata("/docs/");
 
 const cards = [
+  {
+    href: "/docs/artifacts/",
+    title: "Engineering artifacts",
+    body: "The chain from requirement to runbook: requirements, use cases, design models, SAD and ADRs, OpenSpec, tests, threat models, pipelines and manuals, with counts read from the repository.",
+  },
   {
     href: "/docs/stack/",
     title: "Technology stack",
@@ -80,6 +86,29 @@ export default function DocsHomePage() {
           DevSecOps.
         </p>
       </header>
+
+      <section aria-labelledby="path-title" className="rounded-2xl border border-slate-200 bg-white p-6">
+        <h2 id="path-title" className="text-xl font-semibold text-neutral-900">
+          Read it as a story
+        </h2>
+        <p className="mt-1 text-sm text-neutral-600">
+          New to Notaire? Follow these eight pages in order, from what the product does down to how each change is made,
+          proved, protected and shipped.
+        </p>
+        <ol className="mt-4 grid gap-2 sm:grid-cols-2">
+          {READING_PATH.map((p, i) => (
+            <li key={p.href}>
+              <Link href={p.href} className="group flex gap-3 rounded-xl border border-slate-200 px-3 py-2 transition-colors hover:border-brand-500">
+                <span className="font-mono text-xs text-slate-500 pt-0.5">{i + 1}</span>
+                <span>
+                  <span className="block font-semibold text-neutral-900 group-hover:text-brand-700">{p.title}</span>
+                  <span className="block text-sm text-neutral-600">{p.question}</span>
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ol>
+      </section>
 
       <QuestionPicker />
 

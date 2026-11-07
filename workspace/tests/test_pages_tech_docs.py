@@ -90,6 +90,34 @@ class TechDocsTest(unittest.TestCase):
         self.assertIn("escapeRegExp(repo)", facts)
 
 
+class ArtifactsPageTest(unittest.TestCase):
+    """#2067: the Engineering artifacts page tells the artifact chain from repository facts."""
+
+    PAGE_FILE = DOCS_APP / "artifacts" / "page.tsx"
+    CONTENT = PAGE / "lib" / "artifacts-content.ts"
+    FACTS = PAGE / "lib" / "artifact-facts.ts"
+
+    def test_page_exists_and_is_in_the_site_map(self):
+        self.assertTrue(self.PAGE_FILE.is_file())
+        self.assertIn('href: "/docs/artifacts/"', read(SITE))
+
+    def test_every_cited_path_exists(self):
+        cited = cited_paths(read(self.CONTENT)) + cited_paths(read(self.PAGE_FILE))
+        self.assertGreaterEqual(len(cited), 40, "every artifact should link its source")
+        for rel in cited:
+            self.assertTrue((REPO / rel.rstrip("/")).exists(), f"artifacts page cites missing {rel}")
+
+    def test_counts_come_from_the_facts_reader(self):
+        page = read(self.PAGE_FILE)
+        self.assertIn("@/lib/artifact-facts", page)
+        self.assertIsNone(re.search(r">\s*\d{2,}\s*<", page), "the artifacts page hard-codes a count")
+        facts = read(self.FACTS)
+        for needle in ("102-use-cases", "requerimientos.csv", "202-ADR", "openspec/specs", "system.stride.yml", "security/cases/catalog.yml"):
+            self.assertIn(needle, facts)
+        content = read(self.CONTENT)
+        self.assertIsNone(re.search(r"\b\d{2,} (use cases|ADRs|requirements|scenarios|migrations)\b", content), "content types a count")
+
+
 class ProductSectionTest(unittest.TestCase):
     def test_product_has_four_pages_in_the_document_shell(self):
         self.assertIn("<DocShell", read(PRODUCT_APP / "layout.tsx"))

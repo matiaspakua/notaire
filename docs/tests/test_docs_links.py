@@ -55,11 +55,12 @@ class DocumentationLinksTest(unittest.TestCase):
                 self.assertIn(exemption, current, "stale exemption: the link now resolves, remove it")
                 self.assertTrue(reason.strip())
 
-    def test_audit_report_exists_and_is_linked_from_the_development_index(self):
-        report = REPO_ROOT / "docs" / "300-development" / "DOCUMENTATION-AUDIT-2026-10.md"
-        self.assertTrue(report.is_file())
+    def test_audit_reports_exist_and_are_linked_from_the_development_index(self):
+        # The current audit (#2067) and the one it re-checks (#921) both stay reachable.
         index = (REPO_ROOT / "docs" / "README.md").read_text(encoding="utf-8")
-        self.assertIn("DOCUMENTATION-AUDIT-2026-10.md", index)
+        for name in ("DOCUMENTATION-AUDIT-2026-11.md", "DOCUMENTATION-AUDIT-2026-10.md"):
+            self.assertTrue((REPO_ROOT / "docs" / "300-development" / name).is_file(), name)
+            self.assertIn(name, index)
 
 
 if __name__ == "__main__":
