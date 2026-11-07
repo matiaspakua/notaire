@@ -64,14 +64,14 @@ Legend: ● mechanical (a command or service enforces it) · ◐ documented or p
 | Shrink-only baselines, rising floors | Notaire, gentle-ai | ● | ● |
 | Owner-only paths enforced at merge | agentic-os C14-004, factory-control `protectedPaths` | ◐ prose | ● `aisdlc protected` (merge stage) |
 | Diff bounded by the plan's write set | agentic-os C15-006/C15-007, gentle-ai surfaces | ○ (audit S2 open) | ◐ `aisdlc scope` advisory + template section |
-| Review-size budget, chained PRs | gentle-ai `pr-check.yml`, `chained-pr` skill | ○ | ◐ `aisdlc size` advisory |
+| Review-size budget, chained PRs | gentle-ai `pr-check.yml`, `chained-pr` skill; SmartBear/Cisco review study (200–400 LOC per session) | ○ | ◐ `aisdlc size` advisory |
 | Tamper-evident evidence | agentic-os journal, factory-control F-05 | ○ | ● `aisdlc evidence verify` (kit ledger) |
 | Decision packet when asking a human | agentic-os C04-047, C15-002 | ○ | ◐ rule + template |
 | Deviation boundary (mechanical vs decision) | agentic-os C07-043…C07-053 | ○ | ◐ rule |
 | Bounded correction rounds | gentle-ai ODD S8, `reviewtransaction` | ◐ "2–3 attempts" | ◐ one batch + one re-check, then packet |
 | RED per rule + PRESERVE per touched behavior | gentle-ai ODD S6 | ◐ red only | ◐ rule |
 | Risk line on every change | gentle-ai ODD S3 | ○ | ◐ PR template + rule |
-| AI-assistance disclosure in the PR | gentle-ai `AI_POLICY.md` | ○ | ◐ PR template |
+| AI-assistance disclosure in the PR | gentle-ai `AI_POLICY.md`; Linux kernel `coding-assistants.rst` | ○ | ◐ PR template (trailer policy: B11) |
 | Stop with unpublished work | Notaire #1681, audit E4 | ◐ SessionStart reminder | ● Stop hook, once per stop |
 | Incident lowers autonomy | agentic-os C05-003 | ○ | ◐ kit policy template + README |
 | Agent never commits; runtime/coordinator does | agentic-os C15-008 | ◐ local harness owns commits; fleet Workers commit | ◐ unchanged (§5 B2) |
@@ -88,11 +88,11 @@ Legend: ● mechanical (a command or service enforces it) · ◐ documented or p
 | A1 | **Owner-only paths.** 27 globs: policy, card, agent entry files, kit and profile, hooks and settings, Foreman playbook, preflight/pipeline/heavy-CI/exception/plan scripts, context and quality ratchet scripts, ruleset scripts and desired state, OpenSpec schema and config, fleet manifest and merge-gate doc, local foreman | `.aisdlc/aisdlc.toml` `[protected]`; `aisdlc protected` | `merge` stage, required; `doctor` warns at level ≥3 when an agent role may merge and no paths are declared | Replayed on `3d890ef4` (#2046): flags `AGENTS.md`, `CONSTITUTION.md`, the design template — a PR the Constitution already reserves for the Owner. Clean on `fee25f4b`, `7c970ff7`, `50105a83` |
 | A2 | **Write set.** Optional `### Write set` in the proposal template; the kit reads the section from every change folder the diff touches (including `archive/`), ignoring HTML comments | `aisdlc scope`; proposal template | `pre-pr`, advisory; *not evaluable* (never a silent pass) until proposals carry it | 5 tests; on today's history it reports NOT EVALUABLE, as it should |
 | A3 | **Review budget.** 400 counted lines; OpenSpec ceremony, lockfiles, snapshots, generated types and ratchet baselines excluded | `aisdlc size`; `[size]` | `pre-pr`, advisory | Last merged PRs: 6, 54, 224 counted lines (284–309 excluded) — the budget fits Notaire's real cadence |
-| A4 | **Hash-chained evidence.** `prev` = SHA-256 of the previous line; legacy records accepted only as a prefix; head digest printed for anchoring | `aisdlc/evidence.py`; `aisdlc evidence verify` | `merge` stage, required | 6 tests: edit, delete, legacy-after-chain detected; cost log chained; `report` unchanged |
+| A4 | **Hash-chained, anchored evidence.** `prev` = SHA-256 of the previous line; legacy records accepted only as a prefix. A chain alone cannot see a truncated tail or an emptied file (any prefix of a valid chain is valid), so the verifier prints the head digest, the Foreman anchors it in the PR body, and `--anchor <digest>` later fails if that record is gone; an empty ledger reports NO EVIDENCE, never PASSED | `aisdlc/evidence.py`; `aisdlc evidence verify [--anchor D]` | `merge` stage, required | 8 tests: edit, delete, legacy-after-chain, truncated tail and emptied ledger detected; cost log chained; `report` unchanged |
 | A5 | **Decision packet, deviations, bounded corrections, RED + PRESERVE, risk line** | `.claude/rules/ai-agent-workflow.md`; CONSTITUTION §10; kit policy template; `cloud-foreman.md` | Prose (cannot be a command); the PR template carries Deviations, AI assistance, Review budget and `Risk:` so review sees them | — |
 | A6 | **Stop hook for unpublished work** | `.claude/hooks/stop-unpublished-work.sh`; `.claude/settings.json` | Claude Code `Stop`; blocks once, retry passes | 6 tests in `workspace/tests/test_stop_hook_publication.py` |
 
-Kit tests: 79 → 99, all passing. The 20 new tests were run against the unmodified kit: 18 failed
+Kit tests: 79 → 101, all passing. The anchor tests (2) were added after the web challenge (§7). The first 20 new tests were run against the unmodified kit: 18 failed
 or errored. The other two pass there by design or by accident: `report` still reading chained
 records is a preservation test, and the invalid-`limit` test passes vacuously because the old kit
 also exits 2 on an unknown command.
@@ -101,7 +101,7 @@ also exits 2 on an unknown command.
 
 | # | Gap | Source | Why it matters for Notaire | Proposal | Priority |
 |---|---|---|---|---|---|
-| B1 | The local worker runs with `sandbox_mode = "danger-full-access"`, `approvals never` | factory-control ARQ-01/F-01 (Seatbelt/bubblewrap, `.git` read-only, token dir hidden) | The worker was observed running `git reset`, `pkill -9 git`, `--no-verify` and sed-editing the ledger; it can read `~/.ssh` and `gh` credentials | Run the worker under a macOS Seatbelt profile: worktree writable, `.git/` and `$RUNS` read-only, `~/.config/gh` and `~/.ssh` denied, network to the model endpoint only | P1 |
+| B1 | The local worker runs with `sandbox_mode = "danger-full-access"`, `approvals never` | factory-control ARQ-01/F-01; OWASP Agentic Top 10 ASI02 (tool misuse) and ASI10 (rogue agents) | The worker was observed running `git reset`, `pkill -9 git`, `--no-verify` and sed-editing the ledger; it can read `~/.ssh` and `gh` credentials | Codex already ships the needed sandbox: `sandbox_mode = "workspace-write"` keeps `.git` read-only even inside a writable root, `[sandbox_workspace_write] writable_roots` adds `~/.m2` and `~/.npm` (what made the harness give up on workspace-write, `AI-SDLC.md`), and `network_access = true` covers Maven/npm. Read-only `.git` is only workable once the harness owns every commit (B2), so B1 and B2 land together. Caveat: a Seatbelt bug reportedly ignores `network_access` on macOS; verify it on this machine first | P1 |
 | B2 | Fleet Workers commit their own work | agentic-os C15-008; factory-control F-04 | The local harness already owns commits (the ref guard caught violations); the cloud fleet does not | Fleet handoff returns a diff; the Foreman runs `aisdlc scope`, then commits. Start with the local harness rule written into `FLEET-ARCHITECTURE.md` | P2 |
 | B3 | No deterministic E2E of the harness | gentle-ai scripted model over HTTP; audit H5 | Harness regressions are found by running real issues (the audit found five that way) | A fixture issue + a mock OpenAI-compatible server that replays a scripted worker; run `foreman.sh` end to end in `local-ai/sdlc/tests` | P1 |
 | B4 | Harness ledger (`local-ai/sdlc/bin/ledger.py`) is not chained and is worker-writable | agentic-os journal | Same failure the worker already exhibited | Reuse the kit's chain; keep `$RUNS` outside the worker's sandbox (B1) | P2 |
@@ -111,20 +111,34 @@ also exits 2 on an unknown command.
 | B8 | Write set and size are advisory | this change | Advisory gates are where drift starts | After 10 proposals carry a write set: `validate-sdlc-plan.sh` requires it and `scope --strict` becomes required | P2 |
 | B9 | 38 worktrees, 17 prunable, all as siblings of the repository | factory-control `.worktrees/<ID>` (gitignored, one per claimed task, released on merge) | Stale worktrees hold branches, disk and confusion for the next agent | `workspace/sdlc/worktree-hygiene.py`: report missing/merged/dirty/unpushed; prune only missing ones; claim protocol creates the worktree | P3 |
 | B10 | Memory is spread across `.serena/`, `.remember/`, Claude auto-memory | factory-control F2MEM (agents propose, people confirm); gentle-ai Engram | Lessons land in tool-private stores instead of the repository (P12) | Lessons go to `FLEET-LESSONS-*` or a gate (P12); tool memories are caches, never the record | P3 |
+| B11 | Agent commits carry `Co-Authored-By: <model>` | gentle-ai `AI_POLICY.md` (no human-attribution tags for AI; optional `Assisted-by`); Linux kernel (`Assisted-by: AGENT:MODEL [tools]`; AI never adds `Signed-off-by`); agentic-os C05-050 (no trailers at all) | Three of the references treat an AI co-author line as human attribution; Notaire has no stated policy | Owner decision: keep `Co-Authored-By`, switch to `Assisted-by: <agent>:<model>`, or no trailer (traceability via Issue and OpenSpec). Then `check-commit-messages.sh` enforces it | P3 (decision) |
 
 ## 6. Publishing this change
 
-The Constitution requires an Issue + Use Case + OpenSpec change before code (Gate 1). This
-branch was prepared in an isolated worktree without creating an Issue, so that no fleet agent
-claims or races it. To publish:
+Prepared in an isolated worktree, then published as **three independent pull requests from
+`main`**, one Issue (CU76), each with its own OpenSpec change archived in its PR:
 
-1. Create the Issue (Use Case CU76 — Quality Assurance and Testing Infrastructure), `type:chore`,
-   `area:devops`, owner-decision (not `status:ready`), so the fleet does not pick it.
-2. Rename the branch to `chore/<n>_ai-sdlc-cross-repo-improvements`; seed the OpenSpec change
-   (`seed-openspec-change.sh`) with this document as the proposal's evidence and a `### Write set`
-   naming the files in §4.
-3. `bash workspace/sdlc/preflight.sh --full`, push, open the PR. `aisdlc protected` fails on it by
-   design: the Owner merges it.
+| PR | Content | Depends on | Merged by |
+|----|---------|------------|-----------|
+| 1 | The kit: `protected`, `size`, `scope`, `evidence verify --anchor`, tests, README, policy template | — | Owner (`framework/ai-sdlc/**` is owner-only) |
+| 2 | The `Stop` hook and its tests | — | Owner (`.claude/hooks/**`, `.claude/settings.json`) |
+| 3 | Notaire's adoption (profile, CONSTITUTION, rule, templates, Foreman) and this document | PR 1 (its gates call the new commands); stays draft until PR 1 merges | Owner (CONSTITUTION) |
+
+**Why not stacked PRs.** Stacked PRs merged by squash leave each child holding the parent's
+pre-squash commits; fixing that needs `git rebase --onto` and a force-push, which Notaire forbids
+on pushed branches ("merge, never rebase"). Independent PRs avoid it; PR 3 waits instead.
+
+**Why PR 1 exceeds the 400-line budget.** About 585 counted lines, ~330 of them tests for one
+module. Splitting the module from its tests would break the work-unit rule (code, tests and docs
+of one behavior together); splitting the commands into two PRs doubles the OpenSpec ceremony for
+a reader who reviews them together anyway. The budget's own evidence (SmartBear/Cisco, a vendor
+study reporting 200–400 LOC per session) supports review in two sittings: the PR body names the
+split point (diff checks, then the evidence chain).
+
+**Why the PRs are drafts.** `preflight.sh --full` runs `docker compose down` and removes the
+`notary-*` containers; another agent's stack was running, so `--full` was not run and the push used
+`PREFLIGHT_SKIP=1` on the Owner's instruction. The non-server preflight and the suites listed in each
+PR ran. A PR leaves draft only after `--full` passes (#2001).
 
 ## 7. Evidence and limits
 
@@ -133,8 +147,31 @@ claims or races it. To publish:
   gentle-ai `AI_POLICY.md`, `docs/trigger-rules.md`, `docs/testing-agents-deterministically.md`,
   `odd/tasks/1731-parity-delegate-for-reason.md`, `.github/workflows/pr-check.yml`;
   factory-control `AUDIT.md`, `factory-core/policies.yaml`, `docs/auditoria/ASSESSMENT_AI_FACTORYS_V1.md`.
-- Run: the kit suite (99 tests), the new hook suite (6 tests), `aisdlc doctor` on Notaire's
+- Run: the kit suite (101 tests), the new hook suite (6 tests), `aisdlc doctor` on Notaire's
   profile, and the three new checks replayed on four merged commits of `origin/main`.
 - Not run: `preflight.sh --full` (needs the Docker stack); gentle-ai's and agentic-os's suites.
-- The Stop hook depends on Claude Code's `stop_hook_active` field; other runtimes keep the
-  SessionStart reminder only.
+- The Stop hook depends on Claude Code's `stop_hook_active` field (documented: set when a stop
+  hook already kept the agent going; Claude Code also overrides a Stop hook after eight
+  consecutive blocks). Other runtimes keep the SessionStart reminder only.
+
+### Web challenge (2026-11-07)
+
+Each decision above was checked against outside sources; three changed:
+
+| Claim | What the sources say | Change |
+|-------|----------------------|--------|
+| A hash chain makes the ledger tamper-evident | Any prefix of a valid chain verifies; an external anchor is mandatory, and an empty log must not read as verified (IETF draft-melegassi-opsawg-mvps-logging; TYPO3 nr-vault ADR-034) | Added `--anchor` and NO EVIDENCE (A4) |
+| 400 lines is *the* review limit | SmartBear/Cisco: 200–400 LOC per session, 60–90 minutes; vendor-published, primary data behind a form | Kept 400 as an advisory ceiling, cited as a range (§3, §6) |
+| Sandboxing the worker needs new tooling | Codex `workspace-write` keeps `.git` read-only, `writable_roots` and `network_access` are configurable; a macOS network bug is reported | B1 rewritten as a configuration change, paired with B2 |
+| AI disclosure | Linux kernel: `Assisted-by: AGENT:MODEL`, AI never signs off | Added B11 (Owner decision) |
+| Stacked PRs for the split | Squash merges force `rebase --onto` in children | Independent PRs (§6) |
+| Stop hook semantics | Exit 2 blocks with stderr as the reason; `stop_hook_active` prevents loops | Confirmed, no change |
+
+Sources: [Claude Code hooks reference](https://code.claude.com/docs/en/hooks) ·
+[SmartBear code review best practices](https://smartbear.com/learn/code-review/best-practices-for-peer-code-review/) ·
+[IETF draft-melegassi-opsawg-mvps-logging](https://datatracker.ietf.org/doc/draft-melegassi-opsawg-mvps-logging/) ·
+[TYPO3 nr-vault ADR-034, audit chain tip anchor](https://docs.typo3.org/p/netresearch/nr-vault/0.14/en-us/_sources/Developer/Adr/ADR-034-AuditChainTipAnchor.rst.txt) ·
+[Codex sandboxing](https://developers.openai.com/codex/concepts/sandboxing) ·
+[Linux kernel: AI coding assistants](https://docs.kernel.org/next/process/coding-assistants.html) ·
+[OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026) ·
+[Stacked PRs with squash merge](https://echobind.com/post/stacked-pull-requests-with-squash-merge)
