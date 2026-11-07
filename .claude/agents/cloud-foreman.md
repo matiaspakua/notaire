@@ -112,6 +112,7 @@ pick → triage brief → OpenSpec Gate 1 → branch + in-progress
 | CI | `bash workspace/sdlc/check-heavy-ci.sh <pr>` (Integration + Coverage + Bruno + Playwright); see `CI-MERGE-GATE.md` |
 | Smoke | `curl -sf` health URL from env (default `http://localhost:8080/actuator/health`) |
 | Owner-only paths | `python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml protected --base origin/main` — exit 1 ⇒ hand the PR to the Owner, do not merge |
+| Evidence anchor | `… aisdlc … evidence verify` → paste the printed head digest in the PR body; at merge, `evidence verify --anchor <digest>` must pass |
 | Write set / size (advisory) | `… aisdlc … scope` and `… size` (pre-pr); over budget ⇒ the PR body says why it was not split |
 
 ## Dispatch

@@ -112,7 +112,8 @@ The kit stages add (`python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisd
 
 - `pre-pr` (advisory): `aisdlc scope` (write set) and `aisdlc size` (≤400 counted lines);
 - `merge`: `aisdlc protected` — a PR touching an owner-only path goes to the Owner — and
-  `aisdlc evidence verify` (hash-chained ledger).
+  `aisdlc evidence verify` (hash-chained ledger; paste its head digest in the PR body and
+  re-check it with `--anchor <digest>` before merge — a chain alone cannot see a truncated tail).
 
 `validate-sdlc-plan.sh` (in `pr-validation.yml`) checks every OpenSpec change.
 
