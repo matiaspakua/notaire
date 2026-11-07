@@ -15,7 +15,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | this change | passed |
 | Branch | `refactor/577_typed-user-login` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
+| Commits | `60dcc06d` | created |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -33,8 +33,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `CHANGELOG.md` | yes | this PR |
-| `docs/openspec/specs/controller-typed-returns/spec.md` | yes | this PR |
+| `CHANGELOG.md` | yes | `60dcc06d` |
+| `docs/openspec/specs/controller-typed-returns/spec.md` | yes | `60dcc06d` |
 
 ## Gate log
 
