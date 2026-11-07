@@ -33,6 +33,7 @@ import com.licensis.notaire.application.port.out.procedure.ProcedureOpsPort.Proc
 import com.licensis.notaire.application.port.out.procedure.ProcedureOpsPort.ProcedureView;
 import com.licensis.notaire.application.port.out.procedure.ProcedureOpsPort.PropertyView;
 import com.licensis.notaire.application.port.out.procedure.ProcedureOpsPort.SaveResult;
+import com.licensis.notaire.domain.procedure.ProcedureNotFoundException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -42,7 +43,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Procedures. Calls inbound ports only; hydration and persistence live behind
- * {@code ProcedureOpsPort} (issue #1801).
+ * {@code ProcedureOpsPort} (issue #1801). Write NotFound throws
+ * {@link ProcedureNotFoundException} mapped by {@link ProcedureExceptionHandler} (#577);
+ * ServerError still throws to GEH.
  */
 @RestController
 @RequestMapping("/api/v1/procedures")
@@ -117,10 +120,10 @@ public class ProcedureController {
     })
     @PostMapping
     @Operation(summary = "Create procedure")
-    public ResponseEntity<Object> create(@Valid @RequestBody ProcedureRequest request) {
+    public ResponseEntity<ProcedureResponse> create(@Valid @RequestBody ProcedureRequest request) {
         return switch (manageProcedures.create(toCommand(request))) {
             case SaveResult.Created created -> ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created.view()));
-            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
+            case SaveResult.NotFound ignored -> throw new ProcedureNotFoundException();
             case SaveResult.ServerError ignored -> throw new IllegalStateException("Procedure create failed");
             case SaveResult.Updated ignored -> throw new IllegalStateException("Unexpected Updated on procedure create");
         };
@@ -136,10 +139,10 @@ public class ProcedureController {
     @Operation(summary = "Update procedure",
             description = "idProcedureType is required (400 if it is missing); notes are stored as sent and "
                     + "a missing association keeps the current one.")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody ProcedureRequest request) {
+    public ResponseEntity<ProcedureResponse> update(@PathVariable Integer id, @Valid @RequestBody ProcedureRequest request) {
         return switch (manageProcedures.update(id, toCommand(request))) {
             case SaveResult.Updated updated -> ResponseEntity.ok(toResponse(updated.view()));
-            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
+            case SaveResult.NotFound ignored -> throw new ProcedureNotFoundException();
             case SaveResult.ServerError ignored -> throw new IllegalStateException("Procedure update failed");
             case SaveResult.Created ignored -> throw new IllegalStateException("Unexpected Created on procedure update");
         };
