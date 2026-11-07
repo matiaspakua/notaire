@@ -33,4 +33,3 @@ TestimonyMovementController#delete
 TestimonyMovementController#update
 UserController#login
 UserController#logout
-WorkflowValidationController#validate
