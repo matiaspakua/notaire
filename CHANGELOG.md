@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **api:** ProcedureType assignWorkflow returns typed DtoProcedureType via ProcedureTypeExceptionHandler (Refs #577)
 * **api:** TestimonyMovement create/update/delete return typed DTO/Void via TestimonyMovementExceptionHandler (Refs #577)
 * **api:** Testimony create/update/delete return typed DtoTestimony/Void via TestimonyExceptionHandler (Refs #577)
 * **api:** Substitution create returns typed SubstitutionResponse via SubstitutionExceptionHandler (Refs #577)

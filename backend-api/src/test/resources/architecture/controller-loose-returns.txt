@@ -9,7 +9,6 @@ ManagementController#updateCompleteCase
 ProcedureController#create
 ProcedureController#update
 ProcedureFolderController#putOnHold
-ProcedureTypeController#assignWorkflow
 RegistrationDraftController#generate
 RegistrationDraftController#observe
 RegistrationDraftController#recordRegistration
