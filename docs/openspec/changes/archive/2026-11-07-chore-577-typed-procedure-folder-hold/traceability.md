@@ -1,0 +1,45 @@
+# Traceability
+
+> Governed by [CONSTITUTION.md](../../../../CONSTITUTION.md) — P4 Traceability.
+
+## Chain
+
+```text
+Issue → Specification → Tasks → Commits → PR → Merge → Release
+```
+
+| Link | Reference | Status |
+|------|-----------|--------|
+| Issue | #577 | in-progress |
+| Use Case | CU85 | exists |
+| Specification | this change | passed |
+| Branch | `refactor/577_typed-procedure-folder-hold` | created |
+| Tasks | `tasks.md` | in progress |
+| Commits | pending | pending |
+| Pull Request | pending | pending |
+| CI run | pending | pending |
+| Merge commit | pending | pending |
+| Release / tag | pending | pending |
+| Smoke test | pending | pending |
+
+## Requirement coverage
+
+| Scenario | Test | Status |
+|----------|------|--------|
+| putOnHold leaves baseline | ControllerSignatureArchitectureTest | pending |
+
+## Permanent documentation updated
+
+| Document | Updated | Commit |
+|----------|---------|--------|
+| `CHANGELOG.md` | pending | pending |
+
+## Gate log
+
+| Gate | Passed | Evidence |
+|------|--------|----------|
+| 1 | yes | #577 |
+
+## Exceptions
+
+None.
