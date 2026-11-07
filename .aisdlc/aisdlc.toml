@@ -38,7 +38,45 @@ generic = [
 forbid_in_generic = ['notaire', 'backend-api', 'workspace/sdlc', 'docs/openspec', '\bCU-?\d{2}\b']
 
 [evidence]
-dir = ".aisdlc/evidence"
+dir = ".aisdlc/evidence"     # hash-chained; `aisdlc evidence verify` (cross-repo assessment 2026-11)
+
+# Owner-only paths: the policy, the gates, the merge path and the harness. Agents may propose a
+# change to them; the Owner merges it (CONSTITUTION §5 step 21, §10 Roles). The merge gate below
+# turns that sentence into an exit code (agentic-os C14-004; factory-control protectedPaths).
+[protected]
+owner = "the Owner (CODEOWNERS)"
+paths = [
+  "CONSTITUTION.md", "CONSTITUTION-AGENT-CARD.md", "AGENTS.md", "CLAUDE.md",
+  ".aisdlc/**", "framework/ai-sdlc/**",
+  ".claude/settings.json", ".claude/hooks/**", ".claude/agents/cloud-foreman.md", ".githooks/**",
+  ".github/CODEOWNERS", ".github/workflows/sdlc-process.yml",
+  "workspace/sdlc/preflight.sh", "workspace/sdlc/run_pipeline.sh", "workspace/sdlc/check-heavy-ci.sh",
+  "workspace/sdlc/check-sdlc-exception.sh", "workspace/sdlc/validate-sdlc-plan.sh",
+  "workspace/ci/agent-context-budget.py", "workspace/ci/enforce-quality-ratchet.py",
+  "security/apply-protect-main-ruleset.sh", "security/assert-protect-main-ruleset.sh",
+  "security/rulesets/**",
+  "docs/openspec/schemas/**", "docs/openspec/config.yaml",
+  "docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md",
+  "docs/300-development/304-ai-sdlc-cloud/fleet-manifest.yaml",
+  "local-ai/sdlc/foreman.sh",
+]
+
+# Review budget (gentle-ai pr-size-policy): a reviewer reads ≤400 changed lines in one sitting.
+# OpenSpec ceremony, lockfiles and generated files do not count. Advisory: domain-sized hex
+# slices (#1693) may exceed it; the PR body then says why it could not be split.
+[size]
+limit = 400
+exclude = [
+  "docs/openspec/**", "CHANGELOG.md", "**/package-lock.json", "**/pnpm-lock.yaml",
+  "**/*.snap", "frontend/src/**/generated/**", "**/src/test/resources/architecture/*.txt",
+  "frontend/eslint-suppressions.json",
+]
+
+# Write set (Notaire audit S2; agentic-os C15-006): the proposal's "### Write set" lists the paths
+# the change may touch. The archive folds deltas into docs/openspec/specs/, so those always pass.
+[scope]
+heading = "Write set"
+always = ["CHANGELOG.md", "docs/openspec/specs/**"]
 
 [roles.owner]
 tier = "human"
@@ -106,7 +144,29 @@ stage = "pre-pr"
 run = "bash workspace/sdlc/run_pipeline.sh"
 timeout = 7200
 
+[[gates]]
+name = "changed paths inside the write set"
+stage = "pre-pr"
+run = "aisdlc scope --base {base}"
+required = false               # advisory until every proposal carries a Write set
+
+[[gates]]
+name = "review budget (≤400 changed lines)"
+stage = "pre-pr"
+run = "aisdlc size --base {base}"
+required = false               # advisory: split into chained PRs, or say why not in the PR body
+
 # ── G4 reviewed (pass --var pr=<number>) ─────────────────────────────────────
+[[gates]]
+name = "owner-only paths untouched (else the Owner merges)"
+stage = "merge"
+run = "aisdlc protected --base {base}"
+
+[[gates]]
+name = "evidence ledger chain intact"
+stage = "merge"
+run = "aisdlc evidence verify"
+
 [[gates]]
 name = "heavy CI green on the PR head"
 stage = "merge"

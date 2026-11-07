@@ -41,7 +41,7 @@ Examples:
 - [ ] Unit tests added/updated
 - [ ] Integration tests passing
 - [ ] E2E tests passing (if applicable)
-- [ ] Test coverage: ___ % (target: ≥80%)
+- [ ] Coverage ratchet holds (JaCoCo floors in `backend-api/pom.xml`; `mvn jacoco:check`)
 - [ ] Manual testing completed
 
 ## Documentation
@@ -91,11 +91,33 @@ Examples:
 - [ ] No merge conflicts
 - [ ] Ready for review
 
+## Deviations from the approved change
+
+<!-- From tasks.md. Mechanical: what you checked. Decision: link the Owner's answer. -->
+
+- None
+
+## AI assistance
+
+<!-- Tool/model, the scope it produced or reviewed, and the verification you ran. -->
+
+- Agent / model:
+- Scope:
+- Verification (commands + exit codes):
+
+## Review budget
+
+<!-- `aisdlc size` output. Over 400 counted lines: why it could not be split into chained PRs. -->
+
 ## Reviewer Notes
 
 <!-- Anything specific reviewers should pay attention to -->
 
 ---
+
+Risk: none
+<!-- Or: Risk: <item> (<reason>) — stored data, a consumed contract, authn/authz, the merge path.
+     Owner-only paths (`aisdlc protected`) mean the Owner merges this PR. -->
 
 **Workflow Reference:** See `.claude/rules/ai-agent-workflow.md` for the mandatory development process.  
 **Merge Policy:** Requires approval from code owners before merging to main.

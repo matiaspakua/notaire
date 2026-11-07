@@ -108,6 +108,17 @@ class ScaffoldOpenspecChangeTest(unittest.TestCase):
         for scenario in ("first", "second", "third"):
             self.assertIn(f"| {scenario} | ExampleTest | pending |", traceability)
 
+    def test_write_set_lands_in_the_proposal_for_aisdlc_scope(self):
+        spec = {**SPEC, "write_set": ["workspace/sdlc/example.py", "workspace/tests/test_example.py"]}
+        self.spec_file.write_text(json.dumps(spec), encoding="utf-8")
+        self.scaffold()
+        proposal = (self.change / "proposal.md").read_text(encoding="utf-8")
+        self.assertIn("### Write set\n\n- `workspace/sdlc/example.py`\n- `workspace/tests/test_example.py`\n", proposal)
+
+    def test_proposal_without_write_set_has_no_empty_section(self):
+        self.scaffold()
+        self.assertNotIn("### Write set", (self.change / "proposal.md").read_text(encoding="utf-8"))
+
     def test_given_tasks_land_in_the_implementation_group(self):
         self.scaffold()
         tasks = (self.change / "tasks.md").read_text(encoding="utf-8")

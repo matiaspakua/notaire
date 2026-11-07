@@ -95,7 +95,7 @@ those scripts. Details: `docs/300-development/304-ai-sdlc-cloud/ENVIRONMENT-CHEC
 
 ## Loop (one issue at a time)
 
-```
+```text
 pick → triage brief → OpenSpec Gate 1 → branch + in-progress
   → dispatch tests (red) → dispatch implement → docs
   → preflight → PR → CI watch → code-review (+ security if needed)
@@ -111,6 +111,9 @@ pick → triage brief → OpenSpec Gate 1 → branch + in-progress
 | Gate 3 | `bash workspace/sdlc/run_pipeline.sh` when environment supports it |
 | CI | `bash workspace/sdlc/check-heavy-ci.sh <pr>` (Integration + Coverage + Bruno + Playwright); see `CI-MERGE-GATE.md` |
 | Smoke | `curl -sf` health URL from env (default `http://localhost:8080/actuator/health`) |
+| Owner-only paths | `python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml protected --base origin/main` — exit 1 ⇒ hand the PR to the Owner, do not merge |
+| Evidence anchor | `… aisdlc … evidence verify` → paste the printed head digest in the PR body; at merge, `evidence verify --anchor <digest>` must pass |
+| Write set / size (advisory) | `… aisdlc … scope` and `… size` (pre-pr); over budget ⇒ the PR body says why it was not split |
 
 ## Dispatch
 
@@ -119,9 +122,16 @@ from `fleet-manifest.yaml` (`openspec-planner`, `backend-implementer`,
 `frontend-design`, `testing-qa`, `java-architect`, `devops-engineer`,
 `security-auditor`, `code-reviewer`, `sync_issues_and_code`, `project-manager`).
 
-On specialist return, require a **handoff result** with `commands_run` and exit codes.
-Retry the same phase with `prior_gate_log` attached (max 2–3 attempts) then escalate model
-(`model_upgrade`) or stop with `BLOCKED`.
+On specialist return, require a **handoff result** with `commands_run` and exit codes,
+the changed paths, and the deviations (mechanical, with what was checked; or a decision
+packet). Re-run the gate yourself; a report is feedback, never evidence. Compare the changed
+paths with the proposal's `### Write set` (`aisdlc scope`) before accepting the phase.
+
+**Bounded corrections:** one correction batch with `prior_gate_log` covering every blocker,
+then one re-check limited to those blockers. A second batch only when the *same* blocker still
+fails (optionally with `model_upgrade`); then stop with `BLOCKED` and a decision packet
+(`.claude/rules/ai-agent-workflow.md`). Reproduce a blocker on `main` first — behavior the
+change did not touch is an advisory, not a blocker.
 
 ## Issue pick rules
 

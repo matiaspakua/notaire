@@ -642,10 +642,19 @@ An AI agent **must**:
 - ✅ Adapt to the existing project architecture and conventions (do not replace them)
 - ✅ Reference the existing rule files (`AGENTS.md`, `.claude/rules/*`) for operational detail
 - ✅ Treat human review as authoritative when conflicts arise
+- ✅ **Stop with a decision packet, record deviations, bound corrections, state the risk**
+  (cross-repo assessment 2026-11): a question for the Owner is a packet (context,
+  alternatives with consequences, a recommendation marked as a proposal; ≤3 questions);
+  a deviation from the approved OpenSpec change is recorded as *mechanical* (with what
+  was checked) or stopped as a *decision*; review corrections run one batch plus one
+  re-check, then stop; every PR states `Risk: <item> (<reason>)` or `Risk: none`. Operational detail:
+  `.claude/rules/ai-agent-workflow.md` § Decisions, deviations, corrections and risk
 - ✅ **Merge authority:** only the Foreman merges, and only under the Foreman
   merge rule (§5 step 21). A PR is ready when `bash workspace/sdlc/preflight.sh --full`
   has passed. `bash workspace/sdlc/check-heavy-ci.sh <pr>` must exit 0; it does
-  not wait for GitHub jobs that no longer run on pull requests. Details:
+  not wait for GitHub jobs that no longer run on pull requests. The `merge` stage of
+  `.aisdlc/aisdlc.toml` runs `aisdlc protected`: a PR that touches an owner-only path
+  (policy, gates, harness, merge path) fails it and goes to the Owner. Details:
   [`docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md`](docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md)
 - ✅ **Serialize** Playwright-heavy PRs (one at a time on shared runners); draft
   Dependabot PRs when they starve the queue
@@ -800,6 +809,9 @@ drift.
 | Stack-agnostic framework (#1958) | `framework/ai-sdlc/` (`aisdlc` kit) with Notaire's profile `.aisdlc/aisdlc.toml`: stages map onto the scripts in this table; report `docs/300-development/306-ai-sdlc-framework/ai_sdlc_framework.md` |
 | Baselines only shrink (#1958) | `aisdlc ratchet --base <base>` — ArchUnit and ESLint baselines may not gain an entry versus `main` (`preflight.sh`, Process Checks); the owning tests still fail stale entries |
 | Skills catalog lint (#1958) | `aisdlc skills` — every skill has a `SKILL.md` with a description, names are unique, generic skills carry no Notaire-only pattern (`preflight.sh`, Process Checks, Main Health) |
+| Owner-only paths (Foreman merge rule) | `aisdlc protected --base origin/main` — `[protected]` in `.aisdlc/aisdlc.toml` lists the policy, gate, harness and merge-path files; the `merge` stage fails when a PR touches one, so the Owner merges it |
+| Review budget and write set (advisory) | `aisdlc size` — ≤400 changed lines excluding OpenSpec ceremony and generated files (split into chained PRs, or say why not); `aisdlc scope` — changed paths stay inside the proposal's `### Write set` (Notaire audit S2); both in the `pre-pr` stage |
+| Evidence integrity | `aisdlc evidence verify` — the ledger and cost log are hash-chained; the verifier prints the head digest to anchor in the PR |
 | Local-AI harness | `local-ai/sdlc/foreman.sh`; harness self-tests in `local-ai/sdlc/tests/` |
 | Unit + Integration tests | `mvn test -pl backend-api`; `mvn verify -pl backend-api` |
 | Coverage | JaCoCo ratchet floor (`mvn jacoco:check`); CI job `coverage` |
