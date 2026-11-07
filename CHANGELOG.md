@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **api:** Notebook create returns typed NotebookResponse via NotebookExceptionHandler (Refs #577)
 * **api:** Person create/update/delete return typed PersonResponse/Void via PersonExceptionHandler (Refs #577)
 * **api:** WorkflowValidation validate returns typed WorkflowValidationResponse (Refs #577)
 * **api:** Concept create/update/delete return typed DTO/Void via ConceptExceptionHandler (Refs #577)
