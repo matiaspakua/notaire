@@ -82,6 +82,17 @@
 - Configuration / `.env`:
 - Dependencies:
 
+### Write set
+
+<!-- The paths this change may touch, one glob per item in backticks (a folder covers
+     everything under it). `aisdlc scope` (pre-pr stage) compares the PR diff with this list:
+     a path outside it is a planning gap or scope creep. Planned NEW files belong here too.
+     Example:
+- `backend-api/src/main/java/com/notaire/<module>/**`
+- `backend-api/src/test/java/com/notaire/<module>/**`
+- `frontend/src/app/<route>/**`
+-->
+
 ### Architecture review
 
 <!-- Does this follow the existing architecture (repository over legacy jpa, design

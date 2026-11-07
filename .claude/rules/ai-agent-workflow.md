@@ -51,6 +51,54 @@ Then confirm the push landed: `git ls-remote --heads origin <branch>`. Wrapped
 or filtered output (RTK) can print `ok` while the pre-push preflight rejected it.
 If an open PR shows `CONFLICTING`/`DIRTY`, fix it before starting other work.
 
+## Decisions, deviations, corrections and risk
+
+Adopted from the cross-repo assessment (2026-11, `docs/300-development/306-ai-sdlc-framework/CROSS-ASSESSMENT-2026-11.md`).
+
+**Decision packet.** When you need the Owner, stop and send one packet, not a chat thread:
+
+```text
+Decision needed: <one line, plain words>
+Context: <what is true now, with the evidence: command, file:line, issue>
+Options:
+  A. <option> — consequence: <what it changes, costs, risks>
+  B. <option> — consequence: <…>
+Recommendation (proposal): <A or B, and why>
+```
+
+At most three related questions per message. Ask only when the answer changes scope, a
+contract, data, permissions, cost, an accepted risk or delivery; resolve a routine detail inside
+the task (a local name, an error type) with a sensible default and record it in `tasks.md`.
+
+**Deviations from the approved OpenSpec change.** Record each one in the change's `tasks.md`:
+
+- *Mechanical* — it only applies what the proposal, design, tests or a recorded Owner decision
+  already say. Record it with what you checked: "does not change scope/contract/data/permissions",
+  "applies convention X (source)", or "executes decision Y (link)".
+- *Decision* — it changes the objective, scope, an API or DB contract, data, permissions or an
+  accepted risk. Stop with a decision packet **before** the commit; update the change after the
+  answer (`openspec-update-change`). Missing information never makes a deviation mechanical.
+
+**Write set.** The proposal's `### Write set` lists the paths the change may touch (globs in
+backticks). `aisdlc scope` compares the PR diff with it; a path outside it is either a planning
+gap (update the proposal) or scope creep (take it out).
+
+**Bounded corrections.** A Foreman review or a failing gate gets one correction batch covering
+every blocker, then one re-check limited to those blockers. A second batch only when the same
+blocker still fails; after that, stop with a decision packet (or `BLOCKED`), never a third blind
+attempt. Reproduce a blocker on `main` first: behavior the change did not touch is an advisory,
+not a blocker of this PR.
+
+**Tests: RED per rule, PRESERVE per touched behavior.** One failing test per acceptance scenario
+(Gate 2), plus one test per existing behavior the change touches (shares the changed code) that
+proves it still holds. No padding tests that assert nothing new.
+
+**Risk line.** Every PR body ends with `Risk: <item> (<reason>)` or `Risk: none`. High-risk items:
+changing or deleting stored data (Flyway on existing rows), changing a contract others consume
+(REST shape, OpenAPI, events), authentication/authorization, and the merge path itself. Before
+writing `Risk: none`, check whether the diff changes code that behavior you were not asked to
+change also uses.
+
 ## Checked mechanically
 
 These run in `workspace/sdlc/preflight.sh` on every pull request and in `sdlc-process.yml` on a version tag:
@@ -59,6 +107,12 @@ These run in `workspace/sdlc/preflight.sh` on every pull request and in `sdlc-pr
 - a PR that changes production code also changes tests;
 - a PR without an OpenSpec change carries the Owner's `sdlc-exception` label;
 - the always-loaded rule files are non-empty and reference paths that exist.
+
+The kit stages add (`python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml gate <stage>`):
+
+- `pre-pr` (advisory): `aisdlc scope` (write set) and `aisdlc size` (≤400 counted lines);
+- `merge`: `aisdlc protected` — a PR touching an owner-only path goes to the Owner — and
+  `aisdlc evidence verify` (hash-chained ledger).
 
 `validate-sdlc-plan.sh` (in `pr-validation.yml`) checks every OpenSpec change.
 
