@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.licensis.notaire.application.port.in.substitution.ManageSubstitutionsUseCase;
+import com.licensis.notaire.domain.substitution.SubstitutionBadRequestException;
+import com.licensis.notaire.domain.substitution.SubstitutionNotFoundException;
 import com.licensis.notaire.application.port.in.substitution.QuerySubstitutionsUseCase;
 import com.licensis.notaire.application.port.out.substitution.SubstitutionOpsPort.DeleteResult;
 import com.licensis.notaire.application.port.out.substitution.SubstitutionOpsPort.PersonView;
@@ -31,7 +33,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 /**
- * Substitutions. Calls inbound ports only; person hydration and persistence live behind
+ * Substitutions. Calls inbound ports only; create failures throw domain exceptions mapped by {@link SubstitutionExceptionHandler} (#577); person hydration and persistence live behind
  * {@code SubstitutionOpsPort} (issue #1807).
  */
 @RestController
@@ -153,13 +155,13 @@ public class SubstitutionController {
     })
     @PostMapping
     @Operation(summary = "Create substitution")
-    public ResponseEntity<Object> create(@Valid @RequestBody SubstitutionRequest request) {
+    public ResponseEntity<SubstitutionResponse> create(@Valid @RequestBody SubstitutionRequest request) {
         return switch (manageSubstitutions.create(toCommand(request))) {
             case SaveResult.Created created -> ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created.view()));
-            case SaveResult.BadRequest ignored -> ResponseEntity.badRequest().build();
+            case SaveResult.BadRequest ignored -> throw new SubstitutionBadRequestException();
             case SaveResult.ServerError ignored -> throw new IllegalStateException("Substitution create failed");
             case SaveResult.Updated ignored -> throw new IllegalStateException("Unexpected Updated on substitution create");
-            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
+            case SaveResult.NotFound ignored -> throw new SubstitutionNotFoundException();
         };
     }
 
