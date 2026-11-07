@@ -9,7 +9,6 @@ ManagementController#createCompleteCase
 ManagementController#getWorkflowTrace
 ManagementController#transition
 ManagementController#updateCompleteCase
-NotebookController#createNotebook
 ProcedureController#create
 ProcedureController#update
 ProcedureFolderController#putOnHold
