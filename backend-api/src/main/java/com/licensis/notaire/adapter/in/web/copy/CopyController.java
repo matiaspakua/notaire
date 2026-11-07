@@ -2,7 +2,6 @@ package com.licensis.notaire.adapter.in.web.copy;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.licensis.notaire.application.port.in.copy.ManageCopiesUseCase;
+import com.licensis.notaire.domain.copy.CopyConflictException;
+import com.licensis.notaire.domain.copy.CopyNotFoundException;
 import com.licensis.notaire.application.port.in.copy.QueryCopiesUseCase;
 import com.licensis.notaire.application.port.out.copy.CopyOpsPort.CopyCommand;
 import com.licensis.notaire.application.port.out.copy.CopyOpsPort.CopyView;
@@ -32,7 +33,7 @@ import jakarta.validation.constraints.NotNull;
 
 /**
  * Copies. Calls inbound ports only; orchestration and persistence live in the use cases
- * (issue #1779).
+ * (issue #1779). Create failures throw domain exceptions mapped by {@link CopyExceptionHandler} (#577).
  */
 @RestController
 @RequestMapping("/api/v1/copies")
@@ -97,14 +98,13 @@ public class CopyController {
     })
     @PostMapping
     @Operation(summary = "Create copy")
-    public ResponseEntity<Object> create(@Valid @RequestBody CopyRequest request) {
+    public ResponseEntity<CopyResponse> create(@Valid @RequestBody CopyRequest request) {
         return switch (manageCopies.create(toCommand(request))) {
             case SaveResult.Created created -> ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created.view()));
-            case SaveResult.Conflict conflict -> ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", conflict.message()));
+            case SaveResult.Conflict conflict -> throw new CopyConflictException(conflict.message());
             case SaveResult.ServerError ignored -> throw new IllegalStateException("Copy create failed");
             case SaveResult.Updated ignored -> throw new IllegalStateException("Unexpected Updated on copy create");
-            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
+            case SaveResult.NotFound ignored -> throw new CopyNotFoundException();
         };
     }
 
