@@ -14,8 +14,5 @@ RegistrationDraftController#generate
 RegistrationDraftController#observe
 RegistrationDraftController#recordRegistration
 RegistrationDraftController#submit
-TestimonyMovementController#create
-TestimonyMovementController#delete
-TestimonyMovementController#update
 UserController#login
 UserController#logout
