@@ -9,7 +9,7 @@ business, architecture, and development.
 |---------|-----------|
 | [`100-business/`](100-business/) | Requirements, use cases, actors, and business traceability |
 | [`200-architecture/`](200-architecture/) | SAD (arc42), ADRs, design, diagrams, data model, security, monitoring, DevSecOps, and deployment |
-| [`300-development/`](300-development/) | Setup guides, code standards, testing, and the [AI SDLC Cloud fleet](300-development/304-ai-sdlc-cloud/); current audit: [DOCUMENTATION-AUDIT-2026-10.md](300-development/DOCUMENTATION-AUDIT-2026-10.md) |
+| [`300-development/`](300-development/) | Setup guides, code standards, testing, and the [AI SDLC Cloud fleet](300-development/304-ai-sdlc-cloud/); current audit: [DOCUMENTATION-AUDIT-2026-11.md](300-development/DOCUMENTATION-AUDIT-2026-11.md), previous: [DOCUMENTATION-AUDIT-2026-10.md](300-development/DOCUMENTATION-AUDIT-2026-10.md) |
 | [`github/`](github/) | GitHub organization (board, milestones, labels) and the September 2026 production-readiness audit |
 | [`300-development/305-project-management/`](300-development/305-project-management/) | Project scheduling: history, delivery trains, requirements catalog, roadmap chart |
 | [`000-archive/`](000-archive/) | Superseded legacy documents and artifacts, kept for historical traceability |
@@ -22,6 +22,10 @@ business, architecture, and development.
 4. **Architecture**: [SAD](200-architecture/201-SAD/sad.md) — the full arc42 view of the system.
 5. **Development**: [`CLAUDE.md`](../CLAUDE.md) and [`CONSTITUTION.md`](../CONSTITUTION.md) — the mandatory workflow for any code change.
 6. **Delivery**: [GitHub organization](github/README.md) — where the work is tracked and how it is labeled.
+
+The public site renders this tree as a guided story. Its
+[Engineering artifacts](https://matiaspakua.github.io/notaire/docs/artifacts/) page walks every
+artifact below in order, from requirement to runbook, with counts read from the repository.
 
 ## Conventions
 
