@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **frontend:** Login presents one desk card and a token-timed seal with no rotation (Refs #2069)
 * **api:** ProcedureFolder putOnHold returns typed DtoProcedureFolder via advice (Refs #577)
 * **api:** Procedure create/update return typed ProcedureResponse via ProcedureExceptionHandler (Refs #577)
 * **api:** ProcedureType assignWorkflow returns typed DtoProcedureType via ProcedureTypeExceptionHandler (Refs #577)
