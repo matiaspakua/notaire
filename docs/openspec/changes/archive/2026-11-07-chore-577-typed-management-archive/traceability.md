@@ -15,7 +15,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | this change | passed |
 | Branch | `refactor/577_typed-management-archive` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
+| Commits | `c2e4a1a6`, `b4de7894` | created |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -26,15 +26,15 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario | Test | Status |
 |----------|------|--------|
-| archiving leaves the loose baseline | `ControllerSignatureArchitectureTest` | pending |
-| Missing management and waiting folders keep their HTTP bodies | `ManagementArchiveControllerTest` | pending |
+| archiving leaves the loose baseline | `ControllerSignatureArchitectureTest` | passing |
+| Missing management and waiting folders keep their HTTP bodies | `ManagementArchiveControllerTest` | passing |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `CHANGELOG.md` | pending | pending |
-| `docs/openspec/specs/controller-typed-returns/spec.md` | pending | pending |
+| `CHANGELOG.md` | yes | `c2e4a1a6` |
+| `docs/openspec/specs/controller-typed-returns/spec.md` | yes | `c2e4a1a6` |
 
 ## Gate log
 
