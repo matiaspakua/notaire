@@ -13,9 +13,6 @@ ProcedureController#create
 ProcedureController#update
 ProcedureFolderController#putOnHold
 ProcedureTypeController#assignWorkflow
-ProcedureTypeController#create
-ProcedureTypeController#delete
-ProcedureTypeController#update
 RegistrationDraftController#generate
 RegistrationDraftController#observe
 RegistrationDraftController#recordRegistration

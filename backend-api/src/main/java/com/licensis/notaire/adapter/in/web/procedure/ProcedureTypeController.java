@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.adapter.in.web.support.RequiredFields;
 import com.licensis.notaire.application.port.in.procedure.ManageProcedureTypesUseCase;
 import com.licensis.notaire.application.port.in.procedure.QueryProcedureTypesUseCase;
@@ -25,6 +24,9 @@ import com.licensis.notaire.application.port.out.procedure.ProcedureTypeOpsPort;
 import com.licensis.notaire.application.port.out.procedure.ProcedureTypeOpsPort.DeleteResult;
 import com.licensis.notaire.application.port.out.procedure.ProcedureTypeOpsPort.SaveResult;
 import com.licensis.notaire.application.port.out.procedure.ProcedureTypeOpsPort.WorkflowAssignResult;
+import com.licensis.notaire.domain.procedure.ProcedureTypeInUseException;
+import com.licensis.notaire.domain.procedure.ProcedureTypeNotFoundException;
+import com.licensis.notaire.domain.procedure.ProcedureTypeOperationFailedException;
 import com.licensis.notaire.dto.DtoProcedureType;
 import com.licensis.notaire.exception.BusinessValidationException;
 
@@ -37,7 +39,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Procedure types. Calls inbound ports only; orchestration and persistence live in the use cases
- * (issue #1791).
+ * (issue #1791). Write failures throw domain exceptions mapped by
+ * {@link ProcedureTypeExceptionHandler} (#577).
  */
 @RestController
 @RequestMapping("/api/v1/procedure-types")
@@ -114,13 +117,17 @@ public class ProcedureTypeController {
     })
     @PostMapping
     @Operation(summary = "Create procedure type")
-    public ResponseEntity<Object> create(@Valid @RequestBody ProcedureTypeWriteRequest request) {
+    public ResponseEntity<DtoProcedureType> create(@Valid @RequestBody ProcedureTypeWriteRequest request) {
         return switch (manageProcedureTypes.create(request.toDto())) {
             case SaveResult.Created created -> ResponseEntity.status(HttpStatus.CREATED).body(created.dto());
-            case SaveResult.Failed failed -> ErrorResponses.createFailed(failed.cause());
-            case SaveResult.Updated ignored -> ResponseEntity.internalServerError().build();
-            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case SaveResult.InUse inUse -> ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", inUse.message()));
+            case SaveResult.Failed failed ->
+                throw new ProcedureTypeOperationFailedException(
+                        ProcedureTypeOperationFailedException.Kind.CREATE, failed.cause());
+            case SaveResult.Updated ignored ->
+                throw new ProcedureTypeOperationFailedException(
+                        ProcedureTypeOperationFailedException.Kind.CREATE, new IllegalStateException("unexpected Updated"));
+            case SaveResult.NotFound ignored -> throw new ProcedureTypeNotFoundException();
+            case SaveResult.InUse inUse -> throw new ProcedureTypeInUseException(inUse.message());
         };
     }
 
@@ -132,13 +139,17 @@ public class ProcedureTypeController {
     })
     @PutMapping("/{id}")
     @Operation(summary = "Update procedure type")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody ProcedureTypeWriteRequest request) {
+    public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody ProcedureTypeWriteRequest request) {
         return switch (manageProcedureTypes.update(id, request.toDto())) {
             case SaveResult.Updated ignored -> ResponseEntity.ok().build();
-            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case SaveResult.InUse inUse -> ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", inUse.message()));
-            case SaveResult.Failed failed -> ErrorResponses.updateFailed(failed.cause());
-            case SaveResult.Created ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.NotFound ignored -> throw new ProcedureTypeNotFoundException();
+            case SaveResult.InUse inUse -> throw new ProcedureTypeInUseException(inUse.message());
+            case SaveResult.Failed failed ->
+                throw new ProcedureTypeOperationFailedException(
+                        ProcedureTypeOperationFailedException.Kind.UPDATE, failed.cause());
+            case SaveResult.Created ignored ->
+                throw new ProcedureTypeOperationFailedException(
+                        ProcedureTypeOperationFailedException.Kind.UPDATE, new IllegalStateException("unexpected Created"));
         };
     }
 
@@ -148,11 +159,11 @@ public class ProcedureTypeController {
     })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete procedure type")
-    public ResponseEntity<Object> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         return switch (manageProcedureTypes.delete(id)) {
             case DeleteResult.Deleted ignored -> ResponseEntity.noContent().build();
-            case DeleteResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case DeleteResult.InUse inUse -> ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", inUse.message()));
+            case DeleteResult.NotFound ignored -> throw new ProcedureTypeNotFoundException();
+            case DeleteResult.InUse inUse -> throw new ProcedureTypeInUseException(inUse.message());
         };
     }
 
