@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.adapter.in.web.procedure.ProcedureFolderController;
+import com.licensis.notaire.adapter.in.web.procedure.ProcedureFolderExceptionHandler;
 import com.licensis.notaire.application.port.in.procedure.ManageProcedureFoldersUseCase;
 import com.licensis.notaire.application.port.in.procedure.QueryProcedureFoldersUseCase;
 import com.licensis.notaire.application.port.out.procedure.ProcedureFolderOpsPort.HoldResult;
@@ -46,7 +47,7 @@ class ProcedureFolderControllerTest {
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(
                         new ProcedureFolderController(queryProcedureFolders, manageProcedureFolders))
-                .setControllerAdvice(new GlobalExceptionHandler())
+                .setControllerAdvice(new ProcedureFolderExceptionHandler(), new GlobalExceptionHandler())
                 .build();
         mapper = new ObjectMapper();
     }

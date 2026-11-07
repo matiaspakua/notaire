@@ -47,6 +47,7 @@ Issue #577 typed returns via `ProcedureFolderExceptionHandler`.
 - `backend-api/src/main/java/com/licensis/notaire/adapter/in/web/procedure/ProcedureFolderController.java`
 - `backend-api/src/main/java/com/licensis/notaire/adapter/in/web/procedure/ProcedureFolderExceptionHandler.java`
 - `backend-api/src/main/java/com/licensis/notaire/domain/procedure/ProcedureFolder*.java`
+- `backend-api/src/test/java/com/licensis/notaire/unit/ProcedureFolderControllerTest.java`
 - `backend-api/src/test/resources/architecture/controller-loose-returns.txt`
 - `docs/openspec/changes/**`
 
