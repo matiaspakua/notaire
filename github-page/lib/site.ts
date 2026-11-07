@@ -78,6 +78,7 @@ export const DOCS_GROUPS: PageGroup[] = [
     label: "Start here",
     pages: [
       { href: "/docs/", title: "Overview", summary: "Map of the technical documentation.", keywords: "docs index start" },
+      { href: "/docs/artifacts/", title: "Engineering artifacts", summary: "Every artifact from requirement to runbook: what it is, why it exists, how it was made.", keywords: "artifacts requirements use cases sad arc42 decision records diagrams test plan test cases threat model stride security spec traceability openspec deployment monitoring manuals" },
       { href: "/docs/stack/", title: "Technology stack", summary: "Every major technology and pattern, with versions read from the repo.", keywords: "stack technologies versions java spring next react postgres patterns assessment" },
     ],
   },
