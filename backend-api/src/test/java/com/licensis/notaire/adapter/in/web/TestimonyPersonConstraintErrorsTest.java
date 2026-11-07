@@ -3,6 +3,7 @@ package com.licensis.notaire.adapter.in.web;
 import com.licensis.notaire.adapter.in.web.person.PersonController;
 import com.licensis.notaire.adapter.in.web.person.PersonExceptionHandler;
 import com.licensis.notaire.adapter.in.web.testimony.TestimonyController;
+import com.licensis.notaire.adapter.in.web.testimony.TestimonyExceptionHandler;
 import com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementController;
 import com.licensis.notaire.config.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
@@ -51,9 +52,14 @@ class TestimonyPersonConstraintErrorsTest {
             Class<?> parameter = constructor.getParameterTypes()[i];
             args[i] = collaborators.containsKey(parameter) ? collaborators.get(parameter) : mock(parameter);
         }
-        Object[] advice = type == PersonController.class
-                ? new Object[] {new PersonExceptionHandler(), new GlobalExceptionHandler()}
-                : new Object[] {new GlobalExceptionHandler()};
+        Object[] advice;
+        if (type == PersonController.class) {
+            advice = new Object[] {new PersonExceptionHandler(), new GlobalExceptionHandler()};
+        } else if (type == TestimonyController.class) {
+            advice = new Object[] {new TestimonyExceptionHandler(), new GlobalExceptionHandler()};
+        } else {
+            advice = new Object[] {new GlobalExceptionHandler()};
+        }
         return standaloneSetup(constructor.newInstance(args))
                 .setControllerAdvice(advice)
                 .build();

@@ -13,12 +13,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.adapter.in.web.support.RequiredFields;
 import com.licensis.notaire.application.port.in.testimony.ManageTestimoniesUseCase;
 import com.licensis.notaire.application.port.in.testimony.QueryTestimoniesUseCase;
 import com.licensis.notaire.application.port.out.testimony.TestimonyOpsPort.DeleteResult;
 import com.licensis.notaire.application.port.out.testimony.TestimonyOpsPort.SaveResult;
+import com.licensis.notaire.domain.testimony.TestimonyConflictException;
+import com.licensis.notaire.domain.testimony.TestimonyNotFoundException;
+import com.licensis.notaire.domain.testimony.TestimonyOperationFailedException;
+import com.licensis.notaire.domain.testimony.TestimonyStaleVersionException;
+import com.licensis.notaire.domain.testimony.TestimonyUnexpectedResultException;
 import com.licensis.notaire.dto.DtoDeed;
 import com.licensis.notaire.dto.DtoTestimony;
 
@@ -32,7 +36,8 @@ import jakarta.validation.constraints.NotNull;
 
 /**
  * Testimonies. Calls inbound ports only; orchestration and persistence live in the use cases
- * (issue #1783).
+ * (issue #1783). Write failures throw domain exceptions mapped by {@link TestimonyExceptionHandler}
+ * (#577).
  */
 @RestController
 @RequestMapping("/api/v1/testimonies")
@@ -164,13 +169,16 @@ public class TestimonyController {
     })
     @PostMapping
     @Operation(summary = "Create testimony")
-    public ResponseEntity<Object> create(@Valid @RequestBody TestimonyCreateRequest dto) {
+    public ResponseEntity<DtoTestimony> create(@Valid @RequestBody TestimonyCreateRequest dto) {
         return switch (manageTestimonies.create(dto)) {
             case SaveResult.Created created -> ResponseEntity.status(HttpStatus.CREATED).body(created.dto());
-            case SaveResult.Failed failed -> ErrorResponses.createFailed(failed.cause());
-            case SaveResult.Updated ignored -> ResponseEntity.internalServerError().build();
-            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case SaveResult.StaleVersion ignored -> ErrorResponses.staleVersion();
+            case SaveResult.Failed failed ->
+                throw new TestimonyOperationFailedException(
+                        TestimonyOperationFailedException.Operation.CREATE, failed.cause());
+            case SaveResult.Updated ignored ->
+                throw new TestimonyUnexpectedResultException("unexpected Updated on create");
+            case SaveResult.NotFound ignored -> throw new TestimonyNotFoundException();
+            case SaveResult.StaleVersion ignored -> throw new TestimonyStaleVersionException();
         };
     }
 
@@ -186,14 +194,17 @@ public class TestimonyController {
             description = "Replaces the testimony. number, flagged, verified, and version are required (400 if "
                     + "any of them is missing); notes are stored as sent, and a missing deed keeps the current one. "
                     + "version is the one that was read: a mismatch with the stored version responds 409 (optimistic lock).")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody TestimonyUpdateRequest dto) {
+    public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody TestimonyUpdateRequest dto) {
         dto.requireComplete();
         return switch (manageTestimonies.update(id, dto)) {
             case SaveResult.Updated ignored -> ResponseEntity.ok().build();
-            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case SaveResult.StaleVersion ignored -> ErrorResponses.staleVersion();
-            case SaveResult.Failed failed -> ErrorResponses.updateFailed(failed.cause());
-            case SaveResult.Created ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.NotFound ignored -> throw new TestimonyNotFoundException();
+            case SaveResult.StaleVersion ignored -> throw new TestimonyStaleVersionException();
+            case SaveResult.Failed failed ->
+                throw new TestimonyOperationFailedException(
+                        TestimonyOperationFailedException.Operation.UPDATE, failed.cause());
+            case SaveResult.Created ignored ->
+                throw new TestimonyUnexpectedResultException("unexpected Created on update");
         };
     }
 
@@ -206,12 +217,12 @@ public class TestimonyController {
     @Operation(summary = "Delete testimony",
             description = "Deletes a testimony that has no registry movements and no issued copies. Otherwise "
                     + "answers 409 with the reason and keeps everything: they are part of the deed's history.")
-    public ResponseEntity<Object> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         return switch (manageTestimonies.delete(id)) {
             case DeleteResult.Deleted ignored -> ResponseEntity.noContent().build();
-            case DeleteResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case DeleteResult.InUse inUse -> ResponseEntity.status(HttpStatus.CONFLICT).body(inUse.message());
-            case DeleteResult.Conflict conflict -> ResponseEntity.status(HttpStatus.CONFLICT).body(conflict.message());
+            case DeleteResult.NotFound ignored -> throw new TestimonyNotFoundException();
+            case DeleteResult.InUse inUse -> throw new TestimonyConflictException(inUse.message());
+            case DeleteResult.Conflict conflict -> throw new TestimonyConflictException(conflict.message());
         };
     }
 
