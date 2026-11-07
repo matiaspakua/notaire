@@ -2,10 +2,12 @@ package com.licensis.notaire.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.adapter.in.web.registrationdraft.RegistrationDraftController;
+import com.licensis.notaire.adapter.in.web.registrationdraft.RegistrationDraftExceptionHandler;
 import com.licensis.notaire.application.port.in.registrationdraft.ManageRegistrationDraftsUseCase;
 import com.licensis.notaire.application.port.in.registrationdraft.QueryRegistrationDraftsUseCase;
 import com.licensis.notaire.application.port.out.registrationdraft.RegistrationDraftOpsPort.DraftResult;
 import com.licensis.notaire.business.BusinessConstants;
+import com.licensis.notaire.config.GlobalExceptionHandler;
 import com.licensis.notaire.dto.DtoRegistrationDraft;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +30,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,6 +53,7 @@ class RegistrationDraftControllerTest {
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(
                         new RegistrationDraftController(queryRegistrationDrafts, manageRegistrationDrafts))
+                .setControllerAdvice(new RegistrationDraftExceptionHandler(), new GlobalExceptionHandler())
                 .build();
         mapper = new ObjectMapper();
     }
@@ -120,7 +124,35 @@ class RegistrationDraftControllerTest {
         mockMvc.perform(post("/api/v1/registration-drafts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new RegistrationDraftController.GenerateRequest(999))))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(""));
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/registration-drafts/{id}/submit returns 400 when the draft cannot be submitted")
+    void shouldRejectSubmissionWhenInvalid() throws Exception {
+        when(manageRegistrationDrafts.submit(any(), any(), anyString()))
+                .thenReturn(new DraftResult.Invalid("The registration draft is not in status Generada"));
+
+        mockMvc.perform(put("/api/v1/registration-drafts/1/submit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(
+                                new RegistrationDraftController.SubmitRequest(new Date(), "ENT-123"))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("The registration draft is not in status Generada"));
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/registration-drafts/{id}/submit returns 404 when the draft does not exist")
+    void shouldReturnNotFoundWhenSubmittingMissingDraft() throws Exception {
+        when(manageRegistrationDrafts.submit(any(), any(), anyString())).thenReturn(new DraftResult.NotFound());
+
+        mockMvc.perform(put("/api/v1/registration-drafts/999/submit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(
+                                new RegistrationDraftController.SubmitRequest(new Date(), "ENT-123"))))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(""));
     }
 
     @Test
@@ -152,6 +184,33 @@ class RegistrationDraftControllerTest {
     }
 
     @Test
+    @DisplayName("PUT /api/v1/registration-drafts/{id}/observe returns 400 when the draft is not submitted")
+    void shouldRejectObservationWhenInvalid() throws Exception {
+        when(manageRegistrationDrafts.observe(anyInt(), anyString(), any()))
+                .thenReturn(new DraftResult.Invalid("The registration draft is not submitted"));
+
+        mockMvc.perform(put("/api/v1/registration-drafts/1/observe")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(
+                                new RegistrationDraftController.ObserveRequest("Missing plan", new Date()))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("The registration draft is not submitted"));
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/registration-drafts/{id}/observe returns 404 when the draft does not exist")
+    void shouldReturnNotFoundWhenObservingMissingDraft() throws Exception {
+        when(manageRegistrationDrafts.observe(anyInt(), anyString(), any())).thenReturn(new DraftResult.NotFound());
+
+        mockMvc.perform(put("/api/v1/registration-drafts/999/observe")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(
+                                new RegistrationDraftController.ObserveRequest("Missing plan", new Date()))))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(""));
+    }
+
+    @Test
     @DisplayName("PUT /api/v1/registration-drafts/{id}/register registers the final registration")
     void shouldRegisterFinalRegistration() throws Exception {
         when(manageRegistrationDrafts.recordRegistration(anyInt(), any(), anyString()))
@@ -163,5 +222,33 @@ class RegistrationDraftControllerTest {
                                 new RegistrationDraftController.RegisterRequest(new Date(), "INS-456"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftRegistered));
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/registration-drafts/{id}/register returns 400 when the draft is not submitted")
+    void shouldRejectRegistrationWhenInvalid() throws Exception {
+        when(manageRegistrationDrafts.recordRegistration(anyInt(), any(), anyString()))
+                .thenReturn(new DraftResult.Invalid("The registration draft is not submitted"));
+
+        mockMvc.perform(put("/api/v1/registration-drafts/1/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(
+                                new RegistrationDraftController.RegisterRequest(new Date(), "INS-456"))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("The registration draft is not submitted"));
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/registration-drafts/{id}/register returns 404 when the draft does not exist")
+    void shouldReturnNotFoundWhenRegisteringMissingDraft() throws Exception {
+        when(manageRegistrationDrafts.recordRegistration(anyInt(), any(), anyString()))
+                .thenReturn(new DraftResult.NotFound());
+
+        mockMvc.perform(put("/api/v1/registration-drafts/999/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(
+                                new RegistrationDraftController.RegisterRequest(new Date(), "INS-456"))))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(""));
     }
 }
