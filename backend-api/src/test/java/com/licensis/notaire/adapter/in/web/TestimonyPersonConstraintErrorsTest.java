@@ -1,6 +1,7 @@
 package com.licensis.notaire.adapter.in.web;
 
 import com.licensis.notaire.adapter.in.web.person.PersonController;
+import com.licensis.notaire.adapter.in.web.person.PersonExceptionHandler;
 import com.licensis.notaire.adapter.in.web.testimony.TestimonyController;
 import com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementController;
 import com.licensis.notaire.config.GlobalExceptionHandler;
@@ -50,8 +51,11 @@ class TestimonyPersonConstraintErrorsTest {
             Class<?> parameter = constructor.getParameterTypes()[i];
             args[i] = collaborators.containsKey(parameter) ? collaborators.get(parameter) : mock(parameter);
         }
+        Object[] advice = type == PersonController.class
+                ? new Object[] {new PersonExceptionHandler(), new GlobalExceptionHandler()}
+                : new Object[] {new GlobalExceptionHandler()};
         return standaloneSetup(constructor.newInstance(args))
-                .setControllerAdvice(new GlobalExceptionHandler())
+                .setControllerAdvice(advice)
                 .build();
     }
 

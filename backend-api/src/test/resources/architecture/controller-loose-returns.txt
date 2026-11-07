@@ -10,9 +10,6 @@ ManagementController#getWorkflowTrace
 ManagementController#transition
 ManagementController#updateCompleteCase
 NotebookController#createNotebook
-PersonController#createPerson
-PersonController#deletePerson
-PersonController#updatePerson
 ProcedureController#create
 ProcedureController#update
 ProcedureFolderController#putOnHold
