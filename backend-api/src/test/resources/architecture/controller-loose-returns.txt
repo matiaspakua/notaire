@@ -6,9 +6,5 @@ ManagementController#createCompleteCase
 ManagementController#getWorkflowTrace
 ManagementController#transition
 ManagementController#updateCompleteCase
-RegistrationDraftController#generate
-RegistrationDraftController#observe
-RegistrationDraftController#recordRegistration
-RegistrationDraftController#submit
 UserController#login
 UserController#logout
