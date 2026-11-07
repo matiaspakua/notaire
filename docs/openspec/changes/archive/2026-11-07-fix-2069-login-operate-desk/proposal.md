@@ -81,6 +81,7 @@ entrance onto `frontend/src/theme/motion.ts`.
 - `DESIGN.md`
 - `PRODUCT.md`
 - `.impeccable/design.json`
+- `.impeccable/critique/**`
 
 ### Architecture review
 
