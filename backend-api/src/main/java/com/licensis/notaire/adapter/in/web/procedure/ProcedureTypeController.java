@@ -188,7 +188,7 @@ public class ProcedureTypeController {
     })
     @PutMapping("/{id}/workflow")
     @Operation(summary = "Assign or unassign a workflow on a procedure type")
-    public ResponseEntity<Object> assignWorkflow(@PathVariable Integer id,
+    public ResponseEntity<DtoProcedureType> assignWorkflow(@PathVariable Integer id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = WorkflowAssignmentRequest.class)))
@@ -201,9 +201,9 @@ public class ProcedureTypeController {
         Integer wfId = (Integer) wfIdObj;
         return switch (manageProcedureTypes.assignWorkflow(id, wfId)) {
             case WorkflowAssignResult.Ok ok -> ResponseEntity.ok(ok.dto());
-            case WorkflowAssignResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case WorkflowAssignResult.Inactive ignored -> ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", ProcedureTypeOpsPort.WORKFLOW_INACTIVE_MESSAGE));
+            case WorkflowAssignResult.NotFound ignored -> throw new ProcedureTypeNotFoundException();
+            case WorkflowAssignResult.Inactive ignored ->
+                throw new ProcedureTypeInUseException(ProcedureTypeOpsPort.WORKFLOW_INACTIVE_MESSAGE);
         };
     }
 }
