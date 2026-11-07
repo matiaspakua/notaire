@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.licensis.notaire.application.port.in.user.AuthenticateUserUseCase;
 import com.licensis.notaire.application.port.in.user.AuthenticateUserUseCase.Result;
 import com.licensis.notaire.application.port.in.user.ManageUsersUseCase;
@@ -29,6 +30,8 @@ import com.licensis.notaire.config.AuthCookieService;
 import com.licensis.notaire.config.JwtTokenService;
 import com.licensis.notaire.config.RequestTokenResolver;
 import com.licensis.notaire.config.TokenRevocationService;
+import com.licensis.notaire.domain.user.LoginLockedException;
+import com.licensis.notaire.domain.user.LoginRejectedException;
 import com.licensis.notaire.domain.user.User;
 import com.licensis.notaire.domain.user.UserNotFoundException;
 import com.licensis.notaire.observability.MetricsUtil;
@@ -82,6 +85,27 @@ public class UserController {
     }
 
     public record LoginRequest(@NotBlank String name, @NotBlank String password) { }
+
+    public record LoginPerson(Integer idPerson, String firstName, String lastName) { }
+
+    public record LoginSuccessResponse(
+            boolean valid,
+            String token,
+            Integer idUser,
+            String name,
+            boolean status,
+            String type,
+            int version,
+            @JsonInclude(JsonInclude.Include.NON_NULL) LoginPerson person) {
+
+        static LoginSuccessResponse of(User user, String jwt) {
+            LoginPerson person = user.personId() == null
+                    ? null
+                    : new LoginPerson(user.personId(), user.personFirstName(), user.personLastName());
+            return new LoginSuccessResponse(
+                    true, jwt, user.id(), user.name(), user.active(), user.type(), user.version(), person);
+        }
+    }
 
     record PersonInfo(Integer idPerson, String name, String lastName) { }
 
@@ -182,54 +206,21 @@ public class UserController {
     })
     @PostMapping("/login")
     @Operation(summary = "Authenticate user")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse httpResponse) {
-        try {
-            if (loginAttemptService.isLocked(loginRequest.name())) {
-                log.warn("Login locked for '{}': too many failed attempts.", loginRequest.name());
-                metricsUtil.incrementCounter("login", "locked");
-                Map<String, Object> lockedResponse = new HashMap<>();
-                lockedResponse.put("valid", false);
-                lockedResponse.put("message", "Account temporarily locked after too many failed attempts.");
-                return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(lockedResponse);
-            }
-
-            Result result = authenticate.authenticate(loginRequest.name(), loginRequest.password());
-            if (result instanceof Result.Failed failed) {
-                return handleAuthFailure(failed.failure(), loginRequest.name());
-            }
-            User user = ((Result.Success) result).user();
-            log.info("Login succeeded for user: '{}'", user.name());
-            metricsUtil.incrementCounter("login", "success");
-            loginAttemptService.onLoginSucceeded(user.name());
-
-            String jwt = jwtTokenService.generateToken(user.name());
-            Map<String, Object> response = new HashMap<>();
-            response.put("valid", true);
-            // Bearer token kept for Bruno/API clients; browsers use the HttpOnly cookie (#1051).
-            response.put("token", jwt);
-            response.put("idUser", user.id());
-            response.put("name", user.name());
-            response.put("status", user.active());
-            response.put("type", user.type());
-            response.put("version", user.version());
-            if (user.personId() != null) {
-                Map<String, Object> personMap = new HashMap<>();
-                personMap.put("idPerson", user.personId());
-                personMap.put("firstName", user.personFirstName());
-                personMap.put("lastName", user.personLastName());
-                response.put("person", personMap);
-            }
-            ResponseCookie sessionCookie = authCookieService.createSessionCookie(jwt);
-            // addHeader, not the ResponseEntity header map: entity headers are
-            // applied with set semantics and would drop the XSRF-TOKEN cookie
-            // written by the security chain (issue #1620).
-            httpResponse.addHeader(HttpHeaders.SET_COOKIE, sessionCookie.toString());
-            return ResponseEntity.ok().body(response);
-        } catch (Exception e) {
-            log.error("Failed to process login for {}", loginRequest.name(), e);
-            metricsUtil.incrementCounter("login", "error");
-            return ResponseEntity.ok(invalidLoginResponse());
+    public ResponseEntity<LoginSuccessResponse> login(
+            @Valid @RequestBody LoginRequest loginRequest, HttpServletResponse httpResponse) {
+        if (loginAttemptService.isLocked(loginRequest.name())) {
+            log.warn("Login locked for '{}': too many failed attempts.", loginRequest.name());
+            metricsUtil.incrementCounter("login", "locked");
+            throw new LoginLockedException("Account temporarily locked after too many failed attempts.");
         }
+        Result result = authenticateSafely(loginRequest);
+        return switch (result) {
+            case Result.Failed failed -> {
+                noteAuthFailure(failed.failure(), loginRequest.name());
+                throw new LoginRejectedException();
+            }
+            case Result.Success success -> successBody(success.user(), loginRequest.name(), httpResponse);
+        };
     }
 
     @ApiResponses({
@@ -252,7 +243,34 @@ public class UserController {
         return ResponseEntity.ok().body(body);
     }
 
-    private ResponseEntity<?> handleAuthFailure(AuthenticateUserUseCase.Failure failure, String username) {
+    private Result authenticateSafely(LoginRequest loginRequest) {
+        try {
+            return authenticate.authenticate(loginRequest.name(), loginRequest.password());
+        } catch (Exception e) {
+            throw invalidLogin(loginRequest.name(), e);
+        }
+    }
+
+    private ResponseEntity<LoginSuccessResponse> successBody(
+            User user, String username, HttpServletResponse httpResponse) {
+        try {
+            log.info("Login succeeded for user: '{}'", user.name());
+            metricsUtil.incrementCounter("login", "success");
+            loginAttemptService.onLoginSucceeded(user.name());
+            String jwt = jwtTokenService.generateToken(user.name());
+            ResponseCookie sessionCookie = authCookieService.createSessionCookie(jwt);
+            // addHeader, not the ResponseEntity header map: entity headers are
+            // applied with set semantics and would drop the XSRF-TOKEN cookie
+            // written by the security chain (issue #1620).
+            httpResponse.addHeader(HttpHeaders.SET_COOKIE, sessionCookie.toString());
+            // Bearer token kept for Bruno/API clients; browsers use the HttpOnly cookie (#1051).
+            return ResponseEntity.ok(LoginSuccessResponse.of(user, jwt));
+        } catch (Exception e) {
+            throw invalidLogin(username, e);
+        }
+    }
+
+    private void noteAuthFailure(AuthenticateUserUseCase.Failure failure, String username) {
         switch (failure) {
             case NOT_FOUND -> {
                 log.warn("Login failed: user '{}' not found.", username);
@@ -266,17 +284,13 @@ public class UserController {
                 log.warn("Login failed for '{}': inactive user", username);
                 metricsUtil.incrementCounter("login", "inactive");
             }
-            default -> {
-                // sealed enum — all cases covered
-            }
         }
         loginAttemptService.onLoginFailed(username);
-        return ResponseEntity.ok(invalidLoginResponse());
     }
 
-    private Map<String, Object> invalidLoginResponse() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("valid", false);
-        return response;
+    private LoginRejectedException invalidLogin(String username, Exception cause) {
+        log.error("Failed to process login for {}", username, cause);
+        metricsUtil.incrementCounter("login", "error");
+        return new LoginRejectedException();
     }
 }

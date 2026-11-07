@@ -10,6 +10,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 import java.util.HashMap;
@@ -30,12 +32,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.licensis.notaire.adapter.in.web.user.UserController;
+import com.licensis.notaire.adapter.in.web.user.UserLoginExceptionHandler;
 import com.licensis.notaire.adapter.out.persistence.user.PasswordHasherAdapter;
 import com.licensis.notaire.application.port.out.user.UserCatalogPort;
 import com.licensis.notaire.application.usecase.user.AuthenticateUserService;
 import com.licensis.notaire.application.usecase.user.UserManagementService;
 import com.licensis.notaire.application.usecase.user.UserQueryService;
 import com.licensis.notaire.config.AuthCookieService;
+import com.licensis.notaire.config.GlobalExceptionHandler;
 import com.licensis.notaire.config.JwtTokenService;
 import com.licensis.notaire.config.TokenRevocationService;
 import com.licensis.notaire.domain.user.User;
@@ -88,7 +92,9 @@ class UserControllerHashTest {
                 new LoginAttemptService(5, 900000, new InMemoryLoginAttemptStore()),
                 authCookieService,
                 tokenRevocationService);
-        mockMvc = standaloneSetup(controller).build();
+        mockMvc = standaloneSetup(controller)
+                .setControllerAdvice(new UserLoginExceptionHandler(), new GlobalExceptionHandler())
+                .build();
     }
 
     @Test
@@ -124,26 +130,24 @@ class UserControllerHashTest {
         when(passwordEncoder.matches("secret", BCRYPT_HASH)).thenReturn(true);
         when(jwtTokenService.generateToken("juan")).thenReturn("jwt-token");
 
-        ResponseEntity<?> response = controller.login(
+        ResponseEntity<UserController.LoginSuccessResponse> response = controller.login(
                 new UserController.LoginRequest("juan", "secret"), new MockHttpServletResponse());
 
-        @SuppressWarnings("unchecked")
-        Map<String, Object> body = (Map<String, Object>) response.getBody();
-        assertThat(body).containsEntry("valid", true);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().valid()).isTrue();
         assertThat(catalog.saveCount()).isEqualTo(1); // only the initial seed
     }
 
     @Test
     @DisplayName("login should reject a legacy MD5 hash (hard cutoff — issue #1762)")
-    void loginShouldRejectLegacyMd5Hash() {
+    void loginShouldRejectLegacyMd5Hash() throws Exception {
         catalog.save(User.restore(1, "admin", LEGACY_MD5_ADMIN, true, "Escribano", null, null, null, null, null, 0));
 
-        ResponseEntity<?> response = controller.login(
-                new UserController.LoginRequest("admin", "admin"), new MockHttpServletResponse());
-
-        @SuppressWarnings("unchecked")
-        Map<String, Object> body = (Map<String, Object>) response.getBody();
-        assertThat(body).containsEntry("valid", false);
+        mockMvc.perform(post("/api/v1/users/login")
+                        .contentType("application/json")
+                        .content("{\"name\":\"admin\",\"password\":\"admin\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.valid").value(false));
         assertThat(catalog.findById(1))
                 .hasValueSatisfying(u -> assertThat(u.passwordHash()).isEqualTo(LEGACY_MD5_ADMIN));
         assertThat(catalog.saveCount()).isEqualTo(1); // only the initial seed — no upgrade save
@@ -153,16 +157,15 @@ class UserControllerHashTest {
 
     @Test
     @DisplayName("login should reject a wrong password regardless of stored hash format")
-    void loginShouldRejectWrongPassword() {
+    void loginShouldRejectWrongPassword() throws Exception {
         catalog.save(User.restore(1, "juan", BCRYPT_HASH, true, "Escribano", null, null, null, null, null, 0));
         when(passwordEncoder.matches(eq("wrong"), eq(BCRYPT_HASH))).thenReturn(false);
 
-        ResponseEntity<?> response = controller.login(
-                new UserController.LoginRequest("juan", "wrong"), new MockHttpServletResponse());
-
-        @SuppressWarnings("unchecked")
-        Map<String, Object> body = (Map<String, Object>) response.getBody();
-        assertThat(body).containsEntry("valid", false);
+        mockMvc.perform(post("/api/v1/users/login")
+                        .contentType("application/json")
+                        .content("{\"name\":\"juan\",\"password\":\"wrong\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.valid").value(false));
         assertThat(catalog.saveCount()).isEqualTo(1);
         verify(passwordEncoder, never()).encode(any());
     }

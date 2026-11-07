@@ -268,7 +268,9 @@ class AdditionalControllersTest {
                                     5, 900000, new com.licensis.notaire.security.InMemoryLoginAttemptStore()),
                             authCookies,
                             mock(com.licensis.notaire.config.TokenRevocationService.class)))
-                    .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
+                    .setControllerAdvice(
+                            new com.licensis.notaire.adapter.in.web.user.UserLoginExceptionHandler(),
+                            new com.licensis.notaire.config.GlobalExceptionHandler())
                     .build();
             User u = User.restore(1, "admin", "abc", true, "Escribano", null, null, null, null, null, 0);
 

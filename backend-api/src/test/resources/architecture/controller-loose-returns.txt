@@ -5,5 +5,4 @@ ManagementController#createCompleteCase
 ManagementController#getWorkflowTrace
 ManagementController#transition
 ManagementController#updateCompleteCase
-UserController#login
 UserController#logout
