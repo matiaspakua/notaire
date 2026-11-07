@@ -48,7 +48,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--strict", action="store_true", help="fail when no change record declares a write set")
 
     p = sub.add_parser("evidence", help="evidence ledger integrity")
-    p.add_subparsers(dest="action", required=True).add_parser("verify", help="check the hash chain of the ledger")
+    q = p.add_subparsers(dest="action", required=True).add_parser("verify", help="check the hash chain of the ledger")
+    q.add_argument("--anchor", action="append", default=[], metavar="DIGEST",
+                   help="a head digest recorded earlier; fails unless that record is still in the ledger")
 
     p = sub.add_parser("change", help="built-in change records")
     change_sub = p.add_subparsers(dest="action", required=True)
@@ -112,7 +114,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "protected": lambda: diffchecks.protected(ctx, args.base),
         "size": lambda: diffchecks.size(ctx, args.base, args.limit),
         "scope": lambda: diffchecks.scope(ctx, args.base, args.strict),
-        "evidence": lambda: evidence.verify(ctx),
+        "evidence": lambda: evidence.verify(ctx, args.anchor),
     }
     return simple[args.command]()
 

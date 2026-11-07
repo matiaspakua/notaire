@@ -3,8 +3,11 @@
 Agents' claims are never evidence; these records are written by the kit from real exit codes.
 Each record carries `prev`, the SHA-256 of the line before it ("genesis" for the first), so an
 edited, deleted or reordered record breaks the chain and `aisdlc evidence verify` reports where.
-A chain cannot see a change to its own last line: anchor the head digest the verifier prints
-somewhere agents cannot rewrite (a PR body, a commit message, a release note).
+A chain alone cannot see a truncated tail or an emptied file: any prefix of a valid chain is
+valid. So the verifier prints the head digest, the Foreman anchors it where agents cannot rewrite
+it (a PR body, a commit message, a release note), and `verify --anchor <digest>` later fails
+unless a record with that digest is still in the ledger. An empty or missing ledger is never
+reported as verified.
 """
 from __future__ import annotations
 
@@ -72,15 +75,18 @@ def verify_chain(lines: list[str]) -> tuple[int, int, list[str]]:
     return chained, legacy, problems
 
 
-def verify(ctx: Context) -> int:
+def verify(ctx: Context, anchors: list[str] | None = None) -> int:
     folder = ctx.path(ctx.profile.evidence_dir)
-    failed = False
+    anchors = list(anchors or [])
+    failed, digests, records = False, set(), 0
     for name in (LEDGER, COSTS):
         path = folder / name
         if not path.is_file():
-            print(f"  -     {name}: no records yet")
+            print(f"  -     {name}: no records")
             continue
         lines = [line for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+        records += len(lines)
+        digests.update(_digest(line) for line in lines)
         chained, legacy, problems = verify_chain(lines)
         if problems:
             failed = True
@@ -89,8 +95,20 @@ def verify(ctx: Context) -> int:
                 print(f"        {problem}")
         else:
             print(f"  PASS  {name}: {chained} chained record(s), {legacy} legacy; head {_digest(lines[-1] if lines else None)}")
-    print(f"evidence: {'FAILED — the ledger was altered after it was written' if failed else 'PASSED'}")
-    return 1 if failed else 0
+    for anchor in anchors:
+        if anchor in digests:
+            print(f"  PASS  anchor {anchor[:12]}… is still in the ledger")
+        else:
+            failed = True
+            print(f"  FAIL  anchor {anchor[:12]}… is gone: the ledger was truncated, emptied or replaced")
+    if failed:
+        print("evidence: FAILED — the ledger was altered after it was written")
+        return 1
+    if records == 0:
+        print("evidence: NO EVIDENCE — nothing to verify (an empty ledger is not a verified one)")
+        return 0
+    print("evidence: PASSED")
+    return 0
 
 
 def _read(ctx: Context, name: str, since: str | None) -> list[dict]:

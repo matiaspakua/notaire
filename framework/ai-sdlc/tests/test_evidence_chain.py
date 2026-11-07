@@ -81,6 +81,31 @@ class EvidenceChainTest(unittest.TestCase):
         self.assertEqual(0, result.returncode, output(result))
         self.assertIn("cost.jsonl: 2 chained", output(result))
 
+    def test_anchor_detects_a_truncated_tail(self):
+        repo = Repo(self, GATE)
+        for _ in range(3):
+            repo.run("gate", "pre-push")
+        head = repo.run("evidence", "verify").stdout.split("head ")[1].split()[0]
+        self.assertEqual(0, repo.run("evidence", "verify", "--anchor", head).returncode)
+        path = ledger_path(repo)
+        lines = path.read_text(encoding="utf-8").splitlines()
+        path.write_text("\n".join(lines[:2]) + "\n", encoding="utf-8")
+        self.assertEqual(0, repo.run("evidence", "verify").returncode)   # a prefix is a valid chain
+        result = repo.run("evidence", "verify", "--anchor", head)
+        self.assertEqual(1, result.returncode)
+        self.assertIn("truncated", output(result))
+
+    def test_emptied_ledger_is_no_evidence_and_fails_against_an_anchor(self):
+        repo = Repo(self, GATE)
+        repo.run("gate", "pre-push")
+        head = repo.run("evidence", "verify").stdout.split("head ")[1].split()[0]
+        ledger_path(repo).unlink()
+        result = repo.run("evidence", "verify")
+        self.assertEqual(0, result.returncode)
+        self.assertIn("NO EVIDENCE", output(result))
+        self.assertNotIn("PASSED", output(result))
+        self.assertEqual(1, repo.run("evidence", "verify", "--anchor", head).returncode)
+
     def test_report_still_reads_chained_records(self):
         repo = Repo(self, GATE)
         repo.run("gate", "pre-push")
