@@ -15,13 +15,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.dto.DtoTestimony;
 import com.licensis.notaire.application.port.in.testimony.ManageTestimonyMovementsUseCase;
 import com.licensis.notaire.application.port.in.testimony.QueryTestimonyMovementsUseCase;
 import com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort.DeleteResult;
 import com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort.SaveResult;
 import com.licensis.notaire.application.usecase.testimony.TestimonyReentry;
+import com.licensis.notaire.domain.testimony.TestimonyConflictException;
+import com.licensis.notaire.domain.testimony.TestimonyNotFoundException;
+import com.licensis.notaire.domain.testimony.TestimonyOperationFailedException;
+import com.licensis.notaire.domain.testimony.TestimonyStaleVersionException;
+import com.licensis.notaire.domain.testimony.TestimonyUnexpectedResultException;
 import com.licensis.notaire.dto.DtoTestimonyMovement;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +38,8 @@ import java.util.Date;
 
 /**
  * Testimony movements. Calls inbound ports only; orchestration and persistence live in the use cases
- * (issue #1787).
+ * (issue #1787). Write failures throw domain exceptions mapped by
+ * {@link TestimonyMovementExceptionHandler} (#577).
  */
 @RestController
 @RequestMapping("/api/v1/testimony-movements")
@@ -92,13 +97,16 @@ public class TestimonyMovementController {
     })
     @PostMapping
     @Operation(summary = "Create testimony movement")
-    public ResponseEntity<Object> create(@Valid @RequestBody TestimonyMovementWriteRequest dto) {
+    public ResponseEntity<DtoTestimonyMovement> create(@Valid @RequestBody TestimonyMovementWriteRequest dto) {
         return switch (manageMovements.create(dto)) {
             case SaveResult.Created created -> ResponseEntity.status(HttpStatus.CREATED).body(created.dto());
-            case SaveResult.Failed failed -> ErrorResponses.createFailed(failed.cause());
-            case SaveResult.Updated ignored -> ResponseEntity.internalServerError().build();
-            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case SaveResult.StaleVersion ignored -> ErrorResponses.staleVersion();
+            case SaveResult.Failed failed ->
+                throw new TestimonyOperationFailedException(
+                        TestimonyOperationFailedException.Operation.CREATE, failed.cause());
+            case SaveResult.Updated ignored ->
+                throw new TestimonyUnexpectedResultException("unexpected Updated on create");
+            case SaveResult.NotFound ignored -> throw new TestimonyNotFoundException();
+            case SaveResult.StaleVersion ignored -> throw new TestimonyStaleVersionException();
         };
     }
 
@@ -111,14 +119,17 @@ public class TestimonyMovementController {
     })
     @PutMapping("/{id}")
     @Operation(summary = "Update testimony movement")
-    public ResponseEntity<Object> update(
+    public ResponseEntity<Void> update(
             @PathVariable Integer id, @Valid @RequestBody TestimonyMovementWriteRequest dto) {
         return switch (manageMovements.update(id, dto)) {
             case SaveResult.Updated ignored -> ResponseEntity.ok().build();
-            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case SaveResult.StaleVersion ignored -> ErrorResponses.staleVersion();
-            case SaveResult.Failed failed -> ErrorResponses.updateFailed(failed.cause());
-            case SaveResult.Created ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.NotFound ignored -> throw new TestimonyNotFoundException();
+            case SaveResult.StaleVersion ignored -> throw new TestimonyStaleVersionException();
+            case SaveResult.Failed failed ->
+                throw new TestimonyOperationFailedException(
+                        TestimonyOperationFailedException.Operation.UPDATE, failed.cause());
+            case SaveResult.Created ignored ->
+                throw new TestimonyUnexpectedResultException("unexpected Created on update");
         };
     }
 
@@ -128,11 +139,11 @@ public class TestimonyMovementController {
     })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete testimony movement")
-    public ResponseEntity<Object> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         return switch (manageMovements.delete(id)) {
             case DeleteResult.Deleted ignored -> ResponseEntity.noContent().build();
-            case DeleteResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case DeleteResult.Conflict conflict -> ResponseEntity.status(HttpStatus.CONFLICT).body(conflict.message());
+            case DeleteResult.NotFound ignored -> throw new TestimonyNotFoundException();
+            case DeleteResult.Conflict conflict -> throw new TestimonyConflictException(conflict.message());
         };
     }
 

@@ -222,7 +222,10 @@ class SimpleControllersTest {
         private final com.licensis.notaire.application.port.in.testimony.ManageTestimonyMovementsUseCase manage =
                 mock(com.licensis.notaire.application.port.in.testimony.ManageTestimonyMovementsUseCase.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new TestimonyMovementController(query, manage)).build();
+                standaloneSetup(new TestimonyMovementController(query, manage))
+                        .setControllerAdvice(
+                                new com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementExceptionHandler())
+                        .build();
 
         private DtoTestimonyMovement buildDto() {
             DtoTestimonyMovement dto = new DtoTestimonyMovement();

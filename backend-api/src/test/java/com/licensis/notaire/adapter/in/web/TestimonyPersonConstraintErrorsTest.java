@@ -5,6 +5,7 @@ import com.licensis.notaire.adapter.in.web.person.PersonExceptionHandler;
 import com.licensis.notaire.adapter.in.web.testimony.TestimonyController;
 import com.licensis.notaire.adapter.in.web.testimony.TestimonyExceptionHandler;
 import com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementController;
+import com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementExceptionHandler;
 import com.licensis.notaire.config.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,6 +58,8 @@ class TestimonyPersonConstraintErrorsTest {
             advice = new Object[] {new PersonExceptionHandler(), new GlobalExceptionHandler()};
         } else if (type == TestimonyController.class) {
             advice = new Object[] {new TestimonyExceptionHandler(), new GlobalExceptionHandler()};
+        } else if (type == TestimonyMovementController.class) {
+            advice = new Object[] {new TestimonyMovementExceptionHandler(), new GlobalExceptionHandler()};
         } else {
             advice = new Object[] {new GlobalExceptionHandler()};
         }
