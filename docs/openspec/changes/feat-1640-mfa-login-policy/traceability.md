@@ -35,21 +35,21 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Enrolled user receives a challenge instead of a token | LoginMfaPolicyTest | pending |
-| Optional policy does not force enrolment | LoginMfaPolicyTest | pending |
-| Enforced policy requires enrolment for admin and notary | LoginMfaPolicyTest | pending |
-| Other roles are never forced | LoginMfaPolicyTest | pending |
-| Policy OFF skips the challenge | LoginMfaPolicyTest | pending |
-| Valid TOTP completes login | LoginMfaPolicyTest | pending |
-| Recovery code completes login | LoginMfaPolicyTest | pending |
-| Wrong code is rejected and counted | LoginMfaPolicyTest | pending |
-| Locked account is refused | LoginMfaPolicyTest | pending |
-| Scoped tokens are not sessions | LoginMfaPolicyTest | pending |
-| Begin and confirm enrolment | LoginMfaPolicyTest | pending |
-| Enrolment-required user can enrol | LoginMfaPolicyTest | pending |
-| Wrong confirmation code is counted | LoginMfaPolicyTest | pending |
-| Disable requires a current code | LoginMfaPolicyTest | pending |
-| Anonymous callers are refused | LoginMfaPolicyTest | pending |
+| Enrolled user receives a challenge instead of a token | LoginMfaPolicyTest | passing |
+| Optional policy does not force enrolment | LoginMfaPolicyTest | passing |
+| Enforced policy requires enrolment for admin and notary | LoginMfaPolicyTest | passing |
+| Other roles are never forced | LoginMfaPolicyTest | passing |
+| Policy OFF skips the challenge | LoginMfaPolicyTest | passing |
+| Valid TOTP completes login | LoginMfaPolicyTest | passing |
+| Recovery code completes login | LoginMfaPolicyTest | passing |
+| Wrong code is rejected and counted | LoginMfaPolicyTest | passing |
+| Locked account is refused | LoginMfaPolicyTest | passing |
+| Scoped tokens are not sessions | LoginMfaPolicyTest | passing |
+| Begin and confirm enrolment | LoginMfaPolicyTest | passing |
+| Enrolment-required user can enrol | LoginMfaPolicyTest | passing |
+| Wrong confirmation code is counted | LoginMfaPolicyTest | passing |
+| Disable requires a current code | LoginMfaPolicyTest | passing |
+| Anonymous callers are refused | LoginMfaPolicyTest | passing |
 
 ## Permanent documentation updated
 

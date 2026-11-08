@@ -52,6 +52,11 @@ requirements:
     asset: admin
     status: Mitigated
     verification: UserAuthorityResolver maps Escribano to ROLE_NOTARY (#1638)
+  - id: SR-17
+    stride: Spoofing
+    asset: session
+    status: Partial
+    verification: MfaLoginFlowIntegrationTest; ENFORCE is opt-in via notaire.mfa.policy (#1640, ADR-032)
 linddun:
   - id: LD-1
     threat: Identifiability of Person fields
