@@ -108,3 +108,8 @@ placeholder = true               # replace with your full suite command, then de
 # [telemetry]
 # enabled = false
 # exporter = "none"
+
+# FeatureFlagPort (#2137). Off by default. File may be flat JSON or flagd-shaped.
+# [flags]
+# enabled = false
+# file = ".aisdlc/flags.json"

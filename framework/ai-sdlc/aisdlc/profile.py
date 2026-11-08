@@ -11,6 +11,7 @@ import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from aisdlc.flags import FlagsSettings
 from aisdlc.telemetry import TelemetrySettings, validate_telemetry_settings
 
 PROFILE_NAMES = ("aisdlc.toml", ".aisdlc/aisdlc.toml")
@@ -132,6 +133,7 @@ class Profile:
     inventory: str | None = None
     harness_adapters: tuple[HarnessAdapter, ...] = ()
     telemetry: TelemetrySettings = field(default_factory=TelemetrySettings)
+    flags: FlagsSettings = field(default_factory=FlagsSettings)
 
     def stages(self) -> list[str]:
         declared = {g.stage for g in self.gates}
@@ -226,8 +228,18 @@ def _build(data: dict, errors: list[str]) -> Profile:
     profile.ratchets = _ratchets(data.get("ratchets", []), errors)
     profile.roles = _roles(data.get("roles", {}), errors)
     profile.telemetry = _telemetry(data.get("telemetry", {}), errors)
+    profile.flags = _flags(data.get("flags", {}), errors)
     _check_prices(profile.prices, errors)
     return profile
+
+
+def _flags(raw: dict, errors: list[str]) -> FlagsSettings:
+    enabled = bool(raw.get("enabled", False))
+    file_path = raw.get("file", ".aisdlc/flags.json")
+    if not isinstance(file_path, str) or not file_path.strip():
+        errors.append(f"flags.file must be a non-empty string, got {file_path!r}")
+        file_path = ".aisdlc/flags.json"
+    return FlagsSettings(enabled=enabled, file=file_path)
 
 
 def _telemetry(raw: dict, errors: list[str]) -> TelemetrySettings:
