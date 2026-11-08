@@ -11,12 +11,12 @@ every rule, and what remains open are in the report:
 ## Quick start (any stack)
 
 ```bash
-# 1. Vendor the kit (copy, submodule or subtree) — it has no dependencies.
-cp -R framework/ai-sdlc /path/to/your-repo/tools/ai-sdlc
+# 1. One-command install: copies the kit and scaffolds the profile (#2135).
+#    From a checkout that already contains framework/ai-sdlc (or any aisdlc bin):
 cd /path/to/your-repo
+python3 /path/to/framework/ai-sdlc/bin/aisdlc install --path tools/ai-sdlc --name your-product --level 2
 
-# 2. Scaffold the policy, the profile, the always-loaded card and the role agents.
-python3 tools/ai-sdlc/bin/aisdlc init --name your-product --level 2
+# Equivalent manual steps remain: copy the kit, then `aisdlc init`.
 
 # 3. Replace the placeholder gates with your commands, then check the profile.
 $EDITOR aisdlc.toml
@@ -65,6 +65,9 @@ the no-op path. GenAI semantic conventions are not claimed.
 
 | Command | Does | Exit 1 when |
 |---------|------|-------------|
+| `install --path P --name N [--level 1-4] [--force]` | Copies this kit to `P` (default `tools/ai-sdlc`) and scaffolds the profile. Refuses product trees. | destination exists without `--force`, or path is forbidden |
+| `update [--path P]` | Re-copies the kit idempotently; leaves adopter policy/evidence alone. | kit path missing |
+| `uninstall [--path P] [--purge]` | Removes the kit tree (+ install manifest). `--purge` also drops scaffold and evidence. | forbidden path |
 | `init --name N [--level 1-4] [--force]` | Scaffolds policy, card, `AGENTS.md`, profile, role agents, change folder. Never overwrites without `--force`. | — |
 | `doctor` | Validates the profile and the files it names; warns on placeholders and on what the level still lacks. | the policy, a baseline, a context file, a skills dir or a gate script is missing |
 | `config validate` | Checks factory knobs, trusted plugin manifests, and the migration inventory when `[factory] inventory` is set. A partial failure is not success. | any of those checks fail |
