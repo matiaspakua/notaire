@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **aisdlc:** OpenFeature-shaped FeatureFlagPort with JSON/flagd file provider; flags cannot skip required gates or raise PR ceiling (Refs #2137)
 * **aisdlc:** `install` / `update` / `uninstall` lifecycle for the kit (Refs #2135)
 * **aisdlc:** TelemetryPort with optional OpenTelemetry NoOp path (off by default), secret redaction, lead-time/cost hooks, and OpenFeature-shaped flag stub (Refs #2125)
 * **aisdlc:** AWS AI-DLC boundary design — owns no aisdlc stages as orchestrator; hooks never auto-trusted; plugin unavailable (Refs #2124)

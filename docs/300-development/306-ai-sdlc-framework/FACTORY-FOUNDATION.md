@@ -74,4 +74,4 @@ Lifecycle (#2135): `aisdlc install|update|uninstall` copies the kit, scaffolds a
 idempotently, and uninstalls kit-managed paths only (`--purge` for scaffold/evidence). Never writes
 `frontend/`, `backend-api/`, or product OpenAPI paths.
 
-TelemetryPort (`aisdlc/telemetry.py`, #2125): off by default; optional OpenTelemetry NoOp path when enabled with `exporter = "none"`; prompts/diffs/secrets redacted; lead-time/cost hooks on stage and cost records. FeatureFlagPort stub (`aisdlc/flags.py`) mirrors OpenFeature shape without a hard SDK dependency. No HTTP server was added. A manifest path check is not a sandbox.
+TelemetryPort (`aisdlc/telemetry.py`, #2125): off by default; optional OpenTelemetry NoOp path when enabled with `exporter = "none"`; prompts/diffs/secrets redacted; lead-time/cost hooks on stage and cost records. FeatureFlagPort (`aisdlc/flags.py`, #2137) loads JSON/flagd flags in-process; required gates and PR ceilings stay fail-closed. No HTTP server was added. A manifest path check is not a sandbox.

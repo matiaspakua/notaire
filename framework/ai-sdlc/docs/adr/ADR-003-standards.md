@@ -6,9 +6,9 @@
 
 The useful shape is a provider, an evaluation context, hooks, and a result that carries a default plus a reason. Evaluation of an optional flag must not throw.
 
-That shape is implemented as a stdlib stub in `aisdlc/flags.py` (`InMemoryProvider`, `FlagHooks`, `evaluate`). Ordinary settings (paths, timeouts, the pull-request cap) stay config. Approval, merge rights, security gates, and allowlists stay policy and fail closed — they are not feature flags. Keys under `core.*` and `security.*` cannot override invariants through the port. A flag's default may be false. "Fail open" is the wrong lesson.
+That shape is implemented in `aisdlc/flags.py` (#2137): `JsonFileProvider` (flat JSON or flagd-shaped variants) plus `InMemoryProvider`, hooks, and `evaluate`. Ordinary settings stay config. Approval, merge rights, security gates, and allowlists stay policy and fail closed. Keys under `core.*` / `security.*` cannot override invariants. Required gates cannot be skipped via `gate.<name>.skip`. `factory.max_open_prs` may lower the profile ceiling, never raise it. Flags default off (`[flags] enabled = false`). A flag's default may be false. "Fail open" is the wrong lesson.
 
-OFREP and the numeric error-code list are not verified against a pinned OpenFeature SDK. This stub is not a claim of SDK conformance.
+OFREP and the numeric error-code list are not verified against a pinned OpenFeature SDK. This is not a claim of full SDK conformance — it is the smallest real in-process provider path.
 
 ## OpenAPI
 

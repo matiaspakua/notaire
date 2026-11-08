@@ -44,8 +44,9 @@ secrets are redacted. Stage duration and `aisdlc cost` feed lead-time/cost hooks
 ledger remains authoritative. `OTEL_SDK_DISABLED` is honored; `TRACEPARENT` is not injected on
 the no-op path. GenAI semantic conventions are not claimed.
 
-`aisdlc/flags.py` is a minimal OpenFeature-shaped stub (provider, context, hooks, result).
-`core.*` / `security.*` flags cannot relax policy. This is not OFREP or SDK conformance.
+`aisdlc/flags.py` is the FeatureFlagPort (#2137): JSON/flagd file provider when `[flags] enabled`,
+otherwise off. `core.*` / `security.*` cannot relax policy; required gates cannot be skipped;
+`factory.max_open_prs` cannot be raised by a flag. Not OFREP or full SDK conformance.
 
 ## Concepts
 
