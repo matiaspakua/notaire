@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Audit log HTTP adapter. Calls {@link QueryAuditRecordsUseCase} only; transactions
@@ -45,7 +43,7 @@ public class AuditRecordController {
      */
     @GetMapping
     @Operation(summary = "Get audit records with pagination and optional filters")
-    public ResponseEntity<?> getAll(
+    public ResponseEntity<AuditRecordGetAllResponse> getAll(
             @RequestParam(required = false) Integer page,
             @RequestParam(required = false) Integer size,
             @RequestParam(required = false, defaultValue = "date,desc") String sort,
@@ -58,13 +56,13 @@ public class AuditRecordController {
     ) {
         boolean paginated = page != null || size != null;
         if (!paginated) {
-            return ResponseEntity.ok(queryAuditRecords.findAll());
+            return ResponseEntity.ok(AuditRecordGetAllResponse.flat(queryAuditRecords.findAll()));
         }
 
         int safePage = page == null || page < 0 ? 0 : page;
         int safeSize = size == null || size <= 0 ? 20 : size;
         PageResult result = queryAuditRecords.search(module, idUser, from, to, safePage, safeSize, sort);
-        return ResponseEntity.ok(toPageResponse(result));
+        return ResponseEntity.ok(AuditRecordGetAllResponse.page(result));
     }
 
     @ApiResponses({
@@ -85,15 +83,4 @@ public class AuditRecordController {
         return ResponseEntity.ok(queryAuditRecords.findByUserId(idUser));
     }
 
-    private Map<String, Object> toPageResponse(PageResult page) {
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("content", page.content());
-        response.put("page", page.number());
-        response.put("size", page.size());
-        response.put("totalElements", page.totalElements());
-        response.put("totalPages", page.totalPages());
-        response.put("first", page.first());
-        response.put("last", page.last());
-        return response;
-    }
 }
