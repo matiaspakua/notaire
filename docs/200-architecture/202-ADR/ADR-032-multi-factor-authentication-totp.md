@@ -22,8 +22,8 @@ from third-party services, so the factor must work without an external provider.
    stored only as BCrypt hashes (the existing `PasswordHasherPort`). Using one consumes it.
 4. **Secrets encrypted at rest**: the TOTP secret is stored as AES-256-GCM ciphertext (random 96-bit IV
    prepended, one key from `NOTAIRE_MFA_ENCRYPTION_KEY`, Base64 of 32 bytes). The application layer sees
-   only a `SecretCipherPort`; the key is never committed (ADR-019). Startup refuses an absent or
-   malformed key once MFA is enabled.
+   only the persistence adapter encrypts, through `SecretCipherPort`; the key is never committed (ADR-019).
+   A malformed key fails startup; an absent key fails on first use, so installations without MFA are unaffected.
 5. **Replay protection**: the last accepted time step is stored per user; a code for a step at or below it
    is rejected.
 6. **Policy**: MFA is **required for `ROLE_ADMIN`**, **optional for every other role**; `ROLE_NOTARY`

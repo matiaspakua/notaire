@@ -45,9 +45,11 @@ class AesGcmSecretCipherAdapterTest {
     }
 
     @Test
-    @DisplayName("refuses an absent or malformed key")
+    @DisplayName("refuses a malformed key at startup and an absent key on use")
     void shouldRefuseBadKey() {
-        assertThatThrownBy(() -> new AesGcmSecretCipherAdapter("")).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> new AesGcmSecretCipherAdapter("").encrypt("S"))
+                .isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> new AesGcmSecretCipherAdapter("not base64!")).isInstanceOf(IllegalStateException.class);
         assertThatThrownBy(() -> new AesGcmSecretCipherAdapter(Base64.getEncoder().encodeToString(new byte[16])))
                 .isInstanceOf(IllegalStateException.class);
     }
