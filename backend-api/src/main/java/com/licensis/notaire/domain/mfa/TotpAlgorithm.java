@@ -7,16 +7,14 @@ import java.security.MessageDigest;
 import java.time.Instant;
 import java.util.OptionalLong;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
-/** TOTP per RFC 6238 (HMAC-SHA1, 6 digits, 30 s step). Plain JDK, no framework. */
+/** TOTP per RFC 6238 (HMAC-SHA1 built on MessageDigest because the domain may use java.* only, ADR-030 R3). */
 public final class TotpAlgorithm {
 
     public static final int DIGITS = 6;
     public static final int PERIOD_SECONDS = 30;
     private static final int SKEW_STEPS = 1;
     private static final int MODULUS = 1_000_000;
+    private static final int HMAC_BLOCK = 64;
 
     private TotpAlgorithm() {
     }
@@ -53,11 +51,22 @@ public final class TotpAlgorithm {
 
     private static byte[] hmacSha1(byte[] key, byte[] message) {
         try {
-            Mac mac = Mac.getInstance("HmacSHA1");
-            mac.init(new SecretKeySpec(key, "HmacSHA1"));
-            return mac.doFinal(message);
+            MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+            byte[] block = key.length > HMAC_BLOCK ? sha1.digest(key) : key;
+            byte[] inner = new byte[HMAC_BLOCK];
+            byte[] outer = new byte[HMAC_BLOCK];
+            for (int i = 0; i < HMAC_BLOCK; i++) {
+                byte k = i < block.length ? block[i] : 0;
+                inner[i] = (byte) (k ^ 0x36);
+                outer[i] = (byte) (k ^ 0x5c);
+            }
+            sha1.update(inner);
+            sha1.update(message);
+            byte[] innerHash = sha1.digest();
+            sha1.update(outer);
+            return sha1.digest(innerHash);
         } catch (GeneralSecurityException e) {
-            throw new IllegalStateException("HmacSHA1 unavailable", e);
+            throw new IllegalStateException("SHA-1 unavailable", e);
         }
     }
 }
