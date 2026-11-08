@@ -29,7 +29,6 @@ import com.licensis.notaire.application.port.in.management.QueryManagementsUseCa
 import com.licensis.notaire.application.port.in.management.TransitionManagementUseCase;
 import com.licensis.notaire.application.port.out.management.ManagementOpsPort.ArchiveResult;
 import com.licensis.notaire.application.port.out.management.ManagementOpsPort.CompleteCaseCommand;
-import com.licensis.notaire.application.port.out.management.ManagementOpsPort.CompleteCaseResult;
 import com.licensis.notaire.application.port.out.management.ManagementOpsPort.CompleteCaseView;
 import com.licensis.notaire.application.port.out.management.ManagementOpsPort.DeleteResult;
 import com.licensis.notaire.application.port.out.management.ManagementOpsPort.ManagementCommand;
