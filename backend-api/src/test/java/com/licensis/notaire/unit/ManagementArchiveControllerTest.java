@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.licensis.notaire.adapter.in.web.management.ManagementArchiveExceptionHandler;
+import com.licensis.notaire.adapter.in.web.management.CompleteCaseWebMapper;
 import com.licensis.notaire.adapter.in.web.management.ManagementController;
 import com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper;
 import com.licensis.notaire.application.port.in.document.ExternalEntityDocumentUseCase;
@@ -68,6 +69,7 @@ class ManagementArchiveControllerTest {
                         workflowTrace,
                         transitionManagementUseCase,
                         transitionManagementWebMapper,
+                        new CompleteCaseWebMapper(),
                         externalEntityDocuments,
                         documentReentry))
                 .setControllerAdvice(new ManagementArchiveExceptionHandler(), new GlobalExceptionHandler())

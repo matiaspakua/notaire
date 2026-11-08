@@ -30,6 +30,7 @@ class ManagementControllerExceptionPropagationTest {
                     workflowTrace,
                     mock(TransitionManagementUseCase.class),
                     mock(TransitionManagementWebMapper.class),
+                    new CompleteCaseWebMapper(),
                     mock(ExternalEntityDocumentUseCase.class),
                     mock(DocumentReentryUseCase.class)))
             .setControllerAdvice(new GlobalExceptionHandler())
