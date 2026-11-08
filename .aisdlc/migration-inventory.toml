@@ -1,0 +1,125 @@
+# Machine-readable map of AI SDLC assets. schema 1.
+# status=planned means this change did not move the files.
+# Product contracts stay with the product. No secrets belong in this file.
+schema = 1
+canonical_root = "framework/ai-sdlc"
+
+[[rows]]
+source = "framework/ai-sdlc"
+destination = "framework/ai-sdlc"
+class = "core"
+status = "migrated"
+note = "Canonical kit. This change adds config, plugin listing and inventory checks here. Gates and evidence were already here."
+
+[[rows]]
+source = "framework/ai-sdlc/plugins/openspec"
+destination = "framework/ai-sdlc/plugins/openspec"
+class = "method-plugin"
+status = "migrated"
+note = "Working adapter: prints argv for openspec validate. Does not execute on list or config validate. Pinned CLI in this environment is 1.14.0."
+
+[[rows]]
+source = "framework/ai-sdlc/plugins/example-method"
+destination = "framework/ai-sdlc/plugins/example-method"
+class = "method-plugin"
+status = "migrated"
+note = "Second plugin id. Proves the loader is not hardwired to one method."
+
+[[rows]]
+source = "framework/ai-sdlc/plugins/planned/spec-kit.toml"
+destination = "framework/ai-sdlc/plugins/planned/spec-kit.toml"
+class = "method-plugin"
+status = "planned"
+note = "Not loaded. Upstream documents an extensions API. This slice does not call it."
+
+[[rows]]
+source = "framework/ai-sdlc/plugins/planned/aws-ai-dlc.toml"
+destination = "framework/ai-sdlc/plugins/planned/aws-ai-dlc.toml"
+class = "method-plugin"
+status = "planned"
+note = "Not loaded. Upstream is its own orchestrator. Integrating it would double-orchestrate."
+
+[[rows]]
+source = ".aisdlc/aisdlc.toml"
+destination = ".aisdlc/aisdlc.toml"
+class = "project-profile"
+status = "stay"
+note = "First-adopter profile. Paths and gate commands stay here, not in the kit."
+
+[[rows]]
+source = ".aisdlc/migration-inventory.toml"
+destination = ".aisdlc/migration-inventory.toml"
+class = "project-profile"
+status = "migrated"
+note = "This file. A second project supplies its own inventory."
+
+[[rows]]
+source = "workspace/sdlc"
+destination = "framework/ai-sdlc"
+class = "compatibility-shim"
+status = "planned"
+note = "Preflight and claim scripts. Consumers still call them. Not moved."
+
+[[rows]]
+source = "docs/300-development/303-testing/INVENTORY.md"
+destination = "docs/300-development/303-testing/INVENTORY.md"
+class = "stay"
+status = "stay"
+hotspot = true
+note = "Generated merge hotspot (#2117). Do not relocate until every consumer reads one path."
+
+[[rows]]
+source = "local-ai/sdlc"
+destination = "framework/ai-sdlc"
+class = "harness-adapter"
+status = "planned"
+note = "oMLX foreman. A different runtime from Cursor. Not a private-worker trigger."
+
+[[rows]]
+source = "docs/300-development/304-ai-sdlc-cloud/fleet-manifest.yaml"
+destination = "docs/300-development/304-ai-sdlc-cloud/fleet-manifest.yaml"
+class = "harness-adapter"
+status = "planned"
+note = "Cursor Cloud role map. Stays until a harness port reads it."
+
+[[rows]]
+source = ".claude/agents"
+destination = ".claude/agents"
+class = "harness-adapter"
+status = "planned"
+note = "Discoverability for Cursor and Claude. Not a second policy."
+
+[[rows]]
+source = ".claude/skills"
+destination = ".claude/skills"
+class = "project-profile"
+status = "planned"
+note = "Skill bundles. Vendored third-party skills keep their own license. Not moved."
+
+[[rows]]
+source = "CONSTITUTION.md"
+destination = "CONSTITUTION.md"
+class = "project-profile"
+status = "stay"
+note = "Adopter policy. The kit template is a different file and names no product."
+
+[[rows]]
+source = "docs/openspec"
+destination = "docs/openspec"
+class = "stay"
+status = "stay"
+note = "Adopter method store. The product specs inside it stay product-owned."
+
+[[rows]]
+source = "backend-api/openapi/openapi.yaml"
+destination = "backend-api/openapi/openapi.yaml"
+class = "stay"
+status = "stay"
+note = "Product HTTP contract. Not a factory contract."
+
+[[rows]]
+source = "frontend/src"
+destination = "frontend/src"
+class = "stay"
+status = "stay"
+note = "Product UI. Out of this change."

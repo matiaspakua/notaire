@@ -213,3 +213,29 @@ file = "backend-api/src/test/resources/architecture/entity-dto-mapping.txt"
 name = "frontend hexagon ESLint suppressions"
 kind = "baseline"
 file = "frontend/eslint-suppressions.json"
+
+# Factory core (#2121). The profile ceiling on open pull requests cannot be raised by env or flags.
+[factory]
+max_open_prs = 3
+concurrency = 1
+timeout_seconds = 1800
+retry = 2
+backoff_seconds = 2
+inventory = ".aisdlc/migration-inventory.toml"
+
+[plugins]
+allow = ["openspec", "example-method"]
+
+[[plugins.entries]]
+id = "openspec"
+kind = "method"
+version = "1.0.0"
+manifest = "framework/ai-sdlc/plugins/openspec/plugin.toml"
+trusted = true
+
+[[plugins.entries]]
+id = "example-method"
+kind = "method"
+version = "1.0.0"
+manifest = "framework/ai-sdlc/plugins/example-method/plugin.toml"
+trusted = true

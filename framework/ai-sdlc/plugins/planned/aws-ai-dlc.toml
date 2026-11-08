@@ -1,0 +1,6 @@
+id = "aws-ai-dlc"
+kind = "method"
+version = "0"
+status = "planned"
+capabilities = []
+summary = "Not implemented. Upstream is awslabs/aidlc-workflows. Do not treat this file as a working adapter."
