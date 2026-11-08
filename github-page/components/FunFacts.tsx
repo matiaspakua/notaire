@@ -12,8 +12,8 @@ function buildFacts(metrics: SiteMetrics, java: string | null) {
     },
     {
       emoji: "🤯",
-      title: "786 commits in 2026",
-      desc: "One calendar year of AI-paired development outpaced the previous decade combined. Agents wrote tests, reviewed code, and updated docs continuously.",
+      title: `${metrics.commits} commits`,
+      desc: "The 2014 to 2018 years left fewer than thirty commits; the AI-paired period wrote the rest. Agents wrote tests, reviewed code and updated docs continuously.",
       color: "var(--ai-purple)",
     },
     {

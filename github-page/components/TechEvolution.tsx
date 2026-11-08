@@ -47,7 +47,7 @@ public class DeedController {
 }`,
     stack: [
       { name: "Java 21", icon: "☕" },
-      { name: "Spring Boot 4", icon: "🌱" },
+      { name: "Spring Boot 3", icon: "🌱" },
       { name: "PostgreSQL 16", icon: "🐘" },
       { name: "Docker", icon: "🐳" },
     ],
