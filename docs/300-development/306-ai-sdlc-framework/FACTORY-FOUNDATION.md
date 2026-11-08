@@ -44,8 +44,13 @@ Pinned `specify-cli==1.3.2`. The extensions API that was called is recorded in
 python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml plugin plan --id github-spec-kit --var query=git
 ```
 
-That plan exits 2 on Notaire until the id is added to `[plugins] allow`. AWS AI-DLC remains
-planned under `framework/ai-sdlc/plugins/planned/`.
+That plan exits 2 on Notaire until the id is added to `[plugins] allow`.
+
+AWS AI-DLC (`aws-ai-dlc`, #2124) is a **boundary** plugin under
+`framework/ai-sdlc/plugins/aws-ai-dlc/`. `DESIGN.md` states it owns **no** aisdlc
+stages as orchestrator (Construction/Operation forbidden). `auto_trust_hooks = false`
+is required; `config validate` rejects `auto_trust_hooks = true`. The plugin is
+declared with `trusted = false` and is not available on `plugin list`.
 
 `docs/300-development/303-testing/INVENTORY.md` stays where generators and reviewers already
 read it (#2117). The migration row marks it as a hotspot and does not change its path.
@@ -53,9 +58,9 @@ read it (#2117). The migration row marks it as a hotspot and does not change its
 Product OpenAPI, product specs, and `frontend/src` are `class = stay`.
 
 Follow-ups, not done here:
-[#2124](https://github.com/matiaspakua/notaire/issues/2124) AWS AI-DLC,
 [#2125](https://github.com/matiaspakua/notaire/issues/2125) a real telemetry SDK.
 Owner opt-in: add `github-spec-kit` to `[plugins] allow` after reviewing the dry plan.
+AWS AI-DLC stays unavailable until a later Issue adds a non-orchestrating dry plan.
 [#2117](https://github.com/matiaspakua/notaire/issues/2117) stays the generated-inventory hotspot.
 
 No OpenTelemetry SDK is imported. No feature-flag SDK is imported. No HTTP server was added.
