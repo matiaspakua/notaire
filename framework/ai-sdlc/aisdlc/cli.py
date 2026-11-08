@@ -64,6 +64,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     sub.add_parser("doctor", help="validate the profile and report what its level still lacks")
 
+    p = sub.add_parser("contract", help="factory control OpenAPI 3.1.0 contract (#2136)")
+    contract_sub = p.add_subparsers(dest="action", required=True)
+    contract_sub.add_parser("show", help="print the path of the factory OpenAPI document")
+    contract_sub.add_parser("check", help="validate OpenAPI 3.1.0 structure and required paths")
+
     p = sub.add_parser("config", help="validate or print factory configuration")
     config_sub = p.add_subparsers(dest="action", required=True)
     show = config_sub.add_parser("show", help="print the resolved factory config")
@@ -178,6 +183,17 @@ def main(argv: list[str] | None = None) -> int:
         try:
             return lifecycle.uninstall(root, args.path, args.purge)
         except ValueError as exc:
+            print(f"error: {exc}")
+            return 2
+    if args.command == "contract":
+        from aisdlc import contract
+
+        if args.action == "show":
+            print(contract.contract_path())
+            return 0
+        try:
+            return contract.check()
+        except FileNotFoundError as exc:
             print(f"error: {exc}")
             return 2
     try:
