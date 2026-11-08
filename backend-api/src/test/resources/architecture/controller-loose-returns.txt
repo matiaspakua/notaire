@@ -1,3 +1,2 @@
 AuditRecordController#getAll
 AuxiliaryProtocolController#startDeed
-ManagementController#getWorkflowTrace
