@@ -75,6 +75,15 @@ class PluginDecl:
 
 
 @dataclass(frozen=True)
+class HarnessAdapter:
+    """An agent runtime discovered by path. Not a commercial Harness product."""
+
+    id: str
+    runtime: str
+    source: str
+
+
+@dataclass(frozen=True)
 class Role:
     name: str
     tier: str
@@ -119,6 +128,7 @@ class Profile:
     plugin_allow: tuple[str, ...] = ()
     plugins: tuple["PluginDecl", ...] = ()
     inventory: str | None = None
+    harness_adapters: tuple[HarnessAdapter, ...] = ()
 
     def stages(self) -> list[str]:
         declared = {g.stage for g in self.gates}
@@ -208,6 +218,7 @@ def _build(data: dict, errors: list[str]) -> Profile:
     profile.inventory = factory.get("inventory")
     profile.plugin_allow = tuple(plugins.get("allow", ()))
     profile.plugins = _plugins(plugins.get("entries", []), errors)
+    profile.harness_adapters = _harness_adapters(data.get("harness", {}).get("adapters", []), errors)
     profile.gates = _gates(data.get("gates", []), errors)
     profile.ratchets = _ratchets(data.get("ratchets", []), errors)
     profile.roles = _roles(data.get("roles", {}), errors)
@@ -249,6 +260,28 @@ def _plugins(raw: list[dict], errors: list[str]) -> tuple[PluginDecl, ...]:
             errors.append(f"{label} manifest must be a relative path inside the project")
             continue
         found.append(PluginDecl(plugin_id, kind, str(version), text, bool(item.get("trusted", False))))
+    return tuple(found)
+
+
+def _harness_adapters(raw: list[dict], errors: list[str]) -> tuple[HarnessAdapter, ...]:
+    found: list[HarnessAdapter] = []
+    seen: set[str] = set()
+    for index, item in enumerate(raw, 1):
+        label = f"harness adapter #{index} ({item.get('id', '?')})"
+        adapter_id = item.get("id")
+        runtime = item.get("runtime")
+        source = item.get("source")
+        if not adapter_id or not runtime or not source:
+            errors.append(f"{label} needs id, runtime and source")
+            continue
+        if adapter_id in seen:
+            errors.append(f"{label} duplicates id {adapter_id}")
+        seen.add(adapter_id)
+        text = str(source)
+        if text.startswith("/") or ".." in Path(text).parts:
+            errors.append(f"{label} source must be a relative path inside the project")
+            continue
+        found.append(HarnessAdapter(str(adapter_id), str(runtime), text))
     return tuple(found)
 
 
