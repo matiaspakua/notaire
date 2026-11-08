@@ -130,7 +130,11 @@ def main(argv: list[str] | None = None) -> int:
 
 def load_context(root: Path, profile_arg: Path | None) -> Context:
     path = profile_arg.resolve() if profile_arg else find_profile(root)
-    return Context(root=root, profile=load_profile(path), profile_path=path)
+    profile = load_profile(path)
+    from aisdlc.telemetry import bind_telemetry
+
+    bind_telemetry(profile, env=dict(os.environ))
+    return Context(root=root, profile=profile, profile_path=path)
 
 
 def dispatch(args: argparse.Namespace, ctx: Context) -> int:
