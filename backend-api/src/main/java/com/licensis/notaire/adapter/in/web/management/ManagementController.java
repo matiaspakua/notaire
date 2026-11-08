@@ -405,7 +405,8 @@ public class ManagementController {
     })
     @PostMapping("/{id}/transition")
     @Operation(summary = "CU83 - Transition management status validating the defined workflow")
-    public ResponseEntity<?> transition(@PathVariable Integer id, @Valid @RequestBody DtoTransitionRequest request) {
+    public ResponseEntity<TransitionManagementWebMapper.ManagementSummaryDto> transition(
+            @PathVariable Integer id, @Valid @RequestBody DtoTransitionRequest request) {
         var output = transitionManagementUseCase.execute(id, request.statusDestination());
         return ResponseEntity.ok(transitionManagementWebMapper.mapToHttpResponse(output));
     }

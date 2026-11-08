@@ -2,5 +2,4 @@ AuditRecordController#getAll
 AuxiliaryProtocolController#startDeed
 ManagementController#createCompleteCase
 ManagementController#getWorkflowTrace
-ManagementController#transition
 ManagementController#updateCompleteCase
