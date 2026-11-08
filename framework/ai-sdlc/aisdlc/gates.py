@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from aisdlc import evidence, repo
 from aisdlc.context import Context, run_shell
+from aisdlc.flags import EvaluationContext, can_skip_gate, get_flags
 from aisdlc.profile import STAGES, Gate
 
 SHOWN_TAIL = 15
@@ -52,6 +53,12 @@ def _run_gate(ctx: Context, gate: Gate, base: str, variables: dict[str, str],
         return {**result, "status": "todo"}
     if gate.paths and changed is not None and not any(repo.matches(p, gate.paths) for p in changed):
         print(f"  SKIP  {gate.name} — no change matches {', '.join(gate.paths)}")
+        return {**result, "status": "skip"}
+    provider = get_flags()
+    if provider is not None and can_skip_gate(
+        provider, gate_name=gate.name, required=gate.required, context=EvaluationContext()
+    ):
+        print(f"  SKIP  {gate.name} — optional gate disabled by flag gate.{gate.name}.skip")
         return {**result, "status": "skip"}
     command = ctx.expand(gate.run, {"base": base, **variables})
     outcome = run_shell(command, ctx.root, gate.timeout, stream=stream)

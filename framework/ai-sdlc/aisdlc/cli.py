@@ -190,9 +190,11 @@ def main(argv: list[str] | None = None) -> int:
 def load_context(root: Path, profile_arg: Path | None) -> Context:
     path = profile_arg.resolve() if profile_arg else find_profile(root)
     profile = load_profile(path)
+    from aisdlc.flags import bind_flags
     from aisdlc.telemetry import bind_telemetry
 
     bind_telemetry(profile, env=dict(os.environ))
+    bind_flags(root, profile.flags)
     return Context(root=root, profile=profile, profile_path=path)
 
 
@@ -278,7 +280,9 @@ def _config(ctx: Context, args: argparse.Namespace) -> int:
     if not args.redacted:
         print("error: config show requires --redacted")
         return 2
-    limit = resolve_max_open_prs(ctx.profile, os.environ, args.max_open_prs)
+    from aisdlc.flags import get_flags
+
+    limit = resolve_max_open_prs(ctx.profile, os.environ, args.max_open_prs, flag_provider=get_flags())
     view = config_view(ctx.profile, limit=limit)
     print(json.dumps(view, indent=2, sort_keys=True) if args.json else _plain(view))
     return 0

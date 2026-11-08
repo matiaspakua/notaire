@@ -21,11 +21,19 @@ SECRET_VALUES = re.compile(r"(ghp_[A-Za-z0-9]{8,}|github_pat_\w+|sk-[A-Za-z0-9]|
 ENV_LIMIT = "AISDLC_MAX_OPEN_PRS"
 
 
-def resolve_max_open_prs(profile: Profile, env: dict[str, str] | None = None, cli: int | None = None) -> int:
+def resolve_max_open_prs(
+    profile: Profile,
+    env: dict[str, str] | None = None,
+    cli: int | None = None,
+    flag_provider=None,
+) -> int:
     """Effective cap. The profile value is a ceiling: env and flags may lower it, not raise it.
 
     The environment variable is a number, not a secret. A non-numeric value is ignored.
+    A FeatureFlagPort value above the ceiling is ignored (clamped); it never raises the cap.
     """
+    from aisdlc.flags import EvaluationContext, clamp_pr_ceiling
+
     ceiling = profile.max_open_prs
     requested = ceiling
     if cli is not None:
@@ -34,6 +42,11 @@ def resolve_max_open_prs(profile: Profile, env: dict[str, str] | None = None, cl
         raw = (env if env is not None else os.environ).get(ENV_LIMIT)
         if raw is not None and raw.isdigit():
             requested = int(raw)
+    if flag_provider is not None:
+        flagged, _reason = clamp_pr_ceiling(flag_provider, ceiling=ceiling, context=EvaluationContext())
+        # Flags only participate when they propose a value at or below the current request,
+        # and never above the profile ceiling (clamp_pr_ceiling already enforces that).
+        requested = min(requested, flagged)
     if requested > ceiling:
         raise ProfileError(
             f"cannot raise max_open_prs above the profile ceiling {ceiling} (asked for {requested})"
