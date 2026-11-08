@@ -1,0 +1,7 @@
+id = "openspec"
+kind = "method"
+version = "1.0.0"
+status = "adapter"
+capabilities = ["plan", "validate"]
+command = ["openspec", "validate", "{change}", "--strict"]
+summary = "Prints the OpenSpec validate command. The factory does not run it while listing plugins."

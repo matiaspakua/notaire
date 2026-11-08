@@ -4,8 +4,19 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+import json
+import os
+
 from aisdlc import __version__, adopt, change, checks, diffchecks, evidence, gates, ratchet, repo, skills
 from aisdlc.context import Context
+from aisdlc.factory import (
+    check_inventory,
+    config_view,
+    list_plugins,
+    method_plan,
+    resolve_max_open_prs,
+    validate_factory,
+)
 from aisdlc.profile import ProfileError, find_profile, load_profile
 
 
@@ -22,6 +33,27 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--force", action="store_true")
 
     sub.add_parser("doctor", help="validate the profile and report what its level still lacks")
+
+    p = sub.add_parser("config", help="validate or print factory configuration")
+    config_sub = p.add_subparsers(dest="action", required=True)
+    show = config_sub.add_parser("show", help="print the resolved factory config")
+    show.add_argument("--redacted", action="store_true", help="required: refuse a raw dump")
+    show.add_argument("--json", action="store_true")
+    show.add_argument("--max-open-prs", type=int, help="override the open pull-request cap for this print")
+    config_sub.add_parser("validate", help="check factory config, plugins and the migration inventory")
+
+    p = sub.add_parser("plugin", help="list trusted plugins without executing them")
+    plugin_sub = p.add_subparsers(dest="action", required=True)
+    listed = plugin_sub.add_parser("list")
+    listed.add_argument("--json", action="store_true")
+    caps = plugin_sub.add_parser("capabilities")
+    caps.add_argument("--json", action="store_true")
+    plan = plugin_sub.add_parser("plan", help="print a plugin command without running it")
+    plan.add_argument("--id", required=True)
+    plan.add_argument("--var", action="append", default=[], metavar="KEY=VALUE")
+
+    p = sub.add_parser("inventory", help="check the migration inventory")
+    p.add_argument("action", choices=("check",))
 
     p = sub.add_parser("gate", help="run every gate of a stage")
     p.add_argument("stage", nargs="?")
@@ -115,8 +147,68 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "size": lambda: diffchecks.size(ctx, args.base, args.limit),
         "scope": lambda: diffchecks.scope(ctx, args.base, args.strict),
         "evidence": lambda: evidence.verify(ctx, args.anchor),
+        "config": lambda: _config(ctx, args),
+        "plugin": lambda: _plugin(ctx, args),
+        "inventory": lambda: _inventory(ctx),
     }
     return simple[args.command]()
+
+
+def _config(ctx: Context, args: argparse.Namespace) -> int:
+    if args.action == "validate":
+        errors = validate_factory(ctx.root, ctx.profile)
+        if errors:
+            print("factory config invalid:")
+            for error in errors:
+                print(f"  - {error}")
+            return 1
+        print("factory config valid")
+        return 0
+    if not args.redacted:
+        print("error: config show requires --redacted")
+        return 2
+    limit = resolve_max_open_prs(ctx.profile, os.environ, args.max_open_prs)
+    view = config_view(ctx.profile, limit=limit)
+    print(json.dumps(view, indent=2, sort_keys=True) if args.json else _plain(view))
+    return 0
+
+
+def _plugin(ctx: Context, args: argparse.Namespace) -> int:
+    if args.action == "plan":
+        try:
+            print(method_plan(ctx.root, ctx.profile, args.id, parse_vars(args.var)))
+        except ProfileError as exc:
+            print(f"error: {exc}")
+            return 2
+        return 0
+    rows = list_plugins(ctx.root, ctx.profile)
+    if args.action == "capabilities":
+        rows = [row for row in rows if row["available"]]
+    if args.json:
+        print(json.dumps(rows, indent=2))
+    else:
+        for row in rows:
+            caps = ",".join(row["capabilities"]) or "-"
+            print(f"{row['id']}\t{row['kind']}\t{row['status']}\tavailable={row['available']}\t{caps}")
+    return 0
+
+
+def _inventory(ctx: Context) -> int:
+    if not ctx.profile.inventory:
+        print("error: [factory] inventory is not set")
+        return 2
+    errors = check_inventory(ctx.root / ctx.profile.inventory)
+    if errors:
+        print("migration inventory invalid:")
+        for error in errors:
+            print(f"  - {error}")
+        return 1
+    print("migration inventory valid")
+    return 0
+
+
+def _plain(view: dict) -> str:
+    return "\n".join(f"{key}={value}" for key, value in view.items())
 
 
 def parse_vars(pairs: list[str]) -> dict[str, str]:

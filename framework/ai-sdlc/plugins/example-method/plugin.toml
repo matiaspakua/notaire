@@ -1,0 +1,7 @@
+id = "example-method"
+kind = "method"
+version = "1.0.0"
+status = "example"
+capabilities = ["plan"]
+command = ["example-method", "plan", "{change}"]
+summary = "In-repo example with no network and no project paths. Proves a second plugin id loads."

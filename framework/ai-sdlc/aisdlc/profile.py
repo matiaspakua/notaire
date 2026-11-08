@@ -62,6 +62,18 @@ class Ratchet:
     direction: str = "min"
 
 
+PLUGIN_KINDS = ("method", "harness", "tracker", "gate", "evidence")
+
+
+@dataclass(frozen=True)
+class PluginDecl:
+    id: str
+    kind: str
+    version: str
+    manifest: str
+    trusted: bool = False
+
+
 @dataclass(frozen=True)
 class Role:
     name: str
@@ -99,6 +111,14 @@ class Profile:
     size_exclude: tuple[str, ...] = ()
     scope_heading: str = "Write set"
     scope_always: tuple[str, ...] = ()
+    max_open_prs: int = 3
+    concurrency: int = 1
+    timeout_seconds: int = 1800
+    retry: int = 2
+    backoff_seconds: float = 2.0
+    plugin_allow: tuple[str, ...] = ()
+    plugins: tuple["PluginDecl", ...] = ()
+    inventory: str | None = None
 
     def stages(self) -> list[str]:
         declared = {g.stage for g in self.gates}
@@ -171,11 +191,65 @@ def _build(data: dict, errors: list[str]) -> Profile:
         scope_heading=scope.get("heading", "Write set"),
         scope_always=tuple(scope.get("always", ())),
     )
+    factory, plugins = data.get("factory", {}), data.get("plugins", {})
+    profile.max_open_prs = _fallback(_nonneg(factory.get("max_open_prs", 3), "factory.max_open_prs", errors), 3)
+    profile.concurrency = _fallback(_positive(factory.get("concurrency", 1), "factory.concurrency", errors), 1)
+    profile.timeout_seconds = _fallback(
+        _positive(factory.get("timeout_seconds", 1800), "factory.timeout_seconds", errors), 1800
+    )
+    profile.retry = _nonneg(factory.get("retry", 2), "factory.retry", errors)
+    if profile.retry is None:
+        profile.retry = 2
+    backoff = factory.get("backoff_seconds", 2)
+    if not isinstance(backoff, (int, float)) or isinstance(backoff, bool) or backoff < 0:
+        errors.append(f"factory.backoff_seconds must be a non-negative number, got {backoff!r}")
+        backoff = 2
+    profile.backoff_seconds = float(backoff)
+    profile.inventory = factory.get("inventory")
+    profile.plugin_allow = tuple(plugins.get("allow", ()))
+    profile.plugins = _plugins(plugins.get("entries", []), errors)
     profile.gates = _gates(data.get("gates", []), errors)
     profile.ratchets = _ratchets(data.get("ratchets", []), errors)
     profile.roles = _roles(data.get("roles", {}), errors)
     _check_prices(profile.prices, errors)
     return profile
+
+
+def _fallback(value: int | None, default: int) -> int:
+    return default if value is None else value
+
+
+def _nonneg(value, where: str, errors: list[str]) -> int | None:
+    if not isinstance(value, int) or isinstance(value, bool) or value < 0:
+        errors.append(f"{where} must be a non-negative integer, got {value!r}")
+        return None
+    return value
+
+
+def _plugins(raw: list[dict], errors: list[str]) -> tuple[PluginDecl, ...]:
+    found: list[PluginDecl] = []
+    seen: set[str] = set()
+    for index, item in enumerate(raw, 1):
+        label = f"plugin #{index} ({item.get('id', '?')})"
+        plugin_id = item.get("id")
+        kind = item.get("kind")
+        version = item.get("version")
+        manifest = item.get("manifest")
+        if not plugin_id or not version or not manifest:
+            errors.append(f"{label} needs id, version and manifest")
+            continue
+        if kind not in PLUGIN_KINDS:
+            errors.append(f"{label} kind must be one of {', '.join(PLUGIN_KINDS)}")
+            continue
+        if plugin_id in seen:
+            errors.append(f"{label} duplicates id {plugin_id}")
+        seen.add(plugin_id)
+        text = str(manifest)
+        if text.startswith("/") or ".." in Path(text).parts:
+            errors.append(f"{label} manifest must be a relative path inside the project")
+            continue
+        found.append(PluginDecl(plugin_id, kind, str(version), text, bool(item.get("trusted", False))))
+    return tuple(found)
 
 
 def _positive(value, where: str, errors: list[str]) -> int | None:

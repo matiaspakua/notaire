@@ -8,6 +8,7 @@
 | Notaire profile | [`.aisdlc/aisdlc.toml`](../../../.aisdlc/aisdlc.toml) |
 | Data snapshot | [`github-page/lib/ai-sdlc-history.json`](../../../github-page/lib/ai-sdlc-history.json) (2026-10-28) |
 | Public case study | GitHub Pages → AI Factory → Case study / Framework |
+| Foundation slice | [#2121](https://github.com/matiaspakua/notaire/issues/2121) · [`FACTORY-FOUNDATION.md`](FACTORY-FOUNDATION.md) |
 
 **How to read this report.** Every finding is labelled. **Evidence (E)** is something you can open in
 the repository or on GitHub: a file, a commit, an issue, a count from the snapshot. **Inference (I)**
