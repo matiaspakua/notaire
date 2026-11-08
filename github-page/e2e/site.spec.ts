@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-const PAGES = ["", "product/", "product/story/", "product/platform/", "product/numbers/", "docs/", "docs/stack/", "docs/hexagonal/", "docs/database/", "docs/api/", "docs/architecture/", "docs/testing/", "docs/releases/", "security/", "security/architecture/", "security/threats/", "security/toolchain/", "security/posture/", "ai-sdlc/", "ai-sdlc/lifecycle/", "ai-sdlc/guardrails/", "ai-sdlc/quality-gates/", "ai-sdlc/security-gates/", "ai-sdlc/agents/", "ai-sdlc/results/", "ai-sdlc/case-study/", "about/"];
+const PAGES = ["", "product/", "product/anatomy/", "product/story/", "product/platform/", "product/numbers/", "docs/", "docs/engineering/", "docs/glossary/", "docs/stack/", "docs/hexagonal/", "docs/database/", "docs/api/", "docs/architecture/", "docs/testing/", "docs/releases/", "security/", "security/architecture/", "security/threats/", "security/toolchain/", "security/posture/", "ai-sdlc/", "ai-sdlc/anatomy/", "ai-sdlc/lifecycle/", "ai-sdlc/guardrails/", "ai-sdlc/quality-gates/", "ai-sdlc/security-gates/", "ai-sdlc/agents/", "ai-sdlc/results/", "ai-sdlc/case-study/", "about/"];
 
 for (const p of PAGES) {
   test(`/${p} has one header, no horizontal scroll and no axe violations`, async ({ page }) => {
@@ -58,7 +58,7 @@ test("factory pages show reading progress and previous/next links", async ({ pag
   await page.goto("ai-sdlc/lifecycle/");
   const pager = page.getByRole("navigation", { name: /previous and next/i });
   await expect(pager.getByRole("link", { name: /OpenSpec/ })).toBeVisible();
-  await expect(pager.getByRole("link", { name: /Case study/ })).toBeVisible();
+  await expect(pager.getByRole("link", { name: /Anatomy/ })).toBeVisible();
   await expect(page.locator("[data-reading-progress]")).toHaveCount(1);
 });
 
@@ -66,7 +66,7 @@ test("product pages share the sidebar and the pager (#1976)", async ({ page, isM
   await page.goto("product/story/");
   if (!isMobile) {
     const sidebar = page.getByRole("navigation", { name: /product pages/i });
-    for (const name of ["Overview", "Story", "Platform", "Numbers"]) await expect(sidebar.getByRole("link", { name })).toBeVisible();
+    for (const name of ["Overview", "How it works", "Story", "Platform", "Numbers"]) await expect(sidebar.getByRole("link", { name })).toBeVisible();
   }
   const pager = page.getByRole("navigation", { name: /previous and next/i });
   await expect(pager.getByRole("link", { name: /Platform/ })).toBeVisible();

@@ -82,7 +82,7 @@ export function Architecture({ versions }: { versions: Versions }) {
         <div className="text-center mb-16">
           <p className="text-emerald-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">System Architecture</p>
           <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
-            Modern <span className="grad-green">Microservices</span>
+            Modern <span className="grad-green">Layered Platform</span>
           </h2>
           <p className="text-neutral-600 max-w-xl mx-auto">From a single Java Swing file to a multi-layer containerized platform.</p>
         </div>
