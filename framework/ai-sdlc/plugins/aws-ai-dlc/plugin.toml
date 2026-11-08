@@ -1,0 +1,9 @@
+id = "aws-ai-dlc"
+kind = "method"
+version = "1.0.0"
+status = "boundary"
+capabilities = ["boundary"]
+auto_trust_hooks = false
+second_orchestrator = false
+summary = "Boundary only (#2124). Design in DESIGN.md: AI-DLC owns no aisdlc stages as orchestrator. Hooks are never auto-trusted. Not available until allow + a non-orchestrating dry plan."
+upstream = "awslabs/aidlc-workflows"

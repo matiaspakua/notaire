@@ -222,4 +222,7 @@ def _manifest_errors(plugin_id: str, path: Path) -> list[str]:
         not isinstance(command, list) or not all(isinstance(part, str) for part in command)
     ):
         errors.append(f"plugin {plugin_id} command must be an argv list of strings")
+    # Method/harness hooks that can run commands must never be auto-trusted (#2124).
+    if data.get("auto_trust_hooks") is True:
+        errors.append(f"plugin {plugin_id} must not set auto_trust_hooks = true")
     return errors
