@@ -1,0 +1,159 @@
+openapi: 3.1.0
+info:
+  title: AI SDLC factory control surface
+  version: 1.0.0
+  description: |
+    Contract for factory control operations shared by the `aisdlc` CLI JSON payloads
+    and any future HTTP adapter. Separate from any adopter application API description.
+    No HTTP server is required to publish this description (#2136 / ADR-003).
+servers:
+  - url: https://factory.local/v1
+    description: Placeholder; CLI is the system of record today
+tags:
+  - name: config
+  - name: plugins
+  - name: harness
+  - name: evidence
+  - name: catalogs
+paths:
+  /factory/config:
+    get:
+      tags: [config]
+      operationId: getFactoryConfig
+      summary: Resolved factory config (CLI `config show --json --redacted`)
+      responses:
+        "200":
+          description: Redacted factory config
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FactoryConfig"
+  /factory/plugins:
+    get:
+      tags: [plugins]
+      operationId: listFactoryPlugins
+      summary: Trusted plugin listing (CLI `plugin list --json`)
+      responses:
+        "200":
+          description: Plugin rows
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PluginRow"
+  /factory/harness:
+    get:
+      tags: [harness]
+      operationId: listFactoryHarness
+      summary: Harness adapters (CLI `harness list --json`)
+      responses:
+        "200":
+          description: Adapter rows
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HarnessRow"
+  /factory/report:
+    get:
+      tags: [evidence]
+      operationId: getFactoryReport
+      summary: Evidence and cost summary (CLI `report --json`)
+      responses:
+        "200":
+          description: Report payload
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EvidenceReport"
+  /factory/catalogs/{kind}:
+    get:
+      tags: [catalogs]
+      operationId: listCatalog
+      summary: Catalog entries by kind (skills|mcp|agents|memory) — reserved for #2139
+      parameters:
+        - name: kind
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [skills, mcp, agents, memory]
+      responses:
+        "200":
+          description: Catalog list (empty until catalogs CRUD lands)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CatalogList"
+components:
+  schemas:
+    FactoryConfig:
+      type: object
+      additionalProperties: true
+      required: [schema, project, max_open_prs, concurrency, timeout_seconds, retry, backoff_seconds, plugin_allow]
+      properties:
+        schema: { type: integer }
+        project: { type: string }
+        max_open_prs: { type: integer, minimum: 0 }
+        concurrency: { type: integer, minimum: 1 }
+        timeout_seconds: { type: integer, minimum: 1 }
+        retry: { type: integer, minimum: 0 }
+        backoff_seconds: { type: number, minimum: 0 }
+        plugin_allow:
+          type: array
+          items: { type: string }
+        inventory:
+          type: [string, "null"]
+        distributed_claim_lock: { type: string }
+    PluginRow:
+      type: object
+      additionalProperties: true
+      required: [id, kind, version, available, capabilities, status]
+      properties:
+        id: { type: string }
+        kind: { type: string }
+        version: { type: string }
+        available: { type: boolean }
+        reason:
+          type: [string, "null"]
+        capabilities:
+          type: array
+          items: { type: string }
+        status: { type: string }
+    HarnessRow:
+      type: object
+      additionalProperties: true
+      required: [id, runtime, source]
+      properties:
+        id: { type: string }
+        runtime: { type: string }
+        source: { type: string }
+    EvidenceReport:
+      type: object
+      additionalProperties: true
+      required: [runs, failed_runs, gates, stages, cost]
+      properties:
+        runs: { type: integer }
+        failed_runs: { type: integer }
+        gates: { type: array, items: { type: object, additionalProperties: true } }
+        stages: { type: array, items: { type: object, additionalProperties: true } }
+        cost: { type: object, additionalProperties: true }
+        lead_time_event_pair: { type: object, additionalProperties: true }
+    CatalogList:
+      type: object
+      additionalProperties: false
+      required: [kind, entries]
+      properties:
+        kind:
+          type: string
+          enum: [skills, mcp, agents, memory]
+        entries:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+            required: [id]
+            properties:
+              id: { type: string }

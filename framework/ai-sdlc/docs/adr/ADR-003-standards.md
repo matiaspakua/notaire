@@ -12,11 +12,14 @@ OFREP and the numeric error-code list are not verified against a pinned OpenFeat
 
 ## OpenAPI
 
-This CLI has no HTTP server. It does not need an OpenAPI document to be a CLI.
+This CLI has no HTTP server. The factory still publishes an **OpenAPI 3.1.0** control
+description at `openapi/factory-control.openapi.yaml` (#2136) so CLI JSON payloads and any
+future HTTP adapter share one contract. OAS 3.2 is not used. The adopter application API
+description stays outside the kit and is never imported.
 
-The product HTTP contract stays in the adopter's OpenAPI file. A future factory HTTP API, if one is justified, would be a separate description. This slice does not pick OAS 3.2. The installed toolchain is not being asked to parse 3.2.
-
-`config show --json` is a CLI payload, not an OpenAPI operation.
+`aisdlc contract check` validates structure; `bin/check-contract-breaking.sh` runs oasdiff when
+installed, with accepts under `openapi/accepted-breaking-changes.d/`. `config show --json` keys
+are covered by the `FactoryConfig` schema.
 
 ## OpenTelemetry
 
