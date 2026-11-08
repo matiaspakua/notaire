@@ -11,6 +11,8 @@ import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from aisdlc.telemetry import TelemetrySettings, validate_telemetry_settings
+
 PROFILE_NAMES = ("aisdlc.toml", ".aisdlc/aisdlc.toml")
 
 # Canonical stages in lifecycle order and the hard gate each one belongs to.
@@ -129,6 +131,7 @@ class Profile:
     plugins: tuple["PluginDecl", ...] = ()
     inventory: str | None = None
     harness_adapters: tuple[HarnessAdapter, ...] = ()
+    telemetry: TelemetrySettings = field(default_factory=TelemetrySettings)
 
     def stages(self) -> list[str]:
         declared = {g.stage for g in self.gates}
@@ -222,8 +225,19 @@ def _build(data: dict, errors: list[str]) -> Profile:
     profile.gates = _gates(data.get("gates", []), errors)
     profile.ratchets = _ratchets(data.get("ratchets", []), errors)
     profile.roles = _roles(data.get("roles", {}), errors)
+    profile.telemetry = _telemetry(data.get("telemetry", {}), errors)
     _check_prices(profile.prices, errors)
     return profile
+
+
+def _telemetry(raw: dict, errors: list[str]) -> TelemetrySettings:
+    enabled = bool(raw.get("enabled", False))
+    exporter = raw.get("exporter", "none")
+    if not isinstance(exporter, str):
+        errors.append(f"telemetry.exporter must be a string, got {exporter!r}")
+        exporter = "none"
+    errors.extend(validate_telemetry_settings(enabled, exporter))
+    return TelemetrySettings(enabled=enabled, exporter=exporter)
 
 
 def _fallback(value: int | None, default: int) -> int:

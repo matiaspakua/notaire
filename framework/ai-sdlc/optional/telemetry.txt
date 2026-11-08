@@ -1,0 +1,5 @@
+# Optional OpenTelemetry packages for the TelemetryPort SDK path (#2125).
+# The kit stays stdlib-only at runtime; `verify.sh` installs these into
+# `framework/ai-sdlc/.venv-telemetry` so tests can prove the real NoOp / env behavior.
+opentelemetry-api==1.45.2
+opentelemetry-sdk==1.45.2

@@ -101,3 +101,10 @@ placeholder = true               # replace with your full suite command, then de
 # [cost.prices."model-id"]        # USD per million tokens, for `aisdlc cost`
 # input = 3.0
 # output = 15.0
+
+# Optional TelemetryPort (#2125). Off by default. exporter=none binds the OpenTelemetry
+# NoOpTracerProvider when the optional packages in optional/telemetry.txt are installed.
+# Prompts, diffs and secrets are never span attributes. No GenAI semantic-convention claim.
+# [telemetry]
+# enabled = false
+# exporter = "none"

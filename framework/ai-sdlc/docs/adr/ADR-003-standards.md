@@ -1,14 +1,14 @@
 # ADR-003: What the external specifications change, and what they do not
 
-**Status:** Accepted as design constraints. No new SDK is added in this slice.
+**Status:** Accepted. TelemetryPort and FeatureFlagPort stubs land in #2125; the kit remains stdlib-only at runtime.
 
 ## OpenFeature
 
 The useful shape is a provider, an evaluation context, hooks, and a result that carries a default plus a reason. Evaluation of an optional flag must not throw.
 
-That shape is not implemented. Ordinary settings (paths, timeouts, the pull-request cap) are config. Approval, merge rights, security gates, and allowlists are policy. They are validated config and they fail closed. They are not feature flags. A flag's default may be false. "Fail open" is the wrong lesson.
+That shape is implemented as a stdlib stub in `aisdlc/flags.py` (`InMemoryProvider`, `FlagHooks`, `evaluate`). Ordinary settings (paths, timeouts, the pull-request cap) stay config. Approval, merge rights, security gates, and allowlists stay policy and fail closed — they are not feature flags. Keys under `core.*` and `security.*` cannot override invariants through the port. A flag's default may be false. "Fail open" is the wrong lesson.
 
-OFREP and the numeric error-code list were not verified against a pinned SDK. They are not implemented.
+OFREP and the numeric error-code list are not verified against a pinned OpenFeature SDK. This stub is not a claim of SDK conformance.
 
 ## OpenAPI
 
@@ -20,11 +20,9 @@ The product HTTP contract stays in the adopter's OpenAPI file. A future factory 
 
 ## OpenTelemetry
 
-No OpenTelemetry SDK is imported. No exporter is configured. JSON config output is not a span.
+`aisdlc/telemetry.py` is the TelemetryPort. Default: `[telemetry] enabled = false` (stdlib no-op). When enabled with `exporter = "none"`, the port binds the OpenTelemetry API's `NoOpTracerProvider` via `importlib` if the optional packages are present — a real no-op SDK path, not a hand-rolled fake. No OTLP exporter is configured in this slice. JSON config output is not a span. Prompts, diffs, and secrets are redacted from attributes. High-cardinality free text is not used as metric attributes. Stage duration and cost USD emit as cheap lead-time/cost hooks into the port; the evidence ledger remains the source of truth.
 
-A later telemetry port would default to a no-op. Spans, metrics, and logs would be opt-in. Prompts, diffs, and secrets would stay off those signals. High-cardinality names would not be metric attributes. Whether a child process reads `TRACEPARENT`, and whether `OTEL_SDK_DISABLED` is honored, would be tested against the SDK that gets added. This slice does not claim either behavior.
-
-GenAI semantic conventions are a draft in a separate repository. Nothing here says the kit conforms to them.
+Proven against the optional SDK (`framework/ai-sdlc/optional/telemetry.txt`): `OTEL_SDK_DISABLED=true` yields non-recording spans; `TRACEPARENT` is not injected on the no-op / disabled paths. GenAI semantic conventions are a draft in a separate repository. Nothing here claims conformance to them.
 
 ## Method tools
 

@@ -58,10 +58,9 @@ read it (#2117). The migration row marks it as a hotspot and does not change its
 Product OpenAPI, product specs, and `frontend/src` are `class = stay`.
 
 Follow-ups, not done here:
-[#2125](https://github.com/matiaspakua/notaire/issues/2125) a real telemetry SDK.
 Owner opt-in: add `github-spec-kit` to `[plugins] allow` after reviewing the dry plan.
 AWS AI-DLC stays unavailable until a later Issue adds a non-orchestrating dry plan.
 [#2117](https://github.com/matiaspakua/notaire/issues/2117) stays the generated-inventory hotspot.
+A hosted OTLP collector / product application telemetry stay out of scope.
 
-No OpenTelemetry SDK is imported. No feature-flag SDK is imported. No HTTP server was added.
-A manifest path check is not a sandbox.
+TelemetryPort (`aisdlc/telemetry.py`, #2125): off by default; optional OpenTelemetry NoOp path when enabled with `exporter = "none"`; prompts/diffs/secrets redacted; lead-time/cost hooks on stage and cost records. FeatureFlagPort stub (`aisdlc/flags.py`) mirrors OpenFeature shape without a hard SDK dependency. No HTTP server was added. A manifest path check is not a sandbox.

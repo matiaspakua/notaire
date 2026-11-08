@@ -40,6 +40,11 @@ forbid_in_generic = ['notaire', 'backend-api', 'workspace/sdlc', 'docs/openspec'
 [evidence]
 dir = ".aisdlc/evidence"     # hash-chained; `aisdlc evidence verify` (cross-repo assessment 2026-11)
 
+# TelemetryPort (#2125): off by default. Optional OTel NoOp path when enabled; no exporter.
+[telemetry]
+enabled = false
+exporter = "none"
+
 # Owner-only paths: the policy, the gates, the merge path and the harness. Agents may propose a
 # change to them; the Owner merges it (CONSTITUTION §5 step 21, §10 Roles). The merge gate below
 # turns that sentence into an exit code (agentic-os C14-004; factory-control protectedPaths).
