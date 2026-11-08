@@ -7,7 +7,22 @@ from pathlib import Path
 import json
 import os
 
-from aisdlc import __version__, adopt, change, checks, diffchecks, evidence, gates, harness, lifecycle, ratchet, repo, skills
+from aisdlc import (
+    __version__,
+    adopt,
+    change,
+    checks,
+    diffchecks,
+    evidence,
+    gates,
+    harness,
+    lifecycle,
+    metrics,
+    ratchet,
+    repo,
+    skills,
+)
+from aisdlc.telemetry import get_telemetry
 from aisdlc.context import Context
 from aisdlc.factory import (
     check_inventory,
@@ -120,6 +135,18 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--json", action="store_true")
     p.add_argument("--since", help="ISO date, e.g. 2026-10-01")
 
+    p = sub.add_parser("metrics", help="lead-time and stage duration metrics (#2138)")
+    metrics_sub = p.add_subparsers(dest="action", required=True)
+    lead = metrics_sub.add_parser(
+        "lead-time",
+        help="issue.created_at → earliest linked PR checks_green_at (fixture or sample JSON)",
+    )
+    lead.add_argument("--fixture", type=Path, required=True, help="JSON sample with issue + pull_requests")
+    lead.add_argument("--json", action="store_true")
+    stages = metrics_sub.add_parser("stages", help="stage durations from the evidence ledger")
+    stages.add_argument("--json", action="store_true")
+    stages.add_argument("--since", help="ISO date, e.g. 2026-10-01")
+
     p = sub.add_parser("cost", help="record the token cost of an agent run")
     p.add_argument("--agent", required=True)
     p.add_argument("--model", required=True)
@@ -188,6 +215,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "commits": lambda: checks.commits(ctx, args.base),
         "tdd": lambda: checks.tdd(ctx, args.base),
         "report": lambda: evidence.report(ctx, args.json, args.since),
+        "metrics": lambda: _metrics(ctx, args),
         "protected": lambda: diffchecks.protected(ctx, args.base),
         "size": lambda: diffchecks.size(ctx, args.base, args.limit),
         "scope": lambda: diffchecks.scope(ctx, args.base, args.strict),
@@ -198,6 +226,43 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "harness": lambda: _harness(ctx, args),
     }
     return simple[args.command]()
+
+
+def _metrics(ctx: Context, args: argparse.Namespace) -> int:
+    if args.action == "lead-time":
+        path = args.fixture
+        if not path.is_file():
+            print(f"error: fixture not found: {path}")
+            return 2
+        result = metrics.load_lead_time_fixture(path)
+        metrics.emit_lead_time(get_telemetry(), result)
+        if args.json:
+            print(json.dumps(result, indent=2, sort_keys=True))
+        else:
+            if result["status"] != "ok":
+                print(f"lead-time: no-evaluable (issue {result.get('issue')})")
+                return 1
+            print(
+                f"lead-time: issue #{result['issue']} → PR #{result['pull_request']} "
+                f"green in {result['seconds']:.0f}s "
+                f"({result['start_event']} → {result['end_event']})"
+            )
+        return 0 if result["status"] == "ok" else 1
+    # stages
+    data = evidence.summarize(ctx, args.since)
+    stages = data.get("stages") or []
+    metrics.emit_stage_durations(get_telemetry(), stages)
+    if args.json:
+        print(json.dumps({"stages": stages, "event_pair": metrics.EVENT_PAIR}, indent=2, sort_keys=True))
+        return 0
+    print("| Stage | Runs | OK | Median s | Total s |")
+    print("|-------|-----:|---:|---------:|--------:|")
+    for stage in stages:
+        print(
+            f"| {stage['stage']} | {stage['runs']} | {stage['ok_runs']} | "
+            f"{stage['median_seconds']:.1f} | {stage['total_seconds']:.1f} |"
+        )
+    return 0
 
 
 def _config(ctx: Context, args: argparse.Namespace) -> int:

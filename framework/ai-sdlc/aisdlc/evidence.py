@@ -19,6 +19,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from aisdlc.context import Context
+from aisdlc.metrics import stage_durations
 from aisdlc.telemetry import get_telemetry, record_cost_event, record_stage_event
 
 LEDGER = "ledger.jsonl"
@@ -159,8 +160,17 @@ def summarize(ctx: Context, since: str | None = None) -> dict:
         for gate in run.get("gates", []):
             per_gate[(run["stage"], gate["name"])].append({**gate, "ts": run["ts"]})
     gates = [_gate_summary(stage, name, results) for (stage, name), results in sorted(per_gate.items())]
-    return {"runs": len(runs), "failed_runs": sum(1 for r in runs if not r.get("ok")),
-            "gates": gates, "cost": _cost_summary(_read(ctx, COSTS, since))}
+    return {
+        "runs": len(runs),
+        "failed_runs": sum(1 for r in runs if not r.get("ok")),
+        "gates": gates,
+        "stages": stage_durations(runs),
+        "cost": _cost_summary(_read(ctx, COSTS, since)),
+        "lead_time_event_pair": {
+            "start": "issue.created_at",
+            "end": "pull_request.checks_green_at",
+        },
+    }
 
 
 def _gate_summary(stage: str, name: str, results: list[dict]) -> dict:
@@ -206,6 +216,20 @@ def report(ctx: Context, as_json: bool, since: str | None) -> int:
         rate = "—" if g["pass_rate"] is None else f"{g['pass_rate']:.1f}%"
         median = "—" if g["median_seconds"] is None else f"{g['median_seconds']:.1f}"
         print(f"| {g['stage']} | {g['gate']} | {g['runs']} | {rate} | {median} | {g['last_status']} |")
+    if data.get("stages"):
+        print("\n| Stage | Runs | OK | Median s | Total s |")
+        print("|-------|-----:|---:|---------:|--------:|")
+        for s in data["stages"]:
+            print(
+                f"| {s['stage']} | {s['runs']} | {s['ok_runs']} | "
+                f"{s['median_seconds']:.1f} | {s['total_seconds']:.1f} |"
+            )
+    pair = data.get("lead_time_event_pair") or {}
+    if pair:
+        print(
+            f"\nLead time event pair: `{pair.get('start')}` → `{pair.get('end')}` "
+            "(see `aisdlc metrics lead-time --fixture`)."
+        )
     cost = data["cost"]
     if cost["by_model"]:
         print("\n| Model | Entries | Input tokens | Output tokens | USD |")
