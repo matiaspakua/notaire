@@ -75,7 +75,7 @@ export default function ProductOverviewPage() {
       <SectionTitle id="case">How a case moves</SectionTitle>
       <p>
         Every case follows a status workflow that the office can redesign in the app (ADR-014); the default path is
-        the one the use cases describe:
+        the one the use cases describe. <Link href="/product/anatomy/">How it works</Link> draws the system behind it.
       </p>
       <ol className="my-6 grid gap-2 sm:grid-cols-3">
         {CASE_FLOW.map(([cu, step], i) => (

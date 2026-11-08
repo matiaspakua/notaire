@@ -1,0 +1,32 @@
+/* Anatomy figures (#2089). Kit tokens come from iso.css; layout rules from figures.css. */
+.anatomy [data-station] {
+  transition: opacity 0.45s cubic-bezier(0.32, 0.72, 0, 1);
+  cursor: pointer;
+}
+.anatomy [data-station][data-dim] {
+  opacity: 0.26;
+}
+.anatomy [data-part] {
+  transition: transform 0.95s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.55s ease;
+}
+.anatomy .iso-plate {
+  overflow: hidden;
+}
+.anatomy .iso-figure {
+  margin: 1.5rem 0;
+}
+.anatomy .iso-figure svg {
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+.anatomy-still [data-station],
+.anatomy-still [data-part] {
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .anatomy [data-station],
+  .anatomy [data-part] {
+    transition: none;
+  }
+}
