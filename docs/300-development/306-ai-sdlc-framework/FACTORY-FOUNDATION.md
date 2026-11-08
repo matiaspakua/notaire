@@ -26,5 +26,11 @@ read it (#2117). The migration row marks it as a hotspot and does not change its
 
 Product OpenAPI, product specs, and `frontend/src` are `class = stay`.
 
+Follow-ups, not done here: [#2122](https://github.com/matiaspakua/notaire/issues/2122) harness port,
+[#2123](https://github.com/matiaspakua/notaire/issues/2123) Spec Kit,
+[#2124](https://github.com/matiaspakua/notaire/issues/2124) AWS AI-DLC,
+[#2125](https://github.com/matiaspakua/notaire/issues/2125) a real telemetry SDK.
+[#2117](https://github.com/matiaspakua/notaire/issues/2117) stays the generated-inventory hotspot.
+
 No OpenTelemetry SDK is imported. No feature-flag SDK is imported. No HTTP server was added.
 A manifest path check is not a sandbox.
