@@ -37,6 +37,7 @@ Architecture Decision Records document the important architecture decisions for 
 | [029](ADR-029-object-level-authorization.md) | Object-level authorization (record ownership) | Proposed | 2026-10-14 | Security |
 | [030](ADR-030-hexagonal-architecture-full-adoption.md) | Full Ports & Adapters architecture for backend and frontend | Accepted | 2026-10-14 | Code organization |
 | [031](ADR-031-local-ai-assistant.md) | Local AI assistant through Spring AI behind hexagonal ports | Proposed | 2026-10-28 | Architecture / AI |
+| [032](ADR-032-multi-factor-authentication-totp.md) | Multi-factor authentication with TOTP (RFC 6238) | Accepted | 2026-11-08 | Security |
 
 Dates for ADR-005, ADR-006, and ADR-007 match the date in each decision file.
 
