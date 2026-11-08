@@ -152,6 +152,7 @@ class AdditionalControllersTest {
                     traceService,
                     transitionUseCase,
                     transitionWebMapper,
+                    new com.licensis.notaire.adapter.in.web.management.CompleteCaseWebMapper(),
                     externalEntityDocumentService,
                     documentReentryService))
                     .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
