@@ -31,5 +31,5 @@ GenAI semantic conventions are a draft in a separate repository. Nothing here sa
 | Tool | What was checked here | Status |
 |------|----------------------|--------|
 | OpenSpec | `openspec --version` prints 1.14.0. `.cursor/install.sh` pins `@fission-ai/openspec@1.14.0`. The adapter argv is `openspec validate {change} --strict`, which this repository already runs. | Working as a printed command. Not executed by `plugin list`. |
-| GitHub Spec Kit | Not installed. Upstream documents an extensions API. This slice does not call it and does not claim the API is absent. | Planned. |
+| GitHub Spec Kit | Pinned `specify-cli==1.3.2`. Adapter under `plugins/spec-kit/`. **Called:** CLI `specify extension search` and Python `ExtensionCatalog.search` (see `plugins/spec-kit/CALLED-API.md`). Dry plan prints argv; Notaire keeps the id out of `[plugins] allow` until an Owner opts in. | Adapter present; not on allow. |
 | AWS AI-DLC | Not installed. It is an orchestrator of its own. Loading it beside this kit would run two lifecycles. | Planned. Not a harness adapter. |

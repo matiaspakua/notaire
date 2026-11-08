@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **aisdlc:** Spec Kit method plugin prints `specify extension search` (pinned specify-cli 1.3.2); kept out of plugin allow until Owner opt-in (Refs #2123)
 * **aisdlc:** Harness port lists Cursor Cloud and local oMLX adapters and reads their sources in place without claiming a sandbox (Refs #2122)
 * **api:** Auxiliary protocol startDeed returns typed DeedResponse via advice for errors (Refs #577)
 * **api:** Audit log list returns typed AuditRecordGetAllResponse (flat list or paginated page) (Refs #577)
