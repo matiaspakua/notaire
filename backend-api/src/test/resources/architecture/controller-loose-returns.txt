@@ -1,6 +1,5 @@
 AuditRecordController#getAll
 AuxiliaryProtocolController#startDeed
-ManagementController#create
 ManagementController#createCompleteCase
 ManagementController#getWorkflowTrace
 ManagementController#transition

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **api:** Management create returns typed ManagementResponse (Refs #577)
 * **api:** User logout returns typed LogoutResponse (Refs #577)
 * **api:** User login returns typed LoginSuccessResponse via UserLoginExceptionHandler (Refs #577)
 * **frontend:** Login presents one desk card and a token-timed seal with no rotation (Refs #2069)
