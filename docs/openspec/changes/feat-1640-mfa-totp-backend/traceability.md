@@ -35,13 +35,13 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Confirm enrolment with a valid code | TotpAlgorithmTest | pending |
-| Confirm enrolment with a wrong code | TotpAlgorithmTest | pending |
-| Secret is encrypted at rest | TotpAlgorithmTest | pending |
-| Valid code accepted | TotpAlgorithmTest | pending |
-| Wrong code rejected | TotpAlgorithmTest | pending |
-| Replayed code rejected | TotpAlgorithmTest | pending |
-| Recovery code consumed | TotpAlgorithmTest | pending |
+| Confirm enrolment with a valid code | TotpAlgorithmTest | passing |
+| Confirm enrolment with a wrong code | TotpAlgorithmTest | passing |
+| Secret is encrypted at rest | TotpAlgorithmTest | passing |
+| Valid code accepted | TotpAlgorithmTest | passing |
+| Wrong code rejected | TotpAlgorithmTest | passing |
+| Replayed code rejected | TotpAlgorithmTest | passing |
+| Recovery code consumed | TotpAlgorithmTest | passing |
 
 ## Permanent documentation updated
 
