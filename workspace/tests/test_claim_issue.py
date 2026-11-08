@@ -7,7 +7,9 @@ waits, re-reads, and only the earliest marker since the last release wins.
 
 from __future__ import annotations
 
+import contextlib
 import importlib.util
+import io
 import sys
 import unittest
 from pathlib import Path
@@ -127,6 +129,21 @@ class ClaimFlowTest(unittest.TestCase):
         gh = FakeGh(issue(), wip=[issue(number=20, labels=("BACKEND", "in-progress"))])
         self.assertEqual(claim.claim(gh, 10, "agent-a", settle=0), 1)
         self.assertEqual(gh.comments(10), [])
+
+    def test_markerless_wip_stays_held_and_is_reported(self):
+        """A WIP label with no claim marker still blocks the lane (#577)."""
+        held = issue(
+            number=577,
+            labels=("area:backend", "status:in-progress"),
+            title="arch(api): loose returns",
+        )
+        gh = FakeGh(held, wip=[held])
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            self.assertEqual(claim.release_stale(gh, 24), 0)
+        self.assertIn("status:in-progress", gh.labels)
+        self.assertIn("no claim marker", buf.getvalue())
+        self.assertEqual(gh.status, None)
 
 
 if __name__ == "__main__":
