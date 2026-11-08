@@ -1,0 +1,4 @@
+schema: notaire-sdlc
+created: 2026-11-08
+# Phased change (#1640): slice 1 backend core; later slices continue on other PRs, the last archives it.
+multi_pr: true
