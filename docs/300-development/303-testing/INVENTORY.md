@@ -14,7 +14,7 @@
 | Backend `*Test.java` (all) | 376 | `backend-api/src/test` |
 | Backend unit-path | 124 | `.../unit/*Test.java` |
 | Backend integration-path | 146 | `.../integration/*Test.java` |
-| Frontend Vitest files | 199 | `frontend/src/**/*.test.ts(x)` |
+| Frontend Vitest files | 200 | `frontend/src/**/*.test.ts(x)` |
 | Bruno YAML requests | 423 | `backend-api/api-test/**/*.yml` |
 
 ## Playwright suites (TS-nnnn)
