@@ -60,6 +60,15 @@ npm config set prefix "$HOME/.local"
 npm install -g @fission-ai/openspec@1.14.0
 sudo ln -sfn "$HOME/.local/bin/openspec" /usr/local/bin/openspec
 
+# --- Spec Kit CLI (method plugin github-spec-kit, #2123; dry plan only until allow) ---
+if ! command -v uv >/dev/null 2>&1; then
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+fi
+export PATH="$HOME/.local/bin:$PATH"
+uv tool install "specify-cli==1.3.2"
+sudo ln -sfn "$HOME/.local/bin/specify" /usr/local/bin/specify
+specify --version || true
+
 # --- Bruno CLI (OpenCollection needs ≥4.x; CI uses unpinned npx @usebruno/cli) ---
 npm install -g @usebruno/cli@4.2.0
 # Prefer npm-global bin; fall back to package entry

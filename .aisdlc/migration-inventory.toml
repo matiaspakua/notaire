@@ -26,11 +26,11 @@ status = "migrated"
 note = "Second plugin id. Proves the loader is not hardwired to one method."
 
 [[rows]]
-source = "framework/ai-sdlc/plugins/planned/spec-kit.toml"
-destination = "framework/ai-sdlc/plugins/planned/spec-kit.toml"
+source = "framework/ai-sdlc/plugins/spec-kit"
+destination = "framework/ai-sdlc/plugins/spec-kit"
 class = "method-plugin"
-status = "planned"
-note = "Not loaded. Upstream documents an extensions API. This slice does not call it."
+status = "migrated"
+note = "Spec Kit adapter (#2123). Prints specify extension search. Pinned specify-cli 1.3.2. Out of [plugins] allow until Owner opts in."
 
 [[rows]]
 source = "framework/ai-sdlc/plugins/planned/aws-ai-dlc.toml"
