@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* **docs:** Factory routing follows ADR-030, records Impeccable 4.8.1, and names the local Cursor handoff for #1693 (Refs #2086)
+* **docs:** Factory routing follows ADR-030, records Impeccable 4.8.1, and keeps hexagonal work on Cloud (Refs #2086)
+* **pages:** Isometric diagram labels use the anatomy text color so corner captions and the key clear WCAG AA contrast (Refs #2086)
 * **api:** Management transition returns typed ManagementSummaryDto (Refs #577)
 * **api:** Management create returns typed ManagementResponse (Refs #577)
 * **api:** User logout returns typed LogoutResponse (Refs #577)
