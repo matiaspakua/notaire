@@ -1,6 +1,0 @@
-id = "github-spec-kit"
-kind = "method"
-version = "0"
-status = "planned"
-capabilities = []
-summary = "Not implemented. Upstream is github/github-spec-kit. Do not treat this file as a working adapter."
