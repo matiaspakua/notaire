@@ -31,4 +31,7 @@ trusted = true
 
 A manifest path must stay inside the project. That is not a sandbox. Permissions written in a manifest are not enforced isolation, because this slice does not enforce them.
 
+`auto_trust_hooks = true` fails `config validate` (#2124). Plugins that could install
+harness hooks set `auto_trust_hooks = false` (or omit the key).
+
 Planned manifests under `plugins/planned/` are documentation. They are not entries.

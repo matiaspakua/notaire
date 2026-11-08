@@ -32,4 +32,4 @@ GenAI semantic conventions are a draft in a separate repository. Nothing here sa
 |------|----------------------|--------|
 | OpenSpec | `openspec --version` prints 1.14.0. `.cursor/install.sh` pins `@fission-ai/openspec@1.14.0`. The adapter argv is `openspec validate {change} --strict`, which this repository already runs. | Working as a printed command. Not executed by `plugin list`. |
 | GitHub Spec Kit | Pinned `specify-cli==1.3.2`. Adapter under `plugins/spec-kit/`. **Called:** CLI `specify extension search` and Python `ExtensionCatalog.search` (see `plugins/spec-kit/CALLED-API.md`). Dry plan prints argv; Notaire keeps the id out of `[plugins] allow` until an Owner opts in. | Adapter present; not on allow. |
-| AWS AI-DLC | Not installed. It is an orchestrator of its own. Loading it beside this kit would run two lifecycles. | Planned. Not a harness adapter. |
+| AWS AI-DLC | Boundary design in `plugins/aws-ai-dlc/DESIGN.md` (#2124): owns **no** aisdlc stages as orchestrator; `auto_trust_hooks = false` enforced by `config validate`. Not installed; not available on Notaire. | Boundary declared; unavailable. |
