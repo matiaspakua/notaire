@@ -13,7 +13,7 @@ class MfaEnrollmentJpaEntity {
     @Column(name = "user_id")
     private Integer userId;
 
-    @Column(name = "secret_ciphertext", nullable = false)
+    @Column(name = "secret_ciphertext", nullable = false, columnDefinition = "text")
     private String secretCiphertext;
 
     @Column(nullable = false)
@@ -22,7 +22,7 @@ class MfaEnrollmentJpaEntity {
     @Column(name = "last_used_step", nullable = false)
     private long lastUsedStep;
 
-    @Column(name = "recovery_code_hashes", nullable = false)
+    @Column(name = "recovery_code_hashes", nullable = false, columnDefinition = "text")
     private String recoveryCodeHashes;
 
     protected MfaEnrollmentJpaEntity() {

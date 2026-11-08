@@ -79,7 +79,8 @@ class UserLogoutControllerTest {
                         metricsUtil,
                         loginAttemptService,
                         authCookieService,
-                        tokenRevocationService))
+                        tokenRevocationService,
+                        org.mockito.Mockito.mock(com.licensis.notaire.adapter.in.web.user.LoginMfaGate.class)))
                 .build();
     }
 

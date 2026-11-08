@@ -2,6 +2,7 @@ package com.licensis.notaire.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -65,7 +66,8 @@ class MfaLoginFlowIntegrationTest {
         if (bearer != null) {
             request.header(HttpHeaders.AUTHORIZATION, "Bearer " + bearer);
         }
-        return JSON.readTree(mvc.perform(request).andReturn().getResponse().getContentAsString());
+        var response = mvc.perform(request).andReturn().getResponse();
+        return JSON.readTree(response.getContentAsString());
     }
 
     @Test
@@ -116,10 +118,10 @@ class MfaLoginFlowIntegrationTest {
     @Test
     @DisplayName("mfa endpoints reject anonymous callers")
     void shouldRejectAnonymous() throws Exception {
-        mvc.perform(post("/api/v1/mfa/enrollment")).andExpect(status().isUnauthorized());
-        mvc.perform(post("/api/v1/mfa/disable").contentType(APPLICATION_JSON).content("{\"code\":\"1\"}"))
+        mvc.perform(post("/api/v1/mfa/enrollment").with(csrf())).andExpect(status().isUnauthorized());
+        mvc.perform(post("/api/v1/mfa/disable").with(csrf()).contentType(APPLICATION_JSON).content("{\"code\":\"1\"}"))
                 .andExpect(status().isUnauthorized());
-        mvc.perform(post("/api/v1/mfa/enrollment/confirm").contentType(APPLICATION_JSON).content("{\"code\":\"1\"}"))
+        mvc.perform(post("/api/v1/mfa/enrollment/confirm").with(csrf()).contentType(APPLICATION_JSON).content("{\"code\":\"1\"}"))
                 .andExpect(status().isUnauthorized());
     }
 }

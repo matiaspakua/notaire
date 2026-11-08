@@ -1,6 +1,7 @@
 package com.licensis.notaire.adapter.in.web.mfa;
 
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -58,7 +59,7 @@ class MfaControllerTest {
         mvc = MockMvcBuilders.standaloneSetup(new MfaController(users, enrol, disable, attempts, metrics))
                 .setControllerAdvice(new MfaExceptionHandler(), new GlobalExceptionHandler())
                 .build();
-        when(users.findByName("juan")).thenReturn(Optional.of(JUAN));
+        lenient().when(users.findByName("juan")).thenReturn(Optional.of(JUAN));
     }
 
     @Test

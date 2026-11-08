@@ -1,6 +1,7 @@
 package com.licensis.notaire.adapter.in.web.user;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +63,7 @@ public class UserController {
     private final LoginAttemptService loginAttemptService;
     private final AuthCookieService authCookieService;
     private final TokenRevocationService tokenRevocationService;
+    private final LoginMfaGate mfaGate;
 
     public UserController(
             QueryUsersUseCase query,
@@ -71,7 +73,8 @@ public class UserController {
             MetricsUtil metricsUtil,
             LoginAttemptService loginAttemptService,
             AuthCookieService authCookieService,
-            TokenRevocationService tokenRevocationService) {
+            TokenRevocationService tokenRevocationService,
+            LoginMfaGate mfaGate) {
         this.query = query;
         this.manage = manage;
         this.authenticate = authenticate;
@@ -80,6 +83,7 @@ public class UserController {
         this.loginAttemptService = loginAttemptService;
         this.authCookieService = authCookieService;
         this.tokenRevocationService = tokenRevocationService;
+        this.mfaGate = mfaGate;
     }
 
     public record LoginRequest(@NotBlank String name, @NotBlank String password) { }
@@ -87,6 +91,21 @@ public class UserController {
     public record LoginPerson(Integer idPerson, String firstName, String lastName) { }
 
     public record LogoutResponse(boolean ok) { }
+
+    public sealed interface LoginResponse permits LoginSuccessResponse, MfaChallengeResponse { }
+
+    public record LoginMfaRequest(@NotBlank String mfaToken, String code, String recoveryCode) { }
+
+    /** valid stays false so clients that predate MFA treat a challenge as a failed login. */
+    public record MfaChallengeResponse(
+            boolean valid, boolean mfaRequired, boolean mfaEnrollmentRequired, String mfaToken)
+            implements LoginResponse {
+
+        static MfaChallengeResponse of(LoginMfaGate.Challenge challenge) {
+            return new MfaChallengeResponse(
+                    false, !challenge.enrollmentRequired(), challenge.enrollmentRequired(), challenge.token());
+        }
+    }
 
     public record LoginSuccessResponse(
             boolean valid,
@@ -96,7 +115,7 @@ public class UserController {
             boolean status,
             String type,
             int version,
-            @JsonInclude(JsonInclude.Include.NON_NULL) LoginPerson person) {
+            @JsonInclude(JsonInclude.Include.NON_NULL) LoginPerson person) implements LoginResponse {
 
         static LoginSuccessResponse of(User user, String jwt) {
             LoginPerson person = user.personId() == null
@@ -201,26 +220,49 @@ public class UserController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "OK (see the 'valid' field for the result)"),
+        @ApiResponse(responseCode = "200", description = "OK (see 'valid'); when 'mfaRequired' or "
+                + "'mfaEnrollmentRequired' is true no session is issued and 'mfaToken' is a short-lived scoped token"),
         @ApiResponse(responseCode = "429", description = "Account temporarily locked after failed attempts")
     })
     @PostMapping("/login")
     @Operation(summary = "Authenticate user")
-    public ResponseEntity<LoginSuccessResponse> login(
+    public ResponseEntity<LoginResponse> login(
             @Valid @RequestBody LoginRequest loginRequest, HttpServletResponse httpResponse) {
-        if (loginAttemptService.isLocked(loginRequest.name())) {
-            log.warn("Login locked for '{}': too many failed attempts.", loginRequest.name());
-            metricsUtil.incrementCounter("login", "locked");
-            throw new LoginLockedException("Account temporarily locked after too many failed attempts.");
-        }
+        rejectWhenLocked(loginRequest.name());
         Result result = authenticateSafely(loginRequest);
         return switch (result) {
             case Result.Failed failed -> {
                 noteAuthFailure(failed.failure(), loginRequest.name());
                 throw new LoginRejectedException();
             }
-            case Result.Success success -> successBody(success.user(), loginRequest.name(), httpResponse);
+            case Result.Success success -> afterPassword(success.user(), loginRequest.name(), httpResponse);
         };
+    }
+
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK (see 'valid'); the session is issued only when true"),
+        @ApiResponse(responseCode = "429", description = "Account temporarily locked after failed attempts")
+    })
+    @PostMapping("/login/mfa")
+    @Operation(
+            summary = "Complete a login with a TOTP or recovery code",
+            description = "Takes the 'mfaToken' returned by /login and either 'code' (TOTP) or 'recoveryCode'. "
+                    + "Wrong codes count toward the same lockout as wrong passwords.")
+    public ResponseEntity<LoginResponse> loginMfa(
+            @Valid @RequestBody LoginMfaRequest request, HttpServletResponse httpResponse) {
+        String username = mfaGate.challengeSubject(request.mfaToken()).orElseThrow(() -> {
+            metricsUtil.incrementCounter("login", "mfa_invalid_challenge");
+            return new LoginRejectedException();
+        });
+        rejectWhenLocked(username);
+        User user = query.findByName(username).filter(User::active).orElseThrow(LoginRejectedException::new);
+        if (!mfaGate.verifySecondFactor(user, request.code(), request.recoveryCode())) {
+            log.warn("Login failed for '{}': incorrect second factor", username);
+            metricsUtil.incrementCounter("login", "mfa_failed");
+            loginAttemptService.onLoginFailed(username);
+            throw new LoginRejectedException();
+        }
+        return successBody(user, username, httpResponse);
     }
 
     @ApiResponses({
@@ -249,7 +291,32 @@ public class UserController {
         }
     }
 
-    private ResponseEntity<LoginSuccessResponse> successBody(
+    private void rejectWhenLocked(String username) {
+        if (loginAttemptService.isLocked(username)) {
+            log.warn("Login locked for '{}': too many failed attempts.", username);
+            metricsUtil.incrementCounter("login", "locked");
+            throw new LoginLockedException("Account temporarily locked after too many failed attempts.");
+        }
+    }
+
+    private ResponseEntity<LoginResponse> afterPassword(User user, String username, HttpServletResponse response) {
+        Optional<LoginMfaGate.Challenge> challenge;
+        try {
+            challenge = mfaGate.challenge(user);
+        } catch (Exception e) {
+            throw invalidLogin(username, e);
+        }
+        if (challenge.isEmpty()) {
+            return successBody(user, username, response);
+        }
+        boolean enrollment = challenge.get().enrollmentRequired();
+        log.info("Login password accepted for '{}'; second factor {}", user.name(),
+                enrollment ? "enrolment required" : "required");
+        metricsUtil.incrementCounter("login", enrollment ? "mfa_enrollment_required" : "mfa_required");
+        return ResponseEntity.ok(MfaChallengeResponse.of(challenge.get()));
+    }
+
+    private ResponseEntity<LoginResponse> successBody(
             User user, String username, HttpServletResponse httpResponse) {
         try {
             log.info("Login succeeded for user: '{}'", user.name());
