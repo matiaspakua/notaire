@@ -16,7 +16,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `refactor/577_typed-management-transition` | created |
 | Tasks | `tasks.md` | in progress |
 | Commits | `0b548d13` | created |
-| Pull Request | pending | pending |
+| Pull Request | #2085 | open |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |
