@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **aisdlc:** Harness port lists Cursor Cloud and local oMLX adapters and reads their sources in place without claiming a sandbox (Refs #2122)
 * **api:** Auxiliary protocol startDeed returns typed DeedResponse via advice for errors (Refs #577)
 * **api:** Audit log list returns typed AuditRecordGetAllResponse (flat list or paginated page) (Refs #577)
 * **aisdlc:** Factory config validate/show, trusted plugin listing, and a migration inventory. OpenSpec is a printed argv adapter. Spec Kit and AWS AI-DLC are planned only (Refs #2121)

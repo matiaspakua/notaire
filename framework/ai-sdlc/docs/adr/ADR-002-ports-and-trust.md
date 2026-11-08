@@ -9,7 +9,7 @@ The core talks to the outside through ports:
 | Port | Responsibility | This slice |
 |------|----------------|------------|
 | Method | Planning workflow (validate, plan) | OpenSpec argv is printed. Example plugin loads. Spec Kit and AWS AI-DLC are not loaded. |
-| Harness | Agent runtime (Cursor, Claude Code, Codex, local worker). Not a commercial Harness product. | Not implemented. Existing prompts stay in place. |
+| Harness | Agent runtime (Cursor Cloud fleet, local oMLX foreman, …). Not a commercial Harness product. | `harness list` / `harness show` read profile `[harness.adapters]` sources in place. Always reports `sandbox=false`. |
 | Tracker | Issues and pull requests | Not implemented. The profile may name a verify command; this slice does not run it from `plugin list`. |
 | Gate | Quality commands | Existing `gate` command. Unchanged. |
 | Evidence | Hash-chained ledger | Existing `evidence` command. Unchanged. |

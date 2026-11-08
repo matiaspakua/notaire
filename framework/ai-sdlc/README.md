@@ -57,6 +57,7 @@ and locally with [`templates/integrations/pre-push`](templates/integrations/pre-
 | `config show --redacted [--json] [--max-open-prs N]` | Prints the resolved factory view. Refuses to run without `--redacted`. Cannot raise the profile pull-request ceiling. | — (exit 2 on usage or an attempt to raise the ceiling) |
 | `plugin list` · `plugin capabilities` · `plugin plan --id ID --var K=V` | Reads trusted manifests. `plan` prints argv and does not run it. Untrusted ids are listed as unavailable. | — (exit 2 when the id is not available) |
 | `inventory check` | Validates `[factory] inventory`. Requires both migrated and planned rows, so a file cannot claim the move is finished. | the inventory is missing, inconsistent, or secret-shaped |
+| `harness list [--json]` · `harness show --id ID [--json]` | Lists profile `[harness.adapters]` or reads one source in place. Always reports `sandbox=false`. Not a commercial Harness product. | show: source missing or runtime mismatch (exit 1); unknown id (exit 2) |
 | `gate <stage> [--base R] [--var K=V] [--stream]` · `gate --list` | Runs every gate of the stage; path-scoped gates skip when nothing they cover changed; writes one ledger record. | a required gate does not exit as expected |
 | `ratchet [--base R] [--name N]` | Baselines (lines, or JSON leaf counts) may not gain entries versus the base revision; floors must hold. | an entry was added or a floor missed |
 | `skills` | Every skill folder has a `SKILL.md` with a description, names are unique, generic skills carry no forbidden project pattern. | any of those |
@@ -129,6 +130,11 @@ exclude = ["**/*.lock", "docs/changes/**"]
 [scope]                       # write set declared by the change record
 heading = "Write set"
 always = ["CHANGELOG.md"]
+
+[[harness.adapters]]          # agent runtimes; sources stay in place; never a sandbox claim
+id = "cursor-cloud"
+runtime = "cursor-cloud"
+source = "docs/fleet-manifest.yaml"
 
 [roles.foreman]
 tier = "mid"                  # human | top | mid | low
