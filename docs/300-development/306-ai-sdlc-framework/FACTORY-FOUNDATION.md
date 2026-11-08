@@ -70,4 +70,8 @@ AWS AI-DLC stays unavailable until a later Issue adds a non-orchestrating dry pl
 [#2117](https://github.com/matiaspakua/notaire/issues/2117) stays the generated-inventory hotspot.
 A hosted OTLP collector / product application telemetry stay out of scope.
 
+Lifecycle (#2135): `aisdlc install|update|uninstall` copies the kit, scaffolds a profile, updates
+idempotently, and uninstalls kit-managed paths only (`--purge` for scaffold/evidence). Never writes
+`frontend/`, `backend-api/`, or product OpenAPI paths.
+
 TelemetryPort (`aisdlc/telemetry.py`, #2125): off by default; optional OpenTelemetry NoOp path when enabled with `exporter = "none"`; prompts/diffs/secrets redacted; lead-time/cost hooks on stage and cost records. FeatureFlagPort stub (`aisdlc/flags.py`) mirrors OpenFeature shape without a hard SDK dependency. No HTTP server was added. A manifest path check is not a sandbox.

@@ -9,14 +9,16 @@ OPTIONAL_VENV="$KIT/.venv-telemetry"
 OPTIONAL_REQ="$KIT/optional/telemetry.txt"
 
 # Optional OTel packages prove the real NoOp / OTEL_SDK_DISABLED path (#2125). Kit runtime stays stdlib-only.
+# Do not export PYTHONPATH into the parent shell — a leaked site-packages breaks Semgrep SEC-SAST-01.
+TEST_ENV=()
 if [[ -f "$OPTIONAL_REQ" ]]; then
   if [[ ! -x "$OPTIONAL_VENV/bin/python" ]]; then
     python3 -m venv "$OPTIONAL_VENV"
     "$OPTIONAL_VENV/bin/pip" install -q -r "$OPTIONAL_REQ"
   fi
   SITE="$("$OPTIONAL_VENV/bin/python" -c 'import site; print(site.getsitepackages()[0])')"
-  export PYTHONPATH="$SITE${PYTHONPATH:+:$PYTHONPATH}"
+  TEST_ENV=("env" "PYTHONPATH=$SITE${PYTHONPATH:+:$PYTHONPATH}")
 fi
 
-python3 -m unittest discover -s framework/ai-sdlc/tests
+"${TEST_ENV[@]}" python3 -m unittest discover -s framework/ai-sdlc/tests
 python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml doctor

@@ -7,7 +7,7 @@ from pathlib import Path
 import json
 import os
 
-from aisdlc import __version__, adopt, change, checks, diffchecks, evidence, gates, harness, ratchet, repo, skills
+from aisdlc import __version__, adopt, change, checks, diffchecks, evidence, gates, harness, lifecycle, ratchet, repo, skills
 from aisdlc.context import Context
 from aisdlc.factory import (
     check_inventory,
@@ -18,6 +18,7 @@ from aisdlc.factory import (
     validate_factory,
 )
 from aisdlc.harness import HarnessError
+from aisdlc.lifecycle import DEFAULT_PATH
 from aisdlc.profile import ProfileError, find_profile, load_profile
 
 
@@ -32,6 +33,19 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--name", required=True)
     p.add_argument("--level", type=int, default=1, help="adoption level 1-4")
     p.add_argument("--force", action="store_true")
+
+    p = sub.add_parser("install", help="copy the kit into the repo and scaffold a profile (#2135)")
+    p.add_argument("--path", default=DEFAULT_PATH, help=f"kit destination (default: {DEFAULT_PATH})")
+    p.add_argument("--name", required=True, help="project name for the scaffolded profile")
+    p.add_argument("--level", type=int, default=1, help="adoption level 1-4")
+    p.add_argument("--force", action="store_true", help="replace an existing kit tree and overwrite scaffold files")
+
+    p = sub.add_parser("update", help="re-copy the kit idempotently; leave adopter profile/evidence alone")
+    p.add_argument("--path", help=f"kit destination (default: manifest or {DEFAULT_PATH})")
+
+    p = sub.add_parser("uninstall", help="remove kit-managed paths; --purge also drops scaffold and evidence")
+    p.add_argument("--path", help=f"kit destination (default: manifest or {DEFAULT_PATH})")
+    p.add_argument("--purge", action="store_true", help="also remove scaffolded policy/profile and evidence")
 
     sub.add_parser("doctor", help="validate the profile and report what its level still lacks")
 
@@ -121,6 +135,24 @@ def main(argv: list[str] | None = None) -> int:
     root = (args.root or repo.toplevel(Path.cwd()) or Path.cwd()).resolve()
     if args.command == "init":
         return adopt.init(root, args.name, args.level, args.force)
+    if args.command == "install":
+        try:
+            return lifecycle.install(root, args.path, args.name, args.level, args.force)
+        except ValueError as exc:
+            print(f"error: {exc}")
+            return 2
+    if args.command == "update":
+        try:
+            return lifecycle.update(root, args.path)
+        except ValueError as exc:
+            print(f"error: {exc}")
+            return 2
+    if args.command == "uninstall":
+        try:
+            return lifecycle.uninstall(root, args.path, args.purge)
+        except ValueError as exc:
+            print(f"error: {exc}")
+            return 2
     try:
         return dispatch(args, load_context(root, args.profile))
     except (ProfileError, repo.GitError) as exc:
