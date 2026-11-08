@@ -1,91 +1,55 @@
-# Notaire — GitHub Pages site
+# Notaire GitHub Pages site
 
-Static Next.js site published at <https://matiaspakua.github.io/notaire/>
-(`output: export`, and `basePath: /notaire` in production builds, set in [`next.config.ts`](next.config.ts)).
-It is deployed by [`.github/workflows/deploy-github-page.yml`](../.github/workflows/deploy-github-page.yml)
-after CI succeeds on `main` (or on manual dispatch).
+The public site at <https://matiaspakua.github.io/notaire/>: a Next.js static export (`output: "export"`, base path `/notaire`).
+Everything that can change (versions, counts, test totals, workflows, ADRs) is read from the repository when `next build` runs, so a
+page never types a number by hand.
 
-Every page shares one shell (#1970): a single header with the primary navigation
-(**AI Factory**, **Product**, **Technical docs**, **Releases**), an accessible mobile drawer,
-site search (`/` or Ctrl/⌘K), and a footer. Docs and AI Factory pages add breadcrumbs,
-a section sidebar, previous/next links and reading progress. The registry behind all of it
-is [`lib/site.ts`](lib/site.ts): add a page there and it appears in the nav, the sidebar,
-the search index and the pager. Design tokens (colours, type, radius, shadow) live in the
-`@theme` block of [`app/globals.css`](app/globals.css); the AI Factory swaps the shared accent
-for violet through `.theme-factory`. The UX audit behind this is [`docs/ux-assessment.md`](docs/ux-assessment.md).
+## Sections
 
-The site has three parts. They are kept apart on purpose:
+| Section | Routes | What it is for |
+|---|---|---|
+| Home | `/` | The portfolio landing: what was built, the proof and three illustrated machines. |
+| Product | `/product/…` | What Notaire does, **how it works** (Anatomy Fig 1), its story, platform and numbers. |
+| AI Factory | `/ai-sdlc/…` | The AI SDLC that builds Notaire, told as five acts. Includes the **AI SDLC anatomy** (Fig 3). |
+| Security | `/security/…` | Trust boundaries, threats, toolchain and reporting. |
+| Technical docs | `/docs/…` | Architecture, modules, database, API, testing, the **engineering anatomy** (Fig 2) and the glossary. |
+| Releases | `/docs/releases/` | Every product cut. |
 
-| Route | What it is | Source |
-|-------|------------|--------|
-| `/` | Landing: what Notaire is, and the three doors below | [`app/page.tsx`](app/page.tsx) |
-| `/product/` | **Product**: overview, story, platform, numbers — four pages sharing one sidebar | [`app/product/`](app/product/), `components/` |
-| `/docs/` | **Technical docs**: domain, architecture, the internals (hexagonal, Flyway, API contract and Bruno, stack), quality and operations. Versions and counts come from [`lib/tech-facts.ts`](lib/tech-facts.ts), which reads the repository at build time | [`app/docs/`](app/docs/), `lib/docs-content.ts` |
-| `/ai-sdlc/` | **AI Factory**: the AI SDLC that builds Notaire, told in five acts (problem → how a change flows → what keeps it safe → what we learned and the results → how to apply it) | [`app/ai-sdlc/`](app/ai-sdlc/), [`lib/ai-sdlc-content.ts`](lib/ai-sdlc-content.ts), [`lib/ai-sdlc-facts.ts`](lib/ai-sdlc-facts.ts) |
+The site map lives in one place, `lib/site.ts`. Add a page there and it appears in the header, sidebars, breadcrumbs, previous/next
+links and search; a registered href with no page file fails `npm test`.
 
-The AI Factory pages only summarise. Every claim cites a repository file through
-the `src()` / `skill()` / `agent()` / `workflow()` helpers. The test
-[`workspace/tests/test_pages_ai_sdlc.py`](../workspace/tests/test_pages_ai_sdlc.py)
-fails if a cited path does not exist. Counts (skills, agents, workflows, ADRs, use
-cases, security families) are read from the repo at build time, so they never go
-stale. The source of truth is still [`CONSTITUTION.md`](../CONSTITUTION.md) and
-[`docs/300-development/304-ai-sdlc-cloud/`](../docs/300-development/304-ai-sdlc-cloud/).
-
-The **case study** (`/ai-sdlc/case-study/`) charts monthly history from a committed snapshot,
-[`lib/ai-sdlc-history.json`](lib/ai-sdlc-history.json), which records when and how it was generated.
-Refresh it with `python3 workspace/ci/generate-ai-sdlc-history.py` (needs git and an authenticated `gh`).
-The **framework** page (`/ai-sdlc/framework/`) presents [`framework/ai-sdlc/`](../framework/ai-sdlc/) and its
-[report](../docs/300-development/306-ai-sdlc-framework/ai_sdlc_framework.md) (#1958).
-
-Structural diagrams are Mermaid strings rendered on the client by
-[`components/MermaidDiagram.tsx`](components/MermaidDiagram.tsx), themed from the CSS tokens.
-Explainers are hand-built inline SVG with a `<title>`, a `<desc>` and a list fallback on narrow
-screens: [`GuardrailStack`](components/GuardrailStack.tsx) and [`Swimlane`](components/Swimlane.tsx).
-The interactive diagrams (#1977) live in [`components/diagrams/`](components/diagrams/): a shared
-stepper ([`useStepper`](components/diagrams/useStepper.ts), [`StepControls`](components/diagrams/StepControls.tsx)),
-a node-and-edge [`FlowDiagram`](components/diagrams/FlowDiagram.tsx) fed by
-[`lib/diagram-flows.ts`](lib/diagram-flows.ts) (request, contract and factory flows), and
-[`HexagonMap`](components/diagrams/HexagonMap.tsx), [`FlywayTimeline`](components/diagrams/FlywayTimeline.tsx),
-[`TestPyramid`](components/diagrams/TestPyramid.tsx) and [`PipelineMap`](components/diagrams/PipelineMap.tsx),
-which take their counts from `lib/tech-facts.ts` as props. Nothing plays until the reader asks;
-each step is announced in an `aria-live` region and links its source; under
-`prefers-reduced-motion` steps change instantly. Product screenshots for the landing are in
-`public/screenshots/` (demo data); prefix public paths with `ASSET_BASE` from `lib/site.ts`.
-The **results** page (`/ai-sdlc/results/`) prints only numbers read at build time.
-
-**Delivery outcomes** (#1985) on the results page and the landing come from
-[`lib/delivery-metrics.json`](lib/delivery-metrics.json): PR lead time (median, p90), weekly throughput, a
-change-failure proxy, time to restore `main`, first-push CI pass rate, issues closed and releases, with the window
-and the method of each. Refresh it with `python3 workspace/ci/generate-delivery-metrics.py` (needs an authenticated
-`gh`); the Pages deploy re-runs it before every build. Metrics the GitHub data cannot support are stored as
-unavailable with the reason (today: Actions run history is pruned nightly by `cleanup-actions.yml`).
-
-**About** (`/about/` and the landing) renders [`lib/about.json`](lib/about.json): each fact names its source;
-`placeholders` lists what no public source states and is never rendered.
-
-The **live demo** (`/demo/`) is the real frontend exported with recorded sample data and a read-only fetch shim.
-How it works and why: [`docs/demo.md`](docs/demo.md).
-
-## Local build
+## Commands
 
 ```bash
-cd github-page
 npm ci
-npm run dev                         # http://localhost:3000/ (no basePath in dev)
-npm run typecheck && npm run lint && npm test   # tsc, ESLint, Vitest
-NODE_ENV=production npm run build   # static export into out/
-(cd ../frontend && npm ci)          # once, for the demo
-npm run build:demo                  # the read-only demo into out/demo/ (docs/demo.md)
-npm run check:links                 # every internal href and #fragment in out/ resolves
-npx playwright install chromium     # once
-npm run test:smoke                    # Playwright + axe at 375 and 1280 px, served under /notaire
-python3 -m pytest ../workspace/tests/test_pages_*.py -q
+npm run dev              # http://localhost:3000
+npm run typecheck && npm run lint && npm test
+npm run build            # static export to out/
+npm run check:links      # every internal link and fragment in out/
+npm run test:smoke       # Playwright + axe at 375 and 1280 px, against out/ (build first)
 ```
 
-`bash workspace/sdlc/preflight.sh` runs the checks above before a pull request
-(`--full` adds Playwright). [`pages-ci.yml`](../.github/workflows/pages-ci.yml)
-runs them on a version tag, not on the pull request. The site itself deploys
-on push to `main`.
+## Anatomy figures
 
-`prebuild` regenerates `lib/releases.json` from the product release manifest
-(`workspace/release/product_release.py`).
+The three step-through machines in `components/anatomy/` are isometric SVG built at build time with the kit in `components/iso/`
+(the `anatomy` skill in `.claude/skills/`):
+
+| Figure | File | Page |
+|---|---|---|
+| Fig 1, the notary's counter | `system-figure.ts` | `/product/anatomy/` |
+| Fig 2, the release line | `engineering-figure.ts` | `/docs/engineering/` |
+| Fig 3, the lock chamber | `sdlc-figure.ts` | `/ai-sdlc/anatomy/` |
+
+Each figure exports its SVG, its legend and an ordered list of steps (`figure-types.ts`). A step names a station to light, the pose of the
+moving parts, a readout and a `where` line of real repository paths. `tests/anatomy.test.tsx` fails if a step lights a station that does not
+exist, moves a part that does not exist, or points at a path that is not in the repository. `AnatomyFigure.tsx` is the only client code: it
+moves the named parts, dims the other stations and drives the shared `StepControls`. Nothing plays on its own.
+
+## Rules for content
+
+- Read a fact from the repository (`lib/tech-facts.ts`, `lib/ai-sdlc-facts.ts`) instead of typing it.
+- Describe the CI model as it is: a pull request is proved by the local `preflight.sh --full`; the product workflows run on a version tag or
+  on demand (see `/ai-sdlc/quality-gates/`).
+- Colour contrast must stay at WCAG AA; `npm run test:smoke` runs axe on every page.
+
+See also `docs/ux-assessment.md`, `docs/portfolio-review.md` and `docs/demo.md`.

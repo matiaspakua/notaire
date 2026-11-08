@@ -66,3 +66,13 @@ and 1280 px, no page scrolls sideways, and the drawer, search and pager tests pa
 Checks: `e2e/site.spec.ts` adds `/docs/testing/` to the axe sweep, steps the request diagram with the
 keyboard (and waits to prove nothing autoplays) and steps the pipeline under `reducedMotion: "reduce"`.
 The portfolio critique is in [`portfolio-review.md`](portfolio-review.md).
+
+## Follow-up: anatomy pages, glossary and content review (#2089)
+
+| # | Finding | Fix |
+|---|---------|-----|
+| 1 | The site told what the product does and how agents are gated, but no page showed how one request moves through the system, or how development, QA, security and operations fit together over the environments. | Three step-through illustrated machines, one per question: `/product/anatomy/` (the notary's counter), `/docs/engineering/` (the release line) and `/ai-sdlc/anatomy/` (the lock chamber). Each step names the real repository paths, and a test checks that they exist. |
+| 2 | Terms such as management, folio, ratchet or Foreman were used without a definition. | `/docs/glossary/`, linked from the three anatomy pages. |
+| 3 | The reading path started at the product and jumped to the artifacts and the lifecycle. | Two anatomy pages join the path, so a reader goes from the basics (how it works) to the loop (engineering) to the rulebook (AI SDLC). |
+| 4 | Stale or wrong claims in the story components: "Modern Microservices" over a layered backend, a hand-typed "786 commits in 2026" and "200+ E2E tests", a 2025 card that said Spring Boot 4. | Reworded or read from the metrics; the Timeline keeps its dated stack names because they describe the past. |
+| 5 | The plate captions and legends of the three existing figures were 3.2:1 on the card, below WCAG AA (axe `color-contrast`). | `--anatomy-muted` is darkened for the light theme in `components/figures/figures.css`; the smoke suite now covers the new pages too. |
