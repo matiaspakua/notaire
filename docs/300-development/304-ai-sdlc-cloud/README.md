@@ -10,7 +10,7 @@ issue → OpenSpec Gate 1 → TDD → implement → preflight/CI → PR → revi
 | Document | Purpose |
 |----------|---------|
 | [`FLEET-ARCHITECTURE.md`](FLEET-ARCHITECTURE.md) | Foreman + specialist roles, model recommendations, handoffs, local-ai exclusion, process learnings |
-| [`LOCAL-CURSOR-HANDOFF.md`](LOCAL-CURSOR-HANDOFF.md) | How the Owner's Cursor machine continues epic #1693. Not the oMLX harness |
+| [`LOCAL-CURSOR-HANDOFF.md`](LOCAL-CURSOR-HANDOFF.md) | Recorded Mac worker commands. Not the active path: #1693 continues on Cloud (#2086) |
 | [`FORMS-AUDIT-PLAN.md`](FORMS-AUDIT-PLAN.md) | Code inventory of product forms and the next rendered pass. Not a visual score |
 | [`ENVIRONMENT-CHECKLIST.md`](ENVIRONMENT-CHECKLIST.md) | Toolchain/secrets checklist for Cloud `environment.json` + Saved-card and ops pitfalls |
 | [`CI-MERGE-GATE.md`](CI-MERGE-GATE.md) | **PR ready when `preflight.sh --full` passed** (#2001). `check-heavy-ci.sh` does not wait for checks that no longer run. Also OpenSpec archive hygiene / task groups 3–8; merge-`main`-first; CHANGELOG Unreleased fence |

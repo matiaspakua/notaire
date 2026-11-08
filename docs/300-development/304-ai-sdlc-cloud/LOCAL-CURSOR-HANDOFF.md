@@ -1,47 +1,36 @@
-# Local Cursor handoff — hexagonal continuation
+# Local Cursor handoff — recorded, not the active path
 
-Factory procedure for continuing epic [#1693](https://github.com/matiaspakua/notaire/issues/1693)
-on the Owner's machine. This is not product design, and it is not the oMLX
-harness (`local-ai/sdlc/foreman.sh`). Cloud agents do not implement this queue
-as a substitute when the Owner asked for the local machine.
+Factory note for epic [#1693](https://github.com/matiaspakua/notaire/issues/1693).
+This is not product design, and it is not the oMLX harness
+(`local-ai/sdlc/foreman.sh`).
 
-Measured from this factory change (#2086) on 2026-11-08: the cloud run's
-worker list returned **no** connected private machines. A worker appears only
-while `agent worker start` is running on that machine.
+## Active path (Owner, 2026-11-08)
 
-## Prerequisites
+The Owner superseded the local-machine requirement (#2086): continue repository
+work on Cursor Cloud. Do **not** access the Owner's Mac. Do **not** start a private worker (`agent worker start`) and do **not** target My Machines.
 
-1. Cursor CLI installed (`agent --version`). Official quickstart:
-   [My Machines](https://cursor.com/docs/cloud-agent/self-hosted/my-machines).
-2. Same Cursor account as the GitHub user who will comment or pick the machine.
-3. A checkout of `matiaspakua/notaire` whose `origin` remote is that repository.
-4. Toolchain the hex slice needs (JDK, Maven, Docker for Testcontainers). The
-   machine keeps its own tools. Cloud environment secrets are not copied there.
-5. Outbound HTTPS to `api2.cursor.sh` and `api2direct.cursor.sh`.
+Measured earlier the same day, before that direction: the cloud run's worker
+list returned **no** connected private machines. That measurement is historical.
+It is not a reason to launch a worker.
 
-## Start the worker
+Cloud execution still follows the Constitution: one issue-sized slice, claim
+the free lane, `bash workspace/sdlc/preflight.sh --full` on the cloud VM before
+push, merge `origin/main` (never rebase), and the Owner merges.
 
-On the machine, in the notaire checkout:
+## Recorded commands (do not run)
+
+Kept so the trigger is identifiable. Official page:
+[My Machines](https://cursor.com/docs/cloud-agent/self-hosted/my-machines).
+Do not execute this block on the Owner's Mac or from a cloud run.
 
 ```bash
 agent login
 agent worker start --name "notaire-local" --worker-dir "$PWD"
 ```
 
-Leave that process running. Confirm with `agent worker debug`. Optional:
-`--computer-use` when a later UI pass must drive the desktop on this machine.
-
-## Trigger
-
-Either:
-
-- At [cursor.com/agents](https://cursor.com/agents), choose the machine under **My Machines** and send the task below, or
-- On the issue, as a trusted commenter whose Cursor account owns the machine:
-  `@cursoragent worker=notaire-local` plus the task. The worker name must match
-  `--name`, and the checkout remote must be this repo. There is no fallback to
-  a cloud VM when the machine is missing.
-
-`self_hosted` or `pool=` alone does not select My Machines.
+The page also describes `agent worker debug`, `--computer-use`, and a chat
+trigger `@cursoragent worker=notaire-local`. `self_hosted` or `pool=` alone
+does not select My Machines. None of those are in use for #1693.
 
 ## What to continue
 
@@ -65,7 +54,7 @@ Remaining work on #577 is the loose-return ratchet, not the original
 
 ## Specialists
 
-The foreman on the machine coordinates. It does not re-implement the slice.
+The cloud foreman coordinates. It does not re-implement the slice.
 
 | Phase | Role | Skills |
 |-------|------|--------|

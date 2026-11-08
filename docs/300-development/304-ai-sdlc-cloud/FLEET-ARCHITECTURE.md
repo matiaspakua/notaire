@@ -194,7 +194,7 @@ fresh brief, mechanical gate, retry with gate output attached — not a monolith
 | Item | Cloud fleet policy |
 |------|--------------------|
 | `local-ai/setup-omlx-codex.sh`, oMLX, Codex `--profile omlx*` | **Forbidden** as runtime dependency |
-| `local-ai/sdlc/foreman.sh` and `bin/*` harness | **Do not execute** for Cloud SDLC. It is not the local Cursor machine. See [`LOCAL-CURSOR-HANDOFF.md`](LOCAL-CURSOR-HANDOFF.md) |
+| `local-ai/sdlc/foreman.sh` and `bin/*` harness | **Do not execute**. It is not Cloud SDLC and not a private Cursor worker. See [`LOCAL-CURSOR-HANDOFF.md`](LOCAL-CURSOR-HANDOFF.md) |
 | `.aisdlc/project.yml` | Local-harness adapter only; Cloud uses `fleet-manifest.yaml` + this doc |
 | Worktree `../notaire-localai` | Not used; Cloud agent uses its own checkout |
 | Ideas OK to reuse in prose | Phased gates, scope discipline, foreman-owned merge, never trust model success claims |

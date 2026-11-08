@@ -151,9 +151,10 @@ change did not touch is an advisory, not a blocker.
 - Canonical rules:
   `docs/300-development/305-project-management/PARALLEL-AGENTS.md`.
 - Confirm environment **GO** from `VALIDATION-PLAN.md` before the first product issue.
-- Hex continuation assigned to the Owner's machine follows
-  `docs/300-development/304-ai-sdlc-cloud/LOCAL-CURSOR-HANDOFF.md`.
-  Do not implement that queue on Cloud, and do not run `local-ai/sdlc/foreman.sh`.
+- Hex continuation is on Cursor Cloud. Read
+  `docs/300-development/304-ai-sdlc-cloud/LOCAL-CURSOR-HANDOFF.md`: the Mac
+  worker commands are recorded there and are not the active path. Do not
+  start `agent worker start` or run `local-ai/sdlc/foreman.sh`.
 - Form review goes to `frontend-design` with the vendored Impeccable skill.
   The plan is `FORMS-AUDIT-PLAN.md`. A code inventory is not a rendered audit.
 

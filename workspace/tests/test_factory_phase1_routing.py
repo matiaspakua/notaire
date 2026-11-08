@@ -64,6 +64,8 @@ class FactoryPhase1RoutingTest(unittest.TestCase):
             "#2086",
             "local-ai/sdlc/foreman.sh",
             "no claim marker",
+            "Do **not** start a private worker",
+            "Cursor Cloud",
         ):
             self.assertIn(needle, text)
 

@@ -5,9 +5,9 @@
 
 `java-architect.md` and `backend-implementer.md` still describe the layered
 packages ADR-030 retired. The fleet manifest does not name Impeccable or
-`notaire-cybersec`. Epic #1693's continuation was requested on the Owner's
-Cursor machine, and that trigger was not written down. Cloud measured zero
-connected workers on 2026-11-08.
+`notaire-cybersec`. The Mac worker trigger was unwritten. The Owner then
+directed this run to stay on Cursor Cloud and not start a private worker.
+The commands are recorded and marked inactive.
 
 ## Goals / Non-Goals
 
@@ -83,7 +83,7 @@ connected workers on 2026-11-08.
 
 ## Migration Plan
 
-No staged rollout. After merge, the local machine uses `LOCAL-CURSOR-HANDOFF.md`. #2087 starts only then.
+No staged rollout. After this change is verified, #2087 is the next frontend slice and #577 stays the backend slice. Both run on Cursor Cloud. The Mac commands in `LOCAL-CURSOR-HANDOFF.md` stay recorded and are not executed.
 
 ## Open Questions
 

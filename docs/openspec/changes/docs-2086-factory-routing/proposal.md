@@ -103,7 +103,7 @@ Follows ADR-030 by deleting contradictory agent instructions. No new ADR. Produc
 
 ## Out of Scope
 
-- Implementing #577, #580, or #1693. The local machine continues those.
+- Implementing #577, #580, or #1693 in this change. Those stay later issue-sized cloud slices. Do not start a private worker.
 - Rendering or editing product forms. Next slices are #2087 and #2088.
 - Merging, force-push, rebase, or changing GitHub rulesets.
 - Refreshing `.impeccable/design.json`.
