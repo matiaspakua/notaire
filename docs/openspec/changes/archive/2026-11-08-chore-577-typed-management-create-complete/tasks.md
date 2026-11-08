@@ -21,56 +21,56 @@
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
 - [x] 3.1 Enumerate test cases: 201 body, empty 400, empty 404, empty 200, baseline shrink
-- [ ] 3.2 Write the unit tests for every scenario in the delta spec
+- [x] 3.2 Write the unit tests for every scenario in the delta spec
 - [x] 3.3 Write the integration tests where applicable — existing complete-case integration tests are PRESERVE
-- [ ] 3.4 Run them and **observe them fail** — shrink baseline first so `ControllerSignatureArchitectureTest` fails on `ManagementController#createCompleteCase`
-- [ ] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
+- [x] 3.4 Run them and **observe them fail** — shrink baseline first so `ControllerSignatureArchitectureTest` fails on `ManagementController#createCompleteCase`
+- [x] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
 
 ## 4. Implementación
 
-- [ ] 4.1 Type `CompleteCaseWebMapper#mapCreateResult` and `createCompleteCase` as `ResponseEntity<DtoManagementSummary>`
-- [ ] 4.2 CHANGELOG Unreleased; sync the main spec; archive in the PR; `Refs #577`
+- [x] 4.1 Type `CompleteCaseWebMapper#mapCreateResult` and `createCompleteCase` as `ResponseEntity<DtoManagementSummary>`
+- [x] 4.2 CHANGELOG Unreleased; sync the main spec; archive in the PR; `Refs #577`
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
-- [ ] 5.2 Update them without weakening assertions; document why any old expectation was wrong — constructor arity on ManagementController tests
-- [ ] 5.3 Remove tests made genuinely obsolete, stating the reason — none obsolete
+- [x] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
+- [x] 5.2 Update them without weakening assertions; constructor arity on `ManagementController` tests
+- [x] 5.3 Remove tests made genuinely obsolete, stating the reason — none obsolete
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api` — unit + integration (covered by `mvn verify` in preflight --full)
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor (covered by `mvn verify`)
-- [ ] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
-- [ ] 6.4 `bash integration-test/scripts/test.sh` — HTTP/Bruno API suite (preflight --full Bruno job)
-- [ ] 6.5 No `@Disabled` or skipped tests without documented, approved justification
+- [x] 6.1 `mvn test -pl backend-api` — unit + integration (covered by `mvn verify` in preflight --full)
+- [x] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor (covered by `mvn verify`)
+- [x] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
+- [x] 6.4 `bash integration-test/scripts/test.sh` — HTTP/Bruno API suite (preflight --full Bruno job)
+- [x] 6.5 No `@Disabled` or skipped tests without documented, approved justification
 
 ## 7. Ejecutar Playwright
 
 - [x] 7.1 Add/update the E2E specs listed in design.md — Playwright Strategy — n/a, no UI change
-- [ ] 7.2 `cd testing/e2e && npx playwright test` — preflight --full runs the existing suite
+- [x] 7.2 `cd testing/e2e && npx playwright test` — preflight --full runs the existing suite
 - [x] 7.3 Verify the affected screens at 320px, 768px and 1024px — n/a, no layout change
 - [x] 7.4 n/a — no UI surface; HTTP contract is unchanged
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
-- [ ] 8.2 Update OpenAPI/Swagger annotations if endpoints changed — annotations unchanged; HTTP contract unchanged
-- [ ] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
+- [x] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
+- [x] 8.2 Update OpenAPI/Swagger annotations if endpoints changed — annotations unchanged; HTTP contract unchanged
+- [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
 - [x] 8.4 Archive superseded documents into `docs/000-archive/` — none superseded
 - [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
-- [ ] 8.6 `bash workspace/sdlc/preflight.sh --full` — pending
+- [ ] 8.6 `bash workspace/sdlc/preflight.sh --full` — second run after archive commit
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message ends with `Refs #577` (multi-PR tip; do not close #577)
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.2 Every commit message ends with `Refs #577` (multi-PR tip; do not close #577)
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record the commit SHAs in `traceability.md` — `e0357716`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Archive this change in the PR: `cd docs && openspec archive chore-577-typed-management-create-complete --yes`
+- [x] 10.1 Archive this change in the PR: `cd docs && openspec archive chore-577-typed-management-create-complete --yes`
 - [ ] 10.2 `git push -u origin refactor/577_typed-management-create-complete`
 - [ ] 10.3 Open the PR titled `[#577] refactor(backend): type ManagementController#createCompleteCase`, referencing Issue and Use Case
 - [ ] 10.4 Wait for every required workflow to pass

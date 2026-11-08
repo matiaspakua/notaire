@@ -15,7 +15,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | this change | passed |
 | Branch | `refactor/577_typed-management-create-complete` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
+| Commits | `e0357716` | created |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -26,8 +26,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario | Test | Status |
 |----------|------|--------|
-| createCompleteCase leaves the loose baseline | `ControllerSignatureArchitectureTest` | pending |
-| Create complete-case keeps 201 and empty error statuses | `ManagementCreateCompleteCaseControllerTest` | pending |
+| createCompleteCase leaves the loose baseline | `ControllerSignatureArchitectureTest` | passing |
+| Create complete-case keeps 201 and empty error statuses | `ManagementCreateCompleteCaseControllerTest` | passing |
 
 ## Permanent documentation updated
 
