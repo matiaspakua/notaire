@@ -12,4 +12,6 @@ public interface QueryUsersUseCase {
     Optional<User> findById(int id);
 
     Optional<User> findByPersonId(int personId);
+
+    Optional<User> findByName(String name);
 }

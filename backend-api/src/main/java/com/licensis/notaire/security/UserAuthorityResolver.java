@@ -1,7 +1,6 @@
 package com.licensis.notaire.security;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
@@ -10,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import com.licensis.notaire.business.User;
+import com.licensis.notaire.domain.user.AccountRole;
 import com.licensis.notaire.repository.UserRepository;
 
 /**
@@ -23,8 +23,6 @@ public class UserAuthorityResolver {
 
     public static final String NOTARY_ROLE = "NOTARY";
 
-    private static final Set<String> ADMINISTRATOR_TYPES = Set.of("ADMIN", "ADMINISTRADOR");
-    private static final Set<String> NOTARY_TYPES = Set.of("ESCRIBANO");
     private static final GrantedAuthority ADMIN_AUTHORITY = new SimpleGrantedAuthority("ROLE_" + ADMIN_ROLE);
     private static final GrantedAuthority NOTARY_AUTHORITY = new SimpleGrantedAuthority("ROLE_" + NOTARY_ROLE);
     private static final GrantedAuthority USER_AUTHORITY = new SimpleGrantedAuthority("ROLE_USER");
@@ -42,10 +40,10 @@ public class UserAuthorityResolver {
     }
 
     private GrantedAuthority authorityOf(User user) {
-        String type = user.getType() == null ? "" : user.getType().trim().toUpperCase(Locale.ROOT);
-        if (ADMINISTRATOR_TYPES.contains(type)) {
-            return ADMIN_AUTHORITY;
-        }
-        return NOTARY_TYPES.contains(type) ? NOTARY_AUTHORITY : USER_AUTHORITY;
+        return switch (AccountRole.ofUserType(user.getType())) {
+            case ADMIN -> ADMIN_AUTHORITY;
+            case NOTARY -> NOTARY_AUTHORITY;
+            case USER -> USER_AUTHORITY;
+        };
     }
 }
