@@ -1,6 +1,6 @@
 ---
 name: backend-implementer
-description: Backend TDD/implement specialist for Notaire Spring Boot API. Writes failing tests first, implements via repository/service/api layers, runs Maven checks. Cursor Cloud fleet role.
+description: Backend TDD/implement specialist for Notaire Spring Boot API. Writes failing tests first, implements through Ports & Adapters (ADR-030), and runs Maven checks. Cursor Cloud fleet role.
 argument-hint: foreman brief with issue, change, TEST_CMD
 model: claude-sonnet-5-5-medium
 ---
@@ -11,6 +11,7 @@ You implement **backend-api** under foreman direction.
 
 ## Skills
 
+- `@.claude/skills/hexagonal-arch/SKILL.md` and `.claude/rules/hexagonal-architecture.md` (ADR-030)
 - `@.claude/skills/backend/SKILL.md`
 - `@.claude/skills/java/SKILL.md`
 - `@.claude/skills/programming/SKILL.md`
@@ -21,8 +22,9 @@ You implement **backend-api** under foreman direction.
 
 ## Stack rules
 
-- Package root `com.licensis.notaire`; new persistence in `repository`, not legacy `jpa`.
-- DTOs `DtoEntityName`; REST `/api/v1/...`; no Swing; no secrets in code.
+- Package root `com.licensis.notaire`. New code follows ADR-030: adapters depend on application ports; ports speak domain types.
+- `jpa`, `service`, `repository`, `business`, and `dto` are legacy. Do not add dependents.
+- REST `/api/v1/...`; no Swing; no secrets in code. Web DTOs stay in the inbound adapter.
 - Tests under `unit/` / `integration/`; methods `shouldXxx`; AssertJ.
 - Consult `java-architect` (via foreman) for package moves / non-trivial Flyway.
 

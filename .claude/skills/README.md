@@ -16,7 +16,7 @@ This directory combines project-specific skills with generic lifecycle skills. T
 | Operations and incidents | `operations-observability-readiness`, `devops` | `infra/`, runbooks, SLOs, incident/postmortem evidence | 3-5 |
 | PR stewardship | `steward` | `workspace/sdlc/check-heavy-ci.sh`, `workspace/sdlc/preflight.sh`, `CI-MERGE-GATE.md` | 4 |
 | Specification lifecycle | OpenSpec vendor skills + `openspec-triage` | `docs/openspec/changes/`, `docs/openspec/specs/` | 1-5 |
-| Product UI | `frontend-design` (+ `.claude/rules/ui-ux-design.md`) | `frontend/` screens: theme tokens, system fonts, `FormContainer → FormSection → FormField` | 3 |
+| Product UI | `frontend-design` (+ `.claude/rules/ui-ux-design.md`) and vendored `impeccable` (pbakaus/impeccable, metadata 4.8.1, Apache-2.0; `skills-lock.json`) | `frontend/` screens: theme tokens, system fonts, `FormContainer → FormSection → FormField`. Impeccable reviews forms; a source inventory is not a rendered audit | 3 |
 | Showcase UI and motion | `ui-design`, `motion-design` (generic) | `github-page/`, artifacts, demos — never product forms, where `frontend-design` prevails | 3 |
 
 ## Selection rule
