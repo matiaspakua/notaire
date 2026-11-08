@@ -1,5 +1,6 @@
 package com.licensis.notaire.config;
 
+import com.licensis.notaire.adapter.in.web.management.CompleteCaseWebMapper;
 import com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper;
 import com.licensis.notaire.adapter.out.persistence.management.ManagementStatusLogAdapter;
 import com.licensis.notaire.adapter.out.persistence.management.ManagementRepositoryAdapter;
@@ -52,5 +53,10 @@ public class ManagementCompositionConfig {
     public TransitionManagementWebMapper transitionManagementWebMapper(
             QueryManagementsUseCase queryManagements) {
         return new TransitionManagementWebMapper(queryManagements);
+    }
+
+    @Bean
+    public CompleteCaseWebMapper completeCaseWebMapper() {
+        return new CompleteCaseWebMapper();
     }
 }
