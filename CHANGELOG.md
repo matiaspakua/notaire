@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **api:** Management update complete-case returns typed DtoManagementSummary (Refs #577)
 * **docs:** Factory routing follows ADR-030, records Impeccable 4.8.1, and keeps hexagonal work on Cloud (Refs #2086)
 * **pages:** Isometric diagram labels use the anatomy text color so corner captions and the key clear WCAG AA contrast (Refs #2086)
 * **api:** Management create complete-case returns typed DtoManagementSummary (Refs #577)

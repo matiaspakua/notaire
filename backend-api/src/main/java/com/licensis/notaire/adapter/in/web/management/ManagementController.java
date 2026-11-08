@@ -202,14 +202,9 @@ public class ManagementController {
                     + "start date, the management is redirected to the substitute and a note is recorded. "
                     + "CU83 **BREAKING** - Changing statusManagementId is rejected; use "
                     + "POST /{id}/transition. Same-status updates remain allowed.")
-    public ResponseEntity<Object> updateCompleteCase(
+    public ResponseEntity<DtoManagementSummary> updateCompleteCase(
             @PathVariable Integer id, @Valid @RequestBody CompleteCaseRequest request) {
-        return switch (manageManagements.updateCompleteCase(id, toCommand(request))) {
-            case CompleteCaseResult.Updated updated -> ResponseEntity.ok(updated.summary());
-            case CompleteCaseResult.BadRequest ignored -> ResponseEntity.badRequest().build();
-            case CompleteCaseResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case CompleteCaseResult.Created ignored -> ResponseEntity.status(HttpStatus.CREATED).build();
-        };
+        return completeCaseWebMapper.mapUpdateResult(manageManagements.updateCompleteCase(id, toCommand(request)));
     }
 
     @GetMapping

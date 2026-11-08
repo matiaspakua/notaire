@@ -1,4 +1,3 @@
 AuditRecordController#getAll
 AuxiliaryProtocolController#startDeed
 ManagementController#getWorkflowTrace
-ManagementController#updateCompleteCase
