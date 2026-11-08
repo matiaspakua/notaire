@@ -7,7 +7,7 @@ from pathlib import Path
 import json
 import os
 
-from aisdlc import __version__, adopt, change, checks, diffchecks, evidence, gates, ratchet, repo, skills
+from aisdlc import __version__, adopt, change, checks, diffchecks, evidence, gates, harness, ratchet, repo, skills
 from aisdlc.context import Context
 from aisdlc.factory import (
     check_inventory,
@@ -17,6 +17,7 @@ from aisdlc.factory import (
     resolve_max_open_prs,
     validate_factory,
 )
+from aisdlc.harness import HarnessError
 from aisdlc.profile import ProfileError, find_profile, load_profile
 
 
@@ -54,6 +55,14 @@ def build_parser() -> argparse.ArgumentParser:
 
     p = sub.add_parser("inventory", help="check the migration inventory")
     p.add_argument("action", choices=("check",))
+
+    p = sub.add_parser("harness", help="list or show agent-runtime adapters (not a commercial Harness product)")
+    harness_sub = p.add_subparsers(dest="action", required=True)
+    listed = harness_sub.add_parser("list", help="list adapters declared in the profile")
+    listed.add_argument("--json", action="store_true")
+    shown = harness_sub.add_parser("show", help="read one adapter source in place")
+    shown.add_argument("--id", required=True)
+    shown.add_argument("--json", action="store_true")
 
     p = sub.add_parser("gate", help="run every gate of a stage")
     p.add_argument("stage", nargs="?")
@@ -150,6 +159,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "config": lambda: _config(ctx, args),
         "plugin": lambda: _plugin(ctx, args),
         "inventory": lambda: _inventory(ctx),
+        "harness": lambda: _harness(ctx, args),
     }
     return simple[args.command]()
 
@@ -204,6 +214,33 @@ def _inventory(ctx: Context) -> int:
             print(f"  - {error}")
         return 1
     print("migration inventory valid")
+    return 0
+
+
+def _harness(ctx: Context, args: argparse.Namespace) -> int:
+    if args.action == "list":
+        rows = harness.list_adapters(ctx.root, ctx.profile)
+        if args.json:
+            print(json.dumps(rows, indent=2))
+        else:
+            for row in rows:
+                print(
+                    f"{row['id']}\t{row['runtime']}\treadable={row['readable']}\t"
+                    f"sandbox={row['sandbox']}\t{row['source']}"
+                )
+        return 0
+    try:
+        view = harness.describe(ctx.root, ctx.profile, args.id)
+    except ProfileError as exc:
+        print(f"error: {exc}")
+        return 2
+    except HarnessError as exc:
+        print(f"error: {exc}")
+        return 1
+    if args.json:
+        print(json.dumps(view, indent=2, sort_keys=True))
+    else:
+        print(_plain(view))
     return 0
 
 
