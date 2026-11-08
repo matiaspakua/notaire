@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "event_pair": {
+    "start": "issue.created_at",
+    "end": "pull_request.checks_green_at",
+    "notes": "Lead time = first linked PR whose required checks are all green, minus issue open time. Merge is optional and not required for this metric."
+  },
+  "sample": {
+    "label": "notaire-factory-#2135",
+    "issue": {
+      "number": 2135,
+      "title": "feat(aisdlc): one-command install / update / uninstall for the kit",
+      "created_at": "2026-11-08T20:00:00Z"
+    },
+    "pull_requests": [
+      {
+        "number": 2144,
+        "title": "[#2135] feat(aisdlc): one-command install update uninstall",
+        "created_at": "2026-11-08T21:00:00Z",
+        "checks_green_at": "2026-11-08T21:45:00Z",
+        "linked_issues": [2135]
+      }
+    ]
+  }
+}
