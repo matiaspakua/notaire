@@ -78,6 +78,7 @@ otherwise off. `core.*` / `security.*` cannot relax policy; required gates canno
 | `harness list [--json]` · `harness show --id ID [--json]` | Lists profile `[harness.adapters]` or reads one source in place. Always reports `sandbox=false`. Not a commercial Harness product. | show: source missing or runtime mismatch (exit 1); unknown id (exit 2) |
 | `gate <stage> [--base R] [--var K=V] [--stream]` · `gate --list` | Runs every gate of the stage; path-scoped gates skip when nothing they cover changed; writes one ledger record. | a required gate does not exit as expected |
 | `ratchet [--base R] [--name N]` | Baselines (lines, or JSON leaf counts) may not gain entries versus the base revision; floors must hold. | an entry was added or a floor missed |
+| `catalog list\|add\|update\|remove\|validate` | CRUD for skills/MCP/agents/memory catalogs (#2139); digests on write; never executes. | unknown kind / missing dir on write |
 | `skills` | Every skill folder has a `SKILL.md` with a description, names are unique, generic skills carry no forbidden project pattern. | any of those |
 | `budget` | Always-loaded files ≤ `max_tokens` (bytes/4). | over budget or a file is missing |
 | `commits [--base R]` | Commit subjects match `[commits] pattern` (Conventional Commits by default). | a subject does not match |
