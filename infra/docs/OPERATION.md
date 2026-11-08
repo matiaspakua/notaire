@@ -197,6 +197,26 @@ exporter credentials against Flyway V12, and the queries in
 **"Application network not found"** — start the application first
 (`bash workspace/stack/start.sh`).
 
+### Constrained hosts and cloud sandboxes
+
+**SonarQube web stops with `no_shard_available_action_exception`** — Elasticsearch treats a host that
+reports little usable disk as over its flood watermark. Set
+`SONAR_SEARCH_JAVAADDITIONALOPTS=-Dcluster.routing.allocation.disk.threshold_enabled=false`. Also run
+`sysctl -w vm.max_map_count=262144`, and override `ulimits.nofile` below 65536 when the host hard limit is lower.
+
+**Backend Sonar analysis fails with `InvalidPathException ... CU01 ??? Preparar Presupuesto.md`** — the JVM
+runs in the POSIX locale and cannot decode the file name. Export `LC_ALL=C.UTF-8` and pass
+`-Dsun.jnu.encoding=UTF-8`.
+
+**`docker build` cannot reach package mirrors** — run the built jar or `.next/standalone` in
+`eclipse-temurin:26-jre-alpine` or `node:22-alpine` on the Compose network, with the aliases
+`notary-backend`, `notaire-frontend` and `postgres`.
+
+**Next Maven package fails after `docker run -v <file>:...`** — a missing host file is created as a
+directory of that name. Remove it before packaging.
+
+**Docker Hub answers 429 on image pulls** — retry after a short wait.
+
 ## Rollback
 
 Observability: `docker compose ... down`, redeploy the previous revision of `infra/`
