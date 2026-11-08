@@ -20,4 +20,13 @@ public class CompleteCaseWebMapper {
             case CompleteCaseResult.Updated ignored -> ResponseEntity.ok().build();
         };
     }
+
+    public ResponseEntity<DtoManagementSummary> mapUpdateResult(CompleteCaseResult result) {
+        return switch (result) {
+            case CompleteCaseResult.Updated updated -> ResponseEntity.ok(updated.summary());
+            case CompleteCaseResult.BadRequest ignored -> ResponseEntity.badRequest().build();
+            case CompleteCaseResult.NotFound ignored -> ResponseEntity.notFound().build();
+            case CompleteCaseResult.Created ignored -> ResponseEntity.status(HttpStatus.CREATED).build();
+        };
+    }
 }
