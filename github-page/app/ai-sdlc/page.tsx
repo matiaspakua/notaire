@@ -2,7 +2,6 @@ import Link from "next/link";
 import { FACTORY_VS_PRODUCT, LESSONS, SOURCES_OF_TRUTH, src } from "@/lib/ai-sdlc-content";
 import { fmt, loadFactoryFacts } from "@/lib/ai-sdlc-facts";
 import { Card, Diagram, SectionTitle, Sources } from "@/components/FactoryUI";
-import { GateLine } from "@/components/figures/gateline/figure";
 import { FACTORY_ACTS, pageMetadata } from "@/lib/site";
 import { FlowDiagram } from "@/components/diagrams/FlowDiagram";
 import { factoryFlow } from "@/lib/diagram-flows";
@@ -90,19 +89,18 @@ export default function FactoryHome() {
       <SectionTitle id="answer">The answer: a factory with gates</SectionTitle>
       <p className="leading-relaxed text-slate-700">
         Every change, by a human or an agent, takes the same path. A gate opens only when its command exits as expected.
-        The bench below is that path as a machine: one Issue card on a carriage, five booms that stay down until their
-        check exits green. Move along the line, or open the{" "}
+        Picture the path as a test bench: the change is one card on a carriage, and a boom stays down until the check
+        at that step passes. The instrument is drawn on{" "}
         <Link href="/ai-sdlc/lifecycle/" className="font-semibold text-factory-700 hover:underline">
-          full lifecycle
-        </Link>{" "}
-        for every numbered step.
+          How a change flows
+        </Link>
+        .
       </p>
-      <GateLine />
       <FlowDiagram
         id="factory"
         title="The AI SDLC factory"
         desc="A change goes from a real issue through five gates: plan, failing tests, the local pipeline, CI and review, then release and smoke test. A failed gate sends it back."
-        caption="The same gates as a flow chart: each node is a command with an exit code."
+        caption="Step through the gates; each one is a command with an exit code."
         {...factoryFlow()}
       />
 

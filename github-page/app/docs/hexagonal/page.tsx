@@ -1,6 +1,6 @@
 import { Card, Code, Diagram, PageHeader, SectionTitle, Sources, Table } from "@/components/FactoryUI";
 import { Callout, StatGrid } from "@/components/DocsUI";
-import { HexManifold } from "@/components/figures/hexmanifold/figure";
+import { JunctionInstrument } from "@/components/figures/hexagon/figure";
 import { src } from "@/lib/ai-sdlc-content";
 import { pageMetadata } from "@/lib/site";
 import { hexagon, versions } from "@/lib/tech-facts";
@@ -75,19 +75,18 @@ export default function HexagonalPage() {
         ]}
       />
 
-      <SectionTitle id="manifold">The object</SectionTitle>
       <p>
-        Ports and adapters are not a stack of boxes. They are a sealed core with keyed sockets: only a matching plug
-        reaches the domain, and ArchUnit fails any cable that tries to skip the socket. Hover a plug to seat it; the
-        readout names the real package.
+        Dependencies point inward only. An adapter may know a port, and a port may know the domain. The instrument
+        below is that rule: the sealed case is the domain, the glands on its skin are the ports, and the plug modules
+        are the adapters. A plug mates to a gland. It never meets the case.
       </p>
-      <HexManifold facts={h} />
+      <JunctionInstrument facts={h} />
 
       <SectionTitle id="map">The map</SectionTitle>
       <p>
-        Dependencies point inward only: <Code>adapter</Code> → <Code>application</Code> → <Code>domain</Code>. A
-        controller never sees a JPA entity; a use case never sees HTTP. <Code>config</Code> is the composition root
-        that wires the adapters to the ports. Step through the rings, or click one.
+        The rings are the same rule, read as packages: <Code>adapter</Code> → <Code>application</Code> →{" "}
+        <Code>domain</Code>. A controller never sees a JPA entity; a use case never sees HTTP. <Code>config</Code> is
+        the composition root that wires the adapters to the ports. Step through the rings, or click one.
       </p>
       <HexagonMap
         facts={h}

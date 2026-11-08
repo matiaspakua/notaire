@@ -10,7 +10,7 @@
 
 .cabinet-stage,
 .gateline-stage,
-.hexmanifold-stage {
+.hexagon-stage {
   cursor: pointer;
   touch-action: pan-y;
   border-radius: 12px;
@@ -18,7 +18,7 @@
 
 .cabinet-stage:focus-visible,
 .gateline-stage:focus-visible,
-.hexmanifold-stage:focus-visible {
+.hexagon-stage:focus-visible {
   outline: 1px solid var(--anatomy-muted);
   outline-offset: 6px;
 }

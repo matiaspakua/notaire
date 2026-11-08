@@ -6,7 +6,7 @@ import { READING_PATH, STAGES } from "@/lib/artifacts-content";
 import { DOCS_PAGES, search } from "@/lib/site";
 import { cardsFor, DRAWERS, pullFor } from "@/components/figures/cabinet/geometry";
 import { GATES, STOPS } from "@/components/figures/gateline/geometry";
-import { FACES, readoutFor, SEAT_MAX, seatVector } from "@/components/figures/hexmanifold/geometry";
+import { ATTACHMENTS, entersCase, plugVector, SOCKETS, solidCount, UNMATE } from "@/components/figures/hexagon/geometry";
 import { LIFECYCLE_PHASES } from "@/lib/ai-sdlc-content";
 
 const ROOT = path.resolve(__dirname, "..", "..");
@@ -84,25 +84,31 @@ describe("gated line (#2067)", () => {
   });
 });
 
-describe("hexagonal port manifold (#2083)", () => {
-  it("maps six faces to ports and adapters around a sealed domain", () => {
-    expect(FACES).toHaveLength(6);
-    expect(FACES.map((f) => f.key)).toEqual(["web", "security", "in", "out", "persist", "pdf"]);
-    expect(FACES.some((f) => f.kind === "port")).toBe(true);
-    expect(FACES.filter((f) => f.kind.includes("adapter"))).toHaveLength(4);
-  });
-
-  it("seats each plug toward the core on a non-zero screen vector", () => {
-    expect(SEAT_MAX).toBeGreaterThan(8);
-    for (let i = 0; i < FACES.length; i += 1) {
-      const [vx, vy] = seatVector(i);
-      expect(Math.hypot(vx, vy), `face ${i}`).toBeGreaterThan(0.2);
-      expect(readoutFor(i)).toContain(FACES[i].layer);
+describe("junction instrument (#2083)", () => {
+  it("names three adapters on four glands, inbound in front and outbound at the rear", () => {
+    expect(SOCKETS.map((s) => s.id)).toEqual(["http", "open", "jpa", "pdf"]);
+    expect(SOCKETS.filter((s) => s.side === "inbound").map((s) => s.id)).toEqual(["http", "open"]);
+    expect(SOCKETS.filter((s) => s.side === "outbound").map((s) => s.id)).toEqual(["jpa", "pdf"]);
+    expect(SOCKETS.filter((s) => s.adapter).map((s) => s.adapter)).toEqual(["HTTP web", "JPA persistence", "PDF"]);
+    for (const socket of SOCKETS.filter((s) => s.adapter)) {
+      expect(socket.readout).toContain("adapter → port → domain");
     }
+    expect(SOCKETS.find((s) => s.id === "open")?.readout).not.toContain("adapter → port → domain");
   });
 
-  it("is linked from the hexagonal docs page in the site map", () => {
-    expect(DOCS_PAGES.map((p) => p.href)).toContain("/docs/hexagonal/");
-    expect(search("hexagonal ports").map((r) => r.href)).toContain("/docs/hexagonal/");
+  it("keeps every gland, cable and plug on the skin of the case", () => {
+    expect(ATTACHMENTS.length).toBeGreaterThanOrEqual(10);
+    for (const box of ATTACHMENTS) expect(entersCase(box), box.id).toBe(false);
+  });
+
+  it("backs a plug off its socket along a real screen vector, within a Figure's part count", () => {
+    expect(UNMATE).toBeGreaterThan(4);
+    for (const id of ["http", "jpa", "pdf"] as const) {
+      const [vx, vy] = plugVector(id);
+      expect(Math.hypot(vx, vy), id).toBeGreaterThan(0.2);
+    }
+    const solids = solidCount();
+    expect(solids).toBeGreaterThanOrEqual(40);
+    expect(solids).toBeLessThanOrEqual(80);
   });
 });

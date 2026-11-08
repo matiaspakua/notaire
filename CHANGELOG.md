@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Documentation
+
+* **docs:** The hexagonal page leads with a sealed junction instrument (domain case, port glands, adapter plugs), and the AI Factory home points at the gated line (Refs #2083)
+
 ### Changed
 
 * **api:** Management transition returns typed ManagementSummaryDto (Refs #577)
