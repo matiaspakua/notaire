@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **aisdlc:** TelemetryPort with optional OpenTelemetry NoOp path (off by default), secret redaction, lead-time/cost hooks, and OpenFeature-shaped flag stub (Refs #2125)
 * **aisdlc:** AWS AI-DLC boundary design — owns no aisdlc stages as orchestrator; hooks never auto-trusted; plugin unavailable (Refs #2124)
 * **aisdlc:** Spec Kit method plugin prints `specify extension search` (pinned specify-cli 1.3.2); kept out of plugin allow until Owner opt-in (Refs #2123)
 * **aisdlc:** Harness port lists Cursor Cloud and local oMLX adapters and reads their sources in place without claiming a sandbox (Refs #2122)

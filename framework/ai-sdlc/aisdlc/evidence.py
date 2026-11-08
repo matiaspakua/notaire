@@ -19,6 +19,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from aisdlc.context import Context
+from aisdlc.telemetry import get_telemetry, record_cost_event, record_stage_event
 
 LEDGER = "ledger.jsonl"
 COSTS = "cost.jsonl"
@@ -120,7 +121,15 @@ def _read(ctx: Context, name: str, since: str | None) -> list[dict]:
 
 
 def record_stage(ctx: Context, record: dict) -> Path:
-    return _append(ctx, LEDGER, record)
+    path = _append(ctx, LEDGER, record)
+    seconds = sum(float(g.get("seconds") or 0) for g in record.get("gates", []))
+    record_stage_event(
+        get_telemetry(),
+        stage=str(record.get("stage", "")),
+        ok=bool(record.get("ok")),
+        seconds=seconds,
+    )
+    return path
 
 
 def add_cost(ctx: Context, agent: str, model: str, tokens_in: int, tokens_out: int,
@@ -130,6 +139,14 @@ def add_cost(ctx: Context, agent: str, model: str, tokens_in: int, tokens_out: i
         usd = round(tokens_in / 1e6 * price["input"] + tokens_out / 1e6 * price["output"], 6)
     _append(ctx, COSTS, {"ts": now(), "agent": agent, "model": model, "input": tokens_in,
                          "output": tokens_out, "usd": usd, "issue": issue})
+    record_cost_event(
+        get_telemetry(),
+        agent=agent,
+        model=model,
+        tokens_in=tokens_in,
+        tokens_out=tokens_out,
+        usd=usd,
+    )
     print(f"cost recorded: {agent} · {model} · {tokens_in}+{tokens_out} tokens · "
           f"{'unpriced' if usd is None else f'${usd:.4f}'}")
     return 0
