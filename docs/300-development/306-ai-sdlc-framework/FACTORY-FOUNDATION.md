@@ -1,5 +1,12 @@
 # Factory foundation (#2121) and harness port (#2122)
 
+**Multi-session plan:** continue from [`FACTORY-ROADMAP.md`](FACTORY-ROADMAP.md)
+(mirror of the store master plan; docs [#2140](https://github.com/matiaspakua/notaire/issues/2140);
+epic [#2134](https://github.com/matiaspakua/notaire/issues/2134)). On `main` already:
+TelemetryPort [#2125](https://github.com/matiaspakua/notaire/issues/2125), install lifecycle
+[#2135](https://github.com/matiaspakua/notaire/issues/2135). Next open spine slice:
+lead-time metrics [#2138](https://github.com/matiaspakua/notaire/issues/2138).
+
 The canonical root is [`framework/ai-sdlc`](../../../framework/ai-sdlc/README.md).
 Decisions: [ADR-001](../../../framework/ai-sdlc/docs/adr/ADR-001-canonical-root.md),
 [ADR-002](../../../framework/ai-sdlc/docs/adr/ADR-002-ports-and-trust.md),
