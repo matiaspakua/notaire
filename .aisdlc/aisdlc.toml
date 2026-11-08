@@ -46,6 +46,9 @@ enabled = false
 exporter = "none"
 
 # FeatureFlagPort (#2137): off by default; JSON/flagd file when enabled.
+[catalogs]
+dir = ".aisdlc/catalogs"
+
 [flags]
 enabled = false
 file = ".aisdlc/flags.json"

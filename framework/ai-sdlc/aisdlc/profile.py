@@ -134,6 +134,7 @@ class Profile:
     harness_adapters: tuple[HarnessAdapter, ...] = ()
     telemetry: TelemetrySettings = field(default_factory=TelemetrySettings)
     flags: FlagsSettings = field(default_factory=FlagsSettings)
+    catalogs_dir: str | None = None
 
     def stages(self) -> list[str]:
         declared = {g.stage for g in self.gates}
@@ -229,6 +230,13 @@ def _build(data: dict, errors: list[str]) -> Profile:
     profile.roles = _roles(data.get("roles", {}), errors)
     profile.telemetry = _telemetry(data.get("telemetry", {}), errors)
     profile.flags = _flags(data.get("flags", {}), errors)
+    catalogs = data.get("catalogs", {})
+    profile.catalogs_dir = catalogs.get("dir")
+    if profile.catalogs_dir is not None and (
+        not isinstance(profile.catalogs_dir, str) or not profile.catalogs_dir.strip()
+    ):
+        errors.append(f"catalogs.dir must be a non-empty string, got {profile.catalogs_dir!r}")
+        profile.catalogs_dir = None
     _check_prices(profile.prices, errors)
     return profile
 

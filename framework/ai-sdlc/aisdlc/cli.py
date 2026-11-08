@@ -10,6 +10,7 @@ import os
 from aisdlc import (
     __version__,
     adopt,
+    catalogs,
     change,
     checks,
     diffchecks,
@@ -154,6 +155,26 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--output", type=int, required=True, help="output tokens")
     p.add_argument("--usd", type=float, help="actual cost; computed from [cost.prices] when omitted")
     p.add_argument("--issue")
+
+    p = sub.add_parser("catalog", help="CRUD for skills/MCP/agents/memory catalogs (#2139)")
+    cat_sub = p.add_subparsers(dest="action", required=True)
+    for action, help_text in (
+        ("list", "list catalog entries (never executes manifests)"),
+        ("validate", "check digests and skill refs (read-only)"),
+    ):
+        q = cat_sub.add_parser(action, help=help_text)
+        q.add_argument("--kind", choices=list(catalogs.KINDS), help="limit to one kind")
+        if action == "list":
+            q.add_argument("--json", action="store_true")
+    for action in ("add", "update", "remove"):
+        q = cat_sub.add_parser(action)
+        q.add_argument("--kind", required=True, choices=list(catalogs.KINDS))
+        q.add_argument("--id", required=True)
+        if action != "remove":
+            q.add_argument("--ref", help="path or logical reference")
+            q.add_argument("--summary", help="short description")
+            if action == "add":
+                q.set_defaults(summary="")
     return parser
 
 
@@ -218,6 +239,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "tdd": lambda: checks.tdd(ctx, args.base),
         "report": lambda: evidence.report(ctx, args.json, args.since),
         "metrics": lambda: _metrics(ctx, args),
+        "catalog": lambda: _catalog(ctx, args),
         "protected": lambda: diffchecks.protected(ctx, args.base),
         "size": lambda: diffchecks.size(ctx, args.base, args.limit),
         "scope": lambda: diffchecks.scope(ctx, args.base, args.strict),
@@ -228,6 +250,31 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "harness": lambda: _harness(ctx, args),
     }
     return simple[args.command]()
+
+
+def _catalog(ctx: Context, args: argparse.Namespace) -> int:
+    try:
+        if args.action == "list":
+            data = catalogs.list_entries(ctx, getattr(args, "kind", None))
+            if args.json:
+                print(json.dumps(data, indent=2, sort_keys=True))
+            else:
+                blocks = [data] if getattr(args, "kind", None) else data.values()
+                for block in blocks:
+                    print(f"[{block['kind']}] {len(block['entries'])} entries")
+                    for entry in block["entries"]:
+                        print(f"  - {entry['id']}" + (f" · {entry.get('summary')}" if entry.get("summary") else ""))
+            return 0
+        if args.action == "validate":
+            return catalogs.validate(ctx, getattr(args, "kind", None))
+        if args.action == "add":
+            return catalogs.add(ctx, args.kind, args.id, ref=args.ref, summary=args.summary)
+        if args.action == "update":
+            return catalogs.update(ctx, args.kind, args.id, ref=args.ref, summary=args.summary)
+        return catalogs.remove(ctx, args.kind, args.id)
+    except ProfileError as exc:
+        print(f"error: {exc}")
+        return 2
 
 
 def _metrics(ctx: Context, args: argparse.Namespace) -> int:
