@@ -1,5 +1,6 @@
 import { Card, Code, Diagram, PageHeader, SectionTitle, Sources, Table } from "@/components/FactoryUI";
 import { Callout, StatGrid } from "@/components/DocsUI";
+import { HexManifold } from "@/components/figures/hexmanifold/figure";
 import { src } from "@/lib/ai-sdlc-content";
 import { pageMetadata } from "@/lib/site";
 import { hexagon, versions } from "@/lib/tech-facts";
@@ -73,6 +74,14 @@ export default function HexagonalPage() {
           { value: h.baselineViolations, label: "Known violations", hint: "ArchUnit baseline" },
         ]}
       />
+
+      <SectionTitle id="manifold">The object</SectionTitle>
+      <p>
+        Ports and adapters are not a stack of boxes. They are a sealed core with keyed sockets: only a matching plug
+        reaches the domain, and ArchUnit fails any cable that tries to skip the socket. Hover a plug to seat it; the
+        readout names the real package.
+      </p>
+      <HexManifold facts={h} />
 
       <SectionTitle id="map">The map</SectionTitle>
       <p>
