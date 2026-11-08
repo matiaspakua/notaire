@@ -32,6 +32,7 @@ class ManagementControllerServerErrorResponseTest {
                     mock(QueryWorkflowTraceUseCase.class),
                     mock(TransitionManagementUseCase.class),
                     mock(TransitionManagementWebMapper.class),
+                    new CompleteCaseWebMapper(),
                     mock(ExternalEntityDocumentUseCase.class),
                     mock(DocumentReentryUseCase.class)))
             .setControllerAdvice(new GlobalExceptionHandler())
