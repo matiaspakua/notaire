@@ -2,8 +2,10 @@
 
 **Multi-session plan:** continue from [`FACTORY-ROADMAP.md`](FACTORY-ROADMAP.md)
 (mirror of the store master plan; docs [#2140](https://github.com/matiaspakua/notaire/issues/2140);
-epic [#2134](https://github.com/matiaspakua/notaire/issues/2134)). Next code slice is
-TelemetryPort [#2125](https://github.com/matiaspakua/notaire/issues/2125) — not this foundation note.
+epic [#2134](https://github.com/matiaspakua/notaire/issues/2134)). TelemetryPort
+[#2125](https://github.com/matiaspakua/notaire/issues/2125) landed on `main`; next open
+spine slice is install/update/uninstall [#2135](https://github.com/matiaspakua/notaire/issues/2135)
+(PR #2144 — serialize merge after this docs tip).
 
 The canonical root is [`framework/ai-sdlc`](../../../framework/ai-sdlc/README.md).
 Decisions: [ADR-001](../../../framework/ai-sdlc/docs/adr/ADR-001-canonical-root.md),
