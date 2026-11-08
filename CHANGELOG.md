@@ -21,7 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* **aisdlc:** catalogs CRUD for skills/MCP/agents/memory with digests; list/validate never execute (Refs #2139)
 * **aisdlc:** OpenAPI 3.1.0 factory control contract (`contract check` / oasdiff accept dir); CLI JSON is the shared shape (Refs #2136)
 * **aisdlc:** OpenFeature-shaped FeatureFlagPort with JSON/flagd file provider; flags cannot skip required gates or raise PR ceiling (Refs #2137)
 * **aisdlc:** `install` / `update` / `uninstall` lifecycle for the kit (Refs #2135)
