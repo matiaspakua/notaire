@@ -86,6 +86,8 @@ the no-op path. GenAI semantic conventions are not claimed.
 | `scope [--base R] [--strict]` | Changed paths stay inside the write set that the change record declares under `[scope] heading` (default `### Write set`, globs in backticks; HTML comments ignored). No record with a write set ⇒ *not evaluable* (exit 0, or 1 with `--strict`). | a path outside the write set |
 | `evidence verify [--anchor D]` | The ledger and the cost log are hash-chained (`prev` = SHA-256 of the line before); reports any edited, deleted or reordered record and prints the head digest. A chain cannot see a truncated tail, so anchor the digest outside the agents' reach (PR body, commit) and pass it back with `--anchor`: the check fails if that record is gone. An empty ledger reports NO EVIDENCE, never PASSED. | the chain is broken, or an anchored record is missing |
 | `change new NAME --issue N` · `change check [NAME…]` | Built-in change records; `check` needs every section filled and the issue resolvable by `[tracker] verify`. | an empty section, no issue, an unresolvable issue |
+| `metrics lead-time --fixture F [--json]` | Lead time: `issue.created_at` → earliest linked PR `checks_green_at` (#2138). | no evaluable PR |
+| `metrics stages [--json] [--since DATE]` | Stage duration medians from the evidence ledger. | — |
 | `report [--json] [--since DATE]` | Pass rate, median duration and last status per gate; cost per model and agent. | — |
 | `cost --agent A --model M --input N --output N [--usd X] [--issue N]` | Records an agent run's tokens, priced from `[cost.prices]` when `--usd` is omitted. Also feeds the TelemetryPort cost hook (no-op unless `[telemetry] enabled`). | — |
 
