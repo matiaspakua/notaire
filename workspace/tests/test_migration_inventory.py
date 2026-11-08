@@ -29,7 +29,9 @@ class MigrationInventoryTest(unittest.TestCase):
         self.assertEqual("stay", rows["frontend/src"]["status"])
         self.assertTrue(rows["docs/300-development/303-testing/INVENTORY.md"]["hotspot"])
         self.assertEqual("planned", rows["framework/ai-sdlc/plugins/planned/spec-kit.toml"]["status"])
-        self.assertEqual("planned", rows["local-ai/sdlc"]["status"])
+        self.assertEqual("migrated", rows["local-ai/sdlc"]["status"])
+        self.assertEqual("migrated", rows["docs/300-development/304-ai-sdlc-cloud/fleet-manifest.yaml"]["status"])
+        self.assertEqual("migrated", rows[".aisdlc/project.yml"]["status"])
         statuses = {row["status"] for row in data["rows"]}
         self.assertIn("migrated", statuses)
         self.assertIn("planned", statuses)

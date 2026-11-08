@@ -239,3 +239,14 @@ kind = "method"
 version = "1.0.0"
 manifest = "framework/ai-sdlc/plugins/example-method/plugin.toml"
 trusted = true
+
+# Harness port (#2122). Files stay at their discoverability paths. A listed permission is not a sandbox.
+[[harness.adapters]]
+id = "cursor-cloud"
+runtime = "cursor-cloud"
+source = "docs/300-development/304-ai-sdlc-cloud/fleet-manifest.yaml"
+
+[[harness.adapters]]
+id = "local-foreman"
+runtime = "local-omlx"
+source = ".aisdlc/project.yml"

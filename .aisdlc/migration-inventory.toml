@@ -72,15 +72,22 @@ note = "Generated merge hotspot (#2117). Do not relocate until every consumer re
 source = "local-ai/sdlc"
 destination = "framework/ai-sdlc"
 class = "harness-adapter"
-status = "planned"
-note = "oMLX foreman. A different runtime from Cursor. Not a private-worker trigger."
+status = "migrated"
+note = "oMLX foreman. Read by aisdlc harness (id local-foreman → .aisdlc/project.yml). Files stay; not a sandbox."
 
 [[rows]]
 source = "docs/300-development/304-ai-sdlc-cloud/fleet-manifest.yaml"
 destination = "docs/300-development/304-ai-sdlc-cloud/fleet-manifest.yaml"
 class = "harness-adapter"
-status = "planned"
-note = "Cursor Cloud role map. Stays until a harness port reads it."
+status = "migrated"
+note = "Cursor Cloud role map. Read by aisdlc harness (id cursor-cloud). Files stay; not a sandbox."
+
+[[rows]]
+source = ".aisdlc/project.yml"
+destination = ".aisdlc/project.yml"
+class = "harness-adapter"
+status = "migrated"
+note = "Local foreman adapter YAML. Discoverability path for runtime local-omlx."
 
 [[rows]]
 source = ".claude/agents"
