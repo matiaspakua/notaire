@@ -18,7 +18,7 @@ public class TransitionManagementWebMapper {
     /**
      * Maps the use case output to the HTTP response DTO.
      */
-    public Object mapToHttpResponse(TransitionManagementOutput output) {
+    public ManagementSummaryDto mapToHttpResponse(TransitionManagementOutput output) {
         String statusName = queryManagements.findCurrentStatusName(output.managementId())
                 .orElseThrow(() -> new IllegalStateException(
                         "Management should exist after transition: " + output.managementId()));
