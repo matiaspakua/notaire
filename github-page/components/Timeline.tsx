@@ -31,7 +31,7 @@ const events = [
     month: "December",
     title: "The Renaissance",
     subtitle: "Modern Reboot",
-    desc: "A decade later, the project was reborn. Java 21, Spring Boot 3.2.9, Docker, PostgreSQL. The monolith began its transformation into a proper microservices architecture.",
+    desc: "A decade later, the project was reborn. Java 21, Spring Boot 3.2.9, Docker, PostgreSQL. The monolith began its transformation into a layered REST architecture.",
     color: "var(--spring-green)",
     icon: "🌱",
     tech: ["Java 21", "Spring Boot 3.2.9", "PostgreSQL 16", "Docker"],
@@ -164,7 +164,7 @@ export function Timeline() {
           <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
             A Decade of <span className="grad-fire">Evolution</span>
           </h2>
-          <p className="text-neutral-600 max-w-xl mx-auto">From dormant Swing monolith to AI-accelerated microservices — every commit tells a story.</p>
+          <p className="text-neutral-600 max-w-xl mx-auto">From dormant Swing monolith to an AI-accelerated platform — every commit tells a story.</p>
         </div>
 
         {/* Timeline track */}

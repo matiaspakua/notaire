@@ -11,7 +11,7 @@ const features = [
   {
     icon: "🎭",
     title: "Playwright E2E",
-    desc: "200+ automated end-to-end tests covering every user flow, form, and edge case. Every PR requires passing E2E coverage.",
+    desc: "Playwright end-to-end suites cover the critical use cases, with Bruno API tests beside them. The Product numbers page counts them from the repository.",
     color: "var(--ai-cyan)",
   },
   {
@@ -35,7 +35,7 @@ const features = [
   {
     icon: "⚡",
     title: "Accelerated Delivery",
-    desc: "786 commits in 2026 alone with AI pairing. What took years of manual work now happens in sprints.",
+    desc: "AI pairing turned the long-dormant project into a stream of small, atomic commits. What took years of manual work now happens in sprints; the Product numbers page counts the commits.",
     color: "#ff375f",
   },
 ];

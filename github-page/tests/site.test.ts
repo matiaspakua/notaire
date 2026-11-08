@@ -50,6 +50,7 @@ describe("site map (#1970)", () => {
   it("links each factory page to its neighbours in reading order", () => {
     expect(prevNext("/ai-sdlc/").prev).toBeUndefined();
     expect(prevNext("/ai-sdlc/").next?.href).toBe("/ai-sdlc/case-study/");
+    expect(prevNext("/ai-sdlc/lifecycle/").prev?.href).toBe("/ai-sdlc/anatomy/");
     expect(prevNext("/ai-sdlc/playbook/").next).toBeUndefined();
     expect(prevNext("/docs/testing/").prev?.href).toBe("/docs/api/");
   });
@@ -73,10 +74,10 @@ describe("site map (#1970)", () => {
     expect(search("zzzz-nothing")).toEqual([]);
   });
 
-  it("gives Product four pages in one sidebar, like the other sections (#1976)", () => {
+  it("gives Product five pages in one sidebar, like the other sections (#1976, #2089)", () => {
     expect(PRIMARY_NAV.find((n) => n.key === "product")?.href).toBe("/product/");
-    expect(PRODUCT_PAGES.map((p) => p.href)).toEqual(["/product/", "/product/story/", "/product/platform/", "/product/numbers/"]);
-    expect(prevNext("/product/story/").prev?.href).toBe("/product/");
+    expect(PRODUCT_PAGES.map((p) => p.href)).toEqual(["/product/", "/product/anatomy/", "/product/story/", "/product/platform/", "/product/numbers/"]);
+    expect(prevNext("/product/story/").prev?.href).toBe("/product/anatomy/");
     expect(prevNext("/product/story/").next?.href).toBe("/product/platform/");
     expect(pageMetadata("/product/numbers/").title).toBe("Numbers — Product");
     expect(pageMetadata("/security/").title).toBe("Security");

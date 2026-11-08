@@ -120,7 +120,12 @@ def release_stale(gh, hours: float) -> int:
         number = issue["number"]
         claims = active_claims(gh.comments(number))
         claimed_at = min(claims)[0] if claims else None
-        if claimed_at is None or not is_stale(claimed_at, now, hours=hours, open_prs=gh.open_prs_closing(number)):
+        if claimed_at is None:
+            # #577 is this case: status:in-progress, no marker, no open PR.
+            # Releasing it would drop a live lane. Report it and keep the label.
+            print(f"! #{number} is in progress with no claim marker; lane stays held (#1646)")
+            continue
+        if not is_stale(claimed_at, now, hours=hours, open_prs=gh.open_prs_closing(number)):
             continue
         for name in ("in-progress", "status:in-progress"):
             if name in issue["labels"]:

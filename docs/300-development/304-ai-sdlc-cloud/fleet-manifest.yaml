@@ -86,6 +86,7 @@ roles:
     model: claude-sonnet-5-5-medium
     model_upgrade: claude-sonnet-5-5-high
     skills:
+      - hexagonal-arch
       - backend
       - java
       - programming
@@ -102,6 +103,7 @@ roles:
     model_upgrade: gpt-5.6-terra-medium
     skills:
       - frontend-design
+      - impeccable
       - motion-design
       - openspec-apply-change
     phases: [tests, implement]
@@ -136,6 +138,7 @@ roles:
     model_upgrade: claude-opus-5-5-high
     skills:
       - secure-threat-modeling
+      - notaire-cybersec
       - backend
     phases: [review]
     when: auth, JWT, secrets, PII, schema ACLs
@@ -181,6 +184,12 @@ roles:
     when: SURFACE unclear or docs/chore only
 
 dispatch_rules:
+  - if: work is ports and adapters, ArchUnit, or a package migration
+    primary: java-architect
+    then: backend-implementer
+  - if: work is a product form, accessibility, or UI review
+    primary: frontend-design
+    skills_extra: [impeccable]
   - if: surface contains backend and not frontend
     primary: backend-implementer
   - if: surface contains frontend and not backend

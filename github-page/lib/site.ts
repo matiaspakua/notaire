@@ -25,7 +25,7 @@ export const ASSET_BASE = process.env.NODE_ENV === "production" ? "/notaire" : "
 
 export const PRIMARY_NAV: { key: Exclude<SectionKey, "home">; label: string; href: string; blurb: string }[] = [
   { key: "factory", label: "AI Factory", href: "/ai-sdlc/", blurb: "The AI SDLC that builds Notaire" },
-  { key: "product", label: "Product", href: "/product/", blurb: "What Notaire does, its story and its numbers" },
+  { key: "product", label: "Product", href: "/product/", blurb: "What Notaire does, how it works, its story and its numbers" },
   { key: "security", label: "Security", href: "/security/", blurb: "Trust boundaries, threats, tools and when they run" },
   { key: "docs", label: "Technical docs", href: "/docs/", blurb: "Architecture, modules, testing, security" },
   { key: "releases", label: "Releases", href: "/docs/releases/", blurb: "Every product cut and its parts" },
@@ -43,6 +43,7 @@ export const FACTORY_ACTS: PageGroup[] = [
   {
     label: "II · How a change flows",
     pages: [
+      { href: "/ai-sdlc/anatomy/", title: "Anatomy", summary: "The AI SDLC at a glance: what it is, why it exists and how it works, as a lock chamber.", keywords: "anatomy what why how lock gates roles rulebook illustration" },
       { href: "/ai-sdlc/lifecycle/", title: "Lifecycle", summary: "24 mandatory steps from Issue to closed Issue, five hard gates.", keywords: "workflow steps constitution issue pr" },
       { href: "/ai-sdlc/openspec/", title: "OpenSpec", summary: "The spec-driven schema and Notaire's adaptations.", keywords: "spec proposal tasks traceability archive" },
       { href: "/ai-sdlc/agents/", title: "Agents & skills", summary: "The crew, its skills, and who does what next to the human Owner.", keywords: "foreman worker owner swimlane crew" },
@@ -79,6 +80,8 @@ export const DOCS_GROUPS: PageGroup[] = [
     pages: [
       { href: "/docs/", title: "Overview", summary: "Map of the technical documentation.", keywords: "docs index start" },
       { href: "/docs/artifacts/", title: "Engineering artifacts", summary: "Every artifact from requirement to runbook: what it is, why it exists, how it was made.", keywords: "artifacts requirements use cases sad arc42 decision records diagrams test plan test cases threat model stride security spec traceability openspec deployment monitoring manuals" },
+      { href: "/docs/engineering/", title: "Engineering anatomy", summary: "Development, QA, security and operations as one loop, with the environments and infrastructure under it.", keywords: "anatomy engineering devops dev qa security ops infrastructure environments compose kubernetes observability pipeline illustration" },
+      { href: "/docs/glossary/", title: "Glossary", summary: "Every notarial and engineering term the site uses, in plain words.", keywords: "glossary terms definitions words vocabulary" },
       { href: "/docs/stack/", title: "Technology stack", summary: "Every major technology and pattern, with versions read from the repo.", keywords: "stack technologies versions java spring next react postgres patterns assessment" },
     ],
   },
@@ -114,12 +117,13 @@ export const DOCS_GROUPS: PageGroup[] = [
   },
 ];
 
-/** The Product section (#1976): four pages in the shared document shell. */
+/** The Product section (#1976): five pages in the shared document shell. */
 export const PRODUCT_GROUPS: PageGroup[] = [
   {
     label: "The product",
     pages: [
       { href: "/product/", title: "Overview", summary: "What Notaire does for a notary office, and who uses it.", keywords: "product features screenshots notary cases quotes deeds" },
+      { href: "/product/anatomy/", title: "How it works", summary: "What the office does and how one request travels through browser, API, database and audit, as a machine.", keywords: "anatomy how it works request layers illustration management states" },
       { href: "/product/story/", title: "Story", summary: "From a 2014 Swing project to an AI-built platform.", keywords: "history origin swing evolution ai era timeline" },
       { href: "/product/platform/", title: "Platform", summary: "The three tiers and the infrastructure around them.", keywords: "architecture tiers infrastructure observability docker" },
       { href: "/product/numbers/", title: "Numbers", summary: "Versions, coverage and statistics read from the repository.", keywords: "stats metrics coverage versions" },

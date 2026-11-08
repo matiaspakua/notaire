@@ -412,9 +412,12 @@ export const STAGES: Stage[] = [
 /** The reading path on the Technical docs overview: from what Notaire is, down to how it was made. */
 export const READING_PATH: { href: string; title: string; question: string }[] = [
   { href: "/product/", title: "Product", question: "What does Notaire do, and for whom?" },
+  { href: "/product/anatomy/", title: "How it works", question: "How does one request travel through the system?" },
   { href: "/product/story/", title: "Story", question: "Where did it come from?" },
   { href: "/docs/artifacts/", title: "Engineering artifacts", question: "Which documents define it, and how do they connect?" },
   { href: "/docs/architecture/", title: "Architecture", question: "How is it structured, and why?" },
+  { href: "/docs/engineering/", title: "Engineering anatomy", question: "How do dev, QA, security and ops fit together, and where does it run?" },
+  { href: "/ai-sdlc/anatomy/", title: "AI SDLC anatomy", question: "What is the AI SDLC, and why does it exist?" },
   { href: "/ai-sdlc/lifecycle/", title: "AI SDLC lifecycle", question: "How does one change go from Issue to production?" },
   { href: "/docs/testing/", title: "Testing", question: "How is each change proved?" },
   { href: "/security/", title: "Security", question: "How is the record protected?" },

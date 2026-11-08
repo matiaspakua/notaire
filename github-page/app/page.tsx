@@ -192,6 +192,27 @@ export default function Home() {
           </p>
         </section>
 
+        <section aria-labelledby="machines-title" className="pt-16">
+          <h2 id="machines-title" className="font-display text-3xl font-semibold text-slate-900">How it works, drawn as machines</h2>
+          <p className="mt-3 max-w-3xl text-slate-700">
+            Three illustrated, step-through machines explain the system from the basics: what the office does and how a request travels, how
+            development, QA, security and operations run as one loop, and how the AI SDLC lets agents build a feature without skipping a gate.
+          </p>
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            {[
+              { href: "/product/anatomy/", title: "The notary's counter", body: "One request, end to end: browser, API, rules, database, audit and monitoring." },
+              { href: "/docs/engineering/", title: "The release line", body: "Dev, QA, security, gates, environments and operations on one conveyor." },
+              { href: "/ai-sdlc/anatomy/", title: "The lock chamber", body: "Five gates, three roles and one rulebook between an agent and main." },
+            ].map((m) => (
+              <Link key={m.href} href={m.href} className="flex h-full flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-[var(--shadow-card)] transition-colors duration-200 hover:border-brand-500">
+                <h3 className="font-semibold text-slate-900">{m.title}</h3>
+                <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-700">{m.body}</p>
+                <span className="mt-4 text-sm font-semibold text-brand-700">Step through it →</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         <section aria-labelledby="shots-title" className="pt-16">
           <h2 id="shots-title" className="font-display text-3xl font-semibold text-slate-900">The product, running</h2>
           <p className="mt-3 max-w-3xl text-slate-700">

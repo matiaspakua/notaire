@@ -8,6 +8,16 @@ export const metadata = pageMetadata("/docs/");
 
 const cards = [
   {
+    href: "/docs/engineering/",
+    title: "Engineering anatomy",
+    body: "Development, QA, security and operations as one loop, drawn as a release line, with the environments and infrastructure under it.",
+  },
+  {
+    href: "/docs/glossary/",
+    title: "Glossary",
+    body: "Every notarial and engineering term the site uses, in plain words.",
+  },
+  {
     href: "/docs/artifacts/",
     title: "Engineering artifacts",
     body: "The chain from requirement to runbook: requirements, use cases, design models, SAD and ADRs, OpenSpec, tests, threat models, pipelines and manuals, with counts read from the repository.",
@@ -92,7 +102,7 @@ export default function DocsHomePage() {
           Read it as a story
         </h2>
         <p className="mt-1 text-sm text-neutral-600">
-          New to Notaire? Follow these eight pages in order, from what the product does down to how each change is made,
+          New to Notaire? Follow these pages in order, from what the product does down to how each change is made,
           proved, protected and shipped.
         </p>
         <ol className="mt-4 grid gap-2 sm:grid-cols-2">

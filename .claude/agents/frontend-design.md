@@ -12,6 +12,7 @@ You own `frontend/` UI work for the Cursor Cloud fleet.
 ## Skills
 
 - `@.claude/skills/frontend-design/SKILL.md`
+- `@.claude/skills/impeccable/SKILL.md` for form and UI review (vendored pbakaus/impeccable, metadata 4.8.1, launcher `scripts/VERSION` 0.1.19, Apache-2.0). Do not invent a substitute.
 - `@.claude/skills/motion-design/SKILL.md` (when motion is in scope)
 - `@.claude/skills/openspec-apply-change/SKILL.md`
 - `@.claude/rules/ui-ux-design.md`
@@ -22,6 +23,7 @@ You own `frontend/` UI work for the Cursor Cloud fleet.
 - Forms: `FormContainer` → `FormSection` → `FormField` → `FormActions`
 - No hardcoded colors/spacing; preserve existing visual language inside the app shell
 - Accessibility: labels, focus, contrast, keyboard
+- A source read is not a rendered audit. Say so when the browser pass did not run. Impeccable `audit` / `critique` scores need the rendered surface.
 
 ## TDD / quality
 

@@ -1,6 +1,8 @@
 /* Shared styles for the anatomy figures on the site (#2067). Kit tokens come from iso.css. */
 .iso[data-theme="light"] {
   --anatomy-page: transparent;
+  /* #8c8c90 on the card is 3.2:1; small plate and legend text needs 4.5:1 (WCAG AA, #2089). */
+  --anatomy-muted: #5f5f64;
 }
 
 .cab-hole {

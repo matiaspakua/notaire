@@ -93,6 +93,10 @@ export default function FactoryHome() {
         at that step passes. The instrument is drawn on{" "}
         <Link href="/ai-sdlc/lifecycle/" className="font-semibold text-factory-700 hover:underline">
           How a change flows
+        </Link>{" "}
+        for every numbered step. For the roles and the rulebook around the gates, read the{" "}
+        <Link href="/ai-sdlc/anatomy/" className="font-semibold text-factory-700 hover:underline">
+          anatomy
         </Link>
         .
       </p>

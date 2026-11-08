@@ -98,10 +98,10 @@ architecture or security review is blocked.
 | **Analyst** | (via planner or `analyst` skill) | `analyst`, `delivery-maturity-roadmap` | `claude-sonnet-5-5-medium` | `gpt-5.6-terra-medium` | Requirements/UC mapping; medium is enough |
 | **Java Architect** | `java-architect` | `java`, `hexagonal-arch`, `architecture-decision-design`, `flyway` | `claude-opus-5-5-medium` | `claude-opus-5-5-high` | Package/migration decisions are high leverage |
 | **Backend Implementer** | `backend-implementer` (+ `efficiency_config_agent`) | `backend`, `java`, `programming`, `maven-build`, `flyway`, `openspec-apply-change` | `claude-sonnet-5-5-medium` | `claude-sonnet-5-5-high` | Bulk TDD/implement; Sonnet is cost-effective |
-| **Frontend Design** | `frontend-design` | `frontend-design`, `motion-design` | `claude-sonnet-5-5-high` | `gpt-5.6-terra-medium` | Design-system fidelity; avoid weak coding-only models |
+| **Frontend Design** | `frontend-design` | `frontend-design`, `impeccable`, `motion-design` | `claude-sonnet-5-5-high` | `gpt-5.6-terra-medium` | Design-system fidelity; Impeccable reviews forms. A source inventory is not a rendered audit |
 | **Testing / QA** | `testing-qa` | `testing`, `qa-automation-strategy`, `api-rest`, `api-contract-testing` | `claude-sonnet-5-5-medium` | `claude-sonnet-5-5-high` | Test design + red proof; medium default |
 | **DevOps** | `devops-engineer` | `devops`, `ci-cd-quality-gates`, `operations-observability-readiness` | `claude-sonnet-5-5-medium` | `gpt-5.6-terra-medium` | Compose/CI scripts; Sonnet matches existing agent default |
-| **Security** | `security-auditor` | `secure-threat-modeling`, `backend` | `claude-opus-5-5-medium` | `claude-opus-5-5-high` | Authz/secrets false negatives are expensive |
+| **Security** | `security-auditor` | `secure-threat-modeling`, `notaire-cybersec`, `backend` | `claude-opus-5-5-medium` | `claude-opus-5-5-high` | Authz/secrets false negatives are expensive |
 | **Code Reviewer** | `code-reviewer` | `ai-agent-workflow`, `programming` | `claude-sonnet-5-5-high` | `claude-opus-5-5-medium` | Gate 4 needs careful diff reading |
 | **Issue Sync** | `sync_issues_and_code` | `devsecops-traceability`, `product-owner` | `composer-2.5-fast` | `claude-sonnet-5-5-low` | Label/link chores; cheapest reliable slug |
 | **Project manager** | `project-manager` | `project-management`, `product-owner`, `delivery-maturity-roadmap` | `claude-sonnet-5-5-medium` | `claude-opus-5-5-medium` | Milestone, priority, and lane scheduling. Does not write product code |
@@ -194,7 +194,7 @@ fresh brief, mechanical gate, retry with gate output attached — not a monolith
 | Item | Cloud fleet policy |
 |------|--------------------|
 | `local-ai/setup-omlx-codex.sh`, oMLX, Codex `--profile omlx*` | **Forbidden** as runtime dependency |
-| `local-ai/sdlc/foreman.sh` and `bin/*` harness | **Do not execute** for Cloud SDLC |
+| `local-ai/sdlc/foreman.sh` and `bin/*` harness | **Do not execute**. It is not Cloud SDLC and not a private Cursor worker. See [`LOCAL-CURSOR-HANDOFF.md`](LOCAL-CURSOR-HANDOFF.md) |
 | `.aisdlc/project.yml` | Local-harness adapter only; Cloud uses `fleet-manifest.yaml` + this doc |
 | Worktree `../notaire-localai` | Not used; Cloud agent uses its own checkout |
 | Ideas OK to reuse in prose | Phased gates, scope discipline, foreman-owned merge, never trust model success claims |
