@@ -248,6 +248,14 @@ version = "1.0.0"
 manifest = "framework/ai-sdlc/plugins/spec-kit/plugin.toml"
 trusted = false
 
+# AWS AI-DLC (#2124). Boundary design only; never auto-trust hooks; not available.
+[[plugins.entries]]
+id = "aws-ai-dlc"
+kind = "method"
+version = "1.0.0"
+manifest = "framework/ai-sdlc/plugins/aws-ai-dlc/plugin.toml"
+trusted = false
+
 # Harness port (#2122). Files stay at their discoverability paths. A listed permission is not a sandbox.
 [[harness.adapters]]
 id = "cursor-cloud"
