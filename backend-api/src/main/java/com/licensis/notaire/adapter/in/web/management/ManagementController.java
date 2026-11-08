@@ -277,7 +277,7 @@ public class ManagementController {
                     + "start date, the management is redirected to the substitute and a note is recorded. "
                     + "CU13 - When a status is provided, the initial status is appended to History. "
                     + "Plain create has no procedure/workflow yet, so any defined status is accepted.")
-    public ResponseEntity<Object> create(@Valid @RequestBody ManagementRequest request) {
+    public ResponseEntity<ManagementResponse> create(@Valid @RequestBody ManagementRequest request) {
         return switch (manageManagements.create(toCommand(request))) {
             case SaveResult.Created created -> ResponseEntity.status(HttpStatus.CREATED)
                     .body(toResponse(created.view()));
