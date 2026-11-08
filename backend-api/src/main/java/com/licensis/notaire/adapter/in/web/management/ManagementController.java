@@ -76,6 +76,7 @@ public class ManagementController {
     private final QueryWorkflowTraceUseCase workflowTrace;
     private final TransitionManagementUseCase transitionManagementUseCase;
     private final TransitionManagementWebMapper transitionManagementWebMapper;
+    private final CompleteCaseWebMapper completeCaseWebMapper;
     private final ExternalEntityDocumentUseCase externalEntityDocuments;
     private final DocumentReentryUseCase documentReentry;
 
@@ -85,6 +86,7 @@ public class ManagementController {
             QueryWorkflowTraceUseCase workflowTrace,
             TransitionManagementUseCase transitionManagementUseCase,
             TransitionManagementWebMapper transitionManagementWebMapper,
+            CompleteCaseWebMapper completeCaseWebMapper,
             ExternalEntityDocumentUseCase externalEntityDocuments,
             DocumentReentryUseCase documentReentry) {
         this.queryManagements = queryManagements;
@@ -92,6 +94,7 @@ public class ManagementController {
         this.workflowTrace = workflowTrace;
         this.transitionManagementUseCase = transitionManagementUseCase;
         this.transitionManagementWebMapper = transitionManagementWebMapper;
+        this.completeCaseWebMapper = completeCaseWebMapper;
         this.externalEntityDocuments = externalEntityDocuments;
         this.documentReentry = documentReentry;
     }
@@ -173,14 +176,9 @@ public class ManagementController {
                     + "start date, the management is redirected to the substitute and a note is recorded. "
                     + "CU83 - When the procedure type has a workflow, the initial status must be a start node. "
                     + "CU13 - Initial status is appended to History.")
-    public ResponseEntity<Object> createCompleteCase(@Valid @RequestBody CompleteCaseRequest request) {
-        return switch (manageManagements.createCompleteCase(toCommand(request))) {
-            case CompleteCaseResult.Created created -> ResponseEntity.status(HttpStatus.CREATED)
-                    .body(created.summary());
-            case CompleteCaseResult.BadRequest ignored -> ResponseEntity.badRequest().build();
-            case CompleteCaseResult.NotFound ignored -> ResponseEntity.notFound().build();
-            case CompleteCaseResult.Updated ignored -> ResponseEntity.ok().build();
-        };
+    public ResponseEntity<DtoManagementSummary> createCompleteCase(
+            @Valid @RequestBody CompleteCaseRequest request) {
+        return completeCaseWebMapper.mapCreateResult(manageManagements.createCompleteCase(toCommand(request)));
     }
 
     @ApiResponses({
