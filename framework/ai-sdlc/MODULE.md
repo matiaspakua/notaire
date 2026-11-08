@@ -18,7 +18,7 @@ templates that `aisdlc init` scaffolds. Extracted from Notaire's process (#1958)
 ## Must not
 
 - Name an adopter's path, stack or tool in `aisdlc/`, `bin/` or `templates/` (guarded by `tests/test_independence.py`)
-- Depend on anything outside the Python 3.11+ standard library
+- Depend on anything outside the Python 3.11+ standard library at runtime (OpenTelemetry is optional via `importlib` + `optional/telemetry.txt` for TelemetryPort tests)
 - Be imported by product code
 
 Manifest entry: [`workspace/modules.yaml`](../../workspace/modules.yaml). Rationale: ADR-026.
