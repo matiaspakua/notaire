@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0](https://github.com/matiaspakua/notaire/compare/v0.2.7...v0.3.0) (2026-11-08)
+
+
+### Features
+
+* **pages:** anatomy figures for the system, the engineering loop and the AI SDLC ([b9d9bc5](https://github.com/matiaspakua/notaire/commit/b9d9bc5d845509b32f9b4ad13165ff8c40d6281b)), closes [#2089](https://github.com/matiaspakua/notaire/issues/2089)
+
+
+### Bug Fixes
+
+* **pages:** correct stale story claims and the figure plate contrast ([d680ac5](https://github.com/matiaspakua/notaire/commit/d680ac5953537a9c4d7dbaaff1ebb89414da684b)), closes [#2089](https://github.com/matiaspakua/notaire/issues/2089)
+
 ## [Unreleased]
 
 ### Changed
