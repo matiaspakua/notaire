@@ -39,6 +39,7 @@ import com.licensis.notaire.application.port.in.workflow.DocumentReentryUseCase;
 import com.licensis.notaire.application.port.in.workflow.QueryWorkflowTraceUseCase;
 import com.licensis.notaire.domain.management.ManagementArchiveConflictException;
 import com.licensis.notaire.domain.management.ManagementArchiveNotFoundException;
+import com.licensis.notaire.domain.management.WorkflowTraceBadRequestException;
 import com.licensis.notaire.dto.DtoDocumentReentered;
 import com.licensis.notaire.dto.DtoDocumentReentryRequest;
 import com.licensis.notaire.dto.DtoExternalEntityDocument;
@@ -328,13 +329,12 @@ public class ManagementController {
                     + "`transitions` whose `originNodeId` matches the current node (the node whose "
                     + "status equals `currentStatus`). The managements UI must offer only those "
                     + "destinations when changing status via POST /{id}/transition.")
-    public ResponseEntity<Object> getWorkflowTrace(@PathVariable Integer id) {
+    public ResponseEntity<DtoManagementWorkflowTrace> getWorkflowTrace(@PathVariable Integer id) {
         try {
-            DtoManagementWorkflowTrace trace = workflowTrace.buildTrace(id);
-            return ResponseEntity.ok(trace);
+            return ResponseEntity.ok(workflowTrace.buildTrace(id));
         } catch (IllegalArgumentException e) {
             log.warn("Cannot build workflow trace for management {}: {}", id, e.getMessage());
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            throw new WorkflowTraceBadRequestException(e.getMessage());
         }
     }
 
