@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **api:** Auxiliary protocol startDeed returns typed DeedResponse via advice for errors (Refs #577)
 * **api:** Audit log list returns typed AuditRecordGetAllResponse (flat list or paginated page) (Refs #577)
 * **aisdlc:** Factory config validate/show, trusted plugin listing, and a migration inventory. OpenSpec is a printed argv adapter. Spec Kit and AWS AI-DLC are planned only (Refs #2121)
 * **api:** Management workflow-trace returns typed DtoManagementWorkflowTrace (Refs #577)
