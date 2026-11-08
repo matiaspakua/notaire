@@ -27,6 +27,7 @@ WorkflowTracker had 48.63% branch coverage (75 uncovered branches, the second la
 ## Capabilities
 
 ### New Capabilities
+
 - `workflow-tracker-tests`: behaviour tests for the workflow tracker component.
 
 ### Modified Capabilities

@@ -61,4 +61,36 @@ test.describe("TS-0001 - Login Authentication", () => {
     await page.getByTestId("btn-sign-in").click();
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
   });
+
+  test("shows one desk card and a single product heading (#2069)", async ({ page }) => {
+    const card = page.getByTestId("login-card");
+    await expect(card).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Notaire" })).toBeVisible();
+    await expect(card.getByRole("heading", { level: 2, name: "Iniciar sesión" })).toBeVisible();
+    await expect(card.getByTestId("btn-sign-in")).toBeVisible();
+    await expect(page.getByTestId("login-mark")).toHaveCSS("transform", "none");
+  });
+
+  for (const width of [320, 768, 1024]) {
+    test(`desk card fits a ${width}px viewport (#2069)`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 800 });
+      await page.goto("/login");
+      await expect(page.getByTestId("login-card")).toBeVisible();
+      const overflows = await page.evaluate(
+        () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+      );
+      expect(overflows).toBe(false);
+    });
+  }
+});
+
+test.describe("TS-0001 login reduced motion (#2069)", () => {
+  test.use({ reducedMotion: "reduce" });
+
+  test("seal and card render without a transform", async ({ page }) => {
+    await page.goto("/login");
+    await expect(page.getByTestId("login-mark")).toBeVisible();
+    await expect(page.getByTestId("login-mark")).toHaveCSS("transform", "none");
+    await expect(page.getByTestId("login-card")).toHaveCSS("transform", "none");
+  });
 });

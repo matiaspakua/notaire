@@ -35,7 +35,16 @@ BACKEND_KEY="notaire-backend"
 FRONTEND_KEY="notaire-frontend"
 GATE_NAME="Notaire way"
 SCANNER_IMAGE="sonarsource/sonar-scanner-cli:12.2.0.4256_8.1.0"
-SONAR_NETWORK="${SONAR_DOCKER_NETWORK:-infra_devsecops-network}"
+# Compose project name varies (notaire_ vs infra_); prefer an existing network.
+if [ -n "${SONAR_DOCKER_NETWORK:-}" ]; then
+    SONAR_NETWORK="$SONAR_DOCKER_NETWORK"
+elif docker network inspect notaire_devsecops-network >/dev/null 2>&1; then
+    SONAR_NETWORK="notaire_devsecops-network"
+elif docker network inspect infra_devsecops-network >/dev/null 2>&1; then
+    SONAR_NETWORK="infra_devsecops-network"
+else
+    SONAR_NETWORK="notaire_devsecops-network"
+fi
 
 echo -e "${BLUE}=== SonarQube analysis for Notaire (backend + frontend) ===${NC}\n"
 
@@ -78,7 +87,21 @@ else
     exit 1
 fi
 
-# 3. Generate / reuse an analysis token
+# 3. Generate / reuse an analysis token.
+# A persisted SONAR_TOKEN can go stale when the Sonar volume is recreated (#1862
+# pipeline: HTTP 200 + valid:false → frontend scanner 401). Validate before reuse.
+token_works() {
+    local token="$1"
+    [ -n "$token" ] || return 1
+    curl -s -m 5 -u "$token:" "$SONAR_URL/api/authentication/validate" 2>/dev/null \
+        | grep -q '"valid":true'
+}
+
+if [ -n "${SONAR_TOKEN:-}" ] && ! token_works "$SONAR_TOKEN"; then
+    echo -e "${YELLOW}Stored SONAR_TOKEN is invalid — regenerating...${NC}"
+    SONAR_TOKEN=""
+fi
+
 if [ -z "${SONAR_TOKEN:-}" ]; then
     echo -e "${YELLOW}Generating analysis token...${NC}"
     # Revoke any existing token with the same name, then (re)generate.
@@ -103,44 +126,113 @@ if [ -z "$SONAR_TOKEN" ]; then
     exit 1
 fi
 
-# 4. Quality gate ("Notaire way" = copy of "Sonar way" with new-code coverage >= 70%) and new-code period
+# 4. Quality gate ("Notaire way" = copy of "Sonar way" with new-code coverage >= 70%
+#    and new BLOCKER/CRITICAL/MAJOR = 0 — issue #1737) and new-code period
 api() { curl -s -u "$SONAR_USER:$WORKING_PASS" -X POST "$SONAR_URL/api/$1" "${@:2}"; }
+
+gate_json() {
+    curl -s -u "$SONAR_USER:$WORKING_PASS" \
+        "$SONAR_URL/api/qualitygates/show?name=$(echo "$GATE_NAME" | sed 's/ /%20/g')"
+}
+
+ensure_severity_conditions() {
+    # Idempotent: create or update GT/0 conditions for new high-severity metrics (#1737).
+    local json metric cond_id
+    json=$(gate_json)
+    for metric in new_blocker_violations new_critical_violations new_major_violations; do
+        cond_id=$(printf '%s' "$json" | python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+print(next((str(c['id']) for c in data.get('conditions', []) if c.get('metric') == '$metric'), ''))
+")
+        if [ -n "$cond_id" ]; then
+            api qualitygates/update_condition \
+                --data-urlencode "id=$cond_id" \
+                --data-urlencode "metric=$metric" \
+                --data-urlencode "op=GT" \
+                --data-urlencode "error=0" >/dev/null || true
+        else
+            api qualitygates/create_condition \
+                --data-urlencode "gateName=$GATE_NAME" \
+                --data-urlencode "metric=$metric" \
+                --data-urlencode "op=GT" \
+                --data-urlencode "error=0" >/dev/null || true
+        fi
+    done
+}
 
 if ! curl -s -u "$SONAR_USER:$WORKING_PASS" "$SONAR_URL/api/qualitygates/list" | grep -q "\"name\":\"$GATE_NAME\""; then
     api qualitygates/copy --data-urlencode "sourceName=Sonar way" --data-urlencode "name=$GATE_NAME" >/dev/null
-    COVERAGE_ID=$(curl -s -u "$SONAR_USER:$WORKING_PASS" "$SONAR_URL/api/qualitygates/show?name=$(echo "$GATE_NAME" | sed 's/ /%20/g')" \
+    COVERAGE_ID=$(gate_json \
         | python3 -c "import sys,json;print(next((c['id'] for c in json.load(sys.stdin)['conditions'] if c['metric']=='new_coverage'),''))")
     [ -n "$COVERAGE_ID" ] && api qualitygates/update_condition --data-urlencode "id=$COVERAGE_ID" \
         --data-urlencode "metric=new_coverage" --data-urlencode "op=LT" --data-urlencode "error=70" >/dev/null
     echo -e "${GREEN}✓ Quality gate '$GATE_NAME' created${NC}"
 fi
+# Sonar way ships new_violations=0 (any severity). Notaire way (#1737) ratchets
+# BLOCKER/CRITICAL/MAJOR only — drop the catch-all so MINOR/INFO noise does not
+# fail the gate while the severity conditions still do.
+NEW_VIOLATIONS_ID=$(gate_json | python3 -c "
+import sys, json
+print(next((str(c['id']) for c in json.load(sys.stdin).get('conditions', []) if c.get('metric') == 'new_violations'), ''))
+")
+if [ -n "$NEW_VIOLATIONS_ID" ]; then
+    api qualitygates/delete_condition --data-urlencode "id=$NEW_VIOLATIONS_ID" >/dev/null || true
+fi
+ensure_severity_conditions
+echo -e "${GREEN}✓ Quality gate '$GATE_NAME' ratchets new_blocker/critical/major (error=0)${NC}"
+# Community Edition only honours the GLOBAL new-code definition; a project-level
+# set returns 200 but leaves the inherited default. Prefer PREVIOUS_VERSION so the
+# severity ratchet (#1737) measures changes since the last product version event,
+# not an accidental whole-tree leak after a snapshot→semver bump (#1862 hygiene).
+api new_code_periods/set --data-urlencode "type=PREVIOUS_VERSION" >/dev/null
+echo -e "${GREEN}✓ Global new-code period set to PREVIOUS_VERSION${NC}"
+PRODUCT_VERSION="$(mvn -q -DforceStdout -Dexpression=project.version help:evaluate 2>/dev/null || true)"
+PRODUCT_VERSION="${SONAR_PROJECT_VERSION:-${PRODUCT_VERSION:-0.0.0}}"
 for KEY in "$BACKEND_KEY" "$FRONTEND_KEY"; do
     api projects/create --data-urlencode "project=$KEY" --data-urlencode "name=$KEY" >/dev/null 2>&1 || true
     api qualitygates/select --data-urlencode "gateName=$GATE_NAME" --data-urlencode "projectKey=$KEY" >/dev/null
-    api new_code_periods/set --data-urlencode "project=$KEY" --data-urlencode "type=NUMBER_OF_DAYS" --data-urlencode "value=30" >/dev/null
 done
 
 FAILED=0
 
-# 5. Backend: tests + JaCoCo report, then the Maven scanner (settings live in backend-api/pom.xml)
+# 5. Backend: tests + JaCoCo report, then the Maven scanner (settings live in backend-api/pom.xml).
+# Force projectKey so the reactor root (notaire-root) does not steal the dashboard from
+# the gate selected for notaire-backend (#1535 triage).
 echo -e "${YELLOW}Backend: Maven build + Sonar analysis (this can take a few minutes)...${NC}"
 mvn -B -pl backend-api -am clean test \
     org.jacoco:jacoco-maven-plugin:report \
     org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
     -Dsonar.host.url="$SONAR_URL" \
     -Dsonar.token="$SONAR_TOKEN" \
+    -Dsonar.projectKey="$BACKEND_KEY" \
+    -Dsonar.projectName="$BACKEND_KEY" \
+    -Dsonar.projectVersion="$PRODUCT_VERSION" \
+    -Dsonar.scm.provider=git \
     -Dsonar.qualitygate.wait=true || FAILED=1
 
-# 6. Frontend: Vitest lcov + ESLint JSON report, then the scanner container on the Sonar network
+# 6. Frontend: Vitest lcov + ESLint JSON report, then the scanner container on the Sonar network.
+# Mount the monorepo (not only frontend/) so the scanner can see .git. Without SCM,
+# Community "new code" covers the whole tree and the quality gate fails with dozens of
+# legacy violations (#1680).
 echo -e "${YELLOW}Frontend: Vitest coverage + ESLint report + Sonar analysis...${NC}"
 (
     cd frontend
     npm run test:coverage --silent
     npx eslint src -f json -o coverage/eslint-report.json || true
 )
-docker run --rm --network "$SONAR_NETWORK" -v "$APP_DIR/frontend:/usr/src" \
+# Give the JS/TS bridge enough heap; the default OOMs on this monorepo
+# ("bridge server is unresponsive", #1862 hygiene re-run).
+docker run --rm --network "$SONAR_NETWORK" \
+    -v "$APP_DIR:/usr/src" \
+    -w /usr/src/frontend \
     -e SONAR_HOST_URL="http://devsecops-sonarqube:9000" -e SONAR_TOKEN="$SONAR_TOKEN" \
-    "$SCANNER_IMAGE" -Dsonar.qualitygate.wait=true || FAILED=1
+    -e SONAR_SCANNER_JAVA_OPTS="${SONAR_SCANNER_JAVA_OPTS:--Xmx2g}" \
+    "$SCANNER_IMAGE" \
+    -Dsonar.projectBaseDir=/usr/src/frontend \
+    -Dsonar.projectVersion="$PRODUCT_VERSION" \
+    -Dsonar.scm.provider=git \
+    -Dsonar.qualitygate.wait=true || FAILED=1
 
 echo ""
 if [ "$FAILED" = "0" ]; then

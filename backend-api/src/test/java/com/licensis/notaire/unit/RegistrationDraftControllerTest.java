@@ -2,12 +2,13 @@ package com.licensis.notaire.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.adapter.in.web.registrationdraft.RegistrationDraftController;
-import com.licensis.notaire.exception.BusinessValidationException;
-import com.licensis.notaire.exception.ResourceNotFoundException;
+import com.licensis.notaire.adapter.in.web.registrationdraft.RegistrationDraftExceptionHandler;
+import com.licensis.notaire.application.port.in.registrationdraft.ManageRegistrationDraftsUseCase;
+import com.licensis.notaire.application.port.in.registrationdraft.QueryRegistrationDraftsUseCase;
+import com.licensis.notaire.application.port.out.registrationdraft.RegistrationDraftOpsPort.DraftResult;
 import com.licensis.notaire.business.BusinessConstants;
-import com.licensis.notaire.business.Deed;
-import com.licensis.notaire.business.RegistrationDraft;
-import com.licensis.notaire.application.usecase.registrationdraft.RegistrationDraftService;
+import com.licensis.notaire.config.GlobalExceptionHandler;
+import com.licensis.notaire.dto.DtoRegistrationDraft;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,33 +41,37 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class RegistrationDraftControllerTest {
 
     @Mock
-    private RegistrationDraftService registrationDraftService;
+    private QueryRegistrationDraftsUseCase queryRegistrationDrafts;
+
+    @Mock
+    private ManageRegistrationDraftsUseCase manageRegistrationDrafts;
 
     private MockMvc mockMvc;
     private ObjectMapper mapper;
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new RegistrationDraftController(registrationDraftService)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(
+                        new RegistrationDraftController(queryRegistrationDrafts, manageRegistrationDrafts))
+                .setControllerAdvice(new RegistrationDraftExceptionHandler(), new GlobalExceptionHandler())
+                .build();
         mapper = new ObjectMapper();
     }
 
-    private RegistrationDraft buildDraft(Integer id, int number, String status) {
-        Deed deed = new Deed();
-        deed.setIdDeed(1);
-        RegistrationDraft draft = new RegistrationDraft();
-        draft.setIdRegistrationDraft(id);
-        draft.setNumber(number);
-        draft.setStatus(status);
-        draft.setFkIdDeed(deed);
-        return draft;
+    private DtoRegistrationDraft buildDto(Integer id, int number, String status) {
+        DtoRegistrationDraft dto = new DtoRegistrationDraft();
+        dto.setIdRegistrationDraft(id);
+        dto.setNumber(number);
+        dto.setStatus(status);
+        dto.setIdDeed(1);
+        return dto;
     }
 
     @Test
     @DisplayName("GET /api/v1/registration-drafts/{id} returns the registration draft when found")
     void shouldReturnDraftById() throws Exception {
-        when(registrationDraftService.findById(1))
-                .thenReturn(Optional.of(buildDraft(1, 1, BusinessConstants.RegistrationDraftGenerated)));
+        when(queryRegistrationDrafts.findById(1))
+                .thenReturn(Optional.of(buildDto(1, 1, BusinessConstants.RegistrationDraftGenerated)));
 
         mockMvc.perform(get("/api/v1/registration-drafts/1"))
                 .andExpect(status().isOk())
@@ -75,7 +81,7 @@ class RegistrationDraftControllerTest {
     @Test
     @DisplayName("GET /api/v1/registration-drafts/{id} returns 404 when not found")
     void shouldReturnNotFoundWhenDraftMissing() throws Exception {
-        when(registrationDraftService.findById(999)).thenReturn(Optional.empty());
+        when(queryRegistrationDrafts.findById(999)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/v1/registration-drafts/999"))
                 .andExpect(status().isNotFound());
@@ -84,8 +90,8 @@ class RegistrationDraftControllerTest {
     @Test
     @DisplayName("POST /api/v1/registration-drafts generates a registration draft when data is complete")
     void shouldGenerateDraftWhenDataIsComplete() throws Exception {
-        when(registrationDraftService.generate(1))
-                .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftGenerated));
+        when(manageRegistrationDrafts.generate(1))
+                .thenReturn(new DraftResult.Ok(buildDto(1, 1, BusinessConstants.RegistrationDraftGenerated)));
 
         mockMvc.perform(post("/api/v1/registration-drafts")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -98,34 +104,62 @@ class RegistrationDraftControllerTest {
     @Test
     @DisplayName("POST /api/v1/registration-drafts returns 400 when data is incomplete")
     void shouldRejectGenerationWhenDataIsIncomplete() throws Exception {
-        when(registrationDraftService.generate(1))
-                .thenThrow(new BusinessValidationException(
+        when(manageRegistrationDrafts.generate(1))
+                .thenReturn(new DraftResult.Invalid(
                         "Missing cadastral/registry data for the property: registration number"));
 
         mockMvc.perform(post("/api/v1/registration-drafts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new RegistrationDraftController.GenerateRequest(1))))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Missing cadastral/registry data for the property: registration number"));
+                .andExpect(jsonPath("$.message")
+                        .value("Missing cadastral/registry data for the property: registration number"));
     }
 
     @Test
     @DisplayName("POST /api/v1/registration-drafts returns 404 when the deed does not exist")
     void shouldReturnNotFoundWhenDeedMissing() throws Exception {
-        when(registrationDraftService.generate(999))
-                .thenThrow(new ResourceNotFoundException("Deed not found with ID: 999"));
+        when(manageRegistrationDrafts.generate(999)).thenReturn(new DraftResult.NotFound());
 
         mockMvc.perform(post("/api/v1/registration-drafts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new RegistrationDraftController.GenerateRequest(999))))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(""));
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/registration-drafts/{id}/submit returns 400 when the draft cannot be submitted")
+    void shouldRejectSubmissionWhenInvalid() throws Exception {
+        when(manageRegistrationDrafts.submit(any(), any(), anyString()))
+                .thenReturn(new DraftResult.Invalid("The registration draft is not in status Generada"));
+
+        mockMvc.perform(put("/api/v1/registration-drafts/1/submit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(
+                                new RegistrationDraftController.SubmitRequest(new Date(), "ENT-123"))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("The registration draft is not in status Generada"));
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/registration-drafts/{id}/submit returns 404 when the draft does not exist")
+    void shouldReturnNotFoundWhenSubmittingMissingDraft() throws Exception {
+        when(manageRegistrationDrafts.submit(any(), any(), anyString())).thenReturn(new DraftResult.NotFound());
+
+        mockMvc.perform(put("/api/v1/registration-drafts/999/submit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(
+                                new RegistrationDraftController.SubmitRequest(new Date(), "ENT-123"))))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(""));
     }
 
     @Test
     @DisplayName("PUT /api/v1/registration-drafts/{id}/submit registers the submission")
     void shouldRegisterSubmission() throws Exception {
-        when(registrationDraftService.submit(any(), any(), anyString()))
-                .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftSubmitted));
+        when(manageRegistrationDrafts.submit(any(), any(), anyString()))
+                .thenReturn(new DraftResult.Ok(buildDto(1, 1, BusinessConstants.RegistrationDraftSubmitted)));
 
         mockMvc.perform(put("/api/v1/registration-drafts/1/submit")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -138,8 +172,8 @@ class RegistrationDraftControllerTest {
     @Test
     @DisplayName("PUT /api/v1/registration-drafts/{id}/observe registers the observation")
     void shouldRegisterObservation() throws Exception {
-        when(registrationDraftService.observe(anyInt(), anyString(), any()))
-                .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftObserved));
+        when(manageRegistrationDrafts.observe(anyInt(), anyString(), any()))
+                .thenReturn(new DraftResult.Ok(buildDto(1, 1, BusinessConstants.RegistrationDraftObserved)));
 
         mockMvc.perform(put("/api/v1/registration-drafts/1/observe")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -150,10 +184,37 @@ class RegistrationDraftControllerTest {
     }
 
     @Test
+    @DisplayName("PUT /api/v1/registration-drafts/{id}/observe returns 400 when the draft is not submitted")
+    void shouldRejectObservationWhenInvalid() throws Exception {
+        when(manageRegistrationDrafts.observe(anyInt(), anyString(), any()))
+                .thenReturn(new DraftResult.Invalid("The registration draft is not submitted"));
+
+        mockMvc.perform(put("/api/v1/registration-drafts/1/observe")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(
+                                new RegistrationDraftController.ObserveRequest("Missing plan", new Date()))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("The registration draft is not submitted"));
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/registration-drafts/{id}/observe returns 404 when the draft does not exist")
+    void shouldReturnNotFoundWhenObservingMissingDraft() throws Exception {
+        when(manageRegistrationDrafts.observe(anyInt(), anyString(), any())).thenReturn(new DraftResult.NotFound());
+
+        mockMvc.perform(put("/api/v1/registration-drafts/999/observe")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(
+                                new RegistrationDraftController.ObserveRequest("Missing plan", new Date()))))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(""));
+    }
+
+    @Test
     @DisplayName("PUT /api/v1/registration-drafts/{id}/register registers the final registration")
     void shouldRegisterFinalRegistration() throws Exception {
-        when(registrationDraftService.recordRegistration(anyInt(), any(), anyString()))
-                .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftRegistered));
+        when(manageRegistrationDrafts.recordRegistration(anyInt(), any(), anyString()))
+                .thenReturn(new DraftResult.Ok(buildDto(1, 1, BusinessConstants.RegistrationDraftRegistered)));
 
         mockMvc.perform(put("/api/v1/registration-drafts/1/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -161,5 +222,33 @@ class RegistrationDraftControllerTest {
                                 new RegistrationDraftController.RegisterRequest(new Date(), "INS-456"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftRegistered));
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/registration-drafts/{id}/register returns 400 when the draft is not submitted")
+    void shouldRejectRegistrationWhenInvalid() throws Exception {
+        when(manageRegistrationDrafts.recordRegistration(anyInt(), any(), anyString()))
+                .thenReturn(new DraftResult.Invalid("The registration draft is not submitted"));
+
+        mockMvc.perform(put("/api/v1/registration-drafts/1/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(
+                                new RegistrationDraftController.RegisterRequest(new Date(), "INS-456"))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("The registration draft is not submitted"));
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/registration-drafts/{id}/register returns 404 when the draft does not exist")
+    void shouldReturnNotFoundWhenRegisteringMissingDraft() throws Exception {
+        when(manageRegistrationDrafts.recordRegistration(anyInt(), any(), anyString()))
+                .thenReturn(new DraftResult.NotFound());
+
+        mockMvc.perform(put("/api/v1/registration-drafts/999/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(
+                                new RegistrationDraftController.RegisterRequest(new Date(), "INS-456"))))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(""));
     }
 }

@@ -1,0 +1,37 @@
+/* Shared styles for the anatomy figures on the site (#2067). Kit tokens come from iso.css. */
+.iso[data-theme="light"] {
+  --anatomy-page: transparent;
+}
+
+.cab-hole {
+  fill: var(--anatomy-shade-0);
+  stroke: none;
+}
+
+.cabinet-stage,
+.gateline-stage,
+.hexmanifold-stage {
+  cursor: pointer;
+  touch-action: pan-y;
+  border-radius: 12px;
+}
+
+.cabinet-stage:focus-visible,
+.gateline-stage:focus-visible,
+.hexmanifold-stage:focus-visible {
+  outline: 1px solid var(--anatomy-muted);
+  outline-offset: 6px;
+}
+
+/* The figure sits inside the doc body's prose styles: undo their figure and svg margins. */
+.doc-body .iso-figure,
+.product-body .iso-figure {
+  margin: 2rem 0;
+}
+
+.doc-body .iso-figure svg,
+.product-body .iso-figure svg {
+  margin: 0;
+  max-width: 100%;
+  height: auto;
+}

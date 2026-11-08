@@ -26,7 +26,7 @@ export default function PropertiesPage() {
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const { data: properties = [], isLoading } = useProperties();
+  const { data: properties = [], isLoading, isError, refetch } = useProperties();
   const createMutation = useCreateProperty();
   const updateMutation = useUpdateProperty();
   const deleteMutation = useDeleteProperty();
@@ -172,6 +172,9 @@ export default function PropertiesPage() {
         isLoading={isLoading}
         keyExtractor={(i) => i.idProperty!}
         emptyMessage={t("noData")}
+      
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>

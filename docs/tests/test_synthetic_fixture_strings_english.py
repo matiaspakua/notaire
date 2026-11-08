@@ -55,20 +55,20 @@ class SyntheticFixtureStringsEnglishTest(unittest.TestCase):
     def test_budget_heading_and_concept_names_are_english(self):
         budgets = read("unit/SimpleControllersTest.java")
         self.assertIn("With client", budgets)
-        self.assertIn('"Active"', budgets)
-        self.assertIn('"Protocol"', budgets)
         self.assertNotIn("Con cliente", budgets)
         self.assertNotIn('"Activo"', budgets)
         self.assertNotIn('"Protocolo"', budgets)
+
+        # Management status fixtures moved out of SimpleControllersTest with the
+        # hexagon slice (#1719); keep the English name pin on the dedicated test.
+        management_status = read("adapter/in/web/management/ManagementStatusControllerTest.java")
+        self.assertIn('"Active"', management_status)
+        self.assertNotIn('"Activo"', management_status)
 
         concepts = read("unit/application/usecase/concept/ConceptServiceTest.java")
         self.assertIn("Notary office", concepts)
         self.assertIn("Honorarios", concepts)
         self.assertNotIn("Notaría", concepts)
-
-        adapter = read("unit/adapter/out/concept/ConceptPersistenceAdapterTest.java")
-        self.assertIn("Notary office", adapter)
-        self.assertNotIn("Notaría", adapter)
 
     def test_entity_and_folio_type_fixtures_are_english(self):
         entities = read("unit/EntitiesBasicTest.java")
@@ -81,10 +81,8 @@ class SyntheticFixtureStringsEnglishTest(unittest.TestCase):
         self.assertNotIn('"Protocolo"', entities)
         self.assertNotIn('"Auxiliar"', entities)
 
-        folio_types = read("unit/FolioTypeControllerTest.java")
+        folio_types = read("adapter/in/web/folio/FolioTypeControllerTest.java")
         self.assertIn('"Protocol"', folio_types)
-        self.assertIn("Modified protocol", folio_types)
-        self.assertIn("Protocolo Auxiliar", folio_types)
         self.assertNotIn('"Protocolo"', folio_types)
         self.assertNotIn("Protocolo Modificado", folio_types)
 

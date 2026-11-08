@@ -61,7 +61,7 @@ that together define test levels, artifact IDs, owners, CI triggers, and evidenc
 #### Scenario: Coverage floors documented match tools
 
 - **WHEN** Constitution §7 and the Master Test Plan state coverage floors
-- **THEN** backend floors match JaCoCo enforcement (80% line / 65% branch) and
-  frontend floors match `vitest.config.ts` raise-only thresholds, with any
-  aspirational targets labeled separately from enforced floors
+- **THEN** backend floors match JaCoCo enforcement (85% line / 70% branch) and
+  frontend floors match `vitest.config.ts` raise-only thresholds, with the Owner
+  **>90%** target (#2046) labeled separately from enforced floors
 

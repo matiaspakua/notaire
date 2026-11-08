@@ -1,6 +1,7 @@
 # Roadmap and Project views
 
 Live board: [Notaire — Delivery Board](https://github.com/users/matiaspakua/projects/1).
+Milestone titles follow [MILESTONE-NOMENCLATURE.md](MILESTONE-NOMENCLATURE.md).
 
 The board has four delivery views and three catalog views. Each view answers
 one question; adding another view requires removing duplication.

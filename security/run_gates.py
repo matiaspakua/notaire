@@ -216,10 +216,18 @@ def assess_sca(repo: Path, trivy_bin: str | None, profile: str = "local") -> Cas
                 "--exit-code",
                 "1",
                 "--quiet",
+                # Product tree only: ignore local tooling / agent scratch that is
+                # gitignored or not shipped (stale worktrees otherwise fail SEC-SCA-01).
                 "--skip-dirs",
                 "security/.tools",
                 "--skip-dirs",
                 "reports",
+                "--skip-dirs",
+                ".claude/worktrees",
+                "--skip-dirs",
+                "local-ai",
+                "--skip-dirs",
+                ".opencode",
             ],
             repo,
             900,
@@ -240,7 +248,7 @@ def assess_dast(repo: Path, base_url: str | None, skip: bool, profile: str) -> C
     if "zaproxy/action-baseline" not in zap_text:
         return _result(case, "FAIL", "dast-zap.yml does not run zaproxy/action-baseline")
     if profile == "ci":
-        return _result(case, "PASS", "CI DAST is the weekly ZAP baseline (warn-first, #281)")
+        return _result(case, "PASS", "CI DAST is the weekly ZAP baseline (blocking allowlist, #1738)")
     if skip or not base_url:
         return _result(
             case,

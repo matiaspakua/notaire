@@ -54,6 +54,8 @@ def git(args: list[str], *, cwd: str | None = None) -> str:
 
 
 def diff_base(base: str, head: str) -> str:
+    if os.environ.get("GITHUB_ACTIONS") != "true":
+        return base
     parents = subprocess.run(
         ["git", "rev-parse", "--verify", "--quiet", f"{head}^2"],
         capture_output=True,
@@ -242,6 +244,8 @@ def main(argv: list[str] | None = None) -> int:
 
     repo_root = Path(git(["rev-parse", "--show-toplevel"]).strip())
     labels = {part.strip() for part in os.environ.get("PR_LABELS", "").split(",") if part.strip()}
+    if "process:sdlc-exception" in labels:  # #1860 taxonomy name
+        labels.add("sdlc-exception")
     skip_inventory = (
         args.skip_inventory
         or os.environ.get("SKIP_INVENTORY", "") == "1"

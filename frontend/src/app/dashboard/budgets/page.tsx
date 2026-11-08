@@ -20,11 +20,11 @@ import {
 } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { FormContainer, FormSection, FormField, FormActions, FormHeader } from "@/theme/form-patterns";
-import { useQuery } from "@tanstack/react-query";
-import { apiGet, ApiError } from "@/lib/api-client";
 import { presentMutationError } from "@/lib/mutation-error";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import {
   useBudgetsPage,
+  useBudgetsByStatus,
   useBudgetSummary,
   useCreateBudget,
   useUpdateBudget,
@@ -32,6 +32,7 @@ import {
   useLoadItemsFromTemplate,
   useAddItemsFromCatalog,
 } from "@/hooks/useBudgets";
+import { useBudgetFind } from "@/hooks/useBudgetSearch";
 import { PersonPicker } from "@/components/shared/PersonPicker";
 import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { useItems, useItemsByBudget } from "@/hooks/useItems";
@@ -69,6 +70,7 @@ function BudgetsList() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Budget>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const [summaryId, setSummaryId] = useState<number | null>(null);
   const { data: summary, isLoading: isSummaryLoading, error: summaryError } =
@@ -102,7 +104,8 @@ function BudgetsList() {
     } catch (e) {
       // CU39: keep curated Spanish for "no template" (400). Server body is
       // terse and would otherwise replace items.errorNoPlantilla via extractApiError.
-      const noTemplate = e instanceof ApiError && e.status === 400;
+      const noTemplate =
+        typeof e === "object" && e !== null && "status" in e && (e as { status: number }).status === 400;
       presentMutationError(e, {
         fallback: noTemplate ? t("items.errorNoPlantilla") : t("items.errorCargar"),
         preferFallback: noTemplate,
@@ -135,29 +138,35 @@ function BudgetsList() {
   // One server page at a time, page and size in the URL (#1340): the list used
   // to load size=1000, so budgets after the 1000th were unreachable.
   const paging = useUrlPagination();
-  const { data: budgetsPage, isLoading: isLoadingPage, isFetching } = useBudgetsPage(
+  const {
+    data: budgetsPage,
+    isLoading: isLoadingPage,
+    isFetching,
+    isError: isBudgetsError,
+    refetch: refetchBudgets,
+  } = useBudgetsPage(
     { page: paging.page, size: paging.size },
     { enabled: !byStatus && searchId === null },
   );
   useClampPage(paging, byStatus || searchId !== null ? undefined : budgetsPage?.totalPages);
 
   // CU60: the backend reads `status`. The retired query name was ignored and returned every budget.
-  const { data: budgetsByStatus = [], isLoading: isLoadingByStatus } = useQuery({
-    queryKey: ["budgets", "search", statusFilter],
-    queryFn: () => apiGet<Budget[]>(`/budgets/search?status=${encodeURIComponent(statusFilter)}`),
+  const {
+    data: budgetsByStatus = [],
+    isLoading: isLoadingByStatus,
+    isError: isByStatusError,
+    refetch: refetchByStatus,
+  } = useBudgetsByStatus(statusFilter, {
     enabled: byStatus,
   });
 
   // A budget number is looked up on the server, so it is found on any page.
-  const { data: byId = null, isLoading: isLoadingId } = useQuery({
-    queryKey: ["budgets", searchId ?? 0, "search"],
-    queryFn: () =>
-      apiGet<Budget>(`/budgets/${searchId}`).catch((e) => {
-        if (e instanceof ApiError && e.status === 404) return null;
-        throw e;
-      }),
-    enabled: searchId !== null,
-  });
+  const {
+    data: byId = null,
+    isLoading: isLoadingId,
+    isError: isByIdError,
+    refetch: refetchById,
+  } = useBudgetFind(searchId);
 
   const shown = byStatus ? budgetsByStatus : budgetsPage?.content ?? [];
   const isLoading = searchId !== null ? isLoadingId : byStatus ? isLoadingByStatus : isLoadingPage;
@@ -180,22 +189,37 @@ function BudgetsList() {
     setEditing(EMPTY);
     setNewProcedureTypeId(NO_TEMPLATE);
     setIsEditMode(false);
+    setFieldErrors({});
     setModalOpen(true);
   }
   function openEdit(p: Budget) {
     setEditing({ ...p, status: normalizeBudgetStatus(p.status) ?? p.status });
     setIsEditMode(true);
+    setFieldErrors({});
     setModalOpen(true);
   }
 
   async function handleSave() {
+    const errors = requiredFieldErrors(
+      {
+        person: editing.person?.personId,
+        date: editing.date,
+        propertyAmount: editing.propertyAmount,
+      },
+      tc("fieldRequired"),
+    );
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
     try {
       if (isEditMode && editing.idBudget) {
         await updateMutation.mutateAsync({ id: editing.idBudget, data: editing });
         toast.success(t("updated"));
       } else {
         const procedureTypeId = newProcedureTypeId === NO_TEMPLATE ? undefined : Number(newProcedureTypeId);
-        const { itemsLoaded } = await createMutation.mutateAsync({ data: editing, procedureTypeId });
+        const { itemsLoaded } = await createMutation.mutateAsync({
+          data: { ...editing, status: editing.status ?? DEFAULT_BUDGET_STATUS },
+          procedureTypeId,
+        });
         toast.success(t("created"));
         if (procedureTypeId !== undefined && !itemsLoaded) toast.warning(t("itemsNotLoaded"));
       }
@@ -333,6 +357,24 @@ function BudgetsList() {
         isFetching={showPagination && isFetching}
         keyExtractor={(p) => p.idBudget!}
         emptyMessage={t("noData")}
+        error={
+          searchId !== null
+            ? isByIdError
+              ? t("loadError")
+              : undefined
+            : byStatus
+              ? isByStatusError
+                ? t("loadError")
+                : undefined
+              : isBudgetsError
+                ? t("loadError")
+                : undefined
+        }
+        onRetry={() => {
+          if (searchId !== null) void refetchById();
+          else if (byStatus) void refetchByStatus();
+          else void refetchBudgets();
+        }}
         pagination={
           showPagination
             ? {
@@ -350,7 +392,7 @@ function BudgetsList() {
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={isEditMode ? t("editPresupuesto") : t("newPresupuesto")}>
-              <FormField label={t("fields.cliente")} required>
+              <FormField label={t("fields.cliente")} required error={fieldErrors.person}>
                 {/* Server search instead of the first 1000 people (#1340). */}
                 <PersonPicker
                   value={editing.person?.personId}
@@ -360,14 +402,19 @@ function BudgetsList() {
                   data-testid="select-person"
                 />
               </FormField>
-              <FormField label={tc("date")} required>
+              <FormField label={tc("date")} required error={fieldErrors.date}>
                 <Input
                   type="date"
                   value={toDateInputValue(editing.date)}
                   onChange={(e) => setEditing({ ...editing, date: e.target.value })}
                 />
               </FormField>
-              <FormField label={`${tc("amount")} ($)`} required helperText={t("fields.montoAyuda")}>
+              <FormField
+                label={`${tc("amount")} ($)`}
+                required
+                helperText={t("fields.montoAyuda")}
+                error={fieldErrors.propertyAmount}
+              >
                 <Input
                   type="number"
                   step="0.01"
@@ -434,7 +481,10 @@ function BudgetsList() {
             )}
             {summaryError && (
               <p className="text-sm text-destructive" data-testid="summary-not-found">
-                {summaryError instanceof ApiError && summaryError.status === 404
+                {typeof summaryError === "object" &&
+                summaryError !== null &&
+                "status" in summaryError &&
+                (summaryError as { status: number }).status === 404
                   ? t("resumen.notFound")
                   : t("errorSave")}
               </p>

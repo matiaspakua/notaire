@@ -7,9 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 FILES = (
     "backend-api/src/main/java/com/licensis/notaire/repository/SubstitutionRepository.java",
-    "backend-api/src/main/java/com/licensis/notaire/application/port/out/substitution/SubstitutionRepositoryPort.java",
-    "backend-api/src/main/java/com/licensis/notaire/adapter/out/persistence/substitution/SubstitutionPersistenceAdapter.java",
-    "backend-api/src/main/java/com/licensis/notaire/application/usecase/substitution/SubstitutionService.java",
+    "backend-api/src/main/java/com/licensis/notaire/adapter/out/persistence/substitution/SubstitutionService.java",
 )
 
 

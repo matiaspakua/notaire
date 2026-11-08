@@ -39,6 +39,16 @@ truth: `frontend/src/theme/`.
 - **Accessible**: WCAG AA compliant color contrasts
 - **Responsive**: Works seamlessly on desktop, tablet, and mobile
 
+### Operate surfaces
+
+Authenticated screens and login stay in Operate mode: scanability and the
+tokens in `frontend/src/theme/` outrank expression. Root `DESIGN.md` is the
+scan of those tokens for agents; this document remains the implementation
+guide and does not restate the palette. The login task sits on one white
+card (28px radius, `apple-shadow`). Its seal moves with `theme/motion.ts`
+(opacity and a 4px rise, 240ms, no rotation). `github-page/` is a separate
+Persuade surface and is not governed by this restraint.
+
 ---
 
 ## Design Principles
@@ -380,6 +390,42 @@ Dark mode is not yet active, but tokens are structured to support it:
 
 ## Component Patterns
 
+### Page chrome (#1942)
+
+| Primitive | File | Use |
+|-----------|------|-----|
+| `PageHeader` | `components/shared/PageHeader.tsx` | Title + optional description + actions (`size="display"` on home) |
+| `EmptyState` | `components/shared/EmptyState.tsx` | Empty invitation; optional primary action |
+| `PageSection` | `components/shared/PageSection.tsx` | One-job section with token spacing |
+| `LoadingState` | `components/shared/LoadingState.tsx` | Busy panel with skeletons + accessible loading label (#1947) |
+| `ErrorState` | `components/shared/ErrorState.tsx` | Failure invitation; optional retry action (#1947) |
+
+`AppHeader` composes `PageHeader` inside sticky glass chrome. `DataTable` empty
+rows/cards use `EmptyState`; query failures use `ErrorState` via `error` /
+`onRetry`. Prefer sentence case — never decorative ALL-CAPS labels on chrome or
+table headers.
+
+**Workflow chrome (#1949):** `WorkflowViewer` empty canvases and `WorkflowHero`
+empty / not-found / loading use `EmptyState` / `ErrorState` / `LoadingState`.
+Workflow node type badges must not use CSS `text-transform: uppercase`.
+
+**Business forms (#1951 / Wave 8 #1961):** Create/edit dialogs use
+`requiredFieldErrors` (`frontend/src/lib/required-field-errors.ts`) so empty
+required values surface on `FormField` `error` before the mutation runs —
+high-traffic modules (cases, budgets, deeds, people) plus secondary surfaces
+(payments, copies, admin catalogs, …). Prefer `common.fieldRequired`.
+
+**List query failures (Wave 8 #1961):** Dashboard `DataTable` lists pass
+`error={isError ? tc("loadError") : undefined}` and `onRetry={() => void refetch()}`.
+REST error/retry layers are documented in
+[`frontend-rest-client-errors.md`](../../300-development/frontend-rest-client-errors.md) (#293).
+
+**Reports & metrics (#1953):** Home totals use shared `MetricCard` (apple-shadow
+tile + tinted icon well + `StatValue`). PDF download surfaces use shared
+`ReportCard` grouped with `PageSection`. Catalog filter loads use
+`LoadingState` / `ErrorState`. No chart library yet — future charts should reuse
+the same primary tint, muted labels, and rounded-28 card language.
+
 ### Form Structure
 
 All forms follow this structure — see [Quick Reference](#quick-reference)
@@ -447,10 +493,17 @@ idiomatic React/Tailwind. Dashboard shell/home (`dashboard/layout.tsx`,
 
 Use this checklist when creating or updating any form in the Notaire frontend.
 
+**Reference consumer:** `/login` (CU84, #611) composes credentials with
+`FormContainer` → `FormField` → `FormActions`. The brand mark stays outside
+`FormHeader` so the page keeps a single `h1`. Labels use sentence case — never
+decorative ALL-CAPS. Prefer `FormSection` only when the form has more than one
+logical group (dialogs and multi-section pages); a single-task surface like
+login omits it.
+
 ### Structure & Layout
 
 - [ ] **Use FormContainer**: All form content wrapped in `<FormContainer>`
-- [ ] **Use FormHeader**: Add title, subtitle, description for context
+- [ ] **Use FormHeader**: Add title, subtitle, description for context (skip when a brand/page `h1` already names the surface)
 - [ ] **Use FormSection**: Group related fields logically, with a visual divider between sections
 - [ ] **Responsive layout**: Content stacks vertically on mobile
 - [ ] **Max width**: Form content limited to 600px for readability

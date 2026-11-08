@@ -71,7 +71,7 @@ public class Concept implements Serializable, Persistable<Integer>
     @Basic(optional = false)
     @Column(name = "name")
     private String name;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "concept", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "concept", fetch = FetchType.LAZY)
     private List<BudgetTemplate> budgetTemplateList = new ArrayList<>();
 
     public Concept()

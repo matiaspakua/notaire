@@ -127,12 +127,11 @@ public class SubmittedDocument implements Serializable, Persistable<Integer>
     {
         this.idSubmittedDocument = idSubmittedDocument;
         this.name = name;
-        //this.dateEntry = dateEntry;
+        this.dateEntry = dateEntry;
         this.prepared = prepared;
         this.expires = expires;
         this.released = released;
         this.flagged = flagged;
-        this.reentered = reentered;
     }
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore

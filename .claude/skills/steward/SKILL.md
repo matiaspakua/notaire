@@ -11,29 +11,43 @@ Owners: `CONSTITUTION.md` §5, `docs/300-development/304-ai-sdlc-cloud/CI-MERGE-
 
 ## 1. Read the whole PR first
 
-Merge state, checks on the **current head**, open review threads. Light-only green is not
-green: `bash workspace/sdlc/check-heavy-ci.sh <pr>` must exit 0 (needs `gh`; without it read the
-check runs and require `Unit Tests`, `Integration Tests`, `Coverage Gate (mvn verify)`,
-`API Tests (Bruno)` and `UI E2E Tests (Playwright)` to be success or workflow-skipped).
+Merge state and open review threads. A PR is ready when `bash workspace/sdlc/preflight.sh --full`
+has passed on the head. `bash workspace/sdlc/check-heavy-ci.sh <pr>` must exit 0 (needs `gh`).
+Product workflows do not run on the pull request (#2001). The script fails only when a heavy
+workflow was started on that head and is pending or red.
 
-## 2. Required checks on `main`
+## 2. Ruleset
 
-`CI`, `Frontend CI`, `Playwright E2E`, `Code Lint`, `PR Validation` and `Process Checks`
-(ruleset `protect-main`, strict: the branch must contain current `main`).
+`protect-main` must not require checks the pull request will never report. Desired state drops
+`CI`, `Frontend CI`, `Playwright E2E`, `Code Lint`, and `PR Validation` (#2001). The Owner applies
+that file after merge (#1040). Until then GitHub refuses every merge. The branch must still
+contain current `main` when the ruleset is strict.
 
 ## 3. Behind or conflicting with `main`
 
 merge `origin/main` into the branch, never rebase or force-push a pushed branch. Regenerate
 generated files with their tool (`python3 workspace/sdlc/generate-testing-inventory.py`), rerun
 the affected suites, push, then confirm it landed: `git ls-remote --heads origin <branch>`.
+After **each land** on `main`, sync remaining open tips the same way before more pushes
+(`docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md`).
 
-## 4. CI red
+## 4. Local gate red
 
-Reproduce locally with `bash workspace/sdlc/preflight.sh` (mirrors CI) before pushing a fix.
+Reproduce with `bash workspace/sdlc/preflight.sh --full` before pushing a fix. A run without
+`--full` is not sufficient to open a pull request. GitHub will not re-run the suite.
 Fix the cause; never skip, `@Disabled` or quarantine a test, never push an empty commit.
+
+**Redundant pre-push `--full` (#2023):** the pre-push hook also runs `--full`. When the
+same tip already has a **green** `preflight.sh --full` in this session (log shows
+`PREFLIGHT PASSED`) and the working tree has not changed since that run, you may
+push with `PREFLIGHT_SKIP=1` to avoid a second 15–30 min suite. The proof of readiness
+remains that local `--full` log — never skip to hide a red gate. If the tip changed
+after the green run, run `--full` again.
 Typical Notaire causes: stale `docs/300-development/303-testing/INVENTORY.md`, a new Flyway migration
 without `python3 workspace/release/product_release.py --write` (product version coherence), Spotless format
 (`mvn spotless:apply -pl backend-api`), an unticked or unarchived OpenSpec change.
+If preflight fails once with `Issue #N was not found on GitHub`, re-run
+`validate-sdlc-plan.sh` (transient `gh` flake) before declaring a product defect.
 
 ## 5. Commits and the OpenSpec change
 
@@ -47,11 +61,33 @@ may share one PR when each has its own change and commits. Never commit bot repo
 PR title: `[#<issue>] <type>(<single-scope>): <description>`; the PR Validation title check rejects a
 comma in the scope (`feat(a,b)`) — and keep the PR body filled from `.github/PULL_REQUEST_TEMPLATE.md`.
 
+**CHANGELOG `[Unreleased]` fence:** only one open PR edits Unreleased; omit or wait while Release
+Please holds it. Never commit on `release-please--branches--*`.
+
+**multi_pr / epic CHANGELOG hygiene (#2033):** Unreleased must not contain `closes #N` (docs
+test enforces). Prefer prose like `tracking issue N` until the epic is Done. Markdown
+`[#N](url)` links in Unreleased also feed Release Please closing text — avoid them on
+open multi_pr issues; use `Refs #N` only in commits. If a release PR body still says
+`closes #<epic>`, strip it before merge (Owner/Foreman).
+
+## 5b. Process Checks before ready
+
+Do not mark the PR ready until `preflight.sh --full` is green: OpenSpec archive hygiene, Spotless when
+Java changed, INVENTORY regen when architecture/test inventory drifted, Conventional Commits.
+After moving helpers to `adapter.out.persistence.<slice>`, fix english-locals / `docs/tests` path
+refs in the same PR (`python3 -m unittest discover -s docs/tests`). `check-heavy-ci.sh` must exit 0.
+Prefer one product tip at a time. Hex FE ratchet Done only when
+`eslint-suppressions.json` is `{}` (count 0). Full checklist + paste templates:
+`docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md`.
+
 ## 6. Who merges
 
-Workers never merge. The Foreman merges a Worker PR when every required check is green and
+Workers never merge. The Foreman merges a Worker PR when `preflight.sh --full` has passed and
 `check-heavy-ci.sh` exits 0; the Owner merges Constitution, `sdlc-exception` and harness PRs.
 When only people are owed (approval, merge), say so once and wait.
+If Issues/Projects write returns **403**, leave a **human paste** using the templates in
+`FLEET-LESSONS-HEX-1693.md` (Issue #… Status/labels/close); never open a probe issue to test
+permissions.
 
 ## 7. Failures that are the environment, not the PR
 
@@ -61,3 +97,7 @@ there, e.g. #1635's read-only-transaction audit insert); pg-integration (Testcon
 the Docker build are CI-only. `test_watchdog` fails there because PID 1 does not reap zombies. Spotless
 needs a UTF-8 locale. `.claude/hooks/session-start-toolchain.sh` installs JDK 26, `openspec`,
 `kustomize`, Trivy, `promtool` and `amtool` at session start; say so in the PR instead of hiding it.
+Mac vs CI ownership for hex/R2: `docs/300-development/304-ai-sdlc-cloud/MAC-LOCAL-VS-CI.md`.
+If Build Docker Image fails on `spring-boot-starter-parent` “absent” while unit/integration
+are green, verify Central has that version before changing `pom.xml` — usually Dockerfile
+`-U` / go-offline cache (`FLEET-LESSONS-HEX-1693.md`).

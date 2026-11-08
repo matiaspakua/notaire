@@ -27,7 +27,8 @@ class AuditColumnKeysEnglishTest(unittest.TestCase):
             "backend-api/src/test/java/com/licensis/notaire/unit/"
             "ProcedureTemplateControllerTest.java"
         )
-        self.assertIn('setNotes("Observation test")', text)
+        # Ports-only TemplateView carries the note in the record ctor (no setNotes).
+        self.assertIn('"Observation test"', text)
         self.assertNotIn("Obs test", text)
 
 

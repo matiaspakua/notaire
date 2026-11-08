@@ -17,6 +17,7 @@ import { layoutWorkflow, NODE_WIDTH, NODE_HEIGHT } from "@/lib/workflow-layout";
 import { workflowNodeTypes } from "@/components/workflow/WorkflowNodeBox";
 import { workflowEdge } from "@/components/workflow/workflow-edges";
 import { WORKFLOW_ZOOM, WORKFLOW_FIT, MINIMAP_CLASS, workflowAriaLabels, workflowMiniMapColor } from "@/components/workflow/workflow-canvas";
+import { EmptyState } from "@/components/shared/EmptyState";
 
 export function toFlowNodes(nodes: WorkflowNode[], transitions: WorkflowTransition[] = []): Node[] {
   // #1574: same automatic layout as the editor, so boxes never stack at 0,0.
@@ -54,7 +55,7 @@ export function WorkflowViewer({ nodes, transitions, "data-testid": testId }: Wo
   if (nodes.length === 0) {
     return (
       <div
-        className="flex items-center justify-center h-64 rounded-xl border border-dashed border-border text-muted-foreground text-sm"
+        className="rounded-xl border border-border/40 bg-white apple-shadow overflow-hidden"
         data-testid={testId}
       >
         <WorkflowViewerEmpty />
@@ -90,5 +91,5 @@ export function WorkflowViewer({ nodes, transitions, "data-testid": testId }: Wo
 
 function WorkflowViewerEmpty() {
   const t = useTranslations("workflowViewer");
-  return <>{t("empty")}</>;
+  return <EmptyState title={t("empty")} />;
 }

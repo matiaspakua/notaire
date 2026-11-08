@@ -50,19 +50,16 @@ function clearHttpOnlyAuthCookieBestEffort(): void {
   if (typeof window === "undefined" || typeof fetch !== "function") {
     return;
   }
-  try {
-    const result = fetch("/api/v1/users/logout", {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
+  // Prefer Promise.catch (typescript:S4822 / S6544); tolerate non-Promise mocks in tests.
+  const pending: unknown = fetch("/api/v1/users/logout", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+  });
+  if (pending != null && typeof (pending as Promise<unknown>).catch === "function") {
+    void (pending as Promise<unknown>).catch(() => {
+      // Best-effort; client state is still cleared below.
     });
-    if (result && typeof (result as Promise<unknown>).catch === "function") {
-      void (result as Promise<unknown>).catch(() => {
-        // Best-effort; client state is still cleared below.
-      });
-    }
-  } catch {
-    // Best-effort; client state is still cleared below.
   }
 }
 

@@ -107,7 +107,7 @@ flowchart LR
 | Refinement | Open issue | OpenSpec: proposal, spec, design, tasks | Gate 1, `openspec validate` |
 | Construction | Spec and a failing test | Code, a migration if needed, `DOC-CICLO` if a state moved | TDD, branch from `main` |
 | Verification | Change on the branch | Unit, integration, contract, E2E, SAST | [CI-PREFLIGHT.md](CI-PREFLIGHT.md) |
-| Delivery | Heavy CI green and review | Published image, issue closed | [CD](../200-architecture/209-deployment/README.md) publishes; applying to the cluster is manual |
+| Delivery | Local full preflight and review (#2001) | Published image, issue closed | [CD](../200-architecture/209-deployment/README.md) publishes; applying to the cluster is manual |
 | Operation | A running version | Metrics, logs, alerts, history | CU77, Prometheus, Grafana, Loki |
 | Return | An operational or usage finding | A new issue at intake | Closes the loop |
 

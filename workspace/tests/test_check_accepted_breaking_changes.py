@@ -299,6 +299,44 @@ class RepositoryStateTest(unittest.TestCase):
                         "the README documents the rule and keeps the directory in git")
         self.assertFalse(os.path.exists(os.path.join(REPO_ROOT, *LEGACY_LIST_REL.split("/"))))
 
+    def test_main_has_no_active_ignore_txt_files(self):
+        """Issue #1920: merged accepted-breaking ``*.txt`` files must not linger.
+
+        PR branches may add ``*.txt`` for Owner-accepted breaks; after merge,
+        ``preflight --fix`` / ``--prune`` removes them. A cleanup PR deletes
+        leftovers still on ``origin/main`` — those deletions are the fix, so
+        assert no ``*.txt`` remains on **HEAD** that is also still on the
+        base (stale leftovers). Brand-new files only on HEAD are allowed.
+        """
+        def txt_paths(ref: str) -> set[str]:
+            listed = subprocess.run(
+                ["git", "ls-tree", "-r", "--name-only", ref, "--", ACCEPTED_DIR_REL],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if listed.returncode != 0:
+                return set()
+            return {line for line in listed.stdout.splitlines() if line.endswith(".txt")}
+
+        base_ref = "origin/main"
+        if subprocess.run(
+            ["git", "rev-parse", "--verify", base_ref],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            check=False,
+        ).returncode != 0:
+            base_ref = "main"
+        on_base = txt_paths(base_ref)
+        on_head = txt_paths("HEAD")
+        stale = sorted(on_base & on_head)
+        self.assertEqual(
+            stale,
+            [],
+            f"stale accepted-breaking *.txt still on HEAD and {base_ref}; "
+            + "prune them (preflight --fix / --prune) so main stays empty",
+        )
     def test_committed_files_are_traceable(self):
         for path in glob.glob(os.path.join(REPO_ROOT, *ACCEPTED_DIR_REL.split("/"), "*.txt")):
             name = os.path.basename(path)

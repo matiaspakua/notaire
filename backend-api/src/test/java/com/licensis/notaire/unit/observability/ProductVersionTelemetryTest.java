@@ -20,5 +20,6 @@ class ProductVersionTelemetryTest {
         assertThat(properties).contains("app.version=@project.version@");
         assertThat(properties).contains(
                 "management.opentelemetry.resource-attributes.service.version=${app.version}");
+        assertThat(properties).contains("management.metrics.tags.version=${app.version}");
     }
 }

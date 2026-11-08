@@ -1,9 +1,14 @@
 name: PR Validation
 
+# PR title, lint, and plan checks run in workspace/sdlc/preflight.sh on every
+# pull request (#2001). This workflow runs on a version tag and on manual
+# dispatch. Jobs that need a pull_request payload skip otherwise, so a tag
+# run does not fail on an empty title.
 on:
-  pull_request:
-    branches: [ main ]
-    types: [ opened, synchronize, reopened ]
+  push:
+    tags:
+      - 'v*'
+      - 'notaire-v*'
   workflow_dispatch:
 
 permissions:
@@ -16,6 +21,7 @@ jobs:
   # ==========================================
   validate-pr:
     name: Validate PR
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -121,6 +127,7 @@ jobs:
   # ==========================================
   quick-build:
     name: Quick Build Check
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -144,6 +151,7 @@ jobs:
   # ==========================================
   dependency-analysis:
     name: Dependency Analysis
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -168,6 +176,7 @@ jobs:
   # ==========================================
   lint:
     name: Code Lint
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -183,10 +192,9 @@ jobs:
           java-version: '26'
           cache: 'maven'
 
-      # Advisory only for now — 3,066 pre-existing violations, tracked in #705
-      # pending a blocking-policy decision (ratchet / hard-block / diff-scoped).
-      - name: Checkstyle
-        run: mvn checkstyle:check -pl backend-api -q || true
+      # Shrink-only ratchet (#566): new violations fail; zero-debt tracked in #710.
+      - name: Checkstyle (ratchet)
+        run: python3 workspace/ci/enforce-quality-ratchet.py --tool checkstyle
 
       - name: Upload Checkstyle Results
         uses: actions/upload-artifact@v7
@@ -263,7 +271,7 @@ jobs:
     name: Generate PR Report
     runs-on: ubuntu-latest
     needs: [validate-pr, quick-build, dependency-analysis, lint, branch-naming]
-    if: always()
+    if: always() && github.event_name == 'pull_request'
     steps:
       - name: Checkout code
         uses: actions/checkout@v7

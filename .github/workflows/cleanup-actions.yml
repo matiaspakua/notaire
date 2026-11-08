@@ -1,0 +1,67 @@
+name: Cleanup Actions artifacts and logs
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # diario, 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  actions: write
+
+concurrency:
+  group: actions-cleanup
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete artifacts and logs from all but the latest run per workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          # Obtener todos los workflows del repositorio
+          workflow_ids="$(
+            gh api --paginate "/repos/${REPO}/actions/workflows?per_page=100" \
+              --jq '.workflows[].id'
+          )"
+
+          for workflow_id in $workflow_ids; do
+            echo "Processing workflow ${workflow_id}"
+
+            # Runs completados, del más nuevo al más antiguo
+            run_ids="$(
+              gh api --paginate \
+                "/repos/${REPO}/actions/workflows/${workflow_id}/runs?status=completed&per_page=100" \
+                --jq '.workflow_runs[].id'
+            )"
+
+            keep=1
+            count=0
+
+            for run_id in $run_ids; do
+              count=$((count + 1))
+
+              if [ "$count" -le "$keep" ]; then
+                echo "Keeping latest run ${run_id}"
+                continue
+              fi
+
+              echo "Deleting logs for run ${run_id}"
+              gh api \
+                --method DELETE \
+                "/repos/${REPO}/actions/runs/${run_id}/logs" \
+                >/dev/null || true
+
+              echo "Deleting run ${run_id} and its artifacts"
+              gh api \
+                --method DELETE \
+                "/repos/${REPO}/actions/runs/${run_id}" \
+                >/dev/null || true
+            done
+          done
+
+          echo "Cleanup completed."

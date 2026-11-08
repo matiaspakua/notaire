@@ -6,7 +6,7 @@ import com.licensis.notaire.business.Person;
 import com.licensis.notaire.repository.DeedRepository;
 import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.repository.PersonRepository;
-import com.licensis.notaire.application.usecase.deed.DeedService;
+import com.licensis.notaire.adapter.out.persistence.deed.DeedService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -143,8 +143,8 @@ class DeedServiceTest {
         void shouldReturnAllNotaries() {
             Person notary = new Person();
             notary.setPersonId(1);
-            notary.setFirstName("Juan");
-            notary.setLastName("García");
+            notary.setFirstName("Jane");
+            notary.setLastName("Doe");
             notary.setNotaryRegistrationNumber(1001);
             when(personRepository.findAllNotaries()).thenReturn(List.of(notary));
 
@@ -152,6 +152,7 @@ class DeedServiceTest {
 
             assertThat(result).hasSize(1);
             assertThat(result.get(0).getNotaryRegistrationNumber()).isEqualTo(1001);
+            assertThat(result.get(0).getFirstName()).isEqualTo("Jane");
         }
 
         @Test

@@ -7,7 +7,7 @@ export function VersionHistory({ history }: { history: ReleaseHistory }) {
     <section id="versions" className="py-24 px-6" style={{ background: "var(--bg-dark)" }}>
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
-          <p className="text-[#0A84FF] text-sm font-mono font-bold tracking-widest mb-4 uppercase">
+          <p className="text-brand-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">
             Version history
           </p>
           <h2
@@ -51,7 +51,7 @@ export function VersionHistory({ history }: { history: ReleaseHistory }) {
                 <div>
                   <a
                     href={release.url}
-                    className="font-mono font-semibold text-neutral-900 hover:text-[#0A84FF]"
+                    className="font-mono font-semibold text-neutral-900 hover:text-brand-700"
                   >
                     {release.tag}
                   </a>

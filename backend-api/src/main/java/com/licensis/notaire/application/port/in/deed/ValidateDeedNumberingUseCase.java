@@ -1,6 +1,5 @@
 package com.licensis.notaire.application.port.in.deed;
 
-import com.licensis.notaire.business.Person;
 import com.licensis.notaire.domain.deed.DeedNumberingValidationResult;
 
 /**
@@ -13,7 +12,7 @@ public interface ValidateDeedNumberingUseCase {
      * Validate a proposed deed number against numbering rules.
      *
      * @param number the proposed deed number
-     * @param notary the notary person (contains personId)
+     * @param notaryId the notary person id
      * @param year the year
      * @param isAuxiliary true if for auxiliary protocol, false for principal
      * @param skipJustification optional justification for skipping sequential numbers
@@ -21,6 +20,6 @@ public interface ValidateDeedNumberingUseCase {
      * @return validation result indicating if the number is acceptable
      */
     DeedNumberingValidationResult validate(
-            int number, Person notary, int year, boolean isAuxiliary,
+            int number, Integer notaryId, int year, boolean isAuxiliary,
             String skipJustification, Integer idDeedExclude);
 }

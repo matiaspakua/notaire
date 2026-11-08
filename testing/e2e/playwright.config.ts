@@ -55,13 +55,20 @@ export default defineConfig({
     {
       name: "chromium",
       testMatch: "**/*.spec.ts",
+      // Mobile viewport specs run only under the `mobile` (iPhone SE) project (#1983).
+      testIgnore: ["**/*mobile*.spec.ts"],
       grepInvert: /@smoke|@health/,
       use: { ...devices["Desktop Chrome"] },
     },
     {
       name: "mobile",
-      testMatch: "**/mobile-viewport.spec.ts",
-      use: { ...devices["iPhone SE"] },
+      testMatch: "**/*mobile*.spec.ts",
+      use: {
+        ...devices["iPhone SE"],
+        // Same admin session global-setup writes for chromium workers (#1983 flake:
+        // per-test UI login on mobile hit /login lockout under shard load).
+        storageState: "tests/fixtures/admin-auth.json",
+      },
     },
   ],
   // Skip webServer since we're using Docker

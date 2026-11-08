@@ -89,7 +89,7 @@ class WorkflowConstraintErrorsIntegrationTest {
     @Test
     @DisplayName("POST /workflow-definition without a name answers 400, not 409")
     void definitionCreateWithoutName() throws Exception {
-        badRequest(send("post", "/api/v1/workflow-definition", "{}"), CONSTRAINT_MESSAGE);
+        badRequest(send("post", "/api/v1/workflow-definition", "{}"), "must not be blank");
     }
 
     @Test
@@ -97,7 +97,7 @@ class WorkflowConstraintErrorsIntegrationTest {
     void definitionUpdateWithoutName() throws Exception {
         int id = workflow();
         badRequest(send("put", "/api/v1/workflow-definition/" + id, "{\"description\":\"x\"}"),
-                CONSTRAINT_MESSAGE);
+                "must not be blank");
     }
 
     @ParameterizedTest(name = "POST /workflow-node {0} answers 400 naming {1}")

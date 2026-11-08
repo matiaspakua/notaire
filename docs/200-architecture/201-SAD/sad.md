@@ -2,7 +2,9 @@
 
 > **arc42 Template v8.2** — based on [docs.arc42.org](https://docs.arc42.org/home/)
 >
-> **Version:** 3.4 | **Date:** 2026-10-11 | **Author:** Architecture Team
+> **Version:** 3.5 | **Date:** 2026-11-01 | **Author:** Architecture Team
+>
+> **Changelog v3.5**: Spring Boot 4.1.2, Flyway through V53, and the technology assessment in [TECHNOLOGY-STACK.md](../TECHNOLOGY-STACK.md) (#1976).
 >
 > **Changelog v3.4**: §6 points at [GESTION.md](../203-design/GESTION.md) for the case-process analysis. States stay in CICLO-DE-VIDA.md.
 >
@@ -52,7 +54,7 @@ The system originated as a monolithic Java Swing desktop application with direct
 |----------|-------------|----------|
 | 1 | **Maintainability** | New features delivered in < 6 months; developers onboard in < 2 weeks |
 | 2 | **Testability** | ≥ 80% code coverage; all changes validated by unit, integration, and E2E tests |
-| 3 | **Security** | JWT authentication, `ROLE_ADMIN` on admin paths and admin writes, full audit trail for legal compliance. Object-level checks remain open (SR-11) |
+| 3 | **Security** | JWT authentication, `ROLE_ADMIN` on admin paths and admin writes, full audit trail for legal compliance. Tenants are isolated by deployment; module grants are not yet enforced server-side (ADR-029) |
 | 4 | **Scalability** | Backend scales horizontally via stateless containers |
 | 5 | **Observability** | Real-time metrics, structured logs, and alerts via LPG stack |
 
@@ -75,7 +77,7 @@ The system originated as a monolithic Java Swing desktop application with direct
 | Constraint | Description |
 |-----------|-------------|
 | Java 26 | Backend runtime, from the root `pom.xml` |
-| Spring Boot 4.1.1 | Backend framework |
+| Spring Boot 4.1.2 | Backend framework |
 | PostgreSQL 16 | Database — migrated from MySQL 5.7 |
 | Next.js 16 / React 19 | Frontend framework with App Router |
 | Docker / Docker Compose | Containerization for all services |
@@ -98,7 +100,7 @@ The system originated as a monolithic Java Swing desktop application with direct
 |-----------|-------------|
 | Audit trail | All CRUD operations must be recorded for legal compliance |
 | Data retention | Notarial records must be preserved indefinitely |
-| Access control | Authenticated access to sensitive notarial data. `ROLE_ADMIN` guards admin paths and admin writes; object-level checks are still open (SR-11) |
+| Access control | Authenticated access to sensitive notarial data. `ROLE_ADMIN` guards admin paths and admin writes; each installation serves one notary (ADR-029); module grants are not yet enforced server-side |
 
 ---
 
@@ -175,7 +177,7 @@ Graf --> Loki : Log queries
 
 | Decision | Rationale | ADR |
 |----------|-----------|-----|
-| Spring Boot 4.1.1 + Java 26 | Current platform in the root `pom.xml` | ADR-001 |
+| Spring Boot 4.1.2 + Java 26 | Current platform in the root `pom.xml` | ADR-001 |
 | Maven multi-module | Separation of shared, backend, and frontend concerns | ADR-002 |
 | URL-path API versioning (`/api/v1`) | Simple, explicit, cacheable | ADR-003 |
 | PostgreSQL 16 (from MySQL 5.7) | Superior JSON support, CTEs, full-text search | ADR-004 |
@@ -248,7 +250,7 @@ rectangle "Phase 6\nDeprecation" #Gray {
 | Phase 3: Backend API | ✅ Complete | Controllers, repositories, entities, Flyway migrations |
 | Phase 4: Frontend | 🔄 In Progress | Next.js 16 app (`frontend/`) — Swing is not a target client |
 | Phase 5: Observability | ✅ Complete | Full LPG stack + SonarQube + Homer dashboard |
-| Phase 6: Deprecation | 🔶 Partial | Swing client removed from the active build; `jpa` → `repository` migration ongoing |
+| Phase 6: Deprecation | 🔶 Partial | Swing gone; ArchUnit hex DoD MET (#1693); residual `jpa` controllers until [#576](https://github.com/matiaspakua/notaire/issues/576) |
 
 Live delivery status: [Delivery Board](https://github.com/users/matiaspakua/projects/1) /
 [docs/github/README.md](../../github/README.md). Phase narrative:
@@ -260,217 +262,115 @@ Live delivery status: [Delivery Board](https://github.com/users/matiaspakua/proj
 
 ### 5.1 Level 1 — System Decomposition
 
-```plantuml
-@startuml
-title Building Block View — Level 1
-
-package "Notaire System" {
-
-  package "frontend\n(Next.js 16)" as FE {
-    [App Router Pages]
-    [React Components]
-    [Theme / Design Tokens]
-    [API Client + Hooks]
-  }
-
-  package "backend-api\n(Spring Boot 4.1)" as BE {
-    [REST API Layer]
-    [Business Services]
-    [Data Access Layer]
-    [Security & Config]
-  }
-
-  database "PostgreSQL 16" as DB
-}
-
-FE --> BE : HTTP/JSON (JWT)
-BE --> DB : Flyway + Hibernate
-@enduml
+```mermaid
+flowchart LR
+    user([Notary office staff]) -->|browser| FE
+    subgraph FE["frontend (Next.js 16)"]
+        ui["UI adapters: pages, components, hooks"]
+        core_fe["core: domain + use cases + ports"]
+        http_fe["HTTP adapters"]
+        ui --> core_fe
+        http_fe -.implements ports.-> core_fe
+    end
+    subgraph BE["backend-api (Spring Boot 4.1)"]
+        in_be["inbound adapters: REST, security"]
+        app_be["application: use cases + ports"]
+        dom_be["domain"]
+        out_be["outbound adapters: persistence, PDF"]
+        in_be --> app_be --> dom_be
+        out_be -.implements ports.-> app_be
+    end
+    http_fe -->|HTTP/JSON, JWT| in_be
+    out_be -->|Flyway + Hibernate| DB[(PostgreSQL 16)]
 ```
+
+Both tiers follow Ports & Adapters (ADR-030). Dependencies point inward; infrastructure is reached only through
+ports. This is the target; sections 5.2 and 5.3 state how far each tier is from it.
 
 ### 5.2 Level 2 — Backend API Internal Structure
 
-```plantuml
-@startuml
-title Building Block View — Level 2: backend-api
+Target (ADR-030). Root package `com.licensis.notaire`.
 
-package "com.licensis.notaire" {
-
-  package "api\n(31 REST Controllers)" as api {
-    [ManagementController]
-    [PersonController]
-    [DeedController]
-    [BudgetController]
-    [UserController]
-    [ReportController]
-    [FolioController]
-    [PaymentController]
-    [WorkflowDefinitionController]
-    [WorkflowNodeController]
-    [WorkflowTransitionController]
-    [WorkflowValidationController]
-    [... +19 more]
-  }
-
-  package "service\n(Business Logic)" as svc {
-    [PaymentQueryService]
-    [PersonService]
-    [DeedService]
-    [BudgetService]
-    [ReportService]
-    [AuditRecordService]
-    [WorkflowTraceService]
-    [WorkflowValidationService]
-    [ManagementQueryService]
-    [JpaAdministrator]
-    [ValidationAdministrator]
-  }
-
-  package "repository\n(31 Spring Data JPA)" as repo {
-    [DeedManagementRepository]
-    [PersonRepository]
-    [DeedRepository]
-    [BudgetRepository]
-    [UserRepository]
-    [... +26 more]
-  }
-
-  package "business\n(32 Domain Entities)" as dom #LightYellow {
-    [DeedManagement]
-    [Person]
-    [Deed]
-    [Budget]
-    [Procedure]
-    [User]
-    [WorkflowDefinition]
-    [WorkflowNode]
-    [WorkflowTransition]
-    [... +31 more]
-  }
-
-  package "jpa\n(Legacy — being replaced)" as jpa #LightGray {
-    [26 JpaController classes]
-    [exceptions/]
-    [interfaz/]
-  }
-
-  package "config" as cfg {
-    [SecurityAndCorsConfig]
-    [JwtAuthenticationFilter]
-    [JwtTokenService]
-    [GlobalExceptionHandler]
-    [OpenApiConfig]
-    [ObservabilityConfig]
-    [DataInitializer]
-    [ProductionCredentialsGuard]
-  }
-
-  package "security" as sec {
-    [LoginAttemptService]
-    [PasswordEncoderUtil]
-  }
-
-  package "exception" as exc {
-    [NotaireException]
-    [BusinessValidationException]
-    [ResourceNotFoundException]
-    [ErrorResponse]
-  }
-
-  package "audit" as aud {
-    [AuditAspect]
-    [AuditModuleResolver]
-    [AuditOperationDescriber]
-  }
-
-  package "observability" as obs {
-    [ApplicationHealthIndicator]
-    [MetricsUtil]
-    [SharedModuleMetrics]
-    [StructuredLogger]
-  }
-}
-
-api -down-> svc : delegates
-svc -down-> repo : persists
-repo -down-> dom : maps
-svc .right.> jpa : legacy fallback
-cfg -left-> sec : JWT config
-aud --> repo : audit trail
-obs ..> api : health/metrics
-@enduml
+```mermaid
+flowchart TB
+    subgraph IN["adapter.in.* (driving)"]
+        web["web.&lt;context&gt;: controllers, web DTOs, mappers"]
+        sec["security: JWT filter, authority resolution"]
+    end
+    subgraph APP["application"]
+        pin["port.in.&lt;context&gt;: use-case interfaces"]
+        uc["usecase.&lt;context&gt;: @Service + @Transactional"]
+        pout["port.out.&lt;context&gt;: repository and gateway interfaces"]
+    end
+    subgraph DOM["domain.&lt;context&gt;: entities, value objects, rules (JDK only)"]
+    end
+    subgraph OUT["adapter.out.* (driven)"]
+        per["persistence.&lt;context&gt;: JpaEntity, JpaRepository, Mapper, Adapter"]
+        pdf["pdf, storage, other gateways"]
+    end
+    web --> pin
+    sec --> pin
+    uc -.implements.-> pin
+    uc --> pout
+    uc --> DOM
+    per -.implements.-> pout
+    pdf -.implements.-> pout
+    per --> DOM
+    cfg["config: composition root (Spring wiring, security, OpenAPI)"] -.wires.-> IN
+    cfg -.wires.-> OUT
 ```
+
+| Package | Role |
+|---|---|
+| `config` | Composition root: Spring wiring, security configuration, OpenAPI, global exception handler |
+| `exception` | Application and domain exceptions; HTTP status mapping belongs to the inbound adapter |
+| `audit`, `observability` | Cross-cutting adapters (audit aspect, metrics, structured logging); no business rules |
+
+**Current state** (measured on `main` post-#1915 @ `6ffe578fe`, epic #1693; the executable truth is the ArchUnit baseline
+`src/test/resources/architecture/hexagon-baseline.txt`, #1695 — **empty**, R1–R6 = 0):
+
+| Aspect | Today |
+|---|---|
+| ArchUnit R1–R6 | Empty baseline (DoD MET). Controllers / ports / use cases ratcheted via strangler slices under #1693 |
+| Ports speak domain / views | Entity-speaking ports removed for migrated contexts; helpers live under `adapter.out.persistence.*` |
+| Web controllers | Call inbound ports (R1 clear); REST contracts unchanged |
+| Pure `domain` vs `business` | Model remains `business` `@Entity` (model extraction is a later rule, not ArchUnit DoD) |
+| Legacy packages still present | `jpa` (~35 `*JpaController`s) + `service` (`JpaAdministrator`, `LegacyJpaEmfConfig`) — Owner-accepted residual until [#576](https://github.com/matiaspakua/notaire/issues/576) / [#1918](https://github.com/matiaspakua/notaire/issues/1918); `persistence.PersistenceConstants` moved out of `jpa` |
+
+ArchUnit DoD for #1693 is **MET**. Residual package delete is #576, not a re-open of the baseline.
 
 ### 5.3 Level 2 — Frontend Internal Structure
 
-```plantuml
-@startuml
-title Building Block View — Level 2: frontend (Next.js 16)
+Target (ADR-030). `frontend/src`:
 
-package "frontend/src" {
-
-  package "app\n(Next.js App Router)" as app {
-    [layout.tsx — Root layout]
-    [page.tsx — Home redirect]
-    [login/ — Authentication page]
-    [dashboard/ — Main dashboard]
-    [auditoria/ — Audit trail view]
-    [globals.css]
-    [providers.tsx]
-  }
-
-  package "components" as comp {
-    [layout/ — Page layouts]
-    [ui/ — Design system components]
-    [shared/ — Reusable elements]
-    [motion/ — Animations]
-  }
-
-  package "hooks\n(20 TanStack Query hooks)" as hooks {
-    [useManagements]
-    [usePeople]
-    [useDeeds]
-    [useBudgets]
-    [usePayments]
-    [useUsers]
-    [useWorkflow]
-    [useReports]
-    [useAudit]
-    [... +11 more]
-  }
-
-  package "theme" as theme {
-    [tokens.ts — Design tokens]
-    [index.ts — Theme utilities]
-    [form-patterns.tsx — Form components]
-  }
-
-  package "lib" as lib {
-    [api-client.ts — HTTP client]
-    [query-client.ts — TanStack setup]
-    [logger.ts — Client logging]
-    [utils.ts]
-  }
-
-  package "i18n" as i18n {
-    [Locale files]
-  }
-
-  package "store" as store {
-    [Client state]
-  }
-
-  package "types" as types {
-    [TypeScript interfaces]
-  }
-}
-
-app --> comp : renders
-app --> hooks : data fetching
-hooks --> lib : API calls
-comp --> theme : styling
-@enduml
+```mermaid
+flowchart TB
+    subgraph UI["adapters/ui: app/, components/, hooks/ (driving)"]
+        pages["pages and components"]
+        hooks["React Query hooks"]
+    end
+    subgraph CORE["core/&lt;context&gt;"]
+        usecases["application: use cases + ports.ts"]
+        domain["domain: types, pure rules (no React, no fetch)"]
+    end
+    subgraph HTTP["adapters/http/&lt;context&gt; (driven)"]
+        impl["port implementations + mappers"]
+    end
+    comp["composition/: builds use cases, one React provider"]
+    pages --> hooks --> usecases --> domain
+    impl -.implements.-> usecases
+    impl --> api["lib/api-client"]
+    comp -.wires.-> hooks
+    comp -.wires.-> impl
 ```
+
+Supporting areas stay as they are: `theme` (design tokens and form patterns), `i18n` (locale files), `store`
+(client state), `lib` (API client, query client, logger, utilities).
+
+**Current state** (same measurement): 22 files under `app/` and 43 of 49 hooks import `lib/api-client`
+directly; 12 files use `useQuery` or `useMutation` inline in pages; there are no ports, no domain module and no
+composition root. The import-boundary lint with a shrink-only baseline (#1696) turns these counts into a
+ratchet.
 
 ### 5.4 Level 2 — Shared Module (retired)
 
@@ -672,7 +572,7 @@ alt Too many attempts (5 failures / 15 min lockout)
 else
   Ctrl -> DB : find user by name
   DB --> Ctrl : User entity
-  Ctrl -> Ctrl : BCrypt.matches(password)\n(or legacy MD5 auto-migration)
+  Ctrl -> Ctrl : BCrypt.matches(password)\n(BCrypt only; MD5 removed #1762)
   alt Valid credentials
     Ctrl -> Login : onLoginSucceeded(name)
     Ctrl -> JWT : generateToken(name)
@@ -848,6 +748,17 @@ Loki --> Graf : depends_on
 @enduml
 ```
 
+### 7.5 Tenancy and Isolation
+
+The system is **single tenant per notary** (ADR-029). Every installation runs the same versioned product
+release (backend, frontend, data model; ADR-028) but owns its data: database, `JWT_SECRET`, actuator
+credentials, application admin account, backups and observability stack. Installations never share a
+database or a signing secret, so a token or an id from one notary is meaningless in another installation.
+
+The standard roles and permissions are part of database initialization (Flyway, insert-if-absent), so a new
+installation starts with a working default configuration that the tenant can later customize. Upgrades never
+overwrite a tenant's changes.
+
 ---
 
 ## 8. Cross-cutting Concepts
@@ -870,11 +781,16 @@ Loki --> Graf : depends_on
 **Authorization:**
 
 - Every `/api/**` request must be authenticated (valid JWT), except login and logout.
-- `UserAuthorityResolver` grants `ROLE_ADMIN` to active users of type Administrador,
-  Admin, or Escribano, and `ROLE_USER` to other active users. `SecurityAndCorsConfig`
-  requires `ROLE_ADMIN` for user, role, and audit-log paths and for admin catalog
-  writes (#559). Other business records are reachable by any authenticated user
-  (object-level gap SR-11).
+- `UserAuthorityResolver` grants `ROLE_ADMIN` to active users of type Administrador or Admin,
+  `ROLE_NOTARY` to type Escribano (#1638) and `ROLE_USER` to other active users.
+  `SecurityAndCorsConfig` requires `ROLE_ADMIN` for user, role, and audit-log paths and for admin
+  catalog writes (#559).
+- Tenancy (ADR-029): one installation serves one notary; the office shares its files, so there is no
+  per-record ownership check. Cross-notary isolation comes from the deployment (section 7.5).
+- Roles and their module grants (`roles`, `role_modules`) are the customizable permission model: a
+  standard template is seeded at database initialization and each tenant may change it. Server-side
+  enforcement of the grants is planned work (ADR-029 W1, W2); until then module access is not
+  restricted beyond the checks above.
 - Extending enforcement means adding a path in `SecurityAndCorsConfig` and a case
   in `RbacIntegrationTest` (see [API Authentication Guide](../206-security/API-AUTHENTICATION-GUIDE.md#extending-rbac)).
 
@@ -920,7 +836,7 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 
 - **Flyway** is the single source of truth for database schema.
 - Migrations located at `backend-api/src/main/resources/db/migration/`.
-- Docker starts PostgreSQL **empty**; Flyway applies the versioned migrations on backend startup, through V46. Applied files V1–V45 stay immutable.
+- Docker starts PostgreSQL **empty**; Flyway applies the versioned migrations on backend startup, through V53 at the time of v3.5. Applied files stay immutable. The full, current list is rendered on GitHub Pages at `/docs/database/`, straight from `db/migration/`.
 - Historical `init-db/` scripts archived at `docs/000-archive/init-db/`.
 - Repeatable migrations (`R__`) used for reversible operations.
 
@@ -945,6 +861,7 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 | R14 | Manual rollback script that restores `budgets.fk_id_tramite`. Flyway does not run it |
 | V45 | Rename the remaining Spanish identifiers. `R45` reverses that rename |
 | V46 | Rename Spanish constraint names. `R46` restores the previous names |
+| V47–V53 | Append-only audit, login attempts, admin promotion, standard role template, exporter grants (`R51`), bcrypt seed password, office staff catalog module |
 
 ### 8.5 Observability
 
@@ -1116,11 +1033,11 @@ O --> (Deployability Docker)
 
 | Item | Location | Severity | Effort |
 |------|----------|----------|--------|
-| 26 legacy JPA controllers | `com.licensis.notaire.jpa` | High | Large — one per entity |
+| ~35 legacy JPA controllers | `com.licensis.notaire.jpa` | High | Large — tracked by [#576](https://github.com/matiaspakua/notaire/issues/576) |
 | ~~`ControllerNegocio.java` God class (5,337 lines)~~ | removed in #900 (`business/BusinessController.java` deleted) | Resolved | — |
-| `JpaAdministrator` in service layer | `service/JpaAdministrator.java` | Medium | Medium |
-| `ValidationAdministrator` mixed concerns | `service/ValidationAdministrator.java` | Medium | Medium |
-| Missing service classes for some entities | `service/` | Medium | Medium |
+| `JpaAdministrator` + `LegacyJpaEmfConfig` | `service/` | Medium | Medium — residual until #576 (#1918) |
+| ~~`ValidationAdministrator` / `SessionAdministrator`~~ | deleted in #1918 | Resolved | — |
+| Missing service classes for some entities | `service/` | Low | Superseded by hex adapters |
 | Legacy Swing tree deleted from `main` (#1046) | git history only | Resolved | — |
 | `GuiConstants.java` in audit package | `audit/GuiConstants.java` | Low | Small |
 
@@ -1142,21 +1059,21 @@ O --> (Deployability Docker)
 
 | Phase | Status | Where the work is tracked |
 |-------|--------|---------------------------|
-| Phase 1 — Analysis | Complete | `History · Phase 0 Foundations` and the Q2 history cohort |
+| Phase 1 — Analysis | Complete | `H1 · Revival & foundations (2026-03–2026-04)` and the Q2 cohort |
 | Phase 2 — Foundation | Complete | Shared DTO module retired (ADR-025); preserved in Q2 history |
-| Phase 3 — Backend API | Complete | `History · Phase 1 Backend API` and the Q2 history cohort |
-| Phase 4 — Modern Frontend | In progress | `2026-12 · Frontend product`; tracker [#898](https://github.com/matiaspakua/notaire/issues/898) |
-| Phase 5 — Observability | Complete | `History · Phase 2 Platform & observability` and Q3 history |
-| Phase 6 — Deprecation | Partial | `2027-03 · Legacy retirement`; Swing is gone and `jpa` cleanup remains ([#899](https://github.com/matiaspakua/notaire/issues/899)) |
+| Phase 3 — Backend API | Complete | `H2 · REST API migration (2026-05)` and the Q2 cohort |
+| Phase 4 — Modern Frontend | In progress | `v0.4 · Product completeness (2026-12)`; tracker [#898](https://github.com/matiaspakua/notaire/issues/898) |
+| Phase 5 — Observability | Complete | `H3 · Platform & observability (2026-06)` and the Q3 cohort |
+| Phase 6 — Deprecation | Partial | `v1.0 · GA: legacy-free (2027-03)`; Swing is gone and `jpa` cleanup moved into `v0.3` with #1693 ([#899](https://github.com/matiaspakua/notaire/issues/899)) |
 
-#### Short Term (`2026-12 · Frontend product`)
+#### Short Term (`v0.4 · Product completeness (2026-12)`)
 
 1. **Complete Next.js frontend pages for all 73 use cases** — tracking issue [#898](https://github.com/matiaspakua/notaire/issues/898).
    Key open items: deed managements (#804, #806), deeds (#838, #839), budgets (#797, #821, #822, #823), people (#829, #835).
 2. **Fix critical bugs blocking frontend** — #829 (Person create), #835 (person deduplication), #799 (uniqueness), #801 (SubmittedDocument mapping).
 3. ~~Extract `ControllerNegocio` logic into dedicated service classes~~ — resolved by deleting the class ([#900](https://github.com/matiaspakua/notaire/issues/900)); its only live behaviour moved to `IdentificationTypeLookup`.
 
-#### Medium Term (`2027-03 · Legacy retirement`)
+#### Medium Term (`v1.0 · GA: legacy-free (2027-03)`)
 
 1. **Replace all `jpa` package controllers** with `repository` + `service` — [#576](https://github.com/matiaspakua/notaire/issues/576).
 2. **Swing client retirement** — complete: directory removed under [#1046](https://github.com/matiaspakua/notaire/issues/1046) (do not recreate). Remaining Phase 6 focus is `jpa` cleanup — [#899](https://github.com/matiaspakua/notaire/issues/899).
@@ -1174,14 +1091,14 @@ O --> (Deployability Docker)
 | Severity | Item | GitHub Issue | Scheduling rule |
 |----------|------|-------------|-----------|
 | ✅ Resolved | `ControllerNegocio` God class (5,337 lines) removed | [#568](https://github.com/matiaspakua/notaire/issues/568), [#900](https://github.com/matiaspakua/notaire/issues/900) | Closed history |
-| 🔴 Critical | Controllers instantiate JPA directly (no Spring DI) | [#574](https://github.com/matiaspakua/notaire/issues/574) | Release blockers |
-| 🔴 Critical | Raw-JDBC `Conexion` singleton bypasses HikariCP | [#575](https://github.com/matiaspakua/notaire/issues/575) | Release blockers |
-| 🟠 High | 26 legacy JPA controllers | [#576](https://github.com/matiaspakua/notaire/issues/576) | Legacy retirement |
-| 🟠 High | Business logic in controllers, not services | [#578](https://github.com/matiaspakua/notaire/issues/578) | Legacy retirement |
-| 🟠 High | Controllers return JPA entities instead of DTOs | [#577](https://github.com/matiaspakua/notaire/issues/577) | Legacy retirement |
-| 🟠 High | `GlobalExceptionHandler` bypassed in 26 controllers | [#579](https://github.com/matiaspakua/notaire/issues/579) | Legacy retirement |
-| 🟡 Medium | `JpaAdministrator` singleton in service layer | [#584](https://github.com/matiaspakua/notaire/issues/584) | Legacy retirement |
-| 🟡 Medium | Domain entities depend on DTOs (inverted dependency) | [#580](https://github.com/matiaspakua/notaire/issues/580) | Legacy retirement |
+| 🔴 Critical | Controllers instantiate JPA directly (no Spring DI) | [#574](https://github.com/matiaspakua/notaire/issues/574) | v0.3 |
+| 🔴 Critical | Raw-JDBC `Conexion` singleton bypasses HikariCP | [#575](https://github.com/matiaspakua/notaire/issues/575) | v0.3 |
+| 🟠 High | 26 legacy JPA controllers | [#576](https://github.com/matiaspakua/notaire/issues/576) | v0.3 |
+| 🟠 High | Business logic in controllers, not services | [#578](https://github.com/matiaspakua/notaire/issues/578) | v0.3 |
+| 🟠 High | Controllers return JPA entities instead of DTOs | [#577](https://github.com/matiaspakua/notaire/issues/577) | v0.3 |
+| 🟠 High | `GlobalExceptionHandler` bypassed in 26 controllers | [#579](https://github.com/matiaspakua/notaire/issues/579) | v0.3 |
+| 🟡 Medium | `JpaAdministrator` singleton in service layer | [#584](https://github.com/matiaspakua/notaire/issues/584) | v0.3 |
+| 🟡 Medium | Domain entities depend on DTOs (inverted dependency) | [#580](https://github.com/matiaspakua/notaire/issues/580) | v0.3 |
 
 ---
 

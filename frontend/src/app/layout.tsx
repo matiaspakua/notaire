@@ -17,12 +17,15 @@ export default async function RootLayout({
   const locale = await getLocale();
   const messages = await getMessages();
   const nonce = (await headers()).get("x-nonce") ?? undefined;
+  // Runtime Compose/env — not baked into the client bundle (#1739).
+  const browserOtelEnabled =
+    process.env.NEXT_PUBLIC_OTEL_TRACES_ENABLED === "true";
 
   return (
     <html lang={locale}>
       <body className="antialiased" data-nonce={nonce}>
         <NextIntlClientProvider messages={messages} locale={locale}>
-          <Providers>
+          <Providers browserOtelEnabled={browserOtelEnabled}>
             {children}
             <Toaster richColors position="top-right" />
           </Providers>

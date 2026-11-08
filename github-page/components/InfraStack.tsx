@@ -27,9 +27,9 @@ const services = [
     category: "App",
   },
   {
-    name: "PostgreSQL 16",
+    name: "PostgreSQL",
     port: "5432",
-    role: "Primary database. Managed by Flyway migrations + init-db scripts",
+    role: "Primary database. Schema owned by Flyway migrations only",
     icon: "🐘",
     color: "#336791",
     category: "Data",
@@ -93,7 +93,8 @@ const alerts = [
 
 const categories = ["All", "App", "Data", "Observability", "Quality", "Dashboard"] as const;
 
-export function InfraStack() {
+/** `serviceCount` is the number of services in the two compose files, read at build time (#1976). */
+export function InfraStack({ serviceCount }: { serviceCount: number }) {
   const [active, setActive] = useState<string>("All");
   const ref = useRef<HTMLDivElement>(null);
 
@@ -120,12 +121,12 @@ export function InfraStack() {
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
-          <p className="text-[#0A84FF] text-sm font-mono font-bold tracking-widest mb-4 uppercase">Infrastructure</p>
+          <p className="text-brand-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">Infrastructure</p>
           <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
             DevSecOps <span className="grad-cyan">Platform</span>
           </h2>
           <p className="text-neutral-600 max-w-2xl mx-auto">
-            10 containerized services. Two Docker Compose stacks. One command to run everything.
+            {serviceCount} containerized services in two Docker Compose stacks: the application and the observability platform.
             From a university project with <em>no infrastructure</em> to a full observability platform.
           </p>
         </div>
@@ -165,7 +166,7 @@ export function InfraStack() {
         {/* Two-column: start cmd + alert rules */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Start commands */}
-          <div className="glass rounded-2xl p-6 border border-[#0A84FF]/20">
+          <div className="glass rounded-2xl p-6 border border-brand-600/20">
             <h3 className="text-neutral-900 font-bold mb-4 flex items-center gap-2">
               <span>🚀</span> Start Everything
             </h3>
@@ -176,7 +177,7 @@ export function InfraStack() {
                 { cmd: "bash workspace/stack/start-all.sh", desc: "Everything at once" },
               ].map((c, i) => (
                 <div key={i} className="rounded-xl p-3" style={{ background: "rgba(0,0,0,0.03)" }}>
-                  <code className="text-[#0A84FF] text-xs font-mono">$ {c.cmd}</code>
+                  <code className="text-brand-700 text-xs font-mono">$ {c.cmd}</code>
                   <p className="text-neutral-500 text-xs mt-1">{c.desc}</p>
                 </div>
               ))}
@@ -184,7 +185,7 @@ export function InfraStack() {
           </div>
 
           {/* Alert rules */}
-          <div className="glass rounded-2xl p-6 border border-[#AF52DE]/20">
+          <div className="glass rounded-2xl p-6 border border-factory-600/20">
             <h3 className="text-neutral-900 font-bold mb-4 flex items-center gap-2">
               <span>🔔</span> Active Alert Rules
             </h3>
@@ -196,7 +197,7 @@ export function InfraStack() {
                     <div className="text-neutral-900 text-xs font-mono font-medium">{a.name}</div>
                     <div className="text-neutral-500 text-xs">{a.desc}</div>
                   </div>
-                  <span className={`ml-auto text-xs px-2 py-0.5 rounded-full flex-none ${a.severity === "critical" ? "bg-red-500/15 text-red-600" : "bg-yellow-500/15 text-yellow-600"}`}>{a.severity}</span>
+                  <span className={`ml-auto text-xs px-2 py-0.5 rounded-full flex-none ${a.severity === "critical" ? "bg-red-500/15 text-red-600" : "bg-yellow-500/15 text-amber-700"}`}>{a.severity}</span>
                 </div>
               ))}
             </div>

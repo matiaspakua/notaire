@@ -5,16 +5,18 @@ import com.licensis.notaire.adapter.in.web.management.ManagementController;
 import com.licensis.notaire.adapter.in.web.procedure.ProcedureTemplateController;
 import com.licensis.notaire.adapter.in.web.report.ReportController;
 import com.licensis.notaire.adapter.in.web.user.UserController;
-import com.licensis.notaire.dto.DtoUser;
-import com.licensis.notaire.business.DeedManagement;
-import com.licensis.notaire.business.History;
-import com.licensis.notaire.business.ProcedureTemplate;
-import com.licensis.notaire.business.User;
-import com.licensis.notaire.repository.DeedManagementRepository;
-import com.licensis.notaire.repository.HistoryRepository;
-import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort;
-import com.licensis.notaire.repository.UserRepository;
-import com.licensis.notaire.application.usecase.report.ReportService;
+import com.licensis.notaire.application.port.in.procedure.ManageProcedureTemplatesUseCase;
+import com.licensis.notaire.application.port.in.procedure.QueryProcedureTemplatesUseCase;
+import com.licensis.notaire.application.port.in.user.AuthenticateUserUseCase;
+import com.licensis.notaire.application.port.in.user.AuthenticateUserUseCase.Result;
+import com.licensis.notaire.application.port.in.user.ManageUsersUseCase;
+import com.licensis.notaire.application.port.in.user.ManageUsersUseCase.CreateUserCommand;
+import com.licensis.notaire.application.port.in.user.ManageUsersUseCase.UpdateUserCommand;
+import com.licensis.notaire.application.port.in.user.QueryUsersUseCase;
+import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateOpsPort.TemplateView;
+import com.licensis.notaire.application.port.in.report.GenerateReportsUseCase;
+import com.licensis.notaire.domain.user.User;
+import com.licensis.notaire.domain.user.UserNotFoundException;
 import com.licensis.notaire.config.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -26,6 +28,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -34,7 +37,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
@@ -50,10 +52,12 @@ class AdditionalControllersTest {
         @Test
         @DisplayName("getAll and getByProcedureType endpoints")
         void all() throws Exception {
-            ProcedureTemplateRepositoryPort repo = mock(ProcedureTemplateRepositoryPort.class);
-            var mvc = standaloneSetup(new ProcedureTemplateController(repo)).build();
-            when(repo.findAll()).thenReturn(List.of(new ProcedureTemplate()));
-            when(repo.findByProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of(new ProcedureTemplate()));
+            QueryProcedureTemplatesUseCase query = mock(QueryProcedureTemplatesUseCase.class);
+            ManageProcedureTemplatesUseCase manage = mock(ManageProcedureTemplatesUseCase.class);
+            var mvc = standaloneSetup(new ProcedureTemplateController(query, manage)).build();
+            TemplateView view = new TemplateView(1, 2, null, 0);
+            when(query.findAll()).thenReturn(List.of(view));
+            when(query.findByProcedureType(anyInt())).thenReturn(List.of(view));
 
             mvc.perform(get("/api/v1/procedure-templates")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/procedure-templates/procedure-types/1")).andExpect(status().isOk());
@@ -67,7 +71,7 @@ class AdditionalControllersTest {
         @Test
         @DisplayName("All endpoints — success and failure paths")
         void all() throws Exception {
-            ReportService service = mock(ReportService.class);
+            GenerateReportsUseCase service = mock(GenerateReportsUseCase.class);
             var mvc = standaloneSetup(new ReportController(service))
                     .setControllerAdvice(new GlobalExceptionHandler())
                     .build();
@@ -80,7 +84,7 @@ class AdditionalControllersTest {
             when(service.generateDebtDocumentsReport(anyInt())).thenReturn(pdf);
             when(service.generateIndexBookReport(anyInt(), any(), any())).thenReturn(pdf);
             when(service.generateMonthlyTaxDeclarationReport(anyInt(), anyInt(), any(), any())).thenReturn(pdf);
-            when(service.generateIncomeTaxDeclarationReport(anyInt(), anyInt())).thenReturn(pdf);
+            when(service.generateIncomeTaxDeclarationReport(anyInt(), anyInt(), any(), any())).thenReturn(pdf);
 
             mvc.perform(get("/api/v1/reports/budget/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/reports/budget-properties/1")).andExpect(status().isOk());
@@ -109,7 +113,7 @@ class AdditionalControllersTest {
             when(service.generateDebtDocumentsReport(anyInt())).thenThrow(new RuntimeException("e"));
             when(service.generateIndexBookReport(anyInt(), any(), any())).thenThrow(new RuntimeException("e"));
             when(service.generateMonthlyTaxDeclarationReport(anyInt(), anyInt(), any(), any())).thenThrow(new RuntimeException("e"));
-            when(service.generateIncomeTaxDeclarationReport(anyInt(), anyInt())).thenThrow(new RuntimeException("e"));
+            when(service.generateIncomeTaxDeclarationReport(anyInt(), anyInt(), any(), any())).thenThrow(new RuntimeException("e"));
 
             mvc.perform(get("/api/v1/reports/budget/1")).andExpect(status().isInternalServerError());
             mvc.perform(get("/api/v1/reports/budget-properties/1")).andExpect(status().isInternalServerError());
@@ -134,56 +138,53 @@ class AdditionalControllersTest {
         @Test
         @DisplayName("All paths")
         void all() throws Exception {
-            DeedManagementRepository repo = mock(DeedManagementRepository.class);
-            HistoryRepository histRepo = mock(HistoryRepository.class);
-            var traceService = mock(com.licensis.notaire.application.usecase.workflow.WorkflowTraceService.class);
-            var queryService = mock(com.licensis.notaire.application.usecase.management.ManagementQueryService.class);
+            var query = mock(com.licensis.notaire.application.port.in.management.QueryManagementsUseCase.class);
+            var manage = mock(com.licensis.notaire.application.port.in.management.ManageManagementsUseCase.class);
+            var traceService = mock(com.licensis.notaire.application.port.in.workflow.QueryWorkflowTraceUseCase.class);
             var transitionUseCase = mock(com.licensis.notaire.application.port.in.management.TransitionManagementUseCase.class);
             var transitionWebMapper =
                     mock(com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper.class);
-            var statusLogService = mock(com.licensis.notaire.application.usecase.management.ManagementStatusLogService.class);
-            var statusWriteGuard = mock(com.licensis.notaire.application.usecase.management.ManagementStatusWriteGuard.class);
-            var externalEntityDocumentService = mock(com.licensis.notaire.application.usecase.document.ExternalEntityDocumentService.class);
-            var documentReentryService = mock(com.licensis.notaire.application.usecase.workflow.DocumentReentryService.class);
-            var mvc = standaloneSetup(new ManagementController(repo, histRepo, traceService, queryService,
-                    mock(com.licensis.notaire.repository.PersonRepository.class),
-                    mock(com.licensis.notaire.repository.ManagementStatusRepository.class),
-                    mock(com.licensis.notaire.repository.BudgetRepository.class),
-                    mock(com.licensis.notaire.repository.ProcedureTypeRepository.class),
-                    mock(com.licensis.notaire.repository.ProcedureRepository.class),
-                    mock(com.licensis.notaire.repository.PropertyRepository.class),
-                    mock(com.licensis.notaire.application.usecase.management.ManagementArchiveDebtService.class),
-                    mock(com.licensis.notaire.application.usecase.management.ManagementSubstitutionService.class),
-                    mock(com.licensis.notaire.application.usecase.management.ManagementFinancialSummaryService.class),
-                    statusLogService, statusWriteGuard, transitionUseCase, transitionWebMapper,
-                    externalEntityDocumentService, documentReentryService,
-                    mock(com.licensis.notaire.application.usecase.procedure.ProcedureFolderService.class),
-                    mock(com.licensis.notaire.application.usecase.procedure.RequiredDocumentationOnConfirmService.class)))
+            var externalEntityDocumentService = mock(com.licensis.notaire.application.port.in.document.ExternalEntityDocumentUseCase.class);
+            var documentReentryService = mock(com.licensis.notaire.application.port.in.workflow.DocumentReentryUseCase.class);
+            var mvc = standaloneSetup(new ManagementController(
+                    query,
+                    manage,
+                    traceService,
+                    transitionUseCase,
+                    transitionWebMapper,
+                    externalEntityDocumentService,
+                    documentReentryService))
                     .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                     .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                     .build();
 
-            DeedManagement g = new DeedManagement(1);
-            com.licensis.notaire.business.Person escr = new com.licensis.notaire.business.Person();
-            escr.setPersonId(99);
-            g.setFkIdNotaryPerson(escr);
             var summary = new com.licensis.notaire.dto.DtoManagementSummary(1, 10, "Management", new Date(), null, 0, null);
-            when(queryService.findAll(any(org.springframework.data.domain.Pageable.class)))
-                    .thenReturn(new PageImpl<>(List.of(summary), org.springframework.data.domain.PageRequest.of(0, 20), 1));
-            when(queryService.findById(1)).thenReturn(Optional.of(summary));
-            when(queryService.findById(2)).thenReturn(Optional.empty());
-            when(queryService.findByNumber(10)).thenReturn(Optional.of(summary));
-            when(queryService.findByNumber(99)).thenReturn(Optional.empty());
-            when(repo.existsById(1)).thenReturn(true);
-            when(repo.existsById(2)).thenReturn(false);
-            when(repo.findById(1)).thenReturn(Optional.of(g));
-            when(repo.findById(2)).thenReturn(Optional.empty());
-            when(repo.save(any(DeedManagement.class))).thenReturn(g);
-            History h = new History();
-            h.setIdHistory(1);
-            h.setDate(new Date());
-            when(histRepo.findByFkIdManagementIdManagement(1)).thenReturn(List.of(h));
-            when(histRepo.findByFkIdManagementIdManagement(2)).thenReturn(List.of());
+            var view = new com.licensis.notaire.application.port.out.management.ManagementOpsPort.ManagementView(
+                    1, 10, "Management", new Date(), null, 99, null, null, 0);
+            var history = new com.licensis.notaire.dto.DtoHistorySummary(1, new Date(), null, 1, null, null);
+            when(query.findAll(anyInt(), anyInt(), any()))
+                    .thenReturn(new com.licensis.notaire.application.port.out.management.ManagementOpsPort.PageResult(
+                            List.of(summary), 0, 20, 1));
+            when(query.findById(1)).thenReturn(Optional.of(summary));
+            when(query.findById(2)).thenReturn(Optional.empty());
+            when(query.findByNumber(10)).thenReturn(Optional.of(summary));
+            when(query.findByNumber(99)).thenReturn(Optional.empty());
+            when(query.findByClientPersonId(5)).thenReturn(List.of(view));
+            when(query.findCurrentStatus(1)).thenReturn(Optional.of(history));
+            when(query.findCurrentStatus(2)).thenReturn(Optional.empty());
+            when(query.findHistory(1)).thenReturn(Optional.of(List.of(history)));
+            when(query.findHistory(2)).thenReturn(Optional.empty());
+
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.management.ManagementOpsPort.SaveResult.Created(view));
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.management.ManagementOpsPort.SaveResult.Updated());
+            when(manage.update(eq(2), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.management.ManagementOpsPort.SaveResult.NotFound());
+            when(manage.delete(1)).thenReturn(
+                    new com.licensis.notaire.application.port.out.management.ManagementOpsPort.DeleteResult.Deleted());
+            when(manage.delete(2)).thenReturn(
+                    new com.licensis.notaire.application.port.out.management.ManagementOpsPort.DeleteResult.NotFound());
 
             mvc.perform(get("/api/v1/managements")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/managements/1")).andExpect(status().isOk());
@@ -226,12 +227,16 @@ class AdditionalControllersTest {
             mvc.perform(get("/api/v1/managements/1/history")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/managements/2/history")).andExpect(status().isNotFound());
 
-            when(repo.save(any(DeedManagement.class))).thenThrow(new RuntimeException("x"));
+            when(manage.create(any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.management.ManagementOpsPort.SaveResult.ServerError());
+            when(manage.update(eq(1), any())).thenReturn(
+                    new com.licensis.notaire.application.port.out.management.ManagementOpsPort.SaveResult.ServerError());
+            when(manage.delete(1)).thenReturn(
+                    new com.licensis.notaire.application.port.out.management.ManagementOpsPort.DeleteResult.Conflict());
             mvc.perform(post("/api/v1/managements").contentType("application/json")
                     .content(managementBody)).andExpect(status().isInternalServerError());
             mvc.perform(put("/api/v1/managements/1").contentType("application/json")
                     .content(managementBody)).andExpect(status().isInternalServerError());
-            doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
             mvc.perform(delete("/api/v1/managements/1")).andExpect(status().isConflict());
         }
     }
@@ -243,28 +248,37 @@ class AdditionalControllersTest {
         @Test
         @DisplayName("All endpoints")
         void all() throws Exception {
-            UserRepository repo = mock(UserRepository.class);
+            QueryUsersUseCase query = mock(QueryUsersUseCase.class);
+            ManageUsersUseCase manage = mock(ManageUsersUseCase.class);
+            AuthenticateUserUseCase authenticate = mock(AuthenticateUserUseCase.class);
             var jwtSvc = mock(com.licensis.notaire.config.JwtTokenService.class);
             when(jwtSvc.generateToken(any())).thenReturn("mock-jwt-token");
             var metrics = mock(com.licensis.notaire.observability.MetricsUtil.class);
-            var passwordEncoder = mock(org.springframework.security.crypto.password.PasswordEncoder.class);
             var authCookies = mock(com.licensis.notaire.config.AuthCookieService.class);
             when(authCookies.createSessionCookie(any())).thenReturn(
                     org.springframework.http.ResponseCookie.from("notaire-auth-token", "mock")
                             .httpOnly(true).path("/").sameSite("Lax").build());
-            var mvc = standaloneSetup(new UserController(repo, jwtSvc, metrics, passwordEncoder,
-                    new com.licensis.notaire.security.LoginAttemptService(5, 900000,
-                            new com.licensis.notaire.security.InMemoryLoginAttemptStore()), authCookies,
-                    mock(com.licensis.notaire.config.TokenRevocationService.class))).build();
-            User u = new User(1, "admin", "abc", true, "Escribano");
+            var mvc = standaloneSetup(new UserController(
+                            query,
+                            manage,
+                            authenticate,
+                            jwtSvc,
+                            metrics,
+                            new com.licensis.notaire.security.LoginAttemptService(
+                                    5, 900000, new com.licensis.notaire.security.InMemoryLoginAttemptStore()),
+                            authCookies,
+                            mock(com.licensis.notaire.config.TokenRevocationService.class)))
+                    .setControllerAdvice(
+                            new com.licensis.notaire.adapter.in.web.user.UserLoginExceptionHandler(),
+                            new com.licensis.notaire.config.GlobalExceptionHandler())
+                    .build();
+            User u = User.restore(1, "admin", "abc", true, "Escribano", null, null, null, null, null, 0);
 
-            when(repo.findAll()).thenReturn(List.of(u));
-            when(repo.findById(1)).thenReturn(Optional.of(u));
-            when(repo.findById(2)).thenReturn(Optional.empty());
-            when(repo.findFirstByFkIdPersonIdPerson(10)).thenReturn(Optional.of(u));
-            when(repo.findFirstByFkIdPersonIdPerson(99)).thenReturn(Optional.empty());
-            when(repo.existsById(1)).thenReturn(true);
-            when(repo.existsById(2)).thenReturn(false);
+            when(query.findAll()).thenReturn(List.of(u));
+            when(query.findById(1)).thenReturn(Optional.of(u));
+            when(query.findById(2)).thenReturn(Optional.empty());
+            when(query.findByPersonId(10)).thenReturn(Optional.of(u));
+            when(query.findByPersonId(99)).thenReturn(Optional.empty());
 
             mvc.perform(get("/api/v1/users")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/users/1")).andExpect(status().isOk());
@@ -272,14 +286,12 @@ class AdditionalControllersTest {
             mvc.perform(get("/api/v1/users/person/10")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/users/person/99")).andExpect(status().isNotFound());
 
-            // create with no password — uses UserRequest format (field active)
             String noPwdJson = """
                     {"name":"user","password":"","type":"Notary","active":true}
                     """;
-            when(repo.save(any(User.class))).thenReturn(u);
+            when(manage.create(any(CreateUserCommand.class))).thenReturn(u);
             mvc.perform(post("/api/v1/users").contentType("application/json")
                     .content(noPwdJson)).andExpect(status().isCreated());
-            // create with password
             String withPwdJson = """
                     {"name":"user","password":"pwd","type":"Notary","active":true}
                     """;
@@ -291,53 +303,51 @@ class AdditionalControllersTest {
                     """;
             mvc.perform(put("/api/v1/users/1").contentType("application/json")
                     .content(updateJson)).andExpect(status().isOk());
+            doThrow(new UserNotFoundException(2)).when(manage).update(eq(2), any(UpdateUserCommand.class));
             mvc.perform(put("/api/v1/users/2").contentType("application/json")
                     .content(updateJson)).andExpect(status().isNotFound());
 
             mvc.perform(delete("/api/v1/users/1")).andExpect(status().isNoContent());
+            doThrow(new UserNotFoundException(2)).when(manage).delete(2);
             mvc.perform(delete("/api/v1/users/2")).andExpect(status().isNotFound());
 
-            // Login flow - all branches
-            // Empty users list
-            when(repo.findAll()).thenReturn(List.of());
-            DtoUser loginDto = new DtoUser();
-            loginDto.setName("admin");
-            loginDto.setPassword("admin");
+            String loginJson = """
+                    {"name":"admin","password":"admin"}
+                    """;
+            when(authenticate.authenticate(any(), any()))
+                    .thenReturn(new Result.Failed(AuthenticateUserUseCase.Failure.NOT_FOUND));
             mvc.perform(post("/api/v1/users/login").contentType("application/json")
-                    .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
+                    .content(loginJson)).andExpect(status().isOk());
 
-            // User found, wrong password
-            when(repo.findAll()).thenReturn(List.of(u));
-            loginDto.setPassword("wrong");
+            when(authenticate.authenticate(any(), any()))
+                    .thenReturn(new Result.Failed(AuthenticateUserUseCase.Failure.BAD_CREDENTIALS));
             mvc.perform(post("/api/v1/users/login").contentType("application/json")
-                    .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
+                    .content("""
+                            {"name":"admin","password":"wrong"}
+                            """)).andExpect(status().isOk());
 
-            // User found, valid login - the password 'admin' has known MD5
-            // 21232f297a57a5a743894a0e4a801fc3 is MD5("admin")
-            u.setPassword("21232f297a57a5a743894a0e4a801fc3");
-            u.setStatus(true);
-            loginDto.setPassword("admin");
+            // User found, valid login — BCrypt only (legacy MD5 verify removed, #1762)
+            when(authenticate.authenticate(any(), any())).thenReturn(new Result.Success(u));
             mvc.perform(post("/api/v1/users/login").contentType("application/json")
-                    .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
+                    .content(loginJson)).andExpect(status().isOk());
 
-            // User inactive
-            u.setStatus(false);
+            when(authenticate.authenticate(any(), any()))
+                    .thenReturn(new Result.Failed(AuthenticateUserUseCase.Failure.INACTIVE));
             mvc.perform(post("/api/v1/users/login").contentType("application/json")
-                    .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
+                    .content(loginJson)).andExpect(status().isOk());
 
-            // Failure paths
-            when(repo.save(any(User.class))).thenThrow(new RuntimeException("x"));
+            when(manage.create(any(CreateUserCommand.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/users").contentType("application/json")
                     .content(noPwdJson)).andExpect(status().isInternalServerError());
+            doThrow(new RuntimeException("x")).when(manage).update(eq(1), any(UpdateUserCommand.class));
             mvc.perform(put("/api/v1/users/1").contentType("application/json")
                     .content(updateJson)).andExpect(status().isInternalServerError());
-            doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
-            mvc.perform(delete("/api/v1/users/1")).andExpect(status().isConflict());
+            doThrow(new RuntimeException("fk")).when(manage).delete(1);
+            mvc.perform(delete("/api/v1/users/1")).andExpect(status().isInternalServerError());
 
-            // Exception during login should still return 200 with valid=false
-            when(repo.findAll()).thenThrow(new RuntimeException("db down"));
+            when(authenticate.authenticate(any(), any())).thenThrow(new RuntimeException("db down"));
             mvc.perform(post("/api/v1/users/login").contentType("application/json")
-                    .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
+                    .content(loginJson)).andExpect(status().isOk());
         }
     }
 }

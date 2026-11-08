@@ -42,7 +42,7 @@ observability/quality infrastructure stack.
 ### Prerequisites
 
 - Docker and Docker Compose v2+
-- Java 21+ (for local development)
+- Java 26 (the release pinned in the root `pom.xml`) (for local development)
 - Maven 3.9+ (for local builds)
 
 ### 1. Build Application
@@ -138,7 +138,9 @@ bash workspace/stack/start.sh
 
 A distinct `COMPOSE_PROJECT_NAME` also separates volumes and the network. The observability
 stack (`infra/`) scrapes `notary-backend` and `notary-postgres` on `notaire_notary-network`, so it
-only works with the default container names. `docker-compose.prod.yml` and
+only works with the default container names. `workspace/stack/start.sh` defaults
+`COMPOSE_PROJECT_NAME` to `notaire` so git worktrees still publish that network; override it
+only for intentional parallel stacks. `docker-compose.prod.yml` and
 `docker-compose.cloud.yml` are not affected.
 
 ### docker-compose.prod.yml (production entrypoint — issue #1044)
@@ -148,7 +150,7 @@ only works with the default container names. `docker-compose.prod.yml` and
 - **Secrets**: required via `${VAR:?...}` — compose fails fast if `.env` is incomplete; no `admin` defaults
 - **Backend**: `ENVIRONMENT=production` (activates `ProductionCredentialsGuard`); least-privilege env (no Grafana/pgAdmin/exporter credential keys); `SPRING_FLYWAY_BASELINE_ON_MIGRATE=false`
 - **Proxy config**: `infra/deploy/kustomize/base/nginx.conf` — `/` → frontend, `/api/` and `/actuator/` → backend
-- **TLS**: terminate TLS in front of this proxy (or extend the nginx config); full certbot/ACME productization is issue #254
+- **TLS**: terminate TLS in front of this proxy (or extend the nginx config); see [HTTPS-TLS-RUNBOOK.md](../206-security/HTTPS-TLS-RUNBOOK.md) (#254)
 - **Backups**: automated backup productization remains issue #256. CI verification
   of backup→restore→smoke is scaffolded in `.github/workflows/backup-restore-smoke.yml`
   (#1067) and **skips with an explicit #256 message** until `infra/scripts/backup-postgres.sh`
@@ -238,7 +240,7 @@ For production deployment, ensure:
 
 1. **Use `docker-compose.prod.yml`** — not the dev compose with published DB/admin ports
 2. **Change default credentials** — do not reuse `.env.example` values; prod compose requires them via `${VAR:?}`
-3. **Enable HTTPS** — terminate TLS in front of the reverse proxy (issue #254)
+3. **Enable HTTPS** — [HTTPS-TLS-RUNBOOK.md](../206-security/HTTPS-TLS-RUNBOOK.md) (#254)
 4. **Set a strong `JWT_SECRET`** — see [API Authentication Guide](../206-security/API-AUTHENTICATION-GUIDE.md)
 5. **Database backups** — configure periodic `pg_dump` backups (issue #256); after
    that lands, the scheduled backup→restore→smoke workflow (#1067) will exercise restore

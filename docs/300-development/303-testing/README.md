@@ -26,6 +26,7 @@ Unit → Integration → API (Bruno) → Frontend (Vitest) → E2E UI (Playwrigh
 | [`E2E-TEST-MAPPING.md`](E2E-TEST-MAPPING.md) | CU ↔ TS narrative mapping |
 | [`TESTING-PATTERNS.md`](TESTING-PATTERNS.md) | Fixture patterns by level |
 | [`FRONTEND-TESTING-GUIDE.md`](FRONTEND-TESTING-GUIDE.md) | Vitest + Playwright conventions |
+| [`A11Y-AXE.md`](A11Y-AXE.md) | Playwright axe WCAG 2.1 AA (#1251) |
 | [`test-coverage/TEST-COVERAGE-STRATEGY.md`](test-coverage/TEST-COVERAGE-STRATEGY.md) | Coverage strategy |
 | [`ADR-006`](../../200-architecture/202-ADR/ADR-006-testing-strategy.md) | Architecture decision |
 
@@ -46,9 +47,9 @@ Enforced floors only (see MTP §4):
 
 | Tool | Floor |
 |------|-------|
-| JaCoCo | 80% line / 65% branch |
-| Vitest | raise-only 14/9/10/14 (statements/branches/functions/lines) |
-| Aspirational | 80% / 80% backend branch; 80% Vitest (#1246) |
+| JaCoCo | 85% line / 70% branch |
+| Vitest | raise-only 76/68/72/78 (statements/branches/functions/lines) |
+| Owner target | **>90%** across the pyramid (#2046); floors ratchet raise-only |
 
 ## CI/CD
 

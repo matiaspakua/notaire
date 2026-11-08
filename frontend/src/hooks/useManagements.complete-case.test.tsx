@@ -2,21 +2,21 @@
  * Issue #1360 — full management edit. The edit dialog prefills from
  * GET /managements/{id}/complete-case and saves every field through
  * PUT /managements/{id}/complete-case with the backend's CompleteCaseRequest names.
+ * After #1839 hooks call composition; wire mapping is covered in the HTTP gateway test.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 
-vi.mock("@/lib/api-client", () => ({
-  apiGet: vi.fn(),
-  apiGetPage: vi.fn(),
-  apiPost: vi.fn(),
-  apiPut: vi.fn(),
-  apiDelete: vi.fn(),
+vi.mock("@/composition/management", () => ({
+  managementUseCases: {
+    getCompleteCase: vi.fn(),
+    updateCompleteCase: vi.fn(),
+  },
 }));
 
-import { apiGet, apiPut } from "@/lib/api-client";
+import { managementUseCases } from "@/composition/management";
 import { managementsKeys, useManagementCompleteCase, useUpdateCompleteManagement } from "@/hooks/useManagements";
 
 function createWrapper() {
@@ -32,27 +32,32 @@ function createWrapper() {
 describe("useManagementCompleteCase (#1360)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("reads the case values from GET /managements/{id}/complete-case", async () => {
-    vi.mocked(apiGet).mockResolvedValue({ idManagement: 7, number: 70, budgetId: 3, notaryId: 4 });
+  it("reads the case values from the management use case", async () => {
+    vi.mocked(managementUseCases.getCompleteCase).mockResolvedValue({
+      idManagement: 7,
+      number: 70,
+      budgetId: 3,
+      notaryId: 4,
+    });
     const { Wrapper } = createWrapper();
     const { result } = renderHook(() => useManagementCompleteCase(7), { wrapper: Wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(apiGet).toHaveBeenCalledWith("/managements/7/complete-case");
+    expect(managementUseCases.getCompleteCase).toHaveBeenCalledWith(7);
     expect(result.current.data?.notaryId).toBe(4);
   });
 
   it("does not fetch without an id", () => {
     const { Wrapper } = createWrapper();
     renderHook(() => useManagementCompleteCase(undefined), { wrapper: Wrapper });
-    expect(apiGet).not.toHaveBeenCalled();
+    expect(managementUseCases.getCompleteCase).not.toHaveBeenCalled();
   });
 });
 
 describe("useUpdateCompleteManagement (#1360)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("PUTs every field with the CompleteCaseRequest names and refreshes the lists", async () => {
-    vi.mocked(apiPut).mockResolvedValue({ idManagement: 7, notes: "n" });
+  it("updates through the use case and refreshes the lists", async () => {
+    vi.mocked(managementUseCases.updateCompleteCase).mockResolvedValue({ idManagement: 7, notes: "n" });
     const { Wrapper, queryClient } = createWrapper();
     const invalidate = vi.spyOn(queryClient, "invalidateQueries");
     const { result } = renderHook(() => useUpdateCompleteManagement(), { wrapper: Wrapper });
@@ -73,14 +78,14 @@ describe("useUpdateCompleteManagement (#1360)", () => {
       }),
     );
 
-    expect(apiPut).toHaveBeenCalledWith("/managements/7/complete-case", {
+    expect(managementUseCases.updateCompleteCase).toHaveBeenCalledWith(7, {
       number: 70,
       heading: "Header",
       notes: "n",
       budgetId: 3,
       notaryId: 5,
       statusManagementId: 2,
-      typeProcedureId: 9,
+      procedureTypeId: 9,
       propertyId: undefined,
     });
     expect(invalidate).toHaveBeenCalledWith({ queryKey: managementsKeys.all });

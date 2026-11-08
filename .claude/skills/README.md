@@ -9,13 +9,15 @@ This directory combines project-specific skills with generic lifecycle skills. T
 | Business analysis and backlog | `analyst`, `product-owner`, `delivery-maturity-roadmap`, `project-management` | `docs/100-business/`, `docs/300-development/305-project-management/`, roadmap and Issue | 1 |
 | Traceability | `devsecops-traceability` | `docs/openspec/changes/*/traceability.md`, `docs/100-business/104-traceability/` | 1-5 |
 | Architecture and decisions | `architecture-decision-design`, `plantuml`, `hexagonal-arch` | `docs/200-architecture/`, `docs/200-architecture/202-ADR/`, diagrams | 1 |
-| Threats and security requirements | `secure-threat-modeling`, `backend`, `programming`, `devops` | security docs, `SR-*`, SAST/SCA/DAST evidence | 1-4 |
+| Threats and security requirements | `secure-threat-modeling`, `notaire-cybersec`, `backend`, `programming`, `devops` | security docs, `SR-*`, SAST/SCA/DAST evidence, local `security/run_gates.py` | 1-4 |
 | QA strategy and tests | `qa-automation-strategy`, `testing`, `maven-build`, `api-rest` | MTP, JUnit, Vitest, Bruno, Playwright | 2-3 |
 | API contracts | `api-contract-testing`, `api-rest` | OpenAPI/Swagger, Bruno and UI traceability | 2-3 |
 | CI/CD quality gates | `ci-cd-quality-gates`, `devops` | `workspace/sdlc/preflight.sh`, `workspace/sdlc/run_pipeline.sh`, CI workflows | 3-4 |
 | Operations and incidents | `operations-observability-readiness`, `devops` | `infra/`, runbooks, SLOs, incident/postmortem evidence | 3-5 |
 | PR stewardship | `steward` | `workspace/sdlc/check-heavy-ci.sh`, `workspace/sdlc/preflight.sh`, `CI-MERGE-GATE.md` | 4 |
 | Specification lifecycle | OpenSpec vendor skills + `openspec-triage` | `docs/openspec/changes/`, `docs/openspec/specs/` | 1-5 |
+| Product UI | `frontend-design` (+ `.claude/rules/ui-ux-design.md`) | `frontend/` screens: theme tokens, system fonts, `FormContainer → FormSection → FormField` | 3 |
+| Showcase UI and motion | `ui-design`, `motion-design` (generic) | `github-page/`, artifacts, demos — never product forms, where `frontend-design` prevails | 3 |
 
 ## Selection rule
 
@@ -26,3 +28,11 @@ Use the narrowest project-specific skill for implementation details and the gene
 `delivery-maturity-roadmap` -> `analyst`/`product-owner` -> `openspec-triage` -> `openspec-propose` -> `architecture-decision-design` + `secure-threat-modeling` -> `qa-automation-strategy` + `api-contract-testing` -> `openspec-apply-change` -> `ci-cd-quality-gates` -> `operations-observability-readiness` -> `openspec-archive-change`.
 
 All generic skills include domain references and an evaluation manifest (`<skill>/evals/evals.json`). The manifests are scenarios for running by hand when a skill changes; no CI job runs them yet. Their examples are provider-neutral; adapt commands to the actual Notaire toolchain documented in `CONSTITUTION.md` and `docs/openspec/NOTAIRE-ADAPTATIONS.md`.
+
+## Catalog lint (#1958)
+
+`python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml skills` runs in `preflight.sh` and
+Process Checks. It fails when a folder has no `SKILL.md`, a skill has no frontmatter `description`
+(agents select skills by it), two skills resolve to the same name, or a skill listed as generic in
+`.aisdlc/aisdlc.toml` (`[skills] generic`) mentions a Notaire-only pattern (`forbid_in_generic`).
+Generic skills stay provider- and project-neutral; Notaire scope for them lives in the table above.

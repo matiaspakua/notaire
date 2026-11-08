@@ -15,8 +15,7 @@ class DtoOwnershipTest {
     @ValueSource(strings = {
         "com.licensis.notaire.dto.DtoPerson",
         "com.licensis.notaire.dto.TypeItem",
-        "com.licensis.notaire.dto.exceptions.InvalidDtoException",
-        "com.licensis.notaire.jpa.exceptions.PreexistingEntityException"
+        "com.licensis.notaire.dto.exceptions.InvalidDtoException"
     })
     @DisplayName("should load the class from the backend-api build output")
     void shouldLoadClassFromBackendApiBuildOutput(String className) throws ClassNotFoundException {

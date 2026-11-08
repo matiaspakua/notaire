@@ -393,6 +393,17 @@ public class PdfBoxReportRenderer implements ReportRenderer {
                 totalWeight += column.weight();
             }
             float[] widths = new float[columns.size()];
+            if (widths.length == 0) {
+                return widths;
+            }
+            // Equal share when weights are missing or sum to zero (java:S3518 / #1535).
+            if (totalWeight <= 0f) {
+                float equal = contentWidth / widths.length;
+                for (int c = 0; c < widths.length; c++) {
+                    widths[c] = equal;
+                }
+                return widths;
+            }
             for (int c = 0; c < widths.length; c++) {
                 widths[c] = contentWidth * columns.get(c).weight() / totalWeight;
             }

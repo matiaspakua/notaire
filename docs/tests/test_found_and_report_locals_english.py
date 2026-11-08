@@ -13,24 +13,27 @@ def read(relative: str) -> str:
 
 class FoundAndReportLocalsEnglishTest(unittest.TestCase):
     def test_found_locals_and_used_status_are_english(self):
-        procedure_type = read(
-            "backend-api/src/main/java/com/licensis/notaire/jpa/ProcedureTypeJpaController.java"
-        )
-        self.assertIn("foundProcedureType", procedure_type)
-        self.assertNotIn("procedureTypeEncontrado", procedure_type)
+        # #576 retired the legacy jpa controllers that used to carry these locals.
+        for relative in (
+            "backend-api/src/main/java/com/licensis/notaire/jpa/ProcedureTypeJpaController.java",
+            "backend-api/src/main/java/com/licensis/notaire/jpa/PersonProcedureJpaController.java",
+        ):
+            self.assertFalse(
+                (ROOT / relative).exists(),
+                f"{relative} must stay deleted after legacy jpa retirement (#576)",
+            )
 
-        person_procedure = read(
-            "backend-api/src/main/java/com/licensis/notaire/jpa/PersonProcedureJpaController.java"
+        # Utilizado lock lives on the domain type after the folio-instance hexagon (#1727).
+        folio_domain = read(
+            "backend-api/src/main/java/com/licensis/notaire/domain/folio/Folio.java"
         )
-        self.assertIn("PersonProcedure found", person_procedure)
-        self.assertNotIn("encontrado", person_procedure)
-
-        folio = read(
+        self.assertIn("STATUS_USED", folio_domain)
+        self.assertIn('"Utilizado"', folio_domain)
+        self.assertNotIn("StatusUTILIZADO", folio_domain)
+        folio_controller = read(
             "backend-api/src/main/java/com/licensis/notaire/adapter/in/web/folio/FolioController.java"
         )
-        self.assertIn("STATUS_USED", folio)
-        self.assertIn('"Utilizado"', folio)
-        self.assertNotIn("StatusUTILIZADO", folio)
+        self.assertNotIn("StatusUTILIZADO", folio_controller)
 
     def test_sworn_statement_methods_and_dialog_keys_are_english(self):
         reports = read(
@@ -59,7 +62,8 @@ class FoundAndReportLocalsEnglishTest(unittest.TestCase):
         self.assertNotIn("declaracion-jurada", protocol)
         self.assertIn("libro_indice_", protocol)
         self.assertIn("ddjj_mensual_", protocol)
-        self.assertIn("declaracion_jurada_rentas_", protocol)
+        self.assertIn("ddjj_rentas_", protocol)
+        self.assertNotIn("declaracion_jurada_rentas_", protocol)
         self.assertIn('t("reports.libroIndice.title")', protocol)
         self.assertIn('t("reports.ddjjMensual.title")', protocol)
         self.assertIn('t("reports.ddjjRentas.title")', protocol)

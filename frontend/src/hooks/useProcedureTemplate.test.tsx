@@ -1,16 +1,30 @@
 /**
  * Unit test for useProcedureTemplate (CU03 — documents required for a procedure).
+ * Mocks composition use cases (ADR-030); HTTP is covered by procedure-template-http-gateway.test.ts.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 
-vi.mock("@/lib/api-client", () => ({
-  apiGet: vi.fn(),
+const listByProcedureType = vi.fn();
+
+vi.mock("@/composition/procedure-template", () => ({
+  procedureTemplateUseCases: {
+    listByProcedureType: (...args: unknown[]) => listByProcedureType(...args),
+    listAll: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+  },
 }));
 
-import { apiGet } from "@/lib/api-client";
+vi.mock("@/hooks/useDocuments", () => ({
+  useDocumentTypes: () => ({
+    data: [{ idDocumentType: 1, name: "DNI", expires: false, deliveredBy: "Cliente" }],
+  }),
+}));
+
 import { procedureTemplateKeys, useProcedureTemplate } from "@/hooks/useProcedureTemplate";
 
 function createWrapper() {
@@ -33,18 +47,14 @@ describe("useProcedureTemplate (CU03)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches the flat checklist rows and joins the document type by fkIdDocumentType (#1362)", async () => {
-    vi.mocked(apiGet).mockImplementation((path: string) =>
-      Promise.resolve(
-        path.startsWith("/document-types")
-          ? [{ idDocumentType: 1, name: "DNI", expires: false, deliveredBy: "Cliente" }]
-          : [{ fkIdProcedureType: 7, fkIdDocumentType: 1, notes: "", version: 0 }],
-      ) as never,
-    );
+    listByProcedureType.mockResolvedValue([
+      { procedureTypeId: 7, documentTypeId: 1, notes: "", version: 0 },
+    ]);
 
     const { result } = renderHook(() => useProcedureTemplate(7), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.data?.[0]?.documentType?.name).toBe("DNI"));
-    expect(apiGet).toHaveBeenCalledWith("/procedure-templates/procedure-types/7");
+    expect(listByProcedureType).toHaveBeenCalledWith(7);
     expect(result.current.data?.[0].fkIdDocumentType).toBe(1);
   });
 
@@ -52,6 +62,6 @@ describe("useProcedureTemplate (CU03)", () => {
     const { result } = renderHook(() => useProcedureTemplate(undefined), { wrapper: createWrapper() });
 
     expect(result.current.fetchStatus).toBe("idle");
-    expect(apiGet).not.toHaveBeenCalledWith(expect.stringContaining("/procedure-templates"));
+    expect(listByProcedureType).not.toHaveBeenCalled();
   });
 });

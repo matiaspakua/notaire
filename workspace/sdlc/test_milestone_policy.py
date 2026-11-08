@@ -1,5 +1,6 @@
 """Scheduling rules for milestones, catalog assessment, and agent lanes."""
 
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -8,68 +9,69 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from milestone_policy import (
     BACKLOG,
+    CATALOG,
     DELIVERY_FILTER,
     FRONTEND,
     FULL_LIFECYCLE_FILTER,
     HISTORY_ERAS,
-    LEGACY,
+    GA,
+    HISTORY_STAGES,
+    MILESTONE_DESCRIPTION,
+    MILESTONE_DUE,
     MILESTONE_WINDOW,
     PLATFORM,
     QUALITY,
     RELEASE,
     RENAMES,
     SCHEDULED,
+    SHIPPED,
     VIEW_CONTRACTS,
     VIEW_FIELDS,
+    VIEW_LAYOUT,
+    VIEW_UI_ONLY,
     classify_closed,
     classify_open,
+    current_train,
+    is_history,
     lane,
     lanes_blocked_by,
+    shipped_train,
     suggested_priority,
 )
-from apply_milestone_policy import missing_project_issues
+from apply_milestone_policy import (
+    WANTED,
+    assignment_bucket_summary,
+    closed_issues_with_status_labels,
+    create_body,
+    ensure_milestones,
+    http_error_message,
+    milestone_field_drift,
+    milestone_payload,
+    missing_project_issues,
+    missing_scopes,
+    missing_wanted_titles,
+    retire_milestones,
+    retired_milestones,
+    snapshot_freshness_errors,
+    stale_views,
+    target_for,
+)
 
 
 class ClassifyOpenTests(unittest.TestCase):
-    def test_security_rnf_is_a_release_blocker(self):
-        self.assertEqual(
-            classify_open(81, "RNF-12: Seguridad y privacidad", ["requerimiento-no-funcional"]),
-            RELEASE,
-        )
+    def test_catalog_anchors_live_on_the_catalog_milestone(self):
+        for number, title, label in (
+            (81, "RNF-12: Seguridad y privacidad", "requerimiento-no-funcional"),
+            (74, "RNF-05: Aspecto Visual", "requerimiento-no-funcional"),
+            (70, "RNF-01: Uso de Memoria RAM", "requerimiento-no-funcional"),
+            (3, "RF-01: Gestionar Trámites", "requerimiento-funcional"),
+            (162, "CU09 – Registrar deudas documentos de Cliente", "CASO-DE-USO"),
+        ):
+            self.assertEqual(classify_open(number, title, [label]), CATALOG, title)
 
-    def test_visual_rnf_belongs_to_the_frontend_product(self):
+    def test_catalog_anchor_with_work_labels_is_delivery_work(self):
         self.assertEqual(
-            classify_open(74, "RNF-05: Aspecto Visual", ["requerimiento-no-funcional"]),
-            FRONTEND,
-        )
-
-    def test_performance_and_process_rnfs_are_quality(self):
-        self.assertEqual(
-            classify_open(70, "RNF-01: Uso de Memoria RAM", ["requerimiento-no-funcional"]),
-            QUALITY,
-        )
-        self.assertEqual(
-            classify_open(89, "RNF-21: Metodología de desarrollo", ["requerimiento-no-funcional"]),
-            QUALITY,
-        )
-
-    def test_environment_rnfs_stay_on_the_backlog(self):
-        self.assertEqual(
-            classify_open(85, "RNF-17: Java VM", ["requerimiento-no-funcional"]),
-            BACKLOG,
-        )
-        self.assertEqual(
-            classify_open(92, "RNF-24: Motor de Base de datos", ["requerimiento-no-funcional"]),
-            BACKLOG,
-        )
-
-    def test_functional_requirements_and_use_cases_are_frontend_scope(self):
-        self.assertEqual(
-            classify_open(3, "RF-01: Gestionar Trámites", ["requerimiento-funcional"]),
-            FRONTEND,
-        )
-        self.assertEqual(
-            classify_open(153, "CU01: Preparar Presupuesto", ["CASO-DE-USO"]),
+            classify_open(611, "login page bypasses FormContainer", ["CASO-DE-USO", "FRONTEND", "bug", "priority:medium"]),
             FRONTEND,
         )
 
@@ -95,14 +97,17 @@ class ClassifyOpenTests(unittest.TestCase):
             RELEASE,
         )
 
-    def test_jpa_retirement_is_the_legacy_milestone(self):
-        self.assertEqual(
-            classify_open(576, "arch(jpa): retire legacy jpa package", ["BACKEND", "priority:high", "tech-debt"]),
-            LEGACY,
-        )
+    def test_jpa_retirement_moved_into_the_hexagonal_train(self):
+        for number in (571, 576, 577, 578, 579, 580):
+            self.assertEqual(
+                classify_open(number, "arch(jpa): legacy layering", ["BACKEND", "priority:high", "tech-debt"]),
+                RELEASE,
+            )
+
+    def test_phase_6_deprecation_epic_is_the_ga_train(self):
         self.assertEqual(
             classify_open(899, "Phase 6 — Deprecation", ["roadmap", "phase:6-deprecation", "priority:medium"]),
-            LEGACY,
+            GA,
         )
 
     def test_high_security_title_is_a_release_blocker(self):
@@ -166,10 +171,195 @@ class ClassifyClosedTests(unittest.TestCase):
         self.assertIsNone(classify_closed("2026-05-01T00:00:00Z", True))
 
     def test_groups_unmilestoned_history_by_close_date(self):
-        self.assertEqual(classify_closed("2026-06-30T12:00:00Z", False), "History · 2026 Q2 — Foundations & API")
-        self.assertEqual(classify_closed("2026-07-01T00:00:00Z", False), "History · 2026 Q3 — Product build")
-        self.assertEqual(classify_closed("2026-09-30T00:00:00Z", False), "History · 2026 Q3 — Product build")
-        self.assertEqual(classify_closed("2026-10-01T00:00:00Z", False), "History · 2026 Q4 — Cloud AI SDLC")
+        self.assertEqual(classify_closed("2026-06-30T12:00:00Z", False), "H · 2026 Q2 cohort: foundations & API")
+        self.assertEqual(classify_closed("2026-07-01T00:00:00Z", False), "H · 2026 Q3 cohort: product build & UI/UX")
+        self.assertEqual(classify_closed("2026-09-30T00:00:00Z", False), "H · 2026 Q3 cohort: product build & UI/UX")
+        self.assertEqual(classify_closed("2026-10-01T00:00:00Z", False), "v0.1 · First release cuts (2026-10)")
+        self.assertEqual(classify_closed("2026-10-12T00:00:00Z", False), "v0.2 · Release identity & product forms (2026-10)")
+
+    def test_unmilestoned_work_closed_after_the_last_cut_ships_with_the_current_train(self):
+        self.assertEqual(classify_closed("2026-10-17T00:00:00Z", False), RELEASE)
+
+
+class NomenclatureTests(unittest.TestCase):
+    TRAIN = re.compile(r"^v\d+\.\d+ · \S.* \(\d{4}-\d{2}\)$")
+    STAGE = re.compile(r"^H\d+ · \S.* \(\d{4}(-\d{2})?–\d{4}(-\d{2})?\)$|^H\d+ · \S.* \(\d{4}-\d{2}\)$")
+
+    def test_open_trains_are_version_first_and_ordered(self):
+        self.assertEqual(
+            SCHEDULED,
+            (
+                "v0.3 · Hexagonal core & security (2026-11)",
+                "v0.4 · Product completeness (2026-12)",
+                "v0.5 · Quality & traceability (2027-01)",
+                "v0.6 · Platform & operability (2027-02)",
+                "v1.0 · GA: legacy-free (2027-03)",
+            ),
+        )
+        for title in SCHEDULED + SHIPPED:
+            self.assertRegex(title, self.TRAIN)
+
+    def test_shipped_cuts_have_their_own_closed_trains(self):
+        self.assertEqual(
+            SHIPPED,
+            ("v0.1 · First release cuts (2026-10)", "v0.2 · Release identity & product forms (2026-10)"),
+        )
+
+    def test_history_stages_run_from_the_swing_monolith_to_pre_release_hardening(self):
+        self.assertEqual(HISTORY_STAGES[0], "H0 · Swing monolith (2014–2018)")
+        self.assertEqual(HISTORY_STAGES[-1], "H8 · Pre-release hardening (2026-09–2026-10)")
+        self.assertEqual([t.split(" ")[0] for t in HISTORY_STAGES], [f"H{n}" for n in range(9)])
+        for title in HISTORY_STAGES:
+            self.assertRegex(title, self.STAGE)
+
+    def test_backlog_and_catalog_are_continuous_without_due_date(self):
+        self.assertEqual(BACKLOG, "Backlog · Unscheduled")
+        self.assertEqual(CATALOG, "Catalog · Requirements & use cases")
+        self.assertNotIn(BACKLOG, MILESTONE_DUE)
+        self.assertNotIn(CATALOG, MILESTONE_DUE)
+        self.assertNotIn(BACKLOG, MILESTONE_WINDOW)
+
+    def test_every_train_and_stage_has_a_due_date_equal_to_its_window_end(self):
+        for title in SCHEDULED + SHIPPED + HISTORY_STAGES + HISTORY_ERAS:
+            self.assertEqual(MILESTONE_DUE[title][:10], MILESTONE_WINDOW[title][1], title)
+
+    def test_descriptions_follow_the_template(self):
+        for title in SCHEDULED + SHIPPED + HISTORY_STAGES:
+            text = MILESTONE_DESCRIPTION[title]
+            self.assertTrue(text.startswith("Goal: "), title)
+            for part in ("Window: ", "Key deliverables: ", "Exit: "):
+                self.assertIn(part, text, title)
+
+    def test_old_titles_rename_to_the_new_nomenclature(self):
+        self.assertEqual(RENAMES["2026-11 · Release blockers"], RELEASE)
+        self.assertEqual(RENAMES["2027-03 · Legacy retirement"], GA)
+        self.assertEqual(RENAMES["2027-06 · Backlog"], BACKLOG)
+        self.assertEqual(RENAMES["History · Phase 0 Foundations"], HISTORY_STAGES[1])
+        self.assertEqual(RENAMES["Phase 0 - Foundations"], HISTORY_STAGES[1])
+        for bucket in ("History · v1.0 priority bucket", "History · v1.1 priority bucket", "History · Backlog priority bucket"):
+            self.assertEqual(RENAMES[bucket], HISTORY_STAGES[8])
+        self.assertEqual(RENAMES["History · 2026 Q4 — Cloud AI SDLC"], HISTORY_ERAS[2])
+        for old, new in RENAMES.items():
+            self.assertNotIn(new, RENAMES, f"{old} renames to a title that is itself renamed")
+
+    def test_history_is_recognised_by_prefix(self):
+        self.assertTrue(is_history("H0 · Swing monolith (2014–2018)"))
+        self.assertTrue(is_history("H · 2026 Q3 cohort: product build & UI/UX"))
+        self.assertTrue(is_history("History · Phase 0 Foundations"))
+        self.assertFalse(is_history("v0.3 · Hexagonal core & security (2026-11)"))
+        self.assertFalse(is_history(BACKLOG))
+
+
+class ShippedTrainTests(unittest.TestCase):
+    V01 = "v0.1 · First release cuts (2026-10)"
+    V02 = "v0.2 · Release identity & product forms (2026-10)"
+    Q4 = "H · 2026 Q4 cohort: cloud AI SDLC"
+
+    def test_issues_closed_up_to_the_last_v0_1_tag_shipped_in_v0_1(self):
+        self.assertEqual(shipped_train("2026-10-01T00:00:00Z", None), self.V01)
+        self.assertEqual(shipped_train("2026-10-10T14:45:19Z", self.Q4), self.V01)
+
+    def test_issues_closed_after_v0_1_up_to_v0_2_3_shipped_in_v0_2(self):
+        self.assertEqual(shipped_train("2026-10-10T15:00:00Z", "2026-11 · Release blockers"), self.V02)
+        self.assertEqual(shipped_train("2026-10-16T11:26:32Z", RELEASE), self.V02)
+
+    def test_outside_the_cut_windows_nothing_moves(self):
+        self.assertIsNone(shipped_train("2026-09-30T23:59:59Z", None))
+        self.assertIsNone(shipped_train("2026-10-16T11:26:33Z", None))
+        self.assertIsNone(shipped_train("", None))
+
+    def test_curated_history_and_shipped_trains_are_kept(self):
+        self.assertIsNone(shipped_train("2026-10-05T00:00:00Z", "H8 · Pre-release hardening (2026-09–2026-10)"))
+        self.assertIsNone(shipped_train("2026-10-05T00:00:00Z", "History · v1.0 priority bucket"))
+        self.assertIsNone(shipped_train("2026-10-14T00:00:00Z", self.V02))
+
+
+class ApplyTests(unittest.TestCase):
+    @staticmethod
+    def issue(state, milestone=None, closed_at=None, labels=(), number=1000, title="x"):
+        return {
+            "number": number,
+            "title": title,
+            "state": state,
+            "closedAt": closed_at,
+            "milestone": {"title": milestone} if milestone else None,
+            "labels": {"nodes": [{"name": name} for name in labels]},
+        }
+
+    def test_merged_bucket_issues_move_to_h8(self):
+        for bucket in ("History · v1.1 priority bucket", "History · Backlog priority bucket"):
+            self.assertEqual(
+                target_for(self.issue("CLOSED", bucket, "2026-10-05T00:00:00Z")),
+                "H8 · Pre-release hardening (2026-09–2026-10)",
+            )
+
+    def test_closed_cohort_issue_in_a_cut_window_moves_to_the_shipped_train(self):
+        self.assertEqual(
+            target_for(self.issue("CLOSED", "History · 2026 Q4 — Cloud AI SDLC", "2026-10-11T00:00:00Z")),
+            "v0.2 · Release identity & product forms (2026-10)",
+        )
+
+    def test_curated_history_issue_keeps_its_renamed_stage(self):
+        self.assertEqual(
+            target_for(self.issue("CLOSED", "History · Phase 1 Backend API", "2026-05-02T00:00:00Z")),
+            "H2 · REST API migration (2026-05)",
+        )
+
+    def test_open_catalog_anchor_targets_the_catalog(self):
+        self.assertEqual(
+            target_for(self.issue("OPEN", "2026-12 · Frontend product", labels=["CASO-DE-USO"], number=162, title="CU09")),
+            CATALOG,
+        )
+
+    def test_payload_closes_history_and_shipped_and_leaves_continuous_undated(self):
+        self.assertEqual(milestone_payload(HISTORY_STAGES[0])["state"], "closed")
+        self.assertEqual(milestone_payload(SHIPPED[1])["state"], "closed")
+        self.assertEqual(milestone_payload(RELEASE)["state"], "open")
+        self.assertIsNone(milestone_payload(BACKLOG)["due_on"])
+        self.assertIsNone(milestone_payload(CATALOG)["due_on"])
+        self.assertEqual(milestone_payload(RELEASE)["due_on"], MILESTONE_DUE[RELEASE])
+
+
+class CreateBodyTests(unittest.TestCase):
+    """The first Owner run stopped creating Catalog, the only POST with ``"due_on": null``."""
+
+    def test_continuous_milestone_is_created_without_a_due_on_key(self):
+        body = create_body(CATALOG)
+        self.assertNotIn("due_on", body)
+        self.assertEqual(body["state"], "open")
+        self.assertEqual(body["title"], CATALOG)
+
+    def test_closed_milestones_are_created_open_with_their_due_date(self):
+        body = create_body(SHIPPED[0])
+        self.assertEqual(body["state"], "open")
+        self.assertEqual(body["due_on"], MILESTONE_DUE[SHIPPED[0]])
+        self.assertTrue(all(value is not None for value in body.values()))
+
+
+class ConsolidationTests(unittest.TestCase):
+    """#1847: merged-away milestones and pre-taxonomy views do not linger."""
+
+    def row(self, number, title, open_issues=0, closed_issues=0):
+        return {"number": number, "title": title, "open_issues": open_issues, "closed_issues": closed_issues}
+
+    def test_merged_bucket_is_retired_once_its_target_exists(self):
+        rows = [self.row(12, "H8 · Pre-release hardening (2026-09–2026-10)"),
+                self.row(13, "History · v1.1 priority bucket")]
+        self.assertEqual([r["number"] for r in retired_milestones(rows)], [13])
+
+    def test_bucket_is_not_retired_before_its_target_exists(self):
+        self.assertEqual(retired_milestones([self.row(13, "History · v1.1 priority bucket")]), [])
+
+    def test_policy_milestones_are_never_retired(self):
+        rows = [self.row(n, t) for n, t in enumerate(SCHEDULED, 1)]
+        self.assertEqual(retired_milestones(rows), [])
+
+    def test_views_outside_the_contract_are_stale(self):
+        names = ["Kanban", "Casos de Uso", "RNF", "Catalog", "KANBAN"]
+        self.assertEqual(stale_views(names), ["Casos de Uso", "RNF", "KANBAN"])
+
+    def test_alias_is_not_stale_while_its_new_view_is_missing(self):
+        self.assertEqual(stale_views(["KANBAN", "Requerimientos Func."]), [])
 
 
 class RoadmapContractTests(unittest.TestCase):
@@ -181,7 +371,7 @@ class RoadmapContractTests(unittest.TestCase):
         )
 
     def test_every_history_and_delivery_milestone_has_a_roadmap_window(self):
-        expected = set(SCHEDULED) | set(HISTORY_ERAS) | set(RENAMES.values())
+        expected = set(SCHEDULED) | set(HISTORY_ERAS) | set(HISTORY_STAGES) | set(SHIPPED)
         self.assertEqual(set(MILESTONE_WINDOW), expected)
         for start, target in MILESTONE_WINDOW.values():
             self.assertLessEqual(start, target)
@@ -193,29 +383,53 @@ class RoadmapContractTests(unittest.TestCase):
             "requerimiento-funcional",
             "requerimiento-no-funcional",
             "CASO-DE-USO",
+            "trace:rf",
+            "trace:rnf",
+            "trace:cu",
         ):
-            self.assertIn(f"-label:{catalog_label}", FULL_LIFECYCLE_FILTER)
-            self.assertIn(f"-label:{catalog_label}", DELIVERY_FILTER)
+            self.assertIn(catalog_label, FULL_LIFECYCLE_FILTER)
+            self.assertIn(catalog_label, DELIVERY_FILTER)
+        self.assertTrue(FULL_LIFECYCLE_FILTER.startswith("-label:"))
 
     def test_view_contract_separates_history_from_execution(self):
         self.assertEqual(
-            VIEW_CONTRACTS["Roadmap"],
-            ("ROADMAP_LAYOUT", FULL_LIFECYCLE_FILTER),
+            VIEW_CONTRACTS["Release roadmap"],
+            ("ROADMAP_LAYOUT", f'{FULL_LIFECYCLE_FILTER} -milestone:"{BACKLOG}"'),
         )
-        self.assertEqual(
-            VIEW_CONTRACTS["KANBAN"],
-            ("BOARD_LAYOUT", DELIVERY_FILTER),
-        )
-        self.assertEqual(
-            VIEW_CONTRACTS["Agent queue"],
-            ("TABLE_LAYOUT", DELIVERY_FILTER),
-        )
+        self.assertEqual(VIEW_CONTRACTS["Kanban"], ("BOARD_LAYOUT", DELIVERY_FILTER))
+        self.assertIn("status:Todo", VIEW_CONTRACTS["Agent queue"][1])
 
-    def test_views_expose_only_the_fields_needed_for_their_job(self):
-        self.assertNotIn("Roadmap", VIEW_FIELDS)
-        self.assertIn("Priority", VIEW_FIELDS["Agent queue"])
-        self.assertIn("Area", VIEW_FIELDS["Agent queue"])
-        self.assertNotIn("Start", VIEW_FIELDS["KANBAN"])
+    def test_nine_views_from_the_label_taxonomy(self):
+        # #1860: the approved board views; filters name old AND new labels (comma = OR).
+        self.assertEqual(
+            list(VIEW_CONTRACTS),
+            ["Kanban", "Current train", "Agent queue", "In flight", "Needs triage",
+             "Blocked / needs info", "Release roadmap", "Shipped", "Catalog"],
+        )
+        self.assertIn("label:status:ready,ready-for-dev", VIEW_CONTRACTS["Agent queue"][1])
+        self.assertIn(f'milestone:"{current_train()}"', VIEW_CONTRACTS["Current train"][1])
+        self.assertIn("is:closed", VIEW_CONTRACTS["Shipped"][1])
+        self.assertIn(f'milestone:"{CATALOG}"', VIEW_CONTRACTS["Catalog"][1])
+        for name in ("trace:rf", "requerimiento-funcional", "trace:cu", "CASO-DE-USO"):
+            self.assertIn(name, DELIVERY_FILTER)
+
+    def test_views_do_not_use_deleted_board_fields(self):
+        # #1860: Priority/Area/Kind project fields are deleted; labels carry them.
+        self.assertNotIn("Release roadmap", VIEW_FIELDS)
+        for fields in VIEW_FIELDS.values():
+            self.assertFalse({"Priority", "Area", "Kind"} & set(fields))
+        self.assertIn("Labels", VIEW_FIELDS["Agent queue"])
+        self.assertNotIn("Start", VIEW_FIELDS["Kanban"])
+
+    def test_view_layout_covers_all_nine_views(self):
+        self.assertEqual(set(VIEW_LAYOUT), set(VIEW_CONTRACTS))
+        self.assertEqual(VIEW_LAYOUT["Kanban"]["vertical_group"], ("Status",))
+        self.assertEqual(VIEW_LAYOUT["Release roadmap"]["group"], ("Milestone",))
+        self.assertTrue(VIEW_UI_ONLY)
+
+    def test_current_train_is_the_earliest_scheduled(self):
+        self.assertEqual(current_train(), SCHEDULED[0])
+        self.assertEqual(current_train(), RELEASE)
 
 
 class LaneTests(unittest.TestCase):
@@ -278,5 +492,143 @@ class PriorityTests(unittest.TestCase):
         )
 
 
+class RicherCheckHelpersTests(unittest.TestCase):
+    def test_description_and_due_drift(self):
+        row = {"title": RELEASE, "description": "stale", "due_on": "2099-01-01T00:00:00Z"}
+        drift = milestone_field_drift(row, milestone_payload(RELEASE))
+        self.assertIn("description", drift)
+        self.assertIn("due_on", drift)
+
+    def test_closed_with_status_labels(self):
+        issues = [
+            {
+                "number": 1,
+                "state": "CLOSED",
+                "labels": {"nodes": [{"name": "status:in-progress"}, {"name": "bug"}]},
+                "milestone": None,
+            },
+            {
+                "number": 2,
+                "state": "OPEN",
+                "labels": {"nodes": [{"name": "status:ready"}]},
+                "milestone": None,
+            },
+        ]
+        self.assertEqual(closed_issues_with_status_labels(issues), [(1, ["status:in-progress"])])
+
+    def test_bucket_summary_and_missing_milestones(self):
+        issues = [
+            {
+                "number": 3,
+                "state": "OPEN",
+                "title": "RF-01",
+                "labels": {"nodes": [{"name": "requerimiento-funcional"}]},
+                "milestone": {"title": BACKLOG},
+            }
+        ]
+        summary = assignment_bucket_summary(issues)
+        self.assertEqual(summary[f"{BACKLOG} -> {CATALOG}"], 1)
+        self.assertEqual(missing_wanted_titles({}), list(WANTED))
+
+    def test_snapshot_freshness(self):
+        committed = {"open": 1, "closed": 2, "milestoneNumbers": {"A": 1}}
+        live = {"open": 9, "closed": 2, "milestoneNumbers": {"A": 1, "B": 2}}
+        errors = snapshot_freshness_errors(committed, live)
+        self.assertTrue(any("open" in e for e in errors))
+        self.assertTrue(any("milestone titles" in e for e in errors))
+
+    def test_missing_scopes_and_http_error_name_step(self):
+        self.assertEqual(missing_scopes(["repo"]), ["project"])
+        self.assertEqual(missing_scopes(["repo", "project"]), [])
+        msg = http_error_message("ensure_milestones", "POST", "/repos/x/milestones", 422, "due_on", obj=CATALOG)
+        self.assertIn("ensure_milestones", msg)
+        self.assertIn(CATALOG, msg)
+
+
+class FakeGitHub:
+    """Rejects ``due_on: null`` on POST the way the live API did on the first Owner run."""
+
+    def __init__(self) -> None:
+        self.step = "init"
+        self.milestones: dict[str, dict] = {}
+        self.next_number = 1
+        self.posts: list[dict] = []
+
+    def request(self, method: str, path: str, body: dict | None = None, *, obj: str = ""):
+        if method == "GET" and path.endswith("/milestones?state=all&per_page=100"):
+            return 200, list(self.milestones.values())
+        if method == "POST" and path.endswith("/milestones"):
+            assert body is not None
+            if "due_on" in body and body["due_on"] is None:
+                raise SystemExit(f"step={self.step}: rejected due_on null for {obj or body.get('title')}")
+            self.posts.append(body)
+            row = {
+                "number": self.next_number,
+                "title": body["title"],
+                "description": body.get("description"),
+                "due_on": body.get("due_on"),
+                "state": body.get("state", "open"),
+                "open_issues": 0,
+                "closed_issues": 0,
+            }
+            self.next_number += 1
+            self.milestones[row["title"]] = row
+            return 201, row
+        if method == "PATCH" and "/milestones/" in path:
+            number = int(path.rsplit("/", 1)[-1])
+            row = next(r for r in self.milestones.values() if r["number"] == number)
+            row.update(body or {})
+            return 200, row
+        if method == "DELETE" and "/milestones/" in path:
+            number = int(path.rsplit("/", 1)[-1])
+            title = next(t for t, r in self.milestones.items() if r["number"] == number)
+            del self.milestones[title]
+            return 204, None
+        raise AssertionError(f"unexpected {method} {path}")
+
+    def graphql(self, query: str, variables: dict | None = None) -> dict:
+        raise AssertionError("graphql unused in whole-run fixture")
+
+
+class WholeRunFakeGitHubTests(unittest.TestCase):
+    def test_whole_run_survives_due_on_null_rejection_and_ends_clean(self):
+        gh = FakeGitHub()
+        # Pre-seed a merged-away empty bucket so retire has work.
+        gh.milestones["History · v1.1 priority bucket"] = {
+            "number": 99,
+            "title": "History · v1.1 priority bucket",
+            "open_issues": 0,
+            "closed_issues": 0,
+            "description": "old",
+            "due_on": None,
+            "state": "open",
+        }
+        # Target of the rename must exist so the old title is retired.
+        gh.milestones[RENAMES["History · v1.1 priority bucket"]] = {
+            "number": 12,
+            "title": RENAMES["History · v1.1 priority bucket"],
+            "open_issues": 0,
+            "closed_issues": 0,
+            "description": MILESTONE_DESCRIPTION[RENAMES["History · v1.1 priority bucket"]],
+            "due_on": MILESTONE_DUE.get(RENAMES["History · v1.1 priority bucket"]),
+            "state": "closed",
+        }
+        by_title = ensure_milestones(gh, apply=True)
+        for title in WANTED:
+            self.assertIn(title, by_title)
+        for body in gh.posts:
+            self.assertFalse("due_on" in body and body["due_on"] is None, body)
+            if body["title"] in (BACKLOG, CATALOG):
+                self.assertNotIn("due_on", body)
+        left = retire_milestones(gh, apply=True)
+        self.assertEqual(left, 0)
+        self.assertNotIn("History · v1.1 priority bucket", gh.milestones)
+        # Zero metadata mismatches against the fake catalogue.
+        from apply_milestone_policy import check_milestone_metadata
+
+        self.assertEqual(check_milestone_metadata(list(gh.milestones.values())), 0)
+
+
 if __name__ == "__main__":
     unittest.main()
+

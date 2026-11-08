@@ -6,7 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.licensis.notaire.application.usecase.document.UpcomingExpirationService;
+import com.licensis.notaire.adapter.out.persistence.document.UpcomingExpirationService;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.business.SubmittedDocument;

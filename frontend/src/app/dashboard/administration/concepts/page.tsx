@@ -12,14 +12,28 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
-import { apiGet } from "@/lib/api-client";
+import { conceptUseCases } from "@/composition/concept";
+import type { Concept as DomainConcept } from "@/core/concept/domain/concept";
 import { useConcepts, useCreateConcept, useUpdateConcept, useDeleteConcept } from "@/hooks/useConcepts";
 import { extractApiError } from "@/lib/utils";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import type { Concept } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { useFormat } from "@/hooks/useFormat";
 
 const EMPTY: Partial<Concept> = { name: "", value: undefined };
+
+function toWire(c: DomainConcept): Concept {
+  return {
+    idConcept: c.id,
+    name: c.name,
+    value: c.value,
+    percentage: c.percentage,
+    fixed: c.fixed,
+    enabled: c.enabled,
+    version: c.version,
+  };
+}
 
 export default function ConceptsPage() {
   const fmt = useFormat();
@@ -27,7 +41,7 @@ export default function ConceptsPage() {
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const { data: concepts = [], isLoading } = useConcepts();
+  const { data: concepts = [], isLoading, isError, refetch } = useConcepts();
   const createMutation = useCreateConcept();
   const updateMutation = useUpdateConcept();
   const deleteMutation = useDeleteConcept();
@@ -36,21 +50,37 @@ export default function ConceptsPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Concept>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [search, setSearch] = useState("");
 
   const { data: filtered = concepts } = useQuery({
     queryKey: ["concepts", "search", search, concepts],
-    queryFn: () =>
+    queryFn: async () =>
       search
-        ? apiGet<Concept[]>(`/concepts/search?name=${encodeURIComponent(search)}`)
-        : Promise.resolve(concepts),
+        ? (await conceptUseCases.searchByName(search)).map(toWire)
+        : concepts,
   });
 
-  function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
-  function openEdit(c: Concept) { setEditing(c); setIsEditMode(true); setModalOpen(true); }
+  function openCreate() {
+    setEditing(EMPTY);
+    setIsEditMode(false);
+    setFieldErrors({});
+    setModalOpen(true);
+  }
+  function openEdit(c: Concept) {
+    setEditing(c);
+    setIsEditMode(true);
+    setFieldErrors({});
+    setModalOpen(true);
+  }
 
   async function handleSave() {
-    if (!editing.name?.trim()) { toast.error(t("nameRequired")); return; }
+    const required = requiredFieldErrors(
+      { name: editing.name, value: editing.value },
+      tc("fieldRequired"),
+    );
+    setFieldErrors(required);
+    if (Object.keys(required).length > 0) return;
     try {
       if (isEditMode && editing.idConcept) {
         await updateMutation.mutateAsync({ id: editing.idConcept, data: editing });
@@ -72,7 +102,7 @@ export default function ConceptsPage() {
 
   async function handleDeleteClick(c: Concept) {
     try {
-      const { inUse } = await apiGet<{ inUse: boolean }>(`/concepts/${c.idConcept}/in-use`);
+      const inUse = await conceptUseCases.isInUse(c.idConcept!);
       if (inUse) {
         toast.warning(t("inUseCannotDelete"));
         return;
@@ -127,25 +157,31 @@ export default function ConceptsPage() {
         />
       </div>
 
-      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(c) => c.idConcept!} emptyMessage={t("noData")} />
+      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(c) => c.idConcept!} emptyMessage={t("noData")} 
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
+      />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={isEditMode ? t("editConcepto") : t("newConcepto")}>
-              <FormField label={t("fields.nombre")} required>
+              <FormField label={t("fields.nombre")} required error={fieldErrors.name}>
                 <Input
                   value={editing.name ?? ""}
                   onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                   data-testid="input-name-concept"
+                  aria-invalid={!!fieldErrors.name}
                 />
               </FormField>
-              <FormField label={t("fields.valorBaseInput")}>
+              <FormField label={t("fields.valorBaseInput")} required error={fieldErrors.value}>
                 <Input
                   type="number"
                   step="0.01"
                   value={editing.value ?? ""}
                   onChange={(e) => setEditing({ ...editing, value: parseFloat(e.target.value) })}
+                  data-testid="input-value-concept"
+                  aria-invalid={!!fieldErrors.value}
                 />
               </FormField>
             </FormSection>

@@ -9,57 +9,54 @@
  * on seed data, then assert at 390x844 that the row is a card, its edit button
  * is inside the viewport, and the page does not scroll horizontally.
  */
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 
 const ROW_ID = 990_109;
+/** Written by global-setup; avoids per-test UI login races / lockouts on the mobile project. */
+const ADMIN_AUTH = "tests/fixtures/admin-auth.json";
 
 const PAGES: { route: string; api: string; paged: boolean; row: Record<string, unknown> }[] = [
   {
     route: "/dashboard/people",
-    api: "**/api/v1/people?**",
+    // Match with or without query string (Playwright `?**` required a literal `?`).
+    api: "**/api/v1/people**",
     paged: true,
     row: { personId: ROW_ID, firstName: "Mobile", lastName: "TS0109", identificationNumber: "99010901", email: "mobile.ts0109@notaire.test", isClient: true },
   },
   {
     route: "/dashboard/managements",
-    api: "**/api/v1/managements?**",
+    api: "**/api/v1/managements**",
     paged: true,
     row: { idManagement: ROW_ID, number: "TS0109", procedureCount: 1, currentStatus: "INICIADA" },
   },
   {
     route: "/dashboard/budgets",
-    api: "**/api/v1/budgets?**",
+    api: "**/api/v1/budgets**",
     paged: true,
     row: { idBudget: ROW_ID, date: "2026-10-01", propertyAmount: 1000, status: "PENDIENTE" },
   },
   {
     route: "/dashboard/deeds",
-    api: "**/api/v1/deeds?**",
+    api: "**/api/v1/deeds**",
     paged: true,
     row: { idDeed: ROW_ID, number: 109, dateDeedrecording: "2026-10-01", status: "BORRADOR" },
   },
   {
     route: "/dashboard/payments",
-    api: "**/api/v1/payments",
+    api: "**/api/v1/payments**",
     paged: false,
     row: { idPayment: ROW_ID, idBudget: 1, date: "2026-10-01", amount: 109, paymentMethod: "EFECTIVO" },
   },
 ];
 
-async function loginAsAdmin(page: Page) {
-  await page.goto("/login");
-  await page.getByTestId("input-username").fill("admin");
-  await page.getByTestId("input-password").fill("admin");
-  await page.getByTestId("btn-sign-in").click();
-  await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
-}
-
 test.describe("TS-0109 - list pages at 390px (#1356)", () => {
-  test.use({ viewport: { width: 390, height: 844 } });
+  test.use({
+    viewport: { width: 390, height: 844 },
+    storageState: ADMIN_AUTH,
+  });
 
   for (const p of PAGES) {
     test(`${p.route}: rows are cards with reachable actions and no horizontal overflow`, async ({ page }) => {
-      await loginAsAdmin(page);
       await page.route(p.api, async (route) => {
         if (route.request().method() !== "GET") return route.continue();
         await route.fulfill({
@@ -71,6 +68,9 @@ test.describe("TS-0109 - list pages at 390px (#1356)", () => {
         });
       });
       await page.goto(p.route);
+      // storageState must hydrate Zustand; otherwise dashboard stays on AppShellSkeleton (#1994).
+      await expect(page.getByTestId("app-shell-skeleton")).toHaveCount(0, { timeout: 15000 });
+      await expect(page).toHaveURL((url) => url.pathname === p.route);
 
       const cards = page.getByTestId("data-table-cards");
       await expect(cards).toBeVisible({ timeout: 15000 });
@@ -92,8 +92,24 @@ test.describe("TS-0109 - list pages at 390px (#1356)", () => {
 
   test("desktop keeps the table", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await loginAsAdmin(page);
+    const people = PAGES.find((p) => p.route === "/dashboard/people")!;
+    await page.route(people.api, async (route) => {
+      if (route.request().method() !== "GET") return route.continue();
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          content: [people.row],
+          totalElements: 1,
+          totalPages: 1,
+          number: 0,
+          size: 1000,
+        }),
+      });
+    });
     await page.goto("/dashboard/people");
+    await expect(page.getByTestId("app-shell-skeleton")).toHaveCount(0, { timeout: 15000 });
+    await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
     await expect(page.getByRole("table")).toBeVisible({ timeout: 15000 });
     await expect(page.getByTestId("data-table-cards")).toHaveCount(0);
   });

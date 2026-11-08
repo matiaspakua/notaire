@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# Local mirror of the CI gates. Install: cp templates/integrations/pre-push .git/hooks/pre-push
+# Adjust the kit path if you vendored it elsewhere.
+exec python3 tools/ai-sdlc/bin/aisdlc gate pre-push --stream

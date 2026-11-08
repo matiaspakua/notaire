@@ -1,17 +1,12 @@
 package com.licensis.notaire.adapter.in.web;
 
 import com.licensis.notaire.adapter.in.web.person.PersonController;
+import com.licensis.notaire.adapter.in.web.person.PersonExceptionHandler;
 import com.licensis.notaire.adapter.in.web.testimony.TestimonyController;
+import com.licensis.notaire.adapter.in.web.testimony.TestimonyExceptionHandler;
 import com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementController;
-import com.licensis.notaire.application.usecase.person.PersonService;
-import com.licensis.notaire.business.IdentificationType;
-import com.licensis.notaire.business.Person;
-import com.licensis.notaire.business.Testimony;
-import com.licensis.notaire.business.TestimonyMovement;
-import com.licensis.notaire.repository.DeedRepository;
-import com.licensis.notaire.repository.IdentificationTypeRepository;
-import com.licensis.notaire.repository.TestimonyMovementRepository;
-import com.licensis.notaire.repository.TestimonyRepository;
+import com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementExceptionHandler;
+import com.licensis.notaire.config.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,7 +16,6 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -59,7 +53,19 @@ class TestimonyPersonConstraintErrorsTest {
             Class<?> parameter = constructor.getParameterTypes()[i];
             args[i] = collaborators.containsKey(parameter) ? collaborators.get(parameter) : mock(parameter);
         }
-        return standaloneSetup(constructor.newInstance(args)).build();
+        Object[] advice;
+        if (type == PersonController.class) {
+            advice = new Object[] {new PersonExceptionHandler(), new GlobalExceptionHandler()};
+        } else if (type == TestimonyController.class) {
+            advice = new Object[] {new TestimonyExceptionHandler(), new GlobalExceptionHandler()};
+        } else if (type == TestimonyMovementController.class) {
+            advice = new Object[] {new TestimonyMovementExceptionHandler(), new GlobalExceptionHandler()};
+        } else {
+            advice = new Object[] {new GlobalExceptionHandler()};
+        }
+        return standaloneSetup(constructor.newInstance(args))
+                .setControllerAdvice(advice)
+                .build();
     }
 
     private static ResultActions send(MockMvc mvc, boolean update, String url, String body) throws Exception {
@@ -77,35 +83,40 @@ class TestimonyPersonConstraintErrorsTest {
     }
 
     private static MockMvc movements(RuntimeException failure) throws Exception {
-        TestimonyMovementRepository repo = mock(TestimonyMovementRepository.class);
-        when(repo.findById(anyInt())).thenReturn(Optional.of(new TestimonyMovement()));
-        when(repo.save(any())).thenThrow(failure);
-        return mvc(TestimonyMovementController.class, Map.of(TestimonyMovementRepository.class, repo));
+        var manage = mock(com.licensis.notaire.application.port.in.testimony.ManageTestimonyMovementsUseCase.class);
+        when(manage.create(any())).thenReturn(
+                new com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort.SaveResult.Failed(
+                        failure));
+        when(manage.update(anyInt(), any())).thenReturn(
+                new com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort.SaveResult.Failed(
+                        failure));
+        return mvc(TestimonyMovementController.class, Map.of(
+                com.licensis.notaire.application.port.in.testimony.ManageTestimonyMovementsUseCase.class, manage));
     }
 
     private static MockMvc testimonies(RuntimeException failure) throws Exception {
-        TestimonyRepository repo = mock(TestimonyRepository.class);
-        when(repo.findById(anyInt())).thenReturn(Optional.of(new Testimony()));
-        when(repo.save(any())).thenThrow(failure);
-        DeedRepository deeds = mock(DeedRepository.class);
-        when(deeds.existsById(anyInt())).thenReturn(true);
-        return mvc(TestimonyController.class, Map.of(TestimonyRepository.class, repo, DeedRepository.class, deeds));
+        var manage = mock(com.licensis.notaire.application.port.in.testimony.ManageTestimoniesUseCase.class);
+        when(manage.create(any())).thenReturn(
+                new com.licensis.notaire.application.port.out.testimony.TestimonyOpsPort.SaveResult.Failed(failure));
+        when(manage.update(anyInt(), any())).thenReturn(
+                new com.licensis.notaire.application.port.out.testimony.TestimonyOpsPort.SaveResult.Failed(failure));
+        return mvc(TestimonyController.class, Map.of(
+                com.licensis.notaire.application.port.in.testimony.ManageTestimoniesUseCase.class, manage));
     }
 
     private static MockMvc people(RuntimeException failure) throws Exception {
-        PersonService service = mock(PersonService.class);
-        Person existing = new Person();
-        existing.setPersonId(1);
-        when(service.findById(1)).thenReturn(Optional.of(existing));
-        when(service.save(any())).thenThrow(failure);
-        IdentificationTypeRepository types = mock(IdentificationTypeRepository.class);
-        when(types.findById(anyInt())).thenReturn(Optional.of(new IdentificationType(1, "DNI")));
-        return mvc(PersonController.class, Map.of(PersonService.class, service,
-                IdentificationTypeRepository.class, types));
+        var manage = mock(com.licensis.notaire.application.port.in.person.ManagePeopleUseCase.class);
+        when(manage.create(any())).thenReturn(
+                new com.licensis.notaire.application.port.out.person.PersonOpsPort.SaveResult.Failed(failure, true));
+        when(manage.update(anyInt(), any())).thenReturn(
+                new com.licensis.notaire.application.port.out.person.PersonOpsPort.SaveResult.Failed(failure, false));
+        return mvc(PersonController.class, Map.of(
+                com.licensis.notaire.application.port.in.person.ManagePeopleUseCase.class, manage));
     }
 
     private static final String PERSON = "{\"firstName\":\"Ana\",\"lastName\":\"Paz\",\"identificationNumber\":\"1\","
             + "\"isClient\":false}";
+    private static final String MOVEMENT = "{\"testimony\":{\"idTestimony\":1},\"dateEntry\":\"2026-01-01T12:00:00.000+00:00\"}";
     private static final String TESTIMONY = "{\"number\":1,\"deed\":{\"idDeed\":1,\"number\":1}}";
     /** PUT /testimonies/{id} requires number, flagged, verified and version (#655). */
     private static final String TESTIMONY_UPDATE = "{\"number\":1,\"flagged\":false,\"verified\":false,\"version\":0,"
@@ -115,14 +126,14 @@ class TestimonyPersonConstraintErrorsTest {
     @DisplayName("POST /testimony-movements answers 400, not 409, on a constraint violation")
     void movementCreate() throws Exception {
         assertConstraint400(send(movements(new DataIntegrityViolationException(SQL_LEAK)), false,
-                "/api/v1/testimony-movements", "{}"));
+                "/api/v1/testimony-movements", MOVEMENT));
     }
 
     @Test
     @DisplayName("PUT /testimony-movements/{id} answers 400, not 500, on a constraint violation")
     void movementUpdate() throws Exception {
         assertConstraint400(send(movements(new DataIntegrityViolationException(SQL_LEAK)), true,
-                "/api/v1/testimony-movements/1", "{}"));
+                "/api/v1/testimony-movements/1", MOVEMENT));
     }
 
     @Test
@@ -157,8 +168,8 @@ class TestimonyPersonConstraintErrorsTest {
     @DisplayName("other failures keep their status: 409 on create, 500 on testimony updates, 409 on person updates")
     void otherFailuresKeepTheirStatus() throws Exception {
         RuntimeException boom = new IllegalStateException(SQL_LEAK);
-        send(movements(boom), false, "/api/v1/testimony-movements", "{}").andExpect(status().isConflict());
-        send(movements(boom), true, "/api/v1/testimony-movements/1", "{}")
+        send(movements(boom), false, "/api/v1/testimony-movements", MOVEMENT).andExpect(status().isConflict());
+        send(movements(boom), true, "/api/v1/testimony-movements/1", MOVEMENT)
                 .andExpect(status().isInternalServerError());
         send(testimonies(boom), false, "/api/v1/testimonies", TESTIMONY).andExpect(status().isConflict());
         send(testimonies(boom), true, "/api/v1/testimonies/1", TESTIMONY_UPDATE).andExpect(status().isInternalServerError());

@@ -184,6 +184,7 @@ describe("create", () => {
     await waitFor(() =>
       expect(apiPost).toHaveBeenCalledWith("/managements/complete-case", {
         number: 5100,
+        heading: "gestiones.defaultHeadingLabel 5100",
         budgetId: 21,
         notaryId: 31,
         statusManagementId: 4,
@@ -219,7 +220,7 @@ describe("create", () => {
     );
   });
 
-  it("reports a failed save and closes the form", async () => {
+  it("reports a failed save and keeps the form open (#1951)", async () => {
     apiPost.mockRejectedValue(new Error("boom"));
     await renderPage();
     await fillCreateForm(false);
@@ -228,7 +229,7 @@ describe("create", () => {
 
     await waitFor(() => expect(toast.error).toHaveBeenCalledWith("gestiones.errorSave"));
     expect(toast.success).not.toHaveBeenCalled();
-    await waitFor(() => expect(screen.queryByTestId("btn-save-management")).toBeNull());
+    expect(screen.getByTestId("btn-save-management")).toBeDefined();
   });
 
   it("starts empty every time the form opens", async () => {
@@ -332,7 +333,7 @@ describe("transition", () => {
   });
 
   it("shows the server message when the transition is refused and keeps the dialog open", async () => {
-    apiPost.mockRejectedValue(new ApiError(422, "refused", { message: "Falta documentación" }));
+    apiPost.mockRejectedValue(new ApiError(422, "refused", JSON.stringify({ message: "Falta documentación" })));
     await renderPage();
     fireEvent.click(screen.getByTestId("btn-change-status-1"));
     fireEvent.click(await screen.findByTestId("select-new-status"));

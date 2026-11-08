@@ -2,7 +2,9 @@
 
 ## Purpose
 TBD - created by archiving change chore-1571-product-release. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: The product record includes backend, frontend, and database
 
 The committed product record SHALL list the Maven version, the npm version,
@@ -19,22 +21,6 @@ recorded and SHALL NOT be required to equal that semver.
 
 - **WHEN** the record is collected
 - **THEN** `components.database.schemaVersion` is the highest `V*` migration and it differs from the product semver
-
-### Requirement: A semver maps to a delivery train and is not the milestone title
-
-Versions below 1.0.0 and versions 1.0.x SHALL map to the train
-`v1.0 — Production Ready`. Versions 1.1.x SHALL map to `v1.1 — Hardening`.
-Any other minor SHALL fail closed. A release SHALL NOT close catalog issues.
-
-#### Scenario: Pre-1.0 and 1.0.x share the production train
-
-- **WHEN** the train is derived for `0.2.0` and for `1.0.0`
-- **THEN** both results are `v1.0 — Production Ready`
-
-#### Scenario: An unmapped minor fails
-
-- **WHEN** the train is derived for `1.2.0`
-- **THEN** the derivation raises an error
 
 ### Requirement: New tags are vX.Y.Z and legacy component tags still publish
 
@@ -94,3 +80,16 @@ sidebar SHALL show the `package.json` version.
 - **WHEN** the sidebar is rendered
 - **THEN** the version element shows the `package.json` version
 
+### Requirement: A semver maps to the train with its version prefix
+
+A product version `X.Y.Z` SHALL map to the milestone whose title starts with `vX.Y · `. Every patch of a minor SHALL map to the same train. A minor with no train SHALL fail closed. A release SHALL NOT close catalog issues.
+
+#### Scenario: Patches share their minor's train
+
+- **WHEN** the train is derived for `0.2.0` and for `0.2.3`
+- **THEN** both results are `v0.2 · Release identity & product forms (2026-10)`
+
+#### Scenario: A minor with no train fails
+
+- **WHEN** the train is derived for `1.1.0`
+- **THEN** the derivation raises an error

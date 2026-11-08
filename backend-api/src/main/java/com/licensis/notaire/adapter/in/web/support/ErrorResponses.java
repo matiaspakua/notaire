@@ -104,12 +104,20 @@ public final class ErrorResponses {
     public static boolean isOptimisticLockFailure(Throwable error) {
         for (Throwable t = error; t != null; t = t.getCause() == t ? null : t.getCause()) {
             if (t instanceof OptimisticLockingFailureException
-                    || t instanceof jakarta.persistence.OptimisticLockException
-                    || t instanceof org.hibernate.StaleStateException) {
+                    || t instanceof org.hibernate.StaleStateException
+                    || isJpaOptimisticLockException(t)) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Detect JPA optimistic-lock by class name so {@code adapter.in} does not depend on
+     * {@code jakarta.persistence} (ArchUnit R1 / issue #1826).
+     */
+    private static boolean isJpaOptimisticLockException(Throwable t) {
+        return "jakarta.persistence.OptimisticLockException".equals(t.getClass().getName());
     }
 
     /**

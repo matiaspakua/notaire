@@ -1,23 +1,24 @@
 import { MermaidDiagram } from "@/components/MermaidDiagram";
 import { DOCS, SYSTEM_CONTEXT_CHART } from "@/lib/docs-content";
+import { pageMetadata } from "@/lib/site";
+import { adrs, sadVersion } from "@/lib/tech-facts";
 
-const adrs = [
-  {
-    id: "022",
-    title: "Git history / large binaries — pending Owner decision (#1438)",
-    file: "ADR-022-git-history-rewrite-and-large-binaries.md",
-  },
-  {
-    id: "024",
-    title: "Repository topology (Proposed) — Owner umbrella (#1445)",
-    file: "ADR-024-repository-topology.md",
-  },
-  { id: "025", title: "Retire notaire-shared", file: "ADR-025-retire-notaire-shared.md" },
-  { id: "026", title: "Module separation inside the repo", file: "ADR-026-module-separation.md" },
-  { id: "027", title: "Mermaid diagram language", file: "ADR-027-mermaid-diagrams.md" },
+export const metadata = pageMetadata("/docs/architecture/");
+
+/** Records the Owner decisions below hinge on (kept as explicit links; the full list follows). */
+const OWNER_ADRS = [
+  { id: "022", title: "Git history and large binaries (#1438)", file: "ADR-022-git-history-rewrite-and-large-binaries.md" },
+  { id: "024", title: "Repository topology (#1445)", file: "ADR-024-repository-topology.md" },
 ];
 
+const STATUS_STYLE: Record<string, string> = {
+  Accepted: "bg-emerald-50 text-emerald-800 border-emerald-200",
+  Proposed: "bg-amber-50 text-amber-800 border-amber-200",
+};
+
 export default function DocsArchitecturePage() {
+  const list = adrs();
+  const sad = sadVersion();
   return (
     <div className="space-y-8">
       <header className="space-y-3">
@@ -42,7 +43,7 @@ export default function DocsArchitecturePage() {
         >
           <h3 className="font-semibold text-neutral-900">SAD</h3>
           <p className="mt-2 text-sm text-neutral-600">
-            Goals, building blocks, deployment, quality requirements, risks and roadmap (v3.2).
+            Goals, building blocks, deployment, quality requirements, risks and roadmap{sad ? ` (v${sad})` : ""}.
           </p>
         </a>
         <a
@@ -51,7 +52,7 @@ export default function DocsArchitecturePage() {
         >
           <h3 className="font-semibold text-neutral-900">ADR index</h3>
           <p className="mt-2 text-sm text-neutral-600">
-            ADR-001 … ADR-027. New active diagrams must be Mermaid (ADR-027).
+            {list.length} decision records, ADR-{list[0]?.id} to ADR-{list.at(-1)?.id}. New active diagrams must be Mermaid (ADR-027).
           </p>
         </a>
       </section>
@@ -62,14 +63,14 @@ export default function DocsArchitecturePage() {
           Topology prep Phase 0 is on main (<strong>P0.1–P0.5 Done</strong>); these Owner choices
           still block marking the work done. Agents must not invent answers. Evidence:{" "}
           <a
-            className="text-[#0A84FF] hover:underline"
+            className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
             href={`${DOCS}/300-development/REPO-METRICS-BASELINE.md`}
           >
             REPO-METRICS-BASELINE.md
           </a>{" "}
-          (path-scoped workflows <strong>6/17</strong>, ~2k always-loaded tokens) and{" "}
+          (path-scoped workflows <strong>6/17</strong> when that baseline was measured) and{" "}
           <a
-            className="text-[#0A84FF] hover:underline"
+            className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
             href={`${DOCS}/300-development/REPO-SPLIT-PLAN.md`}
           >
             REPO-SPLIT-PLAN.md
@@ -79,7 +80,7 @@ export default function DocsArchitecturePage() {
         <ul className="space-y-2 text-sm">
           <li>
             <a
-              className="text-[#0A84FF] hover:underline"
+              className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
               href="https://github.com/matiaspakua/notaire/issues/1445"
             >
               #1445
@@ -89,18 +90,18 @@ export default function DocsArchitecturePage() {
           </li>
           <li>
             <a
-              className="text-[#0A84FF] hover:underline"
+              className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
               href="https://github.com/matiaspakua/notaire/issues/1438"
             >
               #1438
             </a>
             {" — "}
             P0.6 <code className="text-xs bg-neutral-100 px-1 rounded">deprecated/</code> Option A /
-            B / C (record in ADR-022)
+            B / C (history purge deferred by ADR-022)
           </li>
           <li>
             <a
-              className="text-[#0A84FF] hover:underline"
+              className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
               href="https://github.com/matiaspakua/notaire/issues/1226"
             >
               #1226
@@ -109,6 +110,20 @@ export default function DocsArchitecturePage() {
             LICENSE file (README already links one that does not exist)
           </li>
         </ul>
+        <p className="text-sm text-neutral-600">
+          Records involved:{" "}
+          {OWNER_ADRS.map((a, i) => (
+            <span key={a.id}>
+              {i > 0 && " · "}
+              <a
+                className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
+                href={`${DOCS}/200-architecture/202-ADR/${encodeURIComponent(a.file)}`}
+              >
+                ADR-{a.id} — {a.title}
+              </a>
+            </span>
+          ))}
+        </p>
       </section>
 
       <section className="space-y-3">
@@ -120,7 +135,7 @@ export default function DocsArchitecturePage() {
         <ul className="space-y-2 text-sm">
           <li>
             <a
-              className="text-[#0A84FF] hover:underline"
+              className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
               href={`${DOCS}/300-development/ASSESSMENT-2026-10.md`}
             >
               ASSESSMENT-2026-10.md
@@ -130,7 +145,7 @@ export default function DocsArchitecturePage() {
           </li>
           <li>
             <a
-              className="text-[#0A84FF] hover:underline"
+              className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
               href={`${DOCS}/300-development/DOCUMENTATION-AUDIT-2026-10.md`}
             >
               DOCUMENTATION-AUDIT-2026-10.md
@@ -141,20 +156,31 @@ export default function DocsArchitecturePage() {
         </ul>
       </section>
 
-      <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-neutral-900">Recent decisions</h2>
-        <ul className="space-y-2">
-          {adrs.map((a) => (
-            <li key={a.id}>
+      <section className="space-y-3" aria-labelledby="adr-index">
+        <h2 id="adr-index" className="text-lg font-semibold text-neutral-900">
+          All decisions
+        </h2>
+        <p className="text-sm text-neutral-600 max-w-3xl leading-relaxed">
+          Read from the ADR folder when the site is built, with each record&apos;s own status.
+        </p>
+        <ol className="divide-y divide-neutral-200 rounded-2xl border border-neutral-200 bg-white">
+          {list.map((a) => (
+            <li key={a.id} className="flex flex-wrap items-baseline gap-x-3 gap-y-1 px-4 py-2.5">
+              <span className="w-16 shrink-0 font-mono text-xs text-neutral-500">ADR-{a.id}</span>
               <a
-                className="text-sm text-[#0A84FF] hover:underline"
-                href={`${DOCS}/200-architecture/202-ADR/${a.file}`}
+                className="min-w-0 flex-1 text-sm text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
+                href={`${DOCS}/200-architecture/202-ADR/${encodeURIComponent(a.file)}`}
               >
-                ADR-{a.id} — {a.title}
+                {a.title}
               </a>
+              <span
+                className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${STATUS_STYLE[a.status] ?? "bg-neutral-50 text-neutral-700 border-neutral-200"}`}
+              >
+                {a.status}
+              </span>
             </li>
           ))}
-        </ul>
+        </ol>
       </section>
     </div>
   );

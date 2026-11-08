@@ -117,13 +117,19 @@ class RbacIntegrationTest {
     @CsvSource({
         "/api/v1/people",
         "/api/v1/deeds",
-        "/api/v1/budgets",
-        "/api/v1/procedure-types"
+        "/api/v1/budgets"
     })
     @DisplayName("should let a notary use the notarial endpoints (issue #1638)")
     void shouldLetANotaryUseTheNotarialEndpoints(String path) throws Exception {
         mockMvc.perform(get(path).header("Authorization", "Bearer " + notaryToken))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("should forbid a notary on administration catalogs without the administracion module (#1683)")
+    void shouldForbidANotaryOnAdministrationCatalogsWithoutAdministracionModule() throws Exception {
+        mockMvc.perform(get("/api/v1/procedure-types").header("Authorization", "Bearer " + notaryToken))
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -143,16 +149,34 @@ class RbacIntegrationTest {
 
     @ParameterizedTest(name = "employee GET {0} -> 200")
     @CsvSource({
+        "/api/v1/people",
+        "/api/v1/budgets",
+        "/api/v1/managements"
+    })
+    @DisplayName("should let an employee read endpoints granted to the office staff template (#1683)")
+    void shouldLetAnEmployeeReadOfficeStaffEndpoints(String path) throws Exception {
+        mockMvc.perform(get(path).header("Authorization", "Bearer " + employeeToken))
+                .andExpect(status().isOk());
+    }
+
+    @ParameterizedTest(name = "employee GET {0} -> 200")
+    @CsvSource({
         "/api/v1/procedure-types",
         "/api/v1/concepts",
         "/api/v1/management-statuses",
-        "/api/v1/document-types",
-        "/api/v1/workflow-definition"
+        "/api/v1/document-types"
     })
-    @DisplayName("should let an employee read catalogs")
-    void shouldLetAnEmployeeReadCatalogs(String path) throws Exception {
+    @DisplayName("should let an employee read administration catalogs (#559 / office staff template)")
+    void shouldLetAnEmployeeReadAdministrationCatalogs(String path) throws Exception {
         mockMvc.perform(get(path).header("Authorization", "Bearer " + employeeToken))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("should forbid an employee on workflow catalogs without the workflows module (#1683)")
+    void shouldForbidAnEmployeeOnWorkflowCatalogsWithoutWorkflowsModule() throws Exception {
+        mockMvc.perform(get("/api/v1/workflow-definition").header("Authorization", "Bearer " + employeeToken))
+                .andExpect(status().isForbidden());
     }
 
     @Test

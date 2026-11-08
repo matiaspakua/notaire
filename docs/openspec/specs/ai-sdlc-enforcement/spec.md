@@ -6,7 +6,9 @@ Mechanical checks of the CONSTITUTION process: the local-AI harness gates
 (env parsing, static test checks, runnable review notes, metrics) and the PR
 checks run by `sdlc-process.yml` and `workspace/sdlc/preflight.sh`. Issue #1083
 introduced them from the findings in `local-ai/AUDIT.md`.
+
 ## Requirements
+
 ### Requirement: Harness env files accept quoted values
 
 The harness SHALL read `KEY=value` files (`triage.env`, `tests.env`) with one
@@ -808,3 +810,103 @@ The agent workflow rule SHALL tell agents to confirm a push with `git ls-remote 
 - **WHEN** `.claude/rules/ai-agent-workflow.md` is read
 - **THEN** it contains `git ls-remote --heads origin`
 
+### Requirement: The release-please PR is exempt from the exception gate
+
+The exception gate SHALL accept a PR without an OpenSpec change when its author
+is `github-actions[bot]` and its head branch starts with `release-please--`. Any
+other combination still needs an OpenSpec change or the human `sdlc-exception` label.
+
+#### Scenario: Release-please PR passes
+
+- **WHEN** the author is `github-actions[bot]` and the head branch is `release-please--branches--main--components--notaire`
+- **THEN** `check-sdlc-exception.sh` exits 0
+
+#### Scenario: Other actions-bot PR still needs approval
+
+- **WHEN** the author is `github-actions[bot]` and the head branch does not start with `release-please--`
+- **THEN** `check-sdlc-exception.sh` fails
+
+#### Scenario: Human on a release-please branch still needs approval
+
+- **WHEN** the head branch starts with `release-please--` but the author is not `github-actions[bot]`
+- **THEN** `check-sdlc-exception.sh` fails
+
+### Requirement: Board coherence reads the label taxonomy
+
+The coherence check SHALL treat each legacy label and its taxonomy name (`workspace/sdlc/label_taxonomy.py`) as the same label, and SHALL add three rules for open issues (#1860): R6 `status:in-review` requires an open linked PR when the PR count is known; R7 `status:ready` and `status:blocked` are mutually exclusive; R8 a `status:ready` issue carries at most one `type:` label, merged legacy names counted once.
+
+#### Scenario: New WIP name satisfies In Progress
+
+- **WHEN** an open issue has Status In Progress and `status:in-progress`
+- **THEN** the check passes
+
+#### Scenario: In review without an open PR
+
+- **WHEN** an open issue carries `status:in-review` and has zero open linked PRs
+- **THEN** the check fails with R6
+
+#### Scenario: Ready and blocked together
+
+- **WHEN** an open issue carries `ready-for-dev` and `status:blocked`
+- **THEN** the check fails with R7
+
+#### Scenario: Ready issue with two types
+
+- **WHEN** a ready issue carries `bug` and `type:feature`
+- **THEN** the check fails with R8, while `TAREA` plus `chore` (both `type:chore`) passes
+
+#### Scenario: Taxonomy exception label
+
+- **WHEN** a PR carries `process:sdlc-exception`
+- **THEN** the exception, TDD-evidence and archive-hygiene checks treat it as `sdlc-exception`
+
+### Requirement: Agents do not stop with unpublished Issue-branch commits
+
+The Claude Code `Stop` hook MUST block the stop once, naming `publish-progress.sh <issue>`, when the current branch follows `<type>/<issue>_<desc>` and holds commits that are on no remote, and MUST let the stop through on the retry (`stop_hook_active`), on `main`, on other branches, after a push, and on any error.
+
+#### Scenario: local-only commits on an Issue branch
+
+- **WHEN** the agent stops on `fix/1620_x` with a commit on no remote
+- **THEN** the hook exits 2 and names `publish-progress.sh 1620`
+
+#### Scenario: the retry passes
+
+- **WHEN** the same stop is retried with `stop_hook_active` true
+- **THEN** the hook exits 0
+
+#### Scenario: pushed work passes
+
+- **WHEN** the branch's commits are on a remote
+- **THEN** the hook exits 0
+
+### Requirement: Notaire's merge stage enforces owner-only paths and anchored evidence
+
+Notaire's profile MUST list the policy, gate, harness and merge-path files as owner-only, every glob MUST match a tracked file, and the `merge` stage MUST run `aisdlc protected` and `aisdlc evidence verify` as required gates, with `aisdlc scope` and `aisdlc size` advisory at `pre-pr`.
+
+#### Scenario: a Constitution change reaches the merge stage
+
+- **WHEN** a PR modifies `CONSTITUTION.md`
+- **THEN** the `merge` stage fails `aisdlc protected` and the Owner merges it
+
+#### Scenario: a typo'd owner-only glob
+
+- **WHEN** a `[protected]` glob matches no tracked file
+- **THEN** the profile adoption test fails
+
+### Requirement: Proposals can declare a write set
+
+The proposal template and the scaffold MUST offer a `### Write set` section that `aisdlc scope` reads, and the scaffold MUST omit it when the spec gives none.
+
+#### Scenario: scaffolded write set
+
+- **WHEN** `spec.json` carries `write_set`
+- **THEN** the scaffolded proposal lists each glob under `### Write set`
+
+### Requirement: The agent protocol is written where agents read it
+
+The workflow rule MUST describe the decision packet, deviations, bounded corrections, RED+PRESERVE tests, the risk line and the evidence anchor, and the PR template MUST ask for deviations, AI assistance, the review budget and `Risk:`.
+
+#### Scenario: protocol present
+
+- **WHEN** the rule and the PR template are read
+- **THEN** each protocol element is present

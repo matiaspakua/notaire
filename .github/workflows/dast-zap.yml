@@ -55,7 +55,7 @@ jobs:
             --spring.datasource.url=jdbc:postgresql://localhost:5432/notaire \
             --spring.datasource.username=notaire \
             --spring.datasource.password=notaire \
-            --spring.jpa.hibernate.ddl-auto=update \
+            --spring.jpa.hibernate.ddl-auto=none \
             --jwt.secret="${JWT_SECRET}" \
             --actuator.security.username="${ACTUATOR_USER}" \
             --actuator.security.password="${ACTUATOR_PASSWORD}" \
@@ -72,19 +72,23 @@ jobs:
           ADMIN_PASSWORD: ci-zap-admin-pass
 
       - name: OWASP ZAP baseline scan
-        # Warn-first policy (#1067): publish the report; do not fail the job on
-        # baseline alerts until an allowlist/ratchet lands. Fail only if ZAP
-        # itself cannot run.
+        # Blocking ratchet (#1738): fail the job on non-allowlisted alerts.
+        # Allowlist: .zap/rules.tsv (reviewed informational noise: Sec-Fetch 90005, Non-Storable 10049 #1932).
+        # Evidence baseline: run 38249512129 — High/Medium/Low = 0.
         uses: zaproxy/action-baseline@v0.15.0
         with:
           target: 'http://localhost:8080'
           cmd_options: '-a'
           allow_issue_writing: false
-          fail_action: false
+          fail_action: true
+          rules_file_name: '.zap/rules.tsv'
           artifact_name: zap-baseline-report
 
       - name: Upload ZAP report files
         if: always()
+        # Evidence, not a gate (#1932): an artifact-quota outage must not turn a
+        # passing run red. The scan/test step above decides the job result.
+        continue-on-error: true
         uses: actions/upload-artifact@v7
         with:
           name: zap-baseline-report-files

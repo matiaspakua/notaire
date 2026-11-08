@@ -70,4 +70,13 @@ describe("WorkflowViewer node styling (#613)", () => {
     );
     expect(screen.getByTestId("wf-viewer")).toHaveTextContent("No nodes. Add statuses to the workflow.");
   });
+
+  it("uses shared EmptyState for the empty canvas (#1949)", () => {
+    render(
+      <NextIntlClientProvider locale="en" messages={en}>
+        <WorkflowViewer nodes={[]} transitions={[]} data-testid="wf-viewer" />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByTestId("empty-state")).toBeInTheDocument();
+  });
 });

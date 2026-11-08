@@ -1,5 +1,6 @@
 package com.licensis.notaire.application.usecase.report;
 
+import com.licensis.notaire.adapter.out.report.MonthlySwornStatementReportBuilder;
 import com.licensis.notaire.application.port.out.report.ReportDocument;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Fields;
 import com.licensis.notaire.application.port.out.report.ReportDocument.Table;

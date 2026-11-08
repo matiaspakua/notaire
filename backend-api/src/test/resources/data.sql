@@ -45,9 +45,9 @@ INSERT INTO people (
 
 -- Seed Data: User (administrator) — required by login test
 -- Entity columns: version, id (auto), username, password, status, user_type, fk_id_person
--- MD5("admin") = 21232f297a57a5a743894a0e4a801fc3
+-- BCrypt("admin", cost=12) — legacy MD5 seed retired (#1762)
 INSERT INTO users (version, username, password, user_type, status, fk_id_person) VALUES
-(0, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'ADMIN', true, 1);
+(0, 'admin', '$2a$12$MzGVbtKng5BRII/pfWCJpOE.hkzzYSLroZOjzATlTdRyygKG8Z0e6', 'ADMIN', true, 1);
 
 -- Seed Data: Budget — required by Payment FK
 -- Entity columns: version, id (auto), number, budget_date, heading, notes, status, property_amount

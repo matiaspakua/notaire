@@ -2,11 +2,13 @@
  * Server-side management lookup for pickers (#1340). Forms never load the whole
  * managements table (GET /managements?size=1000 left every case after the 1000th
  * out): they show the newest page and search by case number or by client.
+ * Hexagon wiring: #1839 / ADR-030.
  */
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { apiGet } from "@/lib/api-client";
+import { managementUseCases } from "@/composition/management";
 import { searchPeople } from "@/hooks/usePersonSearch";
 import { managementsKeys, useManagementsPage } from "@/hooks/useManagements";
+import type { Management as DomainManagement } from "@/core/management/domain/management";
 import type { DeedManagement } from "@/types";
 
 /** Newest managements listed before the user types. */
@@ -14,12 +16,21 @@ export const MANAGEMENT_PICKER_RECENT_SIZE = 20;
 /** Clients whose managements one search loads (one request each). */
 export const MANAGEMENT_PICKER_MAX_CLIENTS = 5;
 
+function toWire(m: DomainManagement): DeedManagement {
+  return {
+    idManagement: m.idManagement,
+    number: m.number,
+    heading: m.heading,
+    notes: m.notes,
+    currentStatus: m.currentStatus,
+    dateStart: m.dateStart,
+    procedureCount: m.procedureCount,
+  };
+}
+
 async function managementByNumber(number: string): Promise<DeedManagement[]> {
-  try {
-    return [await apiGet<DeedManagement>(`/managements/number/${number}`)];
-  } catch {
-    return []; // 404: no management with that number
-  }
+  const found = await managementUseCases.findByNumber(Number(number));
+  return found ? [toWire(found)] : [];
 }
 
 /**
@@ -37,10 +48,13 @@ export async function searchManagements(raw: string): Promise<DeedManagement[]> 
   const byClient = await Promise.all(
     people
       .slice(0, MANAGEMENT_PICKER_MAX_CLIENTS)
-      .map((p) => apiGet<DeedManagement[]>(`/managements/client/${p.personId}`)),
+      .map((p) => managementUseCases.listByClient(p.personId!)),
   );
   const seen = new Set<number>();
-  const clientCases = byClient.flat().sort((a, b) => (b.idManagement ?? 0) - (a.idManagement ?? 0));
+  const clientCases = byClient
+    .flat()
+    .map(toWire)
+    .sort((a, b) => (b.idManagement ?? 0) - (a.idManagement ?? 0));
   return [...byNumber, ...clientCases].filter((g) => {
     if (g.idManagement == null || seen.has(g.idManagement)) return false;
     seen.add(g.idManagement);
@@ -67,7 +81,7 @@ export function useRecentManagements(enabled: boolean) {
 export function useManagement(id: number | undefined, enabled = true) {
   return useQuery({
     queryKey: managementsKeys.detail(id ?? -1),
-    queryFn: () => apiGet<DeedManagement>(`/managements/${id}`),
+    queryFn: async () => toWire(await managementUseCases.getById(id!)),
     enabled: enabled && id != null,
     staleTime: 60_000,
   });

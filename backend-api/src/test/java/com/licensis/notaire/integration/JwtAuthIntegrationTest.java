@@ -135,15 +135,14 @@ class JwtAuthIntegrationTest {
     }
 
     @Test
-    @DisplayName("TC-LOGIN-12: Login with empty username and password returns valid=false")
+    @DisplayName("TC-LOGIN-12: Login with empty username and password returns 400 (#655)")
     void shouldRejectLoginWithEmptyCredentials() throws Exception {
         mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "", "password": ""}
                                 """))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.valid").value(false));
+                .andExpect(status().isBadRequest());
     }
 
     @Test

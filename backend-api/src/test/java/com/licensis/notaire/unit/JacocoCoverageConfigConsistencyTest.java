@@ -54,15 +54,16 @@ class JacocoCoverageConfigConsistencyTest {
     }
 
     @Test
-    @DisplayName("Should enforce the raised coverage floor (80% line / 65% branch)")
+    @DisplayName("Should enforce the raised coverage floor (85% line / 70% branch)")
     void shouldEnforceRaisedCoverageFloor() throws IOException {
         String pomContent = Files.readString(Paths.get(POM_PATH));
 
         int linePercent = extractPercent(pomContent, LINE_MINIMUM_PATTERN);
         int branchPercent = extractPercent(pomContent, BRANCH_MINIMUM_PATTERN);
 
-        assertThat(linePercent).as("Line coverage floor must be 80%").isEqualTo(80);
-        assertThat(branchPercent).as("Branch coverage floor must be 65%").isEqualTo(65);
+        // Raise-only ratchet toward Owner >90% target (#2046). Never lower without ADR.
+        assertThat(linePercent).as("Line coverage floor must be 85%").isEqualTo(85);
+        assertThat(branchPercent).as("Branch coverage floor must be 70%").isEqualTo(70);
     }
 
     @Test

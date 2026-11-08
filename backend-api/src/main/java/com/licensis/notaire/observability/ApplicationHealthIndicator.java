@@ -20,30 +20,16 @@ public class ApplicationHealthIndicator implements HealthIndicator {
     @Override
     public Health health() {
         try {
-            // Check application readiness
-            boolean isReady = checkApplicationReadiness();
-            
-            if (isReady) {
-                structuredLogger.logHealthProbe(
-                    "application_health",
-                    "UP",
-                    Map.of("timestamp", System.currentTimeMillis())
-                );
-                return Health.up()
-                    .withDetail("service", "notaire-backend")
-                    .withDetail("status", "operational")
-                    .build();
-            } else {
-                structuredLogger.logHealthProbe(
-                    "application_health",
-                    "DOWN",
-                    Map.of("reason", "application not ready")
-                );
-                return Health.down()
-                    .withDetail("service", "notaire-backend")
-                    .withDetail("reason", "Application not fully initialized")
-                    .build();
-            }
+            // Application process is up; database readiness is a separate health indicator.
+            structuredLogger.logHealthProbe(
+                "application_health",
+                "UP",
+                Map.of("timestamp", System.currentTimeMillis())
+            );
+            return Health.up()
+                .withDetail("service", "notaire-backend")
+                .withDetail("status", "operational")
+                .build();
         } catch (Exception e) {
             logger.error("Health check failed", e);
             structuredLogger.logError(
@@ -55,14 +41,5 @@ public class ApplicationHealthIndicator implements HealthIndicator {
                 .withDetail("error", e.getMessage())
                 .build();
         }
-    }
-
-    /**
-     * Check if the application is ready to serve requests
-     */
-    private boolean checkApplicationReadiness() {
-        // Add custom readiness checks here
-        // For now, always return true if we reach here (database already checked by DB health indicator)
-        return true;
     }
 }

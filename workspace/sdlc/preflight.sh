@@ -1,35 +1,41 @@
 #!/usr/bin/env bash
 #
-# preflight.sh — run the same gates CI runs, locally, before pushing.
+# preflight.sh — the local gate for every pull request (#2001).
 #
 # WHY
 # ---
-# CI spreads its gates across ci.yml, pr-validation.yml, frontend-ci.yml,
-# playwright-e2e.yml, sdlc-process.yml, and codeql.yml. Some of those gates are NOT reachable
-# through the commands developers normally run: `mvn verify` does not invoke
-# Spotless (it is deliberately unbound in backend-api/pom.xml, see #705), so a
-# branch can be fully green locally and still fail "Code Lint" in CI. This script
-# is the single local entry point that covers every blocking gate, so a push that
-# passes here passes CI.
+# GitHub Actions does not re-run product CI on a pull request or on push to
+# main. The heavy workflows run on a version tag (v* / notaire-v*) or on
+# workflow_dispatch. This script is the gate that used to be those jobs.
+# `mvn verify` does not invoke Spotless (unbound in backend-api/pom.xml, #705),
+# so a branch can look green under Maven and still fail format here.
+#
+# A run WITHOUT --full is NOT sufficient to open a pull request. There is no
+# GitHub safety net on the pull request for the suites --full adds.
 #
 # KEEPING IT HONEST
 # -----------------
-# Each check below records the CI job it mirrors. If you add or change a gate in
-# .github/workflows/, update the matching check here in the same PR — otherwise
-# the local/CI gap reopens. `--list` prints the mapping.
+# Each check below records the release-workflow job it mirrors. If you add or
+# change a gate in .github/workflows/, update the matching check here in the
+# same PR. `--list` prints the mapping. CodeQL is the exception: it stays on
+# GitHub (weekly Monday plus version tags) and is not replicated locally.
 #
 # USAGE
-#   bash workspace/sdlc/preflight.sh            # everything except server-backed suites
+#   bash workspace/sdlc/preflight.sh            # not sufficient to open a pull request
 #   bash workspace/sdlc/preflight.sh --fix      # auto-fix what is fixable, then verify
-#   bash workspace/sdlc/preflight.sh --fast     # format/lint/compile/typecheck only
-#   bash workspace/sdlc/preflight.sh --full     # adds Playwright E2E + Bruno API tests + Docker build/smoke test
-#   bash workspace/sdlc/preflight.sh --list     # show local-check -> CI-job mapping
+#   bash workspace/sdlc/preflight.sh --fast     # format/lint/compile/typecheck only; not sufficient to open a pull request
+#   bash workspace/sdlc/preflight.sh --full     # mandatory before push/PR: Playwright, Bruno, Docker, database V&V
+#   bash workspace/sdlc/preflight.sh --list     # show local-check -> release-workflow mapping
 #
 # Exit code is non-zero if any blocking check fails.
 set -uo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$REPO_ROOT"
+# The pre-push hook exports GIT_DIR (in a linked worktree: .git/worktrees/<name>). Self-tests
+# that build throwaway repositories would run git init/config against it and rewrite the shared
+# .git/config (core.bare = true, fixture identity). From the root, discovery is correct (#1958).
+unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_PREFIX
 
 MODE_FIX=0; MODE_FAST=0; MODE_FULL=0
 for arg in "$@"; do
@@ -53,14 +59,18 @@ sdlc exception label            Process Checks                    sdlc-process.y
 doc traceability                Process Checks                    sdlc-process.yml   (BLOCKING)
 openspec archive hygiene        Process Checks                    sdlc-process.yml   (BLOCKING; #1252)
 board Status/label coherence    Process Checks                    sdlc-process.yml   (BLOCKING; #1550; skips without gh auth)
+Closes/Fixes multi_pr guard     Process Checks                    sdlc-process.yml   (BLOCKING; #1878)
+Owner scripts bash -n           Process Checks                    sdlc-process.yml   (BLOCKING; #1878)
 agent rule files                Process Checks                    sdlc-process.yml   (BLOCKING)
+baseline ratchet (shrink-only)  Process Checks                    sdlc-process.yml   (BLOCKING; #1958)
+skills catalog lint             Process Checks / Main Health      sdlc-process.yml   (BLOCKING; #1958)
 process script self-tests       Process Checks                    sdlc-process.yml   (BLOCKING)
 openapi breaking diff           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; export freshness CI-only)
 openapi accepted list           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; stale entries, #1315)
 spotless format                 Code Lint / Format Check         pr-validation.yml  (BLOCKING)
-checkstyle                      Code Lint / Checkstyle           pr-validation.yml  (warn, CI uses || true)
+checkstyle                      Code Lint / Checkstyle           pr-validation.yml  (BLOCKING ratchet #566)
 dependency analysis             Dependency Analysis              pr-validation.yml  (warn, CI uses || true)
-spotbugs                        Code Quality / SpotBugs          ci.yml             (warn, report-only)
+spotbugs                        Code Quality / SpotBugs          ci.yml             (BLOCKING ratchet #566)
 trivy filesystem scan           Security Scan                    ci.yml             (BLOCKING in CI on CRITICAL/HIGH; warn locally)
 backend compile                 Build & Compile / Quick Build    ci.yml, pr-validation.yml
 backend unit+integration+cov    Unit Tests, Integration Tests,   ci.yml
@@ -72,6 +82,9 @@ frontend vitest                 Unit Tests (Vitest)              frontend-ci.yml
 frontend build                  Build (Next.js)                  frontend-ci.yml
 e2e typecheck                   UI E2E Tests (Playwright)        playwright-e2e.yml (fails before the stack starts)
 e2e eslint                      UI E2E Tests (Playwright)        playwright-e2e.yml (fails before the stack starts)
+pages typecheck/lint/vitest     Pages build, tests and links     pages-ci.yml       (BLOCKING; #1970)
+pages build + link check        Pages build, tests and links     pages-ci.yml       (BLOCKING; #1970)
+pages playwright + axe  (--full) Pages build, tests and links    pages-ci.yml       (needs Chromium; #1970)
 http integration suite (--full) (legacy cURL smoke; no CI job)   n/a
 database v&v suite      (--full) Database V&V                    database-vv.yml    (needs Docker, not the stack)
 playwright e2e          (--full) UI E2E Tests (Playwright)       playwright-e2e.yml
@@ -160,16 +173,36 @@ run "openspec archive hygiene" python3 workspace/sdlc/check-openspec-archive-hyg
 # Board Status ↔ issue state ↔ labels (#1550). Skips clearly without gh auth.
 run "board Status/label coherence" \
     python3 workspace/sdlc/check-board-status-label-coherence.py --scope pr
+run "Closes/Fixes multi_pr guard" \
+    python3 workspace/sdlc/check-closes-refs-guard.py --base-sha origin/main
+# One open PR may edit CHANGELOG [Unreleased] (FLEET-LESSONS / #1693).
+if gh pr view >/dev/null 2>&1; then
+    run "CHANGELOG Unreleased fence" \
+        python3 workspace/sdlc/check-changelog-unreleased-fence.py
+else
+    skip "CHANGELOG Unreleased fence" "no open PR for this tip"
+fi
+run "Owner scripts bash -n" bash -c \
+    'for s in workspace/sdlc/owner/*.sh; do [ -f "$s" ] || continue; bash -n "$s"; done'
 run "tdd evidence" bash workspace/sdlc/check-tdd-evidence.sh origin/main
 if gh pr view >/dev/null 2>&1; then
     run "sdlc exception label" bash workspace/sdlc/check-sdlc-exception.sh origin/main
 else
-    skip "sdlc exception label" "no PR yet — CI WILL run this"
+    skip "sdlc exception label" "no PR yet — re-run after the PR exists; GitHub will not run this on the pull request"
 fi
 run "agent rule files" bash workspace/sdlc/check-agent-rules.sh
+# AI SDLC framework (#1958): architecture/lint baselines only shrink against main, and the
+# skills catalog stays unique, described and generic where it claims to be.
+run "baseline ratchet (shrink-only)" \
+    python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml ratchet --base origin/main
+run "skills catalog lint" \
+    python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml skills
 run "process script self-tests" bash -c \
     "python3 -m unittest discover -s local-ai/sdlc/tests \
-     && python3 -m unittest discover -s workspace/tests && python3 -m unittest discover -s contracts/tests \
+     && python3 -m unittest discover -s framework/ai-sdlc/tests \
+     && python3 -m unittest discover -s workspace/tests \
+     && python3 -m unittest workspace.sdlc.test_milestone_policy \
+     && python3 -m unittest discover -s contracts/tests \
      && python3 -m unittest discover -s security/tests \
      && python3 -m unittest discover -s infra/tests \
      && python3 -m unittest discover -s testing/tests \
@@ -193,7 +226,7 @@ fi
 # them). The export-freshness half needs a springdoc export and runs in CI only.
 OPENAPI_SPEC="backend-api/openapi/openapi.yaml"
 if ! command -v oasdiff >/dev/null 2>&1; then
-    skip "openapi breaking diff" "oasdiff not installed — CI WILL run this"
+    skip "openapi breaking diff" "oasdiff not installed — install it; GitHub will not run this on the pull request"
 elif ! git cat-file -e "origin/main:$OPENAPI_SPEC" 2>/dev/null; then
     skip "openapi breaking diff" "no $OPENAPI_SPEC on origin/main yet"
 else
@@ -203,9 +236,10 @@ else
     [ "$MODE_FIX" = "1" ] && OPENAPI_PRUNE=(--prune)
     git show "origin/main:$OPENAPI_SPEC" > "$OPENAPI_BASE"
     # Mirrors: "Accepted breaking changes: assemble and check" (openapi-contract.yml).
+    # ${arr[@]+…}: empty OPENAPI_PRUNE under `set -u` otherwise aborts the script.
     run "openapi accepted breaking changes (accepted-breaking-changes.d)" \
         python3 workspace/sdlc/check-accepted-breaking-changes.py "$OPENAPI_BASE" "$OPENAPI_SPEC" \
-        --base-ref origin/main --write-ignore "$OPENAPI_IGNORE" "${OPENAPI_PRUNE[@]}"
+        --base-ref origin/main --write-ignore "$OPENAPI_IGNORE" ${OPENAPI_PRUNE[@]+"${OPENAPI_PRUNE[@]}"}
     run "openapi breaking diff" oasdiff breaking "$OPENAPI_BASE" "$OPENAPI_SPEC" \
         --fail-on ERR --err-ignore "$OPENAPI_IGNORE"
     rm -f "$OPENAPI_BASE" "$OPENAPI_IGNORE"
@@ -245,9 +279,9 @@ if [ "$MODE_FAST" = "0" ]; then
     if command -v trivy >/dev/null 2>&1; then
         run_warn "trivy filesystem scan" trivy fs . --severity CRITICAL,HIGH --exit-code 1 --ignore-unfixed --quiet
     else
-        skip "trivy filesystem scan" "trivy not installed — CI WILL run this"
+        skip "trivy filesystem scan" "trivy not installed — install it; GitHub will not run this on the pull request"
     fi
-    skip "codeql analysis" "GitHub-hosted CodeQL (codeql.yml) — CI WILL run this"
+    skip "codeql analysis" "GitHub-hosted CodeQL runs weekly and on version tags, not on pull requests"
 else
     skip "dependency analysis / spotbugs / trivy fs / codeql" "--fast"
 fi
@@ -262,13 +296,22 @@ run "packaged app.version" python3 workspace/sdlc/check-product-version-coherenc
 
 if [ "$MODE_FAST" = "0" ]; then
     # `mvn verify` covers Unit Tests + Integration Tests (H2) + Coverage Gate.
-    run "backend verify (tests + coverage gate)" mvn verify -pl backend-api -am "${MVN_FLAGS[@]}"
+    # Drop Compose/stack datasource overrides: if SPRING_DATASOURCE_URL points at
+    # Postgres while tests use the PostgreSQL driver name, H2 profiles explode with
+    # "Driver org.postgresql.Driver claims to not accept jdbcUrl, jdbc:h2:…" (#2023).
+    run "backend verify (tests + coverage gate)" \
+        env -u SPRING_DATASOURCE_URL -u SPRING_DATASOURCE_USERNAME -u SPRING_DATASOURCE_PASSWORD \
+            -u SPRING_DATASOURCE_DRIVER_CLASS_NAME \
+            mvn verify -pl backend-api -am "${MVN_FLAGS[@]}"
 
     # Testcontainers-backed; needs a working Docker daemon.
     if docker info >/dev/null 2>&1; then
-        run "backend pg-integration tests" mvn test -pl backend-api -am -Ppg-integration "${MVN_FLAGS[@]}"
+        run "backend pg-integration tests" \
+            env -u SPRING_DATASOURCE_URL -u SPRING_DATASOURCE_USERNAME -u SPRING_DATASOURCE_PASSWORD \
+                -u SPRING_DATASOURCE_DRIVER_CLASS_NAME \
+                mvn test -pl backend-api -am -Ppg-integration "${MVN_FLAGS[@]}"
     else
-        skip "backend pg-integration tests" "docker not running — CI WILL run these"
+        skip "backend pg-integration tests" "docker not running — start Docker; GitHub will not run this on the pull request"
     fi
 else
     skip "backend tests" "--fast"
@@ -310,13 +353,47 @@ run "e2e typecheck" bash -c "cd testing/e2e && ./node_modules/.bin/tsc --noEmit"
 run "e2e eslint" bash -c "cd testing/e2e && ./node_modules/.bin/eslint . --max-warnings=0"
 
 # ---------------------------------------------------------------------------
+section "GitHub Pages app (github-page)"
+# ---------------------------------------------------------------------------
+# Mirrors pages-ci.yml (#1970). Local binaries, like the frontend section above.
+if [ ! -d github-page/node_modules ]; then
+    echo "installing github-page deps (npm ci)…"
+    (cd github-page && npm ci) >/dev/null 2>&1 || warn "npm ci failed (github-page)"
+fi
+run "pages typecheck" bash -c "cd github-page && ./node_modules/.bin/tsc --noEmit"
+run "pages eslint" bash -c "cd github-page && ./node_modules/.bin/eslint ."
+if [ "$MODE_FAST" = "0" ]; then
+    run "pages vitest" bash -c "cd github-page && ./node_modules/.bin/vitest run"
+    # Match pages-ci.yml (#1985): the export links to /notaire/demo/, so the demo
+    # must be built into out/ before check-links runs.
+    run "pages build + link check" bash -c "cd github-page && ./node_modules/.bin/next build && npm run build:demo && node scripts/check-links.mjs out"
+    if [ "$MODE_FULL" = "1" ]; then
+        run "pages playwright + axe" bash -c "cd github-page && ./node_modules/.bin/playwright test"
+    else
+        skip "pages playwright + axe" "not --full; this run is not sufficient to open a pull request"
+    fi
+else
+    skip "pages vitest / build / links" "--fast"
+fi
+
+# ---------------------------------------------------------------------------
 section "Server-backed suites"
 # ---------------------------------------------------------------------------
 if [ "$MODE_FULL" = "1" ]; then
     if curl -sf http://localhost:8080/actuator/health >/dev/null 2>&1 \
        && curl -sf -o /dev/null http://localhost:3000 2>/dev/null; then
         run "http integration suite" bash -c "cd testing/integration/http && bash test-all-endpoints-v2.sh"
-        run "playwright e2e" bash -c "cd testing/e2e && ./node_modules/.bin/playwright test"
+        # Cursor (and some sandboxes) set PLAYWRIGHT_BROWSERS_PATH to an empty
+        # cache dir; Chromium then fails to launch even when the user cache has
+        # browsers. Drop an unusable override so Playwright uses its default.
+        run "playwright e2e" bash -c '
+            if [ -n "${PLAYWRIGHT_BROWSERS_PATH:-}" ]; then
+                if ! find "$PLAYWRIGHT_BROWSERS_PATH" -type f -name chrome-headless-shell 2>/dev/null | grep -q .; then
+                    unset PLAYWRIGHT_BROWSERS_PATH
+                fi
+            fi
+            cd testing/e2e && ./node_modules/.bin/playwright test
+        '
 
         # Mirrors playwright-e2e.yml's "API Tests (Bruno)" job: fetch a JWT up
         # front (the collection sends it on every request; folders run
@@ -337,18 +414,24 @@ if [ "$MODE_FULL" = "1" ]; then
     if docker info >/dev/null 2>&1; then
         run "database v&v suite" bash testing/scripts/run.sh database
     else
-        skip "database v&v suite" "docker not running — CI WILL run this (database-vv.yml)"
+        fail "database v&v suite: docker not running — start Docker; GitHub will not run this on the pull request"
     fi
 
     if docker info >/dev/null 2>&1; then
         run "docker compose build" docker compose build --no-cache
+        # Server-backed suites above need workspace/stack/start.sh (same container
+        # names as compose). Tear that stack down before smoke or `up -d` conflicts.
         run "docker compose smoke test" bash -c \
-            'docker compose up -d && sleep 10 && docker compose ps && docker compose down'
+            'docker compose down --remove-orphans 2>/dev/null || true
+             for c in notary-postgres notary-backend notary-pgadmin notaire-frontend; do
+               docker rm -f "$c" 2>/dev/null || true
+             done
+             docker compose up -d && sleep 10 && docker compose ps && docker compose down'
     else
-        skip "docker build/smoke test" "docker not running — CI WILL run this (docker-build job)"
+        fail "docker build/smoke test: docker not running — start Docker; GitHub will not run this on the pull request"
     fi
 else
-    skip "playwright e2e / bruno api / docker build" "not --full; CI WILL run these"
+    skip "playwright e2e / bruno api / docker build" "not --full; this run is not sufficient to open a pull request"
 fi
 
 # ---------------------------------------------------------------------------
@@ -360,13 +443,14 @@ printf '%spassed:%s  %d\n' "$GREEN" "$NC" "${#PASSED[@]}"
 if [ "${#FAILED[@]}" -gt 0 ]; then
     printf '%sfailed:%s  %d\n' "$RED" "$NC" "${#FAILED[@]}"
     printf '  ✗ %s\n' "${FAILED[@]}"
-    printf '\n%sPREFLIGHT FAILED — these would fail in CI.%s\n' "$RED" "$NC"
+    printf '\n%sPREFLIGHT FAILED — these fail the local pull-request gate.%s\n' "$RED" "$NC"
     printf 'Try: bash workspace/sdlc/preflight.sh --fix\n'
     exit 1
 fi
 
 printf '\n%sPREFLIGHT PASSED%s\n' "$GREEN" "$NC"
 if [ "$MODE_FAST" = "1" ] || [ "$MODE_FULL" = "0" ]; then
-    printf '%sNote:%s some CI gates were skipped above — see the skipped list.\n' "$YELLOW" "$NC"
+    printf '%sNote:%s this run is not sufficient to open a pull request. GitHub will not re-run the skipped suites.\n' "$YELLOW" "$NC"
+    printf 'Run: bash workspace/sdlc/preflight.sh --full\n'
 fi
 exit 0

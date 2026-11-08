@@ -1,5 +1,10 @@
+/**
+ * React Query hooks for copies.
+ * Hexagon wiring: #1845 / ADR-030.
+ */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { copyUseCases } from "@/composition/copy";
+import type { Copy as DomainCopy, CopyInput } from "@/core/copy/domain/copy";
 import type { Copy } from "@/types";
 
 export const copiesKeys = {
@@ -7,17 +12,21 @@ export const copiesKeys = {
   detail: (id: number) => ["copies", id] as const,
 };
 
+function toWire(c: DomainCopy): Copy {
+  return c as Copy;
+}
+
 export function useCopies() {
   return useQuery({
     queryKey: copiesKeys.all,
-    queryFn: () => apiGet<Copy[]>("/copies"),
+    queryFn: async () => (await copyUseCases.list()).map(toWire),
   });
 }
 
 export function useCreateCopy() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<Copy>) => apiPost<void>("/copies", data),
+    mutationFn: (data: Partial<Copy>) => copyUseCases.create(data as CopyInput),
     onSuccess: () => qc.invalidateQueries({ queryKey: copiesKeys.all }),
   });
 }
@@ -26,7 +35,7 @@ export function useUpdateCopy() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<Copy> }) =>
-      apiPut<void>(`/copies/${id}`, data),
+      copyUseCases.update(id, data as CopyInput),
     onSuccess: () => qc.invalidateQueries({ queryKey: copiesKeys.all }),
   });
 }
@@ -34,7 +43,7 @@ export function useUpdateCopy() {
 export function useDeleteCopy() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => apiDelete(`/copies/${id}`),
+    mutationFn: (id: number) => copyUseCases.delete(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: copiesKeys.all }),
   });
 }

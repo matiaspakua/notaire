@@ -1,22 +1,31 @@
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.jpa.IdentificationTypeJpaController;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
  * Resolves identification-type names and ids from the catalog. Entities are not Spring beans, so they reach the
- * default instance through {@link #shared()}.
+ * default instance through {@link #shared()}. The catalog supplier is wired at startup from
+ * {@code IdentificationTypeRepository} ({@code IdentificationTypeLookupConfig}, #576).
  */
 public final class IdentificationTypeLookup {
 
-    private static final IdentificationTypeLookup SHARED = new IdentificationTypeLookup(
-            () -> IdentificationTypeJpaController.getInstance().findIdentificationTypeEntities());
+    private static Supplier<List<IdentificationType>> catalogSupplier = List::of;
+
+    private static final IdentificationTypeLookup SHARED = new IdentificationTypeLookup(() -> catalogSupplier.get());
 
     private final Supplier<List<IdentificationType>> catalog;
 
     public IdentificationTypeLookup(Supplier<List<IdentificationType>> catalog) {
         this.catalog = catalog;
+    }
+
+    /**
+     * Installs the live catalog supplier used by {@link #shared()}. Called once from Spring configuration.
+     */
+    public static void wireCatalog(Supplier<List<IdentificationType>> catalog) {
+        catalogSupplier = Objects.requireNonNull(catalog, "catalog");
     }
 
     public static IdentificationTypeLookup shared() {

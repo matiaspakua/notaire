@@ -1,0 +1,4 @@
+{
+  "$comment": "Pre-existing axe findings allowed until fixed. Each entry needs ruleId + issue. Fingerprint is ruleId|css selector (first target node).",
+  "entries": []
+}

@@ -37,9 +37,11 @@ class HelperNamesEnglishTest(unittest.TestCase):
         self.assertNotIn("nameConcept", template)
         self.assertNotIn("Sellado", template)
 
-        concept = read("main/java/com/licensis/notaire/jpa/ConceptJpaController.java")
-        self.assertIn("String conceptName", concept)
-        self.assertNotIn("nameConcept", concept)
+        # #576 deleted ConceptJpaController; conceptName lives on the integration helper above.
+        self.assertFalse(
+            (ROOT / "backend-api/src/main/java/com/licensis/notaire/jpa/ConceptJpaController.java").exists(),
+            "ConceptJpaController must stay deleted after #576",
+        )
 
     def test_stamp_duty_fixture_and_amount_testid_are_english(self):
         for relative in (

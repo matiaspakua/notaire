@@ -34,16 +34,31 @@ import { BudgetPicker } from "@/components/shared/BudgetPicker";
 import { useManagementStatuses } from "@/hooks/useManagementStatuses";
 import { useProcedureTypes } from "@/hooks/useProcedureTypes";
 import { useProperties } from "@/hooks/useProperties";
-import { ApiError } from "@/lib/api-client";
 import { extractApiError } from "@/lib/utils";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import type { DeedManagement } from "@/types";
 import { ManagementSummaryDialog } from "./ManagementSummaryDialog";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { useFormat } from "@/hooks/useFormat";
 
+/** Duck-type HTTP status without importing api-client (ADR-030). */
+function httpStatus(err: unknown): number | undefined {
+  if (typeof err === "object" && err !== null && "status" in err) {
+    const status = (err as { status: unknown }).status;
+    return typeof status === "number" ? status : undefined;
+  }
+  return undefined;
+}
+
 const STATUS_FOLDER_ACTIVE = "Activa";
 
 const STATUS_ARCHIVED = "Archivada";
+
+/** Backend CompleteCaseRequest requires a non-blank heading (#1963 / @Valid). */
+function defaultCaseHeading(caseNumber: string, label: string): string {
+  const trimmed = caseNumber.trim();
+  return trimmed ? `${label} ${trimmed}` : label;
+}
 
 export default function ManagementsPage() {
   return (
@@ -61,7 +76,13 @@ function ManagementsList() {
   // One server page at a time, page and size in the URL (#1340): the list used
   // to load size=1000, hiding older managements and rendering 1000 rows.
   const paging = useUrlPagination();
-  const { data: managementsPage, isLoading, isFetching } = useManagementsPage({ page: paging.page, size: paging.size });
+  const {
+    data: managementsPage,
+    isLoading,
+    isFetching,
+    isError: isManagementsError,
+    refetch: refetchManagements,
+  } = useManagementsPage({ page: paging.page, size: paging.size });
   const managements = managementsPage?.content ?? [];
   useClampPage(paging, managementsPage?.totalPages);
   const { data: statuses = [] } = useManagementStatuses();
@@ -93,6 +114,7 @@ function ManagementsList() {
   const [statusId, setStatusId] = useState("");
   const [procedureTypeId, setProcedureTypeId] = useState("");
   const [propertyId, setPropertyId] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   // Full edit (#1360): prefill once per opened management from GET /complete-case.
   const { data: editCase, isLoading: isLoadingEditCase } = useManagementCompleteCase(
     modalOpen ? editing?.idManagement : undefined,
@@ -114,9 +136,12 @@ function ManagementsList() {
     setPropertyId(editCase.propertyId != null ? String(editCase.propertyId) : "");
   }
 
-  const { data: managementsByClient = [], isLoading: isLoadingByClient } = useManagementsByClient(
-    clientFilter ? Number(clientFilter) : 0
-  );
+  const {
+    data: managementsByClient = [],
+    isLoading: isLoadingByClient,
+    isError: isByClientError,
+    refetch: refetchByClient,
+  } = useManagementsByClient(clientFilter ? Number(clientFilter) : 0);
   const { data: outstandingBalance } = useOutstandingBalance(archiveId ?? undefined);
   const { data: trace } = useManagementWorkflowTrace(transitionId ?? undefined);
   const { data: history = [] } = useHistory(historyId ?? undefined);
@@ -141,6 +166,7 @@ function ManagementsList() {
     setStatusId("");
     setProcedureTypeId("");
     setPropertyId("");
+    setFieldErrors({});
     setModalOpen(true);
   }
 
@@ -153,10 +179,25 @@ function ManagementsList() {
     setStatusId("");
     setProcedureTypeId("");
     setPropertyId("");
+    setFieldErrors({});
     setModalOpen(true);
   }
 
   async function handleSave() {
+    const errors = requiredFieldErrors(
+      {
+        number,
+        budgetId,
+        notaryId,
+        statusId,
+        procedureTypeId,
+      },
+      tc("fieldRequired"),
+    );
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+    const heading =
+      editCase?.heading?.trim() || defaultCaseHeading(number, t("defaultHeadingLabel"));
     try {
       if (editing?.idManagement) {
         // Heading and notes are not edited here; send them back so the PUT keeps them.
@@ -165,7 +206,7 @@ function ManagementsList() {
           id: editing.idManagement,
           data: {
             number: Number(number),
-            heading: editCase?.heading ?? undefined,
+            heading,
             notes: sentNotes,
             budgetId: Number(budgetId),
             notaryId: Number(notaryId),
@@ -180,6 +221,7 @@ function ManagementsList() {
       } else {
         const created = await createCompleteMutation.mutateAsync({
           number: Number(number),
+          heading,
           budgetId: Number(budgetId),
           notaryId: Number(notaryId),
           statusManagementId: Number(statusId),
@@ -189,10 +231,9 @@ function ManagementsList() {
         toast.success(t("created"));
         notifySubstitutionRedirect(created.notes);
       }
+      setModalOpen(false);
     } catch {
       toast.error(t("errorSave"));
-    } finally {
-      setModalOpen(false);
     }
   }
 
@@ -223,7 +264,7 @@ function ManagementsList() {
       setArchiveId(null);
       setArchiveConflict(null);
     } catch (err) {
-      if (err instanceof ApiError && err.status === 409) {
+      if (httpStatus(err) === 409) {
         setArchiveConflict(extractApiError(err) ?? t("archiveConflictTitle"));
         return;
       }
@@ -433,6 +474,19 @@ function ManagementsList() {
         isFetching={!clientFilter && isFetching}
         keyExtractor={(g) => g.idManagement!}
         emptyMessage={t("noData")}
+        error={
+          clientFilter
+            ? isByClientError
+              ? t("loadError")
+              : undefined
+            : isManagementsError
+              ? t("loadError")
+              : undefined
+        }
+        onRetry={() => {
+          if (clientFilter) void refetchByClient();
+          else void refetchManagements();
+        }}
         pagination={
           clientFilter
             ? undefined
@@ -450,7 +504,7 @@ function ManagementsList() {
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={editing ? t("editGestion") : t("newGestion")}>
-              <FormField label={t("fields.numero")} required>
+              <FormField label={t("fields.numero")} required error={fieldErrors.number}>
                 <Input
                   type="number"
                   value={number}
@@ -459,7 +513,7 @@ function ManagementsList() {
                   data-testid="input-management-number"
                 />
               </FormField>
-              <FormField label={t("fields.presupuesto")} required>
+              <FormField label={t("fields.presupuesto")} required error={fieldErrors.budgetId}>
                 {/* Server search instead of the first 1000 budgets (#1340). */}
                 <BudgetPicker
                   value={budgetId ? Number(budgetId) : undefined}
@@ -468,7 +522,7 @@ function ManagementsList() {
                   data-testid="select-budget-management"
                 />
               </FormField>
-              <FormField label={t("fields.escribano")} required>
+              <FormField label={t("fields.escribano")} required error={fieldErrors.notaryId}>
                 <PersonPicker
                   value={notaryId ? Number(notaryId) : undefined}
                   onChange={(person) => setNotaryId(person?.personId != null ? String(person.personId) : "")}
@@ -480,6 +534,7 @@ function ManagementsList() {
                 label={t("fields.estado")}
                 required
                 helperText={editing ? t("estadoViaTransition") : undefined}
+                error={fieldErrors.statusId}
               >
                 {/* CU83: an edit keeps the status; it changes through the workflow transition. */}
                 <Select value={statusId} onValueChange={setStatusId} disabled={!!editing}>
@@ -487,7 +542,7 @@ function ManagementsList() {
                   <SelectContent>{statuses.map((e) => <SelectItem key={e.idManagementStatus} value={String(e.idManagementStatus)}>{e.name}</SelectItem>)}</SelectContent>
                 </Select>
               </FormField>
-              <FormField label={t("fields.tipo")} required>
+              <FormField label={t("fields.tipo")} required error={fieldErrors.procedureTypeId}>
                 <Select value={procedureTypeId} onValueChange={setProcedureTypeId}>
                   <SelectTrigger data-testid="select-procedure-type-management"><SelectValue placeholder={t("selectTramite")} /></SelectTrigger>
                   <SelectContent>{procedureTypes.map((tt) => <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>{tt.name}</SelectItem>)}</SelectContent>

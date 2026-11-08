@@ -1,0 +1,1802 @@
+{
+ "about": "API answers replayed by the Pages demo (#1985). Recorded by github-page/demo/record-fixtures.mjs from the local stack seeded by Flyway.",
+ "recordedAt": "2026-11-01",
+ "routes": [
+  "/audit",
+  "/dashboard",
+  "/dashboard/administration",
+  "/dashboard/administration/audit",
+  "/dashboard/administration/concepts",
+  "/dashboard/administration/documents",
+  "/dashboard/administration/folios",
+  "/dashboard/administration/identification-types",
+  "/dashboard/administration/items",
+  "/dashboard/administration/management-statuses",
+  "/dashboard/administration/procedures",
+  "/dashboard/administration/roles",
+  "/dashboard/administration/templates",
+  "/dashboard/administration/users",
+  "/dashboard/administration/workflows",
+  "/dashboard/audit",
+  "/dashboard/budgets",
+  "/dashboard/copies",
+  "/dashboard/deeds",
+  "/dashboard/document-reentry",
+  "/dashboard/documents",
+  "/dashboard/external-entity-documents",
+  "/dashboard/items",
+  "/dashboard/managements",
+  "/dashboard/payments",
+  "/dashboard/people",
+  "/dashboard/properties",
+  "/dashboard/protocol",
+  "/dashboard/protocol/auxiliary",
+  "/dashboard/protocol/notebooks",
+  "/dashboard/registration-drafts",
+  "/dashboard/reports",
+  "/dashboard/required-documents",
+  "/dashboard/substitutions",
+  "/dashboard/testimonies",
+  "/dashboard/testimony-movements",
+  "/dashboard/upcoming-expirations"
+ ],
+ "workflowIds": [
+  "1"
+ ],
+ "responses": {
+  "GET /audit-log?page=0&size=20&sort=date%2Cdesc": {
+   "status": 200,
+   "body": {
+    "content": [
+     {
+      "users": {
+       "idUser": 1,
+       "name": "admin",
+       "persons": {
+        "address": null,
+        "birthDate": null,
+        "budgets": [],
+        "client": false,
+        "copies": [],
+        "dtoIdentificationType": null,
+        "email": null,
+        "firstName": "Juan Carlos",
+        "folios": [],
+        "id": 1,
+        "identificationNumber": null,
+        "identifications": [],
+        "isClient": false,
+        "lastName": "Garcia",
+        "maritalStatus": null,
+        "marriageCount": null,
+        "nationality": null,
+        "notaryDeedManagements": [],
+        "notaryRegistrationNumber": null,
+        "occupation": null,
+        "personDeedManagements": [],
+        "personProcedures": [],
+        "phone": null,
+        "sex": null,
+        "substitutionsForSubstitute": [],
+        "substitutionsForSubstituted": [],
+        "taxId": null,
+        "users": [],
+        "version": null
+       },
+       "roleId": null,
+       "roleName": null,
+       "status": true,
+       "token": null,
+       "type": "ADMIN",
+       "valid": false,
+       "version": null
+      },
+      "operationDetail": "Read of personal data via /api/v1/people",
+      "date": "2026-11-01T10:54:12.391Z",
+      "idAuditRecord": 6,
+      "module": "People",
+      "valid": true
+     },
+     {
+      "users": {
+       "idUser": 1,
+       "name": "admin",
+       "persons": {
+        "address": null,
+        "birthDate": null,
+        "budgets": [],
+        "client": false,
+        "copies": [],
+        "dtoIdentificationType": null,
+        "email": null,
+        "firstName": "Juan Carlos",
+        "folios": [],
+        "id": 1,
+        "identificationNumber": null,
+        "identifications": [],
+        "isClient": false,
+        "lastName": "Garcia",
+        "maritalStatus": null,
+        "marriageCount": null,
+        "nationality": null,
+        "notaryDeedManagements": [],
+        "notaryRegistrationNumber": null,
+        "occupation": null,
+        "personDeedManagements": [],
+        "personProcedures": [],
+        "phone": null,
+        "sex": null,
+        "substitutionsForSubstitute": [],
+        "substitutionsForSubstituted": [],
+        "taxId": null,
+        "users": [],
+        "version": null
+       },
+       "roleId": null,
+       "roleName": null,
+       "status": true,
+       "token": null,
+       "type": "ADMIN",
+       "valid": false,
+       "version": null
+      },
+      "operationDetail": "Read of personal data via /api/v1/people",
+      "date": "2026-11-01T10:53:07.020Z",
+      "idAuditRecord": 5,
+      "module": "People",
+      "valid": true
+     },
+     {
+      "users": {
+       "idUser": 1,
+       "name": "admin",
+       "persons": {
+        "address": null,
+        "birthDate": null,
+        "budgets": [],
+        "client": false,
+        "copies": [],
+        "dtoIdentificationType": null,
+        "email": null,
+        "firstName": "Juan Carlos",
+        "folios": [],
+        "id": 1,
+        "identificationNumber": null,
+        "identifications": [],
+        "isClient": false,
+        "lastName": "Garcia",
+        "maritalStatus": null,
+        "marriageCount": null,
+        "nationality": null,
+        "notaryDeedManagements": [],
+        "notaryRegistrationNumber": null,
+        "occupation": null,
+        "personDeedManagements": [],
+        "personProcedures": [],
+        "phone": null,
+        "sex": null,
+        "substitutionsForSubstitute": [],
+        "substitutionsForSubstituted": [],
+        "taxId": null,
+        "users": [],
+        "version": null
+       },
+       "roleId": null,
+       "roleName": null,
+       "status": true,
+       "token": null,
+       "type": "ADMIN",
+       "valid": false,
+       "version": null
+      },
+      "operationDetail": "Read of personal data via /api/v1/people",
+      "date": "2026-11-01T10:51:32.722Z",
+      "idAuditRecord": 4,
+      "module": "People",
+      "valid": true
+     },
+     {
+      "users": {
+       "idUser": 1,
+       "name": "admin",
+       "persons": {
+        "address": null,
+        "birthDate": null,
+        "budgets": [],
+        "client": false,
+        "copies": [],
+        "dtoIdentificationType": null,
+        "email": null,
+        "firstName": "Juan Carlos",
+        "folios": [],
+        "id": 1,
+        "identificationNumber": null,
+        "identifications": [],
+        "isClient": false,
+        "lastName": "Garcia",
+        "maritalStatus": null,
+        "marriageCount": null,
+        "nationality": null,
+        "notaryDeedManagements": [],
+        "notaryRegistrationNumber": null,
+        "occupation": null,
+        "personDeedManagements": [],
+        "personProcedures": [],
+        "phone": null,
+        "sex": null,
+        "substitutionsForSubstitute": [],
+        "substitutionsForSubstituted": [],
+        "taxId": null,
+        "users": [],
+        "version": null
+       },
+       "roleId": null,
+       "roleName": null,
+       "status": true,
+       "token": null,
+       "type": "ADMIN",
+       "valid": false,
+       "version": null
+      },
+      "operationDetail": "Read of personal data via /api/v1/people",
+      "date": "2026-11-01T10:48:28.401Z",
+      "idAuditRecord": 3,
+      "module": "People",
+      "valid": true
+     },
+     {
+      "users": {
+       "idUser": 1,
+       "name": "admin",
+       "persons": {
+        "address": null,
+        "birthDate": null,
+        "budgets": [],
+        "client": false,
+        "copies": [],
+        "dtoIdentificationType": null,
+        "email": null,
+        "firstName": "Juan Carlos",
+        "folios": [],
+        "id": 1,
+        "identificationNumber": null,
+        "identifications": [],
+        "isClient": false,
+        "lastName": "Garcia",
+        "maritalStatus": null,
+        "marriageCount": null,
+        "nationality": null,
+        "notaryDeedManagements": [],
+        "notaryRegistrationNumber": null,
+        "occupation": null,
+        "personDeedManagements": [],
+        "personProcedures": [],
+        "phone": null,
+        "sex": null,
+        "substitutionsForSubstitute": [],
+        "substitutionsForSubstituted": [],
+        "taxId": null,
+        "users": [],
+        "version": null
+       },
+       "roleId": null,
+       "roleName": null,
+       "status": true,
+       "token": null,
+       "type": "ADMIN",
+       "valid": false,
+       "version": null
+      },
+      "operationDetail": "Read of personal data via /api/v1/people",
+      "date": "2026-11-01T09:31:46.617Z",
+      "idAuditRecord": 2,
+      "module": "People",
+      "valid": true
+     },
+     {
+      "users": {
+       "idUser": 1,
+       "name": "admin",
+       "persons": {
+        "address": null,
+        "birthDate": null,
+        "budgets": [],
+        "client": false,
+        "copies": [],
+        "dtoIdentificationType": null,
+        "email": null,
+        "firstName": "Juan Carlos",
+        "folios": [],
+        "id": 1,
+        "identificationNumber": null,
+        "identifications": [],
+        "isClient": false,
+        "lastName": "Garcia",
+        "maritalStatus": null,
+        "marriageCount": null,
+        "nationality": null,
+        "notaryDeedManagements": [],
+        "notaryRegistrationNumber": null,
+        "occupation": null,
+        "personDeedManagements": [],
+        "personProcedures": [],
+        "phone": null,
+        "sex": null,
+        "substitutionsForSubstitute": [],
+        "substitutionsForSubstituted": [],
+        "taxId": null,
+        "users": [],
+        "version": null
+       },
+       "roleId": null,
+       "roleName": null,
+       "status": true,
+       "token": null,
+       "type": "ADMIN",
+       "valid": false,
+       "version": null
+      },
+      "operationDetail": "Read of personal data via /api/v1/people",
+      "date": "2026-11-01T09:30:32.813Z",
+      "idAuditRecord": 1,
+      "module": "People",
+      "valid": true
+     }
+    ],
+    "page": 0,
+    "size": 20,
+    "totalElements": 6,
+    "totalPages": 1,
+    "first": true,
+    "last": true
+   }
+  },
+  "GET /auxiliary-protocol/available-folios": {
+   "status": 200,
+   "body": []
+  },
+  "GET /budget-templates": {
+   "status": 200,
+   "body": []
+  },
+  "GET /budgets?page=0&size=1&sort=idBudget%2Cdesc": {
+   "status": 200,
+   "body": {
+    "content": [],
+    "empty": true,
+    "first": true,
+    "last": true,
+    "number": 0,
+    "numberOfElements": 0,
+    "pageable": {
+     "offset": 0,
+     "pageNumber": 0,
+     "pageSize": 1,
+     "paged": true,
+     "sort": {
+      "empty": false,
+      "sorted": true,
+      "unsorted": false
+     },
+     "unpaged": false
+    },
+    "size": 1,
+    "sort": {
+     "empty": false,
+     "sorted": true,
+     "unsorted": false
+    },
+    "totalElements": 0,
+    "totalPages": 0
+   }
+  },
+  "GET /budgets?page=0&size=20&sort=idBudget%2Cdesc": {
+   "status": 200,
+   "body": {
+    "content": [],
+    "empty": true,
+    "first": true,
+    "last": true,
+    "number": 0,
+    "numberOfElements": 0,
+    "pageable": {
+     "offset": 0,
+     "pageNumber": 0,
+     "pageSize": 20,
+     "paged": true,
+     "sort": {
+      "empty": false,
+      "sorted": true,
+      "unsorted": false
+     },
+     "unpaged": false
+    },
+    "size": 20,
+    "sort": {
+     "empty": false,
+     "sorted": true,
+     "unsorted": false
+    },
+    "totalElements": 0,
+    "totalPages": 0
+   }
+  },
+  "GET /concepts": {
+   "status": 200,
+   "body": [
+    {
+     "budgetTemplates": null,
+     "enabled": true,
+     "fixed": false,
+     "idConcept": 1,
+     "name": "IVA",
+     "percentage": 20,
+     "valid": true,
+     "value": 0,
+     "version": 1
+    },
+    {
+     "budgetTemplates": null,
+     "enabled": true,
+     "fixed": false,
+     "idConcept": 2,
+     "name": "Honorarios",
+     "percentage": 5,
+     "valid": true,
+     "value": 0,
+     "version": 1
+    },
+    {
+     "budgetTemplates": null,
+     "enabled": true,
+     "fixed": true,
+     "idConcept": 4,
+     "name": "Protocolo",
+     "percentage": 0,
+     "valid": true,
+     "value": 150,
+     "version": 1
+    },
+    {
+     "budgetTemplates": null,
+     "enabled": true,
+     "fixed": true,
+     "idConcept": 3,
+     "name": "Documentacion",
+     "percentage": 0,
+     "valid": true,
+     "value": 500,
+     "version": 2
+    }
+   ]
+  },
+  "GET /copies": {
+   "status": 200,
+   "body": []
+  },
+  "GET /deeds?page=0&size=20&sort=idDeed%2Cdesc": {
+   "status": 200,
+   "body": {
+    "content": [],
+    "empty": true,
+    "first": true,
+    "last": true,
+    "number": 0,
+    "numberOfElements": 0,
+    "pageable": {
+     "offset": 0,
+     "pageNumber": 0,
+     "pageSize": 20,
+     "paged": true,
+     "sort": {
+      "empty": false,
+      "sorted": true,
+      "unsorted": false
+     },
+     "unpaged": false
+    },
+    "size": 20,
+    "sort": {
+     "empty": false,
+     "sorted": true,
+     "unsorted": false
+    },
+    "totalElements": 0,
+    "totalPages": 0
+   }
+  },
+  "GET /deeds/available-notaries": {
+   "status": 200,
+   "body": [
+    {
+     "personId": 1,
+     "firstName": "Juan Carlos",
+     "lastName": "Garcia",
+     "identificationNumber": "20123456",
+     "isClient": false,
+     "nationality": "Argentina",
+     "taxId": "20-20123456-3",
+     "sex": "M",
+     "birthDate": "1980-01-14T23:00:00.000Z",
+     "maritalStatus": "Casado",
+     "marriageCount": 1,
+     "occupation": "Escribano",
+     "address": "Av. Principal 123",
+     "phone": "011-4555-1234",
+     "email": "jcgarcia@notaria.com",
+     "notaryRegistrationNumber": 1001,
+     "identificationTypeId": 1,
+     "version": 0
+    }
+   ]
+  },
+  "GET /document-types": {
+   "status": 200,
+   "body": [
+    {
+     "deliveredBy": "Entidad",
+     "dueDays": 30,
+     "enabled": true,
+     "expires": true,
+     "idDocumentType": 1,
+     "name": "Libre Deuda Municipal",
+     "returned": true,
+     "templateProcedures": null,
+     "valid": true,
+     "version": 0
+    },
+    {
+     "deliveredBy": "Entidad",
+     "dueDays": 60,
+     "enabled": true,
+     "expires": true,
+     "idDocumentType": 2,
+     "name": "Informe de Dominio",
+     "returned": true,
+     "templateProcedures": null,
+     "valid": true,
+     "version": 0
+    },
+    {
+     "deliveredBy": "Entidad",
+     "dueDays": 90,
+     "enabled": true,
+     "expires": true,
+     "idDocumentType": 3,
+     "name": "Certificado Catastral",
+     "returned": true,
+     "templateProcedures": null,
+     "valid": true,
+     "version": 0
+    },
+    {
+     "deliveredBy": "Cliente",
+     "dueDays": null,
+     "enabled": true,
+     "expires": false,
+     "idDocumentType": 4,
+     "name": "Fotocopia DNI",
+     "returned": false,
+     "templateProcedures": null,
+     "valid": true,
+     "version": 0
+    }
+   ]
+  },
+  "GET /folio-types": {
+   "status": 200,
+   "body": [
+    {
+     "enabled": true,
+     "folios": [],
+     "idFolioType": 1,
+     "isAuxiliary": false,
+     "name": "De documento",
+     "notes": null,
+     "valid": true,
+     "version": 0
+    },
+    {
+     "enabled": true,
+     "folios": [],
+     "idFolioType": 2,
+     "isAuxiliary": false,
+     "name": "De actuacion",
+     "notes": null,
+     "valid": true,
+     "version": 0
+    },
+    {
+     "enabled": true,
+     "folios": [],
+     "idFolioType": 3,
+     "isAuxiliary": false,
+     "name": "De certificacion",
+     "notes": null,
+     "valid": true,
+     "version": 0
+    }
+   ]
+  },
+  "GET /folios": {
+   "status": 200,
+   "body": []
+  },
+  "GET /identification-types": {
+   "status": 200,
+   "body": [
+    {
+     "idIdentificationType": 1,
+     "name": "DNI",
+     "characters": "8",
+     "version": 0
+    },
+    {
+     "idIdentificationType": 2,
+     "name": "LE",
+     "characters": "8",
+     "version": 0
+    },
+    {
+     "idIdentificationType": 3,
+     "name": "LC",
+     "characters": "8",
+     "version": 0
+    },
+    {
+     "idIdentificationType": 4,
+     "name": "Pasaporte",
+     "characters": "12",
+     "version": 0
+    },
+    {
+     "idIdentificationType": 5,
+     "name": "CUIT",
+     "characters": "11",
+     "version": 0
+    }
+   ]
+  },
+  "GET /items": {
+   "status": 200,
+   "body": []
+  },
+  "GET /management-statuses": {
+   "status": 200,
+   "body": [
+    {
+     "name": "Iniciada",
+     "data": {},
+     "historials": [],
+     "idManagementStatus": 1,
+     "notes": "Inicio Gestion",
+     "valid": true,
+     "version": 0
+    },
+    {
+     "name": "En Tramite",
+     "data": {},
+     "historials": [],
+     "idManagementStatus": 2,
+     "notes": "",
+     "valid": true,
+     "version": 0
+    },
+    {
+     "name": "Documentacion Completa",
+     "data": {},
+     "historials": [],
+     "idManagementStatus": 3,
+     "notes": "",
+     "valid": true,
+     "version": 0
+    },
+    {
+     "name": "Archivada",
+     "data": {},
+     "historials": [],
+     "idManagementStatus": 4,
+     "notes": "",
+     "valid": true,
+     "version": 0
+    },
+    {
+     "name": "Gestion Modificada",
+     "data": {},
+     "historials": [],
+     "idManagementStatus": 5,
+     "notes": "",
+     "valid": true,
+     "version": 0
+    },
+    {
+     "name": "Gestion con Escritura Firmada",
+     "data": {},
+     "historials": [],
+     "idManagementStatus": 6,
+     "notes": "",
+     "valid": true,
+     "version": 0
+    },
+    {
+     "name": "Gestion con Escritura Sin Firmar",
+     "data": {},
+     "historials": [],
+     "idManagementStatus": 7,
+     "notes": "",
+     "valid": true,
+     "version": 0
+    },
+    {
+     "name": "Gestion con Escritura Anulada",
+     "data": {},
+     "historials": [],
+     "idManagementStatus": 8,
+     "notes": "",
+     "valid": true,
+     "version": 0
+    },
+    {
+     "name": "Gestion con Escritura No Paso",
+     "data": {},
+     "historials": [],
+     "idManagementStatus": 9,
+     "notes": "",
+     "valid": true,
+     "version": 0
+    },
+    {
+     "name": "Gestion con Escritura Inscripta",
+     "data": {},
+     "historials": [],
+     "idManagementStatus": 10,
+     "notes": "",
+     "valid": true,
+     "version": 0
+    },
+    {
+     "name": "Testimonio Generado",
+     "data": {},
+     "historials": [],
+     "idManagementStatus": 11,
+     "notes": "Post-signing: testimony generated from signed deed",
+     "valid": true,
+     "version": 0
+    },
+    {
+     "name": "Testimonio Ingresado a Inscripcion",
+     "data": {},
+     "historials": [],
+     "idManagementStatus": 12,
+     "notes": "Post-signing: testimony submitted for inscription",
+     "valid": true,
+     "version": 0
+    },
+    {
+     "name": "Testimonio Retirado",
+     "data": {},
+     "historials": [],
+     "idManagementStatus": 13,
+     "notes": "Post-signing: testimony withdrawn after inscription cycle",
+     "valid": true,
+     "version": 0
+    }
+   ]
+  },
+  "GET /managements?page=0&size=1&sort=idManagement%2Cdesc": {
+   "status": 200,
+   "body": {
+    "content": [
+     {
+      "idManagement": 2,
+      "number": 1002,
+      "heading": "Donación — Sucesión Gómez",
+      "dateStart": "2026-05-19T22:00:00.000Z",
+      "currentStatus": "En Tramite",
+      "procedureCount": 1,
+      "notes": null
+     }
+    ],
+    "empty": false,
+    "first": true,
+    "last": false,
+    "number": 0,
+    "numberOfElements": 1,
+    "pageable": {
+     "offset": 0,
+     "pageNumber": 0,
+     "pageSize": 1,
+     "paged": true,
+     "sort": {
+      "empty": false,
+      "sorted": true,
+      "unsorted": false
+     },
+     "unpaged": false
+    },
+    "size": 1,
+    "sort": {
+     "empty": false,
+     "sorted": true,
+     "unsorted": false
+    },
+    "totalElements": 2,
+    "totalPages": 2
+   }
+  },
+  "GET /managements?page=0&size=20&sort=idManagement%2Cdesc": {
+   "status": 200,
+   "body": {
+    "content": [
+     {
+      "idManagement": 2,
+      "number": 1002,
+      "heading": "Donación — Sucesión Gómez",
+      "dateStart": "2026-05-19T22:00:00.000Z",
+      "currentStatus": "En Tramite",
+      "procedureCount": 1,
+      "notes": null
+     },
+     {
+      "idManagement": 1,
+      "number": 1001,
+      "heading": "Compraventa Lote 12 — Familia Pérez",
+      "dateStart": "2026-05-01T22:00:00.000Z",
+      "currentStatus": "Documentacion Completa",
+      "procedureCount": 1,
+      "notes": null
+     }
+    ],
+    "empty": false,
+    "first": true,
+    "last": true,
+    "number": 0,
+    "numberOfElements": 2,
+    "pageable": {
+     "offset": 0,
+     "pageNumber": 0,
+     "pageSize": 20,
+     "paged": true,
+     "sort": {
+      "empty": false,
+      "sorted": true,
+      "unsorted": false
+     },
+     "unpaged": false
+    },
+    "size": 20,
+    "sort": {
+     "empty": false,
+     "sorted": true,
+     "unsorted": false
+    },
+    "totalElements": 2,
+    "totalPages": 1
+   }
+  },
+  "GET /managements/1/workflow-trace": {
+   "status": 200,
+   "body": {
+    "currentStatus": "Documentacion Completa",
+    "dateStart": "2026-05-01T22:00:00.000Z",
+    "heading": "Compraventa Lote 12 — Familia Pérez",
+    "history": [
+     {
+      "date": "2026-05-01T22:00:00.000Z",
+      "idHistory": 1,
+      "notes": "Apertura de la gestión",
+      "statusManagementId": 1,
+      "statusManagementName": "Iniciada"
+     },
+     {
+      "date": "2026-05-08T22:00:00.000Z",
+      "idHistory": 2,
+      "notes": "Trámite de compraventa en curso",
+      "statusManagementId": 2,
+      "statusManagementName": "En Tramite"
+     },
+     {
+      "date": "2026-05-27T22:00:00.000Z",
+      "idHistory": 3,
+      "notes": "Documentación completa recibida",
+      "statusManagementId": 3,
+      "statusManagementName": "Documentacion Completa"
+     }
+    ],
+    "managementId": 1,
+    "nodeStatuses": {
+     "1": "completed",
+     "2": "completed",
+     "3": "in_progress",
+     "4": "pending",
+     "5": "pending",
+     "7": "pending",
+     "8": "pending",
+     "9": "pending",
+     "10": "pending"
+    },
+    "nodes": [
+     {
+      "id": 1,
+      "positionX": null,
+      "positionY": null,
+      "statusManagementId": 1,
+      "statusManagementName": "Iniciada",
+      "type": "INITIAL",
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "id": 2,
+      "positionX": null,
+      "positionY": null,
+      "statusManagementId": 2,
+      "statusManagementName": "En Tramite",
+      "type": "INTERMEDIATE",
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "id": 3,
+      "positionX": null,
+      "positionY": null,
+      "statusManagementId": 3,
+      "statusManagementName": "Documentacion Completa",
+      "type": "INTERMEDIATE",
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "id": 4,
+      "positionX": null,
+      "positionY": null,
+      "statusManagementId": 7,
+      "statusManagementName": "Gestion con Escritura Sin Firmar",
+      "type": "INTERMEDIATE",
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "id": 5,
+      "positionX": null,
+      "positionY": null,
+      "statusManagementId": 6,
+      "statusManagementName": "Gestion con Escritura Firmada",
+      "type": "INTERMEDIATE",
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "id": 7,
+      "positionX": null,
+      "positionY": null,
+      "statusManagementId": 4,
+      "statusManagementName": "Archivada",
+      "type": "FINAL",
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "id": 8,
+      "positionX": null,
+      "positionY": null,
+      "statusManagementId": 11,
+      "statusManagementName": "Testimonio Generado",
+      "type": "INTERMEDIATE",
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "id": 9,
+      "positionX": null,
+      "positionY": null,
+      "statusManagementId": 12,
+      "statusManagementName": "Testimonio Ingresado a Inscripcion",
+      "type": "INTERMEDIATE",
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "id": 10,
+      "positionX": null,
+      "positionY": null,
+      "statusManagementId": 13,
+      "statusManagementName": "Testimonio Retirado",
+      "type": "FINAL",
+      "version": 0,
+      "workflowDefinitionId": 1
+     }
+    ],
+    "number": 1001,
+    "testimonyMovements": [],
+    "transitions": [
+     {
+      "condition": null,
+      "description": "Se asignan trámites y comienza la gestión",
+      "destinationNodeId": 2,
+      "id": 1,
+      "originNodeId": 1,
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "condition": null,
+      "description": "Toda la documentación requerida fue presentada",
+      "destinationNodeId": 3,
+      "id": 2,
+      "originNodeId": 2,
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "condition": null,
+      "description": "Se redacta la escritura",
+      "destinationNodeId": 4,
+      "id": 3,
+      "originNodeId": 3,
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "condition": null,
+      "description": "Las partes firman la escritura",
+      "destinationNodeId": 5,
+      "id": 4,
+      "originNodeId": 4,
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "condition": null,
+      "description": "La gestión se archiva sin escritura",
+      "destinationNodeId": 7,
+      "id": 6,
+      "originNodeId": 3,
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "condition": null,
+      "description": "Testimony generated after deed signing",
+      "destinationNodeId": 8,
+      "id": 5,
+      "originNodeId": 5,
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "condition": null,
+      "description": "Testimony submitted for inscription",
+      "destinationNodeId": 9,
+      "id": 7,
+      "originNodeId": 8,
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "condition": null,
+      "description": "Testimony withdrawn after inscription cycle",
+      "destinationNodeId": 10,
+      "id": 8,
+      "originNodeId": 9,
+      "version": 0,
+      "workflowDefinitionId": 1
+     }
+    ],
+    "workflowDefinition": {
+     "active": true,
+     "description": "Ciclo de vida estándar de una gestión de escritura",
+     "id": 1,
+     "name": "Workflow de Gestión Estándar",
+     "version": 0
+    }
+   }
+  },
+  "GET /managements/2/workflow-trace": {
+   "status": 200,
+   "body": {
+    "currentStatus": "En Tramite",
+    "dateStart": "2026-05-19T22:00:00.000Z",
+    "heading": "Donación — Sucesión Gómez",
+    "history": [
+     {
+      "date": "2026-05-19T22:00:00.000Z",
+      "idHistory": 4,
+      "notes": "Apertura de la gestión",
+      "statusManagementId": 1,
+      "statusManagementName": "Iniciada"
+     },
+     {
+      "date": "2026-05-31T22:00:00.000Z",
+      "idHistory": 5,
+      "notes": "Trámite de donación en curso",
+      "statusManagementId": 2,
+      "statusManagementName": "En Tramite"
+     }
+    ],
+    "managementId": 2,
+    "nodeStatuses": {
+     "1": "completed",
+     "2": "in_progress",
+     "3": "pending",
+     "4": "pending",
+     "5": "pending",
+     "7": "pending",
+     "8": "pending",
+     "9": "pending",
+     "10": "pending"
+    },
+    "nodes": [
+     {
+      "id": 1,
+      "positionX": null,
+      "positionY": null,
+      "statusManagementId": 1,
+      "statusManagementName": "Iniciada",
+      "type": "INITIAL",
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "id": 2,
+      "positionX": null,
+      "positionY": null,
+      "statusManagementId": 2,
+      "statusManagementName": "En Tramite",
+      "type": "INTERMEDIATE",
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "id": 3,
+      "positionX": null,
+      "positionY": null,
+      "statusManagementId": 3,
+      "statusManagementName": "Documentacion Completa",
+      "type": "INTERMEDIATE",
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "id": 4,
+      "positionX": null,
+      "positionY": null,
+      "statusManagementId": 7,
+      "statusManagementName": "Gestion con Escritura Sin Firmar",
+      "type": "INTERMEDIATE",
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "id": 5,
+      "positionX": null,
+      "positionY": null,
+      "statusManagementId": 6,
+      "statusManagementName": "Gestion con Escritura Firmada",
+      "type": "INTERMEDIATE",
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "id": 7,
+      "positionX": null,
+      "positionY": null,
+      "statusManagementId": 4,
+      "statusManagementName": "Archivada",
+      "type": "FINAL",
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "id": 8,
+      "positionX": null,
+      "positionY": null,
+      "statusManagementId": 11,
+      "statusManagementName": "Testimonio Generado",
+      "type": "INTERMEDIATE",
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "id": 9,
+      "positionX": null,
+      "positionY": null,
+      "statusManagementId": 12,
+      "statusManagementName": "Testimonio Ingresado a Inscripcion",
+      "type": "INTERMEDIATE",
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "id": 10,
+      "positionX": null,
+      "positionY": null,
+      "statusManagementId": 13,
+      "statusManagementName": "Testimonio Retirado",
+      "type": "FINAL",
+      "version": 0,
+      "workflowDefinitionId": 1
+     }
+    ],
+    "number": 1002,
+    "testimonyMovements": [],
+    "transitions": [
+     {
+      "condition": null,
+      "description": "Se asignan trámites y comienza la gestión",
+      "destinationNodeId": 2,
+      "id": 1,
+      "originNodeId": 1,
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "condition": null,
+      "description": "Toda la documentación requerida fue presentada",
+      "destinationNodeId": 3,
+      "id": 2,
+      "originNodeId": 2,
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "condition": null,
+      "description": "Se redacta la escritura",
+      "destinationNodeId": 4,
+      "id": 3,
+      "originNodeId": 3,
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "condition": null,
+      "description": "Las partes firman la escritura",
+      "destinationNodeId": 5,
+      "id": 4,
+      "originNodeId": 4,
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "condition": null,
+      "description": "La gestión se archiva sin escritura",
+      "destinationNodeId": 7,
+      "id": 6,
+      "originNodeId": 3,
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "condition": null,
+      "description": "Testimony generated after deed signing",
+      "destinationNodeId": 8,
+      "id": 5,
+      "originNodeId": 5,
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "condition": null,
+      "description": "Testimony submitted for inscription",
+      "destinationNodeId": 9,
+      "id": 7,
+      "originNodeId": 8,
+      "version": 0,
+      "workflowDefinitionId": 1
+     },
+     {
+      "condition": null,
+      "description": "Testimony withdrawn after inscription cycle",
+      "destinationNodeId": 10,
+      "id": 8,
+      "originNodeId": 9,
+      "version": 0,
+      "workflowDefinitionId": 1
+     }
+    ],
+    "workflowDefinition": {
+     "active": true,
+     "description": "Ciclo de vida estándar de una gestión de escritura",
+     "id": 1,
+     "name": "Workflow de Gestión Estándar",
+     "version": 0
+    }
+   }
+  },
+  "GET /notebooks": {
+   "status": 200,
+   "body": []
+  },
+  "GET /payments": {
+   "status": 200,
+   "body": []
+  },
+  "GET /people?page=0&size=1&sort=idPerson%2Cdesc": {
+   "status": 200,
+   "body": {
+    "content": [
+     {
+      "personId": 1,
+      "firstName": "Juan Carlos",
+      "lastName": "Garcia",
+      "identificationNumber": "20123456",
+      "isClient": false,
+      "nationality": "Argentina",
+      "taxId": "20-20123456-3",
+      "sex": "M",
+      "birthDate": "1980-01-14T23:00:00.000Z",
+      "maritalStatus": "Casado",
+      "marriageCount": 1,
+      "occupation": "Escribano",
+      "address": "Av. Principal 123",
+      "phone": "011-4555-1234",
+      "email": "jcgarcia@notaria.com",
+      "notaryRegistrationNumber": 1001,
+      "identificationTypeId": 1,
+      "version": 0
+     }
+    ],
+    "empty": false,
+    "first": true,
+    "last": true,
+    "number": 0,
+    "numberOfElements": 1,
+    "pageable": {
+     "offset": 0,
+     "pageNumber": 0,
+     "pageSize": 1,
+     "paged": true,
+     "sort": {
+      "empty": false,
+      "sorted": true,
+      "unsorted": false
+     },
+     "unpaged": false
+    },
+    "size": 1,
+    "sort": {
+     "empty": false,
+     "sorted": true,
+     "unsorted": false
+    },
+    "totalElements": 1,
+    "totalPages": 1
+   }
+  },
+  "GET /people?page=0&size=20&sort=idPerson%2Cdesc": {
+   "status": 200,
+   "body": {
+    "content": [
+     {
+      "personId": 1,
+      "firstName": "Juan Carlos",
+      "lastName": "Garcia",
+      "identificationNumber": "20123456",
+      "isClient": false,
+      "nationality": "Argentina",
+      "taxId": "20-20123456-3",
+      "sex": "M",
+      "birthDate": "1980-01-14T23:00:00.000Z",
+      "maritalStatus": "Casado",
+      "marriageCount": 1,
+      "occupation": "Escribano",
+      "address": "Av. Principal 123",
+      "phone": "011-4555-1234",
+      "email": "jcgarcia@notaria.com",
+      "notaryRegistrationNumber": 1001,
+      "identificationTypeId": 1,
+      "version": 0
+     }
+    ],
+    "empty": false,
+    "first": true,
+    "last": true,
+    "number": 0,
+    "numberOfElements": 1,
+    "pageable": {
+     "offset": 0,
+     "pageNumber": 0,
+     "pageSize": 20,
+     "paged": true,
+     "sort": {
+      "empty": false,
+      "sorted": true,
+      "unsorted": false
+     },
+     "unpaged": false
+    },
+    "size": 20,
+    "sort": {
+     "empty": false,
+     "sorted": true,
+     "unsorted": false
+    },
+    "totalElements": 1,
+    "totalPages": 1
+   }
+  },
+  "GET /procedure-templates": {
+   "status": 200,
+   "body": []
+  },
+  "GET /procedure-types": {
+   "status": 200,
+   "body": [
+    {
+     "name": "Sucesion",
+     "isArchived": true,
+     "isRegistered": false,
+     "associatesProperties": false,
+     "budgetTemplates": [],
+     "data": {},
+     "description": "Tramite de sucesion",
+     "enabled": true,
+     "idProcedureType": 4,
+     "notes": "Tramite de sucesion",
+     "templateProcedures": [],
+     "valid": true,
+     "version": 0,
+     "workflowDefinitionId": null,
+     "workflowDefinitionName": null
+    },
+    {
+     "name": "Poder",
+     "isArchived": false,
+     "isRegistered": false,
+     "associatesProperties": false,
+     "budgetTemplates": [],
+     "data": {},
+     "description": "Otorgamiento de poderes",
+     "enabled": true,
+     "idProcedureType": 5,
+     "notes": "Otorgamiento de poderes",
+     "templateProcedures": [],
+     "valid": true,
+     "version": 0,
+     "workflowDefinitionId": null,
+     "workflowDefinitionName": null
+    },
+    {
+     "name": "Compraventa",
+     "isArchived": true,
+     "isRegistered": true,
+     "associatesProperties": true,
+     "budgetTemplates": [],
+     "data": {},
+     "description": "Tramite de compraventa de inmuebles",
+     "enabled": true,
+     "idProcedureType": 1,
+     "notes": "Tramite de compraventa de inmuebles",
+     "templateProcedures": [],
+     "valid": true,
+     "version": 0,
+     "workflowDefinitionId": 1,
+     "workflowDefinitionName": "Workflow de Gestión Estándar"
+    },
+    {
+     "name": "Donacion",
+     "isArchived": true,
+     "isRegistered": true,
+     "associatesProperties": true,
+     "budgetTemplates": [],
+     "data": {},
+     "description": "Tramite de donacion",
+     "enabled": true,
+     "idProcedureType": 2,
+     "notes": "Tramite de donacion",
+     "templateProcedures": [],
+     "valid": true,
+     "version": 0,
+     "workflowDefinitionId": 1,
+     "workflowDefinitionName": "Workflow de Gestión Estándar"
+    },
+    {
+     "name": "Hipoteca",
+     "isArchived": true,
+     "isRegistered": true,
+     "associatesProperties": true,
+     "budgetTemplates": [],
+     "data": {},
+     "description": "Tramite de hipoteca",
+     "enabled": true,
+     "idProcedureType": 3,
+     "notes": "Tramite de hipoteca",
+     "templateProcedures": [],
+     "valid": true,
+     "version": 0,
+     "workflowDefinitionId": 1,
+     "workflowDefinitionName": "Workflow de Gestión Estándar"
+    }
+   ]
+  },
+  "GET /properties": {
+   "status": 200,
+   "body": []
+  },
+  "GET /roles": {
+   "status": 200,
+   "body": [
+    {
+     "idRole": 1,
+     "name": "Administrator",
+     "description": "Full access, including users, roles and audit",
+     "active": true,
+     "modulos": [
+      "administracion",
+      "usuarios",
+      "tramites",
+      "presupuestos",
+      "escrituras",
+      "personas",
+      "auditoria",
+      "workflows"
+     ]
+    },
+    {
+     "idRole": 2,
+     "name": "Notary",
+     "description": "Files, deeds, budgets, people, workflows and audit",
+     "active": true,
+     "modulos": [
+      "tramites",
+      "presupuestos",
+      "escrituras",
+      "personas",
+      "auditoria",
+      "workflows"
+     ]
+    },
+    {
+     "idRole": 3,
+     "name": "Office Staff",
+     "description": "Day-to-day files, deeds, budgets and people",
+     "active": true,
+     "modulos": [
+      "tramites",
+      "presupuestos",
+      "escrituras",
+      "personas",
+      "administracion"
+     ]
+    }
+   ]
+  },
+  "GET /submitted-documents": {
+   "status": 200,
+   "body": []
+  },
+  "GET /submitted-documents/upcoming-expirations?days=30": {
+   "status": 200,
+   "body": []
+  },
+  "GET /substitutions": {
+   "status": 200,
+   "body": []
+  },
+  "GET /testimonies": {
+   "status": 200,
+   "body": []
+  },
+  "GET /users": {
+   "status": 200,
+   "body": [
+    {
+     "idUser": 1,
+     "name": "admin",
+     "type": "ADMIN",
+     "active": true,
+     "person": {
+      "idPerson": 1,
+      "name": "Juan Carlos",
+      "lastName": "Garcia"
+     },
+     "role": {
+      "idRole": 1,
+      "name": "Administrator"
+     }
+    }
+   ]
+  },
+  "GET /workflow-definition": {
+   "status": 200,
+   "body": [
+    {
+     "active": true,
+     "description": "Ciclo de vida estándar de una gestión de escritura",
+     "id": 1,
+     "name": "Workflow de Gestión Estándar",
+     "version": 0
+    }
+   ]
+  },
+  "GET /workflow-node/by-workflow/1": {
+   "status": 200,
+   "body": [
+    {
+     "id": 1,
+     "positionX": null,
+     "positionY": null,
+     "statusManagementId": 1,
+     "statusManagementName": "Iniciada",
+     "type": "INITIAL",
+     "version": 0,
+     "workflowDefinitionId": 1
+    },
+    {
+     "id": 2,
+     "positionX": null,
+     "positionY": null,
+     "statusManagementId": 2,
+     "statusManagementName": "En Tramite",
+     "type": "INTERMEDIATE",
+     "version": 0,
+     "workflowDefinitionId": 1
+    },
+    {
+     "id": 3,
+     "positionX": null,
+     "positionY": null,
+     "statusManagementId": 3,
+     "statusManagementName": "Documentacion Completa",
+     "type": "INTERMEDIATE",
+     "version": 0,
+     "workflowDefinitionId": 1
+    },
+    {
+     "id": 4,
+     "positionX": null,
+     "positionY": null,
+     "statusManagementId": 7,
+     "statusManagementName": "Gestion con Escritura Sin Firmar",
+     "type": "INTERMEDIATE",
+     "version": 0,
+     "workflowDefinitionId": 1
+    },
+    {
+     "id": 5,
+     "positionX": null,
+     "positionY": null,
+     "statusManagementId": 6,
+     "statusManagementName": "Gestion con Escritura Firmada",
+     "type": "INTERMEDIATE",
+     "version": 0,
+     "workflowDefinitionId": 1
+    },
+    {
+     "id": 7,
+     "positionX": null,
+     "positionY": null,
+     "statusManagementId": 4,
+     "statusManagementName": "Archivada",
+     "type": "FINAL",
+     "version": 0,
+     "workflowDefinitionId": 1
+    },
+    {
+     "id": 8,
+     "positionX": null,
+     "positionY": null,
+     "statusManagementId": 11,
+     "statusManagementName": "Testimonio Generado",
+     "type": "INTERMEDIATE",
+     "version": 0,
+     "workflowDefinitionId": 1
+    },
+    {
+     "id": 9,
+     "positionX": null,
+     "positionY": null,
+     "statusManagementId": 12,
+     "statusManagementName": "Testimonio Ingresado a Inscripcion",
+     "type": "INTERMEDIATE",
+     "version": 0,
+     "workflowDefinitionId": 1
+    },
+    {
+     "id": 10,
+     "positionX": null,
+     "positionY": null,
+     "statusManagementId": 13,
+     "statusManagementName": "Testimonio Retirado",
+     "type": "FINAL",
+     "version": 0,
+     "workflowDefinitionId": 1
+    }
+   ]
+  },
+  "GET /workflow-transition/by-workflow/1": {
+   "status": 200,
+   "body": [
+    {
+     "condition": null,
+     "description": "Se asignan trámites y comienza la gestión",
+     "destinationNodeId": 2,
+     "id": 1,
+     "originNodeId": 1,
+     "version": 0,
+     "workflowDefinitionId": 1
+    },
+    {
+     "condition": null,
+     "description": "Toda la documentación requerida fue presentada",
+     "destinationNodeId": 3,
+     "id": 2,
+     "originNodeId": 2,
+     "version": 0,
+     "workflowDefinitionId": 1
+    },
+    {
+     "condition": null,
+     "description": "Se redacta la escritura",
+     "destinationNodeId": 4,
+     "id": 3,
+     "originNodeId": 3,
+     "version": 0,
+     "workflowDefinitionId": 1
+    },
+    {
+     "condition": null,
+     "description": "Las partes firman la escritura",
+     "destinationNodeId": 5,
+     "id": 4,
+     "originNodeId": 4,
+     "version": 0,
+     "workflowDefinitionId": 1
+    },
+    {
+     "condition": null,
+     "description": "La gestión se archiva sin escritura",
+     "destinationNodeId": 7,
+     "id": 6,
+     "originNodeId": 3,
+     "version": 0,
+     "workflowDefinitionId": 1
+    },
+    {
+     "condition": null,
+     "description": "Testimony generated after deed signing",
+     "destinationNodeId": 8,
+     "id": 5,
+     "originNodeId": 5,
+     "version": 0,
+     "workflowDefinitionId": 1
+    },
+    {
+     "condition": null,
+     "description": "Testimony submitted for inscription",
+     "destinationNodeId": 9,
+     "id": 7,
+     "originNodeId": 8,
+     "version": 0,
+     "workflowDefinitionId": 1
+    },
+    {
+     "condition": null,
+     "description": "Testimony withdrawn after inscription cycle",
+     "destinationNodeId": 10,
+     "id": 8,
+     "originNodeId": 9,
+     "version": 0,
+     "workflowDefinitionId": 1
+    }
+   ]
+  },
+  "POST /users/login": {
+   "status": 200,
+   "body": {
+    "valid": true,
+    "idUser": 1,
+    "person": {
+     "firstName": "Juan Carlos",
+     "lastName": "Garcia",
+     "idPerson": 1
+    },
+    "name": "admin",
+    "type": "ADMIN",
+    "version": 0,
+    "token": "demo",
+    "status": true
+   }
+  }
+ }
+}

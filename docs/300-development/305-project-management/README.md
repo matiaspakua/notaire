@@ -5,7 +5,8 @@ fleet read history, coordinate current work, and select what comes next.
 
 | Start here | Question answered |
 |------------|-------------------|
-| [MILESTONES.md](MILESTONES.md) | Which history cohort or delivery train owns an issue? |
+| [MILESTONE-NOMENCLATURE.md](MILESTONE-NOMENCLATURE.md) | How is a milestone named, and what does each name mean? |
+| [MILESTONES.md](MILESTONES.md) | Which history stage or release train owns an issue? |
 | [ROADMAP.md](ROADMAP.md) | Which GitHub Project view answers history, execution, queue, or triage? |
 | [PARALLEL-AGENTS.md](PARALLEL-AGENTS.md) | May another agent claim this work now? |
 | [LABELS.md](LABELS.md) | Which labels express area, urgency, concern, and workflow? |
@@ -73,8 +74,18 @@ python3 workspace/sdlc/check-board-status-label-coherence.py --scope all
 ```
 
 `--apply` is owner-only and explicit. It requires an authenticated `gh` user
-with repository Issues and user Project write permission. Agent installation
-tokens that return 403 produce a handoff; they do not invent a second tracker.
+with repository Issues and user Project write permission (`repo` + `project`
+scopes; the apply script preflights scopes before the first write). Agent
+installation tokens that return 403 produce a handoff; they do not invent a
+second tracker.
+
+Owner shell helpers live in [`workspace/sdlc/owner/`](../../../workspace/sdlc/owner/)
+(`notaire-consolidate.sh`, `notaire-milestones-apply.sh`,
+`notaire-labels-apply.sh`). Preview is the default; pass `--apply` to mutate
+GitHub. After a live apply, commit the refreshed
+`docs/github/milestone-snapshot.json` and
+`github-page/lib/milestone-snapshot.json` on a PR — `--check` fails when the
+committed snapshot is stale.
 
 ## Authority and navigation
 

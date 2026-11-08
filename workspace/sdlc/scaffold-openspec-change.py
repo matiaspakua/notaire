@@ -16,7 +16,7 @@ spec.json keys: name, issue, uc, branch, title, why, what, rule, rule_src, cap, 
 modules {backend-api|frontend|infra|ci|workspace: text}, docs [[path, change]], oos, spec
 (delta-spec markdown), context, goals, nongoals, decisions, risks, testing, regression,
 tasks [text], test (name used in the coverage table); optional: entities, endpoints, db,
-config, arch, pw, deploy, migration.
+config, arch, pw, deploy, migration, write_set (globs for `aisdlc scope`).
 
 `complete` ticks groups 1-8 and 9.1/9.3 and marks the tests passing. Groups 9.2 and 10-12 stay
 open for the real PR, merge and deploy. Set NOTAIRE_REPO_ROOT to operate on another checkout.
@@ -53,6 +53,14 @@ def module_table(modules: dict[str, str]) -> str:
     return "\n".join(rows)
 
 
+def write_set(c: dict) -> str:
+    """The proposal's `### Write set` for `aisdlc scope` (pre-pr); empty when the spec gives none."""
+    globs = c.get("write_set") or []
+    if not globs:
+        return ""
+    return "\n### Write set\n\n" + "\n".join(f"- `{g}`" for g in globs) + "\n"
+
+
 def proposal(c: dict) -> str:
     docs = "\n".join(f"| `{path}` | {what} |" for path, what in c["docs"])
     return f"""# {c['title']}
@@ -84,6 +92,7 @@ def proposal(c: dict) -> str:
 ## Capabilities
 
 ### New Capabilities
+
 - `{c['cap']}`: {c['cap_desc']}
 
 ### Modified Capabilities
@@ -103,7 +112,7 @@ def proposal(c: dict) -> str:
 - Database (Flyway `V{{n}}`): {c.get('db', 'none')}
 - Configuration / `.env`: {c.get('config', 'none')}
 - Dependencies: none
-
+{write_set(c)}
 ### Architecture review
 
 {c.get('arch', 'Follows the existing architecture; no ADR.')}

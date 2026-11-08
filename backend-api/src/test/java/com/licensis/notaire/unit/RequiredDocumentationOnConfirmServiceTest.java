@@ -16,7 +16,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.licensis.notaire.application.usecase.procedure.RequiredDocumentationOnConfirmService;
+import com.licensis.notaire.adapter.out.persistence.procedure.RequiredDocumentationOnConfirmService;
 import com.licensis.notaire.business.DocumentType;
 import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.business.ProcedureTemplate;

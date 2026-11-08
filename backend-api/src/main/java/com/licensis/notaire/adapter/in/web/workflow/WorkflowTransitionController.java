@@ -1,18 +1,7 @@
 package com.licensis.notaire.adapter.in.web.workflow;
 
-import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
-import com.licensis.notaire.adapter.in.web.support.RequiredFields;
-import com.licensis.notaire.dto.DtoWorkflowTransition;
-import com.licensis.notaire.business.WorkflowDefinition;
-import com.licensis.notaire.business.WorkflowNode;
-import com.licensis.notaire.business.WorkflowTransition;
-import com.licensis.notaire.repository.WorkflowDefinitionRepository;
-import com.licensis.notaire.repository.WorkflowNodeRepository;
-import com.licensis.notaire.repository.WorkflowTransitionRepository;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,133 +12,146 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import com.licensis.notaire.application.port.in.workflow.ManageWorkflowTransitionsUseCase;
+import com.licensis.notaire.application.port.in.workflow.ManageWorkflowTransitionsUseCase.CreateWorkflowTransitionCommand;
+import com.licensis.notaire.application.port.in.workflow.ManageWorkflowTransitionsUseCase.UpdateWorkflowTransitionCommand;
+import com.licensis.notaire.application.port.in.workflow.QueryWorkflowTransitionsUseCase;
+import com.licensis.notaire.domain.workflow.WorkflowTransition;
+import com.licensis.notaire.domain.workflow.WorkflowTransitionInvalidException;
+import com.licensis.notaire.domain.workflow.WorkflowTransitionNotFoundException;
+import com.licensis.notaire.dto.DtoWorkflowTransition;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+/**
+ * Workflow transitions. Calls inbound ports only; workflow and node reference checks live in the use
+ * case (issue #1730). Unexpected failures propagate to {@code GlobalExceptionHandler} (#579).
+ */
 @RestController
 @RequestMapping("/api/v1/workflow-transition")
 @Tag(name = "Workflow Transition", description = "CU71 - Transitions between statuses of a workflow")
 public class WorkflowTransitionController {
 
-    private final WorkflowTransitionRepository repository;
-    private final WorkflowNodeRepository nodeRepository;
-    private final WorkflowDefinitionRepository workflowRepository;
+    public record WorkflowTransitionCreateRequest(
+            @NotNull Integer workflowDefinitionId,
+            @NotNull Integer originNodeId,
+            @NotNull Integer destinationNodeId,
+            String condition,
+            String description) { }
 
-    public WorkflowTransitionController(WorkflowTransitionRepository repository,
-            WorkflowNodeRepository nodeRepository,
-            WorkflowDefinitionRepository workflowRepository) {
-        this.repository = repository;
-        this.nodeRepository = nodeRepository;
-        this.workflowRepository = workflowRepository;
+    public record WorkflowTransitionUpdateRequest(
+            @NotNull Integer originNodeId,
+            @NotNull Integer destinationNodeId,
+            String condition,
+            String description) { }
+
+    private final QueryWorkflowTransitionsUseCase query;
+    private final ManageWorkflowTransitionsUseCase manage;
+
+    public WorkflowTransitionController(
+            QueryWorkflowTransitionsUseCase query, ManageWorkflowTransitionsUseCase manage) {
+        this.query = query;
+        this.manage = manage;
+    }
+
+    private DtoWorkflowTransition toDto(WorkflowTransition transition) {
+        DtoWorkflowTransition dto = new DtoWorkflowTransition();
+        dto.setId(transition.id());
+        dto.setWorkflowDefinitionId(transition.workflowDefinitionId());
+        dto.setOriginNodeId(transition.originNodeId());
+        dto.setDestinationNodeId(transition.destinationNodeId());
+        dto.setCondition(transition.condition());
+        dto.setDescription(transition.description());
+        dto.setVersion(transition.version());
+        return dto;
     }
 
     @GetMapping("/by-workflow/{workflowId}")
     @Operation(summary = "Get transitions by workflow")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoWorkflowTransition>> getByWorkflow(@PathVariable Integer workflowId) {
-        return ResponseEntity.ok(repository.findByWorkflowDefinitionId(workflowId)
-                .stream().map(WorkflowTransition::toDto).toList());
+        return ResponseEntity.ok(
+                query.findByWorkflowDefinitionId(workflowId).stream().map(this::toDto).toList());
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "Not found")
-})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @GetMapping("/{id}")
     @Operation(summary = "Get transition by ID")
-    @Transactional(readOnly = true)
     public ResponseEntity<DtoWorkflowTransition> getById(@PathVariable Integer id) {
-        return repository.findById(id)
-                .map(t -> ResponseEntity.ok(t.toDto()))
+        return query.findById(id)
+                .map(t -> ResponseEntity.ok(toDto(t)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Created"),
-    @ApiResponse(responseCode = "400", description = "Invalid request: workflowDefinitionId, originNodeId and "
-            + "destinationNodeId are required"),
-    @ApiResponse(responseCode = "409", description = "Conflict")
-})
+        @ApiResponse(responseCode = "201", description = "Created"),
+        @ApiResponse(
+                responseCode = "400",
+                description = "Invalid request: workflowDefinitionId, originNodeId and "
+                        + "destinationNodeId are required"),
+        @ApiResponse(responseCode = "409", description = "Conflict")
+    })
     @PostMapping
     @Operation(summary = "Create a transition between two nodes")
-    public ResponseEntity<Object> create(@RequestBody DtoWorkflowTransition dto) {
-        Integer workflowId = RequiredFields.require(dto.getWorkflowDefinitionId(), "workflowDefinitionId");
-        Integer originId = RequiredFields.require(dto.getOriginNodeId(), "originNodeId");
-        Integer destinationId = RequiredFields.require(dto.getDestinationNodeId(), "destinationNodeId");
-        Optional<WorkflowDefinition> wf = workflowRepository.findById(workflowId);
-        if (wf.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        Optional<WorkflowNode> origin = nodeRepository.findById(originId);
-        if (origin.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        Optional<WorkflowNode> destination = nodeRepository.findById(destinationId);
-        if (destination.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<DtoWorkflowTransition> create(@Valid @RequestBody WorkflowTransitionCreateRequest request) {
         try {
-            WorkflowTransition transition = new WorkflowTransition();
-            transition.setWorkflowDefinition(wf.get());
-            transition.setOriginNode(origin.get());
-            transition.setDestinationNode(destination.get());
-            transition.setCondition(dto.getCondition());
-            transition.setDescription(dto.getDescription());
-            transition = repository.save(transition);
-            return ResponseEntity.status(HttpStatus.CREATED).body(transition.toDto());
-        } catch (Exception e) {
-            return ErrorResponses.createFailed(e);
+            WorkflowTransition saved = manage.create(new CreateWorkflowTransitionCommand(
+                    request.workflowDefinitionId(),
+                    request.originNodeId(),
+                    request.destinationNodeId(),
+                    request.condition(),
+                    request.description()));
+            return ResponseEntity.status(HttpStatus.CREATED).body(toDto(saved));
+        } catch (WorkflowTransitionInvalidException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Invalid request: originNodeId and destinationNodeId are "
-            + "required"),
-    @ApiResponse(responseCode = "404", description = "Not found")
-})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(
+                responseCode = "400",
+                description = "Invalid request: originNodeId and destinationNodeId are required"),
+        @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @PutMapping("/{id}")
     @Operation(summary = "Update transition")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoWorkflowTransition dto) {
-        if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        Integer originId = RequiredFields.require(dto.getOriginNodeId(), "originNodeId");
-        Integer destinationId = RequiredFields.require(dto.getDestinationNodeId(), "destinationNodeId");
-        Optional<WorkflowNode> origin = nodeRepository.findById(originId);
-        if (origin.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        Optional<WorkflowNode> destination = nodeRepository.findById(destinationId);
-        if (destination.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<DtoWorkflowTransition> update(
+            @PathVariable Integer id, @Valid @RequestBody WorkflowTransitionUpdateRequest request) {
         try {
-            WorkflowTransition transition = repository.findById(id).get();
-            transition.setOriginNode(origin.get());
-            transition.setDestinationNode(destination.get());
-            transition.setCondition(dto.getCondition());
-            transition.setDescription(dto.getDescription());
-            return ResponseEntity.ok(repository.save(transition).toDto());
-        } catch (Exception e) {
-            // A data constraint answers 400; any other failure keeps 409 (issue #579, slice 3).
-            return ErrorResponses.createFailed(e);
+            WorkflowTransition saved = manage.update(
+                    id,
+                    new UpdateWorkflowTransitionCommand(
+                            request.originNodeId(),
+                            request.destinationNodeId(),
+                            request.condition(),
+                            request.description()));
+            return ResponseEntity.ok(toDto(saved));
+        } catch (WorkflowTransitionNotFoundException | WorkflowTransitionInvalidException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Deleted"),
-    @ApiResponse(responseCode = "404", description = "Not found")
-})
+        @ApiResponse(responseCode = "204", description = "Deleted"),
+        @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete transition")
-    public ResponseEntity<Object> delete(@PathVariable Integer id) {
-        if (!repository.existsById(id)) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        try {
+            manage.delete(id);
+            return ResponseEntity.noContent().build();
+        } catch (WorkflowTransitionNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
-        repository.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 }

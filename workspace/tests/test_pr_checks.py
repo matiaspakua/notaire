@@ -40,7 +40,7 @@ def commit(repo, message, *paths):
 
 def run(script, *args, cwd, **env):
     return subprocess.run(["bash", os.path.join(SCRIPTS, script), *args], cwd=cwd, capture_output=True,
-                          text=True, env={**os.environ, "PR_LABELS": "", "PR_AUTHOR": "someone", **env})
+                          text=True, env={**os.environ, "PR_LABELS": "", "PR_AUTHOR": "someone", "PR_HEAD_REF": "", **env})
 
 
 class CommitMessagesTest(unittest.TestCase):
@@ -84,6 +84,13 @@ class TddEvidenceTest(unittest.TestCase):
         repo, base = new_repo()
         commit(repo, "test: foo red", self.TEST)
         commit(repo, "feat: foo", self.MAIN)
+        self.assertEqual(run("check-tdd-evidence.sh", base, cwd=repo).returncode, 0)
+
+    def test_accepts_docs_tests_as_tdd_evidence(self):
+        """docs/tests guards count as tests (#2023 — session lesson from #1980)."""
+        repo, base = new_repo()
+        commit(repo, "test: docs guard red", "docs/tests/test_flyway_docs_no_stale_version_range.py")
+        commit(repo, "docs: refresh properties comment", "backend-api/src/main/resources/application.properties")
         self.assertEqual(run("check-tdd-evidence.sh", base, cwd=repo).returncode, 0)
 
     def test_rejects_code_before_tests_and_names_commit(self):
@@ -135,6 +142,29 @@ class SdlcExceptionTest(unittest.TestCase):
         commit(repo, "chore(deps): bump", "frontend/package.json")
         self.assertEqual(run("check-sdlc-exception.sh", base, cwd=repo, PR_AUTHOR="dependabot[bot]").returncode, 0)
 
+    def test_accepts_release_please_pr(self):
+        """#1753: the release-please PR carries no OpenSpec change and must not need the Owner's label."""
+        repo, base = new_repo()
+        commit(repo, "chore(main): release 0.2.3", "CHANGELOG.md")
+        result = run("check-sdlc-exception.sh", base, cwd=repo, PR_AUTHOR="github-actions[bot]",
+                     PR_HEAD_REF="release-please--branches--main--components--notaire")
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertIn("release-please", result.stdout)
+
+    def test_rejects_actions_bot_pr_that_is_not_release_please(self):
+        repo, base = new_repo()
+        commit(repo, "chore: something", "CHANGELOG.md")
+        result = run("check-sdlc-exception.sh", base, cwd=repo, PR_AUTHOR="github-actions[bot]",
+                     PR_HEAD_REF="some-other-branch")
+        self.assertNotEqual(result.returncode, 0)
+
+    def test_rejects_release_please_branch_from_a_human(self):
+        repo, base = new_repo()
+        commit(repo, "chore: something", "CHANGELOG.md")
+        result = run("check-sdlc-exception.sh", base, cwd=repo, PR_AUTHOR="someone",
+                     PR_HEAD_REF="release-please--branches--main--components--notaire")
+        self.assertNotEqual(result.returncode, 0)
+
     def test_merge_checkout_ignores_openspec_files_that_landed_on_main(self):
         """Actions checks out refs/pull/N/merge. A stale event base SHA must not
         count an OpenSpec path that arrived on main after the PR opened."""
@@ -144,7 +174,7 @@ class SdlcExceptionTest(unittest.TestCase):
         commit(repo, "docs: readme", "docs/README.md")
         git(repo, "checkout", "-q", "main")
         git(repo, "merge", "-q", "--no-ff", "pr", "-m", "Merge pr into main")
-        result = run("check-sdlc-exception.sh", stale, cwd=repo)
+        result = run("check-sdlc-exception.sh", stale, cwd=repo, GITHUB_ACTIONS="true")
         self.assertNotEqual(result.returncode, 0, result.stdout)
         self.assertIn("sdlc-exception", result.stdout)
 
@@ -155,7 +185,51 @@ class SdlcExceptionTest(unittest.TestCase):
         commit(repo, "docs(openspec): plan", "docs/openspec/changes/x/proposal.md")
         git(repo, "checkout", "-q", "main")
         git(repo, "merge", "-q", "--no-ff", "pr", "-m", "Merge pr into main")
-        self.assertEqual(run("check-sdlc-exception.sh", stale, cwd=repo).returncode, 0)
+        self.assertEqual(run("check-sdlc-exception.sh", stale, cwd=repo, GITHUB_ACTIONS="true").returncode, 0)
+
+
+class LocalMergeBaseTest(unittest.TestCase):
+    """#1655: a branch that merged main must still be diffed against its merge base locally."""
+
+    def branch_that_merged_main(self):
+        repo, base = new_repo()
+        git(repo, "checkout", "-q", "-b", "work")
+        commit(repo, "docs(openspec): plan", "docs/openspec/changes/x/proposal.md")
+        git(repo, "checkout", "-q", "main")
+        commit(repo, "docs: unrelated main note", "docs/OTHER.md")
+        git(repo, "checkout", "-q", "work")
+        git(repo, "merge", "-q", "--no-ff", "main", "-m", "merge main")
+        return repo, base
+
+    def test_local_run_still_sees_the_branch_openspec_path(self):
+        repo, base = self.branch_that_merged_main()
+        env = {k: v for k, v in os.environ.items() if k != "GITHUB_ACTIONS"}
+        result = subprocess.run(["bash", os.path.join(SCRIPTS, "check-sdlc-exception.sh"), base], cwd=repo,
+                                capture_output=True, text=True, env={**env, "PR_LABELS": "", "PR_AUTHOR": "someone"})
+        self.assertEqual(result.returncode, 0, result.stdout)
+
+    def test_ci_run_keeps_the_first_parent_heuristic(self):
+        repo, base = self.branch_that_merged_main()
+        result = run("check-sdlc-exception.sh", base, cwd=repo, GITHUB_ACTIONS="true")
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+
+    def test_python_checks_return_the_base_locally_and_the_parent_in_ci(self):
+        repo, base = self.branch_that_merged_main()
+        first_parent = git(repo, "rev-parse", "HEAD^1")
+        for name in ("check-openspec-archive-hygiene.py", "check-doc-traceability.py"):
+            code = (
+                "import importlib.util,os,sys;"
+                f"s=importlib.util.spec_from_file_location('m',r'{os.path.join(SCRIPTS, name)}');"
+                "m=importlib.util.module_from_spec(s);s.loader.exec_module(m);"
+                f"print(m.diff_base('{base}','HEAD'))"
+            )
+            for ci, expected in (("", base), ("true", first_parent)):
+                env = {k: v for k, v in os.environ.items() if k != "GITHUB_ACTIONS"}
+                if ci:
+                    env["GITHUB_ACTIONS"] = ci
+                out = subprocess.run(["python3", "-c", code], cwd=repo, capture_output=True, text=True, env=env)
+                with self.subTest(check=name, ci=ci):
+                    self.assertEqual(out.stdout.strip(), expected, out.stderr)
 
 
 class AgentRulesTest(unittest.TestCase):

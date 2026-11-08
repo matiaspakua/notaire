@@ -69,12 +69,15 @@ class FakeGh:
     def open_prs_closing(self, number):
         return 0
 
+    def repo_labels(self):
+        return {"in-progress", "ready-for-dev"}
+
     def set_status(self, number, status):
         self.status = status
         return True
 
 
-def issue(number=10, labels=("BACKEND", "priority:high"), title="fix: x"):
+def issue(number=10, labels=("BACKEND", "priority:high", "ready-for-dev"), title="fix: x"):
     return {"number": number, "state": "OPEN", "title": title, "labels": list(labels)}
 
 

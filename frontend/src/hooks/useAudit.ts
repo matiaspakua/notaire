@@ -1,11 +1,10 @@
 /**
  * React Query hooks for AuditRecord (system audit).
- * Endpoints: GET /api/v1/audit-log (paged, newest first; optional module, idUser and an
- *            inclusive from/to day range, #1545 / CU23)
- * Read-only — audit logs are not editable.
+ * Hexagon wiring: #1843 / ADR-030.
  */
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { apiGetPage } from "@/lib/api-client";
+import { auditUseCases } from "@/composition/audit";
+import type { AuditRecord as DomainAudit } from "@/core/audit/domain/audit";
 import type { AuditRecord } from "@/types";
 
 export interface AuditPageParams {
@@ -25,17 +24,21 @@ export const auditKeys = {
   page: (params: AuditPageParams) => ["audit", "page", params] as const,
 };
 
+function toWire(r: DomainAudit): AuditRecord {
+  return r as AuditRecord;
+}
+
 /** One server page of the audit log (#1340): the table grows fastest, so it is never loaded whole. */
 export function useAudit(params: AuditPageParams) {
   return useQuery({
     queryKey: auditKeys.page(params),
-    queryFn: () =>
-      apiGetPage<AuditRecord>("/audit-log", {
-        page: params.page,
-        size: params.size,
-        sort: "date,desc",
-        params: { module: params.module, idUser: params.idUser, from: params.from, to: params.to },
-      }),
+    queryFn: async () => {
+      const page = await auditUseCases.listPage(params);
+      return {
+        ...page,
+        content: page.content.map(toWire),
+      };
+    },
     placeholderData: keepPreviousData,
   });
 }

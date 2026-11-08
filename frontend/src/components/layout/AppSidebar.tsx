@@ -8,7 +8,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
-import { apiLogout } from "@/lib/api-client";
+import { authUseCases } from "@/composition/auth";
 import {
   DASHBOARD_NAV_GROUPS,
   DASHBOARD_NAV_HOME,
@@ -81,7 +81,7 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
 
   async function handleLogout() {
     // Clear HttpOnly JWT cookie via API before clearing client state (#1051).
-    await apiLogout();
+    await authUseCases.logout();
     logout();
     router.replace("/login");
   }

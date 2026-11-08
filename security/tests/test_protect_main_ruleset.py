@@ -1,15 +1,9 @@
 #!/usr/bin/env python3
 """
-Guards issue #1040 / CU76+CU78: protect main with ruleset — PR-only, five
-required check-run names, no force-push/delete, no durable bot bypass.
-
-Invariants (in-repo artifacts; live GitHub assert is Gate 5):
-- Desired-state JSON for ruleset protect-main (id 24128115) includes
-  pull_request, required_status_checks for the five AC names, deletion,
-  non_fast_forward, and empty bypass_actors.
-- Workflow aggregator jobs exist with exact name: CI, Frontend CI,
-  Playwright E2E, PR Validation; Code Lint remains the lint job name.
-- .claude/rules/hooks.md no longer claims main is unprotected / 404.
+Guards issue #1040 / CU76+CU78, retargeted by #2001: protect main with a
+ruleset — PR-only, no force-push/delete, no durable bot bypass. Required
+status checks that product workflows no longer report on a pull request are
+absent from the desired JSON. Aggregator job names stay for a tag run.
 
 Run with: python3 security/tests/test_protect_main_ruleset.py
 """
@@ -101,26 +95,17 @@ class ProtectMainDesiredStateTest(unittest.TestCase):
         )
         self.assertIn("~DEFAULT_BRANCH", include)
 
-    def test_rule_types_include_pr_checks_deletion_non_ff(self):
+    def test_rule_types_include_pr_deletion_non_ff_without_retired_checks(self):
         types = {rule.get("type") for rule in self.desired.get("rules", [])}
         self.assertIn("pull_request", types)
-        self.assertIn("required_status_checks", types)
+        self.assertNotIn("required_status_checks", types)
         self.assertIn("deletion", types)
         self.assertIn("non_fast_forward", types)
 
-    def test_required_status_checks_are_exact_ac_names(self):
-        rsc = next(
-            r for r in self.desired["rules"] if r.get("type") == "required_status_checks"
-        )
-        params = rsc.get("parameters") or {}
-        checks = params.get("required_status_checks") or []
-        contexts = sorted(c.get("context") for c in checks if isinstance(c, dict))
-        self.assertEqual(contexts, sorted(REQUIRED_CHECK_NAMES))
-        self.assertTrue(
-            params.get("strict_required_status_checks_policy") is True
-            or params.get("strict") is True,
-            "expected strict required-status-checks policy",
-        )
+    def test_retired_status_checks_are_absent(self):
+        blob = json.dumps(self.desired)
+        for name in REQUIRED_CHECK_NAMES:
+            self.assertNotIn(f'"context": "{name}"', blob)
 
     def test_pull_request_rule_does_not_require_approving_reviews(self):
         pr = next(r for r in self.desired["rules"] if r.get("type") == "pull_request")

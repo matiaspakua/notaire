@@ -48,6 +48,16 @@ Constitution loop; specialists write most of the code.
 - Do **not** invent Issue numbers or Use Cases.
 - Do **not** treat `Issue: #n` (or a plain body mention) as sufficient to close work —
   GitHub will **not** auto-close the issue on merge.
+- Do **not** start the next hex/R2 **domain** PR (or push tips that re-trigger heavy CI)
+  while the current domain PR is still open — serialize domains and heavy CI
+  (`docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md`).
+- Do **not** edit `CHANGELOG.md` `[Unreleased]` while another PR (or Release Please)
+  holds that fence; never commit on `release-please--branches--*`.
+- Do **not** open probe/canary Issues to test write permissions; on `gh` **403** leave a
+  **human paste** for labels/Status/close (templates in `FLEET-LESSONS-HEX-1693.md`).
+- Do **not** open parallel heavy-CI product tips “to go faster” — serialize merges and prefer
+  **domain-sized** slices (fleet cost / `FLEET-LESSONS-HEX-1693.md` Performance section).
+- Do **not** treat Mac local green as CI merge-ready (`MAC-LOCAL-VS-CI.md`).
 
 ## Hard rule — closing keyword
 
@@ -85,7 +95,7 @@ those scripts. Details: `docs/300-development/304-ai-sdlc-cloud/ENVIRONMENT-CHEC
 
 ## Loop (one issue at a time)
 
-```
+```text
 pick → triage brief → OpenSpec Gate 1 → branch + in-progress
   → dispatch tests (red) → dispatch implement → docs
   → preflight → PR → CI watch → code-review (+ security if needed)
@@ -101,6 +111,9 @@ pick → triage brief → OpenSpec Gate 1 → branch + in-progress
 | Gate 3 | `bash workspace/sdlc/run_pipeline.sh` when environment supports it |
 | CI | `bash workspace/sdlc/check-heavy-ci.sh <pr>` (Integration + Coverage + Bruno + Playwright); see `CI-MERGE-GATE.md` |
 | Smoke | `curl -sf` health URL from env (default `http://localhost:8080/actuator/health`) |
+| Owner-only paths | `python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml protected --base origin/main` — exit 1 ⇒ hand the PR to the Owner, do not merge |
+| Evidence anchor | `… aisdlc … evidence verify` → paste the printed head digest in the PR body; at merge, `evidence verify --anchor <digest>` must pass |
+| Write set / size (advisory) | `… aisdlc … scope` and `… size` (pre-pr); over budget ⇒ the PR body says why it was not split |
 
 ## Dispatch
 
@@ -109,9 +122,16 @@ from `fleet-manifest.yaml` (`openspec-planner`, `backend-implementer`,
 `frontend-design`, `testing-qa`, `java-architect`, `devops-engineer`,
 `security-auditor`, `code-reviewer`, `sync_issues_and_code`, `project-manager`).
 
-On specialist return, require a **handoff result** with `commands_run` and exit codes.
-Retry the same phase with `prior_gate_log` attached (max 2–3 attempts) then escalate model
-(`model_upgrade`) or stop with `BLOCKED`.
+On specialist return, require a **handoff result** with `commands_run` and exit codes,
+the changed paths, and the deviations (mechanical, with what was checked; or a decision
+packet). Re-run the gate yourself; a report is feedback, never evidence. Compare the changed
+paths with the proposal's `### Write set` (`aisdlc scope`) before accepting the phase.
+
+**Bounded corrections:** one correction batch with `prior_gate_log` covering every blocker,
+then one re-check limited to those blockers. A second batch only when the *same* blocker still
+fails (optionally with `model_upgrade`); then stop with `BLOCKED` and a decision packet
+(`.claude/rules/ai-agent-workflow.md`). Reproduce a blocker on `main` first — behavior the
+change did not touch is an advisory, not a blocker.
 
 ## Issue pick rules
 
@@ -147,12 +167,15 @@ Retry the same phase with `prior_gate_log` attached (max 2–3 attempts) then es
 - If a cloud worker’s `gh` returns 401, the **coordinator** (or a same-VM worker
   with working `gh`) owns `gh pr ready` / squash-merge after heavy-gate exit 0.
 - Before merge: the PR archives its OpenSpec change (#1623). After merge: ensure board
-  Status is **Done** and WIP labels (`in-progress`, `blocked`) are cleared.
+  Status is **Done** and WIP labels (`in-progress`, `blocked`) are cleared;
+  **sync remaining open tips** with new `main` (merge, never rebase pushed branches).
   Before merge/close and during board hygiene run
   `python3 workspace/sdlc/check-board-status-label-coherence.py --scope pr`
   (and `--scope wip` for the In Progress column). Project has no Blocked
   Status — use the `blocked` label. If Issues/Projects write is 403, leave a
   human paste; never invent Owner product scope.
+- Process Checks green before ready; Mac vs CI split for hex:
+  `MAC-LOCAL-VS-CI.md`.
 
 ## Module map
 

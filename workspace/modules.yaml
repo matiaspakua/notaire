@@ -31,6 +31,12 @@ modules:
     fleet: ai
     verify: bash local-ai/verify.sh
     depends_on: []
+  ai-sdlc-framework:
+    path: framework/ai-sdlc
+    responsibility: Stack-agnostic AI SDLC kit (aisdlc CLI, policy and agent templates); knows no adopter
+    fleet: ai
+    verify: bash framework/ai-sdlc/verify.sh
+    depends_on: []
   docs:
     path: docs
     responsibility: Business and architecture knowledge base
@@ -55,4 +61,4 @@ modules:
     extra_paths: [.github]
     fleet: foreman
     verify: bash workspace/verify.sh
-    depends_on: [backend-api, frontend, infra, testing, local-ai, docs, contracts, security]
+    depends_on: [backend-api, frontend, infra, testing, local-ai, ai-sdlc-framework, docs, contracts, security]

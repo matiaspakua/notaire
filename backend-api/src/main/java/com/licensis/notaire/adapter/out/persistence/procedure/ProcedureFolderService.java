@@ -1,0 +1,72 @@
+package com.licensis.notaire.adapter.out.persistence.procedure;
+
+import com.licensis.notaire.exception.BusinessValidationException;
+import com.licensis.notaire.exception.ResourceNotFoundException;
+import com.licensis.notaire.business.ProcedureFolder;
+import com.licensis.notaire.business.Procedure;
+import com.licensis.notaire.repository.ProcedureFolderRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * CU85 — Manage procedure folders. Outbound persistence helper (issue #1867).
+ */
+@Service
+@Transactional
+public class ProcedureFolderService {
+
+    static final String STATUS_ACTIVE = "Activa";
+    static final String STATUS_ON_HOLD = "Espera";
+
+    private static final Logger log = LoggerFactory.getLogger(ProcedureFolderService.class);
+
+    private final ProcedureFolderRepository procedureFolderRepository;
+
+    public ProcedureFolderService(ProcedureFolderRepository procedureFolderRepository) {
+        this.procedureFolderRepository = procedureFolderRepository;
+    }
+
+    public ProcedureFolder generateFolderForProcedure(Procedure procedure) {
+        ProcedureFolder folder = new ProcedureFolder();
+        folder.setNumber(procedureFolderRepository.nextFolderNumber());
+        folder.setStatus(STATUS_ACTIVE);
+        folder.setFkIdManagement(procedure.getFkIdManagement());
+        folder.setFkIdProcedure(procedure);
+        ProcedureFolder saved = procedureFolderRepository.save(folder);
+        log.info("Folder {} generated for procedure {} of management {}", saved.getNumber(),
+                procedure.getIdProcedure(), procedure.getFkIdManagement().getIdManagement());
+        return saved;
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<ProcedureFolder> findById(Integer id) {
+        return procedureFolderRepository.findById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<ProcedureFolder> findByProcedure(Integer idProcedure) {
+        return procedureFolderRepository.findByFkIdProcedureIdProcedure(idProcedure);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProcedureFolder> findByManagement(Integer idManagement) {
+        return procedureFolderRepository.findByFkIdManagementIdManagement(idManagement);
+    }
+
+    public ProcedureFolder putOnHold(Integer idFolder, String reason) {
+        if (reason == null || reason.isBlank()) {
+            throw new BusinessValidationException(
+                    "The reason is required to put a folder on hold");
+        }
+        ProcedureFolder folder = procedureFolderRepository.findById(idFolder)
+                .orElseThrow(() -> new ResourceNotFoundException("Folder not found with ID: " + idFolder));
+        folder.setStatus(STATUS_ON_HOLD);
+        folder.setWaitReason(reason);
+        return procedureFolderRepository.save(folder);
+    }
+}

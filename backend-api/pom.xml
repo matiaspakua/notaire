@@ -1,11 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>com.licensis</groupId>
         <artifactId>notaire-root</artifactId>
-        <version>0.2.1</version>
+        <version>0.2.7</version>
     </parent>
 
     <artifactId>backend-api</artifactId>
@@ -15,12 +14,16 @@
 
     <properties>
         <skipSpotBugs>true</skipSpotBugs>
+        <!-- CI passes stricter values (#566 ratchet); local defaults stay permissive. -->
+        <checkstyle.maxAllowedViolations>999999</checkstyle.maxAllowedViolations>
+        <checkstyle.failOnViolation>false</checkstyle.failOnViolation>
+        <archunit.version>1.5.1</archunit.version>
         <sonar.projectKey>notaire-backend</sonar.projectKey>
         <sonar.projectName>Notaire Backend</sonar.projectName>
         <sonar.sources>src/main/java,src/main/resources</sonar.sources>
         <sonar.tests>src/test/java</sonar.tests>
         <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-        <sonar.coverage.exclusions>**/com/licensis/notaire/jpa/**,**/com/licensis/notaire/dto/**</sonar.coverage.exclusions>
+        <sonar.coverage.exclusions>**/com/licensis/notaire/dto/**</sonar.coverage.exclusions>
         <sonar.junit.reportPaths>${project.build.directory}/surefire-reports</sonar.junit.reportPaths>
     </properties>
 
@@ -140,6 +143,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5</artifactId>
+            <version>${archunit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
@@ -190,7 +199,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>3.1.1</version>
+            <version>3.2.0</version>
         </dependency>
         <!-- Lombok for reducing boilerplate -->
         <dependency>
@@ -270,17 +279,25 @@
                         reverse). Alphabetical keeps every environment running the same order.
                     -->
                     <runOrder>alphabetical</runOrder>
+                    <!--
+                        H2 TIMESTAMP WITH TIME ZONE round-trips an Instant through the JVM
+                        zone, so lockout timestamps drifted on non-UTC developer machines
+                        while CI (UTC) passed. Pin the zone so every environment agrees.
+                    -->
+                    <environmentVariables>
+                        <TZ>UTC</TZ>
+                    </environmentVariables>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.6.1</version>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.15</version>
+                <version>0.8.16</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -294,12 +311,6 @@
                                 <exclude>jdk/**/*</exclude>
                                 <exclude>com.sun/**/*</exclude>
                                 <exclude>sun/**/*</exclude>
-                                <exclude>com/licensis/notaire/jpa/**/*</exclude>
-                                <exclude>com/licensis/notaire/service/JpaAdministrator*</exclude>
-                                <exclude>com/licensis/notaire/service/AdministradorReportes*</exclude>
-                                <exclude>com/licensis/notaire/service/AdministradorSesion*</exclude>
-                                <exclude>com/licensis/notaire/service/ValidationAdministrator*</exclude>
-                                <exclude>com/licensis/notaire/service/Conexion*</exclude>
                                 <exclude>com/licensis/notaire/NotaireBackendApplication*</exclude>
                             </excludes>
                         </configuration>
@@ -312,13 +323,6 @@
                         </goals>
                         <configuration>
                             <excludes>
-                                <exclude>com/licensis/notaire/jpa/**/*</exclude>
-                                <exclude>com/licensis/notaire/jpa/exceptions/**/*</exclude>
-                                <exclude>com/licensis/notaire/service/JpaAdministrator*</exclude>
-                                <exclude>com/licensis/notaire/service/AdministradorReportes*</exclude>
-                                <exclude>com/licensis/notaire/service/AdministradorSesion*</exclude>
-                                <exclude>com/licensis/notaire/service/ValidationAdministrator*</exclude>
-                                <exclude>com/licensis/notaire/service/Conexion*</exclude>
                                 <exclude>com/licensis/notaire/NotaireBackendApplication*</exclude>
                             </excludes>
                         </configuration>
@@ -326,11 +330,11 @@
                     <execution>
                         <id>check</id>
                         <!--
-                            Enforced ratchet floor (runs on `mvn verify`). Legacy jpa package
-                            is excluded from instrumentation so numbers reflect modern code only.
-                            Enforced floor: 80% line / 65% branch (#1511 aligns docs).
-                            Long-term target: 80% line / 80% branch.
-                            Raise these minimums as coverage improves; never lower.
+                            Enforced ratchet floor (runs on `mvn verify`).
+                            Enforced floor: 85% line / 70% branch (#2046; was 80/65).
+                            Owner target: >90% across the test pyramid (floors ratchet toward it).
+                            Raise these minimums as coverage improves; never lower without ADR.
+                            Legacy jpa / JpaAdministrator retired in #576 — no longer excluded.
                         -->
                         <phase>verify</phase>
                         <goals>
@@ -338,12 +342,6 @@
                         </goals>
                         <configuration>
                             <excludes>
-                                <exclude>com/licensis/notaire/jpa/**/*</exclude>
-                                <exclude>com/licensis/notaire/service/JpaAdministrator*</exclude>
-                                <exclude>com/licensis/notaire/service/AdministradorReportes*</exclude>
-                                <exclude>com/licensis/notaire/service/AdministradorSesion*</exclude>
-                                <exclude>com/licensis/notaire/service/ValidationAdministrator*</exclude>
-                                <exclude>com/licensis/notaire/service/Conexion*</exclude>
                                 <exclude>com/licensis/notaire/NotaireBackendApplication*</exclude>
                             </excludes>
                             <rules>
@@ -353,12 +351,12 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.80</minimum>
+                                            <minimum>0.85</minimum>
                                         </limit>
                                         <limit>
                                             <counter>BRANCH</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.65</minimum>
+                                            <minimum>0.70</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
@@ -370,7 +368,7 @@
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>4.10.4.1</version>
+                <version>4.10.5.0</version>
                 <configuration>
                     <effort>Max</effort>
                     <threshold>Low</threshold>
@@ -394,8 +392,9 @@
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
                     <violationSeverity>warning</violationSeverity>
-                    <failOnViolation>false</failOnViolation>
-                    <failsOnError>false</failsOnError>
+                    <maxAllowedViolations>${checkstyle.maxAllowedViolations}</maxAllowedViolations>
+                    <failOnViolation>${checkstyle.failOnViolation}</failOnViolation>
+                    <failsOnError>${checkstyle.failOnViolation}</failsOnError>
                 </configuration>
                 <executions>
                     <execution>
@@ -446,7 +445,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.6.1</version>
                 <configuration>
                     <showPacks>true</showPacks>
                     <showSummary>true</showSummary>
@@ -455,7 +454,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.15</version>
+                <version>0.8.16</version>
                 <configuration>
                     <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
                 </configuration>

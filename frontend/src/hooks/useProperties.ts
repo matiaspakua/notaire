@@ -1,5 +1,10 @@
+/**
+ * React Query hooks for properties.
+ * Hexagon wiring: #1845 / ADR-030.
+ */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { propertyUseCases } from "@/composition/property";
+import type { Property as DomainProperty, PropertyInput } from "@/core/property/domain/property";
 import type { Property } from "@/types";
 
 export const propertiesKeys = {
@@ -7,17 +12,21 @@ export const propertiesKeys = {
   detail: (id: number) => ["properties", id] as const,
 };
 
+function toWire(p: DomainProperty): Property {
+  return p as Property;
+}
+
 export function useProperties() {
   return useQuery({
     queryKey: propertiesKeys.all,
-    queryFn: () => apiGet<Property[]>("/properties"),
+    queryFn: async () => (await propertyUseCases.list()).map(toWire),
   });
 }
 
 export function useCreateProperty() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<Property>) => apiPost<void>("/properties", data),
+    mutationFn: (data: Partial<Property>) => propertyUseCases.create(data as PropertyInput),
     onSuccess: () => qc.invalidateQueries({ queryKey: propertiesKeys.all }),
   });
 }
@@ -26,7 +35,7 @@ export function useUpdateProperty() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<Property> }) =>
-      apiPut<void>(`/properties/${id}`, data),
+      propertyUseCases.update(id, data as PropertyInput),
     onSuccess: () => qc.invalidateQueries({ queryKey: propertiesKeys.all }),
   });
 }
@@ -34,7 +43,7 @@ export function useUpdateProperty() {
 export function useDeleteProperty() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => apiDelete(`/properties/${id}`),
+    mutationFn: (id: number) => propertyUseCases.delete(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: propertiesKeys.all }),
   });
 }

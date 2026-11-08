@@ -1,29 +1,42 @@
 /**
  * React Query hooks for ProcedureTemplate: the required-documents checklist per procedure type
- * (CU03 read, CU55 admin #1362).
- * Endpoints: GET /api/v1/procedure-templates (all rows, CU79 overview #1554),
- * GET /api/v1/procedure-templates/procedure-types/{idProcedureType},
- * POST /api/v1/procedure-templates, PUT/DELETE /api/v1/procedure-templates/{idProcedureType}/{idDocumentType}
- *
- * The API answers flat rows (fkIdProcedureType, fkIdDocumentType, notes), so the document name,
- * expiry and who delivers it come from the document-type catalog.
+ * (CU03 read, CU55 admin #1362). Hexagon wiring: #1788 / ADR-030.
  */
 import { useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiDelete, apiGet, apiPost, apiPut } from "@/lib/api-client";
+import { procedureTemplateUseCases } from "@/composition/procedure-template";
 import { useDocumentTypes } from "@/hooks/useDocuments";
 import type { ProcedureTemplate, ProcedureTemplateRow } from "@/types";
 
 export const procedureTemplateKeys = {
   root: ["procedureTemplate"] as const,
   all: ["procedureTemplate", "all"] as const,
-  byProcedure: (idTypeProcedure: number) => ["procedureTemplate", "procedureType", idTypeProcedure] as const,
+  byProcedure: (idTypeProcedure: number) =>
+    ["procedureTemplate", "procedureType", idTypeProcedure] as const,
 };
+
+function toWire(row: {
+  procedureTypeId: number;
+  documentTypeId: number;
+  notes?: string | null;
+  version?: number;
+}): ProcedureTemplate {
+  return {
+    fkIdProcedureType: row.procedureTypeId,
+    fkIdDocumentType: row.documentTypeId,
+    notes: row.notes,
+    version: row.version,
+  };
+}
 
 export function useProcedureTemplate(idTypeProcedure: number | undefined) {
   const templates = useQuery({
-    queryKey: idTypeProcedure !== undefined ? procedureTemplateKeys.byProcedure(idTypeProcedure) : ["procedureTemplate", "procedureType", "none"],
-    queryFn: () => apiGet<ProcedureTemplate[]>(`/procedure-templates/procedure-types/${idTypeProcedure}`),
+    queryKey:
+      idTypeProcedure !== undefined
+        ? procedureTemplateKeys.byProcedure(idTypeProcedure)
+        : ["procedureTemplate", "procedureType", "none"],
+    queryFn: async () =>
+      (await procedureTemplateUseCases.listByProcedureType(idTypeProcedure!)).map(toWire),
     enabled: idTypeProcedure !== undefined,
   });
   const { data: documentTypes } = useDocumentTypes();
@@ -39,7 +52,7 @@ export function useProcedureTemplate(idTypeProcedure: number | undefined) {
 export function useAllProcedureTemplates() {
   return useQuery({
     queryKey: procedureTemplateKeys.all,
-    queryFn: () => apiGet<ProcedureTemplate[]>("/procedure-templates"),
+    queryFn: async () => (await procedureTemplateUseCases.listAll()).map(toWire),
   });
 }
 
@@ -61,11 +74,7 @@ export function useCreateProcedureTemplate() {
   const invalidate = useInvalidateChecklist();
   return useMutation({
     mutationFn: ({ procedureTypeId, documentTypeId, notes }: RequiredDocumentKey & { notes?: string }) =>
-      apiPost<ProcedureTemplate>("/procedure-templates", {
-        fkIdProcedureType: procedureTypeId,
-        fkIdDocumentType: documentTypeId,
-        notes: notes ?? "",
-      }),
+      procedureTemplateUseCases.create({ procedureTypeId, documentTypeId, notes }),
     onSuccess: (_d, v) => invalidate(v.procedureTypeId),
   });
 }
@@ -74,7 +83,7 @@ export function useUpdateProcedureTemplate() {
   const invalidate = useInvalidateChecklist();
   return useMutation({
     mutationFn: ({ procedureTypeId, documentTypeId, notes }: RequiredDocumentKey & { notes: string }) =>
-      apiPut<ProcedureTemplate>(`/procedure-templates/${procedureTypeId}/${documentTypeId}`, { notes }),
+      procedureTemplateUseCases.update({ procedureTypeId, documentTypeId, notes }),
     onSuccess: (_d, v) => invalidate(v.procedureTypeId),
   });
 }
@@ -83,7 +92,7 @@ export function useDeleteProcedureTemplate() {
   const invalidate = useInvalidateChecklist();
   return useMutation({
     mutationFn: ({ procedureTypeId, documentTypeId }: RequiredDocumentKey) =>
-      apiDelete(`/procedure-templates/${procedureTypeId}/${documentTypeId}`),
+      procedureTemplateUseCases.delete(procedureTypeId, documentTypeId),
     onSuccess: (_d, v) => invalidate(v.procedureTypeId),
   });
 }

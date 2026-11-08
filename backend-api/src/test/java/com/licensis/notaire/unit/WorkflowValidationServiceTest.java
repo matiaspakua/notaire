@@ -1,21 +1,21 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.business.ManagementStatus;
-import com.licensis.notaire.business.WorkflowNode;
-import com.licensis.notaire.business.WorkflowNodeType;
-import com.licensis.notaire.business.WorkflowTransition;
-import com.licensis.notaire.application.usecase.workflow.WorkflowValidationService;
-import com.licensis.notaire.application.usecase.workflow.WorkflowValidationService.ValidationResult;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import com.licensis.notaire.application.usecase.workflow.WorkflowValidationService;
+import com.licensis.notaire.application.usecase.workflow.WorkflowValidationService.ValidationResult;
+import com.licensis.notaire.domain.workflow.WorkflowNode;
+import com.licensis.notaire.domain.workflow.WorkflowNodeKind;
+import com.licensis.notaire.domain.workflow.WorkflowTransition;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-@DisplayName("CU83 - WorkflowValidationService unit tests")
+@DisplayName("CU72 - WorkflowValidationService unit tests (domain types, issue #1770)")
 class WorkflowValidationServiceTest {
 
     private WorkflowValidationService service;
@@ -25,20 +25,12 @@ class WorkflowValidationServiceTest {
         service = new WorkflowValidationService();
     }
 
-    private WorkflowNode makeNode(int id, WorkflowNodeType type) {
-        WorkflowNode n = new WorkflowNode(id);
-        n.setType(type);
-        ManagementStatus e = new ManagementStatus(id);
-        e.setName("Status " + id);
-        n.setManagementStatus(e);
-        return n;
+    private WorkflowNode makeNode(int id, WorkflowNodeKind kind, String statusName) {
+        return WorkflowNode.restore(id, 1, id, statusName, kind, 0f, 0f, 0);
     }
 
-    private WorkflowTransition makeTransition(int id, WorkflowNode origin, WorkflowNode destination) {
-        WorkflowTransition t = new WorkflowTransition(id);
-        t.setOriginNode(origin);
-        t.setDestinationNode(destination);
-        return t;
+    private WorkflowTransition makeTransition(int id, int originId, int destinationId) {
+        return WorkflowTransition.restore(id, 1, originId, destinationId, null, null, 0);
     }
 
     @Nested
@@ -48,11 +40,11 @@ class WorkflowValidationServiceTest {
         @Test
         @DisplayName("Should pass for minimal valid workflow: INITIAL → FINAL")
         void shouldPassForMinimalValidWorkflow() {
-            WorkflowNode initial = makeNode(1, WorkflowNodeType.INITIAL);
-            WorkflowNode finalNode = makeNode(2, WorkflowNodeType.FINAL);
-            WorkflowTransition t = makeTransition(1, initial, finalNode);
-
-            ValidationResult result = service.validate(List.of(initial, finalNode), List.of(t));
+            ValidationResult result = service.validate(
+                    List.of(
+                            makeNode(1, WorkflowNodeKind.INITIAL, "Start"),
+                            makeNode(2, WorkflowNodeKind.FINAL, "End")),
+                    List.of(makeTransition(1, 1, 2)));
 
             assertThat(result.isValid()).isTrue();
             assertThat(result.getErrors()).isEmpty();
@@ -61,13 +53,12 @@ class WorkflowValidationServiceTest {
         @Test
         @DisplayName("Should pass for INITIAL → INTERMEDIATE → FINAL")
         void shouldPassForLinearWorkflow() {
-            WorkflowNode initial = makeNode(1, WorkflowNodeType.INITIAL);
-            WorkflowNode mid = makeNode(2, WorkflowNodeType.INTERMEDIATE);
-            WorkflowNode finalNode = makeNode(3, WorkflowNodeType.FINAL);
-            WorkflowTransition t1 = makeTransition(1, initial, mid);
-            WorkflowTransition t2 = makeTransition(2, mid, finalNode);
-
-            ValidationResult result = service.validate(List.of(initial, mid, finalNode), List.of(t1, t2));
+            ValidationResult result = service.validate(
+                    List.of(
+                            makeNode(1, WorkflowNodeKind.INITIAL, "A"),
+                            makeNode(2, WorkflowNodeKind.INTERMEDIATE, "B"),
+                            makeNode(3, WorkflowNodeKind.FINAL, "C")),
+                    List.of(makeTransition(1, 1, 2), makeTransition(2, 2, 3)));
 
             assertThat(result.isValid()).isTrue();
             assertThat(result.getErrors()).isEmpty();
@@ -84,60 +75,61 @@ class WorkflowValidationServiceTest {
             ValidationResult result = service.validate(List.of(), List.of());
 
             assertThat(result.isValid()).isFalse();
-            assertThat(result.getErrors()).isNotEmpty();
+            assertThat(result.getErrors()).contains("The workflow has no nodes.");
         }
 
         @Test
         @DisplayName("Should fail when no INITIAL node")
         void shouldFailWhenNoInitialNode() {
-            WorkflowNode mid = makeNode(1, WorkflowNodeType.INTERMEDIATE);
-            WorkflowNode finalNode = makeNode(2, WorkflowNodeType.FINAL);
-            WorkflowTransition t = makeTransition(1, mid, finalNode);
-
-            ValidationResult result = service.validate(List.of(mid, finalNode), List.of(t));
+            ValidationResult result = service.validate(
+                    List.of(
+                            makeNode(1, WorkflowNodeKind.INTERMEDIATE, "Mid"),
+                            makeNode(2, WorkflowNodeKind.FINAL, "End")),
+                    List.of(makeTransition(1, 1, 2)));
 
             assertThat(result.isValid()).isFalse();
             assertThat(result.getErrors()).anyMatch(e -> e.contains("initial"));
         }
 
         @Test
-        @DisplayName("Should fail when more than one INITIAL node")
+        @DisplayName("Should fail when multiple INITIAL nodes")
         void shouldFailWhenMultipleInitialNodes() {
-            WorkflowNode i1 = makeNode(1, WorkflowNodeType.INITIAL);
-            WorkflowNode i2 = makeNode(2, WorkflowNodeType.INITIAL);
-            WorkflowNode finalNode = makeNode(3, WorkflowNodeType.FINAL);
-
-            ValidationResult result = service.validate(List.of(i1, i2, finalNode), List.of());
+            ValidationResult result = service.validate(
+                    List.of(
+                            makeNode(1, WorkflowNodeKind.INITIAL, "A"),
+                            makeNode(2, WorkflowNodeKind.INITIAL, "B"),
+                            makeNode(3, WorkflowNodeKind.FINAL, "C")),
+                    List.of());
 
             assertThat(result.isValid()).isFalse();
-            assertThat(result.getErrors()).anyMatch(e -> e.contains("initial"));
+            assertThat(result.getErrors()).anyMatch(e -> e.contains("more than one initial node"));
         }
 
         @Test
         @DisplayName("Should fail when no FINAL node")
         void shouldFailWhenNoFinalNode() {
-            WorkflowNode initial = makeNode(1, WorkflowNodeType.INITIAL);
-            WorkflowNode mid = makeNode(2, WorkflowNodeType.INTERMEDIATE);
-            WorkflowTransition t = makeTransition(1, initial, mid);
-
-            ValidationResult result = service.validate(List.of(initial, mid), List.of(t));
+            ValidationResult result = service.validate(
+                    List.of(
+                            makeNode(1, WorkflowNodeKind.INITIAL, "Start"),
+                            makeNode(2, WorkflowNodeKind.INTERMEDIATE, "Mid")),
+                    List.of(makeTransition(1, 1, 2)));
 
             assertThat(result.isValid()).isFalse();
-            assertThat(result.getErrors()).anyMatch(e -> e.contains("final"));
+            assertThat(result.getErrors()).anyMatch(e -> e.contains("final node"));
         }
 
         @Test
-        @DisplayName("Should fail when orphan node unreachable from INITIAL")
-        void shouldFailWhenOrphanNodeExists() {
-            WorkflowNode initial = makeNode(1, WorkflowNodeType.INITIAL);
-            WorkflowNode finalNode = makeNode(2, WorkflowNodeType.FINAL);
-            WorkflowNode orphan = makeNode(3, WorkflowNodeType.INTERMEDIATE);
-            WorkflowTransition t = makeTransition(1, initial, finalNode);
-
-            ValidationResult result = service.validate(List.of(initial, finalNode, orphan), List.of(t));
+        @DisplayName("Should fail when nodes are unreachable from INITIAL")
+        void shouldFailWhenUnreachableNodes() {
+            ValidationResult result = service.validate(
+                    List.of(
+                            makeNode(1, WorkflowNodeKind.INITIAL, "Start"),
+                            makeNode(2, WorkflowNodeKind.FINAL, "End"),
+                            makeNode(3, WorkflowNodeKind.FINAL, "Isolated")),
+                    List.of(makeTransition(1, 1, 2)));
 
             assertThat(result.isValid()).isFalse();
-            assertThat(result.getErrors()).anyMatch(e -> e.contains("unreachable") || e.contains("isolated"));
+            assertThat(result.getErrors()).anyMatch(e -> e.contains("unreachable") && e.contains("Isolated"));
         }
     }
 }

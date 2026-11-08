@@ -1,69 +1,44 @@
+import Link from "next/link";
 import { DOCS, REPO } from "@/lib/docs-content";
+import { pageMetadata } from "@/lib/site";
 
-const controls = [
-  {
-    title: "Authentication & sessions",
-    body: "JWT (HttpOnly cookie path), rate limiting, logout revocation. ADR-008, ADR-018.",
-  },
-  {
-    title: "Business audit",
-    body: "AuditoriaAspect records create/update/delete and logins from SecurityContext — not client headers.",
-  },
-  {
-    title: "SAST / SCA / DAST",
-    body: "CodeQL, dependency review, Trivy image/fs scans, ZAP DAST workflows run where the source lives.",
-  },
-  {
-    title: "Repository protection",
-    body: "security/ module holds rulesets-as-code and the control map; apply with admin PAT (#1040).",
-  },
-  {
-    title: "Sec by Design",
-    body: "Threat model, security case catalog, policy-as-code, and local gates before a pull request. Program: CYBERSECURITY-PROGRAM.md (#307, #1500).",
-  },
-];
+export const metadata = pageMetadata("/docs/security/");
 
 export default function DocsSecurityPage() {
   return (
     <div className="space-y-8">
       <header className="space-y-3">
         <h1 className="text-3xl font-semibold text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
-          Security & DevSecOps
+          Security docs
         </h1>
-        <p className="text-neutral-600 max-w-3xl leading-relaxed">
-          Security scanning stays with the source (ADR-024 critique of a standalone security repo).
-          The <code className="text-xs bg-neutral-100 px-1 rounded">security/</code> module owns
-          protection-as-code and the inventory of controls.
+        <p className="max-w-3xl leading-relaxed text-neutral-600">
+          The interactive explanation — trust boundaries, STRIDE, the toolchain cadence, and the public snapshot —
+          lives in the Security section. This page keeps the old route and points at the architecture notes on GitHub.
         </p>
       </header>
-
-      <div className="grid sm:grid-cols-2 gap-4">
-        {controls.map((c) => (
-          <article key={c.title} className="rounded-2xl border border-neutral-200 bg-white p-5">
-            <h2 className="font-semibold text-neutral-900">{c.title}</h2>
-            <p className="mt-2 text-sm text-neutral-600 leading-relaxed">{c.body}</p>
-          </article>
-        ))}
-      </div>
-
+      <p>
+        <Link href="/security/" className="font-semibold text-brand-700 underline decoration-brand-700/30 underline-offset-2">
+          Open the Security section
+        </Link>
+      </p>
       <ul className="space-y-2 text-sm">
         <li>
-          <a className="text-[#0A84FF] hover:underline" href={`${DOCS}/200-architecture/206-security/`}>
+          <a className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current" href={`${DOCS}/200-architecture/206-security/ASSESSMENT-2026-11-05.md`}>
+            Assessment 2026-11-05
+          </a>
+        </li>
+        <li>
+          <a className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current" href={`${DOCS}/200-architecture/206-security/`}>
             Security architecture docs
           </a>
         </li>
         <li>
-          <a className="text-[#0A84FF] hover:underline" href={`${DOCS}/200-architecture/208-devsecops/README.md`}>
-            DevSecOps README
-          </a>
-        </li>
-        <li>
-          <a className="text-[#0A84FF] hover:underline" href={`${REPO}/blob/main/SECURITY.md`}>
+          <a className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current" href={`${REPO}/blob/main/SECURITY.md`}>
             SECURITY.md
           </a>
         </li>
         <li>
-          <a className="text-[#0A84FF] hover:underline" href={`${REPO}/tree/main/security`}>
+          <a className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current" href={`${REPO}/tree/main/security`}>
             security/ module
           </a>
         </li>

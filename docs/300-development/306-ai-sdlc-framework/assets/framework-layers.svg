@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 492" role="img" aria-labelledby="t d" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+<title id="t">Layers of the AI SDLC framework</title>
+<desc id="d">Six layers from top to bottom: interchangeable agent runtimes; roles; the policy document and agent card; the project profile; the aisdlc kit; and the project's own unchanged toolchain. A side column shows the evidence ledger, written by the kit from real exit codes and read by humans, reports and the learning loop.</desc>
+<style>.h{font-size:14px;font-weight:700}.s{font-size:12px}@media (prefers-color-scheme:dark){.bg{fill:#0f172a}.cap{fill:#cbd5e1}}</style>
+<rect class="bg" width="980" height="492" rx="16" fill="#ffffff"/>
+<text class="h cap" x="40" y="36" fill="#0f172a">One policy, one profile, one kit — any stack, any agent</text>
+<rect x="40" y="60" width="700" height="58" rx="12" fill="#f1f5f9" stroke="#475569" stroke-width="1.5"/>
+<text class="h" x="60" y="84" fill="#0f172a">Agent runtimes — interchangeable</text>
+<text class="s" x="60" y="104" fill="#0f172a">Claude Code · Cursor · Codex · OpenCode · Copilot · local models (read AGENTS.md)</text>
+<rect x="40" y="126" width="700" height="58" rx="12" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+<text class="h" x="60" y="150" fill="#451a03">Roles</text>
+<text class="s" x="60" y="170" fill="#451a03">Owner (human) · Foreman · Planner · Implementer · Reviewer · Steward — tiers and merge rule in the profile</text>
+<rect x="40" y="192" width="700" height="58" rx="12" fill="#ede9fe" stroke="#6d28d9" stroke-width="1.5"/>
+<text class="h" x="60" y="216" fill="#2e1065">Policy</text>
+<text class="s" x="60" y="236" fill="#2e1065">CONSTITUTION.md (one authority, names no tool) + AGENT-CARD.md (≤3 KB always loaded)</text>
+<rect x="40" y="258" width="700" height="58" rx="12" fill="#e0e7ff" stroke="#4338ca" stroke-width="1.5"/>
+<text class="h" x="60" y="282" fill="#1e1b4b">Profile</text>
+<text class="s" x="60" y="302" fill="#1e1b4b">aisdlc.toml — stages, gate commands, ratchets, test globs, skills catalog, budgets, roles, prices</text>
+<rect x="40" y="324" width="700" height="58" rx="12" fill="#dcfce7" stroke="#15803d" stroke-width="1.5"/>
+<text class="h" x="60" y="348" fill="#052e16">Kit — aisdlc CLI</text>
+<text class="s" x="60" y="368" fill="#052e16">gate · ratchet · change · skills · budget · commits · tdd · doctor · init · report · cost</text>
+<rect x="40" y="390" width="700" height="58" rx="12" fill="#e0f2fe" stroke="#0369a1" stroke-width="1.5"/>
+<text class="h" x="60" y="414" fill="#082f49">Your toolchain — unchanged</text>
+<text class="s" x="60" y="434" fill="#082f49">test runners · linters · spec engine · CI · issue tracker · deploy (called by gates, never replaced)</text>
+<rect x="770" y="60" width="170" height="388" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text class="h" x="855" y="94" text-anchor="middle" fill="#7c2d12">Evidence ledger</text>
+<text class="s" x="855" y="116" text-anchor="middle" fill="#7c2d12"></text>
+<text class="s" x="855" y="138" text-anchor="middle" fill="#7c2d12">.aisdlc/evidence/</text>
+<text class="s" x="855" y="160" text-anchor="middle" fill="#7c2d12">ledger.jsonl</text>
+<text class="s" x="855" y="182" text-anchor="middle" fill="#7c2d12">cost.jsonl</text>
+<text class="s" x="855" y="204" text-anchor="middle" fill="#7c2d12"></text>
+<text class="s" x="855" y="226" text-anchor="middle" fill="#7c2d12">written by the kit</text>
+<text class="s" x="855" y="248" text-anchor="middle" fill="#7c2d12">from exit codes,</text>
+<text class="s" x="855" y="270" text-anchor="middle" fill="#7c2d12">never by agents</text>
+<text class="s" x="855" y="292" text-anchor="middle" fill="#7c2d12"></text>
+<text class="s" x="855" y="314" text-anchor="middle" fill="#7c2d12">read by aisdlc report,</text>
+<text class="s" x="855" y="336" text-anchor="middle" fill="#7c2d12">the Owner and the</text>
+<text class="s" x="855" y="358" text-anchor="middle" fill="#7c2d12">learning loop</text>
+<line x1="740" y1="353.0" x2="770" y2="353.0" stroke="#c2410c" stroke-width="1.5" marker-end="url(#a)"/>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#c2410c"/></marker></defs>
+<text class="s cap" x="40" y="476" fill="#475569">Only the profile is project-specific. Notaire: .aisdlc/aisdlc.toml · kit: framework/ai-sdlc</text>
+</svg>

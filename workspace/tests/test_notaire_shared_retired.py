@@ -31,7 +31,8 @@ MOVED_SOURCES = (
     BACKEND_JAVA / "dto" / "interfaces" / "ValidDto.java",
     BACKEND_JAVA / "dto" / "TypeItem.java",
     BACKEND_JAVA / "dto" / "exceptions" / "InvalidDtoException.java",
-    BACKEND_JAVA / "jpa" / "exceptions" / "PreexistingEntityException.java",
+    # PreexistingEntityException lived under jpa/exceptions until #576 retired the
+    # legacy jpa package; DTO ownership is covered by InvalidDtoException above.
 )
 DEAD_SOURCE = BACKEND_JAVA / "observability" / "SharedModuleMetrics.java"
 

@@ -64,6 +64,7 @@ running application.
 | `notaire-postgres` | connections, transactions, size |
 | `notaire-logs` | backend and frontend logs from Loki |
 | `notaire-auth` | login and security signals |
+| `notaire-quality` | SonarQube / sonar-db probes, packaged product version, how to run `run-sonar.sh` |
 
 ### Log-to-trace link
 

@@ -1,21 +1,31 @@
 "use client";
 
+import { PageHeader } from "@/components/shared/PageHeader";
+
 interface AppHeaderProps {
   title?: string;
   description?: string;
   actions?: React.ReactNode;
 }
 
+/** Sticky glass chrome around PageHeader (#1942). */
 export function AppHeader({ title, description, actions }: AppHeaderProps) {
+  if (!title) {
+    return (
+      <header className="sticky top-0 z-20 glass border-b border-border/40 px-6 lg:px-10 py-5">
+        <div className="max-w-[1600px] mx-auto" />
+      </header>
+    );
+  }
+
   return (
     <header className="sticky top-0 z-20 glass border-b border-border/40 px-6 lg:px-10 py-5">
-      <div className="flex flex-wrap items-center justify-between gap-3 max-w-[1600px] mx-auto">
-        <div className="space-y-0.5 min-w-0">
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">{title}</h1>
-          {description && <p className="text-sm text-muted-foreground font-medium">{description}</p>}
-        </div>
-        {actions && <div className="flex flex-wrap items-center gap-3">{actions}</div>}
-      </div>
+      <PageHeader
+        title={title}
+        description={description}
+        actions={actions}
+        className="max-w-[1600px] mx-auto"
+      />
     </header>
   );
 }

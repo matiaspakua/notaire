@@ -25,7 +25,7 @@ export default function DocumentsRequiredPage() {
   const { data: procedureTypes = [] } = useProcedureTypes();
   const [procedureId, setProcedureId] = useState("");
   const idTypeProcedure = procedureId ? Number(procedureId) : undefined;
-  const { data: documents = [], isLoading, isFetched } = useProcedureTemplate(idTypeProcedure);
+  const { data: documents = [], isLoading, isFetched, isError, refetch } = useProcedureTemplate(idTypeProcedure);
 
   const columns: Column<ProcedureTemplateRow>[] = [
     {
@@ -103,7 +103,10 @@ export default function DocumentsRequiredPage() {
                 isLoading={isLoading}
                 emptyMessage={t("noDocuments")}
                 keyExtractor={(p) => `${p.fkIdProcedureType}-${p.fkIdDocumentType}`}
-              />
+              
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
+      />
             )}
           </div>
         )}

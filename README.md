@@ -3,7 +3,7 @@
 <div align="center">
 
 [![Java](https://img.shields.io/badge/Java-26-%23ED8B00?logo=openjdk&logoColor=white)](https://openjdk.org/projects/jdk/26/)
-[![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.1.1-%236DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.1.2-%236DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
 [![Next.js](https://img.shields.io/badge/Next.js-16-%23000000?logo=nextdotjs&logoColor=white)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-%2361DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-%234169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
@@ -49,11 +49,11 @@ containers and no automated tests.
 
 **Notaire** is the result of moving it to:
 
-- **Backend**: REST API with **Spring Boot 4.1.1** and **Java 26**.
+- **Backend**: REST API with **Spring Boot 4.1.2** and **Java 26**.
 - **Frontend**: **Next.js 16** + **React 19** + **TypeScript** + **Tailwind CSS 4**, with a custom design system inspired by Apple.
 - **Active client**: the Next.js frontend only. The legacy Swing client was removed from the tree (#1046); do not recreate it.
 - **Database**: **PostgreSQL 16** with **Flyway** as the only source of truth for the schema.
-- **Infrastructure**: multi-stage Docker Compose, 11 GitHub Actions workflows, Prometheus/Grafana/Loki observability.
+- **Infrastructure**: multi-stage Docker Compose, 19 GitHub Actions workflows, Prometheus/Grafana/Loki observability.
 
 ## 🏗️ Architecture
 
@@ -106,14 +106,14 @@ notaire/
 
 | Layer | Technologies |
 |:-----|:------------|
-| **Backend** | Java 26, Spring Boot 4.1.1 (Web, Data JPA, Security, Actuator), SpringDoc OpenAPI |
+| **Backend** | Java 26, Spring Boot 4.1.2 (Web, Data JPA, Security, Actuator), SpringDoc OpenAPI |
 | **Persistence** | PostgreSQL 16, Flyway, HikariCP |
 | **PDF reports** | Apache PDFBox (generated in-process, no templates) |
 | **Frontend** | Next.js 16, React 19, TypeScript 5.7, Tailwind CSS 4, TanStack Query, shadcn/ui, Zustand |
 | **Testing** | JUnit 5 + Mockito + Testcontainers (backend), Vitest + Playwright (frontend), Bruno (API) |
 | **Quality** | JaCoCo, Checkstyle, SpotBugs, Trivy |
 | **Observability** | Micrometer, Prometheus, Loki + Promtail, Grafana |
-| **CI/CD** | GitHub Actions (11 workflows), multi-stage Docker |
+| **CI/CD** | GitHub Actions (19 workflows), multi-stage Docker |
 
 Full detail and the reason for each choice: [ADRs](docs/200-architecture/202-ADR/).
 
@@ -179,7 +179,8 @@ Local ↔ CI mapping of each gate: [`docs/300-development/CI-PREFLIGHT.md`](docs
 - **Observability**: metrics (Prometheus), structured JSON logs (Loki),
   dashboards (Grafana) — see [`docs/200-architecture/207-monitoring/`](docs/200-architecture/207-monitoring/).
 - **Security**: BCrypt, Spring Security, CORS, input validation, Trivy
-  scanning — see [`docs/200-architecture/206-security/`](docs/200-architecture/206-security/).
+  scanning — see [`docs/200-architecture/206-security/`](docs/200-architecture/206-security/)
+  (HTTPS/TLS runbook, installation isolation checklist, security tools).
 - **DevSecOps / deployment**: [`docs/200-architecture/208-devsecops/`](docs/200-architecture/208-devsecops/) and [`docs/200-architecture/209-deployment/`](docs/200-architecture/209-deployment/).
 
 ## 📚 Documentation

@@ -416,7 +416,7 @@ export function RadioField({
       </label>
       <div style={{ display: "flex", flexDirection: "column", gap: theme.spacing[2] }}>
         {options.map((option) => (
-          <div
+          <label
             key={option.value}
             style={{
               display: "flex",
@@ -425,7 +425,6 @@ export function RadioField({
               cursor: disabled ? "not-allowed" : "pointer",
               opacity: disabled ? 0.5 : 1,
             }}
-            onClick={() => !disabled && onChange(option.value)}
           >
             <input
               type="radio"
@@ -441,7 +440,7 @@ export function RadioField({
                 cursor: disabled ? "not-allowed" : "pointer",
               }}
             />
-            <label
+            <span
               style={{
                 color: theme.colors.neutral[900],
                 fontSize: theme.typography.fontSize.base,
@@ -450,8 +449,8 @@ export function RadioField({
               }}
             >
               {option.label}
-            </label>
-          </div>
+            </span>
+          </label>
         ))}
       </div>
     </div>

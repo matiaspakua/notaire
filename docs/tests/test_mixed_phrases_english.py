@@ -41,10 +41,15 @@ class MixedPhrasesEnglishTest(unittest.TestCase):
         self.assertIn("Verified by the notary", testimony)
         self.assertNotIn("por ", testimony)
 
-        draft = read("unit/RegistrationDraftControllerTest.java")
-        self.assertIn("Deed not found with ID: 999", draft)
-        self.assertNotIn("No existe", draft)
-        self.assertNotIn("con ID", draft)
+        draft_controller = read("unit/RegistrationDraftControllerTest.java")
+        self.assertNotIn("No existe", draft_controller)
+        self.assertNotIn("con ID", draft_controller)
+
+        # Message lives in RegistrationDraftService; controller maps NotFound without the body.
+        draft_service = read("unit/RegistrationDraftServiceTest.java")
+        self.assertIn("Deed not found with ID: 999", draft_service)
+        self.assertNotIn("No existe", draft_service)
+        self.assertNotIn("con ID", draft_service)
 
         initializer = read("unit/DataInitializerTest.java")
         self.assertIn("hash-already-rotated-by-the-operator", initializer)

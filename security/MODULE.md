@@ -20,7 +20,7 @@ They stay next to what they protect, because the tool reads them from a fixed pl
 | Vulnerability policy | `SECURITY.md` | GitHub reads it from the repository root |
 | Code owners | `.github/CODEOWNERS` | GitHub reads it from `.github/` |
 | Dependabot | `.github/dependabot.yml` | GitHub reads it from `.github/` |
-| CodeQL, Trivy, DAST (ZAP) | `.github/workflows/codeql.yml`, `ci.yml`, `dast-zap.yml` | scans run where the source is |
+| CodeQL, Trivy, DAST (ZAP) | `.github/workflows/codeql.yml`, `ci.yml`, `dast-zap.yml` | release tag, Monday schedule, or manual dispatch. Not on a pull request (#2001) |
 | SonarQube analysis | `infra/scripts/run-sonar.sh` | part of the quality stack in `infra` |
 | Auth, input validation, SQL injection, threat model | `docs/200-architecture/206-security/` | knowledge base |
 | Threat-modeling skill, security auditor agent | `.claude/skills/secure-threat-modeling`, `.claude/agents/security-auditor.md` | central catalogs |

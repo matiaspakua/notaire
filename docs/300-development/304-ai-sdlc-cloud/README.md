@@ -3,11 +3,17 @@
 Configuration for Notaire's **Cursor Cloud** autonomous SDLC path:
 issue → OpenSpec Gate 1 → TDD → implement → preflight/CI → PR → review → merge.
 
+> **Public overview:** the [AI Factory section](https://matiaspakua.github.io/notaire/ai-sdlc/) of the
+> GitHub Pages site (source: [`github-page/app/ai-sdlc/`](../../../github-page/app/ai-sdlc/)) explains this
+> SDLC with diagrams, apart from the product docs. These files stay the source of truth (#1934).
+
 | Document | Purpose |
 |----------|---------|
 | [`FLEET-ARCHITECTURE.md`](FLEET-ARCHITECTURE.md) | Foreman + specialist roles, model recommendations, handoffs, local-ai exclusion, process learnings |
 | [`ENVIRONMENT-CHECKLIST.md`](ENVIRONMENT-CHECKLIST.md) | Toolchain/secrets checklist for Cloud `environment.json` + Saved-card and ops pitfalls |
-| [`CI-MERGE-GATE.md`](CI-MERGE-GATE.md) | **Never merge on light-CI-only green** — `bash workspace/sdlc/check-heavy-ci.sh <pr>`; also verify OpenSpec archive hygiene / task groups 3–8 (`check-openspec-archive-hygiene.py`, #1252); rebase-first for stale Budget/person failures |
+| [`CI-MERGE-GATE.md`](CI-MERGE-GATE.md) | **PR ready when `preflight.sh --full` passed** (#2001). `check-heavy-ci.sh` does not wait for checks that no longer run. Also OpenSpec archive hygiene / task groups 3–8; merge-`main`-first; CHANGELOG Unreleased fence |
+| [`FLEET-LESSONS-HEX-1693.md`](FLEET-LESSONS-HEX-1693.md) | **#1693 hex-fleet do/don’t** — steward cadence, Process Checks before ready, R2 one-domain slices + path hygiene, FE suppressions `{}`, human paste templates, performance/cost serialize, anti-patterns (#1858/#1907) |
+| [`MAC-LOCAL-VS-CI.md`](MAC-LOCAL-VS-CI.md) | What Mac local gates can prove for hex/R2 vs what CI must still own — **Mac green ≠ CI green** |
 | [`FLEET-IDENTITY.md`](FLEET-IDENTITY.md) | `notaire-fleet` GitHub App: least-privilege permissions, Owner setup, `workspace/sdlc/fleet-token.sh` (#1648) |
 | [`VALIDATION-PLAN.md`](VALIDATION-PLAN.md) | Prove the fleet is ready before picking the first GitHub issue |
 | [`fleet-manifest.yaml`](fleet-manifest.yaml) | Machine-readable role → skills → model map |
@@ -17,7 +23,7 @@ issue → OpenSpec Gate 1 → TDD → implement → preflight/CI → PR → revi
 **Process learnings (must follow):** a product release is not a lane and not a
 board column — semver cuts record backend, frontend, and the Flyway schema
 ([RELEASES.md](../305-project-management/RELEASES.md), [SBOM.md](../SBOM.md));
-do not implement on `release-please--branches--*`. `Closes #<issue>` (not only `Issue: #N`); never commit PR Validation wiki reports onto PR heads with `[skip ci]`; host-network compose; run `bash .cursor/install.sh` until the Environment card is Saved (`openspec`+`bc` from that script); prefer `workspace/sdlc/seed-openspec-change.sh` for Gate 1; **do not merge when only light CI (~12 checks) is green** — run `bash workspace/sdlc/check-heavy-ci.sh <pr>` ([CI-MERGE-GATE](CI-MERGE-GATE.md)); **verify OpenSpec archive hygiene** before merge (`python3 workspace/sdlc/check-openspec-archive-hygiene.py`, tick groups 3–8, archive CLOSED leftovers — #1252); **sync board Status + labels + issue state** before merge/close and in board hygiene (`python3 workspace/sdlc/check-board-status-label-coherence.py` — CLOSED⇒Done+no WIP labels; OPEN WIP⇒In Progress+`in-progress`; blocked⇒`blocked` label; #1550); **rebase onto `main` before inventing fixes** for Budget/person / `undefined, undefined` when the tip is stale; **CodeQL advanced XOR default setup** ([DevSecOps](../../200-architecture/208-devsecops/README.md#codeql-advanced-vs-default-setup)). Details in [ENVIRONMENT-CHECKLIST §7](ENVIRONMENT-CHECKLIST.md) and [FLEET-ARCHITECTURE §9](FLEET-ARCHITECTURE.md).
+do not implement on `release-please--branches--*`. `Closes #<issue>` (not only `Issue: #N`); never commit PR Validation wiki reports onto PR heads with `[skip ci]`; host-network compose; run `bash .cursor/install.sh` until the Environment card is Saved (`openspec`+`bc` from that script); prefer `workspace/sdlc/seed-openspec-change.sh` for Gate 1; **a PR is ready when `bash workspace/sdlc/preflight.sh --full` has passed** — GitHub does not re-run that suite on the pull request (#2001); `bash workspace/sdlc/check-heavy-ci.sh <pr>` exits 0 when those workflows were not started ([CI-MERGE-GATE](CI-MERGE-GATE.md)); **verify OpenSpec archive hygiene** before merge (`python3 workspace/sdlc/check-openspec-archive-hygiene.py`, tick groups 3–8, archive CLOSED leftovers — #1252); **sync board Status + labels + issue state** before merge/close and in board hygiene (`python3 workspace/sdlc/check-board-status-label-coherence.py` — CLOSED⇒Done+no WIP labels; OPEN WIP⇒In Progress+`in-progress`; blocked⇒`blocked` label; #1550); **merge `origin/main` before inventing fixes** for Budget/person / `undefined, undefined` when the tip is stale (never rebase a pushed branch); **CHANGELOG Unreleased fence** and **#1693 hex lessons** ([FLEET-LESSONS-HEX-1693](FLEET-LESSONS-HEX-1693.md), [MAC-LOCAL-VS-CI](MAC-LOCAL-VS-CI.md)); **CodeQL advanced XOR default setup** ([DevSecOps](../../200-architecture/208-devsecops/README.md#codeql-advanced-vs-default-setup)). Details in [ENVIRONMENT-CHECKLIST §7](ENVIRONMENT-CHECKLIST.md) and [FLEET-ARCHITECTURE §9](FLEET-ARCHITECTURE.md).
 
 **Agent definitions** (loadable by Cursor / Claude-compatible agents):
 
@@ -70,3 +76,6 @@ back to `alwaysApply: true`.
 - [← Development docs](../)
 - [CI Preflight](../CI-PREFLIGHT.md)
 - [OpenSpec adaptations](../../openspec/NOTAIRE-ADAPTATIONS.md)
+
+The stack-agnostic generalization of this process (one policy, one profile, the `aisdlc` kit) is
+[`../306-ai-sdlc-framework/ai_sdlc_framework.md`](../306-ai-sdlc-framework/ai_sdlc_framework.md) (#1958).

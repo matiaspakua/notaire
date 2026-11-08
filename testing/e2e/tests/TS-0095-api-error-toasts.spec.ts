@@ -44,8 +44,13 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
 
     await page.goto("/dashboard/payments");
     await page.getByTestId("btn-new-payment").click();
+    // Wave 8 (#1961): client-side requiredFieldErrors need budget + date + amount
+    // before the stubbed POST can run.
+    const dialog = page.getByRole("dialog");
+    await dialog.getByTestId("select-budget-payment").click();
+    await page.getByRole("option").first().click();
+    await dialog.locator('input[type="date"]').fill("2026-10-09");
     await page.getByTestId("input-amount-payment").fill("999999");
-    // Submit even if budget picker is empty — stub owns the failure.
     await page.getByRole("button", { name: /crear|create/i }).click();
 
     await expect(

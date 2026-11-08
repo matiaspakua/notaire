@@ -16,7 +16,7 @@ import com.licensis.notaire.repository.SubmittedDocumentRepository;
 import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.ProcedureTemplateRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
-import com.licensis.notaire.application.usecase.workflow.DocumentReentryService;
+import com.licensis.notaire.adapter.out.persistence.workflow.DocumentReentryService;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

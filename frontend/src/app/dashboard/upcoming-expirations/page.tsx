@@ -16,8 +16,9 @@ const DEFAULT_WINDOW = UPCOMING_EXPIRATIONS_DEFAULT_DAYS;
 export default function UpcomingExpirationsPage() {
   const fmt = useFormat();
   const t = useTranslations("proximosVencimientos");
+  const tc = useTranslations("common");
   const [days, setDays] = useState(DEFAULT_WINDOW);
-  const { data: expirations = [], isLoading } = useUpcomingExpirations(days);
+  const { data: expirations = [], isLoading, isError, refetch } = useUpcomingExpirations(days);
 
   const columns: Column<UpcomingExpiration>[] = [
     { key: "document", header: t("fields.documento"), render: (v) => <span className="font-medium">{v.documentName ?? "—"}</span> },
@@ -59,7 +60,10 @@ export default function UpcomingExpirationsPage() {
           isLoading={isLoading}
           keyExtractor={(v) => v.idSubmittedDocument}
           emptyMessage={t("noData")}
-        />
+        
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
+      />
       </div>
     </div>
   );

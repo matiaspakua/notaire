@@ -10,7 +10,7 @@
 | **Descripción** | Establece los controles de seguridad esenciales para proteger datos personales de clientes, escrituras y trámites frente a accesos no autorizados o vulnerabilidades (OWASP Top 10). |
 | **Tipo** | Soporte / Seguridad |
 | **Referencias Cruzadas** | RF #81 (Seguridad y privacidad), RF #82 (Acceso de usuarios), RF #83 (Cifrado de contraseña), RF #84 (Transporte de información por red), RF #85 (Acceso a la base de datos); CU20, CU21 |
-| **GitHub ID** | #254, #267, #280, #281, #282, #283, #307, #309, #1044, #1045, #1046, #1051, #1055 |
+| **GitHub ID** | #254, #267, #280, #281, #282, #283, #307, #309, #1044, #1045, #1046, #1051, #1055, #2003 |
 
 ## Programa de ciberseguridad
 

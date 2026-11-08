@@ -24,10 +24,10 @@
   `infra/performance/k6/load-test.js`, validación de assets en
   `infra/tests/test_performance_test_assets.py`, y publicación del artefacto
   `k6-load-test-results` / `summary.json` (issue #1047; no es gate por PR).
-- Publicación CD a GHCR anclada al SHA que CI probó en `main`
-  (`workflow_run.head_sha`), con `latest` movido solo después del push del
-  tag SHA; se omite publicar si CI no concluyó `success` (issue #1042;
-  `workspace/tests/test_cd_pin_tested_sha.py`).
+- Publicación CD a GHCR solo en un tag de versión (`v*` / `notaire-v*`) o
+  despacho manual. Un merge a `main` no publica imágenes (issue #2001).
+  El SHA publicado es `github.sha` del tag; `:latest` se mueve después del
+  tag SHA (issue #1042; `workspace/tests/test_cd_pin_tested_sha.py`).
 - Publicación CD de **backend y frontend** a GHCR con SBOM CycloneDX, firma
   cosign keyless y attest del SBOM; proceso semver automatizado
   (release-please) que corta tags `v*`, rueda `CHANGELOG.md` `[Unreleased]`
@@ -55,7 +55,7 @@
 |---|---|---|
 | 1 | El desarrollador implementa pruebas unitarias e integración siguiendo TDD. | Ejecuta la suite de pruebas locales (`mvn test`, `mvn verify`). |
 | 2 | Se realiza un cambio en la interfaz gráfica de usuario. | Se ejecutan las pruebas E2E con Playwright simulando la interacción en formularios. |
-| 3 | El pipeline de CI/CD procesa la integración del código. | Valida Checkstyle, SpotBugs, cobertura JaCoCo (≥ 80%), **ESLint del frontend (bloqueante, incl. jsx-a11y; #1048)** y suite completa de tests. |
+| 3 | El autor corre `bash workspace/sdlc/preflight.sh --full` antes del PR. GitHub corre la misma suite en un tag de versión, no en cada PR (#2001). | Valida Checkstyle, SpotBugs, cobertura JaCoCo (ratchet), **ESLint del frontend (bloqueante, incl. jsx-a11y; #1048)** y la suite de tests. |
 | 4 | El sistema valida la consistencia visual y de sesión. | Verifica que el nombre del usuario y el estado del trámite se visualicen en todo momento en pantalla. |
 
 ## Confiabilidad E2E (Playwright) — #1066

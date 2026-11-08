@@ -1,0 +1,31 @@
+# Mirror the local stages in CI so the server enforces what agents run locally.
+# Copy to .github/workflows/aisdlc.yml and make "AI SDLC" a required check.
+name: AI SDLC
+
+on:
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  gates:
+    name: AI SDLC
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0            # ratchets and path scoping compare against the base
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Profile is valid
+        run: python3 tools/ai-sdlc/bin/aisdlc doctor
+      - name: Plan (G1)
+        run: python3 tools/ai-sdlc/bin/aisdlc gate plan --base "origin/${{ github.base_ref }}"
+      - name: Verified (G3)
+        run: python3 tools/ai-sdlc/bin/aisdlc gate pre-push --base "origin/${{ github.base_ref }}"
+      - name: Evidence
+        if: always()
+        run: python3 tools/ai-sdlc/bin/aisdlc report >> "$GITHUB_STEP_SUMMARY"

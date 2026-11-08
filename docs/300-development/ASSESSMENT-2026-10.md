@@ -1,5 +1,10 @@
 # System assessment — October 2026
 
+> **Refresh:** current PE-facing verdicts and counts live in
+> [`ASSESSMENT-REFRESH-2026-10-18.md`](ASSESSMENT-REFRESH-2026-10-18.md)
+> (`main` @ `7d88110f`, product **0.2.4**). Keep this file as the 2026-10-04
+> baseline report; do not treat section 1 security/architecture rows below as current.
+
 | Field | Value |
 |-------|-------|
 | Baseline | `main` @ `d4473af2` (2026-10-04) |

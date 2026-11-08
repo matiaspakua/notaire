@@ -24,6 +24,7 @@ import {
 import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { fullName } from "@/lib/utils";
 import { presentPersonSaveError } from "@/lib/person-save-error";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import type { Person } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { defaultIdentificationTypeId, useIdentificationTypes } from "@/hooks/useIdentificationTypes";
@@ -54,7 +55,13 @@ function PeopleList() {
   // One server page at a time, page and size in the URL (#1340): the list used
   // to load size=1000 and silently hide everyone after the 1000th person.
   const paging = useUrlPagination();
-  const { data: peoplePage, isLoading, isFetching } = usePeoplePage({ page: paging.page, size: paging.size });
+  const {
+    data: peoplePage,
+    isLoading,
+    isFetching,
+    isError: isPeopleError,
+    refetch: refetchPeople,
+  } = usePeoplePage({ page: paging.page, size: paging.size });
   const people = peoplePage?.content ?? [];
   useClampPage(paging, peoplePage?.totalPages);
   const createMutation = useCreatePerson();
@@ -107,11 +114,20 @@ function PeopleList() {
     editing.identificationTypeId ?? (isEditMode ? undefined : defaultIdentificationTypeId(identificationTypes));
 
   async function handleSave() {
-    setFieldErrors({});
+    const errors = requiredFieldErrors(
+      {
+        firstName: editing.firstName,
+        lastName: editing.lastName,
+        identificationNumber: editing.identificationNumber,
+        identificationTypeId: selectedTypeId,
+      },
+      tc("fieldRequired"),
+    );
     if (selectedTypeId == null) {
-      setFieldErrors({ identificationTypeId: t("validation.tipoIdentificacionRequired") });
-      return;
+      errors.identificationTypeId = t("validation.tipoIdentificacionRequired");
     }
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
     const data: Partial<Person> = { ...editing, identificationTypeId: selectedTypeId };
     delete data.fkIdIdentificationType;
     try {
@@ -262,6 +278,17 @@ function PeopleList() {
         isFetching={hasSearchCriteria ? search.isFetching : isFetching}
         keyExtractor={(p) => p.personId!}
         emptyMessage={t("noData")}
+        error={
+          !hasSearchCriteria && isPeopleError
+            ? t("loadError")
+            : hasSearchCriteria && search.isError
+              ? t("loadError")
+              : undefined
+        }
+        onRetry={() => {
+          if (hasSearchCriteria) void search.refetch();
+          else void refetchPeople();
+        }}
         pagination={
           hasSearchCriteria
             ? undefined
@@ -315,7 +342,7 @@ function PeopleList() {
                     </SelectContent>
                   </Select>
                 </FormField>
-                <FormField label={t("fields.numeroIdentificacion")} error={fieldErrors.identificationNumber}>
+                <FormField label={t("fields.numeroIdentificacion")} required error={fieldErrors.identificationNumber}>
                   <Input
                     value={editing.identificationNumber ?? ""}
                     onChange={(e) => setEditing({ ...editing, identificationNumber: e.target.value })}

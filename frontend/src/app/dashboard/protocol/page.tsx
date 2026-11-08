@@ -13,27 +13,45 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
-import { apiGet, apiGetBytes } from "@/lib/api-client";
+import { folioUseCases } from "@/composition/folio";
+import { folioTypeUseCases } from "@/composition/folio-type";
+import { protocolReportUseCases } from "@/composition/protocol-report";
+import type { Folio as DomainFolio } from "@/core/folio/domain/folio";
+import type { FolioType as DomainFolioType } from "@/core/folio-type/domain/folio-type";
 import { presentMutationError } from "@/lib/mutation-error";
-import type { Folio, FolioType, Person } from "@/types";
+import type { Folio, FolioType } from "@/types";
 import { FileText, Download, BookOpen, FilePlus } from "lucide-react";
+
+function toWireFolio(f: DomainFolio): Folio {
+  return f as Folio;
+}
+
+function toWireFolioType(t: DomainFolioType): FolioType {
+  return {
+    idFolioType: t.id,
+    name: t.name,
+    isAuxiliary: t.isAuxiliary,
+    notes: t.notes,
+    enabled: t.enabled,
+  };
+}
 
 export default function ProtocolPage() {
   const t = useTranslations("protocolo");
   const tc = useTranslations("common");
   const tf = useTranslations("administracion.folios");
 
-  const { data: folios = [], isLoading } = useQuery({
+  const { data: folios = [], isLoading, isError, refetch } = useQuery({
     queryKey: ["folios"],
-    queryFn: () => apiGet<Folio[]>("/folios"),
+    queryFn: async () => (await folioUseCases.list()).map(toWireFolio),
   });
   const { data: notaries = [] } = useQuery({
     queryKey: ["availableNotaries"],
-    queryFn: () => apiGet<Person[]>("/deeds/available-notaries"),
+    queryFn: () => folioUseCases.listAvailableNotaries(),
   });
   const { data: folioTypes = [] } = useQuery({
     queryKey: ["folioTypes"],
-    queryFn: () => apiGet<FolioType[]>("/folio-types"),
+    queryFn: async () => (await folioTypeUseCases.list()).map(toWireFolioType),
   });
 
   const [reportDialog, setReportDialog] = useState<string | null>(null);
@@ -70,10 +88,17 @@ export default function ProtocolPage() {
         url = `/reports/monthly-sworn-statement?${params.toString()}`;
         filename = `ddjj_mensual_${reportYear}_${reportMonth}.pdf`;
       } else if (reportDialog === "tax-sworn-statement") {
-        url = `/reports/tax-sworn-statement?year=${reportYear}&month=${reportMonth}`;
-        filename = `declaracion_jurada_rentas_${reportMonth}_${reportYear}.pdf`;
+        const params = new URLSearchParams({ year: reportYear, month: reportMonth });
+        if (reportNotary) {
+          params.set("idNotary", reportNotary);
+        }
+        if (reportFolioType) {
+          params.set("idFolioType", reportFolioType);
+        }
+        url = `/reports/tax-sworn-statement?${params.toString()}`;
+        filename = `ddjj_rentas_${reportYear}_${reportMonth}.pdf`;
       }
-      const blob = await apiGetBytes(url);
+      const blob = await protocolReportUseCases.download(url);
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = filename;
@@ -142,6 +167,9 @@ export default function ProtocolPage() {
         isLoading={isLoading}
         keyExtractor={(f) => f.idFolio!}
         emptyMessage={t("noData")}
+      
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
       />
 
       <Dialog open={!!reportDialog} onOpenChange={(v) => !v && setReportDialog(null)}>
@@ -156,7 +184,7 @@ export default function ProtocolPage() {
                   data-testid="input-protocol-report-year"
                 />
               </FormField>
-              {(reportDialog === "index-book" || reportDialog === "monthly-sworn-statement") && (
+              {(reportDialog === "index-book" || reportDialog === "monthly-sworn-statement" || reportDialog === "tax-sworn-statement") && (
                 <>
                   <FormField label={tf("fields.escribano")} helperText={tc("optional")}>
                     <Select

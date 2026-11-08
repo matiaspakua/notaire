@@ -12,7 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
-import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { managementStatusUseCases } from "@/composition/management-status";
+import type { ManagementStatus as DomainManagementStatus } from "@/core/management-status/domain/management-status";
 import { useWorkflowDefinitions, useWorkflowNodes, useWorkflowTransitions } from "@/hooks/useWorkflow";
 import { extractApiError } from "@/lib/utils";
 import type { ManagementStatus } from "@/types";
@@ -20,14 +21,23 @@ import { useDeleteError } from "@/hooks/useDeleteError";
 
 const EMPTY: Partial<ManagementStatus> = { name: "", notes: "" };
 
+function toWire(status: DomainManagementStatus): ManagementStatus {
+  return {
+    idManagementStatus: status.id,
+    name: status.name,
+    notes: status.notes ?? undefined,
+    version: status.version,
+  };
+}
+
 export default function StatusesManagementPage() {
   const t = useTranslations("administracion.estadosGestion");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const { data = [], isLoading, refetch } = useQuery({
+  const { data = [], isLoading, refetch, isError } = useQuery({
     queryKey: ["managementStatuses"],
-    queryFn: () => apiGet<ManagementStatus[]>("/management-statuses"),
+    queryFn: async () => (await managementStatusUseCases.list()).map(toWire),
   });
 
   const [search, setSearch] = useState("");
@@ -44,10 +54,10 @@ export default function StatusesManagementPage() {
 
   const { data: filtered = data } = useQuery({
     queryKey: ["managementStatuses", "search", search, data],
-    queryFn: () =>
+    queryFn: async () =>
       search.trim()
-        ? apiGet<ManagementStatus[]>(`/management-statuses/search?name=${encodeURIComponent(search.trim())}`)
-        : Promise.resolve(data),
+        ? (await managementStatusUseCases.searchByName(search.trim())).map(toWire)
+        : data,
   });
 
   function openCreate() {
@@ -71,10 +81,13 @@ export default function StatusesManagementPage() {
     try {
       const body = { name: editing.name.trim(), notes: editing.notes?.trim() };
       if (isEditMode && editing.idManagementStatus) {
-        await apiPut(`/management-statuses/${editing.idManagementStatus}`, { ...body, version: editing.version });
+        await managementStatusUseCases.update(editing.idManagementStatus, {
+          ...body,
+          version: editing.version,
+        });
         toast.success(t("updated"));
       } else {
-        await apiPost("/management-statuses", body);
+        await managementStatusUseCases.create(body);
         toast.success(t("created"));
       }
       setModalOpen(false);
@@ -89,7 +102,7 @@ export default function StatusesManagementPage() {
 
   async function handleDeleteClick(status: ManagementStatus) {
     try {
-      const { inUse } = await apiGet<{ inUse: boolean }>(`/management-statuses/${status.idManagementStatus}/in-use`);
+      const inUse = await managementStatusUseCases.isInUse(status.idManagementStatus!);
       if (inUse) {
         toast.warning(t("inUseCannotDelete"));
         return;
@@ -104,7 +117,7 @@ export default function StatusesManagementPage() {
     if (!deleteId) return;
     setDeleting(true);
     try {
-      await apiDelete(`/management-statuses/${deleteId}`);
+      await managementStatusUseCases.delete(deleteId);
       toast.success(t("deleted"));
       refetch();
     } catch (err) {
@@ -165,7 +178,10 @@ export default function StatusesManagementPage() {
           data-testid="search-statuses"
         />
       </div>
-      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idManagementStatus!} emptyMessage={t("noData")} />
+      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idManagementStatus!} emptyMessage={t("noData")} 
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
+      />
 
       {workflows.length > 0 && (
         <div className="mt-8">

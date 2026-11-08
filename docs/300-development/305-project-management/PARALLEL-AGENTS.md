@@ -12,7 +12,8 @@ differently.
 4. Derive the lane with `workspace/sdlc/milestone_policy.py`.
 5. A lane is free when no other OPEN issue in a conflicting derived lane has
    `in-progress`.
-6. Prefer `ready-for-dev`, then higher priority, then the earlier train.
+6. Only `status:ready` (legacy `ready-for-dev`) work is claimable (#1860); prefer
+   higher priority, then the earlier train.
 7. Claim with `python3 workspace/sdlc/claim-issue.py <n> --agent <id>` (#1646).
    It refuses busy lanes, posts a claim marker, re-reads after a settle delay,
    and only the earliest marker wins; the winner gets `in-progress` + Status

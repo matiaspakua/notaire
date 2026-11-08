@@ -18,10 +18,29 @@ describe("next.config security headers", () => {
         "X-Frame-Options",
         "X-Content-Type-Options",
         "Strict-Transport-Security",
+        "Referrer-Policy",
+        "Permissions-Policy",
       ]),
     );
     // CSP is per-request nonce in the edge proxy (issue #1051), not a static header.
     expect(headerNames).not.toContain("Content-Security-Policy");
+  });
+
+  it("sets Referrer-Policy to strict-origin-when-cross-origin (#2005)", async () => {
+    const rules = await nextConfig.headers!();
+    const header = rules[0].headers.find((h) => h.key === "Referrer-Policy");
+
+    expect(header?.value).toBe("strict-origin-when-cross-origin");
+  });
+
+  it("sets Permissions-Policy to disable unused powerful APIs (#2005)", async () => {
+    const rules = await nextConfig.headers!();
+    const header = rules[0].headers.find((h) => h.key === "Permissions-Policy");
+
+    expect(header?.value).toBeDefined();
+    for (const feature of ["camera", "microphone", "geolocation", "payment", "usb"]) {
+      expect(header?.value).toContain(`${feature}=()`);
+    }
   });
 
   it("sets X-Frame-Options to DENY", async () => {

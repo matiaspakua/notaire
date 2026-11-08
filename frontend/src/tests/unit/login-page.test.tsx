@@ -1,8 +1,11 @@
 /**
  * Unit tests for LoginPage
  * Covers: user authentication / CU84 session expiry (#1053)
+ * Design-system form patterns (#611)
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
@@ -82,6 +85,37 @@ beforeEach(() => {
 });
 
 describe("LoginPage", () => {
+  it("composes the credentials form with theme FormContainer / FormField / FormActions (#611)", () => {
+    const source = readFileSync(resolve(__dirname, "../../app/login/page.tsx"), "utf8");
+    expect(source).toMatch(/FormContainer/);
+    expect(source).toMatch(/FormField/);
+    expect(source).toMatch(/FormActions/);
+    expect(source).toMatch(/from ["']@\/theme\/form-patterns["']/);
+    expect(source).not.toMatch(/uppercase tracking-wider/);
+  });
+
+  it("presents one desk card, a single product heading, and a token-timed seal (#2069)", () => {
+    const source = readFileSync(resolve(__dirname, "../../app/login/page.tsx"), "utf8");
+    expect(source).toMatch(/from ["']@\/theme\/motion["']/);
+    expect(source).not.toMatch(/rotate:/);
+    expect(source).not.toMatch(/type:\s*"spring"/);
+
+    render(<LoginPage />, { wrapper });
+    const card = screen.getByTestId("login-card");
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    expect(screen.getByRole("heading", { level: 1, name: "Notaire" })).toBeInTheDocument();
+    expect(card).toContainElement(screen.getByRole("heading", { level: 2, name: /iniciar sesión/i }));
+    expect(card).toContainElement(screen.getByTestId("btn-sign-in"));
+    expect(screen.getByTestId("login-mark")).toBeInTheDocument();
+  });
+
+  it("associates username and password via FormField labels (#611)", () => {
+    render(<LoginPage />, { wrapper });
+    expect(screen.getByLabelText(/^Usuario/i)).toHaveAttribute("data-testid", "input-username");
+    expect(screen.getByLabelText(/^Contraseña/i)).toHaveAttribute("data-testid", "input-password");
+    expect(screen.getByTestId("login-form-actions")).toContainElement(screen.getByTestId("btn-sign-in"));
+  });
+
   it("renders username and password fields", () => {
     render(<LoginPage />, { wrapper });
     expect(screen.getByTestId("input-username")).toBeDefined();

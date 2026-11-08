@@ -1,16 +1,19 @@
 /**
- * Unit test for useUpcomingExpirations (CU42 — upcoming document expirations).
+ * Unit test for useUpcomingExpirations (CU42).
+ * Hexagon wiring: #1841 / ADR-030.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 
-vi.mock("@/lib/api-client", () => ({
-  apiGet: vi.fn(),
+vi.mock("@/composition/submitted-document", () => ({
+  submittedDocumentUseCases: {
+    listUpcomingExpirations: vi.fn(),
+  },
 }));
 
-import { apiGet } from "@/lib/api-client";
+import { submittedDocumentUseCases } from "@/composition/submitted-document";
 import { upcomingExpirationKeys, useUpcomingExpirations } from "@/hooks/useUpcomingExpirations";
 
 function createWrapper() {
@@ -30,13 +33,22 @@ describe("upcomingExpirationKeys", () => {
 describe("useUpcomingExpirations (CU42)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("fetches the upcoming expirations of the window via GET with the days parameter", async () => {
-    vi.mocked(apiGet).mockResolvedValue([{ idSubmittedDocument: 1, documentName: "Certificado", daysRemaining: 10 }]);
+  it("fetches upcoming expirations for the window via the use case", async () => {
+    vi.mocked(submittedDocumentUseCases.listUpcomingExpirations).mockResolvedValue([
+      {
+        idSubmittedDocument: 1,
+        documentName: "Certificado",
+        prepared: false,
+        observed: false,
+        dateDue: "2026-07-01",
+        daysRemaining: 10,
+      },
+    ]);
 
     const { result } = renderHook(() => useUpcomingExpirations(30), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(apiGet).toHaveBeenCalledWith("/submitted-documents/upcoming-expirations?days=30");
-    expect(result.current.data).toEqual([{ idSubmittedDocument: 1, documentName: "Certificado", daysRemaining: 10 }]);
+    expect(submittedDocumentUseCases.listUpcomingExpirations).toHaveBeenCalledWith(30);
+    expect(result.current.data?.[0].documentName).toBe("Certificado");
   });
 });

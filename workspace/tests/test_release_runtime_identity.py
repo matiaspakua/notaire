@@ -26,6 +26,7 @@ class RuntimeIdentityWiringTest(unittest.TestCase):
             "management.opentelemetry.resource-attributes.service.version=${app.version}",
             properties,
         )
+        self.assertIn("management.metrics.tags.version=${app.version}", properties)
 
     def test_logback_declares_service_version(self):
         logback = (REPO_ROOT / "backend-api" / "src" / "main" / "resources" / "logback-spring.xml").read_text(

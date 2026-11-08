@@ -1,14 +1,20 @@
 import { MermaidDiagram } from "@/components/MermaidDiagram";
 import { DOCS } from "@/lib/docs-content";
 import snapshot from "@/lib/milestone-snapshot.json";
+import { pageMetadata } from "@/lib/site";
+
+export const metadata = pageMetadata("/docs/roadmap/");
 
 const SEQUENCE = `
 flowchart LR
-  RB["2026-11 Release blockers"] --> FE["2026-12 Frontend product"]
-  FE --> QA["2027-01 Quality & traceability"]
-  QA --> OP["2027-02 Platform & operability"]
-  OP --> LR["2027-03 Legacy retirement"]
-  LR --> BL["2027-06 Backlog"]
+  H["H0–H8 history (2014–2026-10)"] --> V01["v0.1 First release cuts"]
+  V01 --> V02["v0.2 Release identity & product forms"]
+  V02 --> V03["v0.3 Hexagonal core & security (2026-11)"]
+  V03 --> V04["v0.4 Product completeness (2026-12)"]
+  V04 --> V05["v0.5 Quality & traceability (2027-01)"]
+  V05 --> V06["v0.6 Platform & operability (2027-02)"]
+  V06 --> GA["v1.0 GA: legacy-free (2027-03)"]
+  BL["Backlog · Unscheduled"] -.-> V03
 `;
 
 type Milestone = {
@@ -25,13 +31,22 @@ const data = snapshot as {
   openByLane: Record<string, number>;
 };
 
+// History titles: "H<n> · …", "H · …" cohorts, or the retired "History · …".
+const HISTORY_TITLE = /^(H\d* · |History · )/;
+
+function isHistory(title: string): boolean {
+  return HISTORY_TITLE.test(title);
+}
+
 function rows(values: Record<string, number>): Milestone[] {
   return Object.entries(values).map(([title, count]) => ({ title, count }));
 }
 
 export default function DocsRoadmapPage() {
   const delivery = rows(data.openByMilestone);
-  const history = rows(data.closedByMilestone);
+  const history = rows(data.closedByMilestone)
+    .filter((row) => isHistory(row.title))
+    .sort((a, b) => a.title.localeCompare(b.title));
   const lanes = Object.entries(data.openByLane).sort((a, b) => b[1] - a[1]);
   const catalog = data.openByLane.catalog ?? 0;
   const claimable = data.open - catalog;
@@ -39,7 +54,7 @@ export default function DocsRoadmapPage() {
   return (
     <div className="space-y-10">
       <header className="space-y-3">
-        <p className="text-xs uppercase tracking-[0.2em] text-[#0A84FF] font-semibold">
+        <p className="text-xs uppercase tracking-[0.2em] text-brand-700 font-semibold">
           Project chart · {data.generated}
         </p>
         <h1
@@ -54,7 +69,7 @@ export default function DocsRoadmapPage() {
           {claimable} open issues are delivery work; {catalog} are catalog anchors.
         </p>
         <a
-          className="text-sm text-[#0A84FF] hover:underline"
+          className="text-sm text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
           href={`${DOCS}/300-development/305-project-management/README.md`}
         >
           Project management docs →
@@ -78,7 +93,7 @@ export default function DocsRoadmapPage() {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold text-neutral-900">Delivery sequence</h2>
         <MermaidDiagram chart={SEQUENCE} />
-        <div className="overflow-x-auto rounded-2xl border border-neutral-200 bg-white">
+        <div className="overflow-x-auto rounded-2xl border border-neutral-200 bg-white" tabIndex={0} role="region" aria-label="Scrollable table">
           <table className="min-w-full text-sm">
             <thead className="bg-neutral-50 text-left text-neutral-500">
               <tr>

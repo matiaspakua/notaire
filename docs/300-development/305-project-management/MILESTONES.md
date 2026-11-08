@@ -7,58 +7,52 @@ cuts are defined in [RELEASES.md](RELEASES.md).
 The strings below are canonical. Generated counts belong in
 `docs/github/milestone-snapshot.json`, not in this policy.
 
-## Open delivery trains
+Titles follow [MILESTONE-NOMENCLATURE.md](MILESTONE-NOMENCLATURE.md):
+version-first release trains, `H<n>` history stages, close-date cohorts,
+and two continuous milestones (Backlog, Catalog).
+
+## Open release trains
 
 | Train | Window | Purpose |
 |-------|--------|---------|
-| `2026-11 · Release blockers` | 2026-10-13 → 2026-11-30 | Critical work, security fixes, and RNF-11–16 |
-| `2026-12 · Frontend product` | 2026-10-13 → 2026-12-31 | Next.js product scope, functional requirements, use cases, and RNF-05–10 |
-| `2027-01 · Quality & traceability` | 2027-01-01 → 2027-01-31 | Tests, documentation, traceability, RNF-01–04, RNF-21–22 |
-| `2027-02 · Platform & operability` | 2027-02-01 → 2027-02-28 | CI, observability, and non-critical operability |
-| `2027-03 · Legacy retirement` | 2027-03-01 → 2027-03-31 | `jpa` retirement and deprecation work |
-| `2027-06 · Backlog` | 2027-04-01 → 2027-06-30 | Low-priority work, owner decisions, RNF-17–20 and RNF-23–24 |
+| `v0.3 · Hexagonal core & security (2026-11)` | 2026-10-13 → 2026-11-30 | Ports & Adapters epic #1693 including `jpa` retirement (#571–#580), critical and security work |
+| `v0.4 · Product completeness (2026-12)` | 2026-10-13 → 2026-12-31 | Next.js product gaps and visual NFRs |
+| `v0.5 · Quality & traceability (2027-01)` | 2027-01-01 → 2027-01-31 | Tests, documentation, traceability |
+| `v0.6 · Platform & operability (2027-02)` | 2027-02-01 → 2027-02-28 | CI, observability, non-critical operability |
+| `v1.0 · GA: legacy-free (2027-03)` | 2027-03-01 → 2027-03-31 | Phase 6 deprecation (#899) and the Owner's GA decision |
 
-Windows are planning markers for the GitHub roadmap, not effort estimates.
-Priority orders work inside a train; it does not choose a second schedule.
+## Continuous
+
+- `Backlog · Unscheduled`: low-priority work and Owner decisions, no due date.
+- `Catalog · Requirements & use cases`: RF / RNF / CU anchors, no due date.
 
 ## Closed history
 
-Closed issues that had curated milestones retain those groupings under explicit
-history names:
-
-- `History · Phase 0 Foundations`
-- `History · Phase 1 Backend API`
-- `History · Phase 2 Platform & observability`
-- `History · Phase 3 Frontend slice`
-- `History · Phase 4 Frontend wave`
-- `History · Phase 4 Production slice`
-- `History · Phase 6 Deprecation start`
-- `History · v1.0 priority bucket`
-- `History · v1.1 priority bucket`
-- `History · Backlog priority bucket`
-
-Previously unmilestoned closed issues are grouped by close date:
-
-| Cohort | Window | Rule |
-|--------|--------|------|
-| `History · 2026 Q2 — Foundations & API` | 2026-03-01 → 2026-06-30 | Closed before 2026-07-01 |
-| `History · 2026 Q3 — Product build` | 2026-07-01 → 2026-09-30 | Closed during 2026 Q3 |
-| `History · 2026 Q4 — Cloud AI SDLC` | 2026-10-01 → 2026-10-12 | Closed on or after 2026-10-01 at migration time |
+- Stages `H0 · Swing monolith (2014–2018)` through `H8 · Pre-release hardening (2026-09–2026-10)`.
+  `H8` merges the former v1.0, v1.1 and Backlog priority buckets.
+- Shipped cuts `v0.1 · First release cuts (2026-10)` and
+  `v0.2 · Release identity & product forms (2026-10)`. Closed issues inside a
+  cut window (first cut to the minor's last tag) belong to these.
+- Cohorts `H · 2026 Q2 cohort: foundations & API`, `H · 2026 Q3 cohort: product build & UI/UX`,
+  `H · 2026 Q4 cohort: cloud AI SDLC` for unmilestoned issues by close date.
 
 History milestones are closed and must contain zero open issues. A new closed
-issue keeps its delivery milestone, preserving the train in which it shipped.
+issue keeps its release train, recording the cut that shipped it.
 
 ## Assignment precedence
 
 `workspace/sdlc/milestone_policy.py` is executable policy:
 
-1. Security and critical work → Release blockers.
-2. Visual/product requirements and use cases → Frontend product.
-3. `jpa` retirement and deprecation → Legacy retirement.
-4. DevOps implementation → Platform & operability.
-5. Tests, docs, traceability, and process NFRs → Quality & traceability.
-6. Low-priority, owner-only, or otherwise unclassified work → Backlog.
-7. Closed issues without a milestone → the close-date history cohort.
+1. RF / RNF / CU anchors without work labels → Catalog.
+2. `priority:low` → Backlog. Security and critical work → v0.3.
+3. `jpa` retirement (#571–#580, #584, #595) → v0.3; Phase 6 deprecation → v1.0.
+   Product work → v0.4.
+4. DevOps implementation → v0.6.
+5. Tests, docs and traceability → v0.5.
+6. Unclassified work → Backlog.
+7. Closed issues: inside a cut window → v0.1 / v0.2; on a renamed milestone →
+   its new title; without a milestone → the close-date cohort, or the current
+   train after the last cut.
 
 The policy never closes issues or decides whether stale work is valid,
 duplicate, or obsolete. That product decision remains tracked by

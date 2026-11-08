@@ -29,7 +29,7 @@ class SignAndDeliveryLocalsEnglishTest(unittest.TestCase):
 
     def test_delivery_flag_and_audit_lists_are_english(self):
         service = read(
-            "backend-api/src/main/java/com/licensis/notaire/application/usecase/document/"
+            "backend-api/src/main/java/com/licensis/notaire/adapter/out/persistence/document/"
             "ExternalEntityDocumentService.java"
         )
         self.assertIn("boolean allDelivered", service)

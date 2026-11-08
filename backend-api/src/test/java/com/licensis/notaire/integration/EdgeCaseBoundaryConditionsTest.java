@@ -43,29 +43,25 @@ class EdgeCaseBoundaryConditionsTest {
     class AuthEdgeCases {
 
         @Test
-        @DisplayName("Login with empty credentials returns valid=false, not crash")
+        @DisplayName("Login with empty credentials is rejected by bean validation (#655)")
         void loginWithEmptyCredentials() throws Exception {
             mockMvc.perform(post("/api/v1/users/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {"name": "", "password": ""}
                                     """))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.valid").value(false));
+                    .andExpect(status().isBadRequest());
         }
 
         @Test
-        @DisplayName("Login with null password returns valid=false, not crash")
+        @DisplayName("Login with null password is rejected by bean validation (#655)")
         void loginWithNullPassword() throws Exception {
             mockMvc.perform(post("/api/v1/users/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {"name": "admin", "password": null}
                                     """))
-                    .andExpect(result ->
-                            assertThat(result.getResponse().getStatus())
-                                    .as("Should respond without crashing")
-                .isEqualTo(200));
+                    .andExpect(status().isBadRequest());
         }
 
         @Test

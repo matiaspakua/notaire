@@ -13,7 +13,9 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
-import { apiGet } from "@/lib/api-client";
+import { deedUseCases } from "@/composition/deed";
+import { folioUseCases } from "@/composition/folio";
+import type { Folio as DomainFolio } from "@/core/folio/domain/folio";
 import {
   useDeedsPage,
   useCreateDeed,
@@ -22,11 +24,16 @@ import {
   useSignDeed,
 } from "@/hooks/useDeeds";
 import { extractApiError } from "@/lib/utils";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import type { Deed, Folio } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue } from "@/lib/dates";
 import { useFormat } from "@/hooks/useFormat";
+
+function toWireFolio(f: DomainFolio): Folio {
+  return f as Folio;
+}
 
 const EMPTY: Partial<Deed> = { number: undefined, dateDeedrecording: "", body: "" };
 const UNSIGNED_STATUS = "Sin Firmar";
@@ -47,7 +54,7 @@ function DeedsList() {
 
   const { data: folios = [] } = useQuery({
     queryKey: ["folios"],
-    queryFn: () => apiGet<Folio[]>("/folios"),
+    queryFn: async () => (await folioUseCases.list()).map(toWireFolio),
   });
   const createMutation = useCreateDeed();
   const updateMutation = useUpdateDeed();
@@ -59,31 +66,77 @@ function DeedsList() {
   const [signId, setSignId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Deed>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [searchNumber, setSearchNumber] = useState("");
   const number = searchNumber.trim();
 
   // One server page at a time, page and size in the URL (#1340): the list used
   // to load size=1000.
   const paging = useUrlPagination();
-  const { data: deedsPage, isLoading: isLoadingPage, isFetching } = useDeedsPage(
+  const {
+    data: deedsPage,
+    isLoading: isLoadingPage,
+    isFetching,
+    isError: isDeedsError,
+    refetch: refetchDeeds,
+  } = useDeedsPage(
     { page: paging.page, size: paging.size },
     { enabled: !number },
   );
   useClampPage(paging, number ? undefined : deedsPage?.totalPages);
 
   // The backend reads `number`. Any other query name is ignored and returns every deed.
-  const { data: found = [], isLoading: isLoadingSearch } = useQuery({
+  const {
+    data: found = [],
+    isLoading: isLoadingSearch,
+    isError: isSearchError,
+    refetch: refetchSearch,
+  } = useQuery({
     queryKey: ["deeds", "search", number],
-    queryFn: () => apiGet<Deed[]>(`/deeds/search?number=${encodeURIComponent(number)}`),
+    queryFn: async () => {
+      const rows = await deedUseCases.searchByNumber(number);
+      return rows.map(
+        (d): Deed => ({
+          idDeed: d.idDeed,
+          number: d.number,
+          dateDeedrecording: d.dateDeedrecording,
+          body: d.body,
+          notes: d.notes,
+          registrationEntryNumber: d.registrationEntryNumber,
+          status: d.status,
+          idFolio: d.idFolio,
+        }),
+      );
+    },
     enabled: /^\d+$/.test(number),
   });
   const filteredDeeds = number ? (/^\d+$/.test(number) ? found : []) : deedsPage?.content ?? [];
   const isLoading = number ? isLoadingSearch && /^\d+$/.test(number) : isLoadingPage;
 
-  function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
-  function openEdit(e: Deed) { setEditing(e); setIsEditMode(true); setModalOpen(true); }
+  function openCreate() {
+    setEditing(EMPTY);
+    setIsEditMode(false);
+    setFieldErrors({});
+    setModalOpen(true);
+  }
+  function openEdit(e: Deed) {
+    setEditing(e);
+    setIsEditMode(true);
+    setFieldErrors({});
+    setModalOpen(true);
+  }
 
   async function handleSave() {
+    const errors = requiredFieldErrors(
+      {
+        number: editing.number,
+        dateDeedrecording: editing.dateDeedrecording,
+        ...(isEditMode ? {} : { idFolio: editing.idFolio }),
+      },
+      tc("fieldRequired"),
+    );
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
     try {
       if (isEditMode && editing.idDeed) {
         await updateMutation.mutateAsync({ id: editing.idDeed, data: editing });
@@ -173,6 +226,19 @@ function DeedsList() {
         isFetching={!number && isFetching}
         keyExtractor={(e) => e.idDeed!}
         emptyMessage={t("noData")}
+        error={
+          number && /^\d+$/.test(number)
+            ? isSearchError
+              ? t("loadError")
+              : undefined
+            : !number && isDeedsError
+              ? t("loadError")
+              : undefined
+        }
+        onRetry={() => {
+          if (number && /^\d+$/.test(number)) void refetchSearch();
+          else void refetchDeeds();
+        }}
         pagination={
           number
             ? undefined
@@ -190,13 +256,13 @@ function DeedsList() {
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={isEditMode ? t("editEscritura") : t("newEscritura")}>
-              <FormField label={t("fields.numero")} required>
+              <FormField label={t("fields.numero")} required error={fieldErrors.number}>
                 <Input type="number" value={editing.number ?? ""} onChange={(e) => setEditing({ ...editing, number: Number(e.target.value) })} />
               </FormField>
-              <FormField label={tc("date")} required>
+              <FormField label={tc("date")} required error={fieldErrors.dateDeedrecording}>
                 <Input type="date" value={toDateInputValue(editing.dateDeedrecording)} onChange={(e) => setEditing({ ...editing, dateDeedrecording: e.target.value })} />
               </FormField>
-              <FormField label={t("fields.folio")} required={!isEditMode}>
+              <FormField label={t("fields.folio")} required={!isEditMode} error={fieldErrors.idFolio}>
                 <Select value={editing.idFolio?.toString() ?? ""} onValueChange={(v) => setEditing({ ...editing, idFolio: parseInt(v) })}>
                   <SelectTrigger data-testid="select-folio-deed">
                     <SelectValue placeholder={t("fields.folio")} />

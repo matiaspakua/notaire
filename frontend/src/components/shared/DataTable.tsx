@@ -13,6 +13,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Pagination, type PaginationProps } from "@/components/shared/Pagination";
+import { EmptyState } from "@/components/shared/EmptyState";
+import { ErrorState } from "@/components/shared/ErrorState";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const MotionTableRow = motion.create(TableRow);
@@ -41,6 +44,9 @@ interface DataTableProps<T> {
   isFetching?: boolean;
   /** Server-side pagination footer (#1340); omit for lists rendered whole. */
   pagination?: PaginationProps;
+  /** Query failure message; when set, ErrorState replaces empty/rows (#1947). */
+  error?: string;
+  onRetry?: () => void;
 }
 
 export function DataTable<T>({
@@ -51,8 +57,17 @@ export function DataTable<T>({
   keyExtractor,
   isFetching,
   pagination,
+  error,
+  onRetry,
 }: DataTableProps<T>) {
   const isMobile = useMediaQuery(MOBILE_QUERY);
+  if (error) {
+    return (
+      <div className="rounded-[24px] border border-border/40 overflow-hidden bg-white apple-shadow">
+        <TableError message={error} onRetry={onRetry} />
+      </div>
+    );
+  }
   if (isMobile) {
     return (
       <MobileCards
@@ -72,7 +87,7 @@ export function DataTable<T>({
             {columns.map((col) => (
               <TableHead
                 key={col.key}
-                className={cn("font-bold text-[13px] uppercase tracking-wider text-muted-foreground py-5 px-6", col.className)}
+                className={cn("font-semibold text-[13px] tracking-tight text-muted-foreground py-5 px-6", col.className)}
               >
                 {col.header}
               </TableHead>
@@ -92,16 +107,8 @@ export function DataTable<T>({
             ))
           ) : data.length === 0 ? (
             <TableRow>
-              <TableCell
-                colSpan={columns.length}
-                className="h-64 text-center"
-              >
-                <div className="flex flex-col items-center justify-center gap-3 text-muted-foreground">
-                  <div className="bg-secondary p-4 rounded-full">
-                    <TableIcon className="h-8 w-8 opacity-20" />
-                  </div>
-                  <p className="text-lg font-medium"><EmptyMessage text={emptyMessage} /></p>
-                </div>
+              <TableCell colSpan={columns.length} className="h-64 p-0">
+                <TableEmpty emptyMessage={emptyMessage} />
               </TableCell>
             </TableRow>
           ) : (
@@ -128,14 +135,41 @@ export function DataTable<T>({
   );
 }
 
-/** Caller's message, or the translated default (#1354). */
-function EmptyMessage({ text }: { text?: string }) {
-  return text ? <>{text}</> : <DefaultEmptyMessage />;
+const emptyIcon = <TableIcon className="h-8 w-8 opacity-40" aria-hidden />;
+
+/** Empty invitation for table and card layouts (#1942 / #1354). */
+function TableEmpty({ emptyMessage }: { emptyMessage?: string }) {
+  if (emptyMessage) {
+    return <EmptyState title={emptyMessage} icon={emptyIcon} />;
+  }
+  return <TableEmptyDefault />;
 }
 
-function DefaultEmptyMessage() {
+function TableEmptyDefault() {
   const tc = useTranslations("common");
-  return <>{tc("noData")}</>;
+  return <EmptyState title={tc("noData")} icon={emptyIcon} />;
+}
+
+/** Query failure for table and card layouts (#1947). */
+function TableError({ message, onRetry }: { message: string; onRetry?: () => void }) {
+  if (!onRetry) {
+    return <ErrorState title={message} />;
+  }
+  return <TableErrorWithRetry message={message} onRetry={onRetry} />;
+}
+
+function TableErrorWithRetry({ message, onRetry }: { message: string; onRetry: () => void }) {
+  const tc = useTranslations("common");
+  return (
+    <ErrorState
+      title={message}
+      action={
+        <Button type="button" variant="secondary" onClick={onRetry} data-testid="btn-retry">
+          {tc("retry")}
+        </Button>
+      }
+    />
+  );
 }
 
 function isActions<T>(col: Column<T>) {
@@ -175,11 +209,8 @@ function MobileCards<T>({
 
   if (data.length === 0) {
     return (
-      <div className="rounded-2xl border border-border/40 bg-white apple-shadow h-48 flex flex-col items-center justify-center gap-3 text-muted-foreground">
-        <div className="bg-secondary p-4 rounded-full">
-          <TableIcon className="h-8 w-8 opacity-20" />
-        </div>
-        <p className="text-lg font-medium"><EmptyMessage text={emptyMessage} /></p>
+      <div className="rounded-2xl border border-border/40 bg-white apple-shadow">
+        <TableEmpty emptyMessage={emptyMessage} />
       </div>
     );
   }

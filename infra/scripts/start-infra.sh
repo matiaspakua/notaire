@@ -37,6 +37,7 @@ if [ ! -f "$ENV_FILE" ]; then
     echo -e "${YELLOW}No env file found — creating $ENV_FILE from infra/.env.example${NC}"
     cp "$INFRA_DIR/.env.example" "$ENV_FILE"
 fi
+bash "$SCRIPT_DIR/ensure-actuator-credentials.sh" "$ENV_FILE"
 
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}   Notaire Infrastructure Startup${NC}"

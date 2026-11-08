@@ -43,13 +43,14 @@ def load_checker():
     return mod
 
 
-def item(mod, *, number=1, state="OPEN", status=None, labels=(), title="t"):
+def item(mod, *, number=1, state="OPEN", status=None, labels=(), title="t", open_prs=None):
     return mod.BoardItem(
         number=number,
         state=state,
         status=status,
         labels=frozenset(labels),
         title=title,
+        open_prs=open_prs,
     )
 
 
@@ -236,6 +237,81 @@ class SkipWithoutGhTest(unittest.TestCase):
         code, msg = mod.run_check(scope="wip", force_skip=True)
         self.assertEqual(code, 0)
         self.assertRegex(msg.lower(), r"skip")
+
+
+class OpenPrsAndGraphqlLoaderTests(unittest.TestCase):
+    def test_r6_fails_on_live_shaped_open_prs_zero(self):
+        mod = load_checker()
+        errors = mod.evaluate_item(
+            item(
+                mod,
+                state="OPEN",
+                status="In Progress",
+                labels=("in-progress", "status:in-review"),
+                open_prs=0,
+            )
+        )
+        self.assertTrue(any("R6" in e for e in errors))
+
+    def test_r6_passes_when_open_pr_linked(self):
+        mod = load_checker()
+        errors = mod.evaluate_item(
+            item(
+                mod,
+                state="OPEN",
+                status="In Progress",
+                labels=("in-progress", "status:in-review"),
+                open_prs=1,
+            )
+        )
+        self.assertFalse(any("R6" in e for e in errors))
+
+    def test_board_items_from_graphql_rows_fill_open_prs(self):
+        mod = load_checker()
+        rows = [
+            {
+                "status": "In Progress",
+                "content": {"type": "Issue", "number": 42, "state": "OPEN", "title": "t"},
+                "labels": ["status:in-review", "in-progress"],
+                "open_prs": 0,
+            }
+        ]
+        items = mod.board_items_from_graphql_rows(rows)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0].open_prs, 0)
+        self.assertTrue(any("R6" in e for e in mod.evaluate_item(items[0])))
+
+    def test_load_all_uses_graphql_not_fetch_issue(self):
+        mod = load_checker()
+        calls = {"fetch_issue": 0, "graphql": 0}
+
+        def fake_graphql(*, owner, project):
+            calls["graphql"] += 1
+            return [
+                {
+                    "status": "Todo",
+                    "content": {"type": "Issue", "number": 7, "state": "OPEN", "title": "x"},
+                    "labels": ["DOC"],
+                    "open_prs": None,
+                }
+            ]
+
+        def boom(*_a, **_k):
+            calls["fetch_issue"] += 1
+            raise AssertionError("fetch_issue must not run for --scope all")
+
+        original_gql = mod.fetch_project_items_graphql
+        original_fetch = mod.fetch_issue
+        mod.fetch_project_items_graphql = fake_graphql
+        mod.fetch_issue = boom
+        try:
+            items = mod.load_all_issue_items(owner="o", project=1, repo="o/r")
+        finally:
+            mod.fetch_project_items_graphql = original_gql
+            mod.fetch_issue = original_fetch
+        self.assertEqual(len(items), 1)
+        self.assertEqual(calls["graphql"], 1)
+        self.assertEqual(calls["fetch_issue"], 0)
 
 
 if __name__ == "__main__":

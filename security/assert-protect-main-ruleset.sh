@@ -3,8 +3,8 @@
 # assert-protect-main-ruleset.sh — read-only Gate 5 check for #1040.
 #
 # Fetches live ruleset protect-main (id 24128115) and verifies:
-#   - pull_request + required_status_checks + deletion + non_fast_forward
-#   - required check contexts exactly match the five AC names
+#   - pull_request + deletion + non_fast_forward
+#   - the retired product-CI check names are not required (#2001)
 #   - bypass_actors empty
 #
 # USAGE
@@ -17,7 +17,8 @@ RULESET_ID="${PROTECT_MAIN_RULESET_ID:-24128115}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DESIRED_JSON="${PROTECT_MAIN_DESIRED_JSON:-${SCRIPT_DIR}/rulesets/protect-main.desired.json}"
 
-EXPECTED_CHECKS=("CI" "Frontend CI" "Playwright E2E" "Code Lint" "PR Validation")
+# Checks product workflows no longer report on a pull request (#2001).
+RETIRED_CHECKS=("CI" "Frontend CI" "Playwright E2E" "Code Lint" "PR Validation")
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -73,7 +74,7 @@ else
 fi
 
 types="$(echo "$LIVE" | jq -r '[.rules[].type] | sort | join(",")')"
-for required in deletion non_fast_forward pull_request required_status_checks; do
+for required in deletion non_fast_forward pull_request; do
   if ! echo "$types" | tr ',' '\n' | grep -qx "$required"; then
     echo "FAIL: missing rule type: $required (have: $types)" >&2
     FAIL=1
@@ -88,16 +89,18 @@ live_checks="$(echo "$LIVE" | jq -r '
     | .parameters.required_status_checks[]?
     | .context] | sort | .[]
 ')"
-expected_sorted="$(printf '%s\n' "${EXPECTED_CHECKS[@]}" | sort)"
-if [ "$(echo "$live_checks")" != "$(echo "$expected_sorted")" ]; then
-  echo "FAIL: required checks mismatch" >&2
-  echo "  live:" >&2
-  echo "$live_checks" | sed 's/^/    /' >&2
-  echo "  expected:" >&2
-  echo "$expected_sorted" | sed 's/^/    /' >&2
+retired_hit=""
+for name in "${RETIRED_CHECKS[@]}"; do
+  if printf '%s\n' "$live_checks" | grep -Fxq "$name"; then
+    retired_hit="${retired_hit} ${name}"
+  fi
+done
+if [ -n "$retired_hit" ]; then
+  echo "FAIL: protect-main still requires checks that pull requests no longer report:${retired_hit}" >&2
+  echo "  Apply: bash security/apply-protect-main-ruleset.sh --apply" >&2
   FAIL=1
 else
-  echo "OK required_status_checks=${EXPECTED_CHECKS[*]}"
+  echo "OK retired product-CI checks are not required"
 fi
 
 bypass_count="$(echo "$LIVE" | jq '

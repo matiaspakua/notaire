@@ -17,9 +17,8 @@ import {
   useDeleteWorkflowDefinition,
 } from "@/hooks/useWorkflow";
 import { presentMutationError } from "@/lib/mutation-error";
-import { apiGet, apiPost } from "@/lib/api-client";
+import { workflowUseCases } from "@/composition/workflow";
 import { validateWorkflow } from "@/lib/workflow-validate";
-import type { WorkflowNode, WorkflowTransition } from "@/types";
 import type { WorkflowDefinition } from "@/types";
 
 const EMPTY: Partial<WorkflowDefinition> = { name: "", description: "", active: false };
@@ -28,7 +27,7 @@ export default function WorkflowsPage() {
   const t = useTranslations("administracion.workflows");
   const tProblem = useTranslations("workflowViewer.problemList");
   const tc = useTranslations("common");
-  const { data = [], isLoading } = useWorkflowDefinitions();
+  const { data = [], isLoading, isError, refetch } = useWorkflowDefinitions();
   const createWf = useCreateWorkflowDefinition();
   const updateWf = useUpdateWorkflowDefinition();
   const deleteWf = useDeleteWorkflowDefinition();
@@ -65,8 +64,8 @@ export default function WorkflowsPage() {
     if (!id) return fallback.length ? fallback : [t("activateInvalid")];
     try {
       const [nodes, transitions] = await Promise.all([
-        apiGet<WorkflowNode[]>(`/workflow-node/by-workflow/${id}`),
-        apiGet<WorkflowTransition[]>(`/workflow-transition/by-workflow/${id}`),
+        workflowUseCases.listNodesByWorkflow(id),
+        workflowUseCases.listTransitionsByWorkflow(id),
       ]);
       const { problems } = validateWorkflow(nodes, transitions);
       if (problems.length === 0) return fallback;
@@ -89,7 +88,7 @@ export default function WorkflowsPage() {
     try {
       if (editing.active) {
         const result = isEditMode && editing.id
-          ? await apiPost<{ valid: boolean; errors: string[] }>(`/workflow-definition/${editing.id}/validate`, {})
+          ? await workflowUseCases.validateDefinition(editing.id)
           : { valid: false, errors: [t("activateNewHasNoNodes")] };
         if (!result.valid) {
           setActivateErrors(await localizedProblems(editing.id, result.errors ?? []));
@@ -188,7 +187,10 @@ export default function WorkflowsPage() {
           data-testid="search-workflows"
         />
       </div>
-      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(wf) => wf.id!} emptyMessage={t("noData")} />
+      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(wf) => wf.id!} emptyMessage={t("noData")} 
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
+      />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>

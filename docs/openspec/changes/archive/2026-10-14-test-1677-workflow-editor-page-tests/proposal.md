@@ -27,6 +27,7 @@ The workflow editor page had 42.2% branch coverage (63 uncovered branches). Only
 ## Capabilities
 
 ### New Capabilities
+
 - `workflow-editor-page-tests`: behaviour tests for the workflow editor page.
 
 ### Modified Capabilities

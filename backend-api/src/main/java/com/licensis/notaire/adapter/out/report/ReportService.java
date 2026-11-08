@@ -1,0 +1,193 @@
+package com.licensis.notaire.adapter.out.report;
+
+import com.licensis.notaire.application.usecase.report.ReportLocaleFormats;
+
+import com.licensis.notaire.exception.ResourceNotFoundException;
+import com.licensis.notaire.business.Notebook;
+import com.licensis.notaire.business.Item;
+import com.licensis.notaire.business.Payment;
+import com.licensis.notaire.business.Person;
+import com.licensis.notaire.business.Budget;
+import com.licensis.notaire.repository.NotebookRepository;
+import com.licensis.notaire.repository.ItemRepository;
+import com.licensis.notaire.repository.PaymentRepository;
+import com.licensis.notaire.application.port.in.report.GenerateReportsUseCase;
+import com.licensis.notaire.application.port.out.report.RegistrationDraftReportPort;
+import com.licensis.notaire.application.port.out.report.ReportDocument;
+import com.licensis.notaire.application.port.out.report.ReportDocument.Field;
+import com.licensis.notaire.application.port.out.report.ReportDocument.Fields;
+import com.licensis.notaire.application.port.out.report.ReportDocument.Identity;
+import com.licensis.notaire.application.port.out.report.ReportRenderer;
+import com.licensis.notaire.application.port.out.report.TaxSwornStatementReportPort;
+import com.licensis.notaire.application.port.out.report.TestimonyCopyReportPort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+/**
+ * Outbound adapter implementing {@link GenerateReportsUseCase} for {@code /api/v1/reports}.
+ *
+ * <p>The six reports that were JasperReports 3.5.3 templates over the legacy schema
+ * (budget, budget with properties, procedure documents, management history, document
+ * expiry and document debt) are built from the current domain model by
+ * {@link ReportDocumentFactory} and rendered through the {@link ReportRenderer} port
+ * (issue #567). Entity/repository access stays here (issue #1849 / ADR-030 R2+R5).
+ */
+@Service
+public class ReportService implements GenerateReportsUseCase {
+
+    private final NotebookRepository notebookRepository;
+    private final PaymentRepository paymentRepository;
+    private final ItemRepository itemRepository;
+    private final ReportDocumentFactory reportDocuments;
+    private final ReportRenderer reportRenderer;
+    private final IndexBookReportBuilder indexBook;
+    private final MonthlySwornStatementReportBuilder monthlySworn;
+    private final TaxSwornStatementReportPort taxSworn;
+    private final TestimonyCopyReportPort testimonyCopy;
+    private final RegistrationDraftReportPort registrationDraft;
+
+    private static final int FOLIOS_PER_NOTEBOOK = 10;
+
+    public ReportService(NotebookRepository notebookRepository,
+                           PaymentRepository paymentRepository,
+                           ItemRepository itemRepository,
+                           ReportDocumentFactory reportDocuments,
+                           ReportRenderer reportRenderer,
+                           IndexBookReportBuilder indexBook,
+                           MonthlySwornStatementReportBuilder monthlySworn,
+                           TaxSwornStatementReportPort taxSworn,
+                           TestimonyCopyReportPort testimonyCopy,
+                           RegistrationDraftReportPort registrationDraft) {
+        this.notebookRepository = notebookRepository;
+        this.paymentRepository = paymentRepository;
+        this.itemRepository = itemRepository;
+        this.reportDocuments = reportDocuments;
+        this.reportRenderer = reportRenderer;
+        this.indexBook = indexBook;
+        this.monthlySworn = monthlySworn;
+        this.taxSworn = taxSworn;
+        this.testimonyCopy = testimonyCopy;
+        this.registrationDraft = registrationDraft;
+    }
+
+    public byte[] generateBudgetReport(Integer idBudget) {
+        return reportRenderer.render(reportDocuments.budget(idBudget, false));
+    }
+
+    public byte[] generateBudgetPropertiesReport(Integer idBudget) {
+        return reportRenderer.render(reportDocuments.budget(idBudget, true));
+    }
+
+    public byte[] generateProcedureDocumentsListReport(String nameTypeProcedure) {
+        return reportRenderer.render(reportDocuments.procedureDocuments(nameTypeProcedure));
+    }
+
+    public byte[] generateManagementHistoryReport(Integer idManagement) {
+        return reportRenderer.render(reportDocuments.managementHistory(idManagement));
+    }
+
+    public byte[] generateDocumentsDueSoonReport(Integer idSubmittedDocument) {
+        return reportRenderer.render(reportDocuments.submittedDocumentExpiry(idSubmittedDocument));
+    }
+
+    public byte[] generateDebtDocumentsReport(Integer numberManagement) {
+        return reportRenderer.render(reportDocuments.documentDebt(numberManagement));
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] generateIndexBookReport(Integer year) {
+        return generateIndexBookReport(year, null, null);
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] generateIndexBookReport(Integer year, Integer idNotary, Integer idFolioType) {
+        return reportRenderer.render(indexBook.build(year, idNotary, idFolioType));
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] generateMonthlyTaxDeclarationReport(Integer year, Integer month) {
+        return generateMonthlyTaxDeclarationReport(year, month, null, null);
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] generateMonthlyTaxDeclarationReport(Integer year, Integer month, Integer idNotary, Integer idFolioType) {
+        return reportRenderer.render(monthlySworn.build(year, month, idNotary, idFolioType));
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] generateTestimonyCopyReport(Integer idTestimony) {
+        return reportRenderer.render(testimonyCopy.build(idTestimony));
+    }
+
+    public byte[] generateNotebookCoverReport(Integer idNotebook) {
+        Notebook notebook = notebookRepository.findById(idNotebook)
+                .orElseThrow(() -> new ResourceNotFoundException("Notebook not found with ID: " + idNotebook));
+
+        int folioFrom = (notebook.getNumber() - 1) * FOLIOS_PER_NOTEBOOK + 1;
+        int folioTo = notebook.getNumber() * FOLIOS_PER_NOTEBOOK;
+
+        return renderPlaceholder(
+                "Cover of notebook No. " + notebook.getNumber() + "/" + notebook.getYear(),
+                "CU80",
+                "notebook-" + notebook.getNumber(),
+                "Registry No. " + notebook.getFkIdNotaryPerson().getNotaryRegistrationNumber()
+                        + " - Folios " + folioFrom + " to " + folioTo);
+    }
+
+    public byte[] generateIncomeTaxDeclarationReport(Integer year, Integer month) {
+        return generateIncomeTaxDeclarationReport(year, month, null, null);
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] generateIncomeTaxDeclarationReport(Integer year, Integer month, Integer idNotary, Integer idFolioType) {
+        return reportRenderer.render(taxSworn.build(year, month, idNotary, idFolioType));
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] generateRegistrationDraftReport(Integer idRegistrationDraft) {
+        return reportRenderer.render(registrationDraft.build(idRegistrationDraft));
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] generatePaymentReceiptReport(Integer idPayment) {
+        Payment payment = paymentRepository.findById(idPayment)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment not found with ID: " + idPayment));
+
+        Budget budget = payment.getBudget();
+        Person client = budget != null ? budget.getFkIdPerson() : null;
+        String nameClient = client != null
+                ? (client.getFirstName() + " " + client.getLastName()).trim()
+                : "Unidentified client";
+
+        String concepts = budget != null
+                ? itemRepository.findByFkIdBudgetIdBudget(budget.getIdBudget()).stream()
+                        .map(Item::getName)
+                        .filter(name -> name != null && !name.isBlank())
+                        .reduce((a, b) -> a + ", " + b)
+                        .orElse("No concepts listed")
+                : "No concepts listed";
+
+        return reportRenderer.render(new ReportDocument(
+                "Payment receipt",
+                "CU15",
+                List.of(new Fields("Receipt", List.of(
+                        new Field("Client", nameClient),
+                        new Field("Payment date", ReportLocaleFormats.day(payment.getDate())),
+                        new Field("Concepts", concepts),
+                        new Field("Amount paid", ReportLocaleFormats.money(payment.getAmount()))))),
+                Identity.of("CU15", "payment-" + payment.getIdPayment(), null)));
+    }
+
+    private byte[] renderPlaceholder(String title, String cuId, String identifier, String periodLine) {
+        return reportRenderer.render(new ReportDocument(
+                title,
+                cuId,
+                List.of(new Fields(null, List.of(
+                        new Field("Use case", cuId),
+                        new Field("Detail", periodLine),
+                        new Field("Notes", "Operational report generated by the backend API.")))),
+                Identity.of(cuId, identifier, periodLine)));
+    }
+}

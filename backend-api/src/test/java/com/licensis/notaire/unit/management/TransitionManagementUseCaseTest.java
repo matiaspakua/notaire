@@ -7,21 +7,19 @@ import com.licensis.notaire.application.port.out.management.StatusRepositoryPort
 import com.licensis.notaire.application.port.out.management.WorkflowLookupPort;
 import com.licensis.notaire.application.port.out.management.WorkflowTransitionValidatorPort;
 import com.licensis.notaire.application.usecase.management.TransitionManagementUseCaseImpl;
-import com.licensis.notaire.business.DeedManagement;
-import com.licensis.notaire.business.ManagementStatus;
-import com.licensis.notaire.business.WorkflowDefinition;
+import com.licensis.notaire.domain.management.ManagementStatus;
+import com.licensis.notaire.domain.management.ManagementTransitionSnapshot;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Unit tests for TransitionManagementUseCaseImpl using fake ports.
+ * Unit tests for TransitionManagementUseCaseImpl using fake domain ports (issue #1850).
  */
 @DisplayName("TransitionManagementUseCase — validates workflow transitions (CU83)")
 class TransitionManagementUseCaseTest {
@@ -48,71 +46,41 @@ class TransitionManagementUseCaseTest {
     @Test
     @DisplayName("Valid transition is applied and returns updated management")
     void shouldApplyValidTransition() {
-        // Arrange
-        var initialStatus = new ManagementStatus();
-        initialStatus.setIdManagementStatus(1);
-        initialStatus.setName("Initial");
+        var initialStatus = ManagementStatus.restore(1, "Initial", null, 0);
+        var intermediateStatus = ManagementStatus.restore(2, "Intermediate", null, 0);
 
-        var intermediateStatus = new ManagementStatus();
-        intermediateStatus.setIdManagementStatus(2);
-        intermediateStatus.setName("Intermediate");
-
-        var management = new DeedManagement();
-        management.setIdManagement(1);
-        management.setFkIdManagementStatus(initialStatus);
-        management.setNumber(123);
-
-        var workflow = new WorkflowDefinition();
-        workflow.setId(1);
-
-        fakeManagementRepository.save(management);
+        fakeManagementRepository.put(new ManagementTransitionSnapshot(1, 1, "Initial", 10));
+        fakeManagementRepository.registerStatus(initialStatus);
+        fakeManagementRepository.registerStatus(intermediateStatus);
         fakeStatusRepository.save(initialStatus);
         fakeStatusRepository.save(intermediateStatus);
-        fakeWorkflowLookup.setWorkflow(workflow);
-        fakeTransitionValidator.allowTransition(workflow, initialStatus, intermediateStatus);
+        fakeWorkflowLookup.setWorkflowDefinitionId(10);
+        fakeTransitionValidator.allowTransition(10, 1, 2);
 
-        // Act
         TransitionManagementOutput output = useCase.execute(1, "Intermediate");
 
-        // Assert
         assertThat(output.managementId()).isEqualTo(1);
-        var updatedManagement = fakeManagementRepository.findById(1);
-        assertThat(updatedManagement).isNotNull();
-        assertThat(updatedManagement.getFkIdManagementStatus().getName()).isEqualTo("Intermediate");
+        var updated = fakeManagementRepository.findById(1);
+        assertThat(updated).isNotNull();
+        assertThat(updated.statusName()).isEqualTo("Intermediate");
         assertThat(fakeStatusLog.wasStatusRegistered(1)).isTrue();
     }
 
     @Test
     @DisplayName("Invalid transition is rejected with BusinessValidationException")
     void shouldRejectInvalidTransition() {
-        // Arrange
-        var initialStatus = new ManagementStatus();
-        initialStatus.setIdManagementStatus(1);
-        initialStatus.setName("Initial");
+        var initialStatus = ManagementStatus.restore(1, "Initial", null, 0);
+        var unreachableStatus = ManagementStatus.restore(3, "Unreachable", null, 0);
 
-        var unreachableStatus = new ManagementStatus();
-        unreachableStatus.setIdManagementStatus(3);
-        unreachableStatus.setName("Unreachable");
-
-        var management = new DeedManagement();
-        management.setIdManagement(1);
-        management.setFkIdManagementStatus(initialStatus);
-
-        var workflow = new WorkflowDefinition();
-        workflow.setId(1);
-
-        fakeManagementRepository.save(management);
+        fakeManagementRepository.put(new ManagementTransitionSnapshot(1, 1, "Initial", 10));
         fakeStatusRepository.save(initialStatus);
         fakeStatusRepository.save(unreachableStatus);
-        fakeWorkflowLookup.setWorkflow(workflow);
-        // Validator has no allowed transitions
+        fakeWorkflowLookup.setWorkflowDefinitionId(10);
 
-        // Act & Assert
         assertThatThrownBy(() -> useCase.execute(1, "Unreachable"))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("is not allowed");
 
-        // Verify the status log was not called
         assertThat(fakeStatusLog.wasStatusRegistered(1)).isFalse();
     }
 
@@ -127,42 +95,43 @@ class TransitionManagementUseCaseTest {
     @Test
     @DisplayName("Undefined destination status throws BusinessValidationException")
     void shouldThrowBusinessValidationWhenStatusNotDefined() {
-        // Arrange
-        var initialStatus = new ManagementStatus();
-        initialStatus.setIdManagementStatus(1);
-        initialStatus.setName("Initial");
+        var initialStatus = ManagementStatus.restore(1, "Initial", null, 0);
 
-        var management = new DeedManagement();
-        management.setIdManagement(1);
-        management.setFkIdManagementStatus(initialStatus);
-
-        var workflow = new WorkflowDefinition();
-        workflow.setId(1);
-
-        fakeManagementRepository.save(management);
+        fakeManagementRepository.put(new ManagementTransitionSnapshot(1, 1, "Initial", 10));
         fakeStatusRepository.save(initialStatus);
-        fakeWorkflowLookup.setWorkflow(workflow);
+        fakeWorkflowLookup.setWorkflowDefinitionId(10);
 
-        // Act & Assert
         assertThatThrownBy(() -> useCase.execute(1, "DoesNotExist"))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("is not defined");
     }
 
-    // --- Fake Ports ---
-
     private static class FakeManagementRepository implements ManagementRepositoryPort {
-        private final java.util.Map<Integer, DeedManagement> store = new java.util.HashMap<>();
+        private final java.util.Map<Integer, ManagementTransitionSnapshot> store = new java.util.HashMap<>();
+        private final java.util.Map<Integer, ManagementStatus> statusesById = new java.util.HashMap<>();
+
+        void put(ManagementTransitionSnapshot snapshot) {
+            store.put(snapshot.idManagement(), snapshot);
+        }
+
+        void registerStatus(ManagementStatus status) {
+            statusesById.put(status.id(), status);
+        }
 
         @Override
-        public DeedManagement findById(Integer managementId) {
+        public ManagementTransitionSnapshot findById(Integer managementId) {
             return store.get(managementId);
         }
 
         @Override
-        public DeedManagement save(DeedManagement management) {
-            store.put(management.getIdManagement(), management);
-            return management;
+        public ManagementTransitionSnapshot saveStatus(Integer managementId, Integer statusId) {
+            ManagementTransitionSnapshot current = store.get(managementId);
+            ManagementStatus status = statusesById.get(statusId);
+            String name = status != null ? status.name() : null;
+            ManagementTransitionSnapshot updated = new ManagementTransitionSnapshot(
+                    managementId, statusId, name, current != null ? current.workflowDefinitionId() : null);
+            store.put(managementId, updated);
+            return updated;
         }
     }
 
@@ -175,42 +144,39 @@ class TransitionManagementUseCaseTest {
         }
 
         public void save(ManagementStatus status) {
-            store.put(status.getName(), status);
+            store.put(status.name(), status);
+            // Also register on management repo via shared knowledge in tests — handled in saveStatus via id map
         }
     }
 
     private static class FakeWorkflowLookup implements WorkflowLookupPort {
-        private WorkflowDefinition workflow;
+        private Integer workflowDefinitionId;
 
         @Override
-        public WorkflowDefinition resolveWorkflowDefinition(DeedManagement management) {
-            if (workflow == null) {
+        public Integer resolveWorkflowDefinitionId(Integer managementId) {
+            if (workflowDefinitionId == null) {
                 throw new BusinessValidationException("No workflow defined");
             }
-            return workflow;
+            return workflowDefinitionId;
         }
 
-        public void setWorkflow(WorkflowDefinition workflow) {
-            this.workflow = workflow;
+        public void setWorkflowDefinitionId(Integer workflowDefinitionId) {
+            this.workflowDefinitionId = workflowDefinitionId;
         }
     }
 
-    private static class FakeWorkflowTransitionValidator
-            implements WorkflowTransitionValidatorPort {
+    private static class FakeWorkflowTransitionValidator implements WorkflowTransitionValidatorPort {
         private final java.util.List<TransitionKey> allowedTransitions = new java.util.ArrayList<>();
 
         @Override
-        public boolean isTransitionValid(WorkflowDefinition workflowDefinition, ManagementStatus origin,
-                ManagementStatus destination) {
+        public boolean isTransitionValid(Integer workflowDefinitionId, Integer originStatusId,
+                Integer destinationStatusId) {
             return allowedTransitions.stream()
-                    .anyMatch(t -> t.matches(workflowDefinition.getId(), origin.getIdManagementStatus(),
-                            destination.getIdManagementStatus()));
+                    .anyMatch(t -> t.matches(workflowDefinitionId, originStatusId, destinationStatusId));
         }
 
-        public void allowTransition(WorkflowDefinition workflow, ManagementStatus origin,
-                ManagementStatus destination) {
-            allowedTransitions.add(new TransitionKey(workflow.getId(), origin.getIdManagementStatus(),
-                    destination.getIdManagementStatus()));
+        public void allowTransition(Integer workflowId, Integer originStatusId, Integer destinationStatusId) {
+            allowedTransitions.add(new TransitionKey(workflowId, originStatusId, destinationStatusId));
         }
 
         private record TransitionKey(Integer workflowId, Integer originStatusId, Integer destStatusId) {
@@ -225,8 +191,8 @@ class TransitionManagementUseCaseTest {
         private final java.util.Set<Integer> registeredManagementIds = new java.util.HashSet<>();
 
         @Override
-        public void registerStatus(DeedManagement management, String detail) {
-            registeredManagementIds.add(management.getIdManagement());
+        public void registerStatus(Integer managementId, String detail) {
+            registeredManagementIds.add(managementId);
         }
 
         public boolean wasStatusRegistered(Integer managementId) {

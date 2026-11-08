@@ -52,7 +52,7 @@ CU47,Look up a payment,Payments,Nice to have,Payment,Read,PaymentController,GET,
 CU48,Register a notary,Administration,Essential,Person,Create,PersonController,POST,/api/v1/people,people/01-create.yml,OK,OK,notaryRegistrationNumber != null in the body,#201
 CU48,Register a notary (available),Administration,Essential,Deed,Read,DeedController,GET,/api/v1/deeds/available-notaries,MISSING,500-ERROR,NO-TEST,GET returns 500; Bruno gap #953,#201
 CU49,Delete a budget template,Administration,Essential,BudgetTemplate,Delete,BudgetTemplateController,DELETE,/api/v1/budget-templates/procedure-types/{t}/concept/{c},budget-templates/05-delete.yml,OK,OK,Concurrency error — no DELETE test,#202
-CU50,Generate the tax sworn statement,Protocols,Nice to have,Report,Report,ReportController,GET,/api/v1/reports/tax-sworn-statement,report-pdfs/04-tax-sworn-statement.yml,OK,OK,0% documented — endpoint exists without a test; Bruno #953,#203
+CU50,Generate the tax sworn statement,Protocols,Nice to have,Report,Report,ReportController,GET,/api/v1/reports/tax-sworn-statement,report-pdfs/04-tax-sworn-statement.yml,OK,OK,Implemented — #203 year+month required; optional notary/protocol; Playwright CU50-GW01,#203
 CU51,Update a notary,Administration,Essential,Person,Update,PersonController,PUT,/api/v1/people/{id},people/05-update.yml,OK,OK,Green in the idempotent suite (#1035),#204
 CU52,Update a deed,Managements,Essential,Deed,Update,DeedController,PUT,/api/v1/deeds/{id},MISSING,OK,NO-TEST,Reported concurrency error; Bruno gap #953,#205
 CU53,Update a management,Managements,Essential,DeedManagement,Update,ManagementController,PUT,/api/v1/managements/{id},managements/,OK,OK,Bruno #953,#206

@@ -1,12 +1,13 @@
 package com.licensis.notaire.unit;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.when;
 
-import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.business.Item;
-import com.licensis.notaire.business.Budget;
-import com.licensis.notaire.application.port.out.item.ItemRepositoryPort;
-import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
-import com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,23 +15,23 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.when;
+import com.licensis.notaire.repository.BudgetRepository;
+import com.licensis.notaire.repository.ItemRepository;
+import com.licensis.notaire.application.port.out.item.ItemOpsPort.ItemView;
+import com.licensis.notaire.adapter.out.persistence.budget.BudgetCatalogItemsService;
+import com.licensis.notaire.business.Budget;
+import com.licensis.notaire.business.Item;
+import com.licensis.notaire.exception.ResourceNotFoundException;
 
 @DisplayName("BudgetCatalogItemsService Tests (CU71)")
 @ExtendWith(MockitoExtension.class)
 class BudgetCatalogItemsServiceTest {
 
     @Mock
-    private BudgetRepositoryPort budgetRepository;
+    private BudgetRepository budgetRepository;
 
     @Mock
-    private ItemRepositoryPort itemRepository;
+    private ItemRepository itemRepository;
 
     @InjectMocks
     private BudgetCatalogItemsService budgetCatalogItemsService;
@@ -48,17 +49,18 @@ class BudgetCatalogItemsServiceTest {
         Budget budget = new Budget();
         budget.setIdBudget(1);
         when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
-        when(itemRepository.findById(10)).thenReturn(Optional.of(buildCatalogItem(10, "Stamp duty", new java.math.BigDecimal("500"))));
-        when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(itemRepository.findById(10))
+                .thenReturn(Optional.of(buildCatalogItem(10, "Stamp duty", new java.math.BigDecimal("500"))));
+        when(itemRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        List<Item> result = budgetCatalogItemsService.addItemsFromCatalog(1, List.of(10));
+        List<ItemView> result = budgetCatalogItemsService.addItemsFromCatalog(1, List.of(10));
 
         assertThat(result).hasSize(1);
-        Item copy = result.get(0);
-        assertThat(copy.getName()).isEqualTo("Stamp duty");
-        assertThat(copy.getValue()).isEqualByComparingTo(new java.math.BigDecimal("500"));
-        assertThat(copy.getNotes()).isEqualTo("Catalog observation");
-        assertThat(copy.getFkIdBudget()).isEqualTo(budget);
+        ItemView copy = result.get(0);
+        assertThat(copy.name()).isEqualTo("Stamp duty");
+        assertThat(copy.value()).isEqualByComparingTo(new java.math.BigDecimal("500"));
+        assertThat(copy.notes()).isEqualTo("Catalog observation");
+        assertThat(copy.budgetId()).isEqualTo(1);
     }
 
     @Test
@@ -67,14 +69,16 @@ class BudgetCatalogItemsServiceTest {
         Budget budget = new Budget();
         budget.setIdBudget(1);
         when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
-        when(itemRepository.findById(10)).thenReturn(Optional.of(buildCatalogItem(10, "Stamp duty", new java.math.BigDecimal("500"))));
-        when(itemRepository.findById(11)).thenReturn(Optional.of(buildCatalogItem(11, "Honorarios", new java.math.BigDecimal("1000"))));
-        when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(itemRepository.findById(10))
+                .thenReturn(Optional.of(buildCatalogItem(10, "Stamp duty", new java.math.BigDecimal("500"))));
+        when(itemRepository.findById(11))
+                .thenReturn(Optional.of(buildCatalogItem(11, "Honorarios", new java.math.BigDecimal("1000"))));
+        when(itemRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        List<Item> result = budgetCatalogItemsService.addItemsFromCatalog(1, List.of(10, 11));
+        List<ItemView> result = budgetCatalogItemsService.addItemsFromCatalog(1, List.of(10, 11));
 
         assertThat(result).hasSize(2);
-        assertThat(result).extracting(Item::getName).containsExactlyInAnyOrder("Stamp duty", "Honorarios");
+        assertThat(result).extracting(ItemView::name).containsExactlyInAnyOrder("Stamp duty", "Honorarios");
     }
 
     @Test

@@ -50,7 +50,10 @@
     "add": "Agregar",
     "search": "Buscar",
     "loading": "Cargando...",
+    "retry": "Reintentar",
+    "loadError": "No se pudo cargar la lista",
     "generating": "Generando...",
+
     "id": "ID",
     "name": "Nombre",
     "description": "Descripción",
@@ -66,6 +69,7 @@
     "downloadPdf": "Descargar PDF",
     "noData": "Sin datos",
     "required": "requerido",
+    "fieldRequired": "Este campo es obligatorio",
     "optional": "opcional",
     "language": "Idioma",
     "all": "Todos",
@@ -96,6 +100,7 @@
     "hello": "Hola",
     "today": "Resumen de actividad para hoy",
     "availableModules": "Módulos disponibles",
+    "loadError": "No se pudieron cargar algunos totales del panel",
     "accessDenied": "No tiene permisos para acceder a esa sección de administración.",
     "workflowProgress": "Progreso del workflow",
     "workflow": {
@@ -206,6 +211,7 @@
     "duplicateDocument": "Ya existe otra persona registrada con este documento.",
     "viewExisting": "Ver persona existente",
     "noData": "No hay personas registradas",
+    "loadError": "No se pudo cargar la lista de personas",
     "filterClients": "Solo clientes",
     "fields": {
       "nombre": "Nombre",
@@ -241,6 +247,7 @@
   },
   "gestiones": {
     "title": "Gestiones",
+    "defaultHeadingLabel": "Gestión",
     "newGestion": "Nueva gestión",
     "editGestion": "Editar gestión",
     "created": "Gestión creada",
@@ -251,6 +258,7 @@
     "errorSave": "Error al guardar la gestión",
     "errorDelete": "Error al eliminar la gestión",
     "noData": "No hay gestiones registradas",
+    "loadError": "No se pudieron cargar las gestiones",
     "filterByCliente": "Filtrar por cliente...",
     "archiveGestion": "Archivar gestión",
     "archiveConfirmTitle": "¿Archivar esta gestión?",
@@ -357,6 +365,7 @@
     "errorSave": "Error al guardar",
     "errorDelete": "Error al eliminar",
     "noData": "No hay escrituras registradas",
+    "loadError": "No se pudieron cargar las escrituras",
     "searchPlaceholder": "Buscar por número...",
     "firmarEscritura": "Firmar escritura",
     "firmada": "Escritura firmada",
@@ -762,6 +771,7 @@
     "errorSave": "Error al guardar",
     "errorDelete": "Error al eliminar",
     "noData": "No hay presupuestos registrados",
+    "loadError": "No se pudieron cargar los presupuestos",
     "searchPlaceholder": "Buscar por ID o cliente...",
     "fields": {
       "cliente": "Cliente",
@@ -1356,6 +1366,11 @@
     "description": "Generación de reportes y documentos PDF",
     "generated": "PDF generado y descargado",
     "errorGenerate": "Error al generar el reporte (backend necesario)",
+    "catalogLoadError": "No se pudieron cargar escribanos o tipos de folio para los filtros",
+    "sections": {
+      "quotesAndCases": "Presupuestos y gestiones",
+      "swornAndBooks": "Declaraciones juradas y libros"
+    },
     "fields": {
       "presupuestoId": "ID Presupuesto",
       "gestionId": "ID Gestión",

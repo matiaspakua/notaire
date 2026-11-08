@@ -22,13 +22,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * {@code @DirtiesContext(BEFORE_CLASS)}: the create/list round trip goes through the legacy
- * {@code BudgetTemplateJpaController}, which caches its {@code EntityManagerFactory} in
- * the static {@link com.licensis.notaire.config.JpaControllerProvider}. If an earlier test class
- * in the same JVM dirtied the Spring context, that static reference goes stale relative to the
- * newly created H2 instance, so a create() here is invisible to a getAll() backed by the fresh
- * context. Forcing a clean context before this class keeps the static EMF and the active context
- * in sync.
+ * {@code @DirtiesContext(BEFORE_CLASS)} keeps this class on a fresh context. It used to be required
+ * because the legacy controller cached its {@code EntityManagerFactory} in a static holder (removed
+ * in #574); it is kept as is so this change does not alter test isolation.
  */
 @SpringBootTest
 @ActiveProfiles("test-h2")

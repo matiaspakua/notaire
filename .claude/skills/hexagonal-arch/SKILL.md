@@ -7,6 +7,10 @@ metadata:
 
 # Hexagonal Architecture
 
+> **Notaire:** this repository applies the pattern fully, in backend and frontend (ADR-030). Read
+> `references/notaire.md` for the package map, conventions, worked slices and the anti-patterns found here, and
+> `.claude/rules/hexagonal-architecture.md` for the rules and the per-slice checklist.
+
 Hexagonal architecture (Ports & Adapters) keeps business logic independent of
 frameworks, transport, and persistence details. The core application depends
 only on abstract ports; adapters implement those ports at the edges.

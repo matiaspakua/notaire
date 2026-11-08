@@ -1,0 +1,125 @@
+package com.licensis.notaire.adapter.out.persistence.deed;
+
+import com.licensis.notaire.application.port.in.deed.ValidateDeedNumberingUseCase;
+import com.licensis.notaire.domain.deed.DeedNumberingValidationResult;
+import com.licensis.notaire.exception.DuplicateDeedNumberException;
+import com.licensis.notaire.exception.UnjustifiedNumberingGapException;
+import com.licensis.notaire.business.Deed;
+import com.licensis.notaire.business.Folio;
+import com.licensis.notaire.business.Person;
+import com.licensis.notaire.repository.DeedRepository;
+import com.licensis.notaire.repository.FolioRepository;
+import com.licensis.notaire.repository.PersonRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+@Service
+@Transactional
+public class DeedService {
+
+    private static final Logger logger = LoggerFactory.getLogger(DeedService.class);
+
+    private final DeedRepository deedRepository;
+    private final PersonRepository personRepository;
+    private final FolioRepository folioRepository;
+    private final ValidateDeedNumberingUseCase validateDeedNumberingUseCase;
+
+    public DeedService(DeedRepository deedRepository, PersonRepository personRepository,
+            FolioRepository folioRepository, ValidateDeedNumberingUseCase validateDeedNumberingUseCase) {
+        this.deedRepository = deedRepository;
+        this.personRepository = personRepository;
+        this.folioRepository = folioRepository;
+        this.validateDeedNumberingUseCase = validateDeedNumberingUseCase;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Deed> findAllPaged(Pageable pageable) {
+        return deedRepository.findAll(pageable);
+    }
+
+    /** One page of deeds, only those in {@code status} when it is not null (issue #1340). */
+    @Transactional(readOnly = true)
+    public Page<Deed> findAllPaged(String status, Pageable pageable) {
+        return status == null ? deedRepository.findAll(pageable) : deedRepository.findByStatus(status, pageable);
+    }
+
+    public List<Deed> findAll() {
+        logger.debug("Finding all deeds");
+        return deedRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Deed> findById(Integer id) {
+        logger.debug("Finding deed by id: {}", id);
+        return deedRepository.findById(id);
+    }
+
+    public Deed save(Deed entity) {
+        logger.info("Saving deed with number: {}", entity.getNumber());
+        validateNumbering(entity);
+        return deedRepository.save(entity);
+    }
+
+    private void validateNumbering(Deed entity) {
+        resolveFolioForNumbering(entity).ifPresent(folio -> {
+            Person notary = folio.getFkIdNotaryPerson();
+            if (notary == null || notary.getPersonId() == null) {
+                return;
+            }
+            boolean isAuxiliary = folio.getFkIdFolioType() != null && folio.getFkIdFolioType().isIsAuxiliary();
+            DeedNumberingValidationResult result = validateDeedNumberingUseCase.validate(
+                    entity.getNumber(), notary.getPersonId(), folio.getYear(), isAuxiliary,
+                    entity.getNotes(), entity.getIdDeed());
+
+            if (result == DeedNumberingValidationResult.DUPLICATE) {
+                throw new DuplicateDeedNumberException(
+                        "The number " + entity.getNumber() + " was already used in the "
+                                + (isAuxiliary ? "auxiliary" : "main") + " protocol for year " + folio.getYear());
+            }
+            if (result == DeedNumberingValidationResult.SKIP_UNJUSTIFIED) {
+                throw new UnjustifiedNumberingGapException(
+                        "The number " + entity.getNumber() + " leaves a gap in the sequence; "
+                                + "a justification is required in notes");
+            }
+        });
+    }
+
+    private Optional<Folio> resolveFolioForNumbering(Deed entity) {
+        if (entity.getIdFolio() != null) {
+            return folioRepository.findById(entity.getIdFolio());
+        }
+        if (entity.getIdDeed() != null) {
+            return folioRepository.findByFkIdDeedIdDeed(entity.getIdDeed());
+        }
+        return Optional.empty();
+    }
+
+    public void deleteById(Integer id) {
+        logger.info("Deleting deed with id: {}", id);
+        deedRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Person> findAvailableNotaries() {
+        logger.debug("Finding all available notaries");
+        return personRepository.findAllNotaries();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Deed> searchByNumber(Integer number) {
+        logger.debug("Searching deeds by number: {}", number);
+        if (number == null) {
+            return deedRepository.findAll();
+        }
+        return deedRepository.findByNumber(number)
+                .map(List::of)
+                .orElse(List.of());
+    }
+}

@@ -53,15 +53,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             ex.getMessage(),
             request.getRequestURI()
         );
-        STRUCTURED_LOG.logError(
-            "Notaire exception occurred",
-            ex,
-            Map.of(
-                "statusCode", statusCode,
-                "path", request.getRequestURI(),
-                "method", request.getMethod()
-            )
+        // Match ErrorResponses: client faults (4xx) are WARN; server faults stay ERROR (#1712).
+        Map<String, Object> context = Map.of(
+            "statusCode", statusCode,
+            "path", request.getRequestURI(),
+            "method", request.getMethod(),
+            "exception", ex.getClass().getSimpleName(),
+            "exceptionMessage", ex.getMessage() == null ? "" : ex.getMessage()
         );
+        if (statusCode >= 500) {
+            STRUCTURED_LOG.logError("Notaire exception occurred", ex, context);
+        } else {
+            STRUCTURED_LOG.logWarn("Notaire client exception", context);
+        }
         return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(statusCode));
     }
 

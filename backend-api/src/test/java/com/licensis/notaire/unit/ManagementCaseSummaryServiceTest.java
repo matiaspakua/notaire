@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
-import com.licensis.notaire.application.usecase.management.ManagementCaseSummaryService;
+import com.licensis.notaire.adapter.out.persistence.management.ManagementCaseSummaryService;
 import com.licensis.notaire.business.Copy;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.DeedManagement;

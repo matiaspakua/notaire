@@ -33,6 +33,27 @@ curl http://localhost:3100/ready
 curl http://localhost:9187/metrics | head
 ```
 
+## Prove Grafana panels hold data (#1735)
+
+After the stack is up and traffic has run (Bruno, Playwright, or
+`verify-signals.sh --with-e2e`), assert that key provisioned dashboards are
+present in Grafana and that their panel PromQL returns series (same queries the
+UI renders):
+
+```bash
+python3 infra/scripts/verify_grafana_panels.py
+# or after signal checks:
+bash infra/scripts/verify-signals.sh --with-grafana-panels
+# traffic + signals + panels:
+bash infra/scripts/verify-signals.sh --with-e2e --with-grafana-panels
+```
+
+Covers `notaire-status`, `notaire-postgres`, `notaire-backend`, and
+`notaire-quality`. Uses `GRAFANA_ADMIN_*` / Prometheus at `localhost:3001` /
+`9090` (override with `GRAFANA_URL` / `PROMETHEUS_URL`). Inventory lives in
+`infra/scripts/grafana_panel_inventory.py` (guarded by
+`infra/tests/test_grafana_panel_proof.py`).
+
 ## Dashboards and logs
 
 - Start here: stack overview http://localhost:3001/d/notaire-stack-status, Notaire only
@@ -45,12 +66,28 @@ curl http://localhost:9187/metrics | head
   with `amtool` or the UI. Prometheus' own view is http://localhost:9090/alerts.
 - Drill-down: http://localhost:3001/d/notaire-infra-resources (host), `/d/notaire-frontend`,
   `/d/notaire-observability-health` (are the monitoring tools themselves healthy?), `/d/notaire-traces`.
-- Backend: http://localhost:3001/d/notaire-backend
-- PostgreSQL: http://localhost:3001/d/notaire-postgres
+- Backend: http://localhost:3001/d/notaire-backend (includes **Product version** from Micrometer `version=${app.version}`)
+- PostgreSQL: http://localhost:3001/d/notaire-postgres — business counts need the exporter
+  extend-query path (`PG_EXPORTER_EXTEND_QUERY_PATH`); recreate `postgres-exporter` after pull.
+- Quality / SonarQube: http://localhost:3001/d/notaire-quality (probes + markdown load guide)
 - Auth and security: http://localhost:3001/d/notaire-auth
 - Logs: Grafana → Explore → Loki, for example
   `{container_name="notary-backend"} | json` or `{service="notaire"}`
   (labels: `container`, `container_name`, `service`, `app`, `level`).
+  JSON lines also carry `serviceVersion` (same packaged SEMVER).
+
+### Loading provisioned dashboards
+
+Dashboards are Git-managed under
+`infra/observability/grafana/provisioning/dashboards/` and loaded automatically when
+Grafana starts (`dashboard.yml` provider). There is no manual import step. After
+changing JSON on disk, recreate Grafana:
+
+```bash
+docker compose -f infra/observability/docker-compose.yml --env-file infra/.env up -d --force-recreate grafana
+```
+
+Guards: `python3 infra/tests/test_obs_dashboard_wiring.py` (and `bash infra/verify.sh`).
 
 ## Code quality (SonarQube)
 

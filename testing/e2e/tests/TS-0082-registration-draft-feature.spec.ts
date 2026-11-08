@@ -10,6 +10,7 @@ import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
 import { apiPost, uniqueId } from "./setup/api-helpers";
 import { chooseDeed } from "./setup/deed-picker";
+import { assertPdfDownload } from "./setup/pdf-helpers";
 
 interface DeedApiResult {
   idDeed: number;
@@ -68,7 +69,8 @@ test.describe("CU82 - Generate and track the registration draft", () => {
 
   test("Golden path: generate the draft, submit it, and register it definitively", async ({ page }) => {
     const { idDeed, number } = await seedSignedDeed(page);
-    const idProperty = await seedProperty(page);
+    const cadastral = `NC-${uniqueId()}`;
+    const idProperty = await seedProperty(page, { cadastralDesignation: cadastral });
     await seedProcedure(page, idDeed, idProperty);
 
     await steps.givenUserIsOnPage("/dashboard/registration-drafts");
@@ -77,6 +79,9 @@ test.describe("CU82 - Generate and track the registration draft", () => {
     await steps.thenShowsSuccessMessage("generada");
 
     await expect(page.getByTestId("registration-draft-status")).toHaveText(/Generada/i);
+    const downloadPromise = page.waitForEvent("download");
+    await page.getByTestId("btn-download-registration-draft").click();
+    await assertPdfDownload(await downloadPromise, /^minuta_inscripcion_\d+\.pdf$/, [cadastral]);
 
     await page.getByTestId("btn-submit-registration-draft").click();
     await steps.thenModalIsVisible();

@@ -1,5 +1,6 @@
 package com.licensis.notaire.config;
 
+import com.licensis.notaire.security.RoleModuleAuthorizationFilter;
 import com.licensis.notaire.security.UserAuthorityResolver;
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
@@ -220,7 +221,8 @@ public class SecurityAndCorsConfig {
     @Order(2)
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http,
             AuthenticationEntryPoint apiAuthenticationEntryPoint,
-            AccessDeniedHandler apiAccessDeniedHandler) throws Exception {
+            AccessDeniedHandler apiAccessDeniedHandler,
+            RoleModuleAuthorizationFilter roleModuleAuthorizationFilter) throws Exception {
         http
             .securityMatcher("/api/**")
             .authorizeHttpRequests(auth -> {
@@ -240,6 +242,7 @@ public class SecurityAndCorsConfig {
                 .authenticationEntryPoint(apiAuthenticationEntryPoint)
                 .accessDeniedHandler(apiAccessDeniedHandler))
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(roleModuleAuthorizationFilter, JwtAuthenticationFilter.class)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .csrf(csrf -> csrf
                 // Framework defaults for a single-page app (issue #1620): the
@@ -258,7 +261,8 @@ public class SecurityAndCorsConfig {
                 // Exempt login/logout (session bootstrap) and Bearer-token API clients.
                 // Bearer tokens are not vulnerable to CSRF — CSRF only affects ambient
                 // cookie-authenticated browser requests. See CU78 / issues #1618, #1620.
-                .ignoringRequestMatchers(
+                // CSRF stays enabled for cookie SPA clients (.spa() above); this is not a global disable.
+                .ignoringRequestMatchers( // NOSONAR java:S4502 — scoped Bearer/login exemptions only (#1620)
                     request -> {
                         String auth = request.getHeader("Authorization");
                         return auth != null && auth.startsWith("Bearer ");

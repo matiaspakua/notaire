@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Notaire — GitHub Pages site
 
-## Getting Started
+Static Next.js site published at <https://matiaspakua.github.io/notaire/>
+(`output: export`, and `basePath: /notaire` in production builds, set in [`next.config.ts`](next.config.ts)).
+It is deployed by [`.github/workflows/deploy-github-page.yml`](../.github/workflows/deploy-github-page.yml)
+after CI succeeds on `main` (or on manual dispatch).
 
-First, run the development server:
+Every page shares one shell (#1970): a single header with the primary navigation
+(**AI Factory**, **Product**, **Technical docs**, **Releases**), an accessible mobile drawer,
+site search (`/` or Ctrl/⌘K), and a footer. Docs and AI Factory pages add breadcrumbs,
+a section sidebar, previous/next links and reading progress. The registry behind all of it
+is [`lib/site.ts`](lib/site.ts): add a page there and it appears in the nav, the sidebar,
+the search index and the pager. Design tokens (colours, type, radius, shadow) live in the
+`@theme` block of [`app/globals.css`](app/globals.css); the AI Factory swaps the shared accent
+for violet through `.theme-factory`. The UX audit behind this is [`docs/ux-assessment.md`](docs/ux-assessment.md).
+
+The site has three parts. They are kept apart on purpose:
+
+| Route | What it is | Source |
+|-------|------------|--------|
+| `/` | Landing: what Notaire is, and the three doors below | [`app/page.tsx`](app/page.tsx) |
+| `/product/` | **Product**: overview, story, platform, numbers — four pages sharing one sidebar | [`app/product/`](app/product/), `components/` |
+| `/docs/` | **Technical docs**: domain, architecture, the internals (hexagonal, Flyway, API contract and Bruno, stack), quality and operations. Versions and counts come from [`lib/tech-facts.ts`](lib/tech-facts.ts), which reads the repository at build time | [`app/docs/`](app/docs/), `lib/docs-content.ts` |
+| `/ai-sdlc/` | **AI Factory**: the AI SDLC that builds Notaire, told in five acts (problem → how a change flows → what keeps it safe → what we learned and the results → how to apply it) | [`app/ai-sdlc/`](app/ai-sdlc/), [`lib/ai-sdlc-content.ts`](lib/ai-sdlc-content.ts), [`lib/ai-sdlc-facts.ts`](lib/ai-sdlc-facts.ts) |
+
+The AI Factory pages only summarise. Every claim cites a repository file through
+the `src()` / `skill()` / `agent()` / `workflow()` helpers. The test
+[`workspace/tests/test_pages_ai_sdlc.py`](../workspace/tests/test_pages_ai_sdlc.py)
+fails if a cited path does not exist. Counts (skills, agents, workflows, ADRs, use
+cases, security families) are read from the repo at build time, so they never go
+stale. The source of truth is still [`CONSTITUTION.md`](../CONSTITUTION.md) and
+[`docs/300-development/304-ai-sdlc-cloud/`](../docs/300-development/304-ai-sdlc-cloud/).
+
+The **case study** (`/ai-sdlc/case-study/`) charts monthly history from a committed snapshot,
+[`lib/ai-sdlc-history.json`](lib/ai-sdlc-history.json), which records when and how it was generated.
+Refresh it with `python3 workspace/ci/generate-ai-sdlc-history.py` (needs git and an authenticated `gh`).
+The **framework** page (`/ai-sdlc/framework/`) presents [`framework/ai-sdlc/`](../framework/ai-sdlc/) and its
+[report](../docs/300-development/306-ai-sdlc-framework/ai_sdlc_framework.md) (#1958).
+
+Structural diagrams are Mermaid strings rendered on the client by
+[`components/MermaidDiagram.tsx`](components/MermaidDiagram.tsx), themed from the CSS tokens.
+Explainers are hand-built inline SVG with a `<title>`, a `<desc>` and a list fallback on narrow
+screens: [`GuardrailStack`](components/GuardrailStack.tsx) and [`Swimlane`](components/Swimlane.tsx).
+The interactive diagrams (#1977) live in [`components/diagrams/`](components/diagrams/): a shared
+stepper ([`useStepper`](components/diagrams/useStepper.ts), [`StepControls`](components/diagrams/StepControls.tsx)),
+a node-and-edge [`FlowDiagram`](components/diagrams/FlowDiagram.tsx) fed by
+[`lib/diagram-flows.ts`](lib/diagram-flows.ts) (request, contract and factory flows), and
+[`HexagonMap`](components/diagrams/HexagonMap.tsx), [`FlywayTimeline`](components/diagrams/FlywayTimeline.tsx),
+[`TestPyramid`](components/diagrams/TestPyramid.tsx) and [`PipelineMap`](components/diagrams/PipelineMap.tsx),
+which take their counts from `lib/tech-facts.ts` as props. Nothing plays until the reader asks;
+each step is announced in an `aria-live` region and links its source; under
+`prefers-reduced-motion` steps change instantly. Product screenshots for the landing are in
+`public/screenshots/` (demo data); prefix public paths with `ASSET_BASE` from `lib/site.ts`.
+The **results** page (`/ai-sdlc/results/`) prints only numbers read at build time.
+
+**Delivery outcomes** (#1985) on the results page and the landing come from
+[`lib/delivery-metrics.json`](lib/delivery-metrics.json): PR lead time (median, p90), weekly throughput, a
+change-failure proxy, time to restore `main`, first-push CI pass rate, issues closed and releases, with the window
+and the method of each. Refresh it with `python3 workspace/ci/generate-delivery-metrics.py` (needs an authenticated
+`gh`); the Pages deploy re-runs it before every build. Metrics the GitHub data cannot support are stored as
+unavailable with the reason (today: Actions run history is pruned nightly by `cleanup-actions.yml`).
+
+**About** (`/about/` and the landing) renders [`lib/about.json`](lib/about.json): each fact names its source;
+`placeholders` lists what no public source states and is never rendered.
+
+The **live demo** (`/demo/`) is the real frontend exported with recorded sample data and a read-only fetch shim.
+How it works and why: [`docs/demo.md`](docs/demo.md).
+
+## Local build
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd github-page
+npm ci
+npm run dev                         # http://localhost:3000/ (no basePath in dev)
+npm run typecheck && npm run lint && npm test   # tsc, ESLint, Vitest
+NODE_ENV=production npm run build   # static export into out/
+(cd ../frontend && npm ci)          # once, for the demo
+npm run build:demo                  # the read-only demo into out/demo/ (docs/demo.md)
+npm run check:links                 # every internal href and #fragment in out/ resolves
+npx playwright install chromium     # once
+npm run test:smoke                    # Playwright + axe at 375 and 1280 px, served under /notaire
+python3 -m pytest ../workspace/tests/test_pages_*.py -q
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`bash workspace/sdlc/preflight.sh` runs the checks above before a pull request
+(`--full` adds Playwright). [`pages-ci.yml`](../.github/workflows/pages-ci.yml)
+runs them on a version tag, not on the pull request. The site itself deploys
+on push to `main`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`prebuild` regenerates `lib/releases.json` from the product release manifest
+(`workspace/release/product_release.py`).

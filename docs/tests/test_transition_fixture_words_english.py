@@ -55,14 +55,19 @@ class TransitionFixtureWordsEnglishTest(unittest.TestCase):
         self.assertIn('"New"', notebooks)
         self.assertIn('"Errose"', notebooks)
 
-        substitution = read(
-            "backend-api/src/main/java/com/licensis/notaire/jpa/SubstitutionJpaController.java"
+        # #576 deleted SubstitutionJpaController; the named query lives on the entity.
+        self.assertFalse(
+            (
+                ROOT
+                / "backend-api/src/main/java/com/licensis/notaire/jpa/SubstitutionJpaController.java"
+            ).exists(),
+            "SubstitutionJpaController must stay deleted after #576",
         )
-        self.assertIn("the entity serializes while the", substitution)
-        self.assertIn("findSubstitutionsByYear(Substitution substitution)", substitution)
-        self.assertTrue(lacks(substitution, "unaSubstitution"))
-        self.assertTrue(lacks(substitution, "entidad"))
-        self.assertTrue(lacks(substitution, "serializa"))
+        substitution_entity = read(
+            "backend-api/src/main/java/com/licensis/notaire/business/Substitution.java"
+        )
+        self.assertIn("Substitution.findSubstitutionsByYear", substitution_entity)
+        self.assertTrue(lacks(substitution_entity, "unaSubstitution"))
 
 
 if __name__ == "__main__":

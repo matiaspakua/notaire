@@ -36,12 +36,15 @@
 ## Capabilities
 
 ### New Capabilities
+
 <!-- Capabilities being introduced. Use kebab-case for path segments you introduce
      (e.g., user-auth or identity/user-auth) that follow the project's existing
      spec organization. Each creates specs/<capability-path>/spec.md. -->
+
 - `<capability-path>`: <brief description of what this capability covers>
 
 ### Modified Capabilities
+
 <!-- Existing capabilities whose REQUIREMENTS are changing (not just implementation).
      Only list here if spec-level behavior changes. Each needs a delta spec file.
      Use the exact existing path under docs/openspec/specs/. Leave empty if no requirement
@@ -49,6 +52,7 @@
      must set `skip_specs: true` in its .openspec.yaml - openspec validate rejects
      a zero-delta change without that marker. Do not invent a requirement just to
      satisfy validation. -->
+
 - `<existing-capability-path>`: <what requirement is changing>
 
 ## Impact Analysis
@@ -77,6 +81,17 @@
 - Database (Flyway `V{n}`):
 - Configuration / `.env`:
 - Dependencies:
+
+### Write set
+
+<!-- The paths this change may touch, one glob per item in backticks (a folder covers
+     everything under it). `aisdlc scope` (pre-pr stage) compares the PR diff with this list:
+     a path outside it is a planning gap or scope creep. Planned NEW files belong here too.
+     Example:
+- `backend-api/src/main/java/com/notaire/<module>/**`
+- `backend-api/src/test/java/com/notaire/<module>/**`
+- `frontend/src/app/<route>/**`
+-->
 
 ### Architecture review
 

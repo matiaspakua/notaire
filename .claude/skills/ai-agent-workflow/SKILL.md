@@ -1,3 +1,8 @@
+---
+name: ai-agent-workflow
+description: Operational guide for any AI coding agent implementing a Notaire change under CONSTITUTION.md: Issue + Use Case, OpenSpec Gate 1, branch, TDD, gates, docs, PR. Use for any code, test or documentation change.
+---
+
 # AI Agent Development Skill
 
 ## Overview

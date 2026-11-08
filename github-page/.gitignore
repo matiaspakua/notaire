@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# test output (#1970)
+/playwright-report
+/test-results
+
+# read-only demo build (#1985)
+/.demo-build/

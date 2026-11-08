@@ -9,6 +9,7 @@
 4. Every issue **must** be associated with a Use Case (Caso de Uso) from the project documentation. If no Use Case exists, create it and update all related documentation first. No exceptions.
 
 5. After creating the branch and starting work, move the GitHub issue to **IN PROGRESS**.
+   - **Continuous publication (mandatory).** Push the branch immediately after creating it. After each group of atomic commits (spec, failing tests, implementation, docs) push and comment on the issue with `bash workspace/sdlc/publish-progress.sh <issue> "<stage; what remains>"`. GitHub always holds the current state so another person or agent can resume.
 
 6. Write clear and concise commit messages following Conventional Commits format (`<type>(<scope>): <description>`, ending with `Closes #<issue-number>`).
 

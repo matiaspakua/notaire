@@ -1,4 +1,7 @@
 import { DOCS, REPO } from "@/lib/docs-content";
+import { pageMetadata } from "@/lib/site";
+
+export const metadata = pageMetadata("/docs/business/");
 
 const sections = [
   {
@@ -51,12 +54,12 @@ export default function DocsBusinessPage() {
           >
             <h2 className="font-semibold text-neutral-900">{s.title}</h2>
             <p className="mt-2 text-sm text-neutral-600 leading-relaxed">{s.body}</p>
-            <p className="mt-3 font-mono text-xs text-neutral-400">{s.path}/</p>
+            <p className="mt-3 font-mono text-xs text-neutral-500">{s.path}/</p>
           </a>
         ))}
       </section>
 
-      <a className="text-sm text-[#0A84FF] hover:underline" href={`${REPO}/tree/main/docs/100-business`}>
+      <a className="text-sm text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current" href={`${REPO}/tree/main/docs/100-business`}>
         docs/100-business/ on GitHub →
       </a>
     </div>

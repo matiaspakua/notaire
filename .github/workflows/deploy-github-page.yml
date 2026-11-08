@@ -1,18 +1,19 @@
 name: Deploy GitHub Page
 
 # Single source of truth for the GitHub Pages deployment (see issue #778).
-# Auto-deploys after the CI pipeline (ci.yml) completes successfully on main,
-# so the page is always up to date with every merge — the deploy only runs
-# when CI passed. Manual dispatch is kept for on-demand rebuilds.
+# Deploys the portfolio site on every push to main and on manual dispatch
+# (#2001). It does not wait for product CI and it does not publish packages.
 on:
-  workflow_run:
-    workflows: [ "CI - Build, Test & Security" ]
+  push:
     branches: [ main ]
-    types: [ completed ]
   workflow_dispatch:
 
 permissions:
   contents: read
+  # Read-only GitHub data for the delivery-outcomes snapshot (#1985) and the report downloads.
+  actions: read
+  issues: read
+  pull-requests: read
   pages: write
   id-token: write
 
@@ -23,8 +24,6 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # Run on manual dispatch, or only after the CI workflow on main succeeded.
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -37,7 +36,9 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: github-page/package-lock.json
+          cache-dependency-path: |
+            github-page/package-lock.json
+            frontend/package-lock.json
 
       - uses: actions/setup-java@v6
         with:
@@ -165,8 +166,24 @@ jobs:
           GH_REPO: ${{ github.repository }}
         run: bash workspace/ci/generate-github-page-metrics.sh
 
+      # ── Refresh the delivery-outcomes snapshot (#1985) ──
+      # Read-only: the committed lib/delivery-metrics.json is overwritten in the runner only, so the
+      # published numbers are never older than this deploy. On a GitHub API failure the script writes
+      # nothing and the committed snapshot (with its own date range) is published instead.
+      - name: Refresh delivery outcomes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          python3 workspace/ci/generate-delivery-metrics.py \
+            || echo "::warning::delivery metrics not refreshed; publishing the committed snapshot"
+
       - name: Install dependencies
         working-directory: github-page
+        run: npm ci
+
+      - name: Install the frontend (for the demo build)
+        working-directory: frontend
         run: npm ci
 
       - name: Build static site
@@ -174,6 +191,10 @@ jobs:
         run: npm run build
         env:
           NODE_ENV: production
+
+      - name: Build the read-only demo into the export (#1985)
+        working-directory: github-page
+        run: npm run build:demo
 
       - name: Validate build output
         working-directory: github-page

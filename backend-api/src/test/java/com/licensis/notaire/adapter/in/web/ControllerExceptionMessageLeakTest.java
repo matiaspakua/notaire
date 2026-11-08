@@ -4,19 +4,15 @@ import com.licensis.notaire.adapter.in.web.concept.ConceptController;
 import com.licensis.notaire.adapter.in.web.document.DocumentTypeController;
 import com.licensis.notaire.adapter.in.web.folio.FolioTypeController;
 import com.licensis.notaire.adapter.in.web.workflow.WorkflowDefinitionController;
-import com.licensis.notaire.application.usecase.concept.ConceptService;
-import com.licensis.notaire.business.DocumentType;
-import com.licensis.notaire.business.FolioType;
+import com.licensis.notaire.config.GlobalExceptionHandler;
+import com.licensis.notaire.application.port.in.document.ManageDocumentTypesUseCase;
+import com.licensis.notaire.application.port.in.document.QueryDocumentTypesUseCase;
+import com.licensis.notaire.domain.document.DocumentType;
 import com.licensis.notaire.exception.BusinessValidationException;
-import com.licensis.notaire.repository.BudgetTemplateRepository;
-import com.licensis.notaire.repository.DocumentTypeRepository;
-import com.licensis.notaire.repository.FolioRepository;
-import com.licensis.notaire.repository.FolioTypeRepository;
-import com.licensis.notaire.repository.ProcedureTemplateRepository;
-import com.licensis.notaire.repository.SubmittedDocumentRepository;
-import com.licensis.notaire.repository.WorkflowDefinitionRepository;
-import com.licensis.notaire.repository.WorkflowNodeRepository;
-import com.licensis.notaire.repository.WorkflowTransitionRepository;
+import com.licensis.notaire.application.port.in.folio.ManageFolioTypesUseCase;
+import com.licensis.notaire.application.port.in.folio.QueryFolioTypesUseCase;
+import com.licensis.notaire.application.port.in.workflow.ManageWorkflowDefinitionsUseCase;
+import com.licensis.notaire.application.port.in.workflow.QueryWorkflowDefinitionsUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -29,13 +25,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -67,12 +64,14 @@ class ControllerExceptionMessageLeakTest {
     @Test
     @DisplayName("POST /folio-types keeps 409 but no longer echoes the SQL error")
     void folioTypeCreate() throws Exception {
-        FolioTypeRepository repo = mock(FolioTypeRepository.class);
-        when(repo.save(any())).thenThrow(new DataIntegrityViolationException(SQL_LEAK));
-        MockMvc mvc = standaloneSetup(new FolioTypeController(repo, mock(FolioRepository.class))).build();
+        ManageFolioTypesUseCase manage = mock(ManageFolioTypesUseCase.class);
+        when(manage.create(any())).thenThrow(new DataIntegrityViolationException(SQL_LEAK));
+        MockMvc mvc = standaloneSetup(new FolioTypeController(mock(QueryFolioTypesUseCase.class), manage))
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
 
         MvcResult result = mvc.perform(post("/api/v1/folio-types").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":null}"))
+                        .content("{\"name\":\"Test\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value(GENERIC_CONSTRAINT))
@@ -83,15 +82,14 @@ class ControllerExceptionMessageLeakTest {
     @Test
     @DisplayName("PUT /folio-types/{id} keeps 500 but no longer echoes the SQL error")
     void folioTypeUpdate() throws Exception {
-        FolioTypeRepository repo = mock(FolioTypeRepository.class);
-        FolioRepository folios = mock(FolioRepository.class);
-        when(repo.findById(1)).thenReturn(Optional.of(new FolioType()));
-        when(folios.findByFkIdFolioTypeIdFolioType(1)).thenReturn(List.of());
-        when(repo.save(any())).thenThrow(new DataIntegrityViolationException(SQL_LEAK));
-        MockMvc mvc = standaloneSetup(new FolioTypeController(repo, folios)).build();
+        ManageFolioTypesUseCase manage = mock(ManageFolioTypesUseCase.class);
+        doThrow(new DataIntegrityViolationException(SQL_LEAK)).when(manage).update(eq(1), any());
+        MockMvc mvc = standaloneSetup(new FolioTypeController(mock(QueryFolioTypesUseCase.class), manage))
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
 
         MvcResult result = mvc.perform(put("/api/v1/folio-types/1").contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
+                        .content("{\"name\":\"Test\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value(GENERIC_CONSTRAINT))
@@ -102,17 +100,16 @@ class ControllerExceptionMessageLeakTest {
     @Test
     @DisplayName("PUT /document-types/{id} keeps 500 but no longer echoes the SQL error")
     void documentTypeUpdate() throws Exception {
-        DocumentTypeRepository repo = mock(DocumentTypeRepository.class);
-        ProcedureTemplateRepository templates = mock(ProcedureTemplateRepository.class);
-        SubmittedDocumentRepository submitted = mock(SubmittedDocumentRepository.class);
-        when(repo.findById(1)).thenReturn(Optional.of(new DocumentType()));
-        when(templates.findByDocumentTypeIdDocumentType(1)).thenReturn(List.of());
-        when(submitted.existsByDocumentTypeIdDocumentType(1)).thenReturn(false);
-        when(repo.save(any())).thenThrow(new DataIntegrityViolationException(SQL_LEAK));
-        MockMvc mvc = standaloneSetup(new DocumentTypeController(repo, templates, submitted)).build();
+        QueryDocumentTypesUseCase query = mock(QueryDocumentTypesUseCase.class);
+        ManageDocumentTypesUseCase manage = mock(ManageDocumentTypesUseCase.class);
+        when(query.getById(1)).thenReturn(DocumentType.restore(1, "ID", false, null, "", true, false, 0));
+        doThrow(new DataIntegrityViolationException(SQL_LEAK)).when(manage).update(eq(1), any());
+        MockMvc mvc = standaloneSetup(new DocumentTypeController(query, manage))
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
 
         MvcResult result = mvc.perform(put("/api/v1/document-types/1").contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
+                        .content("{\"name\":\"ID\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(GENERIC_CONSTRAINT))
                 .andReturn();
@@ -122,13 +119,15 @@ class ControllerExceptionMessageLeakTest {
     @Test
     @DisplayName("POST /workflow-definition answers 400 on a constraint and the error body carries no SQL text")
     void workflowDefinitionCreate() throws Exception {
-        WorkflowDefinitionRepository repo = mock(WorkflowDefinitionRepository.class);
-        when(repo.save(any())).thenThrow(new DataIntegrityViolationException(SQL_LEAK));
-        MockMvc mvc = standaloneSetup(new WorkflowDefinitionController(repo, mock(WorkflowNodeRepository.class),
-                mock(WorkflowTransitionRepository.class))).build();
+        QueryWorkflowDefinitionsUseCase query = mock(QueryWorkflowDefinitionsUseCase.class);
+        ManageWorkflowDefinitionsUseCase manage = mock(ManageWorkflowDefinitionsUseCase.class);
+        when(manage.create(any())).thenThrow(new DataIntegrityViolationException(SQL_LEAK));
+        MockMvc mvc = standaloneSetup(new WorkflowDefinitionController(query, manage))
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
 
         MvcResult result = mvc.perform(post("/api/v1/workflow-definition").contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
+                        .content("{\"name\":\"Flow\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(GENERIC_CONSTRAINT))
                 .andReturn();
@@ -138,11 +137,19 @@ class ControllerExceptionMessageLeakTest {
     @Test
     @DisplayName("POST /concepts keeps an application-authored message for the user")
     void conceptCreateKeepsBusinessMessage() throws Exception {
-        ConceptService service = mock(ConceptService.class);
-        when(service.create(any())).thenThrow(new BusinessValidationException("Already exists a concept with that name"));
-        MockMvc mvc = standaloneSetup(new ConceptController(service, mock(BudgetTemplateRepository.class))).build();
+        var manage = mock(com.licensis.notaire.application.port.in.concept.ManageConceptsUseCase.class);
+        when(manage.create(any())).thenReturn(
+                new com.licensis.notaire.application.port.out.concept.ConceptOpsPort.SaveResult.Failed(
+                        new BusinessValidationException("Already exists a concept with that name"), true));
+        MockMvc mvc = standaloneSetup(new ConceptController(
+                        mock(com.licensis.notaire.application.port.in.concept.QueryConceptsUseCase.class), manage))
+                .setControllerAdvice(
+                        new com.licensis.notaire.adapter.in.web.concept.ConceptExceptionHandler(),
+                        new GlobalExceptionHandler())
+                .build();
 
-        mvc.perform(post("/api/v1/concepts").contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"X\"}"))
+        mvc.perform(post("/api/v1/concepts").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"X\",\"value\":1}"))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value("Already exists a concept with that name"));
     }

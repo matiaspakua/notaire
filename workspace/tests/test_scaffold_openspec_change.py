@@ -15,6 +15,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SCAFFOLD = REPO_ROOT / "workspace" / "sdlc" / "scaffold-openspec-change.py"
 HYGIENE = REPO_ROOT / "workspace" / "sdlc" / "check-openspec-archive-hygiene.py"
+MARKDOWNLINT = REPO_ROOT / "frontend" / "node_modules" / ".bin" / "markdownlint-cli2"
+TEMPLATES = REPO_ROOT / "docs" / "openspec" / "schemas" / "notaire-sdlc" / "templates"
 NAME = "feat-9999-example-change"
 
 SPEC = {
@@ -33,7 +35,9 @@ SPEC = {
     "docs": [["docs/example.md", "mention the tool"]],
     "oos": "- Nothing else.",
     "spec": (
-        "<!-- Governed by CONSTITUTION.md. CU76, issue #9999. -->\n\n## ADDED Requirements\n\n"
+        "<!-- Governed by CONSTITUTION.md. CU76, issue #9999. -->\n\n"
+        "## Purpose\n\nAn example capability used only by the scaffold unit test.\n\n"
+        "## ADDED Requirements\n\n"
         "### Requirement: Example holds\n\nThe example MUST hold.\n\n"
         "#### Scenario: first\n\n- **WHEN** a\n- **THEN** b\n\n"
         "#### Scenario: second\n\n- **WHEN** c\n- **THEN** d\n\n"
@@ -73,6 +77,8 @@ class ScaffoldOpenspecChangeTest(unittest.TestCase):
         self.spec_file.write_text(json.dumps(SPEC), encoding="utf-8")
         self.change = openspec / "changes" / NAME
         self.env = {**os.environ, "NOTAIRE_REPO_ROOT": str(self.root)}
+        self.offline_env = {k: v for k, v in self.env.items() if k not in ("GH_TOKEN", "GITHUB_TOKEN")}
+        self.offline_env["GH_CONFIG_DIR"] = str(self.root / "no-gh-config")
 
     def run_tool(self, *args: str) -> subprocess.CompletedProcess:
         return subprocess.run(
@@ -91,7 +97,9 @@ class ScaffoldOpenspecChangeTest(unittest.TestCase):
     def test_scaffolded_change_passes_plan_validation(self):
         self.scaffold()
         validator = self.root / "workspace" / "sdlc" / "validate-sdlc-plan.sh"
-        result = subprocess.run(["bash", str(validator), NAME], capture_output=True, text=True, timeout=120)
+        result = subprocess.run(
+            ["bash", str(validator), NAME], capture_output=True, text=True, env=self.offline_env, timeout=120
+        )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_scenarios_become_coverage_rows(self):
@@ -99,6 +107,17 @@ class ScaffoldOpenspecChangeTest(unittest.TestCase):
         traceability = (self.change / "traceability.md").read_text(encoding="utf-8")
         for scenario in ("first", "second", "third"):
             self.assertIn(f"| {scenario} | ExampleTest | pending |", traceability)
+
+    def test_write_set_lands_in_the_proposal_for_aisdlc_scope(self):
+        spec = {**SPEC, "write_set": ["workspace/sdlc/example.py", "workspace/tests/test_example.py"]}
+        self.spec_file.write_text(json.dumps(spec), encoding="utf-8")
+        self.scaffold()
+        proposal = (self.change / "proposal.md").read_text(encoding="utf-8")
+        self.assertIn("### Write set\n\n- `workspace/sdlc/example.py`\n- `workspace/tests/test_example.py`\n", proposal)
+
+    def test_proposal_without_write_set_has_no_empty_section(self):
+        self.scaffold()
+        self.assertNotIn("### Write set", (self.change / "proposal.md").read_text(encoding="utf-8"))
 
     def test_given_tasks_land_in_the_implementation_group(self):
         self.scaffold()
@@ -115,6 +134,37 @@ class ScaffoldOpenspecChangeTest(unittest.TestCase):
         traceability = (self.change / "traceability.md").read_text(encoding="utf-8")
         self.assertIn("| first | ExampleTest | passing |", traceability)
         self.assertIn("- [ ] 10.", tasks)
+
+    def test_scaffolded_change_passes_markdownlint(self):
+        """#1689: fresh scaffold must not invent markdownlint debt."""
+        if not MARKDOWNLINT.is_file():
+            self.skipTest("frontend/node_modules/.bin/markdownlint-cli2 not installed")
+        self.scaffold()
+        files = sorted(str(path) for path in self.change.rglob("*.md"))
+        result = subprocess.run(
+            [str(MARKDOWNLINT), "--no-globs", *files],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        self.assertEqual(
+            result.returncode,
+            0,
+            result.stdout + result.stderr,
+        )
+
+    def test_schema_templates_pass_markdownlint(self):
+        """#1689: seed templates must lint clean before agents fill them."""
+        if not MARKDOWNLINT.is_file():
+            self.skipTest("frontend/node_modules/.bin/markdownlint-cli2 not installed")
+        files = sorted(str(path) for path in TEMPLATES.glob("*.md"))
+        result = subprocess.run(
+            [str(MARKDOWNLINT), "--no-globs", *files],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
 
 if __name__ == "__main__":

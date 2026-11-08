@@ -3,11 +3,11 @@
   "commits": 824,
   "pullRequests": 362,
   "markdownFiles": 638,
-  "testClasses": 221,
-  "backendTestClasses": 160,
-  "frontendTestClasses": 61,
+  "testClasses": 660,
+  "backendTestClasses": 361,
+  "frontendTestClasses": 197,
   "apiTestFiles": 103,
-  "adrCount": 21,
+  "adrCount": 31,
   "useCases": 87,
   "functionalRequirements": 121,
   "dockerServices": 24,
@@ -22,5 +22,6 @@
     "e2eTests": 90,
     "apiEndpoints": 85,
     "lastUpdated": "2026-09-01"
-  }
+  },
+  "e2eSpecFiles": 102
 }

@@ -1,16 +1,25 @@
+/**
+ * React Query hooks for registration drafts.
+ * Hexagon wiring: #1843 / ADR-030.
+ */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiGetBytes, apiPost, apiPut } from "@/lib/api-client";
+import { registrationDraftUseCases } from "@/composition/registration-draft";
+import type { RegistrationDraft as DomainDraft } from "@/core/registration-draft/domain/registration-draft";
 import type { RegistrationDraft } from "@/types";
 
 export const registrationDraftKeys = {
   detail: (id: number) => ["registration-drafts", id] as const,
 };
 
+function toWire(d: DomainDraft): RegistrationDraft {
+  return d as RegistrationDraft;
+}
+
 /** CU82 - Loads one registration draft by id. */
 export function useRegistrationDraft(id: number | null) {
   return useQuery({
     queryKey: id ? registrationDraftKeys.detail(id) : ["registration-drafts", "none"],
-    queryFn: () => apiGet<RegistrationDraft>(`/registration-drafts/${id}`),
+    queryFn: async () => toWire(await registrationDraftUseCases.getById(id!)),
     enabled: id !== null,
   });
 }
@@ -18,8 +27,7 @@ export function useRegistrationDraft(id: number | null) {
 /** CU82 - Creates the registration draft for a deed in status Firmada. */
 export function useGenerateRegistrationDraft() {
   return useMutation({
-    mutationFn: (idDeed: number) =>
-      apiPost<RegistrationDraft>("/registration-drafts", { idDeed: idDeed }),
+    mutationFn: async (idDeed: number) => toWire(await registrationDraftUseCases.generate(idDeed)),
   });
 }
 
@@ -27,7 +35,7 @@ export function useGenerateRegistrationDraft() {
 export function useSubmitRegistrationDraft() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       id,
       dateSubmission,
       registryEntryNumber,
@@ -36,10 +44,9 @@ export function useSubmitRegistrationDraft() {
       dateSubmission: string;
       registryEntryNumber: string;
     }) =>
-      apiPut<RegistrationDraft>(`/registration-drafts/${id}/submit`, {
-        dateSubmission,
-        registryEntryNumber,
-      }),
+      toWire(
+        await registrationDraftUseCases.submit(id, { dateSubmission, registryEntryNumber }),
+      ),
     onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: registrationDraftKeys.detail(id) }),
   });
 }
@@ -48,7 +55,7 @@ export function useSubmitRegistrationDraft() {
 export function useObserveRegistrationDraft() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       id,
       registryNotes,
       dateCorrection,
@@ -57,10 +64,7 @@ export function useObserveRegistrationDraft() {
       registryNotes: string;
       dateCorrection: string;
     }) =>
-      apiPut<RegistrationDraft>(`/registration-drafts/${id}/observe`, {
-        registryNotes,
-        dateCorrection,
-      }),
+      toWire(await registrationDraftUseCases.observe(id, { registryNotes, dateCorrection })),
     onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: registrationDraftKeys.detail(id) }),
   });
 }
@@ -69,7 +73,7 @@ export function useObserveRegistrationDraft() {
 export function useRegisterRegistrationDraft() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       id,
       dateReception,
       finalRegistrationNumber,
@@ -78,17 +82,16 @@ export function useRegisterRegistrationDraft() {
       dateReception: string;
       finalRegistrationNumber: string;
     }) =>
-      apiPut<RegistrationDraft>(`/registration-drafts/${id}/register`, {
-        dateReception,
-        finalRegistrationNumber,
-      }),
+      toWire(
+        await registrationDraftUseCases.register(id, { dateReception, finalRegistrationNumber }),
+      ),
     onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: registrationDraftKeys.detail(id) }),
   });
 }
 
 /** Downloads the normalized registration-draft form (PDF). */
 export async function downloadRegistrationDraftReport(idRegistrationDraft: number): Promise<void> {
-  const blob = await apiGetBytes(`/reports/registration-draft/${idRegistrationDraft}`);
+  const blob = await registrationDraftUseCases.downloadReport(idRegistrationDraft);
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = `minuta_inscripcion_${idRegistrationDraft}.pdf`;

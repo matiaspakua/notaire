@@ -86,6 +86,13 @@ BACKEND_URL=http://localhost:8080/api/v1
 BACKEND_URL=http://backend:8080/api/v1
 ```
 
+Browser OpenTelemetry (#1739): set `NEXT_PUBLIC_OTEL_TRACES_ENABLED=true` (Compose
+defaults on). The layout passes the flag to a client tracer
+(`service.name=notaire-frontend`); the browser posts OTLP to same-origin
+`/api/otlp/v1/traces`, which proxies via server-only
+`OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` to the collector. Do not point the browser
+at Docker collector hostnames.
+
 ## Architecture
 
 ```

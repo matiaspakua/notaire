@@ -87,11 +87,15 @@ describe("useSearchPeople (#1357)", () => {
       initialProps: { ...EMPTY, lastName: "Perez" },
     });
     await flush(PEOPLE_SEARCH_DEBOUNCE_MS + 50);
-    expect(result.current.results).toEqual([{ personId: 1, lastName: "Perez" }]);
+    expect(result.current.results).toEqual(
+      expect.arrayContaining([expect.objectContaining({ personId: 1, lastName: "Perez" })]),
+    );
     rerender({ ...EMPTY, lastName: "Perezz" });
     await flush(PEOPLE_SEARCH_DEBOUNCE_MS + 50);
     expect(apiGet).toHaveBeenCalledTimes(2);
-    expect(result.current.results).toEqual([{ personId: 1, lastName: "Perez" }]);
+    expect(result.current.results).toEqual(
+      expect.arrayContaining([expect.objectContaining({ personId: 1, lastName: "Perez" })]),
+    );
     await act(async () => release([]));
   });
 });

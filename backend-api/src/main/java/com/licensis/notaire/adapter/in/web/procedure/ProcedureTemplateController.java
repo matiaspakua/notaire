@@ -1,14 +1,7 @@
 package com.licensis.notaire.adapter.in.web.procedure;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.licensis.notaire.business.ProcedureTemplate;
-import com.licensis.notaire.business.ProcedureTemplatePK;
-import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,10 +12,23 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.licensis.notaire.application.port.in.procedure.ManageProcedureTemplatesUseCase;
+import com.licensis.notaire.application.port.in.procedure.QueryProcedureTemplatesUseCase;
+import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateOpsPort.DeleteResult;
+import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateOpsPort.SaveResult;
+import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateOpsPort.TemplateView;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+
+/**
+ * Procedure templates (CU55). Calls inbound ports only (issue #1798).
+ */
 @RestController
 @RequestMapping("/api/v1/procedure-templates")
 @Tag(name = "ProcedureTemplate", description = "API for procedure (documents by procedure type)")
@@ -44,10 +50,14 @@ public class ProcedureTemplateController {
             String notes,
             int version) {}
 
-    private final ProcedureTemplateRepositoryPort repository;
+    private final QueryProcedureTemplatesUseCase queryProcedureTemplates;
+    private final ManageProcedureTemplatesUseCase manageProcedureTemplates;
 
-    public ProcedureTemplateController(ProcedureTemplateRepositoryPort repository) {
-        this.repository = repository;
+    public ProcedureTemplateController(
+            QueryProcedureTemplatesUseCase queryProcedureTemplates,
+            ManageProcedureTemplatesUseCase manageProcedureTemplates) {
+        this.queryProcedureTemplates = queryProcedureTemplates;
+        this.manageProcedureTemplates = manageProcedureTemplates;
     }
 
     private Integer resolveProcedureTypeId(ProcedureTemplateRequest request) {
@@ -66,29 +76,24 @@ public class ProcedureTemplateController {
                 ? request.procedureTemplatePK().fkIdDocumentType() : null;
     }
 
-    private ProcedureTemplateResponse toResponse(ProcedureTemplate entity) {
-        ProcedureTemplatePK pk = entity.getProcedureTemplatePK();
+    private ProcedureTemplateResponse toResponse(TemplateView view) {
         return new ProcedureTemplateResponse(
-                pk != null ? pk.getFkIdProcedureType() : null,
-                pk != null ? pk.getFkIdDocumentType() : null,
-                entity.getNotes(),
-                entity.getVersion());
+                view.procedureTypeId(), view.documentTypeId(), view.notes(), view.version());
     }
 
     @GetMapping
     @Operation(summary = "Get all procedure templates")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<ProcedureTemplateResponse>> getAll() {
-        return ResponseEntity.ok(repository.findAll().stream().map(this::toResponse).toList());
+        return ResponseEntity.ok(queryProcedureTemplates.findAll().stream().map(this::toResponse).toList());
     }
 
     @GetMapping("/procedure-types/{idProcedureType}")
     @Operation(summary = "Get procedure templates by procedure type")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<ProcedureTemplateResponse>> getByTypeProcedure(
             @PathVariable Integer idProcedureType) {
-        return ResponseEntity.ok(repository.findByProcedureTypeIdProcedureType(idProcedureType)
-                .stream().map(this::toResponse).toList());
+        return ResponseEntity.ok(queryProcedureTemplates.findByProcedureType(idProcedureType).stream()
+                .map(this::toResponse)
+                .toList());
     }
 
     @ApiResponses({
@@ -97,10 +102,9 @@ public class ProcedureTemplateController {
     })
     @GetMapping("/{idProcedureType}/{idDocumentType}")
     @Operation(summary = "Get template by key composite (CU55)")
-    @Transactional(readOnly = true)
     public ResponseEntity<ProcedureTemplateResponse> getById(@PathVariable Integer idProcedureType,
             @PathVariable Integer idDocumentType) {
-        return repository.findById(new ProcedureTemplatePK(idProcedureType, idDocumentType))
+        return queryProcedureTemplates.findById(idProcedureType, idDocumentType)
                 .map(this::toResponse)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -115,16 +119,14 @@ public class ProcedureTemplateController {
     @Operation(summary = "Create procedure template (CU55)")
     public ResponseEntity<ProcedureTemplateResponse> create(
             @Valid @RequestBody ProcedureTemplateRequest request) {
-        Integer procedureTypeId = resolveProcedureTypeId(request);
-        Integer documentTypeId = resolveDocumentTypeId(request);
-        if (procedureTypeId == null || documentTypeId == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        ProcedureTemplate entity = new ProcedureTemplate(
-                new ProcedureTemplatePK(procedureTypeId, documentTypeId));
-        entity.setNotes(request.notes());
-        ProcedureTemplate saved = repository.save(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(saved));
+        return switch (manageProcedureTemplates.create(
+                resolveProcedureTypeId(request), resolveDocumentTypeId(request), request.notes())) {
+            case SaveResult.Created created ->
+                ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created.view()));
+            case SaveResult.BadRequest ignored -> ResponseEntity.badRequest().build();
+            case SaveResult.Updated ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
+        };
     }
 
     @ApiResponses({
@@ -136,11 +138,12 @@ public class ProcedureTemplateController {
     public ResponseEntity<ProcedureTemplateResponse> update(@PathVariable Integer idProcedureType,
             @PathVariable Integer idDocumentType,
             @Valid @RequestBody ProcedureTemplateRequest request) {
-        ProcedureTemplatePK pk = new ProcedureTemplatePK(idProcedureType, idDocumentType);
-        return repository.findById(pk).map(existing -> {
-            existing.setNotes(request.notes());
-            return ResponseEntity.ok(toResponse(repository.save(existing)));
-        }).orElse(ResponseEntity.notFound().build());
+        return switch (manageProcedureTemplates.update(idProcedureType, idDocumentType, request.notes())) {
+            case SaveResult.Updated updated -> ResponseEntity.ok(toResponse(updated.view()));
+            case SaveResult.NotFound ignored -> ResponseEntity.notFound().build();
+            case SaveResult.Created ignored -> ResponseEntity.internalServerError().build();
+            case SaveResult.BadRequest ignored -> ResponseEntity.badRequest().build();
+        };
     }
 
     @ApiResponses({
@@ -149,14 +152,11 @@ public class ProcedureTemplateController {
     })
     @DeleteMapping("/{idProcedureType}/{idDocumentType}")
     @Operation(summary = "Delete procedure template (CU55)")
-    @Transactional
     public ResponseEntity<Void> delete(@PathVariable Integer idProcedureType,
             @PathVariable Integer idDocumentType) {
-        ProcedureTemplatePK pk = new ProcedureTemplatePK(idProcedureType, idDocumentType);
-        if (!repository.existsById(pk)) {
-            return ResponseEntity.notFound().build();
-        }
-        repository.deleteById(pk);
-        return ResponseEntity.noContent().build();
+        return switch (manageProcedureTemplates.delete(idProcedureType, idDocumentType)) {
+            case DeleteResult.Deleted ignored -> ResponseEntity.noContent().build();
+            case DeleteResult.NotFound ignored -> ResponseEntity.notFound().build();
+        };
     }
 }

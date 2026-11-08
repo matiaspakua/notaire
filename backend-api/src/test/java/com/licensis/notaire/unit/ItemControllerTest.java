@@ -1,12 +1,18 @@
 package com.licensis.notaire.unit;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.licensis.notaire.adapter.in.web.item.ItemController;
-import com.licensis.notaire.dto.TypeItem;
-import com.licensis.notaire.exception.BusinessValidationException;
-import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.business.Item;
-import com.licensis.notaire.application.usecase.item.ItemService;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,52 +22,50 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.licensis.notaire.adapter.in.web.item.ItemController;
+import com.licensis.notaire.application.port.in.item.ManageItemsUseCase;
+import com.licensis.notaire.application.port.in.item.QueryItemsUseCase;
+import com.licensis.notaire.application.port.out.item.ItemOpsPort.DeleteResult;
+import com.licensis.notaire.application.port.out.item.ItemOpsPort.ItemView;
+import com.licensis.notaire.application.port.out.item.ItemOpsPort.ListResult;
+import com.licensis.notaire.application.port.out.item.ItemOpsPort.SaveResult;
+import com.licensis.notaire.dto.TypeItem;
 
 @DisplayName("ItemController unit tests (CU45/CU71)")
 @ExtendWith(MockitoExtension.class)
 class ItemControllerTest {
 
     @Mock
-    private ItemService itemService;
+    private QueryItemsUseCase queryItems;
 
     @Mock
-    private com.licensis.notaire.repository.BudgetRepository budgetRepository;
+    private ManageItemsUseCase manageItems;
 
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        ItemController controller = new ItemController(itemService, budgetRepository);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new ItemController(queryItems, manageItems)).build();
     }
 
-    private Item buildItem(Integer id, TypeItem type, String reason) {
-        Item item = new Item(id);
-        item.setName("Test item");
-        item.setValue(new java.math.BigDecimal("1000"));
-        item.setType(type);
-        item.setReason(reason);
-        return item;
+    private ItemView view(Integer id, TypeItem type, String reason) {
+        return new ItemView(
+                id,
+                "Test item",
+                new java.math.BigDecimal("1000"),
+                null,
+                null,
+                type,
+                reason,
+                false,
+                null,
+                0);
     }
 
     @Test
     @DisplayName("GET /api/v1/items should return 200 with all items")
     void shouldGetAllItems() throws Exception {
-        when(itemService.findAll()).thenReturn(List.of(buildItem(1, TypeItem.NORMAL, null)));
+        when(queryItems.findAll()).thenReturn(List.of(view(1, TypeItem.NORMAL, null)));
         mockMvc.perform(get("/api/v1/items"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].idItem").value(1));
@@ -70,7 +74,7 @@ class ItemControllerTest {
     @Test
     @DisplayName("GET /api/v1/items/{id} should return 200 when item found")
     void shouldGetItemById() throws Exception {
-        when(itemService.findById(1)).thenReturn(Optional.of(buildItem(1, TypeItem.NORMAL, null)));
+        when(queryItems.findById(1)).thenReturn(Optional.of(view(1, TypeItem.NORMAL, null)));
         mockMvc.perform(get("/api/v1/items/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idItem").value(1));
@@ -79,7 +83,7 @@ class ItemControllerTest {
     @Test
     @DisplayName("GET /api/v1/items/{id} should return 404 when item not found")
     void shouldReturn404WhenItemNotFound() throws Exception {
-        when(itemService.findById(999)).thenReturn(Optional.empty());
+        when(queryItems.findById(999)).thenReturn(Optional.empty());
         mockMvc.perform(get("/api/v1/items/999"))
                 .andExpect(status().isNotFound());
     }
@@ -87,7 +91,7 @@ class ItemControllerTest {
     @Test
     @DisplayName("GET /api/v1/items/budget/{id} should return items for the budget")
     void shouldGetItemsByBudget() throws Exception {
-        when(itemService.findByBudget(10)).thenReturn(List.of(buildItem(1, TypeItem.NORMAL, null)));
+        when(queryItems.findByBudget(10)).thenReturn(List.of(view(1, TypeItem.NORMAL, null)));
         mockMvc.perform(get("/api/v1/items/budget/10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].idItem").value(1));
@@ -96,9 +100,8 @@ class ItemControllerTest {
     @Test
     @DisplayName("GET /api/v1/items/budget/{id}/discounts-surcharges should return discounts and surcharges")
     void shouldReturnDiscountsAndSurchargesForBudget() throws Exception {
-        when(itemService.findDiscountsAndSurchargesByBudget(10)).thenReturn(List.of(
-                buildItem(1, TypeItem.DESCUENTO, "Discount for early payment")
-        ));
+        when(queryItems.findDiscountsAndSurchargesByBudget(10))
+                .thenReturn(new ListResult.Ok(List.of(view(1, TypeItem.DESCUENTO, "Discount for early payment"))));
 
         mockMvc.perform(get("/api/v1/items/budget/10/discounts-surcharges"))
                 .andExpect(status().isOk())
@@ -109,7 +112,7 @@ class ItemControllerTest {
     @Test
     @DisplayName("GET /api/v1/items/budget/{id}/discounts-surcharges should return empty list when none exist")
     void shouldReturnEmptyListWhenNoDiscountsOrSurcharges() throws Exception {
-        when(itemService.findDiscountsAndSurchargesByBudget(10)).thenReturn(List.of());
+        when(queryItems.findDiscountsAndSurchargesByBudget(10)).thenReturn(new ListResult.Ok(List.of()));
 
         mockMvc.perform(get("/api/v1/items/budget/10/discounts-surcharges"))
                 .andExpect(status().isOk())
@@ -119,8 +122,7 @@ class ItemControllerTest {
     @Test
     @DisplayName("GET /api/v1/items/budget/{id}/discounts-surcharges should return 404 for an unknown budget")
     void shouldReturn404ForUnknownBudgetOnReport() throws Exception {
-        when(itemService.findDiscountsAndSurchargesByBudget(999))
-                .thenThrow(new ResourceNotFoundException("Budget not found with ID: 999"));
+        when(queryItems.findDiscountsAndSurchargesByBudget(999)).thenReturn(new ListResult.NotFound());
 
         mockMvc.perform(get("/api/v1/items/budget/999/discounts-surcharges"))
                 .andExpect(status().isNotFound());
@@ -129,7 +131,7 @@ class ItemControllerTest {
     @Test
     @DisplayName("POST /api/v1/items should return 201 when item created")
     void shouldCreateItem() throws Exception {
-        when(itemService.create(any(Item.class))).thenReturn(buildItem(1, TypeItem.NORMAL, null));
+        when(manageItems.create(any())).thenReturn(new SaveResult.Created(view(1, TypeItem.NORMAL, null)));
 
         String json = """
                 {
@@ -139,8 +141,8 @@ class ItemControllerTest {
                 """;
 
         mockMvc.perform(post("/api/v1/items")
-                .contentType("application/json")
-                .content(json))
+                        .contentType("application/json")
+                        .content(json))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.idItem").value(1));
     }
@@ -148,8 +150,7 @@ class ItemControllerTest {
     @Test
     @DisplayName("POST /api/v1/items should return 400 when a discount item has no reason")
     void shouldReturn400WhenDiscountItemHasNoReason() throws Exception {
-        when(itemService.create(any(Item.class)))
-                .thenThrow(new BusinessValidationException("The reason is required for items of type DESCUENTO"));
+        when(manageItems.create(any())).thenReturn(new SaveResult.BadRequest());
 
         String json = """
                 {
@@ -161,16 +162,15 @@ class ItemControllerTest {
                 """;
 
         mockMvc.perform(post("/api/v1/items")
-                .contentType("application/json")
-                .content(json))
+                        .contentType("application/json")
+                        .content(json))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     @DisplayName("PUT /api/v1/items/{id} should return 200 when updated")
     void shouldUpdateItem() throws Exception {
-        when(itemService.findById(1)).thenReturn(Optional.of(buildItem(1, TypeItem.NORMAL, null)));
-        when(itemService.update(anyInt(), any(Item.class))).thenReturn(buildItem(1, TypeItem.NORMAL, null));
+        when(manageItems.update(eq(1), any())).thenReturn(new SaveResult.Updated());
 
         String json = """
                 {
@@ -180,15 +180,15 @@ class ItemControllerTest {
                 """;
 
         mockMvc.perform(put("/api/v1/items/1")
-                .contentType("application/json")
-                .content(json))
+                        .contentType("application/json")
+                        .content(json))
                 .andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("PUT /api/v1/items/{id} should return 404 when item not found")
     void shouldReturn404OnUpdateNotFound() throws Exception {
-        when(itemService.findById(999)).thenReturn(Optional.empty());
+        when(manageItems.update(eq(999), any())).thenReturn(new SaveResult.NotFound());
 
         String json = """
                 {
@@ -198,15 +198,15 @@ class ItemControllerTest {
                 """;
 
         mockMvc.perform(put("/api/v1/items/999")
-                .contentType("application/json")
-                .content(json))
+                        .contentType("application/json")
+                        .content(json))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("DELETE /api/v1/items/{id} should return 200 when deleted")
     void shouldDeleteItem() throws Exception {
-        doNothing().when(itemService).delete(1);
+        when(manageItems.delete(1)).thenReturn(new DeleteResult.Deleted());
         mockMvc.perform(delete("/api/v1/items/1"))
                 .andExpect(status().isNoContent());
     }
@@ -214,7 +214,7 @@ class ItemControllerTest {
     @Test
     @DisplayName("DELETE /api/v1/items/{id} should return 404 when item not found")
     void shouldReturn404OnDeleteNotFound() throws Exception {
-        doThrow(new ResourceNotFoundException("Item not found with ID: 999")).when(itemService).delete(999);
+        when(manageItems.delete(999)).thenReturn(new DeleteResult.NotFound());
         mockMvc.perform(delete("/api/v1/items/999"))
                 .andExpect(status().isNotFound());
     }

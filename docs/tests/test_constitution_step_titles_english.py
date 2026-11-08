@@ -32,7 +32,7 @@ class ConstitutionStepTitlesEnglishTest(unittest.TestCase):
             "**14. Full regression.**",
             "**17.5 Run the full pipeline.**",
             "**18. Create the pull request.**",
-            "**19. Wait for green CI/CD.**",
+            "**19. Local full preflight.**",
             "**24. Close the issue.**",
             "self-contained",
             "Actualizar documentación permanente",

@@ -374,6 +374,14 @@ class ImagePinsAndDependabotTest(unittest.TestCase):
             "strict required checks make N bot PRs cost N rebase+CI cycles; group npm minor/patch (#1643)",
         )
 
+    def test_frontend_npm_ignores_typescript_major(self):
+        rules = {rule.get("dependency-name"): rule for rule in update_for("npm", "/frontend").get("ignore") or []}
+        self.assertEqual(
+            (rules.get("typescript") or {}).get("update-types"),
+            ["version-update:semver-major"],
+            "TS7 has no compiler API for Next.js/openapi-typescript/eslint-config-next; skip majors only (#1883, #1871)",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

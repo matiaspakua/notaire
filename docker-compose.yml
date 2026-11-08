@@ -4,6 +4,8 @@ services:
     container_name: ${NOTAIRE_POSTGRES_CONTAINER_NAME:-notary-postgres}
     restart: unless-stopped
     environment:
+      # Calendar day filters (CU23 audit) use the JVM/OS zone; inherit host TZ (#2013).
+      TZ: ${TZ:-UTC}
       POSTGRES_DB: ${POSTGRES_DB:-notaire}
       POSTGRES_USER: ${POSTGRES_USER:-admin}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
@@ -27,7 +29,7 @@ services:
     build:
       context: .
       dockerfile: backend-api/Dockerfile
-    image: ghcr.io/matiaspakua/notaire/backend:0.2.1 # x-release-please-version
+    image: ghcr.io/matiaspakua/notaire/backend:0.2.7 # x-release-please-version
     container_name: ${NOTAIRE_BACKEND_CONTAINER_NAME:-notary-backend}
     restart: unless-stopped
     deploy:
@@ -37,6 +39,8 @@ services:
         reservations:
           memory: 512m
     environment:
+      # Match browser/host calendar for CU23 from/to (#2013). start.sh derives host TZ when unset.
+      TZ: ${TZ:-UTC}
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-notaire}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-admin}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-admin}
@@ -44,6 +48,8 @@ services:
       SPRING_FLYWAY_ENABLED: true
       SPRING_FLYWAY_BASELINE_ON_MIGRATE: true
       JWT_SECRET: ${JWT_SECRET}
+      # Optional backend TLS prove-out (#254): SPRING_PROFILES_ACTIVE=https plus a mounted
+      # PKCS#12 keystore (see docs/200-architecture/206-security/HTTPS-TLS-RUNBOOK.md).
       # Dev-only defaults; production is refused by ProductionCredentialsGuard (#1639).
       ACTUATOR_USER: ${ACTUATOR_USER:-admin}
       ACTUATOR_PASSWORD: ${ACTUATOR_PASSWORD:-admin}
@@ -57,6 +63,8 @@ services:
       MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,metrics,prometheus,info,threaddump
       MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED: true
       MANAGEMENT_HEALTH_DISKSPACE_ENABLED: "false"
+      MANAGEMENT_OTLP_METRICS_EXPORT_ENABLED: "true"
+      MANAGEMENT_TRACING_EXPORT_OTLP_ENABLED: "true"
       MANAGEMENT_OTLP_METRICS_EXPORT_URL: ${OTEL_METRICS_URL:-http://devsecops-otel-collector:4318/v1/metrics}
       MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT: ${OTEL_TRACES_URL:-http://devsecops-otel-collector:4318/v1/traces}
       LOG_LEVEL_APP: INFO
@@ -112,15 +120,20 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    image: ghcr.io/matiaspakua/notaire/frontend:0.2.1 # x-release-please-version
+    image: ghcr.io/matiaspakua/notaire/frontend:0.2.7 # x-release-please-version
     container_name: ${NOTAIRE_FRONTEND_CONTAINER_NAME:-notaire-frontend}
     restart: unless-stopped
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
     environment:
+      TZ: ${TZ:-UTC}
       # Server-only — read by the /api/v1 Route Handler BFF at request time.
       BACKEND_URL: http://backend:8080/api/v1
       HOSTNAME: "0.0.0.0"
+      # Browser OTel (#1739): layout reads this at request time and passes to the
+      # client provider; BFF forwards OTLP to the collector on the shared network.
+      NEXT_PUBLIC_OTEL_TRACES_ENABLED: ${NEXT_PUBLIC_OTEL_TRACES_ENABLED:-true}
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: ${OTEL_TRACES_URL:-http://devsecops-otel-collector:4318/v1/traces}
     depends_on:
       backend:
         condition: service_healthy

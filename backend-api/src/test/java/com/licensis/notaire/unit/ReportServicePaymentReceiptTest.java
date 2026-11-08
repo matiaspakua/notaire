@@ -9,8 +9,8 @@ import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.repository.PaymentRepository;
 import com.licensis.notaire.adapter.out.pdf.PdfBoxReportRenderer;
-import com.licensis.notaire.application.usecase.report.ReportDocumentFactory;
-import com.licensis.notaire.application.usecase.report.ReportService;
+import com.licensis.notaire.adapter.out.report.ReportDocumentFactory;
+import com.licensis.notaire.adapter.out.report.ReportService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,12 +48,13 @@ class ReportServicePaymentReceiptTest {
     void setUp() {
         reportService = new ReportService(
                 null,
-                null,
-                null,
                 paymentRepository,
                 itemRepository,
                 reportDocuments,
                 new PdfBoxReportRenderer(),
+                null,
+                null,
+                null,
                 null,
                 null
         );

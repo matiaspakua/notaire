@@ -18,6 +18,33 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$REPO_DIR"
 
+# Compose derives the project name from the directory by default. Git worktrees
+# (e.g. notaire-wt-*) would then publish <dir>_notary-network instead of
+# notaire_notary-network, so Prometheus/OTel (external network in infra/) cannot
+# resolve the app. Keep overrides for parallel stacks (#1186 / #1678).
+export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-notaire}"
+
+# CU23 audit day filters use the JVM default zone inside the backend container.
+# Compose defaults TZ to UTC when unset; derive the host IANA zone so Playwright
+# (browser calendar) and the API agree after local midnight (#2013).
+if [ -z "${TZ:-}" ]; then
+    _tz_link=""
+    if [ -L /etc/localtime ]; then
+        _tz_link="$(readlink /etc/localtime 2>/dev/null || true)"
+    elif command -v readlink >/dev/null 2>&1; then
+        _tz_link="$(readlink -f /etc/localtime 2>/dev/null || true)"
+    fi
+    if [ -n "$_tz_link" ]; then
+        case "$_tz_link" in
+            *zoneinfo/*)
+                TZ="${_tz_link#*zoneinfo/}"
+                export TZ
+                ;;
+        esac
+    fi
+    unset _tz_link
+fi
+
 # Colors for output
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
@@ -96,6 +123,8 @@ if [ ! -f ".env" ]; then
     fail ".env not found in $REPO_DIR. Create it from the template first:
   cp .env.example .env"
 fi
+
+bash "$REPO_DIR/infra/scripts/ensure-actuator-credentials.sh" .env
 
 POSTGRES_USER="$(env_value POSTGRES_USER admin)"
 POSTGRES_DB="$(env_value POSTGRES_DB notaire)"

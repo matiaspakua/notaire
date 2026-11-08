@@ -101,11 +101,13 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/payments should return 500 on service error")
+    @DisplayName("GET /api/v1/payments should return 500 ErrorResponse via GlobalExceptionHandler (#579)")
     void shouldReturnServerErrorWhenGetAllFails() throws Exception {
         when(queryPaymentsUseCase.findAll()).thenThrow(new RuntimeException("Database error"));
         mockMvc.perform(get("/api/v1/payments"))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.message").value("An unexpected error occurred"));
     }
 
     @Test
@@ -422,6 +424,23 @@ class PaymentControllerTest {
         assertThat(command.getValue().amount()).isEqualByComparingTo(new java.math.BigDecimal("600.0"));
         assertThat(command.getValue().date()).isNotNull();
         assertThat(command.getValue().notes()).isEqualTo("Updated");
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/payments/{id} returns 400 when use case rejects amount (#1921)")
+    void shouldReturn400WhenUseCaseRejectsAmount() throws Exception {
+        when(editPaymentUseCase.edit(any(EditPaymentCommand.class)))
+                .thenThrow(new IllegalArgumentException("The payment amount must be greater than zero"));
+
+        mockMvc.perform(put("/api/v1/payments/1")
+                .contentType("application/json")
+                .content("""
+                        {
+                            "amount": 600.0,
+                            "notes": "Updated"
+                        }
+                        """))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

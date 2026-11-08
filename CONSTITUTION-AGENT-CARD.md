@@ -10,9 +10,9 @@
 3. **TDD**: write failing tests first; observe the failure; then implement.
 4. **Branch** `<type>/<#>_desc` from updated `main`; never commit to `main`.
 5. **Quality gates absolute**: unit + integration + coverage ratchet; Playwright for UI;
-   local security cases via `python3 security/run_gates.py --profile local` inside
-   `bash workspace/sdlc/run_pipeline.sh`; `bash workspace/sdlc/preflight.sh` before push;
-   heavy CI via `check-heavy-ci.sh` before merge.
+   `python3 security/run_gates.py --profile local` inside `run_pipeline.sh`.
+   A PR is ready when `bash workspace/sdlc/preflight.sh --full` passed locally
+   (#2001). GitHub does not re-run it on the pull request.
    **Foreman merge rule (#1624):** the Foreman merges Worker PRs only when all
    required checks are green + `check-heavy-ci.sh` exits 0; the Owner merges
    Constitution, `sdlc-exception` and harness PRs; Workers never merge.
@@ -20,12 +20,18 @@
    (`openspec archive <c> --yes`) unless the change sets `multi_pr: true`.
 6. **Flyway** is schema source of truth; never edit applied migrations.
 7. **Docs are part of Done**; no secrets in git; design-system tokens on frontend.
-8. **KISS** and bounded **Boy Scout** (CONSTITUTION §2 P2/P11): simplest fix; clean only what you touch in the same PR.
+8. **KISS**, bounded **Boy Scout**, and **self-improve while delivering**
+   (CONSTITUTION §2 P2/P11/P12): simplest fix; clean only what you touch in the same PR;
+   when a gate/tool/doc wastes time or fails for the wrong reason, fix or Issue it before moving on.
 9. **Path-scoped CI (#1257)**: docs-only PRs skip Java/E2E leaves; aggregators accept `skipped`;
    `main` always full suite.
 10. **Board coherence (#1550)**: CLOSED⇒Done+no WIP labels; OPEN WIP⇒In Progress+`in-progress`;
    blocked⇒`blocked` label (no Blocked column). Validate:
    `python3 workspace/sdlc/check-board-status-label-coherence.py` (skips without `gh` auth).
+
+12. **Continuous publication (#1681):** push the branch immediately after creating it; after each
+   group of atomic commits push and comment on the Issue (stage, last commit, what remains) with
+   `bash workspace/sdlc/publish-progress.sh <issue> "<stage>"`. GitHub always holds the current state.
 
 ## Workflow (abbrev)
 
@@ -40,7 +46,7 @@ docs → PR → merge → smoke.
 | Ops workflow | `.claude/rules/ai-agent-workflow.md` |
 | Modules | `python3 workspace/modules.py …` / `workspace/modules.yaml` |
 | OpenSpec | `docs/openspec/` (run CLI from `docs/`) |
-| Preflight | `bash workspace/sdlc/preflight.sh` |
+| Preflight | `bash workspace/sdlc/preflight.sh --full` (mandatory before a PR) |
 | Board Status/labels | `python3 workspace/sdlc/check-board-status-label-coherence.py` |
 | Skills catalog | `.claude/skills/README.md` (load on demand) |
 

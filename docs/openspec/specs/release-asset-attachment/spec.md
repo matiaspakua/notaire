@@ -4,14 +4,12 @@
 Every `vX.Y.Z` GitHub Release must carry the five release assets, the pipeline
 must fail loudly when it cannot attach them, and earlier releases must be
 repairable without touching tags, notes, or existing assets.
+
 ## Requirements
+
 ### Requirement: A release-please tag starts the delivery pipeline
 
-The release workflow SHALL start the delivery pipeline on the tag it creates,
-because a tag created with the repository token does not start a tag-triggered
-workflow by itself. The dispatch SHALL name the GitHub repository explicitly so
-`gh` does not need a git checkout. The delivery pipeline SHALL still start on a
-manually pushed `v*` or legacy `notaire-v*` tag.
+The release workflow SHALL start the delivery pipeline on the tag it creates, because a tag created with the repository token does not start a tag-triggered workflow by itself. The dispatch SHALL name the GitHub repository explicitly so `gh` does not need a git checkout. The delivery pipeline SHALL still start on a manually pushed `v*` or legacy `notaire-v*` tag. The same dispatch SHALL also start the heavy release workflows (`ci.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `pages-ci.yml`, `openapi-contract.yml`, `database-vv.yml`, `sdlc-process.yml`, `test-coverage-report.yml`, and `codeql.yml`) on that tag, for the same token limitation.
 
 #### Scenario: Dispatch names the repository without a git checkout
 
@@ -22,6 +20,7 @@ manually pushed `v*` or legacy `notaire-v*` tag.
 
 - **WHEN** release-please reports that it created a release with a tag name
 - **THEN** the release workflow dispatches the delivery workflow with that tag as the ref, using only the repository token and an `actions: write` permission
+- **AND** the same step dispatches `ci.yml` on that tag
 
 #### Scenario: No release created, no dispatch
 
@@ -31,7 +30,7 @@ manually pushed `v*` or legacy `notaire-v*` tag.
 #### Scenario: Manually pushed tags still publish
 
 - **WHEN** the delivery workflow triggers are read
-- **THEN** both the `v*` and the `notaire-v*` tag filters remain
+- **THEN** both the `v*` and the `notaire-v*` tag filters remain and `workflow_run` is absent
 
 ### Requirement: Attachment fails closed on a partial asset set
 
@@ -124,4 +123,3 @@ never equalled the tag. The runbook SHALL record each omission and its reason.
 
 - **WHEN** a legacy release ends with fewer than five assets
 - **THEN** the runbook's legacy table states which assets are absent and why
-

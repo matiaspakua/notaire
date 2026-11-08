@@ -1,10 +1,18 @@
 package com.licensis.notaire.unit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.licensis.notaire.adapter.in.web.procedure.ProcedureTemplateController;
-import com.licensis.notaire.business.ProcedureTemplate;
-import com.licensis.notaire.business.ProcedureTemplatePK;
-import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,45 +23,43 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.licensis.notaire.adapter.in.web.procedure.ProcedureTemplateController;
+import com.licensis.notaire.application.port.in.procedure.ManageProcedureTemplatesUseCase;
+import com.licensis.notaire.application.port.in.procedure.QueryProcedureTemplatesUseCase;
+import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateOpsPort.DeleteResult;
+import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateOpsPort.SaveResult;
+import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateOpsPort.TemplateView;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ProcedureTemplateController unit tests")
 class ProcedureTemplateControllerTest {
 
     @Mock
-    private ProcedureTemplateRepositoryPort repository;
+    private QueryProcedureTemplatesUseCase queryProcedureTemplates;
+
+    @Mock
+    private ManageProcedureTemplatesUseCase manageProcedureTemplates;
 
     private MockMvc mockMvc;
     private ObjectMapper mapper;
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new ProcedureTemplateController(repository)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(
+                        new ProcedureTemplateController(queryProcedureTemplates, manageProcedureTemplates))
+                .build();
         mapper = new ObjectMapper();
     }
 
-    private ProcedureTemplate buildTemplate(int idProcedureType, int idDocumentType) {
-        ProcedureTemplate pt = new ProcedureTemplate(new ProcedureTemplatePK(idProcedureType, idDocumentType));
-        pt.setNotes("Observation test");
-        return pt;
+    private TemplateView view(int procedureTypeId, int documentTypeId) {
+        return new TemplateView(procedureTypeId, documentTypeId, "Observation test", 0);
     }
 
     @Test
     @DisplayName("GET /procedure-templates returns list")
     void shouldReturnAll() throws Exception {
-        when(repository.findAll()).thenReturn(List.of(buildTemplate(1, 2)));
+        when(queryProcedureTemplates.findAll()).thenReturn(List.of(view(1, 2)));
         mockMvc.perform(get("/api/v1/procedure-templates"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
@@ -62,7 +68,7 @@ class ProcedureTemplateControllerTest {
     @Test
     @DisplayName("GET /procedure-templates/procedure-type/{id} returns list")
     void shouldReturnByTypeProcedure() throws Exception {
-        when(repository.findByProcedureTypeIdProcedureType(1)).thenReturn(List.of(buildTemplate(1, 2)));
+        when(queryProcedureTemplates.findByProcedureType(1)).thenReturn(List.of(view(1, 2)));
         mockMvc.perform(get("/api/v1/procedure-templates/procedure-types/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
@@ -71,8 +77,7 @@ class ProcedureTemplateControllerTest {
     @Test
     @DisplayName("GET /procedure-templates/{idProcedureType}/{idDocumentType} returns 200 when found")
     void shouldReturnByCompositeId() throws Exception {
-        ProcedureTemplatePK pk = new ProcedureTemplatePK(1, 2);
-        when(repository.findById(pk)).thenReturn(Optional.of(buildTemplate(1, 2)));
+        when(queryProcedureTemplates.findById(1, 2)).thenReturn(Optional.of(view(1, 2)));
         mockMvc.perform(get("/api/v1/procedure-templates/1/2"))
                 .andExpect(status().isOk());
     }
@@ -80,8 +85,7 @@ class ProcedureTemplateControllerTest {
     @Test
     @DisplayName("GET /procedure-templates/{idProcedureType}/{idDocumentType} returns 404 when not found")
     void shouldReturn404WhenNotFound() throws Exception {
-        ProcedureTemplatePK pk = new ProcedureTemplatePK(9, 9);
-        when(repository.findById(pk)).thenReturn(Optional.empty());
+        when(queryProcedureTemplates.findById(9, 9)).thenReturn(Optional.empty());
         mockMvc.perform(get("/api/v1/procedure-templates/9/9"))
                 .andExpect(status().isNotFound());
     }
@@ -89,44 +93,43 @@ class ProcedureTemplateControllerTest {
     @Test
     @DisplayName("POST /procedure-templates creates new entry and returns 201")
     void shouldCreateTemplate() throws Exception {
-        ProcedureTemplate pt = buildTemplate(1, 2);
-        when(repository.save(any(ProcedureTemplate.class))).thenReturn(pt);
+        when(manageProcedureTemplates.create(eq(1), eq(2), any())).thenReturn(new SaveResult.Created(view(1, 2)));
         mockMvc.perform(post("/api/v1/procedure-templates")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(pt)))
+                        .content("""
+                                {"fkIdProcedureType":1,"fkIdDocumentType":2,"notes":"Observation test"}
+                                """))
                 .andExpect(status().isCreated());
     }
 
     @Test
     @DisplayName("PUT /procedure-templates/{idProcedureType}/{idDocumentType} returns 200 when exists")
     void shouldUpdateTemplate() throws Exception {
-        ProcedureTemplatePK pk = new ProcedureTemplatePK(1, 2);
-        ProcedureTemplate pt = buildTemplate(1, 2);
-        when(repository.findById(pk)).thenReturn(Optional.of(pt));
-        when(repository.save(any(ProcedureTemplate.class))).thenReturn(pt);
+        when(manageProcedureTemplates.update(eq(1), eq(2), any())).thenReturn(new SaveResult.Updated(view(1, 2)));
         mockMvc.perform(put("/api/v1/procedure-templates/1/2")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(pt)))
+                        .content("""
+                                {"notes":"Observation test"}
+                                """))
                 .andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("PUT /procedure-templates/{idProcedureType}/{idDocumentType} returns 404 when it does not exist")
     void shouldReturn404OnUpdate() throws Exception {
-        ProcedureTemplatePK pk = new ProcedureTemplatePK(9, 9);
-        when(repository.findById(pk)).thenReturn(Optional.empty());
+        when(manageProcedureTemplates.update(eq(9), eq(9), any())).thenReturn(new SaveResult.NotFound());
         mockMvc.perform(put("/api/v1/procedure-templates/9/9")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(buildTemplate(9, 9))))
+                        .content("""
+                                {"notes":"x"}
+                                """))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("DELETE /procedure-templates/{idProcedureType}/{idDocumentType} returns 204 when exists")
     void shouldDeleteTemplate() throws Exception {
-        ProcedureTemplatePK pk = new ProcedureTemplatePK(1, 2);
-        when(repository.existsById(pk)).thenReturn(true);
-        doNothing().when(repository).deleteById(pk);
+        when(manageProcedureTemplates.delete(1, 2)).thenReturn(new DeleteResult.Deleted());
         mockMvc.perform(delete("/api/v1/procedure-templates/1/2"))
                 .andExpect(status().isNoContent());
     }
@@ -134,8 +137,7 @@ class ProcedureTemplateControllerTest {
     @Test
     @DisplayName("DELETE /procedure-templates/{idProcedureType}/{idDocumentType} returns 404 when it does not exist")
     void shouldReturn404OnDelete() throws Exception {
-        ProcedureTemplatePK pk = new ProcedureTemplatePK(9, 9);
-        when(repository.existsById(pk)).thenReturn(false);
+        when(manageProcedureTemplates.delete(9, 9)).thenReturn(new DeleteResult.NotFound());
         mockMvc.perform(delete("/api/v1/procedure-templates/9/9"))
                 .andExpect(status().isNotFound());
     }

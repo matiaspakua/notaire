@@ -7,7 +7,7 @@ package com.licensis.notaire.business;
 import com.licensis.notaire.dto.DtoDeed;
 import com.licensis.notaire.dto.DtoFolio;
 import com.licensis.notaire.dto.DtoPerson;
-import com.licensis.notaire.jpa.PersistenceConstants;
+import com.licensis.notaire.persistence.PersistenceConstants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;

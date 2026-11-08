@@ -9,7 +9,9 @@ Always-loaded digest: [`CONSTITUTION-AGENT-CARD.md`](CONSTITUTION-AGENT-CARD.md)
 Load the full Constitution when deciding gates, exceptions, or DoD.
 
 **Principles (CONSTITUTION §2):** KISS — Keep It Simple; bounded Boy Scout — leave
-touched code cleaner in the same PR without behavior change (see full Constitution).
+touched code cleaner in the same PR without behavior change; **self-improve while
+delivering (P12)** — feed friction into gates, skills, docs and follow-on Issues
+(see full Constitution). Same duty applies in `framework/ai-sdlc`.
 
 ## Mandatory workflow (load on change)
 
@@ -19,8 +21,8 @@ Before any code change:
 2. OpenSpec Gate 1 from `docs/` (`openspec` + `bash workspace/sdlc/validate-sdlc-plan.sh`).
 3. Branch `<type>/<#>_description` from updated `main`.
 4. TDD — failing tests first, then implement.
-5. Full suite + Playwright for UI. Before a PR, `bash workspace/sdlc/run_pipeline.sh` (security phase: `python3 security/run_gates.py --profile local`). `bash workspace/sdlc/preflight.sh` before push.
-6. Permanent docs + Conventional Commits + PR (`Closes #…`).
+5. Full suite + Playwright for UI. A PR is ready when `bash workspace/sdlc/preflight.sh --full` has passed locally. GitHub does not re-run that suite on the pull request (#2001). Before a PR, `bash workspace/sdlc/run_pipeline.sh` (security phase: `python3 security/run_gates.py --profile local`; it includes `preflight.sh --full`). A preflight run without `--full` is not sufficient to open a PR.
+6. Permanent docs + Conventional Commits + PR (`Closes #…`). Owner coverage **target >90%** across the pyramid (#2046); enforced JaCoCo/Vitest floors are raise-only and may lag — never lower without ADR; never claim 90% while floors lag.
 
 Operational detail (load when implementing): `.claude/rules/ai-agent-workflow.md` and
 `.claude/skills/ai-agent-workflow/SKILL.md`.
@@ -32,6 +34,7 @@ Operational detail (load when implementing): `.claude/rules/ai-agent-workflow.md
 | Any Java/backend | `.claude/rules/programming.md`, `.claude/rules/code-quality.md`, `.claude/skills/java/SKILL.md`, `.claude/skills/backend/SKILL.md` |
 | Flyway / schema | `.claude/rules/database-migrations.md`, `.claude/skills/flyway/SKILL.md` |
 | Frontend / forms / theme | `.claude/rules/ui-ux-design.md`, `.claude/skills/frontend-design/SKILL.md` |
+| Any backend/frontend structure, ports, adapters | `.claude/rules/hexagonal-architecture.md`, `.claude/skills/hexagonal-arch/SKILL.md` (ADR-030) |
 | Refactors | `.claude/rules/refactoring.md` |
 | CI / Docker / observability | `.claude/agents/devops-engineer.md`, `.claude/skills/devops/SKILL.md` |
 | Security review | `.claude/agents/security-auditor.md`, `.claude/skills/secure-threat-modeling/SKILL.md` |
@@ -57,8 +60,16 @@ See `workspace/modules.yaml` and each module’s `MODULE.md`.
 
 ## Cloud fleet
 
-Cursor Cloud AI SDLC: `docs/300-development/304-ai-sdlc-cloud/`.  
+Cursor Cloud AI SDLC: `docs/300-development/304-ai-sdlc-cloud/`.
 Foreman: `.claude/agents/cloud-foreman.md`. Does not use `local-ai/`.
+Hex-fleet do/don’t (#1693): `docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md`
+(+ `MAC-LOCAL-VS-CI.md`).
+
+## AI SDLC framework (#1958)
+
+Stack-agnostic kit `framework/ai-sdlc/` (Notaire profile `.aisdlc/aisdlc.toml`):
+`python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml gate --list`.
+Baselines only shrink (`… ratchet`); the skills catalog is linted (`… skills`).
 
 ## Context budget (#1259)
 

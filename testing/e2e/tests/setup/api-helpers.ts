@@ -259,6 +259,8 @@ export async function createBudget(
     heading: `Budget E2E ${uniqueId()}`,
     status: "PENDIENTE",
     notes: `Budget E2E ${uniqueId()}`,
+    // Wave 5 (#1951): create/edit UI requires propertyAmount before save.
+    propertyAmount: 0,
     ...overrides,
   });
 }

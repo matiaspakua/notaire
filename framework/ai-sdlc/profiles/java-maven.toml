@@ -1,0 +1,45 @@
+# Example: a Java service (Maven, JUnit, JaCoCo, ArchUnit with a frozen baseline). Level 2: gated.
+[project]
+name = "java-maven"
+policy = "CONSTITUTION.md"
+level = 2
+
+[tdd]
+production = ["src/main/**"]
+tests = ["src/test/**"]
+
+[context]
+max_tokens = 8000
+files = ["AGENTS.md", "AGENT-CARD.md"]
+
+[[gates]]
+name = "change record complete"
+stage = "plan"
+run = "aisdlc change check"
+
+[[gates]]
+name = "new test fails"
+stage = "red"
+run = "mvn -q test -Dtest={test}"
+expect = "fail"
+
+[[gates]]
+name = "format"
+stage = "pre-push"
+run = "mvn -q spotless:check"
+
+[[gates]]
+name = "verify"
+stage = "pre-push"
+run = "mvn -q verify"
+timeout = 3600
+
+[[gates]]
+name = "ratchets"
+stage = "pre-push"
+run = "aisdlc ratchet --base {base}"
+
+[[ratchets]]
+name = "architecture baseline"
+kind = "baseline"
+file = "src/test/resources/archunit-baseline.txt"

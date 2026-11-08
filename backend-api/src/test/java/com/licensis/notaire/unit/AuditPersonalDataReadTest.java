@@ -2,7 +2,7 @@ package com.licensis.notaire.unit;
 
 import com.licensis.notaire.adapter.in.web.deed.DeedController;
 import com.licensis.notaire.adapter.in.web.person.PersonController;
-import com.licensis.notaire.application.usecase.audit.AuditRecordService;
+import com.licensis.notaire.adapter.out.persistence.audit.AuditRecordService;
 import com.licensis.notaire.audit.AuditAspect;
 import com.licensis.notaire.audit.AuditPersonalDataRead;
 import com.licensis.notaire.business.AuditRecord;

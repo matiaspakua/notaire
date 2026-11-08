@@ -17,7 +17,7 @@ export MIGRATIONS_DIR
 EXPORTER_USER="${POSTGRES_EXPORTER_USER:-notaire_exporter}"
 EXPORTER_PASSWORD="${POSTGRES_EXPORTER_PASSWORD:-vv-exporter-throwaway}"
 # Migrations Flyway must ignore on purpose (manual rollback scripts), space separated.
-EXPECTED_IGNORED="${EXPECTED_IGNORED:-R14__restore_presupuestos_fk_id_tramite.sql R45__rename_remaining_spanish_identifiers.sql R46__rename_spanish_constraint_names.sql}"
+EXPECTED_IGNORED="${EXPECTED_IGNORED:-R14__restore_presupuestos_fk_id_tramite.sql R45__rename_remaining_spanish_identifiers.sql R46__rename_spanish_constraint_names.sql R51__grant_exporter_select_business_tables.sql}"
 
 PROJECT="${DB_VV_PROJECT:-notaire-db-vv-$$}"
 COMPOSE=(docker compose -p "$PROJECT" -f "$DB_DIR/docker-compose.yml")

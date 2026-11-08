@@ -6,7 +6,8 @@ import os
 import unittest
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-CHROME = os.path.join(REPO_ROOT, "github-page", "components", "DocsChrome.tsx")
+# #1970: the Docs sidebar, drawer and search read the site map.
+CHROME = os.path.join(REPO_ROOT, "github-page", "lib", "site.ts")
 HOME = os.path.join(REPO_ROOT, "github-page", "app", "docs", "page.tsx")
 BUSINESS = os.path.join(REPO_ROOT, "github-page", "app", "docs", "business", "page.tsx")
 

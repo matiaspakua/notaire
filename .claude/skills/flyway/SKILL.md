@@ -1,3 +1,8 @@
+---
+name: flyway
+description: Create and review Flyway database migrations for Notaire (versioned V{n}__ files, idempotent SQL, sequences, rollback scripts). Use when changing the database schema or versioned reference data.
+---
+
 # Flyway Database Migration Skill
 
 ## Overview

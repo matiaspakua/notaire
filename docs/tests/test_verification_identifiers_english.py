@@ -13,16 +13,18 @@ def read(relative: str) -> str:
 
 class VerificationIdentifiersEnglishTest(unittest.TestCase):
     def test_verification_field_and_class_are_english(self):
-        controller = read(
-            "backend-api/src/main/java/com/licensis/notaire/adapter/in/web/testimony/TestimonyController.java"
+        # After #1783 the field lives on TestimonyOpsAdapter (controller is ports-only).
+        adapter = read(
+            "backend-api/src/main/java/com/licensis/notaire/adapter/out/persistence/testimony/"
+            "TestimonyOpsAdapter.java"
         )
-        self.assertIn("generationVerificationService", controller)
-        self.assertNotIn("generationVerificacionService", controller)
+        self.assertIn("generationVerificationService", adapter)
+        self.assertNotIn("generationVerificacionService", adapter)
 
         simple = read(
             "backend-api/src/test/java/com/licensis/notaire/unit/SimpleControllersTest.java"
         )
-        self.assertIn("generationVerificationService", simple)
+        self.assertIn("ManageTestimoniesUseCase", simple)
         self.assertNotIn("generationVerificacionService", simple)
 
         renamed = ROOT / (
@@ -49,11 +51,14 @@ class VerificationIdentifiersEnglishTest(unittest.TestCase):
         self.assertIn("shouldRejectWithdrawalWhenTestimonyNotFound", movement)
         self.assertNotIn("shouldRejectRetirarWhenTestimonyNotFound", movement)
 
-        jpa = read(
-            "backend-api/src/test/java/com/licensis/notaire/unit/jpa/JpaAdministratorTest.java"
+        # #576 retired JpaAdministratorTest with the legacy jpa package; keep the
+        # english-name assertion on the still-present movement service test above.
+        retirement = read(
+            "backend-api/src/test/java/com/licensis/notaire/unit/architecture/"
+            "LegacyJpaRetirementTest.java"
         )
-        self.assertIn("class LoadJpaList", jpa)
-        self.assertNotIn("CargarListaJpas", jpa)
+        self.assertIn("class LegacyJpaRetirementTest", retirement)
+        self.assertNotIn("CargarListaJpas", retirement)
 
         audit = read(
             "backend-api/src/test/java/com/licensis/notaire/integration/"

@@ -15,13 +15,15 @@ which define the mandatory workflow.
 | [`302-code-standards/`](302-code-standards/) | Code standards: DTO mapping, error handling, JPA lazy loading, Spring transactions |
 | [`303-testing/`](303-testing/) | Test suites, the use-case-to-API matrix, and QA guides |
 | [`templates/`](templates/) | Templates for OpenSpec specifications |
-| [`ASSESSMENT-2026-10.md`](ASSESSMENT-2026-10.md) | System assessment (October 2026): test results, findings by dimension, and linked issues |
+| [`ASSESSMENT-REFRESH-2026-10-18.md`](ASSESSMENT-REFRESH-2026-10-18.md) | Current PE assessment (2026-10-18): live gate evidence, corrected RBAC/hex/coverage claims |
+| [`ASSESSMENT-2026-10.md`](ASSESSMENT-2026-10.md) | Historical baseline assessment (2026-10-04); superseded by the refresh above |
 | [`REPO-SPLIT-PLAN.md`](REPO-SPLIT-PLAN.md) | Phased plan and exit criteria for the repository topology (#1197, ADR-024) |
 | [`MODULE-OWNERSHIP.md`](MODULE-OWNERSHIP.md) | In-repo module map (ADR-026): paths, fleets, verify, Mermaid deps — #1197 Phase 0 |
 | [`REPO-METRICS-BASELINE.md`](REPO-METRICS-BASELINE.md) | Reproducible repo metrics for topology decisions (#1256 / #1417) |
 | [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md) | Map of local checks (`workspace/sdlc/preflight.sh`) to CI jobs |
 | [`304-ai-sdlc-cloud/`](304-ai-sdlc-cloud/) | Cursor Cloud AI SDLC fleet: foreman, specialists, env checklist, [CI merge gate](304-ai-sdlc-cloud/CI-MERGE-GATE.md), validation (not `local-ai/`) |
 | [`305-project-management/`](305-project-management/) | Milestones, labels, roadmap chart, parallel-agent lanes, and [how releases differ from trains](305-project-management/RELEASES.md) |
+| [`306-ai-sdlc-framework/`](306-ai-sdlc-framework/) | Stack-agnostic AI SDLC framework derived from Notaire: [report](306-ai-sdlc-framework/ai_sdlc_framework.md); kit in [`framework/ai-sdlc/`](../../framework/ai-sdlc/), Notaire profile [`.aisdlc/aisdlc.toml`](../../.aisdlc/aisdlc.toml) |
 | [`SBOM.md`](SBOM.md) | CycloneDX product, database, and image bills |
 | [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md) | Permanent domain model. A change that moves a state updates this file in the same PR |
 | [`INGENIERIA.md`](INGENIERIA.md) | Artifact IDs, forward/back trace, and process boxes. Method from the specialization guide, fitted to this repo |
@@ -38,8 +40,10 @@ OpenSpec and the Constitution: see [`docs/openspec/NOTAIRE-ADAPTATIONS.md`](../o
 2. When a change moves a domain state, update
    [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md). The artifact
    and traceability method is in [`INGENIERIA.md`](INGENIERIA.md).
-3. Run `bash workspace/sdlc/preflight.sh` before every push (see
-   [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md); `mvn verify` alone is not enough).
+3. Run `bash workspace/sdlc/preflight.sh --full` before every push and before
+   opening a pull request (see [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md); a run
+   without `--full`, and `mvn verify` alone, are not enough). GitHub does not
+   re-run that suite on the pull request.
 
 ## Navigation
 

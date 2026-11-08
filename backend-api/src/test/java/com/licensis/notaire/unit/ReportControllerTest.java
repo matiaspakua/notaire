@@ -5,7 +5,7 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import com.licensis.notaire.adapter.in.web.report.ReportController;
-import com.licensis.notaire.application.usecase.report.ReportService;
+import com.licensis.notaire.application.port.in.report.GenerateReportsUseCase;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 class ReportControllerTest {
 
     @Mock
-    private ReportService reportService;
+    private GenerateReportsUseCase reportService;
 
     private ReportController controller;
     private ListAppender<ILoggingEvent> logAppender;

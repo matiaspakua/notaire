@@ -160,7 +160,7 @@ export function Timeline() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-20">
-          <p className="text-[#0A84FF] text-sm font-mono font-bold tracking-widest mb-4 uppercase">Project History</p>
+          <p className="text-brand-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">Project History</p>
           <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
             A Decade of <span className="grad-fire">Evolution</span>
           </h2>

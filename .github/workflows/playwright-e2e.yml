@@ -1,17 +1,16 @@
 name: Playwright E2E — Full Suite
 
 # API tests (Bruno) + UI E2E tests (Playwright) against the full stack
-# (PostgreSQL + backend + frontend). Runs on every PR into main, every merge
-# to main, on a weekday schedule, and on manual dispatch. Test failures FAIL
-# the pipeline. The coverage-report job publishes artifact + job summary on
-# non-PR events (no git commits to main — issue #1041); see its `if:`.
+# (PostgreSQL + backend + frontend). Runs on a version tag (v* / notaire-v*)
+# and on manual dispatch. It does not run on pull_request, branch push, or
+# the former weekday cron. Day-to-day proof is preflight.sh --full.
+# Test failures FAIL the pipeline. The coverage-report job publishes artifact
+# + job summary on non-PR events (no git commits to main — issue #1041).
 on:
-  pull_request:
-    branches: [ main ]
   push:
-    branches: [ main ]
-  schedule:
-    - cron: '0 6 * * 1-5'  # Weekdays 6am UTC
+    tags:
+      - 'v*'
+      - 'notaire-v*'
   workflow_dispatch:
     inputs:
       test_filter:
@@ -224,7 +223,7 @@ jobs:
             --spring.datasource.url=jdbc:postgresql://localhost:5432/notaire \
             --spring.datasource.username=notaire \
             --spring.datasource.password=notaire \
-            --spring.jpa.hibernate.ddl-auto=update \
+            --spring.jpa.hibernate.ddl-auto=none \
             --jwt.secret="${JWT_SECRET}" \
             --actuator.security.username="${ACTUATOR_USER}" \
             --actuator.security.password="${ACTUATOR_PASSWORD}" &
@@ -368,7 +367,7 @@ jobs:
             --spring.datasource.url=jdbc:postgresql://localhost:5432/notaire \
             --spring.datasource.username=notaire \
             --spring.datasource.password=notaire \
-            --spring.jpa.hibernate.ddl-auto=update \
+            --spring.jpa.hibernate.ddl-auto=none \
             --jwt.secret="${JWT_SECRET}" \
             --actuator.security.username="${ACTUATOR_USER}" \
             --actuator.security.password="${ACTUATOR_PASSWORD}" &

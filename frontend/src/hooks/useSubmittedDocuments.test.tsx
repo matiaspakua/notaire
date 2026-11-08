@@ -1,20 +1,20 @@
 /**
- * Unit tests for the submitted-document hooks (CU04, CU72 — #773): the request must use the
- * field names SubmittedDocumentController reads.
+ * Unit tests for the submitted-document hooks (CU04, CU72 — #773).
+ * Hexagon wiring: #1841 / ADR-030 — wire mapping covered in the HTTP gateway test.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 
-vi.mock("@/lib/api-client", () => ({
-  apiGet: vi.fn(),
-  apiPost: vi.fn(),
-  apiPut: vi.fn(),
-  apiDelete: vi.fn(),
+vi.mock("@/composition/submitted-document", () => ({
+  submittedDocumentUseCases: {
+    create: vi.fn(),
+    update: vi.fn(),
+  },
 }));
 
-import { apiPost, apiPut } from "@/lib/api-client";
+import { submittedDocumentUseCases } from "@/composition/submitted-document";
 import { useCreateSubmittedDocument, useUpdateSubmittedDocument } from "@/hooks/useSubmittedDocuments";
 
 function createWrapper() {
@@ -30,14 +30,14 @@ function createWrapper() {
 describe("useCreateSubmittedDocument (CU04)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("posts typeId, date, delivered and procedureId", async () => {
-    vi.mocked(apiPost).mockResolvedValue({ idSubmittedDocument: 1 });
+  it("passes typeId, date, delivered and procedureId to the use case", async () => {
+    vi.mocked(submittedDocumentUseCases.create).mockResolvedValue({ idSubmittedDocument: 1 });
 
     const { result } = renderHook(() => useCreateSubmittedDocument(), { wrapper: createWrapper() });
     result.current.mutate({ typeId: 3, date: "2026-06-01", delivered: true, procedureId: 9 });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(apiPost).toHaveBeenCalledWith("/submitted-documents", {
+    expect(submittedDocumentUseCases.create).toHaveBeenCalledWith({
       typeId: 3,
       date: "2026-06-01",
       delivered: true,
@@ -49,13 +49,17 @@ describe("useCreateSubmittedDocument (CU04)", () => {
 describe("useUpdateSubmittedDocument (CU72)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("puts typeId, date and delivered", async () => {
-    vi.mocked(apiPut).mockResolvedValue(undefined);
+  it("passes typeId, date and delivered to the use case", async () => {
+    vi.mocked(submittedDocumentUseCases.update).mockResolvedValue(undefined);
 
     const { result } = renderHook(() => useUpdateSubmittedDocument(), { wrapper: createWrapper() });
     result.current.mutate({ id: 5, data: { typeId: 3, date: "2026-06-01", delivered: false } });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(apiPut).toHaveBeenCalledWith("/submitted-documents/5", { typeId: 3, date: "2026-06-01", delivered: false });
+    expect(submittedDocumentUseCases.update).toHaveBeenCalledWith(5, {
+      typeId: 3,
+      date: "2026-06-01",
+      delivered: false,
+    });
   });
 });

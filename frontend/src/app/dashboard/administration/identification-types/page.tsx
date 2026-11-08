@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
-import { ApiError } from "@/lib/api-client";
+import { ApiError } from "@/lib/api-error";
 import { presentMutationError } from "@/lib/mutation-error";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import {
@@ -39,7 +39,7 @@ export default function IdentificationTypesPage() {
   const tc = useTranslations("common");
   const showDeleteError = useDeleteError();
 
-  const { data = [], isLoading } = useIdentificationTypes();
+  const { data = [], isLoading, isError, refetch } = useIdentificationTypes();
   const createType = useCreateIdentificationType();
   const updateType = useUpdateIdentificationType();
   const deleteType = useDeleteIdentificationType();
@@ -160,6 +160,9 @@ export default function IdentificationTypesPage() {
         isLoading={isLoading}
         keyExtractor={(e) => e.idIdentificationType}
         emptyMessage={t("noData")}
+      
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>

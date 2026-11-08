@@ -1,13 +1,14 @@
 package com.licensis.notaire.service.unit;
 
-import com.licensis.notaire.application.port.out.notebook.NotebookRepositoryPort;
-import com.licensis.notaire.application.port.out.notebook.NotebookFolioOperationPort;
+import com.licensis.notaire.adapter.out.persistence.notebook.NotebookService;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Notebook;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.Person;
-import com.licensis.notaire.application.usecase.notebook.NotebookService;
+import com.licensis.notaire.repository.FolioRepository;
+import com.licensis.notaire.repository.NotebookRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,10 +30,13 @@ import static org.mockito.Mockito.when;
 class NotebookTest {
 
     @Mock
-    private NotebookRepositoryPort notebookRepository;
+    private NotebookRepository notebookRepository;
 
     @Mock
-    private NotebookFolioOperationPort folioRepository;
+    private FolioRepository folioRepository;
+
+    @Mock
+    private PersonRepository personRepository;
 
     private NotebookService notebookService;
 
@@ -40,7 +44,7 @@ class NotebookTest {
 
     @BeforeEach
     void setUp() {
-        notebookService = new NotebookService(notebookRepository, folioRepository);
+        notebookService = new NotebookService(notebookRepository, folioRepository, personRepository);
 
         notary = new Person();
         notary.setPersonId(1);
@@ -75,8 +79,8 @@ class NotebookTest {
     @Test
     @DisplayName("Should assign number one to the first notebook of the year for a notary")
     void shouldAssignNumberOneToFirstNotebookOfYear() {
-        when(notebookRepository.findByYearAndNotary(2026, notary)).thenReturn(List.of());
-        when(notebookRepository.existsByNumberYearAndNotary(1, 2026, notary)).thenReturn(false);
+        when(notebookRepository.findByYearAndFkIdNotaryPerson(2026, notary)).thenReturn(List.of());
+        when(notebookRepository.existsByNumberAndYearAndFkIdNotaryPerson(1, 2026, notary)).thenReturn(false);
 
         int number = notebookService.calculateNextNumber(2026, notary);
 
@@ -86,10 +90,10 @@ class NotebookTest {
     @Test
     @DisplayName("Should recalculate the next available notebook number on conflict")
     void shouldRecalculateNextAvailableNotebookNumber() {
-        when(notebookRepository.findByYearAndNotary(2026, notary))
+        when(notebookRepository.findByYearAndFkIdNotaryPerson(2026, notary))
                 .thenReturn(List.of(new Notebook()));
-        when(notebookRepository.existsByNumberYearAndNotary(2, 2026, notary)).thenReturn(true);
-        when(notebookRepository.existsByNumberYearAndNotary(3, 2026, notary)).thenReturn(false);
+        when(notebookRepository.existsByNumberAndYearAndFkIdNotaryPerson(2, 2026, notary)).thenReturn(true);
+        when(notebookRepository.existsByNumberAndYearAndFkIdNotaryPerson(3, 2026, notary)).thenReturn(false);
 
         int number = notebookService.calculateNextNumber(2026, notary);
 
@@ -99,7 +103,7 @@ class NotebookTest {
     @Test
     @DisplayName("Should reject notebook creation when notary does not exist")
     void shouldRejectCreationWhenNotaryNotFound() {
-        when(notebookRepository.findPersonById(anyInt())).thenReturn(Optional.empty());
+        when(personRepository.findById(anyInt())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> notebookService.createNotebook(List.of(1, 2), 99, 2026, null))
                 .isInstanceOf(ResourceNotFoundException.class);
@@ -108,9 +112,9 @@ class NotebookTest {
     @Test
     @DisplayName("Should reject notebook creation when folio count is not a multiple of ten")
     void shouldRejectWhenFolioCountNotMultipleOfTen() {
-        when(notebookRepository.findPersonById(1)).thenReturn(Optional.of(notary));
+        when(personRepository.findById(1)).thenReturn(Optional.of(notary));
         List<Folio> folios = List.of(folio(1, 1, "New"), folio(2, 2, "New"));
-        when(folioRepository.findAllById(List.of(1, 2))).thenReturn(folios);
+        when(folioRepository.findAllByIdFolioIn(List.of(1, 2))).thenReturn(folios);
 
         assertThatThrownBy(() -> notebookService.createNotebook(List.of(1, 2), 1, 2026, null))
                 .isInstanceOf(BusinessValidationException.class);

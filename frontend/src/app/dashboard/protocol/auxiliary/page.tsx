@@ -9,10 +9,15 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
-import { apiGet, apiPost } from "@/lib/api-client";
+import { auxiliaryProtocolUseCases } from "@/composition/auxiliary-protocol";
+import type { AuxiliaryFolio } from "@/core/auxiliary-protocol/domain/auxiliary-protocol";
 import { extractApiError } from "@/lib/utils";
-import type { Folio, Deed } from "@/types";
+import type { Folio } from "@/types";
 import { FilePlus } from "lucide-react";
+
+function toWireFolio(f: AuxiliaryFolio): Folio {
+  return f as Folio;
+}
 
 export default function AuxiliaryProtocolPage() {
   const t = useTranslations("protocolo.auxiliar");
@@ -21,10 +26,11 @@ export default function AuxiliaryProtocolPage() {
   const {
     data: availableFolios = [],
     isLoading,
+    isError,
     refetch,
   } = useQuery({
     queryKey: ["auxiliary-protocol", "available-folios"],
-    queryFn: () => apiGet<Folio[]>("/auxiliary-protocol/available-folios"),
+    queryFn: async () => (await auxiliaryProtocolUseCases.listAvailableFolios()).map(toWireFolio),
   });
 
   const [selectedFolio, setSelectedFolio] = useState<Folio | null>(null);
@@ -37,11 +43,11 @@ export default function AuxiliaryProtocolPage() {
   }
 
   async function handleStartDeed() {
-    if (!selectedFolio) return;
+    if (!selectedFolio?.idFolio) return;
     setSaving(true);
     try {
       // Backend body is StartDeedRequest(idFolio, body).
-      await apiPost<Deed>("/auxiliary-protocol/deeds", {
+      await auxiliaryProtocolUseCases.startDeed({
         idFolio: selectedFolio.idFolio,
         body: deedBody,
       });
@@ -86,6 +92,8 @@ export default function AuxiliaryProtocolPage() {
         isLoading={isLoading}
         keyExtractor={(f) => f.idFolio!}
         emptyMessage={t("noData")}
+        error={isError ? tc("loadError") : undefined}
+        onRetry={() => void refetch()}
       />
 
       <Dialog open={!!selectedFolio} onOpenChange={(v) => !v && setSelectedFolio(null)}>

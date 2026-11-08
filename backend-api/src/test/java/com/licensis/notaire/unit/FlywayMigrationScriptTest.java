@@ -34,7 +34,8 @@ class FlywayMigrationScriptTest {
     @ParameterizedTest
     @ValueSource(strings = {
             "V1__initial_schema.sql",
-            "V2__initial_data.sql"
+            "V2__initial_data.sql",
+            "V52__migrate_seed_admin_password_to_bcrypt.sql"
     })
     @DisplayName("Migration files should follow Flyway naming convention")
     void migrationFilesShouldFollowNamingConvention(String filename) {
@@ -108,13 +109,13 @@ class FlywayMigrationScriptTest {
     }
 
     @Test
-    @DisplayName("Admin user should have MD5 hashed password")
+    @DisplayName("V2 historical seed still records MD5(admin); V52 migrates it to BCrypt")
     void adminUserShouldHaveHashedPassword() throws IOException {
         String dataContent = Files.readString(Paths.get(MIGRATION_PATH, "V2__initial_data.sql"));
 
-        // MD5 hash of "admin" is 21232f297a57a5a743894a0e4a801fc3
+        // MD5 hash of "admin" is 21232f297a57a5a743894a0e4a801fc3 (historical V2 text)
         assertThat(dataContent)
-                .as("Admin password should be MD5 hashed")
+                .as("Admin password should be MD5 hashed in V2 (historical)")
                 .contains("21232f297a57a5a743894a0e4a801fc3");
 
         // Should have admin user insert
@@ -126,6 +127,12 @@ class FlywayMigrationScriptTest {
         assertThat(dataContent)
                 .as("Admin user should reference notary")
                 .contains("Escribano");
+
+        String v52 = Files.readString(Paths.get(MIGRATION_PATH, "V52__migrate_seed_admin_password_to_bcrypt.sql"));
+        assertThat(v52)
+                .as("V52 replaces the V2 MD5 seed with BCrypt (#1762)")
+                .contains("21232f297a57a5a743894a0e4a801fc3")
+                .contains("$2a$12$MzGVbtKng5BRII/pfWCJpOE.hkzzYSLroZOjzATlTdRyygKG8Z0e6");
     }
 
     @Test

@@ -47,21 +47,21 @@ verifies the outcome with SQL. No Spring context is involved.
 | Check | Verifies |
 |-------|----------|
 | migrate, then validate | Every migration applies to an empty database and the history validates |
-| files versus history | Every `V<n>__*.sql` file is applied, and the only ignored SQL files are the documented manual rollbacks `R14__restore_presupuestos_fk_id_tramite.sql`, `R45__rename_remaining_spanish_identifiers.sql`, and `R46__rename_spanish_constraint_names.sql` |
+| files versus history | Every `V<n>__*.sql` file is applied, and the only ignored SQL files are the documented manual rollbacks `R14__restore_presupuestos_fk_id_tramite.sql`, `R45__rename_remaining_spanish_identifiers.sql`, `R46__rename_spanish_constraint_names.sql`, and `R51__grant_exporter_select_business_tables.sql` |
 | `10_history.sql` | No failed row; versions contiguous from 1 to the latest |
 | `20_config.sql` | Server major version 16; database encoding UTF8 |
-| `30_roles.sql` | The V12 exporter role exists, can log in, is not a superuser and belongs to `pg_monitor` only |
+| `30_roles.sql` | The V12 exporter role exists, can log in, is not a superuser and belongs to `pg_monitor` only; V51 grants SELECT on `deeds` / `budgets` / `people` / `users` |
 | `40_seed.sql` | Rows inserted by V2 and V10: users (default administrator), people, identification and document types, folio types, management statuses, concepts, procedure types, the demo workflow |
 | `50_schema.sql` | Every table has a primary key; foreign keys exist and are all validated |
 | renamed tables | Every table renamed by an `ALTER TABLE … RENAME TO` is gone under its old name (derived from the migrations themselves; `folios` keeps its name on purpose) |
 | second migrate | A repeat `migrate` applies nothing and leaves the history unchanged |
 | tamper detection | A copy of an applied migration with one extra line is rejected by `flyway validate` with a checksum mismatch, proving applied migrations are protected |
 
-### Why `R14__…` and `R45__…` are ignored
+### Why `R14__…`, `R45__…`, `R46__…`, and `R51__…` are ignored
 
-They are deliberate manual rollbacks for V14 and V45 (their own headers say Flyway must ignore them). The Flyway
-CLI reports "2 SQL migrations were detected but not run because they did not follow the filename
-convention", exactly as the backend's engine does. The suite asserts this so a stray misnamed
+They are deliberate manual rollbacks for V14 / V45 / V46 / V51 (their own headers say Flyway must ignore them). The Flyway
+CLI reports that those SQL migrations were detected but not run because they did not follow the filename
+convention, exactly as the backend's engine does. The suite asserts this so a stray misnamed
 migration cannot hide behind it.
 
 ## Coupling with the application

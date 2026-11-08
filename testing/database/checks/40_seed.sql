@@ -16,3 +16,8 @@ FROM counted ORDER BY tbl;
 SELECT CASE WHEN count(*) = 1 THEN 'PASS' ELSE 'FAIL' END
        || ' default administrator user exists and is enabled'
 FROM users WHERE username = 'admin' AND status;
+
+-- V52 (#1762): hard cutoff — seeded admin must store BCrypt, not legacy MD5.
+SELECT CASE WHEN password LIKE '$2%' THEN 'PASS' ELSE 'FAIL' END
+       || ' admin password is BCrypt (not legacy MD5)'
+FROM users WHERE lower(username) = 'admin';

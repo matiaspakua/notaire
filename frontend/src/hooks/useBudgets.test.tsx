@@ -6,14 +6,14 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 
-vi.mock("@/lib/api-client", () => ({
-  apiGet: vi.fn(),
-  apiPost: vi.fn(),
-  apiPut: vi.fn(),
-  apiDelete: vi.fn(),
+vi.mock("@/composition/budget", () => ({
+  budgetUseCases: {
+    create: vi.fn(),
+    loadItemsFromTemplate: vi.fn(),
+  },
 }));
 
-import { apiPost } from "@/lib/api-client";
+import { budgetUseCases } from "@/composition/budget";
 import { useCreateBudget } from "@/hooks/useBudgets";
 
 function createWrapper() {
@@ -30,30 +30,33 @@ describe("useCreateBudget (CU01, CU39)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("creates only the budget when no procedure type is given", async () => {
-    vi.mocked(apiPost).mockResolvedValue({ idBudget: 7 });
+    vi.mocked(budgetUseCases.create).mockResolvedValue({ idBudget: 7 });
 
     const { result } = renderHook(() => useCreateBudget(), { wrapper: createWrapper() });
     result.current.mutate({ data: { propertyAmount: 100 } });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(apiPost).toHaveBeenCalledTimes(1);
-    expect(apiPost).toHaveBeenCalledWith("/budgets", { propertyAmount: 100 });
+    expect(budgetUseCases.create).toHaveBeenCalledTimes(1);
+    expect(budgetUseCases.create).toHaveBeenCalledWith({ propertyAmount: 100 });
+    expect(budgetUseCases.loadItemsFromTemplate).not.toHaveBeenCalled();
     expect(result.current.data).toMatchObject({ budget: { idBudget: 7 }, itemsLoaded: false });
   });
 
   it("loads the template items into the new budget when a procedure type is given", async () => {
-    vi.mocked(apiPost).mockResolvedValueOnce({ idBudget: 7 }).mockResolvedValueOnce([{ idItem: 1 }]);
+    vi.mocked(budgetUseCases.create).mockResolvedValue({ idBudget: 7 });
+    vi.mocked(budgetUseCases.loadItemsFromTemplate).mockResolvedValue([{ idItem: 1 }]);
 
     const { result } = renderHook(() => useCreateBudget(), { wrapper: createWrapper() });
     result.current.mutate({ data: { propertyAmount: 100 }, procedureTypeId: 3 });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(apiPost).toHaveBeenNthCalledWith(2, "/budgets/7/items-from-template?procedureTypeId=3", undefined);
+    expect(budgetUseCases.loadItemsFromTemplate).toHaveBeenCalledWith(7, 3);
     expect(result.current.data).toMatchObject({ itemsLoaded: true });
   });
 
   it("keeps the created budget and reports no items when the template step fails", async () => {
-    vi.mocked(apiPost).mockResolvedValueOnce({ idBudget: 7 }).mockRejectedValueOnce(new Error("no template"));
+    vi.mocked(budgetUseCases.create).mockResolvedValue({ idBudget: 7 });
+    vi.mocked(budgetUseCases.loadItemsFromTemplate).mockRejectedValue(new Error("no template"));
 
     const { result } = renderHook(() => useCreateBudget(), { wrapper: createWrapper() });
     result.current.mutate({ data: { propertyAmount: 100 }, procedureTypeId: 3 });

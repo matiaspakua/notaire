@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useRef } from "react";
+import type { Versions } from "@/lib/tech-facts";
 
-const eras = [
+const erasFor = (v: Versions) => [
   {
     label: "2014",
     title: "The Monolith",
@@ -65,19 +66,19 @@ const procedure = await page.getByRole(
 await expect(procedure).toBeVisible();
 await procedure.click();
 
-// 200+ Playwright E2E tests
-// 84% JaCoCo line coverage
-// Grafana + Loki observability`,
+// Playwright E2E · JaCoCo coverage ratchet
+// OpenTelemetry · Grafana · Loki · Tempo`,
     stack: [
-      { name: "Next.js 15", icon: "▲" },
-      { name: "Claude AI", icon: "🤖" },
+      { name: `Java ${v.java ?? "—"}`, icon: "☕" },
+      { name: `Next.js ${v.next ?? "—"}`, icon: "▲" },
+      { name: "AI agents", icon: "🤖" },
       { name: "Playwright", icon: "🎭" },
       { name: "Grafana", icon: "📊" },
     ],
   },
 ];
 
-function EraCard({ era, index }: { era: (typeof eras)[0]; index: number }) {
+function EraCard({ era, index }: { era: ReturnType<typeof erasFor>[number]; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -137,12 +138,13 @@ function EraCard({ era, index }: { era: (typeof eras)[0]; index: number }) {
   );
 }
 
-export function TechEvolution() {
+export function TechEvolution({ versions }: { versions: Versions }) {
+  const eras = erasFor(versions);
   return (
     <section id="evolution" className="py-32 px-6" style={{ background: "var(--bg-mid)" }}>
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <p className="text-[#AF52DE] text-sm font-mono font-bold tracking-widest mb-4 uppercase">Tech Evolution</p>
+          <p className="text-factory-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">Tech Evolution</p>
           <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
             Three <span className="grad-green">Generations</span>
           </h2>

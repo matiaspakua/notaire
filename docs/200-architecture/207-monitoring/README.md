@@ -62,7 +62,11 @@ authoritative, up-to-date service list, ports, and credentials.
 **Metrics Collection:** Spring Boot Actuator with Micrometer
 
 - **Endpoint:** `http://localhost:8080/actuator/prometheus`
-- **Auth:** Basic Auth via `ACTUATOR_USER` / `ACTUATOR_PASSWORD` (set in `.env`)
+- **Auth:** Basic Auth via `ACTUATOR_USER` / `ACTUATOR_PASSWORD` (set in `.env`). Prometheus reads the same two values as
+  Compose secrets (`username_file` / `password_file` under `/run/secrets`), so no credential is committed in
+  `prometheus.yml` (#1657). `.env.example` ships a `change-me-actuator` placeholder; `start-infra.sh` and
+  `workspace/stack/start.sh` call `infra/scripts/ensure-actuator-credentials.sh`, which replaces a missing or
+  placeholder password with a random one and keeps any real value. Restart the backend after the value changes.
 - **Scrape Interval:** Every 10 seconds
 
 **Metrics Exposed:**
@@ -77,11 +81,24 @@ authoritative, up-to-date service list, ports, and credentials.
 `devsecops-otel-collector`, which Prometheus scrapes. The frontend serves Node runtime metrics at `/api/metrics`;
 cAdvisor and node-exporter cover containers and the host. On Docker Desktop the last two describe the Linux VM.
 OTLP export needs both `micrometer-registry-otlp` and `spring-boot-opentelemetry` on the backend classpath.
+OTLP metrics push is **opt-in** (`MANAGEMENT_OTLP_METRICS_EXPORT_ENABLED=true`); root `docker-compose.yml` enables it
+with the collector URL. When the flag is false (bare jar, ZAP CI, partial stack), the backend does not open the
+exporter and does not spam `UnknownHostException` ERROR (#1736). Actuator scrape stays on either way.
 
 **Tracing topology:** the backend uses the OpenTelemetry tracer (replacing Brave/Zipkin) and exports spans over OTLP to
-the collector, which forwards them to Tempo. Resource attribute `service.version` equals the packaged Maven
+the collector, which forwards them to Tempo when `MANAGEMENT_TRACING_EXPORT_OTLP_ENABLED=true` (set by Compose).
+Resource attribute `service.version` equals the packaged Maven
 `app.version` (#1591). JSON logs include `serviceVersion` with the same value. In Grafana, Explore -> Tempo finds traces
-by service/name; a trace links to its Loki logs by `service`. Frontend spans are not instrumented yet.
+by service/name; a trace links to its Loki logs by `service`. Frontend browser spans
+are opt-in via `NEXT_PUBLIC_OTEL_TRACES_ENABLED=true` (#1739): the Next.js layout
+passes the flag into a client `WebTracerProvider` (`service.name=notaire-frontend`)
+with fetch instrumentation; the browser posts OTLP to same-origin
+`POST /api/otlp/v1/traces`, and the Route Handler proxies to
+`OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` (Compose default:
+`http://devsecops-otel-collector:4318/v1/traces`). No PII attributes — only
+resource `service.name` / `service.version` and standard fetch span names.
+Root `docker-compose.yml` enables the flag for the full stack; without a collector
+the proxy returns 503 and the UI stays up.
 
 **Alerting:** Prometheus evaluates `alert-rules.yml` and `alert-rules-stack.yml` and sends firing alerts to Alertmanager
 (http://localhost:9093). Catalogue: `ServiceDown` and `TargetDown` (availability), `HighHttp5xxRatio`, `HighApiLatency`,
@@ -109,7 +126,10 @@ in its message, because Promtail keeps only the message and dashboards parse it 
 
 **Overview dashboards (start here):** `notaire-stack-status` (every service in the stack) and
 `notaire-status` (Notaire only). Both show availability from blackbox probes, firing alerts and recent
-errors, and link to the specialist dashboards below.
+errors, and link to the specialist dashboards below. `notaire-status` and `notaire-backend` also show
+the packaged product version (Micrometer tag `version=${app.version}`, same value as OTel
+`service.version`). Quality tooling: `notaire-quality` (SonarQube / sonar-db probes and how to run
+`bash infra/scripts/run-sonar.sh`).
 
 **Grafana Dashboard:** `notaire-backend` (pre-provisioned)
 

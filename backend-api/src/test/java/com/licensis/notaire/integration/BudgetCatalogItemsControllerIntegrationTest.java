@@ -21,7 +21,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.List;
 
 @RequirementCoverage({"CU71"})
 @SpringBootTest
@@ -85,7 +84,7 @@ class BudgetCatalogItemsControllerIntegrationTest {
 
         mockMvc.perform(post("/api/v1/budgets/" + budgetId + "/items-from-catalog")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(List.of(catalogItem.getIdItem()))))
+                        .content("{\"idItems\":[%d]}".formatted(catalogItem.getIdItem())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].name").value("Stamp IT"))
@@ -100,7 +99,7 @@ class BudgetCatalogItemsControllerIntegrationTest {
 
         mockMvc.perform(post("/api/v1/budgets/" + budgetId + "/items-from-catalog")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(List.of(999999))))
+                        .content("{\"idItems\":[999999]}"))
                 .andExpect(status().isNotFound());
     }
 
@@ -111,7 +110,7 @@ class BudgetCatalogItemsControllerIntegrationTest {
 
         mockMvc.perform(post("/api/v1/budgets/999999/items-from-catalog")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(List.of(catalogItem.getIdItem()))))
+                        .content("{\"idItems\":[%d]}".formatted(catalogItem.getIdItem())))
                 .andExpect(status().isNotFound());
     }
 }

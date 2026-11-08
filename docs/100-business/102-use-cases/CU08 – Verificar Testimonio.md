@@ -9,8 +9,8 @@
 | **Propósito** | Permite verificar un testimonio generado, registrando si quedó observado y, de ser así, el motivo. |
 | **Descripción** | El Escribano selecciona una escritura, de una lista de escrituras. El sistema presenta la información sobre los testimonios expedidos para la escritura seleccionada, indicando: número de testimonio, fecha de expedición, cantidad de copias generadas y observaciones. El Escribano selecciona el testimonio a verificar e indica si quedó observado; en caso afirmativo, indica el motivo de la observación. |
 | **Tipo** | Primario |
-| **Referencias Cruzadas** | RF #3 (Gestionar Trámites), RF #32 (Administrar inscripciones), RF #33 (Generar y registrar testimonios de escrituras), RF #120 (Impresión de testimonios); CU62 |
-| **GitHub ID** | #161 |
+| **Referencias Cruzadas** | RF #3 (Gestionar Trámites), RF #32 (Administrar inscripciones), RF #33 (Generar y registrar testimonios de escrituras), RF-94 (#119 Impresión de testimonios); CU62 |
+| **GitHub ID** | #161 (verify); #119 (printed copy) |
 
 ## Curso de Eventos
 
@@ -28,3 +28,12 @@
 | Paso | Condición / Evento | Acción del Sistema / Actor |
 |---|---|---|
 | 2.1 | La escritura seleccionada no tiene testimonios expedidos. | El sistema gestiona la excepción y notifica al usuario. |
+
+## Printed copy (RF-94 / #119)
+
+`GET /api/v1/reports/testimonies/{idTestimony}/copies` returns a PDF only when
+the testimony is verified (otherwise 400; unknown id is 404). The PDF shows
+recorded fields: testimony number, verified/observed, notes, copy count, deed
+number, deed date, and deed body. Missing values are `N/A`. The system does
+not invent special-sheet geometry, a signature block, or official-form wording.
+Filename: `testimonio_{id}_copia.pdf`.

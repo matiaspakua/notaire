@@ -11,17 +11,19 @@
 # running for its server-backed suites and it only prints to the terminal —
 # there is no single, reviewable artifact proving a branch is ready. This
 # script is that single command: it brings the stack up itself, runs every
-# gate, adds the one gate that exists nowhere else in the repo yet
+# gate, executes SonarQube static analysis and security quality gates when
+# infra is available, adds the one gate that exists nowhere else in the repo yet
 # (markdown-lint), and writes one HTML dashboard + one log per run.
 #
 # COMPOSITION, NOT DUPLICATION
 # -----------------------------
 # This script does not reimplement any check — it calls:
 #   - workspace/sdlc/validate-sdlc-plan.sh
-#   - python3 security/run_gates.py     (security case catalog, before the PR)
-#   - workspace/stack/start.sh          (idempotent; blocks until backend+frontend healthy)
-#   - python3 security/run_gates.py --only dast   (baseline once the API is up)
+#   - python3 security/run_gates.py          (security case catalog, before the PR)
+#   - workspace/stack/start.sh               (idempotent; blocks until backend+frontend healthy)
+#   - python3 security/run_gates.py --only dast (baseline once the API is up)
 #   - workspace/sdlc/preflight.sh --full
+#   - infra/scripts/run-sonar.sh             (SonarQube quality gate when infra is up)
 # Add or change a gate in preflight.sh or .github/workflows/ and this script
 # picks it up automatically; nothing to update here.
 #
@@ -32,6 +34,8 @@
 # security dast baseline           dast-zap.yml (deeper; local check is the baseline)
 # preflight --full (everything     ci.yml, pr-validation.yml, frontend-ci.yml,
 #   preflight.sh --list covers)      playwright-e2e.yml (via preflight.sh)
+# sonarqube quality gate           infra/scripts/run-sonar.sh (Notaire way QG:
+#                                   new blocker/crit/maj=0, new cov>=70%)
 # markdown-lint (changed *.md      CI job: none — local-only for now, see
 #   files only, ratchet vs main)     issue #856. Same ratchet policy as the
 #                                     backend's Spotless gate (issue #705):
@@ -39,7 +43,12 @@
 #                                     linted, so pre-existing docs are unaffected.
 #
 # USAGE
-#   bash workspace/sdlc/run_pipeline.sh
+#   bash workspace/sdlc/run_pipeline.sh                 # default mandatory pre-PR run
+#   bash workspace/sdlc/run_pipeline.sh --with-infra    # boot infra (SonarQube) and enforce Sonar QG
+#   bash workspace/sdlc/run_pipeline.sh --require-sonar # fail if SonarQube is unreachable or fails QG
+#   bash workspace/sdlc/run_pipeline.sh --skip-sonar    # skip the SonarQube gate (not with the two above)
+#   bash workspace/sdlc/run_pipeline.sh --fast          # fast local checks (skip server-backed suites)
+#   bash workspace/sdlc/run_pipeline.sh --fix           # auto-fix what is fixable before validating
 #
 # Dashboard + logs are written under reports/pipeline/<timestamp>/ (git-ignored); previous runs are
 # deleted first, so only the latest run is kept.
@@ -49,12 +58,28 @@ set -uo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$REPO_ROOT" || exit 1
 
+WITH_INFRA=0
+REQUIRE_SONAR=0
+SKIP_SONAR=0
+FAST_MODE=0
+PREFLIGHT_ARGS=("--full")
+
 for arg in "$@"; do
     case "$arg" in
-        -h|--help) sed -n '3,39p' "${BASH_SOURCE[0]}"; exit 0 ;;
+        -h|--help) sed -n '3,56p' "${BASH_SOURCE[0]}"; exit 0 ;;
+        --with-infra) WITH_INFRA=1; REQUIRE_SONAR=1 ;;
+        --require-sonar) REQUIRE_SONAR=1 ;;
+        --skip-sonar) SKIP_SONAR=1 ;;
+        --fast) FAST_MODE=1; PREFLIGHT_ARGS=("--fast") ;;
+        --fix) PREFLIGHT_ARGS=("--fix") ;;
         *) echo "unknown option: $arg (try --help)"; exit 2 ;;
     esac
 done
+
+if [ "$SKIP_SONAR" -eq 1 ] && { [ "$WITH_INFRA" -eq 1 ] || [ "$REQUIRE_SONAR" -eq 1 ]; }; then
+    echo "--skip-sonar cannot be combined with --with-infra or --require-sonar" >&2
+    exit 2
+fi
 
 RED=$'\033[0;31m'; GREEN=$'\033[0;32m'; YELLOW=$'\033[1;33m'; BLUE=$'\033[0;34m'; NC=$'\033[0m'
 
@@ -108,16 +133,35 @@ OVERALL_FAILED=0
 phase "sdlc plan validation" bash workspace/sdlc/validate-sdlc-plan.sh || OVERALL_FAILED=1
 
 # -----------------------------------------------------------------------------
-# 2. Security case catalog (threat model, secrets, Semgrep, Trivy). DAST waits
+# 2. markdown-lint — ratchet vs origin/main (same policy as Spotless gate, issue #705)
+#    Fail fast before any heavy builds if documentation syntax is broken.
+# -----------------------------------------------------------------------------
+git fetch origin main --quiet 2>/dev/null || true
+mapfile -t CHANGED_MD < <(git diff --name-only origin/main...HEAD -- '*.md' 2>/dev/null | while read -r f; do [ -f "$f" ] && echo "$f"; done)
+
+if [ ! -x frontend/node_modules/.bin/markdownlint-cli2 ]; then
+    phase_skip "markdown-lint" "frontend/node_modules not installed — run 'cd frontend && npm ci'"
+elif [ "${#CHANGED_MD[@]}" -eq 0 ]; then
+    phase_skip "markdown-lint" "no *.md files changed vs origin/main"
+else
+    phase "markdown-lint" frontend/node_modules/.bin/markdownlint-cli2 --no-globs "${CHANGED_MD[@]}" || OVERALL_FAILED=1
+fi
+
+# -----------------------------------------------------------------------------
+# 3. Security case catalog (threat model, secrets, Semgrep, Trivy). DAST waits
 #    until the API is up. preflight skips this phase when it already ran here.
 # -----------------------------------------------------------------------------
 phase "security gates" python3 security/run_gates.py --profile local --skip-dast --report-dir "$REPORT_DIR/security" || OVERALL_FAILED=1
 export NOTAIRE_SECURITY_GATES_DONE=1
 
 # -----------------------------------------------------------------------------
-# 3. Bring the Docker stack up (idempotent; blocks until backend+frontend are healthy)
+# 4. Bring the Application Docker stack up (idempotent; blocks until backend+frontend are healthy).
+#    Fast mode deliberately avoids every live-server phase.
 # -----------------------------------------------------------------------------
-if docker info >/dev/null 2>&1; then
+if [ "$FAST_MODE" -eq 1 ]; then
+    phase_skip "docker stack up" "--fast"
+    phase_skip "security dast baseline" "--fast"
+elif docker info >/dev/null 2>&1; then
     phase "docker stack up" bash workspace/stack/start.sh || OVERALL_FAILED=1
     phase "security dast baseline" python3 security/run_gates.py --profile local --only dast --no-install --base-url "http://127.0.0.1:${BACKEND_PORT:-8080}" --report-dir "$REPORT_DIR/security-dast" || OVERALL_FAILED=1
 else
@@ -126,37 +170,50 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# 3. Everything preflight.sh --full covers (format, lint, backend, frontend,
-#    Bruno API tests, Playwright E2E, Docker build/smoke — see preflight.sh --list)
+# 5. Bring the Infra stack up if requested (Observability + SonarQube)
 # -----------------------------------------------------------------------------
-phase "preflight --full" bash workspace/sdlc/preflight.sh --full || OVERALL_FAILED=1
-
-# -----------------------------------------------------------------------------
-# 4. markdown-lint — ratchet vs origin/main (same policy as the Spotless gate,
-#    issue #705): only files this branch actually touches are linted, so the
-#    thousands of pre-existing violations across docs/ are never in scope.
-# -----------------------------------------------------------------------------
-git fetch origin main --quiet 2>/dev/null
-mapfile -t CHANGED_MD < <(git diff --name-only origin/main...HEAD -- '*.md' 2>/dev/null | while read -r f; do [ -f "$f" ] && echo "$f"; done)
-
-if [ ! -x frontend/node_modules/.bin/markdownlint-cli2 ]; then
-    phase_skip "markdown-lint" "frontend/node_modules not installed — run 'cd frontend && npm ci'"
-elif [ "${#CHANGED_MD[@]}" -eq 0 ]; then
-    phase_skip "markdown-lint" "no *.md files changed vs origin/main"
-else
-    # --no-globs: without it, the config's "globs" property (needed so a bare
-    # `markdownlint-cli2` run still has a sane default) overrides these explicit
-    # ratcheted paths and lints the whole repo instead.
-    phase "markdown-lint" frontend/node_modules/.bin/markdownlint-cli2 --no-globs "${CHANGED_MD[@]}" || OVERALL_FAILED=1
+if [ "$WITH_INFRA" -eq 1 ]; then
+    if docker info >/dev/null 2>&1; then
+        phase "infra stack up (sonarqube)" bash infra/scripts/start-infra.sh || OVERALL_FAILED=1
+    else
+        phase_skip "infra stack up" "docker not running — cannot boot infra"
+    fi
 fi
 
 # -----------------------------------------------------------------------------
-# 5. Best-effort dashboard artifacts (never fail the pipeline over a report)
+# 6. Everything preflight.sh covers (format, lint, backend, frontend,
+#    Bruno API tests, Playwright E2E, Docker build/smoke — see preflight.sh --list)
+# -----------------------------------------------------------------------------
+phase "preflight --full" bash workspace/sdlc/preflight.sh "${PREFLIGHT_ARGS[@]}" || OVERALL_FAILED=1
+
+# -----------------------------------------------------------------------------
+# 7. SonarQube code quality & security quality gate (backend + frontend)
+# -----------------------------------------------------------------------------
+SONAR_URL="http://localhost:9000"
+SONAR_STATUS="$(curl -s -m 3 "$SONAR_URL/api/system/status" 2>/dev/null | sed -n 's/.*"status":"\([A-Z]*\)".*/\1/p' || true)"
+
+if [ "$SKIP_SONAR" -eq 1 ]; then
+    phase_skip "sonarqube quality gate" "--skip-sonar requested"
+elif [ "$SONAR_STATUS" = "UP" ]; then
+    phase "sonarqube quality gate" bash infra/scripts/run-sonar.sh || OVERALL_FAILED=1
+elif [ "$REQUIRE_SONAR" -eq 1 ]; then
+    phase "sonarqube quality gate" bash -c "echo 'SonarQube is required but unreachable at $SONAR_URL (status: $SONAR_STATUS)' >&2; exit 1" || OVERALL_FAILED=1
+else
+    phase_skip "sonarqube quality gate" "SonarQube not running at $SONAR_URL (run with --with-infra or start via bash infra/scripts/start-infra.sh)"
+fi
+
+# -----------------------------------------------------------------------------
+# 8. Best-effort dashboard artifacts (never fail the pipeline over a report)
 # -----------------------------------------------------------------------------
 if [ -d frontend/node_modules ]; then
     (cd frontend && ./node_modules/.bin/eslint src -f html -o "$REPORT_DIR/eslint-report.html") >/dev/null 2>&1 || true
 fi
 mvn checkstyle:checkstyle -pl backend-api --no-transfer-progress -q >/dev/null 2>&1 || true
+
+SONAR_SEVERITY_SUMMARY=""
+if [ -f "infra/scripts/sonar-severity-report.py" ] && [ "$SONAR_STATUS" = "UP" ]; then
+    SONAR_SEVERITY_SUMMARY="$(python3 infra/scripts/sonar-severity-report.py 2>/dev/null || true)"
+fi
 
 # -----------------------------------------------------------------------------
 # Dashboard
@@ -172,7 +229,7 @@ DASHBOARD="$REPORT_DIR/index.html"
     echo "<style>body{font-family:-apple-system,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem}"
     echo "h1{color:$OVERALL_COLOR} table{width:100%;border-collapse:collapse} td,th{padding:8px;border-bottom:1px solid #ddd;text-align:left}"
     echo ".PASS{color:#1a7f37;font-weight:600} .FAIL{color:#cf222e;font-weight:600} .SKIP{color:#9a6700;font-weight:600}"
-    echo "a{color:#0969da}</style></head><body>"
+    echo "a{color:#0969da} pre{background:#f6f8fa;padding:12px;border-radius:6px;overflow-x:auto}</style></head><body>"
     echo "<h1>run_pipeline.sh — $OVERALL_LABEL</h1>"
     echo "<p>Run: $TIMESTAMP &middot; Duration: ${TOTAL_DURATION}s &middot; Branch: $(git rev-parse --abbrev-ref HEAD)</p>"
     echo "<table><tr><th>Gate</th><th>Status</th><th>Duration</th><th>Log</th></tr>"
@@ -182,7 +239,14 @@ DASHBOARD="$REPORT_DIR/index.html"
         [ -n "$logf" ] && link="<a href=\"file://$logf\">log</a>"
         echo "<tr><td>$name</td><td class=\"$status\">$status</td><td>${dur}s</td><td>$link</td></tr>"
     done
-    echo "</table><h2>Artifacts</h2><ul>"
+    echo "</table>"
+
+    if [ -n "$SONAR_SEVERITY_SUMMARY" ]; then
+        echo "<h2>SonarQube Code Quality & Security</h2>"
+        echo "<pre>$SONAR_SEVERITY_SUMMARY</pre>"
+    fi
+
+    echo "<h2>Artifacts</h2><ul>"
     [ -f "$REPO_ROOT/backend-api/target/site/jacoco/index.html" ] && \
         echo "<li><a href=\"file://$REPO_ROOT/backend-api/target/site/jacoco/index.html\">Backend coverage (JaCoCo)</a></li>"
     [ -f "$REPO_ROOT/backend-api/target/checkstyle-result.html" ] && \
@@ -197,6 +261,8 @@ DASHBOARD="$REPORT_DIR/index.html"
         echo "<li><a href=\"file://$REPORT_DIR/security/index.html\">Security cases</a></li>"
     [ -f "$REPORT_DIR/security-dast/index.html" ] && \
         echo "<li><a href=\"file://$REPORT_DIR/security-dast/index.html\">Security DAST baseline</a></li>"
+    echo "<li><a href=\"http://localhost:9000/dashboard?id=notaire-backend\" target=\"_blank\">SonarQube Backend Dashboard</a></li>"
+    echo "<li><a href=\"http://localhost:9000/dashboard?id=notaire-frontend\" target=\"_blank\">SonarQube Frontend Dashboard</a></li>"
     echo "</ul><p><a href=\"file://$SUMMARY_LOG\">Full pipeline log</a></p>"
     echo "</body></html>"
 } > "$DASHBOARD"

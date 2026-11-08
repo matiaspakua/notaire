@@ -50,7 +50,10 @@
     "add": "Add",
     "search": "Search",
     "loading": "Loading...",
+    "retry": "Retry",
+    "loadError": "Could not load the list",
     "generating": "Generating...",
+
     "id": "ID",
     "name": "Name",
     "description": "Description",
@@ -66,6 +69,7 @@
     "downloadPdf": "Download PDF",
     "noData": "No data",
     "required": "required",
+    "fieldRequired": "This field is required",
     "optional": "optional",
     "language": "Language",
     "all": "All",
@@ -96,6 +100,7 @@
     "hello": "Hello",
     "today": "Today's activity summary",
     "availableModules": "Available modules",
+    "loadError": "Some dashboard totals could not be loaded",
     "accessDenied": "You do not have permission to access that administration section.",
     "workflowProgress": "Workflow progress",
     "workflow": {
@@ -206,6 +211,7 @@
     "duplicateDocument": "Another person is already registered with this document.",
     "viewExisting": "View existing person",
     "noData": "No people registered",
+    "loadError": "Could not load the people list",
     "filterClients": "Clients only",
     "fields": {
       "nombre": "First name",
@@ -241,6 +247,7 @@
   },
   "gestiones": {
     "title": "Cases",
+    "defaultHeadingLabel": "Case",
     "newGestion": "New case",
     "editGestion": "Edit case",
     "created": "Case created",
@@ -251,6 +258,7 @@
     "errorSave": "Error saving case",
     "errorDelete": "Error deleting case",
     "noData": "No cases registered",
+    "loadError": "Could not load the cases",
     "filterByCliente": "Filter by client...",
     "archiveGestion": "Archive case",
     "archiveConfirmTitle": "Archive this case?",
@@ -357,6 +365,7 @@
     "errorSave": "Error saving",
     "errorDelete": "Error deleting",
     "noData": "No deeds registered",
+    "loadError": "Could not load the deeds",
     "searchPlaceholder": "Search by number...",
     "firmarEscritura": "Sign deed",
     "firmada": "Deed signed",
@@ -762,6 +771,7 @@
     "errorSave": "Error saving",
     "errorDelete": "Error deleting",
     "noData": "No quotes registered",
+    "loadError": "Could not load the quotes",
     "searchPlaceholder": "Search by ID or client...",
     "fields": {
       "cliente": "Client",
@@ -1356,6 +1366,11 @@
     "description": "Generate reports and PDF documents",
     "generated": "PDF generated and downloaded",
     "errorGenerate": "Error generating report (backend required)",
+    "catalogLoadError": "Could not load notaries or folio types for the report filters",
+    "sections": {
+      "quotesAndCases": "Quotes and cases",
+      "swornAndBooks": "Sworn statements and books"
+    },
     "fields": {
       "presupuestoId": "Budget ID",
       "gestionId": "Case ID",

@@ -1,16 +1,20 @@
 /**
  * Unit tests for the management case summary hooks (#774 — deeds, testimonies, copies, payments).
+ * Hexagon wiring: #1839 / ADR-030.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 
-vi.mock("@/lib/api-client", () => ({
-  apiGet: vi.fn(),
+vi.mock("@/composition/management", () => ({
+  managementUseCases: {
+    getCaseSummary: vi.fn(),
+    getFinancialSummary: vi.fn(),
+  },
 }));
 
-import { apiGet } from "@/lib/api-client";
+import { managementUseCases } from "@/composition/management";
 import { managementSummaryKeys, useManagementCaseSummary, useManagementFinancialSummary } from "@/hooks/useManagementSummary";
 
 function createWrapper() {
@@ -31,31 +35,41 @@ describe("managementSummaryKeys", () => {
 describe("useManagementCaseSummary (#774)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("fetches the case summary via GET /managements/{id}/case-summary", async () => {
-    vi.mocked(apiGet).mockResolvedValue({ managementId: 4, deeds: [] });
+  it("fetches the case summary via the management use case", async () => {
+    vi.mocked(managementUseCases.getCaseSummary).mockResolvedValue({
+      managementId: 4,
+      managementNumber: 4,
+      deeds: [],
+      documents: [],
+    });
 
     const { result } = renderHook(() => useManagementCaseSummary(4), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(apiGet).toHaveBeenCalledWith("/managements/4/case-summary");
+    expect(managementUseCases.getCaseSummary).toHaveBeenCalledWith(4);
   });
 
   it("does not fetch without a management id", () => {
     renderHook(() => useManagementCaseSummary(undefined), { wrapper: createWrapper() });
 
-    expect(apiGet).not.toHaveBeenCalled();
+    expect(managementUseCases.getCaseSummary).not.toHaveBeenCalled();
   });
 });
 
 describe("useManagementFinancialSummary (CU47)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("fetches the financial summary via GET /managements/{id}/financial-summary", async () => {
-    vi.mocked(apiGet).mockResolvedValue({ idManagement: 4, totalCollected: 100 });
+  it("fetches the financial summary via the management use case", async () => {
+    vi.mocked(managementUseCases.getFinancialSummary).mockResolvedValue({
+      idManagement: 4,
+      totalBudgeted: 0,
+      totalCollected: 100,
+      pendingBalance: 0,
+    });
 
     const { result } = renderHook(() => useManagementFinancialSummary(4), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(apiGet).toHaveBeenCalledWith("/managements/4/financial-summary");
+    expect(managementUseCases.getFinancialSummary).toHaveBeenCalledWith(4);
   });
 });

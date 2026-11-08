@@ -10,6 +10,7 @@ import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
 import { apiGet, apiPost, uniqueId } from "./setup/api-helpers";
 import { chooseDeed } from "./setup/deed-picker";
+import { assertPdfDownload } from "./setup/pdf-helpers";
 
 interface TestimonyApiResult {
   idTestimony: number;
@@ -61,7 +62,7 @@ test.describe("CU07/CU08 - Generate and verify a testimony", () => {
     const downloadPromise = page.waitForEvent("download");
     await page.getByTestId(`btn-issue-copy-${idTestimony}`).click();
     const download = await downloadPromise;
-    expect(download.suggestedFilename()).toMatch(/^testimonio_\d+_copia\.pdf$/);
+    await assertPdfDownload(download, /^testimonio_\d+_copia\.pdf$/, [`E2E content ${number}`]);
   });
 
   test("Edge: verifying with notes shows the testimony as Observado", async ({ page }) => {
