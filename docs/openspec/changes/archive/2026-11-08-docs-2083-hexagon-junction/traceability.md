@@ -35,8 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `CHANGELOG.md` | yes | pending |
-| `/docs/hexagonal/` and `/ai-sdlc/` | yes | pending |
+| `CHANGELOG.md` | yes | `ff84f71a` |
+| `github-page/app/docs/hexagonal/page.tsx` | yes | `ff84f71a` |
+| `github-page/app/ai-sdlc/page.tsx` | yes | `ff84f71a` |
 
 ## Gate log
 
