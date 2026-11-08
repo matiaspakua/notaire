@@ -15,7 +15,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/docs-2086-factory-routing/` | active |
 | Branch | `cursor/factory-phase1-routing-b7c4` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
+| Commits | `90bff81b` tests red; `a57a0cbc` routing; `686ed2b2` cloud path | created |
 | Pull Request | pending | pending |
 | CI run | Local `preflight.sh --full`. GitHub does not re-run it (#2001) | pending |
 | Merge commit | pending | pending |
