@@ -6,6 +6,7 @@ import { READING_PATH, STAGES } from "@/lib/artifacts-content";
 import { DOCS_PAGES, search } from "@/lib/site";
 import { cardsFor, DRAWERS, pullFor } from "@/components/figures/cabinet/geometry";
 import { GATES, STOPS } from "@/components/figures/gateline/geometry";
+import { FACES, readoutFor, SEAT_MAX, seatVector } from "@/components/figures/hexmanifold/geometry";
 import { LIFECYCLE_PHASES } from "@/lib/ai-sdlc-content";
 
 const ROOT = path.resolve(__dirname, "..", "..");
@@ -80,5 +81,28 @@ describe("gated line (#2067)", () => {
       const stop = STOPS.find((s) => s.n === g.n);
       expect(g.x - (stop?.x ?? 0)).toBeGreaterThan(10);
     }
+  });
+});
+
+describe("hexagonal port manifold (#2083)", () => {
+  it("maps six faces to ports and adapters around a sealed domain", () => {
+    expect(FACES).toHaveLength(6);
+    expect(FACES.map((f) => f.key)).toEqual(["web", "security", "in", "out", "persist", "pdf"]);
+    expect(FACES.some((f) => f.kind === "port")).toBe(true);
+    expect(FACES.filter((f) => f.kind.includes("adapter"))).toHaveLength(4);
+  });
+
+  it("seats each plug toward the core on a non-zero screen vector", () => {
+    expect(SEAT_MAX).toBeGreaterThan(8);
+    for (let i = 0; i < FACES.length; i += 1) {
+      const [vx, vy] = seatVector(i);
+      expect(Math.hypot(vx, vy), `face ${i}`).toBeGreaterThan(0.2);
+      expect(readoutFor(i)).toContain(FACES[i].layer);
+    }
+  });
+
+  it("is linked from the hexagonal docs page in the site map", () => {
+    expect(DOCS_PAGES.map((p) => p.href)).toContain("/docs/hexagonal/");
+    expect(search("hexagonal ports").map((r) => r.href)).toContain("/docs/hexagonal/");
   });
 });
