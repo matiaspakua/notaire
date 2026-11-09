@@ -94,7 +94,7 @@ otherwise off. `core.*` / `security.*` cannot relax policy; required gates canno
 | `report [--json] [--since DATE] [--html PATH] [--lead-time-fixture F]` | Pass rate, median duration and last status per gate; cost per model and agent. `--html` writes a read-only static monitor (stage/cost/lead-time); never renders prompts, diffs or secrets (#2142). | — |
 | `improve propose [--json] [--since DATE]` | Evidence → proposal artifact under `.aisdlc/proposals/` (friction → candidate paths). Empty friction is `no-evaluable` and writes no file (#2157). Never commits; never mutates policy in place (#2141). | — |
 | `improve validate --file F` | Proposal stays `proposed`/`commits=false`; agent cannot approve; protected candidates require Owner merge. | self-approval or wrong merge rule |
-| `improve autonomy [--json] [--since DATE]` | Wilson lower bound (95%) on clean stage passes; `no-evaluable` under n=30; demote to L1 on first incident. | — |
+| `improve autonomy [--json] [--since DATE]` | Wilson L0 from required `signal` gates (skip ≠ pass); `no-evaluable` under n=30; never claims L3; demote to L1 on first incident (#2163). | — |
 | `cost --agent A --model M --input N --output N [--usd X] [--issue N]` | Records an agent run's tokens, priced from `[cost.prices]` when `--usd` is omitted. Also feeds the TelemetryPort cost hook (no-op unless `[telemetry] enabled`). | — |
 
 Exit code 2 always means usage or configuration error (no profile, invalid profile, unknown base revision).
