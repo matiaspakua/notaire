@@ -52,7 +52,12 @@ def evaluate(commits: list[dict[str, str]], policy: CommitterPolicy) -> dict[str
         "note": "dry-run policy check only — does not claim OS isolation",
     }
     if not policy.evaluable():
-        return {**base, "status": "no-evaluable", "detail": "no [committer] patterns configured"}
+        return {
+            **base,
+            "status": "no-evaluable",
+            "detail": "no runtime committer identity configured "
+            "(set committer.runtime_names or runtime_emails to activate)",
+        }
 
     runtime_enforced = bool(policy.runtime_names or policy.runtime_emails)
     violations: list[dict[str, Any]] = []

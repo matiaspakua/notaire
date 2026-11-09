@@ -10,6 +10,13 @@ Epic [#2134](https://github.com/matiaspakua/notaire/issues/2134) **P0–P3 spine
 ASLI-31 / [#2161](https://github.com/matiaspakua/notaire/issues/2161) closes the epic
 docs; next work is Deferred only (Isolator / Wilson / ForgePort) — no portal.
 
+**Sole-committer dry-run** ([#2167](https://github.com/matiaspakua/notaire/issues/2167) /
+[#2169](https://github.com/matiaspakua/notaire/issues/2169)): `aisdlc committer` is
+**axiom-2 policy evidence** (who authored commits since base). It is **not** an OS
+Isolator and never claims sandbox isolation. Notaire’s pre-pr gate is opt-in
+(`required = false`) and stays `no-evaluable` until the Owner sets
+`[committer] runtime_names` / `runtime_emails`.
+
 The canonical root is [`framework/ai-sdlc`](../../../framework/ai-sdlc/README.md).
 Decisions: [ADR-001](../../../framework/ai-sdlc/docs/adr/ADR-001-canonical-root.md),
 [ADR-002](../../../framework/ai-sdlc/docs/adr/ADR-002-ports-and-trust.md),

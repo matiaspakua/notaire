@@ -55,13 +55,9 @@ class CommitterPolicy:
     agent_trailers: tuple[str, ...] = ()
 
     def evaluable(self) -> bool:
-        return bool(
-            self.runtime_names
-            or self.runtime_emails
-            or self.agent_names
-            or self.agent_emails
-            or self.agent_trailers
-        )
+        # Opt-in (#2169): only when a runtime sole-committer identity is declared.
+        # Agent deny lists alone stay no-evaluable so greenfield PRs are not failed.
+        return bool(self.runtime_names or self.runtime_emails)
 
 
 @dataclass(frozen=True)

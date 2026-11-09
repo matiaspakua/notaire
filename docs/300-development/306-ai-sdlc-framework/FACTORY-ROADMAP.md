@@ -221,7 +221,9 @@ this ordered spine.**
 
 ### Deferred (after ports exist)
 
-- Isolator + agent-never-commits runtime (V1 M0/M1 / D1–D7 class) — **not** in P0–P3.
+- Isolator + agent-never-commits **runtime** (V1 M0/M1 / D1–D7 class) — **not** in P0–P3.
+  Thin **policy** dry-run already exists (`aisdlc committer`, #2167/#2169): axiom-2 evidence,
+  opt-in / no-evaluable until `runtime_*` is set — **not** OS isolation.
 - ForgePort attestations / `factory/gate` on GitHub checks.
 - Wilson autonomy promotion (L0–L4).
 - Full ApprovalPort (SSH/DSSE).
