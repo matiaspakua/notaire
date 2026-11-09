@@ -40,6 +40,20 @@ forbid_in_generic = ['notaire', 'backend-api', 'workspace/sdlc', 'docs/openspec'
 [evidence]
 dir = ".aisdlc/evidence"     # hash-chained; `aisdlc evidence verify` (cross-repo assessment 2026-11)
 
+# Sole-committer dry-run (#2167): axiom 2 as policy, not an OS Isolator.
+# required=false → advisory (exit 0 on fail). Never claims sandbox isolation.
+[committer]
+required = false
+runtime_names = []
+runtime_emails = []
+agent_names = ["cursor[bot]", "Cursor Agent", "github-actions[bot]", "dependabot[bot]"]
+agent_emails = [
+  "41898282+github-actions[bot]@users.noreply.github.com",
+  "49699333+dependabot[bot]@users.noreply.github.com",
+  "*+cursor[bot]@users.noreply.github.com",
+]
+agent_trailers = ["Made-with: Cursor", "Co-authored-by: Cursor"]
+
 # TelemetryPort (#2125): off by default. Optional OTel NoOp path when enabled; no exporter.
 [telemetry]
 enabled = false

@@ -85,6 +85,7 @@ otherwise off. `core.*` / `security.*` cannot relax policy; required gates canno
 | `commits [--base R]` | Commit subjects match `[commits] pattern` (Conventional Commits by default). | a subject does not match |
 | `tdd [--base R]` | Production globs changed ⇒ test globs changed too. | code without tests |
 | `protected [--base R]` | Owner-only paths (`[protected] paths`) changed since the base: the policy, gates, harness and merge path. Agents may propose such a change; a person merges it. | an owner-only path changed |
+| `committer [--base R] [--json]` | Sole-committer **dry-run** (#2167): flag agent-authored commits (name/email/trailer) vs optional runtime allowlist. `no-evaluable` when unset; exit 1 only if `[committer] required = true`. Never claims OS isolation. | required policy and agent commit found |
 | `size [--base R] [--limit N]` | Changed lines since the base stay within the review budget (`[size] limit`, default 400); `exclude` globs and binary files do not count. | over the budget |
 | `scope [--base R] [--strict]` | Changed paths stay inside the write set that the change record declares under `[scope] heading` (default `### Write set`, globs in backticks; HTML comments ignored). No record with a write set ⇒ *not evaluable* (exit 0, or 1 with `--strict`). | a path outside the write set |
 | `evidence verify [--anchor D]` | The ledger and the cost log are hash-chained (`prev` = SHA-256 of the line before); reports any edited, deleted or reordered record and prints the head digest. A chain cannot see a truncated tail, so anchor the digest outside the agents' reach (PR body, commit) and pass it back with `--anchor`: the check fails if that record is gone. An empty ledger reports NO EVIDENCE, never PASSED. | the chain is broken, or an anchored record is missing |
@@ -147,6 +148,12 @@ dir = ".aisdlc/evidence"
 [protected]                   # owner-only paths: policy, gates, harness, merge path
 paths = ["CONSTITUTION.md", "aisdlc.toml", ".github/workflows/**"]
 owner = "the Owner"
+
+[committer]                   # sole-committer dry-run (#2167); required=false is advisory
+required = false
+agent_names = ["cursor[bot]", "github-actions[bot]"]
+agent_emails = ["*@users.noreply.github.com"]
+agent_trailers = ["Made-with: Cursor"]
 
 [size]                        # review budget
 limit = 400

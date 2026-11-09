@@ -44,6 +44,27 @@ class ProfileError(Exception):
 
 
 @dataclass(frozen=True)
+class CommitterPolicy:
+    """Dry-run sole-committer policy (#2167). Never implies OS isolation."""
+
+    required: bool = False
+    runtime_names: tuple[str, ...] = ()
+    runtime_emails: tuple[str, ...] = ()
+    agent_names: tuple[str, ...] = ()
+    agent_emails: tuple[str, ...] = ()
+    agent_trailers: tuple[str, ...] = ()
+
+    def evaluable(self) -> bool:
+        return bool(
+            self.runtime_names
+            or self.runtime_emails
+            or self.agent_names
+            or self.agent_emails
+            or self.agent_trailers
+        )
+
+
+@dataclass(frozen=True)
 class Gate:
     name: str
     stage: str
@@ -135,6 +156,7 @@ class Profile:
     telemetry: TelemetrySettings = field(default_factory=TelemetrySettings)
     flags: FlagsSettings = field(default_factory=FlagsSettings)
     catalogs_dir: str | None = None
+    committer: CommitterPolicy = field(default_factory=CommitterPolicy)
 
     def stages(self) -> list[str]:
         declared = {g.stage for g in self.gates}
@@ -237,8 +259,31 @@ def _build(data: dict, errors: list[str]) -> Profile:
     ):
         errors.append(f"catalogs.dir must be a non-empty string, got {profile.catalogs_dir!r}")
         profile.catalogs_dir = None
+    profile.committer = _committer(data.get("committer", {}), errors)
     _check_prices(profile.prices, errors)
     return profile
+
+
+def _committer(raw: dict, errors: list[str]) -> CommitterPolicy:
+    required = bool(raw.get("required", False))
+
+    def strings(key: str) -> tuple[str, ...]:
+        value = raw.get(key, [])
+        if value is None:
+            return ()
+        if not isinstance(value, list) or any(not isinstance(item, str) for item in value):
+            errors.append(f"committer.{key} must be a list of strings")
+            return ()
+        return tuple(item for item in value if item.strip())
+
+    return CommitterPolicy(
+        required=required,
+        runtime_names=strings("runtime_names"),
+        runtime_emails=strings("runtime_emails"),
+        agent_names=strings("agent_names"),
+        agent_emails=strings("agent_emails"),
+        agent_trailers=strings("agent_trailers"),
+    )
 
 
 def _flags(raw: dict, errors: list[str]) -> FlagsSettings:

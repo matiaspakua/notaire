@@ -13,6 +13,7 @@ from aisdlc import (
     catalogs,
     change,
     checks,
+    committer,
     diffchecks,
     evidence,
     gates,
@@ -123,6 +124,12 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("scope", help="changed paths stay inside the change record's write set")
     p.add_argument("--base")
     p.add_argument("--strict", action="store_true", help="fail when no change record declares a write set")
+    p = sub.add_parser(
+        "committer",
+        help="sole-committer dry-run: flag agent-authored commits (never claims isolation) (#2167)",
+    )
+    p.add_argument("--base")
+    p.add_argument("--json", action="store_true")
 
     p = sub.add_parser("evidence", help="evidence ledger integrity")
     q = p.add_subparsers(dest="action", required=True).add_parser("verify", help="check the hash chain of the ledger")
@@ -293,6 +300,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "protected": lambda: diffchecks.protected(ctx, args.base),
         "size": lambda: diffchecks.size(ctx, args.base, args.limit),
         "scope": lambda: diffchecks.scope(ctx, args.base, args.strict),
+        "committer": lambda: committer.check(ctx, args.base, args.json),
         "evidence": lambda: evidence.verify(ctx, args.anchor),
         "config": lambda: _config(ctx, args),
         "plugin": lambda: _plugin(ctx, args),
