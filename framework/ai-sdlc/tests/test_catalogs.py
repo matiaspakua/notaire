@@ -99,23 +99,54 @@ class CatalogCrudTest(unittest.TestCase):
         self.assertIn("memory", payload)
 
 
+class CatalogSkillsDiscoverTest(unittest.TestCase):
+    def test_list_surfaces_skills_dir_when_catalog_json_empty(self):
+        repo = Repo(
+            self,
+            """
+            [project]
+            name = "demo"
+            policy = "POLICY.md"
+            [skills]
+            dir = ".claude/skills"
+            [catalogs]
+            dir = ".aisdlc/catalogs"
+            """,
+        )
+        skill = repo.root / ".claude" / "skills" / "demo-skill"
+        skill.mkdir(parents=True)
+        (skill / "SKILL.md").write_text(
+            "---\nname: demo-skill\ndescription: Demo skill for catalog discover\n---\n# Demo\n",
+            encoding="utf-8",
+        )
+        listed = repo.run("catalog", "list", "--kind", "skills", "--json")
+        self.assertEqual(0, listed.returncode, output(listed))
+        data = json.loads(listed.stdout)
+        ids = {e["id"] for e in data["entries"]}
+        self.assertIn("demo-skill", ids)
+        entry = next(e for e in data["entries"] if e["id"] == "demo-skill")
+        self.assertEqual("skills-dir", entry.get("source"))
+        # validate ignores virtual skills-dir rows (no digest file)
+        self.assertEqual(0, repo.run("catalog", "validate", "--kind", "skills").returncode)
+
+
 class CatalogNotaireSmokeTest(unittest.TestCase):
     def test_notaire_skills_remain_discoverable_via_catalog_list(self):
         repo = KIT.parents[1]
         profile = repo / ".aisdlc" / "aisdlc.toml"
         if not profile.is_file():
             self.skipTest("not Notaire checkout")
-        # Without catalogs dir yet, list returns empty kinds (not an error).
         result = __import__("subprocess").run(
             [sys.executable, str(KIT / "bin" / "aisdlc"), "--profile", str(profile), "catalog", "list", "--json"],
             cwd=repo,
             capture_output=True,
             text=True,
         )
-        # Command may be missing until implemented — then fail; after impl exit 0.
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         data = json.loads(result.stdout)
         self.assertIn("skills", data)
+        # Notaire keeps skills under .claude/skills — list must surface them without seeding JSON.
+        self.assertGreater(len(data["skills"]["entries"]), 0, result.stdout)
 
 
 if __name__ == "__main__":

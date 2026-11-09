@@ -63,6 +63,38 @@ def _read(path: Path) -> dict:
     return data
 
 
+def _discover_skills_dir(ctx: Context) -> list[dict]:
+    """Read-only overlay from `[skills] dir` folders that contain SKILL.md. Never executes."""
+    if not ctx.profile.skills_dir:
+        return []
+    catalog = ctx.path(ctx.profile.skills_dir)
+    if not catalog.is_dir():
+        return []
+    entries = []
+    for folder in sorted(p for p in catalog.iterdir() if p.is_dir() and not p.name.startswith(".")):
+        skill_md = folder / "SKILL.md"
+        if not skill_md.is_file():
+            continue
+        try:
+            from aisdlc.skills import frontmatter
+
+            meta = frontmatter(skill_md.read_text(encoding="utf-8"))
+        except OSError:
+            meta = {}
+        rel = f"{ctx.profile.skills_dir.rstrip('/')}/{folder.name}"
+        entries.append(
+            {
+                "id": meta.get("name") or folder.name,
+                "kind": "skills",
+                "ref": rel,
+                "summary": meta.get("description") or "",
+                "digest": None,
+                "source": "skills-dir",
+            }
+        )
+    return entries
+
+
 def list_entries(ctx: Context, kind: str | None = None) -> dict:
     kinds = (kind,) if kind else KINDS
     if kind and kind not in KINDS:
@@ -71,23 +103,32 @@ def list_entries(ctx: Context, kind: str | None = None) -> dict:
     result: dict = {}
     for item in kinds:
         entries = []
+        seen: set[str] = set()
         folder = (root / item) if root is not None else None
         if folder is not None and folder.is_dir():
             for path in sorted(folder.glob("*.json")):
                 try:
                     data = _read(path)
                 except (OSError, json.JSONDecodeError, ProfileError):
-                    entries.append({"id": path.stem, "error": "unreadable"})
+                    entries.append({"id": path.stem, "error": "unreadable", "source": "catalog"})
                     continue
+                entry_id = data["id"]
+                seen.add(entry_id)
                 entries.append(
                     {
-                        "id": data["id"],
+                        "id": entry_id,
                         "kind": item,
                         "ref": data.get("ref"),
                         "summary": data.get("summary"),
                         "digest": data.get("digest"),
+                        "source": "catalog",
                     }
                 )
+        if item == "skills":
+            for discovered in _discover_skills_dir(ctx):
+                if discovered["id"] in seen:
+                    continue
+                entries.append(discovered)
         result[item] = {"kind": item, "entries": entries}
     if kind:
         return result[kind]
@@ -142,6 +183,9 @@ def validate(ctx: Context, kind: str | None = None) -> int:
     for block in rows:
         k = block["kind"]
         for entry in block["entries"]:
+            if entry.get("source") == "skills-dir":
+                # Virtual discover rows — list-only; never require a digest file.
+                continue
             if entry.get("error"):
                 errors.append(f"{k}/{entry['id']}: {entry['error']}")
                 continue
