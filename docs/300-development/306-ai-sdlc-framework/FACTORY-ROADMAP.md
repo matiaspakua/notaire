@@ -6,8 +6,8 @@ Store authority for the Project: `ai-sdlc-factory-master-plan.md`. Epic:
 
 | Field | Value |
 |-------|-------|
-| Status | Living plan — continue from here across sessions |
-| Epic | [#2134](https://github.com/matiaspakua/notaire/issues/2134) |
+| Status | Living plan — **P0–P3 spine done** (epic [#2134](https://github.com/matiaspakua/notaire/issues/2134)); next work is deferred / follow-on only |
+| Epic | [#2134](https://github.com/matiaspakua/notaire/issues/2134) (spine complete; close via ASLI-31 / #2161) |
 | Docs mirror | [#2140](https://github.com/matiaspakua/notaire/issues/2140) |
 | Kit | [`framework/ai-sdlc/`](../../../framework/ai-sdlc/) · profile [`.aisdlc/aisdlc.toml`](../../../.aisdlc/aisdlc.toml) |
 | Landed slice notes | [`FACTORY-FOUNDATION.md`](FACTORY-FOUNDATION.md) |
@@ -186,7 +186,7 @@ Cloud ≠ local. Commercial “Harness” product ≠ this port. Permissions in 
 
 ---
 
-## 7. Phased backlog (landed + active spine)
+## 7. Phased backlog (landed + spine done)
 
 ### Landed (do not reopen)
 
@@ -198,24 +198,30 @@ Cloud ≠ local. Commercial “Harness” product ≠ this port. Permissions in 
 | Harness port | #2122 | #2131 merged |
 | Spec Kit plugin | #2123 | #2132 merged |
 | AWS AI-DLC boundary | #2124 | #2133 merged |
+| TelemetryPort | [#2125](https://github.com/matiaspakua/notaire/issues/2125) | [#2143](https://github.com/matiaspakua/notaire/pull/2143) |
+| Install / update / uninstall | [#2135](https://github.com/matiaspakua/notaire/issues/2135) | [#2144](https://github.com/matiaspakua/notaire/pull/2144) |
+| Lead-time + stage metrics | [#2138](https://github.com/matiaspakua/notaire/issues/2138) | [#2146](https://github.com/matiaspakua/notaire/pull/2146) |
+| OpenFeature port | [#2137](https://github.com/matiaspakua/notaire/issues/2137) | [#2147](https://github.com/matiaspakua/notaire/pull/2147) |
+| OpenAPI 3.1 control surface | [#2136](https://github.com/matiaspakua/notaire/issues/2136) | [#2148](https://github.com/matiaspakua/notaire/pull/2148) |
+| Catalogs CRUD | [#2139](https://github.com/matiaspakua/notaire/issues/2139) | [#2149](https://github.com/matiaspakua/notaire/pull/2149) |
+| Roadmap mirror | [#2140](https://github.com/matiaspakua/notaire/issues/2140) | [#2145](https://github.com/matiaspakua/notaire/pull/2145) |
+| Self-improve gated PRs | [#2141](https://github.com/matiaspakua/notaire/issues/2141) | [#2152](https://github.com/matiaspakua/notaire/pull/2152) |
+| Minimal telemetry UI | [#2142](https://github.com/matiaspakua/notaire/issues/2142) | [#2151](https://github.com/matiaspakua/notaire/pull/2151) |
+| Install abs-path refuse | [#2153](https://github.com/matiaspakua/notaire/issues/2153) | [#2154](https://github.com/matiaspakua/notaire/pull/2154) |
+| Catalog skills-dir discover | [#2155](https://github.com/matiaspakua/notaire/issues/2155) | [#2156](https://github.com/matiaspakua/notaire/pull/2156) |
+| Improve empty propose | [#2157](https://github.com/matiaspakua/notaire/issues/2157) | [#2158](https://github.com/matiaspakua/notaire/pull/2158) |
+| Preflight → evidence `signal` | [#2159](https://github.com/matiaspakua/notaire/issues/2159) | [#2160](https://github.com/matiaspakua/notaire/pull/2160) |
 
-### Active spine (epic [#2134](https://github.com/matiaspakua/notaire/issues/2134))
+### Active spine — **done** (epic [#2134](https://github.com/matiaspakua/notaire/issues/2134))
 
-| Phase | Order | Issue | Module | Validate on Notaire |
-|-------|-------|-------|--------|---------------------|
-| **P0** | 1 | **[#2125](https://github.com/matiaspakua/notaire/issues/2125)** | TelemetryPort (reuse — open) | kit unittest; OTEL off default; redaction |
-| **P0** | 2 | [#2135](https://github.com/matiaspakua/notaire/issues/2135) | Install / update / uninstall | profile validate after lifecycle |
-| **P1** | 3 | [#2138](https://github.com/matiaspakua/notaire/issues/2138) | Lead-time + stage metrics | real issue→PR fixture or sample |
-| **P1** | 4 | [#2137](https://github.com/matiaspakua/notaire/issues/2137) | OpenFeature port | flag cannot kill required gate |
-| **P1** | 5 | [#2136](https://github.com/matiaspakua/notaire/issues/2136) | OpenAPI 3.1 control surface | oasdiff in CI; no product OpenAPI import |
-| **P2** | 6 | [#2139](https://github.com/matiaspakua/notaire/issues/2139) | Catalogs CRUD | skills/agents discoverable; no Constitution fork |
-| **P2** | 7 | [#2141](https://github.com/matiaspakua/notaire/issues/2141) | Self-improve gated PRs | proposal only; protected paths Owner-merge |
-| **P3** | 8 | [#2142](https://github.com/matiaspakua/notaire/issues/2142) | Minimal telemetry UI | fixtures from evidence; after #2125+#2138 |
-| **Docs** | ∥ | [#2140](https://github.com/matiaspakua/notaire/issues/2140) | In-repo roadmap mirror | this file + foundation/index cross-links |
+P0–P3 and the docs mirror (#2125–#2142) shipped. Notaire validation follow-ons
+(#2153 / #2155 / #2157) and local preflight evidence feed (#2159) closed the
+loop so `report` / HTML / improve / autonomy have ledger signal. **Do not reopen
+this ordered spine.**
 
 ### Deferred (after ports exist)
 
-- Isolator + agent-never-commits runtime (V1 M0/M1 / D1–D7 class) — **not** in P0–P2.
+- Isolator + agent-never-commits runtime (V1 M0/M1 / D1–D7 class) — **not** in P0–P3.
 - ForgePort attestations / `factory/gate` on GitHub checks.
 - Wilson autonomy promotion (L0–L4).
 - Full ApprovalPort (SSH/DSSE).
@@ -274,7 +280,9 @@ mirrors omit Unreleased when that slice owns the fence.
 ## 10. How later sessions continue
 
 1. Read **this** file + store master plan / thin plan next-5 list.
-2. Pick the lowest open issue in §7 Active spine (currently **#2125**).
+2. **§7 Active spine is done.** Pick only from Deferred (Isolator / ForgePort /
+   Wilson L0–L4 / ApprovalPort) or a new CU76 Issue that cites friction from
+   evidence (`aisdlc improve` / preflight `signal`) — one thin PR, no portal.
 3. Branch from updated `main`; TDD; validate on Notaire; open PR `Closes #…`.
 4. Update thin plan next-5 and inventory notes; do not fork a second master plan.
 5. Keep this mirror aligned when the store master plan changes (#2140).
