@@ -203,6 +203,14 @@ def _cost_summary(entries: list[dict]) -> dict:
     }
 
 
+def _with_autonomy(ctx: Context, data: dict, since: str | None) -> dict:
+    """Attach Wilson L0 from signal gates without importing improve into summarize (#2165)."""
+    from aisdlc.improve import autonomy_from_runs
+
+    runs = _read(ctx, LEDGER, since)
+    return {**data, "autonomy": autonomy_from_runs(runs)}
+
+
 def report(
     ctx: Context,
     as_json: bool,
@@ -213,7 +221,7 @@ def report(
     from aisdlc.report_html import write_monitor
 
     data = summarize(ctx, since)
-    data = {**data, "profile": ctx.profile.name}
+    data = _with_autonomy(ctx, {**data, "profile": ctx.profile.name}, since)
     if html_path is not None:
         write_monitor(html_path, data, lead_time_fixture=lead_time_fixture)
         print(f"wrote HTML monitor: {html_path}")
@@ -223,6 +231,13 @@ def report(
         return 0
     print(f"# AI SDLC evidence — {ctx.profile.name}\n")
     print(f"{data['runs']} stage runs, {data['failed_runs']} failed.\n")
+    auto = data.get("autonomy") or {}
+    print(
+        f"Autonomy (Wilson L0 / signal): status={auto.get('status')} "
+        f"level={auto.get('level')} "
+        f"wilson_lower={auto.get('wilson_lower')} "
+        f"({auto.get('successes')}/{auto.get('trials')})\n"
+    )
     print("| Stage | Gate | Runs | Pass rate | Median s | Last |")
     print("|-------|------|-----:|----------:|---------:|------|")
     for g in data["gates"]:

@@ -71,6 +71,58 @@ class ReportHtmlTest(unittest.TestCase):
         self.assertNotIn("SECRET_PROMPT_SHOULD_NOT_APPEAR", html)
         self.assertNotIn("prompt", html.lower())
 
+    def test_report_json_and_html_surface_wilson_l0_autonomy(self):
+        """#2165: report embeds honest L0 autonomy from signal gates."""
+        repo = Repo(
+            self,
+            """
+            [project]
+            name = "demo"
+            policy = "POLICY.md"
+            """,
+        )
+        ledger = repo.root / ".aisdlc" / "evidence"
+        ledger.mkdir(parents=True)
+        import hashlib
+
+        lines = []
+        prev = "genesis"
+        for i in range(15):
+            record = {
+                "ts": f"2026-11-09T06:{i:02d}:00+00:00",
+                "prev": prev,
+                "stage": "signal",
+                "ok": True,
+                "gates": [
+                    {"name": "ratchet", "status": "pass", "required": True, "seconds": 0.1},
+                    {"name": "skills", "status": "pass", "required": True, "seconds": 0.1},
+                ],
+            }
+            line = json.dumps(record, sort_keys=True)
+            lines.append(line)
+            prev = hashlib.sha256(line.encode("utf-8")).hexdigest()
+        (ledger / "ledger.jsonl").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+        json_result = repo.run("report", "--json")
+        self.assertEqual(0, json_result.returncode, output(json_result))
+        payload = json.loads(json_result.stdout)
+        auto = payload.get("autonomy") or {}
+        self.assertEqual("ok", auto.get("status"))
+        self.assertEqual(0, auto.get("level"))
+        self.assertNotIn(auto.get("level"), (2, 3))
+        self.assertGreaterEqual(auto.get("wilson_lower") or 0, 0.80)
+
+        out = repo.root / "monitor.html"
+        html_result = repo.run("report", "--html", str(out))
+        self.assertEqual(0, html_result.returncode, output(html_result))
+        html = out.read_text(encoding="utf-8")
+        self.assertIn("Autonomy", html)
+        self.assertIn("L0", html)
+        self.assertRegex(html.lower(), r"status:\s*<strong>ok</strong>|status.*\bok\b")
+        self.assertNotIn("level=3", html.lower())
+        self.assertNotRegex(html, r"level:\s*<strong>L[23]")
+        self.assertNotIn("level 3", html.lower().replace("never claims level 3", ""))
+
     def test_report_html_embeds_lead_time_fixture_without_secrets(self):
         repo = Repo(
             self,
