@@ -66,7 +66,7 @@ otherwise off. `core.*` / `security.*` cannot relax policy; required gates canno
 
 | Command | Does | Exit 1 when |
 |---------|------|-------------|
-| `install --path P --name N [--level 1-4] [--force]` | Copies this kit to `P` (default `tools/ai-sdlc`) and scaffolds the profile. Refuses product trees. | destination exists without `--force`, or path is forbidden |
+| `install --path P --name N [--level 1-4] [--force]` | Copies this kit to relative in-repo `P` (default `tools/ai-sdlc`) and scaffolds the profile. Absolute/`~/` paths are refused (they must not strip into the repo). Refuses product trees. | destination exists without `--force`, path absolute/forbidden |
 | `update [--path P]` | Re-copies the kit idempotently; leaves adopter policy/evidence alone. | kit path missing |
 | `uninstall [--path P] [--purge]` | Removes the kit tree (+ install manifest). `--purge` also drops scaffold and evidence. | forbidden path |
 | `init --name N [--level 1-4] [--force]` | Scaffolds policy, card, `AGENTS.md`, profile, role agents, change folder. Never overwrites without `--force`. | — |
