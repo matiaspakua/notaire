@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **aisdlc:** Read-only ForgePort live lead-time via `gh` (`metrics lead-time --issue N`); fixture path unchanged; no forge write/attest (Refs #2184)
 * **aisdlc:** Optional `[[stages]]` profile knobs (agents/skills/MCP/model/effort) resolve against catalogs; `stage list` / `config show --redacted` never execute (Refs #2182)
 * **aisdlc:** OpenAPI 3.1.0 factory control contract (`contract check` / oasdiff accept dir); CLI JSON is the shared shape (Refs #2136)
 * **aisdlc:** OpenFeature-shaped FeatureFlagPort with JSON/flagd file provider; flags cannot skip required gates or raise PR ceiling (Refs #2137)

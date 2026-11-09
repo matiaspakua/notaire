@@ -206,7 +206,8 @@ Cloud ≠ local. Commercial “Harness” product ≠ this port. Permissions in 
 | AWS AI-DLC boundary | #2124 | #2133 merged |
 | TelemetryPort | [#2125](https://github.com/matiaspakua/notaire/issues/2125) | [#2143](https://github.com/matiaspakua/notaire/pull/2143) |
 | Install / update / uninstall | [#2135](https://github.com/matiaspakua/notaire/issues/2135) | [#2144](https://github.com/matiaspakua/notaire/pull/2144) |
-| Lead-time + stage metrics | [#2138](https://github.com/matiaspakua/notaire/issues/2138) | [#2146](https://github.com/matiaspakua/notaire/pull/2146) |
+| Lead-time + stage metrics (fixture) | [#2138](https://github.com/matiaspakua/notaire/issues/2138) | [#2146](https://github.com/matiaspakua/notaire/pull/2146) |
+| ForgePort read-only live lead-time | [#2184](https://github.com/matiaspakua/notaire/issues/2184) | [#2185](https://github.com/matiaspakua/notaire/pull/2185) |
 | OpenFeature port | [#2137](https://github.com/matiaspakua/notaire/issues/2137) | [#2147](https://github.com/matiaspakua/notaire/pull/2147) |
 | OpenAPI 3.1 control surface | [#2136](https://github.com/matiaspakua/notaire/issues/2136) | [#2148](https://github.com/matiaspakua/notaire/pull/2148) |
 | Catalogs CRUD | [#2139](https://github.com/matiaspakua/notaire/issues/2139) | [#2149](https://github.com/matiaspakua/notaire/pull/2149) |
@@ -234,7 +235,8 @@ this ordered spine.**
   (`required = false`); Owner may flip fail-closed later.
   **Boundary design** shipped (#2173 / ADR-004): stub + doctor `no-evaluable`; YAML ≠ isolation;
   Isolator **runtime** still waits on real sole-committer grants (not just identity in TOML).
-- ForgePort attestations / `factory/gate` on GitHub checks.
+- ForgePort **write** / attestations / `factory/gate` on GitHub checks
+  (read-only live lead-time via `gh` shipped in #2184; custody story still incomplete for writes).
 - Wilson autonomy **promotion** (L0–L4). Multi-stage **honesty** already ships
   (#2171): L1 stays no-evaluable until ≥2 allowlisted stages have `min_n` —
   not Isolator, not auto-promotion.
