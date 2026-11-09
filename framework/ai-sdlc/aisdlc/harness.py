@@ -3,16 +3,21 @@
 The kit never names an adopter path. Sources stay where discoverability already
 lives. A permission listed in a source file is not a sandbox. Neither adapter is
 a commercial Harness product.
+
+Harness-kind plugins (#2188) are inventory stubs: list/show/plan never launch a
+remote agent. sandbox is always false until a real Isolator exists.
 """
 from __future__ import annotations
 
+import tomllib
 from pathlib import Path
 
 from aisdlc.profile import Profile, ProfileError
 
 
 def list_adapters(root: Path, profile: Profile) -> list[dict]:
-    rows = []
+    rows: list[dict] = []
+    seen: set[str] = set()
     for adapter in profile.harness_adapters:
         path = _source_path(root, adapter.source)
         rows.append({
@@ -23,26 +28,60 @@ def list_adapters(root: Path, profile: Profile) -> list[dict]:
             "sandbox": False,
             "commercial_harness_product": False,
         })
+        seen.add(adapter.id)
+    allow = set(profile.plugin_allow)
+    for plugin in profile.plugins:
+        if plugin.kind != "harness" or plugin.id in seen:
+            continue
+        source, runtime = _stub_source_and_runtime(root, plugin.manifest, plugin.id)
+        path = _source_path(root, source) if source else None
+        rows.append({
+            "id": plugin.id,
+            "runtime": runtime or plugin.id,
+            "source": source or plugin.manifest,
+            "readable": path is not None and path.is_file(),
+            "sandbox": False,
+            "commercial_harness_product": False,
+            "stub": True,
+            "available": plugin.trusted and plugin.id in allow,
+        })
+        seen.add(plugin.id)
     return rows
 
 
 def describe(root: Path, profile: Profile, adapter_id: str) -> dict:
     adapter = next((item for item in profile.harness_adapters if item.id == adapter_id), None)
-    if adapter is None:
-        raise ProfileError(f"unknown harness adapter {adapter_id!r}")
-    path = _source_path(root, adapter.source)
+    stub = False
+    source = ""
+    runtime = ""
+    if adapter is not None:
+        source = adapter.source
+        runtime = adapter.runtime
+    else:
+        plugin = next(
+            (item for item in profile.plugins if item.kind == "harness" and item.id == adapter_id),
+            None,
+        )
+        if plugin is None:
+            raise ProfileError(f"unknown harness adapter {adapter_id!r}")
+        source, runtime = _stub_source_and_runtime(root, plugin.manifest, plugin.id)
+        if not source or not runtime:
+            raise HarnessError(f"harness {adapter_id} stub source is missing: {plugin.manifest}")
+        stub = True
+
+    path = _source_path(root, source)
     if path is None or not path.is_file():
-        raise HarnessError(f"harness {adapter.id} source is missing: {adapter.source}")
+        raise HarnessError(f"harness {adapter_id} source is missing: {source}")
     data = extract_fields(path.read_text(encoding="utf-8"))
     file_runtime = data.get("runtime")
-    if isinstance(file_runtime, str) and file_runtime and file_runtime != adapter.runtime:
+    if isinstance(file_runtime, str) and file_runtime and file_runtime != runtime:
         raise HarnessError(
-            f"harness {adapter.id} runtime {adapter.runtime!r} does not match source runtime {file_runtime!r}"
+            f"harness {adapter_id} runtime {runtime!r} does not match source runtime {file_runtime!r}"
         )
-    return {
-        "id": adapter.id,
-        "runtime": adapter.runtime,
-        "source": adapter.source,
+    view = {
+        "id": adapter_id,
+        "runtime": runtime,
+        "source": source,
         "version": data.get("version"),
         "project": data.get("project"),
         "foreman_id": data.get("foreman_id"),
@@ -53,6 +92,9 @@ def describe(root: Path, profile: Profile, adapter_id: str) -> dict:
         "commercial_harness_product": False,
         "note": "A permission listed in the source is not a sandbox.",
     }
+    if stub:
+        view["stub"] = True
+    return view
 
 
 class HarnessError(Exception):
@@ -109,6 +151,21 @@ def extract_fields(text: str) -> dict:
                 result["roles"].append(role)
 
     return result
+
+
+def _stub_source_and_runtime(root: Path, manifest: str, plugin_id: str) -> tuple[str, str]:
+    """Resolve adapter.yml path (relative to root) and runtime from a harness plugin."""
+    manifest_path = _source_path(root, manifest)
+    if manifest_path is None or not manifest_path.is_file():
+        return "", ""
+    try:
+        data = tomllib.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, tomllib.TOMLDecodeError):
+        return "", ""
+    runtime = str(data.get("runtime") or plugin_id)
+    adapter_name = str(data.get("adapter") or "adapter.yml")
+    adapter_rel = str((Path(manifest).parent / adapter_name).as_posix())
+    return adapter_rel, runtime
 
 
 def _unquote(value: str) -> str:

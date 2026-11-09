@@ -76,6 +76,27 @@ status = "migrated"
 note = "oMLX foreman. Read by aisdlc harness (id local-foreman → .aisdlc/project.yml). Files stay; not a sandbox."
 
 [[rows]]
+source = "framework/ai-sdlc/plugins/claude-code"
+destination = "framework/ai-sdlc/plugins/claude-code"
+class = "harness-adapter"
+status = "migrated"
+note = "Claude Code HarnessPort stub (#2188). Inventory + dry plan only; out of [plugins] allow until Owner opts in. sandbox=false."
+
+[[rows]]
+source = "framework/ai-sdlc/plugins/openai-codex"
+destination = "framework/ai-sdlc/plugins/openai-codex"
+class = "harness-adapter"
+status = "migrated"
+note = "OpenAI Codex HarnessPort stub (#2188). Inventory + dry plan only; out of [plugins] allow until Owner opts in. sandbox=false."
+
+[[rows]]
+source = "framework/ai-sdlc/plugins/acp"
+destination = "framework/ai-sdlc/plugins/acp"
+class = "harness-adapter"
+status = "migrated"
+note = "Agent Client Protocol (ACP) HarnessPort stub (#2188). Inventory + dry plan only; out of [plugins] allow until Owner opts in. sandbox=false."
+
+[[rows]]
 source = "docs/300-development/304-ai-sdlc-cloud/fleet-manifest.yaml"
 destination = "docs/300-development/304-ai-sdlc-cloud/fleet-manifest.yaml"
 class = "harness-adapter"
