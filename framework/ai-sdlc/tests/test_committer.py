@@ -45,6 +45,26 @@ class CommitterPolicyTest(unittest.TestCase):
         self.assertNotIn("sandbox", (result.stdout + result.stderr).lower())
         self.assertNotIn("isolated", (result.stdout + result.stderr).lower())
 
+    def test_agent_patterns_alone_stay_no_evaluable(self):
+        """#2169: opt-in — without runtime identity the check must not evaluate."""
+        repo = Repo(
+            self,
+            """
+            [committer]
+            required = false
+            agent_names = ["Cursor Agent"]
+            agent_emails = ["cursoragent@example.com"]
+            agent_trailers = ["Made-with: Cursor"]
+            """,
+        )
+        repo.write("src/a.py", "x = 1\n")
+        _commit_as(repo, "feat: agent change", name="Cursor Agent", email="cursoragent@example.com")
+        result = repo.run("committer", "--base", repo.base, "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        data = json.loads(result.stdout)
+        self.assertEqual("no-evaluable", data["status"])
+        self.assertEqual([], data.get("violations") or [])
+
     def test_agent_author_fails_when_required(self):
         repo = Repo(self, POLICY)
         repo.write("src/a.py", "x = 1\n")
