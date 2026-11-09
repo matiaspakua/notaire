@@ -203,8 +203,21 @@ def _cost_summary(entries: list[dict]) -> dict:
     }
 
 
-def report(ctx: Context, as_json: bool, since: str | None) -> int:
+def report(
+    ctx: Context,
+    as_json: bool,
+    since: str | None,
+    html_path: Path | None = None,
+    lead_time_fixture: Path | None = None,
+) -> int:
+    from aisdlc.report_html import write_monitor
+
     data = summarize(ctx, since)
+    data = {**data, "profile": ctx.profile.name}
+    if html_path is not None:
+        write_monitor(html_path, data, lead_time_fixture=lead_time_fixture)
+        print(f"wrote HTML monitor: {html_path}")
+        return 0
     if as_json:
         print(json.dumps(data, indent=2, sort_keys=True))
         return 0

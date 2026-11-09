@@ -35,8 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| HTML contains stage and cost summaries | ReportHtmlTest | pending |
-| Lead-time fixture embeds without secrets | ReportHtmlTest | pending |
+| HTML contains stage and cost summaries | ReportHtmlTest | passing |
+| Lead-time fixture embeds without secrets | ReportHtmlTest | passing |
 
 ## Permanent documentation updated
 

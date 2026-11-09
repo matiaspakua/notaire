@@ -41,7 +41,7 @@ class ReportHtmlTest(unittest.TestCase):
             + "\n",
             encoding="utf-8",
         )
-        (ledger / "costs.jsonl").write_text(
+        (ledger / "cost.jsonl").write_text(
             json.dumps(
                 {
                     "ts": "2026-11-08T20:01:00+00:00",
