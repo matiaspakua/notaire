@@ -1,12 +1,14 @@
 # Factory foundation (#2121) and harness port (#2122)
 
 **Multi-session plan:** continue from [`FACTORY-ROADMAP.md`](FACTORY-ROADMAP.md)
-(mirror of the store master plan; docs [#2140](https://github.com/matiaspakua/notaire/issues/2140);
-epic [#2134](https://github.com/matiaspakua/notaire/issues/2134)). On `main` already: TelemetryPort through telemetry UI (#2125–#2142), plus install /
-catalog / self-improve follow-ons. Local preflight records a cheap `signal` stage
-(`aisdlc gate signal`) so the evidence ledger feeds report / HTML / improve (#2159).
-ASLI-31 closes epic [#2134](https://github.com/matiaspakua/notaire/issues/2134) after
-that slice lands.
+(mirror of the store master plan; docs [#2140](https://github.com/matiaspakua/notaire/issues/2140)).
+Epic [#2134](https://github.com/matiaspakua/notaire/issues/2134) **P0–P3 spine done**
+(#2125–#2142). Validation fixes [#2153](https://github.com/matiaspakua/notaire/issues/2153) /
+[#2155](https://github.com/matiaspakua/notaire/issues/2155) /
+[#2157](https://github.com/matiaspakua/notaire/issues/2157); preflight evidence
+[#2159](https://github.com/matiaspakua/notaire/issues/2159) (`aisdlc gate signal`).
+ASLI-31 / [#2161](https://github.com/matiaspakua/notaire/issues/2161) closes the epic
+docs; next work is Deferred only (Isolator / Wilson / ForgePort) — no portal.
 
 The canonical root is [`framework/ai-sdlc`](../../../framework/ai-sdlc/README.md).
 Decisions: [ADR-001](../../../framework/ai-sdlc/docs/adr/ADR-001-canonical-root.md),

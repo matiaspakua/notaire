@@ -63,9 +63,24 @@ class FactoryRoadmapTest(unittest.TestCase):
             with self.subTest(needle=needle):
                 self.assertIn(needle, lowered)
 
+    def test_roadmap_marks_active_spine_done(self) -> None:
+        """ASLI-31 / #2161: #2134 P0–P3 spine is complete; do not point at open #2125."""
+        text = ROADMAP.read_text(encoding="utf-8")
+        lowered = text.lower()
+        self.assertIn("spine done", lowered)
+        self.assertIn("#2159", text)
+        for fix in ("#2153", "#2155", "#2157"):
+            self.assertIn(fix, text)
+        # Continue-sessions must not treat closed P0 as next open work.
+        self.assertNotRegex(
+            text,
+            r"(?i)pick the lowest open issue in §7 Active spine \(currently \*\*#2125\*\*\)",
+        )
+
     def test_foundation_points_at_roadmap(self) -> None:
         text = FOUNDATION.read_text(encoding="utf-8")
         self.assertIn("FACTORY-ROADMAP.md", text)
+        self.assertRegex(text.lower(), r"spine (is )?done|epic #2134.*(closed|done)")
 
 
 if __name__ == "__main__":
