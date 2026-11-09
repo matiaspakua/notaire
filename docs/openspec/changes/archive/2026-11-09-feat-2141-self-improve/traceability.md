@@ -35,10 +35,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Failed gates become a proposal without writing protected paths | ImproveLoopTest | pending |
-| Agent cannot approve its own improvement | ImproveLoopTest | pending |
-| Protected path candidates require Owner merge | ImproveLoopTest | pending |
-| Autonomy requires sample and Wilson floor | ImproveLoopTest | pending |
+| Failed gates become a proposal without writing protected paths | ImproveLoopTest | passing |
+| Agent cannot approve its own improvement | ImproveLoopTest | passing |
+| Protected path candidates require Owner merge | ImproveLoopTest | passing |
+| Autonomy requires sample and Wilson floor | ImproveLoopTest | passing |
 
 ## Permanent documentation updated
 

@@ -79,3 +79,5 @@ TelemetryPort (`aisdlc/telemetry.py`, #2125): off by default; optional OpenTelem
 Catalogs CRUD (#2139): `aisdlc catalog` manages skills/MCP/agents/memory JSON entries under `[catalogs] dir` with digests; list/validate never execute.
 
 Telemetry UI (#2142): `aisdlc report --html PATH` writes a static read-only HTML monitor from the evidence ledger (gates, stages, cost); optional `--lead-time-fixture` embeds the #2138 event-pair sample. No HTTP server, no policy write path, no prompts/diffs/secrets in the page.
+
+Self-improve (#2141): `aisdlc improve propose` turns ledger friction into a proposal artifact (gated-PR draft only). `validate` rejects agent self-approval and requires Owner merge for protected candidates. `autonomy` reports Wilson lower bound; first incident demotes. The kit never commits and never merges.

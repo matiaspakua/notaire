@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import json
-import math
 import unittest
 from pathlib import Path
 
@@ -18,13 +17,11 @@ policy = "POLICY.md"
 owner = "the Owner"
 paths = ["POLICY.md", ".aisdlc/gates/**", "CONSTITUTION.md"]
 
-[[roles]]
-name = "implementer"
+[roles.implementer]
 tier = "mid"
 may_merge = false
 
-[[roles]]
-name = "foreman"
+[roles.foreman]
 tier = "top"
 may_merge = true
 """
