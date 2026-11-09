@@ -17,6 +17,7 @@ from aisdlc import (
     evidence,
     gates,
     harness,
+    improve,
     lifecycle,
     metrics,
     ratchet,
@@ -167,6 +168,26 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--usd", type=float, help="actual cost; computed from [cost.prices] when omitted")
     p.add_argument("--issue")
 
+    p = sub.add_parser(
+        "improve",
+        help="self-improve from evidence as gated-PR proposals only (#2141)",
+    )
+    improve_sub = p.add_subparsers(dest="action", required=True)
+    prop = improve_sub.add_parser(
+        "propose",
+        help="emit a proposal artifact from ledger friction (never commits)",
+    )
+    prop.add_argument("--json", action="store_true")
+    prop.add_argument("--since", help="ISO date, e.g. 2026-10-01")
+    val = improve_sub.add_parser("validate", help="check a proposal cannot self-approve")
+    val.add_argument("--file", type=Path, required=True)
+    auto = improve_sub.add_parser(
+        "autonomy",
+        help="Wilson lower bound on clean passes; demote on first incident",
+    )
+    auto.add_argument("--json", action="store_true")
+    auto.add_argument("--since", help="ISO date, e.g. 2026-10-01")
+
     p = sub.add_parser("catalog", help="CRUD for skills/MCP/agents/memory catalogs (#2139)")
     cat_sub = p.add_subparsers(dest="action", required=True)
     for action, help_text in (
@@ -268,6 +289,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         ),
         "metrics": lambda: _metrics(ctx, args),
         "catalog": lambda: _catalog(ctx, args),
+        "improve": lambda: _improve(ctx, args),
         "protected": lambda: diffchecks.protected(ctx, args.base),
         "size": lambda: diffchecks.size(ctx, args.base, args.limit),
         "scope": lambda: diffchecks.scope(ctx, args.base, args.strict),
@@ -303,6 +325,14 @@ def _catalog(ctx: Context, args: argparse.Namespace) -> int:
     except ProfileError as exc:
         print(f"error: {exc}")
         return 2
+
+
+def _improve(ctx: Context, args: argparse.Namespace) -> int:
+    if args.action == "propose":
+        return improve.propose(ctx, args.json, getattr(args, "since", None))
+    if args.action == "validate":
+        return improve.validate(ctx, args.file)
+    return improve.autonomy(ctx, args.json, getattr(args, "since", None))
 
 
 def _metrics(ctx: Context, args: argparse.Namespace) -> int:
