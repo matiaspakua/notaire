@@ -217,7 +217,7 @@ class AutonomyWilsonTest(unittest.TestCase):
         self.assertEqual(0, data["level"])
 
     def test_autonomy_l0_eligible_with_wilson_floor_and_demotes_on_incident(self):
-        """#2163: Wilson floor → L0 (never L3); first incident → L1."""
+        """#2163/#2171: single-stage Wilson floor → L0 + L1-not-evaluable; incident → L1."""
         repo = Repo(self, PROFILE)
         clean = [
             {
@@ -238,6 +238,8 @@ class AutonomyWilsonTest(unittest.TestCase):
         self.assertGreaterEqual(data["wilson_lower"], 0.80)
         self.assertEqual(0, data["level"])
         self.assertNotIn(data["level"], (2, 3))
+        self.assertIn("L1-not-evaluable", data.get("detail") or "")
+        self.assertIn("≥2 stages", data.get("detail") or "")
 
         # inject incident → demote to L1
         import hashlib
@@ -263,6 +265,59 @@ class AutonomyWilsonTest(unittest.TestCase):
         payload = json.loads(demoted.stdout)
         self.assertEqual(1, payload["level"])
         self.assertEqual("demoted", payload["status"])
+
+    def test_autonomy_single_stage_keeps_l1_not_evaluable(self):
+        """#2171: green Wilson from one stage alone does not unlock L1 promotion talk."""
+        repo = Repo(self, PROFILE)
+        _seed_ledger(
+            repo,
+            [
+                {
+                    "stage": "signal",
+                    "ok": True,
+                    "gates": [
+                        {"name": "ratchet", "status": "pass", "required": True, "seconds": 0.1},
+                        {"name": "skills", "status": "pass", "required": True, "seconds": 0.1},
+                    ],
+                }
+                for _ in range(15)
+            ],
+        )
+        result = repo.run("improve", "autonomy", "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        data = json.loads(result.stdout)
+        self.assertEqual(0, data["level"])
+        self.assertEqual("ok", data["status"])
+        self.assertEqual(["signal"], data["stages"])
+        self.assertIn("L1-not-evaluable", data["detail"])
+
+    def test_autonomy_two_stages_with_min_n_are_l0_eligible(self):
+        """#2171: ≥2 allowlisted stages with min_n each → L0-eligible (no L1 auto-promote)."""
+        repo = Repo(self, PROFILE)
+        runs = [
+            {
+                "stage": "signal",
+                "ok": True,
+                "gates": [{"name": "ratchet", "status": "pass", "required": True, "seconds": 0.1}],
+            }
+            for _ in range(30)
+        ] + [
+            {
+                "stage": "pre-push",
+                "ok": True,
+                "gates": [{"name": "budget", "status": "pass", "required": True, "seconds": 0.1}],
+            }
+            for _ in range(30)
+        ]
+        _seed_ledger(repo, runs)
+        result = repo.run("improve", "autonomy", "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        data = json.loads(result.stdout)
+        self.assertEqual("ok", data["status"])
+        self.assertEqual(0, data["level"])
+        self.assertEqual("L0-eligible", data["detail"])
+        self.assertEqual(["pre-push", "signal"], data["stages"])
+        self.assertNotIn(data["level"], (1, 2, 3))
 
 
 if __name__ == "__main__":

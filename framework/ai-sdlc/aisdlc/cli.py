@@ -190,7 +190,7 @@ def build_parser() -> argparse.ArgumentParser:
     val.add_argument("--file", type=Path, required=True)
     auto = improve_sub.add_parser(
         "autonomy",
-        help="Wilson L0 from signal gates (skip≠pass); demote to L1 on first incident",
+        help="Wilson L0 from allowlisted stages (skip≠pass); L1 no-evaluable until ≥2 stages; demote on incident",
     )
     auto.add_argument("--json", action="store_true")
     auto.add_argument("--since", help="ISO date, e.g. 2026-10-01")

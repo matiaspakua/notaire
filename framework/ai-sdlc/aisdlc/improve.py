@@ -2,7 +2,9 @@
 
 The kit never commits, never opens a forge PR, and never lets an agent approve
 its own improvement. Protected-path candidates require Owner merge. Autonomy is
-earned as Wilson L0 from required `signal` gates (never a fake L3) and lost on the first incident.
+earned as Wilson L0 from required allowlisted-stage gates (never a fake L3) and
+lost on the first incident. L1 promotion talk stays no-evaluable until ≥2 stages
+each meet min_n (#2171).
 """
 from __future__ import annotations
 
@@ -21,8 +23,11 @@ PROPOSALS_DIR = ".aisdlc/proposals"
 MIN_AUTONOMY_N = 30
 WILSON_FLOOR = 0.80
 Z_95 = 1.96
-# Local preflight records this stage via `aisdlc gate signal` (#2159/#2163).
-AUTONOMY_STAGES = frozenset({"signal"})
+# Allowlisted stages for Wilson (#2159/#2163/#2171). `signal` is fed by local
+# preflight; `pre-push` is the second CONSTITUTION stage for multi-stage honesty
+# (fixtures / future evidence feed). L1 stays no-evaluable until ≥2 qualify.
+AUTONOMY_STAGES = frozenset({"signal", "pre-push"})
+MIN_STAGES_FOR_L1 = 2
 AGENT_APPROVERS = {"agent", "implementer", "worker", "planner", "coder", "bot"}
 
 
@@ -246,16 +251,20 @@ def _gate_required(gate: dict[str, Any]) -> bool:
     return gate.get("required") is not False
 
 
-def _signal_gate_outcomes(runs: list[dict[str, Any]]) -> tuple[int, int, int, bool]:
-    """Count required pass/fail gates in signal stages. skip/todo are not trials.
+def _allowlisted_gate_outcomes(
+    runs: list[dict[str, Any]],
+) -> tuple[int, int, int, bool, dict[str, int]]:
+    """Count required pass/fail gates in allowlisted stages. skip/todo are not trials.
 
-    Returns (successes, trials, failures, saw_incident_flag).
+    Returns (successes, trials, failures, saw_incident_flag, trials_by_stage).
     """
     successes = 0
     failures = 0
     saw_incident = False
+    trials_by_stage: dict[str, int] = {}
     for run in runs:
-        if str(run.get("stage") or "") not in AUTONOMY_STAGES:
+        stage = str(run.get("stage") or "")
+        if stage not in AUTONOMY_STAGES:
             continue
         if run.get("incident") is True:
             saw_incident = True
@@ -265,20 +274,25 @@ def _signal_gate_outcomes(runs: list[dict[str, Any]]) -> tuple[int, int, int, bo
             status = str(gate.get("status") or "")
             if status == "pass":
                 successes += 1
+                trials_by_stage[stage] = trials_by_stage.get(stage, 0) + 1
             elif status == "fail":
                 failures += 1
+                trials_by_stage[stage] = trials_by_stage.get(stage, 0) + 1
             # skip / todo / unknown → excluded (skip ≠ pass)
     trials = successes + failures
-    return successes, trials, failures, saw_incident
+    return successes, trials, failures, saw_incident, trials_by_stage
 
 
 def autonomy_from_runs(runs: list[dict[str, Any]], *, min_n: int = MIN_AUTONOMY_N) -> dict[str, Any]:
-    """Wilson L0 grade from required `signal` gates; first incident demotes to L1.
+    """Wilson L0 grade from required allowlisted-stage gates; first incident → L1.
 
-    Never claims L2/L3 — higher levels need a later slice. Default / eligible = L0.
+    Never claims L2/L3. L0-eligible detail requires ≥2 stages each with ≥ min_n
+    trials (#2171); single-stage green Wilson keeps L1-not-evaluable detail.
     """
-    successes, trials, failures, saw_incident = _signal_gate_outcomes(runs)
+    successes, trials, failures, saw_incident, trials_by_stage = _allowlisted_gate_outcomes(runs)
     lower = wilson_lower_bound(successes, trials, min_n=min_n)
+    observed = sorted(stage for stage, count in trials_by_stage.items() if count > 0)
+    stages_ready = sorted(stage for stage, count in trials_by_stage.items() if count >= min_n)
     base = {
         "trials": trials,
         "successes": successes,
@@ -286,7 +300,7 @@ def autonomy_from_runs(runs: list[dict[str, Any]], *, min_n: int = MIN_AUTONOMY_
         "wilson_floor": WILSON_FLOOR,
         "min_n": min_n,
         "incidents": failures,
-        "stages": sorted(AUTONOMY_STAGES),
+        "stages": observed,
         "level": 0,
     }
     # Axiom 7: first incident loses autonomy → L1 (even before Wilson is evaluable).
@@ -300,6 +314,13 @@ def autonomy_from_runs(runs: list[dict[str, Any]], *, min_n: int = MIN_AUTONOMY_
     if lower is None:
         return {**base, "status": "no-evaluable", "level": 0}
     if lower >= WILSON_FLOOR:
+        if len(stages_ready) < MIN_STAGES_FOR_L1:
+            return {
+                **base,
+                "status": "ok",
+                "level": 0,
+                "detail": "L1-not-evaluable (need ≥2 stages)",
+            }
         return {**base, "status": "ok", "level": 0, "detail": "L0-eligible"}
     return {
         **base,

@@ -225,7 +225,9 @@ this ordered spine.**
   Thin **policy** dry-run already exists (`aisdlc committer`, #2167/#2169): axiom-2 evidence,
   opt-in / no-evaluable until `runtime_*` is set — **not** OS isolation.
 - ForgePort attestations / `factory/gate` on GitHub checks.
-- Wilson autonomy promotion (L0–L4).
+- Wilson autonomy **promotion** (L0–L4). Multi-stage **honesty** already ships
+  (#2171): L1 stays no-evaluable until ≥2 allowlisted stages have `min_n` —
+  not Isolator, not auto-promotion.
 - Full ApprovalPort (SSH/DSSE).
 
 ### Parallel stay path
