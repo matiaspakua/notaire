@@ -160,18 +160,75 @@ class AutonomyWilsonTest(unittest.TestCase):
         repo = Repo(self, PROFILE)
         _seed_ledger(
             repo,
-            [{"stage": "green", "ok": True, "gates": [{"name": "t", "status": "pass", "seconds": 1.0}]}] * 10,
+            [
+                {
+                    "stage": "signal",
+                    "ok": True,
+                    "gates": [{"name": "t", "status": "pass", "required": True, "seconds": 1.0}],
+                }
+            ]
+            * 10,
         )
         result = repo.run("improve", "autonomy", "--json")
         self.assertEqual(0, result.returncode, output(result))
         data = json.loads(result.stdout)
         self.assertEqual("no-evaluable", data["status"])
+        self.assertEqual(0, data["level"])
 
-    def test_autonomy_promotes_with_wilson_floor_and_demotes_on_incident(self):
+    def test_autonomy_ignores_non_signal_stages(self):
+        """#2163: only preflight-fed signal runs count — green alone is no-evaluable."""
+        repo = Repo(self, PROFILE)
+        _seed_ledger(
+            repo,
+            [
+                {
+                    "stage": "green",
+                    "ok": True,
+                    "gates": [{"name": "t", "status": "pass", "required": True, "seconds": 1.0}],
+                }
+            ]
+            * 40,
+        )
+        result = repo.run("improve", "autonomy", "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        data = json.loads(result.stdout)
+        self.assertEqual("no-evaluable", data["status"])
+        self.assertEqual(0, data["level"])
+        self.assertEqual(0, data["trials"])
+
+    def test_autonomy_skip_does_not_count_as_pass_or_trial(self):
+        """#2163: skip ≠ pass — skipped gates are excluded from Wilson denominator."""
+        repo = Repo(self, PROFILE)
+        # 30 signal runs that are "ok" at stage level only because gates skipped
+        runs = [
+            {
+                "stage": "signal",
+                "ok": True,
+                "gates": [{"name": "t", "status": "skip", "required": True, "seconds": 0.0}],
+            }
+            for _ in range(30)
+        ]
+        _seed_ledger(repo, runs)
+        result = repo.run("improve", "autonomy", "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        data = json.loads(result.stdout)
+        self.assertEqual(0, data["trials"])
+        self.assertEqual("no-evaluable", data["status"])
+        self.assertEqual(0, data["level"])
+
+    def test_autonomy_l0_eligible_with_wilson_floor_and_demotes_on_incident(self):
+        """#2163: Wilson floor → L0 (never L3); first incident → L1."""
         repo = Repo(self, PROFILE)
         clean = [
-            {"stage": "green", "ok": True, "gates": [{"name": "t", "status": "pass", "seconds": 1.0}]}
-            for _ in range(30)
+            {
+                "stage": "signal",
+                "ok": True,
+                "gates": [
+                    {"name": "ratchet", "status": "pass", "required": True, "seconds": 0.1},
+                    {"name": "skills", "status": "pass", "required": True, "seconds": 0.1},
+                ],
+            }
+            for _ in range(15)  # 15 runs × 2 gates = 30 trials
         ]
         _seed_ledger(repo, clean)
         result = repo.run("improve", "autonomy", "--json")
@@ -179,9 +236,10 @@ class AutonomyWilsonTest(unittest.TestCase):
         data = json.loads(result.stdout)
         self.assertEqual("ok", data["status"])
         self.assertGreaterEqual(data["wilson_lower"], 0.80)
-        self.assertEqual(3, data["level"])
+        self.assertEqual(0, data["level"])
+        self.assertNotIn(data["level"], (2, 3))
 
-        # inject incident → demote
+        # inject incident → demote to L1
         import hashlib
 
         ledger = repo.root / ".aisdlc" / "evidence" / "ledger.jsonl"
@@ -191,9 +249,9 @@ class AutonomyWilsonTest(unittest.TestCase):
             {
                 "ts": "2026-11-08T21:00:00+00:00",
                 "prev": prev,
-                "stage": "green",
+                "stage": "signal",
                 "ok": False,
-                "gates": [{"name": "t", "status": "fail", "seconds": 1.0}],
+                "gates": [{"name": "ratchet", "status": "fail", "required": True, "seconds": 1.0}],
                 "incident": True,
             },
             sort_keys=True,
