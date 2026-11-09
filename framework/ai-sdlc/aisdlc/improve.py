@@ -151,6 +151,25 @@ def _pr_body(friction: list[dict[str, Any]], merge_rule: str) -> str:
 
 def propose(ctx: Context, as_json: bool, since: str | None = None) -> int:
     proposal = build_proposal(ctx, since)
+    if not proposal.get("friction"):
+        # no-evaluable: skip ≠ pass, and do not write an empty proposal artifact
+        empty = {
+            "kind": "self-improve",
+            "status": "no-evaluable",
+            "commits": False,
+            "approved_by": None,
+            "friction": [],
+            "runs_scanned": proposal.get("runs_scanned", 0),
+            "detail": "no failed-gate friction in the scanned ledger",
+        }
+        if as_json:
+            print(json.dumps(empty, indent=2, sort_keys=True))
+        else:
+            print(
+                f"improve propose: no-evaluable — {empty['detail']} "
+                f"({empty['runs_scanned']} runs scanned); no proposal written"
+            )
+        return 0
     out_dir = ctx.path(PROPOSALS_DIR)
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / f"proposal-{_now_stamp()}.json"

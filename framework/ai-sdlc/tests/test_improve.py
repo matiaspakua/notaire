@@ -68,6 +68,17 @@ class WilsonMathTest(unittest.TestCase):
 
 
 class ImproveProposeTest(unittest.TestCase):
+    def test_propose_empty_friction_is_no_evaluable_without_artifact(self):
+        repo = Repo(self, PROFILE)
+        proposals = repo.root / ".aisdlc" / "proposals"
+        result = repo.run("improve", "propose", "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        payload = json.loads(result.stdout)
+        self.assertEqual("no-evaluable", payload["status"])
+        self.assertEqual([], payload.get("friction") or [])
+        self.assertNotIn("path", payload)
+        self.assertFalse(proposals.exists() and any(proposals.glob("proposal-*.json")))
+
     def test_propose_writes_artifact_without_mutating_policy(self):
         repo = Repo(self, PROFILE)
         policy_before = (repo.root / "POLICY.md").read_text(encoding="utf-8")
