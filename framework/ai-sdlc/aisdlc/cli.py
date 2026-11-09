@@ -140,6 +140,12 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("report", help="summarize the evidence ledger and costs")
     p.add_argument("--json", action="store_true")
     p.add_argument("--since", help="ISO date, e.g. 2026-10-01")
+    p.add_argument("--html", type=Path, help="write a static HTML monitor snapshot (#2142)")
+    p.add_argument(
+        "--lead-time-fixture",
+        type=Path,
+        help="optional forge sample JSON to embed lead time in --html",
+    )
 
     p = sub.add_parser("metrics", help="lead-time and stage duration metrics (#2138)")
     metrics_sub = p.add_subparsers(dest="action", required=True)
@@ -253,7 +259,13 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "budget": lambda: checks.budget(ctx),
         "commits": lambda: checks.commits(ctx, args.base),
         "tdd": lambda: checks.tdd(ctx, args.base),
-        "report": lambda: evidence.report(ctx, args.json, args.since),
+        "report": lambda: evidence.report(
+            ctx,
+            args.json,
+            args.since,
+            html_path=getattr(args, "html", None),
+            lead_time_fixture=getattr(args, "lead_time_fixture", None),
+        ),
         "metrics": lambda: _metrics(ctx, args),
         "catalog": lambda: _catalog(ctx, args),
         "protected": lambda: diffchecks.protected(ctx, args.base),

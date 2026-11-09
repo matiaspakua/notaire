@@ -91,7 +91,7 @@ otherwise off. `core.*` / `security.*` cannot relax policy; required gates canno
 | `change new NAME --issue N` · `change check [NAME…]` | Built-in change records; `check` needs every section filled and the issue resolvable by `[tracker] verify`. | an empty section, no issue, an unresolvable issue |
 | `metrics lead-time --fixture F [--json]` | Lead time: `issue.created_at` → earliest linked PR `checks_green_at` (#2138). | no evaluable PR |
 | `metrics stages [--json] [--since DATE]` | Stage duration medians from the evidence ledger. | — |
-| `report [--json] [--since DATE]` | Pass rate, median duration and last status per gate; cost per model and agent. | — |
+| `report [--json] [--since DATE] [--html PATH] [--lead-time-fixture F]` | Pass rate, median duration and last status per gate; cost per model and agent. `--html` writes a read-only static monitor (stage/cost/lead-time); never renders prompts, diffs or secrets (#2142). | — |
 | `cost --agent A --model M --input N --output N [--usd X] [--issue N]` | Records an agent run's tokens, priced from `[cost.prices]` when `--usd` is omitted. Also feeds the TelemetryPort cost hook (no-op unless `[telemetry] enabled`). | — |
 
 Exit code 2 always means usage or configuration error (no profile, invalid profile, unknown base revision).
