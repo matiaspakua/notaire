@@ -15,12 +15,12 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/archive/2026-11-09-feat-2169-committer-opt-in/` | archived |
 | Branch | `cursor/feat-2169-committer-opt-in-d324` | created |
 | Tasks | `tasks.md` | complete |
-| Commits |  | done |
+| Commits | `f80ee26c` (amended tip) | done |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | n/a (docs/kit) | n/a |
-| Smoke test | `aisdlc committer --json` → no-evaluable | pending |
+| Smoke test | `aisdlc committer --json` → no-evaluable | done |
 
 ## Requirement coverage
 
