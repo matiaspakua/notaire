@@ -46,6 +46,32 @@ class HarnessAdoptionTest(unittest.TestCase):
         self.assertEqual("omlx", view["profile"])
         self.assertNotEqual(view["runtime"], "cursor-cloud")
 
+    def test_extra_stubs_surface_out_of_allow_with_sandbox_false(self):
+        """#2188: Claude Code / Codex / ACP stubs are inventory-only (Spec Kit opt-in)."""
+        listed = run("harness", "list", "--json")
+        self.assertEqual(0, listed.returncode, listed.stdout + listed.stderr)
+        rows = {row["id"]: row for row in json.loads(listed.stdout)}
+        for stub_id, runtime in (
+            ("claude-code", "claude-code"),
+            ("openai-codex", "openai-codex"),
+            ("agent-client-protocol", "agent-client-protocol"),
+        ):
+            self.assertEqual(runtime, rows[stub_id]["runtime"])
+            self.assertIs(False, rows[stub_id]["sandbox"])
+            self.assertIs(False, rows[stub_id]["commercial_harness_product"])
+            self.assertTrue(rows[stub_id]["stub"])
+            self.assertIs(False, rows[stub_id]["available"])
+        plugins = run("plugin", "list", "--json")
+        self.assertEqual(0, plugins.returncode, plugins.stdout + plugins.stderr)
+        plugin_rows = {row["id"]: row for row in json.loads(plugins.stdout)}
+        for stub_id in ("claude-code", "openai-codex", "agent-client-protocol"):
+            self.assertEqual("harness", plugin_rows[stub_id]["kind"])
+            self.assertIs(False, plugin_rows[stub_id]["available"])
+        validate = run("config", "validate")
+        self.assertEqual(0, validate.returncode, validate.stdout + validate.stderr)
+        doctor = run("doctor")
+        self.assertEqual(0, doctor.returncode, doctor.stdout + doctor.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

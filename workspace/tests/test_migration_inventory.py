@@ -35,6 +35,13 @@ class MigrationInventoryTest(unittest.TestCase):
         self.assertEqual("migrated", rows["local-ai/sdlc"]["status"])
         self.assertEqual("migrated", rows["docs/300-development/304-ai-sdlc-cloud/fleet-manifest.yaml"]["status"])
         self.assertEqual("migrated", rows[".aisdlc/project.yml"]["status"])
+        for stub in (
+            "framework/ai-sdlc/plugins/claude-code",
+            "framework/ai-sdlc/plugins/openai-codex",
+            "framework/ai-sdlc/plugins/acp",
+        ):
+            self.assertEqual("harness-adapter", rows[stub]["class"])
+            self.assertEqual("migrated", rows[stub]["status"])
         statuses = {row["status"] for row in data["rows"]}
         self.assertIn("migrated", statuses)
         self.assertIn("planned", statuses)
