@@ -113,3 +113,7 @@ placeholder = true               # replace with your full suite command, then de
 # [flags]
 # enabled = false
 # file = ".aisdlc/flags.json"
+
+# Catalogs CRUD (#2139)
+# [catalogs]
+# dir = ".aisdlc/catalogs"
