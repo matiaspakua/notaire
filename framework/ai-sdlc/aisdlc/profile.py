@@ -111,6 +111,31 @@ class Role:
     may_merge: bool = False
 
 
+# Effort budget units (#2182): tokens (prompt+completion), time_seconds (wall clock),
+# questions (clarification budget), review_lines (changed-line review size).
+EFFORT_KEYS = ("tokens", "time_seconds", "questions", "review_lines")
+
+
+@dataclass(frozen=True)
+class StageEffort:
+    tokens: int | None = None
+    time_seconds: int | None = None
+    questions: int | None = None
+    review_lines: int | None = None
+
+
+@dataclass(frozen=True)
+class StageProfile:
+    """Optional per-stage knobs. Empty lists / None fields are a no-op."""
+
+    id: str
+    agents: tuple[str, ...] = ()
+    skills: tuple[str, ...] = ()
+    mcp: tuple[str, ...] = ()
+    model: str | None = None
+    effort: StageEffort = StageEffort()
+
+
 @dataclass
 class Profile:
     name: str
@@ -153,6 +178,7 @@ class Profile:
     flags: FlagsSettings = field(default_factory=FlagsSettings)
     catalogs_dir: str | None = None
     committer: CommitterPolicy = field(default_factory=CommitterPolicy)
+    stage_profiles: tuple[StageProfile, ...] = ()
 
     def stages(self) -> list[str]:
         declared = {g.stage for g in self.gates}
@@ -256,6 +282,11 @@ def _build(data: dict, errors: list[str]) -> Profile:
         errors.append(f"catalogs.dir must be a non-empty string, got {profile.catalogs_dir!r}")
         profile.catalogs_dir = None
     profile.committer = _committer(data.get("committer", {}), errors)
+    profile.stage_profiles = _stage_profiles(
+        data.get("stages", []),
+        gate_stages={g.stage for g in profile.gates},
+        errors=errors,
+    )
     _check_prices(profile.prices, errors)
     return profile
 
@@ -448,3 +479,73 @@ def _check_prices(prices: dict, errors: list[str]) -> None:
         for key in ("input", "output"):
             if not isinstance(price.get(key), (int, float)):
                 errors.append(f"cost.prices.{model} needs a numeric {key} (USD per million tokens)")
+
+
+def _string_list(raw, where: str, errors: list[str]) -> tuple[str, ...]:
+    if raw is None:
+        return ()
+    if not isinstance(raw, list) or any(not isinstance(item, str) or not item.strip() for item in raw):
+        errors.append(f"{where} must be a list of non-empty strings")
+        return ()
+    return tuple(item.strip() for item in raw)
+
+
+def _effort(raw, where: str, errors: list[str]) -> StageEffort:
+    if raw is None:
+        return StageEffort()
+    if not isinstance(raw, dict):
+        errors.append(f"{where} must be a table of budget fields ({', '.join(EFFORT_KEYS)})")
+        return StageEffort()
+    values: dict[str, int | None] = {key: None for key in EFFORT_KEYS}
+    for key, value in raw.items():
+        if key not in EFFORT_KEYS:
+            errors.append(f"{where} unknown field {key!r} (expected {', '.join(EFFORT_KEYS)})")
+            continue
+        if not isinstance(value, int) or isinstance(value, bool) or value < 0:
+            errors.append(f"{where}.{key} must be a non-negative integer, got {value!r}")
+            continue
+        values[key] = value
+    return StageEffort(**values)
+
+
+def _stage_profiles(raw: list, gate_stages: set[str], errors: list[str]) -> tuple[StageProfile, ...]:
+    if not isinstance(raw, list):
+        errors.append("[[stages]] must be an array of tables")
+        return ()
+    found: list[StageProfile] = []
+    seen: set[str] = set()
+    for index, item in enumerate(raw, 1):
+        if not isinstance(item, dict):
+            errors.append(f"stage #{index} must be a table")
+            continue
+        label = f"stage #{index} ({item.get('id', '?')})"
+        stage_id = item.get("id")
+        if not isinstance(stage_id, str) or not stage_id.strip():
+            errors.append(f"{label} needs a non-empty id matching a gate stage")
+            continue
+        stage_id = stage_id.strip()
+        if stage_id not in gate_stages:
+            errors.append(
+                f"{label} id {stage_id!r} does not match any gate stage "
+                f"(declared: {', '.join(sorted(gate_stages)) or 'none'})"
+            )
+            continue
+        if stage_id in seen:
+            errors.append(f"{label} duplicates id {stage_id!r}")
+            continue
+        seen.add(stage_id)
+        model = item.get("model")
+        if model is not None and (not isinstance(model, str) or not model.strip()):
+            errors.append(f"{label} model must be a non-empty string when set")
+            model = None
+        found.append(
+            StageProfile(
+                id=stage_id,
+                agents=_string_list(item.get("agents"), f"{label} agents", errors),
+                skills=_string_list(item.get("skills"), f"{label} skills", errors),
+                mcp=_string_list(item.get("mcp"), f"{label} mcp", errors),
+                model=model.strip() if isinstance(model, str) else None,
+                effort=_effort(item.get("effort"), f"{label} effort", errors),
+            )
+        )
+    return tuple(found)

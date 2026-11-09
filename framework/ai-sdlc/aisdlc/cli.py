@@ -24,6 +24,7 @@ from aisdlc import (
     ratchet,
     repo,
     skills,
+    stages,
 )
 from aisdlc.telemetry import get_telemetry
 from aisdlc.context import Context
@@ -78,7 +79,18 @@ def build_parser() -> argparse.ArgumentParser:
     show.add_argument("--redacted", action="store_true", help="required: refuse a raw dump")
     show.add_argument("--json", action="store_true")
     show.add_argument("--max-open-prs", type=int, help="override the open pull-request cap for this print")
-    config_sub.add_parser("validate", help="check factory config, plugins and the migration inventory")
+    config_sub.add_parser(
+        "validate",
+        help="check factory config, plugins, migration inventory, and stage→catalog refs (#2182)",
+    )
+
+    p = sub.add_parser(
+        "stage",
+        help="list per-stage profile knobs (agents/skills/MCP/model/effort); never executes (#2182)",
+    )
+    stage_sub = p.add_subparsers(dest="action", required=True)
+    stage_list = stage_sub.add_parser("list", help="print declared stage knobs (read-only)")
+    stage_list.add_argument("--json", action="store_true")
 
     p = sub.add_parser("plugin", help="list trusted plugins without executing them")
     plugin_sub = p.add_subparsers(dest="action", required=True)
@@ -303,6 +315,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "committer": lambda: committer.check(ctx, args.base, args.json),
         "evidence": lambda: evidence.verify(ctx, args.anchor),
         "config": lambda: _config(ctx, args),
+        "stage": lambda: stages.list_stages(ctx, as_json=bool(getattr(args, "json", False))),
         "plugin": lambda: _plugin(ctx, args),
         "inventory": lambda: _inventory(ctx),
         "harness": lambda: _harness(ctx, args),
@@ -383,6 +396,7 @@ def _metrics(ctx: Context, args: argparse.Namespace) -> int:
 def _config(ctx: Context, args: argparse.Namespace) -> int:
     if args.action == "validate":
         errors = validate_factory(ctx.root, ctx.profile)
+        errors.extend(stages.validate_stage_profiles(ctx))
         if errors:
             print("factory config invalid:")
             for error in errors:

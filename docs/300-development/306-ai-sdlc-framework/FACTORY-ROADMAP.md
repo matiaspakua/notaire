@@ -120,17 +120,23 @@ One-command lifecycle (#2135): install kit + scaffold; update idempotent; uninst
 
 ### Stages (adopter-defined)
 
-Profile `[[gates]]` already map stages (`intake` … `release`). Per stage, the factory must allow declaring:
+Profile `[[gates]]` already map stages (`intake` … `release`). Per stage, the factory
+declares knobs via optional `[[stages]]` (#2182 shipped):
 
 | Knob | Meaning |
 |------|---------|
 | **agents** | Role cards / worker ids from agent catalog |
-| **rules / skills** | Skill ids + always-loaded budget |
+| **rules / skills** | Skill ids + always-loaded budget (catalog or skills-dir overlay) |
 | **MCP** | Allowlisted servers/tools (declare only; kit does not run them) |
 | **model** | Preferred model id / tier for that stage |
-| **effort** | Token/time budget, review size, question budget |
+| **effort** | `tokens` / `time_seconds` / `questions` / `review_lines` |
 
-Foreman (cloud or local) **routes** work across stages, may skip/revise, and merges **only** under the written merge rule (Notaire: preflight `--full` + heavy-CI). Spec approval is Foreman instruction, not a forge permission. Factory never merges Constitution/harness without Owner.
+Unknown catalog refs fail `config validate` / `doctor`. `stage list` / `config show
+--redacted` surface knobs without executing anything. Foreman (cloud or local)
+**routes** work across stages, may skip/revise, and merges **only** under the written
+merge rule (Notaire: preflight `--full` + heavy-CI). Spec approval is Foreman
+instruction, not a forge permission. Factory never merges Constitution/harness without
+Owner.
 
 ### Industry challenge (keep / skip)
 
@@ -204,6 +210,7 @@ Cloud ≠ local. Commercial “Harness” product ≠ this port. Permissions in 
 | OpenFeature port | [#2137](https://github.com/matiaspakua/notaire/issues/2137) | [#2147](https://github.com/matiaspakua/notaire/pull/2147) |
 | OpenAPI 3.1 control surface | [#2136](https://github.com/matiaspakua/notaire/issues/2136) | [#2148](https://github.com/matiaspakua/notaire/pull/2148) |
 | Catalogs CRUD | [#2139](https://github.com/matiaspakua/notaire/issues/2139) | [#2149](https://github.com/matiaspakua/notaire/pull/2149) |
+| Per-stage profile knobs | [#2182](https://github.com/matiaspakua/notaire/issues/2182) | [#2183](https://github.com/matiaspakua/notaire/pull/2183) |
 | Roadmap mirror | [#2140](https://github.com/matiaspakua/notaire/issues/2140) | [#2145](https://github.com/matiaspakua/notaire/pull/2145) |
 | Self-improve gated PRs | [#2141](https://github.com/matiaspakua/notaire/issues/2141) | [#2152](https://github.com/matiaspakua/notaire/pull/2152) |
 | Minimal telemetry UI | [#2142](https://github.com/matiaspakua/notaire/issues/2142) | [#2151](https://github.com/matiaspakua/notaire/pull/2151) |

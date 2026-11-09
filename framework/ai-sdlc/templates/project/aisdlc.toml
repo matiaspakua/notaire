@@ -117,3 +117,15 @@ placeholder = true               # replace with your full suite command, then de
 # Catalogs CRUD (#2139)
 # [catalogs]
 # dir = ".aisdlc/catalogs"
+
+# Per-stage knobs (#2182). Optional. id must match a gate stage. agents/skills/mcp
+# resolve against [catalogs] (+ skills-dir overlay for skills). Unknown id →
+# config validate / doctor error. Omit = no-op. List/show never execute.
+# Effort units: tokens (prompt+completion), time_seconds, questions, review_lines.
+# [[stages]]
+# id = "plan"
+# agents = ["planner"]
+# skills = ["propose"]
+# mcp = []
+# model = "your-model-id"
+# effort = { tokens = 200000, time_seconds = 3600, questions = 20, review_lines = 400 }

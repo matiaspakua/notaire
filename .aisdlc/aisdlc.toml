@@ -133,6 +133,22 @@ tier = "mid"
 tier = "top"
 model = "claude-opus-5-5"
 
+# Per-stage knobs (#2182): Foreman routing hints by catalog / skills-dir reference.
+# List/validate/show never execute MCP or agents. No Isolator / sandbox claim.
+# Effort units: tokens (prompt+completion), time_seconds (wall clock),
+# questions (clarification budget), review_lines (changed-line review size).
+[[stages]]
+id = "plan"
+agents = ["openspec-planner"]
+skills = [
+  "openspec-propose",
+  "openspec-update-change",
+  "openspec-triage",
+  "software-functional-analyst",
+]
+model = "claude-sonnet-5-5-high"
+effort = { tokens = 200000, time_seconds = 3600, questions = 20, review_lines = 400 }
+
 # ── G1 specified ─────────────────────────────────────────────────────────────
 [[gates]]
 name = "OpenSpec plans conform (live issue check)"

@@ -189,6 +189,8 @@ def check_inventory(path: Path) -> list[str]:
 
 
 def config_view(profile: Profile, *, limit: int) -> dict:
+    from aisdlc.stages import stage_dicts
+
     return redact("", {
         "schema": SCHEMA,
         "project": profile.name,
@@ -200,6 +202,7 @@ def config_view(profile: Profile, *, limit: int) -> dict:
         "plugin_allow": list(profile.plugin_allow),
         "inventory": profile.inventory,
         "distributed_claim_lock": "not implemented",
+        "stages": stage_dicts(profile),
     })
 
 
