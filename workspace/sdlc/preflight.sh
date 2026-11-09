@@ -62,8 +62,7 @@ board Status/label coherence    Process Checks                    sdlc-process.y
 Closes/Fixes multi_pr guard     Process Checks                    sdlc-process.yml   (BLOCKING; #1878)
 Owner scripts bash -n           Process Checks                    sdlc-process.yml   (BLOCKING; #1878)
 agent rule files                Process Checks                    sdlc-process.yml   (BLOCKING)
-baseline ratchet (shrink-only)  Process Checks                    sdlc-process.yml   (BLOCKING; #1958)
-skills catalog lint             Process Checks / Main Health      sdlc-process.yml   (BLOCKING; #1958)
+aisdlc gate signal (ratchet+skills) Process Checks / Main Health  sdlc-process.yml   (BLOCKING; #1958/#2159)
 process script self-tests       Process Checks                    sdlc-process.yml   (BLOCKING)
 openapi breaking diff           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; export freshness CI-only)
 openapi accepted list           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; stale entries, #1315)
@@ -191,12 +190,11 @@ else
     skip "sdlc exception label" "no PR yet — re-run after the PR exists; GitHub will not run this on the pull request"
 fi
 run "agent rule files" bash workspace/sdlc/check-agent-rules.sh
-# AI SDLC framework (#1958): architecture/lint baselines only shrink against main, and the
-# skills catalog stays unique, described and generic where it claims to be.
-run "baseline ratchet (shrink-only)" \
-    python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml ratchet --base origin/main
-run "skills catalog lint" \
-    python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml skills
+# AI SDLC framework (#1958/#2159): same ratchet + skills work as before, but via
+# `gate signal` so record_stage appends to the evidence ledger (report/HTML/improve).
+# Do not add this stage under pre-push — preflight is already that stage's command.
+run "aisdlc gate signal (ratchet+skills → evidence)" \
+    python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml gate signal --base origin/main
 run "process script self-tests" bash -c \
     "python3 -m unittest discover -s local-ai/sdlc/tests \
      && python3 -m unittest discover -s framework/ai-sdlc/tests \

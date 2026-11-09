@@ -138,6 +138,19 @@ run = "cd frontend && npx vitest run {test}"
 expect = "fail"
 paths = ["frontend/src/**/*.test.ts", "frontend/src/**/*.test.tsx"]
 
+# ── Local signal (#2159): same ratchet+skills work as preflight, recorded via gate ─
+# Cheap custom stage so report/HTML/improve see ledger rows. Not part of pre-push
+# (would recurse through preflight). CI process.yml still calls ratchet/skills directly.
+[[gates]]
+name = "baseline ratchet (shrink-only)"
+stage = "signal"
+run = "aisdlc ratchet --base {base}"
+
+[[gates]]
+name = "skills catalog lint"
+stage = "signal"
+run = "aisdlc skills"
+
 # ── G3 verified ──────────────────────────────────────────────────────────────
 # preflight.sh mirrors every blocking CI gate, including the ratchet and skills lint below.
 [[gates]]
