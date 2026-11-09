@@ -207,7 +207,7 @@ Cloud ≠ local. Commercial “Harness” product ≠ this port. Permissions in 
 | TelemetryPort | [#2125](https://github.com/matiaspakua/notaire/issues/2125) | [#2143](https://github.com/matiaspakua/notaire/pull/2143) |
 | Install / update / uninstall | [#2135](https://github.com/matiaspakua/notaire/issues/2135) | [#2144](https://github.com/matiaspakua/notaire/pull/2144) |
 | Lead-time + stage metrics (fixture) | [#2138](https://github.com/matiaspakua/notaire/issues/2138) | [#2146](https://github.com/matiaspakua/notaire/pull/2146) |
-| ForgePort read-only live lead-time | [#2184](https://github.com/matiaspakua/notaire/issues/2184) | (this PR) |
+| ForgePort read-only live lead-time | [#2184](https://github.com/matiaspakua/notaire/issues/2184) | [#2185](https://github.com/matiaspakua/notaire/pull/2185) |
 | OpenFeature port | [#2137](https://github.com/matiaspakua/notaire/issues/2137) | [#2147](https://github.com/matiaspakua/notaire/pull/2147) |
 | OpenAPI 3.1 control surface | [#2136](https://github.com/matiaspakua/notaire/issues/2136) | [#2148](https://github.com/matiaspakua/notaire/pull/2148) |
 | Catalogs CRUD | [#2139](https://github.com/matiaspakua/notaire/issues/2139) | [#2149](https://github.com/matiaspakua/notaire/pull/2149) |
