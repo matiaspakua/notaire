@@ -40,14 +40,14 @@ forbid_in_generic = ['notaire', 'backend-api', 'workspace/sdlc', 'docs/openspec'
 [evidence]
 dir = ".aisdlc/evidence"     # hash-chained; `aisdlc evidence verify` (cross-repo assessment 2026-11)
 
-# Sole-committer dry-run (#2167/#2169): axiom 2 policy evidence — NOT an OS Isolator.
-# Opt-in: check stays no-evaluable until runtime_names/emails are set. required=false
-# keeps the gate advisory even after activation. Never claims sandbox isolation.
+# Sole-committer dry-run (#2167/#2169/#2175): axiom 2 policy evidence — NOT an OS Isolator.
+# Owner runtime_* makes the check evaluable. required=false keeps it advisory (exit 0 on fail);
+# Owner may flip required=true in a follow-up when fail-closed is desired. Never claims sandbox.
 [committer]
 required = false
-runtime_names = []
-runtime_emails = []
-# Pre-seeded deny patterns; inactive until runtime_* is configured by the Owner.
+runtime_names = ["Matias Miguez"]
+runtime_emails = ["matiaspakua@gmail.com"]
+# Agent deny patterns (active once runtime_* is set).
 agent_names = ["cursor[bot]", "Cursor Agent", "github-actions[bot]", "dependabot[bot]"]
 agent_emails = [
   "41898282+github-actions[bot]@users.noreply.github.com",
@@ -202,7 +202,7 @@ required = false               # advisory: split into chained PRs, or say why no
 name = "sole-committer dry-run (axiom 2 policy, not isolation)"
 stage = "pre-pr"
 run = "aisdlc committer --base {base}"
-required = false               # opt-in: no-evaluable until runtime_* configured (#2169)
+required = false               # advisory even with Owner runtime_* (#2175); flip true to fail-closed
 
 # ── G4 reviewed (pass --var pr=<number>) ─────────────────────────────────────
 [[gates]]

@@ -121,22 +121,25 @@ class WiringTest(unittest.TestCase):
     def test_evidence_ledger_is_not_committed(self):
         self.assertIn(".aisdlc/evidence/", (REPO_ROOT / ".gitignore").read_text(encoding="utf-8"))
 
-    def test_committer_opt_in_gate_is_no_evaluable_without_runtime(self):
-        """#2169: sole-committer gate is wired; stays no-evaluable until runtime_* is set."""
+    def test_committer_owner_runtime_is_evaluable_and_advisory(self):
+        """#2175: Owner runtime_* makes committer evaluable; required stays false."""
         text = PROFILE.read_text(encoding="utf-8")
         self.assertIn("[committer]", text)
         self.assertIn("aisdlc committer --base {base}", text)
-        self.assertIn('required = false', text)
+        self.assertIn("Matias Miguez", text)
+        self.assertIn("matiaspakua@gmail.com", text)
+        self.assertRegex(text, r"(?m)^required\s*=\s*false\s*$")
         listed = aisdlc("gate", "--list")
         self.assertEqual(0, listed.returncode, listed.stdout + listed.stderr)
         self.assertIn("sole-committer", listed.stdout.lower())
         result = aisdlc("committer", "--base", "origin/main", "--json")
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         payload = json.loads(result.stdout)
-        self.assertEqual("no-evaluable", payload["status"])
+        self.assertNotEqual("no-evaluable", payload["status"])
+        self.assertIn(payload["status"], ("pass", "fail"))
+        self.assertIs(False, payload.get("required"))
         combined = (result.stdout + result.stderr).lower()
         self.assertNotIn("sandbox", combined)
-        # May say "does not claim OS isolation"; must not claim that it *is* isolated.
         self.assertNotRegex(combined, r"\bis (an )?os isolat|\bis isolated\b|\bprovides isolation\b")
 
 
