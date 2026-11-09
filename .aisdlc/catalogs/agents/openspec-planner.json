@@ -1,0 +1,7 @@
+{
+  "digest": "49c8ae15fe3a63c8d66d6372b116a85b430db7db291a0b208e803e84dc754ad6",
+  "id": "openspec-planner",
+  "kind": "agents",
+  "ref": ".claude/agents/openspec-planner.md",
+  "summary": "OpenSpec / analyst fleet role (path ref; never executed by aisdlc)"
+}
