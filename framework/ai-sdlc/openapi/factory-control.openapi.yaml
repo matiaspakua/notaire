@@ -107,6 +107,32 @@ components:
         inventory:
           type: [string, "null"]
         distributed_claim_lock: { type: string }
+        stages:
+          type: array
+          description: >
+            Optional per-stage knobs (#2182): agents/skills/mcp catalog ids, model,
+            and effort budgets (tokens, time_seconds, questions, review_lines).
+            List/show never execute MCP or agents.
+          items:
+            type: object
+            additionalProperties: true
+            required: [id]
+            properties:
+              id: { type: string }
+              agents:
+                type: array
+                items: { type: string }
+              skills:
+                type: array
+                items: { type: string }
+              mcp:
+                type: array
+                items: { type: string }
+              model:
+                type: [string, "null"]
+              effort:
+                type: object
+                additionalProperties: true
     PluginRow:
       type: object
       additionalProperties: true

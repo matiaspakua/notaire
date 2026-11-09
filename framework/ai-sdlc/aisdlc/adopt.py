@@ -62,6 +62,8 @@ def doctor(ctx: Context) -> int:
 
 
 def _errors(ctx: Context) -> list[str]:
+    from aisdlc.stages import validate_stage_profiles
+
     p = ctx.profile
     errors = []
     if p.policy and not ctx.path(p.policy).is_file():
@@ -75,6 +77,8 @@ def _errors(ctx: Context) -> list[str]:
         script = _script(gate.run)
         if script and not gate.placeholder and not ctx.path(script).is_file():
             errors.append(f"gate {gate.stage}/{gate.name} runs {script}, which does not exist")
+    # Stage→catalog refs (#2182): fail closed; never execute MCP/agents.
+    errors.extend(validate_stage_profiles(ctx))
     return errors
 
 
