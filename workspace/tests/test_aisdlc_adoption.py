@@ -10,6 +10,7 @@ Run with: python3 workspace/tests/test_aisdlc_adoption.py
 """
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 import unittest
@@ -73,11 +74,38 @@ class WiringTest(unittest.TestCase):
         self.assertIn("ai-sdlc-framework", modules)
         self.assertEqual("framework/ai-sdlc", modules["ai-sdlc-framework"]["path"])
 
-    def test_preflight_runs_ratchet_skills_and_kit_tests(self):
+    def test_profile_declares_signal_stage(self):
+        """#2159: cheap signal stage = ratchet + skills so preflight can record evidence."""
+        listed = aisdlc("gate", "--list")
+        self.assertEqual(0, listed.returncode, listed.stdout + listed.stderr)
+        self.assertRegex(listed.stdout, r"(?m)^signal\b")
+        text = PROFILE.read_text(encoding="utf-8")
+        self.assertIn('stage = "signal"', text)
+        self.assertIn("aisdlc ratchet --base {base}", text)
+        self.assertIn("aisdlc skills", text)
+
+    def test_preflight_runs_signal_stage_and_kit_tests(self):
         text = PREFLIGHT.read_text(encoding="utf-8")
-        self.assertIn("aisdlc --profile .aisdlc/aisdlc.toml ratchet --base origin/main", text)
-        self.assertIn("aisdlc --profile .aisdlc/aisdlc.toml skills", text)
+        self.assertIn("aisdlc --profile .aisdlc/aisdlc.toml gate signal --base origin/main", text)
+        # Direct top-level ratchet/skills runs would skip record_stage; CI may still call them.
+        self.assertNotRegex(text, r'(?m)^run "baseline ratchet')
+        self.assertNotRegex(text, r'(?m)^run "skills catalog lint"')
         self.assertIn("python3 -m unittest discover -s framework/ai-sdlc/tests", text)
+
+    def test_signal_stage_records_evidence_ledger(self):
+        ledger = REPO_ROOT / ".aisdlc" / "evidence" / "ledger.jsonl"
+        before_lines = ledger.read_text(encoding="utf-8").splitlines() if ledger.is_file() else []
+        result = aisdlc("gate", "signal", "--base", "origin/main")
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        after_lines = ledger.read_text(encoding="utf-8").splitlines()
+        self.assertGreater(len(after_lines), len(before_lines))
+        newest = json.loads(after_lines[-1])
+        self.assertEqual("signal", newest.get("stage"))
+        self.assertTrue(newest.get("ok"), newest)
+        report = aisdlc("report", "--json")
+        self.assertEqual(0, report.returncode, report.stdout + report.stderr)
+        payload = json.loads(report.stdout)
+        self.assertGreaterEqual(payload.get("runs", 0), 1)
 
     def test_process_checks_run_ratchet_skills_and_kit_tests(self):
         runs = "\n".join(step.get("run", "") for step in process_steps("process-checks"))
