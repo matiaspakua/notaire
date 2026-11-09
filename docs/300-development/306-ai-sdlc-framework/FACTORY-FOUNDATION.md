@@ -17,10 +17,18 @@ Isolator and never claims sandbox isolation. Notaire’s pre-pr gate is opt-in
 (`required = false`) and stays `no-evaluable` until the Owner sets
 `[committer] runtime_names` / `runtime_emails`.
 
+**Isolator runtime boundary** ([#2173](https://github.com/matiaspakua/notaire/issues/2173),
+[ADR-004](../../../framework/ai-sdlc/docs/adr/ADR-004-isolator-runtime.md)): design-only.
+Grants + write set + agent never commits; YAML ≠ OS isolation. Kit stub /
+`aisdlc doctor` report `no-evaluable` + `sandbox=false` until a real sole-committer
+runtime exists. Do not invent Owner `runtime_*`. Isolator must eventually **enforce**
+what `aisdlc committer` already **checks**.
+
 The canonical root is [`framework/ai-sdlc`](../../../framework/ai-sdlc/README.md).
 Decisions: [ADR-001](../../../framework/ai-sdlc/docs/adr/ADR-001-canonical-root.md),
 [ADR-002](../../../framework/ai-sdlc/docs/adr/ADR-002-ports-and-trust.md),
-[ADR-003](../../../framework/ai-sdlc/docs/adr/ADR-003-standards.md).
+[ADR-003](../../../framework/ai-sdlc/docs/adr/ADR-003-standards.md),
+[ADR-004](../../../framework/ai-sdlc/docs/adr/ADR-004-isolator-runtime.md).
 
 This slice does not move `workspace/sdlc`, `local-ai/sdlc`, agent prompts, or skills.
 The map of what moved and what did not is `.aisdlc/migration-inventory.toml`.

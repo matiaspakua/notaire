@@ -224,6 +224,8 @@ this ordered spine.**
 - Isolator + agent-never-commits **runtime** (V1 M0/M1 / D1–D7 class) — **not** in P0–P3.
   Thin **policy** dry-run already exists (`aisdlc committer`, #2167/#2169): axiom-2 evidence,
   opt-in / no-evaluable until `runtime_*` is set — **not** OS isolation.
+  **Boundary design** shipped (#2173 / ADR-004): stub + doctor `no-evaluable`; YAML ≠ isolation;
+  implement only after Owner `runtime_*` + real sole-committer grants.
 - ForgePort attestations / `factory/gate` on GitHub checks.
 - Wilson autonomy **promotion** (L0–L4). Multi-stage **honesty** already ships
   (#2171): L1 stays no-evaluable until ≥2 allowlisted stages have `min_n` —

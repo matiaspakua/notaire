@@ -14,6 +14,7 @@ The core talks to the outside through ports:
 | Gate | Quality commands | Existing `gate` command. Unchanged. |
 | Evidence | Hash-chained ledger | Existing `evidence` command. Unchanged. |
 | Config | Profile, ceiling, redaction | `config validate` and `config show --redacted`. |
+| Isolator | Sole-committer **runtime** (grants, write set, agent never commits) | Design stub only (#2173 / ADR-004): `no-evaluable`, always `sandbox=false`. Not implemented. |
 
 A plugin manifest is data. `plugin list`, `plugin capabilities`, and `config validate` read TOML. They do not import plugin code and they do not spawn the command.
 

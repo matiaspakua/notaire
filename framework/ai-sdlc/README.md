@@ -71,7 +71,7 @@ otherwise off. `core.*` / `security.*` cannot relax policy; required gates canno
 | `uninstall [--path P] [--purge]` | Removes the kit tree (+ install manifest). `--purge` also drops scaffold and evidence. | forbidden path |
 | `init --name N [--level 1-4] [--force]` | Scaffolds policy, card, `AGENTS.md`, profile, role agents, change folder. Never overwrites without `--force`. | — |
 | `contract show\|check` | Factory control OpenAPI 3.1.0 path and structural validation (#2136). | contract missing or not 3.1.0 |
-| `doctor` | Validates the profile and the files it names; warns on placeholders and on what the level still lacks. | the policy, a baseline, a context file, a skills dir or a gate script is missing |
+| `doctor` | Validates the profile and the files it names; warns on placeholders and on what the level still lacks; INFO line for Isolator `no-evaluable` (ADR-004, never a sandbox claim). | the policy, a baseline, a context file, a skills dir or a gate script is missing |
 | `config validate` | Checks factory knobs, trusted plugin manifests, and the migration inventory when `[factory] inventory` is set. A partial failure is not success. | any of those checks fail |
 | `config show --redacted [--json] [--max-open-prs N]` | Prints the resolved factory view. Refuses to run without `--redacted`. Cannot raise the profile pull-request ceiling. | — (exit 2 on usage or an attempt to raise the ceiling) |
 | `plugin list` · `plugin capabilities` · `plugin plan --id ID --var K=V` | Reads trusted manifests. `plan` prints argv and does not run it. Untrusted ids are listed as unavailable. | — (exit 2 when the id is not available) |

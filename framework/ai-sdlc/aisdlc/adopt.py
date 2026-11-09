@@ -45,11 +45,15 @@ def init(root: Path, name: str, level: int, force: bool) -> int:
 
 
 def doctor(ctx: Context) -> int:
+    from aisdlc.isolator import doctor_note
+
     errors, warnings = _errors(ctx), _warnings(ctx)
     for message in errors:
         print(f"  ERROR  {message}")
     for message in warnings:
         print(f"  WARN   {message}")
+    # Isolator is design-only (#2173): INFO, never an error by itself.
+    print(f"  INFO   {doctor_note()}")
     p = ctx.profile
     print(f"doctor: {p.name} · level {p.level} · {len(p.gates)} gates in {len(p.stages())} stages · "
           f"{len(p.ratchets)} ratchets · {len(p.roles)} roles — "
