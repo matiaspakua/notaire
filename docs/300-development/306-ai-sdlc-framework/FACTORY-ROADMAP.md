@@ -210,7 +210,7 @@ Cloud ≠ local. Commercial “Harness” product ≠ this port. Permissions in 
 | OpenFeature port | [#2137](https://github.com/matiaspakua/notaire/issues/2137) | [#2147](https://github.com/matiaspakua/notaire/pull/2147) |
 | OpenAPI 3.1 control surface | [#2136](https://github.com/matiaspakua/notaire/issues/2136) | [#2148](https://github.com/matiaspakua/notaire/pull/2148) |
 | Catalogs CRUD | [#2139](https://github.com/matiaspakua/notaire/issues/2139) | [#2149](https://github.com/matiaspakua/notaire/pull/2149) |
-| Per-stage profile knobs | [#2182](https://github.com/matiaspakua/notaire/issues/2182) | this PR |
+| Per-stage profile knobs | [#2182](https://github.com/matiaspakua/notaire/issues/2182) | [#2183](https://github.com/matiaspakua/notaire/pull/2183) |
 | Roadmap mirror | [#2140](https://github.com/matiaspakua/notaire/issues/2140) | [#2145](https://github.com/matiaspakua/notaire/pull/2145) |
 | Self-improve gated PRs | [#2141](https://github.com/matiaspakua/notaire/issues/2141) | [#2152](https://github.com/matiaspakua/notaire/pull/2152) |
 | Minimal telemetry UI | [#2142](https://github.com/matiaspakua/notaire/issues/2142) | [#2151](https://github.com/matiaspakua/notaire/pull/2151) |
