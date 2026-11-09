@@ -70,6 +70,39 @@ def subjects(root: Path, base: str) -> list[str]:
     return [line for line in result.stdout.splitlines() if line]
 
 
+def commits_since(root: Path, base: str) -> list[dict[str, str]]:
+    """Non-merge commits since base: sha, author_name, author_email, message (subject+body)."""
+    require_ref(root, base)
+    # Record separator 0x1e; field separator 0x00 — message may contain newlines.
+    result = _git(
+        root,
+        "log",
+        "--no-merges",
+        "--format=%H%x00%an%x00%ae%x00%B%x1e",
+        f"{base}..HEAD",
+    )
+    if result.returncode != 0:
+        raise GitError(result.stderr.strip())
+    rows: list[dict[str, str]] = []
+    for record in result.stdout.split("\x1e"):
+        record = record.strip("\n")
+        if not record.strip():
+            continue
+        parts = record.split("\x00", 3)
+        if len(parts) != 4:
+            continue
+        sha, name, email, message = parts
+        rows.append(
+            {
+                "sha": sha.strip(),
+                "author_name": name,
+                "author_email": email,
+                "message": message.strip("\n"),
+            }
+        )
+    return rows
+
+
 def show(root: Path, ref: str, path: str) -> str | None:
     """The file's content at `ref`, or None when the file does not exist there."""
     require_ref(root, ref)
