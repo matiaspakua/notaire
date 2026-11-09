@@ -35,8 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Empty ledger writes nothing | ImproveProposeTest | pending |
-| Friction still writes a proposal | ImproveProposeTest | pending |
+| Empty ledger writes nothing | ImproveProposeTest | passing |
+| Friction still writes a proposal | ImproveProposeTest | passing |
 
 ## Permanent documentation updated
 
