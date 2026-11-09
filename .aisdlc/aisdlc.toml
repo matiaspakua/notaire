@@ -65,6 +65,20 @@ exporter = "none"
 [catalogs]
 dir = ".aisdlc/catalogs"
 
+# Always-loaded context budget (#1259/#2186): memory pack ids resolve against
+# [catalogs] memory entries; aisdlc budget measures files ∪ pack refs (dedupe).
+# List/validate/budget never execute packs. Coexists with
+# workspace/ci/agent-context-budget.py (same ALWAYS_LOADED set).
+[context]
+max_tokens = 8000
+files = [
+  "CLAUDE.md",
+  "AGENTS.md",
+  "CONSTITUTION-AGENT-CARD.md",
+  ".claude/rules/ai-agent-workflow.md",
+]
+memory = ["agent-card"]
+
 [flags]
 enabled = false
 file = ".aisdlc/flags.json"

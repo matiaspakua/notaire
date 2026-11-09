@@ -1,0 +1,7 @@
+{
+  "digest": "129dfe864909ad40601f6fad9e02cc878a18766774b67f8743bb0bad7878877b",
+  "id": "agent-card",
+  "kind": "memory",
+  "ref": "CONSTITUTION-AGENT-CARD.md",
+  "summary": "Always-loaded Constitution agent card (#1259/#2186); list/budget never execute."
+}

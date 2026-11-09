@@ -170,7 +170,7 @@ Rules: default **no-op** SDK; exporter off unless configured; **never** export p
 
 ### Catalogs (#2139)
 
-CRUD via CLI + files for: **skills**, **MCP** allowlist entries, **agents**, **memory** packs. Lint/digest on write; list/validate never execute. Stage profiles reference catalog ids.
+CRUD via CLI + files for: **skills**, **MCP** allowlist entries, **agents**, **memory** packs. Lint/digest on write; list/validate never execute. Stage profiles reference catalog ids. Profile `[context].memory` pack ids resolve against the memory catalog and participate in `aisdlc budget` (#2186); unknown packs fail closed; list/budget never execute packs.
 
 ### Self-improvement (#2141)
 
