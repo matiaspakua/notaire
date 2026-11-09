@@ -39,7 +39,9 @@ and locally with [`templates/integrations/pre-push`](templates/integrations/pre-
 
 `[telemetry]` defaults to off. When `enabled = true` and `exporter = "none"`, the kit binds
 OpenTelemetry's `NoOpTracerProvider` if the optional packages in `optional/telemetry.txt` are
-importable (`verify.sh` installs them into `.venv-telemetry` for tests). Prompts, diffs and
+importable (`verify.sh` installs them into `.venv-telemetry` for tests when `ensurepip` /
+`python3-venv` is available; otherwise it WARNs and continues stdlib-only — optional must not
+block the kit suite, #2180). Prompts, diffs and
 secrets are redacted. Stage duration and `aisdlc cost` feed lead-time/cost hooks; the evidence
 ledger remains authoritative. `OTEL_SDK_DISABLED` is honored; `TRACEPARENT` is not injected on
 the no-op path. GenAI semantic conventions are not claimed.
