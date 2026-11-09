@@ -84,7 +84,7 @@ otherwise off. `core.*` / `security.*` cannot relax policy; required gates canno
 | `ratchet [--base R] [--name N]` | Baselines (lines, or JSON leaf counts) may not gain entries versus the base revision; floors must hold. | an entry was added or a floor missed |
 | `catalog list\|add\|update\|remove\|validate` | CRUD for skills/MCP/agents/memory catalogs (#2139); digests on write; never executes. `list` also surfaces `[skills] dir` folders as read-only `source=skills-dir` rows (#2155). | unknown kind / missing dir on write |
 | `skills` | Every skill folder has a `SKILL.md` with a description, names are unique, generic skills carry no forbidden project pattern. | any of those |
-| `budget` | Always-loaded files ≤ `max_tokens` (bytes/4). | over budget or a file is missing |
+| `budget` | Always-loaded `[context].files` ∪ memory catalog pack `ref`s ≤ `max_tokens` (bytes/4). Pack ids must exist; list/budget never execute packs (#2186). | over budget, missing file/pack/ref |
 | `commits [--base R]` | Commit subjects match `[commits] pattern` (Conventional Commits by default). | a subject does not match |
 | `tdd [--base R]` | Production globs changed ⇒ test globs changed too. | code without tests |
 | `protected [--base R]` | Owner-only paths (`[protected] paths`) changed since the base: the policy, gates, harness and merge path. Agents may propose such a change; a person merges it. | an owner-only path changed |
@@ -139,6 +139,7 @@ tests = ["tests/**", "**/*_test.go"]   # a leading **/ also matches at the root
 [context]
 max_tokens = 8000
 files = ["AGENTS.md", "AGENT-CARD.md"]
+memory = ["agent-card"]            # optional; pack ids from catalogs/memory (#2186)
 
 [skills]
 dir = ".claude/skills"

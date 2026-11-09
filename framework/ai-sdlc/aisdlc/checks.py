@@ -2,34 +2,65 @@
 from __future__ import annotations
 
 import re
+from pathlib import Path
 
 from aisdlc import repo
 from aisdlc.context import Context
+from aisdlc.context_budget import memory_pack_paths
 
 BYTES_PER_TOKEN = 4
 
 
 def budget(ctx: Context) -> int:
-    limit, files = ctx.profile.context_max_tokens, ctx.profile.context_files
-    if limit is None or not files:
-        print("no context budget configured ([context] max_tokens, files)")
+    limit = ctx.profile.context_max_tokens
+    files = ctx.profile.context_files
+    memory = ctx.profile.context_memory
+    if limit is None or (not files and not memory):
+        print("no context budget configured ([context] max_tokens, files|memory)")
         return 0
-    total, missing = 0, []
+
+    measured: list[tuple[str, Path]] = []
+    seen: set[Path] = set()
+    missing: list[str] = []
+
     for rel in files:
         path = ctx.path(rel)
         if not path.is_file():
             missing.append(rel)
             continue
+        resolved = path.resolve()
+        if resolved in seen:
+            continue
+        seen.add(resolved)
+        measured.append((rel, path))
+
+    pack_paths, pack_errors = memory_pack_paths(ctx)
+    for pack_id, path in pack_paths:
+        resolved = path.resolve()
+        if resolved in seen:
+            continue
+        seen.add(resolved)
+        label = f"{path.relative_to(ctx.root) if path.is_relative_to(ctx.root) else path} (memory:{pack_id})"
+        measured.append((label, path))
+
+    total = 0
+    for label, path in measured:
         size = path.stat().st_size
         total += size
-        print(f"  {size:8d} bytes  {rel}")
+        print(f"  {size:8d} bytes  {label}")
+
     tokens = total // BYTES_PER_TOKEN
     for rel in missing:
         print(f"  FAIL  always-loaded file {rel} is missing")
-    within = tokens <= limit
-    print(f"context: {tokens} tokens (est. bytes/{BYTES_PER_TOKEN}) of {limit} — "
-          f"{'PASSED' if within and not missing else 'FAILED'}")
-    return 0 if within and not missing else 1
+    for error in pack_errors:
+        print(f"  FAIL  {error}")
+
+    failed = bool(missing or pack_errors) or tokens > limit
+    print(
+        f"context: {tokens} tokens (est. bytes/{BYTES_PER_TOKEN}) of {limit} — "
+        f"{'PASSED' if not failed else 'FAILED'}"
+    )
+    return 1 if failed else 0
 
 
 def commits(ctx: Context, base: str | None) -> int:

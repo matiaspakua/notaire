@@ -154,6 +154,7 @@ class Profile:
     tdd_tests: tuple[str, ...] = ()
     context_max_tokens: int | None = None
     context_files: tuple[str, ...] = ()
+    context_memory: tuple[str, ...] = ()
     skills_dir: str | None = None
     skills_generic: tuple[str, ...] = ()
     skills_forbid: tuple[str, ...] = ()
@@ -239,6 +240,7 @@ def _build(data: dict, errors: list[str]) -> Profile:
         tdd_tests=tuple(tdd.get("tests", ())),
         context_max_tokens=context.get("max_tokens"),
         context_files=tuple(context.get("files", ())),
+        context_memory=_string_list(context.get("memory", []), "context.memory", errors),
         skills_dir=skills.get("dir"),
         skills_generic=tuple(skills.get("generic", ())),
         skills_forbid=tuple(_regex(p, "skills.forbid_in_generic", errors) for p in skills.get("forbid_in_generic", ())),
