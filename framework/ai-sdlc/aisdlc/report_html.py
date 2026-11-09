@@ -113,13 +113,15 @@ def render_monitor(data: dict[str, Any], lead_time: dict[str, Any] | None = None
     wilson_s = "—" if wilson is None else f"{float(wilson):.4f}"
     auto_trials = autonomy.get("trials", 0)
     auto_ok = autonomy.get("successes", 0)
+    auto_detail = _safe_text(autonomy.get("detail") or "")
+    detail_bit = f" · detail: <strong>{_esc(auto_detail)}</strong>" if auto_detail else ""
     autonomy_block = f"""
 <section>
   <h2>Autonomy</h2>
-  <p class="meta">Wilson L0 from required <code>signal</code> gates (skip ≠ pass). Never claims level 3.</p>
+  <p class="meta">Wilson L0 from allowlisted stages (skip ≠ pass). L1 stays no-evaluable until ≥2 stages have min_n. Never claims level 3.</p>
   <p>Status: <strong>{auto_status}</strong> · level: <strong>{_esc(level_label)}</strong>
      · wilson_lower: <strong>{_esc(wilson_s)}</strong>
-     · gates: {_esc(auto_ok)}/{_esc(auto_trials)}</p>
+     · gates: {_esc(auto_ok)}/{_esc(auto_trials)}{detail_bit}</p>
 </section>
 """
     return f"""<!DOCTYPE html>

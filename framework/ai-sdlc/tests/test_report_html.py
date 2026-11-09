@@ -111,6 +111,8 @@ class ReportHtmlTest(unittest.TestCase):
         self.assertEqual(0, auto.get("level"))
         self.assertNotIn(auto.get("level"), (2, 3))
         self.assertGreaterEqual(auto.get("wilson_lower") or 0, 0.80)
+        # #2171: single-stage ledger → L1 not evaluable for promotion talk
+        self.assertIn("L1-not-evaluable", auto.get("detail") or "")
 
         out = repo.root / "monitor.html"
         html_result = repo.run("report", "--html", str(out))
@@ -118,6 +120,7 @@ class ReportHtmlTest(unittest.TestCase):
         html = out.read_text(encoding="utf-8")
         self.assertIn("Autonomy", html)
         self.assertIn("L0", html)
+        self.assertIn("L1-not-evaluable", html)
         self.assertRegex(html.lower(), r"status:\s*<strong>ok</strong>|status.*\bok\b")
         self.assertNotIn("level=3", html.lower())
         self.assertNotRegex(html, r"level:\s*<strong>L[23]")

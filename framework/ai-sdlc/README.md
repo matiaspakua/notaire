@@ -92,10 +92,10 @@ otherwise off. `core.*` / `security.*` cannot relax policy; required gates canno
 | `change new NAME --issue N` · `change check [NAME…]` | Built-in change records; `check` needs every section filled and the issue resolvable by `[tracker] verify`. | an empty section, no issue, an unresolvable issue |
 | `metrics lead-time --fixture F [--json]` | Lead time: `issue.created_at` → earliest linked PR `checks_green_at` (#2138). | no evaluable PR |
 | `metrics stages [--json] [--since DATE]` | Stage duration medians from the evidence ledger. | — |
-| `report [--json] [--since DATE] [--html PATH] [--lead-time-fixture F]` | Pass rate, median duration and last status per gate; cost; Wilson L0 `autonomy` from `signal` gates (#2165). `--html` writes a read-only static monitor (autonomy/stage/cost/lead-time); never renders prompts, diffs or secrets (#2142). | — |
+| `report [--json] [--since DATE] [--html PATH] [--lead-time-fixture F]` | Pass rate, median duration and last status per gate; cost; Wilson L0 `autonomy` from allowlisted stages (#2165/#2171). `--html` writes a read-only static monitor (autonomy/stage/cost/lead-time); never renders prompts, diffs or secrets (#2142). | — |
 | `improve propose [--json] [--since DATE]` | Evidence → proposal artifact under `.aisdlc/proposals/` (friction → candidate paths). Empty friction is `no-evaluable` and writes no file (#2157). Never commits; never mutates policy in place (#2141). | — |
 | `improve validate --file F` | Proposal stays `proposed`/`commits=false`; agent cannot approve; protected candidates require Owner merge. | self-approval or wrong merge rule |
-| `improve autonomy [--json] [--since DATE]` | Wilson L0 from required `signal` gates (skip ≠ pass); `no-evaluable` under n=30; never claims L3; demote to L1 on first incident (#2163). | — |
+| `improve autonomy [--json] [--since DATE]` | Wilson L0 from allowlisted stages (`signal`, `pre-push`; skip ≠ pass); L1 stays no-evaluable until ≥2 stages have min_n (#2171); demote to L1 on first incident; never claims L3 (#2163). | — |
 | `cost --agent A --model M --input N --output N [--usd X] [--issue N]` | Records an agent run's tokens, priced from `[cost.prices]` when `--usd` is omitted. Also feeds the TelemetryPort cost hook (no-op unless `[telemetry] enabled`). | — |
 
 Exit code 2 always means usage or configuration error (no profile, invalid profile, unknown base revision).

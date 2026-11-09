@@ -204,7 +204,7 @@ def _cost_summary(entries: list[dict]) -> dict:
 
 
 def _with_autonomy(ctx: Context, data: dict, since: str | None) -> dict:
-    """Attach Wilson L0 from signal gates without importing improve into summarize (#2165)."""
+    """Attach Wilson L0 from allowlisted stages without importing improve into summarize (#2165/#2171)."""
     from aisdlc.improve import autonomy_from_runs
 
     runs = _read(ctx, LEDGER, since)
@@ -233,8 +233,9 @@ def report(
     print(f"{data['runs']} stage runs, {data['failed_runs']} failed.\n")
     auto = data.get("autonomy") or {}
     print(
-        f"Autonomy (Wilson L0 / signal): status={auto.get('status')} "
+        f"Autonomy (Wilson L0 / allowlisted): status={auto.get('status')} "
         f"level={auto.get('level')} "
+        f"detail={auto.get('detail')} "
         f"wilson_lower={auto.get('wilson_lower')} "
         f"({auto.get('successes')}/{auto.get('trials')})\n"
     )
