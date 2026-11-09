@@ -21,7 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* **aisdlc:** `[context].memory` pack ids resolve against the memory catalog and feed `aisdlc budget` (fail closed; never execute packs) (Refs #2186)
 * **aisdlc:** Read-only ForgePort live lead-time via `gh` (`metrics lead-time --issue N`); fixture path unchanged; no forge write/attest (Refs #2184)
 * **aisdlc:** Optional `[[stages]]` profile knobs (agents/skills/MCP/model/effort) resolve against catalogs; `stage list` / `config show --redacted` never execute (Refs #2182)
 * **aisdlc:** OpenAPI 3.1.0 factory control contract (`contract check` / oasdiff accept dir); CLI JSON is the shared shape (Refs #2136)
