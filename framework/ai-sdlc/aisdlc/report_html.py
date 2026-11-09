@@ -36,6 +36,7 @@ def render_monitor(data: dict[str, Any], lead_time: dict[str, Any] | None = None
     stages = data.get("stages") or []
     cost = data.get("cost") or {}
     pair = data.get("lead_time_event_pair") or {}
+    autonomy = data.get("autonomy") or {}
 
     gate_rows = []
     for g in gates:
@@ -105,6 +106,22 @@ def render_monitor(data: dict[str, Any], lead_time: dict[str, Any] | None = None
 """
 
     total_usd = round(float(cost.get("total_usd") or 0), 4)
+    auto_status = _safe_text(autonomy.get("status") or "no-evaluable")
+    # Honest label: never advertise L2/L3 even if a stale payload tried.
+    level_label = "L1 (demoted)" if autonomy.get("level") == 1 else "L0"
+    wilson = autonomy.get("wilson_lower")
+    wilson_s = "—" if wilson is None else f"{float(wilson):.4f}"
+    auto_trials = autonomy.get("trials", 0)
+    auto_ok = autonomy.get("successes", 0)
+    autonomy_block = f"""
+<section>
+  <h2>Autonomy</h2>
+  <p class="meta">Wilson L0 from required <code>signal</code> gates (skip ≠ pass). Never claims level 3.</p>
+  <p>Status: <strong>{auto_status}</strong> · level: <strong>{_esc(level_label)}</strong>
+     · wilson_lower: <strong>{_esc(wilson_s)}</strong>
+     · gates: {_esc(auto_ok)}/{_esc(auto_trials)}</p>
+</section>
+"""
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -129,6 +146,7 @@ def render_monitor(data: dict[str, Any], lead_time: dict[str, Any] | None = None
   <p class="meta">Read-only snapshot of the evidence ledger. No policy write path.</p>
   <p>{_esc(runs)} stage runs, {_esc(failed)} failed.</p>
 </header>
+{autonomy_block}
 <section>
   <h2>Gates</h2>
   <table>
