@@ -56,8 +56,8 @@
 
 ## 8. Commit
 
-- [ ] 8.1 Conventional Commits; reference #2188
-- [ ] 8.2 No secrets in the commit
+- [x] 8.1 Conventional Commits; reference #2188
+- [x] 8.2 No secrets in the commit
 
 ## 9. Push + PR
 
