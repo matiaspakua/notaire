@@ -101,6 +101,7 @@ frontend/tests/e2e/fixtures/
 
 # AI SDLC framework evidence ledger and cost log (local audit trail, #1958)
 .aisdlc/evidence/
+.aisdlc/proposals/
 
 # Optional OpenTelemetry venv for aisdlc TelemetryPort tests (#2125)
 framework/ai-sdlc/.venv-telemetry/
