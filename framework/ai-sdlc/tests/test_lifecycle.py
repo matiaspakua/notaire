@@ -136,3 +136,15 @@ class NotaireLifecycleSmokeTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class InstallAbsolutePathTest(unittest.TestCase):
+    def test_install_refuses_absolute_path_without_stripping_into_repo(self):
+        root = _empty_repo(self)
+        absolute = str(Path(tempfile.mkdtemp(prefix="aisdlc-abs-")))
+        result = _run(root, "install", "--path", absolute, "--name", "demo")
+        self.assertEqual(2, result.returncode, output(result))
+        self.assertIn("invalid kit path", output(result).lower())
+        # Must not create a relative twin under the repo (strip("/") bug).
+        twin = absolute.lstrip("/")
+        self.assertFalse((root / twin).exists(), f"unexpected in-repo install at {twin}")

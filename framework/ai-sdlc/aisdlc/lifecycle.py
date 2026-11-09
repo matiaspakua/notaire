@@ -151,7 +151,11 @@ def _manifest_path(root: Path) -> str | None:
 
 
 def _normalize(dest_rel: str) -> str:
-    text = dest_rel.replace("\\", "/").strip().strip("/")
+    # Reject absolute paths before strip("/") — otherwise "/tmp/kit" becomes in-repo "tmp/kit".
+    raw = dest_rel.replace("\\", "/").strip()
+    if not raw or Path(raw).is_absolute() or raw.startswith("~/"):
+        raise ValueError(f"invalid kit path {dest_rel!r}")
+    text = raw.strip("/")
     if not text or text.startswith("..") or Path(text).is_absolute():
         raise ValueError(f"invalid kit path {dest_rel!r}")
     return text
