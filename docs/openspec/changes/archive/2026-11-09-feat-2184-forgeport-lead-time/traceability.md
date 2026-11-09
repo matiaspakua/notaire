@@ -35,10 +35,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Sample from forge runner | ForgePortLeadTimeTest | pending |
-| Read-only surface | ForgePortLeadTimeTest | pending |
-| Live issue green | ForgePortLeadTimeTest | pending |
-| Live issue no-evaluable | ForgePortLeadTimeTest | pending |
+| Sample from forge runner | ForgePortLeadTimeTest | passing |
+| Read-only surface | ForgePortLeadTimeTest | passing |
+| Live issue green | ForgePortLeadTimeTest | passing |
+| Live issue no-evaluable | ForgePortLeadTimeTest | passing |
 
 ## Permanent documentation updated
 

@@ -194,32 +194,28 @@ class ForgePortLeadTimeTest(unittest.TestCase):
         self.assertIsNone(result["seconds"])
 
 
+def _write_fake_gh(repo: Repo, *, issue_stdout: str, pr_list_stdout: str) -> Path:
+    """Install a tiny `gh` stand-in; CLI subprocesses pick it up via AISDLC_GH."""
+    script = repo.root / "fake-gh"
+    script.write_text(
+        "#!/usr/bin/env python3\n"
+        "import json, sys\n"
+        "argv = sys.argv[1:]\n"
+        f"ISSUE = {issue_stdout!r}\n"
+        f"PRS = {pr_list_stdout!r}\n"
+        "if argv[:2] == ['issue', 'view']:\n"
+        "    print(ISSUE); raise SystemExit(0)\n"
+        "if argv[:2] == ['pr', 'list']:\n"
+        "    print(PRS); raise SystemExit(0)\n"
+        "print('unexpected', argv, file=sys.stderr); raise SystemExit(1)\n",
+        encoding="utf-8",
+    )
+    script.chmod(0o755)
+    return script
+
+
 class ForgePortCliTest(unittest.TestCase):
     def test_metrics_lead_time_issue_uses_forge_port(self):
-        from aisdlc import forge  # noqa: E402
-
-        calls: list[list[str]] = []
-
-        def runner(argv: list[str]) -> subprocess.CompletedProcess[str]:
-            calls.append(list(argv))
-            if argv[:2] == ["issue", "view"]:
-                return subprocess.CompletedProcess(
-                    argv, 0, stdout=_issue_json(99, "2026-01-01T00:00:00Z"), stderr=""
-                )
-            if argv[:2] == ["pr", "list"]:
-                return subprocess.CompletedProcess(
-                    argv,
-                    0,
-                    stdout=_pr_list_json(
-                        number=100,
-                        issue=99,
-                        checks_completed="2026-01-01T01:00:00Z",
-                        merged_at="2026-01-01T01:05:00Z",
-                    ),
-                    stderr="",
-                )
-            return subprocess.CompletedProcess(argv, 1, stdout="", stderr="unexpected")
-
         repo = Repo(
             self,
             """
@@ -228,33 +224,36 @@ class ForgePortCliTest(unittest.TestCase):
             policy = "POLICY.md"
             """,
         )
-        # Patch default runner for CLI path
-        previous = forge._default_runner
-        forge._default_runner = runner  # type: ignore[assignment]
-        self.addCleanup(lambda: setattr(forge, "_default_runner", previous))
+        fake = _write_fake_gh(
+            repo,
+            issue_stdout=_issue_json(99, "2026-01-01T00:00:00Z"),
+            pr_list_stdout=_pr_list_json(
+                number=100,
+                issue=99,
+                checks_completed="2026-01-01T01:00:00Z",
+                merged_at="2026-01-01T01:05:00Z",
+            ),
+        )
+        from helpers import ENV
 
-        result = repo.run("metrics", "lead-time", "--issue", "99", "--json")
+        env = {**ENV, "AISDLC_GH": str(fake)}
+        result = subprocess.run(
+            [sys.executable, str(KIT / "bin" / "aisdlc"), "--root", str(repo.root),
+             "metrics", "lead-time", "--issue", "99", "--json"],
+            cwd=repo.root,
+            env=env,
+            capture_output=True,
+            text=True,
+        )
         self.assertEqual(0, result.returncode, output(result))
         payload = json.loads(result.stdout)
         self.assertEqual("ok", payload["status"])
         self.assertEqual(99, payload["issue"])
         self.assertEqual(100, payload["pull_request"])
         self.assertEqual(3600.0, payload["seconds"])
-        self.assertTrue(calls)
         self.assertNotIn("prompt", json.dumps(payload))
 
     def test_metrics_lead_time_issue_no_evaluable(self):
-        from aisdlc import forge  # noqa: E402
-
-        def runner(argv: list[str]) -> subprocess.CompletedProcess[str]:
-            if argv[:2] == ["issue", "view"]:
-                return subprocess.CompletedProcess(
-                    argv, 0, stdout=_issue_json(8, "2026-01-01T00:00:00Z"), stderr=""
-                )
-            if argv[:2] == ["pr", "list"]:
-                return subprocess.CompletedProcess(argv, 0, stdout="[]", stderr="")
-            return subprocess.CompletedProcess(argv, 1, stdout="", stderr="unexpected")
-
         repo = Repo(
             self,
             """
@@ -263,11 +262,22 @@ class ForgePortCliTest(unittest.TestCase):
             policy = "POLICY.md"
             """,
         )
-        previous = forge._default_runner
-        forge._default_runner = runner  # type: ignore[assignment]
-        self.addCleanup(lambda: setattr(forge, "_default_runner", previous))
+        fake = _write_fake_gh(
+            repo,
+            issue_stdout=_issue_json(8, "2026-01-01T00:00:00Z"),
+            pr_list_stdout="[]",
+        )
+        from helpers import ENV
 
-        result = repo.run("metrics", "lead-time", "--issue", "8", "--json")
+        env = {**ENV, "AISDLC_GH": str(fake)}
+        result = subprocess.run(
+            [sys.executable, str(KIT / "bin" / "aisdlc"), "--root", str(repo.root),
+             "metrics", "lead-time", "--issue", "8", "--json"],
+            cwd=repo.root,
+            env=env,
+            capture_output=True,
+            text=True,
+        )
         self.assertEqual(1, result.returncode, output(result))
         payload = json.loads(result.stdout)
         self.assertEqual("no-evaluable", payload["status"])

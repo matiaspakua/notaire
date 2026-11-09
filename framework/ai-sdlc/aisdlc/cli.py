@@ -171,9 +171,19 @@ def build_parser() -> argparse.ArgumentParser:
     metrics_sub = p.add_subparsers(dest="action", required=True)
     lead = metrics_sub.add_parser(
         "lead-time",
-        help="issue.created_at → earliest linked PR checks_green_at (fixture or sample JSON)",
+        help="issue.created_at → earliest linked PR checks_green_at (fixture or live --issue via ForgePort)",
     )
-    lead.add_argument("--fixture", type=Path, required=True, help="JSON sample with issue + pull_requests")
+    lead_src = lead.add_mutually_exclusive_group(required=True)
+    lead_src.add_argument(
+        "--fixture",
+        type=Path,
+        help="JSON sample with issue + pull_requests (#2138 offline path)",
+    )
+    lead_src.add_argument(
+        "--issue",
+        type=int,
+        help="live forge issue number via read-only ForgePort / gh (#2184)",
+    )
     lead.add_argument("--json", action="store_true")
     stages = metrics_sub.add_parser("stages", help="stage durations from the evidence ledger")
     stages.add_argument("--json", action="store_true")
@@ -358,11 +368,21 @@ def _improve(ctx: Context, args: argparse.Namespace) -> int:
 
 def _metrics(ctx: Context, args: argparse.Namespace) -> int:
     if args.action == "lead-time":
-        path = args.fixture
-        if not path.is_file():
-            print(f"error: fixture not found: {path}")
-            return 2
-        result = metrics.load_lead_time_fixture(path)
+        from aisdlc import forge
+
+        if getattr(args, "issue", None) is not None:
+            try:
+                sample = forge.lead_time_sample(int(args.issue))
+            except forge.ForgeError as exc:
+                print(f"error: {exc}")
+                return 2
+            result = metrics.lead_time_from_sample(sample)
+        else:
+            path = args.fixture
+            if path is None or not path.is_file():
+                print(f"error: fixture not found: {path}")
+                return 2
+            result = metrics.load_lead_time_fixture(path)
         metrics.emit_lead_time(get_telemetry(), result)
         if args.json:
             print(json.dumps(result, indent=2, sort_keys=True))
