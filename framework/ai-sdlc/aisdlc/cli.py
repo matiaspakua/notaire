@@ -81,7 +81,7 @@ def build_parser() -> argparse.ArgumentParser:
     show.add_argument("--max-open-prs", type=int, help="override the open pull-request cap for this print")
     config_sub.add_parser(
         "validate",
-        help="check factory config, plugins, migration inventory, and stage→catalog refs (#2182)",
+        help="check factory config, plugins, migration inventory, stage→catalog refs (#2182), and context memory packs (#2186)",
     )
 
     p = sub.add_parser(
@@ -415,8 +415,11 @@ def _metrics(ctx: Context, args: argparse.Namespace) -> int:
 
 def _config(ctx: Context, args: argparse.Namespace) -> int:
     if args.action == "validate":
+        from aisdlc.context_budget import validate_context_memory
+
         errors = validate_factory(ctx.root, ctx.profile)
         errors.extend(stages.validate_stage_profiles(ctx))
+        errors.extend(validate_context_memory(ctx))
         if errors:
             print("factory config invalid:")
             for error in errors:

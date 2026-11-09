@@ -23,6 +23,10 @@ tests = ["tests/**", "test/**", "**/*_test.*", "**/*.test.*", "**/*.spec.*"]
 [context]
 max_tokens = 8000
 files = ["AGENTS.md", "AGENT-CARD.md"]
+# Optional memory catalog pack ids (#2186). Resolve against [catalogs] memory
+# entries; unknown id → config validate / doctor / budget error. List/budget
+# never execute packs. Omit = no-op.
+# memory = ["agent-card"]
 
 # [skills]
 # dir = ".claude/skills"

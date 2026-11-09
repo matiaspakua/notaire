@@ -133,6 +133,22 @@ components:
               effort:
                 type: object
                 additionalProperties: true
+        context:
+          type: object
+          description: >
+            Always-loaded context budget (#2186): max_tokens, files, and optional
+            memory catalog pack ids. Validate/budget never execute packs.
+          additionalProperties: true
+          properties:
+            max_tokens:
+              type: [integer, "null"]
+            files:
+              type: array
+              items: { type: string }
+            memory:
+              type: array
+              items: { type: string }
+              description: Memory catalog pack ids referenced by the budget
     PluginRow:
       type: object
       additionalProperties: true
