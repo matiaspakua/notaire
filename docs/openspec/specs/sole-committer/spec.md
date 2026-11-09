@@ -3,8 +3,8 @@
 ## Purpose
 `aisdlc committer` is a dry-run **axiom-2 policy** check: who authored commits
 since a base. It is **not** an OS Isolator and never claims sandbox isolation.
-Evaluation is opt-in: without `runtime_names` / `runtime_emails` the status is
-`no-evaluable` so greenfield PRs are not failed by agent deny patterns alone.
+Evaluation requires `runtime_names` / `runtime_emails` (Owner identity on Notaire
+via #2175). `required = false` keeps the gate advisory until Owner enables fail-closed.
 
 ## Requirements
 
@@ -13,6 +13,8 @@ The system SHALL provide `aisdlc committer` that inspects commits since a base f
 authors matching profile `[committer]` agent deny patterns (name, email, message
 trailer) and optional runtime allowlists. The check SHALL be **no-evaluable** unless
 at least one of `runtime_names` or `runtime_emails` is configured (opt-in activation).
+When Notaire’s profile configures Owner `runtime_*`, the check SHALL be evaluable
+while `required` remains false unless the Owner later enables fail-closed.
 The command SHALL report status `pass`, `fail`, or `no-evaluable`, SHALL exit non-zero
 for `fail` only when `required = true`, SHALL NOT rewrite git history, SHALL NOT write
 to a forge, and SHALL NOT claim sandbox isolation.
@@ -36,3 +38,7 @@ to a forge, and SHALL NOT claim sandbox isolation.
 #### Scenario: Runtime-allowed author passes
 - **WHEN** a runtime allowlist is configured and commits since base match it with no agent pattern
 - **THEN** the command reports `pass` and exits 0
+
+#### Scenario: Notaire Owner runtime makes committer evaluable and advisory
+- **WHEN** Notaire’s `.aisdlc` profile sets Owner `runtime_names` / `runtime_emails` and `required = false`
+- **THEN** `aisdlc committer` is not `no-evaluable` and exits 0 even if status is `fail`

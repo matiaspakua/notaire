@@ -11,11 +11,13 @@ ASLI-31 / [#2161](https://github.com/matiaspakua/notaire/issues/2161) closes the
 docs; next work is Deferred only (Isolator / Wilson / ForgePort) — no portal.
 
 **Sole-committer dry-run** ([#2167](https://github.com/matiaspakua/notaire/issues/2167) /
-[#2169](https://github.com/matiaspakua/notaire/issues/2169)): `aisdlc committer` is
+[#2169](https://github.com/matiaspakua/notaire/issues/2169) /
+[#2175](https://github.com/matiaspakua/notaire/issues/2175)): `aisdlc committer` is
 **axiom-2 policy evidence** (who authored commits since base). It is **not** an OS
-Isolator and never claims sandbox isolation. Notaire’s pre-pr gate is opt-in
-(`required = false`) and stays `no-evaluable` until the Owner sets
-`[committer] runtime_names` / `runtime_emails`.
+Isolator and never claims sandbox isolation. Notaire’s Owner `runtime_names` /
+`runtime_emails` are set (#2175), so the check is **evaluable**. The pre-pr gate stays
+**advisory** (`required = false`); Owner may flip `required = true` in a follow-up for
+fail-closed.
 
 **Isolator runtime boundary** ([#2173](https://github.com/matiaspakua/notaire/issues/2173),
 [ADR-004](../../../framework/ai-sdlc/docs/adr/ADR-004-isolator-runtime.md)): design-only.
