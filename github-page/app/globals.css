@@ -157,6 +157,17 @@ body {
 
 /* Mermaid figures: keep text readable on phones and scroll sideways inside the figure. */
 .diagram-frame { overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
+@media (prefers-reduced-motion: no-preference) {
+  .delivery-week-bar {
+    transform-box: fill-box;
+    transform-origin: center bottom;
+    animation: delivery-week-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+@keyframes delivery-week-rise {
+  from { transform: scaleY(0.02); }
+  to { transform: scaleY(1); }
+}
 .diagram-frame svg { max-width: 100%; height: auto; margin-inline: auto; }
 @media (max-width: 639px) {
   .diagram-frame[data-wide="true"] svg { max-width: none; min-width: 40rem; }

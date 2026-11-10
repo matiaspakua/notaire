@@ -3,6 +3,7 @@ import { issue, src } from "@/lib/ai-sdlc-content";
 import { fmt, loadFactoryFacts } from "@/lib/ai-sdlc-facts";
 import { coverageIsMeasured, loadMetrics } from "@/lib/metrics";
 import { loadOutcomes } from "@/lib/outcomes";
+import { DeliveryWeeks } from "@/components/DeliveryWeeks";
 import { OutcomesSection } from "@/components/Outcomes";
 import { HISTORY, HistoryChart } from "@/components/CaseStudy";
 import { Card, PageHeader, SectionTitle, Sources } from "@/components/FactoryUI";
@@ -20,6 +21,7 @@ export const metadata = pageMetadata("/ai-sdlc/results/");
 export default function ResultsPage() {
   const f = loadFactoryFacts();
   const m = loadMetrics();
+  const outcomes = loadOutcomes();
   const t = HISTORY.totals;
   const first = HISTORY.months.find((x) => x.merged_prs > 0);
   const last = HISTORY.months[HISTORY.months.length - 1];
@@ -79,7 +81,8 @@ export default function ResultsPage() {
       </p>
       <HistoryChart />
 
-      <OutcomesSection data={loadOutcomes()} />
+      <OutcomesSection data={outcomes} />
+      <DeliveryWeeks series={outcomes.throughput.series} medianPerWeek={outcomes.throughput.median_per_week} />
 
       <SectionTitle id="factory">The factory itself</SectionTitle>
       <p className="leading-relaxed text-slate-700">
