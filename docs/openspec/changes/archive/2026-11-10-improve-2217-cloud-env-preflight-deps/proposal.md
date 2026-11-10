@@ -7,7 +7,7 @@
 |-------|-------|
 | GitHub Issue | #2217 |
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure |
-| Branch | `improve/2217_cloud-env-preflight-deps` |
+| Branch | `chore/2217_cloud-env-preflight-deps` |
 | Gate 1 status | passed |
 
 ## Objetivo
