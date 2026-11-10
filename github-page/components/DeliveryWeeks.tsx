@@ -97,7 +97,7 @@ export function DeliveryWeeks({ series, medianPerWeek }: { series: WeekPoint[]; 
         <thead>
           <tr className="text-slate-500">
             <th className="py-1 font-medium">{text("Week")}</th>
-            <th className="py-1 font-medium">{text("Merged pull requests")}</th>
+            <th className="py-1 font-medium">{text("merged pull requests")}</th>
           </tr>
         </thead>
         <tbody>
