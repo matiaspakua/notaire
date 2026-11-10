@@ -1,14 +1,14 @@
-"""Grant profile data (#2192/#2194): V1 axiom 5 — list/show + write-set policy dry-run.
+"""Grant profile data (#2192/#2194/#2198): list/show, write-set policy, expire kill-switch.
 
-A Grant names worktree, write set, required checks, and budget. Declaring grants
-in the adopter profile is **data toward Isolator OS** (ADR-004). `grant check` is a
-**policy** dry-run (same honesty as `aisdlc committer`): it compares changed paths
-to `write_set` globs. It never claims OS isolation, sandbox, bubblewrap/landlock,
-expires grants, or changes Isolator status (`no-evaluable` / `sandbox=false`).
+A Grant names worktree, write set, required checks, budget, and optional expire.
+`grant check` is a **policy** dry-run (same honesty as `aisdlc committer`): it compares
+changed paths to `write_set` globs and fails closed on expired grants. Expire schema
+alone never claims OS isolation or Isolator sandbox (ADR-004).
 """
 from __future__ import annotations
 
 import json
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from aisdlc import repo
@@ -34,9 +34,17 @@ def _budget_dict(budget: StageEffort) -> dict:
     }
 
 
+def _format_expires_at(value: datetime | None) -> str | None:
+    if value is None:
+        return None
+    utc = value.astimezone(timezone.utc)
+    text = utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+    return text
+
+
 def grant_dict(grant: Grant) -> dict:
     """Serializable grant for config show / grant list. Never executes or enforces."""
-    return {
+    view: dict[str, Any] = {
         "id": grant.id,
         "stage": grant.stage,
         "worktree": grant.worktree,
@@ -44,10 +52,46 @@ def grant_dict(grant: Grant) -> dict:
         "required_checks": list(grant.required_checks),
         "budget": _budget_dict(grant.budget),
     }
+    expires = _format_expires_at(grant.expires_at)
+    if expires is not None:
+        view["expires_at"] = expires
+    if grant.ttl_seconds is not None:
+        view["ttl_seconds"] = grant.ttl_seconds
+    return view
 
 
 def grant_dicts(profile: Profile) -> list[dict]:
     return [grant_dict(grant) for grant in profile.grants]
+
+
+def is_expired(grant: Grant, now: datetime | None = None) -> bool:
+    """True when expires_at or ttl_seconds deadline is past (fail closed)."""
+    clock = now or datetime.now(timezone.utc)
+    if clock.tzinfo is None:
+        clock = clock.replace(tzinfo=timezone.utc)
+    else:
+        clock = clock.astimezone(timezone.utc)
+    if grant.expires_at is not None:
+        deadline = grant.expires_at
+        if deadline.tzinfo is None:
+            deadline = deadline.replace(tzinfo=timezone.utc)
+        if clock >= deadline.astimezone(timezone.utc):
+            return True
+    if grant.ttl_seconds is not None and grant.loaded_at is not None:
+        loaded = grant.loaded_at
+        if loaded.tzinfo is None:
+            loaded = loaded.replace(tzinfo=timezone.utc)
+        if clock >= loaded.astimezone(timezone.utc) + timedelta(seconds=grant.ttl_seconds):
+            return True
+    return False
+
+
+def active_grants(
+    grants: tuple[Grant, ...] | list[Grant],
+    now: datetime | None = None,
+) -> list[Grant]:
+    """Non-expired grants only."""
+    return [grant for grant in grants if not is_expired(grant, now=now)]
 
 
 def validate_grants(ctx: Context) -> list[str]:
@@ -89,6 +133,10 @@ def list_grants(ctx: Context, *, as_json: bool) -> int:
             bits.append("write_set=" + ",".join(grant["write_set"]))
         if grant["required_checks"]:
             bits.append("checks=" + ",".join(grant["required_checks"]))
+        if grant.get("expires_at"):
+            bits.append(f"expires_at={grant['expires_at']}")
+        if grant.get("ttl_seconds") is not None:
+            bits.append(f"ttl_seconds={grant['ttl_seconds']}")
         if grant["budget"]:
             bits.append(
                 "budget="
@@ -136,17 +184,28 @@ def _in_write_set(path: str, patterns: list[str]) -> bool:
 def evaluate_write_set(
     changed: list[str],
     grants: tuple[Grant, ...] | list[Grant],
+    *,
+    now: datetime | None = None,
 ) -> dict[str, Any]:
     """Return status payload: pass | fail | no-evaluable."""
-    patterns = _write_set_patterns(grants)
+    expired = [g.id for g in grants if is_expired(g, now=now)]
+    live = active_grants(grants, now=now)
+    patterns = _write_set_patterns(live)
     base: dict[str, Any] = {
         "paths_scanned": len(changed),
-        "grants": [g.id for g in grants],
+        "grants": [g.id for g in live],
+        "expired_grants": expired,
         "write_set": list(patterns),
         "outside": [],
         "note": POLICY_NOTE,
         "sandbox": False,
     }
+    if grants and not live:
+        return {
+            **base,
+            "status": "fail",
+            "detail": "all grants expired — fail closed (expire kill-switch; not Isolator OS)",
+        }
     if not patterns:
         return {
             **base,
@@ -177,6 +236,8 @@ def check(ctx: Context, base: str | None, as_json: bool) -> int:
         print(f"grant check: {status} ({result['paths_scanned']} path(s) since {base})")
         print(f"  note: {result['note']}")
         print(f"  sandbox: {result['sandbox']} (never a sandbox claim)")
+        if result.get("expired_grants"):
+            print(f"  expired_grants: {', '.join(result['expired_grants'])}")
         if result.get("write_set"):
             print(f"  write_set: {', '.join(result['write_set'])}")
         for path in result.get("outside") or []:
@@ -186,18 +247,22 @@ def check(ctx: Context, base: str | None, as_json: bool) -> int:
         elif status == "pass":
             print("grant check: PASSED — all changed paths inside Grant write_set (policy)")
         elif status == "fail":
-            print(
-                "grant check: FAILED — path(s) outside Grant write_set "
-                "(policy dry-run; not Isolator OS)"
-            )
+            detail = result.get("detail")
+            if detail:
+                print(f"grant check: FAILED — {detail}")
+            else:
+                print(
+                    "grant check: FAILED — path(s) outside Grant write_set "
+                    "(policy dry-run; not Isolator OS)"
+                )
     if result["status"] == "fail":
         return 1
     return 0
 
 
 def doctor_note() -> str:
-    """Doctor INFO: Grant write-set check is policy-only; never a sandbox."""
+    """Doctor INFO: Grant write-set/expire is policy-only; never a sandbox."""
     return (
-        "grant: write-set check is policy dry-run only "
-        "(aisdlc grant check) — not a sandbox; Isolator OS still missing (ADR-004)"
+        "grant: write-set check + expire kill-switch are policy only "
+        "(aisdlc grant check) — not a sandbox; Isolator OS needs real containment (ADR-004)"
     )

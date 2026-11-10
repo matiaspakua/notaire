@@ -9,6 +9,7 @@ from __future__ import annotations
 import re
 import tomllib
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from pathlib import Path
 
 from aisdlc.flags import FlagsSettings
@@ -138,10 +139,11 @@ class StageProfile:
 
 @dataclass(frozen=True)
 class Grant:
-    """Optional Grant profile data (V1 axiom 5 / #2192/#2194). Never implies OS isolation.
+    """Optional Grant profile data (V1 axiom 5 / #2192/#2194/#2198).
 
     Declaring grants is data toward Isolator OS (ADR-004). `aisdlc grant check` is a
-    policy dry-run against write_set globs — never OS enforcement, expire, or sandbox.
+    policy dry-run against write_set globs. Optional `expires_at` / `ttl_seconds` are a
+    fail-closed kill-switch — never a sandbox claim by themselves.
     """
 
     id: str
@@ -150,6 +152,9 @@ class Grant:
     required_checks: tuple[str, ...] = ()
     budget: StageEffort = StageEffort()
     stage: str | None = None
+    expires_at: datetime | None = None
+    ttl_seconds: int | None = None
+    loaded_at: datetime | None = None
 
 
 @dataclass
@@ -633,6 +638,8 @@ def _grants(
                     f"{label} unknown required_checks {check!r} "
                     f"(not a declared gate name; fail closed)"
                 )
+        expires_at = _parse_expires_at(item.get("expires_at"), label, errors)
+        ttl_seconds = _parse_ttl_seconds(item.get("ttl_seconds"), label, errors)
         found.append(
             Grant(
                 id=grant_id,
@@ -641,6 +648,47 @@ def _grants(
                 required_checks=required_checks,
                 budget=_effort(item.get("budget"), f"{label} budget", errors),
                 stage=stage,
+                expires_at=expires_at,
+                ttl_seconds=ttl_seconds,
+                loaded_at=datetime.now(timezone.utc),
             )
         )
     return tuple(found)
+
+
+def _parse_expires_at(raw: object, label: str, errors: list[str]) -> datetime | None:
+    if raw is None:
+        return None
+    if isinstance(raw, datetime):
+        if raw.tzinfo is None:
+            return raw.replace(tzinfo=timezone.utc)
+        return raw.astimezone(timezone.utc)
+    if isinstance(raw, str):
+        text = raw.strip()
+        if not text:
+            errors.append(f"{label} expires_at must be a non-empty ISO-8601 UTC timestamp when set")
+            return None
+        try:
+            if text.endswith("Z"):
+                text = text[:-1] + "+00:00"
+            parsed = datetime.fromisoformat(text)
+        except ValueError:
+            errors.append(f"{label} expires_at must be ISO-8601 UTC (got {raw!r})")
+            return None
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        return parsed.astimezone(timezone.utc)
+    errors.append(f"{label} expires_at must be an ISO-8601 timestamp string or TOML datetime")
+    return None
+
+
+def _parse_ttl_seconds(raw: object, label: str, errors: list[str]) -> int | None:
+    if raw is None:
+        return None
+    if isinstance(raw, bool) or not isinstance(raw, int):
+        errors.append(f"{label} ttl_seconds must be a positive integer when set")
+        return None
+    if raw <= 0:
+        errors.append(f"{label} ttl_seconds must be a positive integer when set")
+        return None
+    return raw
