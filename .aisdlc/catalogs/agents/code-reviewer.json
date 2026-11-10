@@ -1,0 +1,7 @@
+{
+  "digest": "399516f3ffe7eefd1e72f8e11677f0020077b2c93fa5903548364c3364eb912f",
+  "id": "code-reviewer",
+  "kind": "agents",
+  "ref": ".claude/agents/code-reviewer.md",
+  "summary": "Code review fleet role (path ref; never executed by aisdlc)"
+}
