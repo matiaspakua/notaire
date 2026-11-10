@@ -133,6 +133,30 @@ components:
               effort:
                 type: object
                 additionalProperties: true
+        grants:
+          type: array
+          description: >
+            Optional Grant profile data (#2192 / V1 axiom 5): worktree, write_set,
+            required_checks (gate names), and budget. Validate/list/show only —
+            never Isolator OS, never sandbox, never grant enforcement (ADR-004).
+          items:
+            type: object
+            additionalProperties: true
+            required: [id]
+            properties:
+              id: { type: string }
+              stage:
+                type: [string, "null"]
+              worktree: { type: string }
+              write_set:
+                type: array
+                items: { type: string }
+              required_checks:
+                type: array
+                items: { type: string }
+              budget:
+                type: object
+                additionalProperties: true
         context:
           type: object
           description: >
