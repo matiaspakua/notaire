@@ -41,18 +41,18 @@
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `bash workspace/sdlc/preflight.sh --full` (includes the product suite)
-- [ ] 6.2 Covered by preflight
-- [ ] 6.3 Covered by preflight
-- [ ] 6.4 Covered by preflight
-- [ ] 6.5 No new skipped tests
+- [x] 6.1 `bash workspace/sdlc/preflight.sh --full` (includes the product suite)
+- [x] 6.2 Covered by preflight
+- [x] 6.3 Covered by preflight
+- [x] 6.4 Covered by preflight
+- [x] 6.5 No new skipped tests
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 `github-page/e2e/preferences.spec.ts` plus the existing pages smoke
-- [ ] 7.2 Pages Playwright via preflight
-- [ ] 7.3 375 and 1280 are the pages projects
-- [ ] 7.4 Product Playwright is included in preflight --full
+- [x] 7.1 `github-page/e2e/preferences.spec.ts` plus the existing pages smoke
+- [x] 7.2 Pages Playwright via preflight
+- [x] 7.3 375 and 1280 are the pages projects
+- [x] 7.4 Product Playwright is included in preflight --full
 
 ## 8. Gate 3 — Documentación permanente
 
@@ -61,7 +61,7 @@
 - [x] 8.3 CHANGELOG.md [Unreleased]
 - [x] 8.4 Nothing to archive in docs/000-archive
 - [x] 8.5 Kit behavior stays sourced from the README and the TOML files
-- [ ] 8.6 preflight --full
+- [x] 8.6 `bash workspace/sdlc/preflight.sh --full` is the pull-request proof for this change
 
 ## 9. Commits atómicos
 
