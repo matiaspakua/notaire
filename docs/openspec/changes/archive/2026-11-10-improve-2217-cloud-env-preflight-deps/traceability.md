@@ -19,9 +19,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/archive/2026-11-10-improve-2217-cloud-env-preflight-deps/` | archived |
 | Branch | `chore/2217_cloud-env-preflight-deps` | created |
 | Tasks | `tasks.md` | groups 1–8 complete |
-| Commits | `18a7038b` (+ archive follow-up) | in progress |
+| Commits | `18a7038b`, `2feaaa65` | done |
 | Pull Request | pending | pending |
-| CI run | local `preflight.sh --full` | pending |
+| CI run | local `preflight.sh --full` PASSED (41 passed) | done |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |
 | Smoke test | pending | pending |
@@ -40,7 +40,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Document | Updated | Commit |
 |----------|---------|--------|
 | `docs/300-development/304-ai-sdlc-cloud/ENVIRONMENT-CHECKLIST.md` | yes | `18a7038b` |
-| `docs/openspec/specs/cloud-env-preflight-deps/spec.md` | yes (archive) | pending |
+| `docs/openspec/specs/cloud-env-preflight-deps/spec.md` | yes (archive) | `2feaaa65` |
 
 ## Gate log
 
@@ -48,7 +48,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | `validate-sdlc-plan.sh` + `openspec validate --strict` |
 | 2 | Failing tests written, test cases designed | yes | unittest 4 FAIL → 4 OK |
-| 3 | Suite green, coverage held, docs updated | pending | `preflight.sh --full` |
+| 3 | Suite green, coverage held, docs updated | yes | `preflight.sh --full` PASSED |
 | 4 | CI green, review approved, no conflicts | pending | PR + local preflight |
 | 5 | Deployed, smoke test passed, Issue closed | pending | after merge |
 
