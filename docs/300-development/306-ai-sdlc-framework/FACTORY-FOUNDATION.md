@@ -8,8 +8,9 @@ Epic [#2134](https://github.com/matiaspakua/notaire/issues/2134) **P0–P3 spine
 [#2157](https://github.com/matiaspakua/notaire/issues/2157); preflight evidence
 [#2159](https://github.com/matiaspakua/notaire/issues/2159) (`aisdlc gate signal`).
 ASLI-31 / [#2161](https://github.com/matiaspakua/notaire/issues/2161) closes the epic
-docs; next work is Deferred only (Wilson / ForgePort write) —
-no portal. Isolator sole-committer (#2200) and ApprovalPort runtime (#2205) landed.
+docs; next work is Deferred only (Wilson promotion / broader forge mutations) —
+no portal. Isolator sole-committer (#2200), ApprovalPort runtime (#2205), and
+ForgePort write/attest dry-run + scoped live (#2208) landed.
 
 **Sole-committer dry-run** ([#2167](https://github.com/matiaspakua/notaire/issues/2167) /
 [#2169](https://github.com/matiaspakua/notaire/issues/2169) /

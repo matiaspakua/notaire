@@ -210,6 +210,7 @@ Cloud ≠ local. Commercial “Harness” product ≠ this port. Permissions in 
 | Install / update / uninstall | [#2135](https://github.com/matiaspakua/notaire/issues/2135) | [#2144](https://github.com/matiaspakua/notaire/pull/2144) |
 | Lead-time + stage metrics (fixture) | [#2138](https://github.com/matiaspakua/notaire/issues/2138) | [#2146](https://github.com/matiaspakua/notaire/pull/2146) |
 | ForgePort read-only live lead-time | [#2184](https://github.com/matiaspakua/notaire/issues/2184) | [#2185](https://github.com/matiaspakua/notaire/pull/2185) |
+| ForgePort write / factory gate attest | [#2208](https://github.com/matiaspakua/notaire/issues/2208) | (this PR) |
 | OpenFeature port | [#2137](https://github.com/matiaspakua/notaire/issues/2137) | [#2147](https://github.com/matiaspakua/notaire/pull/2147) |
 | OpenAPI 3.1 control surface | [#2136](https://github.com/matiaspakua/notaire/issues/2136) | [#2148](https://github.com/matiaspakua/notaire/pull/2148) |
 | Catalogs CRUD | [#2139](https://github.com/matiaspakua/notaire/issues/2139) | [#2149](https://github.com/matiaspakua/notaire/pull/2149) |
@@ -245,16 +246,18 @@ this ordered spine.**
   execution).
   Remaining Isolator honesty limits: hooks can be bypassed with
   `git -c core.hooksPath=…` unless combined with stronger containment; not unbreakable.
-- ForgePort **write** / attestations / `factory/gate` on GitHub checks
-  (read-only live lead-time via `gh` shipped in #2184; custody story still incomplete for writes).
+- ForgePort **write** / `factory/gate` attest shipped (#2208): default dry-run;
+  live scoped `comment`/`label`/`check-run` only after ApprovalPort verify +
+  `--write`. Read-only lead-time remains (#2184). Unscoped merge/close still refused.
+  Remaining: broader forge mutation surfaces if Owner scopes them; never fake attest.
 - Wilson autonomy **promotion** (L0–L4). Multi-stage **honesty** already ships
   (#2171): L1 stays no-evaluable until ≥2 allowlisted stages have `min_n` —
   not Isolator, not auto-promotion. **Refused in #2190** until Owner-chosen
   multi-stage operational volume (Notaire `improve autonomy` still `no-evaluable`).
 - ApprovalPort **runtime** mint/verify shipped (#2205 / ADR-005) via
   `ssh-keygen -Y`; `approvals_live=true` only after proven round-trip; local/dev
-  keys ≠ HSM. Remaining: production HSM / DSSE alternate encoder if Owner chooses;
-  ForgePort **write** still waits on Approval being live **and** a scoped Issue.
+  keys ≠ HSM. Remaining: production HSM / DSSE alternate encoder if Owner chooses.
+  ForgePort write (#2208) is gated by Approval verify.
 
 ### Parallel stay path
 
@@ -310,8 +313,8 @@ mirrors omit Unreleased when that slice owns the fence.
 ## 10. How later sessions continue
 
 1. Read **this** file + store master plan / thin plan next-5 list.
-2. **§7 Active spine is done.** Pick only from Deferred (ForgePort write /
-   Wilson L0–L4 / HSM) or a new CU76 Issue that cites friction from
+2. **§7 Active spine is done.** Pick only from Deferred (Wilson L0–L4 /
+   broader forge mutations / HSM) or a new CU76 Issue that cites friction from
    evidence (`aisdlc improve` / preflight `signal`) — one thin PR, no portal.
 3. Branch from updated `main`; TDD; validate on Notaire; open PR `Closes #…`.
 4. Update thin plan next-5 and inventory notes; do not fork a second master plan.

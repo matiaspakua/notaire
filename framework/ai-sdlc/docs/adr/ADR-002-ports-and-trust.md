@@ -11,6 +11,7 @@ The core talks to the outside through ports:
 | Method | Planning workflow (validate, plan) | OpenSpec argv is printed. Example plugin loads. Spec Kit adapter prints `specify extension search` (out of allow on Notaire). AWS AI-DLC is a boundary plugin (design only; unavailable; hooks never auto-trusted). |
 | Harness | Agent runtime (Cursor Cloud fleet, local oMLX foreman, Claude Code / Codex / ACP stubs, …). Not a commercial Harness product. | `harness list` / `harness show` read profile `[harness.adapters]` sources in place and surface harness-kind plugin stubs (#2188). Always reports `sandbox=false`. Stubs stay out of `[plugins] allow` until Owner opts in. |
 | Tracker | Issues and pull requests | Not implemented. The profile may name a verify command; this slice does not run it from `plugin list`. |
+| Forge | Live forge reads + approval-gated scoped writes | Read-only lead-time via `gh` (#2184). Write / `factory/gate` attest (#2208): default dry-run; live scoped `comment`/`label`/`check-run` only after ApprovalPort verify + `--write`. Never fake `attested` / `write_enabled`. |
 | Gate | Quality commands | Existing `gate` command. Unchanged. |
 | Evidence | Hash-chained ledger | Existing `evidence` command. Unchanged. |
 | Config | Profile, ceiling, redaction | `config validate` and `config show --redacted`. |

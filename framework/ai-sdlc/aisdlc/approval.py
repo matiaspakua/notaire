@@ -10,7 +10,8 @@ degrade to ``no-evaluable`` with ``approvals_live=false``. Agents never
 self-approve: ``agent_can_approve`` is always false; mint refuses role=agent.
 
 Local/dev keys via env or optional profile ``[approval]`` — never a production
-HSM claim by themselves. ForgePort write is out of scope.
+HSM claim by themselves. ForgePort write/attest (#2208) consumes verify; this
+module does not mutate the forge.
 """
 from __future__ import annotations
 

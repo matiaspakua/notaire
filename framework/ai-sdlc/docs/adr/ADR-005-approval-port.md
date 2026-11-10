@@ -27,7 +27,8 @@ Today Notaire has:
 | Forge PR review / merge UI | Human process + Foreman merge rule | ApprovalPort |
 | Isolator runtime (ADR-004 / #2200) | OS sole-committer / grant / write-set enforcement | Approval signatures |
 | Dual-LLM “auditor” | Advisory reading aid | Authority |
-| `aisdlc approval mint\|verify\|status` (#2205) | SSHSIG mint/verify custody | Production HSM; ForgePort write |
+| `aisdlc approval mint\|verify\|status` (#2205) | SSHSIG mint/verify custody | Production HSM |
+| `aisdlc forge attest` (#2208) | Consumes Approval verify before any forge mutation | Unscoped merge/close; fake attest |
 
 Wilson autonomy on the Notaire profile remains `no-evaluable` (`trials=0`, empty
 multi-stage ledger). **This ADR refuses Wilson auto-promotion** and refuses inventing
@@ -77,14 +78,14 @@ are refused.
 
 ### Out of scope here
 
-ForgePort write / `factory/gate` attest, portal, Context Lake, flipping
-`[committer] required=true`, production HSM product.
+Portal, Context Lake, flipping `[committer] required=true`, production HSM product.
+ForgePort write / `factory/gate` attest shipped separately in #2208 (gated by this port).
 
 ## Consequences
 
 - Adopters can prove custody in kit tests and opt into local/dev keys without claiming HSM.
 - Readers must not treat doctor’s Approval line as “production approvals shipped.”
-- ForgePort write waits until Approval is live **and** a separate CU76 Issue scopes it.
+- ForgePort write (#2208) requires Approval verify (or honest refuse); dry-run default.
 
 ## References
 

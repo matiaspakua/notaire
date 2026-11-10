@@ -247,6 +247,44 @@ def build_parser() -> argparse.ArgumentParser:
     approval_verify.add_argument("--sig", dest="signature", help="signature path (default: SUBJECT.sig)")
     approval_verify.add_argument("--json", action="store_true")
 
+    p = sub.add_parser(
+        "forge",
+        help=(
+            "ForgePort surfaces: approval-gated factory/gate attest (#2208); "
+            "default dry-run; live scoped write only after Approval verify + --write"
+        ),
+    )
+    forge_sub = p.add_subparsers(dest="action", required=True)
+    forge_attest = forge_sub.add_parser(
+        "attest",
+        help="build factory/gate subject, verify via ApprovalPort; optional scoped write",
+    )
+    forge_attest.add_argument("--gate", required=True, help="gate name for the attest payload")
+    forge_attest.add_argument(
+        "--outcome",
+        default="pass",
+        help="pass|fail|no-evaluable (default: pass)",
+    )
+    forge_attest.add_argument("--subject", help="path to write/read attest JSON subject")
+    forge_attest.add_argument("--sig", dest="signature", help="Approval signature path (default: SUBJECT.sig)")
+    forge_attest.add_argument(
+        "--write",
+        action="store_true",
+        help="enable live scoped forge write after Approval verify (default: dry-run)",
+    )
+    forge_attest.add_argument(
+        "--kind",
+        default="comment",
+        help="scoped write kind: comment|label|check-run (default: comment)",
+    )
+    forge_attest.add_argument("--pr", type=int, help="pull request number for scoped write")
+    forge_attest.add_argument("--issue", type=int, help="issue number for scoped write")
+    forge_attest.add_argument(
+        "--label",
+        help="label name for --kind label (default: aisdlc-factory-gate)",
+    )
+    forge_attest.add_argument("--json", action="store_true")
+
     p = sub.add_parser("evidence", help="evidence ledger integrity")
     q = p.add_subparsers(dest="action", required=True).add_parser("verify", help="check the hash chain of the ledger")
     q.add_argument("--anchor", action="append", default=[], metavar="DIGEST",
@@ -430,6 +468,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "grant": lambda: _grant(ctx, args),
         "isolator": lambda: _isolator(ctx, args),
         "approval": lambda: _approval(ctx, args),
+        "forge": lambda: _forge(ctx, args),
         "foreman": lambda: _foreman(ctx, args),
         "evidence": lambda: evidence.verify(ctx, args.anchor),
         "config": lambda: _config(ctx, args),
@@ -478,6 +517,27 @@ def _approval(ctx: Context, args: argparse.Namespace) -> int:
         subject=getattr(args, "subject", None),
         role=str(getattr(args, "role", "person") or "person"),
         signature=getattr(args, "signature", None),
+    )
+
+
+def _forge(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc import forge
+
+    if args.action != "attest":
+        print(f"error: unknown forge action {args.action!r}")
+        return 2
+    return forge.dispatch_attest(
+        ctx,
+        gate=str(args.gate),
+        outcome=str(getattr(args, "outcome", "pass") or "pass"),
+        subject=getattr(args, "subject", None),
+        signature=getattr(args, "signature", None),
+        write=bool(getattr(args, "write", False)),
+        kind=str(getattr(args, "kind", "comment") or "comment"),
+        pr=getattr(args, "pr", None),
+        issue=getattr(args, "issue", None),
+        label=getattr(args, "label", None),
+        as_json=bool(getattr(args, "json", False)),
     )
 
 
