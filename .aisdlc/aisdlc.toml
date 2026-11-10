@@ -56,6 +56,16 @@ agent_emails = [
 ]
 agent_trailers = ["Made-with: Cursor", "Co-authored-by: Cursor"]
 
+# ApprovalPort (#2205 / ADR-005): omit [approval] → doctor no-evaluable / approvals_live=false.
+# Opt in with local/dev keys only (never commit private keys; not a production HSM claim):
+#   [approval]
+#   signing_key = ".aisdlc/approval/dev_ed25519"          # Owner-held; agents must not receive it
+#   allowed_signers = ".aisdlc/approval/allowed_signers"
+#   identity = "owner@example"
+#   namespace = "file"
+# Or env: AISDLC_APPROVAL_KEY / AISDLC_APPROVAL_ALLOWED_SIGNERS / AISDLC_APPROVAL_IDENTITY
+# Force off: AISDLC_APPROVAL=0. CLI: aisdlc approval status|mint|verify
+
 # TelemetryPort (#2125): off by default. Optional OTel NoOp path when enabled; no exporter.
 [telemetry]
 enabled = false
