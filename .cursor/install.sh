@@ -44,10 +44,12 @@ if ! command -v mvn >/dev/null 2>&1; then
 fi
 
 # --- Docker + compose (nested VM: fuse-overlayfs + iptables-legacy) ---
+# python3-venv: ensurepip for security/run_gates.py → security/.tools/venv (#2217 / CU76).
+# Without it, preflight --full apt-fails mid-run when creating the Semgrep venv.
 sudo apt-get update -qq
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
   ca-certificates curl gnupg fuse3 fuse-overlayfs iptables \
-  docker.io docker-compose-v2 postgresql-client bc \
+  docker.io docker-compose-v2 postgresql-client bc python3-venv \
   -o Dpkg::Options::="--force-confnew" || true
 sudo update-alternatives --set iptables /usr/sbin/iptables-legacy 2>/dev/null || true
 sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy 2>/dev/null || true
@@ -92,6 +94,20 @@ fi
 # --- Frontend deps + Playwright Chromium ---
 (
   cd frontend
+  if [ -f package-lock.json ]; then npm ci; else npm install; fi
+  npx playwright install --with-deps chromium
+)
+
+# --- Playwright browsers for preflight --full (#2217 / CU76) ---
+# Install from each package dir so browser revisions match that package's Playwright
+# major (github-page ≠ testing/e2e ≠ frontend). e2e mobile (iPhone SE) needs WebKit.
+(
+  cd testing/e2e
+  if [ -f package-lock.json ]; then npm ci; else npm install; fi
+  npx playwright install --with-deps chromium webkit
+)
+(
+  cd github-page
   if [ -f package-lock.json ]; then npm ci; else npm install; fi
   npx playwright install --with-deps chromium
 )
