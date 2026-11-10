@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* **aisdlc:** Doctor accepts intentional local stage alias `signal` (no non-canonical WARN); Foreman plan lists `unmapped_stages` as expected until knobs are filled; lead-time help/doctor note: pass Issue number, not PR (Refs #2211)
 * **pages:** Spanish for the product, security, AI Factory, the technical-docs reading path, the about page and the demo banner. One dictionary keyed by the English sentence. A test fails when a translated route is missing its Spanish entry (Refs #2202)
 * **pages:** Dark and light theme, and English or Spanish, saved in the browser. The shell, the home page and the AI Factory introduction are translated. The framework page states what the kit on main can do and what is still planned (Refs #2201)
 * **pages:** Delivery outcomes regenerated from the GitHub API on 2026-11-10 for the 90 days ending that day (median pull-request lead time 0.4 h, p90 4.2 h, 691 non-bot merged pull requests). Coverage percentages stay unpublished as a measurement when no JaCoCo snapshot was present (Refs #2201, #2203)

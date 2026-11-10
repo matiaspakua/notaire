@@ -13,6 +13,11 @@ TEMPLATES = Path(__file__).resolve().parents[1] / "templates" / "project"
 SHELL_WORDS = {"cd", "test", "[", "exit", "echo", "true", "false", "export", "set", "if", "for", "!", "env"}
 INTERPRETERS = {"bash", "sh", "zsh", "python", "python3", "node", "ruby", "pwsh"}
 
+# Documented adopter-local stage aliases (#2211 / #2159). Not in the canonical
+# STAGES set, but intentional — doctor MUST NOT warn as if they were mistakes.
+# `signal` records cheap local ratchet/skills runs into the evidence ledger.
+LOCAL_STAGE_ALIASES = frozenset({"signal"})
+
 # What each maturity level adds (docs: framework README "Adoption levels").
 LEVELS = {
     1: {"stages": ("plan", "pre-push"), "needs": "policy, profile, change records, local gates"},
@@ -20,6 +25,11 @@ LEVELS = {
     3: {"stages": ("merge",), "needs": "roles with a merge rule, merge gate on the full suite"},
     4: {"stages": ("release",), "needs": "release gate, cost prices, measured autonomy"},
 }
+
+LEAD_TIME_DOCTOR_NOTE = (
+    "lead-time: `aisdlc metrics lead-time --issue N` takes a forge Issue number, "
+    "not a pull-request number (PR ids yield no-evaluable)"
+)
 
 
 def init(root: Path, name: str, level: int, force: bool) -> int:
@@ -68,6 +78,8 @@ def doctor(ctx: Context) -> int:
     from aisdlc.forge import doctor_note as forge_doctor_note
 
     print(f"  INFO   {forge_doctor_note(ctx)}")
+    # Lead-time is Issue-keyed (#2211): INFO so ops habit does not pass a PR number.
+    print(f"  INFO   {LEAD_TIME_DOCTOR_NOTE}")
     p = ctx.profile
     print(f"doctor: {p.name} · level {p.level} · {len(p.gates)} gates in {len(p.stages())} stages · "
           f"{len(p.ratchets)} ratchets · {len(p.roles)} roles — "
@@ -106,7 +118,11 @@ def _warnings(ctx: Context) -> list[str]:
     p = ctx.profile
     warnings = [] if p.policy else ["no policy document ([project] policy): agents need one source of truth"]
     warnings += [f"gate {g.stage}/{g.name} is a placeholder" for g in p.gates if g.placeholder]
-    warnings += [f"stage {s!r} is not canonical ({', '.join(STAGES)})" for s in p.stages() if s not in STAGES]
+    warnings += [
+        f"stage {s!r} is not canonical ({', '.join(STAGES)})"
+        for s in p.stages()
+        if s not in STAGES and s not in LOCAL_STAGE_ALIASES
+    ]
     for gate in p.gates:
         program = _program(gate.run)
         if program and not gate.placeholder and not shutil.which(program) and not ctx.path(program).exists():

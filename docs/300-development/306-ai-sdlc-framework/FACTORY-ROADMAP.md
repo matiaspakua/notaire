@@ -140,6 +140,18 @@ across stages, may skip/revise, and merges **only** under the written merge rule
 (Notaire: preflight `--full` + heavy-CI). Spec approval is Foreman instruction, not a
 forge permission. Factory never merges Constitution/harness without Owner.
 
+**Local stage alias `signal` (#2159 / #2211):** Notaire keeps an intentional
+adopter-local `signal` stage for cheap local ratchet/skills ledger recording
+(preflight → `aisdlc gate signal`). It is **not** renamed to a canonical id.
+`aisdlc doctor` accepts `signal` as a documented local alias (no "not canonical"
+WARN); other custom kebab-case stages still warn. Documented in kit
+`LOCAL_STAGE_ALIASES`.
+
+**Foreman unmapped honesty (#2211):** Only stages with `[[stages]]` knobs appear
+in `mapped_count`. Gate stages without knobs are listed as `unmapped_stages` and
+are **expected** until knobs are filled — the kit does **not** invent fake stage
+knobs (KISS). Doctor Foreman INFO states the same. Notaire today maps `plan` only.
+
 ### Industry challenge (keep / skip)
 
 | Theme | Decision |
@@ -222,6 +234,7 @@ Cloud ≠ local. Commercial “Harness” product ≠ this port. Permissions in 
 | Catalog skills-dir discover | [#2155](https://github.com/matiaspakua/notaire/issues/2155) | [#2156](https://github.com/matiaspakua/notaire/pull/2156) |
 | Improve empty propose | [#2157](https://github.com/matiaspakua/notaire/issues/2157) | [#2158](https://github.com/matiaspakua/notaire/pull/2158) |
 | Preflight → evidence `signal` | [#2159](https://github.com/matiaspakua/notaire/issues/2159) | [#2160](https://github.com/matiaspakua/notaire/pull/2160) |
+| Doctor `signal` alias + Foreman unmapped + lead-time Issue hint | [#2211](https://github.com/matiaspakua/notaire/issues/2211) | (this PR) |
 
 ### Active spine — **done** (epic [#2134](https://github.com/matiaspakua/notaire/issues/2134))
 
