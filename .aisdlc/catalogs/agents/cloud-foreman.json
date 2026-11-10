@@ -1,0 +1,7 @@
+{
+  "digest": "aa6e2bba07c7f5bad2c8f298c7117b0e6007a1862dfa4119dd6c90c80b9f8c1d",
+  "id": "cloud-foreman",
+  "kind": "agents",
+  "ref": ".claude/agents/cloud-foreman.md",
+  "summary": "Cloud Foreman fleet role (path ref; never executed by aisdlc)"
+}

@@ -1,0 +1,7 @@
+{
+  "digest": "39e2a51e655ca11bbc818b9902c9b881c4a8146677ec7fdbc0d3d7987c68e900",
+  "id": "testing-qa",
+  "kind": "agents",
+  "ref": ".claude/agents/testing-qa.md",
+  "summary": "QA/testing fleet role (path ref; never executed by aisdlc)"
+}

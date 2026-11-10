@@ -1,0 +1,7 @@
+{
+  "digest": "0b36dcc7ec5ef3123400ca286dcf939bcea3b59abfaae069f4ed045777c3c355",
+  "id": "devops-engineer",
+  "kind": "agents",
+  "ref": ".claude/agents/devops-engineer.md",
+  "summary": "DevOps fleet role (path ref; never executed by aisdlc)"
+}

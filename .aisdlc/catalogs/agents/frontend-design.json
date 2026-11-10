@@ -1,0 +1,7 @@
+{
+  "digest": "e0135211e52b78d4abcc43e3a2387fe9c1d0b95317a6cf1e351449befc84b3a8",
+  "id": "frontend-design",
+  "kind": "agents",
+  "ref": ".claude/agents/frontend-design.md",
+  "summary": "Frontend design fleet role (path ref; never executed by aisdlc)"
+}

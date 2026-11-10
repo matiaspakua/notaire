@@ -1,0 +1,7 @@
+{
+  "digest": "262d26e2d66a7a164cd40d15a8fe2c645e6aab3470743a29824cb45a4128fc70",
+  "id": "backend-implementer",
+  "kind": "agents",
+  "ref": ".claude/agents/backend-implementer.md",
+  "summary": "Backend TDD/implement fleet role (path ref; never executed by aisdlc)"
+}

@@ -157,11 +157,15 @@ tier = "mid"
 tier = "top"
 model = "claude-opus-5-5"
 
-# Per-stage knobs (#2182): Foreman routing hints by catalog / skills-dir reference.
+# Per-stage knobs (#2182 / #2215): Foreman routing hints by catalog / skills-dir reference.
 # Resolve dispatch plan with `aisdlc foreman plan|route [--json]` (#2196) before
 # dispatch — read-only; never executes MCP or agents; no Isolator / sandbox claim.
 # Effort units: tokens (prompt+completion), time_seconds (wall clock),
 # questions (clarification budget), review_lines (changed-line review size).
+# Agents/skills/models come from fleet-manifest + skills-dir — no vanity MCP
+# (MCP catalog empty). No `green` knobs: Notaire has no [[gates]] stage=green;
+# G3 verified is pre-push + pre-pr. merge/release/signal stay unmapped until
+# real knobs exist (#2211 honesty).
 [[stages]]
 id = "plan"
 agents = ["openspec-planner"]
@@ -173,6 +177,45 @@ skills = [
 ]
 model = "claude-sonnet-5-5-high"
 effort = { tokens = 200000, time_seconds = 3600, questions = 20, review_lines = 400 }
+
+[[stages]]
+id = "red"
+agents = ["testing-qa", "backend-implementer", "frontend-design"]
+skills = [
+  "test-master",
+  "qa-automation-strategy",
+  "openspec-apply-change",
+  "hexagonal-architecture",
+  "maven-build",
+  "ai-agent-workflow",
+]
+model = "claude-sonnet-5-5-medium"
+effort = { tokens = 200000, time_seconds = 3600, questions = 15, review_lines = 400 }
+
+[[stages]]
+id = "pre-push"
+agents = ["cloud-foreman", "devops-engineer"]
+skills = [
+  "ai-agent-workflow",
+  "ci-cd-quality-gates",
+  "steward",
+  "senior-devops",
+]
+model = "claude-sonnet-5-5-medium"
+effort = { tokens = 150000, time_seconds = 3600, questions = 10, review_lines = 400 }
+
+[[stages]]
+id = "pre-pr"
+agents = ["cloud-foreman", "code-reviewer", "devops-engineer"]
+skills = [
+  "steward",
+  "ci-cd-quality-gates",
+  "ai-agent-workflow",
+  "senior-devops",
+  "devsecops-traceability",
+]
+model = "claude-sonnet-5-5-high"
+effort = { tokens = 200000, time_seconds = 7200, questions = 15, review_lines = 400 }
 
 # Grant profile data (#2192 / V1 axiom 5) + write-set policy dry-run (#2194) +
 # optional expire kill-switch (#2198): worktree + write set + required checks + budget.
