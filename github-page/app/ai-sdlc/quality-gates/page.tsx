@@ -1,5 +1,7 @@
 import { QUALITY_GATE_PIPELINE, WORKFLOWS, src, workflow } from "@/lib/ai-sdlc-content";
 import { loadFactoryFacts } from "@/lib/ai-sdlc-facts";
+import { FlowDiagram } from "@/components/diagrams/FlowDiagram";
+import { qualityGateFlow } from "@/lib/diagram-flows";
 import { Card, Code, Diagram, PageHeader, SectionTitle, Sources, Table } from "@/components/FactoryUI";
 import { pageMetadata } from "@/lib/site";
 
@@ -21,7 +23,14 @@ export default function QualityGatesPage() {
         title="Gates are commands, not opinions"
         lead="Each gate is a script that exits non-zero. The pull-request proof is preflight.sh --full on the agent machine. GitHub runs the product workflows on a version tag or when someone dispatches them. When a gate is added or changed, preflight.sh changes in the same pull request."
       />
-      <Diagram chart={QUALITY_GATE_PIPELINE} caption="Local preflight is the pull-request proof. Product CI and image publish run on a version tag. Pages and Release Please run on main. ZAP and CodeQL also have a Monday schedule." />
+      <FlowDiagram
+        id="quality"
+        title="Where each gate runs"
+        desc="The pull-request proof is on the agent machine. Product CI runs on a version tag. Pages and Release Please run on main. ZAP, CodeQL, k6 and backup-restore run on a schedule."
+        caption="Step from the agent machine to the tag, then to main. The schedule is beside them, not on the pull request."
+        {...qualityGateFlow()}
+      />
+      <Diagram chart={QUALITY_GATE_PIPELINE} caption="The same story as one map: local preflight, the merge rule, the version tag, main, and the schedule." />
 
       <SectionTitle>Before the push</SectionTitle>
       <div className="grid md:grid-cols-3 gap-4">
