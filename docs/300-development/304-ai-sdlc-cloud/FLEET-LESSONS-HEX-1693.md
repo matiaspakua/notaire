@@ -29,7 +29,7 @@
 1. `python3 workspace/sdlc/check-openspec-archive-hygiene.py origin/main`
 2. Tick OpenSpec task groups **3–8**; archive in the PR (`openspec archive … --yes`) unless `multi_pr: true`
 3. Spotless / format: `mvn spotless:apply -pl backend-api` if Java touched
-4. If architecture or test inventory drifted: `python3 workspace/sdlc/generate-testing-inventory.py` and commit `INVENTORY.md`
+4. After merging `main`, regenerate the testing inventory locally if you need the table (`python3 workspace/sdlc/generate-testing-inventory.py`); never keep either side's count line — feature PRs must not commit the shared generated report (#2117)
 5. After any Java **package move**: fix english-locals / numbered-doc **path refs** (see R2 path hygiene below), then re-run `python3 -m unittest discover -s docs/tests`
 6. `bash workspace/sdlc/check-heavy-ci.sh <pr>` exit 0 on the **current head**
 
@@ -55,7 +55,7 @@ When a class moves out of `application.usecase.*` into `adapter.out.persistence.
 |-------|--------|
 | `docs/tests/*english*` (and any path-hardcoded Process Checks test) | Update Java `Path` / string refs to the **new** package (e.g. `RegistrationDraftService`) |
 | Numbered permanent docs / ADR slice logs | Fix stale FQCNs or tree paths in the same PR |
-| `INVENTORY.md` | Regen if architecture/test discovery lists changed: `python3 workspace/sdlc/generate-testing-inventory.py` |
+| Testing inventory | Validate discovery only; generate `INVENTORY.generated.md` locally/docs-build — do not commit count tables on feature PRs (#2117) |
 | Local proof before ready | `python3 -m unittest discover -s docs/tests` + Process Checks |
 
 Do **not** mark ready with a green unit suite while docs Process Checks still point at the old package.
@@ -137,7 +137,7 @@ Friction captured while draining GEH / typed-return tips and enforcing Owner **>
 |----|-------|
 | Copy `.env` into **each** git worktree before `preflight.sh --full` Docker smoke | Assume the primary checkout `.env` is visible to a sibling worktree (missing `JWT_SECRET` → unhealthy backend) |
 | Wire public `@ControllerAdvice` / GEH handlers into standalone MockMvc unit tests when asserting typed error bodies | Expect controller-only MockMvc to map domain exceptions without advice → opaque 500s |
-| Regen `INVENTORY.md` (`generate-testing-inventory.py`) when architecture or test discovery drifts | Hand-edit inventory or leave Process Checks red after package/controller moves |
+| After merging `main`, regenerate inventory locally if needed; never keep either side's count line (#2117) | Commit a shared count table on feature PRs or resolve conflicts by keeping "ours"/"theirs" totals |
 | After a green `preflight.sh --full`, use documented `PREFLIGHT_SKIP_*` only for the same tip head | Skip heavy suites before the first green `--full` on that head (#2001) |
 | Multi-PR epics / umbrellas: PR body **`Refs #n`** — never `Closes` / `closes` (Release Please and merge auto-close burn the epic) | Put `closes #579`-style footer on release or tip PRs that only slice an epic |
 | Coverage: document Owner **>90% target** separately from enforced floors; ratchet JaCoCo/Vitest raise-only with measured headroom (#2046) | Jump floors to 90% overnight or leave docs claiming 80%/14% while tools enforce higher |
@@ -171,7 +171,7 @@ Check: a login or shell diff that introduces `rotate` or `type: "spring"` outsid
 | Declaring FE hex Done while suppressions remain | Require `{}` / count 0 |
 | Inventing product fixes when tip is behind `main` | merge `origin/main` first, re-run suites |
 | Claiming Mac local green means CI is merge-ready | CI still owns Bruno full + Playwright + CodeQL |
-| Moving a helper to `adapter.out.persistence` without updating `docs/tests` path refs | Same-PR path hygiene + INVENTORY regen |
+| Moving a helper to `adapter.out.persistence` without updating `docs/tests` path refs | Same-PR path hygiene; inventory is discovery-validated (#2117) |
 | Opening parallel heavy PRs “to go faster” | Serialize; domain-sized slices; lower CI cost |
 | Claiming “90% coverage” while JaCoCo/Vitest floors lag | Ratchet floors; track gap under #2046 |
 | `Closes` on a multi_pr epic from a tip or Release Please PR | `Refs` only; keep epic open until DoD |

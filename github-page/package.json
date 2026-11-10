@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "predev": "python3 ../workspace/release/product_release.py --write-pages lib/releases.json",
-    "prebuild": "python3 ../workspace/release/product_release.py --write-pages lib/releases.json",
+    "predev": "python3 ../workspace/release/product_release.py --write-pages lib/releases.json && python3 ../workspace/sdlc/generate-testing-inventory.py",
+    "prebuild": "python3 ../workspace/release/product_release.py --write-pages lib/releases.json && python3 ../workspace/sdlc/generate-testing-inventory.py",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
