@@ -43,7 +43,7 @@ export function DeliveryWeeks({ series, medianPerWeek }: { series: WeekPoint[]; 
           median: medianPerWeek ?? "n/a",
         })}
       </figcaption>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto" tabIndex={0} role="region" aria-label={text("Weekly chart")}>
         <svg viewBox={`0 0 ${w} ${h}`} className="h-auto min-w-[36rem] w-full" aria-hidden="true">
           {[0, 0.5, 1].map((step) => {
             const value = Math.round(max * step);

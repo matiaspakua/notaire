@@ -478,6 +478,7 @@ pair("Merged pull requests each ISO week", "Pull requests fusionados por semana 
 pair("Median {median} per week. A week with no merge is zero. Bot pull requests are excluded.", "Mediana {median} por semana. Una semana sin merge es cero. Los pull requests de bots no entran.");
 pair("{week}: {count} merged pull requests", "{week}: {count} pull requests fusionados");
 pair("Weeks", "Semanas");
+pair("Weekly chart", "Gráfico semanal");
 pair("Week", "Semana");
 pair("Weekly counts from the delivery snapshot", "Conteos semanales de la foto de entrega");
 pair("This snapshot has no weekly counts.", "Esta foto no tiene conteos semanales.");
