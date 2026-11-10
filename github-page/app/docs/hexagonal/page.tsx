@@ -57,13 +57,7 @@ export default function HexagonalPage() {
       <PageHeader
         eyebrow="Architecture internals"
         title="Hexagonal architecture"
-        lead={
-          <>
-            The backend and the front end are both built as ports and adapters: business rules sit in the middle, and
-            HTTP, JPA, PDF and the browser are plugged in from the outside. The Owner made it the rule for all code in
-            ADR-030, after a pilot on the payment slice (ADR-021), and tests keep the boundaries from eroding.
-          </>
-        }
+        lead="The backend and the front end are both built as ports and adapters: business rules sit in the middle, and HTTP, JPA, PDF and the browser are plugged in from the outside. The Owner made it the rule for all code in ADR-030, after a pilot on the payment slice (ADR-021), and tests keep the boundaries from eroding."
       />
 
       <StatGrid

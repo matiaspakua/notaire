@@ -31,8 +31,8 @@ test("Spanish home and factory, English notice on an untranslated page", async (
   await expect(page.locator("h1")).toContainText("AI Factory");
   await expect(page.getByRole("heading", { name: "Léelo en orden" })).toBeVisible();
   await page.goto("docs/hexagonal/");
-  await expect(page.getByText("Esta página sigue en inglés")).toBeVisible();
-  await expect(page.locator("[lang='en']")).toBeVisible();
+  await expect(page.locator("h1")).toContainText("Arquitectura hexagonal");
+  await expect(page.getByText("Esta página sigue en inglés")).toHaveCount(0);
 });
 
 const SPANISH = [

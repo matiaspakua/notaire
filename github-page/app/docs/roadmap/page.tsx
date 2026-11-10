@@ -1,3 +1,4 @@
+import { Fill, T } from "@/components/site/T";
 import { MermaidDiagram } from "@/components/MermaidDiagram";
 import { DOCS } from "@/lib/docs-content";
 import snapshot from "@/lib/milestone-snapshot.json";
@@ -55,7 +56,7 @@ export default function DocsRoadmapPage() {
     <div className="space-y-10">
       <header className="space-y-3">
         <p className="text-xs uppercase tracking-[0.2em] text-brand-700 font-semibold">
-          Project chart · {data.generated}
+          <T text="Project chart" /> · {data.generated}
         </p>
         <h1
           className="text-3xl font-semibold text-neutral-900"
@@ -64,9 +65,10 @@ export default function DocsRoadmapPage() {
           Roadmap and progress
         </h1>
         <p className="text-neutral-600 max-w-3xl leading-relaxed">
-          Live milestone snapshot for {data.open + data.closed} issues ({data.open} open,{" "}
-          {data.closed} closed). Every issue has a history or delivery milestone.{" "}
-          {claimable} open issues are delivery work; {catalog} are catalog anchors.
+          <Fill
+            text="Live milestone snapshot for {total} issues ({open} open, {closed} closed). Every issue has a history or delivery milestone. {claimable} open issues are delivery work; {catalog} are catalog anchors."
+            values={{ total: data.open + data.closed, open: data.open, closed: data.closed, claimable, catalog }}
+          />
         </p>
         <a
           className="text-sm text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
@@ -132,8 +134,10 @@ export default function DocsRoadmapPage() {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold text-neutral-900">Requirements catalog</h2>
         <p className="text-sm text-neutral-600 max-w-3xl">
-          {catalog} RF, CU, and RNF anchors remain open for traceability. They
-          have dedicated Project views and are never picked as implementation work.
+          <Fill
+            text="{catalog} RF, CU, and RNF anchors remain open for traceability. They have dedicated Project views and are never picked as implementation work."
+            values={{ catalog }}
+          />
         </p>
       </section>
 

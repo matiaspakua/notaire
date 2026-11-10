@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Code, PageHeader, SectionTitle, Sources, Table } from "@/components/FactoryUI";
 import { Callout, StatGrid } from "@/components/DocsUI";
+import { Fill } from "@/components/site/T";
 import { REPO, src } from "@/lib/ai-sdlc-content";
 import { pageMetadata } from "@/lib/site";
 import { adrs, services, testCounts, versions, workflowTriggers, workflows } from "@/lib/tech-facts";
@@ -8,7 +9,7 @@ import { PipelineMap } from "@/components/diagrams/PipelineMap";
 
 export const metadata = pageMetadata("/docs/stack/");
 
-type Row = { name: string; version?: string | null; role: string };
+type Row = { name: string; version?: string | null; role: string; n?: number; app?: number; obs?: number };
 
 export default function StackPage() {
   const v = versions();
@@ -62,11 +63,11 @@ export default function StackPage() {
       title: "Testing",
       source: { label: "testing/", href: src("testing/") },
       rows: [
-        { name: "JUnit 5 + Spring Boot Test", role: `${tests.backend} backend test classes.` },
+        { name: "JUnit 5 + Spring Boot Test", role: "{n} backend test classes.", n: tests.backend },
         { name: "Testcontainers", role: "Integration tests against a real PostgreSQL." },
         { name: "ArchUnit", version: v.archunit, role: "Enforces the hexagonal rules R1–R7 in the build." },
-        { name: "Vitest + Testing Library", version: v.vitest, role: `${tests.frontend} frontend test files.` },
-        { name: "Playwright", version: v.playwright, role: `${tests.e2e} end-to-end specs against the full stack.` },
+        { name: "Vitest + Testing Library", version: v.vitest, role: "{n} frontend test files.", n: tests.frontend },
+        { name: "Playwright", version: v.playwright, role: "{n} end-to-end specs against the full stack.", n: tests.e2e },
         { name: "Bruno", role: "API requests with assertions, run by CI against the live backend." },
         { name: "k6", role: "Performance tests in their own workflow." },
         { name: "JaCoCo", role: "Backend coverage reports." },
@@ -102,8 +103,8 @@ export default function StackPage() {
       title: "Delivery and AI tooling",
       source: { label: "CONSTITUTION.md", href: src("CONSTITUTION.md") },
       rows: [
-        { name: "GitHub Actions", role: `${wf.length} workflows (listed below).` },
-        { name: "Docker Compose", role: `${svc.app.length} application services and ${svc.observability.length} observability services.` },
+        { name: "GitHub Actions", role: "{n} workflows (listed below).", n: wf.length },
+        { name: "Docker Compose", role: "{app} application services and {obs} observability services.", app: svc.app.length, obs: svc.observability.length },
         { name: "release-please", role: "Versions and changelog for product releases." },
         { name: "OpenSpec", role: "Every change starts as a proposal, design, spec and tasks." },
         { name: "Claude Code, Cursor, Copilot, OpenCode", role: "AI agents that work through the same SDLC gates as people." },
@@ -116,12 +117,7 @@ export default function StackPage() {
       <PageHeader
         eyebrow="Start here"
         title="Technology stack"
-        lead={
-          <>
-            Every technology Notaire uses and the job it does. Versions are read from <Code>pom.xml</Code>,{" "}
-            <Code>package.json</Code> and the Compose files when this site is built, so they cannot drift from the code.
-          </>
-        }
+        lead="Every technology Notaire uses and the job it does. Versions are read from pom.xml, package.json and the Compose files when this site is built, so they cannot drift from the code."
       />
       <StatGrid
         items={[
@@ -149,14 +145,18 @@ export default function StackPage() {
           <SectionTitle id={`stack-${g.id}`}>{g.title}</SectionTitle>
           <Table
             head={["Technology", "Version", "What it does here"]}
-            rows={g.rows.map((r) => [r.name, r.version === undefined ? "" : <Code key={r.name}>{r.version ?? "—"}</Code>, r.role])}
+            rows={g.rows.map((r) => [
+              r.name,
+              r.version === undefined ? "" : <Code key={r.name}>{r.version ?? "—"}</Code>,
+              r.role.includes("{") ? <Fill key={r.name} text={r.role} values={{ n: r.n ?? "", app: r.app ?? "", obs: r.obs ?? "" }} /> : r.role,
+            ])}
           />
           <Sources items={[g.source]} />
         </section>
       ))}
 
       <SectionTitle id="workflows">CI/CD workflows</SectionTitle>
-      <p>What starts each workflow, read from its <Code>on:</Code> block. Product workflows sit on the tag and on manual dispatch, not on the pull request.</p>
+      <p>What starts each workflow, read from its on: block. Product workflows sit on the tag and on manual dispatch, not on the pull request.</p>
       <PipelineMap workflows={workflowTriggers()} repoHref={REPO} />
       <ul className="my-4 grid gap-2 sm:grid-cols-2">
         {wf.map((w) => (

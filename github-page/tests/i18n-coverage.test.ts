@@ -29,14 +29,15 @@ describe("Spanish keys for translated routes (#2202)", () => {
     for (const href of [...FACTORY_PAGES, ...PRODUCT_PAGES, ...SECURITY_PAGES, ...OTHER_PAGES].map((p) => p.href)) {
       expect(pageIsTranslated(href), href).toBe(true);
     }
-    for (const href of ["/docs/", "/docs/artifacts/", "/docs/architecture/", "/docs/engineering/", "/docs/testing/", "/docs/releases/"]) {
+    for (const href of DOCS_PAGES.map((p) => p.href)) {
       expect(pageIsTranslated(href), href).toBe(true);
     }
-    expect(pageIsTranslated("/docs/hexagonal/")).toBe(false);
-    expect(pageIsTranslated("/docs/glossary/")).toBe(false);
     expect(ES["Case management for a notary office"]).toMatch(/escribanía/);
     expect(ES["What the factory produced"]).toMatch(/fábrica/);
     expect(ES["Notaire knowledge base"]).toMatch(/conocimiento/);
+    expect(ES["Every term, in plain words"]).toMatch(/término/);
+    expect(ES["Roadmap and progress"]).toMatch(/avance/);
+    expect(ES["Module ownership"]).toMatch(/módulo/);
     expect(TRANSLATED_ROUTES).toContain("/about/");
   });
 

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { PageHeader, SectionTitle, Table } from "@/components/FactoryUI";
 import { pageMetadata } from "@/lib/site";
 
@@ -51,13 +50,7 @@ export default function GlossaryPage() {
       <PageHeader
         eyebrow="Technical docs · Glossary"
         title="Every term, in plain words"
-        lead={
-          <>
-            Notarial terms first, engineering and AI SDLC terms second. For the picture behind them, see{" "}
-            <Link href="/product/anatomy/">how Notaire works</Link>, the <Link href="/docs/engineering/">engineering anatomy</Link> and the{" "}
-            <Link href="/ai-sdlc/anatomy/">AI SDLC anatomy</Link>.
-          </>
-        }
+        lead="Notarial terms first, engineering and AI SDLC terms second. The pictures behind them are on How it works, the engineering anatomy and the AI SDLC anatomy."
       />
       <SectionTitle id="domain">The notary office</SectionTitle>
       <Table head={["Term", "Meaning"]} rows={DOMAIN} />

@@ -17,7 +17,12 @@ export function tr(locale: Locale, value: string): string {
   return ES[value] ?? value;
 }
 
-/** Routes whose visible copy must have an ES entry. Deeper /docs/ pages stay English on purpose. */
+/** Fills `{name}` placeholders after choosing the Spanish template. */
+export function tf(locale: Locale, template: string, values: Record<string, string | number>): string {
+  return tr(locale, template).replace(/\{(\w+)\}/g, (_, key: string) => String(values[key] ?? ""));
+}
+
+/** Routes whose visible copy must have an ES entry. */
 export const TRANSLATED_ROUTES = [
   "/",
   "/about/",
@@ -51,4 +56,13 @@ export const TRANSLATED_ROUTES = [
   "/docs/engineering/",
   "/docs/testing/",
   "/docs/releases/",
+  "/docs/glossary/",
+  "/docs/stack/",
+  "/docs/business/",
+  "/docs/modules/",
+  "/docs/hexagonal/",
+  "/docs/database/",
+  "/docs/api/",
+  "/docs/security/",
+  "/docs/roadmap/",
 ] as const;

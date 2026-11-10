@@ -3,7 +3,7 @@ import { Callout, StatGrid } from "@/components/DocsUI";
 import { issue, src } from "@/lib/ai-sdlc-content";
 import { FlywayTimeline } from "@/components/diagrams/FlywayTimeline";
 import { pageMetadata } from "@/lib/site";
-import { flywaySettings, migrations, rollbackScripts, versions } from "@/lib/tech-facts";
+import { flywaySettings, migrations, rollbackScripts } from "@/lib/tech-facts";
 
 export const metadata = pageMetadata("/docs/database/");
 
@@ -41,20 +41,13 @@ export default function DatabasePage() {
   const latest = list.at(-1);
   const rollbacks = rollbackScripts();
   const settings = flywaySettings();
-  const v = versions();
 
   return (
     <>
       <PageHeader
         eyebrow="Architecture internals"
         title="Database & Flyway"
-        lead={
-          <>
-            Notaire stores everything in PostgreSQL {v.postgres ?? "—"}. The schema has exactly one source: the
-            versioned SQL migrations that Flyway applies when the backend starts. Hibernate never creates or alters
-            tables in production, and a test checks that the entities match the migrated schema (ADR-004, ADR-007).
-          </>
-        }
+        lead="Notaire stores everything in PostgreSQL. The schema has exactly one source: the versioned SQL migrations that Flyway applies when the backend starts. Hibernate never creates or alters tables in production, and a test checks that the entities match the migrated schema (ADR-004, ADR-007)."
       />
 
       <StatGrid

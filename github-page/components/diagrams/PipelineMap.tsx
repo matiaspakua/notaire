@@ -1,6 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { tr } from "@/lib/i18n/es";
+import "@/lib/i18n/strings";
+import { usePreferences } from "@/components/site/Preferences";
 import { StepControls, type Step } from "./StepControls";
 import { transition, useStepper } from "./useStepper";
 
@@ -44,6 +47,8 @@ const STAGES: { key: string; label: string; match: string[]; body: string }[] = 
  * workflow's `on:` block at build time, so a new workflow lands in the right column on its own.
  */
 export function PipelineMap({ workflows, repoHref }: { workflows: WorkflowTrigger[]; repoHref: string }) {
+  const { locale } = usePreferences();
+  const text = (value: string) => tr(locale, value);
   const stages = STAGES.map((st) => ({ ...st, items: workflows.filter((w) => w.triggers.some((t) => st.match.includes(t))) })).filter(
     (st) => st.items.length > 0,
   );
@@ -73,7 +78,7 @@ export function PipelineMap({ workflows, repoHref }: { workflows: WorkflowTrigge
                 <span className={`flex h-5 w-5 items-center justify-center rounded-full font-mono text-[11px] ${on ? "bg-[var(--accent-700)] text-white" : "bg-slate-200 text-slate-700"}`}>
                   {i + 1}
                 </span>
-                {st.label}
+                {text(st.label)}
               </p>
               <ul className="mt-2 flex flex-wrap gap-1.5 md:flex-col">
                 {st.items.map((w) => (
