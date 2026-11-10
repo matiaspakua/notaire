@@ -4,7 +4,7 @@ import { Es } from "@/components/site/Es";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { coverageIsMeasured, type SiteMetrics } from "@/lib/metrics";
+import { coverageIsMeasured, type SiteMetrics } from "@/lib/metrics-core";
 
 gsap.registerPlugin(ScrollTrigger);
 

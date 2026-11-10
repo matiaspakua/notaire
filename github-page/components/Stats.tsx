@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Es } from "@/components/site/Es";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { coverageIsMeasured, type SiteMetrics } from "@/lib/metrics";
+import { coverageIsMeasured, type SiteMetrics } from "@/lib/metrics-core";
 
 gsap.registerPlugin(ScrollTrigger);
 

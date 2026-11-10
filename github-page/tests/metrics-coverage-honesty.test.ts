@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { coverageIsMeasured, type CoverageSnapshot } from "@/lib/metrics";
+import { coverageIsMeasured, type CoverageSnapshot } from "@/lib/metrics-core";
 
 describe("coverage honesty (#2203)", () => {
   it("treats unknown lastUpdated as not measured", () => {
