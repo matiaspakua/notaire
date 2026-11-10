@@ -138,10 +138,10 @@ class StageProfile:
 
 @dataclass(frozen=True)
 class Grant:
-    """Optional Grant profile data (V1 axiom 5 / #2192). Never implies OS isolation.
+    """Optional Grant profile data (V1 axiom 5 / #2192/#2194). Never implies OS isolation.
 
-    Declaring grants is data toward Isolator OS (ADR-004). List/validate/show only —
-    never enforce write sets, expire grants, or flip Isolator sandbox.
+    Declaring grants is data toward Isolator OS (ADR-004). `aisdlc grant check` is a
+    policy dry-run against write_set globs — never OS enforcement, expire, or sandbox.
     """
 
     id: str

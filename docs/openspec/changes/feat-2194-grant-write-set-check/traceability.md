@@ -35,10 +35,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| no grant declared is no-evaluable | GrantWriteSetCheckTest | pending |
-| paths inside write_set pass | GrantWriteSetCheckTest | pending |
-| path outside write_set fails | GrantWriteSetCheckTest | pending |
-| doctor denies sandbox for grant check | GrantWriteSetCheckTest | pending |
+| no grant declared is no-evaluable | GrantWriteSetCheckTest | passing |
+| paths inside write_set pass | GrantWriteSetCheckTest | passing |
+| path outside write_set fails | GrantWriteSetCheckTest | passing |
+| doctor denies sandbox for grant check | GrantWriteSetCheckTest | passing |
 
 ## Permanent documentation updated
 

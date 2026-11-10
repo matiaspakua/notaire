@@ -139,7 +139,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--strict", action="store_true", help="fail when no change record declares a write set")
     p = sub.add_parser(
         "grant",
-        help="list/show Grant profile data (axiom 5; never enforces or claims Isolator OS) (#2192)",
+        help="Grant profile data + write-set policy dry-run (axiom 5; never Isolator OS) (#2192/#2194)",
     )
     grant_sub = p.add_subparsers(dest="action", required=True)
     grant_list = grant_sub.add_parser("list", help="print declared grants (read-only)")
@@ -147,6 +147,12 @@ def build_parser() -> argparse.ArgumentParser:
     grant_show = grant_sub.add_parser("show", help="show one grant by id")
     grant_show.add_argument("--id", required=True, help="grant id")
     grant_show.add_argument("--json", action="store_true")
+    grant_check = grant_sub.add_parser(
+        "check",
+        help="write-set policy dry-run vs changed paths (not OS isolation) (#2194)",
+    )
+    grant_check.add_argument("--base")
+    grant_check.add_argument("--json", action="store_true")
     p = sub.add_parser(
         "committer",
         help="sole-committer dry-run: flag agent-authored commits (never claims isolation) (#2167)",
@@ -348,7 +354,9 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
 def _grant(ctx: Context, args: argparse.Namespace) -> int:
     if args.action == "list":
         return grants.list_grants(ctx, as_json=bool(getattr(args, "json", False)))
-    return grants.show_grant(ctx, args.id, as_json=bool(getattr(args, "json", False)))
+    if args.action == "show":
+        return grants.show_grant(ctx, args.id, as_json=bool(getattr(args, "json", False)))
+    return grants.check(ctx, getattr(args, "base", None), bool(getattr(args, "json", False)))
 
 
 def _catalog(ctx: Context, args: argparse.Namespace) -> int:

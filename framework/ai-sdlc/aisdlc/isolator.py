@@ -37,8 +37,8 @@ def isolator_status() -> dict[str, Any]:
         "enforces_committer": False,
         "detail": (
             "no OS Isolator runtime configured — YAML/harness flags are not isolation; "
-            "aisdlc committer is the policy dry-run Isolator must eventually enforce "
-            "(see ADR-004)"
+            "aisdlc committer and aisdlc grant check are policy dry-runs Isolator must "
+            "eventually enforce (see ADR-004); grant check is not a sandbox"
         ),
     }
 

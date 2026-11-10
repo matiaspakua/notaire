@@ -26,10 +26,12 @@ Grants + write set + agent never commits; YAML ≠ OS isolation. Kit stub /
 runtime exists. Do not invent Owner `runtime_*`. Isolator must eventually **enforce**
 what `aisdlc committer` already **checks**.
 
-**Grant profile schema** ([#2192](https://github.com/matiaspakua/notaire/issues/2192)):
-optional `[[grants]]` (worktree, write_set, required_checks, budget) in the adopter
-profile — **validate/list/show only** (`aisdlc grant list|--json`). Data toward
-Isolator OS; never a sandbox claim; Isolator stays `no-evaluable`. Unknown check
+**Grant profile schema** ([#2192](https://github.com/matiaspakua/notaire/issues/2192)) +
+**write-set policy dry-run** ([#2194](https://github.com/matiaspakua/notaire/issues/2194)):
+optional `[[grants]]` (worktree, write_set, required_checks, budget) —
+validate/list/show plus `aisdlc grant check [--base] [--json]` (pass / fail /
+no-evaluable). **Grant runtime lite** = write-set policy check only; Isolator OS
+still missing. Never a sandbox claim; Isolator stays `no-evaluable`. Unknown check
 refs fail closed; omit = no-op. Notaire ships an optional `plan-sample` Grant;
 `[committer] required` stays `false`.
 
