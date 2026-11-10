@@ -53,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **frontend:** Payments date-range unit test applies `router.replace` into `useSearchParams` so both `from` and `to` stay in the address (and clearing `from` leaves `to`) (Refs #2119)
 * **pages:** Do not publish fabricated 0% coverage when the JaCoCo snapshot or Vitest summary is missing; write JSON `null` and keep `lastUpdated: unknown` unless a measured live fallback exists (Refs #2203)
 
 ### Changed
