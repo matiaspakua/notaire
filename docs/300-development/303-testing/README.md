@@ -1,13 +1,17 @@
 # Testing — Notaire
 
 Process knowledge for verification and validation. The **Master Test Plan** is
-[`TEST-PLAN.md`](TEST-PLAN.md). Suite volumes live in generated
-[`INVENTORY.md`](INVENTORY.md) — regenerate after adding or renaming suites:
+[`TEST-PLAN.md`](TEST-PLAN.md). Suite volumes are **discovered on disk**;
+preflight validates naming and prints counts. The committed
+[`INVENTORY.md`](INVENTORY.md) is a stub — do **not** commit a regenerated
+count table on feature PRs (#2117). Generate a local / docs-build report when
+you need the full table:
 
 ```bash
-python3 workspace/sdlc/generate-testing-inventory.py
+python3 workspace/sdlc/generate-testing-inventory.py   # → INVENTORY.generated.md (gitignored)
 python3 workspace/sdlc/validate-testing-inventory.py
 ```
+
 
 Black-box runners and how-to guides: [`testing/README.md`](../../../testing/README.md).
 
@@ -21,7 +25,7 @@ Unit → Integration → API (Bruno) → Frontend (Vitest) → E2E UI (Playwrigh
 |----------|----------|
 | [`TEST-PLAN.md`](TEST-PLAN.md) | **Master Test Plan** — levels, IDs, floors, exit criteria |
 | [`PROCESS-ARCHITECTURE.md`](PROCESS-ARCHITECTURE.md) | Process boxes, owners, CI triggers |
-| [`INVENTORY.md`](INVENTORY.md) | Living suite inventory (generated) |
+| [`INVENTORY.md`](INVENTORY.md) | Inventory stub + how to generate the on-demand report |
 | [`CU-API-MATRIX.csv`](CU-API-MATRIX.csv) | CU → controller → Bruno drift guard |
 | [`E2E-TEST-MAPPING.md`](E2E-TEST-MAPPING.md) | CU ↔ TS narrative mapping |
 | [`TESTING-PATTERNS.md`](TESTING-PATTERNS.md) | Fixture patterns by level |

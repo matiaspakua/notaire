@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Gate 2 checks for #1511 / CU76 — living testing inventory and process architecture.
+Gate 2 checks for #1511 / #2117 / CU76 — discovery-based testing inventory.
 
 Plain stdlib unittest. Run with:
   python3 -m unittest discover -s testing/tests -p 'test_testing_inventory.py'
@@ -16,11 +16,27 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 TESTING_DOCS = REPO / "docs" / "300-development" / "303-testing"
 E2E_TESTS = REPO / "testing" / "e2e" / "tests"
+BACKEND_TEST = REPO / "backend-api" / "src" / "test"
+FRONTEND_SRC = REPO / "frontend" / "src"
 GENERATE = REPO / "workspace" / "sdlc" / "generate-testing-inventory.py"
 VALIDATE = REPO / "workspace" / "sdlc" / "validate-testing-inventory.py"
 PREFLIGHT = REPO / "workspace" / "sdlc" / "preflight.sh"
 CONSTITUTION = REPO / "CONSTITUTION.md"
 TS_NAME = re.compile(r"^TS-\d{4}-.+\.spec\.ts$")
+COUNT_ROW = re.compile(
+    r"^\|\s*(?:Frontend Vitest files|Backend `\*Test\.java` \(all\))\s*\|\s*\d+\s*\|",
+    re.MULTILINE,
+)
+
+
+def _disk_counts() -> tuple[int, int]:
+    backend = len(list(BACKEND_TEST.rglob("*Test.java"))) if BACKEND_TEST.is_dir() else 0
+    vitest = 0
+    if FRONTEND_SRC.is_dir():
+        vitest = len(list(FRONTEND_SRC.rglob("*.test.ts"))) + len(
+            list(FRONTEND_SRC.rglob("*.test.tsx"))
+        )
+    return backend, vitest
 
 
 class InventoryToolingTest(unittest.TestCase):
@@ -28,9 +44,19 @@ class InventoryToolingTest(unittest.TestCase):
         self.assertTrue(GENERATE.is_file(), f"missing {GENERATE}")
         self.assertTrue(VALIDATE.is_file(), f"missing {VALIDATE}")
 
-    def test_inventory_markdown_exists(self):
+    def test_committed_inventory_has_no_shared_count_table(self):
         inventory = TESTING_DOCS / "INVENTORY.md"
-        self.assertTrue(inventory.is_file(), "INVENTORY.md must be generated and committed")
+        self.assertTrue(inventory.is_file(), "committed INVENTORY.md stub must exist")
+        text = inventory.read_text(encoding="utf-8")
+        self.assertIsNone(
+            COUNT_ROW.search(text),
+            "committed INVENTORY.md must not hold shared suite count rows (#2117)",
+        )
+        self.assertRegex(
+            text,
+            r"generate-testing-inventory|INVENTORY\.generated|on-demand|docs.build",
+            msg="stub must point humans at on-demand / docs-build generation",
+        )
 
     def test_validator_passes_on_current_tree(self):
         result = subprocess.run(
@@ -45,12 +71,26 @@ class InventoryToolingTest(unittest.TestCase):
             result.returncode,
             f"validate-testing-inventory failed:\n{result.stdout}\n{result.stderr}",
         )
+        combined = f"{result.stdout}\n{result.stderr}"
+        backend, vitest = _disk_counts()
+        self.assertRegex(combined, rf"Vitest[^\n]*\b{vitest}\b|vitest[^\n]*\b{vitest}\b", re.I)
+        self.assertRegex(combined, rf"[Bb]ackend[^\n]*\b{backend}\b")
 
-    def test_stale_inventory_fails_validation(self):
+    def test_validator_passes_when_generated_report_absent_or_stale(self):
+        generated = TESTING_DOCS / "INVENTORY.generated.md"
         inventory = TESTING_DOCS / "INVENTORY.md"
-        original = inventory.read_text(encoding="utf-8")
+        original_inv = inventory.read_text(encoding="utf-8") if inventory.is_file() else None
+        original_gen = generated.read_text(encoding="utf-8") if generated.is_file() else None
         try:
-            inventory.write_text(original + "\n<!-- stale-marker -->\n", encoding="utf-8")
+            if generated.is_file():
+                generated.unlink()
+            # Corrupt stub so a stale-diff check would fail if still wired.
+            inventory.write_text(
+                original_inv + "\n<!-- stale-marker-must-not-fail-validator -->\n"
+                if original_inv is not None
+                else "# stub\n<!-- stale -->\n",
+                encoding="utf-8",
+            )
             result = subprocess.run(
                 ["python3", str(VALIDATE)],
                 cwd=REPO,
@@ -58,31 +98,68 @@ class InventoryToolingTest(unittest.TestCase):
                 text=True,
                 check=False,
             )
-            self.assertNotEqual(0, result.returncode, "stale inventory must fail validation")
+            self.assertEqual(
+                0,
+                result.returncode,
+                "validator must not fail on a lagging committed markdown snapshot:\n"
+                f"{result.stdout}\n{result.stderr}",
+            )
         finally:
-            inventory.write_text(original, encoding="utf-8")
+            if original_inv is None:
+                if inventory.is_file():
+                    inventory.unlink()
+            else:
+                inventory.write_text(original_inv, encoding="utf-8")
+            if original_gen is None:
+                if generated.is_file():
+                    generated.unlink()
+            else:
+                generated.write_text(original_gen, encoding="utf-8")
+
+    def test_generator_reports_real_disk_counts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "INVENTORY.generated.md"
+            result = subprocess.run(
+                ["python3", str(GENERATE), "--output", str(out)],
+                cwd=REPO,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(
+                0,
+                result.returncode,
+                f"generate failed:\n{result.stdout}\n{result.stderr}",
+            )
+            self.assertTrue(out.is_file())
+            text = out.read_text(encoding="utf-8")
+            backend, vitest = _disk_counts()
+            self.assertRegex(
+                text,
+                rf"\|\s*Frontend Vitest files\s*\|\s*{vitest}\s*\|",
+            )
+            self.assertRegex(
+                text,
+                rf"\|\s*Backend `\*Test\.java` \(all\)\s*\|\s*{backend}\s*\|",
+            )
+            self.assertGreaterEqual(vitest, 202, "main has at least 202 Vitest files per #2117")
 
     def test_unprefixed_spec_fails_validation(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            fake_root = Path(tmp)
-            # Point validator at a temp tree by generating a tiny fixture layout
-            # through env is not supported; instead write a bad file into the real
-            # tests dir briefly.
-            bad = E2E_TESTS / "unprefixed-bad-spec.spec.ts"
-            self.assertFalse(bad.exists())
-            try:
-                bad.write_text("// temporary fixture for #1511\n", encoding="utf-8")
-                result = subprocess.run(
-                    ["python3", str(VALIDATE)],
-                    cwd=REPO,
-                    capture_output=True,
-                    text=True,
-                    check=False,
-                )
-                self.assertNotEqual(0, result.returncode, "unprefixed spec must fail validation")
-            finally:
-                if bad.exists():
-                    bad.unlink()
+        bad = E2E_TESTS / "unprefixed-bad-spec.spec.ts"
+        self.assertFalse(bad.exists())
+        try:
+            bad.write_text("// temporary fixture for #1511 / #2117\n", encoding="utf-8")
+            result = subprocess.run(
+                ["python3", str(VALIDATE)],
+                cwd=REPO,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertNotEqual(0, result.returncode, "unprefixed spec must fail validation")
+        finally:
+            if bad.exists():
+                bad.unlink()
 
 
 class SpecNamingTest(unittest.TestCase):

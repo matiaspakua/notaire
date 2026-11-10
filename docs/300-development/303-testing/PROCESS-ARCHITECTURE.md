@@ -66,7 +66,7 @@ inputs, outputs, owners, and gates — so Dev, Sec, Ops, and QA stay synchronize
 docs/300-development/303-testing/     ← process knowledge (MTP, patterns, matrix)
   TEST-PLAN.md                        ← Master Test Plan (DOC-TESTPLAN-001)
   PROCESS-ARCHITECTURE.md             ← this file
-  INVENTORY.md                        ← generated living index
+  INVENTORY.md                        ← stub; full report = INVENTORY.generated.md (local/docs-build)
   CU-API-MATRIX.csv                   ← CU ↔ API ↔ Bruno
   test-cases/                         ← optional TC-* narratives
 testing/                              ← black-box automation module
@@ -81,7 +81,7 @@ frontend/src/**/*.test.*              ← component automation
 | Guard | Command | Prevents |
 |-------|---------|----------|
 | CU-API matrix | `python3 workspace/sdlc/validate-cu-api-matrix.py` | Stale controllers / Bruno paths |
-| Testing inventory | `python3 workspace/sdlc/validate-testing-inventory.py` | Stale INVENTORY / unprefixed E2E |
+| Testing inventory | `python3 workspace/sdlc/validate-testing-inventory.py` | Unprefixed E2E / unreadable suite trees (no committed count-table diff) |
 | OpenSpec plan | `bash workspace/sdlc/validate-sdlc-plan.sh` | Incomplete Gate 1 |
 | TDD evidence | `bash workspace/sdlc/check-tdd-evidence.sh` | Prod change without tests |
 | Doc traceability | `python3 workspace/sdlc/check-doc-traceability.py` | Claimed docs not in diff |

@@ -105,3 +105,7 @@ frontend/tests/e2e/fixtures/
 
 # Optional OpenTelemetry venv for aisdlc TelemetryPort tests (#2125)
 framework/ai-sdlc/.venv-telemetry/
+
+# On-demand testing inventory report (#2117) — never commit on feature PRs
+docs/300-development/303-testing/INVENTORY.generated.md
+

@@ -66,7 +66,7 @@ destination = "docs/300-development/303-testing/INVENTORY.md"
 class = "stay"
 status = "stay"
 hotspot = true
-note = "Generated merge hotspot (#2117). Do not relocate until every consumer reads one path."
+note = "Path stays as a committed stub (#2117). Full report is INVENTORY.generated.md (gitignored); feature PRs must not commit suite count tables."
 
 [[rows]]
 source = "local-ai/sdlc"
