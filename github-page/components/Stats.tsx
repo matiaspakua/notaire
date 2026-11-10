@@ -23,10 +23,10 @@ function formatDate(dateStr: string): string {
 function buildStats(metrics: SiteMetrics): StatItem[] {
   return [
     { value: metrics.commits, label: "Total Commits", suffix: "+", color: "var(--ai-cyan)", icon: "⚡", sub: `Since ${formatDate(metrics.firstCommitDate)}` },
-    { value: metrics.pullRequests, label: "Pull Requests", suffix: "", color: "var(--spring-green)", icon: "🔀", sub: "100% merge rate" },
+    { value: metrics.pullRequests, label: "Pull Requests", suffix: "", color: "var(--spring-green)", icon: "🔀", sub: "Opened, from GitHub search" },
     { value: metrics.useCases, label: "Use Cases", suffix: "", color: "var(--ai-purple)", icon: "📋", sub: `CU-01 → CU-${metrics.useCases}` },
     { value: metrics.functionalRequirements, label: "Functional Requirements", suffix: "", color: "#ff9500", icon: "📌", sub: `RF-01 → RF-${metrics.functionalRequirements}` },
-    { value: metrics.coverage.backendInstruction, label: "Test Coverage", suffix: "%", color: "var(--java-orange)", icon: "🎯", sub: "JaCoCo enforced" },
+    { value: metrics.coverage.backendInstruction, label: "Test Coverage", suffix: "%", color: "var(--java-orange)", icon: "🎯", sub: metrics.coverage.lastUpdated === "unknown" ? "not measured this build" : "JaCoCo snapshot" },
     { value: metrics.markdownFiles, label: "Docs (Markdown files)", suffix: "", color: "#ff375f", icon: "📚", sub: "Living documentation" },
     { value: metrics.testClasses, label: "Test Classes", suffix: "", color: "#22d3ee", icon: "🧪", sub: "Unit + Integration + E2E" },
     { value: metrics.dockerServices, label: "Docker Services", suffix: "", color: "#a78bfa", icon: "🐳", sub: "App + Infra stacks" },

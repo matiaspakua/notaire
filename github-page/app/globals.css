@@ -162,6 +162,85 @@ body {
   .diagram-frame[data-wide="true"] svg { max-width: none; min-width: 40rem; }
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  html { transition: background-color 160ms ease-out; }
+}
+
+/* Dark theme (#2201). Surfaces and reading text flip. Dark chips (code, primary buttons) stay dark. */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --color-surface: #0b1220;
+  --color-surface-2: #111827;
+  --color-ink: #f8fafc;
+  --color-ink-muted: #cbd5e1;
+  --color-ink-subtle: #94a3b8;
+  --color-hairline: #334155;
+  --bg-dark: #0b1220;
+  --bg-mid: #111827;
+  --ink: #f8fafc;
+  --ink-muted: #94a3b8;
+  --hairline: #334155;
+  --color-brand-50: #0c1e3a;
+  --color-brand-100: #123056;
+  --color-factory-50: #1a1230;
+  --color-factory-100: #2a1b4d;
+  --color-factory-200: #3b2770;
+  --accent-600: #9ecbff;
+  --accent-700: #9ecbff;
+  background: #0b1220;
+}
+[data-theme="dark"] .theme-factory {
+  --accent-600: #ddd6fe;
+  --accent-700: #ddd6fe;
+}
+[data-theme="dark"] body { background: #0b1220; color: #f8fafc; }
+[data-theme="dark"] :is(.bg-white, .bg-white\/70, .bg-white\/80, .bg-white\/85, .bg-white\/90) { background-color: #0f172a; }
+[data-theme="dark"] :is(.bg-slate-50, .bg-neutral-50) { background-color: #0b1220; }
+[data-theme="dark"] :is(.bg-slate-100, .bg-neutral-100, .hover\:bg-slate-100:hover, .hover\:bg-slate-50:hover) { background-color: #1e293b; }
+[data-theme="dark"] :is(.bg-slate-200, .bg-neutral-200) { background-color: #334155; }
+[data-theme="dark"] :is(.text-slate-900, .text-neutral-900, .hover\:text-slate-900:hover, .hover\:text-neutral-900:hover) { color: #f8fafc; }
+[data-theme="dark"] :is(.text-slate-800, .text-neutral-800, .text-slate-700, .text-neutral-700, .hover\:text-slate-700:hover) { color: #e2e8f0; }
+[data-theme="dark"] :is(.text-slate-600, .text-neutral-600) { color: #cbd5e1; }
+[data-theme="dark"] :is(.text-slate-500, .text-neutral-500) { color: #94a3b8; }
+[data-theme="dark"] .placeholder\:text-slate-500::placeholder { color: #94a3b8; }
+[data-theme="dark"] :is(.border-slate-100, .border-slate-200, .border-neutral-100, .border-neutral-200, .border-slate-200\/80) { border-color: #334155; }
+[data-theme="dark"] :is(.border-slate-300, .hover\:border-slate-300:hover, .hover\:border-slate-400:hover) { border-color: #64748b; }
+[data-theme="dark"] :is(.divide-slate-100, .divide-slate-200, .divide-neutral-200) > :not([hidden]) ~ :not([hidden]) { border-color: #334155; }
+[data-theme="dark"] :is(.text-brand-600, .text-brand-700, .text-brand-800, .hover\:text-brand-700:hover) { color: #9ecbff; }
+[data-theme="dark"] :is(.text-factory-600, .text-factory-700, .text-factory-800) { color: #ddd6fe; }
+[data-theme="dark"] :is(.text-amber-700, .text-amber-800, .text-amber-950) { color: #fde68a; }
+[data-theme="dark"] .bg-amber-100 { background-color: #3b2a0a; }
+[data-theme="dark"] .text-emerald-900 { color: #a7f3d0; }
+[data-theme="dark"] .bg-emerald-100 { background-color: #064e3b; }
+[data-theme="dark"] .text-rose-900 { color: #fecdd3; }
+[data-theme="dark"] .bg-rose-100 { background-color: #4c0519; }
+[data-theme="dark"] .iso[data-theme="light"] {
+  background: #f8fafc;
+  border-radius: 1rem;
+  padding: 0.25rem 0.5rem 0.75rem;
+}
+/* Mermaid draws dark labels for a light figure. Keep that figure on paper in both themes. */
+[data-theme="dark"] .diagram-frame {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+[data-theme="dark"] .diagram-frame :is(p, span, .edgeLabel, .nodeLabel) {
+  color: #0f172a;
+}
+[data-theme="dark"] :focus-visible { outline-color: #9ecbff; }
+[data-theme="dark"] ::selection { background: #1d4ed8; color: #ffffff; }
+[data-theme="dark"] .grid-pattern {
+  background-image:
+    linear-gradient(rgba(158, 203, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(158, 203, 255, 0.08) 1px, transparent 1px);
+}
+.hero-wash {
+  background: linear-gradient(135deg, var(--color-factory-50), #ffffff 42%, var(--color-brand-50));
+}
+[data-theme="dark"] .hero-wash {
+  background: linear-gradient(135deg, #1a1230, #0f172a 42%, #0c1e3a);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
     animation-duration: 0.01ms !important;

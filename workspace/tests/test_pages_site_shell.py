@@ -28,9 +28,11 @@ def read(path: Path) -> str:
 class SiteShellTest(unittest.TestCase):
     def test_root_layout_renders_the_one_header_and_footer(self):
         layout = read(PAGE / "app" / "layout.tsx")
+        skip = read(SITE / "SkipLink.tsx")
         self.assertIn("<SiteHeader", layout)
         self.assertIn("<SiteFooter", layout)
-        self.assertIn('href="#main"', layout, "skip link to the main landmark")
+        self.assertIn("<SkipLink", layout)
+        self.assertIn('href="#main"', skip, "skip link to the main landmark")
 
     def test_sections_do_not_ship_their_own_headers(self):
         for name in ("Nav.tsx", "FactoryChrome.tsx", "DocsChrome.tsx", "CustomCursor.tsx"):

@@ -60,6 +60,11 @@ const DEFAULTS: SiteMetrics = {
   },
 };
 
+/** True when a coverage snapshot was present. "unknown" means the generator found no JaCoCo file and must not be read as 0%. */
+export function coverageIsMeasured(coverage: CoverageSnapshot): boolean {
+  return coverage.lastUpdated !== "unknown" && coverage.lastUpdated.trim() !== "";
+}
+
 export function loadMetrics(): SiteMetrics {
   try {
     const filePath = path.join(process.cwd(), "public", "metrics.json");

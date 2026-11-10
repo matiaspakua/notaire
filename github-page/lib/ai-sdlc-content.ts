@@ -955,13 +955,20 @@ export const FRAMEWORK_LEVELS: { level: string; name: string; fits: string; adds
 ];
 
 export const FRAMEWORK_COMMANDS: { cmd: string; does: string }[] = [
+  { cmd: "install --path P --name N", does: "Copy the kit into a repository and scaffold a profile. Absolute paths are refused." },
   { cmd: "init --name N --level L", does: "Scaffold policy, agent card, AGENTS.md, profile, role agents" },
   { cmd: "doctor", does: "Validate the profile; warn on placeholders and what the level lacks" },
+  { cmd: "config validate", does: "Check factory knobs, trusted plugins and the migration inventory. config show requires --redacted." },
+  { cmd: "plugin list", does: "List trusted plugins. plugin plan prints argv and does not run it." },
   { cmd: "gate <stage>", does: "Run the stage's gates by exit code; path-scoped; one ledger record" },
   { cmd: "ratchet", does: "Baselines may not grow against the base; floors must hold" },
-  { cmd: "change new | check", does: "Built-in change records with a live issue check" },
-  { cmd: "skills · budget · commits · tdd", does: "Catalog lint, context budget, commit subjects, tests with code" },
-  { cmd: "report · cost", does: "Gate pass rates and durations; token cost per model and agent" },
+  { cmd: "grant check", does: "Compare changed paths with a Grant write set. An expiry fails closed. This is policy, not a sandbox." },
+  { cmd: "isolator status", does: "Probe bubblewrap. sandbox is true only after a successful probe." },
+  { cmd: "foreman plan", does: "Print a dispatch plan from stage knobs. It does not run agents." },
+  { cmd: "metrics lead-time", does: "Lead time from a fixture or, read-only, from GitHub. It does not write to the forge." },
+  { cmd: "change new", does: "Built-in change records with a live issue check" },
+  { cmd: "skills", does: "Catalog lint. budget, commits and tdd are separate checks." },
+  { cmd: "report", does: "Gate pass rates and durations. cost records tokens when something calls it." },
 ];
 
 export const NOTAIRE_PROFILE_EXCERPT = `[project]

@@ -97,7 +97,8 @@ class AiSdlcSectionStructureTest(unittest.TestCase):
     def test_every_diagram_is_rendered_by_a_page(self):
         ui = (PAGE / "components" / "FactoryUI.tsx").read_text(encoding="utf-8")
         self.assertIn("<MermaidDiagram", ui, "the section's Diagram must render through MermaidDiagram")
-        pages = "\n".join(p.read_text(encoding="utf-8") for p in SECTION.rglob("page.tsx"))
+        rendered = list(SECTION.rglob("page.tsx")) + list((PAGE / "components" / "factory").rglob("*.tsx"))
+        pages = "\n".join(p.read_text(encoding="utf-8") for p in rendered)
         for name in DIAGRAMS:
             self.assertRegex(pages, rf"<Diagram chart=\{{{name}\}}", f"diagram {name} is declared but no page renders it")
 

@@ -1,11 +1,22 @@
+"use client";
+
 import Link from "next/link";
-import { breadcrumbs } from "@/lib/site";
+import { chrome, factoryPageTitle } from "@/lib/i18n";
+import { breadcrumbs, PRIMARY_NAV } from "@/lib/site";
+import { usePreferences } from "./Preferences";
 
 export function Breadcrumbs({ pathname }: { pathname: string }) {
-  const crumbs = breadcrumbs(pathname);
+  const { locale } = usePreferences();
+  const t = chrome(locale);
+  const crumbs = breadcrumbs(pathname).map((crumb) => {
+    if (crumb.href === "/") return { ...crumb, label: t.home };
+    const nav = PRIMARY_NAV.find((item) => item.href === crumb.href);
+    if (nav) return { ...crumb, label: t.nav[nav.key] };
+    return { ...crumb, label: factoryPageTitle(crumb.href, locale, crumb.label) };
+  });
   if (crumbs.length === 0) return null;
   return (
-    <nav aria-label="Breadcrumb" className="mb-6 text-sm">
+    <nav aria-label={t.breadcrumb} className="mb-6 text-sm">
       <ol className="flex flex-wrap items-center gap-1.5 text-slate-600">
         {crumbs.map((c, i) => {
           const last = i === crumbs.length - 1;
