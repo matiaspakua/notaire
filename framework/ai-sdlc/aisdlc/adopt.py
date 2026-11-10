@@ -45,7 +45,8 @@ def init(root: Path, name: str, level: int, force: bool) -> int:
 
 
 def doctor(ctx: Context) -> int:
-    from aisdlc.isolator import doctor_note
+    from aisdlc.approval import doctor_note as approval_doctor_note
+    from aisdlc.isolator import doctor_note as isolator_doctor_note
 
     errors, warnings = _errors(ctx), _warnings(ctx)
     for message in errors:
@@ -53,7 +54,9 @@ def doctor(ctx: Context) -> int:
     for message in warnings:
         print(f"  WARN   {message}")
     # Isolator is design-only (#2173): INFO, never an error by itself.
-    print(f"  INFO   {doctor_note()}")
+    print(f"  INFO   {isolator_doctor_note()}")
+    # ApprovalPort is design-only (#2190): INFO, never an error by itself.
+    print(f"  INFO   {approval_doctor_note()}")
     p = ctx.profile
     print(f"doctor: {p.name} · level {p.level} · {len(p.gates)} gates in {len(p.stages())} stages · "
           f"{len(p.ratchets)} ratchets · {len(p.roles)} roles — "

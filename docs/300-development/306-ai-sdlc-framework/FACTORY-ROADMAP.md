@@ -12,7 +12,7 @@ Store authority for the Project: `ai-sdlc-factory-master-plan.md`. Epic:
 | Kit | [`framework/ai-sdlc/`](../../../framework/ai-sdlc/) · profile [`.aisdlc/aisdlc.toml`](../../../.aisdlc/aisdlc.toml) |
 | Landed slice notes | [`FACTORY-FOUNDATION.md`](FACTORY-FOUNDATION.md) |
 | Framework report | [`ai_sdlc_framework.md`](ai_sdlc_framework.md) |
-| Standards ADRs | [ADR-001](../../../framework/ai-sdlc/docs/adr/ADR-001-canonical-root.md) · [ADR-002](../../../framework/ai-sdlc/docs/adr/ADR-002-ports-and-trust.md) · [ADR-003](../../../framework/ai-sdlc/docs/adr/ADR-003-standards.md) |
+| Standards ADRs | [ADR-001](../../../framework/ai-sdlc/docs/adr/ADR-001-canonical-root.md) · [ADR-002](../../../framework/ai-sdlc/docs/adr/ADR-002-ports-and-trust.md) · [ADR-003](../../../framework/ai-sdlc/docs/adr/ADR-003-standards.md) · [ADR-004](../../../framework/ai-sdlc/docs/adr/ADR-004-isolator-runtime.md) · [ADR-005](../../../framework/ai-sdlc/docs/adr/ADR-005-approval-port.md) |
 
 Do not fork a second master plan. Update this file when the store master plan
 moves; thin store pointers stay short.
@@ -239,8 +239,11 @@ this ordered spine.**
   (read-only live lead-time via `gh` shipped in #2184; custody story still incomplete for writes).
 - Wilson autonomy **promotion** (L0–L4). Multi-stage **honesty** already ships
   (#2171): L1 stays no-evaluable until ≥2 allowlisted stages have `min_n` —
-  not Isolator, not auto-promotion.
-- Full ApprovalPort (SSH/DSSE).
+  not Isolator, not auto-promotion. **Refused in #2190** until Owner-chosen
+  multi-stage operational volume (Notaire `improve autonomy` still `no-evaluable`).
+- Full ApprovalPort **runtime** (SSH/DSSE mint/verify). **Boundary design** shipped
+  (#2190 / ADR-005): stub + doctor `no-evaluable`; `approvals_live=false`;
+  agent never self-approves; no fake approvals.
 
 ### Parallel stay path
 
