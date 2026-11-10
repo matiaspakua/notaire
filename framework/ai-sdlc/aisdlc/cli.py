@@ -10,6 +10,7 @@ import os
 from aisdlc import (
     __version__,
     adopt,
+    approval,
     catalogs,
     change,
     checks,
@@ -214,6 +215,37 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--base")
     p.add_argument("--json", action="store_true")
+    p = sub.add_parser(
+        "approval",
+        help=(
+            "ApprovalPort mint/verify/status (SSH ssh-keygen -Y; approvals_live only "
+            "after proven round-trip; never agent self-approve) (#2205 / ADR-005)"
+        ),
+    )
+    approval_sub = p.add_subparsers(dest="action", required=True)
+    approval_status = approval_sub.add_parser(
+        "status", help="report ApprovalPort honesty fields (approvals_live/algorithm/identity)"
+    )
+    approval_status.add_argument("--json", action="store_true")
+    approval_mint = approval_sub.add_parser(
+        "mint",
+        help="sign a subject file (role=person|admin only; refuses agent)",
+    )
+    approval_mint.add_argument("--subject", required=True, help="path to subject bytes to sign")
+    approval_mint.add_argument(
+        "--role",
+        default="person",
+        help="authority role (person|admin); agent is refused",
+    )
+    approval_mint.add_argument("--sig", dest="signature", help="output signature path (default: SUBJECT.sig)")
+    approval_mint.add_argument("--json", action="store_true")
+    approval_verify = approval_sub.add_parser(
+        "verify",
+        help="verify an SSHSIG over a subject against allowed_signers",
+    )
+    approval_verify.add_argument("--subject", required=True, help="path to subject bytes")
+    approval_verify.add_argument("--sig", dest="signature", help="signature path (default: SUBJECT.sig)")
+    approval_verify.add_argument("--json", action="store_true")
 
     p = sub.add_parser("evidence", help="evidence ledger integrity")
     q = p.add_subparsers(dest="action", required=True).add_parser("verify", help="check the hash chain of the ledger")
@@ -397,6 +429,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "committer": lambda: committer.check(ctx, args.base, args.json),
         "grant": lambda: _grant(ctx, args),
         "isolator": lambda: _isolator(ctx, args),
+        "approval": lambda: _approval(ctx, args),
         "foreman": lambda: _foreman(ctx, args),
         "evidence": lambda: evidence.verify(ctx, args.anchor),
         "config": lambda: _config(ctx, args),
@@ -434,6 +467,17 @@ def _isolator(ctx: Context, args: argparse.Namespace) -> int:
         args.action,
         as_json=bool(getattr(args, "json", False)),
         argv=argv,
+    )
+
+
+def _approval(ctx: Context, args: argparse.Namespace) -> int:
+    return approval.dispatch(
+        ctx,
+        args.action,
+        as_json=bool(getattr(args, "json", False)),
+        subject=getattr(args, "subject", None),
+        role=str(getattr(args, "role", "person") or "person"),
+        signature=getattr(args, "signature", None),
     )
 
 
