@@ -474,3 +474,10 @@ pair("v0.5 Quality & traceability (2027-01)", "v0.5 Calidad y trazabilidad (2027
 pair("v0.6 Platform & operability (2027-02)", "v0.6 Plataforma y operación (2027-02)");
 pair("v1.0 GA: legacy-free (2027-03)", "v1.0 GA: sin legado (2027-03)");
 pair("Backlog · Unscheduled", "Backlog · Sin fecha");
+pair("Merged pull requests each ISO week", "Pull requests fusionados por semana ISO");
+pair("Median {median} per week. A week with no merge is zero. Bot pull requests are excluded.", "Mediana {median} por semana. Una semana sin merge es cero. Los pull requests de bots no entran.");
+pair("{week}: {count} merged pull requests", "{week}: {count} pull requests fusionados");
+pair("Weeks", "Semanas");
+pair("Week", "Semana");
+pair("Weekly counts from the delivery snapshot", "Conteos semanales de la foto de entrega");
+pair("This snapshot has no weekly counts.", "Esta foto no tiene conteos semanales.");
