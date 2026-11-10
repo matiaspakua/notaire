@@ -10,6 +10,20 @@ timestamp string), and optional `ttl_seconds` (positive integer). Omitted or emp
 grants SHALL be a no-op. Expire fields are kill-switch data toward Isolator OS —
 they MUST NOT alone claim sandbox isolation.
 
+#### Scenario: omitted grants are no-op
+- **WHEN** a profile has gates but no `[[grants]]` tables
+- **THEN** `config validate` and `doctor` succeed without requiring grants
+
+#### Scenario: parse grant fields
+- **WHEN** a profile declares `[[grants]]` with id, worktree, write_set, required_checks,
+  budget, and a valid stage
+- **THEN** the kit loads those fields and surfaces them in `config show --redacted` /
+  `grant list --json`
+
+#### Scenario: unknown stage on grant fails load
+- **WHEN** a grant sets `stage` to a value that does not match any gate stage
+- **THEN** profile load fails with a configuration error (exit 2)
+
 #### Scenario: grant expire fields parse and show
 - **WHEN** a profile declares `[[grants]]` with `expires_at` and/or `ttl_seconds`
 - **THEN** the kit loads those fields and surfaces them in `grant list --json` /
