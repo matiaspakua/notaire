@@ -111,6 +111,42 @@ EOF
 
 ---
 
+## Step 0.5: OpenSpec Gate 1 (specification)
+
+No implementation before Gate 1. Notaire's OpenSpec tree lives at
+`docs/openspec/` (ADR-026). The CLI hard-codes the folder name `openspec`, so
+**project schema `notaire-sdlc` is only discovered when cwd is `docs/`**.
+From the repository root, `openspec schemas --json` lists only packaged
+`spec-driven` and `openspec new change --schema notaire-sdlc` fails (#2218).
+
+**Preferred agent path** (creates the change + copies templates):
+
+```bash
+bash workspace/sdlc/seed-openspec-change.sh "<kebab-change-name>" \
+  --issue <n> --use-case "CU76 — …" --branch "<type>/<n>_desc" --create
+```
+
+**Equivalent direct CLI**:
+
+```bash
+cd docs
+openspec new change "<kebab-change-name>" --schema notaire-sdlc
+cd ..
+bash workspace/sdlc/seed-openspec-change.sh "<kebab-change-name>" \
+  --issue <n> --use-case "CU76 — …" --branch "<type>/<n>_desc"
+```
+
+Then fill artifacts (or `python3 workspace/sdlc/scaffold-openspec-change.py scaffold <spec.json>`), and validate:
+
+```bash
+cd docs && openspec validate "<kebab-change-name>" --strict && cd ..
+bash workspace/sdlc/validate-sdlc-plan.sh "<kebab-change-name>"
+```
+
+Permanent detail: `docs/openspec/NOTAIRE-ADAPTATIONS.md` (Quick CLI reference).
+
+---
+
 ## Step 1: Create Branch
 
 Always pull from main first:
