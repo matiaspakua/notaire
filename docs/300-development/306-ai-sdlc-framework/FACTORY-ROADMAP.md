@@ -231,8 +231,10 @@ this ordered spine.**
 
 ### Deferred (after ports exist)
 
-- Isolator **sole-committer enforcement** (`enforces_committer=true`) — still deferred.
-  Thin **policy** dry-run already exists (`aisdlc committer`, #2167/#2169/#2175).
+- Isolator **sole-committer enforcement** started (#2200 / ADR-004):
+  `aisdlc isolator wrap` + hooks custody; `enforces_committer=true` only after a
+  proven interception probe; works without `bwrap` (`sandbox` stays independent).
+  Thin **policy** dry-run still exists (`aisdlc committer`, #2167/#2169/#2175).
   Owner `runtime_*` configured → evaluable, still advisory (`required = false`).
   **Isolator OS started** (#2198 / ADR-004): `aisdlc isolator status|probe|run` with
   `bwrap` when available; honest `sandbox=false` when missing; YAML ≠ isolation.
@@ -241,6 +243,8 @@ this ordered spine.**
   **Foreman stage-knob routing** shipped (#2196): `aisdlc foreman plan|route` —
   Foreman ops habit **partially kit-backed** (dispatch plan only; no agent/MCP
   execution).
+  Remaining Isolator honesty limits: hooks can be bypassed with
+  `git -c core.hooksPath=…` unless combined with stronger containment; not unbreakable.
 - ForgePort **write** / attestations / `factory/gate` on GitHub checks
   (read-only live lead-time via `gh` shipped in #2184; custody story still incomplete for writes).
 - Wilson autonomy **promotion** (L0–L4). Multi-stage **honesty** already ships

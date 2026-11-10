@@ -55,7 +55,8 @@ def doctor(ctx: Context) -> int:
         print(f"  ERROR  {message}")
     for message in warnings:
         print(f"  WARN   {message}")
-    # Isolator OS honesty (#2173/#2198): INFO; sandbox only after real probe.
+    # Isolator OS + sole-committer honesty (#2173/#2198/#2200): INFO;
+    # sandbox / enforces_committer only after real probes.
     print(f"  INFO   {isolator_doctor_note()}")
     # Grant write-set + expire are policy-only (#2194/#2198): INFO, never a sandbox claim alone.
     print(f"  INFO   {grant_doctor_note()}")

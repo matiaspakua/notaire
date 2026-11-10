@@ -1,10 +1,14 @@
-"""IsolatorPort (#2173/#2198): OS containment when bwrap works; honest degrade otherwise.
+"""IsolatorPort (#2173/#2198/#2200): OS containment + sole-committer custody.
 
 YAML, harness adapters, and profile flags are **not** isolation (ADR-002 / ADR-004).
-`sandbox=true` only after a real containment probe succeeds. Prefer Linux `bwrap`
-(bubblewrap). Grant expire is fail-closed and never alone means Isolator shipped.
+`sandbox=true` only after a real containment probe succeeds (prefer Linux `bwrap`).
+`enforces_committer=true` only after a proven interception probe (git commit without
+grant fails closed). Commit custody uses `core.hooksPath` and works **without**
+bwrap; agent sessions never receive `AISDLC_COMMIT_GRANT`.
 
-Override detection with env `AISDLC_BWRAP` (empty = force none; path = that binary).
+Overrides:
+- `AISDLC_BWRAP` — empty = force none; path = that binary
+- `AISDLC_ISOLATOR_COMMITTER` — `0`/`false`/`off` forces enforces_committer=false
 """
 from __future__ import annotations
 
@@ -12,6 +16,8 @@ import json
 import os
 import shutil
 import subprocess
+import tempfile
+import textwrap
 from pathlib import Path
 from typing import Any, Protocol, Sequence
 
@@ -20,6 +26,10 @@ from aisdlc.grants import active_grants, is_expired
 from aisdlc.profile import Grant
 
 ENV_BWRAP = "AISDLC_BWRAP"
+ENV_COMMIT_GRANT = "AISDLC_COMMIT_GRANT"
+ENV_COMMITTER = "AISDLC_ISOLATOR_COMMITTER"
+HOOKS_REL = Path(".aisdlc") / "isolator" / "hooks"
+PRE_COMMIT = "pre-commit"
 
 
 class IsolatorPort(Protocol):
@@ -48,6 +58,11 @@ def bwrap_path() -> str | None:
     return shutil.which("bwrap")
 
 
+def _committer_forced_off() -> bool:
+    raw = (os.environ.get(ENV_COMMITTER) or "").strip().casefold()
+    return raw in {"0", "false", "off", "no"}
+
+
 def _run_bwrap_probe(binary: str) -> bool:
     """Return True when a trivial command runs under bwrap containment."""
     cmd = [
@@ -72,21 +87,135 @@ def _run_bwrap_probe(binary: str) -> bool:
     return result.returncode == 0
 
 
+def install_commit_custody(root: Path) -> Path:
+    """Install Isolator pre-commit hook and point core.hooksPath at it.
+
+    Returns the hooks directory. Does not claim OS sandbox.
+    """
+    root = root.resolve()
+    hooks = root / HOOKS_REL
+    hooks.mkdir(parents=True, exist_ok=True)
+    hook = hooks / PRE_COMMIT
+    hook.write_text(
+        textwrap.dedent(
+            f"""\
+            #!/bin/sh
+            # aisdlc Isolator sole-committer custody (ADR-004 / axiom 2).
+            # Not OS isolation. Agent must not hold {ENV_COMMIT_GRANT}.
+            if [ -z "${{{ENV_COMMIT_GRANT}:-}}" ]; then
+              echo "aisdlc isolator: git commit blocked — set {ENV_COMMIT_GRANT} for Owner/runtime only" >&2
+              exit 1
+            fi
+            exit 0
+            """
+        ),
+        encoding="utf-8",
+    )
+    hook.chmod(0o755)
+    subprocess.run(
+        ["git", "config", "core.hooksPath", str(HOOKS_REL.as_posix())],
+        cwd=root,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return hooks
+
+
+def probe_committer_enforcement() -> bool:
+    """Prove git-commit interception: without grant fails; with grant may pass.
+
+    Returns True only when a without-grant commit fails closed under custody hooks.
+    Forced off via AISDLC_ISOLATOR_COMMITTER=0/false/off.
+    """
+    if _committer_forced_off():
+        return False
+    tmp = Path(tempfile.mkdtemp(prefix="aisdlc-isolator-commit-"))
+    try:
+        env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+        env.pop(ENV_COMMIT_GRANT, None)
+        subprocess.run(
+            ["git", "init", "-q", "-b", "main"],
+            cwd=tmp,
+            check=True,
+            capture_output=True,
+            text=True,
+            env=env,
+        )
+        for key, value in (
+            ("user.email", "isolator-probe@example.com"),
+            ("user.name", "Isolator Probe"),
+            ("commit.gpgsign", "false"),
+        ):
+            subprocess.run(
+                ["git", "config", key, value],
+                cwd=tmp,
+                check=True,
+                capture_output=True,
+                text=True,
+                env=env,
+            )
+        install_commit_custody(tmp)
+        (tmp / "probe.txt").write_text("probe\n", encoding="utf-8")
+        subprocess.run(
+            ["git", "add", "-A"],
+            cwd=tmp,
+            check=True,
+            capture_output=True,
+            text=True,
+            env=env,
+        )
+        denied = subprocess.run(
+            ["git", "commit", "-q", "-m", "agent without grant"],
+            cwd=tmp,
+            capture_output=True,
+            text=True,
+            env=env,
+        )
+        if denied.returncode == 0:
+            return False
+        # Prove Owner/runtime path still works with the grant.
+        allowed_env = {**env, ENV_COMMIT_GRANT: "1"}
+        allowed = subprocess.run(
+            ["git", "commit", "-q", "--allow-empty", "-m", "owner with grant"],
+            cwd=tmp,
+            capture_output=True,
+            text=True,
+            env=allowed_env,
+        )
+        return allowed.returncode == 0
+    except (OSError, subprocess.SubprocessError):
+        return False
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def probe() -> dict[str, Any]:
-    """Detect real containment. sandbox=true only when a probe succeeds."""
+    """Detect real containment + committer custody. Never fake honesty fields."""
+    enforces = probe_committer_enforcement()
     binary = bwrap_path()
     if not binary:
+        detail_parts = [
+            "no OS Isolator backend available (bwrap missing or AISDLC_BWRAP empty) — "
+            "YAML/harness flags are not isolation"
+        ]
+        if enforces:
+            detail_parts.append(
+                "sole-committer custody probe succeeded (git hooks; enforces_committer=true) "
+                "without claiming sandbox"
+            )
+        else:
+            detail_parts.append(
+                "enforces_committer=false — commit interception not proven "
+                "(or AISDLC_ISOLATOR_COMMITTER forced off)"
+            )
         return {
             "status": "no-evaluable",
             "sandbox": False,
             "backend": "none",
             "probe_ok": False,
-            "enforces_committer": False,
-            "detail": (
-                "no OS Isolator backend available (bwrap missing or AISDLC_BWRAP empty) — "
-                "YAML/harness flags are not isolation; aisdlc committer and grant check "
-                "remain policy dry-runs Isolator must eventually enforce (ADR-004)"
-            ),
+            "enforces_committer": enforces,
+            "detail": "; ".join(detail_parts),
         }
     ok = _run_bwrap_probe(binary)
     if not ok:
@@ -95,27 +224,31 @@ def probe() -> dict[str, Any]:
             "sandbox": False,
             "backend": "bwrap",
             "probe_ok": False,
-            "enforces_committer": False,
+            "enforces_committer": enforces,
             "detail": (
                 "bwrap present but containment probe failed — "
-                "sandbox remains false (ADR-004 honesty)"
+                f"sandbox remains false; enforces_committer={str(enforces).lower()} (ADR-004 honesty)"
             ),
         }
+    detail = (
+        "bwrap containment probe succeeded — Isolator OS started for probe/run"
+    )
+    if enforces:
+        detail += "; sole-committer custody proven (enforces_committer=true)"
+    else:
+        detail += "; still does not enforce sole-committer (enforces_committer=false)"
     return {
         "status": "ready",
         "sandbox": True,
         "backend": "bwrap",
         "probe_ok": True,
-        "enforces_committer": False,
-        "detail": (
-            "bwrap containment probe succeeded — Isolator OS started for probe/run; "
-            "still does not enforce sole-committer (enforces_committer=false)"
-        ),
+        "enforces_committer": enforces,
+        "detail": detail,
     }
 
 
 def isolator_status() -> dict[str, Any]:
-    """Report Isolator readiness from a live probe (never fake sandbox)."""
+    """Report Isolator readiness from a live probe (never fake sandbox/committer)."""
     payload = probe()
     return {
         "status": payload["status"],
@@ -131,7 +264,8 @@ def doctor_note() -> str:
     payload = isolator_status()
     return (
         f"isolator: status={payload['status']} sandbox={payload['sandbox']} "
-        f"backend={payload['backend']} — {payload['detail']}"
+        f"backend={payload['backend']} enforces_committer={payload['enforces_committer']} "
+        f"— {payload['detail']}"
     )
 
 
@@ -232,7 +366,7 @@ def run_command(
             "status": "fail",
             "sandbox": False,
             "backend": probed.get("backend", "none"),
-            "enforces_committer": False,
+            "enforces_committer": probed.get("enforces_committer", False),
             "detail": (
                 "Isolator run refused — no working OS containment backend "
                 f"({probed.get('detail')})"
@@ -251,10 +385,29 @@ def run_command(
         return 1
 
     root = ctx.root.resolve()
+    # Install commit custody in the worktree before contained run (agent never gets grant).
+    try:
+        install_commit_custody(root)
+    except (OSError, subprocess.SubprocessError) as exc:
+        payload = {
+            "status": "fail",
+            "sandbox": True,
+            "backend": "bwrap",
+            "enforces_committer": False,
+            "detail": f"failed to install commit custody hooks: {exc}",
+        }
+        if as_json:
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(f"isolator run: FAILED — {payload['detail']}")
+        return 1
+
     write_paths = _write_bind_targets(root, live) if live else []
     cmd = _bwrap_run_command(binary, root, argv, write_paths)
+    child_env = {k: v for k, v in os.environ.items()}
+    child_env.pop(ENV_COMMIT_GRANT, None)
     try:
-        result = subprocess.run(cmd, cwd=root, check=False)
+        result = subprocess.run(cmd, cwd=root, check=False, env=child_env)
     except OSError as exc:
         payload = {
             "status": "fail",
@@ -269,6 +422,7 @@ def run_command(
             print(f"isolator run: FAILED — {payload['detail']}")
         return 1
 
+    enforces = bool(probed.get("enforces_committer"))
     if as_json:
         print(
             json.dumps(
@@ -276,10 +430,85 @@ def run_command(
                     "status": "pass" if result.returncode == 0 else "fail",
                     "sandbox": True,
                     "backend": "bwrap",
-                    "enforces_committer": False,
+                    "enforces_committer": enforces,
                     "exit_code": result.returncode,
                     "write_binds": [str(p) for p in write_paths],
-                    "detail": "command executed under bwrap containment constrained by Grant write_set",
+                    "detail": (
+                        "command executed under bwrap containment constrained by Grant "
+                        "write_set; commit grant unset for agent"
+                    ),
+                },
+                indent=2,
+                sort_keys=True,
+            )
+        )
+    return result.returncode
+
+
+def wrap_command(
+    ctx: Context,
+    argv: Sequence[str],
+    *,
+    as_json: bool = False,
+) -> int:
+    """Run argv with commit custody active; no commit grant. Does not require bwrap."""
+    if not argv:
+        print("error: isolator wrap requires a command after --")
+        return 2
+
+    root = ctx.root.resolve()
+    try:
+        install_commit_custody(root)
+    except (OSError, subprocess.SubprocessError) as exc:
+        payload = {
+            "status": "fail",
+            "sandbox": False,
+            "backend": bwrap_path() and "bwrap" or "none",
+            "enforces_committer": False,
+            "detail": f"failed to install commit custody: {exc}",
+        }
+        if as_json:
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(f"isolator wrap: FAILED — {payload['detail']}")
+        return 1
+
+    child_env = {k: v for k, v in os.environ.items()}
+    # Agent never receives the commit grant in wrap mode.
+    child_env.pop(ENV_COMMIT_GRANT, None)
+    # Empty string also blocks the hook.
+    child_env[ENV_COMMIT_GRANT] = ""
+
+    try:
+        result = subprocess.run(list(argv), cwd=root, check=False, env=child_env)
+    except OSError as exc:
+        payload = {
+            "status": "fail",
+            "sandbox": False,
+            "backend": "none",
+            "enforces_committer": False,
+            "detail": f"failed to execute wrap command: {exc}",
+        }
+        if as_json:
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(f"isolator wrap: FAILED — {payload['detail']}")
+        return 1
+
+    enforces = probe_committer_enforcement()
+    if as_json:
+        print(
+            json.dumps(
+                {
+                    "status": "pass" if result.returncode == 0 else "fail",
+                    "sandbox": False,
+                    "backend": bwrap_path() and "bwrap" or "none",
+                    "enforces_committer": enforces,
+                    "exit_code": result.returncode,
+                    "detail": (
+                        "command ran under Isolator commit custody (hooks); "
+                        "not OS sandbox unless isolator run/bwrap used"
+                    ),
                 },
                 indent=2,
                 sort_keys=True,
@@ -308,7 +537,8 @@ def probe_cmd(*, as_json: bool) -> int:
     else:
         print(
             f"isolator probe: status={payload['status']} sandbox={payload['sandbox']} "
-            f"backend={payload['backend']} probe_ok={payload.get('probe_ok')}"
+            f"backend={payload['backend']} probe_ok={payload.get('probe_ok')} "
+            f"enforces_committer={payload['enforces_committer']}"
         )
         print(f"  detail: {payload['detail']}")
     # Probe reporting is always evaluable as a report; exit 0 even when sandbox=false
@@ -324,5 +554,7 @@ def dispatch(ctx: Context, action: str, *, as_json: bool, argv: Sequence[str]) -
         return probe_cmd(as_json=as_json)
     if action == "run":
         return run_command(ctx, argv, as_json=as_json)
+    if action == "wrap":
+        return wrap_command(ctx, argv, as_json=as_json)
     print(f"error: unknown isolator action {action!r}")
     return 2

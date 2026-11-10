@@ -8,8 +8,9 @@ Epic [#2134](https://github.com/matiaspakua/notaire/issues/2134) **P0–P3 spine
 [#2157](https://github.com/matiaspakua/notaire/issues/2157); preflight evidence
 [#2159](https://github.com/matiaspakua/notaire/issues/2159) (`aisdlc gate signal`).
 ASLI-31 / [#2161](https://github.com/matiaspakua/notaire/issues/2161) closes the epic
-docs; next work is Deferred only (Wilson / ForgePort / Isolator sole-committer
-enforcement) — no portal. Isolator OS probe/run + Grant expire started in #2198.
+docs; next work is Deferred only (Wilson / ForgePort write / ApprovalPort mint) —
+no portal. Isolator OS probe/run + Grant expire started in #2198; sole-committer
+enforcement started in #2200.
 
 **Sole-committer dry-run** ([#2167](https://github.com/matiaspakua/notaire/issues/2167) /
 [#2169](https://github.com/matiaspakua/notaire/issues/2169) /
@@ -26,8 +27,13 @@ fail-closed.
 `aisdlc isolator status|probe|run` prefers Linux `bwrap`; `sandbox=true` only after
 a successful probe; missing `bwrap` → honest `sandbox=false` / `no-evaluable`.
 Grant optional `expires_at` / `ttl_seconds` fail closed. YAML ≠ OS isolation.
-`enforces_committer` stays `false` (sole-committer interception still deferred).
-Do not invent Owner `runtime_*`; `[committer] required` stays `false`.
+
+**Isolator sole-committer enforcement** ([#2200](https://github.com/matiaspakua/notaire/issues/2200)):
+`aisdlc isolator wrap` + git `core.hooksPath` custody blocks `git commit` unless
+Owner/runtime holds `AISDLC_COMMIT_GRANT` (agent never receives it). Works
+**without bwrap**; `enforces_committer=true` only after a proven interception probe.
+`sandbox` stays independent. Do not invent Owner `runtime_*`;
+`[committer] required` stays `false`.
 
 **Grant profile schema** ([#2192](https://github.com/matiaspakua/notaire/issues/2192)) +
 **write-set policy dry-run** ([#2194](https://github.com/matiaspakua/notaire/issues/2194)) +
