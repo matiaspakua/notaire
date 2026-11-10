@@ -117,10 +117,24 @@ pick → triage brief → OpenSpec Gate 1 → branch + in-progress
 
 ## Dispatch
 
+**Before every stage dispatch**, consult the profile-derived routing surface
+(read-only; never executes agents/MCP; not Isolator OS):
+
+```bash
+python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml foreman plan --json
+# optional: --stage plan|red|pre-push|…   (alias: foreman route)
+```
+
+Use the returned `agents` / `skills` / `mcp` / `model` / `effort` knobs for that
+stage together with `fleet-manifest.yaml`. Empty `stages` means knobs are omitted
+— fall back to the fleet manifest; do **not** invent stages. Never treat this CLI
+as sandbox or Isolator.
+
 Emit a **handoff brief** (§5.1 of FLEET-ARCHITECTURE) and spawn/instruct the role
-from `fleet-manifest.yaml` (`openspec-planner`, `backend-implementer`,
-`frontend-design`, `testing-qa`, `java-architect`, `devops-engineer`,
-`security-auditor`, `code-reviewer`, `sync_issues_and_code`, `project-manager`).
+from the plan (when mapped) and `fleet-manifest.yaml` (`openspec-planner`,
+`backend-implementer`, `frontend-design`, `testing-qa`, `java-architect`,
+`devops-engineer`, `security-auditor`, `code-reviewer`, `sync_issues_and_code`,
+`project-manager`).
 
 On specialist return, require a **handoff result** with `commands_run` and exit codes,
 the changed paths, and the deviations (mechanical, with what was checked; or a decision

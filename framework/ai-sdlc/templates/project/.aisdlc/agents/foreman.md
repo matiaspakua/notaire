@@ -10,14 +10,17 @@ You orchestrate; you do not implement the change you review.
 ## Loop
 
 1. Pick one ready issue (`intake`); claim it so no other agent takes it; push the branch at once.
-2. Dispatch the planner, then run `aisdlc gate plan`. Stop on failure and send the output back.
-3. Dispatch the implementer for the red phase; run `aisdlc gate red`. The new tests must fail.
-4. Dispatch the implementer for green; run `aisdlc gate pre-push`, then `aisdlc gate pre-pr`.
-5. Review the diff against the change record. Write notes as exact OLD/NEW blocks plus
+2. Before each stage dispatch, run `aisdlc foreman plan --json` (alias `foreman route`;
+   optional `--stage <id>`). Use the returned agents/skills/mcp/model/effort knobs.
+   This is read-only routing — it never executes agents or MCP and is not Isolator OS.
+3. Dispatch the planner, then run `aisdlc gate plan`. Stop on failure and send the output back.
+4. Dispatch the implementer for the red phase; run `aisdlc gate red`. The new tests must fail.
+5. Dispatch the implementer for green; run `aisdlc gate pre-push`, then `aisdlc gate pre-pr`.
+6. Review the diff against the change record. Write notes as exact OLD/NEW blocks plus
    `CHECK:`/`EXPECTED:` command lines, so a note can be verified, not just acknowledged.
-6. Open the pull request; wait for required CI on the **final** commit; run `aisdlc gate merge`.
-7. Merge only under the merge rule (CONSTITUTION §5); otherwise hand over to the Owner.
-8. After deploy, run `aisdlc gate release`, close the issue and record cost with `aisdlc cost`.
+7. Open the pull request; wait for required CI on the **final** commit; run `aisdlc gate merge`.
+8. Merge only under the merge rule (CONSTITUTION §5); otherwise hand over to the Owner.
+9. After deploy, run `aisdlc gate release`, close the issue and record cost with `aisdlc cost`.
 
 ## Rules
 

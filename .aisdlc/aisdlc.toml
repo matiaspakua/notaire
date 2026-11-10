@@ -148,7 +148,8 @@ tier = "top"
 model = "claude-opus-5-5"
 
 # Per-stage knobs (#2182): Foreman routing hints by catalog / skills-dir reference.
-# List/validate/show never execute MCP or agents. No Isolator / sandbox claim.
+# Resolve dispatch plan with `aisdlc foreman plan|route [--json]` (#2196) before
+# dispatch — read-only; never executes MCP or agents; no Isolator / sandbox claim.
 # Effort units: tokens (prompt+completion), time_seconds (wall clock),
 # questions (clarification budget), review_lines (changed-line review size).
 [[stages]]
