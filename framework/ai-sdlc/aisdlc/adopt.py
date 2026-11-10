@@ -64,6 +64,10 @@ def doctor(ctx: Context) -> int:
     print(f"  INFO   {foreman_doctor_note()}")
     # ApprovalPort mint/verify honesty (#2190/#2205): INFO, never an error by itself.
     print(f"  INFO   {approval_doctor_note(ctx)}")
+    # ForgePort write/attest honesty (#2208): INFO; default dry-run; never fake write live.
+    from aisdlc.forge import doctor_note as forge_doctor_note
+
+    print(f"  INFO   {forge_doctor_note(ctx)}")
     p = ctx.profile
     print(f"doctor: {p.name} · level {p.level} · {len(p.gates)} gates in {len(p.stages())} stages · "
           f"{len(p.ratchets)} ratchets · {len(p.roles)} roles — "

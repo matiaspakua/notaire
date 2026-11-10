@@ -31,7 +31,7 @@ Metric attributes SHALL NOT include prompts, diffs, or secret-shaped keys.
 - **THEN** the emitted event does not contain the prompt
 
 ### Requirement: Read-only ForgePort builds the lead-time sample
-The kit SHALL provide a read-only ForgePort that, given an issue number, fetches issue.created_at and linked pull requests via the `gh` CLI (injectable runner) and builds the same sample document shape used by the #2138 fixture. The port SHALL NOT create, update, or close issues/PRs, SHALL NOT create or update check runs, and SHALL NOT write `factory/gate` attestations.
+The kit SHALL provide a read-only ForgePort that, given an issue number, fetches issue.created_at and linked pull requests via the `gh` CLI (injectable runner) and builds the same sample document shape used by the #2138 fixture. The lead-time path SHALL NOT create, update, or close issues/PRs, SHALL NOT create or update check runs, and SHALL NOT write `factory/gate` attestations. Approval-gated `factory/gate` attest / scoped write SHALL live on a separate `forge attest` surface (#2208) and SHALL NOT be reachable from `metrics lead-time`.
 
 #### Scenario: Sample from forge runner
 - **WHEN** ForgePort is given issue 2182 and a runner that returns a closed issue plus one linked PR with checks_green_at
