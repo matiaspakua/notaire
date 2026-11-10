@@ -45,7 +45,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* **pages:** Step the factory and the quality gates as they are on main (Foreman may merge, Workers never merge, preflight is the pull-request proof, the kit does not execute `foreman plan`). Lead time is the snapshot median and p90, not a histogram (Refs #2202)
+* **pages:** Step the factory and the quality gates as they are on main (Foreman may merge, Workers never merge, preflight is the pull-request proof, `foreman plan` only prints a route). Routing knobs exist for plan, red, pre-push and pre-pr; merge, release and signal stay unmapped. Lead time is the snapshot median and p90, not a histogram (Refs #2202)
+* **aisdlc:** Notaire Foreman `[[stages]]` knobs beyond `plan` — `red`, `pre-push`, `pre-pr` with real fleet agent catalog refs and skills-dir ids (`mapped_count` ≥ 4); no green gate/knob (G3 is pre-push/pre-pr); merge/release/signal stay unmapped honestly; empty MCP (Refs #2215)
 * **aisdlc:** Doctor accepts intentional local stage alias `signal` (no non-canonical WARN); Foreman plan lists `unmapped_stages` as expected until knobs are filled; lead-time help/doctor note: pass Issue number, not PR (Refs #2211)
 * **pages:** Spanish for the product, security, AI Factory, the technical-docs reading path, the about page and the demo banner. One dictionary keyed by the English sentence. A test fails when a translated route is missing its Spanish entry (Refs #2202)
 * **pages:** Dark and light theme, and English or Spanish, saved in the browser. The shell, the home page and the AI Factory introduction are translated. The framework page states what the kit on main can do and what is still planned (Refs #2201)
@@ -53,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **frontend:** Payments date-range unit test applies `router.replace` into `useSearchParams` so both `from` and `to` stay in the address (and clearing `from` leaves `to`) (Refs #2119)
 * **pages:** Do not publish fabricated 0% coverage when the JaCoCo snapshot or Vitest summary is missing; write JSON `null` and keep `lastUpdated: unknown` unless a measured live fallback exists (Refs #2203)
 
 ### Changed

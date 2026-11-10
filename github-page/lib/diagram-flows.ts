@@ -228,7 +228,7 @@ export function factoryFlow(): Flow {
     },
     {
       title: "What the kit on main does",
-      body: "The aisdlc kit runs gates by exit code. aisdlc foreman plan only prints a route; it does not run agents. The plugin allow list is openspec and example-method. Spec Kit and AWS AI-DLC are declared and not loaded.",
+      body: "The aisdlc kit runs gates by exit code. aisdlc foreman plan only prints a route; it does not run agents. Routing knobs exist for plan, red, pre-push and pre-pr. merge, release and signal stay unmapped. The plugin allow list is openspec and example-method. Spec Kit and AWS AI-DLC are declared and not loaded.",
       nodes: ["kit", "g3"],
       edges: [10],
     },

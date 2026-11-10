@@ -150,7 +150,16 @@ WARN); other custom kebab-case stages still warn. Documented in kit
 **Foreman unmapped honesty (#2211):** Only stages with `[[stages]]` knobs appear
 in `mapped_count`. Gate stages without knobs are listed as `unmapped_stages` and
 are **expected** until knobs are filled — the kit does **not** invent fake stage
-knobs (KISS). Doctor Foreman INFO states the same. Notaire today maps `plan` only.
+knobs (KISS). Doctor Foreman INFO states the same.
+
+**Notaire stage knobs beyond plan (#2215):** After #2214 honesty, Notaire
+declares real `[[stages]]` for `plan`, `red`, `pre-push`, and `pre-pr`
+(`mapped_count` ≥ 4) using fleet agent catalog path refs and skills-dir ids —
+empty MCP (no vanity servers). There is **no** Notaire `[[gates]] stage =
+"green"`: kit canonical `green` (G3 verified) is expressed as `pre-push` +
+`pre-pr`, so no green knob is invented solely to raise `mapped_count`. Remaining
+unmapped gate stages (`merge`, `release`, `signal`) stay listed honestly until
+real knobs exist.
 
 ### Industry challenge (keep / skip)
 
@@ -235,6 +244,7 @@ Cloud ≠ local. Commercial “Harness” product ≠ this port. Permissions in 
 | Improve empty propose | [#2157](https://github.com/matiaspakua/notaire/issues/2157) | [#2158](https://github.com/matiaspakua/notaire/pull/2158) |
 | Preflight → evidence `signal` | [#2159](https://github.com/matiaspakua/notaire/issues/2159) | [#2160](https://github.com/matiaspakua/notaire/pull/2160) |
 | Doctor `signal` alias + Foreman unmapped + lead-time Issue hint | [#2211](https://github.com/matiaspakua/notaire/issues/2211) | [#2214](https://github.com/matiaspakua/notaire/pull/2214) |
+| Notaire Foreman stage knobs beyond plan (`mapped_count` ≥ 4) | [#2215](https://github.com/matiaspakua/notaire/issues/2215) | [#2219](https://github.com/matiaspakua/notaire/pull/2219) |
 
 ### Active spine — **done** (epic [#2134](https://github.com/matiaspakua/notaire/issues/2134))
 
@@ -256,7 +266,9 @@ this ordered spine.**
   expire alone ≠ Isolator complete.
   **Foreman stage-knob routing** shipped (#2196): `aisdlc foreman plan|route` —
   Foreman ops habit **partially kit-backed** (dispatch plan only; no agent/MCP
-  execution).
+  execution). **Notaire knobs beyond plan** (#2215): `plan`/`red`/`pre-push`/
+  `pre-pr` mapped; `merge`/`release`/`signal` still unmapped honestly; no
+  invented `green` gate.
   Remaining Isolator honesty limits: hooks can be bypassed with
   `git -c core.hooksPath=…` unless combined with stronger containment; not unbreakable.
 - ForgePort **write** / `factory/gate` attest shipped (#2208): default dry-run;

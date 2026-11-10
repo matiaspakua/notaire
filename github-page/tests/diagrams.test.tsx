@@ -128,6 +128,8 @@ describe("interactive diagrams (#1977)", () => {
     expect(text).toMatch(/foreman plan/);
     expect(text).toMatch(/example-method/);
     expect(text).toMatch(/not loaded/);
+    expect(text).toMatch(/pre-push/);
+    expect(text).toMatch(/stay unmapped/);
     expect(factoryFlow().steps[0].title).toMatch(/issue/i);
   });
 
