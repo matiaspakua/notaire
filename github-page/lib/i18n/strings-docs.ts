@@ -442,6 +442,14 @@ pair("Scheduled jobs cover what a tag does not: the Monday ZAP baseline, k6, the
 pair("An AI agent workflow wakes up when someone mentions it in an issue or review comment.", "Un workflow de agente de IA se despierta cuando alguien lo menciona en un Issue o en un comentario de review.");
 pair("CI/CD pipeline", "Pipeline de CI/CD");
 pair("Project chart", "Tablero del proyecto");
+pair(
+  "Live milestone snapshot for {total} issues ({open} open, {closed} closed). Every issue has a history or delivery milestone. {claimable} open issues are delivery work; {catalog} are catalog anchors.",
+  "Foto viva de los hitos para {total} issues ({open} abiertos, {closed} cerrados). Cada issue tiene un hito de historia o de entrega. {claimable} issues abiertos son trabajo de entrega; {catalog} son anclas del catálogo.",
+);
+pair(
+  "{catalog} RF, CU, and RNF anchors remain open for traceability. They have dedicated Project views and are never picked as implementation work.",
+  "{catalog} anclas RF, CU y RNF siguen abiertas para la trazabilidad. Tienen vistas propias en el Project y nunca se toman como trabajo de implementación.",
+);
 pair("Roadmap and progress", "Roadmap y avance");
 pair("Project management docs →", "Docs de gestión del proyecto →");
 pair("History", "Historia");
