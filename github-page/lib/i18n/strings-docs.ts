@@ -523,6 +523,7 @@ pair("aisdlc kit", "kit aisdlc");
 pair("exit codes only", "solo códigos de salida");
 pair("Refusal", "Rechazo");
 pair("non-zero, back to work", "distinto de cero, de vuelta al trabajo");
+pair("back to work", "vuelta al trabajo");
 pair("Where each gate runs", "Dónde corre cada gate");
 pair("The pull-request proof is on the agent machine. Product CI runs on a version tag. Pages and Release Please run on main. ZAP, CodeQL, k6 and backup-restore run on a schedule.", "La prueba del pull request está en la máquina del agente. El CI del producto corre en un tag de versión. Pages y Release Please corren en main. ZAP, CodeQL, k6 y backup-restore corren en un horario.");
 pair("Step from the agent machine to the tag, then to main. The schedule is beside them, not on the pull request.", "Del agente al tag, y después a main. El horario está al lado, no en el pull request.");

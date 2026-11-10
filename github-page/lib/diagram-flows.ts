@@ -168,7 +168,7 @@ export function factoryFlow(): Flow {
     { id: "g5", label: "Gate 5", sub: "tag, smoke, close", x: 570, y: 190, w: 170, kind: "ok" },
     { id: "done", label: "Closed", sub: "issue done", x: 760, y: 190, w: 140, kind: "ok" },
     { id: "kit", label: "aisdlc kit", sub: "exit codes only", x: 250, y: 320, w: 180, kind: "check" },
-    { id: "back", label: "Refusal", sub: "non-zero, back to work", x: 560, y: 320, w: 220, kind: "fail" },
+    { id: "back", label: "Refusal", sub: "back to work", x: 560, y: 320, w: 200, kind: "fail" },
   ];
   const edges: FlowEdge[] = [
     { from: "issue", to: "g1" }, // 0
