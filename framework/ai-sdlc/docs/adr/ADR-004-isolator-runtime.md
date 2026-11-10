@@ -1,78 +1,70 @@
 # ADR-004: Isolator / sole-committer runtime boundary
 
-**Status:** Accepted as a **design contract**. No OS Isolator is implemented.
-**Issue:** [#2173](https://github.com/matiaspakua/notaire/issues/2173) (CU76).
+**Status:** Accepted. Isolator OS **started** for probe/run when a real containment
+backend works; Grant expire shipped. Still refuse fake sandbox from YAML.
+**Issue:** [#2173](https://github.com/matiaspakua/notaire/issues/2173) (design stub),
+[#2198](https://github.com/matiaspakua/notaire/issues/2198) (OS runtime + Grant expire). CU76.
 
 ## Context
 
 Epic [#2134](https://github.com/matiaspakua/notaire/issues/2134) (P0–P3 spine) is
-closed. Deferred work still lists Isolator. The stop note after [#2172](https://github.com/matiaspakua/notaire/pull/2172)
-said: Isolator only after Owner sets `[committer] runtime_*` and a real sole-committer
-runtime exists. Owner identity is **not** invented here.
-
-Today Notaire has:
+closed. Deferred work listed Isolator OS and Grant expire. Owner `[committer]
+runtime_*` is set with `required=false` — this ADR does **not** flip `required=true`
+and does not invent Owner identity.
 
 | Surface | What it is | What it is not |
 |---------|------------|----------------|
-| `aisdlc committer` (#2167/#2169) | **Policy** dry-run of axiom 2 (who authored commits since base); `no-evaluable` until `runtime_names` / `runtime_emails` | OS isolation, sandbox, forge write |
-| Harness adapters (#2122) | Read runtime manifests in place; always `sandbox=false` | Isolator |
-| Profile / YAML flags | Configuration | Isolation |
+| `aisdlc committer` (#2167/#2169/#2175) | **Policy** dry-run of axiom 2 | OS isolation, sandbox, forge write |
+| `aisdlc grant check` (#2194/#2198) | **Policy** write-set + expire fail-closed | Isolator OS complete / sandbox |
+| Harness adapters (#2122) | Read runtime manifests; `sandbox=false` unless real | Isolator |
+| `aisdlc isolator status\|probe\|run` (#2198) | OS containment probe/run (prefer `bwrap`) | Sole-committer interception (`enforces_committer` stays false) |
 
 ## Decision
 
 ### Isolator (runtime)
 
-An **Isolator** is a future **sole-committer runtime** that:
+An **Isolator** is a **sole-committer / containment runtime** that:
 
-1. **Grants** — a human/Owner process holds the only write grant to `git commit` (and
-   similarly privileged forge mutations). Agents propose; they do not receive that grant.
-2. **Write set** — the runtime may only touch paths allowed by the change’s write set /
-   protected-path rules (CONSTITUTION + `[protected]` + proposal scope).
-3. **Agent never commits** — axiom 2 is **enforced** by the runtime, not merely reported.
-4. **YAML ≠ OS isolation** — a flag, harness permission string, or TOML `[isolator]`
-   block **never** means the process is sandboxed. Path rules and deny lists are not an
-   OS Isolator (extends ADR-002).
+1. **Grants** — a human/Owner process holds the only write grant to `git commit`.
+2. **Write set** — the runtime may only touch paths allowed by Grant / protected rules.
+3. **Agent never commits** — axiom 2 is **enforced** by the runtime when
+   `enforces_committer=true` (not yet; still false in #2198).
+4. **YAML ≠ OS isolation** — a flag, harness permission string, or TOML block
+   **never** means the process is sandboxed (extends ADR-002).
 
-### Policy dry-run (already shipped)
+### Isolator OS started (#2198)
 
-`aisdlc committer` remains the **policy** check Isolator must eventually **enforce**.
-Until Owner configures `runtime_*`, committer stays `no-evaluable` / advisory
-(`required = false`). This ADR does **not** set Owner identity or flip `required = true`.
+- Prefer Linux **`bwrap` (bubblewrap)** when available (`AISDLC_BWRAP` may override;
+  empty forces none).
+- `probe` / `status` report honesty fields: `status`, `sandbox`, `backend`,
+  `enforces_committer`, detail.
+- `sandbox=true` **only** after a successful containment probe.
+- When `bwrap` is missing or the probe fails: `backend=none` (or `bwrap` with
+  `probe_ok=false`), `sandbox=false`, `status=no-evaluable` — **honest degrade**.
+- `run` executes under bwrap with repo RO and Grant `write_set` paths RW, or
+  **refuses** when backend missing / grants expired.
 
-### Kit stub (this slice)
+### Grant expire (#2198)
 
-`aisdlc.isolator.IsolatorPort` / `isolator_status()` report:
+Optional `expires_at` (ISO-8601 UTC) and/or `ttl_seconds` on `[[grants]]`.
+Expired grants **fail closed** for `grant check` and `isolator run`. Expire schema
+alone does **not** mean Isolator OS shipped.
 
-- `status=no-evaluable`
-- `sandbox=false`
-- `enforces_committer=false`
+### Policy dry-runs (already shipped)
 
-`aisdlc doctor` prints that status as an informational line and does **not** fail the
-profile solely because Isolator is unevaluable.
-
-### Grant profile data (#2192) and write-set policy dry-run (#2194)
-
-Optional `[[grants]]` in the adopter profile declare axiom-5 fields (worktree, write
-set, required checks, budget). **Validate / list / show** (#2192) plus
-`aisdlc grant check` (#2194) compare changed paths to `write_set` globs — a
-**policy** dry-run with the same honesty as `aisdlc committer` (pass / fail /
-no-evaluable). That is **data + lite policy** toward Isolator OS — not
-containment, not grant expire/kill-switch, and not a sandbox claim. Unknown
-`required_checks` fail closed against declared gate names; omitting grants is a
-no-op (`grant check` → `no-evaluable`). Presence of grants **must not** flip
-Isolator to evaluable or `sandbox=true`. Peer custody remains ApprovalPort
-(ADR-005), also unevaluable until a real runtime exists.
+`aisdlc committer` and `aisdlc grant check` remain policy checks Isolator must
+eventually **enforce**. Peer custody remains ApprovalPort (ADR-005).
 
 ## Consequences
 
-- No fake sandbox, ForgePort, or portal in this slice.
-- Resume Isolator **implementation** only when: Owner `runtime_*` is real **and** an OS
-  sole-committer runtime design with grants exists.
-- Readers must not treat doctor’s Isolator line, harness `sandbox=false`,
-  `[[grants]]` TOML, or a green `grant check` as “Isolator shipped.”
+- No fake sandbox, ForgePort write, or portal in this slice.
+- Readers must not treat doctor Isolator line, harness flags, `[[grants]]` TOML,
+  green `grant check`, or expire fields alone as “Isolator complete.”
+- Hosts without `bwrap` (common in CI/agent images) correctly report
+  `sandbox=false` — that is success of honesty, not a product defect.
 
 ## References
 
 - ADR-002 (ports; what is not a sandbox); ADR-005 (ApprovalPort peer)
-- FACTORY-ROADMAP Deferred; FACTORY-FOUNDATION sole-committer note
-- Store: `internal/factory-stop-after-2172.md`; Grant schema #2192; write-set check #2194
+- FACTORY-ROADMAP Deferred; FACTORY-FOUNDATION
+- Grant schema #2192; write-set check #2194; Isolator OS + expire #2198

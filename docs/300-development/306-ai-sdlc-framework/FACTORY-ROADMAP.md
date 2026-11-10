@@ -231,19 +231,16 @@ this ordered spine.**
 
 ### Deferred (after ports exist)
 
-- Isolator + agent-never-commits **runtime** (V1 M0/M1 / D1–D7 class) — **not** in P0–P3.
-  Thin **policy** dry-run already exists (`aisdlc committer`, #2167/#2169): axiom-2 evidence —
-  **not** OS isolation. Owner `runtime_*` configured (#2175) → evaluable, still advisory
-  (`required = false`); Owner may flip fail-closed later.
-  **Boundary design** shipped (#2173 / ADR-004): stub + doctor `no-evaluable`; YAML ≠ isolation;
-  Isolator **runtime** still waits on real sole-committer containment.
-  **Grant profile schema** shipped (#2192): optional `[[grants]]` validate/list/show.
-  **Grant write-set policy dry-run** shipped (#2194): `aisdlc grant check` —
-  **Grant runtime lite** (policy vs write_set globs); Isolator OS still missing;
-  Isolator stays `no-evaluable` / `sandbox=false`.
+- Isolator **sole-committer enforcement** (`enforces_committer=true`) — still deferred.
+  Thin **policy** dry-run already exists (`aisdlc committer`, #2167/#2169/#2175).
+  Owner `runtime_*` configured → evaluable, still advisory (`required = false`).
+  **Isolator OS started** (#2198 / ADR-004): `aisdlc isolator status|probe|run` with
+  `bwrap` when available; honest `sandbox=false` when missing; YAML ≠ isolation.
+  **Grant profile + write-set + expire** shipped (#2192/#2194/#2198): expire fail-closed;
+  expire alone ≠ Isolator complete.
   **Foreman stage-knob routing** shipped (#2196): `aisdlc foreman plan|route` —
   Foreman ops habit **partially kit-backed** (dispatch plan only; no agent/MCP
-  execution; not Isolator OS).
+  execution).
 - ForgePort **write** / attestations / `factory/gate` on GitHub checks
   (read-only live lead-time via `gh` shipped in #2184; custody story still incomplete for writes).
 - Wilson autonomy **promotion** (L0–L4). Multi-stage **honesty** already ships
@@ -253,8 +250,6 @@ this ordered spine.**
 - Full ApprovalPort **runtime** (SSH/DSSE mint/verify). **Boundary design** shipped
   (#2190 / ADR-005): stub + doctor `no-evaluable`; `approvals_live=false`;
   agent never self-approves; no fake approvals.
-- Grant **OS runtime** / kill switch / expire — still bundled with Isolator OS
-  (profile + write-set policy lite in #2192/#2194; not containment).
 
 ### Parallel stay path
 

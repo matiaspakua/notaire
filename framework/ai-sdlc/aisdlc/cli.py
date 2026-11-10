@@ -21,6 +21,7 @@ from aisdlc import (
     grants,
     harness,
     improve,
+    isolator,
     lifecycle,
     metrics,
     ratchet,
@@ -153,7 +154,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--strict", action="store_true", help="fail when no change record declares a write set")
     p = sub.add_parser(
         "grant",
-        help="Grant profile data + write-set policy dry-run (axiom 5; never Isolator OS) (#2192/#2194)",
+        help="Grant profile data + write-set/expire policy (axiom 5; never Isolator OS alone) (#2192/#2194/#2198)",
     )
     grant_sub = p.add_subparsers(dest="action", required=True)
     grant_list = grant_sub.add_parser("list", help="print declared grants (read-only)")
@@ -163,10 +164,33 @@ def build_parser() -> argparse.ArgumentParser:
     grant_show.add_argument("--json", action="store_true")
     grant_check = grant_sub.add_parser(
         "check",
-        help="write-set policy dry-run vs changed paths (not OS isolation) (#2194)",
+        help="write-set + expire policy dry-run vs changed paths (not OS isolation) (#2194/#2198)",
     )
     grant_check.add_argument("--base")
     grant_check.add_argument("--json", action="store_true")
+    p = sub.add_parser(
+        "isolator",
+        help="Isolator OS status/probe/run (bwrap when available; never fake sandbox) (#2198)",
+    )
+    isolator_sub = p.add_subparsers(dest="action", required=True)
+    isolator_status = isolator_sub.add_parser(
+        "status", help="report Isolator honesty fields (status/sandbox/backend)"
+    )
+    isolator_status.add_argument("--json", action="store_true")
+    isolator_probe = isolator_sub.add_parser(
+        "probe", help="probe real OS containment (sandbox=true only on success)"
+    )
+    isolator_probe.add_argument("--json", action="store_true")
+    isolator_run = isolator_sub.add_parser(
+        "run",
+        help="run a command under containment constrained by Grant write_set (refuses when unavailable)",
+    )
+    isolator_run.add_argument("--json", action="store_true")
+    isolator_run.add_argument(
+        "argv",
+        nargs=argparse.REMAINDER,
+        help="command to run; prefer: isolator run -- <cmd> [args...]",
+    )
     p = sub.add_parser(
         "committer",
         help="sole-committer dry-run: flag agent-authored commits (never claims isolation) (#2167)",
@@ -355,6 +379,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "scope": lambda: diffchecks.scope(ctx, args.base, args.strict),
         "committer": lambda: committer.check(ctx, args.base, args.json),
         "grant": lambda: _grant(ctx, args),
+        "isolator": lambda: _isolator(ctx, args),
         "foreman": lambda: _foreman(ctx, args),
         "evidence": lambda: evidence.verify(ctx, args.anchor),
         "config": lambda: _config(ctx, args),
@@ -381,6 +406,18 @@ def _grant(ctx: Context, args: argparse.Namespace) -> int:
     if args.action == "show":
         return grants.show_grant(ctx, args.id, as_json=bool(getattr(args, "json", False)))
     return grants.check(ctx, getattr(args, "base", None), bool(getattr(args, "json", False)))
+
+
+def _isolator(ctx: Context, args: argparse.Namespace) -> int:
+    argv = list(getattr(args, "argv", []) or [])
+    if argv and argv[0] == "--":
+        argv = argv[1:]
+    return isolator.dispatch(
+        ctx,
+        args.action,
+        as_json=bool(getattr(args, "json", False)),
+        argv=argv,
+    )
 
 
 def _catalog(ctx: Context, args: argparse.Namespace) -> int:

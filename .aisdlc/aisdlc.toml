@@ -164,10 +164,14 @@ skills = [
 model = "claude-sonnet-5-5-high"
 effort = { tokens = 200000, time_seconds = 3600, questions = 20, review_lines = 400 }
 
-# Grant profile data (#2192 / V1 axiom 5) + write-set policy dry-run (#2194):
-# worktree + write set + required checks + budget. `aisdlc grant check` is policy-only
-# (pass/fail/no-evaluable) — NOT Isolator OS, NOT sandbox, NOT bubblewrap/landlock (ADR-004).
-# Omit would be a no-op; this sample documents one stage toward Isolator OS design.
+# Grant profile data (#2192 / V1 axiom 5) + write-set policy dry-run (#2194) +
+# optional expire kill-switch (#2198): worktree + write set + required checks + budget.
+# `aisdlc grant check` is policy-only (pass/fail/no-evaluable) — expire fails closed when
+# past. NOT a sandbox claim by itself. Isolator OS probe/run is separate (`aisdlc isolator`);
+# Notaire CI/agent hosts often lack bwrap → expect sandbox=false / no-evaluable there (ADR-004).
+# Optional expire sample (comment only — do not enable a past deadline that breaks CI):
+#   expires_at = "2099-01-01T00:00:00Z"
+#   ttl_seconds = 86400
 [[grants]]
 id = "plan-sample"
 stage = "plan"

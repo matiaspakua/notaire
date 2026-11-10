@@ -8,7 +8,8 @@ Epic [#2134](https://github.com/matiaspakua/notaire/issues/2134) **P0–P3 spine
 [#2157](https://github.com/matiaspakua/notaire/issues/2157); preflight evidence
 [#2159](https://github.com/matiaspakua/notaire/issues/2159) (`aisdlc gate signal`).
 ASLI-31 / [#2161](https://github.com/matiaspakua/notaire/issues/2161) closes the epic
-docs; next work is Deferred only (Isolator / Wilson / ForgePort) — no portal.
+docs; next work is Deferred only (Wilson / ForgePort / Isolator sole-committer
+enforcement) — no portal. Isolator OS probe/run + Grant expire started in #2198.
 
 **Sole-committer dry-run** ([#2167](https://github.com/matiaspakua/notaire/issues/2167) /
 [#2169](https://github.com/matiaspakua/notaire/issues/2169) /
@@ -19,21 +20,23 @@ Isolator and never claims sandbox isolation. Notaire’s Owner `runtime_names` /
 **advisory** (`required = false`); Owner may flip `required = true` in a follow-up for
 fail-closed.
 
-**Isolator runtime boundary** ([#2173](https://github.com/matiaspakua/notaire/issues/2173),
-[ADR-004](../../../framework/ai-sdlc/docs/adr/ADR-004-isolator-runtime.md)): design-only.
-Grants + write set + agent never commits; YAML ≠ OS isolation. Kit stub /
-`aisdlc doctor` report `no-evaluable` + `sandbox=false` until a real sole-committer
-runtime exists. Do not invent Owner `runtime_*`. Isolator must eventually **enforce**
-what `aisdlc committer` already **checks**.
+**Isolator OS + Grant expire** ([#2173](https://github.com/matiaspakua/notaire/issues/2173) /
+[#2198](https://github.com/matiaspakua/notaire/issues/2198),
+[ADR-004](../../../framework/ai-sdlc/docs/adr/ADR-004-isolator-runtime.md)):
+`aisdlc isolator status|probe|run` prefers Linux `bwrap`; `sandbox=true` only after
+a successful probe; missing `bwrap` → honest `sandbox=false` / `no-evaluable`.
+Grant optional `expires_at` / `ttl_seconds` fail closed. YAML ≠ OS isolation.
+`enforces_committer` stays `false` (sole-committer interception still deferred).
+Do not invent Owner `runtime_*`; `[committer] required` stays `false`.
 
 **Grant profile schema** ([#2192](https://github.com/matiaspakua/notaire/issues/2192)) +
-**write-set policy dry-run** ([#2194](https://github.com/matiaspakua/notaire/issues/2194)):
-optional `[[grants]]` (worktree, write_set, required_checks, budget) —
-validate/list/show plus `aisdlc grant check [--base] [--json]` (pass / fail /
-no-evaluable). **Grant runtime lite** = write-set policy check only; Isolator OS
-still missing. Never a sandbox claim; Isolator stays `no-evaluable`. Unknown check
-refs fail closed; omit = no-op. Notaire ships an optional `plan-sample` Grant;
-`[committer] required` stays `false`.
+**write-set policy dry-run** ([#2194](https://github.com/matiaspakua/notaire/issues/2194)) +
+**expire** ([#2198](https://github.com/matiaspakua/notaire/issues/2198)):
+optional `[[grants]]` (worktree, write_set, required_checks, budget, expire) —
+validate/list/show plus `aisdlc grant check` (pass / fail / no-evaluable; expire
+fail-closed). Expire / write-set policy alone is **not** Isolator OS complete.
+Unknown check refs fail closed; omit = no-op. Notaire ships optional `plan-sample`
+Grant with expire documented as comments only (CI often has no bwrap).
 
 **Foreman stage-knob routing** ([#2196](https://github.com/matiaspakua/notaire/issues/2196)):
 `aisdlc foreman plan|route [--stage] [--json]` resolves a read-only dispatch plan
