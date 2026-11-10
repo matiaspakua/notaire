@@ -190,6 +190,7 @@ def check_inventory(path: Path) -> list[str]:
 
 def config_view(profile: Profile, *, limit: int) -> dict:
     from aisdlc.context_budget import context_dict
+    from aisdlc.grants import grant_dicts
     from aisdlc.stages import stage_dicts
 
     view = {
@@ -204,6 +205,7 @@ def config_view(profile: Profile, *, limit: int) -> dict:
         "inventory": profile.inventory,
         "distributed_claim_lock": "not implemented",
         "stages": stage_dicts(profile),
+        "grants": grant_dicts(profile),
     }
     context = context_dict(profile)
     if context is not None:

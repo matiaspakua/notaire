@@ -66,6 +66,7 @@ def doctor(ctx: Context) -> int:
 
 def _errors(ctx: Context) -> list[str]:
     from aisdlc.context_budget import validate_context_memory
+    from aisdlc.grants import validate_grants
     from aisdlc.stages import validate_stage_profiles
 
     p = ctx.profile
@@ -83,6 +84,8 @@ def _errors(ctx: Context) -> list[str]:
             errors.append(f"gate {gate.stage}/{gate.name} runs {script}, which does not exist")
     # Stage→catalog refs (#2182): fail closed; never execute MCP/agents.
     errors.extend(validate_stage_profiles(ctx))
+    # Grant required_checks (#2192): fail closed; never enforce grants / Isolator.
+    errors.extend(validate_grants(ctx))
     # Context memory packs (#2186): fail closed; never execute packs.
     errors.extend(validate_context_memory(ctx))
     return errors
