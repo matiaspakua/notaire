@@ -244,7 +244,7 @@ Cloud ≠ local. Commercial “Harness” product ≠ this port. Permissions in 
 | Improve empty propose | [#2157](https://github.com/matiaspakua/notaire/issues/2157) | [#2158](https://github.com/matiaspakua/notaire/pull/2158) |
 | Preflight → evidence `signal` | [#2159](https://github.com/matiaspakua/notaire/issues/2159) | [#2160](https://github.com/matiaspakua/notaire/pull/2160) |
 | Doctor `signal` alias + Foreman unmapped + lead-time Issue hint | [#2211](https://github.com/matiaspakua/notaire/issues/2211) | [#2214](https://github.com/matiaspakua/notaire/pull/2214) |
-| Notaire Foreman stage knobs beyond plan (`mapped_count` ≥ 4) | [#2215](https://github.com/matiaspakua/notaire/issues/2215) | pending |
+| Notaire Foreman stage knobs beyond plan (`mapped_count` ≥ 4) | [#2215](https://github.com/matiaspakua/notaire/issues/2215) | [#2219](https://github.com/matiaspakua/notaire/pull/2219) |
 
 ### Active spine — **done** (epic [#2134](https://github.com/matiaspakua/notaire/issues/2134))
 
