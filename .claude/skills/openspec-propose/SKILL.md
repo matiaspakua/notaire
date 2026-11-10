@@ -12,6 +12,16 @@ metadata:
 
 Propose a new change - create the change and generate all artifacts in one step.
 
+**Notaire working directory (#2218):** OpenSpec lives at `docs/openspec/`
+(ADR-026). Before any `openspec new change` / `schemas` / `status` /
+`instructions` / `validate` call, either `cd docs` so schema `notaire-sdlc`
+is discovered, or prefer the project wrapper
+`bash workspace/sdlc/seed-openspec-change.sh "<name>" --issue N --use-case "…" --branch "…" --create`
+(it already runs `openspec new change --schema notaire-sdlc` under `docs/`).
+Do not expect `openspec new change --schema notaire-sdlc` to work from the
+repository root. See `docs/openspec/NOTAIRE-ADAPTATIONS.md` and
+`.claude/skills/ai-agent-workflow/SKILL.md` Step 0.5.
+
 **Planning boundary**: This workflow creates planning artifacts only. The user request that selected or triggered this workflow authorizes planning only, even if it asks to build or fix something. Do not edit project code. After the planning artifacts are complete, stop. Do not start implementation in the same response, even if the initial request asks for it. Wait for a new user request after the artifacts are presented; then start the apply workflow.
 
 I'll create a change with the artifacts your schema defines. With the default spec-driven schema that is:
@@ -57,14 +67,16 @@ When the user is ready to implement, they must start the apply workflow explicit
 
    Choose one schema form below. If a registered store is selected, append `--store "<store-id>"` to that command and each later OpenSpec command shown below that accepts `--store`.
 
-   Using the configured default:
+   Using the configured default (Notaire: run from `docs/`, or use seed `--create`):
    ```bash
-   openspec new change "<name>"
+   cd docs && openspec new change "<name>"
    ```
 
-   Using an explicitly requested schema:
+   Using an explicitly requested schema (Notaire default schema is `notaire-sdlc`):
    ```bash
-   openspec new change "<name>" --schema "<schema-name>"
+   cd docs && openspec new change "<name>" --schema notaire-sdlc
+   # preferred wrapper from repo root:
+   # bash workspace/sdlc/seed-openspec-change.sh "<name>" --issue N --use-case "…" --branch "…" --create
    ```
    This creates a scaffolded change in the planning home resolved by the CLI with `.openspec.yaml`.
 

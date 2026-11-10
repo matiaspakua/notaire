@@ -67,25 +67,40 @@ gates. Notaire adds those layers on top of OpenSpec.
 
 ### Quick CLI reference
 
+OpenSpec hard-codes the folder name `openspec`. Notaire keeps that tree at
+`docs/openspec/` (ADR-026), so **run CLI commands from `docs/`** (or use the
+seed wrapper below). From the repository root the CLI finds no project root and
+`openspec schemas --json` lists only packaged `spec-driven` — that is expected,
+not a missing schema (#2218).
+
 ```bash
 # Install / update
 npm install -g openspec
 
-# Change lifecycle
-openspec new change "<kebab-case-name>"           # creates the change .openspec.yaml
-bash workspace/sdlc/seed-openspec-change.sh "<name>" \ # copies templates + known values
-  --issue N --use-case "CU…" --branch "type/N_desc"
-openspec status --change "<name>"                 # artifact build order
-openspec instructions <artifact> --change "<name>"  # instructions for the agent
-openspec validate "<name>" --strict               # structural checks
-bash workspace/sdlc/validate-sdlc-plan.sh "<name>"     # Gate 1 (includes leftover <!-- -->)
-openspec list                                     # active changes
-openspec archive "<name>"                         # archive a completed change
+# Preferred agent scaffold (wraps cd docs + notaire-sdlc + templates)
+bash workspace/sdlc/seed-openspec-change.sh "<name>" \
+  --issue N --use-case "CU…" --branch "type/N_desc" --create
 
-# Integrity checks
-openspec doctor                                   # installation health
-openspec context --json                           # root resolved by the CLI
-openspec schemas --json                           # available schemas
+# Equivalent direct CLI (must run under docs/)
+cd docs
+openspec new change "<kebab-case-name>" --schema notaire-sdlc
+cd ..
+bash workspace/sdlc/seed-openspec-change.sh "<name>" \
+  --issue N --use-case "CU…" --branch "type/N_desc"
+
+# Status / validate / archive — also from docs/
+cd docs
+openspec status --change "<name>"
+openspec instructions <artifact> --change "<name>"
+openspec validate "<name>" --strict
+openspec list
+openspec archive "<name>"
+cd ..
+bash workspace/sdlc/validate-sdlc-plan.sh "<name>"   # Gate 1 (includes leftover <!-- -->)
+
+# Integrity checks (cwd = docs/)
+cd docs && openspec doctor && openspec context --json && openspec schemas --json
+# schemas --json must include "notaire-sdlc" with "source": "project"
 ```
 
 ---
@@ -110,9 +125,9 @@ openspec schemas --json                           # available schemas
 # 1. Install the CLI globally
 npm install -g openspec
 
-# 2. Verify the installation
+# 2. Verify the installation (project root resolves only under docs/)
 openspec --version
-openspec doctor
+cd docs && openspec doctor && cd ..
 
 # 3. Authenticate the gh CLI (required for the live Issue gate)
 gh auth login
@@ -120,16 +135,17 @@ gh auth login
 # 4. Install the project git hooks (pre-push runs preflight.sh)
 bash workspace/sdlc/install-git-hooks.sh
 
-# 5. Verify that the project schema is recognized
-openspec schemas --json
-# must include "notaire-sdlc"
+# 5. Verify that the project schema is recognized (cwd MUST be docs/)
+cd docs && openspec schemas --json && cd ..
+# must include "notaire-sdlc" with "source": "project"
+# From the repository root the same command lists only packaged spec-driven (#2218).
 ```
 
 ### Verify that everything is connected
 
 ```bash
 # Must list the active changes under docs/openspec/changes/
-openspec list
+cd docs && openspec list && cd ..
 
 # Must validate every active change
 bash workspace/sdlc/validate-sdlc-plan.sh
@@ -324,12 +340,14 @@ bash workspace/sdlc/validate-sdlc-plan.sh --list          # checks ↔ Constitut
 
 **Template seed (cloud/generic equivalent of `phase_setup`)**:
 
-`openspec new change` writes only `.openspec.yaml`. Before the agent fills
-the specification, run:
+`openspec new change` writes only `.openspec.yaml` and must be run from
+`docs/` (or via `--create` below) so schema `notaire-sdlc` is discovered.
+Before the agent fills the specification, run:
 
 ```bash
+# Preferred: create + seed in one step (internally: cd docs && openspec new change --schema notaire-sdlc)
 bash workspace/sdlc/seed-openspec-change.sh "<change>" \
-  --issue <n> --use-case "CU76 — …" --branch "<type>/<n>_desc"
+  --issue <n> --use-case "CU76 — …" --branch "<type>/<n>_desc" --create
 ```
 
 That copies `proposal.md`, `design.md`, `tasks.md`, and `traceability.md`
@@ -338,7 +356,8 @@ missing**, fills Issue / Use Case / Branch / change name, and does **not**
 overwrite a file that is already present. The agent must **fill** the seeded
 sections (keep every `##`). `validate-sdlc-plan.sh` rejects a body that is
 still only the template HTML comment. Self-tests:
-`workspace/tests/test_validate_sdlc_plan.py`.
+`workspace/tests/test_validate_sdlc_plan.py` and
+`workspace/tests/test_openspec_location.py` (#2218 cwd / schema discovery).
 
 **The live Issue check** (the most important one):
 
