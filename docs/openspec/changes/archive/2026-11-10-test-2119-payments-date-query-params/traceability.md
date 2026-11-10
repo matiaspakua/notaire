@@ -20,8 +20,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/archive/2026-11-10-test-2119-payments-date-query-params/` | archived in PR |
 | Branch | `test/2119_payments-date-query-params` | created |
 | Tasks | `tasks.md` | implement in progress |
-| Commits | pending on branch | pending |
-| Pull Request | pending | pending |
+| Commits | `3e3332b3` | pushed |
+| Pull Request | https://github.com/matiaspakua/notaire/pull/2220 | open |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
