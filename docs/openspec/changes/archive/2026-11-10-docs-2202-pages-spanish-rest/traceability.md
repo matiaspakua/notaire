@@ -15,7 +15,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/docs-2202-pages-spanish-rest/` | passed |
 | Branch | `cursor/pages-spanish-rest-2277` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | recorded after the commit | pending |
+| Commits | `602c030a` docs(pages): translate the remaining public pages | done |
 | Pull Request | pending | pending |
 | CI run | local `preflight.sh --full` before push | pending |
 | Merge commit | Owner merges | pending |
@@ -45,7 +45,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|--------|----------|------|
 | Gate 1 — plan | passed | validate-sdlc-plan.sh | 2026-11-10 |
 | Gate 2 — tests | passed | vitest i18n-coverage.test.ts | 2026-11-10 |
-| Gate 3 — preflight | pending | preflight.sh --full before push | |
+| Gate 3 — preflight | pending | preflight.sh --full on 602c030a before push | |
 | Gate 4 — review | pending | Owner | |
 | Gate 5 — smoke | pending | after merge | |
 
