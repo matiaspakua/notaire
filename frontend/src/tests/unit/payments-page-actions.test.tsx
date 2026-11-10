@@ -13,7 +13,12 @@ const apiPost = vi.fn();
 const apiPut = vi.fn();
 const apiDelete = vi.fn();
 const receipt = vi.fn();
-const replace = vi.hoisted(() => vi.fn());
+const replace = vi.hoisted(() =>
+  vi.fn((url: string) => {
+    const q = url.includes("?") ? url.slice(url.indexOf("?") + 1) : "";
+    searchParams = new URLSearchParams(q);
+  }),
+);
 const toast = vi.hoisted(() => ({ success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() }));
 let searchParams = new URLSearchParams();
 
@@ -90,7 +95,7 @@ beforeEach(() => {
   summaryPending = false;
   status = "PARTIAL";
   searchParams = new URLSearchParams();
-  replace.mockReset();
+  replace.mockClear();
   apiGet.mockReset().mockImplementation(route);
   apiPost.mockReset().mockResolvedValue(undefined);
   apiPut.mockReset().mockResolvedValue(undefined);
@@ -254,9 +259,9 @@ describe("date range", () => {
     fireEvent.change(screen.getByTestId("input-payments-from"), { target: { value: "2026-02-01" } });
     expect(replace).toHaveBeenLastCalledWith("/dashboard/payments?from=2026-02-01", { scroll: false });
     fireEvent.change(screen.getByTestId("input-payments-to"), { target: { value: "2026-04-30" } });
-    expect(replace).toHaveBeenLastCalledWith("/dashboard/payments?to=2026-04-30", { scroll: false });
+    expect(replace).toHaveBeenLastCalledWith("/dashboard/payments?from=2026-02-01&to=2026-04-30", { scroll: false });
     fireEvent.change(screen.getByTestId("input-payments-from"), { target: { value: "" } });
-    expect(replace).toHaveBeenLastCalledWith("/dashboard/payments", { scroll: false });
+    expect(replace).toHaveBeenLastCalledWith("/dashboard/payments?to=2026-04-30", { scroll: false });
   });
 });
 
