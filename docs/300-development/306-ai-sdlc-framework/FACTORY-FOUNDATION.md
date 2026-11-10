@@ -8,9 +8,8 @@ Epic [#2134](https://github.com/matiaspakua/notaire/issues/2134) **P0–P3 spine
 [#2157](https://github.com/matiaspakua/notaire/issues/2157); preflight evidence
 [#2159](https://github.com/matiaspakua/notaire/issues/2159) (`aisdlc gate signal`).
 ASLI-31 / [#2161](https://github.com/matiaspakua/notaire/issues/2161) closes the epic
-docs; next work is Deferred only (Wilson / ForgePort write / ApprovalPort mint) —
-no portal. Isolator OS probe/run + Grant expire started in #2198; sole-committer
-enforcement started in #2200.
+docs; next work is Deferred only (Wilson / ForgePort write) —
+no portal. Isolator sole-committer (#2200) and ApprovalPort runtime (#2205) landed.
 
 **Sole-committer dry-run** ([#2167](https://github.com/matiaspakua/notaire/issues/2167) /
 [#2169](https://github.com/matiaspakua/notaire/issues/2169) /
@@ -50,13 +49,16 @@ from `[[stages]]` knobs (#2182). Cloud Foreman and the kit foreman template must
 consult it before dispatch. Never executes agents/MCP; never Isolator/sandbox.
 Foreman ops habit is **partially kit-backed** (routing surface only).
 
-**ApprovalPort custody boundary** ([#2190](https://github.com/matiaspakua/notaire/issues/2190),
-[ADR-005](../../../framework/ai-sdlc/docs/adr/ADR-005-approval-port.md)): design-only.
-Token + channel authority; SSH/DSSE (or equivalent) mint/verify; agent never
-self-approves. Kit stub / `aisdlc doctor` report `no-evaluable` +
-`approvals_live=false` / `agent_can_approve=false` until a real custody runtime
-exists. No fake approvals. Wilson L1+ auto-promotion is **refused** until
-Owner-chosen multi-stage evidence volume exists (autonomy stays `no-evaluable`).
+**ApprovalPort custody runtime** ([#2205](https://github.com/matiaspakua/notaire/issues/2205),
+design [#2190](https://github.com/matiaspakua/notaire/issues/2190),
+[ADR-005](../../../framework/ai-sdlc/docs/adr/ADR-005-approval-port.md)):
+`aisdlc approval mint|verify|status` via OpenSSH `ssh-keygen -Y`. Token + channel
+authority; agent never self-approves (`agent_can_approve=false`; mint refuses
+agent). `approvals_live=true` **only** after a proven mint→verify probe; without
+local/dev keys (or with `AISDLC_APPROVAL=0`) doctor stays `no-evaluable`. Notaire
+opts in via env / `[approval]` paths — **not** a production HSM claim. No fake
+approvals. Wilson L1+ auto-promotion remains **refused** until Owner-chosen
+multi-stage evidence volume exists (autonomy stays `no-evaluable`).
 
 The canonical root is [`framework/ai-sdlc`](../../../framework/ai-sdlc/README.md).
 Decisions: [ADR-001](../../../framework/ai-sdlc/docs/adr/ADR-001-canonical-root.md),

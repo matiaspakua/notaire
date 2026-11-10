@@ -62,6 +62,16 @@ class CommitterPolicy:
 
 
 @dataclass(frozen=True)
+class ApprovalSettings:
+    """Optional local/dev ApprovalPort key paths (#2205). Not a production HSM claim."""
+
+    signing_key: str | None = None
+    allowed_signers: str | None = None
+    identity: str | None = None
+    namespace: str | None = None
+
+
+@dataclass(frozen=True)
 class Gate:
     name: str
     stage: str
@@ -200,6 +210,7 @@ class Profile:
     flags: FlagsSettings = field(default_factory=FlagsSettings)
     catalogs_dir: str | None = None
     committer: CommitterPolicy = field(default_factory=CommitterPolicy)
+    approval: ApprovalSettings = field(default_factory=ApprovalSettings)
     stage_profiles: tuple[StageProfile, ...] = ()
     grants: tuple[Grant, ...] = ()
 
@@ -306,6 +317,7 @@ def _build(data: dict, errors: list[str]) -> Profile:
         errors.append(f"catalogs.dir must be a non-empty string, got {profile.catalogs_dir!r}")
         profile.catalogs_dir = None
     profile.committer = _committer(data.get("committer", {}), errors)
+    profile.approval = _approval(data.get("approval", {}), errors)
     gate_stages = {g.stage for g in profile.gates}
     gate_names = {g.name for g in profile.gates}
     profile.stage_profiles = _stage_profiles(
@@ -342,6 +354,32 @@ def _committer(raw: dict, errors: list[str]) -> CommitterPolicy:
         agent_names=strings("agent_names"),
         agent_emails=strings("agent_emails"),
         agent_trailers=strings("agent_trailers"),
+    )
+
+
+def _approval(raw: dict, errors: list[str]) -> ApprovalSettings:
+    """Parse optional [approval] local/dev key paths (#2205). Omit = no-evaluable."""
+    if not raw:
+        return ApprovalSettings()
+    if not isinstance(raw, dict):
+        errors.append("[approval] must be a table")
+        return ApprovalSettings()
+
+    def opt_str(key: str) -> str | None:
+        value = raw.get(key)
+        if value is None or value == "":
+            return None
+        if not isinstance(value, str):
+            errors.append(f"approval.{key} must be a string")
+            return None
+        text = value.strip()
+        return text or None
+
+    return ApprovalSettings(
+        signing_key=opt_str("signing_key"),
+        allowed_signers=opt_str("allowed_signers"),
+        identity=opt_str("identity"),
+        namespace=opt_str("namespace"),
     )
 
 

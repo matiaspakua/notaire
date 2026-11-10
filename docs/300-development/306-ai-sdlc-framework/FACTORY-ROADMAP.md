@@ -75,7 +75,7 @@ code** — and **prove every slice by running it against Notaire** (issues → g
           MethodPort  │     │     │     │     │  FeatureFlagPort (OpenFeature)
           HarnessPort │     │     │     │     │  TelemetryPort (OTel, default no-op)
           ForgePort   │     │     │     │     EvidenceStorePort
-          RunnerPort  │     │     ApprovalPort (later)
+          RunnerPort  │     │     ApprovalPort (mint/verify #2205)
                       ▼
               Adopter profile (json / yaml / toml / md)
               + forge (GitHub) + CI runner (Actions/local)
@@ -251,9 +251,10 @@ this ordered spine.**
   (#2171): L1 stays no-evaluable until ≥2 allowlisted stages have `min_n` —
   not Isolator, not auto-promotion. **Refused in #2190** until Owner-chosen
   multi-stage operational volume (Notaire `improve autonomy` still `no-evaluable`).
-- Full ApprovalPort **runtime** (SSH/DSSE mint/verify). **Boundary design** shipped
-  (#2190 / ADR-005): stub + doctor `no-evaluable`; `approvals_live=false`;
-  agent never self-approves; no fake approvals.
+- ApprovalPort **runtime** mint/verify shipped (#2205 / ADR-005) via
+  `ssh-keygen -Y`; `approvals_live=true` only after proven round-trip; local/dev
+  keys ≠ HSM. Remaining: production HSM / DSSE alternate encoder if Owner chooses;
+  ForgePort **write** still waits on Approval being live **and** a scoped Issue.
 
 ### Parallel stay path
 
@@ -309,8 +310,8 @@ mirrors omit Unreleased when that slice owns the fence.
 ## 10. How later sessions continue
 
 1. Read **this** file + store master plan / thin plan next-5 list.
-2. **§7 Active spine is done.** Pick only from Deferred (Isolator / ForgePort /
-   Wilson L0–L4 / ApprovalPort) or a new CU76 Issue that cites friction from
+2. **§7 Active spine is done.** Pick only from Deferred (ForgePort write /
+   Wilson L0–L4 / HSM) or a new CU76 Issue that cites friction from
    evidence (`aisdlc improve` / preflight `signal`) — one thin PR, no portal.
 3. Branch from updated `main`; TDD; validate on Notaire; open PR `Closes #…`.
 4. Update thin plan next-5 and inventory notes; do not fork a second master plan.
