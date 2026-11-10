@@ -16,7 +16,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/docs-2201-pages-theme-locale/` | passed |
 | Branch | `cursor/pages-theme-locale-2277` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
+| Commits | `17d08102` pages, `83dfe889` archive, `90b863c8` shell tests | done |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |

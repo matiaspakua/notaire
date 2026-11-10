@@ -65,10 +65,10 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Conventional commits
-- [ ] 9.2 Messages reference #2201
-- [ ] 9.3 No secrets
-- [ ] 9.4 SHAs recorded in traceability.md
+- [x] 9.1 Conventional commits
+- [x] 9.2 Messages reference #2201
+- [x] 9.3 No secrets
+- [x] 9.4 SHAs recorded in traceability.md
 
 ## 10. Pull Request y validación CI
 
