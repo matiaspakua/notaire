@@ -57,6 +57,8 @@ moves the named parts, dims the other stations and drives the shared `StepContro
 ## Rules for content
 
 - Read a fact from the repository (`lib/tech-facts.ts`, `lib/ai-sdlc-facts.ts`) instead of typing it.
+- Coverage in `public/metrics.json` comes from `workspace/ci/generate-github-page-metrics.sh`. When the JaCoCo snapshot or Vitest
+  summary is missing, percentage fields are JSON `null` and `lastUpdated` is `unknown` — never a fabricated `0` (#2203).
 - Describe the CI model as it is: a pull request is proved by the local `preflight.sh --full`; the product workflows run on a version tag or
   on demand (see `/ai-sdlc/quality-gates/`).
 - Colour contrast must stay at WCAG AA; `npm run test:smoke` runs axe on every page.

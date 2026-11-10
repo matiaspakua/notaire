@@ -7,7 +7,7 @@ Distinct Vitest vs Playwright counts on the portfolio metrics page.
 
 ### Requirement: Vitest and Playwright counts are distinct
 
-`frontendTestClasses` SHALL count Vitest files under `frontend/src`. Playwright specs under `testing/e2e/tests` SHALL be published as `e2eSpecFiles`. The Coverage section SHALL not label Vitest counts as E2E suites.
+`frontendTestClasses` SHALL count Vitest files under `frontend/src`. Playwright specs under `testing/e2e/tests` SHALL be published as `e2eSpecFiles`. The Coverage section SHALL not label Vitest counts as E2E suites. Coverage percentage fields MAY be JSON `null` when unmeasured; that honesty rule is owned by `github-page-metrics-coverage-honesty` and does not change Vitest vs Playwright counting.
 
 #### Scenario: Generator writes separate Vitest and E2E counts
 

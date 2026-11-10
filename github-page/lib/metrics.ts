@@ -2,11 +2,12 @@ import fs from "fs";
 import path from "path";
 
 export interface CoverageSnapshot {
-  backendInstruction: number;
-  backendBranch: number;
-  frontendComponent: number;
-  e2eTests: number;
-  apiEndpoints: number;
+  /** JSON null when the generator had no measured value (#2203). */
+  backendInstruction: number | null;
+  backendBranch: number | null;
+  frontendComponent: number | null;
+  e2eTests: number | null;
+  apiEndpoints: number | null;
   lastUpdated: string;
 }
 
@@ -60,9 +61,22 @@ const DEFAULTS: SiteMetrics = {
   },
 };
 
-/** True when a coverage snapshot was present. "unknown" means the generator found no JaCoCo file and must not be read as 0%. */
+/** True when a coverage snapshot was present. "unknown" / null percentages mean unmeasured — never read as 0%. */
 export function coverageIsMeasured(coverage: CoverageSnapshot): boolean {
-  return coverage.lastUpdated !== "unknown" && coverage.lastUpdated.trim() !== "";
+  return (
+    coverage.lastUpdated !== "unknown" &&
+    coverage.lastUpdated.trim() !== "" &&
+    coverage.backendInstruction !== null &&
+    coverage.backendBranch !== null
+  );
+}
+
+/** Format a coverage percentage for display; null / unmeasured → "n/a". */
+export function formatCoveragePercent(value: number | null, measured: boolean): string {
+  if (!measured || value === null) {
+    return "n/a";
+  }
+  return `${value}%`;
 }
 
 export function loadMetrics(): SiteMetrics {

@@ -113,8 +113,8 @@ pair("Start at chapter 1 ↓", "Empezar en el capítulo 1 ↓");
 pair("Skip to the framework", "Saltar al framework");
 pair("Case study · Notaire · 2014 → 2026", "Caso · Notaire · 2014 → 2026");
 pair(
-  "The coverage percentages on this page are not a JaCoCo or Vitest run. A shown 0% is the generator's missing-file fallback, not a measurement. Activity counts above the coverage charts are counted from the repository and GitHub.",
-  "Los porcentajes de cobertura de esta página no son una corrida de JaCoCo ni de Vitest. Un 0% visible es el fallback del generador cuando falta el archivo, no una medición. Los conteos de actividad, arriba de los gráficos de cobertura, salen del repositorio y de GitHub.",
+  "The coverage percentages on this page are not a JaCoCo or Vitest run. Missing measurement artifacts publish as null / n/a — never as a fabricated 0%. Activity counts above the coverage charts are counted from the repository and GitHub.",
+  "Los porcentajes de cobertura de esta página no son una corrida de JaCoCo ni de Vitest. Si faltan los artefactos de medición se publica null / n/a — nunca un 0% inventado. Los conteos de actividad, arriba de los gráficos de cobertura, salen del repositorio y de GitHub.",
 );
 
 pair("Tech Evolution", "Evolución técnica");
