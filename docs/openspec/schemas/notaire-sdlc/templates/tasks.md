@@ -10,7 +10,7 @@
 - [ ] 1.3 Acceptance Criteria defined as scenarios in the delta spec
 - [ ] 1.4 Impact Analysis and affected modules confirmed in `proposal.md`
 - [ ] 1.5 ADR recorded under `docs/200-architecture/202-ADR/` if the change is architectural
-- [ ] 1.6 Move the Issue to IN PROGRESS (`gh issue edit <n> --add-label "in-progress"`)
+- [ ] 1.6 Move the Issue to IN PROGRESS via `bash workspace/sdlc/add-issue-wip-label.sh <n>` (uses `status:in-progress`; on `addLabelsToLabelable` / `issues: write` 403 print honest SKIPPED and continue — never fake in-progress; see `docs/300-development/304-ai-sdlc-cloud/FLEET-IDENTITY.md`)
 
 ## 2. Crear branch
 

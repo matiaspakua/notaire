@@ -94,8 +94,14 @@ Also required **outside** `.env`:
 
 | Secret | Purpose |
 |--------|---------|
-| GitHub token / `gh` auth | Issue/PR/merge: `notaire-fleet` App via `workspace/sdlc/fleet-token.sh` ([FLEET-IDENTITY.md](FLEET-IDENTITY.md), #1648) |
+| GitHub token / `gh` auth | Issue/PR/merge. Prefer **notaire-fleet** via `workspace/sdlc/fleet-token.sh` ([FLEET-IDENTITY.md](FLEET-IDENTITY.md), #1648). Needs Repository · Issues **Read & write** (`issues: write` / GraphQL `addLabelsToLabelable`) for Gate 1.6 labels (#2221). |
+| `FLEET_APP_ID` + `FLEET_APP_PRIVATE_KEY` | Owner-granted Cursor Cloud environment secrets for the fleet App. Without them, ambient Cursor `gh` often 403s on `gh issue edit --add-label`; agents run `bash workspace/sdlc/add-issue-wip-label.sh <n>` and **honestly SKIP** Gate 1.6 (no false "in progress"). |
 | Any Cursor Cloud secrets for private deps | If applicable |
+
+Agents cannot edit the Cursor dashboard mid-run. If label writes fail with
+`Resource not accessible by integration (addLabelsToLabelable)`, continue Gate 1
+after the SKIP note; the Owner grants `issues: write` or fleet App secrets
+offline.
 
 ---
 
