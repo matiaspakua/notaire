@@ -48,6 +48,7 @@ Saving the card.
 | OpenSpec CLI | current project-supported | Gate 1 `openspec validate` | `openspec --version` |
 | Bruno CLI | **≥4.2.0** (`@usebruno/cli@4.2.0` via `.cursor/install.sh`) | OpenCollection / `preflight.sh --full` API tests; older 2.x only understands `bruno.json` | `bru --version` |
 | Python 3 | 3.11+ | occasional scripts / unittest helpers | `python3 --version` |
+| `python3-venv` | distro package (ensurepip) | `security/run_gates.py --profile local` creates `security/.tools/venv` without apt mid-run (#2217) | `python3 -m venv /tmp/notaire-venv-check && rm -rf /tmp/notaire-venv-check` |
 | `curl` / `jq` | any | health checks, JSON parsing | `curl --version`; `jq --version` |
 | `bc` | any | Installed by `.cursor/install.sh` (optional for Gate 1; validator uses awk) | `bc --version` |
 
@@ -56,7 +57,7 @@ Saving the card.
 | Component | Notes | Verify |
 |-----------|-------|--------|
 | `frontend/node_modules` | `cd frontend && npm ci` in install or first boot | `test -d frontend/node_modules` |
-| Playwright browsers | `cd testing/e2e && npx playwright install --with-deps` (or CI-equivalent) | `npx playwright --version` |
+| Playwright browsers | `.cursor/install.sh` installs from each package dir: `frontend` chromium; `testing/e2e` chromium + webkit (mobile / iPhone SE); `github-page` chromium (pages smoke). Revisions follow each package's Playwright major (#2217). | `ls ~/.cache/ms-playwright`; `cd testing/e2e && npx playwright --version` |
 | Bruno / API collection | Collection under `backend-api/api-test/`; CLI `bru` ≥4.2.0 on PATH from install | `bru --version`; collection present |
 | markdownlint-cli2 | Via frontend deps for docs lint | `frontend/node_modules/.bin/markdownlint-cli2 --version` |
 
