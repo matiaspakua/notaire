@@ -50,16 +50,26 @@ Until Owner configures `runtime_*`, committer stays `no-evaluable` / advisory
 `aisdlc doctor` prints that status as an informational line and does **not** fail the
 profile solely because Isolator is unevaluable.
 
+### Grant profile data (#2192)
+
+Optional `[[grants]]` in the adopter profile declare axiom-5 fields (worktree, write
+set, required checks, budget) for **validate / list / show only**. That is **data
+toward** Isolator OS — not containment, not grant expire/kill-switch, and not a
+sandbox claim. Unknown `required_checks` fail closed against declared gate names;
+omitting grants is a no-op. Presence of grants **must not** flip Isolator to
+evaluable or `sandbox=true`. Peer custody remains ApprovalPort (ADR-005), also
+unevaluable until a real runtime exists.
+
 ## Consequences
 
 - No fake sandbox, ForgePort, or portal in this slice.
 - Resume Isolator **implementation** only when: Owner `runtime_*` is real **and** an OS
   sole-committer runtime design with grants exists.
-- Readers must not treat doctor’s Isolator line or harness `sandbox=false` as “Isolator
-  shipped.”
+- Readers must not treat doctor’s Isolator line, harness `sandbox=false`, or
+  `[[grants]]` TOML as “Isolator shipped.”
 
 ## References
 
-- ADR-002 (ports; what is not a sandbox)
+- ADR-002 (ports; what is not a sandbox); ADR-005 (ApprovalPort peer)
 - FACTORY-ROADMAP Deferred; FACTORY-FOUNDATION sole-committer note
-- Store: `internal/factory-stop-after-2172.md`
+- Store: `internal/factory-stop-after-2172.md`; Grant schema Issue #2192

@@ -136,6 +136,22 @@ class StageProfile:
     effort: StageEffort = StageEffort()
 
 
+@dataclass(frozen=True)
+class Grant:
+    """Optional Grant profile data (V1 axiom 5 / #2192). Never implies OS isolation.
+
+    Declaring grants is data toward Isolator OS (ADR-004). List/validate/show only —
+    never enforce write sets, expire grants, or flip Isolator sandbox.
+    """
+
+    id: str
+    worktree: str = "."
+    write_set: tuple[str, ...] = ()
+    required_checks: tuple[str, ...] = ()
+    budget: StageEffort = StageEffort()
+    stage: str | None = None
+
+
 @dataclass
 class Profile:
     name: str
@@ -180,6 +196,7 @@ class Profile:
     catalogs_dir: str | None = None
     committer: CommitterPolicy = field(default_factory=CommitterPolicy)
     stage_profiles: tuple[StageProfile, ...] = ()
+    grants: tuple[Grant, ...] = ()
 
     def stages(self) -> list[str]:
         declared = {g.stage for g in self.gates}
@@ -284,9 +301,17 @@ def _build(data: dict, errors: list[str]) -> Profile:
         errors.append(f"catalogs.dir must be a non-empty string, got {profile.catalogs_dir!r}")
         profile.catalogs_dir = None
     profile.committer = _committer(data.get("committer", {}), errors)
+    gate_stages = {g.stage for g in profile.gates}
+    gate_names = {g.name for g in profile.gates}
     profile.stage_profiles = _stage_profiles(
         data.get("stages", []),
-        gate_stages={g.stage for g in profile.gates},
+        gate_stages=gate_stages,
+        errors=errors,
+    )
+    profile.grants = _grants(
+        data.get("grants", []),
+        gate_stages=gate_stages,
+        gate_names=gate_names,
         errors=errors,
     )
     _check_prices(profile.prices, errors)
@@ -548,6 +573,74 @@ def _stage_profiles(raw: list, gate_stages: set[str], errors: list[str]) -> tupl
                 mcp=_string_list(item.get("mcp"), f"{label} mcp", errors),
                 model=model.strip() if isinstance(model, str) else None,
                 effort=_effort(item.get("effort"), f"{label} effort", errors),
+            )
+        )
+    return tuple(found)
+
+
+def _grants(
+    raw: list,
+    gate_stages: set[str],
+    gate_names: set[str],
+    errors: list[str],
+) -> tuple[Grant, ...]:
+    """Parse optional [[grants]]. Omit/empty = no-op. Unknown checks fail closed."""
+    if raw is None or raw == []:
+        return ()
+    if not isinstance(raw, list):
+        errors.append("[[grants]] must be an array of tables")
+        return ()
+    found: list[Grant] = []
+    seen: set[str] = set()
+    for index, item in enumerate(raw, 1):
+        if not isinstance(item, dict):
+            errors.append(f"grant #{index} must be a table")
+            continue
+        label = f"grant #{index} ({item.get('id', '?')})"
+        grant_id = item.get("id")
+        if not isinstance(grant_id, str) or not grant_id.strip():
+            errors.append(f"{label} needs a non-empty id")
+            continue
+        grant_id = grant_id.strip()
+        if grant_id in seen:
+            errors.append(f"{label} duplicates id {grant_id!r}")
+            continue
+        seen.add(grant_id)
+        stage = item.get("stage")
+        if stage is not None:
+            if not isinstance(stage, str) or not stage.strip():
+                errors.append(f"{label} stage must be a non-empty string when set")
+                stage = None
+            else:
+                stage = stage.strip()
+                if stage not in gate_stages:
+                    errors.append(
+                        f"{label} stage {stage!r} does not match any gate stage "
+                        f"(declared: {', '.join(sorted(gate_stages)) or 'none'})"
+                    )
+                    continue
+        worktree = item.get("worktree", ".")
+        if not isinstance(worktree, str) or not worktree.strip():
+            errors.append(f"{label} worktree must be a non-empty string")
+            worktree = "."
+        write_set = _string_list(item.get("write_set"), f"{label} write_set", errors)
+        required_checks = _string_list(
+            item.get("required_checks"), f"{label} required_checks", errors
+        )
+        for check in required_checks:
+            if check not in gate_names:
+                errors.append(
+                    f"{label} unknown required_checks {check!r} "
+                    f"(not a declared gate name; fail closed)"
+                )
+        found.append(
+            Grant(
+                id=grant_id,
+                worktree=worktree.strip() if isinstance(worktree, str) else ".",
+                write_set=write_set,
+                required_checks=required_checks,
+                budget=_effort(item.get("budget"), f"{label} budget", errors),
+                stage=stage,
             )
         )
     return tuple(found)

@@ -26,6 +26,13 @@ Grants + write set + agent never commits; YAML ≠ OS isolation. Kit stub /
 runtime exists. Do not invent Owner `runtime_*`. Isolator must eventually **enforce**
 what `aisdlc committer` already **checks**.
 
+**Grant profile schema** ([#2192](https://github.com/matiaspakua/notaire/issues/2192)):
+optional `[[grants]]` (worktree, write_set, required_checks, budget) in the adopter
+profile — **validate/list/show only** (`aisdlc grant list|--json`). Data toward
+Isolator OS; never a sandbox claim; Isolator stays `no-evaluable`. Unknown check
+refs fail closed; omit = no-op. Notaire ships an optional `plan-sample` Grant;
+`[committer] required` stays `false`.
+
 **ApprovalPort custody boundary** ([#2190](https://github.com/matiaspakua/notaire/issues/2190),
 [ADR-005](../../../framework/ai-sdlc/docs/adr/ADR-005-approval-port.md)): design-only.
 Token + channel authority; SSH/DSSE (or equivalent) mint/verify; agent never

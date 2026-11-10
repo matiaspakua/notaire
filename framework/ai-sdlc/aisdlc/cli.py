@@ -17,6 +17,7 @@ from aisdlc import (
     diffchecks,
     evidence,
     gates,
+    grants,
     harness,
     improve,
     lifecycle,
@@ -136,6 +137,16 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("scope", help="changed paths stay inside the change record's write set")
     p.add_argument("--base")
     p.add_argument("--strict", action="store_true", help="fail when no change record declares a write set")
+    p = sub.add_parser(
+        "grant",
+        help="list/show Grant profile data (axiom 5; never enforces or claims Isolator OS) (#2192)",
+    )
+    grant_sub = p.add_subparsers(dest="action", required=True)
+    grant_list = grant_sub.add_parser("list", help="print declared grants (read-only)")
+    grant_list.add_argument("--json", action="store_true")
+    grant_show = grant_sub.add_parser("show", help="show one grant by id")
+    grant_show.add_argument("--id", required=True, help="grant id")
+    grant_show.add_argument("--json", action="store_true")
     p = sub.add_parser(
         "committer",
         help="sole-committer dry-run: flag agent-authored commits (never claims isolation) (#2167)",
@@ -323,6 +334,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "size": lambda: diffchecks.size(ctx, args.base, args.limit),
         "scope": lambda: diffchecks.scope(ctx, args.base, args.strict),
         "committer": lambda: committer.check(ctx, args.base, args.json),
+        "grant": lambda: _grant(ctx, args),
         "evidence": lambda: evidence.verify(ctx, args.anchor),
         "config": lambda: _config(ctx, args),
         "stage": lambda: stages.list_stages(ctx, as_json=bool(getattr(args, "json", False))),
@@ -331,6 +343,12 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "harness": lambda: _harness(ctx, args),
     }
     return simple[args.command]()
+
+
+def _grant(ctx: Context, args: argparse.Namespace) -> int:
+    if args.action == "list":
+        return grants.list_grants(ctx, as_json=bool(getattr(args, "json", False)))
+    return grants.show_grant(ctx, args.id, as_json=bool(getattr(args, "json", False)))
 
 
 def _catalog(ctx: Context, args: argparse.Namespace) -> int:
@@ -419,6 +437,7 @@ def _config(ctx: Context, args: argparse.Namespace) -> int:
 
         errors = validate_factory(ctx.root, ctx.profile)
         errors.extend(stages.validate_stage_profiles(ctx))
+        errors.extend(grants.validate_grants(ctx))
         errors.extend(validate_context_memory(ctx))
         if errors:
             print("factory config invalid:")

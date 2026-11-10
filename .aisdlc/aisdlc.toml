@@ -163,6 +163,22 @@ skills = [
 model = "claude-sonnet-5-5-high"
 effort = { tokens = 200000, time_seconds = 3600, questions = 20, review_lines = 400 }
 
+# Grant profile data (#2192 / V1 axiom 5): worktree + write set + required checks + budget.
+# Validate/list/show only — NOT Isolator OS, NOT sandbox, NOT grant enforcement (ADR-004).
+# Omit would be a no-op; this sample documents one stage toward Isolator OS design.
+[[grants]]
+id = "plan-sample"
+stage = "plan"
+worktree = "."
+write_set = [
+  "docs/openspec/**",
+  "docs/300-development/306-ai-sdlc-framework/**",
+  "framework/ai-sdlc/**",
+  ".aisdlc/**",
+]
+required_checks = ["OpenSpec plans conform (live issue check)"]
+budget = { tokens = 200000, time_seconds = 3600, questions = 20, review_lines = 400 }
+
 # ── G1 specified ─────────────────────────────────────────────────────────────
 [[gates]]
 name = "OpenSpec plans conform (live issue check)"
