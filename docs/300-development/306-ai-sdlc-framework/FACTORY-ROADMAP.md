@@ -235,8 +235,10 @@ this ordered spine.**
   (`required = false`); Owner may flip fail-closed later.
   **Boundary design** shipped (#2173 / ADR-004): stub + doctor `no-evaluable`; YAML ≠ isolation;
   Isolator **runtime** still waits on real sole-committer containment.
-  **Grant profile schema** shipped (#2192): optional `[[grants]]` validate/list/show only
-  (axiom 5 data toward Isolator — not OS isolation; Isolator stays `no-evaluable`).
+  **Grant profile schema** shipped (#2192): optional `[[grants]]` validate/list/show.
+  **Grant write-set policy dry-run** shipped (#2194): `aisdlc grant check` —
+  **Grant runtime lite** (policy vs write_set globs); Isolator OS still missing;
+  Isolator stays `no-evaluable` / `sandbox=false`.
 - ForgePort **write** / attestations / `factory/gate` on GitHub checks
   (read-only live lead-time via `gh` shipped in #2184; custody story still incomplete for writes).
 - Wilson autonomy **promotion** (L0–L4). Multi-stage **honesty** already ships
@@ -246,7 +248,8 @@ this ordered spine.**
 - Full ApprovalPort **runtime** (SSH/DSSE mint/verify). **Boundary design** shipped
   (#2190 / ADR-005): stub + doctor `no-evaluable`; `approvals_live=false`;
   agent never self-approves; no fake approvals.
-- Grant **runtime** / kill switch / expire — bundle with Isolator OS (profile schema only in #2192).
+- Grant **OS runtime** / kill switch / expire — still bundled with Isolator OS
+  (profile + write-set policy lite in #2192/#2194; not containment).
 
 ### Parallel stay path
 
