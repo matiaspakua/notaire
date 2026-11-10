@@ -14,7 +14,8 @@ from aisdlc.stages import stage_dicts
 
 PLAN_NOTE = (
     "dispatch plan only - resolves [[stages]] knobs for Foreman routing; "
-    "does not execute agents or MCP; not Isolator OS / not sandbox"
+    "does not execute agents or MCP; not Isolator OS / not sandbox; "
+    "unmapped gate stages are expected until knobs are filled (do not invent fake knobs)"
 )
 
 
@@ -36,12 +37,20 @@ def build_plan(ctx: Context, stage_id: str | None = None) -> dict[str, Any]:
         item["gates"] = [gate.name for gate in ctx.profile.gates if gate.stage == row["id"]]
         enriched.append(item)
 
+    mapped_ids = {row["id"] for row in enriched}
+    if stage_id is not None:
+        candidates = {stage_id}
+    else:
+        candidates = gate_stages
+    unmapped = sorted(candidates - mapped_ids)
+
     return {
         "note": PLAN_NOTE,
         "executes": False,
         "sandbox": False,
         "filter_stage": stage_id,
         "mapped_count": len(enriched),
+        "unmapped_stages": unmapped,
         "stages": enriched,
     }
 
@@ -58,8 +67,17 @@ def plan(ctx: Context, *, stage_id: str | None = None, as_json: bool = False) ->
         print(json.dumps(data, indent=2, sort_keys=True))
         return 0
 
-    print(f"foreman plan: mapped_count={data['mapped_count']} executes=false sandbox=false")
+    print(
+        f"foreman plan: mapped_count={data['mapped_count']} "
+        f"unmapped_count={len(data['unmapped_stages'])} executes=false sandbox=false"
+    )
     print(f"  note: {data['note']}")
+    if data["unmapped_stages"]:
+        print(
+            "  unmapped_stages: "
+            + ",".join(data["unmapped_stages"])
+            + " (expected until [[stages]] knobs are filled)"
+        )
     if not data["stages"]:
         print("  stages: (none declared — gates still run; consult fleet-manifest for roles)")
         return 0
@@ -87,5 +105,6 @@ def plan(ctx: Context, *, stage_id: str | None = None, as_json: bool = False) ->
 def doctor_note() -> str:
     return (
         "Foreman routing: `aisdlc foreman plan|route` resolves [[stages]] knobs only "
-        "(never executes agents/MCP; not Isolator OS / sandbox=false)"
+        "(never executes agents/MCP; not Isolator OS / sandbox=false); "
+        "unmapped stages are expected until knobs are filled"
     )

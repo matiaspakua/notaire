@@ -324,7 +324,10 @@ def build_parser() -> argparse.ArgumentParser:
     lead_src.add_argument(
         "--issue",
         type=int,
-        help="live forge issue number via read-only ForgePort / gh (#2184)",
+        help=(
+            "live forge Issue number via read-only ForgePort / gh (#2184) — "
+            "pass the Issue number, not a pull-request number (#2211)"
+        ),
     )
     lead.add_argument("--json", action="store_true")
     stages = metrics_sub.add_parser("stages", help="stage durations from the evidence ledger")

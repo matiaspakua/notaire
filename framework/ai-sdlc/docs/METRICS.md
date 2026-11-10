@@ -28,6 +28,10 @@ python3 tools/ai-sdlc/bin/aisdlc metrics lead-time --issue 2182 --json
 
 Uses `gh` **read-only** (`issue view`, `pr list`) to build the same sample shape, then the same calculator. Exactly one of `--issue` / `--fixture` is required.
 
+**`--issue` takes a forge Issue number, not a pull-request number** (#2211). Passing a
+merged PR id (for example `#2210` when the Issue was `#2208`) yields `no-evaluable`.
+`aisdlc doctor` repeats this hint.
+
 **Bounds (lead-time path):** never creates/edits/closes issues or PRs, never creates/updates check runs, never writes `factory/gate` attestations from `metrics lead-time`. Approval-gated `aisdlc forge attest` (#2208) is a separate surface (dry-run default; scoped write only after Approval verify + `--write`). Empty check rollup on a **merged** PR uses `mergedAt` as `checks_green_at` (Notaire #2001: missing checks with no workflow run count as success). Pending or failing checks → omit green → `no-evaluable`.
 
 When TelemetryPort is enabled, the same result is emitted as `aisdlc.lead_time` (secrets/prompts/diffs redacted).
