@@ -175,10 +175,22 @@ git checkout -b feat/253_jwt_authentication
 
 ---
 
-## Step 1.5: Move Issue to IN PROGRESS
+## Step 1.5: Move Issue to IN PROGRESS (Gate 1.6)
+
+Prefer the honest helper (taxonomy `status:in-progress`, SKIP on integration 403):
 
 ```bash
-gh issue edit 253 --add-label "in-progress"
+bash workspace/sdlc/add-issue-wip-label.sh 253
+```
+
+Cursor Cloud ambient `gh` tokens often lack Issues **write** (`addLabelsToLabelable`).
+When the helper prints `SKIPPED`, continue Gate 1 — do **not** mark the Issue as
+in progress. Owner grants: `notaire-fleet` secrets or Cursor App Issues Read & write
+(`docs/300-development/304-ai-sdlc-cloud/FLEET-IDENTITY.md`, #2221). Optional:
+
+```bash
+eval "$(bash workspace/sdlc/fleet-token.sh)"   # when FLEET_APP_* secrets exist
+bash workspace/sdlc/add-issue-wip-label.sh 253
 ```
 
 ---
@@ -394,8 +406,8 @@ gh issue list --search "task"
 git checkout main && git pull origin main
 git checkout -b feat/253_description
 
-# 1.5 Move to IN PROGRESS
-gh issue edit 253 --add-label "in-progress"
+# 1.5 Move to IN PROGRESS (honest SKIP on addLabelsToLabelable 403)
+bash workspace/sdlc/add-issue-wip-label.sh 253
 
 # 2. Write failing tests first
 mvn test -pl backend-api -Dtest=YourTest  # must FAIL

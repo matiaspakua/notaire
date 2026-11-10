@@ -61,7 +61,7 @@ merge, or skip gates.
 | **Pick** | Select one open issue that is not an epic/roadmap umbrella; verify Use Case (`CU-XX` / `RF-XX` / `RNF-XX`) in body | `gh issue view <n> --json title,body,labels,state` — state `OPEN`, UC present |
 | **Triage** | Dispatch analyst / openspec-planner for refine + surface map (`backend` / `frontend` / both / `none`) | Written brief: issue #, UC, TYPE, SURFACE, acceptance criteria list |
 | **Gate 1** | Prefer `bash workspace/sdlc/seed-openspec-change.sh <change> --issue N --use-case "CU…" --branch … --create` then fill; ensure OpenSpec change exists (`schema: notaire-sdlc`); run plan validation | `openspec validate <change> --strict` + `bash workspace/sdlc/validate-sdlc-plan.sh <change>` |
-| **Branch** | Create `<type>/<issue-number>_<description>` from updated `main`; label `in-progress` | Branch name regex + `gh issue edit … --add-label in-progress` |
+| **Branch** | Create `<type>/<issue-number>_<description>` from updated `main`; Gate 1.6 WIP label via honest helper | Branch name regex + `bash workspace/sdlc/add-issue-wip-label.sh <n>` (SKIP on `addLabelsToLabelable` 403 — [FLEET-IDENTITY.md](FLEET-IDENTITY.md) #2221) |
 | **Dispatch implement** | Route by SURFACE to backend / frontend / both; require TDD-first | Specialist commits show failing tests before green commits |
 | **Quality** | Run the local gate before push. Product workflows do not run on a pull request (#2001) | `bash workspace/sdlc/preflight.sh --full`. Security detail: [SECURITY-GATES.md](SECURITY-GATES.md) |
 | **PR** | Open/update PR; body links issue with **`Closes #n`**; title `[#n] type(scope): …` | `gh pr view` / ManagePullRequest; every closing commit must end with `Closes #n` (not merely `Issue: #n`) |
