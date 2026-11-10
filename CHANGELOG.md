@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0](https://github.com/matiaspakua/notaire/compare/v0.3.0...v0.4.0) (2026-11-10)
+
+
+### Features
+
+* **aisdlc:** configure Owner committer runtime_* (evaluable, advisory) ([#2177](https://github.com/matiaspakua/notaire/issues/2177)) ([67c0758](https://github.com/matiaspakua/notaire/commit/67c07584ece18a2f5d776ea7a9f0232eb4d45213)), closes [#2175](https://github.com/matiaspakua/notaire/issues/2175)
+* **aisdlc:** Grant profile schema (axiom 5) validate/list/show ([e2533fa](https://github.com/matiaspakua/notaire/commit/e2533faefaa5bb75726bce52c6039d31ac0be13f)), closes [#2192](https://github.com/matiaspakua/notaire/issues/2192)
+* **aisdlc:** Grant write-set policy dry-run (grant check) ([444e39b](https://github.com/matiaspakua/notaire/commit/444e39b82f5c4d10dd0c80ede7052e0255d29849))
+* **aisdlc:** Isolator sole-committer enforcement ([#2204](https://github.com/matiaspakua/notaire/issues/2204)) ([394a932](https://github.com/matiaspakua/notaire/commit/394a932ce62a6fc375bc95442911ff764a670bfb))
+* **aisdlc:** OpenAPI 3.1.0 factory control contract ([5218403](https://github.com/matiaspakua/notaire/commit/5218403e8e4a7587733c92c7d5f1331eff07ce96)), closes [#2136](https://github.com/matiaspakua/notaire/issues/2136)
+* **aisdlc:** preflight feeds evidence via gate signal ([c5f948c](https://github.com/matiaspakua/notaire/commit/c5f948c3cbf1956b78a66370514cd66bd9cec36a)), closes [#2159](https://github.com/matiaspakua/notaire/issues/2159)
+* **aisdlc:** read-only ForgePort live lead-time via gh ([849169f](https://github.com/matiaspakua/notaire/commit/849169f813b2ba44b5973d3d894113c2cb2a4022)), closes [#2184](https://github.com/matiaspakua/notaire/issues/2184)
+* **aisdlc:** sole-committer dry-run policy check ([dc01d74](https://github.com/matiaspakua/notaire/commit/dc01d7461b56ab8cc73c5cb879daa2587425a773)), closes [#2167](https://github.com/matiaspakua/notaire/issues/2167)
+* **aisdlc:** surface Wilson L0 autonomy in evidence report ([fdd0234](https://github.com/matiaspakua/notaire/commit/fdd0234c1bde58fb0da3163f10fe7b31ec3fbe35)), closes [#2165](https://github.com/matiaspakua/notaire/issues/2165)
+* **aisdlc:** Wilson L0 from signal ledger gates ([679bc0d](https://github.com/matiaspakua/notaire/commit/679bc0d30d2c9aeaab738f7aa4768baefa5b73d1)), closes [#2163](https://github.com/matiaspakua/notaire/issues/2163)
+* **aisdlc:** Wilson L1 no-evaluable until ≥2 stages have min_n ([#2172](https://github.com/matiaspakua/notaire/issues/2172)) ([1136b4c](https://github.com/matiaspakua/notaire/commit/1136b4cb62358e9aa3d72f97d00902b835dd226a)), closes [#2171](https://github.com/matiaspakua/notaire/issues/2171)
+
+
+### Bug Fixes
+
+* **aisdlc:** degrade optional OTel verify bootstrap without ensurepip ([#2181](https://github.com/matiaspakua/notaire/issues/2181)) ([a9057e1](https://github.com/matiaspakua/notaire/commit/a9057e152de1447951ffce97eb77a99a56cba7de)), closes [#2180](https://github.com/matiaspakua/notaire/issues/2180)
+* **aisdlc:** refuse absolute install paths before strip ([#2154](https://github.com/matiaspakua/notaire/issues/2154)) ([ec2f247](https://github.com/matiaspakua/notaire/commit/ec2f24778bf78f5dfd062b18aaa889b2598d88e2)), closes [#2153](https://github.com/matiaspakua/notaire/issues/2153)
+* **aisdlc:** surface skills-dir in catalog list; ignore proposals ([#2156](https://github.com/matiaspakua/notaire/issues/2156)) ([6752147](https://github.com/matiaspakua/notaire/commit/675214779802b455c8c596db7d9ec0e5d9ee3b0b)), closes [#2155](https://github.com/matiaspakua/notaire/issues/2155)
+
 ## [0.3.0](https://github.com/matiaspakua/notaire/compare/v0.2.7...v0.3.0) (2026-11-08)
 
 
