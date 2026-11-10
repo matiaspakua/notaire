@@ -1,4 +1,6 @@
 "use client";
+import { Es } from "@/components/site/Es";
+import { T } from "@/components/site/T";
 import { useEffect, useRef } from "react";
 
 const tools = [
@@ -77,15 +79,16 @@ export function AITools() {
   }, []);
 
   return (
+    <Es>
     <section className="py-24 px-6" style={{ background: "var(--bg-mid)" }}>
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-14">
           <p className="text-orange-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">AI Arsenal</p>
           <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
-            The <span className="grad-fire">AI Tools</span> That Built It
+            <T text="The AI Tools That Built It" />
           </h2>
           <p className="text-neutral-600 max-w-xl mx-auto">
-            Five AI tools, one codebase. Each played a different role in accelerating from idea to production.
+            <T text="Five AI tools, one codebase. Each played a different role in accelerating from idea to production." />
           </p>
         </div>
 
@@ -114,5 +117,6 @@ export function AITools() {
         </div>
       </div>
     </section>
+    </Es>
   );
 }

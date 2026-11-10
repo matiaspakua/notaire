@@ -1,6 +1,10 @@
 "use client";
 
 import type { KeyboardEvent, ReactNode } from "react";
+import { translateNode } from "@/components/site/Es";
+import { tr } from "@/lib/i18n/es";
+import "@/lib/i18n/strings";
+import { usePreferences } from "@/components/site/Preferences";
 import type { Stepper } from "./useStepper";
 
 export type Step = { title: string; body: ReactNode; source?: { label: string; href: string } };
@@ -10,6 +14,8 @@ export type Step = { title: string; body: ReactNode; source?: { label: string; h
  * also the small-screen and screen-reader version of the diagram, so nothing depends on the SVG.
  */
 export function StepControls({ id, steps, s, label }: { id: string; steps: Step[]; s: Stepper; label: string }) {
+  const { locale } = usePreferences();
+  const t = (value: string) => tr(locale, value);
   const current = steps[s.index];
   const onKey = (e: KeyboardEvent) => {
     if (e.key === "ArrowRight") {
@@ -26,30 +32,30 @@ export function StepControls({ id, steps, s, label }: { id: string; steps: Step[
     "inline-flex h-9 items-center gap-1.5 rounded-full border border-slate-300 bg-white px-3 text-sm font-medium text-slate-800 transition-colors duration-150 hover:border-[var(--accent-500)] hover:text-[var(--accent-700)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-500)] disabled:cursor-not-allowed disabled:opacity-50";
   return (
     <div className="space-y-4" onKeyDown={onKey}>
-      <div role="group" aria-label={`${label}: step controls`} className="flex flex-wrap items-center gap-2">
-        <button type="button" className={btn} onClick={() => (s.stop(), s.prev())} disabled={s.index === 0} aria-label="Previous step">
-          <span aria-hidden>←</span> Prev
+      <div role="group" aria-label={`${t(label)}: ${t("step controls")}`} className="flex flex-wrap items-center gap-2">
+        <button type="button" className={btn} onClick={() => (s.stop(), s.prev())} disabled={s.index === 0} aria-label={t("Previous step")}>
+          <span aria-hidden>←</span> {t("Prev")}
         </button>
-        <button type="button" className={btn} onClick={s.toggle} aria-pressed={s.playing} aria-label={s.playing ? "Pause" : "Play all steps"}>
-          <span aria-hidden>{s.playing ? "❚❚" : "▶"}</span> {s.playing ? "Pause" : "Play"}
+        <button type="button" className={btn} onClick={s.toggle} aria-pressed={s.playing} aria-label={s.playing ? t("Pause") : t("Play all steps")}>
+          <span aria-hidden>{s.playing ? "❚❚" : "▶"}</span> {s.playing ? t("Pause") : t("Play")}
         </button>
-        <button type="button" className={btn} onClick={() => (s.stop(), s.next())} disabled={s.index === steps.length - 1} aria-label="Next step">
-          Next <span aria-hidden>→</span>
+        <button type="button" className={btn} onClick={() => (s.stop(), s.next())} disabled={s.index === steps.length - 1} aria-label={t("Next step")}>
+          {t("Next")} <span aria-hidden>→</span>
         </button>
         <span className="ml-auto font-mono text-xs text-slate-600">
-          Step {s.index + 1} of {steps.length}
+          {t("Step")} {s.index + 1} {t("of")} {steps.length}
         </span>
       </div>
       <div aria-live="polite" id={`${id}-live`} className="rounded-2xl border border-[var(--accent-500)]/30 bg-[var(--accent-500)]/5 p-4">
-        <p className="font-semibold text-slate-900">{current.title}</p>
-        <div className="mt-1 text-sm leading-relaxed text-slate-700">{current.body}</div>
+        <p className="font-semibold text-slate-900">{t(current.title)}</p>
+        <div className="mt-1 text-sm leading-relaxed text-slate-700">{locale === "es" ? translateNode(current.body) : current.body}</div>
         {current.source && (
           <a className="mt-2 inline-block font-mono text-[11px] text-[var(--accent-700)] underline underline-offset-2" href={current.source.href}>
             ↗ {current.source.label}
           </a>
         )}
       </div>
-      <ol className="grid gap-1.5 sm:grid-cols-2" aria-label={`${label}: all steps`}>
+      <ol className="grid gap-1.5 sm:grid-cols-2" aria-label={`${t(label)}: ${t("all steps")}`}>
         {steps.map((st, i) => (
           <li key={st.title}>
             <button
@@ -67,7 +73,7 @@ export function StepControls({ id, steps, s, label }: { id: string; steps: Step[
               >
                 {i + 1}
               </span>
-              <span>{st.title}</span>
+              <span>{t(st.title)}</span>
             </button>
           </li>
         ))}

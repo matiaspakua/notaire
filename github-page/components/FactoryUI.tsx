@@ -1,21 +1,30 @@
+"use client";
+
 import type { ReactNode } from "react";
 import type { Source } from "@/lib/ai-sdlc-content";
 import { MermaidDiagram } from "@/components/MermaidDiagram";
+import { tr } from "@/lib/i18n/es";
+import "@/lib/i18n/strings";
+import { usePreferences } from "@/components/site/Preferences";
 
 export function PageHeader({ eyebrow, title, lead }: { eyebrow: string; title: string; lead: ReactNode }) {
+  const { locale } = usePreferences();
+  const show = (value: string) => tr(locale, value);
   return (
     <header className="mb-12 space-y-4">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--accent-700)]">{eyebrow}</p>
-      <h1 className="font-display text-4xl font-semibold leading-[1.1] tracking-tight text-slate-900 text-balance sm:text-5xl">{title}</h1>
-      <div className="max-w-[65ch] text-lg leading-relaxed text-slate-600 sm:text-xl">{lead}</div>
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--accent-700)]">{show(eyebrow)}</p>
+      <h1 className="font-display text-4xl font-semibold leading-[1.1] tracking-tight text-slate-900 text-balance sm:text-5xl">{show(title)}</h1>
+      <div className="max-w-[65ch] text-lg leading-relaxed text-slate-600 sm:text-xl">{typeof lead === "string" ? show(lead) : lead}</div>
     </header>
   );
 }
 
 export function SectionTitle({ children, id }: { children: ReactNode; id?: string }) {
+  const { locale } = usePreferences();
+  const label = typeof children === "string" ? tr(locale, children) : children;
   return (
     <h2 id={id} className="mb-4 mt-16 font-display text-2xl font-semibold tracking-tight text-slate-900 text-balance sm:text-3xl">
-      {children}
+      {label}
     </h2>
   );
 }
@@ -66,6 +75,8 @@ export function Code({ children }: { children: ReactNode }) {
 }
 
 export function Table({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
+  const { locale } = usePreferences();
+  const cell = (value: ReactNode) => (typeof value === "string" ? tr(locale, value) : value);
   return (
     <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm" tabIndex={0} role="region" aria-label={`Table: ${head.join(", ")}`}>
       <table className="min-w-full text-sm">
@@ -73,7 +84,7 @@ export function Table({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           <tr>
             {head.map((h) => (
               <th key={h} className="px-4 py-3 font-medium">
-                {h}
+                {tr(locale, h)}
               </th>
             ))}
           </tr>
@@ -83,7 +94,7 @@ export function Table({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
             <tr key={i} className="border-t border-slate-100 align-top">
               {r.map((c, j) => (
                 <td key={j} className={`px-4 py-3 ${j === 0 ? "font-medium text-slate-900" : "text-slate-600"}`}>
-                  {c}
+                  {cell(c)}
                 </td>
               ))}
             </tr>

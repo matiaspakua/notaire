@@ -35,6 +35,30 @@ test("Spanish home and factory, English notice on an untranslated page", async (
   await expect(page.locator("[lang='en']")).toBeVisible();
 });
 
+const SPANISH = [
+  { path: "product/", heading: /escribanía/i },
+  { path: "security/", heading: /registro notarial/i },
+  { path: "docs/", heading: /conocimiento/i },
+  { path: "ai-sdlc/results/", heading: /fábrica/i },
+  { path: "about/", heading: /construye Notaire/i },
+];
+
+for (const theme of ["light", "dark"] as const) {
+  for (const width of [375, 1280]) {
+    for (const item of SPANISH) {
+      test(`${item.path} is Spanish in ${theme} at ${width}px`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 800 });
+        await page.addInitScript((choice) => localStorage.setItem("notaire.theme", choice), theme);
+        await page.addInitScript(() => localStorage.setItem("notaire.lang", "es"));
+        await page.goto(item.path);
+        await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
+        await expect(page.locator("body")).toContainText(item.heading);
+        await expect(page.getByText("Esta página sigue en inglés")).toHaveCount(0);
+      });
+    }
+  }
+}
+
 test("theme choice survives reload and is keyboard reachable", async ({ page }) => {
   await page.goto("");
   const theme = page.getByRole("button", { name: /theme/i });

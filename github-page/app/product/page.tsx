@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Card, PageHeader, SectionTitle, Sources } from "@/components/FactoryUI";
+import { T } from "@/components/site/T";
 import { StatGrid } from "@/components/DocsUI";
 import { src } from "@/lib/ai-sdlc-content";
 import { pageMetadata, ASSET_BASE, DEMO } from "@/lib/site";
@@ -40,20 +41,13 @@ export default function ProductOverviewPage() {
       <PageHeader
         eyebrow="Product"
         title="Case management for a notary office"
-        lead={
-          <>
-            Notaire runs the daily work of an Argentine notary office (<em>escribanía</em>): the people and properties
-            involved, each case from quote to archive, the deeds and their testimonies, payments, deadlines and an
-            audit trail. It is a web app — a Next.js front end over a Spring Boot API and PostgreSQL — in English and
-            Spanish. <a href={`${ASSET_BASE}${DEMO.href}`}>Try the live demo</a>: the real app with sample data, read-only.
-          </>
-        }
+        lead="Notaire runs the daily work of an Argentine notary office (escribanía): the people and properties involved, each case from quote to archive, the deeds and their testimonies, payments, deadlines and an audit trail. It is a web app — a Next.js front end over a Spring Boot API and PostgreSQL — in English and Spanish. Try the live demo: the real app with sample data, read-only."
       />
 
       <StatGrid
         items={[
           { value: useCaseCount(), label: "Use cases", hint: "documented in docs/100-business" },
-          { value: screens, label: "App areas", hint: `in ${modules.length} menu sections` },
+          { value: screens, label: "App areas", hint: "in the front-end menu" },
           { value: api?.paths ?? "—", label: "API paths", hint: "in the OpenAPI contract" },
           { value: v.product ?? "—", label: "Product version", hint: "from pom.xml" },
         ]}
@@ -66,7 +60,7 @@ export default function ProductOverviewPage() {
             <p className="font-semibold text-slate-900">
               {r.role} <span className="text-sm font-normal text-slate-500">({r.es})</span>
             </p>
-            <p className="mt-1 text-sm text-slate-600">{r.does}</p>
+            <p className="mt-1 text-sm text-slate-600"><T text={r.does} /></p>
           </Card>
         ))}
       </div>
@@ -84,7 +78,7 @@ export default function ProductOverviewPage() {
               {i + 1}
             </span>
             <span className="text-sm text-slate-700">
-              {step} <span className="font-mono text-xs text-slate-500">{cu}</span>
+              <T text={step} /> <span className="font-mono text-xs text-slate-500">{cu}</span>
             </span>
           </li>
         ))}
@@ -97,7 +91,7 @@ export default function ProductOverviewPage() {
       />
 
       <SectionTitle id="areas">What is in the app</SectionTitle>
-      <p>The app&apos;s menu, read from the front end at build time — each entry is a screen with its own tests.</p>
+      <p><T text="The app's menu, read from the front end at build time — each entry is a screen with its own tests." /></p>
       <div className="my-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {modules.map((g) => (
           <Card key={g.group}>

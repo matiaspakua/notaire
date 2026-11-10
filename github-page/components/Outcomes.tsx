@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Es } from "@/components/site/Es";
 import { type DeliveryMetrics, hoursText, pctText } from "@/lib/outcomes";
 
 type Metric = { id: string; label: string; value: ReactNode; detail: ReactNode; method: string; reason?: string };
@@ -71,6 +72,7 @@ function metrics(d: DeliveryMetrics): Metric[] {
 export function OutcomesSection({ data }: { data: DeliveryMetrics }) {
   const list = metrics(data);
   return (
+    <Es>
     <section aria-labelledby="outcomes">
       <h2 id="outcomes" className="mb-4 mt-16 font-display text-2xl font-semibold tracking-tight text-slate-900 text-balance sm:text-3xl">
         Delivery outcomes
@@ -95,5 +97,6 @@ export function OutcomesSection({ data }: { data: DeliveryMetrics }) {
         ))}
       </div>
     </section>
+    </Es>
   );
 }

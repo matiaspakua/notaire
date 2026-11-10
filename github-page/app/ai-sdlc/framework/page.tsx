@@ -13,6 +13,7 @@ import {
   src,
 } from "@/lib/ai-sdlc-content";
 import { Card, Code, Diagram, PageHeader, SectionTitle, Sources, Table } from "@/components/FactoryUI";
+import { T } from "@/components/site/T";
 import { FlowDiagram } from "@/components/diagrams/FlowDiagram";
 import { factoryFlow } from "@/lib/diagram-flows";
 import { Terminal } from "@/components/CaseStudy";
@@ -35,13 +36,7 @@ export default function FrameworkPage() {
       <PageHeader
         eyebrow="AI Factory · Framework"
         title="One policy, one profile, one kit"
-        lead={
-          <>
-            The process that builds Notaire, with Notaire taken out. A stack-agnostic AI SDLC framework: a policy
-            document that names no tool, a TOML profile that holds every project-specific command, and a zero-dependency
-            kit (<Code>aisdlc</Code>) that runs gates by exit code, enforces ratchets and keeps the evidence.
-          </>
-        }
+        lead="The process that builds Notaire, with Notaire taken out. A stack-agnostic AI SDLC framework: a policy document that names no tool, a TOML profile that holds every project-specific command, and a zero-dependency kit (aisdlc) that runs gates by exit code, enforces ratchets and keeps the evidence."
       />
       <div className="flex flex-wrap gap-3">
         <a href={src("framework/ai-sdlc/")} className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white hover:bg-violet-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600">
@@ -71,8 +66,8 @@ export default function FrameworkPage() {
             <Card className="flex h-full gap-4">
               <span className="font-mono text-sm font-semibold text-amber-700" aria-hidden>{String(i + 1).padStart(2, "0")}</span>
               <div>
-                <h3 className="font-semibold text-slate-900">{p.k}</h3>
-                <p className="mt-1 text-sm leading-relaxed text-slate-600">{p.v}</p>
+                <h3 className="font-semibold text-slate-900"><T text={p.k} /></h3>
+                <p className="mt-1 text-sm leading-relaxed text-slate-600"><T text={p.v} /></p>
               </div>
             </Card>
           </li>
@@ -121,9 +116,9 @@ export default function FrameworkPage() {
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-100 font-mono text-sm font-bold text-amber-800">L{l.level}</span>
               <div>
                 <h3 className="font-semibold text-slate-900">
-                  {l.name} <span className="font-normal text-slate-500">· {l.fits}</span>
+                  <T text={l.name} /> <span className="font-normal text-slate-500">· <T text={l.fits} /></span>
                 </h3>
-                <p className="mt-1 text-sm text-slate-600">{l.adds}</p>
+                <p className="mt-1 text-sm text-slate-600"><T text={l.adds} /></p>
               </div>
             </Card>
           ))}

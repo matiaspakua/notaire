@@ -1,3 +1,4 @@
+import { Es } from "@/components/site/Es";
 import { GUARDRAILS, src } from "@/lib/ai-sdlc-content";
 
 /**
@@ -30,6 +31,7 @@ const BAND = 30;
 export function GuardrailStack() {
   const layers = GUARDRAILS.map((g, i) => ({ ...g, name: g.layer.replace(/^\d+\s*·\s*/, ""), n: i + 1, where: where(i) }));
   return (
+    <Es>
     <figure className="my-10">
       <div className="hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-[var(--shadow-card)] sm:block sm:p-6">
         <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="gs-title gs-desc" className="h-auto w-full">
@@ -95,5 +97,6 @@ export function GuardrailStack() {
         and the cards below.
       </figcaption>
     </figure>
+    </Es>
   );
 }

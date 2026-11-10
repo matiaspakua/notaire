@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AboutFacts } from "@/components/About";
+import { T } from "@/components/site/T";
 import { loadAbout } from "@/lib/about";
 import { pageMetadata } from "@/lib/site";
 
@@ -10,20 +11,20 @@ export default function AboutPage() {
   const about = loadAbout();
   return (
     <div className="mx-auto max-w-3xl px-4 pb-24 pt-16 sm:px-6">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-700">About</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-700"><T text="About" /></p>
       <h1 className="mt-4 font-display text-4xl font-semibold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl">{about.name}</h1>
       <p className="mt-6 max-w-[65ch] text-lg leading-relaxed text-slate-700">
-        The engineer behind Notaire. Everything below comes from a public source, linked next to it.
+        <T text="The engineer behind Notaire. Everything below comes from a public source, linked next to it." />
       </p>
       <div className="mt-10">
         <AboutFacts data={about} />
       </div>
       <p className="mt-10 flex flex-wrap gap-3">
         <Link href="/ai-sdlc/results/#outcomes" className="rounded-full bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-800">
-          Delivery outcomes
+          <T text="Delivery outcomes" />
         </Link>
         <Link href="/product/story/" className="rounded-full border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 hover:border-brand-500">
-          The story of the project
+          <T text="The story of the project" />
         </Link>
       </p>
     </div>

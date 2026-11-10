@@ -1,6 +1,7 @@
 import { OPENSPEC_FLOW, skill, src } from "@/lib/ai-sdlc-content";
 import { fmt, loadFactoryFacts } from "@/lib/ai-sdlc-facts";
 import { Card, Code, Diagram, PageHeader, SectionTitle, Sources, Table } from "@/components/FactoryUI";
+import { Fill } from "@/components/site/T";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata("/ai-sdlc/openspec/");
@@ -13,12 +14,10 @@ export default function OpenSpecPage() {
         eyebrow="AI Factory · OpenSpec"
         title="Spec-driven development, adapted"
         lead={
-          <>
-            OpenSpec is the change record. Notaire adapts it instead of replacing it: a forked schema carries the
-            Constitution&apos;s mandatory sections, the CLI injects the rules into every agent, and project scripts turn advisory
-            rules into failing exit codes. So far {fmt(f.archivedChanges)} changes have completed the flow, and{" "}
-            {fmt(f.livingSpecs)} capability specs describe current behaviour.
-          </>
+          <Fill
+            text="OpenSpec is the change record. Notaire adapts it instead of replacing it: a forked schema carries the Constitution's mandatory sections, the CLI injects the rules into every agent, and project scripts turn advisory rules into failing exit codes. So far {archived} changes have completed the flow, and {specs} capability specs describe current behaviour."
+            values={{ archived: fmt(f.archivedChanges), specs: fmt(f.livingSpecs) }}
+          />
         }
       />
       <Diagram chart={OPENSPEC_FLOW} caption="Explore → triage into real Issues → propose → apply with TDD → archive in the same PR → living specs." />

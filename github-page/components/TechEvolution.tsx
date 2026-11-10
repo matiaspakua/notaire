@@ -1,4 +1,6 @@
 "use client";
+import { Es } from "@/components/site/Es";
+import { T } from "@/components/site/T";
 import { useEffect, useRef } from "react";
 import type { Versions } from "@/lib/tech-facts";
 
@@ -102,6 +104,7 @@ function EraCard({ era, index }: { era: ReturnType<typeof erasFor>[number]; inde
   }, [index]);
 
   return (
+    <Es>
     <div ref={ref} className="flex-1 min-w-[280px] max-w-sm">
       <div className="glass rounded-2xl overflow-hidden border" style={{ borderColor: `${era.color}30` }}>
         {/* Header */}
@@ -135,20 +138,22 @@ function EraCard({ era, index }: { era: ReturnType<typeof erasFor>[number]; inde
         </div>
       </div>
     </div>
+    </Es>
   );
 }
 
 export function TechEvolution({ versions }: { versions: Versions }) {
   const eras = erasFor(versions);
   return (
+    <Es>
     <section id="evolution" className="py-32 px-6" style={{ background: "var(--bg-mid)" }}>
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <p className="text-factory-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">Tech Evolution</p>
           <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
-            Three <span className="grad-green">Generations</span>
+            <T text="Three Generations" />
           </h2>
-          <p className="text-neutral-600 max-w-xl mx-auto">The same business domain, reimagined through each era of software engineering.</p>
+          <p className="text-neutral-600 max-w-xl mx-auto"><T text="The same business domain, reimagined through each era of software engineering." /></p>
         </div>
 
         {/* Arrow connectors + cards */}
@@ -164,5 +169,6 @@ export function TechEvolution({ versions }: { versions: Versions }) {
         </div>
       </div>
     </section>
+    </Es>
   );
 }

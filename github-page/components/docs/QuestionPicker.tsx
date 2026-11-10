@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Es } from "@/components/site/Es";
 
 const QUESTIONS = [
   {
@@ -39,6 +40,7 @@ export function QuestionPicker() {
   const [id, setId] = useState(QUESTIONS[0].id);
   const current = QUESTIONS.find((item) => item.id === id) ?? QUESTIONS[0];
   return (
+    <Es>
     <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
       <div role="tablist" aria-label="Documentation questions" className="flex flex-wrap gap-2">
         {QUESTIONS.map((item) => {
@@ -66,5 +68,6 @@ export function QuestionPicker() {
         </Link>
       </div>
     </div>
+    </Es>
   );
 }

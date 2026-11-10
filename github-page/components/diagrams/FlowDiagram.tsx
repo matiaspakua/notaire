@@ -1,6 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { tr } from "@/lib/i18n/es";
+import "@/lib/i18n/strings";
+import { usePreferences } from "@/components/site/Preferences";
 import { StepControls, type Step } from "./StepControls";
 import { transition, useStepper } from "./useStepper";
 
@@ -70,6 +73,10 @@ export function FlowDiagram({
   steps: FlowStep[];
   caption: string;
 }) {
+  const { locale } = usePreferences();
+  const titleText = tr(locale, title);
+  const descText = tr(locale, desc);
+  const captionText = tr(locale, caption);
   const s = useStepper(steps.length);
   const step = steps[s.index];
   const byId = new Map(nodes.map((n) => [n.id, n]));
@@ -82,8 +89,8 @@ export function FlowDiagram({
     <figure className="not-prose my-8 rounded-3xl border border-slate-200 bg-white p-4 shadow-[var(--shadow-card)] sm:p-6" data-diagram={id}>
       <div className="hidden overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_1px_1px,#e2e8f0_1px,transparent_0)] [background-size:22px_22px] md:block">
         <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-labelledby={`${id}-t ${id}-d`} className="h-auto w-full">
-          <title id={`${id}-t`}>{title}</title>
-          <desc id={`${id}-d`}>{desc}</desc>
+          <title id={`${id}-t`}>{titleText}</title>
+          <desc id={`${id}-d`}>{descText}</desc>
           <defs>
             <marker id={`${id}-arrow`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
               <path d="M0 0 L10 5 L0 10 z" fill="#64748b" />
@@ -162,9 +169,9 @@ export function FlowDiagram({
         </svg>
       </div>
       <div className="md:mt-5">
-        <StepControls id={id} steps={steps} s={s} label={title} />
+        <StepControls id={id} steps={steps} s={s} label={titleText} />
       </div>
-      <figcaption className="mt-3 text-xs text-slate-600">{caption}</figcaption>
+      <figcaption className="mt-3 text-xs text-slate-600">{captionText}</figcaption>
     </figure>
   );
 }

@@ -1,5 +1,6 @@
 import { GATES, LIFECYCLE_FLOW, LIFECYCLE_PHASES, src } from "@/lib/ai-sdlc-content";
 import { Card, Code, Diagram, PageHeader, SectionTitle, Sources } from "@/components/FactoryUI";
+import { T } from "@/components/site/T";
 import { pageMetadata } from "@/lib/site";
 import { GateLine } from "@/components/figures/gateline/figure";
 
@@ -18,13 +19,7 @@ export default function LifecyclePage() {
       <PageHeader
         eyebrow="AI Factory · Lifecycle"
         title="From Issue to closed Issue, step by step"
-        lead={
-          <>
-            The Constitution defines one mandatory, sequential workflow of 24 steps for every change: feature, bug fix,
-            refactor, docs, CI or schema. No step may be skipped. Five hard gates stop the work until their conditions hold,
-            whether a human or an agent is doing it.
-          </>
-        }
+        lead="The Constitution defines one mandatory, sequential workflow of 24 steps for every change: feature, bug fix, refactor, docs, CI or schema. No step may be skipped. Five hard gates stop the work until their conditions hold, whether a human or an agent is doing it."
       />
       <GateLine />
 
@@ -34,10 +29,10 @@ export default function LifecyclePage() {
         <section key={ph.phase}>
           <SectionTitle id={ph.phase.toLowerCase()}>
             <span className={`mr-3 inline-block rounded-full border px-3 py-0.5 text-sm ${tone[ph.tone]}`}>{ph.phase}</span>
-            {ph.phase === "Plan" && "Understand and specify"}
-            {ph.phase === "Prove" && "Tests first, then code"}
-            {ph.phase === "Publish" && "Document, commit, open the PR"}
-            {ph.phase === "Ship" && "Review, merge, deploy, verify"}
+            {ph.phase === "Plan" && <T text="Understand and specify" />}
+            {ph.phase === "Prove" && <T text="Tests first, then code" />}
+            {ph.phase === "Publish" && <T text="Document, commit, open the PR" />}
+            {ph.phase === "Ship" && <T text="Review, merge, deploy, verify" />}
           </SectionTitle>
           <ol className="grid md:grid-cols-2 gap-4">
             {ph.steps.map((s) => (
@@ -51,8 +46,8 @@ export default function LifecyclePage() {
                       </span>
                     )}
                   </div>
-                  <h3 className="mt-1 font-semibold text-slate-900">{s.title}</h3>
-                  <p className="mt-2 text-sm text-slate-600 leading-relaxed">{s.what}</p>
+                  <h3 className="mt-1 font-semibold text-slate-900"><T text={s.title} /></h3>
+                  <p className="mt-2 text-sm text-slate-600 leading-relaxed"><T text={s.what} /></p>
                   {s.check && (
                     <p className="mt-3 text-xs text-slate-500">
                       Checked by <Code>{s.check}</Code>

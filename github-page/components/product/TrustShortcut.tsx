@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Es } from "@/components/site/Es";
 
 const STEPS = [
   { id: "browser", title: "Browser", body: "Staff send an HttpOnly cookie. The page does not keep the JWT in local storage." },
@@ -14,6 +15,7 @@ export function TrustShortcut() {
   const [id, setId] = useState(STEPS[0].id);
   const current = STEPS.find((step) => step.id === id) ?? STEPS[0];
   return (
+    <Es>
     <section aria-labelledby="trust-shortcut-title" className="mt-12 rounded-3xl border border-slate-200 bg-white p-6">
       <h2 id="trust-shortcut-title" className="font-display text-2xl font-semibold text-slate-900">
         Where trust sits
@@ -43,5 +45,6 @@ export function TrustShortcut() {
         Step through the full boundary diagram →
       </Link>
     </section>
+    </Es>
   );
 }

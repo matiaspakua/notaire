@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { Es } from "@/components/site/Es";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -115,6 +116,7 @@ function CoverageCard({ metric, index }: { metric: CoverageMetric; index: number
   }, [metric.percentage, index]);
 
   return (
+    <Es>
     <div ref={ref} className="glass rounded-xl p-5 border" style={{ borderColor: `${metric.color}25` }}>
       <div className="flex items-start justify-between mb-3">
         <div>
@@ -148,6 +150,7 @@ function CoverageCard({ metric, index }: { metric: CoverageMetric; index: number
 
       <div className="text-xs text-neutral-500 mt-2">Updated: {metric.lastUpdate}</div>
     </div>
+    </Es>
   );
 }
 
@@ -173,6 +176,7 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
   }, []);
 
   return (
+    <Es>
     <section className="py-32 px-6" style={{ background: "var(--bg-dark)" }}>
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
@@ -182,7 +186,7 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
             className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4"
             style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}
           >
-            Test Coverage <span className="grad-cyan">Dashboard</span>
+            Test Coverage Dashboard
           </h2>
           <p className="text-neutral-600 max-w-2xl mx-auto">
             Real-time coverage metrics across backend, frontend, E2E, and API layers. Updated on every merge to main.
@@ -277,5 +281,6 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
         </div>
       </div>
     </section>
+    </Es>
   );
 }

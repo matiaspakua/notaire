@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { T } from "@/components/site/T";
 import type { Chapter, Snippet } from "@/lib/ai-sdlc-content";
 import { issue } from "@/lib/ai-sdlc-content";
 import { Sources } from "@/components/FactoryUI";
@@ -179,12 +180,12 @@ export function ChapterBlock({ chapter, index }: { chapter: Chapter; index: numb
         <div className="min-w-0">
           <h2 id={`${chapter.id}-title`} className="text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900" style={{ fontFamily: "var(--font-display)" }}>
             <span className="sr-only">Chapter {index + 1}: </span>
-            {chapter.title}
+            <T text={chapter.title} />
           </h2>
           <dl className="mt-6 grid gap-4 md:grid-cols-3">
-            <Beat label="Problem" tone="text-red-700">{chapter.problem}</Beat>
-            <Beat label="Move" tone="text-violet-700">{chapter.move}</Beat>
-            <Beat label="Result" tone="text-emerald-700">{chapter.result}</Beat>
+            <Beat label="Problem" tone="text-red-700"><T text={chapter.problem} /></Beat>
+            <Beat label="Move" tone="text-violet-700"><T text={chapter.move} /></Beat>
+            <Beat label="Result" tone="text-emerald-700"><T text={chapter.result} /></Beat>
           </dl>
           {chapter.before && chapter.after && (
             <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -209,7 +210,7 @@ export function ChapterBlock({ chapter, index }: { chapter: Chapter; index: numb
 function Beat({ label, tone, children }: { label: string; tone: string; children: ReactNode }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <dt className={`text-[11px] font-semibold uppercase tracking-widest ${tone}`}>{label}</dt>
+      <dt className={`text-[11px] font-semibold uppercase tracking-widest ${tone}`}><T text={label} /></dt>
       <dd className="mt-2 text-sm leading-relaxed text-slate-700">{children}</dd>
     </div>
   );

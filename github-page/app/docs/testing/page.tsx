@@ -22,12 +22,7 @@ export default function DocsTestingPage() {
       <PageHeader
         eyebrow="Quality"
         title="Testing process"
-        lead={
-          <>
-            Tests come first, by rule (CONSTITUTION §6, Gate 2): a change starts with tests that fail. The suites are
-            layered from cheap static checks to full-stack browser journeys. The heavy layers run locally in preflight --full before every pull request (#2001), and again on every version tag.
-          </>
-        }
+        lead="Tests come first, by rule (CONSTITUTION §6, Gate 2): a change starts with tests that fail. The suites are layered from cheap static checks to full-stack browser journeys. The heavy layers run locally in preflight --full before every pull request (#2001), and again on every version tag."
       />
 
       <StatGrid

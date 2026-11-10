@@ -1,4 +1,6 @@
 "use client";
+import { Es } from "@/components/site/Es";
+import { T } from "@/components/site/T";
 import { useEffect, useRef } from "react";
 
 const features = [
@@ -72,6 +74,7 @@ export function AIEra() {
   }, []);
 
   return (
+    <Es>
     <section id="ai" className="py-32 px-6 relative overflow-hidden" style={{ background: "var(--bg-mid)" }}>
       {/* BG glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-64 pointer-events-none" style={{ background: "radial-gradient(ellipse, rgba(175,82,222,0.12) 0%, transparent 70%)" }} />
@@ -80,11 +83,10 @@ export function AIEra() {
         <div ref={headerRef} className="text-center mb-16">
           <p className="text-factory-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">The AI Era</p>
           <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
-            Built with <span className="grad-cyan">Artificial Intelligence</span>
+            <T text="Built with Artificial Intelligence" />
           </h2>
           <p className="text-neutral-600 max-w-2xl mx-auto leading-relaxed">
-            In 2026, Claude AI became the primary co-developer, then Cursor Cloud agents
-            closed the loop on remote VMs—OpenSpec specs, TDD, documentation, Bruno, Playwright, and heavy-CI merges.
+            <T text="In 2026, Claude AI became the primary co-developer, then Cursor Cloud agents closed the loop on remote VMs—OpenSpec specs, TDD, documentation, Bruno, Playwright, and heavy-CI merges." />
           </p>
         </div>
 
@@ -113,5 +115,6 @@ export function AIEra() {
         </div>
       </div>
     </section>
+    </Es>
   );
 }
