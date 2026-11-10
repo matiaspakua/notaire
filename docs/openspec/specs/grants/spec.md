@@ -2,7 +2,7 @@
 
 ## Purpose
 Optional Grant profile schema (V1 axiom 5): worktree, write set, required checks, and
-budget — validate/list/show plus write-set **policy** dry-run (`grant check`). Data and
+budget — validate/list/show plus write-set policy dry-run (`grant check`). Data and
 lite policy toward Isolator OS; never a sandbox claim.
 
 ## Requirements
@@ -56,8 +56,9 @@ sandbox isolation, or change Isolator status.
 The kit SHALL provide `aisdlc grant check [--base] [--json]` that compares changed
 paths since `base` (default profile base) against the union of declared Grant
 `write_set` globs. Matching SHALL use the same path-glob honesty as scope write-set
-checks. This is a **policy** dry-run only: it MUST NOT claim OS isolation, sandbox,
-bubblewrap, landlock, or Isolator runtime enforcement.
+checks (`repo.matches` / directory expansion). This is a **policy** dry-run only:
+it MUST NOT claim OS isolation, sandbox, bubblewrap, landlock, or Isolator runtime
+enforcement.
 
 #### Scenario: no grant declared is no-evaluable
 - **WHEN** a profile has no `[[grants]]` (or every grant has an empty `write_set`)
