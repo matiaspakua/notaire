@@ -12,14 +12,14 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|
 | Issue | #2117 | open (Gate 1.6 label SKIPPED — ambient Cursor token) |
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure | exists |
-| Specification | `docs/openspec/changes/docs-2117-testing-inventory-off-prs/` | active |
+| Specification | `docs/openspec/changes/archive/2026-11-10-docs-2117-testing-inventory-off-prs/` | archived |
 | Branch | `docs/2117_testing-inventory-off-prs` | created |
-| Tasks | `tasks.md` | groups 1–2 done; 3+ in progress |
-| Commits | passing | pending |
-| Pull Request | passing | pending |
-| CI run | local `preflight.sh --full` pending | passing |
-| Merge commit | passing | pending |
-| Release / tag | n/a (docs/scripts) | passing |
+| Tasks | `tasks.md` | groups 1–8 done; 9–12 at PR |
+| Commits | `b53183a4` | yes |
+| Pull Request | #2226 | open |
+| CI run | local `preflight.sh --full` **PASSED** (41) | yes |
+| Merge commit | pending | pending |
+| Release / tag | n/a (docs/scripts) | pending |
 | Smoke test | validate + generate counts | passing |
 
 ## Requirement coverage
@@ -36,21 +36,21 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/300-development/303-testing/INVENTORY.md` | pending (stub) | passing |
-| `docs/300-development/303-testing/README.md` | passing | pending |
-| `docs/300-development/303-testing/PROCESS-ARCHITECTURE.md` | passing | pending |
-| `docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md` | passing | pending |
-| `CHANGELOG.md` | passing | pending |
+| `docs/300-development/303-testing/INVENTORY.md` | yes (stub) | `b53183a4` |
+| `docs/300-development/303-testing/README.md` | yes | `b53183a4` |
+| `docs/300-development/303-testing/PROCESS-ARCHITECTURE.md` | yes | `b53183a4` |
+| `docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md` | yes | `b53183a4` |
+| `CHANGELOG.md` | yes | `b53183a4` |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | this change; validate-sdlc-plan |
-| 2 | Failing tests written, test cases designed | passing | TDD red |
-| 3 | Suite green, coverage held, docs updated | passing | preflight `--full` |
-| 4 | CI green, review approved, no conflicts | passing | PR |
-| 5 | Deployed, smoke test passed, Issue closed | passing | Owner/Foreman |
+| 2 | Failing tests written, test cases designed | yes | `internal/foreman-ops-asli-64/tdd-red.txt` |
+| 3 | Suite green, coverage held, docs updated | yes | preflight `--full` PASSED (41) |
+| 4 | CI green, review approved, no conflicts | pending | PR #2226 |
+| 5 | Deployed, smoke test passed, Issue closed | pending | Owner/Foreman |
 
 ## Exceptions
 
