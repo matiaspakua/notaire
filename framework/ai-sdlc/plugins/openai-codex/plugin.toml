@@ -1,0 +1,11 @@
+id = "openai-codex"
+kind = "harness"
+version = "1.0.0"
+status = "stub"
+runtime = "openai-codex"
+adapter = "adapter.yml"
+capabilities = ["describe"]
+command = ["aisdlc-harness-describe", "openai-codex"]
+summary = "Inventory stub for OpenAI Codex. Dry plan prints describe argv only. Never launches a session. sandbox=false forever until a real Isolator."
+sandbox = false
+auto_trust_hooks = false

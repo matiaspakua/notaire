@@ -334,6 +334,29 @@ version = "1.0.0"
 manifest = "framework/ai-sdlc/plugins/aws-ai-dlc/plugin.toml"
 trusted = false
 
+# Extra HarnessPort stubs (#2188). Inventory + dry plan only; out of allow until Owner opts in
+# (Spec Kit pattern). sandbox=false forever until a real Isolator. Never launch runtimes.
+[[plugins.entries]]
+id = "claude-code"
+kind = "harness"
+version = "1.0.0"
+manifest = "framework/ai-sdlc/plugins/claude-code/plugin.toml"
+trusted = false
+
+[[plugins.entries]]
+id = "openai-codex"
+kind = "harness"
+version = "1.0.0"
+manifest = "framework/ai-sdlc/plugins/openai-codex/plugin.toml"
+trusted = false
+
+[[plugins.entries]]
+id = "agent-client-protocol"
+kind = "harness"
+version = "1.0.0"
+manifest = "framework/ai-sdlc/plugins/acp/plugin.toml"
+trusted = false
+
 # Harness port (#2122). Files stay at their discoverability paths. A listed permission is not a sandbox.
 [[harness.adapters]]
 id = "cursor-cloud"

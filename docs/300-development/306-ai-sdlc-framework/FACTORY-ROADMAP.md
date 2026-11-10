@@ -144,7 +144,7 @@ Owner.
 |-------|----------|
 | Inventory → certify → enforce → optimize | **Adapt** as catalogs + gates + Wilson — repo-local |
 | Factories as code | **Include** — profile + catalogs + ADRs |
-| Any model / harness | **Include** — HarnessPort (#2122 done) |
+| Any model / harness | **Include** — HarnessPort (#2122 done; #2188 Claude Code / Codex / ACP stubs, sandbox=false, opt-in allow) |
 | Self-improve → PR | **Adapt** — gated PRs only (#2141) |
 | Context Lake / portal | **Skip** |
 | Hosted factory compute | **Skip** (RunnerPort consumes CI/local) |

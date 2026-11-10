@@ -1,0 +1,7 @@
+# HarnessPort stub (#2188). Discoverability only — not an OS sandbox.
+runtime: claude-code
+version: stub-1
+sandbox: false
+capabilities:
+  - describe
+note: "Stub inventory adapter for Claude Code. List/validate/plan never execute the runtime. A permission listed here is not isolation."

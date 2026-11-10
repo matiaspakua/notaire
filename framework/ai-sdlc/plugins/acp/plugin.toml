@@ -1,0 +1,11 @@
+id = "agent-client-protocol"
+kind = "harness"
+version = "1.0.0"
+status = "stub"
+runtime = "agent-client-protocol"
+adapter = "adapter.yml"
+capabilities = ["describe"]
+command = ["aisdlc-harness-describe", "agent-client-protocol"]
+summary = "Inventory stub for Agent Client Protocol (ACP). Dry plan prints describe argv only. Never launches a session. sandbox=false forever until a real Isolator."
+sandbox = false
+auto_trust_hooks = false

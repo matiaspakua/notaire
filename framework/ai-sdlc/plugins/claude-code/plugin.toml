@@ -1,0 +1,11 @@
+id = "claude-code"
+kind = "harness"
+version = "1.0.0"
+status = "stub"
+runtime = "claude-code"
+adapter = "adapter.yml"
+capabilities = ["describe"]
+command = ["aisdlc-harness-describe", "claude-code"]
+summary = "Inventory stub for Anthropic Claude Code. Dry plan prints describe argv only. Never launches a session. sandbox=false forever until a real Isolator."
+sandbox = false
+auto_trust_hooks = false

@@ -59,6 +59,14 @@ python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml harness show 
 They are different adapters. Neither is a commercial Harness product.
 `sandbox` is always `false` in the CLI output: a permission listed in a source is not isolation.
 
+Extra HarnessPort stubs (#2188) — Claude Code (`claude-code`), OpenAI Codex
+(`openai-codex`), and Agent Client Protocol (`agent-client-protocol`) — ship as
+`kind = "harness"` plugins under `framework/ai-sdlc/plugins/`. `harness list`
+surfaces them with `stub=true`, `sandbox=false`, and `available=false` while they
+stay out of `[plugins] allow` (Spec Kit opt-in pattern). Dry `plugin plan` prints
+`aisdlc-harness-describe <id>` only when allowed; list/validate/plan never launch
+a runtime. Notaire keeps them opted out until the Owner reviews the dry plan.
+
 OpenSpec in this environment is CLI 1.14.0, pinned in `.cursor/install.sh`. The adapter prints
 `openspec validate <change> --strict` and does not run it.
 
