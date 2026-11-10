@@ -19,9 +19,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/improve-2211-doctor-signal-foreman-knobs/` | passed |
 | Branch | `improve/2211_doctor-signal-foreman-knobs` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
-| Pull Request | pending | pending |
-| CI run | pending | pending |
+| Commits | `73e2c06a` | done |
+| Pull Request | [#2214](https://github.com/matiaspakua/notaire/pull/2214) | open |
+| CI run | pending on #2214 | pending |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |
 | Smoke test | pending | pending |
@@ -52,8 +52,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | #2211, this folder |
 | 2 | Failing tests written, test cases designed | yes | kit TDD red-then-green |
-| 3 | Suite green, coverage held, docs updated | pending | kit verify.sh OK; preflight --full in progress |
-| 4 | CI green, review approved, no conflicts | pending | pending |
+| 3 | Suite green, coverage held, docs updated | yes | kit verify.sh OK; `preflight.sh --full` PASSED |
+| 4 | CI green, review approved, no conflicts | pending | PR #2214 |
 | 5 | Deployed, smoke test passed, Issue closed | pending | pending |
 
 ## Exceptions

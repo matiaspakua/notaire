@@ -234,7 +234,7 @@ Cloud ≠ local. Commercial “Harness” product ≠ this port. Permissions in 
 | Catalog skills-dir discover | [#2155](https://github.com/matiaspakua/notaire/issues/2155) | [#2156](https://github.com/matiaspakua/notaire/pull/2156) |
 | Improve empty propose | [#2157](https://github.com/matiaspakua/notaire/issues/2157) | [#2158](https://github.com/matiaspakua/notaire/pull/2158) |
 | Preflight → evidence `signal` | [#2159](https://github.com/matiaspakua/notaire/issues/2159) | [#2160](https://github.com/matiaspakua/notaire/pull/2160) |
-| Doctor `signal` alias + Foreman unmapped + lead-time Issue hint | [#2211](https://github.com/matiaspakua/notaire/issues/2211) | (this PR) |
+| Doctor `signal` alias + Foreman unmapped + lead-time Issue hint | [#2211](https://github.com/matiaspakua/notaire/issues/2211) | [#2214](https://github.com/matiaspakua/notaire/pull/2214) |
 
 ### Active spine — **done** (epic [#2134](https://github.com/matiaspakua/notaire/issues/2134))
 
