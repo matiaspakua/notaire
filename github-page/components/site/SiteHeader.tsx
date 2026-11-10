@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { actLabel, chrome, factoryPageTitle } from "@/lib/i18n";
 import { groupsFor, PRIMARY_NAV, REPO_URL, sectionOf, type SectionKey } from "@/lib/site";
 import { useFocusTrap } from "./useFocusTrap";
 import { SearchDialog } from "./SearchDialog";
 import { CloseIcon, GitHubIcon, Logo, MenuIcon, SearchIcon } from "./icons";
+import { PreferenceButtons, usePreferences } from "./Preferences";
 
 const DRAWER_ID = "site-drawer";
 
@@ -26,6 +28,8 @@ function activeKey(pathname: string): SectionKey {
  */
 export function SiteHeader() {
   const pathname = norm(usePathname() || "/");
+  const { locale } = usePreferences();
+  const t = chrome(locale);
   const section = activeKey(pathname);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -67,7 +71,7 @@ export function SiteHeader() {
             <span className="text-[15px] font-semibold tracking-tight text-slate-900">Notaire</span>
           </Link>
 
-          <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
+          <nav aria-label={t.primary} className="hidden items-center gap-1 lg:flex">
             {PRIMARY_NAV.map((item) => {
               const active = item.key === section;
               return (
@@ -79,29 +83,30 @@ export function SiteHeader() {
                     active ? `${accent} bg-slate-100` : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                   }`}
                 >
-                  {item.label}
+                  {t.nav[item.key]}
                 </Link>
               );
             })}
           </nav>
 
           <div className="ml-auto flex items-center gap-1.5">
+            <PreferenceButtons />
             <button
               ref={searchButton}
               type="button"
               onClick={() => setSearchOpen(true)}
-              aria-label="Search the site"
+              aria-label={t.searchLabel}
               aria-haspopup="dialog"
               className="flex h-10 items-center gap-2 rounded-full border border-slate-200 bg-white px-3 text-sm text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-900 xl:w-56"
             >
               <SearchIcon />
-              <span className="hidden sm:inline">Search</span>
+              <span className="hidden sm:inline">{t.search}</span>
               <kbd className="ml-auto hidden rounded border border-slate-300 px-1.5 font-mono text-[11px] text-slate-600 sm:inline">/</kbd>
             </button>
             <a
               href={REPO_URL}
               className="hidden h-10 w-10 items-center justify-center rounded-full text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 sm:flex"
-              aria-label="Notaire on GitHub"
+              aria-label={t.github}
             >
               <GitHubIcon />
             </a>
@@ -111,7 +116,7 @@ export function SiteHeader() {
               onClick={() => setMenuOpen((o) => !o)}
               aria-expanded={menuOpen}
               aria-controls={DRAWER_ID}
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-label={menuOpen ? t.closeMenu : t.openMenu}
               className="flex h-10 w-10 items-center justify-center rounded-full text-slate-700 transition-colors hover:bg-slate-100 lg:hidden"
             >
               {menuOpen ? <CloseIcon /> : <MenuIcon />}
@@ -127,23 +132,23 @@ export function SiteHeader() {
           id={DRAWER_ID}
           role="dialog"
           aria-modal="true"
-          aria-label="Site menu"
+          aria-label={t.siteMenu}
           tabIndex={-1}
           className="absolute inset-y-0 right-0 flex w-[min(22rem,88vw)] flex-col overflow-y-auto bg-white shadow-2xl motion-safe:animate-[drawer-in_200ms_ease-out]"
         >
           <div className="flex h-[var(--header-h)] shrink-0 items-center justify-between border-b border-slate-200 px-4">
-            <span className="text-sm font-semibold text-slate-900">Menu</span>
+            <span className="text-sm font-semibold text-slate-900">{t.menu}</span>
             <button
               type="button"
               onClick={closeMenu}
-              aria-label="Close menu"
+              aria-label={t.closeMenu}
               className="flex h-10 w-10 items-center justify-center rounded-full text-slate-700 hover:bg-slate-100"
             >
               <CloseIcon />
             </button>
           </div>
 
-          <nav aria-label="Sections" className="border-b border-slate-200 p-3">
+          <nav aria-label={t.sections} className="border-b border-slate-200 p-3">
             <ul className="space-y-1">
               {PRIMARY_NAV.map((item) => {
                 const active = item.key === section;
@@ -155,8 +160,8 @@ export function SiteHeader() {
                       aria-current={active ? "true" : undefined}
                       className={`block rounded-xl px-3 py-2.5 ${active ? "bg-slate-100" : "hover:bg-slate-50"}`}
                     >
-                      <span className={`block text-[15px] font-semibold ${active ? accent : "text-slate-900"}`}>{item.label}</span>
-                      <span className="block text-[13px] text-slate-600">{item.blurb}</span>
+                      <span className={`block text-[15px] font-semibold ${active ? accent : "text-slate-900"}`}>{t.nav[item.key]}</span>
+                      <span className="block text-[13px] text-slate-600">{t.blurb[item.key]}</span>
                     </Link>
                   </li>
                 );
@@ -165,10 +170,10 @@ export function SiteHeader() {
           </nav>
 
           {groups.length > 0 && (
-          <nav aria-label={`${currentLabel ?? "Section"} pages`} className="flex-1 p-3">
+          <nav aria-label={`${currentLabel ?? "Section"} ${t.pages}`} className="flex-1 p-3">
             {groups.map((g) => (
               <div key={g.label} className="mb-4">
-                <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500">{g.label}</p>
+                <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500">{actLabel(g.label, locale)}</p>
                 <ul>
                   {g.pages.map((p) => {
                     const current = p.href === pathname;
@@ -182,7 +187,7 @@ export function SiteHeader() {
                             current ? `${accent} bg-slate-100 font-semibold` : "text-slate-700 hover:bg-slate-50"
                           }`}
                         >
-                          {p.title}
+                          {factoryPageTitle(p.href, locale, p.title)}
                         </Link>
                       </li>
                     );

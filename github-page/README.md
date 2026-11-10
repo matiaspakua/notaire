@@ -18,6 +18,14 @@ page never types a number by hand.
 The site map lives in one place, `lib/site.ts`. Add a page there and it appears in the header, sidebars, breadcrumbs, previous/next
 links and search; a registered href with no page file fails `npm test`.
 
+## Theme and language
+
+The header offers a theme (light, dark, or the system setting) and a language (English, Spanish, or the system language).
+The choice is stored in `localStorage` (`notaire.theme`, `notaire.lang`) and applied by a script in the document head, before paint.
+`prefers-reduced-motion` already collapses transitions. The shell, the home page and the AI Factory overview are translated.
+Other pages stay in English and say so when Spanish is selected. Technical terms such as Issue, pull request, gate, OpenSpec,
+Flyway, commit and kit stay in English.
+
 ## Commands
 
 ```bash

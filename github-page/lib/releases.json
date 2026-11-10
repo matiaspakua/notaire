@@ -1,13 +1,34 @@
 {
-  "productVersion": "0.2.5",
-  "train": "v0.2 · Release identity & product forms (2026-10)",
-  "tag": "v0.2.5",
+  "productVersion": "0.3.0",
+  "train": "v0.3 · Hexagonal core & security (2026-11)",
+  "tag": "v0.3.0",
   "components": {
-    "backend": "0.2.5",
-    "frontend": "0.2.5",
-    "databaseSchema": "53"
+    "backend": "0.3.0",
+    "frontend": "0.3.0",
+    "databaseSchema": "54"
   },
   "releases": [
+    {
+      "version": "0.3.0",
+      "date": "2026-11-08",
+      "tag": "v0.3.0",
+      "train": "v0.3 · Hexagonal core & security (2026-11)",
+      "url": "https://github.com/matiaspakua/notaire/releases/tag/v0.3.0"
+    },
+    {
+      "version": "0.2.7",
+      "date": "2026-11-06",
+      "tag": "v0.2.7",
+      "train": "v0.2 · Release identity & product forms (2026-10)",
+      "url": "https://github.com/matiaspakua/notaire/releases/tag/v0.2.7"
+    },
+    {
+      "version": "0.2.6",
+      "date": "2026-11-06",
+      "tag": "v0.2.6",
+      "train": "v0.2 · Release identity & product forms (2026-10)",
+      "url": "https://github.com/matiaspakua/notaire/releases/tag/v0.2.6"
+    },
     {
       "version": "0.2.5",
       "date": "2026-10-28",

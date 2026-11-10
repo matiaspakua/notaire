@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { actLabel, chrome, factoryPageSummary, factoryPageTitle, pageIsTranslated } from "@/lib/i18n";
 import { actOf, groupsFor, REPORTS, sectionOf } from "@/lib/site";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { PrevNext } from "./PrevNext";
+import { usePreferences } from "./Preferences";
 import { ReadingProgress } from "./ReadingProgress";
 import { Sidebar } from "./Sidebar";
 
@@ -18,12 +20,23 @@ import { Sidebar } from "./Sidebar";
 export function DocShell({ children }: { children: ReactNode }) {
   const raw = usePathname() || "/";
   const pathname = raw.endsWith("/") ? raw : `${raw}/`;
+  const { locale } = usePreferences();
+  const t = chrome(locale);
   const section = sectionOf(pathname);
   const factory = section === "factory";
   const product = section === "product";
   const security = section === "security";
-  const title = factory ? "The AI Factory" : product ? "Product" : security ? "Security" : "Technical docs";
+  const title = factory ? "AI Factory" : product ? t.nav.product : security ? t.nav.security : t.nav.docs;
   const act = factory ? actOf(pathname) : undefined;
+  const groups = groupsFor(section).map((group) => ({
+    ...group,
+    label: actLabel(group.label, locale),
+    pages: group.pages.map((page) => ({
+      ...page,
+      title: factoryPageTitle(page.href, locale, page.title),
+      summary: factoryPageSummary(page.href, locale, page.summary),
+    })),
+  }));
 
   return (
     <div className={factory ? "theme-factory" : "theme-docs"}>
@@ -33,13 +46,13 @@ export function DocShell({ children }: { children: ReactNode }) {
           <div className="sticky top-[calc(var(--header-h)+1.5rem)] max-h-[calc(100vh-var(--header-h)-3rem)] overflow-y-auto py-10 pr-2">
             <p className="mb-5 px-3 text-sm font-semibold text-slate-900">{title}</p>
             <Sidebar
-              label={factory ? "AI Factory chapters" : `${title} pages`}
-              groups={groupsFor(section)}
+              label={factory ? "AI Factory chapters" : `${title} ${t.pages}`}
+              groups={groups}
               pathname={pathname}
               footer={
                 !factory && !product && !security && (
                   <div className="mb-6">
-                    <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Live reports</p>
+                    <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">{t.liveReports}</p>
                     <ul className="space-y-0.5 border-l border-slate-200">
                       {REPORTS.map((r) => (
                         <li key={r.href}>
@@ -60,10 +73,17 @@ export function DocShell({ children }: { children: ReactNode }) {
           {act && (
             <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-factory-50 px-3 py-1 text-xs font-semibold text-factory-700">
               <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-factory-600" />
-              Act {act}
+              {actLabel(act, locale)}
             </p>
           )}
-          <div className={product ? "product-body" : "doc-body"}>{children}</div>
+          {locale === "es" && !pageIsTranslated(pathname) && (
+            <p role="status" className="mb-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800">
+              {t.untranslated}
+            </p>
+          )}
+          <div lang={locale === "es" && !pageIsTranslated(pathname) ? "en" : undefined} className={product ? "product-body" : "doc-body"}>
+            {children}
+          </div>
           <PrevNext pathname={pathname} />
         </div>
       </div>

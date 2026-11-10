@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { FactoryNowView } from "@/components/factory/FactoryNow";
+import { loadFactoryNow } from "@/lib/factory-status";
 import {
   ADOPTION_LEVELS,
   FRAMEWORK_ARCHITECTURE,
@@ -21,22 +23,13 @@ export const metadata = {
 };
 
 const QUICK_START = [
-  "$ cp -R framework/ai-sdlc your-repo/tools/ai-sdlc",
-  "$ python3 tools/ai-sdlc/bin/aisdlc init --name shop --level 2",
-  "  created  .aisdlc/agents/foreman.md",
-  "  …",
-  "  created  aisdlc.toml",
+  "$ python3 framework/ai-sdlc/bin/aisdlc install --path tools/ai-sdlc --name shop --level 2",
   "$ python3 tools/ai-sdlc/bin/aisdlc doctor",
-  "  WARN   gate red/new test fails is a placeholder",
-  "  WARN   gate pre-push/test suite is a placeholder",
-  "doctor: shop · level 2 · 7 gates in 3 stages · 0 ratchets · 4 roles — OK (0 errors, 4 warnings)",
   "$ python3 tools/ai-sdlc/bin/aisdlc gate pre-push --base HEAD~1",
-  "  PASS  commit subjects (exit 0, 0.1s)",
-  "  TODO  test suite — placeholder; configure its command in the profile",
-  "stage pre-push: PASSED",
 ];
 
 export default function FrameworkPage() {
+  const now = loadFactoryNow();
   return (
     <div>
       <PageHeader
@@ -61,6 +54,7 @@ export default function FrameworkPage() {
           How it was derived
         </Link>
       </div>
+      <FactoryNowView model={now} />
 
       <FlowDiagram
         id="factory"
@@ -110,7 +104,7 @@ export default function FrameworkPage() {
             <code>{NOTAIRE_PROFILE_EXCERPT}</code>
           </pre>
         </figure>
-        <Terminal title="Getting started in any repository" lines={QUICK_START} caption="Real output, abridged. Python 3.11+ and git are the only requirements; placeholders show as TODO, never as a pass." />
+        <Terminal title="Getting started in any repository" lines={QUICK_START} caption="Commands from the kit README. install copies the kit and scaffolds the profile. doctor warns when a gate is still a placeholder. A placeholder is TODO, never a pass. Python 3.11+ and git are the requirements." />
       </div>
       <Sources items={[{ label: ".aisdlc/aisdlc.toml", href: src(".aisdlc/aisdlc.toml") }, { label: "example profiles", href: src("framework/ai-sdlc/profiles/") }, { label: "kit README", href: src("framework/ai-sdlc/README.md") }]} />
 
@@ -143,7 +137,10 @@ export default function FrameworkPage() {
       <ul className="list-disc space-y-2 pl-5 text-sm text-slate-700 max-w-3xl">
         <li>Adoption by a second real project and team (the kit is validated on Notaire, a fresh repository and four example stacks).</li>
         <li>Whether near-zero human review time is safe for high-risk changes; the merge rule may need a risk threshold.</li>
-        <li>Real cost per merged change: <Code>aisdlc cost</Code> exists, but no harness records tokens yet.</li>
+        <li>
+          Real cost per merged change: <Code>aisdlc cost</Code> can record a run when something calls it. Telemetry stays off unless the profile turns it on. No harness writes those records by itself yet.
+        </li>
+        <li>ApprovalPort does not approve anything. The doctor line says no-evaluable. A live custody runtime is planned.</li>
       </ul>
       <Sources items={[{ label: "report §10 — evidence, inference, open questions", href: src("docs/300-development/306-ai-sdlc-framework/ai_sdlc_framework.md") }]} />
     </div>

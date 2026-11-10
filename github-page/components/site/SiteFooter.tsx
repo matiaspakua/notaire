@@ -1,13 +1,19 @@
+"use client";
+
 import Link from "next/link";
+import { actLabel, chrome } from "@/lib/i18n";
 import { ASSET_BASE, DEMO, DOCS_PAGES, FACTORY_ACTS, REPORTS, REPO_URL } from "@/lib/site";
 import { GitHubIcon, Logo } from "./icons";
+import { usePreferences } from "./Preferences";
 
 /** The one site footer (#1970). */
 export function SiteFooter({ version }: { version?: string }) {
+  const { locale } = usePreferences();
+  const t = chrome(locale);
   const cols = [
-    { title: "AI Factory", links: FACTORY_ACTS.map((a) => ({ href: a.pages[0].href, label: a.label.replace(/^[IVX]+ · /, "") })) },
-    { title: "Technical docs", links: DOCS_PAGES.slice(0, 6).map((p) => ({ href: p.href, label: p.title })) },
-    { title: "Reports", links: [{ href: "/docs/releases/", label: "Releases" }, ...REPORTS.map((r) => ({ href: r.href, label: r.title }))] },
+    { title: "AI Factory", links: FACTORY_ACTS.map((a) => ({ href: a.pages[0].href, label: actLabel(a.label, locale).replace(/^[IVX]+ · /, "") })) },
+    { title: t.nav.docs, links: DOCS_PAGES.slice(0, 6).map((p) => ({ href: p.href, label: p.title })) },
+    { title: t.reports, links: [{ href: "/docs/releases/", label: t.nav.releases }, ...REPORTS.map((r) => ({ href: r.href, label: r.title }))] },
   ];
   return (
     <footer className="border-t border-slate-200 bg-slate-50">
@@ -18,7 +24,7 @@ export function SiteFooter({ version }: { version?: string }) {
             <span className="font-semibold text-slate-900">Notaire</span>
           </Link>
           <p className="max-w-xs text-sm text-slate-600">
-            A notarial management system, and the AI-assisted software factory that builds it. 2014 – 2026
+            {t.footerBlurb} 2014 – 2026
             {version ? ` · v${version}` : ""}.
           </p>
           <a href={REPO_URL} className="inline-flex items-center gap-2 text-sm font-medium text-slate-700 hover:text-slate-900">
@@ -26,10 +32,10 @@ export function SiteFooter({ version }: { version?: string }) {
           </a>
           <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
             <a href={`${ASSET_BASE}${DEMO.href}`} className="font-medium text-slate-700 hover:text-slate-900 hover:underline">
-              {DEMO.title}
+              {t.demo}
             </a>
             <Link href="/about/" prefetch={false} className="font-medium text-slate-700 hover:text-slate-900 hover:underline">
-              About the author
+              {t.about}
             </Link>
           </p>
         </div>
@@ -49,7 +55,7 @@ export function SiteFooter({ version }: { version?: string }) {
         ))}
       </div>
       <p className="border-t border-slate-200 px-4 py-5 text-center text-xs text-slate-600">
-        Every claim on this site links its source in the repository. Numbers are read from it when the site is built.
+        {t.footerNote}
       </p>
     </footer>
   );

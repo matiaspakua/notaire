@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { issue, src } from "@/lib/ai-sdlc-content";
 import { fmt, loadFactoryFacts } from "@/lib/ai-sdlc-facts";
-import { loadMetrics } from "@/lib/metrics";
+import { coverageIsMeasured, loadMetrics } from "@/lib/metrics";
 import { loadOutcomes } from "@/lib/outcomes";
 import { OutcomesSection } from "@/components/Outcomes";
 import { HISTORY, HistoryChart } from "@/components/CaseStudy";
@@ -97,11 +97,17 @@ export default function ResultsPage() {
         <Card>
           <p className="text-xs font-medium uppercase tracking-wider text-slate-600">Backend coverage (JaCoCo)</p>
           <p className="mt-1 font-display text-4xl font-semibold tabular-nums text-slate-900">
-            {m.coverage.backendInstruction}%<span className="ml-2 text-base font-normal text-slate-600">instructions</span>
+            {coverageIsMeasured(m.coverage) ? `${m.coverage.backendInstruction}%` : "n/a"}
+            <span className="ml-2 text-base font-normal text-slate-600">instructions</span>
           </p>
-          <p className="mt-1 text-sm text-slate-700">{m.coverage.backendBranch}% of branches</p>
+          <p className="mt-1 text-sm text-slate-700">
+            {coverageIsMeasured(m.coverage) ? `${m.coverage.backendBranch}% of branches` : "Branch coverage was not measured for this build."}
+          </p>
           <p className="mt-3 text-xs text-slate-600">
-            From <code className="font-mono">public/metrics.json</code>, regenerated on every deploy (as of {m.coverage.lastUpdated}).{" "}
+            From <code className="font-mono">public/metrics.json</code>
+            {coverageIsMeasured(m.coverage)
+              ? `, regenerated on deploy (as of ${m.coverage.lastUpdated}).`
+              : ". No JaCoCo snapshot was available when this file was generated, so this is not a measured 0%."}{" "}
             <Link href="/coverage/" prefetch={false}>Full report</Link>.
           </p>
         </Card>
