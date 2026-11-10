@@ -16,8 +16,7 @@ export default function ProductNumbersPage() {
       <VersionHistory history={loadReleaseHistory()} />
       {!coverageIsMeasured(metrics.coverage) && (
         <p className="mx-auto max-w-3xl px-6 pt-10 text-sm text-slate-700">
-          The coverage percentages on this page are not a JaCoCo or Vitest run. A shown 0% is the generator&apos;s missing-file fallback, not a measurement.
-          Activity counts above the coverage charts are counted from the repository and GitHub.{" "}
+          The coverage percentages on this page are not a JaCoCo or Vitest run. Missing measurement artifacts publish as null / n/a — never as a fabricated 0%. Activity counts above the coverage charts are counted from the repository and GitHub.{" "}
           <code className="font-mono">lastUpdated: {metrics.coverage.lastUpdated}</code>
         </p>
       )}

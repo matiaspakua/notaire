@@ -1,36 +1,14 @@
 import fs from "fs";
 import path from "path";
+import {
+  coverageIsMeasured,
+  formatCoveragePercent,
+  type CoverageSnapshot,
+  type SiteMetrics,
+} from "@/lib/metrics-core";
 
-export interface CoverageSnapshot {
-  backendInstruction: number;
-  backendBranch: number;
-  frontendComponent: number;
-  e2eTests: number;
-  apiEndpoints: number;
-  lastUpdated: string;
-}
-
-export interface SiteMetrics {
-  generatedAt: string;
-  commits: number;
-  pullRequests: number;
-  markdownFiles: number;
-  testClasses: number;
-  backendTestClasses: number;
-  frontendTestClasses: number;
-  /** Playwright specs under testing/e2e (issue #1982). */
-  e2eSpecFiles: number;
-  apiTestFiles: number;
-  adrCount: number;
-  useCases: number;
-  functionalRequirements: number;
-  dockerServices: number;
-  grafanaDashboards: number;
-  aiTools: number;
-  contributors: number;
-  firstCommitDate: string;
-  coverage: CoverageSnapshot;
-}
+export type { CoverageSnapshot, SiteMetrics };
+export { coverageIsMeasured, formatCoveragePercent };
 
 const DEFAULTS: SiteMetrics = {
   generatedAt: new Date().toISOString(),
@@ -59,11 +37,6 @@ const DEFAULTS: SiteMetrics = {
     lastUpdated: "2026-06-18",
   },
 };
-
-/** True when a coverage snapshot was present. "unknown" means the generator found no JaCoCo file and must not be read as 0%. */
-export function coverageIsMeasured(coverage: CoverageSnapshot): boolean {
-  return coverage.lastUpdated !== "unknown" && coverage.lastUpdated.trim() !== "";
-}
 
 export function loadMetrics(): SiteMetrics {
   try {

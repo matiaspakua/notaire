@@ -4,61 +4,68 @@ import { Es } from "@/components/site/Es";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import type { SiteMetrics } from "@/lib/metrics";
+import { coverageIsMeasured, type SiteMetrics } from "@/lib/metrics-core";
 
 gsap.registerPlugin(ScrollTrigger);
 
 interface CoverageMetric {
   name: string;
   type: string;
-  percentage: number;
+  percentage: number | null;
   color: string;
   trend: string;
   lastUpdate: string;
+  measured: boolean;
 }
 
 function buildCoverageData(metrics: SiteMetrics): CoverageMetric[] {
   const { coverage } = metrics;
+  const measured = coverageIsMeasured(coverage);
   return [
     {
       name: "Backend (JaCoCo)",
       type: "Instruction Coverage",
       percentage: coverage.backendInstruction,
       color: "var(--ai-cyan)",
-      trend: "↑ Increasing",
+      trend: measured ? "↑ Increasing" : "n/a",
       lastUpdate: coverage.lastUpdated,
+      measured,
     },
     {
       name: "Backend (JaCoCo)",
       type: "Branch Coverage",
       percentage: coverage.backendBranch,
       color: "#ff9500",
-      trend: "↑ Increasing",
+      trend: measured ? "↑ Increasing" : "n/a",
       lastUpdate: coverage.lastUpdated,
+      measured,
     },
     {
       name: "Frontend (Vitest)",
       type: "Component Coverage",
       percentage: coverage.frontendComponent,
       color: "var(--spring-green)",
-      trend: "→ Stable",
+      trend: coverage.frontendComponent === null ? "n/a" : "→ Stable",
       lastUpdate: coverage.lastUpdated,
+      measured: coverage.frontendComponent !== null,
     },
     {
       name: "E2E (Playwright)",
       type: "Test Coverage",
       percentage: coverage.e2eTests,
       color: "var(--ai-purple)",
-      trend: "↑ Increasing",
+      trend: coverage.e2eTests === null ? "n/a" : "↑ Increasing",
       lastUpdate: coverage.lastUpdated,
+      measured: coverage.e2eTests !== null,
     },
     {
       name: "API (Bruno)",
       type: "Endpoint Coverage",
       percentage: coverage.apiEndpoints,
       color: "#ff375f",
-      trend: "↑ Increasing",
+      trend: coverage.apiEndpoints === null ? "n/a" : "↑ Increasing",
       lastUpdate: coverage.lastUpdated,
+      measured: coverage.apiEndpoints !== null,
     },
   ];
 }
@@ -66,14 +73,15 @@ function buildCoverageData(metrics: SiteMetrics): CoverageMetric[] {
 function CoverageCard({ metric, index }: { metric: CoverageMetric; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
-  const [animatedPercentage, setAnimatedPercentage] = useState(metric.percentage);
+  const displayTarget = metric.measured && metric.percentage !== null ? metric.percentage : 0;
+  const [animatedPercentage, setAnimatedPercentage] = useState(displayTarget);
 
   useEffect(() => {
     const el = ref.current;
     const progressBar = progressBarRef.current;
     if (!el || !progressBar) return;
     // Show real value immediately
-    setAnimatedPercentage(metric.percentage);
+    setAnimatedPercentage(displayTarget);
 
     gsap.set(el, { opacity: 0, y: 30 });
     gsap.set(progressBar, { scaleX: 0, transformOrigin: "left" });
@@ -90,30 +98,34 @@ function CoverageCard({ metric, index }: { metric: CoverageMetric; index: number
           delay: index * 0.08,
         });
 
-        const proxy = { value: 0 };
-        gsap.to(proxy, {
-          value: metric.percentage,
-          duration: 1.4,
-          ease: "power2.out",
-          delay: index * 0.08 + 0.2,
-          onUpdate() {
-            setAnimatedPercentage(Math.floor(proxy.value));
-          },
-        });
+        if (metric.measured && metric.percentage !== null) {
+          const proxy = { value: 0 };
+          gsap.to(proxy, {
+            value: metric.percentage,
+            duration: 1.4,
+            ease: "power2.out",
+            delay: index * 0.08 + 0.2,
+            onUpdate() {
+              setAnimatedPercentage(Math.floor(proxy.value));
+            },
+          });
 
-        gsap.to(progressBar, {
-          scaleX: 1,
-          duration: 1.4,
-          ease: "power2.out",
-          delay: index * 0.08 + 0.2,
-        });
+          gsap.to(progressBar, {
+            scaleX: 1,
+            duration: 1.4,
+            ease: "power2.out",
+            delay: index * 0.08 + 0.2,
+          });
+        } else {
+          gsap.set(progressBar, { scaleX: 0 });
+        }
       },
     });
 
     return () => {
       trigger.kill();
     };
-  }, [metric.percentage, index]);
+  }, [displayTarget, metric.measured, metric.percentage, index]);
 
   return (
     <Es>
@@ -142,7 +154,7 @@ function CoverageCard({ metric, index }: { metric: CoverageMetric; index: number
           <div className="flex justify-between items-center">
             <span className="text-xs text-neutral-600">Coverage</span>
             <span className="text-sm font-bold" style={{ color: metric.color }}>
-              {animatedPercentage}%
+              {metric.measured && metric.percentage !== null ? `${animatedPercentage}%` : "n/a"}
             </span>
           </div>
         </div>
@@ -232,7 +244,9 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
               <ul className="space-y-3 text-sm">
                 <li className="flex justify-between items-center">
                   <span className="text-neutral-600">Component Coverage (Vitest)</span>
-                  <span className="text-emerald-700 font-mono">{metrics.coverage.frontendComponent}%</span>
+                  <span className="text-emerald-700 font-mono">
+                    {metrics.coverage.frontendComponent === null ? "n/a" : `${metrics.coverage.frontendComponent}%`}
+                  </span>
                 </li>
                 <li className="flex justify-between items-center">
                   <span className="text-neutral-600">Unit / component tests (Vitest)</span>

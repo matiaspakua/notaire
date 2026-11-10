@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { SiteMetrics } from "@/lib/metrics";
+import type { SiteMetrics } from "@/lib/metrics-core";
 
 describe("SiteMetrics test counts (#1982)", () => {
   it("keeps Vitest and Playwright counts on separate fields", () => {

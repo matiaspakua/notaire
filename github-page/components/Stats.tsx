@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Es } from "@/components/site/Es";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import type { SiteMetrics } from "@/lib/metrics";
+import { coverageIsMeasured, type SiteMetrics } from "@/lib/metrics-core";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,6 +14,7 @@ interface StatItem {
   color: string;
   icon: string;
   sub: string;
+  display?: string;
 }
 
 function formatDate(dateStr: string): string {
@@ -27,7 +28,15 @@ function buildStats(metrics: SiteMetrics): StatItem[] {
     { value: metrics.pullRequests, label: "Pull Requests", suffix: "", color: "var(--spring-green)", icon: "🔀", sub: "Opened, from GitHub search" },
     { value: metrics.useCases, label: "Use Cases", suffix: "", color: "var(--ai-purple)", icon: "📋", sub: `CU-01 → CU-${metrics.useCases}` },
     { value: metrics.functionalRequirements, label: "Functional Requirements", suffix: "", color: "#ff9500", icon: "📌", sub: `RF-01 → RF-${metrics.functionalRequirements}` },
-    { value: metrics.coverage.backendInstruction, label: "Test Coverage", suffix: "%", color: "var(--java-orange)", icon: "🎯", sub: metrics.coverage.lastUpdated === "unknown" ? "not measured this build" : "JaCoCo snapshot" },
+    {
+      value: metrics.coverage.backendInstruction ?? 0,
+      label: "Test Coverage",
+      suffix: "%",
+      color: "var(--java-orange)",
+      icon: "🎯",
+      sub: coverageIsMeasured(metrics.coverage) ? "JaCoCo snapshot" : "not measured this build",
+      display: coverageIsMeasured(metrics.coverage) ? undefined : "n/a",
+    },
     { value: metrics.markdownFiles, label: "Docs (Markdown files)", suffix: "", color: "#ff375f", icon: "📚", sub: "Living documentation" },
     { value: metrics.testClasses, label: "Test Classes", suffix: "", color: "#22d3ee", icon: "🧪", sub: "Unit + Integration + E2E" },
     { value: metrics.dockerServices, label: "Docker Services", suffix: "", color: "#a78bfa", icon: "🐳", sub: "App + Infra stacks" },
@@ -114,7 +123,7 @@ function StatCard({ stat, index }: { stat: StatItem; index: number }) {
         {stat.icon}
       </div>
       <div className="text-3xl sm:text-4xl font-bold mb-1 font-mono" style={{ color: stat.color }}>
-        <AnimCounter target={stat.value} suffix={stat.suffix} />
+        {stat.display ?? <AnimCounter target={stat.value} suffix={stat.suffix} />}
       </div>
       <div className="text-neutral-900 text-xs font-semibold mb-1">{stat.label}</div>
       <div className="text-neutral-500 text-xs">{stat.sub}</div>
