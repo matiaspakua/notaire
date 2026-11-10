@@ -216,8 +216,9 @@ run = "cd frontend && npx vitest run {test}"
 expect = "fail"
 paths = ["frontend/src/**/*.test.ts", "frontend/src/**/*.test.tsx"]
 
-# ── Local signal (#2159): same ratchet+skills work as preflight, recorded via gate ─
-# Cheap custom stage so report/HTML/improve see ledger rows. Not part of pre-push
+# ── Local signal (#2159 / #2211): same ratchet+skills work as preflight, recorded via gate ─
+# Cheap adopter-local stage alias so report/HTML/improve see ledger rows. Doctor accepts
+# `signal` (LOCAL_STAGE_ALIASES) — not a mistaken non-canonical id. Not part of pre-push
 # (would recurse through preflight). CI process.yml still calls ratchet/skills directly.
 [[gates]]
 name = "baseline ratchet (shrink-only)"

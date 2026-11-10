@@ -119,6 +119,39 @@ class ForemanPlanTest(unittest.TestCase):
         self.assertIs(False, data["executes"])
         self.assertIs(False, data["sandbox"])
 
+    def test_foreman_plan_lists_unmapped_stages(self):
+        """#2211: gate stages without [[stages]] knobs are listed as unmapped (expected)."""
+        repo = Repo(self, BASE + STAGE)
+        _skill(repo)
+        _catalogs(repo)
+        result = repo.run("foreman", "plan", "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        data = json.loads(result.stdout)
+        self.assertEqual(1, data.get("mapped_count"))
+        unmapped = data.get("unmapped_stages")
+        self.assertIsInstance(unmapped, list, data)
+        self.assertIn("pre-push", unmapped)
+        self.assertNotIn("plan", unmapped)
+        note = (data.get("note") or "").lower()
+        self.assertTrue(
+            "unmapped" in note and ("expected" in note or "until" in note or "knob" in note),
+            note,
+        )
+
+    def test_foreman_doctor_note_mentions_unmapped(self):
+        """#2211: doctor Foreman INFO says unmapped stages are expected until knobs filled."""
+        repo = Repo(self, BASE + STAGE)
+        _skill(repo)
+        _catalogs(repo)
+        result = repo.run("doctor")
+        self.assertEqual(0, result.returncode, output(result))
+        combined = output(result).lower()
+        self.assertIn("foreman", combined)
+        self.assertTrue(
+            "unmapped" in combined and ("knob" in combined or "until" in combined or "expected" in combined),
+            combined,
+        )
+
     def test_stage_filter_narrows_the_plan(self):
         repo = Repo(
             self,

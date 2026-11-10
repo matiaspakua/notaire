@@ -73,11 +73,11 @@ otherwise off. `core.*` / `security.*` cannot relax policy; required gates canno
 | `uninstall [--path P] [--purge]` | Removes the kit tree (+ install manifest). `--purge` also drops scaffold and evidence. | forbidden path |
 | `init --name N [--level 1-4] [--force]` | Scaffolds policy, card, `AGENTS.md`, profile, role agents, change folder. Never overwrites without `--force`. | — |
 | `contract show\|check` | Factory control OpenAPI 3.1.0 path and structural validation (#2136). | contract missing or not 3.1.0 |
-| `doctor` | Validates the profile and the files it names; warns on placeholders and on what the level still lacks; INFO lines for Isolator honesty (ADR-004), Grant write-set policy dry-run (#2194), Foreman routing (`foreman plan` never executes; #2196), ApprovalPort honesty (ADR-005 / #2205: `approvals_live` only after proven mint→verify; never agent self-approve), and ForgePort write/attest honesty (#2208: dry-run default; never fake `write_enabled`). | the policy, a baseline, a context file, a skills dir or a gate script is missing |
+| `doctor` | Validates the profile and the files it names; warns on placeholders and on what the level still lacks; accepts documented local stage alias `signal` (#2211); INFO lines for Isolator honesty (ADR-004), Grant write-set policy dry-run (#2194), Foreman routing (`foreman plan` never executes; unmapped stages expected until knobs filled; #2196/#2211), ApprovalPort honesty (ADR-005 / #2205), ForgePort write/attest honesty (#2208), and lead-time Issue-vs-PR hint (#2211). | the policy, a baseline, a context file, a skills dir or a gate script is missing |
 | `config validate` | Checks factory knobs, trusted plugin manifests, the migration inventory when `[factory] inventory` is set, and stage→catalog refs when `[[stages]]` is declared (#2182). A partial failure is not success. | any of those checks fail |
 | `config show --redacted [--json] [--max-open-prs N]` | Prints the resolved factory view (includes optional `stages` knobs). Refuses to run without `--redacted`. Cannot raise the profile pull-request ceiling. | — (exit 2 on usage or an attempt to raise the ceiling) |
 | `stage list [--json]` | Lists optional per-stage knobs (`agents` / `skills` / `mcp` / `model` / `effort`). Read-only; never executes MCP or agents (#2182). | — |
-| `foreman plan\|route [--stage ID] [--json]` | Resolves a Foreman **dispatch plan** from `[[stages]]` knobs (#2196). Read-only; `executes=false` / `sandbox=false`; never runs agents or MCP; not Isolator OS. | unknown `--stage` (exit 2) |
+| `foreman plan\|route [--stage ID] [--json]` | Resolves a Foreman **dispatch plan** from `[[stages]]` knobs (#2196). Read-only; `executes=false` / `sandbox=false`; lists `unmapped_stages` (expected until knobs filled; #2211); never runs agents or MCP; not Isolator OS. | unknown `--stage` (exit 2) |
 | `plugin list` · `plugin capabilities` · `plugin plan --id ID --var K=V` | Reads trusted manifests. `plan` prints argv and does not run it. Untrusted ids are listed as unavailable. | — (exit 2 when the id is not available) |
 | `inventory check` | Validates `[factory] inventory`. Requires both migrated and planned rows, so a file cannot claim the move is finished. | the inventory is missing, inconsistent, or secret-shaped |
 | `harness list [--json]` · `harness show --id ID [--json]` | Lists profile `[harness.adapters]` plus harness-kind plugin stubs (#2188 Claude Code / Codex / ACP). Always reports `sandbox=false`. Not a commercial Harness product. Stubs stay out of `[plugins] allow` until Owner opts in. | show: source missing or runtime mismatch (exit 1); unknown id (exit 2) |
@@ -98,7 +98,7 @@ otherwise off. `core.*` / `security.*` cannot relax policy; required gates canno
 | `scope [--base R] [--strict]` | Changed paths stay inside the write set that the change record declares under `[scope] heading` (default `### Write set`, globs in backticks; HTML comments ignored). No record with a write set ⇒ *not evaluable* (exit 0, or 1 with `--strict`). | a path outside the write set |
 | `evidence verify [--anchor D]` | The ledger and the cost log are hash-chained (`prev` = SHA-256 of the line before); reports any edited, deleted or reordered record and prints the head digest. A chain cannot see a truncated tail, so anchor the digest outside the agents' reach (PR body, commit) and pass it back with `--anchor`: the check fails if that record is gone. An empty ledger reports NO EVIDENCE, never PASSED. | the chain is broken, or an anchored record is missing |
 | `change new NAME --issue N` · `change check [NAME…]` | Built-in change records; `check` needs every section filled and the issue resolvable by `[tracker] verify`. | an empty section, no issue, an unresolvable issue |
-| `metrics lead-time (--fixture F \| --issue N) [--json]` | Lead time: `issue.created_at` → earliest linked PR `checks_green_at` (fixture #2138 or live read-only ForgePort #2184). | no evaluable PR |
+| `metrics lead-time (--fixture F \| --issue N) [--json]` | Lead time: `issue.created_at` → earliest linked PR `checks_green_at` (fixture #2138 or live read-only ForgePort #2184). `--issue N` is a forge **Issue** number, not a PR number (#2211). | no evaluable PR |
 | `metrics stages [--json] [--since DATE]` | Stage duration medians from the evidence ledger. | — |
 | `report [--json] [--since DATE] [--html PATH] [--lead-time-fixture F]` | Pass rate, median duration and last status per gate; cost; Wilson L0 `autonomy` from allowlisted stages (#2165/#2171). `--html` writes a read-only static monitor (autonomy/stage/cost/lead-time); never renders prompts, diffs or secrets (#2142). | — |
 | `improve propose [--json] [--since DATE]` | Evidence → proposal artifact under `.aisdlc/proposals/` (friction → candidate paths). Empty friction is `no-evaluable` and writes no file (#2157). Never commits; never mutates policy in place (#2141). | — |
@@ -235,7 +235,9 @@ At level 3 and above, an agent role that may merge needs `[protected]` paths; `d
 - **A spec engine** (OpenSpec, Spec Kit…): keep it; call its validator from a `plan` gate.
 - **Another agent runtime** (Claude Code, Cursor, Codex, OpenCode, Copilot): point its entry file at
   `AGENTS.md`; role files in `.aisdlc/agents/` use plain frontmatter every runtime can read.
-- **A custom stage:** any `kebab-case` name works; `doctor` notes it is not canonical.
+- **A custom stage:** any `kebab-case` name works; `doctor` warns it is not canonical —
+  except documented local aliases such as `signal` (Notaire #2159/#2211 ratchet recording;
+  no WARN).
 - **New checks:** any command with an exit code is a gate. Prefer a gate over a sentence in the policy.
 
 ## Development
