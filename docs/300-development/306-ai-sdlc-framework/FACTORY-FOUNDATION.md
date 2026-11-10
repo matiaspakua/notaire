@@ -26,11 +26,20 @@ Grants + write set + agent never commits; YAML ≠ OS isolation. Kit stub /
 runtime exists. Do not invent Owner `runtime_*`. Isolator must eventually **enforce**
 what `aisdlc committer` already **checks**.
 
+**ApprovalPort custody boundary** ([#2190](https://github.com/matiaspakua/notaire/issues/2190),
+[ADR-005](../../../framework/ai-sdlc/docs/adr/ADR-005-approval-port.md)): design-only.
+Token + channel authority; SSH/DSSE (or equivalent) mint/verify; agent never
+self-approves. Kit stub / `aisdlc doctor` report `no-evaluable` +
+`approvals_live=false` / `agent_can_approve=false` until a real custody runtime
+exists. No fake approvals. Wilson L1+ auto-promotion is **refused** until
+Owner-chosen multi-stage evidence volume exists (autonomy stays `no-evaluable`).
+
 The canonical root is [`framework/ai-sdlc`](../../../framework/ai-sdlc/README.md).
 Decisions: [ADR-001](../../../framework/ai-sdlc/docs/adr/ADR-001-canonical-root.md),
 [ADR-002](../../../framework/ai-sdlc/docs/adr/ADR-002-ports-and-trust.md),
 [ADR-003](../../../framework/ai-sdlc/docs/adr/ADR-003-standards.md),
-[ADR-004](../../../framework/ai-sdlc/docs/adr/ADR-004-isolator-runtime.md).
+[ADR-004](../../../framework/ai-sdlc/docs/adr/ADR-004-isolator-runtime.md),
+[ADR-005](../../../framework/ai-sdlc/docs/adr/ADR-005-approval-port.md).
 
 This slice does not move `workspace/sdlc`, `local-ai/sdlc`, agent prompts, or skills.
 The map of what moved and what did not is `.aisdlc/migration-inventory.toml`.
