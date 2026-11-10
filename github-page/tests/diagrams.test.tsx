@@ -1,12 +1,14 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { FlowDiagram } from "@/components/diagrams/FlowDiagram";
+import { FlowDiagram, nodeTextOverflows } from "@/components/diagrams/FlowDiagram";
 import { FlywayTimeline } from "@/components/diagrams/FlywayTimeline";
 import { HexagonMap } from "@/components/diagrams/HexagonMap";
 import { PipelineMap } from "@/components/diagrams/PipelineMap";
 import { TestPyramid } from "@/components/diagrams/TestPyramid";
 import { contractFlow, factoryFlow, qualityGateFlow, requestFlow, trustBoundaryFlow } from "@/lib/diagram-flows";
+import { tr } from "@/lib/i18n/es";
+import "@/lib/i18n/strings";
 
 const live = (id: string) => document.getElementById(`${id}-live`) as HTMLElement;
 
@@ -79,6 +81,41 @@ describe("interactive diagrams (#1977)", () => {
         for (const e of s.edges ?? []) expect(e).toBeLessThan(f.edges.length);
       }
     }
+  });
+
+  it("keeps every translated node label inside its box", () => {
+    const flows = [factoryFlow(), qualityGateFlow(), trustBoundaryFlow(), requestFlow(), contractFlow({ paths: 12, operations: 40 }, 80)];
+    const overflows: string[] = [];
+    for (const locale of ["en", "es"] as const) {
+      for (const flow of flows) {
+        for (const node of flow.nodes) {
+          const width = node.w ?? 150;
+          const label = tr(locale, node.label);
+          if (nodeTextOverflows(label, width, "label")) overflows.push(`${locale} label "${label}" w=${width}`);
+          if (node.sub) {
+            const sub = tr(locale, node.sub);
+            if (nodeTextOverflows(sub, width, "sub")) overflows.push(`${locale} sub "${sub}" w=${width}`);
+          }
+        }
+      }
+    }
+    expect(overflows).toEqual([]);
+  });
+
+  it("keeps factory and quality nodes from sitting on each other", () => {
+    const hits: string[] = [];
+    for (const flow of [factoryFlow(), qualityGateFlow()]) {
+      for (let i = 0; i < flow.nodes.length; i += 1) {
+        for (let j = i + 1; j < flow.nodes.length; j += 1) {
+          const a = flow.nodes[i];
+          const b = flow.nodes[j];
+          const gapX = Math.abs(a.x - b.x) - (a.w ?? 150) / 2 - (b.w ?? 150) / 2;
+          const gapY = Math.abs(a.y - b.y) - 54;
+          if (gapX < 8 && gapY < 8) hits.push(`${a.id} overlaps ${b.id}`);
+        }
+      }
+    }
+    expect(hits).toEqual([]);
   });
 
   it("tells the factory story that is actually on main", () => {

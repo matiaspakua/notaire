@@ -20,9 +20,9 @@ export function requestFlow(): Flow {
     { id: "dom", label: "Money · BudgetCharges", sub: "domain/payment", x: 715, y: 40, w: 190, kind: "core" },
     { id: "bp", label: "BudgetLookupPort", sub: "port/out", x: 930, y: 80, w: 170, kind: "port" },
     { id: "rp", label: "PaymentRepositoryPort", sub: "port/out", x: 930, y: 230, w: 180, kind: "port" },
-    { id: "ba", label: "BudgetLookupAdapter", sub: "adapter/out/persistence", x: 1140, y: 80, w: 180, kind: "adapter" },
-    { id: "pa", label: "PaymentPersistenceAdapter", sub: "adapter/out/persistence", x: 1140, y: 230, w: 200, kind: "adapter" },
-    { id: "db", label: "PostgreSQL", sub: "Flyway schema", x: 1340, y, w: 140, kind: "store" },
+    { id: "ba", label: "BudgetLookupAdapter", sub: "adapter/out/persistence", x: 1160, y: 80, w: 250, kind: "adapter" },
+    { id: "pa", label: "PaymentPersistenceAdapter", sub: "adapter/out/persistence", x: 1160, y: 230, w: 250, kind: "adapter" },
+    { id: "db", label: "PostgreSQL", sub: "Flyway schema", x: 1450, y, w: 150, kind: "store" },
   ];
   const edges: FlowEdge[] = [
     { from: "ui", to: "ctl", label: "JSON + JWT" }, // 0
@@ -86,7 +86,7 @@ export function requestFlow(): Flow {
       source: { label: "PaymentWebMapper.java", href: src(`${JAVA}/adapter/in/web/payment/PaymentWebMapper.java`) },
     },
   ];
-  return { nodes, edges, steps, width: 1420, height: 290 };
+  return { nodes, edges, steps, width: 1560, height: 290 };
 }
 
 /** The committed OpenAPI document and the checks that hang off it. */
@@ -97,8 +97,8 @@ export function contractFlow(ops: { paths: number; operations: number } | null, 
     { id: "diff", label: "oasdiff", sub: "vs the base branch", x: 620, y: 45, w: 170, kind: "check" },
     { id: "types", label: "api.generated.ts", sub: "openapi-typescript", x: 620, y: 150, w: 180, kind: "check" },
     { id: "reach", label: "Reachability", sub: "contracts/tests", x: 620, y: 255, w: 170, kind: "check" },
-    { id: "fail", label: "PR fails", sub: "unless accepted", x: 870, y: 45, w: 150, kind: "fail" },
-    { id: "http", label: "Front-end adapters", sub: "adapters/http", x: 870, y: 150, w: 180, kind: "adapter" },
+    { id: "fail", label: "PR fails", sub: "unless accepted", x: 920, y: 45, w: 220, kind: "fail" },
+    { id: "http", label: "Front-end adapters", sub: "adapters/http", x: 920, y: 150, w: 240, kind: "adapter" },
     { id: "bruno", label: "Bruno suite", sub: `${brunoRequests} requests`, x: 870, y: 255, w: 160, kind: "ok" },
   ];
   const edges: FlowEdge[] = [
@@ -147,7 +147,7 @@ export function contractFlow(ops: { paths: number; operations: number } | null, 
       source: { label: "backend-api/api-test", href: src("backend-api/api-test") },
     },
   ];
-  return { nodes, edges, steps, width: 980, height: 300 };
+  return { nodes, edges, steps, width: 1100, height: 300 };
 }
 
 /**
@@ -159,14 +159,14 @@ export function contractFlow(ops: { paths: number; operations: number } | null, 
  */
 export function factoryFlow(): Flow {
   const nodes: FlowNode[] = [
-    { id: "issue", label: "Issue", sub: "linked to a use case", x: 140, y: 70, w: 160, kind: "actor" },
-    { id: "g1", label: "Gate 1", sub: "OpenSpec, then validate", x: 340, y: 70, w: 180, kind: "port" },
-    { id: "g2", label: "Gate 2", sub: "tests seen failing", x: 540, y: 70, w: 170, kind: "fail" },
-    { id: "impl", label: "Implement", sub: "minimum code", x: 740, y: 70, w: 160, kind: "core" },
+    { id: "issue", label: "Issue", sub: "linked to a use case", x: 120, y: 70, w: 210, kind: "actor" },
+    { id: "g1", label: "Gate 1", sub: "OpenSpec, then validate", x: 360, y: 70, w: 230, kind: "port" },
+    { id: "g2", label: "Gate 2", sub: "tests seen failing", x: 590, y: 70, w: 180, kind: "fail" },
+    { id: "impl", label: "Implement", sub: "minimum code", x: 800, y: 70, w: 170, kind: "core" },
     { id: "g3", label: "Gate 3", sub: "preflight.sh --full", x: 140, y: 190, w: 180, kind: "check" },
     { id: "g4", label: "Gate 4", sub: "Foreman or Owner", x: 360, y: 190, w: 180, kind: "port" },
     { id: "g5", label: "Gate 5", sub: "tag, smoke, close", x: 570, y: 190, w: 170, kind: "ok" },
-    { id: "done", label: "Closed", sub: "issue done", x: 760, y: 190, w: 140, kind: "ok" },
+    { id: "done", label: "Closed", sub: "issue done", x: 780, y: 190, w: 150, kind: "ok" },
     { id: "kit", label: "aisdlc kit", sub: "exit codes only", x: 250, y: 320, w: 180, kind: "check" },
     { id: "back", label: "Refusal", sub: "back to work", x: 560, y: 320, w: 200, kind: "fail" },
   ];
@@ -239,7 +239,7 @@ export function factoryFlow(): Flow {
       edges: [7, 8, 9],
     },
   ];
-  return { nodes, edges, steps, width: 900, height: 390 };
+  return { nodes, edges, steps, width: 920, height: 390 };
 }
 
 /** Where a change is proved: the agent machine, a version tag, main, and the schedule. */
