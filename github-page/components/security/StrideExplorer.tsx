@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { tr } from "@/lib/i18n/es";
+import "@/lib/i18n/strings";
 import { STATUS_STYLE, STRIDE, type StrideItem } from "@/lib/security-content";
+import { usePreferences } from "@/components/site/Preferences";
 
 function Badge({ status }: { status: StrideItem["status"] }) {
   return <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${STATUS_STYLE[status]}`}>{status}</span>;
@@ -9,6 +12,7 @@ function Badge({ status }: { status: StrideItem["status"] }) {
 
 /** Click or arrow-key through STRIDE. The list is the accessible version of the diagram. */
 export function StrideExplorer() {
+  const { locale } = usePreferences();
   const [index, setIndex] = useState(0);
   const current = STRIDE[index];
   return (
@@ -37,14 +41,14 @@ export function StrideExplorer() {
                 selected ? "border-[var(--accent-600)] bg-[var(--accent-50)] text-[var(--accent-700)]" : "border-slate-200 text-slate-700 hover:border-slate-400"
               }`}
             >
-              <span className="font-mono">{item.letter}</span> {item.name}
+              <span className="font-mono">{item.letter}</span> {tr(locale, item.name)}
             </button>
           );
         })}
       </div>
       <div role="tabpanel" id="stride-panel" aria-labelledby={`stride-tab-${current.letter}`} className="mt-5">
-        <h3 className="font-display text-2xl font-semibold text-slate-900">{current.name}</h3>
-        <p className="mt-2 max-w-3xl text-slate-700">{current.question}</p>
+        <h3 className="font-display text-2xl font-semibold text-slate-900">{tr(locale, current.name)}</h3>
+        <p className="mt-2 max-w-3xl text-slate-700">{tr(locale, current.question)}</p>
         <ul className="mt-4 space-y-3">
           {current.items.map((item) => (
             <li key={item.id} className="rounded-xl border border-slate-200 px-4 py-3">
@@ -52,7 +56,7 @@ export function StrideExplorer() {
                 <span className="font-mono text-sm font-semibold text-slate-900">{item.id}</span>
                 <Badge status={item.status} />
               </div>
-              <p className="mt-1 text-sm leading-relaxed text-slate-700">{item.summary}</p>
+              <p className="mt-1 text-sm leading-relaxed text-slate-700">{tr(locale, item.summary)}</p>
             </li>
           ))}
         </ul>

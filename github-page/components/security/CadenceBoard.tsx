@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { tr } from "@/lib/i18n/es";
+import "@/lib/i18n/strings";
 import { CADENCE, TRIGGER_LABEL, type CadenceTrigger } from "@/lib/security-content";
+import { usePreferences } from "@/components/site/Preferences";
 
 const FILTERS: { id: "all" | CadenceTrigger; label: string }[] = [
   { id: "all", label: "All" },
@@ -15,6 +18,7 @@ const FILTERS: { id: "all" | CadenceTrigger; label: string }[] = [
 
 /** Filter the public tool cadence. Workflow names are the files in .github/workflows. */
 export function CadenceBoard() {
+  const { locale } = usePreferences();
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["id"]>("all");
   const rows = CADENCE.entries.filter((entry) => {
     if (filter === "all") return true;
@@ -24,7 +28,7 @@ export function CadenceBoard() {
   });
   return (
     <div>
-      <div role="group" aria-label="Filter tools by when they run" className="flex flex-wrap gap-2">
+      <div role="group" aria-label={tr(locale, "Filter tools by when they run")} className="flex flex-wrap gap-2">
         {FILTERS.map((item) => {
           const pressed = filter === item.id;
           return (
@@ -37,19 +41,19 @@ export function CadenceBoard() {
                 pressed ? "border-[var(--accent-600)] bg-[var(--accent-50)] text-[var(--accent-700)]" : "border-slate-200 text-slate-700 hover:border-slate-400"
               }`}
             >
-              {item.label}
+              {tr(locale, item.label)}
             </button>
           );
         })}
       </div>
-      <p className="mt-3 text-sm text-slate-600">{CADENCE.disclaimer}</p>
+      <p className="mt-3 text-sm text-slate-600">{tr(locale, CADENCE.disclaimer)}</p>
       <div className="mt-4 overflow-x-auto rounded-2xl border border-slate-200" tabIndex={0}>
         <table className="min-w-full text-sm">
           <thead className="bg-slate-50 text-left text-slate-600">
             <tr>
-              <th className="px-4 py-3 font-medium">Tool</th>
-              <th className="px-4 py-3 font-medium">When</th>
-              <th className="px-4 py-3 font-medium">Where</th>
+              <th className="px-4 py-3 font-medium">{tr(locale, "Tool")}</th>
+              <th className="px-4 py-3 font-medium">{tr(locale, "When")}</th>
+              <th className="px-4 py-3 font-medium">{tr(locale, "Where")}</th>
             </tr>
           </thead>
           <tbody>
@@ -59,8 +63,8 @@ export function CadenceBoard() {
                   {row.tool}
                   <div className="font-mono text-[11px] font-normal text-slate-500">{row.workflow ?? row.local}</div>
                 </th>
-                <td className="px-4 py-3 text-slate-700">{TRIGGER_LABEL[row.trigger]}</td>
-                <td className="px-4 py-3 text-slate-700">{row.where}</td>
+                <td className="px-4 py-3 text-slate-700">{tr(locale, TRIGGER_LABEL[row.trigger])}</td>
+                <td className="px-4 py-3 text-slate-700">{tr(locale, row.where)}</td>
               </tr>
             ))}
           </tbody>

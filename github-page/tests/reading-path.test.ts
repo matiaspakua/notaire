@@ -21,6 +21,6 @@ describe("factory reading order (#2201)", () => {
     expect(pageIsTranslated("/ai-sdlc/")).toBe(true);
     expect(pageIsTranslated("/ai-sdlc")).toBe(true);
     expect(pageIsTranslated("/docs/hexagonal/")).toBe(false);
-    expect(pageIsTranslated("/product/story/")).toBe(false);
+    expect(pageIsTranslated("/product/story/")).toBe(true);
   });
 });

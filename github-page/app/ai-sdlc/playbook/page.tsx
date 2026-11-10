@@ -1,5 +1,6 @@
 import { PLAYBOOK, PRODUCTION_READY, src } from "@/lib/ai-sdlc-content";
 import { Card, PageHeader, SectionTitle, Sources } from "@/components/FactoryUI";
+import { T } from "@/components/site/T";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata("/ai-sdlc/playbook/");
@@ -10,12 +11,7 @@ export default function PlaybookPage() {
       <PageHeader
         eyebrow="AI Factory · Playbook"
         title="Apply an AI SDLC to your own project"
-        lead={
-          <>
-            What carries over from Notaire to any codebase that wants AI agents to ship production-ready software. Each step
-            links the Notaire file that implements it, so you can copy the shape, not just the idea.
-          </>
-        }
+        lead="What carries over from Notaire to any codebase that wants AI agents to ship production-ready software. Each step links the Notaire file that implements it, so you can copy the shape, not just the idea."
       />
       <ol className="space-y-4">
         {PLAYBOOK.map((p, i) => (
@@ -25,8 +21,8 @@ export default function PlaybookPage() {
                 {i + 1}
               </span>
               <div>
-                <h3 className="font-semibold text-slate-900">{p.title}</h3>
-                <p className="mt-2 text-sm text-slate-600 leading-relaxed">{p.body}</p>
+                <h3 className="font-semibold text-slate-900"><T text={p.title} /></h3>
+                <p className="mt-2 text-sm text-slate-600 leading-relaxed"><T text={p.body} /></p>
                 <Sources items={p.notaire} />
               </div>
             </Card>
@@ -36,13 +32,12 @@ export default function PlaybookPage() {
 
       <SectionTitle>What “production-ready” means here</SectionTitle>
       <p className="text-sm text-slate-600 max-w-3xl">
-        The factory is only as good as the evidence it leaves. These are the artifacts Notaire&apos;s gates produce or check
-        before a change counts as shipped.
+        <T text="The factory is only as good as the evidence it leaves. These are the artifacts Notaire's gates produce or check before a change counts as shipped." />
       </p>
       <div className="mt-4 grid md:grid-cols-2 gap-3">
         {PRODUCTION_READY.map((p) => (
           <Card key={p.need} className="flex items-center justify-between gap-4">
-            <span className="text-sm text-slate-800">{p.need}</span>
+            <span className="text-sm text-slate-800"><T text={p.need} /></span>
             <Sources items={[p.evidence]} />
           </Card>
         ))}
@@ -50,10 +45,10 @@ export default function PlaybookPage() {
 
       <SectionTitle>Guiding principles for adapting</SectionTitle>
       <ul className="list-disc pl-5 space-y-2 text-sm text-slate-700 max-w-3xl">
-        <li><strong>Adapt, do not replace.</strong> Keep vendor engines and skills; extend them through their own extension points.</li>
-        <li><strong>One source of truth.</strong> The governance process lives in one document; tools point at it and never copy it.</li>
-        <li><strong>Agent-agnostic.</strong> Deliver the rules through a channel every tool reads (the spec CLI), not a feature of one assistant.</li>
-        <li><strong>Mechanical over aspirational.</strong> A rule without an exit code is a wish.</li>
+        <li><T text="Adapt, do not replace. Keep vendor engines and skills; extend them through their own extension points." /></li>
+        <li><T text="One source of truth. The governance process lives in one document; tools point at it and never copy it." /></li>
+        <li><T text="Agent-agnostic. Deliver the rules through a channel every tool reads (the spec CLI), not a feature of one assistant." /></li>
+        <li><T text="Mechanical over aspirational. A rule without an exit code is a wish." /></li>
       </ul>
       <Sources items={[{ label: "NOTAIRE-ADAPTATIONS §11 — adapting OpenSpec to a new project", href: src("docs/openspec/NOTAIRE-ADAPTATIONS.md") }]} />
     </div>

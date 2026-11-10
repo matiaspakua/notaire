@@ -10,13 +10,7 @@ export default function GovernancePage() {
       <PageHeader
         eyebrow="AI Factory · Governance"
         title="One board, one state, many agents"
-        lead={
-          <>
-            Humans and every agent runtime share one coordination protocol on GitHub: Issues, a single Project board, a
-            label taxonomy, milestone trains and pull requests. No runtime keeps a private backlog, and scripts check that
-            Issue state, board Status and labels agree.
-          </>
-        }
+        lead="Humans and every agent runtime share one coordination protocol on GitHub: Issues, a single Project board, a label taxonomy, milestone trains and pull requests. No runtime keeps a private backlog, and scripts check that Issue state, board Status and labels agree."
       />
 
       <SectionTitle>Issue lifecycle</SectionTitle>

@@ -19,13 +19,7 @@ export default function QualityGatesPage() {
       <PageHeader
         eyebrow="AI Factory · Quality gates"
         title="Gates are commands, not opinions"
-        lead={
-          <>
-            Each gate is a script that exits non-zero. The pull-request proof is <Code>preflight.sh --full</Code> on the
-            agent machine. GitHub runs the product workflows on a version tag or when someone dispatches them. When a gate
-            is added or changed, <Code>preflight.sh</Code> changes in the same pull request.
-          </>
-        }
+        lead="Each gate is a script that exits non-zero. The pull-request proof is preflight.sh --full on the agent machine. GitHub runs the product workflows on a version tag or when someone dispatches them. When a gate is added or changed, preflight.sh changes in the same pull request."
       />
       <Diagram chart={QUALITY_GATE_PIPELINE} caption="Local preflight is the pull-request proof. Product CI and image publish run on a version tag. Pages and Release Please run on main. ZAP and CodeQL also have a Monday schedule." />
 

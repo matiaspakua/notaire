@@ -1,4 +1,6 @@
 "use client";
+import { Es } from "@/components/site/Es";
+import { T } from "@/components/site/T";
 import { useEffect, useRef, useState } from "react";
 
 const services = [
@@ -116,6 +118,7 @@ export function InfraStack({ serviceCount }: { serviceCount: number }) {
   }, [active]);
 
   return (
+    <Es>
     <section className="py-32 px-6 relative overflow-hidden" style={{ background: "var(--bg-dark)" }}>
       <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at bottom, rgba(10,132,255,0.06) 0%, transparent 60%)" }} />
       <div className="max-w-6xl mx-auto relative z-10">
@@ -123,7 +126,7 @@ export function InfraStack({ serviceCount }: { serviceCount: number }) {
         <div className="text-center mb-16">
           <p className="text-brand-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">Infrastructure</p>
           <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
-            DevSecOps <span className="grad-cyan">Platform</span>
+            <T text="DevSecOps Platform" />
           </h2>
           <p className="text-neutral-600 max-w-2xl mx-auto">
             {serviceCount} containerized services in two Docker Compose stacks: the application and the observability platform.
@@ -205,5 +208,6 @@ export function InfraStack({ serviceCount }: { serviceCount: number }) {
         </div>
       </div>
     </section>
+    </Es>
   );
 }

@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { usePreferences } from "@/components/site/Preferences";
+import { ES, tr } from "@/lib/i18n/es";
+import "@/lib/i18n/strings";
 
 type Props = {
   chart: string;
@@ -66,7 +69,18 @@ function themeVariables(host: HTMLElement) {
   };
 }
 
+function localizeChart(chart: string, locale: string): string {
+  if (locale !== "es") return chart;
+  const keys = Object.keys(ES)
+    .filter((key) => key.length >= 18 && chart.includes(key))
+    .sort((a, b) => b.length - a.length);
+  return keys.reduce((out, key) => out.split(key).join(ES[key]), chart);
+}
+
 export function MermaidDiagram({ chart, className, flowchart, label = "Diagram", wide = false }: Props) {
+  const { locale } = usePreferences();
+  const localized = useMemo(() => localizeChart(chart, locale), [chart, locale]);
+  const name = tr(locale, label);
   const hostRef = useRef<HTMLDivElement>(null);
   const reactId = useId().replace(/:/g, "");
   const [error, setError] = useState<string | null>(null);
@@ -86,7 +100,7 @@ export function MermaidDiagram({ chart, className, flowchart, label = "Diagram",
           flowchart: { htmlLabels: true, curve: "basis", padding: 12, ...(flowchart ?? {}) },
           sequence: { mirrorActors: false, boxMargin: 8 },
         });
-        const { svg } = await mermaid.render(`mmd-${reactId}`, chart.trim());
+        const { svg } = await mermaid.render(`mmd-${reactId}`, localized.trim());
         if (!cancelled && hostRef.current) {
           hostRef.current.innerHTML = svg;
           const el = hostRef.current.querySelector("svg");
@@ -101,7 +115,7 @@ export function MermaidDiagram({ chart, className, flowchart, label = "Diagram",
     return () => {
       cancelled = true;
     };
-  }, [chart, reactId, flowchart]);
+  }, [localized, reactId, flowchart]);
 
   if (error) {
     return (
@@ -113,7 +127,7 @@ export function MermaidDiagram({ chart, className, flowchart, label = "Diagram",
     <div
       ref={hostRef}
       role="img"
-      aria-label={label}
+      aria-label={name}
       tabIndex={0}
       data-wide={wide ? "true" : undefined}
       className={`diagram-frame ${className ?? "rounded-2xl border border-slate-200 bg-white p-4"}`}

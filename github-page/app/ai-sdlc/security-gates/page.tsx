@@ -11,13 +11,7 @@ export default function SecurityGatesPage() {
       <PageHeader
         eyebrow="AI Factory · Security gates"
         title="The pull request is not the security scan"
-        lead={
-          <>
-            Agents prove the security catalog on their machine with <Code>preflight.sh --full</Code>. GitHub runs the
-            product scanners on a version tag, on a Monday schedule, or when someone dispatches the workflow. A quiet
-            pull request is the design, not a skipped job.
-          </>
-        }
+        lead="Agents prove the security catalog on their machine with preflight.sh --full. GitHub runs the product scanners on a version tag, on a Monday schedule, or when someone dispatches the workflow. A quiet pull request is the design, not a skipped job."
       />
       <div className="grid gap-4 md:grid-cols-3">
         <Card>

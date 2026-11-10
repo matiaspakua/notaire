@@ -21,6 +21,8 @@ const WORK = path.join(PAGE, ".demo-build");
 const OUT = path.join(PAGE, "out", "demo");
 const BASE = "/notaire/demo";
 const BANNER = "Demo – sample data, read-only";
+const BANNER_ES = "Demo: datos de ejemplo, solo lectura";
+const DEMO_LANG = `(function(){try{var raw=localStorage.getItem("notaire.lang");var es=raw==="es"||(raw!=="en"&&String(navigator.language||"").toLowerCase().indexOf("es")===0);document.querySelectorAll("[data-demo-en]").forEach(function(el){el.hidden=es});document.querySelectorAll("[data-demo-es]").forEach(function(el){el.hidden=!es});var box=document.querySelector("[data-demo-banner]");if(box)box.setAttribute("aria-label",es?"Aviso de la demo":"Demo notice");}catch(e){}})();`;
 
 // Inlined, so it runs while the HTML is parsed, before any async app chunk can call fetch.
 const SHIM = `window.__NOTAIRE_DEMO_BASE__=${JSON.stringify(BASE + "/")};\n` + readFileSync(path.join(HERE, "demo-shim.js"), "utf8");
@@ -101,8 +103,13 @@ patch("src/app/layout.tsx", [
               data-demo-banner=""
               style={{ position: "fixed", insetInline: 0, bottom: 0, zIndex: 60, background: "#0f172a", color: "#f8fafc", padding: "0.6rem 1rem", fontSize: "0.875rem", lineHeight: 1.4, textAlign: "center", boxShadow: "0 -2px 8px rgb(0 0 0 / 0.2)" }}
             >
-              <strong>${BANNER}.</strong> Sign in with any name and password; nothing you change is saved. Data recorded ${recorded}.{" "}
-              <a href="/notaire/" style={{ color: "#fcd34d", textDecoration: "underline" }}>Back to the project site</a>
+              <script dangerouslySetInnerHTML={{ __html: ${JSON.stringify(DEMO_LANG)} }} />
+              <strong data-demo-en="">${BANNER}.</strong>
+              <strong data-demo-es="" hidden>${BANNER_ES}.</strong>{" "}
+              <span data-demo-en="">Sign in with any name and password; nothing you change is saved. Data recorded ${recorded}.</span>
+              <span data-demo-es="" hidden>Entra con cualquier nombre y contraseña. Nada de lo que cambies se guarda. Datos grabados ${recorded}.</span>{" "}
+              <a data-demo-en="" href="/notaire/" style={{ color: "#fcd34d", textDecoration: "underline" }}>Back to the project site</a>
+              <a data-demo-es="" href="/notaire/" hidden style={{ color: "#fcd34d", textDecoration: "underline" }}>Volver al sitio del proyecto</a>
             </div>`],
 ]);
 replaceFile("next.config.ts", ['output: "standalone"'], `import type { NextConfig } from "next";

@@ -1,6 +1,7 @@
 import { CREW, ENTRY_POINTS, HARNESS_PHASES, ROLES_CHART, SKILL_STAGES, agent, skill, src } from "@/lib/ai-sdlc-content";
 import { fmt, loadFactoryFacts } from "@/lib/ai-sdlc-facts";
 import { Card, Code, Diagram, PageHeader, SectionTitle, Sources, Table } from "@/components/FactoryUI";
+import { Fill } from "@/components/site/T";
 import { pageMetadata } from "@/lib/site";
 import { Swimlane } from "@/components/Swimlane";
 
@@ -14,11 +15,10 @@ export default function AgentsPage() {
         eyebrow="AI Factory · Agents & skills"
         title="A crew, not a chatbot"
         lead={
-          <>
-            Three roles carry authority: Owner, Foreman and Worker. Specialist agents ({fmt(f.agents)} definitions) work
-            from one catalog of {fmt(f.skills)} skills. Multi-part work is delegated to specialized sub-agents in parallel by
-            default, each with an explicit scope and a model tier matched to the task.
-          </>
+          <Fill
+            text="Three roles carry authority: Owner, Foreman and Worker. Specialist agents ({agents} definitions) work from one catalog of {skills} skills. Multi-part work is delegated to specialized sub-agents in parallel by default, each with an explicit scope and a model tier matched to the task."
+            values={{ agents: fmt(f.agents), skills: fmt(f.skills) }}
+          />
         }
       />
       <Diagram chart={ROLES_CHART} caption="The Foreman briefs specialists and reviews their evidence. The Owner holds the decisions." />

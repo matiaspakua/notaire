@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
+import { Es } from "@/components/site/Es";
 import type { SiteMetrics } from "@/lib/metrics";
 
 function buildFacts(metrics: SiteMetrics, java: string | null) {
@@ -108,6 +109,7 @@ export function FunFacts({ metrics, java }: { metrics: SiteMetrics; java: string
   }, []);
 
   return (
+    <Es>
     <section className="py-32 px-6" style={{ background: "var(--bg-mid)" }}>
       <div className="max-w-6xl mx-auto">
 
@@ -115,7 +117,7 @@ export function FunFacts({ metrics, java }: { metrics: SiteMetrics; java: string
         <div className="text-center mb-14">
           <p className="text-amber-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">Trivia</p>
           <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
-            Fun <span className="grad-gold">Facts</span>
+            Fun Facts
           </h2>
           <p className="text-neutral-600 max-w-xl mx-auto">Numbers and moments that make this project unique.</p>
         </div>
@@ -135,7 +137,7 @@ export function FunFacts({ metrics, java }: { metrics: SiteMetrics; java: string
         <div className="text-center mb-14">
           <p className="text-red-600 text-sm font-mono font-bold tracking-widest mb-4 uppercase">Battle Scars</p>
           <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
-            Major <span className="grad-fire">Challenges</span>
+            Major Challenges
           </h2>
           <p className="text-neutral-600 max-w-xl mx-auto">Real production incidents and architectural hurdles that shaped how the project works today.</p>
         </div>
@@ -159,5 +161,6 @@ export function FunFacts({ metrics, java }: { metrics: SiteMetrics; java: string
         </div>
       </div>
     </section>
+    </Es>
   );
 }

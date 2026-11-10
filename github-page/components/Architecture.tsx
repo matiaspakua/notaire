@@ -1,4 +1,6 @@
 "use client";
+import { Es } from "@/components/site/Es";
+import { T } from "@/components/site/T";
 import { useEffect, useRef } from "react";
 import type { Versions } from "@/lib/tech-facts";
 
@@ -77,14 +79,15 @@ export function Architecture({ versions }: { versions: Versions }) {
   }, []);
 
   return (
+    <Es>
     <section id="architecture" className="py-32 px-6" style={{ background: "var(--bg-dark)" }}>
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <p className="text-emerald-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">System Architecture</p>
           <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
-            Modern <span className="grad-green">Layered Platform</span>
+            <T text="Modern Layered Platform" />
           </h2>
-          <p className="text-neutral-600 max-w-xl mx-auto">From a single Java Swing file to a multi-layer containerized platform.</p>
+          <p className="text-neutral-600 max-w-xl mx-auto"><T text="From a single Java Swing file to a multi-layer containerized platform." /></p>
         </div>
 
         <div ref={ref} className="flex flex-col gap-4">
@@ -121,5 +124,6 @@ export function Architecture({ versions }: { versions: Versions }) {
         </div>
       </div>
     </section>
+    </Es>
   );
 }

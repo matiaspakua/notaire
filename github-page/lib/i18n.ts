@@ -1,6 +1,8 @@
 import type { Locale } from "./preferences";
+import { TRANSLATED_ROUTES } from "./i18n/es";
+import "./i18n/strings";
 
-const TRANSLATED = new Set(["/", "/ai-sdlc/"]);
+const TRANSLATED = new Set<string>(TRANSLATED_ROUTES);
 
 export function pageIsTranslated(pathname: string): boolean {
   const path = pathname.endsWith("/") ? pathname : `${pathname}/`;
@@ -76,6 +78,32 @@ const FACTORY_PAGES: Record<string, { en: string; es: string; summaryEs: string 
   "/ai-sdlc/results/": { en: "Results", es: "Resultados", summaryEs: "Lo que produjo la fábrica, contado desde el repositorio." },
   "/ai-sdlc/framework/": { en: "Framework", es: "Framework", summaryEs: "Una política, un perfil, un kit que cualquier repositorio puede adoptar." },
   "/ai-sdlc/playbook/": { en: "Playbook", es: "Playbook", summaryEs: "Ocho pasos para aplicar un AI SDLC a tu propio proyecto." },
+  "/product/": { en: "Overview", es: "Panorama", summaryEs: "Qué hace Notaire en una escribanía, y quién lo usa." },
+  "/product/anatomy/": { en: "How it works", es: "Cómo funciona", summaryEs: "Qué hace la oficina y cómo viaja un pedido por el sistema." },
+  "/product/story/": { en: "Story", es: "Historia", summaryEs: "De un proyecto Swing de 2014 a una plataforma hecha con IA." },
+  "/product/platform/": { en: "Platform", es: "Plataforma", summaryEs: "Los tres niveles y la infraestructura alrededor." },
+  "/product/numbers/": { en: "Numbers", es: "Números", summaryEs: "Versiones, cobertura y estadísticas leídas del repositorio." },
+  "/security/": { en: "Overview", es: "Panorama", summaryEs: "Qué protege el programa de seguridad, y la foto pública." },
+  "/security/architecture/": { en: "Trust boundaries", es: "Límites de confianza", summaryEs: "Del navegador al BFF, la API y la base de datos." },
+  "/security/threats/": { en: "Threats", es: "Amenazas", summaryEs: "STRIDE y las notas de privacidad de los datos notariales." },
+  "/security/toolchain/": { en: "Toolchain", es: "Cadena de seguridad", summaryEs: "Qué escáner corre en local, en un tag o cada lunes." },
+  "/security/posture/": { en: "Reporting", es: "Informes", summaryEs: "Adónde van los hallazgos, y por qué esto no es un tablero en vivo." },
+  "/docs/": { en: "Overview", es: "Panorama", summaryEs: "Mapa de la documentación técnica." },
+  "/docs/artifacts/": { en: "Engineering artifacts", es: "Artefactos de ingeniería", summaryEs: "Cada artefacto, del requisito al runbook." },
+  "/docs/engineering/": { en: "Engineering anatomy", es: "Anatomía de ingeniería", summaryEs: "Desarrollo, QA, seguridad y operaciones en un solo ciclo." },
+  "/docs/glossary/": { en: "Glossary", es: "Glosario", summaryEs: "Cada término notarial y de ingeniería, en palabras simples." },
+  "/docs/stack/": { en: "Technology stack", es: "Stack tecnológico", summaryEs: "Cada tecnología y patrón, con versiones leídas del repo." },
+  "/docs/business/": { en: "Business", es: "Negocio", summaryEs: "Requisitos, casos de uso, actores y manuales." },
+  "/docs/modules/": { en: "Modules", es: "Módulos", summaryEs: "Dueños y límites de cada módulo." },
+  "/docs/architecture/": { en: "Architecture", es: "Arquitectura", summaryEs: "Contexto del sistema, cada ADR y el SAD." },
+  "/docs/hexagonal/": { en: "Hexagonal architecture", es: "Arquitectura hexagonal", summaryEs: "Puertos, adaptadores y casos de uso." },
+  "/docs/database/": { en: "Database & Flyway", es: "Base de datos y Flyway", summaryEs: "El esquema PostgreSQL versionado por Flyway." },
+  "/docs/api/": { en: "API contract & Bruno", es: "Contrato de API y Bruno", summaryEs: "El contrato OpenAPI y la suite Bruno." },
+  "/docs/testing/": { en: "Testing", es: "Pruebas", summaryEs: "Plan de pruebas, pirámide y suites." },
+  "/docs/security/": { en: "Security docs", es: "Docs de seguridad", summaryEs: "Puente a la sección de Seguridad y a las notas de arquitectura." },
+  "/docs/roadmap/": { en: "Roadmap", es: "Roadmap", summaryEs: "Trenes de entrega, hitos e historia." },
+  "/docs/releases/": { en: "Releases", es: "Releases", summaryEs: "Cada corte del producto: backend, frontend y base de datos." },
+  "/about/": { en: "About", es: "Sobre el autor", summaryEs: "Quién construye Notaire, solo con datos que tienen fuente." },
 };
 
 const ACTS: Record<string, string> = {
@@ -84,6 +112,13 @@ const ACTS: Record<string, string> = {
   "III · What keeps it safe": "III · Qué lo mantiene a salvo",
   "IV · What we learned": "IV · Qué aprendimos",
   "V · Apply it": "V · Cómo aplicarlo",
+  "Start here": "Empieza aquí",
+  "The system": "El sistema",
+  "Architecture internals": "Interior de la arquitectura",
+  "Quality & operations": "Calidad y operaciones",
+  "Planning & delivery": "Planificación y entrega",
+  "The product": "El producto",
+  "The posture": "La postura",
 };
 
 export function factoryPageTitle(href: string, locale: Locale, fallback: string): string {

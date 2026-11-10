@@ -1,9 +1,11 @@
 import type { ReleaseHistory } from "@/lib/releases";
+import { Es } from "@/components/site/Es";
 
 export function VersionHistory({ history }: { history: ReleaseHistory }) {
   const { components } = history;
 
   return (
+    <Es>
     <section id="versions" className="py-24 px-6" style={{ background: "var(--bg-dark)" }}>
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
@@ -14,7 +16,7 @@ export function VersionHistory({ history }: { history: ReleaseHistory }) {
             className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4"
             style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}
           >
-            Product <span className="grad-cyan">cuts</span>
+            Product cuts
           </h2>
           <p className="text-neutral-600 max-w-2xl mx-auto">
             Semver releases of Notaire. The timeline above is the narrative. This list is the
@@ -64,5 +66,6 @@ export function VersionHistory({ history }: { history: ReleaseHistory }) {
         </ol>
       </div>
     </section>
+    </Es>
   );
 }

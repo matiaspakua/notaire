@@ -11,13 +11,7 @@ export default function GuardrailsPage() {
       <PageHeader
         eyebrow="AI Factory · Guardrails"
         title="Nine layers between an agent and main"
-        lead={
-          <>
-            No single control is trusted. Policy reaches the agent through its context. Skills narrow what it does. Hooks
-            and harness guards stop it locally. CI tests both the code and the process, the repository refuses what CI did
-            not pass, and a human owns the decisions that matter. Every layer is a file you can read.
-          </>
-        }
+        lead="No single control is trusted. Policy reaches the agent through its context. Skills narrow what it does. Hooks and harness guards stop it locally. CI tests both the code and the process, the repository refuses what CI did not pass, and a human owns the decisions that matter. Every layer is a file you can read."
       />
       <GuardrailStack />
 

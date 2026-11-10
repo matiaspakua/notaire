@@ -1,3 +1,4 @@
+import { Es } from "@/components/site/Es";
 import { src, workflow } from "@/lib/ai-sdlc-content";
 
 /**
@@ -68,6 +69,7 @@ export function Swimlane() {
   const loopAt = STEPS.findIndex((s) => s.kind === "loop");
 
   return (
+    <Es>
     <figure className="my-10">
       <div className="hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-[var(--shadow-card)] md:block md:p-6">
         <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="sl-title sl-desc" className="mx-auto h-auto w-full max-w-3xl">
@@ -180,5 +182,6 @@ export function Swimlane() {
         .
       </figcaption>
     </figure>
+    </Es>
   );
 }

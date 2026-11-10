@@ -6,6 +6,7 @@ import { loadOutcomes } from "@/lib/outcomes";
 import { OutcomesSection } from "@/components/Outcomes";
 import { HISTORY, HistoryChart } from "@/components/CaseStudy";
 import { Card, PageHeader, SectionTitle, Sources } from "@/components/FactoryUI";
+import { Fill, T } from "@/components/site/T";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata("/ai-sdlc/results/");
@@ -26,10 +27,10 @@ export default function ResultsPage() {
   const processPrs = HISTORY.months.reduce((s, x) => s + x.process_prs, 0);
 
   const delivery = [
-    { value: fmt(t.commits), label: "commits", note: `${fmt(HISTORY.legacy_commits)} from the 2014 desktop app` },
-    { value: fmt(t.merged_prs_without_bots), label: "merged pull requests", note: `${fmt(t.merged_prs)} including Dependabot` },
-    { value: fmt(processPrs), label: "PRs about the process itself", note: "the factory improving the factory" },
-    { value: fmt(t.issues), label: "issues", note: `${fmt(t.bug_issues)} of them labelled type:bug` },
+    { value: fmt(t.commits), label: "commits", note: fmt(HISTORY.legacy_commits), noteTail: "from the 2014 desktop app" },
+    { value: fmt(t.merged_prs_without_bots), label: "merged pull requests", note: fmt(t.merged_prs), noteTail: "including Dependabot" },
+    { value: fmt(processPrs), label: "PRs about the process itself", note: "", noteTail: "the factory improving the factory" },
+    { value: fmt(t.issues), label: "issues", note: fmt(t.bug_issues), noteTail: "of them labelled type:bug" },
   ];
 
   const factory = [
@@ -50,12 +51,7 @@ export default function ResultsPage() {
       <PageHeader
         eyebrow="AI Factory · Results"
         title="What the factory produced"
-        lead={
-          <>
-            Claims are cheap; counts are not. Every number on this page is read when the site is built, from the
-            repository itself or from a committed snapshot that records the command that made it.
-          </>
-        }
+        lead="Claims are cheap; counts are not. Every number on this page is read when the site is built, from the repository itself or from a committed snapshot that records the command that made it."
       />
 
       <SectionTitle id="delivery">Delivery</SectionTitle>
@@ -64,15 +60,22 @@ export default function ResultsPage() {
           <Card key={d.label}>
             <dt className="text-xs font-medium uppercase tracking-wider text-slate-600">{d.label}</dt>
             <dd className="mt-1 font-display text-4xl font-semibold tabular-nums text-slate-900">{d.value}</dd>
-            <dd className="mt-1 text-xs text-slate-600">{d.note}</dd>
+            <dd className="mt-1 text-xs text-slate-600">{d.note}{d.note ? " " : ""}<T text={d.noteTail} /></dd>
           </Card>
         ))}
       </dl>
       <p className="mt-4 leading-relaxed text-slate-700">
-        The first merged pull request in the snapshot is from {first?.month ?? "—"}.{" "}
-        {busiest.month === last.month
-          ? `The latest month, ${last.month}, is also the busiest: ${fmt(last.merged_prs)} merged PRs by ${HISTORY.generated_at.slice(0, 10)}.`
-          : `The busiest month is ${busiest.month}, with ${fmt(busiest.merged_prs)} merged PRs; the latest, ${last.month}, has ${fmt(last.merged_prs)}.`}
+        {busiest.month === last.month ? (
+          <Fill
+            text="The first merged pull request in the snapshot is from {first}. The latest month, {month}, is also the busiest: {count} merged PRs by {date}."
+            values={{ first: first?.month ?? "—", month: last.month, count: fmt(last.merged_prs), date: HISTORY.generated_at.slice(0, 10) }}
+          />
+        ) : (
+          <Fill
+            text="The first merged pull request in the snapshot is from {first}. The busiest month is {busiest}, with {busyCount} merged PRs; the latest, {month}, has {count}."
+            values={{ first: first?.month ?? "—", busiest: busiest.month, busyCount: fmt(busiest.merged_prs), month: last.month, count: fmt(last.merged_prs) }}
+          />
+        )}
       </p>
       <HistoryChart />
 

@@ -24,12 +24,7 @@ export default function ProductAnatomyPage() {
       <PageHeader
         eyebrow="Product · How it works"
         title="Notaire as a machine: one request, end to end"
-        lead={
-          <>
-            Notaire runs a notary office. This page opens it up: first what the office does, then a drawn machine where a
-            request rides a rail past the seven stations that make up the real system.
-          </>
-        }
+        lead="Notaire runs a notary office. This page opens it up: first what the office does, then a drawn machine where a request rides a rail past the seven stations that make up the real system."
       />
 
       <SectionTitle id="office">Start with the office</SectionTitle>

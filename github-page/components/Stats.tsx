@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { Es } from "@/components/site/Es";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { SiteMetrics } from "@/lib/metrics";
@@ -103,6 +104,7 @@ function StatCard({ stat, index }: { stat: StatItem; index: number }) {
   }, [index]);
 
   return (
+    <Es>
     <div
       ref={cardRef}
       className="glass rounded-2xl p-6 text-center group hover:scale-105 hover:shadow-lg transition-transform duration-300 border"
@@ -117,6 +119,7 @@ function StatCard({ stat, index }: { stat: StatItem; index: number }) {
       <div className="text-neutral-900 text-xs font-semibold mb-1">{stat.label}</div>
       <div className="text-neutral-500 text-xs">{stat.sub}</div>
     </div>
+    </Es>
   );
 }
 
@@ -135,6 +138,7 @@ export function Stats({ metrics }: { metrics: SiteMetrics }) {
   }, []);
 
   return (
+    <Es>
     <section id="today" className="py-32 px-6" style={{ background: "var(--bg-dark)" }}>
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
@@ -144,7 +148,7 @@ export function Stats({ metrics }: { metrics: SiteMetrics }) {
             className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4"
             style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}
           >
-            A Decade of <span className="grad-cyan">Progress</span>
+            A Decade of Progress
           </h2>
           <p className="text-neutral-600 max-w-xl mx-auto">Every metric tells a story. From zero to production-grade in the AI era.</p>
         </div>
@@ -156,5 +160,6 @@ export function Stats({ metrics }: { metrics: SiteMetrics }) {
         </div>
       </div>
     </section>
+    </Es>
   );
 }

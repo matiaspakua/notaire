@@ -1,5 +1,8 @@
 "use client";
 import { useEffect, useRef } from "react";
+import { tr } from "@/lib/i18n/es";
+import "@/lib/i18n/strings";
+import { usePreferences } from "@/components/site/Preferences";
 
 const events = [
   {
@@ -89,6 +92,7 @@ const events = [
 ];
 
 function TimelineEvent({ event, index }: { event: (typeof events)[0]; index: number }) {
+  const { locale } = usePreferences();
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -122,14 +126,14 @@ function TimelineEvent({ event, index }: { event: (typeof events)[0]; index: num
             <span className="text-3xl">{event.icon}</span>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-mono font-bold tracking-widest" style={{ color: event.color }}>{event.month} {event.year}</span>
-                <span className="text-xs px-2 py-0.5 rounded-full text-neutral-600 bg-neutral-100">{event.commits} commits</span>
+                <span className="text-xs font-mono font-bold tracking-widest" style={{ color: event.color }}>{tr(locale, event.month)} {event.year}</span>
+                <span className="text-xs px-2 py-0.5 rounded-full text-neutral-600 bg-neutral-100">{event.commits} {tr(locale, "commits")}</span>
               </div>
-              <h3 className="text-xl font-bold text-neutral-900">{event.title}</h3>
-              <p className="text-sm text-neutral-600">{event.subtitle}</p>
+              <h3 className="text-xl font-bold text-neutral-900">{tr(locale, event.title)}</h3>
+              <p className="text-sm text-neutral-600">{tr(locale, event.subtitle)}</p>
             </div>
           </div>
-          <p className="text-neutral-600 text-sm leading-relaxed mb-4">{event.desc}</p>
+          <p className="text-neutral-600 text-sm leading-relaxed mb-4">{tr(locale, event.desc)}</p>
           <div className="flex flex-wrap gap-2">
             {event.tech.map(t => (
               <span key={t} className="tech-badge" style={{ background: `${event.color}15`, color: event.color, border: `1px solid ${event.color}30` }}>
@@ -155,16 +159,17 @@ function TimelineEvent({ event, index }: { event: (typeof events)[0]; index: num
 }
 
 export function Timeline() {
+  const { locale } = usePreferences();
   return (
     <section id="origin" className="py-32 px-6" style={{ background: "var(--bg-dark)" }}>
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-20">
-          <p className="text-brand-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">Project History</p>
+          <p className="text-brand-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">{tr(locale, "Project History")}</p>
           <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
-            A Decade of <span className="grad-fire">Evolution</span>
+            {tr(locale, "A Decade of Evolution")}
           </h2>
-          <p className="text-neutral-600 max-w-xl mx-auto">From dormant Swing monolith to an AI-accelerated platform — every commit tells a story.</p>
+          <p className="text-neutral-600 max-w-xl mx-auto">{tr(locale, "From dormant Swing monolith to an AI-accelerated platform — every commit tells a story.")}</p>
         </div>
 
         {/* Timeline track */}
