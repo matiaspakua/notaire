@@ -46,6 +46,7 @@ def init(root: Path, name: str, level: int, force: bool) -> int:
 
 def doctor(ctx: Context) -> int:
     from aisdlc.approval import doctor_note as approval_doctor_note
+    from aisdlc.foreman import doctor_note as foreman_doctor_note
     from aisdlc.grants import doctor_note as grant_doctor_note
     from aisdlc.isolator import doctor_note as isolator_doctor_note
 
@@ -58,6 +59,8 @@ def doctor(ctx: Context) -> int:
     print(f"  INFO   {isolator_doctor_note()}")
     # Grant write-set check is policy-only (#2194): INFO, never a sandbox claim.
     print(f"  INFO   {grant_doctor_note()}")
+    # Foreman plan is routing-only (#2196): INFO, never executes agents/MCP.
+    print(f"  INFO   {foreman_doctor_note()}")
     # ApprovalPort is design-only (#2190): INFO, never an error by itself.
     print(f"  INFO   {approval_doctor_note()}")
     p = ctx.profile

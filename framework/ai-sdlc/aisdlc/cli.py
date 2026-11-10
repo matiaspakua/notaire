@@ -16,6 +16,7 @@ from aisdlc import (
     committer,
     diffchecks,
     evidence,
+    foreman,
     gates,
     grants,
     harness,
@@ -92,6 +93,19 @@ def build_parser() -> argparse.ArgumentParser:
     stage_sub = p.add_subparsers(dest="action", required=True)
     stage_list = stage_sub.add_parser("list", help="print declared stage knobs (read-only)")
     stage_list.add_argument("--json", action="store_true")
+
+    p = sub.add_parser(
+        "foreman",
+        help="Foreman dispatch plan from [[stages]] knobs; never executes agents/MCP (#2196)",
+    )
+    foreman_sub = p.add_subparsers(dest="action", required=True)
+    for action, help_text in (
+        ("plan", "print/resolve Foreman dispatch plan from stage knobs (read-only)"),
+        ("route", "alias of plan"),
+    ):
+        q = foreman_sub.add_parser(action, help=help_text)
+        q.add_argument("--stage", help="limit to one gate stage id")
+        q.add_argument("--json", action="store_true")
 
     p = sub.add_parser("plugin", help="list trusted plugins without executing them")
     plugin_sub = p.add_subparsers(dest="action", required=True)
@@ -341,6 +355,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "scope": lambda: diffchecks.scope(ctx, args.base, args.strict),
         "committer": lambda: committer.check(ctx, args.base, args.json),
         "grant": lambda: _grant(ctx, args),
+        "foreman": lambda: _foreman(ctx, args),
         "evidence": lambda: evidence.verify(ctx, args.anchor),
         "config": lambda: _config(ctx, args),
         "stage": lambda: stages.list_stages(ctx, as_json=bool(getattr(args, "json", False))),
@@ -349,6 +364,15 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "harness": lambda: _harness(ctx, args),
     }
     return simple[args.command]()
+
+
+def _foreman(ctx: Context, args: argparse.Namespace) -> int:
+    # plan and route are aliases (#2196)
+    return foreman.plan(
+        ctx,
+        stage_id=getattr(args, "stage", None),
+        as_json=bool(getattr(args, "json", False)),
+    )
 
 
 def _grant(ctx: Context, args: argparse.Namespace) -> int:
