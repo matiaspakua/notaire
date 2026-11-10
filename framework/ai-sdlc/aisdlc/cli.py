@@ -170,15 +170,19 @@ def build_parser() -> argparse.ArgumentParser:
     grant_check.add_argument("--json", action="store_true")
     p = sub.add_parser(
         "isolator",
-        help="Isolator OS status/probe/run (bwrap when available; never fake sandbox) (#2198)",
+        help=(
+            "Isolator OS status/probe/run/wrap (bwrap when available; "
+            "sole-committer custody; never fake sandbox) (#2198/#2200)"
+        ),
     )
     isolator_sub = p.add_subparsers(dest="action", required=True)
     isolator_status = isolator_sub.add_parser(
-        "status", help="report Isolator honesty fields (status/sandbox/backend)"
+        "status", help="report Isolator honesty fields (status/sandbox/backend/enforces_committer)"
     )
     isolator_status.add_argument("--json", action="store_true")
     isolator_probe = isolator_sub.add_parser(
-        "probe", help="probe real OS containment (sandbox=true only on success)"
+        "probe",
+        help="probe OS containment + sole-committer custody (honesty fields only on real proof)",
     )
     isolator_probe.add_argument("--json", action="store_true")
     isolator_run = isolator_sub.add_parser(
@@ -190,6 +194,19 @@ def build_parser() -> argparse.ArgumentParser:
         "argv",
         nargs=argparse.REMAINDER,
         help="command to run; prefer: isolator run -- <cmd> [args...]",
+    )
+    isolator_wrap = isolator_sub.add_parser(
+        "wrap",
+        help=(
+            "run a command with Isolator commit custody (blocks git commit without "
+            "AISDLC_COMMIT_GRANT; does not require bwrap) (#2200)"
+        ),
+    )
+    isolator_wrap.add_argument("--json", action="store_true")
+    isolator_wrap.add_argument(
+        "argv",
+        nargs=argparse.REMAINDER,
+        help="command to run; prefer: isolator wrap -- <cmd> [args...]",
     )
     p = sub.add_parser(
         "committer",

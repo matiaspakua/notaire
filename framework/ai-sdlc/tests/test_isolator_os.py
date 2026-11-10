@@ -74,7 +74,8 @@ class IsolatorOsTest(unittest.TestCase):
         self.assertEqual("no-evaluable", data["status"])
         self.assertIs(False, data["sandbox"])
         self.assertEqual("none", data["backend"])
-        self.assertIs(False, data.get("enforces_committer", False))
+        # #2200: enforces_committer is orthogonal to sandbox; may be true without bwrap.
+        self.assertIn("enforces_committer", data)
         blob = json.dumps(data).lower()
         self.assertNotRegex(blob, r'"sandbox"\s*:\s*true')
 
