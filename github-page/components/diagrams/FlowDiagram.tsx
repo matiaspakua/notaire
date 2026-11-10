@@ -123,7 +123,7 @@ export function FlowDiagram({
                 )}
                 {e.label && (
                   <text x={(a.x + b.x) / 2} y={(a.y + b.y) / 2 - 8} textAnchor="middle" fontSize={11} fill={on ? "#0f172a" : "#475569"} fontFamily="var(--font-mono)">
-                    {e.label}
+                    {tr(locale, e.label)}
                   </text>
                 )}
               </g>
@@ -142,6 +142,7 @@ export function FlowDiagram({
                   if (i >= 0) s.jump(i);
                 }}
                 style={{ cursor: "pointer", transformBox: "fill-box", originX: 0.5, originY: 0.5 }}
+                initial={false}
                 animate={{ scale: on && !s.reduced ? 1.06 : 1, opacity: on || done || s.index === 0 ? 1 : 0.55 }}
                 transition={t}
               >
@@ -156,11 +157,11 @@ export function FlowDiagram({
                   strokeWidth={on ? 3 : 1.5}
                 />
                 <text x={n.x} y={n.sub ? n.y - 3 : n.y + 5} textAnchor="middle" fontSize={13} fontWeight={600} fill={k.ink}>
-                  {n.label}
+                  {tr(locale, n.label)}
                 </text>
                 {n.sub && (
                   <text x={n.x} y={n.y + 14} textAnchor="middle" fontSize={10.5} fill="#475569" fontFamily="var(--font-mono)">
-                    {n.sub}
+                    {tr(locale, n.sub)}
                   </text>
                 )}
               </motion.g>
@@ -168,6 +169,23 @@ export function FlowDiagram({
           })}
         </svg>
       </div>
+      <ul className="mt-3 flex flex-wrap gap-2 text-[11px] text-slate-700" aria-label={tr(locale, "Diagram key")}>
+        {(
+          [
+            ["actor", "Person or role"],
+            ["port", "Gate"],
+            ["core", "The work"],
+            ["check", "A command"],
+            ["fail", "A refusal"],
+            ["ok", "Done"],
+          ] as const
+        ).map(([kind, label]) => (
+          <li key={kind} className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2 py-0.5">
+            <span aria-hidden className="h-2.5 w-2.5 rounded-full" style={{ background: KIND[kind].fill, boxShadow: `inset 0 0 0 1.5px ${KIND[kind].stroke}` }} />
+            {tr(locale, label)}
+          </li>
+        ))}
+      </ul>
       <div className="md:mt-5">
         <StepControls id={id} steps={steps} s={s} label={titleText} />
       </div>

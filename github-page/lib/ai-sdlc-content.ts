@@ -100,7 +100,7 @@ flowchart TB
     direction LR
     T1["validate-sdlc-plan.sh"] --> T2["tests, red then green"] --> T3["preflight.sh --full<br/>includes security cases"] --> T4["run_pipeline.sh<br/>when the stack is up"]
   end
-  MERGE{{"Owner review<br/>check-heavy-ci.sh = 0<br/>missing runs are expected"}}
+  MERGE{{"Merge rule<br/>Foreman or Owner<br/>Workers never merge"}}
   subgraph release["Version tag or manual dispatch"]
     direction LR
     H1["CI: tests, Trivy,<br/>secrets, Semgrep"]

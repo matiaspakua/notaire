@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* **pages:** Step the factory and the quality gates as they are on main (Foreman may merge, Workers never merge, preflight is the pull-request proof, the kit does not execute `foreman plan`). Lead time is the snapshot median and p90, not a histogram (Refs #2202)
 * **aisdlc:** Doctor accepts intentional local stage alias `signal` (no non-canonical WARN); Foreman plan lists `unmapped_stages` as expected until knobs are filled; lead-time help/doctor note: pass Issue number, not PR (Refs #2211)
 * **pages:** Spanish for the product, security, AI Factory, the technical-docs reading path, the about page and the demo banner. One dictionary keyed by the English sentence. A test fails when a translated route is missing its Spanish entry (Refs #2202)
 * **pages:** Dark and light theme, and English or Spanish, saved in the browser. The shell, the home page and the AI Factory introduction are translated. The framework page states what the kit on main can do and what is still planned (Refs #2201)

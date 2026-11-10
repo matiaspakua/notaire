@@ -6,7 +6,7 @@ import { FlywayTimeline } from "@/components/diagrams/FlywayTimeline";
 import { HexagonMap } from "@/components/diagrams/HexagonMap";
 import { PipelineMap } from "@/components/diagrams/PipelineMap";
 import { TestPyramid } from "@/components/diagrams/TestPyramid";
-import { contractFlow, factoryFlow, requestFlow } from "@/lib/diagram-flows";
+import { contractFlow, factoryFlow, qualityGateFlow, requestFlow, trustBoundaryFlow } from "@/lib/diagram-flows";
 
 const live = (id: string) => document.getElementById(`${id}-live`) as HTMLElement;
 
@@ -71,7 +71,7 @@ describe("interactive diagrams (#1977)", () => {
   });
 
   it("only references nodes and edges that exist", () => {
-    for (const f of [requestFlow(), contractFlow({ paths: 1, operations: 2 }, 3), factoryFlow()]) {
+    for (const f of [requestFlow(), contractFlow({ paths: 1, operations: 2 }, 3), factoryFlow(), trustBoundaryFlow(), qualityGateFlow()]) {
       const ids = new Set(f.nodes.map((n) => n.id));
       for (const e of f.edges) expect(ids.has(e.from) && ids.has(e.to), `${e.from}->${e.to}`).toBe(true);
       for (const s of f.steps) {
@@ -79,6 +79,34 @@ describe("interactive diagrams (#1977)", () => {
         for (const e of s.edges ?? []) expect(e).toBeLessThan(f.edges.length);
       }
     }
+  });
+
+  it("tells the factory story that is actually on main", () => {
+    const text = factoryFlow().steps.map((step) => `${step.title}\n${step.body}`).join("\n");
+    expect(text).not.toMatch(/only Matias merges/);
+    expect(text).toMatch(/Workers never merge/);
+    expect(text).toMatch(/Foreman/);
+    expect(text).toMatch(/preflight\.sh --full/);
+    expect(text).toMatch(/version tag/);
+    expect(text).toMatch(/foreman plan/);
+    expect(text).toMatch(/example-method/);
+    expect(text).toMatch(/not loaded/);
+    expect(factoryFlow().steps[0].title).toMatch(/issue/i);
+  });
+
+  it("steps the quality gates from the agent machine to the schedule", () => {
+    const titles = qualityGateFlow().steps.map((step) => step.title);
+    expect(titles[0]).toMatch(/agent machine/i);
+    expect(titles.map((title) => title.toLowerCase()).join(" ")).toMatch(/version tag/);
+    expect(titles.map((title) => title.toLowerCase()).join(" ")).toMatch(/main/);
+    expect(titles.map((title) => title.toLowerCase()).join(" ")).toMatch(/schedule/);
+    expect(qualityGateFlow().steps.map((step) => step.body).join(" ")).toMatch(/Workers never merge/);
+  });
+
+  it("steps trust from the browser to the database", () => {
+    const steps = trustBoundaryFlow().steps;
+    expect(steps[0].title).toMatch(/browser/i);
+    expect(steps.at(-1)?.nodes).toEqual(expect.arrayContaining(["uc", "db"]));
   });
 
   it("shows the hexagon counts it is given", () => {

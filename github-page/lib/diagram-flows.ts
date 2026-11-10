@@ -3,7 +3,7 @@
  * ones in the repository; the counts come from lib/tech-facts.ts and are passed in by the pages.
  */
 import type { FlowEdge, FlowNode, FlowStep } from "@/components/diagrams/FlowDiagram";
-import { GATES, src } from "@/lib/ai-sdlc-content";
+import { src } from "@/lib/ai-sdlc-content";
 
 type Flow = { nodes: FlowNode[]; edges: FlowEdge[]; steps: FlowStep[]; width: number; height: number };
 
@@ -150,20 +150,25 @@ export function contractFlow(ops: { paths: number; operations: number } | null, 
   return { nodes, edges, steps, width: 980, height: 300 };
 }
 
-/** The AI SDLC factory: a change moves gate by gate; a refusal sends it back. */
+/**
+ * One change through the factory, as it is on main.
+ * Gate 4 is not "only the Owner": the Foreman may merge a Worker pull request;
+ * the Owner merges protected paths; Workers never merge (#1624, #2001, #2052).
+ * `aisdlc foreman plan` prints a route and does not execute. Plugin allow list
+ * is openspec and example-method.
+ */
 export function factoryFlow(): Flow {
-  const y = 90;
-  const xs = [80, 230, 380, 530, 680, 830, 980, 1130];
   const nodes: FlowNode[] = [
-    { id: "issue", label: "Issue", sub: "linked to a CU", x: xs[0], y, w: 130, kind: "actor" },
-    { id: "g1", label: "G1 Plan", sub: "OpenSpec change", x: xs[1], y, w: 130, kind: "port" },
-    { id: "g2", label: "G2 Red", sub: "tests fail first", x: xs[2], y, w: 130, kind: "fail" },
-    { id: "impl", label: "Implement", sub: "agent + skills", x: xs[3], y, w: 130, kind: "core" },
-    { id: "g3", label: "G3 Pre-PR", sub: "run_pipeline.sh", x: xs[4], y, w: 130, kind: "port" },
-    { id: "g4", label: "G4 Merge", sub: "Owner merges", x: xs[5], y, w: 140, kind: "port" },
-    { id: "g5", label: "G5 Release", sub: "tag CI + pages", x: xs[6], y, w: 140, kind: "ok" },
-    { id: "done", label: "Done", sub: "issue closed", x: xs[7], y, w: 120, kind: "ok" },
-    { id: "back", label: "Gate refuses", sub: "exit code ≠ 0 → back to work", x: 605, y: 240, w: 240, kind: "fail" },
+    { id: "issue", label: "Issue", sub: "linked to a use case", x: 140, y: 70, w: 160, kind: "actor" },
+    { id: "g1", label: "Gate 1", sub: "OpenSpec, then validate", x: 340, y: 70, w: 180, kind: "port" },
+    { id: "g2", label: "Gate 2", sub: "tests seen failing", x: 540, y: 70, w: 170, kind: "fail" },
+    { id: "impl", label: "Implement", sub: "minimum code", x: 740, y: 70, w: 160, kind: "core" },
+    { id: "g3", label: "Gate 3", sub: "preflight.sh --full", x: 140, y: 190, w: 180, kind: "check" },
+    { id: "g4", label: "Gate 4", sub: "Foreman or Owner", x: 360, y: 190, w: 180, kind: "port" },
+    { id: "g5", label: "Gate 5", sub: "tag, smoke, close", x: 570, y: 190, w: 170, kind: "ok" },
+    { id: "done", label: "Closed", sub: "issue done", x: 760, y: 190, w: 140, kind: "ok" },
+    { id: "kit", label: "aisdlc kit", sub: "exit codes only", x: 250, y: 320, w: 180, kind: "check" },
+    { id: "back", label: "Refusal", sub: "non-zero, back to work", x: 560, y: 320, w: 220, kind: "fail" },
   ];
   const edges: FlowEdge[] = [
     { from: "issue", to: "g1" }, // 0
@@ -176,43 +181,107 @@ export function factoryFlow(): Flow {
     { from: "g1", to: "back", dashed: true }, // 7
     { from: "g3", to: "back", dashed: true }, // 8
     { from: "g4", to: "back", dashed: true }, // 9
+    { from: "g3", to: "kit", dashed: true }, // 10
   ];
-  const gate = (n: number) => GATES.find((g) => g.n === n);
-  const gateStep = (n: number, nodesLit: string[], edgesLit: number[], title: string): FlowStep => {
-    const g = gate(n);
-    return {
-      title,
-      body: g ? `${g.name}: ${g.items.join(", ").toLowerCase()}. Machine check: ${g.machine}.` : "",
-      nodes: nodesLit,
-      edges: edgesLit,
-    };
-  };
   const steps: FlowStep[] = [
     {
       title: "It starts with a real issue",
-      body: "Every change, by Matias or an agent, starts from a GitHub issue linked to a use case or requirement.",
+      body: "Every change starts from one GitHub Issue linked to a use case or a requirement. A prompt is not a specification.",
       nodes: ["issue"],
       edges: [0],
     },
-    gateStep(1, ["g1"], [1], "Gate 1: plan before code"),
-    gateStep(2, ["g2"], [2], "Gate 2: watch the tests fail"),
     {
-      title: "The agent implements",
-      body: "Agents work through repo skills and rules (.claude/skills, .claude/rules) and write the minimum code that turns the tests green.",
+      title: "Gate 1: plan before code",
+      body: "An OpenSpec change on the notaire-sdlc schema describes only this change. validate-sdlc-plan.sh checks that the Issue exists and is open. The kit does not write the spec.",
+      nodes: ["g1"],
+      edges: [1],
+    },
+    {
+      title: "Gate 2: watch the tests fail",
+      body: "Tests are written first and seen failing. A test that was never red proves nothing.",
+      nodes: ["g2"],
+      edges: [2],
+    },
+    {
+      title: "The minimum code that passes",
+      body: "The implementation is the minimum that turns those tests green, using the project skills. It does not skip a gate.",
       nodes: ["impl"],
       edges: [3],
     },
-    gateStep(3, ["g3"], [4], "Gate 3: the full local pipeline"),
-    gateStep(4, ["g4"], [5], "Gate 4: only Matias merges"),
-    gateStep(5, ["g5", "done"], [6], "Gate 5: shipped and smoke-tested"),
+    {
+      title: "Gate 3: the local proof",
+      body: "The pull-request proof is preflight.sh --full on the agent machine. GitHub does not re-run the product suite on a pull request. Product CI runs on a version tag.",
+      nodes: ["g3"],
+      edges: [4],
+    },
+    {
+      title: "Gate 4: who may merge",
+      body: "The Foreman may merge a Worker pull request when its merge rule is met. The Owner merges Constitution, sdlc-exception, and harness changes. Workers never merge.",
+      nodes: ["g4"],
+      edges: [5],
+    },
+    {
+      title: "Gate 5: shipped and closed",
+      body: "A version tag runs product CI and image publish. Smoke passes, then the Issue is closed. Pages deploy on the push to main, not as a substitute for that tag.",
+      nodes: ["g5", "done"],
+      edges: [6],
+    },
+    {
+      title: "What the kit on main does",
+      body: "The aisdlc kit runs gates by exit code. aisdlc foreman plan only prints a route; it does not run agents. The plugin allow list is openspec and example-method. Spec Kit and AWS AI-DLC are declared and not loaded.",
+      nodes: ["kit", "g3"],
+      edges: [10],
+    },
     {
       title: "A refusal is a loop, not a crash",
-      body: "Any gate whose command exits non-zero sends the change back with the reason. Agents cannot skip a gate; they can only satisfy it.",
+      body: "A gate whose command exits non-zero sends the change back with the reason. Agents cannot skip a gate; they can only satisfy it.",
       nodes: ["back", "g1", "g3", "g4"],
       edges: [7, 8, 9],
     },
   ];
-  return { nodes, edges, steps, width: 1210, height: 290 };
+  return { nodes, edges, steps, width: 900, height: 390 };
+}
+
+/** Where a change is proved: the agent machine, a version tag, main, and the schedule. */
+export function qualityGateFlow(): Flow {
+  const nodes: FlowNode[] = [
+    { id: "local", label: "Agent machine", sub: "preflight.sh --full", x: 220, y: 70, w: 220, kind: "check" },
+    { id: "tag", label: "Version tag", sub: "product CI and images", x: 220, y: 190, w: 220, kind: "ok" },
+    { id: "main", label: "Push to main", sub: "Pages, Release Please", x: 520, y: 190, w: 230, kind: "port" },
+    { id: "week", label: "Schedule", sub: "ZAP, k6, backup", x: 520, y: 70, w: 200, kind: "store" },
+  ];
+  const edges: FlowEdge[] = [
+    { from: "local", to: "tag" }, // 0
+    { from: "tag", to: "main" }, // 1
+    { from: "local", to: "week", dashed: true }, // 2
+  ];
+  const steps: FlowStep[] = [
+    {
+      title: "On the agent machine",
+      body: "The pull-request proof is preflight.sh --full, including the security case catalog. GitHub does not re-run that suite on the pull request. Workers never merge.",
+      nodes: ["local"],
+      edges: [0],
+    },
+    {
+      title: "On a version tag",
+      body: "Product CI, Bruno, Playwright, and image publish run when a version tag is pushed, or when someone dispatches the workflow. A quiet pull request is the design.",
+      nodes: ["tag"],
+      edges: [1],
+    },
+    {
+      title: "On a push to main",
+      body: "Release Please and the portfolio publish on main. A merge to main does not publish the product images.",
+      nodes: ["main"],
+      edges: [],
+    },
+    {
+      title: "On a schedule",
+      body: "Monday runs the ZAP baseline and CodeQL. Sunday runs backup-restore. k6 is on its own Monday schedule. These do not start on a pull request.",
+      nodes: ["week"],
+      edges: [2],
+    },
+  ];
+  return { nodes, edges, steps, width: 760, height: 280 };
 }
 
 /** Browser to database, the same boundaries as docs/200-architecture/206-security/diagrams/trust-boundaries.puml. */
