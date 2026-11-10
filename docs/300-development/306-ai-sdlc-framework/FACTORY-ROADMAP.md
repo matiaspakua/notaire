@@ -132,11 +132,13 @@ declares knobs via optional `[[stages]]` (#2182 shipped):
 | **effort** | `tokens` / `time_seconds` / `questions` / `review_lines` |
 
 Unknown catalog refs fail `config validate` / `doctor`. `stage list` / `config show
---redacted` surface knobs without executing anything. Foreman (cloud or local)
-**routes** work across stages, may skip/revise, and merges **only** under the written
-merge rule (Notaire: preflight `--full` + heavy-CI). Spec approval is Foreman
-instruction, not a forge permission. Factory never merges Constitution/harness without
-Owner.
+--redacted` surface knobs without executing anything. **Foreman routing surface**
+(#2196): `aisdlc foreman plan|route [--stage] [--json]` resolves the same knobs into
+a dispatch plan (`executes=false`, `sandbox=false`); Cloud Foreman / kit foreman
+templates must consult it before dispatch. Foreman (cloud or local) **routes** work
+across stages, may skip/revise, and merges **only** under the written merge rule
+(Notaire: preflight `--full` + heavy-CI). Spec approval is Foreman instruction, not a
+forge permission. Factory never merges Constitution/harness without Owner.
 
 ### Industry challenge (keep / skip)
 
@@ -239,6 +241,9 @@ this ordered spine.**
   **Grant write-set policy dry-run** shipped (#2194): `aisdlc grant check` —
   **Grant runtime lite** (policy vs write_set globs); Isolator OS still missing;
   Isolator stays `no-evaluable` / `sandbox=false`.
+  **Foreman stage-knob routing** shipped (#2196): `aisdlc foreman plan|route` —
+  Foreman ops habit **partially kit-backed** (dispatch plan only; no agent/MCP
+  execution; not Isolator OS).
 - ForgePort **write** / attestations / `factory/gate` on GitHub checks
   (read-only live lead-time via `gh` shipped in #2184; custody story still incomplete for writes).
 - Wilson autonomy **promotion** (L0–L4). Multi-stage **honesty** already ships

@@ -35,6 +35,12 @@ still missing. Never a sandbox claim; Isolator stays `no-evaluable`. Unknown che
 refs fail closed; omit = no-op. Notaire ships an optional `plan-sample` Grant;
 `[committer] required` stays `false`.
 
+**Foreman stage-knob routing** ([#2196](https://github.com/matiaspakua/notaire/issues/2196)):
+`aisdlc foreman plan|route [--stage] [--json]` resolves a read-only dispatch plan
+from `[[stages]]` knobs (#2182). Cloud Foreman and the kit foreman template must
+consult it before dispatch. Never executes agents/MCP; never Isolator/sandbox.
+Foreman ops habit is **partially kit-backed** (routing surface only).
+
 **ApprovalPort custody boundary** ([#2190](https://github.com/matiaspakua/notaire/issues/2190),
 [ADR-005](../../../framework/ai-sdlc/docs/adr/ADR-005-approval-port.md)): design-only.
 Token + channel authority; SSH/DSSE (or equivalent) mint/verify; agent never
