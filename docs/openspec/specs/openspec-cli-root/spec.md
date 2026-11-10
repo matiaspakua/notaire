@@ -2,7 +2,8 @@
 
 ## Purpose
 
-TBD - created by archiving change docs-2218-openspec-notaire-sdlc-schema. Update Purpose after archive.
+Define how agents discover and scaffold the Notaire `notaire-sdlc` OpenSpec
+schema when the tree lives under `docs/openspec/` (ADR-026 / #2218).
 
 ## Requirements
 
