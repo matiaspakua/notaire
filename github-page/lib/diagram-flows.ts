@@ -141,7 +141,7 @@ export function contractFlow(ops: { paths: number; operations: number } | null, 
     },
     {
       title: "Bruno calls the running API",
-      body: `${brunoRequests} Bruno requests hit the real backend with real tokens and assert the responses, in CI and on a laptop.`,
+      body: "Bruno requests hit the real backend with real tokens and assert the responses, in CI and on a laptop.",
       nodes: ["bruno"],
       edges: [6],
       source: { label: "backend-api/api-test", href: src("backend-api/api-test") },

@@ -1,6 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { tf, tr } from "@/lib/i18n/es";
+import "@/lib/i18n/strings";
+import { usePreferences } from "@/components/site/Preferences";
 import { StepControls, type Step } from "./StepControls";
 import { transition, useStepper } from "./useStepper";
 
@@ -34,46 +37,48 @@ function hex(r: number, sx = 1.25): string {
  * outside, and the world beyond. Counts are passed in from lib/tech-facts.ts at build time.
  */
 export function HexagonMap({ facts, sources }: { facts: HexFacts; sources: Record<"domain" | "port" | "usecase" | "adapter" | "rules", string> }) {
+  const { locale } = usePreferences();
+  const text = (value: string) => tr(locale, value);
   const steps: (Step & { regions: Region[] })[] = [
     {
       title: "The domain is the centre",
-      body: `${facts.domainContexts} bounded contexts keep their entities and value objects in domain/ — plain Java with no Spring, JPA or HTTP. Money, BudgetCharges and PaymentStatus in domain/payment are examples.`,
+      body: tf(locale, "{n} bounded contexts keep their entities and value objects in domain/ — plain Java with no Spring, JPA or HTTP. Money, BudgetCharges and PaymentStatus in domain/payment are examples.", { n: facts.domainContexts }),
       regions: ["domain"],
       source: { label: "domain/", href: sources.domain },
     },
     {
       title: "Use cases orchestrate",
-      body: `${facts.useCases} files in application/usecase, across ${facts.useCaseContexts} contexts. Each service implements an in-port and reaches the outside only through out-ports.`,
+      body: tf(locale, "{n} files in application/usecase, across {contexts} contexts. Each service implements an in-port and reaches the outside only through out-ports.", { n: facts.useCases, contexts: facts.useCaseContexts }),
       regions: ["usecases"],
       source: { label: "application/usecase/", href: sources.usecase },
     },
     {
       title: "In-ports: what the app can do",
-      body: `${facts.inPorts} files in application/port/in: use-case interfaces and their commands (for example ProcessPaymentUseCase). Controllers depend on these, never on a service class.`,
+      body: tf(locale, "{n} files in application/port/in: use-case interfaces and their commands (for example ProcessPaymentUseCase). Controllers depend on these, never on a service class.", { n: facts.inPorts }),
       regions: ["inports"],
       source: { label: "application/port/in/", href: sources.port },
     },
     {
       title: "Out-ports: what the app needs",
-      body: `${facts.outPorts} files in application/port/out: interfaces and the records they carry (for example PaymentRepositoryPort, BudgetLookupPort). The use case states the need; an adapter decides how.`,
+      body: tf(locale, "{n} files in application/port/out: interfaces and the records they carry (for example PaymentRepositoryPort, BudgetLookupPort). The use case states the need; an adapter decides how.", { n: facts.outPorts }),
       regions: ["outports"],
       source: { label: "application/port/out/", href: sources.port },
     },
     {
       title: "Driving adapters call in",
-      body: `${facts.webAdapters} web adapter files: REST controllers and their mappers translate HTTP into commands and back.`,
+      body: tf(locale, "{n} web adapter files: REST controllers and their mappers translate HTTP into commands and back.", { n: facts.webAdapters }),
       regions: ["inadapters", "outside"],
       source: { label: "adapter/in/", href: sources.adapter },
     },
     {
       title: "Driven adapters reach out",
-      body: `${facts.outAdapters} outbound adapter files implement the out-ports: JPA persistence per context, plus PDFBox report rendering.`,
+      body: tf(locale, "{n} outbound adapter files implement the out-ports: JPA persistence per context, plus PDFBox report rendering.", { n: facts.outAdapters }),
       regions: ["outadapters", "outside"],
       source: { label: "adapter/out/", href: sources.adapter },
     },
     {
       title: "Rules hold the shape",
-      body: `Two ArchUnit tests check seven rules in every backend build: R1–R6 on dependencies, R7 on use-case cycles. The dependency baseline has ${facts.baselineViolations} entries, so any new arrow pointing the wrong way fails the build.`,
+      body: tf(locale, "Two ArchUnit tests check seven rules in every backend build: R1–R6 on dependencies, R7 on use-case cycles. The dependency baseline has {n} entries, so any new arrow pointing the wrong way fails the build.", { n: facts.baselineViolations }),
       regions: ["rules", "domain", "usecases", "inports", "outports", "inadapters", "outadapters"],
       source: { label: "HexagonArchitectureTest.java", href: sources.rules },
     },
@@ -92,7 +97,7 @@ export function HexagonMap({ facts, sources }: { facts: HexFacts; sources: Recor
     <figure className="not-prose my-8 rounded-3xl border border-slate-200 bg-white p-4 shadow-[var(--shadow-card)] sm:p-6" data-diagram="hexagon">
       <div className="hidden md:block">
         <svg viewBox={`0 0 ${W} ${HH}`} role="img" aria-labelledby="hex-t hex-d" className="h-auto w-full">
-          <title id="hex-t">The Notaire backend as a hexagon</title>
+          <title id="hex-t">{text("The Notaire backend as a hexagon")}</title>
           <desc id="hex-d">
             Domain in the centre, use cases and ports around it, driving adapters on the left and driven adapters on the
             right, with the browser and the database outside.
@@ -133,12 +138,12 @@ export function HexagonMap({ facts, sources }: { facts: HexFacts; sources: Recor
           />
 
           <g onClick={() => pick("domain")} style={{ cursor: "pointer" }}>
-            <text x={CX} y={CY - 6} textAnchor="middle" fontSize={16} fontWeight={700} fill="#064e3b">Domain</text>
-            <text x={CX} y={CY + 14} textAnchor="middle" fontSize={12} fill="#065f46" fontFamily="var(--font-mono)">{facts.domainContexts} contexts</text>
+            <text x={CX} y={CY - 6} textAnchor="middle" fontSize={16} fontWeight={700} fill="#064e3b">{text("Domain")}</text>
+            <text x={CX} y={CY + 14} textAnchor="middle" fontSize={12} fill="#065f46" fontFamily="var(--font-mono)">{tf(locale, "{n} contexts", { n: facts.domainContexts })}</text>
           </g>
           <g onClick={() => pick("usecases")} style={{ cursor: "pointer" }}>
-            <text x={CX} y={CY - 98} textAnchor="middle" fontSize={14} fontWeight={700} fill="#4c1d95">Use cases</text>
-            <text x={CX} y={CY - 80} textAnchor="middle" fontSize={12} fill="#5b21b6" fontFamily="var(--font-mono)">{facts.useCases} files</text>
+            <text x={CX} y={CY - 98} textAnchor="middle" fontSize={14} fontWeight={700} fill="#4c1d95">{text("Use cases")}</text>
+            <text x={CX} y={CY - 80} textAnchor="middle" fontSize={12} fill="#5b21b6" fontFamily="var(--font-mono)">{tf(locale, "{n} files", { n: facts.useCases })}</text>
           </g>
 
           {/* ports as chips on the application ring */}
@@ -149,7 +154,7 @@ export function HexagonMap({ facts, sources }: { facts: HexFacts; sources: Recor
               <motion.g key={r} onClick={() => pick(r)} style={{ cursor: "pointer" }} initial={false} animate={{ scale: on(r) && !s.reduced ? 1.08 : 1 }} transition={t}>
                 <rect x={x - 58} y={CY - 22} width={116} height={44} rx={22} fill={on(r) ? "var(--accent-700)" : "#ffffff"} stroke="#7c3aed" strokeWidth={1.5} />
                 <text x={x} y={CY - 3} textAnchor="middle" fontSize={12.5} fontWeight={700} fill={on(r) ? "#ffffff" : "#4c1d95"}>
-                  {left ? "In-ports" : "Out-ports"}
+                  {left ? text("In-ports") : text("Out-ports")}
                 </text>
                 <text x={x} y={CY + 13} textAnchor="middle" fontSize={11} fill={on(r) ? "#ffffff" : "#5b21b6"} fontFamily="var(--font-mono)">
                   {left ? facts.inPorts : facts.outPorts}
@@ -159,25 +164,25 @@ export function HexagonMap({ facts, sources }: { facts: HexFacts; sources: Recor
           })}
 
           <g onClick={() => pick("inadapters")} style={{ cursor: "pointer" }}>
-            <text x={CX - 232} y={CY - 112} textAnchor="middle" fontSize={14} fontWeight={700} fill="#1e3a8a">Driving adapters</text>
+            <text x={CX - 232} y={CY - 112} textAnchor="middle" fontSize={14} fontWeight={700} fill="#1e3a8a">{text("Driving adapters")}</text>
             <text x={CX - 232} y={CY - 94} textAnchor="middle" fontSize={11.5} fill="#1e40af" fontFamily="var(--font-mono)">adapter/in · {facts.webAdapters}</text>
-            <text x={CX - 232} y={CY + 104} textAnchor="middle" fontSize={11.5} fill="#1e40af">REST controllers, mappers</text>
+            <text x={CX - 232} y={CY + 104} textAnchor="middle" fontSize={11.5} fill="#1e40af">{text("REST controllers, mappers")}</text>
           </g>
           <g onClick={() => pick("outadapters")} style={{ cursor: "pointer" }}>
-            <text x={CX + 232} y={CY - 112} textAnchor="middle" fontSize={14} fontWeight={700} fill="#1e3a8a">Driven adapters</text>
+            <text x={CX + 232} y={CY - 112} textAnchor="middle" fontSize={14} fontWeight={700} fill="#1e3a8a">{text("Driven adapters")}</text>
             <text x={CX + 232} y={CY - 94} textAnchor="middle" fontSize={11.5} fill="#1e40af" fontFamily="var(--font-mono)">adapter/out · {facts.outAdapters}</text>
-            <text x={CX + 232} y={CY + 104} textAnchor="middle" fontSize={11.5} fill="#1e40af">JPA persistence, PDFBox reports</text>
+            <text x={CX + 232} y={CY + 104} textAnchor="middle" fontSize={11.5} fill="#1e40af">{text("JPA persistence, PDFBox reports")}</text>
           </g>
 
           {/* outside world */}
           <motion.g initial={false} animate={{ opacity: on("outside") || s.index === 0 ? 1 : 0.6 }} transition={t}>
             <rect x={14} y={CY - 26} width={104} height={52} rx={12} fill="#f8fafc" stroke="#94a3b8" />
-            <text x={66} y={CY - 3} textAnchor="middle" fontSize={12.5} fontWeight={600} fill="#0f172a">Next.js app</text>
+            <text x={66} y={CY - 3} textAnchor="middle" fontSize={12.5} fontWeight={600} fill="#0f172a">{text("Next.js app")}</text>
             <text x={66} y={CY + 14} textAnchor="middle" fontSize={10.5} fill="#475569" fontFamily="var(--font-mono)">HTTP + JWT</text>
             <path d={`M118 ${CY} L ${CX - 262} ${CY}`} stroke="#64748b" strokeWidth={2} markerEnd="url(#hex-arrow)" />
             <rect x={W - 118} y={CY - 26} width={104} height={52} rx={12} fill="#fffbeb" stroke="#f59e0b" />
             <text x={W - 66} y={CY - 3} textAnchor="middle" fontSize={12.5} fontWeight={600} fill="#78350f">PostgreSQL</text>
-            <text x={W - 66} y={CY + 14} textAnchor="middle" fontSize={10.5} fill="#92400e" fontFamily="var(--font-mono)">Flyway schema</text>
+            <text x={W - 66} y={CY + 14} textAnchor="middle" fontSize={10.5} fill="#92400e" fontFamily="var(--font-mono)">{text("Flyway schema")}</text>
             <path d={`M${CX + 262} ${CY} L ${W - 122} ${CY}`} stroke="#64748b" strokeWidth={2} markerEnd="url(#hex-arrow)" />
           </motion.g>
           <defs>
@@ -186,14 +191,14 @@ export function HexagonMap({ facts, sources }: { facts: HexFacts; sources: Recor
             </marker>
           </defs>
           <text x={CX} y={HH - 14} textAnchor="middle" fontSize={11.5} fill="#475569">
-            Every dependency points inwards. Click a ring or use the steps below.
+            {text("Every dependency points inwards. Click a ring or use the steps below.")}
           </text>
         </svg>
       </div>
       <div className="md:mt-5">
         <StepControls id="hexagon" steps={steps} s={s} label="The backend hexagon" />
       </div>
-      <figcaption className="mt-3 text-xs text-slate-600">Counts are read from the source tree when the site is built.</figcaption>
+      <figcaption className="mt-3 text-xs text-slate-600">{text("Counts are read from the source tree when the site is built.")}</figcaption>
     </figure>
   );
 }

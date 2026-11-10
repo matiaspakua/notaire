@@ -2,6 +2,7 @@
 import { pair } from "./es";
 import "./strings-content";
 import "./strings-rest";
+import "./strings-docs";
 
 // Demo shell
 pair("Demo – sample data, read-only", "Demo: datos de ejemplo, solo lectura");

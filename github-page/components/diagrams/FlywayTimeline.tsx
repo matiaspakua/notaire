@@ -2,6 +2,9 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { tr } from "@/lib/i18n/es";
+import "@/lib/i18n/strings";
+import { usePreferences } from "@/components/site/Preferences";
 import { StepControls } from "./StepControls";
 import { transition, useStepper } from "./useStepper";
 
@@ -21,11 +24,13 @@ const PHASE_INK = ["#075985", "#5b21b6", "#92400e", "#166534", "#991b1b"];
  * The migrations are listed from db/migration when the site is built; nothing here is typed by hand.
  */
 export function FlywayTimeline({ migrations, phases, sourceHref }: { migrations: TimelineMigration[]; phases: TimelinePhase[]; sourceHref: string }) {
+  const { locale } = usePreferences();
+  const text = (value: string) => tr(locale, value);
   const used = phases
     .map((p) => ({ ...p, items: migrations.filter((m) => m.version >= p.from && m.version <= p.to) }))
     .filter((p) => p.items.length > 0);
   const steps = used.map((p) => ({
-    title: `${p.title} · V${p.items[0].version}–V${p.items.at(-1)?.version}`,
+    title: `${text(p.title)} · V${p.items[0].version}–V${p.items.at(-1)?.version}`,
     body: (
       <>
         {p.body}{" "}
@@ -50,7 +55,7 @@ export function FlywayTimeline({ migrations, phases, sourceHref }: { migrations:
     <figure className="not-prose my-8 rounded-3xl border border-slate-200 bg-white p-4 shadow-[var(--shadow-card)] sm:p-6" data-diagram="flyway-timeline">
       <div className="hidden md:block">
         <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="fw-t fw-d" className="h-auto w-full" onMouseLeave={() => setHover(null)}>
-          <title id="fw-t">Flyway migration timeline</title>
+          <title id="fw-t">{text("Flyway migration timeline")}</title>
           <desc id="fw-d">
             {n} versioned migrations from V{migrations[0].version} to V{migrations.at(-1)?.version}, grouped into {used.length} phases.
           </desc>
@@ -72,7 +77,7 @@ export function FlywayTimeline({ migrations, phases, sourceHref }: { migrations:
                   transition={t}
                 />
                 <text x={(a + b) / 2} y={76} textAnchor="middle" fontSize={12.5} fontWeight={700} fill={PHASE_INK[pi % PHASE_INK.length]}>
-                  {b - a > 90 ? p.title : p.title.split(" ")[0]}
+                  {b - a > 90 ? text(p.title) : text(p.title).split(" ")[0]}
                 </text>
                 <text x={(a + b) / 2} y={92} textAnchor="middle" fontSize={10.5} fill={PHASE_INK[pi % PHASE_INK.length]} fontFamily="var(--font-mono)">
                   V{p.items[0].version}–V{p.items.at(-1)?.version}
@@ -126,14 +131,14 @@ export function FlywayTimeline({ migrations, phases, sourceHref }: { migrations:
             </g>
           )}
           <text x={W / 2} y={30} textAnchor="middle" fontSize={11.5} fill="#475569">
-            Hover a dot to read a migration; click a phase to step to it.
+            {text("Hover a dot to read a migration; click a phase to step to it.")}
           </text>
         </svg>
       </div>
       <div className="md:mt-5">
         <StepControls id="flyway-timeline" steps={steps} s={s} label="Flyway migration timeline" />
       </div>
-      <figcaption className="mt-3 text-xs text-slate-600">One dot per V&lt;n&gt;__*.sql file, read from the migration folder at build time.</figcaption>
+      <figcaption className="mt-3 text-xs text-slate-600">{text("One dot per V<n>__*.sql file, read from the migration folder at build time.")}</figcaption>
     </figure>
   );
 }

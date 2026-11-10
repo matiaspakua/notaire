@@ -29,7 +29,7 @@ export function Tech({ name, version }: { name: string; version?: string | null 
 export function Callout({ title, children }: { title: string; children: ReactNode }) {
   return (
     <aside className="my-6 rounded-2xl border border-[var(--accent-500)]/30 bg-[var(--accent-500)]/5 p-5">
-      <p className="font-semibold text-slate-900">{title}</p>
+      <p className="font-semibold text-slate-900"><T text={title} /></p>
       <div className="mt-1 text-slate-700">{children}</div>
     </aside>
   );

@@ -4,7 +4,7 @@ import { src } from "@/lib/ai-sdlc-content";
 import { pageMetadata } from "@/lib/site";
 import { FlowDiagram } from "@/components/diagrams/FlowDiagram";
 import { contractFlow } from "@/lib/diagram-flows";
-import { BRUNO_SAMPLE_FILE, bruno, brunoDefectsFixed, brunoSample, openapi, versions } from "@/lib/tech-facts";
+import { BRUNO_SAMPLE_FILE, bruno, brunoDefectsFixed, brunoSample, openapi } from "@/lib/tech-facts";
 
 export const metadata = pageMetadata("/docs/api/");
 
@@ -12,19 +12,12 @@ export const metadata = pageMetadata("/docs/api/");
 export default function ApiPage() {
   const api = openapi();
   const b = bruno();
-  const v = versions();
   return (
     <>
       <PageHeader
         eyebrow="Architecture internals"
         title="API contract & Bruno"
-        lead={
-          <>
-            The REST API is code-first: controllers are the source, springdoc {v.springdoc ?? "—"} turns them into an
-            OpenAPI document, and that document is committed. CI checks it is current, refuses unannounced breaking
-            changes, generates the front end&apos;s types from it, and a Bruno suite calls the running API.
-          </>
-        }
+        lead="The REST API is code-first: controllers are the source, springdoc turns them into an OpenAPI document, and that document is committed. CI checks it is current, refuses unannounced breaking changes, generates the front end's types from it, and a Bruno suite calls the running API."
       />
 
       <StatGrid

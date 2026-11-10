@@ -23,9 +23,9 @@ links and search; a registered href with no page file fails `npm test`.
 The header offers a theme (light, dark, or the system setting) and a language (English, Spanish, or the system language).
 The choice is stored in `localStorage` (`notaire.theme`, `notaire.lang`) and applied by a script in the document head, before paint.
 `prefers-reduced-motion` already collapses transitions. Spanish covers the shell, the home page, the product, security,
-the AI Factory, the technical-docs reading path (`/docs/`, artifacts, architecture, engineering, testing, releases) and the
-about page. Deeper technical pages such as `/docs/hexagonal/` stay in English and say so. One dictionary (`lib/i18n/`) is
-the source of the sentences. Technical terms such as Issue, pull request, gate, OpenSpec, Flyway, commit and kit stay in English.
+the AI Factory, the about page and every technical-docs page, including the glossary, the stack, business, modules,
+hexagonal architecture, the database, the API, security docs and the roadmap. One dictionary (`lib/i18n/`) is the source
+of the sentences. Technical terms such as Issue, pull request, gate, OpenSpec, Flyway, commit and kit stay in English.
 
 ## Commands
 
