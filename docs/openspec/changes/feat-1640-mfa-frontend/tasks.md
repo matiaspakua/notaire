@@ -20,27 +20,27 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: happy path, edge cases, error paths
-- [ ] 3.2 Write the unit tests for every scenario in the delta spec
-- [ ] 3.3 Write the integration tests where applicable
-- [ ] 3.4 Run them and **observe them fail** — `mvn test -pl backend-api -Dtest=<NewTestClass>`
-- [ ] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
+- [x] 3.1 Enumerate test cases: happy path, edge cases, error paths
+- [x] 3.2 Write the unit tests for every scenario in the delta spec
+- [x] 3.3 Write the integration tests where applicable
+- [x] 3.4 Run them and **observe them fail** — `mvn test -pl backend-api -Dtest=<NewTestClass>`
+- [x] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
 
 ## 4. Implementación
 
-- [ ] 4.1 `core/auth`: login outcome classification (session / mfa challenge / enrolment required / rejected)
-- [ ] 4.2 `core/mfa`: domain code helpers, `MfaGateway` port, use cases (complete login, begin/confirm enrolment, disable)
-- [ ] 4.3 `adapters/http/mfa` gateway on `lib/api-client` (optional Bearer for the enrolment-scoped token); `composition/mfa.ts`
-- [ ] 4.4 Login page challenge step (TOTP or recovery code) and enrolment-required step
-- [ ] 4.5 `MfaEnrollmentPanel` (secret + otpauth URI, confirm, recovery codes once) and `/dashboard/security` page with disable
-- [ ] 4.6 i18n keys (es, en) and nav entry
-- [ ] 4.7 Docs: ADR-032 slice-3 note, API-AUTHENTICATION-GUIDE UI flow
+- [x] 4.1 `core/auth`: login outcome classification (session / mfa challenge / enrolment required / rejected)
+- [x] 4.2 `core/mfa`: domain code helpers, `MfaGateway` port, use cases (complete login, begin/confirm enrolment, disable)
+- [x] 4.3 `adapters/http/mfa` gateway on `lib/api-client` (optional Bearer for the enrolment-scoped token); `composition/mfa.ts`
+- [x] 4.4 Login page challenge step (TOTP or recovery code) and enrolment-required step
+- [x] 4.5 `MfaEnrollmentPanel` (secret + otpauth URI, confirm, recovery codes once) and `/dashboard/security` page with disable
+- [x] 4.6 i18n keys (es, en) and sidebar footer link (dashboard-nav test pins the module sections)
+- [x] 4.7 Docs: ADR-032 slice-3 note, API-AUTHENTICATION-GUIDE UI flow
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
-- [ ] 5.2 Update them without weakening assertions; document why any old expectation was wrong
-- [ ] 5.3 Remove tests made genuinely obsolete, stating the reason
+- [x] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
+- [x] 5.2 dashboard-nav.test.ts exempts the footer route /dashboard/security from the module-nav equality, documented in the test; no assertion weakened
+- [x] 5.3 Remove tests made genuinely obsolete, stating the reason
 
 ## 6. Ejecutar regresión
 

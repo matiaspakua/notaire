@@ -22,7 +22,7 @@ Slice 2 (PR #2245) made `POST /api/v1/users/login` return an MFA challenge and a
 - `composition/mfa.ts` wires the gateway.
 - Login page: second step asking for a 6-digit TOTP or a recovery code; third step for users who must enrol (policy ENFORCE), reusing the enrolment panel.
 - `MfaEnrollmentPanel` and `/dashboard/security`: begin, show secret and `otpauth://` URI, confirm with a code, show recovery codes once, disable with a current code.
-- i18n keys `mfa.*` and `login.mfa*` in `messages/es.json` and `messages/en.json`; nav entry for the security page.
+- i18n keys `mfa.*` and `login.mfa*` in `messages/es.json` and `messages/en.json`; sidebar footer link to the security page.
 - Playwright `TS-0046-mfa-totp-enrol-login.spec.ts`.
 
 ## Reglas de negocio
@@ -51,14 +51,14 @@ Slice 2 (PR #2245) made `POST /api/v1/users/login` return an MFA challenge and a
 | `frontend` | yes | core/auth, core/mfa, adapters/http/mfa, composition, login page, security page, api-client, messages, nav |
 | `frontend-swing` | no | — |
 | `infra` / observability | no | — |
-| CI/CD (`.github/workflows`) | no | — |
+| CI/CD (`.github/workflows`) | yes | `playwright-e2e.yml` gets a CI-only `NOTAIRE_MFA_ENCRYPTION_KEY` env so TS-0046 can enrol |
 
 ### Surface area
 
 - Entities: none
 - Endpoints: none new; consumes POST /api/v1/users/login/mfa and POST /api/v1/mfa/enrollment, /enrollment/confirm, /disable
 - Database (Flyway `V{n}`): none
-- Configuration / `.env`: none
+- Configuration / `.env`: CI-only `NOTAIRE_MFA_ENCRYPTION_KEY` in the Playwright workflow env
 - Dependencies: none (no QR library; the secret and `otpauth://` URI are shown, see design.md)
 
 ### Write set
@@ -66,6 +66,7 @@ Slice 2 (PR #2245) made `POST /api/v1/users/login` return an MFA challenge and a
 - `frontend/src/**`
 - `frontend/messages/**`
 - `testing/e2e/**`
+- `.github/workflows/playwright-e2e.yml`
 - `docs/**`
 
 ### Architecture review

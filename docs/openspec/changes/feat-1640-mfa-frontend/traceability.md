@@ -35,18 +35,18 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Challenge step is shown instead of a session | login-page-mfa.test.tsx | pending |
-| Valid TOTP completes the login | login-page-mfa.test.tsx | pending |
-| Recovery code completes the login | login-page-mfa.test.tsx | pending |
-| Wrong code is reported and the step stays | login-page-mfa.test.tsx | pending |
-| Locked account is reported | login-page-mfa.test.tsx | pending |
-| Malformed code is not sent | login-page-mfa.test.tsx | pending |
-| Enrolment-required user enrols | login-page-mfa.test.tsx | pending |
-| Loading and begin error states | mfa-enrollment-panel.test.tsx | pending |
-| Confirm shows recovery codes once | mfa-enrollment-panel.test.tsx | pending |
-| Wrong confirmation code | mfa-enrollment-panel.test.tsx | pending |
-| Enrol from the dashboard | security-page.test.tsx; TS-0046 | pending |
-| Disable requires a current code | security-page.test.tsx | pending |
+| Challenge step is shown instead of a session | login-page-mfa.test.tsx | passing |
+| Valid TOTP completes the login | login-page-mfa.test.tsx | passing |
+| Recovery code completes the login | login-page-mfa.test.tsx | passing |
+| Wrong code is reported and the step stays | login-page-mfa.test.tsx | passing |
+| Locked account is reported | login-page-mfa.test.tsx | passing |
+| Malformed code is not sent | login-page-mfa.test.tsx | passing |
+| Enrolment-required user enrols | login-page-mfa.test.tsx | passing |
+| Loading and begin error states | mfa-enrollment-panel.test.tsx | passing |
+| Confirm shows recovery codes once | mfa-enrollment-panel.test.tsx | passing |
+| Wrong confirmation code | mfa-enrollment-panel.test.tsx | passing |
+| Enrol from the dashboard | security-page.test.tsx; TS-0046 | unit passing; E2E not run locally |
+| Disable requires a current code | security-page.test.tsx | passing |
 
 ## Permanent documentation updated
 

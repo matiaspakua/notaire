@@ -57,6 +57,18 @@ from third-party services, so the factor must work without an external provider.
 13. **Endpoints** (`/api/v1/mfa`): `POST /enrollment`, `/enrollment/confirm`, `/disable`; the caller acts only on their
     own account (ADR-029). Disabling is allowed; under `ENFORCE` the next login then asks for enrolment again.
 
+## Recorded decisions — slice 3, web UI (#1640)
+
+14. **No QR dependency**: the enrolment screen shows the Base32 secret and an `otpauth://` link; every authenticator
+    supports manual key entry and a QR library would add a dependency to scan and upgrade. QR rendering is a follow-up.
+15. **Enrolment token handling**: the `mfa_enrollment` token lives in React state and is sent as `Authorization:
+    Bearer` on `/mfa/enrollment/**` only; it is never stored, and recovery codes are held in component state until the
+    user acknowledges them.
+16. **Session only after the factor**: the client creates a session solely from a `valid:true` body, so a challenge
+    response never authenticates the UI.
+17. **Known gap**: no enrolment-status endpoint, so `/dashboard/security` offers both actions without knowing the
+    current state (follow-up on the backend).
+
 ## Consequences
 
 - New table `mfa_enrollments` (Flyway) and one new secret per installation.
