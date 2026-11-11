@@ -161,8 +161,8 @@ Each PR ≤ 400 counted lines and one concern.
 | B1 | Shell, nav, tokens, i18n, workflows list and detail (read-only) | A.2 | #2240 |
 | B2 | Workflow edit, version diff, governance transitions | A.3, B1 | #2240 |
 | B3, B4 | Agents; Skills | B1 | #2240 |
-| C1..C5 | One module per PR: tools/MCP, providers, knowledge, rules/gates, integrations | B1 | #2241 |
-| C6 | Runs monitor (read-only) | A.4 | #2241 |
+| C1..C5 | tools/MCP, providers, knowledge, rules/gates, integrations (shipped together via `aisdlc backoffice` HTML adapters over Phase A catalogs when A.2/A.3 tips are contested) | B1 | #2241 |
+| C6 | Runs monitor (read-only; evidence/`aisdlc report` until A.4 Run entities; cancel/retry honest-empty) | A.4 (entities) / evidence interim | #2241 |
 | D1 | Projects and repo binding | A.4, B1 | #2242 |
 | D2 | Approved-workflow picker and start run (`RunRequest`) | D1, B2 | #2242 |
 | D3 | Progress monitor from evidence | D2, C6 | #2242 |

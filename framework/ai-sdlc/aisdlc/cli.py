@@ -447,7 +447,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     p = sub.add_parser(
         "backoffice",
-        help="Kit-neutral factory backoffice HTML/serve over Phase A ports (#2240)",
+        help="Kit-neutral factory backoffice HTML/serve over Phase A ports (#2240/#2241)",
     )
     p.add_argument(
         "--html",
@@ -456,7 +456,17 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument(
         "--module",
-        choices=["workflows", "agents", "skills"],
+        choices=[
+            "workflows",
+            "agents",
+            "skills",
+            "mcp",
+            "providers",
+            "memory",
+            "rules",
+            "integrations",
+            "runs",
+        ],
         default="workflows",
         help="module page to render (default workflows)",
     )

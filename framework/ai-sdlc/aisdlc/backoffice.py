@@ -1,7 +1,9 @@
-"""Factory backoffice adapters over Phase A catalogs/workflows (#2240).
+"""Factory backoffice adapters over Phase A catalogs/workflows + evidence (#2240/#2241).
 
-HTML/serve are driving adapters only — CLI/OpenAPI catalogs remain the system
-of record. No second config truth. Loopback serve binds 127.0.0.1 by default.
+HTML/serve are driving adapters only — CLI/OpenAPI catalogs and the evidence ledger
+remain the system of record. No second config truth or parallel metrics store.
+Loopback serve binds 127.0.0.1 by default. Does not implement ``aisdlc serve`` (#2253)
+or If-Match writes (#2254).
 """
 from __future__ import annotations
 
@@ -10,18 +12,60 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any
 from urllib.parse import parse_qs, urlparse
 
-from aisdlc import catalogs, workflows
+from aisdlc import catalogs, evidence, workflows
 from aisdlc.context import Context
+from aisdlc.errors import KitError
 from aisdlc.factory import redact
 from aisdlc.profile import ProfileError
 
 BRAND = "AI SDLC factory"
-MODULES = ("workflows", "agents", "skills")
+
+# FACTORY-UI-SPEC order: Workflows … Runs
+MODULES = (
+    "workflows",
+    "agents",
+    "skills",
+    "mcp",
+    "providers",
+    "memory",
+    "rules",
+    "integrations",
+    "runs",
+)
+
 MODULE_KIND = {
     "workflows": "workflows",
     "agents": "agents",
     "skills": "skills",
+    "mcp": "mcp",
+    "providers": "providers",
+    "memory": "memory",
+    "rules": "rules",
+    "integrations": "integrations",
 }
+
+MODULE_LABELS = {
+    "workflows": "Workflows",
+    "agents": "Agents",
+    "skills": "Skills",
+    "mcp": "Tools / MCP",
+    "providers": "Providers",
+    "memory": "Knowledge",
+    "rules": "Rules / Gates",
+    "integrations": "Integrations",
+    "runs": "Runs",
+}
+
+CATALOG_MODULES = tuple(m for m in MODULES if m != "runs")
+
+RUNS_ACTIONS_REASON = (
+    "Cancel/retry unavailable: Runner/Forge ports do not honestly support them yet "
+    "(A.4 Project/Run entities pending — #2255). Runs monitor is evidence-derived only."
+)
+
+
+def module_label(module: str) -> str:
+    return MODULE_LABELS.get(module, module.replace("_", " ").title())
 
 
 def allowed_transitions(governance: str) -> list[str]:
@@ -39,6 +83,10 @@ def snapshot(
     """Assemble a redacted read model for HTML rendering."""
     if module not in MODULES:
         raise ProfileError(f"unknown backoffice module {module!r} (expected {', '.join(MODULES)})")
+
+    if module == "runs":
+        return _runs_snapshot(ctx, error=error)
+
     kind = MODULE_KIND[module]
     listed = catalogs.list_entries(ctx, kind)
     entries = []
@@ -49,7 +97,7 @@ def snapshot(
             continue
         try:
             full = catalogs.show(ctx, kind, eid, redacted=True)
-        except ProfileError as exc:
+        except (ProfileError, KitError) as exc:
             entries.append({**row, "error": str(exc)})
             continue
         if kind == "workflows":
@@ -72,11 +120,57 @@ def snapshot(
         "brand": BRAND,
         "module": module,
         "modules": list(MODULES),
+        "module_labels": dict(MODULE_LABELS),
         "kind": kind,
         "entries": entries,
         "detail": detail,
         "history": history,
         "error": error,
+        "runs_report": None,
+        "runs_actions": None,
+    }
+    return redact("", payload)  # type: ignore[return-value]
+
+
+def _runs_snapshot(ctx: Context, *, error: str | None = None) -> dict[str, Any]:
+    report = evidence.report_summary(ctx)
+    records = evidence.ledger_records(ctx)
+    # Keep monitor payload lean: stage/ok/ts + gate count (no prompts/secrets).
+    recent = []
+    for row in records[-50:]:
+        recent.append(
+            {
+                "ts": row.get("ts"),
+                "stage": row.get("stage"),
+                "ok": row.get("ok"),
+                "gates": len(row.get("gates") or []),
+            }
+        )
+    payload = {
+        "brand": BRAND,
+        "module": "runs",
+        "modules": list(MODULES),
+        "module_labels": dict(MODULE_LABELS),
+        "kind": None,
+        "entries": recent,
+        "detail": None,
+        "history": None,
+        "error": error,
+        "runs_report": {
+            "runs": report.get("runs"),
+            "failed_runs": report.get("failed_runs"),
+            "stages": report.get("stages"),
+            "gates": report.get("gates"),
+            "cost": report.get("cost"),
+            "autonomy": report.get("autonomy"),
+            "profile": report.get("profile"),
+            "source": "evidence.summarize + cost (aisdlc report)",
+        },
+        "runs_actions": {
+            "cancel_supported": False,
+            "retry_supported": False,
+            "reason": RUNS_ACTIONS_REASON,
+        },
     }
     return redact("", payload)  # type: ignore[return-value]
 
@@ -93,27 +187,27 @@ def create_entity(
     mcp: list[str] | None = None,
     providers: list[str] | None = None,
 ) -> dict[str, Any]:
-    if module not in MODULES:
+    if module not in CATALOG_MODULES:
         raise ProfileError(f"unknown backoffice module {module!r}")
-    if module == "workflows":
-        code = workflows.create(
-            ctx,
-            entity_id,
-            summary=summary,
-            agents=agents,
-            skills=skills,
-            mcp=mcp,
-            providers=providers,
-            as_json=False,
-        )
-        if code != 0:
-            raise ProfileError(f"workflow create failed with code {code}")
-        return catalogs.show(ctx, "workflows", entity_id, redacted=True)
-    kind = MODULE_KIND[module]
-    code = catalogs.add(ctx, kind, entity_id, ref=ref, summary=summary, quiet=True)
-    if code != 0:
-        raise ProfileError(f"catalog create failed for {kind}/{entity_id}")
-    return catalogs.show(ctx, kind, entity_id, redacted=True)
+    if module == "runs":
+        raise ProfileError("runs module is read-only (no create)")
+    try:
+        if module == "workflows":
+            workflows.create(
+                ctx,
+                entity_id,
+                summary=summary,
+                agents=agents,
+                skills=skills,
+                mcp=mcp,
+                providers=providers,
+            )
+            return catalogs.show(ctx, "workflows", entity_id, redacted=True)
+        kind = MODULE_KIND[module]
+        catalogs.add(ctx, kind, entity_id, ref=ref, summary=summary)
+        return catalogs.show(ctx, kind, entity_id, redacted=True)
+    except KitError as exc:
+        raise ProfileError(str(exc)) from exc
 
 
 def edit_entity(
@@ -128,27 +222,27 @@ def edit_entity(
     mcp: list[str] | None = None,
     providers: list[str] | None = None,
 ) -> dict[str, Any]:
-    if module not in MODULES:
+    if module not in CATALOG_MODULES:
         raise ProfileError(f"unknown backoffice module {module!r}")
-    if module == "workflows":
-        code = workflows.new_version(
-            ctx,
-            entity_id,
-            summary=summary,
-            agents=agents,
-            skills=skills,
-            mcp=mcp,
-            providers=providers,
-            as_json=False,
-        )
-        if code != 0:
-            raise ProfileError(f"workflow edit failed with code {code}")
-        return catalogs.show(ctx, "workflows", entity_id, redacted=True)
-    kind = MODULE_KIND[module]
-    code = catalogs.update(ctx, kind, entity_id, ref=ref, summary=summary)
-    if code != 0:
-        raise ProfileError(f"catalog edit failed for {kind}/{entity_id}")
-    return catalogs.show(ctx, kind, entity_id, redacted=True)
+    if module == "runs":
+        raise ProfileError("runs module is read-only (no edit)")
+    try:
+        if module == "workflows":
+            workflows.new_version(
+                ctx,
+                entity_id,
+                summary=summary,
+                agents=agents,
+                skills=skills,
+                mcp=mcp,
+                providers=providers,
+            )
+            return catalogs.show(ctx, "workflows", entity_id, redacted=True)
+        kind = MODULE_KIND[module]
+        catalogs.update(ctx, kind, entity_id, ref=ref, summary=summary)
+        return catalogs.show(ctx, kind, entity_id, redacted=True)
+    except KitError as exc:
+        raise ProfileError(str(exc)) from exc
 
 
 def transition_workflow(
@@ -161,18 +255,18 @@ def transition_workflow(
     reason: str | None = None,
     waive_reason: str | None = None,
 ) -> dict[str, Any]:
-    code = workflows.transition(
-        ctx,
-        workflow_id,
-        action,
-        signature=signature,
-        owner_override=owner_override,
-        reason=reason,
-        waive_reason=waive_reason,
-        as_json=False,
-    )
-    if code != 0:
-        raise ProfileError(f"workflow transition failed with code {code}")
+    try:
+        workflows.transition(
+            ctx,
+            workflow_id,
+            action,
+            signature=signature,
+            owner_override=owner_override,
+            reason=reason,
+            waive_reason=waive_reason,
+        )
+    except KitError as exc:
+        raise ProfileError(str(exc)) from exc
     return catalogs.show(ctx, "workflows", workflow_id, redacted=True)
 
 
@@ -241,6 +335,11 @@ def start_server(ctx: Context, *, host: str = "127.0.0.1", port: int = 8765) -> 
             action = form.get("action") or ""
             entity_id = form.get("id") or ""
             try:
+                if module == "runs" or action in {"cancel", "retry"}:
+                    raise ProfileError(
+                        "runs module is read-only; cancel/retry unavailable until Runner/Forge "
+                        "ports honestly support them (#2255)"
+                    )
                 if action == "create":
                     if not entity_id:
                         raise ProfileError("id is required")
@@ -285,14 +384,12 @@ def start_server(ctx: Context, *, host: str = "127.0.0.1", port: int = 8765) -> 
                     raise ProfileError(f"unknown action {action!r}")
                 self._redirect(f"/?module={module}&id={entity_id}")
             except ProfileError as exc:
-                # Prefer an error page with unchanged state for HTML clients;
-                # HTTP 400 for API-like clients that check status.
                 accept = self.headers.get("Accept") or ""
                 err = str(exc)
                 if "application/json" in accept:
                     self._send(400, json.dumps({"error": err}), content_type="application/json")
                     return
-                data = snapshot(ctx, module=module, entity_id=entity_id or None, error=err)
+                data = snapshot(ctx, module=module if module in MODULES else "workflows", entity_id=entity_id or None, error=err)
                 self._send(400, render_shell(data, form_action="/mutate"))
 
     return ThreadingHTTPServer((host, port), Handler)
