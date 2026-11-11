@@ -278,6 +278,13 @@ function PeopleList() {
         isFetching={hasSearchCriteria ? search.isFetching : isFetching}
         keyExtractor={(p) => p.personId!}
         emptyMessage={t("noData")}
+        emptyDescription={t("emptyDescription")}
+        emptyAction={
+          <Button onClick={openCreate} data-testid="btn-empty-new-person">
+            <Plus className="h-4 w-4" />
+            {t("newPersona")}
+          </Button>
+        }
         error={
           !hasSearchCriteria && isPeopleError
             ? t("loadError")
