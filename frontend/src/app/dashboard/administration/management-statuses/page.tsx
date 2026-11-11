@@ -80,9 +80,10 @@ export default function StatusesManagementPage() {
     const required = requiredFieldErrors({ name: editing.name }, tc("fieldRequired"));
     setFieldErrors(required);
     if (Object.keys(required).length > 0) return;
+    const name = (editing.name ?? "").trim();
     setSaving(true);
     try {
-      const body = { name: editing.name.trim(), notes: editing.notes?.trim() };
+      const body = { name, notes: editing.notes?.trim() };
       if (isEditMode && editing.idManagementStatus) {
         await managementStatusUseCases.update(editing.idManagementStatus, {
           ...body,

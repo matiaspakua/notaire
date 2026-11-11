@@ -215,12 +215,14 @@ export default function WorkflowsPage() {
                   placeholder={t("fields.descriptionPlaceholder")}
                 />
               </FormField>
-              <CheckboxField
-                label={t("enabledForAssignment")}
-                checked={editing.active ?? false}
-                onChange={(checked) => setEditing({ ...editing, active: checked })}
-                data-testid="checkbox-active-workflow"
-              />
+              <FormField label={tc("active")}>
+                <CheckboxField
+                  label={t("enabledForAssignment")}
+                  checked={editing.active ?? false}
+                  onChange={(checked) => setEditing({ ...editing, active: checked })}
+                  data-testid="checkbox-active-workflow"
+                />
+              </FormField>
             </FormSection>
             {activateErrors.length > 0 && (
               <div role="alert" className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-sm text-destructive" data-testid="workflow-activate-errors">

@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/fix-2088-admin-catalog-forms-audit/` | passed |
 | Branch | `fix/2088_admin-catalog-forms-audit` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
+| Commits | 41be4425, 0af001a7, 8977e78b | recorded |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -30,26 +30,26 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Required fields announce and show errors | AdminCatalogFormsRenderedA11y (unit) | pending |
-| Labels are not placeholder-only | AdminCatalogFormsRenderedA11y (unit) | pending |
-| Shared checkbox controls meet the touch floor | AdminCatalogFormsRenderedA11y (unit) | pending |
-| Save disables while pending | AdminCatalogFormsRenderedA11y (unit) | pending |
-| Primary save meets touch floor at desktop and 320px | TS-0158 (Playwright) | pending |
-| Narrow viewport does not clip the primary action | TS-0158 (Playwright) | pending |
+| Required fields announce and show errors | AdminCatalogFormsRenderedA11y (unit) | passing |
+| Labels are not placeholder-only | AdminCatalogFormsRenderedA11y (unit) | passing |
+| Shared checkbox controls meet the touch floor | AdminCatalogFormsRenderedA11y (unit) | passing |
+| Save disables while pending | AdminCatalogFormsRenderedA11y (unit) | passing |
+| Primary save meets touch floor at desktop and 320px | TS-0158 (Playwright) | pending (preflight) |
+| Narrow viewport does not clip the primary action | TS-0158 (Playwright) | pending (preflight) |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/300-development/304-ai-sdlc-cloud/FORMS-AUDIT-PLAN.md` | pending | pending |
-| `CHANGELOG.md` | pending (omit if fence held) | pending |
+| `docs/300-development/304-ai-sdlc-cloud/FORMS-AUDIT-PLAN.md` | yes | 8977e78b |
+| `CHANGELOG.md` | omitted (release-please #2230 holds fence) | n/a |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | #2088, this folder |
-| 2 | Failing tests written, test cases designed | pending | pending |
+| 2 | Failing tests written, test cases designed | yes | foreman-ops-asli-73/tdd-red.txt |
 | 3 | Suite green, coverage held, docs updated | pending | pending |
 | 4 | CI green, review approved, no conflicts | pending | pending |
 | 5 | Deployed, smoke test passed, Issue closed | pending | pending |

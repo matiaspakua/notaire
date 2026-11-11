@@ -241,15 +241,18 @@ export default function FoliosAdminPage() {
     if (!form.notaryId) required.notaryId = tc("fieldRequired");
     setFieldErrors(required);
     if (Object.keys(required).length > 0) return;
+    const number = form.number as number;
+    const typeFolioId = form.folioTypeId as number;
+    const notaryId = form.notaryId as number;
     setSaving(true);
     try {
       const body = {
-        number: form.number,
+        number,
         year: form.year,
         status: form.status,
         notes: form.notes,
-        typeFolioId: form.folioTypeId,
-        notaryId: form.notaryId,
+        typeFolioId,
+        notaryId,
         deedId: form.deedId,
       };
       if (isEditMode && form.idFolio) {

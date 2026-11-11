@@ -19,7 +19,6 @@ import type { BudgetTemplate as DomainBudgetTemplate } from "@/core/budget-templ
 import type { DocumentCostTemplate as DomainDocumentCostTemplate } from "@/core/document-cost-template/domain/document-cost-template";
 import type { DocumentType as DomainDocumentType } from "@/core/document-type/domain/document-type";
 import { presentMutationError } from "@/lib/mutation-error";
-import { requiredFieldErrors } from "@/lib/required-field-errors";
 import type { BudgetTemplate, ProcedureType, Concept, DocumentType, DocumentCostTemplate } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { AllProcedureTemplates } from "./AllProcedureTemplates";
