@@ -106,3 +106,28 @@ describe("motion tokens (#1368)", () => {
     expect(staggerDelay(13)).toBeCloseTo(0.15, 5);
   });
 });
+
+/**
+ * #2073 / RNF-05 — reduced-motion policy.
+ *
+ * Choice recorded here: focus/color/opacity state transitions use
+ * `duration.fast` (`var(--motion-duration-fast)`), not an instant cut and not
+ * a global `0.01ms` transition kill. Transform travel stays removed.
+ */
+describe("reduced motion CSS policy (#2073)", () => {
+  const reducedBlock = css.match(/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[\s\S]*$/)?.[0] ?? "";
+
+  it("does not apply a global 0.01ms transition-duration kill", () => {
+    expect(reducedBlock).not.toMatch(/transition-duration:\s*0\.01ms/);
+  });
+
+  it("keeps color/opacity/focus state transitions at duration.fast (chosen over instant cut)", () => {
+    expect(reducedBlock).toMatch(/transition-duration:\s*var\(--motion-duration-fast\)/);
+  });
+
+  it("removes transform travel under reduced motion", () => {
+    expect(reducedBlock).toMatch(/transition-property:[^;]*opacity[^;]*!important/);
+    expect(reducedBlock).not.toMatch(/transition-property:[^;]*\btransform\b/);
+    expect(reducedBlock).toMatch(/\.apple-button:active\s*\{[^}]*transform:\s*none/);
+  });
+});

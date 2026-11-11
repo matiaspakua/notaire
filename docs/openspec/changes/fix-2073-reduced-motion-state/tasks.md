@@ -20,23 +20,23 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: happy path, edge cases, error paths
-- [ ] 3.2 Write the unit tests for every scenario in the delta spec
-- [ ] 3.3 Write the integration tests where applicable
-- [ ] 3.4 Run them and **observe them fail** — `cd frontend && npm test -- motion-tokens.test.ts login-page.test.tsx`
-- [ ] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
+- [x] 3.1 Enumerate test cases: happy path, edge cases, error paths
+- [x] 3.2 Write the unit tests for every scenario in the delta spec
+- [x] 3.3 Write the integration tests where applicable
+- [x] 3.4 Run them and **observe them fail** — `cd frontend && npm test -- motion-tokens.test.ts login-page.test.tsx`
+- [x] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
 
 ## 4. Implementación
 
-- [ ] 4.1 Replace the global `0.01ms` transition kill with duration.fast state transitions + no transform travel
-- [ ] 4.2 Keep MotionConfig `reducedMotion="user"` / `duration.instant` path; login seal transform none
-- [ ] 4.3 Document the duration.fast choice in CSS comment and theme README
+- [x] 4.1 Replace the global `0.01ms` transition kill with duration.fast state transitions + no transform travel
+- [x] 4.2 Keep MotionConfig `reducedMotion="user"` / `duration.instant` path; login seal transform none
+- [x] 4.3 Document the duration.fast choice in CSS comment and theme README
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
-- [ ] 5.2 Update them without weakening assertions; document why any old expectation was wrong
-- [ ] 5.3 Remove tests made genuinely obsolete, stating the reason
+- [x] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
+- [x] 5.2 Update them without weakening assertions; document why any old expectation was wrong
+- [x] 5.3 Remove tests made genuinely obsolete, stating the reason
 
 ## 6. Ejecutar regresión
 
