@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `fix/2072_home-module-grid-accent` | created |
 | Tasks | `tasks.md` | Gate 1–8 complete |
 | Commits | `ebfd405b` | committed |
-| Pull Request | pending | pending |
+| Pull Request | [#2234](https://github.com/matiaspakua/notaire/pull/2234) | open |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |
