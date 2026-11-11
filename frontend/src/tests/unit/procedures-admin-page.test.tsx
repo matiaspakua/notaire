@@ -76,7 +76,8 @@ describe("procedure types", () => {
 
     fireEvent.click(within(await screen.findByRole("dialog")).getByRole("button", { name: /common\.save/ }));
 
-    expect(toast.error).toHaveBeenCalledWith("administracion.tramites.nameRequired");
+    expect(within(screen.getByRole("dialog")).getAllByRole("alert").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("input-name-procedure")).toHaveAttribute("aria-invalid", "true");
     expect(apiPost).not.toHaveBeenCalled();
   });
 

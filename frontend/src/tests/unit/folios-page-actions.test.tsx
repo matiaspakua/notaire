@@ -201,7 +201,8 @@ describe("folio form", () => {
 
     fireEvent.click(saveButton());
 
-    expect(toast.error).toHaveBeenLastCalledWith(expect.stringContaining("administracion.folios.fields.escribano"));
+    expect(within(screen.getByRole("dialog")).getAllByRole("alert").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("select-notary-folio")).toHaveAttribute("aria-invalid", "true");
     expect(apiPost).not.toHaveBeenCalled();
   });
 
@@ -214,7 +215,8 @@ describe("folio form", () => {
 
     fireEvent.click(saveButton());
 
-    expect(toast.error).toHaveBeenLastCalledWith("administracion.folios.numberRequired");
+    expect(within(screen.getByRole("dialog")).getAllByRole("alert").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("input-folio-number")).toHaveAttribute("aria-invalid", "true");
   });
 
   it("reports a failed save with the fallback message and keeps the dialog open", async () => {
@@ -271,7 +273,8 @@ describe("folio form", () => {
 
     fireEvent.click(saveButton());
 
-    expect(toast.error).toHaveBeenLastCalledWith(expect.stringContaining("administracion.folios.fields.tipo"));
+    expect(within(screen.getByRole("dialog")).getAllByRole("alert").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("select-folio-type")).toHaveAttribute("aria-invalid", "true");
     expect(apiPut).not.toHaveBeenCalled();
   });
 

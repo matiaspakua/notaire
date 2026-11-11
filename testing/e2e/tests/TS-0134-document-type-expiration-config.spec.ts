@@ -37,9 +37,11 @@ test.describe("Document type - expiration and responsible party", () => {
     await page.getByTestId("input-name-document").fill(`Power Expires ${Date.now()}`);
     await page.getByTestId("checkbox-expires-document").click();
 
-    await page.getByRole("button", { name: /crear|guardar/i }).click();
+    await page.getByTestId("btn-save-document").click();
 
-    await steps.thenShowsErrorMessage("días");
+    const dialog = page.getByRole("dialog");
+    await expect(dialog.getByRole("alert").first()).toBeVisible({ timeout: 5000 });
+    await expect(dialog.getByTestId("input-due-days-document")).toHaveAttribute("aria-invalid", "true");
   });
 
   test("CU27-GW03: Given a complete form, When creating a document type with an expiration, Then it is stored", async ({

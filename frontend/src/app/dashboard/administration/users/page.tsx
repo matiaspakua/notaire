@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import { useUsers, useCreateUser, useUpdateUser, useDeleteUser } from "@/hooks/useUsers";
 import { useRoles, useAssignRoleToUser, useUnassignRoleFromUser } from "@/hooks/useRoles";
 import { presentMutationError } from "@/lib/mutation-error";
@@ -65,8 +66,9 @@ export default function UsersPage() {
   }
 
   async function handleSave() {
-    if (!editing.name?.trim()) { toast.error(t("fields.nombre") + " " + tc("required")); return; }
-    setFieldErrors({});
+    const required = requiredFieldErrors({ name: editing.name }, tc("fieldRequired"));
+    setFieldErrors(required);
+    if (Object.keys(required).length > 0) return;
     try {
       let savedId: number | undefined;
       if (isEditMode && editing.idUser) {
@@ -194,7 +196,12 @@ export default function UsersPage() {
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>{tc("cancel")}</Button>
-              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
+              <Button
+                onClick={handleSave}
+                disabled={createMutation.isPending || updateMutation.isPending}
+                aria-busy={createMutation.isPending || updateMutation.isPending || undefined}
+                data-testid="btn-save-user"
+              >
                 {isEditMode ? tc("update") : tc("create")}
               </Button>
             </FormActions>

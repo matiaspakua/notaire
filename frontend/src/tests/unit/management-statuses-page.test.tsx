@@ -76,7 +76,8 @@ describe("management statuses", () => {
 
     fireEvent.click(within(await screen.findByRole("dialog")).getByRole("button", { name: /common\.save/ }));
 
-    expect(toast.error).toHaveBeenCalledWith("administracion.estadosGestion.nameRequired");
+    expect(within(screen.getByRole("dialog")).getAllByRole("alert").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("input-name-status")).toHaveAttribute("aria-invalid", "true");
     expect(apiPost).not.toHaveBeenCalled();
   });
 

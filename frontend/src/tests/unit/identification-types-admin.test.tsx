@@ -98,7 +98,8 @@ describe("Identification types admin page (#1361)", () => {
     const dialog = await screen.findByRole("dialog");
     fireEvent.change(within(dialog).getByTestId("input-identification-type-name"), { target: { value: "Identity card" } });
     fireEvent.click(within(dialog).getByTestId("btn-save-identification-type"));
-    await waitFor(() => expect(toastError).toHaveBeenCalled());
+    await waitFor(() => expect(within(dialog).getAllByRole("alert").length).toBeGreaterThan(0));
+    expect(within(dialog).getByTestId("input-identification-type-characters")).toHaveAttribute("aria-invalid", "true");
     expect(calls("POST")).toHaveLength(0);
   });
 
@@ -109,10 +110,12 @@ describe("Identification types admin page (#1361)", () => {
     const dialog = await screen.findByRole("dialog");
     fireEvent.change(within(dialog).getByTestId("input-identification-type-name"), { target: { value: "Identity card" } });
     for (const value of ["51", "0", "abc"]) {
-      toastError.mockClear();
       fireEvent.change(within(dialog).getByTestId("input-identification-type-characters"), { target: { value } });
       fireEvent.click(within(dialog).getByTestId("btn-save-identification-type"));
-      await waitFor(() => expect(toastError).toHaveBeenCalledWith("administracion.tiposIdentificacion.charactersRequired"));
+      await waitFor(() =>
+        expect(within(dialog).getByText("administracion.tiposIdentificacion.charactersRequired")).toBeInTheDocument(),
+      );
+      expect(within(dialog).getByTestId("input-identification-type-characters")).toHaveAttribute("aria-invalid", "true");
     }
     expect(calls("POST")).toHaveLength(0);
   });

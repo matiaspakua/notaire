@@ -181,7 +181,8 @@ describe("add status dialog", () => {
 
     fireEvent.click(screen.getByTestId("btn-confirm-node"));
 
-    expect(toast.error).toHaveBeenCalledWith("administracion.workflows.editor.selectStatus");
+    expect(within(screen.getByRole("dialog")).getAllByRole("alert").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("select-status-node")).toHaveAttribute("aria-invalid", "true");
     expect(apiPost).not.toHaveBeenCalled();
   });
 

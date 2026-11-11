@@ -103,7 +103,8 @@ describe("workflow form", () => {
 
     fireEvent.click(await screen.findByTestId("btn-save-workflow"));
 
-    expect(toast.error).toHaveBeenCalledWith("administracion.workflows.nameRequired");
+    expect(within(screen.getByRole("dialog")).getAllByRole("alert").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("input-name-workflow")).toHaveAttribute("aria-invalid", "true");
     expect(apiPost).not.toHaveBeenCalled();
   });
 

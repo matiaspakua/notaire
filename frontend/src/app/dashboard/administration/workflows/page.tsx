@@ -9,7 +9,7 @@ import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
+import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import {
   useWorkflowDefinitions,
   useCreateWorkflowDefinition,
@@ -17,6 +17,7 @@ import {
   useDeleteWorkflowDefinition,
 } from "@/hooks/useWorkflow";
 import { presentMutationError } from "@/lib/mutation-error";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import { workflowUseCases } from "@/composition/workflow";
 import { validateWorkflow } from "@/lib/workflow-validate";
 import type { WorkflowDefinition } from "@/types";
@@ -37,6 +38,7 @@ export default function WorkflowsPage() {
   const [editing, setEditing] = useState<Partial<WorkflowDefinition>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   // #1577: an invalid workflow cannot be saved as active; the backend validate decides.
   const [activateErrors, setActivateErrors] = useState<string[]>([]);
@@ -47,6 +49,7 @@ export default function WorkflowsPage() {
 
   function openCreate() {
     setEditing(EMPTY);
+    setFieldErrors({});
     setActivateErrors([]);
     setIsEditMode(false);
     setModalOpen(true);
@@ -56,6 +59,7 @@ export default function WorkflowsPage() {
     setEditing(wf);
     setActivateErrors([]);
     setIsEditMode(true);
+    setFieldErrors({});
     setModalOpen(true);
   }
 
@@ -80,10 +84,9 @@ export default function WorkflowsPage() {
   }
 
   async function handleSave() {
-    if (!editing.name?.trim()) {
-      toast.error(t("nameRequired"));
-      return;
-    }
+    const required = requiredFieldErrors({ name: editing.name }, tc("fieldRequired"));
+    setFieldErrors(required);
+    if (Object.keys(required).length > 0) return;
     setSaving(true);
     try {
       if (editing.active) {
@@ -196,12 +199,13 @@ export default function WorkflowsPage() {
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={isEditMode ? t("editWorkflow") : t("newWorkflow")}>
-              <FormField label={tc("name")} required>
+              <FormField label={tc("name")} required error={fieldErrors.name}>
                 <Input
                   value={editing.name ?? ""}
                   onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                   placeholder={t("fields.namePlaceholder")}
                   data-testid="input-name-workflow"
+                  aria-invalid={!!fieldErrors.name}
                 />
               </FormField>
               <FormField label={tc("description")}>
@@ -212,15 +216,12 @@ export default function WorkflowsPage() {
                 />
               </FormField>
               <FormField label={tc("active")}>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={editing.active ?? false}
-                    onChange={(e) => setEditing({ ...editing, active: e.target.checked })}
-                    data-testid="checkbox-active-workflow"
-                  />
-                  <span className="text-sm">{t("enabledForAssignment")}</span>
-                </label>
+                <CheckboxField
+                  label={t("enabledForAssignment")}
+                  checked={editing.active ?? false}
+                  onChange={(checked) => setEditing({ ...editing, active: checked })}
+                  data-testid="checkbox-active-workflow"
+                />
               </FormField>
             </FormSection>
             {activateErrors.length > 0 && (
@@ -236,7 +237,12 @@ export default function WorkflowsPage() {
             )}
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>{tc("cancel")}</Button>
-              <Button onClick={handleSave} disabled={saving} data-testid="btn-save-workflow">
+              <Button
+                onClick={handleSave}
+                disabled={saving}
+                aria-busy={saving || undefined}
+                data-testid="btn-save-workflow"
+              >
                 {isEditMode ? tc("update") : tc("create")}
               </Button>
             </FormActions>

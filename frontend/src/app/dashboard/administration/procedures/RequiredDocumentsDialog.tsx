@@ -21,6 +21,7 @@ import {
   useUpdateProcedureTemplate,
 } from "@/hooks/useProcedureTemplate";
 import { ApiError } from "@/lib/api-error";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import type { ProcedureType, ProcedureTemplateRow } from "@/types";
 
 interface Props {
@@ -42,6 +43,7 @@ export function RequiredDocumentsDialog({ procedureType, onClose }: Props) {
 
   const [newDocTypeId, setNewDocTypeId] = useState("");
   const [newNotes, setNewNotes] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editNotes, setEditNotes] = useState("");
   const [deleting, setDeleting] = useState<ProcedureTemplateRow | null>(null);
@@ -51,12 +53,15 @@ export function RequiredDocumentsDialog({ procedureType, onClose }: Props) {
 
   async function handleAdd() {
     if (!procedureTypeId) return;
-    if (!newDocTypeId) { toast.error(t("documentRequired")); return; }
+    const required = requiredFieldErrors({ documentTypeId: newDocTypeId }, tc("fieldRequired"));
+    setFieldErrors(required);
+    if (Object.keys(required).length > 0) return;
     try {
       await createMutation.mutateAsync({ procedureTypeId, documentTypeId: Number(newDocTypeId), notes: newNotes.trim() });
       toast.success(t("added"));
       setNewDocTypeId("");
       setNewNotes("");
+      setFieldErrors({});
     } catch (err) {
       toast.error(err instanceof ApiError && err.status === 409 ? t("duplicate") : t("errorSave"));
     }
@@ -150,12 +155,13 @@ export function RequiredDocumentsDialog({ procedureType, onClose }: Props) {
               )}
             </FormSection>
             <FormSection title={t("addTitle")}>
-              <FormField label={t("documentType")} required>
+              <FormField label={t("documentType")} required error={fieldErrors.documentTypeId}>
                 <select
                   className="w-full h-12 rounded-xl border border-input px-3 text-sm bg-background"
                   value={newDocTypeId}
                   onChange={(e) => setNewDocTypeId(e.target.value)}
                   data-testid="select-required-doc-type"
+                  aria-invalid={!!fieldErrors.documentTypeId}
                 >
                   <option value="">{t("selectDocument")}</option>
                   {available.map((d) => (
@@ -172,7 +178,12 @@ export function RequiredDocumentsDialog({ procedureType, onClose }: Props) {
                 />
               </FormField>
               <div className="flex justify-end">
-                <Button onClick={handleAdd} disabled={createMutation.isPending} data-testid="btn-add-required-doc">
+                <Button
+                  onClick={handleAdd}
+                  disabled={createMutation.isPending}
+                  aria-busy={createMutation.isPending || undefined}
+                  data-testid="btn-add-required-doc"
+                >
                   <Plus aria-hidden />
                   {t("add")}
                 </Button>

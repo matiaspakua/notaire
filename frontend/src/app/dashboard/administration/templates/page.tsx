@@ -100,21 +100,24 @@ export default function TemplatesPage() {
   const [costKind, setCostKind] = useState<"fixed" | "variable">("fixed");
   const [costAmount, setCostAmount] = useState("");
   const [savingCost, setSavingCost] = useState(false);
+  const [costFieldErrors, setCostFieldErrors] = useState<Record<string, string>>({});
 
   function openCreateCost() {
     setCostDocumentTypeId("");
     setCostKind("fixed");
     setCostAmount("");
+    setCostFieldErrors({});
     setCostModalOpen(true);
   }
 
   async function handleSaveCost() {
     const idTypeDocument = Number(costDocumentTypeId);
     const amount = Number(costAmount);
-    if (!costProcedureId || !idTypeDocument || !amount) {
-      toast.error(t("costosDocumento.selectionRequired"));
-      return;
-    }
+    const required: Record<string, string> = {};
+    if (!idTypeDocument) required.documentTypeId = tc("fieldRequired");
+    if (!amount) required.amount = tc("fieldRequired");
+    setCostFieldErrors(required);
+    if (Object.keys(required).length > 0 || !costProcedureId) return;
     setSavingCost(true);
     try {
       await documentCostTemplateUseCases.create({
@@ -136,6 +139,7 @@ export default function TemplatesPage() {
   const typeDocumentName = (id?: number) =>
     documentTypes.find((x) => x.idDocumentType === id)?.name ?? `#${id}`;
   const [modalOpen, setModalOpen] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [isEditMode, setIsEditMode] = useState(false);
   const [procedureTypeId, setProcedureTypeId] = useState("");
   const [conceptId, setConceptId] = useState("");
@@ -149,6 +153,7 @@ export default function TemplatesPage() {
     setProcedureTypeId("");
     setConceptId("");
     setNotes("");
+    setFieldErrors({});
     setModalOpen(true);
   }
 
@@ -157,16 +162,18 @@ export default function TemplatesPage() {
     setProcedureTypeId(String(p.budgetTemplatePK?.fkIdProcedureType ?? ""));
     setConceptId(String(p.budgetTemplatePK?.fkIdConcept ?? ""));
     setNotes(p.notes ?? "");
+    setFieldErrors({});
     setModalOpen(true);
   }
 
   async function handleSave() {
     const tt = Number(procedureTypeId);
     const cc = Number(conceptId);
-    if (!tt || !cc) {
-      toast.error(t("selectionRequired"));
-      return;
-    }
+    const required: Record<string, string> = {};
+    if (!tt) required.procedureTypeId = tc("fieldRequired");
+    if (!cc) required.conceptId = tc("fieldRequired");
+    setFieldErrors(required);
+    if (Object.keys(required).length > 0) return;
     setSaving(true);
     try {
       const input = {
@@ -276,9 +283,9 @@ export default function TemplatesPage() {
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={isEditMode ? t("editPlantilla") : t("newPlantilla")}>
-              <FormField label={t("fields.tipoTramite")} required>
+              <FormField label={t("fields.tipoTramite")} required error={fieldErrors.procedureTypeId}>
                 <Select value={procedureTypeId} onValueChange={setProcedureTypeId}>
-                  <SelectTrigger data-testid="select-procedure-type" disabled={isEditMode}>
+                  <SelectTrigger data-testid="select-procedure-type" disabled={isEditMode} aria-invalid={!!fieldErrors.procedureTypeId}>
                     <SelectValue placeholder={t("fields.tipoTramitePlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -290,9 +297,9 @@ export default function TemplatesPage() {
                   </SelectContent>
                 </Select>
               </FormField>
-              <FormField label={t("fields.concepto")} required>
+              <FormField label={t("fields.concepto")} required error={fieldErrors.conceptId}>
                 <Select value={conceptId} onValueChange={setConceptId}>
-                  <SelectTrigger data-testid="select-concept" disabled={isEditMode}>
+                  <SelectTrigger data-testid="select-concept" disabled={isEditMode} aria-invalid={!!fieldErrors.conceptId}>
                     <SelectValue placeholder={t("fields.conceptoPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -318,7 +325,12 @@ export default function TemplatesPage() {
                 <NotaireIcon src="/icons/actions/cancel.png" alt={tc("cancel")} size={16} className="mr-1" />
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSave} disabled={saving}>
+              <Button
+                onClick={handleSave}
+                disabled={saving}
+                aria-busy={saving || undefined}
+                data-testid="btn-save-template"
+              >
                 <NotaireIcon src="/icons/actions/save.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
                 {isEditMode ? tc("update") : tc("save")}
               </Button>
@@ -386,9 +398,9 @@ export default function TemplatesPage() {
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={t("costosDocumento.newCosto")}>
-              <FormField label={t("costosDocumento.fields.tipoDocumento")} required>
+              <FormField label={t("costosDocumento.fields.tipoDocumento")} required error={costFieldErrors.documentTypeId}>
                 <Select value={costDocumentTypeId} onValueChange={setCostDocumentTypeId}>
-                  <SelectTrigger data-testid="select-document-type-cost">
+                  <SelectTrigger data-testid="select-document-type-cost" aria-invalid={!!costFieldErrors.documentTypeId}>
                     <SelectValue placeholder={t("costosDocumento.fields.tipoDocumentoPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -409,12 +421,13 @@ export default function TemplatesPage() {
                   { value: "variable", label: t("costosDocumento.fields.porcentajeVariable") },
                 ]}
               />
-              <FormField label={t("costosDocumento.fields.valor")} required>
+              <FormField label={t("costosDocumento.fields.valor")} required error={costFieldErrors.amount}>
                 <Input
                   type="number"
                   value={costAmount}
                   onChange={(e) => setCostAmount(e.target.value)}
                   data-testid="input-value-cost-document"
+                  aria-invalid={!!costFieldErrors.amount}
                 />
               </FormField>
             </FormSection>
@@ -423,7 +436,12 @@ export default function TemplatesPage() {
                 <NotaireIcon src="/icons/actions/cancel.png" alt={tc("cancel")} size={16} className="mr-1" />
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSaveCost} disabled={savingCost} data-testid="btn-save-cost-document">
+              <Button
+                onClick={handleSaveCost}
+                disabled={savingCost}
+                aria-busy={savingCost || undefined}
+                data-testid="btn-save-cost-document"
+              >
                 <NotaireIcon src="/icons/actions/save.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
                 {tc("save")}
               </Button>

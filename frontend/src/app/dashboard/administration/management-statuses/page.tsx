@@ -16,6 +16,7 @@ import { managementStatusUseCases } from "@/composition/management-status";
 import type { ManagementStatus as DomainManagementStatus } from "@/core/management-status/domain/management-status";
 import { useWorkflowDefinitions, useWorkflowNodes, useWorkflowTransitions } from "@/hooks/useWorkflow";
 import { extractApiError } from "@/lib/utils";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import type { ManagementStatus } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 
@@ -49,6 +50,7 @@ export default function StatusesManagementPage() {
   const [editing, setEditing] = useState<Partial<ManagementStatus>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -63,23 +65,25 @@ export default function StatusesManagementPage() {
   function openCreate() {
     setEditing(EMPTY);
     setIsEditMode(false);
+    setFieldErrors({});
     setModalOpen(true);
   }
 
   function openEdit(status: ManagementStatus) {
     setEditing(status);
     setIsEditMode(true);
+    setFieldErrors({});
     setModalOpen(true);
   }
 
   async function handleSave() {
-    if (!editing.name?.trim()) {
-      toast.error(t("nameRequired"));
-      return;
-    }
+    const required = requiredFieldErrors({ name: editing.name }, tc("fieldRequired"));
+    setFieldErrors(required);
+    if (Object.keys(required).length > 0) return;
+    const name = (editing.name ?? "").trim();
     setSaving(true);
     try {
-      const body = { name: editing.name.trim(), notes: editing.notes?.trim() };
+      const body = { name, notes: editing.notes?.trim() };
       if (isEditMode && editing.idManagementStatus) {
         await managementStatusUseCases.update(editing.idManagementStatus, {
           ...body,
@@ -208,12 +212,13 @@ export default function StatusesManagementPage() {
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={isEditMode ? t("editEstado") : t("newEstado")}>
-              <FormField label={t("fields.nombre")} required>
+              <FormField label={t("fields.nombre")} required error={fieldErrors.name}>
                 <Input
                   value={editing.name ?? ""}
                   onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                   placeholder={t("fields.namePlaceholder")}
                   data-testid="input-name-status"
+                  aria-invalid={!!fieldErrors.name}
                 />
               </FormField>
               <FormField label={t("fields.descripcion")}>
@@ -229,7 +234,12 @@ export default function StatusesManagementPage() {
                 <NotaireIcon src="/icons/actions/cancel.png" alt={tc("cancel")} size={16} className="mr-1" />
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSave} disabled={saving}>
+              <Button
+                onClick={handleSave}
+                disabled={saving}
+                aria-busy={saving || undefined}
+                data-testid="btn-save-status"
+              >
                 <NotaireIcon src="/icons/actions/save.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
                 {isEditMode ? tc("update") : tc("save")}
               </Button>

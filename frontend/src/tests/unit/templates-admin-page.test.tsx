@@ -81,7 +81,7 @@ describe("budget templates", () => {
     const dialog = await screen.findByRole("dialog");
     fireEvent.click(within(dialog).getByRole("button", { name: /common\.save/ }));
 
-    expect(toast.error).toHaveBeenCalledWith("administracion.plantillas.selectionRequired");
+    expect(within(dialog).getAllByRole("alert").length).toBeGreaterThan(0);
     expect(apiPost).not.toHaveBeenCalled();
   });
 

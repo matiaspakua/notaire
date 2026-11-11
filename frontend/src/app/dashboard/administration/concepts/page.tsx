@@ -143,7 +143,12 @@ export default function ConceptsPage() {
       <AppHeader
         title={t("title")}
         description={t("description")}
-        actions={<Button onClick={openCreate}><NotaireIcon src="/icons/actions/add.png" alt={tc("add")} size={16} className="mr-1" />{t("newConcepto")}</Button>}
+        actions={
+          <Button onClick={openCreate} data-testid="btn-new-concept">
+            <NotaireIcon src="/icons/actions/add.png" alt={tc("add")} size={16} className="mr-1" />
+            {t("newConcepto")}
+          </Button>
+        }
       />
 
       <div className="px-4 pb-4">
@@ -190,7 +195,12 @@ export default function ConceptsPage() {
                 <NotaireIcon src="/icons/actions/cancel.png" alt={tc("cancel")} size={16} className="mr-1" />
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
+              <Button
+                onClick={handleSave}
+                disabled={createMutation.isPending || updateMutation.isPending}
+                aria-busy={createMutation.isPending || updateMutation.isPending || undefined}
+                data-testid="btn-save-concept"
+              >
                 <NotaireIcon src="/icons/actions/save.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
                 {isEditMode ? tc("update") : tc("save")}
               </Button>

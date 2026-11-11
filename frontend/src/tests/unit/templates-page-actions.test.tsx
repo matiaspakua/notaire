@@ -164,7 +164,8 @@ describe("budget template create", () => {
 
     fireEvent.click(saveButton());
 
-    expect(toast.error).toHaveBeenCalledWith(`${P}.selectionRequired`);
+    expect(within(screen.getByRole("dialog")).getAllByRole("alert").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("select-concept")).toHaveAttribute("aria-invalid", "true");
     expect(apiPost).not.toHaveBeenCalled();
   });
 
@@ -291,14 +292,15 @@ describe("document cost templates", () => {
     fireEvent.click(await screen.findByTestId("btn-new-cost-document"));
     fireEvent.change(await screen.findByTestId("input-value-cost-document"), { target: { value: "10" } });
     fireEvent.click(screen.getByTestId("btn-save-cost-document"));
-    expect(toast.error).toHaveBeenCalledWith(`${P}.costosDocumento.selectionRequired`);
+    expect(within(screen.getByRole("dialog")).getAllByRole("alert").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("select-document-type-cost")).toHaveAttribute("aria-invalid", "true");
 
-    toast.error.mockReset();
     await pick("select-document-type-cost", "DNI");
     fireEvent.change(screen.getByTestId("input-value-cost-document"), { target: { value: "0" } });
     fireEvent.click(screen.getByTestId("btn-save-cost-document"));
 
-    expect(toast.error).toHaveBeenCalledWith(`${P}.costosDocumento.selectionRequired`);
+    expect(within(screen.getByRole("dialog")).getAllByRole("alert").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("input-value-cost-document")).toHaveAttribute("aria-invalid", "true");
     expect(apiPost).not.toHaveBeenCalled();
   });
 
