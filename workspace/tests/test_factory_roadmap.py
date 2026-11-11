@@ -82,6 +82,22 @@ class FactoryRoadmapTest(unittest.TestCase):
         self.assertIn("FACTORY-ROADMAP.md", text)
         self.assertRegex(text.lower(), r"spine (is )?done|epic #2134.*(closed|done)")
 
+    def test_roadmap_and_kit_readme_link_product_docs(self) -> None:
+        """#2251: design record docs exist and are linked from the roadmap and the kit README."""
+        kit_readme = REPO_ROOT / "framework" / "ai-sdlc" / "README.md"
+        roadmap = ROADMAP.read_text(encoding="utf-8")
+        readme = kit_readme.read_text(encoding="utf-8")
+        for name in ("FACTORY-PRODUCT-ANALYSIS.md", "FACTORY-UI-SPEC.md"):
+            with self.subTest(doc=name):
+                self.assertTrue(ROADMAP.with_name(name).is_file())
+                self.assertIn(name, roadmap)
+                self.assertIn(name, readme)
+
+    def test_ui_spec_leaves_owner_decisions_unanswered(self) -> None:
+        text = ROADMAP.with_name("FACTORY-UI-SPEC.md").read_text(encoding="utf-8")
+        self.assertEqual(3, text.count("Decision needed:"))
+        self.assertIn("Unanswered", text)
+
 
 if __name__ == "__main__":
     unittest.main()

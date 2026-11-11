@@ -8,6 +8,10 @@ It was extracted from the process that builds Notaire (#1958). The design, the e
 every rule, and what remains open are in the report:
 [`docs/300-development/306-ai-sdlc-framework/ai_sdlc_framework.md`](../../docs/300-development/306-ai-sdlc-framework/ai_sdlc_framework.md).
 
+Reuse gaps and the control-surface (UI/host) design are in
+[`FACTORY-PRODUCT-ANALYSIS.md`](../../docs/300-development/306-ai-sdlc-framework/FACTORY-PRODUCT-ANALYSIS.md)
+and [`FACTORY-UI-SPEC.md`](../../docs/300-development/306-ai-sdlc-framework/FACTORY-UI-SPEC.md) (#2251).
+
 ## Quick start (any stack)
 
 ```bash
@@ -32,8 +36,6 @@ python3 tools/ai-sdlc/bin/aisdlc report
 
 Mirror the stages in CI with [`templates/integrations/github-actions.yml`](templates/integrations/github-actions.yml)
 and locally with [`templates/integrations/pre-push`](templates/integrations/pre-push).
-
-
 
 ## Telemetry and flags (#2125)
 
