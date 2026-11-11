@@ -474,6 +474,13 @@ function ManagementsList() {
         isFetching={!clientFilter && isFetching}
         keyExtractor={(g) => g.idManagement!}
         emptyMessage={t("noData")}
+        emptyDescription={t("emptyDescription")}
+        emptyAction={
+          <Button onClick={openCreate} data-testid="btn-empty-new-management">
+            <Plus className="h-4 w-4" />
+            {t("newGestion")}
+          </Button>
+        }
         error={
           clientFilter
             ? isByClientError

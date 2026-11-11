@@ -211,6 +211,7 @@
     "duplicateDocument": "Another person is already registered with this document.",
     "viewExisting": "View existing person",
     "noData": "No people registered",
+    "emptyDescription": "Create the first person to start working with clients and parties.",
     "loadError": "Could not load the people list",
     "filterClients": "Clients only",
     "fields": {
@@ -258,6 +259,7 @@
     "errorSave": "Error saving case",
     "errorDelete": "Error deleting case",
     "noData": "No cases registered",
+    "emptyDescription": "Create the first case to start tracking work for a client.",
     "loadError": "Could not load the cases",
     "filterByCliente": "Filter by client...",
     "archiveGestion": "Archive case",
@@ -771,6 +773,7 @@
     "errorSave": "Error saving",
     "errorDelete": "Error deleting",
     "noData": "No quotes registered",
+    "emptyDescription": "Create the first quote to estimate fees for a case.",
     "loadError": "Could not load the quotes",
     "searchPlaceholder": "Search by ID or client...",
     "fields": {
