@@ -16,10 +16,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|
 | Issue | #2074 | open (Gate 1.6 SKIPPED — 403 labels) |
 | Use Case | RNF-05 — Aspecto visual | exists |
-| Specification | `docs/openspec/changes/fix-2074-mobile-nav-group-targets/` | drafted |
+| Specification | `docs/openspec/changes/archive/2026-11-11-fix-2074-mobile-nav-group-targets/` | archived |
 | Branch | `fix/2074_mobile-nav-group-targets` | created |
-| Tasks | `tasks.md` | 0/N complete (Gate 1 done) |
-| Commits | pending | pending |
+| Tasks | `tasks.md` | groups 1–8 complete |
+| Commits | `9eebe359` (Gate 1) · `0559b829` (fix) · archive tip | recorded |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -30,24 +30,24 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Mobile sheet group toggle ≥44px | `app-sidebar.test.tsx` | pending |
-| Desktop group toggle stays compact | `app-sidebar.test.tsx` | pending |
-| Grouped sidebar still works | `TS-0121-grouped-sidebar.spec.ts` | pending |
+| Mobile sheet group toggle ≥44px | `app-sidebar.test.tsx` | passing |
+| Desktop group toggle stays compact | `app-sidebar.test.tsx` | passing |
+| Grouped sidebar still works | `TS-0121-grouped-sidebar.spec.ts` | passing |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `CHANGELOG.md` | pending | pending |
-| `docs/openspec/specs/ui-touch-targets/spec.md` | pending (on archive) | pending |
+| `CHANGELOG.md` | yes | `0559b829` |
+| `docs/openspec/specs/ui-touch-targets/spec.md` | yes | archive commit |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | yes | this change folder; `validate-sdlc-plan.sh` |
-| 2 | Failing tests written, test cases designed | pending | pending |
-| 3 | Suite green, coverage held, docs updated | pending | pending |
+| 1 | Issue + Specification + Acceptance Criteria | yes | archived change; `validate-sdlc-plan.sh` |
+| 2 | Failing tests written, test cases designed | yes | `foreman-ops-asli-65/tdd-red.txt` |
+| 3 | Suite green, coverage held, docs updated | pending | preflight --full |
 | 4 | CI green, review approved, no conflicts | pending | pending |
 | 5 | Deployed, smoke test passed, Issue closed | pending | pending |
 

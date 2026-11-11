@@ -2,7 +2,9 @@
 
 ## Purpose
 Interactive controls meet the 44x44 minimum on touch screens.
+
 ## Requirements
+
 ### Requirement: Touch targets
 
 On devices whose primary pointer is coarse, every small button and the rows-per-page select SHALL be at least 44x44 CSS pixels, adjacent row actions SHALL be 8px apart, and with a fine pointer small buttons SHALL keep their 32px height.
@@ -41,3 +43,18 @@ An icon inside a row action button SHALL render at its declared size regardless 
 - **WHEN** someone removes shrink-0 or max-w-none from NotaireIcon
 - **THEN** the unit suite fails
 
+### Requirement: Mobile nav group toggles
+
+In the mobile navigation sheet (viewport below 768px), every nav-group disclosure
+button SHALL be at least 44 CSS pixels tall. In the desktop sidebar column, group
+disclosure buttons MAY keep a compact 32px height.
+
+#### Scenario: Mobile sheet
+
+- **WHEN** the mobile navigation sheet is open
+- **THEN** each `nav-group-*` disclosure button is at least 44px tall (`min-h-11`)
+
+#### Scenario: Desktop sidebar
+
+- **WHEN** the desktop sidebar is shown at ≥768px
+- **THEN** each group disclosure button keeps the compact `min-h-8` height
