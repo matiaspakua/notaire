@@ -56,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **frontend:** Reduced motion no longer uses a global 0.01ms transition kill — transform travel stays off; focus/color/opacity state changes use `duration.fast` (Refs #2073)
 * **frontend:** Mobile navigation sheet group toggles are at least 44px tall; desktop sidebar keeps the compact 32px group headers (Refs #2074)
 * **frontend:** Payments date-range unit test applies `router.replace` into `useSearchParams` so both `from` and `to` stay in the address (and clearing `from` leaves `to`) (Refs #2119)
 * **pages:** Do not publish fabricated 0% coverage when the JaCoCo snapshot or Vitest summary is missing; write JSON `null` and keep `lastUpdated: unknown` unless a measured live fallback exists (Refs #2203)

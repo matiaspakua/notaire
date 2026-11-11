@@ -109,6 +109,19 @@ describe("LoginPage", () => {
     expect(screen.getByTestId("login-mark")).toBeInTheDocument();
   });
 
+  it("keeps the login seal on MotionConfig reducedMotion=user so transform is none (#2069/#2073)", () => {
+    const providers = readFileSync(resolve(__dirname, "../../app/providers.tsx"), "utf8");
+    const login = readFileSync(resolve(__dirname, "../../app/login/page.tsx"), "utf8");
+    // MotionConfig reducedMotion="user" drops transforms (duration.instant path).
+    expect(providers).toMatch(/<MotionConfig\s+reducedMotion="user"/);
+    expect(login).toMatch(/data-testid="login-mark"/);
+    // Seal may declare a translate for full-motion users; under reduced motion
+    // MotionConfig reports transform: none (no rotate / no spring — #2069).
+    expect(login).not.toMatch(/rotate:/);
+    expect(login).not.toMatch(/type:\s*"spring"/);
+    expect(providers).toMatch(/duration\.instant|reducedMotion="user"/);
+  });
+
   it("associates username and password via FormField labels (#611)", () => {
     render(<LoginPage />, { wrapper });
     expect(screen.getByLabelText(/^Usuario/i)).toHaveAttribute("data-testid", "input-username");

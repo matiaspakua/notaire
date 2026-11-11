@@ -232,15 +232,25 @@
     scroll-behavior: auto !important;
   }
 
+  /*
+   * #2073 / RNF-05: do not use a global 0.01ms transition kill.
+   * Choice: color / opacity / focus-ring state changes keep duration.fast so
+   * they stay perceptible; transform travel is removed (transition-property
+   * allowlist excludes transform; press scale forced to none). Decorative
+   * keyframe animations still collapse via near-zero animation-duration.
+   * MotionConfig reducedMotion="user" keeps the JS path on duration.instant.
+   */
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+    transition-duration: var(--motion-duration-fast) !important;
+    transition-property: color, background-color, border-color, text-decoration-color,
+      fill, stroke, opacity, box-shadow, outline-color, outline-offset, filter !important;
   }
 
   /* Neutralise the decorative button scale so motion-sensitive users get no
-     movement (the transforms are otherwise driven by transitions above). */
+     movement (transform is excluded from transitions above as well). */
   .apple-button:active {
     transform: none !important;
   }
