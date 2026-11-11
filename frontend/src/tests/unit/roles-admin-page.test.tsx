@@ -79,7 +79,8 @@ describe("roles", () => {
 
     fireEvent.click(saveButton());
 
-    expect(toast.error).toHaveBeenCalledWith("administracion.roles.nameRequired");
+    expect(within(screen.getByRole("dialog")).getAllByRole("alert").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("input-name-role")).toHaveAttribute("aria-invalid", "true");
     expect(apiPost).not.toHaveBeenCalled();
   });
 

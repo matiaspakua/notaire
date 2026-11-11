@@ -14,6 +14,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { documentTypeUseCases } from "@/composition/document-type";
 import type { DocumentType as DomainDocumentType } from "@/core/document-type/domain/document-type";
 import { extractApiError } from "@/lib/utils";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import { EMPTY_DOCUMENT_TYPE } from "@/lib/document-type-form";
 import type { DocumentType } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
@@ -71,6 +72,7 @@ export default function DocumentsPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<DocumentType>>(EMPTY_DOCUMENT_TYPE);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [search, setSearch] = useState("");
 
   const { data: filtered = documentTypes } = useQuery({
@@ -84,6 +86,7 @@ export default function DocumentsPage() {
   function openCreate() {
     setEditing({ ...EMPTY_DOCUMENT_TYPE });
     setIsEditMode(false);
+    setFieldErrors({});
     setModalOpen(true);
   }
   function openEdit(documentType: DocumentType) {
@@ -93,12 +96,20 @@ export default function DocumentsPage() {
       returned: documentType.returned ?? false,
     });
     setIsEditMode(true);
+    setFieldErrors({});
     setModalOpen(true);
   }
 
   async function handleSave() {
-    if (!editing.name?.trim()) { toast.error(t("nameRequired")); return; }
-    if (editing.expires && !editing.dueDays) { toast.error(t("diasVencimientoRequired")); return; }
+    const required: Record<string, string> = requiredFieldErrors(
+      { name: editing.name },
+      tc("fieldRequired"),
+    );
+    if (editing.expires && !editing.dueDays) {
+      required.dueDays = tc("fieldRequired");
+    }
+    setFieldErrors(required);
+    if (Object.keys(required).length > 0) return;
     try {
       if (isEditMode && editing.idDocumentType) {
         await updateMutation.mutateAsync({ id: editing.idDocumentType, data: editing });
@@ -194,12 +205,13 @@ export default function DocumentsPage() {
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={isEditMode ? t("editDoc") : t("newDoc")}>
-              <FormField label={tc("name")} required>
+              <FormField label={tc("name")} required error={fieldErrors.name}>
                 <Input
                   value={editing.name ?? ""}
                   onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                   placeholder={t("namePlaceholder")}
                   data-testid="input-name-document"
+                  aria-invalid={!!fieldErrors.name}
                 />
               </FormField>
               <CheckboxField
@@ -223,7 +235,7 @@ export default function DocumentsPage() {
                 data-testid="checkbox-expires-document"
               />
               {editing.expires && (
-                <FormField label={t("fields.diasVencimiento")} required>
+                <FormField label={t("fields.diasVencimiento")} required error={fieldErrors.dueDays}>
                   <Input
                     type="number"
                     min={1}
@@ -232,6 +244,7 @@ export default function DocumentsPage() {
                       setEditing({ ...editing, dueDays: e.target.value ? parseInt(e.target.value) : null })
                     }
                     data-testid="input-due-days-document"
+                    aria-invalid={!!fieldErrors.dueDays}
                   />
                 </FormField>
               )}
@@ -248,7 +261,12 @@ export default function DocumentsPage() {
                 <NotaireIcon src="/icons/actions/cancel.png" alt={tc("cancel")} size={16} className="mr-1" />
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
+              <Button
+                onClick={handleSave}
+                disabled={createMutation.isPending || updateMutation.isPending}
+                aria-busy={createMutation.isPending || updateMutation.isPending || undefined}
+                data-testid="btn-save-document"
+              >
                 <NotaireIcon src="/icons/actions/save.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
                 {isEditMode ? tc("update") : tc("save")}
               </Button>

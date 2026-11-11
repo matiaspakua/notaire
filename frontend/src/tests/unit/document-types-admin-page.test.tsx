@@ -81,7 +81,8 @@ describe("document types", () => {
 
     fireEvent.click(saveButton());
 
-    expect(toast.error).toHaveBeenCalledWith("administracion.documentos.nameRequired");
+    expect(within(screen.getByRole("dialog")).getAllByRole("alert").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("input-name-document")).toHaveAttribute("aria-invalid", "true");
     expect(apiPost).not.toHaveBeenCalled();
   });
 
@@ -93,7 +94,8 @@ describe("document types", () => {
 
     fireEvent.click(saveButton());
 
-    expect(toast.error).toHaveBeenCalledWith("administracion.documentos.diasVencimientoRequired");
+    expect(within(screen.getByRole("dialog")).getAllByRole("alert").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("input-due-days-document")).toHaveAttribute("aria-invalid", "true");
     expect(apiPost).not.toHaveBeenCalled();
   });
 

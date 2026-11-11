@@ -11,9 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
+import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import { useRoles, useCreateRole, useUpdateRole, useDeleteRole } from "@/hooks/useRoles";
 import { presentMutationError } from "@/lib/mutation-error";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import type { Role } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 
@@ -67,8 +68,9 @@ export default function RolesPage() {
   }
 
   async function handleSave() {
-    if (!editing.name?.trim()) { toast.error(t("nameRequired")); return; }
-    setFieldErrors({});
+    const required = requiredFieldErrors({ name: editing.name }, tc("fieldRequired"));
+    setFieldErrors(required);
+    if (Object.keys(required).length > 0) return;
     try {
       if (isEditMode && editing.idRole) {
         await updateMutation.mutateAsync({ id: editing.idRole, data: editing });
@@ -150,36 +152,33 @@ export default function RolesPage() {
                 />
               </FormField>
               <FormField label={t("fields.modulosPermitidos")}>
-                <div className="grid grid-cols-2 gap-2 pt-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
                   {MODULE_VALUES.map((mod) => (
-                    <label key={mod} className="flex items-center gap-2 cursor-pointer text-sm">
-                      <input
-                        type="checkbox"
-                        checked={(editing.modulos ?? []).includes(mod)}
-                        onChange={() => toggleModule(mod)}
-                        data-testid={`check-modulo-${mod}`}
-                        className="rounded"
-                      />
-                      {t(`modules.${mod}`)}
-                    </label>
+                    <CheckboxField
+                      key={mod}
+                      label={t(`modules.${mod}`)}
+                      checked={(editing.modulos ?? []).includes(mod)}
+                      onChange={() => toggleModule(mod)}
+                      data-testid={`check-modulo-${mod}`}
+                    />
                   ))}
                 </div>
               </FormField>
-              <FormField label={t("fields.activo")}>
-                <label className="flex items-center gap-2 cursor-pointer text-sm">
-                  <input
-                    type="checkbox"
-                    checked={editing.active ?? true}
-                    onChange={(e) => setEditing({ ...editing, active: e.target.checked })}
-                    className="rounded"
-                  />
-                  {t("fields.activoHint")}
-                </label>
-              </FormField>
+              <CheckboxField
+                label={t("fields.activoHint")}
+                checked={editing.active ?? true}
+                onChange={(checked) => setEditing({ ...editing, active: checked })}
+                data-testid="check-role-active"
+              />
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>{tc("cancel")}</Button>
-              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
+              <Button
+                onClick={handleSave}
+                disabled={createMutation.isPending || updateMutation.isPending}
+                aria-busy={createMutation.isPending || updateMutation.isPending || undefined}
+                data-testid="btn-save-role"
+              >
                 {isEditMode ? tc("update") : tc("create")}
               </Button>
             </FormActions>

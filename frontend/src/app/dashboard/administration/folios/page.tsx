@@ -19,6 +19,7 @@ import { folioUseCases } from "@/composition/folio";
 import type { FolioType as DomainFolioType } from "@/core/folio-type/domain/folio-type";
 import type { Folio as DomainFolio } from "@/core/folio/domain/folio";
 import { extractApiError } from "@/lib/utils";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import { DeedPicker } from "@/components/shared/DeedPicker";
 import type { Deed, Folio } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
@@ -116,6 +117,7 @@ export default function FoliosAdminPage() {
     setTypeEditing(null);
     setTypeName("");
     setTypeIsAuxiliary(false);
+    setTypeFieldErrors({});
     setTypeModalOpen(true);
   }
 
@@ -123,14 +125,14 @@ export default function FoliosAdminPage() {
     setTypeEditing(tf);
     setTypeName(tf.name);
     setTypeIsAuxiliary(tf.isAuxiliary ?? false);
+    setTypeFieldErrors({});
     setTypeModalOpen(true);
   }
 
   async function handleSaveType() {
-    if (!typeName.trim()) {
-      toast.error(t("tiposDeFolio.nameRequired"));
-      return;
-    }
+    const required = requiredFieldErrors({ name: typeName }, tc("fieldRequired"));
+    setTypeFieldErrors(required);
+    if (Object.keys(required).length > 0) return;
     setTypeSaving(true);
     try {
       if (typeEditing) {
@@ -202,16 +204,20 @@ export default function FoliosAdminPage() {
     allFolios.some((f) => f.fkIdDeed?.idDeed === deed.idDeed && f.idFolio !== form.idFolio);
   const [isEditMode, setIsEditMode] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [typeFieldErrors, setTypeFieldErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   function openCreate() {
     setForm(EMPTY);
     setIsEditMode(false);
+    setFieldErrors({});
     setModalOpen(true);
   }
 
   function openEdit(folio: Folio) {
+    setFieldErrors({});
     setForm({
       idFolio: folio.idFolio,
       number: folio.number,
@@ -227,18 +233,14 @@ export default function FoliosAdminPage() {
   }
 
   async function handleSave() {
+    const required: Record<string, string> = {};
     if (form.number === undefined || form.number === null || Number.isNaN(form.number)) {
-      toast.error(t("numberRequired"));
-      return;
+      required.number = tc("fieldRequired");
     }
-    if (!form.folioTypeId) {
-      toast.error(t("fields.tipo") + " " + tc("required"));
-      return;
-    }
-    if (!form.notaryId) {
-      toast.error(t("fields.escribano") + " " + tc("required"));
-      return;
-    }
+    if (!form.folioTypeId) required.folioTypeId = tc("fieldRequired");
+    if (!form.notaryId) required.notaryId = tc("fieldRequired");
+    setFieldErrors(required);
+    if (Object.keys(required).length > 0) return;
     setSaving(true);
     try {
       const body = {
@@ -369,13 +371,14 @@ export default function FoliosAdminPage() {
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={isEditMode ? t("editFolio") : t("newFolio")}>
-              <FormField label={t("fields.numero")} required>
+              <FormField label={t("fields.numero")} required error={fieldErrors.number}>
                 <Input
                   type="number"
                   value={form.number ?? ""}
                   onChange={(e) => setForm({ ...form, number: e.target.value === "" ? undefined : Number(e.target.value) })}
                   placeholder="1001"
                   data-testid="input-folio-number"
+                  aria-invalid={!!fieldErrors.number}
                 />
               </FormField>
               <FormField label={tc("year")}>
@@ -398,12 +401,12 @@ export default function FoliosAdminPage() {
                   </SelectContent>
                 </Select>
               </FormField>
-              <FormField label={t("fields.tipo")} required>
+              <FormField label={t("fields.tipo")} required error={fieldErrors.folioTypeId}>
                 <Select
                   value={form.folioTypeId !== undefined ? String(form.folioTypeId) : ""}
                   onValueChange={(v) => setForm({ ...form, folioTypeId: Number(v) })}
                 >
-                  <SelectTrigger data-testid="select-folio-type">
+                  <SelectTrigger data-testid="select-folio-type" aria-invalid={!!fieldErrors.folioTypeId}>
                     <SelectValue placeholder={t("fields.tipoPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -413,12 +416,12 @@ export default function FoliosAdminPage() {
                   </SelectContent>
                 </Select>
               </FormField>
-              <FormField label={t("fields.escribano")} required>
+              <FormField label={t("fields.escribano")} required error={fieldErrors.notaryId}>
                 <Select
                   value={form.notaryId !== undefined ? String(form.notaryId) : ""}
                   onValueChange={(v) => setForm({ ...form, notaryId: Number(v) })}
                 >
-                  <SelectTrigger data-testid="select-notary-folio">
+                  <SelectTrigger data-testid="select-notary-folio" aria-invalid={!!fieldErrors.notaryId}>
                     <SelectValue placeholder={t("fields.escribanoPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -453,7 +456,12 @@ export default function FoliosAdminPage() {
                 <NotaireIcon src="/icons/actions/cancel.png" alt={tc("cancel")} size={16} className="mr-1" />
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSave} disabled={saving}>
+              <Button
+                onClick={handleSave}
+                disabled={saving}
+                aria-busy={saving || undefined}
+                data-testid="btn-save-folio"
+              >
                 <NotaireIcon src="/icons/actions/save.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
                 {isEditMode ? tc("update") : tc("save")}
               </Button>
@@ -525,11 +533,12 @@ export default function FoliosAdminPage() {
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={typeEditing ? t("tiposDeFolio.editTipo") : t("tiposDeFolio.newTipo")}>
-              <FormField label={tc("name")} required>
+              <FormField label={tc("name")} required error={typeFieldErrors.name}>
                 <Input
                   value={typeName}
                   onChange={(e) => setTypeName(e.target.value)}
                   data-testid="input-name-folio-type"
+                  aria-invalid={!!typeFieldErrors.name}
                 />
               </FormField>
               <CheckboxField
@@ -544,7 +553,12 @@ export default function FoliosAdminPage() {
                 <NotaireIcon src="/icons/actions/cancel.png" alt={tc("cancel")} size={16} className="mr-1" />
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSaveType} disabled={typeSaving} data-testid="btn-save-folio-type">
+              <Button
+                onClick={handleSaveType}
+                disabled={typeSaving}
+                aria-busy={typeSaving || undefined}
+                data-testid="btn-save-folio-type"
+              >
                 <NotaireIcon src="/icons/actions/save.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
                 {typeEditing ? tc("update") : tc("save")}
               </Button>

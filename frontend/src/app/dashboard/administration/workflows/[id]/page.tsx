@@ -20,6 +20,7 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import {
   useWorkflowDefinitions,
   useWorkflowNodes,
@@ -81,6 +82,7 @@ export default function WorkflowEditorPage() {
   const view = resolveView(chosenView, isPhone);
   const canEditGraph = graphEditable(editMode, isPhone);
   const [addNodeOpen, setAddNodeOpen] = useState(false);
+  const [nodeFieldErrors, setNodeFieldErrors] = useState<Record<string, string>>({});
   const [newNodeStatusId, setNewNodeStatusId] = useState<number | "">("");
   const [newNodeType, setNewNodeType] = useState<WorkflowNodeType>("INTERMEDIATE");
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
@@ -252,14 +254,17 @@ export default function WorkflowEditorPage() {
   }
 
   async function handleAddNode() {
-    if (!newNodeStatusId) {
-      toast.error(t("selectStatus"));
-      return;
-    }
+    const required = requiredFieldErrors(
+      { statusId: newNodeStatusId === "" ? "" : String(newNodeStatusId) },
+      tc("fieldRequired"),
+    );
+    setNodeFieldErrors(required);
+    if (Object.keys(required).length > 0) return;
     if (await createNodeFor(Number(newNodeStatusId), newNodeType)) {
       setAddNodeOpen(false);
       setNewNodeStatusId("");
       setNewNodeType("INTERMEDIATE");
+      setNodeFieldErrors({});
     }
   }
 
@@ -504,12 +509,13 @@ export default function WorkflowEditorPage() {
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={t("addNodeTitle")}>
-              <FormField label={t("fields.estado")} required>
+              <FormField label={t("fields.estado")} required error={nodeFieldErrors.statusId}>
                 <select
                   className="w-full border border-input rounded-lg px-3 py-2 text-sm bg-background"
                   value={newNodeStatusId}
                   onChange={(e) => setNewNodeStatusId(e.target.value ? Number(e.target.value) : "")}
                   data-testid="select-status-node"
+                  aria-invalid={!!nodeFieldErrors.statusId}
                 >
                   <option value="">{t("fields.estadoPlaceholder")}</option>
                   {statuses.map((e) => (
@@ -532,7 +538,14 @@ export default function WorkflowEditorPage() {
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setAddNodeOpen(false)}>{tc("cancel")}</Button>
-              <Button onClick={handleAddNode} data-testid="btn-confirm-node">{tc("add")}</Button>
+              <Button
+                onClick={handleAddNode}
+                disabled={createNode.isPending}
+                aria-busy={createNode.isPending || undefined}
+                data-testid="btn-confirm-node"
+              >
+                {tc("add")}
+              </Button>
             </FormActions>
           </FormContainer>
         </DialogContent>

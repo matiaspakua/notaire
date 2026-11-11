@@ -87,7 +87,8 @@ describe("folio types", () => {
 
     fireEvent.click(await screen.findByTestId("btn-save-folio-type"));
 
-    expect(toast.error).toHaveBeenCalledWith("administracion.folios.tiposDeFolio.nameRequired");
+    expect(within(screen.getByRole("dialog")).getAllByRole("alert").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("input-name-folio-type")).toHaveAttribute("aria-invalid", "true");
     expect(apiPost).not.toHaveBeenCalled();
   });
 
@@ -159,11 +160,13 @@ describe("folios", () => {
     const save = within(dialog).getByRole("button", { name: /common\.save/ });
 
     fireEvent.click(save);
-    expect(toast.error).toHaveBeenLastCalledWith("administracion.folios.numberRequired");
+    expect(within(dialog).getAllByRole("alert").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("input-folio-number")).toHaveAttribute("aria-invalid", "true");
 
     fireEvent.change(screen.getByTestId("input-folio-number"), { target: { value: "2001" } });
     fireEvent.click(save);
-    expect(toast.error).toHaveBeenLastCalledWith(expect.stringContaining("administracion.folios.fields.tipo"));
+    expect(within(dialog).getAllByRole("alert").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("select-folio-type")).toHaveAttribute("aria-invalid", "true");
     expect(apiPost).not.toHaveBeenCalled();
   });
 

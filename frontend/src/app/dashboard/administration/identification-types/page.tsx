@@ -17,6 +17,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { ApiError } from "@/lib/api-error";
 import { presentMutationError } from "@/lib/mutation-error";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import {
   useCreateIdentificationType,
@@ -47,30 +48,31 @@ export default function IdentificationTypesPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState<Draft>(EMPTY);
   const [deleteTarget, setDeleteTarget] = useState<IdentificationType | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const saving = createType.isPending || updateType.isPending;
 
   function openCreate() {
     setDraft(EMPTY);
+    setFieldErrors({});
     setModalOpen(true);
   }
 
   function openEdit(type: IdentificationType) {
     setDraft({ id: type.idIdentificationType, name: type.name ?? "", characters: type.characters ?? "" });
+    setFieldErrors({});
     setModalOpen(true);
   }
 
   async function handleSave() {
     const name = draft.name.trim();
     const characters = draft.characters.trim();
-    if (!name) {
-      toast.error(t("nameRequired"));
-      return;
+    const required = requiredFieldErrors({ name, characters }, tc("fieldRequired"));
+    if (characters && !/^([1-9]|[1-4][0-9]|50)$/.test(characters)) { // same rule as the API (#1526)
+      required.characters = t("charactersRequired");
     }
-    if (!/^([1-9]|[1-4][0-9]|50)$/.test(characters)) { // same rule as the API (#1526)
-      toast.error(t("charactersRequired"));
-      return;
-    }
+    setFieldErrors(required);
+    if (Object.keys(required).length > 0) return;
     try {
       if (draft.id) {
         await updateType.mutateAsync({ id: draft.id, name, characters });
@@ -169,16 +171,17 @@ export default function IdentificationTypesPage() {
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={draft.id ? t("edit") : t("new")}>
-              <FormField label={t("fields.name")} required>
+              <FormField label={t("fields.name")} required error={fieldErrors.name}>
                 <Input
                   value={draft.name}
                   onChange={(e) => setDraft({ ...draft, name: e.target.value })}
                   placeholder={t("fields.namePlaceholder")}
                   maxLength={60}
                   data-testid="input-identification-type-name"
+                  aria-invalid={!!fieldErrors.name}
                 />
               </FormField>
-              <FormField label={t("fields.characters")} helperText={t("fields.charactersHelp")} required>
+              <FormField label={t("fields.characters")} helperText={t("fields.charactersHelp")} required error={fieldErrors.characters}>
                 <Input
                   value={draft.characters}
                   onChange={(e) => setDraft({ ...draft, characters: e.target.value })}
@@ -186,6 +189,7 @@ export default function IdentificationTypesPage() {
                   maxLength={2}
                   placeholder="8"
                   data-testid="input-identification-type-characters"
+                  aria-invalid={!!fieldErrors.characters}
                 />
               </FormField>
             </FormSection>
@@ -194,7 +198,12 @@ export default function IdentificationTypesPage() {
                 <NotaireIcon src="/icons/actions/cancel.png" alt="" size={16} className="mr-1" />
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSave} disabled={saving} data-testid="btn-save-identification-type">
+              <Button
+                onClick={handleSave}
+                disabled={saving}
+                aria-busy={saving || undefined}
+                data-testid="btn-save-identification-type"
+              >
                 <NotaireIcon src="/icons/actions/save.png" alt="" size={16} className="mr-1 brightness-0 invert" />
                 {draft.id ? tc("update") : tc("save")}
               </Button>

@@ -22,6 +22,7 @@ import {
 } from "@/hooks/useProcedureTypes";
 import { useWorkflowDefinitions } from "@/hooks/useWorkflow";
 import { extractApiError } from "@/lib/utils";
+import { requiredFieldErrors } from "@/lib/required-field-errors";
 import type { ProcedureType } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { FileCheck } from "lucide-react";
@@ -54,6 +55,7 @@ function ProceduresList() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<ProcedureType>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [search, setSearch] = useState("");
   const [selectedWorkflowId, setSelectedWorkflowId] = useState<string>("");
   const [checklistFor, setChecklistFor] = useState<ProcedureType | null>(null);
@@ -67,11 +69,25 @@ function ProceduresList() {
 
   const { data: filtered = data } = useSearchProcedureTypes(search, data);
 
-  function openCreate() { setEditing(EMPTY); setIsEditMode(false); setSelectedWorkflowId(""); setModalOpen(true); }
-  function openEdit(item: ProcedureType) { setEditing(item); setIsEditMode(true); setSelectedWorkflowId(item.workflowDefinitionId ? String(item.workflowDefinitionId) : ""); setModalOpen(true); }
+  function openCreate() {
+    setEditing(EMPTY);
+    setIsEditMode(false);
+    setSelectedWorkflowId("");
+    setFieldErrors({});
+    setModalOpen(true);
+  }
+  function openEdit(item: ProcedureType) {
+    setEditing(item);
+    setIsEditMode(true);
+    setSelectedWorkflowId(item.workflowDefinitionId ? String(item.workflowDefinitionId) : "");
+    setFieldErrors({});
+    setModalOpen(true);
+  }
 
   async function handleSave() {
-    if (!editing.name?.trim()) { toast.error(t("nameRequired")); return; }
+    const required = requiredFieldErrors({ name: editing.name }, tc("fieldRequired"));
+    setFieldErrors(required);
+    if (Object.keys(required).length > 0) return;
     try {
       let savedId = editing.idProcedureType;
       if (isEditMode && editing.idProcedureType) {
@@ -196,12 +212,13 @@ function ProceduresList() {
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={isEditMode ? t("editTramite") : t("newTramite")}>
-              <FormField label={t("fields.nombre")} required>
+              <FormField label={t("fields.nombre")} required error={fieldErrors.name}>
                 <Input
                   value={editing.name ?? ""}
                   onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                   placeholder={t("fields.namePlaceholder")}
                   data-testid="input-name-procedure"
+                  aria-invalid={!!fieldErrors.name}
                 />
               </FormField>
               <FormField label={t("fields.descripcion")}>
@@ -240,7 +257,12 @@ function ProceduresList() {
                 <NotaireIcon src="/icons/actions/cancel.png" alt={tc("cancel")} size={16} className="mr-1" />
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
+              <Button
+                onClick={handleSave}
+                disabled={createMutation.isPending || updateMutation.isPending}
+                aria-busy={createMutation.isPending || updateMutation.isPending || undefined}
+                data-testid="btn-save-procedure"
+              >
                 <NotaireIcon src="/icons/actions/save.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
                 {isEditMode ? tc("update") : tc("save")}
               </Button>

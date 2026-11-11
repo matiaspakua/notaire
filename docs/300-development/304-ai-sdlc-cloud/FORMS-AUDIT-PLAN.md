@@ -1,4 +1,4 @@
-# Forms audit plan — code inspection + #2087 rendered slice
+# Forms audit plan — code inspection + #2087/#2088 rendered slices
 
 Phase 1 inventory for product forms remains a **code inspection** (source-only
 keyword hits are not a pass for other surfaces). **#2087 rendered the people
@@ -7,7 +7,16 @@ desktop 1280 and 320px): labels, required `*` + `aria-required`, linked
 `role="alert"` errors, tab order, primary `h-11` (~44px), empty-list next
 action, and CheckboxField raised to the WCAG 2.2 AA 24px floor. Evidence:
 `docs/openspec/changes/archive/*-fix-2087-people-form-rendered-audit/` (after
-archive) and the PR for #2087. Administration catalogs remain #2088.
+archive) and the PR for #2087.
+
+**#2088 rendered administration catalog forms** (concepts, documents, folios,
+identification-types, management-statuses, procedures + RequiredDocumentsDialog,
+roles, templates, users, workflows + workflows/[id]) at 1280 and 320px with the
+same checklist. Toast-only client validation moved to FormField `error` /
+`aria-invalid`; raw checkboxes on roles/workflows use CheckboxField; primary
+saves expose `aria-busy`. Evidence: `docs/openspec/changes/archive/*-fix-2088-admin-catalog-forms-audit/`
+(after archive), `TS-0158`, and the PR for #2088. Case modules
+(managements/deeds/protocol/…) remain for later domain PRs.
 
 Impeccable context was loaded for `frontend/src/theme/form-patterns.tsx`
 (Operate mode, `PRODUCT.md` / `DESIGN.md`). Provenance, from the repo and
