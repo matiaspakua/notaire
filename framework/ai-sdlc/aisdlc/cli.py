@@ -362,7 +362,10 @@ def build_parser() -> argparse.ArgumentParser:
     auto.add_argument("--json", action="store_true")
     auto.add_argument("--since", help="ISO date, e.g. 2026-10-01")
 
-    p = sub.add_parser("catalog", help="CRUD for skills/MCP/agents/memory catalogs (#2139)")
+    p = sub.add_parser(
+        "catalog",
+        help="CRUD + immutable revisions for factory catalogs (#2139/#2239)",
+    )
     cat_sub = p.add_subparsers(dest="action", required=True)
     for action, help_text in (
         ("list", "list catalog entries (never executes manifests)"),
@@ -372,6 +375,14 @@ def build_parser() -> argparse.ArgumentParser:
         q.add_argument("--kind", choices=list(catalogs.KINDS), help="limit to one kind")
         if action == "list":
             q.add_argument("--json", action="store_true")
+    for action, help_text in (
+        ("show", "show current entity JSON (redacted)"),
+        ("history", "list immutable revisions"),
+    ):
+        q = cat_sub.add_parser(action, help=help_text)
+        q.add_argument("--kind", required=True, choices=list(catalogs.KINDS))
+        q.add_argument("--id", required=True)
+        q.add_argument("--json", action="store_true")
     for action in ("add", "update", "remove"):
         q = cat_sub.add_parser(action)
         q.add_argument("--kind", required=True, choices=list(catalogs.KINDS))
@@ -381,6 +392,50 @@ def build_parser() -> argparse.ArgumentParser:
             q.add_argument("--summary", help="short description")
             if action == "add":
                 q.set_defaults(summary="")
+
+    p = sub.add_parser("workflow", help="Workflow entity + governance FSM (#2239)")
+    wf_sub = p.add_subparsers(dest="action", required=True)
+    create = wf_sub.add_parser("create", help="create a draft workflow")
+    create.add_argument("--id", required=True)
+    create.add_argument("--summary", default="")
+    create.add_argument("--agent", action="append", default=[])
+    create.add_argument("--skill", action="append", default=[])
+    create.add_argument("--mcp", action="append", default=[])
+    create.add_argument("--provider", action="append", default=[])
+    create.add_argument("--json", action="store_true")
+    listed = wf_sub.add_parser("list", help="list workflows (never executes)")
+    listed.add_argument("--approved", action="store_true", help="only governance=approved")
+    listed.add_argument("--json", action="store_true")
+    show = wf_sub.add_parser("show", help="show current workflow JSON")
+    show.add_argument("--id", required=True)
+    show.add_argument("--json", action="store_true")
+    transition = wf_sub.add_parser("transition", help="apply a governance transition")
+    transition.add_argument("--id", required=True)
+    transition.add_argument(
+        "--action",
+        dest="transition",
+        required=True,
+        choices=[
+            "define",
+            "request_validation",
+            "approve",
+            "reopen",
+            "demote_validated",
+            "demote_approved",
+        ],
+    )
+    transition.add_argument("--signature", help="ApprovalPort signature path for approve")
+    transition.add_argument(
+        "--owner-override",
+        action="store_true",
+        help="Owner approve path when approvals_live=false (requires --reason)",
+    )
+    transition.add_argument("--reason", help="reason for owner override")
+    transition.add_argument(
+        "--waive-reason",
+        help="required for request_validation in Phase A (test/dry-run waiver)",
+    )
+    transition.add_argument("--json", action="store_true")
     return parser
 
 
@@ -463,7 +518,9 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         ),
         "metrics": lambda: _metrics(ctx, args),
         "catalog": lambda: _catalog(ctx, args),
+        "workflow": lambda: _workflow(ctx, args),
         "improve": lambda: _improve(ctx, args),
+
         "protected": lambda: diffchecks.protected(ctx, args.base),
         "size": lambda: diffchecks.size(ctx, args.base, args.limit),
         "scope": lambda: diffchecks.scope(ctx, args.base, args.strict),
@@ -559,11 +616,70 @@ def _catalog(ctx: Context, args: argparse.Namespace) -> int:
             return 0
         if args.action == "validate":
             return catalogs.validate(ctx, getattr(args, "kind", None))
+        if args.action == "show":
+            data = catalogs.show(ctx, args.kind, args.id, redacted=True)
+            if args.json:
+                print(json.dumps(data, indent=2, sort_keys=True))
+            else:
+                print(
+                    f"{data.get('kind')}/{data.get('id')}@v{data.get('version')} "
+                    f"digest={data.get('digest')}"
+                )
+            return 0
+        if args.action == "history":
+            data = catalogs.history(ctx, args.kind, args.id)
+            if args.json:
+                print(json.dumps(data, indent=2, sort_keys=True))
+            else:
+                for row in data["versions"]:
+                    print(f"  v{row['version']} digest={row.get('digest')}")
+            return 0
         if args.action == "add":
             return catalogs.add(ctx, args.kind, args.id, ref=args.ref, summary=args.summary)
         if args.action == "update":
             return catalogs.update(ctx, args.kind, args.id, ref=args.ref, summary=args.summary)
         return catalogs.remove(ctx, args.kind, args.id)
+    except ProfileError as exc:
+        print(f"error: {exc}")
+        return 2
+
+
+def _workflow(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc import workflows
+
+    try:
+        if args.action == "create":
+            return workflows.create(
+                ctx,
+                args.id,
+                summary=getattr(args, "summary", "") or "",
+                agents=list(getattr(args, "agent", []) or []),
+                skills=list(getattr(args, "skill", []) or []),
+                mcp=list(getattr(args, "mcp", []) or []),
+                providers=list(getattr(args, "provider", []) or []),
+                as_json=bool(getattr(args, "json", False)),
+            )
+        if args.action == "list":
+            return workflows.list_workflows(
+                ctx,
+                approved_only=bool(getattr(args, "approved", False)),
+                as_json=bool(getattr(args, "json", False)),
+            )
+        if args.action == "show":
+            return workflows.show(ctx, args.id, as_json=bool(getattr(args, "json", False)))
+        if args.action == "transition":
+            return workflows.transition(
+                ctx,
+                args.id,
+                args.transition,
+                signature=getattr(args, "signature", None),
+                owner_override=bool(getattr(args, "owner_override", False)),
+                reason=getattr(args, "reason", None),
+                waive_reason=getattr(args, "waive_reason", None),
+                as_json=bool(getattr(args, "json", False)),
+            )
+        print(f"error: unknown workflow action {args.action!r}")
+        return 2
     except ProfileError as exc:
         print(f"error: {exc}")
         return 2

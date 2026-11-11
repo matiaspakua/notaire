@@ -19,6 +19,13 @@ REQUIRED_PATHS = (
     "/factory/harness",
     "/factory/report",
     "/factory/catalogs/{kind}",
+    "/factory/workflows",
+)
+SCHEMA_MARKERS = (
+    "FactoryEntity",
+    "EntityVersion",
+    "Workflow",
+    "WorkflowGovernanceState",
 )
 CONFIG_REQUIRED = (
     "schema",
@@ -69,6 +76,9 @@ def validate_contract(kit_root: Path | None = None) -> list[str]:
                 errors.append(f"FactoryConfig should document property {key}")
     if "CatalogList" not in text:
         errors.append("catalogs schema CatalogList is required for plugin-friendly extension")
+    for marker in SCHEMA_MARKERS:
+        if marker not in text:
+            errors.append(f"missing schema {marker} (#2239)")
     return errors
 
 

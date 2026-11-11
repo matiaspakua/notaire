@@ -1,11 +1,12 @@
 openapi: 3.1.0
 info:
   title: AI SDLC factory control surface
-  version: 1.0.0
+  version: 1.1.0
   description: |
     Contract for factory control operations shared by the `aisdlc` CLI JSON payloads
     and any future HTTP adapter. Separate from any adopter application API description.
     No HTTP server is required to publish this description (#2136 / ADR-003).
+    Phase A (#2239) adds immutable entity revisions and workflow governance.
 servers:
   - url: https://factory.local/v1
     description: Placeholder; CLI is the system of record today
@@ -15,6 +16,7 @@ tags:
   - name: harness
   - name: evidence
   - name: catalogs
+  - name: workflows
 paths:
   /factory/config:
     get:
@@ -72,23 +74,200 @@ paths:
     get:
       tags: [catalogs]
       operationId: listCatalog
-      summary: Catalog entries by kind (skills|mcp|agents|memory) — reserved for #2139
+      summary: Catalog entries by kind (CLI `catalog list --json`)
       parameters:
         - name: kind
           in: path
           required: true
           schema:
-            type: string
-            enum: [skills, mcp, agents, memory]
+            $ref: "#/components/schemas/CatalogKind"
       responses:
         "200":
-          description: Catalog list (empty until catalogs CRUD lands)
+          description: Catalog list
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/CatalogList"
+    post:
+      tags: [catalogs]
+      operationId: createCatalogEntry
+      summary: Create catalog entry version 1 (CLI `catalog add`)
+      parameters:
+        - name: kind
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/CatalogKind"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FactoryEntityWrite"
+      responses:
+        "200":
+          description: Created entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FactoryEntity"
+  /factory/catalogs/{kind}/{id}:
+    get:
+      tags: [catalogs]
+      operationId: getCatalogEntry
+      summary: Show current entity (CLI `catalog show --json`)
+      parameters:
+        - name: kind
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/CatalogKind"
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Current FactoryEntity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FactoryEntity"
+    put:
+      tags: [catalogs]
+      operationId: updateCatalogEntry
+      summary: Allocate a new immutable revision (CLI `catalog update`)
+      parameters:
+        - name: kind
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/CatalogKind"
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FactoryEntityWrite"
+      responses:
+        "200":
+          description: New current revision
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FactoryEntity"
+  /factory/catalogs/{kind}/{id}/versions:
+    get:
+      tags: [catalogs]
+      operationId: listCatalogVersions
+      summary: Immutable revision history (CLI `catalog history --json`)
+      parameters:
+        - name: kind
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/CatalogKind"
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Version list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntityVersionList"
+  /factory/workflows:
+    get:
+      tags: [workflows]
+      operationId: listWorkflows
+      summary: List workflows (CLI `workflow list --json`); optional approved filter
+      parameters:
+        - name: approved
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: When true, only governance=approved (runtime selection)
+      responses:
+        "200":
+          description: Workflow list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkflowList"
+    post:
+      tags: [workflows]
+      operationId: createWorkflow
+      summary: Create draft workflow (CLI `workflow create --json`)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkflowWrite"
+      responses:
+        "200":
+          description: Created workflow
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workflow"
+  /factory/workflows/{id}:
+    get:
+      tags: [workflows]
+      operationId: getWorkflow
+      summary: Show workflow (CLI `workflow show --json`)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Workflow
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workflow"
+  /factory/workflows/{id}/transitions:
+    post:
+      tags: [workflows]
+      operationId: transitionWorkflow
+      summary: Apply governance transition (CLI `workflow transition --json`)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkflowTransition"
+      responses:
+        "200":
+          description: Updated workflow after transition
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workflow"
 components:
   schemas:
+    CatalogKind:
+      type: string
+      enum: [skills, mcp, agents, memory, workflows, providers, integrations, rules]
     FactoryConfig:
       type: object
       additionalProperties: true
@@ -213,8 +392,7 @@ components:
       required: [kind, entries]
       properties:
         kind:
-          type: string
-          enum: [skills, mcp, agents, memory]
+          $ref: "#/components/schemas/CatalogKind"
         entries:
           type: array
           items:
@@ -223,3 +401,144 @@ components:
             required: [id]
             properties:
               id: { type: string }
+              version: { type: integer }
+              governance:
+                $ref: "#/components/schemas/WorkflowGovernanceState"
+    FactoryEntity:
+      type: object
+      additionalProperties: true
+      required: [id, kind, version, digest]
+      properties:
+        id: { type: string }
+        kind:
+          $ref: "#/components/schemas/CatalogKind"
+        version: { type: integer, minimum: 1 }
+        ref:
+          type: [string, "null"]
+          description: Path or credential ref (`env:…`); never secret values
+        summary: { type: string }
+        digest: { type: string }
+        governance:
+          $ref: "#/components/schemas/WorkflowGovernanceState"
+        body:
+          type: object
+          additionalProperties: true
+    FactoryEntityWrite:
+      type: object
+      additionalProperties: true
+      required: [id]
+      properties:
+        id: { type: string }
+        ref:
+          type: [string, "null"]
+        summary: { type: string }
+        body:
+          type: object
+          additionalProperties: true
+    EntityVersion:
+      type: object
+      additionalProperties: true
+      required: [version, digest]
+      properties:
+        version: { type: integer, minimum: 1 }
+        digest: { type: string }
+        summary: { type: string }
+        governance:
+          $ref: "#/components/schemas/WorkflowGovernanceState"
+    EntityVersionList:
+      type: object
+      additionalProperties: false
+      required: [id, kind, versions]
+      properties:
+        id: { type: string }
+        kind:
+          $ref: "#/components/schemas/CatalogKind"
+        versions:
+          type: array
+          items:
+            $ref: "#/components/schemas/EntityVersion"
+    WorkflowGovernanceState:
+      type: string
+      enum: [draft, defined, validated, approved]
+    Workflow:
+      allOf:
+        - $ref: "#/components/schemas/FactoryEntity"
+        - type: object
+          required: [governance]
+          properties:
+            kind:
+              type: string
+              enum: [workflows]
+            governance:
+              $ref: "#/components/schemas/WorkflowGovernanceState"
+            body:
+              type: object
+              additionalProperties: true
+              properties:
+                agents:
+                  type: array
+                  items: { type: string }
+                skills:
+                  type: array
+                  items: { type: string }
+                mcp:
+                  type: array
+                  items: { type: string }
+                providers:
+                  type: array
+                  items: { type: string }
+    WorkflowWrite:
+      type: object
+      additionalProperties: true
+      required: [id]
+      properties:
+        id: { type: string }
+        summary: { type: string }
+        agents:
+          type: array
+          items: { type: string }
+        skills:
+          type: array
+          items: { type: string }
+        mcp:
+          type: array
+          items: { type: string }
+        providers:
+          type: array
+          items: { type: string }
+    WorkflowList:
+      type: object
+      additionalProperties: true
+      required: [kind, entries]
+      properties:
+        kind:
+          type: string
+          enum: [workflows]
+        approved_only: { type: boolean }
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/Workflow"
+    WorkflowTransition:
+      type: object
+      additionalProperties: true
+      required: [action]
+      properties:
+        action:
+          type: string
+          enum:
+            - define
+            - request_validation
+            - approve
+            - reopen
+            - demote_validated
+            - demote_approved
+        signature:
+          type: [string, "null"]
+          description: Path to ApprovalPort signature for approve
+        owner_override: { type: boolean }
+        reason:
+          type: [string, "null"]
+        waive_reason:
+          type: [string, "null"]
+          description: Required for request_validation in Phase A
