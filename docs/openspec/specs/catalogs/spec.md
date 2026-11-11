@@ -6,11 +6,18 @@ Catalogs CRUD for skills, MCP, agents, and memory as digested JSON entries. Upda
 ## Requirements
 
 ### Requirement: Catalog CRUD
-The kit SHALL provide CLI CRUD for skills, mcp, agents, and memory catalog entries as JSON files with digests.
+The kit SHALL provide CLI CRUD for catalog entries across kinds
+`skills|mcp|agents|memory|workflows|providers|integrations|rules` as JSON with
+digests. Updates SHALL create a new immutable revision (current pointer advances)
+rather than silently overwriting prior revision bytes.
 
 #### Scenario: add list remove
 - **WHEN** an entry is added then listed then removed
 - **THEN** list reflects each state and files match
+
+#### Scenario: update creates new revision
+- **WHEN** an existing entry is updated
+- **THEN** history includes the prior revision unchanged and current points at version+1
 
 ### Requirement: List and validate never execute
 Catalog list and validate SHALL only read files and MUST NOT execute entry payloads.
@@ -51,3 +58,11 @@ Resolution is read-only and MUST NOT execute entry payloads.
 #### Scenario: context memory resolves via catalog entry
 - **WHEN** `[context].memory` names an id present as a memory catalog JSON entry
 - **THEN** context validation accepts the pack id
+
+### Requirement: Catalog show and history
+The kit SHALL support show (current entity JSON) and history (revision list) for
+catalog entries without executing entry payloads.
+
+#### Scenario: show returns current version
+- **WHEN** catalog show is invoked for an existing id
+- **THEN** JSON includes id, kind, version, and digest
