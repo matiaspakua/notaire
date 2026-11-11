@@ -7,13 +7,10 @@ override — never a cosmetic badge (ADR-005).
 """
 from __future__ import annotations
 
-import json
-from typing import Any
-
 from aisdlc import approval, catalogs
 from aisdlc.context import Context
+from aisdlc.errors import KitError
 from aisdlc.factory import redact
-from aisdlc.profile import ProfileError
 
 KIND = "workflows"
 STATES = ("draft", "defined", "validated", "approved")
@@ -47,7 +44,7 @@ def _resolve_refs(ctx: Context, body: dict) -> list[str]:
             continue
         try:
             known = _known_ids(ctx, kind)
-        except ProfileError as exc:
+        except KitError as exc:
             errors.append(str(exc))
             continue
         for entry_id in ids:
@@ -65,70 +62,34 @@ def create(
     skills: list[str] | None = None,
     mcp: list[str] | None = None,
     providers: list[str] | None = None,
-    as_json: bool = False,
-) -> int:
+) -> dict:
     body = {
         "agents": list(agents or []),
         "skills": list(skills or []),
         "mcp": list(mcp or []),
         "providers": list(providers or []),
     }
-    extra = {
-        "governance": "draft",
-        "body": body,
-    }
-    code = catalogs.add(
-        ctx,
-        KIND,
-        workflow_id,
-        ref=None,
-        summary=summary,
-        extra=extra,
-        quiet=True,
-    )
-    if code != 0:
-        return code
-    data = catalogs.load_entry(ctx, KIND, workflow_id)
-    return _emit(data, as_json=as_json)
+    catalogs.add(ctx, KIND, workflow_id, ref=None, summary=summary, extra={"governance": "draft", "body": body})
+    return redact("", catalogs.load_entry(ctx, KIND, workflow_id))
 
 
-def list_workflows(ctx: Context, *, approved_only: bool = False, as_json: bool = False) -> int:
-    listed = catalogs.list_entries(ctx, KIND)
-    entries = listed["entries"]
+def list_workflows(ctx: Context, *, approved_only: bool = False) -> dict:
+    entries = catalogs.list_entries(ctx, KIND)["entries"]
     if approved_only:
         enriched = []
         for row in entries:
             try:
                 full = catalogs.load_entry(ctx, KIND, row["id"])
-            except ProfileError:
+            except KitError:
                 continue
             if full.get("governance") == "approved":
-                enriched.append(
-                    {
-                        "id": full["id"],
-                        "kind": KIND,
-                        "version": full.get("version"),
-                        "governance": full.get("governance"),
-                        "summary": full.get("summary"),
-                        "digest": full.get("digest"),
-                    }
-                )
-        entries = enriched
-    payload = {"kind": KIND, "entries": entries, "approved_only": approved_only}
-    if as_json:
-        print(json.dumps(payload, indent=2, sort_keys=True))
-    else:
-        label = "approved workflows" if approved_only else "workflows"
-        print(f"[{label}] {len(entries)}")
-        for entry in entries:
-            gov = entry.get("governance") or ""
-            print(f"  - {entry['id']}" + (f" · {gov}" if gov else ""))
-    return 0
+                enriched.append({key: full.get(key) for key in ("id", "version", "governance", "summary", "digest")})
+        entries = [dict(row, kind=KIND) for row in enriched]
+    return {"kind": KIND, "entries": entries, "approved_only": approved_only}
 
 
-def show(ctx: Context, workflow_id: str, *, as_json: bool = False) -> int:
-    data = catalogs.show(ctx, KIND, workflow_id, redacted=True)
-    return _emit(data, as_json=as_json)
+def show(ctx: Context, workflow_id: str) -> dict:
+    return redact("", catalogs.show(ctx, KIND, workflow_id, redacted=True))
 
 
 def new_version(
@@ -140,11 +101,10 @@ def new_version(
     skills: list[str] | None = None,
     mcp: list[str] | None = None,
     providers: list[str] | None = None,
-    as_json: bool = False,
-) -> int:
+) -> dict:
     data = catalogs.load_entry(ctx, KIND, workflow_id)
     if data.get("governance") == "approved":
-        raise ProfileError("approved workflows are immutable; demote before editing body")
+        raise KitError("immutable_approved", "approved workflows are immutable; demote before editing body")
     body = dict(data.get("body") or {})
     if agents is not None:
         body["agents"] = list(agents)
@@ -159,8 +119,7 @@ def new_version(
     if summary is not None:
         payload["summary"] = summary
     # Body edits keep governance but allocate a new revision.
-    written = catalogs.write_new_revision(ctx, KIND, workflow_id, payload)
-    return _emit(written, as_json=as_json)
+    return redact("", catalogs.write_new_revision(ctx, KIND, workflow_id, payload))
 
 
 def transition(
@@ -172,40 +131,41 @@ def transition(
     owner_override: bool = False,
     reason: str | None = None,
     waive_reason: str | None = None,
-    as_json: bool = False,
-) -> int:
+) -> dict:
     if action not in TRANSITIONS:
-        raise ProfileError(
-            f"unknown workflow transition {action!r} "
-            f"(expected {', '.join(TRANSITIONS)})"
+        raise KitError(
+            "unknown_transition",
+            f"unknown workflow transition {action!r} (expected {', '.join(TRANSITIONS)})",
         )
     data = catalogs.load_entry(ctx, KIND, workflow_id)
     current = data.get("governance") or "draft"
     if current not in STATES:
-        raise ProfileError(f"workflow {workflow_id} has invalid governance {current!r}")
+        raise KitError("invalid_governance", f"workflow {workflow_id} has invalid governance {current!r}")
     expected_from, target = TRANSITIONS[action]
     if current != expected_from:
-        raise ProfileError(
-            f"illegal transition {action!r}: governance is {current!r}, expected {expected_from!r}"
+        raise KitError(
+            "illegal_transition",
+            f"illegal transition {action!r}: governance is {current!r}, expected {expected_from!r}",
         )
 
     body = data.get("body") or {}
     if not isinstance(body, dict):
-        raise ProfileError("workflow body must be an object")
+        raise KitError("invalid_body", "workflow body must be an object")
 
     if action == "define":
         errors = _resolve_refs(ctx, body)
         if errors:
-            raise ProfileError("define failed: " + "; ".join(errors))
+            raise KitError("refs_unresolved", "define failed: " + "; ".join(errors))
 
     if action == "request_validation":
         errors = _resolve_refs(ctx, body)
         if errors:
-            raise ProfileError("request_validation failed: " + "; ".join(errors))
+            raise KitError("refs_unresolved", "request_validation failed: " + "; ".join(errors))
         if not waive_reason or not str(waive_reason).strip():
             # Phase A: require explicit waive/evidence reason (no fake dry-run runner).
-            raise ProfileError(
-                "request_validation requires --waive-reason (or recorded test evidence in a later phase)"
+            raise KitError(
+                "waive_reason_required",
+                "request_validation requires --waive-reason (or recorded test evidence in a later phase)",
             )
 
     if action == "approve":
@@ -220,8 +180,7 @@ def transition(
             "mode": "signature" if signature else "owner_override",
             "reason": (reason or "").strip() or None,
         }
-    written = catalogs.write_new_revision(ctx, KIND, workflow_id, payload)
-    return _emit(written, as_json=as_json)
+    return redact("", catalogs.write_new_revision(ctx, KIND, workflow_id, payload))
 
 
 def _guard_approve(
@@ -237,35 +196,25 @@ def _guard_approve(
         subject = catalogs.current_subject_path(ctx, KIND, workflow_id)
         verified = approval.verify(subject, signature=signature, ctx=ctx)
         if not verified.get("ok"):
-            raise ProfileError(
-                f"approve failed ApprovalPort verify: {verified.get('detail') or 'not ok'}"
+            raise KitError(
+                "approve_failed", f"approve failed ApprovalPort verify: {verified.get('detail') or 'not ok'}"
             )
         return
     if owner_override:
         if not reason or not str(reason).strip():
-            raise ProfileError("approve --owner-override requires --reason")
+            raise KitError("reason_required", "approve --owner-override requires --reason")
         # Owner path is explicit and audited on the revision; still refuse agent self-approve.
         if status.get("agent_can_approve"):
-            raise ProfileError("agents must never approve workflows")
+            raise KitError("agent_approve_forbidden", "agents must never approve workflows")
         return
     live = bool(status.get("approvals_live"))
     if live:
-        raise ProfileError(
-            "approve requires --signature (ApprovalPort verify) when approvals_live=true"
+        raise KitError(
+            "signature_required", "approve requires --signature (ApprovalPort verify) when approvals_live=true"
         )
-    raise ProfileError(
+    raise KitError(
+        "approve_fail_closed",
         "approve fail-closed: approvals_live=false; pass --owner-override --reason "
-        "or configure ApprovalPort keys and --signature"
+        "or configure ApprovalPort keys and --signature",
     )
 
-
-def _emit(data: dict[str, Any], *, as_json: bool) -> int:
-    view = redact("", data)
-    if as_json:
-        print(json.dumps(view, indent=2, sort_keys=True))
-    else:
-        print(
-            f"workflow {view.get('id')}: governance={view.get('governance')} "
-            f"version={view.get('version')} digest={view.get('digest')}"
-        )
-    return 0

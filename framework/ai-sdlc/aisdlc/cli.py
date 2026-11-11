@@ -33,6 +33,7 @@ from aisdlc import (
 )
 from aisdlc.telemetry import get_telemetry
 from aisdlc.context import Context
+from aisdlc.errors import KitError
 from aisdlc.factory import (
     check_inventory,
     config_view,
@@ -642,52 +643,94 @@ def _catalog(ctx: Context, args: argparse.Namespace) -> int:
                 for row in data["versions"]:
                     print(f"  v{row['version']} digest={row.get('digest')}")
             return 0
-        if args.action == "add":
-            return catalogs.add(ctx, args.kind, args.id, ref=args.ref, summary=args.summary)
-        if args.action == "update":
-            return catalogs.update(ctx, args.kind, args.id, ref=args.ref, summary=args.summary)
+        if args.action in ("add", "update"):
+            return _catalog_write(ctx, args)
         return catalogs.remove(ctx, args.kind, args.id)
     except ProfileError as exc:
         print(f"error: {exc}")
         return 2
 
 
+def _catalog_write(ctx: Context, args: argparse.Namespace) -> int:
+    try:
+        if args.action == "add":
+            written = catalogs.add(ctx, args.kind, args.id, ref=args.ref, summary=args.summary)
+        else:
+            written = catalogs.update(ctx, args.kind, args.id, ref=args.ref, summary=args.summary)
+    except KitError as exc:
+        if exc.code in ("already_exists", "not_found"):
+            print(f"error: {exc.detail}")
+            return 1
+        raise
+    print(f"catalog {args.action}: {args.kind}/{args.id}@{written['version']}")
+    return 0
+
+
+def _print_workflow(view: dict, as_json: bool) -> int:
+    if as_json:
+        print(json.dumps(view, indent=2, sort_keys=True))
+    else:
+        print(
+            f"workflow {view.get('id')}: governance={view.get('governance')} "
+            f"version={view.get('version')} digest={view.get('digest')}"
+        )
+    return 0
+
+
+def _print_workflow_list(payload: dict, as_json: bool) -> int:
+    if as_json:
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 0
+    entries = payload["entries"]
+    label = "approved workflows" if payload["approved_only"] else "workflows"
+    print(f"[{label}] {len(entries)}")
+    for entry in entries:
+        gov = entry.get("governance") or ""
+        print(f"  - {entry['id']}" + (f" · {gov}" if gov else ""))
+    return 0
+
+
 def _workflow(ctx: Context, args: argparse.Namespace) -> int:
     from aisdlc import workflows
 
+    as_json = bool(getattr(args, "json", False))
     try:
         if args.action == "create":
-            return workflows.create(
-                ctx,
-                args.id,
-                summary=getattr(args, "summary", "") or "",
-                agents=list(getattr(args, "agent", []) or []),
-                skills=list(getattr(args, "skill", []) or []),
-                mcp=list(getattr(args, "mcp", []) or []),
-                providers=list(getattr(args, "provider", []) or []),
-                as_json=bool(getattr(args, "json", False)),
+            return _print_workflow(
+                workflows.create(
+                    ctx,
+                    args.id,
+                    summary=getattr(args, "summary", "") or "",
+                    agents=list(getattr(args, "agent", []) or []),
+                    skills=list(getattr(args, "skill", []) or []),
+                    mcp=list(getattr(args, "mcp", []) or []),
+                    providers=list(getattr(args, "provider", []) or []),
+                ),
+                as_json,
             )
         if args.action == "list":
-            return workflows.list_workflows(
-                ctx,
-                approved_only=bool(getattr(args, "approved", False)),
-                as_json=bool(getattr(args, "json", False)),
-            )
+            payload = workflows.list_workflows(ctx, approved_only=bool(getattr(args, "approved", False)))
+            return _print_workflow_list(payload, as_json)
         if args.action == "show":
-            return workflows.show(ctx, args.id, as_json=bool(getattr(args, "json", False)))
+            return _print_workflow(workflows.show(ctx, args.id), as_json)
         if args.action == "transition":
-            return workflows.transition(
-                ctx,
-                args.id,
-                args.transition,
-                signature=getattr(args, "signature", None),
-                owner_override=bool(getattr(args, "owner_override", False)),
-                reason=getattr(args, "reason", None),
-                waive_reason=getattr(args, "waive_reason", None),
-                as_json=bool(getattr(args, "json", False)),
+            return _print_workflow(
+                workflows.transition(
+                    ctx,
+                    args.id,
+                    args.transition,
+                    signature=getattr(args, "signature", None),
+                    owner_override=bool(getattr(args, "owner_override", False)),
+                    reason=getattr(args, "reason", None),
+                    waive_reason=getattr(args, "waive_reason", None),
+                ),
+                as_json,
             )
         print(f"error: unknown workflow action {args.action!r}")
         return 2
+    except KitError as exc:
+        print(f"error: {exc}")
+        return 1 if args.action == "create" and exc.code == "already_exists" else 2
     except ProfileError as exc:
         print(f"error: {exc}")
         return 2

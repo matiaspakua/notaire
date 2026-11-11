@@ -14,8 +14,8 @@ import json
 from pathlib import Path
 
 from aisdlc.context import Context
+from aisdlc.errors import KitError
 from aisdlc.factory import redact
-from aisdlc.profile import ProfileError
 
 KINDS = (
     "skills",
@@ -39,19 +39,19 @@ def _catalog_root(ctx: Context) -> Path | None:
 def _require_root(ctx: Context) -> Path:
     root = _catalog_root(ctx)
     if root is None:
-        raise ProfileError("no catalogs configured ([catalogs] dir)")
+        raise KitError("no_catalogs", "no catalogs configured ([catalogs] dir)")
     return root
 
 
 def _kind_dir(ctx: Context, kind: str) -> Path:
     if kind not in KINDS:
-        raise ProfileError(f"unknown catalog kind {kind!r} (expected {', '.join(KINDS)})")
+        raise KitError("unknown_kind", f"unknown catalog kind {kind!r} (expected {', '.join(KINDS)})")
     return _require_root(ctx) / kind
 
 
 def _assert_id(entry_id: str) -> None:
     if not entry_id or "/" in entry_id or "\\" in entry_id or entry_id.startswith("."):
-        raise ProfileError(f"invalid catalog id {entry_id!r}")
+        raise KitError("invalid_id", f"invalid catalog id {entry_id!r}")
 
 
 def _entity_dir(ctx: Context, kind: str, entry_id: str) -> Path:
@@ -89,7 +89,7 @@ def _write_json(path: Path, payload: dict) -> dict:
 def _read_json(path: Path) -> dict:
     data = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict) or "id" not in data:
-        raise ProfileError(f"catalog entry {path} must be a JSON object with id")
+        raise KitError("invalid_entry", f"catalog entry {path} must be a JSON object with id")
     return data
 
 
@@ -140,14 +140,14 @@ def _exists(ctx: Context, kind: str, entry_id: str) -> bool:
 def load_entry(ctx: Context, kind: str, entry_id: str) -> dict:
     """Load the current revision (directory layout or legacy flat file)."""
     if kind not in KINDS:
-        raise ProfileError(f"unknown catalog kind {kind!r} (expected {', '.join(KINDS)})")
+        raise KitError("unknown_kind", f"unknown catalog kind {kind!r} (expected {', '.join(KINDS)})")
     current = _current_path(ctx, kind, entry_id)
     if current.is_file():
         return _read_json(current)
     legacy = _legacy_path(ctx, kind, entry_id)
     if legacy.is_file():
         return _normalize_legacy(_read_json(legacy), kind)
-    raise ProfileError(f"catalog entry {kind}/{entry_id} not found")
+    raise KitError("not_found", f"catalog entry {kind}/{entry_id} not found")
 
 
 def _commit_revision(ctx: Context, kind: str, entry_id: str, payload: dict) -> dict:
@@ -159,7 +159,7 @@ def _commit_revision(ctx: Context, kind: str, entry_id: str, payload: dict) -> d
     payload["version"] = version
     version_file = _version_path(ctx, kind, entry_id, version)
     if version_file.is_file():
-        raise ProfileError(f"catalog revision {kind}/{entry_id}@{version} already exists")
+        raise KitError("revision_exists", f"catalog revision {kind}/{entry_id}@{version} already exists")
     written = _write_json(version_file, payload)
     _write_json(_current_path(ctx, kind, entry_id), written)
     legacy = _legacy_path(ctx, kind, entry_id)
@@ -171,7 +171,7 @@ def _commit_revision(ctx: Context, kind: str, entry_id: str, payload: dict) -> d
 def list_entries(ctx: Context, kind: str | None = None) -> dict:
     kinds = (kind,) if kind else KINDS
     if kind and kind not in KINDS:
-        raise ProfileError(f"unknown catalog kind {kind!r} (expected {', '.join(KINDS)})")
+        raise KitError("unknown_kind", f"unknown catalog kind {kind!r} (expected {', '.join(KINDS)})")
     root = _catalog_root(ctx)
     result: dict = {}
     for item in kinds:
@@ -190,7 +190,7 @@ def list_entries(ctx: Context, kind: str | None = None) -> dict:
                         entry_id = data["id"]
                     else:
                         continue
-                except (OSError, json.JSONDecodeError, ProfileError, KeyError):
+                except (OSError, json.JSONDecodeError, KitError, KeyError):
                     entries.append({"id": path.stem, "error": "unreadable", "source": "catalog"})
                     continue
                 seen.add(entry_id)
@@ -225,7 +225,7 @@ def show(ctx: Context, kind: str, entry_id: str, *, redacted: bool = True) -> di
 def history(ctx: Context, kind: str, entry_id: str) -> dict:
     """List immutable revisions for an entity. Never executes."""
     if not _exists(ctx, kind, entry_id):
-        raise ProfileError(f"catalog entry {kind}/{entry_id} not found")
+        raise KitError("not_found", f"catalog entry {kind}/{entry_id} not found")
     versions: list[dict] = []
     versions_dir = _entity_dir(ctx, kind, entry_id) / "versions"
     if versions_dir.is_dir():
@@ -261,11 +261,9 @@ def add(
     ref: str | None,
     summary: str | None,
     extra: dict | None = None,
-    quiet: bool = False,
-) -> int:
+) -> dict:
     if _exists(ctx, kind, entry_id):
-        print(f"error: catalog entry {kind}/{entry_id} already exists (use update)")
-        return 1
+        raise KitError("already_exists", f"catalog entry {kind}/{entry_id} already exists (use update)")
     payload: dict = {
         "id": entry_id,
         "kind": kind,
@@ -273,42 +271,23 @@ def add(
         "summary": summary or "",
         "version": 1,
     }
-    if extra:
-        for key, value in extra.items():
-            if key in {"id", "kind", "version", "digest"}:
-                continue
+    for key, value in (extra or {}).items():
+        if key not in {"id", "kind", "version", "digest"}:
             payload[key] = value
-    _commit_revision(ctx, kind, entry_id, payload)
-    if not quiet:
-        print(f"catalog add: {kind}/{entry_id}@1")
-    return 0
+    return _commit_revision(ctx, kind, entry_id, payload)
 
 
-def update(ctx: Context, kind: str, entry_id: str, *, ref: str | None, summary: str | None) -> int:
+def update(ctx: Context, kind: str, entry_id: str, *, ref: str | None, summary: str | None) -> dict:
     try:
         data = load_entry(ctx, kind, entry_id)
-    except ProfileError:
-        print(f"error: catalog entry {kind}/{entry_id} not found")
-        return 1
-    next_version = int(data.get("version") or 1) + 1
+    except KitError as exc:
+        raise KitError("not_found", f"catalog entry {kind}/{entry_id} not found") from exc
     payload = dict(data)
     if ref is not None:
         payload["ref"] = ref
     if summary is not None:
         payload["summary"] = summary
-    payload["version"] = next_version
-    payload.pop("digest", None)
-    # Ensure prior revision exists as an immutable file before advancing.
-    prior = int(data.get("version") or 1)
-    prior_path = _version_path(ctx, kind, entry_id, prior)
-    if not prior_path.is_file():
-        seed = dict(data)
-        seed["version"] = prior
-        seed.pop("digest", None)
-        _write_json(prior_path, seed)
-    _commit_revision(ctx, kind, entry_id, payload)
-    print(f"catalog update: {kind}/{entry_id}@{next_version}")
-    return 0
+    return write_new_revision(ctx, kind, entry_id, payload)
 
 
 def write_new_revision(ctx: Context, kind: str, entry_id: str, payload: dict) -> dict:
@@ -351,7 +330,7 @@ def validate(ctx: Context, kind: str | None = None) -> int:
     """Read-only integrity: digests match; skills refs exist when kind=skills. Never executes."""
     try:
         listed = list_entries(ctx, kind)
-    except ProfileError as exc:
+    except KitError as exc:
         print(f"error: {exc}")
         return 2
     rows = [listed] if kind else list(listed.values())
@@ -394,4 +373,4 @@ def current_subject_path(ctx: Context, kind: str, entry_id: str) -> Path:
     legacy = _legacy_path(ctx, kind, entry_id)
     if legacy.is_file():
         return legacy
-    raise ProfileError(f"catalog entry {kind}/{entry_id} not found")
+    raise KitError("not_found", f"catalog entry {kind}/{entry_id} not found")
