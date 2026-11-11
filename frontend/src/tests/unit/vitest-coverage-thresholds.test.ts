@@ -9,12 +9,15 @@ import { describe, expect, it } from "vitest";
  *
  * Floors raised 2026-10-14 (issue #1667), two points below the measurement after the dashboard
  * smoke tests: Statements 61.34% / Branches 54.39% / Functions 51.51% / Lines 62.34%.
+ *
+ * Floors raised 2026-11-11 (issue #2249), two points below the measurement after the #1246 page tests:
+ * Statements 88.81% / Branches 81.07% / Functions 87.61% / Lines 90.12%.
  */
 export const DOCUMENTED_VITEST_COVERAGE_FLOORS = {
-  statements: 76,
-  branches: 68,
-  functions: 72,
-  lines: 78,
+  statements: 86,
+  branches: 79,
+  functions: 85,
+  lines: 88,
 } as const;
 
 function readConfiguredThresholds(): Record<keyof typeof DOCUMENTED_VITEST_COVERAGE_FLOORS, number> {
