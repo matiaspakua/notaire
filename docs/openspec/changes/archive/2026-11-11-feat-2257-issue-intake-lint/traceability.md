@@ -35,11 +35,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| complete issue passes | test_intake | pending |
-| missing or empty section fails | test_intake | pending |
-| placeholder or dangling link fails | test_intake | pending |
-| missing label prefix fails | test_intake | pending |
-| no fetch command is no-evaluable | test_intake | pending |
+| complete issue passes | test_intake | passing |
+| missing or empty section fails | test_intake | passing |
+| placeholder or dangling link fails | test_intake | passing |
+| missing label prefix fails | test_intake | passing |
+| no fetch command is no-evaluable | test_intake | passing |
 
 ## Permanent documentation updated
 
