@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/test-2264-telemetry-traceparent-isolation/` | drafted |
 | Branch | `cursor/2264-telemetry-traceparent-b566` | created |
 | Tasks | `tasks.md` | pending |
-| Commits | pending | pending |
+| Commits | `0e32392a`, `112c4805` | recorded |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -30,7 +30,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Parent TRACEPARENT does not fail default-off proof | `test_telemetry_port.TelemetryDefaultOffTest.test_default_profile_does_not_emit_or_inject_traceparent` | pending |
+| Parent TRACEPARENT does not fail default-off proof | `test_telemetry_port.TelemetryDefaultOffTest.test_default_profile_does_not_emit_or_inject_traceparent` | passing |
 | SDK disabled | existing `test_otel_sdk_disabled_is_honored` | passing |
 
 ## Permanent documentation updated
@@ -44,8 +44,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | pending | validate-sdlc-plan.sh |
-| 2 | Failing tests written, test cases designed | yes | verify-with-traceparent-red.txt |
+| 1 | Issue + Specification + Acceptance Criteria | yes | validate-sdlc-plan.sh OK; WIP label SKIPPED 403 |
+| 2 | Failing tests written, test cases designed | yes | foreman-ops-asli-78/verify-with-traceparent-red.txt |
 | 3 | Suite green, coverage held, docs updated | pending | |
 | 4 | CI green, review approved, no conflicts | pending | |
 | 5 | Deployed, smoke test passed, Issue closed | pending | |

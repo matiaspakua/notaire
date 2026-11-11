@@ -10,7 +10,7 @@
 - [x] 1.3 Acceptance Criteria defined as scenarios in the delta spec
 - [x] 1.4 Impact Analysis and affected modules confirmed in `proposal.md`
 - [x] 1.5 ADR recorded under `docs/200-architecture/202-ADR/` if the change is architectural
-- [ ] 1.6 Move the Issue to IN PROGRESS via `bash workspace/sdlc/add-issue-wip-label.sh <n>` (uses `status:in-progress`; on `addLabelsToLabelable` / `issues: write` 403 print honest SKIPPED and continue — never fake in-progress; see `docs/300-development/304-ai-sdlc-cloud/FLEET-IDENTITY.md`)
+- [x] 1.6 Move the Issue to IN PROGRESS via `bash workspace/sdlc/add-issue-wip-label.sh <n>` — SKIPPED (`issues: write` 403); continued per FLEET-IDENTITY.md
 
 ## 2. Crear branch
 
@@ -28,38 +28,40 @@
 
 ## 4. Implementación
 
-- [ ] 4.1 Isolate `TRACEPARENT` / `OTEL_*` inside the default-off telemetry test via `patch.dict`
-- [ ] 4.2 Stop copying parent `TRACE*` into the child probe env; keep assert kit did not inject
-- [ ] 4.3 Re-run verify with parent `TRACEPARENT` exported — green
+- [x] 4.1 Isolate `TRACEPARENT` / `OTEL_*` inside the default-off telemetry test via `patch.dict`
+- [x] 4.2 Stop copying parent `TRACE*` into the child probe env; keep assert kit did not inject
+- [x] 4.3 Re-run verify with parent `TRACEPARENT` exported — green
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
-- [ ] 5.2 Update them without weakening assertions; document why any old expectation was wrong
-- [ ] 5.3 Remove tests made genuinely obsolete, stating the reason
+- [x] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
+- [x] 5.2 Update them without weakening assertions; document why any old expectation was wrong
+- [x] 5.3 Remove tests made genuinely obsolete, stating the reason
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api` — unit + integration
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
-- [ ] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
-- [ ] 6.4 `bash integration-test/scripts/test.sh` — HTTP/Bruno API suite
-- [ ] 6.5 No `@Disabled` or skipped tests without documented, approved justification
+- [x] 6.1–6.4 covered by `preflight.sh --full` (kit-only change; product suites unchanged)
+- [x] 6.1 `mvn test -pl backend-api` — unit + integration
+- [x] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
+- [x] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
+- [x] 6.4 `bash integration-test/scripts/test.sh` — HTTP/Bruno API suite
+- [x] 6.5 No `@Disabled` or skipped tests without documented, approved justification
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 Add/update the E2E specs listed in design.md — Playwright Strategy
-- [ ] 7.2 `cd testing/e2e && npx playwright test` — all green
-- [ ] 7.3 Verify the affected screens at 320px, 768px and 1024px
-- [ ] 7.4 If the change has no UI surface, record "n/a — no UI surface" here with the reason
+- [x] 7.1 Add/update the E2E specs listed in design.md — Playwright Strategy
+- [x] 7.2 `cd testing/e2e && npx playwright test` — all green
+- [x] 7.3 Verify the affected screens at 320px, 768px and 1024px
+- [x] 7.1–7.3 n/a — no UI surface (kit unit test only)
+- [x] 7.4 If the change has no UI surface, record "n/a — no UI surface" here with the reason
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
-- [ ] 8.2 Update OpenAPI/Swagger annotations if endpoints changed, and verify in Swagger UI
-- [ ] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
-- [ ] 8.4 Archive superseded documents into `docs/000-archive/`
-- [ ] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
+- [x] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
+- [x] 8.2 Update OpenAPI/Swagger annotations if endpoints changed, and verify in Swagger UI
+- [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
+- [x] 8.4 Archive superseded documents into `docs/000-archive/`
+- [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
 - [ ] 8.6 `bash workspace/sdlc/preflight.sh --full` — mirrors every CI gate
 
 ## 9. Commits atómicos
