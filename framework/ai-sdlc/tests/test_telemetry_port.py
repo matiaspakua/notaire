@@ -79,20 +79,43 @@ class TelemetryRedactionTest(unittest.TestCase):
 
 class TelemetryDefaultOffTest(unittest.TestCase):
     def test_default_profile_does_not_emit_or_inject_traceparent(self):
-        repo = Repo(self, PROFILE_OFF)
-        result = repo.run("cost", "--agent", "worker", "--model", "m", "--input", "1", "--output", "1", "--usd", "0.01")
-        self.assertEqual(0, result.returncode, output(result))
-        # Child env must not gain TRACEPARENT when telemetry is off.
-        child = subprocess.run(
-            [sys.executable, "-c", "import os; print(os.environ.get('TRACEPARENT',''))"],
-            cwd=repo.root,
-            env={**_otel_env(), **{k: v for k, v in os.environ.items() if k.startswith("TRACE")}},
-            capture_output=True,
-            text=True,
-        )
-        # Our kit must not have injected into the current process either.
-        self.assertEqual("", os.environ.get("TRACEPARENT", ""))
-        self.assertEqual("", child.stdout.strip())
+        # #2264: cloud shells export TRACEPARENT; isolate so the scenario stays evaluable.
+        from unittest import mock
+
+        with mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("TRACEPARENT", None)
+            for key in [k for k in list(os.environ) if k.startswith("OTEL_")]:
+                os.environ.pop(key, None)
+
+            repo = Repo(self, PROFILE_OFF)
+            result = repo.run(
+                "cost",
+                "--agent",
+                "worker",
+                "--model",
+                "m",
+                "--input",
+                "1",
+                "--output",
+                "1",
+                "--usd",
+                "0.01",
+            )
+            self.assertEqual(0, result.returncode, output(result))
+            # Child probe starts clean of TRACEPARENT; kit must not inject it.
+            child_env = dict(_otel_env())
+            child_env.pop("TRACEPARENT", None)
+            for key in [k for k in list(child_env) if k.startswith("OTEL_")]:
+                child_env.pop(key, None)
+            child = subprocess.run(
+                [sys.executable, "-c", "import os; print(os.environ.get('TRACEPARENT',''))"],
+                cwd=repo.root,
+                env=child_env,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual("", os.environ.get("TRACEPARENT", ""))
+            self.assertEqual("", child.stdout.strip())
 
 
 class TelemetrySdkPathTest(unittest.TestCase):
