@@ -1,6 +1,6 @@
 # Fleet identity (GitHub App)
 
-> Issue #1648 · #2221 · CU76 / CU78 (least privilege). Process authority:
+> Issue #1648 · #2221 · #2231 · CU76 / CU78 (least privilege). Process authority:
 > [CONSTITUTION.md](../../../CONSTITUTION.md).
 
 Fleet agents must write issue labels and the Project Status field to claim,
@@ -54,6 +54,26 @@ Until that grant exists, Gate 1.6 must **honestly SKIP** — never fake
 ```bash
 bash workspace/sdlc/add-issue-wip-label.sh <n>
 ```
+
+## Ambient `gh pr create` vs ManagePullRequest (#2231)
+
+Ambient Cursor `gh` can push branches yet still fail GraphQL
+`createPullRequest` with **403** / Resource not accessible by integration
+(ASLI-66 #2073 → Owner compare URL [#2228](https://github.com/matiaspakua/notaire/pull/2228);
+ASLI-67 #2071 → ManagePullRequest on a `cursor/*` tip
+[#2229](https://github.com/matiaspakua/notaire/pull/2229)). Do **not** treat that
+403 as a product defect, and do **not** assert that ambient or fleet tokens can
+open PRs unless the Owner configured those secrets/scopes.
+
+| Step | Action |
+|------|--------|
+| 1 | Prefer shell `gh pr create` after push (title `[#n] type(scope): …`, body `Closes #n`) |
+| 2 | On `createPullRequest` 403: push a cloud tip `cursor/<desc>` (optionally also the constitutional `type/#_desc` at the same commit) and open via **ManagePullRequest** / Cursor PR tools |
+| 3 | If ManagePullRequest also fails (e.g. forge SoT ENOENT): leave an **Owner compare-link** with the exact title and body (`Closes #n`) |
+
+`FLEET_APP_ID` / `FLEET_APP_PRIVATE_KEY` remain **optional** for Issue labels via
+`fleet-token.sh` (#2221). Agents cannot widen Cursor App scopes mid-run. Short
+lessons copy: [FLEET-LESSONS-HEX-1693.md](FLEET-LESSONS-HEX-1693.md).
 
 ## Owner setup (one time)
 

@@ -391,8 +391,14 @@ Fixes #253
 ```bash
 gh pr create \
   --title "[253] feat: add user authentication with JWT" \
-  --body "Fixes #253"
+  --body "Closes #253"
 ```
+
+Ambient Cursor `gh` may return GraphQL `createPullRequest` **403** even after a
+successful push. Preferred fallback: push a `cursor/<desc>` tip (optionally also
+`type/#_desc`) and open via ManagePullRequest / Cursor PR tools; if that fails,
+leave an Owner compare-link with the exact title and body (`Closes #n`). See
+`docs/300-development/304-ai-sdlc-cloud/FLEET-IDENTITY.md` (#2231).
 
 ---
 
@@ -431,8 +437,8 @@ git push -u origin feat/253_description
 
 # 8. Update docs
 
-# 9. Create PR
-gh pr create --title "[253] feat: description" --body "Fixes #253"
+# 9. Create PR (on createPullRequest 403 → ManagePullRequest on cursor/*; else Owner compare)
+gh pr create --title "[#253] feat: description" --body "Closes #253"
 ```
 
 ---

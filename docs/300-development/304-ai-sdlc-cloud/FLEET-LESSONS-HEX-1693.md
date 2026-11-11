@@ -95,6 +95,23 @@ When **Unit / Integration / Coverage** are green but **Build Docker Image** fail
 
 **Status on `main` (after #1859):** `backend-api/Dockerfile` already runs `go-offline` and `package` with **`-U`**. Do not re-ship that Dockerfile change — treat this section as the runbook when Docker flakes return. Aggregate `CI` fails when Docker fails even if heavy tests passed — still fix Docker before merge.
 
+## Forge PR create — ambient `gh` 403 (#2231)
+
+Ambient Cursor `gh pr create` may fail GraphQL `createPullRequest` with **403**
+even when push works. Proven path (ASLI-67 → #2229): push a `cursor/<desc>` tip
+(optionally also `type/#_desc`) and open with **ManagePullRequest** / Cursor PR
+tools. If that fails (ASLI-66 → #2228), leave an **Owner compare URL** with the
+exact title (`[#n] type(scope): …`) and body including `Closes #n`. Do not assert
+PR-write capability mid-run without Owner configuration; optional `FLEET_APP_*`
+is for labels (`fleet-token.sh`, #2221). Durable detail:
+[FLEET-IDENTITY.md](FLEET-IDENTITY.md).
+
+| Do | Don't |
+|----|-------|
+| Try `gh pr create` first; on 403 use ManagePullRequest on `cursor/*` | Treat `createPullRequest` 403 as a product bug or stop the tip |
+| Keep constitutional `type/#_desc` and cloud `cursor/*` tips at the same SHA when both are used | Invent App scopes or open a probe Issue to test PR write |
+| Hand the Owner a compare-link + exact title/body when forge tools fail | Merge from a Worker — Workers never merge |
+
 ## Issue hygiene when the bot cannot close
 
 Fleet App / agent `gh` often returns **403** on label edit, board Status, or issue close. Then:
@@ -165,6 +182,7 @@ Check: a login or shell diff that introduces `rotate` or `type: "spring"` outsid
 | Anti-pattern | Instead |
 |--------------|---------|
 | Probe / canary Issues to test permissions | Human paste template; continue other work |
+| Stopping on ambient `gh pr create` / `createPullRequest` 403 | ManagePullRequest on `cursor/*`, else Owner compare-link (#2231) |
 | Starting the next domain before merge | Hold the queue; serialize |
 | Trusting advisory / light checks as merge-ready | `check-heavy-ci.sh` + Process Checks |
 | Mixing several R2 domains in one PR | One slice, one baseline shrink |
