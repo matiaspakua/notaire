@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, type ReactNode } from "react";
 import { actLabel, chrome, factoryPageSummary, factoryPageTitle, pageIsTranslated } from "@/lib/i18n";
+import { tr } from "@/lib/i18n/es";
+import "@/lib/i18n/strings";
 import { actOf, groupsFor, REPORTS, sectionOf } from "@/lib/site";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { Es, trs } from "./Es";
@@ -75,7 +77,7 @@ export function DocShell({ children }: { children: ReactNode }) {
           <div className="sticky top-[calc(var(--header-h)+1.5rem)] max-h-[calc(100vh-var(--header-h)-3rem)] overflow-y-auto py-10 pr-2">
             <p className="mb-5 px-3 text-sm font-semibold text-slate-900">{title}</p>
             <Sidebar
-              label={factory ? "AI Factory chapters" : `${title} ${t.pages}`}
+              label={factory ? tr(locale, "AI Factory chapters") : `${title} ${t.pages}`}
               groups={groups}
               pathname={pathname}
               footer={

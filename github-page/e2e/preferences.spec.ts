@@ -37,8 +37,10 @@ test("Spanish home and factory, English notice on an untranslated page", async (
 
 const SPANISH = [
   { path: "product/", heading: /escribanía/i },
+  { path: "product/anatomy/", heading: /mostrador|máquina|pedido/i },
   { path: "security/", heading: /registro notarial/i },
   { path: "docs/", heading: /conocimiento/i },
+  { path: "ai-sdlc/lifecycle/", heading: /ciclo|Issue|gate/i },
   { path: "ai-sdlc/results/", heading: /fábrica/i },
   { path: "about/", heading: /construye Notaire/i },
 ];
