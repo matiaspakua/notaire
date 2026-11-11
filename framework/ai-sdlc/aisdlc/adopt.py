@@ -6,10 +6,12 @@ import shlex
 import shutil
 from pathlib import Path
 
+from aisdlc import __version__
 from aisdlc.context import Context
+from aisdlc.kitroot import kit_root
 from aisdlc.profile import STAGES
 
-TEMPLATES = Path(__file__).resolve().parents[1] / "templates" / "project"
+TEMPLATES = kit_root() / "templates" / "project"
 SHELL_WORDS = {"cd", "test", "[", "exit", "echo", "true", "false", "export", "set", "if", "for", "!", "env"}
 INTERPRETERS = {"bash", "sh", "zsh", "python", "python3", "node", "ruby", "pwsh"}
 
@@ -36,7 +38,7 @@ def init(root: Path, name: str, level: int, force: bool) -> int:
     if not 1 <= level <= 4:
         print("error: --level must be 1-4")
         return 2
-    values = {"{{project}}": name, "{{level}}": str(level)}
+    values = {"{{project}}": name, "{{level}}": str(level), "{{kit_version}}": __version__}
     for source in sorted(p for p in TEMPLATES.rglob("*") if p.is_file()):
         rel = source.relative_to(TEMPLATES)
         target = root / rel
@@ -67,6 +69,8 @@ def doctor(ctx: Context) -> int:
         print(f"  WARN   {message}")
     # Isolator OS + sole-committer honesty (#2173/#2198/#2200): INFO;
     # sandbox / enforces_committer only after real probes.
+    for message in _skew(ctx):
+        print(f"  {message}")
     print(f"  INFO   {isolator_doctor_note()}")
     # Grant write-set + expire are policy-only (#2194/#2198): INFO, never a sandbox claim alone.
     print(f"  INFO   {grant_doctor_note()}")
@@ -85,6 +89,14 @@ def doctor(ctx: Context) -> int:
           f"{len(p.ratchets)} ratchets · {len(p.roles)} roles — "
           f"{'FAILED' if errors else 'OK'} ({len(errors)} errors, {len(warnings)} warnings)")
     return 1 if errors else 0
+
+
+def _skew(ctx: Context) -> list[str]:
+    recorded = ctx.profile.kit_version
+    if recorded is None or recorded == __version__:
+        return []
+    level = "WARN" if recorded.split(".")[0] != __version__.split(".")[0] else "INFO"
+    return [f"{level:<5}  kit_version {recorded} in the profile differs from the running kit {__version__}"]
 
 
 def _errors(ctx: Context) -> list[str]:

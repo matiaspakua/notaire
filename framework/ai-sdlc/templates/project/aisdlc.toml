@@ -6,6 +6,7 @@
 name = "{{project}}"
 policy = "CONSTITUTION.md"
 level = {{level}}                # 1 guided · 2 gated · 3 fleet · 4 autonomous
+kit_version = "{{kit_version}}"  # kit release this profile was written for; doctor reports skew
 base = "origin/main"             # base revision for diffs, path scoping and ratchets
 
 [tracker]

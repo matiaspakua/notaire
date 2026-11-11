@@ -37,6 +37,7 @@ DEFAULT_COMMIT_PATTERN = (
     r"(\([^()]+\))?!?: .+|Revert \".+\")$"
 )
 DEFAULT_ISSUE_PATTERN = r"#(\d+)"
+KIT_VERSION = re.compile(r"\d+\.\d+\.\d+")
 DEFAULT_SECTIONS = ("Why", "What changes", "Acceptance scenarios", "Test plan", "Traceability")
 
 
@@ -172,6 +173,7 @@ class Profile:
     name: str
     policy: str | None = None
     level: int = 1
+    kit_version: str | None = None
     base: str = "origin/main"
     gates: list[Gate] = field(default_factory=list)
     ratchets: list[Ratchet] = field(default_factory=list)
@@ -258,6 +260,10 @@ def _build(data: dict, errors: list[str]) -> Profile:
     if not isinstance(level, int) or not 1 <= level <= 4:
         errors.append(f"[project] level must be 1-4, got {level!r}")
         level = 1
+    kit_version = project.get("kit_version")
+    if kit_version is not None and not (isinstance(kit_version, str) and KIT_VERSION.fullmatch(kit_version)):
+        errors.append(f"[project] kit_version must be MAJOR.MINOR.PATCH, got {kit_version!r}")
+        kit_version = None
     tracker, spec, commits = data.get("tracker", {}), data.get("spec", {}), data.get("commits", {})
     tdd, context, skills = data.get("tdd", {}), data.get("context", {}), data.get("skills", {})
     protected, size, scope = data.get("protected", {}), data.get("size", {}), data.get("scope", {})
@@ -265,6 +271,7 @@ def _build(data: dict, errors: list[str]) -> Profile:
         name=name,
         policy=project.get("policy"),
         level=level,
+        kit_version=kit_version,
         base=project.get("base", "origin/main"),
         issue_pattern=_regex(tracker.get("issue_pattern", DEFAULT_ISSUE_PATTERN), "tracker.issue_pattern", errors),
         verify=tracker.get("verify"),
