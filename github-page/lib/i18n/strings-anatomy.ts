@@ -187,3 +187,29 @@ pair(
   "Prometheus scrapea métricas, Loki guarda logs, Tempo guarda trazas por un collector OpenTelemetry, Alertmanager pagina, Grafana lo dibuja todo, y SonarQube sigue la calidad del código. Un smoke test demuestra un release antes de que se cierre su Issue.",
 );
 pair("dials live, alerts armed", "diales en vivo, alertas armadas");
+
+/* Product / engineering anatomy page chrome still missing from earlier passes */
+pair("Product · How it works", "Producto · Cómo funciona");
+pair("Notaire as a machine: one request, end to end", "Notaire como máquina: un pedido, de punta a punta");
+pair("Start with the office", "Empezá por la escribanía");
+pair("The layers, and what each must never do", "Las capas, y lo que cada una no debe hacer nunca");
+pair("Word", "Palabra");
+pair("Meaning in Notaire", "Significado en Notaire");
+pair(
+  "The case file for one procedure, such as a sale. It has a status, a history and linked documents.",
+  "El expediente de un trámite, por ejemplo una venta. Tiene un estado, un historial y documentos vinculados.",
+);
+pair(
+  "The priced list of procedures offered to a client. Payments are collected against it.",
+  "La lista con precio de trámites ofrecidos a un cliente. Los pagos se cobran contra ella.",
+);
+pair(
+  "The notarial instrument drafted for the management. It starts unsigned and needs a folio to be signed.",
+  "El instrumento notarial redactado para la gestión. Empieza sin firmar y necesita un folio para firmarse.",
+);
+pair(
+  "The authorised copy of a signed deed. It goes to the registry and can come back for correction.",
+  "La copia autorizada de una escritura firmada. Va al registro y puede volver para corrección.",
+);
+pair("A numbered page of the notary's protocol book.", "Una página numerada del protocolo del escribano.");
+pair("Folio", "Folio");
