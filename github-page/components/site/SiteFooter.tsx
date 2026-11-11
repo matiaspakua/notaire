@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { actLabel, chrome } from "@/lib/i18n";
+import { actLabel, chrome, factoryPageTitle } from "@/lib/i18n";
 import { ASSET_BASE, DEMO, DOCS_PAGES, FACTORY_ACTS, REPORTS, REPO_URL } from "@/lib/site";
 import { GitHubIcon, Logo } from "./icons";
 import { usePreferences } from "./Preferences";
@@ -12,7 +12,7 @@ export function SiteFooter({ version }: { version?: string }) {
   const t = chrome(locale);
   const cols = [
     { title: "AI Factory", links: FACTORY_ACTS.map((a) => ({ href: a.pages[0].href, label: actLabel(a.label, locale).replace(/^[IVX]+ · /, "") })) },
-    { title: t.nav.docs, links: DOCS_PAGES.slice(0, 6).map((p) => ({ href: p.href, label: p.title })) },
+    { title: t.nav.docs, links: DOCS_PAGES.slice(0, 6).map((p) => ({ href: p.href, label: factoryPageTitle(p.href, locale, p.title) })) },
     { title: t.reports, links: [{ href: "/docs/releases/", label: t.nav.releases }, ...REPORTS.map((r) => ({ href: r.href, label: r.title }))] },
   ];
   return (

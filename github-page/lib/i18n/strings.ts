@@ -3,6 +3,8 @@ import { pair } from "./es";
 import "./strings-content";
 import "./strings-rest";
 import "./strings-docs";
+import "./strings-anatomy";
+import "./strings-mermaid";
 
 // Demo shell
 pair("Demo – sample data, read-only", "Demo: datos de ejemplo, solo lectura");

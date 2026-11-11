@@ -8,6 +8,9 @@ import { engineeringFigure } from "@/components/anatomy/engineering-figure";
 import type { FigureData } from "@/components/anatomy/figure-types";
 import { sdlcFigure } from "@/components/anatomy/sdlc-figure";
 import { systemFigure } from "@/components/anatomy/system-figure";
+import { PreferencesProvider } from "@/components/site/Preferences";
+import { ES } from "@/lib/i18n/es";
+import "@/lib/i18n/strings";
 import { DOCS_PAGES, FACTORY_PAGES, PRODUCT_PAGES, search } from "@/lib/site";
 
 const ROOT = path.resolve(__dirname, "..", "..");
@@ -58,6 +61,19 @@ describe("Anatomy figures (#2089)", () => {
     expect(document.querySelector('[data-station="2"]')).not.toHaveAttribute("data-dim");
     await userEvent.click(screen.getByRole("button", { name: /previous step/i }));
     expect(readout()).toBe(systemFigure.steps[0].readout);
+  });
+
+  it("renders Spanish plate title and readout when the locale is Spanish (#2202)", async () => {
+    localStorage.setItem("notaire.lang", "es");
+    render(
+      <PreferencesProvider>
+        <AnatomyFigure data={systemFigure} />
+      </PreferencesProvider>,
+    );
+    // PreferencesProvider applies the stored locale after a tick.
+    await screen.findByLabelText(/Fig 1: El mostrador/i);
+    expect(document.querySelector("[data-readout]")?.textContent).toBe(ES[systemFigure.steps[0].readout]);
+    expect(screen.getByText(ES["Where to look:"])).toBeTruthy();
   });
 
   it("moves the ticket and opens a gate when a step asks for it", async () => {

@@ -24,8 +24,9 @@ The header offers a theme (light, dark, or the system setting) and a language (E
 The choice is stored in `localStorage` (`notaire.theme`, `notaire.lang`) and applied by a script in the document head, before paint.
 `prefers-reduced-motion` already collapses transitions. Spanish covers the shell, the home page, the product, security,
 the AI Factory, the about page and every technical-docs page, including the glossary, the stack, business, modules,
-hexagonal architecture, the database, the API, security docs and the roadmap. One dictionary (`lib/i18n/`) is the source
-of the sentences. Technical terms such as Issue, pull request, gate, OpenSpec, Flyway, commit and kit stay in English.
+hexagonal architecture, the database, the API, security docs and the roadmap. Anatomy figure plates and steps,
+Mermaid sentence labels and Diagram captions use the same dictionary (`lib/i18n/`). Technical terms such as Issue,
+pull request, gate, OpenSpec, Flyway, commit, kit and Owner stay in English; identifiers stay as in the repository.
 
 ## Commands
 

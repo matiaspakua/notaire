@@ -10,6 +10,9 @@ import {
   PLAYBOOK,
   PRODUCTION_READY,
 } from "@/lib/ai-sdlc-content";
+import { engineeringFigure } from "@/components/anatomy/engineering-figure";
+import { sdlcFigure } from "@/components/anatomy/sdlc-figure";
+import { systemFigure } from "@/components/anatomy/system-figure";
 import { pageIsTranslated } from "@/lib/i18n";
 import { ES, TRANSLATED_ROUTES } from "@/lib/i18n/es";
 import "@/lib/i18n/strings";
@@ -89,5 +92,40 @@ describe("Spanish keys for translated routes (#2202)", () => {
       need(row.id, row.summary);
     }
     expect(DOCS_PAGES.find((p) => p.href === "/docs/hexagonal/")).toBeTruthy();
+  });
+
+  it("has Spanish for anatomy figure plate copy and steps", () => {
+    need("chrome", "Where to look:");
+    need("chrome", "AI Factory chapters");
+    for (const fig of [systemFigure, engineeringFigure, sdlcFigure]) {
+      need(fig.id, fig.title);
+      need(fig.id, fig.hint);
+      need(fig.id, fig.caption);
+      for (const key of fig.keys) need(fig.id, key.label);
+      for (const step of fig.steps) {
+        need(`${fig.id}/${step.station}`, step.title);
+        need(`${fig.id}/${step.station}`, step.text);
+        need(`${fig.id}/${step.station}`, step.readout);
+      }
+    }
+    expect(ES["The notary's counter"]).toMatch(/escribanía|mostrador/i);
+    expect(ES["The lock chamber"]).toMatch(/esclusa|cámara/i);
+    expect(ES["The release line"]).toMatch(/línea|release/i);
+  });
+
+  it("has Spanish for key Mermaid sentence labels and diagram captions", () => {
+    need("mermaid", "On the agent's machine — the pull-request proof");
+    need("mermaid", "2 · Refine requirement");
+    need(
+      "caption",
+      "CONSTITUTION.md §5 Official SDLC Workflow. The yellow hexagons are the hard gates of §6.",
+    );
+    need(
+      "caption",
+      "Purple: policy and context. Blue: mechanical enforcement. Red: the human Owner.",
+    );
+    expect(ES["On the agent's machine — the pull-request proof"]).not.toBe(
+      "On the agent's machine — the pull-request proof",
+    );
   });
 });

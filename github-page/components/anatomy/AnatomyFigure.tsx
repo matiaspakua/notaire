@@ -5,6 +5,9 @@ import { plateHtml } from "@/components/iso/iso-kit";
 import { StepControls, type Step } from "@/components/diagrams/StepControls";
 import { useStepper } from "@/components/diagrams/useStepper";
 import { Code } from "@/components/FactoryUI";
+import { usePreferences } from "@/components/site/Preferences";
+import { tr } from "@/lib/i18n/es";
+import "@/lib/i18n/strings";
 import type { FigureData } from "./figure-types";
 import "@/components/iso/iso.css";
 import "@/components/figures/figures.css";
@@ -14,25 +17,28 @@ import "./anatomy.css";
  * An Anatomy figure (#2089): the machine is static SVG built at build time. This component only moves
  * its named parts, dims the stations that are not being explained and writes the card readout.
  * Nothing plays on its own; the reader steps with Prev, Next, Play or a click on a station, and
- * the step list below is the text version of the drawing.
+ * the step list below is the text version of the drawing. Plate copy follows the site locale (#2202).
  */
 export function AnatomyFigure({ data }: { data: FigureData }) {
   const root = useRef<HTMLDivElement>(null);
   const touched = useRef(false);
   const s = useStepper(data.steps.length, 4200);
+  const { locale } = usePreferences();
+  const show = (value: string) => tr(locale, value);
 
   const html = useMemo(
     () =>
       plateHtml({
         fig: data.fig,
-        title: data.title,
-        hint: data.hint,
-        readout: data.steps[0].readout,
-        keys: data.keys,
-        caption: data.caption,
+        title: show(data.title),
+        hint: show(data.hint),
+        readout: show(data.steps[0].readout),
+        keys: data.keys.map((key) => ({ ...key, label: show(key.label) })),
+        caption: show(data.caption),
         body: data.svg,
       }),
-    [data],
+    // locale changes the dictionary lookup; data is the figure source
+    [data, locale], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   useEffect(() => {
@@ -54,8 +60,8 @@ export function AnatomyFigure({ data }: { data: FigureData }) {
       if (pose.d !== undefined) el.setAttribute("d", pose.d);
     }
     const readout = host.querySelector("[data-readout]");
-    if (readout) readout.textContent = step.readout;
-  }, [s.index, data]);
+    if (readout) readout.textContent = show(step.readout);
+  }, [s.index, data, locale]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const host = root.current;
@@ -71,21 +77,22 @@ export function AnatomyFigure({ data }: { data: FigureData }) {
   }, [data.steps, s.jump]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const steps: Step[] = data.steps.map((st) => ({
-    title: st.title,
+    title: show(st.title),
     body: (
       <>
-        {st.text}
+        {show(st.text)}
         <span className="mt-2 block text-xs text-slate-600">
-          Where to look: <Code>{st.where}</Code>
+          {show("Where to look:")} <Code>{st.where}</Code>
         </span>
       </>
     ),
   }));
 
+  const title = show(data.title);
   return (
-    <section className={`iso anatomy${s.reduced ? " anatomy-still" : ""}`} data-theme="light" aria-label={`${data.fig}: ${data.title}`}>
+    <section className={`iso anatomy${s.reduced ? " anatomy-still" : ""}`} data-theme="light" aria-label={`${data.fig}: ${title}`}>
       <div ref={root} dangerouslySetInnerHTML={{ __html: html }} />
-      <StepControls id={data.id} steps={steps} s={s} label={data.title} />
+      <StepControls id={data.id} steps={steps} s={s} label={title} />
     </section>
   );
 }
