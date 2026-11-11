@@ -57,6 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **frontend:** DataTable row and card entrances use `motion.duration.base`, `ease.standard`, `distance.sm`, and `staggerDelay` instead of hardcoded 0.3s / Material ease (Refs #2070)
 * **frontend:** Home module grid uses mist icon wells, drops decorative `scale-110`, and keeps San Francisco Blue off every card when the expirations alert is the accent (Refs #2072)
 * **frontend:** Reduced motion no longer uses a global 0.01ms transition kill — transform travel stays off; focus/color/opacity state changes use `duration.fast` (Refs #2073)
 * **frontend:** Mobile navigation sheet group toggles are at least 44px tall; desktop sidebar keeps the compact 32px group headers (Refs #2074)

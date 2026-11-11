@@ -407,9 +407,11 @@ Dark mode is not yet active, but tokens are structured to support it:
 `AppHeader` composes `PageHeader` inside sticky glass chrome. `DataTable` empty
 rows/cards use `EmptyState` via `emptyMessage` (title), optional
 `emptyDescription`, and optional `emptyAction` (#2071) — reuse an existing create
-control when the page already has one; do not invent create flows. Query
-failures use `ErrorState` via `error` / `onRetry`. Prefer sentence case — never
-decorative ALL-CAPS labels on chrome or table headers.
+control when the page already has one; do not invent create flows. Row and
+mobile-card entrances use shared motion tokens (`duration.base`, `ease.standard`,
+`distance.sm`, `staggerDelay`) — not hardcoded 0.3s / Material ease (#2070 /
+#1368). Query failures use `ErrorState` via `error` / `onRetry`. Prefer sentence
+case — never decorative ALL-CAPS labels on chrome or table headers.
 
 **Workflow chrome (#1949):** `WorkflowViewer` empty canvases and `WorkflowHero`
 empty / not-found / loading use `EmptyState` / `ErrorState` / `LoadingState`.
