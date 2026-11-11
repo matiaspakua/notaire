@@ -1,10 +1,11 @@
 """The kit builds into a wheel that installs and runs `aisdlc install` + `doctor` offline (#2256).
 
-`python -m build` needs network for its isolated environment, so the wheel is built with
-`pip wheel --no-deps --no-build-isolation` and the sdist with setuptools directly.
+`python -m build` is not installed and needs network for its isolated environment, so the wheel is built
+with `pip wheel --no-deps --no-build-isolation` and the sdist with `setup.py sdist` (setuptools only).
 """
 from __future__ import annotations
 
+import shutil
 import subprocess
 import sys
 import tarfile
@@ -23,35 +24,49 @@ def run(*cmd: str, cwd: Path | None = None) -> subprocess.CompletedProcess:
     return subprocess.run(cmd, cwd=cwd, env=ENV, capture_output=True, text=True)
 
 
-def build_environment_problem() -> str | None:
-    probe = run(sys.executable, "-c", "import setuptools, wheel")
-    if probe.returncode != 0:
-        return "setuptools/wheel not importable (offline build needs them preinstalled)"
+def venv_problem() -> str | None:
     with tempfile.TemporaryDirectory(prefix="aisdlc-venvprobe-") as tmp:
         venv = run(sys.executable, "-m", "venv", str(Path(tmp) / "v"))
-        if venv.returncode != 0:
-            return f"venv unavailable: {venv.stderr.strip()[:120]}"
-    return None
+    return None if venv.returncode == 0 else f"venv unavailable: {venv.stderr.strip()[:120]}"
+
+
+def build_wheel(python: str, source: Path, out: Path) -> subprocess.CompletedProcess:
+    return run(python, "-m", "pip", "wheel", "--no-deps", "--no-build-isolation", "-w", str(out), str(source))
+
+
+def builder(work: Path, source: Path, out: Path) -> str:
+    """The interpreter that builds the wheel: this one when its setuptools works, else a venv with a fresh one.
+
+    The distro setuptools of some hosts cannot build on a newer Python (`install_layout`); a venv
+    with pip-installed setuptools does. No network and no working setuptools means skip, not pass."""
+    if build_wheel(sys.executable, source, out).returncode == 0:
+        return sys.executable
+    venv = work / "build-venv"
+    run(sys.executable, "-m", "venv", str(venv))
+    python = str(venv / "bin" / "python")
+    fetched = run(python, "-m", "pip", "install", "-q", "setuptools", "wheel")
+    if fetched.returncode != 0:
+        raise unittest.SkipTest(f"no usable setuptools offline: {fetched.stderr.strip()[-120:]}")
+    built = build_wheel(python, source, out)
+    assert built.returncode == 0, output(built)
+    return python
 
 
 class PackagingTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        problem = build_environment_problem()
+        problem = venv_problem()
         if problem:
             raise unittest.SkipTest(problem)
         cls.work = Path(tempfile.mkdtemp(prefix="aisdlc-pkg-"))
-        cls.addClassCleanup(lambda: __import__("shutil").rmtree(cls.work, ignore_errors=True))
+        cls.addClassCleanup(shutil.rmtree, cls.work, ignore_errors=True)
         source = cls.work / "src"
-        run("cp", "-r", str(KIT), str(source))
-        for junk in ("build", "dist", "aisdlc.egg-info", ".venv-telemetry"):
-            run("rm", "-rf", str(source / junk))
+        shutil.copytree(KIT, source, ignore=shutil.ignore_patterns(
+            "build", "dist", "*.egg-info", ".venv-telemetry", "__pycache__"))
         cls.wheel_dir = cls.work / "wheels"
-        built = run(sys.executable, "-m", "pip", "wheel", "--no-deps", "--no-build-isolation",
-                    "--no-index", "-w", str(cls.wheel_dir), str(source))
-        assert built.returncode == 0, output(built)
+        python = builder(cls.work, source, cls.wheel_dir)
         cls.wheel = next(cls.wheel_dir.glob("*.whl"))
-        sdist = run(sys.executable, "setup.py", "-q", "sdist", "-d", str(cls.work / "sdist"), cwd=source)
+        sdist = run(python, "setup.py", "-q", "sdist", "-d", str(cls.work / "sdist"), cwd=source)
         assert sdist.returncode == 0, output(sdist)
         cls.sdist = next((cls.work / "sdist").glob("*.tar.gz"))
         cls.venv = cls.work / "venv"
@@ -71,7 +86,7 @@ class PackagingTest(unittest.TestCase):
 
     def test_install_from_the_wheel_then_doctor_passes(self):
         repo = Path(tempfile.mkdtemp(prefix="aisdlc-adopter-"))
-        self.addCleanup(__import__("shutil").rmtree, repo, ignore_errors=True)
+        self.addCleanup(shutil.rmtree, repo, ignore_errors=True)
         git(repo, "init", "-q", "-b", "main")
         installed = run(self.aisdlc, "--root", str(repo), "install", "--path", "tools/ai-sdlc", "--name", "shop")
         self.assertEqual(0, installed.returncode, output(installed))

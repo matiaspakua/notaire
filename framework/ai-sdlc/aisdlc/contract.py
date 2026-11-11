@@ -10,7 +10,9 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-KIT_ROOT = Path(__file__).resolve().parents[1]
+from aisdlc.kitroot import kit_root
+
+KIT_ROOT = kit_root()
 CONTRACT_REL = "openapi/factory-control.openapi.yaml"
 ACCEPT_DIR_REL = "openapi/accepted-breaking-changes.d"
 REQUIRED_PATHS = (

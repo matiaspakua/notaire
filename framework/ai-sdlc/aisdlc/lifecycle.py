@@ -13,11 +13,12 @@ import tomllib
 from pathlib import Path
 
 from aisdlc import __version__, adopt
+from aisdlc.kitroot import PACKAGE, WHEEL_DATA, kit_root
 
-KIT_ROOT = Path(__file__).resolve().parents[1]
+KIT_ROOT = kit_root()
 DEFAULT_PATH = "tools/ai-sdlc"
 MANIFEST_REL = ".aisdlc/kit-install.toml"
-SKIP_DIR_NAMES = {".git", ".venv-telemetry", "__pycache__", ".pytest_cache", "node_modules"}
+SKIP_DIR_NAMES = {".git", ".venv-telemetry", "__pycache__", ".pytest_cache", "node_modules", "_kit"}
 
 # Built without a contiguous adopter marker string (independence scan).
 _FORBIDDEN_ROOTS = ("frontend", "backend" + "-api")
@@ -103,10 +104,17 @@ def _copy_kit(source: Path, dest: Path) -> None:
     if dest.exists():
         shutil.rmtree(dest)
     dest.mkdir(parents=True, exist_ok=True)
+    _copy_tree(source, dest)
+    if source == WHEEL_DATA:
+        _copy_tree(PACKAGE, dest / "aisdlc")
+
+
+def _copy_tree(source: Path, dest: Path) -> None:
+    dest.mkdir(parents=True, exist_ok=True)
     for path in sorted(source.rglob("*")):
-        if any(part in SKIP_DIR_NAMES for part in path.parts):
-            continue
         rel = path.relative_to(source)
+        if any(part in SKIP_DIR_NAMES for part in rel.parts):
+            continue
         target = dest / rel
         if path.is_dir():
             target.mkdir(parents=True, exist_ok=True)

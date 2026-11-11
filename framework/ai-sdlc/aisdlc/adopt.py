@@ -7,9 +7,10 @@ import shutil
 from pathlib import Path
 
 from aisdlc.context import Context
+from aisdlc.kitroot import kit_root
 from aisdlc.profile import STAGES
 
-TEMPLATES = Path(__file__).resolve().parents[1] / "templates" / "project"
+TEMPLATES = kit_root() / "templates" / "project"
 SHELL_WORDS = {"cd", "test", "[", "exit", "echo", "true", "false", "export", "set", "if", "for", "!", "env"}
 INTERPRETERS = {"bash", "sh", "zsh", "python", "python3", "node", "ruby", "pwsh"}
 
