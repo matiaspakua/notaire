@@ -22,6 +22,7 @@ from aisdlc import (
     grants,
     harness,
     improve,
+    intake,
     isolator,
     lifecycle,
     metrics,
@@ -153,6 +154,12 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("scope", help="changed paths stay inside the change record's write set")
     p.add_argument("--base")
     p.add_argument("--strict", action="store_true", help="fail when no change record declares a write set")
+    p = sub.add_parser("intake", help="lint an issue's text before an agent starts (#2257)")
+    intake_sub = p.add_subparsers(dest="action", required=True)
+    p = intake_sub.add_parser("check", help="sections, checkbox, placeholders, links and labels of one issue")
+    p.add_argument("issue")
+    p.add_argument("--file", help="issue JSON (title, body, labels) instead of the [tracker] fetch command")
+    p.add_argument("--json", action="store_true")
     p = sub.add_parser(
         "grant",
         help="Grant profile data + write-set/expire policy (axiom 5; never Isolator OS alone) (#2192/#2194/#2198)",
@@ -524,6 +531,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "protected": lambda: diffchecks.protected(ctx, args.base),
         "size": lambda: diffchecks.size(ctx, args.base, args.limit),
         "scope": lambda: diffchecks.scope(ctx, args.base, args.strict),
+        "intake": lambda: intake.check(ctx, args.issue, args.file, args.json),
         "committer": lambda: committer.check(ctx, args.base, args.json),
         "grant": lambda: _grant(ctx, args),
         "isolator": lambda: _isolator(ctx, args),
