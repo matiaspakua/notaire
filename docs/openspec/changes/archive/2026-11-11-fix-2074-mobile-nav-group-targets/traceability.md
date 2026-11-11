@@ -19,8 +19,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/archive/2026-11-11-fix-2074-mobile-nav-group-targets/` | archived |
 | Branch | `fix/2074_mobile-nav-group-targets` | created |
 | Tasks | `tasks.md` | groups 1–8 complete |
-| Commits | `9eebe359` (Gate 1) · `0559b829` (fix) · archive tip | recorded |
-| Pull Request | pending | pending |
+| Commits | `9eebe359` · `0559b829` · `53c85ba4` | recorded |
+| Pull Request | #2227 | open |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |
@@ -47,7 +47,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | archived change; `validate-sdlc-plan.sh` |
 | 2 | Failing tests written, test cases designed | yes | `foreman-ops-asli-65/tdd-red.txt` |
-| 3 | Suite green, coverage held, docs updated | pending | preflight --full |
+| 3 | Suite green, coverage held, docs updated | yes | `preflight.sh --full` PASSED (41) |
 | 4 | CI green, review approved, no conflicts | pending | pending |
 | 5 | Deployed, smoke test passed, Issue closed | pending | pending |
 
