@@ -19,8 +19,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/feat-2239-factory-entity-governance/` | Gate 1 artifacts present |
 | Branch | `feat/2239_factory-phase-a-domain` | created |
 | Tasks | `tasks.md` | pending |
-| Commits | pending | pending |
-| Pull Request | pending | pending |
+| Commits | db0f4584, 530b7471, c849dd1e | recorded |
+| Pull Request | #2244 | open |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |
@@ -55,9 +55,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | pending | validate-sdlc-plan |
-| 2 | Failing tests written, test cases designed | pending | pending |
-| 3 | Suite green, coverage held, docs updated | pending | pending |
+| 1 | Issue + Specification + Acceptance Criteria | yes | validate-sdlc-plan |
+| 2 | Failing tests written, test cases designed | yes | test_entity_versioning / test_workflow_governance |
+| 3 | Suite green, coverage held, docs updated | yes | verify.sh + preflight --full |
 | 4 | CI green, review approved, no conflicts | pending | pending |
 | 5 | Deployed, smoke test passed, Issue closed | pending | pending |
 
