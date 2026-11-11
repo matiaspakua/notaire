@@ -76,3 +76,22 @@ describe("DataTable default empty message (#1354)", () => {
     expect(screen.getByText("No data")).toBeDefined();
   });
 });
+
+describe("DataTable empty next action (#2071)", () => {
+  it("forwards description and action to EmptyState", () => {
+    render(
+      <DataTable
+        data={[]}
+        columns={columns}
+        keyExtractor={(r) => r.id}
+        emptyMessage="No people registered"
+        emptyDescription="Create the first person to start."
+        emptyAction={<button type="button">New person</button>}
+      />,
+    );
+    const empty = screen.getByTestId("empty-state");
+    expect(empty).toHaveTextContent("No people registered");
+    expect(empty).toHaveTextContent("Create the first person to start.");
+    expect(screen.getByRole("button", { name: "New person" })).toBeInTheDocument();
+  });
+});

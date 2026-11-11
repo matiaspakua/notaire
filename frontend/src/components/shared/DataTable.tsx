@@ -39,6 +39,10 @@ interface DataTableProps<T> {
   columns: Column<T>[];
   isLoading?: boolean;
   emptyMessage?: string;
+  /** Short invitation under the empty title (#2071). */
+  emptyDescription?: string;
+  /** One next-step control for empty lists (#2071); reuse an existing create action. */
+  emptyAction?: React.ReactNode;
   keyExtractor: (row: T) => string | number;
   /** A newer page is loading while the previous rows stay visible (#1340). */
   isFetching?: boolean;
@@ -54,6 +58,8 @@ export function DataTable<T>({
   columns,
   isLoading,
   emptyMessage,
+  emptyDescription,
+  emptyAction,
   keyExtractor,
   isFetching,
   pagination,
@@ -75,6 +81,8 @@ export function DataTable<T>({
         columns={columns}
         isLoading={isLoading}
         emptyMessage={emptyMessage}
+        emptyDescription={emptyDescription}
+        emptyAction={emptyAction}
         keyExtractor={keyExtractor}
       />
     );
@@ -108,7 +116,11 @@ export function DataTable<T>({
           ) : data.length === 0 ? (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-64 p-0">
-                <TableEmpty emptyMessage={emptyMessage} />
+                <TableEmpty
+                  emptyMessage={emptyMessage}
+                  emptyDescription={emptyDescription}
+                  emptyAction={emptyAction}
+                />
               </TableCell>
             </TableRow>
           ) : (
@@ -137,17 +149,45 @@ export function DataTable<T>({
 
 const emptyIcon = <TableIcon className="h-8 w-8 opacity-40" aria-hidden />;
 
-/** Empty invitation for table and card layouts (#1942 / #1354). */
-function TableEmpty({ emptyMessage }: { emptyMessage?: string }) {
+/** Empty invitation for table and card layouts (#1942 / #1354 / #2071). */
+function TableEmpty({
+  emptyMessage,
+  emptyDescription,
+  emptyAction,
+}: {
+  emptyMessage?: string;
+  emptyDescription?: string;
+  emptyAction?: React.ReactNode;
+}) {
   if (emptyMessage) {
-    return <EmptyState title={emptyMessage} icon={emptyIcon} />;
+    return (
+      <EmptyState
+        title={emptyMessage}
+        description={emptyDescription}
+        action={emptyAction}
+        icon={emptyIcon}
+      />
+    );
   }
-  return <TableEmptyDefault />;
+  return <TableEmptyDefault emptyDescription={emptyDescription} emptyAction={emptyAction} />;
 }
 
-function TableEmptyDefault() {
+function TableEmptyDefault({
+  emptyDescription,
+  emptyAction,
+}: {
+  emptyDescription?: string;
+  emptyAction?: React.ReactNode;
+}) {
   const tc = useTranslations("common");
-  return <EmptyState title={tc("noData")} icon={emptyIcon} />;
+  return (
+    <EmptyState
+      title={tc("noData")}
+      description={emptyDescription}
+      action={emptyAction}
+      icon={emptyIcon}
+    />
+  );
 }
 
 /** Query failure for table and card layouts (#1947). */
@@ -181,9 +221,11 @@ function MobileCards<T>({
   columns,
   isLoading,
   emptyMessage,
+  emptyDescription,
+  emptyAction,
   keyExtractor,
 }: Required<Pick<DataTableProps<T>, "data" | "columns" | "keyExtractor">> &
-  Pick<DataTableProps<T>, "emptyMessage"> &
+  Pick<DataTableProps<T>, "emptyMessage" | "emptyDescription" | "emptyAction"> &
   Pick<DataTableProps<T>, "isLoading">) {
   const visible = columns.filter((c) => c.mobile !== "hidden");
   const actions = visible.filter(isActions);
@@ -210,7 +252,11 @@ function MobileCards<T>({
   if (data.length === 0) {
     return (
       <div className="rounded-2xl border border-border/40 bg-white apple-shadow">
-        <TableEmpty emptyMessage={emptyMessage} />
+        <TableEmpty
+          emptyMessage={emptyMessage}
+          emptyDescription={emptyDescription}
+          emptyAction={emptyAction}
+        />
       </div>
     );
   }

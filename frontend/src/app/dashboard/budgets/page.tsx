@@ -357,6 +357,13 @@ function BudgetsList() {
         isFetching={showPagination && isFetching}
         keyExtractor={(p) => p.idBudget!}
         emptyMessage={t("noData")}
+        emptyDescription={t("emptyDescription")}
+        emptyAction={
+          <Button onClick={openCreate} data-testid="btn-empty-new-budget">
+            <Plus className="h-4 w-4" />
+            {t("newPresupuesto")}
+          </Button>
+        }
         error={
           searchId !== null
             ? isByIdError

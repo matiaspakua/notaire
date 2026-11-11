@@ -153,6 +153,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **frontend:** people, cases, and quotes empty tables pass a description and reuse the page create action through shared `DataTable` → `EmptyState` ([#2071](https://github.com/matiaspakua/notaire/issues/2071))
 * **api:** type `BudgetTemplateController` create/update/delete returns (`Map` / `Void`); shrink loose-return baseline by three (tracking issue 577)
 * **api:** type `RoleController#createRole` / `#assignRoleToUser`; map conflict/not-found via `RoleExceptionHandler` (tracking issue 577)
 * **api:** type `WorkflowDefinitionController#delete` and `WorkflowNodeController#delete` as `Void`; map NotFound/InUse via advice (tracking issue 577)
