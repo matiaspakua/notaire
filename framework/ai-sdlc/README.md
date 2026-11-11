@@ -82,6 +82,17 @@ copy (`tools/ai-sdlc`) is a plain source layout and runs with `python3 tools/ai-
 `[project] kit_version = "MAJOR.MINOR.PATCH"` is optional. `init` and `install` write the running version;
 `aisdlc doctor` prints INFO when it differs in minor or patch, WARN when the major differs, and never fails
 the run for it. Release automation, provenance and publishing are tracked in #2256 / #2251.
+## Service layer and `KitError` (#2252)
+
+`workflows.py` and `catalogs.py` expose adapter-neutral functions: they return dicts and never print.
+A failure raises `aisdlc.errors.KitError(code, detail)` (a `ProfileError`, so existing handlers still
+catch it). The CLI formats results and maps errors to exit codes: `already_exists`/`not_found` on
+`catalog add|update` and `workflow create` exit 1, every other error exits 2. Stable `code` values
+(see `aisdlc/errors.py:CODES`): `no_catalogs`, `unknown_kind`, `invalid_id`, `not_found`,
+`already_exists`, `revision_exists`, `invalid_entry`, `unknown_transition`, `illegal_transition`,
+`invalid_governance`, `invalid_body`, `refs_unresolved`, `waive_reason_required`, `approve_failed`,
+`reason_required`, `agent_approve_forbidden`, `signature_required`, `approve_fail_closed`,
+`immutable_approved`.
 
 ## Telemetry and flags (#2125)
 
