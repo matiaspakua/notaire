@@ -193,3 +193,137 @@ describe("procedure folders", () => {
     expect(toast.success).toHaveBeenCalledWith("gestiones.carpetaEnEspera");
   });
 });
+
+describe("dialogs and fallbacks", () => {
+  it("falls back to the conflict title when the archive conflict has no reason", async () => {
+    apiPost.mockRejectedValueOnce(new ApiError(409, "/managements/1/archive", ""));
+    await renderPage();
+    fireEvent.click(screen.getByTestId("btn-archive-management-1"));
+
+    fireEvent.click(await screen.findByTestId("confirm-dialog-confirm"));
+
+    expect(await screen.findAllByText("gestiones.archiveConflictTitle")).not.toHaveLength(0);
+    expect(toast.success).not.toHaveBeenCalled();
+  });
+
+  it("shows the server's reason when archiving fails for another reason", async () => {
+    apiPost.mockRejectedValueOnce(new ApiError(422, "/managements/1/archive", '{"message":"No se puede archivar"}'));
+    await renderPage();
+    fireEvent.click(screen.getByTestId("btn-archive-management-1"));
+
+    fireEvent.click(await screen.findByTestId("confirm-dialog-confirm"));
+
+    await waitFor(() => expect(toast.error).toHaveBeenCalled());
+    expect(toast.error).not.toHaveBeenCalledWith("gestiones.errorArchive");
+  });
+
+  it("treats a missing balance like no debt", async () => {
+    outstanding = {} as { pendingBalance: number };
+    await renderPage();
+
+    fireEvent.click(screen.getByTestId("btn-archive-management-1"));
+
+    expect(await screen.findByText("gestiones.archiveConfirmDescriptionNoDebt")).toBeInTheDocument();
+  });
+
+  it("forgets a conflict when the archive dialog is dismissed", async () => {
+    apiPost.mockRejectedValueOnce(new ApiError(409, "/managements/1/archive", '{"message":"carpetas en espera"}'));
+    await renderPage();
+    fireEvent.click(screen.getByTestId("btn-archive-management-1"));
+    fireEvent.click(await screen.findByTestId("confirm-dialog-confirm"));
+    await screen.findByText("gestiones.archiveConflictTitle");
+
+    fireEvent.keyDown(screen.getByRole("alertdialog"), { key: "Escape" });
+    await waitFor(() => expect(screen.queryByTestId("confirm-dialog-confirm")).toBeNull());
+    fireEvent.click(screen.getByTestId("btn-archive-management-1"));
+
+    expect(await screen.findByText("gestiones.archiveConfirmDescriptionNoDebt")).toBeInTheDocument();
+  });
+
+  it("deletes nothing when the confirmation is dismissed", async () => {
+    await renderPage();
+    fireEvent.click(screen.getAllByRole("button", { name: "common.delete" })[0]);
+    await screen.findByTestId("confirm-dialog-confirm");
+
+    fireEvent.keyDown(screen.getByRole("alertdialog"), { key: "Escape" });
+
+    await waitFor(() => expect(screen.queryByTestId("confirm-dialog-confirm")).toBeNull());
+    expect(apiDelete).not.toHaveBeenCalled();
+  });
+
+  it("closes the history dialog with Escape", async () => {
+    await renderPage();
+    fireEvent.click(screen.getByTestId("btn-view-history-1"));
+    await screen.findAllByTestId("history-item");
+
+    fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+
+    await waitFor(() => expect(screen.queryByTestId("history-item")).toBeNull());
+  });
+
+  it("shows the empty history and keeps a note-less entry without a note line", async () => {
+    apiGet.mockImplementation((path: string) =>
+      path.endsWith("/history")
+        ? Promise.resolve([{ idHistory: 8, statusManagementName: "Iniciada", date: "2026-01-01" }])
+        : route(path),
+    );
+    await renderPage();
+
+    fireEvent.click(screen.getByTestId("btn-view-history-1"));
+
+    const [item] = await screen.findAllByTestId("history-item");
+    expect(item.querySelectorAll("div")).toHaveLength(2);
+  });
+
+  it("closes the folders dialog and forgets a pending hold", async () => {
+    await renderPage();
+    fireEvent.click(screen.getByTestId("btn-view-folders-1"));
+    fireEvent.click(await screen.findByTestId("btn-place-on-hold-9"));
+    fireEvent.change(await screen.findByTestId("input-wait-reason"), { target: { value: "motivo" } });
+
+    fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+    await waitFor(() => expect(screen.queryByTestId("input-wait-reason")).toBeNull());
+    fireEvent.click(screen.getByTestId("btn-view-folders-1"));
+    fireEvent.click(await screen.findByTestId("btn-place-on-hold-9"));
+
+    expect(await screen.findByTestId("input-wait-reason")).toHaveValue("");
+  });
+
+  it("goes back from the hold form to the folder list without sending", async () => {
+    await renderPage();
+    fireEvent.click(screen.getByTestId("btn-view-folders-1"));
+    fireEvent.click(await screen.findByTestId("btn-place-on-hold-9"));
+    await screen.findByTestId("input-wait-reason");
+
+    fireEvent.click(screen.getByRole("button", { name: "common.cancel" }));
+
+    expect(await screen.findAllByTestId("folder-item")).toHaveLength(2);
+    expect(apiPut).not.toHaveBeenCalled();
+  });
+
+  it("reports a folder that could not be put on hold with the fallback message", async () => {
+    apiPut.mockRejectedValue(new ApiError(500, "/procedure-folders/9/wait", ""));
+    await renderPage();
+    fireEvent.click(screen.getByTestId("btn-view-folders-1"));
+    fireEvent.click(await screen.findByTestId("btn-place-on-hold-9"));
+    fireEvent.change(await screen.findByTestId("input-wait-reason"), { target: { value: "falta firma" } });
+
+    fireEvent.click(screen.getByTestId("btn-confirm-wait"));
+
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith("gestiones.errorCarpetaEspera"));
+    expect(screen.getByTestId("input-wait-reason")).toBeInTheDocument();
+  });
+
+  it("numbers a folder without number as zero and shows the empty folder list", async () => {
+    apiGet.mockImplementation((path: string) =>
+      path.startsWith("/procedure-folders?")
+        ? Promise.resolve([{ idFolder: 11, status: "Activa" }])
+        : route(path),
+    );
+    await renderPage();
+
+    fireEvent.click(screen.getByTestId("btn-view-folders-1"));
+
+    expect(await screen.findByText(/gestiones\.carpetaNumero:\{"numero":0\}/)).toBeInTheDocument();
+  });
+});
