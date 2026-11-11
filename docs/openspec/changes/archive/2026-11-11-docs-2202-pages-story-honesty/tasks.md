@@ -53,7 +53,7 @@
 
 ## 8. Gate 3 — Documentación permanente
 
-- [x] 8.1 CHANGELOG.md
+- [x] 8.1 CHANGELOG left to release PR #2230, the other Unreleased writer
 - [x] 8.2 No API change
 - [x] 8.3 Unreleased section
 - [x] 8.4 Nothing for docs/000-archive
