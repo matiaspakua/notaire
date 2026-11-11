@@ -1,0 +1,4 @@
+schema: notaire-sdlc
+created: 2026-11-11
+# Slice 3 of 4 (#1640): frontend + E2E. Slice 4 (docs/rollout) continues; the last PR archives it.
+multi_pr: true
