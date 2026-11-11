@@ -19,8 +19,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/feat-2241-factory-backoffice-modules/` | drafted |
 | Branch | `feat/2241_factory-backoffice-modules` | created |
 | Tasks | `tasks.md` | 0/N complete (Gate 1 filled) |
-| Commits | <!-- SHAs, one per line --> | pending |
-| Pull Request | #<!-- number --> | pending |
+| Commits | `fd52256f` Gate 1; `073a7722` feat Phase C | recorded |
+| Pull Request | pending push | pending |
 | CI run | <!-- workflow run URL --> | pending |
 | Merge commit | <!-- SHA --> | pending |
 | Release / tag | <!-- vX.Y.Z --> | pending |
