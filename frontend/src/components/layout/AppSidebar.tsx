@@ -183,7 +183,11 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
                   aria-expanded={expanded}
                   aria-controls={listId}
                   onClick={() => toggleGroup(group.labelKey)}
-                  className="flex w-full min-h-8 items-center justify-between rounded-[8px] px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--sidebar-muted))] hover:text-[hsl(var(--sidebar-foreground))] transition-colors duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
+                  className={cn(
+                    // #2074: mobile sheet needs ≥44px touch targets; desktop stays compact.
+                    "flex w-full items-center justify-between rounded-[8px] px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--sidebar-muted))] hover:text-[hsl(var(--sidebar-foreground))] transition-colors duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
+                    idPrefix === "mobile" ? "min-h-11" : "min-h-8",
+                  )}
                 >
                   {label}
                   <ChevronDown

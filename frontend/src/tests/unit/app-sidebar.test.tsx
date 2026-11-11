@@ -89,4 +89,17 @@ describe("AppSidebar sections (#1367)", () => {
     expect(desktop().getByRole("button", { name: "navGroups.escriturasProtocolo" })).toHaveAttribute("aria-expanded", "true");
     expect(desktop().getByTestId("nav-copias")).toBeVisible();
   });
+
+  // #2074 — mobile sheet group toggles ≥44px; desktop stays compact.
+  it("uses a 44px min-height for mobile sheet group toggles and keeps desktop compact", () => {
+    const { unmount } = render(<AppSidebar />);
+    const desktopToggle = desktop().getByTestId("nav-group-clientes");
+    expect(desktopToggle.className.split(/\s+/)).toContain("min-h-8");
+    expect(desktopToggle.className.split(/\s+/)).not.toContain("min-h-11");
+    unmount();
+
+    render(<AppSidebar open onClose={() => {}} />);
+    const mobileToggle = within(screen.getByTestId("sidebar")).getByTestId("nav-group-clientes");
+    expect(mobileToggle.className.split(/\s+/)).toContain("min-h-11");
+  });
 });
