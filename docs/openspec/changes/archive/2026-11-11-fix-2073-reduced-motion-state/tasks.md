@@ -40,27 +40,27 @@
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api` — unit + integration
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
-- [ ] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
-- [ ] 6.4 `bash integration-test/scripts/test.sh` — HTTP/Bruno API suite
-- [ ] 6.5 No `@Disabled` or skipped tests without documented, approved justification
+- [x] 6.1 `mvn test -pl backend-api` — unit + integration
+- [x] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
+- [x] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
+- [x] 6.4 `bash integration-test/scripts/test.sh` — HTTP/Bruno API suite
+- [x] 6.5 No `@Disabled` or skipped tests without documented, approved justification
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 Add/update the E2E specs listed in design.md — Playwright Strategy
-- [ ] 7.2 n/a — no UI surface requiring Playwright for this CSS media-query policy (unit locks the contract)
-- [ ] 7.3 Verify the affected screens at 320px, 768px and 1024px — n/a (no layout change)
-- [ ] 7.4 If the change has no UI surface, record "n/a — no UI surface" here with the reason — CSS policy only; Vitest covers AC
+- [x] 7.1 Add/update the E2E specs listed in design.md — Playwright Strategy
+- [x] 7.2 n/a — no UI surface requiring Playwright for this CSS media-query policy (unit locks the contract)
+- [x] 7.3 Verify the affected screens at 320px, 768px and 1024px — n/a (no layout change)
+- [x] 7.4 If the change has no UI surface, record "n/a — no UI surface" here with the reason — CSS policy only; Vitest covers AC
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
-- [ ] 8.2 Update OpenAPI/Swagger annotations if endpoints changed, and verify in Swagger UI
-- [ ] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
-- [ ] 8.4 Archive superseded documents into `docs/000-archive/`
-- [ ] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
-- [ ] 8.6 `bash workspace/sdlc/preflight.sh --full` — mirrors every CI gate
+- [x] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
+- [x] 8.2 Update OpenAPI/Swagger annotations if endpoints changed, and verify in Swagger UI
+- [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
+- [x] 8.4 Archive superseded documents into `docs/000-archive/`
+- [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
+- [x] 8.6 `bash workspace/sdlc/preflight.sh --full` — mirrors every CI gate
 
 ## 9. Commits atómicos
 
