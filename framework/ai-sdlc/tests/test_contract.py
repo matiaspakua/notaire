@@ -43,6 +43,22 @@ class FactoryContractTest(unittest.TestCase):
         self.assertTrue(path.is_dir())
         self.assertTrue((path / "README.md").is_file())
 
+    def test_phase_a_entity_and_workflow_schemas_present(self):
+        """#2239: OpenAPI must describe FactoryEntity / EntityVersion / Workflow."""
+        text = self.contract.load_contract_text(KIT)
+        for marker in (
+            "FactoryEntity",
+            "EntityVersion",
+            "Workflow",
+            "WorkflowGovernanceState",
+            "workflows",
+            "providers",
+            "integrations",
+            "rules",
+            "/factory/workflows",
+        ):
+            self.assertIn(marker, text)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -38,7 +38,9 @@ class CatalogCrudTest(unittest.TestCase):
             "--ref", "skills/demo-skill", "--summary", "Demo skill",
         )
         self.assertEqual(0, add.returncode, output(add))
-        entry = self.repo.root / ".aisdlc" / "catalogs" / "skills" / "demo-skill.json"
+        entry = (
+            self.repo.root / ".aisdlc" / "catalogs" / "skills" / "demo-skill" / "current.json"
+        )
         self.assertTrue(entry.is_file())
         data = json.loads(entry.read_text(encoding="utf-8"))
         self.assertEqual("demo-skill", data["id"])
@@ -59,6 +61,7 @@ class CatalogCrudTest(unittest.TestCase):
         data = json.loads(entry.read_text(encoding="utf-8"))
         self.assertEqual("Updated summary", data["summary"])
         self.assertNotEqual(digest, data["digest"])
+        self.assertEqual(2, data["version"])
 
         val = self.repo.run("catalog", "validate")
         self.assertEqual(0, val.returncode, output(val))
@@ -79,7 +82,9 @@ class CatalogCrudTest(unittest.TestCase):
         # validate reads digests only — never interprets summary/command text as code
         val = self.repo.run("catalog", "validate", "--kind", "mcp")
         self.assertEqual(0, val.returncode, output(val))
-        self.assertTrue((self.repo.root / ".aisdlc" / "catalogs" / "mcp" / "hook.json").is_file())
+        self.assertTrue(
+            (self.repo.root / ".aisdlc" / "catalogs" / "mcp" / "hook" / "current.json").is_file()
+        )
 
     def test_unknown_kind_rejected(self):
         result = self.repo.run("catalog", "list", "--kind", "widgets")
