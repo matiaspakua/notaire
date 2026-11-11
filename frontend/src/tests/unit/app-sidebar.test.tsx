@@ -57,6 +57,12 @@ describe("AppSidebar sections (#1367)", () => {
     expect(PRODUCT_VERSION).toMatch(/^\d+\.\d+\.\d+$/);
   });
 
+  it("links the security page from the footer for every role (#1640)", () => {
+    admin = false;
+    render(<AppSidebar />);
+    expect(desktop().getByTestId("link-security")).toHaveAttribute("href", "/dashboard/security");
+  });
+
   it("keeps Inicio outside the sections", () => {
     render(<AppSidebar />);
     const home = desktop().getByTestId("nav-home");

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronDown, LogOut, Scale, X } from "lucide-react";
+import { ChevronDown, KeyRound, LogOut, Scale, X } from "lucide-react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
@@ -215,6 +215,15 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
           {t("productVersion")} {PRODUCT_VERSION}
         </p>
         <LanguageSwitcher />
+        <Link
+          href="/dashboard/security"
+          data-testid="link-security"
+          onClick={onClose}
+          className="flex items-center gap-3 w-full px-4 py-2.5 rounded-[12px] text-sm font-medium text-[hsl(var(--sidebar-foreground))] hover:bg-[hsl(var(--sidebar-accent))] transition-colors duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+        >
+          <KeyRound className="h-[18px] w-[18px] shrink-0" aria-hidden="true" />
+          {t("seguridad")}
+        </Link>
         <button
           data-testid="btn-logout"
           onClick={handleLogout}
