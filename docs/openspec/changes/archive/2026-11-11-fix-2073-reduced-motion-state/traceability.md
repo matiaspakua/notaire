@@ -19,8 +19,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/archive/2026-11-11-fix-2073-reduced-motion-state/` | archived |
 | Branch | `fix/2073_reduced-motion-state` | created |
 | Tasks | `tasks.md` | groups 1–8 complete |
-| Commits | `e89f9703` · `6d51d664` | recorded |
-| Pull Request | pending | pending |
+| Commits | `e89f9703` · `6d51d664` · `8818c57c` | recorded |
+| Pull Request | blocked — ambient token 403 createPullRequest; ManagePullRequest forge SoT ENOENT | pending Owner |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |
@@ -48,7 +48,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | archived change; `validate-sdlc-plan.sh` |
 | 2 | Failing tests written, test cases designed | yes | `foreman-ops-asli-66/tdd-red.txt` |
-| 3 | Suite green, coverage held, docs updated | pending | `preflight.sh --full` (re-run after archive) |
+| 3 | Suite green, coverage held, docs updated | yes | `preflight.sh --full` PASSED (41) — `foreman-ops-asli-66/preflight-full-final.txt` |
 | 4 | CI green, review approved, no conflicts | pending | pending |
 | 5 | Deployed, smoke test passed, Issue closed | pending | pending |
 
