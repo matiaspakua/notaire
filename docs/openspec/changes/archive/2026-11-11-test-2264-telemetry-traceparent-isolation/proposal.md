@@ -16,7 +16,11 @@ Cloud agent shells export `TRACEPARENT` into every process. The kit telemetry de
 
 ## What Changes
 
+- 
+- 
 - `framework/ai-sdlc/tests/test_telemetry_port.py`: clear `TRACEPARENT` and `OTEL_*` for the duration of the default-off scenario (via `unittest.mock.patch.dict`), stop copying parent `TRACE*` into the child probe, and keep asserting the kit does not inject.
+- 
+- 
 - Delta on `Observability`: require kit self-tests to isolate from parent TRACEPARENT/OTEL_*.
 
 ## Reglas de negocio
@@ -31,6 +35,8 @@ Cloud agent shells export `TRACEPARENT` into every process. The kit telemetry de
 
 ### Modified Capabilities
 
+- 
+- 
 - `Observability`: default-off TRACEPARENT proof must isolate from parent process environment variables.
 
 ## Impact Analysis
@@ -47,16 +53,33 @@ Cloud agent shells export `TRACEPARENT` into every process. The kit telemetry de
 
 ### Surface area
 
+- 
+- 
 - Entities: none
+- 
+- 
 - Endpoints: none
+- 
+- 
 - Database (Flyway `V{n}`): none
+- 
+- 
 - Configuration / `.env`: none
+- 
+- 
 - Dependencies: none
 
 ### Write set
 
+- 
+- 
 - `framework/ai-sdlc/tests/test_telemetry_port.py`
+- 
+- 
 - `docs/openspec/**`
+- 
+- 
+- `docs/300-development/303-testing/CU-API-MATRIX.csv`  # boy-scout: MfaController drift after #1640 blocks every preflight
 
 ### Architecture review
 

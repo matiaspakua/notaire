@@ -46,7 +46,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | validate-sdlc-plan.sh OK; WIP label SKIPPED 403 |
 | 2 | Failing tests written, test cases designed | yes | foreman-ops-asli-78/verify-with-traceparent-red.txt |
-| 3 | Suite green, coverage held, docs updated | pending | |
+| 3 | Suite green, coverage held, docs updated | pending | preflight re-run after archive/matrix/compose |
 | 4 | CI green, review approved, no conflicts | pending | |
 | 5 | Deployed, smoke test passed, Issue closed | pending | |
 
