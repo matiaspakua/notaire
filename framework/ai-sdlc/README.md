@@ -62,6 +62,27 @@ require_checkbox = true
 max_links = 20
 ```
 
+## Packaging and versioning (#2256)
+
+`pyproject.toml` builds the kit into a wheel and an sdist (setuptools; runtime has no dependencies;
+Python 3.11+). The version is single-sourced from `aisdlc/__version__`. The console script is `aisdlc`.
+
+```bash
+python -m pip wheel --no-deps --no-build-isolation -w dist framework/ai-sdlc   # offline; or `python -m build`
+python -m pip install dist/aisdlc-*.whl
+aisdlc --version
+aisdlc install --path tools/ai-sdlc --name your-product   # works from the installed wheel
+```
+
+The wheel contains the `aisdlc` package plus, under `aisdlc/_kit/`, `templates/`, `profiles/`, `openapi/`,
+`plugins/`, `optional/` and `bin/`. `install`, `update` and `init` read them from there; from a source
+checkout they read the sibling directories. `tests/`, `docs/` and `verify.sh` are not shipped. An installed
+copy (`tools/ai-sdlc`) is a plain source layout and runs with `python3 tools/ai-sdlc/bin/aisdlc`.
+
+`[project] kit_version = "MAJOR.MINOR.PATCH"` is optional. `init` and `install` write the running version;
+`aisdlc doctor` prints INFO when it differs in minor or patch, WARN when the major differs, and never fails
+the run for it. Release automation, provenance and publishing are tracked in #2256 / #2251.
+
 ## Telemetry and flags (#2125)
 
 `[telemetry]` defaults to off. When `enabled = true` and `exporter = "none"`, the kit binds
@@ -152,6 +173,7 @@ Exit code 2 always means usage or configuration error (no profile, invalid profi
 name = "acme"                 # required
 policy = "CONSTITUTION.md"    # the single process document
 level = 2                     # 1 guided · 2 gated · 3 fleet · 4 autonomous
+kit_version = "1.0.0"         # optional: kit release the profile was written for (doctor reports skew)
 base = "origin/main"          # default base revision
 
 [tracker]
