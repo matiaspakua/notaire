@@ -3,9 +3,12 @@ from __future__ import annotations
 
 import contextlib
 import io
+import sys
 import unittest
 
-from helpers import Repo
+from helpers import KIT, Repo
+
+sys.path.insert(0, str(KIT))
 
 PROFILE = """
 [project]
