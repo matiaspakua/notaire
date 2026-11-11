@@ -371,3 +371,132 @@ describe("client filter", () => {
     expect(apiGet).toHaveBeenCalledWith("/managements/client/31");
   });
 });
+
+describe("required fields and sparse data", () => {
+  it("needs a number, a budget, a notary, a status and a procedure type before saving", async () => {
+    await renderPage();
+    fireEvent.click(screen.getByTestId("btn-new-management"));
+    await screen.findByTestId("input-management-number");
+
+    fireEvent.click(screen.getByTestId("btn-save-management"));
+
+    expect(await screen.findAllByText("common.fieldRequired")).toHaveLength(5);
+    expect(apiPost).not.toHaveBeenCalled();
+  });
+
+  it("builds the default heading from the number when the case has none", async () => {
+    await renderPage();
+    await fillCreateForm(false);
+
+    fireEvent.click(screen.getByTestId("btn-save-management"));
+
+    await waitFor(() =>
+      expect(apiPost).toHaveBeenCalledWith(
+        "/managements/complete-case",
+        expect.objectContaining({ heading: "gestiones.defaultHeadingLabel 5100" }),
+      ),
+    );
+  });
+
+  it("shows a dash for a management without number or heading and zero procedures", async () => {
+    apiGetPage.mockResolvedValue({
+      content: [{ idManagement: 3, heading: "Hipoteca", currentStatus: "Iniciada" }, { idManagement: 4 }],
+      number: 0, size: 20, totalElements: 2, totalPages: 1,
+    });
+    render(<ManagementsPage />, { wrapper });
+
+    expect(await screen.findByText("Hipoteca")).toHaveAttribute("title", "Hipoteca");
+    expect(screen.getAllByText("—").length).toBeGreaterThanOrEqual(3);
+    expect(screen.getAllByText("0").length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("edits a management whose number is unknown and whose complete case is empty", async () => {
+    apiGetPage.mockResolvedValue({
+      content: [{ idManagement: 1, currentStatus: "Iniciada" }], number: 0, size: 20, totalElements: 1, totalPages: 1,
+    });
+    completeCase = { idManagement: 1 };
+    render(<ManagementsPage />, { wrapper });
+    fireEvent.click(await screen.findByTestId("btn-edit-management-1"));
+    await waitFor(() => expect(screen.getByTestId("btn-save-management")).toBeEnabled());
+
+    expect(screen.getByTestId("input-management-number")).toHaveValue(null);
+    expect(screen.getByTestId("select-budget-management")).toHaveTextContent("budget:none");
+    expect(screen.getByTestId("select-notary-management")).toHaveTextContent("person:none");
+    fireEvent.click(screen.getByTestId("btn-save-management"));
+
+    expect(await screen.findAllByText("common.fieldRequired")).toHaveLength(5);
+    expect(apiPut).not.toHaveBeenCalled();
+  });
+
+  it("saves an edit without property and without notes", async () => {
+    completeCase = { ...completeCase, notes: null, propertyId: null, heading: " " };
+    await renderPage();
+    fireEvent.click(screen.getByTestId("btn-edit-management-1"));
+    await waitFor(() => expect(screen.getByTestId("select-budget-management")).toHaveTextContent("budget:21"));
+
+    fireEvent.click(screen.getByTestId("btn-save-management"));
+
+    await waitFor(() =>
+      expect(apiPut).toHaveBeenCalledWith(
+        "/managements/1/complete-case",
+        expect.objectContaining({
+          heading: "gestiones.defaultHeadingLabel 5001", notes: undefined, propertyId: undefined,
+        }),
+      ),
+    );
+  });
+
+  it("reports a failed edit and keeps the form open", async () => {
+    apiPut.mockRejectedValue(new Error("boom"));
+    await renderPage();
+    fireEvent.click(screen.getByTestId("btn-edit-management-1"));
+    await waitFor(() => expect(screen.getByTestId("select-budget-management")).toHaveTextContent("budget:21"));
+
+    fireEvent.click(screen.getByTestId("btn-save-management"));
+
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith("gestiones.errorSave"));
+    expect(screen.getByTestId("btn-save-management")).toBeInTheDocument();
+  });
+});
+
+describe("load errors", () => {
+  it("shows the list load error and retries the page", async () => {
+    apiGetPage.mockRejectedValueOnce(new ApiError(500, "/managements", ""))
+      .mockResolvedValue({ content: ROWS, number: 0, size: 20, totalElements: 1, totalPages: 1 });
+    render(<ManagementsPage />, { wrapper });
+
+    expect(await screen.findByText("gestiones.loadError")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /retry|reintentar/i }));
+
+    expect(await screen.findByText("5001")).toBeInTheDocument();
+  });
+
+  it("shows the client list load error and retries that list, not the page", async () => {
+    let fail = true;
+    apiGet.mockImplementation((path: string) =>
+      path === "/managements/client/31" && fail ? Promise.reject(new ApiError(500, path, "")) : route(path),
+    );
+    await renderPage();
+    fireEvent.click(screen.getByTestId("select-filter-client-management"));
+
+    expect(await screen.findByText("gestiones.loadError")).toBeInTheDocument();
+    const pageCalls = apiGetPage.mock.calls.length;
+    fail = false;
+    fireEvent.click(screen.getByRole("button", { name: /retry|reintentar/i }));
+
+    expect(await screen.findByText("7001")).toBeInTheDocument();
+    expect(apiGetPage.mock.calls.length).toBe(pageCalls);
+  });
+
+  it("refuses a transition with the fallback message when the server gives no reason", async () => {
+    apiPost.mockRejectedValue(new ApiError(500, "/managements/1/transition", ""));
+    await renderPage();
+    fireEvent.click(screen.getByTestId("btn-change-status-1"));
+    fireEvent.click(await screen.findByTestId("select-new-status"));
+    fireEvent.click(await screen.findByRole("option", { name: "Documentación" }));
+
+    fireEvent.click(screen.getByTestId("btn-confirm-transition"));
+
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith("gestiones.errorTransition"));
+  });
+});
