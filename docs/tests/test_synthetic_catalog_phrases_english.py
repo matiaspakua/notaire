@@ -70,7 +70,9 @@ class SyntheticCatalogPhrasesEnglishTest(unittest.TestCase):
         self.assertIn("existing type with returned", documents)
         self.assertIn("vence/diasVencimiento/quienEntrega", documents)
         self.assertIn('"Escribano"', documents)
-        self.assertIn('"días"', documents)
+        # CU27-GW02 asserts FormField alert + aria-invalid (not a Spanish toast substring).
+        self.assertIn('getByRole("alert")', documents)
+        self.assertIn('aria-invalid', documents)
         self.assertIn('"creado"', documents)
         self.assertNotIn("Vence", documents)
         self.assertNotIn("Cedula", documents)
