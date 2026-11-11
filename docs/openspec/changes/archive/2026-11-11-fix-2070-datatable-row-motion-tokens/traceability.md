@@ -19,8 +19,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/fix-2070-datatable-row-motion-tokens/` | passed |
 | Branch | `fix/2070_datatable-row-motion-tokens` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | `53d83004` | pushed |
-| Pull Request | pending | pending |
+| Commits | `3e1ac9bc` | pushed |
+| Pull Request | #2235 | open |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |
