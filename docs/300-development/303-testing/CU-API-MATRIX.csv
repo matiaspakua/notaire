@@ -94,3 +94,6 @@ CU39,Document cost template (API),Administration,Essential,DocumentCostTemplate,
 CU76,Manage roles (API),Administration,Necessary,Role,CRUD,RoleController,GET,/api/v1/roles,roles/,OK,OK,Resource inventory row; Bruno folder from #953,#1064
 CU17,Identification types (API),Clients,Essential,IdentificationType,CRUD,IdentificationTypeController,GET,/api/v1/identification-types,identification-types/,OK,OK,Resource inventory row; Bruno folder from #953,#170
 CU02,Procedures (API inventory),Managements,Essential,Procedure,CRUD,ProcedureController,GET,/api/v1/procedures,procedures/,OK,OK,Resource inventory row; Bruno folder from #953,#155
+CU78,Security — MFA enrolment start,Security,Essential,MfaEnrollment,Start,MfaController,POST,/api/v1/mfa/enrollment,MISSING,OK,NO-TEST,Bruno gap #953; MFA TOTP enrolment (#1640 ADR-032),"#1640, #953"
+CU78,Security — MFA enrolment confirm,Security,Essential,MfaEnrollment,Confirm,MfaController,POST,/api/v1/mfa/enrollment/confirm,MISSING,OK,NO-TEST,Bruno gap #953; MFA TOTP enrolment (#1640 ADR-032),"#1640, #953"
+CU78,Security — MFA disable,Security,Essential,MfaEnrollment,Disable,MfaController,POST,/api/v1/mfa/disable,MISSING,OK,NO-TEST,Bruno gap #953; MFA TOTP enrolment (#1640 ADR-032),"#1640, #953"
