@@ -35,6 +35,29 @@ and locally with [`templates/integrations/pre-push`](templates/integrations/pre-
 
 
 
+## Issue intake lint (#2257)
+
+`aisdlc intake check <issue> [--json] [--file issue.json]` lints the issue an agent is about to
+work from: required sections with content (default `Use Case`, `Acceptance criteria`,
+`Out of scope`, `Test plan`, `Size`; a heading that starts with the name counts), an acceptance
+checkbox, no placeholder (`#TBD`, `TBD`, `TODO`, `XXX`), every `#N` link resolved through
+`[tracker] verify`, and a label for each configured prefix. Each check is `pass`, `fail` or
+`no-evaluable`; exit 0 all pass, 1 any fail, 3 not evaluable (no `fetch`, fetch failed, or no
+`verify` to resolve links). Skip is never pass.
+
+```toml
+[tracker]
+verify = "gh issue view {issue} --json number"
+fetch  = "gh issue view {issue} --json title,body,labels"   # one compact JSON object
+
+[intake]                      # optional; these are the defaults
+sections = ["Use Case", "Acceptance criteria", "Out of scope", "Test plan", "Size"]
+label_prefixes = ["area:", "type:"]
+placeholders = ["#TBD", "TBD", "TODO", "XXX"]
+require_checkbox = true
+max_links = 20
+```
+
 ## Telemetry and flags (#2125)
 
 `[telemetry]` defaults to off. When `enabled = true` and `exporter = "none"`, the kit binds

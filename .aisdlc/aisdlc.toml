@@ -18,6 +18,8 @@ base = "origin/main"
 [tracker]
 issue_pattern = '#(\d+)'
 verify = "gh issue view {issue} --repo matiaspakua/notaire --json number"
+# Issue text for `aisdlc intake check <n>` (#2257): one compact JSON object with title, body, labels.
+fetch = "gh issue view {issue} --repo matiaspakua/notaire --json title,body,labels"
 
 [spec]
 # Notaire uses OpenSpec (schema notaire-sdlc); the plan gate calls its validator.

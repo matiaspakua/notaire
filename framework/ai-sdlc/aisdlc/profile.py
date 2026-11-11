@@ -178,6 +178,8 @@ class Profile:
     roles: list[Role] = field(default_factory=list)
     issue_pattern: str = DEFAULT_ISSUE_PATTERN
     verify: str | None = None
+    fetch: str | None = None
+    intake: dict = field(default_factory=dict)
     spec_dir: str = ".aisdlc/changes"
     sections: tuple[str, ...] = DEFAULT_SECTIONS
     commit_pattern: str = DEFAULT_COMMIT_PATTERN
@@ -266,6 +268,8 @@ def _build(data: dict, errors: list[str]) -> Profile:
         base=project.get("base", "origin/main"),
         issue_pattern=_regex(tracker.get("issue_pattern", DEFAULT_ISSUE_PATTERN), "tracker.issue_pattern", errors),
         verify=tracker.get("verify"),
+        fetch=tracker.get("fetch"),
+        intake=_intake_table(data.get("intake", {}), errors),
         spec_dir=spec.get("dir", ".aisdlc/changes"),
         sections=tuple(spec.get("sections", DEFAULT_SECTIONS)),
         commit_pattern=_regex(commits.get("pattern", DEFAULT_COMMIT_PATTERN), "commits.pattern", errors),
@@ -459,6 +463,27 @@ def _harness_adapters(raw: list[dict], errors: list[str]) -> tuple[HarnessAdapte
             continue
         found.append(HarnessAdapter(str(adapter_id), str(runtime), text))
     return tuple(found)
+
+
+def _intake_table(table, errors: list[str]) -> dict:
+    """The [intake] keys, validated by shape; defaults live in aisdlc.intake."""
+    if not isinstance(table, dict):
+        errors.append("[intake] must be a table")
+        return {}
+    out = {}
+    for key in ("sections", "label_prefixes", "placeholders"):
+        if key in table:
+            out[key] = _string_list(table[key], f"intake.{key}", errors)
+    if "require_checkbox" in table:
+        if isinstance(table["require_checkbox"], bool):
+            out["require_checkbox"] = table["require_checkbox"]
+        else:
+            errors.append("intake.require_checkbox must be true or false")
+    if "max_links" in table:
+        value = _positive(table["max_links"], "intake.max_links", errors)
+        if value is not None:
+            out["max_links"] = value
+    return out
 
 
 def _positive(value, where: str, errors: list[str]) -> int | None:
