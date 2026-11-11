@@ -1,122 +1,71 @@
 "use client";
 import { Es } from "@/components/site/Es";
 import { T } from "@/components/site/T";
-import { useEffect, useRef } from "react";
 
 const tools = [
   {
     name: "Claude Code",
     maker: "Anthropic",
     role: "Primary AI agent — TDD, code review, E2E tests, docs, architecture decisions",
-    color: "#f97316",
-    icon: "🧠",
     badge: "Core",
-    contrib: "~80% of AI work",
   },
   {
     name: "Cursor Cloud",
     maker: "Cursor",
     role: "Autonomous cloud fleet — foreman + specialists run Issue → OpenSpec → PR → heavy-CI on remote VMs",
-    color: "#0A84FF",
-    icon: "☁️",
     badge: "Fleet",
-    contrib: "Cloud SDLC loop",
   },
   {
     name: "OpenCode",
     maker: "OpenCode",
     role: "Terminal-native AI coding agent, integrated directly into the shell workflow",
-    color: "var(--ai-cyan)",
-    icon: "⌨️",
     badge: "Shell",
-    contrib: "RTK token proxy",
   },
   {
     name: "GitHub Copilot",
     maker: "Microsoft / GitHub",
     role: "VS Code inline completions, chat, and PR summaries for rapid in-editor development",
-    color: "#6366f1",
-    icon: "✈️",
     badge: "IDE",
-    contrib: "Inline completions",
   },
   {
     name: "Gemini CLI",
     maker: "Google",
     role: "Command-line Gemini access for research, alternative perspectives, and cross-validation",
-    color: "#22c55e",
-    icon: "💎",
     badge: "Research",
-    contrib: "Cross-validation",
   },
 ];
 
 export function AITools() {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const cards = ref.current?.querySelectorAll(".tool-card");
-    if (!cards) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        cards.forEach((card, i) => {
-          setTimeout(() => {
-            (card as HTMLElement).style.transition = "opacity 0.6s, transform 0.6s cubic-bezier(0.16,1,0.3,1)";
-            (card as HTMLElement).style.opacity = "1";
-            (card as HTMLElement).style.transform = "translateY(0)";
-          }, i * 100);
-        });
-        observer.disconnect();
-      }
-    }, { threshold: 0.15 });
-
-    cards.forEach(card => {
-      (card as HTMLElement).style.opacity = "0";
-      (card as HTMLElement).style.transform = "translateY(40px)";
-    });
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <Es>
-    <section className="py-24 px-6" style={{ background: "var(--bg-mid)" }}>
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-14">
-          <p className="text-orange-700 text-sm font-mono font-bold tracking-widest mb-4 uppercase">AI Arsenal</p>
-          <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
-            <T text="The AI Tools That Built It" />
-          </h2>
-          <p className="text-neutral-600 max-w-xl mx-auto">
-            <T text="Five AI tools, one codebase. Each played a different role in accelerating from idea to production." />
-          </p>
-        </div>
-
-        <div ref={ref} className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          {tools.map((t, i) => (
-            <div key={i} className="tool-card glass rounded-2xl p-6 border group hover:scale-[1.02] transition-transform duration-300" style={{ borderColor: `${t.color}25` }}>
-              <div className="flex items-start gap-4">
-                <div className="text-4xl flex-none">{t.icon}</div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <span className="text-neutral-900 font-bold">{t.name}</span>
-                    <span className="tech-badge text-xs" style={{ background: `${t.color}15`, color: t.color, border: `1px solid ${t.color}30` }}>{t.badge}</span>
-                  </div>
-                  <div className="text-neutral-500 text-xs mb-2">{t.maker}</div>
-                  <p className="text-neutral-600 text-sm leading-relaxed">{t.role}</p>
-                  <div className="mt-3 flex items-center gap-2">
-                    <div className="h-1 rounded-full flex-1 bg-neutral-100">
-                      <div className="h-1 rounded-full transition-all duration-1000" style={{ background: t.color, width: t.contrib.startsWith("~80") ? "80%" : t.contrib.startsWith("RTK") ? "55%" : "40%" }} />
-                    </div>
-                    <span className="text-xs font-mono" style={{ color: t.color }}>{t.contrib}</span>
-                  </div>
+      <section className="bg-slate-50 px-6 py-24">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-10 max-w-2xl">
+            <h2 className="font-display text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
+              <T text="The AI Tools That Built It" />
+            </h2>
+            <p className="mt-4 text-slate-600">
+              <T text="Five AI tools, one codebase. Each played a different role in accelerating from idea to production." />
+            </p>
+          </div>
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {tools.map((tool) => (
+              <li key={tool.name} className="rounded-2xl border border-slate-200 bg-white p-6">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-semibold text-slate-900">{tool.name}</span>
+                  <span className="rounded-full border border-slate-200 px-2 py-0.5 text-xs text-slate-600">
+                    <T text={tool.badge} />
+                  </span>
                 </div>
-              </div>
-            </div>
-          ))}
+                <p className="mt-1 text-xs text-slate-500">{tool.maker}</p>
+                <p className="mt-3 text-sm leading-relaxed text-slate-700">
+                  <T text={tool.role} />
+                </p>
+              </li>
+            ))}
+          </ul>
         </div>
-      </div>
-    </section>
+      </section>
     </Es>
   );
 }

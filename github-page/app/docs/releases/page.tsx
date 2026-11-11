@@ -1,3 +1,4 @@
+import { Fill } from "@/components/site/T";
 import { loadReleaseHistory } from "@/lib/releases";
 import { pageMetadata } from "@/lib/site";
 
@@ -17,9 +18,10 @@ export default function ReleasesDocPage() {
           Release history
         </h1>
         <p className="text-neutral-600 max-w-2xl leading-relaxed">
-          One product version covers the backend, the frontend, and the Flyway schema recorded
-          with that cut. The schema number is not the semver. Delivery trains
-          ({history.train} for {history.productVersion}) are milestones, not tags.
+          <Fill
+            text="One product version covers the backend, the frontend, and the Flyway schema recorded with that cut. The schema number is not the semver. Delivery trains ({train} for {version}) are milestones, not tags."
+            values={{ train: history.train, version: history.productVersion }}
+          />
         </p>
       </header>
 

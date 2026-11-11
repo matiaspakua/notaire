@@ -113,7 +113,7 @@ pair("commits", "commits");
 pair("Three Generations", "Tres generaciones");
 pair("The same business domain, reimagined through each era of software engineering.", "El mismo dominio de negocio, rehecho en cada época de la ingeniería de software.");
 pair("Built with Artificial Intelligence", "Construido con inteligencia artificial");
-pair("In 2026, Claude AI became the primary co-developer, then Cursor Cloud agents closed the loop on remote VMs—OpenSpec specs, TDD, documentation, Bruno, Playwright, and heavy-CI merges.", "En 2026, Claude pasó a ser el coautor principal. Después, los agentes de Cursor Cloud cerraron el ciclo en máquinas remotas: specs OpenSpec, TDD, documentación, Bruno, Playwright y merges con CI pesado.");
+pair("In 2026, Claude AI became the primary co-developer, then Cursor Cloud agents closed the loop on remote VMs: OpenSpec, TDD, documentation, Bruno, Playwright, and preflight.sh --full before a merge.", "En 2026, Claude pasó a ser el coautor principal. Después, los agentes de Cursor Cloud cerraron el ciclo en máquinas remotas: OpenSpec, TDD, documentación, Bruno, Playwright y preflight.sh --full antes de un merge.");
 pair("The AI Tools That Built It", "Las herramientas de IA que lo construyeron");
 pair("Five AI tools, one codebase. Each played a different role in accelerating from idea to production.", "Cinco herramientas de IA, un solo código. Cada una aceleró una parte distinta del camino a producción.");
 pair("Modern Layered Platform", "Plataforma moderna por capas");
