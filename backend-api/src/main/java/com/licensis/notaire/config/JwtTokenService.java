@@ -12,11 +12,13 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
 public class JwtTokenService {
 
+    private static final String SCOPE_CLAIM = "scope";
     private static final int MIN_SECRET_LENGTH = 32;
     private static final String INSECURE_DEFAULT_SECRET = "notaire-default-secret-key-change-in-production-!!";
 
@@ -56,6 +58,31 @@ public class JwtTokenService {
                 .compact();
     }
 
+    /** Short-lived token for one narrow purpose (MFA challenge or enrolment); never accepted as a session. */
+    public String generateScopedToken(String username, String scope, long ttlMs) {
+        return Jwts.builder()
+                .id(UUID.randomUUID().toString())
+                .subject(username)
+                .claim(SCOPE_CLAIM, scope)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + ttlMs))
+                .signWith(signingKey())
+                .compact();
+    }
+
+    public Optional<String> scopedSubject(String token, String scope) {
+        if (token == null || token.isBlank()) {
+            return Optional.empty();
+        }
+        try {
+            Claims c = claims(token);
+            boolean matches = scope.equals(c.get(SCOPE_CLAIM, String.class)) && c.getExpiration().after(new Date());
+            return matches ? Optional.ofNullable(c.getSubject()) : Optional.empty();
+        } catch (JwtException | IllegalArgumentException e) {
+            return Optional.empty();
+        }
+    }
+
     public String extractUsername(String token) {
         return claims(token).getSubject();
     }
@@ -75,7 +102,7 @@ public class JwtTokenService {
         }
         try {
             Claims c = claims(token);
-            return c.getExpiration().after(new Date());
+            return c.get(SCOPE_CLAIM) == null && c.getExpiration().after(new Date());
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }

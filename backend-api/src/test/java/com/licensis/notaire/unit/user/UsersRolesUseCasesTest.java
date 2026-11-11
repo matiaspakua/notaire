@@ -108,6 +108,11 @@ class UsersRolesUseCasesTest {
         }
 
         @Override
+        public Optional<User> findByName(String name) {
+            return Optional.empty();
+        }
+
+        @Override
         public Optional<User> findFirstByPersonId(int personId) {
             return Optional.empty();
         }

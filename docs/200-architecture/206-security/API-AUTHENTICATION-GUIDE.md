@@ -75,7 +75,7 @@ anyone with repo read access forge valid tokens for any user). Set
 | `JwtAuthenticationFilter` | `config/` | Extract Bearer **or** auth cookie, skip revoked tokens, set `SecurityContext` |
 | `TokenRevocationService` | `config/` | Revoke the presented token on logout; answer whether a token was revoked (`revoked_tokens`) |
 | `AuthCookieService` | `config/` | Build/clear HttpOnly session cookie (`COOKIE_SECURE`) |
-| `SecurityAndCorsConfig` | `config/` | Security filter chain — API chain registers the JWT filter; login/logout permitAll |
+| `SecurityAndCorsConfig` | `config/` | Security filter chain — API chain registers the JWT filter; login, login/mfa and logout permitAll |
 
 ### Client-side session propagation
 
@@ -119,6 +119,37 @@ boolean valid = jwtTokenService.isValid(token);
   "token": "eyJhbGciOiJIUzI1NiJ9..."
 }
 ```
+
+### Second factor (TOTP, ADR-032, #1640)
+
+`notaire.mfa.policy` (`NOTAIRE_MFA_POLICY`) is `OFF`, `OPTIONAL` (default) or `ENFORCE`. `ENFORCE` also needs
+`NOTAIRE_MFA_ENCRYPTION_KEY` (startup fails without it) and applies to the roles in `notaire.mfa.required-roles`
+(default `ADMIN,NOTARY`). `OFF` is the break-glass switch if locked out.
+
+After a valid password, `POST /api/v1/users/login` returns one of three bodies:
+
+| Case | Body | Session cookie / `token` |
+|------|------|--------------------------|
+| No second factor needed | the success body above | yes |
+| Confirmed enrolment (any role, policy not `OFF`) | `{"valid":false,"mfaRequired":true,"mfaEnrollmentRequired":false,"mfaToken":"..."}` | no |
+| `ENFORCE`, ADMIN/NOTARY without enrolment | `{"valid":false,"mfaRequired":false,"mfaEnrollmentRequired":true,"mfaToken":"..."}` | no |
+
+`valid` stays `false` so clients that predate MFA read it as a failed login. `mfaToken` is a 5-minute scoped JWT
+(`notaire.mfa.challenge-ttl-ms`); it is never accepted as a session.
+
+```text
+mfaRequired:            POST /api/v1/users/login/mfa {"mfaToken","code"|"recoveryCode"} -> success body (session)
+mfaEnrollmentRequired:  POST /api/v1/mfa/enrollment          (Bearer mfaToken) -> {"secret","otpauthUri"}
+                        POST /api/v1/mfa/enrollment/confirm  (Bearer mfaToken) {"code"} -> {"recoveryCodes":[10]}
+                        then log in again (password, then code)
+signed in:              POST /api/v1/mfa/disable {"code"|"recoveryCode"} -> 204   (also enrolment begin/confirm)
+```
+
+The enrolment token authenticates only `/api/v1/mfa/enrollment/**`. Responses carrying the secret or recovery
+codes are `Cache-Control: no-store`; store the codes, they are shown once. A wrong code at `login/mfa`,
+`enrollment/confirm` or `disable` returns `valid:false` / `400` and counts toward the same lockout as a wrong
+password (429 once locked); the password step does not reset that counter, only a completed login does. Logs and
+metrics (`login{status="mfa_failed"}`) never contain code values.
 
 ## Role-Based Access Control (RBAC)
 

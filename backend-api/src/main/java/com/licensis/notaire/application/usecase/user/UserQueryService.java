@@ -34,4 +34,9 @@ public class UserQueryService implements QueryUsersUseCase {
     public Optional<User> findByPersonId(int personId) {
         return catalog.findFirstByPersonId(personId);
     }
+
+    @Override
+    public Optional<User> findByName(String name) {
+        return catalog.findByName(name);
+    }
 }

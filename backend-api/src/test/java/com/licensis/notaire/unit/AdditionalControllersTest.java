@@ -268,7 +268,8 @@ class AdditionalControllersTest {
                             new com.licensis.notaire.security.LoginAttemptService(
                                     5, 900000, new com.licensis.notaire.security.InMemoryLoginAttemptStore()),
                             authCookies,
-                            mock(com.licensis.notaire.config.TokenRevocationService.class)))
+                            mock(com.licensis.notaire.config.TokenRevocationService.class),
+                            org.mockito.Mockito.mock(com.licensis.notaire.adapter.in.web.user.LoginMfaGate.class)))
                     .setControllerAdvice(
                             new com.licensis.notaire.adapter.in.web.user.UserLoginExceptionHandler(),
                             new com.licensis.notaire.config.GlobalExceptionHandler())

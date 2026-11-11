@@ -91,7 +91,8 @@ class UserControllerHashTest {
                 metricsUtil,
                 new LoginAttemptService(5, 900000, new InMemoryLoginAttemptStore()),
                 authCookieService,
-                tokenRevocationService);
+                tokenRevocationService,
+                org.mockito.Mockito.mock(com.licensis.notaire.adapter.in.web.user.LoginMfaGate.class));
         mockMvc = standaloneSetup(controller)
                 .setControllerAdvice(new UserLoginExceptionHandler(), new GlobalExceptionHandler())
                 .build();
@@ -130,11 +131,12 @@ class UserControllerHashTest {
         when(passwordEncoder.matches("secret", BCRYPT_HASH)).thenReturn(true);
         when(jwtTokenService.generateToken("juan")).thenReturn("jwt-token");
 
-        ResponseEntity<UserController.LoginSuccessResponse> response = controller.login(
+        ResponseEntity<UserController.LoginResponse> response = controller.login(
                 new UserController.LoginRequest("juan", "secret"), new MockHttpServletResponse());
 
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().valid()).isTrue();
+        assertThat(response.getBody()).isInstanceOfSatisfying(UserController.LoginSuccessResponse.class,
+                success -> assertThat(success.valid()).isTrue());
         assertThat(catalog.saveCount()).isEqualTo(1); // only the initial seed
     }
 
@@ -187,6 +189,13 @@ class UserControllerHashTest {
         @Override
         public Optional<User> findById(int id) {
             return Optional.ofNullable(byId.get(id));
+        }
+
+        @Override
+        public Optional<User> findByName(String name) {
+            return byId.values().stream()
+                    .filter(u -> name.equals(u.name()))
+                    .findFirst();
         }
 
         @Override

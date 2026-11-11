@@ -228,6 +228,7 @@ public class SecurityAndCorsConfig {
             .authorizeHttpRequests(auth -> {
                 auth.requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll();
                 auth.requestMatchers(HttpMethod.POST, "/api/v1/users/login").permitAll();
+                auth.requestMatchers(HttpMethod.POST, "/api/v1/users/login/mfa").permitAll();
                 auth.requestMatchers(HttpMethod.POST, "/api/v1/users/logout").permitAll();
                 auth.requestMatchers(ADMIN_ONLY_PATHS).hasRole(UserAuthorityResolver.ADMIN_ROLE);
                 for (HttpMethod method : WRITE_METHODS) {
@@ -269,7 +270,8 @@ public class SecurityAndCorsConfig {
                     },
                     request -> {
                         String path = request.getRequestURI();
-                        return path.equals("/api/v1/users/login") || path.equals("/api/v1/users/logout");
+                        return path.equals("/api/v1/users/login") || path.equals("/api/v1/users/login/mfa")
+                                || path.equals("/api/v1/users/logout");
                     }
                 ))
             .addFilterAfter(new CsrfCookieFilter(), CsrfFilter.class)

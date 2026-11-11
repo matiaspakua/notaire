@@ -14,6 +14,8 @@ public interface UserCatalogPort {
 
     Optional<User> findFirstByPersonId(int personId);
 
+    Optional<User> findByName(String name);
+
     boolean existsById(int id);
 
     User save(User user);

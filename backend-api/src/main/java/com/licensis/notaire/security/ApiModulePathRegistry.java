@@ -27,7 +27,8 @@ public final class ApiModulePathRegistry {
         if (query >= 0) {
             path = path.substring(0, query);
         }
-        if ("/api/v1/users/login".equals(path) || "/api/v1/users/logout".equals(path)) {
+        if ("/api/v1/users/login".equals(path) || "/api/v1/users/login/mfa".equals(path)
+                || "/api/v1/users/logout".equals(path)) {
             return Optional.empty();
         }
         for (PrefixRule rule : RULES) {

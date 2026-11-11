@@ -6,11 +6,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.licensis.notaire.security.UserAuthorityResolver;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Authenticates API requests from either {@code Authorization: Bearer} (API
@@ -43,9 +46,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token != null && jwtTokenService.isValid(token) && !tokenRevocationService.isRevoked(token)) {
             String username = jwtTokenService.extractUsername(token);
             userAuthorityResolver.resolve(username).ifPresent(authorities ->
-                    SecurityContextHolder.getContext().setAuthentication(
-                            new UsernamePasswordAuthenticationToken(username, null, authorities)));
+                    authenticate(username, authorities));
+        } else if (token != null && MfaTokenScope.isEnrollmentPath(request.getRequestURI())) {
+            jwtTokenService.scopedSubject(token, MfaTokenScope.ENROLLMENT)
+                    .filter(username -> userAuthorityResolver.resolve(username).isPresent())
+                    .ifPresent(username -> authenticate(username,
+                            List.of(new SimpleGrantedAuthority(MfaTokenScope.ENROLLMENT_AUTHORITY))));
         }
         filterChain.doFilter(request, response);
+    }
+
+    private static void authenticate(String username, List<? extends GrantedAuthority> authorities) {
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(username, null, authorities));
     }
 }

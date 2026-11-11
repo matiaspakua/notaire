@@ -34,13 +34,36 @@ from third-party services, so the factor must work without an external provider.
    `MfaEnrollmentStorePort`, `SecretCipherPort`, `RandomBytesPort`, `ClockPort`; the adapters live in
    `adapter.out.persistence.mfa` and `adapter.out.security`.
 
+## Recorded decisions — slice 2, login policy (#1640)
+
+8. **Policy switch**: `notaire.mfa.policy` = `OFF` | `OPTIONAL` | `ENFORCE`, env `NOTAIRE_MFA_POLICY`,
+   **default `OPTIONAL`**. Rationale: no existing deployment changes behaviour on upgrade (an administrator with no
+   enrolment still gets a session), while anyone who enrols voluntarily is protected. `ENFORCE` is an operator
+   decision taken after administrators have enrolled; `OFF` is the break-glass switch. This refines decision 6:
+   "required" is realised by `ENFORCE`, not by default.
+9. **Required roles under `ENFORCE`**: `notaire.mfa.required-roles`, default `ADMIN,NOTARY` (`ROLE_NOTARY` exists
+   since #1638, so the "after SR-16" condition of decision 6 is met).
+10. **No lock-out by enforcement**: under `ENFORCE` an ADMIN/NOTARY without a confirmed enrolment gets no session but a
+    5-minute `mfa_enrollment` token that authenticates only `/api/v1/mfa/enrollment/**`; after confirming they log in
+    again with the code. `ENFORCE` without `NOTAIRE_MFA_ENCRYPTION_KEY` fails at startup, since enrolment would be
+    impossible.
+11. **Challenge**: after a valid password a user with a confirmed enrolment gets `valid:false, mfaRequired:true` and a
+    5-minute `mfa_challenge` JWT (`scope` claim). `JwtTokenService.isValid` rejects any token with a scope, so a
+    scoped token can never act as a session. `POST /api/v1/users/login/mfa` takes the token and a TOTP or recovery
+    code and only then issues the session.
+12. **Lockout**: wrong second-factor codes (login, enrolment confirm, disable) call `LoginAttemptService.onLoginFailed`
+    under the same username key; the password step does not clear the counter for challenged users, so a known
+    password cannot reset the TOTP guess budget. Failures are logged and counted without code values.
+13. **Endpoints** (`/api/v1/mfa`): `POST /enrollment`, `/enrollment/confirm`, `/disable`; the caller acts only on their
+    own account (ADR-029). Disabling is allowed; under `ENFORCE` the next login then asks for enrolment again.
+
 ## Consequences
 
 - New table `mfa_enrollments` (Flyway) and one new secret per installation.
 - Losing the key loses every enrolment; operators back it up like the JWT secret. Key rotation is out of
   scope for slice 1 and recorded as follow-up.
-- A lost device is recoverable by a recovery code or an admin reset (slice 2).
-- Login behaviour is unchanged until slice 2 wires the policy.
+- A lost device is recoverable by a recovery code; an admin reset of another user's enrolment is a follow-up.
+- Login behaviour is unchanged unless a user enrols or the operator sets `NOTAIRE_MFA_POLICY=ENFORCE`.
 
 ## Alternatives considered
 

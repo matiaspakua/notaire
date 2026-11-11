@@ -41,6 +41,11 @@ public class UserCatalogPersistenceAdapter implements UserCatalogPort {
     }
 
     @Override
+    public Optional<User> findByName(String name) {
+        return users.findByName(name).map(UserCatalogPersistenceAdapter::toDomain);
+    }
+
+    @Override
     public boolean existsById(int id) {
         return users.existsById(id);
     }

@@ -1,7 +1,8 @@
 package com.licensis.notaire.security;
 
-import java.util.Locale;
 import java.util.Set;
+
+import com.licensis.notaire.domain.user.AccountRole;
 
 /**
  * Standard role template module grants (ADR-029 / V50). Used when a user account
@@ -13,9 +14,6 @@ public final class StandardRoleModules {
     public static final String ADMINISTRATOR_ROLE_NAME = "Administrator";
 
     public static final String ROLE_MANAGEMENT_MODULE = "administracion";
-
-    private static final Set<String> ADMINISTRATOR_TYPES = Set.of("ADMIN", "ADMINISTRADOR");
-    private static final Set<String> NOTARY_TYPES = Set.of("ESCRIBANO");
 
     private static final Set<String> ADMINISTRATOR_MODULES = Set.of(
             "administracion", "usuarios", "tramites", "presupuestos", "escrituras", "personas", "auditoria",
@@ -32,13 +30,10 @@ public final class StandardRoleModules {
     }
 
     public static Set<String> fallbackForUserType(String userType) {
-        String normalized = userType == null ? "" : userType.trim().toUpperCase(Locale.ROOT);
-        if (ADMINISTRATOR_TYPES.contains(normalized)) {
-            return ADMINISTRATOR_MODULES;
-        }
-        if (NOTARY_TYPES.contains(normalized)) {
-            return NOTARY_MODULES;
-        }
-        return OFFICE_STAFF_MODULES;
+        return switch (AccountRole.ofUserType(userType)) {
+            case ADMIN -> ADMINISTRATOR_MODULES;
+            case NOTARY -> NOTARY_MODULES;
+            case USER -> OFFICE_STAFF_MODULES;
+        };
     }
 }

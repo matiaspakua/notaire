@@ -38,7 +38,8 @@ class UserControllerExceptionPropagationTest {
                     mock(MetricsUtil.class),
                     new LoginAttemptService(5, 900000, new InMemoryLoginAttemptStore()),
                     mock(AuthCookieService.class),
-                    mock(TokenRevocationService.class)))
+                    mock(TokenRevocationService.class),
+                    org.mockito.Mockito.mock(com.licensis.notaire.adapter.in.web.user.LoginMfaGate.class)))
             .setControllerAdvice(new GlobalExceptionHandler())
             .build();
 
