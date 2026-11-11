@@ -46,8 +46,12 @@ tokens in `frontend/src/theme/` outrank expression. Root `DESIGN.md` is the
 scan of those tokens for agents; this document remains the implementation
 guide and does not restate the palette. The login task sits on one white
 card (28px radius, `apple-shadow`). Its seal moves with `theme/motion.ts`
-(opacity and a 4px rise, 240ms, no rotation). `github-page/` is a separate
-Persuade surface and is not governed by this restraint.
+(opacity and a 4px rise, 240ms, no rotation). Home module grid cards keep the
+same 28px radius and type, use mist icon wells (`bg-secondary`), and do not
+scale icons on hover; San Francisco Blue on that grid is limited to at most
+one well (or the existing expirations alert stands as the accent) (#2072).
+`github-page/` is a separate Persuade surface and is not governed by this
+restraint.
 
 ---
 

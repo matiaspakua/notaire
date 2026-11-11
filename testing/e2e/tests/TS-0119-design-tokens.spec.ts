@@ -1,9 +1,9 @@
 /**
- * E2E — One design-token source (#1365, RNF-05 / RNF-09).
+ * E2E — One design-token source (#1365, RNF-05 / RNF-09; #2072 mist wells).
  *
  * The primary button, the active navigation item and the focus ring all render
- * the brand primary #0071E3 (owner decision 2026-10-09), and the dashboard
- * module tiles use one semantic tint instead of 14 raw palette gradients.
+ * the brand primary #0071E3 (owner decision 2026-10-09). Dashboard module
+ * icon wells share one mist tint (not SF Blue, not 14 palette gradients).
  */
 import { test, expect } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
@@ -39,10 +39,10 @@ test.describe("Design tokens (#1365)", () => {
     await page.screenshot({ path: `${SHOTS}/personas-desktop.png`, fullPage: false });
   });
 
-  test("dashboard module tiles use one semantic tint, not palette gradients", async ({ page }) => {
+  test("dashboard module tiles use one mist tint, not SF Blue or palette gradients", async ({ page }) => {
     await establishAdminBrowserSession(page);
     await page.goto("/dashboard");
-    const tiles = page.locator('a[href^="/dashboard/"] .rounded-2xl.w-14');
+    const tiles = page.locator('[data-testid="dashboard-modules"] a[href^="/dashboard/"] .rounded-2xl.w-14');
     await expect(tiles.first()).toBeVisible();
     const styles = await tiles.evaluateAll((els) =>
       els.map((el) => {
@@ -53,7 +53,9 @@ test.describe("Design tokens (#1365)", () => {
     expect(styles.length).toBeGreaterThanOrEqual(12);
     expect(new Set(styles).size).toBe(1);
     expect(styles[0].startsWith("none|")).toBe(true);
-    expect(styles[0].endsWith(`|${BRAND}`)).toBe(true);
+    // #2072: mist wells — icon ink is not San Francisco Blue on every card.
+    expect(styles[0].endsWith(`|${BRAND}`)).toBe(false);
+    expect(styles[0]).not.toMatch(/gradient/i);
     await page.screenshot({ path: `${SHOTS}/dashboard-desktop.png`, fullPage: true });
     await page.setViewportSize({ width: 390, height: 844 });
     await page.screenshot({ path: `${SHOTS}/dashboard-mobile.png`, fullPage: true });

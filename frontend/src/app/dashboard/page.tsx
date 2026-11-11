@@ -139,9 +139,9 @@ export default function DashboardPage() {
                   <HoverLift className="h-full">
                     <Link href={mod.href} className="group block h-full">
                       <Card className="h-full bg-white border-none apple-shadow rounded-[28px] hover:apple-shadow-lg transition-shadow duration-base ease-standard relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-1.5 h-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-base ease-standard" />
                         <CardHeader className="pb-4 p-8">
-                          <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 bg-primary/10 text-primary transition-transform duration-base ease-standard group-hover:scale-110">
+                          {/* Mist wells (#2072): expirations alert is the accent; no SF Blue scale on every card. */}
+                          <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 bg-secondary text-muted-foreground">
                             <Icon className="h-7 w-7" />
                           </div>
                           <CardTitle className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-fast">
