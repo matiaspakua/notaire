@@ -344,6 +344,11 @@ mirrors omit Unreleased when that slice owns the fence.
 3. Branch from updated `main`; TDD; validate on Notaire; open PR `Closes #…`.
 4. Update thin plan next-5 and inventory notes; do not fork a second master plan.
 5. Keep this mirror aligned when the store master plan changes (#2140).
+6. Control-surface UI, host and reuse work follows the design record
+   [#2251](https://github.com/matiaspakua/notaire/issues/2251):
+   [`FACTORY-PRODUCT-ANALYSIS.md`](FACTORY-PRODUCT-ANALYSIS.md) (gaps, reuse plan) and
+   [`FACTORY-UI-SPEC.md`](FACTORY-UI-SPEC.md) (architecture, contract, slices). Claim a slice
+   there before branching.
 
 ---
 
@@ -352,5 +357,7 @@ mirrors omit Unreleased when that slice owns the fence.
 - Kit README: [`framework/ai-sdlc/README.md`](../../../framework/ai-sdlc/README.md)
 - Cloud fleet: [`../304-ai-sdlc-cloud/`](../304-ai-sdlc-cloud/)
 - Cross-repo assessment: [`CROSS-ASSESSMENT-2026-11.md`](CROSS-ASSESSMENT-2026-11.md)
+- Factory as a product — gap analysis: [`FACTORY-PRODUCT-ANALYSIS.md`](FACTORY-PRODUCT-ANALYSIS.md)
+- Factory UI and host — architecture spec: [`FACTORY-UI-SPEC.md`](FACTORY-UI-SPEC.md)
 - Constitution P12 / gates: [`CONSTITUTION.md`](../../../CONSTITUTION.md)
 - Port AgentOps / Warp Factories: contrast only — adapt inventory→gates ideas; skip portal/hosted compute
