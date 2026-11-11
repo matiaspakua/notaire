@@ -33,6 +33,8 @@ A workflow SHALL carry governance state in
 (draft→defined), `request_validation` (defined→validated), `approve`
 (validated→approved), and documented demote/reopen pairs. Illegal transitions
 SHALL fail closed. List/show/history MUST NOT execute workflow steps.
+**Phase B:** any HTML/serve adapter SHALL expose only legal transitions for the
+current state and MUST fail closed on illegal approve attempts (same guards as CLI).
 
 #### Scenario: happy path to approved
 - **WHEN** a workflow is created and transitions define → request_validation → approve with honest approval
@@ -41,6 +43,10 @@ SHALL fail closed. List/show/history MUST NOT execute workflow steps.
 #### Scenario: illegal transition
 - **WHEN** a draft workflow attempts `approve`
 - **THEN** the command fails and state remains `draft`
+
+#### Scenario: UI respects illegal transition
+- **WHEN** backoffice attempts `approve` on a draft workflow
+- **THEN** the adapter fails and governance remains `draft`
 
 ### Requirement: Approve honesty
 The `approve` transition SHALL require ApprovalPort verify success when
