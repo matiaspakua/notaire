@@ -21,7 +21,8 @@ policy = "POLICY.md"
 dir = ".aisdlc/catalogs"
 """
 
-SECRET_SHAPED = "ghp_ABCDEFGHijklmnopqrstuvwxyz0123456789"
+# Build a secret-shaped fixture at runtime so the source tree stays clean for secret scan.
+SECRET_SHAPED = "ghp_" + ("A" * 36)
 
 
 class ServeHostTest(unittest.TestCase):
