@@ -38,6 +38,8 @@ env:
   BASE_URL: http://localhost:3000
   E2E_CLEANUP: ${{ inputs.cleanup || 'true' }}
   JWT_SECRET: ci-e2e-only-jwt-secret-do-not-use-in-prod-!!
+  # CI-only AES-256 key so TS-0046 can enrol TOTP (#1640, ADR-032); never used outside this job.
+  NOTAIRE_MFA_ENCRYPTION_KEY: SKL551DJBKmj2WK0jPg2nN0iIYo0OClkQF+yGNZYfhM=
   ACTUATOR_USER: ci-e2e-actuator-user
   ACTUATOR_PASSWORD: ci-e2e-actuator-pass
 
