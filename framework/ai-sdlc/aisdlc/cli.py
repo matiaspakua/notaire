@@ -444,6 +444,30 @@ def build_parser() -> argparse.ArgumentParser:
         help="required for request_validation in Phase A (test/dry-run waiver)",
     )
     transition.add_argument("--json", action="store_true")
+
+    p = sub.add_parser(
+        "backoffice",
+        help="Kit-neutral factory backoffice HTML/serve over Phase A ports (#2240)",
+    )
+    p.add_argument(
+        "--html",
+        type=Path,
+        help="write a static backoffice HTML snapshot (read-only forms)",
+    )
+    p.add_argument(
+        "--module",
+        choices=["workflows", "agents", "skills"],
+        default="workflows",
+        help="module page to render (default workflows)",
+    )
+    p.add_argument("--id", help="entity id for detail + version history")
+    p.add_argument(
+        "--serve",
+        action="store_true",
+        help="start a loopback HTTP adapter for create/edit/transition",
+    )
+    p.add_argument("--host", default="127.0.0.1", help="serve bind host (default 127.0.0.1)")
+    p.add_argument("--port", type=int, default=8765, help="serve bind port (default 8765)")
     return parser
 
 
@@ -527,6 +551,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "metrics": lambda: _metrics(ctx, args),
         "catalog": lambda: _catalog(ctx, args),
         "workflow": lambda: _workflow(ctx, args),
+        "backoffice": lambda: _backoffice(ctx, args),
         "improve": lambda: _improve(ctx, args),
 
         "protected": lambda: diffchecks.protected(ctx, args.base),
@@ -731,6 +756,31 @@ def _workflow(ctx: Context, args: argparse.Namespace) -> int:
     except KitError as exc:
         print(f"error: {exc}")
         return 1 if args.action == "create" and exc.code == "already_exists" else 2
+    except ProfileError as exc:
+        print(f"error: {exc}")
+        return 2
+
+
+def _backoffice(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc import backoffice
+
+    try:
+        if getattr(args, "serve", False):
+            return backoffice.serve(
+                ctx,
+                host=str(getattr(args, "host", "127.0.0.1") or "127.0.0.1"),
+                port=int(getattr(args, "port", 8765) or 8765),
+            )
+        html_path = getattr(args, "html", None)
+        if html_path is None:
+            print("error: backoffice requires --html PATH or --serve")
+            return 2
+        return backoffice.export_html(
+            ctx,
+            html_path,
+            module=str(getattr(args, "module", "workflows") or "workflows"),
+            entity_id=getattr(args, "id", None),
+        )
     except ProfileError as exc:
         print(f"error: {exc}")
         return 2
