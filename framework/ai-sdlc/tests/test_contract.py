@@ -59,6 +59,17 @@ class FactoryContractTest(unittest.TestCase):
         ):
             self.assertIn(marker, text)
 
+    def test_phase_b_backoffice_uses_same_contract_paths(self):
+        """#2240: contract notes backoffice adapts catalog/workflow paths (no second SoR)."""
+        text = self.contract.load_contract_text(KIT)
+        self.assertIn("backoffice", text.lower())
+        self.assertIn("/factory/workflows", text)
+        self.assertIn("/factory/catalogs/{kind}", text)
+        repo = Repo(self, '[project]\nname = "demo"\npolicy = "POLICY.md"\n')
+        repo.write("POLICY.md", "# P\n")
+        result = repo.run("contract", "check")
+        self.assertEqual(0, result.returncode, output(result))
+
 
 if __name__ == "__main__":
     unittest.main()
