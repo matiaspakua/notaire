@@ -23,6 +23,11 @@ CODES = {
     "signature_required": "approve needs a signature when approvals are live",
     "approve_fail_closed": "approvals are not live and no owner override was given",
     "immutable_approved": "approved workflows cannot be edited before demotion",
+    "unauthorized": "missing or invalid bearer token",
+    "forbidden": "token scope is insufficient",
+    "method_not_allowed": "HTTP method not allowed on this host",
+    "bind_refused": "non-loopback bind refused without --allow-remote and token",
+    "invalid_scope": "serve token scope is not read|write|owner",
 }
 
 

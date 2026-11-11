@@ -478,6 +478,18 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--host", default="127.0.0.1", help="serve bind host (default 127.0.0.1)")
     p.add_argument("--port", type=int, default=8765, help="serve bind port (default 8765)")
+
+    p = sub.add_parser(
+        "serve",
+        help="Read-only factory OpenAPI HTTP host (#2253); loopback + Bearer token",
+    )
+    p.add_argument("--host", default="127.0.0.1", help="bind host (default 127.0.0.1)")
+    p.add_argument("--port", type=int, default=8765, help="bind port (default 8765)")
+    p.add_argument(
+        "--allow-remote",
+        action="store_true",
+        help="allow non-loopback bind when .aisdlc/serve.token already exists",
+    )
     return parser
 
 
@@ -562,6 +574,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "catalog": lambda: _catalog(ctx, args),
         "workflow": lambda: _workflow(ctx, args),
         "backoffice": lambda: _backoffice(ctx, args),
+        "serve": lambda: _serve(ctx, args),
         "improve": lambda: _improve(ctx, args),
 
         "protected": lambda: diffchecks.protected(ctx, args.base),
@@ -769,6 +782,17 @@ def _workflow(ctx: Context, args: argparse.Namespace) -> int:
     except ProfileError as exc:
         print(f"error: {exc}")
         return 2
+
+
+def _serve(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc import serve as serve_mod
+
+    return serve_mod.serve(
+        ctx,
+        host=str(getattr(args, "host", "127.0.0.1") or "127.0.0.1"),
+        port=int(getattr(args, "port", 8765) or 8765),
+        allow_remote=bool(getattr(args, "allow_remote", False)),
+    )
 
 
 def _backoffice(ctx: Context, args: argparse.Namespace) -> int:

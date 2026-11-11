@@ -4,5 +4,6 @@ recursive-include profiles *
 recursive-include openapi *
 recursive-include plugins *
 recursive-include optional *
+recursive-include ui *
 recursive-include bin *
 global-exclude __pycache__ *.pyc
