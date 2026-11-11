@@ -1,7 +1,7 @@
 "use client";
 
 import { Table as TableIcon } from "lucide-react";
-import { motion } from "motion/react";
+import { motion as motionDom } from "motion/react";
 import { useTranslations } from "next-intl";
 import { useMediaQuery, MOBILE_QUERY } from "@/hooks/useMediaQuery";
 import {
@@ -17,9 +17,17 @@ import { EmptyState } from "@/components/shared/EmptyState";
 import { ErrorState } from "@/components/shared/ErrorState";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { staggerDelay } from "@/components/motion";
+import { motion } from "@/theme/motion";
 
-const MotionTableRow = motion.create(TableRow);
-const rowTransition = (i: number) => ({ duration: 0.3, ease: [0.4, 0, 0.2, 1] as const, delay: Math.min(i * 0.03, 0.3) });
+const MotionTableRow = motionDom.create(TableRow);
+
+/** Row/card entrance transition — shared motion tokens (#2070 / #1368). */
+export const rowTransition = (i: number) => ({
+  duration: motion.duration.base,
+  ease: motion.ease.standard,
+  delay: staggerDelay(i),
+});
 
 export interface Column<T> {
   key: string;
@@ -127,7 +135,7 @@ export function DataTable<T>({
             data.map((row, i) => (
               <MotionTableRow
                 key={keyExtractor(row)}
-                initial={{ opacity: 0, y: 6 }}
+                initial={{ opacity: 0, y: motion.distance.sm }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={rowTransition(i)}
                 className="border-b border-border/20 last:border-0 hover:bg-secondary/30 transition-colors duration-fast group"
@@ -264,10 +272,10 @@ function MobileCards<T>({
   return (
     <ul role="list" data-testid="data-table-cards" className="flex flex-col gap-3">
       {data.map((row, i) => (
-        <motion.li
+        <motionDom.li
           key={keyExtractor(row)}
           data-testid="data-table-card"
-          initial={{ opacity: 0, y: 6 }}
+          initial={{ opacity: 0, y: motion.distance.sm }}
           animate={{ opacity: 1, y: 0 }}
           transition={rowTransition(i)}
           className="rounded-2xl border border-border/40 bg-white p-4 apple-shadow"
@@ -299,7 +307,7 @@ function MobileCards<T>({
               ))}
             </div>
           )}
-        </motion.li>
+        </motionDom.li>
       ))}
     </ul>
   );
