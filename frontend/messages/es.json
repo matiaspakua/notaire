@@ -29,7 +29,8 @@
     "openMenu": "Abrir menú",
     "closeMenu": "Cerrar menú",
     "mainNav": "Navegación principal",
-    "productVersion": "Versión"
+    "productVersion": "Versión",
+    "seguridad": "Seguridad"
   },
   "navGroups": {
     "clientes": "Clientes",
@@ -53,7 +54,6 @@
     "retry": "Reintentar",
     "loadError": "No se pudo cargar la lista",
     "generating": "Generando...",
-
     "id": "ID",
     "name": "Nombre",
     "description": "Descripción",
@@ -1308,7 +1308,16 @@
     "validationRequired": "Complete usuario y contraseña",
     "welcome": "Bienvenido, {name}",
     "forgotPassword": "¿Olvidó su contraseña? Contacte al administrador.",
-    "footerSecure": "Infraestructura Segura"
+    "footerSecure": "Infraestructura Segura",
+    "mfaTitle": "Verificación en dos pasos",
+    "mfaDescription": "Ingrese el código de 6 dígitos de su aplicación de autenticación.",
+    "mfaVerify": "Verificar",
+    "mfaBack": "Volver al inicio de sesión",
+    "mfaError": "Código incorrecto. Intente nuevamente.",
+    "mfaCodeInvalid": "Ingrese el código de 6 dígitos o su código de recuperación.",
+    "mfaEnrollTitle": "Configurar la verificación en dos pasos",
+    "mfaEnrollDescription": "Su cuenta requiere un segundo factor para iniciar sesión.",
+    "mfaEnrolled": "La verificación en dos pasos está activa. Inicie sesión nuevamente."
   },
   "confirmDialog": {
     "title": "¿Confirmar eliminación?",
@@ -1515,7 +1524,8 @@
       "protocol": "Protocolo",
       "notebooks": "Cuadernos de Folios",
       "externalEntityDocuments": "Documentación de Entidades Externas",
-      "properties": "Inmuebles"
+      "properties": "Inmuebles",
+      "security": "Seguridad"
     },
     "admin": {
       "roles": "Roles y Permisos",
@@ -1580,5 +1590,40 @@
       "asignado": "Asignado a cuaderno",
       "errose": "Errose"
     }
+  },
+  "mfa": {
+    "pageTitle": "Seguridad",
+    "pageDescription": "Verificación en dos pasos con una aplicación de autenticación.",
+    "startTitle": "Configurar la verificación",
+    "startDescription": "Agregue su cuenta a una aplicación de autenticación y confirme con un código.",
+    "start": "Configurar",
+    "loading": "Preparando...",
+    "retry": "Reintentar",
+    "alreadyEnrolled": "La verificación en dos pasos ya está configurada para esta cuenta.",
+    "locked": "Cuenta bloqueada temporalmente por demasiados intentos fallidos.",
+    "beginError": "No se pudo iniciar la configuración. Intente nuevamente.",
+    "scanHint": "Abra su aplicación de autenticación y agregue la cuenta con la clave de abajo, o ábrala directamente.",
+    "secretLabel": "Clave de configuración",
+    "openInApp": "Abrir en la aplicación de autenticación",
+    "confirmLabel": "Código de la aplicación",
+    "confirmSubmit": "Confirmar",
+    "codeInvalid": "Ingrese el código de 6 dígitos de la aplicación.",
+    "confirmWrong": "Código incorrecto. Revise la aplicación e intente nuevamente.",
+    "confirmError": "No se pudo confirmar el código. Intente nuevamente.",
+    "recoveryTitle": "Códigos de recuperación",
+    "recoveryWarning": "Guarde estos códigos ahora. Cada uno sirve una sola vez si pierde su dispositivo. No se vuelven a mostrar.",
+    "saved": "Guardé mis códigos de recuperación",
+    "done": "Listo",
+    "codeLabel": "Código de autenticación",
+    "recoveryLabel": "Código de recuperación",
+    "useRecovery": "Usar un código de recuperación",
+    "useTotp": "Usar un código de autenticación",
+    "disableTitle": "Desactivar la verificación",
+    "disableDescription": "Ingrese un código vigente o un código de recuperación para desactivar la verificación en dos pasos.",
+    "disableSubmit": "Desactivar",
+    "disabledNotice": "La verificación en dos pasos está desactivada.",
+    "disableWrong": "Código incorrecto. La verificación sigue activa.",
+    "notEnrolled": "La verificación en dos pasos no está configurada.",
+    "disableError": "No se pudo desactivar la verificación. Intente nuevamente."
   }
 }

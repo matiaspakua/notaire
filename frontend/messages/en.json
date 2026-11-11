@@ -29,7 +29,8 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "mainNav": "Main navigation",
-    "productVersion": "Version"
+    "productVersion": "Version",
+    "seguridad": "Security"
   },
   "navGroups": {
     "clientes": "Clients",
@@ -53,7 +54,6 @@
     "retry": "Retry",
     "loadError": "Could not load the list",
     "generating": "Generating...",
-
     "id": "ID",
     "name": "Name",
     "description": "Description",
@@ -1308,7 +1308,16 @@
     "validationRequired": "Enter username and password",
     "welcome": "Welcome, {name}",
     "forgotPassword": "Forgot your password? Contact the administrator.",
-    "footerSecure": "Secure Infrastructure"
+    "footerSecure": "Secure Infrastructure",
+    "mfaTitle": "Two-step verification",
+    "mfaDescription": "Enter the 6-digit code from your authenticator app.",
+    "mfaVerify": "Verify",
+    "mfaBack": "Back to sign in",
+    "mfaError": "Incorrect code. Try again.",
+    "mfaCodeInvalid": "Enter the 6-digit code, or your recovery code.",
+    "mfaEnrollTitle": "Set up two-step verification",
+    "mfaEnrollDescription": "Your account requires a second factor before you can sign in.",
+    "mfaEnrolled": "Two-step verification is on. Sign in again."
   },
   "confirmDialog": {
     "title": "Confirm deletion?",
@@ -1515,7 +1524,8 @@
       "protocol": "Protocol",
       "notebooks": "Folio Notebooks",
       "externalEntityDocuments": "External Entity Documents",
-      "properties": "Properties"
+      "properties": "Properties",
+      "security": "Security"
     },
     "admin": {
       "roles": "Roles & Permissions",
@@ -1580,5 +1590,40 @@
       "asignado": "Assigned to a notebook",
       "errose": "Voided"
     }
+  },
+  "mfa": {
+    "pageTitle": "Security",
+    "pageDescription": "Two-step verification with an authenticator app.",
+    "startTitle": "Set up verification",
+    "startDescription": "Add your account to an authenticator app and confirm with a code.",
+    "start": "Set up",
+    "loading": "Preparing...",
+    "retry": "Try again",
+    "alreadyEnrolled": "Two-step verification is already set up for this account.",
+    "locked": "Account temporarily locked due to too many failed attempts.",
+    "beginError": "Could not start the setup. Try again.",
+    "scanHint": "Open your authenticator app and add the account with the key below, or open it directly.",
+    "secretLabel": "Setup key",
+    "openInApp": "Open in authenticator app",
+    "confirmLabel": "Code from the app",
+    "confirmSubmit": "Confirm",
+    "codeInvalid": "Enter the 6-digit code from the app.",
+    "confirmWrong": "Incorrect code. Check the app and try again.",
+    "confirmError": "Could not confirm the code. Try again.",
+    "recoveryTitle": "Recovery codes",
+    "recoveryWarning": "Save these codes now. Each works once if you lose your device. They are not shown again.",
+    "saved": "I have saved my recovery codes",
+    "done": "Done",
+    "codeLabel": "Authenticator code",
+    "recoveryLabel": "Recovery code",
+    "useRecovery": "Use a recovery code",
+    "useTotp": "Use an authenticator code",
+    "disableTitle": "Turn off verification",
+    "disableDescription": "Enter a current code or a recovery code to turn off two-step verification.",
+    "disableSubmit": "Turn off",
+    "disabledNotice": "Two-step verification is turned off.",
+    "disableWrong": "Incorrect code. Verification stays on.",
+    "notEnrolled": "Two-step verification is not set up.",
+    "disableError": "Could not turn off verification. Try again."
   }
 }

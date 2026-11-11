@@ -151,6 +151,17 @@ codes are `Cache-Control: no-store`; store the codes, they are shown once. A wro
 password (429 once locked); the password step does not reset that counter, only a completed login does. Logs and
 metrics (`login{status="mfa_failed"}`) never contain code values.
 
+### Web client flow (#1640, slice 3)
+
+The login page (`app/login`) renders the outcome of `resolveLoginOutcome` (`core/auth`): a session is stored only when
+`valid` is true; `mfaRequired` shows the code step (6-digit TOTP or a recovery code, `POST /users/login/mfa`);
+`mfaEnrollmentRequired` runs the enrolment panel with `mfaToken` as Bearer (`apiPost` option `bearerToken`, held in
+component state only), then returns to the password step. Signed-in users enrol and disable at
+`/dashboard/security` (sidebar footer). The UI shows the Base32 secret and the `otpauth://` URI; it renders no QR
+image. The API has no enrolment-status endpoint, so the page cannot show whether MFA is on (409 on begin means
+already enrolled). Playwright: `TS-0046-mfa-totp-enrol-login.spec.ts`, whose workflow sets a CI-only
+`NOTAIRE_MFA_ENCRYPTION_KEY`.
+
 ## Role-Based Access Control (RBAC)
 
 ### Role model

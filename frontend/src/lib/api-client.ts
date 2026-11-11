@@ -27,12 +27,16 @@ const DEFAULT_FETCH_INIT: RequestInit = {
  * storage (issue #1051). The backend audit aspect attributes the acting user from
  * the verified JWT identity, not from any client-supplied header (issue #678).
  */
-function buildHeaders(base: Record<string, string> = {}): Record<string, string> {
+function buildHeaders(
+  base: Record<string, string> = {},
+  bearerToken?: string,
+): Record<string, string> {
   const csrfToken = document.cookie
     .split("; ")
     .find((cookie) => cookie.startsWith("XSRF-TOKEN="))
     ?.split("=", 2)[1];
-  return csrfToken ? { ...base, "X-XSRF-TOKEN": decodeURIComponent(csrfToken) } : { ...base };
+  const headers = csrfToken ? { ...base, "X-XSRF-TOKEN": decodeURIComponent(csrfToken) } : { ...base };
+  return bearerToken ? { ...headers, Authorization: `Bearer ${bearerToken}` } : headers;
 }
 
 function rejectApiFailure(status: number, path: string, body: string): never {
@@ -115,14 +119,20 @@ export async function apiGetPage<T>(path: string, request: PageRequest = {}): Pr
   };
 }
 
+export interface PostOptions {
+  /** Scoped MFA token for calls made before any session exists (ADR-032 decision 10). */
+  bearerToken?: string;
+}
+
 export async function apiPost<T = void>(
   path: string,
-  body: unknown
+  body: unknown,
+  options: PostOptions = {},
 ): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
     ...DEFAULT_FETCH_INIT,
     method: "POST",
-    headers: buildHeaders({ "Content-Type": "application/json" }),
+    headers: buildHeaders({ "Content-Type": "application/json" }, options.bearerToken),
     body: JSON.stringify(body),
   });
   return handleResponse<T>(res, path, "POST");

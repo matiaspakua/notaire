@@ -12,34 +12,16 @@ import { Input } from "@/components/ui/input";
 import { FormContainer, FormField, FormActions } from "@/theme/form-patterns";
 import { useAuthStore } from "@/store/auth-store";
 import { authUseCases } from "@/composition/auth";
+import { MfaChallengeForm } from "@/components/mfa/mfa-challenge-form";
+import { MfaEnrollmentPanel } from "@/components/mfa/mfa-enrollment-panel";
+import { resolveLoginOutcome } from "@/core/auth/domain/auth";
+import { errorBody, httpStatus, lockoutMessage } from "@/lib/http-error";
 import type { DtoLoginUser } from "@/types";
 
-/** Duck-type HTTP status/body without importing api-client (ADR-030). */
-function httpStatus(err: unknown): number | undefined {
-  if (typeof err === "object" && err !== null && "status" in err) {
-    const status = (err as { status: unknown }).status;
-    return typeof status === "number" ? status : undefined;
-  }
-  return undefined;
-}
-
-function errorBody(err: unknown): string {
-  if (typeof err === "object" && err !== null && "body" in err) {
-    const body = (err as { body: unknown }).body;
-    return typeof body === "string" ? body : "";
-  }
-  return "";
-}
-
-/** Reads the backend's `message` field from a lockout response body, if present. */
-function lockoutMessage(body: string, fallback: string): string {
-  try {
-    const parsed = JSON.parse(body) as { message?: string };
-    return parsed.message?.trim() || fallback;
-  } catch {
-    return fallback;
-  }
-}
+type LoginStep =
+  | { kind: "password" }
+  | { kind: "challenge"; mfaToken: string }
+  | { kind: "enrollment"; mfaToken: string };
 
 function LoginForm() {
   const t = useTranslations("login");
@@ -50,6 +32,15 @@ function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState<LoginStep>({ kind: "password" });
+
+  function startSession(user: DtoLoginUser) {
+    // UX cookies for edge gating are set inside auth-store.login (#1052).
+    // JWT is delivered as HttpOnly Set-Cookie; ignore JSON token (#1051).
+    login(user);
+    toast.success(t("welcome", { name: user.name }));
+    router.push("/dashboard");
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -64,14 +55,14 @@ function LoginForm() {
         password: password.trim(),
       })) as DtoLoginUser;
 
-      if (result.valid) {
-        // UX cookies for edge gating are set inside auth-store.login (#1052).
-        // JWT is delivered as HttpOnly Set-Cookie; ignore JSON token (#1051).
-        login(result);
-        toast.success(t("welcome", { name: result.name }));
-        router.push("/dashboard");
-      } else {
+      const outcome = resolveLoginOutcome(result);
+      if (outcome.kind === "session") {
+        startSession(result);
+      } else if (outcome.kind === "rejected") {
         toast.error(t("error"));
+      } else {
+        setPassword("");
+        setStep({ kind: outcome.kind, mfaToken: outcome.mfaToken });
       }
     } catch (error) {
       if (httpStatus(error) === 429) {
@@ -119,6 +110,32 @@ function LoginForm() {
             delay: motionTokens.stagger.step,
           }}
         >
+          {step.kind === "challenge" && (
+            <MfaChallengeForm
+              mfaToken={step.mfaToken}
+              onBack={() => setStep({ kind: "password" })}
+              onSession={startSession}
+            />
+          )}
+
+          {step.kind === "enrollment" && (
+            <div className="space-y-4">
+              <h2 className="text-center text-lg font-semibold tracking-tight text-foreground">
+                {t("mfaEnrollTitle")}
+              </h2>
+              <p className="text-center text-sm text-muted-foreground">{t("mfaEnrollDescription")}</p>
+              <MfaEnrollmentPanel
+                bearerToken={step.mfaToken}
+                onDone={() => {
+                  toast.success(t("mfaEnrolled"));
+                  setStep({ kind: "password" });
+                }}
+              />
+            </div>
+          )}
+
+          {step.kind === "password" && (
+          <>
           <h2 className="mb-6 text-center text-lg font-semibold tracking-tight text-foreground">
             {t("title")}
           </h2>
@@ -186,6 +203,8 @@ function LoginForm() {
               </FormActions>
             </FormContainer>
           </form>
+          </>
+          )}
         </motion.div>
 
         <p className="text-center text-xs font-medium text-muted-foreground">

@@ -146,10 +146,13 @@ describe("DASHBOARD_NAV_GROUPS (#1367)", () => {
   });
 
   it("lists every top-level dashboard route exactly once", () => {
+    // Account routes reached from the sidebar footer, not the module nav (#1640).
+    const footerRoutes = ["/dashboard/security"];
     const dir = resolve(__dirname, "../../app/dashboard");
     const routes = readdirSync(dir)
       .filter((d) => statSync(resolve(dir, d)).isDirectory() && existsSync(resolve(dir, d, "page.tsx")))
       .map((d) => `/dashboard/${d}`)
+      .filter((route) => !footerRoutes.includes(route))
       .sort();
     const hrefs = DASHBOARD_NAV_GROUPS.flatMap((g) => g.items.map((i) => i.href));
     expect([...hrefs].sort()).toEqual(routes);
