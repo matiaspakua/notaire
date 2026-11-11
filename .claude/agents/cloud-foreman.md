@@ -174,10 +174,14 @@ change did not touch is an advisory, not a blocker.
 
 ## PR / merge
 
-- Branch: `<type>/<issue-number>_<description>`
+- Branch: `<type>/<issue-number>_<description>` (cloud tips may also push `cursor/<desc>`)
 - PR title: `[#n] type(scope): description`
 - Commits / PR body: Conventional Commits + **`Closes #n`** (hard rule above —
   never only `Issue: #n`)
+- Open PR: prefer `gh pr create`; on ambient GraphQL `createPullRequest` **403**,
+  open via ManagePullRequest / Cursor PR tools on the `cursor/*` tip; if that fails,
+  hand the Owner a compare-link with exact title/body —
+  `docs/300-development/304-ai-sdlc-cloud/FLEET-IDENTITY.md` (#2231). Workers never merge.
 - Merge only via PR after Gate 4 PASS **and** `bash workspace/sdlc/check-heavy-ci.sh <pr>`
   exits 0 on the **current head** (Integration + Coverage + Bruno + Playwright).
   Never merge on light-only `gh pr checks` green — `CI-MERGE-GATE.md`.

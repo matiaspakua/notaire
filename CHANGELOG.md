@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* **cloud:** Document ambient `gh` GraphQL `createPullRequest` 403 — prefer ManagePullRequest on a `cursor/*` tip, else Owner compare-link with exact title/body; steward / workflow / foreman point at `FLEET-IDENTITY.md` (Refs #2231)
 * **cloud:** Document Issue-label scopes (`issues: write` / `addLabelsToLabelable`) and honest Gate 1.6 SKIP via `add-issue-wip-label.sh` when Cursor ambient `gh` cannot label (Refs #2221)
 * **openspec:** Document Gate 1 scaffold cwd — run OpenSpec under `docs/` (or `seed-openspec-change.sh … --create`) so `notaire-sdlc` is discovered; agent workflow + openspec-propose skills point at that path; location tests lock discovery (Refs #2218)
 * **pages:** Step the factory and the quality gates as they are on main (Foreman may merge, Workers never merge, preflight is the pull-request proof, `foreman plan` only prints a route). Routing knobs exist for plan, red, pre-push and pre-pr; merge, release and signal stay unmapped. Lead time is the snapshot median and p90, not a histogram (Refs #2202)

@@ -88,6 +88,10 @@ When only people are owed (approval, merge), say so once and wait.
 If Issues/Projects write returns **403**, leave a **human paste** using the templates in
 `FLEET-LESSONS-HEX-1693.md` (Issue #… Status/labels/close); never open a probe issue to test
 permissions.
+If ambient `gh pr create` fails with GraphQL `createPullRequest` **403**, push a `cursor/*`
+tip and open via ManagePullRequest / Cursor PR tools; if that fails, hand the Owner a
+compare-link with exact title/body (`Closes #n`) —
+`docs/300-development/304-ai-sdlc-cloud/FLEET-IDENTITY.md` (#2231).
 
 ## 7. Failures that are the environment, not the PR
 
