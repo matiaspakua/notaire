@@ -313,7 +313,7 @@ function PeopleList() {
         <DialogContent className="max-w-md">
           <FormContainer>
             <FormSection dialogTitle title={isEditMode ? t("editPersona") : t("newPersona")}>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <FormField label={t("fields.nombre")} required error={fieldErrors.firstName}>
                   <Input
                     value={editing.firstName ?? ""}
@@ -331,7 +331,7 @@ function PeopleList() {
                   />
                 </FormField>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <FormField label={t("fields.tipoIdentificacion")} required error={fieldErrors.identificationTypeId}>
                   <Select
                     value={selectedTypeId != null ? String(selectedTypeId) : ""}
@@ -409,7 +409,12 @@ function PeopleList() {
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
+              <Button
+                data-testid="btn-save-person"
+                onClick={handleSave}
+                disabled={createMutation.isPending || updateMutation.isPending}
+                aria-busy={createMutation.isPending || updateMutation.isPending || undefined}
+              >
                 {isEditMode ? tc("update") : tc("create")}
               </Button>
             </FormActions>
