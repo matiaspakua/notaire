@@ -104,6 +104,18 @@ describe("apiGet()", () => {
 });
 
 describe("apiPost()", () => {
+  it("sends an Authorization Bearer header only when a bearer token is given (MFA enrolment, #1640)", async () => {
+    mockFetch.mockReturnValueOnce(makeResponse(""));
+    await apiPost("/mfa/enrollment", {}, { bearerToken: "scoped" });
+    const withToken = mockFetch.mock.calls[0][1].headers as Record<string, string>;
+    expect(withToken.Authorization).toBe("Bearer scoped");
+
+    mockFetch.mockReturnValueOnce(makeResponse(""));
+    await apiPost("/mfa/enrollment", {});
+    const without = mockFetch.mock.calls[1][1].headers as Record<string, string>;
+    expect(without.Authorization).toBeUndefined();
+  });
+
   it("forwards the browser CSRF token on an unsafe request", async () => {
     document.cookie = "XSRF-TOKEN=csrf-test-token; path=/";
     mockFetch.mockReturnValueOnce(makeResponse(""));
