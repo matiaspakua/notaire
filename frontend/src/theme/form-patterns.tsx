@@ -358,12 +358,16 @@ export function CheckboxField({
         onChange={(e) => onChange(e.target.checked)}
         disabled={disabled}
         style={{
-          width: "20px",
-          height: "20px",
+          // WCAG 2.2 AA SC 2.5.8 floor is 24 CSS px (#2087). Native checkboxes
+          // often paint a hair under the declared size; 28px keeps the measured
+          // box ≥24 after subpixel rounding in Chromium.
+          width: "28px",
+          height: "28px",
           borderRadius: theme.borderRadius.md,
           borderColor: theme.colors.neutral[400],
           accentColor: theme.colors.primary[600],
           cursor: disabled ? "not-allowed" : "pointer",
+          flexShrink: 0,
         }}
       />
       <label

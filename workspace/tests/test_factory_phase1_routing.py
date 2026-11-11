@@ -72,8 +72,10 @@ class FactoryPhase1RoutingTest(unittest.TestCase):
     def test_forms_plan_is_a_code_inventory(self):
         text = FORMS.read_text(encoding="utf-8")
         lowered = text.lower()
+        # Phase 1 inventory stays a code inspection; #2087 records the people
+        # rendered pass (desktop + 320px) without claiming other surfaces.
         self.assertIn("code inspection", lowered)
-        self.assertIn("rendered audit did not run", lowered)
+        self.assertIn("rendered the people", lowered)
         self.assertIn("form-patterns.tsx", text)
         self.assertIn("people/page.tsx", text)
         self.assertIn("pbakaus/impeccable", text)

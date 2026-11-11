@@ -1,8 +1,13 @@
-# Forms audit plan — code inspection only
+# Forms audit plan — code inspection + #2087 rendered slice
 
-Phase 1 inventory for product forms. **The rendered audit did not run.**
-No browser, no contrast measurement, no keyboard pass, no touch gesture, and
-no Impeccable health score. Keyword hits are not a pass.
+Phase 1 inventory for product forms remains a **code inspection** (source-only
+keyword hits are not a pass for other surfaces). **#2087 rendered the people
+create/edit dialog and shared FormField controls** (Playwright Chromium,
+desktop 1280 and 320px): labels, required `*` + `aria-required`, linked
+`role="alert"` errors, tab order, primary `h-11` (~44px), empty-list next
+action, and CheckboxField raised to the WCAG 2.2 AA 24px floor. Evidence:
+`docs/openspec/changes/archive/*-fix-2087-people-form-rendered-audit/` (after
+archive) and the PR for #2087. Administration catalogs remain #2088.
 
 Impeccable context was loaded for `frontend/src/theme/form-patterns.tsx`
 (Operate mode, `PRODUCT.md` / `DESIGN.md`). Provenance, from the repo and
@@ -111,7 +116,8 @@ this form pass.
 ## Next iterations
 
 1. [#2087](https://github.com/matiaspakua/notaire/issues/2087) — rendered audit
-   of the shared controls plus `people/page.tsx`. Blocked by #2086.
+   of the shared controls plus `people/page.tsx`. **Done** (Playwright Chromium
+   desktop + 320px; CheckboxField AA floor; primary `h-11` locked).
 2. [#2088](https://github.com/matiaspakua/notaire/issues/2088) — administration
    catalog pages in the table above. Blocked by #2087.
 3. Case modules (managements, deeds, budgets, payments, testimonies, protocol)
