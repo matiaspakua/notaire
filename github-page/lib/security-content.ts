@@ -40,7 +40,8 @@ export const STRIDE: { letter: string; name: string; question: string; items: St
     question: "Can someone pretend to be a staff member or an API client?",
     items: [
       { id: "SR-12", status: "Partial", summary: "The browser session is an HttpOnly cookie. API clients still receive a bearer token in the login JSON." },
-      { id: "AT-1", status: "Partial", summary: "Passwords are BCrypt and login lockout is shared in the database. There is no second factor." },
+      { id: "AT-1", status: "Partial", summary: "Passwords are BCrypt and login lockout is shared in the database. TOTP MFA ships (ADR-032); the default policy is OPTIONAL, and ENFORCE can require it for ADMIN and NOTARY." },
+      { id: "SR-17", status: "Partial", summary: "A confirmed TOTP enrolment is challenged at login. Wrong codes share the login lockout. The default policy is OPTIONAL, so MFA is not forced until an operator turns ENFORCE on." },
     ],
   },
   {
@@ -99,7 +100,7 @@ export const LINDDUN: { id: string; name: string; status: StrideItem["status"]; 
 ];
 
 export const POSTURE: { id: string; title: string; status: StrideItem["status"]; summary: string }[] = [
-  { id: "identity", title: "Identity", status: "Partial", summary: "BCrypt, shared login lockout, signed JWT, HttpOnly cookie. No second factor." },
+  { id: "identity", title: "Identity", status: "Partial", summary: "BCrypt, shared login lockout, signed JWT, HttpOnly cookie, and TOTP MFA (OPTIONAL by default; ENFORCE for ADMIN and NOTARY)." },
   { id: "grants", title: "Module grants", status: "Mitigated", summary: "After the JWT check, the API denies a path whose module the role does not hold." },
   { id: "office", title: "Inside one office", status: "Accepted", summary: "Staff in the same installation can open the office files. That is the tenancy decision, not a missing check." },
   { id: "supply", title: "Dependencies and images", status: "Partial", summary: "Trivy fails the release job. GitHub does not run that job on the pull request. The local gate does." },

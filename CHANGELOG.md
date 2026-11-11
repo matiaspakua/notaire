@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+* **pages:** Security Identity and AT-1 describe TOTP MFA as shipped (OPTIONAL by default; ENFORCE for ADMIN and NOTARY). The committed release snapshot and local `preflight` pages build refresh to the current product version (Refs #2270)
+
 ## [0.4.1](https://github.com/matiaspakua/notaire/compare/v0.4.0...v0.4.1) (2026-11-11)
 
 
