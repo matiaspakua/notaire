@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| service returns data | test_service_layer | pending |
-| failure raises a typed error | test_service_layer | pending |
-| CLI output is unchanged | test_service_layer | pending |
+| service returns data | test_service_layer | passing |
+| failure raises a typed error | test_service_layer | passing |
+| CLI output is unchanged | test_service_layer | passing |
 
 ## Permanent documentation updated
 
