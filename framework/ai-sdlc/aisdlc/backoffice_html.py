@@ -1,4 +1,4 @@
-"""Static / served HTML for the AI SDLC factory backoffice (#2240).
+"""Static / served HTML for the AI SDLC factory backoffice (#2240 / #2241).
 
 Kit-neutral brand. Right-side module nav. Never renders plaintext secrets —
 callers must pass already-redacted snapshots from ``backoffice.snapshot``.
@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from aisdlc.backoffice import BRAND, MODULES
+from aisdlc.backoffice import BRAND, MODULE_LABELS, MODULES, module_label
 
 
 def _esc(value: Any) -> str:
@@ -22,41 +22,49 @@ def render_shell(data: dict[str, Any], *, form_action: str | None = None) -> str
     brand = _esc(data.get("brand") or BRAND)
     module = data.get("module") or "workflows"
     modules = data.get("modules") or list(MODULES)
+    labels = data.get("module_labels") or dict(MODULE_LABELS)
     entries = data.get("entries") or []
     detail = data.get("detail")
     history = data.get("history") or {}
     error = data.get("error")
     action = form_action or "#"
+    title_label = _esc(labels.get(module) or module_label(str(module)))
 
     nav_items = []
     for name in modules:
         active = ' aria-current="page"' if name == module else ""
+        label = labels.get(name) or module_label(str(name))
         nav_items.append(
-            f'<li><a href="?module={_esc(name)}"{active}>{_esc(name.capitalize())}</a></li>'
+            f'<li><a href="?module={_esc(name)}"{active}>{_esc(label)}</a></li>'
         )
 
     error_block = ""
     if error:
         error_block = f'<p class="error" role="alert">error: {_esc(error)}</p>'
 
-    rows = []
-    for entry in entries:
-        eid = entry.get("id") or "—"
-        summary = entry.get("summary") or ""
-        gov = entry.get("governance")
-        version = entry.get("version")
-        gov_bit = f' · <span class="gov">{_esc(gov)}</span>' if gov else ""
-        ver_bit = f" · v{_esc(version)}" if version is not None else ""
-        rows.append(
-            "<tr>"
-            f'<td><a href="?module={_esc(module)}&amp;id={_esc(eid)}">{_esc(eid)}</a></td>'
-            f"<td>{_esc(summary)}{gov_bit}{ver_bit}</td>"
-            "</tr>"
-        )
+    if module == "runs":
+        list_section = _render_runs_monitor(data)
+        create_section = ""
+        detail_section = ""
+    else:
+        rows = []
+        for entry in entries:
+            eid = entry.get("id") or "—"
+            summary = entry.get("summary") or ""
+            gov = entry.get("governance")
+            version = entry.get("version")
+            gov_bit = f' · <span class="gov">{_esc(gov)}</span>' if gov else ""
+            ver_bit = f" · v{_esc(version)}" if version is not None else ""
+            rows.append(
+                "<tr>"
+                f'<td><a href="?module={_esc(module)}&amp;id={_esc(eid)}">{_esc(eid)}</a></td>'
+                f"<td>{_esc(summary)}{gov_bit}{ver_bit}</td>"
+                "</tr>"
+            )
 
-    list_section = f"""
+        list_section = f"""
 <section data-module="{_esc(module)}" data-view="list">
-  <h2>{_esc(str(module).capitalize())}</h2>
+  <h2>{title_label}</h2>
   <p class="meta">One job: configure this catalog kind via Phase A ports.</p>
   <table>
     <thead><tr><th>Id</th><th>Summary</th></tr></thead>
@@ -67,7 +75,7 @@ def render_shell(data: dict[str, Any], *, form_action: str | None = None) -> str
 </section>
 """
 
-    create_section = f"""
+        create_section = f"""
 <section data-module="{_esc(module)}" data-action="create">
   <h2>Create</h2>
   <form method="post" action="{_esc(action)}">
@@ -81,10 +89,9 @@ def render_shell(data: dict[str, Any], *, form_action: str | None = None) -> str
   </form>
 </section>
 """
-
-    detail_section = ""
-    if detail:
-        detail_section = _render_detail(module, detail, history, action)
+        detail_section = ""
+        if detail:
+            detail_section = _render_detail(module, detail, history, action)
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -183,8 +190,13 @@ def render_shell(data: dict[str, Any], *, form_action: str | None = None) -> str
     cursor: pointer;
     width: fit-content;
   }}
+  button:disabled, .action-disabled {{
+    opacity: 0.45;
+    cursor: not-allowed;
+  }}
   .gov {{ font-weight: 600; color: var(--accent); }}
   .transitions {{ display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }}
+  .actions {{ display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }}
   code {{ font-size: 0.88em; }}
   pre.json {{
     background: #1c1917;
@@ -211,7 +223,7 @@ def render_shell(data: dict[str, Any], *, form_action: str | None = None) -> str
   <main>
     <header>
       <h1>{brand}</h1>
-      <p class="meta">Backoffice control plane · adapters over Phase A catalogs &amp; workflows</p>
+      <p class="meta">Backoffice control plane · adapters over Phase A catalogs, workflows &amp; evidence</p>
     </header>
     {error_block}
     {list_section}
@@ -227,6 +239,81 @@ def render_shell(data: dict[str, Any], *, form_action: str | None = None) -> str
 </div>
 </body>
 </html>
+"""
+
+
+def _render_runs_monitor(data: dict[str, Any]) -> str:
+    report = data.get("runs_report") or {}
+    actions = data.get("runs_actions") or {}
+    entries = data.get("entries") or []
+    cost = report.get("cost") or {}
+    reason = actions.get("reason") or "Cancel/retry unavailable."
+    cancel_ok = bool(actions.get("cancel_supported"))
+    retry_ok = bool(actions.get("retry_supported"))
+
+    rows = []
+    for entry in entries:
+        ok = entry.get("ok")
+        status = "ok" if ok else "failed"
+        rows.append(
+            "<tr>"
+            f"<td>{_esc(entry.get('ts'))}</td>"
+            f"<td>{_esc(entry.get('stage'))}</td>"
+            f"<td>{_esc(status)}</td>"
+            f"<td>{_esc(entry.get('gates'))}</td>"
+            "</tr>"
+        )
+
+    cost_rows = []
+    for model, bucket in sorted((cost.get("by_model") or {}).items()):
+        cost_rows.append(
+            "<tr>"
+            f"<td>{_esc(model)}</td>"
+            f"<td>{_esc(bucket.get('entries'))}</td>"
+            f"<td>{_esc(bucket.get('usd'))}</td>"
+            "</tr>"
+        )
+
+    cancel_attr = "true" if cancel_ok else "false"
+    retry_attr = "true" if retry_ok else "false"
+    cancel_disabled = "" if cancel_ok else " disabled"
+    retry_disabled = "" if retry_ok else " disabled"
+
+    live = (
+        f'{_esc(report.get("runs"))} stage runs · '
+        f'{_esc(report.get("failed_runs"))} failed · '
+        f'cost ${_esc(cost.get("total_usd"))} '
+        f'(source: {_esc(report.get("source") or "evidence")})'
+    )
+
+    return f"""
+<section data-module="runs" data-view="runs-monitor">
+  <h2>Runs</h2>
+  <p class="meta">Read/monitor from evidence ledger + <code>aisdlc report</code> / cost. No parallel metrics store.</p>
+  <p class="meta" aria-live="polite" data-runs-live="1">{live}</p>
+  <h3>Recent stage runs</h3>
+  <table>
+    <thead><tr><th>When</th><th>Stage</th><th>Status</th><th>Gates</th></tr></thead>
+    <tbody>
+      {''.join(rows) or '<tr><td colspan="4">No evidence yet — no harness adapter has reported.</td></tr>'}
+    </tbody>
+  </table>
+  <h3>Cost (from evidence)</h3>
+  <table>
+    <thead><tr><th>Model</th><th>Entries</th><th>USD</th></tr></thead>
+    <tbody>
+      {''.join(cost_rows) or '<tr><td colspan="3">No cost entries</td></tr>'}
+    </tbody>
+  </table>
+  <h3>Actions</h3>
+  <p class="meta">{_esc(reason)}</p>
+  <div class="actions">
+    <button type="button" data-action="cancel" data-supported="{cancel_attr}"{cancel_disabled} class="action-disabled">Cancel</button>
+    <button type="button" data-action="retry" data-supported="{retry_attr}"{retry_disabled} class="action-disabled">Retry</button>
+  </div>
+  <h3>Report summary (redacted)</h3>
+  <pre class="json">{html.escape(json.dumps(report, indent=2, sort_keys=True), quote=False)}</pre>
+</section>
 """
 
 

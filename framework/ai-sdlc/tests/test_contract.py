@@ -60,11 +60,13 @@ class FactoryContractTest(unittest.TestCase):
             self.assertIn(marker, text)
 
     def test_phase_b_backoffice_uses_same_contract_paths(self):
-        """#2240: contract notes backoffice adapts catalog/workflow paths (no second SoR)."""
+        """#2240/#2241: contract notes backoffice adapts catalog/workflow/evidence paths (no second SoR)."""
         text = self.contract.load_contract_text(KIT)
         self.assertIn("backoffice", text.lower())
+        self.assertIn("Phase C", text)
         self.assertIn("/factory/workflows", text)
         self.assertIn("/factory/catalogs/{kind}", text)
+        self.assertNotIn("/factory/runs/{id}/cancel", text)  # cancel stays out until ports honest
         repo = Repo(self, '[project]\nname = "demo"\npolicy = "POLICY.md"\n')
         repo.write("POLICY.md", "# P\n")
         result = repo.run("contract", "check")

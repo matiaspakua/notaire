@@ -153,6 +153,11 @@ def add_cost(ctx: Context, agent: str, model: str, tokens_in: int, tokens_out: i
     return 0
 
 
+def ledger_records(ctx: Context, since: str | None = None) -> list[dict]:
+    """Public read of evidence ledger rows (same source as ``aisdlc report``)."""
+    return _read(ctx, LEDGER, since)
+
+
 def summarize(ctx: Context, since: str | None = None) -> dict:
     runs = _read(ctx, LEDGER, since)
     per_gate: dict[tuple[str, str], list[dict]] = defaultdict(list)
@@ -171,6 +176,16 @@ def summarize(ctx: Context, since: str | None = None) -> dict:
             "end": "pull_request.checks_green_at",
         },
     }
+
+
+def report_summary(ctx: Context, since: str | None = None) -> dict:
+    """Same payload shape as ``aisdlc report --json`` (evidence + autonomy + profile).
+
+    Backoffice Runs module reuses this so measure/tune hooks stay on TelemetryPort /
+    evidence/cost — no parallel metrics store (#2241).
+    """
+    data = summarize(ctx, since)
+    return _with_autonomy(ctx, {**data, "profile": ctx.profile.name}, since)
 
 
 def _gate_summary(stage: str, name: str, results: list[dict]) -> dict:
