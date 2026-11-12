@@ -35,8 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| backoffice shell | test_backoffice_html | pending |
-| runtime shell | test_backoffice_html | pending |
+| backoffice shell | test_backoffice_html | passing |
+| runtime shell | test_backoffice_html | passing |
 
 ## Permanent documentation updated
 

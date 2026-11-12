@@ -15,3 +15,8 @@ The backoffice and runtime HTML shells SHALL let their `main` element shrink (`m
 
 - **WHEN** the runtime HTML is rendered
 - **THEN** its `main` rule contains `min-width: 0`
+
+#### Scenario: scrollable JSON block is keyboard focusable
+
+- **WHEN** the backoffice HTML contains a `pre` block that scrolls inside its container
+- **THEN** the block has `tabindex="0"` and an `aria-label`
