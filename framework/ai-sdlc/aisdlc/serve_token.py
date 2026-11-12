@@ -17,6 +17,7 @@ DEFAULT_SCOPE = "owner"
 class ServeToken:
     value: str
     scope: str
+    identity: str = ""
 
     def allows(self, need: str) -> bool:
         return SCOPES.get(self.scope, 0) >= SCOPES.get(need, 99)
@@ -32,6 +33,7 @@ def load_token(root: Path) -> ServeToken | None:
         return None
     value = ""
     scope = DEFAULT_SCOPE
+    identity = ""
     for raw in path.read_text(encoding="utf-8").splitlines():
         line = raw.strip()
         if not line or line.startswith("#"):
@@ -45,9 +47,11 @@ def load_token(root: Path) -> ServeToken | None:
             value = rest
         elif key == "scope" and rest in SCOPES:
             scope = rest
+        elif key == "identity":
+            identity = rest
     if not value:
         return None
-    return ServeToken(value=value, scope=scope)
+    return ServeToken(value=value, scope=scope, identity=identity or scope)
 
 
 def ensure_token(root: Path, *, scope: str = DEFAULT_SCOPE) -> ServeToken:

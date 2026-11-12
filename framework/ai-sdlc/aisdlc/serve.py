@@ -1,33 +1,42 @@
-"""Read-only ``aisdlc serve`` HTTP host implementing factory OpenAPI GETs (#2253).
+"""``aisdlc serve`` HTTP host implementing factory OpenAPI paths (#2253 / #2254).
 
-Stdlib only (``http.server``). Mutating methods answer 405. Token handling is in
-``serve_token``. Static UI mounts at ``/ui/`` (placeholder only).
+Stdlib only (``http.server``). GET is always available with Bearer ``read``.
+Mutating methods answer 405 unless started with ``--write``; then PUT catalogs
+requires write scope, ``X-AISDLC-CSRF`` matching the bearer token, and ``If-Match``.
+Static UI mounts at ``/ui/`` (placeholder only).
 """
 from __future__ import annotations
 
 import json
 import os
 import re
+import secrets
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, unquote, urlparse
 
 from aisdlc import approval, catalogs, evidence, harness, isolator, workflows
+from aisdlc.actor import from_token_identity
 from aisdlc.context import Context
 from aisdlc.errors import KitError
 from aisdlc.factory import config_view, list_plugins, redact, resolve_max_open_prs
 from aisdlc.kitroot import kit_root
-from aisdlc.serve_token import ensure_token, load_token, require_token
+from aisdlc.serve_token import ServeToken, ensure_token, load_token, require_token
 
 ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 LOOPBACK = {"127.0.0.1", "::1", "localhost"}
 MUTATING = {"POST", "PUT", "PATCH", "DELETE"}
+CSRF_HEADER = "X-AISDLC-CSRF"
 STATUS_FOR = {
     "unauthorized": 401,
     "forbidden": 403,
     "not_found": 404,
     "method_not_allowed": 405,
+    "version_conflict": 409,
+    "if_match_required": 428,
+    "csrf_required": 403,
+    "writes_disabled": 405,
 }
 
 
@@ -142,6 +151,55 @@ def _dispatch_get(ctx: Context, path: str, query: dict[str, list[str]]) -> Any:
     raise KitError("not_found", f"unknown path {path}")
 
 
+def _parse_if_match(raw: str | None) -> int:
+    if raw is None or not str(raw).strip():
+        raise KitError("if_match_required", "PUT requires If-Match with the expected version")
+    value = str(raw).strip()
+    if value.startswith("W/"):
+        value = value[2:].strip()
+    if value.startswith('"') and value.endswith('"'):
+        value = value[1:-1]
+    try:
+        return int(value)
+    except ValueError as exc:
+        raise KitError("if_match_required", f"If-Match must be an integer version, got {raw!r}") from exc
+
+
+def _require_csrf(headers, token: ServeToken) -> None:
+    presented = headers.get(CSRF_HEADER) or headers.get(CSRF_HEADER.casefold())
+    # BaseHTTPRequestHandler lowercases header keys in some paths; scan casefold.
+    if presented is None:
+        for key, value in headers.items():
+            if key.casefold() == CSRF_HEADER.casefold():
+                presented = value
+                break
+    if presented is None or not secrets.compare_digest(str(presented).strip(), token.value):
+        raise KitError("csrf_required", f"mutating requests require {CSRF_HEADER} matching the bearer token")
+
+
+def _dispatch_put(ctx: Context, path: str, body: dict, *, expected_version: int, actor: str) -> Any:
+    _guard_path(path)
+    m = re.fullmatch(r"/factory/catalogs/([^/]+)/([^/]+)", path)
+    if not m:
+        raise KitError("method_not_allowed", f"PUT not implemented for {path}")
+    kind = m.group(1)
+    entry_id = _assert_id(m.group(2))
+    if kind not in catalogs.KINDS:
+        raise KitError("unknown_kind", f"unknown catalog kind {kind!r}")
+    # Body cannot set created_by / created_at / version / digest.
+    summary = body.get("summary") if isinstance(body, dict) else None
+    ref = body.get("ref") if isinstance(body, dict) else None
+    return catalogs.update(
+        ctx,
+        kind,
+        entry_id,
+        ref=ref,
+        summary=summary,
+        expected_version=expected_version,
+        actor=actor,
+    )
+
+
 def static_root() -> Path:
     return kit_root() / "ui"
 
@@ -153,6 +211,7 @@ def start_server(
     port: int = 8765,
     allow_remote: bool = False,
     create_token: bool = True,
+    enable_write: bool = False,
 ) -> ThreadingHTTPServer:
     configured = load_token(ctx.root) is not None
     assert_bind_allowed(host, allow_remote=allow_remote, token_configured=configured)
@@ -177,6 +236,13 @@ def start_server(
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, format: str, *args) -> None:  # noqa: A003
             return
+
+        def _token(self) -> ServeToken:
+            # Reload so scope/identity edits to serve.token take effect without restart.
+            current = load_token(ctx.root)
+            if current is None:
+                raise KitError("unauthorized", "serve token missing")
+            return current
 
         def _send(self, status: int, payload: bytes, content_type: str) -> None:
             self.send_response(status)
@@ -228,19 +294,35 @@ def start_server(
         def do_DELETE(self) -> None:  # noqa: N802
             self._handle("DELETE")
 
+        def _read_json_body(self) -> dict:
+            length = int(self.headers.get("Content-Length") or 0)
+            raw = self.rfile.read(length) if length > 0 else b"{}"
+            if not raw:
+                return {}
+            try:
+                data = json.loads(raw.decode("utf-8"))
+            except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+                raise KitError("invalid_body", "request body must be JSON object") from exc
+            if not isinstance(data, dict):
+                raise KitError("invalid_body", "request body must be a JSON object")
+            return data
+
         def _handle(self, method: str) -> None:
             parsed = urlparse(self.path)
-            # Keep encoding for traversal checks; do not normalize ".." away.
             path = parsed.path or "/"
             try:
-                require_token(self.headers.get("Authorization"), token, need="read")
+                active = self._token()
+                require_token(self.headers.get("Authorization"), active, need="read")
             except KitError as exc:
                 self._problem(exc.code, exc.detail)
                 return
-            if method in MUTATING:
+            if method in MUTATING and not enable_write:
                 self._problem("method_not_allowed", f"{method} not allowed on read-only host")
                 return
             if path == "/ui" or path.startswith("/ui/"):
+                if method != "GET":
+                    self._problem("method_not_allowed", f"{method} not allowed on static mount")
+                    return
                 rel = unquote(path[len("/ui/") :]) if path.startswith("/ui/") else ""
                 if ".." in rel.split("/") or "%2f" in path.casefold():
                     self._problem("invalid_id", "path traversal blocked")
@@ -248,9 +330,24 @@ def start_server(
                 self._serve_static(rel)
                 return
             try:
-                query = parse_qs(parsed.query, keep_blank_values=True)
-                data = _dispatch_get(ctx, path, query)
-                self._send_json(200, data)
+                if method == "GET":
+                    query = parse_qs(parsed.query, keep_blank_values=True)
+                    data = _dispatch_get(ctx, path, query)
+                    self._send_json(200, data)
+                    return
+                if method == "PUT":
+                    active = self._token()
+                    require_token(self.headers.get("Authorization"), active, need="write")
+                    _require_csrf(self.headers, active)
+                    expected = _parse_if_match(self.headers.get("If-Match"))
+                    body = self._read_json_body()
+                    actor = from_token_identity(active.identity, active.scope)
+                    data = _dispatch_put(
+                        ctx, path, body, expected_version=expected, actor=actor,
+                    )
+                    self._send_json(200, data)
+                    return
+                self._problem("method_not_allowed", f"{method} not implemented")
             except KitError as exc:
                 self._problem(exc.code, exc.detail)
 
@@ -263,14 +360,22 @@ def serve(
     host: str = "127.0.0.1",
     port: int = 8765,
     allow_remote: bool = False,
+    enable_write: bool = False,
 ) -> int:
     try:
-        server = start_server(ctx, host=host, port=port, allow_remote=allow_remote)
+        server = start_server(
+            ctx,
+            host=host,
+            port=port,
+            allow_remote=allow_remote,
+            enable_write=enable_write,
+        )
     except KitError as exc:
         print(f"error: {exc.detail}")
         return 2
     bound = server.server_address[1]
-    print(f"aisdlc serve: http://{host}:{bound}/ (token: .aisdlc/serve.token; Ctrl+C to stop)")
+    mode = "write" if enable_write else "read-only"
+    print(f"aisdlc serve ({mode}): http://{host}:{bound}/ (token: .aisdlc/serve.token; Ctrl+C to stop)")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

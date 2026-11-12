@@ -133,6 +133,13 @@ def record_stage(ctx: Context, record: dict) -> Path:
     return path
 
 
+def append_record(ctx: Context, record: dict) -> Path:
+    """Append an arbitrary kit-authored ledger row (e.g. migrate evidence)."""
+    payload = dict(record)
+    payload.setdefault("ts", now())
+    return _append(ctx, LEDGER, payload)
+
+
 def add_cost(ctx: Context, agent: str, model: str, tokens_in: int, tokens_out: int,
              usd: float | None, issue: str | None) -> int:
     price = ctx.profile.prices.get(model)

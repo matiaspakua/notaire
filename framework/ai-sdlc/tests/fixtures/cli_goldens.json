@@ -7,7 +7,7 @@
  "catalog-add-duplicate": {
   "rc": 1,
   "stderr": "",
-  "stdout": "error: catalog entry skills/s1 already exists (use update)\n"
+  "stdout": "error: already_exists: catalog entry skills/s1 already exists (use update)\n"
  },
  "catalog-add-invalid-id": {
   "rc": 2,
@@ -22,12 +22,12 @@
  "catalog-history-after-update": {
   "rc": 0,
   "stderr": "",
-  "stdout": "  v1 digest=30661be651367cafd8779f329cd5511d98bf12ddf17e9341923de3aca15442aa\n  v2 digest=5dc1a6f1b2059ecf044e1c46f298be3da3156ba18ec631251124b07b3f36e2d0\n"
+  "stdout": "  v1 digest=0cd39aa9f5f9a251742abf06886a1be94b531f813644309535a2415d2662de34\n  v2 digest=35ec2367f46911182d44c3bf81cf7a9ba4d55e293a82fe8cec9bde580d4bf604\n"
  },
  "catalog-history-json": {
   "rc": 0,
   "stderr": "",
-  "stdout": "{\n  \"id\": \"s1\",\n  \"kind\": \"skills\",\n  \"versions\": [\n    {\n      \"digest\": \"30661be651367cafd8779f329cd5511d98bf12ddf17e9341923de3aca15442aa\",\n      \"governance\": null,\n      \"summary\": \"S one\",\n      \"version\": 1\n    }\n  ]\n}\n"
+  "stdout": "{\n  \"id\": \"s1\",\n  \"kind\": \"skills\",\n  \"versions\": [\n    {\n      \"digest\": \"0cd39aa9f5f9a251742abf06886a1be94b531f813644309535a2415d2662de34\",\n      \"governance\": null,\n      \"summary\": \"S one\",\n      \"version\": 1\n    }\n  ]\n}\n"
  },
  "catalog-history-legacy": {
   "rc": 0,
@@ -42,7 +42,7 @@
  "catalog-history-text": {
   "rc": 0,
   "stderr": "",
-  "stdout": "  v1 digest=30661be651367cafd8779f329cd5511d98bf12ddf17e9341923de3aca15442aa\n"
+  "stdout": "  v1 digest=0cd39aa9f5f9a251742abf06886a1be94b531f813644309535a2415d2662de34\n"
  },
  "catalog-list-empty": {
   "rc": 0,
@@ -52,7 +52,7 @@
  "catalog-list-json": {
   "rc": 0,
   "stderr": "",
-  "stdout": "{\n  \"agents\": {\n    \"entries\": [\n      {\n        \"digest\": \"16ab37707c00e223f4c22c8d4c1224dc7d3d8d66f5eb39db2e674877470c31d8\",\n        \"governance\": null,\n        \"id\": \"a1\",\n        \"kind\": \"agents\",\n        \"ref\": null,\n        \"source\": \"catalog\",\n        \"summary\": \"\",\n        \"version\": 1\n      }\n    ],\n    \"kind\": \"agents\"\n  },\n  \"integrations\": {\n    \"entries\": [],\n    \"kind\": \"integrations\"\n  },\n  \"mcp\": {\n    \"entries\": [],\n    \"kind\": \"mcp\"\n  },\n  \"memory\": {\n    \"entries\": [],\n    \"kind\": \"memory\"\n  },\n  \"providers\": {\n    \"entries\": [],\n    \"kind\": \"providers\"\n  },\n  \"rules\": {\n    \"entries\": [\n      {\n        \"error\": \"unreadable\",\n        \"id\": \"broken\",\n        \"source\": \"catalog\"\n      },\n      {\n        \"digest\": null,\n        \"governance\": null,\n        \"id\": \"legacy\",\n        \"kind\": \"rules\",\n        \"ref\": null,\n        \"source\": \"catalog\",\n        \"summary\": \"old\",\n        \"version\": 1\n      }\n    ],\n    \"kind\": \"rules\"\n  },\n  \"skills\": {\n    \"entries\": [\n      {\n        \"digest\": \"30661be651367cafd8779f329cd5511d98bf12ddf17e9341923de3aca15442aa\",\n        \"governance\": null,\n        \"id\": \"s1\",\n        \"kind\": \"skills\",\n        \"ref\": \"skills/s1\",\n        \"source\": \"catalog\",\n        \"summary\": \"S one\",\n        \"version\": 1\n      }\n    ],\n    \"kind\": \"skills\"\n  },\n  \"workflows\": {\n    \"entries\": [],\n    \"kind\": \"workflows\"\n  }\n}\n"
+  "stdout": "{\n  \"agents\": {\n    \"entries\": [\n      {\n        \"digest\": \"05124a572e0d19ffa210a119eef306c851e5da3b31edb423b2664b5cd3ce5c6f\",\n        \"governance\": null,\n        \"id\": \"a1\",\n        \"kind\": \"agents\",\n        \"ref\": null,\n        \"source\": \"catalog\",\n        \"summary\": \"\",\n        \"version\": 1\n      }\n    ],\n    \"kind\": \"agents\"\n  },\n  \"integrations\": {\n    \"entries\": [],\n    \"kind\": \"integrations\"\n  },\n  \"mcp\": {\n    \"entries\": [],\n    \"kind\": \"mcp\"\n  },\n  \"memory\": {\n    \"entries\": [],\n    \"kind\": \"memory\"\n  },\n  \"providers\": {\n    \"entries\": [],\n    \"kind\": \"providers\"\n  },\n  \"rules\": {\n    \"entries\": [\n      {\n        \"error\": \"unreadable\",\n        \"id\": \"broken\",\n        \"source\": \"catalog\"\n      },\n      {\n        \"digest\": null,\n        \"governance\": null,\n        \"id\": \"legacy\",\n        \"kind\": \"rules\",\n        \"ref\": null,\n        \"source\": \"catalog\",\n        \"summary\": \"old\",\n        \"version\": 1\n      }\n    ],\n    \"kind\": \"rules\"\n  },\n  \"skills\": {\n    \"entries\": [\n      {\n        \"digest\": \"0cd39aa9f5f9a251742abf06886a1be94b531f813644309535a2415d2662de34\",\n        \"governance\": null,\n        \"id\": \"s1\",\n        \"kind\": \"skills\",\n        \"ref\": \"skills/s1\",\n        \"source\": \"catalog\",\n        \"summary\": \"S one\",\n        \"version\": 1\n      }\n    ],\n    \"kind\": \"skills\"\n  },\n  \"workflows\": {\n    \"entries\": [],\n    \"kind\": \"workflows\"\n  }\n}\n"
  },
  "catalog-list-kind-json": {
   "rc": 0,
@@ -82,12 +82,12 @@
  "catalog-show-json": {
   "rc": 0,
   "stderr": "",
-  "stdout": "{\n  \"digest\": \"30661be651367cafd8779f329cd5511d98bf12ddf17e9341923de3aca15442aa\",\n  \"id\": \"s1\",\n  \"kind\": \"skills\",\n  \"ref\": \"skills/s1\",\n  \"summary\": \"S one\",\n  \"version\": 1\n}\n"
+  "stdout": "{\n  \"created_at\": \"2026-01-01T00:00:00+00:00\",\n  \"created_by\": \"cli:golden\",\n  \"digest\": \"0cd39aa9f5f9a251742abf06886a1be94b531f813644309535a2415d2662de34\",\n  \"id\": \"s1\",\n  \"kind\": \"skills\",\n  \"ref\": \"skills/s1\",\n  \"schema_version\": 1,\n  \"summary\": \"S one\",\n  \"version\": 1\n}\n"
  },
  "catalog-show-legacy": {
   "rc": 0,
   "stderr": "",
-  "stdout": "{\n  \"id\": \"legacy\",\n  \"kind\": \"rules\",\n  \"summary\": \"old\",\n  \"version\": 1\n}\n"
+  "stdout": "{\n  \"id\": \"legacy\",\n  \"kind\": \"rules\",\n  \"schema_version\": 1,\n  \"summary\": \"old\",\n  \"version\": 1\n}\n"
  },
  "catalog-show-missing": {
   "rc": 2,
@@ -97,7 +97,7 @@
  "catalog-show-text": {
   "rc": 0,
   "stderr": "",
-  "stdout": "skills/s1@v1 digest=30661be651367cafd8779f329cd5511d98bf12ddf17e9341923de3aca15442aa\n"
+  "stdout": "skills/s1@v1 digest=0cd39aa9f5f9a251742abf06886a1be94b531f813644309535a2415d2662de34\n"
  },
  "catalog-update": {
   "rc": 0,
@@ -107,7 +107,7 @@
  "catalog-update-missing": {
   "rc": 1,
   "stderr": "",
-  "stdout": "error: catalog entry skills/nope not found\n"
+  "stdout": "error: not_found: catalog entry skills/nope not found\n"
  },
  "nocat-catalog-add": {
   "rc": 2,
@@ -147,7 +147,7 @@
  "wf-approve-override": {
   "rc": 0,
   "stderr": "",
-  "stdout": "workflow w1: governance=approved version=4 digest=d21d8e93f75960f583d3b3483784563b5fa7a87f7a66372b23779d194df4cced\n"
+  "stdout": "workflow w1: governance=approved version=4 digest=83bf99582d4710128ccd18525eaac71c9e073580517f24f164e738023e51f694\n"
  },
  "wf-approve-override-no-reason": {
   "rc": 2,
@@ -157,7 +157,7 @@
  "wf-create": {
   "rc": 0,
   "stderr": "",
-  "stdout": "workflow w1: governance=draft version=1 digest=0563254ac83d4115cf04d1dd352e449eb6eca00f3407c7ebae8763300ab7fcdf\n"
+  "stdout": "workflow w1: governance=draft version=1 digest=187553c0b5780e8616ffeebb038162969c2e173308ccfcb6c3c762e529d7be5b\n"
  },
  "wf-create-duplicate": {
   "rc": 1,
@@ -172,17 +172,17 @@
  "wf-create-json": {
   "rc": 0,
   "stderr": "",
-  "stdout": "{\n  \"body\": {\n    \"agents\": [\n      \"ghost\"\n    ],\n    \"mcp\": [],\n    \"providers\": [],\n    \"skills\": []\n  },\n  \"digest\": \"86c7c70ab7b003b46b02a25a36e1e640cb4038c3a135631f7620060aceec18de\",\n  \"governance\": \"draft\",\n  \"id\": \"w2\",\n  \"kind\": \"workflows\",\n  \"ref\": null,\n  \"summary\": \"\",\n  \"version\": 1\n}\n"
+  "stdout": "{\n  \"body\": {\n    \"agents\": [\n      \"ghost\"\n    ],\n    \"mcp\": [],\n    \"providers\": [],\n    \"skills\": []\n  },\n  \"created_at\": \"2026-01-01T00:00:00+00:00\",\n  \"created_by\": \"cli:golden\",\n  \"digest\": \"09e42baad2f75721a478c76f147a81aa93e330c1fcb5070d7cfc80767a3ed4ce\",\n  \"governance\": \"draft\",\n  \"id\": \"w2\",\n  \"kind\": \"workflows\",\n  \"ref\": null,\n  \"schema_version\": 1,\n  \"summary\": \"\",\n  \"version\": 1\n}\n"
  },
  "wf-define": {
   "rc": 0,
   "stderr": "",
-  "stdout": "workflow w1: governance=defined version=2 digest=56ac8e7c607a1b3c7fb5934bc3f78c205bdd4ffd5d7b92fc4c3936974127fab9\n"
+  "stdout": "workflow w1: governance=defined version=2 digest=2376c98d58877129517065a8083bc24812f55246e9a5f8f40515b71a99886a49\n"
  },
  "wf-define-json": {
   "rc": 0,
   "stderr": "",
-  "stdout": "{\n  \"body\": {\n    \"agents\": [\n      \"a1\"\n    ],\n    \"mcp\": [],\n    \"providers\": [],\n    \"skills\": [\n      \"s1\"\n    ]\n  },\n  \"digest\": \"56ac8e7c607a1b3c7fb5934bc3f78c205bdd4ffd5d7b92fc4c3936974127fab9\",\n  \"governance\": \"defined\",\n  \"id\": \"w1\",\n  \"kind\": \"workflows\",\n  \"ref\": null,\n  \"summary\": \"First\",\n  \"version\": 2\n}\n"
+  "stdout": "{\n  \"body\": {\n    \"agents\": [\n      \"a1\"\n    ],\n    \"mcp\": [],\n    \"providers\": [],\n    \"skills\": [\n      \"s1\"\n    ]\n  },\n  \"created_at\": \"2026-01-01T00:00:00+00:00\",\n  \"created_by\": \"cli:golden\",\n  \"digest\": \"2376c98d58877129517065a8083bc24812f55246e9a5f8f40515b71a99886a49\",\n  \"governance\": \"defined\",\n  \"id\": \"w1\",\n  \"kind\": \"workflows\",\n  \"ref\": null,\n  \"schema_version\": 1,\n  \"summary\": \"First\",\n  \"version\": 2\n}\n"
  },
  "wf-define-unknown-ref": {
   "rc": 2,
@@ -192,12 +192,12 @@
  "wf-demote-approved": {
   "rc": 0,
   "stderr": "",
-  "stdout": "workflow w1: governance=validated version=5 digest=6005d0bbc10f2a30186776efaeb29c9f0f94ac2608e42f1dc7937943f6f4400c\n"
+  "stdout": "workflow w1: governance=validated version=5 digest=0e6f196c575d2caeec2318fa30a23504783c930b2a44a7cc692b838b932418af\n"
  },
  "wf-demote-validated": {
   "rc": 0,
   "stderr": "",
-  "stdout": "workflow w1: governance=defined version=6 digest=90d2d4c013ef698cc713988a0837d942915cc69de9d080e483af5c0b300c69e7\n"
+  "stdout": "workflow w1: governance=defined version=6 digest=b77776d9e4b303a4bd5f4548fd8cd03f2a1ffe70488fb951eab21342ff5e574d\n"
  },
  "wf-list": {
   "rc": 0,
@@ -212,7 +212,7 @@
  "wf-list-approved-json": {
   "rc": 0,
   "stderr": "",
-  "stdout": "{\n  \"approved_only\": true,\n  \"entries\": [\n    {\n      \"digest\": \"d21d8e93f75960f583d3b3483784563b5fa7a87f7a66372b23779d194df4cced\",\n      \"governance\": \"approved\",\n      \"id\": \"w1\",\n      \"kind\": \"workflows\",\n      \"summary\": \"First\",\n      \"version\": 4\n    }\n  ],\n  \"kind\": \"workflows\"\n}\n"
+  "stdout": "{\n  \"approved_only\": true,\n  \"entries\": [\n    {\n      \"digest\": \"83bf99582d4710128ccd18525eaac71c9e073580517f24f164e738023e51f694\",\n      \"governance\": \"approved\",\n      \"id\": \"w1\",\n      \"kind\": \"workflows\",\n      \"summary\": \"First\",\n      \"version\": 4\n    }\n  ],\n  \"kind\": \"workflows\"\n}\n"
  },
  "wf-list-approved-none": {
   "rc": 0,
@@ -232,12 +232,12 @@
  "wf-list-json": {
   "rc": 0,
   "stderr": "",
-  "stdout": "{\n  \"approved_only\": false,\n  \"entries\": [\n    {\n      \"digest\": \"0563254ac83d4115cf04d1dd352e449eb6eca00f3407c7ebae8763300ab7fcdf\",\n      \"governance\": \"draft\",\n      \"id\": \"w1\",\n      \"kind\": \"workflows\",\n      \"ref\": null,\n      \"source\": \"catalog\",\n      \"summary\": \"First\",\n      \"version\": 1\n    },\n    {\n      \"digest\": \"86c7c70ab7b003b46b02a25a36e1e640cb4038c3a135631f7620060aceec18de\",\n      \"governance\": \"draft\",\n      \"id\": \"w2\",\n      \"kind\": \"workflows\",\n      \"ref\": null,\n      \"source\": \"catalog\",\n      \"summary\": \"\",\n      \"version\": 1\n    }\n  ],\n  \"kind\": \"workflows\"\n}\n"
+  "stdout": "{\n  \"approved_only\": false,\n  \"entries\": [\n    {\n      \"digest\": \"187553c0b5780e8616ffeebb038162969c2e173308ccfcb6c3c762e529d7be5b\",\n      \"governance\": \"draft\",\n      \"id\": \"w1\",\n      \"kind\": \"workflows\",\n      \"ref\": null,\n      \"source\": \"catalog\",\n      \"summary\": \"First\",\n      \"version\": 1\n    },\n    {\n      \"digest\": \"09e42baad2f75721a478c76f147a81aa93e330c1fcb5070d7cfc80767a3ed4ce\",\n      \"governance\": \"draft\",\n      \"id\": \"w2\",\n      \"kind\": \"workflows\",\n      \"ref\": null,\n      \"source\": \"catalog\",\n      \"summary\": \"\",\n      \"version\": 1\n    }\n  ],\n  \"kind\": \"workflows\"\n}\n"
  },
  "wf-reopen": {
   "rc": 0,
   "stderr": "",
-  "stdout": "{\n  \"approval\": {\n    \"mode\": \"owner_override\",\n    \"reason\": \"owner decision\"\n  },\n  \"body\": {\n    \"agents\": [\n      \"a1\"\n    ],\n    \"mcp\": [],\n    \"providers\": [],\n    \"skills\": [\n      \"s1\"\n    ]\n  },\n  \"digest\": \"8e08b9b995891865563ef9a97f0aa7a95053d2adb48ae3be9a5345c3e0d5ee1b\",\n  \"governance\": \"draft\",\n  \"id\": \"w1\",\n  \"kind\": \"workflows\",\n  \"ref\": null,\n  \"summary\": \"First\",\n  \"validation\": {\n    \"waive_reason\": \"dry run\"\n  },\n  \"version\": 7\n}\n"
+  "stdout": "{\n  \"approval\": {\n    \"mode\": \"owner_override\",\n    \"reason\": \"owner decision\"\n  },\n  \"body\": {\n    \"agents\": [\n      \"a1\"\n    ],\n    \"mcp\": [],\n    \"providers\": [],\n    \"skills\": [\n      \"s1\"\n    ]\n  },\n  \"created_at\": \"2026-01-01T00:00:00+00:00\",\n  \"created_by\": \"cli:golden\",\n  \"digest\": \"7683af3d3ab0c7bb6cae840e67275b67eb5f3b2c2108e16d32fd2b97f2c37b9f\",\n  \"governance\": \"draft\",\n  \"id\": \"w1\",\n  \"kind\": \"workflows\",\n  \"ref\": null,\n  \"schema_version\": 1,\n  \"summary\": \"First\",\n  \"validation\": {\n    \"pins\": [],\n    \"waive_reason\": \"dry run\"\n  },\n  \"version\": 7\n}\n"
  },
  "wf-reopen-illegal": {
   "rc": 2,
@@ -247,7 +247,7 @@
  "wf-show-json": {
   "rc": 0,
   "stderr": "",
-  "stdout": "{\n  \"body\": {\n    \"agents\": [\n      \"a1\"\n    ],\n    \"mcp\": [],\n    \"providers\": [],\n    \"skills\": [\n      \"s1\"\n    ]\n  },\n  \"digest\": \"0563254ac83d4115cf04d1dd352e449eb6eca00f3407c7ebae8763300ab7fcdf\",\n  \"governance\": \"draft\",\n  \"id\": \"w1\",\n  \"kind\": \"workflows\",\n  \"ref\": null,\n  \"summary\": \"First\",\n  \"version\": 1\n}\n"
+  "stdout": "{\n  \"body\": {\n    \"agents\": [\n      \"a1\"\n    ],\n    \"mcp\": [],\n    \"providers\": [],\n    \"skills\": [\n      \"s1\"\n    ]\n  },\n  \"created_at\": \"2026-01-01T00:00:00+00:00\",\n  \"created_by\": \"cli:golden\",\n  \"digest\": \"187553c0b5780e8616ffeebb038162969c2e173308ccfcb6c3c762e529d7be5b\",\n  \"governance\": \"draft\",\n  \"id\": \"w1\",\n  \"kind\": \"workflows\",\n  \"ref\": null,\n  \"schema_version\": 1,\n  \"summary\": \"First\",\n  \"version\": 1\n}\n"
  },
  "wf-show-missing": {
   "rc": 2,
@@ -257,7 +257,7 @@
  "wf-show-text": {
   "rc": 0,
   "stderr": "",
-  "stdout": "workflow w1: governance=draft version=1 digest=0563254ac83d4115cf04d1dd352e449eb6eca00f3407c7ebae8763300ab7fcdf\n"
+  "stdout": "workflow w1: governance=draft version=1 digest=187553c0b5780e8616ffeebb038162969c2e173308ccfcb6c3c762e529d7be5b\n"
  },
  "wf-transition-illegal": {
   "rc": 2,
@@ -272,7 +272,7 @@
  "wf-validate": {
   "rc": 0,
   "stderr": "",
-  "stdout": "{\n  \"body\": {\n    \"agents\": [\n      \"a1\"\n    ],\n    \"mcp\": [],\n    \"providers\": [],\n    \"skills\": [\n      \"s1\"\n    ]\n  },\n  \"digest\": \"d66f1533d1de14d2800f239172d62cc0ba7ee41a975a767e39756ea40f1807c4\",\n  \"governance\": \"validated\",\n  \"id\": \"w1\",\n  \"kind\": \"workflows\",\n  \"ref\": null,\n  \"summary\": \"First\",\n  \"validation\": {\n    \"waive_reason\": \"dry run\"\n  },\n  \"version\": 3\n}\n"
+  "stdout": "{\n  \"body\": {\n    \"agents\": [\n      \"a1\"\n    ],\n    \"mcp\": [],\n    \"providers\": [],\n    \"skills\": [\n      \"s1\"\n    ]\n  },\n  \"created_at\": \"2026-01-01T00:00:00+00:00\",\n  \"created_by\": \"cli:golden\",\n  \"digest\": \"30b1724140f2eb85163b02f510ebc88709cdeeaac99471bb59289885ae65060d\",\n  \"governance\": \"validated\",\n  \"id\": \"w1\",\n  \"kind\": \"workflows\",\n  \"ref\": null,\n  \"schema_version\": 1,\n  \"summary\": \"First\",\n  \"validation\": {\n    \"pins\": [],\n    \"waive_reason\": \"dry run\"\n  },\n  \"version\": 3\n}\n"
  },
  "wf-validate-blank-waive": {
   "rc": 2,

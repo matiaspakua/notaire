@@ -82,6 +82,16 @@ class FactoryContractTest(unittest.TestCase):
         self.assertEqual(1, len(yaml_files))
         self.assertEqual([], self.contract.validate_contract(KIT))
 
+    def test_phase_a3_if_match_and_schema_fields(self):
+        """#2254: If-Match + schema_version/created_by; still one OpenAPI tree."""
+        text = self.contract.load_contract_text(KIT)
+        self.assertIn("If-Match", text)
+        self.assertIn("schema_version", text)
+        self.assertIn("created_by", text)
+        self.assertIn("WorkflowBodyV2", text)
+        yaml_files = list((KIT / "openapi").glob("*.yaml")) + list((KIT / "openapi").glob("*.yml"))
+        self.assertEqual(1, len(yaml_files))
+
 
 if __name__ == "__main__":
     unittest.main()

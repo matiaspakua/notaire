@@ -1,4 +1,4 @@
-"""Catalogs CRUD with immutable revisions (#2139 / #2239 Phase A).
+"""Catalogs CRUD with immutable revisions (#2139 / #2239 Phase A / #2254 A.3).
 
 Entries live under ``[catalogs] dir`` / ``{kind}/{id}/``:
 ``current.json`` (pointer + latest payload) and ``versions/{n}.json`` (immutable).
@@ -6,16 +6,22 @@ Legacy flat ``{id}.json`` files remain readable; the next write migrates them.
 
 List/show/history/validate only read files — they never execute commands or import
 entry code. Digests are SHA-256 of the canonical JSON without the digest field.
+Writes stamp ``schema_version``, ``created_at``, and server-derived ``created_by``.
 """
 from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 
+from aisdlc.actor import from_env
 from aisdlc.context import Context
 from aisdlc.errors import KitError
+from aisdlc.evidence import now as evidence_now
 from aisdlc.factory import redact
+
+DEFAULT_SCHEMA_VERSION = 1
 
 KINDS = (
     "skills",
@@ -78,6 +84,11 @@ def _digest(payload: dict) -> str:
     return hashlib.sha256(blob).hexdigest()
 
 
+def compute_digest(payload: dict) -> str:
+    """Public digest of a catalog payload (digest field ignored)."""
+    return _digest(payload)
+
+
 def _write_json(path: Path, payload: dict) -> dict:
     payload = dict(payload)
     payload["digest"] = _digest(payload)
@@ -130,7 +141,26 @@ def _normalize_legacy(data: dict, kind: str) -> dict:
     payload.setdefault("kind", kind)
     payload.setdefault("version", 1)
     payload.setdefault("summary", payload.get("summary") or "")
+    payload.setdefault("schema_version", DEFAULT_SCHEMA_VERSION)
     return payload
+
+
+def _stamp_envelope(
+    payload: dict,
+    *,
+    actor: str | None,
+    schema_version: int | None,
+) -> dict:
+    body = dict(payload)
+    body.pop("created_by", None)
+    body.pop("created_at", None)
+    body["schema_version"] = int(
+        schema_version if schema_version is not None else body.get("schema_version") or DEFAULT_SCHEMA_VERSION
+    )
+    # AISDLC_CREATED_AT pins timestamps for golden CLI fixtures.
+    body["created_at"] = os.environ.get("AISDLC_CREATED_AT") or evidence_now()
+    body["created_by"] = actor or from_env(channel="cli")
+    return body
 
 
 def _exists(ctx: Context, kind: str, entry_id: str) -> bool:
@@ -261,6 +291,8 @@ def add(
     ref: str | None,
     summary: str | None,
     extra: dict | None = None,
+    actor: str | None = None,
+    schema_version: int | None = None,
 ) -> dict:
     if _exists(ctx, kind, entry_id):
         raise KitError("already_exists", f"catalog entry {kind}/{entry_id} already exists (use update)")
@@ -272,12 +304,22 @@ def add(
         "version": 1,
     }
     for key, value in (extra or {}).items():
-        if key not in {"id", "kind", "version", "digest"}:
+        if key not in {"id", "kind", "version", "digest", "created_by", "created_at"}:
             payload[key] = value
+    payload = _stamp_envelope(payload, actor=actor, schema_version=schema_version)
     return _commit_revision(ctx, kind, entry_id, payload)
 
 
-def update(ctx: Context, kind: str, entry_id: str, *, ref: str | None, summary: str | None) -> dict:
+def update(
+    ctx: Context,
+    kind: str,
+    entry_id: str,
+    *,
+    ref: str | None,
+    summary: str | None,
+    expected_version: int | None = None,
+    actor: str | None = None,
+) -> dict:
     try:
         data = load_entry(ctx, kind, entry_id)
     except KitError as exc:
@@ -287,13 +329,34 @@ def update(ctx: Context, kind: str, entry_id: str, *, ref: str | None, summary: 
         payload["ref"] = ref
     if summary is not None:
         payload["summary"] = summary
-    return write_new_revision(ctx, kind, entry_id, payload)
+    return write_new_revision(
+        ctx,
+        kind,
+        entry_id,
+        payload,
+        expected_version=expected_version,
+        actor=actor,
+    )
 
 
-def write_new_revision(ctx: Context, kind: str, entry_id: str, payload: dict) -> dict:
+def write_new_revision(
+    ctx: Context,
+    kind: str,
+    entry_id: str,
+    payload: dict,
+    *,
+    expected_version: int | None = None,
+    actor: str | None = None,
+    schema_version: int | None = None,
+) -> dict:
     """Library helper: persist payload as the next immutable revision."""
     data = load_entry(ctx, kind, entry_id)
     prior = int(data.get("version") or 1)
+    if expected_version is not None and int(expected_version) != prior:
+        raise KitError(
+            "version_conflict",
+            f"version conflict for {kind}/{entry_id}: expected {expected_version}, current {prior}",
+        )
     prior_path = _version_path(ctx, kind, entry_id, prior)
     if not prior_path.is_file():
         seed = dict(data)
@@ -306,7 +369,21 @@ def write_new_revision(ctx: Context, kind: str, entry_id: str, payload: dict) ->
     body["kind"] = kind
     body["version"] = next_version
     body.pop("digest", None)
+    if schema_version is None and body.get("schema_version") is None:
+        schema_version = int(data.get("schema_version") or DEFAULT_SCHEMA_VERSION)
+    body = _stamp_envelope(body, actor=actor, schema_version=schema_version)
     return _commit_revision(ctx, kind, entry_id, body)
+
+
+def load_revision(ctx: Context, kind: str, entry_id: str, version: int) -> dict:
+    """Load an immutable revision by version number."""
+    path = _version_path(ctx, kind, entry_id, int(version))
+    if path.is_file():
+        return _read_json(path)
+    current = load_entry(ctx, kind, entry_id)
+    if int(current.get("version") or 1) == int(version):
+        return current
+    raise KitError("not_found", f"catalog revision {kind}/{entry_id}@{version} not found")
 
 
 def remove(ctx: Context, kind: str, entry_id: str) -> int:
