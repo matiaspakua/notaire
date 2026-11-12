@@ -28,6 +28,11 @@ CODES = {
     "method_not_allowed": "HTTP method not allowed on this host",
     "bind_refused": "non-loopback bind refused without --allow-remote and token",
     "invalid_scope": "serve token scope is not read|write|owner",
+    "version_conflict": "expected entity version does not match current",
+    "if_match_required": "mutating write requires If-Match expected version",
+    "pin_digest_mismatch": "pinned workflow ref digest no longer matches",
+    "csrf_required": "mutating HTTP requires X-AISDLC-CSRF matching the bearer token",
+    "writes_disabled": "serve was started without --write",
 }
 
 

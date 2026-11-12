@@ -1,6 +1,7 @@
-"""PRESERVE goldens for `workflow` and `catalog` CLI output (#2252, A.1).
+"""PRESERVE goldens for `workflow` and `catalog` CLI output (#2252, A.1 / #2254).
 
-Recorded from main before the service-layer extraction; the refactor must keep every byte.
+v1 command surfaces stay stable; envelope fields from A.3 (`schema_version`,
+`created_at`, `created_by`) are pinned via env when recording.
 Re-record only on purpose: AISDLC_RECORD_GOLDENS=1 python3 -m unittest test_cli_goldens
 """
 from __future__ import annotations
@@ -9,7 +10,7 @@ import json
 import os
 import unittest
 
-from helpers import KIT, Repo
+from helpers import ENV, KIT, Repo
 
 PROFILE = """
 [project]
@@ -98,10 +99,27 @@ def no_catalogs_cases():
 class CliGoldenTest(unittest.TestCase):
     def setUp(self) -> None:
         self.recorded: dict[str, dict] = {}
+        # Pin actor/time so A.3 envelope fields stay byte-stable across runs.
+        self._env_prev = {
+            "AISDLC_ACTOR": os.environ.get("AISDLC_ACTOR"),
+            "AISDLC_CREATED_AT": os.environ.get("AISDLC_CREATED_AT"),
+        }
+        os.environ["AISDLC_ACTOR"] = "golden"
+        os.environ["AISDLC_CREATED_AT"] = "2026-01-01T00:00:00+00:00"
+
+    def tearDown(self) -> None:
+        for key, value in self._env_prev.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
 
     def _replay(self, repo: Repo, cases) -> None:
         stored = json.loads(GOLDENS.read_text(encoding="utf-8")) if GOLDENS.is_file() else {}
         record = bool(os.environ.get("AISDLC_RECORD_GOLDENS"))
+        # Ensure Repo.run inherits pinned actor/time.
+        for key in ("AISDLC_ACTOR", "AISDLC_CREATED_AT"):
+            ENV[key] = os.environ[key]
         for name, args in cases:
             with self.subTest(name):
                 result = repo.run(*args)

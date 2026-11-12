@@ -7,8 +7,9 @@ info:
     and the `aisdlc serve` HTTP adapter (#2253 / ADR-003). Separate from any adopter
     application API description. One OpenAPI tree only.
     Phase A (#2239) adds immutable entity revisions and workflow governance.
-    Phase A.2 (#2253) hosts declared GET paths on loopback with Bearer token scopes;
-    mutating methods answer 405 until A.3 If-Match writes.
+    Phase A.2 (#2253) hosts declared GET paths on loopback with Bearer token scopes.
+    Phase A.3 (#2254) enables opt-in writes (`aisdlc serve --write`) with If-Match,
+    CSRF, schema_version, workflow body v2 pins, and server-derived created_by.
     Phase B (#2240) kit backoffice HTML/serve is an adapter over the same catalog and
     workflow paths — not a second schema set or config truth.
     Phase C (#2241) extends that HTML adapter for mcp/providers/memory/rules/integrations
@@ -165,7 +166,7 @@ paths:
     put:
       tags: [catalogs]
       operationId: updateCatalogEntry
-      summary: Allocate a new immutable revision (CLI `catalog update`)
+      summary: Allocate a new immutable revision (CLI `catalog update` / serve --write)
       parameters:
         - name: kind
           in: path
@@ -175,6 +176,18 @@ paths:
         - name: id
           in: path
           required: true
+          schema:
+            type: string
+        - name: If-Match
+          in: header
+          required: true
+          description: Expected current entity version; mismatch yields 409
+          schema:
+            type: string
+        - name: X-AISDLC-CSRF
+          in: header
+          required: true
+          description: Must equal the Bearer token value (double-submit CSRF)
           schema:
             type: string
       requestBody:
@@ -190,6 +203,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FactoryEntity"
+        "409":
+          description: Version conflict (If-Match mismatch)
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "428":
+          description: If-Match required
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
   /factory/catalogs/{kind}/{id}/versions:
     get:
       tags: [catalogs]
@@ -474,12 +499,17 @@ components:
     FactoryEntity:
       type: object
       additionalProperties: true
-      required: [id, kind, version, digest]
+      required: [id, kind, version, digest, schema_version]
       properties:
         id: { type: string }
         kind:
           $ref: "#/components/schemas/CatalogKind"
         version: { type: integer, minimum: 1 }
+        schema_version: { type: integer, minimum: 1 }
+        created_at: { type: string, format: date-time }
+        created_by:
+          type: string
+          description: Server-derived `{channel}:{identity}`; never from request body
         ref:
           type: [string, "null"]
           description: Path or credential ref (`env:…`); never secret values
@@ -539,21 +569,71 @@ components:
             governance:
               $ref: "#/components/schemas/WorkflowGovernanceState"
             body:
-              type: object
-              additionalProperties: true
-              properties:
-                agents:
-                  type: array
-                  items: { type: string }
-                skills:
-                  type: array
-                  items: { type: string }
-                mcp:
-                  type: array
-                  items: { type: string }
-                providers:
-                  type: array
-                  items: { type: string }
+              oneOf:
+                - $ref: "#/components/schemas/WorkflowBodyV1"
+                - $ref: "#/components/schemas/WorkflowBodyV2"
+    WorkflowBodyV1:
+      type: object
+      additionalProperties: true
+      description: Legacy id-list body (schema_version 1); readable until migrate
+      properties:
+        agents:
+          type: array
+          items: { type: string }
+        skills:
+          type: array
+          items: { type: string }
+        mcp:
+          type: array
+          items: { type: string }
+        providers:
+          type: array
+          items: { type: string }
+    WorkflowStepV2:
+      type: object
+      additionalProperties: true
+      required: [id, stage]
+      properties:
+        id: { type: string }
+        stage: { type: string }
+        agent:
+          type: [string, "null"]
+          description: Pinned ref `agents:<id>@<version>`
+        skills:
+          type: array
+          items: { type: string }
+        mcp:
+          type: array
+          items: { type: string }
+        provider:
+          type: [string, "null"]
+        gates:
+          type: array
+          items: { type: string }
+        budget:
+          type: object
+          additionalProperties: true
+          properties:
+            tokens: { type: [integer, "null"] }
+            time_seconds: { type: [number, "null"] }
+            usd: { type: [number, "null"] }
+        on_fail: { type: string }
+    WorkflowBodyV2:
+      type: object
+      additionalProperties: true
+      required: [steps, inputs, outputs]
+      description: schema_version 2 body with pinned refs
+      properties:
+        steps:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkflowStepV2"
+        inputs:
+          type: array
+          items: {}
+        outputs:
+          type: array
+          items: {}
     WorkflowWrite:
       type: object
       additionalProperties: true

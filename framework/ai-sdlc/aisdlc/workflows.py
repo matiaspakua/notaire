@@ -1,19 +1,27 @@
-"""First-class workflow entity + governance FSM (#2239 Phase A).
+"""First-class workflow entity + governance FSM (#2239 Phase A / #2254 A.3).
 
 Stages (foreman knobs) are not workflows. A workflow is a versioned blueprint with
 governance ``draft → defined → validated → approved``. List/show never execute
 workflow steps. ``approve`` requires ApprovalPort verify or an explicit Owner
 override — never a cosmetic badge (ADR-005).
+
+Body schema v1 keeps bare id lists (PRESERVE). Schema v2 uses ``steps[]`` /
+``inputs[]`` / ``outputs[]`` with pinned ``<kind>:<id>@<version>`` refs; migrate
+upgrades v1→v2. ``request_validation`` records digests; ``approve`` refuses drift.
 """
 from __future__ import annotations
 
+import re
+
 from aisdlc import approval, catalogs
+from aisdlc.actor import from_env
 from aisdlc.context import Context
 from aisdlc.errors import KitError
 from aisdlc.factory import redact
 
 KIND = "workflows"
 STATES = ("draft", "defined", "validated", "approved")
+REF_RE = re.compile(r"^(?P<kind>[a-z]+):(?P<id>[^@]+)@(?P<version>\d+)$")
 
 # action -> (from_state, to_state)
 TRANSITIONS: dict[str, tuple[str, str]] = {
@@ -26,12 +34,20 @@ TRANSITIONS: dict[str, tuple[str, str]] = {
 }
 
 
+def _actor(actor: str | None) -> str:
+    return actor or from_env(channel="cli")
+
+
 def _known_ids(ctx: Context, kind: str) -> set[str]:
     listed = catalogs.list_entries(ctx, kind)
     return {entry["id"] for entry in listed["entries"] if entry.get("id") and not entry.get("error")}
 
 
-def _resolve_refs(ctx: Context, body: dict) -> list[str]:
+def _is_v2_body(body: dict) -> bool:
+    return isinstance(body.get("steps"), list)
+
+
+def _resolve_refs_v1(ctx: Context, body: dict) -> list[str]:
     errors: list[str] = []
     for kind, key in (("agents", "agents"), ("skills", "skills"), ("mcp", "mcp"), ("providers", "providers")):
         ids = body.get(key) or []
@@ -53,6 +69,77 @@ def _resolve_refs(ctx: Context, body: dict) -> list[str]:
     return errors
 
 
+def parse_ref(ref: str) -> tuple[str, str, int]:
+    match = REF_RE.fullmatch(str(ref or "").strip())
+    if not match:
+        raise KitError("refs_unresolved", f"invalid pinned ref {ref!r} (expected kind:id@version)")
+    kind = match.group("kind")
+    if kind not in catalogs.KINDS:
+        raise KitError("refs_unresolved", f"unknown ref kind {kind!r}")
+    return kind, match.group("id"), int(match.group("version"))
+
+
+def _collect_refs(body: dict) -> list[str]:
+    refs: list[str] = []
+    for step in body.get("steps") or []:
+        if not isinstance(step, dict):
+            continue
+        for key in ("agent", "provider"):
+            value = step.get(key)
+            if value:
+                refs.append(str(value))
+        for key in ("skills", "mcp", "gates"):
+            for item in step.get(key) or []:
+                if isinstance(item, str) and ":" in item and "@" in item:
+                    refs.append(item)
+    for bucket in ("inputs", "outputs"):
+        for item in body.get(bucket) or []:
+            if isinstance(item, str) and ":" in item and "@" in item:
+                refs.append(item)
+            elif isinstance(item, dict) and item.get("ref"):
+                refs.append(str(item["ref"]))
+    # de-dupe preserving order
+    seen: set[str] = set()
+    out: list[str] = []
+    for ref in refs:
+        if ref not in seen:
+            seen.add(ref)
+            out.append(ref)
+    return out
+
+
+def _resolve_and_pin(ctx: Context, body: dict) -> tuple[list[str], list[dict]]:
+    errors: list[str] = []
+    pins: list[dict] = []
+    for ref in _collect_refs(body):
+        try:
+            kind, entry_id, version = parse_ref(ref)
+            rev = catalogs.load_revision(ctx, kind, entry_id, version)
+        except KitError as exc:
+            errors.append(str(exc.detail if hasattr(exc, "detail") else exc))
+            continue
+        digest = catalogs.compute_digest(rev)
+        pins.append({"ref": ref, "digest": digest})
+    return errors, pins
+
+
+def _verify_pins(ctx: Context, pins: list[dict]) -> list[str]:
+    errors: list[str] = []
+    for pin in pins or []:
+        ref = pin.get("ref")
+        expected = pin.get("digest")
+        try:
+            kind, entry_id, version = parse_ref(str(ref))
+            rev = catalogs.load_revision(ctx, kind, entry_id, version)
+        except KitError as exc:
+            errors.append(str(exc.detail if hasattr(exc, "detail") else exc))
+            continue
+        # Recompute so on-disk tampering is detected even if the digest field was left alone.
+        if catalogs.compute_digest(rev) != expected:
+            errors.append(f"digest drift for {ref}")
+    return errors
+
+
 def create(
     ctx: Context,
     workflow_id: str,
@@ -62,6 +149,7 @@ def create(
     skills: list[str] | None = None,
     mcp: list[str] | None = None,
     providers: list[str] | None = None,
+    actor: str | None = None,
 ) -> dict:
     body = {
         "agents": list(agents or []),
@@ -69,7 +157,16 @@ def create(
         "mcp": list(mcp or []),
         "providers": list(providers or []),
     }
-    catalogs.add(ctx, KIND, workflow_id, ref=None, summary=summary, extra={"governance": "draft", "body": body})
+    catalogs.add(
+        ctx,
+        KIND,
+        workflow_id,
+        ref=None,
+        summary=summary,
+        extra={"governance": "draft", "body": body},
+        actor=_actor(actor),
+        schema_version=1,
+    )
     return redact("", catalogs.load_entry(ctx, KIND, workflow_id))
 
 
@@ -101,6 +198,7 @@ def new_version(
     skills: list[str] | None = None,
     mcp: list[str] | None = None,
     providers: list[str] | None = None,
+    actor: str | None = None,
 ) -> dict:
     data = catalogs.load_entry(ctx, KIND, workflow_id)
     if data.get("governance") == "approved":
@@ -118,8 +216,18 @@ def new_version(
     payload["body"] = body
     if summary is not None:
         payload["summary"] = summary
-    # Body edits keep governance but allocate a new revision.
-    return redact("", catalogs.write_new_revision(ctx, KIND, workflow_id, payload))
+    # Body edits allocate a new revision and return to draft (#2254).
+    payload["governance"] = "draft"
+    return redact(
+        "",
+        catalogs.write_new_revision(
+            ctx,
+            KIND,
+            workflow_id,
+            payload,
+            actor=_actor(actor),
+        ),
+    )
 
 
 def transition(
@@ -131,6 +239,7 @@ def transition(
     owner_override: bool = False,
     reason: str | None = None,
     waive_reason: str | None = None,
+    actor: str | None = None,
 ) -> dict:
     if action not in TRANSITIONS:
         raise KitError(
@@ -152,35 +261,55 @@ def transition(
     if not isinstance(body, dict):
         raise KitError("invalid_body", "workflow body must be an object")
 
-    if action == "define":
-        errors = _resolve_refs(ctx, body)
+    pins: list[dict] | None = None
+    if action in ("define", "request_validation"):
+        if _is_v2_body(body):
+            errors, pins = _resolve_and_pin(ctx, body)
+        else:
+            errors = _resolve_refs_v1(ctx, body)
         if errors:
-            raise KitError("refs_unresolved", "define failed: " + "; ".join(errors))
+            raise KitError("refs_unresolved", f"{action} failed: " + "; ".join(errors))
 
     if action == "request_validation":
-        errors = _resolve_refs(ctx, body)
-        if errors:
-            raise KitError("refs_unresolved", "request_validation failed: " + "; ".join(errors))
         if not waive_reason or not str(waive_reason).strip():
-            # Phase A: require explicit waive/evidence reason (no fake dry-run runner).
             raise KitError(
                 "waive_reason_required",
                 "request_validation requires --waive-reason (or recorded test evidence in a later phase)",
             )
 
     if action == "approve":
+        stored = (data.get("validation") or {}).get("pins") or []
+        if stored:
+            drift = _verify_pins(ctx, stored)
+            if drift:
+                raise KitError(
+                    "pin_digest_mismatch",
+                    "approve failed: pinned ref digest mismatch: " + "; ".join(drift),
+                )
         _guard_approve(ctx, workflow_id, signature=signature, owner_override=owner_override, reason=reason)
 
     payload = dict(data)
     payload["governance"] = target
     if action == "request_validation":
-        payload["validation"] = {"waive_reason": str(waive_reason).strip()}
+        payload["validation"] = {
+            "waive_reason": str(waive_reason).strip(),
+            "pins": pins or [],
+        }
     if action == "approve":
         payload["approval"] = {
             "mode": "signature" if signature else "owner_override",
             "reason": (reason or "").strip() or None,
         }
-    return redact("", catalogs.write_new_revision(ctx, KIND, workflow_id, payload))
+    return redact(
+        "",
+        catalogs.write_new_revision(
+            ctx,
+            KIND,
+            workflow_id,
+            payload,
+            actor=_actor(actor),
+        ),
+    )
 
 
 def _guard_approve(
@@ -203,7 +332,6 @@ def _guard_approve(
     if owner_override:
         if not reason or not str(reason).strip():
             raise KitError("reason_required", "approve --owner-override requires --reason")
-        # Owner path is explicit and audited on the revision; still refuse agent self-approve.
         if status.get("agent_can_approve"):
             raise KitError("agent_approve_forbidden", "agents must never approve workflows")
         return
@@ -217,4 +345,3 @@ def _guard_approve(
         "approve fail-closed: approvals_live=false; pass --owner-override --reason "
         "or configure ApprovalPort keys and --signature",
     )
-

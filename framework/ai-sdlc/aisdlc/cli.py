@@ -400,6 +400,13 @@ def build_parser() -> argparse.ArgumentParser:
             q.add_argument("--summary", help="short description")
             if action == "add":
                 q.set_defaults(summary="")
+            if action == "update":
+                q.add_argument(
+                    "--if-match",
+                    type=int,
+                    dest="if_match",
+                    help="expected current version (If-Match); refuse on mismatch",
+                )
 
     p = sub.add_parser("workflow", help="Workflow entity + governance FSM (#2239)")
     wf_sub = p.add_subparsers(dest="action", required=True)
@@ -481,7 +488,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     p = sub.add_parser(
         "serve",
-        help="Read-only factory OpenAPI HTTP host (#2253); loopback + Bearer token",
+        help="Factory OpenAPI HTTP host (#2253/#2254); loopback + Bearer token",
     )
     p.add_argument("--host", default="127.0.0.1", help="bind host (default 127.0.0.1)")
     p.add_argument("--port", type=int, default=8765, help="bind port (default 8765)")
@@ -490,6 +497,17 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="allow non-loopback bind when .aisdlc/serve.token already exists",
     )
+    p.add_argument(
+        "--write",
+        action="store_true",
+        help="enable mutating PUT (If-Match + CSRF + write scope) (#2254)",
+    )
+
+    p = sub.add_parser(
+        "migrate",
+        help="Idempotent schema migration (workflow body v1→v2) with evidence (#2254)",
+    )
+    p.add_argument("--json", action="store_true")
     return parser
 
 
@@ -575,6 +593,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "workflow": lambda: _workflow(ctx, args),
         "backoffice": lambda: _backoffice(ctx, args),
         "serve": lambda: _serve(ctx, args),
+        "migrate": lambda: _migrate(ctx, args),
         "improve": lambda: _improve(ctx, args),
 
         "protected": lambda: diffchecks.protected(ctx, args.base),
@@ -700,17 +719,49 @@ def _catalog(ctx: Context, args: argparse.Namespace) -> int:
 
 
 def _catalog_write(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc.actor import from_env
+
+    actor = from_env(channel="cli")
     try:
         if args.action == "add":
-            written = catalogs.add(ctx, args.kind, args.id, ref=args.ref, summary=args.summary)
+            written = catalogs.add(
+                ctx, args.kind, args.id, ref=args.ref, summary=args.summary, actor=actor,
+            )
         else:
-            written = catalogs.update(ctx, args.kind, args.id, ref=args.ref, summary=args.summary)
+            written = catalogs.update(
+                ctx,
+                args.kind,
+                args.id,
+                ref=args.ref,
+                summary=args.summary,
+                expected_version=getattr(args, "if_match", None),
+                actor=actor,
+            )
     except KitError as exc:
-        if exc.code in ("already_exists", "not_found"):
-            print(f"error: {exc.detail}")
+        if exc.code in ("already_exists", "not_found", "version_conflict"):
+            print(f"error: {exc.code}: {exc.detail}")
             return 1
         raise
     print(f"catalog {args.action}: {args.kind}/{args.id}@{written['version']}")
+    return 0
+
+
+def _migrate(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc import migrate as migrate_mod
+    from aisdlc.actor import from_env
+
+    try:
+        report = migrate_mod.migrate_workflows(ctx, actor=from_env(channel="cli"))
+    except KitError as exc:
+        print(f"error: {exc.code}: {exc.detail}")
+        return 2
+    if getattr(args, "json", False):
+        print(json.dumps(report, indent=2, sort_keys=True))
+    else:
+        print(
+            f"migrate: upgraded={len(report.get('upgraded') or [])} "
+            f"skipped={len(report.get('skipped') or [])}"
+        )
     return 0
 
 
@@ -792,6 +843,7 @@ def _serve(ctx: Context, args: argparse.Namespace) -> int:
         host=str(getattr(args, "host", "127.0.0.1") or "127.0.0.1"),
         port=int(getattr(args, "port", 8765) or 8765),
         allow_remote=bool(getattr(args, "allow_remote", False)),
+        enable_write=bool(getattr(args, "write", False)),
     )
 
 
