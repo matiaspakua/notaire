@@ -35,8 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| default and apple variants | button-hover-contrast | pending |
-| destructive variant | button-hover-contrast | pending |
+| default and apple variants | button-hover-contrast | passing |
+| destructive variant | button-hover-contrast | passing |
 
 ## Permanent documentation updated
 
@@ -46,7 +46,6 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Document | Updated | Commit |
 |----------|---------|--------|
 | `docs/300-development/304-ai-sdlc-cloud/FORMS-AUDIT-PLAN.md` | no | pending |
-| `.claude/rules/ui-ux-design.md` | no | pending |
 
 ## Gate log
 
