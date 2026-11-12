@@ -38,7 +38,14 @@ def init(root: Path, name: str, level: int, force: bool) -> int:
     if not 1 <= level <= 4:
         print("error: --level must be 1-4")
         return 2
-    values = {"{{project}}": name, "{{level}}": str(level), "{{kit_version}}": __version__}
+    from aisdlc.profile import PROFILE_SCHEMA_VERSION
+
+    values = {
+        "{{project}}": name,
+        "{{level}}": str(level),
+        "{{kit_version}}": __version__,
+        "{{schema_version}}": str(PROFILE_SCHEMA_VERSION),
+    }
     for source in sorted(p for p in TEMPLATES.rglob("*") if p.is_file()):
         rel = source.relative_to(TEMPLATES)
         target = root / rel

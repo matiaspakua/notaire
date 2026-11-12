@@ -38,6 +38,7 @@ DEFAULT_COMMIT_PATTERN = (
 )
 DEFAULT_ISSUE_PATTERN = r"#(\d+)"
 KIT_VERSION = re.compile(r"\d+\.\d+\.\d+")
+PROFILE_SCHEMA_VERSION = 1  # bump when the profile TOML schema breaks; one-minor deprecation (UPGRADE.md)
 DEFAULT_SECTIONS = ("Why", "What changes", "Acceptance scenarios", "Test plan", "Traceability")
 
 
@@ -174,6 +175,7 @@ class Profile:
     policy: str | None = None
     level: int = 1
     kit_version: str | None = None
+    schema_version: int = PROFILE_SCHEMA_VERSION
     base: str = "origin/main"
     gates: list[Gate] = field(default_factory=list)
     ratchets: list[Ratchet] = field(default_factory=list)
@@ -264,6 +266,10 @@ def _build(data: dict, errors: list[str]) -> Profile:
     if kit_version is not None and not (isinstance(kit_version, str) and KIT_VERSION.fullmatch(kit_version)):
         errors.append(f"[project] kit_version must be MAJOR.MINOR.PATCH, got {kit_version!r}")
         kit_version = None
+    schema_version = project.get("schema_version", PROFILE_SCHEMA_VERSION)
+    if not isinstance(schema_version, int) or isinstance(schema_version, bool) or schema_version < 1:
+        errors.append(f"[project] schema_version must be a positive integer, got {schema_version!r}")
+        schema_version = PROFILE_SCHEMA_VERSION
     tracker, spec, commits = data.get("tracker", {}), data.get("spec", {}), data.get("commits", {})
     tdd, context, skills = data.get("tdd", {}), data.get("context", {}), data.get("skills", {})
     protected, size, scope = data.get("protected", {}), data.get("size", {}), data.get("scope", {})
@@ -272,6 +278,7 @@ def _build(data: dict, errors: list[str]) -> Profile:
         policy=project.get("policy"),
         level=level,
         kit_version=kit_version,
+        schema_version=schema_version,
         base=project.get("base", "origin/main"),
         issue_pattern=_regex(tracker.get("issue_pattern", DEFAULT_ISSUE_PATTERN), "tracker.issue_pattern", errors),
         verify=tracker.get("verify"),

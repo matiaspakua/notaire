@@ -1,0 +1,5 @@
+# Time-to-first-verified-gate budget for the second-adopter sample (#2256).
+# The automated proof is tests/test_second_adopter.py (live wall-clock ≤ max).
+max_seconds=900
+target=gate plan exit 0 after install from wheel
+note=measured in CI/local unittest; fill measured_seconds=… when recording a manual run

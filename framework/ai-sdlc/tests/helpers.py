@@ -22,6 +22,30 @@ POLICY = "# Policy\n\nGates are absolute.\n"
 # A pre-push hook exports GIT_DIR; inherited, `git init` here would rewrite the real repository.
 ENV = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
 
+_ISOLATOR_SNAPSHOT: dict | None = None
+
+
+def isolator_live_snapshot() -> dict:
+    """One live Isolator probe for environment-aware honesty assertions.
+
+    GitHub-hosted runners often have ``bwrap`` (sandbox=true / status=ready); local
+    and some cloud VMs do not (no-evaluable / sandbox=false). Tests must assert the
+    honest probe result, never force a fake sandbox=false when containment works.
+    """
+    global _ISOLATOR_SNAPSHOT
+    if _ISOLATOR_SNAPSHOT is None:
+        sys.path.insert(0, str(KIT))
+        from aisdlc.isolator import isolator_status  # noqa: E402
+
+        _ISOLATOR_SNAPSHOT = isolator_status()
+    return dict(_ISOLATOR_SNAPSHOT)
+
+
+def isolator_sandbox_live() -> bool:
+    """True when the live containment probe reports an Isolator sandbox."""
+    snap = isolator_live_snapshot()
+    return bool(snap.get("sandbox")) and snap.get("status") == "ready"
+
 
 def git(root: Path, *args: str) -> str:
     out = subprocess.run(["git", *args], cwd=root, check=True, capture_output=True, text=True, env=ENV)

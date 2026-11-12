@@ -109,3 +109,4 @@ framework/ai-sdlc/.venv-telemetry/
 # On-demand testing inventory report (#2117) — never commit on feature PRs
 docs/300-development/303-testing/INVENTORY.generated.md
 
+*.egg-info/
