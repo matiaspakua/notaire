@@ -17,6 +17,9 @@ info:
     Phase C (#2241) extends that HTML adapter for mcp/providers/memory/rules/integrations
     and an evidence-backed runs monitor (`aisdlc report`/cost); it does not add a competing
     OpenAPI write tree (A.2/A.3 own `aisdlc serve` / If-Match).
+    Phase D (#2242) kit runtime HTML/serve (`aisdlc runtime`) adapts the same Project/Run
+    paths (`/factory/projects`, `/factory/runs`) and approved-workflow filter — not a second
+    schema set or config truth. Agent never commits or approves from that surface.
 servers:
   - url: http://127.0.0.1:8765
     description: Default `aisdlc serve` loopback (CLI remains the system of record)
