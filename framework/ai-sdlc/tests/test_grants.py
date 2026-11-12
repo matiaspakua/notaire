@@ -135,13 +135,21 @@ class GrantProfileTest(unittest.TestCase):
         self.assertNotIn('"sandbox": true', blob.replace(" ", ""))
         self.assertNotRegex(blob, r'"sandbox"\s*:\s*true')
 
-        from aisdlc.isolator import isolator_status  # noqa: E402
+        from helpers import isolator_live_snapshot, isolator_sandbox_live
 
-        payload = isolator_status()
-        self.assertEqual("no-evaluable", payload["status"])
-        self.assertIs(False, payload["sandbox"])
+        payload = isolator_live_snapshot()
+        # Declaring grants must not invent Isolator truth — match the live probe.
+        if isolator_sandbox_live():
+            self.assertEqual("ready", payload["status"])
+            self.assertIs(True, payload["sandbox"])
+        else:
+            self.assertEqual("no-evaluable", payload["status"])
+            self.assertIs(False, payload["sandbox"])
 
-    def test_isolator_stays_no_evaluable_with_grants_present(self):
+    def test_isolator_honesty_unchanged_when_grants_present(self):
+        """Grants do not fake Isolator; doctor Isolator line matches the live probe."""
+        from helpers import isolator_live_snapshot, isolator_sandbox_live
+
         repo = Repo(
             self,
             BASE
@@ -159,8 +167,17 @@ class GrantProfileTest(unittest.TestCase):
         self.assertEqual(0, doctor.returncode, output(doctor))
         combined = output(doctor).lower()
         self.assertIn("isolator", combined)
-        self.assertIn("no-evaluable", combined)
-        self.assertNotIn("sandbox=true", combined)
+        self.assertIn("grant", combined)
+        self.assertTrue("not a sandbox" in combined or "policy" in combined, combined)
+        snap = isolator_live_snapshot()
+        if isolator_sandbox_live():
+            self.assertEqual("ready", snap["status"])
+            self.assertIn("sandbox=true", combined)
+            self.assertIn("ready", combined)
+        else:
+            self.assertEqual("no-evaluable", snap["status"])
+            self.assertIn("no-evaluable", combined)
+            self.assertNotIn("sandbox=true", combined)
 
 
 if __name__ == "__main__":

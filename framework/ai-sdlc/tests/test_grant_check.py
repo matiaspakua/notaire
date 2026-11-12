@@ -96,19 +96,29 @@ class GrantWriteSetCheckTest(unittest.TestCase):
         self.assertTrue("not" in note and ("isolation" in note or "sandbox" in note), note)
 
     def test_doctor_denies_sandbox_for_grant_check(self):
-        """#2194: doctor INFO denies sandbox; Isolator stays no-evaluable."""
+        """#2194: grant INFO stays policy-only; Isolator honesty follows the live probe."""
+        from helpers import isolator_live_snapshot, isolator_sandbox_live
+
         repo = Repo(self, BASE + GRANT)
         doctor = repo.run("doctor")
         self.assertEqual(0, doctor.returncode, output(doctor))
         combined = output(doctor).lower()
         self.assertIn("grant", combined)
+        # Grants never claim to *be* a sandbox — policy wording stays honest either way.
         self.assertTrue(
-            "policy" in combined or "not a sandbox" in combined or "sandbox=false" in combined,
+            "policy" in combined or "not a sandbox" in combined,
             combined,
         )
         self.assertIn("isolator", combined)
-        self.assertIn("no-evaluable", combined)
-        self.assertNotIn("sandbox=true", combined)
+        snap = isolator_live_snapshot()
+        if isolator_sandbox_live():
+            self.assertEqual("ready", snap["status"])
+            self.assertIn("sandbox=true", combined)
+            self.assertIn("ready", combined)
+        else:
+            self.assertEqual("no-evaluable", snap["status"])
+            self.assertIn("no-evaluable", combined)
+            self.assertNotIn("sandbox=true", combined)
 
 
 if __name__ == "__main__":

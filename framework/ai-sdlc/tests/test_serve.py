@@ -148,7 +148,12 @@ class ServeHostTest(unittest.TestCase):
                 self.assertIs(False, data["approvals_live"])
                 self.assertIs(False, data["runner"])
                 self.assertIs(False, data["forge_write"])
-                self.assertIs(False, data["isolator"]["sandbox"])
+                # Isolator sandbox follows the live probe (bwrap on GH runners → true).
+                from helpers import isolator_live_snapshot
+
+                snap = isolator_live_snapshot()
+                self.assertEqual(bool(snap.get("sandbox")), data["isolator"]["sandbox"])
+                self.assertEqual(snap.get("status"), data["isolator"].get("status"))
             elif path == "/factory/config":
                 for key in (
                     "schema",
