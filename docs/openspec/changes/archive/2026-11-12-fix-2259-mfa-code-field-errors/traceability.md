@@ -35,11 +35,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| wrong code at login | login-page-mfa | pending |
-| lockout at login | login-page-mfa | pending |
-| editing clears the error | login-page-mfa | pending |
-| connection failure | login-page-mfa | pending |
-| wrong confirmation code at enrolment | login-page-mfa | pending |
+| wrong code at login | login-page-mfa | passing |
+| lockout at login | login-page-mfa | passing |
+| editing clears the error | login-page-mfa | passing |
+| connection failure | login-page-mfa | passing |
+| wrong confirmation code at enrolment | login-page-mfa | passing |
 
 ## Permanent documentation updated
 
