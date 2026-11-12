@@ -48,7 +48,8 @@ When `mode` is omitted, the binding SHALL default to `dry_run`.
 
 The Start run workflow picker SHALL list only workflows whose governance state
 is `approved`. Draft, defined, and validated workflows MUST be excluded from
-production start options.
+production start options. Adopter demo seed (#2243) SHALL be the supported way
+to materialize at least one approved workflow for local demos.
 
 #### Scenario: approved-only workflow picker
 
