@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| both dates missing | substitutions-form-validation | pending |
-| entering a date clears its error | substitutions-form-validation | pending |
-| both dates present | substitutions-form-validation | pending |
+| both dates missing | substitutions-form-validation | passing |
+| entering a date clears its error | substitutions-form-validation | passing |
+| both dates present | substitutions-form-validation | passing |
 
 ## Permanent documentation updated
 
