@@ -28,6 +28,12 @@ beforeEach(() => {
   useAuthStore.setState({ user: null, token: null, isAuthenticated: false });
 });
 
+function fieldError(): { invalid: string | null; text: string | undefined } {
+  const input = screen.getByTestId("input-mfa-code");
+  const id = input.getAttribute("aria-describedby")?.split(" ")[0];
+  return { invalid: input.getAttribute("aria-invalid"), text: id ? document.getElementById(id)?.textContent ?? undefined : undefined };
+}
+
 async function passPasswordStep() {
   fireEvent.change(screen.getByTestId("input-username"), { target: { value: "alice" } });
   fireEvent.change(screen.getByTestId("input-password"), { target: { value: "pw" } });
@@ -72,7 +78,8 @@ describe("LoginPage MFA challenge", () => {
     const input = await reachChallenge(() => ({ valid: false }));
     fireEvent.change(input, { target: { value: "000000" } });
     fireEvent.click(screen.getByTestId("btn-mfa-verify"));
-    await waitFor(() => expect(toast.error).toHaveBeenCalledWith("login.mfaError"));
+    await waitFor(() => expect(fieldError()).toEqual({ invalid: "true", text: "login.mfaError" }));
+    expect(toast.error).not.toHaveBeenCalled();
     expect(screen.getByTestId("input-mfa-code")).toHaveValue("");
     expect(useAuthStore.getState().isAuthenticated).toBe(false);
     expect(push).not.toHaveBeenCalled();
@@ -84,15 +91,43 @@ describe("LoginPage MFA challenge", () => {
     });
     fireEvent.change(input, { target: { value: "123456" } });
     fireEvent.click(screen.getByTestId("btn-mfa-verify"));
-    await waitFor(() => expect(toast.error).toHaveBeenCalledWith("Locked now"));
+    await waitFor(() => expect(fieldError()).toEqual({ invalid: "true", text: "Locked now" }));
+    expect(toast.error).not.toHaveBeenCalled();
   });
 
   it("does not send a malformed TOTP", async () => {
     const input = await reachChallenge();
     fireEvent.change(input, { target: { value: "12" } });
     fireEvent.click(screen.getByTestId("btn-mfa-verify"));
-    await waitFor(() => expect(toast.error).toHaveBeenCalledWith("login.mfaCodeInvalid"));
+    await waitFor(() => expect(fieldError()).toEqual({ invalid: "true", text: "login.mfaCodeInvalid" }));
+    expect(toast.error).not.toHaveBeenCalled();
     expect(post).toHaveBeenCalledTimes(1);
+  });
+
+  it("clears the code error as soon as the user edits the code or switches mode", async () => {
+    const input = await reachChallenge(() => ({ valid: false }));
+    fireEvent.change(input, { target: { value: "000000" } });
+    fireEvent.click(screen.getByTestId("btn-mfa-verify"));
+    await waitFor(() => expect(fieldError().invalid).toBe("true"));
+
+    fireEvent.change(screen.getByTestId("input-mfa-code"), { target: { value: "1" } });
+    expect(screen.getByTestId("input-mfa-code")).not.toHaveAttribute("aria-invalid");
+
+    fireEvent.change(screen.getByTestId("input-mfa-code"), { target: { value: "000000" } });
+    fireEvent.click(screen.getByTestId("btn-mfa-verify"));
+    await waitFor(() => expect(fieldError().invalid).toBe("true"));
+    fireEvent.click(screen.getByTestId("toggle-mfa-recovery"));
+    expect(screen.getByTestId("input-mfa-code")).not.toHaveAttribute("aria-invalid");
+  });
+
+  it("keeps a connection failure as a toast, since it is not about the code", async () => {
+    const input = await reachChallenge(() => {
+      throw new Error("network");
+    });
+    fireEvent.change(input, { target: { value: "123456" } });
+    fireEvent.click(screen.getByTestId("btn-mfa-verify"));
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith("login.connectionError"));
+    expect(screen.getByTestId("input-mfa-code")).not.toHaveAttribute("aria-invalid");
   });
 
   it("returns to the password step from the challenge", async () => {
