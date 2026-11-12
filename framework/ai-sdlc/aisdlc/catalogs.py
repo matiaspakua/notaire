@@ -420,7 +420,17 @@ def validate(ctx: Context, kind: str | None = None) -> int:
             if entry.get("error"):
                 errors.append(f"{k}/{entry['id']}: {entry['error']}")
                 continue
-            data = load_entry(ctx, k, entry["id"])
+            # Digest the on-disk payload (not load_entry normalize extras) so legacy
+            # flat files stay honest until migrated to the revision layout.
+            current = _current_path(ctx, k, entry["id"])
+            legacy = _legacy_path(ctx, k, entry["id"])
+            if current.is_file():
+                data = _read_json(current)
+            elif legacy.is_file():
+                data = _read_json(legacy)
+            else:
+                errors.append(f"{k}/{entry['id']}: missing on-disk entry")
+                continue
             expected = _digest(data)
             if data.get("digest") != expected:
                 errors.append(f"{k}/{entry['id']}: digest mismatch (file edited outside catalog CLI)")

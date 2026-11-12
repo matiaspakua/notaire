@@ -570,6 +570,28 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--port", type=int, default=8766, help="serve bind port (default 8766)")
 
     p = sub.add_parser(
+        "demo",
+        help="Kit-neutral factory adopter demo seed (#2243); never executes agents/MCP",
+    )
+    demo_sub = p.add_subparsers(dest="action", required=True)
+    dseed = demo_sub.add_parser(
+        "seed",
+        help="ensure catalogs + one approved workflow for UI demos",
+    )
+    dseed.add_argument(
+        "--from-stages",
+        action="store_true",
+        help="pin agents/skills from profile [[stages]] (Foreman knobs)",
+    )
+    dseed.add_argument(
+        "--workflow",
+        default="factory-feature",
+        help="workflow id to seed (default factory-feature)",
+    )
+    dseed.add_argument("--reason", help="Owner approve reason when approvals_live=false")
+    dseed.add_argument("--json", action="store_true")
+
+    p = sub.add_parser(
         "serve",
         help="Factory OpenAPI HTTP host (#2253/#2254); loopback + Bearer token",
     )
@@ -678,6 +700,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "run": lambda: _run(ctx, args),
         "backoffice": lambda: _backoffice(ctx, args),
         "runtime": lambda: _runtime(ctx, args),
+        "demo": lambda: _demo(ctx, args),
         "serve": lambda: _serve(ctx, args),
         "migrate": lambda: _migrate(ctx, args),
         "improve": lambda: _improve(ctx, args),
@@ -981,6 +1004,35 @@ def _runtime(ctx: Context, args: argparse.Namespace) -> int:
     except ProfileError as exc:
         print(f"error: {exc}")
         return 2
+
+
+def _demo(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc import demo
+
+    if args.action != "seed":
+        print(f"error: unknown demo action {args.action!r}")
+        return 2
+    try:
+        view = demo.seed(
+            ctx,
+            workflow_id=str(getattr(args, "workflow", None) or demo.DEFAULT_WORKFLOW_ID),
+            from_stages=bool(getattr(args, "from_stages", False)),
+            reason=getattr(args, "reason", None),
+        )
+    except KitError as exc:
+        print(f"error: {exc}")
+        return 2
+    except ProfileError as exc:
+        print(f"error: {exc}")
+        return 2
+    if getattr(args, "json", False):
+        print(json.dumps(view, indent=2, sort_keys=True))
+    else:
+        print(
+            f"demo seed: workflow {view.get('id')} governance={view.get('governance')} "
+            f"version={view.get('version')}"
+        )
+    return 0
 
 
 def _improve(ctx: Context, args: argparse.Namespace) -> int:

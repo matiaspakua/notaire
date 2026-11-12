@@ -1,0 +1,11 @@
+{
+  "created_at": "2026-11-12T04:39:16+00:00",
+  "created_by": "cli:local",
+  "digest": "2ba92e4aa84c13735e0b836f57617dce1b11f7ef0a9764bd23c0b25bb9a072a1",
+  "id": "maven-build",
+  "kind": "skills",
+  "ref": ".claude/skills/maven-build",
+  "schema_version": 1,
+  "summary": "Demo skills entry maven-build (declare-only; never executed)",
+  "version": 1
+}

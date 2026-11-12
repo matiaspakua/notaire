@@ -1,0 +1,11 @@
+{
+  "created_at": "2026-11-12T04:39:16+00:00",
+  "created_by": "cli:local",
+  "digest": "8797dae72bd6c81f1164d8047c997794fd15817d0a724a36bed466c60f0e4c5f",
+  "id": "openspec-update-change",
+  "kind": "skills",
+  "ref": ".claude/skills/openspec-update-change",
+  "schema_version": 1,
+  "summary": "Demo skills entry openspec-update-change (declare-only; never executed)",
+  "version": 1
+}

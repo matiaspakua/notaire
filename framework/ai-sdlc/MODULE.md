@@ -11,6 +11,7 @@ templates that `aisdlc init` scaffolds. Extracted from Notaire's process (#1958)
 - `framework/ai-sdlc/bin/aisdlc` and its exit codes: 0 passed, 1 a gate or check failed, 2 usage or configuration error
 - The profile schema documented in `README.md` (Notaire's profile: `.aisdlc/aisdlc.toml`), including the optional `[project] kit_version`
 - The wheel built from `pyproject.toml` (console script `aisdlc`, version from `aisdlc/__init__.py`; contents in `README.md` "Packaging and versioning")
+- `aisdlc demo seed` (#2243): kit-neutral approved-workflow seed for factory UI demos; documented in `docs/ADOPTER-DEMO.md`
 
 ## Seams (what this module reads from outside)
 

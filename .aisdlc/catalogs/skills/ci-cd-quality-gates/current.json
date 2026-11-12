@@ -1,0 +1,11 @@
+{
+  "created_at": "2026-11-12T04:39:16+00:00",
+  "created_by": "cli:local",
+  "digest": "c3dbe6082fe2f89eb20ba83aebd6279cf8faa96f5c99b64e56f42241518d3134",
+  "id": "ci-cd-quality-gates",
+  "kind": "skills",
+  "ref": ".claude/skills/ci-cd-quality-gates",
+  "schema_version": 1,
+  "summary": "Demo skills entry ci-cd-quality-gates (declare-only; never executed)",
+  "version": 1
+}

@@ -1,0 +1,44 @@
+{
+  "body": {
+    "inputs": [],
+    "outputs": [],
+    "steps": [
+      {
+        "agent": "agents:openspec-planner@1",
+        "budget": {
+          "time_seconds": null,
+          "tokens": null,
+          "usd": null
+        },
+        "gates": [],
+        "id": "main",
+        "mcp": [],
+        "on_fail": "stop",
+        "provider": null,
+        "skills": [
+          "skills:openspec-propose@1",
+          "skills:openspec-update-change@1",
+          "skills:openspec-triage@1",
+          "skills:qa-automation-strategy@1",
+          "skills:openspec-apply-change@1",
+          "skills:maven-build@1",
+          "skills:ai-agent-workflow@1",
+          "skills:ci-cd-quality-gates@1",
+          "skills:steward@1",
+          "skills:devsecops-traceability@1"
+        ],
+        "stage": "implement"
+      }
+    ]
+  },
+  "created_at": "2026-11-12T04:39:16+00:00",
+  "created_by": "cli:local",
+  "digest": "1a61b097d8de84f4b38f73e1cc13c90eb0c2b0d5079396081a68ab5b16e8ef5f",
+  "governance": "defined",
+  "id": "factory-feature",
+  "kind": "workflows",
+  "ref": null,
+  "schema_version": 2,
+  "summary": "Factory demo feature workflow (pinned refs; never auto-executed)",
+  "version": 3
+}

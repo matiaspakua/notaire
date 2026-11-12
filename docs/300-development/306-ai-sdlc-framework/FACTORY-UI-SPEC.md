@@ -166,7 +166,7 @@ Each PR ≤ 400 counted lines and one concern.
 | D1 | Projects and repo binding | A.4, B1 | #2242 — shipped via `aisdlc runtime` HTML/serve adapters |
 | D2 | Approved-workflow picker and start run (`RunRequest`) | D1, B2 | #2242 — shipped via `aisdlc runtime` |
 | D3 | Progress monitor from evidence | D2, C6 | #2242 — shipped via `aisdlc runtime` Monitor |
-| E | Notaire adopter demo path plus second adopter fixture | D3 | #2243 |
+| E | Notaire adopter demo path plus second adopter fixture (`aisdlc demo seed`, kit temp-project tests; public wheel sample remains #2256) — see [`FACTORY-ADOPTER-DEMO.md`](FACTORY-ADOPTER-DEMO.md) | D3 | #2243 |
 
 Packaging, conformance matrix and second adopter are independent of the A.x chain
 ([#2256](https://github.com/matiaspakua/notaire/issues/2256)); the intake lint is

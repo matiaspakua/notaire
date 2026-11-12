@@ -1,0 +1,11 @@
+{
+  "created_at": "2026-11-12T04:39:16+00:00",
+  "created_by": "cli:local",
+  "digest": "58e8e120f5046dfcb6859b8e8a94eac3483f4c329e52265cf830bad1a39f2456",
+  "id": "steward",
+  "kind": "skills",
+  "ref": ".claude/skills/steward",
+  "schema_version": 1,
+  "summary": "Demo skills entry steward (declare-only; never executed)",
+  "version": 1
+}

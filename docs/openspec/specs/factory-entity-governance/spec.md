@@ -35,6 +35,9 @@ A workflow SHALL carry governance state in
 SHALL fail closed. List/show/history MUST NOT execute workflow steps.
 **Phase B:** any HTML/serve adapter SHALL expose only legal transitions for the
 current state and MUST fail closed on illegal approve attempts (same guards as CLI).
+Adopter profiles MAY ship an `approved` workflow for factory UI demos when pins
+resolve and approve guards pass (Owner override when approvals_live=false)
+(#2243 Phase E).
 
 #### Scenario: happy path to approved
 - **WHEN** a workflow is created and transitions define → request_validation → approve with honest approval
@@ -47,6 +50,12 @@ current state and MUST fail closed on illegal approve attempts (same guards as C
 #### Scenario: UI respects illegal transition
 - **WHEN** backoffice attempts `approve` on a draft workflow
 - **THEN** the adapter fails and governance remains `draft`
+
+#### Scenario: happy path reaches approved with owner override when not live
+
+- **WHEN** a workflow with resolvable refs is defined, validated with a waive
+  reason, and approved with `--owner-override --reason` while approvals_live=false
+- **THEN** governance becomes `approved` and list `--approved` includes it
 
 ### Requirement: Approve honesty
 The `approve` transition SHALL require ApprovalPort verify success when
