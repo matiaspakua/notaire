@@ -78,9 +78,11 @@ function SubstitutionsList() {
 
   const [notaryId, setNotaryId] = useState("");
   const [substituteId, setSubstituteId] = useState("");
+  const [missingDates, setMissingDates] = useState({ start: false, end: false });
 
   function openCreate() {
     setEditing(EMPTY);
+    setMissingDates({ start: false, end: false });
     setNotaryId("");
     setSubstituteId("");
     setIsEditMode(false);
@@ -89,6 +91,7 @@ function SubstitutionsList() {
 
   function openEdit(s: Substitution) {
     setEditing(s);
+    setMissingDates({ start: false, end: false });
     setNotaryId(s.fkIdSubstituted?.personId?.toString() ?? "");
     setSubstituteId(s.fkIdSubstitute?.personId?.toString() ?? "");
     setIsEditMode(true);
@@ -96,6 +99,11 @@ function SubstitutionsList() {
   }
 
   async function handleSave() {
+    const missing = { start: !editing.dateStart, end: !editing.dateEnd };
+    if (missing.start || missing.end) {
+      setMissingDates(missing);
+      return;
+    }
     const payload: Partial<Substitution> = {
       dateStart: editing.dateStart,
       dateEnd: editing.dateEnd,
@@ -270,19 +278,19 @@ function SubstitutionsList() {
                 </FormField>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <FormField label={t("fields.desde")}>
+                <FormField label={t("fields.desde")} required error={missingDates.start ? tc("fieldRequired") : undefined}>
                   <Input
                     type="date"
                     value={toDateInputValue(editing.dateStart)}
-                    onChange={(e) => setEditing({ ...editing, dateStart: e.target.value })}
+                    onChange={(e) => { setEditing({ ...editing, dateStart: e.target.value }); setMissingDates((m) => ({ ...m, start: false })); }}
                     data-testid="input-start-date"
                   />
                 </FormField>
-                <FormField label={t("fields.hasta")}>
+                <FormField label={t("fields.hasta")} required error={missingDates.end ? tc("fieldRequired") : undefined}>
                   <Input
                     type="date"
                     value={toDateInputValue(editing.dateEnd)}
-                    onChange={(e) => setEditing({ ...editing, dateEnd: e.target.value })}
+                    onChange={(e) => { setEditing({ ...editing, dateEnd: e.target.value }); setMissingDates((m) => ({ ...m, end: false })); }}
                     data-testid="input-end-date"
                   />
                 </FormField>
