@@ -53,6 +53,7 @@ export default function ItemsPage() {
   const [editing, setEditing] = useState<Partial<Item>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
   const [budgetId, setBudgetId] = useState("");
+  const [reasonMissing, setReasonMissing] = useState(false);
   const [reportId, setReportId] = useState("");
   const [reportQuery, setReportQuery] = useState<number | undefined>(undefined);
   const { data: discountsAndSurcharges = [], isFetching: reportLoading } =
@@ -64,6 +65,7 @@ export default function ItemsPage() {
 
   function openCreate() {
     setEditing(EMPTY);
+    setReasonMissing(false);
     setBudgetId("");
     setIsEditMode(false);
     setModalOpen(true);
@@ -71,6 +73,7 @@ export default function ItemsPage() {
 
   function openEdit(item: Item) {
     setEditing(item);
+    setReasonMissing(false);
     setBudgetId(item.fkIdBudget?.idBudget?.toString() ?? "");
     setIsEditMode(true);
     setModalOpen(true);
@@ -79,7 +82,7 @@ export default function ItemsPage() {
   async function handleSave() {
     const type = editing.type ?? "NORMAL";
     if (type !== "NORMAL" && !editing.reason?.trim()) {
-      toast.error(t("reasonRequired"));
+      setReasonMissing(true);
       return;
     }
     const payload: Partial<Item> = {
@@ -258,7 +261,7 @@ export default function ItemsPage() {
               <FormField label={t("fields.tipoItem")}>
                 <Select
                   value={editing.type ?? "NORMAL"}
-                  onValueChange={(v) => setEditing({ ...editing, type: v as ItemType })}
+                  onValueChange={(v) => { setEditing({ ...editing, type: v as ItemType }); setReasonMissing(false); }}
                 >
                   <SelectTrigger data-testid="select-item-type">
                     <SelectValue />
@@ -273,10 +276,10 @@ export default function ItemsPage() {
                 </Select>
               </FormField>
               {editing.type && editing.type !== "NORMAL" && (
-                <FormField label={t("fields.motivo")} required>
+                <FormField label={t("fields.motivo")} required error={reasonMissing ? t("reasonRequired") : undefined}>
                   <Input
                     value={editing.reason ?? ""}
-                    onChange={(e) => setEditing({ ...editing, reason: e.target.value })}
+                    onChange={(e) => { setEditing({ ...editing, reason: e.target.value }); setReasonMissing(false); }}
                     placeholder={t("fields.motivoPlaceholder")}
                     data-testid="input-reason"
                   />
