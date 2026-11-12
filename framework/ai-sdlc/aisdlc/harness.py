@@ -101,6 +101,39 @@ class HarnessError(Exception):
     """A harness source failed a closed check. Maps to exit code 1."""
 
 
+def report_event(
+    ctx,
+    *,
+    run_id: str,
+    event: str,
+    adapter: str = "local-worker",
+    step: str | None = None,
+    step_status: str | None = None,
+    ok: bool | None = None,
+    budget_overrun: bool = False,
+    cancelled: bool = False,
+    blocked: bool = False,
+) -> dict:
+    """Local-worker reference adapter: append a harness run event (#2255).
+
+    Never launches agents. Hash-chain append only — see docs/HARNESS-REPORTING.md.
+    """
+    from aisdlc import runs
+
+    return runs.append_harness_event(
+        ctx,
+        run_id=run_id,
+        event=event,
+        adapter=adapter,
+        step=step,
+        step_status=step_status,
+        ok=ok,
+        budget_overrun=budget_overrun,
+        cancelled=cancelled,
+        blocked=blocked,
+    )
+
+
 def extract_fields(text: str) -> dict:
     """Pull the few adapter fields we need from a YAML-like source (stdlib only).
 

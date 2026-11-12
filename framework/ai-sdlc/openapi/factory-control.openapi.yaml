@@ -10,6 +10,8 @@ info:
     Phase A.2 (#2253) hosts declared GET paths on loopback with Bearer token scopes.
     Phase A.3 (#2254) enables opt-in writes (`aisdlc serve --write`) with If-Match,
     CSRF, schema_version, workflow body v2 pins, and server-derived created_by.
+    Phase A.4 (#2255) adds Project, Run, RunRequest schemas with evidence-derived
+    status and harness reporting; cancel returns 501 while runner is false.
     Phase B (#2240) kit backoffice HTML/serve is an adapter over the same catalog and
     workflow paths — not a second schema set or config truth.
     Phase C (#2241) extends that HTML adapter for mcp/providers/memory/rules/integrations
@@ -26,6 +28,8 @@ tags:
   - name: evidence
   - name: catalogs
   - name: workflows
+  - name: projects
+  - name: runs
 paths:
   /factory/capabilities:
     get:
@@ -316,6 +320,179 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Workflow"
+  /factory/projects:
+    get:
+      tags: [projects]
+      operationId: listProjects
+      summary: List factory projects (CLI `project list --json`)
+      responses:
+        "200":
+          description: Project list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectList"
+    post:
+      tags: [projects]
+      operationId: createProject
+      summary: Create a project (repos default mode=dry_run)
+      parameters:
+        - name: X-AISDLC-CSRF
+          in: header
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectWrite"
+      responses:
+        "200":
+          description: Created project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+  /factory/projects/{id}:
+    get:
+      tags: [projects]
+      operationId: getProject
+      summary: Show a project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+  /factory/projects/{id}/repos:
+    post:
+      tags: [projects]
+      operationId: addProjectRepo
+      summary: Bind a repository (mode defaults dry_run)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: X-AISDLC-CSRF
+          in: header
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectRepo"
+      responses:
+        "200":
+          description: Updated project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+  /factory/runs:
+    get:
+      tags: [runs]
+      operationId: listRuns
+      summary: List runs with evidence-derived status
+      responses:
+        "200":
+          description: Run list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RunList"
+    post:
+      tags: [runs]
+      operationId: startRun
+      summary: Start a run (appends RunRequest evidence for an approved workflow)
+      parameters:
+        - name: X-AISDLC-CSRF
+          in: header
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RunWrite"
+      responses:
+        "200":
+          description: Created run (status queued/requested — never running from request alone)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Run"
+        "409":
+          description: Workflow not approved
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /factory/runs/{id}:
+    get:
+      tags: [runs]
+      operationId: getRun
+      summary: Show a run (status derived from evidence)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Run
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Run"
+  /factory/runs/{id}/events:
+    get:
+      tags: [runs]
+      operationId: listRunEvents
+      summary: Evidence events for a run
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Run events
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RunEventList"
+  /factory/runs/{id}/cancel:
+    post:
+      tags: [runs]
+      operationId: cancelRun
+      summary: Cancel a run (501 while runner capability is false)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: X-AISDLC-CSRF
+          in: header
+          required: true
+          schema: { type: string }
+      responses:
+        "501":
+          description: Runner port not proven — honest refuse
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
 components:
   securitySchemes:
     bearerAuth:
@@ -689,3 +866,147 @@ components:
         waive_reason:
           type: [string, "null"]
           description: Required for request_validation in Phase A
+    ProjectRepo:
+      type: object
+      additionalProperties: true
+      required: [id]
+      properties:
+        id: { type: string }
+        forge: { type: string }
+        url: { type: string }
+        default_branch: { type: string }
+        mode:
+          type: string
+          enum: [dry_run, live]
+          default: dry_run
+          description: Defaults to dry_run when omitted
+    Project:
+      type: object
+      additionalProperties: true
+      required: [id, profile_ref, repos]
+      properties:
+        id: { type: string }
+        profile_ref: { type: string }
+        repos:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProjectRepo"
+        created_at: { type: string, format: date-time }
+        created_by: { type: string }
+    ProjectWrite:
+      type: object
+      additionalProperties: true
+      required: [id]
+      properties:
+        id: { type: string }
+        profile_ref: { type: string }
+        repos:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProjectRepo"
+    ProjectList:
+      type: object
+      additionalProperties: true
+      required: [kind, entries]
+      properties:
+        kind:
+          type: string
+          enum: [projects]
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/Project"
+    RunWorkflowRef:
+      type: object
+      additionalProperties: false
+      required: [id, version, digest]
+      properties:
+        id: { type: string }
+        version: { type: integer, minimum: 1 }
+        digest: { type: string }
+    RunStep:
+      type: object
+      additionalProperties: true
+      required: [id, status]
+      properties:
+        id: { type: string }
+        status:
+          type: string
+          description: pending|running|pass|fail|skip|todo — skip is never pass
+    Run:
+      type: object
+      additionalProperties: true
+      required: [id, project, workflow, status, requested_by, evidence_head, steps]
+      properties:
+        id: { type: string }
+        project: { type: string }
+        workflow:
+          $ref: "#/components/schemas/RunWorkflowRef"
+        status:
+          type: string
+          enum: [requested, queued, running, succeeded, failed, cancelled, blocked]
+          description: Derived from evidence only; never running from RunRequest alone
+        requested_by: { type: string }
+        requested_at: { type: string, format: date-time }
+        evidence_head: { type: string }
+        steps:
+          type: array
+          items:
+            $ref: "#/components/schemas/RunStep"
+    RunRequest:
+      type: object
+      additionalProperties: true
+      required: [kind, run_id, project, workflow, requested_by]
+      description: Evidence ledger event written on start-run
+      properties:
+        kind:
+          type: string
+          enum: [run.request]
+        run_id: { type: string }
+        project: { type: string }
+        workflow:
+          $ref: "#/components/schemas/RunWorkflowRef"
+        requested_by: { type: string }
+        ts: { type: string, format: date-time }
+        ok: { type: boolean }
+        prev: { type: string }
+    RunWrite:
+      type: object
+      additionalProperties: true
+      required: [project, workflow]
+      properties:
+        id: { type: string }
+        project: { type: string }
+        workflow:
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/RunWorkflowRef"
+    RunList:
+      type: object
+      additionalProperties: true
+      required: [kind, entries]
+      properties:
+        kind:
+          type: string
+          enum: [runs]
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/Run"
+    RunEventList:
+      type: object
+      additionalProperties: true
+      required: [run_id, events]
+      properties:
+        run_id: { type: string }
+        events:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+            required: [kind, run_id]
+            properties:
+              kind: { type: string }
+              run_id: { type: string }
+              ts: { type: string, format: date-time }
+              prev: { type: string }

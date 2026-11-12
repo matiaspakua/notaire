@@ -66,7 +66,8 @@ class FactoryContractTest(unittest.TestCase):
         self.assertIn("Phase C", text)
         self.assertIn("/factory/workflows", text)
         self.assertIn("/factory/catalogs/{kind}", text)
-        self.assertNotIn("/factory/runs/{id}/cancel", text)  # cancel stays out until ports honest
+        # A.4 declares cancel; honesty is HTTP 501 while runner is false (#2255).
+        self.assertIn("/factory/runs/{id}/cancel", text)
         repo = Repo(self, '[project]\nname = "demo"\npolicy = "POLICY.md"\n')
         repo.write("POLICY.md", "# P\n")
         result = repo.run("contract", "check")
@@ -91,6 +92,23 @@ class FactoryContractTest(unittest.TestCase):
         self.assertIn("WorkflowBodyV2", text)
         yaml_files = list((KIT / "openapi").glob("*.yaml")) + list((KIT / "openapi").glob("*.yml"))
         self.assertEqual(1, len(yaml_files))
+
+    def test_phase_a4_project_run_schemas(self):
+        """#2255: Project / Run / RunRequest schemas and paths; still one tree."""
+        text = self.contract.load_contract_text(KIT)
+        for marker in (
+            "Project",
+            "Run",
+            "RunRequest",
+            "/factory/projects",
+            "/factory/runs",
+            "/factory/runs/{id}/events",
+            "/factory/runs/{id}/cancel",
+        ):
+            self.assertIn(marker, text)
+        yaml_files = list((KIT / "openapi").glob("*.yaml")) + list((KIT / "openapi").glob("*.yml"))
+        self.assertEqual(1, len(yaml_files))
+        self.assertEqual([], self.contract.validate_contract(KIT))
 
 
 if __name__ == "__main__":

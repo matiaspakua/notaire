@@ -1,8 +1,9 @@
-"""``aisdlc serve`` HTTP host implementing factory OpenAPI paths (#2253 / #2254).
+"""``aisdlc serve`` HTTP host implementing factory OpenAPI paths (#2253–#2255).
 
 Stdlib only (``http.server``). GET is always available with Bearer ``read``.
 Mutating methods answer 405 unless started with ``--write``; then PUT catalogs
 requires write scope, ``X-AISDLC-CSRF`` matching the bearer token, and ``If-Match``.
+Phase A.4 adds GET/POST projects and runs; cancel returns 501 while runner is false.
 Static UI mounts at ``/ui/`` (placeholder only).
 """
 from __future__ import annotations
@@ -16,7 +17,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, unquote, urlparse
 
-from aisdlc import approval, catalogs, evidence, harness, isolator, workflows
+from aisdlc import approval, catalogs, evidence, harness, isolator, projects, runs, workflows
 from aisdlc.actor import from_token_identity
 from aisdlc.context import Context
 from aisdlc.errors import KitError
@@ -37,6 +38,9 @@ STATUS_FOR = {
     "if_match_required": 428,
     "csrf_required": 403,
     "writes_disabled": 405,
+    "not_implemented": 501,
+    "runner_unavailable": 501,
+    "workflow_not_approved": 409,
 }
 
 
@@ -148,6 +152,19 @@ def _dispatch_get(ctx: Context, path: str, query: dict[str, list[str]]) -> Any:
     m = re.fullmatch(r"/factory/catalogs/([^/]+)/([^/]+)/versions", path)
     if m:
         return catalogs.history(ctx, m.group(1), _assert_id(m.group(2)))
+    if path == "/factory/projects":
+        return projects.list_projects(ctx)
+    m = re.fullmatch(r"/factory/projects/([^/]+)", path)
+    if m:
+        return projects.show(ctx, _assert_id(m.group(1)))
+    if path == "/factory/runs":
+        return runs.list_runs(ctx)
+    m = re.fullmatch(r"/factory/runs/([^/]+)/events", path)
+    if m:
+        return runs.list_events(ctx, _assert_id(m.group(1)))
+    m = re.fullmatch(r"/factory/runs/([^/]+)", path)
+    if m:
+        return runs.show(ctx, _assert_id(m.group(1)))
     raise KitError("not_found", f"unknown path {path}")
 
 
@@ -198,6 +215,43 @@ def _dispatch_put(ctx: Context, path: str, body: dict, *, expected_version: int,
         expected_version=expected_version,
         actor=actor,
     )
+
+
+def _dispatch_post(ctx: Context, path: str, body: dict, *, actor: str) -> Any:
+    _guard_path(path)
+    if path == "/factory/projects":
+        return projects.create(
+            ctx,
+            project_id=str(body.get("id") or ""),
+            profile_ref=str(body.get("profile_ref") or "aisdlc.toml"),
+            repos=list(body.get("repos") or []),
+            actor=actor,
+        )
+    m = re.fullmatch(r"/factory/projects/([^/]+)/repos", path)
+    if m:
+        return projects.add_repo(
+            ctx,
+            project_id=_assert_id(m.group(1)),
+            repo=body if isinstance(body, dict) else {},
+            actor=actor,
+        )
+    if path == "/factory/runs":
+        workflow = body.get("workflow")
+        if isinstance(workflow, dict):
+            workflow_id = str(workflow.get("id") or "")
+        else:
+            workflow_id = str(workflow or "")
+        return runs.start(
+            ctx,
+            project_id=str(body.get("project") or ""),
+            workflow_id=workflow_id,
+            actor=actor,
+            run_id=str(body["id"]) if body.get("id") else None,
+        )
+    m = re.fullmatch(r"/factory/runs/([^/]+)/cancel", path)
+    if m:
+        runs.cancel_unavailable(ctx, _assert_id(m.group(1)))
+    raise KitError("method_not_allowed", f"POST not implemented for {path}")
 
 
 def static_root() -> Path:
@@ -345,6 +399,15 @@ def start_server(
                     data = _dispatch_put(
                         ctx, path, body, expected_version=expected, actor=actor,
                     )
+                    self._send_json(200, data)
+                    return
+                if method == "POST":
+                    active = self._token()
+                    require_token(self.headers.get("Authorization"), active, need="write")
+                    _require_csrf(self.headers, active)
+                    body = self._read_json_body()
+                    actor = from_token_identity(active.identity, active.scope)
+                    data = _dispatch_post(ctx, path, body, actor=actor)
                     self._send_json(200, data)
                     return
                 self._problem("method_not_allowed", f"{method} not implemented")

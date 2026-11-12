@@ -90,3 +90,16 @@ version-conflict Problem responses. No second OpenAPI write tree SHALL be added.
 - **WHEN** `aisdlc contract check` runs after this change
 - **THEN** the factory OpenAPI declares If-Match on catalog PUT and envelope
   fields `schema_version` and `created_by` without introducing a second tree
+
+### Requirement: One OpenAPI tree documents Project Run and RunRequest
+
+`openapi/factory-control.openapi.yaml` SHALL remain the single factory contract
+tree. It SHALL document Project, Run, and RunRequest schemas plus
+`/factory/projects` and `/factory/runs` paths (including events and cancel).
+No second OpenAPI tree SHALL be added.
+
+#### Scenario: OpenAPI Project Run RunRequest schemas present
+
+- **WHEN** `aisdlc contract check` runs after this change
+- **THEN** the factory OpenAPI declares Project, Run, and RunRequest schemas and
+  the project/run paths without introducing a second tree

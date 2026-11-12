@@ -23,6 +23,8 @@ REQUIRED_PATHS = (
     "/factory/report",
     "/factory/catalogs/{kind}",
     "/factory/workflows",
+    "/factory/projects",
+    "/factory/runs",
 )
 SCHEMA_MARKERS = (
     "FactoryEntity",
@@ -30,6 +32,9 @@ SCHEMA_MARKERS = (
     "Workflow",
     "WorkflowGovernanceState",
     "FactoryCapabilities",
+    "Project",
+    "Run",
+    "RunRequest",
 )
 CONFIG_REQUIRED = (
     "schema",
