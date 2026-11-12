@@ -18,6 +18,8 @@ saves expose `aria-busy`. Evidence: `docs/openspec/changes/archive/*-fix-2088-ad
 (after archive), `TS-0158`, and the PR for #2088. Case modules
 (managements/deeds/protocol/…) remain for later domain PRs.
 
+**#2259 module 1, `managements` page and create dialog** (Chromium, 1280 and 320px, axe wcag2a/2aa/21aa/22aa, 2026-11-12): 0 axe violations, no horizontal overflow, every control labelled, empty submit shows 5 required alerts. One failure: only 3 of the 5 alerts were tied to an `aria-invalid` control, because the shared `SearchCombobox` (Presupuesto, Escribano) ignored the FormField state. Fixed by reading `useFormFieldAria`; after the fix 5 of 5 on both viewports. Evidence: `docs/openspec/changes/archive/*-fix-2259-management-form-combobox-aria/`, `TS-0159`. The 34x20px breadcrumb link is an inline target and stays under the WCAG 2.5.8 spacing exception.
+
 Impeccable context was loaded for `frontend/src/theme/form-patterns.tsx`
 (Operate mode, `PRODUCT.md` / `DESIGN.md`). Provenance, from the repo and
 GitHub on 2026-11-08:

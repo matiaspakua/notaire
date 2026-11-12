@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| invalid field | search-combobox-form-field | pending |
-| required field | search-combobox-form-field | pending |
-| no field context | search-combobox-form-field | pending |
+| invalid field | search-combobox-form-field | passing |
+| required field | search-combobox-form-field | passing |
+| no field context | search-combobox-form-field | passing |
 
 ## Permanent documentation updated
 
