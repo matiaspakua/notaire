@@ -77,3 +77,16 @@ and Runs UI surfaces adapt existing catalog and evidence/report operations.
 - **WHEN** `aisdlc contract check` runs after Phase C lands
 - **THEN** the factory OpenAPI remains a single tree and Phase C does not add
   competing `/factory/*` write schemas for A.2/A.3 ownership
+
+### Requirement: One OpenAPI tree documents A.3 writes
+
+`openapi/factory-control.openapi.yaml` SHALL remain the single factory contract
+tree. It SHALL document `If-Match` on catalog PUT, `schema_version` /
+`created_by` on the entity envelope, workflow body v2 schemas, and 409
+version-conflict Problem responses. No second OpenAPI write tree SHALL be added.
+
+#### Scenario: If-Match and schema fields appear in OpenAPI
+
+- **WHEN** `aisdlc contract check` runs after this change
+- **THEN** the factory OpenAPI declares If-Match on catalog PUT and envelope
+  fields `schema_version` and `created_by` without introducing a second tree
