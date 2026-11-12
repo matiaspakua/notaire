@@ -15,6 +15,7 @@ interface MfaCodeInputProps {
   toggleTestId: string;
   disabled?: boolean;
   autoFocus?: boolean;
+  error?: string;
 }
 
 /** One field for a 6-digit TOTP or a recovery code, with an explicit mode toggle. */
@@ -27,12 +28,13 @@ export function MfaCodeInput({
   toggleTestId,
   disabled,
   autoFocus,
+  error,
 }: MfaCodeInputProps) {
   const t = useTranslations("mfa");
   const isTotp = mode === "totp";
   return (
     <>
-      <FormField label={isTotp ? t("codeLabel") : t("recoveryLabel")} required>
+      <FormField label={isTotp ? t("codeLabel") : t("recoveryLabel")} required error={error}>
         <Input
           data-testid={inputTestId}
           className="h-12 text-lg tracking-widest"

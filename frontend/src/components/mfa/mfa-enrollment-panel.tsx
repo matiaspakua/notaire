@@ -10,6 +10,8 @@ import { mfaUseCases } from "@/composition/mfa";
 import { InvalidCodeFormatError, type EnrollmentStart } from "@/core/mfa/domain/mfa";
 import { httpStatus } from "@/lib/http-error";
 
+const CONFIRM_ERROR_ID = "mfa-confirm-error";
+
 type Phase =
   | { kind: "loading" }
   | { kind: "error"; messageKey: string }
@@ -153,10 +155,12 @@ export function MfaEnrollmentPanel({ bearerToken, onDone }: MfaEnrollmentPanelPr
           inputMode="numeric"
           autoComplete="one-time-code"
           disabled={busy}
+          aria-invalid={confirmError ? true : undefined}
+          aria-describedby={confirmError ? CONFIRM_ERROR_ID : undefined}
         />
       </FormField>
       {confirmError && (
-        <p data-testid="mfa-error" role="alert" className="text-sm font-medium text-destructive">
+        <p id={CONFIRM_ERROR_ID} data-testid="mfa-error" role="alert" className="text-sm font-medium text-destructive">
           {t(confirmError)}
         </p>
       )}

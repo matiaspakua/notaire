@@ -24,9 +24,11 @@ export function MfaChallengeForm({ mfaToken, onBack, onSession }: MfaChallengeFo
   const [mode, setMode] = useState<SecondFactorMode>("totp");
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
+  const [codeError, setCodeError] = useState<string | undefined>();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setCodeError(undefined);
     setLoading(true);
     try {
       const outcome = resolveLoginOutcome(await mfaUseCases.completeLogin({ mfaToken, mode, value }));
@@ -34,13 +36,13 @@ export function MfaChallengeForm({ mfaToken, onBack, onSession }: MfaChallengeFo
         onSession(outcome.user);
         return;
       }
-      toast.error(t("mfaError"));
+      setCodeError(t("mfaError"));
       setValue("");
     } catch (error) {
       if (error instanceof InvalidCodeFormatError) {
-        toast.error(t("mfaCodeInvalid"));
+        setCodeError(t("mfaCodeInvalid"));
       } else if (httpStatus(error) === 429) {
-        toast.error(lockoutMessage(errorBody(error), t("lockoutError")));
+        setCodeError(lockoutMessage(errorBody(error), t("lockoutError")));
       } else {
         toast.error(t("connectionError"));
       }
@@ -57,12 +59,13 @@ export function MfaChallengeForm({ mfaToken, onBack, onSession }: MfaChallengeFo
         <MfaCodeInput
           mode={mode}
           value={value}
-          onChange={setValue}
-          onModeChange={setMode}
+          onChange={(next) => { setValue(next); setCodeError(undefined); }}
+          onModeChange={(next) => { setMode(next); setCodeError(undefined); }}
           inputTestId="input-mfa-code"
           toggleTestId="toggle-mfa-recovery"
           disabled={loading}
           autoFocus
+          error={codeError}
         />
         <FormActions align="center">
           <div className="flex w-full flex-col gap-3">
