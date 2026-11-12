@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 import unittest
 
@@ -93,6 +94,15 @@ class RuntimeHtmlTest(unittest.TestCase):
         self.assertIn('id="module-nav"', html)
         self.assertIn("module-nav right", html)
         self.assertIn('data-surface="runtime"', html)
+
+    def test_main_can_shrink_so_the_page_does_not_scroll_sideways_at_360px(self):
+        out = self.repo.root / "monitor.html"
+        result = self.repo.run("runtime", "--html", str(out), "--module", "monitor")
+        self.assertEqual(0, result.returncode, output(result))
+        html = out.read_text(encoding="utf-8")
+        main_rule = re.search(r"\bmain\s*\{([^}]*)\}", html)
+        self.assertIsNotNone(main_rule)
+        self.assertRegex(main_rule.group(1), r"min-width:\s*0")
 
     def test_approved_only_workflow_picker(self):
         self._approve("feature-delivery")

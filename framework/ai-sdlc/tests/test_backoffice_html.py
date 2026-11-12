@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -56,6 +57,18 @@ class BackofficeHtmlTest(unittest.TestCase):
         self.assertNotIn("Notaire", html)
         self.assertNotIn("notaire", html.lower())
         self.assertNotIn("/dashboard/administration", html)
+
+    def test_main_can_shrink_so_the_page_does_not_scroll_sideways_at_360px(self):
+        out = self.repo.root / "runs.html"
+        result = self.repo.run("backoffice", "--html", str(out), "--module", "runs")
+        self.assertEqual(0, result.returncode, output(result))
+        html = out.read_text(encoding="utf-8")
+        main_rule = re.search(r"\bmain\s*\{([^}]*)\}", html)
+        self.assertIsNotNone(main_rule)
+        self.assertRegex(main_rule.group(1), r"min-width:\s*0")
+        for pre in re.findall(r"<pre\b[^>]*>", html):
+            self.assertIn('tabindex="0"', pre, "a scrollable JSON block must be keyboard focusable")
+            self.assertIn("aria-label=", pre)
 
     def test_list_and_detail_for_agents_and_skills(self):
         out = self.repo.root / "agents.html"
