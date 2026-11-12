@@ -1,9 +1,9 @@
 """Factory control OpenAPI 3.1.0 contract (#2136).
 
 The document under `openapi/factory-control.openapi.yaml` describes CLI JSON payloads
-and any future HTTP adapter. The kit does not host a server and does not import the
-adopter's product OpenAPI. Breaking changes are checked with oasdiff when installed;
-accepted breaks live in `openapi/accepted-breaking-changes.d/`.
+and the ``aisdlc serve`` HTTP adapter (#2253). The kit does not import the adopter's
+product OpenAPI. Breaking changes are checked with oasdiff when installed; accepted
+breaks live in `openapi/accepted-breaking-changes.d/`.
 """
 from __future__ import annotations
 
@@ -16,6 +16,7 @@ KIT_ROOT = kit_root()
 CONTRACT_REL = "openapi/factory-control.openapi.yaml"
 ACCEPT_DIR_REL = "openapi/accepted-breaking-changes.d"
 REQUIRED_PATHS = (
+    "/factory/capabilities",
     "/factory/config",
     "/factory/plugins",
     "/factory/harness",
@@ -28,6 +29,7 @@ SCHEMA_MARKERS = (
     "EntityVersion",
     "Workflow",
     "WorkflowGovernanceState",
+    "FactoryCapabilities",
 )
 CONFIG_REQUIRED = (
     "schema",

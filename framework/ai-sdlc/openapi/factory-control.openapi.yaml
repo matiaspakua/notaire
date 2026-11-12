@@ -4,18 +4,21 @@ info:
   version: 1.1.0
   description: |
     Contract for factory control operations shared by the `aisdlc` CLI JSON payloads
-    and any future HTTP adapter. Separate from any adopter application API description.
-    No HTTP server is required to publish this description (#2136 / ADR-003).
+    and the `aisdlc serve` HTTP adapter (#2253 / ADR-003). Separate from any adopter
+    application API description. One OpenAPI tree only.
     Phase A (#2239) adds immutable entity revisions and workflow governance.
+    Phase A.2 (#2253) hosts declared GET paths on loopback with Bearer token scopes;
+    mutating methods answer 405 until A.3 If-Match writes.
     Phase B (#2240) kit backoffice HTML/serve is an adapter over the same catalog and
     workflow paths — not a second schema set or config truth.
     Phase C (#2241) extends that HTML adapter for mcp/providers/memory/rules/integrations
     and an evidence-backed runs monitor (`aisdlc report`/cost); it does not add a competing
     OpenAPI write tree (A.2/A.3 own `aisdlc serve` / If-Match).
 servers:
-  - url: https://factory.local/v1
-    description: Placeholder; CLI is the system of record today
+  - url: http://127.0.0.1:8765
+    description: Default `aisdlc serve` loopback (CLI remains the system of record)
 tags:
+  - name: capabilities
   - name: config
   - name: plugins
   - name: harness
@@ -23,6 +26,26 @@ tags:
   - name: catalogs
   - name: workflows
 paths:
+  /factory/capabilities:
+    get:
+      tags: [capabilities]
+      operationId: getFactoryCapabilities
+      summary: Honest live-port capabilities (approvals, runner, forge write, isolator)
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Port truth as reported by kit ports (false when not proven)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FactoryCapabilities"
+        "401":
+          description: Missing or invalid bearer token
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
   /factory/config:
     get:
       tags: [config]
@@ -269,7 +292,46 @@ paths:
               schema:
                 $ref: "#/components/schemas/Workflow"
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Token from `.aisdlc/serve.token` (scopes read < write < owner)
   schemas:
+    Problem:
+      type: object
+      additionalProperties: true
+      required: [type, title, status, detail, code]
+      properties:
+        type: { type: string }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        code: { type: string }
+    FactoryCapabilities:
+      type: object
+      additionalProperties: true
+      required: [approvals_live, runner, forge_write, isolator]
+      properties:
+        approvals_live: { type: boolean }
+        runner:
+          type: boolean
+          description: True only when an executable runner port is proven (never from stubs)
+        forge_write:
+          type: boolean
+          description: True only after Approval verify + scoped write (default false)
+        isolator:
+          type: object
+          additionalProperties: true
+          required: [sandbox, enforces_committer]
+          properties:
+            sandbox: { type: boolean }
+            enforces_committer: { type: boolean }
+            backend: { type: [string, "null"] }
+            status: { type: string }
+        detail:
+          type: object
+          additionalProperties: true
     CatalogKind:
       type: string
       enum: [skills, mcp, agents, memory, workflows, providers, integrations, rules]

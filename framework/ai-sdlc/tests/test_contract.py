@@ -72,6 +72,16 @@ class FactoryContractTest(unittest.TestCase):
         result = repo.run("contract", "check")
         self.assertEqual(0, result.returncode, output(result))
 
+    def test_phase_a2_capabilities_path_single_tree(self):
+        """#2253: additive capabilities path; still one OpenAPI document."""
+        text = self.contract.load_contract_text(KIT)
+        self.assertIn("/factory/capabilities", text)
+        self.assertIn("FactoryCapabilities", text)
+        self.assertIn("aisdlc serve", text)
+        yaml_files = list((KIT / "openapi").glob("*.yaml")) + list((KIT / "openapi").glob("*.yml"))
+        self.assertEqual(1, len(yaml_files))
+        self.assertEqual([], self.contract.validate_contract(KIT))
+
 
 if __name__ == "__main__":
     unittest.main()
