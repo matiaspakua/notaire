@@ -48,14 +48,28 @@ work from: required sections with content (default `Use Case`, `Acceptance crite
 checkbox, no placeholder (`#TBD`, `TBD`, `TODO`, `XXX`), every `#N` link resolved through
 `[tracker] verify`, and a label for each configured prefix. Each check is `pass`, `fail` or
 `no-evaluable`; exit 0 all pass, 1 any fail, 3 not evaluable (no `fetch`, fetch failed, or no
-`verify` to resolve links). Skip is never pass.
+`verify` to resolve links). Skip is never pass. Section names are adopter-configurable;
+kit code names no adopter product paths.
+
+`aisdlc foreman claim <issue> [--json] [--file issue.json]` is the claim-protocol gate: it runs
+the same lint and returns `intake_status`, `would_refuse`, `dispatch_allowed`, and `required`.
+When `[intake] required = true`, a non-pass refuses dispatch (exit 1 / 3). When advisory
+(`required = false`, the default), `would_refuse` is still reported but `dispatch_allowed`
+stays true and the exit is 0.
+
+`aisdlc intake board [--json] [--file board.json]` lints every open issue from `[tracker] list`
+(JSON array) or `--file`. The report includes counts and `clean` (true only when every issue
+passes). Enforcement is **raise-only**: set `required = true` only after a clean board report.
+In advisory mode a dirty board exits 0; under enforcement it exits 1 (or 3 when no-evaluable).
 
 ```toml
 [tracker]
 verify = "gh issue view {issue} --json number"
 fetch  = "gh issue view {issue} --json title,body,labels"   # one compact JSON object
+list   = "gh issue list --state open --json number,title,body,labels"
 
 [intake]                      # optional; these are the defaults
+required = false              # true = Foreman claim refuses on fail (raise-only after clean board)
 sections = ["Use Case", "Acceptance criteria", "Out of scope", "Test plan", "Size"]
 label_prefixes = ["area:", "type:"]
 placeholders = ["#TBD", "TBD", "TODO", "XXX"]
@@ -158,6 +172,8 @@ otherwise off. `core.*` / `security.*` cannot relax policy; required gates canno
 | `config show --redacted [--json] [--max-open-prs N]` | Prints the resolved factory view (includes optional `stages` knobs). Refuses to run without `--redacted`. Cannot raise the profile pull-request ceiling. | — (exit 2 on usage or an attempt to raise the ceiling) |
 | `stage list [--json]` | Lists optional per-stage knobs (`agents` / `skills` / `mcp` / `model` / `effort`). Read-only; never executes MCP or agents (#2182). | — |
 | `foreman plan\|route [--stage ID] [--json]` | Resolves a Foreman **dispatch plan** from `[[stages]]` knobs (#2196). Read-only; `executes=false` / `sandbox=false`; lists `unmapped_stages` (expected until knobs filled; #2211); never runs agents or MCP; not Isolator OS. | unknown `--stage` (exit 2) |
+| `foreman claim <issue> [--json] [--file F]` | Claim protocol (#2257): runs intake lint; refuses dispatch when `intake.required=true` and status is not pass. Advisory mode reports `would_refuse` without blocking. | required + non-pass |
+| `intake check\|board …` | Issue lint / clean-board report (#2257). See [Issue intake lint](#issue-intake-lint-2257). | fail / no-evaluable |
 | `plugin list` · `plugin capabilities` · `plugin plan --id ID --var K=V` | Reads trusted manifests. `plan` prints argv and does not run it. Untrusted ids are listed as unavailable. | — (exit 2 when the id is not available) |
 | `inventory check` | Validates `[factory] inventory`. Requires both migrated and planned rows, so a file cannot claim the move is finished. | the inventory is missing, inconsistent, or secret-shaped |
 | `harness list [--json]` · `harness show --id ID [--json]` | Lists profile `[harness.adapters]` plus harness-kind plugin stubs (#2188 Claude Code / Codex / ACP). Always reports `sandbox=false`. Not a commercial Harness product. Stubs stay out of `[plugins] allow` until Owner opts in. | show: source missing or runtime mismatch (exit 1); unknown id (exit 2) |

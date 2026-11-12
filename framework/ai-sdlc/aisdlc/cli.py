@@ -110,6 +110,13 @@ def build_parser() -> argparse.ArgumentParser:
         q = foreman_sub.add_parser(action, help=help_text)
         q.add_argument("--stage", help="limit to one gate stage id")
         q.add_argument("--json", action="store_true")
+    claim = foreman_sub.add_parser(
+        "claim",
+        help="refuse dispatch when intake fails and [intake] required=true (#2257)",
+    )
+    claim.add_argument("issue")
+    claim.add_argument("--file", help="issue JSON instead of [tracker] fetch")
+    claim.add_argument("--json", action="store_true")
 
     p = sub.add_parser("plugin", help="list trusted plugins without executing them")
     plugin_sub = p.add_subparsers(dest="action", required=True)
@@ -179,6 +186,12 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("issue")
     p.add_argument("--file", help="issue JSON (title, body, labels) instead of the [tracker] fetch command")
     p.add_argument("--json", action="store_true")
+    board = intake_sub.add_parser(
+        "board",
+        help="clean-board report over open issues ([tracker] list or --file); raise-only evidence (#2257)",
+    )
+    board.add_argument("--file", help="JSON array of issue objects instead of [tracker] list")
+    board.add_argument("--json", action="store_true")
     p = sub.add_parser(
         "grant",
         help="Grant profile data + write-set/expire policy (axiom 5; never Isolator OS alone) (#2192/#2194/#2198)",
@@ -708,7 +721,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "protected": lambda: diffchecks.protected(ctx, args.base),
         "size": lambda: diffchecks.size(ctx, args.base, args.limit),
         "scope": lambda: diffchecks.scope(ctx, args.base, args.strict),
-        "intake": lambda: intake.check(ctx, args.issue, args.file, args.json),
+        "intake": lambda: _intake(ctx, args),
         "committer": lambda: committer.check(ctx, args.base, args.json),
         "grant": lambda: _grant(ctx, args),
         "isolator": lambda: _isolator(ctx, args),
@@ -726,12 +739,25 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
 
 
 def _foreman(ctx: Context, args: argparse.Namespace) -> int:
+    if getattr(args, "action", None) == "claim":
+        return foreman.claim(
+            ctx,
+            args.issue,
+            getattr(args, "file", None),
+            bool(getattr(args, "json", False)),
+        )
     # plan and route are aliases (#2196)
     return foreman.plan(
         ctx,
         stage_id=getattr(args, "stage", None),
         as_json=bool(getattr(args, "json", False)),
     )
+
+
+def _intake(ctx: Context, args: argparse.Namespace) -> int:
+    if getattr(args, "action", None) == "board":
+        return intake.board(ctx, getattr(args, "file", None), bool(getattr(args, "json", False)))
+    return intake.check(ctx, args.issue, getattr(args, "file", None), bool(getattr(args, "json", False)))
 
 
 def _grant(ctx: Context, args: argparse.Namespace) -> int:

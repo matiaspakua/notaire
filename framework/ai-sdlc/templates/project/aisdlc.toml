@@ -13,6 +13,13 @@ base = "origin/main"             # base revision for diffs, path scoping and rat
 [tracker]
 issue_pattern = '#(\d+)'
 # verify = "gh issue view {issue} --json number"   # fail Gate 1 on an invented issue number
+# fetch  = "gh issue view {issue} --json title,body,labels"  # for aisdlc intake check / foreman claim
+# list   = "gh issue list --state open --json number,title,body,labels"  # for aisdlc intake board
+
+# [intake]                      # optional; advisory by default (#2257)
+# required = false              # true = Foreman claim refuses on fail (raise-only after clean board)
+# sections = ["Use Case", "Acceptance criteria", "Out of scope", "Test plan", "Size"]
+# label_prefixes = ["area:", "type:"]
 
 [spec]
 dir = ".aisdlc/changes"

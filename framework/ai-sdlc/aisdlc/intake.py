@@ -3,6 +3,9 @@
 Reads the issue through the profile's `[tracker] fetch` command (or `--file`) and lints it. Every
 check is `pass`, `fail` or `no-evaluable`; a check that cannot run is never a pass (axiom 3).
 Exit codes: 0 all pass, 1 any fail, 3 the issue could not be evaluated.
+
+Foreman claim refuse and the clean-board report live here too: enforcement is raise-only via
+`[intake] required` after a clean board over open issues.
 """
 from __future__ import annotations
 
@@ -23,6 +26,10 @@ HEADING = re.compile(r"^#{1,6}\s+(.+?)\s*#*\s*$")
 CHECKBOX = re.compile(r"^\s*[-*]\s+\[[ xX]\]\s+\S", re.M)
 LINK = re.compile(r"(?<![\w/])#(\d+)\b")
 COMMENT = re.compile(r"<!--.*?-->", re.DOTALL)
+BOARD_NOTE = (
+    "raise intake.required only after a clean report over the open board "
+    "(raise-only; do not flip enforcement without evidence)"
+)
 
 
 @dataclass(frozen=True)
@@ -32,6 +39,7 @@ class IntakeConfig:
     placeholders: tuple[str, ...] = DEFAULT_PLACEHOLDERS
     require_checkbox: bool = True
     max_links: int = DEFAULT_MAX_LINKS
+    required: bool = False
 
 
 Resolver = Callable[[int], bool]
@@ -45,6 +53,7 @@ def config_from(ctx: Context) -> IntakeConfig:
         placeholders=tuple(table.get("placeholders", DEFAULT_PLACEHOLDERS)),
         require_checkbox=table.get("require_checkbox", True),
         max_links=table.get("max_links", DEFAULT_MAX_LINKS),
+        required=bool(table.get("required", False)),
     )
 
 
@@ -144,19 +153,155 @@ def _resolver(ctx: Context) -> Resolver | None:
     return resolve
 
 
-def check(ctx: Context, issue: str, file: str | None, as_json: bool) -> int:
+def evaluate(ctx: Context, issue: str, file: str | None) -> dict:
+    """Return intake status payload without printing (shared by check / claim / board)."""
+    config = config_from(ctx)
     data, reason = _load(ctx, issue, file)
     if data is None:
-        payload = {"issue": issue, "status": "no-evaluable", "reason": reason, "checks": []}
-        print(json.dumps(payload, indent=2) if as_json else f"intake #{issue}: no-evaluable — {reason}")
+        return {
+            "issue": issue,
+            "status": "no-evaluable",
+            "reason": reason,
+            "checks": [],
+            "required": config.required,
+        }
+    results = lint(data, config, _resolver(ctx))
+    return {
+        "issue": issue,
+        "status": overall(results),
+        "checks": results,
+        "required": config.required,
+    }
+
+
+def claim_decision(status: str, required: bool) -> dict:
+    """Foreman claim protocol: refuse only when enforced and status is not pass."""
+    would_refuse = status != "pass"
+    return {
+        "intake_status": status,
+        "required": required,
+        "would_refuse": would_refuse,
+        "dispatch_allowed": (not would_refuse) or (not required),
+    }
+
+
+def check(ctx: Context, issue: str, file: str | None, as_json: bool) -> int:
+    payload = evaluate(ctx, issue, file)
+    status = payload["status"]
+    if status == "no-evaluable" and not payload.get("checks"):
+        out = {
+            "issue": issue,
+            "status": "no-evaluable",
+            "reason": payload.get("reason", ""),
+            "checks": [],
+        }
+        print(json.dumps(out, indent=2) if as_json else f"intake #{issue}: no-evaluable — {out['reason']}")
         return NO_EVALUABLE_EXIT
-    results = lint(data, config_from(ctx), _resolver(ctx))
-    status = overall(results)
     if as_json:
-        print(json.dumps({"issue": issue, "status": status, "checks": results}, indent=2, sort_keys=True))
+        print(json.dumps({"issue": issue, "status": status, "checks": payload.get("checks", [])}, indent=2, sort_keys=True))
     else:
-        for row in results:
+        for row in payload.get("checks") or []:
             detail = f" — {row['detail']}" if row["detail"] else ""
             print(f"  {row['status'].upper():<13} {row['name']}{detail}")
         print(f"intake #{issue}: {status}")
     return {"pass": 0, "fail": 1}.get(status, NO_EVALUABLE_EXIT)
+
+
+def _load_board(ctx: Context, file: str | None) -> tuple[list | None, str]:
+    if file:
+        try:
+            data = json.loads(Path(file).read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            return None, f"cannot read {file}: {exc}"
+        return (data, "") if isinstance(data, list) else (None, "board file is not a JSON array")
+    if not ctx.profile.list:
+        return None, "no [tracker] list command in the profile and no --file"
+    outcome = run_shell(ctx.expand(ctx.profile.list, {}), ctx.root, timeout=120)
+    if outcome.exit != 0:
+        return None, f"list failed (exit {outcome.exit})"
+    try:
+        data = json.loads("\n".join(outcome.tail))
+    except ValueError:
+        return None, "list output is not a JSON array"
+    return (data, "") if isinstance(data, list) else (None, "list output is not a JSON array")
+
+
+def _issue_id(issue: dict, index: int) -> str:
+    for key in ("number", "id"):
+        value = issue.get(key)
+        if value is not None:
+            return str(value)
+    return str(index + 1)
+
+
+def board_report(issues: list, config: IntakeConfig, resolver: Resolver | None) -> dict:
+    rows = []
+    counts = {"pass": 0, "fail": 0, "no-evaluable": 0}
+    for index, issue in enumerate(issues):
+        if not isinstance(issue, dict):
+            status = "no-evaluable"
+            entry = {"issue": str(index + 1), "status": status, "reason": "board entry is not an object"}
+        else:
+            results = lint(issue, config, resolver)
+            status = overall(results)
+            entry = {"issue": _issue_id(issue, index), "status": status, "checks": results}
+        counts[status] = counts.get(status, 0) + 1
+        rows.append(entry)
+    clean = bool(issues) and counts["fail"] == 0 and counts["no-evaluable"] == 0
+    if not issues:
+        clean = True
+    if counts["fail"]:
+        status = "fail"
+    elif counts["no-evaluable"]:
+        status = "no-evaluable"
+    else:
+        status = "pass"
+    return {
+        "status": status,
+        "clean": clean,
+        "required": config.required,
+        "counts": counts,
+        "issues": rows,
+        "note": BOARD_NOTE,
+    }
+
+
+def board(ctx: Context, file: str | None, as_json: bool) -> int:
+    config = config_from(ctx)
+    issues, reason = _load_board(ctx, file)
+    if issues is None:
+        payload = {
+            "status": "no-evaluable",
+            "clean": False,
+            "required": config.required,
+            "counts": {"pass": 0, "fail": 0, "no-evaluable": 0},
+            "issues": [],
+            "reason": reason,
+            "note": BOARD_NOTE,
+        }
+        if as_json:
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(f"intake board: no-evaluable — {reason}")
+        return NO_EVALUABLE_EXIT
+    payload = board_report(issues, config, _resolver(ctx))
+    if as_json:
+        print(json.dumps(payload, indent=2, sort_keys=True))
+    else:
+        print(
+            f"intake board: {payload['status']} clean={str(payload['clean']).lower()} "
+            f"pass={payload['counts']['pass']} fail={payload['counts']['fail']} "
+            f"no-evaluable={payload['counts']['no-evaluable']}"
+        )
+        print(f"  note: {payload['note']}")
+        for row in payload["issues"]:
+            print(f"  {row['status'].upper():<13} #{row['issue']}")
+        if payload["status"] == "fail" and not config.required:
+            print("intake board: FAIL (advisory — set intake.required = true only after clean=true)")
+    if not config.required:
+        return 0
+    if payload["status"] == "fail":
+        return 1
+    if payload["status"] == "no-evaluable":
+        return NO_EVALUABLE_EXIT
+    return 0
