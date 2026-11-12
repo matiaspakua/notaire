@@ -140,6 +140,16 @@ describe("list", () => {
     expect(await screen.findByText("Efectivo")).toBeInTheDocument();
   });
 
+  it("names every icon-only row action with an aria-label, not a title alone", async () => {
+    await renderPage();
+    await screen.findByText("Efectivo");
+
+    const row = within(rowOf("Efectivo"));
+    expect(row.getByTitle("pagos.emitirRecibo")).toHaveAttribute("aria-label", "pagos.emitirRecibo");
+    expect(row.getByRole("button", { name: "common.edit" })).toBeInTheDocument();
+    expect(row.getByRole("button", { name: "common.delete" })).toBeInTheDocument();
+  });
+
   it("issues the receipt of a payment and reports a failure", async () => {
     await renderPage();
     await screen.findByText("Efectivo");

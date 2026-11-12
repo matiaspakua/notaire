@@ -20,6 +20,8 @@ saves expose `aria-busy`. Evidence: `docs/openspec/changes/archive/*-fix-2088-ad
 
 **#2259 module 1, `managements` page and create dialog** (Chromium, 1280 and 320px, axe wcag2a/2aa/21aa/22aa, 2026-11-12): 0 axe violations, no horizontal overflow, every control labelled, empty submit shows 5 required alerts. One failure: only 3 of the 5 alerts were tied to an `aria-invalid` control, because the shared `SearchCombobox` (Presupuesto, Escribano) ignored the FormField state. Fixed by reading `useFormFieldAria`; after the fix 5 of 5 on both viewports. Evidence: `docs/openspec/changes/archive/*-fix-2259-management-form-combobox-aria/`, `TS-0159`. The 34x20px breadcrumb link is an inline target and stays under the WCAG 2.5.8 spacing exception.
 
+**#2259 module 2, `payments` page and create dialog** (same method, 2026-11-12): 0 axe violations, no horizontal overflow at 1280 and 320px, all controls labelled, empty submit shows 3 required alerts each tied to an `aria-invalid` control (Presupuesto through the `SearchCombobox` fix of module 1), primary 44px, delete behind `ConfirmDialog`, submit disabled while pending. One gap: the receipt row action was named by `title` alone (edit and delete had `aria-label`); it now has one. Evidence: `docs/openspec/changes/archive/*-fix-2259-payments-receipt-aria-label/`. Row action target sizes on a populated list were not measured (no seeded payment).
+
 Impeccable context was loaded for `frontend/src/theme/form-patterns.tsx`
 (Operate mode, `PRODUCT.md` / `DESIGN.md`). Provenance, from the repo and
 GitHub on 2026-11-08:
