@@ -12,6 +12,7 @@ import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { useFormFieldAria } from "@/theme/form-field-context";
 
 const MAX_OPTIONS = 50;
 
@@ -69,6 +70,7 @@ export function SearchCombobox<T>({
   "data-testid": testId,
 }: SearchComboboxProps<T>) {
   const listId = useId();
+  const fieldAria = useFormFieldAria({});
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
@@ -174,6 +176,7 @@ export function SearchCombobox<T>({
         aria-expanded={open}
         aria-controls={listId}
         aria-autocomplete="list"
+        {...fieldAria}
         aria-activedescendant={activeOption ? optionId(activeOption) : undefined}
         autoComplete="off"
         spellCheck={false}
