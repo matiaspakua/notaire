@@ -1,0 +1,92 @@
+name: AI SDLC kit
+
+# Kit packaging remainders (#2256):
+# - On PRs/pushes that touch framework/ai-sdlc: run the conformance matrix.
+# - On aisdlc-v* tags: build wheel + sdist, attach CycloneDX SBOM and provenance
+#   attestation to a GitHub Release. Does NOT publish to PyPI (Owner decision).
+
+on:
+  # Tag pushes must not share a paths filter with branch pushes (GitHub ANDs them).
+  push:
+    tags:
+      - "aisdlc-v*"
+  pull_request:
+    paths:
+      - "framework/ai-sdlc/**"
+      - ".github/workflows/aisdlc-kit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  conformance:
+    name: conformance-matrix
+    if: github.event_name != 'push' || !startsWith(github.ref, 'refs/tags/aisdlc-v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install build tooling (offline-friendly setuptools)
+        run: python3 -m pip install -q setuptools wheel
+      - name: Kit verify (includes conformance matrix)
+        run: env -u TRACEPARENT bash framework/ai-sdlc/verify.sh
+
+  release:
+    name: release-wheel-sdist
+    if: startsWith(github.ref, 'refs/tags/aisdlc-v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install build tooling
+        run: python3 -m pip install -q build setuptools wheel
+      - name: Build wheel and sdist
+        working-directory: framework/ai-sdlc
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          python3 -m build --outdir dist
+          ls -la dist
+      - name: Generate CycloneDX SBOM
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: "fs"
+          scan-ref: "framework/ai-sdlc"
+          format: "cyclonedx"
+          output: "framework/ai-sdlc/dist/sbom-aisdlc.cdx.json"
+      - name: Create GitHub Release and upload assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          NOTES="AI SDLC kit ${TAG}
+
+          Wheel and sdist for offline \`pip install\`. SBOM: sbom-aisdlc.cdx.json.
+          Provenance attestation is attached via GitHub artifact attestations.
+          PyPI publishing is an Owner decision (not performed by this workflow)."
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            gh release create "$TAG" --title "$TAG" --notes "$NOTES"
+          fi
+          gh release upload "$TAG" \
+            framework/ai-sdlc/dist/*.whl \
+            framework/ai-sdlc/dist/*.tar.gz \
+            framework/ai-sdlc/dist/sbom-aisdlc.cdx.json \
+            --clobber
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            framework/ai-sdlc/dist/*.whl
+            framework/ai-sdlc/dist/*.tar.gz

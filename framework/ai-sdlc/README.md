@@ -82,7 +82,26 @@ copy (`tools/ai-sdlc`) is a plain source layout and runs with `python3 tools/ai-
 
 `[project] kit_version = "MAJOR.MINOR.PATCH"` is optional. `init` and `install` write the running version;
 `aisdlc doctor` prints INFO when it differs in minor or patch, WARN when the major differs, and never fails
-the run for it. Release automation, provenance and publishing are tracked in #2256 / #2251.
+the run for it. `[project] schema_version` is a positive integer (currently `1`); absent means `1`.
+
+### Releases (`aisdlc-v*`)
+
+Pushing a tag `aisdlc-vX.Y.Z` runs `.github/workflows/aisdlc-kit.yml`: wheel + sdist, CycloneDX SBOM
+(`sbom-aisdlc.cdx.json`), and GitHub artifact provenance attestation attached to the GitHub Release.
+**PyPI publishing is an Owner decision / non-goal** until asked (see `docs/UPGRADE.md`). Kit semver is
+independent of Notaire release-please. Kit history: `CHANGELOG.md`.
+
+### Conformance matrix
+
+CI (same workflow on kit path changes) and `tests/test_conformance_matrix.py` install the built wheel and,
+for each stock profile (`go-service`, `java-maven`, `node-web`, `python-service`), run
+`install → doctor → change new → gate plan → gate red → report`, asserting exit 0. Fixtures keep the stock
+profile name and use offline stubs for language tools.
+
+### Second adopter
+
+`samples/second-adopter/` is a non-product sample that adopts via the wheel. Automated proof:
+`tests/test_second_adopter.py` (time to first verified `gate plan` ≤ 15 minutes).
 ## Service layer and `KitError` (#2252)
 
 `workflows.py` and `catalogs.py` expose adapter-neutral functions: they return dicts and never print.
@@ -195,6 +214,7 @@ name = "acme"                 # required
 policy = "CONSTITUTION.md"    # the single process document
 level = 2                     # 1 guided · 2 gated · 3 fleet · 4 autonomous
 kit_version = "1.0.0"         # optional: kit release the profile was written for (doctor reports skew)
+schema_version = 1              # optional: profile TOML schema (absent → 1); see docs/UPGRADE.md
 base = "origin/main"          # default base revision
 
 [tracker]

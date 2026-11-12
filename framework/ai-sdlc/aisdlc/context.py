@@ -13,10 +13,10 @@ from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
 
+from aisdlc.kitroot import kit_root
 from aisdlc.profile import Profile
 from aisdlc.repo import clean_env
 
-KIT_BIN = Path(__file__).resolve().parents[1] / "bin" / "aisdlc"
 TAIL_LINES = 40
 
 
@@ -41,7 +41,9 @@ class Context:
         return command
 
     def self_command(self) -> str:
-        parts = [sys.executable, str(KIT_BIN), "--root", str(self.root)]
+        # Prefer the kit's bin entry (source tree or wheel `aisdlc/_kit/bin`), not site-packages/bin.
+        kit_bin = kit_root() / "bin" / "aisdlc"
+        parts = [sys.executable, str(kit_bin), "--root", str(self.root)]
         if self.profile_path is not None:
             parts += ["--profile", str(self.profile_path)]
         return " ".join(shlex.quote(p) for p in parts)

@@ -102,9 +102,12 @@ Numbering follows the issue; sections 3-8 and 11 live in [`FACTORY-UI-SPEC.md`](
 7. **Scope guard (P7).** No Context Lake, Port.io clone, hosted compute or interface builder
    (the epic refusals stay).
 
-Tracking issues: P1, P2 and P3 are [#2256](https://github.com/matiaspakua/notaire/issues/2256);
-P4 spans [#2254](https://github.com/matiaspakua/notaire/issues/2254) (`schema_version`,
-`migrate`) and #2256 (profile skew); P5 and P6 have no issue yet and wait for P1.
+Tracking issues: P1, P2 and P3 are [#2256](https://github.com/matiaspakua/notaire/issues/2256)
+(slice 1 wheel/skew shipped; remainders: kit-tag release + SBOM/provenance, conformance matrix,
+second-adopter sample, profile `schema_version`, kit CHANGELOG/UPGRADE — PyPI still Owner-gated);
+P4 spans [#2254](https://github.com/matiaspakua/notaire/issues/2254) (entity `schema_version`,
+`migrate`) and #2256 (profile skew + profile `schema_version`); P5 and P6 have no issue yet and
+wait for P1.
 
 ## 10. Improvements for the Notaire AI SDLC itself
 
