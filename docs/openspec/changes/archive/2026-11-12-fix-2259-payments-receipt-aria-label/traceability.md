@@ -35,8 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| receipt action | payments-page-actions | pending |
-| edit and delete keep their names | payments-page-actions | pending |
+| receipt action | payments-page-actions | passing |
+| edit and delete keep their names | payments-page-actions | passing |
 
 ## Permanent documentation updated
 
