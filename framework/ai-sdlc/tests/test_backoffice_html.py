@@ -66,6 +66,9 @@ class BackofficeHtmlTest(unittest.TestCase):
         main_rule = re.search(r"\bmain\s*\{([^}]*)\}", html)
         self.assertIsNotNone(main_rule)
         self.assertRegex(main_rule.group(1), r"min-width:\s*0")
+        for pre in re.findall(r"<pre\b[^>]*>", html):
+            self.assertIn('tabindex="0"', pre, "a scrollable JSON block must be keyboard focusable")
+            self.assertIn("aria-label=", pre)
 
     def test_list_and_detail_for_agents_and_skills(self):
         out = self.repo.root / "agents.html"

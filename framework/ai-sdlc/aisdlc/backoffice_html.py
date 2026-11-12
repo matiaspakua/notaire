@@ -129,6 +129,7 @@ def render_shell(data: dict[str, Any], *, form_action: str | None = None) -> str
   main {{
     padding: 1.75rem 1.5rem 2.5rem;
     max-width: 52rem;
+    min-width: 0;
   }}
   .module-nav.right {{
     border-left: 1px solid var(--line);
@@ -312,7 +313,7 @@ def _render_runs_monitor(data: dict[str, Any]) -> str:
     <button type="button" data-action="retry" data-supported="{retry_attr}"{retry_disabled} class="action-disabled">Retry</button>
   </div>
   <h3>Report summary (redacted)</h3>
-  <pre class="json">{html.escape(json.dumps(report, indent=2, sort_keys=True), quote=False)}</pre>
+  <pre class="json" tabindex="0" aria-label="JSON detail">{html.escape(json.dumps(report, indent=2, sort_keys=True), quote=False)}</pre>
 </section>
 """
 
@@ -395,7 +396,7 @@ def _render_detail(module: str, detail: dict[str, Any], history: dict[str, Any],
     </tbody>
   </table>
   <h3>Current (redacted)</h3>
-  <pre class="json">{pretty}</pre>
+  <pre class="json" tabindex="0" aria-label="JSON detail">{pretty}</pre>
 </section>
 """
 

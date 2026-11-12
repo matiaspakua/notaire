@@ -83,6 +83,7 @@ def render_shell(data: dict[str, Any], *, form_action: str | None = None) -> str
   main {{
     padding: 1.75rem 1.5rem 2.5rem;
     max-width: 52rem;
+    min-width: 0;
   }}
   .module-nav.right {{
     border-left: 1px solid var(--line);
@@ -253,7 +254,7 @@ def _render_projects(data: dict[str, Any], action: str, title_label: str) -> str
     </label>
     <button type="submit">Bind repo</button>
   </form>
-  <pre class="json">{_esc(json.dumps(detail, indent=2, sort_keys=True))}</pre>
+  <pre class="json" tabindex="0" aria-label="JSON detail">{_esc(json.dumps(detail, indent=2, sort_keys=True))}</pre>
 </section>
 """
 
