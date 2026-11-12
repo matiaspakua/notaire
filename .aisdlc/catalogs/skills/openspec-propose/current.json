@@ -1,0 +1,11 @@
+{
+  "created_at": "2026-11-12T04:39:16+00:00",
+  "created_by": "cli:local",
+  "digest": "5c568ae36101e9704cec58d34fea43d87c91fa2053e0506a4e29895f5e9dfbf8",
+  "id": "openspec-propose",
+  "kind": "skills",
+  "ref": ".claude/skills/openspec-propose",
+  "schema_version": 1,
+  "summary": "Demo skills entry openspec-propose (declare-only; never executed)",
+  "version": 1
+}

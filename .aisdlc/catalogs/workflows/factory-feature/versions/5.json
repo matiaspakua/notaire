@@ -1,0 +1,97 @@
+{
+  "approval": {
+    "mode": "owner_override",
+    "reason": "Owner Phase E demo seed (approvals_live=false)"
+  },
+  "body": {
+    "inputs": [],
+    "outputs": [],
+    "steps": [
+      {
+        "agent": "agents:openspec-planner@1",
+        "budget": {
+          "time_seconds": null,
+          "tokens": null,
+          "usd": null
+        },
+        "gates": [],
+        "id": "main",
+        "mcp": [],
+        "on_fail": "stop",
+        "provider": null,
+        "skills": [
+          "skills:openspec-propose@1",
+          "skills:openspec-update-change@1",
+          "skills:openspec-triage@1",
+          "skills:qa-automation-strategy@1",
+          "skills:openspec-apply-change@1",
+          "skills:maven-build@1",
+          "skills:ai-agent-workflow@1",
+          "skills:ci-cd-quality-gates@1",
+          "skills:steward@1",
+          "skills:devsecops-traceability@1"
+        ],
+        "stage": "implement"
+      }
+    ]
+  },
+  "created_at": "2026-11-12T04:39:16+00:00",
+  "created_by": "cli:local",
+  "digest": "57371500de5cefdd60b1d3b4605b3ca8f9ec2e53b2b66a5068917df7b2ad49e5",
+  "governance": "approved",
+  "id": "factory-feature",
+  "kind": "workflows",
+  "ref": null,
+  "schema_version": 2,
+  "summary": "Factory demo feature workflow (pinned refs; never auto-executed)",
+  "validation": {
+    "pins": [
+      {
+        "digest": "f92271bc3a3ebd2129a33cde8ec0a6a050e9816e6f9874f6163273f55b437bde",
+        "ref": "agents:openspec-planner@1"
+      },
+      {
+        "digest": "5c568ae36101e9704cec58d34fea43d87c91fa2053e0506a4e29895f5e9dfbf8",
+        "ref": "skills:openspec-propose@1"
+      },
+      {
+        "digest": "8797dae72bd6c81f1164d8047c997794fd15817d0a724a36bed466c60f0e4c5f",
+        "ref": "skills:openspec-update-change@1"
+      },
+      {
+        "digest": "458acfd8fbcb54f44cc9f3f15aa7a9d06b0209e955a3950e477b0b6c79822e05",
+        "ref": "skills:openspec-triage@1"
+      },
+      {
+        "digest": "938e6d9e96053fbcc01cc7e3061d3a62c55a554b484e9ea55828b9e0323b096c",
+        "ref": "skills:qa-automation-strategy@1"
+      },
+      {
+        "digest": "9b5c28c7122bb0dfacaaed01000a51e8133b89903e0b22736ad200fe99d9502e",
+        "ref": "skills:openspec-apply-change@1"
+      },
+      {
+        "digest": "2ba92e4aa84c13735e0b836f57617dce1b11f7ef0a9764bd23c0b25bb9a072a1",
+        "ref": "skills:maven-build@1"
+      },
+      {
+        "digest": "080b84c42ed531cf998be88e9aea4135d038f703e5c26407fb993d8c1c79b550",
+        "ref": "skills:ai-agent-workflow@1"
+      },
+      {
+        "digest": "c3dbe6082fe2f89eb20ba83aebd6279cf8faa96f5c99b64e56f42241518d3134",
+        "ref": "skills:ci-cd-quality-gates@1"
+      },
+      {
+        "digest": "58e8e120f5046dfcb6859b8e8a94eac3483f4c329e52265cf830bad1a39f2456",
+        "ref": "skills:steward@1"
+      },
+      {
+        "digest": "c59f548609058a7721678d2560b4e604447abb81f052212f0dcbb7afab7e26b8",
+        "ref": "skills:devsecops-traceability@1"
+      }
+    ],
+    "waive_reason": "Phase E demo dry-run validation"
+  },
+  "version": 5
+}

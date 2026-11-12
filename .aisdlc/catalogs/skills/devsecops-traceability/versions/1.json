@@ -1,0 +1,11 @@
+{
+  "created_at": "2026-11-12T04:39:16+00:00",
+  "created_by": "cli:local",
+  "digest": "c59f548609058a7721678d2560b4e604447abb81f052212f0dcbb7afab7e26b8",
+  "id": "devsecops-traceability",
+  "kind": "skills",
+  "ref": ".claude/skills/devsecops-traceability",
+  "schema_version": 1,
+  "summary": "Demo skills entry devsecops-traceability (declare-only; never executed)",
+  "version": 1
+}
