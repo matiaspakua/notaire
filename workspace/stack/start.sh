@@ -125,6 +125,7 @@ if [ ! -f ".env" ]; then
 fi
 
 bash "$REPO_DIR/infra/scripts/ensure-actuator-credentials.sh" .env
+bash "$REPO_DIR/infra/scripts/ensure-mfa-encryption-key.sh" .env
 
 POSTGRES_USER="$(env_value POSTGRES_USER admin)"
 POSTGRES_DB="$(env_value POSTGRES_DB notaire)"

@@ -364,7 +364,8 @@ if [ "$MODE_FAST" = "0" ]; then
     run "pages vitest" bash -c "cd github-page && ./node_modules/.bin/vitest run"
     # Match pages-ci.yml (#1985): the export links to /notaire/demo/, so the demo
     # must be built into out/ before check-links runs.
-    run "pages build + link check" bash -c "cd github-page && ./node_modules/.bin/next build && npm run build:demo && node scripts/check-links.mjs out"
+    # npm run build (not bare next build) so prebuild refreshes releases.json (#2270).
+    run "pages build + link check" bash -c "cd github-page && npm run build && npm run build:demo && node scripts/check-links.mjs out"
     if [ "$MODE_FULL" = "1" ]; then
         run "pages playwright + axe" bash -c "cd github-page && ./node_modules/.bin/playwright test"
     else

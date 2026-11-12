@@ -1,13 +1,27 @@
 {
-  "productVersion": "0.3.0",
-  "train": "v0.3 · Hexagonal core & security (2026-11)",
-  "tag": "v0.3.0",
+  "productVersion": "0.4.1",
+  "train": "v0.4 · Product completeness (2026-12)",
+  "tag": "v0.4.1",
   "components": {
-    "backend": "0.3.0",
-    "frontend": "0.3.0",
+    "backend": "0.4.1",
+    "frontend": "0.4.1",
     "databaseSchema": "54"
   },
   "releases": [
+    {
+      "version": "0.4.1",
+      "date": "2026-11-11",
+      "tag": "v0.4.1",
+      "train": "v0.4 · Product completeness (2026-12)",
+      "url": "https://github.com/matiaspakua/notaire/releases/tag/v0.4.1"
+    },
+    {
+      "version": "0.4.0",
+      "date": "2026-11-10",
+      "tag": "v0.4.0",
+      "train": "v0.4 · Product completeness (2026-12)",
+      "url": "https://github.com/matiaspakua/notaire/releases/tag/v0.4.0"
+    },
     {
       "version": "0.3.0",
       "date": "2026-11-08",
