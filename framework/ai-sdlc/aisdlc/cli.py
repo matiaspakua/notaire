@@ -546,6 +546,30 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--port", type=int, default=8765, help="serve bind port (default 8765)")
 
     p = sub.add_parser(
+        "runtime",
+        help="Kit-neutral factory runtime HTML/serve over Project/Run ports (#2242)",
+    )
+    p.add_argument(
+        "--html",
+        type=Path,
+        help="write a static runtime HTML snapshot (read-only forms)",
+    )
+    p.add_argument(
+        "--module",
+        choices=["projects", "start", "monitor"],
+        default="projects",
+        help="runtime page to render (default projects)",
+    )
+    p.add_argument("--id", help="project or run id for detail")
+    p.add_argument(
+        "--serve",
+        action="store_true",
+        help="start a loopback HTTP adapter for create project / bind repo / start run",
+    )
+    p.add_argument("--host", default="127.0.0.1", help="serve bind host (default 127.0.0.1)")
+    p.add_argument("--port", type=int, default=8766, help="serve bind port (default 8766)")
+
+    p = sub.add_parser(
         "serve",
         help="Factory OpenAPI HTTP host (#2253/#2254); loopback + Bearer token",
     )
@@ -653,6 +677,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "project": lambda: _project(ctx, args),
         "run": lambda: _run(ctx, args),
         "backoffice": lambda: _backoffice(ctx, args),
+        "runtime": lambda: _runtime(ctx, args),
         "serve": lambda: _serve(ctx, args),
         "migrate": lambda: _migrate(ctx, args),
         "improve": lambda: _improve(ctx, args),
@@ -926,6 +951,31 @@ def _backoffice(ctx: Context, args: argparse.Namespace) -> int:
             ctx,
             html_path,
             module=str(getattr(args, "module", "workflows") or "workflows"),
+            entity_id=getattr(args, "id", None),
+        )
+    except ProfileError as exc:
+        print(f"error: {exc}")
+        return 2
+
+
+def _runtime(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc import runtime
+
+    try:
+        if getattr(args, "serve", False):
+            return runtime.serve(
+                ctx,
+                host=str(getattr(args, "host", "127.0.0.1") or "127.0.0.1"),
+                port=int(getattr(args, "port", 8766) or 8766),
+            )
+        html_path = getattr(args, "html", None)
+        if html_path is None:
+            print("error: runtime requires --html PATH or --serve")
+            return 2
+        return runtime.export_html(
+            ctx,
+            html_path,
+            module=str(getattr(args, "module", "projects") or "projects"),
             entity_id=getattr(args, "id", None),
         )
     except ProfileError as exc:
