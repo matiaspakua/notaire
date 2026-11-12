@@ -176,8 +176,38 @@ describe("create", () => {
 
     fireEvent.click(saveButton());
 
-    expect(toast.error).toHaveBeenCalledWith(`${I}.reasonRequired`);
+    const reason = screen.getByTestId("input-reason");
+    expect(reason).toHaveAttribute("aria-invalid", "true");
+    const describedBy = reason.getAttribute("aria-describedby");
+    expect(describedBy).toBeTruthy();
+    expect(document.getElementById(describedBy!.split(" ")[0])).toHaveTextContent(`${I}.reasonRequired`);
+    expect(toast.error).not.toHaveBeenCalled();
     expect(apiPost).not.toHaveBeenCalled();
+  });
+
+  it("clears the reason error as soon as a reason is typed", async () => {
+    await renderPage();
+    fireEvent.click(screen.getByTestId("btn-new-item"));
+    await pickType(`${I}.types.RECARGO`);
+    fireEvent.click(saveButton());
+    expect(screen.getByTestId("input-reason")).toHaveAttribute("aria-invalid", "true");
+
+    fireEvent.change(screen.getByTestId("input-reason"), { target: { value: "urgente" } });
+
+    expect(screen.getByTestId("input-reason")).not.toHaveAttribute("aria-invalid");
+  });
+
+  it("does not show a stale reason error when the dialog is opened again", async () => {
+    await renderPage();
+    fireEvent.click(screen.getByTestId("btn-new-item"));
+    await pickType(`${I}.types.RECARGO`);
+    fireEvent.click(saveButton());
+    fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: /common\.cancel/ }));
+
+    fireEvent.click(screen.getByTestId("btn-new-item"));
+    await pickType(`${I}.types.RECARGO`);
+
+    expect(screen.getByTestId("input-reason")).not.toHaveAttribute("aria-invalid");
   });
 
   it("sends a surcharge with its reason, and hides the reason again for a normal item", async () => {
