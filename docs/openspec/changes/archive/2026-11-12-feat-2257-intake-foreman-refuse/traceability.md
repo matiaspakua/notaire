@@ -16,10 +16,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|
 | Issue | #2257 | open (WIP label SKIPPED — issues:write 403) |
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure | exists |
-| Specification | `docs/openspec/changes/feat-2257-intake-foreman-refuse/` | drafted |
+| Specification | `docs/openspec/changes/archive/2026-11-12-feat-2257-intake-foreman-refuse/` | archived |
 | Branch | `cursor/2257_intake-foreman-refuse-7ab7` | created |
-| Tasks | `tasks.md` | pending |
-| Commits | | pending |
+| Tasks | `tasks.md` | Gate 1–8 mostly complete; preflight pending |
+| Commits | `da631016`, `08e1fa83` | recorded |
 | Pull Request | # | pending |
 | CI run | | pending |
 | Merge commit | | pending |
