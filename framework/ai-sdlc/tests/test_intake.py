@@ -137,5 +137,105 @@ class IntakeCliTest(unittest.TestCase):
         self.assertEqual(0, result.returncode, output(result))
 
 
+ENFORCED = PROFILE + "\n[intake]\nrequired = true\n"
+ADVISORY = PROFILE + "\n[intake]\nrequired = false\n"
+
+
+class ForemanClaimTest(unittest.TestCase):
+    def test_enforced_claim_refuses_a_failing_issue(self):
+        repo = Repo(self, ENFORCED)
+        repo.write("issue-8.json", json.dumps({**ISSUE, "body": "no sections"}))
+        result = repo.run("foreman", "claim", "8", "--json")
+        self.assertEqual(1, result.returncode, output(result))
+        payload = json.loads(result.stdout)
+        self.assertEqual("fail", payload["intake_status"])
+        self.assertTrue(payload["required"])
+        self.assertTrue(payload["would_refuse"])
+        self.assertFalse(payload["dispatch_allowed"])
+
+    def test_advisory_claim_reports_fail_without_refusing(self):
+        repo = Repo(self, ADVISORY)
+        repo.write("issue-8.json", json.dumps({**ISSUE, "body": "no sections"}))
+        result = repo.run("foreman", "claim", "8", "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        payload = json.loads(result.stdout)
+        self.assertEqual("fail", payload["intake_status"])
+        self.assertFalse(payload["required"])
+        self.assertTrue(payload["would_refuse"])
+        self.assertTrue(payload["dispatch_allowed"])
+
+    def test_claim_allows_a_passing_issue(self):
+        repo = Repo(self, ENFORCED)
+        repo.write("issue-7.json", json.dumps(ISSUE))
+        result = repo.run("foreman", "claim", "7", "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        payload = json.loads(result.stdout)
+        self.assertEqual("pass", payload["intake_status"])
+        self.assertFalse(payload["would_refuse"])
+        self.assertTrue(payload["dispatch_allowed"])
+
+
+BOARD_PROFILE = """
+    [tracker]
+    verify = "true"
+    list = "cat {root}/board.json"
+"""
+
+
+class IntakeBoardTest(unittest.TestCase):
+    def test_clean_board_reports_clean_true(self):
+        repo = Repo(self, BOARD_PROFILE + "\n[intake]\nrequired = false\n")
+        repo.write("board.json", json.dumps([{**ISSUE, "number": 1}, {**ISSUE, "number": 2}]))
+        result = repo.run("intake", "board", "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        payload = json.loads(result.stdout)
+        self.assertTrue(payload["clean"])
+        self.assertEqual("pass", payload["status"])
+        self.assertEqual({"pass": 2, "fail": 0, "no-evaluable": 0}, payload["counts"])
+
+    def test_dirty_board_reports_clean_false_advisory_exit_zero(self):
+        repo = Repo(self, BOARD_PROFILE + "\n[intake]\nrequired = false\n")
+        repo.write(
+            "board.json",
+            json.dumps([{**ISSUE, "number": 1}, {**ISSUE, "number": 2, "body": "broken"}]),
+        )
+        result = repo.run("intake", "board", "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        payload = json.loads(result.stdout)
+        self.assertFalse(payload["clean"])
+        self.assertEqual("fail", payload["status"])
+        self.assertIn("raise-only", payload["note"].lower())
+
+    def test_no_list_command_is_no_evaluable(self):
+        repo = Repo(self, '[tracker]\nverify = "true"\n')
+        result = repo.run("intake", "board")
+        self.assertEqual(3, result.returncode)
+        self.assertIn("no-evaluable", output(result))
+
+    def test_file_option_replaces_list(self):
+        repo = Repo(self, '[tracker]\nverify = "true"\n')
+        path = repo.write("board.json", json.dumps([{**ISSUE, "number": 3}]))
+        result = repo.run("intake", "board", "--file", str(path), "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        self.assertTrue(json.loads(result.stdout)["clean"])
+
+    def test_enforced_dirty_board_exits_one(self):
+        repo = Repo(self, BOARD_PROFILE + "\n[intake]\nrequired = true\n")
+        repo.write("board.json", json.dumps([{**ISSUE, "number": 1, "body": "broken"}]))
+        result = repo.run("intake", "board", "--json")
+        self.assertEqual(1, result.returncode)
+        self.assertFalse(json.loads(result.stdout)["clean"])
+
+
+class IntakeKitPurityTest(unittest.TestCase):
+    def test_intake_and_foreman_sources_name_no_notaire_paths(self):
+        root = __import__("pathlib").Path(__file__).resolve().parents[1] / "aisdlc"
+        forbidden = ("backend-api/", "docs/openspec/", "matiaspakua/notaire")
+        for name in ("intake.py", "foreman.py"):
+            text = (root / name).read_text(encoding="utf-8")
+            for needle in forbidden:
+                self.assertNotIn(needle, text, f"{name} must not hard-code {needle}")
+
+
 if __name__ == "__main__":
     unittest.main()

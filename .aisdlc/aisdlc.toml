@@ -20,6 +20,15 @@ issue_pattern = '#(\d+)'
 verify = "gh issue view {issue} --repo matiaspakua/notaire --json number"
 # Issue text for `aisdlc intake check <n>` (#2257): one compact JSON object with title, body, labels.
 fetch = "gh issue view {issue} --repo matiaspakua/notaire --json title,body,labels"
+# Open-board list for `aisdlc intake board` (#2257): JSON array of issue objects.
+list = "gh issue list --repo matiaspakua/notaire --state open --limit 200 --json number,title,body,labels"
+
+# Intake lint (#2257): advisory first. Foreman claim reports would_refuse without blocking.
+# Raise required=true only after `aisdlc intake board --json` shows clean=true (raise-only).
+[intake]
+required = false
+sections = ["Use Case", "Acceptance criteria", "Out of scope", "Test plan", "Size"]
+label_prefixes = ["area:", "type:"]
 
 [spec]
 # Notaire uses OpenSpec (schema notaire-sdlc); the plan gate calls its validator.

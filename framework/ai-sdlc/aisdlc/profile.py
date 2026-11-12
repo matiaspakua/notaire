@@ -183,6 +183,7 @@ class Profile:
     issue_pattern: str = DEFAULT_ISSUE_PATTERN
     verify: str | None = None
     fetch: str | None = None
+    list: str | None = None
     intake: dict = field(default_factory=dict)
     spec_dir: str = ".aisdlc/changes"
     sections: tuple[str, ...] = DEFAULT_SECTIONS
@@ -283,6 +284,7 @@ def _build(data: dict, errors: list[str]) -> Profile:
         issue_pattern=_regex(tracker.get("issue_pattern", DEFAULT_ISSUE_PATTERN), "tracker.issue_pattern", errors),
         verify=tracker.get("verify"),
         fetch=tracker.get("fetch"),
+        list=tracker.get("list"),
         intake=_intake_table(data.get("intake", {}), errors),
         spec_dir=spec.get("dir", ".aisdlc/changes"),
         sections=tuple(spec.get("sections", DEFAULT_SECTIONS)),
@@ -493,6 +495,11 @@ def _intake_table(table, errors: list[str]) -> dict:
             out["require_checkbox"] = table["require_checkbox"]
         else:
             errors.append("intake.require_checkbox must be true or false")
+    if "required" in table:
+        if isinstance(table["required"], bool):
+            out["required"] = table["required"]
+        else:
+            errors.append("intake.required must be true or false")
     if "max_links" in table:
         value = _positive(table["max_links"], "intake.max_links", errors)
         if value is not None:

@@ -9,7 +9,12 @@ You orchestrate; you do not implement the change you review.
 
 ## Loop
 
-1. Pick one ready issue (`intake`); claim it so no other agent takes it; push the branch at once.
+1. Pick one ready issue (`intake`). Run `aisdlc foreman claim <n> --json` before any
+   specialist dispatch. When `dispatch_allowed` is false, refuse and stop (intake failed
+   under `[intake] required = true`). Advisory mode (`required = false`) still reports
+   `would_refuse` but allows dispatch — raise enforcement only after a clean
+   `aisdlc intake board --json`. Then claim the forge issue so no other agent takes it;
+   push the branch at once.
 2. Before each stage dispatch, run `aisdlc foreman plan --json` (alias `foreman route`;
    optional `--stage <id>`). Use the returned agents/skills/mcp/model/effort knobs.
    This is read-only routing — it never executes agents or MCP and is not Isolator OS.
