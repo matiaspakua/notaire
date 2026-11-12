@@ -73,8 +73,12 @@ describe("MfaEnrollmentPanel", () => {
     await reachConfirmStep();
     fireEvent.change(screen.getByTestId("input-mfa-confirm-code"), { target: { value: "123456" } });
     fireEvent.click(screen.getByTestId("btn-mfa-confirm"));
-    expect(await screen.findByTestId("mfa-error")).toHaveTextContent("mfa.confirmWrong");
-    expect(screen.getByTestId("input-mfa-confirm-code")).not.toBeDisabled();
+    const error = await screen.findByTestId("mfa-error");
+    expect(error).toHaveTextContent("mfa.confirmWrong");
+    const input = screen.getByTestId("input-mfa-confirm-code");
+    expect(input).toHaveAttribute("aria-invalid", "true");
+    expect(input.getAttribute("aria-describedby")?.split(" ")).toContain(error.id);
+    expect(input).not.toBeDisabled();
     expect(screen.getByTestId("mfa-secret")).toBeInTheDocument();
   });
 
