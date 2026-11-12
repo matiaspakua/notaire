@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| save without reason | items-page-actions | pending |
-| typing clears the error | items-page-actions | pending |
-| reopening | items-page-actions | pending |
+| save without reason | items-page-actions | passing |
+| typing clears the error | items-page-actions | passing |
+| reopening | items-page-actions | passing |
 
 ## Permanent documentation updated
 
