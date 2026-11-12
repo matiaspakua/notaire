@@ -1,7 +1,8 @@
 # factory-ui-responsive Specification
 
 ## Purpose
-TBD - created by archiving change fix-2277-factory-ui-no-sideways-scroll. Update Purpose after archive.
+
+The factory backoffice and runtime HTML shells do not scroll sideways at 360 px; scrollable JSON blocks stay keyboard focusable.
 
 ## Requirements
 
