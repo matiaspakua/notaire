@@ -48,3 +48,62 @@ The profile MAY record `[project] kit_version`. `aisdlc doctor` SHALL compare it
 
 - **WHEN** `kit_version` is absent
 - **THEN** doctor prints no skew line; when it is not `MAJOR.MINOR.PATCH`, the profile is rejected
+
+### Requirement: Kit tag release with SBOM and provenance
+
+On a push of a tag matching `aisdlc-v*`, the kit release workflow SHALL build a wheel and an sdist, attach a CycloneDX SBOM and a GitHub artifact provenance attestation to the GitHub Release for those artifacts, and SHALL NOT publish to PyPI unless the Owner later asks.
+
+#### Scenario: release workflow declares kit tag build and attest
+
+- **WHEN** the kit CI workflow file is read
+- **THEN** it triggers on `aisdlc-v*` tags, builds wheel and sdist under `framework/ai-sdlc`, uploads them with an SBOM asset, and includes a provenance attestation step; PyPI publish steps are absent
+
+### Requirement: Conformance matrix for stock profiles
+
+For each stock profile name `go-service`, `java-maven`, `node-web` and `python-service`, a conformance fixture SHALL install the built kit wheel into a clean environment and run `install → doctor → change new → gate plan → gate red → report`, asserting the expected exit codes.
+
+#### Scenario: each profile matrix row exits successfully through report
+
+- **WHEN** the conformance matrix runs for a stock profile fixture
+- **THEN** install, doctor, change new, gate plan, gate red and report each exit 0
+
+### Requirement: Second-adopter wheel proof
+
+A non-Notaire sample project SHALL adopt the kit via the installed wheel. Time from empty repo to first verified gate (`gate plan` exit 0) SHALL be measured and SHALL be ≤ 15 minutes.
+
+#### Scenario: second adopter reaches first verified gate within fifteen minutes
+
+- **WHEN** the second-adopter sample is installed from the built wheel and runs through doctor and gate plan
+- **THEN** gate plan exits 0 and the recorded elapsed seconds are ≤ 900
+
+### Requirement: Profile schema_version
+
+The profile MAY record `[project] schema_version` as a positive integer. `aisdlc init` and `aisdlc install` SHALL write the current profile schema version. An invalid value SHALL fail profile load. Absence SHALL be treated as schema version 1 for compatibility.
+
+#### Scenario: init records schema_version
+
+- **WHEN** `aisdlc init` scaffolds a profile
+- **THEN** the profile contains `[project] schema_version` equal to the kit's current profile schema version
+
+#### Scenario: invalid schema_version is rejected
+
+- **WHEN** the profile sets `schema_version` to a non-positive or non-integer value
+- **THEN** profile load fails naming `schema_version`
+
+### Requirement: Kit changelog and upgrade policy
+
+The kit SHALL ship a kit-local `CHANGELOG.md` and an upgrade document that states a deprecation window of one minor version. PyPI publishing SHALL be documented as an Owner decision / non-goal until asked.
+
+#### Scenario: changelog and upgrade notes exist
+
+- **WHEN** the kit packaging docs are inspected
+- **THEN** `CHANGELOG.md` and `docs/UPGRADE.md` exist under `framework/ai-sdlc` and the upgrade doc names the one-minor deprecation window and the PyPI non-goal
+
+### Requirement: Independence preserved
+
+The independence scan SHALL still pass: kit code and templates SHALL NOT contain adopter product path markers.
+
+#### Scenario: independence scan stays clean
+
+- **WHEN** the independence test runs after packaging remainders land
+- **THEN** it finds no adopter markers under `aisdlc/`, `bin/` or `templates/`
