@@ -33,6 +33,9 @@ CODES = {
     "pin_digest_mismatch": "pinned workflow ref digest no longer matches",
     "csrf_required": "mutating HTTP requires X-AISDLC-CSRF matching the bearer token",
     "writes_disabled": "serve was started without --write",
+    "workflow_not_approved": "runtime start accepts approved workflows only",
+    "not_implemented": "capability not available (honest empty / 501)",
+    "runner_unavailable": "no executable runner port proven",
 }
 
 

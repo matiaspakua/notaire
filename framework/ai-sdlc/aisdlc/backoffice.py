@@ -60,7 +60,7 @@ CATALOG_MODULES = tuple(m for m in MODULES if m != "runs")
 
 RUNS_ACTIONS_REASON = (
     "Cancel/retry unavailable: Runner/Forge ports do not honestly support them yet "
-    "(A.4 Project/Run entities pending — #2255). Runs monitor is evidence-derived only."
+    "(A.4 Project/Run entities shipped — #2255). Runs monitor is evidence-derived only."
 )
 
 

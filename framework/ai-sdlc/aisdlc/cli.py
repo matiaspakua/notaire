@@ -131,6 +131,24 @@ def build_parser() -> argparse.ArgumentParser:
     shown = harness_sub.add_parser("show", help="read one adapter source in place")
     shown.add_argument("--id", required=True)
     shown.add_argument("--json", action="store_true")
+    report = harness_sub.add_parser(
+        "report",
+        help="append a run lifecycle evidence event (local-worker reference adapter; #2255)",
+    )
+    report.add_argument("--run", required=True, help="run id")
+    report.add_argument(
+        "--event",
+        required=True,
+        choices=["run.started", "run.finished", "step.started", "step.finished"],
+    )
+    report.add_argument("--adapter", default="local-worker")
+    report.add_argument("--step", help="step id for step.* events")
+    report.add_argument("--step-status", dest="step_status", help="pass|fail|skip|todo")
+    report.add_argument("--ok", default=None, help="true|false for run.finished")
+    report.add_argument("--budget-overrun", action="store_true")
+    report.add_argument("--cancelled", action="store_true")
+    report.add_argument("--blocked", action="store_true")
+    report.add_argument("--json", action="store_true")
 
     p = sub.add_parser("gate", help="run every gate of a stage")
     p.add_argument("stage", nargs="?")
@@ -408,6 +426,47 @@ def build_parser() -> argparse.ArgumentParser:
                     help="expected current version (If-Match); refuse on mismatch",
                 )
 
+    p = sub.add_parser("project", help="Factory Project + repo binding (#2255)")
+    proj_sub = p.add_subparsers(dest="action", required=True)
+    pcreate = proj_sub.add_parser("create", help="create a project (repos default mode=dry_run)")
+    pcreate.add_argument("--id", required=True)
+    pcreate.add_argument("--profile-ref", default="aisdlc.toml", dest="profile_ref")
+    pcreate.add_argument("--repo-id", dest="repo_id")
+    pcreate.add_argument("--forge", default="")
+    pcreate.add_argument("--url", default="")
+    pcreate.add_argument("--default-branch", default="main", dest="default_branch")
+    pcreate.add_argument("--mode", choices=["dry_run", "live"], default=None)
+    pcreate.add_argument("--json", action="store_true")
+    plist = proj_sub.add_parser("list", help="list projects")
+    plist.add_argument("--json", action="store_true")
+    pshow = proj_sub.add_parser("show", help="show a project")
+    pshow.add_argument("--id", required=True)
+    pshow.add_argument("--json", action="store_true")
+    padd = proj_sub.add_parser("add-repo", help="bind a repository (mode defaults dry_run)")
+    padd.add_argument("--id", required=True, help="project id")
+    padd.add_argument("--repo-id", required=True, dest="repo_id")
+    padd.add_argument("--forge", default="")
+    padd.add_argument("--url", default="")
+    padd.add_argument("--default-branch", default="main", dest="default_branch")
+    padd.add_argument("--mode", choices=["dry_run", "live"], default=None)
+    padd.add_argument("--json", action="store_true")
+
+    p = sub.add_parser("run", help="Factory Run / RunRequest (#2255); never fakes running")
+    run_sub = p.add_subparsers(dest="action", required=True)
+    rstart = run_sub.add_parser("start", help="append RunRequest for an approved workflow")
+    rstart.add_argument("--project", required=True)
+    rstart.add_argument("--workflow", required=True)
+    rstart.add_argument("--id", help="optional run id")
+    rstart.add_argument("--json", action="store_true")
+    rlist = run_sub.add_parser("list", help="list runs with evidence-derived status")
+    rlist.add_argument("--json", action="store_true")
+    rshow = run_sub.add_parser("show", help="show a run (status from evidence)")
+    rshow.add_argument("--id", required=True)
+    rshow.add_argument("--json", action="store_true")
+    revents = run_sub.add_parser("events", help="list evidence events for a run")
+    revents.add_argument("--id", required=True)
+    revents.add_argument("--json", action="store_true")
+
     p = sub.add_parser("workflow", help="Workflow entity + governance FSM (#2239)")
     wf_sub = p.add_subparsers(dest="action", required=True)
     create = wf_sub.add_parser("create", help="create a draft workflow")
@@ -591,6 +650,8 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "metrics": lambda: _metrics(ctx, args),
         "catalog": lambda: _catalog(ctx, args),
         "workflow": lambda: _workflow(ctx, args),
+        "project": lambda: _project(ctx, args),
+        "run": lambda: _run(ctx, args),
         "backoffice": lambda: _backoffice(ctx, args),
         "serve": lambda: _serve(ctx, args),
         "migrate": lambda: _migrate(ctx, args),
@@ -999,6 +1060,32 @@ def _harness(ctx: Context, args: argparse.Namespace) -> int:
                     f"sandbox={row['sandbox']}\t{row['source']}"
                 )
         return 0
+    if args.action == "report":
+        ok_raw = getattr(args, "ok", None)
+        ok = None
+        if ok_raw is not None:
+            ok = str(ok_raw).casefold() in {"1", "true", "yes"}
+        try:
+            view = harness.report_event(
+                ctx,
+                run_id=args.run,
+                event=args.event,
+                adapter=getattr(args, "adapter", "local-worker") or "local-worker",
+                step=getattr(args, "step", None),
+                step_status=getattr(args, "step_status", None),
+                ok=ok,
+                budget_overrun=bool(getattr(args, "budget_overrun", False)),
+                cancelled=bool(getattr(args, "cancelled", False)),
+                blocked=bool(getattr(args, "blocked", False)),
+            )
+        except KitError as exc:
+            print(f"error: {exc.code}: {exc.detail}")
+            return 2
+        if args.json:
+            print(json.dumps(view, indent=2, sort_keys=True))
+        else:
+            print(f"harness report: run={view.get('id')} status={view.get('status')}")
+        return 0
     try:
         view = harness.describe(ctx.root, ctx.profile, args.id)
     except ProfileError as exc:
@@ -1011,6 +1098,99 @@ def _harness(ctx: Context, args: argparse.Namespace) -> int:
         print(json.dumps(view, indent=2, sort_keys=True))
     else:
         print(_plain(view))
+    return 0
+
+
+def _project(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc import projects
+    from aisdlc.actor import from_env
+
+    as_json = bool(getattr(args, "json", False))
+    try:
+        if args.action == "create":
+            repos = []
+            if getattr(args, "repo_id", None):
+                repo = {
+                    "id": args.repo_id,
+                    "forge": getattr(args, "forge", "") or "",
+                    "url": getattr(args, "url", "") or "",
+                    "default_branch": getattr(args, "default_branch", "main") or "main",
+                }
+                if getattr(args, "mode", None):
+                    repo["mode"] = args.mode
+                repos.append(repo)
+            view = projects.create(
+                ctx,
+                project_id=args.id,
+                profile_ref=getattr(args, "profile_ref", "aisdlc.toml") or "aisdlc.toml",
+                repos=repos,
+                actor=from_env(channel="cli"),
+            )
+        elif args.action == "list":
+            view = projects.list_projects(ctx)
+        elif args.action == "show":
+            view = projects.show(ctx, args.id)
+        elif args.action == "add-repo":
+            repo = {
+                "id": args.repo_id,
+                "forge": getattr(args, "forge", "") or "",
+                "url": getattr(args, "url", "") or "",
+                "default_branch": getattr(args, "default_branch", "main") or "main",
+            }
+            if getattr(args, "mode", None):
+                repo["mode"] = args.mode
+            view = projects.add_repo(
+                ctx, project_id=args.id, repo=repo, actor=from_env(channel="cli"),
+            )
+        else:
+            print(f"error: unknown project action {args.action!r}")
+            return 2
+    except KitError as exc:
+        print(f"error: {exc.code}: {exc.detail}")
+        return 2
+    if as_json:
+        print(json.dumps(view, indent=2, sort_keys=True))
+    else:
+        print(_plain(view) if isinstance(view, dict) and "entries" not in view else json.dumps(view, indent=2))
+    return 0
+
+
+def _run(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc import runs
+    from aisdlc.actor import from_env
+
+    as_json = bool(getattr(args, "json", False))
+    try:
+        if args.action == "start":
+            view = runs.start(
+                ctx,
+                project_id=args.project,
+                workflow_id=args.workflow,
+                actor=from_env(channel="cli"),
+                run_id=getattr(args, "id", None),
+            )
+        elif args.action == "list":
+            view = runs.list_runs(ctx)
+        elif args.action == "show":
+            view = runs.show(ctx, args.id)
+        elif args.action == "events":
+            view = runs.list_events(ctx, args.id)
+        else:
+            print(f"error: unknown run action {args.action!r}")
+            return 2
+    except KitError as exc:
+        print(f"error: {exc.code}: {exc.detail}")
+        return 2
+    if as_json:
+        print(json.dumps(view, indent=2, sort_keys=True))
+    else:
+        if args.action == "show" or args.action == "start":
+            print(
+                f"run {view.get('id')}: status={view.get('status')} "
+                f"project={view.get('project')} workflow={view.get('workflow')}"
+            )
+        else:
+            print(json.dumps(view, indent=2, sort_keys=True))
     return 0
 
 
