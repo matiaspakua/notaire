@@ -191,7 +191,8 @@ pair("The posture and the cadence are checked-in explanations. They use no produ
 // STRIDE questions and summaries are registered from security-content by the test via pair() calls below.
 pair("Can someone pretend to be a staff member or an API client?", "¿Alguien puede hacerse pasar por personal de la escribanía o por un cliente de la API?");
 pair("The browser session is an HttpOnly cookie. API clients still receive a bearer token in the login JSON.", "La sesión del navegador es una cookie HttpOnly. Los clientes de la API todavía reciben un token bearer en el JSON del login.");
-pair("Passwords are BCrypt and login lockout is shared in the database. There is no second factor.", "Las contraseñas son BCrypt y el bloqueo de login vive en la base. No hay un segundo factor.");
+pair("Passwords are BCrypt and login lockout is shared in the database. TOTP MFA ships (ADR-032); the default policy is OPTIONAL, and ENFORCE can require it for ADMIN and NOTARY.", "Las contraseñas son BCrypt y el bloqueo de login vive en la base. TOTP MFA está en el producto (ADR-032); la política por defecto es OPTIONAL, y ENFORCE puede exigirlo a ADMIN y NOTARY.");
+pair("A confirmed TOTP enrolment is challenged at login. Wrong codes share the login lockout. The default policy is OPTIONAL, so MFA is not forced until an operator turns ENFORCE on.", "Una inscripción TOTP confirmada se desafía en el login. Los códigos incorrectos comparten el bloqueo de login. La política por defecto es OPTIONAL, así que MFA no se fuerza hasta que un operador active ENFORCE.");
 pair("Can someone change a record, a query, or a published image?", "¿Alguien puede cambiar un registro, una consulta o una imagen publicada?");
 pair("Persistence uses parameterized JPA. The SQL injection note names the query paths.", "La persistencia usa JPA con parámetros. La nota de inyección SQL nombra las rutas de consulta.");
 pair("Trivy fails the release job on fixed critical and high findings. That job does not run on a pull request.", "Trivy hace fallar el job de release ante hallazgos críticos y altos fijados. Ese job no corre en un pull request.");
@@ -219,7 +220,7 @@ pair("Retention of notarial records is indefinite by the architecture note. A st
 pair("Detectability", "Detectabilidad");
 pair("Login failures are a metric. Reads of personal data are an audit row, not a dashboard series.", "Los fallos de login son una métrica. Las lecturas de datos personales son una fila de auditoría, no una serie del tablero.");
 pair("Identity", "Identidad");
-pair("BCrypt, shared login lockout, signed JWT, HttpOnly cookie. No second factor.", "BCrypt, bloqueo de login compartido, JWT firmado, cookie HttpOnly. Sin segundo factor.");
+pair("BCrypt, shared login lockout, signed JWT, HttpOnly cookie, and TOTP MFA (OPTIONAL by default; ENFORCE for ADMIN and NOTARY).", "BCrypt, bloqueo de login compartido, JWT firmado, cookie HttpOnly y TOTP MFA (OPTIONAL por defecto; ENFORCE para ADMIN y NOTARY).");
 pair("Module grants", "Permisos de módulo");
 pair("After the JWT check, the API denies a path whose module the role does not hold.", "Después de comprobar el JWT, la API niega una ruta cuyo módulo el rol no tiene.");
 pair("Inside one office", "Dentro de una escribanía");
