@@ -1,0 +1,139 @@
+# Scale tasks: two large public repositories (spring-framework, vscode; ~33k files, ~9M lines) indexed as one
+# multi-project store. Used to check speed and accuracy far beyond Notaire's size; never used for tuning.
+# Prompts describe behaviour without naming the answer classes. Ground truth verified with `git ls-files`
+# on the shallow clones in bench/.scale (2026-11-17). Patterns are matched against repository-relative paths.
+name: scale
+corpus:
+  config: ../.scale/scale-fastembed.toml
+answer_suffix: >-
+  Answer concisely. Finish with one line that starts with `FILES:` followed by the repository-relative
+  paths of every relevant file, comma-separated.
+tasks:
+  - id: tx-rollback-rules
+    project: spring-framework
+    prompt: How does a transactional method decide whether a thrown exception triggers a rollback, given the configured rollback rules?
+    expected:
+      - transaction/interceptor/RuleBasedTransactionAttribute\.java$
+      - transaction/interceptor/RollbackRuleAttribute\.java$
+
+  - id: circular-singletons
+    project: spring-framework
+    prompt: How are circular references between singleton beans resolved with early references during bean creation?
+    expected:
+      - beans/factory/support/DefaultSingletonBeanRegistry\.java$
+      - beans/factory/support/AbstractAutowireCapableBeanFactory\.java$
+
+  - id: cron-parse
+    project: spring-framework
+    prompt: Where are cron expressions for scheduled tasks parsed and the next execution time computed?
+    expected:
+      - scheduling/support/CronExpression\.java$
+      - scheduling/support/CronField\.java$
+
+  - id: string-to-enum
+    project: spring-framework
+    prompt: Which converter turns a String into an Enum constant in the core type conversion service?
+    expected:
+      - core/convert/support/StringToEnumConverterFactory\.java$
+
+  - id: jdbc-batch
+    project: spring-framework
+    prompt: How does the JDBC template execute a batch update with a prepared statement setter callback?
+    expected:
+      - jdbc/core/JdbcTemplate\.java$
+      - jdbc/core/BatchPreparedStatementSetter\.java$
+
+  - id: async-executor
+    project: spring-framework
+    prompt: How are asynchronous methods intercepted and submitted to a task executor?
+    expected:
+      - aop/interceptor/AsyncExecutionInterceptor\.java$
+
+  - id: placeholders
+    project: spring-framework
+    prompt: Where are ${...} property placeholders with default values parsed and resolved?
+    expected:
+      - util/PlaceholderParser\.java$
+      - util/PropertyPlaceholderHelper\.java$
+
+  - id: aop-proxy-choice
+    project: spring-framework
+    prompt: How does Spring choose between a JDK dynamic proxy and a CGLIB class proxy when creating an AOP proxy?
+    expected:
+      - aop/framework/DefaultAopProxyFactory\.java$
+
+  - id: reactive-cors
+    project: spring-framework
+    prompt: How are CORS preflight requests handled in the reactive WebFlux stack?
+    expected:
+      - web/cors/reactive/CorsWebFilter\.java$
+      - web/cors/reactive/DefaultCorsProcessor\.java$
+
+  - id: scheduled-registration
+    project: spring-framework
+    prompt: Where are methods annotated for scheduled execution detected on beans and registered as tasks?
+    expected:
+      - scheduling/annotation/ScheduledAnnotationBeanPostProcessor\.java$
+
+  - id: minimap
+    project: vscode
+    prompt: How does the editor render the minimap overview of the document?
+    expected:
+      - editor/browser/viewParts/minimap/minimap\.ts$
+
+  - id: fuzzy-score
+    project: vscode
+    prompt: How are file names scored against a typed pattern in quick open fuzzy matching?
+    expected:
+      - base/common/fuzzyScorer\.ts$
+      - base/common/filters\.ts$
+
+  - id: git-exec
+    project: vscode
+    prompt: In the git extension, where are git commands spawned and where is the repository state with staged changes kept?
+    expected:
+      - extensions/git/src/git\.ts$
+      - extensions/git/src/repository\.ts$
+
+  - id: piece-tree
+    project: vscode
+    prompt: What data structure stores the text buffer of an editor model and how are edits inserted into it?
+    expected:
+      - pieceTreeTextBuffer/pieceTreeBase\.ts$
+
+  - id: when-clause
+    project: vscode
+    prompt: How are when-clause context key expressions parsed and evaluated to decide which keybinding applies?
+    expected:
+      - platform/contextkey/common/contextkey\.ts$
+      - platform/keybinding/common/keybindingResolver\.ts$
+
+  - id: throttle
+    project: vscode
+    prompt: Where are the generic throttler, delayer and debounce helpers for promises implemented?
+    expected:
+      - base/common/async\.ts$
+
+  - id: jsonc
+    project: vscode
+    prompt: Where is the scanner and parser for JSON with comments implemented?
+    expected:
+      - base/common/json\.ts$
+
+  - id: bracket-pairs
+    project: vscode
+    prompt: How are bracket pairs tracked for colorization as the document changes?
+    expected:
+      - bracketPairsTree/bracketPairsTree\.ts$
+
+  - id: file-watcher
+    project: vscode
+    prompt: Which recursive file watcher implementation watches folders for changes on disk?
+    expected:
+      - platform/files/node/watcher/parcel/parcelWatcher\.ts$
+
+  - id: line-diff
+    project: vscode
+    prompt: Which algorithm computes the line-level diff shown in the diff editor?
+    expected:
+      - diff/defaultLinesDiffComputer/defaultLinesDiffComputer\.ts$
