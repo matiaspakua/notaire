@@ -10,6 +10,8 @@ It is the open-source, stack-agnostic implementation of the *Code Knowledge Grap
 co-edits...), two-step retrieval (similarity **anchors**, then **Personalized PageRank**), and near-zero
 append cost when the codebase changes.
 
+![repolens vs grep-driven navigation: accuracy, speed and agent steps](bench/results/charts/headline.svg)
+
 **Results on this repository (Notaire, 9.6k files)** — see [Benchmark](#benchmark) for method and caveats:
 
 <!-- RESULTS:START -->
@@ -36,7 +38,7 @@ where things live in such famous repositories; see [Scale](#scale).
 1. [How it works](#how-it-works)
 2. [Install](#install) · [Quick start](#quick-start)
 3. [Configuration](#configuration)
-4. [CLI](#cli) · [MCP server](#mcp-server) · [HTTP API](#http-api) · [Graph explorer](#graph-explorer)
+4. [CLI](#cli) · [MCP server](#mcp-server) · [In an agent factory](#in-an-agent-factory) · [HTTP API](#http-api) · [Graph explorer](#graph-explorer)
 5. [Extending](#extending)
 6. [Performance](#performance) · [Scale](#scale)
 7. [Benchmark](#benchmark)
@@ -113,34 +115,41 @@ flowchart LR
 
 ## Install
 
-Python 3.11+.
+Python 3.11+. Two ways, both one command:
 
 ```bash
-cd framework/ai-sdlc/graph-db
-python3 -m venv .venv && . .venv/bin/activate
-pip install -e ".[all]"          # embed + api + mcp + pdf; or pick extras: .[embed,mcp]
+# inside a repository that vendors repolens (as Notaire does): no install, a launcher runs this checkout
+bash framework/ai-sdlc/repolens/bin/repolens setup --install    # deps into ~/.cache/repolens/venv + wiring
+
+# any other repository: install the command, then wire the repository you are in
+pipx install /path/to/repolens            # or: pip install "/path/to/repolens[all]"
+cd ~/src/my-service && repolens setup
 ```
 
-The core needs only `numpy`, `scipy`, `tree-sitter`, `tree-sitter-language-pack` and `pyyaml`. Without the
-`embed` extra repolens falls back to its dependency-free LSA embedder. The first `fastembed` run downloads the
-model (`BAAI/bge-small-en-v1.5`, ~67 MB) into `~/.cache/repolens/models`; set `HF_HUB_OFFLINE=1` afterwards.
+`setup` registers the MCP server with every agent harness it knows (Claude Code, Codex, OpenCode, Cursor),
+adds the usage hook and the git hooks, and ignores `.repolens/`; `--install` creates the shared environment,
+`--index` builds the first index in the background, `--only <target>` and `--dry-run` narrow it. `repolens
+doctor` checks the result. The core needs `numpy`, `scipy`, `tree-sitter`, `tree-sitter-language-pack` and
+`pyyaml`; without `fastembed` repolens falls back to its dependency-free LSA embedder. The first `fastembed`
+run downloads the model (`BAAI/bge-small-en-v1.5`, ~67 MB) into `~/.cache/repolens/models`; later starts
+load it from there without touching the network.
 
 ## Quick start
 
+No configuration is needed: from anywhere inside a repository, repolens indexes that repository (or the
+folder of the nearest `repolens.toml`) and keeps the store in its `.repolens/` folder.
+
 ```bash
-repolens index ~/src/my-service ~/src/my-frontend      # ad-hoc: one project per folder, store in .repolens/graph.db
+repolens index                                           # incremental; --full re-extracts everything
 repolens search "where are refunds validated?" --files
 repolens impact PaymentRepositoryPort                    # what breaks if this changes, which tests to run
 repolens path frontend/src/api/refunds.ts refunds        # how a client reaches a DB table
+repolens report                                          # how efficiently agents use it (see below)
 repolens serve                                           # UI + API on http://127.0.0.1:7474
 ```
 
-For a durable setup write a profile (`repolens init <folders...>` creates one) and pass it with `-c`:
-
-```bash
-repolens -c examples/notaire.toml index        # incremental; --full re-extracts everything
-repolens -c examples/notaire.toml stats
-```
+Several repositories in one store, or ranking settings: write a profile (`repolens init <folders...>`) next to
+them; Notaire's is [`repolens.toml`](../../../repolens.toml) at the repository root.
 
 ## Configuration
 
@@ -195,7 +204,11 @@ anchors = 7                        # code anchors that seed the walk
 | Command | Purpose |
 |---|---|
 | `repolens init <folders...>` | write a `repolens.toml` |
-| `repolens index [folders...] [--full] [--no-embed] [--embedder lsa]` | create or update the graph (incremental) |
+| `repolens setup [--install] [--index] [--only claude\|codex\|opencode\|cursor\|git\|gitignore] [--dry-run]` | wire repolens into the repository's harnesses (idempotent) |
+| `repolens doctor` | check dependencies, config, store freshness, harness wiring, telemetry |
+| `repolens index [folders...] [--full] [--no-embed] [--no-wait] [--quiet]` | create or update the graph (incremental; `--no-wait` steps aside when another run holds the store) |
+| `repolens report [--since 7d] [--json] [--md f] [--gate]` | usage efficiency report |
+| `repolens refresh [--background]` · `repolens hook` | refresh an existing store (git hooks) · record a harness tool call (Claude Code hook) |
 | `repolens search "<question>" [--files] [-k 10] [--also 10] [--scope code\|docs\|tests] [--kind method] [--project api]` | hybrid + graph search; `--also` lists more results one line each |
 | `repolens node <ref>` | a node and its typed relations both ways |
 | `repolens neighbors <ref> [--depth 2] [--kind calls] [--direction in]` | expand the graph |
@@ -206,16 +219,17 @@ anchors = 7                        # code anchors that seed the walk
 | `repolens serve` · `repolens mcp` | HTTP API + UI · MCP server |
 
 A `<ref>` is a node id, a path, `path:line`, `path#Symbol.member`, a symbol name or a route (`POST /api/v1/mfa/enrollment`).
-Every command takes `--json`. Exit codes: 0 ok, 1 not found / no results, 2 usage or configuration error.
+The query commands take `--json`. Exit codes: 0 ok, 1 not found / no results, 2 usage or configuration error.
 
 ## MCP server
 
+`repolens setup` registers it (see [In an agent factory](#in-an-agent-factory)); by hand:
+
 ```bash
-claude mcp add repolens -- repolens -c /abs/path/repolens.toml mcp      # Claude Code
+claude mcp add repolens -- repolens mcp       # Claude Code; any MCP client: command `repolens`, args `["mcp"]`
 ```
 
-or commit an `.mcp.json` like [`examples/mcp.json`](examples/mcp.json) (works for any MCP client: Claude
-Desktop, Cursor, VS Code, Codex). Tools: `search`, `node`, `impact`, `path`, `outline`, `snippet`;
+Tools: `search`, `node`, `impact`, `path`, `outline`, `snippet`;
 `--all-tools` adds `neighbors`, `stats` and `reindex`. Each tool schema costs the agent input tokens on
 every turn, so the default set is kept small. Results are compact text that starts with `path:line`.
 `search` returns the top `k` (default 10) with their symbols and the relation that surfaced them, then ten
@@ -232,6 +246,51 @@ also relevant:
 11. frontend/src/hooks/useReports.ts  downloadPdf
 13. backend-api/.../adapter/out/report/ReportService.java
 ```
+
+## In an agent factory
+
+repolens is built to be the repository-knowledge tool of every agent working on a codebase at the same time:
+several harnesses and models, each in its own worktree and branch, opening pull requests while `main` moves.
+
+| Concern | What repolens does |
+|---|---|
+| Every harness gets it | `repolens setup` writes the native registration of each: `.mcp.json` + `.claude/settings.json` (Claude Code), `.codex/config.toml` (Codex), `opencode.json` (OpenCode), `.cursor/mcp.json` (Cursor). The command resolves the launcher with `git rev-parse --show-toplevel`, so every worktree serves its own checkout. |
+| One index per worktree | The store lives in `<worktree>/.repolens/`: an index never mixes branches. |
+| Branches and worktrees are cheap | Vectors are content-addressed and shared machine-wide (`~/.cache/repolens/vectors`, with the PCA basis): a new worktree, a branch switch or a rebased branch embeds only text no store has embedded before. Measured on Notaire: a new worktree indexed in 11 s, 82,379 of its 83,241 vectors from the cache (862 texts that differ were embedded), against ~4 min cold. |
+| Answers follow the agent's edits | Before a tool call the MCP server starts an incremental refresh in the background (at most every `REPOLENS_REFRESH_SECONDS`, default 15); answers come from the last published graph meanwhile. Git `post-checkout`/`post-merge` hooks refresh after a branch switch or a pull. |
+| Many agents, one worktree | An inter-process lock serialises index runs; a refresh that finds the lock taken steps aside. Readers never block (SQLite WAL). |
+| First start | An MCP server on an unindexed repository builds the index in the background and tells the agent to retry or use grep meanwhile; the graph and keyword search are published before the slow embedding pass. |
+| Evidence | Every tool call is logged (`.repolens/usage.jsonl`), and the Claude Code hook logs Read/Grep/Glob, so `repolens report` measures real use (below). |
+
+### Usage report
+
+```bash
+repolens report [--since 7d] [--json] [--md report.md] [--gate]
+```
+
+| Measure | Meaning |
+|---|---|
+| adoption | share of agent sessions that called repolens |
+| repolens first | share of sessions whose first navigation call was repolens, not grep/glob/read |
+| hit rate | of the files an agent read after a repolens call, the share repolens had already returned: retrieval quality in real work |
+| grep fallback | share of repolens calls followed by a grep/glob before the next repolens call |
+| navigation tokens | what navigation tools returned to the model, per session, with and without repolens |
+| latency, zero-result searches, refreshes | server side, for every harness |
+
+Each finding comes with an action (strengthen the instructions, add the missed questions to `bench/tasks`,
+tune `demote`/weights, look at the zero-result queries). `--gate` prints one advisory line; Notaire's AI SDLC
+profile runs it in the `signal` stage, so it lands in the factory's evidence ledger next to the other gates.
+Session comparisons are observational; the controlled measurement is the benchmark below.
+
+### Adopting it in another project
+
+```bash
+pipx install /path/to/repolens && cd my-repo && repolens setup --index && repolens doctor
+```
+
+Commit the files `setup` wrote (they hold no machine path), add a pointer to `AGENTS.md` (or the harness's
+instruction file) such as "navigate with the repolens MCP tools before grep", and read `repolens report` after
+a few days of work.
 
 ## HTTP API
 
@@ -379,7 +438,8 @@ Everything to reproduce is in [`bench/`](bench); `bench/run_all.sh` runs all of 
   [`notaire.yaml`](bench/tasks/notaire.yaml) (11 tasks, the **tuning** set: ranking parameters were chosen on
   it) and [`notaire-holdout.yaml`](bench/tasks/notaire-holdout.yaml) (12 tasks on other parts of the
   repository, **held out**: never used to choose anything, only to check that results generalise).
-- **Corpus** — a `git clone --shared` of the repository HEAD in `bench/.corpus/`, with this module (the
+- **Corpus** — a `git clone --shared` of the repository HEAD in `$REPOLENS_BENCH_HOME/corpus/` (default
+  `~/.cache/repolens/bench`, outside the repository tree), with this module (the
   benchmark and its answer key) deleted from the clone's working tree, so no arm can read the answers.
 - **Retrieval** (deterministic, free) — the prompt goes verbatim to `grep` (one ripgrep per keyword, TF-IDF
   ranking), repolens **hybrid** (no graph walk) and repolens **graph**; recall@k, MRR, latency and output size.
@@ -391,7 +451,7 @@ Everything to reproduce is in [`bench/`](bench); `bench/run_all.sh` runs all of 
   memory, latency by stage, MCP cold start and quality on both task sets, saved per label in
   `bench/results/perf/`.
 - **Scale** — `bench/scale_bench.py --label <name> [--embed none|fastembed] [--steps index,noop,touch,query]`:
-  the same measurements on spring-framework + vscode (33k files), cloned shallow into `bench/.scale` (its own
+  the same measurements on spring-framework + vscode (33k files), cloned shallow into `$REPOLENS_BENCH_HOME/scale` (its own
   git root, so agents working there cannot wander into the enclosing repository).
 
 <!-- BENCH:START -->

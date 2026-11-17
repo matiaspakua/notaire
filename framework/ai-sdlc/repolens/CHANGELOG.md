@@ -3,6 +3,52 @@
 All notable changes to repolens. Versions follow [SemVer](https://semver.org); the version lives in
 `repolens/__init__.py` and release tags are `repolens-v<version>`.
 
+## [0.4.0] - 2026-11-17
+
+The factory release (#2298): repolens becomes the repository-knowledge tool of every agent harness, works
+while many agents create branches, worktrees and pull requests, and measures its own use.
+
+### Added
+
+- **Zero configuration**: from anywhere in a repository, repolens uses the nearest `repolens.toml`, else
+  indexes the repository; the store lives in `<worktree>/.repolens/` (one index per worktree and branch).
+- **`repolens setup`**: registers the MCP server with Claude Code (`.mcp.json`, `.claude/settings.json` with
+  the usage hook), Codex (`.codex/config.toml`), OpenCode (`opencode.json`, path from `[harness] opencode`),
+  Cursor (`.cursor/mcp.json`), adds git `post-checkout`/`post-merge` refresh hooks and ignores `.repolens/`;
+  idempotent and merging. `--install` creates the shared dependency environment, `--index` builds the first
+  index in the background. **`repolens doctor`** checks the result.
+- **Launcher `bin/repolens`**: runs the repository's own checkout from any directory with the shared
+  environment, so each worktree serves its own code.
+- **Shared vector cache** (`~/.cache/repolens/vectors`, with the PCA basis): vectors are content-addressed,
+  so a new worktree or branch embeds only text no store has embedded (Notaire: a new worktree indexed in 11 s
+  with 82,379 of 83,241 vectors from the cache, against ~4 min cold).
+- **Background refresh**: before a tool call the MCP server starts an incremental index (at most every
+  `REPOLENS_REFRESH_SECONDS`, default 15) on its own connection; an inter-process index lock serialises runs
+  from several agents and git hooks. A first start builds the index in the background and says so.
+- **Usage telemetry and `repolens report`**: the server logs every tool call (client, latency, size, files
+  returned), the Claude Code hook logs Read/Grep/Glob; the report gives adoption, hit rate, grep fallbacks,
+  navigation tokens, latency, zero-result queries and recommendations; `--gate` feeds the factory's evidence
+  ledger.
+- `bench/results/charts/headline.svg`: one chart, repolens against grep-driven navigation.
+
+### Fixed
+
+- A long-lived engine never saw a refreshed index: the query-term stemmer wrote a scratch table through the
+  store's connection, leaving a transaction open that pinned the reader to its first snapshot (and stalled the
+  writer's checkpoint). The stemmer now has its own in-memory connection.
+- After a refresh refitted the embedding space (LSA, a new PCA basis) the engine kept the old query embedder;
+  it is rebuilt on every reload.
+- The embedding model loads from the local cache first (no network round trip on every server start).
+
+### Changed
+
+- Module folder `framework/ai-sdlc/graph-db` -> `framework/ai-sdlc/repolens`.
+- Benchmark clones, the scale corpus and agent transcripts live in `$REPOLENS_BENCH_HOME` (default
+  `~/.cache/repolens/bench`), outside the repository tree; the benchmark deletes this module (its answer
+  key) from the corpus clone.
+- Removed `examples/` (Notaire's profile is the root `repolens.toml`; harness files come from `setup`) and
+  superseded benchmark snapshots.
+
 ## [0.3.0] - 2026-11-17
 
 **The project was renamed from `codekg` to `repolens`** (package, `repolens` command, `python -m repolens`,
