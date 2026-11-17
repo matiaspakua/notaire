@@ -12,9 +12,14 @@ import { describe, expect, it } from "vitest";
  *
  * Floors raised 2026-11-11 (issue #2249), two points below the measurement after the #1246 page tests:
  * Statements 88.81% / Branches 81.07% / Functions 87.61% / Lines 90.12%.
+ *
+ * Statement floor raised 2026-11-17 (issue #2047), two points under a fresh run:
+ * Statements 89.15% / Branches 81.43% / Functions 87.99% / Lines 90.46%.
+ * Only statements move (87). The other three stay, because a higher integer
+ * would leave less than two points of headroom.
  */
 export const DOCUMENTED_VITEST_COVERAGE_FLOORS = {
-  statements: 86,
+  statements: 87,
   branches: 79,
   functions: 85,
   lines: 88,
@@ -56,5 +61,26 @@ describe("Vitest coverage thresholds raise-only floor (issue #976)", () => {
     const source = readFileSync(configPath, "utf8");
     expect(source).toMatch(/raise-only|never lower/i);
     expect(source).toMatch(/#976|2026-10-03/);
+  });
+
+  it("quotes the same floors in the Constitution, TEST-PLAN and testing README", () => {
+    const root = resolve(__dirname, "../../../..");
+    const constitution = readFileSync(resolve(root, "CONSTITUTION.md"), "utf8");
+    const testPlan = readFileSync(
+      resolve(root, "docs/300-development/303-testing/TEST-PLAN.md"),
+      "utf8",
+    );
+    const testingReadme = readFileSync(
+      resolve(root, "docs/300-development/303-testing/README.md"),
+      "utf8",
+    );
+
+    expect(constitution).toContain(
+      "statements **87%**, branches **79%**, functions **85%**, lines **88%**",
+    );
+    expect(testPlan).toContain("statements **87** / branches **79** / functions **85** / lines **88**");
+    expect(testingReadme).toContain("87/79/85/88");
+    expect(constitution).toMatch(/>90%/);
+    expect(testPlan).toMatch(/>90%/);
   });
 });

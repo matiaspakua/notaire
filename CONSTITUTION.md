@@ -541,7 +541,7 @@ Execution Strategy:
 | Tool | Check | Enforced at | Ratchet Floor / Owner target |
 |------|-------|-------------|------------------------------|
 | JaCoCo | Line + branch coverage (backend) | `mvn verify` (Gate 3) | Floor **85% line / 70% branch**; Owner target **>90%** (#2046) |
-| Vitest | Coverage thresholds (frontend) | CI job `frontend-ci` | Floor raise-only in `vitest.config.ts` (statements **76%**, branches **68%**, functions **72%**, lines **78%**); Owner target **>90%** (#2046; #1246 superseded for target) |
+| Vitest | Coverage thresholds (frontend) | CI job `frontend-ci` | Floor raise-only in `vitest.config.ts` (statements **87%**, branches **79%**, functions **85%**, lines **88%**); Owner target **>90%** (#2046; #2047; #1246 superseded for target) |
 | Bruno | REST endpoint coverage | CI job `playwright-e2e` + CU matrix | Matrix complete or `MISSING`+#953; Owner target **>90%** endpoint/CU coverage |
 | Playwright | E2E workflow coverage | CI job `playwright-e2e` | 1+ test per critical Use Case; TS-nnnn naming; Owner target **>90%** critical CU coverage |
 | Security / Perf | SAST/SCA/DAST + k6 | `security/run_gates.py`, weekly ZAP/k6 | Gates green; coverage of critical surfaces tracked under #2046 |

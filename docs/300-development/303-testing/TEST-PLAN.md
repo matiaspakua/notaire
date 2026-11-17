@@ -120,7 +120,7 @@ floors lag.
 | Tool | Enforced floor | Owner target | Source of truth |
 |------|----------------|--------------|-----------------|
 | JaCoCo (backend) | **85% line / 70% branch** | **>90%** (#2046) | `backend-api/pom.xml` |
-| Vitest (frontend) | statements **76** / branches **68** / functions **72** / lines **78** | **>90%** (#2046) | `frontend/vitest.config.ts` |
+| Vitest (frontend) | statements **87** / branches **79** / functions **85** / lines **88** | **>90%** (#2046) | `frontend/vitest.config.ts` |
 | Bruno | Matrix drift guard; gaps as `MISSING`+#953 | **>90%** endpoints / CU matrix | `validate-cu-api-matrix.py` |
 | Playwright | ≥1 suite per critical CU workflow; TS naming | **>90%** critical CU workflows | INVENTORY + E2E mapping |
 | Security / Perf | Local security gates + weekly ZAP / k6 | Critical-surface coverage under #2046 | `security/`, `infra/performance/` |

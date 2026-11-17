@@ -42,7 +42,8 @@ test.describe("Items - discounts and surcharges", () => {
 
     await page.getByTestId("btn-save-item").click();
 
-    await steps.thenShowsErrorMessage("motivo es obligatorio");
+    // The form shows the reason error on the field (role=alert), not a toast.
+    await expect(page.getByRole("alert").filter({ hasText: /motivo es obligatorio/i })).toBeVisible();
     await steps.thenModalIsVisible();
   });
 

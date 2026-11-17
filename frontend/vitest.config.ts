@@ -27,11 +27,13 @@ export default defineConfig({
       ],
       // Enforced raise-only ratchet floor (mirrors backend JaCoCo; issue #976):
       // raise these as coverage improves, never lower them without ADR/exception.
-      // Re-measured 2026-10-14 after the dashboard smoke tests (issue #1667):
-      // Statements 61.34% / Branches 54.39% / Functions 51.51% / Lines 62.34%.
+      // Re-measured 2026-11-17 (issue #2047):
+      // Statements 89.15% / Branches 81.43% / Functions 87.99% / Lines 90.46%.
       // Floors sit ~2pp below measured coverage for headroom.
+      // Only statements rise (86 → 87). A higher integer on the other three
+      // would leave less than two points.
       thresholds: {
-        statements: 86,
+        statements: 87,
         branches: 79,
         functions: 85,
         lines: 88,
