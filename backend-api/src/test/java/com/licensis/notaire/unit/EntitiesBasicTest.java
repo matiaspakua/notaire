@@ -3,6 +3,7 @@ package com.licensis.notaire.unit;
 
 import com.licensis.notaire.adapter.out.persistence.document.DocumentTypeLegacyMapper;
 import com.licensis.notaire.adapter.out.persistence.folio.FolioTypeLegacyMapper;
+import com.licensis.notaire.adapter.out.persistence.management.ManagementStatusLegacyMapper;
 import com.licensis.notaire.adapter.out.persistence.procedure.ProcedureTypeLegacyMapper;
 import com.licensis.notaire.dto.DtoManagementStatus;
 import com.licensis.notaire.dto.DtoFolio;
@@ -174,10 +175,10 @@ class EntitiesBasicTest {
             dto.setName("X");
             dto.setNotes("y");
             dto.setVersion(2);
-            e1.setAttribute(dto);
+            ManagementStatusLegacyMapper.apply(e1, dto);
             assertThat(e1.getName()).isEqualTo("X");
 
-            DtoManagementStatus outDto = e1.getDto();
+            DtoManagementStatus outDto = ManagementStatusLegacyMapper.toDto(e1);
             assertThat(outDto.getIdManagementStatus()).isEqualTo(99);
         }
     }
