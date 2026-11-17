@@ -336,6 +336,7 @@ flowchart TB
 | `skills`, `budget`, `commits`, `tdd` | Catalog lint, context budget, commit subjects, tests-with-code | — |
 | Evidence ledger, `report`, `cost` | Audit trail, gate health, token cost per model and agent | Is written by agents |
 | Role agents (`.aisdlc/agents/`) | Foreman, planner, implementer, reviewer, steward instructions in tool-neutral Markdown | Duplicate the policy |
+| `repolens` (`framework/ai-sdlc/graph-db`) | Optional local code knowledge graph (CLI, HTTP API, MCP): hybrid retrieval over code, tests, docs, routes and tables for agents | Is required by the kit or sends code off the machine |
 
 ### 7.3 End-to-end workflow
 
