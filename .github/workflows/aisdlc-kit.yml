@@ -85,7 +85,7 @@ jobs:
             framework/ai-sdlc/dist/sbom-aisdlc.cdx.json \
             --clobber
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@v4
         with:
           subject-path: |
             framework/ai-sdlc/dist/*.whl
