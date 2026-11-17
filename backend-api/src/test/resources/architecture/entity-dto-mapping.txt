@@ -5,8 +5,6 @@ DeedManagement#getDto
 DocumentType#getDto
 DocumentType#setAttributes
 Folio#getDto
-FolioType#getDto
-FolioType#setAttributes
 History#getDto
 ManagementStatus#getDto
 ManagementStatus#setAttribute

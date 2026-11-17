@@ -6,6 +6,7 @@ package com.licensis.notaire.business;
 
 import com.licensis.notaire.dto.DtoDeed;
 import com.licensis.notaire.dto.DtoFolio;
+import com.licensis.notaire.dto.DtoFolioType;
 import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.persistence.PersistenceConstants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -301,7 +302,14 @@ public class Folio implements Serializable, Persistable<Integer>
             folioDto.setPersonNotary(person);
         }
 
-        folioDto.setFolioType(this.fkIdFolioType.getDto());
+        DtoFolioType folioTypeDto = new DtoFolioType();
+        folioTypeDto.setIdFolioType(this.fkIdFolioType.getIdFolioType());
+        folioTypeDto.setName(this.fkIdFolioType.getName());
+        folioTypeDto.setNotes(this.fkIdFolioType.getNotes());
+        folioTypeDto.setEnabled(this.fkIdFolioType.getEnabled());
+        folioTypeDto.setIsAuxiliary(this.fkIdFolioType.isIsAuxiliary());
+        folioTypeDto.setVersion(this.fkIdFolioType.getVersion());
+        folioDto.setFolioType(folioTypeDto);
 
         if (this.fkIdDeed != null)
         {

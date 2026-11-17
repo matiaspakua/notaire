@@ -4,8 +4,6 @@
  */
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoFolioType;
-import com.licensis.notaire.dto.exceptions.InvalidDtoException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
@@ -188,39 +186,6 @@ public class FolioType implements Serializable, Persistable<Integer>
     {
         return "FolioType[ idFolioType=" + idFolioType + " ]"
                 + "[ name=" + name + " ]";
-    }
-
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoFolioType getDto()
-    {
-        DtoFolioType folioTypeDto = new DtoFolioType();
-
-        folioTypeDto.setIdFolioType(this.getIdFolioType());
-        folioTypeDto.setName(this.getName());
-        folioTypeDto.setNotes(this.getNotes());
-        folioTypeDto.setEnabled(this.enabled);
-        folioTypeDto.setIsAuxiliary(this.isAuxiliary);
-        folioTypeDto.setVersion(this.getVersion());
-
-        return folioTypeDto;
-
-    }
-
-    public void setAttributes(DtoFolioType dtoFolioType) throws InvalidDtoException
-    {
-        if (dtoFolioType.isValid())
-        {
-            this.setIdFolioType(dtoFolioType.getIdFolioType());
-            this.setName(dtoFolioType.getName());
-            this.setNotes(dtoFolioType.getNotes());
-            this.setEnabled(dtoFolioType.isEnabled());
-            this.setIsAuxiliary(dtoFolioType.isIsAuxiliary());
-            this.setVersion(dtoFolioType.getVersion());
-        } else
-        {
-            throw new InvalidDtoException("The indicated DTO is not valid.");
-        }
-
     }
 
     public boolean getEnabled()
