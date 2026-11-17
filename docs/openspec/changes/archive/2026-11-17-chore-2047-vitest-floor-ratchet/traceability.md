@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/chore-2047-vitest-floor-ratchet/` | drafted |
 | Branch | `cursor/2047-vitest-floor-ratchet-47dc` | created |
 | Tasks | `tasks.md` | 0/N complete |
-| Commits | pending | pending |
+| Commits | `6b143a5f` | recorded |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -30,17 +30,17 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Guard rejects a statement floor below the ratchet | `frontend/src/tests/unit/vitest-coverage-thresholds.test.ts` | pending |
-| Permanent docs quote the enforced floors | `frontend/src/tests/unit/vitest-coverage-thresholds.test.ts` | pending |
+| Guard rejects a statement floor below the ratchet | `frontend/src/tests/unit/vitest-coverage-thresholds.test.ts` | passing |
+| Permanent docs quote the enforced floors | `frontend/src/tests/unit/vitest-coverage-thresholds.test.ts` | passing |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `CONSTITUTION.md` | no | pending |
-| `docs/300-development/303-testing/TEST-PLAN.md` | no | pending |
-| `docs/300-development/303-testing/README.md` | no | pending |
-| `.claude/rules/code-quality.md` | no | pending |
+| `CONSTITUTION.md` | yes | `6b143a5f` |
+| `docs/300-development/303-testing/TEST-PLAN.md` | yes | `6b143a5f` |
+| `docs/300-development/303-testing/README.md` | yes | `6b143a5f` |
+| `.claude/rules/code-quality.md` | yes | `6b143a5f` |
 
 ## Gate log
 
