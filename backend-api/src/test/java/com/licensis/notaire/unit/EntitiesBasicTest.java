@@ -2,6 +2,7 @@ package com.licensis.notaire.unit;
 
 
 import com.licensis.notaire.adapter.out.persistence.document.DocumentTypeLegacyMapper;
+import com.licensis.notaire.adapter.out.persistence.folio.FolioTypeLegacyMapper;
 import com.licensis.notaire.dto.DtoManagementStatus;
 import com.licensis.notaire.dto.DtoFolio;
 import com.licensis.notaire.dto.DtoProperty;
@@ -804,14 +805,14 @@ class EntitiesBasicTest {
             assertThat(new FolioType(1)).isNotEqualTo("x");
             assertThat(t1.toString()).isNotBlank();
 
-            DtoFolioType dto = t1.getDto();
+            DtoFolioType dto = FolioTypeLegacyMapper.toDto(t1);
             assertThat(dto.getName()).isEqualTo("X");
 
             DtoFolioType dto2 = new DtoFolioType();
             dto2.setIdFolioType(99);
             dto2.setName("NewName");
             FolioType t5 = new FolioType();
-            t5.setAttributes(dto2);
+            FolioTypeLegacyMapper.apply(t5, dto2);
             assertThat(t5.getName()).isEqualTo("NewName");
         }
     }

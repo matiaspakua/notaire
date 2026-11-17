@@ -3,8 +3,6 @@ Concept#setAttributes
 Deed#getDto
 DeedManagement#getDto
 Folio#getDto
-FolioType#getDto
-FolioType#setAttributes
 History#getDto
 ManagementStatus#getDto
 ManagementStatus#setAttribute
