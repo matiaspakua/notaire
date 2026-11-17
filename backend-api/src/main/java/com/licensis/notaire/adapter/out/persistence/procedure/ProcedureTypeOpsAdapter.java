@@ -51,19 +51,19 @@ public class ProcedureTypeOpsAdapter implements ProcedureTypeOpsPort {
     @Override
     @Transactional(readOnly = true)
     public List<DtoProcedureType> findAll() {
-        return repository.findAll().stream().map(ProcedureType::getDto).toList();
+        return repository.findAll().stream().map(ProcedureTypeLegacyMapper::toDto).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<DtoProcedureType> searchByName(String name) {
-        return repository.findByNameContaining(name).stream().map(ProcedureType::getDto).toList();
+        return repository.findByNameContaining(name).stream().map(ProcedureTypeLegacyMapper::toDto).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<DtoProcedureType> findById(Integer id) {
-        return repository.findById(id).map(ProcedureType::getDto);
+        return repository.findById(id).map(ProcedureTypeLegacyMapper::toDto);
     }
 
     @Override
@@ -88,9 +88,9 @@ public class ProcedureTypeOpsAdapter implements ProcedureTypeOpsPort {
                 dto.setAssociatesProperties(false);
             }
             ProcedureType entity = new ProcedureType();
-            entity.setAttributes(dto);
+            ProcedureTypeLegacyMapper.apply(entity, dto);
             entity = repository.save(entity);
-            return new SaveResult.Created(entity.getDto());
+            return new SaveResult.Created(ProcedureTypeLegacyMapper.toDto(entity));
         } catch (Exception e) {
             return new SaveResult.Failed(e);
         }
@@ -108,7 +108,7 @@ public class ProcedureTypeOpsAdapter implements ProcedureTypeOpsPort {
         try {
             dto.setIdProcedureType(id);
             ProcedureType entity = existing.get();
-            entity.setAttributes(dto);
+            ProcedureTypeLegacyMapper.apply(entity, dto);
             repository.save(entity);
             return new SaveResult.Updated();
         } catch (Exception e) {
@@ -138,7 +138,7 @@ public class ProcedureTypeOpsAdapter implements ProcedureTypeOpsPort {
         if (workflowDefinitionId == null) {
             type.setWorkflowDefinition(null);
             repository.save(type);
-            return new WorkflowAssignResult.Ok(type.getDto());
+            return new WorkflowAssignResult.Ok(ProcedureTypeLegacyMapper.toDto(type));
         }
         Optional<WorkflowDefinition> wf = workflowDefinitionRepository.findById(workflowDefinitionId);
         if (wf.isEmpty()) {
@@ -149,6 +149,6 @@ public class ProcedureTypeOpsAdapter implements ProcedureTypeOpsPort {
         }
         type.setWorkflowDefinition(wf.get());
         repository.save(type);
-        return new WorkflowAssignResult.Ok(type.getDto());
+        return new WorkflowAssignResult.Ok(ProcedureTypeLegacyMapper.toDto(type));
     }
 }
