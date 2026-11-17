@@ -22,4 +22,11 @@ public interface QueryPaymentsUseCase {
     List<PaymentDetails> findByBudget(Integer budgetId);
 
     List<PaymentDetails> findByDateRange(Date startDate, Date endDate);
+
+    /**
+     * One page of payments. {@code sort} is {@code property,asc|desc}; unknown properties fall back to id.
+     */
+    PageResult findPage(int page, int size, String sort);
+
+    record PageResult(List<PaymentDetails> content, int number, int size, long totalElements) {}
 }

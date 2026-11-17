@@ -2,9 +2,9 @@
  * HTTP adapter for payments (#1832 / ADR-030).
  * Only place in this catalog that may import api-client.
  */
-import { apiDelete, apiGet, apiPost, apiPut } from "@/lib/api-client";
+import { apiDelete, apiGet, apiGetPage, apiPost, apiPut } from "@/lib/api-client";
 import type { Payment, PaymentStatus } from "@/core/payment/domain/payment";
-import type { PaymentGateway, PaymentInput } from "@/core/payment/application/ports";
+import type { PaymentGateway, PaymentInput, PaymentPage, PaymentPageRequest } from "@/core/payment/application/ports";
 
 /** Wire shape from DtoPaymentResponse / PaymentRequest — kept loose for OpenAPI drift. */
 type PaymentDto = Payment;
@@ -42,6 +42,20 @@ function toUpdateWire(input: PaymentInput): PaymentDto {
 
 export const paymentHttpGateway: PaymentGateway = {
   list: async () => (await apiGet<PaymentDto[]>("/payments")).map(toDomain),
+  listPage: async (request: PaymentPageRequest): Promise<PaymentPage> => {
+    const page = await apiGetPage<PaymentDto>("/payments", {
+      page: request.page,
+      size: request.size,
+      sort: request.sort,
+    });
+    return {
+      content: page.content.map(toDomain),
+      totalElements: page.totalElements,
+      totalPages: page.totalPages,
+      number: page.number,
+      size: page.size,
+    };
+  },
   listByBudget: async (idBudget: number) =>
     (await apiGet<PaymentDto[]>(`/payments/budget/${idBudget}`)).map(toDomain),
   listByDateRange: async (from: string, to: string) =>

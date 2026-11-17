@@ -42,6 +42,17 @@ class InMemoryPaymentRepository implements PaymentRepositoryPort {
     }
 
     @Override
+    public PaymentRepositoryPort.PageResult findPage(int page, int size, String sort) {
+        List<PaymentDetails> all = new ArrayList<>(stored.values());
+        all.sort((left, right) -> Integer.compare(
+                right.id() == null ? 0 : right.id(),
+                left.id() == null ? 0 : left.id()));
+        int from = Math.min(page * size, all.size());
+        int to = Math.min(from + size, all.size());
+        return new PaymentRepositoryPort.PageResult(List.copyOf(all.subList(from, to)), page, size, all.size());
+    }
+
+    @Override
     public Optional<PaymentDetails> findById(Integer paymentId) {
         return Optional.ofNullable(stored.get(paymentId));
     }

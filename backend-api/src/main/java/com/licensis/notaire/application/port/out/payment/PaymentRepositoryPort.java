@@ -24,6 +24,10 @@ public interface PaymentRepositoryPort {
 
     List<PaymentDetails> findByDateRange(Date startDate, Date endDate);
 
+    PageResult findPage(int page, int size, String sort);
+
+    record PageResult(List<PaymentDetails> content, int number, int size, long totalElements) {}
+
     /**
      * Sum of every amount paid for the budget, or {@code null} when no payment exists.
      */
