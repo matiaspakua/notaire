@@ -1,10 +1,10 @@
 # Scale tasks: two large public repositories (spring-framework, vscode; ~33k files, ~9M lines) indexed as one
 # multi-project store. Used to check speed and accuracy far beyond Notaire's size; never used for tuning.
 # Prompts describe behaviour without naming the answer classes. Ground truth verified with `git ls-files`
-# on the shallow clones in bench/.scale (2026-11-17). Patterns are matched against repository-relative paths.
+# on the shallow clones in $REPOLENS_BENCH_HOME/scale (2026-11-17). Patterns are matched against repository-relative paths.
 name: scale
 corpus:
-  config: ../.scale/scale-fastembed.toml
+  config: "{bench}/scale/scale-fastembed.toml"
 answer_suffix: >-
   Answer concisely. Finish with one line that starts with `FILES:` followed by the repository-relative
   paths of every relevant file, comma-separated.

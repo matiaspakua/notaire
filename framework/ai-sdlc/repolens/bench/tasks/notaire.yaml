@@ -4,8 +4,8 @@
 name: notaire
 corpus:
   repo: ../../../../..                    # repository under test
-  clone: ../.corpus/notaire               # clean clone of its HEAD (no untracked files, so no answer key)
-  profile: ../../examples/notaire.toml    # repolens settings reused for the clone
+  clone: "{bench}/corpus/notaire"           # clean clone of HEAD, outside the repository, without this module
+  profile: ../../../../../repolens.toml     # the repository's repolens profile, reused for the clone
 answer_suffix: >-
   Answer concisely. Finish with one line that starts with `FILES:` followed by the repository-relative
   paths of every relevant file, comma-separated.

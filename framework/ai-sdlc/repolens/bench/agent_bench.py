@@ -8,7 +8,8 @@ Each run is a headless Claude Code session (`claude -p`) in a clean clone of the
   baseline  built-in Read, Grep, Glob (the standard grep-driven harness)
   graph     the same three tools + the repolens MCP server (search, node, impact, path, outline, snippet...)
 No extra system prompt is added to either arm; the MCP server describes itself through its own
-instructions and tool descriptions. Raw transcripts land in bench/results/runs/<stamp>/.
+instructions and tool descriptions. Raw transcripts land in $REPOLENS_BENCH_HOME/runs/<stamp>/
+(default ~/.cache/repolens/bench).
 """
 
 from __future__ import annotations
@@ -28,7 +29,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 sys.path.insert(0, str(HERE))
 
-from corpus import ensure_corpus, ensure_index, head, load_spec  # noqa: E402
+from corpus import bench_home, ensure_corpus, ensure_index, head, load_spec  # noqa: E402
 
 BUILTIN = ["Read", "Grep", "Glob"]
 
@@ -157,7 +158,7 @@ def main() -> int:
     ensure_corpus(spec)
     ensure_index(spec, log=lambda m: print(m, file=sys.stderr))
     stamp = time.strftime("%Y%m%d-%H%M%S")
-    run_dir = HERE / "results" / "runs" / f"{stamp}-{args.model}"
+    run_dir = bench_home() / "runs" / f"{stamp}-{args.model}"
     run_dir.mkdir(parents=True, exist_ok=True)
     mcp = mcp_config(spec, run_dir / "mcp.json")
     tasks = [t for t in spec["tasks"] if not args.only or t["id"] in args.only.split(",")]

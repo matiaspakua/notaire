@@ -3,7 +3,7 @@
 
     python3 bench/scale_bench.py --label s0 [--embed none|fastembed] [--steps index,noop,touch,query]
 
-Corpus: shallow clones of spring-framework and vscode in bench/.scale (~33k files, ~9M lines), cloned on
+Corpus: shallow clones of spring-framework and vscode in $REPOLENS_BENCH_HOME/scale (~33k files, ~9M lines), cloned on
 first use. Each step runs in a fresh process, so peak memory (`ru_maxrss` of the process and of its
 extraction workers) is that step's own. Quality uses bench/tasks/scale.yaml (never used for tuning).
 """
@@ -20,9 +20,12 @@ from pathlib import Path
 
 import yaml
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from corpus import bench_home  # noqa: E402
+
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-SCALE = HERE / ".scale"
+SCALE = bench_home() / "scale"
 REPOS = {"spring-framework": "https://github.com/spring-projects/spring-framework.git",
          "vscode": "https://github.com/microsoft/vscode.git"}
 TASKS = HERE / "tasks" / "scale.yaml"

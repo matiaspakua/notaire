@@ -302,6 +302,105 @@ def perf_section(before: dict, after: dict, out: Path) -> tuple[str, str]:
     return html_part, md
 
 
+# Concrete colours (no CSS variables): the headline image must render the same in browsers, IDE previews and
+# rasterisers such as rsvg. Same hues as STYLE; validated with the dataviz palette checker in both modes.
+HEADLINE_STYLE = """
+.bg { fill: #fcfcfb; } text { font: 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  fill: #52514e; } .title { font-size: 13px; font-weight: 600; fill: #0b0b0b; } .value { font-weight: 600;
+  fill: #0b0b0b; } .axis { stroke: #e4e3df; stroke-width: 1; } .grep { fill: #2a78d6; } .graph { fill: #1baf7a; }
+@media (prefers-color-scheme: dark) { .bg { fill: #1a1a19; } text { fill: #c3c2b7; } .title, .value { fill: #f0efec; }
+  .axis { stroke: #353431; } .grep { fill: #3987e5; } .graph { fill: #199e70; } }
+"""
+
+
+def headline_chart(out: Path) -> str | None:
+    """One picture: navigating with grep versus with repolens, from the benchmark results (no typed numbers).
+    Each metric row has its own scale; the factor on the right says better/worse in plain words."""
+    tune, hold = out / "retrieval.json", out / "retrieval-notaire-holdout.json"
+    agent = out / "agent-sonnet-holdout-0.3.0.json"
+    if not (tune.exists() and hold.exists()):
+        return None
+    t, h = json.loads(tune.read_text())["summary"], json.loads(hold.read_text())["summary"]
+    rows: list[tuple] = [
+        ("Accuracy — higher is better", None),
+        ("Right files in top 10, tuning tasks", t["grep"]["recall@10"], t["graph"]["recall@10"], "{:.2f}",
+         True, "more"),
+        ("Right files in top 10, held-out tasks", h["grep"]["recall@10"], h["graph"]["recall@10"], "{:.2f}",
+         True, "more"),
+        ("Rank of first right file (MRR), held-out", h["grep"]["mrr"], h["graph"]["mrr"], "{:.2f}", True, "higher"),
+        ("Speed and size per query — lower is better", None),
+        ("Latency (ms)", t["grep"]["latency_ms"], t["graph"]["latency_ms"], "{:,.0f}", False, "faster"),
+        ("Text returned to the model (KB)", t["grep"]["output_bytes"] / 1024, t["graph"]["output_bytes"] / 1024,
+         "{:,.1f}", False, "less"),
+    ]
+    if agent.exists():
+        a = json.loads(agent.read_text())["summary"]
+        b, g = a["baseline"], a["graph"]
+        rows += [
+            (f"Claude Sonnet agent, held-out tasks ({b['runs']} + {g['runs']} sessions)", None),
+            ("Answer accuracy — higher is better", b["recall"], g["recall"], "{:.2f}", True, "more"),
+            ("Tool calls per task — lower is better", b["tool_calls"], g["tool_calls"], "{:.1f}", False, "fewer"),
+            ("Seconds per task — lower is better", b["duration_s"], g["duration_s"], "{:.1f}", False, "faster"),
+        ]
+    width, left, bar_x, bar_w, bar_h, gap = 760, 20, 300, 290, 11, 2
+    y = 110
+    parts = [
+        f'<text class="title" x="{left}" y="28" style="font-size:16px">repolens vs grep-driven navigation</text>',
+        f'<text x="{left}" y="50">Notaire, 9.6k files. Retrieval: the same questions answered by grep keyword '
+        f'ranking and by repolens.</text>',
+        f'<text x="{left}" y="66">Agent: the same model, prompt and tools, with and without the repolens MCP '
+        f'server.</text>',
+        f'<rect class="grep" x="{left}" y="78" width="12" height="11" rx="2"/>'
+        f'<text x="{left + 18}" y="88">without repolens (grep / Read / Glob)</text>',
+        f'<rect class="graph" x="{left + 270}" y="78" width="12" height="11" rx="2"/>'
+        f'<text x="{left + 288}" y="88">with repolens</text>',
+    ]
+    for row in rows:
+        if row[1] is None:
+            y += 12
+            parts.append(f'<text class="title" x="{left}" y="{y}">{esc(row[0])}</text>')
+            parts.append(f'<line class="axis" x1="{left}" x2="{width - left}" y1="{y + 6}" y2="{y + 6}"/>')
+            y += 20
+            continue
+        label, before, after, fmt, higher_better, word = row
+        vmax = max(before, after) or 1
+        parts.append(f'<text x="{left}" y="{y + bar_h + 4}">{esc(label)}</text>')
+        for k, (cls, value, who) in enumerate((("grep", before, "without repolens"),
+                                                ("graph", after, "with repolens"))):
+            by = y + k * (bar_h + gap)
+            w = max(2.0, bar_w * value / vmax)
+            text = fmt.format(value)
+            parts.append(f'<g class="bar"><title>{esc(label)}, {who}: {esc(text)}</title>'
+                         f'<path class="{cls}" d="{_bar_path(bar_x, by, w, bar_h, horizontal=True)}"/></g>'
+                         f'<text class="value" x="{bar_x + w + 6}" y="{by + bar_h - 1}">{esc(text)}</text>')
+        parts.append(f'<text class="value" x="{width - left}" y="{y + bar_h + 4}" text-anchor="end">'
+                     f'{esc(_factor(before, after, higher_better, word))}</text>')
+        y += 2 * bar_h + gap + 18
+    parts.append(f'<text x="{left}" y="{y + 8}">Data: bench/results/retrieval*.json, agent-*.json. Cost per task '
+                 f'and every other measure: README, Benchmark.</text>')
+    height = int(y + 24)
+    svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="{width}" '
+           f'height="{height}" role="img" aria-label="repolens vs grep-driven navigation">'
+           f'<style>{HEADLINE_STYLE}</style><rect class="bg" width="{width}" height="{height}" rx="8"/>'
+           f'{"".join(parts)}</svg>')
+    (out / "charts" / "headline.svg").write_text(svg, encoding="utf-8")
+    return svg
+
+
+def _factor(before: float, after: float, higher_better: bool, word: str) -> str:
+    """'4.9x more', '43x faster', '-50%', 'same': the size of the difference in plain words."""
+    if before == after:
+        return "same"
+    if not before or not after:
+        return ""
+    better = after > before if higher_better else after < before
+    ratio = max(before, after) / min(before, after)
+    if ratio >= 2:
+        shown = f"{ratio:.0f}x" if ratio >= 10 else f"{ratio:.1f}x"
+        return f"{shown} {word}" if better else f"{shown} worse"
+    return f"{(after - before) / before:+.0%}"
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--results", type=Path, default=HERE / "results")
@@ -313,6 +412,10 @@ def main() -> int:
     charts_dir = out / "charts"
     charts_dir.mkdir(parents=True, exist_ok=True)
     sections, md_parts = [], []
+    headline = headline_chart(out)
+    if headline:
+        sections.append(f'<section><h2>At a glance</h2>{headline}</section>')
+        md_parts.append("![repolens vs grep-driven navigation](charts/headline.svg)\n")
     for retrieval in sorted(out.glob("retrieval*.json")):
         h, m, _ = retrieval_section(json.loads(retrieval.read_text()), charts_dir)
         sections.append(h)

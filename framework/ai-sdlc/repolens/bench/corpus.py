@@ -6,6 +6,7 @@ arm nor the agents can read the expected answers. The clone keeps git history, s
 
 from __future__ import annotations
 
+import os
 import re
 import shutil
 import subprocess
@@ -17,6 +18,18 @@ import yaml
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 
+from repolens.paths import home  # noqa: E402
+
+
+def bench_home() -> Path:
+    """Clones, the scale corpus and agent transcripts: outside the repository tree (they are large, and
+    tree-walking tools such as secret scanners must not see third-party code)."""
+    return Path(os.environ.get("REPOLENS_BENCH_HOME") or home() / "bench").expanduser()
+
+
+def _path(base: Path, value: str) -> Path:
+    return (base / value.replace("{bench}", str(bench_home()))).resolve()
+
 
 def load_spec(path: Path) -> dict:
     """A task file names either a repository to clone (`repo`, `clone`, `profile`) or a prebuilt store
@@ -25,13 +38,13 @@ def load_spec(path: Path) -> dict:
     corpus = spec["corpus"]
     base = path.resolve().parent
     if "config" in corpus:
-        spec["config"] = (base / corpus["config"]).resolve()
+        spec["config"] = _path(base, corpus["config"])
         spec["clone"] = spec["config"].parent
         spec["prebuilt"] = True
         return spec
-    spec["repo"] = (base / corpus["repo"]).resolve()
-    spec["clone"] = (base / corpus["clone"]).resolve()
-    spec["profile"] = (base / corpus["profile"]).resolve()
+    spec["repo"] = _path(base, corpus["repo"])
+    spec["clone"] = _path(base, corpus["clone"])
+    spec["profile"] = _path(base, corpus["profile"])
     spec["config"] = spec["clone"].parent / f"{spec['clone'].name}.toml"
     return spec
 
@@ -51,7 +64,7 @@ def ensure_corpus(spec: dict, refresh: bool = False, log=print) -> Path:
         subprocess.run(["git", "-C", str(clone), "pull", "--quiet", "--ff-only"], check=True)
     # This module holds the task files (questions and expected answers). Once it is committed, a clone of
     # HEAD contains it, so it is removed from the working tree: no arm may read the answer key.
-    shutil.rmtree(clone / "framework" / "ai-sdlc" / "graph-db", ignore_errors=True)
+    shutil.rmtree(clone / "framework" / "ai-sdlc" / "repolens", ignore_errors=True)
     profile = spec["profile"].read_text(encoding="utf-8")
     profile = re.sub(r'(?m)^db\s*=.*$', f'db = "{clone.name}.db"', profile)
     profile = re.sub(r'(?ms)^\[\[source\]\].*?(?=^\[)', "", profile)
