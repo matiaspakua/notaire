@@ -35,15 +35,15 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| a question about behaviour finds the implementing files | repolens test suite (verify.sh) | pending |
-| test files rank lower unless the question is about tests | repolens test suite (verify.sh) | pending |
-| an identifier resolves exactly | repolens test suite (verify.sh) | pending |
-| a run with no changes does nothing | repolens test suite (verify.sh) | pending |
-| the graph is published before embedding | repolens test suite (verify.sh) | pending |
-| relinking keeps unchanged derived nodes | repolens test suite (verify.sh) | pending |
-| the three interfaces agree | repolens test suite (verify.sh) | pending |
-| the module gate passes | repolens test suite (verify.sh) | pending |
-| the module is declared in the manifest | repolens test suite (verify.sh) | pending |
+| a question about behaviour finds the implementing files | repolens test suite (verify.sh) | passing |
+| test files rank lower unless the question is about tests | repolens test suite (verify.sh) | passing |
+| an identifier resolves exactly | repolens test suite (verify.sh) | passing |
+| a run with no changes does nothing | repolens test suite (verify.sh) | passing |
+| the graph is published before embedding | repolens test suite (verify.sh) | passing |
+| relinking keeps unchanged derived nodes | repolens test suite (verify.sh) | passing |
+| the three interfaces agree | repolens test suite (verify.sh) | passing |
+| the module gate passes | repolens test suite (verify.sh) | passing |
+| the module is declared in the manifest | repolens test suite (verify.sh) | passing |
 
 ## Permanent documentation updated
 
