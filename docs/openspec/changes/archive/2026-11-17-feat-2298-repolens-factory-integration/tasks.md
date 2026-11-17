@@ -93,6 +93,13 @@
 - [ ] 12.3 Close the GitHub Issue, referencing the PR
 - [ ] 12.4 Record deploy and smoke evidence in the archived `traceability.md`
 
+## Deviations
+
+- Mechanical: `framework/ai-sdlc/tests/test_notaire_foreman_stages.py` was missing from the write set. It
+  asserted that no stage names any MCP server ("no vanity MCP"), which this approved change contradicts by
+  design (repolens on plan, red and pre-pr). The test now applies the same rule to cataloged servers only (an
+  uncataloged name still fails). Checked: does not change scope, contract, data or permissions.
+
 ## Definition of Done
 
 <!-- Per CONSTITUTION.md §3. Every box must be checked before the change is Done. -->

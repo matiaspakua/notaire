@@ -60,6 +60,7 @@ Agents spend most navigation steps and tokens on grep/glob/read loops. repolens 
 ### Write set
 
 - `framework/ai-sdlc/repolens/**`
+- `framework/ai-sdlc/tests/test_notaire_foreman_stages.py`
 - `repolens.toml`
 - `.mcp.json`
 - `.cursor/**`
