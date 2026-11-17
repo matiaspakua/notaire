@@ -9,6 +9,7 @@ import com.licensis.notaire.dto.DtoDeedManagement;
 import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoIdentificationType;
 import com.licensis.notaire.dto.DtoProcedure;
+import com.licensis.notaire.dto.DtoProcedureType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
@@ -349,7 +350,21 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
 
         procedureDto.setIdProcedure(procedure.getIdProcedure());
         procedureDto.setNotes(procedure.getNotes());
-        procedureDto.setProcedureType(procedure.getFkIdProcedureType().getDto());
+        DtoProcedureType procedureTypeDto = new DtoProcedureType();
+        ProcedureType procedureType = procedure.getFkIdProcedureType();
+        procedureTypeDto.setIdProcedureType(procedureType.getIdProcedureType());
+        procedureTypeDto.setName(procedureType.getName());
+        procedureTypeDto.setIsArchived(procedureType.getIsArchived());
+        procedureTypeDto.setIsRegistered(procedureType.getIsRegistered());
+        procedureTypeDto.setAssociatesProperties(procedureType.getAssociatesProperties());
+        procedureTypeDto.setNotes(procedureType.getNotes());
+        procedureTypeDto.setVersion(procedureType.getVersion());
+        procedureTypeDto.setEnabled(procedureType.getEnabled());
+        if (procedureType.getWorkflowDefinition() != null) {
+            procedureTypeDto.setWorkflowDefinitionId(procedureType.getWorkflowDefinition().getId());
+            procedureTypeDto.setWorkflowDefinitionName(procedureType.getWorkflowDefinition().getName());
+        }
+        procedureDto.setProcedureType(procedureTypeDto);
 
         if (procedure.getFkIdProperty() != null) {
             procedureDto.setProperty(procedure.getFkIdProperty().getDto());

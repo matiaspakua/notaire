@@ -12,6 +12,13 @@ function fakeGateway(initial: Payment[] = []): PaymentGateway & { store: Payment
   return {
     store,
     list: async () => [...store],
+    listPage: async (request) => ({
+      content: [...store],
+      totalElements: store.length,
+      totalPages: 1,
+      number: request.page,
+      size: request.size,
+    }),
     listByBudget: async (idBudget) => store.filter((p) => p.idBudget === idBudget),
     listByDateRange: async (from, to) =>
       store.filter((p) => !!p.date && p.date >= from && p.date <= to),

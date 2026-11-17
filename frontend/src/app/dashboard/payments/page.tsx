@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
-import { usePayments, usePaymentsByBudget, usePaymentsByDate, useBudgetBalance, useCreatePayment, useUpdatePayment, useDeletePayment, usePaymentStatus } from "@/hooks/usePayments";
+import { usePaymentsPage, usePaymentsByBudget, usePaymentsByDate, useBudgetBalance, useCreatePayment, useUpdatePayment, useDeletePayment, usePaymentStatus } from "@/hooks/usePayments";
 import { useBudgetSummary } from "@/hooks/useBudgets";
 import { BudgetPicker } from "@/components/shared/BudgetPicker";
 import { usePaymentReceipt } from "@/hooks/useReports";
@@ -20,6 +20,7 @@ import { presentMutationError } from "@/lib/mutation-error";
 import { requiredFieldErrors } from "@/lib/required-field-errors";
 import type { Payment } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
+import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { toDateInputValue } from "@/lib/dates";
 import { useFormat } from "@/hooks/useFormat";
 
@@ -82,7 +83,13 @@ function PaymentsPageContent() {
   const rangeActive = (!!from || !!to) && !rangeInvalid;
   // Server-side only with both days and no budget; otherwise narrow on the client.
   const serverRange = rangeActive && !consultBudget && !!from && !!to;
-  const allPayments = usePayments();
+  const showAll = !consultBudget && !serverRange;
+  const paging = useUrlPagination();
+  const paymentsPageQuery = usePaymentsPage(
+    { page: paging.page, size: paging.size },
+    { enabled: showAll },
+  );
+  useClampPage(paging, showAll ? paymentsPageQuery.data?.totalPages : 0);
   const byBudget = usePaymentsByBudget(consultBudget);
   const byDate = usePaymentsByDate(serverRange ? from : "", serverRange ? to : "");
   const { data: consultSummary } = useBudgetSummary(consultBudget);
@@ -93,15 +100,18 @@ function PaymentsPageContent() {
     const day = toDateInputValue(p.date);
     return (!from || day >= from) && (!to || day <= to);
   };
-  const source = consultBudget ? byBudget : serverRange ? byDate : allPayments;
-  const rows = source.data ?? [];
+  const rows: Payment[] = consultBudget
+    ? (byBudget.data ?? [])
+    : serverRange
+      ? (byDate.data ?? [])
+      : (paymentsPageQuery.data?.content ?? []);
   const filteredRows = rangeInvalid ? [] : rangeActive && !serverRange ? rows.filter(inRange) : rows;
   const payments = consultBudget
     ? [...filteredRows].sort((a, b) => String(b.date ?? "").localeCompare(String(a.date ?? "")))
     : filteredRows;
-  const isLoading = source.isLoading;
-  const isError = source.isError;
-  const refetch = source.refetch;
+  const isLoading = consultBudget ? byBudget.isLoading : serverRange ? byDate.isLoading : paymentsPageQuery.isLoading;
+  const isError = consultBudget ? byBudget.isError : serverRange ? byDate.isError : paymentsPageQuery.isError;
+  const refetch = consultBudget ? byBudget.refetch : serverRange ? byDate.refetch : paymentsPageQuery.refetch;
   const createMutation = useCreatePayment();
   const updateMutation = useUpdatePayment();
   const deleteMutation = useDeletePayment();
@@ -295,6 +305,17 @@ function PaymentsPageContent() {
         emptyMessage={consultBudget ? t("consulta.sinPagos") : t("noData")}
         error={isError ? tc("loadError") : undefined}
         onRetry={() => void refetch()}
+        pagination={
+          showAll
+            ? {
+                page: paymentsPageQuery.data?.number ?? paging.page,
+                size: paging.size,
+                totalElements: paymentsPageQuery.data?.totalElements ?? 0,
+                onPageChange: paging.setPage,
+                onSizeChange: paging.setSize,
+              }
+            : undefined
+        }
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>

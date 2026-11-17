@@ -8,6 +8,8 @@ import com.licensis.notaire.business.Payment;
 import com.licensis.notaire.domain.payment.PaymentDetails;
 import com.licensis.notaire.repository.BudgetRepository;
 import com.licensis.notaire.repository.PaymentRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -37,6 +39,13 @@ public class PaymentPersistenceAdapter implements PaymentRepositoryPort {
     @Override
     public List<PaymentDetails> findAll() {
         return toDetails(paymentRepository.findAll());
+    }
+
+    @Override
+    public PaymentRepositoryPort.PageResult findPage(int page, int size, String sort) {
+        var result = paymentRepository.findAll(PageRequest.of(page, Math.max(size, 1), paymentSort(sort)));
+        return new PaymentRepositoryPort.PageResult(
+                toDetails(result.getContent()), result.getNumber(), result.getSize(), result.getTotalElements());
     }
 
     @Override
@@ -104,6 +113,19 @@ public class PaymentPersistenceAdapter implements PaymentRepositoryPort {
         }
 
         return toDetails(paymentRepository.save(payment));
+    }
+
+    private static Sort paymentSort(String sort) {
+        String value = sort == null || sort.isBlank() ? "idPayment,desc" : sort;
+        String[] parts = value.split(",", 2);
+        String property = switch (parts[0].trim()) {
+            case "date", "amount", "paymentMethod" -> parts[0].trim();
+            default -> "idPayment";
+        };
+        Sort.Direction direction = parts.length > 1 && "asc".equalsIgnoreCase(parts[1].trim())
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+        return Sort.by(direction, property);
     }
 
     private static List<PaymentDetails> toDetails(List<Payment> payments) {

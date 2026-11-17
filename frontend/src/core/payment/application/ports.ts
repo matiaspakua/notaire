@@ -5,8 +5,23 @@ import type { Payment, PaymentStatus } from "../domain/payment";
 
 export type PaymentInput = Partial<Payment>;
 
+export interface PaymentPageRequest {
+  page: number;
+  size: number;
+  sort: string;
+}
+
+export interface PaymentPage {
+  content: Payment[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+}
+
 export interface PaymentGateway {
   list(): Promise<Payment[]>;
+  listPage(request: PaymentPageRequest): Promise<PaymentPage>;
   listByBudget(idBudget: number): Promise<Payment[]>;
   listByDateRange(from: string, to: string): Promise<Payment[]>;
   getStatus(idBudget: number): Promise<PaymentStatus>;

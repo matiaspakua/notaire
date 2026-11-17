@@ -273,11 +273,12 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(1)
-        @DisplayName("GET /api/v1/payments returns array")
+        @DisplayName("GET /api/v1/payments returns one page")
         void getAllPaymentsReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/payments"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray());
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.totalElements").isNumber());
         }
 
         @Test

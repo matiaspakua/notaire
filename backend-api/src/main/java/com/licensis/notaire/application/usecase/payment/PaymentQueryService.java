@@ -45,4 +45,12 @@ public class PaymentQueryService implements QueryPaymentsUseCase {
     public List<PaymentDetails> findByDateRange(Date startDate, Date endDate) {
         return payments.findByDateRange(startDate, endDate);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public QueryPaymentsUseCase.PageResult findPage(int page, int size, String sort) {
+        var pageResult = payments.findPage(page, size, sort);
+        return new QueryPaymentsUseCase.PageResult(
+                pageResult.content(), pageResult.number(), pageResult.size(), pageResult.totalElements());
+    }
 }

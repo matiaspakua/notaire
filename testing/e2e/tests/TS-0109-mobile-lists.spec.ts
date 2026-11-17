@@ -44,7 +44,7 @@ const PAGES: { route: string; api: string; paged: boolean; row: Record<string, u
   {
     route: "/dashboard/payments",
     api: "**/api/v1/payments**",
-    paged: false,
+    paged: true,
     row: { idPayment: ROW_ID, idBudget: 1, date: "2026-10-01", amount: 109, paymentMethod: "EFECTIVO" },
   },
 ];

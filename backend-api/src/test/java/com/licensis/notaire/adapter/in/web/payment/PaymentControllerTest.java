@@ -20,6 +20,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -79,6 +80,7 @@ class PaymentControllerTest {
                 deletePaymentUseCase, queryPaymentsUseCase, paymentStatusUseCase);
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
+                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }
 
@@ -91,19 +93,21 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/payments should return 200 with all payments")
+    @DisplayName("GET /api/v1/payments returns one page sorted by id")
     void shouldGetAllPayments() throws Exception {
-        when(queryPaymentsUseCase.findAll()).thenReturn(List.of(buildPayment()));
+        when(queryPaymentsUseCase.findPage(0, 20, "idPayment,desc"))
+                .thenReturn(new QueryPaymentsUseCase.PageResult(List.of(buildPayment()), 0, 20, 1));
         mockMvc.perform(get("/api/v1/payments"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].idPayment").value(1))
-                .andExpect(jsonPath("$[0].amount").value(500.0));
+                .andExpect(jsonPath("$.content[0].idPayment").value(1))
+                .andExpect(jsonPath("$.content[0].amount").value(500.0))
+                .andExpect(jsonPath("$.totalElements").value(1));
     }
 
     @Test
     @DisplayName("GET /api/v1/payments should return 500 ErrorResponse via GlobalExceptionHandler (#579)")
     void shouldReturnServerErrorWhenGetAllFails() throws Exception {
-        when(queryPaymentsUseCase.findAll()).thenThrow(new RuntimeException("Database error"));
+        when(queryPaymentsUseCase.findPage(0, 20, "idPayment,desc")).thenThrow(new RuntimeException("Database error"));
         mockMvc.perform(get("/api/v1/payments"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.status").value(500))

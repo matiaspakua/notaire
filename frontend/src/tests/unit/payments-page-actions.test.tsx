@@ -25,6 +25,8 @@ let searchParams = new URLSearchParams();
 vi.mock("@/lib/api-client", async (orig) => ({
   ...(await orig<typeof import("@/lib/api-client")>()),
   apiGet: (path: string) => apiGet(path),
+  apiGetPage: (path: string, request: { page?: number; size?: number; sort?: string } = {}) =>
+    apiGet(`${path}?page=${request.page ?? 0}&size=${request.size ?? 20}&sort=${request.sort ?? ""}`),
   apiPost: (path: string, body: unknown) => apiPost(path, body),
   apiPut: (path: string, body: unknown) => apiPut(path, body),
   apiDelete: (path: string) => apiDelete(path),
@@ -67,6 +69,15 @@ let summaryFails = false;
 let summaryPending = false;
 let status: string | null = "PARTIAL";
 function route(path: string): Promise<unknown> {
+  if (path.startsWith("/payments?")) {
+    return Promise.resolve({
+      content: ALL,
+      totalElements: ALL.length,
+      totalPages: 1,
+      number: 0,
+      size: 20,
+    });
+  }
   if (path === "/payments") return Promise.resolve(ALL);
   if (path === "/payments/budget/7") return Promise.resolve(BY7);
   if (path === "/payments/budget/7/balance") return Promise.resolve(40);
@@ -123,12 +134,13 @@ describe("list", () => {
     expect(screen.getByText("#9")).toBeInTheDocument();
     expect(within(rowOf("Transferencia")).getByText("#—")).toBeInTheDocument();
     expect(within(rowOf("#9")).getByText("—")).toBeInTheDocument();
+    expect(apiGet).toHaveBeenCalledWith(expect.stringMatching(/\/payments\?page=0&size=20&sort=idPayment(%2C|,)desc/));
   });
 
   it("shows the load error and retries", async () => {
     let fail = true;
     apiGet.mockImplementation((path: string) =>
-      path === "/payments" && fail ? Promise.reject(new ApiError(500, path, "")) : route(path),
+      path.startsWith("/payments?") && fail ? Promise.reject(new ApiError(500, path, "")) : route(path),
     );
     searchParams = new URLSearchParams();
     render(<PaymentsPage />, { wrapper });
