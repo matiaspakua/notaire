@@ -335,6 +335,18 @@ class ValidateCuApiMatrixTest(unittest.TestCase):
         else:
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_bruno_backed_rows_are_not_marked_500_error(self) -> None:
+        """A row that names a Bruno file must not still say the endpoint returns 500 (#1244)."""
+        with MATRIX.open(encoding="utf-8", newline="") as handle:
+            rows = list(csv.DictReader(handle))
+        bad = [
+            f"{row['CU_ID']} {row['Bruno_Test']}"
+            for row in rows
+            if row.get("Endpoint_Status") == "500-ERROR"
+            and row.get("Bruno_Test") not in ("", "MISSING")
+        ]
+        self.assertEqual(bad, [], "Bruno-backed rows still marked 500-ERROR:\n  " + "\n  ".join(bad))
+
 
 if __name__ == "__main__":
     unittest.main()
