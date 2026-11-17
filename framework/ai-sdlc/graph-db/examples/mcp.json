@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "repolens": {
-      "command": "repolens",
-      "args": ["-c", "framework/ai-sdlc/graph-db/examples/notaire.toml", "mcp"],
-      "env": { "HF_HUB_OFFLINE": "1" }
-    }
-  }
-}

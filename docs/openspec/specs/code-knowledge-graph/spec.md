@@ -59,7 +59,7 @@ The module MUST ship a `verify.sh` that lints, tests with a coverage floor, buil
 
 #### Scenario: the module gate passes
 
-- **WHEN** `bash framework/ai-sdlc/graph-db/verify.sh` runs on a clean checkout
+- **WHEN** `bash framework/ai-sdlc/repolens/verify.sh` runs on a clean checkout
 - **THEN** lint, tests (coverage at or above 88%), the wheel build and the smoke search all succeed
 
 #### Scenario: the module is declared in the manifest

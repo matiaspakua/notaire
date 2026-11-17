@@ -38,10 +38,10 @@ modules:
     verify: bash framework/ai-sdlc/verify.sh
     depends_on: []
   repolens:
-    path: framework/ai-sdlc/graph-db
+    path: framework/ai-sdlc/repolens
     responsibility: Local code knowledge graph for AI agents (CLI, HTTP API, MCP); no product consumer
     fleet: ai
-    verify: bash framework/ai-sdlc/graph-db/verify.sh
+    verify: bash framework/ai-sdlc/repolens/verify.sh
     depends_on: []
   docs:
     path: docs
