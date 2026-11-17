@@ -66,6 +66,7 @@
 - `backend-api/src/main/java/com/licensis/notaire/business/Folio.java`
 - `backend-api/src/test/java/com/licensis/notaire/unit/FolioTypeLegacyMapperTest.java`
 - `backend-api/src/test/java/com/licensis/notaire/unit/EntitiesBasicTest.java`
+- `backend-api/src/test/resources/architecture/entity-dto-mapping.txt`
 - `docs/openspec/changes/refactor-580-folio-type-dto/**`
 
 ### Architecture review
