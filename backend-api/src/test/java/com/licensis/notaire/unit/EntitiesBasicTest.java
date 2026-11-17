@@ -1,6 +1,7 @@
 package com.licensis.notaire.unit;
 
 
+import com.licensis.notaire.adapter.out.persistence.concept.ConceptLegacyMapper;
 import com.licensis.notaire.adapter.out.persistence.folio.FolioTypeLegacyMapper;
 import com.licensis.notaire.dto.DtoManagementStatus;
 import com.licensis.notaire.dto.DtoFolio;
@@ -115,7 +116,7 @@ class EntitiesBasicTest {
             c.setEnabled(true);
             c.setFixedConcept(true);
 
-            var dto = c.getDto();
+            var dto = ConceptLegacyMapper.toDto(c);
             assertThat(dto.getIdConcept()).isEqualTo(1);
             assertThat(dto.getName()).isEqualTo("X");
             assertThat(dto.getValue()).isEqualByComparingTo(new java.math.BigDecimal("10"));
@@ -125,7 +126,7 @@ class EntitiesBasicTest {
             assertThat(dto.isFixed()).isTrue();
 
             Concept c2 = new Concept();
-            c2.setAttributes(dto);
+            ConceptLegacyMapper.apply(c2, dto);
             assertThat(c2.getIdConcept()).isEqualTo(1);
             assertThat(c2.getName()).isEqualTo("X");
             assertThat(c2.getValue()).isEqualByComparingTo(new java.math.BigDecimal("10"));

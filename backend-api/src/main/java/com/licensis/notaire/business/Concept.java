@@ -6,8 +6,6 @@ package com.licensis.notaire.business;
 
 import java.math.BigDecimal;
 
-import com.licensis.notaire.dto.DtoConcept;
-import com.licensis.notaire.dto.exceptions.InvalidDtoException;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 import java.util.ArrayList;
@@ -136,51 +134,6 @@ public class Concept implements Serializable, Persistable<Integer>
     public void setBudgetTemplateList(List<BudgetTemplate> budgetTemplateList)
     {
         this.budgetTemplateList = budgetTemplateList;
-    }
-
-    /**
-     * Returns a {@code DtoConcept} with the current values of this concept.
-     *
-     * @return
-     */
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoConcept getDto()
-    {
-        DtoConcept dto = new DtoConcept();
-
-        dto.setIdConcept(this.getIdConcept());
-        dto.setName(this.getName());
-        dto.setValue(this.getValue());
-        dto.setPercentage(this.getPercentage());
-        dto.setVersion(this.version);
-        dto.setEnabled(enabled);
-        dto.setFixed(fixedConcept);
-
-        return dto;
-    }
-
-    public void setAttributes(DtoConcept updatedDto) throws InvalidDtoException
-    {
-        this.setIdConcept(updatedDto.getIdConcept());
-
-        if (updatedDto.getName() != null)
-        {
-            this.setName(updatedDto.getName());
-        }
-
-        if (updatedDto.getValue() != null)
-        {
-            this.setValue(updatedDto.getValue());
-        }
-
-        if (updatedDto.getPercentage() != null)
-        {
-            this.setPercentage(updatedDto.getPercentage());
-        }
-
-        this.setVersion(updatedDto.getVersion());
-        this.setEnabled(updatedDto.getEnabled());
-        this.fixedConcept = updatedDto.isFixed();
     }
 
     @Override
