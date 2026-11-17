@@ -16,6 +16,12 @@ Open Homer at http://localhost:8888 for links to every service. Local Grafana
 login (#1413); both ports are bound to loopback only. Recreate those containers
 after pulling if an older volume still shows a login form.
 
+## Incidents
+
+When health, Postgres or Grafana panels fail, follow
+[INCIDENT-RUNBOOK.md](INCIDENT-RUNBOOK.md). That page is the response for
+#288. It does not set an on-call rota.
+
 ## Health check
 
 ```bash
