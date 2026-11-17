@@ -87,6 +87,7 @@ class Engine:
         self.tuning = {**DEFAULT_TUNING, **cfg.tuning}
         self.timings: dict[str, float] = {}
         self._vocab: dict[str, int] | None = None
+        self._tokenizer: sqlite3.Connection | None = None
         self.load()
 
     # -- loading ---------------------------------------------------------------------------
@@ -129,6 +130,9 @@ class Engine:
             self.roots = self.store.project_roots()
             self.loaded_at = self.store.get_meta("last_index")
             self._vocab = None
+            # The index may have refitted its embedding space (LSA, a new PCA basis): rebuild the query side
+            # from the store on next use (the ONNX model itself is shared and stays loaded).
+            self._embedder, self._embedder_loaded = None, False
 
     def _containment(self, conn) -> np.ndarray:
         """(parent, child) index pairs. `parent` is stored relative to the file id ('' = the file itself,
@@ -376,22 +380,26 @@ class Engine:
         return [t for t in tokens if t in keep][:24]
 
     def _doc_freqs(self, tokens: list[str]) -> list[int]:
-        """Exact document frequency of each token: stemmed by SQLite's own tokenizer (a scratch in-memory
-        FTS5 table with the index's tokenizer), then looked up in the index vocabulary."""
-        conn = self.store.conn
+        """Exact document frequency of each token: stemmed by SQLite's own tokenizer (a scratch FTS5 table
+        with the index's tokenizer), then looked up in the index vocabulary. The scratch table lives on its
+        own in-memory connection: writing it through the store's connection would open a transaction that
+        pins this long-lived reader to an old snapshot (refreshed indexes would never become visible)."""
         if self._vocab is None:
             try:
-                self._vocab = dict(conn.execute("SELECT term, doc FROM fts_vocab"))
-                conn.execute("CREATE VIRTUAL TABLE IF NOT EXISTS temp.qtok USING fts5(x, tokenize='porter unicode61 "
-                             "remove_diacritics 2')")
-                conn.execute("CREATE VIRTUAL TABLE IF NOT EXISTS temp.qtok_v USING fts5vocab(temp, qtok, 'instance')")
+                self._vocab = dict(self.store.conn.execute("SELECT term, doc FROM fts_vocab"))
             except sqlite3.Error:  # vocabulary unavailable: no pruning
                 self._vocab = {}
         if not self._vocab:
             return [0] * len(tokens)
-        conn.execute("DELETE FROM temp.qtok")
-        conn.executemany("INSERT INTO temp.qtok (rowid, x) VALUES (?, ?)", list(enumerate(tokens)))
-        stems = dict(conn.execute("SELECT doc, term FROM temp.qtok_v ORDER BY doc, offset DESC"))
+        if self._tokenizer is None:
+            self._tokenizer = sqlite3.connect(":memory:", check_same_thread=False, isolation_level=None)
+            self._tokenizer.execute("CREATE VIRTUAL TABLE qtok USING fts5(x, tokenize='porter unicode61 "
+                                    "remove_diacritics 2')")
+            self._tokenizer.execute("CREATE VIRTUAL TABLE qtok_v USING fts5vocab(qtok, 'instance')")
+        conn = self._tokenizer
+        conn.execute("DELETE FROM qtok")
+        conn.executemany("INSERT INTO qtok (rowid, x) VALUES (?, ?)", list(enumerate(tokens)))
+        stems = dict(conn.execute("SELECT doc, term FROM qtok_v ORDER BY doc, offset DESC"))
         return [self._vocab.get(stems.get(i, t), 0) for i, t in enumerate(tokens)]
 
     def _exact(self, ident: str) -> list[int]:
