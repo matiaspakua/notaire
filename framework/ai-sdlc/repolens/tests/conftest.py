@@ -10,6 +10,15 @@ import pytest
 from repolens.config import Config, Source
 from repolens.service import KnowledgeGraph
 
+
+@pytest.fixture(autouse=True)
+def _isolated_home(tmp_path_factory, monkeypatch):
+    """Never touch the user's ~/.cache/repolens (shared vector cache, models are read-only via HF cache)."""
+    home = tmp_path_factory.mktemp("repolens-home")
+    monkeypatch.setenv("REPOLENS_HOME", str(home))
+    monkeypatch.setenv("REPOLENS_VECTOR_CACHE", str(home / "vectors"))
+    monkeypatch.setenv("REPOLENS_REFRESH_SECONDS", "-1")
+
 FILES = {
     "backend/src/main/java/com/acme/port/VerifyCodeUseCase.java": """
 package com.acme.port;
