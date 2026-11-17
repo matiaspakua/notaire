@@ -110,14 +110,14 @@ Never add suppressions by hand; `--suppress-rule` is only for the first generati
 Frontend unit coverage uses Vitest `@vitest/coverage-v8` with global thresholds in
 `frontend/vitest.config.ts`. Same policy as JaCoCo: **raise-only ratchet floor**.
 
-### Configuration (as of 2026-11-11, #2249)
+### Configuration (as of 2026-11-17, #2047)
 
-| Metric | Enforced floor | Measured 2026-11-11 (#2249) |
+| Metric | Enforced floor | Measured 2026-11-17 (#2047) |
 |--------|----------------|----------------------------------|
-| Statements | **86%** | 88.81% |
-| Branches | **79%** | 81.07% |
-| Functions | **85%** | 87.61% |
-| Lines | **88%** | 90.12% |
+| Statements | **87%** | 89.15% |
+| Branches | **79%** | 81.43% |
+| Functions | **85%** | 87.99% |
+| Lines | **88%** | 90.46% |
 
 - **Owner target**: **>90%** (#2046); current floors lag (see `vitest.config.ts`).
 - **Policy**: raise floors as coverage improves with ≥1 percentage point headroom
