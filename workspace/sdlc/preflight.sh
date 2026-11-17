@@ -64,6 +64,7 @@ Owner scripts bash -n           Process Checks                    sdlc-process.y
 agent rule files                Process Checks                    sdlc-process.yml   (BLOCKING)
 aisdlc gate signal (ratchet+skills) Process Checks / Main Health  sdlc-process.yml   (BLOCKING; #1958/#2159)
 process script self-tests       Process Checks                    sdlc-process.yml   (BLOCKING)
+repolens module gate            (local only; no CI job)           n/a                (BLOCKING when its path changed; #2298)
 openapi breaking diff           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; export freshness CI-only)
 openapi accepted list           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; stale entries, #1315)
 spotless format                 Code Lint / Format Check         pr-validation.yml  (BLOCKING)
@@ -206,6 +207,19 @@ run "process script self-tests" bash -c \
      && python3 -m unittest discover -s testing/tests \
      && python3 -m unittest discover -s docs/tests \
      && python3 -m unittest discover -s backend-api/tools/tests"
+
+# repolens module gate (#2298): lint, tests with its coverage floor, wheel build and smoke search, when the
+# branch touches it. Its stack (numpy, scipy, tree-sitter, fastembed, mcp) is heavier than the stdlib-only
+# kit, so a host without it skips with the reason (install: bash framework/ai-sdlc/repolens/bin/repolens
+# setup --install, plus pytest/pytest-cov/ruff) instead of failing for an unrelated change.
+if git diff --name-only origin/main...HEAD -- framework/ai-sdlc/repolens repolens.toml | grep -q .; then
+    if python3 -c "import numpy, scipy, tree_sitter_language_pack, mcp, fastapi, pytest, pytest_cov, ruff" \
+        >/dev/null 2>&1; then
+        run "repolens module gate" bash framework/ai-sdlc/repolens/verify.sh
+    else
+        skip "repolens module gate" "dependencies missing on this host (see the comment above)"
+    fi
+fi
 
 # Security case catalog (CU78, #1500). The same command is a phase of
 # run_pipeline.sh, which then runs the DAST baseline against the stack.

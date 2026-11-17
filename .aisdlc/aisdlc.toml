@@ -173,13 +173,15 @@ model = "claude-opus-5-5"
 # dispatch — read-only; never executes MCP or agents; no Isolator / sandbox claim.
 # Effort units: tokens (prompt+completion), time_seconds (wall clock),
 # questions (clarification budget), review_lines (changed-line review size).
-# Agents/skills/models come from fleet-manifest + skills-dir — no vanity MCP
-# (MCP catalog empty). No `green` knobs: Notaire has no [[gates]] stage=green;
+# Agents/skills/models come from fleet-manifest + skills-dir. MCP: repolens (#2298, catalog mcp/repolens) is
+# the repository-knowledge tool of every stage where agents navigate code; harnesses start it from
+# `repolens setup` registrations, its usage evidence is the `repolens usage report` gate below. No `green` knobs: Notaire has no [[gates]] stage=green;
 # G3 verified is pre-push + pre-pr. merge/release/signal stay unmapped until
 # real knobs exist (#2211 honesty).
 [[stages]]
 id = "plan"
 agents = ["openspec-planner"]
+mcp = ["repolens"]
 skills = [
   "openspec-propose",
   "openspec-update-change",
@@ -192,6 +194,7 @@ effort = { tokens = 200000, time_seconds = 3600, questions = 20, review_lines = 
 [[stages]]
 id = "red"
 agents = ["testing-qa", "backend-implementer", "frontend-design"]
+mcp = ["repolens"]
 skills = [
   "test-master",
   "qa-automation-strategy",
@@ -218,6 +221,7 @@ effort = { tokens = 150000, time_seconds = 3600, questions = 10, review_lines = 
 [[stages]]
 id = "pre-pr"
 agents = ["cloud-foreman", "code-reviewer", "devops-engineer"]
+mcp = ["repolens"]
 skills = [
   "steward",
   "ci-cd-quality-gates",
@@ -283,6 +287,15 @@ run = "aisdlc ratchet --base {base}"
 name = "skills catalog lint"
 stage = "signal"
 run = "aisdlc skills"
+
+# repolens usage evidence (#2298): adoption, hit rate, grep fallbacks, tokens and latency of the agents'
+# repository navigation, from .repolens/usage.jsonl. Advisory: the line lands in the ledger for `report` and
+# `improve`; it never blocks (no usage yet on a fresh clone or a CI host).
+[[gates]]
+name = "repolens usage report"
+stage = "signal"
+run = "bash framework/ai-sdlc/repolens/bin/repolens report --gate --since 30d"
+required = false
 
 # ── G3 verified ──────────────────────────────────────────────────────────────
 # preflight.sh mirrors every blocking CI gate, including the ratchet and skills lint below.
