@@ -8,7 +8,19 @@
   "instructions": [
     "worker-instructions.md"
   ],
-  "mcp": {},
+  "mcp": {
+    "repolens": {
+      "type": "local",
+      "command": [
+        "bash",
+        "-c",
+        "exec \"$(git rev-parse --show-toplevel)/framework/ai-sdlc/repolens/bin/repolens\" \"$@\"",
+        "repolens",
+        "mcp"
+      ],
+      "enabled": true
+    }
+  },
   "permission": {
     "edit": "allow",
     "bash": "allow",

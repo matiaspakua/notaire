@@ -1,0 +1,32 @@
+# repolens profile for the Notaire monorepo (framework/ai-sdlc/repolens). Every agent harness starts the
+# repolens MCP server from this repository (`repolens setup` registered it); the index of each worktree lives
+# in its own .repolens/ folder. Check the wiring with:
+#   bash framework/ai-sdlc/repolens/bin/repolens doctor
+[index]
+db = ".repolens/graph.db"
+
+[[source]]
+name = "notaire"
+path = "."
+
+[embed]
+backend = "fastembed"            # fastembed | lsa | none | auto
+model = "BAAI/bge-small-en-v1.5"
+
+[git]
+commits = 3000
+max_files_per_commit = 30
+min_count = 2
+
+[tags]
+usecase = '\bCU-?(\d{2,3})\b'
+
+[routes]
+prefixes = ["/api/v1", "/api"]
+
+[ranking]
+# Retired code and archived docs stay indexed (complete) but rank lower.
+demote = ["deprecated/**", "docs/000-archive/**", "**/archive/**", "github-page/**"]
+
+[harness]
+opencode = "local-ai/opencode/opencode.json"   # the local-AI worker's OpenCode config

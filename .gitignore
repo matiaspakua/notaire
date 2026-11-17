@@ -110,3 +110,5 @@ framework/ai-sdlc/.venv-telemetry/
 docs/300-development/303-testing/INVENTORY.generated.md
 
 *.egg-info/
+# repolens store, usage log and lock
+.repolens/

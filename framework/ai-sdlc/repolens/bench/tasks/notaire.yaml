@@ -1,0 +1,104 @@
+# Benchmark tasks for the Notaire monorepo. `expected` holds regexes over repository-relative paths;
+# a task's recall is the share of expected entries matched by at least one returned file.
+# Ground truth was verified with grep against main (2026-11-16).
+name: notaire
+corpus:
+  repo: ../../../../..                    # repository under test
+  clone: "{bench}/corpus/notaire"           # clean clone of HEAD, outside the repository, without this module
+  profile: ../../../../../repolens.toml     # the repository's repolens profile, reused for the clone
+answer_suffix: >-
+  Answer concisely. Finish with one line that starts with `FILES:` followed by the repository-relative
+  paths of every relevant file, comma-separated.
+tasks:
+  - id: totp-verify
+    category: lexical
+    prompt: Where is a TOTP code verified during MFA login, and which use-case interface does that implementation fulfil?
+    expected:
+      - application/usecase/mfa/TotpVerificationService\.java$
+      - application/port/in/mfa/VerifyTotpUseCase\.java$
+
+  - id: mfa-policy
+    category: lexical
+    prompt: Where is the login MFA policy (which users must present a second factor) decided, and how is it configured?
+    expected:
+      - domain/mfa/LoginMfaPolicy\.java$
+      - config/MfaPolicyConfig\.java$
+      - application/usecase/mfa/AssessLoginMfaService\.java$
+
+  - id: mfa-enroll-cross-stack
+    category: cross-stack
+    prompt: Which frontend module sends the HTTP request that begins MFA enrollment, and which backend controller method serves that endpoint?
+    expected:
+      - frontend/src/adapters/http/mfa/mfa-http-gateway\.ts$
+      - adapter/in/web/mfa/MfaController\.java$
+
+  - id: person-create
+    category: cross-stack
+    prompt: When a user creates a person in the web UI, which frontend HTTP adapter sends the request, which backend controller receives it, which inbound port does it call and which use-case service performs the write?
+    expected:
+      - frontend/src/adapters/http/person/person-http-gateway\.ts$
+      - adapter/in/web/person/PersonController\.java$
+      - application/port/in/person/ManagePeopleUseCase\.java$
+      - application/usecase/person/PersonWriteService\.java$
+
+  - id: mfa-table
+    category: multi-hop
+    prompt: Which database table stores MFA enrollments, which Flyway migration creates it, and which persistence classes map and access it?
+    expected:
+      - db/migration/V54__create_mfa_enrollments\.sql$
+      - persistence/mfa/MfaEnrollmentJpaEntity\.java$
+      - persistence/mfa/MfaEnrollmentJpaRepository\.java$
+      - persistence/mfa/MfaEnrollmentPersistenceAdapter\.java$
+
+  - id: folio-slice
+    category: multi-hop
+    prompt: List the full hexagonal slice for folios - the REST controller, the inbound port interfaces, the use-case services and the outbound persistence adapter.
+    expected:
+      - adapter/in/web/folio/FolioController\.java$
+      - port/in/folio/ManageFoliosUseCase\.java$
+      - port/in/folio/QueryFoliosUseCase\.java$
+      - usecase/folio/FolioManagementService\.java$
+      - usecase/folio/FolioQueryService\.java$
+      - persistence/folio/FolioCatalogPersistenceAdapter\.java$
+
+  - id: storeport-impact
+    category: impact
+    prompt: If I change the MfaEnrollmentStorePort interface, which production classes implement or depend on it, and which tests should I re-run?
+    expected:
+      - persistence/mfa/MfaEnrollmentPersistenceAdapter\.java$
+      - usecase/mfa/TotpVerificationService\.java$
+      - usecase/mfa/TotpEnrollmentService\.java$
+      - usecase/mfa/TotpDisableService\.java$
+      - usecase/mfa/RecoveryCodeService\.java$
+      - usecase/mfa/AssessLoginMfaService\.java$
+      - (MfaFakes|MfaEnrollmentPersistencePgIntegrationTest|MfaLoginFlowIntegrationTest)\.java$
+
+  - id: enroll-tests
+    category: tests
+    prompt: Which test classes exercise the TOTP enrollment service?
+    expected:
+      - usecase/mfa/TotpEnrollmentServiceTest\.java$
+      - usecase/mfa/(RecoveryCodeServiceTest|LoginMfaServicesTest|TotpVerificationServiceTest)\.java$
+
+  - id: folio-api-tests
+    category: tests
+    prompt: Which API test collection exercises the folios REST endpoints, and which controller serves them?
+    expected:
+      - backend-api/api-test/folios/
+      - adapter/in/web/folio/FolioController\.java$
+
+  - id: hex-adr
+    category: docs
+    prompt: Which architecture decision record mandates ports and adapters for the whole system, and which automated tests enforce its dependency rules?
+    expected:
+      - ADR-030-hexagonal-architecture-full-adoption\.md$
+      - architecture/HexagonArchitectureTest\.java$
+      - architecture/UseCaseSliceCycleArchitectureTest\.java$
+
+  - id: mfa-docs
+    category: docs
+    prompt: Which architecture decision record and which OpenSpec change proposals describe multi-factor authentication with TOTP?
+    expected:
+      - ADR-032-multi-factor-authentication-totp\.md$
+      - openspec/changes/feat-1640-mfa-totp-backend/proposal\.md$
+      - openspec/changes/feat-1640-mfa-(login-policy|frontend)/proposal\.md$

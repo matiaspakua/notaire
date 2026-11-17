@@ -1,0 +1,157 @@
+# Changelog
+
+All notable changes to repolens. Versions follow [SemVer](https://semver.org); the version lives in
+`repolens/__init__.py` and release tags are `repolens-v<version>`.
+
+## [0.4.0] - 2026-11-17
+
+The factory release (#2298): repolens becomes the repository-knowledge tool of every agent harness, works
+while many agents create branches, worktrees and pull requests, and measures its own use.
+
+### Added
+
+- **Zero configuration**: from anywhere in a repository, repolens uses the nearest `repolens.toml`, else
+  indexes the repository; the store lives in `<worktree>/.repolens/` (one index per worktree and branch).
+- **`repolens setup`**: registers the MCP server with Claude Code (`.mcp.json`, `.claude/settings.json` with
+  the usage hook), Codex (`.codex/config.toml`), OpenCode (`opencode.json`, path from `[harness] opencode`),
+  Cursor (`.cursor/mcp.json`), adds git `post-checkout`/`post-merge` refresh hooks and ignores `.repolens/`;
+  idempotent and merging. `--install` creates the shared dependency environment, `--index` builds the first
+  index in the background. **`repolens doctor`** checks the result.
+- **Launcher `bin/repolens`**: runs the repository's own checkout from any directory with the shared
+  environment, so each worktree serves its own code.
+- **Shared vector cache** (`~/.cache/repolens/vectors`, with the PCA basis): vectors are content-addressed,
+  so a new worktree or branch embeds only text no store has embedded (Notaire: a new worktree indexed in 11 s
+  with 82,379 of 83,241 vectors from the cache, against ~4 min cold).
+- **Background refresh**: before a tool call the MCP server starts an incremental index (at most every
+  `REPOLENS_REFRESH_SECONDS`, default 15) on its own connection; an inter-process index lock serialises runs
+  from several agents and git hooks. A first start builds the index in the background and says so.
+- **Usage telemetry and `repolens report`**: the server logs every tool call (client, latency, size, files
+  returned), the Claude Code hook logs Read/Grep/Glob; the report gives adoption, hit rate, grep fallbacks,
+  navigation tokens, latency, zero-result queries and recommendations; `--gate` feeds the factory's evidence
+  ledger.
+- `bench/results/charts/headline.svg`: one chart, repolens against grep-driven navigation.
+
+### Fixed
+
+- A long-lived engine never saw a refreshed index: the query-term stemmer wrote a scratch table through the
+  store's connection, leaving a transaction open that pinned the reader to its first snapshot (and stalled the
+  writer's checkpoint). The stemmer now has its own in-memory connection.
+- After a refresh refitted the embedding space (LSA, a new PCA basis) the engine kept the old query embedder;
+  it is rebuilt on every reload.
+- The embedding model loads from the local cache first (no network round trip on every server start).
+
+### Changed
+
+- Module folder `framework/ai-sdlc/graph-db` -> `framework/ai-sdlc/repolens`.
+- Benchmark clones, the scale corpus and agent transcripts live in `$REPOLENS_BENCH_HOME` (default
+  `~/.cache/repolens/bench`), outside the repository tree; the benchmark deletes this module (its answer
+  key) from the corpus clone.
+- Removed `examples/` (Notaire's profile is the root `repolens.toml`; harness files come from `setup`) and
+  superseded benchmark snapshots.
+
+## [0.3.0] - 2026-11-17
+
+**The project was renamed from `codekg` to `repolens`** (package, `repolens` command, `python -m repolens`,
+`REPOLENS_*` environment variables, `.repolens/` default folder, `~/.cache/repolens` model cache, MCP server
+name `repolens`, release tags `repolens-v<version>`). The name had not been released before, so there is no
+compatibility shim; move an old model cache with `mv ~/.cache/codekg ~/.cache/repolens`.
+
+Scale iteration: measured with `bench/scale_bench.py` on a 33k-file, ~9M-line multi-repository corpus
+(spring-framework + vscode) and re-validated on the Notaire task sets. Stores re-extract on first index
+(extractor version 4) and re-embed only the texts that changed.
+
+### Fixed
+
+- **License headers were the documentation of every file**: the file node's text (and so its embedding and
+  keywords) was the leading comment, which in a licensed codebase is the same Apache/MIT header everywhere.
+  Leading license blocks are now skipped, also for the first symbol of a file.
+- **Exported TypeScript declarations lost their JSDoc** (`export function f` keeps its comment on the export
+  statement); comment terminators (`*/`) no longer leak into docs.
+- **Locals of anonymous functions were module symbols**: variables inside test-suite callbacks and IIFEs
+  became `variable` nodes (107k of 545k nodes at scale). They are no longer extracted.
+- **Query-term pruning used wrong document frequencies**: the stem was guessed by prefix, so frequent words
+  (`exception`, `request`) looked rare and were never pruned. Stems now come from SQLite's own tokenizer.
+- The LSA fallback refitted and re-embedded everything on every run, even when nothing changed.
+
+### Changed
+
+- **Linker**: same-named candidates are grouped once per name, kind and language and indexed by file,
+  directory and project (69 s -> 8 s at scale, identical edges); symbol references are streamed from the
+  store instead of held in memory, and edges are written in bounded batches (link peak 2.1 -> 1.2 GB).
+- **PageRank** runs on sparse vectors: mass below `ppr_eps` (1e-5) is not propagated, so the cost follows the
+  walk's reach, not the graph size (83 -> 30 ms at scale; same rankings on the Notaire sets).
+- **Engine memory**: node ids, names and qualified names are read from SQLite per rendered result instead of
+  being held for every node; containment is resolved by one SQL join (engine heap 310 -> 133 MB at scale).
+- **Embedding**: the embedding text is 300 characters (was 600; same recall on both task sets, ~30% less
+  compute on long texts); the PCA basis is fitted on a sample and applied in bounded chunks (indexing peak
+  3.6 -> 1.3 GB at scale).
+- **Ranking**: test files weigh half unless the query asks about tests (`test_factor`; recall@10 on the tuning
+  set 0.86 -> 0.89).
+- **Indexing**: the graph is published (`last_index`) as soon as it is linked, so a running server answers
+  with keyword + graph ranking during a long first embedding; a run with no changes skips the vector scan.
+
+### Added
+
+- `bench/scale_bench.py` and the scale task set `bench/tasks/scale.yaml` (validation only); benchmark task
+  files may point at a prebuilt multi-repository store (`corpus.config`).
+
+## [0.2.0] - 2026-11-16
+
+Performance iteration, measured with `bench/perf_bench.py` on the Notaire corpus (before -> after in
+`bench/results/perf/`). Existing stores migrate in place on first open and keep their embeddings.
+
+### Changed
+
+- **Store schema v4** (5x smaller): integer-keyed derived edges without secondary indexes; containment kept
+  as a relative `parent` column instead of edge rows; unresolved references stored as one compressed blob
+  per file; contentless FTS5 updated incrementally (no full rebuild); long node text zlib-compressed;
+  redundant `owner` column replaced by a `derived` flag and a partial index.
+- **Vectors**: content-addressed by text hash (identical texts share one vector), int8-quantised and reduced
+  to 128 dimensions with a PCA basis fitted once per model (`[embed] reduce`, 0 keeps model dimensions).
+  The engine keeps them as float16 (half the memory, ~1 ms per query).
+- **Indexing**: stat-first change detection (unchanged files are not read); a run with no changes skips
+  link, FTS and embedding; full re-extract clears once instead of deleting per file; FTS tokens and content
+  hashes are computed in the extraction workers; `git log` output is cached by HEAD; the embedding model
+  loads only when there is something to embed.
+- **Embedding**: texts are embedded shortest-first in small batches, and large jobs use one pool of worker
+  processes for the whole stream (`[embed] workers`).
+- **Query**: PageRank runs 20 iterations (identical rankings to 30); very common query terms are dropped
+  from the FTS query using the index vocabulary (`max_df`), the two rarest always stay.
+- A one-word query is treated as an identifier lookup; `path#Symbol` references resolve without the project
+  prefix.
+- **Ranking**: fusion re-tuned on the tuning tasks and confirmed on the held-out set (dense list weighted
+  1.5x, RRF constant 60, 7 code anchors + 1 doc anchor); every parameter is overridable per profile under
+  `[ranking.tuning]` (the former `[ranking] restart` key was read but never applied).
+- **Search output** (MCP, `--also` on the CLI): the top `k` results in detail plus ten one-line "also
+  relevant" entries; one call now carries the recall of the top 20 for about 1 KB more.
+- **Memory**: the engine streams nodes, edges and vectors from SQLite in bounded chunks and keeps vectors as
+  float16; peak server memory 788 -> 504 MB.
+- `bench/agent_bench.py` stops at the first account usage-limit error and never overwrites earlier results
+  with a failed batch.
+
+### Added
+
+- `bench/perf_bench.py` (size, index, load, memory, latency by stage, MCP cold start, quality) and a held-out
+  task set `bench/tasks/notaire-holdout.yaml` that is never used for tuning.
+
+## [0.1.0] - 2026-11-16
+
+### Added
+
+- Recursive scanner: honours `.gitignore` in git repositories, include/exclude globs, size limits, never
+  indexes secrets (`.env`, keys).
+- Extractors: tree-sitter code walker (Java, Kotlin, C#, TypeScript/TSX/JavaScript, Python, Go, Rust, plus a
+  generic fallback for other grammars), Markdown, SQL, JSON/YAML/TOML/XML/properties, CSV/TSV, PDF (optional
+  `pypdf`), plain text and binary assets. Plugin entry point group `repolens.extractors`.
+- Linker: imports (Java FQN, TS path aliases from `tsconfig.json`, Python modules, Go packages), calls, type
+  references, inheritance and method overrides, tests-to-subject, HTTP route matching (Spring, JAX-RS,
+  FastAPI/Flask, NestJS, Express servers; fetch/axios/api helpers, MockMvc, API-test collections as callers),
+  SQL tables and JPA/SQLAlchemy mappings, doc links and mentions, issue/ADR tags, git co-change.
+- SQLite store (WAL, FTS5 BM25) with incremental re-index by content hash; embeddings cached by text hash.
+- Embeddings: fastembed (ONNX, local) by default, dependency-free LSA fallback, or none.
+- Engine: hybrid anchors (BM25 + dense + exact identifiers) and typed, hub-damped Personalized PageRank;
+  node, neighbors, impact, weighted path, outline, snippet; `demote` globs and `scope` filters.
+- Interfaces: `repolens` CLI, FastAPI HTTP API, MCP server (FastMCP), Cytoscape.js graph explorer, JSON and
+  GraphML export.
+- Benchmark: retrieval (grep vs hybrid vs graph) and agent (Claude Code with and without the MCP server)
+  with an HTML/SVG report.

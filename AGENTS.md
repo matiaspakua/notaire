@@ -48,6 +48,13 @@ do not create a runtime-specific backlog or `lane:*` labels.
 General hygiene (short): `.claude/rules/general.md` — load at session start if needed;
 prefer skills over pasting full rule bodies into context.
 
+## Repository knowledge (repolens)
+
+Navigate with the `repolens` MCP tools before grep/glob: `search` (question or identifier → ranked files
+with path:line), `node`, `impact` (callers, tests), `path`, `outline`, `snippet`. It follows your worktree's
+edits and branch. Wiring and health: `bash framework/ai-sdlc/repolens/bin/repolens doctor`; usage
+efficiency: `… report` (#2298).
+
 ## Modules
 
 ```bash

@@ -1,0 +1,11 @@
+{
+  "created_at": "2026-11-17T18:59:11+00:00",
+  "created_by": "cli:local",
+  "digest": "8b72cfed365612b59af2e411765ef935ddeebde3780c737ef0f81f9e5881a279",
+  "id": "repolens",
+  "kind": "mcp",
+  "ref": "framework/ai-sdlc/repolens",
+  "schema_version": 1,
+  "summary": "Local code knowledge graph MCP server (search, node, impact, path, outline, snippet); started by every harness via repolens setup",
+  "version": 1
+}

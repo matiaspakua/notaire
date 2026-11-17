@@ -46,12 +46,15 @@ class NotaireForemanStagesTest(unittest.TestCase):
         for required in ("plan", "red", "pre-pr"):
             self.assertIn(required, ids, result.stdout)
         self.assertNotIn("green", ids, "no green knob without a green gate")
+        # No vanity MCP: a stage may name only MCP servers the factory catalogs (repolens, #2298).
+        cataloged = {p.parent.name for p in (self.repo / ".aisdlc" / "catalogs" / "mcp").glob("*/current.json")}
         for stage in data["stages"]:
             self.assertTrue(
                 stage.get("agents") or stage.get("skills"),
                 f"stage {stage.get('id')} needs real agents/skills: {stage}",
             )
-            self.assertEqual([], stage.get("mcp") or [], f"no vanity MCP on {stage.get('id')}")
+            named = set(stage.get("mcp") or [])
+            self.assertLessEqual(named, cataloged, f"uncataloged (vanity) MCP on {stage.get('id')}")
         self.assertFalse(data.get("executes", True))
         self.assertFalse(data.get("sandbox", True))
 

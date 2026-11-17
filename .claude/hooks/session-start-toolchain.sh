@@ -95,11 +95,23 @@ export_environment() {
     } >> "$CLAUDE_ENV_FILE"
 }
 
+# repolens (#2298): its Python dependencies go into the shared $REPOLENS_HOME/venv and the first index is
+# built, both in the background so session start is never delayed. Until they are ready the repolens MCP
+# server is unavailable and agents use Grep/Glob; the next session has it.
+install_repolens() {
+    local launcher="${CLAUDE_PROJECT_DIR:-.}/framework/ai-sdlc/repolens/bin/repolens"
+    [ -x "$launcher" ] || return 0
+    mkdir -p "$HOME/.cache/repolens"
+    nohup bash "$launcher" setup --install --index --only gitignore \
+        >"$HOME/.cache/repolens/bootstrap.log" 2>&1 </dev/null &
+}
+
 install_jdk
 install_openspec
 install_kustomize
 install_trivy
 install_alert_tools
+install_repolens
 export_environment
 echo "toolchain ready: $TOOLS"
 exit 0
