@@ -50,6 +50,10 @@ public interface CopyOpsPort {
 
     List<CopyView> findAll();
 
+    PageResult findPage(int page, int size, String sort);
+
+    record PageResult(List<CopyView> content, int number, int size, long totalElements) {}
+
     Optional<CopyView> findById(Integer id);
 
     SaveResult create(CopyCommand command);

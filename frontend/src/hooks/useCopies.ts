@@ -2,9 +2,9 @@
  * React Query hooks for copies.
  * Hexagon wiring: #1845 / ADR-030.
  */
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { copyUseCases } from "@/composition/copy";
-import type { Copy as DomainCopy, CopyInput } from "@/core/copy/domain/copy";
+import type { CopyInput } from "@/core/copy/domain/copy";
 import type { Copy } from "@/types";
 
 export const copiesKeys = {
@@ -12,14 +12,18 @@ export const copiesKeys = {
   detail: (id: number) => ["copies", id] as const,
 };
 
-function toWire(c: DomainCopy): Copy {
-  return c as Copy;
-}
+export const COPIES_SORT = "idCopy,desc";
 
-export function useCopies() {
+export function useCopiesPage(params: { page: number; size: number }) {
   return useQuery({
-    queryKey: copiesKeys.all,
-    queryFn: async () => (await copyUseCases.list()).map(toWire),
+    queryKey: [...copiesKeys.all, "page", params.page, params.size],
+    queryFn: () =>
+      copyUseCases.listPage({
+        page: params.page,
+        size: params.size,
+        sort: COPIES_SORT,
+      }),
+    placeholderData: keepPreviousData,
   });
 }
 

@@ -5,6 +5,8 @@ import com.licensis.notaire.repository.CopyRepository;
 import com.licensis.notaire.repository.TestimonyMovementRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,24 @@ public class CopyService {
     public List<Copy> findAll() {
         logger.debug("Finding all copies");
         return repository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public org.springframework.data.domain.Page<Copy> findPage(int page, int size, String sort) {
+        return repository.findAll(PageRequest.of(page, Math.max(size, 1), copySort(sort)));
+    }
+
+    private static Sort copySort(String sort) {
+        String value = sort == null || sort.isBlank() ? "idCopy,desc" : sort;
+        String[] parts = value.split(",", 2);
+        String property = switch (parts[0].trim()) {
+            case "number", "datePrinting" -> parts[0].trim();
+            default -> "idCopy";
+        };
+        Sort.Direction direction = parts.length > 1 && "asc".equalsIgnoreCase(parts[1].trim())
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+        return Sort.by(direction, property);
     }
 
     @Transactional(readOnly = true)

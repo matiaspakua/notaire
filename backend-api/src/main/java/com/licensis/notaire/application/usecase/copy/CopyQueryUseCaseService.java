@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.licensis.notaire.application.port.in.copy.QueryCopiesUseCase;
 import com.licensis.notaire.application.port.out.copy.CopyOpsPort;
 import com.licensis.notaire.application.port.out.copy.CopyOpsPort.CopyView;
+import com.licensis.notaire.application.port.out.copy.CopyOpsPort.PageResult;
 
 /**
  * Read-side use case for copies — delegates to {@link CopyOpsPort} (issue #1779).
@@ -26,6 +27,12 @@ public class CopyQueryUseCaseService implements QueryCopiesUseCase {
     @Transactional(readOnly = true)
     public List<CopyView> findAll() {
         return ops.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageResult findPage(int page, int size, String sort) {
+        return ops.findPage(page, size, sort);
     }
 
     @Override
