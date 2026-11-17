@@ -72,7 +72,9 @@ test.describe("CU01 - Prepare a budget (golden path)", () => {
     const personOption = page.getByRole("listbox").getByRole("option").first();
     await expect(personOption).toBeVisible({ timeout: 5000 });
     // Use the picker option that matches our seeded person via data attribute
-    const targetOption = page.getByRole("option", { name: new RegExp(`Person-${idPerson}`, "i") });
+    const targetOption = page.getByRole("option", {
+      name: new RegExp(`Person-${idPerson}\\b`, "i"),
+    });
     if (await targetOption.count() > 0) {
       await targetOption.evaluate((el: HTMLElement) => el.click());
     } else {
