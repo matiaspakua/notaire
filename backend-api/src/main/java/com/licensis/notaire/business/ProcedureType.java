@@ -4,7 +4,6 @@
  */
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoProcedureType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
@@ -198,44 +197,6 @@ public class ProcedureType implements Serializable, Persistable<Integer> {
 
     public void setWorkflowDefinition(WorkflowDefinition workflowDefinition) {
         this.workflowDefinition = workflowDefinition;
-    }
-
-    public void setAttributes(DtoProcedureType dtoProcedureType) {
-        if (dtoProcedureType.isValid()) {
-            this.idProcedureType = dtoProcedureType.getIdProcedureType();
-            this.name = dtoProcedureType.getName();
-            // Null-safe unboxing: PUT payloads may omit boolean flags, which
-            // previously NPE'd (for example getAssociatesProperties() null on update).
-            this.isArchived = Boolean.TRUE.equals(dtoProcedureType.getIsArchived());
-            this.isRegistered = Boolean.TRUE.equals(dtoProcedureType.getIsRegistered());
-            this.associatesProperties = Boolean.TRUE.equals(dtoProcedureType.getAssociatesProperties());
-            this.notes = dtoProcedureType.getNotes();
-            // Preserve current version when the payload omits it (avoids NPE on update).
-            if (dtoProcedureType.getVersion() != null) {
-                this.version = dtoProcedureType.getVersion();
-            }
-            enabled = !Boolean.FALSE.equals(dtoProcedureType.getEnabled());
-        }
-    }
-
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoProcedureType getDto() {
-        DtoProcedureType dto = new DtoProcedureType();
-
-        dto.setIdProcedureType(idProcedureType);
-        dto.setName(name);
-        dto.setIsArchived(isArchived);
-        dto.setIsRegistered(isRegistered);
-        dto.setAssociatesProperties(associatesProperties);
-        dto.setNotes(notes);
-        dto.setVersion(version);
-        dto.setEnabled(enabled);
-        if (workflowDefinition != null) {
-            dto.setWorkflowDefinitionId(workflowDefinition.getId());
-            dto.setWorkflowDefinitionName(workflowDefinition.getName());
-        }
-
-        return dto;
     }
 
     @Override
