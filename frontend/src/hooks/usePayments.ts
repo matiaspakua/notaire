@@ -2,12 +2,14 @@
  * React Query hooks for payments.
  * Hexagon wiring: #1832 / ADR-030.
  */
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { paymentUseCases } from "@/composition/payment";
 import type { Payment as DomainPayment, PaymentStatus as DomainStatus } from "@/core/payment/domain/payment";
 import type { Payment } from "@/types";
 
 export const paymentsKeys = { all: ["payments"] as const };
+
+export const PAYMENTS_SORT = "idPayment,desc";
 
 // Values match PaymentStatus.java verbatim — its constant names are the published REST
 // contract (see domain/payment/PaymentStatus.java javadoc), not SIN_PAGOS/PARCIAL/SALDADO.
@@ -25,10 +27,25 @@ function toWire(p: DomainPayment): Payment {
   };
 }
 
-export function usePayments() {
+export function usePaymentsPage(params: { page: number; size: number }, options: { enabled?: boolean } = {}) {
   return useQuery({
-    queryKey: paymentsKeys.all,
-    queryFn: async () => (await paymentUseCases.list()).map(toWire),
+    enabled: options.enabled ?? true,
+    queryKey: [...paymentsKeys.all, "page", params.page, params.size],
+    queryFn: async () => {
+      const page = await paymentUseCases.listPage({
+        page: params.page,
+        size: params.size,
+        sort: PAYMENTS_SORT,
+      });
+      return {
+        content: page.content.map(toWire),
+        totalElements: page.totalElements,
+        totalPages: page.totalPages,
+        number: page.number,
+        size: page.size,
+      };
+    },
+    placeholderData: keepPreviousData,
   });
 }
 

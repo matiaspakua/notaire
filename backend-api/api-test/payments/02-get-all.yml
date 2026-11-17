@@ -20,5 +20,5 @@ runtime:
           test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
           test("Includes the created payment", function () {
             const id = Number(bru.getVar('payment_id'));
-            expect(res.getBody().some(p => p.idPayment === id)).to.be.true;
+            expect(res.getBody().content.some(p => p.idPayment === id)).to.be.true;
           });
