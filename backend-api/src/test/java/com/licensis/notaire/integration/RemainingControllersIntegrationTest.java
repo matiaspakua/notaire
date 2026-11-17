@@ -142,12 +142,13 @@ class RemainingControllersIntegrationTest {
     class PaymentTests {
 
         @Test
-        @DisplayName("Should return all payments")
+        @DisplayName("Should return one page of payments")
         void shouldReturnAllPayments() throws Exception {
             mockMvc.perform(get("/api/v1/payments"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$", isA(java.util.List.class)));
+                    .andExpect(jsonPath("$.content", isA(java.util.List.class)))
+                    .andExpect(jsonPath("$.totalElements").isNumber());
         }
 
         @Test

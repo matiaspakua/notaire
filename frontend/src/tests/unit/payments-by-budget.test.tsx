@@ -63,6 +63,9 @@ function route(url: string) {
   if (/\/payments\/budget\/9\/status$/.test(url)) return ok("NoPayments");
   if (/\/budgets\/(7|9)\/summary$/.test(url)) return ok({ total: 100, pendingBalance: 50 });
   if (/\/budgets\/(7|9)$/.test(url)) return ok({ idBudget: 7 });
+  if (/\/payments\?/.test(url)) {
+    return ok({ content: ALL, totalElements: ALL.length, totalPages: 1, number: 0, size: 20 });
+  }
   if (/\/payments$/.test(url)) return ok(ALL);
   return ok([]);
 }

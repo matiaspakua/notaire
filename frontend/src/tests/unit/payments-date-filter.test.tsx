@@ -54,6 +54,9 @@ beforeEach(() => {
     const url = String(u);
     if (url.includes("/payments/date")) return ok(DATED);
     if (/\/payments\/budget\/7$/.test(url)) return ok(BY7);
+    if (url.includes("/payments?")) {
+      return ok({ content: ALL, totalElements: ALL.length, totalPages: 1, number: 0, size: 20 });
+    }
     if (/\/payments$/.test(url)) return ok(ALL);
     return ok({});
   });

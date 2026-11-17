@@ -1,7 +1,5 @@
 Deed#getDto
 DeedManagement#getDto
-DocumentType#getDto
-DocumentType#setAttributes
 Folio#getDto
 History#getDto
 ManagementStatus#getDto
@@ -9,8 +7,6 @@ ManagementStatus#setAttribute
 Person#setAttributes
 Procedure#getDto
 ProcedureFolder#getDto
-ProcedureType#getDto
-ProcedureType#setAttributes
 Property#getDto
 RegistrationDraft#getDto
 Testimony#getDto

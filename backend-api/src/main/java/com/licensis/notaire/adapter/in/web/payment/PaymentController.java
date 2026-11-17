@@ -24,6 +24,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -74,9 +80,18 @@ public class PaymentController {
     }
 
     @GetMapping
-    @Operation(summary = "Get all payments")
-    public ResponseEntity<List<DtoPaymentResponse>> getAll() {
-        return ResponseEntity.ok(PaymentWebMapper.toDtoList(queryPaymentsUseCase.findAll()));
+    @Operation(summary = "Get payments, one page at a time",
+            description = "Parameters: page (default 0), size (default 20), sort (for example idPayment,desc)")
+    public ResponseEntity<Page<DtoPaymentResponse>> getAll(
+            @ParameterObject @PageableDefault(size = 20, sort = "idPayment", direction = Sort.Direction.DESC)
+            Pageable pageable) {
+        var order = pageable.getSort().stream().findFirst().orElse(null);
+        String sort = order == null
+                ? "idPayment,desc"
+                : order.getProperty() + "," + order.getDirection().name().toLowerCase();
+        var result = queryPaymentsUseCase.findPage(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        var content = result.content().stream().map(PaymentWebMapper::toDto).toList();
+        return ResponseEntity.ok(new PageImpl<>(content, pageable, result.totalElements()));
     }
 
     @ApiResponses({

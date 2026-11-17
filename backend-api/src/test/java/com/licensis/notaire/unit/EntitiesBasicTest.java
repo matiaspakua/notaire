@@ -2,7 +2,9 @@ package com.licensis.notaire.unit;
 
 
 import com.licensis.notaire.adapter.out.persistence.concept.ConceptLegacyMapper;
+import com.licensis.notaire.adapter.out.persistence.document.DocumentTypeLegacyMapper;
 import com.licensis.notaire.adapter.out.persistence.folio.FolioTypeLegacyMapper;
+import com.licensis.notaire.adapter.out.persistence.procedure.ProcedureTypeLegacyMapper;
 import com.licensis.notaire.dto.DtoManagementStatus;
 import com.licensis.notaire.dto.DtoFolio;
 import com.licensis.notaire.dto.DtoProperty;
@@ -759,7 +761,7 @@ class EntitiesBasicTest {
             assertThat(t1.hashCode()).isNotNegative();
             assertThat(t1.toString()).isNotBlank();
 
-            DtoDocumentType dto = t1.getDto();
+            DtoDocumentType dto = DocumentTypeLegacyMapper.toDto(t1);
             assertThat(dto.getName()).isEqualTo("DNI");
 
             DtoDocumentType dto2 = new DtoDocumentType();
@@ -770,7 +772,7 @@ class EntitiesBasicTest {
             dto2.setEnabled(true);
             dto2.setVersion(0);
             DocumentType t3 = new DocumentType();
-            t3.setAttributes(dto2);
+            DocumentTypeLegacyMapper.apply(t3, dto2);
             assertThat(t3.getName()).isEqualTo("RG");
         }
     }
@@ -850,7 +852,7 @@ class EntitiesBasicTest {
             assertThat(new ProcedureType(1)).isNotEqualTo("x");
             assertThat(t1.toString()).isNotBlank();
 
-            DtoProcedureType dto = t1.getDto();
+            DtoProcedureType dto = ProcedureTypeLegacyMapper.toDto(t1);
             assertThat(dto.getName()).isEqualTo("X");
 
             DtoProcedureType dto2 = new DtoProcedureType();
@@ -862,7 +864,7 @@ class EntitiesBasicTest {
             dto2.setEnabled(true);
             dto2.setVersion(0);
             ProcedureType t3 = new ProcedureType();
-            t3.setAttributes(dto2);
+            ProcedureTypeLegacyMapper.apply(t3, dto2);
             assertThat(t3.getName()).isEqualTo("New");
         }
     }

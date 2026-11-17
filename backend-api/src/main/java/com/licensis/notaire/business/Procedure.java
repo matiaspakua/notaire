@@ -11,6 +11,7 @@ import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoBudget;
 import com.licensis.notaire.dto.DtoIdentificationType;
 import com.licensis.notaire.dto.DtoProcedure;
+import com.licensis.notaire.dto.DtoProcedureType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -217,7 +218,20 @@ public class Procedure implements Serializable, Persistable<Integer> {
 
         dto.setIdProcedure(getIdProcedure());
         dto.setNotes(notes);
-        dto.setProcedureType(fkIdProcedureType.getDto());
+        DtoProcedureType procedureTypeDto = new DtoProcedureType();
+        procedureTypeDto.setIdProcedureType(fkIdProcedureType.getIdProcedureType());
+        procedureTypeDto.setName(fkIdProcedureType.getName());
+        procedureTypeDto.setIsArchived(fkIdProcedureType.getIsArchived());
+        procedureTypeDto.setIsRegistered(fkIdProcedureType.getIsRegistered());
+        procedureTypeDto.setAssociatesProperties(fkIdProcedureType.getAssociatesProperties());
+        procedureTypeDto.setNotes(fkIdProcedureType.getNotes());
+        procedureTypeDto.setVersion(fkIdProcedureType.getVersion());
+        procedureTypeDto.setEnabled(fkIdProcedureType.getEnabled());
+        if (fkIdProcedureType.getWorkflowDefinition() != null) {
+            procedureTypeDto.setWorkflowDefinitionId(fkIdProcedureType.getWorkflowDefinition().getId());
+            procedureTypeDto.setWorkflowDefinitionName(fkIdProcedureType.getWorkflowDefinition().getName());
+        }
+        dto.setProcedureType(procedureTypeDto);
 
         if (fkIdDeed != null) {
             DtoDeed deedDto = new DtoDeed();
