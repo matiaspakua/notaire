@@ -13,6 +13,7 @@ from .config import Config, Source
 from .embed import embed_store
 from .extractors import EXTRACTOR_VERSION, Options, extract_job
 from .linker import link
+from .locks import index_lock
 from .scanner import scan
 from .store import Store
 
@@ -20,7 +21,16 @@ BATCH = 400
 
 
 def index(cfg: Config, store: Store, only: list[str] | None = None, full: bool = False,
-          embed: bool = True, log=print) -> dict:
+          embed: bool = True, log=print, wait: bool = True) -> dict:
+    """Run one index pass under the store's index lock. With `wait=False` a pass already running elsewhere
+    (another agent's server, a git hook) wins and this call returns `{"busy": True}` at once."""
+    with index_lock(store.path, wait=wait) as acquired:
+        if not acquired:
+            return {"busy": True, "changed": False, "sources": {}}
+        return _index(cfg, store, only, full, embed, log)
+
+
+def _index(cfg: Config, store: Store, only: list[str] | None, full: bool, embed: bool, log) -> dict:
     t0 = time.perf_counter()
     report: dict = {"sources": {}}
     if store.get_meta("extractor_version") != EXTRACTOR_VERSION:

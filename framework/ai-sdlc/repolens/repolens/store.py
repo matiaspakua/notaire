@@ -146,6 +146,9 @@ class Store:
         rows = self.conn.execute("SELECT path, hash, size, mtime FROM files WHERE project = ?", (project,))
         return {r[0]: (r[1], r[2], r[3]) for r in rows}
 
+    def file_signatures_count(self) -> int:
+        return self.conn.execute("SELECT COUNT(*) FROM files").fetchone()[0]
+
     def file_hashes(self, project: str) -> dict[str, str]:
         return {p: s[0] for p, s in self.file_signatures(project).items()}
 

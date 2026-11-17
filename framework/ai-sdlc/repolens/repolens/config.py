@@ -7,6 +7,8 @@ import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from .paths import STATE_DIR, find_config, project_root
+
 DEFAULT_EXCLUDES = [
     ".git/**", "**/.git/**", "**/node_modules/**", "**/.venv/**", "**/venv/**", "**/__pycache__/**",
     "**/target/**", "**/dist/**", "**/build/**", "**/.next/**", "**/coverage/**", "**/.repolens/**",
@@ -84,15 +86,29 @@ def default_db_path() -> Path:
 
 
 def load_config(path: Path | None = None, db: Path | None = None) -> Config:
-    """Load a TOML config; relative paths resolve against the config file's folder."""
+    """Load a TOML config; relative paths resolve against the config file's folder. Without a config path,
+    `$REPOLENS_CONFIG` or the nearest repolens.toml is used; without any, the repository itself is indexed
+    (zero configuration). An explicit `db` (or `$REPOLENS_DB`) without a config opens just that store."""
     if path is None:
         env = os.environ.get("REPOLENS_CONFIG")
         path = Path(env) if env else None
+    if path is None and db is None and not os.environ.get("REPOLENS_DB"):
+        path = find_config()
+        if path is None:
+            return default_config()
     if path is None:
         return Config(db_path=db or default_db_path())
     data = tomllib.loads(Path(path).read_text(encoding="utf-8"))
     base = Path(path).resolve().parent
     return config_from_dict(data, base, db)
+
+
+def default_config(start: Path | None = None) -> Config:
+    """No repolens.toml: index the repository (or folder) and keep the store in its `.repolens/` folder."""
+    root = project_root(start)
+    cfg = Config(db_path=root / STATE_DIR / "graph.db")
+    cfg.sources.append(Source(root.name, root))
+    return cfg
 
 
 def config_from_dict(data: dict, base: Path, db: Path | None = None) -> Config:

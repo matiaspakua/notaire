@@ -6,12 +6,15 @@ import importlib.util
 import io
 import json
 import os
+import threading
 from collections import Counter
 from pathlib import Path
 
 import numpy as np
 
+from . import vcache
 from .model import Node, split_identifier, text_hash
+from .paths import home
 
 SKIP_KINDS = frozenset({"dir", "project", "external"})
 PARALLEL_FROM = 5000
@@ -23,6 +26,25 @@ def embed_text(n: Node) -> str:
     words = " ".join(split_identifier(n.qualname or n.name))
     path = " ".join(split_identifier(n.path.replace("/", " "))) if n.path else ""
     return f"{n.kind} {words}. {n.signature} {n.text} ({path})"[:EMBED_CHARS]
+
+
+_MODELS: dict[str, object] = {}
+_MODELS_LOCK = threading.Lock()
+
+
+def _shared_model(name: str):
+    """One loaded ONNX model per process: a server answering queries and refreshing its index uses one copy."""
+    with _MODELS_LOCK:
+        if name not in _MODELS:
+            from fastembed import TextEmbedding
+
+            cache = Path(os.environ.get("REPOLENS_MODEL_CACHE") or home() / "models")
+            cache.mkdir(parents=True, exist_ok=True)
+            try:  # cached model: no network round trip on every server start
+                _MODELS[name] = TextEmbedding(name, cache_dir=str(cache), local_files_only=True)
+            except Exception:  # noqa: BLE001 - not cached yet (first run): download it once
+                _MODELS[name] = TextEmbedding(name, cache_dir=str(cache))
+        return _MODELS[name]
 
 
 class FastEmbedder:
@@ -37,11 +59,7 @@ class FastEmbedder:
     @property
     def model(self):
         if self._model is None:
-            from fastembed import TextEmbedding
-
-            cache = Path(os.environ.get("REPOLENS_MODEL_CACHE", Path.home() / ".cache" / "repolens" / "models"))
-            cache.mkdir(parents=True, exist_ok=True)
-            self._model = TextEmbedding(self.model_name, cache_dir=str(cache))
+            self._model = _shared_model(self.model_name)
         return self._model
 
     def needs_fit(self) -> bool:
@@ -229,7 +247,12 @@ def embed_store(store, cfg, log=print) -> dict:
         embedder.fit(list(unique.values()))
         store.set_meta("lsa_state", embedder.dump())
         store.clear_vectors()
-    else:
+    cache = _open_cache(store, embedder, cfg)
+    pulled = vcache.pull(store, cache, SKIP_KINDS) if cache is not None and _shares_basis(store, cache, embedder) \
+        else 0
+    if pulled:
+        log(f"  {pulled} vectors from the shared cache")
+    if not embedder.needs_fit():
         unique = {text_hash(t): t for t in (embed_text(n) for n in store.missing_vectors(SKIP_KINDS))}
     todo = sorted(unique.items(), key=lambda kv: len(kv[1]))
     reduce = 0 if embedder.needs_fit() else cfg.embed_reduce
@@ -257,7 +280,38 @@ def embed_store(store, cfg, log=print) -> dict:
     if todo:
         store.prune_vectors()
     store.set_meta("embedder", embedder.name)
-    return {"embedder": embedder.name, "embedded": len(todo), "dims": reduce if projection else None}
+    pushed = 0
+    if cache is not None:
+        basis = _store_basis(store, embedder.name)
+        if basis is not None and cache.adopt_projection(basis) == basis:
+            pushed = vcache.push(store, cache)
+        cache.close()
+    return {"embedder": embedder.name, "embedded": len(todo), "dims": reduce if projection else None,
+            "from_cache": pulled, "to_cache": pushed}
+
+
+def _open_cache(store, embedder, cfg):
+    """The shared vector cache for a dense model reduced by PCA (LSA is fitted per store: nothing to share).
+    A fresh store adopts the cache's basis so the vectors it pulls and the ones it embeds agree."""
+    if embedder.needs_fit() or not cfg.embed_reduce:
+        return None
+    cache = vcache.VectorCache.open(embedder.name)
+    if cache is None:
+        return None
+    basis = cache.projection()
+    if basis is not None and _store_basis(store, embedder.name) is None and store.count_vectors() == 0:
+        store.set_meta("pca", basis)
+        store.set_meta("pca_for", embedder.name)
+    return cache
+
+
+def _shares_basis(store, cache, embedder) -> bool:
+    basis = cache.projection()
+    return basis is not None and _store_basis(store, embedder.name) == basis
+
+
+def _store_basis(store, name: str):
+    return store.get_meta("pca") if store.get_meta("pca_for") == name else None
 
 
 def query_embedder(store, cfg):

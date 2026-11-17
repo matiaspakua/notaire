@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import os
 import threading
+import time
 from pathlib import Path
 
 from .config import Config, Source, load_config
@@ -17,11 +19,12 @@ class KnowledgeGraph:
         self._store: Store | None = None
         self._engine: Engine | None = None
         self._lock = threading.RLock()
+        self._refresh_lock = threading.Lock()
+        self._refreshing = False
+        self._last_refresh = float("-inf")
 
     @classmethod
     def open(cls, config: Path | None = None, db: Path | None = None) -> KnowledgeGraph:
-        if config is None and Path("repolens.toml").exists():
-            config = Path("repolens.toml")
         return cls(load_config(config, db))
 
     @property
@@ -56,16 +59,70 @@ class KnowledgeGraph:
             if project["name"] not in known:
                 self.cfg.sources.append(Source(project["name"], Path(project["root"])))
 
-    def index(self, only: list[str] | None = None, full: bool = False, embed: bool = True, log=print) -> dict:
+    def index(self, only: list[str] | None = None, full: bool = False, embed: bool = True, log=print,
+              wait: bool = True) -> dict:
         with self._lock:
             if not self.cfg.sources:
                 self.sources_from_store()
             if not self.cfg.sources:
                 raise ValueError("nothing to index: pass folders or configure [[source]] entries")
-            report = index(self.cfg, self.store, only=only, full=full, embed=embed, log=log)
+            report = index(self.cfg, self.store, only=only, full=full, embed=embed, log=log, wait=wait)
             if self._engine is not None:
                 self._engine.load()
             return report
+
+    @staticmethod
+    def refresh_interval() -> float:
+        """Seconds between automatic refreshes (`$REPOLENS_REFRESH_SECONDS`, default 15; negative disables)."""
+        try:
+            return float(os.environ.get("REPOLENS_REFRESH_SECONDS", "15"))
+        except ValueError:
+            return 15.0
+
+    @property
+    def refreshing(self) -> bool:
+        return self._refreshing
+
+    def maybe_refresh(self, on_done=None, force: bool = False) -> bool:
+        """Start an incremental index in the background when the interval has passed and none is running.
+        Queries keep answering from the last published graph meanwhile (the engine reloads when the run
+        publishes); the run uses its own connection and the store's index lock, so concurrent agents and
+        git hooks never index the same store twice at once."""
+        interval = self.refresh_interval()
+        if interval < 0 and not force:
+            return False
+        now = time.monotonic()
+        with self._refresh_lock:
+            if self._refreshing or (not force and now - self._last_refresh < interval):
+                return False
+            self._refreshing = True
+            self._last_refresh = now
+        threading.Thread(target=self._refresh_worker, args=(on_done,), daemon=True, name="repolens-refresh").start()
+        return True
+
+    def _refresh_worker(self, on_done) -> None:
+        clock = time.perf_counter()
+        result: dict = {}
+        store = None
+        try:
+            if not self.cfg.sources:
+                self.sources_from_store()
+            if self.cfg.sources:
+                store = Store(self.cfg.db_path)
+                report = index(self.cfg, store, log=lambda *_a, **_k: None, wait=False)
+                result = {"busy": report.get("busy", False), "changed": report.get("changed", False),
+                          "extracted": sum(s.get("extracted", 0) + s.get("removed", 0)
+                                           for s in report.get("sources", {}).values())}
+        except Exception as exc:  # noqa: BLE001 - a failed refresh must not take the server down
+            result = {"error": f"{type(exc).__name__}: {exc}"[:300]}
+        finally:
+            if store is not None:
+                store.close()
+            with self._refresh_lock:
+                self._refreshing = False
+            result["ms"] = round((time.perf_counter() - clock) * 1000)
+            if on_done is not None:
+                on_done(result)
 
     def close(self) -> None:
         if self._store is not None:
