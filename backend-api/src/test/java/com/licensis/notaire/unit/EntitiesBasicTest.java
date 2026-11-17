@@ -1,6 +1,7 @@
 package com.licensis.notaire.unit;
 
 
+import com.licensis.notaire.adapter.out.persistence.document.DocumentTypeLegacyMapper;
 import com.licensis.notaire.adapter.out.persistence.folio.FolioTypeLegacyMapper;
 import com.licensis.notaire.dto.DtoManagementStatus;
 import com.licensis.notaire.dto.DtoFolio;
@@ -758,7 +759,7 @@ class EntitiesBasicTest {
             assertThat(t1.hashCode()).isNotNegative();
             assertThat(t1.toString()).isNotBlank();
 
-            DtoDocumentType dto = t1.getDto();
+            DtoDocumentType dto = DocumentTypeLegacyMapper.toDto(t1);
             assertThat(dto.getName()).isEqualTo("DNI");
 
             DtoDocumentType dto2 = new DtoDocumentType();
@@ -769,7 +770,7 @@ class EntitiesBasicTest {
             dto2.setEnabled(true);
             dto2.setVersion(0);
             DocumentType t3 = new DocumentType();
-            t3.setAttributes(dto2);
+            DocumentTypeLegacyMapper.apply(t3, dto2);
             assertThat(t3.getName()).isEqualTo("RG");
         }
     }

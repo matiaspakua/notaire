@@ -4,7 +4,6 @@
  */
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoDocumentType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
@@ -181,61 +180,6 @@ public class DocumentType implements Serializable, Persistable<Integer>
     public void setProcedureTemplateList(List<ProcedureTemplate> procedureTemplateList)
     {
         this.procedureTemplateList = procedureTemplateList;
-    }
-
-    public void setAttributes(DtoDocumentType dto)
-    {
-        if (dto.getIdDocumentType() != null)
-        {
-            this.idDocumentType = dto.getIdDocumentType();
-        }
-
-        this.name = dto.getName();
-        this.expires = dto.isExpires();
-
-        if (this.expires)
-        {
-            this.dueDays = dto.getDueDays();
-        } else
-        {
-            this.dueDays = null;
-        }
-
-        this.deliveredBy = dto.getDeliveredBy();
-        // Preserve current version / flags when omitted (nullable in the DTO).
-        // Create path defaults enabled=true and returned=false in the controller.
-        if (dto.getVersion() != null) {
-            this.version = dto.getVersion();
-        }
-        if (dto.getEnabled() != null) {
-            enabled = dto.getEnabled();
-        }
-        if (dto.getReturned() != null) {
-            returned = dto.getReturned();
-        }
-    }
-
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoDocumentType getDto()
-    {
-        DtoDocumentType dto = new DtoDocumentType();
-
-        dto.setIdDocumentType(this.idDocumentType);
-        dto.setName(this.name);
-        dto.setExpires(this.expires);
-
-        if (dto.isExpires())
-        {
-            dto.setDueDays(this.dueDays);
-        }
-
-        dto.setDeliveredBy(this.deliveredBy);
-
-        dto.setVersion(version);
-        dto.setEnabled(enabled);
-        dto.setReturned(returned);
-
-        return dto;
     }
 
     @Override

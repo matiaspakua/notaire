@@ -2,8 +2,6 @@ Concept#getDto
 Concept#setAttributes
 Deed#getDto
 DeedManagement#getDto
-DocumentType#getDto
-DocumentType#setAttributes
 Folio#getDto
 History#getDto
 ManagementStatus#getDto
