@@ -1,0 +1,13 @@
+.repolens/
+.venv/
+__pycache__/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+bench/results/runs/
+bench/.corpus/
+bench/.scale/

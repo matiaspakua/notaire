@@ -1,0 +1,48 @@
+# GitHub Actions workflow for the repolens package. Copy to .github/workflows/repolens.yml to enable it
+# (kept here so this module carries its own pipeline without touching the host repository's CI).
+name: repolens
+on:
+  pull_request:
+    paths: ["framework/ai-sdlc/graph-db/**"]
+  push:
+    tags: ["repolens-v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: framework/ai-sdlc/graph-db
+    strategy:
+      matrix:
+        python: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - run: python -m pip install -e ".[api,mcp,dev]"
+      - run: bash verify.sh
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/repolens-v')
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: framework/ai-sdlc/graph-db
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install build && python -m build
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: framework/ai-sdlc/graph-db/dist/*
