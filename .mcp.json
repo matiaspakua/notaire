@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "repolens": {
+      "type": "stdio",
+      "command": "bash",
+      "args": [
+        "-c",
+        "exec \"$(git rev-parse --show-toplevel)/framework/ai-sdlc/repolens/bin/repolens\" \"$@\"",
+        "repolens",
+        "mcp"
+      ]
+    }
+  }
+}
