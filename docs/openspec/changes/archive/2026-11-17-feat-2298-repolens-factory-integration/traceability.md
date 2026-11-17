@@ -35,15 +35,15 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| setup registers every harness once | repolens factory tests (test_factory.py, test_repolens_integration.py) | pending |
-| the committed wiring has not drifted | repolens factory tests (test_factory.py, test_repolens_integration.py) | pending |
-| an agent's edit is visible to the next query | repolens factory tests (test_factory.py, test_repolens_integration.py) | pending |
-| switching branches re-indexes only the difference | repolens factory tests (test_factory.py, test_repolens_integration.py) | pending |
-| a new worktree reuses the shared vectors | repolens factory tests (test_factory.py, test_repolens_integration.py) | pending |
-| a second indexer steps aside | repolens factory tests (test_factory.py, test_repolens_integration.py) | pending |
-| the server builds on first start and logs each call | repolens factory tests (test_factory.py, test_repolens_integration.py) | pending |
-| the report measures real sessions | repolens factory tests (test_factory.py, test_repolens_integration.py) | pending |
-| stages, catalog and gate | repolens factory tests (test_factory.py, test_repolens_integration.py) | pending |
+| setup registers every harness once | repolens factory tests (test_factory.py, test_repolens_integration.py) | passing |
+| the committed wiring has not drifted | repolens factory tests (test_factory.py, test_repolens_integration.py) | passing |
+| an agent's edit is visible to the next query | repolens factory tests (test_factory.py, test_repolens_integration.py) | passing |
+| switching branches re-indexes only the difference | repolens factory tests (test_factory.py, test_repolens_integration.py) | passing |
+| a new worktree reuses the shared vectors | repolens factory tests (test_factory.py, test_repolens_integration.py) | passing |
+| a second indexer steps aside | repolens factory tests (test_factory.py, test_repolens_integration.py) | passing |
+| the server builds on first start and logs each call | repolens factory tests (test_factory.py, test_repolens_integration.py) | passing |
+| the report measures real sessions | repolens factory tests (test_factory.py, test_repolens_integration.py) | passing |
+| stages, catalog and gate | repolens factory tests (test_factory.py, test_repolens_integration.py) | passing |
 
 ## Permanent documentation updated
 
