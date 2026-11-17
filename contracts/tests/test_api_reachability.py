@@ -11,7 +11,9 @@ comments, and `*.generated.ts` excluded — generated OpenAPI path maps are not 
 apiGet/apiGetPaged/apiGetBytes/apiPost/apiPut/apiDelete counts only for that HTTP method; any other
 literal (for example a path kept in a variable) counts for every method. A wildcard binds to the
 endpoints whose path parameter sits in the same place; only when none exists does it also cover
-fixed segments (`/testimony-movements/${id}/${action}`).
+fixed segments (`/testimony-movements/${id}/${action}`). A fixed literal that also fits a
+parameterized sibling covers only the template with fewer parameters (`/payments/date` is not
+`/payments/{id}`, #1563).
 
 Run with: python3 contracts/tests/test_api_reachability.py
 """
@@ -92,14 +94,27 @@ def _fits(template, literal, fixed_ok):
     return True
 
 
+def _wildcards(parts):
+    return sum(1 for part in parts if part == WILDCARD)
+
+
 def reachable(endpoints, calls):
-    """Endpoints covered by at least one frontend literal."""
+    """Endpoints covered by at least one frontend literal.
+
+    When several templates fit, keep only those with the fewest path
+    parameters. A call to `/payments/date` must not count as a call to
+    `/payments/{id}` (#1563).
+    """
     parsed = [(key, key.split(" ", 1)[0], segments(key.split(" ", 1)[1])) for key in endpoints]
     covered = set()
     for verb, literal in calls:
         same_verb = [(k, s) for k, m, s in parsed if verb in (m, ANY)]
-        exact = [k for k, s in same_verb if _fits(s, literal, fixed_ok=False)]
-        covered.update(exact or [k for k, s in same_verb if _fits(s, literal, fixed_ok=True)])
+        exact = [(k, s) for k, s in same_verb if _fits(s, literal, fixed_ok=False)]
+        if exact:
+            fewest = min(_wildcards(s) for _, s in exact)
+            covered.update(k for k, s in exact if _wildcards(s) == fewest)
+        else:
+            covered.update(k for k, s in same_verb if _fits(s, literal, fixed_ok=True))
     return covered
 
 
@@ -149,6 +164,11 @@ class ScannerTest(unittest.TestCase):
 
     def test_wildcard_prefers_the_path_parameter_over_a_fixed_segment(self):
         self.assertNotIn("GET /api/v1/payments/date", self.covered("apiGet(`/payments/${id}`)"))
+
+    def test_fixed_segment_does_not_count_as_a_path_parameter(self):
+        covered = self.covered("apiGet(`/payments/date?from=1`)")
+        self.assertIn("GET /api/v1/payments/date", covered)
+        self.assertNotIn("GET /api/v1/payments/{id}", covered)
 
     def test_wildcard_covers_fixed_segments_when_no_parameter_fits(self):
         self.assertEqual(
