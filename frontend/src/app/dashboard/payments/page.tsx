@@ -100,15 +100,18 @@ function PaymentsPageContent() {
     const day = toDateInputValue(p.date);
     return (!from || day >= from) && (!to || day <= to);
   };
-  const source = consultBudget ? byBudget : serverRange ? byDate : paymentsPageQuery;
-  const rows = showAll ? (paymentsPageQuery.data?.content ?? []) : (source.data ?? []);
+  const rows: Payment[] = consultBudget
+    ? (byBudget.data ?? [])
+    : serverRange
+      ? (byDate.data ?? [])
+      : (paymentsPageQuery.data?.content ?? []);
   const filteredRows = rangeInvalid ? [] : rangeActive && !serverRange ? rows.filter(inRange) : rows;
   const payments = consultBudget
     ? [...filteredRows].sort((a, b) => String(b.date ?? "").localeCompare(String(a.date ?? "")))
     : filteredRows;
-  const isLoading = source.isLoading;
-  const isError = source.isError;
-  const refetch = source.refetch;
+  const isLoading = consultBudget ? byBudget.isLoading : serverRange ? byDate.isLoading : paymentsPageQuery.isLoading;
+  const isError = consultBudget ? byBudget.isError : serverRange ? byDate.isError : paymentsPageQuery.isError;
+  const refetch = consultBudget ? byBudget.refetch : serverRange ? byDate.refetch : paymentsPageQuery.refetch;
   const createMutation = useCreatePayment();
   const updateMutation = useUpdatePayment();
   const deleteMutation = useDeletePayment();
