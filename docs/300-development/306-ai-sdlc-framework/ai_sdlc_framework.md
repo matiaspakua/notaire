@@ -336,7 +336,7 @@ flowchart TB
 | `skills`, `budget`, `commits`, `tdd` | Catalog lint, context budget, commit subjects, tests-with-code | — |
 | Evidence ledger, `report`, `cost` | Audit trail, gate health, token cost per model and agent | Is written by agents |
 | Role agents (`.aisdlc/agents/`) | Foreman, planner, implementer, reviewer, steward instructions in tool-neutral Markdown | Duplicate the policy |
-| `repolens` (`framework/ai-sdlc/graph-db`) | Optional local code knowledge graph (CLI, HTTP API, MCP): hybrid retrieval over code, tests, docs, routes and tables for agents | Is required by the kit or sends code off the machine |
+| `repolens` (`framework/ai-sdlc/repolens`) | Optional local code knowledge graph (CLI, HTTP API, MCP): hybrid retrieval over code, tests, docs, routes and tables for agents | Is required by the kit or sends code off the machine |
 
 ### 7.3 End-to-end workflow
 
@@ -534,6 +534,55 @@ flowchart TD
 Go with Jira) are in `framework/ai-sdlc/profiles/`. **Spec engines** (OpenSpec, Spec Kit) plug in as
 `plan` gates. **Agent runtimes** read `AGENTS.md` and `.aisdlc/agents/`. **Trackers** other than
 GitHub change `[tracker]` only.
+
+### 7.10 Repository knowledge: repolens
+
+Agents spend most navigation steps and tokens on grep/glob/read loops. `repolens`
+(`framework/ai-sdlc/repolens`, #2297/#2298) is the factory's repository-knowledge tool: a local typed graph of
+files, symbols, tests, routes, tables and git co-change, queried over MCP. On Notaire's held-out tasks a
+Sonnet agent reached the same answers with half the tool calls (module README, Benchmark).
+
+```mermaid
+flowchart LR
+  subgraph harnesses["Agent harnesses (one worktree each)"]
+    direction TB
+    CC["Claude Code<br/>.mcp.json"] --- CX["Codex<br/>.codex/config.toml"]
+    CX --- OC["OpenCode · local-AI worker<br/>opencode.json"] --- CU["Cursor<br/>.cursor/mcp.json"]
+  end
+  subgraph wt["Worktree / branch"]
+    direction TB
+    MCP["repolens MCP server<br/>search · node · impact · path"] --> ST[(".repolens/graph.db<br/>this branch only")]
+    MCP --> LOG[".repolens/usage.jsonl"]
+    HK["git post-checkout/merge<br/>hooks"] -->|refresh| ST
+  end
+  subgraph shared["Machine (~/.cache/repolens)"]
+    VC[("vector cache<br/>content-addressed")]
+  end
+  subgraph kit["aisdlc kit"]
+    G["gate signal:<br/>repolens usage report"] --> LED[("Evidence ledger")] --> IMP["report · improve"]
+  end
+  harnesses -->|"MCP tools"| MCP
+  CC -->|"PostToolUse hook<br/>Read/Grep/Glob"| LOG
+  ST <-->|"pull / push vectors"| VC
+  LOG --> G
+  IMP -->|"tune profile, tasks, instructions"| MCP
+  classDef k fill:#dcfce7,stroke:#15803d,color:#052e16
+  class G,LED,IMP k
+```
+
+| Touchpoint | Where | What it guarantees |
+|------------|-------|--------------------|
+| Harness registration | `.mcp.json`, `.claude/settings.json`, `.codex/config.toml`, `local-ai/opencode/opencode.json`, `.cursor/mcp.json` (written by `repolens setup`) | Every agent, whatever the runtime or model, gets the same server; the launcher resolves the worktree's own checkout |
+| Instructions | `AGENTS.md` § Repository knowledge; the server's MCP instructions | Agents navigate with repolens before grep |
+| Stage knobs | `.aisdlc/aisdlc.toml` `mcp = ["repolens"]` on `plan`, `red`, `pre-pr`; catalog `mcp/repolens` | The Foreman's dispatch plan names the tool per stage |
+| Branches, worktrees, PRs | one store per worktree, shared vector cache, background refresh, index lock, git hooks | Answers follow each agent's branch and edits; new worktrees index in seconds; concurrent agents never corrupt an index |
+| Evidence | usage log + `repolens report`; advisory `signal` gate | Adoption, hit rate, grep fallbacks, tokens and latency land in the ledger, so `improve` can act on them |
+| Quality | `preflight.sh` "repolens module gate" (path-scoped); `workspace/tests/test_repolens_integration.py` | The module and the committed wiring cannot drift |
+| Cloud agents | `.claude/hooks/session-start-toolchain.sh`, `.cursor/install.sh` | Dependencies and a first index are prepared on fresh images |
+
+Improvement loop: read `repolens report` (or the ledger line) after a period of work; a low hit rate becomes a
+benchmark task in `framework/ai-sdlc/repolens/bench/tasks` and a ranking change validated on the held-out set;
+low adoption becomes an instruction change; zero-result queries become profile or extractor fixes.
 
 ## 8. Applying it to a real project
 
