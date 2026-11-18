@@ -366,7 +366,7 @@ class Linker:
         if via_import:
             return via_import[:3]
         same_dir = bucket.in_dir(posixpath.dirname(src_file), src)
-        if same_dir:
+        if same_dir and (not strict or len(same_dir) == 1):
             return same_dir[:3]
         pool = bucket.in_project(project, src) or (
             bucket.cands if len(bucket.cands) > 4 else [c for c in bucket.cands if c != src])
