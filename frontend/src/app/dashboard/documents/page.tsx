@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, CheckCircle, XCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -20,7 +20,7 @@ import {
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import { presentMutationError } from "@/lib/mutation-error";
 import {
-  useSubmittedDocuments,
+  useSubmittedDocumentsPage,
   useCreateSubmittedDocument,
   useUpdateSubmittedDocument,
   useDeleteSubmittedDocument,
@@ -36,17 +36,34 @@ import {
 } from "@/lib/submitted-document-form";
 import { useDocumentReentry } from "@/hooks/useDocumentReentry";
 import type { SubmittedDocument } from "@/types";
+import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue, todayInputValue } from "@/lib/dates";
 import { useFormat } from "@/hooks/useFormat";
 
 export default function DocumentsPage() {
+  return (
+    <Suspense>
+      <DocumentsPageContent />
+    </Suspense>
+  );
+}
+
+function DocumentsPageContent() {
   const fmt = useFormat();
   const t = useTranslations("documentos");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const { data: documents = [], isLoading, isError, refetch } = useSubmittedDocuments();
+  const paging = useUrlPagination();
+  const {
+    data: documentsPage,
+    isLoading,
+    isError,
+    refetch,
+  } = useSubmittedDocumentsPage({ page: paging.page, size: paging.size });
+  const documents = documentsPage?.content ?? [];
+  useClampPage(paging, documentsPage?.totalPages);
   const { data: documentTypes = [] } = useDocumentTypes();
   const createMutation = useCreateSubmittedDocument();
   const updateMutation = useUpdateSubmittedDocument();
@@ -187,6 +204,13 @@ export default function DocumentsPage() {
       
         error={isError ? tc("loadError") : undefined}
         onRetry={() => void refetch()}
+        pagination={{
+          page: documentsPage?.number ?? paging.page,
+          size: paging.size,
+          totalElements: documentsPage?.totalElements ?? 0,
+          onPageChange: paging.setPage,
+          onSizeChange: paging.setSize,
+        }}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>

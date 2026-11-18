@@ -218,8 +218,9 @@ class SubmittedDocumentControllerTest {
 
         MvcResult list = mockMvc.perform(get("/api/v1/submitted-documents")).andExpect(status().isOk()).andReturn();
 
+        var body = mapper.readTree(list.getResponse().getContentAsString()).get("content");
         var row = java.util.stream.StreamSupport
-                .stream(mapper.readTree(list.getResponse().getContentAsString()).spliterator(), false)
+                .stream(body.spliterator(), false)
                 .filter(node -> node.get("idSubmittedDocument").asInt() == id).findFirst().orElseThrow();
         assertThat(row.get("type").get("idDocumentType").asInt()).isEqualTo(typeId);
         assertThat(row.get("date").asText()).isEqualTo("2026-06-01");
@@ -232,7 +233,8 @@ class SubmittedDocumentControllerTest {
     void shouldListSubmittedDocuments() throws Exception {
         mockMvc.perform(get("/api/v1/submitted-documents"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray());
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.totalElements").isNumber());
     }
 
     @Test

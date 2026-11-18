@@ -11,6 +11,10 @@ describe("createSubmittedDocumentUseCases", () => {
         calls.push(["list"]);
         return [];
       },
+      listPage: async (request) => {
+        calls.push(["listPage", request]);
+        return { content: [], totalElements: 0, totalPages: 0, number: 0, size: request.size };
+      },
       create: async (input) => {
         calls.push(["create", input]);
         return { idSubmittedDocument: 1, ...input };

@@ -2,7 +2,7 @@
  * React Query hooks for submitted documents.
  * Hexagon wiring: #1841 / ADR-030.
  */
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { submittedDocumentUseCases } from "@/composition/submitted-document";
 import type {
   SubmittedDocument as DomainSubmittedDocument,
@@ -24,10 +24,20 @@ function toWire(d: DomainSubmittedDocument): SubmittedDocument {
   return d as SubmittedDocument;
 }
 
-export function useSubmittedDocuments() {
+export const SUBMITTED_DOCUMENTS_SORT = "idSubmittedDocument,desc";
+
+export function useSubmittedDocumentsPage(params: { page: number; size: number }) {
   return useQuery({
-    queryKey: submittedDocumentsKeys.all,
-    queryFn: async () => (await submittedDocumentUseCases.list()).map(toWire),
+    queryKey: [...submittedDocumentsKeys.all, "page", params.page, params.size],
+    queryFn: async () => {
+      const page = await submittedDocumentUseCases.listPage({
+        page: params.page,
+        size: params.size,
+        sort: SUBMITTED_DOCUMENTS_SORT,
+      });
+      return { ...page, content: page.content.map(toWire) };
+    },
+    placeholderData: keepPreviousData,
   });
 }
 
