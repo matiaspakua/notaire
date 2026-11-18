@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.2](https://github.com/matiaspakua/notaire/compare/v0.4.1...v0.4.2) (2026-11-18)
+
+
+### Bug Fixes
+
+* **repolens:** count CLI queries in the usage report ([#2311](https://github.com/matiaspakua/notaire/issues/2311)) ([3f5c86c](https://github.com/matiaspakua/notaire/commit/3f5c86c5cb93c9f65eb74a6a4be5b0b56c3c1767)), closes [#2307](https://github.com/matiaspakua/notaire/issues/2307)
+
 ## [Unreleased]
 
 ### Fixed
