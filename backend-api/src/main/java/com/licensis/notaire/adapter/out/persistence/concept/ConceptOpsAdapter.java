@@ -29,19 +29,19 @@ public class ConceptOpsAdapter implements ConceptOpsPort {
     @Override
     @Transactional(readOnly = true)
     public List<DtoConcept> findAll() {
-        return service.findAll().stream().map(Concept::getDto).toList();
+        return service.findAll().stream().map(ConceptLegacyMapper::toDto).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<DtoConcept> searchByName(String name) {
-        return service.searchByName(name).stream().map(Concept::getDto).toList();
+        return service.searchByName(name).stream().map(ConceptLegacyMapper::toDto).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<DtoConcept> findById(Integer id) {
-        return service.findById(id).map(Concept::getDto);
+        return service.findById(id).map(ConceptLegacyMapper::toDto);
     }
 
     @Override
@@ -62,8 +62,8 @@ public class ConceptOpsAdapter implements ConceptOpsPort {
                 dto.setEnabled(true);
             }
             Concept entity = new Concept();
-            entity.setAttributes(dto);
-            return new SaveResult.Created(service.create(entity).getDto());
+            ConceptLegacyMapper.apply(entity, dto);
+            return new SaveResult.Created(ConceptLegacyMapper.toDto(service.create(entity)));
         } catch (Exception e) {
             return new SaveResult.Failed(e, true);
         }
@@ -84,7 +84,7 @@ public class ConceptOpsAdapter implements ConceptOpsPort {
             if (dto.getEnabled() == null) {
                 dto.setEnabled(entity.getEnabled());
             }
-            entity.setAttributes(dto);
+            ConceptLegacyMapper.apply(entity, dto);
             service.update(id, entity);
             return new SaveResult.Updated();
         } catch (Exception e) {

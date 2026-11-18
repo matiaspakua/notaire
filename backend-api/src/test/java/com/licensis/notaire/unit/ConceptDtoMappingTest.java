@@ -1,6 +1,7 @@
 package com.licensis.notaire.unit;
 
 
+import com.licensis.notaire.adapter.out.persistence.concept.ConceptLegacyMapper;
 import com.licensis.notaire.dto.DtoConcept;
 import com.licensis.notaire.business.Concept;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Arrays;
 
 class ConceptDtoMappingTest {
 
@@ -22,7 +25,7 @@ class ConceptDtoMappingTest {
         concept.setFixedConcept(false);
         concept.setVersion(3);
 
-        DtoConcept dto = concept.getDto();
+        DtoConcept dto = ConceptLegacyMapper.toDto(concept);
 
         assertEquals(7, dto.getIdConcept());
         assertEquals("Concept test", dto.getName());
@@ -31,5 +34,7 @@ class ConceptDtoMappingTest {
         assertTrue(dto.getEnabled());
         assertFalse(dto.isFixed());
         assertEquals(3, dto.getVersion());
+        assertTrue(Arrays.stream(Concept.class.getDeclaredMethods()).map(method -> method.getName())
+                .noneMatch(name -> name.equals("getDto") || name.equals("setAttributes")));
     }
 }
