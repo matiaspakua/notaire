@@ -20,6 +20,27 @@ def cli_args(kg, tmp_path):
     return ["-c", str(cfg)]
 
 
+def test_cli_search_is_counted_by_the_usage_report(cli_args, capsys):
+    from pathlib import Path
+
+    from repolens.report import build
+
+    cfg = Path(cli_args[1]).read_text(encoding="utf-8")
+    db = next(line.split("=", 1)[1].strip().strip('"') for line in cfg.splitlines() if line.strip().startswith("db "))
+    log = Path(db).parent / "usage.jsonl"
+    assert cli.main([*cli_args, "search", "codes verify endpoint", "-k", "3"]) == 0
+    capsys.readouterr()
+    assert cli.main([*cli_args, "impact", "CodeStorePort"]) == 0
+    capsys.readouterr()
+    events = [json.loads(line) for line in log.read_text(encoding="utf-8").splitlines()]
+    assert [event["tool"] for event in events] == ["search", "impact"]
+    assert events[0]["src"] == "cli" and events[0]["results"] >= 1
+    report = build(log)
+    assert report["events"] == 2
+    assert report["server"]["calls"] == 2
+    assert report["server"]["clients"]["cli"] == 2
+
+
 def test_cli_search_stats_and_json(cli_args, capsys):
     assert cli.main([*cli_args, "search", "codes verify endpoint", "--files", "-k", "5"]) == 0
     out = capsys.readouterr().out
