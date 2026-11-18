@@ -223,7 +223,8 @@ class RemainingControllersIntegrationTest {
             mockMvc.perform(get("/api/v1/submitted-documents"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$", isA(java.util.List.class)));
+                    .andExpect(jsonPath("$.content", isA(java.util.List.class)))
+                    .andExpect(jsonPath("$.totalElements").isNumber());
         }
 
         @Test
