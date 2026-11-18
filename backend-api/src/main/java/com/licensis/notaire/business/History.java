@@ -4,8 +4,6 @@
  */
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoHistory;
-import com.licensis.notaire.dto.DtoManagementStatus;
 import java.io.Serializable;
 import java.util.Date;
 import jakarta.persistence.Basic;
@@ -193,26 +191,5 @@ public class History implements Serializable, Persistable<Integer>
     {
         return "History[ idHistory=" + getIdHistory() + " ]";
     }
-
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoHistory getDto()
-    {
-        DtoHistory dto = new DtoHistory();
-
-        dto.setIdHistory(this.idHistory);
-        dto.setVersion(this.version);
-        dto.setDate(this.date);
-        dto.setDeedManagement(this.getFkIdManagement().getDto());
-        DtoManagementStatus statusDto = new DtoManagementStatus();
-        statusDto.setIdManagementStatus(this.fkIdManagementStatus.getIdManagementStatus());
-        statusDto.setName(this.fkIdManagementStatus.getName());
-        statusDto.setNotes(this.fkIdManagementStatus.getNotes());
-        statusDto.setVersion(this.fkIdManagementStatus.getVersion());
-        dto.setManagementStatus(statusDto);
-        dto.setNotes(this.notes);
-
-        return dto;
-    }
-
 
 }
