@@ -124,6 +124,30 @@ run() {
     rm -f "$log"
 }
 
+# run_retry <label> <cmd...> — one extra attempt, then the same failure report as run.
+# Frontend Vitest under the full parallel suite has failed a single timeout and
+# passed when that file was run again. One retry, then the gate still fails.
+run_retry() {
+    local label="$1"; shift
+    local log; log="$(mktemp)"
+    if "$@" >"$log" 2>&1; then
+        pass "$label"
+        rm -f "$log"
+        return 0
+    fi
+    printf '%s!%s %s failed once; retrying\n' "$YELLOW" "$NC" "$label"
+    if "$@" >"$log" 2>&1; then
+        pass "$label (passed on retry)"
+        rm -f "$log"
+        return 0
+    fi
+    fail "$label"
+    printf '%s--- last 25 lines: %s ---%s\n' "$RED" "$label" "$NC"
+    tail -25 "$log"
+    printf '%s--- full log: %s ---%s\n' "$RED" "$log" "$NC"
+    return 1
+}
+
 # run_warn <label> <cmd...> — non-blocking (mirrors CI steps that use `|| true`)
 run_warn() {
     local label="$1"; shift
@@ -348,7 +372,7 @@ fi
 run "frontend eslint" bash -c "cd frontend && ./node_modules/.bin/eslint src --max-warnings=0"
 
 if [ "$MODE_FAST" = "0" ]; then
-    run "frontend vitest" bash -c "cd frontend && ./node_modules/.bin/vitest run"
+    run_retry "frontend vitest" bash -c "cd frontend && ./node_modules/.bin/vitest run"
     run "frontend build" bash -c "cd frontend && ./node_modules/.bin/next build"
 else
     skip "frontend tests + build" "--fast"

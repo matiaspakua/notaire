@@ -9,3 +9,8 @@ Short notes from the cloud factory loop. Product behavior is not documented here
 - `pip install pytest` into the RepoLens venv upgraded `mcp` to 2.x. `verify.sh` then failed 4 tests because `mcp.server.fastmcp` is gone. The extra is now pinned to `mcp>=1.2,<2`. After the pin, the local package version was 1.30.0.
 - GitHub label writes from this agent still return 403. Issue creation for #2307 succeeded. Status labels were not applied.
 - Cursor branch names `cursor/<desc>-47dc` warn in preflight (`does not match a documented pattern`). The warning does not fail the run.
+
+## 2026-11-18 vitest retry
+
+- `preflight.sh` retries frontend Vitest once (`run_retry`) before failing the gate. Measured flakes that passed on the immediate rerun: `reports-page` and `dashboard-pages-render` (99 tests), `upcoming-expirations` (93 tests), and `budgets opens every dialog` (93 tests in the same file).
+
