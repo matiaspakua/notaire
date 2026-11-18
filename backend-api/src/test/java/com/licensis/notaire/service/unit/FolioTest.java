@@ -1,5 +1,6 @@
 package com.licensis.notaire.service.unit;
 
+import com.licensis.notaire.adapter.out.persistence.folio.FolioLegacyMapper;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.FolioType;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +22,6 @@ class FolioTest {
         folio.setFkIdFolioType(new FolioType("Protocolo Principal"));
 
         assertThat(folio.getFkIdDeed()).isNull();
-        assertThat(folio.getDto().getDeed()).isNull();
+        assertThat(FolioLegacyMapper.toDto(folio).getDeed()).isNull();
     }
 }

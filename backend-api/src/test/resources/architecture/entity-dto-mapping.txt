@@ -1,5 +1,4 @@
 DeedManagement#getDto
-Folio#getDto
 History#getDto
 Person#setAttributes
 Procedure#getDto

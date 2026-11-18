@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.out.persistence.deed;
 
+import com.licensis.notaire.adapter.out.persistence.folio.FolioLegacyMapper;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.Procedure;
@@ -28,7 +29,7 @@ public final class DeedLegacyMapper {
         var folioList = deed.getFolioList();
         if (folioList != null && !folioList.isEmpty()) {
             for (Folio folio : folioList) {
-                deedDto.getFolios().add(folio.getDto());
+                deedDto.getFolios().add(FolioLegacyMapper.toDto(folio));
             }
         } else {
             deedDto.setFolios(null);
