@@ -3,6 +3,17 @@
 All notable changes to repolens. Versions follow [SemVer](https://semver.org); the version lives in
 `repolens/__init__.py` and release tags are `repolens-v<version>`.
 
+## [0.4.1] - 2026-11-18
+
+### Fixed
+
+- CLI query commands (`search`, `node`, `outline`, `snippet`, `neighbors`, `impact`, `path`) append
+  `.repolens/usage.jsonl`. `repolens report` counts those events with the server calls (`client` is `cli`).
+  Before this, a CLI search left the report at 0 events (#2307).
+- The MCP extra now requires `mcp>=1.2,<2`. mcp 2.0 removes `mcp.server.fastmcp.FastMCP`, and a fresh
+  install of `mcp>=1.2` resolved to 2.x and failed `verify.sh` (4 MCP tests). Measured on this VM after
+  `pip install pytest` upgraded mcp.
+
 ## [0.4.0] - 2026-11-17
 
 The factory release (#2298): repolens becomes the repository-knowledge tool of every agent harness, works

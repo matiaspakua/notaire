@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import time
 from pathlib import Path
 
 from . import __version__
@@ -183,15 +184,19 @@ def _dispatch(args) -> int:  # noqa: C901 - flat command table
 
     eng = kg.engine
     if args.cmd == "search":
+        started = time.perf_counter()
         hits = eng.search(args.query, k=args.k + args.also, kinds=args.kind, project=args.project,
                           mode="files" if args.files else "nodes", graph=not args.no_graph, scope=args.scope)
-        print(json.dumps([h.to_dict() for h in hits], indent=2) if args.json
-              else render.hits(hits, args.query, detailed=args.k))
+        text = (json.dumps([h.to_dict() for h in hits], indent=2) if args.json
+                else render.hits(hits, args.query, detailed=args.k))
+        print(text)
+        _record_cli(args, "search", args.query, text, len(hits), started)
         return 0 if hits else 1
     if args.cmd == "stats":
         s = eng.stats()
         print(json.dumps(s, indent=2) if args.json else render.stats(s))
         return 0
+    started = time.perf_counter()
     result, text = {
         "node": lambda: (r := eng.node(args.ref), render.node(r)),
         "outline": lambda: (r := eng.outline(args.ref), render.outline(r)),
@@ -200,8 +205,23 @@ def _dispatch(args) -> int:  # noqa: C901 - flat command table
         "impact": lambda: (r := eng.impact(args.ref, args.depth), render.impact(r)),
         "path": lambda: (r := eng.path_between(args.a, args.b), render.path(r)),
     }[args.cmd]()
-    print(json.dumps(result, indent=2) if args.json else text)
+    printed = json.dumps(result, indent=2) if args.json else text
+    print(printed)
+    given = getattr(args, "ref", None) or f"{getattr(args, 'a', '')} {getattr(args, 'b', '')}".strip()
+    _record_cli(args, args.cmd, str(given), printed, 1 if result else 0, started)
     return 0 if result else 1
+
+
+def _record_cli(args, tool: str, given: str, text: str, results: int, started: float) -> None:
+    """Append one CLI query to the usage log. Telemetry must not change the command's result."""
+    from .paths import usage_log
+    from .usage import files_in, record
+
+    record(usage_log(_state_dir(args)), {
+        "src": "cli", "client": "cli", "tool": tool, "input": (given or "")[:200],
+        "ms": round((time.perf_counter() - started) * 1000, 1), "bytes": len(text.encode()),
+        "tokens": len(text.encode()) // 4, "results": results, "files": files_in(text),
+    })
 
 
 def _report(args) -> int:

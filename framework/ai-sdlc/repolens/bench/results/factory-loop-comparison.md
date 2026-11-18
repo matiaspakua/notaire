@@ -65,4 +65,23 @@ Repolens search replaced the first grep for the two slices above: one query name
 3. CLI searches do not append `.repolens/usage.jsonl`, so `repolens report` stays at 0 events. The MCP hook is what the factory profile expects to record usage; this cloud agent called the CLI.
 4. Full index embed was 1,252s on this VM.
 
-Issue creation from this agent has returned 403 on label writes before. These four items are the record if a GitHub issue cannot be opened.
+Issue creation from this agent has returned 403 on label writes before. These four items are the record if a GitHub issue cannot be opened. #2307 was opened for items 1–3.
+
+## Paired locate (grep then Repolens, or the reverse)
+
+Each row is one locate question, run both ways before the first edit of that issue. Tool calls are the commands actually run. Bytes are the command output, not the source files read afterwards. Wall time is `time.perf_counter` around the process. A file counts as a hit when it is in the final diff and the pass named it. New files that the pass could not have known are listed separately and are not in the hit rate.
+
+| Issue | Order | Pass | Calls | Output bytes | Wall time | Named files that are in the diff | Hit rate | Notes |
+|---|---|---|---|---|---|---|---|---|
+| #580 Deed `getDto` | grep first | grep | 4 | 6,425 | 0.186s | `Deed.java`, `Testimony.java`, `DeedEntityTest.java` | 3/4 | The fourth diff file is `entity-dto-mapping.txt`, which neither pass was asked to find. Grep also printed `Folio.java` (a comment that says not to call `getDto`) and a broad `getDto()` list. |
+| #580 Deed `getDto` | grep first | repolens | 2 | 5,137 | 4.552s | `Deed.java`, `Testimony.java`, `DeedEntityTest.java` | 3/4 | Search 2.804s / 1,875 bytes. Impact 1.748s / 3,262 bytes, "7 files, 4 tests". |
+
+Running totals for this paired sample (n = 1 issue, 2 passes): both passes hit 3 of 4 diff files. Repolens used 2 calls against grep's 4, and took 4.552s against 0.186s. Median is the same as the only value. No percentage improvement is claimed.
+
+`impact Deed.getDto` also named `History.getDto` and `ProcedureEntityTest`. `History.getDto` calls `getFkIdManagement().getDto()`, and `Procedure.getDto` copies two deed fields without calling `Deed.getDto`. Those are false caller edges. The linker returns up to three same-directory methods of the same name before the strict unique-name rule (`linker.py` `_scope`). That stays on #2307.
+
+#2307 itself was located by reading `cli.py`, `mcp_server.py`, `usage.py`, and `report.py` in the previous turn, before this paired protocol. That locate is not in the table.
+
+## Before / after for the CLI usage log
+
+Before the patch, `repolens report` on this machine printed `0 events` after CLI searches, and `usage.jsonl` was absent. The new test failed with `FileNotFoundError` on that path. After the patch, the same test records two events (`search`, `impact`) and `report["server"]["calls"] == 2`. A live `search "Deed getDto" -k 1` on the indexed checkout, using this patch, then `repolens report --gate` printed: `repolens usage: 1 calls, 0 sessions, adoption 0%, hit rate n/a, p95 988 ms; ok: no problem found`.

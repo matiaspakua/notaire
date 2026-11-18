@@ -46,7 +46,7 @@ def _pct(values: list[float], q: float) -> float:
 
 
 def server_metrics(events: list[dict]) -> dict:
-    calls = [e for e in events if e.get("src") == "server" and e.get("tool") != "refresh"]
+    calls = [e for e in events if e.get("src") in ("server", "cli") and e.get("tool") != "refresh"]
     refresh = [e for e in events if e.get("src") == "server" and e.get("tool") == "refresh"]
     searches = [e for e in calls if e.get("tool") == "search"]
     zero = [e for e in searches if not e.get("results")]
