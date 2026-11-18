@@ -3,6 +3,12 @@
 All notable changes to repolens. Versions follow [SemVer](https://semver.org); the version lives in
 `repolens/__init__.py` and release tags are `repolens-v<version>`.
 
+## [0.4.3] - 2026-11-18
+
+### Added
+
+- `repolens miss "<query>"` records a grep/read fallback in `.repolens/usage.jsonl` (`tool` is `miss`, `results` is 0). Agents run it when a RepoLens answer is unusable. It does not search.
+
 ## [0.4.2] - 2026-11-18
 
 ### Fixed

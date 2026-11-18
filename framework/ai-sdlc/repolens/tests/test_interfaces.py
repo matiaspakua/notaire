@@ -41,6 +41,21 @@ def test_cli_search_is_counted_by_the_usage_report(cli_args, capsys):
     assert report["server"]["clients"]["cli"] == 2
 
 
+def test_cli_miss_records_a_grep_fallback(cli_args):
+    from pathlib import Path
+
+    from repolens.report import build
+
+    cfg = Path(cli_args[1]).read_text(encoding="utf-8")
+    db = next(line.split("=", 1)[1].strip().strip('"') for line in cfg.splitlines() if line.strip().startswith("db "))
+    log = Path(db).parent / "usage.jsonl"
+    assert cli.main([*cli_args, "miss", "exact symbol Folio.getDto"]) == 0
+    events = [json.loads(line) for line in log.read_text(encoding="utf-8").splitlines()]
+    assert events[-1]["tool"] == "miss" and events[-1]["results"] == 0
+    assert events[-1]["input"] == "exact symbol Folio.getDto"
+    assert build(log)["server"]["by_tool"]["miss"]["calls"] == 1
+
+
 def test_cli_search_stats_and_json(cli_args, capsys):
     assert cli.main([*cli_args, "search", "codes verify endpoint", "--files", "-k", "5"]) == 0
     out = capsys.readouterr().out

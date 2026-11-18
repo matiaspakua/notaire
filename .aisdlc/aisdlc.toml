@@ -173,9 +173,10 @@ model = "claude-opus-5-5"
 # dispatch — read-only; never executes MCP or agents; no Isolator / sandbox claim.
 # Effort units: tokens (prompt+completion), time_seconds (wall clock),
 # questions (clarification budget), review_lines (changed-line review size).
-# Agents/skills/models come from fleet-manifest + skills-dir. MCP: repolens (#2298, catalog mcp/repolens) is
-# the repository-knowledge tool of every stage where agents navigate code; harnesses start it from
-# `repolens setup` registrations, its usage evidence is the `repolens usage report` gate below. No `green` knobs: Notaire has no [[gates]] stage=green;
+# Agents/skills/models come from fleet-manifest + skills-dir. MCP: repolens (#2298) stays available on
+# plan/red/pre-pr. Routing (AGENTS.md): search when the symbol is unknown; rg for an exact symbol;
+# impact for callers; `repolens miss` when falling back. Do not treat search as the first call for
+# every lookup. Usage evidence is the `repolens usage report` gate below. No `green` knobs: Notaire has no [[gates]] stage=green;
 # G3 verified is pre-push + pre-pr. merge/release/signal stay unmapped until
 # real knobs exist (#2211 honesty).
 [[stages]]

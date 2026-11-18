@@ -1,0 +1,35 @@
+{
+  "updated": "2026-11-18",
+  "source": "factory loop locate commands and framework/ai-sdlc/repolens/bench/results/summary.md",
+  "routing": "search when the symbol is unknown; rg for an exact symbol or path; impact for callers; repolens miss on fallback",
+  "sampled_ab": "every third implemented issue, and every miss",
+  "loop_locate": {
+    "questions": 6,
+    "note": "Wall times and output bytes are from time.perf_counter and the command stdout. Hit rate is named diff files over existing diff files. Not a full agent session.",
+    "exact_symbol_or_known_file": {
+      "examples": ["frontend vitest in preflight.sh", "useUsers() callers"],
+      "rg_faster": true,
+      "rg_wall_s": [0.002, 0.008],
+      "repolens_search_wall_s": [1.924, 1.878],
+      "hit_rate_same_or_rg_better": true
+    },
+    "caller_search": {
+      "examples": ["Deed.getDto", "Folio.getDto"],
+      "grep_hit": ["3/4", "5/6"],
+      "search_plus_impact_hit": ["3/4", "5/6"],
+      "search_alone_hit_folio": "1/6",
+      "repolens_slower_s": true
+    }
+  },
+  "offline_bench_summary_md": {
+    "haiku_notaire_holdout": {"runs_per_arm": 36, "recall_both": 0.97, "tool_calls_baseline": 5.89, "tool_calls_repolens": 4.56, "input_tokens_baseline": 48468, "input_tokens_repolens": 36165, "cost_usd_baseline": 0.00334, "cost_usd_repolens": 0.00228},
+    "haiku_notaire": {"runs_per_arm": 33, "tool_calls_baseline": 5.61, "tool_calls_repolens": 4.52, "input_tokens_baseline": 56301, "input_tokens_repolens": 38122, "cost_usd_baseline": 0.0036, "cost_usd_repolens": 0.00245},
+    "sonnet_notaire_holdout": {"runs_per_arm": 6, "tool_calls_baseline": 4.0, "tool_calls_repolens": 2.0, "input_tokens_baseline": 21914, "input_tokens_repolens": 24419, "cost_usd_baseline": 0.0323, "cost_usd_repolens": 0.03312},
+    "sonnet_scale": {"runs_per_arm": 8, "tool_calls_both": 2.0, "input_tokens_baseline": 18727, "input_tokens_repolens": 22506, "cost_usd_baseline": 0.02573, "cost_usd_repolens": 0.02646}
+  },
+  "usage_report_last_gate": "6 calls, 0 sessions, adoption 0%, hit rate n/a, p95 988 ms",
+  "preflight": {
+    "vitest_retry": "one extra attempt for frontend vitest only",
+    "full_runs_with_a_recorded_restart": ["registration-draft: 3", "folio: 3", "cli-usage: 2"]
+  }
+}

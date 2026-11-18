@@ -12,7 +12,7 @@ from . import __version__
 
 # Commands that must start fast and work before the dependencies are installed (the harness hook runs on
 # every tool call): they import only the standard library. The rest import the engine lazily.
-LIGHT = ("hook", "report", "setup", "doctor", "refresh")
+LIGHT = ("hook", "report", "setup", "doctor", "refresh", "miss")
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -46,6 +46,9 @@ def _parser() -> argparse.ArgumentParser:
     s.add_argument("--dry-run", action="store_true")
 
     sub.add_parser("doctor", help="check dependencies, config, store freshness, harness wiring and telemetry")
+
+    s = sub.add_parser("miss", help="record a grep/read fallback after repolens missed or was the wrong tool")
+    s.add_argument("query")
 
     s = sub.add_parser("report", help="usage efficiency report (adoption, hit rate, fallbacks, tokens, latency)")
     s.add_argument("--since", help="7d, 12h or an ISO date (default: everything)")
@@ -139,6 +142,8 @@ def _light(args) -> int:
         code, lines = doctor()
         print("\n".join(lines))
         return code
+    if args.cmd == "miss":
+        return _miss(args)
     return _refresh(args)
 
 
@@ -222,6 +227,18 @@ def _record_cli(args, tool: str, given: str, text: str, results: int, started: f
         "ms": round((time.perf_counter() - started) * 1000, 1), "bytes": len(text.encode()),
         "tokens": len(text.encode()) // 4, "results": results, "files": files_in(text),
     })
+
+
+def _miss(args) -> int:
+    """Record that the agent fell back to grep or read. Does not search."""
+    from .paths import usage_log
+    from .usage import record
+
+    record(usage_log(_state_dir(args)), {
+        "src": "cli", "client": "cli", "tool": "miss", "input": (args.query or "")[:200],
+        "results": 0, "files": [],
+    })
+    return 0
 
 
 def _report(args) -> int:

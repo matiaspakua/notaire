@@ -17,3 +17,11 @@ Short notes from the cloud factory loop. Product behavior is not documented here
 
 - `preflight.sh` retries frontend Vitest once (`run_retry`) before failing the gate. Measured flakes that passed on the immediate rerun: `reports-page` and `dashboard-pages-render` (99 tests), `upcoming-expirations` (93 tests), and `budgets opens every dialog` (93 tests in the same file).
 
+## 2026-11-18 locate routing
+
+- Owner-delegated autonomous merge for the backlog loop, 2026-11-18, revocable by the owner. Merge only after `preflight.sh --full` exit 0 on the final head, required GitHub checks green, and a clean merge with main. No ruleset bypass, no force-push.
+- Do not file a new GitHub issue unless it is necessary. Work open issues first. Other findings stay in this log.
+- RepoLens is not the first call for every lookup. Exact symbol or path: `rg` (0.002s and 0.008s on two questions, versus 1.924s and 1.878s for search, hit rate not better). Unknown symbol: `repolens search`. Callers: `repolens impact`, then `rg` plus `repolens miss` if impact names no production file. Offline bench (`summary.md`): Haiku holdout tool calls 5.89 to 4.56 and input tokens 48,468 to 36,165; Sonnet holdout tool calls 4.00 to 2.00 but input tokens 21,914 to 24,419 and cost 0.03230 to 0.03312. Sonnet scale did not reduce tool calls (2.00 both) and raised input tokens.
+- Paired grep-vs-repolens locate is sampled: every third implemented issue, and every miss. KPI file: `factory-kpis.json`.
+
+
