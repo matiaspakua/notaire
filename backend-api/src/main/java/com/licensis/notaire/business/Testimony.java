@@ -5,6 +5,9 @@
 package com.licensis.notaire.business;
 
 import com.licensis.notaire.dto.DtoDeed;
+import com.licensis.notaire.dto.DtoFolio;
+import com.licensis.notaire.dto.DtoFolioType;
+import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoTestimonyMovement;
 import com.licensis.notaire.dto.DtoTestimony;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -279,7 +282,7 @@ public class Testimony implements Serializable, Persistable<Integer>
         deedDto.setVersion(deed.getVersion());
         if (deed.getFolioList() != null && !deed.getFolioList().isEmpty()) {
             for (Folio folio : deed.getFolioList()) {
-                deedDto.getFolios().add(folio.getDto());
+                deedDto.getFolios().add(copyFolio(folio));
             }
         } else {
             deedDto.setFolios(null);
@@ -292,6 +295,38 @@ public class Testimony implements Serializable, Persistable<Integer>
             deedDto.setProcedures(null);
         }
         return deedDto;
+    }
+
+    private static DtoFolio copyFolio(Folio folio) {
+        DtoFolio folioDto = new DtoFolio();
+        folioDto.setIdFolio(folio.getIdFolio());
+        folioDto.setNumber(folio.getNumber());
+        folioDto.setStatus(folio.getStatus());
+        folioDto.setNotes(folio.getNotes());
+        folioDto.setYear(folio.getYear());
+        folioDto.setVersion(folio.getVersion());
+        if (folio.getFkIdNotaryPerson() != null) {
+            DtoPerson person = new DtoPerson();
+            person.setId(folio.getFkIdNotaryPerson().getPersonId());
+            person.setNotaryRegistrationNumber(folio.getFkIdNotaryPerson().getNotaryRegistrationNumber());
+            folioDto.setPersonNotary(person);
+        }
+        DtoFolioType folioTypeDto = new DtoFolioType();
+        folioTypeDto.setIdFolioType(folio.getFkIdFolioType().getIdFolioType());
+        folioTypeDto.setName(folio.getFkIdFolioType().getName());
+        folioTypeDto.setNotes(folio.getFkIdFolioType().getNotes());
+        folioTypeDto.setEnabled(folio.getFkIdFolioType().getEnabled());
+        folioTypeDto.setIsAuxiliary(folio.getFkIdFolioType().isIsAuxiliary());
+        folioTypeDto.setVersion(folio.getFkIdFolioType().getVersion());
+        folioDto.setFolioType(folioTypeDto);
+        if (folio.getFkIdDeed() != null) {
+            DtoDeed nested = new DtoDeed();
+            nested.setIdDeed(folio.getFkIdDeed().getIdDeed());
+            nested.setNumber(folio.getFkIdDeed().getNumber());
+            nested.setStatus(folio.getFkIdDeed().getStatus());
+            folioDto.setDeed(nested);
+        }
+        return folioDto;
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.licensis.notaire.unit;
 
 import com.licensis.notaire.adapter.out.persistence.concept.ConceptLegacyMapper;
 import com.licensis.notaire.adapter.out.persistence.document.DocumentTypeLegacyMapper;
+import com.licensis.notaire.adapter.out.persistence.folio.FolioLegacyMapper;
 import com.licensis.notaire.adapter.out.persistence.folio.FolioTypeLegacyMapper;
 import com.licensis.notaire.adapter.out.persistence.management.ManagementStatusLegacyMapper;
 import com.licensis.notaire.adapter.out.persistence.procedure.ProcedureTypeLegacyMapper;
@@ -282,7 +283,7 @@ class EntitiesBasicTest {
             // (we just verify no exception is thrown)
             assertThat(target).isNotNull();
 
-            DtoFolio outDto = f1.getDto();
+            DtoFolio outDto = FolioLegacyMapper.toDto(f1);
             assertThat(outDto.getIdFolio()).isEqualTo(5);
             assertThat(outDto.getNumber()).isEqualTo(101);
         }

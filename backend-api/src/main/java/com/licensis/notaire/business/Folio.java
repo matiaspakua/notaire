@@ -4,10 +4,6 @@
  */
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoDeed;
-import com.licensis.notaire.dto.DtoFolio;
-import com.licensis.notaire.dto.DtoFolioType;
-import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.persistence.PersistenceConstants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
@@ -280,50 +276,6 @@ public class Folio implements Serializable, Persistable<Integer>
     }
 
 
-
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoFolio getDto()
-    {
-        DtoFolio folioDto = new DtoFolio();
-
-        folioDto.setIdFolio(this.idFolio);
-        folioDto.setNumber(this.number);
-        folioDto.setStatus(this.status);
-        folioDto.setNotes(this.notes);
-        folioDto.setYear(this.year);
-        folioDto.setVersion(this.getVersion());
-
-        if (this.getFkIdNotaryPerson() != null)
-        {
-            DtoPerson person = new DtoPerson();
-            person.setId(fkIdNotaryPerson.getPersonId());
-            person.setNotaryRegistrationNumber(fkIdNotaryPerson.getNotaryRegistrationNumber());
-
-            folioDto.setPersonNotary(person);
-        }
-
-        DtoFolioType folioTypeDto = new DtoFolioType();
-        folioTypeDto.setIdFolioType(this.fkIdFolioType.getIdFolioType());
-        folioTypeDto.setName(this.fkIdFolioType.getName());
-        folioTypeDto.setNotes(this.fkIdFolioType.getNotes());
-        folioTypeDto.setEnabled(this.fkIdFolioType.getEnabled());
-        folioTypeDto.setIsAuxiliary(this.fkIdFolioType.isIsAuxiliary());
-        folioTypeDto.setVersion(this.fkIdFolioType.getVersion());
-        folioDto.setFolioType(folioTypeDto);
-
-        if (this.fkIdDeed != null)
-        {
-            // Not fkIdDeed.getDto(): that walks Deed's lazy folioList, which
-            // includes this same Folio, and would recurse back into Folio.getDto().
-            DtoDeed deedDto = new DtoDeed();
-            deedDto.setIdDeed(this.fkIdDeed.getIdDeed());
-            deedDto.setNumber(this.fkIdDeed.getNumber());
-            deedDto.setStatus(this.fkIdDeed.getStatus());
-            folioDto.setDeed(deedDto);
-        }
-
-        return folioDto;
-    }
 
     public int getVersion()
     {
