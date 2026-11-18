@@ -2,8 +2,6 @@ Deed#getDto
 DeedManagement#getDto
 Folio#getDto
 History#getDto
-ManagementStatus#getDto
-ManagementStatus#setAttribute
 Person#setAttributes
 Procedure#getDto
 ProcedureFolder#getDto

@@ -4,8 +4,6 @@
  */
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoManagementStatus;
-import com.licensis.notaire.dto.exceptions.InvalidDtoException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
@@ -151,29 +149,6 @@ public class ManagementStatus implements Serializable, Persistable<Integer> {
     public String toString() {
         return "ManagementStatus[ idManagementStatus=" + idManagementStatus + " ]"
                 + "[ name=" + name + " ]";
-    }
-
-    public void setAttribute(DtoManagementStatus dto) throws InvalidDtoException {
-        if (dto.isValid() == Boolean.TRUE) {
-            this.setIdManagementStatus(dto.getIdManagementStatus());
-            this.setName(dto.getName());
-            this.setNotes(dto.getNotes());
-            this.version = dto.getVersion();
-        } else {
-            throw new InvalidDtoException("Invalid DTO");
-        }
-    }
-
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoManagementStatus getDto() throws NullPointerException {
-        DtoManagementStatus dto = new DtoManagementStatus();
-
-        dto.setIdManagementStatus(this.getIdManagementStatus());
-        dto.setName(this.getName());
-        dto.setNotes(this.getNotes());
-        dto.setVersion(this.getVersion());
-
-        return dto;
     }
 
     public int getVersion() {

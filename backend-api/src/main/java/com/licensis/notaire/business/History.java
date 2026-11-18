@@ -5,6 +5,7 @@
 package com.licensis.notaire.business;
 
 import com.licensis.notaire.dto.DtoHistory;
+import com.licensis.notaire.dto.DtoManagementStatus;
 import java.io.Serializable;
 import java.util.Date;
 import jakarta.persistence.Basic;
@@ -202,7 +203,12 @@ public class History implements Serializable, Persistable<Integer>
         dto.setVersion(this.version);
         dto.setDate(this.date);
         dto.setDeedManagement(this.getFkIdManagement().getDto());
-        dto.setManagementStatus(this.fkIdManagementStatus.getDto());
+        DtoManagementStatus statusDto = new DtoManagementStatus();
+        statusDto.setIdManagementStatus(this.fkIdManagementStatus.getIdManagementStatus());
+        statusDto.setName(this.fkIdManagementStatus.getName());
+        statusDto.setNotes(this.fkIdManagementStatus.getNotes());
+        statusDto.setVersion(this.fkIdManagementStatus.getVersion());
+        dto.setManagementStatus(statusDto);
         dto.setNotes(this.notes);
 
         return dto;
