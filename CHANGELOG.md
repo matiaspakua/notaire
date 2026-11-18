@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+* **pages:** polish RepoLens AI Factory page — ranking pipeline FlowDiagram, chart entry motion and focus tooltips, scroll reveals; honors prefers-reduced-motion; Cytoscape HTTP explorer left unchanged (Refs #2318)
+
 ### Added
 
 * **pages:** AI Factory RepoLens showcase at `/ai-sdlc/repolens/` with charts from committed offline and factory-loop benches (Refs #2315)

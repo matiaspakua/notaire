@@ -37,6 +37,15 @@ export const REPOLENS_SECTIONS = {
     "Charts below are generated from the committed result files under framework/ai-sdlc/repolens/bench/results/. Nothing is typed by hand on this page.",
     "Los gráficos de abajo se generan desde los archivos de resultados commitidos en framework/ai-sdlc/repolens/bench/results/. Nada se escribe a mano en esta página.",
   ),
+  pipelineTitle: pair("How RepoLens ranks code", "Cómo RepoLens ordena el código"),
+  pipelineDesc: pair(
+    "Five stages from the worktree to the agent: parse, store, embed, rank, then serve over CLI, MCP, or HTTP.",
+    "Cinco etapas del worktree al agente: parsear, guardar, embedder, ordenar y servir por CLI, MCP o HTTP.",
+  ),
+  pipelineCaption: pair(
+    "Step through the ranking pipeline. Numbers on this page still come only from the committed benches.",
+    "Recorre el pipeline de ranking. Los números de esta página siguen saliendo solo de los benches commitidos.",
+  ),
 };
 
 export const REPOLENS_STEPS = [
@@ -131,6 +140,17 @@ export const REPOLENS_LOOP = [
     ),
   },
 ];
+
+/** Pipeline diagram node / edge labels (#2318). Technical tokens stay in English. */
+pair("Parse", "Parsear");
+pair("Store", "Guardar");
+pair("Embed", "Embed");
+pair("Rank", "Ordenar");
+pair("Serve", "Servir");
+pair("symbols", "símbolos");
+pair("chunks", "chunks");
+pair("vectors", "vectores");
+pair("hits", "hits");
 
 /** Side-effect: register Spanish strings when this module is imported. */
 void REPOLENS_BASICS;
