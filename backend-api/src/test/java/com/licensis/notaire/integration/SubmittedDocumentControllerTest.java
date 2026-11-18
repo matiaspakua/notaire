@@ -218,9 +218,9 @@ class SubmittedDocumentControllerTest {
 
         MvcResult list = mockMvc.perform(get("/api/v1/submitted-documents")).andExpect(status().isOk()).andReturn();
 
-        var body = mapper.readTree(list.getResponse().getContentAsString()).get("content");
+        var content = mapper.readTree(list.getResponse().getContentAsString()).get("content");
         var row = java.util.stream.StreamSupport
-                .stream(body.spliterator(), false)
+                .stream(content.spliterator(), false)
                 .filter(node -> node.get("idSubmittedDocument").asInt() == id).findFirst().orElseThrow();
         assertThat(row.get("type").get("idDocumentType").asInt()).isEqualTo(typeId);
         assertThat(row.get("date").asText()).isEqualTo("2026-06-01");
