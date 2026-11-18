@@ -10,6 +10,10 @@ public interface SubmittedDocumentCatalogPort {
 
     List<SubmittedDocument> findAll();
 
+    PageResult findPage(int page, int size, String sort);
+
+    record PageResult(List<SubmittedDocument> content, int number, int size, long totalElements) {}
+
     Optional<SubmittedDocument> findById(int id);
 
     /** Inserts when the document has no id, otherwise updates it. */

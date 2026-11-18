@@ -7,9 +7,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import com.licensis.notaire.application.port.out.document.SubmittedDocumentCatalogPort;
+import com.licensis.notaire.application.port.out.document.SubmittedDocumentCatalogPort.PageResult;
 import com.licensis.notaire.business.DocumentType;
 import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.domain.document.SubmittedDocument;
@@ -41,6 +44,29 @@ public class SubmittedDocumentPersistenceAdapter implements SubmittedDocumentCat
     @Override
     public List<SubmittedDocument> findAll() {
         return documents.findAll().stream().map(SubmittedDocumentPersistenceAdapter::toDomain).toList();
+    }
+
+    @Override
+    public PageResult findPage(int page, int size, String sort) {
+        var result = documents.findAll(PageRequest.of(page, Math.max(size, 1), documentSort(sort)));
+        return new PageResult(
+                result.getContent().stream().map(SubmittedDocumentPersistenceAdapter::toDomain).toList(),
+                result.getNumber(),
+                result.getSize(),
+                result.getTotalElements());
+    }
+
+    private static Sort documentSort(String sort) {
+        String value = sort == null || sort.isBlank() ? "idSubmittedDocument,desc" : sort;
+        String[] parts = value.split(",", 2);
+        String property = switch (parts[0].trim()) {
+            case "dateEntry" -> "dateEntry";
+            default -> "idSubmittedDocument";
+        };
+        Sort.Direction direction = parts.length > 1 && "asc".equalsIgnoreCase(parts[1].trim())
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+        return Sort.by(direction, property);
     }
 
     @Override

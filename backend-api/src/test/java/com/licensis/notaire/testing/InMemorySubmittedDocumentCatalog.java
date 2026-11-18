@@ -20,6 +20,18 @@ public class InMemorySubmittedDocumentCatalog implements SubmittedDocumentCatalo
     }
 
     @Override
+    public SubmittedDocumentCatalogPort.PageResult findPage(int page, int size, String sort) {
+        List<SubmittedDocument> ordered = new ArrayList<>(rows);
+        ordered.sort((left, right) -> Integer.compare(
+                right.id() == null ? 0 : right.id(),
+                left.id() == null ? 0 : left.id()));
+        int from = Math.min(Math.max(page, 0) * Math.max(size, 1), ordered.size());
+        int to = Math.min(from + Math.max(size, 1), ordered.size());
+        return new SubmittedDocumentCatalogPort.PageResult(
+                List.copyOf(ordered.subList(from, to)), page, size, ordered.size());
+    }
+
+    @Override
     public Optional<SubmittedDocument> findById(int id) {
         return rows.stream().filter(d -> d.id() != null && d.id() == id).findFirst();
     }

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.in.document.QuerySubmittedDocumentsUseCase;
 import com.licensis.notaire.application.port.out.document.SubmittedDocumentCatalogPort;
+import com.licensis.notaire.application.port.out.document.SubmittedDocumentCatalogPort.PageResult;
 import com.licensis.notaire.domain.document.SubmittedDocument;
 
 @Service
@@ -23,6 +24,11 @@ public class SubmittedDocumentQueryService implements QuerySubmittedDocumentsUse
     @Override
     public List<SubmittedDocument> findAll() {
         return catalog.findAll();
+    }
+
+    @Override
+    public PageResult findPage(int page, int size, String sort) {
+        return catalog.findPage(page, size, sort);
     }
 
     @Override

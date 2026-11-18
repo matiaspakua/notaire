@@ -4,8 +4,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
-import java.util.List;
 
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -151,9 +156,18 @@ public class SubmittedDocumentController {
     }
 
     @GetMapping
-    @Operation(summary = "Get all submitted documents")
-    public ResponseEntity<List<SubmittedDocumentResponse>> getAll() {
-        return ResponseEntity.ok(query.findAll().stream().map(this::toResponse).toList());
+    @Operation(summary = "Get submitted documents, one page at a time",
+            description = "Parameters: page (default 0), size (default 20), sort (for example idSubmittedDocument,desc)")
+    public ResponseEntity<Page<SubmittedDocumentResponse>> getAll(
+            @ParameterObject @PageableDefault(size = 20, sort = "idSubmittedDocument", direction = Sort.Direction.DESC)
+            Pageable pageable) {
+        var order = pageable.getSort().stream().findFirst().orElse(null);
+        String sort = order == null
+                ? "idSubmittedDocument,desc"
+                : order.getProperty() + "," + order.getDirection().name().toLowerCase();
+        var result = query.findPage(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        var content = result.content().stream().map(this::toResponse).toList();
+        return ResponseEntity.ok(new PageImpl<>(content, pageable, result.totalElements()));
     }
 
     @ApiResponses({
