@@ -2,8 +2,6 @@ package com.licensis.notaire.business;
 
 import java.math.BigDecimal;
 
-import com.licensis.notaire.dto.DtoRegistrationDraft;
-
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -224,9 +222,4 @@ public class RegistrationDraft implements Serializable, Persistable<Integer> {
                 + " ][ status=" + status + " ]";
     }
 
-    public DtoRegistrationDraft getDto() {
-        return new DtoRegistrationDraft(idRegistrationDraft, number, operationPrice, status, dateGeneration,
-                dateSubmission, registryEntryNumber, dateReception, finalRegistrationNumber,
-                registryNotes, dateCorrection, fkIdDeed != null ? fkIdDeed.getIdDeed() : null);
-    }
 }

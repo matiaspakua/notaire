@@ -5,7 +5,6 @@ History#getDto
 Person#setAttributes
 Procedure#getDto
 ProcedureFolder#getDto
-RegistrationDraft#getDto
 Testimony#getDto
 Testimony#setAttributes
 TestimonyMovement#getDto
