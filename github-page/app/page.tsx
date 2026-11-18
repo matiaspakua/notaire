@@ -60,7 +60,7 @@ export default function Home() {
         doors: [
           { key: "product", href: "/product/", facts: [`v${v.product ?? "—"}`, `${n(api?.paths)} API paths`, `${list.length} migrations`] },
           { key: "docs", href: "/docs/", facts: [`Java ${v.java ?? "—"}`, `Spring Boot ${v.springBoot ?? "—"}`, `Next.js ${v.next ?? "—"}`] },
-          { key: "factory", href: "/ai-sdlc/", facts: [`${n(factory.skills)} skills`, `${n(factory.agents)} agents`, `${n(factory.livingSpecs)} living specs`] },
+          { key: "factory", href: "/ai-sdlc/repolens/", facts: [`${n(factory.skills)} skills`, `${n(factory.agents)} agents`, "RepoLens benches"] },
           { key: "security", href: "/security/", facts: ["STRIDE", "local gates", "release scans"] },
         ],
         name: about.name,

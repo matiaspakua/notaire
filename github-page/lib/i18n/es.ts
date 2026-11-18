@@ -48,6 +48,7 @@ export const TRANSLATED_ROUTES = [
   "/ai-sdlc/governance/",
   "/ai-sdlc/lessons/",
   "/ai-sdlc/results/",
+  "/ai-sdlc/repolens/",
   "/ai-sdlc/framework/",
   "/ai-sdlc/playbook/",
   "/docs/",

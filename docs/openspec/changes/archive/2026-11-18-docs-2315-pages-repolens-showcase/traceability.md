@@ -35,12 +35,12 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Visitor opens RepoLens from the factory sidebar | RepoLensPagesTest | pending |
-| Home and reading path surface RepoLens | RepoLensPagesTest | pending |
-| Reader learns the factory plug-in | RepoLensPagesTest | pending |
-| Learning loop cites real fixes | RepoLensPagesTest | pending |
-| Chart data tracks the committed snapshot | RepoLensPagesTest | pending |
-| Theme and locale | RepoLensPagesTest | pending |
+| Visitor opens RepoLens from the factory sidebar | RepoLensPagesTest | passing |
+| Home and reading path surface RepoLens | RepoLensPagesTest | passing |
+| Reader learns the factory plug-in | RepoLensPagesTest | passing |
+| Learning loop cites real fixes | RepoLensPagesTest | passing |
+| Chart data tracks the committed snapshot | RepoLensPagesTest | passing |
+| Theme and locale | RepoLensPagesTest | passing |
 
 ## Permanent documentation updated
 

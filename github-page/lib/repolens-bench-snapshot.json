@@ -1,0 +1,318 @@
+{
+  "generated_at": "2026-11-18T19:31:23Z",
+  "method": "python3 workspace/ci/generate-repolens-bench.py",
+  "sources": [
+    {
+      "path": "framework/ai-sdlc/repolens/bench/results/retrieval.json"
+    },
+    {
+      "path": "framework/ai-sdlc/repolens/bench/results/retrieval-notaire-holdout.json"
+    },
+    {
+      "path": "framework/ai-sdlc/repolens/bench/results/agent-haiku.json"
+    },
+    {
+      "path": "framework/ai-sdlc/repolens/bench/results/agent-haiku-notaire-holdout.json"
+    },
+    {
+      "path": "framework/ai-sdlc/repolens/bench/results/agent-sonnet-holdout-0.3.0.json"
+    },
+    {
+      "path": "framework/ai-sdlc/repolens/bench/results/agent-sonnet-scale.json"
+    },
+    {
+      "path": "framework/ai-sdlc/repolens/bench/results/factory-loop-comparison.md"
+    }
+  ],
+  "headlines": {
+    "tuning_recall": "4.9x more",
+    "holdout_recall": "2.5x more",
+    "latency": "43x faster",
+    "bytes": "91x less",
+    "sonnet_tool_calls": "2.0x fewer",
+    "sonnet_recall": "same"
+  },
+  "retrieval": {
+    "tuning": {
+      "path": "framework/ai-sdlc/repolens/bench/results/retrieval.json",
+      "taskset": "notaire",
+      "commit": "073e9776",
+      "tasks": 11,
+      "k": 10,
+      "arms": {
+        "grep": {
+          "recall_at_5": 0.091,
+          "recall_at_10": 0.182,
+          "recall_at_20": 0.28,
+          "mrr": 0.136,
+          "latency_ms": 1279.518,
+          "output_bytes": 209188.273
+        },
+        "hybrid": {
+          "recall_at_5": 0.592,
+          "recall_at_10": 0.792,
+          "recall_at_20": 0.896,
+          "mrr": 0.718,
+          "latency_ms": 22.855,
+          "output_bytes": 2320.545
+        },
+        "graph": {
+          "recall_at_5": 0.67,
+          "recall_at_10": 0.891,
+          "recall_at_20": 0.939,
+          "mrr": 0.788,
+          "latency_ms": 29.927,
+          "output_bytes": 2305.273
+        }
+      }
+    },
+    "holdout": {
+      "path": "framework/ai-sdlc/repolens/bench/results/retrieval-notaire-holdout.json",
+      "taskset": "notaire-holdout",
+      "commit": "073e9776",
+      "tasks": 12,
+      "k": 10,
+      "arms": {
+        "grep": {
+          "recall_at_5": 0.174,
+          "recall_at_10": 0.306,
+          "recall_at_20": 0.451,
+          "mrr": 0.221,
+          "latency_ms": 1088.15,
+          "output_bytes": 235907.417
+        },
+        "hybrid": {
+          "recall_at_5": 0.607,
+          "recall_at_10": 0.801,
+          "recall_at_20": 0.832,
+          "mrr": 0.785,
+          "latency_ms": 21.025,
+          "output_bytes": 2392.5
+        },
+        "graph": {
+          "recall_at_5": 0.628,
+          "recall_at_10": 0.765,
+          "recall_at_20": 0.958,
+          "mrr": 0.84,
+          "latency_ms": 28.175,
+          "output_bytes": 2415.5
+        }
+      }
+    }
+  },
+  "agents": {
+    "haikuTuning": {
+      "path": "framework/ai-sdlc/repolens/bench/results/agent-haiku.json",
+      "model": "haiku",
+      "taskset": "notaire",
+      "commit": "073e9776",
+      "repeat": 3,
+      "baseline": {
+        "recall": 0.984848,
+        "tool_calls": 5.606061,
+        "turns": 6.606061,
+        "duration_s": 11.59697,
+        "cost_usd": 0.003603,
+        "input_tokens": 56301.393939,
+        "output_tokens": 2050.727273,
+        "runs": 33
+      },
+      "graph": {
+        "recall": 0.989909,
+        "tool_calls": 4.515152,
+        "turns": 5.515152,
+        "duration_s": 8.760606,
+        "cost_usd": 0.002445,
+        "input_tokens": 38121.787879,
+        "output_tokens": 1549.515152,
+        "runs": 33
+      }
+    },
+    "haikuHoldout": {
+      "path": "framework/ai-sdlc/repolens/bench/results/agent-haiku-notaire-holdout.json",
+      "model": "haiku",
+      "taskset": "notaire-holdout",
+      "commit": "073e9776",
+      "repeat": 3,
+      "baseline": {
+        "recall": 0.967611,
+        "tool_calls": 5.888889,
+        "turns": 6.888889,
+        "duration_s": 11.594444,
+        "cost_usd": 0.003344,
+        "input_tokens": 48468.5,
+        "output_tokens": 2080.611111,
+        "runs": 36
+      },
+      "graph": {
+        "recall": 0.97225,
+        "tool_calls": 4.555556,
+        "turns": 5.555556,
+        "duration_s": 8.8,
+        "cost_usd": 0.002278,
+        "input_tokens": 36165.444444,
+        "output_tokens": 1585.416667,
+        "runs": 36
+      }
+    },
+    "sonnetHoldout": {
+      "path": "framework/ai-sdlc/repolens/bench/results/agent-sonnet-holdout-0.3.0.json",
+      "model": "sonnet",
+      "taskset": "notaire-holdout",
+      "commit": "073e9776",
+      "repeat": 1,
+      "baseline": {
+        "recall": 1.0,
+        "tool_calls": 4.0,
+        "turns": 5.0,
+        "duration_s": 8.716667,
+        "cost_usd": 0.0323,
+        "input_tokens": 21913.666667,
+        "output_tokens": 1247.5,
+        "runs": 6
+      },
+      "graph": {
+        "recall": 1.0,
+        "tool_calls": 2.0,
+        "turns": 3.0,
+        "duration_s": 7.316667,
+        "cost_usd": 0.033117,
+        "input_tokens": 24418.666667,
+        "output_tokens": 1063.166667,
+        "runs": 6
+      }
+    },
+    "sonnetScale": {
+      "path": "framework/ai-sdlc/repolens/bench/results/agent-sonnet-scale.json",
+      "model": "sonnet",
+      "taskset": "scale",
+      "commit": "spring-framework,vscode",
+      "repeat": 1,
+      "baseline": {
+        "recall": 0.9375,
+        "tool_calls": 2.0,
+        "turns": 3.0,
+        "duration_s": 7.5875,
+        "cost_usd": 0.025725,
+        "input_tokens": 18726.875,
+        "output_tokens": 937.375,
+        "runs": 8
+      },
+      "graph": {
+        "recall": 0.9375,
+        "tool_calls": 2.0,
+        "turns": 3.0,
+        "duration_s": 8.3375,
+        "cost_usd": 0.026462,
+        "input_tokens": 22505.5,
+        "output_tokens": 888.25,
+        "runs": 8
+      }
+    }
+  },
+  "factoryLoop": {
+    "pairs": [
+      {
+        "issue": "#580",
+        "label": "#580 Deed `getDto`",
+        "order": "grep first",
+        "pass": "grep",
+        "calls": 4,
+        "output_bytes": 6425,
+        "wall": "0.186s",
+        "hit_rate": "3/4",
+        "named_files": "`Deed.java`, `Testimony.java`, `DeedEntityTest.java`"
+      },
+      {
+        "issue": "#580",
+        "label": "#580 Deed `getDto`",
+        "order": "grep first",
+        "pass": "repolens",
+        "calls": 2,
+        "output_bytes": 5137,
+        "wall": "4.552s",
+        "hit_rate": "3/4",
+        "named_files": "`Deed.java`, `Testimony.java`, `DeedEntityTest.java`"
+      },
+      {
+        "issue": "#596",
+        "label": "#596 procedure folders",
+        "order": "repolens first",
+        "pass": "repolens",
+        "calls": 2,
+        "output_bytes": 4572,
+        "wall": "3.650s",
+        "hit_rate": "n/a, not implemented",
+        "named_files": null
+      },
+      {
+        "issue": "#596",
+        "label": "#596 procedure folders",
+        "order": "repolens first",
+        "pass": "grep",
+        "calls": 2,
+        "output_bytes": 1458,
+        "wall": "0.174s",
+        "hit_rate": "n/a",
+        "named_files": null
+      },
+      {
+        "issue": "#580",
+        "label": "#580 Folio `getDto`",
+        "order": "grep first",
+        "pass": "grep",
+        "calls": 4,
+        "output_bytes": 4623,
+        "wall": "0.154s",
+        "hit_rate": "5/6",
+        "named_files": null
+      },
+      {
+        "issue": "#580",
+        "label": "#580 Folio `getDto`",
+        "order": "grep first",
+        "pass": "repolens search",
+        "calls": 1,
+        "output_bytes": 1794,
+        "wall": "1.882s",
+        "hit_rate": "1/6",
+        "named_files": null
+      },
+      {
+        "issue": "#580",
+        "label": "#580 Folio `getDto`",
+        "order": "grep first",
+        "pass": "repolens impact",
+        "calls": 1,
+        "output_bytes": 3135,
+        "wall": "1.203s",
+        "hit_rate": "5/6",
+        "named_files": null
+      },
+      {
+        "issue": "#596",
+        "label": "#596 users",
+        "order": "repolens first",
+        "pass": "repolens",
+        "calls": 1,
+        "output_bytes": 1877,
+        "wall": "1.878s",
+        "hit_rate": "n/a, not implemented",
+        "named_files": null
+      },
+      {
+        "issue": "#596",
+        "label": "#596 users",
+        "order": "repolens first",
+        "pass": "grep",
+        "calls": 1,
+        "output_bytes": 265,
+        "wall": "0.008s",
+        "hit_rate": "n/a",
+        "named_files": null
+      }
+    ],
+    "implemented_issues_n": 2,
+    "caveat": "No percentage improvement is claimed for the paired factory-loop sample when n is small (see factory-loop-comparison.md). Numbers are command output bytes and wall time, not source files read afterwards."
+  }
+}

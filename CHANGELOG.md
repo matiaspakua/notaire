@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* **pages:** AI Factory RepoLens showcase at `/ai-sdlc/repolens/` with charts from committed offline and factory-loop benches (Refs #2315)
+
 ### Fixed
 
 * **pages:** Security Identity and AT-1 describe TOTP MFA as shipped (OPTIONAL by default; ENFORCE for ADMIN and NOTARY). The committed release snapshot and local `preflight` pages build refresh to the current product version (Refs #2270)
