@@ -4,14 +4,10 @@
  */
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoDeed;
-import com.licensis.notaire.dto.DtoFolio;
-import com.licensis.notaire.dto.DtoProcedure;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
@@ -251,53 +247,6 @@ public class Deed implements Serializable, Persistable<Integer>
     }
 
 
-
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoDeed getDto()
-    {
-        DtoDeed deedDto = new DtoDeed();
-
-        deedDto.setIdDeed(idDeed);
-        deedDto.setDateDeedrecording(dateDeedrecording);
-        deedDto.setNumber(number);
-        deedDto.setBody(body);
-        deedDto.setStatus(status);
-        deedDto.setRegistrationEntryNumber(registrationEntryNumber);
-        deedDto.setDateRegistration(dateRegistration);
-
-        deedDto.setVersion(version);
-
-        if (folioList != null && !folioList.isEmpty())
-        {
-
-            for (Iterator<Folio> it = folioList.iterator(); it.hasNext();)
-            {
-                Folio folio = it.next();
-                DtoFolio folioDto = folio.getDto();
-
-                deedDto.getFolios().add(folioDto);
-            }
-        } else
-        {
-            deedDto.setFolios(null);
-        }
-
-        if (procedureList != null && !procedureList.isEmpty())
-        {
-            for (Iterator<Procedure> it = procedureList.iterator(); it.hasNext();)
-            {
-                Procedure procedure = it.next();
-                DtoProcedure procedureDto = procedure.getDto();
-
-                deedDto.getProcedures().add(procedureDto);
-            }
-        } else
-        {
-            deedDto.setProcedures(null);
-        }
-
-        return deedDto;
-    }
 
     @Override
     public int hashCode()

@@ -4,6 +4,7 @@
  */
 package com.licensis.notaire.business;
 
+import com.licensis.notaire.dto.DtoDeed;
 import com.licensis.notaire.dto.DtoTestimonyMovement;
 import com.licensis.notaire.dto.DtoTestimony;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -246,7 +247,7 @@ public class Testimony implements Serializable, Persistable<Integer>
 
         if (fkIdDeed != null)
         {
-            dto.setDeed(fkIdDeed.getDto());
+            dto.setDeed(copyDeed(fkIdDeed));
         }
 
         if (testimonyMovementList != null && !testimonyMovementList.isEmpty())
@@ -264,6 +265,33 @@ public class Testimony implements Serializable, Persistable<Integer>
         }
 
         return dto;
+    }
+
+    private static DtoDeed copyDeed(Deed deed) {
+        DtoDeed deedDto = new DtoDeed();
+        deedDto.setIdDeed(deed.getIdDeed());
+        deedDto.setDateDeedrecording(deed.getDateDeedrecording());
+        deedDto.setNumber(deed.getNumber());
+        deedDto.setBody(deed.getBody());
+        deedDto.setStatus(deed.getStatus());
+        deedDto.setRegistrationEntryNumber(deed.getRegistrationEntryNumber());
+        deedDto.setDateRegistration(deed.getDateRegistration());
+        deedDto.setVersion(deed.getVersion());
+        if (deed.getFolioList() != null && !deed.getFolioList().isEmpty()) {
+            for (Folio folio : deed.getFolioList()) {
+                deedDto.getFolios().add(folio.getDto());
+            }
+        } else {
+            deedDto.setFolios(null);
+        }
+        if (deed.getProcedureList() != null && !deed.getProcedureList().isEmpty()) {
+            for (Procedure procedure : deed.getProcedureList()) {
+                deedDto.getProcedures().add(procedure.getDto());
+            }
+        } else {
+            deedDto.setProcedures(null);
+        }
+        return deedDto;
     }
 
     @Override
