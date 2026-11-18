@@ -1,5 +1,6 @@
 package com.licensis.notaire.unit;
 
+import com.licensis.notaire.adapter.out.persistence.deed.DeedLegacyMapper;
 import com.licensis.notaire.business.BusinessConstants;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
@@ -230,7 +231,7 @@ class DeedEntityTest {
             Deed e = new Deed(1);
             e.setNumber(42);
             // folioList is null by default → getDto sets folios null on DTO, but DtoDeed.getFolios() returns new ArrayList<>()
-            var dto = e.getDto();
+            var dto = DeedLegacyMapper.toDto(e);
             assertThat(dto.getFolios()).isNotNull().isEmpty();
         }
 
@@ -240,7 +241,7 @@ class DeedEntityTest {
             Deed e = new Deed(1);
             e.setNumber(42);
             e.setFolioList(new ArrayList<>());
-            var dto = e.getDto();
+            var dto = DeedLegacyMapper.toDto(e);
             assertThat(dto.getFolios()).isNotNull().isEmpty();
         }
 
@@ -249,7 +250,7 @@ class DeedEntityTest {
         void getDtoWithNullProcedureListReturnsProceduresEmpty() {
             Deed e = new Deed(1);
             e.setNumber(42);
-            var dto = e.getDto();
+            var dto = DeedLegacyMapper.toDto(e);
             // procedureList null → setProcedures(null) → dto.getProcedures() is null
             assertThat(dto.getProcedures()).isNull();
         }
@@ -260,7 +261,7 @@ class DeedEntityTest {
             Deed e = new Deed(1);
             e.setNumber(42);
             e.setProcedureList(new ArrayList<>());
-            var dto = e.getDto();
+            var dto = DeedLegacyMapper.toDto(e);
             assertThat(dto.getProcedures()).isNull();
         }
 
@@ -270,7 +271,7 @@ class DeedEntityTest {
             Deed e = new Deed(5);
             e.setNumber(3001);
             e.setBody("Test deed");
-            var dto = e.getDto();
+            var dto = DeedLegacyMapper.toDto(e);
             assertThat(dto.getIdDeed()).isEqualTo(5);
             assertThat(dto.getNumber()).isEqualTo(3001);
             assertThat(dto.getBody()).isEqualTo("Test deed");
