@@ -24,7 +24,7 @@ export type HomeModel = {
 };
 
 const MACHINE_HREFS = ["/product/anatomy/", "/docs/engineering/", "/ai-sdlc/anatomy/"];
-const TAKEAWAY_HREFS = ["/docs/hexagonal/", "/ai-sdlc/guardrails/", "/docs/stack/"];
+const TAKEAWAY_HREFS = ["/docs/hexagonal/", "/ai-sdlc/repolens/", "/docs/stack/"];
 
 export function HomeView({ model }: { model: HomeModel }) {
   const { locale } = usePreferences();
