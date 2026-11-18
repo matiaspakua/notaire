@@ -6,6 +6,7 @@ import com.licensis.notaire.adapter.out.persistence.document.DocumentTypeLegacyM
 import com.licensis.notaire.adapter.out.persistence.folio.FolioTypeLegacyMapper;
 import com.licensis.notaire.adapter.out.persistence.management.ManagementStatusLegacyMapper;
 import com.licensis.notaire.adapter.out.persistence.procedure.ProcedureTypeLegacyMapper;
+import com.licensis.notaire.adapter.out.persistence.property.PropertyLegacyMapper;
 import com.licensis.notaire.dto.DtoManagementStatus;
 import com.licensis.notaire.dto.DtoFolio;
 import com.licensis.notaire.dto.DtoProperty;
@@ -460,7 +461,7 @@ class EntitiesBasicTest {
             assertThat(new Property(1)).isNotEqualTo("x");
             assertThat(i1.toString()).contains("10");
 
-            DtoProperty dto = i1.getDto();
+            DtoProperty dto = PropertyLegacyMapper.toDto(i1);
             assertThat(dto.getAddress()).isEqualTo("Address");
             assertThat(dto.getIdProperty()).isEqualTo(10);
             assertThat(dto.getFiscalAppraisal()).isEqualByComparingTo(new java.math.BigDecimal("10000"));

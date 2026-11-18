@@ -9,6 +9,7 @@ import com.licensis.notaire.dto.DtoDeedManagement;
 import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoIdentificationType;
 import com.licensis.notaire.dto.DtoProcedure;
+import com.licensis.notaire.dto.DtoProperty;
 import com.licensis.notaire.dto.DtoProcedureType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
@@ -367,7 +368,16 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
         procedureDto.setProcedureType(procedureTypeDto);
 
         if (procedure.getFkIdProperty() != null) {
-            procedureDto.setProperty(procedure.getFkIdProperty().getDto());
+            DtoProperty propertyDto = new DtoProperty();
+            propertyDto.setIdProperty(procedure.getFkIdProperty().getIdProperty());
+            propertyDto.setAddress(procedure.getFkIdProperty().getAddress());
+            propertyDto.setCadastralDesignation(procedure.getFkIdProperty().getCadastralDesignation());
+            propertyDto.setNotes(procedure.getFkIdProperty().getNotes());
+            propertyDto.setFiscalAppraisal(procedure.getFkIdProperty().getFiscalAppraisal());
+            propertyDto.setRegistrationNumber(procedure.getFkIdProperty().getRegistrationNumber());
+            propertyDto.setVolumeFolioLandRecord(procedure.getFkIdProperty().getVolumeFolioLandRecord());
+            propertyDto.setBoundaries(procedure.getFkIdProperty().getBoundaries());
+            procedureDto.setProperty(propertyDto);
         } else {
             procedureDto.setProperty(null);
         }

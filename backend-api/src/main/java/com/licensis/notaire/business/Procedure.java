@@ -8,6 +8,7 @@ import com.licensis.notaire.dto.DtoSubmittedDocument;
 import com.licensis.notaire.dto.DtoDeed;
 import com.licensis.notaire.dto.DtoDeedManagement;
 import com.licensis.notaire.dto.DtoPerson;
+import com.licensis.notaire.dto.DtoProperty;
 import com.licensis.notaire.dto.DtoBudget;
 import com.licensis.notaire.dto.DtoIdentificationType;
 import com.licensis.notaire.dto.DtoProcedure;
@@ -258,7 +259,16 @@ public class Procedure implements Serializable, Persistable<Integer> {
         }
 
         if (fkIdProperty != null) {
-            dto.setProperty(fkIdProperty.getDto());
+            DtoProperty propertyDto = new DtoProperty();
+            propertyDto.setIdProperty(fkIdProperty.getIdProperty());
+            propertyDto.setAddress(fkIdProperty.getAddress());
+            propertyDto.setCadastralDesignation(fkIdProperty.getCadastralDesignation());
+            propertyDto.setNotes(fkIdProperty.getNotes());
+            propertyDto.setFiscalAppraisal(fkIdProperty.getFiscalAppraisal());
+            propertyDto.setRegistrationNumber(fkIdProperty.getRegistrationNumber());
+            propertyDto.setVolumeFolioLandRecord(fkIdProperty.getVolumeFolioLandRecord());
+            propertyDto.setBoundaries(fkIdProperty.getBoundaries());
+            dto.setProperty(propertyDto);
         } else {
             dto.setProperty(null);
         }
