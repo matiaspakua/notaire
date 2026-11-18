@@ -17,12 +17,14 @@ export const COPIES_SORT = "idCopy,desc";
 export function useCopiesPage(params: { page: number; size: number }) {
   return useQuery({
     queryKey: [...copiesKeys.all, "page", params.page, params.size],
-    queryFn: () =>
-      copyUseCases.listPage({
+    queryFn: async () => {
+      const page = await copyUseCases.listPage({
         page: params.page,
         size: params.size,
         sort: COPIES_SORT,
-      }),
+      });
+      return { ...page, content: page.content as Copy[] };
+    },
     placeholderData: keepPreviousData,
   });
 }
