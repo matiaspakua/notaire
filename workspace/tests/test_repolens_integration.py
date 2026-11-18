@@ -56,7 +56,16 @@ class RepolensHarnessWiringTest(unittest.TestCase):
         out = subprocess.run(["bash", str(LAUNCHER), "setup", "--dry-run"], cwd=ROOT, capture_output=True,
                              text=True, timeout=60)
         self.assertEqual(0, out.returncode, out.stderr)
-        drift = [line for line in out.stdout.splitlines() if "would update" in line]
+        # Cursor Cloud remaps core.hooksPath to a host mirror under
+        # ~/.cursor/agent-hooks/ that is not committed wiring. Drift there is
+        # fixed with `repolens setup --only git` on the machine; it is not a
+        # repository defect. Assert only on in-repo paths (.githooks is checked
+        # separately above).
+        drift = [
+            line
+            for line in out.stdout.splitlines()
+            if "would update" in line and "/.cursor/agent-hooks/" not in line
+        ]
         self.assertEqual([], drift, "run `bash framework/ai-sdlc/repolens/bin/repolens setup` and commit")
 
 
