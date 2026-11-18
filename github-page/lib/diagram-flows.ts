@@ -336,3 +336,54 @@ export function trustBoundaryFlow(): Flow {
   ];
   return { nodes, edges, steps, width: 1320, height: 260 };
 }
+
+/** How RepoLens ranks code before an agent reads a file (#2318). */
+export function repolensPipelineFlow(): Flow {
+  const y = 90;
+  const nodes: FlowNode[] = [
+    { id: "parse", label: "Parse", sub: "tree-sitter AST", x: 100, y, w: 160, kind: "adapter" },
+    { id: "store", label: "Store", sub: "SQLite + FTS5", x: 310, y, w: 170, kind: "store" },
+    { id: "embed", label: "Embed", sub: "fastembed · LSA", x: 530, y, w: 180, kind: "port" },
+    { id: "rank", label: "Rank", sub: "BM25 · RRF · PPR", x: 760, y, w: 190, kind: "core" },
+    { id: "serve", label: "Serve", sub: "CLI · MCP · HTTP", x: 1000, y, w: 180, kind: "actor" },
+  ];
+  const edges: FlowEdge[] = [
+    { from: "parse", to: "store", label: "symbols" },
+    { from: "store", to: "embed", label: "chunks" },
+    { from: "embed", to: "rank", label: "vectors" },
+    { from: "rank", to: "serve", label: "hits" },
+  ];
+  const steps: FlowStep[] = [
+    {
+      title: "Parse the tree",
+      body: "tree-sitter (plus markdown, SQL, YAML, CSV, PDF helpers) extracts symbols and edges from the worktree.",
+      nodes: ["parse"],
+      edges: [0],
+    },
+    {
+      title: "Store in SQLite + FTS5",
+      body: "A local SQLite WAL database holds nodes, edges and full-text search. One index lives under .repolens/ in the worktree.",
+      nodes: ["store"],
+      edges: [1],
+    },
+    {
+      title: "Embed locally",
+      body: "Local embeddings (fastembed bge-small-en-v1.5 or LSA) land in a content-addressed vector cache under ~/.cache/repolens/vectors, shared across worktrees.",
+      nodes: ["embed"],
+      edges: [2],
+    },
+    {
+      title: "Rank with typed Personalized PageRank",
+      body: "BM25, dense and exact anchors fuse (RRF), then typed Personalized PageRank walks the graph for hybrid or graph retrieval.",
+      nodes: ["rank"],
+      edges: [3],
+    },
+    {
+      title: "Serve CLI / HTTP / MCP",
+      body: "The same index answers search and impact over the CLI, an HTTP API with a small UI, and MCP tools the factory stages can call.",
+      nodes: ["serve"],
+      edges: [],
+    },
+  ];
+  return { nodes, edges, steps, width: 1260, height: 240 };
+}
