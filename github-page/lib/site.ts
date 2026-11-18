@@ -63,6 +63,12 @@ export const FACTORY_ACTS: PageGroup[] = [
     pages: [
       { href: "/ai-sdlc/lessons/", title: "Lessons", summary: "Real incidents, each turned into a rule or a check.", keywords: "incidents mistakes decisions" },
       { href: "/ai-sdlc/results/", title: "Results", summary: "What the factory produced, counted from the repository.", keywords: "metrics numbers coverage throughput" },
+      {
+        href: "/ai-sdlc/repolens/",
+        title: "RepoLens",
+        summary: "Local code knowledge graph for agents: how it works, factory plug-in, and committed benchmarks.",
+        keywords: "repolens retrieval benchmark knowledge graph mcp fts5 pagerank",
+      },
     ],
   },
   {

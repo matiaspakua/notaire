@@ -118,4 +118,13 @@ Before the patch, `repolens report` on this machine printed `0 events` after CLI
 | Vitest retry in preflight | grep first | repolens | 1 | 2,164 | 1.924s | 1/2 | Ranked `preflight.sh` third, after a coverage doc and `vitest.config.ts`. |
 
 `repolens report --gate` after that search: `4 calls, 0 sessions, adoption 0%, hit rate n/a, p95 988 ms`.
+## History.getDto locate
+
+Repolens first, then grep. The diff is `History.java` and `entity-dto-mapping.txt`. The new test could not have been named. `repolens report --gate` after the searches printed `6 calls, 0 sessions, adoption 0%, hit rate n/a, p95 988 ms`. The index still reflects the graph from before the 0.4.2 linker change.
+
+| Pass | Calls | Output bytes | Wall time | Hit rate | Notes |
+|---|---|---|---|---|---|
+| repolens search | 1 | 2,190 | 2.230s | 1/2 | Ranked `DtoHistory.java` then `History.getDto`. Did not name the ratchet file. |
+| repolens impact | 1 | 482 | 1.434s | 0/2 | Named only `EntitiesBasicTest`, which does not call `History.getDto` and is not in the diff. |
+| grep | 4 | 80,477 | 0.483s | 1/2 | The method is at `History.java:198` and calls `getFkIdManagement().getDto()`. No other `history.getDto` call. The broad Java scan is most of the bytes. |
 

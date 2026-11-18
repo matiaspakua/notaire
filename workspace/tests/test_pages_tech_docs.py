@@ -128,6 +128,9 @@ class ProductSectionTest(unittest.TestCase):
         home = read(PAGE / "app" / "page.tsx")
         for href in ("/product/", "/docs/", "/ai-sdlc/"):
             self.assertIn(f'"{href}"', home)
+        # RepoLens showcase is linked from the home takeaways (#2315).
+        takeaways = read(PAGE / "components" / "home" / "HomeView.tsx")
+        self.assertIn('"/ai-sdlc/repolens/"', takeaways)
 
 
 if __name__ == "__main__":

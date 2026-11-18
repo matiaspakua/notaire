@@ -76,6 +76,11 @@ const FACTORY_PAGES: Record<string, { en: string; es: string; summaryEs: string 
   "/ai-sdlc/governance/": { en: "Governance", es: "Gobierno", summaryEs: "Etiquetas, hitos, el tablero y el flujo del pull request." },
   "/ai-sdlc/lessons/": { en: "Lessons", es: "Lecciones", summaryEs: "Incidentes reales, cada uno convertido en una regla o un chequeo." },
   "/ai-sdlc/results/": { en: "Results", es: "Resultados", summaryEs: "Lo que produjo la fábrica, contado desde el repositorio." },
+  "/ai-sdlc/repolens/": {
+    en: "RepoLens",
+    es: "RepoLens",
+    summaryEs: "Grafo local de conocimiento del código para agentes: cómo funciona, enchufe a la fábrica y benchmarks commitidos.",
+  },
   "/ai-sdlc/framework/": { en: "Framework", es: "Framework", summaryEs: "Una política, un perfil, un kit que cualquier repositorio puede adoptar." },
   "/ai-sdlc/playbook/": { en: "Playbook", es: "Playbook", summaryEs: "Ocho pasos para aplicar un AI SDLC a tu propio proyecto." },
   "/product/": { en: "Overview", es: "Panorama", summaryEs: "Qué hace Notaire en una escribanía, y quién lo usa." },
@@ -171,12 +176,12 @@ export function homeCopy(locale: Locale) {
     takeaways: es
       ? [
           { title: "Modernización de un legado", body: "Un monolito de escritorio acoplado pasó a una API REST hexagonal y una web tipada, corte a corte, cada corte con sus propios tests.", link: "El hexágono" },
-          { title: "IA con guardrails", body: "Los agentes escriben la mayor parte del código, pero cada cambio pasa las mismas gates comprobadas por máquina: un Issue real, una spec, tests que fallan primero, un pipeline local en verde y un merge revisado.", link: "Las guardrails" },
+          { title: "RepoLens en la fábrica", body: "Un grafo local de conocimiento del código reduce las idas a grep: retrieval híbrido, MCP en plan/red/pre-pr, y benchmarks commitidos con tamaños de muestra a la vista.", link: "RepoLens" },
           { title: "Ingeniería de producción", body: "Un esquema versionado, un contrato de API comprobado en CI, {workflows} workflows de GitHub Actions, escaneo de seguridad y un stack de observabilidad y calidad de código de {services} servicios.", link: "El stack" },
         ]
       : [
           { title: "Legacy modernisation", body: "A coupled desktop monolith became a hexagonal REST API and a typed web app, slice by slice, each slice behind its own tests.", link: "The hexagon" },
-          { title: "AI with guardrails", body: "Agents write most of the code, but every change passes the same machine-checked gates: a real issue, a spec, failing tests first, a green local pipeline, and a reviewed merge.", link: "The guardrails" },
+          { title: "RepoLens in the factory", body: "A local code knowledge graph cuts grep thrash: hybrid retrieval, MCP on plan/red/pre-pr, and committed benchmarks with sample sizes shown.", link: "RepoLens" },
           { title: "Production engineering", body: "A versioned schema, a CI-checked API contract, {workflows} CI workflows, security scanning and a {services}-service observability and code-quality stack.", link: "The stack" },
         ],
     factoryTitle: es ? "Cómo sale cada cambio" : "How every change ships",
@@ -266,6 +271,12 @@ export function readingCopy(locale: Locale) {
       "/ai-sdlc/agents/": { title: es ? "Quién hace qué" : "Who does what", body: es ? "El Owner decide. El Foreman ordena el trabajo. Los Workers implementan. Nadie se aprueba a sí mismo." : "The Owner decides. The Foreman orders the work. Workers implement. Nobody approves their own change." },
       "/ai-sdlc/guardrails/": { title: es ? "Qué frena un mal cambio" : "What stops a bad change", body: es ? "Guardrails, quality gates y security gates. Una afirmación del modelo no es evidencia." : "Guardrails, quality gates and security gates. A model's claim is not evidence." },
       "/ai-sdlc/results/": { title: es ? "Qué muestra el repositorio" : "What the repository shows", body: es ? "Conteos y lead time leídos de GitHub, con la fecha y el método al lado del número." : "Counts and lead time read from GitHub, with the date and the method next to the number." },
+      "/ai-sdlc/repolens/": {
+        title: es ? "RepoLens, el conocimiento del repo" : "RepoLens, repo knowledge",
+        body: es
+          ? "Cómo un grafo local ayuda a localizar código, cómo se enchufa a plan/red/pre-pr, y los benchmarks commitidos."
+          : "How a local graph helps locate code, how it plugs into plan/red/pre-pr, and the committed benchmarks.",
+      },
       "/ai-sdlc/framework/": { title: es ? "El kit, y lo que sigue planificado" : "The kit, and what is still planned", body: es ? "Qué comandos están en main y qué sigue marcado como planificado." : "Which commands are on main, and what is still marked planned." },
       "/ai-sdlc/playbook/": { title: es ? "Probarlo en otro proyecto" : "Try it on another project", body: es ? "Ocho pasos. El kit no exige el stack de Notaire." : "Eight steps. The kit does not require Notaire's stack." },
     } as Record<string, { title: string; body: string }>,

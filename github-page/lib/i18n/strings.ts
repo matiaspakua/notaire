@@ -5,6 +5,7 @@ import "./strings-rest";
 import "./strings-docs";
 import "./strings-anatomy";
 import "./strings-mermaid";
+import "../repolens-content";
 
 // Demo shell
 pair("Demo – sample data, read-only", "Demo: datos de ejemplo, solo lectura");
@@ -374,3 +375,53 @@ pair(
 // Playbook bodies and lesson bodies are registered by importing the data in the test file
 // via registerContent(), called from strings-content.ts so this file stays the headings
 // and the content file stays next to the arrays.
+
+// RepoLens charts / page chrome (#2315)
+pair("Also see", "También mira");
+pair("and", "y");
+pair("Live factory-loop paired locate (grep vs RepoLens).", "Localización emparejada del bucle de fábrica (grep vs RepoLens).");
+pair("All passes", "Todos los pases");
+pair("grep only", "solo grep");
+pair("RepoLens only", "solo RepoLens");
+pair("Issue", "Issue");
+pair("Order", "Orden");
+pair("Pass", "Pase");
+pair("Calls", "Llamadas");
+pair("Output bytes", "Bytes de salida");
+pair("Wall time", "Tiempo de pared");
+pair("Hit rate", "Hit rate");
+pair("Headline factors from the offline benches", "Factores destacados de los benches offline");
+pair(
+  "Labels use the same rounding as RepoLens bench/report.py. Raw numerators and denominators come from the committed JSON.",
+  "Las etiquetas usan el mismo redondeo que RepoLens bench/report.py. Los numeradores y denominadores crudos salen del JSON commitido.",
+);
+pair("Right files in top 10 (tuning)", "Archivos correctos en el top 10 (tuning)");
+pair("Right files in top 10 (held-out)", "Archivos correctos en el top 10 (held-out)");
+pair("Latency per query (tuning)", "Latencia por consulta (tuning)");
+pair("Text returned per query (tuning)", "Texto devuelto por consulta (tuning)");
+pair("Sonnet tool calls (held-out)", "Llamadas de herramienta Sonnet (held-out)");
+pair("Sonnet answer recall (held-out)", "Recall de respuesta Sonnet (held-out)");
+pair("Offline retrieval", "Retrieval offline");
+pair("Task sets", "Conjuntos de tareas");
+pair("Commit", "Commit");
+pair("recall@10 — tuning", "recall@10 — tuning");
+pair("recall@10 — held-out", "recall@10 — held-out");
+pair("Higher is better", "Más alto es mejor");
+pair("Lower is better", "Más bajo es mejor");
+pair("Latency (ms) — tuning", "Latencia (ms) — tuning");
+pair("Latency (ms) — held-out", "Latencia (ms) — held-out");
+pair("Output bytes — tuning", "Bytes de salida — tuning");
+pair("Output bytes — held-out", "Bytes de salida — held-out");
+pair("Text returned for top 10 files", "Texto devuelto para los 10 primeros archivos");
+pair("Offline agent benches", "Benches de agentes offline");
+pair(
+  "Baseline is Read/Grep/Glob. The graph arm adds the RepoLens MCP. Sample sizes are the run counts in each JSON.",
+  "El baseline es Read/Grep/Glob. El brazo graph añade el MCP de RepoLens. Los tamaños de muestra son los runs de cada JSON.",
+);
+pair("tool calls", "llamadas de herramienta");
+pair("same recall", "mismo recall");
+pair("tie on tool calls", "empate en llamadas de herramienta");
+pair("Live factory-loop A/B", "A/B del bucle de fábrica en vivo");
+pair("From", "Desde");
+pair("Implemented sample n", "n de la muestra implementada");
+pair("Snapshot generated", "Snapshot generado");
