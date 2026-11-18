@@ -9,3 +9,8 @@ Short notes from the cloud factory loop. Product behavior is not documented here
 - `pip install pytest` into the RepoLens venv upgraded `mcp` to 2.x. `verify.sh` then failed 4 tests because `mcp.server.fastmcp` is gone. The extra is now pinned to `mcp>=1.2,<2`. After the pin, the local package version was 1.30.0.
 - GitHub label writes from this agent still return 403. Issue creation for #2307 succeeded. Status labels were not applied.
 - Cursor branch names `cursor/<desc>-47dc` warn in preflight (`does not match a documented pattern`). The warning does not fail the run.
+- Release-please opened #2312 (`chore(main): release 0.4.2`) as soon as #2311 merged. That holds one of the three open-PR slots, so this round opens two agent pull requests, not three.
+- Procedure-folder list and the users list were challenged and not implemented. The folder endpoint is a management search. The users endpoint also fills the audit filter.
+- Frontend Vitest still fails an occasional full-suite run and passes when that file is run alone. A one-retry in `preflight.sh` is the next factory change once a slot is free. It is not in this commit.
+- Repolens 0.4.2 stops linking an ambiguous same-directory call to the first three methods of that name. The fixture test is the before/after: `Reader.show` linked both `getDto` methods, and after the change it links neither, while `Reader.once` still links `Deed.onlyOnce`.
+

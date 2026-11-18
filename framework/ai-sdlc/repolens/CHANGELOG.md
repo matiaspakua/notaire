@@ -3,6 +3,12 @@
 All notable changes to repolens. Versions follow [SemVer](https://semver.org); the version lives in
 `repolens/__init__.py` and release tags are `repolens-v<version>`.
 
+## [0.4.2] - 2026-11-18
+
+### Fixed
+
+- A strict call whose name matches several methods in the same directory is no longer linked to the first three of them. `impact Folio.getDto` on the indexed checkout listed `History.getDto`, which does not call `Folio.getDto`. A uniquely named method in that directory still links. Measured on a three-class fixture: before the change `Reader.show` linked both `Deed.getDto` and `Folio.getDto`; after it, that call links neither, and `Reader.once` still links `Deed.onlyOnce` (#2307).
+
 ## [0.4.1] - 2026-11-18
 
 ### Fixed
