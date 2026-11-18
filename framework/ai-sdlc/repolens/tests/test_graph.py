@@ -205,3 +205,33 @@ def test_sparse_pagerank_matches_the_exact_walk(kg):
         eng.tuning["ppr_sparse_from"] = old
     assert top_sparse == list(exact_nodes[np.argsort(-exact_mass)][:10])
     assert abs(mass.sum() - exact_mass.sum()) < 1e-3
+
+
+def test_an_ambiguous_same_directory_call_is_not_guessed(tmp_path):
+    """A call named getDto must not be attached to every getDto in the folder (#2307).
+
+    A uniquely named method in that same folder still links.
+    """
+    root = tmp_path / "repo"
+    src = root / "src"
+    src.mkdir(parents=True)
+    (src / "Deed.java").write_text(
+        "package p;\npublic class Deed {\n"
+        "  public String getDto() { return \"deed\"; }\n"
+        "  public String onlyOnce() { return \"once\"; }\n}\n", encoding="utf-8")
+    (src / "Folio.java").write_text(
+        "package p;\npublic class Folio {\n  public String getDto() { return \"folio\"; }\n}\n", encoding="utf-8")
+    (src / "Reader.java").write_text(
+        "package p;\npublic class Reader {\n"
+        "  public String show(Deed deed) { return deed.getDto(); }\n"
+        "  public String once(Deed deed) { return deed.onlyOnce(); }\n}\n", encoding="utf-8")
+    kg = KnowledgeGraph(make_config(root, tmp_path / "g.db"))
+    kg.index(embed=False, log=lambda *_: None)
+    edges = edge_set(kg)
+
+    def targets(method: str) -> set[str]:
+        return {dst for src_id, dst, kind in edges if kind == "calls" and src_id.endswith(method)}
+
+    guessed = targets("#Reader.show")
+    assert not any(item.endswith("#Deed.getDto") or item.endswith("#Folio.getDto") for item in guessed)
+    assert any(item.endswith("#Deed.onlyOnce") for item in targets("#Reader.once"))

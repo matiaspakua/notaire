@@ -78,9 +78,33 @@ Each row is one locate question, run both ways before the first edit of that iss
 
 Running totals for this paired sample (n = 1 issue, 2 passes): both passes hit 3 of 4 diff files. Repolens used 2 calls against grep's 4, and took 4.552s against 0.186s. Median is the same as the only value. No percentage improvement is claimed.
 
-`impact Deed.getDto` also named `History.getDto` and `ProcedureEntityTest`. `History.getDto` calls `getFkIdManagement().getDto()`, and `Procedure.getDto` copies two deed fields without calling `Deed.getDto`. Those are false caller edges. The linker returns up to three same-directory methods of the same name before the strict unique-name rule (`linker.py` `_scope`). That stays on #2307.
+`impact Deed.getDto` also named `History.getDto` and `ProcedureEntityTest`. `History.getDto` calls `getFkIdManagement().getDto()`, and `Procedure.getDto` copies two deed fields without calling `Deed.getDto`. Those were false caller edges from linking up to three same-directory methods of the same name. Repolens 0.4.2 stops guessing when a strict call is ambiguous in its directory.
 
 #2307 itself was located by reading `cli.py`, `mcp_server.py`, `usage.py`, and `report.py` in the previous turn, before this paired protocol. That locate is not in the table.
+
+## 2026-11-18 later pairs
+
+`repolens report --gate` on this checkout, after #2311, printed `repolens usage: 3 calls, 0 sessions, adoption 0%, hit rate n/a, p95 988 ms`. The 3 calls are the earlier Deed search plus two confirmation searches. The paired commands below were not all present in the log when it still had 1 line; a later `bin/repolens search` did append. Sessions stay 0 because the CLI does not send a harness session id.
+
+| Issue | Order | Pass | Calls | Output bytes | Wall time | Hit rate | Notes |
+|---|---|---|---|---|---|---|---|
+| #596 procedure folders | repolens first | repolens | 2 | 4,572 | 3.650s | n/a, not implemented | First query did not rank `ProcedureFolderController`. Second query ranked it 1st and did not show a `getAll` symbol. |
+| #596 procedure folders | repolens first | grep | 2 | 1,458 | 0.174s | n/a | The handler is `search`, returning `List<DtoProcedureFolder>`. The only UI caller is the management screen (`management-http-gateway.ts`). Not a standalone growing list. |
+| #580 Folio `getDto` | grep first | grep | 4 | 4,623 | 0.154s | 5/6 | Named `Folio.java`, `Testimony.java`, `DeedLegacyMapper.java`, `FolioTest.java`, `EntitiesBasicTest.java`. Missed `entity-dto-mapping.txt`. |
+| #580 Folio `getDto` | grep first | repolens search | 1 | 1,794 | 1.882s | 1/6 | Ranked `DtoFolio.java` then `Folio.java`. Did not name `Testimony.java` or `DeedLegacyMapper.java`. |
+| #580 Folio `getDto` | grep first | repolens impact | 1 | 3,135 | 1.203s | 5/6 | Named the real callers and also `History.getDto`, which does not call `Folio.getDto`. |
+| #596 users | repolens first | repolens | 1 | 1,877 | 1.878s | n/a, not implemented | Ranked `useUsers.ts` 1st and `UserController.java` 4th. |
+| #596 users | repolens first | grep | 1 | 265 | 0.008s | n/a | `useUsers()` is called from the users admin page and from the audit page, which maps every user into a filter. Paging the only endpoint would hide audit choices. |
+
+Implemented sample, counting a diff file only when that pass named it (n = 2 issues, Deed and Folio):
+
+| Pass | Hit rates | Median |
+|---|---|---|
+| grep | 3/4, 5/6 | 3/4 and 5/6, two values |
+| repolens search, or search plus impact when impact was run | Deed search+impact 3/4; Folio search alone 1/6; Folio search+impact 5/6 | not reduced to one number |
+
+No percentage improvement. Grep was faster on both issues. Repolens search missed Folio's callers; impact found them and added a false one.
+
 
 ## Before / after for the CLI usage log
 
