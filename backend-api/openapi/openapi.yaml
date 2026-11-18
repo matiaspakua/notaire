@@ -2176,6 +2176,38 @@ components:
           format: int32
           type: integer
       type: object
+    PageCopyResponse:
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/CopyResponse'
+          type: array
+        empty:
+          type: boolean
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          format: int32
+          type: integer
+        numberOfElements:
+          format: int32
+          type: integer
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        size:
+          format: int32
+          type: integer
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        totalElements:
+          format: int64
+          type: integer
+        totalPages:
+          format: int32
+          type: integer
+      type: object
     PageDtoPaymentResponse:
       properties:
         content:
@@ -3841,11 +3873,36 @@ paths:
           content:
             '*/*':
               schema:
-                items:
-                  $ref: '#/components/schemas/CopyResponse'
-                type: array
+                $ref: '#/components/schemas/PageCopyResponse'
           description: OK
-      summary: Get all copies
+      summary: Get copies, one page at a time
+      parameters:
+      - description: Zero-based page index (0..N)
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+          type: integer
+      - description: The size of the page to be returned
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 20
+          minimum: 1
+          type: integer
+      - description: 'Sorting criteria in the format: property,(asc|desc). Default is idCopy,desc.'
+        in: query
+        name: sort
+        required: false
+        schema:
+          default:
+          - idCopy,desc
+          items:
+            type: string
+          type: array
       tags:
       - Copy
     post:

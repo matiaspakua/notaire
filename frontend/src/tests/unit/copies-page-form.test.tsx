@@ -13,7 +13,19 @@ const toast = vi.hoisted(() => ({ success: vi.fn(), error: vi.fn(), warning: vi.
 vi.mock("@/lib/api-client", async (orig) => ({
   ...(await orig<typeof import("@/lib/api-client")>()),
   apiGet: (path: string) => apiGet(path),
+  apiGetPage: () => apiGet("/copies").then((content: unknown[]) => ({
+    content,
+    totalElements: content.length,
+    totalPages: 1,
+    number: 0,
+    size: 20,
+  })),
   apiPost: (path: string, body: unknown) => apiPost(path, body),
+}));
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ replace: vi.fn() }),
+  usePathname: () => "/dashboard/copies",
+  useSearchParams: () => new URLSearchParams(),
 }));
 vi.mock("sonner", () => ({ toast }));
 vi.mock("next-intl", () => ({

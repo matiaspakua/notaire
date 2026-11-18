@@ -54,6 +54,7 @@ class SimpleControllersTest {
         private final org.springframework.test.web.servlet.MockMvc mvc =
                 standaloneSetup(new CopyController(query, manage))
                         .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
+                        .setCustomArgumentResolvers(new org.springframework.data.web.PageableHandlerMethodArgumentResolver())
                         .build();
 
         private static com.licensis.notaire.application.port.out.copy.CopyOpsPort.CopyView view(int id) {
@@ -62,10 +63,15 @@ class SimpleControllersTest {
         }
 
         @Test
-        @DisplayName("GET all should return 200")
+        @DisplayName("GET all should return one page")
         void getAll() throws Exception {
-            when(query.findAll()).thenReturn(List.of(view(1)));
-            mvc.perform(get("/api/v1/copies")).andExpect(status().isOk());
+            when(query.findPage(0, 20, "idCopy,desc"))
+                    .thenReturn(new com.licensis.notaire.application.port.out.copy.CopyOpsPort.PageResult(
+                            List.of(view(1)), 0, 20, 1));
+            mvc.perform(get("/api/v1/copies"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content[0].idCopy").value(1))
+                    .andExpect(jsonPath("$.totalElements").value(1));
         }
 
         @Test

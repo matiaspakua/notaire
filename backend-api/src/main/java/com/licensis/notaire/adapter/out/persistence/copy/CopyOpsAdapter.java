@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.out.copy.CopyOpsPort;
+import com.licensis.notaire.application.port.out.copy.CopyOpsPort.PageResult;
 import com.licensis.notaire.business.Copy;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Testimony;
@@ -41,6 +42,17 @@ public class CopyOpsAdapter implements CopyOpsPort {
     @Transactional(readOnly = true)
     public List<CopyView> findAll() {
         return service.findAll().stream().map(this::toView).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageResult findPage(int page, int size, String sort) {
+        var result = service.findPage(page, size, sort);
+        return new PageResult(
+                result.getContent().stream().map(this::toView).toList(),
+                result.getNumber(),
+                result.getSize(),
+                result.getTotalElements());
     }
 
     @Override

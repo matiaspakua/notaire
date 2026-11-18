@@ -8,6 +8,7 @@ describe("createCopyUseCases", () => {
     const calls: unknown[] = [];
     const gw: CopyGateway = {
       list: async () => { calls.push(["list"]); return []; },
+      listPage: async (request) => { calls.push(["listPage", request]); return { content: [], totalElements: 0, totalPages: 0, number: 0, size: request.size }; },
       create: async (input) => { calls.push(["create", input]); },
       update: async (id, input) => { calls.push(["update", id, input]); },
       delete: async (id) => { calls.push(["delete", id]); },

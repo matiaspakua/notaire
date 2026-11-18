@@ -345,7 +345,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get all copies */
+        /** Get copies, one page at a time */
         get: operations["getAll_19"];
         put?: never;
         /** Create copy */
@@ -3887,6 +3887,24 @@ export interface components {
             /** Format: int32 */
             totalPages?: number;
         };
+        PageCopyResponse: {
+            content?: components["schemas"]["CopyResponse"][];
+            empty?: boolean;
+            first?: boolean;
+            last?: boolean;
+            /** Format: int32 */
+            number?: number;
+            /** Format: int32 */
+            numberOfElements?: number;
+            pageable?: components["schemas"]["PageableObject"];
+            /** Format: int32 */
+            size?: number;
+            sort?: components["schemas"]["SortObject"];
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
         PageDtoPaymentResponse: {
             content?: components["schemas"]["DtoPaymentResponse"][];
             empty?: boolean;
@@ -5287,7 +5305,14 @@ export interface operations {
     };
     getAll_19: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default is idCopy,desc. */
+                sort?: string[];
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -5300,7 +5325,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["CopyResponse"][];
+                    "*/*": components["schemas"]["PageCopyResponse"];
                 };
             };
         };

@@ -1,8 +1,13 @@
 package com.licensis.notaire.adapter.in.web.copy;
 
 import java.util.Date;
-import java.util.List;
 
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -73,9 +78,18 @@ public class CopyController {
     }
 
     @GetMapping
-    @Operation(summary = "Get all copies")
-    public ResponseEntity<List<CopyResponse>> getAll() {
-        return ResponseEntity.ok(queryCopies.findAll().stream().map(this::toResponse).toList());
+    @Operation(summary = "Get copies, one page at a time",
+            description = "Parameters: page (default 0), size (default 20), sort (for example idCopy,desc)")
+    public ResponseEntity<Page<CopyResponse>> getAll(
+            @ParameterObject @PageableDefault(size = 20, sort = "idCopy", direction = Sort.Direction.DESC)
+            Pageable pageable) {
+        var order = pageable.getSort().stream().findFirst().orElse(null);
+        String sort = order == null
+                ? "idCopy,desc"
+                : order.getProperty() + "," + order.getDirection().name().toLowerCase();
+        var result = queryCopies.findPage(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        var content = result.content().stream().map(this::toResponse).toList();
+        return ResponseEntity.ok(new PageImpl<>(content, pageable, result.totalElements()));
     }
 
     @ApiResponses({

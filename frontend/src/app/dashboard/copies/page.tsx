@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -12,11 +12,12 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import {
-  useCopies,
+  useCopiesPage,
   useCreateCopy,
   useUpdateCopy,
   useDeleteCopy,
 } from "@/hooks/useCopies";
+import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { presentMutationError } from "@/lib/mutation-error";
 import { requiredFieldErrors } from "@/lib/required-field-errors";
 import type { Copy } from "@/types";
@@ -25,12 +26,28 @@ import { toDateInputValue, todayInputValue } from "@/lib/dates";
 import { useFormat } from "@/hooks/useFormat";
 
 export default function CopiesPage() {
+  return (
+    <Suspense>
+      <CopiesPageContent />
+    </Suspense>
+  );
+}
+
+function CopiesPageContent() {
   const fmt = useFormat();
   const t = useTranslations("copias");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const { data: copies = [], isLoading, isError, refetch } = useCopies();
+  const paging = useUrlPagination();
+  const {
+    data: copiesPage,
+    isLoading,
+    isError,
+    refetch,
+  } = useCopiesPage({ page: paging.page, size: paging.size });
+  const copies = copiesPage?.content ?? [];
+  useClampPage(paging, copiesPage?.totalPages);
   const createMutation = useCreateCopy();
   const updateMutation = useUpdateCopy();
   const deleteMutation = useDeleteCopy();
@@ -176,6 +193,13 @@ export default function CopiesPage() {
       
         error={isError ? tc("loadError") : undefined}
         onRetry={() => void refetch()}
+        pagination={{
+          page: copiesPage?.number ?? paging.page,
+          size: paging.size,
+          totalElements: copiesPage?.totalElements ?? 0,
+          onPageChange: paging.setPage,
+          onSizeChange: paging.setSize,
+        }}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
