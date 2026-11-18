@@ -25,13 +25,13 @@ public class RegistrationDraftOpsAdapter implements RegistrationDraftOpsPort {
 
     @Override
     public Optional<DtoRegistrationDraft> findById(Integer id) {
-        return service.findById(id).map(draft -> draft.getDto());
+        return service.findById(id).map(RegistrationDraftLegacyMapper::toDto);
     }
 
     @Override
     public DraftResult generate(Integer idDeed) {
         try {
-            return new DraftResult.Ok(service.generate(idDeed).getDto());
+            return new DraftResult.Ok(RegistrationDraftLegacyMapper.toDto(service.generate(idDeed)));
         } catch (ResourceNotFoundException e) {
             return new DraftResult.NotFound();
         } catch (BusinessValidationException e) {
@@ -42,7 +42,8 @@ public class RegistrationDraftOpsAdapter implements RegistrationDraftOpsPort {
     @Override
     public DraftResult submit(Integer id, Date dateSubmission, String registryEntryNumber) {
         try {
-            return new DraftResult.Ok(service.submit(id, dateSubmission, registryEntryNumber).getDto());
+            return new DraftResult.Ok(
+                    RegistrationDraftLegacyMapper.toDto(service.submit(id, dateSubmission, registryEntryNumber)));
         } catch (ResourceNotFoundException e) {
             return new DraftResult.NotFound();
         } catch (BusinessValidationException e) {
@@ -53,7 +54,8 @@ public class RegistrationDraftOpsAdapter implements RegistrationDraftOpsPort {
     @Override
     public DraftResult observe(Integer id, String registryNotes, Date dateCorrection) {
         try {
-            return new DraftResult.Ok(service.observe(id, registryNotes, dateCorrection).getDto());
+            return new DraftResult.Ok(
+                    RegistrationDraftLegacyMapper.toDto(service.observe(id, registryNotes, dateCorrection)));
         } catch (ResourceNotFoundException e) {
             return new DraftResult.NotFound();
         } catch (BusinessValidationException e) {
@@ -64,8 +66,8 @@ public class RegistrationDraftOpsAdapter implements RegistrationDraftOpsPort {
     @Override
     public DraftResult recordRegistration(Integer id, Date dateReception, String finalRegistrationNumber) {
         try {
-            return new DraftResult.Ok(
-                    service.recordRegistration(id, dateReception, finalRegistrationNumber).getDto());
+            return new DraftResult.Ok(RegistrationDraftLegacyMapper.toDto(
+                    service.recordRegistration(id, dateReception, finalRegistrationNumber)));
         } catch (ResourceNotFoundException e) {
             return new DraftResult.NotFound();
         } catch (BusinessValidationException e) {
