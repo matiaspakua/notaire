@@ -6,7 +6,6 @@ package com.licensis.notaire.business;
 
 import java.math.BigDecimal;
 
-import com.licensis.notaire.dto.DtoProperty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
@@ -172,23 +171,6 @@ public class Property implements Serializable, Persistable<Integer> {
     public void setProcedureList(List<Procedure> procedureList) {
         this.procedureList = procedureList;
     }
-
-    public DtoProperty getDto() {
-        DtoProperty dto = new DtoProperty();
-
-        dto.setAddress(this.getAddress());
-        dto.setIdProperty(this.getIdProperty());
-        dto.setCadastralDesignation(this.getCadastralDesignation());
-        dto.setNotes(this.getNotes());
-        dto.setFiscalAppraisal(this.getFiscalAppraisal());
-        dto.setRegistrationNumber(this.getRegistrationNumber());
-        dto.setVolumeFolioLandRecord(this.getVolumeFolioLandRecord());
-        dto.setBoundaries(this.getBoundaries());
-
-        return dto;
-    }
-
-
 
     @Override
     public int hashCode() {
