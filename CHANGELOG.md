@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0](https://github.com/matiaspakua/notaire/compare/v0.4.2...v0.5.0) (2026-11-18)
+
+
+### Features
+
+* **pages:** showcase RepoLens benches on the AI Factory ([aee9b53](https://github.com/matiaspakua/notaire/commit/aee9b53d95c147949d5e16c49f9a1f1961b70e45))
+
+
+### Bug Fixes
+
+* **pages:** keep home factory door on /ai-sdlc/ ([5d5ba21](https://github.com/matiaspakua/notaire/commit/5d5ba21bf10b354b2e15c35c288ee3bdb3937a5b))
+* **sdlc:** ignore Cursor agent-hooks drift in RepoLens wiring test ([439e940](https://github.com/matiaspakua/notaire/commit/439e9400358a884705ab48813d1505169798c6ae))
+
 ## [0.4.2](https://github.com/matiaspakua/notaire/compare/v0.4.1...v0.4.2) (2026-11-18)
 
 
