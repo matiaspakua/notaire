@@ -9,7 +9,7 @@
 
 import { cloneElement, isValidElement, ReactElement, ReactNode, useId } from "react";
 import { AlertCircle } from "lucide-react";
-import { FormFieldContext, mergeFormFieldAria, type FormFieldControlState } from "./form-field-context";
+import { FormFieldContext, mergeFormFieldAria, useFormFieldAria, type FormFieldControlState } from "./form-field-context";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { theme } from "./tokens";
 
@@ -339,6 +339,11 @@ export function CheckboxField({
   "data-testid"?: string;
 }) {
   const inputId = useId();
+  const aria = useFormFieldAria({
+    "aria-invalid": undefined as boolean | "true" | "false" | undefined,
+    "aria-describedby": undefined as string | undefined,
+    "aria-required": undefined as boolean | "true" | "false" | undefined,
+  });
 
   return (
     <div
@@ -357,6 +362,9 @@ export function CheckboxField({
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
         disabled={disabled}
+        aria-invalid={aria["aria-invalid"]}
+        aria-describedby={aria["aria-describedby"]}
+        aria-required={aria["aria-required"]}
         style={{
           // WCAG 2.2 AA SC 2.5.8 floor is 24 CSS px (#2087). Native checkboxes
           // often paint a hair under the declared size; 28px keeps the measured
