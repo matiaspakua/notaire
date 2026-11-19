@@ -32,6 +32,8 @@ function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [usernameError, setUsernameError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
   const [step, setStep] = useState<LoginStep>({ kind: "password" });
 
   function startSession(user: DtoLoginUser) {
@@ -45,7 +47,8 @@ function LoginForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!username.trim() || !password.trim()) {
-      toast.error(t("validationRequired"));
+      setUsernameError(!username.trim());
+      setPasswordError(!password.trim());
       return;
     }
     setLoading(true);
@@ -158,26 +161,32 @@ function LoginForm() {
 
           <form onSubmit={handleSubmit}>
             <FormContainer>
-              <FormField label={t("username")} required>
+              <FormField label={t("username")} required error={usernameError ? t("validationRequired") : undefined}>
                 <Input
                   data-testid="input-username"
                   placeholder={t("username").toLowerCase()}
                   className="h-12 text-lg"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                    if (e.target.value.trim()) setUsernameError(false);
+                  }}
                   autoComplete="username"
                   disabled={loading}
                 />
               </FormField>
 
-              <FormField label={t("password")} required>
+              <FormField label={t("password")} required error={passwordError ? t("validationRequired") : undefined}>
                 <Input
                   data-testid="input-password"
                   type="password"
                   placeholder="••••••••"
                   className="h-12 text-lg"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (e.target.value.trim()) setPasswordError(false);
+                  }}
                   autoComplete="current-password"
                   disabled={loading}
                 />
