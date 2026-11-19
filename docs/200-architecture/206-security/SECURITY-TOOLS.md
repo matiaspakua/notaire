@@ -11,7 +11,7 @@ new vendor account. GitHub product workflows do not run on a pull request
 
 | Guide category | Concern | Tool | Where | Why this one |
 |----------------|---------|------|-------|----------------|
-| 4.1 Model | Threat model | PlantUML | `206-security/diagrams/` | Diagrams as code, already the project standard |
+| 4.1 Model | Threat model | PlantUML and OWASP Threat Dragon v2 | `206-security/diagrams/` and `threat-model/notaire-system.threat-dragon.json` | PlantUML stays the picture. The Dragon JSON is checked against the upstream v2 schema and the SR ids in the register, with no Dragon binary (#2009) |
 | 4.2 Build | CI | GitHub Actions | `.github/workflows/` | The forge is GitHub. GitLab CI from the guide is the same role, not a second server |
 | 4.3 Test | Unit / API | JUnit, Vitest, Bruno, Playwright | existing suites | Bruno is the guide's Postman alternative and is already the API suite |
 | 4.3 SAST | Java, JS | Semgrep (local and release job) | `security/semgrep/notaire.yml` | High-signal rules in preflight and in `ci.yml` on a version tag. CodeQL stays the deeper SAST |
@@ -40,7 +40,6 @@ absolute zero-debt is tracked in #710 and #711.
 | OWASP Dependency-Check | §3.4.1 example | Trivy already fills SCA. A second database does not change the remediation path |
 | OSV-Scanner | Lockfile advisory database | Same remediation path as Trivy filesystem. Not added |
 | Checkov / tfsec | IaC policy | No Terraform or CloudFormation in this repository. Image pins are tested in Python |
-| OWASP Threat Dragon | Diagram threat model | Evaluated for #2003. A checked-in YAML register plus PlantUML is what CI can test without the Dragon binary. Import is #2009 |
 | pytm | Python DFD generator | Would duplicate `diagrams/trust-boundaries.puml`. Not added |
 | Threagile | YAML risk model | A good schema, and a Go binary this pipeline does not pin. The register in `threat-model/system.stride.yml` is smaller and tested by unittest |
 | Snyk | Example in the guide's risk table | Commercial account. Not required while Trivy and Dependabot run |
