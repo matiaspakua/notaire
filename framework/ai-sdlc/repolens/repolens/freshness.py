@@ -35,11 +35,21 @@ def status(store, start: Path | None = None, extractors: str | None = None) -> t
 
 
 def outdated(store, extractors: str) -> bool:
-    """The store holds an index, written by other extractors than `extractors`."""
-    found = store.get_meta("extractor_version")
-    if isinstance(found, bytes):
-        found = found.decode()
-    return bool(found) and found != extractors
+    """The store holds an index written by older extractors than `extractors` (a newer one is left alone:
+    see `newer`)."""
+    found = _version(store)
+    return bool(found) and found != extractors and not newer(found, extractors)
+
+
+def newer(found: str, extractors: str) -> bool:
+    """`found` is a later extractor version than the running code's: a process started before an upgrade
+    (a long-lived MCP server) must not rewrite that index with its older extractors."""
+    return found.isdigit() and extractors.isdigit() and int(found) > int(extractors)
+
+
+def _version(store) -> str:
+    found = store.get_meta("extractor_version") or ""
+    return found.decode() if isinstance(found, bytes) else str(found)
 
 
 def stamp(store, start: Path | None = None) -> None:
