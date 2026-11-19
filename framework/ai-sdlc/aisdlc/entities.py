@@ -1,8 +1,8 @@
 """Factory entity toolset: list, visualize, add, edit, delete, apply, evolve.
 
 Entities are the catalog revisions (skills, agents, rules, MCP, prompts, hooks,
-and any later kind in ``REGISTRY``). The kit stores them as data. It does not
-import a harness. Project entries override factory defaults with the same id.
+and any later kind in ``REGISTRY``). The kit stores them as data and does not
+load a harness package. Project entries override factory defaults with the same id.
 """
 from __future__ import annotations
 
