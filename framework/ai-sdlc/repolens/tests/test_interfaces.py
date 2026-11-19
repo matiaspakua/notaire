@@ -172,17 +172,20 @@ def test_impact_lists_each_file_once_with_its_symbols():
     def item(kind, name, path, line, via, demoted=False):
         return {"kind": kind, "name": name, "path": path, "line": line, "depth": 1, "via": via, "demoted": demoted}
 
-    result = {"root": "p:src/A.java#A", "files": ["docs/old/adr.md", "src/test/ATest.java", "src/test/BTest.java"],
+    result = {"root": "p:src/A.java#A", "files": ["docs/adr.md", "docs/old/adr.md", "src/test/ATest.java",
+                                                  "src/test/BTest.java"],
               "tests": ["src/test/ATest.java", "src/test/BTest.java"], "affected": [
                   item("route", "GET /a", "", 0, "handles"),
                   item("method", "ATest.one", "src/test/ATest.java", 5, "calls"),
                   item("method", "ATest.Nested.two", "src/test/ATest.java", 9, "calls"),
                   item("file", "ATest.java", "src/test/ATest.java", 1, "imports"),
-                  item("section", "Decisions", "docs/old/adr.md", 12, "mentions", demoted=True)]}
+                  item("section", "docs/adr.md § Decisions", "docs/adr.md", 12, "mentions"),
+                  item("section", "docs/old/adr.md § Decisions", "docs/old/adr.md", 12, "mentions", demoted=True)]}
     text = render.impact(result)
     assert text.count("src/test/ATest.java") == 1
     assert "  d1 src/test/ATest.java [test]: calls one:5, Nested.two:9; imports" in text
     assert "  d1 handles: GET /a" in text
+    assert "  d1 docs/adr.md: mentions § Decisions:12" in text
     assert "docs/old/adr.md" not in text and "+1 in demoted paths" in text
     assert text.endswith("tests not listed above: src/test/BTest.java")
 
@@ -212,3 +215,26 @@ def test_navigation_misses_name_the_closest_symbols(kg, cli_args, capsys):
 
     text = asyncio.run(call())
     assert text.startswith("not found: 'CodeService'") and "CodeVerificationService" in text
+
+
+def test_node_lists_related_symbols_by_file_without_repeating_paths():
+    from repolens import render
+
+    def item(kind, name, path, line, demoted=False):
+        return {"id": f"p:{path}#{name}", "kind": kind, "name": name, "path": path, "line": line, "end": 0,
+                "demoted": demoted}
+
+    home = "src/A.java"
+    info = {**item("class", "A", home, 3), "end": 40, "signature": "class A", "text": "",
+            "out": {"contains": [item("method", "A.one", home, 5), item("method", "A.two", home, 9)],
+                    "calls": [item("route", "GET /b", "", 0)]},
+            "in": {"contains": [item("file", home, home, 1)],
+                   "references": [item("class", "B", "src/B.java", 2), item("method", "B.use", "src/B.java", 7),
+                                  item("file", "src/C.java", "src/C.java", 1)],
+                   "mentions": [item("section", "docs/a.md § Usage", "docs/a.md", 4),
+                                item("section", "docs/old/a.md § Notes", "docs/old/a.md", 4, demoted=True)]}}
+    text = render.node(info)
+    assert "-> contains: one:5, two:9" in text and "-> calls: route:GET /b" in text
+    assert "<- contains" not in text
+    assert "<- references: src/B.java (B:2, use:7), src/C.java" in text
+    assert "<- mentions: docs/a.md (§ Usage:4), +1 in demoted paths" in text
