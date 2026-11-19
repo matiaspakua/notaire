@@ -648,6 +648,11 @@ class Engine:
                 if kind == "contains" and j not in seeds:
                     seeds.add(j)
                     stack.append(j)
+        # Dynamic dispatch: a method is also reached through the interface or superclass method it
+        # overrides (a controller calls the port, the use case implements it), so callers of those count.
+        overridden = [j for i in seeds if self.kind[i] == "method"
+                      for j, kind, _ in self._adjacent(i, "out") if kind == "inherits" and self.kind[j] == "method"]
+        seeds.update(overridden)
         seen = dict.fromkeys(seeds, (0, "", ""))
         queue = deque((i, 0) for i in seeds)
         while queue and len(seen) < limit + len(seeds):
