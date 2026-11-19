@@ -44,6 +44,11 @@
 - [x] 4.10 `.txt`, `.inc`, `.log` stay plain text (mechanical deviation: the pack detects them as vimdoc and
   sourcepawn)
 
+- [x] 4.11 An index of other (older) extractors is stale; an index run never downgrades a newer store
+  (mechanical deviation, after the archive: a robustness defect found while smoke-testing the explorer on
+  Notaire, where a refresh from another checkout and a long-lived MCP server rewrote the store with version 6;
+  no contract change)
+
 ## 5. Actualizar tests existentes
 
 - [x] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy) — test_orphans fixture: the profile's demote glob named a directory, which now links; test_agnostic uses a six-letter-plus function name (cross-directory calls need one)

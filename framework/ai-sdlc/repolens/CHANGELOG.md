@@ -27,6 +27,10 @@ All notable changes to repolens. Versions follow [SemVer](https://semver.org); t
   NodeNext projects write them) resolve to the source. On the scale corpus, resolved imports 109,129 ->
   255,070 and calls 547,866 -> 1,028,599: calls are scoped by the imports they go through.
 - An ambiguous path mention linked the first three files with that name; it now links the nearest one.
+- An index written by other extractors than the running code's is stale, not only one behind HEAD: a branch
+  switch could leave the older checkout's index stamped with the current HEAD (Notaire served version 6 at
+  the 0.6.0 commit). An index run never downgrades: a process started before an upgrade (a long-lived MCP
+  server) leaves a newer store as is instead of re-extracting it with its older extractors.
 
 ### Changed
 
