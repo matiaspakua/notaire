@@ -2,7 +2,6 @@ package com.licensis.notaire.application.usecase.identification;
 
 import java.util.List;
 
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,8 +14,6 @@ import com.licensis.notaire.domain.identification.IdentificationTypeNotFoundExce
 @Transactional(readOnly = true)
 public class IdentificationTypeQueryService implements QueryIdentificationTypesUseCase {
 
-    static final String CACHE = "identification-types";
-
     private final IdentificationTypeCatalogPort catalog;
 
     public IdentificationTypeQueryService(IdentificationTypeCatalogPort catalog) {
@@ -24,7 +21,6 @@ public class IdentificationTypeQueryService implements QueryIdentificationTypesU
     }
 
     @Override
-    @Cacheable(CACHE)
     public List<IdentificationType> findAll() {
         return catalog.findAll();
     }

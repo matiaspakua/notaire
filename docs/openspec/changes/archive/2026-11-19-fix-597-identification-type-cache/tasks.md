@@ -19,7 +19,7 @@
 ## 4. Implementación
 
 - [x] 4.1 Caffeine cache, 60 second TTL
-- [x] 4.2 findAll is @Cacheable
+- [x] 4.2 the outbound catalog decorator's findAll is @Cacheable; save and delete evict it
 - [x] 4.3 create, update, and delete evict the list
 
 ## 5. Actualizar tests existentes

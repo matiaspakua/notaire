@@ -12,7 +12,7 @@ Identification-type list reads go to the database on every call. Writes already 
 ## Decisions
 
 1. Caffeine, expire-after-write 60 seconds, plus evict-on-write. The TTL covers a writer that does not go through the management service.
-2. The name-uniqueness check keeps reading the port, so it cannot approve a duplicate from a stale list.
+2. The cache is an outbound decorator in front of the persistence adapter. The application layer cannot depend on Spring cache annotations (hexagon rule R2). The name check uses that same decorator: a save or delete drops the list before the next check, so a duplicate written through the adapter is visible. A writer that skips the adapter stays invisible only until the 60 second TTL.
 
 ## Riesgos / Trade-offs
 

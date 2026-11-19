@@ -1,6 +1,7 @@
 package com.licensis.notaire.unit.identification;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -14,8 +15,10 @@ import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.licensis.notaire.adapter.out.persistence.identification.CachingIdentificationTypeCatalog;
 import com.licensis.notaire.application.port.in.identification.ManageIdentificationTypesUseCase;
 import com.licensis.notaire.application.port.in.identification.ManageIdentificationTypesUseCase.SaveIdentificationTypeCommand;
 import com.licensis.notaire.application.port.in.identification.QueryIdentificationTypesUseCase;
@@ -24,9 +27,10 @@ import com.licensis.notaire.application.port.out.identification.IdentificationTy
 import com.licensis.notaire.application.usecase.identification.IdentificationTypeManagementService;
 import com.licensis.notaire.application.usecase.identification.IdentificationTypeQueryService;
 import com.licensis.notaire.domain.identification.IdentificationType;
+import com.licensis.notaire.domain.identification.IdentificationTypeNameTakenException;
 
 /**
- * Catalog list reads are cached and a write drops the list (#597, CU74).
+ * The identification-type list is cached in the outbound catalog adapter and a write drops it (#597, CU74).
  */
 class IdentificationTypeCatalogCacheTest {
 
@@ -42,9 +46,15 @@ class IdentificationTypeCatalogCacheTest {
             assertEquals(1, catalog.reads, "the second list read is served from the cache");
 
             manage.create(new SaveIdentificationTypeCommand("Passport", "9"));
+            assertThrows(IdentificationTypeNameTakenException.class,
+                    () -> manage.create(new SaveIdentificationTypeCommand("passport", "9")));
+            assertEquals(2, catalog.reads, "the save drops the list, so the next name check reads the port");
             assertEquals(2, query.findAll().size());
-            // The write's own name check reads the port, then the evicted list is loaded again.
-            assertEquals(3, catalog.reads, "a write drops the list so the next read sees the new row");
+            assertEquals(2, catalog.reads, "that name check refreshed the list");
+
+            manage.delete(1);
+            assertEquals(1, query.findAll().size());
+            assertEquals(3, catalog.reads, "a delete drops the list too");
         }
     }
 
@@ -53,23 +63,29 @@ class IdentificationTypeCatalogCacheTest {
     static class CacheHarness {
         @Bean
         CacheManager cacheManager() {
-            var manager = new CaffeineCacheManager("identification-types");
+            var manager = new CaffeineCacheManager(CachingIdentificationTypeCatalog.CACHE);
             manager.setCaffeine(Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(60)));
             return manager;
         }
 
         @Bean
-        CountingCatalog catalog() {
+        CountingCatalog counting() {
             return new CountingCatalog();
         }
 
         @Bean
-        IdentificationTypeQueryService query(CountingCatalog catalog) {
+        @Primary
+        IdentificationTypeCatalogPort catalog(CountingCatalog counting) {
+            return new CachingIdentificationTypeCatalog(counting);
+        }
+
+        @Bean
+        QueryIdentificationTypesUseCase query(IdentificationTypeCatalogPort catalog) {
             return new IdentificationTypeQueryService(catalog);
         }
 
         @Bean
-        IdentificationTypeManagementService manage(CountingCatalog catalog) {
+        ManageIdentificationTypesUseCase manage(IdentificationTypeCatalogPort catalog) {
             IdentificationTypeUsagePort unused = id -> false;
             return new IdentificationTypeManagementService(catalog, unused);
         }

@@ -1,6 +1,5 @@
 package com.licensis.notaire.application.usecase.identification;
 
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +30,6 @@ public class IdentificationTypeManagementService implements ManageIdentification
     }
 
     @Override
-    @CacheEvict(value = IdentificationTypeQueryService.CACHE, allEntries = true)
     public IdentificationType create(SaveIdentificationTypeCommand command) {
         IdentificationType type = IdentificationType.create(command.name(), command.characters());
         requireNameAvailable(type.name(), null);
@@ -39,7 +37,6 @@ public class IdentificationTypeManagementService implements ManageIdentification
     }
 
     @Override
-    @CacheEvict(value = IdentificationTypeQueryService.CACHE, allEntries = true)
     public void update(int id, SaveIdentificationTypeCommand command) {
         IdentificationType existing = catalog.findById(id).orElseThrow(() -> new IdentificationTypeNotFoundException(id));
         IdentificationType changed = existing.changeTo(command.name(), command.characters());
@@ -48,7 +45,6 @@ public class IdentificationTypeManagementService implements ManageIdentification
     }
 
     @Override
-    @CacheEvict(value = IdentificationTypeQueryService.CACHE, allEntries = true)
     public void delete(int id) {
         // Port delete is void (no boolean race signal); always report deleted after the load+lock checks.
         CatalogLockSupport.delete(

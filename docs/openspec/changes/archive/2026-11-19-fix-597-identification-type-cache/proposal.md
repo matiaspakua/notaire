@@ -58,14 +58,14 @@ Every identification-type list read hits the database. The catalog is read on ne
 
 - `backend-api/pom.xml`
 - `backend-api/src/main/java/com/licensis/notaire/config/CatalogCacheConfig.java`
-- `backend-api/src/main/java/com/licensis/notaire/application/usecase/identification/*`
+- `backend-api/src/main/java/com/licensis/notaire/adapter/out/persistence/identification/CachingIdentificationTypeCatalog.java`
 - `backend-api/src/main/resources/application.properties`
 - `backend-api/src/test/java/com/licensis/notaire/unit/identification/IdentificationTypeCatalogCacheTest.java`
 - `docs/openspec/**`
 
 ### Architecture review
 
-The cache sits on the use case, not the controller. No ADR.
+The cache sits on an outbound catalog decorator. The application layer may depend only on Service and Transactional (hexagon rule R2), so the use cases stay free of Spring cache annotations. No ADR.
 
 ## Documentation Impact
 
