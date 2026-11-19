@@ -24,6 +24,8 @@ saves expose `aria-busy`. Evidence: `docs/openspec/changes/archive/*-fix-2088-ad
 
 **#2259 modules 3 to 9, batch pass** (same method; `deeds`, `budgets`, `copies`, `items`, `people`, plus the earlier `managements` and `payments`; 2026-11-12): all pass axe on the list and the create dialog at 1280 and 320px, none scrolls sideways, every required error on `deeds`, `budgets`, `copies` and `people` is tied to an `aria-invalid` control, primaries are 44px, and signing or deleting a deed goes through `ConfirmDialog` with a loading guard. Findings: (1) the filled primary button lost AA contrast while hovered (`hover:bg-primary/90` gave 4.01:1, white text), fixed for the default and apple variants by hovering to the existing `primary-text` token (about 6.4:1); (2) `items`: the conditional required reason was validated by a toast only; it is now a `FormField` error with `aria-invalid` and `aria-describedby`, cleared on typing (`fix-2259-items-reason-inline-error`); (3) `documents`, `properties` and `substitutions` dialogs have a differently labelled submit button the batch script did not reach were measured separately (see below).
 
+**#2259 testimonies edit dialog** (unit test, 2026-11-19): saving an edit with a blank or non-integer number used `toast.error` only. The number field now gets `FormField error` (`aria-invalid` and the alert). A valid number clears it, and closing the dialog clears it. The register dialog already used a field error. Evidence: `testimonies-page-actions.test.tsx`.
+
 Impeccable context was loaded for `frontend/src/theme/form-patterns.tsx`
 (Operate mode, `PRODUCT.md` / `DESIGN.md`). Provenance, from the repo and
 GitHub on 2026-11-08:
