@@ -34,8 +34,10 @@ describe("security explorers (#2003)", () => {
   it("filters the cadence down to the weekly tools", async () => {
     render(<CadenceBoard />);
     expect(screen.getByRole("row", { name: /OWASP ZAP/ })).toBeInTheDocument();
-    await userEvent.click(screen.getByRole("button", { name: "Weekly" }));
+    await userEvent.click(screen.getByRole("button", { name: "Tag and weekly" }));
     expect(screen.getByRole("row", { name: /OWASP ZAP/ })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Weekly" }));
+    expect(screen.queryByRole("row", { name: /OWASP ZAP/ })).not.toBeInTheDocument();
     expect(screen.queryByRole("row", { name: /scan_secrets/ })).not.toBeInTheDocument();
   });
 });
