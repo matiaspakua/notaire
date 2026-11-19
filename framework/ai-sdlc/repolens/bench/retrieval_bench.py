@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Retrieval benchmark (deterministic, no LLM): ripgrep keyword ranking vs repolens hybrid vs repolens graph.
 
-    python3 bench/retrieval_bench.py bench/tasks/notaire.yaml [-k 10] [--out bench/results/retrieval.json]
+    python3 bench/retrieval_bench.py tasks.yaml [-k 10] [--out bench/results/retrieval.json]
 
 Arms
   grep    keywords from the prompt, one `rg -i -c -F` per keyword, files ranked by TF-IDF of the matches
@@ -20,6 +20,8 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+
+import yaml
 
 HERE = Path(__file__).resolve().parent
 TAIL = 10  # the MCP search tool lists this many one-line results after the detailed top k
@@ -107,7 +109,8 @@ def main() -> int:
     ap.add_argument("--out", type=Path)
     args = ap.parse_args()
     taskset = args.tasks.stem
-    default = "retrieval.json" if taskset == "notaire" else f"retrieval-{taskset}.json"
+    spec_preview = yaml.safe_load(args.tasks.read_text(encoding="utf-8"))
+    default = spec_preview.get("output_name") or f"retrieval-{taskset}.json"
     args.out = args.out or HERE / "results" / default
     spec = load_spec(args.tasks)
     ensure_corpus(spec)

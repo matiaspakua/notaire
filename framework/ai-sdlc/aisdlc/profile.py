@@ -74,6 +74,19 @@ class ApprovalSettings:
 
 
 @dataclass(frozen=True)
+class KnowledgeSettings:
+    """Code-knowledge CLI. Default provider is RepoLens, invoked as a command, never imported."""
+
+    provider: str = "repolens"
+    command: str = "repolens"
+    args: tuple[str, ...] = ()
+    default_tool: str = "search"
+    exact_symbol_tool: str = "rg"
+    callers_tool: str = "impact"
+    fallback_tool: str = "miss"
+
+
+@dataclass(frozen=True)
 class Gate:
     name: str
     stage: str
@@ -220,6 +233,7 @@ class Profile:
     approval: ApprovalSettings = field(default_factory=ApprovalSettings)
     stage_profiles: tuple[StageProfile, ...] = ()
     grants: tuple[Grant, ...] = ()
+    knowledge: KnowledgeSettings = field(default_factory=KnowledgeSettings)
 
     def stages(self) -> list[str]:
         declared = {g.stage for g in self.gates}
@@ -338,6 +352,7 @@ def _build(data: dict, errors: list[str]) -> Profile:
         profile.catalogs_dir = None
     profile.committer = _committer(data.get("committer", {}), errors)
     profile.approval = _approval(data.get("approval", {}), errors)
+    profile.knowledge = _knowledge(data.get("knowledge", {}), errors)
     gate_stages = {g.stage for g in profile.gates}
     gate_names = {g.name for g in profile.gates}
     profile.stage_profiles = _stage_profiles(
@@ -353,6 +368,40 @@ def _build(data: dict, errors: list[str]) -> Profile:
     )
     _check_prices(profile.prices, errors)
     return profile
+
+
+def _string_tuple(value: object, label: str, errors: list[str]) -> tuple[str, ...]:
+    if value is None:
+        return ()
+    if not isinstance(value, list) or any(not isinstance(item, str) for item in value):
+        errors.append(f"{label} must be a list of strings")
+        return ()
+    return tuple(item for item in value if item.strip())
+
+
+def _knowledge(raw: object, errors: list[str]) -> KnowledgeSettings:
+    if raw is None:
+        raw = {}
+    if not isinstance(raw, dict):
+        errors.append("[knowledge] must be a table")
+        return KnowledgeSettings()
+    provider = raw.get("provider", "repolens")
+    command = raw.get("command", "repolens")
+    if not isinstance(provider, str) or not provider.strip():
+        errors.append("knowledge.provider must be a non-empty string")
+        provider = "repolens"
+    if not isinstance(command, str) or not command.strip():
+        errors.append("knowledge.command must be a non-empty string")
+        command = "repolens"
+    return KnowledgeSettings(
+        provider=provider.strip(),
+        command=command.strip(),
+        args=_string_tuple(raw.get("args", []), "knowledge.args", errors),
+        default_tool=str(raw.get("default_tool") or "search"),
+        exact_symbol_tool=str(raw.get("exact_symbol_tool") or "rg"),
+        callers_tool=str(raw.get("callers_tool") or "impact"),
+        fallback_tool=str(raw.get("fallback_tool") or "miss"),
+    )
 
 
 def _committer(raw: dict, errors: list[str]) -> CommitterPolicy:

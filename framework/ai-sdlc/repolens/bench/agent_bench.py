@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 """Agent benchmark: the same prompt, model and built-in tools, with and without the repolens MCP server.
 
-    python3 bench/agent_bench.py bench/tasks/notaire.yaml --model sonnet [--repeat 1] [--parallel 3]
-           [--tasks id,id] [--budget 1.0] [--arms baseline,graph]
+    python3 bench/agent_bench.py tasks.yaml --model sonnet [--provider auto] [--order anthropic,cursor]
 
-Each run is a headless Claude Code session (`claude -p`) in a clean clone of the repository:
+Each run is a headless session in a clean clone of the repository. The provider is `anthropic`
+(`claude -p`) when that CLI is logged in or `ANTHROPIC_API_KEY` is set, and `cursor`
+(`agent -p` or `cursor-agent`) otherwise. `--provider cursor` (or `REPOLENS_AGENT_PROVIDER`)
+forces one runner and does not fall back.
   baseline  built-in Read, Grep, Glob (the standard grep-driven harness)
   graph     the same three tools + the repolens MCP server (search, node, impact, path, outline, snippet...)
 No extra system prompt is added to either arm; the MCP server describes itself through its own
 instructions and tool descriptions. Raw transcripts land in $REPOLENS_BENCH_HOME/runs/<stamp>/
-(default ~/.cache/repolens/bench).
+(default ~/.cache/repolens/bench). Result files record the runner id, command and model.
 """
 
 from __future__ import annotations
@@ -30,6 +32,12 @@ ROOT = HERE.parent
 sys.path.insert(0, str(HERE))
 
 from corpus import bench_home, ensure_corpus, ensure_index, head, load_spec  # noqa: E402
+from providers import (  # noqa: E402
+    build_argv,
+    default_probe_runner,
+    load_settings,
+    select_provider,
+)
 
 BUILTIN = ["Read", "Grep", "Glob"]
 
@@ -44,15 +52,8 @@ def mcp_config(spec: dict, out: Path) -> Path:
     return out
 
 
-def command(prompt: str, arm: str, model: str, budget: float, mcp: Path) -> list[str]:
-    cmd = ["claude", "-p", prompt, "--model", model, "--output-format", "stream-json", "--verbose",
-           "--setting-sources", "", "--no-session-persistence", "--strict-mcp-config",
-           "--max-budget-usd", str(budget), "--tools", ",".join(BUILTIN)]
-    allowed = list(BUILTIN)
-    if arm == "graph":
-        cmd += ["--mcp-config", str(mcp)]
-        allowed.append("mcp__repolens")
-    return cmd + ["--allowedTools", *allowed]
+def command(prompt: str, arm: str, model: str, budget: float, mcp: Path, provider: str, binary: str) -> list[str]:
+    return build_argv(provider, binary, prompt, model=model, budget=budget, mcp=mcp, arm=arm)
 
 
 STOP = threading.Event()
@@ -145,6 +146,9 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("tasks", type=Path)
     ap.add_argument("--model", default="sonnet")
+    ap.add_argument("--provider", default="", help="auto, anthropic, or cursor; a named provider does not fall back")
+    ap.add_argument("--order", default="", help="comma-separated preference; default anthropic,cursor")
+    ap.add_argument("--agents-config", type=Path, help="optional TOML file with an [agents] table")
     ap.add_argument("--arms", default="baseline,graph")
     ap.add_argument("--repeat", type=int, default=1)
     ap.add_argument("--parallel", type=int, default=3)
@@ -154,6 +158,15 @@ def main() -> int:
     ap.add_argument("--out", type=Path)
     args = ap.parse_args()
 
+    settings = load_settings(
+        args.agents_config, provider=args.provider, order=args.order,
+    )
+    selection = select_provider(settings, run_probe=default_probe_runner)
+    if selection.selected is None:
+        print(json.dumps(selection.to_dict(), indent=1), file=sys.stderr)
+        print("no agent provider available; result files were not written", file=sys.stderr)
+        return 2
+    print(f"runner {selection.selected} via {selection.via} command {selection.command}", file=sys.stderr)
     spec = load_spec(args.tasks)
     ensure_corpus(spec)
     ensure_index(spec, log=lambda m: print(m, file=sys.stderr))
@@ -171,7 +184,8 @@ def main() -> int:
                     "task": task["id"], "category": task.get("category", task.get("project", "")),
                     "arm": arm, "rep": rep,
                     "expected": task["expected"], "cwd": str(spec["clone"]), "timeout": args.timeout,
-                    "cmd": command(task["prompt"] + suffix, arm, args.model, args.budget, mcp),
+                    "cmd": command(task["prompt"] + suffix, arm, args.model, args.budget, mcp,
+                                   selection.selected, selection.command),
                     "log": run_dir / f"{task['id']}-{arm}-{rep}.jsonl",
                 })
     print(f"{len(jobs)} runs ({args.model}), transcripts in {run_dir}", file=sys.stderr)
@@ -193,10 +207,13 @@ def main() -> int:
               f"Partial rows are in {partial}; existing result files were left untouched.", file=sys.stderr)
         return 3
     taskset = args.tasks.stem
-    suffix_name = "" if taskset == "notaire" else f"-{taskset}"
+    suffix_name = spec.get("output_suffix")
+    if suffix_name is None:
+        suffix_name = f"-{taskset}" if taskset else ""
     out = args.out or HERE / "results" / f"agent-{args.model}{suffix_name}.json"
     meta = {"model": args.model, "corpus": spec.get("name"), "commit": head(spec), "repeat": args.repeat,
             "taskset": taskset,
+            "runner": selection.selected, "runner_command": selection.command, "runner_via": selection.via,
             "stamp": stamp, "tools_baseline": BUILTIN, "tools_graph": [*BUILTIN, "mcp__repolens"]}
     out.write_text(json.dumps({**meta, "summary": summary, "rows": rows}, indent=1), encoding="utf-8")
     print(f"wrote {out}", file=sys.stderr)

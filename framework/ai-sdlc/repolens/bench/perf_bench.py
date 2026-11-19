@@ -5,7 +5,8 @@
 
 Measures store size (and per-table breakdown), index time (no-op, one changed file, full re-extract),
 engine load time and peak memory, query latency (p50/p95 + stage breakdown), MCP cold start, and
-retrieval quality on the tuning set (notaire.yaml) and the held-out set (notaire-holdout.yaml).
+retrieval quality on the task files passed with `--tasks name=path` (the first is indexed).
+The indexed spec's `corpus.touch` is the file rewritten for the one-file step.
 """
 
 from __future__ import annotations
@@ -30,15 +31,15 @@ from retrieval_bench import score  # noqa: E402
 from repolens.config import load_config  # noqa: E402
 from repolens.service import KnowledgeGraph  # noqa: E402
 
-TASK_SETS = {"tune": HERE / "tasks" / "notaire.yaml", "holdout": HERE / "tasks" / "notaire-holdout.yaml"}
-AGENT_QUERIES = [
-    "MFA enrollment start request frontend and backend controller", "TotpVerificationService",
-    "folio controller ports use cases", "MfaEnrollmentStorePort", "where are payments processed",
-    "JwtAuthenticationFilter revoked token", "budget template", "person http gateway create",
-    "login attempts lockout", "audit aspect personal data", "flyway migration mfa_enrollments",
-    "HexagonArchitectureTest baseline", "report controller pdf", "theme tokens colors",
-    "alert rules login failures", "deed lookup adapter",
-]
+
+def parse_task_sets(values: list[str]) -> dict[str, Path]:
+    sets = {}
+    for item in values:
+        name, sep, raw = item.partition("=")
+        if not sep or not name or not raw:
+            raise SystemExit(f"--tasks expects name=path, got {item!r}")
+        sets[name] = Path(raw)
+    return sets
 
 
 def db_size(path: Path) -> dict:
@@ -61,14 +62,17 @@ def time_index(config: Path, full: bool) -> dict:
 
 
 def touch_one_file(spec: dict) -> Path:
-    target = spec["clone"] / "backend-api/src/main/java/com/licensis/notaire/domain/mfa/TotpAlgorithm.java"
+    relative = (spec.get("corpus") or {}).get("touch") or spec.get("touch")
+    if not relative:
+        raise SystemExit("the indexed task file needs corpus.touch (a file inside the clone)")
+    target = spec["clone"] / relative
     target.write_text(target.read_text(encoding="utf-8") + "\n// perf-bench touch\n", encoding="utf-8")
     return target
 
 
-def quality(kg: KnowledgeGraph, graph: bool = True) -> dict:
+def quality(kg: KnowledgeGraph, task_sets: dict[str, Path], graph: bool = True) -> dict:
     out = {}
-    for name, path in TASK_SETS.items():
+    for name, path in task_sets.items():
         spec = load_spec(path)
         r10 = mrr = 0.0
         per = {}
@@ -83,8 +87,8 @@ def quality(kg: KnowledgeGraph, graph: bool = True) -> dict:
     return out
 
 
-def latency(kg: KnowledgeGraph, repeats: int = 3) -> dict:
-    prompts = [t["prompt"] for p in TASK_SETS.values() for t in load_spec(p)["tasks"]] + AGENT_QUERIES
+def latency(kg: KnowledgeGraph, task_sets: dict[str, Path], extra: list[str], repeats: int = 3) -> dict:
+    prompts = [t["prompt"] for p in task_sets.values() for t in load_spec(p)["tasks"]] + extra
     samples, stages = [], {}
     for _ in range(repeats):
         for q in prompts:
@@ -148,10 +152,14 @@ def main() -> int:
     ap.add_argument("--label", required=True)
     ap.add_argument("--skip-index", action="store_true")
     ap.add_argument("--compare", help="label of an earlier run to diff against")
+    ap.add_argument("--tasks", action="append", required=True, metavar="NAME=PATH",
+                    help="named task file; the first one is indexed")
     ap.add_argument("--extra", action="append", default=[], metavar="KEY=VALUE",
                     help="record an externally measured number (e.g. embed_cold_min=3.9)")
     args = ap.parse_args()
-    spec = load_spec(TASK_SETS["tune"])
+    task_sets = parse_task_sets(args.tasks)
+    spec = load_spec(next(iter(task_sets.values())))
+    extra_queries = list(spec.get("extra_queries") or [])
     ensure_corpus(spec)
     ensure_index(spec, log=lambda *_: None)
     config = spec["config"]
@@ -170,9 +178,9 @@ def main() -> int:
     kg = KnowledgeGraph.open(config)
     kg.engine.warm()
     result["engine_load_s"] = round(time.perf_counter() - t0, 2)
-    result["latency"] = latency(kg)
-    result["quality_graph"] = quality(kg, graph=True)
-    result["quality_hybrid"] = quality(kg, graph=False)
+    result["latency"] = latency(kg, task_sets, extra_queries)
+    result["quality_graph"] = quality(kg, task_sets, graph=True)
+    result["quality_hybrid"] = quality(kg, task_sets, graph=False)
     result["peak_rss_mb"] = server_rss_mb(config)
     result["mcp"] = mcp_cold_start(config)
     out = HERE / "results" / "perf" / f"{args.label}.json"

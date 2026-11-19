@@ -363,7 +363,10 @@ def _refresh_if_stale(kg, notes: list[str] | None = None) -> None:
     if not stale:
         return
     if indexed.startswith("extractors "):
-        say(f"repolens: index was written by other extractors ({indexed[11:]} -> {head[11:]}); refreshing in the background")
+        say(
+            "repolens: index was written by other extractors "
+            f"({indexed[11:]} -> {head[11:]}); refreshing in the background"
+        )
     else:
         shown = (indexed or "unknown")[:12]
         head_s = (head or "unknown")[:12]

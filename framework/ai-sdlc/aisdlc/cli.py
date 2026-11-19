@@ -626,6 +626,35 @@ def build_parser() -> argparse.ArgumentParser:
         help="Idempotent schema migration (workflow body v1→v2) with evidence (#2254)",
     )
     p.add_argument("--json", action="store_true")
+
+    p = sub.add_parser(
+        "agent",
+        help="probe or run an agent CLI (anthropic, else cursor when anthropic cannot authenticate)",
+    )
+    agent_sub = p.add_subparsers(dest="action", required=True)
+    probed = agent_sub.add_parser("probe", help="report which provider can authenticate; do not launch a session")
+    probed.add_argument("--json", action="store_true")
+    probed.add_argument("--provider", default="", help="auto, anthropic, or cursor; a named provider does not fall back")
+    probed.add_argument("--order", default="", help="comma-separated preference, default anthropic,cursor")
+    launched = agent_sub.add_parser("run", help="run one headless session with the selected provider")
+    launched.add_argument("--prompt", required=True)
+    launched.add_argument("--model", default="sonnet")
+    launched.add_argument("--provider", default="")
+    launched.add_argument("--order", default="")
+    launched.add_argument("--arm", default="baseline", choices=("baseline", "graph"))
+    launched.add_argument("--mcp-config", type=Path)
+    launched.add_argument("--budget", type=float, default=1.0)
+    launched.add_argument("--timeout", type=int, default=900)
+    launched.add_argument("--dry-run", action="store_true", help="print the argv and provider; do not execute")
+    launched.add_argument("--json", action="store_true")
+
+    p = sub.add_parser("knowledge", help="call the configured code-knowledge CLI (default command: repolens)")
+    knowledge_sub = p.add_subparsers(dest="action", required=True)
+    for tool in ("search", "doctor", "report", "impact", "miss"):
+        tool_parser = knowledge_sub.add_parser(tool, help=f"run the knowledge CLI `{tool}` subcommand")
+        tool_parser.add_argument("--dry-run", action="store_true")
+        tool_parser.add_argument("args", nargs="*", help="arguments forwarded to the knowledge CLI")
+
     return parser
 
 
@@ -734,6 +763,8 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "plugin": lambda: _plugin(ctx, args),
         "inventory": lambda: _inventory(ctx),
         "harness": lambda: _harness(ctx, args),
+        "agent": lambda: _agent(ctx, args),
+        "knowledge": lambda: _knowledge_cmd(ctx, args),
     }
     return simple[args.command]()
 
@@ -1174,6 +1205,105 @@ def _inventory(ctx: Context) -> int:
         return 1
     print("migration inventory valid")
     return 0
+
+
+def _agent(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc.agent_provider import (
+        build_argv,
+        default_probe_runner,
+        load_settings,
+        run_session,
+        select_provider,
+        usage_from_stream,
+    )
+
+    try:
+        settings = load_settings(
+            ctx.profile_path,
+            provider=getattr(args, "provider", "") or "",
+            order=getattr(args, "order", "") or "",
+        )
+    except ValueError as exc:
+        print(f"error: {exc}")
+        return 2
+    selection = select_provider(settings, run_probe=default_probe_runner)
+    if args.action == "probe":
+        payload = selection.to_dict()
+        if args.json:
+            print(json.dumps(payload, indent=2))
+        else:
+            print(f"agent probe: selected={payload['selected'] or 'none'} via={payload['via']}")
+            for item in payload["providers"]:
+                state = "available" if item["available"] else "unavailable"
+                detail = item["auth"] or item["reason"]
+                print(f"  {item['id']}\t{state}\t{detail}")
+            if payload["reason"] and not payload["selected"]:
+                print(payload["reason"])
+        return 0 if selection.selected else 2
+    if selection.selected is None or not selection.command:
+        print(f"error: no agent provider available: {selection.reason}")
+        if args.json:
+            print(json.dumps(selection.to_dict(), indent=2))
+        return 2
+    argv = build_argv(
+        selection.selected,
+        selection.command,
+        args.prompt,
+        model=args.model,
+        budget=args.budget,
+        mcp=getattr(args, "mcp_config", None),
+        arm=args.arm,
+    )
+    if args.dry_run:
+        view = {
+            "provider": selection.selected,
+            "via": selection.via,
+            "command": selection.command,
+            "model": args.model,
+            "argv": argv,
+            "executes": False,
+        }
+        print(json.dumps(view, indent=2) if args.json else " ".join(argv))
+        return 0
+    code, stdout, stderr, elapsed = run_session(argv, cwd=ctx.root, timeout=args.timeout)
+    usage = usage_from_stream(stdout)
+    event = {
+        "provider": selection.selected,
+        "via": selection.via,
+        "command": selection.command,
+        "model": args.model,
+        "exit_code": code,
+        "latency_ms": int(elapsed * 1000),
+        "output_bytes": len(stdout.encode()),
+        "input_tokens": usage["input_tokens"],
+        "output_tokens": usage["output_tokens"],
+    }
+    get_telemetry().emit("agent.run", event)
+    folder = ctx.root / ctx.profile.evidence_dir
+    try:
+        folder.mkdir(parents=True, exist_ok=True)
+        with (folder / "agent-runs.jsonl").open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(event, separators=(",", ":")) + "\n")
+    except OSError:
+        pass
+    if stdout:
+        print(stdout, end="" if stdout.endswith("\n") else "\n")
+    if code != 0 and stderr:
+        print(stderr, file=__import__("sys").stderr)
+    return code
+
+
+def _knowledge_cmd(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc.knowledge import execute
+
+    try:
+        code, text = execute(ctx, args.action, list(getattr(args, "args", []) or []), dry_run=bool(args.dry_run))
+    except ValueError as exc:
+        print(f"error: {exc}")
+        return 2
+    if text:
+        print(text, end="" if text.endswith("\n") else "\n")
+    return code
 
 
 def _harness(ctx: Context, args: argparse.Namespace) -> int:

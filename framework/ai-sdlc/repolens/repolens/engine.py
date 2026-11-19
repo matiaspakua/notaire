@@ -32,7 +32,7 @@ DOC_LANGS = frozenset({"md", "mdx", "markdown", "txt", "rst", "adoc", "pdf", "te
 SCOPES = ("all", "code", "docs", "tests")
 RELEVANCE_TOP = 10
 TYPE_KINDS = frozenset({"class", "interface", "enum", "record", "type"})
-# Tuned on bench/tasks/notaire.yaml and validated on the held-out set (README, "Benchmark").
+# Chosen on a tuning task set and checked on a held-out set (README, "Benchmark").
 # Override any value per profile under [ranking.tuning].
 DEFAULT_TUNING = {
     "anchors": 7, "doc_anchors": 1, "anchor_power": 2.0,   # seeds: best code nodes + best doc nodes
@@ -346,7 +346,7 @@ class Engine:
 
     def space(self) -> str:
         """The embedding space relevance is measured in: the model and the vector width. Two stores of one
-        model compare even with their own PCA bases (each fitted on its corpus): measured on Notaire and the
+        model compare even with their own PCA bases (each fitted on its corpus): measured on one checkout and the
         scale corpus, the owning store had the higher relevance in 32 of 32 tasks. LSA fits a vocabulary per
         store, so an LSA space is that store's alone."""
         name = self.store.get_meta("embedder") or "none"

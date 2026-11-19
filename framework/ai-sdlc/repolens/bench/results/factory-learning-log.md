@@ -66,4 +66,12 @@ Short notes from the cloud factory loop. Product behavior is not documented here
 - The Sonnet holdout and scale sessions were not re-run: this environment has Claude Code installed and `claude auth status` reports logged out, with no API key. A login or `ANTHROPIC_API_KEY` is required for `bench/agent_bench.py`.
 - Offline stand-in, labeled as such: `repolens search` on the 12 `notaire-holdout` prompts with RepoLens 0.6.1. Default answers totaled 13682 bytes. The previous shape (`-k 10 --also 10`) totaled 35053 bytes. Ratio 0.390. Bytes divided by 4 is 3420 versus 8763. That is the answer text only, not a model session's input tokens.
 
+## 2026-11-19 Cursor agent fallback probe
+
+- `python3 framework/ai-sdlc/repolens/bench/providers.py probe` exited 2. Selected provider: none.
+- Anthropic: none of [`claude`] is on PATH and `ANTHROPIC_API_KEY` is unset.
+- Cursor: none of [`agent`, `cursor-agent`] is on PATH and `CURSOR_API_KEY` is unset.
+- Holdout and scale agent benchmarks were not run. No session recall, token, or cost numbers were written. The Claude rows already in `factory-kpis.json` `offline_bench_summary_md` are unchanged.
+- The probe record is `bench/results/provider-probe-2026-11-19.json` (`not_a_benchmark: true`). `github-page/lib/repolens-bench-snapshot.json` was not regenerated because no benchmark result file changed.
+
 

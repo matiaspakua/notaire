@@ -4,6 +4,7 @@
  "commit": "073e9776",
  "repeat": 3,
  "taskset": "notaire",
+ "chart_tag": "haiku",
  "stamp": "20261117-082312",
  "tools_baseline": [
   "Read",

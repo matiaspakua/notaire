@@ -1,6 +1,6 @@
 """Resident per-worktree service behind the CLI.
 
-A CLI query is a new process: Python, numpy, the engine (~0.5 s for Notaire) and, for prose, the embedding
+A CLI query is a new process: Python, numpy, the engine (~0.5 s on a 9.6k-file checkout) and, for prose, the embedding
 model load again on every call, which made `repolens search` 1-4 s against milliseconds for `rg`. The first
 query in a worktree answers in-process as before and starts this service in the background; later queries
 send their arguments over a Unix socket in `.repolens/` and get the same text back from the warm engine.

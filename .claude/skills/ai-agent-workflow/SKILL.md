@@ -29,7 +29,13 @@ Do not open a new GitHub issue unless it is necessary (a security problem, or a 
 
 ### Locate code
 
-Follow `AGENTS.md`: `repolens search` when the file or symbol is unknown; `rg` for an exact symbol or path; `repolens impact` for callers. If you fall back, run `repolens miss "<query>"`. Pair grep against repolens every third implemented issue, and on every miss, not on every issue.
+RepoLens is the default code-knowledge mechanism (`[knowledge]` in the profile,
+MCP server `repolens`, `aisdlc knowledge`). Follow `AGENTS.md`: `repolens search`
+when the file or symbol is unknown; `rg` for an exact symbol or path;
+`repolens impact` for callers. If you fall back, run `repolens miss "<query>"`.
+Pair grep against repolens every third implemented issue, and on every miss,
+not on every issue. Tool calls, tokens and latency stay in `.repolens/usage.jsonl`
+(`repolens report`) and in `.aisdlc/evidence/knowledge.jsonl`.
 
 ### Workflow Summary
 

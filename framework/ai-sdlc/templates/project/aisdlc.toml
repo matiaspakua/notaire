@@ -139,6 +139,16 @@ placeholder = true               # replace with your full suite command, then de
 # id = "plan"
 # agents = ["planner"]
 # skills = ["propose"]
-# mcp = []
+# mcp = ["repolens"]         # RepoLens is the default code-knowledge server
 # model = "your-model-id"
 # effort = { tokens = 200000, time_seconds = 3600, questions = 20, review_lines = 400 }
+
+# Code knowledge. Default command is the installed `repolens` console script.
+# [knowledge]
+# provider = "repolens"
+# command = "repolens"
+
+# Agent CLI order. The first provider that can authenticate runs.
+# A forced provider (`aisdlc agent run --provider cursor`) does not fall back.
+# [agents]
+# order = ["anthropic", "cursor"]

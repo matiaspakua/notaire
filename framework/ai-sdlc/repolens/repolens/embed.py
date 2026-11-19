@@ -295,7 +295,7 @@ def embed_store(store, cfg, log=print) -> dict:
 
 def skipped(path: str, globs: list[str]) -> bool:
     """`[embed] skip`: paths whose nodes get no vector (keyword and graph search still find them). Measured on
-    Notaire: skipping the demoted paths halves the vectors to embed (87,484 -> 39,307) at a cost of 0.013
+    one checkout: skipping the demoted paths halves the vectors to embed (87,484 -> 39,307) at a cost of 0.013
     tuning recall@10 and 0.042 held-out MRR, so it is opt-in (README, Cold start)."""
     return bool(path) and any(fnmatch.fnmatch(path, g) or fnmatch.fnmatch("/" + path, g) for g in globs)
 

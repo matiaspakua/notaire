@@ -52,6 +52,7 @@ def build_plan(ctx: Context, stage_id: str | None = None) -> dict[str, Any]:
         candidates = gate_stages
     unmapped = sorted(candidates - mapped_ids)
 
+    knowledge = ctx.profile.knowledge
     return {
         "note": PLAN_NOTE,
         "executes": False,
@@ -60,6 +61,16 @@ def build_plan(ctx: Context, stage_id: str | None = None) -> dict[str, Any]:
         "mapped_count": len(enriched),
         "unmapped_stages": unmapped,
         "stages": enriched,
+        "knowledge": {
+            "provider": knowledge.provider,
+            "command": knowledge.command,
+            "args": list(knowledge.args),
+            "default_tool": knowledge.default_tool,
+            "exact_symbol_tool": knowledge.exact_symbol_tool,
+            "callers_tool": knowledge.callers_tool,
+            "fallback_tool": knowledge.fallback_tool,
+            "executes": False,
+        },
     }
 
 

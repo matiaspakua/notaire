@@ -37,6 +37,8 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--label", required=True)
     ap.add_argument("--runs", type=int, default=5)
+    ap.add_argument("--rg-pattern", required=True, help="exact-symbol pattern passed to rg")
+    ap.add_argument("--rg-path", required=True, help="path passed to rg, relative to the repository root")
     args = ap.parse_args()
     root = Path(subprocess.run(["git", "rev-parse", "--show-toplevel"], cwd=HERE, capture_output=True,
                                text=True).stdout.strip())
@@ -47,7 +49,7 @@ def main() -> int:
         walls = [s[0] for s in samples]
         result["queries"][name] = {"p50_s": round(statistics.median(walls), 3), "max_s": round(max(walls), 3),
                                    "exit": samples[-1][1], "bytes": samples[-1][2]}
-    rg = [timed(["rg", "-n", "class ProcessPaymentService", "backend-api/src"], root)[0] for _ in range(args.runs)]
+    rg = [timed(["rg", "-n", args.rg_pattern, args.rg_path], root)[0] for _ in range(args.runs)]
     result["rg_exact_p50_s"] = round(statistics.median(rg), 4)
     out = HERE / "results" / "perf" / f"cli-{args.label}.json"
     out.write_text(json.dumps(result, indent=1), encoding="utf-8")
