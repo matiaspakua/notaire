@@ -140,8 +140,8 @@ def test_a_repository_reindexed_elsewhere_is_searched_fresh(two, monkeypatch, ca
     monkeypatch.chdir(shop)
     assert cli.main(["search", "settle refund voucher", "--files", "--repos", "billing"]) in (0, 1)
     assert "RefundVoucher.py" not in capsys.readouterr().out  # billing's store is now open in this process
-    (billing / "billing" / "RefundVoucher.py").write_text(
-        'def settle_refund_voucher(voucher):\n    """Settle a refund voucher."""\n    return voucher\n', encoding="utf-8")
+    source = 'def settle_refund_voucher(voucher):\n    """Settle a refund voucher."""\n    return voucher\n'
+    (billing / "billing" / "RefundVoucher.py").write_text(source, encoding="utf-8")
     monkeypatch.chdir(billing)
     assert cli.main(["index", "--quiet"]) == 0
     monkeypatch.chdir(shop)
