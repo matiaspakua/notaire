@@ -346,12 +346,16 @@ def _refresh_if_stale(kg, notes: list[str] | None = None) -> None:
         else:
             notes.append(line)
 
-    stale, indexed, head = status(kg.store)
+    from .extractors import EXTRACTOR_VERSION
+
+    stale, indexed, head = status(kg.store, extractors=EXTRACTOR_VERSION)
     if not stale:
         return
     started = time.perf_counter()
-    shown = (indexed or "unknown")[:12]
-    say(f"repolens: index is behind HEAD ({shown} -> {head[:12]}); refreshing")
+    if indexed.startswith("extractors "):
+        say(f"repolens: index was written by other extractors ({indexed[11:]} -> {head[11:]}); refreshing")
+    else:
+        say(f"repolens: index is behind HEAD ({(indexed or 'unknown')[:12]} -> {head[:12]}); refreshing")
     report = kg.index(log=lambda *_a, **_k: None, wait=True)
     elapsed = time.perf_counter() - started
     if report.get("busy"):

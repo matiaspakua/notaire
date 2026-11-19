@@ -91,9 +91,10 @@ class KnowledgeGraph:
         interval = self.refresh_interval()
         if interval < 0 and not force:
             return False
+        from .extractors import EXTRACTOR_VERSION
         from .freshness import status
 
-        if status(self.store)[0]:
+        if status(self.store, extractors=EXTRACTOR_VERSION)[0]:
             force = True
         now = time.monotonic()
         with self._refresh_lock:
