@@ -104,13 +104,13 @@ a written decision adds them.
 | Family | Selected practice | Evidence | Not selected, and why |
 |--------|-------------------|----------|------------------------|
 | SAST | CodeQL advanced workflow; SpotBugs report | `.github/workflows/codeql.yml`, CI quality job | FindSecBugs is a candidate Java complement, not a second mandatory scanner |
-| DAST | OWASP ZAP baseline, weekly, fails on non-allowlisted alerts (`fail_action: true`, `.zap/rules.tsv`) | `.github/workflows/dast-zap.yml` | Exploitation scanners are not CI jobs |
+| DAST | OWASP ZAP baseline on a version tag and Monday, fails on non-allowlisted alerts (`fail_action: true`, `.zap/rules.tsv`) | `.github/workflows/dast-zap.yml` | Exploitation scanners are not CI jobs |
 | IAST | None | — | Needs an agent in the test JVM; no current signal that CodeQL plus ZAP miss a class of defect we can name |
 | RASP | None | — | Runtime blocking agents are a later production control, not a test |
 | SCA | Trivy fs and image; Dependabot | `ci.yml`, `.github/dependabot.yml` | Commercial SCA was not added beside Trivy |
 | Secrets | `security/scan_secrets.py` fails CI and the local gate | `security/policy/security-policy.yml` | Gitleaks is the reference OSS rule set; the Python gate has no extra action to pin |
 | SAST, local | Semgrep rules in `security/semgrep/notaire.yml` | `python3 security/run_gates.py` | CodeQL stays the deeper CI SAST |
-| DAST, local | Unauthenticated baseline | `security/dast_baseline.py` | ZAP stays the weekly CI DAST |
+| DAST, local | Unauthenticated baseline | `security/dast_baseline.py` | ZAP stays the tag and Monday CI DAST |
 | Pentest | Rules of engagement only | [SECURITY-TOOLS.md](SECURITY-TOOLS.md) | No standing authorization to attack a shared environment |
 
 ### Local gate before the pull request
@@ -183,9 +183,11 @@ That template is the guide §3.7; it is not a new product feature.
 
 Guide §3.9. Notarial records are retained indefinitely (SAD §2.3). `Person`
 holds regulated identifiers. LINDDUN rows in the system threat model are the
-engineering view. Issue **#309** is closed. It did not add a statute map,
-and this page still does not give legal advice. The engineering follow-through
-for testimony and personal data is **#2007**. Counsel owns any statute reading.
+engineering view, including testimony, folio, and submitted documents (LD-7,
+LD-8, LD-9). Issue **#309** is closed. It did not add a statute map, and this
+page still does not give legal advice. Counsel owns any statute reading. A
+privacy notice is not in the product (LD-4). Reads beyond `Person` are not
+audited (LD-9).
 
 Third-party code is tracked by Dependabot and the SBOM attached to releases.
 The scanner ignores the public AWS documentation key id
@@ -225,16 +227,14 @@ Open follow-ups from the 2026-11-05 assessment (#2003):
 | Issue | Remaining work |
 |-------|----------------|
 | #2001 | Owner updates the live `protect-main` ruleset. Desired JSON in git already dropped checks that no longer run on a pull request |
-| #2005 | `Referrer-Policy` and `Permissions-Policy` on the frontend |
 | #2006 | Authorization regression pack across modules |
-| #2007 | LINDDUN follow-through for testimony and personal data |
 | #2008 | Redacted findings snapshot for the portfolio |
 | #2009 | Threat Dragon (or equivalent) model checked against this register |
 | #2010 | General API rate limit (SR-05, SR-15) |
 | #2011 | Decide whether CodeQL findings fail the release |
 | #1640 | MFA for admins and notaries |
 
-Closed issues that this program used to list as open work: #2004 (ZAP on version tags), #254 (TLS runbook),
+Closed issues that this program used to list as open work: #2007 (LINDDUN for testimony, folio, and submitted documents), #2005 (Referrer-Policy and Permissions-Policy), #2004 (ZAP on version tags), #254 (TLS runbook),
 #267 (Top 10 mapping), #280 (rate-limit guide, not the limiter), #282, #283,
 #309, #1465, #1738. Do not reopen them to point at the rows above.
 

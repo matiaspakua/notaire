@@ -1,13 +1,20 @@
 {
-  "productVersion": "0.5.0",
+  "productVersion": "0.5.1",
   "train": "v0.5 · Quality & traceability (2027-01)",
-  "tag": "v0.5.0",
+  "tag": "v0.5.1",
   "components": {
-    "backend": "0.5.0",
-    "frontend": "0.5.0",
+    "backend": "0.5.1",
+    "frontend": "0.5.1",
     "databaseSchema": "54"
   },
   "releases": [
+    {
+      "version": "0.5.1",
+      "date": "2026-11-19",
+      "tag": "v0.5.1",
+      "train": "v0.5 · Quality & traceability (2027-01)",
+      "url": "https://github.com/matiaspakua/notaire/releases/tag/v0.5.1"
+    },
     {
       "version": "0.5.0",
       "date": "2026-11-18",
