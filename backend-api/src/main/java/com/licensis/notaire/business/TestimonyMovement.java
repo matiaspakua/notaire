@@ -4,8 +4,6 @@
  */
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoTestimonyMovement;
-import com.licensis.notaire.dto.DtoTestimony;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 import java.util.Date;
@@ -243,50 +241,5 @@ public class TestimonyMovement implements Serializable, Persistable<Integer>
     public void setVersion(int version)
     {
         this.version = version;
-    }
-
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoTestimonyMovement getDto()
-    {
-        DtoTestimonyMovement dto = new DtoTestimonyMovement();
-
-        dto.setIdTestimonyMovement(idTestimonyMovement);
-        dto.setDateEntry(dateEntry);
-        dto.setDateRegistration(dateRegistration);
-        dto.setDateExit(dateExit);
-        dto.setRegistered(registered);
-        dto.setCardNumber(cardNumber);
-        dto.setNotes(notes);
-        dto.setObservedByRegistry(observedByRegistry);
-        dto.setVersion(version);
-
-        DtoTestimony testimonyDto = new DtoTestimony();
-        testimonyDto.setIdTestimony(fkIdTestimony.getIdTestimony());
-        dto.setTestimony(testimonyDto);
-
-        return dto;
-    }
-
-    public void setAttributes(DtoTestimonyMovement dto)
-    {
-
-        if (dto.getIdTestimonyMovement() != null)
-        {
-            idTestimonyMovement = dto.getIdTestimonyMovement();
-        }
-
-        dateEntry = dto.getDateEntry();
-        dateRegistration = dto.getDateRegistration();
-        dateExit = dto.getDateExit();
-        registered = dto.isRegistered();
-        cardNumber = dto.getCardNumber();
-        notes = dto.getNotes();
-        observedByRegistry = dto.isObservedByRegistry();
-        version = dto.getVersion();
-
-        if (dto.getTestimony() != null)
-        {
-            fkIdTestimony = new Testimony(dto.getTestimony().getIdTestimony());
-        }
     }
 }

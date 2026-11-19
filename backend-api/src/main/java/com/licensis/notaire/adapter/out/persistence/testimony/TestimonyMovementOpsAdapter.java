@@ -35,13 +35,13 @@ public class TestimonyMovementOpsAdapter implements TestimonyMovementOpsPort {
     @Override
     @Transactional(readOnly = true)
     public List<DtoTestimonyMovement> findAll() {
-        return repository.findAll().stream().map(TestimonyMovement::getDto).toList();
+        return repository.findAll().stream().map(TestimonyMovementLegacyMapper::toDto).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<DtoTestimonyMovement> findById(Integer id) {
-        return repository.findById(id).map(TestimonyMovement::getDto);
+        return repository.findById(id).map(TestimonyMovementLegacyMapper::toDto);
     }
 
     @Override
@@ -50,9 +50,9 @@ public class TestimonyMovementOpsAdapter implements TestimonyMovementOpsPort {
         // mark the Spring TX rollback-only (UnexpectedRollbackException → 500 instead of 400).
         try {
             TestimonyMovement entity = new TestimonyMovement();
-            entity.setAttributes(dto);
+            TestimonyMovementLegacyMapper.apply(entity, dto);
             entity = repository.save(entity);
-            return new SaveResult.Created(entity.getDto());
+            return new SaveResult.Created(TestimonyMovementLegacyMapper.toDto(entity));
         } catch (Exception e) {
             return new SaveResult.Failed(e);
         }
@@ -70,7 +70,7 @@ public class TestimonyMovementOpsAdapter implements TestimonyMovementOpsPort {
         }
         try {
             dto.setIdTestimonyMovement(id);
-            entity.setAttributes(dto);
+        TestimonyMovementLegacyMapper.apply(entity, dto);
             repository.save(entity);
             return new SaveResult.Updated();
         } catch (Exception e) {
@@ -93,21 +93,21 @@ public class TestimonyMovementOpsAdapter implements TestimonyMovementOpsPort {
 
     @Override
     public DtoTestimonyMovement registerEntry(Integer idTestimony) {
-        return testimonyMovementService.registerEntry(idTestimony).getDto();
+        return TestimonyMovementLegacyMapper.toDto(testimonyMovementService.registerEntry(idTestimony));
     }
 
     @Override
     public DtoTestimonyMovement registerInscription(Integer idTestimony) {
-        return testimonyMovementService.registerInscription(idTestimony).getDto();
+        return TestimonyMovementLegacyMapper.toDto(testimonyMovementService.registerInscription(idTestimony));
     }
 
     @Override
     public DtoTestimonyMovement withdraw(Integer idTestimony, int cardNumber) {
-        return testimonyMovementService.withdraw(idTestimony, cardNumber).getDto();
+        return TestimonyMovementLegacyMapper.toDto(testimonyMovementService.withdraw(idTestimony, cardNumber));
     }
 
     @Override
     public DtoTestimonyMovement reenter(Integer idTestimony, TestimonyReentry reentry) {
-        return testimonyMovementService.reenter(idTestimony, reentry).getDto();
+        return TestimonyMovementLegacyMapper.toDto(testimonyMovementService.reenter(idTestimony, reentry));
     }
 }
