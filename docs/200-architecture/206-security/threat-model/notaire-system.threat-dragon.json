@@ -1,0 +1,261 @@
+{
+  "version": "2.3.0",
+  "summary": {
+    "title": "Notaire system trust boundaries",
+    "owner": "Notaire",
+    "description": "STRIDE threats for the system register. No secrets.",
+    "id": 0
+  },
+  "detail": {
+    "contributors": [],
+    "diagrams": [
+      {
+        "id": 0,
+        "title": "System trust boundaries",
+        "diagramType": "STRIDE",
+        "version": "2.3.0",
+        "description": "One element per register asset. Threat ids are the SR ids.",
+        "thumbnail": "./public/content/images/thumbnail.stride.jpg",
+        "cells": [
+          {
+            "id": "cell-audit-trail",
+            "shape": "store",
+            "zIndex": 1,
+            "visible": true,
+            "position": {
+              "x": 40,
+              "y": 40
+            },
+            "size": {
+              "width": 160,
+              "height": 80
+            },
+            "data": {
+              "name": "audit-trail",
+              "description": "Trust-boundary element from the STRIDE register.",
+              "type": "tm.Store",
+              "hasOpenThreats": false,
+              "threats": [
+                {
+                  "id": "SR-07",
+                  "title": "SR-07",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Repudiation",
+                  "modelType": "STRIDE",
+                  "description": "Repudiation affecting audit-trail. The register row is the engineering record.",
+                  "mitigation": "THREAT-MODEL-AUTH-AUDIT.md"
+                }
+              ]
+            }
+          },
+          {
+            "id": "cell-person",
+            "shape": "actor",
+            "zIndex": 2,
+            "visible": true,
+            "position": {
+              "x": 260,
+              "y": 40
+            },
+            "size": {
+              "width": 160,
+              "height": 80
+            },
+            "data": {
+              "name": "person",
+              "description": "Trust-boundary element from the STRIDE register.",
+              "type": "tm.Actor",
+              "hasOpenThreats": false,
+              "threats": [
+                {
+                  "id": "SR-11",
+                  "title": "SR-11",
+                  "status": "Accepted",
+                  "severity": "Medium",
+                  "type": "Elevation of privilege",
+                  "modelType": "STRIDE",
+                  "description": "Elevation of privilege affecting person. The register row is the engineering record.",
+                  "mitigation": "RoleModuleAuthorizationFilter (#1683); intra-tenant object sharing accepted by ADR-029"
+                }
+              ]
+            }
+          },
+          {
+            "id": "cell-session",
+            "shape": "store",
+            "zIndex": 3,
+            "visible": true,
+            "position": {
+              "x": 480,
+              "y": 40
+            },
+            "size": {
+              "width": 160,
+              "height": 80
+            },
+            "data": {
+              "name": "session",
+              "description": "Trust-boundary element from the STRIDE register.",
+              "type": "tm.Store",
+              "hasOpenThreats": true,
+              "threats": [
+                {
+                  "id": "SR-12",
+                  "title": "SR-12",
+                  "status": "Partial",
+                  "severity": "Medium",
+                  "type": "Spoofing",
+                  "modelType": "STRIDE",
+                  "description": "Spoofing affecting session. The register row is the engineering record.",
+                  "mitigation": "frontend HttpOnly cookie tests; API login JSON still returns a bearer token"
+                },
+                {
+                  "id": "SR-17",
+                  "title": "SR-17",
+                  "status": "Partial",
+                  "severity": "Medium",
+                  "type": "Spoofing",
+                  "modelType": "STRIDE",
+                  "description": "Spoofing affecting session. The register row is the engineering record.",
+                  "mitigation": "MfaLoginFlowIntegrationTest; ENFORCE is opt-in via notaire.mfa.policy (#1640, ADR-032)"
+                }
+              ]
+            }
+          },
+          {
+            "id": "cell-build",
+            "shape": "process",
+            "zIndex": 4,
+            "visible": true,
+            "position": {
+              "x": 700,
+              "y": 40
+            },
+            "size": {
+              "width": 160,
+              "height": 80
+            },
+            "data": {
+              "name": "build",
+              "description": "Trust-boundary element from the STRIDE register.",
+              "type": "tm.Process",
+              "hasOpenThreats": true,
+              "threats": [
+                {
+                  "id": "SR-13",
+                  "title": "SR-13",
+                  "status": "Partial",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "modelType": "STRIDE",
+                  "description": "Tampering affecting build. The register row is the engineering record.",
+                  "mitigation": "ci.yml trivy-action exit-code 1; security/tests/test_image_pins_and_dependabot.py"
+                }
+              ]
+            }
+          },
+          {
+            "id": "cell-repository",
+            "shape": "store",
+            "zIndex": 5,
+            "visible": true,
+            "position": {
+              "x": 40,
+              "y": 200
+            },
+            "size": {
+              "width": 160,
+              "height": 80
+            },
+            "data": {
+              "name": "repository",
+              "description": "Trust-boundary element from the STRIDE register.",
+              "type": "tm.Store",
+              "hasOpenThreats": true,
+              "threats": [
+                {
+                  "id": "SR-14",
+                  "title": "SR-14",
+                  "status": "Partial",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "modelType": "STRIDE",
+                  "description": "Information disclosure affecting repository. The register row is the engineering record.",
+                  "mitigation": "security/scan_secrets.py"
+                }
+              ]
+            }
+          },
+          {
+            "id": "cell-api",
+            "shape": "process",
+            "zIndex": 6,
+            "visible": true,
+            "position": {
+              "x": 260,
+              "y": 200
+            },
+            "size": {
+              "width": 160,
+              "height": 80
+            },
+            "data": {
+              "name": "api",
+              "description": "Trust-boundary element from the STRIDE register.",
+              "type": "tm.Process",
+              "hasOpenThreats": false,
+              "threats": [
+                {
+                  "id": "SR-15",
+                  "title": "SR-15",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "modelType": "STRIDE",
+                  "description": "Denial of service affecting api. The register row is the engineering record.",
+                  "mitigation": "ApiQuotaSharedStoreIntegrationTest; api_rate_windows shared across instances (#2010)"
+                }
+              ]
+            }
+          },
+          {
+            "id": "cell-admin",
+            "shape": "process",
+            "zIndex": 7,
+            "visible": true,
+            "position": {
+              "x": 480,
+              "y": 200
+            },
+            "size": {
+              "width": 160,
+              "height": 80
+            },
+            "data": {
+              "name": "admin",
+              "description": "Trust-boundary element from the STRIDE register.",
+              "type": "tm.Process",
+              "hasOpenThreats": false,
+              "threats": [
+                {
+                  "id": "SR-16",
+                  "title": "SR-16",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Elevation of privilege",
+                  "modelType": "STRIDE",
+                  "description": "Elevation of privilege affecting admin. The register row is the engineering record.",
+                  "mitigation": "UserAuthorityResolver maps Escribano to ROLE_NOTARY (#1638)"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "diagramTop": 0,
+    "reviewer": "",
+    "threatTop": 8
+  }
+}

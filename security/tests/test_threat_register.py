@@ -41,7 +41,8 @@ class ThreatRegisterTest(unittest.TestCase):
         self.assertEqual("STRIDE", self.data["method"]["primary"])
         self.assertEqual("LINDDUN", self.data["method"]["privacy"])
         evaluated = {item["name"] for item in self.data["method"]["evaluated_not_adopted"]}
-        self.assertTrue({"OWASP Threat Dragon", "pytm", "Threagile"} <= evaluated)
+        self.assertTrue({"pytm", "Threagile"} <= evaluated)
+        self.assertNotIn("OWASP Threat Dragon", evaluated)
 
     def test_every_requirement_is_in_a_markdown_model(self):
         system = SYSTEM.read_text(encoding="utf-8")

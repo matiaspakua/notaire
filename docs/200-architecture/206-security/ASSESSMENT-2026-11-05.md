@@ -69,7 +69,7 @@ The id register checked by `security/tests/test_threat_register.py` is
 | PlantUML | Kept. `diagrams/trust-boundaries.puml` is the diagram the catalog already requires. |
 | Mermaid | Kept on the portfolio and in this file for the same boundaries. |
 | Checked-in YAML | Adopted. Small enough for unittest. Not a Threagile schema. |
-| OWASP Threat Dragon | Not adopted. The JSON model needs the editor, and CI has no Dragon binary. #2009. |
+| OWASP Threat Dragon | Adopted as a checked-in v2 JSON model. CI checks the upstream schema and the SR ids. No Dragon binary. #2009. |
 | pytm | Not adopted. It would generate a second diagram beside PlantUML. |
 | Threagile | Not adopted. Sound YAML, and a Go binary this pipeline does not pin. |
 
@@ -159,7 +159,7 @@ the #2003 pull request is an issue.
 | Next | Authorization tests do not cover every module path | #2006 |
 | Closed | LINDDUN covers testimony, folio, and submitted documents. The notice, the statute, and read-audit beyond Person stay open rows | #2007 |
 | Next | No redacted findings feed for the portfolio | #2008 |
-| Later | Threat Dragon model checked in CI | #2009 |
+| Closed | Threat Dragon v2 model is checked against the register in preflight | #2009 |
 | Closed | `/api/**` quota is the shared `api_rate_windows` table. Login lockout remains a separate control | #2010 |
 | Decision | CodeQL findings do not fail the release | #2011 |
 | Open, already filed | MFA | #1640 |
