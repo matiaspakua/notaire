@@ -51,6 +51,7 @@ CALLABLE_KINDS = frozenset({"function", "method", "class", "variable"})
 LANG_FAMILY = {
     "java": "jvm", "kotlin": "jvm", "scala": "jvm", "typescript": "js", "tsx": "js", "javascript": "js",
 }
+_EMITTED = {".js": (".ts", ".tsx"), ".jsx": (".tsx",), ".mjs": (".mts",), ".cjs": (".cts",)}
 TS_EXTS = ("", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".d.ts", "/index.ts", "/index.tsx", "/index.js")
 TEST_PATH = re.compile(
     r"(^|/)(tests?|__tests__|spec|e2e|it)/|(Test|Tests|IT|Spec)\.(java|kt|cs|scala)$|"
@@ -281,8 +282,11 @@ class Linker:
                 if target.startswith(prefix) and (path.startswith(alias_dir) or not alias_dir):
                     bases.append(posixpath.normpath(posixpath.join(alias_dir, repl + target[len(prefix):])))
         for base in bases:
-            for ext in TS_EXTS:
-                fid = self.ix.files.get((project, base + ext))
+            stem, ext = posixpath.splitext(base)
+            # ESM TypeScript imports the emitted file (`./format.js`): its source is `./format.ts`
+            sources = [stem + e for e in _EMITTED.get(ext, ())]
+            for candidate in (*sources, *(base + e for e in TS_EXTS)):
+                fid = self.ix.files.get((project, candidate))
                 if fid:
                     return [fid]
         return []
