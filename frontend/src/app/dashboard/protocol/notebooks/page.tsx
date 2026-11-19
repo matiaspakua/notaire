@@ -52,9 +52,11 @@ export default function NotebooksPage() {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
+  const [folioError, setFolioError] = useState(false);
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
 
   function toggleFolio(idFolio: number) {
+    setFolioError(false);
     setSelectedIds((prev) =>
       prev.includes(idFolio) ? prev.filter((id) => id !== idFolio) : [...prev, idFolio],
     );
@@ -63,13 +65,14 @@ export default function NotebooksPage() {
   function openModal() {
     setSelectedIds([]);
     setNotes("");
+    setFolioError(false);
     setModalOpen(true);
   }
 
   async function handleCreateNotebook() {
     const notaryId = folios.find((f) => selectedIds.includes(f.idFolio!))?.fkIdNotaryPerson?.personId;
     if (!notaryId) {
-      toast.error(t("selectFoliosFirst"));
+      setFolioError(true);
       return;
     }
     setSaving(true);
@@ -159,7 +162,11 @@ export default function NotebooksPage() {
         <DialogContent className="max-w-2xl">
           <FormContainer>
             <FormSection dialogTitle title={t("newCuaderno")}>
-              <FormField label={t("fields.selectFolios")} helperText={t("selectTenHelper")}>
+              <FormField
+                label={t("fields.selectFolios")}
+                helperText={t("selectTenHelper")}
+                error={folioError ? t("selectFoliosFirst") : undefined}
+              >
                 <div className="max-h-64 overflow-y-auto rounded-lg border border-border/40 p-3 space-y-2">
                   {availableFolios.length === 0 && (
                     <p className="text-sm text-muted-foreground">{t("noAvailableFolios")}</p>

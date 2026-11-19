@@ -51,6 +51,7 @@ export default function TestimoniesPage() {
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Testimony | null>(null);
   const [editNumber, setEditNumber] = useState("");
+  const [editNumberError, setEditNumberError] = useState(false);
   const [editNotes, setEditNotes] = useState("");
   const [deleting, setDeleting] = useState<Testimony | null>(null);
   const [movementsOf, setMovementsOf] = useState<Testimony | null>(null);
@@ -59,6 +60,7 @@ export default function TestimoniesPage() {
   function openEdit(testimony: Testimony) {
     setEditing(testimony);
     setEditNumber(String(testimony.number ?? ""));
+    setEditNumberError(false);
     setEditNotes(testimony.notes ?? "");
   }
 
@@ -66,7 +68,7 @@ export default function TestimoniesPage() {
     if (!editing?.idTestimony) return;
     const number = editNumber.trim();
     if (!/^[1-9]\d*$/.test(number)) {
-      toast.error(t("numberRequired"));
+      setEditNumberError(true);
       return;
     }
     try {
@@ -287,14 +289,25 @@ export default function TestimoniesPage() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={editing !== null} onOpenChange={(v) => !v && setEditing(null)}>
+      <Dialog
+        open={editing !== null}
+        onOpenChange={(v) => {
+          if (!v) {
+            setEditing(null);
+            setEditNumberError(false);
+          }
+        }}
+      >
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={t("editTestimonio")}>
-              <FormField label={t("fields.numero")} required>
+              <FormField label={t("fields.numero")} required error={editNumberError ? t("numberRequired") : undefined}>
                 <Input
                   value={editNumber}
-                  onChange={(e) => setEditNumber(e.target.value)}
+                  onChange={(e) => {
+                    setEditNumber(e.target.value);
+                    if (/^[1-9]\d*$/.test(e.target.value.trim())) setEditNumberError(false);
+                  }}
                   inputMode="numeric"
                   data-testid="input-edit-testimony-number"
                 />

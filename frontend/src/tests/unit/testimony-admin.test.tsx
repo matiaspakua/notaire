@@ -95,7 +95,9 @@ describe("Testimonies edit/delete and movement history (#1364)", () => {
     const dialog = await screen.findByRole("dialog");
     fireEvent.change(within(dialog).getByTestId("input-edit-testimony-number"), { target: { value: "0" } });
     fireEvent.click(within(dialog).getByTestId("btn-save-edit-testimony"));
-    await waitFor(() => expect(toastError).toHaveBeenCalledWith("testimonios.numberRequired"));
+    const number = within(dialog).getByTestId("input-edit-testimony-number");
+    expect(number).toHaveAttribute("aria-invalid", "true");
+    expect(toastError).not.toHaveBeenCalled();
     expect(calls("PUT")).toHaveLength(0);
   });
 

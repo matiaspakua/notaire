@@ -214,15 +214,22 @@ describe("LoginPage", () => {
     });
   });
 
-  it("shows error when fields are empty", async () => {
+  it("shows a field error when fields are empty and sends nothing", async () => {
     const { toast } = await import("sonner");
     render(<LoginPage />, { wrapper });
 
     fireEvent.click(screen.getByTestId("btn-sign-in"));
 
-    await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith("Complete usuario y contraseña");
-    });
+    const username = screen.getByTestId("input-username");
+    const password = screen.getByTestId("input-password");
+    expect(username).toHaveAttribute("aria-invalid", "true");
+    expect(password).toHaveAttribute("aria-invalid", "true");
+    expect(toast.error).not.toHaveBeenCalled();
+    expect(apiPost).not.toHaveBeenCalled();
+
+    fireEvent.change(username, { target: { value: "admin" } });
+    expect(screen.getByTestId("input-username")).not.toHaveAttribute("aria-invalid");
+    expect(screen.getByTestId("input-password")).toHaveAttribute("aria-invalid", "true");
   });
 
   it("shows the backend's lockout message on a 429 response (issue #756)", async () => {
