@@ -4,15 +4,9 @@
  */
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoSubmittedDocument;
-import com.licensis.notaire.dto.DtoDeed;
-import com.licensis.notaire.dto.DtoDeedManagement;
-import com.licensis.notaire.dto.DtoPerson;
-import com.licensis.notaire.dto.DtoProperty;
-import com.licensis.notaire.dto.DtoBudget;
 import com.licensis.notaire.dto.DtoIdentificationType;
-import com.licensis.notaire.dto.DtoProcedure;
-import com.licensis.notaire.dto.DtoProcedureType;
+import com.licensis.notaire.dto.DtoPerson;
+import com.licensis.notaire.dto.DtoSubmittedDocument;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -212,79 +206,6 @@ public class Procedure implements Serializable, Persistable<Integer> {
     }
 
 
-
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoProcedure getDto() {
-        DtoProcedure dto = new DtoProcedure();
-
-        dto.setIdProcedure(getIdProcedure());
-        dto.setNotes(notes);
-        DtoProcedureType procedureTypeDto = new DtoProcedureType();
-        procedureTypeDto.setIdProcedureType(fkIdProcedureType.getIdProcedureType());
-        procedureTypeDto.setName(fkIdProcedureType.getName());
-        procedureTypeDto.setIsArchived(fkIdProcedureType.getIsArchived());
-        procedureTypeDto.setIsRegistered(fkIdProcedureType.getIsRegistered());
-        procedureTypeDto.setAssociatesProperties(fkIdProcedureType.getAssociatesProperties());
-        procedureTypeDto.setNotes(fkIdProcedureType.getNotes());
-        procedureTypeDto.setVersion(fkIdProcedureType.getVersion());
-        procedureTypeDto.setEnabled(fkIdProcedureType.getEnabled());
-        if (fkIdProcedureType.getWorkflowDefinition() != null) {
-            procedureTypeDto.setWorkflowDefinitionId(fkIdProcedureType.getWorkflowDefinition().getId());
-            procedureTypeDto.setWorkflowDefinitionName(fkIdProcedureType.getWorkflowDefinition().getName());
-        }
-        dto.setProcedureType(procedureTypeDto);
-
-        if (fkIdDeed != null) {
-            DtoDeed deedDto = new DtoDeed();
-
-            deedDto.setIdDeed(fkIdDeed.getIdDeed());
-            deedDto.setNumber(fkIdDeed.getNumber());
-
-            dto.setDeed(deedDto);
-        }
-
-        if (fkIdManagement != null) {
-            DtoDeedManagement deedManagementDto = new DtoDeedManagement();
-
-            deedManagementDto.setIdManagement(fkIdManagement.getIdManagement());
-            deedManagementDto.setNumber(fkIdManagement.getNumber());
-
-            DtoPerson notary = new DtoPerson();
-            notary.setId(fkIdManagement.getFkIdNotaryPerson().getPersonId());
-            notary.setNotaryRegistrationNumber(fkIdManagement.getFkIdNotaryPerson().getNotaryRegistrationNumber());
-
-            deedManagementDto.setPersonNotary(notary);
-
-            dto.setDeedManagement(deedManagementDto);
-        }
-
-        if (fkIdProperty != null) {
-            DtoProperty propertyDto = new DtoProperty();
-            propertyDto.setIdProperty(fkIdProperty.getIdProperty());
-            propertyDto.setAddress(fkIdProperty.getAddress());
-            propertyDto.setCadastralDesignation(fkIdProperty.getCadastralDesignation());
-            propertyDto.setNotes(fkIdProperty.getNotes());
-            propertyDto.setFiscalAppraisal(fkIdProperty.getFiscalAppraisal());
-            propertyDto.setRegistrationNumber(fkIdProperty.getRegistrationNumber());
-            propertyDto.setVolumeFolioLandRecord(fkIdProperty.getVolumeFolioLandRecord());
-            propertyDto.setBoundaries(fkIdProperty.getBoundaries());
-            dto.setProperty(propertyDto);
-        } else {
-            dto.setProperty(null);
-        }
-
-        if (this.fkIdBudget != null) {
-            DtoBudget budget = new DtoBudget();
-
-            budget.setIdBudget(fkIdBudget.getIdBudget());
-
-            dto.setBudget(budget);
-        }
-
-        this.submittedDocumentList = new ArrayList<>();
-
-        return dto;
-    }
 
     public DtoSubmittedDocument setDtoDocument(SubmittedDocument document) {
         DtoSubmittedDocument dtoSubmittedDocument = new DtoSubmittedDocument();

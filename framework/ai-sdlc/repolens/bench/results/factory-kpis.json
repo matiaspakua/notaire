@@ -55,6 +55,14 @@
     "cold_index_embed_s": 1251.85,
     "first_query_wall_s": 7.104,
     "refresh_reported_s": 5.52,
+    "second_observation_after_user_merge": {
+      "from_commit": "b0065a209ca9",
+      "to_commit": "623b2d5621b5",
+      "refresh_reported_s": 5.79,
+      "first_query_wall_s": 7.718,
+      "query": "Procedure.getDto",
+      "top_hits": ["Procedure.getDto", "DeedLegacyMapper.toDto", "TestimonyLegacyMapper.copyDeed"]
+    },
     "second_query_wall_s": 1.508,
     "second_query_refreshed": false,
     "locate_query": "User.setAttributes",

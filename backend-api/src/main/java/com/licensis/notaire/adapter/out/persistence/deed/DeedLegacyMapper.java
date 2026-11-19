@@ -1,6 +1,7 @@
 package com.licensis.notaire.adapter.out.persistence.deed;
 
 import com.licensis.notaire.adapter.out.persistence.folio.FolioLegacyMapper;
+import com.licensis.notaire.adapter.out.persistence.procedure.ProcedureLegacyMapper;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.Procedure;
@@ -38,7 +39,7 @@ public final class DeedLegacyMapper {
         var procedureList = deed.getProcedureList();
         if (procedureList != null && !procedureList.isEmpty()) {
             for (Procedure procedure : procedureList) {
-                deedDto.getProcedures().add(procedure.getDto());
+                deedDto.getProcedures().add(ProcedureLegacyMapper.toDto(procedure));
             }
         } else {
             deedDto.setProcedures(null);

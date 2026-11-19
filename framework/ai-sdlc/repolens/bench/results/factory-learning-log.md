@@ -45,5 +45,6 @@ Short notes from the cloud factory loop. Product behavior is not documented here
 - The next search took 1.508s and did not refresh.
 - `git grep` for the declaration took 0.0061s and named only that line.
 - 5.52s is not a re-embed. It is not the next RepoLens item. DeedManagement and Procedure remain on the ratchet.
+- After #2334 merged, the next search (`Procedure.getDto`, `b0065a20` to `623b2d56`) printed `index refreshed in 5.79s`. The query took 7.718s and ranked `Procedure.getDto`, then `DeedLegacyMapper.toDto` and `TestimonyLegacyMapper.copyDeed`. Same conclusion: about 6s, not the next RepoLens item.
 
 
