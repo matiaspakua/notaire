@@ -1,6 +1,5 @@
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoWorkflowNode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -117,19 +116,6 @@ public class WorkflowNode implements Serializable, Persistable<Integer> {
 
     public void setVersion(int version) {
         this.version = version;
-    }
-
-    public DtoWorkflowNode toDto() {
-        DtoWorkflowNode dto = new DtoWorkflowNode();
-        dto.setId(this.id);
-        dto.setWorkflowDefinitionId(workflowDefinition != null ? workflowDefinition.getId() : null);
-        dto.setStatusManagementId(managementStatus != null ? managementStatus.getIdManagementStatus() : null);
-        dto.setStatusManagementName(managementStatus != null ? managementStatus.getName() : null);
-        dto.setType(type != null ? type.name() : null);
-        dto.setPositionX(this.positionX);
-        dto.setPositionY(this.positionY);
-        dto.setVersion(this.version);
-        return dto;
     }
 
     @Override

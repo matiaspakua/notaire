@@ -1,6 +1,5 @@
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoWorkflowDefinition;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -115,16 +114,6 @@ public class WorkflowDefinition implements Serializable, Persistable<Integer> {
 
     public void setTransitions(List<WorkflowTransition> transitions) {
         this.transitions = transitions;
-    }
-
-    public DtoWorkflowDefinition toDto() {
-        DtoWorkflowDefinition dto = new DtoWorkflowDefinition();
-        dto.setId(this.id);
-        dto.setName(this.name);
-        dto.setDescription(this.description);
-        dto.setActive(this.active);
-        dto.setVersion(this.version);
-        return dto;
     }
 
     @Override

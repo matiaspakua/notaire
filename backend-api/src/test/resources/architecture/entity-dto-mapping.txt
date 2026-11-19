@@ -2,6 +2,3 @@ DeedManagement#getDto
 Person#setAttributes
 Procedure#getDto
 User#setAttributes
-WorkflowDefinition#toDto
-WorkflowNode#toDto
-WorkflowTransition#toDto
