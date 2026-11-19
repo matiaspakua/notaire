@@ -106,6 +106,7 @@ function ManagementsList() {
   const [caseSummaryId, setCaseSummaryId] = useState<number | null>(null);
   const [waitFolderId, setWaitFolderId] = useState<number | null>(null);
   const [waitReason, setWaitReason] = useState("");
+  const [waitReasonError, setWaitReasonError] = useState(false);
   const [editing, setEditing] = useState<DeedManagement | null>(null);
   const [number, setNumber] = useState("");
   const [clientFilter, setClientFilter] = useState("");
@@ -284,7 +285,7 @@ function ManagementsList() {
   async function handlePutOnHold() {
     if (!waitFolderId || !foldersManagementId) return;
     if (!waitReason.trim()) {
-      toast.error(t("errorMotivoRequerido"));
+      setWaitReasonError(true);
       return;
     }
     try {
@@ -671,6 +672,7 @@ function ManagementsList() {
             setFoldersManagementId(null);
             setWaitFolderId(null);
             setWaitReason("");
+            setWaitReasonError(false);
           }
         }}
       >
@@ -679,10 +681,18 @@ function ManagementsList() {
             <FormContainer>
               <FormHeader dialogTitle title={t("ponerEnEsperaTitle")} />
               <FormSection title={t("ponerEnEsperaTitle")}>
-                <FormField label={t("motivoEspera")} required helperText={t("motivoEsperaHelper")}>
+                <FormField
+                  label={t("motivoEspera")}
+                  required
+                  helperText={t("motivoEsperaHelper")}
+                  error={waitReasonError ? t("errorMotivoRequerido") : undefined}
+                >
                   <Input
                     value={waitReason}
-                    onChange={(e) => setWaitReason(e.target.value)}
+                    onChange={(e) => {
+                      setWaitReason(e.target.value);
+                      if (e.target.value.trim()) setWaitReasonError(false);
+                    }}
                     placeholder={t("motivoEsperaPlaceholder")}
                     data-testid="input-wait-reason"
                   />
@@ -694,6 +704,7 @@ function ManagementsList() {
                   onClick={() => {
                     setWaitFolderId(null);
                     setWaitReason("");
+                    setWaitReasonError(false);
                   }}
                 >
                   {tc("cancel")}
