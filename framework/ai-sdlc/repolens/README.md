@@ -289,7 +289,7 @@ pipx install /path/to/repolens && cd my-repo && repolens setup --index && repole
 ```
 
 Commit the files `setup` wrote (they hold no machine path), add a pointer to `AGENTS.md` (or the harness's
-instruction file) such as "navigate with the repolens MCP tools before grep", and read `repolens report` after
+instruction file). The Notaire rule is in `AGENTS.md`: search when the symbol is unknown, `rg` for an exact symbol, `impact` for callers, and `repolens miss` on a fallback. Read `repolens report` after
 a few days of work.
 
 ## HTTP API

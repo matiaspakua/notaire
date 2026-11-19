@@ -23,7 +23,13 @@ Invoke this skill when:
 
 ### The Golden Rule
 
-> **Every task → One Use Case → One Issue → One Branch → One PR**
+> **Every task → One Use Case → One open Issue → One Branch → One PR**
+
+Do not open a new GitHub issue unless it is necessary (a security problem, or a finding that must be tracked across agents). Work the open queue first. Note other findings in the factory learning log.
+
+### Locate code
+
+Follow `AGENTS.md`: `repolens search` when the file or symbol is unknown; `rg` for an exact symbol or path; `repolens impact` for callers. If you fall back, run `repolens miss "<query>"`. Pair grep against repolens every third implemented issue, and on every miss, not on every issue.
 
 ### Workflow Summary
 

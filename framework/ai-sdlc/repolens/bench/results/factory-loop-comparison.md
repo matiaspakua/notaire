@@ -110,6 +110,14 @@ No percentage improvement. Grep was faster on both issues. Repolens search misse
 
 Before the patch, `repolens report` on this machine printed `0 events` after CLI searches, and `usage.jsonl` was absent. The new test failed with `FileNotFoundError` on that path. After the patch, the same test records two events (`search`, `impact`) and `report["server"]["calls"] == 2`. A live `search "Deed getDto" -k 1` on the indexed checkout, using this patch, then `repolens report --gate` printed: `repolens usage: 1 calls, 0 sessions, adoption 0%, hit rate n/a, p95 988 ms; ok: no problem found`.
 
+## Vitest retry locate
+
+| Issue | Order | Pass | Calls | Output bytes | Wall time | Hit rate | Notes |
+|---|---|---|---|---|---|---|---|
+| Vitest retry in preflight | grep first | grep | 1 | 170 | 0.002s | 1/2 | Named both lines in `preflight.sh`. The new test file could not have been named. |
+| Vitest retry in preflight | grep first | repolens | 1 | 2,164 | 1.924s | 1/2 | Ranked `preflight.sh` third, after a coverage doc and `vitest.config.ts`. |
+
+`repolens report --gate` after that search: `4 calls, 0 sessions, adoption 0%, hit rate n/a, p95 988 ms`.
 ## History.getDto locate
 
 Repolens first, then grep. The diff is `History.java` and `entity-dto-mapping.txt`. The new test could not have been named. `repolens report --gate` after the searches printed `6 calls, 0 sessions, adoption 0%, hit rate n/a, p95 988 ms`. The index still reflects the graph from before the 0.4.2 linker change.
