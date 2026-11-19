@@ -83,6 +83,7 @@ class _Index:
     by_suffix: dict[str, list[str]] = field(default_factory=lambda: defaultdict(list))
     dirs: dict[tuple[str, str], str] = field(default_factory=dict)
     dir_by_suffix: dict[str, list[str]] = field(default_factory=lambda: defaultdict(list))
+    names: set[str] = field(default_factory=set)  # the last segment of every file and directory path
     file_of: dict[str, str] = field(default_factory=dict)
     by_file: dict[str, list[str]] = field(default_factory=lambda: defaultdict(list))
     stems_sorted: list[str] = field(default_factory=list)
@@ -97,6 +98,7 @@ class Linker:
         self.ix = _Index()
         self.edges: dict[tuple[str, str, str], float] = {}
         self.virtual: dict[str, Node] = {}
+        self.path_mentions: dict[tuple[str, str, str], tuple[list[str], bool]] = {}
         self.imported: dict[str, set[str]] = defaultdict(set)
         self.git_cache: dict[str, tuple[str, str]] = {}
         self.family: dict[str, str] = {}
@@ -155,6 +157,7 @@ class Linker:
                 stem = n.name.split(".", 1)[0]
                 ix.by_stem[stem.lower()].append(n.id)
                 parts = n.path.split("/")
+                ix.names.update(parts)
                 for i in range(len(parts)):
                     ix.by_suffix["/".join(parts[i:])].append(n.id)
             elif n.kind in SYMBOL_KINDS:
@@ -680,37 +683,47 @@ class Linker:
                 self._edge(src, h, "mentions", 1.0 / len(hits))
 
     def _mention_path(self, project: str, src: str, token: str) -> bool:
-        """Resolve a path the text names: relative to the mentioning file (`./`, `../`, or a sibling), from
-        the repository root (`/icons/x.png` is `public/icons/x.png` by suffix), with the mentioning file's
-        extension when the name has none (`require "../lib/x"`), else by suffix. Several candidates: the ones
-        sharing the longest path prefix with the mentioning file, and none when more than three remain."""
+        """Link a path the text names; True when the token named a file or directory (linked or ambiguous)."""
         here = self._split(src)[1]
-        base = posixpath.dirname(here)
+        key = (project, here, token)
+        resolved = self.path_mentions.get(key)
+        if resolved is None:
+            resolved = self.path_mentions[key] = self._resolve_path(project, here, token)
+        targets, named = resolved
+        for h in targets:
+            self._edge(src, h, "mentions", 1.0 / len(targets))
+        return named
+
+    def _resolve_path(self, project: str, here: str, token: str) -> tuple[list[str], bool]:
+        """The targets a path names, resolved once per file (a document's sections repeat its tokens):
+        relative to the mentioning file (`./`, `../`, or a sibling), from the repository root (`/icons/x.png`
+        is `public/icons/x.png` by suffix), with the mentioning file's extension when the name has none
+        (`require "../lib/x"`), else by suffix. Several candidates: the ones sharing the longest path prefix
+        with the mentioning file, and none when more than three remain."""
         name = token.rstrip("/")
+        last = name.rsplit("/", 1)[-1]
+        ext = posixpath.splitext(here)[1]
+        if last not in self.ix.names and last + ext not in self.ix.names:
+            return [], False  # names no file or directory of any store: most candidates end here
+        base = posixpath.dirname(here)
         relative = name.startswith(("./", "../"))
         exact = [posixpath.normpath(posixpath.join(base, name))] if relative else \
             [posixpath.normpath(name.lstrip("/")), posixpath.normpath(posixpath.join(base, name.lstrip("/")))]
-        ext = posixpath.splitext(here)[1]
-        if ext and "." not in name.rsplit("/", 1)[-1]:
+        if ext and "." not in last:
             exact += [e + ext for e in exact]
         for target in exact:
             hit = self.ix.files.get((project, target)) or self.ix.dirs.get((project, target))
             if hit and target != here:
-                self._edge(src, hit, "mentions")
-                return True
+                return [hit], True
         if relative or ("/" not in name and "." not in name):
-            return False
+            return [], False
         key = posixpath.normpath(name.lstrip("/"))
         hits = [h for h in (*self.ix.by_suffix.get(key, ()), *self.ix.dir_by_suffix.get(key, ()))
                 if h.startswith(project + ":") and self._target_path(h) != here]
         if not hits:
-            return False
+            return [], False
         nearest = _nearest(here, hits, self._target_path)
-        if len(nearest) > 3:
-            return True  # named, but too ambiguous to link
-        for h in nearest:
-            self._edge(src, h, "mentions", 1.0 / len(nearest))
-        return True
+        return (nearest if len(nearest) <= 3 else []), True  # more than three equally near: named, not linked
 
     def _target_path(self, node_id: str) -> str:
         node = self.ix.nodes.get(node_id) or self.virtual.get(node_id)
