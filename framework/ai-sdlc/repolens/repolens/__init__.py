@@ -5,4 +5,4 @@ graph in SQLite, and answer hybrid lexical + semantic + Personalized-PageRank qu
 CLI, an HTTP API and an MCP server.
 """
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
