@@ -32,6 +32,8 @@ KINDS = (
     "providers",
     "integrations",
     "rules",
+    "prompts",
+    "hooks",
 )
 
 

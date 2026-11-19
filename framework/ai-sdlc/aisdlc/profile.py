@@ -74,6 +74,14 @@ class ApprovalSettings:
 
 
 @dataclass(frozen=True)
+class EntitySettings:
+    """Which harnesses `entity apply` syncs. Paths stay relative to the project."""
+
+    harnesses: tuple[str, ...] = ("cursor", "claude")
+    targets: tuple[tuple[str, str], ...] = ()
+
+
+@dataclass(frozen=True)
 class KnowledgeSettings:
     """Code-knowledge CLI. Default provider is RepoLens, invoked as a command, never imported."""
 
@@ -234,6 +242,7 @@ class Profile:
     stage_profiles: tuple[StageProfile, ...] = ()
     grants: tuple[Grant, ...] = ()
     knowledge: KnowledgeSettings = field(default_factory=KnowledgeSettings)
+    entities: EntitySettings = field(default_factory=EntitySettings)
 
     def stages(self) -> list[str]:
         declared = {g.stage for g in self.gates}
@@ -353,6 +362,7 @@ def _build(data: dict, errors: list[str]) -> Profile:
     profile.committer = _committer(data.get("committer", {}), errors)
     profile.approval = _approval(data.get("approval", {}), errors)
     profile.knowledge = _knowledge(data.get("knowledge", {}), errors)
+    profile.entities = _entities(data.get("entities", {}), errors)
     gate_stages = {g.stage for g in profile.gates}
     gate_names = {g.name for g in profile.gates}
     profile.stage_profiles = _stage_profiles(
@@ -368,6 +378,34 @@ def _build(data: dict, errors: list[str]) -> Profile:
     )
     _check_prices(profile.prices, errors)
     return profile
+
+
+def _entities(raw: object, errors: list[str]) -> EntitySettings:
+    if raw is None:
+        raw = {}
+    if not isinstance(raw, dict):
+        errors.append("[entities] must be a table")
+        return EntitySettings()
+    harnesses = raw.get("harnesses", ["cursor", "claude"])
+    if not isinstance(harnesses, list) or any(not isinstance(item, str) or not item.strip() for item in harnesses):
+        errors.append("entities.harnesses must be a list of strings")
+        harnesses = ["cursor", "claude"]
+    targets_raw = raw.get("targets", {})
+    targets: list[tuple[str, str]] = []
+    if targets_raw is None:
+        targets_raw = {}
+    if not isinstance(targets_raw, dict):
+        errors.append("entities.targets must be a table of harness = relative path")
+    else:
+        for key, value in targets_raw.items():
+            if not isinstance(key, str) or not isinstance(value, str) or not value.strip():
+                errors.append(f"entities.targets.{key} must be a relative path")
+                continue
+            if value.startswith("/") or ".." in Path(value).parts:
+                errors.append(f"entities.targets.{key} must stay inside the project")
+                continue
+            targets.append((key, value.strip()))
+    return EntitySettings(harnesses=tuple(item.strip() for item in harnesses), targets=tuple(targets))
 
 
 def _string_tuple(value: object, label: str, errors: list[str]) -> tuple[str, ...]:
