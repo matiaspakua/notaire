@@ -167,7 +167,14 @@ def _counted(text: str) -> tuple[str, int]:
 
 
 def _tool(mcp, enabled: tuple[str, ...]):
+    """Register a tool with plain-text results only: a structured copy would send every answer twice and add
+    an output schema to the tool list each session pays for."""
     def register(fn):
-        return mcp.tool()(fn) if fn.__name__ in enabled else fn
+        if fn.__name__ not in enabled:
+            return fn
+        try:
+            return mcp.tool(structured_output=False)(fn)
+        except TypeError:  # mcp < 1.10 has no structured output
+            return mcp.tool()(fn)
 
     return register
