@@ -248,7 +248,7 @@ def assess_dast(repo: Path, base_url: str | None, skip: bool, profile: str) -> C
     if "zaproxy/action-baseline" not in zap_text:
         return _result(case, "FAIL", "dast-zap.yml does not run zaproxy/action-baseline")
     if profile == "ci":
-        return _result(case, "PASS", "CI DAST is the weekly ZAP baseline (blocking allowlist, #1738)")
+        return _result(case, "PASS", "CI DAST is the ZAP baseline on a version tag and Monday (blocking allowlist, #1738, #2004)")
     if skip or not base_url:
         return _result(
             case,

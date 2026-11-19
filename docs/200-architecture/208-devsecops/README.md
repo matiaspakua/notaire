@@ -322,7 +322,7 @@ env:
 | `sdlc-process.yml` | PR opened/synchronized/reopened/labeled | CONSTITUTION process gates: commit messages, TDD evidence, `sdlc-exception` label, agent-rule file lint, plus the scripts' self-tests |
 | `test-coverage-report.yml` | Daily schedule (02:00 UTC), manual dispatch | Publishes a standalone coverage report artifact |
 | `performance-test.yml` | Weekly schedule (Mondays 04:00 UTC) | k6 load test |
-| `dast-zap.yml` | Weekly schedule (Mondays 05:00 UTC) + manual dispatch | OWASP ZAP baseline DAST against a live API (blocking on non-allowlisted alerts via `.zap/rules.tsv` — not on every PR). See [DAST / OpenAPI / backup-restore](#dast--openapi--backup-restore-issue-1067). |
+| `dast-zap.yml` | Version tags (`v*` / `notaire-v*`), weekly Mondays 05:00 UTC, and manual dispatch | OWASP ZAP baseline DAST against a live API (blocking on non-allowlisted alerts via `.zap/rules.tsv` — not on a pull request, #2004). See [DAST / OpenAPI / backup-restore](#dast--openapi--backup-restore-issue-1067). |
 | `openapi-contract.yml` | PR into `main` + manual dispatch | Regenerates OpenAPI from springdoc, fails if `backend-api/openapi/openapi.yaml` is stale, and fails on breaking changes vs the base branch (`oasdiff`) unless the pull request lists them in its own file under `backend-api/openapi/accepted-breaking-changes.d/` |
 | `backup-restore-smoke.yml` | Weekly schedule (Sundays 03:00 UTC) + manual dispatch | Backup→restore→smoke once `#256` lands (`infra/scripts/backup-postgres.sh`); until then skips with an explicit blocked-on-#256 notice (no false-green restore) |
 | `deploy-github-page.yml` | After CI succeeds on `main` | Publishes the GitHub Pages documentation site |
