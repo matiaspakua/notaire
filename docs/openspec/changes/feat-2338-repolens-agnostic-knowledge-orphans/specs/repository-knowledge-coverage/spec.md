@@ -20,6 +20,11 @@ A file whose language has a tree-sitter grammar MUST yield its definitions (with
 - **WHEN** a shell script defines a function
 - **THEN** the function is a node of the file
 
+#### Scenario: an ESM TypeScript import
+
+- **WHEN** a TypeScript file imports `./format.js` and the source is `format.ts`
+- **THEN** the import resolves to `format.ts` and calls through it are linked
+
 #### Scenario: a format with no definitions
 
 - **WHEN** a Terraform or Groovy build file is indexed
@@ -46,7 +51,7 @@ Every text file, code included, MUST link the repository files and directories i
 
 ### Requirement: Orphans are reported
 
-repolens MUST list the files with no relation to any other file (structure such as containment and directories does not count; a shared route, table or tag does; a shared library import does not) and, separately, the files related only through git history (co-change, issue tags). Symbols with no relation MUST be listed on request. Paths under `[ranking] demote` MUST be counted, not listed, unless requested. The list MUST be available from the CLI, the HTTP API, the MCP server and the UI, and an index run MUST report how many orphans there are.
+repolens MUST list the files with no relation to any other file (structure such as containment and directories does not count; a shared route, table or tag does; a shared library import does not) and, separately, the files related only through git history (co-change, issue tags). Symbols with no relation MUST be listed on request. Paths under `[ranking] demote` and files a tool or runtime reads by name (`[orphans] conventional`: `package-info.java`, `LICENSE`, `__init__.py`...) MUST be counted, not listed, unless requested. The list MUST be available from the CLI, the HTTP API, the MCP server and the UI, and an index run MUST report how many orphans there are.
 
 #### Scenario: an isolated file
 
@@ -57,6 +62,11 @@ repolens MUST list the files with no relation to any other file (structure such 
 
 - **WHEN** a file's only relation is a co-change with another file
 - **THEN** it is listed as related only through git history, not as isolated
+
+#### Scenario: a file a tool reads by name
+
+- **WHEN** `LICENSE` or `__init__.py` relates to nothing
+- **THEN** it is counted as conventional, listed with `--all`, and listed as an orphan when `[orphans] conventional` is empty
 
 #### Scenario: every interface
 
