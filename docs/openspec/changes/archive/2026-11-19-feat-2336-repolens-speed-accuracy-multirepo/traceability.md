@@ -20,9 +20,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `feat/2336_repolens-speed-callers-multirepo` | created |
 | Tasks | `tasks.md` | groups 1-9 done |
 | Commits | `7d4cbf1b`..archive commit, see Gate log | done |
-| Pull Request | pending | pending |
+| Pull Request | #2346 | merged 2026-11-19 16:15 UTC |
 | CI run | pending | pending |
-| Merge commit | pending | pending |
+| Merge commit | `9948cf63` (squash on `main`) | done |
 | Release / tag | pending | pending |
 | Smoke test | pending | pending |
 

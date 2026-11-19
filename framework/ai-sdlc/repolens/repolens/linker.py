@@ -51,6 +51,7 @@ CALLABLE_KINDS = frozenset({"function", "method", "class", "variable"})
 LANG_FAMILY = {
     "java": "jvm", "kotlin": "jvm", "scala": "jvm", "typescript": "js", "tsx": "js", "javascript": "js",
 }
+_EMITTED = {".js": (".ts", ".tsx"), ".jsx": (".tsx",), ".mjs": (".mts",), ".cjs": (".cts",)}
 TS_EXTS = ("", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".d.ts", "/index.ts", "/index.tsx", "/index.js")
 TEST_PATH = re.compile(
     r"(^|/)(tests?|__tests__|spec|e2e|it)/|(Test|Tests|IT|Spec)\.(java|kt|cs|scala)$|"
@@ -80,6 +81,9 @@ class _Index:
     by_stem: dict[str, list[str]] = field(default_factory=lambda: defaultdict(list))
     by_fqn: dict[str, str] = field(default_factory=dict)
     by_suffix: dict[str, list[str]] = field(default_factory=lambda: defaultdict(list))
+    dirs: dict[tuple[str, str], str] = field(default_factory=dict)
+    dir_by_suffix: dict[str, list[str]] = field(default_factory=lambda: defaultdict(list))
+    names: set[str] = field(default_factory=set)  # the last segment of every file and directory path
     file_of: dict[str, str] = field(default_factory=dict)
     by_file: dict[str, list[str]] = field(default_factory=lambda: defaultdict(list))
     stems_sorted: list[str] = field(default_factory=list)
@@ -94,6 +98,7 @@ class Linker:
         self.ix = _Index()
         self.edges: dict[tuple[str, str, str], float] = {}
         self.virtual: dict[str, Node] = {}
+        self.path_mentions: dict[tuple[str, str, str], tuple[list[str], bool]] = {}
         self.imported: dict[str, set[str]] = defaultdict(set)
         self.git_cache: dict[str, tuple[str, str]] = {}
         self.family: dict[str, str] = {}
@@ -152,6 +157,7 @@ class Linker:
                 stem = n.name.split(".", 1)[0]
                 ix.by_stem[stem.lower()].append(n.id)
                 parts = n.path.split("/")
+                ix.names.update(parts)
                 for i in range(len(parts)):
                     ix.by_suffix["/".join(parts[i:])].append(n.id)
             elif n.kind in SYMBOL_KINDS:
@@ -221,7 +227,12 @@ class Linker:
                     self._edge(proj, child, "dir_contains")
                     break
                 did = self._vnode(project, "dir", parent + "/", parent.rsplit("/", 1)[-1] + "/")
-                self.virtual[did].path = parent
+                if (project, parent) not in self.ix.dirs:
+                    self.virtual[did].path = parent
+                    self.ix.dirs[(project, parent)] = did
+                    parts = parent.split("/")
+                    for i in range(len(parts)):
+                        self.ix.dir_by_suffix["/".join(parts[i:])].append(did)
                 existed = (did, child, "dir_contains") in self.edges
                 self._edge(did, child, "dir_contains")
                 if existed:
@@ -274,8 +285,11 @@ class Linker:
                 if target.startswith(prefix) and (path.startswith(alias_dir) or not alias_dir):
                     bases.append(posixpath.normpath(posixpath.join(alias_dir, repl + target[len(prefix):])))
         for base in bases:
-            for ext in TS_EXTS:
-                fid = self.ix.files.get((project, base + ext))
+            stem, ext = posixpath.splitext(base)
+            # ESM TypeScript imports the emitted file (`./format.js`): its source is `./format.ts`
+            sources = [stem + e for e in _EMITTED.get(ext, ())]
+            for candidate in (*sources, *(base + e for e in TS_EXTS)):
+                fid = self.ix.files.get((project, candidate))
                 if fid:
                     return [fid]
         return []
@@ -658,14 +672,8 @@ class Linker:
             self._edge(src, fid, "links")
 
     def _mention(self, project: str, src: str, _k: str, token: str, _extra: str) -> None:
-        if "/" in token or re.search(r"\.[A-Za-z]{1,6}$", token):
-            fid = self.ix.files.get((project, token))
-            hits = [fid] if fid else [h for h in self.ix.by_suffix.get(token, []) if h.startswith(project + ":")]
-            if not hits and "/" not in token:
-                hits = [h for h in self.ix.by_stem.get(token.split(".", 1)[0].lower(), [])
-                        if h.startswith(project + ":") and self.ix.nodes[h].name == token]
-            for h in hits[:3]:
-                self._edge(src, h, "mentions", 1.0 / len(hits[:3]))
+        """A file or directory the text names, else a type or function it names."""
+        if self._mention_path(project, src, token) or "/" in token:
             return
         hits = self.ix.by_qual.get(token) or [
             s for s in self.ix.by_name.get(token, []) if self.ix.nodes[s].kind in TYPE_KINDS | {"function"}]
@@ -673,6 +681,53 @@ class Linker:
         if 0 < len(hits) <= 3:
             for h in hits:
                 self._edge(src, h, "mentions", 1.0 / len(hits))
+
+    def _mention_path(self, project: str, src: str, token: str) -> bool:
+        """Link a path the text names; True when the token named a file or directory (linked or ambiguous)."""
+        here = self._split(src)[1]
+        key = (project, here, token)
+        resolved = self.path_mentions.get(key)
+        if resolved is None:
+            resolved = self.path_mentions[key] = self._resolve_path(project, here, token)
+        targets, named = resolved
+        for h in targets:
+            self._edge(src, h, "mentions", 1.0 / len(targets))
+        return named
+
+    def _resolve_path(self, project: str, here: str, token: str) -> tuple[list[str], bool]:
+        """The targets a path names, resolved once per file (a document's sections repeat its tokens):
+        relative to the mentioning file (`./`, `../`, or a sibling), from the repository root (`/icons/x.png`
+        is `public/icons/x.png` by suffix), with the mentioning file's extension when the name has none
+        (`require "../lib/x"`), else by suffix. Several candidates: the ones sharing the longest path prefix
+        with the mentioning file, and none when more than three remain."""
+        name = token.rstrip("/")
+        last = name.rsplit("/", 1)[-1]
+        ext = posixpath.splitext(here)[1]
+        if last not in self.ix.names and last + ext not in self.ix.names:
+            return [], False  # names no file or directory of any store: most candidates end here
+        base = posixpath.dirname(here)
+        relative = name.startswith(("./", "../"))
+        exact = [posixpath.normpath(posixpath.join(base, name))] if relative else \
+            [posixpath.normpath(name.lstrip("/")), posixpath.normpath(posixpath.join(base, name.lstrip("/")))]
+        if ext and "." not in last:
+            exact += [e + ext for e in exact]
+        for target in exact:
+            hit = self.ix.files.get((project, target)) or self.ix.dirs.get((project, target))
+            if hit and target != here:
+                return [hit], True
+        if relative or ("/" not in name and "." not in name):
+            return [], False
+        key = posixpath.normpath(name.lstrip("/"))
+        hits = [h for h in (*self.ix.by_suffix.get(key, ()), *self.ix.dir_by_suffix.get(key, ()))
+                if h.startswith(project + ":") and self._target_path(h) != here]
+        if not hits:
+            return [], False
+        nearest = _nearest(here, hits, self._target_path)
+        return (nearest if len(nearest) <= 3 else []), True  # more than three equally near: named, not linked
+
+    def _target_path(self, node_id: str) -> str:
+        node = self.ix.nodes.get(node_id) or self.virtual.get(node_id)
+        return node.path if node is not None else ""
 
     # -- git co-change ---------------------------------------------------------------------
     def _git_log(self, project: str, root: Path) -> str:
@@ -786,6 +841,23 @@ def _git_head(root: Path) -> str:
                               timeout=30).stdout.decode().strip()
     except (OSError, subprocess.SubprocessError):
         return ""
+
+
+def _nearest(here: str, ids: list[str], path_of) -> list[str]:
+    """The ids whose path shares the most leading directories with `here`."""
+    mine = here.split("/")[:-1]
+
+    def shared(node_id: str) -> int:
+        n = 0
+        for a, b in zip(mine, path_of(node_id).split("/"), strict=False):
+            if a != b:
+                break
+            n += 1
+        return n
+
+    scores = {h: shared(h) for h in dict.fromkeys(ids)}
+    best = max(scores.values())
+    return [h for h, v in scores.items() if v == best]
 
 
 def _common_prefix(a: str, b: str) -> int:

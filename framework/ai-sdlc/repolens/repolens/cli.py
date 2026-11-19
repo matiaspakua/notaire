@@ -14,7 +14,7 @@ from . import __version__
 # every tool call): they import only the standard library. The rest import the engine lazily.
 LIGHT = ("hook", "report", "setup", "doctor", "refresh", "miss", "cache", "repos")
 # Read-only queries: answered by the resident per-worktree service when one runs (repolens/daemon.py).
-QUERY = frozenset({"search", "node", "outline", "snippet", "neighbors", "impact", "path"})
+QUERY = frozenset({"search", "node", "outline", "snippet", "neighbors", "impact", "path", "orphans"})
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -114,6 +114,13 @@ def _parser() -> argparse.ArgumentParser:
     s.add_argument("--transport", choices=["stdio", "sse", "streamable-http"], default="stdio")
     s.add_argument("--all-tools", action="store_true", help="also expose neighbors, stats and reindex")
 
+    s = sub.add_parser("orphans", help="files (and symbols) that relate to nothing: candidates to review")
+    s.add_argument("--symbols", action="store_true", help="also list symbols with no relation")
+    s.add_argument("--all", action="store_true",
+                   help="also list demoted paths and files tools read by name ([orphans] conventional)")
+    s.add_argument("--limit", type=int, default=50, help="entries listed per section (default 50)")
+    s.add_argument("--json", action="store_true")
+
     s = sub.add_parser("repos", help="repositories indexed on this machine (for --repos)")
     s.add_argument("--json", action="store_true")
     s.add_argument("--forget", metavar="NAME", help="remove a repository from the registry")
@@ -199,6 +206,10 @@ def _dispatch(args) -> int:  # noqa: C901 - flat command table
         if report.get("busy"):
             print("repolens: another index run holds this store; nothing done", file=sys.stderr)
             return 0
+        if not report.get("busy"):
+            from . import orphans
+
+            report["orphans"] = orphans.counts(kg.engine)
         print(json.dumps(report, indent=2) if args.json else _index_summary(report))
         return 0
     if args.cmd == "serve":
@@ -261,6 +272,14 @@ def answer(args, kg) -> tuple[int, str, list[str]]:
             text = json.dumps({"hits": [h.to_dict() for h in hits], "relevance": eng.relevance(args.query)})
         _record_cli(args, "search", args.query, text, len(hits), started)
         return (0 if hits else 1), text, notes
+    if args.cmd == "orphans":
+        from . import orphans
+
+        started = time.perf_counter()
+        found = orphans.find(eng, symbols=args.symbols, include_demoted=args.all, include_conventional=args.all)
+        text = json.dumps(found, indent=2) if args.json else render.orphans(found, args.limit)
+        _record_cli(args, "orphans", "", text, len(found["isolated"]) + len(found["history_only"]), started)
+        return 0, text, notes
     started = time.perf_counter()
     result, text = {
         "node": lambda: (r := eng.node(args.ref), render.node(r)),
@@ -327,12 +346,16 @@ def _refresh_if_stale(kg, notes: list[str] | None = None) -> None:
         else:
             notes.append(line)
 
-    stale, indexed, head = status(kg.store)
+    from .extractors import EXTRACTOR_VERSION
+
+    stale, indexed, head = status(kg.store, extractors=EXTRACTOR_VERSION)
     if not stale:
         return
     started = time.perf_counter()
-    shown = (indexed or "unknown")[:12]
-    say(f"repolens: index is behind HEAD ({shown} -> {head[:12]}); refreshing")
+    if indexed.startswith("extractors "):
+        say(f"repolens: index was written by other extractors ({indexed[11:]} -> {head[11:]}); refreshing")
+    else:
+        say(f"repolens: index is behind HEAD ({(indexed or 'unknown')[:12]} -> {head[:12]}); refreshing")
     report = kg.index(log=lambda *_a, **_k: None, wait=True)
     elapsed = time.perf_counter() - started
     if report.get("busy"):
@@ -505,6 +528,10 @@ def _index_summary(report: dict) -> str:
     lines.append(f"graph: {s['files']} files, {s['nodes']} nodes, {s['edges']} edges, {s['embeddings']} embeddings "
                  f"({report['embed'].get('embedder')})")
     lines.append("time: " + ", ".join(f"{k} {v}" for k, v in t.items()))
+    o = report.get("orphans") or {}
+    if o.get("isolated") or o.get("history_only"):
+        lines.append(f"orphans: {o['isolated']} files relate to no other file, {o['history_only']} only through "
+                     "git history (repolens orphans)")
     return "\n".join(lines)
 
 

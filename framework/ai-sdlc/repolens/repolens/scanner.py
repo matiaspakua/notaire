@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import fnmatch
+import functools
 import hashlib
 import os
 import stat
@@ -59,7 +60,42 @@ def detect(path: str) -> tuple[str, str]:
             return (ext.lstrip(".") or family), family
     if name in ("dockerfile", "makefile", "jenkinsfile", "procfile") or name.startswith("dockerfile."):
         return name.split(".")[0], "text"
+    lang = _pack_language(name) if ext not in PLAIN_TEXT else None
+    if lang:
+        return lang, "code" if _analyzable(lang) else "text"
     return (ext.lstrip(".") or "text"), "text"
+
+
+# Generic extensions the pack maps to a niche language (`.txt` -> vimdoc, `.inc` -> sourcepawn): plain text.
+PLAIN_TEXT = frozenset({".txt", ".text", ".inc", ".log"})
+KNOWN_EXTENSIONS = frozenset(CODE_LANGS) | frozenset().union(*FAMILIES.values()) | {
+    ".txt", ".html", ".htm", ".css", ".scss", ".less", ".svg", ".sh", ".bat", ".cmd", ".ps1", ".env", ".lock",
+    ".gradle", ".tf", ".puml", ".bru", ".adoc", ".rst", ".log", ".vue", ".svelte", ".mdx", ".ipynb", ".j2",
+}
+
+
+@functools.lru_cache(maxsize=65536)
+def is_file_name(name: str) -> bool:
+    """A name that reads as a file: a known extension, or one the tree-sitter pack recognizes."""
+    ext = os.path.splitext(name.lower())[1]
+    return ext in KNOWN_EXTENSIONS or _pack_language(name.lower()) is not None
+
+
+@functools.lru_cache(maxsize=4096)
+def _pack_language(name: str) -> str | None:
+    """The tree-sitter pack's language for a file name (371 grammars in pack 1.14), or None."""
+    try:
+        from tree_sitter_language_pack import detect_language_from_path
+
+        return detect_language_from_path(name)
+    except Exception:  # noqa: BLE001 - no pack: the extension is the language
+        return None
+
+
+def _analyzable(lang: str) -> bool:
+    from .extractors.code import analyzable
+
+    return analyzable(lang)
 
 
 def _matches(path: str, patterns: list[str]) -> bool:

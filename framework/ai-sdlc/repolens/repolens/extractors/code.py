@@ -1,5 +1,10 @@
 """Source code extractor: one generic tree-sitter walker driven by per-language specs.
 
+A language with a hand-written spec (Java, Kotlin, C#, TypeScript, JavaScript, Python, Go, Rust) is walked by
+it; any other language with a tags query in the tree-sitter pack (`@definition.*`, `@reference.*`: Ruby, PHP,
+Dart, Elixir, Scala, Swift, C, C++, Lua... 71 in pack 1.14) gives its definitions and references through
+that query; any other grammar is walked by node-type names (`*_declaration`, `*_definition`, `*_item`).
+
 Emits symbols (classes, interfaces, functions, methods, top-level constants), containment edges and
 unresolved refs: imports, calls, type references, inheritance, HTTP routes served (Spring, JAX-RS,
 FastAPI/Flask, NestJS, Express), HTTP calls made (fetch/axios/api helpers, MockMvc) and DB tables.
@@ -7,11 +12,12 @@ FastAPI/Flask, NestJS, Express), HTTP calls made (fetch/axios/api helpers, MockM
 
 from __future__ import annotations
 
+import functools
 import re
 from dataclasses import dataclass, field
 
 from ..model import Edge, Extraction, Node, Ref, file_id, symbol_id
-from .common import Options, add_tags, new_file, normalize_route
+from .common import Options, add_path_mentions, add_tags, new_file, normalize_route
 from .jtypes import CLASS_KINDS, LOCAL_DECLARATIONS, JavaTypes, generic_type, return_type
 
 IDENTS = frozenset({
@@ -113,6 +119,14 @@ SPECS: dict[str, Spec] = {
     ),
 }
 _GENERIC = Spec(generic=True, type_refs=frozenset({"type_identifier"}))
+_TAGGED = Spec(type_refs=frozenset())  # definitions and references come from the language's tags query
+_TAG_KINDS = {
+    "class": "class", "struct": "class", "object": "class", "record": "class", "union": "class", "mixin": "class",
+    "interface": "interface", "trait": "interface", "protocol": "interface", "module": "type", "namespace": "type",
+    "type": "type", "impl": "type", "enum": "enum", "function": "function", "macro": "function",
+    "method": "method", "constructor": "method",
+}
+_TAG_TYPE_REFS = {"class": "type", "type": "type", "interface": "type", "module": "type", "implementation": "inherit"}
 _GENERIC_DEF = re.compile(r"(class|struct|interface|trait|enum|module|function|method)_(declaration|definition|item)$")
 _GENERIC_KIND = {"struct": "class", "trait": "interface", "module": "type"}
 
@@ -147,13 +161,51 @@ _RULE = re.compile(r"[-=*_#/]{4,}")
 _COMMENT_MARKS = re.compile(r"^\s*(/\*\*?|\*/|\*|//+|#+|\"\"\"|''')\s?", re.M)
 
 
-def _parser(lang: str):
-    from tree_sitter_language_pack import get_parser
+_PARSERS: dict[str, object] = {}
+_QUERIES: dict[str, object] = {}
 
-    cache = _parser.__dict__.setdefault("cache", {})
-    if lang not in cache:
-        cache[lang] = get_parser(lang)
-    return cache[lang]
+
+class GrammarUnavailable(RuntimeError):
+    """The language's grammar could not be loaded (offline, or not in the pack): index the file as text."""
+
+
+def _parser(lang: str):
+    """The language's parser; a grammar that fails to load is tried once per process, not once per file."""
+    if lang not in _PARSERS:
+        try:
+            from tree_sitter_language_pack import get_parser
+
+            _PARSERS[lang] = get_parser(lang)
+        except Exception:  # noqa: BLE001 - offline download, unknown grammar: the file is indexed as text
+            _PARSERS[lang] = None
+    parser = _PARSERS[lang]
+    if parser is None:
+        raise GrammarUnavailable(lang)
+    return parser
+
+
+@functools.cache
+def tags_query(lang: str) -> str | None:
+    try:
+        from tree_sitter_language_pack import get_tags_query
+
+        return get_tags_query(lang) or None
+    except Exception:  # noqa: BLE001 - no pack, unknown language
+        return None
+
+
+def analyzable(lang: str) -> bool:
+    """Definitions can be extracted: a hand-written spec, or a tags query."""
+    return lang in SPECS or tags_query(lang) is not None
+
+
+def _query(lang: str):
+    if lang not in _QUERIES:
+        from tree_sitter import Query
+        from tree_sitter_language_pack import get_language
+
+        _QUERIES[lang] = Query(get_language(lang), tags_query(lang))
+    return _QUERIES[lang]
 
 
 # Bodies of anonymous functions and blocks at module level (test-suite callbacks, IIFEs): their variables
@@ -172,7 +224,8 @@ class _Scope:
 class _Walker:
     def __init__(self, opts: Options, path: str, lang: str, src: bytes):
         self.opts, self.path, self.lang, self.src = opts, path, lang, src
-        self.spec = SPECS.get(lang, _GENERIC)
+        self.spec = SPECS.get(lang) or (_TAGGED if tags_query(lang) else _GENERIC)
+        self.tagged: dict[tuple[int, int, str], tuple[str, str, str]] = {}
         self.fid = file_id(opts.project, path)
         self.ex: Extraction | None = None
         self.seen_ids: set[str] = set()
@@ -193,6 +246,8 @@ class _Walker:
     def run(self, ex: Extraction) -> None:
         self.ex = ex
         root = _parser(self.lang).parse(self.src).root_node
+        if self.spec is _TAGGED:
+            self.tagged = self.tag_index(root)
         file_scope = _Scope(self.fid, "", "file")
         stack = [(child, file_scope) for child in reversed(root.named_children)]
         while stack:
@@ -201,7 +256,45 @@ class _Walker:
             if child_scope is not None:
                 stack.extend((c, child_scope) for c in reversed(node.named_children))
 
+    def tag_index(self, root) -> dict[tuple[int, int, str], tuple[str, str, str]]:
+        """(start, end, type) of every node the tags query captures -> (role, kind, name)."""
+        from tree_sitter import QueryCursor
+
+        index: dict[tuple[int, int, str], tuple[str, str, str]] = {}
+        for _pattern, captures in QueryCursor(_query(self.lang)).matches(root):
+            names = captures.get("name") or []
+            name = self.text(names[0]) if names else ""
+            for capture, nodes in captures.items():
+                role, _, kind = capture.partition(".")
+                if role in ("definition", "reference") and name:
+                    for node in nodes:
+                        index.setdefault((node.start_byte, node.end_byte, node.type), (role, kind, name))
+        return index
+
+    def visit_tagged(self, node, scope: _Scope) -> tuple[bool, _Scope | None]:
+        """A node the tags query captured: (handled, scope for its children)."""
+        tag = self.tagged.get((node.start_byte, node.end_byte, node.type))
+        if tag is None:
+            return False, None
+        role, kind, name = tag
+        if role == "definition":
+            mapped = _TAG_KINDS.get(kind)
+            if mapped is None:
+                return False, None
+            if mapped == "method" and scope.kind == "file":
+                mapped = "function"  # a top-level `def` (Ruby, Elixir) is a function
+            return True, self.define(node, scope, mapped, name)
+        if kind == "call":
+            self.ref(scope.sid, "call", name)
+        elif kind in _TAG_TYPE_REFS:
+            self.ref(scope.sid, _TAG_TYPE_REFS[kind], name)
+        return True, scope
+
     def visit(self, node, scope: _Scope) -> _Scope | None:
+        if self.tagged:
+            handled, child_scope = self.visit_tagged(node, scope)
+            if handled:
+                return child_scope
         t, spec = node.type, self.spec
         kind = spec.defs.get(t)
         if kind is None and spec.generic:
@@ -245,8 +338,8 @@ class _Walker:
             return None
         return scope
 
-    def define(self, node, scope: _Scope, kind: str) -> _Scope | None:
-        name = self.def_name(node)
+    def define(self, node, scope: _Scope, kind: str, name: str | None = None) -> _Scope | None:
+        name = name or self.def_name(node)
         if not name:
             return scope
         if kind == "function" and scope.kind in ("class", "interface", "enum"):
@@ -563,6 +656,8 @@ def extract_code(opts: Options, path: str, lang: str, text: str) -> Extraction:
     header = _header_comment(text)
     ex.nodes[0].text = (header + " | defines: " + ", ".join(walker.top_names[:40])).strip(" |")
     add_tags(ex, ex.nodes[0].id, text, opts)
+    # Files a program reads, serves, sources or runs: `"/icons/logo.png"`, `source ./lib/common.sh`.
+    add_path_mentions(ex, ex.nodes[0].id, text, limit=100, known_names=True)
     return ex
 
 

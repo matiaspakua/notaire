@@ -12,7 +12,7 @@ from concurrent.futures import ProcessPoolExecutor
 from .config import Config, Source
 from .embed import embed_store
 from .extractors import EXTRACTOR_VERSION, Options, extract_job
-from .freshness import stamp
+from .freshness import newer, stamp
 from .linker import link
 from .locks import index_lock
 from .repos import record as register
@@ -35,7 +35,11 @@ def index(cfg: Config, store: Store, only: list[str] | None = None, full: bool =
 def _index(cfg: Config, store: Store, only: list[str] | None, full: bool, embed: bool, log) -> dict:
     t0 = time.perf_counter()
     report: dict = {"sources": {}}
-    if store.get_meta("extractor_version") != EXTRACTOR_VERSION:
+    stored = store.get_meta("extractor_version") or ""
+    if newer(str(stored), EXTRACTOR_VERSION):
+        log(f"index written by newer extractors ({stored}); this process runs {EXTRACTOR_VERSION}: left as is")
+        return {"busy": True, "changed": False, "sources": {}, "newer_extractors": stored}
+    if stored != EXTRACTOR_VERSION:
         full = True
     sources = [s for s in cfg.sources if not only or s.name in only]
     changed = full
