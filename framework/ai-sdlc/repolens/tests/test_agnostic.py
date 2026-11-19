@@ -31,6 +31,9 @@ FILES = {
     "docs/guide.md": "# Guide\n\nStart from index.ts.\n",
     "notes/todo.txt": "Check index.ts somewhere.\n",
     "public/icons/logo.png": b"\x89PNG\r\n\x1a\n" + bytes(32),
+    # ESM TypeScript imports name the emitted `.js` file (vscode, NodeNext projects)
+    "esm/app.ts": 'import { formatInvoice } from "./format.js";\n\nexport const total = formatInvoice(1);\n',
+    "esm/format.ts": "export function formatInvoice(n: number) {\n  return n;\n}\n",
 }
 
 
@@ -128,3 +131,8 @@ def test_an_unavailable_grammar_falls_back_to_text_once(tmp_path, monkeypatch):
     assert set(rows) == {("ruby", "text")}
     assert calls == ["ruby"]
     kg.close()
+
+
+def test_an_esm_import_of_the_js_file_resolves_to_the_ts_source(graph):
+    assert ("esm/app.ts", "esm/format.ts") in links(graph, "imports")
+    assert ("esm/app.ts", "esm/format.ts") in links(graph, "calls")
