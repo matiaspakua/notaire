@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/feat-2338-repolens-agnostic-knowledge-orphans/` | passed |
 | Branch | `feat/2338_repolens-agnostic-orphans` | created |
 | Tasks | `tasks.md` | groups 1-9 done |
-| Commits | `e1f3411c`..archive commit | done |
+| Commits | `944b1bb0`..archive commit | done |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -57,9 +57,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `framework/ai-sdlc/repolens/README.md` | yes | `226d0900` |
-| `framework/ai-sdlc/repolens/CHANGELOG.md` | yes | `226d0900` |
-| `framework/ai-sdlc/repolens/bench/results/factory-kpis.json` | yes | `226d0900` |
+| `framework/ai-sdlc/repolens/README.md` | yes | `8aab271e` |
+| `framework/ai-sdlc/repolens/CHANGELOG.md` | yes | `8aab271e` |
+| `framework/ai-sdlc/repolens/bench/results/factory-kpis.json` | yes | `8aab271e` |
 
 ## Gate log
 
