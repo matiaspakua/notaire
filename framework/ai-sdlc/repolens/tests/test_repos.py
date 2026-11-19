@@ -133,3 +133,17 @@ def test_a_repository_too_far_behind_to_place_a_hit_is_not_searched(monkeypatch,
     pairs = repos.search(SimpleNamespace(cfg=SimpleNamespace(db_path="/s")), "q", 3, "all")
     assert asked == searched
     assert [h.path for _n, h in pairs][0] == "billing0"
+
+
+def test_a_repository_reindexed_elsewhere_is_searched_fresh(two, monkeypatch, capsys):
+    billing, shop = two
+    monkeypatch.chdir(shop)
+    assert cli.main(["search", "settle refund voucher", "--files", "--repos", "billing"]) in (0, 1)
+    assert "RefundVoucher.py" not in capsys.readouterr().out  # billing's store is now open in this process
+    (billing / "billing" / "RefundVoucher.py").write_text(
+        'def settle_refund_voucher(voucher):\n    """Settle a refund voucher."""\n    return voucher\n', encoding="utf-8")
+    monkeypatch.chdir(billing)
+    assert cli.main(["index", "--quiet"]) == 0
+    monkeypatch.chdir(shop)
+    assert cli.main(["search", "settle refund voucher", "--files", "--repos", "billing"]) == 0
+    assert "[billing] billing/RefundVoucher.py" in capsys.readouterr().out
