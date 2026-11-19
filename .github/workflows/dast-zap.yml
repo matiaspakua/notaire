@@ -1,8 +1,14 @@
 name: DAST — OWASP ZAP Baseline
 
-# Issue #1067 / CU78 / ADR-006. Nightly + manual DAST against a live API.
-# OpenAPI contract diff gates PRs; ZAP is intentionally not on every PR.
+# Issue #1067 / CU78 / ADR-006. DAST against a live API.
+# A version tag (v* / notaire-v*) runs the same blocking baseline as Monday
+# (#2004). OpenAPI contract diff is separate. ZAP stays off pull_request and
+# off branch push (#2001).
 on:
+  push:
+    tags:
+      - 'v*'
+      - 'notaire-v*'
   schedule:
     - cron: '0 5 * * 1'  # Weekly, Mondays 5am UTC (after k6 at 4am)
   workflow_dispatch:

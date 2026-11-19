@@ -165,7 +165,7 @@ each `SR-*` row.
 | Phase | Practice | Now | Next, tracked |
 |-------|----------|-----|----------------|
 | Build | Policy as code | `security-policy.yml` enforced by tests and CI | FindSecBugs only if CodeQL leaves a repeated Java gap |
-| Test | ZAP baseline | Weekly workflow fails on non-allowlisted alerts (#1738). It does not run on the version tag (#2004) | Authenticated ZAP stays a later decision |
+| Test | ZAP baseline | Version tag and the Monday workflow fail on non-allowlisted alerts (#1738, #2004) | Authenticated ZAP stays a later decision |
 | Production | Runtime scan, CIS, compliance packs | Not claimed | Falco is the OSS candidate from the guide §4.9. Statute mapping is counsel, not this table |
 | Production | Access control | Function-level RBAC and module grants (#1683) | Object-level sharing inside one office stays accepted (SR-11). General rate limit is #2010 |
 | Production | Alerts and review | Login alerts, local Alertmanager | External paging is an owner decision (#1465) |
@@ -225,7 +225,6 @@ Open follow-ups from the 2026-11-05 assessment (#2003):
 | Issue | Remaining work |
 |-------|----------------|
 | #2001 | Owner updates the live `protect-main` ruleset. Desired JSON in git already dropped checks that no longer run on a pull request |
-| #2004 | Run the ZAP baseline on version tags as well as Monday |
 | #2005 | `Referrer-Policy` and `Permissions-Policy` on the frontend |
 | #2006 | Authorization regression pack across modules |
 | #2007 | LINDDUN follow-through for testimony and personal data |
@@ -235,7 +234,7 @@ Open follow-ups from the 2026-11-05 assessment (#2003):
 | #2011 | Decide whether CodeQL findings fail the release |
 | #1640 | MFA for admins and notaries |
 
-Closed issues that this program used to list as open work: #254 (TLS runbook),
+Closed issues that this program used to list as open work: #2004 (ZAP on version tags), #254 (TLS runbook),
 #267 (Top 10 mapping), #280 (rate-limit guide, not the limiter), #282, #283,
 #309, #1465, #1738. Do not reopen them to point at the rows above.
 
