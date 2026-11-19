@@ -177,8 +177,25 @@ describe("procedure folders", () => {
 
     fireEvent.click(await screen.findByTestId("btn-confirm-wait"));
 
-    expect(toast.error).toHaveBeenCalledWith("gestiones.errorMotivoRequerido");
+    const reason = screen.getByTestId("input-wait-reason");
+    expect(reason).toHaveAttribute("aria-invalid", "true");
+    const describedBy = reason.getAttribute("aria-describedby");
+    expect(describedBy).toBeTruthy();
+    expect(document.getElementById(describedBy!.split(" ")[0])).toHaveTextContent(
+      "gestiones.errorMotivoRequerido",
+    );
+    expect(toast.error).not.toHaveBeenCalled();
     expect(apiPut).not.toHaveBeenCalled();
+
+    fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+    await waitFor(() => expect(screen.queryByTestId("input-wait-reason")).toBeNull());
+    fireEvent.click(screen.getByTestId("btn-view-folders-1"));
+    fireEvent.click(await screen.findByTestId("btn-place-on-hold-9"));
+    expect(await screen.findByTestId("input-wait-reason")).not.toHaveAttribute("aria-invalid");
+
+    fireEvent.click(screen.getByTestId("btn-confirm-wait"));
+    fireEvent.change(screen.getByTestId("input-wait-reason"), { target: { value: "falta firma" } });
+    expect(screen.getByTestId("input-wait-reason")).not.toHaveAttribute("aria-invalid");
   });
 
   it("puts a folder on hold with its reason", async () => {
