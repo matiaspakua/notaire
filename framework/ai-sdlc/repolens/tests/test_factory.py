@@ -239,7 +239,8 @@ def test_a_query_does_not_wait_for_the_refresh_after_head_moves(tmp_path, monkey
             break
         time.sleep(0.05)
     else:
-        log = (repo / ".repolens" / "refresh.log").read_text(encoding="utf-8") if (repo / ".repolens" / "refresh.log").is_file() else "no log"
+        log_path = repo / ".repolens" / "refresh.log"
+        log = log_path.read_text(encoding="utf-8") if log_path.is_file() else "no log"
         raise AssertionError("background refresh did not catch HEAD\n" + log[-1500:])
     assert cli.main(["-c", "repolens.toml", "search", "brand_new_symbol", "-k", "3"]) == 0
     second = capsys.readouterr()
@@ -356,7 +357,8 @@ def test_a_query_refreshes_an_index_written_by_other_extractors(tmp_path, monkey
             break
         time.sleep(0.05)
     else:
-        log = (repo / ".repolens" / "refresh.log").read_text(encoding="utf-8") if (repo / ".repolens" / "refresh.log").is_file() else "no log"
+        log_path = repo / ".repolens" / "refresh.log"
+        log = log_path.read_text(encoding="utf-8") if log_path.is_file() else "no log"
         raise AssertionError(f"background refresh left extractor_version={found!r}\n" + log[-1500:])
 
 
