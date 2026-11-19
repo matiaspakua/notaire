@@ -12,7 +12,7 @@ from . import __version__
 
 # Commands that must start fast and work before the dependencies are installed (the harness hook runs on
 # every tool call): they import only the standard library. The rest import the engine lazily.
-LIGHT = ("hook", "report", "setup", "doctor", "refresh", "miss")
+LIGHT = ("hook", "report", "setup", "doctor", "refresh", "miss", "cache")
 # Read-only queries: answered by the resident per-worktree service when one runs (repolens/daemon.py).
 QUERY = frozenset({"search", "node", "outline", "snippet", "neighbors", "impact", "path"})
 
@@ -112,6 +112,11 @@ def _parser() -> argparse.ArgumentParser:
     s.add_argument("--transport", choices=["stdio", "sse", "streamable-http"], default="stdio")
     s.add_argument("--all-tools", action="store_true", help="also expose neighbors, stats and reindex")
 
+    s = sub.add_parser("cache", help="the shared vector cache: info, or export/import it between machines")
+    s.add_argument("action", choices=["info", "export", "import"])
+    s.add_argument("file", nargs="?", type=Path, help="export target / import source")
+    s.add_argument("--model", help="embedding model (default: the profile's [embed] model)")
+
     s = sub.add_parser("daemon", help="the resident per-worktree service CLI queries reuse (run/status/stop)")
     s.add_argument("action", choices=["run", "status", "stop"])
 
@@ -160,6 +165,8 @@ def _light(args) -> int:
         return code
     if args.cmd == "miss":
         return _miss(args)
+    if args.cmd == "cache":
+        return _cache(args)
     return _refresh(args)
 
 
@@ -311,6 +318,41 @@ def _miss(args) -> int:
         "results": 0, "files": [],
     })
     return 0
+
+
+def _cache(args) -> int:
+    import tomllib
+
+    from . import vcache
+    from .paths import find_config
+
+    model = args.model
+    if not model:
+        config = args.config or find_config()
+        embed = tomllib.loads(Path(config).read_text(encoding="utf-8")).get("embed", {}) if config else {}
+        model = embed.get("model", "BAAI/bge-small-en-v1.5")
+    try:
+        if args.action == "info":
+            found = vcache.info(model)
+            if found is None:
+                print(f"repolens: no vector cache for {vcache.model_name(model)} yet")
+                return 1
+            print(f"{found['path']}: {found['vectors']} vectors, {found['bytes'] / 1e6:.1f} MB, "
+                  f"projection {'yes' if found['projection'] else 'not yet'}")
+            return 0
+        if args.file is None:
+            print(f"repolens: cache {args.action} needs a file", file=sys.stderr)
+            return 2
+        if args.action == "export":
+            done = vcache.export(model, args.file)
+            print(f"wrote {done['path']} ({done['bytes'] / 1e6:.1f} MB)")
+            return 0
+        done = vcache.import_file(args.file)
+        print(f"imported {done['added']} vectors into {done['path']} ({done['vectors']} in all)")
+        return 0
+    except vcache.CacheError as exc:
+        print(f"repolens: {exc}", file=sys.stderr)
+        return 2
 
 
 def _report(args) -> int:

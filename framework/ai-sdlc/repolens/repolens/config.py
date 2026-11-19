@@ -63,6 +63,7 @@ class Config:
     embed_dim: int = 256
     embed_reduce: int = 128
     embed_workers: int = 0
+    embed_skip: list[str] = field(default_factory=list)
     git_commits: int = 3000
     cochange_max_files: int = 30
     cochange_min_count: int = 2
@@ -131,6 +132,7 @@ def config_from_dict(data: dict, base: Path, db: Path | None = None) -> Config:
     cfg.embed_dim = int(embed.get("dim", cfg.embed_dim))
     cfg.embed_reduce = int(embed.get("reduce", cfg.embed_reduce))
     cfg.embed_workers = int(embed.get("workers", cfg.embed_workers))
+    cfg.embed_skip = list(embed.get("skip", cfg.embed_skip))
     git = data.get("git", {})
     cfg.git_commits = int(git.get("commits", cfg.git_commits))
     cfg.cochange_max_files = int(git.get("max_files_per_commit", cfg.cochange_max_files))
