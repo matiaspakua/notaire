@@ -1,5 +1,6 @@
 package com.licensis.notaire.unit;
 
+import com.licensis.notaire.adapter.out.persistence.management.DeedManagementLegacyMapper;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.business.ManagementStatus;
@@ -197,8 +198,8 @@ class DeedManagementEntityTest {
             management.setFkIdManagementStatus(null);
             management.setFkIdNotaryPerson(null);
 
-            assertThatCode(management::getDto).doesNotThrowAnyException();
-            DtoDeedManagement dto = management.getDto();
+            assertThatCode(() -> DeedManagementLegacyMapper.toDto(management)).doesNotThrowAnyException();
+            DtoDeedManagement dto = DeedManagementLegacyMapper.toDto(management);
             assertThat(dto.getStatus()).isNull();
             assertThat(dto.getPersonNotary()).isNull();
         }
@@ -253,7 +254,7 @@ class DeedManagementEntityTest {
             management.setFkIdNotaryPerson(notary);
             management.setFkIdManagementStatus(status);
 
-            DtoDeedManagement dto = management.getDto();
+            DtoDeedManagement dto = DeedManagementLegacyMapper.toDto(management);
             assertThat(dto.getStatus()).isNotNull();
             assertThat(dto.getStatus().getName()).isEqualTo("In Progress");
             assertThat(dto.getPersonNotary()).isNotNull();
