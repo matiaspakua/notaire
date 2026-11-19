@@ -38,4 +38,12 @@ Short notes from the cloud factory loop. Product behavior is not documented here
 - Fixture after: the CLI query printed `index is behind HEAD` and `index refreshed in 0.01s`, then listed `src/new.py`. The query took 0.0164s. Embedder was `none`. This does not measure an incremental refresh of the Notaire index.
 - The Testimony.getDto miss (0.680s, no results) was this failure mode: the live index was one merge behind HEAD.
 
+## 2026-11-19 Notaire refresh after a merge
+
+- Indexed at `9c267f89` (cold index 1265.78s, embed 1251.85s, 84636 vectors). Fast-forwarded to `b0065a20`, the #2333 merge.
+- First `repolens search User.setAttributes` printed `index refreshed in 5.52s`. The query took 7.104s and ranked `User.java:210` first.
+- The next search took 1.508s and did not refresh.
+- `git grep` for the declaration took 0.0061s and named only that line.
+- 5.52s is not a re-embed. It is not the next RepoLens item. DeedManagement and Procedure remain on the ratchet.
+
 
