@@ -61,7 +61,7 @@ class TestimonyDeleteKeepsHistoryIntegrationTest extends ServiceIntegrationTest 
 
     private boolean movementsOf(int idTestimony) throws Exception {
         MvcResult res = mockMvc.perform(get("/api/v1/testimony-movements")).andExpect(status().isOk()).andReturn();
-        for (JsonNode m : mapper.readTree(res.getResponse().getContentAsString())) {
+        for (JsonNode m : mapper.readTree(res.getResponse().getContentAsString()).path("content")) {
             if (m.path("testimony").path("idTestimony").asInt() == idTestimony) {
                 return true;
             }

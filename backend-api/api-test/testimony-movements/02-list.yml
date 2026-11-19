@@ -19,5 +19,7 @@ runtime:
           test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
           test("Created movement listed", function () {
             const id = Number(bru.getVar('tm_movement_id'));
-            expect(res.getBody().some(x => x.idTestimonyMovement === id)).to.equal(true);
+            const body = res.getBody();
+            const rows = body.content || body;
+            expect(rows.some(x => x.idTestimonyMovement === id)).to.equal(true);
           });

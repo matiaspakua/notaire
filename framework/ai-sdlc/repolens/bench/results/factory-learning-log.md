@@ -47,4 +47,10 @@ Short notes from the cloud factory loop. Product behavior is not documented here
 - 5.52s is not a re-embed. It is not the next RepoLens item. DeedManagement and Procedure remain on the ratchet.
 - After #2334 merged, the next search (`Procedure.getDto`, `b0065a20` to `623b2d56`) printed `index refreshed in 5.79s`. The query took 7.718s and ranked `Procedure.getDto`, then `DeedLegacyMapper.toDto` and `TestimonyLegacyMapper.copyDeed`. Same conclusion: about 6s, not the next RepoLens item.
 
+## 2026-11-19 Maven Central 429 on dependency submission
+
+- `submit-maven` on #2337 (run 44496389413) failed while resolving `org.springframework.boot:spring-boot-starter-parent:pom:4.1.2` from Maven Central: HTTP 429 Too Many Requests. The job is GitHub Automatic Dependency Submission. It does not call the Notaire API.
+- This agent cannot re-run that workflow (`Resource not accessible by integration`).
+- Fallback: the owner re-runs the failed job with an owner token, or a later push retries it. Do not open an issue unless the 429 happens again on a later pull request. Do not push an empty commit just to retry, because that changes the head that `preflight.sh --full` already passed.
+
 

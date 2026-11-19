@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.licensis.notaire.application.port.in.testimony.QueryTestimonyMovementsUseCase;
 import com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort;
+import com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort.PageResult;
 import com.licensis.notaire.dto.DtoTestimonyMovement;
 
 /**
@@ -27,6 +28,12 @@ public class TestimonyMovementQueryUseCaseService implements QueryTestimonyMovem
     @Transactional(readOnly = true)
     public List<DtoTestimonyMovement> findAll() {
         return ops.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageResult findPage(int page, int size, String sort) {
+        return ops.findPage(page, size, sort);
     }
 
     @Override

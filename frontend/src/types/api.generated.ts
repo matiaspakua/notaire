@@ -2331,7 +2331,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get all testimony movement */
+        /** Get testimony movements, one page at a time */
         get: operations["getAll_1"];
         put?: never;
         /** Create testimony movement */
@@ -3889,6 +3889,24 @@ export interface components {
         };
         PageSubmittedDocumentResponse: {
             content?: components["schemas"]["SubmittedDocumentResponse"][];
+            empty?: boolean;
+            first?: boolean;
+            last?: boolean;
+            /** Format: int32 */
+            number?: number;
+            /** Format: int32 */
+            numberOfElements?: number;
+            pageable?: components["schemas"]["PageableObject"];
+            /** Format: int32 */
+            size?: number;
+            sort?: components["schemas"]["SortObject"];
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        PageDtoTestimonyMovement: {
+            content?: components["schemas"]["DtoTestimonyMovement"][];
             empty?: boolean;
             first?: boolean;
             last?: boolean;
@@ -11077,7 +11095,14 @@ export interface operations {
     };
     getAll_1: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default is idTestimonyMovement,desc. Allowed: idTestimonyMovement, dateEntry, dateExit, dateRegistration. */
+                sort?: string[];
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -11090,7 +11115,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["DtoTestimonyMovement"][];
+                    "*/*": components["schemas"]["PageDtoTestimonyMovement"];
                 };
             };
         };
