@@ -18,7 +18,7 @@ FILES = {
     "README.md": "# App\n\nRun `src/app.py`. The icon is assets/icon.png.\n",
     "notes/a.txt": "alpha\n",
     "notes/b.txt": "beta\n",
-    "archive/old.md": "# Old\n\nNothing here.\n",
+    "archive/notes.old": "Old notes.\n",
 }
 
 
@@ -49,7 +49,7 @@ backend = "lsa"
 [git]
 min_count = 2
 [ranking]
-demote = ["archive/**"]
+demote = ["**/*.old"]  # a glob that names no directory: the profile would otherwise link it
 """
 
 
@@ -77,7 +77,7 @@ def test_files_related_to_nothing_and_only_through_history(graph):
 
 
 def test_demoted_paths_are_listed_on_request(graph):
-    assert "archive/old.md" in paths(orphans.find(graph.engine, include_demoted=True)["isolated"])
+    assert "archive/notes.old" in paths(orphans.find(graph.engine, include_demoted=True)["isolated"])
 
 
 def test_symbols_with_no_relation_on_request(graph):
