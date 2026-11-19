@@ -76,6 +76,15 @@ linddun:
   - id: LD-6
     threat: Detectability of abuse beyond login failures
     status: Partial
+  - id: LD-7
+    threat: Identifiability of testimony and folio records
+    status: Partial
+  - id: LD-8
+    threat: Disclosure of submitted-document fields
+    status: Partial
+  - id: LD-9
+    threat: Reads of testimony, folio, and submitted documents are not audited
+    status: Open
 attack_names:
   - id: T1110
     name: Brute Force

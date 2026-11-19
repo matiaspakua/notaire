@@ -183,9 +183,11 @@ That template is the guide §3.7; it is not a new product feature.
 
 Guide §3.9. Notarial records are retained indefinitely (SAD §2.3). `Person`
 holds regulated identifiers. LINDDUN rows in the system threat model are the
-engineering view. Issue **#309** is closed. It did not add a statute map,
-and this page still does not give legal advice. The engineering follow-through
-for testimony and personal data is **#2007**. Counsel owns any statute reading.
+engineering view, including testimony, folio, and submitted documents (LD-7,
+LD-8, LD-9). Issue **#309** is closed. It did not add a statute map, and this
+page still does not give legal advice. Counsel owns any statute reading. A
+privacy notice is not in the product (LD-4). Reads beyond `Person` are not
+audited (LD-9).
 
 Third-party code is tracked by Dependabot and the SBOM attached to releases.
 The scanner ignores the public AWS documentation key id
@@ -226,9 +228,7 @@ Open follow-ups from the 2026-11-05 assessment (#2003):
 |-------|----------------|
 | #2001 | Owner updates the live `protect-main` ruleset. Desired JSON in git already dropped checks that no longer run on a pull request |
 | #2004 | Run the ZAP baseline on version tags as well as Monday |
-| #2005 | `Referrer-Policy` and `Permissions-Policy` on the frontend |
 | #2006 | Authorization regression pack across modules |
-| #2007 | LINDDUN follow-through for testimony and personal data |
 | #2008 | Redacted findings snapshot for the portfolio |
 | #2009 | Threat Dragon (or equivalent) model checked against this register |
 | #2010 | General API rate limit (SR-05, SR-15) |

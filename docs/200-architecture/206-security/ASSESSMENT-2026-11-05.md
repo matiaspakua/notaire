@@ -54,8 +54,8 @@ Primary method: **STRIDE**, in
 [THREAT-MODEL-AUTH-AUDIT.md](THREAT-MODEL-AUTH-AUDIT.md) (`SR-01`..`SR-10`) and
 [THREAT-MODEL-SYSTEM.md](THREAT-MODEL-SYSTEM.md) (`SR-11`..`SR-16`).
 
-Privacy method: **LINDDUN** rows `LD-1`..`LD-6` in the system model. Testimony,
-folio, and submitted documents are not modeled in depth. That is #2007. This
+Privacy method: **LINDDUN** rows `LD-1`..`LD-9` in the system model. Testimony,
+folio, and submitted documents are LD-7, LD-8, and LD-9 (#2007). This
 assessment does not interpret a statute. Counsel owns that reading. Issue #309
 is closed and is not reopened here.
 
@@ -157,7 +157,7 @@ the #2003 pull request is an issue.
 | Next | ZAP does not run on the version tag | #2004 |
 | Next | Missing `Referrer-Policy` and `Permissions-Policy`. CSP nonce stays as it is | #2005 |
 | Next | Authorization tests do not cover every module path | #2006 |
-| Next | LINDDUN does not cover testimony and submitted documents | #2007 |
+| Closed | LINDDUN covers testimony, folio, and submitted documents. The notice, the statute, and read-audit beyond Person stay open rows | #2007 |
 | Next | No redacted findings feed for the portfolio | #2008 |
 | Later | Threat Dragon model checked in CI | #2009 |
 | Next | No general API rate limit. Login lockout remains | #2010 |
