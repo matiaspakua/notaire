@@ -4,8 +4,6 @@
  */
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoManagementStatus;
-import com.licensis.notaire.dto.DtoDeedManagement;
 import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoIdentificationType;
 import com.licensis.notaire.dto.DtoProcedure;
@@ -237,69 +235,6 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
     }
 
 
-
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoDeedManagement getDto() {
-        DtoDeedManagement dtoManagement = new DtoDeedManagement();
-
-        dtoManagement.setVersion(this.getVersion());
-        dtoManagement.setIdManagement(this.getIdManagement());
-        dtoManagement.setNumber(this.getNumber());
-        dtoManagement.setHeading(this.getHeading());
-        dtoManagement.setDateStart(this.getDateStart());
-        dtoManagement.setNotes(this.getNotes());
-
-        // Use getDtoNotary (not Person.getDto) to avoid a circular mapping loop
-        dtoManagement.setPersonNotary(this.getDtoNotary());
-
-        // Procedures associated with this management
-        ArrayList<DtoProcedure> procedureDtos = new ArrayList<>();
-        if (procedureList != null && !procedureList.isEmpty()) {
-            for (int i = 0; i < procedureList.size(); i++) {
-                procedureDtos.add(this.getDtoProcedure(procedureList.get(i)));
-            }
-            dtoManagement.setAssociatedProcedures(procedureDtos);
-        }
-
-        /*
-         * People associated with this management. Clients are collected without
-         * discriminating by procedure, so duplicates across procedures are removed.
-         * A management can have multiple procedures, and a procedure multiple people,
-         * which would otherwise repeat people on the management DTO.
-         */
-        ArrayList<DtoPerson> personDtos = new ArrayList<>();
-        ArrayList<Integer> personIds = new ArrayList<>();
-
-        if (this.procedureList != null && !(this.procedureList.isEmpty())) {
-            for (int j = 0; j < procedureList.size(); j++) {
-                for (int i = 0; i < procedureList.get(j).getPersonList().size(); i++) {
-
-                    DtoPerson personDto = this.getInvolvedPersonDto(procedureList.get(j).getPersonList().get(i));
-
-                    if (!personIds.contains(personDto.getId())) {
-                        personIds.add(personDto.getId());
-                        personDtos.add(personDto);
-                    }
-                }
-            }
-
-            dtoManagement.setInvolvedClients(personDtos);
-        }
-
-        // Management status — null when unset
-        if (this.fkIdManagementStatus != null) {
-            DtoManagementStatus statusDto = new DtoManagementStatus();
-            statusDto.setIdManagementStatus(this.getFkIdManagementStatus().getIdManagementStatus());
-            statusDto.setName(fkIdManagementStatus.getName());
-            statusDto.setNotes(fkIdManagementStatus.getNotes());
-            statusDto.setVersion(fkIdManagementStatus.getVersion());
-            dtoManagement.setStatus(statusDto);
-        } else {
-            dtoManagement.setStatus(null);
-        }
-
-        return dtoManagement;
-    }
 
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoPerson getDtoNotary() {
