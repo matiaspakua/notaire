@@ -164,3 +164,39 @@ def test_mcp_core_tool_set(kg):
     assert names == set(CORE_TOOLS)
     with pytest.raises(ValueError):
         build(kg, ("search", "bogus"))
+
+
+def test_impact_lists_each_file_once_with_its_symbols():
+    from repolens import render
+
+    def item(kind, name, path, line, via, demoted=False):
+        return {"kind": kind, "name": name, "path": path, "line": line, "depth": 1, "via": via, "demoted": demoted}
+
+    result = {"root": "p:src/A.java#A", "files": ["docs/old/adr.md", "src/test/ATest.java", "src/test/BTest.java"],
+              "tests": ["src/test/ATest.java", "src/test/BTest.java"], "affected": [
+                  item("route", "GET /a", "", 0, "handles"),
+                  item("method", "ATest.one", "src/test/ATest.java", 5, "calls"),
+                  item("method", "ATest.Nested.two", "src/test/ATest.java", 9, "calls"),
+                  item("file", "ATest.java", "src/test/ATest.java", 1, "imports"),
+                  item("section", "Decisions", "docs/old/adr.md", 12, "mentions", demoted=True)]}
+    text = render.impact(result)
+    assert text.count("src/test/ATest.java") == 1
+    assert "  d1 src/test/ATest.java [test]: calls one:5, Nested.two:9; imports" in text
+    assert "  d1 handles: GET /a" in text
+    assert "docs/old/adr.md" not in text and "+1 in demoted paths" in text
+    assert text.endswith("tests not listed above: src/test/BTest.java")
+
+
+def test_impact_marks_what_lies_in_demoted_paths(repo, tmp_path):
+    from repolens.service import KnowledgeGraph
+
+    from .conftest import make_config
+
+    cfg = make_config(repo, tmp_path / "graph.db")
+    cfg.demote = ["docs/**"]
+    graph = KnowledgeGraph(cfg)
+    graph.index(log=lambda *_: None)
+    affected = graph.engine.impact("CodeController")["affected"]
+    assert {a["path"] for a in affected if a["demoted"]} == {"docs/adr/ADR-007-one-time-codes.md"}
+    graph.close()
+
