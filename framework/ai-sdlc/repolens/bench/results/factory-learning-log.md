@@ -29,6 +29,13 @@ Short notes from the cloud factory loop. Product behavior is not documented here
 - Sampled locate for `Testimony.getDto` (third implemented issue since the routing rule): `rg` 0.004s, `repolens search` 0.680s with `no results`, `repolens impact` 0.205s with `node not found`. The live index has no node of that name. `git grep origin/main` (0.015s) was the caller list that was implemented.
 - #2325 was opened because Gate 1 requires an open issue and no open RepoLens issue remained (#2307 is closed). It tracks the three measured gaps: exact-symbol embed latency, search-alone caller recall, and `adoption 0%` with zero harness sessions.
 - 0.4.4 skips `embed_query` when the query is one identifier and the name index hits. It also adds `calls` predecessors of that hit when full-text search is empty. `report --gate` prints `adoption n/a` when `sessions` is 0. The fixture tests failed first (`embed_query` count was 1; the gate line contained `adoption 0%`).
-- Merging #2324 closed #580 (`cursor[bot]`, no commit id on the close event) even though the pull request said to keep it open. `gh issue reopen 580` returned `Could not reopen the issue`. The remainder is #2326. Do not put `Closes` on a partial entity slice.
+- Merging #2324 closed #580 (`cursor[bot]`, no commit id on the close event) even though the pull request said to keep it open. `gh issue reopen 580` returned `Could not reopen the issue`. The remainder is #2326. Do not file a pull request body that puts a closing keyword next to an issue that must stay open. #2326 later closed the same way because the body contained `close #2326`. #2329 is the current remainder and its pull request avoided that phrase; it stayed open after #2330 merged.
+
+## 2026-11-19 index freshness
+
+- #2331 was opened because no open issue covered a stale index. #2307 is closed.
+- Fixture before: searching the graph that was indexed at the previous commit for `brand_new_symbol` returned 0 hits in 0.0019s.
+- Fixture after: the CLI query printed `index is behind HEAD` and `index refreshed in 0.01s`, then listed `src/new.py`. The query took 0.0164s. Embedder was `none`. This does not measure an incremental refresh of the Notaire index.
+- The Testimony.getDto miss (0.680s, no results) was this failure mode: the live index was one merge behind HEAD.
 
 

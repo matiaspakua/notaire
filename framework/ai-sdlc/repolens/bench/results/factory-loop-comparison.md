@@ -141,3 +141,14 @@ Repolens first, then grep. The diff is `History.java` and `entity-dto-mapping.tx
 
 `/usr/bin/time` is not installed on this VM. The wall times are `time.perf_counter` around the process.
 
+## Index freshness fixture
+
+A two-file git repo, embedder `none`. The symbol `brand_new_symbol` was committed after the index.
+
+| Pass | Hits | Wall time | Notes |
+|---|---|---|---|
+| Search on the previous graph | 0 | 0.0019s | The graph has no `src/new.py`. |
+| CLI search, which refreshes first | `src/new.py` | 0.0164s | stderr: `index refreshed in 0.01s`. |
+
+This does not time an incremental refresh of the Notaire index.
+

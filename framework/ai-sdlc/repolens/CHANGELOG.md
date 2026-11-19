@@ -3,6 +3,13 @@
 All notable changes to repolens. Versions follow [SemVer](https://semver.org); the version lives in
 `repolens/__init__.py` and release tags are `repolens-v<version>`.
 
+## [0.4.5] - 2026-11-19
+
+### Fixed
+
+- A query (`search`, `impact`, and the other read commands) compares the commit stored at index time with `HEAD`. When they differ it runs an incremental index before it answers and says so on stderr. Git `post-checkout` / `post-merge` hooks are unchanged. A cloud VM that never ran those hooks still picks up a merge on the next query (#2331).
+- On a two-file fixture the old graph returned 0 hits for `brand_new_symbol` in 0.0019s. The query then printed `index refreshed in 0.01s` and listed `src/new.py`. The whole query took 0.0164s. This is not a measurement of a full Notaire reindex.
+
 ## [0.4.4] - 2026-11-19
 
 ### Fixed
