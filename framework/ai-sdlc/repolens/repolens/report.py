@@ -218,8 +218,11 @@ def gate_line(rep: dict) -> str:
     s, h = rep["server"], rep["sessions"]
     worst = next((r for r in rep["recommendations"] if r["level"] == "high"), rep["recommendations"][0])
     hit = h.get("hit_rate")
-    return (f"repolens usage: {s['calls']} calls, {h.get('sessions', 0)} sessions, adoption "
-            f"{h.get('adoption', 0):.0%}, hit rate {'n/a' if hit is None else f'{hit:.0%}'}, p95 {s['p95_ms']:.0f} "
+    sessions = h.get("sessions", 0)
+    # CLI events carry no harness session. Zero sessions is not a measured 0% adoption.
+    adoption = "n/a" if not sessions else f"{h.get('adoption', 0):.0%}"
+    return (f"repolens usage: {s['calls']} calls, {sessions} sessions, adoption "
+            f"{adoption}, hit rate {'n/a' if hit is None else f'{hit:.0%}'}, p95 {s['p95_ms']:.0f} "
             f"ms; {worst['level']}: {worst['finding']}")
 
 

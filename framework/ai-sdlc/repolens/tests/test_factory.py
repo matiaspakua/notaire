@@ -133,6 +133,17 @@ def test_mcp_builds_on_first_start_and_records_every_call(tmp_path, monkeypatch)
     kg.close()
 
 
+def test_gate_line_does_not_report_zero_adoption_when_there_are_no_sessions(tmp_path):
+    log = tmp_path / "usage.jsonl"
+    log.write_text(json.dumps({
+        "src": "cli", "client": "cli", "tool": "search", "input": "Testimony.getDto",
+        "results": 0, "ms": 680, "tokens": 0,
+    }) + "\n", encoding="utf-8")
+    line = gate_line(build(log))
+    assert "1 calls" in line and "0 sessions" in line and "adoption n/a" in line
+    assert "adoption 0%" not in line
+
+
 def test_hook_and_report_measure_hit_rate_fallbacks_and_adoption(tmp_path, monkeypatch):
     (tmp_path / ".git").mkdir()
     (tmp_path / ".repolens").mkdir()
