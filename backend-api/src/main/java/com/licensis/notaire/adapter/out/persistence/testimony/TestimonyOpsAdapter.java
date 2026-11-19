@@ -45,13 +45,13 @@ public class TestimonyOpsAdapter implements TestimonyOpsPort {
     @Override
     @Transactional(readOnly = true)
     public List<DtoTestimony> findAll() {
-        return repository.findAll().stream().map(Testimony::getDto).toList();
+        return repository.findAll().stream().map(TestimonyLegacyMapper::toDto).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<DtoTestimony> findById(Integer id) {
-        return repository.findById(id).map(Testimony::getDto);
+        return repository.findById(id).map(TestimonyLegacyMapper::toDto);
     }
 
     @Override
@@ -65,9 +65,9 @@ public class TestimonyOpsAdapter implements TestimonyOpsPort {
         }
         try {
             Testimony entity = new Testimony();
-            entity.setAttributes(dto);
+            TestimonyLegacyMapper.apply(entity, dto);
             entity = repository.save(entity);
-            return new SaveResult.Created(entity.getDto());
+            return new SaveResult.Created(TestimonyLegacyMapper.toDto(entity));
         } catch (Exception e) {
             return new SaveResult.Failed(e);
         }
@@ -85,7 +85,7 @@ public class TestimonyOpsAdapter implements TestimonyOpsPort {
         }
         try {
             dto.setIdTestimony(id);
-            entity.setAttributes(dto);
+            TestimonyLegacyMapper.apply(entity, dto);
             repository.save(entity);
             return new SaveResult.Updated();
         } catch (Exception e) {
@@ -113,12 +113,12 @@ public class TestimonyOpsAdapter implements TestimonyOpsPort {
     @Override
     @Transactional
     public DtoTestimony generate(Integer idDeed) {
-        return generationVerificationService.generate(idDeed).getDto();
+        return TestimonyLegacyMapper.toDto(generationVerificationService.generate(idDeed));
     }
 
     @Override
     @Transactional
     public DtoTestimony verify(Integer id, boolean flagged, String notes) {
-        return generationVerificationService.verify(id, flagged, notes).getDto();
+        return TestimonyLegacyMapper.toDto(generationVerificationService.verify(id, flagged, notes));
     }
 }

@@ -1,5 +1,6 @@
 package com.licensis.notaire.unit;
 
+import com.licensis.notaire.adapter.out.persistence.testimony.TestimonyLegacyMapper;
 import com.licensis.notaire.business.Copy;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.TestimonyMovement;
@@ -111,7 +112,7 @@ class TestimonyEntityTest {
             testimony.setFkIdDeed(null);
 
             assertThat(testimony.getFkIdDeed()).isNull();
-            assertThat(testimony.getDto().getDeed()).isNull();
+            assertThat(TestimonyLegacyMapper.toDto(testimony).getDeed()).isNull();
         }
 
         @Test

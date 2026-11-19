@@ -1,8 +1,6 @@
 DeedManagement#getDto
 Person#setAttributes
 Procedure#getDto
-Testimony#getDto
-Testimony#setAttributes
 User#setAttributes
 WorkflowDefinition#toDto
 WorkflowNode#toDto

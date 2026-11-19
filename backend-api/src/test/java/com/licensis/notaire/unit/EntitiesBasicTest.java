@@ -1,6 +1,7 @@
 package com.licensis.notaire.unit;
 
 
+import com.licensis.notaire.adapter.out.persistence.testimony.TestimonyLegacyMapper;
 import com.licensis.notaire.adapter.out.persistence.testimony.TestimonyMovementLegacyMapper;
 import com.licensis.notaire.adapter.out.persistence.concept.ConceptLegacyMapper;
 import com.licensis.notaire.adapter.out.persistence.document.DocumentTypeLegacyMapper;
@@ -542,7 +543,7 @@ class EntitiesBasicTest {
             // toString requires fkIdDeed to be set
             assertThat(t1.toString()).contains("10");
 
-            DtoTestimony dto = t1.getDto();
+            DtoTestimony dto = TestimonyLegacyMapper.toDto(t1);
             assertThat(dto.getIdTestimony()).isEqualTo(10);
 
             DtoTestimony dto2 = new DtoTestimony();
@@ -552,7 +553,7 @@ class EntitiesBasicTest {
             dto2.setFlagged(true);
             dto2.setVersion(1);
             Testimony t3 = new Testimony();
-            t3.setAttributes(dto2);
+            TestimonyLegacyMapper.apply(t3, dto2);
             assertThat(t3.getIdTestimony()).isEqualTo(99);
         }
     }
