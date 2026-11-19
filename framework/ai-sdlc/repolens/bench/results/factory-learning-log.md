@@ -24,4 +24,11 @@ Short notes from the cloud factory loop. Product behavior is not documented here
 - RepoLens is not the first call for every lookup. Exact symbol or path: `rg` (0.002s and 0.008s on two questions, versus 1.924s and 1.878s for search, hit rate not better). Unknown symbol: `repolens search`. Callers: `repolens impact`, then `rg` plus `repolens miss` if impact names no production file. Offline bench (`summary.md`): Haiku holdout tool calls 5.89 to 4.56 and input tokens 48,468 to 36,165; Sonnet holdout tool calls 4.00 to 2.00 but input tokens 21,914 to 24,419 and cost 0.03230 to 0.03312. Sonnet scale did not reduce tool calls (2.00 both) and raised input tokens.
 - Paired grep-vs-repolens locate is sampled: every third implemented issue, and every miss. KPI file: `factory-kpis.json`.
 
+## 2026-11-19 exact-symbol search
+
+- Sampled locate for `Testimony.getDto` (third implemented issue since the routing rule): `rg` 0.004s, `repolens search` 0.680s with `no results`, `repolens impact` 0.205s with `node not found`. The live index has no node of that name. `git grep origin/main` (0.015s) was the caller list that was implemented.
+- #2325 was opened because Gate 1 requires an open issue and no open RepoLens issue remained (#2307 is closed). It tracks the three measured gaps: exact-symbol embed latency, search-alone caller recall, and `adoption 0%` with zero harness sessions.
+- 0.4.4 skips `embed_query` when the query is one identifier and the name index hits. It also adds `calls` predecessors of that hit when full-text search is empty. `report --gate` prints `adoption n/a` when `sessions` is 0. The fixture tests failed first (`embed_query` count was 1; the gate line contained `adoption 0%`).
+- Merging #2324 closed #580 (`cursor[bot]`, no commit id on the close event) even though the pull request said to keep it open. `gh issue reopen 580` returned `Could not reopen the issue`. The remainder is #2326. Do not put `Closes` on a partial entity slice.
+
 

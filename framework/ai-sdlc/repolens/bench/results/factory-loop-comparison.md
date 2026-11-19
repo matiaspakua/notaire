@@ -128,3 +128,16 @@ Repolens first, then grep. The diff is `History.java` and `entity-dto-mapping.tx
 | repolens impact | 1 | 482 | 1.434s | 0/2 | Named only `EntitiesBasicTest`, which does not call `History.getDto` and is not in the diff. |
 | grep | 4 | 80,477 | 0.483s | 1/2 | The method is at `History.java:198` and calls `getFkIdManagement().getDto()`. No other `history.getDto` call. The broad Java scan is most of the bytes. |
 
+## Testimony.getDto locate (sampled A/B, third implemented issue)
+
+`rg` first on the indexed checkout, then `repolens search` and `repolens impact`. The index returned no node named `Testimony.getDto`.
+
+| Pass | Calls | Output bytes | Wall time | Hit rate | Notes |
+|---|---|---|---|---|---|
+| rg | 1 | 2,751 | 0.004s | callers of the symbol were in the output | The checkout was one merge behind `origin/main`, so the lines still included `TestimonyMovement.getDto`. |
+| git grep `origin/main` | 1 | 14,566 | 0.015s | the adapter, `Testimony.java`, and `TestimonyEntityTest` | This is the caller list the slice used. |
+| repolens search `Testimony.getDto` | 1 | 34 | 0.680s | 0 | `no results`, exit 1. |
+| repolens impact `Testimony.getDto` | 1 | 15 | 0.205s | 0 | `node not found`, exit 1. |
+
+`/usr/bin/time` is not installed on this VM. The wall times are `time.perf_counter` around the process.
+

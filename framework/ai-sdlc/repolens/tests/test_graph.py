@@ -60,6 +60,36 @@ def test_imports_tests_tables_docs_tags_and_cochange(kg):
             "calls") in edges
 
 
+def test_an_exact_symbol_skips_the_embedding_query_and_lists_its_caller(kg):
+    """Exact identifiers were ~1.9s in embed_query while rg was milliseconds, and search alone
+    recalled 1/6 of the Folio.getDto caller files. A single identifier that the name index
+    already hit must not embed, and a caller linked by a calls edge must still be returned."""
+    eng = kg.engine
+    calls = {"n": 0}
+    real = eng.embedder
+
+    class Counting:
+        def embed_query(self, text):
+            calls["n"] += 1
+            return real.embed_query(text)
+
+    eng._embedder = Counting()
+    eng._embedder_loaded = True
+    hits = eng.search("CodeVerificationService", k=5)
+    assert any(h.path.endswith("CodeVerificationService.java") for h in hits)
+    assert calls["n"] == 0
+    prose = eng.search("verify one-time code service", k=5)
+    assert any(h.path.endswith("CodeVerificationService.java") for h in prose)
+    assert calls["n"] == 1
+    real_fts = eng.store.fts
+    eng.store.fts = lambda match, limit: []
+    try:
+        callers = eng.search("codeGateway.verify", k=8, graph=False)
+    finally:
+        eng.store.fts = real_fts
+    assert any(h.path == "frontend/src/components/VerifyForm.tsx" for h in callers)
+
+
 def test_search_finds_and_explains(kg):
     hits = kg.engine.search("verify one-time code service", k=5)
     assert any(h.path == SVC for h in hits)

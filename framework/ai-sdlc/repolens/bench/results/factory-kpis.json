@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18",
+  "updated": "2026-11-19",
   "source": "factory loop locate commands and framework/ai-sdlc/repolens/bench/results/summary.md",
   "routing": "search when the symbol is unknown; rg for an exact symbol or path; impact for callers; repolens miss on fallback",
   "sampled_ab": "every third implemented issue, and every miss",
@@ -28,6 +28,17 @@
     "sonnet_scale": {"runs_per_arm": 8, "tool_calls_both": 2.0, "input_tokens_baseline": 18727, "input_tokens_repolens": 22506, "cost_usd_baseline": 0.02573, "cost_usd_repolens": 0.02646}
   },
   "usage_report_last_gate": "6 calls, 0 sessions, adoption 0%, hit rate n/a, p95 988 ms",
+  "usage_report_note": "That 0% is the line printed before 0.4.4. With zero harness sessions the gate now prints adoption n/a. No new live gate line was captured in this change.",
+  "testimony_getdto_sample": {
+    "rg_wall_s": 0.004,
+    "rg_bytes": 2751,
+    "git_grep_origin_main_wall_s": 0.015,
+    "search_wall_s": 0.680,
+    "search_result": "no results",
+    "impact_wall_s": 0.205,
+    "impact_result": "node not found",
+    "caveat": "The indexed checkout was one merge behind origin/main and had no Testimony.getDto node."
+  },
   "preflight": {
     "vitest_retry": "one extra attempt for frontend vitest only",
     "full_runs_with_a_recorded_restart": ["registration-draft: 3", "folio: 3", "cli-usage: 2"]

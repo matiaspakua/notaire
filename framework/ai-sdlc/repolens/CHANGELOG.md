@@ -3,6 +3,14 @@
 All notable changes to repolens. Versions follow [SemVer](https://semver.org); the version lives in
 `repolens/__init__.py` and release tags are `repolens-v<version>`.
 
+## [0.4.4] - 2026-11-19
+
+### Fixed
+
+- A search whose query is one identifier, and whose name index already hits that identifier, does not run the embedding query. A prose question still does. On the fixture, `CodeVerificationService` made zero `embed_query` calls and `verify one-time code service` made one (#2325).
+- That same exact hit adds nodes that call it (`calls` edges) even when full-text search returns nothing. `codeGateway.verify` with an empty full-text result and `graph=False` still lists `VerifyForm.tsx` (#2325).
+- `repolens report --gate` prints `adoption n/a` when the log has tool calls and zero harness sessions. CLI events have no session id, so `adoption 0%` was not a measured rate. A log with harness sessions still prints the percentage (#2325).
+
 ## [0.4.3] - 2026-11-18
 
 ### Added

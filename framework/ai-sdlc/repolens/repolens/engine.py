@@ -347,24 +347,40 @@ class Engine:
                 if i >= 0:
                     fused[i] = fused.get(i, 0.0) + self.tuning["w_fts"] / (rrf_k + rank)
         self.timings["fts"] = time.perf_counter() - clock
-        clock = time.perf_counter()
-        if semantic and self.embedder is not None and self.emb is not None:
-            q = self.embedder.embed_query(query)
-            self.timings["embed_query"] = time.perf_counter() - clock
-            sims = self.similarities(q)
-            top = np.argpartition(-sims, min(150, len(sims) - 1))[:150]
-            for rank, r in enumerate(top[np.argsort(-sims[top])]):
-                if sims[r] <= 0.0:
-                    break
-                i = int(self.emb_rows[r])
-                fused[i] = fused.get(i, 0.0) + self.tuning["w_dense"] / (rrf_k + rank)
-        self.timings["dense"] = time.perf_counter() - clock
         idents = set(_IDENT_IN_QUERY.findall(query))
-        if query.strip() and not re.search(r"\s", query.strip()):
-            idents.add(query.strip())
+        stripped = query.strip()
+        single = bool(stripped) and re.search(r"\s", stripped) is None
+        if single:
+            idents.add(stripped)
+        exact: list[int] = []
         for ident in idents:
-            for i in self._exact(ident):
+            hits = self._exact(ident)
+            exact.extend(hits)
+            for i in hits:
                 fused[i] = fused.get(i, 0.0) + 2.0 / rrf_k
+        # A single identifier the name index already hit does not need an embedding.
+        # Measured: that query spent ~1.9s in embed_query while rg answered in milliseconds,
+        # and the hit rate was not better. Questions with spaces still embed.
+        if single and exact:
+            for i in exact:
+                for j, kind, _ in self._adjacent(i, "in"):
+                    if kind == "calls":
+                        fused[j] = max(fused.get(j, 0.0), 1.0 / rrf_k)
+            self.timings["embed_query"] = 0.0
+            self.timings["dense"] = 0.0
+        else:
+            clock = time.perf_counter()
+            if semantic and self.embedder is not None and self.emb is not None:
+                q = self.embedder.embed_query(query)
+                self.timings["embed_query"] = time.perf_counter() - clock
+                sims = self.similarities(q)
+                top = np.argpartition(-sims, min(150, len(sims) - 1))[:150]
+                for rank, r in enumerate(top[np.argsort(-sims[top])]):
+                    if sims[r] <= 0.0:
+                        break
+                    i = int(self.emb_rows[r])
+                    fused[i] = fused.get(i, 0.0) + self.tuning["w_dense"] / (rrf_k + rank)
+            self.timings["dense"] = time.perf_counter() - clock
         return {i: s for i, s in fused.items() if not self.hidden[i]}
 
     def _query_terms(self, query: str) -> list[str]:
