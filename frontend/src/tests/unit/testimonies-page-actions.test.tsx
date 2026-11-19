@@ -258,8 +258,23 @@ describe("edit", () => {
 
     fireEvent.click(screen.getByTestId("btn-save-edit-testimony"));
 
-    expect(toast.error).toHaveBeenCalledWith(`${T}.numberRequired`);
+    expect(number).toHaveAttribute("aria-invalid", "true");
+    const describedBy = number.getAttribute("aria-describedby");
+    expect(describedBy).toBeTruthy();
+    expect(document.getElementById(describedBy!.split(" ")[0])).toHaveTextContent(`${T}.numberRequired`);
+    expect(toast.error).not.toHaveBeenCalled();
     expect(apiPut).not.toHaveBeenCalled();
+  });
+
+  it("clears the number error when a valid number is typed", async () => {
+    const number = await openEdit(7);
+    fireEvent.change(number, { target: { value: "abc" } });
+    fireEvent.click(screen.getByTestId("btn-save-edit-testimony"));
+    expect(screen.getByTestId("input-edit-testimony-number")).toHaveAttribute("aria-invalid", "true");
+
+    fireEvent.change(screen.getByTestId("input-edit-testimony-number"), { target: { value: "12" } });
+
+    expect(screen.getByTestId("input-edit-testimony-number")).not.toHaveAttribute("aria-invalid");
   });
 
   it("says the testimony changed when the version is stale", async () => {
