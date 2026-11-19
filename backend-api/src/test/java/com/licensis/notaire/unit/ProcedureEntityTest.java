@@ -1,5 +1,6 @@
 package com.licensis.notaire.unit;
 
+import com.licensis.notaire.adapter.out.persistence.procedure.ProcedureLegacyMapper;
 import com.licensis.notaire.dto.DtoProcedureType;
 import com.licensis.notaire.dto.DtoProcedure;
 import com.licensis.notaire.business.Deed;
@@ -241,7 +242,7 @@ class ProcedureEntityTest {
         void getDtoAllNullOptional() {
             Procedure procedure = baseProcedure();
 
-            var dto = procedure.getDto();
+            var dto = ProcedureLegacyMapper.toDto(procedure);
 
             assertThat(dto.getIdProcedure()).isEqualTo(5);
             assertThat(dto.getDeed()).isNull();
@@ -258,7 +259,7 @@ class ProcedureEntityTest {
             deed.setNumber(2025001);
             procedure.setFkIdDeed(deed);
 
-            var dto = procedure.getDto();
+            var dto = ProcedureLegacyMapper.toDto(procedure);
 
             assertThat(dto.getDeed()).isNotNull();
             assertThat(dto.getDeed().getIdDeed()).isEqualTo(7);
@@ -272,7 +273,7 @@ class ProcedureEntityTest {
             property.setAddress("Street Test 456");
             procedure.setFkIdProperty(property);
 
-            var dto = procedure.getDto();
+            var dto = ProcedureLegacyMapper.toDto(procedure);
 
             assertThat(dto.getProperty()).isNotNull();
         }
@@ -284,7 +285,7 @@ class ProcedureEntityTest {
             Budget budget = new Budget(15);
             procedure.setFkIdBudget(budget);
 
-            var dto = procedure.getDto();
+            var dto = ProcedureLegacyMapper.toDto(procedure);
 
             assertThat(dto.getBudget()).isNotNull();
             assertThat(dto.getBudget().getIdBudget()).isEqualTo(15);
@@ -302,7 +303,7 @@ class ProcedureEntityTest {
             management.setFkIdNotaryPerson(notary);
             procedure.setFkIdManagement(management);
 
-            var dto = procedure.getDto();
+            var dto = ProcedureLegacyMapper.toDto(procedure);
 
             assertThat(dto.getManagement()).isNotNull();
             assertThat(dto.getManagement().getIdManagement()).isEqualTo(9);

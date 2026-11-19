@@ -3,6 +3,7 @@ package com.licensis.notaire.adapter.out.persistence.testimony;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.licensis.notaire.adapter.out.persistence.procedure.ProcedureLegacyMapper;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.Procedure;
@@ -85,7 +86,7 @@ public final class TestimonyLegacyMapper {
         }
         if (deed.getProcedureList() != null && !deed.getProcedureList().isEmpty()) {
             for (Procedure procedure : deed.getProcedureList()) {
-                deedDto.getProcedures().add(procedure.getDto());
+                deedDto.getProcedures().add(ProcedureLegacyMapper.toDto(procedure));
             }
         } else {
             deedDto.setProcedures(null);
