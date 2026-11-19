@@ -3,6 +3,43 @@
 All notable changes to repolens. Versions follow [SemVer](https://semver.org); the version lives in
 `repolens/__init__.py` and release tags are `repolens-v<version>`.
 
+## [0.5.0] - 2026-11-19
+
+### Added
+
+- Java calls link through the receiver's type: locals, fields, parameters, lambda parameters, return types,
+  generic arguments and Spring Data repository methods. Against the javac call graph of `backend-api`
+  (`bench/caller_bench.py`, 6,745 pairs) precision 0.714 -> 0.989, recall 0.852 -> 0.954. `impact` on 150
+  shared method names finds 0.968 of the real callers (was 0.768); 1.3% find none (was 14%) (#2336).
+- `impact` starts from the interface and superclass methods a method overrides, so callers through a port count.
+- A resident per-worktree query service answers CLI queries over a Unix socket in a private per-user folder.
+  `search` 1.252 -> 0.086 s, `impact` 0.767 -> 0.095 s p50 on Notaire (`bench/cli_latency.py`).
+  `repolens daemon status|stop`; `REPOLENS_DAEMON=0` turns it off.
+- `repolens cache export|import` carries the vector cache to another machine: a fresh Notaire worktree indexed
+  in 9.1 s with 84,964 of 84,965 vectors from an imported cache. `[embed] skip` keeps paths out of the vector
+  index (opt-in: half the vectors, held-out MRR -0.042).
+- Several repositories: every index run registers its store (`repolens repos`); `search --repos all|a,b` and
+  MCP `search(repos=...)` ask each one and label hits `[repo] path`. Answers are weighted by each store's
+  relevance to the question, so federated recall@10 equals the owning store's (0.786 Notaire held-out, 0.825
+  scale) where plain interleaving dropped it to 0.628 / 0.575. A repository that cannot place a hit in the
+  top k is not searched: federated p50 45 ms on Notaire (`bench/federation_bench.py`).
+
+### Changed
+
+- `impact` and `node` list each file once with its symbols as `name:line` and count `[ranking] demote` paths
+  instead of listing them: ten `impact` answers 61,232 -> 24,524 bytes, ten `node` answers 28,212 -> 12,837,
+  no other file dropped. `--json` keeps every entry and adds a `demoted` flag.
+- MCP tools return plain text once: FastMCP added an output schema per tool and a structured copy of every
+  answer. Tool list plus instructions 4,701 -> 3,803 bytes, pinned under 4,000 by a test.
+- The extractor version is 6: the first index run after the upgrade re-extracts every file.
+
+### Fixed
+
+- An unknown name is no longer answered with the top semantic hit. `impact TestimonyService` reported the
+  `TestimonyWriteService` constructor with "0 files, 0 tests"; it now answers `not found` with the five
+  closest symbols, types first (CLI and MCP).
+- `verify.sh` runs its smoke index with a private `REPOLENS_HOME` and no resident service.
+
 ## [0.4.5] - 2026-11-19
 
 ### Fixed
