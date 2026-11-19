@@ -36,9 +36,11 @@ def hits(results: list[Hit], query: str = "", detailed: int | None = None) -> st
         head += f"  ({h.score:.2f})"
         lines.append(head)
         if h.signature and h.kind not in ("section", "chunk", "route", "table", "tag"):
-            lines.append(f"   sig: {h.signature[:160]}")
+            lines.append(f"   sig: {h.signature[:80]}")
         if h.symbols:
-            lines.append("   symbols: " + ", ".join(f"{s['name']}:{s['line']}" for s in h.symbols))
+            shown = h.symbols[:6]
+            extra = f" (+{len(h.symbols) - 6})" if len(h.symbols) > 6 else ""
+            lines.append("   symbols: " + ", ".join(f"{s['name']}:{s['line']}" for s in shown) + extra)
         if h.why and h.why != "match":
             lines.append(f"   via: {h.why}")
     return "\n".join(lines)
@@ -149,6 +151,37 @@ def _member(item: dict) -> str:
         return "§ " + item["name"].split(" § ", 1)[-1]  # the label is `path § title`
     stem = item["path"].rsplit("/", 1)[-1].split(".", 1)[0]
     return item["name"][len(stem) + 1:] if item["name"].startswith(stem + ".") else item["name"]
+
+
+def orphans(result: dict, limit: int = 50) -> str:
+    """Files that relate to no other file, then files related only through git history (and symbols)."""
+    iso, hist = result["isolated"], result["history_only"]
+    lines = [f"orphans: {len(iso)} of {result['files']} files relate to no other file; "
+             f"{len(hist)} only through git history"]
+    sections = [("relate to nothing", iso, _orphan_file),
+                ("only through git history (co-change, commit issues)", hist, _orphan_file)]
+    if "symbols" in result:
+        sections.append(("symbols with no relation", result["symbols"], _orphan_symbol))
+    for title, items, line in sections:
+        if items:
+            lines.append(f"{title} ({len(items)}):")
+            lines += [line(e) for e in items[:limit]]
+            if len(items) > limit:
+                lines.append(f"  +{len(items) - limit} more (--limit)")
+    demoted, conventional = sum(result["demoted"].values()), sum(result.get("conventional", {}).values())
+    held = [f"+{demoted} in demoted paths"] if demoted else []
+    held += [f"{'+' if not held else ''}{conventional} read by tools by name"] if conventional else []
+    if held:
+        lines.append(", ".join(held) + " (--all lists them)")
+    return "\n".join(lines)
+
+
+def _orphan_file(entry: dict) -> str:
+    return f"  {entry['path']}  [{entry['lang']}]"
+
+
+def _orphan_symbol(entry: dict) -> str:
+    return f"  {entry['path']}:{entry['line']} {entry['qualname'] or entry['name']} [{entry['kind']}]"
 
 
 def path(result: dict | None) -> str:

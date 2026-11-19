@@ -3,6 +3,55 @@
 All notable changes to repolens. Versions follow [SemVer](https://semver.org); the version lives in
 `repolens/__init__.py` and release tags are `repolens-v<version>`.
 
+## [0.6.1] - 2026-11-19
+
+### Changed
+
+- Search defaults to 4 detailed hits plus 4 one-line hits. Snippet defaults to 32 lines. Impact defaults to depth 2. Signatures in search hits are capped at 80 characters and symbol lists at 6. On the session fixture, 10 detailed hits for `code verification` were 1697 bytes; the new default was 940 bytes.
+- A stale index no longer blocks the query. The query starts the same detached `index --no-wait` the `post-merge` hook starts, and answers from the previous graph. An index written by other extractors uses that same background refresh. The next query sees the result.
+
+## [0.6.0] - 2026-11-19
+
+### Added
+
+- Orphans: `repolens orphans`, `GET /api/orphans`, the MCP `orphans` tool and the explorer's Orphans view list
+  the files that relate to no other file, then the files related only through git history; `--symbols` adds
+  symbols with no relation. Demoted paths and files a tool reads by name (`[orphans] conventional`:
+  `package-info.java`, `LICENSE`, `__init__.py`, `*.snap`...) are counted, `--all` lists them. `repolens index`
+  prints the counts (#2338).
+- Any language: a file name the tree-sitter pack knows gets its language; a language without a hand-written spec
+  but with a tags query (71 in pack 1.14: Ruby, PHP, Dart, Elixir, Scala, Swift, C, C++, Lua...) yields its
+  definitions, calls and type references through it. A grammar that cannot load is tried once per process and
+  the file is indexed as text. On the scale corpus, 18 code languages yield symbols (was 15).
+- Any text links the files and directories it names (full, `./`, `../`, web-root and bare names; code files
+  too) and configuration and text link the code identifiers they name. An ambiguous name links the nearest
+  candidate, or nothing when more than three tie.
+- `bench/orphan_bench.py`: orphans, coverage and a precision proxy on real repositories.
+
+### Fixed
+
+- ESM TypeScript imports that name the emitted file (`import ... from './x.js'` for `x.ts`, as vscode and
+  NodeNext projects write them) resolve to the source. On the scale corpus, resolved imports 109,129 ->
+  255,070 and calls 547,866 -> 1,028,599: calls are scoped by the imports they go through.
+- An ambiguous path mention linked the first three files with that name; it now links the nearest one.
+- An index written by other extractors than the running code's is stale, not only one behind HEAD: a branch
+  switch could leave the older checkout's index stamped with the current HEAD (Notaire served version 6 at
+  the 0.6.0 commit). An index run never downgrades: a process started before an upgrade (a long-lived MCP
+  server) leaves a newer store as is instead of re-extracting it with its older extractors.
+
+### Changed
+
+- Measured on the same content before and after (`bench/orphan_bench.py`): files related to nothing, Notaire
+  195 -> 62 and scale 3,821 -> 638; of those, named by another file (a link repolens missed) 27 -> 9 and
+  1,486 -> 110. Retrieval unchanged on Notaire (tuning 0.904 / 0.788, held-out 0.786 / 0.882) and on the scale
+  tasks (recall@10 0.825, MRR 0.420 -> 0.418).
+- Costs: a full re-extract of Notaire 5.8 -> 6.7 s (link 1.4 -> 1.9 s), of the scale corpus 36.8 -> 41.0 s;
+  scale query p50 64 -> 83 ms (39% more edges walked).
+- MCP: seven core tools (`orphans` added), instructions trimmed; tool list plus instructions 3,941 bytes,
+  under the 4,000-byte budget.
+- `.txt`, `.inc` and `.log` stay plain text (the pack detects vimdoc and sourcepawn).
+- Extractor version 7: the first index after the upgrade re-extracts every file.
+
 ## [0.5.0] - 2026-11-19
 
 ### Added

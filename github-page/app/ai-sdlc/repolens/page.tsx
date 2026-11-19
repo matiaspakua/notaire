@@ -13,6 +13,7 @@ import {
   REPOLENS_SECTIONS,
 } from "@/lib/repolens-content";
 import { loadRepoLensBench } from "@/lib/repolens-bench";
+import { loadRepoLensRelease } from "@/lib/repolens-release";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata("/ai-sdlc/repolens/");
@@ -23,6 +24,7 @@ export const metadata = pageMetadata("/ai-sdlc/repolens/");
  */
 export default function RepoLensPage() {
   const bench = loadRepoLensBench();
+  const release = loadRepoLensRelease();
   const sources = [
     ...bench.sources.map((s) => ({ href: src(s.path), label: s.path })),
     { href: src("framework/ai-sdlc/repolens/README.md"), label: "framework/ai-sdlc/repolens/README.md" },
@@ -102,6 +104,19 @@ export default function RepoLensPage() {
             </Card>
           ))}
         </div>
+      </RevealSection>
+
+      <RevealSection>
+        <SectionTitle id="version">{REPOLENS_SECTIONS.versionTitle}</SectionTitle>
+        <p className="leading-relaxed text-slate-700 dark:text-slate-300">
+          <T text={REPOLENS_SECTIONS.versionLead} />
+        </p>
+        <p className="mt-3 font-mono text-sm text-slate-900 dark:text-slate-100">repolens {release.version}</p>
+        <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+          {release.highlights.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
       </RevealSection>
 
       <RevealSection>

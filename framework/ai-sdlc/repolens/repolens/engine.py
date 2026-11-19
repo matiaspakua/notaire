@@ -24,7 +24,7 @@ from scipy.sparse import csr_matrix
 
 from .config import Config
 from .embed import query_embedder
-from .model import SYMBOL_KINDS, search_tokens
+from .model import SYMBOL_KINDS, is_constructor, search_tokens
 from .store import Store
 
 HIDDEN_KINDS = frozenset({"dir", "project", "external"})
@@ -590,7 +590,7 @@ class Engine:
             if self.resolve(ref) is not None:
                 continue
             near = [h for h in self.search(ref, k=12, graph=False)
-                    if h.kind not in ("file", "section") and not _is_constructor(h.qualname or h.name)]
+                    if h.kind not in ("file", "section") and not is_constructor(h.qualname or h.name)]
             near = sorted(near, key=lambda h: h.kind not in TYPE_KINDS)[:5]  # stable: types first, then rank
             closest = ", ".join(f"{h.qualname or h.name} ({h.path}:{h.start})" for h in near)
             lines.append(f"not found: {ref!r}" + (f"; closest: {closest}" if closest else ""))
@@ -891,8 +891,3 @@ def _csr(src: np.ndarray, dst: np.ndarray, kind: np.ndarray, n: int):
     ptr = np.zeros(n + 1, dtype=np.int64)
     np.add.at(ptr, src + 1, 1)
     return np.cumsum(ptr), dst[order], kind[order]
-
-
-def _is_constructor(qualname: str) -> bool:
-    parts = qualname.split(".")
-    return len(parts) >= 2 and parts[-1] == parts[-2]

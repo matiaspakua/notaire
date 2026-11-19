@@ -16,20 +16,16 @@ from .paths import usage_log
 from .service import KnowledgeGraph
 from .usage import files_in, record
 
-INSTRUCTIONS = """repolens is a pre-built knowledge graph of this repository: every file, class, method,
-function, doc section, REST route, DB table, test and git co-change, linked by typed edges (calls, imports,
-inherits/implements, tests, http_call, handles, uses_table, mentions, co_change). It follows the working tree
-(edits, branch switches and pulls are re-indexed automatically).
-Start with `search` (hybrid semantic + keyword + graph ranking) instead of grep/glob: one call returns the
-relevant files with path:line and the relation that put them there. Then use `node` (relations of one
-symbol), `impact` (what breaks / which tests cover a change), `path` (how two things connect),
-`outline`/`snippet` (read code without opening whole files). Arguments accept a node id, a path,
-path:line or a symbol name. Use grep for exact literal strings repolens does not index (log messages, config
-values)."""
+INSTRUCTIONS = """repolens is a knowledge graph of this repository (files, symbols, docs, routes, tables, tests,
+git co-change) linked by typed edges and kept in sync with the working tree.
+Start with `search` instead of grep/glob: one call returns the relevant files with path:line and why. Then
+`node` (relations of one symbol), `impact` (what breaks, which tests cover it), `path` (how two things connect),
+`outline`/`snippet` (code without whole files), `orphans` (files nothing relates to). A reference is a node id,
+a path, path:line or a symbol name. Use grep for exact literal strings (log messages, config values)."""
 
 
-ALSO = 10  # one-line results listed after the detailed top k
-CORE_TOOLS = ("search", "node", "impact", "path", "outline", "snippet")
+ALSO = 4  # one-line results listed after the detailed top k
+CORE_TOOLS = ("search", "node", "impact", "path", "outline", "snippet", "orphans")
 ALL_TOOLS = (*CORE_TOOLS, "neighbors", "stats", "reindex")
 BUILDING = ("repolens is building the index of this repository for the first time (graph and keyword search "
             "are ready in seconds to a few minutes; semantic vectors follow). Retry shortly, or use Grep/Glob "
@@ -84,13 +80,13 @@ def build(kg: KnowledgeGraph, tools: tuple[str, ...] = CORE_TOOLS):
     threading.Thread(target=lambda: kg.engine.warm(), daemon=True).start()
 
     @_tool(mcp, tools)
-    def search(query: str, k: int = 10, scope: str = "all", group_by_file: bool = True,
+    def search(query: str, k: int = 4, scope: str = "all", group_by_file: bool = True,
                kinds: list[str] | None = None, project: str | None = None, repos: str | None = None) -> str:
         """Find code, tests, docs, configs, routes and tables relevant to a natural-language question or
         identifier. Ranks by semantic + keyword similarity, then expands through the code graph (calls,
         implementations, tests, HTTP routes, co-changed files) so related files that never mention the
         query words still surface. scope: all | code | docs | tests. Returns path:line per result: the top
-        `k` in detail, then 10 more as one-line "also relevant" entries (often the rest of the answer)."""
+        `k` in detail (default 4), then 4 more as one-line "also relevant" entries."""
         def body():
             mode = "files" if group_by_file else "nodes"
             if repos:
@@ -110,7 +106,7 @@ def build(kg: KnowledgeGraph, tools: tuple[str, ...] = CORE_TOOLS):
         return track.call("node", ref, lambda: _found(kg, render.node(kg.engine.node(ref)), ref))
 
     @_tool(mcp, tools)
-    def impact(ref: str, depth: int = 3) -> str:
+    def impact(ref: str, depth: int = 2) -> str:
         """Reverse-dependency closure of a node: everything that calls, implements, imports, routes to or
         tests it (transitively up to `depth`), plus the list of affected test files."""
         return track.call("impact", ref, lambda: _found(kg, render.impact(kg.engine.impact(ref, depth)), ref))
@@ -135,9 +131,20 @@ def build(kg: KnowledgeGraph, tools: tuple[str, ...] = CORE_TOOLS):
             kg, render.outline(kg.engine.outline(file_path)), file_path))
 
     @_tool(mcp, tools)
-    def snippet(ref: str, max_lines: int = 80) -> str:
+    def snippet(ref: str, max_lines: int = 32) -> str:
         """Source text of a node (a method, class, section...) without reading the whole file."""
         return track.call("snippet", ref, lambda: _found(kg, render.snippet(kg.engine.snippet(ref, max_lines)), ref))
+
+    @_tool(mcp, tools)
+    def orphans(symbols: bool = False, limit: int = 50) -> str:
+        """Files that relate to no other file (review: unused, misplaced or missing a link), then files related
+        only through git history; `symbols` adds symbols with no relation."""
+        from . import orphans as orphan_report
+
+        def body():
+            found = orphan_report.find(kg.engine, symbols=symbols)
+            return render.orphans(found, limit), len(found["isolated"]) + len(found["history_only"])
+        return track.call("orphans", "", body)
 
     @_tool(mcp, tools)
     def stats() -> str:

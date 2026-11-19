@@ -55,7 +55,7 @@ Route the lookup. Do not send every question to RepoLens.
 - You do not know the file or symbol: `repolens search` first. If the top hit is not usable, `rg`, then `repolens miss "<query>"`.
 - You know the exact symbol, path, or string: `rg` first. A search costs about 2s here; a direct `rg` is usually under 0.2s and was as accurate or better on exact lookups in the factory loop.
 - You need callers of a known symbol: `repolens impact <symbol>`. If it returns no production file, `rg` and `repolens miss "<symbol> callers"`.
-- A query refreshes the index first when its recorded commit is not `HEAD`. That covers a cloud VM merge that did not run the git hooks.
+- After a merge or pull, run `bash framework/ai-sdlc/repolens/bin/repolens refresh --background` if the git hooks are not installed. A query that still sees a stale index starts that same refresh and answers immediately. It does not wait for the refresh.
 
 Sample a paired grep-vs-repolens locate every third implemented issue, and on every miss. Do not pair them on every issue. Numbers: `framework/ai-sdlc/repolens/bench/results/factory-kpis.json` and `factory-loop-comparison.md`. Health: `bash framework/ai-sdlc/repolens/bin/repolens doctor`. Usage: `… report` (#2298).
 

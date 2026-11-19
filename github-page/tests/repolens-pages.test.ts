@@ -6,6 +6,7 @@ import { FACTORY_READING_PATH } from "@/lib/reading-path";
 import { pageIsTranslated } from "@/lib/i18n";
 import { TRANSLATED_ROUTES } from "@/lib/i18n/es";
 import { loadRepoLensBench, headlineFactors } from "@/lib/repolens-bench";
+import { loadRepoLensRelease } from "@/lib/repolens-release";
 
 const REPO = path.join(__dirname, "..", "..");
 const RESULTS = path.join(REPO, "framework", "ai-sdlc", "repolens", "bench", "results");
@@ -80,5 +81,20 @@ describe("RepoLens Pages showcase (#2315)", () => {
     expect(snap.agents.sonnetScale.baseline.runs).toBe(8);
     expect(snap.factoryLoop.pairs.length).toBeGreaterThanOrEqual(2);
     expect(snap.factoryLoop.caveat).toMatch(/percentage|n\s*=/i);
+  });
+
+  it("reads the package version and the current changelog section", () => {
+    const release = loadRepoLensRelease();
+    const init = readFileSync(
+      path.join(REPO, "framework/ai-sdlc/repolens/repolens/__init__.py"),
+      "utf8",
+    );
+    const page = readFileSync(path.join(__dirname, "..", "app", "ai-sdlc", "repolens", "page.tsx"), "utf8");
+    expect(init).toContain(`__version__ = "${release.version}"`);
+    expect(release.version).toMatch(/^\d+\.\d+\.\d+$/);
+    expect(release.highlights.length).toBeGreaterThan(0);
+    expect(release.highlights.join("\n")).toMatch(/background/);
+    expect(page).toContain("loadRepoLensRelease");
+    expect(page).toContain("release.version");
   });
 });

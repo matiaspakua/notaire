@@ -72,6 +72,36 @@
     "git_grep_hit": "User.java:210 only production declaration",
     "verdict": "5.52s is one incremental pass after a single merge, not a re-embed. Not the next RepoLens item."
   },
+  "compact_search_payload": {
+    "query": "code verification",
+    "fixture": "repolens session fixture, file mode",
+    "ten_detailed_hits_bytes": 1697,
+    "default_four_detailed_plus_four_oneline_bytes": 940,
+    "ratio": 0.554,
+    "note": "Same renderer after the signature cap. Not a re-run of the Sonnet bench."
+  },
+  "holdout_search_payload_0_6_1": {
+    "label": "CLI search text over the 12 notaire-holdout prompts. Not a Sonnet or Haiku session.",
+    "version": "0.6.1",
+    "tasks": 12,
+    "default_bytes": 13682,
+    "old_k10_also10_bytes": 35053,
+    "ratio": 0.390,
+    "token_estimate_bytes_div_4": [3420, 8763],
+    "note": "Default is 4 detailed hits plus 4 one-line hits. The old arm is -k 10 --also 10, the previous default shape. Token estimates are bytes/4 of the answer text only."
+  },
+  "background_refresh": {
+    "query_blocks": false,
+    "fixture_test": "test_a_query_does_not_wait_for_the_refresh_after_head_moves",
+    "notaire_blocking_refresh_s": [5.52, 5.79],
+    "notaire_blocking_query_s": [7.104, 7.718],
+    "remeasure_range": "b0065a209ca9 -> 623b2d5621b5",
+    "notaire_stale_query_s": 1.31,
+    "notaire_caught_up_s": 2.112,
+    "notaire_second_search_s": 1.374,
+    "git_grep_procedure_getdto_s": 0.0037,
+    "note": "The 5.52s and 5.79s figures are the old blocking refresh. On the same second range, the new query returned in 1.31s with 'refreshing in the background' and the index matched HEAD 2.112s after the query started. git grep of Procedure.getDto was 0.0037s."
+  },
   "preflight": {
     "vitest_retry": "one extra attempt for frontend vitest only",
     "full_runs_with_a_recorded_restart": ["registration-draft: 3", "folio: 3", "cli-usage: 2"]
@@ -181,5 +211,102 @@
       "cloud_vm_cold_index_s": 1265.78
     },
     "strict_resolution": "Two of ten sampled names (JwtService, AuthController) do not exist; 0.4.x answered them with the top semantic hit, 0.5.0 answers not found with the closest symbols."
+  },
+  "release_0_6_0": {
+    "issue": 2338,
+    "source": "bench/results/orphans-{0.5.0,0.6.0}-{notaire,scale}.json, perf/0.5.0-pre-agnostic.json, perf/0.6.0.json",
+    "method": "same content indexed by the 0.5.0 and the 0.6.0 extractors; same orphan definition and precision proxy",
+    "orphans": {
+      "notaire_isolated": [
+        195,
+        62
+      ],
+      "notaire_isolated_named_elsewhere": [
+        27,
+        9
+      ],
+      "notaire_history_only": [
+        101,
+        53
+      ],
+      "notaire_demoted_isolated": [
+        900,
+        432
+      ],
+      "scale_isolated": [
+        3821,
+        638
+      ],
+      "scale_isolated_named_elsewhere": [
+        1486,
+        110
+      ],
+      "scale_conventional": [
+        890,
+        580
+      ]
+    },
+    "coverage": {
+      "scale_code_languages_with_symbols": [
+        15,
+        18
+      ],
+      "scale_imports": [
+        109129,
+        255070
+      ],
+      "scale_calls": [
+        547866,
+        1028599
+      ],
+      "notaire_edges": [
+        263543,
+        275448
+      ],
+      "scale_edges": [
+        1773289,
+        2461200
+      ]
+    },
+    "retrieval": {
+      "notaire_tune": "0.904 / 0.788 both",
+      "notaire_holdout": "0.786 / 0.882 both",
+      "scale_recall10_mrr": [
+        [
+          0.825,
+          0.42
+        ],
+        [
+          0.825,
+          0.418
+        ]
+      ]
+    },
+    "cost": {
+      "notaire_full_reextract_s": [
+        5.8,
+        6.7
+      ],
+      "notaire_link_s": [
+        1.44,
+        1.9
+      ],
+      "scale_full_reextract_s": [
+        36.8,
+        41.0
+      ],
+      "scale_query_p50_ms": [
+        63.6,
+        83.2
+      ],
+      "notaire_query_p50_ms": [
+        26.0,
+        28.2
+      ],
+      "mcp_schema_bytes": [
+        3803,
+        3941
+      ]
+    }
   }
 }

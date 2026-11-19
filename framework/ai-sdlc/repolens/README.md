@@ -35,10 +35,10 @@ where things live in such famous repositories; see [Scale](#scale).
 
 ## Contents
 
-1. [How it works](#how-it-works)
+1. [How it works](#how-it-works) · [Any language, any format](#any-language-any-format)
 2. [Install](#install) · [Quick start](#quick-start)
 3. [Configuration](#configuration)
-4. [CLI](#cli) · [MCP server](#mcp-server) · [Several repositories](#several-repositories) · [In an agent factory](#in-an-agent-factory) · [HTTP API](#http-api) · [Graph explorer](#graph-explorer)
+4. [CLI](#cli) · [MCP server](#mcp-server) · [Orphans](#orphans) · [Several repositories](#several-repositories) · [In an agent factory](#in-an-agent-factory) · [HTTP API](#http-api) · [Graph explorer](#graph-explorer)
 5. [Extending](#extending)
 6. [Performance](#performance) · [Callers](#callers) · [Cold start](#cold-start) · [Scale](#scale)
 7. [Benchmark](#benchmark)
@@ -75,7 +75,7 @@ flowchart LR
 | Nodes | From |
 |---|---|
 | `file`, `dir`, `project` | every scanned file and its folders |
-| `class`, `interface`, `enum`, `type`, `function`, `method`, `variable` | tree-sitter (Java, Kotlin, C#, TS/TSX/JS, Python, Go, Rust; generic fallback for other grammars). TS/JS object-literal services (`const api: Port = { get: () => ... }`) become methods. |
+| `class`, `interface`, `enum`, `type`, `function`, `method`, `variable` | tree-sitter, in three tiers (see [Any language, any format](#any-language-any-format)): hand-written specs for Java, Kotlin, C#, TS/TSX/JS, Python, Go and Rust; the language's tags query for 71 more (Ruby, PHP, Dart, Elixir, Scala, Swift, C, C++, Lua...); node-type names for any other grammar. TS/JS object-literal services (`const api: Port = { get: () => ... }`) become methods. |
 | `section`, `chunk` | Markdown headings; long configs, text and PDF pages |
 | `route` | `@GetMapping`/`@RequestMapping` (Spring), JAX-RS, FastAPI/Flask, NestJS decorators, Express `app.get(...)` |
 | `table` | `CREATE TABLE/VIEW` in SQL, JPA `@Table`, SQLAlchemy `__tablename__` |
@@ -91,9 +91,46 @@ flowchart LR
 | `tests` | test file → subject (`FooTest` → `Foo`, `foo.test.ts` → `foo.ts`, `test_foo.py` → `foo.py`) |
 | `handles`, `http_call` | route → handler method; client call / MockMvc test / API-test collection (Bruno, Postman) → route. This is what joins a frontend to its backend, even across repositories. |
 | `defines_table`, `uses_table` | migration → table; entity / SQL → table |
-| `links`, `mentions` | Markdown links; inline code, paths and endpoints mentioned in docs and configs |
+| `links`, `mentions` | Markdown links; the files and directories any text names (full, `./`, `../`, web-root or bare names, code included), the code identifiers configs and text name, endpoints |
 | `tagged`, `changed_for` | node → tag; file → issue referenced by the commits that changed it |
 | `co_change` | files committed together (normalised count from `git log`) |
+
+### Any language, any format
+
+Every file is knowledge, whatever it is written in:
+
+1. **Detection.** A file name the tree-sitter pack knows (371 grammars in pack 1.14) gets its language. It is
+   *code* when definitions can be extracted (a hand-written spec, or a tags query), else *text* with its
+   language name (`terraform`, `groovy`, `html`). `.txt`, `.inc` and `.log` stay plain text (the pack calls
+   them vimdoc and sourcepawn).
+2. **Definitions and references.** Hand-written specs keep the deepest model (Java calls are measured against
+   javac). Any other language with a tags query, the standard `@definition.*` / `@reference.*` captures GitHub
+   code navigation uses, yields its classes, functions and methods with containment, plus calls and type
+   references. Any other grammar is walked by node-type names (`*_declaration`, `*_definition`). A grammar that
+   cannot load (offline, first use downloads it) is tried once per process and the file is indexed as text.
+3. **Mentions.** Any text, code included, names files and directories: `docs/x.md`, `./lib/common.sh`,
+   `../lib/greeter` (the file's own extension is tried), `/icons/logo.png` (a web-root path, found by suffix
+   under `public/`), `.claude/skills/review` (a directory) or a bare `docker-compose.yml`. In code a bare name
+   needs a recognized extension (`Folio.java`, not `this.store`). Configuration and text also name code
+   identifiers (`InvoiceLedger`, `invoice_ledger`, `Ledger.reconcile`), linked to a type or function. A name
+   with several candidates links the nearest one (most shared directories with the mentioning file), and
+   nothing when more than three are equally near; before, the first three matches were linked.
+
+Measured with `bench/orphan_bench.py` and the retrieval benchmarks on the same content indexed by 0.5.0 and by
+0.6.0 (Notaire; the scale corpus is spring-framework + vscode):
+
+| | Notaire 0.5.0 | Notaire 0.6.0 | scale 0.5.0 | scale 0.6.0 |
+|---|---|---|---|---|
+| Files / edges | 10,028 / 263,543 | 10,029 / 275,448 | 32,298 / 1,773,289 | 32,298 / 2,461,200 |
+| Code languages that yield symbols | 6 | 6 | 15 | 18 |
+| Resolved imports / calls | | | 109,129 / 547,866 | 255,070 / 1,028,599 |
+| Recall@10 / MRR | 0.786 / 0.882 (held-out) | 0.786 / 0.882 | 0.825 / 0.420 | 0.825 / 0.418 |
+| Full re-extract (link) | 5.8 s (1.4 s) | 6.7 s (1.9 s) | 36.8 s (11.3 s) | 41.0 s (13.4 s) |
+| Query p50 | 26 ms | 28 ms | 64 ms | 83 ms |
+
+Most of the scale growth is vscode's ESM imports (`import ... from './x.js'` for `x.ts`), which 0.5.0 did not
+resolve: calls are scoped by the imports they go through, so they were dropped as ambiguous. The graph is
+larger, and the walk over it is slower in proportion; ranking did not move.
 
 ### Retrieval
 
@@ -186,6 +223,9 @@ usecase = '\bCU-?(\d{2,3})\b'
 [routes]
 prefixes = ["/api/v1", "/api"]    # lets client calls without the prefix match server routes
 
+[orphans]
+conventional = ["**/package-info.java", "**/LICENSE*"]   # read by a tool by name; replaces the defaults
+
 [ranking]
 demote = ["deprecated/**", "**/archive/**"]   # indexed, but ranked lower
 demote_factor = 0.35
@@ -213,7 +253,7 @@ anchors = 7                        # code anchors that seed the walk
 | `repolens index [folders...] [--full] [--no-embed] [--no-wait] [--quiet]` | create or update the graph (incremental; `--no-wait` steps aside when another run holds the store) |
 | `repolens report [--since 7d] [--json] [--md f] [--gate]` | usage efficiency report |
 | `repolens refresh [--background]` · `repolens hook` | refresh an existing store (git hooks) · record a harness tool call (Claude Code hook) |
-| `repolens search "<question>" [--files] [-k 10] [--also 10] [--scope code\|docs\|tests] [--kind method] [--project api] [--repos all\|a,b]` | hybrid + graph search; `--also` lists more results one line each; `--repos` asks other indexed repositories too |
+| `repolens search "<question>" [--files] [-k 4] [--also 4] [--scope code\|docs\|tests] [--kind method] [--project api] [--repos all\|a,b]` | hybrid + graph search; the default is 4 detailed hits plus 4 one-line hits; `--repos` asks other indexed repositories too |
 | `repolens node <ref>` | a node and its typed relations both ways |
 | `repolens neighbors <ref> [--depth 2] [--kind calls] [--direction in]` | expand the graph |
 | `repolens impact <ref>` | reverse-dependency closure + affected tests |
@@ -221,6 +261,7 @@ anchors = 7                        # code anchors that seed the walk
 | `repolens outline <file>` / `repolens snippet <ref>` | symbols of a file / source of a node |
 | `repolens stats` · `repolens export --format graphml -o g.graphml` | store size; export for Gephi, yEd, networkx |
 | `repolens serve` · `repolens mcp` | HTTP API + UI · MCP server |
+| `repolens orphans [--symbols] [--all] [--limit 50] [--json]` | files (and symbols) that relate to nothing: review candidates (see [Orphans](#orphans)) |
 | `repolens repos [--json] [--forget NAME]` | repositories indexed on this machine (see [Several repositories](#several-repositories)) |
 | `repolens cache info\|export <file>\|import <file> [--model M]` | the shared vector cache: size, or copy it to another machine (see [Cold start](#cold-start)) |
 | `repolens daemon status\|stop` | the resident query service of this worktree |
@@ -253,17 +294,18 @@ service in the background; later queries go over a Unix socket in a private per-
 claude mcp add repolens -- repolens mcp       # Claude Code; any MCP client: command `repolens`, args `["mcp"]`
 ```
 
-Tools: `search` (`repos` asks other indexed repositories too), `node`, `impact`, `path`, `outline`, `snippet`;
+Tools: `search` (`repos` asks other indexed repositories too), `node`, `impact`, `path`, `outline`, `snippet`,
+`orphans`;
 `--all-tools` adds `neighbors`, `stats` and `reindex`. Each tool schema costs the agent input tokens on
-every turn, so the default set is kept small: the tool list plus instructions are 3,803 bytes, pinned under
-4,000 by a test. Results are plain text that starts with `path:line`, sent once (no structured copy; FastMCP
+every turn, so the default set is kept small: the tool list plus instructions are 3,941 bytes for the seven
+tools, pinned under 4,000 by a test. Results are plain text that starts with `path:line`, sent once (no structured copy; FastMCP
 otherwise returns each answer twice and adds an output schema per tool, 4,701 bytes in 0.4.5).
 `impact` and `node` list each file once with its symbols as `name:line`, and count the `[ranking] demote`
 paths instead of listing them: 61,232 -> 24,524 bytes over ten Notaire `impact` answers, 28,212 -> 12,837
 over ten `node` answers, with no other file dropped (`--json` keeps every entry).
-`search` returns the top `k` (default 10) with their symbols and the relation that surfaced them, then ten
-more as one-line "also relevant" entries: recall keeps rising past the top 10 (0.86 -> 0.94 on the tuning
-tasks, 0.77 -> 0.94 held-out) and one line per file costs about 1 KB for all ten. For example:
+`search` returns the top `k` (default 4) with their symbols and the relation that surfaced them, then 4
+more as one-line "also relevant" entries. Recall keeps rising past the top 10 (0.86 -> 0.94 on the tuning
+tasks, 0.77 -> 0.94 held-out); the shorter default is what the agent reads back on the next turn. For example:
 
 ```text
 1. [file] backend-api/.../adapter/out/pdf/PdfBoxReportRenderer.java:1-487  (1.39)
@@ -275,6 +317,41 @@ also relevant:
 11. frontend/src/hooks/useReports.ts  downloadPdf
 13. backend-api/.../adapter/out/report/ReportService.java
 ```
+
+## Orphans
+
+After indexing, repolens can say which files relate to nothing: candidates for a person to review (unused,
+misplaced, or missing a link). `repolens index` prints how many there are; `repolens orphans`,
+`GET /api/orphans`, the MCP `orphans` tool and the explorer's **Orphans** button list them.
+
+- A file is **isolated** when no edge joins it to another file (calls, imports, tests, mentions, links...) and it
+  shares no route, table or issue tag with one. Structure is not a relation (a file contains its symbols and
+  sits in a folder whatever it is used for), and neither is a shared library import. Text that names a
+  directory relates the files in it.
+- A file related **only through git history** (co-change, the issues its commits name) is listed apart: it
+  changes with others, but nothing in the content names it.
+- Paths under `[ranking] demote` and files a tool or runtime reads by name (`[orphans] conventional`:
+  `package-info.java`, `__init__.py`, `LICENSE`, `.dockerignore`, `SKILL.md`, `*.snap`...) are counted, not
+  listed; `--all` lists them.
+- `--symbols` adds classes, functions and methods with no relation at all (constructors excluded).
+
+An orphan is a review candidate, not proof of dead code: reflection, dependency injection by string, paths
+built at runtime (`` `/icons/${name}.png` ``) and files read by an external tool hide their use.
+
+Measured with `bench/orphan_bench.py` on the same content indexed by 0.5.0 and 0.6.0. "Named by another file"
+is the precision proxy: another tracked file names the orphan with its parent directory, or by a name no other
+file shares, so the orphan is most likely a link repolens missed.
+
+| | Notaire 0.5.0 | Notaire 0.6.0 | scale 0.5.0 | scale 0.6.0 |
+|---|---|---|---|---|
+| Files related to nothing | 195 | **62** | 3,821 | **638** |
+| ... of which named by another file | 27 | 9 | 1,486 | 110 |
+| Related only through git history | 101 | 53 | 0 (shallow clones) | 0 |
+| Counted apart: demoted / read by tools by name | 900 / 15 | 432 / 2 | 0 / 890 | 0 / 580 |
+
+What remains on Notaire is review material: 43 OpenSpec capability specs no file references, five superseded
+versions of a workflow catalog, and images nothing uses (`frontend/public/icons/actions/accept.png`,
+`printer.png`, `search.png`, while their siblings are referenced from TSX).
 
 ## Several repositories
 
@@ -311,7 +388,7 @@ several harnesses and models, each in its own worktree and branch, opening pull 
 | Every harness gets it | `repolens setup` writes the native registration of each: `.mcp.json` + `.claude/settings.json` (Claude Code), `.codex/config.toml` (Codex), `opencode.json` (OpenCode), `.cursor/mcp.json` (Cursor). The command resolves the launcher with `git rev-parse --show-toplevel`, so every worktree serves its own checkout. |
 | One index per worktree | The store lives in `<worktree>/.repolens/`: an index never mixes branches. |
 | Branches and worktrees are cheap | Vectors are content-addressed and shared machine-wide (`~/.cache/repolens/vectors`, with the PCA basis): a new worktree, a branch switch or a rebased branch embeds only text no store has embedded before. Measured on Notaire: a new worktree indexed in 11 s, 82,379 of its 83,241 vectors from the cache (862 texts that differ were embedded), against ~4 min cold. |
-| Answers follow the agent's edits | Before a tool call the MCP server starts an incremental refresh in the background (at most every `REPOLENS_REFRESH_SECONDS`, default 15); answers come from the last published graph meanwhile. Git `post-checkout`/`post-merge` hooks refresh after a branch switch or a pull. A CLI query also compares the indexed commit with `HEAD` and, when they differ, finishes an incremental index before it answers, so a cloud VM that did not run the hooks still does. |
+| Answers follow the agent's edits | Before a tool call the MCP server starts an incremental refresh in the background (at most every `REPOLENS_REFRESH_SECONDS`, default 15); answers come from the last published graph meanwhile. Git `post-checkout`/`post-merge` hooks refresh after a branch switch or a pull. A CLI query that still sees a stale index starts `refresh` in the background and answers at once. `git pull` and `git merge` run the `post-merge` hook, which starts that refresh before the next query. |
 | Many agents, one worktree | An inter-process lock serialises index runs; a refresh that finds the lock taken steps aside. Readers never block (SQLite WAL). |
 | First start | An MCP server on an unindexed repository builds the index in the background and tells the agent to retry or use grep meanwhile; the graph and keyword search are published before the slow embedding pass. |
 | Evidence | Every tool call is logged (`.repolens/usage.jsonl`), and the Claude Code hook logs Read/Grep/Glob, so `repolens report` measures real use (below). |
@@ -357,13 +434,15 @@ a few days of work.
 | `GET /api/impact?ref=&depth=` · `/api/path?a=&b=` | impact, relation path |
 | `GET /api/outline?path=` · `/api/snippet?ref=&lines=` | file outline, source text |
 | `GET /api/subgraph?q=` or `?ref=&depth=` | nodes + edges for visualisation |
+| `GET /api/orphans?symbols=&all=` | files (and symbols) that relate to nothing, history-only files, held-out counts |
 | `GET /api/stats` · `POST /api/index?full=` | store statistics, re-index |
 
 ## Graph explorer
 
 `repolens serve`, then open `http://127.0.0.1:7474` (or `/?q=your+question`). Search shows the ranked hits and
 the subgraph that connects them; click a node for its relations and source, double-click to expand its
-neighbours, toggle edge kinds in the legend.
+neighbours, toggle edge kinds in the legend. **Orphans** lists the files that relate to nothing, the files
+related only through git history and the symbols with no relation, and places them in the graph.
 
 ## Extending
 
@@ -676,8 +755,14 @@ python3 bench/perf_bench.py --label mine --compare final   # size, index, memory
 - Java calls are linked through the receiver's type (locals, fields, parameters, lambda parameters, return
   types, generics, Spring Data repositories): against javac on `backend-api`, precision 0.989 and recall
   0.954 (0.714 / 0.852 in 0.4.5). A call whose receiver type cannot be followed is dropped, not guessed.
-  Other languages link by name. Reflection, dependency injection by string and generated code are not
-  followed; `impact` follows dynamic dispatch through the methods a method overrides.
+  Other languages link calls by name within scope (same file, imported files, same folder, then a unique name
+  in the project); their caller precision has no compiler ground truth here yet. Reflection, dependency
+  injection by string and generated code are not followed; `impact` follows dynamic dispatch through the
+  methods a method overrides.
+- A language's grammar is downloaded by the tree-sitter pack on first use; offline, its files are indexed as
+  text (names, mentions, keyword and semantic search) until it can be fetched.
+- An orphan is a review candidate: a file read by reflection, by a runtime-built path or by an external tool
+  relates to nothing in the graph although it is used.
 - Route matching needs literal paths; URLs assembled at runtime from variables are missed.
 - The embedding model is English; mixed-language repositories still work through BM25 and the graph, or
   choose a multilingual fastembed model (`sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`).
