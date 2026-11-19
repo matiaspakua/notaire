@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/feat-2336-repolens-speed-accuracy-multirepo/` | passed |
 | Branch | `feat/2336_repolens-speed-callers-multirepo` | created |
 | Tasks | `tasks.md` | groups 1-9 done |
-| Commits | `7d4cbf1b`..`a3bbd6f5` (27), see Gate log | done |
+| Commits | `7d4cbf1b`..archive commit, see Gate log | done |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
