@@ -104,13 +104,13 @@ a written decision adds them.
 | Family | Selected practice | Evidence | Not selected, and why |
 |--------|-------------------|----------|------------------------|
 | SAST | CodeQL advanced workflow; SpotBugs report | `.github/workflows/codeql.yml`, CI quality job | FindSecBugs is a candidate Java complement, not a second mandatory scanner |
-| DAST | OWASP ZAP baseline, weekly, fails on non-allowlisted alerts (`fail_action: true`, `.zap/rules.tsv`) | `.github/workflows/dast-zap.yml` | Exploitation scanners are not CI jobs |
+| DAST | OWASP ZAP baseline on a version tag and Monday, fails on non-allowlisted alerts (`fail_action: true`, `.zap/rules.tsv`) | `.github/workflows/dast-zap.yml` | Exploitation scanners are not CI jobs |
 | IAST | None | — | Needs an agent in the test JVM; no current signal that CodeQL plus ZAP miss a class of defect we can name |
 | RASP | None | — | Runtime blocking agents are a later production control, not a test |
 | SCA | Trivy fs and image; Dependabot | `ci.yml`, `.github/dependabot.yml` | Commercial SCA was not added beside Trivy |
 | Secrets | `security/scan_secrets.py` fails CI and the local gate | `security/policy/security-policy.yml` | Gitleaks is the reference OSS rule set; the Python gate has no extra action to pin |
 | SAST, local | Semgrep rules in `security/semgrep/notaire.yml` | `python3 security/run_gates.py` | CodeQL stays the deeper CI SAST |
-| DAST, local | Unauthenticated baseline | `security/dast_baseline.py` | ZAP stays the weekly CI DAST |
+| DAST, local | Unauthenticated baseline | `security/dast_baseline.py` | ZAP stays the tag and Monday CI DAST |
 | Pentest | Rules of engagement only | [SECURITY-TOOLS.md](SECURITY-TOOLS.md) | No standing authorization to attack a shared environment |
 
 ### Local gate before the pull request
@@ -165,7 +165,7 @@ each `SR-*` row.
 | Phase | Practice | Now | Next, tracked |
 |-------|----------|-----|----------------|
 | Build | Policy as code | `security-policy.yml` enforced by tests and CI | FindSecBugs only if CodeQL leaves a repeated Java gap |
-| Test | ZAP baseline | Weekly workflow fails on non-allowlisted alerts (#1738). It does not run on the version tag (#2004) | Authenticated ZAP stays a later decision |
+| Test | ZAP baseline | Version tag and the Monday workflow fail on non-allowlisted alerts (#1738, #2004) | Authenticated ZAP stays a later decision |
 | Production | Runtime scan, CIS, compliance packs | Not claimed | Falco is the OSS candidate from the guide §4.9. Statute mapping is counsel, not this table |
 | Production | Access control | Function-level RBAC and module grants (#1683) | Object-level sharing inside one office stays accepted (SR-11). General rate limit is #2010 |
 | Production | Alerts and review | Login alerts, local Alertmanager | External paging is an owner decision (#1465) |
@@ -227,7 +227,6 @@ Open follow-ups from the 2026-11-05 assessment (#2003):
 | Issue | Remaining work |
 |-------|----------------|
 | #2001 | Owner updates the live `protect-main` ruleset. Desired JSON in git already dropped checks that no longer run on a pull request |
-| #2004 | Run the ZAP baseline on version tags as well as Monday |
 | #2006 | Authorization regression pack across modules |
 | #2008 | Redacted findings snapshot for the portfolio |
 | #2009 | Threat Dragon (or equivalent) model checked against this register |
@@ -235,7 +234,7 @@ Open follow-ups from the 2026-11-05 assessment (#2003):
 | #2011 | Decide whether CodeQL findings fail the release |
 | #1640 | MFA for admins and notaries |
 
-Closed issues that this program used to list as open work: #254 (TLS runbook),
+Closed issues that this program used to list as open work: #2007 (LINDDUN for testimony, folio, and submitted documents), #2005 (Referrer-Policy and Permissions-Policy), #2004 (ZAP on version tags), #254 (TLS runbook),
 #267 (Top 10 mapping), #280 (rate-limit guide, not the limiter), #282, #283,
 #309, #1465, #1738. Do not reopen them to point at the rows above.
 

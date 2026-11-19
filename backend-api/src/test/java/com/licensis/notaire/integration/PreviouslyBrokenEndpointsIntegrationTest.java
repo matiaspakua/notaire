@@ -58,7 +58,7 @@ class PreviouslyBrokenEndpointsIntegrationTest {
     void shouldListTestimonyMovementsWhenRequested() throws Exception {
         mockMvc.perform(get("/api/v1/testimony-movements"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray());
+                .andExpect(jsonPath("$.content").isArray());
     }
 
     @Test

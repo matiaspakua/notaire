@@ -34,7 +34,7 @@ if the local profile says Trivy or Semgrep is missing.
 
 - `ci.yml` security job (secrets, Semgrep, Trivy filesystem and image)
 - `codeql.yml` (version tag, Monday 06:30 UTC, or `workflow_dispatch`)
-- `dast-zap.yml` (Monday 05:00 UTC or `workflow_dispatch`, not on the tag — #2004)
+- `dast-zap.yml` (version tag, Monday 05:00 UTC, or `workflow_dispatch` — #2004). Not on pull_request
 - `cd.yml` (no image publish on a merge to `main`)
 
 Do not add `pull_request` to those workflows to make a check green. Do not set

@@ -35,6 +35,10 @@ public interface TestimonyMovementOpsPort {
 
     List<DtoTestimonyMovement> findAll();
 
+    record PageResult(java.util.List<DtoTestimonyMovement> content, long totalElements) {}
+
+    PageResult findPage(int page, int size, String sort);
+
     Optional<DtoTestimonyMovement> findById(Integer id);
 
     SaveResult create(DtoTestimonyMovement dto);
