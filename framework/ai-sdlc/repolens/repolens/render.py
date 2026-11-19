@@ -52,14 +52,39 @@ def node(info: dict | None) -> str:
         lines.append(f"sig: {info['signature']}")
     if info.get("text"):
         lines.append(f"text: {info['text'][:400]}")
-    for _title, bucket, arrow in (("outgoing", info["out"], "->"), ("incoming", info["in"], "<-")):
+    for bucket, arrow in ((info["out"], "->"), (info["in"], "<-")):
         for kind, items in sorted(bucket.items()):
             if kind == "dir_contains":
                 continue
-            shown = ", ".join(_short(i) for i in items[:12])
+            shown = _related(items[:12], info["path"])
             more = f" (+{len(items) - 12})" if len(items) > 12 else ""
-            lines.append(f"{arrow} {kind}: {shown}{more}")
+            if shown:
+                lines.append(f"{arrow} {kind}: {shown}{more}")
     return "\n".join(lines)
+
+
+def _related(items: list[dict], home: str) -> str:
+    """Related nodes by file: members of the node's own file as `name:line`, other files as
+    `path (name:line, ...)`, the node's own file left out, demoted paths counted."""
+    own: list[str] = []
+    files: dict[str, list[str]] = {}
+    demoted = 0
+    for i in items:
+        if i.get("demoted"):
+            demoted += 1
+        elif not i["path"]:
+            own.append(_short(i))
+        elif i["kind"] == "file":
+            if i["path"] != home:
+                files.setdefault(i["path"], [])
+        elif i["path"] == home:
+            own.append(f"{_member(i)}:{i['line']}")
+        else:
+            files.setdefault(i["path"], []).append(f"{_member(i)}:{i['line']}")
+    parts = own + [f"{path} ({', '.join(members)})" if members else path for path, members in files.items()]
+    if demoted:
+        parts.append(f"+{demoted} in demoted paths")
+    return ", ".join(parts)
 
 
 def _short(item: dict) -> str:
@@ -121,7 +146,7 @@ def impact(result: dict | None) -> str:
 def _member(item: dict) -> str:
     """A symbol's name without its file's own class (`ATest.one` in ATest.java is `one`); sections as § title."""
     if item["kind"] == "section":
-        return f"§ {item['name']}"
+        return "§ " + item["name"].split(" § ", 1)[-1]  # the label is `path § title`
     stem = item["path"].rsplit("/", 1)[-1].split(".", 1)[0]
     return item["name"][len(stem) + 1:] if item["name"].startswith(stem + ".") else item["name"]
 

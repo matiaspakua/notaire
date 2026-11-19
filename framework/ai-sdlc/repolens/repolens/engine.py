@@ -644,7 +644,7 @@ class Engine:
 
     def brief(self, i: int) -> dict:
         return {"id": self.ids[i], "kind": self.kind[i], "name": self._label(i), "path": self.path[i],
-                "line": self.start[i], "end": self.end[i]}
+                "line": self.start[i], "end": self.end[i], "demoted": bool(self.boost[i] < 1.0)}
 
     def neighbors(self, ref: str, kinds: list[str] | None = None, direction: str = "both", depth: int = 1,
                   limit: int = 60) -> dict | None:
@@ -714,7 +714,7 @@ class Engine:
                     if pk == "contains" and self.kind[parent] == "file" and parent not in seen:
                         seen[parent] = (d + 1, "contains", self.ids[j])
         affected = [
-            {**self.brief(i), "depth": d, "via": kind, "from": src, "demoted": bool(self.boost[i] < 1.0)}
+            {**self.brief(i), "depth": d, "via": kind, "from": src}
             for i, (d, kind, src) in sorted(seen.items(), key=lambda kv: kv[1][0]) if i not in seeds
         ]
         tests = sorted({a["path"] for a in affected if _looks_test(a["path"])})
