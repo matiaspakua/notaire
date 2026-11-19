@@ -39,6 +39,14 @@
     "impact_result": "node not found",
     "caveat": "The indexed checkout was one merge behind origin/main and had no Testimony.getDto node."
   },
+  "index_freshness_fixture": {
+    "before_hits": 0,
+    "before_wall_s": 0.0019,
+    "refresh_reported_s": 0.01,
+    "after_query_wall_s": 0.0164,
+    "after_hit": "src/new.py brand_new_symbol",
+    "caveat": "Two-file fixture, embedder none. Not a Notaire incremental-index timing."
+  },
   "preflight": {
     "vitest_retry": "one extra attempt for frontend vitest only",
     "full_runs_with_a_recorded_restart": ["registration-draft: 3", "folio: 3", "cli-usage: 2"]

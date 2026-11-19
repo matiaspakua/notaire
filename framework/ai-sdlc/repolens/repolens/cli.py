@@ -186,6 +186,8 @@ def _dispatch(args) -> int:  # noqa: C901 - flat command table
         n = export(kg.engine, args.format, args.output)
         print(f"wrote {n} nodes to {args.output}")
         return 0
+    if args.cmd in {"search", "node", "outline", "snippet", "neighbors", "impact", "path"}:
+        _refresh_if_stale(kg)
 
     eng = kg.engine
     if args.cmd == "search":
@@ -215,6 +217,25 @@ def _dispatch(args) -> int:  # noqa: C901 - flat command table
     given = getattr(args, "ref", None) or f"{getattr(args, 'a', '')} {getattr(args, 'b', '')}".strip()
     _record_cli(args, args.cmd, str(given), printed, 1 if result else 0, started)
     return 0 if result else 1
+
+
+def _refresh_if_stale(kg) -> None:
+    """Cloud VMs merge without the git hooks. A query compares the indexed commit to HEAD and
+    incrementally reindexes before it answers, instead of returning the previous graph."""
+    from .freshness import status
+
+    stale, indexed, head = status(kg.store)
+    if not stale:
+        return
+    started = time.perf_counter()
+    shown = (indexed or "unknown")[:12]
+    print(f"repolens: index is behind HEAD ({shown} -> {head[:12]}); refreshing", file=sys.stderr)
+    report = kg.index(log=lambda *_a, **_k: None, wait=True)
+    elapsed = time.perf_counter() - started
+    if report.get("busy"):
+        print("repolens: index refresh is busy; answering from the previous graph", file=sys.stderr)
+        return
+    print(f"repolens: index refreshed in {elapsed:.2f}s", file=sys.stderr)
 
 
 def _record_cli(args, tool: str, given: str, text: str, results: int, started: float) -> None:

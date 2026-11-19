@@ -12,6 +12,7 @@ from concurrent.futures import ProcessPoolExecutor
 from .config import Config, Source
 from .embed import embed_store
 from .extractors import EXTRACTOR_VERSION, Options, extract_job
+from .freshness import stamp
 from .linker import link
 from .locks import index_lock
 from .scanner import scan
@@ -79,6 +80,7 @@ def _index(cfg: Config, store: Store, only: list[str] | None, full: bool, embed:
         "optimize_s": round(t4 - t3, 2), "total_s": round(t4 - t0, 2),
     }
     report["stats"] = {k: v for k, v in store.stats().items() if k in ("files", "nodes", "edges", "embeddings")}
+    stamp(store)
     return report
 
 

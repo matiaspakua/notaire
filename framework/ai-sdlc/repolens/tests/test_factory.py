@@ -205,6 +205,41 @@ def test_refresh_never_creates_a_store(tmp_path, monkeypatch):
     assert not (repo / ".repolens").exists()
 
 
+def test_a_query_refreshes_when_head_moved_past_the_index(tmp_path, monkeypatch, capsys):
+    """A symbol committed after the index is invisible until something reindexes. Cloud VMs do not
+    run the git hooks, so the query itself has to notice that HEAD moved."""
+    repo = tmp_path / "repo"
+    (repo / "src").mkdir(parents=True)
+    (repo / "src" / "old.py").write_text("def old_name():\n    return 1\n", encoding="utf-8")
+    git(repo, "init", "-q")
+    git(repo, "add", "src")
+    git(repo, "commit", "-qm", "old")
+    (repo / "repolens.toml").write_text(
+        '[index]\ndb = ".repolens/graph.db"\n[[source]]\nname = "repo"\npath = "."\n'
+        '[embed]\nbackend = "none"\n', encoding="utf-8")
+    monkeypatch.chdir(repo)
+    assert cli.main(["-c", "repolens.toml", "index", "--embedder", "none", "--quiet"]) == 0
+    (repo / "src" / "new.py").write_text("def brand_new_symbol():\n    return 2\n", encoding="utf-8")
+    git(repo, "add", "src/new.py")
+    git(repo, "commit", "-qm", "new")
+    kg = KnowledgeGraph.open(repo / "repolens.toml")
+    started = time.perf_counter()
+    stale_hits = kg.engine.search("brand_new_symbol", k=5)
+    stale_s = time.perf_counter() - started
+    kg.close()
+    assert not any(h.path.endswith("new.py") for h in stale_hits)
+    started = time.perf_counter()
+    code = cli.main(["-c", "repolens.toml", "search", "brand_new_symbol", "-k", "5"])
+    fresh_s = time.perf_counter() - started
+    captured = capsys.readouterr()
+    assert code == 0, captured
+    assert "brand_new_symbol" in captured.out
+    assert "behind HEAD" in captured.err and "refreshed in" in captured.err
+    assert cli.main(["-c", "repolens.toml", "search", "brand_new_symbol", "-k", "3"]) == 0
+    assert "behind HEAD" not in capsys.readouterr().err
+    assert stale_s >= 0 and fresh_s >= 0
+
+
 def _stdin(payload):
     import io
 

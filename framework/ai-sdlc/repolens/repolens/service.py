@@ -91,6 +91,10 @@ class KnowledgeGraph:
         interval = self.refresh_interval()
         if interval < 0 and not force:
             return False
+        from .freshness import status
+
+        if status(self.store)[0]:
+            force = True
         now = time.monotonic()
         with self._refresh_lock:
             if self._refreshing or (not force and now - self._last_refresh < interval):
