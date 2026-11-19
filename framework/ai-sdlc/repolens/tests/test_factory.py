@@ -339,3 +339,24 @@ def test_a_query_refreshes_an_index_written_by_other_extractors(tmp_path, monkey
     store = Store(repo / ".repolens" / "graph.db")
     assert store.get_meta("extractor_version") == EXTRACTOR_VERSION
     store.close()
+
+
+def test_older_code_never_rewrites_an_index_written_by_newer_extractors(tmp_path):
+    """A long-lived MCP server started before an upgrade keeps the older extractors in memory: its background
+    refresh must not re-extract the store the upgraded code wrote (they would take turns rewriting it)."""
+    from repolens import freshness
+    from repolens.extractors import EXTRACTOR_VERSION
+
+    from .conftest import make_config, write_repo
+
+    root = write_repo(tmp_path / "repo")
+    kg = KnowledgeGraph(make_config(root, tmp_path / "graph.db"))
+    kg.index(log=lambda *_: None)
+    newer = str(int(EXTRACTOR_VERSION) + 1)
+    kg.store.set_meta("extractor_version", newer)
+    report = kg.index(full=True, log=lambda *_: None)
+    assert report.get("busy") and kg.store.get_meta("extractor_version") == newer
+    assert not freshness.outdated(kg.store, EXTRACTOR_VERSION)  # newer is not stale for the older code
+    kg.store.set_meta("extractor_version", "1")
+    assert freshness.outdated(kg.store, EXTRACTOR_VERSION)
+    kg.close()
