@@ -19,6 +19,9 @@ FILES = {
     "notes/a.txt": "alpha\n",
     "notes/b.txt": "beta\n",
     "archive/notes.old": "Old notes.\n",
+    # read by a tool or runtime by name: conventional, counted but not listed
+    "LICENSE": "MIT\n",
+    "src/__init__.py": "",
 }
 
 
@@ -69,15 +72,26 @@ def paths(entries):
 
 def test_files_related_to_nothing_and_only_through_history(graph):
     found = orphans.find(graph.engine)
-    # repolens.toml too: the tool reads it, but no file of the repository names it
-    assert paths(found["isolated"]) == {"src/legacy.py", "assets/logo.png", "repolens.toml"}
+    assert paths(found["isolated"]) == {"src/legacy.py", "assets/logo.png"}
     assert paths(found["history_only"]) == {"notes/a.txt", "notes/b.txt"}
     assert found["demoted"] == {"isolated": 1, "history_only": 0}
-    assert found["files"] == len(FILES) + 1  # and repolens.toml, which names `.repolens/graph.db`
+    assert found["conventional"] == {"isolated": 3, "history_only": 0}  # LICENSE, __init__.py, repolens.toml
+    assert found["files"] == len(FILES) + 1  # and repolens.toml
 
 
 def test_demoted_paths_are_listed_on_request(graph):
     assert "archive/notes.old" in paths(orphans.find(graph.engine, include_demoted=True)["isolated"])
+
+
+def test_files_tools_read_by_name_are_listed_on_request_or_without_the_convention(graph):
+    listed = paths(orphans.find(graph.engine, include_conventional=True)["isolated"])
+    assert {"LICENSE", "src/__init__.py", "repolens.toml"} <= listed
+    conventional = graph.engine.cfg.orphans_conventional
+    graph.engine.cfg.orphans_conventional = []
+    try:
+        assert "LICENSE" in paths(orphans.find(graph.engine)["isolated"])
+    finally:
+        graph.engine.cfg.orphans_conventional = conventional
 
 
 def test_symbols_with_no_relation_on_request(graph):
@@ -91,9 +105,10 @@ def test_the_cli_lists_orphans_and_the_index_run_alerts(graph, capsys, monkeypat
     monkeypatch.chdir(graph.cfg.sources[0].path)
     assert cli.main(["orphans"]) == 0
     out = capsys.readouterr().out
-    assert "src/legacy.py" in out and "notes/a.txt" in out and "+1 in demoted paths" in out
+    assert "src/legacy.py" in out and "notes/a.txt" in out and "LICENSE" not in out
+    assert "+1 in demoted paths, 3 read by tools by name (--all lists them)" in out
     assert cli.main(["index"]) == 0
-    assert "orphans: 3 files relate to no other file, 2 only through git history (repolens orphans)" in \
+    assert "orphans: 2 files relate to no other file, 2 only through git history (repolens orphans)" in \
         capsys.readouterr().out
 
 
@@ -105,7 +120,8 @@ def test_http_and_mcp_return_the_same_files(graph):
 
     client = TestClient(create_app(graph))
     body = client.get("/api/orphans").json()
-    assert paths(body["isolated"]) == {"src/legacy.py", "assets/logo.png", "repolens.toml"}
+    assert paths(body["isolated"]) == {"src/legacy.py", "assets/logo.png"}
+    assert "LICENSE" in paths(client.get("/api/orphans", params={"all": True}).json()["isolated"])
     with_symbols = client.get("/api/orphans", params={"symbols": True}).json()
     assert "unused_helper" in {s["name"] for s in with_symbols["symbols"]}
     assert "/api/orphans" in client.get("/").text  # the explorer's Orphans view
