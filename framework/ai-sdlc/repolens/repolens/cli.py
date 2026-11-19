@@ -13,6 +13,8 @@ from . import __version__
 # Commands that must start fast and work before the dependencies are installed (the harness hook runs on
 # every tool call): they import only the standard library. The rest import the engine lazily.
 LIGHT = ("hook", "report", "setup", "doctor", "refresh", "miss")
+# Read-only queries: answered by the resident per-worktree service when one runs (repolens/daemon.py).
+QUERY = frozenset({"search", "node", "outline", "snippet", "neighbors", "impact", "path"})
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -110,6 +112,9 @@ def _parser() -> argparse.ArgumentParser:
     s.add_argument("--transport", choices=["stdio", "sse", "streamable-http"], default="stdio")
     s.add_argument("--all-tools", action="store_true", help="also expose neighbors, stats and reindex")
 
+    s = sub.add_parser("daemon", help="the resident per-worktree service CLI queries reuse (run/status/stop)")
+    s.add_argument("action", choices=["run", "status", "stop"])
+
     s = sub.add_parser("export", help="export the graph (json or graphml)")
     s.add_argument("--format", choices=["json", "graphml"], default="json")
     s.add_argument("-o", "--output", type=Path, required=True)
@@ -117,10 +122,21 @@ def _parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    args = _parser().parse_args(argv)
+    raw = list(sys.argv[1:] if argv is None else argv)
+    args = _parser().parse_args(raw)
     try:
         if args.cmd in LIGHT:
             return _light(args)
+        if args.cmd == "daemon" and args.action != "run":
+            return _daemon_admin(args)
+        if args.cmd in QUERY:
+            from . import daemon
+
+            reply = daemon.ask(_state_dir(args), raw)
+            if reply is not None:
+                sys.stderr.write(reply.get("stderr", ""))
+                sys.stdout.write(reply.get("stdout", ""))
+                return int(reply.get("code", 0))
         return _dispatch(args)
     except (ValueError, FileNotFoundError, KeyError) as exc:
         print(f"repolens: {exc}", file=sys.stderr)
@@ -186,9 +202,27 @@ def _dispatch(args) -> int:  # noqa: C901 - flat command table
         n = export(kg.engine, args.format, args.output)
         print(f"wrote {n} nodes to {args.output}")
         return 0
-    if args.cmd in {"search", "node", "outline", "snippet", "neighbors", "impact", "path"}:
-        _refresh_if_stale(kg)
+    if args.cmd == "daemon":
+        from . import daemon
 
+        return daemon.run(args, _state_dir(args))
+    if args.cmd == "stats":
+        s = kg.engine.stats()
+        print(json.dumps(s, indent=2) if args.json else render.stats(s))
+        return 0
+    code, text, notes = answer(args, kg)
+    for note in notes:
+        print(note, file=sys.stderr)
+    print(text)
+    return code
+
+
+def answer(args, kg) -> tuple[int, str, list[str]]:
+    """One read-only query: (exit code, text, stderr notes). Shared by the CLI and the resident service."""
+    from . import render
+
+    notes: list[str] = []
+    _refresh_if_stale(kg, notes)
     eng = kg.engine
     if args.cmd == "search":
         started = time.perf_counter()
@@ -196,13 +230,8 @@ def _dispatch(args) -> int:  # noqa: C901 - flat command table
                           mode="files" if args.files else "nodes", graph=not args.no_graph, scope=args.scope)
         text = (json.dumps([h.to_dict() for h in hits], indent=2) if args.json
                 else render.hits(hits, args.query, detailed=args.k))
-        print(text)
         _record_cli(args, "search", args.query, text, len(hits), started)
-        return 0 if hits else 1
-    if args.cmd == "stats":
-        s = eng.stats()
-        print(json.dumps(s, indent=2) if args.json else render.stats(s))
-        return 0
+        return (0 if hits else 1), text, notes
     started = time.perf_counter()
     result, text = {
         "node": lambda: (r := eng.node(args.ref), render.node(r)),
@@ -213,29 +242,51 @@ def _dispatch(args) -> int:  # noqa: C901 - flat command table
         "path": lambda: (r := eng.path_between(args.a, args.b), render.path(r)),
     }[args.cmd]()
     printed = json.dumps(result, indent=2) if args.json else text
-    print(printed)
     given = getattr(args, "ref", None) or f"{getattr(args, 'a', '')} {getattr(args, 'b', '')}".strip()
     _record_cli(args, args.cmd, str(given), printed, 1 if result else 0, started)
-    return 0 if result else 1
+    return (0 if result else 1), printed, notes
 
 
-def _refresh_if_stale(kg) -> None:
+def _daemon_admin(args) -> int:
+    from . import daemon
+
+    state = _state_dir(args)
+    if args.action == "stop":
+        stopped = daemon.stop(state)
+        print("repolens: service stopped" if stopped else "repolens: no service running")
+        return 0
+    info = daemon.status(state)
+    if info is None:
+        print("repolens: no service running" + ("" if daemon.enabled() else " (disabled: REPOLENS_DAEMON=0)"))
+        return 1
+    print(f"repolens service pid {info['pid']}, {'alive' if info['alive'] else 'not answering'}, "
+          f"up {time.time() - info['started']:.0f}s, store {info['db']}")
+    return 0 if info["alive"] else 1
+
+
+def _refresh_if_stale(kg, notes: list[str] | None = None) -> None:
     """Cloud VMs merge without the git hooks. A query compares the indexed commit to HEAD and
     incrementally reindexes before it answers, instead of returning the previous graph."""
     from .freshness import status
+
+    def say(line: str) -> None:
+        if notes is None:
+            print(line, file=sys.stderr)
+        else:
+            notes.append(line)
 
     stale, indexed, head = status(kg.store)
     if not stale:
         return
     started = time.perf_counter()
     shown = (indexed or "unknown")[:12]
-    print(f"repolens: index is behind HEAD ({shown} -> {head[:12]}); refreshing", file=sys.stderr)
+    say(f"repolens: index is behind HEAD ({shown} -> {head[:12]}); refreshing")
     report = kg.index(log=lambda *_a, **_k: None, wait=True)
     elapsed = time.perf_counter() - started
     if report.get("busy"):
-        print("repolens: index refresh is busy; answering from the previous graph", file=sys.stderr)
+        say("repolens: index refresh is busy; answering from the previous graph")
         return
-    print(f"repolens: index refreshed in {elapsed:.2f}s", file=sys.stderr)
+    say(f"repolens: index refreshed in {elapsed:.2f}s")
 
 
 def _record_cli(args, tool: str, given: str, text: str, results: int, started: float) -> None:
