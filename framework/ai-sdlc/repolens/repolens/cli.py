@@ -116,7 +116,8 @@ def _parser() -> argparse.ArgumentParser:
 
     s = sub.add_parser("orphans", help="files (and symbols) that relate to nothing: candidates to review")
     s.add_argument("--symbols", action="store_true", help="also list symbols with no relation")
-    s.add_argument("--all", action="store_true", help="also list paths under [ranking] demote")
+    s.add_argument("--all", action="store_true",
+                   help="also list demoted paths and files tools read by name ([orphans] conventional)")
     s.add_argument("--limit", type=int, default=50, help="entries listed per section (default 50)")
     s.add_argument("--json", action="store_true")
 
@@ -275,7 +276,7 @@ def answer(args, kg) -> tuple[int, str, list[str]]:
         from . import orphans
 
         started = time.perf_counter()
-        found = orphans.find(eng, symbols=args.symbols, include_demoted=args.all)
+        found = orphans.find(eng, symbols=args.symbols, include_demoted=args.all, include_conventional=args.all)
         text = json.dumps(found, indent=2) if args.json else render.orphans(found, args.limit)
         _record_cli(args, "orphans", "", text, len(found["isolated"]) + len(found["history_only"]), started)
         return 0, text, notes

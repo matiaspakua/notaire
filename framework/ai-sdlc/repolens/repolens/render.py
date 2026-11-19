@@ -166,9 +166,11 @@ def orphans(result: dict, limit: int = 50) -> str:
             lines += [line(e) for e in items[:limit]]
             if len(items) > limit:
                 lines.append(f"  +{len(items) - limit} more (--limit)")
-    demoted = sum(result["demoted"].values())
-    if demoted:
-        lines.append(f"+{demoted} in demoted paths (archives, retired code; --all lists them)")
+    demoted, conventional = sum(result["demoted"].values()), sum(result.get("conventional", {}).values())
+    held = [f"+{demoted} in demoted paths"] if demoted else []
+    held += [f"{'+' if not held else ''}{conventional} read by tools by name"] if conventional else []
+    if held:
+        lines.append(", ".join(held) + " (--all lists them)")
     return "\n".join(lines)
 
 

@@ -141,8 +141,10 @@ async function showOrphans() {
     <span class="kind" style="background:${KIND_COLORS[e.kind] || "#888"}">${esc(e.lang || e.kind)}</span>
     <span class="t">${esc(label)}</span>${e.line > 1 ? `<div class="p">${esc(e.path)}:${e.line}</div>` : ""}</div>`;
   const demoted = o.demoted.isolated + o.demoted.history_only;
+  const conventional = o.conventional.isolated + o.conventional.history_only;
   $("results").innerHTML = `<div class="muted">${o.isolated.length} of ${o.files} files relate to no other file;
-      ${o.history_only.length} only through git history${demoted ? `; ${demoted} more in demoted paths` : ""}.
+      ${o.history_only.length} only through git history${demoted ? `; ${demoted} more in demoted paths` : ""}${
+      conventional ? `; ${conventional} read by tools by name` : ""}.
       Review candidates: unused, misplaced or missing a link.</div>` +
     `<div class="group">Relate to nothing (${o.isolated.length})</div>` + o.isolated.map((e) => row(e, e.path)).join("") +
     `<div class="group">Only through git history (${o.history_only.length})</div>` +

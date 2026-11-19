@@ -42,6 +42,21 @@ DEFAULT_EDGE_WEIGHTS = {
 }
 
 
+# Files a tool or runtime reads by name: nothing in the content names them, yet they are not orphans.
+DEFAULT_CONVENTIONAL = [
+    "**/package-info.java", "**/module-info.java", "**/__init__.py", "**/__main__.py", "**/conftest.py",
+    "**/README*", "**/LICENSE*", "**/LICENCE*", "**/NOTICE*", "**/COPYING*", "**/CHANGELOG*", "**/CONTRIBUTING*",
+    "**/CODE_OF_CONDUCT*", "**/SECURITY*", "**/AUTHORS*", "**/CODEOWNERS", "**/SKILL.md", "**/AGENTS.md",
+    "**/CLAUDE.md", "**/.gitignore", "**/.gitattributes", "**/.gitmodules", "**/.dockerignore", "**/.editorconfig",
+    "**/.npmignore", "**/.npmrc", "**/.nvmrc", "**/.prettierrc*", "**/.prettierignore", "**/.eslintrc*",
+    "**/.eslintignore", "**/Dockerfile*", "**/Makefile", "**/package.json", "**/package-lock.json", "**/pom.xml",
+    "**/build.gradle*", "**/settings.gradle*", "**/gradle.properties", "**/pyproject.toml", "**/setup.py",
+    "**/setup.cfg", "**/requirements*.txt", "**/go.mod", "**/go.sum", "**/Cargo.toml", "**/Cargo.lock",
+    "**/tsconfig*.json", "**/.github/**", "**/package.nls*.json", "**/log4j2*.xml", "**/logback*.xml", "**/*.snap",
+    "**/repolens.toml",
+]
+
+
 @dataclass
 class Source:
     name: str
@@ -74,6 +89,7 @@ class Config:
     tuning: dict[str, float] = field(default_factory=dict)
     demote: list[str] = field(default_factory=list)
     demote_factor: float = 0.35
+    orphans_conventional: list[str] = field(default_factory=lambda: list(DEFAULT_CONVENTIONAL))
 
     def source(self, name: str) -> Source:
         for src in self.sources:
@@ -149,6 +165,7 @@ def config_from_dict(data: dict, base: Path, db: Path | None = None) -> Config:
         cfg.tuning["restart"] = float(ranking["restart"])
     cfg.demote = list(ranking.get("demote", cfg.demote))
     cfg.demote_factor = float(ranking.get("demote_factor", cfg.demote_factor))
+    cfg.orphans_conventional = list(data.get("orphans", {}).get("conventional", cfg.orphans_conventional))
     return cfg
 
 

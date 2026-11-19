@@ -11,6 +11,8 @@ Computed on demand from the engine's adjacency arrays; nothing is stored.
 
 from __future__ import annotations
 
+import fnmatch
+
 import numpy as np
 
 from .model import SYMBOL_KINDS, is_constructor
@@ -21,9 +23,10 @@ NOT_HUBS = frozenset({"external", "project", "dir"})  # shared by too much to re
 REVIEWED_SYMBOLS = SYMBOL_KINDS - {"variable"}
 
 
-def find(engine, symbols: bool = False, include_demoted: bool = False) -> dict:
-    """Orphan files (`isolated`), files related only through git history (`history_only`), the counts left out
-    under demoted paths, and with `symbols` the symbols with no relation at all."""
+def find(engine, symbols: bool = False, include_demoted: bool = False, include_conventional: bool = False) -> dict:
+    """Orphan files (`isolated`), files related only through git history (`history_only`), and the counts left
+    out: under demoted paths (`[ranking] demote`) and read by a tool by name (`[orphans] conventional`). With
+    `symbols`, the symbols with no relation at all."""
     n = len(engine.kind)
     files = np.array([i for i in range(n) if engine.kind[i] == "file"], dtype=np.int64)
     file_of = _file_of(engine, files, n)
@@ -40,32 +43,41 @@ def find(engine, symbols: bool = False, include_demoted: bool = False) -> dict:
         if f >= 0 and d in dir_files and dir_files[d] - {f}:
             content.add(f)
             content.update(dir_files[d])
-    boost = engine.boost
-    isolated = [int(f) for f in files if f not in content and f not in through_history]
-    history_only = [int(f) for f in files if f not in content and f in through_history]
-    result = {
-        "files": int(len(files)),
-        "isolated": [_entry(engine, f) for f in isolated if include_demoted or boost[f] >= 1.0],
-        "history_only": [_entry(engine, f) for f in history_only if include_demoted or boost[f] >= 1.0],
-        "demoted": {"isolated": 0 if include_demoted else sum(boost[f] < 1.0 for f in isolated),
-                    "history_only": 0 if include_demoted else sum(boost[f] < 1.0 for f in history_only)},
-    }
-    result["demoted"] = {k: int(v) for k, v in result["demoted"].items()}
+    conventional = engine.cfg.orphans_conventional
+
+    def held(f: int) -> str:
+        if not include_demoted and engine.boost[f] < 1.0:
+            return "demoted"
+        if not include_conventional and _matches(engine.path[f], conventional):
+            return "conventional"
+        return ""
+
+    result: dict = {"files": int(len(files)), "demoted": {}, "conventional": {}}
+    for name, members in (("isolated", [f for f in files if f not in content and f not in through_history]),
+                          ("history_only", [f for f in files if f not in content and f in through_history])):
+        reasons = [held(int(f)) for f in members]
+        result[name] = [_entry(engine, int(f)) for f, why in zip(members, reasons, strict=True) if not why]
+        for why in ("demoted", "conventional"):
+            result[why][name] = reasons.count(why)
     if symbols:
         degree = np.bincount(src, minlength=n) + np.bincount(dst, minlength=n)
         result["symbols"] = [
             {**_entry(engine, i), "name": engine.name[i], "qualname": engine.qual[i]}
             for i in range(n)
             if degree[i] == 0 and engine.kind[i] in REVIEWED_SYMBOLS and not is_constructor(engine.qual[i])
-            and (include_demoted or boost[i] >= 1.0)
+            and (include_demoted or engine.boost[i] >= 1.0)
         ]
     return result
 
 
 def counts(engine) -> dict:
     found = find(engine)
-    return {"isolated": len(found["isolated"]), "history_only": len(found["history_only"]), **{
-        f"demoted_{k}": v for k, v in found["demoted"].items()}}
+    return {"isolated": len(found["isolated"]), "history_only": len(found["history_only"]),
+            "demoted": sum(found["demoted"].values()), "conventional": sum(found["conventional"].values())}
+
+
+def _matches(path: str, globs: list[str]) -> bool:
+    return any(fnmatch.fnmatch(path, g) or fnmatch.fnmatch("/" + path, g) for g in globs)
 
 
 def _file_of(engine, files: np.ndarray, n: int) -> np.ndarray:
