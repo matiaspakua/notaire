@@ -1,0 +1,47 @@
+{
+ "label": "typed-v1",
+ "stamp": "2026-11-19 10:08",
+ "module": "backend-api",
+ "javac_seconds": 5.1,
+ "javac_calls_in_module": 13208,
+ "index": {
+  "timings": {
+   "extract_s": 4.83,
+   "link_s": 1.44,
+   "embed_s": 0.7,
+   "optimize_s": 0.15,
+   "total_s": 7.11
+  },
+  "stats": {
+   "files": 9969,
+   "nodes": 94270,
+   "edges": 261576,
+   "embeddings": 84863
+  }
+ },
+ "index_seconds": 7.2,
+ "all": {
+  "pairs_truth": 6745,
+  "pairs_predicted": 6474,
+  "true_positive": 6329,
+  "precision": 0.9776,
+  "recall": 0.9383,
+  "f1": 0.9576
+ },
+ "ambiguous_names": {
+  "pairs_truth": 5585,
+  "pairs_predicted": 5369,
+  "true_positive": 5241,
+  "precision": 0.9762,
+  "recall": 0.9384,
+  "f1": 0.9569
+ },
+ "ambiguous_method_names": 471,
+ "impact_depth1": {
+  "callees": 150,
+  "not_found": 0,
+  "recall_mean": 0.9468,
+  "precision_mean": 0.8048,
+  "recall_zero_share": 0.02
+ }
+}

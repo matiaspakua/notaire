@@ -22,6 +22,8 @@ rm -rf build ./*.egg-info
 echo "== smoke"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
+# A private home (registry, vector cache) and no resident service: the smoke run leaves nothing behind.
+export REPOLENS_HOME="$TMP/home" REPOLENS_VECTOR_CACHE="$TMP/home/vectors" REPOLENS_DAEMON=0
 mkdir -p "$TMP/src"
 printf 'def greet(name):\n    return f"hi {name}"\n' > "$TMP/src/app.py"
 "$PY" -m repolens --db "$TMP/g.db" index "$TMP/src" --name smoke --embedder lsa >/dev/null

@@ -12,6 +12,7 @@ from dataclasses import dataclass, field
 
 from ..model import Edge, Extraction, Node, Ref, file_id, symbol_id
 from .common import Options, add_tags, new_file, normalize_route
+from .jtypes import CLASS_KINDS, LOCAL_DECLARATIONS, JavaTypes, generic_type, return_type
 
 IDENTS = frozenset({
     "identifier", "type_identifier", "property_identifier", "field_identifier", "simple_identifier",
@@ -177,6 +178,7 @@ class _Walker:
         self.seen_ids: set[str] = set()
         self.seen_refs: set[tuple[str, str, str]] = set()
         self.top_names: list[str] = []
+        self.types = JavaTypes(self.text) if lang == "java" else None
 
     def text(self, node) -> str:
         return self.src[node.start_byte:node.end_byte].decode("utf-8", "replace")
@@ -207,6 +209,14 @@ class _Walker:
             kind = _GENERIC_KIND.get(m.group(1), m.group(1)) if m else None
         if kind is not None:
             return self.define(node, scope, kind)
+        if self.types is not None:
+            if t in LOCAL_DECLARATIONS:
+                self.types.declare(node, scope)
+            elif t == "lambda_expression":
+                self.types.lambda_params(node, scope)
+            elif t == "method_reference":
+                self.method_reference(node, scope)
+                return None
         if t in spec.scope_only:
             target = node.child_by_field_name("type")
             name = self.text(target) if target is not None else ""
@@ -257,10 +267,23 @@ class _Walker:
         if scope.kind == "file":
             self.top_names.append(name)
         new_scope = _Scope(sid, qual, kind, scope.route_prefix)
+        if self.types is not None:
+            if kind in CLASS_KINDS:
+                self.types.enter_class(node, sid, qual)
+            elif kind == "method":
+                self.types.enter_method(node, sid, scope)
+                returned = return_type(node, self.text)
+                if returned:
+                    self.ref(sid, "returns", returned)
         for child in node.children:
             if child.type in self.spec.heritage:
                 for sup in self.supertypes(child):
                     self.ref(sid, "inherit", sup)
+                if self.types is not None:  # `extends JpaRepository<Folio, Integer>`: the entity type matters
+                    for typ in child.named_children:
+                        for g in [typ, *typ.named_children]:
+                            if g.type == "generic_type":
+                                self.ref(sid, "supertype", generic_type(self.text(g)))
         self.annotations(node, new_scope, scope)
         if kind == "class" and self.lang == "python":
             m = _PY_TABLE.search(self.text(node))
@@ -396,7 +419,8 @@ class _Walker:
         if callee in ("require", "import") and first is not None:
             self.ref(self.fid, "import", first)
             return
-        self.ref(scope.sid, "call", callee)
+        hint = self.types.receiver(node, scope) if self.types is not None and node.type == "method_invocation" else ""
+        self.ref(scope.sid, "call", callee, hint)
         if first is None or not first.startswith(("/", "http")):
             return
         low = callee.lower()
@@ -411,6 +435,18 @@ class _Walker:
             return
         if prefixed or _HTTP_CALLEE.match(callee):
             self.ref(scope.sid, "http_call", normalize_route(url), verb.upper())
+
+    def method_reference(self, node, scope: _Scope) -> None:
+        """`Folio::getDto`, `catalog::findById` are calls of that method (not of `::new`)."""
+        parts = list(node.named_children)
+        if len(parts) < 2 or parts[-1].type != "identifier":
+            return
+        target = parts[0]
+        if target.type in ("type_identifier", "scoped_type_identifier", "generic_type"):
+            hint = "T:" + self.text(target).split("<", 1)[0].rsplit(".", 1)[-1]
+        else:
+            hint = self.types.type_of(target, scope)
+        self.ref(scope.sid, "call", self.text(parts[-1]), hint)
 
     def callee(self, fn) -> tuple[str, str]:
         if fn.type in IDENTS:

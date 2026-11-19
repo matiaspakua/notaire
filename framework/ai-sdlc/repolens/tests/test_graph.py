@@ -240,7 +240,8 @@ def test_sparse_pagerank_matches_the_exact_walk(kg):
 def test_an_ambiguous_same_directory_call_is_not_guessed(tmp_path):
     """A call named getDto must not be attached to every getDto in the folder (#2307).
 
-    A uniquely named method in that same folder still links.
+    A uniquely named method in that same folder still links. A typed receiver (`Deed deed`) links exactly
+    its own method (#2336); a receiver of unknown type (a lambda parameter) is still not guessed.
     """
     root = tmp_path / "repo"
     src = root / "src"
@@ -254,6 +255,7 @@ def test_an_ambiguous_same_directory_call_is_not_guessed(tmp_path):
     (src / "Reader.java").write_text(
         "package p;\npublic class Reader {\n"
         "  public String show(Deed deed) { return deed.getDto(); }\n"
+        "  public void each(java.util.List<Object> all) { all.forEach(x -> x.getDto()); }\n"
         "  public String once(Deed deed) { return deed.onlyOnce(); }\n}\n", encoding="utf-8")
     kg = KnowledgeGraph(make_config(root, tmp_path / "g.db"))
     kg.index(embed=False, log=lambda *_: None)
@@ -262,6 +264,17 @@ def test_an_ambiguous_same_directory_call_is_not_guessed(tmp_path):
     def targets(method: str) -> set[str]:
         return {dst for src_id, dst, kind in edges if kind == "calls" and src_id.endswith(method)}
 
-    guessed = targets("#Reader.show")
+    typed = targets("#Reader.show")
+    assert any(item.endswith("#Deed.getDto") for item in typed)
+    assert not any(item.endswith("#Folio.getDto") for item in typed)
+    guessed = targets("#Reader.each")
     assert not any(item.endswith("#Deed.getDto") or item.endswith("#Folio.getDto") for item in guessed)
     assert any(item.endswith("#Deed.onlyOnce") for item in targets("#Reader.once"))
+
+
+def test_an_unknown_name_is_not_answered_with_a_guess(kg):
+    eng = kg.engine
+    assert eng.resolve("CodeService") is None and eng.impact("CodeService") is None
+    text = eng.missing("CodeService", "CodeController")
+    assert text.startswith("not found: 'CodeService'") and "CodeVerificationService" in text
+    assert "'CodeController'" not in text
