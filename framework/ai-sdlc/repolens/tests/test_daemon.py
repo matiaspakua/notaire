@@ -53,8 +53,10 @@ def test_the_second_query_is_served_by_the_service(repo, capsys):
     assert cli.main(QUERY) == 0 and capsys.readouterr().out == in_process
 
 
-def test_the_service_follows_head(repo):
+def test_the_service_follows_head(repo, monkeypatch):
     root, state = repo
+    # The suite disables periodic refresh. A stale index must still refresh in the background.
+    monkeypatch.setenv("REPOLENS_REFRESH_SECONDS", "0")
     daemon.start(state, QUERY)
     assert wait_for(lambda: alive(state)), (state / daemon.LOG).read_text()
     (root / "tools" / "added.py").write_text("def brandNewHelper():\n    return 1\n", encoding="utf-8")
@@ -62,8 +64,13 @@ def test_the_service_follows_head(repo):
     subprocess.run([*git, "add", "-A"], check=True)
     subprocess.run([*git, "commit", "-qm", "add helper"], check=True)
     reply = daemon.ask(state, ["search", "brandNewHelper", "-k", "3"])
-    assert reply is not None and "tools/added.py" in reply["stdout"]
-    assert "index refreshed" in reply["stderr"]
+    assert reply is not None and "background" in reply["stderr"]
+
+    def found():
+        later = daemon.ask(state, ["search", "brandNewHelper", "-k", "3"])
+        return later is not None and "tools/added.py" in later["stdout"]
+
+    assert wait_for(found), (state / daemon.LOG).read_text(encoding="utf-8")[-800:]
 
 
 def test_an_idle_service_exits(repo, monkeypatch):

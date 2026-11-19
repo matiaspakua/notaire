@@ -44,7 +44,7 @@ Short notes from the cloud factory loop. Product behavior is not documented here
 - First `repolens search User.setAttributes` printed `index refreshed in 5.52s`. The query took 7.104s and ranked `User.java:210` first.
 - The next search took 1.508s and did not refresh.
 - `git grep` for the declaration took 0.0061s and named only that line.
-- 5.52s is not a re-embed. It is not the next RepoLens item. DeedManagement and Procedure remain on the ratchet.
+- 5.52s is not a re-embed. It is one incremental pass.
 - After #2334 merged, the next search (`Procedure.getDto`, `b0065a20` to `623b2d56`) printed `index refreshed in 5.79s`. The query took 7.718s and ranked `Procedure.getDto`, then `DeedLegacyMapper.toDto` and `TestimonyLegacyMapper.copyDeed`. Same conclusion: about 6s, not the next RepoLens item.
 
 ## 2026-11-19 Maven Central 429 on dependency submission
@@ -52,5 +52,12 @@ Short notes from the cloud factory loop. Product behavior is not documented here
 - `submit-maven` on #2337 (run 44496389413) failed while resolving `org.springframework.boot:spring-boot-starter-parent:pom:4.1.2` from Maven Central: HTTP 429 Too Many Requests. The job is GitHub Automatic Dependency Submission. It does not call the Notaire API.
 - This agent cannot re-run that workflow (`Resource not accessible by integration`).
 - Fallback: the owner re-runs the failed job with an owner token, or a later push retries it. Do not open an issue unless the 429 happens again on a later pull request. Do not push an empty commit just to retry, because that changes the head that `preflight.sh --full` already passed.
+
+## 2026-11-19 Sonnet tokens and the post-merge refresh
+
+- Sonnet input tokens rose with RepoLens (holdout 21914 to 24419, scale 18727 to 22506). The default search was 10 fully detailed hits (signature up to 160 characters, every symbol, the `via` line) and the MCP server added 10 more one-line hits. Snippet defaulted to 80 lines. Impact defaulted to depth 3. Those payloads are what the model reads back as input on the next turn.
+- On the session fixture, query `code verification`: 10 detailed hits were 1697 bytes; the new default (4 detailed plus 4 one-line) was 940 bytes, 0.554 of that text. Signatures are now capped at 80 characters and symbol lists at 6. This is not a new Sonnet bench run.
+- The 5.52s and 5.79s waits were the query itself running the incremental index (`wait=True`) because the cloud VM had not run the git hook. `post-merge` already starts `refresh --background`. A query that is still stale now starts that same detached index and returns. The fixture test no longer prints `refreshed in` on the first search, and the following search finds `brand_new_symbol` after the background run.
+- Re-measured on the Notaire index for `b0065a209ca9` to `623b2d5621b5` (the range that used to print `index refreshed in 5.79s` and take 7.718s). With the index marked at the parent commit, `repolens search Procedure.getDto` returned in 1.31s and printed `refreshing in the background`. The store's `indexed_head` matched HEAD 2.112s after the query started. The next search took 1.374s and did not warn. `git grep` of `getDto(` in `Procedure.java` took 0.0037s. The suite sets `REPOLENS_REFRESH_SECONDS=-1`, which disables the resident service's periodic refresh; the follow-HEAD test opts back in, because a negative interval still means "do not refresh on a timer."
 
 

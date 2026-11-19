@@ -114,7 +114,12 @@ class KnowledgeGraph:
                 self.sources_from_store()
             if self.cfg.sources:
                 store = Store(self.cfg.db_path)
-                report = index(self.cfg, store, log=lambda *_a, **_k: None, wait=False)
+                deadline = time.perf_counter() + 8
+                report = {"busy": True}
+                while report.get("busy") and time.perf_counter() < deadline:
+                    report = index(self.cfg, store, log=lambda *_a, **_k: None, wait=False)
+                    if report.get("busy"):
+                        time.sleep(0.2)
                 result = {"busy": report.get("busy", False), "changed": report.get("changed", False),
                           "extracted": sum(s.get("extracted", 0) + s.get("removed", 0)
                                            for s in report.get("sources", {}).values())}

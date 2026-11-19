@@ -72,6 +72,26 @@
     "git_grep_hit": "User.java:210 only production declaration",
     "verdict": "5.52s is one incremental pass after a single merge, not a re-embed. Not the next RepoLens item."
   },
+  "compact_search_payload": {
+    "query": "code verification",
+    "fixture": "repolens session fixture, file mode",
+    "ten_detailed_hits_bytes": 1697,
+    "default_four_detailed_plus_four_oneline_bytes": 940,
+    "ratio": 0.554,
+    "note": "Same renderer after the signature cap. Not a re-run of the Sonnet bench."
+  },
+  "background_refresh": {
+    "query_blocks": false,
+    "fixture_test": "test_a_query_does_not_wait_for_the_refresh_after_head_moves",
+    "notaire_blocking_refresh_s": [5.52, 5.79],
+    "notaire_blocking_query_s": [7.104, 7.718],
+    "remeasure_range": "b0065a209ca9 -> 623b2d5621b5",
+    "notaire_stale_query_s": 1.31,
+    "notaire_caught_up_s": 2.112,
+    "notaire_second_search_s": 1.374,
+    "git_grep_procedure_getdto_s": 0.0037,
+    "note": "The 5.52s and 5.79s figures are the old blocking refresh. On the same second range, the new query returned in 1.31s with 'refreshing in the background' and the index matched HEAD 2.112s after the query started. git grep of Procedure.getDto was 0.0037s."
+  },
   "preflight": {
     "vitest_retry": "one extra attempt for frontend vitest only",
     "full_runs_with_a_recorded_restart": ["registration-draft: 3", "folio: 3", "cli-usage: 2"]

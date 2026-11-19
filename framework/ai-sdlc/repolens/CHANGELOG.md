@@ -3,6 +3,13 @@
 All notable changes to repolens. Versions follow [SemVer](https://semver.org); the version lives in
 `repolens/__init__.py` and release tags are `repolens-v<version>`.
 
+## [0.6.1] - 2026-11-19
+
+### Changed
+
+- Search defaults to 4 detailed hits plus 4 one-line hits. Snippet defaults to 32 lines. Impact defaults to depth 2. Signatures in search hits are capped at 80 characters and symbol lists at 6. On the session fixture, 10 detailed hits for `code verification` were 1697 bytes; the new default was 940 bytes.
+- A stale index no longer blocks the query. The query starts the same detached `index --no-wait` the `post-merge` hook starts, and answers from the previous graph. An index written by other extractors uses that same background refresh. The next query sees the result.
+
 ## [0.6.0] - 2026-11-19
 
 ### Added

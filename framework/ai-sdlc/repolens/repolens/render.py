@@ -36,9 +36,11 @@ def hits(results: list[Hit], query: str = "", detailed: int | None = None) -> st
         head += f"  ({h.score:.2f})"
         lines.append(head)
         if h.signature and h.kind not in ("section", "chunk", "route", "table", "tag"):
-            lines.append(f"   sig: {h.signature[:160]}")
+            lines.append(f"   sig: {h.signature[:80]}")
         if h.symbols:
-            lines.append("   symbols: " + ", ".join(f"{s['name']}:{s['line']}" for s in h.symbols))
+            shown = h.symbols[:6]
+            extra = f" (+{len(h.symbols) - 6})" if len(h.symbols) > 6 else ""
+            lines.append("   symbols: " + ", ".join(f"{s['name']}:{s['line']}" for s in shown) + extra)
         if h.why and h.why != "match":
             lines.append(f"   via: {h.why}")
     return "\n".join(lines)

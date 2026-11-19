@@ -253,7 +253,7 @@ anchors = 7                        # code anchors that seed the walk
 | `repolens index [folders...] [--full] [--no-embed] [--no-wait] [--quiet]` | create or update the graph (incremental; `--no-wait` steps aside when another run holds the store) |
 | `repolens report [--since 7d] [--json] [--md f] [--gate]` | usage efficiency report |
 | `repolens refresh [--background]` · `repolens hook` | refresh an existing store (git hooks) · record a harness tool call (Claude Code hook) |
-| `repolens search "<question>" [--files] [-k 10] [--also 10] [--scope code\|docs\|tests] [--kind method] [--project api] [--repos all\|a,b]` | hybrid + graph search; `--also` lists more results one line each; `--repos` asks other indexed repositories too |
+| `repolens search "<question>" [--files] [-k 4] [--also 4] [--scope code\|docs\|tests] [--kind method] [--project api] [--repos all\|a,b]` | hybrid + graph search; the default is 4 detailed hits plus 4 one-line hits; `--repos` asks other indexed repositories too |
 | `repolens node <ref>` | a node and its typed relations both ways |
 | `repolens neighbors <ref> [--depth 2] [--kind calls] [--direction in]` | expand the graph |
 | `repolens impact <ref>` | reverse-dependency closure + affected tests |
@@ -303,9 +303,9 @@ otherwise returns each answer twice and adds an output schema per tool, 4,701 by
 `impact` and `node` list each file once with its symbols as `name:line`, and count the `[ranking] demote`
 paths instead of listing them: 61,232 -> 24,524 bytes over ten Notaire `impact` answers, 28,212 -> 12,837
 over ten `node` answers, with no other file dropped (`--json` keeps every entry).
-`search` returns the top `k` (default 10) with their symbols and the relation that surfaced them, then ten
-more as one-line "also relevant" entries: recall keeps rising past the top 10 (0.86 -> 0.94 on the tuning
-tasks, 0.77 -> 0.94 held-out) and one line per file costs about 1 KB for all ten. For example:
+`search` returns the top `k` (default 4) with their symbols and the relation that surfaced them, then 4
+more as one-line "also relevant" entries. Recall keeps rising past the top 10 (0.86 -> 0.94 on the tuning
+tasks, 0.77 -> 0.94 held-out); the shorter default is what the agent reads back on the next turn. For example:
 
 ```text
 1. [file] backend-api/.../adapter/out/pdf/PdfBoxReportRenderer.java:1-487  (1.39)
@@ -388,7 +388,7 @@ several harnesses and models, each in its own worktree and branch, opening pull 
 | Every harness gets it | `repolens setup` writes the native registration of each: `.mcp.json` + `.claude/settings.json` (Claude Code), `.codex/config.toml` (Codex), `opencode.json` (OpenCode), `.cursor/mcp.json` (Cursor). The command resolves the launcher with `git rev-parse --show-toplevel`, so every worktree serves its own checkout. |
 | One index per worktree | The store lives in `<worktree>/.repolens/`: an index never mixes branches. |
 | Branches and worktrees are cheap | Vectors are content-addressed and shared machine-wide (`~/.cache/repolens/vectors`, with the PCA basis): a new worktree, a branch switch or a rebased branch embeds only text no store has embedded before. Measured on Notaire: a new worktree indexed in 11 s, 82,379 of its 83,241 vectors from the cache (862 texts that differ were embedded), against ~4 min cold. |
-| Answers follow the agent's edits | Before a tool call the MCP server starts an incremental refresh in the background (at most every `REPOLENS_REFRESH_SECONDS`, default 15); answers come from the last published graph meanwhile. Git `post-checkout`/`post-merge` hooks refresh after a branch switch or a pull. A CLI query also compares the indexed commit with `HEAD` and, when they differ, finishes an incremental index before it answers, so a cloud VM that did not run the hooks still does. |
+| Answers follow the agent's edits | Before a tool call the MCP server starts an incremental refresh in the background (at most every `REPOLENS_REFRESH_SECONDS`, default 15); answers come from the last published graph meanwhile. Git `post-checkout`/`post-merge` hooks refresh after a branch switch or a pull. A CLI query that still sees a stale index starts `refresh` in the background and answers at once. `git pull` and `git merge` run the `post-merge` hook, which starts that refresh before the next query. |
 | Many agents, one worktree | An inter-process lock serialises index runs; a refresh that finds the lock taken steps aside. Readers never block (SQLite WAL). |
 | First start | An MCP server on an unindexed repository builds the index in the background and tells the agent to retry or use grep meanwhile; the graph and keyword search are published before the slow embedding pass. |
 | Evidence | Every tool call is logged (`.repolens/usage.jsonl`), and the Claude Code hook logs Read/Grep/Glob, so `repolens report` measures real use (below). |
