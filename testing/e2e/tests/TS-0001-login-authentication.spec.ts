@@ -43,7 +43,8 @@ test.describe("TS-0001 - Login Authentication", () => {
 
   test("shows a field error for an empty submission", async ({ page }) => {
     await page.getByTestId("btn-sign-in").click();
-    await expect(page.getByRole("alert")).toHaveCount(2);
+    const card = page.getByTestId("login-card");
+    await expect(card.getByRole("alert")).toHaveCount(2);
     await expect(page.getByTestId("input-username")).toHaveAttribute("aria-invalid", "true");
     await expect(page.getByTestId("input-password")).toHaveAttribute("aria-invalid", "true");
   });
