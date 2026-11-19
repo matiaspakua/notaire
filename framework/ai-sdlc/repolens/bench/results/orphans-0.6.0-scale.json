@@ -1,0 +1,59 @@
+{
+ "label": "0.6.0-scale",
+ "stamp": "2026-11-19 15:25",
+ "stores": [
+  {
+   "profile": "scale-fastembed.toml",
+   "reindex_s": 41.6,
+   "timings": {
+    "extract_s": 26.45,
+    "link_s": 13.4,
+    "embed_s": 0.56,
+    "optimize_s": 0.61,
+    "total_s": 41.02
+   },
+   "files": 32298,
+   "nodes": 437861,
+   "edges": 2461200,
+   "isolated": 638,
+   "history_only": 0,
+   "demoted": {
+    "isolated": 0,
+    "history_only": 0
+   },
+   "conventional": {
+    "isolated": 580,
+    "history_only": 0
+   },
+   "isolated_named_elsewhere": 110,
+   "isolated_by_lang": {
+    "xml": 153,
+    "json": 89,
+    "txt": 59,
+    "html": 58,
+    "ipynb": 39,
+    "properties": 38,
+    "java": 30,
+    "ico": 26,
+    "text": 19,
+    "groovy": 17,
+    "bmp": 14,
+    "asciidoc": 12,
+    "typescript": 10,
+    "factories": 8,
+    "github-issues": 8
+   },
+   "languages": 147,
+   "code_files": 25898,
+   "code_languages": 18,
+   "code_files_with_symbols": 23487,
+   "languages_with_symbols": 18,
+   "isolated_named_elsewhere_share": 0.172,
+   "projects": [
+    "spring-framework",
+    "vscode"
+   ],
+   "extractors": "0.6.0 extractors"
+  }
+ ]
+}

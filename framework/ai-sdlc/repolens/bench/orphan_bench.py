@@ -76,7 +76,7 @@ def _read_text(path: Path) -> str | None:
 
 def measure(profile: Path, reindex: bool) -> dict:
     kg = KnowledgeGraph.open(profile)
-    row: dict = {"profile": str(profile)}
+    row: dict = {"profile": profile.name, "projects": sorted(kg.engine.roots)}  # no local paths in results
     if reindex:
         clock = time.perf_counter()
         report = kg.index(full=True, log=lambda *_: None)
