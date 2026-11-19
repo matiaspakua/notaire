@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import fnmatch
 import importlib.util
 import io
 import json
@@ -243,7 +244,8 @@ def embed_store(store, cfg, log=print) -> dict:
         if store.get_meta("embedder") == embedder.name and store.count_vectors() \
                 and next(store.missing_vectors(SKIP_KINDS), None) is None:
             return {"embedder": embedder.name, "embedded": 0}
-        unique = {text_hash(embed_text(n)): embed_text(n) for n in store.nodes() if n.kind not in SKIP_KINDS}
+        unique = {text_hash(embed_text(n)): embed_text(n) for n in store.nodes()
+                  if n.kind not in SKIP_KINDS and not skipped(n.path, cfg.embed_skip)}
         embedder.fit(list(unique.values()))
         store.set_meta("lsa_state", embedder.dump())
         store.clear_vectors()
@@ -253,7 +255,8 @@ def embed_store(store, cfg, log=print) -> dict:
     if pulled:
         log(f"  {pulled} vectors from the shared cache")
     if not embedder.needs_fit():
-        unique = {text_hash(t): t for t in (embed_text(n) for n in store.missing_vectors(SKIP_KINDS))}
+        unique = {text_hash(t): t for t in (embed_text(n) for n in store.missing_vectors(SKIP_KINDS)
+                                            if not skipped(n.path, cfg.embed_skip))}
     todo = sorted(unique.items(), key=lambda kv: len(kv[1]))
     reduce = 0 if embedder.needs_fit() else cfg.embed_reduce
     projection = _projection(store, embedder.name) if reduce else None
@@ -288,6 +291,13 @@ def embed_store(store, cfg, log=print) -> dict:
         cache.close()
     return {"embedder": embedder.name, "embedded": len(todo), "dims": reduce if projection else None,
             "from_cache": pulled, "to_cache": pushed}
+
+
+def skipped(path: str, globs: list[str]) -> bool:
+    """`[embed] skip`: paths whose nodes get no vector (keyword and graph search still find them). Measured on
+    Notaire: skipping the demoted paths halves the vectors to embed (87,484 -> 39,307) at a cost of 0.013
+    tuning recall@10 and 0.042 held-out MRR, so it is opt-in (README, Cold start)."""
+    return bool(path) and any(fnmatch.fnmatch(path, g) or fnmatch.fnmatch("/" + path, g) for g in globs)
 
 
 def _open_cache(store, embedder, cfg):

@@ -15,6 +15,7 @@ from .extractors import EXTRACTOR_VERSION, Options, extract_job
 from .freshness import stamp
 from .linker import link
 from .locks import index_lock
+from .repos import record as register
 from .scanner import scan
 from .store import Store
 
@@ -81,6 +82,7 @@ def _index(cfg: Config, store: Store, only: list[str] | None, full: bool, embed:
     }
     report["stats"] = {k: v for k, v in store.stats().items() if k in ("files", "nodes", "edges", "embeddings")}
     stamp(store)
+    register(cfg, store.get_meta("indexed_head") or "", report["stats"].get("files", 0))
     return report
 
 

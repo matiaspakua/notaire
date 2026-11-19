@@ -22,7 +22,7 @@ from .docs import (
     extract_text,
 )
 
-EXTRACTOR_VERSION = "4"
+EXTRACTOR_VERSION = "6"
 
 EXTRACTORS = {
     "code": extract_code,

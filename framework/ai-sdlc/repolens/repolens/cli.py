@@ -12,7 +12,9 @@ from . import __version__
 
 # Commands that must start fast and work before the dependencies are installed (the harness hook runs on
 # every tool call): they import only the standard library. The rest import the engine lazily.
-LIGHT = ("hook", "report", "setup", "doctor", "refresh", "miss")
+LIGHT = ("hook", "report", "setup", "doctor", "refresh", "miss", "cache", "repos")
+# Read-only queries: answered by the resident per-worktree service when one runs (repolens/daemon.py).
+QUERY = frozenset({"search", "node", "outline", "snippet", "neighbors", "impact", "path"})
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -67,14 +69,16 @@ def _parser() -> argparse.ArgumentParser:
 
     s = sub.add_parser("search", help="hybrid semantic + lexical + graph search")
     s.add_argument("query")
-    s.add_argument("-k", type=int, default=4, help="detailed results (default 4; further hits are one line each via --also)")
+    s.add_argument("-k", type=int, default=4, help="detailed results (default 4)")
     s.add_argument("--kind", action="append", help="restrict to node kinds (file, class, method, section, route...)")
     s.add_argument("--project")
     s.add_argument("--scope", choices=["all", "code", "docs", "tests"], default="all")
     s.add_argument("--files", action="store_true", help="group results by file")
     s.add_argument("--also", type=int, default=4, metavar="N", help="list N more results, one line each (default 4)")
     s.add_argument("--no-graph", action="store_true", help="disable the PageRank expansion")
+    s.add_argument("--repos", help="also search other indexed repositories: all, or names (see `repolens repos`)")
     s.add_argument("--json", action="store_true")
+    s.add_argument("--relevance", action="store_true", help=argparse.SUPPRESS)  # federated requests (repos.py)
 
     for name, helptext in (("node", "a node and its typed relations"), ("outline", "symbols of a file"),
                            ("snippet", "source text of a node")):
@@ -112,6 +116,18 @@ def _parser() -> argparse.ArgumentParser:
     s.add_argument("--transport", choices=["stdio", "sse", "streamable-http"], default="stdio")
     s.add_argument("--all-tools", action="store_true", help="also expose neighbors, stats and reindex")
 
+    s = sub.add_parser("repos", help="repositories indexed on this machine (for --repos)")
+    s.add_argument("--json", action="store_true")
+    s.add_argument("--forget", metavar="NAME", help="remove a repository from the registry")
+
+    s = sub.add_parser("cache", help="the shared vector cache: info, or export/import it between machines")
+    s.add_argument("action", choices=["info", "export", "import"])
+    s.add_argument("file", nargs="?", type=Path, help="export target / import source")
+    s.add_argument("--model", help="embedding model (default: the profile's [embed] model)")
+
+    s = sub.add_parser("daemon", help="the resident per-worktree service CLI queries reuse (run/status/stop)")
+    s.add_argument("action", choices=["run", "status", "stop"])
+
     s = sub.add_parser("export", help="export the graph (json or graphml)")
     s.add_argument("--format", choices=["json", "graphml"], default="json")
     s.add_argument("-o", "--output", type=Path, required=True)
@@ -119,10 +135,21 @@ def _parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    args = _parser().parse_args(argv)
+    raw = list(sys.argv[1:] if argv is None else argv)
+    args = _parser().parse_args(raw)
     try:
         if args.cmd in LIGHT:
             return _light(args)
+        if args.cmd == "daemon" and args.action != "run":
+            return _daemon_admin(args)
+        if args.cmd in QUERY:
+            from . import daemon
+
+            reply = daemon.ask(_state_dir(args), raw)
+            if reply is not None:
+                sys.stderr.write(reply.get("stderr", ""))
+                sys.stdout.write(reply.get("stdout", ""))
+                return int(reply.get("code", 0))
         return _dispatch(args)
     except (ValueError, FileNotFoundError, KeyError) as exc:
         print(f"repolens: {exc}", file=sys.stderr)
@@ -146,6 +173,10 @@ def _light(args) -> int:
         return code
     if args.cmd == "miss":
         return _miss(args)
+    if args.cmd == "cache":
+        return _cache(args)
+    if args.cmd == "repos":
+        return _repos(args)
     return _refresh(args)
 
 
@@ -164,7 +195,12 @@ def _dispatch(args) -> int:  # noqa: C901 - flat command table
             kg.sources_from_store()
         quiet = args.json or args.quiet
         log = (lambda *_a, **_k: None) if quiet else (lambda msg: print(msg, file=sys.stderr))
-        report = _index_report(kg, args, only, log)
+        deadline = time.perf_counter() + (8 if args.retry_busy else 0)
+        while True:
+            report = kg.index(only=only, full=args.full, embed=not args.no_embed, log=log, wait=not args.no_wait)
+            if not report.get("busy") or time.perf_counter() >= deadline:
+                break
+            time.sleep(0.2)
         if args.quiet:
             return 0
         if report.get("busy"):
@@ -188,24 +224,54 @@ def _dispatch(args) -> int:  # noqa: C901 - flat command table
         n = export(kg.engine, args.format, args.output)
         print(f"wrote {n} nodes to {args.output}")
         return 0
-    if args.cmd in {"search", "node", "outline", "snippet", "neighbors", "impact", "path"}:
-        _refresh_if_stale(kg, args)
+    if args.cmd == "daemon":
+        from . import daemon
 
+        return daemon.run(args, _state_dir(args))
+    if args.cmd == "stats":
+        s = kg.engine.stats()
+        print(json.dumps(s, indent=2) if args.json else render.stats(s))
+        return 0
+    code, text, notes = answer(args, kg)
+    for note in notes:
+        print(note, file=sys.stderr)
+    print(text)
+    if getattr(kg, "_pending_background_refresh", False):
+        config = getattr(args, "config", None)
+        kg.close()
+        _spawn_index(Path.cwd(), config)
+    return code
+
+
+def answer(args, kg) -> tuple[int, str, list[str]]:
+    """One read-only query: (exit code, text, stderr notes). Shared by the CLI and the resident service."""
+    from . import render
+
+    notes: list[str] = []
+    _refresh_if_stale(kg, notes)
     eng = kg.engine
+    if args.cmd == "search" and args.repos:
+        from . import repos
+
+        started = time.perf_counter()
+        pairs = repos.search(kg, args.query, args.k + args.also, args.repos, "files" if args.files else "nodes",
+                             args.scope)
+        labelled = [repos.labelled(name, hit) for name, hit in pairs]
+        text = (json.dumps([dict(h.to_dict(), repo=n) for n, h in pairs], indent=2) if args.json
+                else render.hits(labelled, args.query, detailed=args.k))
+        _record_cli(args, "search", args.query, text, len(pairs), started)
+        return (0 if pairs else 1), text, notes
     if args.cmd == "search":
         started = time.perf_counter()
         hits = eng.search(args.query, k=args.k + args.also, kinds=args.kind, project=args.project,
-                          mode="files" if args.files else "nodes", graph=not args.no_graph, scope=args.scope)
+                          mode="files" if args.files else "nodes", graph=not args.no_graph,
+                          scope=args.scope) if args.k + args.also > 0 else []
         text = (json.dumps([h.to_dict() for h in hits], indent=2) if args.json
                 else render.hits(hits, args.query, detailed=args.k))
-        print(text)
+        if args.relevance:
+            text = json.dumps({"hits": [h.to_dict() for h in hits], "relevance": eng.relevance(args.query)})
         _record_cli(args, "search", args.query, text, len(hits), started)
-        _finish_refresh(kg)
-        return 0 if hits else 1
-    if args.cmd == "stats":
-        s = eng.stats()
-        print(json.dumps(s, indent=2) if args.json else render.stats(s))
-        return 0
+        return (0 if hits else 1), text, notes
     started = time.perf_counter()
     result, text = {
         "node": lambda: (r := eng.node(args.ref), render.node(r)),
@@ -215,40 +281,70 @@ def _dispatch(args) -> int:  # noqa: C901 - flat command table
         "impact": lambda: (r := eng.impact(args.ref, args.depth), render.impact(r)),
         "path": lambda: (r := eng.path_between(args.a, args.b), render.path(r)),
     }[args.cmd]()
+    refs = [args.ref] if hasattr(args, "ref") else [args.a, args.b]
+    if result is None and not args.json:
+        text = eng.missing(*refs)
     printed = json.dumps(result, indent=2) if args.json else text
-    print(printed)
-    given = getattr(args, "ref", None) or f"{getattr(args, 'a', '')} {getattr(args, 'b', '')}".strip()
+    given = " ".join(refs)
     _record_cli(args, args.cmd, str(given), printed, 1 if result else 0, started)
-    _finish_refresh(kg)
-    return 0 if result else 1
+    return (0 if result else 1), printed, notes
 
 
-def _refresh_if_stale(kg, args) -> None:
+def _repos(args) -> int:
+    from . import repos
+
+    if args.forget:
+        print(f"forgot {repos.forget(args.forget)} store(s) named {args.forget}")
+        return 0
+    entries = repos.listed()
+    if args.json:
+        print(json.dumps(entries, indent=1))
+        return 0
+    if not entries:
+        print("repolens: no repository indexed on this machine yet")
+        return 1
+    for e in entries:
+        age = (time.time() - e.get("indexed_at", 0)) / 3600
+        print(f"{e['name']:<20} {e.get('files', 0):>7} files  {e.get('head', '')[:10]:<10}  "
+              f"{age:6.1f} h ago  {e['root']}")
+    return 0
+
+
+def _daemon_admin(args) -> int:
+    from . import daemon
+
+    state = _state_dir(args)
+    if args.action == "stop":
+        stopped = daemon.stop(state)
+        print("repolens: service stopped" if stopped else "repolens: no service running")
+        return 0
+    info = daemon.status(state)
+    if info is None:
+        print("repolens: no service running" + ("" if daemon.enabled() else " (disabled: REPOLENS_DAEMON=0)"))
+        return 1
+    print(f"repolens service pid {info['pid']}, {'alive' if info['alive'] else 'not answering'}, "
+          f"up {time.time() - info['started']:.0f}s, store {info['db']}")
+    return 0 if info["alive"] else 1
+
+
+def _refresh_if_stale(kg, notes: list[str] | None = None) -> None:
     """A merge or pull should already have started ``refresh --background``. If the index is still
-    behind HEAD, start that same detached refresh and answer from the previous graph. The query
-    does not wait."""
+    behind HEAD, mark a detached refresh and answer from the previous graph. The query does not wait."""
     from .freshness import status
+
+    def say(line: str) -> None:
+        if notes is None:
+            print(line, file=sys.stderr)
+        else:
+            notes.append(line)
 
     stale, indexed, head = status(kg.store)
     if not stale:
         return
     shown = (indexed or "unknown")[:12]
     head_s = (head or "unknown")[:12]
-    print(
-        f"repolens: index is behind HEAD ({shown} -> {head_s}); refreshing in the background",
-        file=sys.stderr,
-    )
-    # The store is still open for this query. The detached index starts after it closes,
-    # otherwise --no-wait sees the lock and exits without indexing.
-    kg._pending_background_refresh = args
-
-
-def _finish_refresh(kg) -> None:
-    pending = getattr(kg, "_pending_background_refresh", None)
-    if pending is None:
-        return
-    kg.close()
-    _spawn_index(Path.cwd(), getattr(pending, "config", None))
+    say(f"repolens: index is behind HEAD ({shown} -> {head_s}); refreshing in the background")
+    kg._pending_background_refresh = True
 
 
 def _record_cli(args, tool: str, given: str, text: str, results: int, started: float) -> None:
@@ -273,6 +369,41 @@ def _miss(args) -> int:
         "results": 0, "files": [],
     })
     return 0
+
+
+def _cache(args) -> int:
+    import tomllib
+
+    from . import vcache
+    from .paths import find_config
+
+    model = args.model
+    if not model:
+        config = args.config or find_config()
+        embed = tomllib.loads(Path(config).read_text(encoding="utf-8")).get("embed", {}) if config else {}
+        model = embed.get("model", "BAAI/bge-small-en-v1.5")
+    try:
+        if args.action == "info":
+            found = vcache.info(model)
+            if found is None:
+                print(f"repolens: no vector cache for {vcache.model_name(model)} yet")
+                return 1
+            print(f"{found['path']}: {found['vectors']} vectors, {found['bytes'] / 1e6:.1f} MB, "
+                  f"projection {'yes' if found['projection'] else 'not yet'}")
+            return 0
+        if args.file is None:
+            print(f"repolens: cache {args.action} needs a file", file=sys.stderr)
+            return 2
+        if args.action == "export":
+            done = vcache.export(model, args.file)
+            print(f"wrote {done['path']} ({done['bytes'] / 1e6:.1f} MB)")
+            return 0
+        done = vcache.import_file(args.file)
+        print(f"imported {done['added']} vectors into {done['path']} ({done['vectors']} in all)")
+        return 0
+    except vcache.CacheError as exc:
+        print(f"repolens: {exc}", file=sys.stderr)
+        return 2
 
 
 def _report(args) -> int:
@@ -308,16 +439,6 @@ def _setup(args) -> int:
     return 0
 
 
-def _index_report(kg, args, only, log) -> dict:
-    """One index pass. ``--retry-busy`` keeps trying when another connection still holds the lock."""
-    deadline = time.perf_counter() + (8 if args.retry_busy else 0)
-    while True:
-        report = kg.index(only=only, full=args.full, embed=not args.no_embed, log=log, wait=not args.no_wait)
-        if not report.get("busy") or time.perf_counter() >= deadline:
-            return report
-        time.sleep(0.2)
-
-
 def _refresh(args) -> int:
     """Git hooks call this: refresh an existing store, never create one, never fail, never block."""
     from .paths import project_root
@@ -333,9 +454,8 @@ def _refresh(args) -> int:
 
 
 def _spawn_index(root: Path, config: Path | None = None) -> None:
-    import subprocess
-
     import os
+    import subprocess
 
     state = root / ".repolens"
     state.mkdir(parents=True, exist_ok=True)

@@ -36,12 +36,15 @@ def cache_path(model: str) -> Path | None:
 
 
 class VectorCache:
-    def __init__(self, path: Path):
+    def __init__(self, path: Path, model: str = ""):
         self.path = path
         path.parent.mkdir(parents=True, exist_ok=True)
         self.conn = sqlite3.connect(path, timeout=60)
         self.conn.execute("PRAGMA journal_mode = WAL")
         self.conn.executescript(SCHEMA)
+        if model:  # recorded so an exported copy knows which cache it belongs to
+            with self.conn:
+                self.conn.execute("INSERT OR IGNORE INTO meta VALUES ('model', ?)", (model,))
 
     @classmethod
     def open(cls, model: str) -> VectorCache | None:
@@ -49,7 +52,7 @@ class VectorCache:
         if path is None:
             return None
         try:
-            return cls(path)
+            return cls(path, model)
         except sqlite3.Error:
             return None
 
@@ -100,3 +103,70 @@ def push(store, cache: VectorCache) -> int:
             return conn.total_changes - before
     finally:
         conn.execute("DETACH DATABASE vcache")
+
+
+# -- moving vectors between machines (`repolens cache export/import/info`) ------------------------
+class CacheError(Exception):
+    pass
+
+
+def model_name(model: str) -> str:
+    """The cache key of a fastembed model, as `embed_store` names it."""
+    return model if ":" in model else f"fastembed:{model}"
+
+
+def info(model: str) -> dict | None:
+    path = cache_path(model_name(model))
+    if path is None or not path.exists():
+        return None
+    conn = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
+    try:
+        count = conn.execute("SELECT COUNT(*) FROM vectors").fetchone()[0]
+        basis = conn.execute("SELECT value FROM meta WHERE key = 'pca'").fetchone()
+    finally:
+        conn.close()
+    return {"path": str(path), "vectors": count, "projection": basis is not None,
+            "bytes": path.stat().st_size}
+
+
+def export(model: str, target: Path) -> dict:
+    """Write the model's cache to one compact SQLite file (for another machine, a CI artifact...)."""
+    source = cache_path(model_name(model))
+    if source is None or not source.exists():
+        raise CacheError(f"no vector cache for {model_name(model)}")
+    if target.exists():
+        raise CacheError(f"{target} exists; not overwriting")
+    cache = VectorCache(source, model_name(model))  # records the model in caches made before 0.5
+    try:
+        cache.conn.execute("VACUUM INTO ?", (str(target),))
+    finally:
+        cache.close()
+    return {"path": str(target), "bytes": target.stat().st_size}
+
+
+def import_file(source: Path) -> dict:
+    """Merge an exported cache into this machine's cache. Both must share the PCA basis (or this one has
+    none yet and adopts it): vectors in different projections are not comparable."""
+    con = sqlite3.connect(f"file:{source}?mode=ro", uri=True)
+    try:
+        name = con.execute("SELECT value FROM meta WHERE key = 'model'").fetchone()
+        basis = con.execute("SELECT value FROM meta WHERE key = 'pca'").fetchone()
+    finally:
+        con.close()
+    if name is None:
+        raise CacheError(f"{source} is not a repolens vector cache (no model recorded)")
+    cache = VectorCache.open(name[0] if isinstance(name[0], str) else name[0].decode())
+    if cache is None:
+        raise CacheError("the vector cache is disabled (REPOLENS_VECTOR_CACHE=off)")
+    try:
+        if basis is not None and cache.adopt_projection(basis[0]) != basis[0]:
+            raise CacheError(f"{source} uses a different projection than {cache.path}; import it into an empty "
+                             "cache (REPOLENS_VECTOR_CACHE) instead")
+        before = cache.count()
+        cache.conn.execute("ATTACH DATABASE ? AS incoming", (str(source),))
+        with cache.conn:
+            cache.conn.execute("INSERT OR IGNORE INTO main.vectors SELECT hash, scale, q FROM incoming.vectors")
+        cache.conn.execute("DETACH DATABASE incoming")
+        return {"path": str(cache.path), "added": cache.count() - before, "vectors": cache.count()}
+    finally:
+        cache.close()

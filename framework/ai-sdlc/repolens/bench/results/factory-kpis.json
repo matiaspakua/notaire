@@ -6,6 +6,7 @@
   "loop_locate": {
     "questions": 6,
     "note": "Wall times and output bytes are from time.perf_counter and the command stdout. Hit rate is named diff files over existing diff files. Not a full agent session.",
+    "note_0_5_0": "The repolens wall times above are 0.4.x, a new process per call. With the 0.5.0 resident service a CLI search answers in about 0.09 s; see release_0_5_0.cli_latency.",
     "exact_symbol_or_known_file": {
       "examples": ["frontend vitest in preflight.sh", "useUsers() callers"],
       "rg_faster": true,
@@ -88,5 +89,111 @@
   "preflight": {
     "vitest_retry": "one extra attempt for frontend vitest only",
     "full_runs_with_a_recorded_restart": ["registration-draft: 3", "folio: 3", "cli-usage: 2"]
+  },
+  "release_0_5_0": {
+    "issue": 2336,
+    "callers_vs_javac": {
+      "source": "bench/results/callers-baseline-0.4.5.json, bench/results/callers-0.5.0.json",
+      "pairs_truth": 6745,
+      "precision": [
+        0.714,
+        0.989
+      ],
+      "recall": [
+        0.852,
+        0.954
+      ],
+      "f1": [
+        0.777,
+        0.971
+      ],
+      "impact_depth1_recall": [
+        0.768,
+        0.968
+      ],
+      "impact_depth1_precision": [
+        0.589,
+        0.818
+      ],
+      "impact_zero_recall_share": [
+        0.14,
+        0.013
+      ]
+    },
+    "cli_latency": {
+      "source": "bench/results/perf/cli-baseline-0.4.5.json, bench/results/perf/cli-service-0.5.0.json",
+      "search_prose_p50_s": [
+        1.252,
+        0.086
+      ],
+      "search_exact_p50_s": [
+        0.984,
+        0.097
+      ],
+      "impact_p50_s": [
+        0.767,
+        0.095
+      ],
+      "impact_bytes": [
+        11241,
+        3762
+      ],
+      "rg_exact_p50_s": 0.019
+    },
+    "answer_bytes_ten_samples": {
+      "impact": [
+        61232,
+        24524
+      ],
+      "node": [
+        28212,
+        12837
+      ],
+      "note": "Same affected files listed; demoted paths counted instead of listed."
+    },
+    "mcp_schema_bytes": {
+      "tools_list_plus_instructions": [
+        4701,
+        3803
+      ],
+      "pinned_budget": 4000,
+      "answers_sent": [
+        "twice (content + structuredContent)",
+        "once"
+      ]
+    },
+    "federation": {
+      "source": "bench/results/federation-0.5.0.json",
+      "notaire_holdout_recall10": {
+        "own_store": 0.786,
+        "all_unweighted": 0.628,
+        "all_weighted": 0.786
+      },
+      "scale_recall10": {
+        "own_store": 0.825,
+        "all_unweighted": 0.575,
+        "all_weighted": 0.825
+      },
+      "federated_p50_ms": {
+        "notaire": [
+          98.4,
+          45.0
+        ],
+        "scale": [
+          87.5,
+          74.3
+        ]
+      },
+      "note": "Before/after of the latency is all repositories searched vs skipping those that cannot place a hit."
+    },
+    "cold_start": {
+      "cache_export_mb": 13.8,
+      "export_s": 0.12,
+      "import_s": 0.1,
+      "fresh_worktree_index_s": 9.1,
+      "vectors_from_cache": "84964/84965",
+      "cloud_vm_cold_index_s": 1265.78
+    },
+    "strict_resolution": "Two of ten sampled names (JwtService, AuthController) do not exist; 0.4.x answered them with the top semantic hit, 0.5.0 answers not found with the closest symbols."
   }
 }

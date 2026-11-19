@@ -7,6 +7,7 @@ typed, hub-damped PageRank walk surface the structurally related nodes the query
 from __future__ import annotations
 
 import fnmatch
+import hashlib
 import heapq
 import re
 import sqlite3
@@ -29,6 +30,8 @@ from .store import Store
 HIDDEN_KINDS = frozenset({"dir", "project", "external"})
 DOC_LANGS = frozenset({"md", "mdx", "markdown", "txt", "rst", "adoc", "pdf", "text", "html"})
 SCOPES = ("all", "code", "docs", "tests")
+RELEVANCE_TOP = 10
+TYPE_KINDS = frozenset({"class", "interface", "enum", "record", "type"})
 # Tuned on bench/tasks/notaire.yaml and validated on the held-out set (README, "Benchmark").
 # Override any value per profile under [ranking.tuning].
 DEFAULT_TUNING = {
@@ -83,6 +86,7 @@ class Engine:
         self._lock = threading.RLock()
         self._embedder = None
         self._embedder_loaded = False
+        self._query_vec: tuple[str, np.ndarray | None] = ("", None)
         self.loaded_at = None
         self.tuning = {**DEFAULT_TUNING, **cfg.tuning}
         self.timings: dict[str, float] = {}
@@ -133,6 +137,7 @@ class Engine:
             # The index may have refitted its embedding space (LSA, a new PCA basis): rebuild the query side
             # from the store on next use (the ONNX model itself is shared and stays loaded).
             self._embedder, self._embedder_loaded = None, False
+            self._query_vec = ("", None)
 
     def _containment(self, conn) -> np.ndarray:
         """(parent, child) index pairs. `parent` is stored relative to the file id ('' = the file itself,
@@ -328,6 +333,35 @@ class Engine:
                 return self._group_files(ranked, scores, set(anchors), k)
             return [self._hit(i, scores[i], set(anchors), scores) for i in ranked[:k]]
 
+    def relevance(self, query: str) -> dict | None:
+        """How much this store has to say about a question: the mean cosine of its ten nearest vectors, and
+        the embedding space it was measured in. Only values from one space compare (same model and basis);
+        federated search weights each repository's answers by it (repolens/repos.py)."""
+        with self._lock:
+            if self.embedder is None or self.emb is None or not len(self.emb):
+                return None
+            sims = self.similarities(self._embed(query))
+            n = min(RELEVANCE_TOP, len(sims))
+            return {"score": round(float(np.partition(sims, len(sims) - n)[-n:].mean()), 4), "space": self.space()}
+
+    def space(self) -> str:
+        """The embedding space relevance is measured in: the model and the vector width. Two stores of one
+        model compare even with their own PCA bases (each fitted on its corpus): measured on Notaire and the
+        scale corpus, the owning store had the higher relevance in 32 of 32 tasks. LSA fits a vocabulary per
+        store, so an LSA space is that store's alone."""
+        name = self.store.get_meta("embedder") or "none"
+        if name.startswith("lsa:"):
+            state = self.store.get_meta("lsa_state") or b""
+            raw = state if isinstance(state, bytes) else str(state).encode()
+            return f"{name}:{hashlib.sha1(raw, usedforsecurity=False).hexdigest()[:12]}"
+        return f"{name}:{self.emb.shape[1]}" if self.emb is not None and self.emb.ndim == 2 else name
+
+    def _embed(self, query: str) -> np.ndarray:
+        """The query vector, kept for the next call: a federated search asks for relevance and hits."""
+        if self._query_vec[0] != query or self._query_vec[1] is None:
+            self._query_vec = (query, self.embedder.embed_query(query))
+        return self._query_vec[1]
+
     def _balanced(self, ranked: list[int], n_code: int, n_docs: int) -> list[int]:
         """Seed the walk from the best code nodes and the best doc nodes: natural-language questions
         otherwise pick only prose, and the graph is what relates the two."""
@@ -371,7 +405,7 @@ class Engine:
         else:
             clock = time.perf_counter()
             if semantic and self.embedder is not None and self.emb is not None:
-                q = self.embedder.embed_query(query)
+                q = self._embed(query)
                 self.timings["embed_query"] = time.perf_counter() - clock
                 sims = self.similarities(q)
                 top = np.argpartition(-sims, min(150, len(sims) - 1))[:150]
@@ -547,8 +581,20 @@ class Engine:
         if rows:
             rows.sort(key=lambda r: (prio.get(r[1], 9), len(r[0])))
             return self.idx[rows[0][0]]
-        hits = self.search(ref, k=1, graph=False)
-        return self.idx.get(hits[0].id) if hits else None
+        return None  # never a guess: the impact of the wrong node reads as "nothing depends on it" (`missing`)
+
+    def missing(self, *refs: str) -> str:
+        """Which of these references name no node, and the closest real symbols for each."""
+        lines = []
+        for ref in refs:
+            if self.resolve(ref) is not None:
+                continue
+            near = [h for h in self.search(ref, k=12, graph=False)
+                    if h.kind not in ("file", "section") and not _is_constructor(h.qualname or h.name)]
+            near = sorted(near, key=lambda h: h.kind not in TYPE_KINDS)[:5]  # stable: types first, then rank
+            closest = ", ".join(f"{h.qualname or h.name} ({h.path}:{h.start})" for h in near)
+            lines.append(f"not found: {ref!r}" + (f"; closest: {closest}" if closest else ""))
+        return "\n".join(lines) or "not found"
 
     def _file(self, path: str) -> int | None:
         path = path.strip().lstrip("./")
@@ -598,7 +644,7 @@ class Engine:
 
     def brief(self, i: int) -> dict:
         return {"id": self.ids[i], "kind": self.kind[i], "name": self._label(i), "path": self.path[i],
-                "line": self.start[i], "end": self.end[i]}
+                "line": self.start[i], "end": self.end[i], "demoted": bool(self.boost[i] < 1.0)}
 
     def neighbors(self, ref: str, kinds: list[str] | None = None, direction: str = "both", depth: int = 1,
                   limit: int = 60) -> dict | None:
@@ -648,6 +694,11 @@ class Engine:
                 if kind == "contains" and j not in seeds:
                     seeds.add(j)
                     stack.append(j)
+        # Dynamic dispatch: a method is also reached through the interface or superclass method it
+        # overrides (a controller calls the port, the use case implements it), so callers of those count.
+        overridden = [j for i in seeds if self.kind[i] == "method"
+                      for j, kind, _ in self._adjacent(i, "out") if kind == "inherits" and self.kind[j] == "method"]
+        seeds.update(overridden)
         seen = dict.fromkeys(seeds, (0, "", ""))
         queue = deque((i, 0) for i in seeds)
         while queue and len(seen) < limit + len(seeds):
@@ -840,3 +891,8 @@ def _csr(src: np.ndarray, dst: np.ndarray, kind: np.ndarray, n: int):
     ptr = np.zeros(n + 1, dtype=np.int64)
     np.add.at(ptr, src + 1, 1)
     return np.cumsum(ptr), dst[order], kind[order]
+
+
+def _is_constructor(qualname: str) -> bool:
+    parts = qualname.split(".")
+    return len(parts) >= 2 and parts[-1] == parts[-2]

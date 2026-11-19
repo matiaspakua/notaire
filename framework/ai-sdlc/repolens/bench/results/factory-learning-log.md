@@ -44,7 +44,7 @@ Short notes from the cloud factory loop. Product behavior is not documented here
 - First `repolens search User.setAttributes` printed `index refreshed in 5.52s`. The query took 7.104s and ranked `User.java:210` first.
 - The next search took 1.508s and did not refresh.
 - `git grep` for the declaration took 0.0061s and named only that line.
-- 5.52s is not a re-embed. It is not the next RepoLens item. DeedManagement and Procedure remain on the ratchet.
+- 5.52s is not a re-embed. It is one incremental pass.
 - After #2334 merged, the next search (`Procedure.getDto`, `b0065a20` to `623b2d56`) printed `index refreshed in 5.79s`. The query took 7.718s and ranked `Procedure.getDto`, then `DeedLegacyMapper.toDto` and `TestimonyLegacyMapper.copyDeed`. Same conclusion: about 6s, not the next RepoLens item.
 
 ## 2026-11-19 Maven Central 429 on dependency submission

@@ -24,7 +24,29 @@ from .config import Config
 from .model import SYMBOL_KINDS, Edge, Node, virtual_id
 
 TYPE_KINDS = frozenset({"class", "interface", "enum", "type"})
-SYMBOL_REFS = frozenset({"inherit", "type", "call"})
+SYMBOL_REFS = frozenset({"type", "call"})
+# Library methods that hand back an element of their receiver (`list.get(0)`, `optional.orElseThrow()`), or the
+# same elements in another container (`list.stream()`, `stream.filter(...)`), and Spring Data repository methods
+# typed by the entity of `extends JpaRepository<Entity, Id>` ('' = the entity itself).
+ELEMENT_METHODS = frozenset({
+    "get", "getFirst", "getLast", "orElse", "orElseThrow", "orElseGet", "next", "join", "poll", "peek", "pop",
+    "element",
+})
+SAME_ELEMENT_METHODS = {
+    "stream": "Stream", "parallelStream": "Stream", "filter": "Stream", "sorted": "Stream", "distinct": "Stream",
+    "limit": "Stream", "skip": "Stream", "toList": "List", "findFirst": "Optional", "findAny": "Optional",
+    "min": "Optional", "max": "Optional", "iterator": "Iterator", "subList": "List", "reversed": "List",
+    "values": "Collection", "copyOf": "List", "unmodifiableList": "List",
+}
+REPOSITORY_TYPES = frozenset({
+    "JpaRepository", "CrudRepository", "ListCrudRepository", "PagingAndSortingRepository",
+    "ListPagingAndSortingRepository", "Repository", "JpaSpecificationExecutor", "QueryByExampleExecutor",
+})
+REPOSITORY_METHODS = {
+    "save": "", "saveAndFlush": "", "getReferenceById": "", "getById": "", "getOne": "",
+    "findById": "Optional", "findOne": "Optional", "findAll": "List", "findAllById": "List", "saveAll": "List",
+    "saveAllAndFlush": "List",
+}
 CALLABLE_KINDS = frozenset({"function", "method", "class", "variable"})
 LANG_FAMILY = {
     "java": "jvm", "kotlin": "jvm", "scala": "jvm", "typescript": "js", "tsx": "js", "javascript": "js",
@@ -90,6 +112,9 @@ class Linker:
         self._dirs()
         for row in by_kind["import"]:
             self._import(*row)
+        for row in by_kind["inherit"]:  # the class hierarchy first: typed calls resolve through it
+            self._symbol_ref(*row)
+        self._index_types(by_kind["returns"], by_kind["supertype"])
         for row in refs():
             if row[2] in SYMBOL_REFS:
                 self._symbol_ref(*self._canonical(row))
@@ -330,6 +355,8 @@ class Linker:
         name = target.split("<", 1)[0].strip()
         if name not in self.ix.by_name:
             return
+        if kind == "call" and extra and self._typed_call(src, name, extra):
+            return
         types = kind in ("type", "inherit")
         bucket = self._bucket(name, types, self._family(src))
         chosen = self._scope(project, src, bucket, name, strict=(kind == "call"))
@@ -384,6 +411,152 @@ class Linker:
                 if own:
                     self._edge(own, m, "inherits")
                     self.edges.pop((own, m, "calls"), None)
+
+    # -- typed calls (receiver hints from the extractor, see extractors/jtypes.py) -------------
+    def _index_types(self, returns, supertypes=()) -> None:
+        self.supers: dict[str, list[str]] = defaultdict(list)
+        for (s, d, k) in self.edges:
+            if k == "inherits" and self._is_type(s) and self._is_type(d):
+                self.supers[s].append(d)
+        self.returns = {src: target for _p, src, _k, target, _e in returns}
+        self.generic_supers: dict[str, list[tuple[str, str]]] = defaultdict(list)
+        for _p, src, _k, target, _e in supertypes:
+            base, _, element = target.partition("<")
+            if element:
+                self.generic_supers[src].append((base, element.rstrip(">")))
+        self.member_index: dict[str, dict[str, list[str]]] = {}
+
+    def _is_type(self, node_id: str) -> bool:
+        node = self.ix.nodes.get(node_id)
+        return node is not None and node.kind in TYPE_KINDS
+
+    def _typed_call(self, src: str, name: str, hint: str) -> bool:
+        """Resolve a call through its receiver's static type. Returns False when the receiver is unknown
+        (the caller falls back to name-based resolution). A known receiver whose type hierarchy in this
+        repository has no such method is a library call (`List.get`, `JpaRepository.save`): no edge."""
+        terms = self._resolve_hint(hint, src)
+        if terms is None:
+            return False
+        owners = [t[1] for t in terms if t[0] == "C"]
+        chosen = self._find_method(owners, name) if owners else []
+        if not chosen and hint.startswith("C:") and "#" not in hint:
+            chosen = self._enclosing_or_static(src, hint[2:], name)
+        chosen = [c for c in chosen if c != src][:3]
+        for c in chosen:
+            self._edge(src, c, "calls", 1.0 / len(chosen))
+        return True
+
+    def _resolve_hint(self, hint: str, src: str) -> list[tuple] | None:
+        """Type terms the receiver can be: ("C", class id) for a repository type, ("X", name, element) for
+        a library type (with its first type argument); None when the hint names no class of this file.
+        A chain step that cannot be followed (a library method, a generic return) yields []: no edge.
+        Measured against javac on Notaire's backend: name-based guessing there instead raised recall
+        0.954 -> 0.964 but cut precision 0.989 -> 0.953 (bench/results/callers-typed-v3-*.json)."""
+        src_file = src.split("#", 1)[0]
+        head, *steps = hint.split("#")
+        kind, _, name = head.partition(":")
+        if kind in ("C", "S"):
+            cls = f"{src_file}#{name}"
+            if cls not in self.ix.nodes:
+                return None
+            terms = [("C", cls)] if kind == "C" else [("C", s) for s in self.supers.get(cls, ())]
+        elif kind == "T":
+            terms = self._terms(name, src_file)
+        else:
+            return None
+        for step in steps:
+            following: list[tuple] = []
+            for term in terms:
+                following.extend(self._step(term, step, src_file))
+            terms = list(dict.fromkeys(following))
+            if not terms:
+                return []
+        return terms
+
+    def _terms(self, typ: str, context_file: str) -> list[tuple]:
+        base, _, rest = typ.partition("<")
+        element = rest.rstrip(">")
+        found = self._types_named(base, context_file)
+        return [("C", c) for c in found] if found else [("X", base, element)]
+
+    def _step(self, term: tuple, step: str, context_file: str) -> list[tuple]:
+        """The type after `.step()` (or `#@`: an element) on one term."""
+        if term[0] == "X":
+            _, base, element = term
+            if not element:
+                return []
+            if step == "@" or step in ELEMENT_METHODS:
+                return self._terms(element, context_file)
+            container = SAME_ELEMENT_METHODS.get(step)
+            return [("X", container, element)] if container else []
+        if step == "@":
+            return []
+        out: list[tuple] = []
+        methods = self._find_method([term[1]], step)
+        for method in methods:
+            returned = self.returns.get(method)
+            if returned:
+                out.extend(self._terms(returned, self.ix.file_of.get(method, context_file)))
+        if not methods:  # inherited from a library supertype with a known entity (Spring Data)
+            for base, entity in self.generic_supers.get(term[1], ()):
+                result = REPOSITORY_METHODS.get(step) if base in REPOSITORY_TYPES else None
+                if result == "":
+                    out.extend(self._terms(entity, self.ix.file_of.get(term[1], context_file)))
+                elif result:
+                    out.append(("X", result, entity))
+        return out
+
+    def _types_named(self, name: str, context_file: str) -> list[str]:
+        """Types with this simple name as seen from a file: same file, imported, same package, unique."""
+        cands = [c for c in self.ix.by_name.get(name, ()) if self.ix.nodes[c].kind in TYPE_KINDS]
+        if len(cands) <= 1:
+            return cands
+        family = self._family(context_file) if context_file in self.ix.nodes else ""
+        cands = [c for c in cands if not family or self._family(c) == family] or cands
+        for pick in (
+            lambda c: self.ix.file_of.get(c) == context_file,
+            lambda c: self.ix.file_of.get(c) in self.imported.get(context_file, ()),
+            lambda c: posixpath.dirname(self.ix.file_of.get(c, "")) == posixpath.dirname(context_file),
+        ):
+            hits = [c for c in cands if pick(c)]
+            if hits:
+                return hits[:3]
+        return cands if len(cands) <= 2 else []
+
+    def _find_method(self, owners: list[str], name: str, depth: int = 8) -> list[str]:
+        """Methods named `name` on the nearest level of the owners' type hierarchy that declares one."""
+        level, seen = list(owners), set(owners)
+        for _ in range(depth):
+            found = [m for cls in level for m in self._members_by_name(cls).get(name, ())]
+            if found:
+                return list(dict.fromkeys(found))
+            nxt = [s for cls in level for s in self.supers.get(cls, ()) if s not in seen]
+            if not nxt:
+                return []
+            seen.update(nxt)
+            level = nxt
+        return []
+
+    def _members_by_name(self, cls: str) -> dict[str, list[str]]:
+        table = self.member_index.get(cls)
+        if table is None:
+            table = defaultdict(list)
+            for m in self._members(cls):
+                table[self.ix.nodes[m].name].append(m)
+            self.member_index[cls] = table
+        return table
+
+    def _enclosing_or_static(self, src: str, qual: str, name: str) -> list[str]:
+        """An unqualified call not declared in its class: an enclosing class, else a static import."""
+        src_file = src.split("#", 1)[0]
+        while "." in qual:
+            qual = qual.rsplit(".", 1)[0]
+            found = self._find_method([f"{src_file}#{qual}"], name)
+            if found:
+                return found
+        imported = [c for f in self.imported.get(src_file, ()) for c in self._symbols_in(f)
+                    if self.ix.nodes[c].kind in TYPE_KINDS]
+        return self._find_method(imported, name, depth=1)
 
     def _members(self, cls: str) -> list[str]:
         node = self.ix.nodes.get(cls)

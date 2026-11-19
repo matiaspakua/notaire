@@ -38,9 +38,9 @@ where things live in such famous repositories; see [Scale](#scale).
 1. [How it works](#how-it-works)
 2. [Install](#install) · [Quick start](#quick-start)
 3. [Configuration](#configuration)
-4. [CLI](#cli) · [MCP server](#mcp-server) · [In an agent factory](#in-an-agent-factory) · [HTTP API](#http-api) · [Graph explorer](#graph-explorer)
+4. [CLI](#cli) · [MCP server](#mcp-server) · [Several repositories](#several-repositories) · [In an agent factory](#in-an-agent-factory) · [HTTP API](#http-api) · [Graph explorer](#graph-explorer)
 5. [Extending](#extending)
-6. [Performance](#performance) · [Scale](#scale)
+6. [Performance](#performance) · [Callers](#callers) · [Cold start](#cold-start) · [Scale](#scale)
 7. [Benchmark](#benchmark)
 8. [Development and release](#development-and-release)
 9. [Components and licenses](#components-and-licenses) · [Limitations](#limitations)
@@ -173,6 +173,7 @@ backend = "fastembed"             # fastembed | lsa | none | auto
 model = "BAAI/bge-small-en-v1.5"  # any fastembed text model
 reduce = 128                      # PCA dimensions stored and searched (0 = keep the model's dimensions)
 workers = 0                       # embedding worker processes for large jobs (0 = auto)
+skip = []                         # globs found by keyword and graph only, no vector (see Cold start)
 
 [git]
 commits = 3000                    # history scanned for co-change and issue links (0 disables)
@@ -198,6 +199,9 @@ anchors = 7                        # code anchors that seed the walk
 ```
 
 `REPOLENS_CONFIG`, `REPOLENS_DB` and `REPOLENS_MODEL_CACHE` override the profile, the store and the model cache.
+`REPOLENS_HOME` (default `~/.cache/repolens`) holds the repository registry and the shared vector cache
+(`REPOLENS_VECTOR_CACHE` moves the cache alone). `REPOLENS_DAEMON=0` turns the resident service off and
+`REPOLENS_DAEMON_IDLE` sets its idle exit in seconds (default 1800).
 
 ## CLI
 
@@ -209,7 +213,7 @@ anchors = 7                        # code anchors that seed the walk
 | `repolens index [folders...] [--full] [--no-embed] [--no-wait] [--quiet]` | create or update the graph (incremental; `--no-wait` steps aside when another run holds the store) |
 | `repolens report [--since 7d] [--json] [--md f] [--gate]` | usage efficiency report |
 | `repolens refresh [--background]` · `repolens hook` | refresh an existing store (git hooks) · record a harness tool call (Claude Code hook) |
-| `repolens search "<question>" [--files] [-k 10] [--also 10] [--scope code\|docs\|tests] [--kind method] [--project api]` | hybrid + graph search; `--also` lists more results one line each |
+| `repolens search "<question>" [--files] [-k 10] [--also 10] [--scope code\|docs\|tests] [--kind method] [--project api] [--repos all\|a,b]` | hybrid + graph search; `--also` lists more results one line each; `--repos` asks other indexed repositories too |
 | `repolens node <ref>` | a node and its typed relations both ways |
 | `repolens neighbors <ref> [--depth 2] [--kind calls] [--direction in]` | expand the graph |
 | `repolens impact <ref>` | reverse-dependency closure + affected tests |
@@ -217,9 +221,29 @@ anchors = 7                        # code anchors that seed the walk
 | `repolens outline <file>` / `repolens snippet <ref>` | symbols of a file / source of a node |
 | `repolens stats` · `repolens export --format graphml -o g.graphml` | store size; export for Gephi, yEd, networkx |
 | `repolens serve` · `repolens mcp` | HTTP API + UI · MCP server |
+| `repolens repos [--json] [--forget NAME]` | repositories indexed on this machine (see [Several repositories](#several-repositories)) |
+| `repolens cache info\|export <file>\|import <file> [--model M]` | the shared vector cache: size, or copy it to another machine (see [Cold start](#cold-start)) |
+| `repolens daemon status\|stop` | the resident query service of this worktree |
 
 A `<ref>` is a node id, a path, `path:line`, `path#Symbol.member`, a symbol name or a route (`POST /api/v1/mfa/enrollment`).
+Resolution is exact: a name that matches no node answers `not found` with the five closest symbols (types
+first), never with a guess. Before 0.5.0 the top semantic hit answered instead: `impact TestimonyService`, a
+class that does not exist, reported the `TestimonyWriteService` constructor with "0 files, 0 tests".
 The query commands take `--json`. Exit codes: 0 ok, 1 not found / no results, 2 usage or configuration error.
+
+**Resident service.** A CLI query is a new process, and loading Python, numpy, the engine and the embedding
+model took 1-4 s per call. The first query in a worktree answers in-process and starts a per-worktree
+service in the background; later queries go over a Unix socket in a private per-user folder
+(`/tmp/repolens-<uid>/`, mode 0700) and get the same text. It refreshes when `HEAD` moves, exits after
+`REPOLENS_DAEMON_IDLE` seconds idle or when its own code changes on disk. Measured with
+`bench/cli_latency.py` (p50 of 5 runs, a new process per call, M5 Pro):
+
+| Notaire query | 0.4.5 | 0.5.0 | Output 0.4.5 -> 0.5.0 |
+|---|---|---|---|
+| `search "where are payments processed"` | 1.252 s | **0.086 s** | 1,251 B |
+| `search ProcessPaymentService` | 0.984 s | **0.097 s** | 1,135 B |
+| `impact ProcessPaymentService.process` | 0.767 s | **0.095 s** | 11,241 -> **3,762 B** |
+| `rg ProcessPaymentService` (reference) | 0.019 s | 0.019 s | |
 
 ## MCP server
 
@@ -229,9 +253,14 @@ The query commands take `--json`. Exit codes: 0 ok, 1 not found / no results, 2 
 claude mcp add repolens -- repolens mcp       # Claude Code; any MCP client: command `repolens`, args `["mcp"]`
 ```
 
-Tools: `search`, `node`, `impact`, `path`, `outline`, `snippet`;
+Tools: `search` (`repos` asks other indexed repositories too), `node`, `impact`, `path`, `outline`, `snippet`;
 `--all-tools` adds `neighbors`, `stats` and `reindex`. Each tool schema costs the agent input tokens on
-every turn, so the default set is kept small. Results are compact text that starts with `path:line`.
+every turn, so the default set is kept small: the tool list plus instructions are 3,803 bytes, pinned under
+4,000 by a test. Results are plain text that starts with `path:line`, sent once (no structured copy; FastMCP
+otherwise returns each answer twice and adds an output schema per tool, 4,701 bytes in 0.4.5).
+`impact` and `node` list each file once with its symbols as `name:line`, and count the `[ranking] demote`
+paths instead of listing them: 61,232 -> 24,524 bytes over ten Notaire `impact` answers, 28,212 -> 12,837
+over ten `node` answers, with no other file dropped (`--json` keeps every entry).
 `search` returns the top `k` (default 10) with their symbols and the relation that surfaced them, then ten
 more as one-line "also relevant" entries: recall keeps rising past the top 10 (0.86 -> 0.94 on the tuning
 tasks, 0.77 -> 0.94 held-out) and one line per file costs about 1 KB for all ten. For example:
@@ -246,6 +275,31 @@ also relevant:
 11. frontend/src/hooks/useReports.ts  downloadPdf
 13. backend-api/.../adapter/out/report/ReportService.java
 ```
+
+## Several repositories
+
+Every `repolens index` registers its store in `$REPOLENS_HOME/repos.json` (name, root, store, commit; the
+repository identity is `git rev-parse --git-common-dir`, so worktrees of one repository count once).
+`repolens repos` lists them; `repolens search "<question>" --repos all` (or `--repos billing,shop`, MCP
+`search(repos=...)`) asks each one and labels every hit `[repo] path`. Each repository keeps its own index,
+profile and lifecycle; nothing is copied between stores.
+
+The answers are merged by reciprocal-rank fusion, each repository weighted by how much it has to say about the
+question: its relevance is the mean cosine of its ten nearest vectors, and the weight is
+`exp((relevance - best) / 0.05)`. Stores of one model compare even with their own PCA bases; an LSA store fits
+its own vocabulary and is interleaved unweighted. Relevance costs 5-9 ms per store against 30-60 ms for a
+search, so it is asked first and a repository that cannot place a hit in the top `k` is not searched at all.
+Measured with `bench/federation_bench.py`, Notaire and the scale corpus registered (recall@10 / MRR of the
+expected files, top 20):
+
+| Task set | Owning store alone | All, unweighted | All, weighted | Federated p50 |
+|---|---|---|---|---|
+| `notaire-holdout` (12) | 0.786 / 0.819 | 0.628 / 0.790 | **0.786 / 0.819** | 45 ms |
+| `scale` (20) | 0.825 / 0.430 | 0.575 / 0.354 | **0.825 / 0.430** | 74 ms |
+
+Every temperature up to 0.05 kept the owning store's recall and 0.1 lost 0.017 on Notaire, so 0.05 is the
+most permissive lossless one. These tasks each belong to one repository; a question that spans repositories
+interleaves them when their relevance is close.
 
 ## In an agent factory
 
@@ -344,6 +398,36 @@ release, 0.2.0 the performance iteration, 0.3.0 the scale iteration (details in 
 
 Where a Notaire query spends its ~25 ms: PageRank 11 ms, BM25 6 ms, vector scan 4 ms, query embedding 2 ms,
 the rest is ranking and rendering (names and ids of the results are read from SQLite on demand).
+
+### Callers
+
+`bench/caller_bench.py` compares the `calls` edges with the call graph javac resolves for `backend-api`
+(6,745 caller-file / callee-file / method pairs, self-file calls, constructors and type references left out),
+and asks `impact` for the callers of 150 method names that several classes share:
+
+| | 0.4.5 (by name) | 0.5.0 (by receiver type) |
+|---|---|---|
+| Precision / recall / F1 | 0.714 / 0.852 / 0.777 | **0.989 / 0.954 / 0.971** |
+| `impact` depth 1: recall / precision of the real callers | 0.768 / 0.589 | **0.968 / 0.818** |
+| Ambiguous names whose `impact` found no real caller | 14% | **1.3%** |
+
+The receiver's type comes from locals, fields, parameters, lambda parameters, method return types and
+generic arguments (`List<Folio>` element calls), plus Spring Data repository methods. A chain that cannot be
+followed links nothing: guessing it instead measured F1 0.959 against 0.971. `impact` also starts from the
+interface and superclass methods a method overrides, so a controller calling a port reaches the use case.
+
+### Cold start
+
+The first embedding pass of a large repository is the slow part (about 21 minutes for Notaire on a cloud VM).
+Vectors are cached by content in `$REPOLENS_HOME`, so every worktree and branch of a machine reuses them;
+`repolens cache export vectors.db` and `repolens cache import vectors.db` carry that cache to another machine
+or a CI image. Import refuses a cache built with another PCA basis (its vectors would not compare).
+Measured: exporting Notaire's cache is a 13.8 MB file in 0.12 s, importing it 0.10 s, and a fresh worktree
+then indexed in 9.1 s with 84,964 of 84,965 vectors taken from the cache.
+
+`[embed] skip` globs keep paths out of the vector index (keyword and graph search still find them). Skipping
+Notaire's demoted paths halves the vectors to embed (87,484 -> 39,307) and costs 0.013 tuning recall@10 and
+0.042 held-out MRR, so it is opt-in.
 
 ### Scale
 
@@ -450,6 +534,14 @@ Everything to reproduce is in [`bench/`](bench); `bench/run_all.sh` runs all of 
 - **Performance** — `bench/perf_bench.py --label <name> [--compare <other>]`: store size, index times, load,
   memory, latency by stage, MCP cold start and quality on both task sets, saved per label in
   `bench/results/perf/`.
+- **Callers** — `bench/caller_bench.py --label <name>`: repolens `calls` edges against the call graph javac
+  resolves (`bench/callgraph/CallGraph.java`, the Compiler Tree API with the module's Maven classpath and
+  Lombok) on `backend-api`: precision / recall over (caller file, callee file, method) pairs, and how many
+  real callers `impact` finds for 150 sampled ambiguous names.
+- **CLI latency** — `bench/cli_latency.py --label <name>`: wall time and output bytes of CLI queries run as an
+  agent runs them, one process per call.
+- **Federation** — `bench/federation_bench.py --label <name>`: each task set against its own store and against
+  every registered store, per relevance temperature.
 - **Scale** — `bench/scale_bench.py --label <name> [--embed none|fastembed] [--steps index,noop,touch,query]`:
   the same measurements on spring-framework + vscode (33k files), cloned shallow into `$REPOLENS_BENCH_HOME/scale` (its own
   git root, so agents working there cannot wander into the enclosing repository).
@@ -457,7 +549,7 @@ Everything to reproduce is in [`bench/`](bench); `bench/run_all.sh` runs all of 
 <!-- BENCH:START -->
 Results on commit `073e9776`; retrieval and Sonnet runs with repolens 0.3.0, Haiku runs with 0.2.0:
 
-#### Retrieval, task set `notaire-holdout` (top-10 files, 12 tasks, commit 073e9776)
+### Retrieval, task set `notaire-holdout` (top-10 files, 12 tasks, commit 073e9776)
 
 | arm | recall@5 | recall@10 | recall@20 | MRR | latency ms | output KB (top 10) | output KB (top 10 + 10 one-line) |
 |---|---|---|---|---|---|---|---|
@@ -474,7 +566,7 @@ Results on commit `073e9776`; retrieval and Sonnet runs with repolens 0.3.0, Hai
 | multi-hop | 0.21 | 0.81 | 0.81 |
 | tests | 0.50 | 1.00 | 1.00 |
 
-#### Retrieval, task set `notaire` (top-10 files, 11 tasks, commit 073e9776)
+### Retrieval, task set `notaire` (top-10 files, 11 tasks, commit 073e9776)
 
 | arm | recall@5 | recall@10 | recall@20 | MRR | latency ms | output KB (top 10) | output KB (top 10 + 10 one-line) |
 |---|---|---|---|---|---|---|---|
@@ -491,7 +583,7 @@ Results on commit `073e9776`; retrieval and Sonnet runs with repolens 0.3.0, Hai
 | multi-hop | 0.00 | 0.46 | 0.83 |
 | tests | 0.50 | 1.00 | 1.00 |
 
-#### Agent: haiku, task set `notaire-holdout` (72 runs, 3 rep., $0.20 total)
+### Agent: haiku, task set `notaire-holdout` (72 runs, 3 rep., $0.20 total)
 
 | arm | runs | recall | tool calls | turns | time s | input tokens | output tokens | cost USD |
 |---|---|---|---|---|---|---|---|---|
@@ -499,7 +591,7 @@ Results on commit `073e9776`; retrieval and Sonnet runs with repolens 0.3.0, Hai
 | + repolens MCP | 36 | 0.97 | 4.56 | 5.56 | 8.8 | 36,165 | 1,585 | 0.00228 |
 | change |  | +0% | -23% | -19% | -24% | -25% | -24% | -32% |
 
-#### Agent: haiku, task set `notaire` (66 runs, 3 rep., $0.20 total)
+### Agent: haiku, task set `notaire` (66 runs, 3 rep., $0.20 total)
 
 | arm | runs | recall | tool calls | turns | time s | input tokens | output tokens | cost USD |
 |---|---|---|---|---|---|---|---|---|
@@ -507,7 +599,7 @@ Results on commit `073e9776`; retrieval and Sonnet runs with repolens 0.3.0, Hai
 | + repolens MCP | 33 | 0.99 | 4.52 | 5.52 | 8.8 | 38,122 | 1,550 | 0.00245 |
 | change |  | +1% | -19% | -17% | -24% | -32% | -24% | -32% |
 
-#### Agent: sonnet, task set `notaire-holdout` (12 runs, 1 rep., $0.39 total)
+### Agent: sonnet, task set `notaire-holdout` (12 runs, 1 rep., $0.39 total)
 
 | arm | runs | recall | tool calls | turns | time s | input tokens | output tokens | cost USD |
 |---|---|---|---|---|---|---|---|---|
@@ -515,7 +607,7 @@ Results on commit `073e9776`; retrieval and Sonnet runs with repolens 0.3.0, Hai
 | + repolens MCP | 6 | 1.00 | 2.00 | 3.00 | 7.3 | 24,419 | 1,063 | 0.03312 |
 | change |  | +0% | -50% | -40% | -16% | +11% | -15% | +3% |
 
-#### Agent: sonnet, task set `scale` (16 runs, 1 rep., $0.42 total)
+### Agent: sonnet, task set `scale` (16 runs, 1 rep., $0.42 total)
 
 | arm | runs | recall | tool calls | turns | time s | input tokens | output tokens | cost USD |
 |---|---|---|---|---|---|---|---|---|
@@ -523,7 +615,7 @@ Results on commit `073e9776`; retrieval and Sonnet runs with repolens 0.3.0, Hai
 | + repolens MCP | 8 | 0.94 | 2.00 | 3.00 | 8.3 | 22,506 | 888 | 0.02646 |
 | change |  | +0% | +0% | +0% | +10% | +20% | -5% | +3% |
 
-#### Performance iteration
+### Performance iteration
 
 | metric | 0.2.0 | 0.3.0 | change |
 |---|---|---|---|
@@ -581,8 +673,11 @@ python3 bench/perf_bench.py --label mine --compare final   # size, index, memory
 
 ## Limitations
 
-- Name resolution is static and heuristic: dynamic dispatch, reflection, dependency injection by string and
-  generated code are not followed (ambiguous calls are split across at most three candidates or dropped).
+- Java calls are linked through the receiver's type (locals, fields, parameters, lambda parameters, return
+  types, generics, Spring Data repositories): against javac on `backend-api`, precision 0.989 and recall
+  0.954 (0.714 / 0.852 in 0.4.5). A call whose receiver type cannot be followed is dropped, not guessed.
+  Other languages link by name. Reflection, dependency injection by string and generated code are not
+  followed; `impact` follows dynamic dispatch through the methods a method overrides.
 - Route matching needs literal paths; URLs assembled at runtime from variables are missed.
 - The embedding model is English; mixed-language repositories still work through BM25 and the graph, or
   choose a multilingual fastembed model (`sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`).

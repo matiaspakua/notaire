@@ -85,15 +85,21 @@ def build(kg: KnowledgeGraph, tools: tuple[str, ...] = CORE_TOOLS):
 
     @_tool(mcp, tools)
     def search(query: str, k: int = 4, scope: str = "all", group_by_file: bool = True,
-               kinds: list[str] | None = None, project: str | None = None) -> str:
+               kinds: list[str] | None = None, project: str | None = None, repos: str | None = None) -> str:
         """Find code, tests, docs, configs, routes and tables relevant to a natural-language question or
         identifier. Ranks by semantic + keyword similarity, then expands through the code graph (calls,
         implementations, tests, HTTP routes, co-changed files) so related files that never mention the
         query words still surface. scope: all | code | docs | tests. Returns path:line per result: the top
         `k` in detail (default 4), then 4 more as one-line "also relevant" entries."""
         def body():
-            hits = kg.engine.search(query, k=k + ALSO, kinds=kinds, project=project, scope=scope,
-                                    mode="files" if group_by_file else "nodes")
+            mode = "files" if group_by_file else "nodes"
+            if repos:
+                from . import repos as federation
+
+                pairs = federation.search(kg, query, k + ALSO, repos, mode, scope)
+                hits = [federation.labelled(name, hit) for name, hit in pairs]
+            else:
+                hits = kg.engine.search(query, k=k + ALSO, kinds=kinds, project=project, scope=scope, mode=mode)
             return render.hits(hits, query, detailed=k), len(hits)
         return track.call("search", query, body)
 
@@ -101,36 +107,37 @@ def build(kg: KnowledgeGraph, tools: tuple[str, ...] = CORE_TOOLS):
     def node(ref: str) -> str:
         """Describe one node (file, class, method, route, table, doc section...) and list its typed
         relations both ways: callers/callees, implementations, imports, tests, routes, tables, docs."""
-        return track.call("node", ref, lambda: _counted(render.node(kg.engine.node(ref))))
+        return track.call("node", ref, lambda: _found(kg, render.node(kg.engine.node(ref)), ref))
 
     @_tool(mcp, tools)
     def impact(ref: str, depth: int = 2) -> str:
         """Reverse-dependency closure of a node: everything that calls, implements, imports, routes to or
         tests it (transitively up to `depth`), plus the list of affected test files."""
-        return track.call("impact", ref, lambda: _counted(render.impact(kg.engine.impact(ref, depth))))
+        return track.call("impact", ref, lambda: _found(kg, render.impact(kg.engine.impact(ref, depth)), ref))
 
     @_tool(mcp, tools)
     def neighbors(ref: str, edge_kinds: list[str] | None = None, direction: str = "both", depth: int = 1) -> str:
         """Expand the graph around a node. edge_kinds filters e.g. ["calls","inherits","tests","http_call",
         "handles","imports","references","co_change","uses_table","mentions"]. direction: in | out | both."""
-        return track.call("neighbors", ref, lambda: _counted(
-            render.neighbors(kg.engine.neighbors(ref, edge_kinds, direction, depth))))
+        return track.call("neighbors", ref, lambda: _found(
+            kg, render.neighbors(kg.engine.neighbors(ref, edge_kinds, direction, depth)), ref))
 
     @_tool(mcp, tools)
     def path(source: str, target: str) -> str:
         """Shortest chain of typed relations connecting two nodes (e.g. a UI component and a DB table)."""
-        return track.call("path", f"{source} -> {target}", lambda: _counted(
-            render.path(kg.engine.path_between(source, target))))
+        return track.call("path", f"{source} -> {target}", lambda: _found(
+            kg, render.path(kg.engine.path_between(source, target)), source, target))
 
     @_tool(mcp, tools)
     def outline(file_path: str) -> str:
         """Symbols (or doc sections) of one file with line ranges and signatures."""
-        return track.call("outline", file_path, lambda: _counted(render.outline(kg.engine.outline(file_path))))
+        return track.call("outline", file_path, lambda: _found(
+            kg, render.outline(kg.engine.outline(file_path)), file_path))
 
     @_tool(mcp, tools)
     def snippet(ref: str, max_lines: int = 32) -> str:
         """Source text of a node (a method, class, section...) without reading the whole file."""
-        return track.call("snippet", ref, lambda: _counted(render.snippet(kg.engine.snippet(ref, max_lines))))
+        return track.call("snippet", ref, lambda: _found(kg, render.snippet(kg.engine.snippet(ref, max_lines)), ref))
 
     @_tool(mcp, tools)
     def stats() -> str:
@@ -148,12 +155,26 @@ def build(kg: KnowledgeGraph, tools: tuple[str, ...] = CORE_TOOLS):
     return mcp
 
 
+def _found(kg: KnowledgeGraph, text: str, *refs: str) -> tuple[str, int]:
+    """A lookup's answer; on a miss, what was not found and the closest real symbols (one call, not two)."""
+    if text in ("node not found", "file not found"):
+        return kg.engine.missing(*refs), 0
+    return _counted(text)
+
+
 def _counted(text: str) -> tuple[str, int]:
     return text, 0 if not text or "not found" in text[:40] or text.startswith("no ") else 1
 
 
 def _tool(mcp, enabled: tuple[str, ...]):
+    """Register a tool with plain-text results only: a structured copy would send every answer twice and add
+    an output schema to the tool list each session pays for."""
     def register(fn):
-        return mcp.tool()(fn) if fn.__name__ in enabled else fn
+        if fn.__name__ not in enabled:
+            return fn
+        try:
+            return mcp.tool(structured_output=False)(fn)
+        except TypeError:  # mcp < 1.10 has no structured output
+            return mcp.tool()(fn)
 
     return register
