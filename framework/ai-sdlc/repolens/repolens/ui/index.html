@@ -25,6 +25,7 @@ input, select, button { font: inherit; color: var(--ink); background: var(--bg);
                         border-radius: 8px; padding: 7px 10px; }
 input { flex: 1; min-width: 0; }
 button { background: var(--accent); color: #fff; border-color: var(--accent); cursor: pointer; }
+button.quiet { background: var(--bg); color: var(--ink); border-color: var(--line); }
 button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 #stats { color: var(--muted); font-size: 12px; }
 main { display: grid; grid-template-columns: 320px 1fr 380px; min-height: 0; }
@@ -44,6 +45,7 @@ pre { background: var(--code); padding: 10px; border-radius: 8px; overflow: auto
 #legend { display: flex; flex-wrap: wrap; gap: 6px; font-size: 12px; }
 #legend label { display: inline-flex; gap: 4px; align-items: center; }
 .empty { color: var(--muted); padding: 16px 4px; }
+.group { font-weight: 600; margin: 12px 4px 4px; }
 @media (max-width: 900px) {
   main { grid-template-columns: 1fr; grid-template-rows: 220px 50vh auto; }
   #results, #detail { border: 0; }
@@ -58,6 +60,7 @@ pre { background: var(--code); padding: 10px; border-radius: 8px; overflow: auto
     <select id="scope" aria-label="Scope"><option>all</option><option>code</option><option>docs</option><option>tests</option></select>
     <button type="submit">Search</button>
   </form>
+  <button type="button" id="orphans" class="quiet" title="Files that relate to no other file">Orphans</button>
   <span id="stats"></span>
 </header>
 <main>
@@ -128,6 +131,29 @@ async function search(ev) {
     el.addEventListener("click", go); el.addEventListener("keydown", (e) => e.key === "Enter" && go()); });
 }
 
+async function showOrphans() {
+  $("results").innerHTML = '<div class="empty">Looking for files that relate to nothing…</div>';
+  const o = await api("/api/orphans?symbols=true");
+  const nodes = [...o.isolated, ...o.history_only].map((e) => ({...e, name: e.path}));
+  cy.elements().remove(); addGraph({nodes, edges: []});
+  cy.layout({name: "grid", animate: false, padding: 24}).run();
+  const row = (e, label) => `<div class="hit" data-id="${esc(e.id)}" tabindex="0">
+    <span class="kind" style="background:${KIND_COLORS[e.kind] || "#888"}">${esc(e.lang || e.kind)}</span>
+    <span class="t">${esc(label)}</span>${e.line > 1 ? `<div class="p">${esc(e.path)}:${e.line}</div>` : ""}</div>`;
+  const demoted = o.demoted.isolated + o.demoted.history_only;
+  $("results").innerHTML = `<div class="muted">${o.isolated.length} of ${o.files} files relate to no other file;
+      ${o.history_only.length} only through git history${demoted ? `; ${demoted} more in demoted paths` : ""}.
+      Review candidates: unused, misplaced or missing a link.</div>` +
+    `<div class="group">Relate to nothing (${o.isolated.length})</div>` + o.isolated.map((e) => row(e, e.path)).join("") +
+    `<div class="group">Only through git history (${o.history_only.length})</div>` +
+    o.history_only.map((e) => row(e, e.path)).join("") +
+    `<div class="group">Symbols with no relation (${o.symbols.length})</div>` +
+    o.symbols.slice(0, 300).map((e) => row(e, e.qualname || e.name)).join("");
+  $("results").querySelectorAll(".hit").forEach((el) => {
+    const go = () => { show(el.dataset.id); cy.$(":selected").unselect(); cy.getElementById(el.dataset.id).select(); };
+    el.addEventListener("click", go); el.addEventListener("keydown", (e) => e.key === "Enter" && go()); });
+}
+
 async function show(id) {
   const n = await api(`/api/node?ref=${encodeURIComponent(id)}`);
   let html = `<h2>Node</h2><div><span class="kind" style="background:${KIND_COLORS[n.kind]}">${n.kind}</span><b>${esc(n.name)}</b></div>
@@ -152,6 +178,7 @@ async function expand(id, focus) {
 cy.on("tap", "node", (e) => show(e.target.id()));
 cy.on("dbltap", "node", (e) => expand(e.target.id(), false));
 $("f").addEventListener("submit", search);
+$("orphans").addEventListener("click", showOrphans);
 legend();
 api("/api/stats").then((s) => { $("stats").textContent =
   `${s.projects.map((p) => p.name).join(", ")} · ${s.files} files · ${s.nodes} nodes · ${s.edges} edges`; });
