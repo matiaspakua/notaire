@@ -11,8 +11,9 @@ async function expectBadgeOnEveryRow(page: Page, route: string) {
   await page.waitForLoadState("networkidle");
   // The first table is the list (folios also shows a folio-type table below it).
   const table = page.getByRole("table").first();
-  const rows = table.locator("tbody tr");
-  await expect(rows.first()).toBeVisible({ timeout: 15000 });
+  await expect(table.locator("tbody tr").first()).toBeVisible({ timeout: 15000 });
+  // An empty list shows one placeholder row with a single colSpan cell (DataTable): that is not data.
+  const rows = table.locator("tbody tr").filter({ hasNot: page.locator("td[colspan]") });
   const count = await rows.count();
   test.skip(count === 0, `no rows on ${route}`);
   const badges = table.getByTestId("status-badge");
