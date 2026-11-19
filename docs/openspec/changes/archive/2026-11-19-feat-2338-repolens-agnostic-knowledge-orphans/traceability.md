@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `feat/2338_repolens-agnostic-orphans` | created |
 | Tasks | `tasks.md` | groups 1-9 done |
 | Commits | `944b1bb0`..archive commit | done |
-| Pull Request | pending | pending |
+| Pull Request | #2347 | open (targets `main` since #2346 merged; merged `origin/main` to resolve conflicts) |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |
