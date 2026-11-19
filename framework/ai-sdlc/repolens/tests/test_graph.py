@@ -270,3 +270,11 @@ def test_an_ambiguous_same_directory_call_is_not_guessed(tmp_path):
     guessed = targets("#Reader.each")
     assert not any(item.endswith("#Deed.getDto") or item.endswith("#Folio.getDto") for item in guessed)
     assert any(item.endswith("#Deed.onlyOnce") for item in targets("#Reader.once"))
+
+
+def test_an_unknown_name_is_not_answered_with_a_guess(kg):
+    eng = kg.engine
+    assert eng.resolve("CodeService") is None and eng.impact("CodeService") is None
+    text = eng.missing("CodeService", "CodeController")
+    assert text.startswith("not found: 'CodeService'") and "CodeVerificationService" in text
+    assert "'CodeController'" not in text

@@ -200,3 +200,15 @@ def test_impact_marks_what_lies_in_demoted_paths(repo, tmp_path):
     assert {a["path"] for a in affected if a["demoted"]} == {"docs/adr/ADR-007-one-time-codes.md"}
     graph.close()
 
+
+def test_navigation_misses_name_the_closest_symbols(kg, cli_args, capsys):
+    assert cli.main([*cli_args, "impact", "CodeService"]) == 1
+    assert "not found: 'CodeService'" in capsys.readouterr().out
+    server = build(kg)
+
+    async def call():
+        result = await server.call_tool("impact", {"ref": "CodeService"})
+        return (result[0] if isinstance(result, tuple) else result)[0].text
+
+    text = asyncio.run(call())
+    assert text.startswith("not found: 'CodeService'") and "CodeVerificationService" in text
