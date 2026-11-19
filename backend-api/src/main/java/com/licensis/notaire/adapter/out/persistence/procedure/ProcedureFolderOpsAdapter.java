@@ -28,7 +28,7 @@ public class ProcedureFolderOpsAdapter implements ProcedureFolderOpsPort {
     @Override
     @Transactional(readOnly = true)
     public Optional<DtoProcedureFolder> findById(Integer id) {
-        return procedureFolderService.findById(id).map(ProcedureFolder::getDto);
+        return procedureFolderService.findById(id).map(ProcedureFolderLegacyMapper::toDto);
     }
 
     @Override
@@ -42,13 +42,13 @@ public class ProcedureFolderOpsAdapter implements ProcedureFolderOpsPort {
         } else {
             folders = List.of();
         }
-        return folders.stream().map(ProcedureFolder::getDto).toList();
+        return folders.stream().map(ProcedureFolderLegacyMapper::toDto).toList();
     }
 
     @Override
     public HoldResult putOnHold(Integer id, String reason) {
         try {
-            return new HoldResult.Ok(procedureFolderService.putOnHold(id, reason).getDto());
+            return new HoldResult.Ok(ProcedureFolderLegacyMapper.toDto(procedureFolderService.putOnHold(id, reason)));
         } catch (ResourceNotFoundException e) {
             return new HoldResult.NotFound();
         } catch (BusinessValidationException e) {

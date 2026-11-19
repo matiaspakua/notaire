@@ -1,7 +1,6 @@
 DeedManagement#getDto
 Person#setAttributes
 Procedure#getDto
-ProcedureFolder#getDto
 Testimony#getDto
 Testimony#setAttributes
 TestimonyMovement#getDto

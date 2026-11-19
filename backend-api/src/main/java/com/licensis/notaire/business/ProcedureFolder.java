@@ -1,6 +1,5 @@
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoProcedureFolder;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -113,9 +112,4 @@ public class ProcedureFolder implements Serializable {
         return "ProcedureFolder[ idFolder=" + idFolder + " ][ number=" + number + " ][ status=" + status + " ]";
     }
 
-    public DtoProcedureFolder getDto() {
-        return new DtoProcedureFolder(idFolder, number, status, waitReason,
-                fkIdManagement != null ? fkIdManagement.getIdManagement() : null,
-                fkIdProcedure != null ? fkIdProcedure.getIdProcedure() : null);
-    }
 }
