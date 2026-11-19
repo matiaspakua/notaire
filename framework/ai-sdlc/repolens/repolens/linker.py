@@ -80,6 +80,8 @@ class _Index:
     by_stem: dict[str, list[str]] = field(default_factory=lambda: defaultdict(list))
     by_fqn: dict[str, str] = field(default_factory=dict)
     by_suffix: dict[str, list[str]] = field(default_factory=lambda: defaultdict(list))
+    dirs: dict[tuple[str, str], str] = field(default_factory=dict)
+    dir_by_suffix: dict[str, list[str]] = field(default_factory=lambda: defaultdict(list))
     file_of: dict[str, str] = field(default_factory=dict)
     by_file: dict[str, list[str]] = field(default_factory=lambda: defaultdict(list))
     stems_sorted: list[str] = field(default_factory=list)
@@ -221,7 +223,12 @@ class Linker:
                     self._edge(proj, child, "dir_contains")
                     break
                 did = self._vnode(project, "dir", parent + "/", parent.rsplit("/", 1)[-1] + "/")
-                self.virtual[did].path = parent
+                if (project, parent) not in self.ix.dirs:
+                    self.virtual[did].path = parent
+                    self.ix.dirs[(project, parent)] = did
+                    parts = parent.split("/")
+                    for i in range(len(parts)):
+                        self.ix.dir_by_suffix["/".join(parts[i:])].append(did)
                 existed = (did, child, "dir_contains") in self.edges
                 self._edge(did, child, "dir_contains")
                 if existed:
@@ -658,14 +665,8 @@ class Linker:
             self._edge(src, fid, "links")
 
     def _mention(self, project: str, src: str, _k: str, token: str, _extra: str) -> None:
-        if "/" in token or re.search(r"\.[A-Za-z]{1,6}$", token):
-            fid = self.ix.files.get((project, token))
-            hits = [fid] if fid else [h for h in self.ix.by_suffix.get(token, []) if h.startswith(project + ":")]
-            if not hits and "/" not in token:
-                hits = [h for h in self.ix.by_stem.get(token.split(".", 1)[0].lower(), [])
-                        if h.startswith(project + ":") and self.ix.nodes[h].name == token]
-            for h in hits[:3]:
-                self._edge(src, h, "mentions", 1.0 / len(hits[:3]))
+        """A file or directory the text names, else a type or function it names."""
+        if self._mention_path(project, src, token) or "/" in token:
             return
         hits = self.ix.by_qual.get(token) or [
             s for s in self.ix.by_name.get(token, []) if self.ix.nodes[s].kind in TYPE_KINDS | {"function"}]
@@ -673,6 +674,43 @@ class Linker:
         if 0 < len(hits) <= 3:
             for h in hits:
                 self._edge(src, h, "mentions", 1.0 / len(hits))
+
+    def _mention_path(self, project: str, src: str, token: str) -> bool:
+        """Resolve a path the text names: relative to the mentioning file (`./`, `../`, or a sibling), from
+        the repository root (`/icons/x.png` is `public/icons/x.png` by suffix), with the mentioning file's
+        extension when the name has none (`require "../lib/x"`), else by suffix. Several candidates: the ones
+        sharing the longest path prefix with the mentioning file, and none when more than three remain."""
+        here = self._split(src)[1]
+        base = posixpath.dirname(here)
+        name = token.rstrip("/")
+        relative = name.startswith(("./", "../"))
+        exact = [posixpath.normpath(posixpath.join(base, name))] if relative else \
+            [posixpath.normpath(name.lstrip("/")), posixpath.normpath(posixpath.join(base, name.lstrip("/")))]
+        ext = posixpath.splitext(here)[1]
+        if ext and "." not in name.rsplit("/", 1)[-1]:
+            exact += [e + ext for e in exact]
+        for target in exact:
+            hit = self.ix.files.get((project, target)) or self.ix.dirs.get((project, target))
+            if hit and target != here:
+                self._edge(src, hit, "mentions")
+                return True
+        if relative or ("/" not in name and "." not in name):
+            return False
+        key = posixpath.normpath(name.lstrip("/"))
+        hits = [h for h in (*self.ix.by_suffix.get(key, ()), *self.ix.dir_by_suffix.get(key, ()))
+                if h.startswith(project + ":") and self._target_path(h) != here]
+        if not hits:
+            return False
+        nearest = _nearest(here, hits, self._target_path)
+        if len(nearest) > 3:
+            return True  # named, but too ambiguous to link
+        for h in nearest:
+            self._edge(src, h, "mentions", 1.0 / len(nearest))
+        return True
+
+    def _target_path(self, node_id: str) -> str:
+        node = self.ix.nodes.get(node_id) or self.virtual.get(node_id)
+        return node.path if node is not None else ""
 
     # -- git co-change ---------------------------------------------------------------------
     def _git_log(self, project: str, root: Path) -> str:
@@ -786,6 +824,23 @@ def _git_head(root: Path) -> str:
                               timeout=30).stdout.decode().strip()
     except (OSError, subprocess.SubprocessError):
         return ""
+
+
+def _nearest(here: str, ids: list[str], path_of) -> list[str]:
+    """The ids whose path shares the most leading directories with `here`."""
+    mine = here.split("/")[:-1]
+
+    def shared(node_id: str) -> int:
+        n = 0
+        for a, b in zip(mine, path_of(node_id).split("/"), strict=False):
+            if a != b:
+                break
+            n += 1
+        return n
+
+    scores = {h: shared(h) for h in dict.fromkeys(ids)}
+    best = max(scores.values())
+    return [h for h, v in scores.items() if v == best]
 
 
 def _common_prefix(a: str, b: str) -> int:

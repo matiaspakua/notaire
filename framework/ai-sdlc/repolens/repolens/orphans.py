@@ -32,9 +32,14 @@ def find(engine, symbols: bool = False, include_demoted: bool = False) -> dict:
     kinds = np.asarray(engine.out_kind)
     codes = {name: code for code, name in enumerate(engine.kind_names)}
     keep = ~np.isin(kinds, [codes[k] for k in STRUCTURE if k in codes])
+    dir_files = _dir_files(engine, file_of, src[~keep], dst[~keep], kinds[~keep], codes.get("dir_contains"))
     src, dst, kinds = src[keep], dst[keep], kinds[keep]
     history = np.isin(kinds, [codes[k] for k in HISTORY if k in codes])
     content, through_history = _related(engine, file_of, src, dst, history)
+    for f, d in zip(file_of[src].tolist(), dst.tolist(), strict=True):  # text naming a directory
+        if f >= 0 and d in dir_files and dir_files[d] - {f}:
+            content.add(f)
+            content.update(dir_files[d])
     boost = engine.boost
     isolated = [int(f) for f in files if f not in content and f not in through_history]
     history_only = [int(f) for f in files if f not in content and f in through_history]
@@ -66,6 +71,18 @@ def counts(engine) -> dict:
 def _file_of(engine, files: np.ndarray, n: int) -> np.ndarray:
     index = {engine.path[f]: f for f in files}
     return np.array([index.get(engine.path[i], -1) if engine.path[i] else -1 for i in range(n)], dtype=np.int64)
+
+
+def _dir_files(engine, file_of, src, dst, kinds, dir_contains) -> dict[int, set[int]]:
+    """Directory node -> the files directly in it."""
+    out: dict[int, set[int]] = {}
+    if dir_contains is None:
+        return out
+    mask = (kinds == dir_contains) & (file_of[dst] >= 0)
+    for d, f in zip(src[mask].tolist(), file_of[dst][mask].tolist(), strict=True):
+        if engine.kind[d] == "dir":
+            out.setdefault(d, set()).add(f)
+    return out
 
 
 def _related(engine, file_of: np.ndarray, src: np.ndarray, dst: np.ndarray, history: np.ndarray):
