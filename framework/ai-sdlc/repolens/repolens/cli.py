@@ -270,8 +270,11 @@ def answer(args, kg) -> tuple[int, str, list[str]]:
         "impact": lambda: (r := eng.impact(args.ref, args.depth), render.impact(r)),
         "path": lambda: (r := eng.path_between(args.a, args.b), render.path(r)),
     }[args.cmd]()
+    refs = [args.ref] if hasattr(args, "ref") else [args.a, args.b]
+    if result is None and not args.json:
+        text = eng.missing(*refs)
     printed = json.dumps(result, indent=2) if args.json else text
-    given = getattr(args, "ref", None) or f"{getattr(args, 'a', '')} {getattr(args, 'b', '')}".strip()
+    given = " ".join(refs)
     _record_cli(args, args.cmd, str(given), printed, 1 if result else 0, started)
     return (0 if result else 1), printed, notes
 

@@ -107,36 +107,37 @@ def build(kg: KnowledgeGraph, tools: tuple[str, ...] = CORE_TOOLS):
     def node(ref: str) -> str:
         """Describe one node (file, class, method, route, table, doc section...) and list its typed
         relations both ways: callers/callees, implementations, imports, tests, routes, tables, docs."""
-        return track.call("node", ref, lambda: _counted(render.node(kg.engine.node(ref))))
+        return track.call("node", ref, lambda: _found(kg, render.node(kg.engine.node(ref)), ref))
 
     @_tool(mcp, tools)
     def impact(ref: str, depth: int = 3) -> str:
         """Reverse-dependency closure of a node: everything that calls, implements, imports, routes to or
         tests it (transitively up to `depth`), plus the list of affected test files."""
-        return track.call("impact", ref, lambda: _counted(render.impact(kg.engine.impact(ref, depth))))
+        return track.call("impact", ref, lambda: _found(kg, render.impact(kg.engine.impact(ref, depth)), ref))
 
     @_tool(mcp, tools)
     def neighbors(ref: str, edge_kinds: list[str] | None = None, direction: str = "both", depth: int = 1) -> str:
         """Expand the graph around a node. edge_kinds filters e.g. ["calls","inherits","tests","http_call",
         "handles","imports","references","co_change","uses_table","mentions"]. direction: in | out | both."""
-        return track.call("neighbors", ref, lambda: _counted(
-            render.neighbors(kg.engine.neighbors(ref, edge_kinds, direction, depth))))
+        return track.call("neighbors", ref, lambda: _found(
+            kg, render.neighbors(kg.engine.neighbors(ref, edge_kinds, direction, depth)), ref))
 
     @_tool(mcp, tools)
     def path(source: str, target: str) -> str:
         """Shortest chain of typed relations connecting two nodes (e.g. a UI component and a DB table)."""
-        return track.call("path", f"{source} -> {target}", lambda: _counted(
-            render.path(kg.engine.path_between(source, target))))
+        return track.call("path", f"{source} -> {target}", lambda: _found(
+            kg, render.path(kg.engine.path_between(source, target)), source, target))
 
     @_tool(mcp, tools)
     def outline(file_path: str) -> str:
         """Symbols (or doc sections) of one file with line ranges and signatures."""
-        return track.call("outline", file_path, lambda: _counted(render.outline(kg.engine.outline(file_path))))
+        return track.call("outline", file_path, lambda: _found(
+            kg, render.outline(kg.engine.outline(file_path)), file_path))
 
     @_tool(mcp, tools)
     def snippet(ref: str, max_lines: int = 80) -> str:
         """Source text of a node (a method, class, section...) without reading the whole file."""
-        return track.call("snippet", ref, lambda: _counted(render.snippet(kg.engine.snippet(ref, max_lines))))
+        return track.call("snippet", ref, lambda: _found(kg, render.snippet(kg.engine.snippet(ref, max_lines)), ref))
 
     @_tool(mcp, tools)
     def stats() -> str:
@@ -152,6 +153,13 @@ def build(kg: KnowledgeGraph, tools: tuple[str, ...] = CORE_TOOLS):
         return track.call("reindex", "", body)
 
     return mcp
+
+
+def _found(kg: KnowledgeGraph, text: str, *refs: str) -> tuple[str, int]:
+    """A lookup's answer; on a miss, what was not found and the closest real symbols (one call, not two)."""
+    if text in ("node not found", "file not found"):
+        return kg.engine.missing(*refs), 0
+    return _counted(text)
 
 
 def _counted(text: str) -> tuple[str, int]:

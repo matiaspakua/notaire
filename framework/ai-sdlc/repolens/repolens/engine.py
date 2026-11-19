@@ -31,6 +31,7 @@ HIDDEN_KINDS = frozenset({"dir", "project", "external"})
 DOC_LANGS = frozenset({"md", "mdx", "markdown", "txt", "rst", "adoc", "pdf", "text", "html"})
 SCOPES = ("all", "code", "docs", "tests")
 RELEVANCE_TOP = 10
+TYPE_KINDS = frozenset({"class", "interface", "enum", "record", "type"})
 # Tuned on bench/tasks/notaire.yaml and validated on the held-out set (README, "Benchmark").
 # Override any value per profile under [ranking.tuning].
 DEFAULT_TUNING = {
@@ -580,8 +581,20 @@ class Engine:
         if rows:
             rows.sort(key=lambda r: (prio.get(r[1], 9), len(r[0])))
             return self.idx[rows[0][0]]
-        hits = self.search(ref, k=1, graph=False)
-        return self.idx.get(hits[0].id) if hits else None
+        return None  # never a guess: the impact of the wrong node reads as "nothing depends on it" (`missing`)
+
+    def missing(self, *refs: str) -> str:
+        """Which of these references name no node, and the closest real symbols for each."""
+        lines = []
+        for ref in refs:
+            if self.resolve(ref) is not None:
+                continue
+            near = [h for h in self.search(ref, k=12, graph=False)
+                    if h.kind not in ("file", "section") and not _is_constructor(h.qualname or h.name)]
+            near = sorted(near, key=lambda h: h.kind not in TYPE_KINDS)[:5]  # stable: types first, then rank
+            closest = ", ".join(f"{h.qualname or h.name} ({h.path}:{h.start})" for h in near)
+            lines.append(f"not found: {ref!r}" + (f"; closest: {closest}" if closest else ""))
+        return "\n".join(lines) or "not found"
 
     def _file(self, path: str) -> int | None:
         path = path.strip().lstrip("./")
@@ -878,3 +891,8 @@ def _csr(src: np.ndarray, dst: np.ndarray, kind: np.ndarray, n: int):
     ptr = np.zeros(n + 1, dtype=np.int64)
     np.add.at(ptr, src + 1, 1)
     return np.cumsum(ptr), dst[order], kind[order]
+
+
+def _is_constructor(qualname: str) -> bool:
+    parts = qualname.split(".")
+    return len(parts) >= 2 and parts[-1] == parts[-2]
