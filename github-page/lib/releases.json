@@ -5,7 +5,7 @@
   "components": {
     "backend": "0.5.1",
     "frontend": "0.5.1",
-    "databaseSchema": "54"
+    "databaseSchema": "55"
   },
   "releases": [
     {

@@ -230,11 +230,10 @@ Open follow-ups from the 2026-11-05 assessment (#2003):
 | #2006 | Authorization regression pack across modules |
 | #2008 | Redacted findings snapshot for the portfolio |
 | #2009 | Threat Dragon (or equivalent) model checked against this register |
-| #2010 | General API rate limit (SR-05, SR-15) |
 | #2011 | Decide whether CodeQL findings fail the release |
 | #1640 | MFA for admins and notaries |
 
-Closed issues that this program used to list as open work: #2007 (LINDDUN for testimony, folio, and submitted documents), #2005 (Referrer-Policy and Permissions-Policy), #2004 (ZAP on version tags), #254 (TLS runbook),
+Closed issues that this program used to list as open work: #2010 (shared API quota), #2007 (LINDDUN for testimony, folio, and submitted documents), #2005 (Referrer-Policy and Permissions-Policy), #2004 (ZAP on version tags), #254 (TLS runbook),
 #267 (Top 10 mapping), #280 (rate-limit guide, not the limiter), #282, #283,
 #309, #1465, #1738. Do not reopen them to point at the rows above.
 

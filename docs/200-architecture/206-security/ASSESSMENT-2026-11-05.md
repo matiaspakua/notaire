@@ -81,7 +81,7 @@ The id register checked by `security/tests/test_threat_register.py` is
 | SR-12 | Spoofing | Partial | HttpOnly cookie. Login JSON still returns a bearer token for API clients |
 | SR-13 | Tampering | Partial | Trivy fails the release job. It does not run on pull_request |
 | SR-14 | Disclosure | Partial | `security/scan_secrets.py`. GitHub push protection is an admin setting |
-| SR-15 | Denial of service | Open | Login lockout only. #2010 |
+| SR-15 | Denial of service | Mitigated | Shared `api_rate_windows` quota. #2010 |
 | SR-16 | Elevation | Mitigated | `Escribano` is `ROLE_NOTARY` (#1638) |
 
 ### ATT&CK names
@@ -160,7 +160,7 @@ the #2003 pull request is an issue.
 | Closed | LINDDUN covers testimony, folio, and submitted documents. The notice, the statute, and read-audit beyond Person stay open rows | #2007 |
 | Next | No redacted findings feed for the portfolio | #2008 |
 | Later | Threat Dragon model checked in CI | #2009 |
-| Next | No general API rate limit. Login lockout remains | #2010 |
+| Closed | `/api/**` quota is the shared `api_rate_windows` table. Login lockout remains a separate control | #2010 |
 | Decision | CodeQL findings do not fail the release | #2011 |
 | Open, already filed | MFA | #1640 |
 | Owner only | Live `protect-main` ruleset may still require checks that no longer run on a pull request. Desired JSON in git already dropped them | #2001 |

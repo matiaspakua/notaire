@@ -45,8 +45,8 @@ requirements:
   - id: SR-15
     stride: Denial of service
     asset: api
-    status: Partial
-    verification: "ApiRequestQuotaTest; per-JVM quota, not shared across instances (#2010)"
+    status: Mitigated
+    verification: "ApiQuotaSharedStoreIntegrationTest; api_rate_windows shared across instances (#2010)"
   - id: SR-16
     stride: Elevation of privilege
     asset: admin

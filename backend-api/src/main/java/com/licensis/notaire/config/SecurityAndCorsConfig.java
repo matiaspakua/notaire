@@ -1,6 +1,7 @@
 package com.licensis.notaire.config;
 
 import com.licensis.notaire.security.ApiRateLimitFilter;
+import com.licensis.notaire.security.ApiRateWindowStore;
 import com.licensis.notaire.security.ApiRequestQuota;
 import com.licensis.notaire.security.RoleModuleAuthorizationFilter;
 import com.licensis.notaire.security.UserAuthorityResolver;
@@ -224,9 +225,11 @@ public class SecurityAndCorsConfig {
     @Bean
     public ApiRateLimitFilter apiRateLimitFilter(
             @Value("${notaire.api.rate-limit.max-requests:2000}") int maxRequests,
-            @Value("${notaire.api.rate-limit.window-seconds:60}") long windowSeconds) {
+            @Value("${notaire.api.rate-limit.window-seconds:60}") long windowSeconds,
+            ApiRateWindowStore apiRateWindowStore) {
         return new ApiRateLimitFilter(
-                new ApiRequestQuota(maxRequests, Duration.ofSeconds(windowSeconds)), Instant::now);
+                new ApiRequestQuota(maxRequests, Duration.ofSeconds(windowSeconds), apiRateWindowStore),
+                Instant::now);
     }
 
     @Bean
