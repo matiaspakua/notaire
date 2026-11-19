@@ -1,7 +1,8 @@
 # Structured STRIDE / LINDDUN register for the Notaire system (CU78, #2003).
 # Prose and the diagram stay in THREAT-MODEL-SYSTEM.md and diagrams/trust-boundaries.puml.
-# This file is the id register a test can check. It is not a Threat Dragon or
-# Threagile model. No procedures and no secrets.
+# This file is the id register a test can check. The Threat Dragon v2 model
+# next to it must list the same SR ids. It is not a Threagile model.
+# No procedures and no secrets.
 version: 1
 assessed: "2026-11-05"
 use_case: CU78
@@ -10,8 +11,6 @@ method:
   primary: STRIDE
   privacy: LINDDUN
   evaluated_not_adopted:
-    - name: OWASP Threat Dragon
-      reason: Diagram JSON needs the Threat Dragon editor. CI here has no Dragon binary. Follow-up #2009.
     - name: pytm
       reason: A second diagram generator beside the PlantUML the repository already checks.
     - name: Threagile
