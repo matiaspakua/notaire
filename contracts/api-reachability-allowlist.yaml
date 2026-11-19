@@ -24,7 +24,7 @@ endpoints:
   "PUT /api/v1/history/{id}": "API-only (#1250 bucket B): ADMIN-only correction of the CU13 audit trail"
   "GET /api/v1/properties/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
   "GET /api/v1/items/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
-  "GET /api/v1/testimony-movements": "API-only (#1250 bucket A, #1364): the movement history panel reads testimonyMovements from GET /api/v1/testimonies, so the UI does not load the whole movement table"
+  "GET /api/v1/testimony-movements": "API-only paged list (#596): the movement history panel reads testimonyMovements from GET /api/v1/testimonies, so the UI does not load this table. The response is a page, default 20, newest id first."
   "POST /api/v1/testimony-movements": "API-only (#1250 bucket A, Owner decision 2026-10-09, #1364): the withdraw and re-enter actions record movements; manual creation is not offered in the UI"
   "DELETE /api/v1/testimony-movements/{id}": "API-only (#1250 bucket A, Owner decision 2026-10-09, #1364): manual movement correction is API-only"
   "GET /api/v1/testimony-movements/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
