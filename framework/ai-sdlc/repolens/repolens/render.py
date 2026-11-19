@@ -85,16 +85,45 @@ def neighbors(result: dict | None) -> str:
 
 
 def impact(result: dict | None) -> str:
+    """One line per affected file: its symbols as `name:line` under each relation, tests marked. Paths
+    otherwise repeat on every symbol line (13 KB for a Notaire controller). Demoted paths (archives, retired
+    code: `[ranking] demote`) are counted, not listed; the JSON output keeps every entry."""
     if not result:
         return "node not found"
-    lines = [f"impact of {result['root']}: {len(result['files'])} files, {len(result['tests'])} tests"]
+    tests = set(result["tests"])
+    groups: dict[tuple[int, str], dict[str, list[str]]] = {}
+    demoted = 0
     for a in result["affected"]:
         if a["kind"] == "file" and a["via"] == "contains":
             continue
-        lines.append(f"  d{a['depth']} {a['via']:<12} {_short(a)}")
-    if result["tests"]:
-        lines.append("tests: " + ", ".join(result["tests"][:25]))
+        if a.get("demoted"):
+            demoted += 1
+            continue
+        labels = groups.setdefault((a["depth"], a["path"]), {}).setdefault(a["via"], [])
+        if a["path"] and a["kind"] != "file":
+            labels.append(f"{_member(a)}:{a['line']}" if a["line"] else _member(a))
+        elif not a["path"]:
+            labels.append(a["name"] if a["kind"] == "route" else f"{a['kind']}:{a['name']}")
+    lines = [f"impact of {result['root']}: {len(result['files'])} files, {len(result['tests'])} tests"]
+    for (depth, path), relations in groups.items():
+        sep = " " if path else ": "
+        rels = "; ".join(f"{via}{sep}{', '.join(labels)}" if labels else via for via, labels in relations.items())
+        lines.append(f"  d{depth} {path}{' [test]' if path in tests else ''}: {rels}" if path else f"  d{depth} {rels}")
+    if demoted:
+        lines.append(f"  +{demoted} in demoted paths (archives, retired code)")
+    shown = {path for _d, path in groups}
+    rest = [t for t in result["tests"] if t not in shown]
+    if rest:
+        lines.append("tests not listed above: " + ", ".join(rest[:25]))
     return "\n".join(lines)
+
+
+def _member(item: dict) -> str:
+    """A symbol's name without its file's own class (`ATest.one` in ATest.java is `one`); sections as § title."""
+    if item["kind"] == "section":
+        return f"§ {item['name']}"
+    stem = item["path"].rsplit("/", 1)[-1].split(".", 1)[0]
+    return item["name"][len(stem) + 1:] if item["name"].startswith(stem + ".") else item["name"]
 
 
 def path(result: dict | None) -> str:
