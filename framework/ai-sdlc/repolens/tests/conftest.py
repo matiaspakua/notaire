@@ -18,6 +18,7 @@ def _isolated_home(tmp_path_factory, monkeypatch):
     monkeypatch.setenv("REPOLENS_HOME", str(home))
     monkeypatch.setenv("REPOLENS_VECTOR_CACHE", str(home / "vectors"))
     monkeypatch.setenv("REPOLENS_REFRESH_SECONDS", "-1")
+    monkeypatch.setenv("REPOLENS_DAEMON", "0")  # tests opt in to the resident service (tests/test_daemon.py)
 
 FILES = {
     "backend/src/main/java/com/acme/port/VerifyCodeUseCase.java": """
