@@ -238,3 +238,20 @@ def test_node_lists_related_symbols_by_file_without_repeating_paths():
     assert "<- contains" not in text
     assert "<- references: src/B.java (B:2, use:7), src/C.java" in text
     assert "<- mentions: docs/a.md (§ Usage:4), +1 in demoted paths" in text
+
+
+SCHEMA_BUDGET = 4000  # bytes of tools/list + instructions per session: 4,701 with output schemas, 3,803 without
+
+
+def test_tool_schemas_stay_within_the_byte_budget(kg):
+    server = build(kg)
+    tools = asyncio.run(server.list_tools())
+    assert all(t.outputSchema is None for t in tools)
+    listing = json.dumps([t.model_dump(exclude_none=True) for t in tools])
+    assert len(listing) + len(server.instructions) <= SCHEMA_BUDGET
+
+
+def test_a_tool_answer_is_sent_once(kg):
+    result = asyncio.run(build(kg).call_tool("node", {"ref": "CodeController"}))
+    assert not isinstance(result, tuple)  # no structured copy of the same text
+    assert "CodeController" in result[0].text
