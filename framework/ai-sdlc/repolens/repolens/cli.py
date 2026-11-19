@@ -257,8 +257,20 @@ def _dispatch(args) -> int:  # noqa: C901 - flat command table
 def answer(args, kg) -> tuple[int, str, list[str]]:
     """One read-only query: (exit code, text, stderr notes). Shared by the CLI and the resident service."""
     from . import render
+    from .bootstrap import EMPTY_INDEX, adopt
 
     notes: list[str] = []
+    if kg.store.file_signatures_count() == 0:
+        note = adopt(kg)
+        if note:
+            notes.append(note)
+        else:
+            kg._pending_background_refresh = True
+            text = EMPTY_INDEX
+            started = time.perf_counter()
+            given = getattr(args, "query", None) or getattr(args, "ref", "") or ""
+            _record_cli(args, args.cmd, str(given), text, 0, started)
+            return 2, text, notes
     _refresh_if_stale(kg, notes)
     eng = kg.engine
     if args.cmd == "search" and args.repos:

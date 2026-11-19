@@ -74,4 +74,11 @@ Short notes from the cloud factory loop. Product behavior is not documented here
 - Holdout and scale agent benchmarks were not run. No session recall, token, or cost numbers were written. The Claude rows already in `factory-kpis.json` `offline_bench_summary_md` are unchanged.
 - The probe record is `bench/results/provider-probe-2026-11-19.json` (`not_a_benchmark: true`). `github-page/lib/repolens-bench-snapshot.json` was not regenerated because no benchmark result file changed.
 
+## 2026-11-19 empty worktree index
+
+- A fresh git worktree has its own `.repolens/` and no files in the store. `repolens search` was answering `no results` and agents fell back to `rg`.
+- Search now copies a non-empty store from another worktree of the same git common dir (same HEAD preferred) and says `bootstrapped` on stderr.
+- With no donor, search exits 2 and prints that indexing started, with the log path and the `rg` exact-symbol fallback. It does not print `no results`.
+- A built index that simply lacks the symbol still exits 1 with `no results`.
+
 
