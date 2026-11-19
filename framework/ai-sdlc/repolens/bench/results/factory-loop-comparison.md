@@ -152,3 +152,15 @@ A two-file git repo, embedder `none`. The symbol `brand_new_symbol` was committe
 
 This does not time an incremental refresh of the Notaire index.
 
+## User.setAttributes locate and the Notaire refresh
+
+Indexed at `9c267f89`, then `main` moved to `b0065a20` (#2333). The cold index that made the baseline was 1265.78s (embed 1251.85s).
+
+| Pass | Wall time | Result |
+|---|---|---|
+| git grep `void setAttributes` in `User.java` and the adapter tree | 0.0061s | `User.java:210` only |
+| First `repolens search User.setAttributes` after the merge | 7.104s | stderr `index refreshed in 5.52s`. Rank 1: `User.setAttributes` at `User.java:210` |
+| Second search, index already at HEAD | 1.508s | Same top hit. No refresh line |
+
+5.52s is the first-query wait after one merge. It is not large enough to replace the remaining entity slices.
+

@@ -4,8 +4,6 @@
  */
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoPerson;
-import com.licensis.notaire.dto.DtoUser;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 import java.util.List;
@@ -206,51 +204,6 @@ public class User implements Serializable, Persistable<Integer> {
                 + "[ type=" + type + " ] "
                 + "[ status=" + status + " ]";
     }
-
-    public void setAttributes(DtoUser dtoUser) {
-
-        // Person linked to this user account
-        Person person = new Person();
-        DtoPerson dtoPerson = dtoUser.getPersons();
-        person.setVersion(dtoPerson.getVersion());
-        person.setFirstName(dtoPerson.getFirstName());
-        person.setLastName(dtoPerson.getLastName());
-        person.setPhone(dtoPerson.getPhone());
-        person.setEmail(dtoPerson.getEmail());
-        person.setPersonId(dtoPerson.getId());
-        person.setIdentificationNumber(dtoPerson.getIdentificationNumber());
-        IdentificationType identificationType = new IdentificationType();
-        identificationType.setIdIdentificationType(dtoPerson.getDtoIdentificationType().getIdIdentificationType());
-        identificationType.setName(dtoPerson.getDtoIdentificationType().getName());
-        person.setFkIdIdentificationType(identificationType);
-        if (dtoPerson.getIsClient()) {
-            person.setNationality(dtoPerson.getNationality());
-            person.setBirthDate(dtoPerson.getBirthDate());
-            person.setTaxId(dtoPerson.getTaxId());
-            person.setMaritalStatus(dtoPerson.getMaritalStatus());
-            person.setMarriageCount(dtoPerson.getMarriageCount());
-            person.setSex(dtoPerson.getSex());
-            person.setOccupation(dtoPerson.getOccupation());
-            person.setAddress(dtoPerson.getAddress());
-            person.setIsClient(dtoPerson.getIsClient());
-        }
-        setFkIdPerson(person);
-
-        // User attributes
-        setPassword(dtoUser.getPassword());
-        ;
-        setStatus(dtoUser.isStatus());
-        setIdUser(dtoUser.getIdUser());
-        setName(dtoUser.getName());
-        setType(dtoUser.getType());
-
-        if (dtoUser.getVersion() != null) {
-            // Check the object version
-            setVersion(dtoUser.getVersion());
-        }
-
-    }
-
 
     public int getVersion() {
         return version;

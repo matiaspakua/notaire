@@ -45,7 +45,23 @@
     "refresh_reported_s": 0.01,
     "after_query_wall_s": 0.0164,
     "after_hit": "src/new.py brand_new_symbol",
-    "caveat": "Two-file fixture, embedder none. Not a Notaire incremental-index timing."
+    "caveat": "Two-file fixture, embedder none. The Notaire number is notaire_incremental_refresh."
+  },
+  "notaire_incremental_refresh": {
+    "from_commit": "9c267f898a5f",
+    "to_commit": "b0065a209ca9",
+    "merge": "#2333 person mapper",
+    "cold_index_total_s": 1265.78,
+    "cold_index_embed_s": 1251.85,
+    "first_query_wall_s": 7.104,
+    "refresh_reported_s": 5.52,
+    "second_query_wall_s": 1.508,
+    "second_query_refreshed": false,
+    "locate_query": "User.setAttributes",
+    "search_top_hit": "User.java:210 User.setAttributes",
+    "git_grep_wall_s": 0.0061,
+    "git_grep_hit": "User.java:210 only production declaration",
+    "verdict": "5.52s is one incremental pass after a single merge, not a re-embed. Not the next RepoLens item."
   },
   "preflight": {
     "vitest_retry": "one extra attempt for frontend vitest only",
