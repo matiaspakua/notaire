@@ -5,13 +5,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
+import com.licensis.notaire.adapter.out.persistence.document.CachingDocumentTypeCatalog;
+import com.licensis.notaire.adapter.out.persistence.document.DocumentTypePersistenceAdapter;
 import com.licensis.notaire.adapter.out.persistence.identification.CachingIdentificationTypeCatalog;
 import com.licensis.notaire.adapter.out.persistence.identification.IdentificationTypePersistenceAdapter;
+import com.licensis.notaire.application.port.out.document.DocumentTypeCatalogPort;
 import com.licensis.notaire.application.port.out.identification.IdentificationTypeCatalogPort;
 
 /**
- * Turns on the catalog list cache (#597, CU74). The TTL lives in {@code spring.cache.caffeine.spec}. The
- * caching adapter is the catalog port use cases receive; the persistence adapter stays the delegate and the
+ * Turns on the catalog list caches (#597, CU74). The TTL lives in {@code spring.cache.caffeine.spec}. Each
+ * caching adapter is the catalog port its use cases receive; the persistence adapter stays the delegate and the
  * usage port.
  */
 @Configuration
@@ -23,5 +26,11 @@ public class CatalogCacheConfig {
     public IdentificationTypeCatalogPort cachingIdentificationTypeCatalog(
             IdentificationTypePersistenceAdapter persistence) {
         return new CachingIdentificationTypeCatalog(persistence);
+    }
+
+    @Bean
+    @Primary
+    public DocumentTypeCatalogPort cachingDocumentTypeCatalog(DocumentTypePersistenceAdapter persistence) {
+        return new CachingDocumentTypeCatalog(persistence);
     }
 }
