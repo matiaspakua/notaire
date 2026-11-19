@@ -85,15 +85,21 @@ def build(kg: KnowledgeGraph, tools: tuple[str, ...] = CORE_TOOLS):
 
     @_tool(mcp, tools)
     def search(query: str, k: int = 10, scope: str = "all", group_by_file: bool = True,
-               kinds: list[str] | None = None, project: str | None = None) -> str:
+               kinds: list[str] | None = None, project: str | None = None, repos: str | None = None) -> str:
         """Find code, tests, docs, configs, routes and tables relevant to a natural-language question or
         identifier. Ranks by semantic + keyword similarity, then expands through the code graph (calls,
         implementations, tests, HTTP routes, co-changed files) so related files that never mention the
         query words still surface. scope: all | code | docs | tests. Returns path:line per result: the top
         `k` in detail, then 10 more as one-line "also relevant" entries (often the rest of the answer)."""
         def body():
-            hits = kg.engine.search(query, k=k + ALSO, kinds=kinds, project=project, scope=scope,
-                                    mode="files" if group_by_file else "nodes")
+            mode = "files" if group_by_file else "nodes"
+            if repos:
+                from . import repos as federation
+
+                pairs = federation.search(kg, query, k + ALSO, repos, mode, scope)
+                hits = [federation.labelled(name, hit) for name, hit in pairs]
+            else:
+                hits = kg.engine.search(query, k=k + ALSO, kinds=kinds, project=project, scope=scope, mode=mode)
             return render.hits(hits, query, detailed=k), len(hits)
         return track.call("search", query, body)
 

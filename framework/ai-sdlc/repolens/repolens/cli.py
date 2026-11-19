@@ -12,7 +12,7 @@ from . import __version__
 
 # Commands that must start fast and work before the dependencies are installed (the harness hook runs on
 # every tool call): they import only the standard library. The rest import the engine lazily.
-LIGHT = ("hook", "report", "setup", "doctor", "refresh", "miss", "cache")
+LIGHT = ("hook", "report", "setup", "doctor", "refresh", "miss", "cache", "repos")
 # Read-only queries: answered by the resident per-worktree service when one runs (repolens/daemon.py).
 QUERY = frozenset({"search", "node", "outline", "snippet", "neighbors", "impact", "path"})
 
@@ -74,7 +74,9 @@ def _parser() -> argparse.ArgumentParser:
     s.add_argument("--files", action="store_true", help="group results by file")
     s.add_argument("--also", type=int, default=0, metavar="N", help="list N more results, one line each")
     s.add_argument("--no-graph", action="store_true", help="disable the PageRank expansion")
+    s.add_argument("--repos", help="also search other indexed repositories: all, or names (see `repolens repos`)")
     s.add_argument("--json", action="store_true")
+    s.add_argument("--relevance", action="store_true", help=argparse.SUPPRESS)  # federated requests (repos.py)
 
     for name, helptext in (("node", "a node and its typed relations"), ("outline", "symbols of a file"),
                            ("snippet", "source text of a node")):
@@ -111,6 +113,10 @@ def _parser() -> argparse.ArgumentParser:
     s = sub.add_parser("mcp", help="MCP server (stdio by default)")
     s.add_argument("--transport", choices=["stdio", "sse", "streamable-http"], default="stdio")
     s.add_argument("--all-tools", action="store_true", help="also expose neighbors, stats and reindex")
+
+    s = sub.add_parser("repos", help="repositories indexed on this machine (for --repos)")
+    s.add_argument("--json", action="store_true")
+    s.add_argument("--forget", metavar="NAME", help="remove a repository from the registry")
 
     s = sub.add_parser("cache", help="the shared vector cache: info, or export/import it between machines")
     s.add_argument("action", choices=["info", "export", "import"])
@@ -167,6 +173,8 @@ def _light(args) -> int:
         return _miss(args)
     if args.cmd == "cache":
         return _cache(args)
+    if args.cmd == "repos":
+        return _repos(args)
     return _refresh(args)
 
 
@@ -231,12 +239,26 @@ def answer(args, kg) -> tuple[int, str, list[str]]:
     notes: list[str] = []
     _refresh_if_stale(kg, notes)
     eng = kg.engine
+    if args.cmd == "search" and args.repos:
+        from . import repos
+
+        started = time.perf_counter()
+        pairs = repos.search(kg, args.query, args.k + args.also, args.repos, "files" if args.files else "nodes",
+                             args.scope)
+        labelled = [repos.labelled(name, hit) for name, hit in pairs]
+        text = (json.dumps([dict(h.to_dict(), repo=n) for n, h in pairs], indent=2) if args.json
+                else render.hits(labelled, args.query, detailed=args.k))
+        _record_cli(args, "search", args.query, text, len(pairs), started)
+        return (0 if pairs else 1), text, notes
     if args.cmd == "search":
         started = time.perf_counter()
         hits = eng.search(args.query, k=args.k + args.also, kinds=args.kind, project=args.project,
-                          mode="files" if args.files else "nodes", graph=not args.no_graph, scope=args.scope)
+                          mode="files" if args.files else "nodes", graph=not args.no_graph,
+                          scope=args.scope) if args.k + args.also > 0 else []
         text = (json.dumps([h.to_dict() for h in hits], indent=2) if args.json
                 else render.hits(hits, args.query, detailed=args.k))
+        if args.relevance:
+            text = json.dumps({"hits": [h.to_dict() for h in hits], "relevance": eng.relevance(args.query)})
         _record_cli(args, "search", args.query, text, len(hits), started)
         return (0 if hits else 1), text, notes
     started = time.perf_counter()
@@ -252,6 +274,26 @@ def answer(args, kg) -> tuple[int, str, list[str]]:
     given = getattr(args, "ref", None) or f"{getattr(args, 'a', '')} {getattr(args, 'b', '')}".strip()
     _record_cli(args, args.cmd, str(given), printed, 1 if result else 0, started)
     return (0 if result else 1), printed, notes
+
+
+def _repos(args) -> int:
+    from . import repos
+
+    if args.forget:
+        print(f"forgot {repos.forget(args.forget)} store(s) named {args.forget}")
+        return 0
+    entries = repos.listed()
+    if args.json:
+        print(json.dumps(entries, indent=1))
+        return 0
+    if not entries:
+        print("repolens: no repository indexed on this machine yet")
+        return 1
+    for e in entries:
+        age = (time.time() - e.get("indexed_at", 0)) / 3600
+        print(f"{e['name']:<20} {e.get('files', 0):>7} files  {e.get('head', '')[:10]:<10}  "
+              f"{age:6.1f} h ago  {e['root']}")
+    return 0
 
 
 def _daemon_admin(args) -> int:

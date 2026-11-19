@@ -63,7 +63,7 @@ def code_version() -> str:
 
 
 # -- client -----------------------------------------------------------------------------------
-def ask(state: Path, argv: list[str], timeout: float = 900.0) -> dict | None:
+def ask(state: Path, argv: list[str], timeout: float = 900.0, cwd: Path | None = None) -> dict | None:
     """The service's answer to one CLI query, or None (then the caller answers in-process). A missing or
     outdated service is started in the background for the next query."""
     path = socket_path(state) if enabled() and state.is_dir() else None
@@ -71,17 +71,17 @@ def ask(state: Path, argv: list[str], timeout: float = 900.0) -> dict | None:
         return None
     reply = _request(path, {"argv": argv, "version": code_version()}, timeout)
     if reply is None or reply.get("restart"):
-        start(state, argv)
+        start(state, argv, cwd)
         return None
     return reply
 
 
-def start(state: Path, argv: list[str]) -> None:
+def start(state: Path, argv: list[str], cwd: Path | None = None) -> None:
     env = dict(os.environ)
     env["PYTHONPATH"] = str(PACKAGE.parent) + (os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
     with open(state / LOG, "a", encoding="utf-8") as log:
         subprocess.Popen([sys.executable, "-m", "repolens", *_global_options(argv), "daemon", "run"],  # noqa: S603
-                         cwd=os.getcwd(), env=env, stdout=log, stderr=log, stdin=subprocess.DEVNULL,
+                         cwd=str(cwd or os.getcwd()), env=env, stdout=log, stderr=log, stdin=subprocess.DEVNULL,
                          start_new_session=True)
 
 
