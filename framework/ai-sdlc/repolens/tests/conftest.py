@@ -11,14 +11,26 @@ from repolens.config import Config, Source
 from repolens.service import KnowledgeGraph
 
 
+def _isolate(env, home: Path) -> None:
+    env.setenv("REPOLENS_HOME", str(home))
+    env.setenv("REPOLENS_VECTOR_CACHE", str(home / "vectors"))
+    env.setenv("REPOLENS_REFRESH_SECONDS", "-1")
+    env.setenv("REPOLENS_DAEMON", "0")  # tests opt in to the resident service (tests/test_daemon.py)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _isolated_session(tmp_path_factory):
+    """Never touch the user's ~/.cache/repolens (vector cache, repository registry), not even from the
+    session-scoped fixtures that index before any function-level fixture runs."""
+    with pytest.MonkeyPatch.context() as env:
+        _isolate(env, tmp_path_factory.mktemp("repolens-session-home"))
+        yield
+
+
 @pytest.fixture(autouse=True)
 def _isolated_home(tmp_path_factory, monkeypatch):
-    """Never touch the user's ~/.cache/repolens (shared vector cache, models are read-only via HF cache)."""
-    home = tmp_path_factory.mktemp("repolens-home")
-    monkeypatch.setenv("REPOLENS_HOME", str(home))
-    monkeypatch.setenv("REPOLENS_VECTOR_CACHE", str(home / "vectors"))
-    monkeypatch.setenv("REPOLENS_REFRESH_SECONDS", "-1")
-    monkeypatch.setenv("REPOLENS_DAEMON", "0")  # tests opt in to the resident service (tests/test_daemon.py)
+    """Each test also gets its own home, so registries and caches never leak between tests."""
+    _isolate(monkeypatch, tmp_path_factory.mktemp("repolens-home"))
 
 FILES = {
     "backend/src/main/java/com/acme/port/VerifyCodeUseCase.java": """
