@@ -8,7 +8,10 @@ from dataclasses import dataclass, field
 from ..model import Edge, Extraction, Node, Ref, file_id
 
 HTTP_VERBS = ("GET", "POST", "PUT", "PATCH", "DELETE")
-_PATH_MENTION = re.compile(r"(?<![\w/.:-])((?:[\w.-]+/)+[\w.-]+\.[A-Za-z]{1,6})\b")
+# A path is any run of path characters; everything else (spaces, quotes, brackets, `:`, `=`, `,`) ends one.
+_NOT_PATH = re.compile(r"[^\w./@+~-]+")
+_FILE_NAME = re.compile(r"^[\w@+~-][\w.@+~-]*\.[A-Za-z][A-Za-z0-9]{0,7}$")
+_IDENT_TOKEN = re.compile(r"(?<![\w$./-])[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*")
 _IDENT_MENTION = re.compile(r"^[A-Za-z_][A-Za-z0-9_.]{3,80}(?:\(\))?$")
 _PARAM = re.compile(r"\$\{[^}]*\}|\{\{[^}]*\}\}|\{[^}/]*\}|:[A-Za-z_]\w*|<[^>/]*>")
 
@@ -83,22 +86,66 @@ def add_route_mentions(ex: Extraction, src: str, text: str, opts: Options) -> No
             ex.refs.append(Ref(src, "http_call", path, verb))
 
 
-def add_path_mentions(ex: Extraction, src: str, text: str, limit: int = 200) -> None:
-    seen = set()
-    for m in _PATH_MENTION.finditer(text):
-        target = m.group(1).lstrip("./")
-        if target not in seen and "://" not in target:
-            seen.add(target)
-            ex.refs.append(Ref(src, "mention", target))
+def path_tokens(text: str, limit: int = 200, known_names: bool = False) -> list[str]:
+    """Tokens that can name a repository file or directory: with a `/` (full, `./`, `../` or web-root
+    `/icons/x.png` paths, directories), or a bare file name with an extension (`docker-compose.yml`). The
+    linker keeps only those that resolve to a real file or directory, so a false candidate costs a lookup."""
+    out: dict[str, None] = {}
+    for raw in _NOT_PATH.split(text):
+        token = raw.rstrip(".-")
+        if not 3 <= len(token) <= 200 or token.startswith("//") or not any(c.isalpha() for c in token):
+            continue
+        if "/" in token or _FILE_NAME.match(token) and (not known_names or _is_file_name(token)):
+            out[token] = None
+            if len(out) >= limit:
+                break
+    return list(out)
+
+
+def _is_file_name(token: str) -> bool:
+    """A bare name with an extension repolens recognizes: `Folio.java`, `logo.png`, not `this.store`."""
+    from ..scanner import is_file_name
+
+    return is_file_name(token)
+
+
+def add_path_mentions(ex: Extraction, src: str, text: str, limit: int = 200, known_names: bool = False) -> None:
+    """`known_names` (code): a bare name must carry a recognized extension, or `obj.field` floods the limit."""
+    for token in path_tokens(text, limit, known_names):
+        ex.refs.append(Ref(src, "mention", token))
+
+
+def _code_like(token: str) -> bool:
+    """`InvoiceLedger`, `invoice_ledger`, `Ledger.reconcile`: not a prose word, not an ALL_CAPS constant."""
+    if not any(c.islower() for c in token):
+        return False
+    last = token.rsplit(".", 1)[-1]
+    camel = any(c.isupper() for c in last[1:])
+    snake = "_" in last.strip("_")
+    qualified = "." in token and any(part[:1].isupper() for part in token.split("."))
+    return camel or snake or qualified
+
+
+def add_identifier_mentions(ex: Extraction, src: str, text: str, limit: int = 200) -> None:
+    """Code identifiers named in any text: CamelCase with an inner capital, snake_case or dotted. The linker
+    keeps those naming a type or function (at most three candidates)."""
+    seen: set[str] = set()
+    for m in _IDENT_TOKEN.finditer(text):
+        token = m.group(0)
+        if token in seen or not 4 <= len(token) <= 120:
+            continue
+        if _code_like(token):
+            seen.add(token)
+            ex.refs.append(Ref(src, "mention", token))
             if len(seen) >= limit:
                 return
 
 
 def add_identifier_mention(ex: Extraction, src: str, token: str) -> None:
+    """One code span: a path (kept relative, the linker resolves it against the file) or an identifier."""
     token = token.strip().rstrip("()")
-    if "/" in token or "." in token.rsplit("/", 1)[-1][-6:]:
-        ex.refs.append(Ref(src, "mention", token.lstrip("./")))
-    elif _IDENT_MENTION.match(token) and (any(c.isupper() for c in token[1:]) or "_" in token):
+    is_path = "/" in token or "." in token.rsplit("/", 1)[-1][-6:]
+    if is_path or _IDENT_MENTION.match(token) and _code_like(token):
         ex.refs.append(Ref(src, "mention", token))
 
 

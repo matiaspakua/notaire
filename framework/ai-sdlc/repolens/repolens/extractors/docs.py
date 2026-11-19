@@ -12,6 +12,7 @@ from .common import (
     Options,
     add_chunks,
     add_identifier_mention,
+    add_identifier_mentions,
     add_path_mentions,
     add_route_mentions,
     add_tags,
@@ -185,6 +186,7 @@ def extract_structured(opts: Options, path: str, lang: str, text: str) -> Extrac
         ex.meta["base_url"] = options.get("baseUrl") or "."
     add_route_mentions(ex, fid, text, opts)
     add_path_mentions(ex, fid, text, limit=60)
+    add_identifier_mentions(ex, fid, text)
     add_tags(ex, fid, text, opts)
     if len(text) > 4000:
         add_chunks(ex, opts, path, lines, lang)
@@ -285,6 +287,7 @@ def extract_text(opts: Options, path: str, lang: str, text: str) -> Extraction:
     add_tags(ex, fid, text, opts)
     add_route_mentions(ex, fid, text, opts)
     add_path_mentions(ex, fid, text, limit=60)
+    add_identifier_mentions(ex, fid, text)
     if len(text) > 4000:
         add_chunks(ex, opts, path, lines, lang)
     return ex

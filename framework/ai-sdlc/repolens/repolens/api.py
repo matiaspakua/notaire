@@ -59,6 +59,12 @@ def create_app(kg: KnowledgeGraph):
     def snippet(ref: str, lines: int = 80):
         return found(kg.engine.snippet(ref, min(lines, 400)))
 
+    @app.get("/api/orphans")
+    def orphan_list(symbols: bool = False, all: bool = False):  # noqa: A002 - the query parameter is `all`
+        from . import orphans
+
+        return orphans.find(kg.engine, symbols=symbols, include_demoted=all, include_conventional=all)
+
     @app.get("/api/subgraph")
     def subgraph(q: str | None = None, ref: str | None = None, k: int = 25, scope: str = "all", depth: int = 1):
         eng = kg.engine

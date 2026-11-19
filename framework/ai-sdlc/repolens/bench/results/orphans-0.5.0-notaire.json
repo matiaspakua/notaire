@@ -1,0 +1,48 @@
+{
+ "label": "0.5.0-notaire",
+ "stamp": "2026-11-19 15:20",
+ "stores": [
+  {
+   "profile": "repolens.toml",
+   "files": 10028,
+   "nodes": 94833,
+   "edges": 263543,
+   "isolated": 195,
+   "history_only": 101,
+   "demoted": {
+    "isolated": 900,
+    "history_only": 426
+   },
+   "conventional": {
+    "isolated": 15,
+    "history_only": 8
+   },
+   "isolated_named_elsewhere": 27,
+   "isolated_by_lang": {
+    "json": 51,
+    "md": 49,
+    "png": 31,
+    "yml": 30,
+    "javascript": 14,
+    "yaml": 9,
+    "toml": 3,
+    "text": 3,
+    "txt": 1,
+    "cmd": 1,
+    "bash": 1,
+    "java": 1,
+    "properties": 1
+   },
+   "languages": 46,
+   "code_files": 3184,
+   "code_languages": 6,
+   "code_files_with_symbols": 2912,
+   "languages_with_symbols": 6,
+   "isolated_named_elsewhere_share": 0.138,
+   "projects": [
+    "notaire"
+   ],
+   "extractors": "0.5.0 extractors"
+  }
+ ]
+}

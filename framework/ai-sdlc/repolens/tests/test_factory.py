@@ -320,3 +320,62 @@ def test_doctor_reads_a_live_store_and_the_usage_log(tmp_path, monkeypatch):
     text = "\n".join(lines)
     assert "store " in text and "files" in text and "usage log" in text and "config " in text
     assert cli.main(["refresh"]) == 0
+
+
+def test_a_query_refreshes_an_index_written_by_other_extractors(tmp_path, monkeypatch, capsys):
+    """A branch switch can leave the index written by another checkout's extractors at the current HEAD (its
+    refresh held the lock while the newer one stepped aside): the query notices the version, not only HEAD."""
+    from repolens.extractors import EXTRACTOR_VERSION
+    from repolens.store import Store
+
+    repo = tmp_path / "repo"
+    (repo / "src").mkdir(parents=True)
+    (repo / "src" / "app.py").write_text("def stamped_symbol():\n    return 1\n", encoding="utf-8")
+    git(repo, "init", "-q")
+    git(repo, "add", "src")
+    git(repo, "commit", "-qm", "init")
+    (repo / "repolens.toml").write_text(
+        '[index]\ndb = ".repolens/graph.db"\n[[source]]\nname = "repo"\npath = "."\n'
+        '[embed]\nbackend = "none"\n', encoding="utf-8")
+    monkeypatch.chdir(repo)
+    assert cli.main(["-c", "repolens.toml", "index", "--embedder", "none", "--quiet"]) == 0
+    store = Store(repo / ".repolens" / "graph.db")
+    store.set_meta("extractor_version", "older")
+    store.close()
+    assert cli.main(["-c", "repolens.toml", "search", "stamped_symbol", "-k", "3"]) == 0
+    err = capsys.readouterr().err
+    assert "extractors" in err and "background" in err
+    assert "refreshed in" not in err
+    deadline = time.perf_counter() + 15
+    found = ""
+    while time.perf_counter() < deadline:
+        store = Store(repo / ".repolens" / "graph.db")
+        found = store.get_meta("extractor_version") or ""
+        store.close()
+        if found == EXTRACTOR_VERSION:
+            break
+        time.sleep(0.05)
+    else:
+        log = (repo / ".repolens" / "refresh.log").read_text(encoding="utf-8") if (repo / ".repolens" / "refresh.log").is_file() else "no log"
+        raise AssertionError(f"background refresh left extractor_version={found!r}\n" + log[-1500:])
+
+
+def test_older_code_never_rewrites_an_index_written_by_newer_extractors(tmp_path):
+    """A long-lived MCP server started before an upgrade keeps the older extractors in memory: its background
+    refresh must not re-extract the store the upgraded code wrote (they would take turns rewriting it)."""
+    from repolens import freshness
+    from repolens.extractors import EXTRACTOR_VERSION
+
+    from .conftest import make_config, write_repo
+
+    root = write_repo(tmp_path / "repo")
+    kg = KnowledgeGraph(make_config(root, tmp_path / "graph.db"))
+    kg.index(log=lambda *_: None)
+    newer = str(int(EXTRACTOR_VERSION) + 1)
+    kg.store.set_meta("extractor_version", newer)
+    report = kg.index(full=True, log=lambda *_: None)
+    assert report.get("busy") and kg.store.get_meta("extractor_version") == newer
+    assert not freshness.outdated(kg.store, EXTRACTOR_VERSION)  # newer is not stale for the older code
+    kg.store.set_meta("extractor_version", "1")
+    assert freshness.outdated(kg.store, EXTRACTOR_VERSION)
+    kg.close()

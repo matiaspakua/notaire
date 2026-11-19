@@ -95,3 +95,9 @@ def search_tokens(*texts: str) -> str:
 def text_hash(text: str) -> int:
     """Stable signed 64-bit content hash (the key of the vector cache)."""
     return int.from_bytes(hashlib.blake2b(text.encode("utf-8"), digest_size=8).digest(), "big", signed=True)
+
+
+def is_constructor(qualname: str) -> bool:
+    """`Folio.Folio`: a constructor carries its class's name."""
+    parts = qualname.split(".")
+    return len(parts) >= 2 and parts[-1] == parts[-2]

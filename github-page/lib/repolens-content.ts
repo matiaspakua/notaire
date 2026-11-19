@@ -32,6 +32,11 @@ export const REPOLENS_SECTIONS = {
     "Every issue can measure locate work both ways. Friction becomes a fix in RepoLens or in the factory profile — without claiming a percentage when the sample is small.",
     "Cada issue puede medir el trabajo de localización de las dos formas. La fricción se convierte en un arreglo en RepoLens o en el perfil de la fábrica — sin inventar un porcentaje cuando la muestra es pequeña.",
   ),
+  versionTitle: pair("This version", "Esta versión"),
+  versionLead: pair(
+    "The version and the notes below are read from the RepoLens package and its changelog when this site is built. They are not typed on the page.",
+    "La versión y las notas de abajo se leen del paquete RepoLens y de su changelog cuando se construye este sitio. No se escriben en la página.",
+  ),
   benchesTitle: pair("Latest committed benchmarks", "Últimos benchmarks commitidos"),
   benchesLead: pair(
     "Charts below are generated from the committed result files under framework/ai-sdlc/repolens/bench/results/. Nothing is typed by hand on this page.",
