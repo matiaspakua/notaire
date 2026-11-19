@@ -26,6 +26,8 @@ saves expose `aria-busy`. Evidence: `docs/openspec/changes/archive/*-fix-2088-ad
 
 **#2259 testimonies edit dialog** (unit test, 2026-11-19): saving an edit with a blank or non-integer number used `toast.error` only. The number field now gets `FormField error` (`aria-invalid` and the alert). A valid number clears it, and closing the dialog clears it. The register dialog already used a field error. Evidence: `testimonies-page-actions.test.tsx`.
 
+**#2259 protocol notebooks** (unit test, 2026-11-19): creating a notebook from a selected folio that has no notary used `toast.error`. The folio checkboxes now take the FormField error (`aria-invalid` and the alert). Changing the selection clears it. The create button stays disabled until at least one folio is selected. Evidence: `notebooks-page-actions.test.tsx`.
+
 Impeccable context was loaded for `frontend/src/theme/form-patterns.tsx`
 (Operate mode, `PRODUCT.md` / `DESIGN.md`). Provenance, from the repo and
 GitHub on 2026-11-08:
