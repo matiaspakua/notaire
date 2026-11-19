@@ -53,4 +53,10 @@ Short notes from the cloud factory loop. Product behavior is not documented here
 - This agent cannot re-run that workflow (`Resource not accessible by integration`).
 - Fallback: the owner re-runs the failed job with an owner token, or a later push retries it. Do not open an issue unless the 429 happens again on a later pull request. Do not push an empty commit just to retry, because that changes the head that `preflight.sh --full` already passed.
 
+## 2026-11-19 Sonnet tokens and the post-merge refresh
+
+- Sonnet input tokens rose with RepoLens (holdout 21914 to 24419, scale 18727 to 22506). The default search was 10 fully detailed hits (signature up to 160 characters, every symbol, the `via` line) and the MCP server added 10 more one-line hits. Snippet defaulted to 80 lines. Impact defaulted to depth 3. Those payloads are what the model reads back as input on the next turn.
+- On the session fixture, query `code verification`: 10 detailed hits were 1697 bytes; the new default (4 detailed plus 4 one-line) was 940 bytes, 0.554 of that text. Signatures are now capped at 80 characters and symbol lists at 6. This is not a new Sonnet bench run.
+- The 5.52s and 5.79s waits were the query itself running the incremental index (`wait=True`) because the cloud VM had not run the git hook. `post-merge` already starts `refresh --background`. A query that is still stale now starts that same detached index and returns. The fixture test no longer prints `refreshed in` on the first search, and the following search finds `brand_new_symbol` after the background run. The Notaire 5.5s figure is the old blocking path, not a new cold index.
+
 

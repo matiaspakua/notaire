@@ -3,6 +3,13 @@
 All notable changes to repolens. Versions follow [SemVer](https://semver.org); the version lives in
 `repolens/__init__.py` and release tags are `repolens-v<version>`.
 
+## [0.4.6] - 2026-11-19
+
+### Changed
+
+- Search defaults to 4 detailed hits plus 4 one-line hits. Snippet defaults to 32 lines. Impact defaults to depth 2. Signatures, symbol lists, node text and outline signatures are shorter. The previous shape was 10 fully detailed hits, an 80-line snippet and impact depth 3, which is the payload that raised Sonnet input tokens on the factory bench.
+- A stale index no longer blocks the query. The query starts the same detached `index --no-wait` the `post-merge` hook starts, and answers from the previous graph. The next query sees the refresh.
+
 ## [0.4.5] - 2026-11-19
 
 ### Fixed

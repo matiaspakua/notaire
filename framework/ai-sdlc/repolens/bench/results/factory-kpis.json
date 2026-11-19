@@ -71,6 +71,20 @@
     "git_grep_hit": "User.java:210 only production declaration",
     "verdict": "5.52s is one incremental pass after a single merge, not a re-embed. Not the next RepoLens item."
   },
+  "compact_search_payload": {
+    "query": "code verification",
+    "fixture": "repolens session fixture, file mode",
+    "ten_detailed_hits_bytes": 1697,
+    "default_four_detailed_plus_four_oneline_bytes": 940,
+    "ratio": 0.554,
+    "note": "Same renderer after the signature cap. Not a re-run of the Sonnet bench."
+  },
+  "background_refresh": {
+    "query_blocks": false,
+    "fixture_test": "test_a_query_does_not_wait_for_the_refresh_after_head_moves",
+    "notaire_blocking_refresh_s": [5.52, 5.79],
+    "note": "Those Notaire seconds are the old blocking query. The new query returns and the index catches up in the background."
+  },
   "preflight": {
     "vitest_retry": "one extra attempt for frontend vitest only",
     "full_runs_with_a_recorded_restart": ["registration-draft: 3", "folio: 3", "cli-usage: 2"]

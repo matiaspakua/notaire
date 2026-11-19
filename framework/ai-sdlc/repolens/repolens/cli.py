@@ -35,6 +35,8 @@ def _parser() -> argparse.ArgumentParser:
     s.add_argument("--no-embed", action="store_true")
     s.add_argument("--embedder", choices=["auto", "fastembed", "lsa", "none"])
     s.add_argument("--no-wait", action="store_true", help="exit at once when another index run holds the store")
+    s.add_argument("--retry-busy", action="store_true",
+                   help="when the store lock is busy, retry for a few seconds (detached refresh)")
     s.add_argument("--quiet", action="store_true", help="print nothing (git hooks, background refresh)")
     s.add_argument("--json", action="store_true")
 
@@ -65,12 +67,12 @@ def _parser() -> argparse.ArgumentParser:
 
     s = sub.add_parser("search", help="hybrid semantic + lexical + graph search")
     s.add_argument("query")
-    s.add_argument("-k", type=int, default=10)
+    s.add_argument("-k", type=int, default=4, help="detailed results (default 4; further hits are one line each via --also)")
     s.add_argument("--kind", action="append", help="restrict to node kinds (file, class, method, section, route...)")
     s.add_argument("--project")
     s.add_argument("--scope", choices=["all", "code", "docs", "tests"], default="all")
     s.add_argument("--files", action="store_true", help="group results by file")
-    s.add_argument("--also", type=int, default=0, metavar="N", help="list N more results, one line each")
+    s.add_argument("--also", type=int, default=4, metavar="N", help="list N more results, one line each (default 4)")
     s.add_argument("--no-graph", action="store_true", help="disable the PageRank expansion")
     s.add_argument("--json", action="store_true")
 
@@ -80,7 +82,7 @@ def _parser() -> argparse.ArgumentParser:
         s.add_argument("ref", help="node id, path, path:line or symbol name")
         s.add_argument("--json", action="store_true")
         if name == "snippet":
-            s.add_argument("--lines", type=int, default=80)
+            s.add_argument("--lines", type=int, default=32)
 
     s = sub.add_parser("neighbors", help="expand the graph around a node")
     s.add_argument("ref")
@@ -91,7 +93,7 @@ def _parser() -> argparse.ArgumentParser:
 
     s = sub.add_parser("impact", help="what depends on a node (reverse closure) and which tests cover it")
     s.add_argument("ref")
-    s.add_argument("--depth", type=int, default=3)
+    s.add_argument("--depth", type=int, default=2)
     s.add_argument("--json", action="store_true")
 
     s = sub.add_parser("path", help="shortest relation path between two nodes")
@@ -162,7 +164,7 @@ def _dispatch(args) -> int:  # noqa: C901 - flat command table
             kg.sources_from_store()
         quiet = args.json or args.quiet
         log = (lambda *_a, **_k: None) if quiet else (lambda msg: print(msg, file=sys.stderr))
-        report = kg.index(only=only, full=args.full, embed=not args.no_embed, log=log, wait=not args.no_wait)
+        report = _index_report(kg, args, only, log)
         if args.quiet:
             return 0
         if report.get("busy"):
@@ -187,7 +189,7 @@ def _dispatch(args) -> int:  # noqa: C901 - flat command table
         print(f"wrote {n} nodes to {args.output}")
         return 0
     if args.cmd in {"search", "node", "outline", "snippet", "neighbors", "impact", "path"}:
-        _refresh_if_stale(kg)
+        _refresh_if_stale(kg, args)
 
     eng = kg.engine
     if args.cmd == "search":
@@ -198,6 +200,7 @@ def _dispatch(args) -> int:  # noqa: C901 - flat command table
                 else render.hits(hits, args.query, detailed=args.k))
         print(text)
         _record_cli(args, "search", args.query, text, len(hits), started)
+        _finish_refresh(kg)
         return 0 if hits else 1
     if args.cmd == "stats":
         s = eng.stats()
@@ -216,26 +219,36 @@ def _dispatch(args) -> int:  # noqa: C901 - flat command table
     print(printed)
     given = getattr(args, "ref", None) or f"{getattr(args, 'a', '')} {getattr(args, 'b', '')}".strip()
     _record_cli(args, args.cmd, str(given), printed, 1 if result else 0, started)
+    _finish_refresh(kg)
     return 0 if result else 1
 
 
-def _refresh_if_stale(kg) -> None:
-    """Cloud VMs merge without the git hooks. A query compares the indexed commit to HEAD and
-    incrementally reindexes before it answers, instead of returning the previous graph."""
+def _refresh_if_stale(kg, args) -> None:
+    """A merge or pull should already have started ``refresh --background``. If the index is still
+    behind HEAD, start that same detached refresh and answer from the previous graph. The query
+    does not wait."""
     from .freshness import status
 
     stale, indexed, head = status(kg.store)
     if not stale:
         return
-    started = time.perf_counter()
     shown = (indexed or "unknown")[:12]
-    print(f"repolens: index is behind HEAD ({shown} -> {head[:12]}); refreshing", file=sys.stderr)
-    report = kg.index(log=lambda *_a, **_k: None, wait=True)
-    elapsed = time.perf_counter() - started
-    if report.get("busy"):
-        print("repolens: index refresh is busy; answering from the previous graph", file=sys.stderr)
+    head_s = (head or "unknown")[:12]
+    print(
+        f"repolens: index is behind HEAD ({shown} -> {head_s}); refreshing in the background",
+        file=sys.stderr,
+    )
+    # The store is still open for this query. The detached index starts after it closes,
+    # otherwise --no-wait sees the lock and exits without indexing.
+    kg._pending_background_refresh = args
+
+
+def _finish_refresh(kg) -> None:
+    pending = getattr(kg, "_pending_background_refresh", None)
+    if pending is None:
         return
-    print(f"repolens: index refreshed in {elapsed:.2f}s", file=sys.stderr)
+    kg.close()
+    _spawn_index(Path.cwd(), getattr(pending, "config", None))
 
 
 def _record_cli(args, tool: str, given: str, text: str, results: int, started: float) -> None:
@@ -295,6 +308,16 @@ def _setup(args) -> int:
     return 0
 
 
+def _index_report(kg, args, only, log) -> dict:
+    """One index pass. ``--retry-busy`` keeps trying when another connection still holds the lock."""
+    deadline = time.perf_counter() + (8 if args.retry_busy else 0)
+    while True:
+        report = kg.index(only=only, full=args.full, embed=not args.no_embed, log=log, wait=not args.no_wait)
+        if not report.get("busy") or time.perf_counter() >= deadline:
+            return report
+        time.sleep(0.2)
+
+
 def _refresh(args) -> int:
     """Git hooks call this: refresh an existing store, never create one, never fail, never block."""
     from .paths import project_root
@@ -309,13 +332,22 @@ def _refresh(args) -> int:
     return main(["index", "--no-wait", "--quiet"])
 
 
-def _spawn_index(root: Path) -> None:
+def _spawn_index(root: Path, config: Path | None = None) -> None:
     import subprocess
+
+    import os
 
     state = root / ".repolens"
     state.mkdir(parents=True, exist_ok=True)
+    cmd = [sys.executable, "-m", "repolens"]
+    if config is not None:
+        cmd += ["-c", str(config)]
+    cmd += ["index", "--no-wait", "--quiet", "--retry-busy"]
+    env = os.environ.copy()
+    source = Path(__file__).resolve().parents[1]
+    env["PYTHONPATH"] = str(source) + (os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
     with open(state / "refresh.log", "a", encoding="utf-8") as log:
-        subprocess.Popen([sys.executable, "-m", "repolens", "index", "--no-wait", "--quiet"], cwd=root,  # noqa: S603
+        subprocess.Popen(cmd, cwd=root, env=env,  # noqa: S603
                          stdout=log, stderr=log, stdin=subprocess.DEVNULL, start_new_session=True)
 
 

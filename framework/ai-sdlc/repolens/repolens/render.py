@@ -36,9 +36,11 @@ def hits(results: list[Hit], query: str = "", detailed: int | None = None) -> st
         head += f"  ({h.score:.2f})"
         lines.append(head)
         if h.signature and h.kind not in ("section", "chunk", "route", "table", "tag"):
-            lines.append(f"   sig: {h.signature[:160]}")
+            lines.append(f"   sig: {h.signature[:80]}")
         if h.symbols:
-            lines.append("   symbols: " + ", ".join(f"{s['name']}:{s['line']}" for s in h.symbols))
+            shown = h.symbols[:6]
+            extra = f" (+{len(h.symbols) - 6})" if len(h.symbols) > 6 else ""
+            lines.append("   symbols: " + ", ".join(f"{s['name']}:{s['line']}" for s in shown) + extra)
         if h.why and h.why != "match":
             lines.append(f"   via: {h.why}")
     return "\n".join(lines)
@@ -51,13 +53,13 @@ def node(info: dict | None) -> str:
     if info.get("signature"):
         lines.append(f"sig: {info['signature']}")
     if info.get("text"):
-        lines.append(f"text: {info['text'][:400]}")
+        lines.append(f"text: {info['text'][:160]}")
     for _title, bucket, arrow in (("outgoing", info["out"], "->"), ("incoming", info["in"], "<-")):
         for kind, items in sorted(bucket.items()):
             if kind == "dir_contains":
                 continue
-            shown = ", ".join(_short(i) for i in items[:12])
-            more = f" (+{len(items) - 12})" if len(items) > 12 else ""
+            shown = ", ".join(_short(i) for i in items[:6])
+            more = f" (+{len(items) - 6})" if len(items) > 6 else ""
             lines.append(f"{arrow} {kind}: {shown}{more}")
     return "\n".join(lines)
 
@@ -93,7 +95,7 @@ def impact(result: dict | None) -> str:
             continue
         lines.append(f"  d{a['depth']} {a['via']:<12} {_short(a)}")
     if result["tests"]:
-        lines.append("tests: " + ", ".join(result["tests"][:25]))
+        lines.append("tests: " + ", ".join(result["tests"][:8]))
     return "\n".join(lines)
 
 
@@ -113,7 +115,7 @@ def outline(result: dict | None) -> str:
         return "file not found"
     lines = [result["file"]["path"]]
     for item in result["items"]:
-        sig = f"  {item['signature'][:120]}" if item["signature"] else ""
+        sig = f"  {item['signature'][:60]}" if item["signature"] else ""
         lines.append(f"{'  ' * item['depth']}{item['line']}-{item['end']} {item['kind']} {item['name']}{sig}")
     return "\n".join(lines)
 

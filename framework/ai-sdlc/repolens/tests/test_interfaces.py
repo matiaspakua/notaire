@@ -28,6 +28,7 @@ def test_cli_search_is_counted_by_the_usage_report(cli_args, capsys):
     cfg = Path(cli_args[1]).read_text(encoding="utf-8")
     db = next(line.split("=", 1)[1].strip().strip('"') for line in cfg.splitlines() if line.strip().startswith("db "))
     log = Path(db).parent / "usage.jsonl"
+    log.write_text("", encoding="utf-8")
     assert cli.main([*cli_args, "search", "codes verify endpoint", "-k", "3"]) == 0
     capsys.readouterr()
     assert cli.main([*cli_args, "impact", "CodeStorePort"]) == 0
@@ -135,6 +136,16 @@ def test_mcp_tools(kg):
         assert "acme" in await call("stats", {})
 
     asyncio.run(scenario())
+
+
+def test_default_search_keeps_four_detailed_hits(cli_args, capsys):
+    assert cli.main([*cli_args, "search", "code verification"]) == 0
+    out = capsys.readouterr().out
+    head = out.split("also relevant:")[0]
+    heads = [ln for ln in head.splitlines() if ln.split(". ", 1)[0].isdigit()]
+    assert heads
+    assert len(heads) <= 4
+    assert "also relevant:" in out
 
 
 def test_search_lists_a_compact_tail_after_the_detailed_results(kg, cli_args, capsys):

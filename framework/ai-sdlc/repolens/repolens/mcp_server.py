@@ -28,7 +28,7 @@ path:line or a symbol name. Use grep for exact literal strings repolens does not
 values)."""
 
 
-ALSO = 10  # one-line results listed after the detailed top k
+ALSO = 4  # one-line results listed after the detailed top k
 CORE_TOOLS = ("search", "node", "impact", "path", "outline", "snippet")
 ALL_TOOLS = (*CORE_TOOLS, "neighbors", "stats", "reindex")
 BUILDING = ("repolens is building the index of this repository for the first time (graph and keyword search "
@@ -84,13 +84,13 @@ def build(kg: KnowledgeGraph, tools: tuple[str, ...] = CORE_TOOLS):
     threading.Thread(target=lambda: kg.engine.warm(), daemon=True).start()
 
     @_tool(mcp, tools)
-    def search(query: str, k: int = 10, scope: str = "all", group_by_file: bool = True,
+    def search(query: str, k: int = 4, scope: str = "all", group_by_file: bool = True,
                kinds: list[str] | None = None, project: str | None = None) -> str:
         """Find code, tests, docs, configs, routes and tables relevant to a natural-language question or
         identifier. Ranks by semantic + keyword similarity, then expands through the code graph (calls,
         implementations, tests, HTTP routes, co-changed files) so related files that never mention the
         query words still surface. scope: all | code | docs | tests. Returns path:line per result: the top
-        `k` in detail, then 10 more as one-line "also relevant" entries (often the rest of the answer)."""
+        `k` in detail (default 4), then 4 more as one-line "also relevant" entries."""
         def body():
             hits = kg.engine.search(query, k=k + ALSO, kinds=kinds, project=project, scope=scope,
                                     mode="files" if group_by_file else "nodes")
@@ -104,7 +104,7 @@ def build(kg: KnowledgeGraph, tools: tuple[str, ...] = CORE_TOOLS):
         return track.call("node", ref, lambda: _counted(render.node(kg.engine.node(ref))))
 
     @_tool(mcp, tools)
-    def impact(ref: str, depth: int = 3) -> str:
+    def impact(ref: str, depth: int = 2) -> str:
         """Reverse-dependency closure of a node: everything that calls, implements, imports, routes to or
         tests it (transitively up to `depth`), plus the list of affected test files."""
         return track.call("impact", ref, lambda: _counted(render.impact(kg.engine.impact(ref, depth))))
@@ -128,7 +128,7 @@ def build(kg: KnowledgeGraph, tools: tuple[str, ...] = CORE_TOOLS):
         return track.call("outline", file_path, lambda: _counted(render.outline(kg.engine.outline(file_path))))
 
     @_tool(mcp, tools)
-    def snippet(ref: str, max_lines: int = 80) -> str:
+    def snippet(ref: str, max_lines: int = 32) -> str:
         """Source text of a node (a method, class, section...) without reading the whole file."""
         return track.call("snippet", ref, lambda: _counted(render.snippet(kg.engine.snippet(ref, max_lines))))
 
