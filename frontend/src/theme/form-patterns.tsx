@@ -339,7 +339,11 @@ export function CheckboxField({
   "data-testid"?: string;
 }) {
   const inputId = useId();
-  const aria = useFormFieldAria({});
+  const aria = useFormFieldAria({
+    "aria-invalid": undefined as boolean | "true" | "false" | undefined,
+    "aria-describedby": undefined as string | undefined,
+    "aria-required": undefined as boolean | "true" | "false" | undefined,
+  });
 
   return (
     <div
