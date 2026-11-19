@@ -113,13 +113,13 @@ public class WorkflowTraceService implements QueryWorkflowTraceUseCase {
 
         List<DtoWorkflowNode> nodeDtos = new ArrayList<>();
         for (WorkflowNode node : nodeEntities) {
-            nodeDtos.add(node.toDto());
+            nodeDtos.add(WorkflowLegacyMapper.toDto(node));
         }
         trace.setNodes(nodeDtos);
 
         List<DtoWorkflowTransition> transitionDtos = new ArrayList<>();
         for (WorkflowTransition transition : transitionEntities) {
-            transitionDtos.add(transition.toDto());
+            transitionDtos.add(WorkflowLegacyMapper.toDto(transition));
         }
         trace.setTransitions(transitionDtos);
 
