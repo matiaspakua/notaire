@@ -151,7 +151,7 @@ def main() -> int:
     index_s = time.perf_counter() - clock
     pred = {p for p in predicted(kg.store, args.module) if p[0] != p[1]}
     declared = defaultdict(set)
-    for _c, d, _l, owner, m in rows:
+    for _c, _d, _l, owner, m in rows:
         declared[m].add(owner)
     ambiguous = {m for m, owners in declared.items() if len(owners) > 1}
     truth_amb = {p for p in truth if p[2] in ambiguous}
