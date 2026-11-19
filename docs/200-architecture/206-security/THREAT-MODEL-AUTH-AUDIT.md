@@ -68,7 +68,7 @@ Two trust boundaries matter here:
 | SR-02 | Spoofing | Attacker forges a JWT to impersonate a user | `JwtTokenService` signs tokens with a server-held secret; `JwtAuthenticationFilter` validates signature + expiry on every `/api/**` request | Mitigated |
 | SR-03 | Tampering | Attacker modifies a JWT payload (e.g. escalate role claim) | Signature validation rejects any payload change | Mitigated |
 | SR-04 | Information Disclosure | Credentials or JWT secret leak via logs, error responses, or default `.env` values | `ProductionCredentialsGuard` blocks startup on the literal default password/secret in production; secrets never committed (`.env` is git-ignored, see [ADR-019](../202-ADR/ADR-019-secrets-management.md)) | Partial — only catches the literal known-default value, not other weak-but-non-default secrets |
-| SR-05 | Denial of Service | Attacker floods `/login` to exhaust resources or lock out legitimate users via `LoginAttemptService` (an attacker locking a *victim* out by deliberately failing their login) | None dedicated — `LoginAttemptService` mitigates brute force but is itself abusable as a lockout-griefing vector against a known username | **Open** — general API rate limiting is not implemented (README already flags this). The engineering follow-up is #2010. #280 is closed and was a guide |
+| SR-05 | Denial of Service | Attacker floods `/login` to exhaust resources or lock out legitimate users via `LoginAttemptService` (an attacker locking a *victim* out by deliberately failing their login) | `/api/**` has a per-JVM quota (`ApiRateLimitFilter`, #2010) in addition to username lockout. The quota does not stop lockout-griefing of a known username, and it is not shared across API instances | **Partial** — general quota exists per JVM. Distributed limiting and lockout-griefing remain #2010 |
 | SR-06 | Elevation of Privilege | Authenticated low-privilege user accesses an admin endpoint, or another user's record | `ROLE_ADMIN` is required for user, role, and audit-log paths and for admin catalog writes (#559). Any other authenticated caller still reaches business records | **Partial** — function-level RBAC exists; object-level access is SR-11 in [THREAT-MODEL-SYSTEM.md](THREAT-MODEL-SYSTEM.md) |
 
 ## STRIDE — Audit-trail flow
@@ -83,11 +83,8 @@ Two trust boundaries matter here:
 ## Summary
 
 - **Mitigated**: SR-01, SR-02, SR-03, SR-07, SR-08, SR-09, SR-10 (7)
-- **Partial**: SR-04, SR-06 (2)
-- **Open**: SR-05 (1)
+- **Partial**: SR-04, SR-05, SR-06 (3)
+- **Open**: none
 
-SR-06 moved to Partial when function-level RBAC landed (#559). The object-level
-gap is SR-11 in the system model. The remaining Open item is the login
-flood/lockout-griefing case (SR-08, unaudited reads, was mitigated by #1635; SR-09, audit tampering, by #1636).
-None are fixed by this change — see issue #1028's follow-up
-recommendations for how each should be triaged into its own issue.
+SR-06 moved to Partial when function-level RBAC landed (#559). SR-05 moved to Partial when `/api/**` gained a per-JVM quota (#2010); a shared store and lockout-griefing are still open on that issue. The object-level
+gap is SR-11 in the system model. SR-08, unaudited reads, was mitigated by #1635; SR-09, audit tampering, by #1636.

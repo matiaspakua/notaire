@@ -1,5 +1,7 @@
 package com.licensis.notaire.config;
 
+import com.licensis.notaire.security.ApiRateLimitFilter;
+import com.licensis.notaire.security.ApiRequestQuota;
 import com.licensis.notaire.security.RoleModuleAuthorizationFilter;
 import com.licensis.notaire.security.UserAuthorityResolver;
 import jakarta.annotation.PostConstruct;
@@ -34,6 +36,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -218,11 +222,20 @@ public class SecurityAndCorsConfig {
      * browser flows are (issue #1620).</p>
      */
     @Bean
+    public ApiRateLimitFilter apiRateLimitFilter(
+            @Value("${notaire.api.rate-limit.max-requests:2000}") int maxRequests,
+            @Value("${notaire.api.rate-limit.window-seconds:60}") long windowSeconds) {
+        return new ApiRateLimitFilter(
+                new ApiRequestQuota(maxRequests, Duration.ofSeconds(windowSeconds)), Instant::now);
+    }
+
+    @Bean
     @Order(2)
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http,
             AuthenticationEntryPoint apiAuthenticationEntryPoint,
             AccessDeniedHandler apiAccessDeniedHandler,
-            RoleModuleAuthorizationFilter roleModuleAuthorizationFilter) throws Exception {
+            RoleModuleAuthorizationFilter roleModuleAuthorizationFilter,
+            ApiRateLimitFilter apiRateLimitFilter) throws Exception {
         http
             .securityMatcher("/api/**")
             .authorizeHttpRequests(auth -> {
@@ -243,7 +256,8 @@ public class SecurityAndCorsConfig {
                 .authenticationEntryPoint(apiAuthenticationEntryPoint)
                 .accessDeniedHandler(apiAccessDeniedHandler))
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            .addFilterAfter(roleModuleAuthorizationFilter, JwtAuthenticationFilter.class)
+            .addFilterAfter(apiRateLimitFilter, JwtAuthenticationFilter.class)
+            .addFilterAfter(roleModuleAuthorizationFilter, ApiRateLimitFilter.class)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .csrf(csrf -> csrf
                 // Framework defaults for a single-page app (issue #1620): the
