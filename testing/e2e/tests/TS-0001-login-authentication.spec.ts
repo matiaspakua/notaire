@@ -41,9 +41,11 @@ test.describe("TS-0001 - Login Authentication", () => {
     expect(html).not.toContain("http://backend:8080");
   });
 
-  test("shows error for empty submission", async ({ page }) => {
+  test("shows a field error for an empty submission", async ({ page }) => {
     await page.getByTestId("btn-sign-in").click();
-    await expect(page.getByText("Complete usuario y contraseña")).toBeVisible();
+    await expect(page.getByRole("alert")).toHaveCount(2);
+    await expect(page.getByTestId("input-username")).toHaveAttribute("aria-invalid", "true");
+    await expect(page.getByTestId("input-password")).toHaveAttribute("aria-invalid", "true");
   });
 
   test("shows error for wrong credentials", async ({ page }) => {
