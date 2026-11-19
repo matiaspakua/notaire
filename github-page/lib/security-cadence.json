@@ -51,8 +51,8 @@
       "id": "zap",
       "tool": "OWASP ZAP baseline",
       "family": "dast",
-      "where": "Monday 05:00 UTC and manual dispatch. Not on the version tag.",
-      "trigger": "schedule",
+      "where": "Version tags v* and notaire-v*, Monday 05:00 UTC, and manual dispatch. Not on a pull request.",
+      "trigger": "release-schedule",
       "workflow": "dast-zap.yml",
       "local": null
     },
