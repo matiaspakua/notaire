@@ -1,7 +1,7 @@
 # ADR-018: Rate-Limiting Policy
 
 ## Status
-Accepted
+Accepted. Later than this text: login lockout is the shared `login_attempts` table (#1634). `/api/**` counts in the shared `api_rate_windows` table (#2010). The paragraphs below are the decision as of the date it was accepted.
 
 ## Context
 The system has no general-purpose API rate limiter (no Bucket4j, no gateway

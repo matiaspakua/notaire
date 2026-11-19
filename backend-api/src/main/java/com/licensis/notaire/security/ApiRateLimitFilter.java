@@ -16,7 +16,8 @@ import jakarta.servlet.http.HttpServletResponse;
 /**
  * Quota for {@code /api/**}. The key is the authenticated username when the
  * JWT filter has already run, otherwise the servlet remote address. The
- * counters are not shared across API instances (issue #2010).
+ * counters live in {@code api_rate_windows}, so every API instance shares them
+ * (issue #2010).
  */
 public class ApiRateLimitFilter extends OncePerRequestFilter {
 
