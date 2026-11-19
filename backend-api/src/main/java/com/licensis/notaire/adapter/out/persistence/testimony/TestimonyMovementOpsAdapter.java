@@ -3,6 +3,7 @@ package com.licensis.notaire.adapter.out.persistence.testimony;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +37,14 @@ public class TestimonyMovementOpsAdapter implements TestimonyMovementOpsPort {
     @Transactional(readOnly = true)
     public List<DtoTestimonyMovement> findAll() {
         return repository.findAll().stream().map(TestimonyMovementLegacyMapper::toDto).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageResult findPage(int page, int size, String sort) {
+        var result = repository.findAll(PageRequest.of(Math.max(page, 0), Math.max(size, 1), MovementPageSort.of(sort)));
+        return new PageResult(result.getContent().stream().map(TestimonyMovementLegacyMapper::toDto).toList(),
+                result.getTotalElements());
     }
 
     @Override

@@ -383,7 +383,7 @@ export const WORKFLOWS: { file: string; name: string; when: string; role: string
   { file: "test-coverage-report.yml", name: "Test Coverage Report", when: "version tag · manual", role: "Coverage artifact. Enforcement stays in the test workflows", tier: "release" },
   { file: "release-please.yml", name: "Release Please", when: "push to main · manual", role: "Release pull request from Conventional Commits, then the tag that dispatches product CI", tier: "main" },
   { file: "deploy-github-page.yml", name: "Deploy GitHub Page", when: "push to main · manual", role: "Publishes this portfolio. Does not wait for product CI", tier: "main" },
-  { file: "dast-zap.yml", name: "DAST — OWASP ZAP Baseline", when: "Monday 05:00 UTC · manual", role: "Blocking ZAP baseline with a reviewed allowlist. Not on the version tag", tier: "schedule" },
+  { file: "dast-zap.yml", name: "DAST — OWASP ZAP Baseline", when: "version tag · Monday 05:00 UTC · manual", role: "Blocking ZAP baseline with a reviewed allowlist. Not on a pull request", tier: "release" },
   { file: "performance-test.yml", name: "Performance - k6 Load Test", when: "Monday 04:00 UTC · manual", role: "k6 load test against a live API", tier: "schedule" },
   { file: "backup-restore-smoke.yml", name: "Backup → Restore → Smoke", when: "Sunday 03:00 UTC · manual", role: "Restores a backup and smoke-tests it, or skips with an explicit reason", tier: "schedule" },
   { file: "cleanup-actions.yml", name: "Cleanup Actions artifacts and logs", when: "daily 03:00 UTC · manual", role: "Keeps artifact storage under quota", tier: "schedule" },

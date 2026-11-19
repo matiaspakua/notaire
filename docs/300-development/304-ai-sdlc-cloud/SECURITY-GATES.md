@@ -44,7 +44,7 @@ Do not weaken a gate to close one of those issues.
 |--------------|------------------------|
 | Secrets, Semgrep, Trivy | Local preflight, and again on a version tag in `ci.yml` |
 | CodeQL | Version tag, Monday 06:30 UTC, or manual dispatch. Not locally |
-| ZAP | Monday 05:00 UTC or manual dispatch. Not on the tag (#2004) |
+| ZAP | Version tag, Monday 05:00 UTC, or manual dispatch (#2004). Not on pull_request |
 | Signed images | `cd.yml` on a version tag. Not on a merge to `main` |
 | This portfolio | `deploy-github-page.yml` on push to `main` |
 

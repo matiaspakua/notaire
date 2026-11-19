@@ -1,7 +1,11 @@
 package com.licensis.notaire.adapter.in.web.testimony;
 
-import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,6 +31,8 @@ import com.licensis.notaire.domain.testimony.TestimonyOperationFailedException;
 import com.licensis.notaire.domain.testimony.TestimonyStaleVersionException;
 import com.licensis.notaire.domain.testimony.TestimonyUnexpectedResultException;
 import com.licensis.notaire.dto.DtoTestimonyMovement;
+
+import org.springdoc.core.annotations.ParameterObject;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -73,9 +79,17 @@ public class TestimonyMovementController {
     }
 
     @GetMapping
-    @Operation(summary = "Get all testimony movement")
-    public ResponseEntity<List<DtoTestimonyMovement>> getAll() {
-        return ResponseEntity.ok(queryMovements.findAll());
+    @Operation(summary = "Get testimony movements, one page at a time",
+            description = "Parameters: page (default 0), size (default 20), sort (for example idTestimonyMovement,desc)")
+    public ResponseEntity<Page<DtoTestimonyMovement>> getAll(
+            @ParameterObject @PageableDefault(size = 20, sort = "idTestimonyMovement", direction = Sort.Direction.DESC)
+            Pageable pageable) {
+        var order = pageable.getSort().stream().findFirst().orElse(null);
+        String sort = order == null
+                ? "idTestimonyMovement,desc"
+                : order.getProperty() + "," + order.getDirection().name().toLowerCase();
+        var result = queryMovements.findPage(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        return ResponseEntity.ok(new PageImpl<>(result.content(), pageable, result.totalElements()));
     }
 
     @ApiResponses({

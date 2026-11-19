@@ -54,8 +54,8 @@ Primary method: **STRIDE**, in
 [THREAT-MODEL-AUTH-AUDIT.md](THREAT-MODEL-AUTH-AUDIT.md) (`SR-01`..`SR-10`) and
 [THREAT-MODEL-SYSTEM.md](THREAT-MODEL-SYSTEM.md) (`SR-11`..`SR-16`).
 
-Privacy method: **LINDDUN** rows `LD-1`..`LD-6` in the system model. Testimony,
-folio, and submitted documents are not modeled in depth. That is #2007. This
+Privacy method: **LINDDUN** rows `LD-1`..`LD-9` in the system model. Testimony,
+folio, and submitted documents are LD-7, LD-8, and LD-9 (#2007). This
 assessment does not interpret a statute. Counsel owns that reading. Issue #309
 is closed and is not reopened here.
 
@@ -81,7 +81,7 @@ The id register checked by `security/tests/test_threat_register.py` is
 | SR-12 | Spoofing | Partial | HttpOnly cookie. Login JSON still returns a bearer token for API clients |
 | SR-13 | Tampering | Partial | Trivy fails the release job. It does not run on pull_request |
 | SR-14 | Disclosure | Partial | `security/scan_secrets.py`. GitHub push protection is an admin setting |
-| SR-15 | Denial of service | Open | Login lockout only. #2010 |
+| SR-15 | Denial of service | Mitigated | Shared `api_rate_windows` quota. #2010 |
 | SR-16 | Elevation | Mitigated | `Escribano` is `ROLE_NOTARY` (#1638) |
 
 ### ATT&CK names
@@ -109,7 +109,7 @@ them (#1599).
 | Secrets | `security/scan_secrets.py` inside `security/run_gates.py` | `ci.yml` security job | — | Push protection is outside git |
 | SAST | Semgrep `security/semgrep/notaire.yml` | Same job, plus `codeql.yml` | `codeql.yml` Monday 06:30 UTC | CodeQL does not fail on findings (#2011). It does not run locally |
 | SCA | Trivy fs, `--exit-code 1`, fixed CRITICAL/HIGH | Same, plus image scan CRITICAL in `docker-build` | — | A pull request is not scanned by GitHub until the tag |
-| DAST | `security/dast_baseline.py` after the stack is up (pipeline, not the short preflight) | — | `dast-zap.yml` Monday 05:00 UTC, `fail_action: true` | ZAP does not run on the version tag (#2004) |
+| DAST | `security/dast_baseline.py` after the stack is up (pipeline, not the short preflight) | `dast-zap.yml` on `v*` / `notaire-v*`, `fail_action: true` (#2004) | Monday 05:00 UTC, same workflow | — |
 | Policy | `security/cases/catalog.yml` evidence checks | `run_gates.py --profile ci` | — | — |
 | AuthZ tests | JUnit `RoleModuleGrantIntegrationTest` and neighbours, inside `mvn verify` when preflight runs the suite | `ci.yml` | — | The matrix is thin (#2006) |
 | Supply chain | image-pin unit tests | `cd.yml` cosign and CycloneDX | — | CD does not publish on a merge to `main` |
@@ -138,7 +138,7 @@ runner ignored it.
 | Actions job summary | `security/publish_summary.py` | People with access to the workflow run | Release or manual run only |
 | Artifacts `security-case-report`, `trivy-results`, `trivy-image-results` | JSON and HTML | Same | Release or manual run only |
 | CodeQL | SARIF on the GitHub Security tab | Repository security access | Tag, Monday, or manual. Upload does not fail the job |
-| ZAP | Workflow logs and artifacts | Same | Weekly or manual |
+| ZAP | Workflow logs and artifacts | Same | Tag, Monday, or manual |
 | Grafana `notaire-auth` | Login metrics | Local observability stack | Metrics, not a vuln list |
 | Portfolio `/security/` | Public posture and cadence | Anyone | **No.** Checked-in demo snapshot. Not a live scan |
 
@@ -154,13 +154,13 @@ the #2003 pull request is an issue.
 |----------|-----|-------|
 | Now, in #2003 | Docs still said module grants were pending and that the image scan was report-only. Both were false after #1683 and the Trivy `exit-code: '1'` lines | This assessment |
 | Now, in #2003 | Portfolio and the AI Factory pages still described pull-request product CI | Portfolio and `SECURITY-GATES.md` |
-| Next | ZAP does not run on the version tag | #2004 |
-| Next | Missing `Referrer-Policy` and `Permissions-Policy`. CSP nonce stays as it is | #2005 |
+| Closed | ZAP runs on the version tag as well as Monday | #2004 |
+| Closed | `Referrer-Policy` and `Permissions-Policy` are on every frontend response. CSP nonce stays as it is | #2005 |
 | Next | Authorization tests do not cover every module path | #2006 |
-| Next | LINDDUN does not cover testimony and submitted documents | #2007 |
+| Closed | LINDDUN covers testimony, folio, and submitted documents. The notice, the statute, and read-audit beyond Person stay open rows | #2007 |
 | Next | No redacted findings feed for the portfolio | #2008 |
 | Later | Threat Dragon model checked in CI | #2009 |
-| Next | No general API rate limit. Login lockout remains | #2010 |
+| Closed | `/api/**` quota is the shared `api_rate_windows` table. Login lockout remains a separate control | #2010 |
 | Decision | CodeQL findings do not fail the release | #2011 |
 | Open, already filed | MFA | #1640 |
 | Owner only | Live `protect-main` ruleset may still require checks that no longer run on a pull request. Desired JSON in git already dropped them | #2001 |

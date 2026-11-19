@@ -25,7 +25,7 @@ STRIDE = {
     "Elevation of privilege",
 }
 SYSTEM_IDS = {"SR-11", "SR-12", "SR-13", "SR-14", "SR-15", "SR-16"}
-LINDDUN_IDS = {"LD-1", "LD-2", "LD-3", "LD-4", "LD-5", "LD-6"}
+LINDDUN_IDS = {"LD-1", "LD-2", "LD-3", "LD-4", "LD-5", "LD-6", "LD-7", "LD-8", "LD-9"}
 SECRET_MARKERS = ("ghp_", "BEGIN PRIVATE KEY", "AKIA", "sk_live_")
 
 
@@ -60,6 +60,18 @@ class ThreatRegisterTest(unittest.TestCase):
         self.assertEqual(LINDDUN_IDS, ids)
         for row in self.data["linddun"]:
             self.assertIn(row["id"], system)
+        for needle in (
+            "testimonies",
+            "folios",
+            "submitted-documents",
+            "deliveredBy",
+            "escrituras",
+            "tramites",
+            "AuditPersonalDataRead",
+            "Counsel owns the statute",
+        ):
+            self.assertIn(needle, system, needle)
+        self.assertIn("Open", next(line for line in system.splitlines() if line.startswith("| LD-9 |")))
         grant = next(row for row in self.data["requirements"] if row["id"] == "SR-11")
         self.assertIn("RoleModuleAuthorizationFilter", grant["verification"])
         self.assertIn("1683", str(grant["verification"]))

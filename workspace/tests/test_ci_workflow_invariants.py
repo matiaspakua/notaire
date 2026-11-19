@@ -273,6 +273,27 @@ class ReleaseOnlyWorkflowTriggersTest(unittest.TestCase):
                 self.assertIn("schedule", on)
                 self.assertNotIn("pull_request", on)
 
+    def test_dast_zap_runs_on_version_tags_and_keeps_monday(self):
+        """#2004 — a release tag runs the same blocking baseline as Monday."""
+        zap = load_workflow("dast-zap.yml")
+        on = zap.get("on", {})
+        self.assertNotIn("pull_request", on)
+        self.assertIn("workflow_dispatch", on)
+        push = on.get("push") or {}
+        self.assertNotIn("branches", push)
+        self.assertNotIn("paths", push)
+        for tag in RELEASE_TAGS:
+            self.assertIn(tag, push.get("tags") or [])
+        crons = [item.get("cron") for item in (on.get("schedule") or [])]
+        self.assertIn("0 5 * * 1", crons)
+        steps = zap["jobs"]["zap-baseline"]["steps"]
+        scan = next(
+            step for step in steps if str(step.get("uses", "")).startswith("zaproxy/action-baseline")
+        )
+        self.assertIs(scan["with"]["fail_action"], True)
+        self.assertEqual(scan["with"]["rules_file_name"], ".zap/rules.tsv")
+        self.assertEqual(scan["with"]["cmd_options"], "-a")
+
 
 
 

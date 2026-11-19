@@ -231,6 +231,7 @@ class SimpleControllersTest {
                 standaloneSetup(new TestimonyMovementController(query, manage))
                         .setControllerAdvice(
                                 new com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementExceptionHandler())
+                        .setCustomArgumentResolvers(new org.springframework.data.web.PageableHandlerMethodArgumentResolver())
                         .build();
 
         private DtoTestimonyMovement buildDto() {
@@ -246,7 +247,10 @@ class SimpleControllersTest {
         @Test
         @DisplayName("GET endpoints should work")
         void getEndpoints() throws Exception {
-            when(query.findAll()).thenReturn(List.of(buildDto()));
+            when(query.findPage(org.mockito.ArgumentMatchers.anyInt(), org.mockito.ArgumentMatchers.anyInt(),
+                    org.mockito.ArgumentMatchers.any())).thenReturn(
+                            new com.licensis.notaire.application.port.out.testimony.TestimonyMovementOpsPort.PageResult(
+                                    List.of(buildDto()), 1));
             when(query.findById(1)).thenReturn(Optional.of(buildDto()));
             when(query.findById(2)).thenReturn(Optional.empty());
             mvc.perform(get("/api/v1/testimony-movements")).andExpect(status().isOk());

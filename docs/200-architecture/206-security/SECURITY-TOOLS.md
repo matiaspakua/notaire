@@ -17,7 +17,7 @@ new vendor account. GitHub product workflows do not run on a pull request
 | 4.3 SAST | Java, JS | Semgrep (local and release job) | `security/semgrep/notaire.yml` | High-signal rules in preflight and in `ci.yml` on a version tag. CodeQL stays the deeper SAST |
 | 4.3 SAST | Java, JS, Actions | CodeQL | `codeql.yml` | Version tag, Monday 06:30 UTC, and manual dispatch. Uploads SARIF. Does not fail on findings (#2011). Not on pull_request |
 | 4.3 DAST | Running API, anonymous | `security/dast_baseline.py` | `run_pipeline.sh` after the stack is up | Health plus a 401 on `/api/v1/people`, with no stack trace |
-| 4.3 DAST | Running API | OWASP ZAP baseline | `dast-zap.yml` + `.zap/rules.tsv` | Monday 05:00 UTC and manual dispatch. Fails on non-allowlisted alerts (#1738). Not on the version tag (#2004) |
+| 4.3 DAST | Running API | OWASP ZAP baseline | `dast-zap.yml` + `.zap/rules.tsv` | Version tags `v*` and `notaire-v*`, Monday 05:00 UTC, and manual dispatch. Fails on non-allowlisted alerts (#1738, #2004). Not on pull_request (#2001) |
 | 4.3 Secrets | High-confidence tokens | `security/scan_secrets.py` | local gate and `ci.yml` security job | Same families as Gitleaks (private key, `ghp_`, `AKIA`, Slack). No extra action pin |
 | 4.3 SCA | Dependencies and images | Trivy + Dependabot | `ci.yml`, `dependabot.yml` | Filesystem scan fails on fixed CRITICAL/HIGH. Image scan fails on CRITICAL. Both on the release workflow. Dependabot opens the update |
 | 4.4 Package | Image integrity | cosign + Trivy CycloneDX | `cd.yml` | SBOM and keyless signature on GHCR |
