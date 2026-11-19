@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Make repolens cheaper and more accurate for agents: callers resolved through static types, answers from a resident service instead of a cold process per call, vectors that move between machines, one question across several repositories, and smaller tool schemas.
+Make repolens cheaper and more accurate for agents: callers resolved through static types, answers from a resident service instead of a cold process per call, vectors that move between machines, one question across several repositories, exact lookups, and smaller tool schemas and answers.
 
 ## ADDED Requirements
 
@@ -74,7 +74,7 @@ The shared vector cache MUST export to a file and import into another machine's 
 
 ### Requirement: One question can span several indexed repositories
 
-Every index run MUST register its store on the machine, and a search MUST be able to merge the answers of several registered repositories, labelled by repository.
+Every index run MUST register its store on the machine, and a search MUST be able to merge the answers of several registered repositories, labelled by repository. Each repository's answers MUST be weighted by its relevance to the question when the stores share an embedding space, and a repository that cannot place a hit in the top `k` MUST NOT be searched.
 
 #### Scenario: registry
 
@@ -86,6 +86,21 @@ Every index run MUST register its store on the machine, and a search MUST be abl
 - **WHEN** `repolens search --repos all` (or the MCP `search` with `repos`) runs
 - **THEN** hits of every repository are merged by rank and each names its repository
 
+#### Scenario: the repository that matches the question ranks first
+
+- **WHEN** one repository's relevance to the question is clearly higher than another's in the same embedding space
+- **THEN** its hits rank first, equally relevant repositories interleave, and stores in different spaces are interleaved unweighted
+
+#### Scenario: a repository out of reach is not searched
+
+- **WHEN** a repository's weight cannot place its first hit in the merged top `k`
+- **THEN** its search is not run and the merged answer is unchanged
+
+#### Scenario: federated recall
+
+- **WHEN** `bench/federation_bench.py` runs each task set against every registered store
+- **THEN** recall@10 equals the owning store's own recall
+
 ### Requirement: Tool schemas cost fewer tokens per turn
 
 The MCP tool list and server instructions MUST stay within a measured byte budget.
@@ -94,3 +109,26 @@ The MCP tool list and server instructions MUST stay within a measured byte budge
 
 - **WHEN** the MCP server lists its tools
 - **THEN** the tool list and instructions together stay under the budget the test pins
+
+### Requirement: Lookups resolve exactly
+
+`node`, `impact`, `path`, `outline`, `snippet` and `neighbors` MUST resolve a reference only to the node it names (id, path, `path:line`, name or qualified name). A reference that names no node MUST answer that it was not found, with the closest real symbols.
+
+#### Scenario: an unknown name
+
+- **WHEN** `impact` runs on a name no node has
+- **THEN** it answers `not found` with the closest symbols (CLI and MCP) instead of the impact of another node
+
+### Requirement: Answers name each file once
+
+`impact` and `node` MUST list each related file once with its symbols, and count paths under `[ranking] demote` instead of listing them; MCP tools MUST return each answer once as plain text.
+
+#### Scenario: impact and node
+
+- **WHEN** several symbols of one file depend on the node
+- **THEN** the file's path appears once with the symbols as `name:line`, and demoted paths appear as a count
+
+#### Scenario: one copy per answer
+
+- **WHEN** an MCP tool answers
+- **THEN** the answer carries no structured copy and the tool list declares no output schema
