@@ -80,6 +80,16 @@
     "ratio": 0.554,
     "note": "Same renderer after the signature cap. Not a re-run of the Sonnet bench."
   },
+  "holdout_search_payload_0_6_1": {
+    "label": "CLI search text over the 12 notaire-holdout prompts. Not a Sonnet or Haiku session.",
+    "version": "0.6.1",
+    "tasks": 12,
+    "default_bytes": 13682,
+    "old_k10_also10_bytes": 35053,
+    "ratio": 0.390,
+    "token_estimate_bytes_div_4": [3420, 8763],
+    "note": "Default is 4 detailed hits plus 4 one-line hits. The old arm is -k 10 --also 10, the previous default shape. Token estimates are bytes/4 of the answer text only."
+  },
   "background_refresh": {
     "query_blocks": false,
     "fixture_test": "test_a_query_does_not_wait_for_the_refresh_after_head_moves",

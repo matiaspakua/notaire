@@ -60,4 +60,10 @@ Short notes from the cloud factory loop. Product behavior is not documented here
 - The 5.52s and 5.79s waits were the query itself running the incremental index (`wait=True`) because the cloud VM had not run the git hook. `post-merge` already starts `refresh --background`. A query that is still stale now starts that same detached index and returns. The fixture test no longer prints `refreshed in` on the first search, and the following search finds `brand_new_symbol` after the background run.
 - Re-measured on the Notaire index for `b0065a209ca9` to `623b2d5621b5` (the range that used to print `index refreshed in 5.79s` and take 7.718s). With the index marked at the parent commit, `repolens search Procedure.getDto` returned in 1.31s and printed `refreshing in the background`. The store's `indexed_head` matched HEAD 2.112s after the query started. The next search took 1.374s and did not warn. `git grep` of `getDto(` in `Procedure.java` took 0.0037s. The suite sets `REPOLENS_REFRESH_SECONDS=-1`, which disables the resident service's periodic refresh; the follow-HEAD test opts back in, because a negative interval still means "do not refresh on a timer."
 
+## 2026-11-19 GitHub writes and the 0.6.1 holdout payload
+
+- When GitHub refuses an issue comment, close, or claim (`Resource not accessible by integration`), do not stop the slice. Put the comment-ready text in an Orchestrator actions list at the end of the report: issue number, action, text. The owner applies it. Keep working on the next slice.
+- The Sonnet holdout and scale sessions were not re-run: this environment has Claude Code installed and `claude auth status` reports logged out, with no API key. A login or `ANTHROPIC_API_KEY` is required for `bench/agent_bench.py`.
+- Offline stand-in, labeled as such: `repolens search` on the 12 `notaire-holdout` prompts with RepoLens 0.6.1. Default answers totaled 13682 bytes. The previous shape (`-k 10 --also 10`) totaled 35053 bytes. Ratio 0.390. Bytes divided by 4 is 3420 versus 8763. That is the answer text only, not a model session's input tokens.
+
 
