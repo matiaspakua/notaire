@@ -229,9 +229,7 @@ public class Testimony implements Serializable, Persistable<Integer>
             for (Iterator<DtoTestimonyMovement> it = dto.getTestimonyMovements().iterator(); it.hasNext();)
             {
                 DtoTestimonyMovement dtoTestimonyMovement = it.next();
-                TestimonyMovement testimonyMovement = new TestimonyMovement();
-                testimonyMovement.setAttributes(dtoTestimonyMovement);
-                testimonyMovementList.add(testimonyMovement);
+                testimonyMovementList.add(copyMovement(dtoTestimonyMovement));
             }
         }
     }
@@ -260,7 +258,7 @@ public class Testimony implements Serializable, Persistable<Integer>
             for (Iterator<TestimonyMovement> it = testimonyMovementList.iterator(); it.hasNext();)
             {
                 TestimonyMovement testimonyMovement = it.next();
-                DtoTestimonyMovement testimonyMovementDto = testimonyMovement.getDto();
+                DtoTestimonyMovement testimonyMovementDto = copyMovement(testimonyMovement);
                 movementDtos.add(testimonyMovementDto);
             }
 
@@ -327,6 +325,42 @@ public class Testimony implements Serializable, Persistable<Integer>
             folioDto.setDeed(nested);
         }
         return folioDto;
+    }
+
+    private static TestimonyMovement copyMovement(DtoTestimonyMovement dto) {
+        TestimonyMovement movement = new TestimonyMovement();
+        if (dto.getIdTestimonyMovement() != null) {
+            movement.setIdTestimonyMovement(dto.getIdTestimonyMovement());
+        }
+        movement.setDateEntry(dto.getDateEntry());
+        movement.setDateRegistration(dto.getDateRegistration());
+        movement.setDateExit(dto.getDateExit());
+        movement.setRegistered(dto.isRegistered());
+        movement.setCardNumber(dto.getCardNumber());
+        movement.setNotes(dto.getNotes());
+        movement.setObservedByRegistry(dto.isObservedByRegistry());
+        movement.setVersion(dto.getVersion());
+        if (dto.getTestimony() != null) {
+            movement.setTestimony(new Testimony(dto.getTestimony().getIdTestimony()));
+        }
+        return movement;
+    }
+
+    private static DtoTestimonyMovement copyMovement(TestimonyMovement movement) {
+        DtoTestimonyMovement dto = new DtoTestimonyMovement();
+        dto.setIdTestimonyMovement(movement.getIdTestimonyMovement());
+        dto.setDateEntry(movement.getDateEntry());
+        dto.setDateRegistration(movement.getDateRegistration());
+        dto.setDateExit(movement.getDateExit());
+        dto.setRegistered(movement.getRegistered());
+        dto.setCardNumber(movement.getCardNumber());
+        dto.setNotes(movement.getNotes());
+        dto.setObservedByRegistry(movement.isObservedByRegistry());
+        dto.setVersion(movement.getVersion());
+        DtoTestimony testimonyDto = new DtoTestimony();
+        testimonyDto.setIdTestimony(movement.getTestimony().getIdTestimony());
+        dto.setTestimony(testimonyDto);
+        return dto;
     }
 
     @Override
