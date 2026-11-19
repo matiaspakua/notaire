@@ -1,4 +1,3 @@
 DeedManagement#getDto
-Person#setAttributes
 Procedure#getDto
 User#setAttributes

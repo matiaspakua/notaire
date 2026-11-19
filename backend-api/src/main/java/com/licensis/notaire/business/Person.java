@@ -5,7 +5,6 @@
 package com.licensis.notaire.business;
 
 import com.licensis.notaire.dto.DtoDeedManagement;
-import com.licensis.notaire.dto.DtoPerson;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 import java.util.ArrayList;
@@ -458,38 +457,6 @@ public class Person implements Serializable, Persistable<Integer> {
         deedManagements.addAll(hs);
 
         return deedManagements;
-
-    }
-
-    public void setAttributes(DtoPerson dtoPerson) {
-
-        // Version of the object
-        this.setVersion(dtoPerson.getVersion());
-
-        this.setFirstName(dtoPerson.getFirstName());
-        this.setLastName(dtoPerson.getLastName());
-        this.setPhone(dtoPerson.getPhone());
-        this.setEmail(dtoPerson.getEmail());
-        this.setPersonId(dtoPerson.getId());
-        this.setIdentificationNumber(dtoPerson.getIdentificationNumber());
-
-        IdentificationType identificationType = new IdentificationType();
-        identificationType.setIdIdentificationType(dtoPerson.getDtoIdentificationType().getIdIdentificationType());
-        identificationType.setName(dtoPerson.getDtoIdentificationType().getName());
-        this.setFkIdIdentificationType(identificationType);
-
-        // Set client attributes
-        if (dtoPerson.getIsClient()) {
-            this.setNationality(dtoPerson.getNationality());
-            this.setBirthDate(dtoPerson.getBirthDate());
-            this.setTaxId(dtoPerson.getTaxId());
-            this.setMaritalStatus(dtoPerson.getMaritalStatus());
-            this.setMarriageCount(dtoPerson.getMarriageCount());
-            this.setSex(dtoPerson.getSex());
-            this.setOccupation(dtoPerson.getOccupation());
-            this.setAddress(dtoPerson.getAddress());
-            this.setIsClient(dtoPerson.getIsClient());
-        }
 
     }
 
