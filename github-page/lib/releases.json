@@ -1,13 +1,20 @@
 {
-  "productVersion": "0.6.0",
-  "train": "v0.6 · Platform & operability (2027-02)",
-  "tag": "v0.6.0",
+  "productVersion": "0.7.0",
+  "train": "v0.7 · AI Factory & repo knowledge (2027-03)",
+  "tag": "v0.7.0",
   "components": {
-    "backend": "0.6.0",
-    "frontend": "0.6.0",
+    "backend": "0.7.0",
+    "frontend": "0.7.0",
     "databaseSchema": "55"
   },
   "releases": [
+    {
+      "version": "0.7.0",
+      "date": "2026-11-20",
+      "tag": "v0.7.0",
+      "train": "v0.7 · AI Factory & repo knowledge (2027-03)",
+      "url": "https://github.com/matiaspakua/notaire/releases/tag/v0.7.0"
+    },
     {
       "version": "0.6.0",
       "date": "2026-11-20",
