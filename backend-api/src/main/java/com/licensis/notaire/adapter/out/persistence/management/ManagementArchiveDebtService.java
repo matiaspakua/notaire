@@ -1,7 +1,7 @@
 package com.licensis.notaire.adapter.out.persistence.management;
 
 import com.licensis.notaire.application.port.in.payment.GetPaymentStatusUseCase;
-import com.licensis.notaire.exception.FoldersInWaitException;
+import com.licensis.notaire.domain.management.ManagementArchiveConflictException;
 import com.licensis.notaire.business.ProcedureFolder;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.Budget;
@@ -96,17 +96,17 @@ public class ManagementArchiveDebtService {
      * warning is shown before confirmation (GET /outstanding-balance), and the
      * archive is stored with or without debt. If a folder is still in the stored
      * status "Espera" and {@code confirmado} is false, the archive is rejected
-     * with {@link FoldersInWaitException} (CU85 — exception 5.1).
+     * with {@link ManagementArchiveConflictException} (CU85 — exception 5.1).
      */
     @Transactional
     public ArchiveResult archiving(Integer idManagement, boolean confirmed) {
         List<ProcedureFolder> foldersInWait =
                 procedureFolderRepository.findByFkIdManagementIdManagementAndStatus(idManagement, STATUS_ON_HOLD);
         if (!foldersInWait.isEmpty() && !confirmed) {
-            throw new FoldersInWaitException(
+            throw new ManagementArchiveConflictException(
                     "The management has procedure folders on hold that are unresolved; "
                             + "confirm explicitly to archive anyway",
-                    foldersInWait);
+                    foldersInWait.stream().map(ProcedureFolder::getNumber).toList());
         }
 
         BigDecimal pendingBalance = calculatePendingBalance(idManagement);

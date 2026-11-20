@@ -30,7 +30,7 @@ import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.business.Property;
-import com.licensis.notaire.exception.FoldersInWaitException;
+import com.licensis.notaire.domain.management.ManagementArchiveConflictException;
 import com.licensis.notaire.exception.NotaireException;
 import com.licensis.notaire.repository.BudgetRepository;
 import com.licensis.notaire.repository.DeedManagementRepository;
@@ -358,7 +358,7 @@ public class ManagementOpsAdapter implements ManagementOpsPort {
 
     @Override
     // No @Transactional here: archiving() owns its TX. Catching IllegalArgumentException /
-    // FoldersInWaitException inside an outer TX marks rollback-only → 500 (#1745 pattern).
+    // ManagementArchiveConflictException inside an outer TX marks rollback-only → 500 (#1745 pattern).
     public ArchiveResult archive(Integer id, boolean confirmed) {
         try {
             ManagementArchiveDebtService.ArchiveResult result =
@@ -369,11 +369,8 @@ public class ManagementOpsAdapter implements ManagementOpsPort {
                     Boolean.TRUE.equals(result.management().getPendingDebtAtArchiving())));
         } catch (IllegalArgumentException e) {
             return new ArchiveResult.NotFound();
-        } catch (FoldersInWaitException e) {
-            List<Integer> waitingFolderNumbers = e.getFoldersInWait().stream()
-                    .map(f -> f.getNumber())
-                    .toList();
-            return new ArchiveResult.WaitingFolders(e.getMessage(), waitingFolderNumbers);
+        } catch (ManagementArchiveConflictException e) {
+            return new ArchiveResult.WaitingFolders(e.getMessage(), e.waitingFolderNumbers());
         }
     }
 
