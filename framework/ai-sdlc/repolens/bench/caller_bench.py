@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Caller benchmark: repolens `calls` edges against a call graph resolved by the Java compiler.
 
-    python3 bench/caller_bench.py [--config repolens.toml] [--label NAME] [--module backend-api]
+    python3 bench/caller_bench.py --module <module-dir> [--config repolens.toml] [--label NAME]
 
 Ground truth: bench/callgraph/CallGraph.java runs javac (Compiler Tree API, Lombok included) over the
 module's main and test sources and resolves every method invocation and method reference to the method it
@@ -136,7 +136,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", type=Path)
     ap.add_argument("--label", default="current")
-    ap.add_argument("--module", default="backend-api")
+    ap.add_argument("--module", required=True, help="module directory, relative to the repository root")
     ap.add_argument("--sample", type=int, default=150, help="ambiguous callees sampled for the impact check")
     args = ap.parse_args()
     from repolens.service import KnowledgeGraph

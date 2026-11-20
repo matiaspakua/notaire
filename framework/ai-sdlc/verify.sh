@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 # Verifies the ai-sdlc-framework module only: its self-tests and the adopter profile. Run from any directory.
 set -euo pipefail
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-cd "$ROOT"
-
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 KIT="$ROOT/framework/ai-sdlc"
+# Extracted kit: the script sits at the kit root, not at <repo>/framework/ai-sdlc.
+if [[ ! -d "$KIT/tests" ]]; then
+  KIT="$SCRIPT_DIR"
+  ROOT="$KIT"
+fi
+cd "$ROOT"
 OPTIONAL_VENV="$KIT/.venv-telemetry"
 OPTIONAL_REQ="$KIT/optional/telemetry.txt"
 
@@ -64,6 +69,10 @@ if [[ -n "${AISDLC_TEST_VERIFY_CMD:-}" ]]; then
   # Test-only override (#2180): run a short command instead of the full suite.
   "${TEST_ENV[@]}" bash -c "$AISDLC_TEST_VERIFY_CMD"
 else
-  "${TEST_ENV[@]}" python3 -m unittest discover -s framework/ai-sdlc/tests
+  "${TEST_ENV[@]}" python3 -m unittest discover -s "$KIT/tests"
 fi
-python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml doctor
+if [[ -f "$ROOT/.aisdlc/aisdlc.toml" ]]; then
+  python3 "$KIT/bin/aisdlc" --profile "$ROOT/.aisdlc/aisdlc.toml" doctor
+else
+  python3 "$KIT/bin/aisdlc" --help >/dev/null
+fi

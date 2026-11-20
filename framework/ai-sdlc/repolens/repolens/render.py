@@ -113,7 +113,7 @@ def neighbors(result: dict | None) -> str:
 
 def impact(result: dict | None) -> str:
     """One line per affected file: its symbols as `name:line` under each relation, tests marked. Paths
-    otherwise repeat on every symbol line (13 KB for a Notaire controller). Demoted paths (archives, retired
+    otherwise repeat on every symbol line (13 KB for one controller). Demoted paths (archives, retired
     code: `[ranking] demote`) are counted, not listed; the JSON output keeps every entry."""
     if not result:
         return "node not found"

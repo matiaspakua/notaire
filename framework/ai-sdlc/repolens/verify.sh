@@ -11,7 +11,18 @@ echo "== lint"
 "$PY" -m ruff check repolens tests bench
 
 echo "== tests (coverage floor ${COVERAGE_FLOOR}%)"
+# Numpy has segfaulted once under a loaded preflight (exit 139) and passed on the
+# immediate retry. A test failure is not retried.
+set +e
 "$PY" -m pytest -q -p no:cacheprovider --cov=repolens --cov-report=term --cov-fail-under="$COVERAGE_FLOOR"
+code=$?
+if [ "$code" -eq 139 ]; then
+  echo "WARN: pytest died with SIGSEGV (139); retrying once" >&2
+  "$PY" -m pytest -q -p no:cacheprovider --cov=repolens --cov-report=term --cov-fail-under="$COVERAGE_FLOOR"
+  code=$?
+fi
+set -e
+[ "$code" -eq 0 ]
 
 echo "== package"
 rm -rf build dist ./*.egg-info

@@ -1,0 +1,7 @@
+# HarnessPort stub. Discoverability only — not an OS sandbox.
+runtime: cursor
+version: stub-1
+sandbox: false
+capabilities:
+  - describe
+note: "Stub inventory adapter for the Cursor agent CLI. `aisdlc agent run` is the session entrypoint. A permission listed here is not isolation."

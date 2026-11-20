@@ -47,12 +47,12 @@
  "catalog-list-empty": {
   "rc": 0,
   "stderr": "",
-  "stdout": "[skills] 1 entries\n  - s1 \u00b7 Demo\n[mcp] 0 entries\n[agents] 0 entries\n[memory] 0 entries\n[workflows] 0 entries\n[providers] 0 entries\n[integrations] 0 entries\n[rules] 2 entries\n  - broken\n  - legacy \u00b7 old\n"
+  "stdout": "[skills] 1 entries\n  - s1 \u00b7 Demo\n[mcp] 0 entries\n[agents] 0 entries\n[memory] 0 entries\n[workflows] 0 entries\n[providers] 0 entries\n[integrations] 0 entries\n[rules] 2 entries\n  - broken\n  - legacy \u00b7 old\n[prompts] 0 entries\n[hooks] 0 entries\n"
  },
  "catalog-list-json": {
   "rc": 0,
   "stderr": "",
-  "stdout": "{\n  \"agents\": {\n    \"entries\": [\n      {\n        \"digest\": \"05124a572e0d19ffa210a119eef306c851e5da3b31edb423b2664b5cd3ce5c6f\",\n        \"governance\": null,\n        \"id\": \"a1\",\n        \"kind\": \"agents\",\n        \"ref\": null,\n        \"source\": \"catalog\",\n        \"summary\": \"\",\n        \"version\": 1\n      }\n    ],\n    \"kind\": \"agents\"\n  },\n  \"integrations\": {\n    \"entries\": [],\n    \"kind\": \"integrations\"\n  },\n  \"mcp\": {\n    \"entries\": [],\n    \"kind\": \"mcp\"\n  },\n  \"memory\": {\n    \"entries\": [],\n    \"kind\": \"memory\"\n  },\n  \"providers\": {\n    \"entries\": [],\n    \"kind\": \"providers\"\n  },\n  \"rules\": {\n    \"entries\": [\n      {\n        \"error\": \"unreadable\",\n        \"id\": \"broken\",\n        \"source\": \"catalog\"\n      },\n      {\n        \"digest\": null,\n        \"governance\": null,\n        \"id\": \"legacy\",\n        \"kind\": \"rules\",\n        \"ref\": null,\n        \"source\": \"catalog\",\n        \"summary\": \"old\",\n        \"version\": 1\n      }\n    ],\n    \"kind\": \"rules\"\n  },\n  \"skills\": {\n    \"entries\": [\n      {\n        \"digest\": \"0cd39aa9f5f9a251742abf06886a1be94b531f813644309535a2415d2662de34\",\n        \"governance\": null,\n        \"id\": \"s1\",\n        \"kind\": \"skills\",\n        \"ref\": \"skills/s1\",\n        \"source\": \"catalog\",\n        \"summary\": \"S one\",\n        \"version\": 1\n      }\n    ],\n    \"kind\": \"skills\"\n  },\n  \"workflows\": {\n    \"entries\": [],\n    \"kind\": \"workflows\"\n  }\n}\n"
+  "stdout": "{\n  \"agents\": {\n    \"entries\": [\n      {\n        \"digest\": \"05124a572e0d19ffa210a119eef306c851e5da3b31edb423b2664b5cd3ce5c6f\",\n        \"governance\": null,\n        \"id\": \"a1\",\n        \"kind\": \"agents\",\n        \"ref\": null,\n        \"source\": \"catalog\",\n        \"summary\": \"\",\n        \"version\": 1\n      }\n    ],\n    \"kind\": \"agents\"\n  },\n  \"hooks\": {\n    \"entries\": [],\n    \"kind\": \"hooks\"\n  },\n  \"integrations\": {\n    \"entries\": [],\n    \"kind\": \"integrations\"\n  },\n  \"mcp\": {\n    \"entries\": [],\n    \"kind\": \"mcp\"\n  },\n  \"memory\": {\n    \"entries\": [],\n    \"kind\": \"memory\"\n  },\n  \"prompts\": {\n    \"entries\": [],\n    \"kind\": \"prompts\"\n  },\n  \"providers\": {\n    \"entries\": [],\n    \"kind\": \"providers\"\n  },\n  \"rules\": {\n    \"entries\": [\n      {\n        \"error\": \"unreadable\",\n        \"id\": \"broken\",\n        \"source\": \"catalog\"\n      },\n      {\n        \"digest\": null,\n        \"governance\": null,\n        \"id\": \"legacy\",\n        \"kind\": \"rules\",\n        \"ref\": null,\n        \"source\": \"catalog\",\n        \"summary\": \"old\",\n        \"version\": 1\n      }\n    ],\n    \"kind\": \"rules\"\n  },\n  \"skills\": {\n    \"entries\": [\n      {\n        \"digest\": \"0cd39aa9f5f9a251742abf06886a1be94b531f813644309535a2415d2662de34\",\n        \"governance\": null,\n        \"id\": \"s1\",\n        \"kind\": \"skills\",\n        \"ref\": \"skills/s1\",\n        \"source\": \"catalog\",\n        \"summary\": \"S one\",\n        \"version\": 1\n      }\n    ],\n    \"kind\": \"skills\"\n  },\n  \"workflows\": {\n    \"entries\": [],\n    \"kind\": \"workflows\"\n  }\n}\n"
  },
  "catalog-list-kind-json": {
   "rc": 0,
@@ -67,7 +67,7 @@
  "catalog-list-text": {
   "rc": 0,
   "stderr": "",
-  "stdout": "[skills] 1 entries\n  - s1 \u00b7 S one\n[mcp] 0 entries\n[agents] 1 entries\n  - a1\n[memory] 0 entries\n[workflows] 0 entries\n[providers] 0 entries\n[integrations] 0 entries\n[rules] 2 entries\n  - broken\n  - legacy \u00b7 old\n"
+  "stdout": "[skills] 1 entries\n  - s1 \u00b7 S one\n[mcp] 0 entries\n[agents] 1 entries\n  - a1\n[memory] 0 entries\n[workflows] 0 entries\n[providers] 0 entries\n[integrations] 0 entries\n[rules] 2 entries\n  - broken\n  - legacy \u00b7 old\n[prompts] 0 entries\n[hooks] 0 entries\n"
  },
  "catalog-list-unreadable": {
   "rc": 0,
@@ -117,7 +117,7 @@
  "nocat-catalog-list": {
   "rc": 0,
   "stderr": "",
-  "stdout": "{\n  \"agents\": {\n    \"entries\": [],\n    \"kind\": \"agents\"\n  },\n  \"integrations\": {\n    \"entries\": [],\n    \"kind\": \"integrations\"\n  },\n  \"mcp\": {\n    \"entries\": [],\n    \"kind\": \"mcp\"\n  },\n  \"memory\": {\n    \"entries\": [],\n    \"kind\": \"memory\"\n  },\n  \"providers\": {\n    \"entries\": [],\n    \"kind\": \"providers\"\n  },\n  \"rules\": {\n    \"entries\": [],\n    \"kind\": \"rules\"\n  },\n  \"skills\": {\n    \"entries\": [],\n    \"kind\": \"skills\"\n  },\n  \"workflows\": {\n    \"entries\": [],\n    \"kind\": \"workflows\"\n  }\n}\n"
+  "stdout": "{\n  \"agents\": {\n    \"entries\": [],\n    \"kind\": \"agents\"\n  },\n  \"hooks\": {\n    \"entries\": [],\n    \"kind\": \"hooks\"\n  },\n  \"integrations\": {\n    \"entries\": [],\n    \"kind\": \"integrations\"\n  },\n  \"mcp\": {\n    \"entries\": [],\n    \"kind\": \"mcp\"\n  },\n  \"memory\": {\n    \"entries\": [],\n    \"kind\": \"memory\"\n  },\n  \"prompts\": {\n    \"entries\": [],\n    \"kind\": \"prompts\"\n  },\n  \"providers\": {\n    \"entries\": [],\n    \"kind\": \"providers\"\n  },\n  \"rules\": {\n    \"entries\": [],\n    \"kind\": \"rules\"\n  },\n  \"skills\": {\n    \"entries\": [],\n    \"kind\": \"skills\"\n  },\n  \"workflows\": {\n    \"entries\": [],\n    \"kind\": \"workflows\"\n  }\n}\n"
  },
  "nocat-catalog-show": {
   "rc": 2,

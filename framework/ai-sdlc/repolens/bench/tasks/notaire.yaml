@@ -2,10 +2,31 @@
 # a task's recall is the share of expected entries matched by at least one returned file.
 # Ground truth was verified with grep against main (2026-11-16).
 name: notaire
+output_name: retrieval.json
+output_suffix: ""
 corpus:
   repo: ../../../../..                    # repository under test
   clone: "{bench}/corpus/notaire"           # clean clone of HEAD, outside the repository, without this module
   profile: ../../../../../repolens.toml     # the repository's repolens profile, reused for the clone
+  strip: framework/ai-sdlc/repolens         # answer key; removed from the clone's working tree
+  touch: backend-api/src/main/java/com/licensis/notaire/domain/mfa/TotpAlgorithm.java
+extra_queries:
+  - MFA enrollment start request frontend and backend controller
+  - TotpVerificationService
+  - folio controller ports use cases
+  - MfaEnrollmentStorePort
+  - where are payments processed
+  - JwtAuthenticationFilter revoked token
+  - budget template
+  - person http gateway create
+  - login attempts lockout
+  - audit aspect personal data
+  - flyway migration mfa_enrollments
+  - HexagonArchitectureTest baseline
+  - report controller pdf
+  - theme tokens colors
+  - alert rules login failures
+  - deed lookup adapter
 answer_suffix: >-
   Answer concisely. Finish with one line that starts with `FILES:` followed by the repository-relative
   paths of every relevant file, comma-separated.

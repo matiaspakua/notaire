@@ -62,9 +62,10 @@ def ensure_corpus(spec: dict, refresh: bool = False, log=print) -> Path:
         subprocess.run(["git", "clone", "--quiet", "--shared", str(repo), str(clone)], check=True)
     elif refresh:
         subprocess.run(["git", "-C", str(clone), "pull", "--quiet", "--ff-only"], check=True)
-    # This module holds the task files (questions and expected answers). Once it is committed, a clone of
-    # HEAD contains it, so it is removed from the working tree: no arm may read the answer key.
-    shutil.rmtree(clone / "framework" / "ai-sdlc" / "repolens", ignore_errors=True)
+    # The task file can name a directory to delete from the clone so no arm can read the answer key.
+    strip = (spec.get("corpus") or {}).get("strip")
+    if strip:
+        shutil.rmtree(clone / strip, ignore_errors=True)
     profile = spec["profile"].read_text(encoding="utf-8")
     profile = re.sub(r'(?m)^db\s*=.*$', f'db = "{clone.name}.db"', profile)
     profile = re.sub(r'(?ms)^\[\[source\]\].*?(?=^\[)', "", profile)

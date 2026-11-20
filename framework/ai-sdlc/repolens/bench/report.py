@@ -139,9 +139,23 @@ def md_table(headers: list[str], rows: list[list]) -> str:
     return "\n".join(lines)
 
 
+def _chart_tag(data: dict, *, model: str | None = None) -> str:
+    """Filename fragment. Set chart_tag in the result JSON to keep a historical name."""
+    if "chart_tag" in data:
+        return str(data["chart_tag"])
+    taskset = str(data.get("taskset") or "")
+    if model:
+        return f"{model}-{taskset}" if taskset else model
+    return f"-{taskset}" if taskset else ""
+
+
+def _taskset_name(data: dict) -> str:
+    return str(data.get("taskset") or "tasks")
+
+
 def retrieval_section(data: dict, out: Path) -> tuple[str, str, list[str]]:
     s = data["summary"]
-    tag = "" if data.get("taskset", "notaire") == "notaire" else f"-{data['taskset']}"
+    tag = _chart_tag(data)
     arms = ["grep", "hybrid", "graph"]
     metrics = [("recall@10", "Recall@10 (higher is better)", lambda v: f"{v:.2f}"),
                ("mrr", "MRR (higher is better)", lambda v: f"{v:.2f}"),
@@ -173,7 +187,7 @@ def retrieval_section(data: dict, out: Path) -> tuple[str, str, list[str]]:
         sel = [r for r in data["rows"] if r["category"] == c]
         cat_rows.append([c] + [f"{_mean([r['recall@10'] for r in sel if r['arm'] == a]):.2f}" for a in arms])
     html_part = (
-        f"<h2>Retrieval, task set <code>{esc(data.get('taskset', 'notaire'))}</code>: same question, "
+        f"<h2>Retrieval, task set <code>{esc(_taskset_name(data))}</code>: same question, "
         f"top-{data['k']} files</h2>"
         "<p>Each task prompt is sent verbatim to three retrievers. <b>grep</b> runs one ripgrep per prompt keyword "
         "and ranks files by TF-IDF of the matches; <b>hybrid</b> is repolens's BM25 + embedding anchors without the "
@@ -183,7 +197,7 @@ def retrieval_section(data: dict, out: Path) -> tuple[str, str, list[str]]:
         f'<div class="grid">{"".join(charts)}</div>{per_task}'
         f"<h3>Table</h3>{table(headers, rows)}<h3>Recall@10 by task category</h3>"
         f"{table(['category', *[ARM_LABEL[a] for a in arms]], cat_rows)}")
-    md = (f"### Retrieval, task set `{data.get('taskset', 'notaire')}` (top-{data['k']} files, "
+    md = (f"### Retrieval, task set `{_taskset_name(data)}` (top-{data['k']} files, "
           f"{data['tasks']} tasks, commit {data['commit']})\n\n"
           + md_table(headers, rows) + "\n\n" + md_table(["category", *[ARM_LABEL[a] for a in arms]], cat_rows))
     return html_part, md, files
@@ -197,8 +211,7 @@ def agent_section(data: dict, out: Path) -> tuple[str, str, list[str]]:
     from agent_bench import summarize
 
     s, model = summarize(data["rows"]), data["model"]
-    taskset = data.get("taskset", "notaire")
-    tag = model if taskset == "notaire" else f"{model}-{taskset}"
+    tag = _chart_tag(data, model=model)
     arms = [a for a in ("baseline", "graph") if a in s]
     label = {"baseline": ARM_LABEL["baseline"], "graph": ARM_LABEL["graph_agent"]}
     metrics = [("recall", "Answer recall", lambda v: f"{v:.2f}"),
@@ -247,15 +260,15 @@ def agent_section(data: dict, out: Path) -> tuple[str, str, list[str]]:
                     "graph used"]
     total = sum(r["cost_usd"] for r in data["rows"])
     html_part = (
-        f"<h2>Agent: Claude Code headless, model <code>{esc(model)}</code>, task set "
-        f"<code>{esc(taskset)}</code></h2>"
+        f"<h2>Agent: headless, model <code>{esc(model)}</code>, task set "
+        f"<code>{esc(_taskset_name(data))}</code></h2>"
         f"<p>{len(data['rows'])} runs ({data['repeat']} repetition(s) per task and arm, total cost "
         f"${total:.2f}). Both arms get the same prompt, the same model and the same built-in tools (Read, Grep, "
         "Glob); the graph arm also has the repolens MCP server. No system prompt is added to either arm. Recall is "
         "scored from the <code>FILES:</code> line of the final answer.</p>"
         f'<div class="grid">{"".join(charts)}</div>{per_task}<h3>Table</h3>{table(headers, rows)}'
         f"<h3>Per task (means)</h3>{table(task_headers, task_rows)}")
-    md = (f"### Agent: {model}, task set `{taskset}` ({len(data['rows'])} runs, {data['repeat']} rep., "
+    md = (f"### Agent: {model}, task set `{_taskset_name(data)}` ({len(data['rows'])} runs, {data['repeat']} rep., "
           f"${total:.2f} total)\n\n"
           + md_table(headers, rows))
     return html_part, md, files
@@ -315,9 +328,15 @@ HEADLINE_STYLE = """
 
 def headline_chart(out: Path) -> str | None:
     """One picture: navigating with grep versus with repolens, from the benchmark results (no typed numbers).
-    Each metric row has its own scale; the factor on the right says better/worse in plain words."""
-    tune, hold = out / "retrieval.json", out / "retrieval-notaire-holdout.json"
-    agent = out / "agent-sonnet-holdout-0.3.0.json"
+    Each metric row has its own scale; the factor on the right says better/worse in plain words.
+    Which result files and which caption to draw come from results/headline.json."""
+    manifest_path = out / "headline.json"
+    if not manifest_path.is_file():
+        return None
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    tune, hold = out / manifest["tuning"], out / manifest["holdout"]
+    agent_name = manifest.get("agent")
+    agent = out / agent_name if agent_name else None
     if not (tune.exists() and hold.exists()):
         return None
     t, h = json.loads(tune.read_text())["summary"], json.loads(hold.read_text())["summary"]
@@ -333,11 +352,14 @@ def headline_chart(out: Path) -> str | None:
         ("Text returned to the model (KB)", t["grep"]["output_bytes"] / 1024, t["graph"]["output_bytes"] / 1024,
          "{:,.1f}", False, "less"),
     ]
-    if agent.exists():
+    if agent is not None and agent.exists():
         a = json.loads(agent.read_text())["summary"]
         b, g = a["baseline"], a["graph"]
+        title = manifest.get("agent_title", "Agent, held-out tasks ({runs} sessions)").format(
+            runs=b["runs"] + g["runs"], baseline=b["runs"], graph=g["runs"],
+        )
         rows += [
-            (f"Claude Sonnet agent, held-out tasks ({b['runs']} + {g['runs']} sessions)", None),
+            (title, None),
             ("Answer accuracy — higher is better", b["recall"], g["recall"], "{:.2f}", True, "more"),
             ("Tool calls per task — lower is better", b["tool_calls"], g["tool_calls"], "{:.1f}", False, "fewer"),
             ("Seconds per task — lower is better", b["duration_s"], g["duration_s"], "{:.1f}", False, "faster"),
@@ -346,10 +368,8 @@ def headline_chart(out: Path) -> str | None:
     y = 110
     parts = [
         f'<text class="title" x="{left}" y="28" style="font-size:16px">repolens vs grep-driven navigation</text>',
-        f'<text x="{left}" y="50">Notaire, 9.6k files. Retrieval: the same questions answered by grep keyword '
-        f'ranking and by repolens.</text>',
-        f'<text x="{left}" y="66">Agent: the same model, prompt and tools, with and without the repolens MCP '
-        f'server.</text>',
+        f'<text x="{left}" y="50">{esc(manifest["captions"][0])}</text>',
+        f'<text x="{left}" y="66">{esc(manifest["captions"][1])}</text>',
         f'<rect class="grep" x="{left}" y="78" width="12" height="11" rx="2"/>'
         f'<text x="{left + 18}" y="88">without repolens (grep / Read / Glob)</text>',
         f'<rect class="graph" x="{left + 270}" y="78" width="12" height="11" rx="2"/>'

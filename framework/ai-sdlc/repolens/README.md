@@ -606,10 +606,13 @@ Everything to reproduce is in [`bench/`](bench); `bench/run_all.sh` runs all of 
   benchmark and its answer key) deleted from the clone's working tree, so no arm can read the answers.
 - **Retrieval** (deterministic, free) — the prompt goes verbatim to `grep` (one ripgrep per keyword, TF-IDF
   ranking), repolens **hybrid** (no graph walk) and repolens **graph**; recall@k, MRR, latency and output size.
-- **Agent** — `claude -p` headless in the clone, same prompt, same model, same built-in tools (Read, Grep,
-  Glob); the graph arm also has the repolens MCP server. No system prompt is added. Recall is scored from the
-  `FILES:` line of the answer; tool calls, turns, tokens, cost and time come from the session result. Agent
-  runs count against the account's usage limits; the harness stops at the first usage-limit error.
+- **Agent** — a headless session in the clone. The runner is Anthropic (`claude -p`) when that CLI is
+  logged in or `ANTHROPIC_API_KEY` is set, and the Cursor agent CLI (`agent` / `cursor-agent`) otherwise.
+  `--provider` forces one runner and does not fall back. Same prompt, same model, same built-in tools (Read,
+  Grep, Glob); the graph arm also has the repolens MCP server. No system prompt is added. Recall is scored
+  from the `FILES:` line of the answer; tool calls, turns, tokens, cost and time come from the session
+  result. The result file records `runner`, `runner_command` and `runner_via`. Agent runs count against the
+  account's usage limits; the harness stops at the first usage-limit error.
 - **Performance** — `bench/perf_bench.py --label <name> [--compare <other>]`: store size, index times, load,
   memory, latency by stage, MCP cold start and quality on both task sets, saved per label in
   `bench/results/perf/`.

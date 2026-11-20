@@ -5,7 +5,7 @@ repository it belongs to (worktrees of one repository share that identity). A fe
 selected repository's own index (its resident service when it can, else the store in-process) for its hits and
 its relevance to the question (the mean cosine of its ten nearest vectors), then merges the answers by
 reciprocal-rank fusion, each repository weighted by exp((relevance - best) / TAU), and labels each hit with its
-repository. Plain interleaving cost Notaire's held-out recall@10 0.786 -> 0.628 with one unrelated store
+repository. Plain interleaving cost one checkout's held-out recall@10 0.786 -> 0.628 with one unrelated store
 registered; the owning repository scored the higher relevance in 32 of 32 benchmark tasks
 (bench/federation_bench.py). Stores in different embedding spaces (another model or width, or an LSA store) do
 not compare, and are interleaved unweighted. Each repository keeps its own index, profile and lifecycle; nothing is

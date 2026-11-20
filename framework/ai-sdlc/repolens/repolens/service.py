@@ -137,3 +137,9 @@ class KnowledgeGraph:
     def close(self) -> None:
         if self._store is not None:
             self._store.close()
+
+    def release(self) -> None:
+        """Drop the open store so a replaced database file is read on the next use."""
+        self.close()
+        self._store = None
+        self._engine = None

@@ -308,5 +308,18 @@
         3941
       ]
     }
+  },
+  "cursor_agent_fallback": {
+    "status": "not_run",
+    "date": "2026-11-19",
+    "repolens": "0.6.1",
+    "probe_file": "provider-probe-2026-11-19.json",
+    "probe_command": "python3 framework/ai-sdlc/repolens/bench/providers.py probe",
+    "selected": null,
+    "anthropic": "none of [claude] is on PATH and ANTHROPIC_API_KEY is unset",
+    "cursor": "none of [agent, cursor-agent] is on PATH and CURSOR_API_KEY is unset",
+    "holdout_benchmark": "not run",
+    "scale_benchmark": "not run",
+    "note": "No session numbers were recorded. Existing Claude rows in offline_bench_summary_md are unchanged and are not Cursor measurements."
   }
 }
