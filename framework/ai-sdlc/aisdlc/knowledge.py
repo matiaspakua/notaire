@@ -50,6 +50,11 @@ def _record(ctx: Context, call: KnowledgeCall, *, exit_code: int, latency_ms: in
 
 
 def execute(ctx: Context, tool: str, args: list[str], *, dry_run: bool = False, timeout: int = 120) -> tuple[int, str]:
+    from aisdlc.intents import knowledge_backend, record_tool
+
+    backend = knowledge_backend(ctx.profile.knowledge.provider)
+    if backend == "none":
+        return 0, "knowledge disabled\n"
     call = plan_call(ctx.profile.knowledge, tool, args)
     if dry_run:
         return 0, json.dumps({
@@ -68,6 +73,13 @@ def execute(ctx: Context, tool: str, args: list[str], *, dry_run: bool = False, 
         code, stdout, stderr = 127, "", str(exc)
     latency_ms = int((time.perf_counter() - started) * 1000)
     _record(ctx, call, exit_code=code, latency_ms=latency_ms, output_bytes=len(stdout.encode()))
+    if tool in {"search", "impact"}:
+        from aisdlc.errors import KitError
+
+        try:
+            record_tool(ctx, None, tool)
+        except KitError:
+            pass
     text = stdout
     if stderr and code != 0:
         text = stdout + (("\n" if stdout else "") + stderr)
