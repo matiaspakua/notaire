@@ -7,9 +7,9 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
-import com.licensis.notaire.business.Role;
-import com.licensis.notaire.business.User;
-import com.licensis.notaire.repository.UserRepository;
+import com.licensis.notaire.application.port.in.user.QueryRolesUseCase;
+import com.licensis.notaire.application.port.in.user.QueryUsersUseCase;
+import com.licensis.notaire.domain.user.User;
 
 /**
  * Resolves the module grants effective for an authenticated user (issue #1683).
@@ -17,15 +17,18 @@ import com.licensis.notaire.repository.UserRepository;
 @Component
 public class RoleModuleGrantService {
 
-    private final UserRepository userRepository;
+    private final QueryUsersUseCase users;
 
-    public RoleModuleGrantService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    private final QueryRolesUseCase roles;
+
+    public RoleModuleGrantService(QueryUsersUseCase users, QueryRolesUseCase roles) {
+        this.users = users;
+        this.roles = roles;
     }
 
     public Set<String> grantedModules(String username) {
-        return userRepository.findByName(username)
-                .filter(User::getStatus)
+        return users.findByName(username)
+                .filter(User::active)
                 .map(this::modulesFor)
                 .orElseGet(Set::of);
     }
@@ -39,11 +42,12 @@ public class RoleModuleGrantService {
     }
 
     private Set<String> modulesFor(User user) {
-        Role role = user.getRole();
-        if (role != null) {
-            return normalize(role.getModulos());
+        if (user.roleId() == null) {
+            return StandardRoleModules.fallbackForUserType(user.type());
         }
-        return StandardRoleModules.fallbackForUserType(user.getType());
+        return roles.findById(user.roleId())
+                .map(role -> normalize(role.modules()))
+                .orElseGet(() -> StandardRoleModules.fallbackForUserType(user.type()));
     }
 
     private static Set<String> normalize(List<String> modules) {

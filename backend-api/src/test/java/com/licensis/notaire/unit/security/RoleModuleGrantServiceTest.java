@@ -13,9 +13,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.licensis.notaire.business.Role;
-import com.licensis.notaire.business.User;
-import com.licensis.notaire.repository.UserRepository;
+import com.licensis.notaire.application.port.in.user.QueryRolesUseCase;
+import com.licensis.notaire.application.port.in.user.QueryUsersUseCase;
+import com.licensis.notaire.domain.user.Role;
+import com.licensis.notaire.domain.user.User;
 import com.licensis.notaire.security.RoleModuleGrantService;
 
 @ExtendWith(MockitoExtension.class)
@@ -23,19 +24,19 @@ import com.licensis.notaire.security.RoleModuleGrantService;
 class RoleModuleGrantServiceTest {
 
     @Mock
-    private UserRepository userRepository;
+    private QueryUsersUseCase users;
+
+    @Mock
+    private QueryRolesUseCase roles;
 
     @Test
     @DisplayName("should use modules from the assigned role when present")
     void shouldUseModulesFromTheAssignedRoleWhenPresent() {
-        Role role = new Role();
-        role.setActive(true);
-        role.setModulos(List.of("personas", "presupuestos"));
-        User user = new User(1, "clerk", "x", true, "EMPLEADO");
-        user.setRole(role);
-        when(userRepository.findByName("clerk")).thenReturn(Optional.of(user));
+        when(users.findByName("clerk")).thenReturn(Optional.of(active("clerk", "EMPLEADO", 7)));
+        when(roles.findById(7)).thenReturn(Optional.of(
+                Role.restore(7, "Clerk", null, true, List.of("personas", "presupuestos"), 0)));
 
-        Set<String> grants = new RoleModuleGrantService(userRepository).grantedModules("clerk");
+        Set<String> grants = new RoleModuleGrantService(users, roles).grantedModules("clerk");
 
         assertThat(grants).containsExactlyInAnyOrder("personas", "presupuestos");
     }
@@ -43,10 +44,9 @@ class RoleModuleGrantServiceTest {
     @Test
     @DisplayName("should fall back to the notary template when a notary has no role")
     void shouldFallBackToTheNotaryTemplateWhenANotaryHasNoRole() {
-        when(userRepository.findByName("notary")).thenReturn(
-                Optional.of(new User(2, "notary", "x", true, "ESCRIBANO")));
+        when(users.findByName("notary")).thenReturn(Optional.of(active("notary", "ESCRIBANO", null)));
 
-        Set<String> grants = new RoleModuleGrantService(userRepository).grantedModules("notary");
+        Set<String> grants = new RoleModuleGrantService(users, roles).grantedModules("notary");
 
         assertThat(grants).contains("personas", "presupuestos", "escrituras");
         assertThat(grants).doesNotContain("usuarios", "administracion");
@@ -55,8 +55,12 @@ class RoleModuleGrantServiceTest {
     @Test
     @DisplayName("should return empty when the user is unknown")
     void shouldReturnEmptyWhenTheUserIsUnknown() {
-        when(userRepository.findByName("ghost")).thenReturn(Optional.empty());
+        when(users.findByName("ghost")).thenReturn(Optional.empty());
 
-        assertThat(new RoleModuleGrantService(userRepository).grantedModules("ghost")).isEmpty();
+        assertThat(new RoleModuleGrantService(users, roles).grantedModules("ghost")).isEmpty();
+    }
+
+    private static User active(String name, String type, Integer roleId) {
+        return User.restore(1, name, "x", true, type, null, null, null, roleId, null, 0);
     }
 }
