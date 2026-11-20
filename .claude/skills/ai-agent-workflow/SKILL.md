@@ -36,6 +36,10 @@ when the file or symbol is unknown; `rg` for an exact symbol or path;
 Pair grep against repolens every third implemented issue, and on every miss,
 not on every issue. Tool calls, tokens and latency stay in `.repolens/usage.jsonl`
 (`repolens report`) and in `.aisdlc/evidence/knowledge.jsonl`.
+Record the run with `aisdlc intent start` / `aisdlc intent end` or
+`aisdlc intent run --id <intent> --type implement -- <command>`.
+Set `AISDLC_KNOWLEDGE=none` to repeat the same intent without RepoLens.
+Compare with `aisdlc metrics intents compare --a knowledge=repolens --b knowledge=none`.
 
 ### Workflow Summary
 
