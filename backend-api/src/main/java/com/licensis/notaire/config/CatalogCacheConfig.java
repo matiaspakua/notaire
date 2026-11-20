@@ -7,9 +7,12 @@ import org.springframework.context.annotation.Primary;
 
 import com.licensis.notaire.adapter.out.persistence.document.CachingDocumentTypeCatalog;
 import com.licensis.notaire.adapter.out.persistence.document.DocumentTypePersistenceAdapter;
+import com.licensis.notaire.adapter.out.persistence.folio.CachingFolioTypeCatalog;
+import com.licensis.notaire.adapter.out.persistence.folio.FolioTypePersistenceAdapter;
 import com.licensis.notaire.adapter.out.persistence.identification.CachingIdentificationTypeCatalog;
 import com.licensis.notaire.adapter.out.persistence.identification.IdentificationTypePersistenceAdapter;
 import com.licensis.notaire.application.port.out.document.DocumentTypeCatalogPort;
+import com.licensis.notaire.application.port.out.folio.FolioTypeCatalogPort;
 import com.licensis.notaire.application.port.out.identification.IdentificationTypeCatalogPort;
 
 /**
@@ -32,5 +35,11 @@ public class CatalogCacheConfig {
     @Primary
     public DocumentTypeCatalogPort cachingDocumentTypeCatalog(DocumentTypePersistenceAdapter persistence) {
         return new CachingDocumentTypeCatalog(persistence);
+    }
+
+    @Bean
+    @Primary
+    public FolioTypeCatalogPort cachingFolioTypeCatalog(FolioTypePersistenceAdapter persistence) {
+        return new CachingFolioTypeCatalog(persistence);
     }
 }
