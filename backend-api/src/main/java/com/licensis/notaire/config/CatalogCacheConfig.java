@@ -15,6 +15,8 @@ import com.licensis.notaire.adapter.out.persistence.identification.CachingIdenti
 import com.licensis.notaire.adapter.out.persistence.identification.IdentificationTypePersistenceAdapter;
 import com.licensis.notaire.adapter.out.persistence.management.CachingManagementStatusCatalog;
 import com.licensis.notaire.adapter.out.persistence.management.ManagementStatusPersistenceAdapter;
+import com.licensis.notaire.adapter.out.persistence.procedure.CachingProcedureTypeCatalog;
+import com.licensis.notaire.adapter.out.persistence.procedure.ProcedureTypeOpsAdapter;
 import com.licensis.notaire.adapter.out.persistence.user.CachingRoleCatalog;
 import com.licensis.notaire.adapter.out.persistence.user.RoleCatalogPersistenceAdapter;
 import com.licensis.notaire.application.port.out.concept.ConceptOpsPort;
@@ -22,6 +24,7 @@ import com.licensis.notaire.application.port.out.document.DocumentTypeCatalogPor
 import com.licensis.notaire.application.port.out.folio.FolioTypeCatalogPort;
 import com.licensis.notaire.application.port.out.identification.IdentificationTypeCatalogPort;
 import com.licensis.notaire.application.port.out.management.ManagementStatusCatalogPort;
+import com.licensis.notaire.application.port.out.procedure.ProcedureTypeOpsPort;
 import com.licensis.notaire.application.port.out.user.RoleCatalogPort;
 
 /**
@@ -68,5 +71,11 @@ public class CatalogCacheConfig {
     @Primary
     public ConceptOpsPort cachingConceptCatalog(ConceptOpsAdapter persistence) {
         return new CachingConceptCatalog(persistence);
+    }
+
+    @Bean
+    @Primary
+    public ProcedureTypeOpsPort cachingProcedureTypeCatalog(ProcedureTypeOpsAdapter persistence) {
+        return new CachingProcedureTypeCatalog(persistence);
     }
 }
