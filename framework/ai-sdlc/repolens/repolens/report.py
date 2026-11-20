@@ -9,7 +9,8 @@ Measured (not estimated):
   tokens          what navigation tools returned to the model (bytes / 4), per session and per tool
   latency, zero-result queries, index refreshes (server side, any harness)
 
-Sessions come from harness hook events (Claude Code); server events cover every harness but carry no session.
+Sessions come from harness hook events and from CLI events that carry a session id.
+Server events without a session still count as calls, not as adoption.
 Comparisons between sessions with and without repolens are observational, not controlled: the benchmark in
 bench/ is the controlled measurement.
 """
@@ -68,10 +69,19 @@ def server_metrics(events: list[dict]) -> dict:
     }
 
 
+def _repolens_call(event: dict) -> bool:
+    tool = str(event.get("tool") or "")
+    if tool.startswith("repolens:"):
+        return True
+    return event.get("src") == "cli" and tool not in ("", "miss", "refresh")
+
+
 def session_metrics(events: list[dict]) -> dict:
     sessions: dict[str, list[dict]] = defaultdict(list)
     for e in events:
-        if e.get("src") == "harness" and e.get("session"):
+        if not e.get("session"):
+            continue
+        if e.get("src") == "harness" or e.get("src") == "cli":
             sessions[e["session"]].append(e)
     if not sessions:
         return {"sessions": 0}
@@ -88,15 +98,15 @@ def session_metrics(events: list[dict]) -> dict:
         waiting_fallback = False
         for e in evs:
             tool = e.get("tool", "")
-            tool_tokens["repolens" if tool.startswith("repolens:") else tool] += e.get("bytes", 0) // 4
-            if tool.startswith("repolens:"):
+            tool_tokens["repolens" if _repolens_call(e) else tool] += e.get("bytes", 0) // 4
+            if _repolens_call(e):
                 if waiting_fallback:
                     waiting_fallback = False
                 seen_repolens = True
                 rl_calls += 1
                 waiting_fallback = True
                 returned.update(e.get("files") or [])
-            elif tool in ("grep", "glob"):
+            elif tool in ("grep", "glob", "miss"):
                 if waiting_fallback:
                     fallbacks += 1
                     waiting_fallback = False
@@ -104,8 +114,8 @@ def session_metrics(events: list[dict]) -> dict:
                 path = (e.get("files") or [""])[0]
                 reads_after += 1
                 hits += any(path == f or path.endswith("/" + f) or f.endswith("/" + path) for f in returned)
-        first = next((e.get("tool", "") for e in evs), "")
-        first_repolens += first.startswith("repolens:")
+        first = next(iter(evs), {})
+        first_repolens += _repolens_call(first)
         total_tokens = sum(e.get("bytes", 0) for e in evs) // 4
         if seen_repolens:
             adopted += 1
@@ -219,7 +229,7 @@ def gate_line(rep: dict) -> str:
     worst = next((r for r in rep["recommendations"] if r["level"] == "high"), rep["recommendations"][0])
     hit = h.get("hit_rate")
     sessions = h.get("sessions", 0)
-    # CLI events carry no harness session. Zero sessions is not a measured 0% adoption.
+    # CLI events with no session id are calls, not adoption. Zero sessions is not 0%.
     adoption = "n/a" if not sessions else f"{h.get('adoption', 0):.0%}"
     return (f"repolens usage: {s['calls']} calls, {sessions} sessions, adoption "
             f"{adoption}, hit rate {'n/a' if hit is None else f'{hit:.0%}'}, p95 {s['p95_ms']:.0f} "

@@ -12,6 +12,11 @@ import {
 import { pair } from "./es";
 
 const lesson: Record<string, [string, string, string]> = {
+  "A down stack must not throw away a full preflight": [
+    "Un stack apagado no debe tirar un preflight completo",
+    "preflight.sh --full corrió Maven, Vitest y el build de Pages, y después falló porque nada escuchaba en :8080 y :3000. La rama de registration-draft lo hizo el 2026-11-18. #2374 lo repitió el 2026-11-20. Las dos pasaron después de start.sh.",
+    "--full arranca el stack una vez con workspace/stack/start.sh --no-admin antes de las suites que necesitan el servidor, y falla solo si ese arranque deja los puertos a oscuras.",
+  ],
   "Light green is not mergeable": [
     "Verde claro no se puede fusionar",
     "Una suscripción de CI informó que los 18 chequeos habían pasado mientras la suite de integración del backend y Playwright seguían pendientes.",

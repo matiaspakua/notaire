@@ -235,9 +235,9 @@ jobs:
           echo "Branch: $branch_name"
           
           # Allowed patterns:
-          #   Standard:   feature/*, bugfix/*, hotfix/*, release/*, main, develop
+          #   Standard:   feature/*, bugfix/*, hotfix/*, release/*, cursor/*, main, develop
           #   Issue-based: <ISSUE-ID>/(feat|fix|docs|refactor|ci|chore|perf|test|build|revert)/*
-          allowed_prefixes="^(main|develop|feature/|bugfix/|hotfix/|release/|[0-9]+/(feat|fix|docs|refactor|ci|chore|perf|test|build|revert)/)"
+          allowed_prefixes="^(main|develop|feature/|bugfix/|hotfix/|release/|cursor/|[0-9]+/(feat|fix|docs|refactor|ci|chore|perf|test|build|revert)/)"
 
           if [[ ! "$branch_name" =~ $allowed_prefixes ]]; then
             echo "⚠️  Warning: Branch name doesn't follow conventional naming"

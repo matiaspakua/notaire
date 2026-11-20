@@ -25,6 +25,19 @@ _RESULT_LINE = re.compile(r"^\s*\d+\.\s+\[\w+\]\s+(\S+?):\d", re.M)
 NAVIGATION_TOOLS = {"Read": "read", "Grep": "grep", "Glob": "glob", "LS": "glob", "NotebookRead": "read"}
 
 
+def cli_session() -> str:
+    """Session id for a CLI query. Empty when neither variable is set.
+
+    ``REPOLENS_SESSION`` wins. Otherwise the Cursor cloud agent conversation id
+    is used, so CLI searches from one run share a session in ``repolens report``.
+    """
+    for key in ("REPOLENS_SESSION", "CURSOR_CONVERSATION_ID"):
+        value = os.environ.get(key, "").strip()
+        if value:
+            return value[:64]
+    return ""
+
+
 def record(log: Path, event: dict) -> None:
     """Append one event (with a timestamp). Missing or unwritable state folders are ignored."""
     try:

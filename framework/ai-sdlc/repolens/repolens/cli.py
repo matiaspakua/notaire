@@ -389,10 +389,11 @@ def _refresh_if_stale(kg, notes: list[str] | None = None) -> None:
 def _record_cli(args, tool: str, given: str, text: str, results: int, started: float) -> None:
     """Append one CLI query to the usage log. Telemetry must not change the command's result."""
     from .paths import usage_log
-    from .usage import files_in, record
+    from .usage import cli_session, files_in, record
 
     record(usage_log(_state_dir(args)), {
         "src": "cli", "client": "cli", "tool": tool, "input": (given or "")[:200],
+        "session": cli_session(),
         "ms": round((time.perf_counter() - started) * 1000, 1), "bytes": len(text.encode()),
         "tokens": len(text.encode()) // 4, "results": results, "files": files_in(text),
     })
@@ -401,10 +402,11 @@ def _record_cli(args, tool: str, given: str, text: str, results: int, started: f
 def _miss(args) -> int:
     """Record that the agent fell back to grep or read. Does not search."""
     from .paths import usage_log
-    from .usage import record
+    from .usage import cli_session, record
 
     record(usage_log(_state_dir(args)), {
         "src": "cli", "client": "cli", "tool": "miss", "input": (args.query or "")[:200],
+        "session": cli_session(),
         "results": 0, "files": [],
     })
     return 0
