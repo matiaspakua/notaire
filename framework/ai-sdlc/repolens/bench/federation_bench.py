@@ -3,8 +3,8 @@
 
     python3 bench/federation_bench.py --label NAME
 
-Stores: this repository (Notaire, held-out tasks) and the scale corpus (spring-framework + vscode, scale tasks),
-both registered by an index run. For each task: recall@10 and MRR of the expected files when only the owning
+Pass one `--set name=tasks.yaml` and one `--config name=profile.toml` per store.
+For each task: recall@10 and MRR of the expected files when only the owning
 store answers, and when `repos.search(..., "all")` merges every registered store with each relevance
 temperature in `--tau` (`inf` = unweighted interleaving); plus the federated latency. Relevance and hits are
 fetched once per task; only the fusion differs between temperatures.
@@ -28,8 +28,6 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 sys.path.insert(0, str(HERE))
 
-from corpus import bench_home  # noqa: E402
-
 from repolens import repos  # noqa: E402
 from repolens.service import KnowledgeGraph  # noqa: E402
 
@@ -43,16 +41,29 @@ def score(paths: list[str], expected: list[str]) -> tuple[float, float]:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--label", required=True)
+    ap.add_argument("--set", action="append", required=True, metavar="NAME=TASKS.yaml")
+    ap.add_argument("--config", action="append", required=True, metavar="NAME=profile.toml")
     ap.add_argument("--tau", default="0.005,0.01,0.02,0.05,0.1,inf", help="relevance temperatures to compare")
     args = ap.parse_args()
     taus = [float(t) for t in args.tau.split(",")]
     configured = repos.TAU
-    root = HERE.parents[3]
+
+    def paired(values: list[str]) -> dict[str, str]:
+        out = {}
+        for item in values:
+            name, sep, raw = item.partition("=")
+            if not sep or not name or not raw:
+                raise SystemExit(f"expected name=path, got {item!r}")
+            out[name] = raw
+        return out
+
+    task_paths, configs = paired(args.set), paired(args.config)
+    if set(task_paths) != set(configs):
+        raise SystemExit(f"--set names {sorted(task_paths)} and --config names {sorted(configs)} differ")
     sets = [
-        ("notaire-holdout", yaml.safe_load((HERE / "tasks" / "notaire-holdout.yaml").read_text())["tasks"],
-         KnowledgeGraph.open(root / "repolens.toml")),
-        ("scale", yaml.safe_load((HERE / "tasks" / "scale.yaml").read_text())["tasks"],
-         KnowledgeGraph.open(bench_home() / "scale" / "scale-fastembed.toml")),
+        (name, yaml.safe_load(Path(task_paths[name]).read_text(encoding="utf-8"))["tasks"],
+         KnowledgeGraph.open(Path(configs[name])))
+        for name in task_paths
     ]
     registered = [e["name"] for e in repos.listed()]
     result: dict = {"label": args.label, "stamp": time.strftime("%Y-%m-%d %H:%M"), "registered": registered, "sets": {}}

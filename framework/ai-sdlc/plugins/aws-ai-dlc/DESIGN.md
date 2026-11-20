@@ -26,7 +26,7 @@ only orchestrator for delivery gates.
 | AI-DLC phase | AI-DLC stages (summary) | Owns aisdlc stage? | Factory stance |
 |---|---|---|---|
 | **0 Initialization** | Workspace scaffold, detection, state init | **No** | Adopter profile + `aisdlc init` / project layout. Do not run `aidlc` init beside it. |
-| **1 Ideation** | Intent, research, feasibility, scope, approval | **No** (content only) | May *inform* `intake` / `plan` prose. OpenSpec (or Spec Kit) stays the method store on Notaire. |
+| **1 Ideation** | Intent, research, feasibility, scope, approval | **No** (content only) | May *inform* `intake` / `plan` prose. OpenSpec (or Spec Kit) stays the method store on the adopter. |
 | **2 Inception** | Reverse eng, requirements, stories, units, delivery plan | **No** (content only) | Same as Ideation: optional input to `plan`. Never replaces Gate 1 validators. |
 | **3 Construction** | Design units, code generation, CI pipeline | **No — forbidden** | `red` / `green` / `pre-push` / `pre-pr` stay on aisdlc gates, ratchets, and adopter scripts. |
 | **4 Operation** | Deploy pipeline, feedback | **No — forbidden** | `release` and product ops stay on aisdlc + adopter CI. |

@@ -206,6 +206,12 @@ def config_view(profile: Profile, *, limit: int) -> dict:
         "distributed_claim_lock": "not implemented",
         "stages": stage_dicts(profile),
         "grants": grant_dicts(profile),
+        "knowledge": {
+            "provider": profile.knowledge.provider,
+            "command": profile.knowledge.command,
+            "args": list(profile.knowledge.args),
+            "default_tool": profile.knowledge.default_tool,
+        },
     }
     context = context_dict(profile)
     if context is not None:

@@ -1,0 +1,11 @@
+id = "cursor"
+kind = "harness"
+version = "1.0.0"
+status = "stub"
+runtime = "cursor"
+adapter = "adapter.yml"
+capabilities = ["describe"]
+command = ["aisdlc", "agent", "probe", "--provider", "cursor"]
+summary = "Inventory stub for the Cursor agent CLI. Dry plan prints the probe argv only. Sessions go through `aisdlc agent run`, which falls back to this provider when Anthropic cannot authenticate. sandbox=false until a real Isolator."
+sandbox = false
+auto_trust_hooks = false

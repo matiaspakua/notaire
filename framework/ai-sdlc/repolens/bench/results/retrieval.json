@@ -4,6 +4,7 @@
  "commit": "073e9776",
  "tasks": 11,
  "taskset": "notaire",
+ "chart_tag": "",
  "summary": {
   "grep": {
    "recall@5": 0.091,

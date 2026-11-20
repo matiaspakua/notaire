@@ -1,0 +1,25 @@
+{
+  "kind": "provider-probe",
+  "not_a_benchmark": true,
+  "date": "2026-11-19",
+  "repolens": "0.6.1",
+  "command": "python3 framework/ai-sdlc/repolens/bench/providers.py probe",
+  "selected": null,
+  "via": "none",
+  "providers": [
+    {
+      "id": "anthropic",
+      "available": false,
+      "command": "",
+      "auth": "",
+      "reason": "none of [claude] is on PATH and ANTHROPIC_API_KEY is unset"
+    },
+    {
+      "id": "cursor",
+      "available": false,
+      "command": "",
+      "auth": "",
+      "reason": "none of [agent, cursor-agent] is on PATH and CURSOR_API_KEY is unset"
+    }
+  ]
+}

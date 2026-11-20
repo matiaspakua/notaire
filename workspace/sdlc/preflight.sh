@@ -65,6 +65,7 @@ agent rule files                Process Checks                    sdlc-process.y
 aisdlc gate signal (ratchet+skills) Process Checks / Main Health  sdlc-process.yml   (BLOCKING; #1958/#2159)
 process script self-tests       Process Checks                    sdlc-process.yml   (BLOCKING)
 repolens module gate            (local only; no CI job)           n/a                (BLOCKING when its path changed; #2298)
+factory/repolens boundaries     (local only; --full)              n/a                (BLOCKING; extraction scan + copied-tree tests)
 openapi breaking diff           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; export freshness CI-only)
 openapi accepted list           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; stale entries, #1315)
 spotless format                 Code Lint / Format Check         pr-validation.yml  (BLOCKING)
@@ -243,6 +244,11 @@ if git diff --name-only origin/main...HEAD -- framework/ai-sdlc/repolens repolen
     else
         skip "repolens module gate" "dependencies missing on this host (see the comment above)"
     fi
+fi
+
+if [ "$MODE_FULL" = "1" ]; then
+    run "factory/repolens extraction boundaries" \
+        python3 workspace/sdlc/check-factory-boundaries.py
 fi
 
 # Security case catalog (CU78, #1500). The same command is a phase of

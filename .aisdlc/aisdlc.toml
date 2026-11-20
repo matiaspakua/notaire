@@ -210,6 +210,7 @@ effort = { tokens = 200000, time_seconds = 3600, questions = 15, review_lines = 
 [[stages]]
 id = "pre-push"
 agents = ["cloud-foreman", "devops-engineer"]
+mcp = ["repolens"]
 skills = [
   "ai-agent-workflow",
   "ci-cd-quality-gates",
@@ -457,6 +458,24 @@ kind = "harness"
 version = "1.0.0"
 manifest = "framework/ai-sdlc/plugins/acp/plugin.toml"
 trusted = false
+
+[[plugins.entries]]
+id = "cursor"
+kind = "harness"
+version = "1.0.0"
+manifest = "framework/ai-sdlc/plugins/cursor/plugin.toml"
+trusted = false
+
+# Code knowledge. RepoLens is the default. The kit shells out to this command;
+# it does not import the package. Agent runs: anthropic when `claude` can
+# authenticate, otherwise the Cursor agent CLI (`aisdlc agent probe`).
+[knowledge]
+provider = "repolens"
+command = "bash"
+args = ["framework/ai-sdlc/repolens/bin/repolens"]
+
+[agents]
+order = ["anthropic", "cursor"]
 
 # Harness port (#2122). Files stay at their discoverability paths. A listed permission is not a sandbox.
 [[harness.adapters]]

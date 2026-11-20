@@ -48,6 +48,6 @@ The adapter prints argv only (same contract as OpenSpec):
 specify extension search <query>
 ```
 
-`plugin list` / `config validate` do not execute `specify`. The Notaire profile
+`plugin list` / `config validate` do not execute `specify`. The adopter profile
 keeps `github-spec-kit` **out of** `[plugins] allow` until an Owner opts in
 after config validate and a dry plan pass on a profile that includes it.

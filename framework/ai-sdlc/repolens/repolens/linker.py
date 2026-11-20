@@ -464,7 +464,7 @@ class Linker:
         """Type terms the receiver can be: ("C", class id) for a repository type, ("X", name, element) for
         a library type (with its first type argument); None when the hint names no class of this file.
         A chain step that cannot be followed (a library method, a generic return) yields []: no edge.
-        Measured against javac on Notaire's backend: name-based guessing there instead raised recall
+        Measured against javac on one Java module: name-based guessing there instead raised recall
         0.954 -> 0.964 but cut precision 0.989 -> 0.953 (bench/results/callers-typed-v3-*.json)."""
         src_file = src.split("#", 1)[0]
         head, *steps = hint.split("#")

@@ -626,6 +626,91 @@ def build_parser() -> argparse.ArgumentParser:
         help="Idempotent schema migration (workflow body v1→v2) with evidence (#2254)",
     )
     p.add_argument("--json", action="store_true")
+
+    p = sub.add_parser(
+        "agent",
+        help="probe or run an agent CLI (anthropic, else cursor when anthropic cannot authenticate)",
+    )
+    agent_sub = p.add_subparsers(dest="action", required=True)
+    probed = agent_sub.add_parser("probe", help="report which provider can authenticate; do not launch a session")
+    probed.add_argument("--json", action="store_true")
+    probed.add_argument("--provider", default="", help="auto, anthropic, or cursor; a named provider does not fall back")
+    probed.add_argument("--order", default="", help="comma-separated preference, default anthropic,cursor")
+    launched = agent_sub.add_parser("run", help="run one headless session with the selected provider")
+    launched.add_argument("--prompt", required=True)
+    launched.add_argument("--model", default="sonnet")
+    launched.add_argument("--provider", default="")
+    launched.add_argument("--order", default="")
+    launched.add_argument("--arm", default="baseline", choices=("baseline", "graph"))
+    launched.add_argument("--mcp-config", type=Path)
+    launched.add_argument("--budget", type=float, default=1.0)
+    launched.add_argument("--timeout", type=int, default=900)
+    launched.add_argument("--dry-run", action="store_true", help="print the argv and provider; do not execute")
+    launched.add_argument("--json", action="store_true")
+
+    p = sub.add_parser(
+        "entity",
+        help="list, visualize, add, edit, delete, apply and evolve AI config entities",
+    )
+    # Nested required subparsers clear dest="command" on 3.12 unless it is pinned.
+    p.set_defaults(command="entity")
+    entity_sub = p.add_subparsers(dest="action", required=True)
+    listed = entity_sub.add_parser("list", help="list entities (factory defaults and project overrides)")
+    listed.add_argument("--kind")
+    listed.add_argument("--scope", choices=("factory", "project"))
+    listed.add_argument("--harness")
+    listed.add_argument("--version", type=int)
+    listed.add_argument("--json", action="store_true")
+    shown = entity_sub.add_parser("visualize", help="relationships, versions and drift (Mermaid or JSON)")
+    shown.add_argument("--kind")
+    shown.add_argument("--id")
+    shown.add_argument("--json", action="store_true")
+    created = entity_sub.add_parser("add", help="create version 1; identical re-add is a no-op")
+    created.set_defaults(command="entity")
+    created.add_argument("--kind", required=True)
+    created.add_argument("--id", required=True)
+    created.add_argument("--summary", default="")
+    created.add_argument("--ref")
+    created.add_argument("--harness", default="*")
+    created.add_argument("--command")
+    created.add_argument("--arg", action="append", dest="args")
+    created.add_argument("--dry-run", action="store_true")
+    created.add_argument("--json", action="store_true")
+    edited = entity_sub.add_parser("edit", help="write a new revision of an existing entity")
+    edited.add_argument("--kind", required=True)
+    edited.add_argument("--id", required=True)
+    edited.add_argument("--summary")
+    edited.add_argument("--ref")
+    edited.add_argument("--if-match", type=int, dest="if_match")
+    edited.add_argument("--dry-run", action="store_true")
+    edited.add_argument("--json", action="store_true")
+    removed = entity_sub.add_parser("delete", help="remove an entity that nothing references")
+    removed.add_argument("--kind", required=True)
+    removed.add_argument("--id", required=True)
+    removed.add_argument("--force", action="store_true")
+    removed.add_argument("--dry-run", action="store_true")
+    removed.add_argument("--json", action="store_true")
+    applied = entity_sub.add_parser("apply", help="sync entities to harness files; idempotent")
+    applied.add_argument("--harness")
+    applied.add_argument("--dry-run", action="store_true")
+    applied.add_argument("--json", action="store_true")
+    evolved = entity_sub.add_parser("evolve", help="versioned change with rationale, or rollback")
+    evolved.add_argument("--kind", required=True)
+    evolved.add_argument("--id", required=True)
+    evolved.add_argument("--rationale", default="")
+    evolved.add_argument("--summary")
+    evolved.add_argument("--if-match", type=int, dest="if_match")
+    evolved.add_argument("--rollback", type=int, dest="rollback")
+    evolved.add_argument("--dry-run", action="store_true")
+    evolved.add_argument("--json", action="store_true")
+
+    p = sub.add_parser("knowledge", help="call the configured code-knowledge CLI (default command: repolens)")
+    knowledge_sub = p.add_subparsers(dest="action", required=True)
+    for tool in ("search", "doctor", "report", "impact", "miss"):
+        tool_parser = knowledge_sub.add_parser(tool, help=f"run the knowledge CLI `{tool}` subcommand")
+        tool_parser.add_argument("--dry-run", action="store_true")
+        tool_parser.add_argument("args", nargs="*", help="arguments forwarded to the knowledge CLI")
+
     return parser
 
 
@@ -734,6 +819,9 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "plugin": lambda: _plugin(ctx, args),
         "inventory": lambda: _inventory(ctx),
         "harness": lambda: _harness(ctx, args),
+        "agent": lambda: _agent(ctx, args),
+        "knowledge": lambda: _knowledge_cmd(ctx, args),
+        "entity": lambda: _entity(ctx, args),
     }
     return simple[args.command]()
 
@@ -1174,6 +1262,182 @@ def _inventory(ctx: Context) -> int:
         return 1
     print("migration inventory valid")
     return 0
+
+
+def _agent(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc.agent_provider import (
+        build_argv,
+        default_probe_runner,
+        load_settings,
+        run_session,
+        select_provider,
+        usage_from_stream,
+    )
+
+    try:
+        settings = load_settings(
+            ctx.profile_path,
+            provider=getattr(args, "provider", "") or "",
+            order=getattr(args, "order", "") or "",
+        )
+    except ValueError as exc:
+        print(f"error: {exc}")
+        return 2
+    selection = select_provider(settings, run_probe=default_probe_runner)
+    if args.action == "probe":
+        payload = selection.to_dict()
+        if args.json:
+            print(json.dumps(payload, indent=2))
+        else:
+            print(f"agent probe: selected={payload['selected'] or 'none'} via={payload['via']}")
+            for item in payload["providers"]:
+                state = "available" if item["available"] else "unavailable"
+                detail = item["auth"] or item["reason"]
+                print(f"  {item['id']}\t{state}\t{detail}")
+            if payload["reason"] and not payload["selected"]:
+                print(payload["reason"])
+        return 0 if selection.selected else 2
+    if selection.selected is None or not selection.command:
+        print(f"error: no agent provider available: {selection.reason}")
+        if args.json:
+            print(json.dumps(selection.to_dict(), indent=2))
+        return 2
+    argv = build_argv(
+        selection.selected,
+        selection.command,
+        args.prompt,
+        model=args.model,
+        budget=args.budget,
+        mcp=getattr(args, "mcp_config", None),
+        arm=args.arm,
+    )
+    if args.dry_run:
+        view = {
+            "provider": selection.selected,
+            "via": selection.via,
+            "command": selection.command,
+            "model": args.model,
+            "argv": argv,
+            "executes": False,
+        }
+        print(json.dumps(view, indent=2) if args.json else " ".join(argv))
+        return 0
+    code, stdout, stderr, elapsed = run_session(argv, cwd=ctx.root, timeout=args.timeout)
+    usage = usage_from_stream(stdout)
+    event = {
+        "provider": selection.selected,
+        "via": selection.via,
+        "command": selection.command,
+        "model": args.model,
+        "exit_code": code,
+        "latency_ms": int(elapsed * 1000),
+        "output_bytes": len(stdout.encode()),
+        "input_tokens": usage["input_tokens"],
+        "output_tokens": usage["output_tokens"],
+    }
+    get_telemetry().emit("agent.run", event)
+    folder = ctx.root / ctx.profile.evidence_dir
+    try:
+        folder.mkdir(parents=True, exist_ok=True)
+        with (folder / "agent-runs.jsonl").open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(event, separators=(",", ":")) + "\n")
+    except OSError:
+        pass
+    if stdout:
+        print(stdout, end="" if stdout.endswith("\n") else "\n")
+    if code != 0 and stderr:
+        print(stderr, file=__import__("sys").stderr)
+    return code
+
+
+def _entity_payload(args: argparse.Namespace) -> dict:
+    payload: dict = {}
+    if getattr(args, "summary", None) is not None:
+        payload["summary"] = args.summary
+    if getattr(args, "ref", None):
+        payload["ref"] = args.ref
+    if getattr(args, "harness", None):
+        payload["harness"] = args.harness
+    if getattr(args, "command", None):
+        payload["command"] = args.command
+    if getattr(args, "args", None):
+        payload["args"] = list(args.args)
+    return payload
+
+
+def _entity(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc.actor import from_env
+    from aisdlc.entities import (
+        add_entity,
+        apply_entities,
+        delete_entity,
+        edit_entity,
+        evolve_entity,
+        list_entities,
+        visualize,
+    )
+
+    actor = from_env(channel="cli")
+    try:
+        if args.action == "list":
+            data = list_entities(
+                ctx,
+                kind=args.kind,
+                scope=args.scope,
+                harness=args.harness,
+                version=args.version,
+            )
+        elif args.action == "visualize":
+            data = visualize(ctx, kind=args.kind, entry_id=args.id)
+        elif args.action == "add":
+            data = add_entity(ctx, args.kind, args.id, _entity_payload(args), actor=actor, dry_run=args.dry_run)
+        elif args.action == "edit":
+            data = edit_entity(
+                ctx, args.kind, args.id, _entity_payload(args), actor=actor,
+                expected_version=args.if_match, dry_run=args.dry_run,
+            )
+        elif args.action == "delete":
+            data = delete_entity(ctx, args.kind, args.id, force=args.force, dry_run=args.dry_run)
+        elif args.action == "apply":
+            data = apply_entities(ctx, harness=args.harness, dry_run=args.dry_run)
+        else:
+            data = evolve_entity(
+                ctx, args.kind, args.id, actor=actor, rationale=args.rationale, summary=args.summary,
+                expected_version=args.if_match, rollback_to=args.rollback, dry_run=args.dry_run,
+            )
+    except KitError as exc:
+        print(f"error: {exc.code}: {exc.detail}")
+        return 1 if exc.code in {"already_exists", "not_found", "in_use", "version_conflict"} else 2
+    if getattr(args, "json", False) or args.action == "visualize":
+        if args.action == "visualize" and not args.json:
+            print(data["mermaid"])
+            if data["apply_drift"]:
+                print("drift: " + ", ".join(data["apply_drift"]))
+            return 0
+        print(json.dumps(data, indent=2, sort_keys=True))
+        return 0
+    if args.action == "list":
+        for row in data:
+            print(f"{row['kind']}/{row['id']}@{row.get('version', 1)} {row.get('source')}")
+        return 0
+    if args.action == "apply":
+        print(f"entity apply: in_sync={data['in_sync']} drift={len(data['drift'])} dry_run={data['dry_run']}")
+        return 0
+    print(f"entity {args.action}: {data.get('kind')}/{data.get('id')}@{data.get('version', '')}")
+    return 0
+
+
+def _knowledge_cmd(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc.knowledge import execute
+
+    try:
+        code, text = execute(ctx, args.action, list(getattr(args, "args", []) or []), dry_run=bool(args.dry_run))
+    except ValueError as exc:
+        print(f"error: {exc}")
+        return 2
+    if text:
+        print(text, end="" if text.endswith("\n") else "\n")
+    return code
 
 
 def _harness(ctx: Context, args: argparse.Namespace) -> int:

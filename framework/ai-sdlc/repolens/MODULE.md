@@ -11,7 +11,9 @@ preflight runs it when a branch touches this module.
 ## Contract (what other modules may rely on)
 
 - The launcher `bin/repolens` (runs this checkout from any directory) and the `repolens` console script, with
-  exit codes 0 ok, 1 not found / no results, 2 usage or configuration error
+  exit codes 0 ok, 1 not found / no results, 2 usage or configuration error. An empty worktree store is not a
+  miss: search copies another worktree's index of the same git directory when one exists, otherwise it exits 2
+  and says the index is being built
 - Zero-configuration discovery: the nearest `repolens.toml` from the working directory, else the repository
 - The TOML profile schema documented in `README.md` (`[index]`, `[[source]]`, `[embed]`, `[git]`, `[tags]`,
   `[routes]`, `[ranking]`, `[harness]`)

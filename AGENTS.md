@@ -50,6 +50,10 @@ prefer skills over pasting full rule bodies into context.
 
 ## Repository knowledge (repolens)
 
+RepoLens is the default mechanism for code knowledge and navigation in this
+factory. The kit reaches it through the `[knowledge]` command (`aisdlc knowledge`
+and the MCP server). It does not import the package.
+
 Route the lookup. Do not send every question to RepoLens.
 
 - You do not know the file or symbol: `repolens search` first. If the top hit is not usable, `rg`, then `repolens miss "<query>"`.
