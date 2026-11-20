@@ -59,6 +59,10 @@ Every procedure-type list read hits the database. The catalog is read on nearly 
 - `backend-api/src/main/java/com/licensis/notaire/config/CatalogCacheConfig.java`
 - `backend-api/src/main/java/com/licensis/notaire/adapter/out/persistence/procedure/CachingProcedureTypeCatalog.java`
 - `backend-api/src/test/java/com/licensis/notaire/unit/procedure/ProcedureTypeCatalogCacheTest.java`
+- `backend-api/src/test/resources/application-test-h2.properties`
+- `backend-api/src/test/resources/application-test.properties`
+- `backend-api/src/test/resources/application-integration.properties`
+- `backend-api/src/test/resources/application-testcontainers.properties`
 - `docs/openspec/**`
 
 ### Architecture review

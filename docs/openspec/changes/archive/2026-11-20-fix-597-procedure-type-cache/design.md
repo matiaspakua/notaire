@@ -13,6 +13,7 @@ Procedure-type list reads go to the database on every call. Writes already go th
 
 1. Reuse the Caffeine cache already configured with expire-after-write 60 seconds. The procedure-type list is a separate cache name so another catalog's write does not drop it.
 2. The cache is an outbound decorator in front of `ProcedureTypeOpsAdapter`. Hexagon rule R2 forbids Spring cache annotations in the application layer. Create, update, delete, and assign-workflow drop the list, because assigning a workflow changes the row the list shows. A writer that skips the adapter stays invisible only until the 60 second TTL.
+3. Test profiles set `spring.cache.type=none`. The cache is per JVM and is not rolled back with the database, so a list cached by an earlier test would hide a row that the next test seeded through a repository.
 
 ## Riesgos / Trade-offs
 
