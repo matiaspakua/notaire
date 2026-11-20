@@ -16,3 +16,5 @@ import the package. Use `repolens search` when the file or symbol is unknown,
 `repolens miss` when you fall back. Adoption, tool calls, tokens and latency
 are recorded by `repolens report` and by `aisdlc knowledge` (tool, latency,
 exit code, output size — not the query text).
+Wrap a factory run with `aisdlc intent run --id <intent> --type implement -- <command>`
+so the same intent can be compared later with `AISDLC_KNOWLEDGE=none`.

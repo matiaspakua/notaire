@@ -372,6 +372,59 @@ def build_parser() -> argparse.ArgumentParser:
     stages = metrics_sub.add_parser("stages", help="stage durations from the evidence ledger")
     stages.add_argument("--json", action="store_true")
     stages.add_argument("--since", help="ISO date, e.g. 2026-10-01")
+    intents = metrics_sub.add_parser("intents", help="summarize, list, export, or compare intent runs")
+    intents.set_defaults(command="metrics")
+    intent_metrics = intents.add_subparsers(dest="intents_action", required=True)
+    intent_summary = intent_metrics.add_parser("summary", help="counts of finished intent runs")
+    intent_summary.add_argument("--json", action="store_true")
+    intent_list = intent_metrics.add_parser("list", help="finished intent runs")
+    intent_list.add_argument("--json", action="store_true")
+    intent_export = intent_metrics.add_parser("export", help="CSV or JSON of finished runs")
+    intent_export.add_argument("--format", choices=("csv", "json"), default="json")
+    intent_compare = intent_metrics.add_parser("compare", help="compare two knowledge backends")
+    intent_compare.add_argument("--a", required=True, help="knowledge=repolens")
+    intent_compare.add_argument("--b", required=True, help="knowledge=none")
+    intent_compare.add_argument("--intent", help="limit to one intent id")
+    intent_compare.add_argument("--json", action="store_true")
+
+    p = sub.add_parser("intent", help="record one factory intent run (append-only)")
+    p.set_defaults(command="intent")
+    intent_sub = p.add_subparsers(dest="action", required=True)
+    started = intent_sub.add_parser("start", help="append a start event and print the run id")
+    started.set_defaults(command="intent")
+    started.add_argument("--id", required=True, dest="intent_id")
+    started.add_argument("--type", required=True, dest="intent_type")
+    started.add_argument("--issue")
+    started.add_argument("--harness")
+    started.add_argument("--provider")
+    started.add_argument("--model")
+    started.add_argument("--json", action="store_true")
+    ended = intent_sub.add_parser("end", help="append the outcome for a started run")
+    ended.set_defaults(command="intent")
+    ended.add_argument("--run", required=True)
+    ended.add_argument("--outcome", required=True, choices=("success", "fail"))
+    ended.add_argument("--input-tokens", type=int, dest="input_tokens")
+    ended.add_argument("--output-tokens", type=int, dest="output_tokens")
+    ended.add_argument("--cached-tokens", type=int, dest="cached_tokens")
+    ended.add_argument("--cost-usd", type=float, dest="cost_usd")
+    ended.add_argument("--file", action="append", dest="files")
+    ended.add_argument("--commit")
+    ended.add_argument("--pr", dest="pull_request")
+    ended.add_argument("--preflight-restarts", type=int, default=0, dest="preflight_restarts")
+    ended.add_argument("--retries", type=int, default=0)
+    ended.add_argument("--json", action="store_true")
+    tooled = intent_sub.add_parser("tool", help="count one navigation or shell call on the open run")
+    tooled.set_defaults(command="intent")
+    tooled.add_argument("--run")
+    tooled.add_argument("--kind", required=True)
+    tooled.add_argument("--n", type=int, default=1)
+    tooled.add_argument("--json", action="store_true")
+    wrapped = intent_sub.add_parser("run", help="record start and end around a command")
+    wrapped.set_defaults(command="intent")
+    wrapped.add_argument("--id", required=True, dest="intent_id")
+    wrapped.add_argument("--type", required=True, dest="intent_type")
+    wrapped.add_argument("--issue")
+    wrapped.add_argument("argv", nargs=argparse.REMAINDER, help="command after --")
 
     p = sub.add_parser("cost", help="record the token cost of an agent run")
     p.add_argument("--agent", required=True)
@@ -822,6 +875,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "agent": lambda: _agent(ctx, args),
         "knowledge": lambda: _knowledge_cmd(ctx, args),
         "entity": lambda: _entity(ctx, args),
+        "intent": lambda: _intent(ctx, args),
     }
     return simple[args.command]()
 
@@ -1158,6 +1212,8 @@ def _improve(ctx: Context, args: argparse.Namespace) -> int:
 
 
 def _metrics(ctx: Context, args: argparse.Namespace) -> int:
+    if args.action == "intents":
+        return _intent_metrics(ctx, args)
     if args.action == "lead-time":
         from aisdlc import forge
 
@@ -1187,7 +1243,6 @@ def _metrics(ctx: Context, args: argparse.Namespace) -> int:
                 f"({result['start_event']} → {result['end_event']})"
             )
         return 0 if result["status"] == "ok" else 1
-    # stages
     data = evidence.summarize(ctx, args.since)
     stages = data.get("stages") or []
     metrics.emit_stage_durations(get_telemetry(), stages)
@@ -1201,6 +1256,82 @@ def _metrics(ctx: Context, args: argparse.Namespace) -> int:
             f"| {stage['stage']} | {stage['runs']} | {stage['ok_runs']} | "
             f"{stage['median_seconds']:.1f} | {stage['total_seconds']:.1f} |"
         )
+    return 0
+
+
+def _intent_metrics(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc.intents import compare, export_csv, finished_runs, log_path, read_events, summary
+
+    events = read_events(log_path(ctx))
+    action = args.intents_action
+    if action == "summary":
+        data = summary(events)
+    elif action == "list":
+        data = finished_runs(events)
+    elif action == "export":
+        if args.format == "csv":
+            print(export_csv(events), end="")
+            return 0
+        data = finished_runs(events)
+    else:
+        try:
+            data = compare(events, args.a, args.b, getattr(args, "intent", None))
+        except KitError as exc:
+            print(f"error: {exc.code}: {exc.detail}")
+            return 2
+    if getattr(args, "json", False) or action in {"summary", "list", "export", "compare"}:
+        print(json.dumps(data, indent=2, sort_keys=True))
+    return 0
+
+
+def _intent(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc.intents import end_intent, record_tool, run_command, start_intent
+
+    try:
+        if args.action == "start":
+            data = start_intent(
+                ctx,
+                intent_id=args.intent_id,
+                intent_type=args.intent_type,
+                issue=args.issue,
+                harness=args.harness,
+                provider=args.provider,
+                model=args.model,
+            )
+        elif args.action == "tool":
+            data = record_tool(ctx, args.run, args.kind, args.n)
+        elif args.action == "run":
+            argv = list(args.argv or [])
+            if argv and argv[0] == "--":
+                argv = argv[1:]
+            code, data = run_command(
+                ctx, argv, intent_id=args.intent_id, intent_type=args.intent_type, issue=args.issue,
+            )
+            if args.json if hasattr(args, "json") else False:
+                print(json.dumps(data, indent=2, sort_keys=True))
+            return code
+        else:
+            data = end_intent(
+                ctx,
+                args.run,
+                outcome=args.outcome,
+                input_tokens=args.input_tokens,
+                output_tokens=args.output_tokens,
+                cached_tokens=args.cached_tokens,
+                reported_cost=args.cost_usd,
+                files=args.files,
+                commit=args.commit,
+                pull_request=args.pull_request,
+                preflight_restarts=args.preflight_restarts,
+                retries=args.retries,
+            )
+    except KitError as exc:
+        print(f"error: {exc.code}: {exc.detail}")
+        return 2 if exc.code == "invalid_intent" else 1
+    if getattr(args, "json", False):
+        print(json.dumps(data, indent=2, sort_keys=True))
+    else:
+        print(data.get("run_id", ""))
     return 0
 
 
