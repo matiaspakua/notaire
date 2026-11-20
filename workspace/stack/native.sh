@@ -113,7 +113,7 @@ backend_up() {
         --spring.datasource.url="$DB_URL" \
         --spring.datasource.username="$DB_USER" \
         --spring.datasource.password="$DB_PASSWORD" \
-        --spring.jpa.hibernate.ddl-auto=update \
+        --spring.jpa.hibernate.ddl-auto=none \
         --jwt.secret="$JWT_SECRET" \
         --actuator.security.username="$ACTUATOR_USER" \
         --actuator.security.password="$ACTUATOR_PASSWORD" \
