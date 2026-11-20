@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0](https://github.com/matiaspakua/notaire/compare/v0.6.0...v0.7.0) (2026-11-20)
+
+
+### Features
+
+* **aisdlc:** record intent runs for RepoLens vs no-knowledge comparison ([#2375](https://github.com/matiaspakua/notaire/issues/2375)) ([c837165](https://github.com/matiaspakua/notaire/commit/c8371657cdaa5b972bc7b40238f97062045cbaa4))
+
 ## [0.6.0](https://github.com/matiaspakua/notaire/compare/v0.5.1...v0.6.0) (2026-11-20)
 
 
