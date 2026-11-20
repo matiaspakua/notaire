@@ -479,6 +479,13 @@ export type Lesson = { title: string; happened: string; rule: string; refs: numb
 
 export const LESSONS: Lesson[] = [
   {
+    title: "A down stack must not throw away a full preflight",
+    happened: "preflight.sh --full ran Maven, Vitest and the Pages build, then failed because nothing was listening on :8080 and :3000. The registration-draft branch did this on 2026-11-18. #2374 did it again on 2026-11-20. Both later passed after start.sh.",
+    rule: "--full starts the stack once with workspace/stack/start.sh --no-admin before the server-backed suites, then fails only if that start still leaves the ports dark.",
+    refs: [2374],
+    source: { label: "2026-11-20 PR retrospective", href: src("framework/ai-sdlc/docs/retrospectives/2026-11-20-pr-retrospective.md") },
+  },
+  {
     title: "Light green is not mergeable",
     happened: "A CI subscription reported \"all 18 checks success\" while the backend Integration suite and Playwright were still pending.",
     rule: "check-heavy-ci.sh fails a pending or red heavy run. A missing run is success: product CI does not start on the pull request. The local proof is preflight.sh --full.",

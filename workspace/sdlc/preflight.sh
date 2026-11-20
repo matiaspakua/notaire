@@ -168,7 +168,7 @@ echo "branch: $BRANCH"
 git fetch origin main --quiet 2>/dev/null || warn "could not fetch origin/main (offline?)"
 
 # Mirrors: Branch Naming Convention Check (pr-validation.yml) — warn-only there too.
-if [[ "$BRANCH" =~ ^(main|develop|feature/|bugfix/|hotfix/|release/|[0-9]+/(feat|fix|docs|refactor|ci|chore|perf|test|build|revert)/) ]] \
+if [[ "$BRANCH" =~ ^(main|develop|feature/|bugfix/|hotfix/|release/|cursor/|[0-9]+/(feat|fix|docs|refactor|ci|chore|perf|test|build|revert)/) ]] \
    || [[ "$BRANCH" =~ ^(feat|fix|docs|refactor|ci|chore|perf|test|build|revert|design|add)/[0-9]+_ ]]; then
     pass "branch naming"
 else
@@ -423,6 +423,17 @@ fi
 section "Server-backed suites"
 # ---------------------------------------------------------------------------
 if [ "$MODE_FULL" = "1" ]; then
+    # A full run that reaches this point has already paid for Maven, Vitest and
+    # the Pages build. Failing here because nothing is listening throws that
+    # work away (registration-draft, 2026-11-18; #2374, 2026-11-20). Start the
+    # stack once, then judge reachability.
+    if ! curl -sf http://localhost:8080/actuator/health >/dev/null 2>&1 \
+       || ! curl -sf -o /dev/null http://localhost:3000 2>/dev/null; then
+        echo "server-backed suites: stack is down; starting it once (workspace/stack/start.sh --no-admin)"
+        stack_log="$(mktemp)"
+        bash workspace/stack/start.sh --no-admin >"$stack_log" 2>&1 || true
+        echo "stack start log: $stack_log"
+    fi
     if curl -sf http://localhost:8080/actuator/health >/dev/null 2>&1 \
        && curl -sf -o /dev/null http://localhost:3000 2>/dev/null; then
         run "http integration suite" bash -c "cd testing/integration/http && bash test-all-endpoints-v2.sh"

@@ -32,3 +32,4 @@ You orchestrate; you do not implement the change you review.
 - Serialize scarce resources: one heavy pipeline at a time; one domain-sized slice per pull request.
 - A stale branch is not a product bug: merge the base branch and re-run before touching code.
 - Every repeated review note becomes a gate, a ratchet or a policy line (learning loop).
+- A forge comment, close, or claim that returns 403 is not a stop. Write the issue number, the action, and the text under Orchestrator actions for the owner, and continue the next slice. Do not invent a second board.

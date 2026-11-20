@@ -133,6 +133,32 @@ def test_mcp_builds_on_first_start_and_records_every_call(tmp_path, monkeypatch)
     kg.close()
 
 
+def test_cli_session_uses_the_cursor_conversation_when_present(monkeypatch):
+    from repolens.usage import cli_session
+
+    monkeypatch.delenv("REPOLENS_SESSION", raising=False)
+    monkeypatch.delenv("CURSOR_CONVERSATION_ID", raising=False)
+    assert cli_session() == ""
+    monkeypatch.setenv("CURSOR_CONVERSATION_ID", "conv-20")
+    assert cli_session() == "conv-20"
+    monkeypatch.setenv("REPOLENS_SESSION", "explicit")
+    assert cli_session() == "explicit"
+
+
+def test_a_cli_search_with_a_session_counts_as_adoption(tmp_path):
+    log = tmp_path / "usage.jsonl"
+    log.write_text(json.dumps({
+        "src": "cli", "client": "cli", "tool": "search", "session": "conv-20",
+        "input": "User.active", "results": 1, "ms": 90, "tokens": 40, "bytes": 160,
+        "files": ["backend-api/src/main/java/User.java"],
+    }) + "\n", encoding="utf-8")
+    rep = build(log)
+    assert rep["server"]["calls"] == 1
+    assert rep["sessions"]["sessions"] == 1
+    assert rep["sessions"]["adoption"] == 1.0
+    assert "1 sessions" in gate_line(rep) and "adoption 100%" in gate_line(rep)
+
+
 def test_gate_line_does_not_report_zero_adoption_when_there_are_no_sessions(tmp_path):
     log = tmp_path / "usage.jsonl"
     log.write_text(json.dumps({

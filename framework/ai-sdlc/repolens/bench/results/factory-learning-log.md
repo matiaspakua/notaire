@@ -81,4 +81,12 @@ Short notes from the cloud factory loop. Product behavior is not documented here
 - With no donor, search exits 2 and prints that indexing started, with the log path and the `rg` exact-symbol fallback. It does not print `no results`.
 - A built index that simply lacks the symbol still exits 1 with `no results`.
 
+## 2026-11-20 retrospective
+
+- #2374 was already merged (`9ff9f289`) when this note was written. `submit-maven` on `2d56cec5` was SUCCESS. No new product-issue pull request was opened after that.
+- The first `preflight.sh --full` on `cursor/2351-security-grants-47dc` failed one check: `server-backed suites: stack not reachable`. The suites before that had passed. The second full run, after `workspace/stack/start.sh --no-admin`, exited 0 (41 passed). Same failure mode as the registration-draft note above.
+- GitHub reviews on the 66 merged pull requests from #2292 through #2374 (five numbers in that range are not pull requests): 0 review objects. The only human review comment in that set is on #2301: the owner asked to resolve conflicts, and the branch was already mergeable. Four other comments are release-please release notes.
+- Open-to-merge, from `createdAt` to `mergedAt`, is not agent work time. For #2292–#2305 the median is 103 minutes (n = 12), and three of those sat overnight. For #2355–#2374 the median is 1.4 minutes (n = 20); 18 of those 20 are under 15 minutes. #2362 is the 0.6.0 release (460 minutes). #2358 is 39 minutes. The cause of that 39 minutes was not recorded.
+- `submit-maven` HTTP 429 on #2337 remains the only recorded GitHub Actions failure in the learning log. Retrieval, caller, and agent benches were not re-run for 0.6.2: the change does not alter the index or the answer text. The measured difference is the usage report, in `tests/test_factory.py`: a CLI search with no session stays `0 sessions` and `adoption n/a`; the same shape of event with `session: conv-20` is `1 sessions` and `adoption 100%`.
+
 

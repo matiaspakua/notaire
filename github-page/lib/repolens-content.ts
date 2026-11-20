@@ -93,6 +93,13 @@ export const REPOLENS_STEPS = [
 
 export const REPOLENS_FACTORY = [
   {
+    title: pair("CLI calls can be a session", "Las llamadas CLI pueden ser una sesión"),
+    body: pair(
+      "From 0.6.2, a CLI search records REPOLENS_SESSION or CURSOR_CONVERSATION_ID. Without either, report still says 0 sessions and adoption n/a. That n/a is the measured state of the log before this release, not a claim that agents never searched.",
+      "Desde 0.6.2, una búsqueda CLI registra REPOLENS_SESSION o CURSOR_CONVERSATION_ID. Sin ninguna de las dos, el reporte sigue diciendo 0 sesiones y adopción n/a. Esa n/a es el estado medido del log antes de esta versión, no una afirmación de que los agentes no buscaron.",
+    ),
+  },
+  {
     title: pair("Stages plan, red, pre-pr", "Etapas plan, red, pre-pr"),
     body: pair(
       "The aisdlc profile attaches mcp = [\"repolens\"] on plan, red and pre-pr so agents can locate before they edit.",

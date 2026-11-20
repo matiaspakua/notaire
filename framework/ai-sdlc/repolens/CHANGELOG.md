@@ -3,6 +3,12 @@
 All notable changes to repolens. Versions follow [SemVer](https://semver.org); the version lives in
 `repolens/__init__.py` and release tags are `repolens-v<version>`.
 
+## [0.6.2] - 2026-11-20
+
+### Added
+
+- A CLI search or miss records a session when `REPOLENS_SESSION` or `CURSOR_CONVERSATION_ID` is set. `repolens report` counts that session. With neither variable set, the call stays a server call and adoption stays `n/a`, which is what a log line with no session measured before this release.
+
 ## [0.6.1] - 2026-11-19
 
 ### Changed
