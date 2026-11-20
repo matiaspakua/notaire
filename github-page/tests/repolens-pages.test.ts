@@ -93,7 +93,7 @@ describe("RepoLens Pages showcase (#2315)", () => {
     expect(init).toContain(`__version__ = "${release.version}"`);
     expect(release.version).toMatch(/^\d+\.\d+\.\d+$/);
     expect(release.highlights.length).toBeGreaterThan(0);
-    expect(release.highlights.join("\n")).toMatch(/background/);
+    expect(release.highlights.join("\n")).toMatch(/session/);
     expect(page).toContain("loadRepoLensRelease");
     expect(page).toContain("release.version");
   });
