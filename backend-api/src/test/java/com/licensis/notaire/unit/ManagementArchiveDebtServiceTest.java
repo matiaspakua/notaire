@@ -2,7 +2,7 @@ package com.licensis.notaire.unit;
 
 
 import com.licensis.notaire.exception.BusinessValidationException;
-import com.licensis.notaire.exception.FoldersInWaitException;
+import com.licensis.notaire.domain.management.ManagementArchiveConflictException;
 import com.licensis.notaire.business.ProcedureFolder;
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.DeedManagement;
@@ -259,7 +259,9 @@ class ManagementArchiveDebtServiceTest {
                     .thenReturn(List.of(folderEnWait));
 
             assertThatThrownBy(() -> managementArchiveDebtService.archiving(1, false))
-                    .isInstanceOf(FoldersInWaitException.class);
+                    .isInstanceOf(ManagementArchiveConflictException.class)
+                    .extracting(thrown -> ((ManagementArchiveConflictException) thrown).waitingFolderNumbers())
+                    .isEqualTo(List.of(1));
 
             verify(managementRepository, never()).save(testManagement);
         }
