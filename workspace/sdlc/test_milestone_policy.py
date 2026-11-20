@@ -193,7 +193,8 @@ class NomenclatureTests(unittest.TestCase):
                 "v0.4 · Product completeness (2026-12)",
                 "v0.5 · Quality & traceability (2027-01)",
                 "v0.6 · Platform & operability (2027-02)",
-                "v1.0 · GA: legacy-free (2027-03)",
+                "v0.7 · AI Factory & repo knowledge (2027-03)",
+                "v1.0 · GA: legacy-free (2027-04)",
             ),
         )
         for title in SCHEDULED + SHIPPED:

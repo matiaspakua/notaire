@@ -46,7 +46,7 @@ class TrainAndTagTest(unittest.TestCase):
         self.assertEqual(self.mod.train_for("0.2.0"), "v0.2 · Release identity & product forms (2026-10)")
         self.assertEqual(self.mod.train_for("0.2.3"), "v0.2 · Release identity & product forms (2026-10)")
         self.assertEqual(self.mod.train_for("0.3.0"), "v0.3 · Hexagonal core & security (2026-11)")
-        self.assertEqual(self.mod.train_for("1.0.4"), "v1.0 · GA: legacy-free (2027-03)")
+        self.assertEqual(self.mod.train_for("1.0.4"), "v1.0 · GA: legacy-free (2027-04)")
 
     def test_release_trains_match_the_milestone_policy(self):
         sys.path.insert(0, os.path.join(REPO_ROOT, "workspace", "sdlc"))
