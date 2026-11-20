@@ -1,9 +1,9 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.business.RevokedToken;
+import com.licensis.notaire.adapter.out.persistence.security.RevokedToken;
+import com.licensis.notaire.adapter.out.persistence.security.RevokedTokenRepository;
 import com.licensis.notaire.config.JwtTokenService;
 import com.licensis.notaire.config.TokenRevocationService;
-import com.licensis.notaire.repository.RevokedTokenRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
