@@ -1,7 +1,7 @@
 package com.licensis.notaire.config;
 
-import com.licensis.notaire.business.RevokedToken;
-import com.licensis.notaire.repository.RevokedTokenRepository;
+import com.licensis.notaire.adapter.out.persistence.security.RevokedToken;
+import com.licensis.notaire.adapter.out.persistence.security.RevokedTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

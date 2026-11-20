@@ -1,6 +1,5 @@
-package com.licensis.notaire.repository;
+package com.licensis.notaire.adapter.out.persistence.security;
 
-import com.licensis.notaire.business.RevokedToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
