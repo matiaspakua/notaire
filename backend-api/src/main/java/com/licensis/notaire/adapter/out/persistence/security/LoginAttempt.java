@@ -1,4 +1,4 @@
-package com.licensis.notaire.business;
+package com.licensis.notaire.adapter.out.persistence.security;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

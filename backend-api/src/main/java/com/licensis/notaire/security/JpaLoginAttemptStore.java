@@ -1,7 +1,7 @@
 package com.licensis.notaire.security;
 
-import com.licensis.notaire.business.LoginAttempt;
-import com.licensis.notaire.repository.LoginAttemptRepository;
+import com.licensis.notaire.adapter.out.persistence.security.LoginAttempt;
+import com.licensis.notaire.adapter.out.persistence.security.LoginAttemptRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
