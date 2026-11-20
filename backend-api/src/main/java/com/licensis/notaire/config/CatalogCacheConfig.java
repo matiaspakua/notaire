@@ -11,9 +11,12 @@ import com.licensis.notaire.adapter.out.persistence.folio.CachingFolioTypeCatalo
 import com.licensis.notaire.adapter.out.persistence.folio.FolioTypePersistenceAdapter;
 import com.licensis.notaire.adapter.out.persistence.identification.CachingIdentificationTypeCatalog;
 import com.licensis.notaire.adapter.out.persistence.identification.IdentificationTypePersistenceAdapter;
+import com.licensis.notaire.adapter.out.persistence.management.CachingManagementStatusCatalog;
+import com.licensis.notaire.adapter.out.persistence.management.ManagementStatusPersistenceAdapter;
 import com.licensis.notaire.application.port.out.document.DocumentTypeCatalogPort;
 import com.licensis.notaire.application.port.out.folio.FolioTypeCatalogPort;
 import com.licensis.notaire.application.port.out.identification.IdentificationTypeCatalogPort;
+import com.licensis.notaire.application.port.out.management.ManagementStatusCatalogPort;
 
 /**
  * Turns on the catalog list caches (#597, CU74). The TTL lives in {@code spring.cache.caffeine.spec}. Each
@@ -41,5 +44,11 @@ public class CatalogCacheConfig {
     @Primary
     public FolioTypeCatalogPort cachingFolioTypeCatalog(FolioTypePersistenceAdapter persistence) {
         return new CachingFolioTypeCatalog(persistence);
+    }
+
+    @Bean
+    @Primary
+    public ManagementStatusCatalogPort cachingManagementStatusCatalog(ManagementStatusPersistenceAdapter persistence) {
+        return new CachingManagementStatusCatalog(persistence);
     }
 }
