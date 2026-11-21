@@ -1,0 +1,8 @@
+{
+  "listen": { "host": "127.0.0.1", "port": 8766 },
+  "sessionTtlMinutes": 720,
+  "workspaces": [
+    { "id": "shop", "label": "Shop", "kit": "http://127.0.0.1:8765", "knowledge": "http://127.0.0.1:8770" },
+    { "id": "billing", "label": "Billing (build host)", "kit": "http://127.0.0.1:8775" }
+  ]
+}

@@ -1,118 +1,98 @@
-# AI SDLC Factory Dashboard
+# Factory Control (factory dashboard)
 
-Control and monitoring dashboard for the AI SDLC agentic factory production line.
+A web dashboard for one or more AI SDLC factories. It is an optional companion of the kit: it
+speaks only the `aisdlc serve` contract (`../openapi/factory-control.openapi.yaml`) and, when you
+add it, the RepoLens HTTP API. It never reads or writes a repository's files. The kit stays the
+system of record and enforces scope, CSRF, `If-Match` and the actor. See
+[ADR-006](../docs/adr/ADR-006-dashboard-contract-client.md).
 
-## Overview
+What you get per workspace:
 
-A standalone TypeScript/pnpm server that provides a real-time pub/sub dashboard for monitoring the AI SDLC factory lifecycle. It bridges the Python AI SDLC engine to a React UI via WebSocket and HTTP API.
+| View | Source | Notes |
+|------|--------|-------|
+| Overview | `/factory/runs`, `/factory/capabilities`, `/factory/report` | Production line by run status, what the factory can do now, gates, autonomy, cost |
+| Runs | `/factory/runs`, `/factory/runs/{id}/events`, `POST /factory/runs` | Steps and evidence per run; request a run with an approved workflow |
+| Projects | `/factory/projects`, `POST …/repos` | Repositories per project, `dry_run` or `live` |
+| Catalogs | `/factory/catalogs/{kind}` | Providers, agents, skills, MCP, workflows, rules, prompts, hooks, memory, integrations; versioned edits |
+| Knowledge | RepoLens `search`, `orphans`, `metrics` | Search hits keep their repository label |
+| Coach | `/factory/coach` (owner only) | Local harness habits and anti-patterns; never prompt text |
 
-## Architecture
+## Run it in any project
 
-```
-┌─────────────────────────────────────────────────┐
-│  React UI (Vite)                                │
-│  ┌─────────────┐ ┌──────────┐ ┌──────────────┐ │
-│  │ Production  │ │ Event    │ │ Agent Roster │ │
-│  │ Line        │ │ Stream   │ │              │ │
-│  └─────────────┘ └──────────┘ └──────────────┘ │
-└────────────────────┬────────────────────────────┘
-                     │ WebSocket + HTTP API
-┌────────────────────▼────────────────────────────┐
-│  Fastify Server (TypeScript)                    │
-│  ┌─────────────┐ ┌──────────┐ ┌──────────────┐ │
-│  │ Evidence    │ │ AI SDLC  │ │ WebSocket    │ │
-│  │ Watcher     │ │ Bridge   │ │ Pub/Sub      │ │
-│  └─────────────┘ └──────────┘ └──────────────┘ │
-└────────────────────┬────────────────────────────┘
-                     │ HTTP proxy + file watch
-┌────────────────────▼────────────────────────────┐
-│  AI SDLC Python Engine                          │
-│  ┌─────────────┐ ┌──────────┐ ┌──────────────┐ │
-│  │ aisdlc      │ │ Evidence │ │ Runs         │ │
-│  │ serve       │ │ Ledger   │ │ Lifecycle    │ │
-│  └─────────────┘ └──────────┘ └──────────────┘ │
-└─────────────────────────────────────────────────┘
-```
+Requirements: Node 22 or later and pnpm; Python 3.11 or later for the kit.
 
-## Quick Start
+1. In each repository you want to watch, start the kit with writes on:
 
-```bash
-# Install dependencies
-cd framework/ai-sdlc/factory-dashboard
-pnpm install
+   ```bash
+   aisdlc serve --write --port 8765
+   ```
 
-# Build the UI
-pnpm build
+2. Give each person their own token. The secret is printed once:
 
-# Start the server (requires aisdlc serve running on port 8765)
-pnpm dev
+   ```bash
+   aisdlc serve-token add --identity ana --scope write    # read | write | owner
+   aisdlc serve-token list                                 # identities and scopes, never secrets
+   aisdlc serve-token revoke --identity ana
+   ```
 
-# Or start with custom AISDLC root
-AISDLC_ROOT=/path/to/project pnpm dev
-```
+   Tokens live in `.aisdlc/serve.tokens` (mode 0600). The kit writes `.aisdlc/.gitignore` so they
+   never reach a commit.
 
-The dashboard will be available at `http://127.0.0.1:8766`.
+3. Optional: serve the code knowledge graph of the repository with `repolens serve --port 8770`.
 
-## Configuration
+4. Describe your workspaces in a `dashboard.json` (git-ignored here; see `dashboard.example.json`):
 
-| Environment Variable | Default | Description |
-|---|---|---|
-| `FACTORY_DASHBOARD_PORT` | `8766` | Dashboard server port |
-| `AISDLC_ROOT` | `process.cwd()` | Path to the AI SDLC project root |
-| `AISDLC_SERVE_PORT` | `8765` | Port of the `aisdlc serve` HTTP adapter |
+   ```json
+   {
+     "listen": { "host": "127.0.0.1", "port": 8766 },
+     "workspaces": [
+       { "id": "shop", "label": "Shop", "kit": "http://127.0.0.1:8765", "knowledge": "http://127.0.0.1:8770" },
+       { "id": "billing", "label": "Billing (build host)", "kit": "http://10.0.0.12:8765" }
+     ]
+   }
+   ```
 
-## API Endpoints
+5. Build and start:
 
-All endpoints proxy to the AI SDLC `aisdlc serve` adapter:
+   ```bash
+   pnpm install
+   pnpm build
+   FACTORY_DASHBOARD_CONFIG=./dashboard.json pnpm start
+   ```
 
-- `GET /api/factory/capabilities` — Live port capabilities
-- `GET /api/factory/runs` — List runs
-- `GET /api/factory/runs/:id` — Run detail
-- `GET /api/factory/runs/:id/events` — Run evidence events
-- `GET /api/factory/workflows` — List workflows
-- `GET /api/factory/config` — Factory config
-- `GET /api/factory/report` — Evidence report
-- `GET /api/factory/dashboard` — Aggregated dashboard state
-- `WS /ws` — WebSocket pub/sub for real-time events
+   Open `http://127.0.0.1:8766`, pick a workspace and sign in with your token.
 
-## WebSocket Protocol
+Without a config file the dashboard serves one workspace, `local`, from `AISDLC_SERVE_URL`
+(default `http://127.0.0.1:8765`) and `REPOLENS_URL`.
 
-Messages are JSON objects:
+| Variable | Default | Meaning |
+|----------|---------|---------|
+| `FACTORY_DASHBOARD_CONFIG` | none | Path of `dashboard.json` |
+| `FACTORY_DASHBOARD_HOST` / `FACTORY_DASHBOARD_PORT` | `127.0.0.1` / `8766` | Listen address |
+| `AISDLC_SERVE_URL` | `http://127.0.0.1:8765` | Kit of the default workspace |
+| `REPOLENS_URL` | none | RepoLens of the default workspace |
+| `FACTORY_DASHBOARD_LABEL` | `Local` | Label of the default workspace |
 
-```json
-{
-  "type": "event",
-  "timestamp": "2024-01-01T00:00:00Z",
-  "data": {
-    "kind": "step.started",
-    "run_id": "run-abc123",
-    "step": "implement"
-  }
-}
-```
+## Security model
 
-Message types: `event`, `run_status`, `station_update`, `agent_update`, `intent_update`, `heartbeat`.
+- The browser never sees a kit token. The server keeps it per session and workspace, behind an
+  `HttpOnly; SameSite=Strict` cookie (`Secure` when `secureCookies` or `allowRemote` is set).
+- Writes need the `X-Dashboard-CSRF` header from `/api/session`. The server adds the kit's
+  `X-AISDLC-CSRF` itself.
+- Only `/factory/...` paths of the contract are proxied; dot segments and encoded separators are
+  refused. RepoLens is read-only through the dashboard.
+- The server binds to loopback. Another address needs `"allowRemote": true` and TLS in front.
+- Responses carry a strict CSP (`default-src 'self'`), `nosniff`, `no-referrer` and `no-store`.
+- Sessions expire after `sessionTtlMinutes` (default 720) and live in memory.
 
-## Integration with AI SDLC
-
-The dashboard watches the evidence ledger (`.aisdlc/evidence/ledger.jsonl`) for real-time events. When `aisdlc serve` is running, it also proxies the OpenAPI endpoints.
-
-To start the dashboard with the AI SDLC factory:
+## Develop
 
 ```bash
-# Start aisdlc serve first
-aisdlc serve --port 8765
-
-# Then start the dashboard
-cd framework/ai-sdlc/factory-dashboard
-pnpm dev
+pnpm dev           # server with reload on :8766
+pnpm dev:ui        # Vite on :5173, proxying /api to :8766
+pnpm typecheck
+pnpm test          # server tests (Vitest, Fastify inject, fake upstreams)
+pnpm e2e           # Playwright + axe against a real, seeded `aisdlc serve`
 ```
 
-## Files
-
-- `src/server/index.ts` — Fastify server with WebSocket pub/sub
-- `src/ui/App.tsx` — Main React app with production line view
-- `src/ui/components/` — UI components (StationCard, EventStream, IntentPanel)
-- `src/ui/hooks/` — React hooks (useWebSocket, useDashboard)
-- `src/ui/types/` — TypeScript types mirroring the OpenAPI model
-- `src/ui/styles/dashboard.css` — Dark theme CSS with factory control room aesthetic
+The design tokens and rules are in [DESIGN.md](DESIGN.md).

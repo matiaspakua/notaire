@@ -3,6 +3,18 @@
 All notable changes to repolens. Versions follow [SemVer](https://semver.org); the version lives in
 `repolens/__init__.py` and release tags are `repolens-v<version>`.
 
+## [Unreleased]
+
+### Changed
+
+- RepoLens lives at `framework/repolens`, beside the AI SDLC kit instead of inside it. The kit reaches it only as a command, an MCP server and the HTTP API. `repolens setup` rewrites a repository's wiring for the new launcher path.
+- `GET /api/metrics` describes the served store: index size, orphan counts and the usage report from that store's own log. Benchmark results appear only from the folder named by `REPOLENS_BENCH_RESULTS`.
+- The CLI comparison experiment takes its tasks file and corpus as arguments instead of a built-in project.
+
+### Added
+
+- `tests/test_boundaries.py`: the package, runners and launcher import no factory kit and name no adopter.
+
 ## [0.6.2] - 2026-11-20
 
 ### Added
