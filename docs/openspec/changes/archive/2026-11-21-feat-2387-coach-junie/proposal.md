@@ -63,13 +63,14 @@ The `aisdlc coach` command reads Claude Code, Codex, OpenCode and Antigravity se
 
 ### Write set
 
-- `` `framework/ai-sdlc/aisdlc/coach.py` ``
-- `` `framework/ai-sdlc/tests/**` ``
-- `` `framework/ai-sdlc/openapi/factory-control.openapi.yaml` ``
-- `` `framework/ai-sdlc/README.md` ``
-- `` `framework/ai-sdlc/CHANGELOG.md` ``
-- `` `docs/openspec/changes/feat-2387-coach-junie/**` ``
-- `` `docs/openspec/specs/**` `` (archive only)
+- `framework/ai-sdlc/aisdlc/coach.py`
+- `framework/ai-sdlc/tests/**`
+- `framework/ai-sdlc/openapi/factory-control.openapi.yaml`
+- `framework/ai-sdlc/README.md`
+- `framework/ai-sdlc/CHANGELOG.md`
+- `docs/openspec/changes/feat-2387-coach-junie/**`
+- `docs/openspec/changes/archive/2026-11-21-feat-2387-coach-junie/**`
+- `docs/openspec/specs/**` (archive only)
 
 ### Architecture review
 
