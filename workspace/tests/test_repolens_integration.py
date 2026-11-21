@@ -28,9 +28,10 @@ class RepolensHarnessWiringTest(unittest.TestCase):
     def test_every_harness_starts_the_same_server(self):
         claude = load_json(".mcp.json")["mcpServers"]["repolens"]
         cursor = load_json(".cursor/mcp.json")["mcpServers"]["repolens"]
+        junie = load_json(".junie/mcp/mcp.json")["mcpServers"]["repolens"]
         opencode = load_json("local-ai/opencode/opencode.json")["mcp"]["repolens"]
         codex = tomllib.loads((ROOT / ".codex" / "config.toml").read_text(encoding="utf-8"))["mcp_servers"]["repolens"]
-        for name, server in (("claude", claude), ("cursor", cursor), ("codex", codex)):
+        for name, server in (("claude", claude), ("cursor", cursor), ("junie", junie), ("codex", codex)):
             self.assertEqual(EXPECTED, [server["command"], *server["args"]], name)
         self.assertEqual(EXPECTED, opencode["command"])
         self.assertTrue(opencode["enabled"])
