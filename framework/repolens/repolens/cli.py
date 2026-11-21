@@ -43,7 +43,8 @@ def _parser() -> argparse.ArgumentParser:
     s.add_argument("--json", action="store_true")
 
     s = sub.add_parser("setup", help="register repolens with this repository's agent harnesses (idempotent)")
-    s.add_argument("--only", action="append", choices=["claude", "codex", "opencode", "cursor", "git", "gitignore"],
+    s.add_argument("--only", action="append",
+                   choices=["claude", "codex", "opencode", "cursor", "junie", "git", "gitignore"],
                    help="only these targets (default: all)")
     s.add_argument("--install", action="store_true", help="also install the dependencies into $REPOLENS_HOME/venv")
     s.add_argument("--index", action="store_true", help="also build the index now (in the background)")

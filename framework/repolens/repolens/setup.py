@@ -32,7 +32,7 @@ from pathlib import Path
 
 from .paths import CONFIG_NAME, STATE_DIR, find_config, git_root, home, project_root, usage_log
 
-TARGETS = ("claude", "codex", "opencode", "cursor", "git", "gitignore")
+TARGETS = ("claude", "codex", "opencode", "cursor", "junie", "git", "gitignore")
 HOOK_MATCHER = "Read|Grep|Glob|mcp__repolens__.*"
 DEPENDENCIES = ("numpy", "scipy", "tree_sitter", "tree_sitter_language_pack", "yaml", "fastembed", "mcp")
 MODULE_DIR = Path(__file__).resolve().parent.parent
@@ -124,6 +124,13 @@ def setup_cursor(root: Path, dry_run: bool) -> list[str]:
     return [".cursor/mcp.json"] if _write_json(path, data, dry_run) else []
 
 
+def setup_junie(root: Path, dry_run: bool) -> list[str]:
+    path = root / ".junie" / "mcp" / "mcp.json"
+    data = _load_json(path)
+    data.setdefault("mcpServers", {})["repolens"] = _server(root)
+    return [".junie/mcp/mcp.json"] if _write_json(path, data, dry_run) else []
+
+
 def setup_codex(root: Path, dry_run: bool) -> list[str]:
     path = root / ".codex" / "config.toml"
     text = path.read_text(encoding="utf-8") if path.exists() else ""
@@ -188,7 +195,7 @@ def setup_gitignore(root: Path, dry_run: bool) -> list[str]:
 
 
 WRITERS = {"claude": setup_claude, "codex": setup_codex, "opencode": setup_opencode, "cursor": setup_cursor,
-           "git": setup_git, "gitignore": setup_gitignore}
+           "junie": setup_junie, "git": setup_git, "gitignore": setup_gitignore}
 
 
 def setup(targets: list[str], dry_run: bool = False, start: Path | None = None) -> dict[str, list[str]]:
@@ -265,6 +272,7 @@ def _wiring(root: Path) -> dict[str, bool]:
         "codex": has(root / ".codex" / "config.toml", "[mcp_servers.repolens]"),
         "opencode": has(root / _harness_setting(root, "opencode", "opencode.json"), '"repolens"'),
         "cursor": has(root / ".cursor" / "mcp.json", '"repolens"'),
+        "junie": has(root / ".junie" / "mcp" / "mcp.json", '"repolens"'),
         "git": hooks_dir is not None and has(hooks_dir / "post-checkout", "repolens"),
         "gitignore": has(root / ".gitignore", f"{STATE_DIR}/"),
     }
