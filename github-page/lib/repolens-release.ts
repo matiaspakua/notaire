@@ -13,7 +13,7 @@ export type RepoLensRelease = {
 };
 
 export function changelogHighlights(markdown: string): string[] {
-  const head = markdown.search(/^## \[/m);
+  const head = markdown.search(/^## \[(?!Unreleased)/m);
   if (head < 0) return [];
   const rest = markdown.slice(head);
   const next = rest.slice(1).search(/^## \[/m);
