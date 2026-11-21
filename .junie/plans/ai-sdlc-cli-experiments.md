@@ -32,3 +32,9 @@ Add control commands to the factory dashboard so users can direct the factory vi
 
 ### ✓ Step 7: Factory configuration module
 Implement full lifecycle management for agents, rules, MCP integrations, and skills catalog with CRUD operations, enable/disable toggles, and associations. Backend API endpoints in factory-dashboard server, UI module with sidebar navigation, and integration with aisdlc config. Fixed blank page bug: `API_BASE` was used before definition in `types/index.ts`.
+
+### ✓ Step 8: Sequential stage execution, agent tracking, and file viewer
+Factory runs 1 stage at a time with 1 agent, Foreman monitors all. Each agent configured with AGENT.md, rules, skills, MCP/tools, specific LLM model. Track per-agent token consumption and time spent. Add file viewer module to open factory config files (markdown, JSON, YAML) in a nice editor within the dashboard.
+
+### ✓ Step 9: Persistent storage layer for dashboard without active intent
+The dashboard must run even with no active intent, showing historical data and factory configuration. Implement a storage layer reading from `.aisdlc/` (runs, evidence, costs, projects, catalogs) and serve it through the dashboard API. Add multi-project support, historical run browser, and intent history view. The dashboard should show past runs, their metrics, and allow filtering by project/intent.

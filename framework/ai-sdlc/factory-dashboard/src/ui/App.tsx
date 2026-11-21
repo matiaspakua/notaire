@@ -1,22 +1,24 @@
 /**
  * Factory Dashboard — Main app component.
  *
- * Production line control room: intent panel, station grid, event stream,
- * agent roster, and tabs for navigation.
+ * Manufacturing control room: sidebar navigation, always-visible intent bar,
+ * production line with clickable stations opening an inspection panel.
  */
 import { useState, useMemo, useCallback, useEffect } from "react";
-import { Station, Agent, EvidenceEvent, StationPhase, ControlState, EvidenceKind } from "@/types";
+import { Station, Agent, EvidenceEvent, StationPhase, ControlState } from "@/types";
 import { StationCard } from "@/components/StationCard";
 import { EventStream } from "@/components/EventStream";
 import { StationDetail } from "@/components/StationDetail";
 import { MetricsView } from "@/components/MetricsView";
 import { ControlBar } from "@/components/ControlBar";
 import { ConfigView } from "@/components/ConfigView";
+import { FileViewerView } from "@/components/FileViewerView";
+import { RepoLensMetricsView } from "@/components/RepoLensMetricsView";
+import { HistoryView } from "@/components/HistoryView";
 import { useWebSocket } from "@/hooks/useWebSocket";
-import { IntentPanel } from "@/components/IntentPanel";
 import "@/styles/dashboard.css";
 
-// ───────────────────── Default stations (production line definition) ─────────────────────
+// ───────────────────── Default stations ─────────────────────
 
 const DEFAULT_STATIONS: Station[] = [
   // Intake
@@ -61,33 +63,66 @@ const DEFAULT_AGENTS: Agent[] = [
 
 const PHASES: StationPhase[] = ["Intake", "Plan", "Prove", "Publish", "Ship"];
 
-type TabId = "line" | "events" | "agents";
+const PHASE_INDICATOR_CLASS: Record<StationPhase, string> = {
+  Intake: "intake",
+  Plan: "plan",
+  Prove: "prove",
+  Publish: "publish",
+  Ship: "ship",
+};
+
+// Map StationPhase to data-phase attribute (lowercase)
+const PHASE_DATA_ATTR: Record<StationPhase, string> = {
+  Intake: "intake",
+  Plan: "plan",
+  Prove: "prove",
+  Publish: "publish",
+  Ship: "ship",
+};
+
+// Map status to data-status attribute
+const STATUS_MAP: Record<string, string> = {
+  idle: "idle",
+  active: "running",
+  completed: "done",
+  blocked: "error",
+  waiting: "waiting",
+  skipped: "skipped",
+  paused: "paused",
+};
+
+type ViewId = "line" | "metrics" | "events" | "config" | "files" | "repolens-metrics" | "history";
+
+type Theme = "light" | "dark";
 
 // ───────────────────── App ─────────────────────
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<TabId>("line");
+  const [activeView, setActiveView] = useState<ViewId>("line");
+  const [theme, setTheme] = useState<Theme>("light");
+  const [controlState, setControlState] = useState<ControlState>("idle");
   const [stations, setStations] = useState<Station[]>(DEFAULT_STATIONS);
   const [agents] = useState<Agent[]>(DEFAULT_AGENTS);
   const [events, setEvents] = useState<EvidenceEvent[]>([]);
+  const [selectedStation, setSelectedStation] = useState<Station | null>(null);
 
-  const { connected } = useWebSocket(
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
+
+  const toggleTheme = useCallback(() => {
+    setTheme((t) => (t === "light" ? "dark" : "light"));
+  }, []);
+
+  const { connected, send } = useWebSocket(
     typeof window !== "undefined"
       ? `ws://${window.location.host}/ws`
       : "ws://127.0.0.1:8766/ws"
   );
 
-  // Process WebSocket messages to update station status
-  const processMessage = (data: any) => {
+  const processMessage = useCallback((data: any) => {
     if (data.kind) {
       setEvents((prev) => [...prev.slice(-100), data as EvidenceEvent]);
-
-      // Map evidence events to station status
-      if (data.kind === "run.started") {
-        setStations((prev) =>
-          prev.map((s) => (s.id === "intake" ? { ...s, status: "completed" as const } : s))
-        );
-      }
       if (data.kind === "step.started" && data.step) {
         setStations((prev) =>
           prev.map((s) => (s.id === data.step ? { ...s, status: "active" as const } : s))
@@ -98,18 +133,29 @@ export default function App() {
           prev.map((s) => (s.id === data.step ? { ...s, status: "completed" as const } : s))
         );
       }
-      if (data.kind === "run.finished") {
+      if (data.kind === "step.skipped" && data.step) {
         setStations((prev) =>
-          prev.map((s) => (s.status === "active" ? { ...s, status: "completed" as const } : s))
+          prev.map((s) => (s.id === data.step ? { ...s, status: "skipped" as const } : s))
         );
       }
+      if (data.kind === "run.paused") {
+        setControlState("paused");
+      }
+      if (data.kind === "run.resumed" || data.kind === "run.play") {
+        setControlState("playing");
+      }
+      if (data.kind === "run.stopped") {
+        setControlState("stopped");
+      }
     }
-  };
+    // Handle control acknowledgments
+    if (data.command && data.accepted !== undefined) {
+      setEvents((prev) => [...prev.slice(-100), { kind: "run.finished", timestamp: new Date().toISOString(), ...data } as EvidenceEvent]);
+    }
+  }, []);
 
   // Simulate demo events for showcase
-  const [demoMode] = useState(true);
   const demoEvents: EvidenceEvent[] = useMemo(() => {
-    if (!demoMode) return [];
     const now = Date.now();
     return [
       { kind: "run.request", run_id: "run-demo-001", timestamp: new Date(now - 60000).toISOString() },
@@ -126,11 +172,10 @@ export default function App() {
       { kind: "step.started", run_id: "run-demo-001", step: "failing-tests", timestamp: new Date(now - 5000).toISOString() },
       { kind: "step.started", run_id: "run-demo-001", step: "implement", timestamp: new Date(now).toISOString() },
     ];
-  }, [demoMode]);
+  }, []);
 
   // Apply demo station statuses
   const demoStations = useMemo(() => {
-    if (!demoMode) return stations;
     const completedSteps = new Set<string>();
     const activeSteps = new Set<string>();
     for (const evt of demoEvents) {
@@ -142,7 +187,7 @@ export default function App() {
       if (activeSteps.has(s.id)) return { ...s, status: "active" as const };
       return s;
     });
-  }, [stations, demoEvents, demoMode]);
+  }, [stations, demoEvents]);
 
   const intent = useMemo(
     () => ({
@@ -156,118 +201,345 @@ export default function App() {
     []
   );
 
+  const handleStationClick = useCallback((station: Station) => {
+    setSelectedStation(station);
+  }, []);
+
+  const handleControl = useCallback(
+    (command: "play" | "pause" | "resume" | "stop" | "skip", reason?: string) => {
+      const runId = intent?.run_id || "run-demo-001";
+      send({ command, run_id: runId, reason });
+
+      // Update local state immediately for responsive UI
+      if (command === "play") setControlState("playing");
+      if (command === "pause") setControlState("paused");
+      if (command === "resume") setControlState("playing");
+      if (command === "stop") setControlState("stopped");
+
+      // Add control event to the stream
+      setEvents((prev) => [
+        ...prev.slice(-100),
+        {
+          kind: `run.${command}` as any,
+          run_id: runId,
+          timestamp: new Date().toISOString(),
+          reason,
+        } as EvidenceEvent,
+      ]);
+    },
+    [send, intent]
+  );
+
+  const handleSkipStation = useCallback(
+    (stationId: string) => {
+      handleControl("skip", `Skip station: ${stationId}`);
+      setStations((prev) =>
+        prev.map((s) => (s.id === stationId ? { ...s, status: "skipped" as const } : s))
+      );
+    },
+    [handleControl]
+  );
+
+  const handleCloseDetail = useCallback(() => {
+    setSelectedStation(null);
+  }, []);
+
   const phasesByGroup = (phase: StationPhase) =>
     demoStations.filter((s) => s.phase === phase);
 
+  const globalStationIndex = useMemo(() => {
+    const map: Record<string, number> = {};
+    let idx = 1;
+    for (const s of demoStations) {
+      map[s.id] = idx++;
+    }
+    return map;
+  }, [demoStations]);
+
+  const completedCount = demoStations.filter((s) => s.status === "completed").length;
+  const runningCount = demoStations.filter((s) => s.status === "active").length;
+
   return (
     <div className="app-shell">
-      {/* Header */}
-      <header className="header">
-        <div className="header-title">
-          <span>⚙️</span>
-          AI SDLC Factory Dashboard
+      {/* ── Sidebar ── */}
+      <aside className="sidebar">
+        <div className="sidebar-brand">
+          <span className="sidebar-brand-icon">F</span>
+          AI SDLC Factory
         </div>
-        <div className="header-status">
-          <span className={`status-dot ${connected ? "connected" : ""}`} />
-          {connected ? "Live" : "Connecting…"}
-        </div>
-      </header>
 
-      {/* Intent panel — always visible */}
-      <IntentPanel intent={intent} />
-
-      {/* Main content */}
-      <main className="main-content">
-        {/* Tabs */}
-        <div className="tabs" role="tablist">
+        <nav className="sidebar-nav">
+          <div className="sidebar-section-label">Views</div>
           <button
-            className={`tab ${activeTab === "line" ? "active" : ""}`}
-            onClick={() => setActiveTab("line")}
-            role="tab"
-            aria-selected={activeTab === "line"}
+            className={`sidebar-nav-item ${activeView === "line" ? "active" : ""}`}
+            onClick={() => setActiveView("line")}
           >
+            <span className="sidebar-nav-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <rect x="1" y="1" width="4" height="4" rx="1" />
+                <rect x="6" y="1" width="4" height="4" rx="1" />
+                <rect x="11" y="1" width="4" height="4" rx="1" />
+                <rect x="1" y="6" width="4" height="4" rx="1" />
+                <rect x="6" y="6" width="4" height="4" rx="1" />
+                <rect x="11" y="6" width="4" height="4" rx="1" />
+                <rect x="1" y="11" width="4" height="4" rx="1" />
+                <rect x="6" y="11" width="4" height="4" rx="1" />
+                <rect x="11" y="11" width="4" height="4" rx="1" />
+              </svg>
+            </span>
             Production Line
           </button>
           <button
-            className={`tab ${activeTab === "events" ? "active" : ""}`}
-            onClick={() => setActiveTab("events")}
-            role="tab"
-            aria-selected={activeTab === "events"}
+            className={`sidebar-nav-item ${activeView === "metrics" ? "active" : ""}`}
+            onClick={() => setActiveView("metrics")}
           >
-            Event Stream
-          </button>
-          <button
-            className={`tab ${activeTab === "agents" ? "active" : ""}`}
-            onClick={() => setActiveTab("agents")}
-            role="tab"
-            aria-selected={activeTab === "agents"}
-          >
-            Agents
-          </button>
-          <button
-            className={`tab ${activeTab === "metrics" ? "active" : ""}`}
-            onClick={() => setActiveTab("metrics")}
-            role="tab"
-            aria-selected={activeTab === "metrics"}
-          >
+            <span className="sidebar-nav-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M2 12l4-4 3 2 5-6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
             Metrics
           </button>
           <button
-            className={`tab ${activeTab === "config" ? "active" : ""}`}
-            onClick={() => setActiveTab("config")}
-            role="tab"
-            aria-selected={activeTab === "config"}
+            className={`sidebar-nav-item ${activeView === "events" ? "active" : ""}`}
+            onClick={() => setActiveView("events")}
           >
+            <span className="sidebar-nav-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M2 4h12M2 8h12M2 12h8" strokeLinecap="round" />
+              </svg>
+            </span>
+            Event Stream
+          </button>
+          <button
+            className={`sidebar-nav-item ${activeView === "config" ? "active" : ""}`}
+            onClick={() => setActiveView("config")}
+          >
+            <span className="sidebar-nav-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M6 2H3a1 1 0 00-1 1v3a4 4 0 004 4h1a4 4 0 014 4v3a1 1 0 01-1 1H7" strokeLinecap="round" />
+                <path d="M14 2a1 1 0 00-1-1H9a1 1 0 00-1 1v3a1 1 0 001 1h4a1 1 0 001-1V2z" strokeLinecap="round" />
+              </svg>
+            </span>
             Configuration
           </button>
+          <button
+            className={`sidebar-nav-item ${activeView === "files" ? "active" : ""}`}
+            onClick={() => setActiveView("files")}
+          >
+            <span className="sidebar-nav-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V7l-5-5z" />
+                <path d="M11 2v5h4" />
+              </svg>
+            </span>
+            Files
+          </button>
+
+          <div className="sidebar-section-label">Data</div>
+          <button
+            className={`sidebar-nav-item ${activeView === "history" ? "active" : ""}`}
+            onClick={() => setActiveView("history")}
+          >
+            <span className="sidebar-nav-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="8" cy="8" r="6" />
+                <path d="M8 4v4l3 2" strokeLinecap="round" />
+              </svg>
+            </span>
+            History
+          </button>
+
+          <div className="sidebar-section-label">Integrations</div>
+          <button
+            className={`sidebar-nav-item ${activeView === "repolens-metrics" ? "active" : ""}`}
+            onClick={() => setActiveView("repolens-metrics")}
+          >
+            <span className="sidebar-nav-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="6" cy="6" r="4" />
+                <path d="M13 13l-3-3" strokeLinecap="round" />
+              </svg>
+            </span>
+            RepoLens Impact
+          </button>
+          <button
+            className="sidebar-nav-item"
+            onClick={() => window.open("http://127.0.0.1:3456", "_blank")}
+            title="Open RepoLens Explorer in new tab"
+          >
+            <span className="sidebar-nav-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M7 3H3a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1v-4" />
+                <path d="M13 3l-7 7h7L13 3z" />
+              </svg>
+            </span>
+            RepoLens Explorer
+          </button>
+        </nav>
+
+        <div className="sidebar-footer">
+          <button
+            className="sidebar-nav-item"
+            onClick={toggleTheme}
+            title={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
+          >
+            <span className="sidebar-nav-icon">
+              {theme === "light" ? (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M14 9A6 6 0 016 2a6.5 6.5 0 108 7z" />
+                </svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <circle cx="8" cy="8" r="3" />
+                  <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.5 3.5l1.4 1.4M11.1 11.1l1.4 1.4M3.5 12.5l1.4-1.4M11.1 4.9l1.4-1.4" strokeLinecap="round" />
+                </svg>
+              )}
+            </span>
+            {theme === "light" ? "Dark Mode" : "Light Mode"}
+          </button>
+          <div className="sidebar-status">
+            <span className={`status-dot ${connected ? "connected" : ""}`} />
+            {connected ? "Live" : "Connecting…"}
+          </div>
+        </div>
+      </aside>
+
+      {/* ── Main ── */}
+      <div className="main-content">
+        {/* Intent bar */}
+        <div className="intent-bar">
+          {intent ? (
+            <>
+              <span className={`intent-source-badge ${intent.source}`}>{intent.source}</span>
+              <div className="intent-content">
+                <span className="intent-id">{intent.id}</span>
+                <span className="intent-title">{intent.title}</span>
+              </div>
+              <span className="intent-run-id">{intent.run_id}</span>
+            </>
+          ) : (
+            <span className="intent-empty">No active intent — factory idle.</span>
+          )}
         </div>
 
-        {/* Production Line tab */}
-        {activeTab === "line" && (
-          <div className="production-line">
-            {PHASES.map((phase) => {
-              const phaseStations = phasesByGroup(phase);
-              if (phaseStations.length === 0) return null;
-              return (
-                <div key={phase} className="phase-group">
-                  <div className="phase-label">{phase}</div>
-                  <div className="conveyor-line" />
-                  <div className="stations-row">
-                    {phaseStations.map((station) => (
-                      <StationCard key={station.id} station={station} />
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Event Stream tab */}
-        {activeTab === "events" && (
-          <EventStream events={demoEvents} />
-        )}
-
-        {/* Agents tab */}
-        {activeTab === "agents" && (
-          <div className="agents-grid">
-            {agents.map((agent) => (
-              <div key={agent.name} className="agent-card">
-                <div className="agent-emoji">{agent.emoji}</div>
-                <div className="agent-name">{agent.name}</div>
-                <div className="agent-role">{agent.role}</div>
-                <div className="agent-status">{agent.status}</div>
+        {/* View content */}
+        <div className="view-container">
+          {/* ── Production Line ── */}
+          {activeView === "line" && (
+            <>
+              <div className="view-header">
+                <h1 className="view-title">Production Line</h1>
+                <p className="view-subtitle">
+                  {completedCount} of {demoStations.length} stations complete
+                  {runningCount > 0 && ` · ${runningCount} running`}
+                  {intent && ` · ${intent.run_id}`}
+                </p>
               </div>
-            ))}
-          </div>
-        )}
+              <ControlBar
+                controlState={controlState}
+                runId={intent?.run_id || null}
+                onControl={handleControl}
+              />
+              <div className="production-line">
+                {PHASES.map((phase) => {
+                  const phaseStations = phasesByGroup(phase);
+                  if (phaseStations.length === 0) return null;
+                  return (
+                    <div key={phase} className="phase-group">
+                      <div className="phase-header">
+                        <span className={`phase-indicator ${PHASE_INDICATOR_CLASS[phase]}`} />
+                        <span className="phase-name">{phase}</span>
+                        <span className="phase-meta">
+                          {phaseStations.filter((s) => s.status === "completed").length}/{phaseStations.length}
+                        </span>
+                      </div>
+                      <div className="stations-row">
+                        {phaseStations.map((station) => (
+                          <StationCard
+                            key={station.id}
+                            station={station}
+                            index={globalStationIndex[station.id] || 0}
+                            phaseDataAttr={PHASE_DATA_ATTR[phase]}
+                            onClick={handleStationClick}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
 
-        {/* Metrics tab */}
-        {activeTab === "metrics" && <MetricsView />}
+          {/* ── Metrics ── */}
+          {activeView === "metrics" && (
+            <>
+              <div className="view-header">
+                <h1 className="view-title">Metrics</h1>
+                <p className="view-subtitle">Production line KPIs and trends</p>
+              </div>
+              <MetricsView />
+            </>
+          )}
 
-        {/* Configuration tab */}
-        {activeTab === "config" && <ConfigView />}
-      </main>
+          {/* ── Event Stream ── */}
+          {activeView === "events" && (
+            <>
+              <div className="view-header">
+                <h1 className="view-title">Event Stream</h1>
+                <p className="view-subtitle">
+                  {demoEvents.length + events.length} events captured
+                </p>
+              </div>
+              <EventStream events={demoEvents} />
+            </>
+          )}
+
+          {/* ── Configuration ── */}
+          {activeView === "config" && (
+            <>
+              <div className="view-header">
+                <h1 className="view-title">Configuration</h1>
+                <p className="view-subtitle">Agents, rules, MCP servers, and skills catalog</p>
+              </div>
+              <ConfigView />
+            </>
+          )}
+
+          {/* ── File Viewer ── */}
+          {activeView === "files" && (
+            <>
+              <div className="view-header">
+                <h1 className="view-title">Files</h1>
+                <p className="view-subtitle">Browse factory configuration files</p>
+              </div>
+              <FileViewerView />
+            </>
+          )}
+
+          {/* ── History ── */}
+          {activeView === "history" && (
+            <HistoryView />
+          )}
+
+          {/* ── RepoLens Impact ── */}
+          {activeView === "repolens-metrics" && (
+            <RepoLensMetricsView />
+          )}
+        </div>
+      </div>
+
+      {/* ── Station Detail Panel ── */}
+      {selectedStation && (
+        <StationDetail
+          station={selectedStation}
+          agents={agents}
+          phaseDataAttr={PHASE_DATA_ATTR[selectedStation.phase]}
+          onClose={handleCloseDetail}
+          onSkip={handleSkipStation}
+        />
+      )}
     </div>
   );
 }

@@ -117,6 +117,23 @@ export interface Agent {
   role: string;
   status: "idle" | "working" | "offline";
   current_station?: string;
+  model?: string;
+  provider?: string;
+  tokens_input?: number;
+  tokens_output?: number;
+  time_spent_seconds?: number;
+}
+
+// ───────────────────── Foreman agent ─────────────────────
+
+export interface ForemanState {
+  status: "monitoring" | "alerting" | "idle";
+  current_stage: string;
+  current_agent: string;
+  stage_index: number;
+  total_stages: number;
+  started_at?: string;
+  last_event?: string;
 }
 
 // ───────────────────── Configuration: Agents ─────────────────────
@@ -325,6 +342,13 @@ export const ENDPOINTS = {
   config: `${API_BASE}/config`,
   report: `${API_BASE}/report`,
   metrics: `${API_BASE}/metrics`,
+  // File viewer
+  fileViewerList: `${API_BASE}/files`,
+  fileViewerContent: (path: string) => `${API_BASE}/files/${encodeURIComponent(path)}`,
+  // Agent tracking
+  agentRecords: `${API_BASE}/agent-records`,
+  agentRecordByRun: (runId: string) => `${API_BASE}/agent-records/run/${runId}`,
+  foreman: `${API_BASE}/foreman`,
 } as const;
 
 // ───────────────────── Metrics ─────────────────────
@@ -382,3 +406,139 @@ export interface MetricsSnapshot {
   // Throughput
   runsByDay: { date: string; count: number }[];
 }
+
+// ───────────────────── Intent-based run metrics ─────────────────────
+
+export interface IntentRun {
+  run_id: string;
+  intent_id: string;
+  intent_title: string;
+  intent_source: "github" | "jira" | "cli" | "mcp";
+  status: "running" | "succeeded" | "failed" | "cancelled" | "paused";
+  started_at: string;
+  finished_at?: string;
+  lead_time_seconds?: number;
+  total_tokens: number;
+  input_tokens: number;
+  output_tokens: number;
+  total_cost_usd: number;
+  stages_completed: number;
+  stages_total: number;
+  stages_failed: number;
+  agent_records: AgentStageRecord[];
+  configuration_used: {
+    agents: string[];
+    rules: string[];
+    skills: string[];
+    mcp_servers: string[];
+    models: string[];
+  };
+  outcome?: {
+    pull_request?: number;
+    branch?: string;
+    commits?: number;
+    files_changed?: number;
+  };
+  errors?: { category: string; count: number }[];
+}
+
+// ───────────────────── Per-agent token and time tracking ─────────────────────
+
+export interface AgentStageRecord {
+  agent_id: string;
+  station_id: string;
+  stage: string;
+  run_id: string;
+  started_at: string;
+  finished_at?: string;
+  duration_seconds?: number;
+  tokens_input: number;
+  tokens_output: number;
+  cost_usd?: number;
+  model: string;
+  provider: string;
+  status: "running" | "completed" | "failed" | "skipped";
+}
+
+// ───────────────────── File viewer ─────────────────────
+
+export type FileViewerType = "markdown" | "json" | "yaml" | "toml" | "text" | "unknown";
+
+export interface FileViewerEntry {
+  path: string;
+  label: string;
+  category: string;
+  type: FileViewerType;
+  description?: string;
+}
+
+export interface FileViewerContent {
+  path: string;
+  content: string;
+  type: FileViewerType;
+  last_modified?: string;
+}
+
+// ───────────────────── RepoLens metrics associations ─────────────────────
+
+export interface RetrievalMetrics {
+  tasks: number;
+  grep_recall_at_10: number;
+  hybrid_recall_at_10: number;
+  graph_recall_at_10: number;
+  grep_latency_ms: number;
+  hybrid_latency_ms: number;
+  graph_latency_ms: number;
+  grep_bytes: number;
+  hybrid_bytes: number;
+  graph_bytes: number;
+}
+
+export interface AgentComparison {
+  baseline: {
+    recall: number;
+    tool_calls: number;
+    turns: number;
+    duration_s: number;
+    cost_usd: number;
+    input_tokens: number;
+    output_tokens: number;
+    runs: number;
+  };
+  graph: {
+    recall: number;
+    tool_calls: number;
+    turns: number;
+    duration_s: number;
+    cost_usd: number;
+    input_tokens: number;
+    output_tokens: number;
+    runs: number;
+  };
+  improvement: {
+    tool_calls_ratio: number;
+    input_tokens_ratio: number;
+    cost_ratio: number;
+    duration_ratio: number;
+  };
+}
+
+export interface RepoLensMetrics {
+  headlines: string[];
+  retrieval: {
+    tuning: RetrievalMetrics | null;
+    holdout: RetrievalMetrics | null;
+  };
+  agents: Record<string, AgentComparison>;
+  factory_kpis?: Record<string, unknown>;
+  cli_comparison?: Record<string, unknown>;
+  index_stats?: {
+    nodes: number;
+    edges: number;
+    files: number;
+    projects: number;
+  };
+}
+
+export const REPOLENS_METRICS_ENDPOINT = "/api/repolens/metrics";
+export const REPOLENS_USAGE_ENDPOINT = "/api/repolens/metrics/usage";

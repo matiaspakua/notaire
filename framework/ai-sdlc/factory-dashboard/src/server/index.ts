@@ -14,6 +14,7 @@ import { EventEmitter } from "events";
 import { readFileSync, existsSync } from "fs";
 import chokidar from "chokidar";
 import { ConfigStore } from "./config-store.js";
+import { PersistentStorage } from "./storage.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = join(__dirname, "../..");
@@ -124,6 +125,9 @@ const port = parseInt(process.env.FACTORY_DASHBOARD_PORT || "8766", 10);
 // Initialize config store and discover all configuration
 const configStore = new ConfigStore(aisdlcRoot);
 configStore.discover();
+
+// Initialize persistent storage for historical data
+const storage = new PersistentStorage(aisdlcRoot);
 
 const fastify = Fastify({
   logger: {
@@ -426,6 +430,67 @@ async function start() {
     return { deleted: true };
   });
 
+  // ── API: Persistent storage (historical data) ──
+
+  // Storage summary — gives the UI a quick overview of what's stored
+  fastify.get("/api/storage/summary", async () => {
+    if (!storage.exists()) {
+      return { error: "No .aisdlc directory found", storage_available: false };
+    }
+    const summary = storage.summary();
+    return { ...summary, storage_available: true };
+  });
+
+  // Evidence records — historical stage runs
+  fastify.get("/api/storage/evidence", async (request: any) => {
+    if (!storage.exists()) return [];
+    const limit = (request.query as any)?.limit;
+    if (limit) {
+      return storage.recentEvidence(Number(limit));
+    }
+    return storage.readEvidence();
+  });
+
+  // Evidence grouped by stage
+  fastify.get("/api/storage/evidence/by-stage", async () => {
+    if (!storage.exists()) return {};
+    return storage.evidenceByStage();
+  });
+
+  // Cost entries
+  fastify.get("/api/storage/costs", async () => {
+    if (!storage.exists()) return [];
+    return storage.readCosts();
+  });
+
+  // Costs grouped by issue
+  fastify.get("/api/storage/costs/by-issue", async () => {
+    if (!storage.exists()) return {};
+    return storage.costsByIssue();
+  });
+
+  // Runs
+  fastify.get("/api/storage/runs", async () => {
+    if (!storage.exists()) return [];
+    return storage.readRuns();
+  });
+
+  // Projects
+  fastify.get("/api/storage/projects", async () => {
+    if (!storage.exists()) return [];
+    return storage.readProjects();
+  });
+
+  // Catalogs (agents, skills, mcp, workflows)
+  fastify.get("/api/storage/catalogs/:type", async (request: any) => {
+    const type = request.params.type;
+    if (!["agents", "skills", "mcp", "workflows"].includes(type)) {
+      throw createError(400, `Invalid catalog type: ${type}`);
+    }
+    if (!storage.exists()) return [];
+    return storage.readCatalogs(type);
+  });
+
   // ── API: Dashboard state (aggregated) ──
   fastify.get("/api/factory/dashboard", async () => {
     const [capabilities, runs, workflows] = await Promise.all([
@@ -434,11 +499,55 @@ async function start() {
       fetchFromAisdlc("/factory/workflows"),
     ]);
 
+    // Merge persistent storage data so the UI has history even without active intent
+    let storageSummary = null;
+    if (storage.exists()) {
+      storageSummary = storage.summary();
+    }
+
     return {
       capabilities: capabilities || {},
       activeRun: runs?.items?.[0] || null,
       workflows: workflows?.items || [],
+      storage: storageSummary,
     };
+  });
+
+  // ── API: RepoLens metrics proxy ──
+  const repolensPort = process.env.REPOLENS_PORT || "3456";
+
+  async function fetchFromRepolens(path: string): Promise<any> {
+    try {
+      const res = await fetch(`http://127.0.0.1:${repolensPort}${path}`);
+      if (!res.ok) return null;
+      return res.json();
+    } catch {
+      return null;
+    }
+  }
+
+  fastify.get("/api/repolens/metrics", async () => {
+    const metrics = await fetchFromRepolens("/api/metrics");
+    if (metrics) return metrics;
+    // Fallback: return empty structure when RepoLens is not running
+    return {
+      headlines: [],
+      retrieval: { tuning: null, holdout: null },
+      agents: {},
+      index_stats: null,
+    };
+  });
+
+  fastify.get("/api/repolens/metrics/usage", async (request: any) => {
+    const hours = (request.query as any)?.hours || 24;
+    const usage = await fetchFromRepolens(`/api/metrics/usage?hours=${hours}`);
+    if (usage) return usage;
+    return { hours: Number(hours), total_events: 0, events: [] };
+  });
+
+  fastify.get("/api/repolens/stats", async () => {
+    const stats = await fetchFromRepolens("/api/stats");
+    return stats || { nodes: 0, edges: 0, files: 0, projects: 0 };
   });
 
   // ── WebSocket endpoint ──
