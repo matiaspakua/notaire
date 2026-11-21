@@ -13,6 +13,11 @@ policy = "POLICY.md"
 
 [catalogs]
 dir = ".aisdlc/catalogs"
+
+[[harness.adapters]]
+id = "local-worker"
+runtime = "local"
+source = ".aisdlc/harness/local-worker.yml"
 """
 
 

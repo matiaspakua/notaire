@@ -12,6 +12,7 @@ from __future__ import annotations
 import tomllib
 from pathlib import Path
 
+from aisdlc.errors import KitError
 from aisdlc.profile import Profile, ProfileError
 
 
@@ -119,6 +120,13 @@ def report_event(
     Never launches agents. Hash-chain append only — see docs/HARNESS-REPORTING.md.
     """
     from aisdlc import runs
+
+    known_ids = [row["id"] for row in list_adapters(ctx.root, ctx.profile)]
+    if adapter not in known_ids:
+        raise KitError(
+            "unknown_adapter",
+            f"unknown adapter {adapter!r}; known adapters: {', '.join(known_ids)}",
+        )
 
     return runs.append_harness_event(
         ctx,
