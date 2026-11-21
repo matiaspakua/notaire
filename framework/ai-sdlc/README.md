@@ -38,8 +38,6 @@ python3 tools/ai-sdlc/bin/aisdlc report
 Mirror the stages in CI with [`templates/integrations/github-actions.yml`](templates/integrations/github-actions.yml)
 and locally with [`templates/integrations/pre-push`](templates/integrations/pre-push).
 
-
-
 ## Issue intake lint (#2257)
 
 `aisdlc intake check <issue> [--json] [--file issue.json]` lints the issue an agent is about to
@@ -116,6 +114,7 @@ profile name and use offline stubs for language tools.
 
 `samples/second-adopter/` is a non-product sample that adopts via the wheel. Automated proof:
 `tests/test_second_adopter.py` (time to first verified `gate plan` ≤ 15 minutes).
+
 ## Service layer and `KitError` (#2252)
 
 `workflows.py` and `catalogs.py` expose adapter-neutral functions: they return dicts and never print.
