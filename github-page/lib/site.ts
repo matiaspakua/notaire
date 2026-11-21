@@ -45,7 +45,7 @@ export const FACTORY_ACTS: PageGroup[] = [
     pages: [
       { href: "/ai-sdlc/anatomy/", title: "Anatomy", summary: "The AI SDLC at a glance: what it is, why it exists and how it works, as a lock chamber.", keywords: "anatomy what why how lock gates roles rulebook illustration" },
       { href: "/ai-sdlc/lifecycle/", title: "Lifecycle", summary: "24 mandatory steps from Issue to closed Issue, five hard gates.", keywords: "workflow steps constitution issue pr" },
-      { href: "/ai-sdlc/factory-line/", title: "Factory line", summary: "Interactive production line dashboard: 16 stations, 10 agents, 5 gates, event stream.", keywords: "production line dashboard factory floor agents stations gates events" },
+      { href: "/ai-sdlc/factory-line/", title: "Factory line", summary: "The production line explained: 16 stations, 10 agents, 5 gates and an example run.", keywords: "production line dashboard factory floor agents stations gates events" },
       { href: "/ai-sdlc/openspec/", title: "OpenSpec", summary: "The spec-driven schema and Notaire's adaptations.", keywords: "spec proposal tasks traceability archive" },
       { href: "/ai-sdlc/agents/", title: "Agents & skills", summary: "The crew, its skills, and who does what next to the human Owner.", keywords: "foreman worker owner swimlane crew" },
     ],

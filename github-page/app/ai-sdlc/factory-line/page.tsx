@@ -558,7 +558,7 @@ export default function FactoryLinePage() {
       <div className="mb-6 flex gap-1 rounded-xl bg-slate-100 p-1" role="tablist">
         {[
           { id: "line" as const, label: "🏭 Production Line" },
-          { id: "events" as const, label: "📡 Event Stream" },
+          { id: "events" as const, label: "Example run" },
           { id: "agents" as const, label: "👥 Agents" },
           { id: "integrations" as const, label: "🔌 Integrations" },
           { id: "diagrams" as const, label: "📊 Diagrams" },

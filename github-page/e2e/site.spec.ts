@@ -58,7 +58,7 @@ test("factory pages show reading progress and previous/next links", async ({ pag
   await page.goto("ai-sdlc/lifecycle/");
   const pager = page.getByRole("navigation", { name: /previous and next/i });
   await expect(pager.getByRole("link", { name: /OpenSpec/ })).toBeVisible();
-  await expect(pager.getByRole("link", { name: /Anatomy/ })).toBeVisible();
+  await expect(pager.getByRole("link", { name: /Factory line/ })).toBeVisible();
   await expect(page.locator("[data-reading-progress]")).toHaveCount(1);
 });
 
