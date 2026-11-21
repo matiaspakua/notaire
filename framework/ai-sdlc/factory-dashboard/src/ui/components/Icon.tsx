@@ -22,6 +22,11 @@ const PATHS = {
   search: "M9 15.5a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13ZM17.5 17.5l-3.8-3.8",
   minus: "M5 10h10",
   dot: "M10 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z",
+  grid: "M3 3h4v4H3zM8 3h4v4H8zM13 3h4v4h-4zM3 8h4v4H3zM8 8h4v4H8zM13 8h4v4h-4zM3 13h4v4H3zM8 13h4v4H8zM13 13h4v4h-4z",
+  metrics: "M2.5 14.5 7 9l3.5 3 7-7.5",
+  config: "M4 5.5h12M4 10h12M4 14.5h12M7 4v3M13 8.5v3M9 13v3",
+  user: "M10 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-6 7.5a6 6 0 0 1 12 0",
+  inbox: "M2.5 11h4l1.5 2.5h4l1.5-2.5h4M4.5 4h11l2 7v4.5a1.5 1.5 0 0 1-1.5 1.5H4a1.5 1.5 0 0 1-1.5-1.5V11l2-7Z",
 } as const;
 
 export type IconName = keyof typeof PATHS;

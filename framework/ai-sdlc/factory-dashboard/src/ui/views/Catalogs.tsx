@@ -33,7 +33,7 @@ function fieldsOf(entry: Entry): Row[] {
 function Value({ name, value }: Row) {
   if (value.startsWith("env:")) {
     return (
-      <span className="env" title={name}>
+      <span className="tag env" title={name}>
         <Icon name="key" size={14} />
         <span className="mono">{value.slice(4)}</span>
       </span>
@@ -164,7 +164,7 @@ function EntryDetail({ kind, entry, onSaved }: { kind: string; entry: Entry; onS
   return (
     <div className="detail">
       <header className="detail-head">
-        <h3 className="mono">{entry.id}</h3>
+        <h3 className="detail-title">{entry.id}</h3>
         <span className="tag">v{entry.version}</span>
         {writable && !editing && (
           <button type="button" className="btn btn-quiet" onClick={() => setEditing(true)}>{t("catalogs.edit")}</button>
@@ -181,7 +181,7 @@ function EntryDetail({ kind, entry, onSaved }: { kind: string; entry: Entry; onS
             <dt>{t("catalogs.by")}</dt>
             <dd>{entry.created_by ?? "—"} <span className="muted small">{time(entry.created_at, lang)}</span></dd>
           </dl>
-          <h4>{t("catalogs.fields")}</h4>
+          <h4 className="section-label">{t("catalogs.fields")}</h4>
           {rows.length === 0 ? <Empty>{t("catalogs.noFields")}</Empty> : (
             <dl className="facts">
               {rows.map((row) => (
@@ -194,7 +194,7 @@ function EntryDetail({ kind, entry, onSaved }: { kind: string; entry: Entry; onS
           )}
         </>
       )}
-      <h4>{t("catalogs.versions")}</h4>
+      <h4 className="section-label">{t("catalogs.versions")}</h4>
       <Loaded resource={versions} rows={2}>
         {(data) => (
           <ol className="timeline">
@@ -219,6 +219,7 @@ export function Catalogs({ kind }: { kind: string }) {
   const list = useResource<{ entries: Entry[] }>(factory(workspace.id, `/catalogs/${kind}`));
   const [selected, setSelected] = useState<string>();
   const [creating, setCreating] = useState(false);
+  const [filter, setFilter] = useState("");
   const current = list.data?.entries.find((entry) => entry.id === selected);
   const detail = useResource<Entry>(current ? factory(workspace.id, `/catalogs/${kind}/${encodeURIComponent(current.id)}`) : null);
   return (
@@ -242,22 +243,33 @@ export function Catalogs({ kind }: { kind: string }) {
       >
         <div className="master">
           <Loaded resource={list}>
-            {(data) =>
-              data.entries.length === 0 ? <Empty>{t("catalogs.empty", { kind })}</Empty> : (
+            {(data) => {
+              const needle = filter.trim().toLowerCase();
+              const shown = data.entries.filter((entry) =>
+                !needle || `${entry.id} ${entry.summary}`.toLowerCase().includes(needle));
+              return data.entries.length === 0 ? <Empty>{t("catalogs.empty", { kind })}</Empty> : (
+                <div className="stack-tight">
+                  <div className="toolbar">
+                    <label className="sr-only" htmlFor="catalog-filter">{t("catalogs.search", { kind })}</label>
+                    <input id="catalog-filter" className="search-input" type="search" value={filter}
+                      placeholder={t("catalogs.search", { kind })} onChange={(e) => setFilter(e.target.value)} />
+                    <span className="count">{t("catalogs.count", { n: shown.length })}</span>
+                  </div>
                 <ul className="entries">
-                  {data.entries.map((entry) => (
+                  {shown.map((entry) => (
                     <li key={entry.id}>
                       <button type="button" className="entry" aria-current={entry.id === selected ? "true" : undefined}
                         onClick={() => { setSelected(entry.id); setCreating(false); }}>
-                        <span className="mono">{entry.id}</span>
-                        <span className="muted small">{entry.summary}</span>
+                        <span className="entry-id">{entry.id}</span>
+                        <span className="entry-summary">{entry.summary}</span>
                         <span className="tag">v{entry.version}</span>
                       </button>
                     </li>
                   ))}
                 </ul>
-              )
-            }
+                </div>
+              );
+            }}
           </Loaded>
           {creating ? (
             <div className="detail">
@@ -269,7 +281,7 @@ export function Catalogs({ kind }: { kind: string }) {
               {(entry) => <EntryDetail kind={kind} entry={entry} onSaved={() => { detail.reload(); list.reload(); }} />}
             </Loaded>
           ) : (
-            <p className="detail empty">{t("catalogs.select")}</p>
+            <p className="detail detail-empty">{t("catalogs.select")}</p>
           )}
         </div>
       </Section>

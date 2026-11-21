@@ -2,22 +2,18 @@ import { type FormEvent, useState } from "react";
 
 import { knowledge } from "../api.ts";
 import { Icon } from "../components/Icon.tsx";
-import { Empty, Loaded, Section } from "../components/State.tsx";
+import { Empty, Group, Kpi, Loaded, Section } from "../components/State.tsx";
 import { useWorkspace } from "../context.ts";
 import { useResource } from "../hooks.ts";
 import { useLang, useT } from "../i18n.ts";
 import type { Hit, KnowledgeMetrics } from "../model.ts";
 
 function Figures({ items }: { items: [string, string][] }) {
+  const tones = ["", "plan", "prove", "publish"];
   return (
-    <dl className="figures">
-      {items.map(([label, value]) => (
-        <div key={label}>
-          <dt>{label}</dt>
-          <dd className="num">{value}</dd>
-        </div>
-      ))}
-    </dl>
+    <div className="kpi-row">
+      {items.map(([label, value], index) => <Kpi key={label} label={label} value={value} tone={tones[index % tones.length]} />)}
+    </div>
   );
 }
 
@@ -34,7 +30,7 @@ function Metrics() {
     <Loaded resource={metrics} rows={4}>
       {(data) => (
         <div className="stack">
-          <Section title={t("knowledge.index")}>
+          <Group title={t("knowledge.index")}>
             <Figures items={[
               [t("knowledge.files"), n(data.index.files)],
               [t("knowledge.nodes"), n(data.index.nodes)],
@@ -44,12 +40,12 @@ function Metrics() {
               <ul className="chips" aria-label={t("knowledge.repos")}>
                 {(data.index.projects as (string | { name: string })[]).map((item) => {
                   const name = typeof item === "string" ? item : item.name;
-                  return <li key={name} className="tag tag-repo">{name}</li>;
+                  return <li key={name} className="tag repo">{name}</li>;
                 })}
               </ul>
             )}
-          </Section>
-          <Section title={t("knowledge.orphans")}>
+          </Group>
+          <Group title={t("knowledge.orphans")} tone="plan">
             <Figures items={[
               [t("knowledge.isolated"), n(data.orphans.isolated)],
               [t("knowledge.historyOnly"), n(data.orphans.history_only)],
@@ -57,10 +53,10 @@ function Metrics() {
             {listing ? (
               <Loaded resource={orphans} rows={3}>
                 {(list) => (
-                  <ul className="paths">
+                  <ul className="paths card">
                     {list.isolated.slice(0, 200).map((item) => (
                       <li key={item.id} className="mono small">
-                        {item.project && <span className="tag tag-repo">{item.project}</span>} {item.path}
+                        {item.project && <span className="tag repo">{item.project}</span>} {item.path}
                       </li>
                     ))}
                   </ul>
@@ -69,15 +65,15 @@ function Metrics() {
             ) : (
               <button type="button" className="btn btn-quiet" onClick={() => setListing(true)}>{t("knowledge.listOrphans")}</button>
             )}
-          </Section>
-          <Section title={t("knowledge.usage")}>
+          </Group>
+          <Group title={t("knowledge.usage")} tone="prove">
             <Figures items={[
               [t("knowledge.calls"), n(data.usage.server?.calls)],
               [t("knowledge.p95"), typeof data.usage.server?.p95_ms === "number" ? `${n(data.usage.server.p95_ms)} ms` : "—"],
               [t("knowledge.zero"), pct(data.usage.server?.zero_result_rate)],
               [t("knowledge.adoption"), pct(data.usage.sessions?.adoption)],
             ]} />
-          </Section>
+          </Group>
         </div>
       )}
     </Loaded>
@@ -100,7 +96,7 @@ export function Knowledge() {
     return <Empty>{t("error.knowledge_not_configured")}</Empty>;
   }
   return (
-    <div className="split split-wide">
+    <div className="stack">
       <Section title={t("knowledge.submit")}>
         <form className="search" role="search" onSubmit={submit}>
           <label htmlFor="kq" className="sr-only">{t("knowledge.search")}</label>
@@ -120,9 +116,9 @@ export function Knowledge() {
                         <div className="hit-head">
                           <span className="hit-name">{hit.name}</span>
                           <span className="tag">{hit.kind}</span>
-                          {hit.project && <span className="tag tag-repo">{hit.project}</span>}
+                          {hit.project && <span className="tag repo">{hit.project}</span>}
                         </div>
-                        <span className="mono small">{hit.path}{hit.start ? `:${hit.start}` : ""}</span>
+                        <span className="hit-path">{hit.path}{hit.start ? `:${hit.start}` : ""}</span>
                         {hit.why && <p className="muted small">{hit.why}</p>}
                       </li>
                     ))}

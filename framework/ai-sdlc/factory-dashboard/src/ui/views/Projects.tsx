@@ -97,8 +97,8 @@ export function Projects() {
                 {data.entries.map((project) => (
                   <li key={project.id} className="project">
                     <header className="detail-head">
-                      <h3>{project.id}</h3>
-                      <span className="mono muted small">{project.profile_ref}</span>
+                      <h3 className="detail-title">{project.id}</h3>
+                      <span className="tag">{project.profile_ref}</span>
                     </header>
                     {project.repos.length === 0 ? (
                       <Empty>{t("projects.noRepos")}</Empty>
@@ -121,7 +121,7 @@ export function Projects() {
                                 <td className="mono small">{repo.url || "—"}</td>
                                 <td className="mono">{repo.default_branch}</td>
                                 <td>
-                                  <span className={`tag tag-${repo.mode}`}>{t(`projects.mode.${repo.mode}`)}</span>
+                                  <span className={`tag ${repo.mode === "live" ? "live" : ""}`}>{t(`projects.mode.${repo.mode}`)}</span>
                                 </td>
                               </tr>
                             ))}

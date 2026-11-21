@@ -5,30 +5,30 @@ import type { Resource } from "../hooks.ts";
 import { hasKey, useLang, useT } from "../i18n.ts";
 import { Icon, type IconName } from "./Icon.tsx";
 
-const STATUS_ICON: Record<string, IconName> = {
-  requested: "dot",
-  queued: "clock",
-  running: "runs",
-  succeeded: "check",
-  pass: "check",
-  failed: "cross",
-  fail: "cross",
-  blocked: "alert",
-  cancelled: "minus",
-  pending: "pause",
-  skip: "minus",
+/** Run, step and gate states map onto the five station tones of the production line. */
+const TONE: Record<string, "idle" | "running" | "done" | "error" | "waiting"> = {
+  requested: "idle",
+  queued: "idle",
+  pending: "idle",
+  running: "running",
+  succeeded: "done",
+  pass: "done",
+  failed: "error",
+  fail: "error",
+  blocked: "waiting",
+  cancelled: "idle",
+  skip: "idle",
 };
 
-/** Status always carries an icon and a word, never color alone. */
+export function toneOf(status: string) {
+  return TONE[status] ?? "idle";
+}
+
+/** The word always names the state; the tint only reinforces it. */
 export function StatusBadge({ status }: { status: string }) {
   const t = useT();
   const key = `status.${status}`;
-  return (
-    <span className={`status status-${status}`}>
-      <Icon name={STATUS_ICON[status] ?? "dot"} size={14} />
-      {hasKey(key) ? t(key) : status}
-    </span>
-  );
+  return <span className={`status-pill ${toneOf(status)}`}>{hasKey(key) ? t(key) : status}</span>;
 }
 
 export function time(value: string | Date | undefined, lang: string): string {
@@ -83,6 +83,17 @@ export function Empty({ children }: { children: ReactNode }) {
   return <p className="empty">{typeof children === "string" ? rich(children) : children}</p>;
 }
 
+/** Page-level empty state: an icon, what is missing, and what to do. */
+export function EmptyState({ icon, title, children }: { icon: IconName; title: string; children?: ReactNode }) {
+  return (
+    <div className="empty-state">
+      <Icon name={icon} size={32} />
+      <p className="empty-state-title">{title}</p>
+      {children && <p>{typeof children === "string" ? rich(children) : children}</p>}
+    </div>
+  );
+}
+
 /** Loading, error, stale and data states for one resource, the same way on every screen. */
 export function Loaded<T>({
   resource,
@@ -117,19 +128,54 @@ export function Loaded<T>({
 export function Section({
   title,
   actions,
+  hint,
   children,
   id,
 }: {
   title: string;
   actions?: ReactNode;
+  hint?: string;
   children: ReactNode;
   id?: string;
 }) {
   const headingId = id ?? `h-${title.replace(/\W+/g, "-").toLowerCase()}`;
   return (
-    <section className="panel" aria-labelledby={headingId}>
-      <header className="panel-head">
-        <h2 id={headingId}>{title}</h2>
+    <section className="card" aria-labelledby={headingId}>
+      <header className="card-head">
+        <h2 className="card-title" id={headingId}>{title}</h2>
+        {actions}
+      </header>
+      {hint && <p className="card-hint">{rich(hint)}</p>}
+      {children}
+    </section>
+  );
+}
+
+export function Kpi({ label, value, sub, tone }: { label: string; value: ReactNode; sub?: ReactNode; tone?: string }) {
+  return (
+    <div className={`kpi-card${tone ? ` ${tone}` : ""}`}>
+      <span className="kpi-label">{label}</span>
+      <span className="kpi-value">{value}</span>
+      {sub !== undefined && <span className="kpi-subtitle">{sub}</span>}
+    </div>
+  );
+}
+
+/** A labelled band on the canvas, like a phase of the production line; KPI rows sit in it without a card. */
+export function Group({ title, tone = "", meta, actions, children }: {
+  title: string;
+  tone?: string;
+  meta?: ReactNode;
+  actions?: ReactNode;
+  children: ReactNode;
+}) {
+  const headingId = `g-${title.replace(/\W+/g, "-").toLowerCase()}`;
+  return (
+    <section className="phase-group" aria-labelledby={headingId}>
+      <header className="phase-header">
+        <span className={`phase-indicator ${tone}`} aria-hidden="true" />
+        <h2 className="phase-name" id={headingId}>{title}</h2>
+        {meta !== undefined && <span className="phase-meta">{meta}</span>}
         {actions}
       </header>
       {children}

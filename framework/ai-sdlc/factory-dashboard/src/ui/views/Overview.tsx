@@ -1,190 +1,118 @@
 import { factory } from "../api.ts";
 import { Icon } from "../components/Icon.tsx";
-import { Empty, Loaded, Section, StatusBadge, time } from "../components/State.tsx";
+import { Kpi, Loaded } from "../components/State.tsx";
 import { useWorkspace } from "../context.ts";
 import { useResource } from "../hooks.ts";
-import { useLang, useT } from "../i18n.ts";
-import type { Capabilities, Report, Run } from "../model.ts";
+import { type Key, useT } from "../i18n.ts";
+import type { Capabilities, Run } from "../model.ts";
 
-const FLOW = ["requested", "queued", "running"] as const;
-const OUTCOMES = ["succeeded", "failed", "blocked", "cancelled"] as const;
+const GROUPS: { id: string; label: Key; phase: string; statuses: string[] }[] = [
+  { id: "flow", label: "line.flow", phase: "", statuses: ["requested", "queued", "running"] },
+  { id: "outcome", label: "line.outcome", phase: "prove", statuses: ["succeeded", "failed", "blocked", "cancelled"] },
+];
+/** A station with runs takes the tone of what those runs need: queued ones wait for a runner adapter. */
+const BUSY: Record<string, string> = {
+  requested: "waiting", queued: "waiting", running: "running", succeeded: "done", failed: "error", blocked: "waiting",
+  cancelled: "idle",
+};
+const ORDER = GROUPS.flatMap((group) => group.statuses);
 
-function Capability({ label, on, detail }: { label: string; on: boolean; detail?: string }) {
+function Station({ status, runs }: { status: string; runs: Run[] }) {
   const t = useT();
+  const { workspace, go } = useWorkspace();
+  const count = runs.length;
+  const label = t(`status.${status}` as Key);
+  const tone = count ? BUSY[status] ?? "idle" : "idle";
   return (
-    <li className={`cap ${on ? "cap-on" : "cap-off"}`}>
-      <Icon name={on ? "check" : "minus"} size={16} />
-      <span className="cap-label">{label}</span>
-      <span className="cap-state">{on ? t("cap.on") : t("cap.off")}</span>
-      {detail && <span className="cap-detail">{detail}</span>}
+    <li>
+      <button
+        type="button"
+        className="station-card"
+        data-status={tone}
+        aria-label={t("line.station", { status: label, n: count })}
+        onClick={() => go(`${workspace.id}/runs?status=${status}`)}
+      >
+        <span className="station-header">
+          <span className="station-number">{ORDER.indexOf(status) + 1}</span>
+          <span className={`status-pill ${tone}`}>{t(`station.${tone}` as Key)}</span>
+        </span>
+        <span className="station-title">{label}</span>
+        <span className="station-count">{count}</span>
+        <span className="station-agent">
+          <Icon name="runs" size={14} />
+          {t(`station.about.${status}` as Key)}
+        </span>
+        {count > 0 && (
+          <span className="station-tags">
+            {runs.slice(0, 3).map((run) => <span key={run.id} className="tag">{run.id}</span>)}
+            {count > 3 && <span className="tag">+{count - 3}</span>}
+          </span>
+        )}
+      </button>
     </li>
   );
 }
 
 function ProductionLine({ runs }: { runs: Run[] }) {
   const t = useT();
-  const { workspace, go } = useWorkspace();
-  const count = (status: string) => runs.filter((run) => run.status === status).length;
-  const station = (status: string) => (
-    <li key={status}>
-      <button
-        type="button"
-        className={`station station-${status}${count(status) ? " station-busy" : ""}`}
-        onClick={() => go(`${workspace.id}/runs?status=${status}`)}
-      >
-        <span className="station-count">{count(status)}</span>
-        <StatusBadge status={status} />
-      </button>
-    </li>
-  );
   return (
-    <div className="line">
-      <ol className="line-flow" aria-label={t("line.title")}>
-        {FLOW.map(station)}
-      </ol>
-      <ol className="line-outcomes">{OUTCOMES.map(station)}</ol>
+    <div className="production-line">
+      {GROUPS.map((group) => {
+        const total = runs.filter((run) => group.statuses.includes(run.status)).length;
+        return (
+          <section key={group.id} className="phase-group" aria-labelledby={`phase-${group.id}`}>
+            <header className="phase-header">
+              <span className={`phase-indicator ${group.phase}`} aria-hidden="true" />
+              <h2 className="phase-name" id={`phase-${group.id}`}>{t(group.label)}</h2>
+              <span className="phase-meta">{total}/{runs.length}</span>
+            </header>
+            <ol className="stations">
+              {group.statuses.map((status) => (
+                <Station key={status} status={status} runs={runs.filter((run) => run.status === status)} />
+              ))}
+            </ol>
+          </section>
+        );
+      })}
     </div>
   );
 }
 
-function Gates({ report }: { report: Report }) {
+function CapabilityCards({ caps }: { caps: Capabilities }) {
   const t = useT();
-  const lang = useLang();
-  if (report.gates.length === 0) {
-    return <Empty>{t("gates.empty")}</Empty>;
-  }
+  const state = (on: boolean) => (on ? t("cap.on") : t("cap.off"));
   return (
-    <div className="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">{t("gates.gate")}</th>
-            <th scope="col">{t("gates.stage")}</th>
-            <th scope="col" className="num">{t("gates.runs")}</th>
-            <th scope="col">{t("gates.passRate")}</th>
-            <th scope="col" className="num">{t("gates.median")}</th>
-            <th scope="col">{t("gates.last")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {report.gates.map((gate) => (
-            <tr key={`${gate.stage}/${gate.gate}`}>
-              <th scope="row">{gate.gate}</th>
-              <td>{gate.stage}</td>
-              <td className="num">{gate.runs}</td>
-              <td>
-                {gate.pass_rate === null ? "—" : (
-                  <span className="meter">
-                    <meter min={0} max={100} value={gate.pass_rate} aria-hidden="true" />
-                    <span className="num">{gate.pass_rate.toLocaleString(lang)}%</span>
-                  </span>
-                )}
-              </td>
-              <td className="num">{gate.median_seconds === null ? "—" : `${gate.median_seconds.toLocaleString(lang)} s`}</td>
-              <td>
-                <StatusBadge status={gate.last_status} />
-                <span className="muted small"> {time(gate.last_ts, lang)}</span>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="kpi-row">
+      <Kpi label={t("cap.runner")} value={state(caps.runner)} tone={caps.runner ? "prove" : "idle"}
+        sub={caps.runner ? t("cap.runner.on") : t("cap.runner.off")} />
+      <Kpi label={t("cap.approvals")} value={state(caps.approvals_live)} tone={caps.approvals_live ? "prove" : "idle"} />
+      <Kpi label={t("cap.forge")} value={state(caps.forge_write)} tone={caps.forge_write ? "prove" : "idle"} />
+      <Kpi label={t("cap.sandbox")} value={state(caps.isolator.sandbox)} tone={caps.isolator.sandbox ? "prove" : "idle"}
+        sub={caps.isolator.backend ?? undefined} />
     </div>
   );
 }
 
-function Cost({ report }: { report: Report }) {
-  const t = useT();
-  const lang = useLang();
-  const models = Object.entries(report.cost.by_model ?? {});
-  const usd = (value: number) => value.toLocaleString(lang, { style: "currency", currency: "USD" });
-  if (models.length === 0) {
-    return <Empty>{t("cost.empty")}</Empty>;
-  }
-  return (
-    <>
-      <p className="figure">
-        <span className="figure-value num">{usd(report.cost.total_usd ?? 0)}</span>
-        <span className="figure-label">{t("cost.total")}</span>
-      </p>
-      <div className="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">{t("cost.model")}</th>
-              <th scope="col" className="num">{t("cost.entries")}</th>
-              <th scope="col" className="num">{t("cost.tokens")}</th>
-              <th scope="col" className="num">USD</th>
-            </tr>
-          </thead>
-          <tbody>
-            {models.map(([model, row]) => (
-              <tr key={model}>
-                <th scope="row" className="mono">{model}</th>
-                <td className="num">{row.entries}</td>
-                <td className="num">{row.input.toLocaleString(lang)} / {row.output.toLocaleString(lang)}</td>
-                <td className="num">{usd(row.usd)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </>
-  );
+export function useRuns() {
+  const { workspace } = useWorkspace();
+  return useResource<{ entries: Run[] }>(factory(workspace.id, "/runs"), 5_000);
 }
 
 export function Overview() {
   const t = useT();
   const { workspace } = useWorkspace();
   const caps = useResource<Capabilities>(factory(workspace.id, "/capabilities"), 30_000);
-  const runs = useResource<{ entries: Run[] }>(factory(workspace.id, "/runs"), 5_000);
-  const report = useResource<Report>(factory(workspace.id, "/report"), 30_000);
+  const runs = useRuns();
   return (
     <div className="stack">
-      <Section title={t("line.title")}>
-        <p className="lede">{t("line.hint")}</p>
-        <Loaded resource={runs} rows={2}>{(data) => <ProductionLine runs={data.entries} />}</Loaded>
-      </Section>
-      <Section title={t("cap.title")}>
-        <Loaded resource={caps} rows={2}>
-          {(data) => (
-            <ul className="caps">
-              <Capability label={t("cap.runner")} on={data.runner} detail={data.runner ? t("cap.runner.on") : t("cap.runner.off")} />
-              <Capability label={t("cap.approvals")} on={data.approvals_live} />
-              <Capability label={t("cap.forge")} on={data.forge_write} />
-              <Capability label={t("cap.sandbox")} on={data.isolator.sandbox} detail={data.isolator.backend ?? undefined} />
-            </ul>
-          )}
-        </Loaded>
-      </Section>
-      <div className="split">
-        <Section title={t("gates.title")}>
-          <Loaded resource={report}>{(data) => <Gates report={data} />}</Loaded>
-        </Section>
-        <div className="stack">
-          <Section title={t("autonomy.title")}>
-            <Loaded resource={report} rows={2}>
-              {(data) =>
-                data.autonomy ? (
-                  <>
-                    <p className="figure">
-                      <span className="figure-value">{t("autonomy.level", { level: data.autonomy.level })}</span>
-                      <span className="tag">{data.autonomy.status}</span>
-                    </p>
-                    <p className="muted">{t("autonomy.trials", { ok: data.autonomy.successes, n: data.autonomy.trials })}</p>
-                    {data.autonomy.detail && <p className="muted small">{data.autonomy.detail}</p>}
-                  </>
-                ) : (
-                  <Empty>—</Empty>
-                )
-              }
-            </Loaded>
-          </Section>
-          <Section title={t("cost.title")}>
-            <Loaded resource={report}>{(data) => <Cost report={data} />}</Loaded>
-          </Section>
-        </div>
-      </div>
+      <Loaded resource={runs} rows={4}>{(data) => <ProductionLine runs={data.entries} />}</Loaded>
+      <section className="phase-group" aria-labelledby="phase-caps">
+        <header className="phase-header">
+          <span className="phase-indicator plan" aria-hidden="true" />
+          <h2 className="phase-name" id="phase-caps">{t("cap.title")}</h2>
+        </header>
+        <Loaded resource={caps} rows={2}>{(data) => <CapabilityCards caps={data} />}</Loaded>
+      </section>
     </div>
   );
 }

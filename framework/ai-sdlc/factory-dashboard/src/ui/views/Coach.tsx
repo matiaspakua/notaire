@@ -1,15 +1,15 @@
 import { useState } from "react";
 
 import { factory } from "../api.ts";
-import { Icon, type IconName } from "../components/Icon.tsx";
-import { Empty, Loaded, Section } from "../components/State.tsx";
+import { Icon } from "../components/Icon.tsx";
+import { Empty, Group, Kpi, Loaded, Section } from "../components/State.tsx";
 import { useWorkspace } from "../context.ts";
 import { useResource } from "../hooks.ts";
 import { hasKey, useLang, useT } from "../i18n.ts";
 import type { CoachReport } from "../model.ts";
 
 const WINDOWS = [7, 30, 90, 0];
-const SEVERITY_ICON: Record<string, IconName> = { high: "alert", medium: "clock", low: "dot" };
+const SEVERITY_TONE: Record<string, string> = { high: "error", medium: "waiting", low: "idle" };
 
 /** Single-series bars: thin marks, a 2px gap, rounded data ends on the baseline, a hover readout, a table twin. */
 function HourChart({ hours }: { hours: number[] }) {
@@ -77,11 +77,12 @@ function Summary({ data }: { data: CoachReport }) {
   const n = (value: number) => value.toLocaleString(lang);
   return (
     <>
-      <dl className="figures">
-        <div><dt>{t("coach.sessions")}</dt><dd className="num">{n(data.totals.sessions)}</dd></div>
-        <div><dt>{t("coach.prompts")}</dt><dd className="num">{n(data.totals.user_turns)}</dd></div>
-        <div><dt>{t("coach.tools")}</dt><dd className="num">{n(data.totals.tool_calls)}</dd></div>
-      </dl>
+      <div className="kpi-row">
+        <Kpi label={t("coach.sessions")} value={n(data.totals.sessions)} />
+        <Kpi label={t("coach.prompts")} tone="plan" value={n(data.totals.user_turns)} />
+        <Kpi label={t("coach.tools")} tone="publish" value={n(data.totals.tool_calls)} />
+        <Kpi label={t("coach.healthyLabel")} tone="prove" value={`${n(data.totals.healthy_sessions)}/${n(data.totals.sessions)}`} />
+      </div>
       <p className="muted">
         {data.totals.sessions > 0
           ? t("coach.healthy", { ok: n(data.totals.healthy_sessions), n: n(data.totals.sessions) })
@@ -105,10 +106,7 @@ function Details({ data }: { data: CoachReport }) {
               const name = `pattern.${item.id}`;
               return (
                 <li key={item.id} className={`finding finding-${item.severity}`}>
-                  <span className={`severity severity-${item.severity}`}>
-                    <Icon name={SEVERITY_ICON[item.severity]} size={14} />
-                    {t(`severity.${item.severity}`)}
-                  </span>
+                  <span className={`status-pill ${SEVERITY_TONE[item.severity]}`}>{t(`severity.${item.severity}`)}</span>
                   <div>
                     <p className="finding-title">{hasKey(name) ? t(name) : item.id}</p>
                     <p className="muted small">{t("coach.occurrences", { n: n(item.occurrences), s: n(item.sessions) })}</p>
@@ -120,7 +118,7 @@ function Details({ data }: { data: CoachReport }) {
           </ul>
         )}
       </Section>
-      <div className="split">
+      <div className="charts-grid">
         <Section title={t("coach.harnesses")}>
           {active.length === 0 ? <Empty>{t("state.empty")}</Empty> : (
             <div className="table-wrap">
@@ -173,21 +171,18 @@ export function Coach() {
   }
   return (
     <div className="stack">
-      <Section
-        title={t("coach.summary")}
-        actions={
-          <div className="chips" role="group" aria-label={t("coach.window")}>
-            {WINDOWS.map((value) => (
-              <button key={value} type="button" className="chip" aria-pressed={days === value} onClick={() => setDays(value)}>
-                {value ? t("coach.days", { n: value }) : t("coach.all")}
-              </button>
-            ))}
-          </div>
-        }
-      >
-        <p className="lede">{t("coach.privacy")}</p>
+      <Group title={t("coach.summary")} actions={
+        <div className="chips" role="group" aria-label={t("coach.window")}>
+          {WINDOWS.map((value) => (
+            <button key={value} type="button" className="chip" aria-pressed={days === value} onClick={() => setDays(value)}>
+              {value ? t("coach.days", { n: value }) : t("coach.all")}
+            </button>
+          ))}
+        </div>
+      }>
+        <p className="card-hint">{t("coach.privacy")}</p>
         <Loaded resource={coach} rows={3}>{(data) => <Summary data={data} />}</Loaded>
-      </Section>
+      </Group>
       {coach.data && coach.data.totals.sessions > 0 && <Details data={coach.data} />}
     </div>
   );

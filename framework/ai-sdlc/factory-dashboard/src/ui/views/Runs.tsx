@@ -21,7 +21,7 @@ function RunDetail({ run }: { run: Run }) {
   return (
     <div className="detail">
       <header className="detail-head">
-        <h3 className="mono">{run.id}</h3>
+        <h3 className="detail-title">{run.id}</h3>
         <StatusBadge status={run.status} />
       </header>
       <dl className="facts">
@@ -34,7 +34,7 @@ function RunDetail({ run }: { run: Run }) {
         <dt>{t("runs.at")}</dt>
         <dd>{time(run.requested_at, lang)}</dd>
       </dl>
-      <h4>{t("runs.steps")}</h4>
+      <h4 className="section-label">{t("runs.steps")}</h4>
       {run.steps && run.steps.length > 0 ? (
         <ol className="steps">
           {run.steps.map((step) => (
@@ -47,7 +47,7 @@ function RunDetail({ run }: { run: Run }) {
       ) : (
         <Empty>—</Empty>
       )}
-      <h4>{t("runs.events")}</h4>
+      <h4 className="section-label">{t("runs.events")}</h4>
       <Loaded resource={events} rows={2}>
         {(data) =>
           data.events.length === 0 ? (
@@ -182,7 +182,7 @@ export function Runs() {
                     </tbody>
                   </table>
                 </div>
-                {chosen ? <RunDetail run={chosen} /> : <p className="detail empty">{t("runs.select")}</p>}
+                {chosen ? <RunDetail run={chosen} /> : <p className="detail detail-empty">{t("runs.select")}</p>}
               </div>
             );
           }}

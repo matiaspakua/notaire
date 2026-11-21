@@ -10,10 +10,11 @@ What you get per workspace:
 
 | View | Source | Notes |
 |------|--------|-------|
-| Overview | `/factory/runs`, `/factory/capabilities`, `/factory/report` | Production line by run status, what the factory can do now, gates, autonomy, cost |
+| Production line | `/factory/runs`, `/factory/capabilities` | Stations by run status with their run ids; what the factory can do now |
 | Runs | `/factory/runs`, `/factory/runs/{id}/events`, `POST /factory/runs` | Steps and evidence per run; request a run with an approved workflow |
+| Metrics | `/factory/report` | KPI cards, stage duration bars, gates, autonomy and cost by model |
+| Configuration | `/factory/catalogs/{kind}` | Providers, agents, skills, MCP, workflows, rules, prompts, hooks, memory, integrations; versioned edits |
 | Projects | `/factory/projects`, `POST …/repos` | Repositories per project, `dry_run` or `live` |
-| Catalogs | `/factory/catalogs/{kind}` | Providers, agents, skills, MCP, workflows, rules, prompts, hooks, memory, integrations; versioned edits |
 | Knowledge | RepoLens `search`, `orphans`, `metrics` | Search hits keep their repository label |
 | Coach | `/factory/coach` (owner only) | Local harness habits and anti-patterns; never prompt text |
 
