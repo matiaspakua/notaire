@@ -159,6 +159,27 @@ class CoachTest(unittest.TestCase):
         self.assertGreater(report["totals"]["healthy_sessions"], 0)
         self.assertLess(report["totals"]["healthy_sessions"], report["totals"]["sessions"])
 
+    def test_harness_injected_messages_are_not_counted_as_prompts(self):
+        home = self.repo.root.parent / f"{self.repo.root.name}-injected"
+        injected = [
+            "<task-notification> <task-id>b1</task-id> background task finished </task-notification>",
+            "<task-notification> <task-id>b1</task-id> background task finished </task-notification>",
+            "<local-command-stdout>model set</local-command-stdout>",
+            "<command-name>/model</command-name>",
+        ]
+        claude_session(home, "noisy", self.repo.root, prompts=["refactor the importer module", *injected])
+        path = home / ".claude" / "projects" / "-demo" / "noisy.jsonl"
+        summary = {"type": "user", "cwd": str(self.repo.root), "isCompactSummary": True, "timestamp": _iso(),
+                   "message": {"role": "user", "content": "This session is being continued from a previous one."}}
+        with path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(summary) + "\n")
+            handle.write(json.dumps(summary) + "\n")
+        result = self.repo.run("coach", "--home", str(home), "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        report = json.loads(result.stdout)
+        self.assertEqual(1, report["totals"]["user_turns"])
+        self.assertEqual([], report["anti_patterns"])
+
     def test_missing_stores_give_an_empty_report_not_an_error(self):
         empty = self.repo.root.parent / f"{self.repo.root.name}-empty"
         empty.mkdir()
