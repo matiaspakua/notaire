@@ -8,6 +8,7 @@ The coach module already supports four harness readers (claude-code, codex, open
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Add Junie CLI as a fifth harness reader in `coach.py`
 - Read sessions from `~/.junie/sessions/index.jsonl`, events from per-session `events.jsonl`, and prompts from `~/.junie/history.jsonl`
 - Never read `EnvironmentVariablesUpdatedEvent` (secrets)
@@ -16,6 +17,7 @@ The coach module already supports four harness readers (claude-code, codex, open
 - Filter by `projectDir` and `--days`
 
 **Non-Goals:**
+
 - Dashboard UI changes
 - Changes to other harness readers
 
