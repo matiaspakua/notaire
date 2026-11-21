@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.1](https://github.com/matiaspakua/notaire/compare/v0.7.0...v0.7.1) (2026-11-20)
+
+
+### Bug Fixes
+
+* **ci:** add missing v0.7 milestone train to fix GitHub Pages build ([#2378](https://github.com/matiaspakua/notaire/issues/2378)) ([1a5d283](https://github.com/matiaspakua/notaire/commit/1a5d283765ac925faf52e407fc2c08049d03212c))
+
 ## [0.7.0](https://github.com/matiaspakua/notaire/compare/v0.6.0...v0.7.0) (2026-11-20)
 
 
