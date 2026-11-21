@@ -122,6 +122,22 @@ class ServeTokensTest(unittest.TestCase):
         self.assertNotIn(secret, cli.stdout)
         self.assertTrue(all(set(e) <= {"identity", "scope", "source"} for e in json.loads(cli.stdout)))
 
+    def test_token_files_are_ignored_by_git(self):
+        import subprocess
+
+        from aisdlc.serve_token import add_token, ensure_token
+
+        ensure_token(self.repo.root, scope="owner")
+        add_token(self.repo.root, identity="gina", scope="read")
+        for name in ("serve.token", "serve.tokens"):
+            ignored = subprocess.run(
+                ["git", "check-ignore", "-q", f".aisdlc/{name}"], cwd=self.repo.root, check=False,
+            )
+            self.assertEqual(0, ignored.returncode, name)
+        add_token(self.repo.root, identity="hana", scope="read")
+        lines = (self.repo.root / ".aisdlc" / ".gitignore").read_text(encoding="utf-8").splitlines()
+        self.assertEqual(1, lines.count("serve.tokens"))
+
     def test_identities_are_unique_and_validated(self):
         from aisdlc.errors import KitError
         from aisdlc.serve_token import add_token
