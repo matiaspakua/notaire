@@ -252,13 +252,23 @@ def junie(home: Path) -> Iterator[Session]:
 
     # Read events for each session
     sessions_dir = home / ".junie" / "sessions"
+    task_start_counts: dict[str, int] = {}
+    task_start_times: dict[str, list[datetime]] = {}
     for session_id, session in sessions.items():
         events_path = sessions_dir / session_id / "events.jsonl"
         if not events_path.is_file():
             continue
         step_ids: set[str] = set()
+        task_start_counts[session_id] = 0
+        task_start_times[session_id] = []
         for row in _rows(events_path):
             kind = row.get("kind")
+            # Count TaskStartedEvent for task-mode sessions (junie --task)
+            if kind == "TaskStartedEvent":
+                task_start_counts[session_id] = task_start_counts.get(session_id, 0) + 1
+                ts = _when(row.get("timestampMs"))
+                if ts is not None:
+                    task_start_times.setdefault(session_id, []).append(ts)
             if kind == "SessionA2uxEvent":
                 event = row.get("event") if isinstance(row.get("event"), dict) else {}
                 agent_event = event.get("agentEvent") if isinstance(event.get("agentEvent"), dict) else {}
@@ -344,6 +354,16 @@ def junie(home: Path) -> Iterator[Session]:
 
             if best_sid is not None:
                 sessions[best_sid].prompt(prompt_text, prompt_when)
+
+    # For task-mode sessions (junie --task) with no history prompts, count each
+    # TaskStartedEvent as one user turn using an empty prompt string.
+    for session_id, session in sessions.items():
+        count = task_start_counts.get(session_id, 0)
+        if count and not session.prompts:
+            times = task_start_times.get(session_id, [])
+            for i in range(count):
+                ts = times[i] if i < len(times) else None
+                session.prompt("", ts)
 
     yield from (s for s in sessions.values() if s.prompts)
 
