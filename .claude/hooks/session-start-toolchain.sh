@@ -99,7 +99,7 @@ export_environment() {
 # built, both in the background so session start is never delayed. Until they are ready the repolens MCP
 # server is unavailable and agents use Grep/Glob; the next session has it.
 install_repolens() {
-    local launcher="${CLAUDE_PROJECT_DIR:-.}/framework/ai-sdlc/repolens/bin/repolens"
+    local launcher="${CLAUDE_PROJECT_DIR:-.}/framework/repolens/bin/repolens"
     [ -x "$launcher" ] || return 0
     mkdir -p "$HOME/.cache/repolens"
     nohup bash "$launcher" setup --install --index --only gitignore \

@@ -3,31 +3,31 @@
   "method": "python3 workspace/ci/generate-repolens-bench.py",
   "sources": [
     {
-      "path": "framework/ai-sdlc/repolens/bench/results/retrieval.json"
+      "path": "framework/repolens/bench/results/retrieval.json"
     },
     {
-      "path": "framework/ai-sdlc/repolens/bench/results/retrieval-notaire-holdout.json"
+      "path": "framework/repolens/bench/results/retrieval-notaire-holdout.json"
     },
     {
-      "path": "framework/ai-sdlc/repolens/bench/results/agent-haiku.json"
+      "path": "framework/repolens/bench/results/agent-haiku.json"
     },
     {
-      "path": "framework/ai-sdlc/repolens/bench/results/agent-haiku-notaire-holdout.json"
+      "path": "framework/repolens/bench/results/agent-haiku-notaire-holdout.json"
     },
     {
-      "path": "framework/ai-sdlc/repolens/bench/results/agent-sonnet-holdout-0.3.0.json"
+      "path": "framework/repolens/bench/results/agent-sonnet-holdout-0.3.0.json"
     },
     {
-      "path": "framework/ai-sdlc/repolens/bench/results/agent-sonnet-scale.json"
+      "path": "framework/repolens/bench/results/agent-sonnet-scale.json"
     },
     {
-      "path": "framework/ai-sdlc/repolens/bench/results/factory-loop-comparison.md"
+      "path": "framework/repolens/bench/results/factory-loop-comparison.md"
     },
     {
-      "path": "framework/ai-sdlc/repolens/bench/results/cli-comparison.json"
+      "path": "framework/repolens/bench/results/cli-comparison.json"
     },
     {
-      "path": "framework/ai-sdlc/repolens/bench/results/summary-cli-comparison.md"
+      "path": "framework/repolens/bench/results/summary-cli-comparison.md"
     }
   ],
   "headlines": {
@@ -40,7 +40,7 @@
   },
   "retrieval": {
     "tuning": {
-      "path": "framework/ai-sdlc/repolens/bench/results/retrieval.json",
+      "path": "framework/repolens/bench/results/retrieval.json",
       "taskset": "notaire",
       "commit": "073e9776",
       "tasks": 11,
@@ -73,7 +73,7 @@
       }
     },
     "holdout": {
-      "path": "framework/ai-sdlc/repolens/bench/results/retrieval-notaire-holdout.json",
+      "path": "framework/repolens/bench/results/retrieval-notaire-holdout.json",
       "taskset": "notaire-holdout",
       "commit": "073e9776",
       "tasks": 12,
@@ -108,7 +108,7 @@
   },
   "agents": {
     "haikuTuning": {
-      "path": "framework/ai-sdlc/repolens/bench/results/agent-haiku.json",
+      "path": "framework/repolens/bench/results/agent-haiku.json",
       "model": "haiku",
       "taskset": "notaire",
       "commit": "073e9776",
@@ -135,7 +135,7 @@
       }
     },
     "haikuHoldout": {
-      "path": "framework/ai-sdlc/repolens/bench/results/agent-haiku-notaire-holdout.json",
+      "path": "framework/repolens/bench/results/agent-haiku-notaire-holdout.json",
       "model": "haiku",
       "taskset": "notaire-holdout",
       "commit": "073e9776",
@@ -162,7 +162,7 @@
       }
     },
     "sonnetHoldout": {
-      "path": "framework/ai-sdlc/repolens/bench/results/agent-sonnet-holdout-0.3.0.json",
+      "path": "framework/repolens/bench/results/agent-sonnet-holdout-0.3.0.json",
       "model": "sonnet",
       "taskset": "notaire-holdout",
       "commit": "073e9776",
@@ -189,7 +189,7 @@
       }
     },
     "sonnetScale": {
-      "path": "framework/ai-sdlc/repolens/bench/results/agent-sonnet-scale.json",
+      "path": "framework/repolens/bench/results/agent-sonnet-scale.json",
       "model": "sonnet",
       "taskset": "scale",
       "commit": "spring-framework,vscode",
@@ -219,7 +219,7 @@
   "cliComparison": {
     "date": "2026-11-20",
     "tasks": ["totp-verify", "person-create", "folio-slice", "hex-adr"],
-    "path": "framework/ai-sdlc/repolens/bench/results/cli-comparison.json",
+    "path": "framework/repolens/bench/results/cli-comparison.json",
     "summary": {
       "agy": {
         "model": "claude-sonnet-4-6",

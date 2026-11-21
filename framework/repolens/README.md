@@ -156,7 +156,7 @@ Python 3.11+. Two ways, both one command:
 
 ```bash
 # inside a repository that vendors repolens (as Notaire does): no install, a launcher runs this checkout
-bash framework/ai-sdlc/repolens/bin/repolens setup --install    # deps into ~/.cache/repolens/venv + wiring
+bash framework/repolens/bin/repolens setup --install    # deps into ~/.cache/repolens/venv + wiring
 
 # any other repository: install the command, then wire the repository you are in
 pipx install /path/to/repolens            # or: pip install "/path/to/repolens[all]"
@@ -186,7 +186,7 @@ repolens serve                                           # UI + API on http://12
 ```
 
 Several repositories in one store, or ranking settings: write a profile (`repolens init <folders...>`) next to
-them; Notaire's is [`repolens.toml`](../../../repolens.toml) at the repository root.
+them, usually at the repository root.
 
 ## Configuration
 

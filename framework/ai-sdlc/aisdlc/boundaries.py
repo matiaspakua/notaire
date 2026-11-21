@@ -1,8 +1,7 @@
-"""Extraction boundaries for the factory kit and for RepoLens.
+"""Extraction boundaries of the factory kit (ADR-006).
 
-The marker is assembled so this file does not itself contain an adopter name.
-Scans cover the installable cores and the runners, not published benchmark
-tables or adopter task files.
+The marker is assembled so this file does not itself contain an adopter name. The kit core and the optional
+dashboard name no adopter; the core imports no RepoLens. RepoLens checks its own side in its own tests.
 """
 from __future__ import annotations
 
@@ -11,12 +10,10 @@ from pathlib import Path
 
 ADOPTER = re.compile("|".join(["notai" + "re", "backend" + "-api", "workspace" + "/sdlc"]), re.IGNORECASE)
 IMPORT_REPOLENS = re.compile(r"^\s*(?:import|from)\s+repolens\b", re.MULTILINE)
-IMPORT_AISDLC = re.compile(r"^\s*(?:import|from)\s+aisdlc\b", re.MULTILINE)
 PARENT_ESCAPE = re.compile(r"\.parents\[\s*([3-9]|\d{2,})\s*\]")
 
 FACTORY_CORE = ("aisdlc", "bin", "templates", "plugins", "profiles")
-REPOLENS_CODE = ("repolens", "bench", "bin")
-REPOLENS_SKIP = ("bench/results", "bench/tasks", "bench/callgraph")
+DASHBOARD = ("factory-dashboard/src", "factory-dashboard/tests")
 
 
 def _hits(path: Path, root: Path, text: str, patterns: tuple[re.Pattern[str], ...]) -> list[str]:
@@ -53,14 +50,9 @@ def scan_factory(kit: Path) -> list[str]:
     return hits
 
 
-def scan_repolens(root: Path) -> list[str]:
-    """Adopter names, parent escapes, and a factory import inside the RepoLens package and runners."""
+def scan_dashboard(kit: Path) -> list[str]:
+    """Adopter names in the optional dashboard: it serves any project, so it names none."""
     hits: list[str] = []
-    files = _files(root, REPOLENS_CODE, (".py", ".sh", ".toml"), REPOLENS_SKIP)
-    project = root / "pyproject.toml"
-    if project.is_file():
-        files.append(project)
-    for path in files:
-        text = path.read_text(encoding="utf-8", errors="replace")
-        hits.extend(_hits(path, root, text, (ADOPTER, IMPORT_AISDLC, PARENT_ESCAPE)))
+    for path in _files(kit, DASHBOARD, (".ts", ".tsx", ".json", ".css", ".html", ".sh")):
+        hits.extend(_hits(path, kit, path.read_text(encoding="utf-8", errors="replace"), (ADOPTER,)))
     return hits

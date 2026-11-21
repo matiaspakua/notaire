@@ -8,7 +8,7 @@ corpus:
   repo: ../../../../..                    # repository under test
   clone: "{bench}/corpus/notaire"           # clean clone of HEAD, outside the repository, without this module
   profile: ../../../../../repolens.toml     # the repository's repolens profile, reused for the clone
-  strip: framework/ai-sdlc/repolens         # answer key; removed from the clone's working tree
+  strip: framework/repolens         # answer key; removed from the clone's working tree
   touch: backend-api/src/main/java/com/licensis/notaire/domain/mfa/TotpAlgorithm.java
 extra_queries:
   - MFA enrollment start request frontend and backend controller

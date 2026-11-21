@@ -5,7 +5,7 @@ corpus:
   repo: ../../../../..
   clone: "{bench}/corpus/notaire"           # clean clone of HEAD, outside the repository, without this module
   profile: ../../../../../repolens.toml     # the repository's repolens profile, reused for the clone
-  strip: framework/ai-sdlc/repolens
+  strip: framework/repolens
 answer_suffix: >-
   Answer concisely. Finish with one line that starts with `FILES:` followed by the repository-relative
   paths of every relevant file, comma-separated.

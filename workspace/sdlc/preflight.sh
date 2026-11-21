@@ -235,12 +235,12 @@ run "process script self-tests" bash -c \
 
 # repolens module gate (#2298): lint, tests with its coverage floor, wheel build and smoke search, when the
 # branch touches it. Its stack (numpy, scipy, tree-sitter, fastembed, mcp) is heavier than the stdlib-only
-# kit, so a host without it skips with the reason (install: bash framework/ai-sdlc/repolens/bin/repolens
+# kit, so a host without it skips with the reason (install: bash framework/repolens/bin/repolens
 # setup --install, plus pytest/pytest-cov/ruff) instead of failing for an unrelated change.
-if git diff --name-only origin/main...HEAD -- framework/ai-sdlc/repolens repolens.toml | grep -q .; then
+if git diff --name-only origin/main...HEAD -- framework/repolens repolens.toml | grep -q .; then
     if python3 -c "import numpy, scipy, tree_sitter_language_pack, mcp, fastapi, pytest, pytest_cov, ruff" \
         >/dev/null 2>&1; then
-        run "repolens module gate" bash framework/ai-sdlc/repolens/verify.sh
+        run "repolens module gate" bash framework/repolens/verify.sh
     else
         skip "repolens module gate" "dependencies missing on this host (see the comment above)"
     fi

@@ -1,11 +1,13 @@
-# repolens (framework/ai-sdlc/repolens)
+# repolens (framework/repolens)
 
-**Purpose:** Local, open-source code knowledge graph and the repository-knowledge tool of the AI SDLC factory.
+**Purpose:** Local, open-source code knowledge graph. A system of its own beside the AI SDLC kit, not inside
+it: the kit calls it as a command, an MCP server or an HTTP API and never imports it (ADR-006 of the kit), so
+either can move to its own repository.
 Indexes one or more folders (code, tests, docs, configs, data) into a typed property graph and answers hybrid
 semantic + graph queries over a CLI, an HTTP API and an MCP server, so AI agents locate code with fewer tool
 calls and tokens than grep-driven search; measures how agents use it (`repolens report`).
 
-**Verify:** `bash framework/ai-sdlc/repolens/verify.sh` (lint, tests with coverage floor, wheel, smoke run);
+**Verify:** `bash framework/repolens/verify.sh` (lint, tests with coverage floor, wheel, smoke run);
 preflight runs it when a branch touches this module.
 
 ## Contract (what other modules may rely on)

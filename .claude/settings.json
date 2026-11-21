@@ -69,7 +69,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$(git rev-parse --show-toplevel)/framework/ai-sdlc/repolens/bin/repolens\" hook",
+            "command": "bash \"$(git rev-parse --show-toplevel)/framework/repolens/bin/repolens\" hook",
             "timeout": 5
           }
         ]
