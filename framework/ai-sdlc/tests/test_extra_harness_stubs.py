@@ -7,7 +7,7 @@ from pathlib import Path
 
 from helpers import KIT, Repo, output
 
-STUB_IDS = ("claude-code", "openai-codex", "agent-client-protocol")
+STUB_IDS = ("claude-code", "openai-codex", "agent-client-protocol", "junie")
 
 PROFILE = """
 [project]
@@ -47,6 +47,13 @@ id = "agent-client-protocol"
 kind = "harness"
 version = "1.0.0"
 manifest = "plugins/acp/plugin.toml"
+trusted = false
+
+[[plugins.entries]]
+id = "junie"
+kind = "harness"
+version = "1.0.0"
+manifest = "plugins/junie/plugin.toml"
 trusted = false
 
 [[harness.adapters]]
@@ -98,7 +105,7 @@ backend:
 
 
 def _copy_stub_plugins(repo: Repo) -> None:
-    for name in ("openspec", "claude-code", "openai-codex", "acp"):
+    for name in ("openspec", "claude-code", "openai-codex", "acp", "junie"):
         source = KIT / "plugins" / name
         if not source.is_dir():
             continue
@@ -116,11 +123,12 @@ class ExtraHarnessStubsTest(unittest.TestCase):
         self.repo.write(".aisdlc/migration-inventory.toml", INVENTORY)
         self.repo.commit("chore: extra harness stub fixtures")
 
-    def test_kit_ships_three_harness_stub_manifests(self):
+    def test_kit_ships_harness_stub_manifests(self):
         for plugin_dir, plugin_id, runtime in (
             ("claude-code", "claude-code", "claude-code"),
             ("openai-codex", "openai-codex", "openai-codex"),
             ("acp", "agent-client-protocol", "agent-client-protocol"),
+            ("junie", "junie", "junie"),
         ):
             text = (KIT / "plugins" / plugin_dir / "plugin.toml").read_text(encoding="utf-8")
             self.assertIn(f'id = "{plugin_id}"', text)
