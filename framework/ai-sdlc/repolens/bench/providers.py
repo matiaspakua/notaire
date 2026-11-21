@@ -19,7 +19,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 
-DEFAULT_ORDER = ("anthropic", "cursor")
+DEFAULT_ORDER = ("anthropic", "cursor", "codex", "agy", "kiro", "opencode")
 BUILTIN_TOOLS = ("Read", "Grep", "Glob")
 ENV_ORDER = "REPOLENS_AGENT_ORDER"
 ENV_PROVIDER = "REPOLENS_AGENT_PROVIDER"
@@ -98,6 +98,30 @@ def default_providers() -> dict[str, ProviderSpec]:
             fallback_commands=("cursor-agent",),
             auth_env=("CURSOR_API_KEY",),
             probe=("{command}", "status"),
+        ),
+        "codex": ProviderSpec(
+            id="codex",
+            command="codex",
+            auth_env=("OPENAI_API_KEY",),
+            probe=("{command}", "--version"),
+        ),
+        "agy": ProviderSpec(
+            id="agy",
+            command="agy",
+            auth_env=("ANTHROPIC_API_KEY",),
+            probe=("{command}", "--version"),
+        ),
+        "kiro": ProviderSpec(
+            id="kiro",
+            command="kiro-cli",
+            auth_env=("ANTHROPIC_API_KEY",),
+            probe=("{command}", "--version"),
+        ),
+        "opencode": ProviderSpec(
+            id="opencode",
+            command="opencode",
+            auth_env=("OPENAI_API_KEY", "ANTHROPIC_API_KEY"),
+            probe=("{command}", "--version"),
         ),
     }
 
@@ -277,6 +301,46 @@ def build_argv(
             "--model", model,
         ]
         if arm == "graph" and mcp is not None:
+            cmd += ["--mcp-config", str(mcp)]
+        return cmd + [prompt]
+    if provider == "codex":
+        # Codex: exec subcommand, --json for JSONL output, --dangerously-bypass for auto-approve
+        cmd = [
+            command, "exec", "--model", model, "--json",
+            "--dangerously-bypass-approvals-and-sandbox",
+            "--ephemeral",
+        ]
+        if arm == "graph" and mcp is not None:
+            # Codex MCP via config override: mcp_servers.repolens.command, etc.
+            cmd += ["-c", f"mcp_servers.repolens.config_path=\"{mcp}\""]
+        return cmd + [prompt]
+    if provider == "agy":
+        # AGY: --print for non-interactive, --output-format stream-json
+        cmd = [
+            command, "--print", "--output-format", "stream-json",
+            "--model", model,
+        ]
+        if arm == "graph" and mcp is not None:
+            # AGY MCP via --settings JSON override
+            cmd += ["--settings", f'{{"mcpConfig":{{"repolens":{{"command":"{sys.executable}","args":["-m","repolens","mcp"]}}}}}}']
+        return cmd + ["--prompt", prompt]
+    if provider == "kiro":
+        # kiro-cli: chat subcommand, --no-interactive, --trust-all-tools
+        cmd = [
+            command, "chat", "--model", model,
+            "--no-interactive", "--trust-all-tools",
+        ]
+        if arm == "graph" and mcp is not None:
+            # kiro MCP via --settings override
+            cmd += ["--settings", f'{{"mcpServers":{{"repolens":{{"command":"{sys.executable}","args":["-m","repolens","mcp"]}}}}}}']
+        return cmd + [prompt]
+    if provider == "opencode":
+        # opencode: run subcommand, --format json, --auto for auto-approve
+        cmd = [
+            command, "run", "--model", model, "--format", "json", "--auto",
+        ]
+        if arm == "graph" and mcp is not None:
+            # opencode MCP via environment or config file
             cmd += ["--mcp-config", str(mcp)]
         return cmd + [prompt]
     raise ValueError(f"no argv template for provider {provider!r}")
