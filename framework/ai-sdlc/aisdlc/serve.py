@@ -41,6 +41,8 @@ STATUS_FOR = {
     "not_implemented": 501,
     "runner_unavailable": 501,
     "workflow_not_approved": 409,
+    "literal_secret": 400,
+    "already_exists": 409,
 }
 
 
@@ -219,16 +221,15 @@ def _dispatch_put(ctx: Context, path: str, body: dict, *, expected_version: int,
     if kind not in catalogs.KINDS:
         raise KitError("unknown_kind", f"unknown catalog kind {kind!r}")
     # Body cannot set created_by / created_at / version / digest.
-    summary = body.get("summary") if isinstance(body, dict) else None
-    ref = body.get("ref") if isinstance(body, dict) else None
     return catalogs.update(
         ctx,
         kind,
         entry_id,
-        ref=ref,
-        summary=summary,
+        ref=body.get("ref"),
+        summary=body.get("summary"),
         expected_version=expected_version,
         actor=actor,
+        fields=body.get("fields"),
     )
 
 
@@ -242,6 +243,9 @@ def _dispatch_post(ctx: Context, path: str, body: dict, *, actor: str) -> Any:
             repos=list(body.get("repos") or []),
             actor=actor,
         )
+    m = re.fullmatch(r"/factory/catalogs/([^/]+)", path)
+    if m:
+        return _create_catalog_entry(ctx, m.group(1), body, actor=actor)
     m = re.fullmatch(r"/factory/projects/([^/]+)/repos", path)
     if m:
         return projects.add_repo(
@@ -267,6 +271,28 @@ def _dispatch_post(ctx: Context, path: str, body: dict, *, actor: str) -> Any:
     if m:
         runs.cancel_unavailable(ctx, _assert_id(m.group(1)))
     raise KitError("method_not_allowed", f"POST not implemented for {path}")
+
+
+def _create_catalog_entry(ctx: Context, kind: str, body: dict, *, actor: str) -> dict:
+    if kind not in catalogs.KINDS:
+        raise KitError("unknown_kind", f"unknown catalog kind {kind!r}")
+    entry_id = _assert_id(str(body.get("id") or ""))
+    fields = catalogs.guard_fields(body.get("fields"))
+    ref = body.get("ref")
+    return catalogs.add(
+        ctx, kind, entry_id, ref=str(ref) if ref else None, summary=str(body.get("summary") or ""),
+        extra=fields, actor=actor,
+    )
+
+
+def session_view(token: ServeToken, *, enable_write: bool) -> dict:
+    """Who the caller is, so a client can show read-only states instead of failing on submit."""
+    return {
+        "identity": token.identity,
+        "scope": token.scope,
+        "actor": from_token_identity(token.identity, token.scope),
+        "write_enabled": enable_write and token.allows("write"),
+    }
 
 
 def static_root() -> Path:
@@ -380,9 +406,12 @@ def start_server(
             parsed = urlparse(self.path)
             path = parsed.path or "/"
             try:
-                self._authenticate(GET_SCOPE.get(path, "read") if method == "GET" else "read")
+                caller = self._authenticate(GET_SCOPE.get(path, "read") if method == "GET" else "read")
             except KitError as exc:
                 self._problem(exc.code, exc.detail)
+                return
+            if method == "GET" and path == "/factory/session":
+                self._send_json(200, session_view(caller, enable_write=enable_write))
                 return
             if method in MUTATING and not enable_write:
                 self._problem("method_not_allowed", f"{method} not allowed on read-only host")
