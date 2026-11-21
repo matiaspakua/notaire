@@ -132,6 +132,6 @@ fi
 
 # --- repolens (#2298): dependencies for the repository-knowledge MCP server (.cursor/mcp.json) ---
 # Shared environment $REPOLENS_HOME/venv; the server builds its index on first start. Never fails the install.
-bash framework/ai-sdlc/repolens/bin/repolens setup --install --only gitignore || true
+bash framework/repolens/bin/repolens setup --install --only gitignore || true
 
 echo "notaire cloud install complete"

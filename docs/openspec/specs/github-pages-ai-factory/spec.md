@@ -175,12 +175,12 @@ The RepoLens page SHALL explain in plain English what RepoLens is, how it works 
 
 ### Requirement: Benchmark charts are generated from committed result files
 
-The page SHALL render interactive charts for the latest committed offline retrieval and agent benches (hit@10 / recall@10, latency, bytes per query, agent tool calls) and the live factory-loop A/B comparison from committed markdown/JSON under `framework/ai-sdlc/repolens/bench/results/`. Numbers SHALL match those files (or the report generator's published headline labels derived from them); charts SHALL show sample size and caveats; dark mode and ES/EN SHALL work, keeping English technical terms where clearer.
+The page SHALL render interactive charts for the latest committed offline retrieval and agent benches (hit@10 / recall@10, latency, bytes per query, agent tool calls) and the live factory-loop A/B comparison from committed markdown/JSON under `framework/repolens/bench/results/`. Numbers SHALL match those files (or the report generator's published headline labels derived from them); charts SHALL show sample size and caveats; dark mode and ES/EN SHALL work, keeping English technical terms where clearer.
 
 #### Scenario: Chart data tracks the committed snapshot
 
 - **WHEN** the Pages app builds
-- **THEN** chart values come from a build-time or committed snapshot sourced from `framework/ai-sdlc/repolens/bench/results/` and unit tests fail if key published ratios drift from the JSON sources
+- **THEN** chart values come from a build-time or committed snapshot sourced from `framework/repolens/bench/results/` and unit tests fail if key published ratios drift from the JSON sources
 
 #### Scenario: Theme and locale
 

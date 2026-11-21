@@ -296,7 +296,7 @@ run = "aisdlc skills"
 [[gates]]
 name = "repolens usage report"
 stage = "signal"
-run = "bash framework/ai-sdlc/repolens/bin/repolens report --gate --since 30d"
+run = "bash framework/repolens/bin/repolens report --gate --since 30d"
 required = false
 
 # ── G3 verified ──────────────────────────────────────────────────────────────
@@ -472,7 +472,7 @@ trusted = false
 [knowledge]
 provider = "repolens"
 command = "bash"
-args = ["framework/ai-sdlc/repolens/bin/repolens"]
+args = ["framework/repolens/bin/repolens"]
 
 [agents]
 order = ["anthropic", "cursor"]

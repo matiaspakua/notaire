@@ -675,6 +675,29 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     p = sub.add_parser(
+        "serve-token",
+        help="Named bearer tokens for aisdlc serve: one per person, each with its own scope (#2384)",
+    )
+    tok_sub = p.add_subparsers(dest="action", required=True)
+    tadd = tok_sub.add_parser("add", help="create a named token; prints the secret once")
+    tadd.add_argument("--identity", required=True, help="who acts with this token (recorded as the actor)")
+    tadd.add_argument("--scope", choices=["read", "write", "owner"], default="read")
+    tadd.add_argument("--json", action="store_true")
+    tlist = tok_sub.add_parser("list", help="identities and scopes (never secrets)")
+    tlist.add_argument("--json", action="store_true")
+    trev = tok_sub.add_parser("revoke", help="remove a named token")
+    trev.add_argument("--identity", required=True)
+
+    p = sub.add_parser(
+        "coach",
+        help="How agent sessions on this machine are run: counts and anti-patterns, never prompt text (#2384)",
+    )
+    p.add_argument("--home", type=Path, help="home folder that holds the harness session stores (default: ~)")
+    p.add_argument("--all-projects", action="store_true", help="include sessions run outside this project")
+    p.add_argument("--days", type=int, help="only sessions active in the last N days")
+    p.add_argument("--json", action="store_true")
+
+    p = sub.add_parser(
         "migrate",
         help="Idempotent schema migration (workflow body v1→v2) with evidence (#2254)",
     )
@@ -853,6 +876,8 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "runtime": lambda: _runtime(ctx, args),
         "demo": lambda: _demo(ctx, args),
         "serve": lambda: _serve(ctx, args),
+        "serve-token": lambda: _serve_token(ctx, args),
+        "coach": lambda: _coach(ctx, args),
         "migrate": lambda: _migrate(ctx, args),
         "improve": lambda: _improve(ctx, args),
 
@@ -1110,6 +1135,41 @@ def _workflow(ctx: Context, args: argparse.Namespace) -> int:
     except ProfileError as exc:
         print(f"error: {exc}")
         return 2
+
+
+def _serve_token(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc import serve_token
+
+    if args.action == "add":
+        token = serve_token.add_token(ctx.root, identity=args.identity, scope=args.scope)
+        if args.json:
+            print(json.dumps({"identity": token.identity, "scope": token.scope, "token": token.value}))
+        else:
+            print(f"token for {token.identity} ({token.scope}); shown once, store it now:")
+            print(token.value)
+        return 0
+    if args.action == "list":
+        entries = serve_token.list_tokens(ctx.root)
+        if args.json:
+            print(json.dumps(entries, indent=2))
+        else:
+            for e in entries:
+                print(f"{e['identity']:<24} {e['scope']:<6} {e['source']}")
+        return 0
+    if serve_token.revoke_token(ctx.root, args.identity):
+        print(f"revoked {args.identity}")
+        return 0
+    print(f"no named token for {args.identity}")
+    return 1
+
+
+def _coach(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc import coach
+
+    home = args.home or coach.default_home()
+    data = coach.report(home, root=None if args.all_projects else ctx.root, days=args.days)
+    print(json.dumps(data, indent=2) if args.json else coach.render(data))
+    return 0
 
 
 def _serve(ctx: Context, args: argparse.Namespace) -> int:

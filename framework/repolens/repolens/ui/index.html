@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>repolens explorer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
+<style>
+:root {
+  --bg: #f7f7f5; --panel: #ffffff; --ink: #1d1d1f; --muted: #5f6368; --line: #e3e3df; --accent: #2457d6;
+  --code: #f1f1ee;
+}
+:root[data-theme="dark"] {
+  --bg: #141518; --panel: #1c1d21; --ink: #ececec; --muted: #a0a3a9; --line: #2e3036; --accent: #7aa2ff;
+  --code: #23252a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141518; --panel: #1c1d21; --ink: #ececec; --muted: #a0a3a9; --line: #2e3036; --accent: #7aa2ff;
+    --code: #23252a;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg);
+       color: var(--ink); height: 100vh; display: grid; grid-template-rows: auto 1fr; }
+header { display: flex; gap: 12px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--line);
+         background: var(--panel); flex-wrap: wrap; }
+header h1 { font-size: 15px; margin: 0 8px 0 0; letter-spacing: -0.01em; }
+form { display: flex; gap: 8px; flex: 1; min-width: 260px; }
+input, select, button { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line);
+                        border-radius: 8px; padding: 7px 10px; }
+input { flex: 1; min-width: 0; }
+button { background: var(--accent); color: #fff; border-color: var(--accent); cursor: pointer; }
+button.quiet { background: var(--bg); color: var(--ink); border-color: var(--line); }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+#stats { color: var(--muted); font-size: 12px; }
+main { display: grid; grid-template-columns: 320px 1fr 380px; min-height: 0; }
+aside { background: var(--panel); overflow: auto; padding: 12px; min-height: 0; }
+#results { border-right: 1px solid var(--line); }
+#detail { border-left: 1px solid var(--line); }
+#cy { min-height: 0; }
+.hit { padding: 8px; border-radius: 8px; cursor: pointer; border: 1px solid transparent; }
+.hit:hover, .hit.active { border-color: var(--line); background: var(--bg); }
+.hit .t { font-weight: 600; word-break: break-all; }
+.hit .p, .muted { color: var(--muted); font-size: 12px; word-break: break-all; }
+.kind { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 6px; color: #fff; margin-right: 4px; }
+h2 { font-size: 13px; margin: 14px 0 6px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+pre { background: var(--code); padding: 10px; border-radius: 8px; overflow: auto; font-size: 12px; max-height: 380px; }
+.rel a { color: var(--accent); cursor: pointer; text-decoration: none; }
+.rel { font-size: 12px; margin: 2px 0; word-break: break-all; }
+#legend { display: flex; flex-wrap: wrap; gap: 6px; font-size: 12px; }
+#legend label { display: inline-flex; gap: 4px; align-items: center; }
+.empty { color: var(--muted); padding: 16px 4px; }
+.group { font-weight: 600; margin: 12px 4px 4px; }
+@media (max-width: 900px) {
+  main { grid-template-columns: 1fr; grid-template-rows: 220px 50vh auto; }
+  #results, #detail { border: 0; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>repolens</h1>
+  <form id="f">
+    <input id="q" placeholder="Ask about the code: e.g. where is the TOTP code verified?" aria-label="Query" autofocus>
+    <select id="scope" aria-label="Scope"><option>all</option><option>code</option><option>docs</option><option>tests</option></select>
+    <button type="submit">Search</button>
+  </form>
+  <button type="button" id="orphans" class="quiet" title="Files that relate to no other file">Orphans</button>
+  <button type="button" id="theme-toggle" class="quiet" title="Toggle light/dark theme">🌙</button>
+  <span id="stats"></span>
+</header>
+<main>
+  <aside id="results"><div class="empty">Search to see ranked nodes. Click a node for details; double-click in the graph to expand its neighbours.</div></aside>
+  <div id="cy" role="img" aria-label="Graph of results and relations"></div>
+  <aside id="detail"><h2>Edge kinds</h2><div id="legend"></div><div id="info"></div></aside>
+</main>
+<script>
+const KIND_COLORS = {file:"#6b7280", class:"#2457d6", interface:"#7c3aed", enum:"#0e7490", type:"#0e7490",
+  method:"#3b82f6", function:"#059669", variable:"#65a30d", section:"#b45309", chunk:"#a16207", route:"#dc2626",
+  table:"#be185d", tag:"#9333ea", dir:"#9ca3af", external:"#9ca3af", project:"#111827"};
+const EDGE_COLORS = {calls:"#3b82f6", references:"#60a5fa", imports:"#94a3b8", inherits:"#7c3aed", tests:"#059669",
+  http_call:"#dc2626", handles:"#ef4444", uses_table:"#be185d", defines_table:"#db2777", co_change:"#f59e0b",
+  mentions:"#a3a3a3", links:"#b45309", tagged:"#9333ea", contains:"#d4d4d4", changed_for:"#c084fc", depends_on:"#d1d5db"};
+const hidden = new Set(["contains", "depends_on", "changed_for", "tagged"]);
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const api = async (path) => { const r = await fetch(path); if (!r.ok) throw new Error(r.status); return r.json(); };
+
+const cy = cytoscape({container: $("cy"), wheelSensitivity: 0.25, style: [
+  {selector: "node", style: {"background-color": (n) => KIND_COLORS[n.data("kind")] || "#888", label: "data(label)",
+    "font-size": 8, "min-zoomed-font-size": 7, "text-wrap": "ellipsis", "text-max-width": 140,
+    color: getComputedStyle(document.body).color, "text-valign": "bottom", "text-margin-y": 3,
+    width: (n) => 10 + 24 * (n.data("score") || 0.15), height: (n) => 10 + 24 * (n.data("score") || 0.15)}},
+  {selector: "node:selected", style: {"border-width": 3, "border-color": "#facc15"}},
+  {selector: "edge", style: {width: 1.4, "line-color": (e) => EDGE_COLORS[e.data("kind")] || "#bbb",
+    "target-arrow-color": (e) => EDGE_COLORS[e.data("kind")] || "#bbb", "target-arrow-shape": "triangle",
+    "curve-style": "bezier", "arrow-scale": 0.7, opacity: 0.8}},
+  {selector: "edge.off", style: {display: "none"}},
+]});
+
+function legend() {
+  $("legend").innerHTML = Object.entries(EDGE_COLORS).map(([k, c]) =>
+    `<label><input type="checkbox" data-k="${k}" ${hidden.has(k) ? "" : "checked"}><span style="color:${c}">■</span>${k}</label>`).join("");
+  $("legend").querySelectorAll("input").forEach((box) => box.addEventListener("change", () => {
+    box.checked ? hidden.delete(box.dataset.k) : hidden.add(box.dataset.k); applyFilter(); }));
+}
+function applyFilter() { cy.edges().forEach((e) => e.toggleClass("off", hidden.has(e.data("kind")))); }
+function label(n) { return (n.name || n.id).split("/").pop().slice(0, 40); }
+
+function addGraph(g, scores = {}) {
+  const els = [];
+  for (const n of g.nodes) if (!cy.getElementById(n.id).length)
+    els.push({group: "nodes", data: {...n, label: label(n), score: scores[n.id]}});
+  for (const e of g.edges) { const id = `${e.source}|${e.kind}|${e.target}`;
+    if (!cy.getElementById(id).length) els.push({group: "edges", data: {id, ...e}}); }
+  cy.add(els); applyFilter();
+  cy.layout({name: "cose", animate: false, nodeRepulsion: 40000, idealEdgeLength: 120, nodeOverlap: 20,
+    componentSpacing: 80, padding: 24}).run();
+}
+
+async function search(ev) {
+  ev?.preventDefault();
+  const q = $("q").value.trim(); if (!q) return;
+  $("results").innerHTML = '<div class="empty">Searching…</div>';
+  const t0 = performance.now();
+  const g = await api(`/api/subgraph?q=${encodeURIComponent(q)}&k=30&scope=${$("scope").value}`);
+  const ms = Math.round(performance.now() - t0);
+  const max = Math.max(...g.hits.map((h) => h.score), 1e-9);
+  const scores = Object.fromEntries(g.hits.map((h) => [h.id, h.score / max]));
+  cy.elements().remove(); addGraph(g, scores);
+  $("results").innerHTML = `<div class="muted">${g.hits.length} results in ${ms} ms</div>` + g.hits.map((h) =>
+    `<div class="hit" data-id="${esc(h.id)}" tabindex="0"><span class="kind" style="background:${KIND_COLORS[h.kind]}">${h.kind}</span>
+     <span class="t">${esc(h.qualname || h.name)}</span><div class="p">${esc(h.path)}${h.start ? ":" + h.start : ""} · ${h.score.toFixed(2)}</div>
+     ${h.why && h.why !== "match" ? `<div class="p">via ${esc(h.why)}</div>` : ""}</div>`).join("");
+  $("results").querySelectorAll(".hit").forEach((el) => {
+    const go = () => { show(el.dataset.id); cy.$(":selected").unselect(); cy.getElementById(el.dataset.id).select(); };
+    el.addEventListener("click", go); el.addEventListener("keydown", (e) => e.key === "Enter" && go()); });
+}
+
+async function showOrphans() {
+  $("results").innerHTML = '<div class="empty">Looking for files that relate to nothing…</div>';
+  const o = await api("/api/orphans?symbols=true");
+  const nodes = [...o.isolated, ...o.history_only].map((e) => ({...e, name: e.path}));
+  cy.elements().remove(); addGraph({nodes, edges: []});
+  cy.layout({name: "grid", animate: false, padding: 24}).run();
+  const row = (e, label) => `<div class="hit" data-id="${esc(e.id)}" tabindex="0">
+    <span class="kind" style="background:${KIND_COLORS[e.kind] || "#888"}">${esc(e.lang || e.kind)}</span>
+    <span class="t">${esc(label)}</span>${e.line > 1 ? `<div class="p">${esc(e.path)}:${e.line}</div>` : ""}</div>`;
+  const demoted = o.demoted.isolated + o.demoted.history_only;
+  const conventional = o.conventional.isolated + o.conventional.history_only;
+  $("results").innerHTML = `<div class="muted">${o.isolated.length} of ${o.files} files relate to no other file;
+      ${o.history_only.length} only through git history${demoted ? `; ${demoted} more in demoted paths` : ""}${
+      conventional ? `; ${conventional} read by tools by name` : ""}.
+      Review candidates: unused, misplaced or missing a link.</div>` +
+    `<div class="group">Relate to nothing (${o.isolated.length})</div>` + o.isolated.map((e) => row(e, e.path)).join("") +
+    `<div class="group">Only through git history (${o.history_only.length})</div>` +
+    o.history_only.map((e) => row(e, e.path)).join("") +
+    `<div class="group">Symbols with no relation (${o.symbols.length})</div>` +
+    o.symbols.slice(0, 300).map((e) => row(e, e.qualname || e.name)).join("");
+  $("results").querySelectorAll(".hit").forEach((el) => {
+    const go = () => { show(el.dataset.id); cy.$(":selected").unselect(); cy.getElementById(el.dataset.id).select(); };
+    el.addEventListener("click", go); el.addEventListener("keydown", (e) => e.key === "Enter" && go()); });
+}
+
+async function show(id) {
+  const n = await api(`/api/node?ref=${encodeURIComponent(id)}`);
+  let html = `<h2>Node</h2><div><span class="kind" style="background:${KIND_COLORS[n.kind]}">${n.kind}</span><b>${esc(n.name)}</b></div>
+    <div class="muted">${esc(n.path)}${n.line ? `:${n.line}-${n.end}` : ""}</div>`;
+  if (n.signature) html += `<pre>${esc(n.signature)}</pre>`;
+  for (const [title, bucket, arrow] of [["Outgoing", n.out, "→"], ["Incoming", n.in, "←"]]) {
+    const kinds = Object.keys(bucket).filter((k) => k !== "dir_contains"); if (!kinds.length) continue;
+    html += `<h2>${title}</h2>` + kinds.map((k) => `<div class="rel"><b>${arrow} ${k}</b>: ` + bucket[k].slice(0, 15)
+      .map((x) => `<a data-id="${esc(x.id)}">${esc(x.name.split("/").pop())}</a>`).join(", ") + "</div>").join("");
+  }
+  try { const s = await api(`/api/snippet?ref=${encodeURIComponent(id)}&lines=60`);
+        html += `<h2>Source</h2><pre>${esc(s.code)}</pre>`; } catch (_) { /* virtual node */ }
+  $("info").innerHTML = html;
+  $("info").querySelectorAll("a[data-id]").forEach((a) => a.addEventListener("click", () => expand(a.dataset.id, true)));
+}
+
+async function expand(id, focus) {
+  const g = await api(`/api/subgraph?ref=${encodeURIComponent(id)}&depth=1`);
+  addGraph(g); if (focus) { show(id); cy.$(":selected").unselect(); cy.getElementById(id).select(); }
+}
+
+cy.on("tap", "node", (e) => show(e.target.id()));
+cy.on("dbltap", "node", (e) => expand(e.target.id(), false));
+$("f").addEventListener("submit", search);
+$("orphans").addEventListener("click", showOrphans);
+legend();
+
+// Theme toggle — respects system preference by default, allows manual override
+const rootEl = document.documentElement;
+const themeBtn = $("theme-toggle");
+function applyThemeIcon() {
+  const isDark = rootEl.dataset.theme === "dark" || (rootEl.dataset.theme !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  themeBtn.textContent = isDark ? "☀️" : "🌙";
+}
+themeBtn.addEventListener("click", () => {
+  const current = rootEl.dataset.theme;
+  if (!current || current === "dark") {
+    rootEl.dataset.theme = "light";
+  } else {
+    rootEl.dataset.theme = "dark";
+  }
+  applyThemeIcon();
+});
+applyThemeIcon();
+api("/api/stats").then((s) => { $("stats").textContent =
+  `${s.projects.map((p) => p.name).join(", ")} · ${s.files} files · ${s.nodes} nodes · ${s.edges} edges`; });
+const initial = new URLSearchParams(location.search).get("q");
+if (initial) { $("q").value = initial; search(); }
+</script>
+</body>
+</html>

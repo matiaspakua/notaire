@@ -9,7 +9,7 @@ import { loadRepoLensBench, headlineFactors } from "@/lib/repolens-bench";
 import { loadRepoLensRelease } from "@/lib/repolens-release";
 
 const REPO = path.join(__dirname, "..", "..");
-const RESULTS = path.join(REPO, "framework", "ai-sdlc", "repolens", "bench", "results");
+const RESULTS = path.join(REPO, "framework", "repolens", "bench", "results");
 
 function loadJson(name: string) {
   return JSON.parse(readFileSync(path.join(RESULTS, name), "utf8")) as {
@@ -67,13 +67,13 @@ describe("RepoLens Pages showcase (#2315)", () => {
     const snap = loadRepoLensBench();
     expect(snap.sources.map((s) => s.path).sort()).toEqual(
       [
-        "framework/ai-sdlc/repolens/bench/results/agent-haiku-notaire-holdout.json",
-        "framework/ai-sdlc/repolens/bench/results/agent-haiku.json",
-        "framework/ai-sdlc/repolens/bench/results/agent-sonnet-holdout-0.3.0.json",
-        "framework/ai-sdlc/repolens/bench/results/agent-sonnet-scale.json",
-        "framework/ai-sdlc/repolens/bench/results/factory-loop-comparison.md",
-        "framework/ai-sdlc/repolens/bench/results/retrieval-notaire-holdout.json",
-        "framework/ai-sdlc/repolens/bench/results/retrieval.json",
+        "framework/repolens/bench/results/agent-haiku-notaire-holdout.json",
+        "framework/repolens/bench/results/agent-haiku.json",
+        "framework/repolens/bench/results/agent-sonnet-holdout-0.3.0.json",
+        "framework/repolens/bench/results/agent-sonnet-scale.json",
+        "framework/repolens/bench/results/factory-loop-comparison.md",
+        "framework/repolens/bench/results/retrieval-notaire-holdout.json",
+        "framework/repolens/bench/results/retrieval.json",
       ].sort(),
     );
     expect(snap.agents.haikuTuning.baseline.runs).toBe(33);
@@ -86,7 +86,7 @@ describe("RepoLens Pages showcase (#2315)", () => {
   it("reads the package version and the current changelog section", () => {
     const release = loadRepoLensRelease();
     const init = readFileSync(
-      path.join(REPO, "framework/ai-sdlc/repolens/repolens/__init__.py"),
+      path.join(REPO, "framework/repolens/repolens/__init__.py"),
       "utf8",
     );
     const page = readFileSync(path.join(__dirname, "..", "app", "ai-sdlc", "repolens", "page.tsx"), "utf8");

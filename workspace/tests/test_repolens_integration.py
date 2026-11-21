@@ -12,8 +12,8 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-LAUNCHER = ROOT / "framework" / "ai-sdlc" / "repolens" / "bin" / "repolens"
-LAUNCH = 'exec "$(git rev-parse --show-toplevel)/framework/ai-sdlc/repolens/bin/repolens" "$@"'
+LAUNCHER = ROOT / "framework" / "repolens" / "bin" / "repolens"
+LAUNCH = 'exec "$(git rev-parse --show-toplevel)/framework/repolens/bin/repolens" "$@"'
 EXPECTED = ["bash", "-c", LAUNCH, "repolens", "mcp"]
 
 
@@ -66,7 +66,7 @@ class RepolensHarnessWiringTest(unittest.TestCase):
             for line in out.stdout.splitlines()
             if "would update" in line and "/.cursor/agent-hooks/" not in line
         ]
-        self.assertEqual([], drift, "run `bash framework/ai-sdlc/repolens/bin/repolens setup` and commit")
+        self.assertEqual([], drift, "run `bash framework/repolens/bin/repolens setup` and commit")
 
 
 class RepolensFactoryProfileTest(unittest.TestCase):
@@ -80,7 +80,7 @@ class RepolensFactoryProfileTest(unittest.TestCase):
 
     def test_catalog_entry_points_at_the_module(self):
         entry = load_json(".aisdlc/catalogs/mcp/repolens/current.json")
-        self.assertEqual("framework/ai-sdlc/repolens", entry["ref"])
+        self.assertEqual("framework/repolens", entry["ref"])
         self.assertTrue((ROOT / entry["ref"] / "MODULE.md").is_file())
 
     def test_usage_report_gate_is_advisory(self):

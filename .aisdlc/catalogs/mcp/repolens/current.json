@@ -1,11 +1,11 @@
 {
-  "created_at": "2026-11-19T17:28:31+00:00",
+  "created_at": "2026-11-21T14:35:05+00:00",
   "created_by": "cli:local",
-  "digest": "09d780cdbe88c4d2a32ef984ae112af8ccd5618b08617b63ba76aef2234b7a8a",
+  "digest": "83b427a07afd9fad2813bd872fcd9ad9b25e7aa4f2cd2c180979e1226c32b626",
   "id": "repolens",
   "kind": "mcp",
-  "ref": "framework/ai-sdlc/repolens",
+  "ref": "framework/repolens",
   "schema_version": 1,
-  "summary": "Local code knowledge graph from this checkout (search, node, impact, path, outline, snippet, orphans); every harness starts it with bin/repolens",
-  "version": 2
+  "summary": "Local code knowledge graph of this checkout (search, node, impact, path, outline, snippet, orphans); a separate system beside the kit, started by every harness with framework/repolens/bin/repolens",
+  "version": 3
 }

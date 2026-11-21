@@ -39,8 +39,8 @@ export const REPOLENS_SECTIONS = {
   ),
   benchesTitle: pair("Latest committed benchmarks", "Últimos benchmarks commitidos"),
   benchesLead: pair(
-    "Charts below are generated from the committed result files under framework/ai-sdlc/repolens/bench/results/. Nothing is typed by hand on this page.",
-    "Los gráficos de abajo se generan desde los archivos de resultados commitidos en framework/ai-sdlc/repolens/bench/results/. Nada se escribe a mano en esta página.",
+    "Charts below are generated from the committed result files under framework/repolens/bench/results/. Nothing is typed by hand on this page.",
+    "Los gráficos de abajo se generan desde los archivos de resultados commitidos en framework/repolens/bench/results/. Nada se escribe a mano en esta página.",
   ),
   pipelineTitle: pair("How RepoLens ranks code", "Cómo RepoLens ordena el código"),
   pipelineDesc: pair(

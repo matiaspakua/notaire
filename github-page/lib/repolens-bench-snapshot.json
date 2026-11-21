@@ -1,33 +1,27 @@
 {
-  "generated_at": "2026-11-20T20:10:00Z",
+  "generated_at": "2026-11-21T14:38:43Z",
   "method": "python3 workspace/ci/generate-repolens-bench.py",
   "sources": [
     {
-      "path": "framework/ai-sdlc/repolens/bench/results/retrieval.json"
+      "path": "framework/repolens/bench/results/retrieval.json"
     },
     {
-      "path": "framework/ai-sdlc/repolens/bench/results/retrieval-notaire-holdout.json"
+      "path": "framework/repolens/bench/results/retrieval-notaire-holdout.json"
     },
     {
-      "path": "framework/ai-sdlc/repolens/bench/results/agent-haiku.json"
+      "path": "framework/repolens/bench/results/agent-haiku.json"
     },
     {
-      "path": "framework/ai-sdlc/repolens/bench/results/agent-haiku-notaire-holdout.json"
+      "path": "framework/repolens/bench/results/agent-haiku-notaire-holdout.json"
     },
     {
-      "path": "framework/ai-sdlc/repolens/bench/results/agent-sonnet-holdout-0.3.0.json"
+      "path": "framework/repolens/bench/results/agent-sonnet-holdout-0.3.0.json"
     },
     {
-      "path": "framework/ai-sdlc/repolens/bench/results/agent-sonnet-scale.json"
+      "path": "framework/repolens/bench/results/agent-sonnet-scale.json"
     },
     {
-      "path": "framework/ai-sdlc/repolens/bench/results/factory-loop-comparison.md"
-    },
-    {
-      "path": "framework/ai-sdlc/repolens/bench/results/cli-comparison.json"
-    },
-    {
-      "path": "framework/ai-sdlc/repolens/bench/results/summary-cli-comparison.md"
+      "path": "framework/repolens/bench/results/factory-loop-comparison.md"
     }
   ],
   "headlines": {
@@ -40,7 +34,7 @@
   },
   "retrieval": {
     "tuning": {
-      "path": "framework/ai-sdlc/repolens/bench/results/retrieval.json",
+      "path": "framework/repolens/bench/results/retrieval.json",
       "taskset": "notaire",
       "commit": "073e9776",
       "tasks": 11,
@@ -73,7 +67,7 @@
       }
     },
     "holdout": {
-      "path": "framework/ai-sdlc/repolens/bench/results/retrieval-notaire-holdout.json",
+      "path": "framework/repolens/bench/results/retrieval-notaire-holdout.json",
       "taskset": "notaire-holdout",
       "commit": "073e9776",
       "tasks": 12,
@@ -108,7 +102,7 @@
   },
   "agents": {
     "haikuTuning": {
-      "path": "framework/ai-sdlc/repolens/bench/results/agent-haiku.json",
+      "path": "framework/repolens/bench/results/agent-haiku.json",
       "model": "haiku",
       "taskset": "notaire",
       "commit": "073e9776",
@@ -135,7 +129,7 @@
       }
     },
     "haikuHoldout": {
-      "path": "framework/ai-sdlc/repolens/bench/results/agent-haiku-notaire-holdout.json",
+      "path": "framework/repolens/bench/results/agent-haiku-notaire-holdout.json",
       "model": "haiku",
       "taskset": "notaire-holdout",
       "commit": "073e9776",
@@ -162,7 +156,7 @@
       }
     },
     "sonnetHoldout": {
-      "path": "framework/ai-sdlc/repolens/bench/results/agent-sonnet-holdout-0.3.0.json",
+      "path": "framework/repolens/bench/results/agent-sonnet-holdout-0.3.0.json",
       "model": "sonnet",
       "taskset": "notaire-holdout",
       "commit": "073e9776",
@@ -189,7 +183,7 @@
       }
     },
     "sonnetScale": {
-      "path": "framework/ai-sdlc/repolens/bench/results/agent-sonnet-scale.json",
+      "path": "framework/repolens/bench/results/agent-sonnet-scale.json",
       "model": "sonnet",
       "taskset": "scale",
       "commit": "spring-framework,vscode",
@@ -215,33 +209,6 @@
         "runs": 8
       }
     }
-  },
-  "cliComparison": {
-    "date": "2026-11-20",
-    "tasks": ["totp-verify", "person-create", "folio-slice", "hex-adr"],
-    "path": "framework/ai-sdlc/repolens/bench/results/cli-comparison.json",
-    "summary": {
-      "agy": {
-        "model": "claude-sonnet-4-6",
-        "runs": 4,
-        "errors": 0,
-        "avg_recall": 1.0,
-        "avg_duration_s": 38.0,
-        "total_input_tokens": 102405,
-        "total_output_tokens": 7511
-      },
-      "kiro": {
-        "model": "claude-sonnet-4.5",
-        "runs": 4,
-        "errors": 0,
-        "avg_recall": 0.75,
-        "avg_duration_s": 43.6
-      }
-    },
-    "unavailable": [
-      {"cli": "codex", "reason": "free tier rate-limited until Nov 25th"},
-      {"cli": "opencode", "reason": "invalid OpenAI API key"}
-    ]
   },
   "factoryLoop": {
     "pairs": [

@@ -1,7 +1,7 @@
-# repolens profile for the Notaire monorepo (framework/ai-sdlc/repolens). Every agent harness starts the
+# repolens profile for the Notaire monorepo (framework/repolens). Every agent harness starts the
 # repolens MCP server from this repository (`repolens setup` registered it); the index of each worktree lives
 # in its own .repolens/ folder. Check the wiring with:
-#   bash framework/ai-sdlc/repolens/bin/repolens doctor
+#   bash framework/repolens/bin/repolens doctor
 [index]
 db = ".repolens/graph.db"
 

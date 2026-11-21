@@ -1,0 +1,48 @@
+# GitHub Actions workflow for the repolens package, for adopters whose CI runs on pull requests. Copy to
+# .github/workflows/repolens.yml and adjust the paths. Notaire runs the same gate in preflight.sh (#2298).
+name: repolens
+on:
+  pull_request:
+    paths: ["framework/repolens/**"]
+  push:
+    tags: ["repolens-v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: framework/repolens
+    strategy:
+      matrix:
+        python: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - run: python -m pip install -e ".[api,mcp,dev]"
+      - run: bash verify.sh
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/repolens-v')
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: framework/repolens
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install build && python -m build
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: framework/repolens/dist/*
