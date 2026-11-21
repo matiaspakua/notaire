@@ -13,6 +13,11 @@ policy = "POLICY.md"
 
 [catalogs]
 dir = ".aisdlc/catalogs"
+
+[[harness.adapters]]
+id = "local-worker"
+runtime = "local"
+source = ".aisdlc/harness/local-worker.yml"
 """
 
 
@@ -111,6 +116,50 @@ class HarnessReportTest(unittest.TestCase):
         self.assertEqual(0, blocked.returncode, output(blocked))
         shown = json.loads(self.repo.run("run", "show", "--id", self.run_id, "--json").stdout)
         self.assertEqual("blocked", shown["status"])
+
+
+    def test_harness_report_refuses_unknown_adapter(self):
+        """CU76 #2385 — adapter not returned by harness list must be rejected."""
+        known = self.repo.run("harness", "list", "--json")
+        self.assertEqual(0, known.returncode, output(known))
+        adapter_ids = [row["id"] for row in json.loads(known.stdout)]
+        unknown = "phantom-adapter"
+        self.assertNotIn(unknown, adapter_ids)
+
+        ledger_before = len(self.repo.ledger())
+
+        result = self.repo.run(
+            "harness", "report",
+            "--run", self.run_id,
+            "--event", "run.started",
+            "--adapter", unknown,
+            "--json",
+        )
+        self.assertEqual(2, result.returncode, output(result))
+        combined = output(result)
+        self.assertIn("unknown_adapter", combined)
+        for aid in adapter_ids:
+            self.assertIn(aid, combined)
+
+        self.assertEqual(ledger_before, len(self.repo.ledger()))
+
+    def test_harness_report_accepts_known_adapter(self):
+        """PRESERVE — adapter returned by harness list still reports successfully."""
+        known = self.repo.run("harness", "list", "--json")
+        self.assertEqual(0, known.returncode, output(known))
+        adapter_ids = [row["id"] for row in json.loads(known.stdout)]
+        self.assertIn("local-worker", adapter_ids)
+
+        result = self.repo.run(
+            "harness", "report",
+            "--run", self.run_id,
+            "--event", "run.started",
+            "--adapter", "local-worker",
+            "--json",
+        )
+        self.assertEqual(0, result.returncode, output(result))
+        shown = self.repo.run("run", "show", "--id", self.run_id, "--json")
+        self.assertEqual("running", json.loads(shown.stdout)["status"])
 
 
 if __name__ == "__main__":
