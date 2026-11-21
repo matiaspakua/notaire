@@ -13,6 +13,7 @@ All notable changes to repolens. Versions follow [SemVer](https://semver.org); t
 
 ### Added
 
+- `repolens setup` now wires the Junie CLI (`.junie/mcp/mcp.json`) alongside Claude Code, Cursor, Codex and OpenCode (#2386).
 - `tests/test_boundaries.py`: the package, runners and launcher import no factory kit and name no adopter.
 
 ## [0.6.2] - 2026-11-20
