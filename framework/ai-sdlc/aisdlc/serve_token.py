@@ -63,6 +63,20 @@ def load_token(root: Path) -> ServeToken | None:
     return ServeToken(value=value, scope=scope, identity=identity or scope)
 
 
+PRIVATE = ("serve.token", "serve.tokens", "serve.tmp")
+
+
+def _keep_out_of_git(root: Path) -> None:
+    """Token files live inside the adopter's repository; a .gitignore next to them keeps them out of commits."""
+    ignore = root / TOKEN_REL.parent / ".gitignore"
+    text = ignore.read_text(encoding="utf-8") if ignore.is_file() else ""
+    missing = [name for name in PRIVATE if name not in text.splitlines()]
+    if missing:
+        ignore.parent.mkdir(parents=True, exist_ok=True)
+        prefix = "\n" if text and not text.endswith("\n") else ""
+        ignore.write_text(text + prefix + "".join(f"{name}\n" for name in missing), encoding="utf-8")
+
+
 def ensure_token(root: Path, *, scope: str = DEFAULT_SCOPE) -> ServeToken:
     existing = load_token(root)
     if existing is not None:
@@ -71,6 +85,7 @@ def ensure_token(root: Path, *, scope: str = DEFAULT_SCOPE) -> ServeToken:
         raise KitError("invalid_scope", f"unknown serve token scope {scope!r}")
     path = token_path(root)
     path.parent.mkdir(parents=True, exist_ok=True)
+    _keep_out_of_git(root)
     value = secrets.token_urlsafe(32)
     path.write_text(f"token={value}\nscope={scope}\n", encoding="utf-8")
     os.chmod(path, 0o600)
@@ -128,6 +143,7 @@ def load_tokens(root: Path) -> list[ServeToken]:
 def _write_named(root: Path, tokens: list[ServeToken]) -> None:
     path = tokens_path(root)
     path.parent.mkdir(parents=True, exist_ok=True)
+    _keep_out_of_git(root)
     lines = ["# aisdlc serve named tokens (#2384): identity scope token. Keep private (mode 0600)."]
     lines += [f"identity={t.identity} scope={t.scope} token={t.value}" for t in tokens]
     tmp = path.with_suffix(".tmp")
