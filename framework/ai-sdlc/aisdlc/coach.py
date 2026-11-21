@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sqlite3
 from collections import Counter
 from collections.abc import Iterator
@@ -18,6 +19,8 @@ from pathlib import Path
 
 SCHEMA = "aisdlc.coach/v1"
 HARNESSES = ("claude-code", "codex", "opencode", "agy")
+# Harnesses write their own messages into the user role: task notifications, command echoes, tool stdout.
+INJECTED = re.compile(r"^\s*<[a-z][a-z0-9_-]*>")
 SEVERITY_ORDER = ("high", "medium", "low")
 THRESHOLDS = {
     "mega_session_turns": 30,
@@ -52,6 +55,9 @@ class Session:
     unguarded: bool = False
 
     def prompt(self, text: str, when: datetime | None) -> None:
+        if INJECTED.match(text):
+            self.planned = self.planned or _is_plan_prompt(text)
+            return
         self.prompts.append(text)
         if when is not None:
             self.stamps.append(when)
@@ -113,7 +119,7 @@ def claude_code(home: Path) -> Iterator[Session]:
     for path in sorted((home / ".claude" / "projects").glob("*/*.jsonl")):
         session = Session("claude-code")
         for row in _rows(path):
-            if row.get("isSidechain") or row.get("isMeta"):
+            if row.get("isSidechain") or row.get("isMeta") or row.get("isCompactSummary"):
                 continue
             session.cwd = session.cwd or row.get("cwd")
             mode = row.get("permissionMode")
