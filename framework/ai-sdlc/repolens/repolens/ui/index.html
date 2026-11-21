@@ -10,9 +10,15 @@
   --bg: #f7f7f5; --panel: #ffffff; --ink: #1d1d1f; --muted: #5f6368; --line: #e3e3df; --accent: #2457d6;
   --code: #f1f1ee;
 }
+:root[data-theme="dark"] {
+  --bg: #141518; --panel: #1c1d21; --ink: #ececec; --muted: #a0a3a9; --line: #2e3036; --accent: #7aa2ff;
+  --code: #23252a;
+}
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #141518; --panel: #1c1d21; --ink: #ececec; --muted: #a0a3a9; --line: #2e3036; --accent: #7aa2ff;
-          --code: #23252a; }
+  :root:not([data-theme="light"]) {
+    --bg: #141518; --panel: #1c1d21; --ink: #ececec; --muted: #a0a3a9; --line: #2e3036; --accent: #7aa2ff;
+    --code: #23252a;
+  }
 }
 * { box-sizing: border-box; }
 body { margin: 0; font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg);
@@ -61,6 +67,7 @@ pre { background: var(--code); padding: 10px; border-radius: 8px; overflow: auto
     <button type="submit">Search</button>
   </form>
   <button type="button" id="orphans" class="quiet" title="Files that relate to no other file">Orphans</button>
+  <button type="button" id="theme-toggle" class="quiet" title="Toggle light/dark theme">🌙</button>
   <span id="stats"></span>
 </header>
 <main>
@@ -182,6 +189,24 @@ cy.on("dbltap", "node", (e) => expand(e.target.id(), false));
 $("f").addEventListener("submit", search);
 $("orphans").addEventListener("click", showOrphans);
 legend();
+
+// Theme toggle — respects system preference by default, allows manual override
+const rootEl = document.documentElement;
+const themeBtn = $("theme-toggle");
+function applyThemeIcon() {
+  const isDark = rootEl.dataset.theme === "dark" || (rootEl.dataset.theme !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  themeBtn.textContent = isDark ? "☀️" : "🌙";
+}
+themeBtn.addEventListener("click", () => {
+  const current = rootEl.dataset.theme;
+  if (!current || current === "dark") {
+    rootEl.dataset.theme = "light";
+  } else {
+    rootEl.dataset.theme = "dark";
+  }
+  applyThemeIcon();
+});
+applyThemeIcon();
 api("/api/stats").then((s) => { $("stats").textContent =
   `${s.projects.map((p) => p.name).join(", ")} · ${s.files} files · ${s.nodes} nodes · ${s.edges} edges`; });
 const initial = new URLSearchParams(location.search).get("q");

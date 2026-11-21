@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI SDLC Factory Dashboard</title>
+    <meta name="description" content="Control and monitoring dashboard for the AI SDLC agentic factory production line" />
+    <style>
+      /* Loading fallback — disappears once React mounts */
+      #root:empty::before {
+        content: "Loading Factory Dashboard…";
+        display: block;
+        font-family: system-ui, -apple-system, sans-serif;
+        font-size: 14px;
+        color: #6b7280;
+        padding: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./main.tsx"></script>
+    <noscript>
+      <div style="padding:2rem;font-family:system-ui,-apple-system,sans-serif">
+        <h1>Factory Dashboard</h1>
+        <p>JavaScript is required to run the AI SDLC Factory Dashboard.</p>
+      </div>
+    </noscript>
+  </body>
+</html>
