@@ -322,7 +322,8 @@ def build_argv(
         ]
         if arm == "graph" and mcp is not None:
             # AGY MCP via --settings JSON override
-            cmd += ["--settings", f'{{"mcpConfig":{{"repolens":{{"command":"{sys.executable}","args":["-m","repolens","mcp"]}}}}}}']
+            server = {"command": sys.executable, "args": ["-m", "repolens", "mcp"]}
+            cmd += ["--settings", json.dumps({"mcpConfig": {"repolens": server}})]
         return cmd + ["--prompt", prompt]
     if provider == "kiro":
         # kiro-cli: chat subcommand, --no-interactive, --trust-all-tools
@@ -332,7 +333,8 @@ def build_argv(
         ]
         if arm == "graph" and mcp is not None:
             # kiro MCP via --settings override
-            cmd += ["--settings", f'{{"mcpServers":{{"repolens":{{"command":"{sys.executable}","args":["-m","repolens","mcp"]}}}}}}']
+            server = {"command": sys.executable, "args": ["-m", "repolens", "mcp"]}
+            cmd += ["--settings", json.dumps({"mcpServers": {"repolens": server}})]
         return cmd + [prompt]
     if provider == "opencode":
         # opencode: run subcommand, --format json, --auto for auto-approve

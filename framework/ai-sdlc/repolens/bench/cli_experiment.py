@@ -5,7 +5,7 @@ Runs 4 representative tasks against available CLIs (agy, kiro-cli) and captures
 metrics: recall, duration, tool calls, errors. Handles each CLI's native output format.
 
 Usage:
-    python3 cli_experiment.py [--provider agy,kiro] [--tasks totp-verify,person-create,folio-slice,hex-adr]
+    python3 cli_experiment.py --tasks-file tasks/<set>.yaml [--corpus PATH] [--provider agy,kiro] [--tasks id,id]
 """
 from __future__ import annotations
 
@@ -19,13 +19,11 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parent.parent.parent  # project root
-TASKS_FILE = HERE / "tasks" / "notaire.yaml"
 RESULTS_DIR = HERE / "results"
 
-# Simple YAML parser for notaire.yaml (no external deps)
-def load_tasks(path: Path) -> dict:
-    """Load tasks from notaire.yaml without PyYAML."""
+
+def load_tasks(path: Path, corpus: Path) -> dict:
+    """Load a task set file (the bench YAML format) without PyYAML; the set is named after the file."""
     text = path.read_text(encoding="utf-8")
     tasks = []
     current = {}
@@ -63,8 +61,8 @@ def load_tasks(path: Path) -> dict:
     if current and current.get("id"):
         tasks.append(current)
     return {
-        "name": "notaire",
-        "corpus": str(ROOT),
+        "name": path.stem,
+        "corpus": str(corpus),
         "tasks": tasks,
         "answer_suffix": answer_suffix.strip(),
     }
@@ -72,7 +70,8 @@ def load_tasks(path: Path) -> dict:
 
 def parse_agy_output(stdout: str) -> dict:
     """Parse AGY stream-json output."""
-    result = {"tool_calls": 0, "tools": {}, "turns": 1, "answer": "", "error": "", "input_tokens": 0, "output_tokens": 0}
+    result = {"tool_calls": 0, "tools": {}, "turns": 1, "answer": "", "error": "",
+              "input_tokens": 0, "output_tokens": 0}
     for line in stdout.splitlines():
         try:
             ev = json.loads(line)
@@ -224,14 +223,16 @@ def summarize(rows: list[dict]) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser(description="CLI comparison experiment")
     ap.add_argument("--provider", default="agy,kiro", help="comma-separated CLI ids")
-    ap.add_argument("--tasks", default="totp-verify,person-create,folio-slice,hex-adr")
+    ap.add_argument("--tasks-file", type=Path, required=True, help="task set YAML (bench/tasks/<set>.yaml)")
+    ap.add_argument("--corpus", type=Path, default=Path.cwd(), help="repository the CLIs work in (default: cwd)")
+    ap.add_argument("--tasks", default="", help="comma-separated task ids (default: every task of the set)")
     ap.add_argument("--timeout", type=int, default=120)
     ap.add_argument("--out", type=Path, default=None)
     args = ap.parse_args()
 
-    spec = load_tasks(TASKS_FILE)
-    task_ids = args.tasks.split(",")
-    tasks = [t for t in spec["tasks"] if t["id"] in task_ids]
+    spec = load_tasks(args.tasks_file, args.corpus.resolve())
+    task_ids = [t for t in args.tasks.split(",") if t]
+    tasks = [t for t in spec["tasks"] if not task_ids or t["id"] in task_ids]
     providers = args.provider.split(",")
     suffix = spec.get("answer_suffix", "")
 
@@ -263,7 +264,7 @@ def main() -> int:
             print(f" {status} {row['duration_s']}s", file=sys.stderr)
 
     summary = summarize(rows)
-    print(f"\n=== Summary ===", file=sys.stderr)
+    print("\n=== Summary ===", file=sys.stderr)
     for cli, stats in summary.items():
         print(f"  {cli}: runs={stats['runs']}, errors={stats['errors']}, "
               f"avg_recall={stats['avg_recall']:.3f}, avg_duration={stats['avg_duration_s']}s", file=sys.stderr)
