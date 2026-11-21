@@ -129,7 +129,8 @@ function Shell({
           <select value={current.id} onChange={(e) => go(`${e.target.value}/${view}`)}>
             {workspaces.map((ws) => (
               <option key={ws.id} value={ws.id}>
-                {ws.label}{session.workspaces[ws.id] ? "" : ` · ${t("ws.signedOut")}`}
+                {ws.label}
+                {!ws.reachable ? ` · ${t("ws.unreachable")}` : session.workspaces[ws.id] ? "" : ` · ${t("ws.signedOut")}`}
               </option>
             ))}
           </select>

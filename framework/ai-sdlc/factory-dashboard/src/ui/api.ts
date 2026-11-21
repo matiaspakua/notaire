@@ -13,6 +13,7 @@ export interface WorkspaceInfo {
   id: string;
   label: string;
   knowledge: boolean;
+  reachable: boolean;
 }
 
 export interface SessionInfo {

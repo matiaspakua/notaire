@@ -6,7 +6,7 @@ import Fastify, { type FastifyInstance, type FastifyReply, type FastifyRequest }
 
 import type { DashboardConfig, Workspace } from "./config.ts";
 import { COOKIE, type Grant, SessionStore, sameSecret } from "./sessions.ts";
-import { callKit, callKnowledge, type Fetch, problem, type UpstreamReply } from "./upstream.ts";
+import { callKit, callKnowledge, type Fetch, probe, problem, type UpstreamReply } from "./upstream.ts";
 
 export interface AppOptions {
   config: DashboardConfig;
@@ -115,7 +115,14 @@ export function buildApp({ config, fetcher = fetch, staticRoot }: AppOptions): F
   }
 
   app.get("/api/workspaces", async () =>
-    config.workspaces.map((ws) => ({ id: ws.id, label: ws.label, knowledge: Boolean(ws.knowledge) })),
+    Promise.all(
+      config.workspaces.map(async (ws) => ({
+        id: ws.id,
+        label: ws.label,
+        knowledge: Boolean(ws.knowledge),
+        reachable: await probe(fetcher, ws.kit),
+      })),
+    ),
   );
 
   app.get("/api/session", async (request) => sessions.view(sessionOf(request)));

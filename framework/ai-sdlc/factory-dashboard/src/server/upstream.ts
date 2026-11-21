@@ -68,6 +68,21 @@ export async function callKit(fetcher: Fetch, base: string, call: KitCall): Prom
   }
 }
 
+/** Reachability without credentials: any HTTP answer, a 401 included, proves the kit is up. */
+export async function probe(fetcher: Fetch, base: string): Promise<boolean> {
+  try {
+    const response = await fetcher(`${base}/factory/capabilities`, {
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(1_500),
+      redirect: "error",
+    });
+    await response.body?.cancel();
+    return response.status < 500;
+  } catch {
+    return false;
+  }
+}
+
 export async function callKnowledge(fetcher: Fetch, base: string, path: string, query: string): Promise<UpstreamReply> {
   try {
     const response = await fetcher(`${base}${path}${query ? `?${query}` : ""}`, {
