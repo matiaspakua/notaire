@@ -63,6 +63,7 @@
 
 ### Write set
 
+- `framework/repolens/repolens/cli.py`
 - `framework/repolens/repolens/setup.py`
 - `framework/repolens/tests/**`
 - `framework/repolens/README.md`
