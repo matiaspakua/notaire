@@ -271,16 +271,35 @@ def junie(home: Path) -> Iterator[Session]:
                     step_id = agent_event.get("stepId")
                     if step_id:
                         step_ids.add(str(step_id))
-                # Model from LlmResponseMetadataEvent
+                # Model from LlmResponseMetadataEvent — real shape is a list of
+                # {"model": str, "cost": float, "inputTokens": int, ...}
                 if agent_kind == "LlmResponseMetadataEvent":
                     model_usage = agent_event.get("modelUsage")
-                    if model_usage:
-                        session.models[str(model_usage)] += 1
+                    if isinstance(model_usage, list):
+                        for item in model_usage:
+                            if isinstance(item, dict):
+                                model_name = item.get("model")
+                                if isinstance(model_name, str) and model_name:
+                                    session.models[model_name] += 1
+                    elif isinstance(model_usage, str) and model_usage:
+                        session.models[model_usage] += 1
         session.tool_calls = len(step_ids)
 
-    # Match prompts from history.jsonl by project path and time window
+    # Match prompts from history.jsonl by project path and time window.
+    # Each prompt is assigned to exactly one session: the one whose time window
+    # is closest (prefer createdAt <= prompt <= updatedAt; else nearest createdAt
+    # within 1 day).
     history_path = home / ".junie" / "history.jsonl"
     if history_path.is_file():
+        # Re-read index to get createdAt/updatedAt per session for window matching
+        session_windows: dict[str, tuple[datetime | None, datetime | None]] = {}
+        for row in _rows(index_path):
+            sid = str(row.get("sessionId") or "")
+            if sid in sessions:
+                created = _when(row.get("createdAt"))
+                updated = _when(row.get("updatedAt"))
+                session_windows[sid] = (created, updated)
+
         for row in _rows(history_path):
             project_path = row.get("projectPath")
             if not project_path:
@@ -289,14 +308,42 @@ def junie(home: Path) -> Iterator[Session]:
             if not isinstance(prompt_text, str):
                 continue
             prompt_when = _when(row.get("timestamp"))
-            for session in sessions.values():
-                if session.cwd == str(project_path):
-                    # Only match if the prompt timestamp is close to a session stamp
-                    if prompt_when is not None and session.stamps:
-                        closest = min(abs((prompt_when - s).total_seconds()) for s in session.stamps)
-                        if closest > 86400:  # within 1 day of a session timestamp
-                            continue
-                    session.prompt(prompt_text, prompt_when)
+
+            # Find the best matching session for this prompt
+            best_sid: str | None = None
+            best_score = float("inf")
+            for sid, session in sessions.items():
+                if session.cwd != str(project_path):
+                    continue
+                created, updated = session_windows.get(sid, (None, None))
+                if prompt_when is None:
+                    # Without a timestamp, pick the session with closest createdAt
+                    if created is not None:
+                        score = abs((prompt_when or created) - created).total_seconds()
+                    else:
+                        score = float("inf")
+                else:
+                    if created is not None and updated is not None:
+                        if created <= prompt_when <= updated:
+                            # Prompt falls within this session's window — best match
+                            score = 0
+                        else:
+                            # Distance to nearest window edge
+                            score = min(abs((prompt_when - created).total_seconds()),
+                                        abs((prompt_when - updated).total_seconds()))
+                    elif created is not None:
+                        score = abs((prompt_when - created).total_seconds())
+                    else:
+                        score = float("inf")
+                # Only consider sessions within 1 day
+                if score > 86400:
+                    continue
+                if score < best_score:
+                    best_score = score
+                    best_sid = sid
+
+            if best_sid is not None:
+                sessions[best_sid].prompt(prompt_text, prompt_when)
 
     yield from (s for s in sessions.values() if s.prompts)
 

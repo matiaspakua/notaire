@@ -97,11 +97,12 @@ JUNIE_SENTINEL_SECRET = "SECRET_ENV_VALUE_DO_NOT_READ"
 
 def junie_session(home: Path, cwd: Path, *, session_id: str = "junie-s1", days_ago: int = 0,
                   tool_step_ids: list[str] | None = None, model: str = "qwen-3-27b",
-                  prompt_text: str = "implement the coach reader") -> None:
+                  prompt_text: str | None = "implement the coach reader") -> None:
     """Create a synthetic Junie store: index.jsonl, events.jsonl, and history.jsonl.
 
     *model* is the model name string; the fixture emits the real list shape used by
     Junie's LlmResponseMetadataEvent (one item per call).
+    Pass *prompt_text=None* to skip creating a history entry for this session.
     """
     ts_ms = int((NOW - timedelta(days=days_ago)).timestamp() * 1000)
     iso = (NOW - timedelta(days=days_ago)).isoformat()
@@ -192,18 +193,19 @@ def junie_session(home: Path, cwd: Path, *, session_id: str = "junie-s1", days_a
     events_path = home / ".junie" / "sessions" / session_id / "events.jsonl"
     _jsonl(events_path, events)
 
-    # History (prompts) — append if file already exists
-    history_path = home / ".junie" / "history.jsonl"
-    history_row = {
-        "projectPath": str(cwd),
-        "text": prompt_text,
-        "timestamp": iso,
-    }
-    if history_path.is_file():
-        with history_path.open("a", encoding="utf-8") as handle:
-            handle.write(json.dumps(history_row) + "\n")
-    else:
-        _jsonl(history_path, [history_row])
+    # History (prompts) — skip when prompt_text is None
+    if prompt_text is not None:
+        history_path = home / ".junie" / "history.jsonl"
+        history_row = {
+            "projectPath": str(cwd),
+            "text": prompt_text,
+            "timestamp": iso,
+        }
+        if history_path.is_file():
+            with history_path.open("a", encoding="utf-8") as handle:
+                handle.write(json.dumps(history_row) + "\n")
+        else:
+            _jsonl(history_path, [history_row])
 
 
 class CoachTest(unittest.TestCase):
@@ -349,17 +351,19 @@ class CoachTest(unittest.TestCase):
         """Blocker 2: one prompt must not be assigned to every session of the same project."""
         home = self.repo.root.parent / f"{self.repo.root.name}-junie-dup"
         home.mkdir()
-        # Two sessions for the same project, one shared prompt
+        # Two sessions for the same project, one shared prompt (dup-s2 has no history entry)
         junie_session(home, self.repo.root, session_id="dup-s1", days_ago=0,
                       prompt_text="shared prompt")
-        junie_session(home, self.repo.root, session_id="dup-s2", days_ago=0)
+        junie_session(home, self.repo.root, session_id="dup-s2", days_ago=0,
+                      prompt_text=None)
         result = self.repo.run("coach", "--home", str(home), "--json")
         self.assertEqual(0, result.returncode, output(result))
         report = json.loads(result.stdout)
         junie_row = self._harness(report, "junie")
-        # Two sessions should exist, but only one user_turn total (one prompt → one session)
-        self.assertEqual(2, junie_row["sessions"])
+        # One prompt assigned to exactly one session → user_turns == 1 (not doubled)
         self.assertEqual(1, junie_row["user_turns"])
+        # The total report user_turns also equals 1 (no other harnesses in this home)
+        self.assertEqual(1, report["totals"]["user_turns"])
 
     def test_harness_injected_messages_are_not_counted_as_prompts(self):
         home = self.repo.root.parent / f"{self.repo.root.name}-injected"
