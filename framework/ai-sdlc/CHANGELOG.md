@@ -8,6 +8,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `harness report` now refuses adapter ids not returned by `harness list` (exit 2, `unknown_adapter`) (#2385).
+
 ### Added
 
 - Foreman template: a forge write that returns 403 is an Orchestrator action for the owner. The loop continues. The kit version stays 1.0.0; this is template text, not a package behavior change.
