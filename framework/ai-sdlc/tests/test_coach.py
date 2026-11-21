@@ -347,6 +347,43 @@ class CoachTest(unittest.TestCase):
             self.assertNotIn("inputTokens", key)
             self.assertNotIn("[", key)  # would appear if we stringified the list
 
+    def test_junie_task_mode_session_counts_task_starts_as_user_turns(self):
+        """Blocker 3: task-mode sessions (junie --task) write nothing to history.jsonl.
+        Each TaskStartedEvent must count as one user turn so the coach does not drop them."""
+        home = self.repo.root.parent / f"{self.repo.root.name}-junie-task"
+        home.mkdir()
+        ts_ms = int(NOW.timestamp() * 1000)
+        iso = NOW.isoformat()
+
+        # Create a session index entry with NO lastPromptAt (task-mode signature)
+        index_path = home / ".junie" / "sessions" / "index.jsonl"
+        index_path.parent.mkdir(parents=True, exist_ok=True)
+        _jsonl(index_path, [{
+            "sessionId": "task-s1",
+            "projectDir": str(self.repo.root),
+            "taskName": "refactor the ledger",
+            "createdAt": iso,
+            "updatedAt": iso,
+        }])
+
+        # Events: two TaskStartedEvents (no SessionA2uxEvent tool/model events needed)
+        events_path = home / ".junie" / "sessions" / "task-s1" / "events.jsonl"
+        _jsonl(events_path, [
+            {"kind": "TaskStartedEvent", "taskId": "t1", "timestampMs": ts_ms},
+            {"kind": "TaskStartedEvent", "taskId": "t2", "timestampMs": ts_ms + 1000},
+        ])
+
+        # No history.jsonl — task-mode sessions never write prompts
+        result = self.repo.run("coach", "--home", str(home), "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        report = json.loads(result.stdout)
+        junie_row = self._harness(report, "junie")
+        # One session visible, two TaskStartedEvents → two user turns
+        self.assertEqual(1, junie_row["sessions"])
+        self.assertEqual(2, junie_row["user_turns"])
+        # No prompt text leaked (empty strings only)
+        self.assertNotIn("refactor", result.stdout)
+
     def test_junie_two_sessions_one_prompt_counts_prompt_once(self):
         """Blocker 2: one prompt must not be assigned to every session of the same project."""
         home = self.repo.root.parent / f"{self.repo.root.name}-junie-dup"
@@ -360,10 +397,10 @@ class CoachTest(unittest.TestCase):
         self.assertEqual(0, result.returncode, output(result))
         report = json.loads(result.stdout)
         junie_row = self._harness(report, "junie")
-        # One prompt assigned to exactly one session → user_turns == 1 (not doubled)
-        self.assertEqual(1, junie_row["user_turns"])
-        # The total report user_turns also equals 1 (no other harnesses in this home)
-        self.assertEqual(1, report["totals"]["user_turns"])
+        # dup-s1 gets 1 user turn from history; dup-s2 gets 1 from its TaskStartedEvent
+        self.assertEqual(2, junie_row["user_turns"])
+        # The prompt text itself was assigned to exactly one session (dup-s1), not doubled
+        self.assertEqual(2, report["totals"]["user_turns"])
 
     def test_harness_injected_messages_are_not_counted_as_prompts(self):
         home = self.repo.root.parent / f"{self.repo.root.name}-injected"
