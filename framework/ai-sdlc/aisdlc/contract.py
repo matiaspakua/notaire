@@ -25,6 +25,7 @@ REQUIRED_PATHS = (
     "/factory/workflows",
     "/factory/projects",
     "/factory/runs",
+    "/factory/coach",
 )
 SCHEMA_MARKERS = (
     "FactoryEntity",
@@ -35,6 +36,7 @@ SCHEMA_MARKERS = (
     "Project",
     "Run",
     "RunRequest",
+    "CoachReport",
 )
 CONFIG_REQUIRED = (
     "schema",

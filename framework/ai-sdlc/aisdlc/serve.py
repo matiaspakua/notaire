@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, unquote, urlparse
 
-from aisdlc import approval, catalogs, evidence, harness, isolator, projects, runs, workflows
+from aisdlc import approval, catalogs, coach, evidence, harness, isolator, projects, runs, workflows
 from aisdlc.actor import from_token_identity
 from aisdlc.context import Context
 from aisdlc.errors import KitError
@@ -101,6 +101,10 @@ def _assert_id(value: str) -> str:
     return decoded
 
 
+# The coach describes how the host's user works: only the owner reads it.
+GET_SCOPE = {"/factory/coach": "owner"}
+
+
 def _problem(code: str, detail: str, status: int | None = None) -> tuple[int, dict]:
     http = status or STATUS_FOR.get(code, 400)
     return http, {
@@ -110,6 +114,14 @@ def _problem(code: str, detail: str, status: int | None = None) -> tuple[int, di
         "detail": detail,
         "code": code,
     }
+
+
+def _positive_int(raw: str | None) -> int | None:
+    if raw is None or raw == "":
+        return None
+    if not raw.isdigit() or int(raw) < 1:
+        raise KitError("invalid_body", f"expected a positive integer, got {raw!r}")
+    return int(raw)
 
 
 def _guard_path(path: str) -> None:
@@ -136,6 +148,9 @@ def _dispatch_get(ctx: Context, path: str, query: dict[str, list[str]]) -> Any:
         return harness.list_adapters(ctx.root, ctx.profile)
     if path == "/factory/report":
         return evidence.report_summary(ctx)
+    if path == "/factory/coach":
+        days = (query.get("days") or [None])[0]
+        return coach.report(coach.default_home(), root=ctx.root, days=_positive_int(days))
     if path == "/factory/workflows":
         approved = (query.get("approved") or [None])[0]
         flag = str(approved).casefold() in {"1", "true", "yes"} if approved is not None else False
@@ -365,7 +380,7 @@ def start_server(
             parsed = urlparse(self.path)
             path = parsed.path or "/"
             try:
-                self._authenticate("read")
+                self._authenticate(GET_SCOPE.get(path, "read") if method == "GET" else "read")
             except KitError as exc:
                 self._problem(exc.code, exc.detail)
                 return

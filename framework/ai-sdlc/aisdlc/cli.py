@@ -689,6 +689,15 @@ def build_parser() -> argparse.ArgumentParser:
     trev.add_argument("--identity", required=True)
 
     p = sub.add_parser(
+        "coach",
+        help="How agent sessions on this machine are run: counts and anti-patterns, never prompt text (#2384)",
+    )
+    p.add_argument("--home", type=Path, help="home folder that holds the harness session stores (default: ~)")
+    p.add_argument("--all-projects", action="store_true", help="include sessions run outside this project")
+    p.add_argument("--days", type=int, help="only sessions active in the last N days")
+    p.add_argument("--json", action="store_true")
+
+    p = sub.add_parser(
         "migrate",
         help="Idempotent schema migration (workflow body v1→v2) with evidence (#2254)",
     )
@@ -868,6 +877,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "demo": lambda: _demo(ctx, args),
         "serve": lambda: _serve(ctx, args),
         "serve-token": lambda: _serve_token(ctx, args),
+        "coach": lambda: _coach(ctx, args),
         "migrate": lambda: _migrate(ctx, args),
         "improve": lambda: _improve(ctx, args),
 
@@ -1151,6 +1161,15 @@ def _serve_token(ctx: Context, args: argparse.Namespace) -> int:
         return 0
     print(f"no named token for {args.identity}")
     return 1
+
+
+def _coach(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc import coach
+
+    home = args.home or coach.default_home()
+    data = coach.report(home, root=None if args.all_projects else ctx.root, days=args.days)
+    print(json.dumps(data, indent=2) if args.json else coach.render(data))
+    return 0
 
 
 def _serve(ctx: Context, args: argparse.Namespace) -> int:
