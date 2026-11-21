@@ -37,6 +37,12 @@ modules:
     fleet: ai
     verify: bash framework/ai-sdlc/verify.sh
     depends_on: []
+  factory-dashboard:
+    path: framework/ai-sdlc/factory-dashboard
+    responsibility: Optional web dashboard over the aisdlc serve contract and RepoLens; many workspaces and users
+    fleet: ai
+    verify: bash framework/ai-sdlc/factory-dashboard/verify.sh
+    depends_on: [ai-sdlc-framework]
   repolens:
     path: framework/repolens
     responsibility: Local code knowledge graph for AI agents (CLI, HTTP API, MCP); no product consumer
@@ -67,4 +73,4 @@ modules:
     extra_paths: [.github]
     fleet: foreman
     verify: bash workspace/verify.sh
-    depends_on: [backend-api, frontend, infra, testing, local-ai, ai-sdlc-framework, repolens, docs, contracts, security]
+    depends_on: [backend-api, frontend, infra, testing, local-ai, ai-sdlc-framework, factory-dashboard, repolens, docs, contracts, security]
