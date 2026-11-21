@@ -18,8 +18,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure | exists |
 | Specification | `docs/openspec/changes/feat-2386-repolens-junie-wiring/` | complete |
 | Branch | `feat/2386_repolens_junie_wiring` | active |
-| Tasks | `tasks.md` | in progress |
-| Commits | <!-- SHAs, one per line --> | pending |
+| Tasks | `tasks.md` | complete |
+| Commits | c70524ee, ffe0dcd5, c892affe, b94c30d2 | complete |
 | Pull Request | #<!-- number --> | pending |
 | CI run | <!-- workflow run URL --> | pending |
 | Merge commit | <!-- SHA --> | pending |
@@ -35,7 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| <!-- scenario name --> | <!-- test class / spec file --> | <!-- pending / passing --> |
+| setup writes Junie MCP config | `test_repolens_setup_junie` in `framework/repolens/tests/` | passing |
+| dry-run reports Junie drift | `test_repolens_dryrun_junie` in `framework/repolens/tests/` | passing |
+| committed wiring matches the generator | `test_junie_wiring_matches_generator` in `workspace/tests/test_repolens_integration.py` | passing |
 
 ## Permanent documentation updated
 
@@ -44,17 +46,18 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| <!-- path --> | <!-- yes/no --> | <!-- SHA --> |
+| `framework/repolens/README.md` | yes | b94c30d2 |
+| `framework/repolens/CHANGELOG.md` | yes | b94c30d2 |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | <!-- --> | <!-- --> |
-| 2 | Failing tests written, test cases designed | <!-- --> | <!-- --> |
-| 3 | Suite green, coverage held, docs updated | <!-- --> | <!-- --> |
-| 4 | CI green, review approved, no conflicts | <!-- --> | <!-- --> |
-| 5 | Deployed, smoke test passed, Issue closed | <!-- --> | <!-- --> |
+| 1 | Issue + Specification + Acceptance Criteria | yes | c70524ee — OpenSpec change created |
+| 2 | Failing tests written, test cases designed | yes | ffe0dcd5 — tests committed and passing |
+| 3 | Suite green, coverage held, docs updated | yes | c892affe, b94c30d2 — impl + docs |
+| 4 | CI green, review approved, no conflicts | pending | — |
+| 5 | Deployed, smoke test passed, Issue closed | pending | — |
 
 ## Exceptions
 
