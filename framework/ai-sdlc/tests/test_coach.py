@@ -98,7 +98,11 @@ JUNIE_SENTINEL_SECRET = "SECRET_ENV_VALUE_DO_NOT_READ"
 def junie_session(home: Path, cwd: Path, *, session_id: str = "junie-s1", days_ago: int = 0,
                   tool_step_ids: list[str] | None = None, model: str = "qwen-3-27b",
                   prompt_text: str = "implement the coach reader") -> None:
-    """Create a synthetic Junie store: index.jsonl, events.jsonl, and history.jsonl."""
+    """Create a synthetic Junie store: index.jsonl, events.jsonl, and history.jsonl.
+
+    *model* is the model name string; the fixture emits the real list shape used by
+    Junie's LlmResponseMetadataEvent (one item per call).
+    """
     ts_ms = int((NOW - timedelta(days=days_ago)).timestamp() * 1000)
     iso = (NOW - timedelta(days=days_ago)).isoformat()
 
@@ -164,14 +168,24 @@ def junie_session(home: Path, cwd: Path, *, session_id: str = "junie-s1", days_a
             }
         },
     })
-    # Model usage event
+    # Model usage event — real Junie shape: list of usage objects
     events.append({
         "kind": "SessionA2uxEvent",
         "timestampMs": ts_ms + 4,
         "event": {
             "agentEvent": {
                 "kind": "LlmResponseMetadataEvent",
-                "modelUsage": model,
+                "modelUsage": [
+                    {
+                        "model": model,
+                        "cost": 0.001,
+                        "inputTokens": 1200,
+                        "cacheInputTokens": 0,
+                        "cacheCreateTokens": 0,
+                        "outputTokens": 340,
+                        "time": ts_ms + 4,
+                    }
+                ],
             }
         },
     })
@@ -312,6 +326,40 @@ class CoachTest(unittest.TestCase):
         report = json.loads(result.stdout)
         junie_row = self._harness(report, "junie")
         self.assertEqual(0, junie_row["sessions"])
+
+    def test_junie_models_are_model_names_without_cost_or_tokens(self):
+        """Blocker 1: modelUsage is a list of objects; report must show model name strings only."""
+        home = self.repo.root.parent / f"{self.repo.root.name}-junie-model"
+        home.mkdir()
+        junie_session(home, self.repo.root, session_id="model-s1", model="qwen-3-27b")
+        result = self.repo.run("coach", "--home", str(home), "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        report = json.loads(result.stdout)
+        junie_row = self._harness(report, "junie")
+        models = junie_row["models"]
+        # Models should be simple name → count mapping
+        self.assertEqual({"qwen-3-27b": 1}, models)
+        # No cost, token, or list-string leakage in model keys
+        for key in models:
+            self.assertNotIn("cost", key)
+            self.assertNotIn("inputTokens", key)
+            self.assertNotIn("[", key)  # would appear if we stringified the list
+
+    def test_junie_two_sessions_one_prompt_counts_prompt_once(self):
+        """Blocker 2: one prompt must not be assigned to every session of the same project."""
+        home = self.repo.root.parent / f"{self.repo.root.name}-junie-dup"
+        home.mkdir()
+        # Two sessions for the same project, one shared prompt
+        junie_session(home, self.repo.root, session_id="dup-s1", days_ago=0,
+                      prompt_text="shared prompt")
+        junie_session(home, self.repo.root, session_id="dup-s2", days_ago=0)
+        result = self.repo.run("coach", "--home", str(home), "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        report = json.loads(result.stdout)
+        junie_row = self._harness(report, "junie")
+        # Two sessions should exist, but only one user_turn total (one prompt → one session)
+        self.assertEqual(2, junie_row["sessions"])
+        self.assertEqual(1, junie_row["user_turns"])
 
     def test_harness_injected_messages_are_not_counted_as_prompts(self):
         home = self.repo.root.parent / f"{self.repo.root.name}-injected"
