@@ -3,7 +3,7 @@
 # this script supplies this repository's task files.
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-BENCH="$ROOT/framework/ai-sdlc/repolens/bench"
+BENCH="$ROOT/framework/repolens/bench"
 TASKS="$BENCH/tasks/notaire.yaml"
 HOLD="$BENCH/tasks/notaire-holdout.yaml"
 cmd="${1:-}"

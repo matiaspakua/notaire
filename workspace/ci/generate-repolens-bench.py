@@ -5,7 +5,7 @@ WHY
 ---
 The AI Factory Pages showcase must chart offline retrieval/agent benches and the live
 factory-loop A/B table without inventing numbers. This script copies summaries from
-framework/ai-sdlc/repolens/bench/results/ into a typed snapshot the Next app can import
+framework/repolens/bench/results/ into a typed snapshot the Next app can import
 offline. Headline factor labels reuse the same rounding as bench/report.py::_factor.
 
 USAGE
@@ -22,7 +22,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-RESULTS = ROOT / "framework" / "ai-sdlc" / "repolens" / "bench" / "results"
+RESULTS = ROOT / "framework" / "repolens" / "bench" / "results"
 OUTPUT = ROOT / "github-page" / "lib" / "repolens-bench-snapshot.json"
 
 RETRIEVAL_FILES = {
@@ -39,7 +39,7 @@ FACTORY_LOOP = "factory-loop-comparison.md"
 
 
 def factor(before: float, after: float, higher_better: bool, word: str) -> str:
-    """Match framework/ai-sdlc/repolens/bench/report.py::_factor."""
+    """Match framework/repolens/bench/report.py::_factor."""
     if before == after:
         return "same"
     if not before or not after:
@@ -83,7 +83,7 @@ def load_retrieval(name: str) -> dict:
     data = json.loads(path.read_text(encoding="utf-8"))
     summary = data["summary"]
     return {
-        "path": f"framework/ai-sdlc/repolens/bench/results/{name}",
+        "path": f"framework/repolens/bench/results/{name}",
         "taskset": data.get("taskset"),
         "commit": data.get("commit"),
         "tasks": int(data["tasks"]),
@@ -101,7 +101,7 @@ def load_agent(key: str, name: str) -> dict:
     data = json.loads(path.read_text(encoding="utf-8"))
     summary = data["summary"]
     return {
-        "path": f"framework/ai-sdlc/repolens/bench/results/{name}",
+        "path": f"framework/repolens/bench/results/{name}",
         "model": data.get("model"),
         "taskset": data.get("taskset"),
         "commit": data.get("commit"),
@@ -194,7 +194,7 @@ def build() -> dict:
     sources = (
         [retrieval[k]["path"] for k in retrieval]
         + [agents[k]["path"] for k in agents]
-        + [f"framework/ai-sdlc/repolens/bench/results/{FACTORY_LOOP}"]
+        + [f"framework/repolens/bench/results/{FACTORY_LOOP}"]
     )
     return {
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),

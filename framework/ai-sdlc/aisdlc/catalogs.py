@@ -13,15 +13,18 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 
 from aisdlc.actor import from_env
 from aisdlc.context import Context
 from aisdlc.errors import KitError
 from aisdlc.evidence import now as evidence_now
-from aisdlc.factory import redact
+from aisdlc.factory import SECRET_KEYS, SECRET_VALUES, redact
 
 DEFAULT_SCHEMA_VERSION = 1
+RESERVED = frozenset({"id", "kind", "version", "digest", "created_by", "created_at"})
+ENV_REF = re.compile(r"^env:[A-Z_][A-Z0-9_]*$")
 
 KINDS = (
     "skills",
@@ -285,6 +288,36 @@ def history(ctx: Context, kind: str, entry_id: str) -> dict:
     return {"id": entry_id, "kind": kind, "versions": versions}
 
 
+def guard_fields(fields: object) -> dict:
+    """Catalog fields may name a credential only as env:NAME; a literal secret never reaches the store."""
+    if fields is None:
+        return {}
+    if not isinstance(fields, dict):
+        raise KitError("invalid_body", "fields must be an object")
+    for key, value in fields.items():
+        _guard_value(str(key), value)
+    return {key: value for key, value in fields.items() if key not in RESERVED}
+
+
+def _guard_value(key: str, value: object) -> None:
+    if isinstance(value, dict):
+        for inner, item in value.items():
+            _guard_value(str(inner), item)
+        return
+    if isinstance(value, list):
+        for item in value:
+            _guard_value(key, item)
+        return
+    if not isinstance(value, str):
+        return
+    if value.startswith("env:"):
+        if not ENV_REF.match(value):
+            raise KitError("literal_secret", f"field {key!r}: env reference must look like env:NAME")
+        return
+    if SECRET_KEYS.search(key) or SECRET_VALUES.search(value):
+        raise KitError("literal_secret", f"field {key!r} holds a secret; store it as env:NAME")
+
+
 def add(
     ctx: Context,
     kind: str,
@@ -306,7 +339,7 @@ def add(
         "version": 1,
     }
     for key, value in (extra or {}).items():
-        if key not in {"id", "kind", "version", "digest", "created_by", "created_at"}:
+        if key not in RESERVED:
             payload[key] = value
     payload = _stamp_envelope(payload, actor=actor, schema_version=schema_version)
     return _commit_revision(ctx, kind, entry_id, payload)
@@ -321,12 +354,14 @@ def update(
     summary: str | None,
     expected_version: int | None = None,
     actor: str | None = None,
+    fields: dict | None = None,
 ) -> dict:
     try:
         data = load_entry(ctx, kind, entry_id)
     except KitError as exc:
         raise KitError("not_found", f"catalog entry {kind}/{entry_id} not found") from exc
     payload = dict(data)
+    payload.update(guard_fields(fields))
     if ref is not None:
         payload["ref"] = ref
     if summary is not None:

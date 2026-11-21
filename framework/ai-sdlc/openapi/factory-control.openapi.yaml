@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: AI SDLC factory control surface
-  version: 1.1.0
+  version: 1.2.0
   description: |
     Contract for factory control operations shared by the `aisdlc` CLI JSON payloads
     and the `aisdlc serve` HTTP adapter (#2253 / ADR-003). Separate from any adopter
@@ -20,6 +20,9 @@ info:
     Phase D (#2242) kit runtime HTML/serve (`aisdlc runtime`) adapts the same Project/Run
     paths (`/factory/projects`, `/factory/runs`) and approved-workflow filter — not a second
     schema set or config truth. Agent never commits or approves from that surface.
+    1.2.0 (#2384) adds named tokens (`.aisdlc/serve.tokens`, one identity and scope per person,
+    recorded as the actor) and the owner-only coach report (`/factory/coach`): local harness
+    session counts and anti-patterns, never prompt or response text.
 servers:
   - url: http://127.0.0.1:8765
     description: Default `aisdlc serve` loopback (CLI remains the system of record)
@@ -33,6 +36,7 @@ tags:
   - name: workflows
   - name: projects
   - name: runs
+  - name: coach
 paths:
   /factory/capabilities:
     get:
@@ -106,6 +110,49 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/EvidenceReport"
+  /factory/session:
+    get:
+      tags: [capabilities]
+      operationId: getFactorySession
+      summary: The caller's identity, scope and actor, so clients show read-only states up front
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Authenticated caller
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionView"
+  /factory/coach:
+    get:
+      tags: [coach]
+      operationId: getFactoryCoach
+      summary: How agent sessions of this project are run on the host (CLI `coach --json`); owner scope
+      description: |
+        Reads the harness session stores under the host user's home read-only (Claude Code, Codex,
+        OpenCode, Antigravity) and reports counts, model and tool names, and anti-patterns. Prompt and
+        response text never leave the process. Requires the `owner` scope: it describes the host's user.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: days
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1 }
+      responses:
+        "200":
+          description: Coach report for sessions run inside this project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CoachReport"
+        "403":
+          description: Token scope below owner
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
   /factory/catalogs/{kind}:
     get:
       tags: [catalogs]
@@ -147,6 +194,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FactoryEntity"
+        "400":
+          description: Literal secret in fields (`literal_secret`) or invalid body
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "409":
+          description: Entry already exists (`already_exists`)
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
   /factory/catalogs/{kind}/{id}:
     get:
       tags: [catalogs]
@@ -212,6 +271,12 @@ paths:
                 $ref: "#/components/schemas/FactoryEntity"
         "409":
           description: Version conflict (If-Match mismatch)
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "400":
+          description: Literal secret in fields (`literal_secret`) or invalid body
           content:
             application/problem+json:
               schema:
@@ -501,7 +566,7 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
-      description: Token from `.aisdlc/serve.token` (scopes read < write < owner)
+      description: Token from `.aisdlc/serve.token` or a named one in `.aisdlc/serve.tokens` (scopes read < write < owner)
   schemas:
     Problem:
       type: object
@@ -658,6 +723,58 @@ components:
         stages: { type: array, items: { type: object, additionalProperties: true } }
         cost: { type: object, additionalProperties: true }
         lead_time_event_pair: { type: object, additionalProperties: true }
+    CoachReport:
+      type: object
+      additionalProperties: false
+      required: [schema, scope, thresholds, totals, harnesses, anti_patterns, hours]
+      properties:
+        schema: { type: string, const: aisdlc.coach/v1 }
+        scope:
+          type: object
+          properties:
+            project_only: { type: boolean }
+            days: { type: [integer, "null"] }
+        thresholds: { type: object, additionalProperties: { type: integer } }
+        totals:
+          type: object
+          required: [sessions, healthy_sessions, user_turns, tool_calls]
+          properties:
+            sessions: { type: integer }
+            healthy_sessions: { type: integer }
+            user_turns: { type: integer }
+            tool_calls: { type: integer }
+        harnesses:
+          type: array
+          items:
+            type: object
+            required: [harness, sessions, user_turns, tool_calls, models, tools, first, last]
+            properties:
+              harness: { type: string, enum: [claude-code, codex, opencode, agy] }
+              sessions: { type: integer }
+              user_turns: { type: integer }
+              tool_calls: { type: [integer, "null"], description: null when the harness store does not record tool calls }
+              models: { type: object, additionalProperties: { type: integer } }
+              tools: { type: object, additionalProperties: { type: integer } }
+              first: { type: [string, "null"], format: date-time }
+              last: { type: [string, "null"], format: date-time }
+        anti_patterns:
+          type: array
+          items:
+            type: object
+            required: [id, severity, occurrences, sessions, recommendation]
+            properties:
+              id:
+                type: string
+                enum: [repeated_prompt, runaway_loop, unguarded_autonomy, mega_session, prompt_bloat, no_plan]
+              severity: { type: string, enum: [high, medium, low] }
+              occurrences: { type: integer }
+              sessions: { type: integer }
+              recommendation: { type: string }
+        hours:
+          type: array
+          minItems: 24
+          maxItems: 24
+          items: { type: integer }
     CatalogList:
       type: object
       additionalProperties: false
@@ -712,6 +829,21 @@ components:
         body:
           type: object
           additionalProperties: true
+        fields:
+          type: object
+          additionalProperties: true
+          description: |
+            Kind-specific fields merged into the entity (for a provider: model, endpoint, api_key).
+            A credential is only ever `env:NAME`; a literal secret is refused with `literal_secret` (400).
+    SessionView:
+      type: object
+      additionalProperties: false
+      required: [identity, scope, actor, write_enabled]
+      properties:
+        identity: { type: string }
+        scope: { type: string, enum: [read, write, owner] }
+        actor: { type: string, description: "Recorded as created_by on writes (channel:identity)" }
+        write_enabled: { type: boolean, description: "Host runs with --write and the scope allows writes" }
     EntityVersion:
       type: object
       additionalProperties: true

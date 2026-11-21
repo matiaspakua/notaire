@@ -13,7 +13,7 @@ export type RepoLensRelease = {
 };
 
 export function changelogHighlights(markdown: string): string[] {
-  const head = markdown.search(/^## \[/m);
+  const head = markdown.search(/^## \[(?!Unreleased)/m);
   if (head < 0) return [];
   const rest = markdown.slice(head);
   const next = rest.slice(1).search(/^## \[/m);
@@ -27,12 +27,12 @@ export function changelogHighlights(markdown: string): string[] {
 
 export function loadRepoLensRelease(): RepoLensRelease {
   const init = readFileSync(
-    path.join(ROOT, "framework/ai-sdlc/repolens/repolens/__init__.py"),
+    path.join(ROOT, "framework/repolens/repolens/__init__.py"),
     "utf8",
   );
   const version = init.match(/__version__\s*=\s*"([^"]+)"/)?.[1] ?? "";
   const changelog = readFileSync(
-    path.join(ROOT, "framework/ai-sdlc/repolens/CHANGELOG.md"),
+    path.join(ROOT, "framework/repolens/CHANGELOG.md"),
     "utf8",
   );
   return { version, highlights: changelogHighlights(changelog) };

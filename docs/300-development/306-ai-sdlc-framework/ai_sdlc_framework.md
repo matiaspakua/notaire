@@ -336,7 +336,7 @@ flowchart TB
 | `skills`, `budget`, `commits`, `tdd` | Catalog lint, context budget, commit subjects, tests-with-code | — |
 | Evidence ledger, `report`, `cost` | Audit trail, gate health, token cost per model and agent | Is written by agents |
 | Role agents (`.aisdlc/agents/`) | Foreman, planner, implementer, reviewer, steward instructions in tool-neutral Markdown | Duplicate the policy |
-| `repolens` (`framework/ai-sdlc/repolens`) | Optional local code knowledge graph (CLI, HTTP API, MCP): hybrid retrieval over code, tests, docs, routes and tables for agents | Is required by the kit or sends code off the machine |
+| `repolens` (`framework/repolens`) | Optional local code knowledge graph (CLI, HTTP API, MCP): hybrid retrieval over code, tests, docs, routes and tables for agents | Is required by the kit or sends code off the machine |
 
 ### 7.3 End-to-end workflow
 
@@ -538,7 +538,7 @@ GitHub change `[tracker]` only.
 ### 7.10 Repository knowledge: repolens
 
 Agents spend most navigation steps and tokens on grep/glob/read loops. `repolens`
-(`framework/ai-sdlc/repolens`, #2297/#2298) is the factory's repository-knowledge tool: a local typed graph of
+(`framework/repolens`, #2297/#2298) is the factory's repository-knowledge tool: a local typed graph of
 files, symbols, tests, routes, tables and git co-change, queried over MCP. On Notaire's held-out tasks a
 Sonnet agent reached the same answers with half the tool calls (module README, Benchmark).
 
@@ -581,7 +581,7 @@ flowchart LR
 | Cloud agents | `.claude/hooks/session-start-toolchain.sh`, `.cursor/install.sh` | Dependencies and a first index are prepared on fresh images |
 
 Improvement loop: read `repolens report` (or the ledger line) after a period of work; a low hit rate becomes a
-benchmark task in `framework/ai-sdlc/repolens/bench/tasks` and a ranking change validated on the held-out set;
+benchmark task in `framework/repolens/bench/tasks` and a ranking change validated on the held-out set;
 low adoption becomes an instruction change; zero-result queries become profile or extractor fixes.
 
 ## 8. Applying it to a real project

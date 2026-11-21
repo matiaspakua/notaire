@@ -40,6 +40,7 @@ export const TRANSLATED_ROUTES = [
   "/ai-sdlc/case-study/",
   "/ai-sdlc/anatomy/",
   "/ai-sdlc/lifecycle/",
+  "/ai-sdlc/factory-line/",
   "/ai-sdlc/openspec/",
   "/ai-sdlc/agents/",
   "/ai-sdlc/guardrails/",

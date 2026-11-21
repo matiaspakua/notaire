@@ -17,13 +17,13 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, unquote, urlparse
 
-from aisdlc import approval, catalogs, evidence, harness, isolator, projects, runs, workflows
+from aisdlc import approval, catalogs, coach, evidence, harness, isolator, projects, runs, workflows
 from aisdlc.actor import from_token_identity
 from aisdlc.context import Context
 from aisdlc.errors import KitError
 from aisdlc.factory import config_view, list_plugins, redact, resolve_max_open_prs
 from aisdlc.kitroot import kit_root
-from aisdlc.serve_token import ServeToken, ensure_token, load_token, require_token
+from aisdlc.serve_token import ServeToken, authenticate, ensure_token, load_token, load_tokens
 
 ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 LOOPBACK = {"127.0.0.1", "::1", "localhost"}
@@ -41,6 +41,8 @@ STATUS_FOR = {
     "not_implemented": 501,
     "runner_unavailable": 501,
     "workflow_not_approved": 409,
+    "literal_secret": 400,
+    "already_exists": 409,
 }
 
 
@@ -101,6 +103,10 @@ def _assert_id(value: str) -> str:
     return decoded
 
 
+# The coach describes how the host's user works: only the owner reads it.
+GET_SCOPE = {"/factory/coach": "owner"}
+
+
 def _problem(code: str, detail: str, status: int | None = None) -> tuple[int, dict]:
     http = status or STATUS_FOR.get(code, 400)
     return http, {
@@ -110,6 +116,14 @@ def _problem(code: str, detail: str, status: int | None = None) -> tuple[int, di
         "detail": detail,
         "code": code,
     }
+
+
+def _positive_int(raw: str | None) -> int | None:
+    if raw is None or raw == "":
+        return None
+    if not raw.isdigit() or int(raw) < 1:
+        raise KitError("invalid_body", f"expected a positive integer, got {raw!r}")
+    return int(raw)
 
 
 def _guard_path(path: str) -> None:
@@ -136,6 +150,9 @@ def _dispatch_get(ctx: Context, path: str, query: dict[str, list[str]]) -> Any:
         return harness.list_adapters(ctx.root, ctx.profile)
     if path == "/factory/report":
         return evidence.report_summary(ctx)
+    if path == "/factory/coach":
+        days = (query.get("days") or [None])[0]
+        return coach.report(coach.default_home(), root=ctx.root, days=_positive_int(days))
     if path == "/factory/workflows":
         approved = (query.get("approved") or [None])[0]
         flag = str(approved).casefold() in {"1", "true", "yes"} if approved is not None else False
@@ -204,16 +221,15 @@ def _dispatch_put(ctx: Context, path: str, body: dict, *, expected_version: int,
     if kind not in catalogs.KINDS:
         raise KitError("unknown_kind", f"unknown catalog kind {kind!r}")
     # Body cannot set created_by / created_at / version / digest.
-    summary = body.get("summary") if isinstance(body, dict) else None
-    ref = body.get("ref") if isinstance(body, dict) else None
     return catalogs.update(
         ctx,
         kind,
         entry_id,
-        ref=ref,
-        summary=summary,
+        ref=body.get("ref"),
+        summary=body.get("summary"),
         expected_version=expected_version,
         actor=actor,
+        fields=body.get("fields"),
     )
 
 
@@ -227,6 +243,9 @@ def _dispatch_post(ctx: Context, path: str, body: dict, *, actor: str) -> Any:
             repos=list(body.get("repos") or []),
             actor=actor,
         )
+    m = re.fullmatch(r"/factory/catalogs/([^/]+)", path)
+    if m:
+        return _create_catalog_entry(ctx, m.group(1), body, actor=actor)
     m = re.fullmatch(r"/factory/projects/([^/]+)/repos", path)
     if m:
         return projects.add_repo(
@@ -252,6 +271,28 @@ def _dispatch_post(ctx: Context, path: str, body: dict, *, actor: str) -> Any:
     if m:
         runs.cancel_unavailable(ctx, _assert_id(m.group(1)))
     raise KitError("method_not_allowed", f"POST not implemented for {path}")
+
+
+def _create_catalog_entry(ctx: Context, kind: str, body: dict, *, actor: str) -> dict:
+    if kind not in catalogs.KINDS:
+        raise KitError("unknown_kind", f"unknown catalog kind {kind!r}")
+    entry_id = _assert_id(str(body.get("id") or ""))
+    fields = catalogs.guard_fields(body.get("fields"))
+    ref = body.get("ref")
+    return catalogs.add(
+        ctx, kind, entry_id, ref=str(ref) if ref else None, summary=str(body.get("summary") or ""),
+        extra=fields, actor=actor,
+    )
+
+
+def session_view(token: ServeToken, *, enable_write: bool) -> dict:
+    """Who the caller is, so a client can show read-only states instead of failing on submit."""
+    return {
+        "identity": token.identity,
+        "scope": token.scope,
+        "actor": from_token_identity(token.identity, token.scope),
+        "write_enabled": enable_write and token.allows("write"),
+    }
 
 
 def static_root() -> Path:
@@ -291,12 +332,12 @@ def start_server(
         def log_message(self, format: str, *args) -> None:  # noqa: A003
             return
 
-        def _token(self) -> ServeToken:
-            # Reload so scope/identity edits to serve.token take effect without restart.
-            current = load_token(ctx.root)
-            if current is None:
+        def _authenticate(self, need: str) -> ServeToken:
+            # Reload on every request so token edits (add, revoke, scope) take effect without restart.
+            tokens = load_tokens(ctx.root)
+            if not tokens:
                 raise KitError("unauthorized", "serve token missing")
-            return current
+            return authenticate(self.headers.get("Authorization"), tokens, need=need)
 
         def _send(self, status: int, payload: bytes, content_type: str) -> None:
             self.send_response(status)
@@ -365,10 +406,12 @@ def start_server(
             parsed = urlparse(self.path)
             path = parsed.path or "/"
             try:
-                active = self._token()
-                require_token(self.headers.get("Authorization"), active, need="read")
+                caller = self._authenticate(GET_SCOPE.get(path, "read") if method == "GET" else "read")
             except KitError as exc:
                 self._problem(exc.code, exc.detail)
+                return
+            if method == "GET" and path == "/factory/session":
+                self._send_json(200, session_view(caller, enable_write=enable_write))
                 return
             if method in MUTATING and not enable_write:
                 self._problem("method_not_allowed", f"{method} not allowed on read-only host")
@@ -390,8 +433,7 @@ def start_server(
                     self._send_json(200, data)
                     return
                 if method == "PUT":
-                    active = self._token()
-                    require_token(self.headers.get("Authorization"), active, need="write")
+                    active = self._authenticate("write")
                     _require_csrf(self.headers, active)
                     expected = _parse_if_match(self.headers.get("If-Match"))
                     body = self._read_json_body()
@@ -402,8 +444,7 @@ def start_server(
                     self._send_json(200, data)
                     return
                 if method == "POST":
-                    active = self._token()
-                    require_token(self.headers.get("Authorization"), active, need="write")
+                    active = self._authenticate("write")
                     _require_csrf(self.headers, active)
                     body = self._read_json_body()
                     actor = from_token_identity(active.identity, active.scope)

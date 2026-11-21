@@ -66,6 +66,7 @@ aisdlc gate signal (ratchet+skills) Process Checks / Main Health  sdlc-process.y
 process script self-tests       Process Checks                    sdlc-process.yml   (BLOCKING)
 repolens module gate            (local only; no CI job)           n/a                (BLOCKING when its path changed; #2298)
 factory/repolens boundaries     (local only; --full)              n/a                (BLOCKING; extraction scan + copied-tree tests)
+factory dashboard gate          (local only; no CI job)           n/a                (BLOCKING when its path changed; e2e with --full; #2384)
 openapi breaking diff           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; export freshness CI-only)
 openapi accepted list           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; stale entries, #1315)
 spotless format                 Code Lint / Format Check         pr-validation.yml  (BLOCKING)
@@ -235,14 +236,29 @@ run "process script self-tests" bash -c \
 
 # repolens module gate (#2298): lint, tests with its coverage floor, wheel build and smoke search, when the
 # branch touches it. Its stack (numpy, scipy, tree-sitter, fastembed, mcp) is heavier than the stdlib-only
-# kit, so a host without it skips with the reason (install: bash framework/ai-sdlc/repolens/bin/repolens
+# kit, so a host without it skips with the reason (install: bash framework/repolens/bin/repolens
 # setup --install, plus pytest/pytest-cov/ruff) instead of failing for an unrelated change.
-if git diff --name-only origin/main...HEAD -- framework/ai-sdlc/repolens repolens.toml | grep -q .; then
+if git diff --name-only origin/main...HEAD -- framework/repolens repolens.toml | grep -q .; then
     if python3 -c "import numpy, scipy, tree_sitter_language_pack, mcp, fastapi, pytest, pytest_cov, ruff" \
         >/dev/null 2>&1; then
-        run "repolens module gate" bash framework/ai-sdlc/repolens/verify.sh
+        run "repolens module gate" bash framework/repolens/verify.sh
     else
         skip "repolens module gate" "dependencies missing on this host (see the comment above)"
+    fi
+fi
+
+# factory dashboard gate (#2384): typecheck, server tests and build when the branch touches it; --full adds the
+# Playwright + axe run against a seeded kit. Node tooling is optional for the rest of the repository, so a host
+# without pnpm skips with the reason.
+if git diff --name-only origin/main...HEAD -- framework/ai-sdlc/factory-dashboard | grep -q .; then
+    if command -v pnpm >/dev/null 2>&1; then
+        if [ "$MODE_FULL" = "1" ]; then
+            run "factory dashboard gate" bash framework/ai-sdlc/factory-dashboard/verify.sh --e2e
+        else
+            run "factory dashboard gate" bash framework/ai-sdlc/factory-dashboard/verify.sh
+        fi
+    else
+        skip "factory dashboard gate" "pnpm is not installed on this host"
     fi
 fi
 

@@ -27,8 +27,8 @@ export default function RepoLensPage() {
   const release = loadRepoLensRelease();
   const sources = [
     ...bench.sources.map((s) => ({ href: src(s.path), label: s.path })),
-    { href: src("framework/ai-sdlc/repolens/README.md"), label: "framework/ai-sdlc/repolens/README.md" },
-    { href: src("framework/ai-sdlc/repolens/MODULE.md"), label: "framework/ai-sdlc/repolens/MODULE.md" },
+    { href: src("framework/repolens/README.md"), label: "framework/repolens/README.md" },
+    { href: src("framework/repolens/MODULE.md"), label: "framework/repolens/MODULE.md" },
   ];
   const pipeline = repolensPipelineFlow();
 

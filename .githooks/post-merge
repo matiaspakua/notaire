@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 # Keep the repolens index of this worktree current after a branch switch or a pull.
 # Never blocks git: runs in the background and never fails.
-bash "$(git rev-parse --show-toplevel)/framework/ai-sdlc/repolens/bin/repolens" refresh --background >/dev/null 2>&1 || true
+bash "$(git rev-parse --show-toplevel)/framework/repolens/bin/repolens" refresh --background >/dev/null 2>&1 || true
