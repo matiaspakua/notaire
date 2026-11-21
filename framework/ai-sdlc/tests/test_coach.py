@@ -102,16 +102,22 @@ def junie_session(home: Path, cwd: Path, *, session_id: str = "junie-s1", days_a
     ts_ms = int((NOW - timedelta(days=days_ago)).timestamp() * 1000)
     iso = (NOW - timedelta(days=days_ago)).isoformat()
 
-    # Session index
-    index_rows = [{
+    # Session index (append if file already exists)
+    index_path = home / ".junie" / "sessions" / "index.jsonl"
+    index_path.parent.mkdir(parents=True, exist_ok=True)
+    new_index_row = {
         "sessionId": session_id,
         "projectDir": str(cwd),
         "taskName": "coach reader task",
         "createdAt": iso,
         "lastPromptAt": iso,
         "updatedAt": iso,
-    }]
-    _jsonl(home / ".junie" / "sessions" / "index.jsonl", index_rows)
+    }
+    if index_path.is_file():
+        with index_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(new_index_row) + "\n")
+    else:
+        _jsonl(index_path, [new_index_row])
 
     # Events for the session
     events: list[dict] = [
@@ -172,15 +178,18 @@ def junie_session(home: Path, cwd: Path, *, session_id: str = "junie-s1", days_a
     events_path = home / ".junie" / "sessions" / session_id / "events.jsonl"
     _jsonl(events_path, events)
 
-    # History (prompts)
-    history_rows = [
-        {
-            "projectPath": str(cwd),
-            "text": prompt_text,
-            "timestamp": iso,
-        },
-    ]
-    _jsonl(home / ".junie" / "history.jsonl", history_rows)
+    # History (prompts) — append if file already exists
+    history_path = home / ".junie" / "history.jsonl"
+    history_row = {
+        "projectPath": str(cwd),
+        "text": prompt_text,
+        "timestamp": iso,
+    }
+    if history_path.is_file():
+        with history_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(history_row) + "\n")
+    else:
+        _jsonl(history_path, [history_row])
 
 
 class CoachTest(unittest.TestCase):
@@ -230,7 +239,8 @@ class CoachTest(unittest.TestCase):
         self.assertEqual({"claude-opus-5-5": 48}, self._harness(report, "claude-code")["models"])
         self.assertEqual({"shell": 2}, self._harness(report, "codex")["tools"])
         self.assertIsNone(self._harness(report, "agy")["tool_calls"])
-        self.assertEqual(sum(report["hours"]), report["totals"]["user_turns"])
+        # Junie adds a createdAt stamp per session, so hours = user_turns + junie sessions
+        self.assertEqual(sum(report["hours"]), report["totals"]["user_turns"] + self._harness(report, "junie")["sessions"])
         # Junie specifics
         junie_row = self._harness(report, "junie")
         self.assertEqual(1, junie_row["user_turns"])

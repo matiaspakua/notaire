@@ -1,9 +1,10 @@
 """Coach: how this machine's agent sessions are run, measured locally and never the words (#2384).
 
 Reads the session stores that coding harnesses keep under the user's home (Claude Code, Codex, OpenCode,
-Antigravity) read-only, and turns them into counts and the anti-patterns of the AI engineering audit. Prompt
-and response text stays in memory while a session is scored; the report carries counts, model and tool names
-only. OpenCode's database also holds credentials, so only its session, message and part tables are queried.
+Antigravity, Junie CLI) read-only, and turns them into counts and the anti-patterns of the AI engineering
+audit. Prompt and response text stays in memory while a session is scored; the report carries counts, model
+and tool names only. OpenCode's database also holds credentials, so only its session, message and part tables
+are queried. Junie's EnvironmentVariablesUpdatedEvent carries secrets and is never read.
 """
 from __future__ import annotations
 
@@ -18,7 +19,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 SCHEMA = "aisdlc.coach/v1"
-HARNESSES = ("claude-code", "codex", "opencode", "agy")
+HARNESSES = ("claude-code", "codex", "opencode", "agy", "junie")
 # Harnesses write their own messages into the user role: task notifications, command echoes, tool stdout.
 INJECTED = re.compile(r"^\s*<[a-z][a-z0-9_-]*>")
 SEVERITY_ORDER = ("high", "medium", "low")
@@ -224,6 +225,82 @@ def _json(raw: object) -> dict:
     return value if isinstance(value, dict) else {}
 
 
+def junie(home: Path) -> Iterator[Session]:
+    """Read Junie CLI sessions: index.jsonl → events.jsonl → history.jsonl.
+
+    Never reads EnvironmentVariablesUpdatedEvent (secrets). Counts one tool call
+    per unique stepId across ToolBlockUpdatedEvent and TerminalBlockUpdatedEvent.
+    """
+    index_path = home / ".junie" / "sessions" / "index.jsonl"
+    if not index_path.is_file():
+        return
+
+    # Build a map of sessionId → session metadata
+    sessions: dict[str, Session] = {}
+    for row in _rows(index_path):
+        session_id = str(row.get("sessionId") or "")
+        if not session_id:
+            continue
+        session = Session("junie", cwd=row.get("projectDir"), tool_calls=None)
+        created = _when(row.get("createdAt"))
+        if created is not None:
+            session.stamps.append(created)
+        sessions[session_id] = session
+
+    if not sessions:
+        return
+
+    # Read events for each session
+    sessions_dir = home / ".junie" / "sessions"
+    for session_id, session in sessions.items():
+        events_path = sessions_dir / session_id / "events.jsonl"
+        if not events_path.is_file():
+            continue
+        step_ids: set[str] = set()
+        for row in _rows(events_path):
+            kind = row.get("kind")
+            if kind == "SessionA2uxEvent":
+                event = row.get("event") if isinstance(row.get("event"), dict) else {}
+                agent_event = event.get("agentEvent") if isinstance(event.get("agentEvent"), dict) else {}
+                agent_kind = agent_event.get("kind")
+                # Skip EnvironmentVariablesUpdatedEvent — contains secrets
+                if agent_kind == "EnvironmentVariablesUpdatedEvent":
+                    continue
+                # Count tool calls by unique stepId
+                if agent_kind in ("ToolBlockUpdatedEvent", "TerminalBlockUpdatedEvent"):
+                    step_id = agent_event.get("stepId")
+                    if step_id:
+                        step_ids.add(str(step_id))
+                # Model from LlmResponseMetadataEvent
+                if agent_kind == "LlmResponseMetadataEvent":
+                    model_usage = agent_event.get("modelUsage")
+                    if model_usage:
+                        session.models[str(model_usage)] += 1
+        session.tool_calls = len(step_ids)
+
+    # Match prompts from history.jsonl by project path and time window
+    history_path = home / ".junie" / "history.jsonl"
+    if history_path.is_file():
+        for row in _rows(history_path):
+            project_path = row.get("projectPath")
+            if not project_path:
+                continue
+            prompt_text = row.get("text")
+            if not isinstance(prompt_text, str):
+                continue
+            prompt_when = _when(row.get("timestamp"))
+            for session in sessions.values():
+                if session.cwd == str(project_path):
+                    # Only match if the prompt timestamp is close to a session stamp
+                    if prompt_when is not None and session.stamps:
+                        closest = min(abs((prompt_when - s).total_seconds()) for s in session.stamps)
+                        if closest > 86400:  # within 1 day of a session timestamp
+                            continue
+                    session.prompt(prompt_text, prompt_when)
+
+    yield from (s for s in sessions.values() if s.prompts)
+
+
 def agy(home: Path) -> Iterator[Session]:
     sessions: dict[str, Session] = {}
     for row in _rows(home / ".gemini" / "antigravity-cli" / "history.jsonl"):
@@ -240,7 +317,7 @@ def default_home() -> Path:
     return Path(os.environ.get("AISDLC_COACH_HOME") or Path.home())
 
 
-READERS = {"claude-code": claude_code, "codex": codex, "opencode": opencode, "agy": agy}
+READERS = {"claude-code": claude_code, "codex": codex, "opencode": opencode, "agy": agy, "junie": junie}
 
 
 def _within(cwd: str | None, root: Path) -> bool:
