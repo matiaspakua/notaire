@@ -8,14 +8,16 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   AgentConfig, RuleConfig, McpServerConfig, SkillConfig,
+  AiProviderConfig, AiModelConfig,
   ConfigCollection, CONFIG_ENDPOINTS,
 } from "@/types";
 
 // ───────────────────── Sub-tabs ─────────────────────
 
-type ConfigTab = "agents" | "rules" | "mcp" | "skills";
+type ConfigTab = "providers" | "agents" | "rules" | "mcp" | "skills";
 
 const TAB_LABELS: Record<ConfigTab, string> = {
+  providers: "AI Providers",
   agents: "Agents",
   rules: "Rules",
   mcp: "MCP Integrations",
@@ -77,6 +79,200 @@ function EnableToggle({ enabled, onChange, label }: {
     >
       <span className="toggle-knob" />
     </button>
+  );
+}
+
+// ───────────────────── Auth method badge ─────────────────────
+
+function AuthBadge({ method, configured }: { method: string; configured: boolean }) {
+  return (
+    <span className={`config-auth-badge ${configured ? "config-auth-ok" : "config-auth-missing"}`}>
+      {configured ? "✓" : "⚠"} {method}
+    </span>
+  );
+}
+
+// ───────────────────── Usage credits bar ─────────────────────
+
+function UsageBar({ usage }: { usage: { monthlyLimit: number; currentUsage: number; currency: string } }) {
+  const pct = usage.monthlyLimit > 0 ? Math.min((usage.currentUsage / usage.monthlyLimit) * 100, 100) : 0;
+  return (
+    <div className="config-usage-bar-wrapper">
+      <div className="config-usage-bar-label">
+        ${usage.currentUsage.toFixed(2)} / ${usage.monthlyLimit.toFixed(2)} {usage.currency}
+      </div>
+      <div className="config-usage-bar">
+        <div className="config-usage-bar-fill" style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  );
+}
+
+// ───────────────────── Model list ─────────────────────
+
+function ModelList({ models, defaultModel }: { models: AiModelConfig[]; defaultModel?: string }) {
+  return (
+    <div className="config-model-list">
+      {models.map((model) => (
+        <div key={model.id} className={`config-model-item ${model.id === defaultModel ? "config-model-default" : ""}`}>
+          <span className="config-model-name">{model.displayName}</span>
+          <span className="config-model-id">{model.name}</span>
+          {model.pricing && (
+            <span className="config-model-pricing">
+              ${model.pricing.inputPer1k}/1k in · ${model.pricing.outputPer1k}/1k out
+            </span>
+          )}
+          {model.id === defaultModel && <span className="config-model-default-badge">Default</span>}
+          <div className="config-model-capabilities">
+            {model.capabilities?.map((cap) => (
+              <span key={cap} className="config-capability-tag">{cap}</span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ───────────────────── AI Providers View ─────────────────────
+
+function ProvidersView() {
+  const [providers, setProviders] = useState<AiProviderConfig[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    try {
+      const { items } = await fetchCollection<AiProviderConfig>(CONFIG_ENDPOINTS.aiProviders);
+      setProviders(items);
+    } catch (err) {
+      console.error("Failed to load providers:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const handleToggle = async (id: string, enabled: boolean) => {
+    try {
+      const updated = await putItem<AiProviderConfig>(CONFIG_ENDPOINTS.aiProviderById(id), { enabled });
+      setProviders(prev => prev.map(p => p.id === id ? updated : p));
+    } catch (err) {
+      console.error("Failed to toggle provider:", err);
+    }
+  };
+
+  const handleSetDefaultModel = async (providerId: string, modelId: string) => {
+    try {
+      const updated = await putItem<AiProviderConfig>(CONFIG_ENDPOINTS.aiProviderById(providerId), { defaultModel: modelId });
+      setProviders(prev => prev.map(p => p.id === providerId ? updated : p));
+    } catch (err) {
+      console.error("Failed to set default model:", err);
+    }
+  };
+
+  const filtered = providers.filter(p =>
+    p.name.toLowerCase().includes(search.toLowerCase()) ||
+    p.provider.toLowerCase().includes(search.toLowerCase()) ||
+    p.description.toLowerCase().includes(search.toLowerCase())
+  );
+
+  if (loading) return <div className="config-loading">Loading AI providers…</div>;
+
+  return (
+    <div className="config-view">
+      <div className="config-toolbar">
+        <input
+          className="config-search"
+          type="text"
+          placeholder="Search providers…"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+        <span className="config-count">{filtered.length} provider{filtered.length !== 1 ? "s" : ""}</span>
+      </div>
+
+      <div className="config-list">
+        {filtered.map(provider => (
+          <div key={provider.id} className={`config-card config-provider-card ${expandedId === provider.id ? "expanded" : ""}`}>
+            <div className="config-card-header">
+              <div className="config-card-title">
+                <span className="config-card-name config-provider-name">{provider.name}</span>
+                <span className={`config-provider-id-badge config-provider-${provider.provider}`}>{provider.provider}</span>
+                <AuthBadge method={provider.authMethod} configured={provider.authConfigured} />
+                {!provider.apiKeySet && <span className="config-api-key-warning">API key not set</span>}
+              </div>
+              <div className="config-card-actions">
+                <EnableToggle
+                  enabled={provider.enabled}
+                  onChange={enabled => handleToggle(provider.id, enabled)}
+                  label={provider.name}
+                />
+                <button
+                  className="config-btn config-btn-edit"
+                  onClick={() => setExpandedId(expandedId === provider.id ? null : provider.id)}
+                  title="Expand models"
+                >
+                  {expandedId === provider.id ? "Collapse" : "Models"}
+                </button>
+              </div>
+            </div>
+
+            <div className="config-card-body">
+              <div className="config-field">
+                <span className="config-field-label">Description</span>
+                <span className="config-field-value">{provider.description}</span>
+              </div>
+              <div className="config-field">
+                <span className="config-field-label">Auth Method</span>
+                <span className="config-field-value">{provider.authMethod}</span>
+              </div>
+              <div className="config-field">
+                <span className="config-field-label">Models</span>
+                <span className="config-field-value">{provider.models.length} available · {provider.defaultModel || "no default"}</span>
+              </div>
+              {provider.usageCredits && (
+                <div className="config-field">
+                  <span className="config-field-label">Monthly Usage</span>
+                  <UsageBar usage={provider.usageCredits} />
+                </div>
+              )}
+              {provider.associatedAgents?.length > 0 && (
+                <div className="config-field">
+                  <span className="config-field-label">Associated Agents</span>
+                  <div className="config-tags">
+                    {provider.associatedAgents.map(a => (
+                      <span key={a} className="config-tag">{a}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {expandedId === provider.id && (
+              <div className="config-provider-models">
+                <h4 className="config-models-title">Available Models</h4>
+                <ModelList models={provider.models} defaultModel={provider.defaultModel} />
+                <div className="config-model-actions">
+                  {provider.models.map(model => (
+                    <button
+                      key={model.id}
+                      className={`config-btn config-btn-set-default ${model.id === provider.defaultModel ? "active" : ""}`}
+                      onClick={() => handleSetDefaultModel(provider.id, model.id)}
+                      disabled={model.id === provider.defaultModel}
+                    >
+                      {model.id === provider.defaultModel ? "✓ Default" : `Set ${model.displayName} as default`}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -641,13 +837,13 @@ function SkillsView() {
 // ───────────────────── Main Configuration View ─────────────────────
 
 export function ConfigView() {
-  const [activeTab, setActiveTab] = useState<ConfigTab>("agents");
+  const [activeTab, setActiveTab] = useState<ConfigTab>("providers");
 
   return (
     <div className="config-container">
       <div className="config-header">
         <h2 className="config-title">Factory Configuration</h2>
-        <p className="config-subtitle">Manage agents, rules, integrations, and skills</p>
+        <p className="config-subtitle">Manage AI providers, agents, rules, integrations, and skills</p>
       </div>
 
       <div className="config-tabs" role="tablist">
@@ -665,6 +861,7 @@ export function ConfigView() {
       </div>
 
       <div className="config-content">
+        {activeTab === "providers" && <ProvidersView />}
         {activeTab === "agents" && <AgentsView />}
         {activeTab === "rules" && <RulesView />}
         {activeTab === "mcp" && <McpView />}

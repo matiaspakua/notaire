@@ -37,4 +37,16 @@ Implement full lifecycle management for agents, rules, MCP integrations, and ski
 Factory runs 1 stage at a time with 1 agent, Foreman monitors all. Each agent configured with AGENT.md, rules, skills, MCP/tools, specific LLM model. Track per-agent token consumption and time spent. Add file viewer module to open factory config files (markdown, JSON, YAML) in a nice editor within the dashboard.
 
 ### ✓ Step 9: Persistent storage layer for dashboard without active intent
-The dashboard must run even with no active intent, showing historical data and factory configuration. Implement a storage layer reading from `.aisdlc/` (runs, evidence, costs, projects, catalogs) and serve it through the dashboard API. Add multi-project support, historical run browser, and intent history view. The dashboard should show past runs, their metrics, and allow filtering by project/intent.
+The dashboard runs even with no active intent, showing historical data from `.aisdlc/`. Implemented `PersistentStorage` class (storage.ts, 337 lines) reading evidence, costs, runs, projects, and catalogs. Added `HistoryView` (385 lines) with stage breakdown, evidence table, and cost-by-model table. 8 new API endpoints in server. Added RepoLens metrics API (`/api/metrics`) and `RepoLensMetricsView` (389 lines) showing recall, latency, and agent comparison. Added `FileViewerView` (325 lines) for factory config files. Added `ForemanMonitorView` merged into Metrics with intent filtering. PR #2383 updated with all changes.
+
+### ✓ Step 10: Hybrid Approach for Production Line visualization
+Replace the 16-card grid with Active Station Focus + Compact Timeline. Created `ActiveStationView` (201 lines) showing the currently running station prominently with agent info, skills, tools, gates, human indicators, and phase-colored border. Created `CompactTimeline` (134 lines) with horizontal progress dots, phase dividers, status icons, tooltips, and legend. Added 660 lines of CSS with dark theme support and responsive breakpoints. Updated `App.tsx` to use new components. Build succeeds (43 modules, 325KB JS + 80KB CSS).
+
+### ✓ Step 11: AI Providers configuration module
+Add "AI Providers" tab to Configuration so users can select AI providers (Anthropic, OpenAI, Google, Microsoft, OpenRouter), configure available models, set authentication (API key, service account, OAuth), manage usage credits, and set default models. Added `AiProviderConfig` and `AiModelConfig` types, `discoverAiProviders()` in config-store with env var detection, 5 REST API endpoints, and `ProvidersView` UI with model expansion, auth status badges, usage bars, and default model selection.
+
+### ✓ Step 12: Intent View — Core factory input component
+Replace the thin 56px intent bar with `IntentView` — a prominent, always-visible "Work Order" that anchors the entire dashboard. Supports simple prompts, task IDs (GitHub/Jira), and full specifications with acceptance criteria, restrictions, links, references, flow, and markdown body. Collapsible to compact header, expandable to full detail with two-column layout.
+
+### ✓ Step 13: Intent ID as primary factory tracker
+Make `intent_id` the unifying tracker across all factory data — evidence, costs, runs, agent records, metrics, events, and configuration. Updated types, storage, server APIs, and UI components so everything correlates by intent ID.

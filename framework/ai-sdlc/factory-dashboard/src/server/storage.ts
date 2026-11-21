@@ -25,6 +25,8 @@ import { join, dirname } from "path";
 
 export interface EvidenceRecord {
   ts: string;
+  /** The intent this evidence belongs to — primary tracker */
+  intent_id?: string;
   stage: string;
   ok: boolean;
   commit?: string;
@@ -40,6 +42,8 @@ export interface EvidenceRecord {
 
 export interface CostEntry {
   ts: string;
+  /** The intent this cost belongs to — primary tracker */
+  intent_id?: string;
   agent: string;
   model: string;
   input: number;
@@ -51,6 +55,8 @@ export interface CostEntry {
 
 export interface RunEntry {
   id: string;
+  /** The intent this run is fulfilling — primary tracker */
+  intent_id?: string;
   project: string;
   workflow: { id: string; version: number; digest: string };
   status: string;
@@ -93,6 +99,8 @@ export interface StorageSummary {
   stages: Record<string, number>;
   costs_by_model: Record<string, { entries: number; usd: number }>;
   costs_by_agent: Record<string, number>;
+  costs_by_intent: Record<string, { entries: number; usd: number }>;
+  evidence_by_intent: Record<string, number>;
   total_usd: number;
 }
 
@@ -264,9 +272,10 @@ export class PersistentStorage {
       stages[stage] = (stages[stage] || 0) + 1;
     }
 
-    // Cost aggregation
+    // Cost aggregation by model, agent, and intent
     const costs_by_model: Record<string, { entries: number; usd: number }> = {};
     const costs_by_agent: Record<string, number> = {};
+    const costs_by_intent: Record<string, { entries: number; usd: number }> = {};
     let total_usd = 0;
 
     for (const entry of costs) {
@@ -280,7 +289,22 @@ export class PersistentStorage {
       const agent = entry.agent || "unknown";
       costs_by_agent[agent] = (costs_by_agent[agent] || 0) + (entry.usd || 0);
 
+      // Track by intent_id (primary tracker)
+      const intentKey = entry.intent_id || entry.issue || "untracked";
+      if (!costs_by_intent[intentKey]) {
+        costs_by_intent[intentKey] = { entries: 0, usd: 0 };
+      }
+      costs_by_intent[intentKey].entries++;
+      costs_by_intent[intentKey].usd += entry.usd || 0;
+
       total_usd += entry.usd || 0;
+    }
+
+    // Evidence grouped by intent
+    const evidence_by_intent: Record<string, number> = {};
+    for (const record of evidence) {
+      const intentKey = record.intent_id || "untracked";
+      evidence_by_intent[intentKey] = (evidence_by_intent[intentKey] || 0) + 1;
     }
 
     return {
@@ -296,6 +320,8 @@ export class PersistentStorage {
       stages,
       costs_by_model,
       costs_by_agent,
+      costs_by_intent,
+      evidence_by_intent,
       total_usd: Math.round(total_usd * 1000000) / 1000000,
     };
   }
@@ -332,5 +358,67 @@ export class PersistentStorage {
     }
 
     return grouped;
+  }
+
+  /** Get cost entries grouped by intent_id (primary tracker) */
+  costsByIntent(): Record<string, CostEntry[]> {
+    const costs = this.readCosts();
+    const grouped: Record<string, CostEntry[]> = {};
+
+    for (const entry of costs) {
+      const intentKey = entry.intent_id || entry.issue || "untracked";
+      if (!grouped[intentKey]) grouped[intentKey] = [];
+      grouped[intentKey].push(entry);
+    }
+
+    return grouped;
+  }
+
+  /** Get evidence records grouped by intent_id (primary tracker) */
+  evidenceByIntent(): Record<string, EvidenceRecord[]> {
+    const evidence = this.readEvidence();
+    const grouped: Record<string, EvidenceRecord[]> = {};
+
+    for (const record of evidence) {
+      const intentKey = record.intent_id || "untracked";
+      if (!grouped[intentKey]) grouped[intentKey] = [];
+      grouped[intentKey].push(record);
+    }
+
+    return grouped;
+  }
+
+  /** Get all runs grouped by intent_id */
+  runsByIntent(): Record<string, RunEntry[]> {
+    const runs = this.readRuns();
+    const grouped: Record<string, RunEntry[]> = {};
+
+    for (const run of runs) {
+      const intentKey = run.intent_id || "untracked";
+      if (!grouped[intentKey]) grouped[intentKey] = [];
+      grouped[intentKey].push(run);
+    }
+
+    return grouped;
+  }
+
+  /** Get costs for a specific intent */
+  costsForIntent(intentId: string): CostEntry[] {
+    const costs = this.readCosts();
+    return costs.filter(
+      (entry) => entry.intent_id === intentId || entry.issue === intentId
+    );
+  }
+
+  /** Get evidence for a specific intent */
+  evidenceForIntent(intentId: string): EvidenceRecord[] {
+    const evidence = this.readEvidence();
+    return evidence.filter((record) => record.intent_id === intentId);
+  }
+
+  /** Get runs for a specific intent */
+  runsForIntent(intentId: string): RunEntry[] {
+    const runs = this.readRuns();
+    return runs.filter((run) => run.intent_id === intentId);
   }
 }

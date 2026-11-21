@@ -264,6 +264,46 @@ async function start() {
   });
 
   // ═══════════════════════════════════════════════════
+  //  API: Configuration — AI Providers
+  // ═══════════════════════════════════════════════════
+
+  fastify.get("/api/factory/config/providers", async () => {
+    const items = configStore.getAiProviders();
+    return { items, total: items.length };
+  });
+
+  fastify.get("/api/factory/config/providers/:id", async (request: any) => {
+    const { id } = request.params;
+    const provider = configStore.getAiProvider(id);
+    if (!provider) throw createError(404, `Provider ${id} not found`);
+    return provider;
+  });
+
+  fastify.post("/api/factory/config/providers", async (request: any) => {
+    const body = request.body;
+    const provider = configStore.createAiProvider(body);
+    broadcastToWs({ type: "config_update", timestamp: new Date().toISOString(), data: { kind: "provider", action: "created", id: provider.id } });
+    return provider;
+  });
+
+  fastify.put("/api/factory/config/providers/:id", async (request: any) => {
+    const { id } = request.params;
+    const body = request.body;
+    const provider = configStore.updateAiProvider(id, body);
+    if (!provider) throw createError(404, `Provider ${id} not found`);
+    broadcastToWs({ type: "config_update", timestamp: new Date().toISOString(), data: { kind: "provider", action: "updated", id } });
+    return provider;
+  });
+
+  fastify.delete("/api/factory/config/providers/:id", async (request: any) => {
+    const { id } = request.params;
+    const deleted = configStore.deleteAiProvider(id);
+    if (!deleted) throw createError(404, `Provider ${id} not found`);
+    broadcastToWs({ type: "config_update", timestamp: new Date().toISOString(), data: { kind: "provider", action: "deleted", id } });
+    return { deleted: true };
+  });
+
+  // ═══════════════════════════════════════════════════
   //  API: Configuration — Agents
   // ═══════════════════════════════════════════════════
 
@@ -463,16 +503,82 @@ async function start() {
     return storage.readCosts();
   });
 
-  // Costs grouped by issue
+  // Costs grouped by issue (legacy)
   fastify.get("/api/storage/costs/by-issue", async () => {
     if (!storage.exists()) return {};
     return storage.costsByIssue();
+  });
+
+  // Costs grouped by intent_id (primary tracker)
+  fastify.get("/api/storage/costs/by-intent", async () => {
+    if (!storage.exists()) return {};
+    return storage.costsByIntent();
+  });
+
+  // Evidence grouped by intent_id (primary tracker)
+  fastify.get("/api/storage/evidence/by-intent", async () => {
+    if (!storage.exists()) return {};
+    return storage.evidenceByIntent();
+  });
+
+  // Runs grouped by intent_id
+  fastify.get("/api/storage/runs/by-intent", async () => {
+    if (!storage.exists()) return {};
+    return storage.runsByIntent();
   });
 
   // Runs
   fastify.get("/api/storage/runs", async () => {
     if (!storage.exists()) return [];
     return storage.readRuns();
+  });
+
+  // ── Intent-based filtering endpoints ──
+
+  // Costs for a specific intent
+  fastify.get("/api/factory/costs/intent/:intentId", async (request: any) => {
+    const { intentId } = request.params;
+    if (!storage.exists()) return [];
+    return storage.costsForIntent(intentId);
+  });
+
+  // Evidence for a specific intent
+  fastify.get("/api/factory/evidence/intent/:intentId", async (request: any) => {
+    const { intentId } = request.params;
+    if (!storage.exists()) return [];
+    return storage.evidenceForIntent(intentId);
+  });
+
+  // Runs for a specific intent
+  fastify.get("/api/factory/runs/intent/:intentId", async (request: any) => {
+    const { intentId } = request.params;
+    if (!storage.exists()) return [];
+    return storage.runsForIntent(intentId);
+  });
+
+  // Agent records for a specific intent
+  fastify.get("/api/factory/agent-records/intent/:intentId", async (request: any) => {
+    const { intentId } = request.params;
+    // Return demo data filtered by intent; replace with real data when connected
+    return { intent_id: intentId, records: [] };
+  });
+
+  // Metrics filtered by intent
+  fastify.get("/api/factory/metrics/intent/:intentId", async (request: any) => {
+    const { intentId } = request.params;
+    if (!storage.exists()) return { error: "No storage", intent_id: intentId };
+    const costs = storage.costsForIntent(intentId);
+    const evidence = storage.evidenceForIntent(intentId);
+    const runs = storage.runsForIntent(intentId);
+    return {
+      intent_id: intentId,
+      costs: costs,
+      evidence: evidence,
+      runs: runs,
+      total_cost_usd: costs.reduce((sum, c) => sum + (c.usd || 0), 0),
+      evidence_count: evidence.length,
+      run_count: runs.length,
+    };
   });
 
   // Projects

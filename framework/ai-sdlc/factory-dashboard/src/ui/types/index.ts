@@ -22,6 +22,8 @@ export type EvidenceKind =
 
 export interface EvidenceEvent {
   kind: EvidenceKind;
+  /** Primary tracker — the intent (GitHub issue, Jira ticket, etc.) this evidence belongs to */
+  intent_id?: string;
   run_id?: string;
   step?: string;
   stage?: string;
@@ -50,6 +52,8 @@ export interface RunStep {
 
 export interface Run {
   id: string;
+  /** The intent this run is fulfilling — primary tracker for all run data */
+  intent_id: string;
   status: RunStatus;
   workflow: { id: string; version: number };
   requested_by: string;
@@ -127,6 +131,8 @@ export interface Agent {
 // ───────────────────── Foreman agent ─────────────────────
 
 export interface ForemanState {
+  /** The intent being monitored by the foreman */
+  intent_id?: string;
   status: "monitoring" | "alerting" | "idle";
   current_stage: string;
   current_agent: string;
@@ -138,7 +144,49 @@ export interface ForemanState {
 
 // ───────────────────── Configuration: Agents ─────────────────────
 
-export type AgentProvider = "claude" | "cursor" | "codex" | "agy" | "kiro" | "opencode" | "custom";
+export type AgentProvider = "anthropic" | "openai" | "google" | "microsoft" | "openrouter" | "custom";
+
+// ───────────────────── Configuration: AI Providers ─────────────────────
+
+export type AiProviderId = "anthropic" | "openai" | "google" | "microsoft" | "openrouter" | "custom";
+
+export type AuthMethod = "api_key" | "service_account" | "oauth" | "token";
+
+export interface AiModelConfig {
+  id: string;
+  name: string;
+  displayName: string;
+  enabled: boolean;
+  maxInputTokens: number;
+  maxOutputTokens: number;
+  pricing?: {
+    inputPer1k: number;
+    outputPer1k: number;
+    currency: string;
+  };
+  capabilities?: string[];
+}
+
+export interface AiProviderConfig {
+  id: string;
+  provider: AiProviderId;
+  name: string;
+  description: string;
+  enabled: boolean;
+  authMethod: AuthMethod;
+  authConfigured: boolean;
+  apiKeySet: boolean;
+  models: AiModelConfig[];
+  defaultModel?: string;
+  usageCredits?: {
+    monthlyLimit: number;
+    currentUsage: number;
+    currency: string;
+  };
+  associatedAgents?: string[];
+  created_at: string;
+  updated_at: string;
+}
 
 export interface AgentConfig {
   id: string;
@@ -239,6 +287,9 @@ const API_BASE = "/api/factory";
 // ───────────────────── Configuration: API endpoints ─────────────────────
 
 export const CONFIG_ENDPOINTS = {
+  // AI Providers
+  aiProviders: `${API_BASE}/config/providers`,
+  aiProviderById: (id: string) => `${API_BASE}/config/providers/${id}`,
   // Agents
   agents: `${API_BASE}/config/agents`,
   agentById: (id: string) => `${API_BASE}/config/agents/${id}`,
@@ -258,6 +309,25 @@ export const CONFIG_ENDPOINTS = {
 } as const;
 
 // ───────────────────── Intent (factory input) ─────────────────────
+// The Intent is the core input of the factory — it describes WHAT to build.
+// It can be a simple prompt, a task ID (GitHub/Jira), or a full specification
+// with acceptance criteria, restrictions, links, and references.
+
+export interface IntentLink {
+  label: string;
+  url: string;
+  type: "documentation" | "design" | "related" | "dependency" | "reference";
+}
+
+export interface IntentAcceptanceCriterion {
+  text: string;
+  done?: boolean;
+}
+
+export interface IntentRestriction {
+  text: string;
+  severity: "required" | "warning";
+}
 
 export interface Intent {
   id: string;
@@ -266,6 +336,13 @@ export interface Intent {
   description: string;
   created_at: string;
   run_id?: string;
+  // Rich intent fields
+  flow?: string;
+  acceptance_criteria?: IntentAcceptanceCriterion[];
+  restrictions?: IntentRestriction[];
+  links?: IntentLink[];
+  references?: string[];
+  markdown_body?: string;
 }
 
 // ───────────────────── Dashboard state ─────────────────────
@@ -315,6 +392,8 @@ export type ControlCommand = "play" | "pause" | "resume" | "stop" | "skip";
 
 export interface ControlRequest {
   command: ControlCommand;
+  /** The intent being controlled */
+  intent_id?: string;
   run_id?: string;
   step_id?: string;
   reason?: string;
@@ -323,6 +402,8 @@ export interface ControlRequest {
 export interface ControlResponse {
   command: ControlCommand;
   accepted: boolean;
+  /** The intent being controlled */
+  intent_id?: string;
   run_id?: string;
   message?: string;
   timestamp: string;
@@ -348,13 +429,20 @@ export const ENDPOINTS = {
   // Agent tracking
   agentRecords: `${API_BASE}/agent-records`,
   agentRecordByRun: (runId: string) => `${API_BASE}/agent-records/run/${runId}`,
+  agentRecordByIntent: (intentId: string) => `${API_BASE}/agent-records/intent/${encodeURIComponent(intentId)}`,
   foreman: `${API_BASE}/foreman`,
+  // Intent-based filtering
+  metricsByIntent: (intentId: string) => `${API_BASE}/metrics/intent/${encodeURIComponent(intentId)}`,
+  evidenceByIntent: (intentId: string) => `${API_BASE}/evidence/intent/${encodeURIComponent(intentId)}`,
+  costsByIntent: (intentId: string) => `${API_BASE}/costs/intent/${encodeURIComponent(intentId)}`,
 } as const;
 
 // ───────────────────── Metrics ─────────────────────
 
 export interface StageDuration {
   stage: string;
+  /** Optional: filter by specific intent */
+  intent_id?: string;
   runs: number;
   okRuns: number;
   medianSeconds: number;
@@ -363,6 +451,8 @@ export interface StageDuration {
 
 export interface TokenUsage {
   timestamp: string;
+  /** The intent this token usage belongs to */
+  intent_id?: string;
   inputTokens: number;
   outputTokens: number;
   totalTokens: number;
@@ -372,10 +462,14 @@ export interface TokenUsage {
 
 export interface ErrorBucket {
   category: string;
+  /** Optional: filter by specific intent */
+  intent_id?: string;
   count: number;
 }
 
 export interface RunLeadTime {
+  /** The intent ID (e.g., "#2380", "NOT-123") — primary tracker */
+  intent_id: string;
   issue: number;
   pullRequest: number;
   seconds: number;
@@ -448,6 +542,8 @@ export interface AgentStageRecord {
   agent_id: string;
   station_id: string;
   stage: string;
+  /** The intent this agent record belongs to — primary tracker */
+  intent_id: string;
   run_id: string;
   started_at: string;
   finished_at?: string;

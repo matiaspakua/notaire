@@ -16,7 +16,48 @@ import { join, basename } from "path";
 
 // ───────────────────── Type definitions ─────────────────────
 
-export type AgentProvider = "claude" | "cursor" | "codex" | "agy" | "kiro" | "opencode" | "custom";
+export type AgentProvider = "anthropic" | "openai" | "google" | "microsoft" | "openrouter" | "claude" | "cursor" | "codex" | "agy" | "kiro" | "opencode" | "custom";
+
+// ───────────────────── AI Providers ─────────────────────
+
+export type AiProviderId = "anthropic" | "openai" | "google" | "microsoft" | "openrouter" | "custom";
+export type AuthMethod = "api_key" | "service_account" | "oauth" | "token";
+
+export interface AiModelConfig {
+  id: string;
+  name: string;
+  displayName: string;
+  enabled: boolean;
+  maxInputTokens: number;
+  maxOutputTokens: number;
+  pricing?: {
+    inputPer1k: number;
+    outputPer1k: number;
+    currency: string;
+  };
+  capabilities?: string[];
+}
+
+export interface AiProviderConfig {
+  id: string;
+  provider: AiProviderId;
+  name: string;
+  description: string;
+  enabled: boolean;
+  authMethod: AuthMethod;
+  authConfigured: boolean;
+  apiKeySet: boolean;
+  models: AiModelConfig[];
+  defaultModel?: string;
+  usageCredits?: {
+    monthlyLimit: number;
+    currentUsage: number;
+    currency: string;
+  };
+  associatedAgents?: string[];
+  created_at: string;
+  updated_at: string;
+}
 
 export interface AgentConfig {
   id: string;
@@ -161,15 +202,237 @@ export class ConfigStore {
   private rules: Map<string, RuleConfig> = new Map();
   private mcpServers: Map<string, McpServerConfig> = new Map();
   private skills: Map<string, SkillConfig> = new Map();
+  private aiProviders: Map<string, AiProviderConfig> = new Map();
 
   constructor(private projectRoot: string) {}
 
   /** Discover all configuration from the project */
   discover() {
+    this.discoverAiProviders();
     this.discoverAgents();
     this.discoverRules();
     this.discoverMcpServers();
     this.discoverSkills();
+  }
+
+  // ── AI Providers ──
+
+  private discoverAiProviders() {
+    // Check environment for configured API keys
+    const hasAnthropic = !!process.env.ANTHROPIC_API_KEY;
+    const hasOpenAI = !!process.env.OPENAI_API_KEY;
+    const hasGoogle = !!process.env.GOOGLE_API_KEY || !!process.env.GEMINI_API_KEY;
+    const hasMicrosoft = !!process.env.AZURE_OPENAI_API_KEY;
+    const hasOpenRouter = !!process.env.OPENROUTER_API_KEY;
+
+    const knownProviders: Array<{
+      id: string;
+      provider: AiProviderId;
+      name: string;
+      description: string;
+      authMethod: AuthMethod;
+      models: AiModelConfig[];
+      defaultModel?: string;
+    }> = [
+      {
+        id: "provider-anthropic",
+        provider: "anthropic",
+        name: "Anthropic",
+        description: "Claude models — Claude Code, Sonnet, Opus, Haiku. Best for complex reasoning and code generation.",
+        authMethod: "api_key",
+        models: [
+          {
+            id: "claude-sonnet-4-20250514",
+            name: "claude-sonnet-4-20250514",
+            displayName: "Claude Sonnet 4",
+            enabled: true,
+            maxInputTokens: 200000,
+            maxOutputTokens: 8192,
+            pricing: { inputPer1k: 0.003, outputPer1k: 0.015, currency: "USD" },
+            capabilities: ["code", "reasoning", "tools"],
+          },
+          {
+            id: "claude-opus-4-20250514",
+            name: "claude-opus-4-20250514",
+            displayName: "Claude Opus 4",
+            enabled: true,
+            maxInputTokens: 200000,
+            maxOutputTokens: 8192,
+            pricing: { inputPer1k: 0.015, outputPer1k: 0.075, currency: "USD" },
+            capabilities: ["code", "reasoning", "tools", "advanced"],
+          },
+          {
+            id: "claude-haiku-4-20250514",
+            name: "claude-haiku-4-20250514",
+            displayName: "Claude Haiku 4",
+            enabled: true,
+            maxInputTokens: 200000,
+            maxOutputTokens: 8192,
+            pricing: { inputPer1k: 0.0008, outputPer1k: 0.004, currency: "USD" },
+            capabilities: ["code", "fast"],
+          },
+        ],
+        defaultModel: "claude-sonnet-4-20250514",
+      },
+      {
+        id: "provider-openai",
+        provider: "openai",
+        name: "OpenAI",
+        description: "GPT models — Codex, GPT-4o, o1. Strong code generation and reasoning capabilities.",
+        authMethod: "api_key",
+        models: [
+          {
+            id: "gpt-4o-2024-11-20",
+            name: "gpt-4o-2024-11-20",
+            displayName: "GPT-4o",
+            enabled: true,
+            maxInputTokens: 128000,
+            maxOutputTokens: 16384,
+            pricing: { inputPer1k: 0.0025, outputPer1k: 0.01, currency: "USD" },
+            capabilities: ["code", "reasoning", "tools"],
+          },
+          {
+            id: "o1-2024-12-17",
+            name: "o1-2024-12-17",
+            displayName: "o1",
+            enabled: true,
+            maxInputTokens: 200000,
+            maxOutputTokens: 100000,
+            pricing: { inputPer1k: 0.015, outputPer1k: 0.06, currency: "USD" },
+            capabilities: ["code", "reasoning", "advanced"],
+          },
+          {
+            id: "o3-mini-2025-01-31",
+            name: "o3-mini-2025-01-31",
+            displayName: "o3-mini",
+            enabled: true,
+            maxInputTokens: 200000,
+            maxOutputTokens: 100000,
+            pricing: { inputPer1k: 0.0011, outputPer1k: 0.0044, currency: "USD" },
+            capabilities: ["code", "reasoning"],
+          },
+        ],
+        defaultModel: "gpt-4o-2024-11-20",
+      },
+      {
+        id: "provider-google",
+        provider: "google",
+        name: "Google",
+        description: "Gemini models — Gemini 2.5 Pro, Flash. Strong multimodal and code capabilities.",
+        authMethod: "api_key",
+        models: [
+          {
+            id: "gemini-2.5-pro-preview-06-05",
+            name: "gemini-2.5-pro-preview-06-05",
+            displayName: "Gemini 2.5 Pro",
+            enabled: true,
+            maxInputTokens: 1048576,
+            maxOutputTokens: 65536,
+            pricing: { inputPer1k: 0.00125, outputPer1k: 0.005, currency: "USD" },
+            capabilities: ["code", "reasoning", "tools", "multimodal"],
+          },
+          {
+            id: "gemini-2.5-flash-preview-05-26",
+            name: "gemini-2.5-flash-preview-05-26",
+            displayName: "Gemini 2.5 Flash",
+            enabled: true,
+            maxInputTokens: 1048576,
+            maxOutputTokens: 65536,
+            pricing: { inputPer1k: 0.00015, outputPer1k: 0.0006, currency: "USD" },
+            capabilities: ["code", "fast"],
+          },
+        ],
+        defaultModel: "gemini-2.5-pro-preview-06-05",
+      },
+      {
+        id: "provider-microsoft",
+        provider: "microsoft",
+        name: "Microsoft Azure AI",
+        description: "Azure OpenAI Service — enterprise-grade with service account authentication.",
+        authMethod: "service_account",
+        models: [
+          {
+            id: "gpt-4o",
+            name: "gpt-4o",
+            displayName: "Azure GPT-4o",
+            enabled: true,
+            maxInputTokens: 128000,
+            maxOutputTokens: 16384,
+            capabilities: ["code", "reasoning", "tools"],
+          },
+          {
+            id: "gpt-4",
+            name: "gpt-4",
+            displayName: "Azure GPT-4",
+            enabled: true,
+            maxInputTokens: 128000,
+            maxOutputTokens: 4096,
+            capabilities: ["code", "reasoning"],
+          },
+        ],
+        defaultModel: "gpt-4o",
+      },
+      {
+        id: "provider-openrouter",
+        provider: "openrouter",
+        name: "OpenRouter",
+        description: "Unified API for multiple model providers — access many models through a single key.",
+        authMethod: "api_key",
+        models: [
+          {
+            id: "anthropic/claude-sonnet-4",
+            name: "anthropic/claude-sonnet-4",
+            displayName: "Claude Sonnet 4 (via OpenRouter)",
+            enabled: true,
+            maxInputTokens: 200000,
+            maxOutputTokens: 8192,
+            capabilities: ["code", "reasoning", "tools"],
+          },
+          {
+            id: "openai/gpt-4o",
+            name: "openai/gpt-4o",
+            displayName: "GPT-4o (via OpenRouter)",
+            enabled: true,
+            maxInputTokens: 128000,
+            maxOutputTokens: 16384,
+            capabilities: ["code", "reasoning", "tools"],
+          },
+        ],
+        defaultModel: "anthropic/claude-sonnet-4",
+      },
+    ];
+
+    const providerAuthStatus: Record<string, { authConfigured: boolean; apiKeySet: boolean }> = {
+      "provider-anthropic": { authConfigured: hasAnthropic, apiKeySet: hasAnthropic },
+      "provider-openai": { authConfigured: hasOpenAI, apiKeySet: hasOpenAI },
+      "provider-google": { authConfigured: hasGoogle, apiKeySet: hasGoogle },
+      "provider-microsoft": { authConfigured: hasMicrosoft, apiKeySet: hasMicrosoft },
+      "provider-openrouter": { authConfigured: hasOpenRouter, apiKeySet: hasOpenRouter },
+    };
+
+    for (const provider of knownProviders) {
+      const existing = this.aiProviders.get(provider.id);
+      const auth = providerAuthStatus[provider.id];
+      if (existing) {
+        existing.authConfigured = auth.authConfigured;
+        existing.apiKeySet = auth.apiKeySet;
+        existing.updated_at = nowIso();
+      } else {
+        this.aiProviders.set(provider.id, {
+          ...provider,
+          enabled: auth.authConfigured,
+          authConfigured: auth.authConfigured,
+          apiKeySet: auth.apiKeySet,
+          usageCredits: {
+            monthlyLimit: 0,
+            currentUsage: 0,
+            currency: "USD",
+          },
+          created_at: nowIso(),
+          updated_at: nowIso(),
+        });
+      }
+    }
   }
 
   // ── Agents ──
@@ -483,5 +746,35 @@ export class ConfigStore {
 
   deleteSkill(id: string): boolean {
     return this.skills.delete(id);
+  }
+
+  // ── CRUD: AI Providers ──
+
+  getAiProviders(): AiProviderConfig[] {
+    return Array.from(this.aiProviders.values());
+  }
+
+  getAiProvider(id: string): AiProviderConfig | undefined {
+    return this.aiProviders.get(id);
+  }
+
+  createAiProvider(provider: Omit<AiProviderConfig, "id" | "created_at" | "updated_at"> & { id?: string }): AiProviderConfig {
+    const id = provider.id || `provider-${Date.now()}`;
+    const now = nowIso();
+    const config: AiProviderConfig = { ...provider, id, created_at: now, updated_at: now };
+    this.aiProviders.set(id, config);
+    return config;
+  }
+
+  updateAiProvider(id: string, updates: Partial<AiProviderConfig>): AiProviderConfig | undefined {
+    const existing = this.aiProviders.get(id);
+    if (!existing) return undefined;
+    const updated = { ...existing, ...updates, id, updated_at: nowIso() };
+    this.aiProviders.set(id, updated);
+    return updated;
+  }
+
+  deleteAiProvider(id: string): boolean {
+    return this.aiProviders.delete(id);
   }
 }

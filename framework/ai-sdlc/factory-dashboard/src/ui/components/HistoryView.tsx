@@ -22,11 +22,14 @@ interface StorageSummary {
   stages: Record<string, number>;
   costs_by_model: Record<string, { entries: number; usd: number }>;
   costs_by_agent: Record<string, number>;
+  costs_by_intent: Record<string, { entries: number; usd: number }>;
+  evidence_by_intent: Record<string, number>;
   total_usd: number;
 }
 
 interface EvidenceRecord {
   ts: string;
+  intent_id?: string;
   stage: string;
   ok: boolean;
   commit?: string;
@@ -41,6 +44,7 @@ interface EvidenceRecord {
 
 interface CostEntry {
   ts: string;
+  intent_id?: string;
   agent: string;
   model: string;
   input: number;
@@ -159,7 +163,8 @@ function EvidenceTable({
         (r) =>
           (r.commit || "").toLowerCase().includes(q) ||
           (r.stage || "").toLowerCase().includes(q) ||
-          (r.base || "").toLowerCase().includes(q)
+          (r.base || "").toLowerCase().includes(q) ||
+          (r.intent_id || "").toLowerCase().includes(q)
       );
     }
     return filtered;
@@ -208,6 +213,7 @@ function EvidenceTable({
           <thead>
             <tr>
               <th>Time</th>
+              <th>Intent</th>
               <th>Stage</th>
               <th>Status</th>
               <th>Commit</th>
@@ -223,6 +229,11 @@ function EvidenceTable({
               return (
                 <tr key={i} className={record.ok ? "" : "history-row-failed"}>
                   <td className="history-time">{new Date(record.ts).toLocaleString()}</td>
+                  <td>
+                    {record.intent_id ? (
+                      <span className="history-intent-badge">{record.intent_id}</span>
+                    ) : "—"}
+                  </td>
                   <td>
                     <span className="history-stage-badge">{record.stage}</span>
                   </td>
@@ -354,7 +365,7 @@ export function HistoryView() {
         <input
           type="text"
           className="history-search-input"
-          placeholder="Search by commit, stage, or branch…"
+          placeholder="Search by intent, commit, stage, or branch…"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           aria-label="Search evidence records"

@@ -86,6 +86,7 @@ function generateDemoMetrics(): MetricsSnapshot {
 
 function generateDemoForeman(): ForemanState {
   return {
+    intent_id: "#2380",
     status: "monitoring",
     current_stage: "implement",
     current_agent: "backend-implementer",
@@ -98,15 +99,16 @@ function generateDemoForeman(): ForemanState {
 
 function generateDemoAgentRecords(): AgentStageRecord[] {
   const now = Date.now();
+  const intentId = "#2380";
   return [
-    { agent_id: "sync_issues_and_code", station_id: "intake", stage: "Intake", run_id: "run-demo-001", started_at: new Date(now - 60000).toISOString(), finished_at: new Date(now - 55000).toISOString(), duration_seconds: 5, tokens_input: 1200, tokens_output: 340, model: "claude-sonnet-4-20250514", provider: "claude", status: "completed" },
-    { agent_id: "cloud-foreman", station_id: "foreman-claim", stage: "Intake", run_id: "run-demo-001", started_at: new Date(now - 55000).toISOString(), finished_at: new Date(now - 50000).toISOString(), duration_seconds: 5, tokens_input: 800, tokens_output: 210, model: "claude-haiku-20250414", provider: "claude", status: "completed" },
-    { agent_id: "openspec-planner", station_id: "spec", stage: "Plan", run_id: "run-demo-001", started_at: new Date(now - 50000).toISOString(), finished_at: new Date(now - 40000).toISOString(), duration_seconds: 10, tokens_input: 3400, tokens_output: 1200, model: "claude-sonnet-4-20250514", provider: "claude", status: "completed" },
-    { agent_id: "java-architect", station_id: "architecture", stage: "Plan", run_id: "run-demo-001", started_at: new Date(now - 40000).toISOString(), finished_at: new Date(now - 30000).toISOString(), duration_seconds: 10, tokens_input: 2800, tokens_output: 950, model: "claude-sonnet-4-20250514", provider: "claude", status: "completed" },
-    { agent_id: "cloud-foreman", station_id: "branch", stage: "Plan", run_id: "run-demo-001", started_at: new Date(now - 30000).toISOString(), finished_at: new Date(now - 25000).toISOString(), duration_seconds: 5, tokens_input: 600, tokens_output: 180, model: "claude-haiku-20250414", provider: "claude", status: "completed" },
-    { agent_id: "testing-qa", station_id: "test-design", stage: "Prove", run_id: "run-demo-001", started_at: new Date(now - 25000).toISOString(), finished_at: new Date(now - 15000).toISOString(), duration_seconds: 10, tokens_input: 2100, tokens_output: 780, model: "claude-sonnet-4-20250514", provider: "claude", status: "completed" },
-    { agent_id: "backend-implementer", station_id: "failing-tests", stage: "Prove", run_id: "run-demo-001", started_at: new Date(now - 15000).toISOString(), finished_at: new Date(now - 8000).toISOString(), duration_seconds: 7, tokens_input: 1800, tokens_output: 520, model: "claude-sonnet-4-20250514", provider: "claude", status: "completed" },
-    { agent_id: "backend-implementer", station_id: "implement", stage: "Prove", run_id: "run-demo-001", started_at: new Date(now - 8000).toISOString(), tokens_input: 4200, tokens_output: 1800, model: "claude-sonnet-4-20250514", provider: "claude", status: "running" },
+    { agent_id: "sync_issues_and_code", station_id: "intake", stage: "Intake", intent_id: intentId, run_id: "run-demo-001", started_at: new Date(now - 60000).toISOString(), finished_at: new Date(now - 55000).toISOString(), duration_seconds: 5, tokens_input: 1200, tokens_output: 340, model: "claude-sonnet-4-20250514", provider: "claude", status: "completed" },
+    { agent_id: "cloud-foreman", station_id: "foreman-claim", stage: "Intake", intent_id: intentId, run_id: "run-demo-001", started_at: new Date(now - 55000).toISOString(), finished_at: new Date(now - 50000).toISOString(), duration_seconds: 5, tokens_input: 800, tokens_output: 210, model: "claude-haiku-20250414", provider: "claude", status: "completed" },
+    { agent_id: "openspec-planner", station_id: "spec", stage: "Plan", intent_id: intentId, run_id: "run-demo-001", started_at: new Date(now - 50000).toISOString(), finished_at: new Date(now - 40000).toISOString(), duration_seconds: 10, tokens_input: 3400, tokens_output: 1200, model: "claude-sonnet-4-20250514", provider: "claude", status: "completed" },
+    { agent_id: "java-architect", station_id: "architecture", stage: "Plan", intent_id: intentId, run_id: "run-demo-001", started_at: new Date(now - 40000).toISOString(), finished_at: new Date(now - 30000).toISOString(), duration_seconds: 10, tokens_input: 2800, tokens_output: 950, model: "claude-sonnet-4-20250514", provider: "claude", status: "completed" },
+    { agent_id: "cloud-foreman", station_id: "branch", stage: "Plan", intent_id: intentId, run_id: "run-demo-001", started_at: new Date(now - 30000).toISOString(), finished_at: new Date(now - 25000).toISOString(), duration_seconds: 5, tokens_input: 600, tokens_output: 180, model: "claude-haiku-20250414", provider: "claude", status: "completed" },
+    { agent_id: "testing-qa", station_id: "test-design", stage: "Prove", intent_id: intentId, run_id: "run-demo-001", started_at: new Date(now - 25000).toISOString(), finished_at: new Date(now - 15000).toISOString(), duration_seconds: 10, tokens_input: 2100, tokens_output: 780, model: "claude-sonnet-4-20250514", provider: "claude", status: "completed" },
+    { agent_id: "backend-implementer", station_id: "failing-tests", stage: "Prove", intent_id: intentId, run_id: "run-demo-001", started_at: new Date(now - 15000).toISOString(), finished_at: new Date(now - 8000).toISOString(), duration_seconds: 7, tokens_input: 1800, tokens_output: 520, model: "claude-sonnet-4-20250514", provider: "claude", status: "completed" },
+    { agent_id: "backend-implementer", station_id: "implement", stage: "Prove", intent_id: intentId, run_id: "run-demo-001", started_at: new Date(now - 8000).toISOString(), tokens_input: 4200, tokens_output: 1800, model: "claude-sonnet-4-20250514", provider: "claude", status: "running" },
   ];
 }
 
@@ -158,7 +160,7 @@ function generateDemoIntentRuns(): IntentRun[] {
       stages_completed: 16,
       stages_total: 16,
       stages_failed: 0,
-      agent_records: baseRecords.map((r, i) => ({ ...r, run_id: "run-demo-002", tokens_input: r.tokens_input * 2 })),
+      agent_records: baseRecords.map((r, i) => ({ ...r, intent_id: "#2348", run_id: "run-demo-002", tokens_input: r.tokens_input * 2 })),
       configuration_used: {
         agents: ["cloud-foreman", "backend-implementer", "java-architect"],
         rules: ["hexagonal-architecture", "programming"],
@@ -184,7 +186,7 @@ function generateDemoIntentRuns(): IntentRun[] {
       stages_completed: 16,
       stages_total: 16,
       stages_failed: 1,
-      agent_records: baseRecords.map((r) => ({ ...r, run_id: "run-demo-003" })),
+      agent_records: baseRecords.map((r) => ({ ...r, intent_id: "#2350", run_id: "run-demo-003" })),
       configuration_used: {
         agents: ["cloud-foreman", "backend-implementer"],
         rules: ["programming", "code-quality"],
@@ -211,7 +213,7 @@ function generateDemoIntentRuns(): IntentRun[] {
       stages_completed: 5,
       stages_total: 16,
       stages_failed: 2,
-      agent_records: baseRecords.slice(0, 3).map((r) => ({ ...r, run_id: "run-demo-004" })),
+      agent_records: baseRecords.slice(0, 3).map((r) => ({ ...r, intent_id: "#2352", run_id: "run-demo-004" })),
       configuration_used: {
         agents: ["cloud-foreman", "backend-implementer"],
         rules: ["hexagonal-architecture"],
@@ -970,7 +972,7 @@ const ERROR_COLORS = [
   "var(--status-error)",
 ];
 
-export function MetricsView() {
+export function MetricsView({ onSelectIntentId }: { onSelectIntentId?: (id: string | undefined) => void }) {
   const metrics = useMemo(() => generateDemoMetrics(), []);
   const foreman = useMemo(() => generateDemoForeman(), []);
   const intentRuns = useMemo(() => generateDemoIntentRuns(), []);
@@ -983,7 +985,9 @@ export function MetricsView() {
 
   const handleSelectRun = useCallback((runId: string | null) => {
     setSelectedRunId(runId);
-  }, []);
+    const run = intentRuns.find((r) => r.run_id === runId);
+    onSelectIntentId?.(run?.intent_id || undefined);
+  }, [intentRuns, onSelectIntentId]);
 
   // Chart data
   const stageBarData = metrics.stageDurations.map((s) => ({

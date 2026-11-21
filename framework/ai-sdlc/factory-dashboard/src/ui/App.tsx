@@ -5,8 +5,7 @@
  * production line with clickable stations opening an inspection panel.
  */
 import { useState, useMemo, useCallback, useEffect } from "react";
-import { Station, Agent, EvidenceEvent, StationPhase, ControlState } from "@/types";
-import { StationCard } from "@/components/StationCard";
+import { Station, Agent, EvidenceEvent, StationPhase, ControlState, Intent } from "@/types";
 import { EventStream } from "@/components/EventStream";
 import { StationDetail } from "@/components/StationDetail";
 import { MetricsView } from "@/components/MetricsView";
@@ -15,6 +14,9 @@ import { ConfigView } from "@/components/ConfigView";
 import { FileViewerView } from "@/components/FileViewerView";
 import { RepoLensMetricsView } from "@/components/RepoLensMetricsView";
 import { HistoryView } from "@/components/HistoryView";
+import { ActiveStationView } from "@/components/ActiveStationView";
+import { CompactTimeline } from "@/components/CompactTimeline";
+import { IntentView } from "@/components/IntentView";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import "@/styles/dashboard.css";
 
@@ -101,6 +103,7 @@ export default function App() {
   const [activeView, setActiveView] = useState<ViewId>("line");
   const [theme, setTheme] = useState<Theme>("light");
   const [controlState, setControlState] = useState<ControlState>("idle");
+  const [selectedIntentId, setSelectedIntentId] = useState<string | undefined>(undefined);
   const [stations, setStations] = useState<Station[]>(DEFAULT_STATIONS);
   const [agents] = useState<Agent[]>(DEFAULT_AGENTS);
   const [events, setEvents] = useState<EvidenceEvent[]>([]);
@@ -189,14 +192,38 @@ export default function App() {
     });
   }, [stations, demoEvents]);
 
-  const intent = useMemo(
+  const intent: Intent = useMemo(
     () => ({
       id: "#2380",
       source: "github" as const,
       title: "CLI comparison experiments & factory dashboard",
-      description: "Run controlled experiments comparing AI SDLC + RepoLens across 4 CLI tools and build a production line dashboard.",
+      description: "Run controlled experiments comparing AI SDLC + RepoLens across 4 CLI tools (Codex, AGY, kiro-cli, opencode). Extend providers.py, run 4 tasks per CLI with baseline and graph arms, capture metrics, publish to GitHub Pages, and create a GitHub issue.",
       created_at: new Date().toISOString(),
       run_id: "run-demo-001",
+      flow: "1. Extend providers.py with 4 new CLI specs → 2. Run lightweight experiments (4 tasks × 2 arms) → 3. Capture recall, latency, tool calls → 4. Publish results to GitHub Pages → 5. Create PR with findings",
+      acceptance_criteria: [
+        { text: "providers.py supports codex, agy, kiro-cli, and opencode", done: true },
+        { text: "Each CLI runs 4 tasks with and without RepoLens MCP", done: true },
+        { text: "Results saved as agent-<cli-name>.json in bench/results/", done: true },
+        { text: "repolens-bench-snapshot.json updated with new CLI data", done: true },
+        { text: "GitHub issue created with findings summary", done: true },
+        { text: "PR created with all changes", done: false },
+      ],
+      restrictions: [
+        { text: "Free-tier rate limits — sequential runs with delays", severity: "warning" },
+        { text: "MCP support varies per CLI — test before graph arm", severity: "required" },
+      ],
+      links: [
+        { label: "AI SDLC Framework README", url: "https://github.com/matiaspakua/notaire/tree/main/framework/ai-sdlc", type: "documentation" },
+        { label: "RepoLens Bench Tasks", url: "https://github.com/matiaspakua/notaire/blob/main/framework/ai-sdlc/repolens/bench/tasks/notaire.yaml", type: "reference" },
+        { label: "Factory UI Spec", url: "https://github.com/matiaspakua/notaire/blob/main/docs/300-development/306-ai-sdlc-framework/FACTORY-UI-SPEC.md", type: "design" },
+        { label: "PR #2381 — CLI Comparison", url: "https://github.com/matiaspakua/notaire/pull/2381", type: "related" },
+      ],
+      references: [
+        "ADR-030: Hexagonal Architecture Full Adoption",
+        "CONSTITUTION.md §12: Self-improve while delivering",
+        "framework/ai-sdlc/repolens/bench/providers.py",
+      ],
     }),
     []
   );
@@ -407,21 +434,8 @@ export default function App() {
 
       {/* ── Main ── */}
       <div className="main-content">
-        {/* Intent bar */}
-        <div className="intent-bar">
-          {intent ? (
-            <>
-              <span className={`intent-source-badge ${intent.source}`}>{intent.source}</span>
-              <div className="intent-content">
-                <span className="intent-id">{intent.id}</span>
-                <span className="intent-title">{intent.title}</span>
-              </div>
-              <span className="intent-run-id">{intent.run_id}</span>
-            </>
-          ) : (
-            <span className="intent-empty">No active intent — factory idle.</span>
-          )}
-        </div>
+        {/* Intent — the core input of the factory */}
+        <IntentView intent={intent} />
 
         {/* View content */}
         <div className="view-container">
@@ -441,34 +455,19 @@ export default function App() {
                 runId={intent?.run_id || null}
                 onControl={handleControl}
               />
-              <div className="production-line">
-                {PHASES.map((phase) => {
-                  const phaseStations = phasesByGroup(phase);
-                  if (phaseStations.length === 0) return null;
-                  return (
-                    <div key={phase} className="phase-group">
-                      <div className="phase-header">
-                        <span className={`phase-indicator ${PHASE_INDICATOR_CLASS[phase]}`} />
-                        <span className="phase-name">{phase}</span>
-                        <span className="phase-meta">
-                          {phaseStations.filter((s) => s.status === "completed").length}/{phaseStations.length}
-                        </span>
-                      </div>
-                      <div className="stations-row">
-                        {phaseStations.map((station) => (
-                          <StationCard
-                            key={station.id}
-                            station={station}
-                            index={globalStationIndex[station.id] || 0}
-                            phaseDataAttr={PHASE_DATA_ATTR[phase]}
-                            onClick={handleStationClick}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              <ActiveStationView
+                stations={demoStations}
+                agents={agents}
+                phases={PHASES}
+                phaseDataAttr={PHASE_DATA_ATTR}
+                onStationClick={handleStationClick}
+              />
+              <CompactTimeline
+                stations={demoStations}
+                phases={PHASES}
+                phaseDataAttr={PHASE_DATA_ATTR}
+                onStationClick={handleStationClick}
+              />
             </>
           )}
 
@@ -479,7 +478,7 @@ export default function App() {
                 <h1 className="view-title">Metrics</h1>
                 <p className="view-subtitle">Production line KPIs and trends</p>
               </div>
-              <MetricsView />
+              <MetricsView onSelectIntentId={setSelectedIntentId} />
             </>
           )}
 
@@ -492,7 +491,7 @@ export default function App() {
                   {demoEvents.length + events.length} events captured
                 </p>
               </div>
-              <EventStream events={demoEvents} />
+              <EventStream events={demoEvents} filterIntentId={selectedIntentId} />
             </>
           )}
 
