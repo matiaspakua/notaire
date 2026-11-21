@@ -4,6 +4,7 @@ export const FACTORY_READING_PATH: { href: string }[] = [
   { href: "/ai-sdlc/" },
   { href: "/ai-sdlc/case-study/" },
   { href: "/ai-sdlc/lifecycle/" },
+  { href: "/ai-sdlc/factory-line/" },
   { href: "/ai-sdlc/agents/" },
   { href: "/ai-sdlc/guardrails/" },
   { href: "/ai-sdlc/results/" },
